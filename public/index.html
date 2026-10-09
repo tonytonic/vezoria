@@ -6157,6 +6157,7 @@ const CV = (function(){
       if(!r || !r.id || r.demo) return;
       const cur = R[r.id], base = M.pkgBase[r.id] || 0;
       if(!cur) return add.push(r);
+      if(cur.deleted && !r.deleted){ add.push(Object.assign({}, r, {updatedAt: Date.now()})); return; }
       if(sameRec(cur, r)) return;
       const iChanged = (cur.updatedAt||0) > base, theyChanged = (r.updatedAt||0) > base;
       if(theyChanged && !iChanged) upd.push(r);
@@ -7249,7 +7250,7 @@ ${pm.join('\n')}</Document></kml>`;
       const data = JSON.parse(new TextDecoder().decode(main)); if(data.app !== 'carnet-voyage') throw new Error('ce ZIP n’est pas une sauvegarde du carnet');
       const replace = Object.values(R).some(r=>!r.demo && r.type!=='profile') && confirm(`Sauvegarde du ${new Date(data.exportedAt).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'))} : ${data.records.length} fiches.\n\nOK = REMPLACER tout le carnet de ce téléphone par la sauvegarde.\nAnnuler = FUSIONNER (garder les deux ; la version la plus récente de chaque fiche gagne).`);
       if(replace) Object.keys(R).forEach(id=>{ if(!R[id].demo) delete R[id]; });
-      let n = 0; data.records.forEach(r=>{ if(!r || !r.id) return; const cur = R[r.id]; if(!cur || (r.updatedAt||0) >= (cur.updatedAt||0)){ R[r.id] = r; markDirty(r.id); n++; } });
+      let n = 0; data.records.forEach(r=>{ if(!r || !r.id) return; const cur = R[r.id]; if(cur && cur.deleted && !r.deleted){ r = Object.assign({}, r, {updatedAt: Date.now()}); R[r.id] = r; markDirty(r.id); n++; return; } if(!cur || (r.updatedAt||0) >= (cur.updatedAt||0)){ R[r.id] = r; markDirty(r.id); n++; } });
       let nf = 0; const names = Object.keys(z).filter(k=>/^(photos|docs)\//.test(k));
       for(const k of names){ const id = k.replace(/^(photos|docs)\//,'').replace(/\.(jpg|pdf)$/,''); const ex = await IDB.get(id).catch(()=>null); if(ex && ex.blob) continue;
         const u8 = await get(k); if(!u8) continue; await IDB.put({id, blob:new Blob([u8], {type: k.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg'}), up:0}); nf++;
@@ -8816,7 +8817,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert(n ? Math.ceil(n/2) + ' photo(s) remise(s) en file d’envoi.' : 'Aucune photo à renvoyer.');
     uploadQueue();
   }
-  const BUILD = '2026-10-09k';
+  const BUILD = '2026-10-09l';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
