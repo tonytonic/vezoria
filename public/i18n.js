@@ -90,6 +90,13 @@
       }
       if(hit) r = bits.join('');
     }
+    if(r == null && I.symFn){   // devise ≠ € : « Prix réel ($) » se retrouve sous sa forme « Prix réel (€) »
+      var sy = I.symFn();
+      if(sy && sy !== '€'){
+        var rx = new RegExp('(^|[^A-Za-zÀ-ÿ0-9])' + esc(sy) + '(?![A-Za-zÀ-ÿ])', 'g');
+        if(rx.test(core)){ var c2 = core.replace(rx, function(m, p){ return p + '€'; }), r2 = look(c2); if(r2 != null) r = r2.replace(/€/g, function(){ return sy; }); }
+      }
+    }
     if(memo.size > 5000) memo.clear();
     memo.set(core, r); return r;
   }

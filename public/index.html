@@ -1309,7 +1309,16 @@ const CV = (function(){
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const D = d => d ? '2027-07-' + String(d).padStart(2,'0') : '';
   const num = v => { const n = parseFloat(String(v ?? '').replace(',','.')); return isNaN(n) ? 0 : n; };
-  const eur = n => (Math.round(n*100)/100).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'),{minimumFractionDigits:0,maximumFractionDigits:2}) + ' €';
+  /* ── Devise : chaque voyage a la sienne (t.devise ; absente = euro, comme les anciens voyages) ── */
+  const CURS = {EUR:'€', USD:'$', GBP:'£', CHF:'CHF', CAD:'CA$', AUD:'A$', NZD:'NZ$', JPY:'¥', CNY:'CN¥', SEK:'kr', NOK:'kr', DKK:'kr', PLN:'PLN', CZK:'CZK', HUF:'HUF', RON:'RON', MXN:'MX$', BRL:'R$', MAD:'MAD', TND:'TND', TRY:'TRY', AED:'AED', THB:'THB', INR:'INR', ZAR:'R', KRW:'KRW'};
+  const REGION_CUR = {US:'USD', GB:'GBP', CH:'CHF', CA:'CAD', AU:'AUD', NZ:'NZD', JP:'JPY', CN:'CNY', SE:'SEK', NO:'NOK', DK:'DKK', PL:'PLN', CZ:'CZK', HU:'HUF', RO:'RON', MX:'MXN', BR:'BRL', MA:'MAD', TN:'TND', TR:'TRY', AE:'AED', TH:'THB', IN:'INR', ZA:'ZAR', KR:'KRW'};
+  const curCode = () => { try { const t = trip(); if(t) return t.devise || 'EUR'; return (M && M.cur) || 'EUR'; } catch(e){ return 'EUR'; } };
+  const CS = () => CURS[curCode()] || curCode();
+  const eur = n => {
+    const s = (Math.round(n*100)/100).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'),{minimumFractionDigits:0,maximumFractionDigits:2}), c = CS();
+    return (window.I18N && I18N.lang === 'en' && /^(\$|£|[A-Z]{1,2}\$|CN¥|¥)$/.test(c)) ? c + s : s + ' ' + c;
+  };
+  if(window.I18N) I18N.symFn = () => CS();
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 
   const COLORS = ['#2f6fdb','#e0559a','#2e9e6a','#e8862e','#8a5cd6','#d64545','#1fa5b5','#b8902f','#5b6b2e','#c2410c','#0f766e','#7c3aed','#be185d','#15803d','#1d4ed8','#a16207'];
@@ -1400,8 +1409,8 @@ const CV = (function(){
       if(t !== 'main' && r && r.type==='trip') (r.voyageurs||[]).forEach(pid=>{ if(R[pid] && !L.includes(pid)) L.push(pid); }); });
   }
   const isDirty = id => M.dirty.includes(id) || (M.spaces||[]).some(x=>(x.dirty||[]).includes(id));
-  function put(r, msg){ photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); persist(); toast(msg); queueSync(); return r; }
-  function putMany(arr, msg){ arr.forEach(r=>{ photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); persist(); toast(msg); queueSync(); }
+  function put(r, msg){ if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); persist(); toast(msg); queueSync(); return r; }
+  function putMany(arr, msg){ arr.forEach(r=>{ if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); persist(); toast(msg); queueSync(); }
   function drop(id, msg){ const r = R[id]; if(!r) return; r.deleted = true; put(r, msg || '🗑 Supprimé'); }
   const clone = o => JSON.parse(JSON.stringify(o));
 
@@ -1503,7 +1512,7 @@ const CV = (function(){
   }
   const rembs = () => list('remb', x=>x.trip===M.trip).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   function rembAdd(de, a, v){
-    const t = prompt(`Montant remboursé par ${pname(de)} à ${pname(a)} (€) :`, String(Math.round(v*100)/100).replace('.',','));
+    const t = prompt(`Montant remboursé par ${pname(de)} à ${pname(a)} (${CS()}) :`, String(Math.round(v*100)/100).replace('.',','));
     if(t === null) return;
     const m = num(t); if(!(m > 0)){ alert('Montant invalide.'); return; }
     put({id:'rb'+uid(), type:'remb', trip:M.trip, de, a, montant:m, date:new Date().toISOString().slice(0,10)}, '💸 Remboursement noté');
@@ -2160,7 +2169,7 @@ const CV = (function(){
       h += `<div class="v-f2">${field('Date','date',it.date,'date')}${field('Heure / créneau','heure',it.heure,'time')}</div>`;
       h += field('Lieu / prestataire','adresse',it.adresse);
     }
-    h += `<div class="v-f2">${field('Prix réel (€)','prix',it.prix,'text','inputmode="decimal" placeholder="à saisir"')}${field('Estimation (€)','estime',it.estime,'text','inputmode="decimal"')}</div>`;
+    h += `<div class="v-f2">${field('Prix réel (' + CS() + ')','prix',it.prix,'text','inputmode="decimal" placeholder="à saisir"')}${field('Estimation (' + CS() + ')','estime',it.estime,'text','inputmode="decimal"')}</div>`;
     h += fxFormRow();
     h += pjBlock(it);
     if(id && it.cat==='divers') h += it.recu ? `<div class="v-f"><label>🧾 Ticket</label><button type="button" class="cv-rc" onclick="CV.rcView('${id}')"><img data-ph="${esc(it.recu)}.t" alt=""><span><b>Voir le ticket</b><small>touche pour l’agrandir</small></span></button></div>`
@@ -2403,7 +2412,7 @@ const CV = (function(){
         <div class="v-tile r"><div class="a">${eur(tot.proj - tot.paye)}</div><div class="l">Reste à payer</div></div>
       </div>
       <div class="v-sum">
-        <div class="v-obj"><span>Objectif par personne</span><input class="v-in" inputmode="decimal" value="${esc(t.objectif||'')}" placeholder="—" onchange="CV.setObj(this.value)"> €</div>
+        <div class="v-obj"><span>Objectif par personne</span><input class="v-in" inputmode="decimal" value="${esc(t.objectif||'')}" placeholder="—" onchange="CV.setObj(this.value)"> ${CS()}</div>
         ${per.map(p=>{
           const pct = obj ? Math.min(100, p.proj/obj*100) : 0, ok = !obj || p.proj <= obj;
           return `<div class="cv-pbud">
@@ -2554,7 +2563,7 @@ const CV = (function(){
             <input class="v-in" data-dep="${p.id}" value="${esc((g[p.id]||{}).dep)}" placeholder="départ de…">
             <input class="v-in" data-ret="${p.id}" value="${esc((g[p.id]||{}).ret)}" placeholder="retour vers…"></div>`).join('')}
           <div class="v-sum-small">Laisse vide pour quelqu’un qui ne vient pas. Ex. : Camille Lyon → Lyon, Sam Bruxelles → Bruxelles.</div></div>
-        ${field('Budget estimé par personne (€)','budget',w.budget,'text','inputmode="decimal"')}
+        ${field('Budget estimé par personne (' + CS() + ')','budget',w.budget,'text','inputmode="decimal"')}
         ${field('Lien','lien',w.lien,'url','placeholder="https://"')}
         <div class="v-f"><label>Notes</label><textarea class="v-in" name="notes">${esc(w.notes)}</textarea></div>
         <div class="v-f"><label>État</label>${segBtns('cv-ws', [['idee','💭 Idée'],['prevu','📆 Prévu'],['fait','✓ Fait']], w.statut||'idee')}</div>
@@ -2607,7 +2616,8 @@ const CV = (function(){
         ${field('Itinéraire / sous-titre','sous',t.sous,'text','placeholder="Ex. Rome → Malte → Athènes"')}
         <div class="v-f2">${field('Début','debut',t.debut,'date')}${field('Fin','fin',t.fin,'date')}</div>
         <div class="v-f"><label>Voyageurs</label>${peopleSel('cv-tv', pool, t.voyageurs||[])}</div>
-        ${field('Objectif de budget par personne (€)','objectif',t.objectif,'text','inputmode="decimal"')}
+        <div class="v-f"><label>Devise du voyage</label><select class="v-in" name="devise">${Object.keys(CURS).map(c=>`<option value="${c}"${c===(t.devise || (id ? 'EUR' : (M.cur || 'EUR'))) ? ' selected' : ''}>${c} · ${CURS[c]}</option>`).join('')}</select></div>
+        ${field('Objectif de budget par personne (' + CS() + ')','objectif',t.objectif,'text','inputmode="decimal"')}
         ${id ? '' : `<label class="cv-checkline"><input type="checkbox" id="cv-basic" checked> Ajouter une checklist de base</label>`}
         ${actions(id ? `CV.delTrip('${id}')` : '')}
       </form>`);
@@ -2963,7 +2973,7 @@ const CV = (function(){
     const v = tv(), c = chargeOf(it), py = it.payeur || 'chacun';
     let h = `<div class="cv-paybox"><div class="cv-paybox-h">💶 Paiement</div>`;
     if(v.length > 1){
-      h += `<div class="v-f"><label>Qui prend en charge le coût ?</label>${segBtns('cv-chg', [['egal','Égal'],['seul','Une personne'],['perso','Montants €'],['parts','Parts']], c.mode)}<div id="cv-chg-x"></div></div>`;
+      h += `<div class="v-f"><label>Qui prend en charge le coût ?</label>${segBtns('cv-chg', [['egal','Égal'],['seul','Une personne'],['perso','Montants ' + CS()],['parts','Parts']], c.mode)}<div id="cv-chg-x"></div></div>`;
       h += `<div class="v-f"><label>Qui a payé / avancé l’argent ?</label>${segBtns('cv-pay', [['chacun','Chacun sa part'], ...v.map(p=>[p, esc(pname(p))]), ['perso','Montants']], py)}<div id="cv-pay-x"></div></div>`;
     }
     h += `<div class="cv-live" id="cv-live"></div>`;
@@ -3025,13 +3035,13 @@ const CV = (function(){
       xc.innerHTML = cm==='seul'
         ? `<div class="cv-qsel" style="margin-top:6px">${p.map(pid=>`<button type="button" class="${(c.pid && p.includes(c.pid) ? c.pid : p[0])===pid?'on':''}" data-p="${pid}" style="--pc:${pcol(pid)}" onclick="CV.one(this)">${esc(pname(pid))} paie tout</button>`).join('')}</div>`
         : cm==='perso' || cm==='parts'
-        ? `<div class="cv-amts">${p.map(pid=>`<label>${pchip(pid)}<input class="v-in" data-chg="${pid}" inputmode="decimal" value="${esc(keep[pid] ?? ((c.mode===cm && c.parts||{})[pid] ?? ''))}" placeholder="${cm==='perso' ? '€' : 'parts'}"></label>`).join('')}</div><div class="v-sum-small" id="cv-chg-help">${cm==='perso' ? 'Montant exact en € pour chacun. Laisse vide : le reste est partagé entre ceux sans montant.' : 'Nombre de parts (ex. 2 et 1 : le premier paie deux fois plus).'}</div>`
+        ? `<div class="cv-amts">${p.map(pid=>`<label>${pchip(pid)}<input class="v-in" data-chg="${pid}" inputmode="decimal" value="${esc(keep[pid] ?? ((c.mode===cm && c.parts||{})[pid] ?? ''))}" placeholder="${cm==='perso' ? CS() : 'parts'}"></label>`).join('')}</div><div class="v-sum-small" id="cv-chg-help">${cm==='perso' ? 'Montant exact en ' + CS() + ' pour chacun. Laisse vide : le reste est partagé entre ceux sans montant.' : 'Nombre de parts (ex. 2 et 1 : le premier paie deux fois plus).'}</div>`
         : '';
     }
     const xp = document.getElementById('cv-pay-x');
     if(xp && pm!==lastPay){
       lastPay = pm;
-      xp.innerHTML = pm==='perso' ? `<div class="cv-amts">${tv().map(pid=>`<label>${pchip(pid)}<input class="v-in" data-pay="${pid}" inputmode="decimal" value="${esc((it.payes||{})[pid] ?? '')}" placeholder="€"></label>`).join('')}</div><div class="v-sum-small">Ce que chacun a réellement sorti.</div>` : '';
+      xp.innerHTML = pm==='perso' ? `<div class="cv-amts">${tv().map(pid=>`<label>${pchip(pid)}<input class="v-in" data-pay="${pid}" inputmode="decimal" value="${esc((it.payes||{})[pid] ?? '')}" placeholder="${CS()}"></label>`).join('')}</div><div class="v-sum-small">Ce que chacun a réellement sorti.</div>` : '';
     }
     readPay(tmp);
     const T = totalOf(tmp);
@@ -3054,7 +3064,7 @@ const CV = (function(){
     const bal = balances(), hasF = tv().some(p=>tFoyer(p)), SF = hasF ? settleFoyers(bal) : null, tr = hasF ? SF.tr : settle(bal), nm = hasF ? SF.lbl : pname_c;
     return `<div class="v-sum">
       <div class="v-sum-row"><div class="v-sum-big" style="font-size:1rem">⚖️ Qui doit quoi</div><div class="v-sum-small">sur ce qui est déjà réglé</div></div>
-      ${bal.map(b=>`<div class="cv-bal">${pchip(b.pid)}<span>a payé ${eur(b.avance)} · sa part ${eur(b.part)}${b.verse>0.5?' · a remboursé '+eur(b.verse):''}${b.recu>0.5?' · a reçu '+eur(b.recu):''}</span><b style="color:${b.solde>0.5?'var(--green)':b.solde<-0.5?'var(--red)':'var(--gray)'}">${Math.abs(b.solde)<0.5 ? '0 €' : (b.solde>0?'+':'') + eur(b.solde)}</b></div>`).join('')}
+      ${bal.map(b=>`<div class="cv-bal">${pchip(b.pid)}<span>a payé ${eur(b.avance)} · sa part ${eur(b.part)}${b.verse>0.5?' · a remboursé '+eur(b.verse):''}${b.recu>0.5?' · a reçu '+eur(b.recu):''}</span><b style="color:${b.solde>0.5?'var(--green)':b.solde<-0.5?'var(--red)':'var(--gray)'}">${Math.abs(b.solde)<0.5 ? '0 ' + CS() : (b.solde>0?'+':'') + eur(b.solde)}</b></div>`).join('')}
       <div class="cv-settle">${tr.length ? tr.map(x=>`<div class="cv-settle-r"><span>➡️ ${nm(x.de)} doit <b>${eur(x.v)}</b> à ${nm(x.a)}</span><button class="v-chip on" onclick="CV.rembAdd('${x.de}','${x.a}',${x.v.toFixed(2)})">💸 Régler</button><button class="v-chip" onclick="CV.rembAsk('${x.de}','${x.a}',${x.v.toFixed(2)})">📤 Demander</button></div>`).join('') : '✓ Personne ne doit rien à personne.'}</div>
       ${rembs().length ? `<div class="cv-rbs">${rembs().map(x=>`<div class="cv-rb">💸 ${pname_c(x.de)} a remboursé <b>${eur(num(x.montant))}</b> à ${pname_c(x.a)} <span class="v-sum-small">le ${fdate(x.date)}</span><button class="cv-x" onclick="CV.rembDel('${x.id}')">✕</button></div>`).join('')}</div>` : ''}
     </div>`;
@@ -3088,7 +3098,7 @@ const CV = (function(){
     const E = editing.echeances || [];
     el.innerHTML = E.map(e=>`<div class="cv-echrow" data-id="${e.id}">
         <input class="v-in" type="date" data-e="date" value="${esc(e.date)}">
-        <input class="v-in" data-e="montant" inputmode="decimal" value="${esc(e.montant)}" placeholder="€">
+        <input class="v-in" data-e="montant" inputmode="decimal" value="${esc(e.montant)}" placeholder="${CS()}">
         <label class="cv-echok"><input type="checkbox" data-e="fait" ${e.fait?'checked':''}> payé</label>
         <button type="button" class="cv-x" onclick="CV.echDel('${e.id}')">✕</button></div>`).join('')
       || '<div class="v-sum-small">Aucune échéance : se paie en une fois.</div>';
@@ -3482,7 +3492,7 @@ const CV = (function(){
       h += `<div class="v-f"><label>Nom du voyage</label><input class="v-in" id="wz-titre" value="${esc(wz.titre)}" placeholder="Ex. Été 2028 en Scandinavie, Week-end Palma…"></div>
         <div class="v-f"><label>Qui part ?</label>${peopleSel('wz-tv', profiles().map(p=>p.id), wz.voyageurs)}
           <div class="v-sum-small" style="margin-top:4px">Il manque quelqu’un ? Ajoute son profil dans ⚙️ Partage, ou plus tard dans 💰 Budget.</div></div>
-        <div class="v-f"><label>Budget visé par personne (facultatif)</label><input class="v-in" id="wz-obj" inputmode="decimal" value="${esc(wz.objectif)}" placeholder="€"></div>`;
+        <div class="v-f"><label>Budget visé par personne (facultatif)</label><input class="v-in" id="wz-obj" inputmode="decimal" value="${esc(wz.objectif)}" placeholder="${CS()}"></div>`;
     }
     if(s===2){
       h += `<div class="v-f2"><div class="v-f"><label>Départ le</label><input class="v-in" type="date" id="wz-debut" value="${esc(wz.debut)}" oninput="CV.wzDates('d')"></div>
@@ -3586,6 +3596,11 @@ const CV = (function(){
     return t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t;
   }
   async function photoBlob(id){
+    if(/\.t$/.test(id)){
+      try { const o = await IDB.get(id); if(o && o.blob){ try { await o.blob.slice(0, 1).arrayBuffer(); return o.blob; } catch(e){} } } catch(e){}
+      const full = await photoBlob(id.slice(0, -2)); if(!full) return null;
+      try { const th = await shrink(full, 480, 0.74); try { await IDB.put({id, blob:th, up:1}); } catch(e){} return th; } catch(e){ return full; }
+    }
     try { const o = await IDB.get(id); if(o && o.blob){ try { await o.blob.slice(0, 1).arrayBuffer(); return o.blob; } catch(e){ /* fichier perdu par Safari : on le reprend sur le serveur */ } } } catch(e){}
     const code = photoCode(id); if(!code || !photoApi()) return null;
     try {
@@ -3628,17 +3643,19 @@ const CV = (function(){
   }
   // Une photo = deux versions : grande (1280 px) et vignette (420 px, id + '.t')
   async function storePhoto(blob, id){
-    const full = await shrink(blob, 1600, 0.84), thumb = await shrink(blob, 480, 0.72);
-    await IDB.put({id, blob:full, up:0}); await IDB.put({id:id+'.t', blob:thumb, up:0});
+    const full = await shrink(blob, 2048, 0.88), thumb = await shrink(blob, 480, 0.74);
+    await IDB.put({id, blob:full, up:0}); await IDB.put({id:id+'.t', blob:thumb, up:1});
     urls[id+'.t'] = URL.createObjectURL(thumb);
-    M.pq = M.pq || []; M.pq.push(id, id+'.t');
+    M.pq = M.pq || []; M.pq.push(id);   // seule la grande photo part sur le serveur : la vignette est refaite sur chaque téléphone
   }
+  const pqN = () => (M.pq||[]).filter(x=>!/\.t$/.test(x)).length;
   let uploading = false;
   async function uploadQueue(){
+    if((M.pq||[]).some(x=>/\.t$/.test(x))){ M.pq = M.pq.filter(x=>!/\.t$/.test(x)); persist(); }   // vignettes d'anciennes versions : plus envoyées
     if(uploading || !(M.pq||[]).length || !photoApi()) return;
     if(!(M.sync.on && M.sync.code) && !(M.spaces||[]).length) return;
     uploading = true; let upErr = '', waiting = 0;
-    cryptShow('🔐 Chiffrement des photos… (' + Math.ceil(M.pq.length/2) + ')');
+    cryptShow('🔐 Chiffrement des photos… (' + pqN() + ')');
     try {
       for(const id of [...M.pq]){
         const code = photoCode(id); if(!code){ waiting++; continue; }          // pas encore de carnet en ligne pour cette photo : on la garde
@@ -3650,7 +3667,7 @@ const CV = (function(){
           try { await IDB.put({id, blob:new Blob([await o.blob.arrayBuffer()], {type:o.blob.type || 'image/jpeg'}), up:1}); } catch(e){}   // copie : Safari perd le fichier si on réenregistre le même objet
         }
         M.pq = M.pq.filter(x=>x!==id); persist(); syncDot();
-        if(M.pq.length) cryptShow('🔐 Chiffrement des photos… (' + Math.ceil(M.pq.length/2) + ' restante' + (M.pq.length > 2 ? 's' : '') + ')');
+        if(M.pq.length) cryptShow('🔐 Chiffrement des photos… (' + pqN() + ' restante' + (pqN() > 1 ? 's' : '') + ')');
       }
     } catch(e){ upErr = 'réseau : ' + (e && e.message || e); }
     cryptHide(M.pq.length ? (upErr ? '⚠️ Photos non envoyées : ' + upErr : (waiting ? '⏳ Photos en attente : voyage pas encore en ligne' : '')) : '🔒 Photos chiffrées et envoyées');
@@ -3664,7 +3681,7 @@ const CV = (function(){
     let h = `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">📸 ${all.length} souvenir${all.length>1?'s':''}</div><div class="v-sum-small">${nph} photo${nph>1?'s':''}</div></div>
       <div class="v-sum-small">Les étapes, les récits et les photos du voyage. Importe un voyage Polarsteps ou ajoute tes propres souvenirs.</div>
       <div class="cv-row" style="margin-top:10px"><button class="v-day-edit" onclick="CV.editSouv(null)">＋ Souvenir</button><button class="v-day-edit" onclick="CV.psPick()">📥 Importer Polarsteps</button></div>
-      ${(M.pq||[]).length && M.sync.on ? `<div class="v-sum-small" style="margin-top:6px">${E2E ? '🔐' : '☁️'} ${Math.ceil(M.pq.length/2)} photo(s) en cours ${E2E ? 'de chiffrement et d’envoi' : 'd’envoi'}…</div>` : ''}
+      ${(M.pq||[]).length && M.sync.on ? `<div class="v-sum-small" style="margin-top:6px">${E2E ? '🔐' : '☁️'} ${pqN()} photo(s) en cours ${E2E ? 'de chiffrement et d’envoi' : 'd’envoi'}…</div>` : ''}
       ${!M.sync.on && nph ? `<div class="v-sum-small" style="margin-top:6px">Les photos restent sur ce téléphone tant que la synchro n’est pas activée.</div>` : ''}</div>`;
     if(!all.length) h += `<div class="v-empty">Encore aucun souvenir pour ce voyage.</div>`;
     const dsl = dayList(); let lastG = null;
@@ -3922,6 +3939,24 @@ const CV = (function(){
   }
 
   /* ══════════ Démarrage ══════════ */
+  let setupCont = null;
+  function setupSheet(cont){
+    setupCont = cont;
+    const reg = ((navigator.language || '').split('-')[1] || '').toUpperCase(), guess = REGION_CUR[reg] || 'EUR';
+    const langs = window.I18N ? Object.entries(I18N.langs) : [['fr', 'Français']], cur = window.I18N ? I18N.lang : 'fr';
+    openSheet(`<h2>👋 Bienvenue sur Vezoria</h2>
+      <p class="v-sum-small">Choisis ta langue et ta devise. Tu pourras les changer plus tard dans Plus → ⚙️ Réglages.</p>
+      <div class="v-f"><label>Langue</label><select class="v-in" id="su-l">${langs.map(([k,l])=>`<option value="${k}"${k===cur?' selected':''}>${l}</option>`).join('')}</select></div>
+      <div class="v-f"><label>Devise</label><select class="v-in" id="su-c">${Object.keys(CURS).map(c=>`<option value="${c}"${c===guess?' selected':''}>${c} · ${CURS[c]}</option>`).join('')}</select></div>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.setupGo()">Commencer</button></div>`, true);
+  }
+  function setupGo(){
+    const l = (document.getElementById('su-l') || {}).value, c = (document.getElementById('su-c') || {}).value || 'EUR';
+    M.cur = c; M.setup = 1; persist();
+    if(window.I18N && l && l !== I18N.lang){ I18N.set(l); return; }   // recharge l'appli dans la langue choisie
+    closeSheet(true); const k = setupCont; setupCont = null; if(k) k();
+  }
+  function setCur(c){ if(CURS[c]){ M.cur = c; persist(); toast('💱 ' + c); } }
   function init(){
     setTimeout(shareInbox, 600);
     try { const hq = document.getElementById('cv-hero-qr'); if(hq) hq.innerHTML = qrSVG(APP_URL(), 'q') + '<span>📤 Partager</span>'; } catch(e){}
@@ -3935,9 +3970,12 @@ const CV = (function(){
     if(installGate()) return;
     applyMode(); applyLock(); countInstall();
     setTimeout(backupNag, 4000);
-    if(PUBLIC && !M.infoSeen) infoSheet(true);
-    else if(!M.me || !prof(M.me)){ if(M.sync.on && profiles().length) whoSheet(); else onboarding(); }
-    else setTimeout(resumeLoad, 300);
+    const boot2 = () => {
+      if(PUBLIC && !M.infoSeen) infoSheet(true);
+      else if(!M.me || !prof(M.me)){ if(M.sync.on && profiles().length) whoSheet(); else onboarding(); }
+      else setTimeout(resumeLoad, 300);
+    };
+    if(!M.setup) setupSheet(boot2); else boot2();
     syncNow();
   }
 
@@ -5693,8 +5731,8 @@ const CV = (function(){
       `<button class="v-btn" onclick="CV.tlDay()">📴 Ouvrir la fiche du jour</button>`);
     h += box('🔔','Rappels dans le calendrier','Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pas de notification de l’appli.',
       `<button class="v-btn sec" onclick="CV.tlIcs()">📅 Rappels dans mon calendrier</button>`);
-    h += box('💱','Convertisseur de devises','Saisis un montant en monnaie locale, l’appli le convertit en euros (aussi dans chaque fiche, sous « Prix réel »).',
-      `<div class="cv-fx"><input class="v-in" id="fxo-a" inputmode="decimal" placeholder="Montant"><select class="v-in" id="fxo-c">${fxOpts(M.fxLast||'USD')}</select><button type="button" class="v-btn sec" onclick="CV.fxTool()">= €</button></div><div class="v-sum-small" id="fxo-r"></div>`);
+    h += box('💱','Convertisseur de devises','Saisis un montant en monnaie locale, l’appli le convertit dans la devise du voyage (aussi dans chaque fiche, sous « Prix réel »).',
+      `<div class="cv-fx"><input class="v-in" id="fxo-a" inputmode="decimal" placeholder="Montant"><select class="v-in" id="fxo-c">${fxOpts(M.fxLast||'USD')}</select><button type="button" class="v-btn sec" onclick="CV.fxTool()">= ${CS()}</button></div><div class="v-sum-small" id="fxo-r"></div>`);
     h += box('🌤️','Météo des étapes','Prévisions si le départ est proche, sinon le temps qu’il faisait l’an dernier aux mêmes dates.',
       `<button class="v-btn sec" onclick="CV.tlMeteo()">🌤️ Voir la météo</button>`);
     h += box('🧾','Ticket ou reçu','Prends l’addition en photo, l’appli essaie de lire le montant et crée la dépense pour le « qui doit quoi ».' + (nRec ? ` <b>${nRec} reçu${nRec>1?'s':''}</b> enregistré${nRec>1?'s':''}.` : ''),
@@ -5805,7 +5843,7 @@ const CV = (function(){
 
   /* ---------- 💱 Devises ---------- */
   const FX_LIST = ['USD','GBP','CHF','JPY','MAD','EGP','TND','TRY','THB','CAD','AUD','NZD','SEK','NOK','DKK','ISK','CZK','HUF','PLN','RON','BGN','MXN','BRL','ARS','CNY','HKD','KRW','INR','IDR','VND','PHP','SGD','MYR','AED','QAR','ILS','JOD','ZAR','KES','XOF','XPF'];
-  const fxOpts = sel => FX_LIST.map(c=>`<option${c===sel?' selected':''}>${c}</option>`).join('');
+  const fxOpts = sel => ['EUR'].concat(FX_LIST).filter(c=>c!==curCode()).map(c=>`<option${c===sel?' selected':''}>${c}</option>`).join('');
   async function fxRates(){
     if(M.fx && Date.now() - M.fx.t < 12*3600e3) return M.fx.rates;
     let rates = null;
@@ -5815,7 +5853,7 @@ const CV = (function(){
     if(M.fx) return M.fx.rates;   // hors ligne : derniers taux connus
     throw new Error('Taux de change indisponibles (pas de réseau ?).');
   }
-  async function fxToEur(amount, cur){ const r = await fxRates(); if(!r[cur]) throw new Error('Devise non disponible : ' + cur); return amount / r[cur]; }
+  async function fxToEur(amount, cur){ const r = Object.assign({EUR:1}, await fxRates()), h = curCode(); if(!r[cur] || !r[h]) throw new Error('Devise non disponible : ' + (r[cur] ? h : cur)); return amount / r[cur] * r[h]; }
   async function fxTool(){
     const a = num((document.getElementById('fxo-a')||{}).value), c = (document.getElementById('fxo-c')||{}).value, out = document.getElementById('fxo-r');
     if(!a){ out.textContent = 'Saisis un montant.'; return; }
@@ -5829,7 +5867,7 @@ const CV = (function(){
       const n = document.getElementById('fx-n'); if(n) n.textContent = `${a.toLocaleString((window.I18N ? I18N.locale : 'fr-FR'))} ${c} ≈ ${eur(e)} (taux du ${new Date(M.fx.t).toLocaleDateString((window.I18N ? I18N.locale : 'fr-FR'))})`; }
     catch(e){ alert(e.message); }
   }
-  const fxFormRow = () => `<div class="cv-fx"><span>💱</span><input class="v-in" id="fx-a" inputmode="decimal" placeholder="Montant en devise"><select class="v-in" id="fx-c">${fxOpts(M.fxLast||'USD')}</select><button type="button" class="v-btn sec" onclick="CV.fxFill()">→ €</button></div><div class="v-sum-small" id="fx-n" style="margin:-4px 0 8px"></div>`;
+  const fxFormRow = () => `<div class="cv-fx"><span>💱</span><input class="v-in" id="fx-a" inputmode="decimal" placeholder="Montant en devise"><select class="v-in" id="fx-c">${fxOpts(M.fxLast||'USD')}</select><button type="button" class="v-btn sec" onclick="CV.fxFill()">→ ${CS()}</button></div><div class="v-sum-small" id="fx-n" style="margin:-4px 0 8px"></div>`;
 
   /* ---------- 🌤️ Météo ---------- */
   function tlStages(){
@@ -5887,7 +5925,7 @@ const CV = (function(){
       <div id="rc-prev" class="v-sum-small" style="margin:8px 0"></div>
       <form id="v-form" onsubmit="event.preventDefault();CV.tlRcSave()">
         ${field('Quoi ?','titre','','text','placeholder="Ex. Dîner à Trastevere" required')}
-        <div class="cv-fx"><input class="v-in" name="montant" id="rc-m" inputmode="decimal" placeholder="Montant" required><select class="v-in" id="rc-c"><option>EUR</option>${fxOpts(M.fxLast||'')}</select></div>
+        <div class="cv-fx"><input class="v-in" name="montant" id="rc-m" inputmode="decimal" placeholder="Montant" required><select class="v-in" id="rc-c"><option>${curCode()}</option>${fxOpts(M.fxLast||'')}</select></div>
         <div class="v-f"><label>Payé par</label><select class="v-in" id="rc-p">${v.map(p=>`<option value="${p}"${p===M.me?' selected':''}>${esc(pname(p))}</option>`).join('')}</select></div>
         <div class="v-f"><label>Partagé entre</label><select class="v-in" id="rc-s"><option value="all">Tout le monde (parts égales)</option>${v.map(p=>`<option value="${p}">${esc(pname(p))} seul(e)</option>`).join('')}</select></div>
         ${actions('')}
@@ -5920,7 +5958,7 @@ const CV = (function(){
     const f = document.getElementById('v-form'), titre = f.titre.value.trim(); let m = num(f.montant.value); const cur = document.getElementById('rc-c').value;
     if(!titre || !m) return;
     let note = '';
-    if(cur !== 'EUR'){ try { const e = await fxToEur(m, cur); note = m.toLocaleString((window.I18N ? I18N.locale : 'fr-FR')) + ' ' + cur; m = Math.round(e*100)/100; } catch(e){ alert(e.message); return; } }
+    if(cur !== curCode()){ try { const e = await fxToEur(m, cur); note = m.toLocaleString((window.I18N ? I18N.locale : 'fr-FR')) + ' ' + cur; m = Math.round(e*100)/100; } catch(e){ alert(e.message); return; } }
     const payeur = document.getElementById('rc-p').value, share = document.getElementById('rc-s').value;
     const it = {id:'i'+uid(), type:'item', trip:M.trip, cat:'divers', titre, date:isoToday(), statut:'paid', prix:String(m), partage:'grp', payeur, qui: share==='all' ? [] : [share], note};
     if(rcpt && rcpt.blob){ const pid = 'rc' + uid(); try { await storePhoto(rcpt.blob, pid); it.recu = pid; } catch(e){} }
@@ -6428,7 +6466,7 @@ const CV = (function(){
       <div class="lb"><button type="button" onclick="CV.tlDay()">📴 Fiche du jour</button><button type="button" onclick="CV.tlReceipt()">🧾 Dépense</button><button type="button" onclick="CV.shopSheet()">🛒 Courses</button></div></div>`;
   }
   function capSet(){
-    const t = trip(); const v = prompt('Plafond de dépenses sur place, par jour, pour tout le groupe (en €) — vide pour aucun :', t.plafond || '');
+    const t = trip(); const v = prompt('Plafond de dépenses sur place, par jour, pour tout le groupe (en ' + CS() + ') — vide pour aucun :', t.plafond || '');
     if(v === null) return; t.plafond = v.trim() ? String(num(v)) : ''; put(t, t.plafond ? '💶 Plafond : ' + eur(num(t.plafond)) + ' / jour' : 'Plafond retiré'); refresh();
   }
   function capWarn(){ const t = trip(); if(!t || !num(t.plafond)) return; const s = spentOn(isoToday()); if(s > num(t.plafond)) setTimeout(()=>alert(`⚠️ Plafond du jour dépassé : ${eur(s)} dépensés pour ${eur(num(t.plafond))} prévus.`), 400); }
@@ -7629,7 +7667,7 @@ ${pm.join('\n')}</Document></kml>`;
         <div class="v-f"><label>Quand ?</label>${sel('in-mois', [['','Je suis flexible'], ...MOIS_L.map((m,i)=>[i+1, m])], v('mois',''))}</div></div>
       <div class="v-f2"><div class="v-f"><label>Combien de jours ?</label>${sel('in-duree', [['3','Week-end (2–3 j)'],['5','4–5 jours'],['7','1 semaine'],['10','10 jours'],['14','2 semaines'],['21','3 semaines et +']], v('duree','7'))}</div>
         <div class="v-f"><label>Combien de voyageurs ?</label>${sel('in-nb', [['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6 et +']], v('nb','2'))}</div></div>
-      <div class="v-f2"><div class="v-f"><label>Budget total par personne</label><input class="v-in" id="in-budget" inputmode="numeric" value="${esc(v('budget','1200'))}" placeholder="€, transport compris"></div>
+      <div class="v-f2"><div class="v-f"><label>Budget total par personne</label><input class="v-in" id="in-budget" inputmode="numeric" value="${esc(v('budget','1200'))}" placeholder="${CS()}, transport compris"></div>
         <div class="v-f"><label>Style</label>${sel('in-style', [['eco','Économique'],['confort','Confort'],['luxe','Petit luxe']], v('style','confort'))}</div></div>
       <div class="v-f2"><div class="v-f"><label>Trajet au maximum</label>${sel('in-vol', [['2','2 h'],['4','4 h'],['8','8 h'],['99','Peu importe']], v('vol','4'))}</div>
         <div class="v-f"><label>Climat souhaité</label>${sel('in-climat', [['','Peu importe'],['chaud','Chaud (26 °C et +)'],['doux','Doux (18–25 °C)'],['frais','Frais (< 18 °C)']], v('climat',''))}</div></div>
@@ -8087,7 +8125,7 @@ ${pm.join('\n')}</Document></kml>`;
     const sel = (id, cur) => `<select class="v-in" id="${id}">${p.map(x=>`<option value="${x}"${x===cur?' selected':''}>${esc(pname(x))}</option>`).join('')}</select>`;
     openSheet(`<h2>✅ Noter un remboursement</h2>
       <div class="v-f2"><div class="v-f"><label>Qui rembourse ?</label>${sel('rb-de', de || p[0])}</div><div class="v-f"><label>À qui ?</label>${sel('rb-a', a || p[1] || p[0])}</div></div>
-      <div class="v-f2"><div class="v-f"><label>Montant (€)</label><input class="v-in" id="rb-m" inputmode="decimal" value="${v ? String(Math.round(v*100)/100).replace('.', ',') : ''}"></div><div class="v-f"><label>Quand ?</label><input class="v-in" id="rb-d" type="date" value="${isoToday()}"></div></div>
+      <div class="v-f2"><div class="v-f"><label>Montant (${CS()})</label><input class="v-in" id="rb-m" inputmode="decimal" value="${v ? String(Math.round(v*100)/100).replace('.', ',') : ''}"></div><div class="v-f"><label>Quand ?</label><input class="v-in" id="rb-d" type="date" value="${isoToday()}"></div></div>
       <div class="v-f"><label>Comment ?</label><select class="v-in" id="rb-mo">${MOYENS.map(m=>`<option>${m}</option>`).join('')}</select></div>
       <div class="v-f"><label>Note (facultatif)</label><input class="v-in" id="rb-n" placeholder="Ex. solde du voyage, réf. du virement…"></div>
       <button type="button" class="v-day-edit" onclick="CV.rbPhoto()">📷 Joindre une preuve (capture du virement…)</button><span id="rb-pv" class="v-sum-small"></span>
@@ -8272,6 +8310,7 @@ ${pm.join('\n')}</Document></kml>`;
         <div class="v-sum-small">Garde seulement ce qui te sert : décoche un onglet ou un encart pour le masquer. Rien n’est effacé, et ce réglage ne concerne que ce téléphone (tes compagnons choisissent les leurs).</div>
         <div class="cv-row" style="gap:6px;margin-top:10px"><button type="button" class="v-day-edit" onclick="CV.prefPreset('simple')">🌱 Version simple</button><button type="button" class="v-day-edit" onclick="CV.prefPreset('all')">✨ Tout afficher</button></div></div>`;
     if(window.I18N) h += `<div class="v-box"><h3>🌐 Langue</h3><select class="v-in" aria-label="Langue" onchange="I18N.set(this.value)">${Object.entries(I18N.langs).map(([k,l])=>`<option value="${k}"${k===I18N.lang?' selected':''}>${l}</option>`).join('')}</select><div class="v-sum-small" style="margin-top:6px">Tes fiches restent dans la langue où tu les as écrites.</div></div>`;
+    h += `<div class="v-box"><h3>💱 Devise</h3><select class="v-in" aria-label="Devise" onchange="CV.setCur(this.value)">${Object.keys(CURS).map(c=>`<option value="${c}"${c===(M.cur||'EUR')?' selected':''}>${c} · ${CURS[c]}</option>`).join('')}</select><div class="v-sum-small" style="margin-top:6px">Devise proposée pour les nouveaux voyages. Un voyage déjà créé garde la sienne : change-la en modifiant le voyage.</div></div>`;
     h += `<div class="v-box"><h3>🧭 Espaces du haut</h3>${MODES.map(([k,ic,l])=>tg('mode:' + k, ic + ' ' + l, k==='prep')).join('')}</div>`;
     h += `<div class="v-box"><h3>🗂️ Onglets</h3>${GROUPS.map(g=>`<div class="cv-prefg"><b>${g.icon} ${g.lbl}</b>${g.tabs.map(([id,l])=>tg('tab:' + id, id==='prog' ? '🗓️ Jour par jour' : id==='budget' ? '💸 Qui paie quoi' : id==='envies' ? '✨ Envies (week-ends, idées)' : l, ALWAYS[id])).join('')}</div>`).join('')}
         <div class="v-sum-small">Un menu du bas dont tous les onglets sont décochés disparaît de la barre.</div></div>`;
@@ -8769,7 +8808,7 @@ ${pm.join('\n')}</Document></kml>`;
     const ids = new Set();
     Object.values(R).forEach(r=>{ if(!r || r.demo) return; (r.photos||[]).forEach(x=>ids.add(x)); [r.recu, r.preuve].forEach(x=>x && ids.add(x)); });
     M.pq = M.pq || []; let n = 0;
-    for(const id of ids) for(const k of [id, id + '.t']){
+    for(const id of ids) for(const k of [id]){
       let o = null; try { o = await IDB.get(k); } catch(e){}
       if(o && o.blob && !M.pq.includes(k)){ M.pq.push(k); n++; }
     }
@@ -8777,7 +8816,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert(n ? Math.ceil(n/2) + ' photo(s) remise(s) en file d’envoi.' : 'Aucune photo à renvoyer.');
     uploadQueue();
   }
-  const BUILD = '2026-10-09g';
+  const BUILD = '2026-10-09k';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
@@ -8786,7 +8825,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate};
+  var APPAPI = {serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
   const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, psPick, psChoose, psImport, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
