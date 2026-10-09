@@ -2753,7 +2753,7 @@ const CV = (function(){
     h += `<div class="v-box"><h3>📤 Inviter un ami</h3><p>Montre-lui le QR code ou envoie-lui le lien de l’appli.</p><button class="v-btn" onclick="CV.shareSheet()">📤 Partager l’appli (QR code)</button></div>`;
     h += `<div class="v-box"><h3>🎬 Tutos</h3><p>Les 4 espaces du carnet (Préparation, En cours, Passés, Bilan), et l’essentiel pour bien commencer.</p>${tutoBtn()}${ESCALE ? `<button type="button" class="v-btn sec" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button><button type="button" class="v-btn sec" onclick="CV.radarTuto()">✦ Tuto Radar des prix (3 min)</button>` : ''}</div>`;
     h += `<div class="v-box"><h3>🕘 Activité récente</h3>${activity()}</div>
-      ${coffeeBox()}<div class="v-box"><h3>📤 Photos non arrivées ?</h3><p>Renvoie vers le serveur toutes les photos de ce téléphone (celles déjà envoyées ne sont pas dupliquées).</p><button class="v-btn" onclick="CV.photoResend()">📤 Renvoyer mes photos</button></div><div class="v-box"><h3>🗑 Mes données sur le serveur</h3><p>Tu peux effacer à tout moment ton carnet du serveur (fiches et photos), pour toi et tes compagnons.</p><button class="v-btn danger" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>
+      ${coffeeBox()}<div class="v-box"><h3>🔄 Mise à jour de l’appli</h3><p>Version installée : ${BUILD}. Si une nouveauté n’apparaît pas, touche le bouton : tes voyages et tes photos ne sont pas touchés.</p><button class="v-btn sec" onclick="CV.forceUpdate()">🔄 Mettre à jour maintenant</button></div><div class="v-box"><h3>📤 Photos non arrivées ?</h3><p>Renvoie vers le serveur toutes les photos de ce téléphone (celles déjà envoyées ne sont pas dupliquées).</p><button class="v-btn" onclick="CV.photoResend()">📤 Renvoyer mes photos</button></div><div class="v-box"><h3>🗑 Mes données sur le serveur</h3><p>Tu peux effacer à tout moment ton carnet du serveur (fiches et photos), pour toi et tes compagnons.</p><button class="v-btn danger" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>
       <div class="v-box"><h3>💾 Sauvegarde</h3>
         <p>Tout est enregistré sur ce téléphone (${Math.round(size/1024)} Ko)${s.on?' et sur le serveur':''}. L’export reste ta copie de secours, et il contient aussi l’archive 2026.</p>
         ${trip() ? `<button class="v-btn" onclick="CV.pdfSheet()">🖨️ Carnet de route à imprimer (PDF)</button>` : ''}
@@ -8221,7 +8221,12 @@ ${pm.join('\n')}</Document></kml>`;
   async function installNow(){ if(!installEvt) return; installEvt.prompt(); try { await installEvt.userChoice; } catch(e){} installEvt = null; render(); }
   function installSheet(){ openSheet(`<h2>📲 Installer l’appli</h2>${installHTML(false)}<div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`); }
   function bootOffline(){
-    if('serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(()=>{});
+    if('serviceWorker' in navigator && /^https?:/.test(location.protocol)){
+      const had = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.register('sw.js').then(reg => { try { reg.update(); document.addEventListener('visibilitychange', () => { if(!document.hidden) reg.update().catch(()=>{}); }); } catch(e){} }).catch(()=>{});
+      // une nouvelle version vient de prendre la main : on recharge (sauf si une fiche est en cours de saisie)
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if(had && !document.getElementById('v-sheet-bg') && !sessionStorage.getItem('cv-rl')){ try { sessionStorage.setItem('cv-rl', '1'); } catch(e){} location.reload(); } });
+    }
     try { if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
   }
 
@@ -8772,7 +8777,16 @@ ${pm.join('\n')}</Document></kml>`;
     alert(n ? Math.ceil(n/2) + ' photo(s) remise(s) en file d’envoi.' : 'Aucune photo à renvoyer.');
     uploadQueue();
   }
-  var APPAPI = {serverWipeSheet, serverWipe, coffeeLater, photoResend};
+  const BUILD = '2026-10-09g';
+  async function forceUpdate(){
+    try {
+      if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
+      if(window.caches) for(const k of await caches.keys()) if(k !== 'share-inbox') await caches.delete(k);
+    } catch(e){}
+    alert('Mise à jour prête : l’appli va se relancer.');
+    location.replace(location.pathname + '?maj=' + Date.now());
+  }
+  var APPAPI = {serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate};
 
   const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, psPick, psChoose, psImport, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
