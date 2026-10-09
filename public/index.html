@@ -1624,7 +1624,7 @@ const CV = (function(){
     }
     return changed;
   }
-  async function syncSpace(sp){
+  async function syncSpace(sp, force){
     sp.dirty = sp.dirty || []; let changed = 0;
     try {
       const ids = [...sp.dirty]; let first = true;
@@ -1634,7 +1634,7 @@ const CV = (function(){
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id]));
-        j.records.forEach(r=>{ if(r && r.type==='trip' && !TS()[r.id]) TS()[r.id] = sp.code; });
+        j.records.forEach(r=>{ if(r && r.type==='trip' && (force || !TS()[r.id])) TS()[r.id] = sp.code; });
         changed += mergeRemote(j.records); sp.since = j.now;
       }
       sp.last = Date.now(); sp.err = '';
@@ -1751,9 +1751,11 @@ const CV = (function(){
     if(code && spaceObj(code)) return tripShareSheet(t.id);
     if(!apiUrl()){ alert('Le partage a besoin de l’appli en ligne (adresse du serveur).'); return; }
     if(!confirm(`Partager « ${t.titre} » avec son propre code ?\n\nSeules les personnes qui ont ce code verront CE voyage (et pas tes autres voyages).\nLes compagnons déjà synchronisés par le code principal gardent ce qu’ils ont déjà, mais ne recevront plus les nouveautés de ce voyage.`)) return;
-    const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t.id] = c;
-    Object.values(R).filter(r=>!r.demo && (r.id===t.id || r.trip===t.id)).forEach(r=>markDirty(r.id));
-    persist(); syncNow(true); tripShareSheet(t.id);
+    let c = (prompt('Ce voyage avait déjà un code (effacé du serveur, par exemple) ? Colle-le ici pour le réutiliser : les autres téléphones le retrouveront.\nSinon laisse vide : un nouveau code sera créé.') || '').trim().toUpperCase();
+    const reuse = c.length >= 8; if(!reuse) c = genCode();
+    if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
+    TS()[t.id] = c;
+    persist(); tripShareSheet(t.id); photoResend(t.id);
   }
   function tripShareSheet(id){
     const t = R[id], code = TS()[id], sp = spaceObj(code) || {};
@@ -1763,8 +1765,17 @@ const CV = (function(){
       <button class="v-btn" onclick="CV.tripInvite('${id}')">📤 Envoyer l’invitation (adresse + code)</button>
       <button class="v-btn sec" onclick="CV.syncNow(true)">🔄 Synchroniser maintenant</button>
       <button class="v-btn sec" onclick="CV.photoResend('${id}')">📤 Tout renvoyer (voyage + photos)</button>
+      <button class="v-btn sec" onclick="CV.tripNewCode('${id}')">🔑 Nouveau code (repartir à neuf)</button>
       <button class="v-btn danger" onclick="CV.tripUnshare('${id}')">Arrêter le partage de ce voyage sur ce téléphone</button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  function tripNewCode(id){
+    const t = R[id]; if(!t) return;
+    if(!confirm('Créer un nouveau code pour « ' + t.titre + ' » ?\n\nLe voyage, ses fiches et ses photos repartent sur le serveur sous ce nouveau code. Les autres téléphones doivent ensuite le rejoindre avec le nouveau code (Mes voyages → Rejoindre un voyage partagé).')) return;
+    const old = TS()[id], c = genCode();
+    (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[id] = c;
+    if(old && !Object.values(TS()).includes(old)) M.spaces = M.spaces.filter(x=>x.code !== old);
+    persist(); tripShareSheet(id); photoResend(id);
   }
   async function tripInvite(id){
     const t = R[id], url = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
@@ -1794,7 +1805,7 @@ const CV = (function(){
     if(code === M.sync.code){ msg.textContent = 'C’est le code de ton carnet principal : tu as déjà ces voyages.'; return; }
     if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
     msg.textContent = '📡 Connexion…';
-    const sp = spaceObj(code); await syncSpace(sp);
+    const sp = spaceObj(code); await syncSpace(sp, true);
     if(sp.err){ msg.textContent = '⚠️ ' + sp.err; return; }
     const got = Object.entries(TS()).filter(([,c])=>c===code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted);
     if(!got.length){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); msg.textContent = 'Aucun voyage trouvé avec ce code. Vérifie-le auprès de la personne qui te l’a envoyé.'; return; }
@@ -2889,6 +2900,7 @@ const CV = (function(){
       mergeRemote(j.records);
       Object.values(R).forEach(r=>{ if(!j.records.some(x=>x.id===r.id)) markDirty(r.id); });
       M.sync.on = true; M.sync.since = j.now; M.sync.err = '';
+      if(!remote.length) await photoQueueAll();   // serveur vide (neuf ou effacé) : les photos de ce téléphone repartent aussi
       persist();
       await syncNow();
       if(!prof(M.me)) whoSheet();
@@ -8986,10 +8998,12 @@ ${pm.join('\n')}</Document></kml>`;
       const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}});
       let j = {}; try { j = await r.json(); } catch(e){}
       if(!r.ok) throw new Error(j.error || ('erreur ' + r.status));
-      if(main){ M.sync.on = false; M.sync.since = 0; M.dirty = []; }
+      const keep = confirm('🗑 Supprimé du serveur : ' + (j.records||0) + ' fiche(s) et ' + (j.photos||0) + ' photo(s).\nTes données restent sur ce téléphone.\n\nGarder le code sur ce téléphone ?\nOK = je garde le code : tu pourras tout renvoyer plus tard avec le même code (bouton « Tout renvoyer »).\nAnnuler = j’oublie ce code ici.');
+      if(keep){ if(main){ M.sync.since = 0; M.dirty = []; } else { const sp = spaceObj(code); if(sp){ sp.since = 0; sp.dirty = []; } } }
+      else if(main){ M.sync.on = false; M.sync.since = 0; M.dirty = []; }
       else { Object.keys(TS()).forEach(tid=>{ if(TS()[tid] === code) delete TS()[tid]; }); M.spaces = (M.spaces||[]).filter(x=>x.code !== code); }
       M.pq = []; M.pgone = []; persist(); closeSheet(true); refresh();
-      alert('🗑 Supprimé du serveur : ' + (j.records||0) + ' fiche(s) et ' + (j.photos||0) + ' photo(s).\nTes données restent sur ce téléphone.');
+      if(keep) alert('Le code est gardé. Pour tout remettre sur le serveur : ' + (main ? 'Réglages' : 'Mes voyages → le voyage → code') + ' → « Tout renvoyer ».');
     } catch(e){ alert('Suppression impossible : ' + e.message); }
   }
   const coffeeOn = () => !!COFFEE_URL && !/TON_PSEUDO/.test(COFFEE_URL) && !isPlay();
@@ -9006,6 +9020,13 @@ ${pm.join('\n')}</Document></kml>`;
       <button type="button" class="v-btn sec" onclick="CV.coffeeLater(true)">Plus tard</button></div>`;
   }
   function coffeeLater(rerender){ M.coffeeLater = Date.now(); persist(); if(rerender === true) render(); }
+  async function photoQueueAll(only){
+    const inScope = r => r && r.id && !r.demo && (!only || r.id === only || r.trip === only);
+    const ids = new Set(); Object.values(R).forEach(r=>{ if(!inScope(r)) return; (r.photos||[]).forEach(x=>ids.add(x)); [r.recu, r.preuve].forEach(x=>x && ids.add(x)); (r.pj||[]).forEach(p=>p && p.id && ids.add(p.id)); });
+    M.pq = M.pq || []; let n = 0;
+    for(const id of ids){ let o = null; try { o = await IDB.get(id); } catch(e){} if(o && o.blob && !M.pq.includes(id)){ M.pq.push(id); n++; } }
+    return n;
+  }
   async function photoResend(only){
     // 1) toutes les fiches (voyage, souvenirs, dépenses…) repartent vers leur carnet (principal ou code du voyage), depuis le début
     // only = id d’un voyage : on ne renvoie que ce voyage (et son code)
@@ -9027,7 +9048,7 @@ ${pm.join('\n')}</Document></kml>`;
     await syncNow(true);
     uploadQueue();
   }
-  const BUILD = '2026-10-09w';
+  const BUILD = '2026-10-09y';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
@@ -9044,7 +9065,7 @@ ${pm.join('\n')}</Document></kml>`;
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
     editTrip, saveTrip, delTrip, closeTrip, reopenTrip,
     live, one, echAdd, echDel, echSpread, echToggle, lisser, echReset, echRange, echRangeReset,
-    planDay, plCfg, plAdd, plDel, plOpt, wizard, radarTuto, rcOpen, rbSheet, rbPhoto, rbSave, zipSavePart, zipCancel, innerGo, inspDeal, inspOpen, compN, compDel, compAdd, compTog, compCreate, inspBack, inspMore, inspFav, inspSurprise, inspVote, gateInstall, partsSheet, partsSave, discInfo, discBack, newTrip, blankTrip, inspire, inspireDemo, inspireGo, inspireCreate, zipSheet, zipExport, zipImport, worldFly, worldStep, worldStory, cfSegGo, trkToggle, modeGo, bilanClose, albumSheet, albCover, albumGo, tripShare, tripShareSheet, tripInvite, tripUnshare, tripJoin, tripJoinGo, tripWho, tripWhoSet, impSheet, impPick, jrSheet, jrTog, jrAll, worldMap, worldMode, worldOpen, worldClose, pjAdd, pjDel, pjOpen, cfSheet, cfGo, tlCo2, hereNow, tlStats, tlKml, tlFill, tlFillGo, rcView, rcAttach, tlIcsGo, capSet, shopSheet, shopAdd, shopTick, shopClear, rembAsk, pollNew, pollSave, pollVote, pollClose, pollDel, pdfRoute, pdfJournal, pdfShare, pdfOpen, pkgPick, pkgApply, hydrateMaps, renderOutils, tlDay, tlIcs, fxTool, fxFill, tlMeteo, tlReceipt, tlRcPhoto, tlRcOcr, tlRcSave, tlReceipts, tlMap, tlBags, tlBagsGo, tlDocs, tlDocEdit, tlDocSave, tlDocDel, tlJournal, pkgSheet, pkgExport, pkgImport, pinToggle, shareSheet, shareLink, askErase, tutoSheet, escaleTuto, demoLoad, demoDel, demoReset, wzGo, wzDates, wzEt, wzSum, wzTpl, wzCreate,
+    planDay, plCfg, plAdd, plDel, plOpt, wizard, radarTuto, rcOpen, rbSheet, rbPhoto, rbSave, zipSavePart, zipCancel, innerGo, inspDeal, inspOpen, compN, compDel, compAdd, compTog, compCreate, inspBack, inspMore, inspFav, inspSurprise, inspVote, gateInstall, partsSheet, partsSave, discInfo, discBack, newTrip, blankTrip, inspire, inspireDemo, inspireGo, inspireCreate, zipSheet, zipExport, zipImport, worldFly, worldStep, worldStory, cfSegGo, trkToggle, modeGo, bilanClose, albumSheet, albCover, albumGo, tripShare, tripShareSheet, tripInvite, tripNewCode, tripUnshare, tripJoin, tripJoinGo, tripWho, tripWhoSet, impSheet, impPick, jrSheet, jrTog, jrAll, worldMap, worldMode, worldOpen, worldClose, pjAdd, pjDel, pjOpen, cfSheet, cfGo, tlCo2, hereNow, tlStats, tlKml, tlFill, tlFillGo, rcView, rcAttach, tlIcsGo, capSet, shopSheet, shopAdd, shopTick, shopClear, rembAsk, pollNew, pollSave, pollVote, pollClose, pollDel, pdfRoute, pdfJournal, pdfShare, pdfOpen, pkgPick, pkgApply, hydrateMaps, renderOutils, tlDay, tlIcs, fxTool, fxFill, tlMeteo, tlReceipt, tlRcPhoto, tlRcOcr, tlRcSave, tlReceipts, tlMap, tlBags, tlBagsGo, tlDocs, tlDocEdit, tlDocSave, tlDocDel, tlJournal, pkgSheet, pkgExport, pkgImport, pinToggle, shareSheet, shareLink, askErase, tutoSheet, escaleTuto, demoLoad, demoDel, demoReset, wzGo, wzDates, wzEt, wzSum, wzTpl, wzCreate,
     pickColor, newProfile, editProfile, saveProfile, delProfile, whoSheet, setMe,
     genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin,
     _R:()=>R, _M:()=>M, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
