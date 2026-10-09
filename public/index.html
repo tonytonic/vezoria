@@ -1575,7 +1575,7 @@ const CV = (function(){
   function cryptHide(doneTxt){
     if(!E2E) return; const el = document.getElementById('cv-crypt'); if(!el) return;
     if(doneTxt) el.textContent = doneTxt;
-    const wait = Math.max(doneTxt ? 1800 : 0, 1200 - (Date.now() - cbSince));
+    const wait = /^[⚠⏳]/.test(doneTxt || '') ? 9000 : Math.max(doneTxt ? 1800 : 0, 1200 - (Date.now() - cbSince));
     clearTimeout(cbT); cbT = setTimeout(()=>{ el.classList.remove('show'); cbSince = 0; }, wait);
   }
 
@@ -3635,23 +3635,23 @@ const CV = (function(){
   async function uploadQueue(){
     if(uploading || !(M.pq||[]).length || !photoApi()) return;
     if(!(M.sync.on && M.sync.code) && !(M.spaces||[]).length) return;
-    uploading = true;
+    uploading = true; let upErr = '', waiting = 0;
     cryptShow('🔐 Chiffrement des photos… (' + Math.ceil(M.pq.length/2) + ')');
     try {
       for(const id of [...M.pq]){
-        const code = photoCode(id); if(!code) continue;          // pas encore de carnet en ligne pour cette photo : on la garde
+        const code = photoCode(id); if(!code){ waiting++; continue; }          // pas encore de carnet en ligne pour cette photo : on la garde
         let o = null; try { o = await IDB.get(id); } catch(e){}
         if(o && o.blob){
           const body = E2E ? new Blob([await seal(new Uint8Array(await o.blob.arrayBuffer()), code)], {type:'image/jpeg'}) : o.blob;
           const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(id, code), 'Content-Type':'image/jpeg'}, body});
-          if(!r.ok && r.status !== 413) break;
+          if(!r.ok && r.status !== 413){ try { upErr = ((await r.json()).error) || ''; } catch(e){} upErr = (upErr ? upErr + ' ' : '') + '(' + r.status + ')'; break; }
           try { await IDB.put({id, blob:new Blob([await o.blob.arrayBuffer()], {type:o.blob.type || 'image/jpeg'}), up:1}); } catch(e){}   // copie : Safari perd le fichier si on réenregistre le même objet
         }
         M.pq = M.pq.filter(x=>x!==id); persist(); syncDot();
         if(M.pq.length) cryptShow('🔐 Chiffrement des photos… (' + Math.ceil(M.pq.length/2) + ' restante' + (M.pq.length > 2 ? 's' : '') + ')');
       }
-    } catch(e){}
-    cryptHide(M.pq.length ? '' : '🔒 Photos chiffrées et envoyées');
+    } catch(e){ upErr = 'réseau : ' + (e && e.message || e); }
+    cryptHide(M.pq.length ? (upErr ? '⚠️ Photos non envoyées : ' + upErr : (waiting ? '⏳ Photos en attente : voyage pas encore en ligne' : '')) : '🔒 Photos chiffrées et envoyées');
     uploading = false; syncDot();
     photoPurge();
   }
