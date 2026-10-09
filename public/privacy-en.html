@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="noindex">
+    <title>Privacy Policy - Vezoria</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; padding-top: calc(20px + env(safe-area-inset-top)); }
+        h1 { color: #2c3e50; }
+        h2 { color: #34495e; margin-top: 30px; }
+        h3 { color: #7C3AED; margin-top: 20px; font-size: 1em; }
+        .box { background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 12px 0; }
+        .ok { background: #ecfdf3; border-left: 3px solid #2e9e6a; padding: 12px 15px; border-radius: 0 5px 5px 0; margin: 12px 0; }
+        .warn { background: #fff8e8; border-left: 3px solid #e0a020; padding: 12px 15px; border-radius: 0 5px 5px 0; margin: 12px 0; }
+        .contact { background: #f5f0ff; border-left: 3px solid #7C3AED; padding: 15px; border-radius: 0 5px 5px 0; }
+        a { color: #5B21B6; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 4px; }
+        table { border-collapse: collapse; width: 100%; font-size: .92em; }
+        td, th { border-top: 1px solid #e5e5e5; padding: 7px 6px; text-align: left; vertical-align: top; }
+        th { color: #666; font-weight: 600; }
+        .updated { color: #888; font-size: 0.9em; }
+        .back-btn{display:inline-block;margin-bottom:18px;padding:9px 16px;background:#7C3AED;color:#fff;
+          text-decoration:none;border-radius:10px;font-size:14px;font-weight:600;transition:background .2s;cursor:pointer;border:none;font-family:inherit;}
+        .back-btn:hover{background:#5B21B6;}
+    </style>
+</head>
+<body>
+
+    <a href="legal-en.html" class="back-btn">← Back to the legal notice</a>
+    <p style="font-size:.85em"><a href="privacy.html" lang="fr">Version française</a></p>
+
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: 9 October 2026 (Google Play app version, without Escale)</p>
+
+    <p>This Privacy Policy describes how the <strong>Vezoria</strong> app (“Vezoria”) handles your information. The App is free, ad-free, account-free and non-profit. It is available on the web and on Google Play.</p>
+
+    <div class="ok">
+        <ul>
+            <li>Your trips, notes, expenses and photos are <strong>encrypted on your phone</strong> before anything is sent. Neither the publisher nor the hosting provider can read them.</li>
+            <li>No advertising, no trackers, no audience measurement.</li>
+            <li>You can erase everything: on your phone in one tap, on the server on simple request.</li>
+        </ul>
+    </div>
+
+    <h2>1. Data controller</h2>
+    <div class="box">
+        <p>Anthony Chauvel, non-professional publisher of the App — <a href="mailto:appareils.treves6g@icloud.com">appareils.treves6g@icloud.com</a>.</p>
+    </div>
+
+    <h2>2. Data processed</h2>
+    <div class="box">
+        <table>
+            <tr><th>Data</th><th>Where</th><th>Why</th></tr>
+            <tr><td>First name and profile colour, trips, stops, bookings, expenses, notes, checklist, memories and photos</td><td>On your device. If sync is enabled: also on the server, <strong>encrypted</strong></td><td>To run the notebook and share it with the members of the group</td></tr>
+            <tr><td>Fingerprint (hash) of the notebook code (the code itself is never sent)</td><td>Server</td><td>To store each notebook’s data separately</td></tr>
+            <tr><td>Travel documents (type, expiry date; optional number and note) and photographed receipts, reimbursement method entered in a profile (optional), poll votes, shopping lists, tickets and documents attached to records, positions saved with “I’m here” (only when you tap the button)</td><td>Like the other records: on your device, and on the server if sync is enabled</td><td>Expiry alerts before departure, expense sharing</td></tr>
+            <tr><td>IP address, date and size of uploads</td><td>Server and the hosting provider’s technical logs</td><td>To route the data, security, protection against abuse</td></tr>
+        </table>
+        <p style="font-size:0.9em;color:#666;">Legal bases: performance of the requested service (Art. 6(1)(b) GDPR) and legitimate interest in securing the service (Art. 6(1)(f)).</p>
+        <p>The demo trip stays only on your device: it is never sent to the server.</p>
+    </div>
+
+    <h2>3. End-to-end encryption</h2>
+    <div class="box">
+        <p>Before anything is sent, your device encrypts the data with <strong>AES-256-GCM</strong>, using a key derived from your notebook code (PBKDF2, 200,000 iterations). The server only receives a fingerprint of this code, which cannot be used to decrypt. Photo names are also replaced by encrypted identifiers.</p>
+    </div>
+    <div class="warn">
+        <p><strong>Lost code = notebook unrecoverable</strong> from the server. Nobody, not even the publisher, can retrieve it. Keep your code in a safe place and export regularly.</p>
+    </div>
+
+    <h2>4. Hosting and processor</h2>
+    <div class="box">
+        <p>Synced data is hosted by <strong>Cloudflare, Inc.</strong> (Pages, D1 and R2 services), acting as processor. As Cloudflare is a US company, data may be stored outside the European Union. This transfer is governed by Cloudflare’s data processing agreement (European Commission standard contractual clauses) and by its certification under the EU–US Data Privacy Framework.</p>
+        <p>Since content is encrypted on your device, Cloudflare cannot read it. To learn more: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare’s privacy policy</a>.</p>
+    </div>
+
+    <h2>5. Third-party services contacted by your device</h2>
+    <div class="box">
+        <p>Some features contact third-party services directly. These then receive your IP address and standard technical information (browser type, language), as with any Internet request, but <strong>no content from your notebook</strong>:</p>
+        <ul>
+            <li><strong>Map, routes and “What to see?”</strong>: OpenStreetMap (Nominatim, Overpass), Photon (Komoot) and Wikipedia (search for places around a stop, photos and summaries of places) receive the name of the place searched for.</li>
+            <li><strong>Import of a Polarsteps export</strong>: the ZIP file is read on your phone (zip.js library included in the app). Your file is never sent.</li>
+            <li><strong>Trip tools</strong> (called directly by your phone, without your name or the notebook’s content): exchange rates (open.er-api.com, otherwise Frankfurter / ECB), weather at stops (Open-Meteo, which receives the city’s location), automatic receipt reading (the Tesseract.js tool is loaded from jsDelivr; the receipt photo is analysed on the phone and never sent).</li>
+            <li><strong>Maps and routes</strong>: the base map is loaded from OpenStreetMap (tile.openstreetmap.org) and walking routes along streets are calculated by the public service routing.openstreetmap.de (FOSSGIS). They receive the displayed coordinates and your IP address, without your name or the notebook’s content. The PDF is generated on your phone (pdf-lib library, included in the app).</li>
+            <li><strong>3D world map</strong>: the MapLibre library is included in the app; images of the Earth come from NASA (Blue Marble, GIBS service), close-zoom maps from OpenStreetMap, country and city names from OpenFreeMap (OpenStreetMap data) and the outlines of visited countries from Natural Earth (public domain, loaded from jsDelivr). They receive the displayed area and your IP address, without your name or the notebook’s content.</li>
+            <li><strong>Booking import</strong>: PDFs are read on your phone (pdf.js library included in the app); screenshots are read by Tesseract.js, loaded from jsDelivr. The document is never sent elsewhere; it is attached to the record as a ticket.</li>
+            <li><strong>Install counter</strong>: the first time the installed app is opened, a randomly generated identifier and the device type (iPhone, Android, computer) are sent once to the app’s server, to count installations. No personal data, no link with your trips.</li>
+            <li><strong>Trip ideas</strong>: to complete the suggestions, the app queries Open-Meteo (weather at a destination), Wikidata, Wikipedia and Wikivoyage (nearby cities, places, photos and descriptions). They receive neither your name nor your notebook’s content. No flight prices are requested from any commercial service.</li>
+            <li><strong>“I’m here”</strong>: when you tap this button, your position is sent to OpenStreetMap (Nominatim) to find the name of the city and country. No position is collected in the background.</li>
+            <li><strong>Serverless packages</strong>: if you choose this mode, your data is encrypted (AES-256) with your group’s passphrase into a file that you send yourself (messaging, AirDrop…). The publisher does not receive these files; how long they are kept depends on the service you use to send them.</li>
+            <li><strong>External links</strong> (airlines, Booking, Google Maps, Trainline…): these are plain links, with no affiliation or payment. By opening them, you leave the App and those sites’ rules apply.</li>
+        </ul>
+        <p>These services are independent of the publisher, who receives no information about this.</p>
+    </div>
+
+    <h2>6. Local storage, cookies and tracking</h2>
+    <div class="box">
+        <p>The App uses your browser’s storage (LocalStorage, IndexedDB) to work, including offline. This storage is strictly necessary for the service and does not require consent.</p>
+        <p>We use <strong>no tracking tools</strong>, no advertising cookies and no third-party analytics service. No data is sold, rented or used for advertising purposes.</p>
+    </div>
+
+    <h2>7. Retention period</h2>
+    <div class="box">
+        <ul>
+            <li><strong>On your device</strong>: until you erase the notebook or the browser data.</li>
+            <li><strong>On the server</strong>: as long as the notebook is in use. A notebook with no activity for 24 months is automatically deleted from the server (its data remains on your devices). A photo removed from a memory, or a deleted memory or trip, is erased from the server.</li>
+            <li><strong>Hosting provider’s technical logs</strong>: according to Cloudflare’s policy, generally a few days.</li>
+        </ul>
+    </div>
+
+    <h2>8. Your rights</h2>
+    <div class="box">
+        <p>You have the right of access, rectification, erasure, restriction, objection and portability of your data:</p>
+        <ul>
+            <li><strong>Access and portability</strong>: More → Sharing &amp; profiles → Export (readable .json file).</li>
+            <li><strong>Rectification</strong>: edit your records and your profile directly in the App.</li>
+            <li><strong>Erasure on the device</strong>: More → Sharing &amp; profiles → “Erase this phone”.</li>
+            <li><strong>Erasure on the server</strong>: More → Sharing &amp; profiles → “🗑 Delete my data from the server”: the records and photos of the chosen notebook are erased immediately from the server, for all its members. You can also write to the contact address above. See also the <a href="suppression-donnees.html#en">Delete my data</a> page.</li>
+        </ul>
+        <p>If you believe your rights are not being respected, you can lodge a complaint with the CNIL (French data protection authority): <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">cnil.fr/fr/plaintes</a>. If you live outside France, you can also contact your local data protection authority.</p>
+    </div>
+
+    <h2>9. Minors</h2>
+    <div class="box">
+        <p>The App is intended for adults and families. A child may appear in a family notebook under the responsibility of their parents.</p>
+    </div>
+
+    <h2>10. Changes to this policy</h2>
+    <div class="box">
+        <p>This policy may change as the App evolves. Any change is published on this page, with its update date.</p>
+    </div>
+
+    <h2>11. Contact</h2>
+    <div class="contact">
+        <p>For any question about this policy: <a href="mailto:appareils.treves6g@icloud.com">appareils.treves6g@icloud.com</a></p>
+        <p style="font-size:0.9em;color:#666;">If you write to us, we receive your email address and your message, solely in order to reply to you. These exchanges are kept for as long as needed to handle your request and for no more than 12 months, then deleted.</p>
+    </div>
+
+    <p style="margin-top:28px"><a href="legal-en.html" class="back-btn">← Back to the legal notice</a></p>
+
+</body>
+</html>
