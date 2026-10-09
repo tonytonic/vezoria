@@ -2843,7 +2843,7 @@ const CV = (function(){
     h += `<div class="v-box"><h3>📤 Inviter un ami</h3><p>Montre-lui le QR code ou envoie-lui le lien de l’appli.</p><button class="v-btn" onclick="CV.shareSheet()">📤 Partager l’appli (QR code)</button></div>`;
     h += `<div class="v-box"><h3>🎬 Tutos</h3><p>Les 4 espaces du carnet (Préparation, En cours, Passés, Bilan), et l’essentiel pour bien commencer.</p>${tutoBtn()}${ESCALE ? `<button type="button" class="v-btn sec" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button><button type="button" class="v-btn sec" onclick="CV.radarTuto()">✦ Tuto Radar des prix (3 min)</button>` : ''}</div>`;
     h += `<div class="v-box"><h3>🕘 Activité récente</h3>${activity()}</div>
-      ${coffeeBox()}<div class="v-box"><h3>🔄 Mise à jour de l’appli</h3><p>Version installée : ${BUILD}. Si une nouveauté n’apparaît pas, touche le bouton : tes voyages et tes photos ne sont pas touchés.</p><button class="v-btn sec" onclick="CV.forceUpdate()">🔄 Mettre à jour maintenant</button></div><div class="v-box"><h3>📤 Photos non arrivées ?</h3><p>Renvoie vers le serveur toutes les photos de ce téléphone (celles déjà envoyées ne sont pas dupliquées).</p><button class="v-btn" onclick="CV.photoResend()">📤 Renvoyer mes photos</button></div><div class="v-box"><h3>🗑 Mes données sur le serveur</h3><p>Tu peux effacer à tout moment ton carnet du serveur (fiches et photos), pour toi et tes compagnons.</p><button class="v-btn danger" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>
+      ${coffeeBox()}<div class="v-box"><h3>🔄 Mise à jour de l’appli</h3><p>Version installée : ${BUILD}. Si une nouveauté n’apparaît pas, touche le bouton : tes voyages et tes photos ne sont pas touchés.</p><button class="v-btn sec" onclick="CV.forceUpdate()">🔄 Mettre à jour maintenant</button></div><div class="v-box"><h3>📤 Voyage ou photos non arrivés ?</h3><p>Renvoie vers le serveur toutes les fiches et toutes les photos de ce téléphone, par exemple après une suppression sur le serveur. Rien n’est dupliqué.</p><button class="v-btn" onclick="CV.photoResend()">📤 Tout renvoyer</button></div><div class="v-box"><h3>🗑 Mes données sur le serveur</h3><p>Tu peux effacer à tout moment ton carnet du serveur (fiches et photos), pour toi et tes compagnons.</p><button class="v-btn danger" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>
       <div class="v-box"><h3>💾 Sauvegarde</h3>
         <p>Tout est enregistré sur ce téléphone (${Math.round(size/1024)} Ko)${s.on?' et sur le serveur':''}. L’export reste ta copie de secours, et il contient aussi l’archive 2026.</p>
         <button class="v-btn" onclick="CV.zipSheet()">💾 Sauvegarde complète ZIP (avec photos)</button>
@@ -8925,18 +8925,25 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function coffeeLater(rerender){ M.coffeeLater = Date.now(); persist(); if(rerender === true) render(); }
   async function photoResend(){
+    // 1) toutes les fiches (voyage, souvenirs, dépenses…) repartent vers leur carnet (principal ou code du voyage), depuis le début
+    let nr = 0;
+    if(M.sync) M.sync.since = 0;
+    (M.spaces||[]).forEach(sp=>{ sp.since = 0; });
+    Object.values(R).forEach(r=>{ if(r && r.id && !r.demo){ markDirty(r.id); nr++; } });
+    // 2) toutes les photos présentes sur ce téléphone repartent aussi
     const ids = new Set();
     Object.values(R).forEach(r=>{ if(!r || r.demo) return; (r.photos||[]).forEach(x=>ids.add(x)); [r.recu, r.preuve].forEach(x=>x && ids.add(x)); });
     M.pq = M.pq || []; let n = 0;
-    for(const id of ids) for(const k of [id]){
-      let o = null; try { o = await IDB.get(k); } catch(e){}
-      if(o && o.blob && !M.pq.includes(k)){ M.pq.push(k); n++; }
+    for(const id of ids){
+      let o = null; try { o = await IDB.get(id); } catch(e){}
+      if(o && o.blob && !M.pq.includes(id)){ M.pq.push(id); n++; }
     }
     persist();
-    alert(n ? Math.ceil(n/2) + ' photo(s) remise(s) en file d’envoi.' : 'Aucune photo à renvoyer.');
+    alert(nr + ' fiche(s) et ' + n + ' photo(s) remises en file d’envoi.');
+    await syncNow(true);
     uploadQueue();
   }
-  const BUILD = '2026-10-09u';
+  const BUILD = '2026-10-09v';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
