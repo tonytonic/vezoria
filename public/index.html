@@ -1775,7 +1775,8 @@ const CV = (function(){
     const old = TS()[id], c = genCode();
     (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[id] = c;
     if(old && !Object.values(TS()).includes(old)) M.spaces = M.spaces.filter(x=>x.code !== old);
-    persist(); tripShareSheet(id); photoResend(id);
+    persist(); tripShareSheet(id);
+    photoResend(id).then(()=>{ const sp = spaceObj(TS()[id]); if(sp && sp.err) alert('⚠️ Le voyage n’a pas pu être envoyé sous le nouveau code : ' + sp.err + '\nRéessaie avec « Tout renvoyer » quand la connexion est bonne.'); else if(sp) { toast('✅ Voyage en ligne : le code peut être donné'); tripShareSheet(id); } });
   }
   async function tripInvite(id){
     const t = R[id], url = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
@@ -1809,6 +1810,7 @@ const CV = (function(){
     if(sp.err){ msg.textContent = '⚠️ ' + sp.err; return; }
     const got = Object.entries(TS()).filter(([,c])=>c===code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted);
     if(!got.length){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); msg.textContent = 'Aucun voyage trouvé avec ce code. Vérifie-le auprès de la personne qui te l’a envoyé.'; return; }
+    M.spaces = (M.spaces||[]).filter(x=>x.code === code || Object.values(TS()).includes(x.code));   // ancien code mort : on l’oublie
     persist(); closeSheet(true); go(got[0].id); refresh();
     const t = got[0];
     if(M.me && !(t.voyageurs||[]).includes(M.me)) tripWho(t.id); else toast('🔗 Voyage « ' + t.titre + ' » ajouté');
@@ -9048,7 +9050,7 @@ ${pm.join('\n')}</Document></kml>`;
     await syncNow(true);
     uploadQueue();
   }
-  const BUILD = '2026-10-09y';
+  const BUILD = '2026-10-09z';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
