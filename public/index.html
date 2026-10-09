@@ -2745,6 +2745,7 @@ const CV = (function(){
       h += `<div class="v-box"><h3>🧳 Ce voyage</h3><p><b>${esc(t.titre)}</b>${t.debut?' · '+tripDates(t):''}${t.archived?' · ✓ clôturé':''}</p>
         <button class="v-btn sec" onclick="CV.editTrip('${t.id}')">✏️ Modifier (nom, dates, voyageurs)</button>
         ${t.archived ? `<button class="v-btn sec" onclick="CV.reopenTrip()">↺ Rouvrir le voyage</button>` : `<button class="v-btn sec" onclick="CV.closeTrip()">✓ Clôturer (tout payé et coché, garder la trace)</button>`}
+        ${t.demo ? '' : (TS()[t.id] && spaceObj(TS()[t.id]) ? `<button class="v-btn" onclick="CV.tripInvite('${t.id}')">📤 Envoyer l’invitation (lien + code)</button><button class="v-btn sec" onclick="CV.tripShareSheet('${t.id}')">Voir le code et l’état du partage</button>` : `<button class="v-btn" onclick="CV.tripShare('${t.id}')">🔗 Partager ce voyage seul (son propre code)</button>`)}
         <button class="v-btn sec" onclick="CV.pdfSheet()">🖨️ Carnet de route à imprimer (PDF)</button>
         <button class="v-btn sec" onclick="CV.newTrip()">＋ Nouveau voyage</button></div>`;
     }
@@ -2953,7 +2954,8 @@ const CV = (function(){
     const E = it.echeances || [];
     if(E.length){
       const f = E.filter(e=>e.fait).length, next = E.filter(e=>!e.fait && e.date).sort((a,b)=>a.date.localeCompare(b.date))[0];
-      bits.push(`📆 ${f}/${E.length} échéance${E.length>1?'s':''} payée${f>1?'s':''}${next ? ' · prochaine le ' + fshort(next.date) + ' (' + eur(num(next.montant)) + ')' : ''}`);
+      bits.push(`📆 ${f}/${E.length} échéance${E.length>1?'s':''} payée${f>1?'s':''}`);
+      if(next) bits.push(`⏭ prochaine échéance : ${fshort(next.date)} (${eur(num(next.montant))})`);
     }
     return bits.length ? `<div class="cv-payline">${bits.join('<br>')}</div>` : '';
   }
