@@ -936,7 +936,7 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .cv-foot{text-align:center;font-size:.72rem;padding:18px 12px 8px;color:var(--gray)}
 .cv-foot a{color:inherit}
 .hero-top{position:relative}
-.cv-hero-qr{position:relative;flex:0 0 auto;margin:0 12px 0 auto;z-index:2;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 6px 4px;border:0;border-radius:12px;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;color:#2A1238;font:700 .62rem/1 inherit}
+.cv-hero-qr{display:none!important;position:relative;flex:0 0 auto;margin:0 12px 0 auto;z-index:2;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 6px 4px;border:0;border-radius:12px;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;color:#2A1238;font:700 .62rem/1 inherit}
 .cv-hero-qr svg{display:block;width:46px;height:46px}
 .cv-hero-qr span{font-size:.62rem;font-weight:800;letter-spacing:.02em}
 .cv-share-qr{display:block;margin:6px auto 10px;width:min(64vw,240px);height:auto;background:#fff;border-radius:14px;padding:10px}
@@ -1026,6 +1026,19 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .cv-idea .hd small{color:#6b5670;font-size:.74rem}
 .cv-idea .why{margin:6px 0 2px;font-size:.8rem;color:#4c1d95;font-weight:600}
 .cv-idea p{margin:4px 0 8px;font-size:.82rem}
+.cv-acc{padding:0}
+.cv-acc>summary{list-style:none;cursor:pointer;padding:16px 18px;font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:1.15rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cv-acc>summary::-webkit-details-marker{display:none}
+.cv-acc>summary::after{content:'›';font-family:inherit;font-size:1.5rem;color:#9a8aa8;transition:transform .2s}
+.cv-acc[open]>summary::after{transform:rotate(90deg)}
+.cv-acc>*:not(summary){margin-left:18px;margin-right:18px}
+.cv-acc>*:last-child{margin-bottom:18px}
+.cv-modes{display:none!important}
+.cv-nav .dotlive{position:absolute;top:4px;right:22%;width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.3)}
+.cv-nav button{position:relative}
+.cv-plus{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.cv-plus button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 6px;border:0;border-radius:16px;background:#f3ecf8;color:#2a1238;font:inherit;font-weight:700;font-size:.78rem;text-align:center}
+.cv-plus button i{font-style:normal;font-size:1.5rem}
 .cv-modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:10px 12px 4px;background:#efe7f6;border-radius:16px;padding:4px}
 .cv-modes button{position:relative;border:0;background:transparent;border-radius:12px;padding:7px 2px;font:inherit;color:#4b3a5a;display:flex;flex-direction:column;align-items:center;gap:1px}
 .cv-modes button i{font-style:normal;font-size:1.1rem}
@@ -1805,8 +1818,51 @@ const CV = (function(){
     const sub = document.getElementById('tabsC');
     const vt = g.tabs.filter(t=>t[0]===M.tab || ALWAYS[t[0]] || !hidden('tab:' + t[0]));
     sub.innerHTML = vt.length > 1 ? vt.map(([id,l]) => `<button class="t27${id===M.tab?' active':''}" onclick="CV.tab('${id}')">${l}</button>`).join('') : '';
+    if(!NAV_G[g.id]) vt.length = 0;
+    sub.innerHTML = vt.length > 1 ? sub.innerHTML : '';
     sub.style.display = vt.length > 1 ? 'flex' : 'none';
-    document.getElementById('cv-nav').innerHTML = visGroups(g).map(x=>`<button class="${x.id===g.id?'on':''}" onclick="CV.navGo('${x.id}')"><i>${x.icon}</i><span>${x.lbl}</span></button>`).join('');
+    buildNav();
+  }
+  /* ---------- 🧭 UNE SEULE barre de boutons, en bas ---------- */
+  const NAV_G = {resas:1, sous:1};   // seuls ces deux groupes gardent leurs petits filtres sous l'en-tête
+  function buildNav(){
+    const mode = M.mode || 'prep', tb = M.tab, grp = groupOf(tb).id, live = trips().some(t=>tripPhase(t)==='live');
+    const G = id => GROUPS.find(x=>x.id===id);
+    const items = [['prog','🗓️','Programme', mode==='prep' && tb==='prog']];
+    if(visTabs(G('resas')).length) items.push(['resas','🎫','Résas', mode==='prep' && grp==='resas']);
+    if(visTabs(G('sous')).length) items.push(['sous','💸','Budget', mode==='prep' && grp==='sous']);
+    const showLive = !hidden('mode:live');
+    if(showLive) items.push(['live','📍','En cours', mode==='live']);
+    const used = items.some(x=>x[3]);
+    items.push(['plus','☰','Plus', !used]);
+    document.getElementById('cv-nav').innerHTML = items.map(([k,ic,l,on])=>`<button class="${on?'on':''}" onclick="CV.navTo('${k}')"><i>${ic}</i><span>${l}</span>${k==='live' && live ? '<b class="dotlive"></b>' : ''}</button>`).join('');
+  }
+  function navTo(k){
+    if(k === 'plus'){ plusSheet(); return; }
+    if(k === 'live'){ if(M.mode === 'live') window.scrollTo({top:0, behavior:'smooth'}); else modeGo('live'); return; }
+    const was = M.mode || 'prep'; M.mode = 'prep';
+    if(k === 'prog'){ M.tab = 'prog'; persist(); applyMode(); window.scrollTo({top:0, behavior: was==='prep' ? 'smooth' : 'auto'}); return; }
+    const g = GROUPS.find(x=>x.id===k); if(!g) return;
+    if(groupOf(M.tab).id === k){ applyMode(); window.scrollTo({top:0, behavior:'smooth'}); return; }
+    persist(); navGo(k);
+  }
+  function plusSheet(){
+    const clean = l => l.replace(/^[^\p{L}\p{N}]+/u, '').trim(), em = l => (l.match(/^[^\p{L}\p{N}]+/u) || [''])[0].trim();
+    const ent = [];
+    [['notes','jours'],['outils','jours'],['souv','jours'],['envies','envies'],['check','plus'],['ech','sous']].forEach(([id,gid])=>{
+      if(hidden('tab:' + id)) return; const g = GROUPS.find(x=>x.id===gid), t = g.tabs.find(x=>x[0]===id); if(!t) return;
+      ent.push([`CV.plusGo('tab','${id}')`, em(t[1]) || g.icon, clean(t[1])]);
+    });
+    if(!hidden('mode:past')) ent.push([`CV.plusGo('mode','past')`, '🗺️', 'Passés']);
+    if(!hidden('mode:bilan')) ent.push([`CV.plusGo('mode','bilan')`, '🏁', 'Bilan']);
+    ent.push([`CV.plusGo('tab','reglages')`, '👥', 'Partage & profils'], [`CV.plusGo('tab','prefs')`, '⚙️', 'Réglages']);
+    openSheet(`<h2>Plus</h2><div class="cv-plus">${ent.map(([fn,ic,l])=>`<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`).join('')}</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">✕ Fermer</button></div>`);
+  }
+  function plusGo(kind, id){
+    closeSheet(true);
+    if(kind === 'mode'){ modeGo(id); return; }
+    M.mode = 'prep'; M.tab = id; persist(); applyMode(); window.scrollTo({top:0});
   }
   function navGo(gid){
     const g = GROUPS.find(x=>x.id===gid); if(!g) return;
@@ -2766,7 +2822,6 @@ const CV = (function(){
       ${coffeeBox()}<div class="v-box"><h3>🔄 Mise à jour de l’appli</h3><p>Version installée : ${BUILD}. Si une nouveauté n’apparaît pas, touche le bouton : tes voyages et tes photos ne sont pas touchés.</p><button class="v-btn sec" onclick="CV.forceUpdate()">🔄 Mettre à jour maintenant</button></div><div class="v-box"><h3>📤 Photos non arrivées ?</h3><p>Renvoie vers le serveur toutes les photos de ce téléphone (celles déjà envoyées ne sont pas dupliquées).</p><button class="v-btn" onclick="CV.photoResend()">📤 Renvoyer mes photos</button></div><div class="v-box"><h3>🗑 Mes données sur le serveur</h3><p>Tu peux effacer à tout moment ton carnet du serveur (fiches et photos), pour toi et tes compagnons.</p><button class="v-btn danger" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>
       <div class="v-box"><h3>💾 Sauvegarde</h3>
         <p>Tout est enregistré sur ce téléphone (${Math.round(size/1024)} Ko)${s.on?' et sur le serveur':''}. L’export reste ta copie de secours, et il contient aussi l’archive 2026.</p>
-        ${trip() ? `<button class="v-btn" onclick="CV.pdfSheet()">🖨️ Carnet de route à imprimer (PDF)</button>` : ''}
         <button class="v-btn" onclick="CV.zipSheet()">💾 Sauvegarde complète ZIP (avec photos)</button>
         <button class="v-btn sec" onclick="CV.exportShare()">📤 Exporter / envoyer (.json, sans photos)</button>
         <button class="v-btn sec" onclick="CV.exportDownload()">⬇️ Télécharger le fichier</button>
@@ -2775,6 +2830,20 @@ const CV = (function(){
         ${s.on ? `<button class="v-btn sec" onclick="CV.askErase()">🗑 Demander l’effacement sur le serveur</button>` : ''}
         <a class="v-btn sec" href="mentions-legales.html" style="display:block;text-align:center;text-decoration:none">🔒 Mentions légales et confidentialité</a></div>`;
     document.getElementById('cv-body').innerHTML = h;
+    accordion();
+  }
+  /* Sections repliables : on ne voit que les titres, un toucher ouvre la section (état gardé pendant la session) */
+  var accOpen = {'👤 Profils':1};
+  function accordion(){
+    document.querySelectorAll('#cv-body > .v-box').forEach(b=>{
+      const h3 = b.firstElementChild; if(!h3 || h3.tagName !== 'H3') return;
+      const d = document.createElement('details'); d.className = 'v-box cv-acc';
+      const key = h3.textContent.trim(); if(accOpen[key]) d.open = true;
+      const sm = document.createElement('summary'); sm.innerHTML = h3.innerHTML; h3.remove();
+      d.appendChild(sm); while(b.firstChild) d.appendChild(b.firstChild);
+      d.addEventListener('toggle', ()=>{ if(d.open) accOpen[key] = 1; else delete accOpen[key]; });
+      b.replaceWith(d);
+    });
   }
   async function syncOn(){
     const urlEl = document.getElementById('cv-surl');
@@ -6737,7 +6806,7 @@ ${pm.join('\n')}</Document></kml>`;
   function quickBar(){
     const t = trip(); if(!t || t.archived) return '';
     if(hidden('blk:quick')) return tripPhase(t)==='live' ? trkHTML() : '';
-    return (tripPhase(t)==='live' ? trkHTML() : '') + `<div class="cv-quick"><button type="button" onclick="CV.hereNow()">📍 Je suis ici</button><button type="button" onclick="CV.impSheet()">📄 Importer une résa</button><button type="button" onclick="CV.worldMap()">🌍 Carte du monde</button></div>`;
+    return (tripPhase(t)==='live' ? trkHTML() : '') + `<div class="cv-quick"><button type="button" onclick="CV.hereNow()">📍 Je suis ici</button><button type="button" onclick="CV.impSheet()">📄 Importer une résa</button></div>`;
   }
 
   /* ---------- 📍 Step géolocalisé = souvenir avec position (photos + récit) ---------- */
@@ -6993,7 +7062,7 @@ ${pm.join('\n')}</Document></kml>`;
     const k = M.mode || 'prep', tc = document.getElementById('tabsC'), nav = document.getElementById('cv-nav');
     modeBar();
     const special = k !== 'prep';
-    if(tc) tc.style.display = special ? 'none' : ''; if(nav) nav.style.display = special ? 'none' : 'flex';
+    if(tc) tc.style.display = special || !tc.innerHTML.trim() ? 'none' : ''; if(nav) nav.style.display = 'flex';
     if(!special) return false;
     document.getElementById('cv-fab').style.display = 'none';
     const body = document.getElementById('cv-body');
@@ -8503,6 +8572,7 @@ ${pm.join('\n')}</Document></kml>`;
       if(!s.on) h += `<button type="button" class="v-btn sec" onclick="CV.close();CV.tab('reglages')">☁️ Partager tout le carnet (code principal)</button>`;
     }
     h += `<button type="button" class="v-btn sec" onclick="CV.tripJoin()">🔗 J’ai reçu un code : rejoindre un voyage</button>
+      <button type="button" class="v-btn sec" onclick="CV.shareSheet()">📤 Faire découvrir l’appli à un ami (QR code)</button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`;
     openSheet(h);
   }
@@ -8817,7 +8887,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert(n ? Math.ceil(n/2) + ' photo(s) remise(s) en file d’envoi.' : 'Aucune photo à renvoyer.');
     uploadQueue();
   }
-  const BUILD = '2026-10-09l';
+  const BUILD = '2026-10-09o';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
@@ -8826,7 +8896,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {navTo, plusGo, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
   const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, psPick, psChoose, psImport, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
