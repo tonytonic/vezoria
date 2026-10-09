@@ -1026,13 +1026,15 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .cv-idea .hd small{color:#6b5670;font-size:.74rem}
 .cv-idea .why{margin:6px 0 2px;font-size:.8rem;color:#4c1d95;font-weight:600}
 .cv-idea p{margin:4px 0 8px;font-size:.82rem}
-.cv-acc{padding:0}
-.cv-acc>summary{list-style:none;cursor:pointer;padding:16px 18px;font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:1.15rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cv-acc{padding:0 18px 18px}
+.cv-acc>summary{list-style:none;cursor:pointer;margin:0 -18px;padding:16px 18px;font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:1.15rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .cv-acc>summary::-webkit-details-marker{display:none}
 .cv-acc>summary::after{content:'›';font-family:inherit;font-size:1.5rem;color:#9a8aa8;transition:transform .2s}
 .cv-acc[open]>summary::after{transform:rotate(90deg)}
-.cv-acc>*:not(summary){margin-left:18px;margin-right:18px}
-.cv-acc>*:last-child{margin-bottom:18px}
+.cv-acc .v-btn{box-sizing:border-box;max-width:100%}
+.cv-pinbar{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cv-pinbar::-webkit-scrollbar{display:none}
+.cv-pinbar button{flex:0 0 auto;border:0;border-radius:999px;background:#fff;box-shadow:var(--shadow);padding:9px 14px;font:inherit;font-weight:700;font-size:.85rem;color:#2a1238;white-space:nowrap}
 .cv-modes{display:none!important}
 .cv-nav .dotlive{position:absolute;top:4px;right:22%;width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.3)}
 .cv-nav button{position:relative}
@@ -1672,9 +1674,19 @@ const CV = (function(){
       if(manual) alert('Synchro impossible : ' + M.sync.err);
     }
     persist(); syncing = false; syncDot();
-    if(changed) refresh();
-    else if(M.tab==='reglages' && M.trip!==LEGACY && !sheetOpen()) render();
+    softRefresh(changed);
     if(again){ again = false; syncNow(); }
+  }
+  /* Ne jamais redessiner l'écran pendant que l'utilisateur touche, tape ou ouvre une liste :
+     sinon le bouton ou la liste « disparaît » sous le doigt et il faut retoucher plusieurs fois. */
+  var lastTouch = 0, softT = null, softWant = 0;
+  ['pointerdown','touchstart','keydown','input','focusin'].forEach(ev=>document.addEventListener(ev, ()=>{ lastTouch = Date.now(); }, {capture:true, passive:true}));
+  const uiBusy = () => { const a = document.activeElement; return (a && /^(SELECT|INPUT|TEXTAREA)$/.test(a.nodeName) && document.getElementById('cv-body') && document.getElementById('cv-body').contains(a)) || Date.now() - lastTouch < 1500; };
+  function softRefresh(changed){
+    softWant = Math.max(softWant, changed ? 2 : (M.tab==='reglages' ? 1 : 0)); if(!softWant) return;
+    if(uiBusy() || sheetOpen()){ clearTimeout(softT); softT = setTimeout(()=>softRefresh(0), 1600); return; }
+    const w = softWant; softWant = 0;
+    if(w === 2) refresh(); else if(M.trip!==LEGACY) render();
   }
   function syncDot(){
     const el = document.getElementById('cv-sd'); if(!el) return;
@@ -1818,9 +1830,9 @@ const CV = (function(){
     const g = groupOf(M.tab);
     const sub = document.getElementById('tabsC');
     const vt = g.tabs.filter(t=>t[0]===M.tab || ALWAYS[t[0]] || !hidden('tab:' + t[0]));
-    sub.innerHTML = vt.length > 1 ? vt.map(([id,l]) => `<button class="t27${id===M.tab?' active':''}" onclick="CV.tab('${id}')">${l}</button>`).join('') : '';
     if(!NAV_G[g.id]) vt.length = 0;
-    sub.innerHTML = vt.length > 1 ? sub.innerHTML : '';
+    const subH = vt.length > 1 ? vt.map(([id,l]) => `<button class="t27${id===M.tab?' active':''}" onclick="CV.tab('${id}')">${l}</button>`).join('') : '';
+    if(sub.__h !== subH){ sub.innerHTML = subH; sub.__h = subH; }
     sub.style.display = vt.length > 1 ? 'flex' : 'none';
     buildNav();
   }
@@ -1831,22 +1843,28 @@ const CV = (function(){
     ['prog','🗓️','Programme'], ['resas','🎫','Résas'], ['sous','💸','Budget'], ['live','📍','En cours'],
     ['souv','📸','Souvenirs'], ['notes','📌','Notes'], ['outils','🧰','Outils'], ['envies','✨','Envies'],
     ['check','✅','Checklist'], ['ech','📆','Échéancier'], ['past','🗺️','Passés'], ['bilan','🏁','Bilan'], ['reglages','👥','Partage & profils']];
-  const DEST_DEF = ['prog','resas','sous','live'], PIN_MAX = 4;
+  const DEST_DEF = ['prog','resas','sous','live'];
   const DEST_HIDE = k => (k==='live'||k==='past'||k==='bilan') ? 'mode:' + k : ['souv','notes','outils','envies','check','ech'].includes(k) ? 'tab:' + k : '';
   const destHidden = k => { const h = DEST_HIDE(k); return !!h && hidden(h); };
-  const pins = () => (Array.isArray(UI().pin) ? UI().pin : DEST_DEF).filter(k=>DEST.some(d=>d[0]===k) && !destHidden(k)).slice(0, PIN_MAX);
+  const bar = () => DEST_DEF.filter(k=>!destHidden(k));                       // barre du bas (fixe)
+  const pins = () => (Array.isArray(UI().pin) ? UI().pin : []).filter(k=>DEST.some(d=>d[0]===k) && !DEST_DEF.includes(k) && !destHidden(k));   // raccourcis en haut de l'écran principal
+  function pinBar(){
+    if(M.mode && M.mode !== 'prep') return ''; const L = pins(); if(!L.length) return '';
+    return `<div class="cv-pinbar">${L.map(k=>{ const d = DEST.find(x=>x[0]===k); return `<button type="button" onclick="CV.navTo('${k}')">${d[1]} ${d[2]}</button>`; }).join('')}</div>`;
+  }
   function destOn(k){
     const mode = M.mode || 'prep', grp = groupOf(M.tab).id;
     if(k==='live'||k==='past'||k==='bilan') return mode === k;
     if(mode !== 'prep') return false;
-    if(k==='resas'||k==='sous') return grp === k && !(M.tab==='ech' && pins().includes('ech'));
+    if(k==='resas'||k==='sous') return grp === k;
     return M.tab === k;
   }
   function buildNav(){
     const live = trips().some(t=>tripPhase(t)==='live');
-    const items = pins().map(k=>{ const d = DEST.find(x=>x[0]===k); return [k, d[1], d[2], destOn(k)]; });
+    const items = bar().map(k=>{ const d = DEST.find(x=>x[0]===k); return [k, d[1], d[2], destOn(k)]; });
     items.push(['plus','☰','Plus', !items.some(x=>x[3])]);
-    document.getElementById('cv-nav').innerHTML = items.map(([k,ic,l,on])=>`<button class="${on?'on':''}" onclick="CV.navTo('${k}')"><i>${ic}</i><span>${l}</span>${k==='live' && live ? '<b class="dotlive"></b>' : ''}</button>`).join('');
+    const navH = items.map(([k,ic,l,on])=>`<button class="${on?'on':''}" onclick="CV.navTo('${k}')"><i>${ic}</i><span>${l}</span>${k==='live' && live ? '<b class="dotlive"></b>' : ''}</button>`).join(''), navEl = document.getElementById('cv-nav');
+    if(navEl.__h !== navH){ navEl.innerHTML = navH; navEl.__h = navH; }
   }
   function navTo(k){
     if(k === 'plus'){ plusSheet(); return; }
@@ -1859,7 +1877,7 @@ const CV = (function(){
     M.tab = k; persist(); applyMode(); window.scrollTo({top:0, behavior: was==='prep' ? 'smooth' : 'auto'});
   }
   function plusSheet(){
-    const p = pins(), ent = DEST.filter(d=>!p.includes(d[0]) && !destHidden(d[0]) && d[0] !== 'prog')
+    const p = bar(), ent = DEST.filter(d=>!p.includes(d[0]) && !destHidden(d[0]) && d[0] !== 'prog')
       .map(d=>[`CV.plusGo('${d[0]}')`, d[1], d[2]]);
     ent.push([`CV.plusGo('prefs')`, '⚙️', 'Réglages']);
     openSheet(`<h2>Plus</h2><div class="cv-plus">${ent.map(([fn,ic,l])=>`<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`).join('')}</div>
@@ -2313,7 +2331,7 @@ const CV = (function(){
   function pinToggle(){ M.pinOpen = M.pinOpen === false; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function renderProg(){
     const ds = dayList();
-    let h = liveCard() + daysBar() + quickBar() + whoBar() + pinBoard() + pinnedPolls();
+    let h = pinBar() + liveCard() + daysBar() + quickBar() + whoBar() + pinBoard() + pinnedPolls();
     const tt = trip();
     if(tt && tt.demo) h = `<div class="cv-demo-bar">👀 <b>Voyage de démo</b> : touche à tout, modifie, supprime. Il reste sur ce téléphone et n’est jamais partagé.
         <span class="cv-demo-btns"><button type="button" onclick="CV.demoReset()">↺ Recommencer</button><button type="button" onclick="CV.demoDel()">Supprimer la démo</button></span></div>` + h;
@@ -8390,13 +8408,12 @@ ${pm.join('\n')}</Document></kml>`;
     let h = `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">⚙️ Réglages</div><div class="v-sum-small">${nh ? nh + ' élément' + (nh>1?'s':'') + ' masqué' + (nh>1?'s':'') : 'tout est affiché'}</div></div>
         <div class="v-sum-small">Garde seulement ce qui te sert : décoche un onglet ou un encart pour le masquer. Rien n’est effacé, et ce réglage ne concerne que ce téléphone (tes compagnons choisissent les leurs).</div>
         <div class="cv-row" style="gap:6px;margin-top:10px"><button type="button" class="v-day-edit" onclick="CV.prefPreset('simple')">🌱 Version simple</button><button type="button" class="v-day-edit" onclick="CV.prefPreset('all')">✨ Tout afficher</button></div></div>`;
-    if(window.I18N) h += `<div class="v-box"><h3>🌐 Langue</h3><select class="v-in" aria-label="Langue" onchange="I18N.set(this.value)">${Object.entries(I18N.langs).map(([k,l])=>`<option value="${k}"${k===I18N.lang?' selected':''}>${l}</option>`).join('')}</select><div class="v-sum-small" style="margin-top:6px">Tes fiches restent dans la langue où tu les as écrites.</div></div>`;
+    if(window.I18N) h += `<div class="v-box"><h3>🌐 Langue</h3><select class="v-in" aria-label="Langue" onchange="CV.setLang(this.value, this)">${Object.entries(I18N.langs).map(([k,l])=>`<option value="${k}"${k===I18N.lang?' selected':''}>${l}</option>`).join('')}</select><div class="v-sum-small" style="margin-top:6px">Tes fiches restent dans la langue où tu les as écrites.</div></div>`;
     h += `<div class="v-box"><h3>💱 Devise</h3><select class="v-in" aria-label="Devise" onchange="CV.setCur(this.value)">${Object.keys(CURS).map(c=>`<option value="${c}"${c===(M.cur||'EUR')?' selected':''}>${c} · ${CURS[c]}</option>`).join('')}</select><div class="v-sum-small" style="margin-top:6px">Devise proposée pour les nouveaux voyages. Un voyage déjà créé garde la sienne : change-la en modifiant le voyage.</div></div>`;
-    { const pn = pins(), full = pn.length >= PIN_MAX;
-      h += `<div class="v-box"><h3>📌 Ma barre du bas</h3><div class="v-sum-small" style="margin-bottom:8px">Pour chaque écran, choisis : dans la barre (4 au maximum, toujours à portée de pouce), dans « Plus » (un toucher de plus), ou masqué. Rien n’est effacé.</div>
-        <div class="v-sum-small" style="margin-bottom:8px">${pn.length} / 4 dans la barre${full ? ' <span>· pleine : retire-en un pour en ajouter</span>' : ''}</div>
-        ${DEST.map(([k,ic,l])=>{ const st = destHidden(k) ? 'hide' : pn.includes(k) ? 'pin' : 'plus', canHide = !!DEST_HIDE(k);
-          return `<div class="cv-pinrow"><span>${ic} ${l}</span><select class="v-in" aria-label="${l}" onchange="CV.destSet('${k}', this.value)"><option value="pin"${st==='pin'?' selected':''}>📌 Dans la barre</option><option value="plus"${st==='plus'?' selected':''}>☰ Dans « Plus »</option>${canHide ? `<option value="hide"${st==='hide'?' selected':''}>🙈 Masqué</option>` : ''}</select></div>`; }).join('')}</div>`; }
+    { const pn = pins();
+      h += `<div class="v-box"><h3>📌 Mes raccourcis</h3><div class="v-sum-small" style="margin-bottom:8px">Épingle un écran pour qu’il apparaisse en haut de l’écran principal. Sans rien d’épinglé, cette barre n’apparaît pas. La barre du bas reste la même.</div>
+        ${DEST.filter(d=>!['prog','resas','sous'].includes(d[0])).map(([k,ic,l])=>{ const bark = k === 'live', st = destHidden(k) ? 'hide' : bark ? 'bar' : pn.includes(k) ? 'pin' : 'plus', canHide = !!DEST_HIDE(k);
+          return `<div class="cv-pinrow"><span>${ic} ${l}</span><select class="v-in" aria-label="${l}" onchange="CV.destSet('${k}', this.value)">${bark ? `<option value="bar"${st==='bar'?' selected':''}>📍 Dans la barre du bas</option>` : `<option value="pin"${st==='pin'?' selected':''}>📌 Épinglé en haut</option><option value="plus"${st==='plus'?' selected':''}>☰ Dans « Plus »</option>`}${canHide ? `<option value="hide"${st==='hide'?' selected':''}>🙈 Masqué</option>` : ''}</select></div>`; }).join('')}</div>`; }
     h += `<div class="v-box"><h3>🗂️ Onglets</h3>${GROUPS.map(g=>{ const tl = g.tabs.filter(([id])=>!DEST.some(d=>d[0]===id) && id!=='prog' && id!=='prefs' && id!=='reglages'); return tl.length ? `<div class="cv-prefg"><b>${g.icon} ${g.lbl}</b>${tl.map(([id,l])=>tg('tab:' + id, l, ALWAYS[id])).join('')}</div>` : ''; }).join('')}
         <div class="v-sum-small">Ce sont les petits filtres sous l’en-tête de Résas et de Budget.</div></div>`;
     h += `<div class="v-box"><h3>🧩 Encarts et boutons</h3>${PREF_BLOCKS.map(([k,l])=>tg(k, l)).join('')}</div>`;
@@ -8412,15 +8429,20 @@ ${pm.join('\n')}</Document></kml>`;
     const s = document.querySelector('.cv-pref input[onchange*="' + k + '"]'); if(s) s.checked = on;
     const n = document.querySelector('#cv-body .v-sum-row .v-sum-small'), nh = Object.keys(u.hide).length; if(n) n.textContent = nh ? nh + ' élément' + (nh>1?'s':'') + ' masqué' + (nh>1?'s':'') : 'tout est affiché';
   }
+  function setLang(l, el){
+    if(el) el.disabled = true; try { persist(); } catch(e){}
+    toast('⏳ …');
+    setTimeout(()=>I18N.set(l), 80);
+  }
   function destSet(k, v){
     const u = UI(); let pn = pins().filter(x=>x!==k); const h = DEST_HIDE(k);
-    if(v === 'pin'){ if(pn.length >= PIN_MAX){ toast('📌 La barre est pleine : retire un écran avant d’en ajouter'); renderPrefs(); return; } pn.push(k); if(h) delete u.hide[h]; }
-    else if(v === 'hide' && h) u.hide[h] = 1;
-    else if(h) delete u.hide[h];
-    u.pin = pn; prefFix(); persist(); buildNav(); renderPrefs(); toast(v === 'pin' ? '📌 Ajouté à la barre' : v === 'hide' ? '🙈 Masqué' : '☰ Rangé dans « Plus »');
+    if(v === 'hide' && h) u.hide[h] = 1; else if(h) delete u.hide[h];
+    if(v === 'pin') pn.push(k);
+    u.pin = pn; prefFix(); persist(); buildNav(); renderPrefs();
+    toast(v === 'pin' ? '📌 Épinglé en haut de l’écran principal' : v === 'hide' ? '🙈 Masqué' : v === 'bar' ? '📍 Dans la barre du bas' : '☰ Rangé dans « Plus »');
   }
   function prefPreset(p){
-    UI().hide = {}; UI().pin = p === 'simple' ? ['prog','resas','sous'] : DEST_DEF.slice(); if(p === 'simple') PRESET_SIMPLE.forEach(k=>UI().hide[k] = 1);
+    UI().hide = {}; UI().pin = []; if(p === 'simple') PRESET_SIMPLE.forEach(k=>UI().hide[k] = 1);
     prefFix(); persist(); applyMode(); toast(p === 'simple' ? '🌱 Version simple' : '✨ Tout est affiché');
   }
 
@@ -8909,7 +8931,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert(n ? Math.ceil(n/2) + ' photo(s) remise(s) en file d’envoi.' : 'Aucune photo à renvoyer.');
     uploadQueue();
   }
-  const BUILD = '2026-10-09q';
+  const BUILD = '2026-10-09s';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
@@ -8918,7 +8940,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {pollPin, navTo, plusGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {setLang, pollPin, navTo, plusGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
   const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, psPick, psChoose, psImport, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
