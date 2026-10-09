@@ -28,6 +28,29 @@
         if(head.length >= 3){ var key = head.slice(0, 3); if(!PAT.has(key)) PAT.set(key, []); PAT.get(key).push(p); } else WILD.push(p);
       } else { EXACT.set(flat(k), flat(v)); if(/\n/.test(k)) RAW.set(rawN(k), rawN(v)); }
     });
+    // une phrase coupée par une balise (« 💳 payé par <b>Anthony</b> ») : chaque morceau de texte fixe est aussi traduit seul
+    var NOSYM = /^[^A-Za-zÀ-ÿ]+/;
+    Object.keys(d).forEach(function(k){
+      var v = d[k]; if(typeof v !== 'string' || !v || !/\{\d+\}/.test(k)) return;
+      var fk = flat(k), fv = flat(v).replace(/\{(\d+)\|[^|}]*\|[^}]*\}/g, '{$1}');
+      var kp = fk.split(/\{(\d+)\}/), vp = fv.split(/\{(\d+)\}/);
+      if(kp.length === vp.length && kp.length >= 3){
+        var same = true; for(var i = 1; i < kp.length; i += 2) if(kp[i] !== vp[i]) same = false;
+        if(same) for(var j = 0; j < kp.length; j += 2){
+          var a = kp[j].trim(), b = vp[j].trim();
+          if(a && b && a !== b && /[A-Za-zÀ-ÿ]{3,}/.test(a)){
+            if(!EXACT.has(a)) EXACT.set(a, b);
+            var a2 = a.replace(NOSYM, ''), b2 = b.replace(NOSYM, '');
+            if(a2 && b2 && a2 !== a && /[A-Za-zÀ-ÿ]{3,}/.test(a2) && !EXACT.has(a2)) EXACT.set(a2, b2);
+          }
+        }
+      }
+      // « … {0} … » avec {0} vide (ex. phrase sans la partie facultative) : la phrase sans variable se traduit aussi
+      if(kp.length === 3 && fk.length > 30 && / \{\d+\} /.test(fk) && / \{\d+\} /.test(fv)){
+        var k0 = fk.replace(/ \{\d+\} /, ' '), v0 = fv.replace(/ \{\d+\} /, ' ');
+        if(!EXACT.has(k0)) EXACT.set(k0, v0);
+      }
+    });
     I.ready = true; memo.clear();
     if(document.documentElement) walkAll(document.documentElement);
   }
@@ -53,10 +76,19 @@
   }
   function look(core){
     if(memo.has(core)) return memo.get(core);
-    var r = EXACT.has(core) ? EXACT.get(core) : (/[A-Za-zÀ-ÿ]/.test(core) ? viaPattern(core) : null);
-    if(r == null){   // « ＋ hébergement », « 📍 Lieu » : symbole devant un texte connu
-      var pm = /^([^A-Za-zÀ-ÿ0-9]+?\s*)([A-Za-zÀ-ÿ][\s\S]*)$/.exec(core);
-      if(pm){ var rest = EXACT.has(pm[2]) ? EXACT.get(pm[2]) : viaPattern(pm[2]); if(rest != null) r = pm[1] + rest; }
+    var r = EXACT.has(core) ? EXACT.get(core) : null, pm = /^([^A-Za-zÀ-ÿ]+?)([A-Za-zÀ-ÿ][\s\S]*)$/.exec(core);
+    if(r == null && pm && EXACT.has(pm[2])) r = pm[1] + EXACT.get(pm[2]);   // « 💶 Plafond de dépenses » : symbole + texte connu, avant les modèles
+    if(r == null && /[A-Za-zÀ-ÿ]/.test(core)) r = viaPattern(core);
+    if(r == null && pm){ var rest = viaPattern(pm[2]); if(rest != null) r = pm[1] + rest; }
+    if(r == null && core.indexOf(' ·') > 0){   // « Sam. 7/11 · Réf. ABC » : chaque morceau séparé par « · » se traduit seul
+      var bits = core.split(/( · | ·$)/), hit = false;
+      for(var q = 0; q < bits.length; q += 2){
+        var c2 = bits[q]; if(!c2 || !/[A-Za-zÀ-ÿ]{3,}/.test(c2)) continue;
+        var t2 = EXACT.has(c2) ? EXACT.get(c2) : viaPattern(c2);
+        if(t2 == null){ var pm2 = /^([^A-Za-zÀ-ÿ]+?)([A-Za-zÀ-ÿ][\s\S]*)$/.exec(c2); if(pm2){ var r2 = EXACT.has(pm2[2]) ? EXACT.get(pm2[2]) : viaPattern(pm2[2]); if(r2 != null) t2 = pm2[1] + r2; } }
+        if(t2 != null){ bits[q] = t2; hit = true; }
+      }
+      if(hit) r = bits.join('');
     }
     if(memo.size > 5000) memo.clear();
     memo.set(core, r); return r;
@@ -90,10 +122,11 @@
   }
   function walkAll(root){
     if(root.nodeType === 3){ doText(root); return; }
-    if(root.nodeType !== 1 || SKIP[root.nodeName]) return;
-    doAttrs(root);
+    if(root.nodeType !== 1) return;
+    doAttrs(root);   // y compris les champs de saisie (placeholder) ; leur contenu reste intact
+    if(SKIP[root.nodeName]) return;
     var w = document.createTreeWalker(root, 5 /* éléments + textes */), n;
-    while((n = w.nextNode())){ if(n.nodeType === 3) doText(n); else if(!SKIP[n.nodeName]) doAttrs(n); }
+    while((n = w.nextNode())){ if(n.nodeType === 3) doText(n); else doAttrs(n); }
   }
   var mo = new MutationObserver(function(list){
     if(!I.ready) return;
