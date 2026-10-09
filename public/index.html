@@ -1641,6 +1641,8 @@ const CV = (function(){
     } catch(e){ sp.err = e.message || String(e); }
     return changed;
   }
+  /* Synchro automatique : une fois par heure (+ à l'ouverture, + juste après chaque modification). Pour plus vite : bouton « Synchroniser maintenant ». */
+  var AUTO_SYNC = 3600000, pollGap = AUTO_SYNC, lastSyncAt = 0;
   async function syncNow(manual){
     const mainOn = !!(M.sync.on && M.sync.code);
     if(!mainOn && !(M.spaces||[]).length) return;
@@ -1648,7 +1650,7 @@ const CV = (function(){
     syncing = true; syncDot();
     const showC = E2E && !!manual;
     if(showC) cryptShow('🔐 Chiffrement de tes données en cours…');
-    let changed = 0;
+    let changed = 0; const hadDirty = M.dirty.length;
     try {
       if(mainOn){
       const ids = [...M.dirty];
@@ -1674,6 +1676,8 @@ const CV = (function(){
       if(manual) alert('Synchro impossible : ' + M.sync.err);
     }
     persist(); syncing = false; syncDot();
+    lastSyncAt = Date.now();
+    pollGap = M.sync.err ? 300000 : AUTO_SYNC;   // en cas d'erreur on réessaie dans 5 min, sinon dans 1 h
     softRefresh(changed);
     if(again){ again = false; syncNow(); }
   }
@@ -4051,10 +4055,10 @@ const CV = (function(){
     try { const hq = document.getElementById('cv-hero-qr'); if(hq) hq.innerHTML = qrSVG(APP_URL(), 'q') + '<span>📤 Partager</span>'; } catch(e){}
     loadStore();
     document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ if(vw) viewClose(); else closeSheet(); } if(vw && e.key==='ArrowRight') viewGo(1); if(vw && e.key==='ArrowLeft') viewGo(-1); });
-    document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') syncNow(); });
+    document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && (M.dirty.length || Date.now() - lastSyncAt > AUTO_SYNC)) syncNow(); });
     window.addEventListener('online', ()=>syncNow());
-    // synchro toutes les 90 s quand l'appli est à l'écran (+ à chaque modification, à l'ouverture et au retour du réseau)
-    setInterval(()=>{ if(document.visibilityState==='visible' && !sheetOpen()) syncNow(); }, 90000);
+    // synchro automatique toutes les heures quand l'appli est à l'écran (+ à chaque modification, à l'ouverture et au retour du réseau)
+    (function poll(){ setTimeout(()=>{ if(document.visibilityState==='visible' && !sheetOpen()) syncNow(); poll(); }, pollGap); })();
     bootOffline();
     if(installGate()) return;
     applyMode(); applyLock(); countInstall();
@@ -4452,7 +4456,8 @@ const CV = (function(){
       <div style="margin-bottom:12px">${pchip(M.me)}</div>
       <div class="v-sum-small" style="margin-bottom:12px">Ce téléphone est le tien : tout ce que tu ajoutes est signé ${esc(pname(M.me))}.</div>
       <button class="v-btn sec" onclick="CV.editProfile('${M.me}')">🎨 Changer mon nom / ma couleur</button>
-      <div class="v-sum-small" style="margin-top:10px">Synchro : ${!M.sync.on ? 'désactivée' : M.sync.err ? '🔴 ' + esc(M.sync.err) : (M.dirty.length || (M.pq||[]).length) ? '🟠 envoi en cours' : '🟢 à jour'}</div>`);
+      ${M.sync.on ? `<button class="v-btn" style="margin-top:10px" onclick="CV.syncNow(true)">🔄 Synchroniser maintenant</button>` : ''}
+      <div class="v-sum-small" style="margin-top:10px">Synchro : ${!M.sync.on ? 'désactivée' : M.sync.err ? '🔴 ' + esc(M.sync.err) : (M.dirty.length || (M.pq||[]).length) ? '🟠 envoi en cours' : '🟢 à jour'}${M.sync.on ? ' · automatique toutes les heures' : ''}</div>`);
   }
   let tapN = 0, tapT = 0;
   function secretTap(e){
@@ -8931,7 +8936,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert(n ? Math.ceil(n/2) + ' photo(s) remise(s) en file d’envoi.' : 'Aucune photo à renvoyer.');
     uploadQueue();
   }
-  const BUILD = '2026-10-09s';
+  const BUILD = '2026-10-09u';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
