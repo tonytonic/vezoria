@@ -843,7 +843,7 @@ input.v-in::-webkit-date-and-time-value{text-align:left;margin:0}
 .cv-psrow{background:#fff;border-radius:16px;padding:12px;margin-bottom:8px;box-shadow:var(--shadow)}
 .cv-psrow select{margin-top:8px}
 #cv-viewer{position:fixed;inset:0;z-index:2000;background:#0d0612;display:none;align-items:center;justify-content:center}
-#cv-viewer img{max-width:100%;max-height:100%;object-fit:contain}
+#cv-viewer img{width:100%;height:100%;object-fit:contain}
 #cv-viewer button{position:absolute;border:none;background:rgba(255,255,255,.14);color:#fff;border-radius:50%;width:44px;height:44px;font-size:1.4rem;cursor:pointer}
 #cv-viewer .vx{top:calc(14px + env(safe-area-inset-top));right:14px;font-size:1rem}
 #cv-viewer .vp{left:10px;top:50%}
@@ -3628,7 +3628,7 @@ const CV = (function(){
   }
   // Une photo = deux versions : grande (1280 px) et vignette (420 px, id + '.t')
   async function storePhoto(blob, id){
-    const full = await shrink(blob, 1280, 0.8), thumb = await shrink(blob, 420, 0.72);
+    const full = await shrink(blob, 1600, 0.84), thumb = await shrink(blob, 480, 0.72);
     await IDB.put({id, blob:full, up:0}); await IDB.put({id:id+'.t', blob:thumb, up:0});
     urls[id+'.t'] = URL.createObjectURL(thumb);
     M.pq = M.pq || []; M.pq.push(id, id+'.t');
@@ -3762,8 +3762,15 @@ const CV = (function(){
   }
   async function viewShow(){
     const img = document.getElementById('cv-vimg'), id = vw.ph[vw.i];
-    document.getElementById('cv-vc').textContent = `${vw.i+1} / ${vw.ph.length}`;
-    img.src = urls[id+'.t'] || ''; const u = await photoURL(id); if(u && vw && vw.ph[vw.i]===id) img.src = u;
+    const vc = document.getElementById('cv-vc'), cnt = `${vw.i+1} / ${vw.ph.length}`;
+    vc.textContent = cnt + (urls[id] ? '' : ' ⏳');
+    img.src = urls[id] || urls[id+'.t'] || '';       // la vignette s'affiche tout de suite, la grande photo la remplace
+    if(!urls[id]){
+      let u = await photoURL(id); if(!u){ await new Promise(r => setTimeout(r, 1500)); if(vw && vw.ph[vw.i]===id) u = await photoURL(id); }
+      if(u && vw && vw.ph[vw.i]===id) img.src = u;
+    }
+    if(vw && vw.ph[vw.i]===id){ vc.textContent = cnt;
+      [1, -1].forEach(d => { const n = vw.ph[(vw.i + d + vw.ph.length) % vw.ph.length]; if(n && n !== id) photoURL(n); }); }   // les voisines se chargent d'avance
   }
   function viewGo(d){ if(!vw) return; vw.i = (vw.i + d + vw.ph.length) % vw.ph.length; viewShow(); }
   function viewClose(){ const el = document.getElementById('cv-viewer'); if(el) el.style.display = 'none'; document.body.style.overflow = ''; vw = null; }
