@@ -4618,7 +4618,7 @@ const CV = (function(){
 
   /* ══════════ 🔐 Fonctionnement & confidentialité (version publique) ══════════ */
   const TUTO = 'tuto.mp4';
-  const tutoBtn = (cls) => `<button type="button" class="v-btn ${cls||'sec'}" onclick="CV.tutoSheet()">🎬 Voir le tuto vidéo du carnet (5 min)</button>`;
+  const tutoBtn = (cls) => `<button type="button" class="v-btn ${cls||'sec'}" onclick="CV.tutoSheet()">🎬 Voir le tuto vidéo du carnet (1 min)</button>`;
   function tutoSheet(){
     openSheet(`<h2>🎬 Tuto vidéo</h2>
       <div class="v-sum-small" style="margin-bottom:10px">Les 4 espaces sur les voyages de démo : 🧳 Préparation (programme, résas, budget, envies, checklist, outils), 📍 En cours (journée, dépenses, souvenirs), 🗺️ Passés (album, carte, stats) et 🏁 Bilan (à vérifier, qui doit quoi, remboursements, justificatifs).</div>
@@ -9820,12 +9820,14 @@ ${pm.join('\n')}</Document></kml>`;
   }
 
   /* ---------- Musique du film : 3 morceaux libres de droits (Pixabay), choisis par l'utilisateur ---------- */
-  const TRACKS = ['music/vezoria-1.mp3', 'music/vezoria-2.mp3', 'music/vezoria-3.mp3'];
+  // 11 morceaux libres de droits (Pixabay) ; le nom s'affiche quand on change de musique
+  const TRACK_N = ['Techno', 'Techno 2', 'Électro énergique', 'Électro swing', 'Celtique EDM', 'Été festif', 'Électro house', 'Rock motivation', 'Phonk', 'Techno intense', 'Techno puissante'];
+  const TRACKS = TRACK_N.map((_, i) => 'music/vezoria-' + (i + 1) + '.mp3');
   let FA = null;
   function filmAudioInit(){   // dans le geste (toucher) : sinon l'iPhone refuse le son
     try {
       if(!FA){
-        const el = new Audio(); el.preload = 'auto'; el.setAttribute('playsinline', ''); FA = {el, on: !M.filmMute, k: (M.filmTrack || 0) % TRACKS.length};
+        const el = new Audio(); el.preload = 'auto'; el.loop = true; el.setAttribute('playsinline', ''); FA = {el, on: !M.filmMute, k: (M.filmTrack || 0) % TRACKS.length};
         const AC = window.AudioContext || window.webkitAudioContext;
         if(AC){ try { const ac = new AC(), src = ac.createMediaElementSource(el), g = ac.createGain(); g.gain.value = 0; src.connect(g); g.connect(ac.destination);
           FA.ac = ac; FA.g = g; if(ac.createMediaStreamDestination){ FA.dest = ac.createMediaStreamDestination(); g.connect(FA.dest); } } catch(e){} }
@@ -9851,7 +9853,7 @@ ${pm.join('\n')}</Document></kml>`;
   function filmTrack(){
     M.filmTrack = ((M.filmTrack || 0) + 1) % TRACKS.length; persist();
     if(FA){ FA.k = M.filmTrack; FA.el.src = TRACKS[FA.k]; if(FM && FM.playing){ const pr = FA.el.play(); if(pr && pr.catch) pr.catch(()=>{}); try { FA.el.currentTime = FM.pos; } catch(e){} filmVol(.9, .3); } }
-    const b = document.getElementById('cv-film-trk'); if(b) b.textContent = '🎵 ' + (M.filmTrack + 1); toast('🎵 Musique ' + (M.filmTrack + 1) + ' / ' + TRACKS.length);
+    const b = document.getElementById('cv-film-trk'); if(b) b.textContent = '🎵 ' + (M.filmTrack + 1); toast('🎵 ' + (M.filmTrack + 1) + ' / ' + TRACKS.length + ' · ' + TT(TRACK_N[M.filmTrack]));
   }
 
   /* ---------- Niveau de préparation : la route jusqu'au décollage ---------- */
@@ -10314,7 +10316,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-10q';
+  const BUILD = '2026-10-10r';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
