@@ -1763,7 +1763,9 @@ const CV = (function(){
     const key = await crypto.subtle.deriveKey({name:'PBKDF2', salt:te.encode('carnet-voyage/e2e/v1'), iterations:200000, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
     const hb = await crypto.subtle.deriveBits({name:'PBKDF2', salt:te.encode('carnet-voyage/ids/v1'), iterations:200000, hash:'SHA-256'}, base, 256);
     const hkey = await crypto.subtle.importKey('raw', hb, {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
-    const token = hex(await crypto.subtle.digest('SHA-256', te.encode('carnet-voyage/space/v1:' + code)));
+    // empreinte envoyée au serveur : dérivée LENTEMENT du code (PBKDF2, 200 000 tours, comme la clé de chiffrement),
+    // pour qu'une base volée ne permette pas d'essayer tous les codes à grande vitesse
+    const token = hex(await crypto.subtle.deriveBits({name:'PBKDF2', salt:te.encode('carnet-voyage/space/v2'), iterations:200000, hash:'SHA-256'}, base, 256));
     return ck[code] = {code, key, hkey, token};
   }
   async function authCode(code){ code = code || M.sync.code; return E2E ? (await keys(code)).token : code; }
@@ -10316,7 +10318,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-10s';
+  const BUILD = '2026-10-10u';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
