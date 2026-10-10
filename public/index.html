@@ -2180,7 +2180,8 @@ const CV = (function(){
     if(k === 'live' || k === 'past' || k === 'bilan'){ if(M.mode === k) window.scrollTo({top:0, behavior:'smooth'}); else modeGo(k); return; }
     const was = M.mode || 'prep'; M.mode = 'prep';
     if(k === 'resas' || k === 'sous'){
-      if(was === 'prep' && groupOf(M.tab).id === k){ applyMode(); window.scrollTo({top:0, behavior:'smooth'}); return; }
+      // déjà sur cet onglet (ex. on revient de « En cours ») : on réaffiche tout de suite, sinon il fallait toucher 2 fois
+      if(groupOf(M.tab).id === k){ persist(); applyMode(); window.scrollTo({top:0, behavior: was === 'prep' ? 'smooth' : 'auto'}); return; }
       persist(); navGo(k); return;
     }
     M.tab = k; persist(); applyMode(); window.scrollTo({top:0, behavior: was==='prep' ? 'smooth' : 'auto'});
@@ -10490,7 +10491,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11j';
+  const BUILD = '2026-10-11k';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
