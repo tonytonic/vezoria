@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "fr.vezoria.app",
+    "sha256_cert_fingerprints": [
+      "2F:16:9F:26:BD:1F:2C:A8:78:8D:B6:5F:0C:DE:F4:33:57:99:D7:A9:15:7C:D1:27:07:36:FA:77:EF:09:32:66"
+    ]
+  }
+}]
