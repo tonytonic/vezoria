@@ -28,7 +28,13 @@ async function spaceOf(request, env) {
     const allowed = String(env.SPACE_CODES).split(',').map(s => s.trim()).filter(Boolean);
     if (!allowed.includes(code)) return json({ error: 'Code de carnet non autorisé sur ce serveur' }, 403);
   }
-  return sha256('carnet-voyage:' + code);
+  const space = await sha256('carnet-voyage:' + code);
+  // carnet suspendu après un signalement (voir admin.js) : plus aucune lecture ni écriture, données conservées
+  try {
+    const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first();
+    if (b) return json({ error: 'Ce carnet est suspendu à la suite d’un signalement. Pour contester : ' + (env.CONTACT || 'appareils.treves6g@icloud.com') + ' — This notebook is suspended following a report. To contest, write to the address above.', suspended: true }, 423);
+  } catch (e) {}   // table pas encore créée : aucun carnet suspendu
+  return space;
 }
 const validId = id => typeof id === 'string' && /^[\w.\-]{1,120}$/.test(id);
 const r2Key = (space, id) => space + '/' + id;
