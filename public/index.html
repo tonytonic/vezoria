@@ -2138,15 +2138,20 @@ const CV = (function(){
      On déclenche donc le bouton dès que le doigt se relève au même endroit, et on ignore le clic en double qui suit éventuellement. */
   (function navTap(){
     const nav = document.getElementById('cv-nav'); if(!nav) return;
-    let st = null, fired = 0;
+    let st = null, ghost = null;
     nav.addEventListener('pointerdown', e=>{ const b = e.target.closest && e.target.closest('button'); st = b ? {b, x:e.clientX, y:e.clientY} : null; }, {passive:true});
     nav.addEventListener('pointercancel', ()=>{ st = null; }, {passive:true});
     nav.addEventListener('pointerup', e=>{
       const b = e.target.closest && e.target.closest('button'), s0 = st; st = null;
       if(!s0 || b !== s0.b || e.pointerType === 'mouse' || Math.hypot(e.clientX - s0.x, e.clientY - s0.y) > 14) return;
-      fired = Date.now(); b.click(); fired = Date.now();   // compté depuis la fin : l'écran peut mettre du temps à se dessiner
+      ghost = {x:e.clientX, y:e.clientY, t:Date.now()}; b.click(); ghost.t = Date.now();
     }, {passive:true});
-    nav.addEventListener('click', e=>{ if(e.isTrusted && Date.now() - fired < 700){ e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+    // le « vrai » clic qui suit le doigt relevé tombe au même endroit : on l'ignore partout (sinon il refermerait la fenêtre « Plus » qui vient de s'ouvrir)
+    document.addEventListener('click', e=>{
+      if(!ghost || !e.isTrusted) return;
+      if(Date.now() - ghost.t > 800){ ghost = null; return; }
+      if(Math.hypot(e.clientX - ghost.x, e.clientY - ghost.y) < 30){ ghost = null; e.preventDefault(); e.stopImmediatePropagation(); }
+    }, true);
   })();
   function buildNav(){
     const live = trips().some(t=>tripPhase(t)==='live');
@@ -10467,7 +10472,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11e';
+  const BUILD = '2026-10-11f';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
