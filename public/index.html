@@ -3,7 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <script src="i18n.js"></script>
-<style>html,body{background:#2A1238}</style>
+<style>html,body{background:#2A1238}
+.cv-hero{background:linear-gradient(135deg,#4c1d95,#7c3aed 60%,#a855f7);color:#fff;border-radius:20px;padding:16px 16px 14px;margin:0 0 12px;box-shadow:0 8px 24px rgba(124,58,237,.35)}
+.cv-hero .hk{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;opacity:.8;font-weight:700}
+.cv-hero .ht{display:flex;gap:12px;align-items:center;margin:8px 0 6px}.cv-hero .hi{font-size:2rem}.cv-hero .ht b{display:block;font-size:1.12rem;line-height:1.25}.cv-hero .ht small{display:block;opacity:.85;font-size:.8rem;margin-top:2px}
+.cv-hero .hc{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.cv-hero .hc span{font-size:1.9rem;font-weight:800;letter-spacing:-.02em}.cv-hero .hc small{opacity:.85;font-size:.85rem}
+.cv-hero .href{background:rgba(255,255,255,.16);border:0;color:#fff;border-radius:999px;padding:5px 12px;font-size:.78rem;margin-top:8px;max-width:100%;box-sizing:border-box}.cv-hero .href b{letter-spacing:.06em}
+.cv-hero .hb{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.cv-hero .hb button{flex:1 1 0;min-width:72px;background:#fff;color:#4c1d95;border:0;border-radius:14px;padding:10px 6px;font-weight:700;font-size:.8rem;display:flex;flex-direction:column;align-items:center;gap:2px;box-sizing:border-box}.cv-hero .hb i{font-style:normal;font-size:1.25rem}
+.cv-hero .hn{margin-top:10px;font-size:.76rem;opacity:.9;line-height:1.5}.cv-hero .hn small{opacity:.8}
+.ap-list{max-height:52vh;overflow:auto;margin-bottom:8px}.ap-row{display:flex;gap:6px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.08)}.ap-b{flex:1;min-width:0}.ap-d{font-size:.78rem;opacity:.75;margin-bottom:4px}.ap-w{color:#c2410c;font-weight:600}
+.ap-th{display:flex;gap:4px;margin-top:6px}.ap-th img{width:48px;height:48px;object-fit:cover;border-radius:8px}
+#cv-film{position:fixed;inset:0;z-index:100000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#cv-film canvas{max-width:100%;max-height:calc(100% - 78px);aspect-ratio:9/16;height:auto;width:auto;object-fit:contain;background:#000}
+#cv-film .fb{display:flex;gap:8px;padding:10px;align-items:center;justify-content:center;width:100%;box-sizing:border-box}#cv-film .fb button{background:#ffffff22;color:#fff;border:0;border-radius:12px;padding:10px 14px;font-size:1rem}#cv-film .fb .fs{background:#7c3aed;font-weight:700;font-size:.9rem}#cv-film .fb button:disabled{opacity:.5}
+#cv-film .fm{position:absolute;top:10px;left:0;right:0;text-align:center;color:#fff;font-size:.82rem;text-shadow:0 1px 4px #000}
+
+.hero #cv-cover{position:absolute;inset:-8%;background-size:cover;background-position:center;animation:cvKB 38s ease-in-out infinite alternate;z-index:0}
+.hero.has-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,8,32,.55) 0%,rgba(20,8,32,.25) 45%,rgba(20,8,32,.8) 100%);z-index:0}
+.hero.has-cover>*:not(#cv-cover):not(.hero-sun){position:relative;z-index:1}.hero.has-cover .hero-sun{opacity:.25}
+@keyframes cvKB{from{transform:scale(1) translate(0,0)}to{transform:scale(1.12) translate(-2%,-2%)}}
+body.cv-jourj .hero{box-shadow:inset 0 -6px 0 #fbbf24}body.cv-jourj #hdr-title::after{content:" ✈︎";color:#fbbf24}
+#cv-viewer .vcov{bottom:calc(18px + env(safe-area-inset-bottom));left:18px;font-size:1.1rem}
+.cv-prep{background:linear-gradient(135deg,#fff,#f5f0ff);border:1px solid #ede4ff;border-radius:18px;margin:0 0 12px;overflow:hidden}
+.cv-prep .pp-h{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;padding:12px 14px;text-align:left;color:inherit;font:inherit}
+.pp-ring{width:64px;height:64px;flex:none}.pp-ring circle{fill:none;stroke-width:8}.pp-ring .bg{stroke:#ede4ff}.pp-ring .fg{stroke:#7c3aed;stroke-linecap:round;transform:rotate(-90deg);transform-origin:40px 40px;transition:stroke-dashoffset 1s ease}.pp-ring text{font-size:17px;font-weight:800;fill:#4c1d95}
+.pp-t{flex:1;display:flex;flex-direction:column;gap:1px}.pp-t b{font-size:1.02rem;color:#2e1065}.pp-t small{font-size:.74rem;opacity:.7}.pp-ch{opacity:.5}
+.pp-l{padding:0 10px 10px;display:grid;gap:4px}.pp-s{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #f0eaff;border-radius:12px;padding:9px 10px;text-align:left;font:inherit;color:inherit}.pp-s i{font-style:normal;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#f3efff;color:#7c3aed;font-weight:800;flex:none}.pp-s.ok i{background:#7c3aed;color:#fff}.pp-s span{flex:1}.pp-s.ok span{opacity:.6}.pp-s small{opacity:.7}
+.cv-moment{position:fixed;inset:0;z-index:99990;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(10,4,30,.0);transition:background .35s;box-sizing:border-box}
+.cv-moment.in{background:rgba(10,4,30,.72)}.cv-moment .mo-card{position:relative;width:100%;max-width:400px;max-height:90vh;overflow:auto;box-sizing:border-box;border-radius:26px;padding:26px 20px 18px;color:#fff;text-align:center;background:linear-gradient(160deg,#1e1b4b,#4c1d95 55%,#7c3aed);box-shadow:0 20px 60px rgba(0,0,0,.45);transform:translateY(30px) scale(.96);opacity:0;transition:all .45s cubic-bezier(.2,.8,.2,1)}
+.cv-moment.in .mo-card{transform:none;opacity:1}.cv-moment.hello .mo-card{background:linear-gradient(160deg,#0f3b46,#0e7490 55%,#22d3ee)}.cv-moment.board .mo-card{background:#fff;color:#1e1b4b;padding:0;overflow:hidden}
+.mo-x{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:inherit;font-size:1rem}.board .mo-x{background:rgba(0,0,0,.08);z-index:2}
+.mo-k{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;opacity:.8;font-weight:700}.mo-big{font-size:3.4rem;margin:8px 0 2px;animation:moPop .7s .15s both}
+@keyframes moPop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+.cv-moment h2{margin:0;font-size:1.7rem;color:inherit}.mo-sub{opacity:.85;margin-top:2px}.mo-l{margin:12px 0 0;font-size:.92rem}.mo-l small{display:block;opacity:.75;font-size:.78rem;margin-top:2px}
+.mo-chk{display:grid;gap:6px;margin:14px 0 0;font-size:.86rem}.mo-chk span{background:rgba(255,255,255,.12);border-radius:12px;padding:8px 10px}.mo-chk .ok{opacity:.75}
+.mo-w{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:14px 0 0}.mo-w div{background:rgba(255,255,255,.14);border-radius:12px;padding:7px 8px;text-align:left}.mo-w small{display:block;font-size:.66rem;opacity:.75;text-transform:uppercase;letter-spacing:.06em}.mo-w b{font-size:.9rem}
+.mo-b{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px}.mo-b button{flex:1 1 auto;border:0;border-radius:14px;padding:11px 12px;font-weight:700;background:rgba(255,255,255,.18);color:inherit;font-size:.86rem}.mo-b .pri{background:#fff;color:#4c1d95}
+.bp{padding:0 0 16px}.bp-h{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,#4c1d95,#7c3aed);color:#fff;padding:16px 50px 16px 18px;font-weight:700}.bp-h b{letter-spacing:.08em}
+.bp-r{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 8px}.bp-r b{font-size:2.6rem;letter-spacing:.04em;display:block;line-height:1}.bp-r small{opacity:.6;font-size:.78rem}.bp-pl{font-size:1.6rem;color:#7c3aed}
+.bp-g{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px 18px}.bp-g small,.bp-ref small{display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;opacity:.55}.bp-g b{font-size:1rem}
+.bp-cut{margin:12px 0;border-top:2px dashed #e5e0f5;position:relative}.bp-ref{padding:0 18px}.bp-ref b{font-size:1.5rem;letter-spacing:.14em}.board .mo-b{padding:0 14px}.board .mo-b button{background:#f3efff;color:#4c1d95}.board .mo-b .pri{background:#7c3aed;color:#fff}
+.cv-eve{background:linear-gradient(160deg,#111827,#312e81);color:#fff;border-radius:20px;padding:14px;margin:0 0 12px}.ev-k{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;opacity:.8;font-weight:700}.ev-t{font-weight:700;margin:4px 0 8px}
+.cv-eve textarea{width:100%;box-sizing:border-box;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}.cv-eve textarea::placeholder{color:rgba(255,255,255,.6)}
+.ev-ph{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0}.ev-ph img{width:52px;height:52px;object-fit:cover;border-radius:8px}
+.ev-b{display:flex;gap:6px;flex-wrap:wrap}.ev-b>*{flex:1 1 auto;border:0;border-radius:12px;padding:10px;font-weight:700;font-size:.82rem;text-align:center;background:rgba(255,255,255,.14);color:#fff;position:relative;overflow:hidden}.ev-b .pri{background:#fbbf24;color:#1f1300}.ev-b input{position:absolute;inset:0;opacity:0}.ev-b .ev-no{flex:0 0 auto;background:none;opacity:.7}
+.cv-anniv{display:flex;align-items:stretch;gap:0;background:linear-gradient(135deg,#7c2d12,#db2777);border-radius:18px;margin:0 0 12px;color:#fff;overflow:hidden}
+.cv-anniv .an-m{flex:1;display:flex;gap:12px;align-items:center;background:none;border:0;color:inherit;text-align:left;padding:10px;font:inherit}.cv-anniv img{width:64px;height:64px;border-radius:12px;object-fit:cover;flex:none;background:rgba(255,255,255,.2)}
+.cv-anniv span{display:flex;flex-direction:column}.cv-anniv small{opacity:.85;font-size:.74rem}.cv-anniv b{font-size:1rem}.cv-anniv .an-x{background:none;border:0;color:#fff;opacity:.7;padding:0 14px}
+.wm-new{margin-left:auto;white-space:nowrap;flex:none;background:#fbbf24;color:#1f1300;border:0;border-radius:999px;padding:8px 12px;font-weight:800;font-size:.8rem}
+#wm-plan{position:absolute;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:5;background:rgba(15,10,40,.92);color:#fff;border-radius:18px;padding:12px;box-sizing:border-box}
+.wm-planning .wm-bottom,.wm-planning .wm-chips{display:none}
+.wp-h{font-size:.8rem;opacity:.85;margin-bottom:8px}.wp-c{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.86rem;margin-bottom:10px}.wp-c span{background:rgba(255,255,255,.12);border-radius:999px;padding:4px 10px}.wp-c i{opacity:.6;font-style:normal}.wp-c em{opacity:.7}
+.wp-b{display:flex;gap:6px}.wp-b button{flex:1;border:0;border-radius:12px;padding:10px;font-weight:700;background:rgba(255,255,255,.14);color:#fff}.wp-b button:first-child{flex:0 0 48px}.wp-b .pri{background:#fbbf24;color:#1f1300;flex:2}.wp-b button:disabled{opacity:.4}
+.wm-plan-pin{width:26px;height:26px;border-radius:50%;background:#fbbf24;color:#1f1300;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 4px rgba(251,191,36,.35),0 0 18px #fbbf24;font-size:.8rem}
+</style>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>/* iPhone : pas de zoom automatique quand on touche un champ (iOS zoome sous 16 px). Le zoom à deux doigts reste possible. */@supports(-webkit-touch-callout:none){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),select,textarea{font-size:max(16px,1em)!important}}</style>
 <meta name="color-scheme" content="light">
@@ -1739,6 +1792,7 @@ const CV = (function(){
         + `<span class="cv-av-names">${vv.length <= 3 ? vv.map(id=>esc(pname(id))).join(' & ') : vv.slice(0,2).map(id=>esc(pname(id))).join(', ') + ' et ' + (vv.length - 2) + ' autres'}</span>`;
       document.title = 'Vezoria · ' + (t.titre||'Voyage');
     } else { title.textContent = 'Vezoria'; sub.textContent = 'Ton premier voyage t’attend'; pill.textContent = 'Mes voyages'; cd.innerHTML = ''; av.innerHTML = ''; }
+    coverPaint(legacy ? null : t); document.body.classList.toggle('cv-jourj', !!(t && t.debut && t.debut === isoToday()));
     const me = document.getElementById('cv-me');
     me.style.background = M.me ? pcol(M.me) : '#777';
     me.innerHTML = `${esc(M.me ? (pname(M.me)[0]||'?').toUpperCase() : '?')}<span class="sd" id="cv-sd"></span>`;
@@ -1835,7 +1889,6 @@ const CV = (function(){
       <button class="v-btn" onclick="CV.newTrip()">＋ Préparer un nouveau voyage</button>
       ${demoBtn()}
       <button class="v-btn sec" onclick="CV.shareSheet()">📤 Partager l’appli à un ami (QR code)</button>
-      <button class="v-btn sec" onclick="CV.psPick()">📥 Importer des voyages Polarsteps</button>
       ${!PUBLIC && !(R.t2025 && !R.t2025.deleted) ? `<button class="v-btn sec" onclick="CV.seedUSA2025()">📦 Ajouter l’archive USA 2025</button>` : ''}
       ${ESCALE ? `<a class="v-btn sec cv-escale" href="${ESCALE}">✈️ Chercher des vols avec Escale</a><button class="v-btn sec" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button><button class="v-btn sec" onclick="CV.radarTuto()">✦ Tuto Radar des prix</button>` : ''}
       ${trip() && !trip().demo ? `<button class="v-btn sec" onclick="CV.tripShare('${M.trip}')">🔗 ${TS()[M.trip] ? 'Partage de « ' + esc(trip().titre) + ' » (code du voyage)' : 'Partager « ' + esc(trip().titre) + ' » seul (son propre code)'}</button>` : ''}
@@ -2046,6 +2099,7 @@ const CV = (function(){
   function refresh(){ if(M.trip===LEGACY){ renderHeader(); return; } applyMode(); }
 
   function render(){
+    setTimeout(moments, 900); setTimeout(()=>{ if(document.querySelector('.cv-anniv img[data-ph]:not([data-ok])')) hydrate(); }, 60);
     const body = document.getElementById('cv-body');
     const fab = document.getElementById('cv-fab');
     const t = trip();
@@ -2349,7 +2403,7 @@ const CV = (function(){
   function pinToggle(){ M.pinOpen = M.pinOpen === false; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function renderProg(){
     const ds = dayList();
-    let h = pinBar() + liveCard() + daysBar() + quickBar() + whoBar() + pinBoard() + pinnedPolls();
+    let h = pinBar() + annivCard() + nextHero() + eveCard() + prepGauge() + liveCard() + daysBar() + quickBar() + whoBar() + pinBoard() + pinnedPolls();
     const tt = trip();
     if(tt && tt.demo) h = `<div class="cv-demo-bar">👀 <b>Voyage de démo</b> : touche à tout, modifie, supprime. Il reste sur ce téléphone et n’est jamais partagé.
         <span class="cv-demo-btns"><button type="button" onclick="CV.demoReset()">↺ Recommencer</button><button type="button" onclick="CV.demoDel()">Supprimer la démo</button></span></div>` + h;
@@ -3706,6 +3760,14 @@ const CV = (function(){
   async function photoBlob(id){
     if(/\.t$/.test(id)){
       try { const o = await IDB.get(id); if(o && o.blob){ try { await o.blob.slice(0, 1).arrayBuffer(); return o.blob; } catch(e){} } } catch(e){}
+      const tc = photoCode(id);   // vignette déjà sur le serveur (≈ 30 Ko) : on la prend, sans télécharger la grande photo
+      if(tc && photoApi()){
+        try {
+          const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(id, tc)), {headers:{'X-Carnet-Code':await authCode(tc)}});
+          if(r.ok){ let b = await r.blob(); if(E2E) b = new Blob([await unseal(new Uint8Array(await b.arrayBuffer()), tc)], {type:'image/jpeg'});
+            try { await IDB.put({id, blob:b, up:1}); } catch(e){} return b; }
+        } catch(e){}
+      }
       const full = await photoBlob(id.slice(0, -2)); if(!full) return null;
       try { const th = await shrink(full, 480, 0.74); try { await IDB.put({id, blob:th, up:1}); } catch(e){} return th; } catch(e){ return full; }
     }
@@ -3774,6 +3836,12 @@ const CV = (function(){
           const body = E2E ? new Blob([await seal(new Uint8Array(await ub.arrayBuffer()), code)], {type:'image/jpeg'}) : ub;
           const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(id, code), 'Content-Type':'image/jpeg'}, body});
           if(!r.ok && r.status !== 413){ try { upErr = ((await r.json()).error) || ''; } catch(e){} upErr = (upErr ? upErr + ' ' : '') + '(' + r.status + ')'; break; }
+          try {   // + vignette légère (≈ 30 Ko) pour que l’autre téléphone affiche vite la grille
+            let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
+            if(!tb) tb = await shrink(ub, 480, 0.74);
+            const tbody = E2E ? new Blob([await seal(new Uint8Array(await tb.arrayBuffer()), code)], {type:'image/jpeg'}) : tb;
+            await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(id + '.t', code), 'Content-Type':'image/jpeg'}, body:tbody});
+          } catch(e){}
           try { await IDB.put({id, blob:new Blob([await o.blob.arrayBuffer()], {type:o.blob.type || 'image/jpeg'}), up:1}); } catch(e){}   // copie : Safari perd le fichier si on réenregistre le même objet
         }
         M.pq = M.pq.filter(x=>x!==id); persist(); syncDot();
@@ -3789,8 +3857,8 @@ const CV = (function(){
   function renderSouv(){
     const all = souvs(), nph = all.reduce((s,x)=>s+(x.photos||[]).length,0);
     let h = `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">📸 ${all.length} souvenir${all.length>1?'s':''}</div><div class="v-sum-small">${nph} photo${nph>1?'s':''}</div></div>
-      <div class="v-sum-small">Les étapes, les récits et les photos du voyage. Importe un voyage Polarsteps ou ajoute tes propres souvenirs.</div>
-      <div class="cv-row" style="margin-top:10px"><button class="v-day-edit" onclick="CV.editSouv(null)">＋ Souvenir</button><button class="v-day-edit" onclick="CV.psPick()">📥 Importer Polarsteps</button></div>
+      <div class="v-sum-small">Les étapes, les récits et les photos du voyage. Ajoute tes propres souvenirs avec leurs photos.</div>
+      <div class="cv-row" style="margin-top:10px"><button class="v-day-edit" onclick="CV.editSouv(null)">＋ Souvenir</button><button class="v-day-edit" onclick="CV.autoPhotoPick()">✨ Ranger mes photos</button>${nph || all.length ? `<button class="v-day-edit" onclick="CV.filmOpen()">🎬 Film du voyage</button>` : ''}</div>
       ${(M.pq||[]).length && M.sync.on ? `<div class="v-sum-small" style="margin-top:6px">${E2E ? '🔐' : '☁️'} ${pqN()} photo(s) en cours ${E2E ? 'de chiffrement et d’envoi' : 'd’envoi'}…</div>` : ''}
       ${!M.sync.on && nph ? `<div class="v-sum-small" style="margin-top:6px">Les photos restent sur ce téléphone tant que la synchro n’est pas activée.</div>` : ''}</div>`;
     if(!all.length) h += `<div class="v-empty">Encore aucun souvenir pour ce voyage.</div>`;
@@ -3874,11 +3942,11 @@ const CV = (function(){
   let vw = null;
   async function view(sid, i){
     const s = R[sid]; if(!s || !(s.photos||[]).length) return;
-    vw = {ph:s.photos, i};
+    vw = {ph:s.photos, i, sid};
     let el = document.getElementById('cv-viewer');
     if(!el){
       el = document.createElement('div'); el.id = 'cv-viewer';
-      el.innerHTML = `<img id="cv-vimg" alt=""><button class="vx" onclick="CV.viewClose()">✕</button><button class="vp" onclick="CV.viewGo(-1)">‹</button><button class="vn" onclick="CV.viewGo(1)">›</button><div class="vc" id="cv-vc"></div>`;
+      el.innerHTML = `<img id="cv-vimg" alt=""><button class="vx" onclick="CV.viewClose()">✕</button><button class="vcov" onclick="CV.coverSet()" aria-label="Photo de couverture du voyage" title="Photo de couverture du voyage">🖼️</button><button class="vp" onclick="CV.viewGo(-1)">‹</button><button class="vn" onclick="CV.viewGo(1)">›</button><div class="vc" id="cv-vc"></div>`;
       let x0 = null;
       el.addEventListener('touchstart', e=>{ x0 = e.touches[0].clientX; }, {passive:true});
       el.addEventListener('touchend', e=>{ if(x0===null) return; const dx = e.changedTouches[0].clientX - x0; if(Math.abs(dx) > 50) viewGo(dx < 0 ? 1 : -1); x0 = null; });
@@ -3902,8 +3970,8 @@ const CV = (function(){
   function viewGo(d){ if(!vw) return; vw.i = (vw.i + d + vw.ph.length) % vw.ph.length; viewShow(); }
   function viewClose(){ const el = document.getElementById('cv-viewer'); if(el) el.style.display = 'none'; document.body.style.overflow = ''; vw = null; }
 
-  /* ── Import Polarsteps (« Télécharger mes données » → ZIP) ── */
-  let zipLib = null, ps = null;
+  /* ── Lecteur de ZIP (sauvegarde complète) ── */
+  let zipLib = null;
   function loadZip(){
     if(zipLib) return zipLib;
     const srcs = ['vendor/zip-native.min.js', 'https://cdn.jsdelivr.net/npm/@zip.js/zip.js@2.23.0/dist/zip-native.min.js'];
@@ -3918,134 +3986,6 @@ const CV = (function(){
       tryOne(0);
     });
     return zipLib;
-  }
-  function psPick(){
-    openSheet(`<h2>📥 Import Polarsteps</h2>
-      <div class="v-sum-small" style="margin-bottom:10px">Polarsteps t’envoie un fichier <b>.zip</b>. Sur iPhone, l’app Fichiers l’ouvre toute seule en dossiers : il faut le recompresser.</div>
-      <ol class="cv-ps-help">
-        <li>Dans <b>Fichiers</b>, ouvre le dossier <b>trip</b>.</li>
-        <li>Appui long sur le dossier d’<b>un</b> voyage (ex. <i>venise_19508845</i>) → <b>Compresser</b>. Un fichier <i>venise_19508845.zip</i> apparaît.</li>
-        <li>Touche le bouton ci-dessous et choisis ce .zip. Tu peux en choisir plusieurs d’un coup.</li>
-      </ol>
-      <div class="v-sum-small" style="margin:8px 0">Un voyage à la fois, c’est plus rapide et plus sûr. Sans photos, tu peux aussi choisir directement le <i>trip.json</i> du voyage.</div>
-      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.psChoose()">📂 Choisir le fichier</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
-  }
-  function psChoose(){
-    const inp = document.createElement('input'); inp.type = 'file'; inp.multiple = true;
-    inp.accept = '.zip,.json,application/zip,application/x-zip-compressed,application/json';
-    inp.style.display = 'none'; document.body.appendChild(inp);
-    inp.onchange = () => { const fs = [...(inp.files || [])]; inp.remove(); if(fs.length) psRead(fs); };
-    inp.click();
-  }
-  const psTime = t => { if(t==null || t==='') return ''; const n = Number(t); const d = isNaN(n) ? new Date(t) : new Date(n > 1e12 ? n : n*1000); return isNaN(d) ? '' : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
-  const isImg = n => /\.(jpe?g|png|webp|heic|heif)$/i.test(n) && !/(^|\/)(\._|__MACOSX\/)/.test(n);
-  const psSteps = j => (j.all_steps || j.steps || (j.trip && (j.trip.all_steps || j.trip.steps)) || []).slice().sort((a,b)=>(Number(a.start_time)||0)-(Number(b.start_time)||0));
-  function psTrip(j, dir, photos, reader, src){
-    if(j && j.trip && !j.all_steps && !j.steps) j = Object.assign({}, j.trip, j);
-    const steps = psSteps(j);
-    return {dir, j, steps, photos, reader, name:j.name || j.title || dir.split('/').filter(Boolean).pop() || src,
-      debut:psTime(j.start_date || (steps[0]||{}).start_time), fin:psTime(j.end_date || (steps[steps.length-1]||{}).start_time)};
-  }
-  async function psRead(files){
-    openSheet(`<h2>📥 Import Polarsteps</h2><div class="cv-route-load" id="ps-msg">Lecture du fichier…</div>`);
-    const say = t => { const m = document.getElementById('ps-msg'); if(m) m.textContent = t; };
-    const found = [], notes = [];
-    try {
-      for(const file of files){
-        const nm = file.name || 'fichier';
-        if(/\.json$/i.test(nm) || file.type === 'application/json'){
-          let j; try { j = JSON.parse(await file.text()); } catch(e){ notes.push(nm + ' : JSON illisible'); continue; }
-          if(!psSteps(j).length){ notes.push(nm + ' : pas d’étapes (choisis le trip.json du voyage)'); continue; }
-          found.push(psTrip(j, '', [], null, nm)); continue;
-        }
-        say('Lecture de ' + nm + '…');
-        const zip = await loadZip();
-        let reader, entries;
-        try { reader = new zip.ZipReader(new zip.BlobReader(file)); entries = await reader.getEntries(); }
-        catch(e){ notes.push(nm + ' : ce n’est pas un .zip lisible'); continue; }
-        const tj = entries.filter(e => !e.directory && /(^|\/)trip\.json$/i.test(e.filename) && !/__MACOSX\//.test(e.filename));
-        if(!tj.length){
-          const nImg = entries.filter(e => !e.directory && isImg(e.filename)).length;
-          notes.push(nm + ' : pas de trip.json dedans' + (nImg ? ` (${nImg} photos seules). Compresse le dossier du voyage entier, celui qui contient trip.json.` : '.'));
-          try { await reader.close(); } catch(e){}
-          continue;
-        }
-        let n = 0;
-        for(const e of tj){
-          let j; try { j = JSON.parse(await e.getData(new zip.TextWriter())); } catch(err){ notes.push(e.filename + ' : illisible'); continue; }
-          const dir = e.filename.replace(/trip\.json$/i, '');
-          const photos = entries.filter(x => !x.directory && x.filename.startsWith(dir) && isImg(x.filename));
-          const f = psTrip(j, dir, photos, reader, nm);
-          if(!f.steps.length){ notes.push(f.name + ' : aucune étape'); continue; }
-          found.push(f); n++;
-        }
-        if(!n){ try { await reader.close(); } catch(e){} }
-      }
-      if(!found.length) throw new Error('Aucun voyage trouvé. ' + notes.join(' · '));
-      ps = {found};
-      const opts = sel => `<option value="new"${sel==='new'?' selected':''}>＋ Nouveau voyage (archivé)</option>${trips().map(t=>`<option value="${t.id}"${sel===t.id?' selected':''}>${esc(t.titre)}</option>`).join('')}`;
-      const guess = f => { const t = trips().find(t => t.debut && f.debut && t.debut <= (f.fin||f.debut) && (t.fin||t.debut) >= f.debut); return t ? t.id : 'new'; };
-      openSheet(`<h2>📥 Import Polarsteps</h2>
-        <div class="v-sum-small" style="margin-bottom:10px">${found.length} voyage(s) trouvé(s). Coche ceux à importer et choisis où les ranger. Un voyage déjà dans le carnet garde son programme et ses dépenses : seuls les souvenirs et photos sont ajoutés. Les photos sont copiées : tes originaux ne sont jamais touchés.</div>
-        ${found.map((f,i)=>`<div class="cv-psrow"><label class="cv-checkline"><input type="checkbox" id="ps-c${i}" checked> <b>${esc(f.name)}</b></label>
-          <div class="v-sum-small">${f.debut ? fdate(f.debut) + ' → ' + fdate(f.fin) + ' ' + f.debut.slice(0,4) : ''} · ${f.steps.length} étape(s) · ${f.photos.length} photo(s)</div>
-          <select class="v-in" id="ps-t${i}">${opts(guess(f))}</select></div>`).join('')}
-        ${notes.length ? `<div class="v-sum-small" style="margin:6px 0">ℹ️ ${notes.map(esc).join('<br>')}</div>` : ''}
-        <div class="v-sum-small" id="ps-msg" style="margin:8px 0"></div>
-        <div class="v-actions"><button type="button" class="v-btn" id="ps-go" onclick="CV.psImport()">Importer</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
-    } catch(e){ say('⚠️ ' + (e.message || e)); }
-  }
-  // Photos d'une étape : n'importe quel dossier « <nom>_<idEtape> » au-dessus de la photo
-  function psStepPhotos(f, st, k){
-    if(!f.photos.length) return [];
-    if(st.id != null){
-      const re = new RegExp('(^|/)[^/]*_' + String(st.id).replace(/\W/g,'') + '/');
-      const m = f.photos.filter(p => re.test(p.filename.slice(f.dir.length)));
-      if(m.length) return m;
-    }
-    return [];
-  }
-  async function psImport(){
-    if(!ps) return;
-    const zip = window.zip, msg = document.getElementById('ps-msg'), btn = document.getElementById('ps-go');
-    const say = t => { if(msg) msg.textContent = t; };
-    btn.disabled = true;
-    let lastTrip = null, nPh = 0;
-    try {
-      for(let i=0;i<ps.found.length;i++){
-        if(!document.getElementById('ps-c'+i).checked) continue;
-        const f = ps.found[i], out = [];
-        let tid = document.getElementById('ps-t'+i).value;
-        if(tid === 'new'){
-          tid = 'ps' + (f.j.id || uid());
-          if(!R[tid] || R[tid].deleted) out.push({id:tid, type:'trip', titre:f.name, sous:'', debut:f.debut, fin:f.fin, voyageurs:[M.me].filter(Boolean), objectif:'', archived:true, imported:true});
-          f.steps.forEach(st=>{ const d = psTime(st.start_time); if(d && !R['day:'+tid+':'+d]) out.push({id:'day:'+tid+':'+d, type:'day', trip:tid, date:d, titre:(st.location && st.location.name) || st.name || st.display_name || '', plan:'', imported:true}); });
-        }
-        for(let k=0;k<f.steps.length;k++){
-          const st = f.steps[k], sid = 'sv-ps' + (st.id || (f.j.id||'') + '-' + k);
-          const loc = st.location || {};
-          const prev = R[sid] && !R[sid].deleted ? R[sid] : null;
-          const mine = psStepPhotos(f, st, k);
-          const ids = prev ? [...(prev.photos||[])] : [];
-          for(let n=0;n<mine.length;n++){
-            const pid = 'ps' + (st.id||k) + '-' + mine[n].filename.split('/').pop().replace(/[^\w.\-]/g,'').slice(0,60);
-            if(ids.includes(pid)) continue;
-            nPh++; say(`📸 ${f.name} · étape ${k+1}/${f.steps.length} · photo ${nPh}…`);
-            try { const blob = await mine[n].getData(new zip.BlobWriter('image/jpeg')); await storePhoto(blob, pid); ids.push(pid); }
-            catch(err){ /* photo illisible (HEIC…) : on passe */ }
-          }
-          out.push(Object.assign(prev ? clone(prev) : {id:sid, type:'souv', imported:true}, {trip:tid, date:psTime(st.start_time), ordre:k,
-            titre: st.name || st.display_name || loc.name || '', lieu: loc.name || '', pays: loc.detail || loc.country || '', cc: (loc.country_code || '').toUpperCase(),
-            texte: st.description || (prev ? prev.texte : '') || '', lat: loc.lat, lng: loc.lon, photos: ids}));
-        }
-        putMany(out, false); lastTrip = tid;
-      }
-      for(const r of new Set(ps.found.map(f=>f.reader).filter(Boolean))){ try { await r.close(); } catch(e){} }
-      ps = null; persist();
-      closeSheet(true); toast('📥 Import terminé · ' + nPh + ' photo(s)');
-      if(lastTrip){ M.tab = 'souv'; go(lastTrip); }
-      uploadQueue();
-    } catch(e){ say('⚠️ ' + (e.message || e)); btn.disabled = false; }
   }
 
   /* ══════════ Démarrage ══════════ */
@@ -6568,7 +6508,7 @@ const CV = (function(){
       const ago = (Date.now() - new Date(fin + 'T23:59:00')) / 864e5; if(ago > 30) return '';
       const tr = settle(balances());
       return `<div class="cv-live done"><div class="lk">🏁 Voyage terminé</div><div class="lt">${tr.length ? `${tr.length} remboursement${tr.length>1?'s':''} à faire pour solder les comptes.` : 'Les comptes sont soldés. 🎉'}</div>
-        <div class="lb"><button type="button" onclick="CV.tab('budget')">💸 Bilan et remboursements</button><button type="button" onclick="CV.jrSheet()">📖 Journal</button></div></div>`;
+        <div class="lb"><button type="button" onclick="CV.tab('budget')">💸 Bilan et remboursements</button><button type="button" onclick="CV.filmOpen()">🎬 Film du voyage</button><button type="button" onclick="CV.jrSheet()">📖 Journal</button></div></div>`;
     }
     const k = ds.indexOf(td), info = dayInfo(td), spent = spentOn(td), cap = num(t.plafond);
     const bar = cap ? `<div class="lcap${spent > cap ? ' over' : ''}"><span style="width:${Math.min(100, spent/cap*100)}%"></span></div>` : '';
@@ -7207,7 +7147,7 @@ ${pm.join('\n')}</Document></kml>`;
         ${lv && lv.id !== (t||{}).id ? `<button class="v-btn" onclick="CV.go('${lv.id}')">📍 Ouvrir le voyage en cours : ${esc(lv.titre)}</button>` : ''}</div>`; }
     const k = dayList().indexOf(isoToday()), info = dayInfo(isoToday()), {own, night} = itemsForDay(isoToday());
     const tile = (ic, l, fn) => `<button type="button" class="cv-tile" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
-    return `${trkHTML()}${liveCard()}
+    return `${annivCard()}${eveCard()}${nextHero()}${trkHTML()}${liveCard()}
       <div class="cv-tiles">${tile('📍','Step ici','CV.hereNow()')}${tile('🧾','Dépense','CV.tlReceipt()')}${tile('📴','Fiche du jour','CV.tlDay()')}${tile('🛒','Courses','CV.shopSheet()')}${tile('🌤️','Météo','CV.tlMeteo()')}${tile('🌍','Carte','CV.worldMap()')}${tile('📄','Importer','CV.impSheet()')}${tile('🛂','Papiers','CV.tlDocs()')}</div>
       <div class="v-box"><h3>Aujourd’hui · J${k+1}${info.titre ? ' · ' + esc(info.titre) : ''}</h3>${info.plan ? `<p>${esc(info.plan)}</p>` : ''}
         ${[...own, ...night].map(it=>`<button type="button" class="cv-prow" onclick="CV.edit('${it.id}')"><span>${icon(it)} <b>${esc(it.titre)}</b></span><span>${esc(it.heureDep||it.heure||'')}</span></button>`).join('') || '<div class="v-sum-small">Rien de réservé aujourd’hui.</div>'}
@@ -7243,7 +7183,7 @@ ${pm.join('\n')}</Document></kml>`;
       ${bilanSplit()}<div class="v-box"><h3>💶 Dépenses</h3><p><b>${eur(tot)}</b> au total${v.length > 1 ? ` · ${eur(tot/v.length)} par personne` : ''}${t.objectif ? ` · budget visé ${eur(t.objectif)} / pers.` : ''}</p>
         ${Object.entries(byCat).filter(([,x])=>x>0).sort((a,b)=>b[1]-a[1]).map(([c,x])=>`<div class="cv-bbar"><span>${CATS[c] ? CATS[c].icon + ' ' + CATS[c].lbl : c}</span><i style="width:${x/mx*100}%"></i><b>${eur(x)}</b></div>`).join('')}</div>
       <div class="v-box"><h3>📸 Souvenirs</h3><p>${sv.length} souvenir${sv.length>1?'s':''} · ${nph} photo${nph>1?'s':''}</p>
-        <button class="v-btn" onclick="CV.albumSheet()">📕 Créer l’album photo (PDF)</button><button class="v-btn sec" onclick="CV.jrSheet()">📖 Journal simple (PDF)</button><button class="v-btn sec" onclick="CV.worldMap()">🌍 Revoir sur la carte du monde</button></div>${coffeeBilan(t)}`;
+        <button class="v-btn" onclick="CV.filmOpen()">🎬 Film du voyage</button><button class="v-btn sec" onclick="CV.albumSheet()">📕 Créer l’album photo (PDF)</button><button class="v-btn sec" onclick="CV.jrSheet()">📖 Journal simple (PDF)</button><button class="v-btn sec" onclick="CV.worldMap()">🌍 Revoir sur la carte du monde</button></div>${coffeeBilan(t)}`;
   }
   function bilanClose(){ const t = clone(trip()); t.archived = true; put(t, '🏁 Voyage clôturé'); refresh(); }
 
@@ -7482,7 +7422,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(!ov){ ov = document.createElement('div'); ov.id = 'cv-world'; document.body.appendChild(ov); }
     ov.innerHTML = `<div class="wm-stars"></div><div id="wm-map"></div>
       <div class="wm-top"><button type="button" class="wm-x" onclick="CV.worldClose()" aria-label="Fermer">✕</button>
-        <div class="wm-seg"><button type="button" class="on" data-m="trips" onclick="CV.worldMode('trips')">🧳 Voyages</button><button type="button" data-m="photos" onclick="CV.worldMode('photos')">📸 Photos</button><button type="button" data-m="pays" onclick="CV.worldMode('pays')">🏳️ Pays</button></div></div>
+        <div class="wm-seg"><button type="button" class="on" data-m="trips" onclick="CV.worldMode('trips')">🧳 Voyages</button><button type="button" data-m="photos" onclick="CV.worldMode('photos')">📸 Photos</button><button type="button" data-m="pays" onclick="CV.worldMode('pays')">🏳️ Pays</button></div><button type="button" class="wm-new" onclick="CV.worldPlan()">✨ Nouveau</button></div>
       <div class="wm-chips" id="wm-chips"></div>
       <div class="wm-story" id="wm-story" hidden></div>
       <div class="wm-bottom"><div class="wm-info" id="wm-info">🌍 Chargement du globe…</div><div class="wm-car" id="wm-car"></div></div>`;
@@ -7522,6 +7462,7 @@ ${pm.join('\n')}</Document></kml>`;
       document.getElementById('cv-world').classList.add('wm-wait');
       map.on('load', async ()=>{
         try { await worldData(); worldMode('trips'); worldCarousel(); } finally { const o = document.getElementById('cv-world'); if(o) o.classList.remove('wm-wait'); }
+        if(wantPlan){ wantPlan = false; setTimeout(worldPlan, 300); }
         spinGlobe();
       });
     } catch(e){ wmInfo('⚠️ ' + esc(e.message)); }
@@ -7779,6 +7720,7 @@ ${pm.join('\n')}</Document></kml>`;
   function newTrip(){
     openSheet(`<h2>🧳 Nouveau voyage</h2><div class="v-sum-small" style="margin-bottom:10px">Comment veux-tu commencer ?</div>
       <button type="button" class="cv-choice" onclick="CV.close();CV.wizard()"><i>🧭</i><span><b>Je sais où je vais</b><small>L’assistant crée le programme, les hébergements et les trajets en 5 étapes.</small></span></button>
+      <button type="button" class="cv-choice" onclick="CV.worldNew()"><i>🌍</i><span><b>Je le dessine sur le globe</b><small>Touche les villes sur la Terre, dans l’ordre : la route se trace et le voyage est créé.</small></span></button>
       <button type="button" class="cv-choice" onclick="CV.inspire()"><i>💡</i><span><b>Je ne sais pas encore où aller</b><small>Quelques questions, et l’appli te propose des destinations adaptées avec ses conseils.</small></span></button>
       <button type="button" class="cv-choice" onclick="CV.blankTrip()"><i>📄</i><span><b>Voyage vierge</b><small>Juste un nom : tu remplis tout toi-même, à ton rythme.</small></span></button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
@@ -9050,7 +8992,558 @@ ${pm.join('\n')}</Document></kml>`;
     await syncNow(true);
     uploadQueue();
   }
-  const BUILD = '2026-10-09z';
+  /* ======================================================================
+     ✨ WHAOU : prochaine étape · rangement auto des photos · film du voyage
+     ====================================================================== */
+  const TT = s => (window.I18N && I18N.tr ? I18N.tr(s) : s), NL = () => (window.I18N && I18N.locale) || 'fr-FR';
+  const hav = (a, b) => { const r = x => x*Math.PI/180, dLa = r(b.lat-a.lat), dLo = r(b.lng-a.lng);
+    return 2*6371*Math.asin(Math.sqrt(Math.sin(dLa/2)**2 + Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dLo/2)**2)); };
+
+  /* ---------- 1) Carte « Prochaine étape » ---------- */
+  function nextHero(){
+    const t = trip(); if(!t || t.archived || t.demo && false) return '';
+    const L = nextMoves(); const nx = L[0]; if(!nx) return '';
+    if(nx.at - Date.now() > 10*864e5) return '';
+    const it = nx.it, td = isoToday(), tm = it.cat==='transport' ? it.heureDep : it.heure;
+    const day = it.date === td ? 'Aujourd’hui' : it.date === new Date(Date.now()+864e5).toISOString().slice(0,10) ? 'Demain' : fdate(it.date);
+    const sub = it.cat==='transport' ? [it.from && it.to ? it.from + ' → ' + it.to : '', it.compagnie, it.heureArr ? 'arrivée ' + it.heureArr : ''].filter(Boolean).join(' · ')
+      : it.cat==='hotel' ? [it.nom, it.adresse].filter(Boolean).join(' · ') : [it.adresse, it.lieu].filter(Boolean).join(' · ');
+    const pj = (it.pj||[])[0], more = L.slice(1, 3);
+    const b = (ic, l, fn) => `<button type="button" onclick="${fn}"><i>${ic}</i>${l}</button>`;
+    return `<div class="cv-hero" id="cv-hero" data-at="${nx.at}">
+      <div class="hk">Prochaine étape</div>
+      <div class="ht"><span class="hi">${icon(it)}</span><div><b>${esc(it.titre)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div></div>
+      <div class="hc"><span id="cv-hero-cd">${hhmm(nx.at - Date.now())}</span><small>${day}${nx.timed ? ' · ' + esc(tm) : it.cat==='hotel' ? ' · arrivée à l’hôtel' : ''}</small></div>
+      ${it.ref ? `<button type="button" class="href" onclick="CV.nhCopy('${esc(it.ref)}')">Réf. <b>${esc(it.ref)}</b> <i>⧉</i></button>` : ''}
+      <div class="hb">${it.cat==='transport' && it.mode==='Avion' && nx.at - Date.now() < 36*3600e3 ? b('🛫','Embarquement',`CV.boardShow('${it.id}')`) : ''}${b('🧭','Y aller',`CV.nhGo('${it.id}')`)}${pj ? b('🎫','Billet',`CV.pjOpen('${esc(pj.id)}','${esc(pj.t||'img')}')`) : ''}${it.tel ? b('📞','Appeler',`location.href='tel:${esc(String(it.tel).replace(/[^+\d]/g,''))}'`) : ''}${b('✏️','Fiche',`CV.edit('${it.id}')`)}</div>
+      ${more.length ? `<div class="hn">Ensuite : ${more.map(m=>`${icon(m.it)} ${esc(m.it.titre)} <small>${m.it.date === td ? '' : fshort(m.it.date) + ' '}${esc((m.it.cat==='transport' ? m.it.heureDep : m.it.heure) || '')}</small>`).join(' &nbsp;·&nbsp; ')}</div>` : ''}</div>`;
+  }
+  function nhGo(id){
+    const it = R[id]; if(!it) return; const q = encodeURIComponent;
+    let u;
+    if(it.cat==='transport'){ const pt = String(it.from||'') + (it.mode==='Avion' ? ' aéroport' : /Train/i.test(it.mode||'') ? ' gare' : ''); u = `https://www.google.com/maps/dir/?api=1&destination=${q(pt)}`; }
+    else if(it.cat==='hotel') u = `https://www.google.com/maps/dir/?api=1&destination=${q([it.nom, it.adresse || it.titre].filter(Boolean).join(' '))}`;
+    else u = `https://www.google.com/maps/dir/?api=1&destination=${q(it.adresse || [it.titre, it.lieu].filter(Boolean).join(' '))}`;
+    window.open(u, '_blank', 'noopener');
+  }
+  async function nhCopy(txt){ try { await navigator.clipboard.writeText(txt); toast('📋 Référence copiée'); } catch(e){ prompt('Référence :', txt); } }
+  setInterval(() => { const h = document.getElementById('cv-hero'); if(!h) return; const at = +h.dataset.at, e = document.getElementById('cv-hero-cd'); if(e) e.textContent = hhmm(at - Date.now()); }, 20000);
+
+  /* ---------- 2) Ranger mes photos automatiquement (EXIF → souvenirs) ---------- */
+  async function exifOf(file){
+    const out = {};
+    try {
+      const v = new DataView(await file.slice(0, 262144).arrayBuffer());
+      if(v.getUint16(0) !== 0xFFD8) throw 0;
+      let o = 2;
+      while(o < v.byteLength - 10){
+        const m = v.getUint16(o);
+        if(m === 0xFFE1 && v.getUint32(o+4) === 0x45786966){
+          const t = o + 10, le = v.getUint16(t) === 0x4949, g16 = p => v.getUint16(p, le), g32 = p => v.getUint32(p, le);
+          const ifd = off => { const r = {}, n = g16(t+off); for(let i=0;i<n;i++){ const e = t+off+2+i*12, tag = g16(e), ty = g16(e+2), c = g32(e+4), sz = ([0,1,1,2,4,8,1,1,2,4,8][ty]||1)*c; r[tag] = {ty, c, p: sz > 4 ? t + g32(e+8) : e+8}; } return r; };
+          const str = e => { let s = ''; for(let i=0;i<e.c-1;i++) s += String.fromCharCode(v.getUint8(e.p+i)); return s; };
+          const rat = (e, i) => { const d = g32(e.p+i*8+4); return d ? g32(e.p+i*8)/d : 0; };
+          const i0 = ifd(g32(t+4)), ex = i0[0x8769] ? ifd(g32(i0[0x8769].p)) : {};
+          const ds = ex[0x9003] ? str(ex[0x9003]) : i0[0x0132] ? str(i0[0x0132]) : '';
+          const mm = ds.match(/^(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2})/); if(mm){ out.date = `${mm[1]}-${mm[2]}-${mm[3]}`; out.time = `${mm[4]}:${mm[5]}`; }
+          if(i0[0x8825]){ const g = ifd(g32(i0[0x8825].p));
+            if(g[2] && g[4]){ let la = rat(g[2],0) + rat(g[2],1)/60 + rat(g[2],2)/3600, lo = rat(g[4],0) + rat(g[4],1)/60 + rat(g[4],2)/3600;
+              if(g[1] && str(g[1]).startsWith('S')) la = -la; if(g[3] && str(g[3]).startsWith('W')) lo = -lo;
+              if(isFinite(la) && isFinite(lo) && (la || lo)){ out.lat = +la.toFixed(5); out.lng = +lo.toFixed(5); } } }
+          break;
+        }
+        if((m & 0xFF00) !== 0xFF00) break;
+        o += 2 + v.getUint16(o+2);
+      }
+    } catch(e){}
+    if(!out.date){ const d = new Date(file.lastModified || Date.now()); out.date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; out.time = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); out.guess = 1; }
+    return out;
+  }
+  let AP = null;
+  function autoPhotoPick(){
+    if(!trip()){ alert('Ouvre d’abord un voyage.'); return; }
+    openSheet(`<h2>✨ Ranger mes photos</h2><div class="v-sum-small" style="margin-bottom:10px">Choisis toutes les photos du voyage d’un coup. L’appli lit leur date et leur lieu, les groupe par jour et par endroit, et te propose les souvenirs déjà prêts.</div>
+      <label class="v-btn cv-addph" style="display:block;text-align:center">📷 Choisir les photos<input type="file" accept="image/*" multiple onchange="CV.autoPhotoRead(this)"></label>
+      <div class="v-sum-small" id="ap-msg" style="margin-top:8px"></div>
+      <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+  }
+  async function autoPhotoRead(input){
+    const files = [...(input.files||[])].filter(f=>/^image\//.test(f.type) || /\.(jpe?g|heic|heif|png|webp)$/i.test(f.name)); if(!files.length) return;
+    const msg = document.getElementById('ap-msg'); const say = s => { if(msg) msg.textContent = s; };
+    const info = [];
+    for(let i=0;i<files.length;i++){ if(i%10===0) say(`Lecture des dates et lieux… ${i}/${files.length}`); info.push(Object.assign({f:files[i]}, await exifOf(files[i]))); }
+    info.sort((a,b)=>(a.date + (a.time||'')).localeCompare(b.date + (b.time||'')));
+    const groups = [];
+    info.forEach(p => {
+      const g = groups[groups.length-1];
+      const near = g && g.date === p.date && (!p.lat || !g.lat || hav(g, p) < 40);
+      if(near){ g.ph.push(p); if(p.lat && !g.lat){ g.lat = p.lat; g.lng = p.lng; } }
+      else groups.push({date:p.date, lat:p.lat, lng:p.lng, ph:[p], titre:'', lieu:'', pays:'', cc:''});
+    });
+    // lieux : un seul appel par groupe (1 par seconde, politesse envers le service gratuit)
+    const cache = {}; let n = 0;
+    for(const g of groups){
+      n++; say(`Recherche des lieux… ${n}/${groups.length}`);
+      if(!g.lat) continue;
+      const key = g.lat.toFixed(1) + ',' + g.lng.toFixed(1);
+      if(!cache[key]){
+        try { const j = await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${g.lat}&lon=${g.lng}`)).json();
+          const a = (j && j.address) || {}; cache[key] = {city: a.city || a.town || a.village || a.municipality || a.county || '', pays: a.country || '', cc: (a.country_code || '').toUpperCase()}; } catch(e){ cache[key] = {}; }
+        await new Promise(r => setTimeout(r, 1100));
+      }
+      Object.assign(g, {lieu: [cache[key].city, cache[key].pays].filter(Boolean).join(', '), pays: cache[key].pays || '', cc: cache[key].cc || ''}); g.titre = g.city = cache[key].city || '';
+    }
+    groups.forEach(g => { if(!g.titre) g.titre = TT('Journée du ' + fdate(g.date)); });
+    const t = trip(); AP = {groups, t};
+    apRender();
+  }
+  function apRender(){
+    const t = AP.t, out = d => t.debut && (d < t.debut || (t.fin && d > t.fin)), nAll = AP.groups.reduce((s,g)=>s+g.ph.length,0);
+    openSheet(`<h2>✨ ${AP.groups.length} souvenir${AP.groups.length>1?'s':''} proposé${AP.groups.length>1?'s':''}</h2>
+      <div class="v-sum-small" style="margin-bottom:8px">${nAll} photo(s) rangées par jour et par lieu. Corrige les titres si tu veux, décoche ce que tu ne veux pas.</div>
+      <div class="ap-list">${AP.groups.map((g,i)=>`<div class="ap-row"><label class="cv-checkline"><input type="checkbox" id="ap-${i}" checked></label>
+        <div class="ap-b"><div class="ap-d"><span>${fdate(g.date)}</span> · <span>${g.ph.length} photo${g.ph.length>1?'s':''}</span>${g.cc ? ' · ' + flag(g.cc) : ''}${out(g.date) ? ' · <span class="ap-w">hors dates du voyage</span>' : ''}${g.ph.some(p=>p.guess) ? ' · <span>date estimée</span>' : ''}</div>
+        <input class="v-in" id="ap-t-${i}" value="${esc(g.titre)}">
+        <div class="ap-th">${g.ph.slice(0,5).map(p=>`<img src="${URL.createObjectURL(p.f)}" alt="" loading="lazy">`).join('')}</div></div></div>`).join('')}</div>
+      <div class="v-sum-small" id="ap-msg2"></div>
+      <div class="v-actions"><button type="button" class="v-btn" id="ap-go" onclick="CV.autoPhotoGo()">✅ Créer les souvenirs</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+  }
+  async function autoPhotoGo(){
+    if(!AP) return; const btn = document.getElementById('ap-go'), msg = document.getElementById('ap-msg2'); if(btn) btn.disabled = true;
+    const total = AP.groups.reduce((s,g,i)=> s + ((document.getElementById('ap-' + i)||{}).checked ? g.ph.length : 0), 0); let done = 0, bad = 0; const made = [];
+    for(let i=0;i<AP.groups.length;i++){
+      const g = AP.groups[i]; if(!(document.getElementById('ap-' + i)||{}).checked) continue;
+      const ids = [];
+      for(const p of g.ph){ done++; if(msg) msg.textContent = `Préparation des photos… ${done}/${total}`;
+        try { const pid = 'ph' + uid() + done; await storePhoto(p.f, pid); ids.push(pid); } catch(e){ bad++; } }
+      if(!ids.length) continue;
+      const s = {id:'sv' + uid() + i, type:'souv', trip:AP.t.id, date:g.date, titre:(document.getElementById('ap-t-' + i).value || '').trim() || g.titre, lieu: g.pays ? (g.city || '') : g.lieu, texte:'', photos:ids};
+      if(g.lat){ s.lat = g.lat; s.lng = g.lng; s.pays = g.pays; s.cc = g.cc; }
+      made.push(s);
+    }
+    AP = null;
+    if(made.length) putMany(made, '✨ ' + made.length + ' souvenir(s) créé(s)');
+    closeSheet(true); render(); uploadQueue();
+    if(bad) setTimeout(() => alert(bad + ' photo(s) n’ont pas pu être lues (format non pris en charge ?).'), 300);
+  }
+
+  /* ---------- 3) Le film du voyage ---------- */
+  const filmEase = x => x < .5 ? 2*x*x : 1 - Math.pow(-2*x + 2, 2) / 2;
+  const FW = 720, FH = 1280;
+  let FM = null;
+  async function filmData(){
+    const t = trip(), sv = souvs(), all = items();
+    const geo = [...geoSouvs(M.trip), ...all.filter(i=>i.cat==='hotel' && i.lat != null && i.date).map(i=>({lat:i.lat, lng:i.lng, date:i.date, titre:i.titre, lieu:i.titre}))]
+      .filter(p=>isFinite(+p.lat) && isFinite(+p.lng)).map(p=>({lat:+p.lat, lng:+p.lng, date:p.date||'', name:String(p.lieu || p.titre || '').split(',')[0].trim(), cc:p.cc||''})).sort((a,b)=>a.date.localeCompare(b.date));
+    const pts = []; geo.forEach(p => { const l = pts[pts.length-1]; if(!l || hav(l, p) > 8) pts.push(Object.assign({}, p, {name: l && l.name === p.name ? '' : p.name})); });
+    let dist = 0; for(let i=1;i<pts.length;i++) dist += hav(pts[i-1], pts[i]);
+    const ds = dayList(), days = ds.length || 1, nn = all.filter(i=>i.cat==='hotel').reduce((s,i)=>s + nights(i.date, i.dateFin), 0);
+    const ccs = [...new Set(geo.map(p=>p.cc).filter(Boolean))];
+    const tot = all.reduce((s,i)=>s + totalOf(i), 0), v = tv(), byCat = {}; all.forEach(i=>{ byCat[i.cat] = (byCat[i.cat]||0) + totalOf(i); });
+    const phAll = sv.flatMap(s => (s.photos||[]).map(p => ({id:p, cap:s.titre || s.lieu || '', date:s.date})));
+    const pick = []; const N = Math.min(12, phAll.length); for(let i=0;i<N;i++) pick.push(phAll[Math.floor(i * phAll.length / N)]);
+    return {t, pts, dist, days, nights:nn, ccs, tot, per: v.length ? tot / v.length : tot, perDay: tot / days, cats:Object.entries(byCat).filter(([,x])=>x>0).sort((a,b)=>b[1]-a[1]).slice(0,4), nph: phAll.length, pick, cur: CS()};
+  }
+  async function filmOpen(){
+    const t = trip(); if(!t){ alert('Ouvre d’abord un voyage.'); return; }
+    toast('🎬 Préparation du film…');
+    const D = await filmData();
+    D.imgs = [];
+    for(const p of D.pick){ try { const b = await photoBlob(p.id); if(b) D.imgs.push({bmp: await createImageBitmap(b), cap:p.cap, date:p.date}); } catch(e){} }
+    if(!D.imgs.length && !D.pts.length && !D.tot){ alert('Il n’y a encore rien à raconter : ajoute des souvenirs avec des photos, ou des dépenses.'); return; }
+    D.scenes = [{k:'title', d:4}];
+    if(D.pts.length >= 2) D.scenes.push({k:'map', d:5.5});
+    D.scenes.push({k:'stats', d:5});
+    if(D.imgs.length) D.scenes.push({k:'photos', d:D.imgs.length * 1.5});
+    if(D.tot > 0) D.scenes.push({k:'spend', d:4.5});
+    D.scenes.push({k:'end', d:3.5});
+    let acc = 0; D.scenes.forEach(s => { s.t0 = acc; acc += s.d; }); D.total = acc;
+    FM = {D, t0:0, pos:0, playing:true, raf:0, rec:null};
+    let el = document.getElementById('cv-film'); if(el) el.remove();
+    el = document.createElement('div'); el.id = 'cv-film';
+    el.innerHTML = `<canvas id="cv-film-c" width="${FW}" height="${FH}"></canvas>
+      <div class="fb"><button type="button" onclick="CV.filmPlay()" id="cv-film-pp">⏸</button><button type="button" onclick="CV.filmRestart()">↺</button><button type="button" id="cv-film-snd" onclick="CV.filmMute()">${M.filmMute ? '🔇' : '🔊'}</button><button type="button" class="fs" onclick="CV.filmSave()" id="cv-film-save">💾 Enregistrer la vidéo</button><button type="button" onclick="CV.filmClose()">✕</button></div>
+      <div class="fm" id="cv-film-msg"></div>`;
+    document.body.appendChild(el); document.body.style.overflow = 'hidden';
+    filmAudioStart(); filmLoop(performance.now());
+  }
+  function filmClose(){ if(!FM) return; filmAudioStop(); cancelAnimationFrame(FM.raf); if(FM.rec){ try { FM.rec.stop(); } catch(e){} } (FM.D.imgs||[]).forEach(i=>{ try { i.bmp.close(); } catch(e){} }); FM = null; const el = document.getElementById('cv-film'); if(el) el.remove(); document.body.style.overflow = ''; }
+  function filmPlay(){ if(!FM) return; FM.playing = !FM.playing; document.getElementById('cv-film-pp').textContent = FM.playing ? '⏸' : '▶'; if(FM.playing){ FM.last = performance.now(); if(FA && FA.ac.state === 'suspended') FA.ac.resume(); } else if(FA) FA.ac.suspend(); }
+  function filmRestart(){ if(!FM) return; filmAudioStart(); FM.pos = 0; FM.playing = true; FM.last = performance.now(); document.getElementById('cv-film-pp').textContent = '⏸'; }
+  function filmLoop(now){
+    if(!FM) return; const c = document.getElementById('cv-film-c'); if(!c) return;
+    if(FM.last == null) FM.last = now;
+    if(FM.playing){ FM.pos += (now - FM.last) / 1000; if(FM.pos >= FM.D.total){ if(FM.rec){ FM.pos = FM.D.total - 0.001; filmStopRec(); } else { FM.pos = FM.D.total; FM.playing = false; document.getElementById('cv-film-pp').textContent = '↺'; FM.endHold = true; filmAudioStop(); } } }
+    FM.last = now; filmDraw(c.getContext('2d'), FM.pos);
+    FM.raf = requestAnimationFrame(filmLoop);
+  }
+  const fz = (c, size, w) => { c.font = `${w||700} ${size}px -apple-system, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif`; };
+  function fWrap(c, text, x, y, maxW, lh, maxLines){
+    const words = String(text).split(/\s+/); let line = '', n = 0;
+    for(const w of words){ const tst = line ? line + ' ' + w : w; if(c.measureText(tst).width > maxW && line){ c.fillText(line, x, y + n*lh); n++; line = w; if(maxLines && n >= maxLines) return n; } else line = tst; }
+    if(line){ c.fillText(line, x, y + n*lh); n++; } return n;
+  }
+  function fCover(c, img, x, y, w, h, z, px, py){
+    const s = Math.max(w / img.width, h / img.height) * z, dw = img.width * s, dh = img.height * s;
+    c.save(); c.beginPath(); c.rect(x, y, w, h); c.clip(); c.drawImage(img, x + (w - dw)/2 + px * (dw - w)/2, y + (h - dh)/2 + py * (dh - h)/2, dw, dh); c.restore();
+  }
+  function fBg(c, a, b){ const g = c.createLinearGradient(0, 0, FW * .4, FH); g.addColorStop(0, a || '#0f0a2e'); g.addColorStop(1, b || '#3b1a7a'); c.fillStyle = g; c.fillRect(0, 0, FW, FH); }
+  function filmDraw(c, T){
+    const D = FM.D; let sc = D.scenes.find(s => T >= s.t0 && T < s.t0 + s.d) || D.scenes[D.scenes.length-1];
+    const p = Math.min(1, Math.max(0, (T - sc.t0) / sc.d)), fade = Math.min(1, (T - sc.t0) / .35, (sc.t0 + sc.d - T) / .35 + .0001);
+    c.save(); c.clearRect(0, 0, FW, FH); c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+    FS[sc.k](c, p, D, sc);
+    // fondu entre scènes
+    if(fade < 1){ c.fillStyle = `rgba(8,5,30,${1 - Math.max(0, fade)})`; c.fillRect(0, 0, FW, FH); }
+    c.restore();
+  }
+  const FS = {
+    title(c, p, D){
+      fBg(c); const im = (D.imgs[0] || {}).bmp; if(im){ fCover(c, im, 0, 0, FW, FH, 1.08 + p * .12, p * .3 - .15, 0); }
+      const g = c.createLinearGradient(0, 0, 0, FH); g.addColorStop(0, 'rgba(10,6,40,.55)'); g.addColorStop(.55, 'rgba(10,6,40,.35)'); g.addColorStop(1, 'rgba(10,6,40,.85)'); c.fillStyle = g; c.fillRect(0, 0, FW, FH);
+      const a = filmEase(Math.min(1, p * 2.2)); c.globalAlpha = a; c.fillStyle = '#fff'; fz(c, 30, 600); c.fillText(TT('✈  MON VOYAGE'), FW/2, 430 - (1-a) * 30);
+      fz(c, 84, 800); const lines = []; { const w = String(D.t.titre || '').split(' '); let l = ''; w.forEach(x=>{ if(c.measureText(l + ' ' + x).width > FW - 100 && l){ lines.push(l); l = x; } else l = (l + ' ' + x).trim(); }); if(l) lines.push(l); }
+      lines.slice(0, 3).forEach((l, i) => c.fillText(l, FW/2, 560 + i * 96 - (1-a) * 40)); c.globalAlpha = a * .9; fz(c, 34, 500);
+      c.fillText(D.t.debut ? tripDatesLong(D.t) : '', FW/2, 560 + Math.min(3, lines.length) * 96 + 40); c.globalAlpha = 1;
+    },
+    map(c, p, D){
+      fBg(c, '#07123a', '#1d1b5e'); const P = D.pts, la = P.map(x=>x.lat), lo = P.map(x=>x.lng);
+      const my = y => Math.log(Math.tan(Math.PI/4 + Math.max(-80, Math.min(80, y)) * Math.PI/360));
+      let x0 = Math.min(...lo), x1 = Math.max(...lo), y0 = my(Math.min(...la)), y1 = my(Math.max(...la)); const dx0 = x1 - x0 || 1, dy0 = (y1 - y0) || .02;
+      const bx = FW - 160, by = 760, sx = bx / (dx0 * Math.PI/180), sy = by / dy0, s = Math.min(sx, sy);
+      const ox = (FW - dx0 * Math.PI/180 * s) / 2, oy = 330 + (by - dy0 * s) / 2;
+      const X = lng => ox + (lng - x0) * Math.PI/180 * s, Y = lat => oy + (y1 - my(lat)) * s;
+      c.strokeStyle = 'rgba(255,255,255,.06)'; c.lineWidth = 1; for(let i=0;i<=12;i++){ c.beginPath(); c.moveTo(i * FW/12, 0); c.lineTo(i * FW/12, FH); c.stroke(); } for(let i=0;i<=20;i++){ c.beginPath(); c.moveTo(0, i * FH/20); c.lineTo(FW, i * FH/20); c.stroke(); }
+      c.fillStyle = '#fff'; fz(c, 46, 800); c.fillText(TT('Ta route'), FW/2, 170); c.fillStyle = 'rgba(255,255,255,.7)'; fz(c, 28, 500); c.fillText(D.dist >= 1 ? TT('≈ ' + Math.round(D.dist).toLocaleString(NL()) + ' km parcourus') : '', FW/2, 218);
+      const seg = P.length - 1, q = filmEase(Math.min(1, p / .85)) * seg, full = Math.floor(q);
+      c.lineCap = 'round'; c.lineJoin = 'round'; c.shadowColor = '#a78bfa'; c.shadowBlur = 18; c.strokeStyle = '#a78bfa'; c.lineWidth = 6; c.beginPath(); c.moveTo(X(P[0].lng), Y(P[0].lat));
+      for(let i=1;i<=Math.min(full, seg);i++) c.lineTo(X(P[i].lng), Y(P[i].lat));
+      let hx = X(P[Math.min(full, seg)].lng), hy = Y(P[Math.min(full, seg)].lat);
+      if(full < seg){ const f = q - full, a = P[full], b = P[full+1]; hx = X(a.lng) + (X(b.lng) - X(a.lng)) * f; hy = Y(a.lat) + (Y(b.lat) - Y(a.lat)) * f; c.lineTo(hx, hy); }
+      c.stroke(); c.shadowBlur = 0;
+      P.forEach((pt, i) => { if(i > q + .001) return; const x = X(pt.lng), y = Y(pt.lat), age = Math.min(1, (q - i) * 2 + .001);
+        c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y, 10 * filmEase(age), 0, 7); c.fill(); c.strokeStyle = 'rgba(167,139,250,.9)'; c.lineWidth = 3; c.beginPath(); c.arc(x, y, 10 + 12 * (1 - age), 0, 7); c.stroke();
+        if(pt.name && i < 10){ c.globalAlpha = age; c.fillStyle = '#fff'; fz(c, 24, 600); c.textAlign = x > FW/2 ? 'right' : 'left'; c.fillText(pt.name, x + (x > FW/2 ? -20 : 20), y + (i % 2 ? 34 : -16)); c.textAlign = 'center'; c.globalAlpha = 1; } });
+      c.fillStyle = '#fbbf24'; c.shadowColor = '#fbbf24'; c.shadowBlur = 24; c.beginPath(); c.arc(hx, hy, 9, 0, 7); c.fill(); c.shadowBlur = 0;
+    },
+    stats(c, p, D){
+      fBg(c, '#1a0b3d', '#5b21b6'); c.fillStyle = '#fff'; fz(c, 46, 800); c.fillText(TT('En chiffres'), FW/2, 190);
+      const T = [['🗓️', D.days, 'jours', 'un jour'], ['🛏️', D.nights, 'nuits', 'une nuit'], ['🛣️', Math.round(D.dist), 'km', 'km'], ['🌍', D.ccs.length, 'pays', 'un pays'], ['📸', D.nph, 'photos', 'une photo']].map(x => [x[0], x[1], x[1] === 1 ? TT(x[3]).replace(/^\S+\s+/, '') : TT(x[2])]).filter(x => x[1] > 0);
+      T.forEach((x, i) => { const st = .08 + i * .13, a = filmEase(Math.max(0, Math.min(1, (p - st) / .2))), cy = 330 + i * 160;
+        c.globalAlpha = a; c.fillStyle = 'rgba(255,255,255,.1)'; c.beginPath(); c.roundRect ? c.roundRect(70 + (1-a) * 120, cy - 70, FW - 140, 130, 28) : c.rect(70, cy - 70, FW - 140, 130); c.fill();
+        fz(c, 56, 800); c.fillStyle = '#fff'; c.textAlign = 'left'; c.fillText(x[0], 110 + (1-a) * 120, cy + 18);
+        fz(c, 74, 800); c.fillText(Math.round(x[1] * a).toLocaleString(NL()), 200 + (1-a) * 120, cy + 26); const w = c.measureText(Math.round(x[1] * a).toLocaleString(NL())).width;
+        fz(c, 34, 500); c.fillStyle = 'rgba(255,255,255,.75)'; c.fillText(x[2], 215 + w + (1-a) * 120, cy + 26); c.textAlign = 'center'; c.globalAlpha = 1; });
+      if(D.ccs.length){ fz(c, 54, 400); c.fillStyle = '#fff'; c.globalAlpha = filmEase(Math.max(0, (p - .75) / .2)); c.fillText(D.ccs.slice(0, 8).map(flag).join(' '), FW/2, 1190); c.globalAlpha = 1; }
+    },
+    photos(c, p, D, sc){
+      fBg(c, '#000', '#000'); const n = D.imgs.length, per = 1 / n, i = Math.min(n - 1, Math.floor(p / per)), lp = (p - i * per) / per, im = D.imgs[i];
+      const dir = i % 2 ? -1 : 1; fCover(c, im.bmp, 0, 0, FW, FH, 1.05 + lp * .1, dir * (lp - .5) * .5, 0);
+      const g = c.createLinearGradient(0, FH - 380, 0, FH); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.8)'); c.fillStyle = g; c.fillRect(0, FH - 380, FW, 380);
+      const a = Math.min(1, lp * 4, (1 - lp) * 6 + .0001); c.globalAlpha = Math.max(0, a); c.fillStyle = '#fff'; fz(c, 46, 800); c.textAlign = 'left'; fWrap(c, im.cap || '', 56, FH - 130, FW - 112, 54, 2);
+      fz(c, 28, 500); c.fillStyle = 'rgba(255,255,255,.8)'; c.fillText(im.date ? fdate(im.date) : '', 56, FH - 60); c.textAlign = 'center'; c.globalAlpha = 1;
+      c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(56, 56, FW - 112, 4); c.fillStyle = '#fff'; c.fillRect(56, 56, (FW - 112) * p, 4);
+    },
+    spend(c, p, D){
+      fBg(c, '#06231f', '#0f766e'); c.fillStyle = '#fff'; fz(c, 46, 800); c.fillText(TT('Ce que ça a coûté'), FW/2, 190);
+      const a = filmEase(Math.min(1, p * 2)); fz(c, 110, 800); c.fillText(Math.round(D.tot * a).toLocaleString(NL()) + ' ' + D.cur, FW/2, 400);
+      fz(c, 32, 500); c.fillStyle = 'rgba(255,255,255,.8)'; c.fillText(TT(`${Math.round(D.perDay).toLocaleString(NL())} ${D.cur} par jour`) + (D.per !== D.tot ? ' · ' + TT(`${Math.round(D.per).toLocaleString(NL())} ${D.cur} par personne`) : ''), FW/2, 460);
+      const mx = Math.max(1, ...D.cats.map(x=>x[1]));
+      D.cats.forEach(([k, x], i) => { const y = 600 + i * 130, w = (FW - 200) * (x / mx) * filmEase(Math.max(0, Math.min(1, (p - .25 - i * .1) / .3)));
+        c.textAlign = 'left'; fz(c, 32, 600); c.fillStyle = '#fff'; c.fillText((CATS[k] ? CATS[k].icon + ' ' + TT(CATS[k].lbl) : k), 100, y);
+        c.fillStyle = 'rgba(255,255,255,.15)'; c.fillRect(100, y + 18, FW - 200, 26); c.fillStyle = '#5eead4'; c.fillRect(100, y + 18, w, 26);
+        c.textAlign = 'right'; fz(c, 28, 600); c.fillStyle = 'rgba(255,255,255,.85)'; c.fillText(Math.round(x).toLocaleString(NL()) + ' ' + D.cur, FW - 100, y); c.textAlign = 'center'; });
+    },
+    end(c, p, D){
+      fBg(c); const a = filmEase(Math.min(1, p * 2)); c.globalAlpha = a; c.fillStyle = '#fff'; fz(c, 120, 800); c.fillText('🧳', FW/2, 560 - (1-a) * 30);
+      fz(c, 64, 800); c.fillText(TT('À la prochaine !'), FW/2, 700); fz(c, 34, 500); c.fillStyle = 'rgba(255,255,255,.75)'; c.fillText(String(D.t.titre || ''), FW/2, 770);
+      fz(c, 30, 700); c.fillStyle = '#c4b5fd'; c.fillText(TT('Fait avec Vezoria'), FW/2, 1160); c.globalAlpha = 1;
+    }
+  };
+  async function filmSave(){
+    if(!FM) return; const c = document.getElementById('cv-film-c'), msg = document.getElementById('cv-film-msg');
+    if(!c.captureStream || typeof MediaRecorder === 'undefined'){ alert('Ce navigateur ne sait pas enregistrer la vidéo. Fais plutôt une capture d’écran vidéo du téléphone pendant la lecture.'); return; }
+    const types = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm']; const mime = types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+    const stream = c.captureStream(30), chunks = []; let rec; filmAudioStart(); try { if(FA && FA.dest && FA.on) FA.dest.stream.getAudioTracks().forEach(tr=>stream.addTrack(tr)); } catch(e){}
+    try { rec = new MediaRecorder(stream, mime ? {mimeType:mime, videoBitsPerSecond:5000000} : {}); } catch(e){ alert('Enregistrement impossible : ' + e.message); return; }
+    rec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+    rec.onstop = async () => {
+      const type = rec.mimeType || mime || 'video/webm', ext = /mp4/.test(type) ? 'mp4' : 'webm', blob = new Blob(chunks, {type});
+      const name = 'film-' + String(FM && FM.D.t.titre || 'voyage').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '.' + ext;
+      if(FM){ FM.rec = null; if(msg) msg.textContent = ''; const b = document.getElementById('cv-film-save'); if(b) b.disabled = false; }
+      const file = new File([blob], name, {type});
+      try { if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:name}); return; } } catch(e){ if(e && e.name === 'AbortError') return; }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { a.remove(); URL.revokeObjectURL(a.href); }, 5000);
+    };
+    FM.rec = rec; FM.chunks = chunks; document.getElementById('cv-film-save').disabled = true; if(msg) msg.textContent = '🔴 Enregistrement… ne quitte pas l’écran (' + Math.round(FM.D.total) + ' s)';
+    FM.pos = 0; FM.playing = true; FM.last = performance.now(); document.getElementById('cv-film-pp').textContent = '⏸'; rec.start(500);
+  }
+  function filmStopRec(){ if(FM && FM.rec){ filmAudioStop(); const r = FM.rec; setTimeout(() => { try { r.stop(); } catch(e){} }, 400); FM.playing = false; } }
+
+  /* ======================================================================
+     ✨ VOYAGE EN 5 ACTES : couverture · préparation · jour J · bienvenue · soir · anniversaire · globe
+     ====================================================================== */
+  /* ---------- Rêver : couverture vivante (photo du voyage dans l'en-tête) ---------- */
+  function coverId(t){
+    if(!t) return ''; if(t.cover) return t.cover;
+    const s = list('souv', x=>x.trip===t.id && (x.photos||[]).length).sort((a,b)=>(a.date||'').localeCompare(b.date||''))[0];
+    return s ? s.photos[0] : '';
+  }
+  let coverCur = '';
+  async function coverPaint(t){
+    const hero = document.querySelector('.header .hero'); if(!hero) return;
+    let el = document.getElementById('cv-cover');
+    const id = coverId(t);
+    if(!id){ if(el) el.remove(); hero.classList.remove('has-cover'); coverCur = ''; return; }
+    if(id === coverCur && el) return; coverCur = id;
+    if(!el){ el = document.createElement('div'); el.id = 'cv-cover'; hero.prepend(el); }
+    const u = urls[id] || urls[id + '.t'] || await photoURL(id + '.t');
+    if(coverCur !== id) return;
+    if(u){ el.style.backgroundImage = `url("${u}")`; hero.classList.add('has-cover'); }
+    photoURL(id).then(full=>{ if(full && coverCur === id) el.style.backgroundImage = `url("${full}")`; }).catch(()=>{});
+  }
+  function coverSet(){
+    if(!vw || !vw.sid) return; const s = R[vw.sid], id = vw.ph[vw.i]; if(!s || !R[s.trip]) return;
+    const t = clone(R[s.trip]); t.cover = id; put(t, '🖼️ Photo de couverture du voyage'); coverCur = ''; renderHeader();
+  }
+
+  /* ---------- Préparer : niveau de préparation ---------- */
+  function prepSteps(){
+    const t = trip(); if(!t) return [];
+    const all = items(), ok = i => i.statut === 'booked' || i.statut === 'paid';
+    const tr = all.filter(i=>i.cat==='transport'), ho = all.filter(i=>i.cat==='hotel');
+    const ns = t.debut && t.fin ? range(t.debut, t.fin).slice(0, -1) : [];
+    const covered = ns.filter(d=>ho.some(h=>h.date && h.date <= d && (h.dateFin ? d < h.dateFin : h.date === d))).length;
+    const ck = list('check', c=>c.trip===t.id), ckd = ck.filter(c=>c.done).length;
+    const di = (() => { try { return docIssues(); } catch(e){ return []; } })();
+    return [
+      {k:'dates', l:'Dates du voyage', ok:!!t.debut, fn:'CV.datesSheet()'},
+      {k:'aller', l:'Trajet aller réservé', ok:tr.some(i=>ok(i) && (!t.debut || i.date === t.debut || i.date < t.debut)) || tr.some(ok), fn:`CV.tab('transport')`},
+      {k:'nuits', l: ns.length ? 'Nuits réservées' : 'Hébergement', ok: ns.length ? covered === ns.length && ho.every(h=>ok(h) || !h.date) : ho.some(ok), n: ns.length ? covered + '/' + ns.length : '', fn:`CV.tab('hotel')`},
+      {k:'retour', l:'Trajet retour réservé', ok: !t.fin || tr.some(i=>ok(i) && i.date && i.date >= t.fin), fn:`CV.tab('transport')`},
+      {k:'budget', l:'Budget fixé', ok:!!num(t.objectif), fn:`CV.editTrip('${t.id}')`},
+      {k:'docs', l:'Documents vérifiés', ok:!di.length, fn:'CV.tlDocs()'},
+      {k:'check', l:'Checklist', ok: ck.length > 0 && ckd === ck.length, n: ck.length ? ckd + '/' + ck.length : '', fn:`CV.tab('check')`}
+    ];
+  }
+  function prepGauge(){
+    const t = trip(); if(!t || t.archived || tripPhase(t) !== 'prep' || hidden('blk:prep')) return '';
+    const S = prepSteps(), done = S.filter(s=>s.ok).length, pct = Math.round(done / S.length * 100);
+    const lv = pct >= 100 ? ['✅','Prêt à partir'] : pct >= 75 ? ['🎒','Presque prêt'] : pct >= 45 ? ['🧩','En préparation'] : pct >= 15 ? ['✏️','Esquisse'] : ['💭','Rêve'];
+    const R0 = 34, C = 2 * Math.PI * R0, off = C * (1 - pct/100), open = !!M.prepOpen;
+    return `<div class="cv-prep${open?' open':''}"><button type="button" class="pp-h" onclick="CV.prepTog()">
+        <svg viewBox="0 0 80 80" class="pp-ring"><circle cx="40" cy="40" r="${R0}" class="bg"/><circle cx="40" cy="40" r="${R0}" class="fg" style="stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${off.toFixed(1)}"/><text x="40" y="46" text-anchor="middle">${pct}%</text></svg>
+        <span class="pp-t"><small>Niveau de préparation</small><b>${lv[0]} ${lv[1]}</b><small>${done} / ${S.length} étapes franchies</small></span><span class="pp-ch">${open ? '▴' : '▾'}</span></button>
+      ${open ? `<div class="pp-l">${S.map(s=>`<button type="button" class="pp-s${s.ok?' ok':''}" onclick="${s.fn}"><i>${s.ok ? '✓' : '○'}</i><span>${s.l}</span>${s.n ? `<small>${s.n}</small>` : ''}</button>`).join('')}</div>` : ''}</div>`;
+  }
+  function prepTog(){ M.prepOpen = !M.prepOpen; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
+
+  /* ---------- Moments : « Demain, tu pars » et « Bienvenue à … » (une seule fois chacun) ---------- */
+  const SAY = {   // bonjour, merci, s'il te plaît, au revoir, santé
+    PT:['Olá','Obrigado / Obrigada','Por favor','Adeus','Saúde!'], BR:['Olá','Obrigado / Obrigada','Por favor','Tchau','Saúde!'],
+    ES:['Hola','Gracias','Por favor','Adiós','¡Salud!'], MX:['Hola','Gracias','Por favor','Adiós','¡Salud!'], AR:['Hola','Gracias','Por favor','Chau','¡Salud!'],
+    IT:['Ciao / Buongiorno','Grazie','Per favore','Arrivederci','Salute!'], DE:['Hallo / Guten Tag','Danke','Bitte','Tschüss','Prost!'], AT:['Grüß Gott','Danke','Bitte','Servus','Prost!'],
+    NL:['Hallo','Dank je wel','Alsjeblieft','Doei','Proost!'], GB:['Hello','Thank you','Please','Goodbye','Cheers!'], IE:['Hello / Dia dhuit','Thank you','Please','Goodbye','Sláinte!'],
+    US:['Hi','Thank you','Please','Bye','Cheers!'], CA:['Hello / Bonjour','Thank you','Please','Bye','Cheers!'], AU:['G’day','Thanks','Please','See ya','Cheers!'],
+    GR:['Yásou (Γειά σου)','Efcharistó (Ευχαριστώ)','Parakaló (Παρακαλώ)','Andío (Αντίο)','Yámas! (Γεια μας)'], MT:['Bonġu','Grazzi','Jekk jogħġbok','Saħħa','Saħħa!'],
+    TR:['Merhaba','Teşekkürler','Lütfen','Hoşça kal','Şerefe!'], HR:['Bok / Dobar dan','Hvala','Molim','Doviđenja','Živjeli!'], CZ:['Ahoj / Dobrý den','Děkuji','Prosím','Na shledanou','Na zdraví!'],
+    PL:['Cześć / Dzień dobry','Dziękuję','Proszę','Do widzenia','Na zdrowie!'], HU:['Szia / Jó napot','Köszönöm','Kérem','Viszlát','Egészségedre!'], RO:['Salut / Bună ziua','Mulțumesc','Vă rog','La revedere','Noroc!'],
+    SE:['Hej','Tack','Snälla','Hej då','Skål!'], NO:['Hei','Takk','Vær så snill','Ha det','Skål!'], DK:['Hej','Tak','Vær så venlig','Farvel','Skål!'], FI:['Moi / Hei','Kiitos','Ole hyvä','Näkemiin','Kippis!'], IS:['Halló / Góðan dag','Takk','Gjörðu svo vel','Bless','Skál!'],
+    MA:['Salam','Choukran','Afak','Bslama','Bsaha!'], EG:['Salam / Ahlan','Shukran','Min fadlak','Ma’a salama','Fi sihhitak!'], TN:['Aslema','Yaïchek','Brabbi','Bslama','Bsaha!'],
+    JP:['Konnichiwa (こんにちは)','Arigatō (ありがとう)','Onegaishimasu (お願いします)','Sayōnara (さようなら)','Kanpai! (乾杯)'], TH:['Sawasdee (สวัสดี)','Khop khun (ขอบคุณ)','Karuna (กรุณา)','Laa gon (ลาก่อน)','Chon kaew! (ชนแก้ว)'],
+    CN:['Nǐ hǎo (你好)','Xièxie (谢谢)','Qǐng (请)','Zàijiàn (再见)','Gānbēi! (干杯)'], KR:['Annyeonghaseyo (안녕하세요)','Gamsahamnida (감사합니다)','Juseyo (주세요)','Annyeonghi gaseyo (안녕히 가세요)','Geonbae! (건배)'],
+    VN:['Xin chào','Cảm ơn','Làm ơn','Tạm biệt','Một, hai, ba, dzô!'], ID:['Halo / Selamat pagi','Terima kasih','Tolong','Sampai jumpa','Bersulang!'], IN:['Namaste (नमस्ते)','Dhanyavaad (धन्यवाद)','Kripya (कृपया)','Phir milenge (फिर मिलेंगे)','Cheers!']
+  };
+  const SAY_LANG = {PT:'pt',BR:'pt',ES:'es',MX:'es',AR:'es',IT:'it',DE:'de',AT:'de',NL:'nl',GB:'en',IE:'en',US:'en',CA:'en',AU:'en',FR:'fr',BE:'fr',LU:'fr',MC:'fr'};
+  const EURO = 'AT BE CY DE EE ES FI FR GR HR IE IT LT LU LV MT NL PT SI SK MC SM VA AD ME XK'.split(' ');
+  let momentDone = false;
+  async function moments(){
+    if(momentDone || document.getElementById('cv-moment') || document.getElementById('v-sheet-bg')) return;
+    const t = trip(); if(!t || !t.debut || t.archived || t.demo) return;
+    const td = isoToday(), tm = new Date(Date.now() + 864e5).toISOString().slice(0,10); M.seen = M.seen || {};
+    // la veille (ou le matin du départ) : « Demain, tu pars »
+    if((t.debut === tm || (t.debut === td && new Date().getHours() < 11)) && !M.seen['eve:' + t.id]){
+      momentDone = true; M.seen['eve:' + t.id] = 1; persist(); momentEve(t, t.debut === tm); return;
+    }
+    // pendant le voyage : « Bienvenue à … » quand la ville de la nuit change
+    if(tripPhase(t) !== 'live') return;
+    const {night} = itemsForDay(td), h = night[0], city = h ? cityOf(h.titre) : '';
+    if(!city || M.seen['hi:' + t.id + ':' + normQ(city)]) return;
+    momentDone = true; M.seen['hi:' + t.id + ':' + normQ(city)] = 1; persist();
+    const c = await countryOf(city).catch(()=>null);
+    momentHello(t, h, city, c);
+  }
+  function momentShow(html, theme){
+    const el = document.createElement('div'); el.id = 'cv-moment'; el.className = 'cv-moment ' + (theme || '');
+    el.innerHTML = `<div class="mo-card">${html}<button type="button" class="mo-x" onclick="CV.momentClose()">✕</button></div>`;
+    document.body.appendChild(el); requestAnimationFrame(()=>el.classList.add('in'));
+  }
+  function momentClose(){ momentDone = false; const el = document.getElementById('cv-moment'); if(!el) return; el.classList.remove('in'); setTimeout(()=>el.remove(), 350); }
+  function momentEve(t, tomorrow){
+    const nx = nextMoves().find(x=>x.it.cat==='transport') || nextMoves()[0];
+    const ck = list('check', c=>c.trip===t.id), left = ck.filter(c=>!c.done).length, di = (() => { try { return docIssues(); } catch(e){ return []; } })();
+    momentShow(`<div class="mo-k">${tomorrow ? 'Demain, tu pars' : 'C’est le grand jour'}</div><div class="mo-big">🧳</div><h2>${esc(t.titre)}</h2>
+      ${nx ? `<div class="mo-l">${icon(nx.it)} <b>${esc(nx.it.titre)}</b>${nx.timed ? ' · ' + esc(nx.it.cat==='transport' ? nx.it.heureDep : nx.it.heure) : ''}</div>` : ''}
+      <div class="mo-chk"><span class="${left ? '' : 'ok'}">${left ? '○' : '✓'} ${left ? left + ' chose(s) à cocher dans la checklist' : 'Checklist terminée'}</span>
+        <span class="${di.length ? '' : 'ok'}">${di.length ? '⚠️ ' + di.length + ' document(s) à vérifier' : '✓ Documents en ordre'}</span></div>
+      <div class="mo-b">${left ? `<button type="button" onclick="CV.momentClose();CV.tab('check')">✅ Checklist</button>` : ''}<button type="button" onclick="CV.momentClose();CV.tlDay()">📴 Fiche du jour</button><button type="button" class="pri" onclick="CV.momentClose()">Bon voyage !</button></div>`, 'eve');
+  }
+  function momentHello(t, h, city, c){
+    const cc = c && c.cc || '', words = SAY[cc], mine = (window.I18N && I18N.lang) || 'fr';
+    const cur = cc ? (EURO.includes(cc) ? 'EUR' : REGION_CUR[cc] || '') : '';
+    const lab = ['Bonjour','Merci','S’il te plaît','Au revoir','Santé !'];
+    momentShow(`<div class="mo-k">Bienvenue à</div><div class="mo-big">${flag(cc)}</div><h2>${esc(city)}</h2>${c && c.pays ? `<div class="mo-sub">${esc(c.pays)}</div>` : ''}
+      ${words && SAY_LANG[cc] !== mine ? `<div class="mo-w">${words.map((w,i)=>`<div><small>${lab[i]}</small><b>${esc(w)}</b></div>`).join('')}</div>` : ''}
+      ${cur && cur !== curCode() ? `<div class="mo-l">💱 Monnaie : <b>${cur} ${CURS[cur] && CURS[cur] !== cur ? '(' + CURS[cur] + ')' : ''}</b></div>` : ''}
+      <div class="mo-l">🛏️ Ce soir : <b>${esc(h.nom || h.titre)}</b>${h.adresse ? `<small>${esc(h.adresse)}</small>` : ''}</div>
+      <div class="mo-b"><button type="button" onclick="CV.momentClose();CV.nhGo('${h.id}')">🧭 Aller à l’hôtel</button>${cur && cur !== curCode() ? `<button type="button" onclick="CV.momentClose();CV.fxTool()">💱 Convertir</button>` : ''}<button type="button" class="pri" onclick="CV.momentClose()">C’est parti !</button></div>`, 'hello');
+  }
+
+  /* ---------- Jour J : carte d'embarquement ---------- */
+  function boardShow(id){
+    const it = R[id]; if(!it) return;
+    const IATA = {'londres gatwick':'LGW','gatwick':'LGW','heathrow':'LHR','stansted':'STN','luton':'LTN','nantes':'NTE','brest':'BES','quimper':'UIP','paris orly':'ORY','orly':'ORY','beauvais':'BVA','paris':'CDG','geneve':'GVA','lisbonne':'LIS','porto':'OPO','rome':'FCO','naples':'NAP','malte':'MLA','la valette':'MLA','athenes':'ATH','le caire':'CAI','bruxelles':'BRU','charleroi':'CRL','barcelone':'BCN','madrid':'MAD','lyon':'LYS','marseille':'MRS','nice':'NCE','bordeaux':'BOD','toulouse':'TLS','amsterdam':'AMS','berlin':'BER','dublin':'DUB','reykjavik':'KEF','venise':'VCE','milan':'MXP','bale':'BSL','mulhouse':'MLH','londres':'LON','new york':'JFK','montreal':'YUL','marrakech':'RAK','istanbul':'IST','prague':'PRG','vienne':'VIE','budapest':'BUD','cracovie':'KRK','seville':'SVQ','malaga':'AGP','palma':'PMI','faro':'FAO','edimbourg':'EDI','copenhague':'CPH','oslo':'OSL','stockholm':'ARN','helsinki':'HEL','munich':'MUC','francfort':'FRA','zurich':'ZRH','florence':'FLR','bologne':'BLQ','catane':'CTA','palerme':'PMO','ajaccio':'AJA','bastia':'BIA'};
+    const code = s => { const m = String(s||'').match(/\(([A-Z]{3})\)/); if(m) return m[1]; const n = String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim(); const hit = Object.keys(IATA).find(x=>n.includes(x)); return hit ? IATA[hit] : String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase() || '—'; };
+    const fl = (String(it.compagnie||'').match(/\b([A-Z0-9]{2,3}\s?\d{2,4})\b/) || [])[1] || '';
+    const seat = (String(it.note||'').match(/si[èe]ge\s*:?\s*([0-9]{1,2}[A-K])/i) || [])[1] || '';
+    const pj = (it.pj||[])[0];
+    momentShow(`<div class="bp"><div class="bp-h"><span>${esc(String(it.compagnie||'').replace(fl,'').trim() || 'Embarquement')}</span><b>${esc(fl)}</b></div>
+      <div class="bp-r"><div><b>${esc(code(it.from))}</b><small>${esc(cityOf(it.from||''))}</small></div><span class="bp-pl">✈</span><div><b>${esc(code(it.to))}</b><small>${esc(cityOf(it.to||''))}</small></div></div>
+      <div class="bp-g"><div><small>Date</small><b>${it.date ? fshort(it.date) : '—'}</b></div><div><small>Départ</small><b>${esc(it.heureDep||'—')}</b></div><div><small>Arrivée</small><b>${esc(it.heureArr||'—')}</b></div><div><small>Siège</small><b>${esc(seat||'—')}</b></div></div>
+      <div class="bp-cut"></div>
+      <div class="bp-ref"><small>Réservation</small><b>${esc(it.ref||'—')}</b></div>
+      <div class="mo-b">${pj ? `<button type="button" class="pri" onclick="CV.momentClose();CV.pjOpen('${esc(pj.id)}','${esc(pj.t||'img')}')">🎫 Ouvrir le billet</button>` : ''}${it.ref ? `<button type="button" onclick="CV.nhCopy('${esc(it.ref)}')">⧉ Copier la réf.</button>` : ''}<button type="button" onclick="CV.momentClose();CV.nhGo('${it.id}')">🧭 Aller à l’aéroport</button></div></div>`, 'board');
+  }
+
+  /* ---------- Vivre : « Ta journée en 30 secondes » (le soir, pendant le voyage) ---------- */
+  function eveCard(){
+    const t = trip(); if(!t || t.archived || tripPhase(t) !== 'live' || hidden('blk:eve')) return '';
+    const td = isoToday(), hr = new Date().getHours(); if(hr < 18 && !M.eveForce) return '';
+    const sv = list('souv', s=>s.trip===t.id && s.date===td && s.day30);
+    if(sv.length || (M.seen && M.seen['day30:' + t.id + ':' + td])) return '';
+    const k = dayList().indexOf(td);
+    return `<div class="cv-eve"><div class="ev-k">🌙 Ta journée en 30 secondes</div><div class="ev-t">J${k+1} · ${fdate(td)}</div>
+      <textarea class="v-in" id="ev-txt" rows="2" placeholder="Une phrase sur ta journée…"></textarea>
+      <div class="ev-ph" id="ev-ph"></div>
+      <div class="ev-b"><label class="ev-add">📷 Photos du jour<input type="file" accept="image/*" multiple onchange="CV.evePhotos(this)"></label><button type="button" class="pri" onclick="CV.eveSave()">✨ Garder ce souvenir</button><button type="button" class="ev-no" onclick="CV.eveSkip()">Pas ce soir</button></div></div>`;
+  }
+  let evePh = [];
+  async function evePhotos(input){
+    const box = document.getElementById('ev-ph'); const fs = [...(input.files||[])];
+    for(const f of fs){ evePh.push(f); if(box) box.insertAdjacentHTML('beforeend', `<img src="${URL.createObjectURL(f)}" alt="">`); }
+    input.value = '';
+  }
+  async function eveSave(){
+    const t = trip(); if(!t) return; const td = isoToday(), txt = (document.getElementById('ev-txt')||{}).value || '';
+    if(!txt.trim() && !evePh.length){ alert('Écris une phrase ou ajoute une photo.'); return; }
+    toast('✨ Souvenir en cours…');
+    const ids = []; for(let i=0;i<evePh.length;i++){ try { const pid = 'ph' + uid() + i; await storePhoto(evePh[i], pid); ids.push(pid); } catch(e){} }
+    evePh = [];
+    const {night} = itemsForDay(td), city = night[0] ? cityOf(night[0].titre) : '';
+    const ex = list('souv', s=>s.trip===t.id && s.date===td).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0))[0];
+    const s = ex ? clone(ex) : {id:'sv' + uid(), type:'souv', trip:t.id, date:td, titre: city || ('J' + (dayList().indexOf(td) + 1)), lieu: city, texte:'', photos:[]};
+    s.texte = [s.texte, txt.trim()].filter(Boolean).join('\n\n'); s.photos = [...(s.photos||[]), ...ids]; s.day30 = 1;
+    put(s, '🌙 Journée gardée en souvenir'); render(); uploadQueue();
+  }
+  function eveSkip(){ M.seen = M.seen || {}; M.seen['day30:' + M.trip + ':' + isoToday()] = 1; persist(); render(); }
+
+  /* ---------- Revivre : « Il y a un an aujourd'hui » ---------- */
+  function annivCard(){
+    if(hidden('blk:anniv')) return '';
+    const td = isoToday(), md = td.slice(5), y = +td.slice(0,4);
+    if(M.seen && M.seen['anniv:' + td]) return '';
+    const s = list('souv', x=>x.date && x.date.slice(5) === md && +x.date.slice(0,4) < y && (x.photos||[]).length && R[x.trip] && !R[x.trip].deleted).sort((a,b)=>b.date.localeCompare(a.date))[0];
+    if(!s) return '';
+    const n = y - +s.date.slice(0,4), t = R[s.trip];
+    return `<div class="cv-anniv"><button type="button" class="an-m" onclick="CV.annivGo('${s.id}')"><img data-ph="${esc(s.photos[0])}.t" alt=""><span><small>${n > 1 ? 'Il y a ' + n + ' ans aujourd’hui' : 'Il y a un an aujourd’hui'}</small><b>${esc(s.titre || s.lieu || t.titre)}</b><small>${esc(t.titre)}</small></span></button><button type="button" class="an-x" onclick="CV.annivSkip()" aria-label="Fermer">✕</button></div>`;
+  }
+  function annivGo(sid){ const s = R[sid]; if(!s) return; go(s.trip); setTimeout(()=>{ view(sid, 0); }, 300); }
+  function annivSkip(){ M.seen = M.seen || {}; M.seen['anniv:' + isoToday()] = 1; persist(); render(); }
+
+  /* ---------- Rêver : créer un voyage en touchant le globe ---------- */
+  let wantPlan = false;
+  function worldNew(){ closeSheet(true); if(wm && wm.map && wm.map.loaded && wm.map.loaded()){ worldMap(); setTimeout(worldPlan, 300); } else { wantPlan = true; worldMap(); } }
+  async function worldPlan(){
+    if(!wm || !wm.map){ toast('🌍 Le globe se charge…'); return; }
+    wm.plan = wm.plan || []; wm.spin = false; stopStory();
+    document.getElementById('cv-world').classList.add('wm-planning');
+    if(!wm.planOn){ wm.planOn = true; wm.map.on('click', worldPick); }
+    worldPlanUI();
+  }
+  async function worldPick(e){
+    if(!wm || !document.getElementById('cv-world').classList.contains('wm-planning')) return;
+    const {lng, lat} = e.lngLat; let city = '', cc = '', pays = '';
+    try { const j = await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${lat}&lon=${lng}`)).json();
+      const a = (j && j.address) || {}; city = a.city || a.town || a.village || a.municipality || a.county || a.state || ''; pays = a.country || ''; cc = (a.country_code || '').toUpperCase(); } catch(e){}
+    if(!city){ toast('🌊 Pas de ville ici : touche la terre ferme'); return; }
+    wm.plan.push({city, pays, cc, lat:+lat.toFixed(4), lng:+lng.toFixed(4)});
+    const el = document.createElement('div'); el.className = 'wm-plan-pin'; el.textContent = wm.plan.length;
+    (wm.planM = wm.planM || []).push(new maplibregl.Marker({element:el}).setLngLat([lng, lat]).addTo(wm.map));
+    worldPlanLine(); worldPlanUI();
+  }
+  function worldPlanLine(){
+    const map = wm.map, P = wm.plan, coords = [];
+    for(let i=1;i<P.length;i++){ const a = P[i-1], b = P[i]; for(let k=0;k<=24;k++){ const f = k/24; coords.push([a.lng + (b.lng - a.lng) * f, a.lat + (b.lat - a.lat) * f]); } }
+    const data = {type:'Feature', geometry:{type:'LineString', coordinates: coords.length ? coords : [[P[0].lng, P[0].lat],[P[0].lng, P[0].lat]]}};
+    if(map.getSource('plan')) map.getSource('plan').setData(data);
+    else { map.addSource('plan', {type:'geojson', data}); map.addLayer({id:'plan-glow', type:'line', source:'plan', paint:{'line-color':'#fbbf24', 'line-width':10, 'line-opacity':.3, 'line-blur':6}}); map.addLayer({id:'plan', type:'line', source:'plan', paint:{'line-color':'#fde68a', 'line-width':3, 'line-dasharray':[2,1.5]}}); }
+  }
+  function worldPlanUI(){
+    let b = document.getElementById('wm-plan'); const ov = document.getElementById('cv-world'); if(!ov) return;
+    if(!b){ b = document.createElement('div'); b.id = 'wm-plan'; ov.appendChild(b); }
+    const P = wm.plan || [];
+    b.innerHTML = `<div class="wp-h">✨ Touche le globe pour poser les villes de ton voyage, dans l’ordre.</div><div class="wp-c">${P.map((p,i)=>`<span>${flag(p.cc)} ${esc(p.city)}</span>`).join('<i>→</i>') || '<em>Aucune ville pour l’instant</em>'}</div>
+      <div class="wp-b"><button type="button" onclick="CV.worldPlanUndo()"${P.length ? '' : ' disabled'}>↶</button><button type="button" onclick="CV.worldPlanStop()">Annuler</button><button type="button" class="pri" onclick="CV.worldPlanGo()"${P.length ? '' : ' disabled'}>✨ Créer ce voyage</button></div>`;
+  }
+  function worldPlanUndo(){ if(!wm || !wm.plan || !wm.plan.length) return; wm.plan.pop(); const m = wm.planM.pop(); if(m) m.remove(); if(wm.plan.length) worldPlanLine(); else { ['plan','plan-glow'].forEach(l=>{ try { wm.map.removeLayer(l); } catch(e){} }); try { wm.map.removeSource('plan'); } catch(e){} } worldPlanUI(); }
+  function worldPlanStop(){ if(!wm) return; while(wm.plan && wm.plan.length) worldPlanUndo(); const b = document.getElementById('wm-plan'); if(b) b.remove(); const ov = document.getElementById('cv-world'); if(ov) ov.classList.remove('wm-planning'); wmInfo(''); }
+  function worldPlanGo(){
+    const P = (wm && wm.plan || []).slice(); if(!P.length) return;
+    const titre = P.length === 1 ? P[0].city : P.length === 2 ? P[0].city + ' & ' + P[1].city : P[0].city + ' → ' + P[P.length-1].city;
+    const tid = 't' + uid(), recs = [{id:tid, type:'trip', titre, sous:P.map(p=>p.city).join(' · '), debut:'', fin:'', voyageurs:M.me ? [M.me] : [], objectif:'', couleur:''}];
+    P.forEach((p, i)=>recs.push({id:'cy' + uid() + i, type:'city', trip:tid, titre:p.city, date:'', dateFin:'', lat:p.lat, lng:p.lng, pays:p.pays, cc:p.cc, ordre:i}));
+    putMany(recs, '✨ Voyage « ' + titre + ' » créé');
+    worldPlanStop(); worldClose(); M.mode = 'prep'; M.tab = 'prog'; go(tid);
+    setTimeout(()=>CV.datesSheet && CV.datesSheet(), 400);
+  }
+
+  /* ---------- Musique du film (générée, libre de droits) ---------- */
+  let FA = null;
+  function filmAudioStart(){
+    try {
+      if(!FA){ const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return; const ac = new AC(), out = ac.createGain(); out.gain.value = .0001; out.connect(ac.destination);
+        const dest = ac.createMediaStreamDestination ? ac.createMediaStreamDestination() : null; if(dest) out.connect(dest);
+        const rev = ac.createConvolver(), len = ac.sampleRate * 2.5, buf = ac.createBuffer(2, len, ac.sampleRate);
+        for(let ch=0; ch<2; ch++){ const d = buf.getChannelData(ch); for(let i=0;i<len;i++) d[i] = (Math.random()*2-1) * Math.pow(1 - i/len, 2.4); }
+        rev.buffer = buf; const wet = ac.createGain(); wet.gain.value = .5; rev.connect(wet); wet.connect(out);
+        FA = {ac, out, dest, rev, timer:0, next:0, step:0, on: M.filmMute ? false : true}; }
+      const {ac} = FA; if(ac.state === 'suspended') ac.resume();
+      FA.step = 0; FA.next = ac.currentTime + .05; clearInterval(FA.timer);
+      FA.out.gain.cancelScheduledValues(ac.currentTime); FA.out.gain.setTargetAtTime(FA.on ? .55 : .0001, ac.currentTime, .6);
+      FA.timer = setInterval(filmAudioTick, 120);
+    } catch(e){ FA = null; }
+  }
+  // Am – F – C – G, nappes douces + petit arpège
+  const CH = [[57,60,64],[53,57,60],[48,52,55,60],[55,59,62]], ARP = [0,1,2,1,2,0,1,2];
+  const hz = n => 440 * Math.pow(2, (n - 69) / 12);
+  function filmAudioTick(){
+    if(!FA || !FM || !FM.playing) return; const {ac} = FA, beat = .5;
+    while(FA.next < ac.currentTime + .4){
+      const bar = Math.floor(FA.step / 8) % CH.length, ch = CH[bar], t = FA.next;
+      if(FA.step % 8 === 0) ch.forEach(n => tone(hz(n - 12), t, beat * 8, .06, 'sine', 1.2));
+      tone(hz(ch[ARP[FA.step % 8]] + 12), t, beat * 1.6, .045, 'triangle', .01);
+      FA.step++; FA.next += beat;
+    }
+  }
+  function tone(f, t, d, v, type, att){
+    const {ac} = FA, o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.value = f;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + att); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+    o.connect(g); g.connect(FA.out); g.connect(FA.rev); o.start(t); o.stop(t + d + .1);
+  }
+  function filmAudioStop(){ if(!FA) return; clearInterval(FA.timer); try { FA.out.gain.setTargetAtTime(.0001, FA.ac.currentTime, .3); } catch(e){} }
+  function filmMute(){ M.filmMute = !M.filmMute; persist(); if(FA){ FA.on = !M.filmMute; FA.out.gain.setTargetAtTime(FA.on ? .55 : .0001, FA.ac.currentTime, .2); } const b = document.getElementById('cv-film-snd'); if(b) b.textContent = M.filmMute ? '🔇' : '🔊'; }
+
+  const BUILD = '2026-10-10d';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
@@ -9059,9 +9552,9 @@ ${pm.join('\n')}</Document></kml>`;
     alert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {setLang, pollPin, navTo, plusGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
-  const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, psPick, psChoose, psImport, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
+  const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
@@ -9072,11 +9565,11 @@ ${pm.join('\n')}</Document></kml>`;
     genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin,
     _R:()=>R, _M:()=>M, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
   // En mode lecture, toutes les actions qui modifient sont bloquées
-  const MUT = ['seedUSA2025','convert2026','saveSouv','delSouv','souvAddPhotos','souvDelPhoto','psPick','psChoose','psImport','rembAdd','rembDel',
+  const MUT = ['seedUSA2025','convert2026','saveSouv','delSouv','souvAddPhotos','souvDelPhoto','rembAdd','rembDel',
     'cycle','saveForm','noteFromItem','del','add','saveDay','saveNote','delNote','pin','setObj','addCompanion','addToTrip','removeCompanion',
     'check','delCheck','addCheck','like','saveWish','delWish','wishToTrip','saveTrip','delTrip','closeTrip','reopenTrip',
     'echAdd','echDel','echSpread','echToggle','lisser','echReset','echRange','echRangeReset','plCfg','plAdd','plDel','plOpt',
-    'wizard','wzCreate','discAdd','cityMove','cityLock','cityDel','cityOpt','newProfile','saveProfile','delProfile','importPick','wipe','editSouv'];
+    'wizard','wzCreate','discAdd','cityMove','cityLock','cityDel','cityOpt','newProfile','saveProfile','delProfile','importPick','wipe','editSouv','autoPhotoPick','autoPhotoGo','coverSet','eveSave','worldPlanGo','worldNew'];
   [...MUT, ...NEWMUT, 'serverWipe'].forEach(n=>{ const f = api[n]; if(!f) return; api[n] = (...a) => {
     if(M.lock && !(n==='editSouv' && a[0])){ toast('🔒 Mode lecture : touche le cadenas en haut pour modifier'); return; }
     return f(...a); }; });
