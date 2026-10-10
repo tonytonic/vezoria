@@ -1485,6 +1485,7 @@ body.cv-ph-live .cv-actb .ac-path .on,body.cv-ph-live .cv-actb .ac-n{box-shadow:
 .vz-band .vz-i{font-size:1.5rem;line-height:1}.vz-band .vz-t{flex:1 1 200px;min-width:0}.vz-band .vz-t b{display:block;font-size:.95rem}.vz-band .vz-t small{display:block;font-size:.78rem;opacity:.8;line-height:1.35}
 .vz-band .vz-a{display:flex;flex-wrap:wrap;gap:6px;width:100%}.vz-band .vz-a button{border:1px solid rgba(42,18,56,.18);background:#fff;color:#2A1238;border-radius:999px;padding:7px 12px;font:700 .8rem system-ui,sans-serif;cursor:pointer;min-height:36px}
 .vz-band .vz-a .vz-go{background:#2A1238;color:#fff;border-color:#2A1238}.vz-band .vz-a .vz-x{margin-left:auto;padding:7px 11px;opacity:.6}
+.vz-back{display:flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;font-size:1.15rem;font-weight:800}
 .vz-ul{margin:4px 0 12px;padding-left:18px;font-size:.88rem;line-height:1.45}.vz-ul li{margin:4px 0}
 .vz-st{display:flex;gap:4px}.vz-st button{border:0;background:none;font-size:1.9rem;line-height:1;color:#d6d3d1;cursor:pointer;padding:2px 3px;min-width:40px;min-height:40px}.vz-st button.on{color:#f59e0b}
 </style>
@@ -10075,6 +10076,8 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function syncPill(){
     let b = document.getElementById('cv-syncpill');
+    // version test ouverte depuis un carnet : pas de voyant (le carnet n'en a pas, la synchro passe par le serveur du carnet)
+    if(window.VZ_HOST){ if(b) b.remove(); return; }
     const btns = document.querySelector('.hero-btns'); if(!btns) return;
     if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'cv-syncpill'; b.className = 'cv-syncpill'; b.onclick = () => CV.syncSheet(); btns.prepend(b); }
     const st = syncState(), L = {ok:['☁️','À jour'], wait:['⏳','Envoi…'], err:['⚠️','Souci'], offline:['📴','Hors ligne'], off:['☁️','Local']};
@@ -10400,7 +10403,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-10y';
+  const BUILD = '2026-10-11a';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -10433,8 +10436,11 @@ ${pm.join('\n')}</Document></kml>`;
   function vzPaint(){
     const el = document.getElementById('vz-band'); if(!el) return;
     const h = VZ_ON && !M[vzHideK] ? vzBandHTML() : ''; if(el.dataset.h !== h){ el.dataset.h = h; el.innerHTML = h; }
-    if(VZ_SIDE === 'vezoria' && VZ_ON && !document.getElementById('vz-back')){
-      const b = document.querySelector('.hero-btns'); if(b){ const a = document.createElement('a'); a.id = 'vz-back'; a.className = 'cv-switch'; a.href = '/?app=carnet'; a.textContent = '↩︎ Carnet'; a.setAttribute('aria-label', 'Retour au carnet'); b.prepend(a); }
+    // bouton « retour au carnet » dans l'en-tête : seulement si l'encart est masqué (l'en-tête est déjà plein), en petit rond
+    if(VZ_SIDE === 'vezoria' && VZ_ON){
+      const cur = document.getElementById('vz-back');
+      if(!M[vzHideK]){ if(cur) cur.remove(); }
+      else if(!cur){ const b = document.querySelector('.hero-btns'); if(b){ const a = document.createElement('a'); a.id = 'vz-back'; a.className = 'cv-lock vz-back'; a.href = '/?app=carnet'; a.textContent = '↩︎'; a.setAttribute('aria-label', 'Retour au carnet'); a.title = 'Retour au carnet'; const lk = document.getElementById('cv-lock'); lk ? lk.before(a) : b.append(a); } }
     }
   }
   function vzGo(){ try { persist(); } catch(e){} location.href = VZ_SIDE === 'carnet' ? '/vezoria/' : '/?app=carnet'; }
