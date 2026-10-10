@@ -1,4 +1,5 @@
 I18N.load({
+"Offrir un café":"Trakteer op koffie",
 "🎬 Voir le tuto vidéo du carnet (3 min)":"🎬 Bekijk de videotutorial van het dagboek (3 min)",
 
 "Techno 2":"Techno 2",

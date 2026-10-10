@@ -1,4 +1,5 @@
 I18N.load({
+"Offrir un café":"Oferecer um café",
 "🎬 Voir le tuto vidéo du carnet (3 min)":"🎬 Ver o tutorial em vídeo do diário (3 min)",
 
 "Techno 2":"Techno 2",
