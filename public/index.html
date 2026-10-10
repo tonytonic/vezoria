@@ -9405,11 +9405,11 @@ ${pm.join('\n')}</Document></kml>`;
     return {t, pts, dist, days, nights:nn, ccs, tot, per: v.length ? tot / v.length : tot, perDay: tot / days, cats:Object.entries(byCat).filter(([,x])=>x>0).sort((a,b)=>b[1]-a[1]).slice(0,4), nph: phAll.length, pick, cur: CS()};
   }
   // Fond de carte du film : vraies tuiles (sombres), dessinées une fois dans une image hors écran
-  async function filmMapPrep(D){
-    const P = D.pts; if(P.length < 2) return;
+  async function filmTileMap(P, maxZ){
+    if(P.length < 2) return null;
     const W2 = z => 256 * Math.pow(2, z), wx = (lng, z) => (lng + 180) / 360 * W2(z);
     const wy = (lat, z) => { const r = Math.max(-85, Math.min(85, lat)) * Math.PI / 180; return (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * W2(z); };
-    let z = 12; for(; z > 1; z--){ const xs = P.map(p=>wx(p.lng, z)), ys = P.map(p=>wy(p.lat, z)); if(Math.max(...xs) - Math.min(...xs) <= FW - 180 && Math.max(...ys) - Math.min(...ys) <= 640) break; }
+    let z = maxZ || 12; for(; z > 1; z--){ const xs = P.map(p=>wx(p.lng, z)), ys = P.map(p=>wy(p.lat, z)); if(Math.max(...xs) - Math.min(...xs) <= FW - 180 && Math.max(...ys) - Math.min(...ys) <= 640) break; }
     const xs = P.map(p=>wx(p.lng, z)), ys = P.map(p=>wy(p.lat, z));
     const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2, left = cx - FW/2, top = cy - 700;
     const n = Math.pow(2, z), jobs = [];
@@ -9419,12 +9419,33 @@ ${pm.join('\n')}</Document></kml>`;
     for(let ty = Math.floor(top/256); ty <= Math.floor((top + FH)/256); ty++){ if(ty < 0 || ty >= n) continue;
       for(let tx = Math.floor(left/256); tx <= Math.floor((left + FW)/256); tx++) jobs.push(get(tx, ty).then(t => t && Object.assign(t, {dx: tx*256 - left, dy: ty*256 - top}))); }
     const tiles = (await Promise.race([Promise.all(jobs), new Promise(r => setTimeout(() => r(null), 9000))])) || [];
-    const ok = tiles.filter(Boolean); if(ok.length < jobs.length * 0.6) return;
+    const ok = tiles.filter(Boolean); if(ok.length < jobs.length * 0.6) return null;
     const cv = document.createElement('canvas'); cv.width = FW; cv.height = FH; const c = cv.getContext('2d');
     c.fillStyle = '#0b1026'; c.fillRect(0, 0, FW, FH); ok.forEach(t => { c.drawImage(t.bmp, t.dx, t.dy, 256, 256); try { t.bmp.close(); } catch(e){} });
     if(!ok[0].dark){ c.globalCompositeOperation = 'multiply'; c.fillStyle = '#3b3a7a'; c.fillRect(0, 0, FW, FH); c.globalCompositeOperation = 'source-over'; }
     const g = c.createLinearGradient(0, 0, 0, FH); g.addColorStop(0, 'rgba(8,10,40,.85)'); g.addColorStop(.22, 'rgba(8,10,40,.15)'); g.addColorStop(.8, 'rgba(8,10,40,.15)'); g.addColorStop(1, 'rgba(8,10,40,.8)'); c.fillStyle = g; c.fillRect(0, 0, FW, FH);
-    D.map = {img: cv, X: lng => wx(lng, z) - left, Y: lat => wy(lat, z) - top, attr: ok[0].dark ? '© Esri · © OpenStreetMap' : '© OpenStreetMap'};
+    return {img: cv, X: lng => wx(lng, z) - left, Y: lat => wy(lat, z) - top, attr: ok[0].dark ? '© Esri · © OpenStreetMap' : '© OpenStreetMap'};
+  }
+  // Régions du voyage (ex. Bretagne → USA) : une région = des étapes reliées par moins de 3 500 km (un océan les sépare).
+  // Si le voyage couvre plusieurs régions éloignées, le film montre d’abord la vue d’ensemble, puis zoome sur chacune.
+  function filmZones(P){
+    const zs = []; let cur = null;
+    P.forEach(p=>{ const z = zs.find(z=>z.some(q=>hav(q, p) < 3500)); if(z){ z.push(p); cur = z; } else { cur = [p]; zs.push(cur); } });
+    return zs;
+  }
+  async function filmMapPrep(D){
+    if(D.pts.length < 2) return;
+    const zs = filmZones(D.pts);
+    D.zones = [];
+    if(zs.length > 1){
+      const jobs = zs.filter(z=>z.length >= 2).sort((a,b)=>b.length - a.length).slice(0, 3).map(async z=>{
+        const P = z.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')), m = await filmTileMap(P, 11).catch(()=>null);
+        const nm = [...new Set(P.map(p=>p.name).filter(Boolean))], dist = P.reduce((s, p, i)=> i ? s + hav(P[i-1], p) : 0, 0);
+        return {P, map:m, title: nm.length > 1 ? nm[0] + ' → ' + nm[nm.length-1] : (nm[0] || ''), dist, t0: P[0].date || ''};
+      });
+      D.zones = (await Promise.all(jobs)).filter(Boolean).sort((a,b)=>a.t0.localeCompare(b.t0));
+    }
+    D.map = await filmTileMap(D.pts);
   }
   async function filmOpen(){
     const t = trip(); if(!t){ alert('Ouvre d’abord un voyage.'); return; }
@@ -9432,12 +9453,12 @@ ${pm.join('\n')}</Document></kml>`;
     const D = await filmData();
     D.imgs = []; await filmMapPrep(D).catch(()=>{});
     for(const p of D.pick){ try { const b = await photoBlob(p.id); if(b) D.imgs.push({bmp: await decodeImg(b), cap:p.cap, date:p.date}); } catch(e){} }
-    if(!D.imgs.length && !D.pts.length && !D.tot){ alert('Il n’y a encore rien à raconter : ajoute des souvenirs avec des photos, ou des dépenses.'); return; }
+    if(!D.imgs.length && !D.pts.length){ alert('Il n’y a encore rien à raconter : ajoute des souvenirs avec des photos et des lieux.'); return; }
     D.scenes = [{k:'title', d:4}];
-    if(D.pts.length >= 2) D.scenes.push({k:'map', d:5.5});
+    if(D.pts.length >= 2) D.scenes.push({k:'map', d:(D.zones||[]).length ? 3.5 : 5.5});
+    (D.zones||[]).forEach(z => D.scenes.push({k:'map', d:5, P:z.P, m:z.map, title:z.title, dist:z.dist, zoom:true}));
     D.scenes.push({k:'stats', d:5});
     if(D.imgs.length) D.scenes.push({k:'photos', d:D.imgs.length * 1.5});
-    if(D.tot > 0) D.scenes.push({k:'spend', d:4.5});
     D.scenes.push({k:'end', d:3.5});
     let acc = 0; D.scenes.forEach(s => { s.t0 = acc; acc += s.d; }); D.total = acc;
     FM = {D, t0:0, pos:0, playing:true, raf:0, rec:null};
@@ -9489,8 +9510,9 @@ ${pm.join('\n')}</Document></kml>`;
       lines.slice(0, 3).forEach((l, i) => c.fillText(l, FW/2, 560 + i * 96 - (1-a) * 40)); c.globalAlpha = a * .9; fz(c, 34, 500);
       c.fillText(D.t.debut ? tripDatesLong(D.t) : '', FW/2, 560 + Math.min(3, lines.length) * 96 + 40); c.globalAlpha = 1;
     },
-    map(c, p, D){
-      fBg(c, '#07123a', '#1d1b5e'); const P = D.pts, la = P.map(x=>x.lat), lo = P.map(x=>x.lng);
+    map(c, p, D0, sc){
+      const D = sc && sc.zoom ? {map:sc.m, dist:sc.dist} : D0;
+      fBg(c, '#07123a', '#1d1b5e'); const P = sc && sc.P ? sc.P : D0.pts, la = P.map(x=>x.lat), lo = P.map(x=>x.lng);
       if(D.map){ const zz = 1.06 - p * .06; c.save(); c.translate(FW/2, 700); c.scale(zz, zz); c.translate(-FW/2, -700); c.drawImage(D.map.img, 0, 0); c.restore(); }
       const my = y => Math.log(Math.tan(Math.PI/4 + Math.max(-80, Math.min(80, y)) * Math.PI/360));
       let x0 = Math.min(...lo), x1 = Math.max(...lo), y0 = my(Math.min(...la)), y1 = my(Math.max(...la)); const dx0 = x1 - x0 || 1, dy0 = (y1 - y0) || .02;
@@ -9499,7 +9521,7 @@ ${pm.join('\n')}</Document></kml>`;
       const zz = D.map ? 1.06 - p * .06 : 1, X = D.map ? lng => FW/2 + (D.map.X(lng) - FW/2) * zz : lng => ox + (lng - x0) * Math.PI/180 * s, Y = D.map ? lat => 700 + (D.map.Y(lat) - 700) * zz : lat => oy + (y1 - my(lat)) * s;
       if(!D.map){ c.strokeStyle = 'rgba(255,255,255,.06)'; c.lineWidth = 1; for(let i=0;i<=12;i++){ c.beginPath(); c.moveTo(i * FW/12, 0); c.lineTo(i * FW/12, FH); c.stroke(); } for(let i=0;i<=20;i++){ c.beginPath(); c.moveTo(0, i * FH/20); c.lineTo(FW, i * FH/20); c.stroke(); } }
       else { c.fillStyle = 'rgba(255,255,255,.55)'; fz(c, 16, 500); c.textAlign = 'right'; c.fillText(D.map.attr, FW - 16, FH - 16); c.textAlign = 'center'; }
-      c.fillStyle = '#fff'; fz(c, 46, 800); c.fillText(TT('Ta route'), FW/2, 170); c.fillStyle = 'rgba(255,255,255,.7)'; fz(c, 28, 500); c.fillText(D.dist >= 1 ? TT('≈ ' + Math.round(D.dist).toLocaleString(NL()) + ' km parcourus') : '', FW/2, 218);
+      c.fillStyle = '#fff'; fz(c, 46, 800); { const tt = sc && sc.zoom ? (sc.title || '') : TT('Ta route'); if(c.measureText(tt).width > FW - 70) fz(c, 32, 800); c.fillText(tt, FW/2, 170); } c.fillStyle = 'rgba(255,255,255,.7)'; fz(c, 28, 500); c.fillText(D.dist >= 1 ? TT('≈ ' + Math.round(D.dist).toLocaleString(NL()) + ' km parcourus') : '', FW/2, 218);
       const seg = P.length - 1, q = filmEase(Math.min(1, p / .85)) * seg, full = Math.floor(q);
       c.lineCap = 'round'; c.lineJoin = 'round'; c.shadowColor = '#a78bfa'; c.shadowBlur = 18; c.strokeStyle = '#a78bfa'; c.lineWidth = 6; c.beginPath(); c.moveTo(X(P[0].lng), Y(P[0].lat));
       for(let i=1;i<=Math.min(full, seg);i++) c.lineTo(X(P[i].lng), Y(P[i].lat));
@@ -10292,7 +10314,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-10o';
+  const BUILD = '2026-10-10p';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
