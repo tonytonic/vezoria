@@ -1,5 +1,7 @@
 /*
   Cache-Control: no-cache
+/music/*
+  Cache-Control: public, max-age=2592000
 /vendor/*
   Cache-Control: public, max-age=2592000
 /.well-known/assetlinks.json
