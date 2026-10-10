@@ -1425,6 +1425,35 @@ html,body{overscroll-behavior-y:none}
 .cv-quick2 button:active i{transform:scale(.92)}.cv-quick2 span{font-size:.7rem;font-weight:600;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .v-btn:not(.sec):not(.danger){background:var(--navy);color:#fff;box-shadow:0 10px 20px -12px var(--navy);letter-spacing:.01em}
 .v-btn.sec{background:transparent;color:var(--ink);border:1.5px solid rgba(42,18,56,.16);box-shadow:none}
+
+img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;object-fit:contain;margin:0 .04em;pointer-events:none;user-select:none}
+body.cv-ph-live img.vi{filter:hue-rotate(170deg) saturate(.92)}body.cv-ph-past img.vi{filter:hue-rotate(-70deg)}
+.cv-nav img.vi,.hero img.vi,.cv-hero img.vi,.cv-live img.vi,.cv-eve img.vi,.cv-prep2 img.vi,.cv-bhero img.vi,.cv-moment:not(.board) img.vi,#cv-film img.vi,.cv-anniv img.vi,#cv-world img.vi,.bp-h img.vi{filter:drop-shadow(0 0 1px rgba(255,255,255,.95)) drop-shadow(0 0 2px rgba(255,255,255,.6))}
+body.cv-ph-live .cv-nav img.vi,body.cv-ph-live .hero img.vi,body.cv-ph-live .cv-hero img.vi,body.cv-ph-live .cv-live img.vi,body.cv-ph-live .cv-eve img.vi{filter:hue-rotate(170deg) saturate(.92) drop-shadow(0 0 1px rgba(255,255,255,.95)) drop-shadow(0 0 2px rgba(255,255,255,.6))}
+body.cv-ph-past .cv-nav img.vi,body.cv-ph-past .hero img.vi,body.cv-ph-past .cv-bhero img.vi,body.cv-ph-past .cv-live img.vi{filter:hue-rotate(-70deg) drop-shadow(0 0 1px rgba(255,255,255,.95)) drop-shadow(0 0 2px rgba(255,255,255,.6))}
+.cv-nav i img.vi{width:24px;height:24px;vertical-align:middle}.cv-quick2 i img.vi{width:30px;height:30px;vertical-align:middle}
+.mo-big img.vi{width:1.15em;height:1.15em}
+.cv-fx .fx-i-plane{width:170px}.cv-fx .fx-i-train{width:220px}.cv-fx .fx-i-bus{width:190px}.cv-fx .fx-i-car{width:140px}.cv-fx .fx-i-boat{width:190px}.cv-fx .fx-i-bear{width:96px}.cv-fx .fx-i-bed{width:190px}.cv-fx .fx-i-cloud{width:100px}.cv-fx .fx-i-moon{width:70px}.cv-fx .fx-i-zzz{width:70px}.cv-fx .fx-i-suitcase{width:110px}.cv-fx .fx-i-star{width:34px}.cv-fx .fx-i-ticket,.cv-fx .fx-i-camera{width:130px}
+.cv-fx.fx-img .fx-blanket{display:none}
+
+.cv-syncpill{display:inline-flex;align-items:center;gap:4px;border:0;border-radius:999px;padding:6px 10px;background:rgba(255,255,255,.16);color:#fff;font:600 .72rem 'Outfit',system-ui,sans-serif;margin-right:6px;cursor:pointer;backdrop-filter:blur(6px)}
+.cv-syncpill small{font-size:.72rem}.cv-syncpill.wait span{animation:sySpin 1.6s linear infinite;display:inline-block}.cv-syncpill.err{background:rgba(236,77,110,.85)}.cv-syncpill.off{opacity:.75}
+@keyframes sySpin{50%{opacity:.35}}
+.sy-r{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--light);border-radius:14px;margin-bottom:6px;background:#fff}.sy-r small{color:var(--gray)}
+.sh-card{background:#fff;border:1px solid var(--light);border-radius:18px;padding:14px;margin-bottom:10px}.sh-k{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:600;font-size:1.2rem}.sh-card p{font-size:.86rem;color:var(--gray);margin:4px 0 10px}
+.sh-st{display:flex;gap:14px;margin:0 0 10px;font-size:.92rem}.sh-more summary{cursor:pointer;color:var(--gray);font-weight:600;margin:6px 0 10px}
+.sv-so{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--light);background:#fff;border-radius:999px;padding:5px 12px;margin:8px 0 2px;font:inherit;font-size:.82rem;color:var(--ink);cursor:pointer}.sv-so small{color:var(--gray)}
+#cv-feed{position:fixed;inset:0;z-index:2500;background:var(--cream);display:flex;flex-direction:column}
+.fd-top{display:flex;gap:12px;align-items:center;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff}.fd-top div{display:flex;flex-direction:column}.fd-top b{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-size:1.4rem}.fd-top small{opacity:.8;font-size:.75rem}
+.fd-x{width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:1rem;flex:none}
+.fd-list{flex:1;overflow:auto;padding:14px 16px calc(30px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+.fd-post{background:#fff;border-radius:20px;padding:14px;margin-bottom:14px;box-shadow:0 6px 18px -12px rgba(42,18,56,.35)}.fd-d{font-size:.76rem;color:var(--gray);font-weight:600}.fd-post h3{margin:4px 0 8px;font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-size:1.25rem}
+.fd-ph{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -14px 8px;padding:0 14px}.fd-ph button{flex:0 0 82%;padding:0;border:0;border-radius:14px;overflow:hidden;scroll-snap-align:start;aspect-ratio:4/3;background:var(--light)}.fd-ph button:only-child{flex-basis:100%}.fd-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.fd-t{white-space:pre-wrap;font-size:.92rem;line-height:1.5;margin:6px 0}.fd-a{display:flex;gap:8px;align-items:center;margin-top:6px}.fd-a button{border:1px solid var(--light);background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-size:.9rem;cursor:pointer}.fd-a button.on{border-color:#f9a8c0;background:#fff1f5}.fd-a small{color:var(--gray);font-size:.76rem}
+.fd-c{margin-top:10px;display:grid;gap:6px;font-size:.86rem}.fd-c small{color:var(--gray)}.fd-send{flex:none;border:0;border-radius:999px;padding:0 16px;min-height:44px;background:var(--navy);color:#fff;font:700 .86rem 'Outfit',system-ui,sans-serif;cursor:pointer}
+.fd-empty{text-align:center;color:var(--gray);padding:40px 10px}
+.fx-like{position:fixed;left:50%;top:45%;z-index:99996;pointer-events:none;transform:translate(-50%,-50%);animation:fxLike 1.1s ease-out both}.fx-like img{width:120px}
+@keyframes fxLike{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}30%{transform:translate(-50%,-50%) scale(1.15);opacity:1}100%{transform:translate(-50%,-90%) scale(.9);opacity:0}}
 </style>
 </head>
 <body class="is-public">
@@ -1550,6 +1579,8 @@ const CV = (function(){
   function targets(r){
     if(!r) return ['main'];
     const sp = id => { const c = TS()[id]; return c && spaceObj(c) ? c : null; };
+    if(r.type==='feedtrip') return sp(r.id) ? [sp(r.id)] : [];
+    if(/^ft:/.test(r.trip || '')) return sp(r.trip) ? [sp(r.trip)] : [];
     if(r.type==='trip') return [sp(r.id) || 'main'];
     if(r.trip) return [sp(r.trip) || 'main'];
     if(r.type==='profile'){ const out = new Set(['main']); Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(t && spaceObj(c) && (t.voyageurs||[]).includes(r.id)) out.add(c); }); return [...out]; }
@@ -1771,7 +1802,7 @@ const CV = (function(){
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id]));
-        j.records.forEach(r=>{ if(r && r.type==='trip' && (force || !TS()[r.id])) TS()[r.id] = sp.code; });
+        j.records.forEach(r=>{ if(r && (r.type==='trip' || r.type==='feedtrip') && (force || !TS()[r.id])) TS()[r.id] = sp.code; });
         changed += mergeRemote(j.records); sp.since = j.now;
       }
       sp.last = Date.now(); sp.err = '';
@@ -1779,7 +1810,7 @@ const CV = (function(){
     return changed;
   }
   /* Synchro automatique : une fois par heure (+ à l'ouverture, + juste après chaque modification). Pour plus vite : bouton « Synchroniser maintenant ». */
-  const liveShared = () => { try { return trips().some(t=>tripPhase(t)==='live' && !t.demo && (TS()[t.id] || (M.sync && M.sync.on))); } catch(e){ return false; } };
+  const liveShared = () => { try { return trips().some(t=>tripPhase(t)==='live' && !t.demo && (TS()[t.id] || (M.sync && M.sync.on))) || list('feedtrip', f=>TS()[f.id] && tripPhase(f)==='live').length > 0; } catch(e){ return false; } };
   var AUTO_SYNC = 3600000, pollGap = AUTO_SYNC, lastSyncAt = 0;
   async function syncNow(manual){
     const mainOn = !!(M.sync.on && M.sync.code);
@@ -1807,7 +1838,7 @@ const CV = (function(){
       for(const sp of (M.spaces||[])) changed += await syncSpace(sp);
       if(showC) cryptHide('🔒 Données chiffrées et synchronisées');
       else if(manual) toast('☁️ Synchronisé');
-      setTimeout(uploadQueue, 100);
+      setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500);
     } catch(e){
       M.sync.err = e.message || String(e);
       if(showC) cryptHide();
@@ -1979,6 +2010,7 @@ const CV = (function(){
       ${ESCALE ? `<a class="v-btn sec cv-escale" href="${ESCALE}">✈️ Chercher des vols avec Escale</a><button class="v-btn sec" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button><button class="v-btn sec" onclick="CV.radarTuto()">✦ Tuto Radar des prix</button>` : ''}
       ${trip() && !trip().demo ? `<button class="v-btn sec" onclick="CV.tripShare('${M.trip}')">🔗 ${TS()[M.trip] ? 'Partage de « ' + esc(trip().titre) + ' » (code du voyage)' : 'Partager « ' + esc(trip().titre) + ' » seul (son propre code)'}</button>` : ''}
       <button class="v-btn sec" onclick="CV.tripJoin()">🔗 Rejoindre un voyage partagé (code)</button>
+      <button class="v-btn sec" onclick="CV.followSheet()">👀 Voyages que je suis${list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')]).length ? ' (' + list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')]).length + ')' : ''}</button>
       ${trip() ? `<button class="v-btn sec" onclick="CV.editTrip('${M.trip}')">✏️ Modifier « ${esc(trip().titre)} »</button>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">✕ Fermer</button></div>`);
     requestAnimationFrame(tripSheetScroll);
@@ -3842,7 +3874,8 @@ const CV = (function(){
   // à quel carnet appartient une photo ? (celui de la fiche qui la contient)
   function photoCode(id){
     const base = String(id).replace(/\.t$/,'');
-    const r = Object.values(R).find(x=>x && ((x.photos||[]).includes(base) || x.recu===base || x.preuve===base || (x.pj||[]).some(p=>p.id===base)));
+    const has = x => x && ((x.photos||[]).includes(base) || x.recu===base || x.preuve===base || (x.pj||[]).some(p=>p.id===base));
+    const r = Object.values(R).find(x=>has(x) && x.type !== 'feed') || Object.values(R).find(has);
     if(r && r.demo) return null;   // les photos de démo restent sur le téléphone
     const t = targets(r)[0];
     return t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t;
@@ -3966,7 +3999,7 @@ const CV = (function(){
         <div class="cv-souv-h"><span class="v-day-d">${s.date ? fdate(s.date) : '—'}</span><div><div class="cv-souv-t">${esc(s.titre||s.lieu||'Souvenir')}</div>
           ${s.lieu || s.pays ? `<div class="v-sum-small">📍 ${esc([s.lieu, s.pays].filter(Boolean).join(', '))}</div>` : ''}</div>
           <button class="cv-x" onclick="CV.editSouv('${s.id}')" aria-label="Modifier">✏️</button></div>
-        ${s.texte ? `<div class="cv-souv-txt" onclick="this.classList.toggle('open')">${esc(s.texte)}</div>` : ''}
+        ${s.texte ? `<div class="cv-souv-txt" onclick="this.classList.toggle('open')">${esc(s.texte)}</div>` : ''}${souvSocial(s)}
         ${ph.length ? `<div class="cv-grid">${ph.slice(0,9).map((p,i)=>`<button class="cv-th" onclick="CV.view('${s.id}',${i})"><img data-ph="${esc(p)}.t" alt="">${i===8 && more>0 ? `<span>+${more}</span>` : ''}</button>`).join('')}</div>` : ''}
         ${byline(s)}
       </div>`;
@@ -3996,6 +4029,7 @@ const CV = (function(){
           <div class="cv-grid" id="sv-grid">${(s.photos||[]).map((p,i)=>`<div class="cv-th"><img data-ph="${esc(p)}.t" alt=""><button type="button" class="cv-thx" onclick="CV.souvDelPhoto(${i})">✕</button></div>`).join('')}</div>
           <label class="v-btn sec cv-addph">📷 Ajouter des photos<input type="file" accept="image/*" multiple onchange="CV.souvAddPhotos(this)"></label>
           <div class="v-sum-small" id="sv-prog"></div></div>
+        ${feedCode(s.trip) ? `<label class="cv-checkline" style="margin:4px 0 10px"><input type="checkbox" name="priv"${s.priv ? ' checked' : ''}> 🔒 Privé : ne pas montrer à mes abonnés</label>` : ''}
         ${actions(id ? `CV.delSouv('${id}')` : '')}
       </form>`);
     hydrate();
@@ -4003,6 +4037,7 @@ const CV = (function(){
   function readSouv(){
     const s = editing, fd = new FormData(document.getElementById('v-form'));
     for(const [k,v] of fd.entries()) s[k] = String(v).trim();
+    { const pv = document.querySelector('#v-form [name=priv]'); if(pv) s.priv = pv.checked; }
     return s;
   }
   async function souvAddPhotos(input){
@@ -4033,7 +4068,7 @@ const CV = (function(){
     const s = readSouv();
     if(!s.titre && !s.texte && !(s.photos||[]).length){ alert('Ajoute au moins un titre, un récit ou une photo.'); return; }
     if(!s.id) s.id = 'sv' + uid();
-    const svNew = !R[s.id]; put(s, '📸 Souvenir enregistré'); closeSheet(); render(); uploadQueue(); if(svNew) setTimeout(()=>fxPlay('souvenir', 'Souvenir gardé !'), 250);
+    const svNew = !R[s.id]; put(s, '📸 Souvenir enregistré'); if(feedCode(s.trip)) setTimeout(feedAll, 400); closeSheet(); render(); uploadQueue(); if(svNew) setTimeout(()=>fxPlay('souvenir', 'Souvenir gardé !'), 250);
   }
   function delSouv(id){ if(!confirm('Supprimer ce souvenir ?')) return; drop(id); closeSheet(); render(); }
 
@@ -4107,7 +4142,7 @@ const CV = (function(){
   }
   function setCur(c){ if(CURS[c]){ M.cur = c; persist(); toast('💱 ' + c); } }
   function init(){
-    setTimeout(shareInbox, 600);
+    setTimeout(shareInbox, 600); setTimeout(hashJoin, 1200);
     try { const hq = document.getElementById('cv-hero-qr'); if(hq) hq.innerHTML = qrSVG(APP_URL(), 'q') + '<span>📤 Partager</span>'; } catch(e){}
     loadStore();
     document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ if(vw) viewClose(); else closeSheet(); } if(vw && e.key==='ArrowRight') viewGo(1); if(vw && e.key==='ArrowLeft') viewGo(-1); });
@@ -4512,7 +4547,7 @@ const CV = (function(){
       <div style="margin-bottom:12px">${pchip(M.me)}</div>
       <div class="v-sum-small" style="margin-bottom:12px">Ce téléphone est le tien : tout ce que tu ajoutes est signé ${esc(pname(M.me))}.</div>
       <button class="v-btn sec" onclick="CV.editProfile('${M.me}')">🎨 Changer mon nom / ma couleur</button>
-      ${M.sync.on ? `<button class="v-btn" style="margin-top:10px" onclick="CV.syncNow(true)">🔄 Synchroniser maintenant</button>` : ''}
+      <button class="v-btn sec" style="margin-top:10px" onclick="CV.syncSheet()">☁️ État de la synchro</button>
       <div class="v-sum-small" style="margin-top:10px">Synchro : ${!M.sync.on ? 'désactivée' : M.sync.err ? '🔴 ' + esc(M.sync.err) : (M.dirty.length || (M.pq||[]).length) ? '🟠 envoi en cours' : '🟢 à jour'}${M.sync.on ? ' · automatique toutes les heures' : ''}</div>`);
   }
   let tapN = 0, tapT = 0;
@@ -8749,24 +8784,25 @@ ${pm.join('\n')}</Document></kml>`;
   function shareHub(){
     const t = trip(); if(!t) return;
     if(t.demo){ alert('C’est le voyage de démo : crée ton propre voyage (Mes voyages → ＋) pour le partager.'); return; }
-    const code = TS()[t.id], s = M.sync, v = (t.voyageurs||[]).filter(prof);
+    const code = TS()[t.id], on = code && spaceObj(code), sp = on ? spaceObj(code) : null, v = (t.voyageurs||[]).filter(prof), fc = feedCode(t.id);
+    const nfw = fc ? list('follower', x=>x.trip===ftId(t.id)).length : 0, nlk = fc ? list('like', l=>l.trip===ftId(t.id) && l.on).length : 0, ncm = fc ? list('comment', c=>c.trip===ftId(t.id)).length : 0;
     let h = `<h2>🔗 Partager « ${esc(t.titre)} »</h2>
-      <div class="v-sum-small" style="margin-bottom:10px">Ton compagnon ou tes amis voient le voyage et le complètent avec toi : chacun sa couleur, chaque ajout est signé.</div>
-      <div class="v-f"><label>Dans ce voyage</label><div class="cv-row" style="gap:6px">${v.map(pid=>pchip(pid)).join('') || '<span class="v-sum-small">personne pour l’instant</span>'}</div>
-        <button type="button" class="v-day-edit" style="margin-top:6px" onclick="CV.editTrip('${t.id}')">👥 Choisir les voyageurs</button></div>`;
-    if(code && spaceObj(code)){
-      h += `<div class="cv-inst ok">🔗 Ce voyage a <b>son propre code</b> : seuls ceux qui l’ont le voient.</div>
-        <button type="button" class="v-btn" onclick="CV.tripInvite('${t.id}')">📤 Envoyer l’invitation (lien + code)</button>
-        <button type="button" class="v-btn sec" onclick="CV.tripShareSheet('${t.id}')">Voir le code et l’état du partage</button>`;
-    } else {
-      if(s.on) h += `<div class="cv-inst ok">✅ Ce voyage est dans ton <b>carnet partagé</b> : ceux qui ont ton code principal le voient déjà.</div>
-        <button type="button" class="v-btn" onclick="CV.shareCode()">📤 Inviter dans tout le carnet (code principal)</button>`;
-      h += `<button type="button" class="v-btn${s.on ? ' sec' : ''}" onclick="CV.tripShare('${t.id}')">🔗 Partager ce voyage seul (son propre code)</button>
-        <div class="v-sum-small" style="margin:-2px 0 8px">Pour des amis qui ne doivent voir <b>que ce voyage</b>, pas tes autres.</div>`;
-      if(!s.on) h += `<button type="button" class="v-btn sec" onclick="CV.close();CV.tab('reglages')">☁️ Partager tout le carnet (code principal)</button>`;
-    }
-    h += `<button type="button" class="v-btn sec" onclick="CV.tripJoin()">🔗 J’ai reçu un code : rejoindre un voyage</button>
-      <button type="button" class="v-btn sec" onclick="CV.shareSheet()">📤 Faire découvrir l’appli à un ami (QR code)</button>
+      <div class="sh-card"><div class="sh-k">👥 Voyager ensemble</div><p>Tes compagnons voient tout le voyage et le complètent avec toi : programme, résas, budget, souvenirs. Chaque ajout est signé.</p>
+        <div class="cv-row" style="gap:6px;flex-wrap:wrap;margin:6px 0 10px">${v.map(pid=>pchip(pid)).join('') || '<span class="v-sum-small">Personne d’autre pour l’instant</span>'}</div>
+        <button type="button" class="v-btn" onclick="CV.tripInviteNow('${t.id}')">📤 Inviter quelqu’un dans ce voyage</button>
+        <div class="v-sum-small" style="margin-top:6px">${on ? `☁️ En ligne et chiffré · ${sp.err ? '⚠️ ' + esc(sp.err) : (sp.dirty||[]).length ? '⏳ envoi en cours' : '✓ à jour'}` : 'Un seul geste : le voyage est mis en ligne (chiffré) et tu envoies le lien par message. Tes autres voyages restent privés.'}</div></div>
+      <div class="sh-card"><div class="sh-k">👀 Abonnés</div><p>Ta famille et tes amis suivent le voyage comme un carnet de bord : uniquement les photos, les lieux et les récits. Ils mettent des ❤️ et des commentaires. Le reste reste privé.</p>
+        ${fc ? `<div class="sh-st"><span>👀 <b>${nfw}</b> abonné${nfw>1?'s':''}</span><span>❤️ <b>${nlk}</b></span><span>💬 <b>${ncm}</b></span></div>
+          <button type="button" class="v-btn" onclick="CV.feedPublish('${t.id}')">📤 Inviter des abonnés</button>
+          <button type="button" class="v-btn sec" onclick="CV.feedStop('${t.id}')">Arrêter la publication</button>`
+        : `<button type="button" class="v-btn" onclick="CV.feedPublish('${t.id}')">👀 Publier pour des abonnés</button>`}</div>
+      <details class="sh-more"><summary>Plus d’options</summary>
+        ${on ? `<button type="button" class="v-btn sec" onclick="CV.tripShareSheet('${t.id}')">🔑 Code du voyage et état du partage</button>` : `<button type="button" class="v-btn sec" onclick="CV.tripShare('${t.id}')">🔑 Réutiliser un ancien code de voyage</button>`}
+        <button type="button" class="v-btn sec" onclick="CV.editTrip('${t.id}')">👥 Choisir les voyageurs</button>
+        <button type="button" class="v-btn sec" onclick="CV.tripJoin()">🔗 J’ai reçu un code : rejoindre un voyage</button>
+        <button type="button" class="v-btn sec" onclick="CV.followSheet()">👀 Voyages que je suis</button>
+        <button type="button" class="v-btn sec" onclick="CV.close();CV.tab('reglages')">📱 Mes voyages sur tous mes appareils</button>
+        <button type="button" class="v-btn sec" onclick="CV.shareSheet()">📤 Faire découvrir l’appli (QR code)</button></details>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`;
     openSheet(h);
   }
@@ -9755,12 +9791,37 @@ ${pm.join('\n')}</Document></kml>`;
     try { const c = await drawMap({w:640, h:360, lines, markers, maxZoom:15}); if(el.isConnected) el.innerHTML = `<img src="${c.toDataURL('image/jpeg', .86)}" alt="" style="width:100%;display:block;border-radius:14px">`; } catch(e){ el.innerHTML = ''; }
   }
 
+  /* ---------- 🎨 Icônes maison : chaque emoji connu est remplacé par son dessin (icons/<nom>.webp) ----------
+     Même rendu sur iPhone et Android. Le texte reste dans « alt » (copier-coller, lecteurs d'écran). */
+  const VI = {"✈️": "airplane", "✈": "airplane", "🛫": "airplane-departure", "🛫️": "airplane-departure", "🚆": "train", "🚆️": "train", "🚄": "high-speed-train", "🚄️": "high-speed-train", "🚇": "metro", "🚇️": "metro", "🚌": "bus", "🚌️": "bus", "🚐": "minibus", "🚐️": "minibus", "🚗": "automobile", "🚗️": "automobile", "🚕": "taxi", "🚕️": "taxi", "⛴️": "ferry", "⛴": "ferry", "⛵": "sailboat", "⛵️": "sailboat", "🛣️": "motorway", "🛣": "motorway", "🚶": "person-walking", "🚶️": "person-walking", "🚀": "rocket", "🚀️": "rocket", "🧭": "compass", "🧭️": "compass", "🛰️": "satellite", "🛰": "satellite", "📡": "satellite-antenna", "📡️": "satellite-antenna", "🏨": "hotel", "🏨️": "hotel", "🛏️": "bed", "🛏": "bed", "🧸": "teddy-bear", "🧸️": "teddy-bear", "💤": "zzz", "💤️": "zzz", "🌙": "crescent-moon", "🌙️": "crescent-moon", "🏡": "house-with-garden", "🏡️": "house-with-garden", "🏠": "house", "🏠️": "house", "📍": "round-pushpin", "📍️": "round-pushpin", "📌": "pushpin", "📌️": "pushpin", "🗺️": "world-map", "🗺": "world-map", "🌍": "globe-showing-europe-africa", "🌍️": "globe-showing-europe-africa", "🌐": "globe-with-meridians", "🌐️": "globe-with-meridians", "🏙️": "cityscape", "🏙": "cityscape", "🏖️": "beach-with-umbrella", "🏖": "beach-with-umbrella", "🏛️": "classical-building", "🏛": "classical-building", "⛪": "church", "⛪️": "church", "🏔️": "snow-capped-mountain", "🏔": "snow-capped-mountain", "🌅": "sunrise", "🌅️": "sunrise", "🎡": "ferris-wheel", "🎡️": "ferris-wheel", "🏺": "amphora", "🏺️": "amphora", "🐘": "elephant", "🐘️": "elephant", "🌳": "deciduous-tree", "🌳️": "deciduous-tree", "🌿": "herb", "🌿️": "herb", "🌱": "seedling", "🌱️": "seedling", "🌊": "water-wave", "🌊️": "water-wave", "🎫": "ticket", "🎫️": "ticket", "🎟️": "admission-tickets", "🎟": "admission-tickets", "📄": "page-facing-up", "📄️": "page-facing-up", "🧾": "receipt", "🧾️": "receipt", "🛂": "passport-control", "🛂️": "passport-control", "🪪": "identification-card", "🪪️": "identification-card", "📋": "clipboard", "📋️": "clipboard", "📎": "paperclip", "📎️": "paperclip", "🗂️": "card-index-dividers", "🗂": "card-index-dividers", "📂": "open-file-folder", "📂️": "open-file-folder", "🗒️": "spiral-notepad", "🗒": "spiral-notepad", "📝": "memo", "📝️": "memo", "✉️": "envelope", "✉": "envelope", "📨": "incoming-envelope", "📨️": "incoming-envelope", "📥": "inbox-tray", "📥️": "inbox-tray", "📤": "outbox-tray", "📤️": "outbox-tray", "📲": "mobile-phone-with-arrow", "📲️": "mobile-phone-with-arrow", "🖨️": "printer", "🖨": "printer", "💶": "euro-banknote", "💶️": "euro-banknote", "💸": "money-with-wings", "💸️": "money-with-wings", "💱": "currency-exchange", "💱️": "currency-exchange", "💳": "credit-card", "💳️": "credit-card", "💰": "money-bag", "💰️": "money-bag", "⚖️": "balance-scale", "⚖": "balance-scale", "🛒": "shopping-cart", "🛒️": "shopping-cart", "📊": "bar-chart", "📊️": "bar-chart", "📸": "camera-with-flash", "📸️": "camera-with-flash", "📷": "camera", "📷️": "camera", "🖼️": "framed-picture", "🖼": "framed-picture", "🎬": "clapper-board", "🎬️": "clapper-board", "📖": "open-book", "📖️": "open-book", "📕": "closed-book", "📕️": "closed-book", "🎵": "musical-note", "🎵️": "musical-note", "🔇": "muted-speaker", "🔇️": "muted-speaker", "🔊": "speaker-high-volume", "🔊️": "speaker-high-volume", "✍️": "writing-hand", "✍": "writing-hand", "💭": "thought-balloon", "💭️": "thought-balloon", "🎨": "artist-palette", "🎨️": "artist-palette", "✨": "sparkles", "✨️": "sparkles", "🪄": "magic-wand", "🪄️": "magic-wand", "💡": "light-bulb", "💡️": "light-bulb", "🎉": "party-popper", "🎉️": "party-popper", "🎁": "wrapped-gift", "🎁️": "wrapped-gift", "❤️": "red-heart", "❤": "red-heart", "🤍": "white-heart", "🤍️": "white-heart", "💕": "two-hearts", "💕️": "two-hearts", "💖": "sparkling-heart", "💖️": "sparkling-heart", "🏁": "chequered-flag", "🏁️": "chequered-flag", "🎯": "bullseye", "🎯️": "bullseye", "🎓": "graduation-cap", "🎓️": "graduation-cap", "🙏": "folded-hands", "🙏️": "folded-hands", "👋": "waving-hand", "👋️": "waving-hand", "✋": "raised-hand", "✋️": "raised-hand", "👀": "eyes", "👀️": "eyes", "🙈": "see-no-evil-monkey", "🙈️": "see-no-evil-monkey", "👤": "bust-in-silhouette", "👤️": "bust-in-silhouette", "👥": "busts-in-silhouette", "👥️": "busts-in-silhouette", "👪": "family", "👪️": "family", "👶": "baby", "👶️": "baby", "🗳️": "ballot-box-with-ballot", "🗳": "ballot-box-with-ballot", "🔗": "link", "🔗️": "link", "☀️": "sun", "☀": "sun", "🌤️": "sun-behind-small-cloud", "🌤": "sun-behind-small-cloud", "🌥️": "sun-behind-large-cloud", "🌥": "sun-behind-large-cloud", "☁️": "cloud", "☁": "cloud", "❄️": "snowflake", "❄": "snowflake", "🌡️": "thermometer", "🌡": "thermometer", "⛷️": "skier", "⛷": "skier", "🥾": "hiking-boot", "🥾️": "hiking-boot", "🧗": "person-climbing", "🧗️": "person-climbing", "🧘": "person-in-lotus-position", "🧘️": "person-in-lotus-position", "🍝": "spaghetti", "🍝️": "spaghetti", "☕": "hot-beverage", "☕️": "hot-beverage", "🎲": "game-die", "🎲️": "game-die", "🧩": "puzzle-piece", "🧩️": "puzzle-piece", "🧴": "lotion-bottle", "🧴️": "lotion-bottle", "🎒": "backpack", "🎒️": "backpack", "💼": "briefcase", "💼️": "briefcase", "🧳": "luggage", "🧳️": "luggage", "📅": "calendar", "📅️": "calendar", "🗓️": "spiral-calendar", "🗓": "spiral-calendar", "📆": "tear-off-calendar", "📆️": "tear-off-calendar", "✅": "check-mark-button", "✅️": "check-mark-button", "⚠️": "warning", "⚠": "warning", "🗑": "wastebasket", "🗑️": "wastebasket", "💾": "floppy-disk", "💾️": "floppy-disk", "📦": "package", "📦️": "package", "🔎": "magnifying-glass-tilted-right", "🔎️": "magnifying-glass-tilted-right", "🔍": "magnifying-glass-tilted-left", "🔍️": "magnifying-glass-tilted-left", "⚡": "high-voltage", "⚡️": "high-voltage", "✏️": "pencil", "✏": "pencil", "🔒": "locked", "🔒️": "locked", "🔓": "unlocked", "🔓️": "unlocked", "🔐": "locked-with-key", "🔐️": "locked-with-key", "🔑": "key", "🔑️": "key", "⏳": "hourglass-not-done", "⏳️": "hourglass-not-done", "⏱️": "stopwatch", "⏱": "stopwatch", "🕘": "nine-o-clock", "🕘️": "nine-o-clock", "🕓": "four-o-clock", "🕓️": "four-o-clock", "⚙️": "gear", "⚙": "gear", "📴": "mobile-phone-off", "📴️": "mobile-phone-off", "📱": "mobile-phone", "📱️": "mobile-phone", "☎": "telephone", "☎️": "telephone", "📞": "telephone-receiver", "📞️": "telephone-receiver", "🔔": "bell", "🔔️": "bell", "🔌": "electric-plug", "🔌️": "electric-plug", "🧰": "toolbox", "🧰️": "toolbox", "🛠️": "hammer-and-wrench", "🛠": "hammer-and-wrench", "🧹": "broom", "🧹️": "broom", "🔴": "red-circle", "🔴️": "red-circle", "🟠": "orange-circle", "🟠️": "orange-circle", "🟢": "green-circle", "🟢️": "green-circle", "👁️": "eye", "👁": "eye", "🏳️": "white-flag", "🏳": "white-flag"};
+  const VI_KEYS = Object.keys(VI).sort((a,b)=>b.length - a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const VI_RE = new RegExp(VI_KEYS.join('|'), 'g'), VI_TEST = new RegExp(VI_KEYS.join('|'));
+  const VI_SKIP = /^(SCRIPT|STYLE|TEXTAREA|OPTION|SELECT|TITLE|INPUT|CODE|PRE)$/;
+  function viWalk(root){
+    if(!root || M.noVi) return;
+    if(root.nodeType === 3) root = root.parentNode; if(!root || root.nodeType !== 1 || VI_SKIP.test(root.nodeName) || (root.closest && root.closest('[data-novi]'))) return;
+    const w = document.createTreeWalker(root, 4, {acceptNode: n => { const p = n.parentNode; if(!p || VI_SKIP.test(p.nodeName) || p.isContentEditable || p.namespaceURI === 'http://www.w3.org/2000/svg' || (p.closest && p.closest('[data-novi],svg'))) return 2; return VI_TEST.test(n.nodeValue) ? 1 : 2; }});
+    const L = []; while(w.nextNode()) L.push(w.currentNode);
+    L.forEach(n => {
+      const t = n.nodeValue, f = document.createDocumentFragment(); let last = 0;
+      t.replace(VI_RE, (m, i) => { if(i > last) f.appendChild(document.createTextNode(t.slice(last, i)));
+        const im = document.createElement('img'); im.className = 'vi'; im.alt = m; im.src = 'icons/' + VI[m] + '.webp'; im.draggable = false; im.decoding = 'async'; f.appendChild(im); last = i + m.length; return m; });
+      if(last < t.length) f.appendChild(document.createTextNode(t.slice(last)));
+      if(n.parentNode) n.parentNode.replaceChild(f, n);
+    });
+  }
+  { let viQ = new Set(), viT = 0;
+    const flush = () => { viT = 0; const q = [...viQ]; viQ.clear(); q.forEach(n => { if(n.isConnected) viWalk(n); }); };
+    new MutationObserver(list => { for(const r of list){ if(r.type === 'characterData') viQ.add(r.target); else r.addedNodes.forEach(n => { if(n.nodeType === 1 || n.nodeType === 3) viQ.add(n); }); }
+      if(!viT) viT = setTimeout(flush, 0); }).observe(document.body, {childList:true, subtree:true, characterData:true});
+    setTimeout(() => viWalk(document.body), 50); }
+
   /* ---------- 🎬 Petites animations (un avion qui décolle, un nounours qui va au lit…) ----------
      Chaque scène utilise une image anim/<nom>.webp si elle existe (dessins maison), sinon un emoji. */
   const FX_IMG = {}, FX_EMO = {plane:'✈️', train:'🚄', bus:'🚌', car:'🚗', boat:'⛴️', bear:'🧸', bed:'🛏️', moon:'🌙', zzz:'💤', cloud:'☁️', ticket:'🎟️', camera:'📸', suitcase:'🧳', star:'✨', heart:'💖'};
   // anim/list.json (facultatif) liste les dessins disponibles, ex. ["plane","bear","bed"] : une seule requête au démarrage
   setTimeout(()=>{ fetch('anim/list.json', {cache:'no-cache'}).then(r=>r.ok ? r.json() : []).then(l=>{ (Array.isArray(l) ? l : []).forEach(k=>{ const im = new Image(); im.onload = () => { FX_IMG[k] = im.src; }; im.src = 'anim/' + k + '.webp'; }); }).catch(()=>{}); }, 4000);
-  const fxEl = k => FX_IMG[k] ? `<img class="fx-i" src="${FX_IMG[k]}" alt="">` : `<span class="fx-e">${FX_EMO[k]}</span>`;
+  const fxEl = k => FX_IMG[k] ? `<img class="fx-i fx-i-${k}" src="${FX_IMG[k]}" alt="">` : `<span class="fx-e" data-novi>${FX_EMO[k]}</span>`;
   function fxPlay(kind, label){
     try { if(M.noFx || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return; } catch(e){}
     const old = document.getElementById('cv-fx'); if(old) old.remove();
@@ -9777,7 +9838,7 @@ ${pm.join('\n')}</Document></kml>`;
       souvenir: `<div class="fx-flash"></div><div class="fx-pop">${fxEl('camera')}</div>${L}`,
       trip: `<div class="fx-burst">${Array.from({length:14}, (_, i)=>`<i style="--a:${i * 360 / 14}deg;--d:${(i % 3) * .08}s">${fxEl('star')}</i>`).join('')}</div><div class="fx-pop">${fxEl('suitcase')}</div>${L}`
     };
-    el.innerHTML = scenes[kind] || scenes.ticket;
+    el.innerHTML = scenes[kind] || scenes.ticket; if(FX_IMG.bed) el.classList.add('fx-img');
     document.body.appendChild(el);
     setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(), 450); }, kind === 'hotel' ? 2600 : 2000);
   }
@@ -9832,7 +9893,203 @@ ${pm.join('\n')}</Document></kml>`;
     catch(e){ el.innerHTML = ''; }
   }
 
-  const BUILD = '2026-10-10h';
+  /* ======================================================================
+     ☁️ Synchro simplifiée · 🔗 invitations par lien · 👀 abonnés (photos + récits, ❤️ et 💬)
+     ====================================================================== */
+  const appUrl = () => M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
+  // ---------- État de synchro unique (pastille dans l'en-tête) ----------
+  function syncState(){
+    const sps = (M.spaces||[]), any = (M.sync.on && M.sync.code) || sps.length;
+    if(!any) return 'off';
+    if(M.sync.err || sps.some(x=>x.err)) return navigator.onLine === false ? 'offline' : 'err';
+    if(syncing || M.dirty.length || sps.some(x=>(x.dirty||[]).length) || (M.pq||[]).length || (M.fq||[]).length) return 'wait';
+    return 'ok';
+  }
+  function syncPill(){
+    let b = document.getElementById('cv-syncpill');
+    const btns = document.querySelector('.hero-btns'); if(!btns) return;
+    if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'cv-syncpill'; b.className = 'cv-syncpill'; b.onclick = () => CV.syncSheet(); btns.prepend(b); }
+    const st = syncState(), L = {ok:['☁️','À jour'], wait:['⏳','Envoi…'], err:['⚠️','Souci'], offline:['📴','Hors ligne'], off:['☁️','Local']};
+    b.className = 'cv-syncpill ' + st; b.innerHTML = `<span>${L[st][0]}</span><small>${L[st][1]}</small>`; b.setAttribute('aria-label', 'Synchronisation : ' + L[st][1]);
+  }
+  function syncSheet(){
+    const s = M.sync, rows = [];
+    if(s.on && s.code) rows.push(`<div class="sy-r"><b>📱 Mes voyages sur tous mes appareils</b><small>${s.err ? '⚠️ ' + esc(s.err) : M.dirty.length ? '⏳ ' + M.dirty.length + ' modif(s) à envoyer' : '✓ à jour' + (s.last ? ' · ' + when(s.last) : '')}</small></div>`);
+    Object.entries(TS()).forEach(([tid, c])=>{ const sp = spaceObj(c), t = R[tid]; if(!sp || !t) return;
+      const kind = FT()[tid.replace(/^ft:/,'')] === c ? '👀 Mes abonnés : ' : t.type === 'feedtrip' ? '👀 Je suis : ' : '🔗 ';
+      rows.push(`<div class="sy-r"><b>${kind}${esc(t.titre || '')}</b><small>${sp.err ? '⚠️ ' + esc(sp.err) : (sp.dirty||[]).length ? '⏳ ' + sp.dirty.length + ' modif(s) à envoyer' : '✓ à jour' + (sp.last ? ' · ' + when(sp.last) : '')}</small></div>`); });
+    const ph = pqN() + (M.fq||[]).length;
+    openSheet(`<h2>☁️ Synchronisation</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">Tout part tout seul : à l’ouverture, après chaque modification, puis régulièrement. Hors connexion, rien n’est perdu : ça part dès que le réseau revient.</div>
+      ${rows.join('') || '<div class="v-sum-small">Rien n’est partagé pour l’instant : tes voyages restent sur ce téléphone. Partage un voyage depuis son bouton 🔗 Partager.</div>'}
+      ${ph ? `<div class="sy-r"><b>📸 Photos</b><small>⏳ ${ph} en cours d’envoi</small></div>` : ''}
+      <div class="v-actions">${rows.length ? `<button type="button" class="v-btn" onclick="CV.syncNow(true);CV.close()">🔄 Synchroniser maintenant</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.close();CV.tab('reglages')">⚙️ Réglages du partage</button></div>`);
+  }
+  setInterval(syncPill, 2500);
+
+  // ---------- Inviter dans un voyage en un geste (le lien contient le code) ----------
+  async function tripInviteNow(id){
+    const t = R[id || M.trip]; if(!t || t.demo) return;
+    if(!(TS()[t.id] && spaceObj(TS()[t.id]))){
+      const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t.id] = c;
+      Object.values(R).filter(r=>!r.demo && (r.id===t.id || r.trip===t.id)).forEach(r=>markDirty(r.id));
+      await photoQueueAll(t.id); persist(); toast('🔐 Voyage mis en ligne (chiffré)…'); await syncNow(); uploadQueue();
+    }
+    const code = TS()[t.id], url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : '';
+    const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
+    const text = MSG(`Rejoins notre voyage « ${t.titre} » sur Vezoria 🧳`) + '\n' + (link || url) + '\n' + MSG(`(Si le lien ne s’ouvre pas : Mes voyages → Rejoindre un voyage → code ${code})`);
+    if(navigator.share){ try { await navigator.share({title:t.titre, text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
+    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); } catch(e){ prompt('Copie ce texte :', text); }
+    refresh();
+  }
+  // lien reçu : #rejoindre=CODE (voyage partagé) ou #suivre=CODE (abonné)
+  function hashJoin(){
+    const h = decodeURIComponent(location.hash || ''); const m = h.match(/#(rejoindre|suivre)=([A-Z0-9-]{8,})/i); if(!m) return;
+    history.replaceState(null, '', location.pathname + location.search);
+    const code = m[2].toUpperCase();
+    if(m[1].toLowerCase() === 'suivre'){ followGo(code); return; }
+    if(Object.values(TS()).includes(code)){ const tid = Object.keys(TS()).find(k=>TS()[k]===code); if(R[tid]) go(tid); return; }
+    if(!confirm('Rejoindre le voyage partagé avec toi ?\n\nCode : ' + code)) return;
+    tripJoin(); setTimeout(()=>{ const i = document.getElementById('tj-code'); if(i){ i.value = code; tripJoinGo(); } }, 120);
+  }
+  window.addEventListener('hashchange', hashJoin);
+
+  // ---------- 👀 Abonnés : le voyage en photos et récits, le reste reste privé ----------
+  const FT = () => M.feedPub || (M.feedPub = {});            // voyage → code abonnés (chez l'auteur)
+  const ftId = tid => 'ft:' + tid;
+  const feedCode = tid => { const c = FT()[tid]; return c && spaceObj(c) ? c : null; };
+  const devId = () => M.devId || (M.devId = 'd' + uid());
+  const myName = () => (M.me && prof(M.me) ? pname(M.me) : '') || M.followName || '';
+  const stripStamp = r => { const o = Object.assign({}, r); ['createdAt','createdBy','updatedAt','updatedBy'].forEach(k=>delete o[k]); return JSON.stringify(o); };
+  function putQuiet(arr){ arr.forEach(r=>{ photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); if(arr.length){ persist(); queueSync(); } }
+  // côté auteur : les souvenirs (non privés) deviennent des publications
+  function feedBuild(tid){
+    const c = feedCode(tid), t = R[tid]; if(!c || !t) return 0;
+    TS()[ftId(tid)] = c; const out = [], cov = coverId(t);
+    const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', cover: cov || ''};
+    if(!R[head.id] || stripStamp(R[head.id]) !== stripStamp(head)) out.push(head);
+    const keep = new Set();
+    list('souv', s=>s.trip===tid && !s.priv && ((s.photos||[]).length || (s.texte||'').trim())).forEach(s=>{
+      const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 24), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''};
+      keep.add(f.id); if(!R[f.id] || R[f.id].deleted || stripStamp(R[f.id]) !== stripStamp(f)) out.push(f);
+      f.photos.forEach(p=>feedPhotoQ(c, p)); if(cov) feedPhotoQ(c, cov);
+    });
+    list('feed', f=>f.trip===ftId(tid) && !keep.has(f.id)).forEach(f=>out.push(Object.assign(clone(f), {deleted:true})));
+    putQuiet(out); return out.length;
+  }
+  function feedPhotoQ(code, id){ M.fup = M.fup || {}; const done = M.fup[code] || (M.fup[code] = {}); if(done[id]) return; M.fq = M.fq || []; if(!M.fq.some(x=>x[0]===code && x[1]===id)) M.fq.push([code, id]); }
+  let feedUp = false;
+  async function feedUpload(){
+    if(feedUp || !(M.fq||[]).length || !photoApi()) return; feedUp = true;
+    try {
+      for(const [code, id] of [...M.fq]){
+        let o = null; try { o = await IDB.get(id); } catch(e){}
+        if(o && o.blob){
+          let ub = o.blob; if(ub.size > 1700000){ try { ub = await shrink(o.blob, 2048, .8); } catch(e){} }
+          const send = async (bl, pid) => { const body = E2E ? new Blob([await seal(new Uint8Array(await bl.arrayBuffer()), code)], {type:'image/jpeg'}) : bl;
+            const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(pid, code), 'Content-Type':'image/jpeg'}, body}); return r.ok || r.status === 413; };
+          if(!(await send(ub, id))) break;
+          try { let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){} if(!tb) tb = await shrink(ub, 480, .74); await send(tb, id + '.t'); } catch(e){}
+        }
+        (M.fup[code] = M.fup[code] || {})[id] = 1; M.fq = M.fq.filter(x=>!(x[0]===code && x[1]===id)); persist();
+      }
+    } catch(e){} finally { feedUp = false; }
+  }
+  function feedAll(){ Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); feedUpload(); }
+  setInterval(()=>{ if(document.visibilityState === 'visible' && Object.keys(FT()).length) feedAll(); }, 60000);
+  setTimeout(feedAll, 5000);
+  async function feedPublish(tid){
+    const t = R[tid || M.trip]; if(!t || t.demo) return;
+    if(!myName()){ const n = prompt('Ton prénom (affiché à tes abonnés) :', ''); if(!n || !n.trim()) return; M.followName = n.trim(); }
+    if(!feedCode(t.id)){
+      if(!confirm(`Publier « ${t.titre} » pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.\nUn souvenir marqué « privé » n’est jamais publié.\nIls pourront mettre des ❤️ et des commentaires.`)) return;
+      const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); FT()[t.id] = c; persist();
+    }
+    feedBuild(t.id); await syncNow(); feedUpload();
+    const link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(FT()[t.id]) : '';
+    const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
+    const text = MSG(`Suis mon voyage « ${t.titre} » sur Vezoria ✈️ : photos et récits au fil des étapes`) + '\n' + link + '\n' + MSG(`(code abonné : ${FT()[t.id]})`);
+    if(navigator.share){ try { await navigator.share({title:t.titre, text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
+    try { await navigator.clipboard.writeText(text); toast('📋 Lien abonné copié'); } catch(e){ prompt('Copie ce texte :', text); }
+    refresh();
+  }
+  function feedStop(tid){
+    const c = FT()[tid]; if(!c) return;
+    if(!confirm('Arrêter la publication ? Tes abonnés ne verront plus ce voyage.')) return;
+    const out = list('feed', f=>f.trip===ftId(tid)).map(f=>Object.assign(clone(f), {deleted:true})); if(R[ftId(tid)]) out.push(Object.assign(clone(R[ftId(tid)]), {deleted:true}));
+    putQuiet(out); syncNow().then(()=>{ delete FT()[tid]; delete TS()[ftId(tid)]; M.spaces = (M.spaces||[]).filter(x=>x.code !== c); persist(); refresh(); });
+    toast('👀 Publication arrêtée');
+  }
+  // côté abonné
+  async function followGo(code){
+    code = String(code || '').trim().toUpperCase(); if(code.length < 8){ alert('Code trop court.'); return; }
+    if(!myName()){ const n = prompt('Ton prénom (pour signer tes ❤️ et commentaires) :', ''); if(!n || !n.trim()) return; M.followName = n.trim(); }
+    if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
+    toast('📡 Connexion…'); const sp = spaceObj(code); await syncSpace(sp, true);
+    if(sp.err){ alert('⚠️ ' + sp.err); return; }
+    const ft = Object.entries(TS()).filter(([k,c])=>c===code && R[k] && R[k].type==='feedtrip' && !R[k].deleted).map(([k])=>R[k])[0];
+    if(!ft){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); alert('Aucun voyage publié avec ce code.'); return; }
+    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who: myName()}; if(!R[fw.id]) putQuiet([fw]);
+    persist(); syncNow(); closeSheet(true); feedView(ft.id); toast('👀 Tu suis « ' + ft.titre + ' »');
+  }
+  function followSheet(){
+    const fl = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')]);
+    openSheet(`<h2>👀 Voyages que je suis</h2>
+      ${fl.map(f=>{ const n = list('feed', x=>x.trip===f.id).length; return `<button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b>${esc(f.titre)}</b><small style="display:block" class="v-sum-small">par ${esc(f.owner || '?')} · ${n} étape${n>1?'s':''}</small></span><span>›</span></button>`; }).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Tu ne suis aucun voyage pour l’instant.</div>'}
+      <div class="v-f" style="margin-top:10px"><label>Suivre un voyage avec un code abonné</label><div class="cv-row"><input class="v-in" id="fw-code" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.followGo(document.getElementById('fw-code').value)">Suivre</button></div></div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  const likesOf = fid => list('like', l=>l.feed===fid && l.on);
+  const commentsOf = fid => list('comment', c=>c.feed===fid).sort((a,b)=>(a.at||0)-(b.at||0));
+  function feedLike(fid){
+    const f = R[fid]; if(!f) return; if(!myName()){ const n = prompt('Ton prénom :', ''); if(!n) return; M.followName = n.trim(); }
+    const id = 'lk:' + fid + ':' + devId(), cur = R[id];
+    putQuiet([{id, type:'like', trip:f.trip, feed:fid, who:myName(), on: !(cur && cur.on)}]); syncNow(); feedPaint(fid);
+    if(!(cur && cur.on)) fxPlay && fxHeart();
+  }
+  function feedComment(fid){
+    const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
+    if(!myName()){ const n = prompt('Ton prénom :', ''); if(!n) return; M.followName = n.trim(); }
+    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:myName(), text:txt.slice(0, 600), at:Date.now()}]); i.value = ''; syncNow(); feedPaint(fid);
+  }
+  function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
+  function feedPostHTML(f){
+    const lk = likesOf(f.id), mine = lk.some(l=>l.id.endsWith(':' + devId())), cm = commentsOf(f.id), open = (M.cmOpen||{})[f.id];
+    return `<article class="fd-post" id="fp-${f.id}"><div class="fd-d">${f.date ? fdate(f.date) : ''}${f.lieu ? ' · ' + esc(f.lieu) : ''}${f.cc ? ' ' + flag(f.cc) : ''}</div>
+      ${f.titre ? `<h3>${esc(f.titre)}</h3>` : ''}
+      ${(f.photos||[]).length ? `<div class="fd-ph">${f.photos.map((p,i)=>`<button type="button" onclick="CV.view('${f.id}',${i})"><img data-ph="${esc(p)}.t" alt=""></button>`).join('')}</div>` : ''}
+      ${f.texte ? `<p class="fd-t">${esc(f.texte)}</p>` : ''}
+      <div class="fd-a"><button type="button" class="${mine ? 'on' : ''}" onclick="CV.feedLike('${f.id}')">${mine ? '❤️' : '🤍'} <b>${lk.length || ''}</b></button><button type="button" onclick="CV.feedTogC('${f.id}')">💬 <b>${cm.length || ''}</b></button>${lk.length ? `<small>${lk.slice(0,3).map(l=>esc(l.who||'')).join(', ')}${lk.length > 3 ? '…' : ''}</small>` : ''}</div>
+      ${open ? `<div class="fd-c">${cm.map(c=>`<div><b>${esc(c.who||'?')}</b> ${esc(c.text)} <small>${c.at ? when(c.at) : ''}</small></div>`).join('') || '<div class="v-sum-small">Pas encore de commentaire.</div>'}
+        <div class="cv-row"><input class="v-in" id="cm-${f.id}" placeholder="Écrire un commentaire…" maxlength="600"><button type="button" class="fd-send" onclick="CV.feedComment('${f.id}')">Envoyer</button></div></div>` : ''}</article>`;
+  }
+  function feedPaint(fid){ const el = document.getElementById('fp-' + fid), f = R[fid]; if(el && f){ el.outerHTML = feedPostHTML(f); hydrate(); } }
+  function feedTogC(fid){ M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = !M.cmOpen[fid]; feedPaint(fid); }
+  function feedView(ftid){
+    const ft = R[ftid]; if(!ft) return; closeSheet(true);
+    let ov = document.getElementById('cv-feed'); if(ov) ov.remove(); ov = document.createElement('div'); ov.id = 'cv-feed';
+    const posts = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    const fw = list('follower', x=>x.trip===ftid).length;
+    ov.innerHTML = `<div class="fd-top"><button type="button" class="fd-x" onclick="CV.feedClose()">✕</button><div><small>Voyage de ${esc(ft.owner||'?')}</small><b>${esc(ft.titre)}</b><small>${ft.debut ? tripDatesLong(ft) : ''}${fw ? ' · 👀 ' + fw + ' abonné' + (fw>1?'s':'') : ''}</small></div></div>
+      <div class="fd-list">${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
+    document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid;
+    syncNow().then(()=>{ if(M.feedOpen === ftid && document.getElementById('cv-feed')){ const y = ov.querySelector('.fd-list').scrollTop; const p2 = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||'')); ov.querySelector('.fd-list').innerHTML = p2.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'; ov.querySelector('.fd-list').scrollTop = y; hydrate(); } });
+  }
+  function feedClose(){ const ov = document.getElementById('cv-feed'); if(ov) ov.remove(); document.body.style.overflow = ''; M.feedOpen = null; }
+  // côté auteur : ❤️ et 💬 sur ses souvenirs
+  function souvSocial(s){
+    if(!feedCode(s.trip)) return ''; if(s.priv) return `<div class="sv-so"><small>🔒 Privé : pas visible des abonnés</small></div>`;
+    const fid = 'fd:' + s.id, lk = likesOf(fid), cm = commentsOf(fid);
+    return `<button type="button" class="sv-so" onclick="CV.souvComments('${s.id}')">❤️ <b>${lk.length}</b> · 💬 <b>${cm.length}</b>${lk.length ? ` <small>${lk.slice(0,3).map(l=>esc(l.who||'')).join(', ')}</small>` : ''}</button>`;
+  }
+  function souvComments(sid){
+    const s = R[sid]; if(!s) return; const fid = 'fd:' + sid; if(!R[fid]){ toast('Publication en cours…'); feedBuild(s.trip); }
+    const f = R[fid]; if(!f) return;
+    openSheet(`<h2>💬 ${esc(s.titre || 'Souvenir')}</h2><div id="sc-box">${feedPostHTML(f)}</div><div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+    M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
+  }
+
+  const BUILD = '2026-10-10j';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
@@ -9841,7 +10098,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {syncSheet, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
   const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
