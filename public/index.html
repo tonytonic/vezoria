@@ -2088,9 +2088,11 @@ const CV = (function(){
     const p = bar(), ent = DEST.filter(d=>!p.includes(d[0]) && !destHidden(d[0]) && d[0] !== 'prog')
       .map(d=>[`CV.plusGo('${d[0]}')`, d[1], d[2]]);
     ent.push([`CV.plusGo('prefs')`, '⚙️', 'Réglages']);
+    if(coffeeOn()) ent.push([`CV.coffeeGo()`, '☕', 'Offrir un café']);
     openSheet(`<h2>Plus</h2><div class="cv-plus">${ent.map(([fn,ic,l])=>`<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">✕ Fermer</button></div>`);
   }
+  function coffeeGo(){ closeSheet(true); try { window.open(COFFEE_URL, '_blank', 'noopener'); } catch(e){ location.href = COFFEE_URL; } }
   function plusGo(k){ closeSheet(true); navTo(k === 'prefs' ? 'prefs' : k); }
   function navGo(gid){
     const g = GROUPS.find(x=>x.id===gid); if(!g) return;
@@ -9132,7 +9134,12 @@ ${pm.join('\n')}</Document></kml>`;
   // ☕ Ton lien de soutien (Buy Me a Coffee). Vide = aucun bouton. Jamais affiché dans l'appli Google Play.
   var COFFEE_URL = 'https://buymeacoffee.com/tonytonic';
   function isPlay(){
-    try { if(/[?&]src=play\b/.test(location.search) || document.referrer.startsWith('android-app://')) localStorage.setItem('cv-play', '1'); return localStorage.getItem('cv-play') === '1'; } catch(e){ return false; }
+    // Seulement sur Android : un iPhone (ou un ordinateur) n'est jamais « l'appli Google Play », même s'il a ouvert un lien ?src=play
+    try {
+      if(!/Android/i.test(navigator.userAgent || '')){ localStorage.removeItem('cv-play'); return false; }
+      if(/[?&]src=play\b/.test(location.search) || document.referrer.startsWith('android-app://')) localStorage.setItem('cv-play', '1');
+      return localStorage.getItem('cv-play') === '1';
+    } catch(e){ return false; }
   }
   isPlay();
   // Les photos sorties d'une fiche ou d'une fiche supprimée sont aussi effacées du serveur
@@ -10318,7 +10325,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-10u';
+  const BUILD = '2026-10-10w';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
@@ -10327,7 +10334,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {objAsk, budTog, syncSheet, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {objAsk, budTog, syncSheet, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
   const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
