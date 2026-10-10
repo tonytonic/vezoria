@@ -1488,6 +1488,11 @@ body.cv-ph-live .cv-actb .ac-path .on,body.cv-ph-live .cv-actb .ac-n{box-shadow:
 .vz-back{display:flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;font-size:1.15rem;font-weight:800}
 .vz-ul{margin:4px 0 12px;padding-left:18px;font-size:.88rem;line-height:1.45}.vz-ul li{margin:4px 0}
 .vz-st{display:flex;gap:4px}.vz-st button{border:0;background:none;font-size:1.9rem;line-height:1;color:#d6d3d1;cursor:pointer;padding:2px 3px;min-width:40px;min-height:40px}.vz-st button.on{color:#f59e0b}
+.ui-dlg{position:fixed;inset:0;z-index:100010;background:rgba(20,10,30,.5);display:flex;align-items:center;justify-content:center;padding:20px;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:uiIn .15s ease-out}
+.ui-box{background:#fff;color:#2A1238;border-radius:22px;max-width:420px;width:100%;padding:20px 18px 14px;box-shadow:0 18px 50px rgba(0,0,0,.35);max-height:85vh;overflow:auto}
+.ui-msg{white-space:pre-wrap;font-size:.95rem;line-height:1.45;word-break:break-word}.ui-in{margin-top:12px;width:100%;box-sizing:border-box}
+.ui-act{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}.ui-act .v-btn{width:auto;flex:1;margin:0;min-height:46px}
+@keyframes uiIn{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body class="is-public">
@@ -1523,6 +1528,28 @@ const CV = (function(){
   const KEY = 'carnet_v2', OLD = 'voyage2027_v1', ARCHIVE_KEY = 'roadtrip2026_v3', LEGACY = 'legacy2026';
 
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  /* ══ Fenêtres de dialogue de l'appli (remplacent alert/confirm/prompt, qui affichent l'adresse du site sur Android et iPhone) ══ */
+  const UIQ = []; let dlgBusy = false;
+  const uiBox = (kind, msg, def) => new Promise(res=>{ UIQ.push({kind, msg: String(msg ?? ''), def, res}); uiNext(); });
+  function uiNext(){
+    if(dlgBusy || !UIQ.length) return; dlgBusy = true;
+    const {kind, msg, def, res} = UIQ.shift(), T = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
+    const ov = document.createElement('div'); ov.className = 'ui-dlg'; ov.setAttribute('role', kind === 'alert' ? 'alertdialog' : 'dialog'); ov.setAttribute('aria-modal', 'true');
+    ov.innerHTML = `<div class="ui-box"><div class="ui-msg"></div>${kind === 'prompt' ? '<input class="v-in ui-in" type="text" autocomplete="off">' : ''}<div class="ui-act">${kind !== 'alert' ? '<button type="button" class="v-btn sec ui-no">Annuler</button>' : ''}<button type="button" class="v-btn ui-ok">OK</button></div></div>`;
+    ov.querySelector('.ui-msg').textContent = T(msg);
+    const inp = ov.querySelector('.ui-in'); if(inp) inp.value = def == null ? '' : String(def);
+    const key = e => { if(e.key === 'Enter'){ e.preventDefault(); e.stopPropagation(); ok(); } else if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); kind === 'alert' ? ok() : no(); } };
+    const done = v => { document.removeEventListener('keydown', key, true); ov.remove(); dlgBusy = false; res(v); setTimeout(uiNext, 0); };
+    const ok = () => done(kind === 'confirm' ? true : kind === 'prompt' ? inp.value : undefined);
+    const no = () => done(kind === 'confirm' ? false : kind === 'prompt' ? null : undefined);
+    ov.querySelector('.ui-ok').onclick = ok; const nb = ov.querySelector('.ui-no'); if(nb) nb.onclick = no;
+    document.addEventListener('keydown', key, true);
+    document.body.appendChild(ov);
+    setTimeout(()=>{ try { (inp || ov.querySelector('.ui-ok')).focus({preventScroll:true}); if(inp) inp.select(); } catch(e){} }, 40);
+  }
+  const uiAlert = m => uiBox('alert', m), uiConfirm = m => uiBox('confirm', m), uiPrompt = (m, d) => uiBox('prompt', m, d);
+  window.alert = uiAlert;
   const D = d => d ? '2027-07-' + String(d).padStart(2,'0') : '';
   const num = v => { const n = parseFloat(String(v ?? '').replace(',','.')); return isNaN(n) ? 0 : n; };
   /* ── Devise : chaque voyage a la sienne (t.devise ; absente = euro, comme les anciens voyages) ── */
@@ -1729,14 +1756,14 @@ const CV = (function(){
     });
   }
   const rembs = () => list('remb', x=>x.trip===M.trip).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-  function rembAdd(de, a, v){
-    const t = prompt(`Montant remboursé par ${pname(de)} à ${pname(a)} (${CS()}) :`, String(Math.round(v*100)/100).replace('.',','));
+  async function rembAdd(de, a, v){
+    const t = (await uiPrompt(`Montant remboursé par ${pname(de)} à ${pname(a)} (${CS()}) :`, String(Math.round(v*100)/100).replace('.',',')));
     if(t === null) return;
     const m = num(t); if(!(m > 0)){ alert('Montant invalide.'); return; }
     put({id:'rb'+uid(), type:'remb', trip:M.trip, de, a, montant:m, date:new Date().toISOString().slice(0,10)}, '💸 Remboursement noté');
     render();
   }
-  function rembDel(id){ const x = R[id]; if(!x || !confirm(`Supprimer ce remboursement de ${eur(num(x.montant))} ?`)) return; drop(id); render(); }
+  async function rembDel(id){ const x = R[id]; if(!x || !(await uiConfirm(`Supprimer ce remboursement de ${eur(num(x.montant))} ?`))) return; drop(id); render(); }
   function settle(bal){
     const cr = bal.filter(b=>b.solde > 0.5).map(b=>({pid:b.pid, v:b.solde})).sort((a,b)=>b.v-a.v);
     const db = bal.filter(b=>b.solde < -0.5).map(b=>({pid:b.pid, v:-b.solde})).sort((a,b)=>b.v-a.v);
@@ -1954,13 +1981,13 @@ const CV = (function(){
     syncDot();
   }
   /* ══════════ 🔗 Partage voyage par voyage ══════════ */
-  function tripShare(id){
+  async function tripShare(id){
     const t = R[id || M.trip]; if(!t) return;
     const code = TS()[t.id];
     if(code && spaceObj(code)) return tripShareSheet(t.id);
     if(!apiUrl()){ alert('Le partage a besoin de l’appli en ligne (adresse du serveur).'); return; }
-    if(!confirm(`Partager « ${t.titre} » avec son propre code ?\n\nSeules les personnes qui ont ce code verront CE voyage (et pas tes autres voyages).\nLes compagnons déjà synchronisés par le code principal gardent ce qu’ils ont déjà, mais ne recevront plus les nouveautés de ce voyage.`)) return;
-    let c = (prompt('Ce voyage avait déjà un code (effacé du serveur, par exemple) ? Colle-le ici pour le réutiliser : les autres téléphones le retrouveront.\nSinon laisse vide : un nouveau code sera créé.') || '').trim().toUpperCase();
+    if(!(await uiConfirm(`Partager « ${t.titre} » avec son propre code ?\n\nSeules les personnes qui ont ce code verront CE voyage (et pas tes autres voyages).\nLes compagnons déjà synchronisés par le code principal gardent ce qu’ils ont déjà, mais ne recevront plus les nouveautés de ce voyage.`))) return;
+    let c = ((await uiPrompt('Ce voyage avait déjà un code (effacé du serveur, par exemple) ? Colle-le ici pour le réutiliser : les autres téléphones le retrouveront.\nSinon laisse vide : un nouveau code sera créé.')) || '').trim().toUpperCase();
     const reuse = c.length >= 8; if(!reuse) c = genCode();
     if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
     TS()[t.id] = c;
@@ -1978,9 +2005,9 @@ const CV = (function(){
       <button class="v-btn danger" onclick="CV.tripUnshare('${id}')">Arrêter le partage de ce voyage sur ce téléphone</button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
-  function tripNewCode(id){
+  async function tripNewCode(id){
     const t = R[id]; if(!t) return;
-    if(!confirm('Créer un nouveau code pour « ' + t.titre + ' » ?\n\nLe voyage, ses fiches et ses photos repartent sur le serveur sous ce nouveau code. Les autres téléphones doivent ensuite le rejoindre avec le nouveau code (Mes voyages → Rejoindre un voyage partagé).')) return;
+    if(!(await uiConfirm('Créer un nouveau code pour « ' + t.titre + ' » ?\n\nLe voyage, ses fiches et ses photos repartent sur le serveur sous ce nouveau code. Les autres téléphones doivent ensuite le rejoindre avec le nouveau code (Mes voyages → Rejoindre un voyage partagé).'))) return;
     const old = TS()[id], c = genCode();
     (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[id] = c;
     if(old && !Object.values(TS()).includes(old)) M.spaces = M.spaces.filter(x=>x.code !== old);
@@ -1991,10 +2018,10 @@ const CV = (function(){
     const t = R[id], url = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
     const text = `Rejoins notre voyage « ${t.titre} » 🧳\n${url}\nCode du voyage : ${TS()[id]}\n(Mes voyages → 🔗 Rejoindre un voyage partagé → colle le code)`;
     if(navigator.share){ try { await navigator.share({title:t.titre, text}); return; } catch(e){ return; } }
-    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée'); } catch(e){ prompt('Copie ce texte :', text); }
+    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
   }
-  function tripUnshare(id){
-    if(!confirm('Arrêter le partage de ce voyage sur ce téléphone ?\nTon voyage reste ici ; tu ne recevras plus les modifications des autres. (Il repasse dans ton carnet principal si celui-ci est synchronisé.)')) return;
+  async function tripUnshare(id){
+    if(!(await uiConfirm('Arrêter le partage de ce voyage sur ce téléphone ?\nTon voyage reste ici ; tu ne recevras plus les modifications des autres. (Il repasse dans ton carnet principal si celui-ci est synchronisé.)'))) return;
     const code = TS()[id]; delete TS()[id];
     if(!Object.values(TS()).includes(code)) M.spaces = (M.spaces||[]).filter(x=>x.code!==code);
     Object.values(R).filter(r=>!r.demo && (r.id===id || r.trip===id)).forEach(r=>markDirty(r.id));
@@ -2232,14 +2259,14 @@ const CV = (function(){
     persist(); M.mode = 'live'; M.tab = 'prog'; go(live.tid);
     setTimeout(()=>alert('👀 3 voyages de démo sont prêts (rien n’est partagé) :\n\n📍 En cours : on est au jour 7 — traceur, steps, tickets, courses, plafond, parts inégales.\n🧳 Préparation : le même Japon dans 6 mois, à organiser.\n🗺️ Passés / 🏁 Bilan : le voyage terminé avec ses photos, son album et ses comptes.\n\nPasse d’un onglet à l’autre en haut de l’écran. « Supprimer la démo » efface tout.'), 300);
   }
-  function demoDel(){
-    if(!confirm('Supprimer le voyage de démo ?\n\nTes propres voyages ne sont pas touchés.')) return;
+  async function demoDel(){
+    if(!(await uiConfirm('Supprimer le voyage de démo ?\n\nTes propres voyages ne sont pas touchés.'))) return;
     Object.keys(R).forEach(id=>{ if(R[id].demo) delete R[id]; });
     if(!trip()){ const t = trips()[0]; M.trip = t ? t.id : null; }
     persist(); closeSheet(true); M.tab = 'prog'; applyMode(); toast('🗑 Démo supprimée');
   }
-  function demoReset(){
-    if(demoTrip() && !confirm('Relancer le voyage de démo ?\n\nIl est remis à neuf : tes essais dans la démo sont effacés. Tes propres voyages ne sont pas touchés.')) return;
+  async function demoReset(){
+    if(demoTrip() && !(await uiConfirm('Relancer le voyage de démo ?\n\nIl est remis à neuf : tes essais dans la démo sont effacés. Tes propres voyages ne sont pas touchés.'))) return;
     Object.keys(R).forEach(id=>{ if(R[id].demo) delete R[id]; });
     persist(); demoLoad();
   }
@@ -2547,9 +2574,9 @@ const CV = (function(){
     return true;
   }
   function noteFromItem(){ const id = saveForm(true); if(!id) return; editNote(null, 'item:'+id); }
-  function del(id){
+  async function del(id){
     const it = R[id];
-    if(!it || !confirm('Supprimer « ' + (it.titre||'') + ' » ?')) return;
+    if(!it || !(await uiConfirm('Supprimer « ' + (it.titre||'') + ' » ?'))) return;
     drop(id); closeSheet(); render();
   }
 
@@ -2698,7 +2725,7 @@ const CV = (function(){
     if(!n.id) n.id = 'n' + uid();
     put(n, '📌 Note enregistrée'); closeSheet(); render();
   }
-  function delNote(id){ if(!confirm('Supprimer cette note ?')) return; drop(id); closeSheet(); render(); }
+  async function delNote(id){ if(!(await uiConfirm('Supprimer cette note ?'))) return; drop(id); closeSheet(); render(); }
   function pin(id){ const n = R[id]; if(!n) return; n.pin = !n.pin; put(n, n.pin ? '📌 Épinglée' : 'Désépinglée'); if(!sheetOpen()) render(); else { const it = editing; if(it && it.type==='item') edit(it.id); } }
   function openRef(ref){
     if(ref.startsWith('item:')) edit(ref.slice(5));
@@ -2760,7 +2787,7 @@ const CV = (function(){
     document.getElementById('cv-body').innerHTML = h;
   }
   function setObj(val){ const t = trip(); t.objectif = num(val); put(t); renderBudget(); }
-  function objAsk(){ const t = trip(); const v = prompt('Budget visé par personne (en ' + CS() + ') — vide pour aucun :', t.objectif || ''); if(v === null) return; setObj(v); }
+  async function objAsk(){ const t = trip(); const v = (await uiPrompt('Budget visé par personne (en ' + CS() + ') — vide pour aucun :', t.objectif || '')); if(v === null) return; setObj(v); }
   function budTog(k, o){ M.budOpen = M.budOpen || {}; M.budOpen[k] = !!o; persist(); }
   function addCompanion(){
     const v = tv(), others = profiles().filter(p=>!v.includes(p.id));
@@ -2777,8 +2804,8 @@ const CV = (function(){
     if(tv().length >= MAXP && !tv().includes(pid)){ alert('Maximum ' + MAXP + ' voyageurs par voyage.'); return; } t.voyageurs = [...new Set([...(t.voyageurs||[]), ...tv(), pid])];
     put(t, '👥 ' + pname(pid) + ' ajouté(e)'); closeSheet(); refresh();
   }
-  function removeCompanion(pid){
-    const t = trip(); if(!confirm('Retirer ' + pname(pid) + ' de ce voyage ? (ses fiches restent)')) return;
+  async function removeCompanion(pid){
+    const t = trip(); if(!(await uiConfirm('Retirer ' + pname(pid) + ' de ce voyage ? (ses fiches restent)'))) return;
     t.voyageurs = tv().filter(x=>x!==pid); put(t); refresh();
   }
 
@@ -2809,11 +2836,11 @@ const CV = (function(){
     document.getElementById('cv-body').innerHTML = h;
   }
   function check(id){ const i = R[id]; if(!i) return; i.done = !i.done; put(i, i.done ? '✓ Coché' : 'Décoché'); renderCheck(); }
-  function delCheck(id){ const i = R[id]; if(i && confirm('Retirer « ' + i.label + ' » ?')){ drop(id); renderCheck(); } }
-  function addCheck(){
+  async function delCheck(id){ const i = R[id]; if(i && (await uiConfirm('Retirer « ' + i.label + ' » ?'))){ drop(id); renderCheck(); } }
+  async function addCheck(){
     const label = document.getElementById('v-cl-new').value.trim(); if(!label) return;
     let cat = document.getElementById('v-cl-cat').value;
-    if(cat==='__new'){ cat = (prompt('Nom de la nouvelle catégorie ?')||'').trim(); if(!cat) return; }
+    if(cat==='__new'){ cat = ((await uiPrompt('Nom de la nouvelle catégorie ?'))||'').trim(); if(!cat) return; }
     put({id:'c'+uid(), type:'check', trip:M.trip, cat, label, done:false}); renderCheck();
   }
 
@@ -2909,12 +2936,12 @@ const CV = (function(){
     if(!w.id){ w.id = 'w' + uid(); if(!w.likes) w.likes = []; }
     put(w, '✨ Envie enregistrée'); closeSheet(); render();
   }
-  function delWish(id){ if(!confirm('Supprimer cette envie ?')) return; drop(id); closeSheet(); render(); }
-  function wishToTrip(id){
+  async function delWish(id){ if(!(await uiConfirm('Supprimer cette envie ?'))) return; drop(id); closeSheet(); render(); }
+  async function wishToTrip(id){
     const w = R[id]; if(!w) return;
     const who = [...new Set([...wishPeople(w), ...(w.likes||[]).filter(prof)])];
     if(!who.length && M.me) who.push(M.me);
-    if(!confirm(`Créer le voyage « ${w.titre} » pour ${who.map(pname).join(', ')} ?\nLes trajets aller/retour de chacun et l’hébergement seront préparés.`)) return;
+    if(!(await uiConfirm(`Créer le voyage « ${w.titre} » pour ${who.map(pname).join(', ')} ?\nLes trajets aller/retour de chacun et l’hébergement seront préparés.`))) return;
     const tid = 't' + uid(), out = [];
     out.push({id:tid, type:'trip', titre:w.titre, sous:WISH[w.kind]?WISH[w.kind].lbl:'', debut:w.debut||'', fin:w.fin||w.debut||'', voyageurs:who, objectif:num(w.budget)||''});
     out.push({id:'i'+uid(), type:'item', trip:tid, cat:'hotel', titre:w.titre, nom:w.hotel||'', date:w.debut||'', dateFin:w.fin||'', statut:'todo', partage:'grp', qui:[]});
@@ -2965,16 +2992,16 @@ const CV = (function(){
     closeSheet(true);
     if(isNew){ M.tab = 'prog'; go(t.id); } else refresh();
   }
-  function delTrip(id){
+  async function delTrip(id){
     const t = R[id]; if(!t) return;
-    if(!confirm('Supprimer le voyage « ' + t.titre + ' » et toutes ses fiches ? (pour tout le monde si la synchro est active)')) return;
+    if(!(await uiConfirm('Supprimer le voyage « ' + t.titre + ' » et toutes ses fiches ? (pour tout le monde si la synchro est active)'))) return;
     const out = Object.values(R).filter(r=>r.trip===id && !r.deleted);
     out.forEach(r=>r.deleted = true); t.deleted = true;
     putMany([...out, t], '🗑 Voyage supprimé'); closeSheet(true); M.trip = null; applyMode();
   }
-  function closeTrip(){
+  async function closeTrip(){
     const t = trip(); if(!t) return;
-    if(!confirm('Clôturer « ' + t.titre + ' » : tout marquer payé et coché, et le garder en archive ?')) return;
+    if(!(await uiConfirm('Clôturer « ' + t.titre + ' » : tout marquer payé et coché, et le garder en archive ?'))) return;
     const out = [];
     items().forEach(i=>{ if(i.statut!=='paid'){ i.statut='paid'; out.push(i); } });
     list('check', c=>c.trip===t.id && !c.done).forEach(c=>{ c.done = true; out.push(c); });
@@ -3021,7 +3048,7 @@ const CV = (function(){
     if(!prof(M.me)) M.me = p.id;
     put(p); closeSheet(true); refresh();
   }
-  function delProfile(id){ if(!confirm('Supprimer le profil ' + pname(id) + ' ? Ses fiches restent.')) return; drop(id); closeSheet(); refresh(); }
+  async function delProfile(id){ if(!(await uiConfirm('Supprimer le profil ' + pname(id) + ' ? Ses fiches restent.'))) return; drop(id); closeSheet(); refresh(); }
   function whoSheet(){
     openSheet(`<h2>👤 Qui utilise ce téléphone ?</h2>
       <div class="v-sum-small" style="margin-bottom:10px">Tes ajouts et modifications seront signés de ce nom, dans sa couleur.</div>
@@ -3129,7 +3156,7 @@ const CV = (function(){
       const remote = j.records.filter(r=>!r.deleted);
       const localContent = Object.values(R).filter(r=>r.type!=='profile' && !r.deleted && !r.demo);
       if(remote.length && localContent.length){
-        const replace = confirm(`Le carnet partagé contient déjà ${remote.length} fiches.\n\nOK = utiliser le carnet partagé (recommandé pour rejoindre : ce téléphone garde seulement ses profils).\nAnnuler = fusionner les deux carnets.`);
+        const replace = (await uiConfirm(`Le carnet partagé contient déjà ${remote.length} fiches.\n\nOK = utiliser le carnet partagé (recommandé pour rejoindre : ce téléphone garde seulement ses profils).\nAnnuler = fusionner les deux carnets.`));
         if(replace) Object.keys(R).forEach(id=>{ if(R[id].type!=='profile') delete R[id]; });
       }
       M.dirty = [];
@@ -3144,12 +3171,12 @@ const CV = (function(){
       if(PUBLIC && prof(M.me)) setTimeout(codeSheet, 300);
     } catch(e){ M.sync = prev; persist(); alert('Connexion impossible : ' + e.message); }
   }
-  function syncOff(){ if(!confirm('Désactiver la synchro sur ce téléphone ? Les données restent ici.')) return; M.sync.on = false; persist(); refresh(); }
+  async function syncOff(){ if(!(await uiConfirm('Désactiver la synchro sur ce téléphone ? Les données restent ici.'))) return; M.sync.on = false; persist(); refresh(); }
   async function shareCode(){
     const url = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
     const text = `Rejoins notre carnet de voyage 🧳\n${url}\nCode du carnet : ${M.sync.code}\n(⚙️ Partage → colle le code → Activer la synchro)`;
     if(navigator.share){ try { await navigator.share({title:'Vezoria', text}); return; } catch(e){ return; } }
-    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée'); } catch(e){ prompt('Copie ce texte :', text); }
+    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
   }
 
   /* ── Export / import ── */
@@ -3169,14 +3196,14 @@ const CV = (function(){
     if(navigator.canShare && navigator.canShare({files:[file]})){ try { await navigator.share({files:[file], title:'Vezoria'}); } catch(e){} }
     else exportDownload();
   }
-  function importData(data){
+  async function importData(data){
     let recs = [];
     if(data && data.format===2 && data.records) recs = Object.values(data.records);
     else {
       const v1 = data && (data.voyage2027 || (Array.isArray(data.items) ? data : null));
       if(!v1 || !Array.isArray(v1.items)) throw new Error('Ce fichier ne contient pas de carnet de voyage.');
       recs = fromV1(v1, M.me, false);
-      if(R.t2027 && !R.t2027.deleted && !confirm('Le voyage 2027 existe déjà ici. Le remplacer par celui du fichier ?')) recs = [];
+      if(R.t2027 && !R.t2027.deleted && !(await uiConfirm('Le voyage 2027 existe déjà ici. Le remplacer par celui du fichier ?'))) recs = [];
       if(recs.length) Object.values(R).forEach(r=>{ if(r.trip==='t2027' && !r.deleted){ r.deleted = true; stamp(r); markDirty(r.id); } });
       recs.forEach(r=>{ stamp(r); r.imported = true; });
     }
@@ -3189,11 +3216,11 @@ const CV = (function(){
     inp.onchange = e => {
       const f = e.target.files && e.target.files[0]; if(!f) return;
       const rd = new FileReader();
-      rd.onload = () => {
+      rd.onload = async () => {
         let data; try { data = JSON.parse(rd.result); } catch(err){ alert('Fichier illisible : ce n’est pas un export JSON valide.'); return; }
         try {
-          const n = importData(data);
-          if(data.archive2026 && confirm('Le fichier contient aussi l’archive 2026. La restaurer ?')) localStorage.setItem(ARCHIVE_KEY, JSON.stringify(data.archive2026));
+          const n = await importData(data);
+          if(data.archive2026 && (await uiConfirm('Le fichier contient aussi l’archive 2026. La restaurer ?'))) localStorage.setItem(ARCHIVE_KEY, JSON.stringify(data.archive2026));
           persist(); queueSync(); alert(n + ' fiche(s) importée(s) (les plus récentes gagnent).'); location.reload();
         } catch(err){ alert(err.message); }
       };
@@ -3204,14 +3231,14 @@ const CV = (function(){
   const CONTACT = 'appareils.treves6g@icloud.com';   // contact de l'éditeur (aussi dans mentions-legales.html et privacy.html)
   async function askErase(){
     if(!M.sync.on){ alert('Ce carnet n’est pas synchronisé : rien n’est stocké sur le serveur.'); return; }
-    if(!confirm('Demander l’effacement de ce carnet sur le serveur ?\n\nToutes ses données en ligne seront supprimées, pour TOUS ses membres. Un e-mail va être préparé : il contient seulement l’identifiant chiffré du carnet, jamais son code.')) return;
+    if(!(await uiConfirm('Demander l’effacement de ce carnet sur le serveur ?\n\nToutes ses données en ligne seront supprimées, pour TOUS ses membres. Un e-mail va être préparé : il contient seulement l’identifiant chiffré du carnet, jamais son code.'))) return;
     const id = hex(await crypto.subtle.digest('SHA-256', te.encode('carnet-voyage:' + await authCode())));
     const body = 'Bonjour,\n\nJe demande l’effacement des données de mon carnet sur le serveur.\n\nIdentifiant du carnet : ' + id + '\n\nMerci.';
     location.href = 'mailto:' + CONTACT + '?subject=' + encodeURIComponent('Vezoria : effacement des données') + '&body=' + encodeURIComponent(body);
   }
-  function wipe(){
-    if(!confirm('Effacer le carnet de ce téléphone ? ' + (M.sync.on ? 'Les données restent sur le serveur partagé, tu pourras le rejoindre à nouveau avec le code.' : 'Sans synchro, tout sera perdu : exporte avant !'))) return;
-    const w = prompt('Pour confirmer, écris EFFACER en majuscules :', '');
+  async function wipe(){
+    if(!(await uiConfirm('Effacer le carnet de ce téléphone ? ' + (M.sync.on ? 'Les données restent sur le serveur partagé, tu pourras le rejoindre à nouveau avec le code.' : 'Sans synchro, tout sera perdu : exporte avant !')))) return;
+    const w = (await uiPrompt('Pour confirmer, écris EFFACER en majuscules :', ''));
     if(w === null) return;
     if(w.trim() !== 'EFFACER'){ alert('Mot incorrect : rien n’a été effacé.'); return; }
     localStorage.removeItem(KEY);
@@ -3521,11 +3548,11 @@ const CV = (function(){
     e.fait = !e.fait; autoStatut(it);
     put(it, e.fait ? '✓ Échéance payée' : 'Échéance décochée'); render();
   }
-  function lisser(){
+  async function lisser(){
     const months = planMonths(), all = items(), unpl = unplanned(all);
     if(!unpl.length) return;
     const total = unpl.reduce((s,u)=>s+u.rest,0), target = total / months.length;
-    if(!confirm(`Répartir ${eur(total)} sur ${months.length} mois (${monthLbl(months[0])} → ${monthLbl(months[months.length-1])}), soit ≈ ${eur(target)} par mois ?\nLes grosses dépenses sont coupées en plusieurs fois. Tu pourras tout ajuster dans chaque fiche.`)) return;
+    if(!(await uiConfirm(`Répartir ${eur(total)} sur ${months.length} mois (${monthLbl(months[0])} → ${monthLbl(months[months.length-1])}), soit ≈ ${eur(target)} par mois ?\nLes grosses dépenses sont coupées en plusieurs fois. Tu pourras tout ajuster dans chaque fiche.`))) return;
     const load = Object.fromEntries(months.map(k=>[k,0]));
     all.forEach(it=>(it.echeances||[]).forEach(e=>{ const k = (e.date||'').slice(0,7); if(k in load && !e.fait) load[k] += num(e.montant); }));
     const changed = [];
@@ -3543,8 +3570,8 @@ const CV = (function(){
     });
     putMany(changed, '📆 Échéancier étalé'); render();
   }
-  function echReset(){
-    if(!confirm('Effacer toutes les échéances non payées de ce voyage ?')) return;
+  async function echReset(){
+    if(!(await uiConfirm('Effacer toutes les échéances non payées de ce voyage ?'))) return;
     const changed = [];
     items(i=>(i.echeances||[]).some(e=>!e.fait)).forEach(it=>{ it.echeances = it.echeances.filter(e=>e.fait); if(!it.echeances.length) delete it.echeances; changed.push(it); });
     putMany(changed, '↺ Échéances effacées'); render();
@@ -4151,7 +4178,7 @@ const CV = (function(){
     if(!s.id) s.id = 'sv' + uid();
     const svNew = !R[s.id]; put(s, '📸 Souvenir enregistré'); if(feedCode(s.trip)) setTimeout(feedAll, 400); closeSheet(); render(); uploadQueue(); if(svNew) setTimeout(()=>fxPlay('souvenir', 'Souvenir gardé !'), 250);
   }
-  function delSouv(id){ if(!confirm('Supprimer ce souvenir ?')) return; drop(id); closeSheet(); render(); }
+  async function delSouv(id){ if(!(await uiConfirm('Supprimer ce souvenir ?'))) return; drop(id); closeSheet(); render(); }
 
   // Visionneuse plein écran
   let vw = null;
@@ -5952,7 +5979,7 @@ const CV = (function(){
   async function shareLink(){
     const url = APP_URL(), text = 'Je t’invite sur Vezoria : on prépare nos voyages à plusieurs (programme, budget, souvenirs), et tout est chiffré.';
     try { if(navigator.share){ await navigator.share({title:'Vezoria', text, url}); return; } } catch(e){ if(e && e.name === 'AbortError') return; }
-    try { await navigator.clipboard.writeText(text + ' ' + url); toast('🔗 Lien copié'); } catch(e){ prompt('Copie ce lien :', url); }
+    try { await navigator.clipboard.writeText(text + ' ' + url); toast('🔗 Lien copié'); } catch(e){ (await uiPrompt('Copie ce lien :', url)); }
   }
   /* ══════════════════════════════════════════════════════════════════════════
      🧰 OUTILS DU VOYAGE (5 octobre 2026)
@@ -6365,7 +6392,7 @@ const CV = (function(){
     put(Object.assign(id ? clone(R[id]) : {id:'d'+uid(), type:'doc', pid}, {kind:f.kind.value, expire:f.expire.value, num:f.num.value.trim(), note:f.note.value.trim()}), '🛂 Document enregistré');
     tlDocs();
   }
-  function tlDocDel(id, pid){ if(!confirm('Supprimer ce document ?')) return; const d = clone(R[id]); d.deleted = true; put(d, '🗑 Supprimé'); tlDocs(); }
+  async function tlDocDel(id, pid){ if(!(await uiConfirm('Supprimer ce document ?'))) return; const d = clone(R[id]); d.deleted = true; put(d, '🗑 Supprimé'); tlDocs(); }
 
   /* ---------- 📖 Journal de voyage ---------- */
   function tlJournal(){
@@ -6430,7 +6457,7 @@ const CV = (function(){
   async function pkgOpenV1(f){
     let o; try { o = JSON.parse(await f.text()); } catch(e){ alert('Ce fichier n’est pas un paquet du carnet.'); return; }
     if(!o || !o.carnetPaquet){ alert('Ce fichier n’est pas un paquet du carnet.'); return; }
-    const pass = prompt('Phrase du groupe :', M.pkgPass || ''); if(pass === null) return;
+    const pass = (await uiPrompt('Phrase du groupe :', M.pkgPass || '')); if(pass === null) return;
     let data;
     try { const plain = await crypto.subtle.decrypt({name:'AES-GCM', iv:tlB64.dec(o.iv)}, await pkgKey(pass, tlB64.dec(o.salt)), tlB64.dec(o.data)); data = JSON.parse(new TextDecoder().decode(plain)); }
     catch(e){ alert('Phrase incorrecte : impossible d’ouvrir ce paquet.'); return; }
@@ -6764,8 +6791,8 @@ const CV = (function(){
       <div class="lsp">💶 Dépenses du jour : <b>${eur(spent)}</b>${cap ? ` / ${eur(cap)}${spent > cap ? ' · <b class="red">plafond dépassé de ' + eur(spent - cap) + '</b>' : ' · reste ' + eur(cap - spent)}` : ''} <button type="button" class="lmini" onclick="CV.capSet()">${cap ? 'modifier' : 'fixer un plafond'}</button></div>${bar}
       <div class="lb"><button type="button" onclick="CV.tlDay()">📴 Fiche du jour</button><button type="button" onclick="CV.tlReceipt()">🧾 Dépense</button><button type="button" onclick="CV.shopSheet()">🛒 Courses</button></div></div>`;
   }
-  function capSet(){
-    const t = trip(); const v = prompt('Plafond de dépenses sur place, par jour, pour tout le groupe (en ' + CS() + ') — vide pour aucun :', t.plafond || '');
+  async function capSet(){
+    const t = trip(); const v = (await uiPrompt('Plafond de dépenses sur place, par jour, pour tout le groupe (en ' + CS() + ') — vide pour aucun :', t.plafond || ''));
     if(v === null) return; t.plafond = v.trim() ? String(num(v)) : ''; put(t, t.plafond ? '💶 Plafond : ' + eur(num(t.plafond)) + ' / jour' : 'Plafond retiré'); refresh();
   }
   function capWarn(){ const t = trip(); if(!t || !num(t.plafond)) return; const s = spentOn(isoToday()); if(s > num(t.plafond)) setTimeout(()=>alert(`⚠️ Plafond du jour dépassé : ${eur(s)} dépensés pour ${eur(num(t.plafond))} prévus.`), 400); }
@@ -6784,13 +6811,13 @@ const CV = (function(){
   function shopClear(){ const out = list('check', c=>c.trip===M.trip && c.cat===SHOP && c.done).map(c=>Object.assign(clone(c), {deleted:true})); if(out.length) putMany(out, '🧹 ' + out.length + ' retiré(s)'); shopSheet(); }
 
   /* ---------- 💸 Demander / envoyer un remboursement ---------- */
-  function rembAsk(de, a, v){
+  async function rembAsk(de, a, v){
     const t = trip(), pa = prof(a) || {}, how = (pa.rembours || '').trim();
     const txt = `Bonjour ${pname(de)} ! Pour « ${t ? t.titre : 'le voyage'} », d’après le carnet tu dois ${eur(v)} à ${pname(a)}.`
       + (how ? `\nPour rembourser : ${how}` : '') + `\nMerci ! 🙏`;
     const go = async () => { try { if(navigator.share){ await navigator.share({text:txt}); return; } } catch(e){ if(e && e.name === 'AbortError') return; }
-      try { await navigator.clipboard.writeText(txt); toast('📋 Message copié'); } catch(e){ prompt('Copie ce message :', txt); } };
-    if(!how && a === M.me && confirm('Tu n’as pas encore indiqué comment on te rembourse (Lydia, Wero, numéro, IBAN…). L’ajouter maintenant dans ton profil ?')){ editProfile(a); return; }
+      try { await navigator.clipboard.writeText(txt); toast('📋 Message copié'); } catch(e){ (await uiPrompt('Copie ce message :', txt)); } };
+    if(!how && a === M.me && (await uiConfirm('Tu n’as pas encore indiqué comment on te rembourse (Lydia, Wero, numéro, IBAN…). L’ajouter maintenant dans ton profil ?'))){ editProfile(a); return; }
     go();
   }
 
@@ -6829,7 +6856,7 @@ const CV = (function(){
   }
   function pollVote(id, i){ if(!M.me) return; const p = clone(R[id]); p.votes = Object.assign({}, p.votes); if(p.votes[M.me] === i) delete p.votes[M.me]; else p.votes[M.me] = i; put(p); refresh(); }
   function pollClose(id){ const p = clone(R[id]); p.closed = !p.closed; put(p); refresh(); }
-  function pollDel(id){ if(!confirm('Supprimer ce sondage ?')) return; const p = clone(R[id]); p.deleted = true; put(p, '🗑 Sondage supprimé'); refresh(); }
+  async function pollDel(id){ if(!(await uiConfirm('Supprimer ce sondage ?'))) return; const p = clone(R[id]); p.deleted = true; put(p, '🗑 Sondage supprimé'); refresh(); }
 
   /* ══════════════════════════════════════════════════════════════════════════
      🎫 BILLETS JOINTS · 📋 CONFIRMATION COLLÉE · 🌍 CO2 & CONSEILS · 📍 JE SUIS ICI · 📊 STATS
@@ -6858,7 +6885,7 @@ const CV = (function(){
       pjSave([...pjOf(editing), {id, t: isPdf ? 'pdf' : 'img', n: (f.name || (isPdf ? 'billet.pdf' : 'billet')).replace(/\.[a-z0-9]+$/i,'').slice(0,40)}]);
     });
   }
-  function pjDel(i){ if(!confirm('Retirer ce document de la fiche ?')) return; const l = pjOf(editing).slice(); l.splice(i,1); pjSave(l); }
+  async function pjDel(i){ if(!(await uiConfirm('Retirer ce document de la fiche ?'))) return; const l = pjOf(editing).slice(); l.splice(i,1); pjSave(l); }
   async function pjOpen(id, t){
     if(t === 'pdf'){ const b = await photoBlob(id); if(!b){ alert('Ce PDF n’est pas sur ce téléphone (les PDF ne sont pas partagés).'); return; } const u = URL.createObjectURL(b); const w = window.open(u, '_blank'); if(!w) location.href = u; return; }
     let ov = document.getElementById('cv-pjv'); if(!ov){ ov = document.createElement('div'); ov.id = 'cv-pjv'; document.body.appendChild(ov); }
@@ -7313,9 +7340,9 @@ ${pm.join('\n')}</Document></kml>`;
   // 👀 Chaque voyageur choisit s’il montre sa route aux abonnés (désactivé par défaut)
   const tpId = (tid, who) => 'tp:' + tid + ':' + (who || M.me || 'moi');
   const trkPubOn = (tid, who) => { const r = R[tpId(tid, who)]; return !!(r && !r.deleted && r.on); };
-  function trkPub(){
+  async function trkPub(){
     const t = trip(); if(!t) return; const on = !trkPubOn(t.id);
-    if(on && !confirm('Montrer ta route aux abonnés de ce voyage ?\n\nIls verront sur une carte le trajet enregistré par le suivi et ta dernière position (précision ≈ 100 m), avec l’heure.\nTu peux arrêter quand tu veux : la carte disparaît chez eux à la synchro suivante.\nTes compagnons choisissent chacun pour eux.')) return;
+    if(on && !(await uiConfirm('Montrer ta route aux abonnés de ce voyage ?\n\nIls verront sur une carte le trajet enregistré par le suivi et ta dernière position (précision ≈ 100 m), avec l’heure.\nTu peux arrêter quand tu veux : la carte disparaît chez eux à la synchro suivante.\nTes compagnons choisissent chacun pour eux.'))) return;
     put({id:tpId(t.id), type:'trkpub', trip:t.id, who:M.me || '', on}, on ? '👀 Route visible des abonnés' : '🔒 Route masquée aux abonnés');
     feedBuild(t.id); syncNow(); refresh();
   }
@@ -7333,11 +7360,11 @@ ${pm.join('\n')}</Document></kml>`;
     return `<div class="cv-trk${on?' on':''}"><span class="dot"></span><span class="tx"><b>${on ? 'Voyage suivi' : 'Suivi arrêté'}</b><small>${on ? `${n} point${n>1?'s':''} aujourd’hui · ${km_ < 10 ? km_.toFixed(1) : Math.round(km_)} km · enregistre ta route quand l’appli est ouverte` : 'Active-le pour tracer ta route sur la carte du monde'}</small></span>
       <button type="button" onclick="CV.trkToggle()">${on ? 'Arrêter' : 'Activer'}</button></div>${feedCode(t.id) ? `<button type="button" class="cv-trkpub${trkPubOn(t.id) ? ' on' : ''}" onclick="CV.trkPub()"><span>${trkPubOn(t.id) ? '👀' : '🔒'}</span><span><b>${trkPubOn(t.id) ? 'Ta route est visible des abonnés' : 'Ta route est cachée aux abonnés'}</b><small>${trkPubOn(t.id) ? 'Touche pour la cacher' : 'Touche pour la montrer sur leur carte'}</small></span></button>` : ''}`;
   }
-  function trkToggle(){
+  async function trkToggle(){
     const t = trip(); if(!t) return;
     if(trkOn() && M.trk.trip === t.id){ M.trk.on = false; trkStop(); persist(); toast('⏸️ Suivi arrêté'); refresh(); return; }
     if(!navigator.geolocation){ alert('Localisation indisponible sur ce téléphone.'); return; }
-    if(!M.trkSeen && !confirm('Activer le suivi du voyage ?\n\n• Ta position est enregistrée environ tous les 300 m, seulement quand l’appli est ouverte (une appli web ne peut pas suivre en arrière-plan, téléphone en poche).\n• Un point est aussi ajouté à chaque ouverture de l’appli.\n• La route est partagée uniquement avec les personnes de CE voyage.\n• Tu peux l’arrêter à tout moment.')) return;
+    if(!M.trkSeen && !(await uiConfirm('Activer le suivi du voyage ?\n\n• Ta position est enregistrée environ tous les 300 m, seulement quand l’appli est ouverte (une appli web ne peut pas suivre en arrière-plan, téléphone en poche).\n• Un point est aussi ajouté à chaque ouverture de l’appli.\n• La route est partagée uniquement avec les personnes de CE voyage.\n• Tu peux l’arrêter à tout moment.'))) return;
     M.trkSeen = 1; M.trk = {on:true, trip:t.id, since:Date.now()}; persist(); trkStart(); toast('🛰️ Suivi activé'); refresh();
   }
   function trkAdd(pos){
@@ -7652,7 +7679,7 @@ ${pm.join('\n')}</Document></kml>`;
         for(const k of Object.keys(z).filter(k=>/^(photos|docs)\//.test(k))){ const id = k.replace(/^(photos|docs)\//,'').replace(/\.(jpg|pdf)$/,''); const ex = await IDB.get(id).catch(()=>null); if(ex && ex.blob) continue; const u8 = await get(k); if(u8){ await IDB.put({id, blob:new Blob([u8], {type: k.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg'}), up:0}); nf++; } }
         toast('📸 ' + nf + ' photo(s) restaurée(s) depuis ' + f.name); refresh(); return; }
       const data = JSON.parse(new TextDecoder().decode(main)); if(data.app !== 'carnet-voyage') throw new Error('ce ZIP n’est pas une sauvegarde du carnet');
-      const replace = Object.values(R).some(r=>!r.demo && r.type!=='profile') && confirm(`Sauvegarde du ${new Date(data.exportedAt).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'))} : ${data.records.length} fiches.\n\nOK = REMPLACER tout le carnet de ce téléphone par la sauvegarde.\nAnnuler = FUSIONNER (garder les deux ; la version la plus récente de chaque fiche gagne).`);
+      const replace = Object.values(R).some(r=>!r.demo && r.type!=='profile') && (await uiConfirm(`Sauvegarde du ${new Date(data.exportedAt).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'))} : ${data.records.length} fiches.\n\nOK = REMPLACER tout le carnet de ce téléphone par la sauvegarde.\nAnnuler = FUSIONNER (garder les deux ; la version la plus récente de chaque fiche gagne).`));
       if(replace) Object.keys(R).forEach(id=>{ if(!R[id].demo) delete R[id]; });
       let n = 0; data.records.forEach(r=>{ if(!r || !r.id) return; const cur = R[r.id]; if(cur && cur.deleted && !r.deleted){ r = Object.assign({}, r, {updatedAt: Date.now()}); R[r.id] = r; markDirty(r.id); n++; return; } if(!cur || (r.updatedAt||0) >= (cur.updatedAt||0)){ R[r.id] = r; markDirty(r.id); n++; } });
       let nf = 0; const names = Object.keys(z).filter(k=>/^(photos|docs)\//.test(k));
@@ -7662,7 +7689,7 @@ ${pm.join('\n')}</Document></kml>`;
         if(nf % 20 === 0) msg(`📸 ${nf} / ${names.length} fichiers…`); }
       const mt = data.meta || {};
       if(mt.me && R[mt.me] && (!M.me || replace)) M.me = mt.me;
-      if(mt.sync && mt.sync.code && (!M.sync.code || replace) && confirm('La sauvegarde contient tes codes de partage. Les réactiver sur ce téléphone ?')){
+      if(mt.sync && mt.sync.code && (!M.sync.code || replace) && (await uiConfirm('La sauvegarde contient tes codes de partage. Les réactiver sur ce téléphone ?'))){
         M.sync.url = mt.sync.url || M.sync.url; M.sync.code = mt.sync.code; M.sync.on = !!mt.sync.on; M.sync.since = 0;
         M.spaces = (mt.spaces||[]).map(x=>({code:x.code, since:0, dirty:[], last:0, err:''})); M.tripSpace = mt.tripSpace || {};
       }
@@ -7992,8 +8019,8 @@ ${pm.join('\n')}</Document></kml>`;
       <button type="button" class="cv-choice" onclick="CV.blankTrip()"><i>📄</i><span><b>Voyage vierge</b><small>Juste un nom : tu remplis tout toi-même, à ton rythme.</small></span></button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
   }
-  function blankTrip(){
-    const n = prompt('Nom du voyage :', 'Mon prochain voyage'); if(n === null) return;
+  async function blankTrip(){
+    const n = (await uiPrompt('Nom du voyage :', 'Mon prochain voyage')); if(n === null) return;
     const tid = 't' + uid();
     put({id:tid, type:'trip', titre:n.trim() || 'Mon prochain voyage', sous:'', debut:'', fin:'', voyageurs:M.me ? [M.me] : [], objectif:''}, '📄 Voyage vierge créé');
     closeSheet(true); M.mode = 'prep'; M.tab = 'prog'; go(tid);
@@ -8483,7 +8510,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(!(head[0] === 0x50 && head[1] === 0x4b)) return pkgOpenV1(f);       // ancien format (JSON)
     const z = await zipRead(f), get = async n => { const v = z[n]; return typeof v === 'function' ? await v() : v; };
     const hd = JSON.parse(new TextDecoder().decode(await get('carnet-paquet.json')));
-    const pass = prompt('Phrase du groupe :', M.pkgPass || ''); if(pass === null) return;
+    const pass = (await uiPrompt('Phrase du groupe :', M.pkgPass || '')); if(pass === null) return;
     const key = await pkgKey(pass, tlB64.dec(hd.salt)), dec = async u8 => new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:u8.slice(0,12)}, key, u8.slice(12)));
     let data; try { data = JSON.parse(new TextDecoder().decode(await dec(await get('paquet.bin')))); } catch(e){ alert('Phrase incorrecte : impossible d’ouvrir ce paquet.'); return; }
     M.pkgPass = pass.trim();
@@ -8647,7 +8674,7 @@ ${pm.join('\n')}</Document></kml>`;
       <button class="v-btn sec" onclick="CV.shareCode()">📤 L’envoyer à mes compagnons de voyage</button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">C’est noté</button></div>`);
   }
-  async function copyCode(){ try { await navigator.clipboard.writeText(M.sync.code); toast('📋 Code copié'); } catch(e){ prompt('Copie ton code :', M.sync.code); } }
+  async function copyCode(){ try { await navigator.clipboard.writeText(M.sync.code); toast('📋 Code copié'); } catch(e){ (await uiPrompt('Copie ton code :', M.sync.code)); } }
 
   /* ══════════ 📲 Installation sur l'écran d'accueil + hors ligne ══════════ */
   let installEvt = null;
@@ -8854,11 +8881,11 @@ ${pm.join('\n')}</Document></kml>`;
     const info = R[dayId(d)] && !R[dayId(d)].deleted && (R[dayId(d)].titre || R[dayId(d)].plan) ? R[dayId(d)] : null;
     return {its, pl, info};
   }
-  function dayDelAsk(d){
+  async function dayDelAsk(d){
     const t = tripBounds(clone(trip())); if(!t) return;
     if(t.debut && t.fin && t.debut === t.fin){ alert('C’est le seul jour du voyage : change plutôt les dates.'); return; }
     const c = dayContent(d), n = c.its.length + c.pl.length + (c.info ? 1 : 0);
-    if(!n){ if(confirm('Retirer le ' + fdate(d) + ' du voyage ?')) dayDel(d, 'drop'); return; }
+    if(!n){ if((await uiConfirm('Retirer le ' + fdate(d) + ' du voyage ?'))) dayDel(d, 'drop'); return; }
     const first = t.debut && d <= t.debut;
     openSheet(`<h2>🗑 Retirer le ${fdate(d)}</h2><div class="v-sum-small" style="margin-bottom:8px">Ce jour contient :</div>
       <div class="cv-dup">${c.its.map(i=>`<div class="od">${icon(i)} <b>${esc(i.titre)}</b> <small>${STATUTS[i.statut]||''}</small></div>`).join('')}${c.pl.length ? `<div class="od">📍 ${c.pl.length} lieu(x) à visiter</div>` : ''}${c.info ? `<div class="od">✏️ Programme : ${esc(c.info.titre || c.info.plan.slice(0,60))}</div>` : ''}</div>
@@ -8952,8 +8979,8 @@ ${pm.join('\n')}</Document></kml>`;
     const r = put({id:'cy' + uid(), type:'city', trip:M.trip, titre, date:d, dateFin:''}, '📍 ' + titre + ' ajouté');
     closeSheet(true); render(); discover(r.id);
   }
-  function voirDel(id){
-    const c = R[id]; if(!c || !confirm('Retirer « ' + c.titre + ' » de « Que voir » ?\nLes lieux déjà placés dans tes journées restent.')) return;
+  async function voirDel(id){
+    const c = R[id]; if(!c || !(await uiConfirm('Retirer « ' + c.titre + ' » de « Que voir » ?\nLes lieux déjà placés dans tes journées restent.'))) return;
     drop(id, '↩️ Retiré'); render(); voirAdd();
   }
 
@@ -9211,12 +9238,12 @@ ${pm.join('\n')}</Document></kml>`;
   }
   async function serverWipe(code){
     const main = !code; code = code || M.sync.code; if(!code) return;
-    if(!confirm('Supprimer définitivement ce carnet du serveur, pour tout le monde ?\nCette action ne peut pas être annulée.')) return;
+    if(!(await uiConfirm('Supprimer définitivement ce carnet du serveur, pour tout le monde ?\nCette action ne peut pas être annulée.'))) return;
     try {
       const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}});
       let j = {}; try { j = await r.json(); } catch(e){}
       if(!r.ok) throw new Error(j.error || ('erreur ' + r.status));
-      const keep = confirm('🗑 Supprimé du serveur : ' + (j.records||0) + ' fiche(s) et ' + (j.photos||0) + ' photo(s).\nTes données restent sur ce téléphone.\n\nGarder le code sur ce téléphone ?\nOK = je garde le code : tu pourras tout renvoyer plus tard avec le même code (bouton « Tout renvoyer »).\nAnnuler = j’oublie ce code ici.');
+      const keep = (await uiConfirm('🗑 Supprimé du serveur : ' + (j.records||0) + ' fiche(s) et ' + (j.photos||0) + ' photo(s).\nTes données restent sur ce téléphone.\n\nGarder le code sur ce téléphone ?\nOK = je garde le code : tu pourras tout renvoyer plus tard avec le même code (bouton « Tout renvoyer »).\nAnnuler = j’oublie ce code ici.'));
       if(keep){ if(main){ M.sync.since = 0; M.dirty = []; } else { const sp = spaceObj(code); if(sp){ sp.since = 0; sp.dirty = []; } } }
       else if(main){ M.sync.on = false; M.sync.since = 0; M.dirty = []; }
       else { Object.keys(TS()).forEach(tid=>{ if(TS()[tid] === code) delete TS()[tid]; }); M.spaces = (M.spaces||[]).filter(x=>x.code !== code); }
@@ -9302,7 +9329,7 @@ ${pm.join('\n')}</Document></kml>`;
     else u = `https://www.google.com/maps/dir/?api=1&destination=${q(it.adresse || [it.titre, it.lieu].filter(Boolean).join(' '))}`;
     window.open(u, '_blank', 'noopener');
   }
-  async function nhCopy(txt){ try { await navigator.clipboard.writeText(txt); toast('📋 Référence copiée'); } catch(e){ prompt('Référence :', txt); } }
+  async function nhCopy(txt){ try { await navigator.clipboard.writeText(txt); toast('📋 Référence copiée'); } catch(e){ (await uiPrompt('Référence :', txt)); } }
   setInterval(() => { const h = document.getElementById('cv-hero'); if(!h) return; const at = +h.dataset.at, e = document.getElementById('cv-hero-cd'); if(e) e.textContent = hhmm(at - Date.now()); }, 20000);
 
   /* ---------- 2) Ranger mes photos automatiquement (EXIF → souvenirs) ---------- */
@@ -10112,17 +10139,17 @@ ${pm.join('\n')}</Document></kml>`;
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
     const text = MSG(`Rejoins notre voyage « ${t.titre} » sur Vezoria 🧳`) + '\n' + (link || url) + '\n' + MSG(`(Si le lien ne s’ouvre pas : Mes voyages → Rejoindre un voyage → code ${code})`);
     if(navigator.share){ try { await navigator.share({title:t.titre, text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
-    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); } catch(e){ prompt('Copie ce texte :', text); }
+    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
     refresh();
   }
   // lien reçu : #rejoindre=CODE (voyage partagé) ou #suivre=CODE (abonné)
-  function hashJoin(){
+  async function hashJoin(){
     const h = decodeURIComponent(location.hash || ''); const m = h.match(/#(rejoindre|suivre)=([A-Z0-9-]{8,})/i); if(!m) return;
     history.replaceState(null, '', location.pathname + location.search);
     const code = m[2].toUpperCase();
     if(m[1].toLowerCase() === 'suivre'){ followGo(code); return; }
     if(Object.values(TS()).includes(code)){ const tid = Object.keys(TS()).find(k=>TS()[k]===code); if(R[tid]) go(tid); return; }
-    if(!confirm('Rejoindre le voyage partagé avec toi ?\n\nCode : ' + code)) return;
+    if(!(await uiConfirm('Rejoindre le voyage partagé avec toi ?\n\nCode : ' + code))) return;
     tripJoin(); setTimeout(()=>{ const i = document.getElementById('tj-code'); if(i){ i.value = code; tripJoinGo(); } }, 120);
   }
   window.addEventListener('hashchange', hashJoin);
@@ -10182,9 +10209,9 @@ ${pm.join('\n')}</Document></kml>`;
   setTimeout(feedAll, 5000);
   async function feedPublish(tid){
     const t = R[tid || M.trip]; if(!t || t.demo) return;
-    if(!myName()){ const n = prompt('Ton prénom (affiché à tes abonnés) :', ''); if(!n || !n.trim()) return; M.followName = n.trim(); }
+    if(!myName()){ const n = (await uiPrompt('Ton prénom (affiché à tes abonnés) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
     if(!feedCode(t.id)){
-      if(!confirm(`Publier « ${t.titre} » pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.\nUn souvenir marqué « privé » n’est jamais publié.\nIls voient les photos en vignettes (taille réduite).\nTa position n’est jamais montrée, sauf si chaque voyageur l’active lui-même dans le suivi du voyage.\nIls pourront mettre des ❤️ et des commentaires.`)) return;
+      if(!(await uiConfirm(`Publier « ${t.titre} » pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.\nUn souvenir marqué « privé » n’est jamais publié.\nIls voient les photos en vignettes (taille réduite).\nTa position n’est jamais montrée, sauf si chaque voyageur l’active lui-même dans le suivi du voyage.\nIls pourront mettre des ❤️ et des commentaires.`))) return;
       const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); FT()[t.id] = c; persist();
     }
     feedBuild(t.id); await syncNow(); feedUpload();
@@ -10192,12 +10219,12 @@ ${pm.join('\n')}</Document></kml>`;
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
     const text = MSG(`Suis mon voyage « ${t.titre} » sur Vezoria ✈️ : photos et récits au fil des étapes`) + '\n' + link + '\n' + MSG(`(code abonné : ${FT()[t.id]})`);
     if(navigator.share){ try { await navigator.share({title:t.titre, text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
-    try { await navigator.clipboard.writeText(text); toast('📋 Lien abonné copié'); } catch(e){ prompt('Copie ce texte :', text); }
+    try { await navigator.clipboard.writeText(text); toast('📋 Lien abonné copié'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
     refresh();
   }
-  function feedStop(tid){
+  async function feedStop(tid){
     const c = FT()[tid]; if(!c) return;
-    if(!confirm('Arrêter la publication ? Tes abonnés ne verront plus ce voyage.')) return;
+    if(!(await uiConfirm('Arrêter la publication ? Tes abonnés ne verront plus ce voyage.'))) return;
     const out = list('feed', f=>f.trip===ftId(tid)).map(f=>Object.assign(clone(f), {deleted:true})); if(R[ftId(tid)]) out.push(Object.assign(clone(R[ftId(tid)]), {deleted:true}));
     putQuiet(out); syncNow().then(()=>{ delete FT()[tid]; delete TS()[ftId(tid)]; M.spaces = (M.spaces||[]).filter(x=>x.code !== c); persist(); refresh(); });
     toast('👀 Publication arrêtée');
@@ -10205,7 +10232,7 @@ ${pm.join('\n')}</Document></kml>`;
   // côté abonné
   async function followGo(code){
     code = String(code || '').trim().toUpperCase(); if(code.length < 8){ alert('Code trop court.'); return; }
-    if(!myName()){ const n = prompt('Ton prénom (pour signer tes ❤️ et commentaires) :', ''); if(!n || !n.trim()) return; M.followName = n.trim(); }
+    if(!myName()){ const n = (await uiPrompt('Ton prénom (pour signer tes ❤️ et commentaires) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
     if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
     toast('📡 Connexion…'); const sp = spaceObj(code); await syncSpace(sp, true);
     if(sp.err){ alert('⚠️ ' + sp.err); return; }
@@ -10290,11 +10317,11 @@ ${pm.join('\n')}</Document></kml>`;
       ${!mine && !author ? `<button type="button" class="v-btn sec" onclick="CV.userHide('${cid}')">🙈 Masquer ce que publie ${w}</button>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
-  function cmDel(cid){ const c = R[cid]; if(!c || !confirm('Supprimer ce commentaire ?')) return; putQuiet([Object.assign(clone(c), {deleted:true})]); syncNow(); closeSheet(true); if(c.feed) feedPaint(c.feed); toast('🗑 Commentaire supprimé'); }
-  function userHide(id){ const d = devOfRec(R[id]); if(!d) return; if(!confirm('Masquer les commentaires et ❤️ de cette personne sur ce téléphone ?')) return; (M.blkDev = M.blkDev || {})[d] = 1; persist(); closeSheet(true); feedRepaintAll(); toast('🙈 Masqué'); }
-  function userBlock(id){
+  async function cmDel(cid){ const c = R[cid]; if(!c || !(await uiConfirm('Supprimer ce commentaire ?'))) return; putQuiet([Object.assign(clone(c), {deleted:true})]); syncNow(); closeSheet(true); if(c.feed) feedPaint(c.feed); toast('🗑 Commentaire supprimé'); }
+  async function userHide(id){ const d = devOfRec(R[id]); if(!d) return; if(!(await uiConfirm('Masquer les commentaires et ❤️ de cette personne sur ce téléphone ?'))) return; (M.blkDev = M.blkDev || {})[d] = 1; persist(); closeSheet(true); feedRepaintAll(); toast('🙈 Masqué'); }
+  async function userBlock(id){
     const r = R[id], d = devOfRec(r); if(!r || !d) return; const tid = String(r.trip).replace(/^ft:/,'');
-    if(!confirm(`Bloquer ${r.who || 'cette personne'} ?\n\nSes commentaires et ❤️ sont masqués pour tous tes abonnés et elle est retirée de la liste.\nPour l’empêcher aussi de voir tes souvenirs, touche ensuite « 🔁 Nouveau lien abonné » et renvoie le lien seulement aux personnes de ton choix.`)) return;
+    if(!(await uiConfirm(`Bloquer ${r.who || 'cette personne'} ?\n\nSes commentaires et ❤️ sont masqués pour tous tes abonnés et elle est retirée de la liste.\nPour l’empêcher aussi de voir tes souvenirs, touche ensuite « 🔁 Nouveau lien abonné » et renvoie le lien seulement aux personnes de ton choix.`))) return;
     const b = (M.feedBlk = M.feedBlk || {})[tid] || (M.feedBlk[tid] = []); if(!b.includes(d)) b.push(d);
     const fw = R['fw:' + ftId(tid) + ':' + d]; if(fw) putQuiet([Object.assign(clone(fw), {deleted:true})]);
     persist(); feedBuild(tid); syncNow(); closeSheet(true); feedRepaintAll(); toast('🚫 Bloqué');
@@ -10302,7 +10329,7 @@ ${pm.join('\n')}</Document></kml>`;
   function fwBlock(fwid){ userBlock(fwid); setTimeout(()=>{ try { socialHub(); } catch(e){} }, 150); }
   async function feedReset(tid){
     const old = FT()[tid]; if(!old) return;
-    if(!confirm('Créer un nouveau lien abonné ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.')) return;
+    if(!(await uiConfirm('Créer un nouveau lien abonné ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.'))) return;
     const out = Object.values(R).filter(r=>r && !r.deleted && r.trip === ftId(tid)).map(r=>Object.assign(clone(r), {deleted:true})); if(R[ftId(tid)]) out.push(Object.assign(clone(R[ftId(tid)]), {deleted:true}));
     putQuiet(out); try { await syncNow(); } catch(e){}
     out.forEach(r=>{ delete R[r.id]; }); M.spaces = (M.spaces||[]).filter(x=>x.code !== old); delete FT()[tid]; delete TS()[ftId(tid)];
@@ -10311,9 +10338,9 @@ ${pm.join('\n')}</Document></kml>`;
     await feedPublish(tid);
   }
   // 🚩 Signalement : un e-mail prérempli à l'éditeur, avec le code abonné (sans lui, impossible de retrouver le carnet). Aucune photo n'est envoyée.
-  function ugcReport(kind, id){
+  async function ugcReport(kind, id){
     const r = R[id]; if(!r) return; const ft = R[r.trip] || {}, code = TS()[r.trip] || '';
-    const why = prompt('Pourquoi signales-tu ce contenu ? (contenu illicite, harcèlement, nudité, violence, autre…)', ''); if(why === null) return;
+    const why = (await uiPrompt('Pourquoi signales-tu ce contenu ? (contenu illicite, harcèlement, nudité, violence, autre…)', '')); if(why === null) return;
     const body = [MSGT('Signalement depuis Vezoria'), '', MSGT('Motif') + ' : ' + why, MSGT('Type') + ' : ' + (kind === 'comment' ? 'commentaire de « ' + (r.who||'?') + ' » : ' + String(r.text||'').slice(0, 300) : 'publication « ' + (r.titre || r.lieu || r.date || '') + ' »'),
       MSGT('Voyage') + ' : ' + (ft.titre || '') + ' (' + (ft.owner || '?') + ')', MSGT('Code abonné') + ' : ' + code, 'Réf. : ' + id, '', '— ' + (myName() || '')].join('\n');
     location.href = 'mailto:' + CONTACT + '?subject=' + encodeURIComponent('Vezoria : signalement') + '&body=' + encodeURIComponent(body);
@@ -10327,21 +10354,21 @@ ${pm.join('\n')}</Document></kml>`;
       <button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(f.trip)}')">🚫 Ne plus suivre « ${esc(ft.titre || '')} »</button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
-  function feedUnfollow(ftid){
-    const code = TS()[ftid]; if(!confirm('Ne plus suivre ce voyage ? Il disparaît de ce téléphone.')) return;
+  async function feedUnfollow(ftid){
+    const code = TS()[ftid]; if(!(await uiConfirm('Ne plus suivre ce voyage ? Il disparaît de ce téléphone.'))) return;
     const fw = R['fw:' + ftid + ':' + devId()]; if(fw) putQuiet([Object.assign(clone(fw), {deleted:true})]);
     syncNow().finally(()=>{ Object.values(R).forEach(r=>{ if(r && (r.trip === ftid || r.id === ftid)) delete R[r.id]; }); delete TS()[ftid]; M.spaces = (M.spaces||[]).filter(x=>x.code !== code); persist(); closeSheet(true); feedClose(); refresh(); toast('🚫 Tu ne suis plus ce voyage'); });
   }
   function feedRepaintAll(){ document.querySelectorAll('.fd-post[id^="fp-"]').forEach(el=>feedPaint(el.id.slice(3))); }
-  function feedLike(fid){
-    const f = R[fid]; if(!f) return; if(!myName()){ const n = prompt('Ton prénom :', ''); if(!n) return; M.followName = n.trim(); }
+  async function feedLike(fid){
+    const f = R[fid]; if(!f) return; if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
     const id = 'lk:' + fid + ':' + devId(), cur = R[id];
     putQuiet([{id, type:'like', trip:f.trip, feed:fid, who:myName(), on: !(cur && cur.on)}]); syncNow(); feedPaint(fid);
     if(!(cur && cur.on)) fxPlay && fxHeart();
   }
-  function feedComment(fid){
+  async function feedComment(fid){
     const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
-    if(!myName()){ const n = prompt('Ton prénom :', ''); if(!n) return; M.followName = n.trim(); }
+    if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
     putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:myName(), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); i.value = ''; syncNow(); feedPaint(fid);
   }
   function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="' + (window.VZ_B || '') + 'anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
@@ -10403,14 +10430,14 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11a';
+  const BUILD = '2026-10-11b';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
       if(window.caches) for(const k of await caches.keys()) if(k !== 'share-inbox') await caches.delete(k);
     } catch(e){}
-    alert('Mise à jour prête : l’appli va se relancer.');
+    await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
   var APPAPI = {objAsk, budTog, syncSheet, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
@@ -10488,7 +10515,7 @@ ${pm.join('\n')}</Document></kml>`;
   async function vzRestore(){
     let o = null; try { const db = await vzDB(); o = await new Promise(res=>{ const q = db.transaction('b').objectStore('b').get('carnet_v2'); q.onsuccess = () => res(q.result); q.onerror = () => res(null); }); } catch(e){}
     if(!o || !o.raw){ alert('Aucune sauvegarde trouvée sur ce téléphone.'); return; }
-    if(!confirm(`Remettre le carnet tel qu’il était le ${new Date(o.at).toLocaleString('fr-FR')}, avant la première ouverture de Vezoria ?\n\nTout ce qui a été ajouté ou modifié depuis sur ce téléphone sera perdu (les photos restent). Ce qui est déjà sur le serveur reviendra à la prochaine synchro.`)) return;
+    if(!(await uiConfirm(`Remettre le carnet tel qu’il était le ${new Date(o.at).toLocaleString('fr-FR')}, avant la première ouverture de Vezoria ?\n\nTout ce qui a été ajouté ou modifié depuis sur ce téléphone sera perdu (les photos restent). Ce qui est déjà sur le serveur reviendra à la prochaine synchro.`))) return;
     try { localStorage.setItem(KEY, o.raw); } catch(e){ alert('Restauration impossible : ' + e.message); return; }
     location.reload();
   }
