@@ -39,7 +39,8 @@
     <div class="ok">
         <ul>
             <li>Your trips, notes, expenses and photos are <strong>encrypted on your phone</strong> before anything is sent. Neither the publisher nor the hosting provider can read them.</li>
-            <li>No advertising, no trackers, no audience measurement.</li>
+            <li>No advertising, no cookies, no advertising trackers, no third-party analytics tool (Google Analytics, Firebase…). Only <strong>anonymous</strong> counters (number of installs, space used on the server) are used to run the service.</li>
+            <li>Permissions (location, photos) are only requested when you use the feature concerned, and you can refuse them.</li>
             <li>You can erase everything: on your phone in one tap, on the server on simple request.</li>
         </ul>
     </div>
@@ -58,6 +59,8 @@
             <tr><td>Travel documents (type, expiry date; optional number and note) and photographed receipts, reimbursement method entered in a profile (optional), poll votes, shopping lists, tickets and documents attached to records, positions saved with “I’m here” (only when you tap the button)</td><td>Like the other records: on your device, and on the server if sync is enabled</td><td>Expiry alerts before departure, expense sharing</td></tr>
             <tr><td><strong>Trip tracking</strong> (off by default): positions recorded roughly every 300 m, <strong>only while the app is open</strong> and only during an ongoing trip</td><td>On your device, and for the members of the shared trip (encrypted)</td><td>Draw your route on the map and in the trip film</td></tr>
             <tr><td><strong>Followers</strong> (only if you publish a trip): non-private memories (photos as thumbnails, titles, places, stories); your route, only if <em>you</em> turn it on (rounded to about 100 m); on the follower side: the chosen first name, ❤️ and comments</td><td>Server, encrypted with the follower code: anyone who received the follower link or code can read them</td><td>Let your loved ones follow the trip and react</td></tr>
+            <tr><td>Install counter: a randomly generated identifier (unrelated to you or your trips), the device type (iPhone, Android, computer) and the date, sent only once</td><td>Server</td><td>Knowing how many times the app has been installed</td></tr>
+            <tr><td>Overall server statistics: total space used by photos, number of notebooks and records (aggregate figures, no content or identity)</td><td>Server; viewed by the publisher</td><td>Monitor storage and stay within the service limits</td></tr>
             <tr><td>IP address, date and size of uploads</td><td>Server and the hosting provider’s technical logs</td><td>To route the data, security, protection against abuse</td></tr>
         </table>
         <p style="font-size:0.9em;color:#666;">Legal bases: performance of the requested service (Art. 6(1)(b) GDPR) and legitimate interest in securing the service (Art. 6(1)(f)).</p>
@@ -82,7 +85,7 @@
     <div class="box">
         <p>Some features contact third-party services directly. These then receive your IP address and standard technical information (browser type, language), as with any Internet request, but <strong>no content from your notebook</strong>:</p>
         <ul>
-            <li><strong>Map, routes and “What to see?”</strong>: OpenStreetMap (Nominatim, Overpass), Photon (Komoot) and Wikipedia (search for places around a stop, photos and summaries of places) receive the name of the place searched for.</li>
+            <li><strong>Map, routes and “What to see?”</strong>: the search for places around a stop goes through the app’s server, which queries Overpass (OpenStreetMap) with the city’s coordinates only; otherwise your phone contacts OpenStreetMap directly (Nominatim, Overpass), Photon (Komoot) and Wikipedia (search for places around a stop, photos and summaries of places) receive the name of the place searched for.</li>
             <li><strong>Import of a Polarsteps export</strong>: the ZIP file is read on your phone (zip.js library included in the app). Your file is never sent.</li>
             <li><strong>Trip tools</strong> (called directly by your phone, without your name or the notebook’s content): exchange rates (open.er-api.com, otherwise Frankfurter / ECB), weather at stops (Open-Meteo, which receives the city’s location), automatic receipt reading (the Tesseract.js tool is loaded from jsDelivr; the receipt photo is analysed on the phone and never sent).</li>
             <li><strong>Maps and routes</strong>: the base map is loaded from OpenStreetMap (tile.openstreetmap.org) and walking routes along streets are calculated by the public service routing.openstreetmap.de (FOSSGIS). They receive the displayed coordinates and your IP address, without your name or the notebook’s content. The PDF is generated on your phone (pdf-lib library, included in the app). The route and film maps also use Esri base maps (server.arcgisonline.com), which receives the displayed area and your IP address.</li>
@@ -99,10 +102,18 @@
         <p>These services are independent of the publisher, who receives no information about this.</p>
     </div>
 
-    <h2>6. Local storage, cookies and tracking</h2>
+    <h2>6. Permissions, local storage, cookies and audience measurement</h2>
     <div class="box">
-        <p>The App uses your browser’s storage (LocalStorage, IndexedDB) to work, including offline. This storage is strictly necessary for the service and does not require consent.</p>
-        <p>We use <strong>no tracking tools</strong>, no advertising cookies and no third-party analytics service. No data is sold, rented or used for advertising purposes.</p>
+        <p><strong>Permissions requested by the app</strong> (always when you use the feature, never at launch; you can refuse them or withdraw them in your phone settings):</p>
+        <ul>
+            <li><strong>Location</strong>: for “I’m here” and for trip tracking, if you turn it on. Only while the app is open, never in the background.</li>
+            <li><strong>Photos and files</strong>: when you add a photo, a receipt, a PDF ticket or a backup, you choose the file (or take the photo) yourself; the app has no access to the rest of your gallery.</li>
+            <li><strong>Clipboard and sharing</strong>: to copy or send an invitation, a file or the trip film, only when you tap the button.</li>
+            <li><strong>Persistent storage</strong>: the app asks the browser not to erase your trips when space runs low.</li>
+        </ul>
+        <p>The app does <strong>not</strong> request access to the microphone, contacts or notifications, and sends no notifications.</p>
+        <p><strong>Local storage</strong>: the App uses your browser’s storage (LocalStorage, IndexedDB) to work, including offline. This storage is strictly necessary for the service and requires no consent. The App uses <strong>no cookies</strong>.</p>
+        <p><strong>Audience measurement</strong>: there are no advertising trackers, no third-party analytics tools and no profiling. Only anonymous measurements strictly necessary to run the service are used: the install counter and the overall server statistics described in section 2, plus the technical traffic statistics provided by the host Cloudflare (number of visits and requests, countries, errors), without cookies and without cross-site tracking. No data is sold, rented or used for advertising.</p>
     </div>
 
     <h2>7. Retention period</h2>
@@ -128,7 +139,7 @@
 
     <h2>9. Minors</h2>
     <div class="box">
-        <p>The App is intended for adults and families. A child may appear in a family notebook under the responsibility of their parents.</p>
+        <p>The App is intended for adults and families. A child may appear in a family notebook under the responsibility of their parents. A minor under 15 should not publish a trip for followers or comment without their parents’ consent.</p>
     </div>
 
     <h2>10. Changes to this policy</h2>

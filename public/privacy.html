@@ -39,8 +39,9 @@
     <div class="ok">
         <ul>
             <li>Vos voyages, notes, dépenses et photos sont <strong>chiffrés sur votre téléphone</strong> avant tout envoi. Ni l'éditeur ni l'hébergeur ne peuvent les lire.</li>
-            <li>Aucune publicité, aucun traceur, aucune mesure d'audience.</li>
-            <li>Vous pouvez tout effacer : sur votre téléphone en un geste, sur le serveur sur simple demande.</li>
+            <li>Aucune publicité, aucun cookie, aucun traceur publicitaire, aucun outil d'analyse tiers (Google Analytics, Firebase…). Seuls des compteurs <strong>anonymes</strong> (nombre d'installations, place utilisée sur le serveur) servent à faire tourner le service.</li>
+            <li>Les autorisations (position, photos) ne sont demandées qu'au moment où vous utilisez la fonction concernée, et vous pouvez les refuser.</li>
+            <li>Vous pouvez tout effacer : sur votre téléphone en un geste, sur le serveur depuis l'appli ou sur simple demande.</li>
         </ul>
     </div>
 
@@ -58,6 +59,8 @@
             <tr><td>Documents de voyage (type, date d'expiration ; numéro et note facultatifs) et reçus photographiés, moyen de remboursement indiqué dans un profil (facultatif), votes aux sondages, listes de courses, billets et documents joints aux fiches, positions enregistrées avec « Je suis ici » (seulement quand vous touchez le bouton)</td><td>Comme les autres fiches : sur votre appareil, et sur le serveur si la synchro est activée</td><td>Alertes d'expiration avant le départ, partage des dépenses</td></tr>
             <tr><td><strong>Suivi du voyage</strong> (désactivé par défaut) : positions relevées environ tous les 300 m, <strong>uniquement quand l'appli est ouverte</strong> et seulement pendant un voyage en cours</td><td>Sur votre appareil, et pour les membres du voyage partagé (chiffré)</td><td>Tracer votre route sur la carte et dans le film du voyage</td></tr>
             <tr><td><strong>Abonnés</strong> (seulement si vous publiez un voyage) : souvenirs non privés (photos en vignettes, titres, lieux, récits) ; votre route, uniquement si <em>vous</em> l'activez (arrondie à environ 100 m) ; côté abonné : le prénom choisi, les ❤️ et les commentaires</td><td>Serveur, chiffré avec le code abonné : toute personne qui a reçu le lien ou le code abonné peut les lire</td><td>Permettre à vos proches de suivre le voyage et de réagir</td></tr>
+            <tr><td>Compteur d'installations : un identifiant tiré au hasard (sans lien avec vous ni avec vos voyages), le type d'appareil (iPhone, Android, ordinateur) et la date, envoyés une seule fois</td><td>Serveur</td><td>Connaître le nombre d'installations de l'appli</td></tr>
+            <tr><td>Statistiques globales du serveur : place totale occupée par les photos, nombre de carnets et de fiches (chiffres d'ensemble, sans contenu ni identité)</td><td>Serveur ; consultées par l'éditeur</td><td>Surveiller le stockage et éviter de dépasser les limites du service</td></tr>
             <tr><td>Adresse IP, date et taille des envois</td><td>Serveur et journaux techniques de l'hébergeur</td><td>Acheminer les données, sécurité, protection contre les abus</td></tr>
         </table>
         <p style="font-size:0.9em;color:#666;">Bases légales : exécution du service demandé (art. 6.1.b du RGPD) et intérêt légitime à sécuriser le service (art. 6.1.f).</p>
@@ -82,7 +85,7 @@
     <div class="box">
         <p>Certaines fonctions contactent directement des services tiers. Ils reçoivent alors votre adresse IP et des informations techniques standard (type de navigateur, langue), comme pour toute requête Internet, mais <strong>aucun contenu de votre carnet</strong> :</p>
         <ul>
-            <li><strong>Carte, itinéraires et « Que voir ? »</strong> : OpenStreetMap (Nominatim, Overpass), Photon (Komoot) et Wikipédia (recherche des lieux autour d'une étape, photos et résumés des lieux) reçoivent le nom du lieu recherché.</li>
+            <li><strong>Carte, itinéraires et « Que voir ? »</strong> : la recherche des lieux autour d'une étape passe par le serveur de l'appli, qui interroge Overpass (OpenStreetMap) avec les seules coordonnées de la ville ; à défaut, votre téléphone contacte directement OpenStreetMap (Nominatim, Overpass), Photon (Komoot) et Wikipédia (recherche des lieux autour d'une étape, photos et résumés des lieux) reçoivent le nom du lieu recherché.</li>
             <li><strong>Import d'un export Polarsteps</strong> : le fichier ZIP est lu sur votre téléphone (bibliothèque zip.js incluse dans l'appli). Votre fichier n'est jamais envoyé.</li>
             <li><strong>Outils du voyage</strong> (appelés directement par votre téléphone, sans votre nom ni le contenu du carnet) : taux de change (open.er-api.com, à défaut Frankfurter / BCE), météo des étapes (Open-Meteo, qui reçoit la position de la ville), lecture automatique d'un ticket (l'outil Tesseract.js est chargé depuis jsDelivr ; la photo du ticket est analysée sur le téléphone et n'est jamais envoyée).</li>
             <li><strong>Cartes et itinéraires</strong> : le fond de carte est chargé chez OpenStreetMap (tile.openstreetmap.org) et le tracé à pied par les rues est calculé par le service public routing.openstreetmap.de (FOSSGIS). Ils reçoivent les coordonnées affichées et votre adresse IP, sans votre nom ni le contenu du carnet. Le PDF est fabriqué sur votre téléphone (bibliothèque pdf-lib, incluse dans l'appli). Les cartes de l'itinéraire et du film utilisent aussi les fonds de carte d'Esri (server.arcgisonline.com), qui reçoit la zone affichée et votre adresse IP.</li>
@@ -99,10 +102,18 @@
         <p>Ces services sont indépendants de l'éditeur, qui ne reçoit aucune information à ce sujet.</p>
     </div>
 
-    <h2>6. Stockage local, cookies et suivi</h2>
+    <h2>6. Autorisations, stockage local, cookies et mesure d'audience</h2>
     <div class="box">
-        <p>L'Application utilise le stockage de votre navigateur (LocalStorage, IndexedDB) pour fonctionner, y compris hors ligne. Ce stockage est strictement nécessaire au service et ne demande pas de consentement.</p>
-        <p>Nous n'utilisons <strong>aucun outil de suivi</strong>, aucun cookie publicitaire et aucun service d'analyse tiers. Aucune donnée n'est vendue, louée ou utilisée à des fins publicitaires.</p>
+        <p><strong>Autorisations demandées par l'appli</strong> (toujours au moment où vous utilisez la fonction, jamais au lancement ; vous pouvez refuser ou les retirer dans les réglages du téléphone) :</p>
+        <ul>
+            <li><strong>Position</strong> : pour « Je suis ici » et pour le suivi du voyage, si vous l'activez. Uniquement quand l'appli est ouverte, jamais en arrière-plan.</li>
+            <li><strong>Photos et fichiers</strong> : quand vous ajoutez une photo, un ticket, un billet PDF ou une sauvegarde, c'est vous qui choisissez le fichier (ou prenez la photo) ; l'appli n'a pas accès au reste de votre galerie.</li>
+            <li><strong>Presse-papiers et partage</strong> : pour copier ou envoyer une invitation, un fichier ou le film du voyage, seulement quand vous touchez le bouton.</li>
+            <li><strong>Stockage persistant</strong> : l'appli demande au navigateur de ne pas effacer vos voyages quand l'espace manque.</li>
+        </ul>
+        <p>L'appli ne demande <strong>pas</strong> l'accès au micro, aux contacts ni aux notifications, et n'envoie aucune notification.</p>
+        <p><strong>Stockage local</strong> : l'Application utilise le stockage de votre navigateur (LocalStorage, IndexedDB) pour fonctionner, y compris hors ligne. Ce stockage est strictement nécessaire au service et ne demande pas de consentement. L'Application n'utilise <strong>aucun cookie</strong>.</p>
+        <p><strong>Mesure d'audience</strong> : il n'y a ni traceur publicitaire, ni outil d'analyse tiers, ni profilage. Seules sont utilisées des mesures anonymes strictement nécessaires au fonctionnement du service : le compteur d'installations et les statistiques globales du serveur décrits au point 2, ainsi que les statistiques techniques de trafic fournies par l'hébergeur Cloudflare (nombre de visites et de requêtes, pays, erreurs), sans cookie et sans suivi d'un site à l'autre. Aucune donnée n'est vendue, louée ou utilisée à des fins publicitaires.</p>
     </div>
 
     <h2>7. Durée de conservation</h2>
@@ -128,7 +139,7 @@
 
     <h2>9. Mineurs</h2>
     <div class="box">
-        <p>L'Application s'adresse aux adultes et aux familles. Un enfant peut figurer dans un carnet familial sous la responsabilité de ses parents.</p>
+        <p>L'Application s'adresse aux adultes et aux familles. Un enfant peut figurer dans un carnet familial sous la responsabilité de ses parents. Un mineur de moins de 15 ans ne doit pas publier un voyage pour des abonnés ni commenter sans l'accord de ses parents.</p>
     </div>
 
     <h2>10. Modifications de cette politique</h2>
