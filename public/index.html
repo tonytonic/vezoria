@@ -1399,8 +1399,10 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
    La hauteur n'est jamais fixée à la main : l'iPhone la donne lui-même via
    var(--sat,env(safe-area-inset-top,0px)). Une bande opaque couvre la barre d'état, et le
    menu collant s'arrête juste dessous : plus rien ne défile flouté en haut. */
-/* iOS 26 regarde ce qu'il y a juste SOUS l'heure pour décider du flou : la bande dépasse donc de 2 px (0 px quand il n'y a pas d'encoche) */
-.cv-statusbar{position:fixed;top:0;left:0;right:0;height:calc(var(--sat,env(safe-area-inset-top,0px)) + min(2px, var(--sat,env(safe-area-inset-top,0px))));background:var(--navy);z-index:2500}
+/* iOS 26 : il pose son flou sur l'heure sauf si un élément fixe et opaque se trouve juste en dessous (comme la barre Trajets/Hôtels).
+   La bande descend donc 12 px sous l'encoche, en s'estompant (le fondu est visuel : iOS lit la couleur pleine). 0 px sans encoche. */
+.cv-statusbar{position:fixed;top:0;left:0;right:0;height:calc(var(--sat,env(safe-area-inset-top,0px)) + min(12px, var(--sat,env(safe-area-inset-top,0px))));background-color:var(--navy);z-index:2500;
+  -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 12px),rgba(0,0,0,.35) calc(100% - 4px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 12px),rgba(0,0,0,.35) calc(100% - 4px),transparent)}
 .cv-sub{top:var(--sat,env(safe-area-inset-top,0px))!important;background:var(--cream)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:0 6px 12px -10px rgba(74,26,79,.35)}
 .hero{padding-top:calc(14px + var(--sat,env(safe-area-inset-top,0px)))}
 .v-sheet{max-height:calc(100dvh - var(--sat,env(safe-area-inset-top,0px)) - 12px)}
@@ -10478,7 +10480,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11h';
+  const BUILD = '2026-10-11i';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
