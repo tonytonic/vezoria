@@ -2,6 +2,15 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>/* Vezoria « version test » : servie par un carnet sous /vezoria/ (même adresse, même stockage, même serveur que le carnet) */
+window.VZ_HOST = /^\/vezoria(\/|$)/.test(location.pathname) && !/(^|\.)vezoria\.pages\.dev$/.test(location.hostname);
+window.VZ_B = '';
+if(window.VZ_HOST){ try {
+  window.VZ_B = localStorage.getItem('vz_base') || 'https://vezoria.pages.dev/';
+  localStorage.setItem('app_last', 'vezoria'); sessionStorage.setItem('app_started', '1');
+  if(!localStorage.getItem('vz_bk')) window.VZ_RAW0 = localStorage.getItem('carnet_v2');
+} catch(e){} }
+</script>
 <script src="i18n.js"></script>
 <style>html,body{background:#2A1238}
 .cv-hero{background:linear-gradient(135deg,#4c1d95,#7c3aed 60%,#a855f7);color:#fff;border-radius:20px;padding:16px 16px 14px;margin:0 0 12px;box-shadow:0 8px 24px rgba(124,58,237,.35)}
@@ -130,7 +139,7 @@ body .cv-live.done{background:linear-gradient(135deg,#3A2119,#8E3B2E)}
 <title>Vezoria</title>
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="manifest" href="manifest.json">
+<script>if(!window.VZ_HOST) document.write('<link rel="manifest" href="manifest.json">');</script>
 <meta name="apple-mobile-web-app-title" content="Vezoria">
 <meta name="apple-mobile-web-app-capable" content="yes">
 
@@ -1472,6 +1481,12 @@ body.cv-ph-past .cv-disc-card{border-color:#E9C7B3;box-shadow:0 4px 14px rgba(14
 body.cv-ph-live .cv-actb .ac-path .on,body.cv-ph-live .cv-actb .ac-n{box-shadow:0 0 0 4px rgba(13,148,136,.2)}
 .cv-soin{display:flex;gap:6px;margin:0 0 12px;overflow-x:auto}.cv-soin button{flex:0 0 auto;border:1.5px solid var(--light);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;font-size:.84rem;color:var(--ink);cursor:pointer}.cv-soin button.on{background:var(--navy);border-color:var(--navy);color:#fff}
 .cv-fban{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#fff,var(--cream));border:1px solid var(--light);border-radius:20px;padding:12px 14px;margin:0 0 12px}.cv-fban .fb-i{font-size:1.8rem}.cv-fban b{display:block}.cv-fban small{display:block;color:var(--gray);font-size:.78rem;line-height:1.35}.cv-fban button{flex:none;border:0;border-radius:999px;background:var(--navy);color:#fff;font:700 .8rem 'Outfit',system-ui,sans-serif;padding:9px 14px;cursor:pointer}
+.vz-band{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:10px 12px 0;padding:10px 12px;border-radius:16px;background:linear-gradient(135deg,#FFF7E6,#FDE9F1);border:1px solid rgba(0,0,0,.06);box-shadow:0 4px 14px rgba(0,0,0,.06);color:#2A1238}
+.vz-band .vz-i{font-size:1.5rem;line-height:1}.vz-band .vz-t{flex:1 1 200px;min-width:0}.vz-band .vz-t b{display:block;font-size:.95rem}.vz-band .vz-t small{display:block;font-size:.78rem;opacity:.8;line-height:1.35}
+.vz-band .vz-a{display:flex;flex-wrap:wrap;gap:6px;width:100%}.vz-band .vz-a button{border:1px solid rgba(42,18,56,.18);background:#fff;color:#2A1238;border-radius:999px;padding:7px 12px;font:700 .8rem system-ui,sans-serif;cursor:pointer;min-height:36px}
+.vz-band .vz-a .vz-go{background:#2A1238;color:#fff;border-color:#2A1238}.vz-band .vz-a .vz-x{margin-left:auto;padding:7px 11px;opacity:.6}
+.vz-ul{margin:4px 0 12px;padding-left:18px;font-size:.88rem;line-height:1.45}.vz-ul li{margin:4px 0}
+.vz-st{display:flex;gap:4px}.vz-st button{border:0;background:none;font-size:1.9rem;line-height:1;color:#d6d3d1;cursor:pointer;padding:2px 3px;min-width:40px;min-height:40px}.vz-st button.on{color:#f59e0b}
 </style>
 </head>
 <body class="is-public">
@@ -1490,7 +1505,7 @@ body.cv-ph-live .cv-actb .ac-path .on,body.cv-ph-live .cv-actb .ac-n{box-shadow:
   </div>
 </div>
 <!-- ═══ CARNET PARTAGÉ ═══════════════════════════════ -->
-<div id="appC" style="display:none"><div class="tabs cv-sub" id="tabsC"></div><div id="cv-body"></div>
+<div id="appC" style="display:none"><div id="vz-band"></div><div class="tabs cv-sub" id="tabsC"></div><div id="cv-body"></div>
 <footer class="cv-foot"><a href="mentions-legales.html">Mentions légales</a> · <a href="privacy.html">Confidentialité</a></footer></div>
 <nav class="cv-nav" id="cv-nav" style="display:none"></nav>
 <button class="v-fab" id="cv-fab" style="display:none" onclick="CV.add()">＋</button>
@@ -1751,7 +1766,7 @@ const CV = (function(){
   /* ── Chiffrement de bout en bout (version publique) ──
      Le code du carnet ne quitte jamais le téléphone : le serveur reçoit seulement une empreinte
      (pour ranger les données) et des fiches/photos chiffrées en AES-256-GCM avec une clé tirée du code. */
-  const E2E = PUBLIC;
+  const E2E = window.VZ_HOST ? (()=>{ try { const h = JSON.parse(localStorage.getItem('vz_host') || 'null'); if(h && typeof h.e2e === 'boolean') return h.e2e; } catch(e){} return !/carnet-voyage-clf/.test(location.hostname); })() : PUBLIC;
   const te = new TextEncoder(), td = new TextDecoder();
   const hex = buf => [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
   const b64 = u8 => { let s = ''; for(let i=0;i<u8.length;i+=0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i+0x8000)); return btoa(s); };
@@ -1766,7 +1781,9 @@ const CV = (function(){
     const hkey = await crypto.subtle.importKey('raw', hb, {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
     // empreinte envoyée au serveur : dérivée LENTEMENT du code (PBKDF2, 200 000 tours, comme la clé de chiffrement),
     // pour qu'une base volée ne permette pas d'essayer tous les codes à grande vitesse
-    const token = hex(await crypto.subtle.deriveBits({name:'PBKDF2', salt:te.encode('carnet-voyage/space/v2'), iterations:200000, hash:'SHA-256'}, base, 256));
+    const token = window.VZ_HOST
+      ? hex(await crypto.subtle.digest('SHA-256', te.encode('carnet-voyage/space/v1:' + code)))   // version test dans le carnet : même empreinte que le carnet
+      : hex(await crypto.subtle.deriveBits({name:'PBKDF2', salt:te.encode('carnet-voyage/space/v2'), iterations:200000, hash:'SHA-256'}, base, 256));
     return ck[code] = {code, key, hkey, token};
   }
   async function authCode(code){ code = code || M.sync.code; return E2E ? (await keys(code)).token : code; }
@@ -3073,7 +3090,7 @@ const CV = (function(){
     h += `<div class="v-box"><h3>📤 Inviter un ami</h3><p>Montre-lui le QR code ou envoie-lui le lien de l’appli.</p><button class="v-btn" onclick="CV.shareSheet()">📤 Partager l’appli (QR code)</button></div>`;
     h += `<div class="v-box"><h3>🎬 Tutos</h3><p>Les 4 espaces du carnet (Préparation, En cours, Passés, Bilan), et l’essentiel pour bien commencer.</p>${tutoBtn()}${ESCALE ? `<button type="button" class="v-btn sec" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button><button type="button" class="v-btn sec" onclick="CV.radarTuto()">✦ Tuto Radar des prix (3 min)</button>` : ''}</div>`;
     h += `<div class="v-box"><h3>🕘 Activité récente</h3>${activity()}</div>
-      ${coffeeBox()}<div class="v-box"><h3>🔄 Mise à jour de l’appli</h3><p>Version installée : ${BUILD}. Si une nouveauté n’apparaît pas, touche le bouton : tes voyages et tes photos ne sont pas touchés.</p><button class="v-btn sec" onclick="CV.forceUpdate()">🔄 Mettre à jour maintenant</button></div><div class="v-box"><h3>📤 Voyage ou photos non arrivés ?</h3><p>Renvoie vers le serveur toutes les fiches et toutes les photos de ce téléphone, par exemple après une suppression sur le serveur. Rien n’est dupliqué.</p><button class="v-btn" onclick="CV.photoResend()">📤 Tout renvoyer</button></div><div class="v-box"><h3>🗑 Mes données sur le serveur</h3><p>Tu peux effacer à tout moment ton carnet du serveur (fiches et photos), pour toi et tes compagnons.</p><button class="v-btn danger" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>
+      ${coffeeBox()}<div class="v-box"><h3>🔄 Mise à jour de l’appli</h3><p>Version installée : ${BUILD}. Si une nouveauté n’apparaît pas, touche le bouton : tes voyages et tes photos ne sont pas touchés.</p><button class="v-btn sec" onclick="CV.forceUpdate()">🔄 Mettre à jour maintenant</button></div><div class="v-box"><h3>📤 Voyage ou photos non arrivés ?</h3><p>Renvoie vers le serveur toutes les fiches et toutes les photos de ce téléphone, par exemple après une suppression sur le serveur. Rien n’est dupliqué.</p><button class="v-btn" onclick="CV.photoResend()">📤 Tout renvoyer</button></div>${window.VZ_HOST ? '' : `<div class="v-box"><h3>🗑 Mes données sur le serveur</h3><p>Tu peux effacer à tout moment ton carnet du serveur (fiches et photos), pour toi et tes compagnons.</p><button class="v-btn danger" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>`}
       <div class="v-box"><h3>💾 Sauvegarde</h3>
         <p>Tout est enregistré sur ce téléphone (${Math.round(size/1024)} Ko)${s.on?' et sur le serveur':''}. L’export reste ta copie de secours, et il contient aussi l’archive 2026.</p>
         <button class="v-btn" onclick="CV.zipSheet()">💾 Sauvegarde complète ZIP (avec photos)</button>
@@ -4171,7 +4188,7 @@ const CV = (function(){
   let zipLib = null;
   function loadZip(){
     if(zipLib) return zipLib;
-    const srcs = ['vendor/zip-native.min.js', 'https://cdn.jsdelivr.net/npm/@zip.js/zip.js@2.23.0/dist/zip-native.min.js'];
+    const srcs = [(window.VZ_B || '') + 'vendor/zip-native.min.js', 'https://cdn.jsdelivr.net/npm/@zip.js/zip.js@2.23.0/dist/zip-native.min.js'];
     zipLib = new Promise((res, rej) => {
       const tryOne = i => {
         if(i >= srcs.length){ zipLib = null; rej(new Error('Impossible de charger le lecteur de ZIP (connexion internet nécessaire).')); return; }
@@ -4208,6 +4225,7 @@ const CV = (function(){
     setTimeout(shareInbox, 600); setTimeout(hashJoin, 1200);
     try { const hq = document.getElementById('cv-hero-qr'); if(hq) hq.innerHTML = qrSVG(APP_URL(), 'q') + '<span>📤 Partager</span>'; } catch(e){}
     loadStore();
+    if(window.VZ_HOST && M.trip === LEGACY) M.trip = R.t2026 && !R.t2026.deleted ? 't2026' : null;
     document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ if(vw) viewClose(); else closeSheet(); } if(vw && e.key==='ArrowRight') viewGo(1); if(vw && e.key==='ArrowLeft') viewGo(-1); });
     document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && (M.dirty.length || Date.now() - lastSyncAt > AUTO_SYNC)) syncNow(); });
     window.addEventListener('online', ()=>syncNow());
@@ -4622,7 +4640,7 @@ const CV = (function(){
   }
 
   /* ══════════ 🔐 Fonctionnement & confidentialité (version publique) ══════════ */
-  const TUTO = 'tuto.mp4';
+  const TUTO = (window.VZ_B || '') + 'tuto.mp4';
   const tutoBtn = (cls) => `<button type="button" class="v-btn ${cls||'sec'}" onclick="CV.tutoSheet()">🎬 Voir le tuto vidéo du carnet (3 min)</button>`;
   function tutoSheet(){
     openSheet(`<h2>🎬 Tuto vidéo</h2>
@@ -6580,7 +6598,7 @@ const CV = (function(){
   /* ---------- 📄 Moteur PDF ---------- */
   async function loadPdfLib(){
     if(window.PDFLib) return window.PDFLib;
-    await new Promise((res, rej)=>{ const s = document.createElement('script'); s.src = 'vendor/pdf-lib.min.js'; s.onload = res; s.onerror = ()=>rej(new Error('Outil PDF introuvable (vendor/pdf-lib.min.js).')); document.head.appendChild(s); });
+    await new Promise((res, rej)=>{ const s = document.createElement('script'); s.src = (window.VZ_B || '') + 'vendor/pdf-lib.min.js'; s.onload = res; s.onerror = ()=>rej(new Error('Outil PDF introuvable (vendor/pdf-lib.min.js).')); document.head.appendChild(s); });
     return window.PDFLib;
   }
   const WIN = '€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ';
@@ -7674,8 +7692,8 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="wm-bottom"><div class="wm-info" id="wm-info">🌍 Chargement du globe…</div><div class="wm-car" id="wm-car"></div></div>`;
     ov.style.display = 'block'; document.body.style.overflow = 'hidden';
     try {
-      await loadCss('vendor/maplibre-gl.css');
-      if(!window.maplibregl) await loadJs('vendor/maplibre-gl.js');
+      await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
+      if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
       // Globe : NASA Blue Marble (domaine public), OpenStreetMap en zoom proche, noms et frontières OpenFreeMap (libre, sans clé)
       const style = {version:8, projection:{type:'globe'},
         sources:{
@@ -8178,7 +8196,7 @@ ${pm.join('\n')}</Document></kml>`;
 
   /* ══════════ 📲 Appli à installer obligatoirement (écran d'accueil) + compteur anonyme ══════════ */
   function installGate(){
-    if(isInstalled() || !/^https?:/.test(location.protocol) || /^(localhost|127\.)/.test(location.hostname) || /[?&]web=1/.test(location.search)) return false;
+    if(window.VZ_HOST || isInstalled() || !/^https?:/.test(location.protocol) || /^(localhost|127\.)/.test(location.hostname) || /[?&]web=1/.test(location.search)) return false;
     let g = document.getElementById('cv-gate'); if(!g){ g = document.createElement('div'); g.id = 'cv-gate'; document.body.appendChild(g); }
     gateRender(); return true;
   }
@@ -8199,7 +8217,7 @@ ${pm.join('\n')}</Document></kml>`;
   window.addEventListener('beforeinstallprompt', ()=>setTimeout(gateRender, 50));
   window.addEventListener('appinstalled', ()=>{ const g = document.getElementById('cv-gate'); if(g) g.innerHTML = '<div class="gt"><h1>✅ Appli installée</h1><p>Ouvre maintenant <b>Vezoria</b> depuis ton écran d’accueil' + (/Android/i.test(navigator.userAgent) ? ', ou glisse vers le haut et cherche « Vezoria » dans tes applis.</p><p class="gw">⚠️ Icône introuvable (Honor, Huawei, Xiaomi…) ? Autorise Chrome à créer des raccourcis : <b>Paramètres → Applications → Chrome → Autorisations → « Créer des raccourcis sur l’écran d’accueil »</b>, puis réinstalle. Sur Honor, glisse vers le bas au milieu de l’écran et tape « Vezoria » pour la chercher.</p>' : '.</p>') + '</div>'; });
   function countInstall(){
-    if(!isInstalled() || M.instSent || !/^https?:/.test(location.protocol)) return;
+    if(window.VZ_HOST || !isInstalled() || M.instSent || !/^https?:/.test(location.protocol)) return;
     M.instId = M.instId || (Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)).slice(0, 32);
     const plat = isIOS() ? 'ios' : /Android/i.test(navigator.userAgent) ? 'android' : 'desktop';
     fetch(location.origin + '/api/installs', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:M.instId, plat})})
@@ -8650,7 +8668,7 @@ ${pm.join('\n')}</Document></kml>`;
   async function installNow(){ if(!installEvt) return; installEvt.prompt(); try { await installEvt.userChoice; } catch(e){} installEvt = null; render(); }
   function installSheet(){ openSheet(`<h2>📲 Installer l’appli</h2>${installHTML(false)}<div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`); }
   function bootOffline(){
-    if('serviceWorker' in navigator && /^https?:/.test(location.protocol)){
+    if(!window.VZ_HOST && 'serviceWorker' in navigator && /^https?:/.test(location.protocol)){
       const had = !!navigator.serviceWorker.controller;
       navigator.serviceWorker.register('sw.js').then(reg => { try { reg.update(); document.addEventListener('visibilitychange', () => { if(!document.hidden) reg.update().catch(()=>{}); }); } catch(e){} }).catch(()=>{});
       // une nouvelle version vient de prendre la main : on recharge (sauf si une fiche est en cours de saisie)
@@ -9163,7 +9181,7 @@ ${pm.join('\n')}</Document></kml>`;
         let ok = true;
         for(const id of [g.id, g.id + '.t']){
           const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(id, g.code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(g.code)}});
-          if(!r.ok && r.status !== 404) ok = false;
+          if(!r.ok && r.status !== 404 && r.status !== 405) ok = false;   // 405 : serveur sans suppression (version test dans le carnet)
         }
         if(!ok) break;
       } catch(e){ break; }
@@ -9938,7 +9956,7 @@ ${pm.join('\n')}</Document></kml>`;
   const VI = {"✈️": "airplane", "✈": "airplane", "🛫": "airplane-departure", "🛫️": "airplane-departure", "🚆": "train", "🚆️": "train", "🚄": "high-speed-train", "🚄️": "high-speed-train", "🚇": "metro", "🚇️": "metro", "🚌": "bus", "🚌️": "bus", "🚐": "minibus", "🚐️": "minibus", "🚗": "automobile", "🚗️": "automobile", "🚕": "taxi", "🚕️": "taxi", "⛴️": "ferry", "⛴": "ferry", "⛵": "sailboat", "⛵️": "sailboat", "🛣️": "motorway", "🛣": "motorway", "🚶": "person-walking", "🚶️": "person-walking", "🚀": "rocket", "🚀️": "rocket", "🧭": "compass", "🧭️": "compass", "🛰️": "satellite", "🛰": "satellite", "📡": "satellite-antenna", "📡️": "satellite-antenna", "🏨": "hotel", "🏨️": "hotel", "🛏️": "bed", "🛏": "bed", "🧸": "teddy-bear", "🧸️": "teddy-bear", "💤": "zzz", "💤️": "zzz", "🌙": "crescent-moon", "🌙️": "crescent-moon", "🏡": "house-with-garden", "🏡️": "house-with-garden", "🏠": "house", "🏠️": "house", "📍": "round-pushpin", "📍️": "round-pushpin", "📌": "pushpin", "📌️": "pushpin", "🗺️": "world-map", "🗺": "world-map", "🌍": "globe-showing-europe-africa", "🌍️": "globe-showing-europe-africa", "🌐": "globe-with-meridians", "🌐️": "globe-with-meridians", "🏙️": "cityscape", "🏙": "cityscape", "🏖️": "beach-with-umbrella", "🏖": "beach-with-umbrella", "🏛️": "classical-building", "🏛": "classical-building", "⛪": "church", "⛪️": "church", "🏔️": "snow-capped-mountain", "🏔": "snow-capped-mountain", "🌅": "sunrise", "🌅️": "sunrise", "🎡": "ferris-wheel", "🎡️": "ferris-wheel", "🏺": "amphora", "🏺️": "amphora", "🐘": "elephant", "🐘️": "elephant", "🌳": "deciduous-tree", "🌳️": "deciduous-tree", "🌿": "herb", "🌿️": "herb", "🌱": "seedling", "🌱️": "seedling", "🌊": "water-wave", "🌊️": "water-wave", "🎫": "ticket", "🎫️": "ticket", "🎟️": "admission-tickets", "🎟": "admission-tickets", "📄": "page-facing-up", "📄️": "page-facing-up", "🧾": "receipt", "🧾️": "receipt", "🛂": "passport-control", "🛂️": "passport-control", "🪪": "identification-card", "🪪️": "identification-card", "📋": "clipboard", "📋️": "clipboard", "📎": "paperclip", "📎️": "paperclip", "🗂️": "card-index-dividers", "🗂": "card-index-dividers", "📂": "open-file-folder", "📂️": "open-file-folder", "🗒️": "spiral-notepad", "🗒": "spiral-notepad", "📝": "memo", "📝️": "memo", "✉️": "envelope", "✉": "envelope", "📨": "incoming-envelope", "📨️": "incoming-envelope", "📥": "inbox-tray", "📥️": "inbox-tray", "📤": "outbox-tray", "📤️": "outbox-tray", "📲": "mobile-phone-with-arrow", "📲️": "mobile-phone-with-arrow", "🖨️": "printer", "🖨": "printer", "💶": "euro-banknote", "💶️": "euro-banknote", "💸": "money-with-wings", "💸️": "money-with-wings", "💱": "currency-exchange", "💱️": "currency-exchange", "💳": "credit-card", "💳️": "credit-card", "💰": "money-bag", "💰️": "money-bag", "⚖️": "balance-scale", "⚖": "balance-scale", "🛒": "shopping-cart", "🛒️": "shopping-cart", "📊": "bar-chart", "📊️": "bar-chart", "📸": "camera-with-flash", "📸️": "camera-with-flash", "📷": "camera", "📷️": "camera", "🖼️": "framed-picture", "🖼": "framed-picture", "🎬": "clapper-board", "🎬️": "clapper-board", "📖": "open-book", "📖️": "open-book", "📕": "closed-book", "📕️": "closed-book", "🎵": "musical-note", "🎵️": "musical-note", "🔇": "muted-speaker", "🔇️": "muted-speaker", "🔊": "speaker-high-volume", "🔊️": "speaker-high-volume", "✍️": "writing-hand", "✍": "writing-hand", "💭": "thought-balloon", "💭️": "thought-balloon", "🎨": "artist-palette", "🎨️": "artist-palette", "✨": "sparkles", "✨️": "sparkles", "🪄": "magic-wand", "🪄️": "magic-wand", "💡": "light-bulb", "💡️": "light-bulb", "🎉": "party-popper", "🎉️": "party-popper", "🎁": "wrapped-gift", "🎁️": "wrapped-gift", "❤️": "red-heart", "❤": "red-heart", "🤍": "white-heart", "🤍️": "white-heart", "💕": "two-hearts", "💕️": "two-hearts", "💖": "sparkling-heart", "💖️": "sparkling-heart", "🏁": "chequered-flag", "🏁️": "chequered-flag", "🎯": "bullseye", "🎯️": "bullseye", "🎓": "graduation-cap", "🎓️": "graduation-cap", "🙏": "folded-hands", "🙏️": "folded-hands", "👋": "waving-hand", "👋️": "waving-hand", "✋": "raised-hand", "✋️": "raised-hand", "👀": "eyes", "👀️": "eyes", "🙈": "see-no-evil-monkey", "🙈️": "see-no-evil-monkey", "👤": "bust-in-silhouette", "👤️": "bust-in-silhouette", "👥": "busts-in-silhouette", "👥️": "busts-in-silhouette", "👪": "family", "👪️": "family", "👶": "baby", "👶️": "baby", "🗳️": "ballot-box-with-ballot", "🗳": "ballot-box-with-ballot", "🔗": "link", "🔗️": "link", "☀️": "sun", "☀": "sun", "🌤️": "sun-behind-small-cloud", "🌤": "sun-behind-small-cloud", "🌥️": "sun-behind-large-cloud", "🌥": "sun-behind-large-cloud", "☁️": "cloud", "☁": "cloud", "❄️": "snowflake", "❄": "snowflake", "🌡️": "thermometer", "🌡": "thermometer", "⛷️": "skier", "⛷": "skier", "🥾": "hiking-boot", "🥾️": "hiking-boot", "🧗": "person-climbing", "🧗️": "person-climbing", "🧘": "person-in-lotus-position", "🧘️": "person-in-lotus-position", "🍝": "spaghetti", "🍝️": "spaghetti", "☕": "hot-beverage", "☕️": "hot-beverage", "🎲": "game-die", "🎲️": "game-die", "🧩": "puzzle-piece", "🧩️": "puzzle-piece", "🧴": "lotion-bottle", "🧴️": "lotion-bottle", "🎒": "backpack", "🎒️": "backpack", "💼": "briefcase", "💼️": "briefcase", "🧳": "luggage", "🧳️": "luggage", "📅": "calendar", "📅️": "calendar", "🗓️": "spiral-calendar", "🗓": "spiral-calendar", "📆": "tear-off-calendar", "📆️": "tear-off-calendar", "✅": "check-mark-button", "✅️": "check-mark-button", "⚠️": "warning", "⚠": "warning", "🗑": "wastebasket", "🗑️": "wastebasket", "💾": "floppy-disk", "💾️": "floppy-disk", "📦": "package", "📦️": "package", "🔎": "magnifying-glass-tilted-right", "🔎️": "magnifying-glass-tilted-right", "🔍": "magnifying-glass-tilted-left", "🔍️": "magnifying-glass-tilted-left", "⚡": "high-voltage", "⚡️": "high-voltage", "✏️": "pencil", "✏": "pencil", "🔒": "locked", "🔒️": "locked", "🔓": "unlocked", "🔓️": "unlocked", "🔐": "locked-with-key", "🔐️": "locked-with-key", "🔑": "key", "🔑️": "key", "⏳": "hourglass-not-done", "⏳️": "hourglass-not-done", "⏱️": "stopwatch", "⏱": "stopwatch", "🕘": "nine-o-clock", "🕘️": "nine-o-clock", "🕓": "four-o-clock", "🕓️": "four-o-clock", "⚙️": "gear", "⚙": "gear", "📴": "mobile-phone-off", "📴️": "mobile-phone-off", "📱": "mobile-phone", "📱️": "mobile-phone", "☎": "telephone", "☎️": "telephone", "📞": "telephone-receiver", "📞️": "telephone-receiver", "🔔": "bell", "🔔️": "bell", "🔌": "electric-plug", "🔌️": "electric-plug", "🧰": "toolbox", "🧰️": "toolbox", "🛠️": "hammer-and-wrench", "🛠": "hammer-and-wrench", "🧹": "broom", "🧹️": "broom", "🔴": "red-circle", "🔴️": "red-circle", "🟠": "orange-circle", "🟠️": "orange-circle", "🟢": "green-circle", "🟢️": "green-circle", "👁️": "eye", "👁": "eye", "🏳️": "white-flag", "🏳": "white-flag"};
   const VI_KEYS = Object.keys(VI).sort((a,b)=>b.length - a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
   const VI_RE = new RegExp(VI_KEYS.join('|'), 'g'), VI_TEST = new RegExp(VI_KEYS.join('|'));
-  const VI_DIR = () => document.body.classList.contains('cv-ph-live') ? 'icons-live/' : document.body.classList.contains('cv-ph-past') ? 'icons-past/' : 'icons/';
+  const VI_DIR = () => (window.VZ_B || '') + (document.body.classList.contains('cv-ph-live') ? 'icons-live/' : document.body.classList.contains('cv-ph-past') ? 'icons-past/' : 'icons/');
   function viPhase(){ const d = VI_DIR(); document.querySelectorAll('img.vi').forEach(i=>{ const n = i.src.split('/').pop(); if(!i.src.endsWith('/' + d + n)) i.src = d + n; }); }
   const VI_SKIP = /^(SCRIPT|STYLE|TEXTAREA|OPTION|SELECT|TITLE|INPUT|CODE|PRE)$/;
   function viWalk(root){
@@ -9964,7 +9982,7 @@ ${pm.join('\n')}</Document></kml>`;
      Chaque scène utilise une image anim/<nom>.webp si elle existe (dessins maison), sinon un emoji. */
   const FX_IMG = {}, FX_EMO = {plane:'✈️', train:'🚄', bus:'🚌', car:'🚗', boat:'⛴️', bear:'🧸', bed:'🛏️', moon:'🌙', zzz:'💤', cloud:'☁️', ticket:'🎟️', camera:'📸', suitcase:'🧳', star:'✨', heart:'💖'};
   // anim/list.json (facultatif) liste les dessins disponibles, ex. ["plane","bear","bed"] : une seule requête au démarrage
-  setTimeout(()=>{ fetch('anim/list.json', {cache:'no-cache'}).then(r=>r.ok ? r.json() : []).then(l=>{ (Array.isArray(l) ? l : []).forEach(k=>{ const im = new Image(); im.onload = () => { FX_IMG[k] = im.src; }; im.src = 'anim/' + k + '.webp'; }); }).catch(()=>{}); }, 4000);
+  setTimeout(()=>{ fetch('anim/list.json', {cache:'no-cache'}).then(r=>r.ok ? r.json() : []).then(l=>{ (Array.isArray(l) ? l : []).forEach(k=>{ const im = new Image(); im.onload = () => { FX_IMG[k] = im.src; }; im.src = (window.VZ_B || '') + 'anim/' + k + '.webp'; }); }).catch(()=>{}); }, 4000);
   const fxEl = k => FX_IMG[k] ? `<img class="fx-i fx-i-${k}" src="${FX_IMG[k]}" alt="">` : `<span class="fx-e" data-novi>${FX_EMO[k]}</span>`;
   function fxPlay(kind, label){
     try { if(M.noFx || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return; } catch(e){}
@@ -10141,7 +10159,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(!(M.fq||[]).length && !olds.length) return; feedUp = true;
     try {
       for(const [code, id] of olds.slice(0, 40)){
-        try { const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(id, code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); if(r.ok || r.status === 404) M.fup[code][id] = 2; } catch(e){ break; }
+        try { const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(id, code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); if(r.ok || r.status === 404 || r.status === 405) M.fup[code][id] = 2; } catch(e){ break; }
       }
       for(const [code, id] of [...(M.fq||[])]){
         // abonnés : uniquement la vignette (≈ 30 à 50 Ko), jamais la grande photo → 2 à 3 fois moins de place sur le serveur
@@ -10323,7 +10341,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(!myName()){ const n = prompt('Ton prénom :', ''); if(!n) return; M.followName = n.trim(); }
     putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:myName(), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); i.value = ''; syncNow(); feedPaint(fid);
   }
-  function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
+  function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="' + (window.VZ_B || '') + 'anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
   function feedPostHTML(f){
     const lk = likesOf(f.id), mine = lk.some(l=>l.id.endsWith(':' + devId())), cm = commentsOf(f.id), open = (M.cmOpen||{})[f.id];
     return `<article class="fd-post" id="fp-${f.id}"><div class="fd-d">${f.date ? fdate(f.date) : ''}${f.lieu ? ' · ' + esc(f.lieu) : ''}${f.cc ? ' ' + flag(f.cc) : ''}</div>
@@ -10382,8 +10400,9 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-10x';
+  const BUILD = '2026-10-10y';
   async function forceUpdate(){
+    if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
       if(window.caches) for(const k of await caches.keys()) if(k !== 'share-inbox') await caches.delete(k);
@@ -10392,6 +10411,84 @@ ${pm.join('\n')}</Document></kml>`;
     location.replace(location.pathname + '?maj=' + Date.now());
   }
   var APPAPI = {objAsk, budTog, syncSheet, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+
+
+  /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
+     Le carnet et Vezoria partagent la même adresse : Vezoria est servie sous /vezoria/ et lit les mêmes voyages
+     (stockage carnet_v2 + photos carnet-photos) et le même serveur (D1 + R2 du carnet, mêmes codes). */
+  const VZ_SIDE = 'vezoria', VZ_MAIL = 'appareils.treves6g@icloud.com';
+  const VZ_ON = VZ_SIDE === 'carnet' ? /^https?:/.test(location.protocol) : !!window.VZ_HOST;
+  const VZ_T = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
+  const VZ_NEW = ['🌍 7 langues (français, anglais, espagnol, allemand, italien, portugais, néerlandais) et la devise de ton choix.','👀 Des abonnés, comme Polarsteps : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.','👥 Une fenêtre « Abonnés & partages », avec une pastille dès qu’il y a du nouveau.','🛰️ Ta route sur la carte pour tes abonnés, seulement si tu l’actives.','🚩 Signaler, bloquer ou masquer quelqu’un, et créer un nouveau lien abonné.','🎬 Le film du voyage en musique (11 musiques), avec la carte zoomée région par région.','📷 « Ranger mes photos » : les photos se placent toutes seules au bon jour et au bon endroit.','🗺️ Le programme et le voyage en cours sur la carte.','💱 La conversion des devises dans les dépenses et les tickets.','🎨 Des couleurs pour chaque moment : préparation, voyage en cours, souvenirs.','☁️ Une synchro plus économe, voyage par voyage, avec l’état de l’envoi en un coup d’œil.','🔐 Un chiffrement renforcé dans la version finale.','🎓 Un nouveau tuto vidéo de 3 minutes.'], VZ_OUT = ['🛫 Escale (recherche de vols, Radar des prix) : pour respecter les règles de Google Play, Escale ne sera pas dans la version finale de Vezoria. Le module fait appel à trop de services extérieurs pour être publié.','🔕 Aucune notification : Vezoria ne t’envoie rien.','📥 L’import depuis Polarsteps n’est pas encore dans Vezoria.'], VZ_DATA = ['Cette version test garde le stockage du carnet : même serveur, mêmes codes. Tes compagnons restés sur le carnet voient ce que tu fais dans Vezoria, et inversement.','Avant la première ouverture de Vezoria, une copie de sauvegarde de ton carnet est gardée sur ce téléphone.','📱 Vezoria sera sur Google Play (Android) et en appli web sur iPhone.'];
+  const vzSrc = () => { if(VZ_SIDE === 'carnet') return PUBLIC ? 'carnet public' : 'carnet perso'; try { return (JSON.parse(localStorage.getItem('vz_host') || '{}').src === 'perso' ? 'carnet perso' : 'carnet public'); } catch(e){ return 'carnet'; } };
+  if(VZ_SIDE === 'carnet') try { localStorage.setItem('vz_host', JSON.stringify({e2e: !!E2E, src: PUBLIC ? 'public' : 'perso'})); } catch(e){}
+  const vzHideK = VZ_SIDE === 'carnet' ? 'vzHideC' : 'vzHideV';
+  function vzBandHTML(){
+    return VZ_SIDE === 'carnet'
+      ? `<div class="vz-band"><span class="vz-i">🧭</span><span class="vz-t"><b>Vezoria arrive !</b><small>La nouvelle version de ce carnet, bientôt sur Google Play. Essaie-la avec tes voyages déjà remplis, puis donne ton avis.</small></span>
+          <span class="vz-a"><button type="button" class="vz-go" onclick="CV.vzGo()">🧭 Essayer Vezoria</button><button type="button" onclick="CV.vzNews()">📋 Ce qui change</button><button type="button" onclick="CV.vzAvis()">⭐ Mon avis</button><button type="button" class="vz-x" onclick="CV.vzHide()" aria-label="Masquer">✕</button></span></div>`
+      : `<div class="vz-band"><span class="vz-i">🧪</span><span class="vz-t"><b>Vezoria · version test</b><small>Tes voyages du carnet sont déjà là. Ce que tu changes ici apparaît aussi dans le carnet.</small></span>
+          <span class="vz-a"><button type="button" class="vz-go" onclick="CV.vzGo()">↩︎ Retour au carnet</button><button type="button" onclick="CV.vzNews()">📋 Ce qui change</button><button type="button" onclick="CV.vzAvis()">⭐ Mon avis</button><button type="button" class="vz-x" onclick="CV.vzHide()" aria-label="Masquer">✕</button></span></div>`;
+  }
+  function vzPaint(){
+    const el = document.getElementById('vz-band'); if(!el) return;
+    const h = VZ_ON && !M[vzHideK] ? vzBandHTML() : ''; if(el.dataset.h !== h){ el.dataset.h = h; el.innerHTML = h; }
+    if(VZ_SIDE === 'vezoria' && VZ_ON && !document.getElementById('vz-back')){
+      const b = document.querySelector('.hero-btns'); if(b){ const a = document.createElement('a'); a.id = 'vz-back'; a.className = 'cv-switch'; a.href = '/?app=carnet'; a.textContent = '↩︎ Carnet'; a.setAttribute('aria-label', 'Retour au carnet'); b.prepend(a); }
+    }
+  }
+  function vzGo(){ try { persist(); } catch(e){} location.href = VZ_SIDE === 'carnet' ? '/vezoria/' : '/?app=carnet'; }
+  function vzHide(){ M[vzHideK] = 1; persist(); vzPaint(); toast(VZ_SIDE === 'carnet' ? VZ_T('🧭 Vezoria reste accessible avec le bouton en haut') : VZ_T('↩︎ Le carnet reste accessible avec le bouton en haut')); }
+  function vzNews(){
+    const li = a => a.map(s=>`<li>${esc(s)}</li>`).join('');
+    const back = VZ_SIDE === 'carnet' && (()=>{ try { return !!localStorage.getItem('vz_bk'); } catch(e){ return false; } })();
+    openSheet(`<h2>📋 Du carnet à Vezoria</h2>
+      <p class="v-sum-small">Le carnet est la première esquisse de Vezoria. C’est grâce à vos critiques sur le carnet que Vezoria avance : continuez à tester et à dire ce que vous en pensez.</p>
+      <h3>✨ Nouveau dans Vezoria</h3><ul class="vz-ul">${li(VZ_NEW)}</ul>
+      <h3>➖ Retiré</h3><ul class="vz-ul">${li(VZ_OUT)}</ul>
+      <h3>💾 Tes données</h3><ul class="vz-ul">${li(VZ_DATA)}</ul>
+      <div class="v-actions">${VZ_SIDE === 'carnet' ? `<button type="button" class="v-btn" onclick="CV.vzGo()">🧭 Essayer Vezoria</button>` : `<button type="button" class="v-btn" onclick="CV.vzGo()">↩︎ Retour au carnet</button>`}
+        <button type="button" class="v-btn sec" onclick="CV.vzAvis()">⭐ Donner mon avis</button>
+        ${back ? `<button type="button" class="v-btn sec" onclick="CV.vzRestore()">↩︎ Remettre le carnet comme avant Vezoria</button>` : ''}
+        <button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  const VZS = {c:0, v:0};
+  const vzStars = k => `<div class="vz-st" id="vzs-${k}">${[1,2,3,4,5].map(n=>`<button type="button" class="${VZS[k] >= n ? 'on' : ''}" onclick="CV.vzStar('${k}',${n})" aria-label="${n} / 5">★</button>`).join('')}</div>`;
+  function vzStar(k, n){ VZS[k] = n; const el = document.getElementById('vzs-' + k); if(el) el.outerHTML = vzStars(k); }
+  function vzAvis(){
+    openSheet(`<h2>⭐ Ton avis</h2><p class="v-sum-small">Compare le carnet et Vezoria : tes critiques aident à construire la version finale.</p>
+      <div class="v-f"><label>Ta note pour le carnet</label>${vzStars('c')}</div>
+      <div class="v-f"><label>Ta note pour Vezoria</label>${vzStars('v')}</div>
+      <div class="v-f"><label>Ce que tu préfères dans Vezoria</label><textarea class="v-in" id="vz-p" rows="3"></textarea></div>
+      <div class="v-f"><label>Ce qui manque ou ne marche pas</label><textarea class="v-in" id="vz-m" rows="3"></textarea></div>
+      <p class="v-sum-small">Ton avis part par e-mail à l’éditeur : rien n’est envoyé sans toi.</p>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.vzSend()">📨 Envoyer mon avis</button><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  function vzSend(){
+    const g = id => ((document.getElementById(id) || {}).value || '').trim(), p = g('vz-p'), m = g('vz-m');
+    if(!VZS.c && !VZS.v && !p && !m){ alert(VZ_T('Mets au moins une note ou un commentaire.')); return; }
+    const ua = navigator.userAgent, dev = /iPhone|iPad/.test(ua) ? 'iPhone' : /Android/i.test(ua) ? 'Android' : 'ordinateur';
+    const body = ['Avis sur Vezoria (version test)', '', 'Note du carnet : ' + (VZS.c ? VZS.c + '/5' : '—'), 'Note de Vezoria : ' + (VZS.v ? VZS.v + '/5' : '—'), '',
+      'Ce que je préfère dans Vezoria :', p || '—', '', 'Ce qui manque ou ne marche pas :', m || '—', '', 'Écrit depuis ' + (VZ_SIDE === 'carnet' ? 'le carnet' : 'Vezoria') + ' (' + vzSrc() + ') · ' + dev].join('\n');
+    location.href = 'mailto:' + VZ_MAIL + '?subject=' + encodeURIComponent('Vezoria : mon avis (version test)') + '&body=' + encodeURIComponent(body);
+    closeSheet(true); setTimeout(()=>toast(VZ_T('📨 Merci ! Envoie le mail pour finir.')), 400);
+  }
+  // Sauvegarde du carnet avant la toute première ouverture de Vezoria (IndexedDB, pour ne pas remplir le stockage du carnet)
+  const vzDB = () => new Promise((res, rej)=>{ const q = indexedDB.open('vezoria-sauvegarde', 1); q.onupgradeneeded = () => q.result.createObjectStore('b', {keyPath:'id'}); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+  async function vzBackup(){
+    const raw = window.VZ_RAW0; if(!raw) return; window.VZ_RAW0 = null;
+    try { const db = await vzDB(); await new Promise((res, rej)=>{ const tx = db.transaction('b', 'readwrite'); tx.objectStore('b').put({id:'carnet_v2', at:Date.now(), raw}); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); localStorage.setItem('vz_bk', String(Date.now())); } catch(e){}
+  }
+  async function vzRestore(){
+    let o = null; try { const db = await vzDB(); o = await new Promise(res=>{ const q = db.transaction('b').objectStore('b').get('carnet_v2'); q.onsuccess = () => res(q.result); q.onerror = () => res(null); }); } catch(e){}
+    if(!o || !o.raw){ alert('Aucune sauvegarde trouvée sur ce téléphone.'); return; }
+    if(!confirm(`Remettre le carnet tel qu’il était le ${new Date(o.at).toLocaleString('fr-FR')}, avant la première ouverture de Vezoria ?\n\nTout ce qui a été ajouté ou modifié depuis sur ce téléphone sera perdu (les photos restent). Ce qui est déjà sur le serveur reviendra à la prochaine synchro.`)) return;
+    try { localStorage.setItem(KEY, o.raw); } catch(e){ alert('Restauration impossible : ' + e.message); return; }
+    location.reload();
+  }
+  if(VZ_SIDE === 'vezoria' && VZ_ON) setTimeout(vzBackup, 50);
+  setTimeout(vzPaint, 0);
+  var VZAPI = {vzGo, vzHide, vzNews, vzAvis, vzStar, vzSend, vzRestore, vzPaint};
 
   const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
@@ -10402,7 +10499,7 @@ ${pm.join('\n')}</Document></kml>`;
     planDay, plCfg, plAdd, plDel, plOpt, wizard, radarTuto, rcOpen, rbSheet, rbPhoto, rbSave, zipSavePart, zipCancel, innerGo, inspDeal, inspOpen, compN, compDel, compAdd, compTog, compCreate, inspBack, inspMore, inspFav, inspSurprise, inspVote, gateInstall, partsSheet, partsSave, discInfo, discBack, newTrip, blankTrip, inspire, inspireDemo, inspireGo, inspireCreate, zipSheet, zipExport, zipImport, worldFly, worldStep, worldStory, cfSegGo, trkToggle, modeGo, bilanClose, albumSheet, albCover, albumGo, tripShare, tripShareSheet, tripInvite, tripNewCode, tripUnshare, tripJoin, tripJoinGo, tripWho, tripWhoSet, impSheet, impPick, jrSheet, jrTog, jrAll, worldMap, worldMode, worldOpen, worldClose, pjAdd, pjDel, pjOpen, cfSheet, cfGo, tlCo2, hereNow, tlStats, tlKml, tlFill, tlFillGo, rcView, rcAttach, tlIcsGo, capSet, shopSheet, shopAdd, shopTick, shopClear, rembAsk, pollNew, pollSave, pollVote, pollClose, pollDel, pdfRoute, pdfJournal, pdfShare, pdfOpen, pkgPick, pkgApply, hydrateMaps, renderOutils, tlDay, tlIcs, fxTool, fxFill, tlMeteo, tlReceipt, tlRcPhoto, tlRcOcr, tlRcSave, rcFx, socialHub, trkPub, tlReceipts, tlMap, tlBags, tlBagsGo, tlDocs, tlDocEdit, tlDocSave, tlDocDel, tlJournal, pkgSheet, pkgExport, pkgImport, pinToggle, shareSheet, shareLink, askErase, tutoSheet, escaleTuto, demoLoad, demoDel, demoReset, wzGo, wzDates, wzEt, wzSum, wzTpl, wzCreate,
     pickColor, newProfile, editProfile, saveProfile, delProfile, whoSheet, setMe,
     genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin,
-    _R:()=>R, _M:()=>M, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
+    _R:()=>R, _M:()=>M, ...VZAPI, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
   // En mode lecture, toutes les actions qui modifient sont bloquées
   const MUT = ['seedUSA2025','convert2026','saveSouv','delSouv','souvAddPhotos','souvDelPhoto','rembAdd','rembDel',
     'cycle','saveForm','noteFromItem','del','add','saveDay','saveNote','delNote','pin','setObj','addCompanion','addToTrip','removeCompanion',
