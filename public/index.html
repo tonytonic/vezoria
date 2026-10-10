@@ -2144,7 +2144,9 @@ const CV = (function(){
     nav.addEventListener('pointerup', e=>{
       const b = e.target.closest && e.target.closest('button'), s0 = st; st = null;
       if(!s0 || b !== s0.b || e.pointerType === 'mouse' || Math.hypot(e.clientX - s0.x, e.clientY - s0.y) > 14) return;
-      ghost = {x:e.clientX, y:e.clientY, t:Date.now()}; b.click(); ghost.t = Date.now();
+      ghost = {x:e.clientX, y:e.clientY, t:Date.now()};
+      nav.querySelectorAll('button.on').forEach(x=>x.classList.remove('on')); b.classList.add('on');   // le bouton s'allume tout de suite
+      requestAnimationFrame(()=>setTimeout(()=>{ b.click(); if(ghost) ghost.t = Date.now(); }, 0));
     }, {passive:true});
     // le « vrai » clic qui suit le doigt relevé tombe au même endroit : on l'ignore partout (sinon il refermerait la fenêtre « Plus » qui vient de s'ouvrir)
     document.addEventListener('click', e=>{
@@ -10013,12 +10015,15 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="lm-l">${ws.map(w=>{ const l = by[w][by[w].length-1]; return `<span><i style="background:${w ? pcol(w) : '#0ea5e9'}"></i>${esc(w ? pname(w) : '—')} <small>${l[2] ? when(l[2]) : ''}</small></span>`; }).join('')}</div>
       <button type="button" class="v-btn sec" onclick="CV.worldTrip('${t.id}')">🌍 Voir sur la carte du monde</button></div>`;
   }
+  const LMAP = {};
   async function liveMapHydrate(){
     const el = document.querySelector('[data-lmap]:not([data-ok])'); if(!el) return; el.dataset.ok = '1';
     const by = trkByWho(el.dataset.lmap), E = Object.entries(by); if(!E.length){ el.innerHTML = ''; return; }
     const lines = E.map(([w, pts])=>({pts: pts.map(p=>[p[0], p[1]]), color: w ? pcol(w) : '#0ea5e9'}));
     const markers = E.map(([w, pts])=>{ const l = pts[pts.length-1]; return {lat:l[0], lng:l[1], label:((w ? pname(w) : '?')[0] || '?').toUpperCase(), color: w ? pcol(w) : '#0ea5e9'}; });
-    try { const c = await drawMap({w:640, h:360, lines, markers, maxZoom:15}); if(el.isConnected) el.innerHTML = `<img src="${c.toDataURL('image/jpeg', .86)}" alt="" style="width:100%;display:block;border-radius:14px">`; } catch(e){ el.innerHTML = ''; }
+    const lk = JSON.stringify([lines.map(l=>[l.color, l.pts.length, l.pts[0], l.pts[l.pts.length-1]]), markers.map(m=>[m.label, m.color])]);
+    if(LMAP[lk]){ el.innerHTML = `<img src="${LMAP[lk]}" alt="" style="width:100%;display:block;border-radius:14px">`; return; }
+    try { const c = await drawMap({w:640, h:360, lines, markers, maxZoom:15}); LMAP[lk] = c.toDataURL('image/jpeg', .86); if(el.isConnected) el.innerHTML = `<img src="${LMAP[lk]}" alt="" style="width:100%;display:block;border-radius:14px">`; } catch(e){ el.innerHTML = ''; }
   }
 
   /* ---------- 🎨 Icônes maison : chaque emoji connu est remplacé par son dessin (icons/<nom>.webp) ----------
@@ -10472,7 +10477,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11f';
+  const BUILD = '2026-10-11g';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
