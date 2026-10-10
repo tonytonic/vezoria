@@ -1187,7 +1187,7 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .cv-pinbar button{flex:0 0 auto;border:0;border-radius:999px;background:#fff;box-shadow:var(--shadow);padding:9px 14px;font:inherit;font-weight:700;font-size:.85rem;color:#2a1238;white-space:nowrap}
 .cv-modes{display:none!important}
 .cv-nav .dotlive{position:absolute;top:4px;right:22%;width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.3)}
-.cv-nav button{position:relative}
+.cv-nav button{position:relative;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 .cv-pinrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid #f0e8f5}.cv-pinrow span{font-weight:600;font-size:.9rem}.cv-pinrow select{width:auto;max-width:55%;padding:8px}
 .cv-plus{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
 .cv-plus button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 6px;border:0;border-radius:16px;background:#f3ecf8;color:#2a1238;font:inherit;font-weight:700;font-size:.78rem;text-align:center}
@@ -2132,6 +2132,20 @@ const CV = (function(){
     if(k==='resas'||k==='sous') return grp === k;
     return M.tab === k;
   }
+  /* Barre du bas : sur Android, un toucher qui arrête un défilement « lancé » ne déclenche pas de clic (il fallait toucher 2 fois).
+     On déclenche donc le bouton dès que le doigt se relève au même endroit, et on ignore le clic en double qui suit éventuellement. */
+  (function navTap(){
+    const nav = document.getElementById('cv-nav'); if(!nav) return;
+    let st = null, fired = 0;
+    nav.addEventListener('pointerdown', e=>{ const b = e.target.closest && e.target.closest('button'); st = b ? {b, x:e.clientX, y:e.clientY} : null; }, {passive:true});
+    nav.addEventListener('pointercancel', ()=>{ st = null; }, {passive:true});
+    nav.addEventListener('pointerup', e=>{
+      const b = e.target.closest && e.target.closest('button'), s0 = st; st = null;
+      if(!s0 || b !== s0.b || e.pointerType === 'mouse' || Math.hypot(e.clientX - s0.x, e.clientY - s0.y) > 14) return;
+      fired = Date.now(); b.click(); fired = Date.now();   // compté depuis la fin : l'écran peut mettre du temps à se dessiner
+    }, {passive:true});
+    nav.addEventListener('click', e=>{ if(e.isTrusted && Date.now() - fired < 700){ e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+  })();
   function buildNav(){
     const live = trips().some(t=>tripPhase(t)==='live');
     const items = bar().map(k=>{ const d = DEST.find(x=>x[0]===k); return [k, d[1], d[2], destOn(k)]; });
@@ -10449,7 +10463,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11c';
+  const BUILD = '2026-10-11d';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
