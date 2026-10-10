@@ -150,14 +150,16 @@ body .cv-live.done{background:linear-gradient(135deg,#3A2119,#8E3B2E)}
   var root = document.documentElement; if(!ios || !sa || !document.body){ return; }
   var p = document.createElement('div'); p.style.cssText = 'position:fixed;top:0;left:0;width:1px;visibility:hidden;pointer-events:none;height:env(safe-area-inset-top,0px)';
   document.body.appendChild(p); var env = p.getBoundingClientRect().height;
-  p.style.height = '100lvh'; var lv = p.getBoundingClientRect().height; p.style.height = '100svh'; var sv = p.getBoundingClientRect().height; p.remove();
+  p.remove();
   if(env > 0){ root.style.removeProperty('--sat'); return; }
-  var t = lv - sv;
-  if(!(t > 15 && t < 90)){ var w = Math.min(screen.width, screen.height), h = Math.max(screen.width, screen.height);
-    t = (w >= 402 && h >= 874 && !(w === 414 && h === 896) && !(w === 428 && h === 926) && !(w === 430 && h === 932)) ? 62 : (w === 393 && h === 852) || (w === 430 && h === 932) ? 59 : (w === 390 && h === 844) || (w === 428 && h === 926) ? 47 : (w === 375 && h === 812) ? 44 : (w === 414 && h === 896) ? 48 : 20; }
+  // si iOS garde déjà une bande pleine pour l'heure (la page commence en dessous), il n'y a rien à compenser
+  var sh = Math.max(screen.width, screen.height), ih = window.innerHeight || document.documentElement.clientHeight;
+  if(sh - ih >= 20){ root.style.setProperty('--sat', '0px'); return; }
+  var w = Math.min(screen.width, screen.height), h = sh;
+  var t = (w >= 402 && h >= 874 && !(w === 414 && h === 896) && !(w === 428 && h === 926) && !(w === 430 && h === 932)) ? 62 : (w === 393 && h === 852) || (w === 430 && h === 932) ? 59 : (w === 390 && h === 844) || (w === 428 && h === 926) ? 47 : (w === 375 && h === 812) ? 44 : (w === 414 && h === 896) ? 48 : 20;
   root.style.setProperty('--sat', Math.round(t) + 'px');
 } catch(e){} }
-  document.addEventListener('DOMContentLoaded', fix); window.addEventListener('pageshow', fix); window.addEventListener('resize', function(){ setTimeout(fix, 150); });
+  document.addEventListener('DOMContentLoaded', fix); window.addEventListener('pageshow', fix);   // pas au redimensionnement : le clavier change la hauteur
 })();
 </script>
 
@@ -2316,7 +2318,9 @@ const CV = (function(){
   }
   function refresh(){ if(M.trip===LEGACY){ renderHeader(); return; } applyMode(); }
 
-  function phaseTheme(){ const t = M.trip !== LEGACY && trip(), ph = t ? tripPhase(t) : 'prep'; const was = document.body.className; document.body.classList.toggle('cv-ph-live', ph === 'live'); document.body.classList.toggle('cv-ph-past', ph === 'past'); if(was !== document.body.className && typeof viPhase === 'function') try { viPhase(); } catch(e){} }
+  function phaseTheme(){ const t = M.trip !== LEGACY && trip(), ph = t ? tripPhase(t) : 'prep'; const was = document.body.className; document.body.classList.toggle('cv-ph-live', ph === 'live'); document.body.classList.toggle('cv-ph-past', ph === 'past'); if(was !== document.body.className && typeof viPhase === 'function') try { viPhase(); } catch(e){}
+    // barre d'état Android (appli Google Play et Chrome) : même couleur que l'en-tête de la période
+    try { const c = getComputedStyle(document.body).getPropertyValue('--navy').trim(), m = document.querySelector('meta[name="theme-color"]'); if(c && m && m.content !== c) m.content = c; } catch(e){} }
   function render(){
     phaseTheme();
     setTimeout(moments, 900); setTimeout(liveMapHydrate, 80); setTimeout(poem, 0); setTimeout(progMapHydrate, 120); setTimeout(()=>{ if(document.querySelector('.cv-anniv img[data-ph]:not([data-ok])')) hydrate(); }, 60);
@@ -10463,7 +10467,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11d';
+  const BUILD = '2026-10-11e';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
