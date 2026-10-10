@@ -1,4 +1,14 @@
 I18N.load({
+"Ta route est visible des abonnés":"A tua rota é visível para os seguidores",
+"Ta route est cachée aux abonnés":"A tua rota está oculta aos seguidores",
+"Touche pour la cacher":"Toca para a ocultar",
+"Touche pour la montrer sur leur carte":"Toca para a mostrar no mapa deles",
+"La route du voyage":"A rota da viagem",
+"Route visible des abonnés":"Rota visível para os seguidores",
+"Route masquée aux abonnés":"Rota oculta aos seguidores",
+"Montrer ta route aux abonnés de ce voyage ?\n\nIls verront sur une carte le trajet enregistré par le suivi et ta dernière position (précision ≈ 100 m), avec l’heure.\nTu peux arrêter quand tu veux : la carte disparaît chez eux à la synchro suivante.\nTes compagnons choisissent chacun pour eux.":"Mostrar a tua rota aos seguidores desta viagem?\n\nVão ver num mapa o trajeto registado pelo acompanhamento e a tua última posição (precisão ≈ 100 m), com a hora.\nPodes parar quando quiseres: o mapa desaparece para eles na sincronização seguinte.\nCada companheiro decide por si.",
+"Publier « {0} » pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.\nUn souvenir marqué « privé » n’est jamais publié.\nIls voient les photos en vignettes (taille réduite).\nTa position n’est jamais montrée, sauf si chaque voyageur l’active lui-même dans le suivi du voyage.\nIls pourront mettre des ❤️ et des commentaires.":"Publicar “{0}” para seguidores?\n\nEles verão só as memórias: fotos, títulos, lugares e relatos. O programa, as reservas, o orçamento e os documentos continuam privados.\nUma memória marcada como “privada” nunca é publicada.\nVeem as fotos em miniatura (tamanho reduzido).\nA tua localização nunca é mostrada, a não ser que cada viajante a ative no acompanhamento da viagem.\nEles poderão deixar ❤️ e comentários.",
+
 "Synchronisation : {0}":"Sincronização: {0}",
 
 "{0} nouveauté(s)":"{0} novidade(s)",

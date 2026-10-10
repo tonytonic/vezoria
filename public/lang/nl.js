@@ -1,4 +1,14 @@
 I18N.load({
+"Ta route est visible des abonnés":"Je route is zichtbaar voor volgers",
+"Ta route est cachée aux abonnés":"Je route is verborgen voor volgers",
+"Touche pour la cacher":"Tik om te verbergen",
+"Touche pour la montrer sur leur carte":"Tik om hem op hun kaart te tonen",
+"La route du voyage":"De route van de reis",
+"Route visible des abonnés":"Route zichtbaar voor volgers",
+"Route masquée aux abonnés":"Route verborgen voor volgers",
+"Montrer ta route aux abonnés de ce voyage ?\n\nIls verront sur une carte le trajet enregistré par le suivi et ta dernière position (précision ≈ 100 m), avec l’heure.\nTu peux arrêter quand tu veux : la carte disparaît chez eux à la synchro suivante.\nTes compagnons choisissent chacun pour eux.":"Je route tonen aan de volgers van deze reis?\n\nZe zien op een kaart de geregistreerde route en je laatste positie (nauwkeurigheid ≈ 100 m), met het tijdstip.\nJe kunt stoppen wanneer je wilt: de kaart verdwijnt bij hen bij de volgende synchronisatie.\nElke reisgenoot beslist zelf.",
+"Publier « {0} » pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.\nUn souvenir marqué « privé » n’est jamais publié.\nIls voient les photos en vignettes (taille réduite).\nTa position n’est jamais montrée, sauf si chaque voyageur l’active lui-même dans le suivi du voyage.\nIls pourront mettre des ❤️ et des commentaires.":"„{0}” publiceren voor volgers?\n\nZe zien alleen de herinneringen: foto’s, titels, plekken en verhalen. Programma, boekingen, budget en documenten blijven privé.\nEen herinnering die ‘privé’ is, wordt nooit gepubliceerd.\nZe zien de foto’s als miniaturen (verkleind).\nJe locatie wordt nooit getoond, tenzij elke reiziger die zelf aanzet bij het volgen van de reis.\nZe kunnen ❤️ en reacties achterlaten.",
+
 "Synchronisation : {0}":"Synchronisatie: {0}",
 
 "{0} nouveauté(s)":"{0} nieuw",
