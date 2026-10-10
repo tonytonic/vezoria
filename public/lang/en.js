@@ -1,4 +1,18 @@
 I18N.load({
+"Techno 2":"Techno 2",
+"Électro énergique":"Energetic electro",
+"Électro swing":"Electro swing",
+"Celtique EDM":"Celtic EDM",
+"Été festif":"Summer party",
+"Électro house":"Electro house",
+"Rock motivation":"Motivation rock",
+"Phonk":"Phonk",
+"Techno intense":"Intense techno",
+"Techno puissante":"Powerful techno",
+"🎬 Voir le tuto vidéo du carnet (1 min)":"🎬 Watch the journal's video tutorial (1 min)",
+
+"Il n’y a encore rien à raconter : ajoute des souvenirs avec des photos et des lieux.":"Nothing to tell yet: add memories with photos and places.",
+
 "Ta route est visible des abonnés":"Your route is visible to followers",
 "Ta route est cachée aux abonnés":"Your route is hidden from followers",
 "Touche pour la cacher":"Tap to hide it",

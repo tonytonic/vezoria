@@ -1,4 +1,18 @@
 I18N.load({
+"Techno 2":"Techno 2",
+"Électro énergique":"Electro energica",
+"Électro swing":"Electro swing",
+"Celtique EDM":"EDM celtica",
+"Été festif":"Festa d’estate",
+"Électro house":"Electro house",
+"Rock motivation":"Rock motivazionale",
+"Phonk":"Phonk",
+"Techno intense":"Techno intensa",
+"Techno puissante":"Techno potente",
+"🎬 Voir le tuto vidéo du carnet (1 min)":"🎬 Guarda il video tutorial del diario (1 min)",
+
+"Il n’y a encore rien à raconter : ajoute des souvenirs avec des photos et des lieux.":"Non c’è ancora niente da raccontare: aggiungi ricordi con foto e luoghi.",
+
 "Ta route est visible des abonnés":"Il tuo percorso è visibile ai follower",
 "Ta route est cachée aux abonnés":"Il tuo percorso è nascosto ai follower",
 "Touche pour la cacher":"Tocca per nasconderlo",

@@ -1,4 +1,18 @@
 I18N.load({
+"Techno 2":"Techno 2",
+"Électro énergique":"Energieke electro",
+"Électro swing":"Electro swing",
+"Celtique EDM":"Keltische EDM",
+"Été festif":"Zomerfeest",
+"Électro house":"Electro house",
+"Rock motivation":"Motivatierock",
+"Phonk":"Phonk",
+"Techno intense":"Intense techno",
+"Techno puissante":"Krachtige techno",
+"🎬 Voir le tuto vidéo du carnet (1 min)":"🎬 Bekijk de videotutorial van het dagboek (1 min)",
+
+"Il n’y a encore rien à raconter : ajoute des souvenirs avec des photos et des lieux.":"Nog niets te vertellen: voeg herinneringen met foto’s en plaatsen toe.",
+
 "Ta route est visible des abonnés":"Je route is zichtbaar voor volgers",
 "Ta route est cachée aux abonnés":"Je route is verborgen voor volgers",
 "Touche pour la cacher":"Tik om te verbergen",
