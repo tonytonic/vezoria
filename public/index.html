@@ -4618,7 +4618,7 @@ const CV = (function(){
 
   /* ══════════ 🔐 Fonctionnement & confidentialité (version publique) ══════════ */
   const TUTO = 'tuto.mp4';
-  const tutoBtn = (cls) => `<button type="button" class="v-btn ${cls||'sec'}" onclick="CV.tutoSheet()">🎬 Voir le tuto vidéo du carnet (1 min)</button>`;
+  const tutoBtn = (cls) => `<button type="button" class="v-btn ${cls||'sec'}" onclick="CV.tutoSheet()">🎬 Voir le tuto vidéo du carnet (3 min)</button>`;
   function tutoSheet(){
     openSheet(`<h2>🎬 Tuto vidéo</h2>
       <div class="v-sum-small" style="margin-bottom:10px">Les 4 espaces sur les voyages de démo : 🧳 Préparation (programme, résas, budget, envies, checklist, outils), 📍 En cours (journée, dépenses, souvenirs), 🗺️ Passés (album, carte, stats) et 🏁 Bilan (à vérifier, qui doit quoi, remboursements, justificatifs).</div>
@@ -10316,7 +10316,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-10r';
+  const BUILD = '2026-10-10s';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
