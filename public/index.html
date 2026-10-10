@@ -83,6 +83,44 @@ body.cv-ph-past .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(245,
 .cv-lmap{background:#fff;border:1px solid var(--light);border-radius:20px;padding:12px;margin:0 0 12px}.lm-h{font-weight:800;margin-bottom:8px}.lm-map{min-height:60px}.lm-l{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0;font-size:.82rem}.lm-l i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}.lm-l small{opacity:.65}
 body.cv-ph-live .cv-live{background:linear-gradient(135deg,#0B3B45,#0F766E);box-shadow:0 6px 18px rgba(15,118,110,.3)}body.cv-ph-live .cv-hero{background:linear-gradient(135deg,#0F4C5C,#0D9488 60%,#14B8A6);box-shadow:0 8px 24px rgba(13,148,136,.35)}body.cv-ph-live .cv-hero .hb button{color:#0F4C5C}
 body .cv-live.done{background:linear-gradient(135deg,#1E1B4B,#4338CA)}
+
+.cv-fx{position:fixed;inset:0;z-index:99995;pointer-events:none;overflow:hidden;animation:fxIn .25s both}.cv-fx.out{animation:fxOut .45s both}
+@keyframes fxIn{from{opacity:0}}@keyframes fxOut{to{opacity:0}}
+.cv-fx .fx-e{font-size:72px;line-height:1;display:block;filter:drop-shadow(0 8px 14px rgba(0,0,0,.25))}.cv-fx .fx-i{width:110px;height:auto;display:block}
+.fx-lab{position:absolute;left:0;right:0;bottom:22%;text-align:center;font-weight:800;font-size:1.6rem;color:#fff;text-shadow:0 2px 3px rgba(0,0,0,.5),0 4px 18px rgba(0,0,0,.45);animation:fxLab 2s .35s both}
+@keyframes fxLab{0%{opacity:0;transform:translateY(14px) scale(.9)}20%,80%{opacity:1;transform:none}100%{opacity:0}}
+.fx-sky,.fx-night{position:absolute;inset:0;background:linear-gradient(180deg,rgba(56,189,248,.55),rgba(186,230,253,.35) 60%,rgba(255,255,255,0))}
+.fx-night{background:radial-gradient(60% 50% at 50% 55%,rgba(49,46,129,.75),rgba(15,12,46,.85))}
+.fx-runway{position:absolute;left:-10%;right:-10%;bottom:30%;height:6px;background:repeating-linear-gradient(90deg,#fff 0 40px,transparent 40px 80px);opacity:.8;animation:fxRun .9s linear both}
+@keyframes fxRun{to{transform:translateX(-80px);opacity:0}}
+.fx-plane .fx-mover{position:absolute;left:-20%;bottom:30%;animation:fxTake 1.9s cubic-bezier(.5,0,.6,1) both}.fx-plane .fx-mover .fx-e{transform:rotate(45deg)}
+@keyframes fxTake{0%{transform:translate(0,0) rotate(0deg)}40%{transform:translate(45vw,0) rotate(-5deg)}100%{transform:translate(125vw,-70vh) rotate(-28deg) scale(.55)}}
+.fx-cl{position:absolute;opacity:0}.fx-cl.c1{top:22%;left:60%;animation:fxCloud 1.9s .6s both}.fx-cl.c2{top:38%;left:20%;animation:fxCloud 1.9s .9s both}.fx-cl .fx-e{font-size:56px}
+@keyframes fxCloud{0%{opacity:0;transform:translateX(40px)}30%{opacity:.9}100%{opacity:0;transform:translateX(-120px)}}
+.fx-train .fx-mover,.fx-bus .fx-mover,.fx-car .fx-mover{position:absolute;left:-30%;bottom:34%;animation:fxPass 1.7s cubic-bezier(.3,.1,.3,1) both}
+@keyframes fxPass{0%{transform:translateX(0)}50%{transform:translateX(70vw)}100%{transform:translateX(140vw)}}
+.fx-rail,.fx-road{position:absolute;left:0;right:0;bottom:32%;height:5px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.9) 0 18px,transparent 18px 30px)}
+.fx-lines{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,184,166,.35),rgba(255,255,255,0) 70%)}
+.fx-sea{position:absolute;left:0;right:0;bottom:0;height:42%;background:linear-gradient(180deg,rgba(14,165,233,.55),rgba(3,105,161,.7));border-radius:50% 50% 0 0/22px 22px 0 0;animation:fxWave 1.2s ease-in-out infinite alternate}
+@keyframes fxWave{to{transform:translateY(6px)}}
+.fx-boat .fx-mover{position:absolute;left:-25%;bottom:36%;animation:fxSail 2s ease-in-out both}
+@keyframes fxSail{0%{transform:translateX(0) rotate(-3deg)}25%{transform:translateX(30vw) rotate(3deg)}50%{transform:translateX(60vw) rotate(-3deg)}75%{transform:translateX(90vw) rotate(3deg)}100%{transform:translateX(130vw) rotate(0)}}
+.fx-moon{position:absolute;top:16%;right:16%;animation:fxPopIn .6s both}.fx-moon .fx-e{font-size:54px}
+.fx-bed{position:absolute;left:50%;top:50%;transform:translate(-50%,-30%);animation:fxPopIn .4s both}.fx-bed .fx-e{font-size:110px}.fx-bed .fx-i{width:170px}
+.fx-bear{position:absolute;left:50%;top:50%;animation:fxBear 1.6s .2s cubic-bezier(.3,.2,.3,1) both}.fx-bear .fx-e{font-size:60px}
+@keyframes fxBear{0%{transform:translate(-60vw,-30%)}45%{transform:translate(-90px,-20%)}62%{transform:translate(-50px,-95%)}80%,100%{transform:translate(-30px,-58%) rotate(-80deg) scale(.9)}}
+.fx-blanket{position:absolute;left:50%;top:50%;width:118px;height:40px;margin-left:-74px;margin-top:6px;border-radius:18px 18px 10px 10px;background:linear-gradient(180deg,#f9a8d4,#ec4899);box-shadow:0 4px 10px rgba(0,0,0,.2);transform-origin:right center;animation:fxBlanket .5s 1.55s both}
+@keyframes fxBlanket{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.fx-z{position:absolute;left:50%;top:40%;opacity:0;animation:fxZ 1.2s 1.9s both}.fx-z .fx-e{font-size:44px}
+@keyframes fxZ{0%{opacity:0;transform:translate(10px,0)}30%{opacity:1}100%{opacity:0;transform:translate(60px,-80px)}}
+@keyframes fxPopIn{from{opacity:0;transform:translate(-50%,-30%) scale(.4)}}
+.fx-ticket .fx-pop,.fx-souvenir .fx-pop,.fx-trip .fx-pop{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);animation:fxBounce .7s both}
+@keyframes fxBounce{0%{transform:translate(-50%,-50%) scale(.2) rotate(-20deg);opacity:0}60%{transform:translate(-50%,-50%) scale(1.15) rotate(6deg);opacity:1}100%{transform:translate(-50%,-50%) scale(1) rotate(0)}}
+.fx-stamp{position:absolute;left:50%;top:44%;width:84px;height:84px;margin:-10px 0 0 10px;border:5px solid #16a34a;border-radius:50%;color:#16a34a;font-size:46px;font-weight:900;display:grid;place-items:center;background:rgba(255,255,255,.85);animation:fxStamp .35s .55s both}
+@keyframes fxStamp{from{transform:scale(2.2);opacity:0}}
+.fx-flash{position:absolute;inset:0;background:#fff;animation:fxFlash .5s both}@keyframes fxFlash{0%{opacity:0}15%{opacity:.95}100%{opacity:0}}
+.fx-burst{position:absolute;left:50%;top:44%}.fx-burst i{position:absolute;left:0;top:0;animation:fxStar 1.3s var(--d) cubic-bezier(.2,.7,.2,1) both}.fx-burst .fx-e{font-size:30px}
+@keyframes fxStar{0%{transform:rotate(var(--a)) translateY(0) scale(.2);opacity:0}30%{opacity:1}100%{transform:rotate(var(--a)) translateY(-150px) scale(1);opacity:0}}
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>/* iPhone : pas de zoom automatique quand on touche un champ (iOS zoome sous 16 px). Le zoom à deux doigts reste possible. */@supports(-webkit-touch-callout:none){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),select,textarea{font-size:max(16px,1em)!important}}</style>
@@ -2387,7 +2425,9 @@ const CV = (function(){
     if(!it.titre){ alert('Donne un intitulé.'); return false; }
     if(!it.id && !keepOpen && dupOf(it).length){ dupAsk([it]); return false; }
     const isNew = !it.id; if(isNew) it.id = 'i' + uid();
-    if(isNew || !sameItem(R[it.id], it)) put(it);
+    const was = R[it.id], booked = x => x && (x.statut === 'booked' || x.statut === 'paid');
+    if(isNew || !sameItem(was, it)) put(it);
+    if(!keepOpen && (isNew || (booked(it) && !booked(was)))) setTimeout(()=>fxFor(it), 250);   // nouveau ou tout juste réservé
     if(keepOpen) return it.id;
     closeSheet(); render(); return it.id;
   }
@@ -3758,7 +3798,7 @@ const CV = (function(){
     if(tpl && wz.copyCheck) list('check', c=>c.trip===tpl.id).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)).forEach((c,i)=>out.push({id:'c'+uid()+i, type:'check', trip:tid, cat:c.cat, label:c.label, done:false}));
     else BASIC_CHECK.forEach(([cat,label],i)=>out.push({id:'c'+uid()+i, type:'check', trip:tid, cat, label, done:false}));
     if(tpl && wz.copyDivers) list('item', i=>i.trip===tpl.id && i.cat==='divers').forEach((x,i)=>out.push({id:'i'+uid()+'d'+i, type:'item', trip:tid, cat:'divers', titre:x.titre, hint:x.hint||'', partage:x.partage, statut:'todo', qui:[]}));
-    putMany(out, '🚀 Voyage créé'); closeSheet(true); M.tab = 'prog'; go(tid);
+    putMany(out, '🚀 Voyage créé'); closeSheet(true); M.tab = 'prog'; go(tid); setTimeout(()=>fxPlay('trip', 'Le rêve commence !'), 300);
   }
 
   function seedUSA2025(){}
@@ -3974,7 +4014,7 @@ const CV = (function(){
     const s = readSouv();
     if(!s.titre && !s.texte && !(s.photos||[]).length){ alert('Ajoute au moins un titre, un récit ou une photo.'); return; }
     if(!s.id) s.id = 'sv' + uid();
-    put(s, '📸 Souvenir enregistré'); closeSheet(); render(); uploadQueue();
+    const svNew = !R[s.id]; put(s, '📸 Souvenir enregistré'); closeSheet(); render(); uploadQueue(); if(svNew) setTimeout(()=>fxPlay('souvenir', 'Souvenir gardé !'), 250);
   }
   function delSouv(id){ if(!confirm('Supprimer ce souvenir ?')) return; drop(id); closeSheet(); render(); }
 
@@ -7968,7 +8008,7 @@ ${pm.join('\n')}</Document></kml>`;
     });
     out.push({id:'i'+uid()+'r', type:'item', trip:tid, cat:'transport', mode, titre:stops[stops.length-1].c + ' → ' + ((S.dep === 'autre' ? S.depTxt : S.dep)||'retour'), from:stops[stops.length-1].c, to:(S.dep === 'autre' ? S.depTxt : S.dep)||'', date:fin, statut:'todo', partage:'pp', qui:[], estime:String(Math.round((x.trans + (x.escale ? 80 : 0))/2))});
     out.push({id:'day:'+tid+':'+fin, type:'day', trip:tid, date:fin, titre:stops[stops.length-1].c + ' → retour', plan:''});
-    putMany(out, '🧳 Voyage créé : ' + x.nom);
+    putMany(out, '🧳 Voyage créé : ' + x.nom); setTimeout(()=>fxPlay('trip', 'Le rêve commence !'), 600);
     closeSheet(true); M.mode = 'prep'; M.tab = 'prog'; go(tid);
     setTimeout(()=>alert(`🧳 « ${x.nom} » est prêt, du ${fdate(debut)} au ${fdate(fin)} :\n${stops.map(s=>'• ' + s.c + ' (' + s.n + ' nuit' + (s.n>1?'s':'') + ')').join('\n')}\n\nTout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».`), 300);
   }
@@ -9695,7 +9735,40 @@ ${pm.join('\n')}</Document></kml>`;
     try { const c = await drawMap({w:640, h:360, lines, markers, maxZoom:15}); if(el.isConnected) el.innerHTML = `<img src="${c.toDataURL('image/jpeg', .86)}" alt="" style="width:100%;display:block;border-radius:14px">`; } catch(e){ el.innerHTML = ''; }
   }
 
-  const BUILD = '2026-10-10f';
+  /* ---------- 🎬 Petites animations (un avion qui décolle, un nounours qui va au lit…) ----------
+     Chaque scène utilise une image anim/<nom>.webp si elle existe (dessins maison), sinon un emoji. */
+  const FX_IMG = {}, FX_EMO = {plane:'✈️', train:'🚄', bus:'🚌', car:'🚗', boat:'⛴️', bear:'🧸', bed:'🛏️', moon:'🌙', zzz:'💤', cloud:'☁️', ticket:'🎟️', camera:'📸', suitcase:'🧳', star:'✨', heart:'💖'};
+  // anim/list.json (facultatif) liste les dessins disponibles, ex. ["plane","bear","bed"] : une seule requête au démarrage
+  setTimeout(()=>{ fetch('anim/list.json', {cache:'no-cache'}).then(r=>r.ok ? r.json() : []).then(l=>{ (Array.isArray(l) ? l : []).forEach(k=>{ const im = new Image(); im.onload = () => { FX_IMG[k] = im.src; }; im.src = 'anim/' + k + '.webp'; }); }).catch(()=>{}); }, 4000);
+  const fxEl = k => FX_IMG[k] ? `<img class="fx-i" src="${FX_IMG[k]}" alt="">` : `<span class="fx-e">${FX_EMO[k]}</span>`;
+  function fxPlay(kind, label){
+    try { if(M.noFx || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return; } catch(e){}
+    const old = document.getElementById('cv-fx'); if(old) old.remove();
+    const el = document.createElement('div'); el.id = 'cv-fx'; el.className = 'cv-fx fx-' + kind;
+    const L = label ? `<div class="fx-lab">${esc(label)}</div>` : '';
+    const scenes = {
+      plane: `<div class="fx-sky"></div><div class="fx-runway"></div><div class="fx-cl c1">${fxEl('cloud')}</div><div class="fx-cl c2">${fxEl('cloud')}</div><div class="fx-mover">${fxEl('plane')}</div>${L}`,
+      train: `<div class="fx-lines"></div><div class="fx-rail"></div><div class="fx-mover">${fxEl('train')}</div>${L}`,
+      bus: `<div class="fx-lines"></div><div class="fx-road"></div><div class="fx-mover">${fxEl('bus')}</div>${L}`,
+      car: `<div class="fx-lines"></div><div class="fx-road"></div><div class="fx-mover">${fxEl('car')}</div>${L}`,
+      boat: `<div class="fx-sea"></div><div class="fx-mover">${fxEl('boat')}</div>${L}`,
+      hotel: `<div class="fx-night"></div><div class="fx-moon">${fxEl('moon')}</div><div class="fx-bed">${fxEl('bed')}</div><div class="fx-bear">${fxEl('bear')}</div><div class="fx-blanket"></div><div class="fx-z">${fxEl('zzz')}</div>${L}`,
+      ticket: `<div class="fx-pop">${fxEl('ticket')}</div><div class="fx-stamp">✓</div>${L}`,
+      souvenir: `<div class="fx-flash"></div><div class="fx-pop">${fxEl('camera')}</div>${L}`,
+      trip: `<div class="fx-burst">${Array.from({length:14}, (_, i)=>`<i style="--a:${i * 360 / 14}deg;--d:${(i % 3) * .08}s">${fxEl('star')}</i>`).join('')}</div><div class="fx-pop">${fxEl('suitcase')}</div>${L}`
+    };
+    el.innerHTML = scenes[kind] || scenes.ticket;
+    document.body.appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(), 450); }, kind === 'hotel' ? 2600 : 2000);
+  }
+  function fxFor(it){
+    if(!it) return;
+    if(it.cat === 'transport'){ const m = String(it.mode || ''); fxPlay(/Avion/i.test(m) ? 'plane' : /Train|Métro|Tram/i.test(m) ? 'train' : /Bateau|Ferry/i.test(m) ? 'boat' : /Bus|Car\b/i.test(m) ? 'bus' : 'car', /Avion/i.test(m) ? 'Bon vol !' : 'Bonne route !'); }
+    else if(it.cat === 'hotel') fxPlay('hotel', 'Bonne nuit !');
+    else if(it.cat === 'activite') fxPlay('ticket', 'C’est réservé !');
+  }
+
+  const BUILD = '2026-10-10g';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
@@ -9704,7 +9777,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
   const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
