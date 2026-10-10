@@ -1438,7 +1438,7 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .cv-anim.fx-img .fx-blanket{display:none}
 
 .cv-syncpill{display:inline-flex;align-items:center;gap:4px;border:0;border-radius:999px;padding:6px 10px;background:rgba(255,255,255,.16);color:#fff;font:600 .72rem 'Outfit',system-ui,sans-serif;margin-right:6px;cursor:pointer;backdrop-filter:blur(6px)}
-.cv-syncpill small{font-size:.72rem}.cv-syncpill.wait span{animation:sySpin 1.6s linear infinite;display:inline-block}.cv-syncpill.err{background:rgba(236,77,110,.85)}.cv-syncpill.off{opacity:.75}
+.cv-syncpill small{font-size:.72rem}.cv-socpill{position:relative}.sh-card .cv-prow{width:100%;text-align:left;justify-content:space-between}.sh-card .cv-row>.v-btn{flex:1;margin:0}.cv-badge{position:absolute;top:-5px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#EC4D6E;color:#fff;font:800 .66rem/18px 'Outfit',system-ui,sans-serif;text-align:center;box-shadow:0 0 0 2px rgba(255,255,255,.85)}.cv-syncpill.wait span{animation:sySpin 1.6s linear infinite;display:inline-block}.cv-syncpill.err{background:rgba(236,77,110,.85)}.cv-syncpill.off{opacity:.75}
 @keyframes sySpin{50%{opacity:.35}}
 .sy-r{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--light);border-radius:14px;margin-bottom:6px;background:#fff}.sy-r small{color:var(--gray)}
 .sh-card{background:#fff;border:1px solid var(--light);border-radius:18px;padding:14px;margin-bottom:10px}.sh-k{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:600;font-size:1.2rem}.sh-card p{font-size:.86rem;color:var(--gray);margin:4px 0 10px}
@@ -2384,7 +2384,19 @@ const CV = (function(){
     return `<div class="v-f"><label>${lbl}</label><input class="v-in" name="${name}" type="${type||'text'}" value="${esc(val)}" ${extra||''}></div>`;
   }
   function openSheet(html, locked){
-    const prev = document.getElementById('v-sheet-bg'); if(prev) prev.remove();
+    const prev = document.getElementById('v-sheet-bg');
+    if(prev && !prev.dataset.locked === !locked){   // fenêtre déjà ouverte : on change son contenu sans rejouer l’animation (plus de flash)
+      const ro = M.lock && /<form|v-actions/.test(html) && !locked;
+      prev.className = 'v-sheet-bg';
+      const sh = document.createElement('div'); sh.className = 'v-sheet' + (ro ? ' ro' : ''); sh.style.animation = 'none';
+      sh.innerHTML = `${locked?'':'<div class="v-grab"></div>'}${ro?'<div class="cv-robanner">🔒 Lecture seule</div>':''}${html}`;
+      const old = prev.querySelector('.v-sheet'); if(old) old.replaceWith(sh); else prev.appendChild(sh);
+      document.body.style.overflow = 'hidden';
+      if(/data-[rt]map=/.test(html)) setTimeout(hydrateMaps, 30);
+      if(/data-ph=/.test(html)) setTimeout(hydrate, 30);
+      return;
+    }
+    if(prev) prev.remove();
     const bg = document.createElement('div');
     bg.className = 'v-sheet-bg'; bg.id = 'v-sheet-bg';
     const ro = M.lock && /<form|v-actions/.test(html) && !locked;
@@ -2698,7 +2710,7 @@ const CV = (function(){
         <div class="bu-bar"><span style="width:${pctPaid.toFixed(1)}%"></span></div>
         <div class="bu-pay"><span>✅ Payé ${eur(tot.paye)}</span><span>⏳ Reste ${eur(tot.proj - tot.paye)}</span></div>
         <div class="bu-obj">${objLine || 'Pas encore d’objectif par personne.'} <button type="button" onclick="CV.objAsk()">${obj ? 'modifier' : 'fixer un objectif'}</button></div></div>
-      <div class="cv-quick2">${r('🧾','Dépense',"CV.tlReceipt()")}${r('📷','Tickets',"CV.tlReceipts()")}${v.length > 1 ? r('💸','Rembourser',"document.getElementById('bu-eq')&&document.getElementById('bu-eq').scrollIntoView({behavior:'smooth'})") : ''}${r('📆','Échéancier',"CV.tab('ech')")}${r('⚖️','Parts',"CV.partsSheet()")}${r('💱','Convertir',"CV.fxTool()")}</div>
+      <div class="cv-quick2">${r('🧾','Dépense',"CV.tlReceipt()")}${r('📷','Tickets',"CV.tlReceipts()")}${v.length > 1 ? r('💸','Rembourser',"document.getElementById('bu-eq')&&document.getElementById('bu-eq').scrollIntoView({behavior:'smooth'})") : ''}${r('⚖️','Parts',"CV.partsSheet()")}${r('💱','Convertir',"CV.fxTool()")}</div>
       ${v.length > 1 ? `<div id="bu-eq">${equilibreHTML()}</div>` : ''}
       <div class="bu-cats"><div class="bu-h">Par poste</div>${rows.filter(x=>x.proj > 0 || x.paye > 0).map(x=>`<button type="button" class="bu-cat" onclick="CV.tab('${x.c}')"><span>${CATS[x.c].icon} ${CATS[x.c].lbl}</span><b>${eur(x.proj)}</b><i><em style="width:${(x.proj / mx * 100).toFixed(1)}%"></em><u style="width:${(x.paye / mx * 100).toFixed(1)}%"></u></i></button>`).join('') || '<div class="v-sum-small">Ajoute des trajets, hébergements, visites ou dépenses : le budget se remplit tout seul.</div>'}</div>
       ${acc('pers', `👥 Par personne <small>${v.length} voyageur${v.length>1?'s':''}</small>`, `
@@ -3035,7 +3047,8 @@ const CV = (function(){
         <button class="v-btn sec" onclick="CV.shareCode()">📤 Envoyer l’invitation (adresse + code)</button>
         <button class="v-btn danger" onclick="CV.syncOff()">Désactiver la synchro sur ce téléphone</button>`;
     } else {
-      h += `<p>Une fois l’appli en ligne sur Cloudflare (voir le LISEZMOI), vous utilisez le même code : ce que l’un modifie, l’autre le voit. Hors connexion, tout reste enregistré sur le téléphone et part dès que le réseau revient.</p>
+      h += `<p>Facultatif : sauvegarde en ligne de tous tes voyages, pour les retrouver sur ton autre téléphone ou ta tablette avec le même code. Hors connexion, tout reste sur le téléphone et part dès que le réseau revient.</p>
+        <p class="v-sum-small">Pour partager un seul voyage, inutile : dans le voyage, touche Partager. Seul ce voyage est alors stocké sur le serveur, tes autres voyages restent sur ton téléphone.</p>
         ${hosted ? '' : `<div class="v-f"><label>Adresse de l’appli en ligne</label><input class="v-in" id="cv-surl" value="${esc(s.url)}" placeholder="https://carnet-voyage.pages.dev"></div>`}
         <div class="v-f"><label>Code du carnet</label><div class="cv-row"><input class="v-in" id="cv-scode" value="${esc(s.code)}" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters">
           <button class="v-btn sec cv-sq" type="button" onclick="document.getElementById('cv-scode').value=CV.genCode()">🎲</button></div>
@@ -3986,41 +3999,42 @@ const CV = (function(){
   let uploading = false;
   async function uploadQueue(){
     if(uploading || !(M.pq||[]).length || !photoApi()) return;
-    if(!(M.sync.on && M.sync.code) && !(M.spaces||[]).length) return;
-    uploading = true; let upErr = '', waiting = 0;
+    if(!(M.sync.on && M.sync.code) && !(M.spaces||[]).length){ M.pqWait = (M.pq||[]).length; return; }
+    uploading = true; let upErr = '', waiting = 0, stop = false;
     cryptShow('🔐 Chiffrement des photos… (' + pqN() + ')');
-    try {
-      for(const id of [...M.pq]){
-        const code = photoCode(id); if(!code){ waiting++; continue; }          // pas encore de carnet en ligne pour cette photo : on la garde
-        let o = null; try { o = await IDB.get(id); } catch(e){}
-        if(/\.t$/.test(id)){   // vignette seule (paquet sans grand format) : envoyée telle quelle ; sinon elle part avec sa grande photo
-          let big = null; try { big = await IDB.get(id.slice(0, -2)); } catch(e){}
-          if(o && o.blob && !(big && big.blob)){
-            const body = E2E ? new Blob([await seal(new Uint8Array(await o.blob.arrayBuffer()), code)], {type:'image/jpeg'}) : o.blob;
-            const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(id, code), 'Content-Type':'image/jpeg'}, body});
-            if(!r.ok && r.status !== 413){ try { upErr = ((await r.json()).error) || ''; } catch(e){} upErr = (upErr ? upErr + ' ' : '') + '(' + r.status + ')'; break; }
-          }
-          M.pq = M.pq.filter(x=>x!==id); persist(); syncDot(); continue;
-        }
-        if(o && o.blob){
-          let ub = o.blob;   // anciennes photos plus lourdes que la limite du serveur (1,9 Mo) : on les réduit pour l’envoi
-          if(ub.size > 1700000){ for(const [mx, q] of [[2048,0.8],[1800,0.7],[1500,0.62],[1200,0.55]]){ try { ub = await shrink(o.blob, mx, q); } catch(e){ break; } if(ub.size <= 1700000) break; } }
-          const body = E2E ? new Blob([await seal(new Uint8Array(await ub.arrayBuffer()), code)], {type:'image/jpeg'}) : ub;
-          const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(id, code), 'Content-Type':'image/jpeg'}, body});
-          if(!r.ok && r.status !== 413){ try { upErr = ((await r.json()).error) || ''; } catch(e){} upErr = (upErr ? upErr + ' ' : '') + '(' + r.status + ')'; break; }
-          try {   // + vignette légère (≈ 30 Ko) pour que l’autre téléphone affiche vite la grille
-            let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
-            if(!tb) tb = await shrink(ub, 480, 0.74);
-            const tbody = E2E ? new Blob([await seal(new Uint8Array(await tb.arrayBuffer()), code)], {type:'image/jpeg'}) : tb;
-            await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(id + '.t', code), 'Content-Type':'image/jpeg'}, body:tbody});
-          } catch(e){}
-          try { await IDB.put({id, blob:new Blob([await o.blob.arrayBuffer()], {type:o.blob.type || 'image/jpeg'}), up:1}); } catch(e){}   // copie : Safari perd le fichier si on réenregistre le même objet
-        }
-        M.pq = M.pq.filter(x=>x!==id); persist(); syncDot();
-        if(M.pq.length) cryptShow('🔐 Chiffrement des photos… (' + pqN() + ' restante' + (pqN() > 1 ? 's' : '') + ')');
+    // photo → code du carnet, calculé une seule fois (rapide même avec des milliers de photos)
+    const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
+    const codeOf = id => { const base = String(id).replace(/\.t$/,''), r = owner[base]; if(!r) return photoCode(id); if(r.demo) return null; const t = targets(r)[0]; return t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t; };
+    const send = async (blob, pid, code) => { const body = E2E ? new Blob([await seal(new Uint8Array(await blob.arrayBuffer()), code)], {type:'image/jpeg'}) : blob;
+      const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(pid, code), 'Content-Type':'image/jpeg'}, body});
+      if(!r.ok && r.status !== 413){ let er = ''; try { er = ((await r.json()).error) || ''; } catch(e){} throw new Error((er ? er + ' ' : '') + '(' + r.status + ')'); } };
+    const one = async id => {
+      const code = codeOf(id); if(!code){ waiting++; return; }          // pas encore de carnet en ligne pour cette photo : on la garde
+      let o = null; try { o = await IDB.get(id); } catch(e){}
+      if(/\.t$/.test(id)){   // vignette seule (paquet sans grand format) : envoyée telle quelle ; sinon elle part avec sa grande photo
+        let big = null; try { big = await IDB.get(id.slice(0, -2)); } catch(e){}
+        if(o && o.blob && !(big && big.blob)) await send(o.blob, id, code);
+      } else if(o && o.blob){
+        let ub = o.blob;   // anciennes photos plus lourdes que la limite du serveur (1,9 Mo) : on les réduit pour l’envoi
+        if(ub.size > 1700000){ for(const [mx, q] of [[2048,0.8],[1800,0.7],[1500,0.62],[1200,0.55]]){ try { ub = await shrink(o.blob, mx, q); } catch(e){ break; } if(ub.size <= 1700000) break; } }
+        await send(ub, id, code);
+        try {   // + vignette légère (≈ 30 Ko) pour que l’autre téléphone affiche vite la grille
+          let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
+          if(!tb) tb = await shrink(ub, 480, 0.74);
+          await send(tb, id + '.t', code);
+        } catch(e){}
+        try { await IDB.put({id, blob:new Blob([await o.blob.arrayBuffer()], {type:o.blob.type || 'image/jpeg'}), up:1}); } catch(e){}   // copie : Safari perd le fichier si on réenregistre le même objet
       }
-    } catch(e){ upErr = 'réseau : ' + (e && e.message || e); }
-    M.pqErr = upErr || ''; cryptHide(M.pq.length ? (upErr ? '⚠️ Photos non envoyées : ' + upErr : (waiting ? '⏳ Photos en attente : voyage pas encore en ligne' : '')) : '🔒 Photos chiffrées et envoyées');
+      M.pq = M.pq.filter(x=>x!==id); syncDot();
+      if(M.pq.length && !(M.pq.length % 3)){ persist(); cryptShow('🔐 Chiffrement des photos… (' + pqN() + ' restante' + (pqN() > 1 ? 's' : '') + ')'); }
+    };
+    const todo = [...M.pq];
+    const worker = async () => { while(!stop && todo.length){ const id = todo.shift(); try { await one(id); } catch(e){ upErr = upErr || (e && e.message) || String(e); stop = true; } } };
+    try { await Promise.all([worker(), worker(), worker()]); }   // 3 envois en même temps : bien plus rapide sur mobile
+    catch(e){ upErr = 'réseau : ' + (e && e.message || e); }
+    if(/Failed to fetch|NetworkError|Load failed/i.test(upErr)) upErr = 'réseau : ' + upErr;
+    M.pqWait = waiting; M.pqErr = upErr || ''; persist();
+    cryptHide(M.pq.length ? (upErr ? '⚠️ Photos non envoyées : ' + upErr : (waiting ? '⏳ Photos en attente : voyage pas encore en ligne' : '')) : '🔒 Photos chiffrées et envoyées');
     uploading = false; syncDot();
     photoPurge();
   }
@@ -6084,6 +6098,13 @@ const CV = (function(){
   }
   async function fxToEur(amount, cur){ const r = Object.assign({EUR:1}, await fxRates()), h = curCode(); if(!r[cur] || !r[h]) throw new Error('Devise non disponible : ' + (r[cur] ? h : cur)); return amount / r[cur] * r[h]; }
   async function fxTool(){
+    if(!document.getElementById('fxo-a')){   // appelé hors de l’onglet Outils (Budget, moment « arrivée ») : petite fenêtre de conversion
+      openSheet(`<h2>💱 Convertir</h2><div class="v-sum-small" style="margin-bottom:8px">Saisis un montant en monnaie locale : il est converti dans la devise du voyage, au taux du jour.</div>
+        <div class="cv-fx"><input class="v-in" id="fxo-a" inputmode="decimal" placeholder="Montant" oninput="CV.fxTool()"><select class="v-in" id="fxo-c" onchange="CV.fxTool()">${fxOpts(M.fxLast||'USD')}</select><button type="button" class="v-btn sec" onclick="CV.fxTool()">= ${CS()}</button></div>
+        <div class="v-sum-small" id="fxo-r" style="font-size:1rem;margin-top:6px"></div>
+        <div class="v-actions"><button type="button" class="v-btn" onclick="CV.tlReceipt()">🧾 En faire une dépense</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+      setTimeout(()=>{ const i = document.getElementById('fxo-a'); if(i) i.focus(); }, 60); return;
+    }
     const a = num((document.getElementById('fxo-a')||{}).value), c = (document.getElementById('fxo-c')||{}).value, out = document.getElementById('fxo-r');
     if(!a){ out.textContent = 'Saisis un montant.'; return; }
     try { const e = await fxToEur(a, c); M.fxLast = c; persist(); out.innerHTML = `<b>${a.toLocaleString((window.I18N ? I18N.locale : 'fr-FR'))} ${c} = ${eur(e)}</b> · taux du ${new Date(M.fx.t).toLocaleDateString((window.I18N ? I18N.locale : 'fr-FR'))}`; }
@@ -6154,11 +6175,24 @@ const CV = (function(){
       <div id="rc-prev" class="v-sum-small" style="margin:8px 0"></div>
       <form id="v-form" onsubmit="event.preventDefault();CV.tlRcSave()">
         ${field('Quoi ?','titre','','text','placeholder="Ex. Dîner à Trastevere" required')}
-        <div class="cv-fx"><input class="v-in" name="montant" id="rc-m" inputmode="decimal" placeholder="Montant" required><select class="v-in" id="rc-c"><option>${curCode()}</option>${fxOpts(M.fxLast||'')}</select></div>
+        <div class="cv-fx"><input class="v-in" name="montant" id="rc-m" inputmode="decimal" placeholder="Montant" required oninput="CV.rcFx()"><select class="v-in" id="rc-c" onchange="CV.rcFx()"><option>${curCode()}</option>${fxOpts(M.fxLast||'')}</select><button type="button" class="v-btn sec" id="rc-cv" onclick="CV.rcFx(1)">Convertir</button></div><div class="v-sum-small" id="rc-fx" style="margin:-4px 0 8px"></div>
         <div class="v-f"><label>Payé par</label><select class="v-in" id="rc-p">${v.map(p=>`<option value="${p}"${p===M.me?' selected':''}>${esc(pname(p))}</option>`).join('')}</select></div>
         <div class="v-f"><label>Partagé entre</label><select class="v-in" id="rc-s"><option value="all">Tout le monde (parts égales)</option>${v.map(p=>`<option value="${p}">${esc(pname(p))} seul(e)</option>`).join('')}</select></div>
         ${actions('')}
       </form>`);
+  }
+  let rcFxT = null;
+  async function rcFx(apply){   // conversion en direct : « 25 USD ≈ 22,73 € » ; 💱 remplace le montant par sa valeur convertie
+    const m = num((document.getElementById('rc-m')||{}).value), sel = document.getElementById('rc-c'), out = document.getElementById('rc-fx'); if(!sel || !out) return;
+    const cur = sel.value, h = curCode();
+    if(cur === h){ out.textContent = apply ? 'Choisis la devise du ticket dans la liste, puis touche Convertir.' : (rcpt && rcpt.fxNote ? '💱 ' + rcpt.fxNote : ''); return; }
+    if(!m){ out.textContent = apply ? 'Saisis d’abord le montant.' : ''; return; }
+    clearTimeout(rcFxT);
+    const go = async () => { try { const e = Math.round(await fxToEur(m, cur) * 100) / 100; M.fxLast = cur; persist();
+      const note = m.toLocaleString((window.I18N ? I18N.locale : 'fr-FR')) + ' ' + cur;
+      if(apply){ document.getElementById('rc-m').value = String(e).replace('.', ','); sel.value = h; if(rcpt) rcpt.fxNote = note; out.textContent = '💱 ' + note + ' = ' + eur(e); }
+      else out.textContent = note + ' ≈ ' + eur(e) + ' · touche Convertir'; } catch(e){ out.textContent = '⚠️ ' + e.message; } };
+    if(apply) go(); else rcFxT = setTimeout(go, 300);
   }
   function tlRcPhoto(){
     tlPickFile('image/*', async f => {
@@ -6186,7 +6220,7 @@ const CV = (function(){
   async function tlRcSave(){
     const f = document.getElementById('v-form'), titre = f.titre.value.trim(); let m = num(f.montant.value); const cur = document.getElementById('rc-c').value;
     if(!titre || !m) return;
-    let note = '';
+    let note = (rcpt && rcpt.fxNote) || '';
     if(cur !== curCode()){ try { const e = await fxToEur(m, cur); note = m.toLocaleString((window.I18N ? I18N.locale : 'fr-FR')) + ' ' + cur; m = Math.round(e*100)/100; } catch(e){ alert(e.message); return; } }
     const payeur = document.getElementById('rc-p').value, share = document.getElementById('rc-s').value;
     const it = {id:'i'+uid(), type:'item', trip:M.trip, cat:'divers', titre, date:isoToday(), statut:'paid', prix:String(m), partage:'grp', payeur, qui: share==='all' ? [] : [share], note};
@@ -8852,7 +8886,7 @@ ${pm.join('\n')}</Document></kml>`;
         ${on ? `<button type="button" class="v-btn sec" onclick="CV.tripShareSheet('${t.id}')">🔑 Code du voyage et état du partage</button>` : `<button type="button" class="v-btn sec" onclick="CV.tripShare('${t.id}')">🔑 Réutiliser un ancien code de voyage</button>`}
         <button type="button" class="v-btn sec" onclick="CV.editTrip('${t.id}')">👥 Choisir les voyageurs</button>
         <button type="button" class="v-btn sec" onclick="CV.tripJoin()">🔗 J’ai reçu un code : rejoindre un voyage</button>
-        <button type="button" class="v-btn sec" onclick="CV.followSheet()">👀 Voyages que je suis</button>
+        <button type="button" class="v-btn sec" onclick="CV.socialHub()">👥 Abonnés, abonnements et codes</button>
         <button type="button" class="v-btn sec" onclick="CV.close();CV.tab('reglages')">📱 Mes voyages sur tous mes appareils</button>
         <button type="button" class="v-btn sec" onclick="CV.shareSheet()">📤 Faire découvrir l’appli (QR code)</button></details>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`;
@@ -9865,7 +9899,7 @@ ${pm.join('\n')}</Document></kml>`;
     L.forEach(n => {
       const t = n.nodeValue, f = document.createDocumentFragment(); let last = 0;
       t.replace(VI_RE, (m, i) => { if(i > last) f.appendChild(document.createTextNode(t.slice(last, i)));
-        const im = document.createElement('img'); im.className = 'vi'; im.alt = m; im.src = VI_DIR() + VI[m] + '.webp'; im.draggable = false; im.decoding = 'async'; f.appendChild(im); last = i + m.length; return m; });
+        const im = document.createElement('img'); im.className = 'vi'; im.alt = m; im.src = VI_DIR() + VI[m] + '.webp'; im.draggable = false; f.appendChild(im); last = i + m.length; return m; });
       if(last < t.length) f.appendChild(document.createTextNode(t.slice(last)));
       if(n.parentNode) n.parentNode.replaceChild(f, n);
     });
@@ -9967,7 +10001,8 @@ ${pm.join('\n')}</Document></kml>`;
     const sps = (M.spaces||[]), any = (M.sync.on && M.sync.code) || sps.length;
     if(!any) return 'off';
     if(M.sync.err || sps.some(x=>x.err)) return navigator.onLine === false ? 'offline' : 'err';
-    if(syncing || M.dirty.length || sps.some(x=>(x.dirty||[]).length) || (M.pq||[]).length || (M.fq||[]).length) return 'wait';
+    const mainOn = !!(M.sync.on && M.sync.code), pqLive = Math.max(0, (M.pq||[]).length - (M.pqWait||0));   // en attente d’un carnet en ligne ≠ en cours d’envoi
+    if(syncing || (mainOn && M.dirty.length) || sps.some(x=>(x.dirty||[]).length) || pqLive || (M.fq||[]).length) return 'wait';
     return 'ok';
   }
   function syncPill(){
@@ -9990,7 +10025,7 @@ ${pm.join('\n')}</Document></kml>`;
       ${ph ? `<div class="sy-r"><b>📸 Photos</b><small>${M.pqErr ? '⚠️ ' + esc(M.pqErr) + ' · ' : ''}⏳ ${ph} en attente d’envoi${(M.pq||[]).length && !(M.pq||[]).some(id=>photoCode(id)) ? ' · voyage pas encore partagé : touche 🔗 Partager' : ''}</small></div>` : ''}
       <div class="v-actions">${rows.length ? `<button type="button" class="v-btn" onclick="CV.syncNow(true);CV.close()">🔄 Synchroniser maintenant</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.close();CV.tab('reglages')">⚙️ Réglages du partage</button></div>`);
   }
-  setInterval(syncPill, 2500);
+  setInterval(()=>{ syncPill(); try { socPill(); } catch(e){} }, 2500);
 
   // ---------- Inviter dans un voyage en un geste (le lien contient le code) ----------
   async function tripInviteNow(id){
@@ -9998,7 +10033,9 @@ ${pm.join('\n')}</Document></kml>`;
     if(!(TS()[t.id] && spaceObj(TS()[t.id]))){
       const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t.id] = c;
       Object.values(R).filter(r=>!r.demo && (r.id===t.id || r.trip===t.id)).forEach(r=>markDirty(r.id));
-      await photoQueueAll(t.id); persist(); toast('🔐 Voyage mis en ligne (chiffré)…'); await syncNow(); uploadQueue();
+      persist(); toast('🔐 Voyage mis en ligne (chiffré)…');
+      // en arrière-plan : l’envoi ne bloque pas l’invitation (sur iPhone, la fenêtre « Partager » doit s’ouvrir tout de suite après le geste)
+      setTimeout(async ()=>{ try { await photoQueueAll(t.id); persist(); await syncNow(); uploadQueue(); refresh(); } catch(e){} }, 50);
     }
     const code = TS()[t.id], url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : '';
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
@@ -10105,6 +10142,60 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="v-f" style="margin-top:10px"><label>Suivre un voyage avec un code abonné</label><div class="cv-row"><input class="v-in" id="fw-code" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.followGo(document.getElementById('fw-code').value)">Suivre</button></div></div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
+  // ---------- 👥 Nouveautés sociales (❤️, 💬, abonnés, nouvelles étapes) + fenêtre « Abonnés & abonnements » ----------
+  function socEvents(){
+    if(M.socSeen == null){ M.socSeen = Date.now(); persist(); }
+    const seen = M.socSeen, me = devId(), nm = myName();
+    const mine = new Set(Object.keys(FT()).map(ftId)), fol = new Set(list('feedtrip', f=>TS()[f.id] && !mine.has(f.id)).map(f=>f.id)), out = [];
+    for(const r of Object.values(R)){
+      if(!r || r.deleted || !r.trip || !(mine.has(r.trip) || fol.has(r.trip))) continue;
+      const t = r.updatedAt || r.createdAt || 0; if(t <= seen) continue;
+      if(r.type === 'like' && r.on && mine.has(r.trip) && !r.id.endsWith(':' + me)) out.push({k:'like', r, t});
+      else if(r.type === 'comment' && (r.dev ? r.dev !== me : r.who !== nm)) out.push({k:'comment', r, t});
+      else if(r.type === 'follower' && mine.has(r.trip) && !r.id.endsWith(':' + me) && (r.createdAt||0) > seen) out.push({k:'follower', r, t});
+      else if(r.type === 'feed' && fol.has(r.trip) && (r.createdAt||0) > seen) out.push({k:'post', r, t});
+    }
+    return out.sort((a,b)=>b.t-a.t);
+  }
+  function socPill(){
+    const btns = document.querySelector('.hero-btns'); if(!btns) return;
+    const any = Object.keys(FT()).length || list('feedtrip', f=>TS()[f.id]).length || Object.keys(TS()).length;
+    let b = document.getElementById('cv-socpill');
+    if(!any){ if(b) b.remove(); return; }
+    if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'cv-socpill'; b.className = 'cv-syncpill cv-socpill'; b.onclick = () => CV.socialHub(); const sp = document.getElementById('cv-syncpill'); sp ? sp.after(b) : btns.prepend(b); }
+    const n = socEvents().length, h = `<span>👥</span>${n ? `<b class="cv-badge">${n > 99 ? '99+' : n}</b>` : ''}`;
+    if(b.dataset.h !== h){ b.dataset.h = h; b.innerHTML = h; b.setAttribute('aria-label', n ? n + ' nouveauté(s)' : 'Abonnés et partages'); }
+  }
+  function socialHub(){
+    const ev = socEvents(), mineT = Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted);
+    const fol = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted);
+    const ttl = ftid => { const ft = R[ftid]; return ft ? ft.titre : ''; };
+    const evRow = e => { const r = e.r, w = esc(r.who || 'Quelqu’un');
+      const txt = e.k === 'like' ? `❤️ ${w} aime ta publication` : e.k === 'comment' ? `💬 ${w} : « ${esc(String(r.text||'').slice(0, 80))} »` : e.k === 'follower' ? `👀 ${w} suit ton voyage` : `📸 Nouvelle étape : ${esc(r.titre || r.lieu || '')}`;
+      return `<button type="button" class="cv-prow" onclick="CV.feedView('${esc(r.trip)}')"><span>${txt}<small class="v-sum-small" style="display:block">${esc(ttl(r.trip))} · ${when(e.t)}</small></span><span>›</span></button>`; };
+    const nFw = mineT.reduce((s, tid)=>s + list('follower', x=>x.trip===ftId(tid)).length, 0);
+    const pubRow = tid => { const t = R[tid], fw = list('follower', x=>x.trip===ftId(tid)), lk = list('like', l=>l.trip===ftId(tid) && l.on).length, cm = list('comment', c=>c.trip===ftId(tid)).length;
+      return `<div class="sh-card"><div class="sh-k">📣 ${esc(t.titre)}</div>
+        <div class="sh-st"><span>👀 <b>${fw.length}</b> abonné${fw.length>1?'s':''}</span><span>❤️ <b>${lk}</b></span><span>💬 <b>${cm}</b></span></div>
+        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>esc(x.who || '?')).join(', ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
+        <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(FT()[tid])}</b></div>
+        <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tid)}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.feedPublish('${tid}')">📤 Inviter</button></div></div>`; };
+    const tripsAll = trips().filter(t=>!t.demo).sort((a,b)=>(b.debut||'').localeCompare(a.debut||''));
+    const codeRow = t => { const c = TS()[t.id] && spaceObj(TS()[t.id]) ? TS()[t.id] : '', who = (t.voyageurs||[]).filter(prof).map(p=>esc(pname(p))).join(', ');
+      return `<div class="cv-prow" style="cursor:default"><span><b>${esc(t.titre)}</b><small class="v-sum-small" style="display:block">${who || 'seul(e)'}${t.debut ? ' · ' + tripDates(t) : ''}</small></span>
+        ${c ? `<button type="button" class="cv-code" style="border:0;background:none;font:inherit;font-weight:700" onclick="CV.tripShareSheet('${t.id}')">${esc(c)}</button>` : `<button type="button" class="v-btn sec" style="width:auto;padding:6px 10px;margin:0" onclick="CV.go('${t.id}');CV.shareHub()">🔗 Partager</button>`}</div>`; };
+    openSheet(`<h2>👥 Abonnés & partages</h2>
+      ${ev.length ? `<div class="sh-card"><div class="sh-k">✨ Nouveautés (${ev.length})</div>${ev.slice(0, 30).map(evRow).join('')}</div>` : '<div class="v-sum-small" style="margin-bottom:10px">Rien de nouveau depuis ta dernière visite.</div>'}
+      <div class="sh-st" style="margin:4px 0 12px"><span>👀 <b>${nFw}</b> abonné${nFw>1?'s':''}</span><span>➡️ <b>${fol.length}</b> voyage${fol.length>1?'s':''} suivi${fol.length>1?'s':''}</span></div>
+      <h3>📣 Mes voyages publiés</h3>${mineT.map(pubRow).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Aucun voyage publié pour l’instant : dans un voyage, touche Partager puis Publier pour des abonnés.</div>'}
+      <h3>➡️ Les voyages que je suis</h3>${fol.map(f=>{ const n = list('feed', x=>x.trip===f.id && !x.deleted).length; return `<button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b>${esc(f.titre)}</b><small class="v-sum-small" style="display:block"><span>par ${esc(f.owner || '?')}</span> · <span>${n} étape${n>1?'s':''}</span> · <span>code ${esc(TS()[f.id])}</span></small></span><span>›</span></button>`; }).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Aucun pour l’instant.</div>'}
+      <button type="button" class="v-btn sec" onclick="CV.followSheet()">➕ Suivre un voyage avec un code</button>
+      <h3>🔑 Codes de mes voyages</h3><div class="v-sum-small" style="margin-bottom:6px">Le code d’un voyage permet à tes compagnons de le rejoindre (tout le voyage, pas seulement les photos).</div>
+      ${tripsAll.map(codeRow).join('') || '<div class="v-sum-small">Aucun voyage.</div>'}
+      ${M.sync.on && M.sync.code ? `<div class="v-sum-small" style="margin-top:8px">📱 Code de tous mes appareils : <b class="cv-code">${esc(M.sync.code)}</b></div>` : ''}
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+    M.socSeen = Date.now(); persist(); setTimeout(socPill, 50);
+  }
   const likesOf = fid => list('like', l=>l.feed===fid && l.on);
   const commentsOf = fid => list('comment', c=>c.feed===fid).sort((a,b)=>(a.at||0)-(b.at||0));
   function feedLike(fid){
@@ -10116,7 +10207,7 @@ ${pm.join('\n')}</Document></kml>`;
   function feedComment(fid){
     const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
     if(!myName()){ const n = prompt('Ton prénom :', ''); if(!n) return; M.followName = n.trim(); }
-    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:myName(), text:txt.slice(0, 600), at:Date.now()}]); i.value = ''; syncNow(); feedPaint(fid);
+    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:myName(), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); i.value = ''; syncNow(); feedPaint(fid);
   }
   function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
   function feedPostHTML(f){
@@ -10164,7 +10255,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-10m';
+  const BUILD = '2026-10-10n';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
@@ -10181,7 +10272,7 @@ ${pm.join('\n')}</Document></kml>`;
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
     editTrip, saveTrip, delTrip, closeTrip, reopenTrip,
     live, one, echAdd, echDel, echSpread, echToggle, lisser, echReset, echRange, echRangeReset,
-    planDay, plCfg, plAdd, plDel, plOpt, wizard, radarTuto, rcOpen, rbSheet, rbPhoto, rbSave, zipSavePart, zipCancel, innerGo, inspDeal, inspOpen, compN, compDel, compAdd, compTog, compCreate, inspBack, inspMore, inspFav, inspSurprise, inspVote, gateInstall, partsSheet, partsSave, discInfo, discBack, newTrip, blankTrip, inspire, inspireDemo, inspireGo, inspireCreate, zipSheet, zipExport, zipImport, worldFly, worldStep, worldStory, cfSegGo, trkToggle, modeGo, bilanClose, albumSheet, albCover, albumGo, tripShare, tripShareSheet, tripInvite, tripNewCode, tripUnshare, tripJoin, tripJoinGo, tripWho, tripWhoSet, impSheet, impPick, jrSheet, jrTog, jrAll, worldMap, worldMode, worldOpen, worldClose, pjAdd, pjDel, pjOpen, cfSheet, cfGo, tlCo2, hereNow, tlStats, tlKml, tlFill, tlFillGo, rcView, rcAttach, tlIcsGo, capSet, shopSheet, shopAdd, shopTick, shopClear, rembAsk, pollNew, pollSave, pollVote, pollClose, pollDel, pdfRoute, pdfJournal, pdfShare, pdfOpen, pkgPick, pkgApply, hydrateMaps, renderOutils, tlDay, tlIcs, fxTool, fxFill, tlMeteo, tlReceipt, tlRcPhoto, tlRcOcr, tlRcSave, tlReceipts, tlMap, tlBags, tlBagsGo, tlDocs, tlDocEdit, tlDocSave, tlDocDel, tlJournal, pkgSheet, pkgExport, pkgImport, pinToggle, shareSheet, shareLink, askErase, tutoSheet, escaleTuto, demoLoad, demoDel, demoReset, wzGo, wzDates, wzEt, wzSum, wzTpl, wzCreate,
+    planDay, plCfg, plAdd, plDel, plOpt, wizard, radarTuto, rcOpen, rbSheet, rbPhoto, rbSave, zipSavePart, zipCancel, innerGo, inspDeal, inspOpen, compN, compDel, compAdd, compTog, compCreate, inspBack, inspMore, inspFav, inspSurprise, inspVote, gateInstall, partsSheet, partsSave, discInfo, discBack, newTrip, blankTrip, inspire, inspireDemo, inspireGo, inspireCreate, zipSheet, zipExport, zipImport, worldFly, worldStep, worldStory, cfSegGo, trkToggle, modeGo, bilanClose, albumSheet, albCover, albumGo, tripShare, tripShareSheet, tripInvite, tripNewCode, tripUnshare, tripJoin, tripJoinGo, tripWho, tripWhoSet, impSheet, impPick, jrSheet, jrTog, jrAll, worldMap, worldMode, worldOpen, worldClose, pjAdd, pjDel, pjOpen, cfSheet, cfGo, tlCo2, hereNow, tlStats, tlKml, tlFill, tlFillGo, rcView, rcAttach, tlIcsGo, capSet, shopSheet, shopAdd, shopTick, shopClear, rembAsk, pollNew, pollSave, pollVote, pollClose, pollDel, pdfRoute, pdfJournal, pdfShare, pdfOpen, pkgPick, pkgApply, hydrateMaps, renderOutils, tlDay, tlIcs, fxTool, fxFill, tlMeteo, tlReceipt, tlRcPhoto, tlRcOcr, tlRcSave, rcFx, socialHub, tlReceipts, tlMap, tlBags, tlBagsGo, tlDocs, tlDocEdit, tlDocSave, tlDocDel, tlJournal, pkgSheet, pkgExport, pkgImport, pinToggle, shareSheet, shareLink, askErase, tutoSheet, escaleTuto, demoLoad, demoDel, demoReset, wzGo, wzDates, wzEt, wzSum, wzTpl, wzCreate,
     pickColor, newProfile, editProfile, saveProfile, delProfile, whoSheet, setMe,
     genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin,
     _R:()=>R, _M:()=>M, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
