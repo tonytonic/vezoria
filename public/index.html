@@ -1517,6 +1517,16 @@ body.cv-ph-live .cv-actb .ac-path .on,body.cv-ph-live .cv-actb .ac-n{box-shadow:
 .ui-msg{white-space:pre-wrap;font-size:.95rem;line-height:1.45;word-break:break-word}.ui-in{margin-top:12px;width:100%;box-sizing:border-box}
 .ui-act{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}.ui-act .v-btn{width:auto;flex:1;margin:0;min-height:46px}
 @keyframes uiIn{from{opacity:0}to{opacity:1}}
+
+/* ══ Barre du haut FIXE (voyages, synchro, abonnés, verrou, profil) : opaque et collée sous l'heure.
+   iOS 26 ne pose plus son flou quand un élément fixe et plein occupe le haut de l'écran. ══ */
+:root{--tb:58px}
+.hero-top{position:fixed!important;top:0;left:0;right:0;z-index:900;margin:0!important;box-sizing:border-box;
+  height:calc(var(--sat,env(safe-area-inset-top,0px)) + var(--tb));padding:calc(var(--sat,env(safe-area-inset-top,0px)) + 8px) 16px 8px;
+  background:var(--navy);box-shadow:0 8px 18px -12px rgba(0,0,0,.55);transition:background .3s}
+.hero{padding-top:calc(var(--sat,env(safe-area-inset-top,0px)) + var(--tb) + 14px)!important}
+.cv-sub{top:calc(var(--sat,env(safe-area-inset-top,0px)) + var(--tb))!important}
+body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;background:none;box-shadow:none}
 </style>
 </head>
 <body class="is-public">
@@ -10480,7 +10490,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11i';
+  const BUILD = '2026-10-11j';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
