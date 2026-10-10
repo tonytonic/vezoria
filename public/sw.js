@@ -1,7 +1,7 @@
 // Carnet de voyage — fonctionnement hors ligne
 // Pages et fichiers de l'appli : réseau d'abord (toujours la dernière version), copie locale si pas de réseau.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-10w';
+const CACHE = 'vezoria-2026-10-10x';
 const CORE = ['./', './index.html', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
