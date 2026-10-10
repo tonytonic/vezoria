@@ -58,8 +58,8 @@ body.cv-jourj .hero{box-shadow:inset 0 -6px 0 #fbbf24}body.cv-jourj #hdr-title::
 .wm-plan-pin{width:26px;height:26px;border-radius:50%;background:#fbbf24;color:#1f1300;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 4px rgba(251,191,36,.35),0 0 18px #fbbf24;font-size:.8rem}
 .cp-facts{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}.cp-facts span{background:#f3efff;color:#3b0764;border-radius:999px;padding:5px 10px;font-size:.78rem}.cp-facts .tip{border-radius:12px;background:#fff7ed;color:#7c2d12}
 
-body.cv-ph-live{--navy:#0B2B33;--navy2:#0F4C5C;--sun1:#5EEAD4;--sun2:#14B8A6;--sun3:#0284C7;--light:#E3F6F3;--cream:#F0FAF8;--sunset:linear-gradient(120deg,#5EEAD4,#14B8A6 55%,#0284C7)}
-body.cv-ph-live .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(20,184,166,.95) 0%, rgba(2,132,199,.55) 38%, transparent 70%),linear-gradient(180deg,#062126 0%,#0B3B45 60%,#0F5A63 100%)}
+body.cv-ph-live{--navy:#073B40;--navy2:#0B5D63;--sun1:#2DD4BF;--sun2:#0D9488;--sun3:#0369A1;--light:#C9EDE6;--cream:#E6F6F2;--sunset:linear-gradient(120deg,#2DD4BF,#0D9488 55%,#0369A1)}
+body.cv-ph-live .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(13,148,136,1) 0%, rgba(3,105,161,.7) 38%, transparent 70%),linear-gradient(180deg,#03262A 0%,#06474D 60%,#0B6B6E 100%)}
 body.cv-ph-past{--navy:#1E1B4B;--navy2:#312E81;--sun1:#FCD34D;--sun2:#F59E0B;--sun3:#6366F1;--light:#EEF0FF;--cream:#F7F6FF;--sunset:linear-gradient(120deg,#FCD34D,#F59E0B 55%,#6366F1)}
 body.cv-ph-past .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(245,158,11,.9) 0%, rgba(99,102,241,.55) 38%, transparent 70%),linear-gradient(180deg,#0F0C2E 0%,#1E1B4B 60%,#3730A3 100%)}
 .cv-prep2{position:relative;overflow:hidden;border-radius:24px;margin:0 0 12px;padding:16px 16px 14px;color:#fff;background:radial-gradient(110% 80% at 100% 0%, rgba(255,160,107,.55), transparent 60%),linear-gradient(150deg,#2A1238 0%,#5B1F5F 55%,#9D4EDD 100%);box-shadow:0 12px 30px rgba(91,31,95,.35)}
@@ -84,9 +84,9 @@ body.cv-ph-past .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(245,
 body.cv-ph-live .cv-live{background:linear-gradient(135deg,#0B3B45,#0F766E);box-shadow:0 6px 18px rgba(15,118,110,.3)}body.cv-ph-live .cv-hero{background:linear-gradient(135deg,#0F4C5C,#0D9488 60%,#14B8A6);box-shadow:0 8px 24px rgba(13,148,136,.35)}body.cv-ph-live .cv-hero .hb button{color:#0F4C5C}
 body .cv-live.done{background:linear-gradient(135deg,#1E1B4B,#4338CA)}
 
-.cv-fx{position:fixed;inset:0;z-index:99995;pointer-events:none;overflow:hidden;animation:fxIn .25s both}.cv-fx.out{animation:fxOut .45s both}
+.cv-anim{position:fixed;inset:0;z-index:99995;pointer-events:none;overflow:hidden;animation:fxIn .25s both}.cv-anim.out{animation:fxOut .45s both}
 @keyframes fxIn{from{opacity:0}}@keyframes fxOut{to{opacity:0}}
-.cv-fx .fx-e{font-size:72px;line-height:1;display:block;filter:drop-shadow(0 8px 14px rgba(0,0,0,.25))}.cv-fx .fx-i{width:110px;height:auto;display:block}
+.cv-anim .fx-e{font-size:72px;line-height:1;display:block;filter:drop-shadow(0 8px 14px rgba(0,0,0,.25))}.cv-anim .fx-i{width:110px;height:auto;display:block}
 .fx-lab{position:absolute;left:0;right:0;bottom:22%;text-align:center;font-weight:800;font-size:1.6rem;color:#fff;text-shadow:0 2px 3px rgba(0,0,0,.5),0 4px 18px rgba(0,0,0,.45);animation:fxLab 2s .35s both}
 @keyframes fxLab{0%{opacity:0;transform:translateY(14px) scale(.9)}20%,80%{opacity:1;transform:none}100%{opacity:0}}
 .fx-sky,.fx-night{position:absolute;inset:0;background:linear-gradient(180deg,rgba(56,189,248,.55),rgba(186,230,253,.35) 60%,rgba(255,255,255,0))}
@@ -767,6 +767,8 @@ button,input,select,textarea{font-family:var(--ui)}
   border-radius:0 0 34px 34px}
 .hero-sun{position:absolute;right:-60px;bottom:-110px;width:260px;height:260px;border-radius:50%;
   background:radial-gradient(circle at 50% 40%, #FFE2B0 0%, #FFA06B 35%, rgba(242,85,127,.0) 70%);opacity:.75;pointer-events:none}
+body.cv-ph-live .hero-sun{background:radial-gradient(circle at 50% 40%, #CCFBF1 0%, #2DD4BF 35%, rgba(13,148,136,0) 70%);opacity:.6}
+body.cv-ph-past .hero-sun{background:radial-gradient(circle at 50% 40%, #FEF3C7 0%, #FCD34D 35%, rgba(99,102,241,0) 70%);opacity:.6}
 @media (prefers-reduced-motion:no-preference){ .hero-sun{animation:sunrise 1.6s cubic-bezier(.2,.7,.2,1) both} }
 @keyframes sunrise{from{transform:translateY(70px);opacity:0}to{transform:translateY(0);opacity:.75}}
 .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
@@ -801,6 +803,8 @@ body.is-legacy .hero{border-radius:0}
 .cv-nav{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:600;display:flex;justify-content:space-around;
   background:rgba(42,18,56,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:26px;padding:7px 6px;
   box-shadow:0 14px 34px -10px rgba(42,18,56,.6)}
+body.cv-ph-live .cv-nav{background:rgba(7,59,64,.93);box-shadow:0 14px 34px -10px rgba(7,59,64,.6)}
+body.cv-ph-past .cv-nav{background:rgba(30,27,75,.93);box-shadow:0 14px 34px -10px rgba(30,27,75,.6)}
 .cv-nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;color:rgba(255,255,255,.55);
   font-size:.66rem;font-weight:600;padding:6px 2px;border-radius:18px;cursor:pointer}
 .cv-nav button i{font-style:normal;font-size:1.25rem;filter:grayscale(1) brightness(1.6);opacity:.7;transition:transform .2s}
@@ -1054,7 +1058,7 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .cv-foot{text-align:center;font-size:.72rem;padding:18px 12px 8px;color:var(--gray)}
 .cv-foot a{color:inherit}
 .hero-top{position:relative}
-.cv-hero-qr{display:none!important;position:relative;flex:0 0 auto;margin:0 12px 0 auto;z-index:2;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 6px 4px;border:0;border-radius:12px;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;color:#2A1238;font:700 .62rem/1 inherit}
+.cv-hero-qr{position:relative;flex:0 0 auto;margin:0 12px 0 auto;z-index:2;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 6px 4px;border:0;border-radius:12px;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;color:#2A1238;font:700 .62rem/1 inherit}
 .cv-hero-qr svg{display:block;width:46px;height:46px}
 .cv-hero-qr span{font-size:.62rem;font-weight:800;letter-spacing:.02em}
 .cv-share-qr{display:block;margin:6px auto 10px;width:min(64vw,240px);height:auto;background:#fff;border-radius:14px;padding:10px}
@@ -1427,14 +1431,11 @@ html,body{overscroll-behavior-y:none}
 .v-btn.sec{background:transparent;color:var(--ink);border:1.5px solid rgba(42,18,56,.16);box-shadow:none}
 
 img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;object-fit:contain;margin:0 .04em;pointer-events:none;user-select:none}
-body.cv-ph-live img.vi{filter:hue-rotate(170deg) saturate(.92)}body.cv-ph-past img.vi{filter:hue-rotate(-70deg)}
 .cv-nav img.vi,.hero img.vi,.cv-hero img.vi,.cv-live img.vi,.cv-eve img.vi,.cv-prep2 img.vi,.cv-bhero img.vi,.cv-moment:not(.board) img.vi,#cv-film img.vi,.cv-anniv img.vi,#cv-world img.vi,.bp-h img.vi{filter:drop-shadow(0 0 1px rgba(255,255,255,.95)) drop-shadow(0 0 2px rgba(255,255,255,.6))}
-body.cv-ph-live .cv-nav img.vi,body.cv-ph-live .hero img.vi,body.cv-ph-live .cv-hero img.vi,body.cv-ph-live .cv-live img.vi,body.cv-ph-live .cv-eve img.vi{filter:hue-rotate(170deg) saturate(.92) drop-shadow(0 0 1px rgba(255,255,255,.95)) drop-shadow(0 0 2px rgba(255,255,255,.6))}
-body.cv-ph-past .cv-nav img.vi,body.cv-ph-past .hero img.vi,body.cv-ph-past .cv-bhero img.vi,body.cv-ph-past .cv-live img.vi{filter:hue-rotate(-70deg) drop-shadow(0 0 1px rgba(255,255,255,.95)) drop-shadow(0 0 2px rgba(255,255,255,.6))}
 .cv-nav i img.vi{width:24px;height:24px;vertical-align:middle}.cv-quick2 i img.vi{width:30px;height:30px;vertical-align:middle}
 .mo-big img.vi{width:1.15em;height:1.15em}
-.cv-fx .fx-i-plane{width:170px}.cv-fx .fx-i-train{width:220px}.cv-fx .fx-i-bus{width:190px}.cv-fx .fx-i-car{width:140px}.cv-fx .fx-i-boat{width:190px}.cv-fx .fx-i-bear{width:96px}.cv-fx .fx-i-bed{width:190px}.cv-fx .fx-i-cloud{width:100px}.cv-fx .fx-i-moon{width:70px}.cv-fx .fx-i-zzz{width:70px}.cv-fx .fx-i-suitcase{width:110px}.cv-fx .fx-i-star{width:34px}.cv-fx .fx-i-ticket,.cv-fx .fx-i-camera{width:130px}
-.cv-fx.fx-img .fx-blanket{display:none}
+.cv-anim .fx-i-plane{width:170px}.cv-anim .fx-i-train{width:220px}.cv-anim .fx-i-bus{width:190px}.cv-anim .fx-i-car{width:140px}.cv-anim .fx-i-boat{width:190px}.cv-anim .fx-i-bear{width:96px}.cv-anim .fx-i-bed{width:190px}.cv-anim .fx-i-cloud{width:100px}.cv-anim .fx-i-moon{width:70px}.cv-anim .fx-i-zzz{width:70px}.cv-anim .fx-i-suitcase{width:110px}.cv-anim .fx-i-star{width:34px}.cv-anim .fx-i-ticket,.cv-anim .fx-i-camera{width:130px}
+.cv-anim.fx-img .fx-blanket{display:none}
 
 .cv-syncpill{display:inline-flex;align-items:center;gap:4px;border:0;border-radius:999px;padding:6px 10px;background:rgba(255,255,255,.16);color:#fff;font:600 .72rem 'Outfit',system-ui,sans-serif;margin-right:6px;cursor:pointer;backdrop-filter:blur(6px)}
 .cv-syncpill small{font-size:.72rem}.cv-syncpill.wait span{animation:sySpin 1.6s linear infinite;display:inline-block}.cv-syncpill.err{background:rgba(236,77,110,.85)}.cv-syncpill.off{opacity:.75}
@@ -1464,6 +1465,12 @@ body.cv-ph-past .cv-nav img.vi,body.cv-ph-past .hero img.vi,body.cv-ph-past .cv-
 .bu-cat i{grid-column:1/-1;position:relative;height:7px;border-radius:999px;background:var(--light);overflow:hidden}.bu-cat em,.bu-cat u{position:absolute;left:0;top:0;bottom:0;border-radius:999px}.bu-cat em{background:var(--sun2);opacity:.35}.bu-cat u{background:var(--sun2)}
 .bu-acc{background:#fff;border:1px solid var(--light);border-radius:18px;margin:0 0 10px;overflow:hidden}.bu-acc summary{padding:13px 14px;font-weight:700;cursor:pointer;list-style:none;display:flex;gap:6px;align-items:center}.bu-acc summary::-webkit-details-marker{display:none}.bu-acc summary::after{content:'▾';opacity:.5;margin-left:auto}.bu-acc summary small+*{display:none}.bu-acc[open] summary::after{content:'▴'}.bu-acc summary small{color:var(--gray);font-weight:500;margin-left:auto;margin-right:-2px}.bu-acc summary:has(small)::after{margin-left:8px}
 .bu-in{padding:0 14px 14px}
+
+body.cv-ph-live .cv-disc-card{border-color:#8FDCCF;box-shadow:0 4px 14px rgba(13,148,136,.14)}body.cv-ph-live .cv-disc-card .dt{color:#0B5D63}body.cv-ph-live .cv-disc-card .dc button{background:#D3F1EB;color:#0B5D63}body.cv-ph-live .cv-disc-card .dc button.cy{background:#fff;border-color:#8FDCCF}body.cv-ph-live .cv-disc-card .dc button.add{background:#0B5D63;color:#fff}
+body.cv-ph-past .cv-disc-card{border-color:#C7D2FE;box-shadow:0 4px 14px rgba(55,48,163,.12)}body.cv-ph-past .cv-disc-card .dt{color:#312E81}body.cv-ph-past .cv-disc-card .dc button{background:#E0E7FF;color:#312E81}body.cv-ph-past .cv-disc-card .dc button.cy{background:#fff;border-color:#C7D2FE}body.cv-ph-past .cv-disc-card .dc button.add{background:#312E81;color:#fff}
+body.cv-ph-live .cv-actb .ac-path .on,body.cv-ph-live .cv-actb .ac-n{box-shadow:0 0 0 4px rgba(13,148,136,.2)}
+.cv-soin{display:flex;gap:6px;margin:0 0 12px;overflow-x:auto}.cv-soin button{flex:0 0 auto;border:1.5px solid var(--light);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;font-size:.84rem;color:var(--ink);cursor:pointer}.cv-soin button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.cv-fban{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#fff,var(--cream));border:1px solid var(--light);border-radius:20px;padding:12px 14px;margin:0 0 12px}.cv-fban .fb-i{font-size:1.8rem}.cv-fban b{display:block}.cv-fban small{display:block;color:var(--gray);font-size:.78rem;line-height:1.35}.cv-fban button{flex:none;border:0;border-radius:999px;background:var(--navy);color:#fff;font:700 .8rem 'Outfit',system-ui,sans-serif;padding:9px 14px;cursor:pointer}
 </style>
 </head>
 <body class="is-public">
@@ -2040,8 +2047,8 @@ const CV = (function(){
   /* Destinations qu'on peut épingler dans la barre du bas (4 maximum + « Plus ») */
   const DEST = [
     ['prog','🗓️','Programme'], ['resas','🎫','Résas'], ['sous','💸','Budget'], ['live','📍','En cours'],
-    ['souv','📸','Souvenirs'], ['notes','📌','Notes'], ['outils','🧰','Outils'], ['envies','✨','Envies'],
-    ['check','✅','Checklist'], ['ech','📆','Échéancier'], ['past','🗺️','Passés'], ['bilan','🏁','Bilan'], ['reglages','👥','Partage & profils']];
+    ['souv','📸','Souvenirs & bilan'], ['notes','📌','Notes'], ['outils','🧰','Outils'], ['envies','✨','Envies'],
+    ['check','✅','Checklist'], ['ech','📆','Échéancier'], ['past','🗺️','Passés'], ['reglages','👥','Partage & profils']];
   const DEST_DEF = ['prog','resas','sous','live'];
   const DEST_HIDE = k => (k==='live'||k==='past'||k==='bilan') ? 'mode:' + k : ['souv','notes','outils','envies','check','ech'].includes(k) ? 'tab:' + k : '';
   const destHidden = k => { const h = DEST_HIDE(k); return !!h && hidden(h); };
@@ -2226,7 +2233,7 @@ const CV = (function(){
   }
   function refresh(){ if(M.trip===LEGACY){ renderHeader(); return; } applyMode(); }
 
-  function phaseTheme(){ const t = M.trip !== LEGACY && trip(), ph = t ? tripPhase(t) : 'prep'; document.body.classList.toggle('cv-ph-live', ph === 'live'); document.body.classList.toggle('cv-ph-past', ph === 'past'); }
+  function phaseTheme(){ const t = M.trip !== LEGACY && trip(), ph = t ? tripPhase(t) : 'prep'; const was = document.body.className; document.body.classList.toggle('cv-ph-live', ph === 'live'); document.body.classList.toggle('cv-ph-past', ph === 'past'); if(was !== document.body.className && typeof viPhase === 'function') try { viPhase(); } catch(e){} }
   function render(){
     phaseTheme();
     setTimeout(moments, 900); setTimeout(liveMapHydrate, 80); setTimeout(poem, 0); setTimeout(progMapHydrate, 120); setTimeout(()=>{ if(document.querySelector('.cv-anniv img[data-ph]:not([data-ok])')) hydrate(); }, 60);
@@ -3940,7 +3947,13 @@ const CV = (function(){
     } finally { hydrating = false; }
     if(document.querySelector('img[data-ph]:not([data-ok])')) setTimeout(hydrate, 50);
   }
+  async function sniffImg(blob){
+    try { const h = new Uint8Array(await blob.slice(0, 12).arrayBuffer());
+      const t = h[0]===0xFF && h[1]===0xD8 ? 'image/jpeg' : h[0]===0x89 && h[1]===0x50 ? 'image/png' : (h[8]===0x57 && h[9]===0x45 && h[10]===0x42 && h[11]===0x50) ? 'image/webp' : (h[4]===0x66 && h[5]===0x74 && h[6]===0x79 && h[7]===0x70) ? 'image/heic' : '';
+      return t && t !== blob.type ? new Blob([blob], {type:t}) : blob; } catch(e){ return blob; }
+  }
   async function decodeImg(blob){
+    blob = await sniffImg(blob);
     try { return await createImageBitmap(blob); } catch(e){}
     const u = URL.createObjectURL(blob);
     try { const im = new Image(); im.decoding = 'async'; im.src = u; await im.decode(); return im; } finally { setTimeout(()=>URL.revokeObjectURL(u), 1000); }
@@ -3991,7 +4004,7 @@ const CV = (function(){
         if(M.pq.length) cryptShow('🔐 Chiffrement des photos… (' + pqN() + ' restante' + (pqN() > 1 ? 's' : '') + ')');
       }
     } catch(e){ upErr = 'réseau : ' + (e && e.message || e); }
-    cryptHide(M.pq.length ? (upErr ? '⚠️ Photos non envoyées : ' + upErr : (waiting ? '⏳ Photos en attente : voyage pas encore en ligne' : '')) : '🔒 Photos chiffrées et envoyées');
+    M.pqErr = upErr || ''; cryptHide(M.pq.length ? (upErr ? '⚠️ Photos non envoyées : ' + upErr : (waiting ? '⏳ Photos en attente : voyage pas encore en ligne' : '')) : '🔒 Photos chiffrées et envoyées');
     uploading = false; syncDot();
     photoPurge();
   }
@@ -3999,7 +4012,7 @@ const CV = (function(){
   const souvs = () => list('souv', s=>s.trip===M.trip).sort((a,b)=>(a.date||'').localeCompare(b.date||'') || (a.ordre||0)-(b.ordre||0));
   function renderSouv(){
     const all = souvs(), nph = all.reduce((s,x)=>s+(x.photos||[]).length,0);
-    let h = `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">📸 ${all.length} souvenir${all.length>1?'s':''}</div><div class="v-sum-small">${nph} photo${nph>1?'s':''}</div></div>
+    let h = souvTop() + `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">📸 ${all.length} souvenir${all.length>1?'s':''}</div><div class="v-sum-small">${nph} photo${nph>1?'s':''}</div></div>
       <div class="v-sum-small">Les étapes, les récits et les photos du voyage. Ajoute tes propres souvenirs avec leurs photos.</div>
       <div class="cv-row" style="margin-top:10px"><button class="v-day-edit" onclick="CV.editSouv(null)">＋ Souvenir</button><button class="v-day-edit" onclick="CV.autoPhotoPick()">✨ Ranger mes photos</button>${nph || all.length ? `<button class="v-day-edit" onclick="CV.filmOpen()">🎬 Film du voyage</button>` : ''}</div>
       ${(M.pq||[]).length && M.sync.on ? `<div class="v-sum-small" style="margin-top:6px">${E2E ? '🔐' : '☁️'} ${pqN()} photo(s) en cours ${E2E ? 'de chiffrement et d’envoi' : 'd’envoi'}…</div>` : ''}
@@ -6382,11 +6395,11 @@ const CV = (function(){
     let nf = 0; P.conf.forEach(c=>{ if(c.pick === 'theirs') touch(c.theirs); else if(c.pick === 'fuse'){ touch(pkgFuse(c.mine, c.theirs)); nf++; } });
     let np = 0;
     for(const [id, s] of Object.entries(P.photos||{})){
-      try { const ex = await IDB.get(id); if(ex && ex.blob) continue; await IDB.put({id, blob:new Blob([typeof s === 'function' ? await s() : tlB64.dec(s)], {type:'image/jpeg'}), up:0}); np++; if(M.sync && M.sync.on){ M.pq = M.pq || []; M.pq.push(id); } } catch(e){}
+      try { const ex = await IDB.get(id); if(ex && ex.blob) continue; await IDB.put({id, blob:new Blob([typeof s === 'function' ? await s() : tlB64.dec(s)], {type:'image/jpeg'}), up:0}); np++; M.pq = M.pq || []; if(!M.pq.includes(id)) M.pq.push(id); } catch(e){}
     }
     pkgSnap();
     if(!M.trip || !R[M.trip]){ const tt = trips()[0]; if(tt) M.trip = tt.id; }
-    persist(); closeSheet(true); refresh(); if(M.sync && M.sync.on){ queueSync(); uploadQueue(); }
+    persist(); closeSheet(true); refresh(); queueSync(); uploadQueue();
     alert(`📥 Paquet de ${P.data.from || 'quelqu’un'} fusionné :\n• ${P.add.length} fiche(s) ajoutée(s)\n• ${P.upd.length} mise(s) à jour\n• ${P.keep.length} gardée(s) telles quelles chez toi\n• ${P.conf.length} conflit(s) réglé(s)${nf ? ' (' + nf + ' fusionnée(s))' : ''}\n• ${np} photo(s) ajoutée(s)\n\nRien de ce que tu avais saisi n’a été perdu.`);
   }
   const pkgBox = () => `<div class="v-box"><h3>📦 Sans serveur : paquets à échanger</h3>
@@ -6402,6 +6415,7 @@ const CV = (function(){
      ══════════════════════════════════════════════════════════════════════════ */
   // Fonds de carte gratuits, sans clé : OpenStreetMap (licence ODbL, attribution affichée).
   const TILES = [
+    {url:(z,x,y)=>`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/${z}/${y}/${x}`, by:'© Esri · © OpenStreetMap'},
     {url:(z,x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`, by:'© contributeurs OpenStreetMap'}
   ];
   const tileImg = {}; let tileBy = TILES[0].by;
@@ -6445,7 +6459,12 @@ const CV = (function(){
     (o.lines||[]).forEach(l=>{ const L = l.pts.map(p=>P({lat:p[0], lng:p[1]})); if(L.length < 2) return; g.lineJoin = 'round'; g.lineCap = 'round';
       g.strokeStyle = 'rgba(255,255,255,.95)'; g.lineWidth = 7; g.beginPath(); L.forEach(([a,b],i)=> i ? g.lineTo(a,b) : g.moveTo(a,b)); g.stroke();
       g.strokeStyle = l.color || '#0ea5e9'; g.lineWidth = 4; g.beginPath(); L.forEach(([a,b],i)=> i ? g.lineTo(a,b) : g.moveTo(a,b)); g.stroke(); });
-    (o.markers||[]).forEach(m=>{
+    if(o.round) (o.markers||[]).forEach(m=>{   // repères ronds numérotés, nom dans une pastille blanche
+      const [a,b] = P(m); g.fillStyle = m.color || '#7C3AED'; g.strokeStyle = '#fff'; g.lineWidth = 3; g.beginPath(); g.arc(a, b, m.label === '•' ? 5 : 11, 0, 7); g.fill(); g.stroke();
+      if(m.label !== '•'){ g.fillStyle = '#fff'; g.font = 'bold 11px -apple-system,Helvetica,Arial,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(m.label), a, b + .5); g.textBaseline = 'alphabetic'; }
+      if(m.name){ g.font = '600 12px -apple-system,Helvetica,Arial,sans-serif'; const w = g.measureText(m.name).width + 12; g.fillStyle = 'rgba(255,255,255,.94)'; g.beginPath(); g.roundRect ? g.roundRect(a + 14, b - 10, w, 20, 10) : g.rect(a + 14, b - 10, w, 20); g.fill(); g.fillStyle = '#1f2937'; g.textAlign = 'left'; g.fillText(m.name, a + 20, b + 4); }
+    });
+    if(!o.round) (o.markers||[]).forEach(m=>{
       const [a,b] = P(m), home = m.kind === 'home';
       g.fillStyle = home ? '#111827' : (m.color || '#dc2626'); g.strokeStyle = '#fff'; g.lineWidth = 2.5;
       g.beginPath(); g.moveTo(a, b); g.bezierCurveTo(a-12, b-14, a-12, b-30, a, b-30); g.bezierCurveTo(a+12, b-30, a+12, b-14, a, b); g.fill(); g.stroke();
@@ -6481,11 +6500,13 @@ const CV = (function(){
     if(!r.loop && r.end && r.end.lat != null) markers.push(Object.assign({kind:'home', label:'A'}, r.end));
     return drawMap({w, h, line, markers});
   }
-  async function tripMapCanvas(w, h){
+  async function tripMapCanvas(w, h, pretty){
     const st = tlStages(); if(!st.length) return null;
     const pts = []; for(const s of st){ const c = geoCached(s.city) || await geocode(s.city, null).catch(()=>null); if(c) pts.push({lat:c.lat, lng:c.lng, name:s.city}); }
     if(!pts.length) return null;
     const steps = geoSouvs(M.trip).map(s=>({lat:s.lat, lng:s.lng, label:'•', color:'#16a34a'}));
+    const col = (getComputedStyle(document.body).getPropertyValue('--sun2') || '').trim() || '#7C3AED';
+    if(pretty) return drawMap({w, h, round:true, line: pts.map(p=>[p.lat,p.lng]), dashed:true, color:col, maxZoom:11, pad:56, markers: [...steps.map(s=>Object.assign({}, s, {label:'•', color:'#94a3b8'})), ...pts.map((p,i)=>Object.assign({label:i+1, color:col}, p))]});
     return drawMap({w, h, line: pts.map(p=>[p.lat,p.lng]), dashed:true, color:'#7C3AED', maxZoom:12, markers: [...pts.map((p,i)=>Object.assign({label:i+1, color:'#7C3AED'}, p)), ...steps]});
   }
   async function hydrateMaps(){
@@ -9342,7 +9363,7 @@ ${pm.join('\n')}</Document></kml>`;
     filmAudioInit(); toast('🎬 Préparation du film…');
     const D = await filmData();
     D.imgs = []; await filmMapPrep(D).catch(()=>{});
-    for(const p of D.pick){ try { const b = await photoBlob(p.id); if(b) D.imgs.push({bmp: await createImageBitmap(b), cap:p.cap, date:p.date}); } catch(e){} }
+    for(const p of D.pick){ try { const b = await photoBlob(p.id); if(b) D.imgs.push({bmp: await decodeImg(b), cap:p.cap, date:p.date}); } catch(e){} }
     if(!D.imgs.length && !D.pts.length && !D.tot){ alert('Il n’y a encore rien à raconter : ajoute des souvenirs avec des photos, ou des dépenses.'); return; }
     D.scenes = [{k:'title', d:4}];
     if(D.pts.length >= 2) D.scenes.push({k:'map', d:5.5});
@@ -9360,7 +9381,7 @@ ${pm.join('\n')}</Document></kml>`;
     document.body.appendChild(el); document.body.style.overflow = 'hidden';
     filmAudioStart(); filmLoop(performance.now());
   }
-  function filmClose(){ if(!FM) return; filmAudioStop(); cancelAnimationFrame(FM.raf); if(FM.rec){ try { FM.rec.stop(); } catch(e){} } (FM.D.imgs||[]).forEach(i=>{ try { i.bmp.close(); } catch(e){} }); FM = null; const el = document.getElementById('cv-film'); if(el) el.remove(); document.body.style.overflow = ''; }
+  function filmClose(){ if(!FM) return; filmAudioStop(); cancelAnimationFrame(FM.raf); if(FM.rec){ try { FM.rec.stop(); } catch(e){} } (FM.D.imgs||[]).forEach(i=>{ try { i.bmp.close && i.bmp.close(); } catch(e){} }); FM = null; const el = document.getElementById('cv-film'); if(el) el.remove(); document.body.style.overflow = ''; }
   function filmPlay(){ if(!FM) return; FM.playing = !FM.playing; document.getElementById('cv-film-pp').textContent = FM.playing ? '⏸' : '▶'; if(FM.playing){ FM.last = performance.now(); if(FA){ if(FA.ac && FA.ac.state === 'suspended') FA.ac.resume(); const pr = FA.el.play(); if(pr && pr.catch) pr.catch(()=>{}); } } else if(FA) FA.el.pause(); }
   function filmRestart(){ if(!FM) return; filmAudioStart(); FM.pos = 0; FM.playing = true; FM.last = performance.now(); document.getElementById('cv-film-pp').textContent = '⏸'; }
   function filmLoop(now){
@@ -9815,6 +9836,8 @@ ${pm.join('\n')}</Document></kml>`;
   const VI = {"✈️": "airplane", "✈": "airplane", "🛫": "airplane-departure", "🛫️": "airplane-departure", "🚆": "train", "🚆️": "train", "🚄": "high-speed-train", "🚄️": "high-speed-train", "🚇": "metro", "🚇️": "metro", "🚌": "bus", "🚌️": "bus", "🚐": "minibus", "🚐️": "minibus", "🚗": "automobile", "🚗️": "automobile", "🚕": "taxi", "🚕️": "taxi", "⛴️": "ferry", "⛴": "ferry", "⛵": "sailboat", "⛵️": "sailboat", "🛣️": "motorway", "🛣": "motorway", "🚶": "person-walking", "🚶️": "person-walking", "🚀": "rocket", "🚀️": "rocket", "🧭": "compass", "🧭️": "compass", "🛰️": "satellite", "🛰": "satellite", "📡": "satellite-antenna", "📡️": "satellite-antenna", "🏨": "hotel", "🏨️": "hotel", "🛏️": "bed", "🛏": "bed", "🧸": "teddy-bear", "🧸️": "teddy-bear", "💤": "zzz", "💤️": "zzz", "🌙": "crescent-moon", "🌙️": "crescent-moon", "🏡": "house-with-garden", "🏡️": "house-with-garden", "🏠": "house", "🏠️": "house", "📍": "round-pushpin", "📍️": "round-pushpin", "📌": "pushpin", "📌️": "pushpin", "🗺️": "world-map", "🗺": "world-map", "🌍": "globe-showing-europe-africa", "🌍️": "globe-showing-europe-africa", "🌐": "globe-with-meridians", "🌐️": "globe-with-meridians", "🏙️": "cityscape", "🏙": "cityscape", "🏖️": "beach-with-umbrella", "🏖": "beach-with-umbrella", "🏛️": "classical-building", "🏛": "classical-building", "⛪": "church", "⛪️": "church", "🏔️": "snow-capped-mountain", "🏔": "snow-capped-mountain", "🌅": "sunrise", "🌅️": "sunrise", "🎡": "ferris-wheel", "🎡️": "ferris-wheel", "🏺": "amphora", "🏺️": "amphora", "🐘": "elephant", "🐘️": "elephant", "🌳": "deciduous-tree", "🌳️": "deciduous-tree", "🌿": "herb", "🌿️": "herb", "🌱": "seedling", "🌱️": "seedling", "🌊": "water-wave", "🌊️": "water-wave", "🎫": "ticket", "🎫️": "ticket", "🎟️": "admission-tickets", "🎟": "admission-tickets", "📄": "page-facing-up", "📄️": "page-facing-up", "🧾": "receipt", "🧾️": "receipt", "🛂": "passport-control", "🛂️": "passport-control", "🪪": "identification-card", "🪪️": "identification-card", "📋": "clipboard", "📋️": "clipboard", "📎": "paperclip", "📎️": "paperclip", "🗂️": "card-index-dividers", "🗂": "card-index-dividers", "📂": "open-file-folder", "📂️": "open-file-folder", "🗒️": "spiral-notepad", "🗒": "spiral-notepad", "📝": "memo", "📝️": "memo", "✉️": "envelope", "✉": "envelope", "📨": "incoming-envelope", "📨️": "incoming-envelope", "📥": "inbox-tray", "📥️": "inbox-tray", "📤": "outbox-tray", "📤️": "outbox-tray", "📲": "mobile-phone-with-arrow", "📲️": "mobile-phone-with-arrow", "🖨️": "printer", "🖨": "printer", "💶": "euro-banknote", "💶️": "euro-banknote", "💸": "money-with-wings", "💸️": "money-with-wings", "💱": "currency-exchange", "💱️": "currency-exchange", "💳": "credit-card", "💳️": "credit-card", "💰": "money-bag", "💰️": "money-bag", "⚖️": "balance-scale", "⚖": "balance-scale", "🛒": "shopping-cart", "🛒️": "shopping-cart", "📊": "bar-chart", "📊️": "bar-chart", "📸": "camera-with-flash", "📸️": "camera-with-flash", "📷": "camera", "📷️": "camera", "🖼️": "framed-picture", "🖼": "framed-picture", "🎬": "clapper-board", "🎬️": "clapper-board", "📖": "open-book", "📖️": "open-book", "📕": "closed-book", "📕️": "closed-book", "🎵": "musical-note", "🎵️": "musical-note", "🔇": "muted-speaker", "🔇️": "muted-speaker", "🔊": "speaker-high-volume", "🔊️": "speaker-high-volume", "✍️": "writing-hand", "✍": "writing-hand", "💭": "thought-balloon", "💭️": "thought-balloon", "🎨": "artist-palette", "🎨️": "artist-palette", "✨": "sparkles", "✨️": "sparkles", "🪄": "magic-wand", "🪄️": "magic-wand", "💡": "light-bulb", "💡️": "light-bulb", "🎉": "party-popper", "🎉️": "party-popper", "🎁": "wrapped-gift", "🎁️": "wrapped-gift", "❤️": "red-heart", "❤": "red-heart", "🤍": "white-heart", "🤍️": "white-heart", "💕": "two-hearts", "💕️": "two-hearts", "💖": "sparkling-heart", "💖️": "sparkling-heart", "🏁": "chequered-flag", "🏁️": "chequered-flag", "🎯": "bullseye", "🎯️": "bullseye", "🎓": "graduation-cap", "🎓️": "graduation-cap", "🙏": "folded-hands", "🙏️": "folded-hands", "👋": "waving-hand", "👋️": "waving-hand", "✋": "raised-hand", "✋️": "raised-hand", "👀": "eyes", "👀️": "eyes", "🙈": "see-no-evil-monkey", "🙈️": "see-no-evil-monkey", "👤": "bust-in-silhouette", "👤️": "bust-in-silhouette", "👥": "busts-in-silhouette", "👥️": "busts-in-silhouette", "👪": "family", "👪️": "family", "👶": "baby", "👶️": "baby", "🗳️": "ballot-box-with-ballot", "🗳": "ballot-box-with-ballot", "🔗": "link", "🔗️": "link", "☀️": "sun", "☀": "sun", "🌤️": "sun-behind-small-cloud", "🌤": "sun-behind-small-cloud", "🌥️": "sun-behind-large-cloud", "🌥": "sun-behind-large-cloud", "☁️": "cloud", "☁": "cloud", "❄️": "snowflake", "❄": "snowflake", "🌡️": "thermometer", "🌡": "thermometer", "⛷️": "skier", "⛷": "skier", "🥾": "hiking-boot", "🥾️": "hiking-boot", "🧗": "person-climbing", "🧗️": "person-climbing", "🧘": "person-in-lotus-position", "🧘️": "person-in-lotus-position", "🍝": "spaghetti", "🍝️": "spaghetti", "☕": "hot-beverage", "☕️": "hot-beverage", "🎲": "game-die", "🎲️": "game-die", "🧩": "puzzle-piece", "🧩️": "puzzle-piece", "🧴": "lotion-bottle", "🧴️": "lotion-bottle", "🎒": "backpack", "🎒️": "backpack", "💼": "briefcase", "💼️": "briefcase", "🧳": "luggage", "🧳️": "luggage", "📅": "calendar", "📅️": "calendar", "🗓️": "spiral-calendar", "🗓": "spiral-calendar", "📆": "tear-off-calendar", "📆️": "tear-off-calendar", "✅": "check-mark-button", "✅️": "check-mark-button", "⚠️": "warning", "⚠": "warning", "🗑": "wastebasket", "🗑️": "wastebasket", "💾": "floppy-disk", "💾️": "floppy-disk", "📦": "package", "📦️": "package", "🔎": "magnifying-glass-tilted-right", "🔎️": "magnifying-glass-tilted-right", "🔍": "magnifying-glass-tilted-left", "🔍️": "magnifying-glass-tilted-left", "⚡": "high-voltage", "⚡️": "high-voltage", "✏️": "pencil", "✏": "pencil", "🔒": "locked", "🔒️": "locked", "🔓": "unlocked", "🔓️": "unlocked", "🔐": "locked-with-key", "🔐️": "locked-with-key", "🔑": "key", "🔑️": "key", "⏳": "hourglass-not-done", "⏳️": "hourglass-not-done", "⏱️": "stopwatch", "⏱": "stopwatch", "🕘": "nine-o-clock", "🕘️": "nine-o-clock", "🕓": "four-o-clock", "🕓️": "four-o-clock", "⚙️": "gear", "⚙": "gear", "📴": "mobile-phone-off", "📴️": "mobile-phone-off", "📱": "mobile-phone", "📱️": "mobile-phone", "☎": "telephone", "☎️": "telephone", "📞": "telephone-receiver", "📞️": "telephone-receiver", "🔔": "bell", "🔔️": "bell", "🔌": "electric-plug", "🔌️": "electric-plug", "🧰": "toolbox", "🧰️": "toolbox", "🛠️": "hammer-and-wrench", "🛠": "hammer-and-wrench", "🧹": "broom", "🧹️": "broom", "🔴": "red-circle", "🔴️": "red-circle", "🟠": "orange-circle", "🟠️": "orange-circle", "🟢": "green-circle", "🟢️": "green-circle", "👁️": "eye", "👁": "eye", "🏳️": "white-flag", "🏳": "white-flag"};
   const VI_KEYS = Object.keys(VI).sort((a,b)=>b.length - a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
   const VI_RE = new RegExp(VI_KEYS.join('|'), 'g'), VI_TEST = new RegExp(VI_KEYS.join('|'));
+  const VI_DIR = () => document.body.classList.contains('cv-ph-live') ? 'icons-live/' : document.body.classList.contains('cv-ph-past') ? 'icons-past/' : 'icons/';
+  function viPhase(){ const d = VI_DIR(); document.querySelectorAll('img.vi').forEach(i=>{ const n = i.src.split('/').pop(); if(!i.src.endsWith('/' + d + n)) i.src = d + n; }); }
   const VI_SKIP = /^(SCRIPT|STYLE|TEXTAREA|OPTION|SELECT|TITLE|INPUT|CODE|PRE)$/;
   function viWalk(root){
     if(!root || M.noVi) return;
@@ -9824,7 +9847,7 @@ ${pm.join('\n')}</Document></kml>`;
     L.forEach(n => {
       const t = n.nodeValue, f = document.createDocumentFragment(); let last = 0;
       t.replace(VI_RE, (m, i) => { if(i > last) f.appendChild(document.createTextNode(t.slice(last, i)));
-        const im = document.createElement('img'); im.className = 'vi'; im.alt = m; im.src = 'icons/' + VI[m] + '.webp'; im.draggable = false; im.decoding = 'async'; f.appendChild(im); last = i + m.length; return m; });
+        const im = document.createElement('img'); im.className = 'vi'; im.alt = m; im.src = VI_DIR() + VI[m] + '.webp'; im.draggable = false; im.decoding = 'async'; f.appendChild(im); last = i + m.length; return m; });
       if(last < t.length) f.appendChild(document.createTextNode(t.slice(last)));
       if(n.parentNode) n.parentNode.replaceChild(f, n);
     });
@@ -9832,7 +9855,7 @@ ${pm.join('\n')}</Document></kml>`;
   { let viQ = new Set(), viT = 0;
     const flush = () => { viT = 0; const q = [...viQ]; viQ.clear(); q.forEach(n => { if(n.isConnected) viWalk(n); }); };
     new MutationObserver(list => { for(const r of list){ if(r.type === 'characterData') viQ.add(r.target); else r.addedNodes.forEach(n => { if(n.nodeType === 1 || n.nodeType === 3) viQ.add(n); }); }
-      if(!viT) viT = setTimeout(flush, 0); }).observe(document.body, {childList:true, subtree:true, characterData:true});
+      flush(); }).observe(document.body, {childList:true, subtree:true, characterData:true});
     setTimeout(() => viWalk(document.body), 50); }
 
   /* ---------- 🎬 Petites animations (un avion qui décolle, un nounours qui va au lit…) ----------
@@ -9843,8 +9866,8 @@ ${pm.join('\n')}</Document></kml>`;
   const fxEl = k => FX_IMG[k] ? `<img class="fx-i fx-i-${k}" src="${FX_IMG[k]}" alt="">` : `<span class="fx-e" data-novi>${FX_EMO[k]}</span>`;
   function fxPlay(kind, label){
     try { if(M.noFx || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return; } catch(e){}
-    const old = document.getElementById('cv-fx'); if(old) old.remove();
-    const el = document.createElement('div'); el.id = 'cv-fx'; el.className = 'cv-fx fx-' + kind;
+    const old = document.getElementById('cv-anim'); if(old) old.remove();
+    const el = document.createElement('div'); el.id = 'cv-anim'; el.className = 'cv-anim fx-' + kind;
     const L = label ? `<div class="fx-lab">${esc(label)}</div>` : '';
     const scenes = {
       plane: `<div class="fx-sky"></div><div class="fx-runway"></div><div class="fx-cl c1">${fxEl('cloud')}</div><div class="fx-cl c2">${fxEl('cloud')}</div><div class="fx-mover">${fxEl('plane')}</div>${L}`,
@@ -9905,12 +9928,17 @@ ${pm.join('\n')}</Document></kml>`;
     return `<div class="cv-pmap"><div class="pm-h"><b>Mon itinéraire</b><small>${st.map(s=>esc(s.city)).join(' → ')}</small></div>
       <button type="button" class="pm-m" data-pmap="${esc(key)}" onclick="CV.tlMap()" aria-label="Agrandir la carte">${PMAP[key] ? `<img src="${PMAP[key]}" alt="">` : '<span class="v-sum-small">🗺️ Carte en cours…</span>'}</button></div>`;
   }
+  const PMAP_BUSY = {};
   async function progMapHydrate(){
-    const el = document.querySelector('.cv-pmap [data-pmap]'); if(!el || el.querySelector('img') || el.dataset.busy) return; el.dataset.busy = '1';
-    const key = el.dataset.pmap;
-    try { const c = await tripMapCanvas(640, 300); if(c){ PMAP[key] = c.toDataURL('image/jpeg', .85); document.querySelectorAll(`.cv-pmap [data-pmap="${CSS.escape(key)}"]`).forEach(e=>{ e.innerHTML = `<img src="${PMAP[key]}" alt="">`; }); } else el.closest('.cv-pmap').remove(); }
-    catch(e){ el.innerHTML = ''; }
+    const el = document.querySelector('.cv-pmap [data-pmap]'); if(!el || el.querySelector('img:not(.vi)')) return;
+    const key = el.dataset.pmap; if(PMAP_BUSY[key]) return; PMAP_BUSY[key] = 1;
+    const paint = h => document.querySelectorAll(`.cv-pmap [data-pmap="${CSS.escape(key)}"]`).forEach(e=>{ e.innerHTML = h; });
+    try { const c = await withTimeout(tripMapCanvas(640, 300, true), 25000);
+      if(c){ PMAP[key] = c.toDataURL('image/jpeg', .88); paint(`<img src="${PMAP[key]}" alt="">`); } else paint('<span class="v-sum-small">🗺️ Villes introuvables sur la carte</span>'); }
+    catch(e){ paint('<span class="v-sum-small">🗺️ Carte indisponible pour l’instant (connexion ?)</span>'); }
+    finally { delete PMAP_BUSY[key]; }
   }
+
 
   /* ======================================================================
      ☁️ Synchro simplifiée · 🔗 invitations par lien · 👀 abonnés (photos + récits, ❤️ et 💬)
@@ -9941,7 +9969,7 @@ ${pm.join('\n')}</Document></kml>`;
     openSheet(`<h2>☁️ Synchronisation</h2>
       <div class="v-sum-small" style="margin-bottom:10px">Tout part tout seul : à l’ouverture, après chaque modification, puis régulièrement. Hors connexion, rien n’est perdu : ça part dès que le réseau revient.</div>
       ${rows.join('') || '<div class="v-sum-small">Rien n’est partagé pour l’instant : tes voyages restent sur ce téléphone. Partage un voyage depuis son bouton 🔗 Partager.</div>'}
-      ${ph ? `<div class="sy-r"><b>📸 Photos</b><small>⏳ ${ph} en cours d’envoi</small></div>` : ''}
+      ${ph ? `<div class="sy-r"><b>📸 Photos</b><small>${M.pqErr ? '⚠️ ' + esc(M.pqErr) + ' · ' : ''}⏳ ${ph} en attente d’envoi${(M.pq||[]).length && !(M.pq||[]).some(id=>photoCode(id)) ? ' · voyage pas encore partagé : touche 🔗 Partager' : ''}</small></div>` : ''}
       <div class="v-actions">${rows.length ? `<button type="button" class="v-btn" onclick="CV.syncNow(true);CV.close()">🔄 Synchroniser maintenant</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.close();CV.tab('reglages')">⚙️ Réglages du partage</button></div>`);
   }
   setInterval(syncPill, 2500);
@@ -10096,6 +10124,15 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function feedClose(){ const ov = document.getElementById('cv-feed'); if(ov) ov.remove(); document.body.style.overflow = ''; M.feedOpen = null; }
   // côté auteur : ❤️ et 💬 sur ses souvenirs
+  function souvTop(){
+    const t = trip(); if(!t) return '';
+    const seg = `<div class="cv-soin"><button type="button" class="on">📸 Souvenirs</button><button type="button" onclick="CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.filmOpen()">🎬 Film</button><button type="button" onclick="CV.albumSheet()">📕 Album</button></div>`;
+    if(t.demo || hidden('blk:fban')) return seg;
+    const fc = feedCode(t.id);
+    if(!fc) return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>Partage tes souvenirs avec tes proches</b><small>Comme Polarsteps : ils suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.</small></span><button type="button" onclick="CV.feedPublish('${t.id}')">Publier</button></div>`;
+    const nfw = list('follower', x=>x.trip===ftId(t.id)).length, nlk = list('like', l=>l.trip===ftId(t.id) && l.on).length, ncm = list('comment', c=>c.trip===ftId(t.id)).length;
+    return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>${nfw} abonné${nfw>1?'s':''} · ❤️ ${nlk} · 💬 ${ncm}</b><small>Tes souvenirs sont publiés. Touche ❤️ / 💬 sous un souvenir pour lire et répondre.</small></span><button type="button" onclick="CV.feedPublish('${t.id}')">Inviter</button></div>`;
+  }
   function souvSocial(s){
     if(!feedCode(s.trip)) return ''; if(s.priv) return `<div class="sv-so"><small>🔒 Privé : pas visible des abonnés</small></div>`;
     const fid = 'fd:' + s.id, lk = likesOf(fid), cm = commentsOf(fid);
@@ -10108,7 +10145,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-10k';
+  const BUILD = '2026-10-10l';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();

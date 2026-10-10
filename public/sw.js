@@ -1,7 +1,7 @@
 // Carnet de voyage — fonctionnement hors ligne
 // Pages et fichiers de l'appli : réseau d'abord (toujours la dernière version), copie locale si pas de réseau.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-10k';
+const CACHE = 'vezoria-2026-10-10l';
 const CORE = ['./', './index.html', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
@@ -44,7 +44,12 @@ self.addEventListener('fetch', e => {
       return;
     }
     if (url.pathname.startsWith('/api/')) return;
-    if (/\.(mp4|mp3)$/.test(url.pathname)) return;   // vidéo du tuto, musiques du film : lues en direct (lecture par morceaux)
+    if (/\.(mp4|mp3)$/.test(url.pathname)) return;
+    // icônes et dessins : copie locale d'abord (instantané, pas de clignotement)
+    if (/\/(icons|icons-live|icons-past|anim)\//.test(url.pathname)) {
+      e.respondWith(caches.match(req).then(m => m || fetch(req).then(r => { if (r && r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; })));
+      return;
+    }   // vidéo du tuto, musiques du film : lues en direct (lecture par morceaux)
     e.respondWith(timeout(fetch(req), 6000)
       .then(r => { if (r && r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; })
       .catch(() => caches.match(req, {ignoreSearch: true}).then(m => m || caches.match('./index.html'))));
