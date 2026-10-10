@@ -1,16 +1,30 @@
 {
+  "id": "/",
   "name": "Vezoria",
   "short_name": "Vezoria",
+  "description": "Vezoria : prépare, vis et garde tes voyages à plusieurs, gratuitement. Programme jour par jour, réservations, budget partagé, souvenirs, film et album du voyage. Sans compte, sans publicité, chiffré de bout en bout.",
+  "lang": "fr",
+  "dir": "ltr",
   "start_url": "./?src=app",
   "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait",
   "background_color": "#2A1238",
   "theme_color": "#2A1238",
+  "categories": [
+    "travel",
+    "lifestyle"
+  ],
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "icon-512.png",
@@ -23,6 +37,36 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/1-preparer.webp",
+      "sizes": "780x1688",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Prépare ton voyage étape par étape"
+    },
+    {
+      "src": "screenshots/2-en-cours.webp",
+      "sizes": "780x1688",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Pendant le voyage : la prochaine étape en un coup d’œil"
+    },
+    {
+      "src": "screenshots/3-budget.webp",
+      "sizes": "780x1688",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Le budget et qui doit quoi, sans prise de tête"
+    },
+    {
+      "src": "screenshots/4-souvenirs.webp",
+      "sizes": "780x1688",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Les souvenirs, le film et l’album du voyage"
     }
   ],
   "share_target": {
@@ -49,11 +93,8 @@
       ]
     }
   },
-  "id": "/",
-  "lang": "fr",
-  "description": "Vezoria : prépare, vis et garde tes voyages à plusieurs, gratuitement.",
-  "categories": [
-    "travel",
-    "lifestyle"
-  ]
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "prefer_related_applications": false
 }
