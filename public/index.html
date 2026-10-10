@@ -1454,6 +1454,16 @@ body.cv-ph-past .cv-nav img.vi,body.cv-ph-past .hero img.vi,body.cv-ph-past .cv-
 .fd-empty{text-align:center;color:var(--gray);padding:40px 10px}
 .fx-like{position:fixed;left:50%;top:45%;z-index:99996;pointer-events:none;transform:translate(-50%,-50%);animation:fxLike 1.1s ease-out both}.fx-like img{width:120px}
 @keyframes fxLike{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}30%{transform:translate(-50%,-50%) scale(1.15);opacity:1}100%{transform:translate(-50%,-90%) scale(.9);opacity:0}}
+
+.bu-hero{border-radius:24px;padding:16px;margin:0 0 12px;color:#fff;background:radial-gradient(110% 80% at 100% 0%, rgba(255,160,107,.5), transparent 60%),linear-gradient(150deg,var(--navy),var(--navy2));box-shadow:0 12px 26px -14px var(--navy)}
+.bu-k{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;opacity:.8;font-weight:700}.bu-tot{font-size:2.4rem;font-weight:800;letter-spacing:-.02em;margin:4px 0 0}.bu-pp{opacity:.85;font-size:.88rem}
+.bu-bar{height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;margin:12px 0 6px}.bu-bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#FFD9A0,#F3C98B)}
+.bu-pay{display:flex;justify-content:space-between;font-size:.84rem;opacity:.95}.bu-obj{margin-top:10px;font-size:.84rem;opacity:.95;display:flex;flex-wrap:wrap;gap:6px;align-items:center}.bu-obj button{border:0;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font:inherit;font-size:.78rem;padding:4px 10px}.bu-over{color:#FECACA}
+.bu-cats{background:#fff;border:1px solid var(--light);border-radius:20px;padding:12px;margin:0 0 12px}.bu-h{font-weight:800;margin-bottom:6px}
+.bu-cat{display:grid;grid-template-columns:1fr auto;gap:2px 8px;width:100%;border:0;background:none;padding:8px 2px;font:inherit;color:var(--ink);text-align:left;cursor:pointer;border-top:1px solid var(--light)}.bu-cat:first-of-type{border-top:0}
+.bu-cat i{grid-column:1/-1;position:relative;height:7px;border-radius:999px;background:var(--light);overflow:hidden}.bu-cat em,.bu-cat u{position:absolute;left:0;top:0;bottom:0;border-radius:999px}.bu-cat em{background:var(--sun2);opacity:.35}.bu-cat u{background:var(--sun2)}
+.bu-acc{background:#fff;border:1px solid var(--light);border-radius:18px;margin:0 0 10px;overflow:hidden}.bu-acc summary{padding:13px 14px;font-weight:700;cursor:pointer;list-style:none;display:flex;gap:6px;align-items:center}.bu-acc summary::-webkit-details-marker{display:none}.bu-acc summary::after{content:'▾';opacity:.5;margin-left:auto}.bu-acc summary small+*{display:none}.bu-acc[open] summary::after{content:'▴'}.bu-acc summary small{color:var(--gray);font-weight:500;margin-left:auto;margin-right:-2px}.bu-acc summary:has(small)::after{margin-left:8px}
+.bu-in{padding:0 14px 14px}
 </style>
 </head>
 <body class="is-public">
@@ -2670,18 +2680,23 @@ const CV = (function(){
     });
     const tot = rows.reduce((a,r)=>({est:a.est+r.est, reel:a.reel+r.reel, proj:a.proj+r.proj, paye:a.paye+r.paye}), {est:0,reel:0,proj:0,paye:0});
     const others = profiles().filter(p=>!v.includes(p.id));
-    let h = `<div class="v-sum">
-        <div class="v-sum-row"><div class="v-sum-big" style="font-size:1rem">👥 ${v.length} voyageur${v.length>1?'s':''}</div>
-          <span class="cv-row" style="gap:6px"><button class="v-chip" onclick="CV.partsSheet()">⚖️ Parts & foyers</button><button class="v-chip" onclick="CV.addCompanion()">＋ Compagnon</button></span></div>
+    // Écran simplifié : l'essentiel en haut, les actions en un geste, le détail dans des volets (rien n'est retiré)
+    const BO = M.budOpen || (M.budOpen = {}), acc = (k, title, body) => `<details class="bu-acc" ${BO[k] ? 'open' : ''} ontoggle="CV.budTog('${k}', this.open)"><summary>${title}</summary><div class="bu-in">${body}</div></details>`;
+    const pp = v.length ? tot.proj / v.length : 0, pctPaid = tot.proj ? Math.min(100, tot.paye / tot.proj * 100) : 0;
+    const objLine = obj ? (pp <= obj ? `<span>🎯 Objectif ${eur(obj)} / pers. · marge ${eur(obj - pp)}</span>` : `<span class="bu-over">🎯 Objectif ${eur(obj)} / pers. · dépasse de ${eur(pp - obj)}</span>`) : '';
+    const r = (ic, l, fn) => `<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
+    const mx = Math.max(1, ...rows.map(x=>x.proj));
+    let h = `<div class="bu-hero"><div class="bu-k">💶 Budget du voyage</div>
+        <div class="bu-tot">${eur(tot.proj)}</div><div class="bu-pp">${v.length > 1 ? `soit ${eur(pp)} par personne · ${v.length} voyageurs` : 'pour tout le voyage'}</div>
+        <div class="bu-bar"><span style="width:${pctPaid.toFixed(1)}%"></span></div>
+        <div class="bu-pay"><span>✅ Payé ${eur(tot.paye)}</span><span>⏳ Reste ${eur(tot.proj - tot.paye)}</span></div>
+        <div class="bu-obj">${objLine || 'Pas encore d’objectif par personne.'} <button type="button" onclick="CV.objAsk()">${obj ? 'modifier' : 'fixer un objectif'}</button></div></div>
+      <div class="cv-quick2">${r('🧾','Dépense',"CV.tlReceipt()")}${r('📷','Tickets',"CV.tlReceipts()")}${v.length > 1 ? r('💸','Rembourser',"document.getElementById('bu-eq')&&document.getElementById('bu-eq').scrollIntoView({behavior:'smooth'})") : ''}${r('📆','Échéancier',"CV.tab('ech')")}${r('⚖️','Parts',"CV.partsSheet()")}${r('💱','Convertir',"CV.fxTool()")}</div>
+      ${v.length > 1 ? `<div id="bu-eq">${equilibreHTML()}</div>` : ''}
+      <div class="bu-cats"><div class="bu-h">Par poste</div>${rows.filter(x=>x.proj > 0 || x.paye > 0).map(x=>`<button type="button" class="bu-cat" onclick="CV.tab('${x.c}')"><span>${CATS[x.c].icon} ${CATS[x.c].lbl}</span><b>${eur(x.proj)}</b><i><em style="width:${(x.proj / mx * 100).toFixed(1)}%"></em><u style="width:${(x.paye / mx * 100).toFixed(1)}%"></u></i></button>`).join('') || '<div class="v-sum-small">Ajoute des trajets, hébergements, visites ou dépenses : le budget se remplit tout seul.</div>'}</div>
+      ${acc('pers', `👥 Par personne <small>${v.length} voyageur${v.length>1?'s':''}</small>`, `
         <div class="v-perslist">${v.map(pid=>pchip(pid, v.length>1 ? `<button onclick="CV.removeCompanion('${pid}')" aria-label="Retirer">✕</button>` : '')).join('')}</div>
-      </div>
-      <div class="v-tiles">
-        <div class="v-tile"><div class="a">${eur(tot.proj)}</div><div class="l">Total du voyage${v.length>1?' (tous)':''}</div></div>
-        <div class="v-tile"><div class="a">${eur(v.length ? tot.proj/v.length : 0)}</div><div class="l">Moyenne par personne</div></div>
-        <div class="v-tile g"><div class="a">${eur(tot.paye)}</div><div class="l">Déjà payé</div></div>
-        <div class="v-tile r"><div class="a">${eur(tot.proj - tot.paye)}</div><div class="l">Reste à payer</div></div>
-      </div>
-      <div class="v-sum">
+        <div class="cv-row" style="gap:6px;margin:8px 0"><button class="v-chip" onclick="CV.partsSheet()">⚖️ Parts & foyers</button><button class="v-chip" onclick="CV.addCompanion()">＋ Compagnon</button></div>
         <div class="v-obj"><span>Objectif par personne</span><input class="v-in" inputmode="decimal" value="${esc(t.objectif||'')}" placeholder="—" onchange="CV.setObj(this.value)"> ${CS()}</div>
         ${per.map(p=>{
           const pct = obj ? Math.min(100, p.proj/obj*100) : 0, ok = !obj || p.proj <= obj;
@@ -2689,22 +2704,22 @@ const CV = (function(){
             <div class="cv-pbud-h">${pchip(p.pid)}<b>${eur(p.proj)}</b></div>
             ${obj ? `<div class="v-bar"><span class="b-paid" style="width:${pct}%;background:${ok?pcol(p.pid):'var(--red)'}"></span></div>` : ''}
             <div class="v-sum-small">sa part réglée ${eur(p.paye)} · reste ${eur(p.proj-p.paye)}${obj ? ` · ${ok ? 'marge '+eur(obj-p.proj) : '<b style="color:var(--red)">dépasse de '+eur(p.proj-obj)+'</b>'}` : ''}</div>
-          </div>`;}).join('')}
-      </div>
-      ${v.length > 1 ? equilibreHTML() : ''}
-      <table class="v-btable">
+          </div>`;}).join('')}`)}
+      ${acc('table', '📊 Estimé, réel et payé par poste', `<table class="v-btable">
         <thead><tr><th>Poste (total)</th><th>Estimé</th><th>Réel</th><th>Payé</th></tr></thead>
         <tbody>
           ${rows.map(r=>`<tr onclick="CV.tab('${r.c}')" style="cursor:pointer"><td>${CATS[r.c].icon} ${CATS[r.c].lbl}</td><td>${eur(r.est)}</td><td>${eur(r.reel)}</td><td>${eur(r.paye)}</td></tr>`).join('')}
           <tr class="tot"><td>Total</td><td>${eur(tot.est)}</td><td>${eur(tot.reel)}</td><td>${eur(tot.paye)}</td></tr>
         </tbody>
-      </table>
-      <div class="v-sum-small" style="padding:0 4px;line-height:1.5">La projection prend le prix réel quand il est saisi, sinon l’estimation.
+      </table>`)}
+      ${acc('how', 'ℹ️ Comment c’est calculé', `<div class="v-sum-small" style="line-height:1.5">La projection prend le prix réel quand il est saisi, sinon l’estimation.
       Prix « par personne » : compté pour chaque voyageur concerné. Prix « global » : divisé entre les voyageurs concernés. Un trajet décoché pour quelqu’un (retour séparé) ne lui est pas compté. Dans chaque fiche, 💶 indique qui prend en charge (égal, une personne, montants) et qui a payé.
-      ${v.length>1 ? 'Pense à mettre à jour les tarifs qui changent à plusieurs (chambre double, cabine de croisière).' : ''}</div>`;
+      ${v.length>1 ? 'Pense à mettre à jour les tarifs qui changent à plusieurs (chambre double, cabine de croisière).' : ''}</div>`)}`;
     document.getElementById('cv-body').innerHTML = h;
   }
   function setObj(val){ const t = trip(); t.objectif = num(val); put(t); renderBudget(); }
+  function objAsk(){ const t = trip(); const v = prompt('Budget visé par personne (en ' + CS() + ') — vide pour aucun :', t.objectif || ''); if(v === null) return; setObj(v); }
+  function budTog(k, o){ M.budOpen = M.budOpen || {}; M.budOpen[k] = !!o; persist(); }
   function addCompanion(){
     const v = tv(), others = profiles().filter(p=>!v.includes(p.id));
     openSheet(`<h2>👥 Ajouter un compagnon</h2>
@@ -9305,11 +9320,12 @@ ${pm.join('\n')}</Document></kml>`;
     const P = D.pts; if(P.length < 2) return;
     const W2 = z => 256 * Math.pow(2, z), wx = (lng, z) => (lng + 180) / 360 * W2(z);
     const wy = (lat, z) => { const r = Math.max(-85, Math.min(85, lat)) * Math.PI / 180; return (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * W2(z); };
-    let z = 13; for(; z > 2; z--){ const xs = P.map(p=>wx(p.lng, z)), ys = P.map(p=>wy(p.lat, z)); if(Math.max(...xs) - Math.min(...xs) <= FW - 180 && Math.max(...ys) - Math.min(...ys) <= 640) break; }
+    let z = 12; for(; z > 1; z--){ const xs = P.map(p=>wx(p.lng, z)), ys = P.map(p=>wy(p.lat, z)); if(Math.max(...xs) - Math.min(...xs) <= FW - 180 && Math.max(...ys) - Math.min(...ys) <= 640) break; }
     const xs = P.map(p=>wx(p.lng, z)), ys = P.map(p=>wy(p.lat, z));
     const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2, left = cx - FW/2, top = cy - 700;
     const n = Math.pow(2, z), jobs = [];
-    const SRC = [(x,y)=>`https://${'abcd'[(x+y)%4]}.basemaps.cartocdn.com/dark_all/${z}/${x}/${y}.png`, (x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`];
+    // fond sombre Esri (gratuit, sans clé), sinon le plan OpenStreetMap assombri
+    const SRC = [(x,y)=>`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${z}/${y}/${x}`, (x,y)=>`https://tile.openstreetmap.org/${z}/${x}/${y}.png`];
     const get = async (x, y) => { for(let k=0;k<SRC.length;k++){ try { const r = await fetch(SRC[k](((x % n) + n) % n, y), {mode:'cors'}); if(r.ok) return {bmp: await createImageBitmap(await r.blob()), dark: k === 0}; } catch(e){} } return null; };
     for(let ty = Math.floor(top/256); ty <= Math.floor((top + FH)/256); ty++){ if(ty < 0 || ty >= n) continue;
       for(let tx = Math.floor(left/256); tx <= Math.floor((left + FW)/256); tx++) jobs.push(get(tx, ty).then(t => t && Object.assign(t, {dx: tx*256 - left, dy: ty*256 - top}))); }
@@ -9319,7 +9335,7 @@ ${pm.join('\n')}</Document></kml>`;
     c.fillStyle = '#0b1026'; c.fillRect(0, 0, FW, FH); ok.forEach(t => { c.drawImage(t.bmp, t.dx, t.dy, 256, 256); try { t.bmp.close(); } catch(e){} });
     if(!ok[0].dark){ c.globalCompositeOperation = 'multiply'; c.fillStyle = '#3b3a7a'; c.fillRect(0, 0, FW, FH); c.globalCompositeOperation = 'source-over'; }
     const g = c.createLinearGradient(0, 0, 0, FH); g.addColorStop(0, 'rgba(8,10,40,.85)'); g.addColorStop(.22, 'rgba(8,10,40,.15)'); g.addColorStop(.8, 'rgba(8,10,40,.15)'); g.addColorStop(1, 'rgba(8,10,40,.8)'); c.fillStyle = g; c.fillRect(0, 0, FW, FH);
-    D.map = {img: cv, X: lng => wx(lng, z) - left, Y: lat => wy(lat, z) - top, attr: ok[0].dark ? '© OpenStreetMap · © CARTO' : '© OpenStreetMap'};
+    D.map = {img: cv, X: lng => wx(lng, z) - left, Y: lat => wy(lat, z) - top, attr: ok[0].dark ? '© Esri · © OpenStreetMap' : '© OpenStreetMap'};
   }
   async function filmOpen(){
     const t = trip(); if(!t){ alert('Ouvre d’abord un voyage.'); return; }
@@ -9401,9 +9417,12 @@ ${pm.join('\n')}</Document></kml>`;
       let hx = X(P[Math.min(full, seg)].lng), hy = Y(P[Math.min(full, seg)].lat);
       if(full < seg){ const f = q - full, a = P[full], b = P[full+1]; hx = X(a.lng) + (X(b.lng) - X(a.lng)) * f; hy = Y(a.lat) + (Y(b.lat) - Y(a.lat)) * f; c.lineTo(hx, hy); }
       c.stroke(); c.shadowBlur = 0;
+      const placed = [];
       P.forEach((pt, i) => { if(i > q + .001) return; const x = X(pt.lng), y = Y(pt.lat), age = Math.min(1, (q - i) * 2 + .001);
         c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y, 10 * filmEase(age), 0, 7); c.fill(); c.strokeStyle = 'rgba(167,139,250,.9)'; c.lineWidth = 3; c.beginPath(); c.arc(x, y, 10 + 12 * (1 - age), 0, 7); c.stroke();
-        if(pt.name && i < 10){ c.globalAlpha = age; c.fillStyle = '#fff'; fz(c, 26, 700); c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 8; c.textAlign = x > FW/2 ? 'right' : 'left'; c.fillText(pt.name, x + (x > FW/2 ? -20 : 20), y + (i % 2 ? 34 : -16)); c.shadowBlur = 0; c.textAlign = 'center'; c.globalAlpha = 1; } });
+        const ly = y + (i % 2 ? 34 : -16), free = pt.name && !placed.some(b => Math.abs(b[0] - x) < 150 && Math.abs(b[1] - ly) < 34);
+        if(free) placed.push([x, ly]);
+        if(free && placed.length <= 10){ c.globalAlpha = age; c.fillStyle = '#fff'; fz(c, 26, 700); c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 8; c.textAlign = x > FW/2 ? 'right' : 'left'; c.fillText(pt.name, x + (x > FW/2 ? -20 : 20), y + (i % 2 ? 34 : -16)); c.shadowBlur = 0; c.textAlign = 'center'; c.globalAlpha = 1; } });
       c.fillStyle = '#fbbf24'; c.shadowColor = '#fbbf24'; c.shadowBlur = 24; c.beginPath(); c.arc(hx, hy, 9, 0, 7); c.fill(); c.shadowBlur = 0;
     },
     stats(c, p, D){
@@ -10089,7 +10108,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-10j';
+  const BUILD = '2026-10-10k';
   async function forceUpdate(){
     try {
       if('serviceWorker' in navigator) for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
@@ -10098,7 +10117,7 @@ ${pm.join('\n')}</Document></kml>`;
     alert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {syncSheet, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {objAsk, budTog, syncSheet, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
   const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
