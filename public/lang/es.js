@@ -1,4 +1,6 @@
 I18N.load({
+"🎬 Voir le tuto vidéo du carnet (3 min)":"🎬 Ver el tutorial en vídeo del cuaderno (3 min)",
+
 "Techno 2":"Techno 2",
 "Électro énergique":"Electro enérgico",
 "Électro swing":"Electro swing",
