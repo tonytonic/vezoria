@@ -3088,4 +3088,5 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "au total · {0} par personne · budget visé {1} / pers.":"toplam · kişi başı {0} · hedef bütçe {1} / kişi",
 "au total · {0} par personne":"toplam · kişi başı {0}",
 "au total · budget visé {0} / pers.":"toplam · hedef bütçe {0} / kişi",
-"souvenirs":"an"});
+"souvenirs":"an",
+"Passer aussi le voyage « {0} » en {1} ?\n\nLes montants déjà saisis ne sont pas convertis : seul le symbole de la devise change.":"“{0}” seyahati de {1} olarak değiştirilsin mi?\n\nGirilmiş tutarlar çevrilmez: yalnızca para birimi simgesi değişir."});

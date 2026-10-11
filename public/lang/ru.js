@@ -3088,4 +3088,5 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "au total · {0} par personne · budget visé {1} / pers.":"всего · {0} на человека · целевой бюджет {1} / чел.",
 "au total · {0} par personne":"всего · {0} на человека",
 "au total · budget visé {0} / pers.":"всего · целевой бюджет {0} / чел.",
-"souvenirs":"моментов"});
+"souvenirs":"моментов",
+"Passer aussi le voyage « {0} » en {1} ?\n\nLes montants déjà saisis ne sont pas convertis : seul le symbole de la devise change.":"Перевести и поездку «{0}» в {1}?\n\nУже введённые суммы не пересчитываются: меняется только символ валюты."});

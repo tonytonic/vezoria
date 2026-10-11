@@ -3088,4 +3088,5 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "au total · {0} par personne · budget visé {1} / pers.":"합계 · 1인당 {0} · 목표 예산 {1} / 1인",
 "au total · {0} par personne":"합계 · 1인당 {0}",
 "au total · budget visé {0} / pers.":"합계 · 목표 예산 {0} / 1인",
-"souvenirs":"순간"});
+"souvenirs":"순간",
+"Passer aussi le voyage « {0} » en {1} ?\n\nLes montants déjà saisis ne sont pas convertis : seul le symbole de la devise change.":"여행 “{0}”도 {1}(으)로 바꿀까요?\n\n이미 입력한 금액은 환산되지 않고 통화 기호만 바뀝니다."});

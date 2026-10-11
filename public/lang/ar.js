@@ -3088,4 +3088,5 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "au total · {0} par personne · budget visé {1} / pers.":"إجمالًا · {0} للشخص · الميزانية المستهدفة {1} / للشخص",
 "au total · {0} par personne":"إجمالًا · {0} للشخص",
 "au total · budget visé {0} / pers.":"إجمالًا · الميزانية المستهدفة {0} / للشخص",
-"souvenirs":"لحظات"});
+"souvenirs":"لحظات",
+"Passer aussi le voyage « {0} » en {1} ?\n\nLes montants déjà saisis ne sont pas convertis : seul le symbole de la devise change.":"هل تريد تحويل رحلة «{0}» أيضًا إلى {1}؟\n\nلا يتم تحويل المبالغ المُدخلة مسبقًا: يتغيّر رمز العملة فقط."});

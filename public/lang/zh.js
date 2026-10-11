@@ -3088,4 +3088,5 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "au total · {0} par personne · budget visé {1} / pers.":"总计 · 每人 {0} · 人均目标预算 {1}",
 "au total · {0} par personne":"总计 · 每人 {0}",
 "au total · budget visé {0} / pers.":"总计 · 人均目标预算 {0}",
-"souvenirs":"回忆"});
+"souvenirs":"回忆",
+"Passer aussi le voyage « {0} » en {1} ?\n\nLes montants déjà saisis ne sont pas convertis : seul le symbole de la devise change.":"也将旅行「{0}」改为 {1} 吗？\n\n已录入的金额不会换算：只更改货币符号。"});

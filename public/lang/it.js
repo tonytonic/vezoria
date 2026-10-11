@@ -146,4 +146,5 @@ I18N.load({
 "au total · {0} par personne · budget visé {1} / pers.":"in totale · {0} a persona · budget previsto {1} / pers.",
 "au total · {0} par personne":"in totale · {0} a persona",
 "au total · budget visé {0} / pers.":"in totale · budget previsto {0} / pers.",
-"souvenirs":"ricordi"});
+"souvenirs":"ricordi",
+"Passer aussi le voyage « {0} » en {1} ?\n\nLes montants déjà saisis ne sont pas convertis : seul le symbole de la devise change.":"Passare anche il viaggio «{0}» a {1}?\n\nGli importi già inseriti non vengono convertiti: cambia solo il simbolo della valuta."});
