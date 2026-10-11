@@ -120,6 +120,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
     .bind(space, since)
     .all();
   if (Math.random() < 0.002 && waitUntil) waitUntil(sweepInactive(env).catch(() => {}));
+  // rappels programmés (notifications) : envoyés quand c'est l'heure, à l'occasion des synchros
+  if (Math.random() < 0.25 && waitUntil) waitUntil(fetch(new URL('/api/push?a=flush', request.url)).catch(() => {}));
   return json({ now, records: results.map(r => JSON.parse(r.data)) });
 }
 
