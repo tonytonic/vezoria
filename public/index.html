@@ -6683,28 +6683,86 @@ const CV = (function(){
 
   /* ---------- 📄 Moteur PDF ---------- */
   async function loadPdfLib(){
-    if(window.PDFLib) return window.PDFLib;
+    if(window.PDFLib) return pdfUni(window.PDFLib);
     await new Promise((res, rej)=>{ const s = document.createElement('script'); s.src = (window.VZ_B || '') + 'vendor/pdf-lib.min.js'; s.onload = res; s.onerror = ()=>rej(new Error('Outil PDF introuvable (vendor/pdf-lib.min.js).')); document.head.appendChild(s); });
-    return window.PDFLib;
+    return pdfUni(window.PDFLib);
   }
   const WIN = '€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ';
   const pdf1 = s => pdfTxt(String(s == null ? '' : s).replace(/\s*[\r\n]+\s*/g, ' '));   // texte sur une seule ligne
   function pdfTxt(s){
-    return String(s == null ? '' : s).replace(/[\u202F\u2009\u00A0]/g, ' ').replace(/→|➜|⟶/g, '->').replace(/←/g, '<-').replace(/≈/g, 'env. ').replace(/[✓✔☑]/g, 'x').replace(/☐/g, 'o').replace(/[‐‑]/g,'-').replace(/ /g,' ').replace(/[\u2028\u2029]/g,' ')
-      .split('').filter(ch => ch === '\n' || (ch.charCodeAt(0) >= 32 && ch.charCodeAt(0) <= 255) || WIN.includes(ch)).join('').replace(/[ \t]{2,}/g,' ').trim().replace(/€ ?/g, '€\u00A0 ');   // espace sûre après €, certains lecteurs PDF la mangent
+    s = String(s == null ? '' : s);
+    if(window.I18N && I18N.lang !== 'fr' && I18N.msg) s = String(I18N.msg(s));   // le PDF parle la langue de l’appli
+    return s.replace(/[\u202F\u2009\u00A0]/g, ' ').replace(/→|➜|⟶/g, '->').replace(/←/g, '<-').replace(/≈/g, PDF_ENV()).replace(/[✓✔☑]/g, 'x').replace(/☐/g, 'o').replace(/[‐‑]/g,'-').replace(/ /g,' ').replace(/[\u2028\u2029]/g,' ')
+      .replace(PDF_EMO, '').split('').filter(ch => ch === '\n' || (ch.charCodeAt(0) >= 32 && (ch.charCodeAt(0) < 127 || ch.charCodeAt(0) >= 160))).join('').replace(/[ \t]{2,}/g,' ').trim().replace(/€ ?/g, '€\u00A0 ');   // espace sûre après €, certains lecteurs PDF la mangent
+  }
+  // découpe en lignes ; un mot trop long (chinois, japonais… écrits sans espaces) se coupe entre deux caractères
+  function pdfWrap(s, font, size, w){
+    const out = [], fit = t => font.widthOfTextAtSize(t, size) <= w;
+    pdfTxt(s).split('\n').forEach(par=>{ let line = '';
+      par.split(' ').forEach(word=>{ const t = line ? line + ' ' + word : word;
+        if(fit(t)){ line = t; return; }
+        if(line && fit(word)){ out.push(line); line = word; return; }
+        let cur = line ? line + ' ' : ''; for(const ch of Array.from(word)){ if(!cur.trim() || fit(cur + ch)) cur += ch; else { out.push(cur.trim()); cur = ch; } } line = cur; });
+      out.push(line); });
+    return out;
+  }
+  /* Écritures hors alphabet latin (中文, 日本語, 한국어, العربية, हिन्दी, русский, Türkçe…) : les polices standard d’un PDF
+     ne les connaissent pas. Chaque ligne concernée est dessinée avec les polices du téléphone (qui savent lier l’arabe et
+     le devanagari) dans une image nette à fond transparent (4 px par point), posée exactement à la place du texte.
+     Le texte latin courant reste du vrai texte PDF, comme avant. */
+  const PDF_EMO = /[\u{1F000}-\u{1FAFF}\u{2300}-\u{23FF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F1E6}-\u{1F1FF}\u{FE0E}\u{FE0F}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu;
+  const PDF_RTL = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/;
+  const PDF_ENV = () => (window.I18N && I18N.lang !== 'fr') ? '~' : 'env. ';
+  const pdfSafe = t => { for(const ch of String(t)){ const c = ch.charCodeAt(0); if(ch !== '\n' && !((c >= 32 && c < 127) || (c >= 160 && c <= 255)) && !WIN.includes(ch)) return false; } return true; };
+  function pdfUni(L){
+    if(L.__uni) return L; L.__uni = true;
+    const S = 4, cv = document.createElement('canvas'), cx = cv.getContext('2d'), wm = new Map(), docs = new WeakMap(), lg = (window.I18N && I18N.lang) || 'fr';
+    const cjk = {zh:'"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",', ja:'"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Noto Sans CJK JP","Yu Gothic",', ko:'"Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Malgun Gothic",'}[lg] || '';
+    const css = (f, px) => { const n = String((f && f.name) || '');
+      return (/Italic|Oblique/.test(n) ? 'italic ' : '') + (/Bold/.test(n) ? '700 ' : '400 ') + px + 'px ' + (/Times|Courier/.test(n)
+        ? '"Times New Roman",Georgia,' + cjk + '"Songti SC","Noto Serif","Noto Naskh Arabic","Noto Serif Devanagari",serif'
+        : '-apple-system,"Helvetica Neue",Helvetica,Arial,' + cjk + '"Noto Sans","Noto Sans Arabic","Noto Sans Devanagari",sans-serif'); };
+    const width = (f, t, size) => { const fo = css(f, 100), k = fo + '|' + t; let w = wm.get(k);
+      if(w == null){ cx.font = fo; cx.direction = PDF_RTL.test(t) ? 'rtl' : 'ltr'; w = cx.measureText(t).width / 100; if(wm.size > 30000) wm.clear(); wm.set(k, w); }
+      return w * size; };
+    const rgbOf = c => !c ? [0,0,0] : c.type === 'RGB' ? [c.red, c.green, c.blue] : c.type === 'Grayscale' ? [c.gray, c.gray, c.gray]
+      : c.type === 'CMYK' ? [(1-c.cyan)*(1-c.key), (1-c.magenta)*(1-c.key), (1-c.yellow)*(1-c.key)] : [0,0,0];
+    function img(doc, f, t, size, col){
+      let cache = docs.get(doc); if(!cache){ cache = new Map(); docs.set(doc, cache); }
+      const rgb = rgbOf(col), key = css(f, size) + '|' + rgb.join(',') + '|' + t; let im = cache.get(key);
+      if(im) return im;
+      const pad = Math.ceil(size * S * .3), W = Math.max(1, Math.ceil(width(f, t, size) * S) + 2 * pad), H = Math.ceil(size * S * 1.8), base = Math.round(size * S * 1.3), rtl = PDF_RTL.test(t);
+      cv.width = W; cv.height = H; cx.clearRect(0, 0, W, H); cx.font = css(f, size * S); cx.fillStyle = '#000'; cx.textBaseline = 'alphabetic';
+      cx.direction = rtl ? 'rtl' : 'ltr'; cx.textAlign = rtl ? 'right' : 'left'; cx.fillText(t, rtl ? W - pad : pad, base);
+      const px = cx.getImageData(0, 0, W, H).data, a = new Uint8Array(W * H), c3 = new Uint8Array(W * H * 3), r = Math.round(rgb[0]*255), g = Math.round(rgb[1]*255), b = Math.round(rgb[2]*255);
+      for(let i = 0, j = 0; i < a.length; i++, j += 3){ a[i] = px[i*4 + 3]; c3[j] = r; c3[j+1] = g; c3[j+2] = b; }
+      const X = doc.context, sm = X.register(X.flateStream(a, {Type:'XObject', Subtype:'Image', Width:W, Height:H, ColorSpace:'DeviceGray', BitsPerComponent:8}));
+      const ref = X.register(X.flateStream(c3, {Type:'XObject', Subtype:'Image', Width:W, Height:H, ColorSpace:'DeviceRGB', BitsPerComponent:8, SMask:sm}));
+      im = {ref, w:W/S, h:H/S, dx:pad/S, dy:(H - base)/S}; cache.set(key, im); return im;
+    }
+    const ow = L.PDFFont.prototype.widthOfTextAtSize, od = L.PDFPage.prototype.drawText;
+    L.PDFFont.prototype.widthOfTextAtSize = function(t, size){ return pdfSafe(t) ? ow.call(this, t, size) : width(this, String(t), size); };
+    L.PDFPage.prototype.drawText = function(t, o){
+      o = o || {}; t = String(t == null ? '' : t); if(pdfSafe(t)) return od.call(this, t, o);
+      const size = o.size || 24, lh = o.lineHeight || size * 1.2;
+      t.split('\n').forEach((l, i) => { if(!l.trim()) return; const im = img(this.doc, o.font, l, size, o.color), nm = this.node.newXObject('Tx', im.ref);
+        this.pushOperators(L.pushGraphicsState(), L.concatTransformationMatrix(im.w, 0, 0, im.h, (o.x || 0) - im.dx, (o.y || 0) - i * lh - im.dy), L.drawObject(nm), L.popGraphicsState()); });
+    };
+    return L;
   }
   async function newPdf(title){
     const L = await loadPdfLib();
-    const pdf = await L.PDFDocument.create(); pdf.setTitle(title); pdf.setCreator('Vezoria'); pdf.setProducer('Vezoria');
-    const D = {L, pdf, F:{r: await pdf.embedFont(L.StandardFonts.Helvetica), b: await pdf.embedFont(L.StandardFonts.HelveticaBold), i: await pdf.embedFont(L.StandardFonts.HelveticaOblique)},
+    const pdf = await L.PDFDocument.create(); pdf.setTitle(pdfTxt(title)); pdf.setCreator('Vezoria'); pdf.setProducer('Vezoria');
+    const D = {L, pdf, rtl: !!(window.I18N && I18N.rtl), F:{r: await pdf.embedFont(L.StandardFonts.Helvetica), b: await pdf.embedFont(L.StandardFonts.HelveticaBold), i: await pdf.embedFont(L.StandardFonts.HelveticaOblique)},
       W:595.28, H:841.89, M:42, page:null, y:0, n:0, C:{ink:L.rgb(.13,.07,.2), mut:L.rgb(.42,.38,.46), acc:L.rgb(.49,.23,.93), line:L.rgb(.88,.85,.9), soft:L.rgb(.96,.94,.99), white:L.rgb(1,1,1)}};
-    D.add = () => { D.page = pdf.addPage([D.W, D.H]); D.y = D.H - D.M; D.n++; const t = pdfTxt(title); D.page.drawText(t, {x:D.M, y:18, size:7.5, font:D.F.r, color:D.C.mut}); D.page.drawText(String(D.n), {x:D.W-D.M-10, y:18, size:7.5, font:D.F.r, color:D.C.mut}); };
+    D.add = () => { D.page = pdf.addPage([D.W, D.H]); D.y = D.H - D.M; D.n++; const t = pdfTxt(title); D.page.drawText(t, {x:D.ax(t, D.F.r, 7.5, D.M), y:18, size:7.5, font:D.F.r, color:D.C.mut}); D.page.drawText(String(D.n), {x:D.rtl ? D.M : D.W-D.M-10, y:18, size:7.5, font:D.F.r, color:D.C.mut}); };
     D.need = h => { if(!D.page || D.y - h < D.M + 14) D.add(); };
-    D.wrap = (s, font, size, w) => { const out = []; pdfTxt(s).split('\n').forEach(par=>{ let line = ''; par.split(' ').forEach(word=>{ const t = line ? line + ' ' + word : word; if(font.widthOfTextAtSize(t, size) <= w) line = t; else { if(line) out.push(line); while(font.widthOfTextAtSize(word, size) > w && word.length > 1){ let k = word.length; while(k > 1 && font.widthOfTextAtSize(word.slice(0,k), size) > w) k--; out.push(word.slice(0,k)); word = word.slice(k); } line = word; } }); out.push(line); }); return out; };
+    D.wrap = (s, font, size, w) => pdfWrap(s, font, size, w);
+    D.ax = (t, font, size, x) => D.rtl ? D.W - x - font.widthOfTextAtSize(t, size) : x;   // en arabe, chaque texte part de la droite
     D.text = (s, o={}) => { const size = o.size || 10, font = o.font || D.F.r, x = D.M + (o.indent||0), w = (o.w || (D.W - 2*D.M)) - (o.indent||0), lh = size * (o.lh || 1.35);
-      D.wrap(s, font, size, w).forEach(l=>{ D.need(lh); D.page.drawText(l, {x, y:D.y - size, size, font, color:o.color || D.C.ink}); D.y -= lh; }); if(o.gap) D.y -= o.gap; };
-    D.h1 = s => { D.need(40); D.page.drawRectangle({x:D.M, y:D.y-26, width:D.W-2*D.M, height:26, color:D.C.acc}); D.page.drawText(pdfTxt(s), {x:D.M+10, y:D.y-18, size:13, font:D.F.b, color:D.C.white}); D.y -= 36; };
-    D.h2 = (s, right) => { D.need(28); D.page.drawRectangle({x:D.M, y:D.y-20, width:D.W-2*D.M, height:20, color:D.C.soft}); D.page.drawText(pdfTxt(s), {x:D.M+8, y:D.y-14, size:11, font:D.F.b, color:D.C.ink}); if(right){ const t = pdfTxt(right), w = D.F.r.widthOfTextAtSize(t, 9); D.page.drawText(t, {x:D.W-D.M-8-w, y:D.y-14, size:9, font:D.F.r, color:D.C.mut}); } D.y -= 26; };
+      D.wrap(s, font, size, w).forEach(l=>{ D.need(lh); D.page.drawText(l, {x:D.ax(l, font, size, x), y:D.y - size, size, font, color:o.color || D.C.ink}); D.y -= lh; }); if(o.gap) D.y -= o.gap; };
+    D.h1 = s => { D.need(40); D.page.drawRectangle({x:D.M, y:D.y-26, width:D.W-2*D.M, height:26, color:D.C.acc}); const t = pdfTxt(s); D.page.drawText(t, {x:D.ax(t, D.F.b, 13, D.M+10), y:D.y-18, size:13, font:D.F.b, color:D.C.white}); D.y -= 36; };
+    D.h2 = (s, right) => { D.need(28); D.page.drawRectangle({x:D.M, y:D.y-20, width:D.W-2*D.M, height:20, color:D.C.soft}); const t0 = pdfTxt(s); D.page.drawText(t0, {x:D.ax(t0, D.F.b, 11, D.M+8), y:D.y-14, size:11, font:D.F.b, color:D.C.ink}); if(right){ const t = pdfTxt(right), w = D.F.r.widthOfTextAtSize(t, 9); D.page.drawText(t, {x:D.ax(t, D.F.r, 9, D.W-D.M-8-w), y:D.y-14, size:9, font:D.F.r, color:D.C.mut}); } D.y -= 26; };
     D.rule = () => { D.need(8); D.page.drawLine({start:{x:D.M, y:D.y-3}, end:{x:D.W-D.M, y:D.y-3}, thickness:.6, color:D.C.line}); D.y -= 8; };
     D.img = async (canvas, maxH) => { if(!canvas) return; const bytes = new Uint8Array(await (await new Promise(r=>canvas.toBlob(r, 'image/jpeg', .85))).arrayBuffer()); const im = await pdf.embedJpg(bytes);
       let w = D.W - 2*D.M, h = w * canvas.height / canvas.width; if(maxH && h > maxH){ h = maxH; w = h * canvas.width / canvas.height; } D.need(h + 8); D.page.drawImage(im, {x:D.M + (D.W-2*D.M-w)/2, y:D.y-h, width:w, height:h}); D.y -= h + 8; };
@@ -6712,20 +6770,22 @@ const CV = (function(){
     D.table = (cols, head, rows) => { const tw = D.W - 2*D.M, ws = cols.map(c=>c*tw), size = 8.6, lh = size*1.3;
       const row = (cells, bold, fill) => { const lines = cells.map((c,i)=>D.wrap(c, bold ? D.F.b : D.F.r, size, ws[i]-8)); const h = Math.max(...lines.map(l=>l.length))*lh + 6; D.need(h);
         if(fill) D.page.drawRectangle({x:D.M, y:D.y-h, width:tw, height:h, color:fill});
-        let x = D.M; lines.forEach((ls,i)=>{ ls.forEach((l,k)=>D.page.drawText(l, {x:x+4, y:D.y-4-size-k*lh, size, font: bold ? D.F.b : D.F.r, color:D.C.ink})); x += ws[i]; });
+        let x = D.M; lines.forEach((ls,i)=>{ ls.forEach((l,k)=>D.page.drawText(l, {x:D.ax(l, bold ? D.F.b : D.F.r, size, x+4), y:D.y-4-size-k*lh, size, font: bold ? D.F.b : D.F.r, color:D.C.ink})); x += ws[i]; });
         D.page.drawLine({start:{x:D.M, y:D.y-h}, end:{x:D.M+tw, y:D.y-h}, thickness:.5, color:D.C.line}); D.y -= h; };
       row(head, true, D.C.soft); rows.forEach(r=>row(r)); D.y -= 8; };
     D.lines = n => { for(let i=0;i<n;i++){ D.need(18); D.page.drawLine({start:{x:D.M, y:D.y-15}, end:{x:D.W-D.M, y:D.y-15}, thickness:.4, color:D.C.line, dashArray:[2,3]}); D.y -= 18; } };
     D.cover = (kicker, t, sub, who) => { D.add(); D.page.drawRectangle({x:0, y:D.H-230, width:D.W, height:230, color:D.L.rgb(.16,.07,.22)});
-      D.page.drawText(pdfTxt(kicker).toUpperCase(), {x:D.M, y:D.H-70, size:10, font:D.F.b, color:D.L.rgb(.98,.75,.55)});
-      let y = D.H-104; D.wrap(t, D.F.b, 30, D.W-2*D.M).forEach(l=>{ D.page.drawText(l, {x:D.M, y, size:30, font:D.F.b, color:D.C.white}); y -= 34; });
-      D.wrap(sub, D.F.r, 12, D.W-2*D.M).forEach(l=>{ D.page.drawText(l, {x:D.M, y:y-4, size:12, font:D.F.r, color:D.L.rgb(.93,.88,.97)}); y -= 16; });
-      if(who) D.page.drawText(pdfTxt(who), {x:D.M, y:D.H-218, size:10.5, font:D.F.r, color:D.L.rgb(.93,.88,.97)}); D.y = D.H - 250; };
+      const kk = pdfTxt(kicker).toUpperCase(); D.page.drawText(kk, {x:D.ax(kk, D.F.b, 10, D.M), y:D.H-70, size:10, font:D.F.b, color:D.L.rgb(.98,.75,.55)});
+      let y = D.H-104; D.wrap(t, D.F.b, 30, D.W-2*D.M).forEach(l=>{ D.page.drawText(l, {x:D.ax(l, D.F.b, 30, D.M), y, size:30, font:D.F.b, color:D.C.white}); y -= 34; });
+      D.wrap(sub, D.F.r, 12, D.W-2*D.M).forEach(l=>{ D.page.drawText(l, {x:D.ax(l, D.F.r, 12, D.M), y:y-4, size:12, font:D.F.r, color:D.L.rgb(.93,.88,.97)}); y -= 16; });
+      if(who){ const ww = pdfTxt(who); D.page.drawText(ww, {x:D.ax(ww, D.F.r, 10.5, D.M), y:D.H-218, size:10.5, font:D.F.r, color:D.L.rgb(.93,.88,.97)}); } D.y = D.H - 250; };
     D.save = async name => { const bytes = await pdf.save(); return new File([bytes], name, {type:'application/pdf'}); };
     return D;
   }
-  const kindLbl = it => it.cat==='transport' ? (it.mode || 'Trajet') : it.cat==='hotel' ? 'Hôtel' : it.cat==='activite' ? 'Visite' : 'Divers';
-  const stTxt = it => it.statut==='paid' ? '[payé]' : it.statut==='booked' ? '[réservé]' : '[à réserver]';
+  const PT = s => (window.I18N && I18N.tr ? I18N.tr(s) : s);   // morceaux d’une ligne composée, traduits un par un
+  const PJ = n => (window.I18N && I18N.lang !== 'fr') ? PT('Jour ' + n) : 'J' + n;   // « J3 » → « Day 3 », « 第 3 天 »…
+  const kindLbl = it => PT(it.cat==='transport' ? (it.mode || 'Trajet') : it.cat==='hotel' ? 'Hôtel' : it.cat==='activite' ? 'Visite' : 'Divers');
+  const stTxt = it => PT(it.statut==='paid' ? '[payé]' : it.statut==='booked' ? '[réservé]' : '[à réserver]');
   let lastPdf = null;
   function pdfReady(file){
     lastPdf = file;
@@ -6757,10 +6817,10 @@ const CV = (function(){
         for(let i=0;i<ds.length;i++){
           const day = ds[i], info = dayInfo(day), {own, night} = itemsForDay(day), pl = placesOf(day);
           pdfSay(`Jour ${i+1} / ${ds.length}…`);
-          D.h2(`J${i+1} · ${longDate(day)}${info.titre ? ' - ' + info.titre : ''}`);
+          D.h2(`${PJ(i+1)} · ${longDate(day)}${info.titre ? ' - ' + PT(info.titre) : ''}`);
           if(info.plan) D.text(info.plan, {font:D.F.i, size:9.5, color:D.C.mut, gap:2});
-          own.forEach(it=>D.text(`${it.heureDep || it.heure || ''}${it.heureArr ? ' -> ' + it.heureArr : ''}  ${kindLbl(it)} : ${it.titre}${[it.compagnie, it.ref ? 'Réf. ' + it.ref : '', it.adresse, it.tel].filter(Boolean).map(x=>' · ' + x).join('')}  ${stTxt(it)}`, {size:9.5, indent:6}));
-          night.forEach(it=>D.text(`Nuit : ${it.nom || it.titre}${[it.adresse, it.tel, it.ref ? 'Réf. ' + it.ref : ''].filter(Boolean).map(x=>' · ' + x).join('')}  ${stTxt(it)}`, {size:9.5, indent:6}));
+          own.forEach(it=>D.text(`${it.heureDep || it.heure || ''}${it.heureArr ? ' -> ' + it.heureArr : ''}  ${kindLbl(it)} : ${PT(it.titre)}${[PT(it.compagnie || ''), it.ref ? PT('Réf.') + ' ' + it.ref : '', PT(it.adresse || ''), it.tel].filter(Boolean).map(x=>' · ' + x).join('')}  ${stTxt(it)}`, {size:9.5, indent:6}));
+          night.forEach(it=>D.text(`Nuit : ${it.nom || it.titre}${[it.adresse, it.tel, it.ref ? PT('Réf.') + ' ' + it.ref : ''].filter(Boolean).map(x=>' · ' + x).join('')}  ${stTxt(it)}`, {size:9.5, indent:6}));
           if(pl.length) D.text('À voir : ' + pl.map((p,k)=>`${k+1}. ${p.nom}`).join('  '), {size:9.5, indent:6});
           const nts = notesFor('day:'+day); nts.forEach(n=>D.text('Note : ' + n.texte, {size:9, indent:6, color:D.C.mut}));
           if(maps && info.route && (info.route.ids||[]).length){ pdfSay(`Jour ${i+1} : carte de l’itinéraire…`); await D.img(await dayMapCanvas(day, 700, 400), 300); }
@@ -6780,7 +6840,7 @@ const CV = (function(){
         D.table([.4,.2,.2,.2], ['Voyageur','Sa part','Déjà réglé','Reste'], v.map(pid=>{ const pr = all.reduce((s,i)=>s+shareOf(i,pid),0), pa = all.reduce((s,i)=>s+shareOfPaid(i,pid),0); return [pname(pid), eur(pr), eur(pa), eur(pr-pa)]; }));
         if(whoSel==='all') D.text('Total du voyage : ' + eur(all.reduce((s,i)=>s+totalOf(i),0)) + '. Montants réels quand ils sont saisis, sinon estimations.', {size:9, color:D.C.mut}); }
       if(sec.check){ const cl = list('check', c=>c.trip===M.trip).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)); if(cl.length){ D.need(80); D.h1('Checklist');
-        [...new Set(cl.map(c=>c.cat))].forEach(cat=>{ D.text(cat, {font:D.F.b, size:10}); cl.filter(x=>x.cat===cat).forEach(x=>D.text((x.done ? '[x] ' : '[  ] ') + x.label, {size:9.5, indent:8})); D.y -= 4; }); } }
+        [...new Set(cl.map(c=>c.cat))].forEach(cat=>{ D.text(cat, {font:D.F.b, size:10}); cl.filter(x=>x.cat===cat).forEach(x=>D.text((x.done ? '[x] ' : '[  ] ') + PT(x.label), {size:9.5, indent:8})); D.y -= 4; }); } }
       M.who = keepWho;
       pdfReady(await D.save(pdfName('carnet-de-route', t)));
     } catch(e){ pdfSay('⚠️ ' + e.message); }
@@ -6798,7 +6858,7 @@ const CV = (function(){
       if(daysWith.length) D.add();
       for(const x of daysWith){
         pdfSay(`Jour ${x.i+1}…`);
-        D.h2(`J${x.i+1} · ${longDate(x.day)}${x.info.titre ? ' - ' + x.info.titre : ''}`);
+        D.h2(`${PJ(x.i+1)} · ${longDate(x.day)}${x.info.titre ? ' - ' + PT(x.info.titre) : ''}`);
         if(x.info.plan) D.text(x.info.plan, {font:D.F.i, size:9.5, color:D.C.mut, gap:3});
         for(const s of x.sv){
           D.text(s.titre || 'Souvenir', {font:D.F.b, size:11}); if(s.lieu) D.text(s.lieu, {size:9, color:D.C.mut}); if(s.texte) D.text(s.texte, {size:10, gap:4});
@@ -7576,7 +7636,7 @@ ${pm.join('\n')}</Document></kml>`;
       const W = 595.28, H = 841.89, Mg = 46; let pg = null, y = 0, n = 0;
       const page = () => { pg = pdf.addPage([W, H]); n++; pg.drawRectangle({x:0, y:0, width:W, height:H, color:C(th.bg)}); y = H - Mg;
         if(n > 1){ const f = pdf1(A.titre) + '  ·  ' + n; pg.drawText(f, {x:W/2 - F.i.widthOfTextAtSize(f, 8)/2, y:22, size:8, font:F.i, color:C(th.acc)}); } };
-      const wrap = (s, f, sz, w) => { const out = []; pdfTxt(s).split('\n').forEach(par=>{ let line = ''; par.split(' ').forEach(wd=>{ const tt = line ? line + ' ' + wd : wd; if(f.widthOfTextAtSize(tt, sz) <= w) line = tt; else { if(line) out.push(line); line = wd; } }); out.push(line); }); return out; };
+      const wrap = pdfWrap;
       const center = (s, f, sz, yy, col) => { const tx = pdf1(s); pg.drawText(tx, {x:W/2 - f.widthOfTextAtSize(tx, sz)/2, y:yy, size:sz, font:f, color:col || C(th.ink)}); };
       const para = (s, f, sz, col, w) => { w = w || W - 2*Mg; wrap(s, f, sz, w).forEach(l=>{ if(y < Mg + sz*1.5) page(); pg.drawText(l, {x:(W - w)/2, y:y - sz, size:sz, font:f, color:col || C(th.ink)}); y -= sz*1.45; }); };
       const emb = new Map(), embed = async id => { if(emb.has(id)) return emb.get(id); const b = await photoBlob(id) || await photoBlob(id + '.t'); let im = null; if(b){ try { im = await pdf.embedJpg(await jpgBytes(b)); } catch(e){} } emb.set(id, im); return im; };
@@ -7598,7 +7658,7 @@ ${pm.join('\n')}</Document></kml>`;
       if(A.carte || A.chiffres){ page(); center('Le voyage', F.b, 26, y - 20); y -= 60;
         if(A.carte){ pdfSay('Carte du voyage…'); const c = await tripMapCanvas(700, 470); if(c){ const im = await pdf.embedJpg(new Uint8Array(await (await new Promise(r=>c.toBlob(r,'image/jpeg',.88))).arrayBuffer())); const w = W - 2*Mg, h = w*c.height/c.width; frame(im, Mg, y - h, w, h); y -= h + 30; } }
         if(A.chiffres){ const st = [[dayList().length,'jours'], [tlStages().length,'étapes'], [sv.length,'souvenirs'], [photos.length,'photos']], cw = (W - 2*Mg)/4;
-          st.forEach(([v,l],i)=>{ const x = Mg + i*cw + cw/2, vs = String(v); pg.drawText(vs, {x:x - F.b.widthOfTextAtSize(vs, 30)/2, y:y - 34, size:30, font:F.b, color:C(th.acc)}); pg.drawText(l, {x:x - F.i.widthOfTextAtSize(l, 11)/2, y:y - 52, size:11, font:F.i, color:C(th.ink)}); });
+          st.forEach(([v,l0],i)=>{ const x = Mg + i*cw + cw/2, vs = String(v), l = pdf1(l0); pg.drawText(vs, {x:x - F.b.widthOfTextAtSize(vs, 30)/2, y:y - 34, size:30, font:F.b, color:C(th.acc)}); pg.drawText(l, {x:x - F.i.widthOfTextAtSize(l, 11)/2, y:y - 52, size:11, font:F.i, color:C(th.ink)}); });
           y -= 80; } }
       // 3. chapitres / photos
       if(A.lay === 'magazine' || A.lay === 'polaroid'){
@@ -7620,7 +7680,7 @@ ${pm.join('\n')}</Document></kml>`;
           const cells = per === 1 ? [[0,0,1,1]] : per === 2 ? [[0,.51,1,.49],[0,0,1,.49]] : [[0,.51,.49,.49],[.51,.51,.49,.49],[0,0,.49,.49],[.51,0,.49,.49]];
           for(let j=0; j<per && k+j<ps.length; j++){ const im = await embed(ps[k+j].p); if(!im) continue; const [cx,cy,cw,ch] = cells[j];
             frame(im, box.x + cx*box.w, box.y + cy*box.h + (per===1 ? 26 : 0), cw*box.w, ch*box.h - (per===1 ? 26 : 0));
-            if(per === 1 && (ps[k+j].s.titre || ps[k+j].s.lieu)) center([ps[k+j].s.titre, ps[k+j].s.lieu].filter(Boolean).join(' · '), F.i, 12, box.y + 2); }
+            if(per === 1 && (ps[k+j].s.titre || ps[k+j].s.lieu)) center([ps[k+j].s.titre, ps[k+j].s.lieu].filter(Boolean).map(pdf1).join(' · '), F.i, 12, box.y + 2); }
         }
       }
       // 4. fin
@@ -8314,7 +8374,7 @@ ${pm.join('\n')}</Document></kml>`;
   async function albumMagazine(ctx, photos, mode, recits){
     const {pdf, L, page, W, H, Mg, th, C, F, embed, getPg} = ctx;
     const ds = dayList(), told = new Set();
-    const head = ps => { const s0 = ps[0] && ps[0].s; if(!s0 || !s0.date) return; const k = ds.indexOf(s0.date), t = pdf1((k >= 0 ? 'Jour ' + (k+1) + '  ·  ' : '') + longDate(s0.date)); getPg().drawText(t, {x:W/2 - F.i.widthOfTextAtSize(t, 10)/2, y:H - 30, size:10, font:F.i, color:C(th.acc)}); };
+    const head = ps => { const s0 = ps[0] && ps[0].s; if(!s0 || !s0.date) return; const k = ds.indexOf(s0.date), t = pdf1((k >= 0 ? pdf1('Jour ' + (k+1)) + '  ·  ' : '') + longDate(s0.date)); getPg().drawText(t, {x:W/2 - F.i.widthOfTextAtSize(t, 10)/2, y:H - 30, size:10, font:F.i, color:C(th.acc)}); };
     const rad = d => d * Math.PI / 180;
     // dessine une image recadrée dans un cadre (x,y,w,h), avec rotation éventuelle autour du centre
     const put = (im, x, y, w, h, rot) => {
@@ -8354,9 +8414,7 @@ ${pm.join('\n')}</Document></kml>`;
     // page « récit » : une photo et le texte du souvenir
     const story = async x => { const im = await embed(x.p); const iw = W - 2*Mg, ih = H*0.52; if(im) put(im, Mg, H - Mg - 20 - ih, iw, ih);
       const pg = getPg(); let y = H - Mg - 20 - ih - 40; const t = pdf1(x.s.titre || x.s.lieu || ''); pg.drawText(t, {x:W/2 - F.b.widthOfTextAtSize(t, 20)/2, y, size:20, font:F.b, color:C(th.acc)}); y -= 30;
-      const words = pdf1(x.s.texte).split(' '); let line = '';
-      for(const w of words){ const tt = line ? line + ' ' + w : w; if(F.r.widthOfTextAtSize(tt, 12.5) > iw - 40){ pg.drawText(line, {x:Mg + 20, y, size:12.5, font:F.r, color:C(th.ink)}); y -= 19; line = w; if(y < Mg + 30) break; } else line = tt; }
-      if(line && y >= Mg + 30) pg.drawText(line, {x:Mg + 20, y, size:12.5, font:F.r, color:C(th.ink)}); };
+      for(const l of pdfWrap(pdf1(x.s.texte), F.r, 12.5, iw - 40)){ if(y < Mg + 30) break; pg.drawText(l, {x:I18N.rtl ? W - Mg - 20 - F.r.widthOfTextAtSize(l, 12.5) : Mg + 20, y, size:12.5, font:F.r, color:C(th.ink)}); y -= 19; } };
     const TT = mode === 'polaroid' ? [T[2]] : T;
     let k = 0, ti = 0;
     while(k < photos.length){
@@ -9596,10 +9654,17 @@ ${pm.join('\n')}</Document></kml>`;
     FM.raf = requestAnimationFrame(filmLoop);
   }
   const fz = (c, size, w) => { c.font = `${w||700} ${size}px -apple-system, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif`; };
+  // lignes d’au plus maxW ; un mot trop long (chinois, japonais… sans espaces) se coupe entre deux caractères
+  function fLines(c, text, maxW){
+    const out = [], fit = t => c.measureText(t).width <= maxW; let line = '';
+    String(text).split(/\s+/).filter(Boolean).forEach(w => { const t = line ? line + ' ' + w : w;
+      if(fit(t)){ line = t; return; }
+      if(line && fit(w)){ out.push(line); line = w; return; }
+      let cur = line ? line + ' ' : ''; for(const ch of Array.from(w)){ if(!cur.trim() || fit(cur + ch)) cur += ch; else { out.push(cur.trim()); cur = ch; } } line = cur; });
+    if(line) out.push(line); return out;
+  }
   function fWrap(c, text, x, y, maxW, lh, maxLines){
-    const words = String(text).split(/\s+/); let line = '', n = 0;
-    for(const w of words){ const tst = line ? line + ' ' + w : w; if(c.measureText(tst).width > maxW && line){ c.fillText(line, x, y + n*lh); n++; line = w; if(maxLines && n >= maxLines) return n; } else line = tst; }
-    if(line){ c.fillText(line, x, y + n*lh); n++; } return n;
+    const ls = fLines(c, text, maxW).slice(0, maxLines || 99); ls.forEach((l, i) => c.fillText(l, x, y + i*lh)); return ls.length;
   }
   function fCover(c, img, x, y, w, h, z, px, py){
     const s = Math.max(w / img.width, h / img.height) * z, dw = img.width * s, dh = img.height * s;
@@ -9615,12 +9680,27 @@ ${pm.join('\n')}</Document></kml>`;
     if(fade < 1){ c.fillStyle = `rgba(8,5,30,${1 - Math.max(0, fade)})`; c.fillRect(0, 0, FW, FH); }
     c.restore();
   }
+  // nom d’unité accordé au nombre (langues où « un jour » moins « un » ne donne pas le singulier)
+  const FILM_U = {
+    ru: {jours:{one:'день', few:'дня', many:'дней'}, nuits:{one:'ночь', few:'ночи', many:'ночей'}, pays:{one:'страна', few:'страны', many:'стран'}, photos:{one:'фото', few:'фото', many:'фото'}},
+    ar: {jours:{one:'يوم', two:'يومان', few:'أيام', many:'يومًا', other:'يوم'}, nuits:{one:'ليلة', two:'ليلتان', few:'ليالٍ', many:'ليلة', other:'ليلة'},
+         pays:{one:'بلد', two:'بلدان', few:'بلدان', many:'بلدًا', other:'بلد'}, photos:{one:'صورة', two:'صورتان', few:'صور', many:'صورة', other:'صورة'}},
+    hi: {jours:{one:'दिन', other:'दिन'}, nuits:{one:'रात', other:'रातें'}, pays:{one:'देश', other:'देश'}, photos:{one:'फ़ोटो', other:'फ़ोटो'}},
+    tr: {jours:{other:'gün'}, nuits:{other:'gece'}, pays:{other:'ülke'}, photos:{other:'fotoğraf'}},
+    zh: {jours:{other:'天'}, nuits:{other:'晚'}, pays:{other:'个国家'}, photos:{other:'张照片'}},
+    ja: {jours:{other:'日'}, nuits:{other:'泊'}, pays:{other:'か国'}, photos:{other:'枚の写真'}},
+    ko: {jours:{other:'일'}, nuits:{other:'박'}, pays:{other:'개국'}, photos:{other:'장의 사진'}}};
+  function filmUnit(k, n){
+    const u = (FILM_U[(window.I18N && I18N.lang) || 'fr'] || {})[k]; if(!u) return '';
+    let cat = 'other'; try { cat = new Intl.PluralRules((window.I18N && I18N.locale) || 'fr-FR').select(n); } catch(e){}
+    return u[cat] || u.other || u.many || u.one;
+  }
   const FS = {
     title(c, p, D){
       fBg(c); const im = (D.imgs[0] || {}).bmp; if(im){ fCover(c, im, 0, 0, FW, FH, 1.08 + p * .12, p * .3 - .15, 0); }
       const g = c.createLinearGradient(0, 0, 0, FH); g.addColorStop(0, 'rgba(10,6,40,.55)'); g.addColorStop(.55, 'rgba(10,6,40,.35)'); g.addColorStop(1, 'rgba(10,6,40,.85)'); c.fillStyle = g; c.fillRect(0, 0, FW, FH);
       const a = filmEase(Math.min(1, p * 2.2)); c.globalAlpha = a; c.fillStyle = '#fff'; fz(c, 30, 600); c.fillText(TT('✈  MON VOYAGE'), FW/2, 430 - (1-a) * 30);
-      fz(c, 84, 800); const lines = []; { const w = String(D.t.titre || '').split(' '); let l = ''; w.forEach(x=>{ if(c.measureText(l + ' ' + x).width > FW - 100 && l){ lines.push(l); l = x; } else l = (l + ' ' + x).trim(); }); if(l) lines.push(l); }
+      fz(c, 84, 800); const lines = fLines(c, TT(String(D.t.titre || '')), FW - 100);
       lines.slice(0, 3).forEach((l, i) => c.fillText(l, FW/2, 560 + i * 96 - (1-a) * 40)); c.globalAlpha = a * .9; fz(c, 34, 500);
       c.fillText(D.t.debut ? tripDatesLong(D.t) : '', FW/2, 560 + Math.min(3, lines.length) * 96 + 40); c.globalAlpha = 1;
     },
@@ -9635,7 +9715,7 @@ ${pm.join('\n')}</Document></kml>`;
       const zz = D.map ? 1.06 - p * .06 : 1, X = D.map ? lng => FW/2 + (D.map.X(lng) - FW/2) * zz : lng => ox + (lng - x0) * Math.PI/180 * s, Y = D.map ? lat => 700 + (D.map.Y(lat) - 700) * zz : lat => oy + (y1 - my(lat)) * s;
       if(!D.map){ c.strokeStyle = 'rgba(255,255,255,.06)'; c.lineWidth = 1; for(let i=0;i<=12;i++){ c.beginPath(); c.moveTo(i * FW/12, 0); c.lineTo(i * FW/12, FH); c.stroke(); } for(let i=0;i<=20;i++){ c.beginPath(); c.moveTo(0, i * FH/20); c.lineTo(FW, i * FH/20); c.stroke(); } }
       else { c.fillStyle = 'rgba(255,255,255,.55)'; fz(c, 16, 500); c.textAlign = 'right'; c.fillText(D.map.attr, FW - 16, FH - 16); c.textAlign = 'center'; }
-      c.fillStyle = '#fff'; fz(c, 46, 800); { const tt = sc && sc.zoom ? (sc.title || '') : TT('Ta route'); if(c.measureText(tt).width > FW - 70) fz(c, 32, 800); c.fillText(tt, FW/2, 170); } c.fillStyle = 'rgba(255,255,255,.7)'; fz(c, 28, 500); c.fillText(D.dist >= 1 ? TT('≈ ' + Math.round(D.dist).toLocaleString(NL()) + ' km parcourus') : '', FW/2, 218);
+      c.fillStyle = '#fff'; fz(c, 46, 800); { const tt = sc && sc.zoom ? (sc.title || '').split(' → ').map(TT).join(' → ') : TT('Ta route'); if(c.measureText(tt).width > FW - 70) fz(c, 32, 800); c.fillText(tt, FW/2, 170); } c.fillStyle = 'rgba(255,255,255,.7)'; fz(c, 28, 500); c.fillText(D.dist >= 1 ? TT('≈ ' + Math.round(D.dist).toLocaleString(NL()) + ' km parcourus') : '', FW/2, 218);
       const seg = P.length - 1, q = filmEase(Math.min(1, p / .85)) * seg, full = Math.floor(q);
       c.lineCap = 'round'; c.lineJoin = 'round'; c.shadowColor = '#a78bfa'; c.shadowBlur = 18; c.strokeStyle = '#a78bfa'; c.lineWidth = 6; c.beginPath(); c.moveTo(X(P[0].lng), Y(P[0].lat));
       for(let i=1;i<=Math.min(full, seg);i++) c.lineTo(X(P[i].lng), Y(P[i].lat));
@@ -9647,12 +9727,12 @@ ${pm.join('\n')}</Document></kml>`;
         c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y, 10 * filmEase(age), 0, 7); c.fill(); c.strokeStyle = 'rgba(167,139,250,.9)'; c.lineWidth = 3; c.beginPath(); c.arc(x, y, 10 + 12 * (1 - age), 0, 7); c.stroke();
         const ly = y + (i % 2 ? 34 : -16), free = pt.name && !placed.some(b => Math.abs(b[0] - x) < 150 && Math.abs(b[1] - ly) < 34);
         if(free) placed.push([x, ly]);
-        if(free && placed.length <= 10){ c.globalAlpha = age; c.fillStyle = '#fff'; fz(c, 26, 700); c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 8; c.textAlign = x > FW/2 ? 'right' : 'left'; c.fillText(pt.name, x + (x > FW/2 ? -20 : 20), y + (i % 2 ? 34 : -16)); c.shadowBlur = 0; c.textAlign = 'center'; c.globalAlpha = 1; } });
+        if(free && placed.length <= 10){ c.globalAlpha = age; c.fillStyle = '#fff'; fz(c, 26, 700); c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 8; c.textAlign = x > FW/2 ? 'right' : 'left'; c.fillText(TT(pt.name), x + (x > FW/2 ? -20 : 20), y + (i % 2 ? 34 : -16)); c.shadowBlur = 0; c.textAlign = 'center'; c.globalAlpha = 1; } });
       c.fillStyle = '#fbbf24'; c.shadowColor = '#fbbf24'; c.shadowBlur = 24; c.beginPath(); c.arc(hx, hy, 9, 0, 7); c.fill(); c.shadowBlur = 0;
     },
     stats(c, p, D){
       fBg(c, '#1a0b3d', '#5b21b6'); c.fillStyle = '#fff'; fz(c, 46, 800); c.fillText(TT('En chiffres'), FW/2, 190);
-      const T = [['🗓️', D.days, 'jours', 'un jour'], ['🛏️', D.nights, 'nuits', 'une nuit'], ['🛣️', Math.round(D.dist), 'km', 'km'], ['🌍', D.ccs.length, 'pays', 'un pays'], ['📸', D.nph, 'photos', 'une photo']].map(x => [x[0], x[1], x[1] === 1 ? TT(x[3]).replace(/^\S+\s+/, '') : TT(x[2])]).filter(x => x[1] > 0);
+      const T = [['🗓️', D.days, 'jours', 'un jour'], ['🛏️', D.nights, 'nuits', 'une nuit'], ['🛣️', Math.round(D.dist), 'km', 'km'], ['🌍', D.ccs.length, 'pays', 'un pays'], ['📸', D.nph, 'photos', 'une photo']].map(x => [x[0], x[1], filmUnit(x[2], x[1]) || (x[1] === 1 ? TT(x[3]).replace(/^\S+\s+/, '') : TT(x[2]))]).filter(x => x[1] > 0);
       T.forEach((x, i) => { const st = .08 + i * .13, a = filmEase(Math.max(0, Math.min(1, (p - st) / .2))), cy = 330 + i * 160;
         c.globalAlpha = a; c.fillStyle = 'rgba(255,255,255,.1)'; c.beginPath(); c.roundRect ? c.roundRect(70 + (1-a) * 120, cy - 70, FW - 140, 130, 28) : c.rect(70, cy - 70, FW - 140, 130); c.fill();
         fz(c, 56, 800); c.fillStyle = '#fff'; c.textAlign = 'left'; c.fillText(x[0], 110 + (1-a) * 120, cy + 18);
@@ -9664,8 +9744,9 @@ ${pm.join('\n')}</Document></kml>`;
       fBg(c, '#000', '#000'); const n = D.imgs.length, per = 1 / n, i = Math.min(n - 1, Math.floor(p / per)), lp = (p - i * per) / per, im = D.imgs[i];
       const dir = i % 2 ? -1 : 1; fCover(c, im.bmp, 0, 0, FW, FH, 1.05 + lp * .1, dir * (lp - .5) * .5, 0);
       const g = c.createLinearGradient(0, FH - 380, 0, FH); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.8)'); c.fillStyle = g; c.fillRect(0, FH - 380, FW, 380);
-      const a = Math.min(1, lp * 4, (1 - lp) * 6 + .0001); c.globalAlpha = Math.max(0, a); c.fillStyle = '#fff'; fz(c, 46, 800); c.textAlign = 'left'; fWrap(c, im.cap || '', 56, FH - 130, FW - 112, 54, 2);
-      fz(c, 28, 500); c.fillStyle = 'rgba(255,255,255,.8)'; c.fillText(im.date ? fdate(im.date) : '', 56, FH - 60); c.textAlign = 'center'; c.globalAlpha = 1;
+      const a = Math.min(1, lp * 4, (1 - lp) * 6 + .0001); c.globalAlpha = Math.max(0, a); c.fillStyle = '#fff'; fz(c, 46, 800); c.textAlign = 'left'; { const cl = fLines(c, TT(im.cap || ''), FW - 112).slice(0, 2); if(I18N.rtl) c.textAlign = 'right';   // légende sur 2 lignes : elle monte au lieu de chevaucher la date
+        cl.forEach((l, k) => c.fillText(l, I18N.rtl ? FW - 56 : 56, FH - 130 - (cl.length - 1 - k) * 54)); c.textAlign = 'left'; }
+      fz(c, 28, 500); c.fillStyle = 'rgba(255,255,255,.8)'; if(I18N.rtl) c.textAlign = 'right'; c.fillText(im.date ? fdate(im.date) : '', I18N.rtl ? FW - 56 : 56, FH - 60); c.textAlign = 'center'; c.globalAlpha = 1;
       c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(56, 56, FW - 112, 4); c.fillStyle = '#fff'; c.fillRect(56, 56, (FW - 112) * p, 4);
     },
     spend(c, p, D){
@@ -9680,7 +9761,7 @@ ${pm.join('\n')}</Document></kml>`;
     },
     end(c, p, D){
       fBg(c); const a = filmEase(Math.min(1, p * 2)); c.globalAlpha = a; c.fillStyle = '#fff'; fz(c, 120, 800); c.fillText('🧳', FW/2, 560 - (1-a) * 30);
-      fz(c, 64, 800); c.fillText(TT('À la prochaine !'), FW/2, 700); fz(c, 34, 500); c.fillStyle = 'rgba(255,255,255,.75)'; c.fillText(String(D.t.titre || ''), FW/2, 770);
+      fz(c, 64, 800); { const t = TT('À la prochaine !'), w = c.measureText(t).width; if(w > FW - 60) fz(c, Math.floor(64 * (FW - 60) / w), 800); c.fillText(t, FW/2, 700); } fz(c, 34, 500); c.fillStyle = 'rgba(255,255,255,.75)'; c.fillText(TT(String(D.t.titre || '')), FW/2, 770);
       fz(c, 30, 700); c.fillStyle = '#c4b5fd'; c.fillText(TT('Fait avec Vezoria'), FW/2, 1160); c.globalAlpha = 1;
     }
   };
@@ -10510,7 +10591,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11m';
+  const BUILD = '2026-10-11n';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
