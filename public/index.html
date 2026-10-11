@@ -1247,7 +1247,11 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .jr-ph span{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:#7c3aed;color:#fff;font-size:.75rem;display:flex;align-items:center;justify-content:center}
 .jr-ph.off img{opacity:.3;filter:grayscale(1)}
 .jr-ph.off span{background:rgba(0,0,0,.35)}
-#cv-world{position:fixed;inset:0;z-index:9000;background:#02040a;display:none;overflow:hidden}
+#cv-world{position:fixed;inset:0;z-index:9000;background:#02040a;display:none;overflow:hidden;overscroll-behavior:none;contain:layout paint}
+#cv-world .wm-top{min-width:0}#cv-world .wm-seg{flex:1 1 auto;min-width:0;justify-content:space-between}
+#cv-world .wm-seg button{flex:1 1 0;min-width:0;padding-left:6px;padding-right:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#cv-world .wm-top>.wm-new{width:auto;min-width:44px;border-radius:999px;padding:0 14px;font-size:.8rem;flex:none}
+@media (max-width:440px){#cv-world .wm-top{gap:6px}#cv-world .wm-top>.wm-new{width:44px;padding:0;font-size:0;line-height:0}#cv-world .wm-top>.wm-new>*{display:none}#cv-world .wm-top>.wm-new::before{content:'✨';font-size:1.25rem;line-height:44px}}
 .wm-stars{position:absolute;inset:0;background:
  radial-gradient(1px 1px at 12% 18%,#fff8,transparent),radial-gradient(1px 1px at 72% 12%,#fff9,transparent),radial-gradient(1.5px 1.5px at 40% 70%,#fffa,transparent),
  radial-gradient(1px 1px at 85% 55%,#fff7,transparent),radial-gradient(1px 1px at 25% 85%,#fff8,transparent),radial-gradient(1.2px 1.2px at 60% 35%,#fff6,transparent),
@@ -8425,7 +8429,8 @@ ${pm.join('\n')}</Document></kml>`;
           const lang = (l => /^(ar|hi)$/.test(l) ? 'en' : l)((window.I18N && I18N.lang) || 'fr');   // la carte 3D ne sait pas dessiner l’arabe ni le hindi : noms en anglais
           const keep = (lib.layers||[]).filter(l=>l.source===vs[0] && ((l.type==='symbol' && l['source-layer']==='place' && /country|city|town|state|capital/.test(l.id)) || (l.type==='line' && l['source-layer']==='boundary')));
           keep.forEach(l=>{ const x = JSON.parse(JSON.stringify(l)); x.source = 'ofm';
-            if(x.type==='symbol'){ x.layout = Object.assign({}, x.layout, {'text-field':['coalesce',['get','name:' + lang],['get','name:latin'],['get','name']]});
+            if(x.type==='symbol'){ if(!/country|state/.test(x.id)) x.maxzoom = Math.min(x.maxzoom || 24, 8.5);
+              x.layout = Object.assign({}, x.layout, {'text-field':['coalesce',['get','name:' + lang],['get','name:latin'],['get','name']]});
               if(x.layout['text-font']) wmFont = x.layout['text-font'];
               x.paint = Object.assign({}, x.paint, {'text-color':'#ffffff', 'text-halo-color':'rgba(10,20,50,.85)', 'text-halo-width':1.4}); }
             else x.paint = Object.assign({}, x.paint, {'line-color':'rgba(255,255,255,.55)'});
@@ -8465,7 +8470,9 @@ ${pm.join('\n')}</Document></kml>`;
     if(!wm || !wm.data || !wm.map.getLayer('routes')) return; const t = wm.data.trips.find(x=>x.id===id); if(!t) return;
     wm.spin = false; wm.sel = id; stopStory();
     document.querySelectorAll('.wm-card').forEach(b=>b.classList.toggle('on', b.dataset.id===id));
-    const card = document.querySelector(`.wm-card[data-id="${id}"]`); if(card) card.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+    const card = document.querySelector(`.wm-card[data-id="${id}"]`), car = document.getElementById('wm-car');
+    if(card && car) car.scrollTo({left:Math.max(0, card.offsetLeft - (car.clientWidth - card.offsetWidth) / 2), behavior:'smooth'});
+    { const o = document.getElementById('cv-world'); if(o){ o.scrollLeft = 0; o.scrollTop = 0; } }
     try { wm.map.setPaintProperty('routes', 'line-opacity', ['case',['==',['get','id'],id],1,0.25]); wm.map.setPaintProperty('routes-glow', 'line-opacity', ['case',['==',['get','id'],id],0.7,0.1]); wm.map.setPaintProperty('routes', 'line-width', ['case',['==',['get','id'],id],3.6,2]); } catch(e){}
     const b = bounds(t.pts), single = t.pts.length < 2;
     if(single) wm.map.flyTo({center:[t.pts[0].lng, t.pts[0].lat], zoom:8, pitch:35, bearing:-15, duration:2600, essential:true});
@@ -11173,7 +11180,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11u';
+  const BUILD = '2026-10-11v';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
