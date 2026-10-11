@@ -32,7 +32,7 @@
     <p style="font-size:.85em"><a href="privacy.html" lang="fr">Version française</a></p>
 
     <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: 10 October 2026 (Google Play app version, without Escale)</p>
+    <p class="updated">Last updated: 11 October 2026 (notifications, journey mode, offline maps, place cards)</p>
 
     <p>This Privacy Policy describes how the <strong>Vezoria</strong> app (“Vezoria”) handles your information. The App is free, ad-free, account-free and non-profit. It is available on the web and on Google Play.</p>
 
@@ -57,10 +57,11 @@
             <tr><td>First name and profile colour, trips, stops, bookings, expenses, notes, checklist, memories and photos</td><td>On your device. If sync is enabled: also on the server, <strong>encrypted</strong></td><td>To run the notebook and share it with the members of the group</td></tr>
             <tr><td>Fingerprint (hash) of the notebook code (the code itself is never sent)</td><td>Server</td><td>To store each notebook’s data separately</td></tr>
             <tr><td>Travel documents (type, expiry date; optional number and note) and photographed receipts, reimbursement method entered in a profile (optional), poll votes, shopping lists, tickets and documents attached to records, positions saved with “I’m here” (only when you tap the button)</td><td>Like the other records: on your device, and on the server if sync is enabled</td><td>Expiry alerts before departure, expense sharing</td></tr>
-            <tr><td><strong>Trip tracking</strong> (off by default): positions recorded roughly every 300 m, <strong>only while the app is open</strong> and only during an ongoing trip</td><td>On your device, and for the members of the shared trip (encrypted)</td><td>Draw your route on the map and in the trip film</td></tr>
+            <tr><td><strong>Trip tracking</strong> (off by default): positions recorded roughly every 300 m (every 50 m in “journey mode”, which you start yourself), <strong>only while the app is open</strong> and only during an ongoing trip. Positions already stored in your memory photos may complete the route shown on your device</td><td>On your device, and for the members of the shared trip (encrypted)</td><td>Draw your route on the map and in the trip film</td></tr>
             <tr><td><strong>Followers</strong> (only if you publish a trip): non-private memories (photos as thumbnails, titles, places, stories); your route, only if <em>you</em> turn it on (rounded to about 100 m); on the follower side: the chosen first name, ❤️ and comments</td><td>Server, encrypted with the follower code: anyone who received the follower link or code can read them</td><td>Let your loved ones follow the trip and react</td></tr>
             <tr><td>Install counter: a randomly generated identifier (unrelated to you or your trips), the device type (iPhone, Android, computer) and the date, sent only once</td><td>Server</td><td>Knowing how many times the app has been installed</td></tr>
             <tr><td>Overall server statistics: total space used by photos, number of notebooks and records (aggregate figures, no content or identity)</td><td>Server; viewed by the publisher</td><td>Monitor storage and stay within the service limits</td></tr>
+            <tr><td><strong>Notifications</strong> (off by default, only if you turn them on): the subscription address provided by your phone (Apple, Google or Mozilla), a random identifier for this device, the categories you chose (expenses, bookings, memories, polls, shopping, reminders), your time zone and the “do not disturb at night” option. The <strong>text</strong> of notifications and scheduled reminders is encrypted by the phones: the server cannot read it</td><td>Server, stored with the fingerprint of the notebook or trip concerned</td><td>Let trip members know what was added, and send you your reminders on time</td></tr>
             <tr><td>IP address, date and size of uploads</td><td>Server and the hosting provider’s technical logs</td><td>To route the data, security, protection against abuse</td></tr>
         </table>
         <p style="font-size:0.9em;color:#666;">Legal bases: performance of the requested service (Art. 6(1)(b) GDPR) and legitimate interest in securing the service (Art. 6(1)(f)).</p>
@@ -96,6 +97,9 @@
             <li><strong>Trip ideas</strong>: to complete the suggestions, the app queries Open-Meteo (weather at a destination), Wikidata, Wikipedia and Wikivoyage (nearby cities, places, photos and descriptions). They receive neither your name nor your notebook’s content. No flight prices are requested from any commercial service.</li>
             <li><strong>“I’m here”</strong>: when you tap this button, your position is sent to OpenStreetMap (Nominatim) to find the name of the city and country. No position is collected in the background.</li>
             <li><strong>Trip tracking and shared route</strong>: if you turn tracking on, your phone records your position only while the app is open (never in the background, phone in your pocket) and stores it in your notebook, encrypted. It is shown to your followers only if you tap “Show your route to followers”: each traveller decides for themselves and can stop at any time.</li>
+            <li><strong>Notifications</strong>: to reach your phone, a notification goes through your system’s service (Apple Push for iPhone, Google’s Firebase Cloud Messaging for Android and Chrome, Mozilla for Firefox). These services receive the subscription address and a message <strong>encrypted twice</strong> (by the Web Push standard, and with the trip’s key): they cannot read its content.</li>
+            <li><strong>Offline maps</strong>: map pieces are downloaded from OpenFreeMap (tiles.openfreemap.org, OpenStreetMap data) and kept on your phone. OpenFreeMap receives the requested areas and your IP address, without your name or your notebook’s content.</li>
+            <li><strong>Place cards</strong>: the place name and city are sent to OpenStreetMap (Nominatim) and Wikipedia to find opening hours, website, photo and summary. The (public) information found is stored in the place’s record.</li>
             <li><strong>Serverless packages</strong>: if you choose this mode, your data is encrypted (AES-256) with your group’s passphrase into a file that you send yourself (messaging, AirDrop…). The publisher does not receive these files; how long they are kept depends on the service you use to send them.</li>
             <li><strong>External links</strong> (airlines, Booking, Google Maps, Trainline…): these are plain links, with no affiliation or payment. By opening them, you leave the App and those sites’ rules apply.</li>
         </ul>
@@ -106,12 +110,13 @@
     <div class="box">
         <p><strong>Permissions requested by the app</strong> (always when you use the feature, never at launch; you can refuse them or withdraw them in your phone settings):</p>
         <ul>
-            <li><strong>Location</strong>: for “I’m here” and for trip tracking, if you turn it on. Only while the app is open, never in the background.</li>
+            <li><strong>Location</strong>: for “I’m here”, for trip tracking if you turn it on, and to show where you are on the offline map. Only while the app is open, never in the background. In “journey mode”, the app keeps the screen on until you stop it.</li>
+            <li><strong>Notifications</strong>: only if you turn them on in Settings → Notifications. You choose the categories and can turn them off at any time, in the app or in the phone settings.</li>
             <li><strong>Photos and files</strong>: when you add a photo, a receipt, a PDF ticket or a backup, you choose the file (or take the photo) yourself; the app has no access to the rest of your gallery.</li>
             <li><strong>Clipboard and sharing</strong>: to copy or send an invitation, a file or the trip film, only when you tap the button.</li>
             <li><strong>Persistent storage</strong>: the app asks the browser not to erase your trips when space runs low.</li>
         </ul>
-        <p>The app does <strong>not</strong> request access to the microphone, contacts or notifications, and sends no notifications.</p>
+        <p>The app does <strong>not</strong> request access to the microphone or contacts, and sends no advertising notifications.</p>
         <p><strong>Local storage</strong>: the App uses your browser’s storage (LocalStorage, IndexedDB) to work, including offline. This storage is strictly necessary for the service and requires no consent. The App uses <strong>no cookies</strong>.</p>
         <p><strong>Audience measurement</strong>: there are no advertising trackers, no third-party analytics tools and no profiling. Only anonymous measurements strictly necessary to run the service are used: the install counter and the overall server statistics described in section 2, plus the technical traffic statistics provided by the host Cloudflare (number of visits and requests, countries, errors), without cookies and without cross-site tracking. No data is sold, rented or used for advertising.</p>
     </div>
@@ -121,6 +126,7 @@
         <ul>
             <li><strong>On your device</strong>: until you erase the notebook or the browser data.</li>
             <li><strong>On the server</strong>: as long as the notebook is in use. A notebook with no activity for 24 months is automatically deleted from the server (its data remains on your devices). A photo removed from a memory, or a deleted memory or trip, is erased from the server.</li>
+            <li><strong>Notifications</strong>: a device’s subscription is erased from the server as soon as you turn notifications off, when the phone no longer accepts it, or when the notebook is erased. A scheduled reminder is erased as soon as it is sent (at the latest 2 days after its scheduled time).</li>
             <li><strong>Reports</strong>: when a report is made, the publisher keeps a log (date, anonymous fingerprint of the notebook, action taken, reason given by the reporter) for as long as needed to handle it and for any legal follow-up, at most 3 years.</li>
             <li><strong>Hosting provider’s technical logs</strong>: according to Cloudflare’s policy, generally a few days.</li>
         </ul>

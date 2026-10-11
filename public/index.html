@@ -1529,6 +1529,9 @@ body.cv-ph-live .cv-actb .ac-path .on,body.cv-ph-live .cv-actb .ac-n{box-shadow:
 body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;background:none;box-shadow:none}
 </style>
 <style>
+/* 🎟️ invitation reçue, sur la page d’installation */
+#cv-gate .gv{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:12px 14px;margin:12px 0;text-align:left}
+#cv-gate .gv b{display:block;margin-bottom:4px}#cv-gate .gv p{margin:0 0 10px;font-size:.88rem;opacity:.9}
 /* 🚗 mode trajet */
 .cv-tjbtn{display:flex;gap:10px;align-items:center;width:100%;margin:8px 0 0;border:1px dashed #c4b5fd;background:#faf7ff;border-radius:14px;padding:10px 12px;text-align:left;font:inherit;color:inherit}
 .cv-tjbtn>span:first-child{font-size:1.4rem}.cv-tjbtn b{display:block}.cv-tjbtn small{color:#6b5b7b;font-size:.78rem}
@@ -2279,7 +2282,7 @@ const CV = (function(){
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.tripJoinGo()">🔗 Rejoindre</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
   }
   async function tripJoinGo(){
-    const code = (document.getElementById('tj-code').value||'').trim().toUpperCase(), u = document.getElementById('tj-url'), msg = document.getElementById('tj-msg');
+    const code = invCode(document.getElementById('tj-code').value), u = document.getElementById('tj-url'), msg = document.getElementById('tj-msg');
     if(code.length < 8){ msg.textContent = 'Colle le code complet (au moins 8 caractères).'; return; }
     if(u && u.value.trim()) M.sync.url = u.value.trim();
     if(code === M.sync.code){ msg.textContent = 'C’est le code de ton carnet principal : tu as déjà ces voyages.'; return; }
@@ -3558,7 +3561,8 @@ const CV = (function(){
       </div>
       <div id="cv-ob-join" style="display:none">
         ${hosted ? '' : `<div class="v-f"><label>Adresse de l’appli en ligne</label><input class="v-in" id="cv-surl" placeholder="https://carnet-voyage.pages.dev"></div>`}
-        <div class="v-f"><label>Code du carnet reçu</label><input class="v-in" id="cv-scode" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters"></div>
+        <div class="v-f"><label>Invitation reçue (lien ou code)</label><input class="v-in" id="cv-scode" placeholder="https://… ou XXXX-XXXX-XXXX" autocapitalize="characters"></div>
+        <button type="button" class="v-btn sec" style="margin-bottom:8px" onclick="CV.obPaste()">📋 Coller l’invitation</button>
         <div class="v-sum-small" style="margin:-4px 0 10px">Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.</div>
         <button class="v-btn" onclick="CV.obJoin()">Rejoindre</button>
       </div>`, true);
@@ -3591,7 +3595,7 @@ const CV = (function(){
   }
   async function obJoin(){
     const urlEl = document.getElementById('cv-surl');
-    const code = document.getElementById('cv-scode').value.trim().toUpperCase();
+    const code = invCode(document.getElementById('cv-scode').value);
     if(code.length < 8){ alert('Colle le code reçu (au moins 8 caractères).'); return; }
     if(urlEl && urlEl.value.trim()) M.sync.url = urlEl.value.trim();
     // 1) code d’un voyage partagé (le cas le plus courant : une invitation reçue) → seul ce voyage est ajouté
@@ -8835,9 +8839,19 @@ ${pm.join('\n')}</Document></kml>`;
       : `<li>${installEvt ? 'Clique sur le bouton ci-dessous' : 'Dans Chrome ou Edge : l’icône <b>Installer</b> à droite de la barre d’adresse. Dans Safari (Mac) : menu <b>Fichier → Ajouter au Dock</b>'}.</li><li>Ouvre <b>Vezoria</b> depuis tes applications.</li>`;
     g.innerHTML = `<div class="gt"><img src="icon-192.png" alt="" class="gi"><h1>Vezoria</h1>
       <p>Pour garder tes voyages <b>sur ton téléphone</b>, fonctionner <b>sans réseau</b> et protéger tes données, l’appli s’utilise <b>installée sur ton écran d’accueil</b>. C’est gratuit et ça prend 10 secondes.</p>
+      ${/[#&]rejoindre=/i.test(location.hash) ? `<div class="gv"><b>🎟️ Tu es invité(e) dans un voyage</b><p>Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».</p><button type="button" class="v-btn sec" id="gv-copy" onclick="CV.gateCopy()">📋 Copier l’invitation</button></div>` : ''}
       <ol class="gs">${steps}</ol>
       ${installEvt ? `<button type="button" class="v-btn" onclick="CV.gateInstall()">📲 Installer l’appli</button>` : ''}
       <p class="gm">Aucune inscription, aucune publicité. <a href="mentions-legales.html">Mentions légales</a> · <a href="privacy.html">Confidentialité</a></p></div>`;
+  }
+  // l’appli installée sur iPhone ne voit pas le lien ouvert dans Safari : l’invitation passe par le presse-papiers
+  async function gateCopy(){ const b = document.getElementById('gv-copy'); try { await navigator.clipboard.writeText(location.href); if(b) b.textContent = '📋 Invitation copiée'; } catch(e){ await uiPrompt('Copie ce texte :', location.href); } }
+  const invCode = s => { const m = String(s || '').match(/rejoindre=([A-Za-z0-9-]{8,})/i); return (m ? m[1] : String(s || '').trim()).toUpperCase(); };
+  async function obPaste(){
+    let t = ''; try { t = await navigator.clipboard.readText(); } catch(e){}
+    const c = /rejoindre=|^[A-Z0-9]{4}-[A-Z0-9]{4}/i.test(t || '') ? invCode(t) : '';
+    const i = document.getElementById('cv-scode'); if(c && i){ i.value = c; return; }
+    alert('Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.');
   }
   async function gateInstall(){ if(!installEvt) return; installEvt.prompt(); try { await installEvt.userChoice; } catch(e){} installEvt = null; gateRender(); }
   window.addEventListener('beforeinstallprompt', ()=>setTimeout(gateRender, 50));
@@ -10781,7 +10795,7 @@ ${pm.join('\n')}</Document></kml>`;
     }
     const code = TS()[t.id], url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : '';
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
-    const text = MSG(`Rejoins notre voyage « ${t.titre} » sur Vezoria 🧳`) + '\n' + (link || url) + '\n' + MSG(`(Si le lien ne s’ouvre pas : Mes voyages → Rejoindre un voyage → code ${code})`);
+    const text = MSG(`Rejoins notre voyage « ${t.titre} » sur Vezoria 🧳`) + '\n' + (link || url);
     if(navigator.share){ try { await navigator.share({title:t.titre, text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
     try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
     refresh();
@@ -11075,7 +11089,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11q';
+  const BUILD = '2026-10-11r';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -11085,7 +11099,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
