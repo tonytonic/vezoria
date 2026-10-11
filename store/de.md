@@ -42,7 +42,7 @@ Deine Daten gehören dir
 • Importiere deine Reisen aus einem Datenexport (ZIP)
 
 Einfach oder umfassend – du entscheidest
-Blende Tabs und Bereiche aus, die du nicht brauchst, damit die App übersichtlich bleibt. Verfügbar in 7 Sprachen.
+Blende Tabs und Bereiche aus, die du nicht brauchst, damit die App übersichtlich bleibt. Verfügbar in 14 Sprachen.
 
 Gute Reise!
 

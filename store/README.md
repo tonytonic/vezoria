@@ -1,6 +1,7 @@
 # Fiche Google Play – Vezoria
 
-Textes par langue : fr.md (source), en.md, es.md, de.md, it.md, pt.md (pt-BR), nl.md.
+Textes par langue : fr.md (source), en.md, es.md, de.md, it.md, pt.md (pt-BR), nl.md,
+ru.md, tr.md, ar.md, hi.md, zh.md (zh-CN), ja.md, ko.md.
 Chaque fichier contient : nom (≤30), description courte (≤80), description complète (≤4000),
 nouveautés (≤500) et 6 légendes de captures (≤40). Limites vérifiées par script.
 

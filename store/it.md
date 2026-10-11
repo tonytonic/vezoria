@@ -42,7 +42,7 @@ I tuoi dati restano tuoi
 • Importa i tuoi viaggi da un'esportazione di dati (ZIP)
 
 Semplice o completo, scegli tu
-Nascondi le schede e i blocchi che non usi per mantenere l'app leggera. Disponibile in 7 lingue.
+Nascondi le schede e i blocchi che non usi per mantenere l'app leggera. Disponibile in 14 lingue.
 
 Buon viaggio!
 

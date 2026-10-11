@@ -42,7 +42,7 @@ Your data stays yours
 • Import your trips from a data export (ZIP)
 
 Simple or complete, your choice
-Hide the tabs and blocks you don't use to keep the app light. Available in 7 languages.
+Hide the tabs and blocks you don't use to keep the app light. Available in 14 languages.
 
 Have a great trip!
 

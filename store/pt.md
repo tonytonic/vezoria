@@ -42,7 +42,7 @@ Seus dados são seus
 • Importe suas viagens de uma exportação de dados (ZIP)
 
 Simples ou completo, você escolhe
-Oculte as abas e os blocos que você não usa para deixar o app mais leve. Disponível em 7 idiomas.
+Oculte as abas e os blocos que você não usa para deixar o app mais leve. Disponível em 14 idiomas.
 
 Boa viagem!
 

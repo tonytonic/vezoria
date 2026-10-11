@@ -42,7 +42,7 @@ Vos données restent à vous
 • Importez vos voyages depuis un export de données (ZIP)
 
 Simple ou complet, à vous de voir
-Masquez les onglets et les blocs dont vous ne vous servez pas pour garder une appli légère. Disponible en 7 langues.
+Masquez les onglets et les blocs dont vous ne vous servez pas pour garder une appli légère. Disponible en 14 langues.
 
 Bon voyage !
 

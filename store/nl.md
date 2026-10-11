@@ -42,7 +42,7 @@ Jouw gegevens blijven van jou
 • Importeer je reizen uit een gegevensexport (zip)
 
 Eenvoudig of uitgebreid, jij kiest
-Verberg de tabbladen en blokken die je niet gebruikt, zodat de app overzichtelijk blijft. Beschikbaar in 7 talen.
+Verberg de tabbladen en blokken die je niet gebruikt, zodat de app overzichtelijk blijft. Beschikbaar in 14 talen.
 
 Goede reis!
 

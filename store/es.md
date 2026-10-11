@@ -42,7 +42,7 @@ Tus datos son tuyos
 • Importa tus viajes desde una exportación de datos (ZIP)
 
 Sencillo o completo, tú decides
-Oculta las pestañas y los bloques que no uses para mantener la app ligera. Disponible en 7 idiomas.
+Oculta las pestañas y los bloques que no uses para mantener la app ligera. Disponible en 14 idiomas.
 
 ¡Buen viaje!
 
