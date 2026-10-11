@@ -3,8 +3,11 @@
    (dictionnaire lang/xx.js), sans toucher aux fiches des utilisateurs ni aux données enregistrées.
    Langue : choix enregistré (Réglages → Langue), sinon celle du téléphone, sinon l'anglais. */
 (function(){
-  var LANGS = {fr:'Français', en:'English', es:'Español', de:'Deutsch', it:'Italiano', pt:'Português', nl:'Nederlands'};
-  var LOC = {fr:'fr-FR', en:'en-GB', es:'es-ES', de:'de-DE', it:'it-IT', pt:'pt-BR', nl:'nl-NL'};
+  var LANGS = {fr:'Français', en:'English', es:'Español', de:'Deutsch', it:'Italiano', pt:'Português', nl:'Nederlands',
+    ru:'Русский', tr:'Türkçe', ar:'العربية', hi:'हिन्दी', zh:'中文（简体）', ja:'日本語', ko:'한국어'};
+  var LOC = {fr:'fr-FR', en:'en-GB', es:'es-ES', de:'de-DE', it:'it-IT', pt:'pt-BR', nl:'nl-NL',
+    ru:'ru-RU', tr:'tr-TR', ar:'ar-u-nu-latn', hi:'hi-IN', zh:'zh-CN', ja:'ja-JP', ko:'ko-KR'};
+  var RTL = {ar: 1};   // langues écrites de droite à gauche
   var saved = null; try { saved = localStorage.getItem('cv-lang'); } catch(e){}
   var nav = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'fr']).map(function(l){ return String(l).slice(0,2).toLowerCase(); });
   var lang = saved && LANGS[saved] ? saved : (nav.filter(function(l){ return LANGS[l]; })[0] || 'en');
@@ -12,6 +15,7 @@
     set: function(l){ try { localStorage.setItem('cv-lang', l); } catch(e){} location.reload(); },
     tr: function(s){ return s; }, msg: function(s){ return s; }, load: load};
   document.documentElement.lang = lang;
+  if(RTL[lang]){ document.documentElement.dir = 'rtl'; I.rtl = true; }   // l’arabe s’affiche de droite à gauche
   if(lang === 'fr') return;
 
   var EXACT = new Map(), RAW = new Map(), PAT = new Map(), WILD = [], memo = new Map();
@@ -24,7 +28,7 @@
       if(/\{\d+\}/.test(k)){
         var parts = flat(k).split(/\{(\d+)\}/), re = '^', order = [];
         for(var i = 0; i < parts.length; i++){ if(i % 2) { re += '([\\s\\S]*?)'; order.push(+parts[i]); } else re += esc(parts[i]); }
-        var p = {re: new RegExp(re + '$'), order: order, v: flat(v)}, head = parts[0];
+        var p = {re: new RegExp(re + '$'), order: order, v: flat(v), lit: parts.filter(function(x, i){ return !(i % 2); }).join('').length}, head = parts[0];
         if(head.length >= 3){ var key = head.slice(0, 3); if(!PAT.has(key)) PAT.set(key, []); PAT.get(key).push(p); } else WILD.push(p);
       } else { EXACT.set(flat(k), flat(v)); if(/\n/.test(k)) RAW.set(rawN(k), rawN(v)); }
     });
@@ -51,6 +55,9 @@
         if(!EXACT.has(k0)) EXACT.set(k0, v0);
       }
     });
+    // le modèle le plus précis (le plus de texte fixe) passe en premier : « {0} souvenir{1} · {2} photo{3} » avant « {0} photos »
+    var byLit = function(a, b){ return b.lit - a.lit; };
+    WILD.sort(byLit); PAT.forEach(function(l){ l.sort(byLit); });
     I.ready = true; memo.clear();
     if(document.documentElement) walkAll(document.documentElement);
   }
@@ -77,8 +84,9 @@
   function look(core){
     if(memo.has(core)) return memo.get(core);
     var r = EXACT.has(core) ? EXACT.get(core) : null, pm = /^([^A-Za-zÀ-ÿ]+?)([A-Za-zÀ-ÿ][\s\S]*)$/.exec(core);
-    if(r == null && pm && EXACT.has(pm[2])) r = pm[1] + EXACT.get(pm[2]);   // « 💶 Plafond de dépenses » : symbole + texte connu, avant les modèles
-    if(r == null && /[A-Za-zÀ-ÿ]/.test(core)) r = viaPattern(core);
+    if(r == null && pm && !/\d/.test(pm[1]) && EXACT.has(pm[2])) r = pm[1] + EXACT.get(pm[2]);   // « 💶 Plafond de dépenses » : symbole + texte connu, avant les modèles
+    if(r == null && /[A-Za-zÀ-ÿ]/.test(core)) r = viaPattern(core);   // « 3 voyages » : un nombre devant passe d’abord par les modèles (« {0} voyages »)
+    if(r == null && pm && EXACT.has(pm[2])) r = pm[1] + EXACT.get(pm[2]);
     if(r == null && pm){ var rest = viaPattern(pm[2]); if(rest != null) r = pm[1] + rest; }
     if(r == null && core.indexOf(' ·') > 0){   // « Sam. 7/11 · Réf. ABC » : chaque morceau séparé par « · » se traduit seul
       var bits = core.split(/( · | ·$)/), hit = false;
