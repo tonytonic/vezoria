@@ -3194,4 +3194,10 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "🔔 Autoriser sur ce téléphone":"🔔 Разрешить на этом телефоне",
 "Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"Нет баннера вверху экрана? Настройки телефона → Приложения → Vezoria → Уведомления → нажми на категорию и включи «Всплывающее уведомление» (или «Со звуком»).",
 "{0} nouveautés":"Новое: {0}",
-"🔔 Pendant ton absence":"🔔 Пока тебя не было"});
+"🔔 Pendant ton absence":"🔔 Пока тебя не было",
+"Nouvelle dépense dans ton voyage":"Новый расход в поездке",
+"Le programme du voyage a changé":"Программа поездки изменилась",
+"Nouveau souvenir dans ton voyage":"Новое воспоминание в поездке",
+"Nouveau sondage dans ton voyage":"Новый опрос в поездке",
+"Nouveautés dans les courses et les notes":"Новое в покупках и заметках",
+"Rappel pour ton voyage":"Напоминание о поездке"});

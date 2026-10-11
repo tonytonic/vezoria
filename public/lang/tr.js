@@ -3194,4 +3194,10 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "🔔 Autoriser sur ce téléphone":"🔔 Bu telefonda izin ver",
 "Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"Ekranın üstünde şerit yok mu? Telefon ayarları → Uygulamalar → Vezoria → Bildirimler → kategoriye dokun ve “Ekranda açılır pencere”yi (veya “Uyarı”yı) aç.",
 "{0} nouveautés":"{0} yenilik",
-"🔔 Pendant ton absence":"🔔 Sen yokken"});
+"🔔 Pendant ton absence":"🔔 Sen yokken",
+"Nouvelle dépense dans ton voyage":"Seyahatinde yeni harcama",
+"Le programme du voyage a changé":"Seyahat programı değişti",
+"Nouveau souvenir dans ton voyage":"Seyahatinde yeni bir anı",
+"Nouveau sondage dans ton voyage":"Seyahatinde yeni anket",
+"Nouveautés dans les courses et les notes":"Alışveriş ve notlarda yenilikler",
+"Rappel pour ton voyage":"Seyahatin için hatırlatma"});

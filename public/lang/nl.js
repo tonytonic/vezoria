@@ -252,4 +252,10 @@ I18N.load({
 "🔔 Autoriser sur ce téléphone":"🔔 Toestaan op deze telefoon",
 "Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"Geen banner bovenaan het scherm? Telefooninstellingen → Apps → Vezoria → Meldingen → tik op de categorie en zet ‘Pop-up op scherm’ aan (of ‘Waarschuwen’).",
 "{0} nouveautés":"{0} nieuwe dingen",
-"🔔 Pendant ton absence":"🔔 Terwijl je weg was"});
+"🔔 Pendant ton absence":"🔔 Terwijl je weg was",
+"Nouvelle dépense dans ton voyage":"Nieuwe uitgave in je reis",
+"Le programme du voyage a changé":"Het reisprogramma is gewijzigd",
+"Nouveau souvenir dans ton voyage":"Nieuwe herinnering in je reis",
+"Nouveau sondage dans ton voyage":"Nieuwe peiling in je reis",
+"Nouveautés dans les courses et les notes":"Nieuws in de boodschappen en notities",
+"Rappel pour ton voyage":"Herinnering voor je reis"});

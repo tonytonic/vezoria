@@ -3194,4 +3194,10 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "🔔 Autoriser sur ce téléphone":"🔔 السماح على هذا الهاتف",
 "Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"لا يظهر شريط أعلى الشاشة؟ إعدادات الهاتف ← التطبيقات ← Vezoria ← الإشعارات ← المس الفئة وفعّل «الظهور على الشاشة» (أو «تنبيه»).",
 "{0} nouveautés":"{0} مستجدات",
-"🔔 Pendant ton absence":"🔔 أثناء غيابك"});
+"🔔 Pendant ton absence":"🔔 أثناء غيابك",
+"Nouvelle dépense dans ton voyage":"مصروف جديد في رحلتك",
+"Le programme du voyage a changé":"تغيّر برنامج الرحلة",
+"Nouveau souvenir dans ton voyage":"ذكرى جديدة في رحلتك",
+"Nouveau sondage dans ton voyage":"استطلاع جديد في رحلتك",
+"Nouveautés dans les courses et les notes":"مستجدات في المشتريات والملاحظات",
+"Rappel pour ton voyage":"تذكير برحلتك"});

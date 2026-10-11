@@ -3194,4 +3194,10 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "🔔 Autoriser sur ce téléphone":"🔔 이 휴대폰에서 허용",
 "Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"화면 위에 배너가 안 뜨나요? 휴대폰 설정 → 앱 → Vezoria → 알림 → 카테고리를 누르고 “팝업으로 표시”(또는 “알림”)를 켜세요.",
 "{0} nouveautés":"새 소식 {0}개",
-"🔔 Pendant ton absence":"🔔 없는 동안"});
+"🔔 Pendant ton absence":"🔔 없는 동안",
+"Nouvelle dépense dans ton voyage":"여행에 새 지출이 있어요",
+"Le programme du voyage a changé":"여행 일정이 바뀌었어요",
+"Nouveau souvenir dans ton voyage":"여행에 새 추억이 있어요",
+"Nouveau sondage dans ton voyage":"여행에 새 투표가 있어요",
+"Nouveautés dans les courses et les notes":"장보기와 메모에 새 소식이 있어요",
+"Rappel pour ton voyage":"여행 알림"});

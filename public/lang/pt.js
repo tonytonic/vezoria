@@ -252,4 +252,10 @@ I18N.load({
 "🔔 Autoriser sur ce téléphone":"🔔 Permitir neste telefone",
 "Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"Sem faixa no topo da tela? Configurações do telefone → Apps → Vezoria → Notificações → toque na categoria e ative “Mostrar como pop-up” (ou “Alertar”).",
 "{0} nouveautés":"{0} novidades",
-"🔔 Pendant ton absence":"🔔 Enquanto você estava fora"});
+"🔔 Pendant ton absence":"🔔 Enquanto você estava fora",
+"Nouvelle dépense dans ton voyage":"Nova despesa na sua viagem",
+"Le programme du voyage a changé":"O roteiro da viagem mudou",
+"Nouveau souvenir dans ton voyage":"Nova lembrança na sua viagem",
+"Nouveau sondage dans ton voyage":"Nova enquete na sua viagem",
+"Nouveautés dans les courses et les notes":"Novidades nas compras e nas notas",
+"Rappel pour ton voyage":"Lembrete da sua viagem"});

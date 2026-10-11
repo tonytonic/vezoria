@@ -3194,4 +3194,10 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "🔔 Autoriser sur ce téléphone":"🔔 在这台手机上允许",
 "Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"屏幕顶部没有横幅？手机设置 → 应用 → Vezoria → 通知 → 点击类别，开启「在屏幕上弹出」（或「提醒」）。",
 "{0} nouveautés":"{0} 条新动态",
-"🔔 Pendant ton absence":"🔔 你不在时"});
+"🔔 Pendant ton absence":"🔔 你不在时",
+"Nouvelle dépense dans ton voyage":"你的旅行有一笔新支出",
+"Le programme du voyage a changé":"旅行行程有变动",
+"Nouveau souvenir dans ton voyage":"你的旅行有一条新回忆",
+"Nouveau sondage dans ton voyage":"你的旅行有一个新投票",
+"Nouveautés dans les courses et les notes":"购物清单和笔记有更新",
+"Rappel pour ton voyage":"旅行提醒"});

@@ -3194,4 +3194,10 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "🔔 Autoriser sur ce téléphone":"🔔 इस फ़ोन पर अनुमति दो",
 "Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"स्क्रीन के ऊपर बैनर नहीं दिखता? फ़ोन सेटिंग्स → ऐप्स → Vezoria → सूचनाएँ → श्रेणी पर टैप करो और “स्क्रीन पर पॉप-अप” (या “अलर्ट”) चालू करो।",
 "{0} nouveautés":"{0} नई बातें",
-"🔔 Pendant ton absence":"🔔 तुम्हारी ग़ैरमौजूदगी में"});
+"🔔 Pendant ton absence":"🔔 तुम्हारी ग़ैरमौजूदगी में",
+"Nouvelle dépense dans ton voyage":"तुम्हारी यात्रा में नया ख़र्च",
+"Le programme du voyage a changé":"यात्रा का कार्यक्रम बदल गया है",
+"Nouveau souvenir dans ton voyage":"तुम्हारी यात्रा में नई याद",
+"Nouveau sondage dans ton voyage":"तुम्हारी यात्रा में नया सर्वे",
+"Nouveautés dans les courses et les notes":"ख़रीदारी और नोट्स में नई बातें",
+"Rappel pour ton voyage":"तुम्हारी यात्रा के लिए रिमाइंडर"});

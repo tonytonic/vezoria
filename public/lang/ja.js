@@ -3194,4 +3194,10 @@ I18N.load({"🔑 Mon code principal":"🔑 メインコード",
 "🔔 Autoriser sur ce téléphone":"🔔 この端末で許可する",
 "Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"画面上部にバナーが出ませんか？端末の設定 → アプリ → Vezoria → 通知 → カテゴリをタップし「ポップアップで表示」（または「アラート」）をオンにしてください。",
 "{0} nouveautés":"新着 {0} 件",
-"🔔 Pendant ton absence":"🔔 留守中の通知"});
+"🔔 Pendant ton absence":"🔔 留守中の通知",
+"Nouvelle dépense dans ton voyage":"旅行に新しい支出があります",
+"Le programme du voyage a changé":"旅行の予定が変更されました",
+"Nouveau souvenir dans ton voyage":"旅行に新しい思い出があります",
+"Nouveau sondage dans ton voyage":"旅行に新しいアンケートがあります",
+"Nouveautés dans les courses et les notes":"買い物リストとメモに新着があります",
+"Rappel pour ton voyage":"旅行のリマインダー"});
