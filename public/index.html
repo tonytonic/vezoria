@@ -2041,10 +2041,15 @@ const CV = (function(){
     const tpl = {}; Object.entries(PUSH_TPL).forEach(([k, s])=>tpl[k] = window.I18N && I18N.tr ? I18N.tr(s) : s);
     await pushKv('tpl', tpl);
     const toks = {};
-    for(const s of spaces){
-      const kk = await keys(s.code), kid = kk.token.slice(0, 16); await pushKv('k:' + kid, kk.key); toks[kk.token] = 1;
-      await pushPost(s.code, {a:'sub', sub:sj, kinds:s.kinds, tz, quiet:!!P.quiet});
+    // ce téléphone d’abord (rappels et essai), puis chaque voyage : un voyage en erreur ne bloque pas les autres
+    let err = null;
+    for(const s of spaces.slice().sort((a, b)=>(b.dev ? 1 : 0) - (a.dev ? 1 : 0))){
+      try {
+        const kk = await keys(s.code), kid = kk.token.slice(0, 16); await pushKv('k:' + kid, kk.key); toks[kk.token] = 1;
+        await pushPost(s.code, {a:'sub', sub:sj, kinds:s.kinds, tz, quiet:!!P.quiet});
+      } catch(e){ if(s.dev) throw e; err = e; }
     }
+    if(err){ console.warn("push sub", err); P.toks = Object.assign(P.toks || {}, toks); persist(); return; }
     // espaces quittés depuis (voyage plus partagé) : on se désabonne
     for(const tk of Object.keys(P.toks || {})) if(!toks[tk]) fetch(pushApi(), {method:'POST', headers:{'Content-Type':'application/json', 'X-Carnet-Code':tk}, body:JSON.stringify({a:'unsub', dev:devId()})}).catch(()=>{});
     P.toks = toks; P.sig = sig; P.regAt = Date.now(); persist();
@@ -2072,7 +2077,7 @@ const CV = (function(){
       if(!pushOk()){ alert('Ce navigateur ne sait pas recevoir de notifications.'); return; }
       let perm = Notification.permission; if(perm === 'default') perm = await Notification.requestPermission();
       if(perm !== 'granted'){ alert('Notifications refusées. Pour les autoriser : réglages du téléphone → Notifications → Vezoria.'); renderPrefsKeep(); return; }
-      await pushRegister(true);
+      try { await pushRegister(true); } catch(e){ console.warn('push sub', e); }
       const got = new Promise(res=>{ pushAck = res; setTimeout(()=>res(null), 25000); });
       await pushPlan(true, {id:'test-' + Date.now(), at:Date.now() - 1000, p:{k:'rappel', r:'test', a:[], tt:'Vezoria'}});
       toast('📨 Notification d’essai envoyée');
