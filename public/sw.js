@@ -1,7 +1,7 @@
 // Carnet de voyage — fonctionnement hors ligne
 // Pages et fichiers de l'appli : réseau d'abord (toujours la dernière version), copie locale si pas de réseau.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-11r';
+const CACHE = 'vezoria-2026-10-11s';
 const CORE = ['./', './index.html', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
@@ -113,7 +113,10 @@ self.addEventListener('push', e => {
     } catch (_) {}
     const n = ((await kvGet('badge')) || 0) + 1; await kvPut('badge', n);
     try { if (self.navigator && self.navigator.setAppBadge) await self.navigator.setAppBadge(n); } catch (_) {}
-    await self.registration.showNotification(title, { body, tag: d.t || 'vezoria', renotify: true, icon: './icon-192.png', badge: './icons/badge-96.png', data: { url } });
+    let ack = { type: 'vz-push', ok: true };
+    try { await self.registration.showNotification(title, { body, tag: d.t || 'vezoria', renotify: true, icon: './icon-192.png', badge: './icons/badge-96.png', data: { url } }); }
+    catch (err) { ack = { type: 'vz-push', ok: false, m: String(err && err.message || err) }; }
+    try { (await self.clients.matchAll({ type: 'window', includeUncontrolled: true })).forEach(c => c.postMessage(ack)); } catch (_) {}
   })());
 });
 self.addEventListener('notificationclick', e => {

@@ -2060,18 +2060,40 @@ const CV = (function(){
   }
   async function pushKind(k, on){ const P = PU(); P.kinds[k] = on ? 1 : 0; persist(); try { if(k === 'rappel') await pushPlan(true); else await pushRegister(true); } catch(e){} toast(on ? '🔔 ' + (PUSH_KINDS.find(x=>x[0]===k)||[,'',''])[1] : '🔕'); }
   async function pushQuiet(on){ PU().quiet = !!on; persist(); try { await pushRegister(true); } catch(e){} }
-  async function pushTest(){ try { await pushPlan(true, {id:'test-' + Date.now(), at:Date.now() - 1000, p:{k:'rappel', r:'test', a:[], tt:'Vezoria'}}); toast('📨 Notification d’essai envoyée'); } catch(e){ alert('Envoi impossible : ' + e.message); } }
+  let pushAck = null;
+  async function pushTest(){
+    try {
+      if(!pushOk()){ alert('Ce navigateur ne sait pas recevoir de notifications.'); return; }
+      let perm = Notification.permission; if(perm === 'default') perm = await Notification.requestPermission();
+      if(perm !== 'granted'){ alert('Notifications refusées. Pour les autoriser : réglages du téléphone → Notifications → Vezoria.'); renderPrefsKeep(); return; }
+      await pushRegister(true);
+      const got = new Promise(res=>{ pushAck = res; setTimeout(()=>res(null), 25000); });
+      await pushPlan(true, {id:'test-' + Date.now(), at:Date.now() - 1000, p:{k:'rappel', r:'test', a:[], tt:'Vezoria'}});
+      toast('📨 Notification d’essai envoyée');
+      const r = await got; pushAck = null;
+      if(r && r.ok) toast('✅ Notification reçue par le téléphone');
+      else if(r) alert('Le téléphone a reçu la notification mais n’a pas pu l’afficher. Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.');
+      else {
+        // rien reçu : on refait un abonnement neuf (les mises à jour de l’appli peuvent l’avoir rendu caduc)
+        try { const reg = await navigator.serviceWorker.ready, sub = await reg.pushManager.getSubscription(); if(sub) await sub.unsubscribe(); } catch(e){}
+        PU().sig = ''; persist(); await pushRegister(true).catch(()=>{});
+        alert('Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.');
+      }
+    } catch(e){ pushAck = null; alert('Envoi impossible : ' + e.message); }
+  }
   function renderPrefsKeep(){ if(M.tab === 'prefs'){ const y = window.scrollY; renderPrefs(); window.scrollTo({top:y}); } }
   function pushBox(){
     const P = PU(), ok = pushOk(), denied = ok && Notification.permission === 'denied';
     let h = `<div class="v-box" id="cv-push"><h3>🔔 Notifications</h3>`;
     if(!ok) return h + `<div class="v-sum-small">${isIOSDev && !standaloneApp() ? 'Sur iPhone, les notifications marchent quand Vezoria est ajoutée à l’écran d’accueil (Partager → « Sur l’écran d’accueil »), avec iOS 16.4 ou plus récent.' : 'Ce navigateur ne sait pas recevoir de notifications.'}</div></div>`;
     if(denied) return h + `<div class="v-sum-small">Les notifications sont bloquées pour Vezoria dans les réglages du téléphone. Autorise-les, puis reviens ici.</div></div>`;
+    if(P.on && Notification.permission !== 'granted') h += `<div class="v-sum-small" style="margin-bottom:8px">Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.</div><button type="button" class="v-btn" style="margin-bottom:10px" onclick="CV.pushTog(true)">🔔 Autoriser sur ce téléphone</button>`;
     h += `<label class="cv-checkline"><input type="checkbox" ${P.on ? 'checked' : ''} onchange="CV.pushTog(this.checked)"> <span><b>Recevoir des notifications</b></span></label>`;
     if(P.on) h += `<div class="v-sum-small" style="margin:8px 0 4px">Choisis ce qui t’intéresse :</div>`
       + PUSH_KINDS.map(([k, ic, l])=>`<label class="cv-checkline cv-pref"><input type="checkbox" ${P.kinds[k] ? 'checked' : ''} onchange="CV.pushKind('${k}', this.checked)"> <span>${ic} ${l}</span></label>`).join('')
       + `<label class="cv-checkline cv-pref"><input type="checkbox" ${P.quiet ? 'checked' : ''} onchange="CV.pushQuiet(this.checked)"> <span>🌙 Ne pas déranger la nuit (22 h – 8 h)</span></label>`
-      + `<button type="button" class="v-day-edit" style="margin-top:8px" onclick="CV.pushTest()">📨 M’envoyer une notification d’essai</button>`;
+      + `<button type="button" class="v-day-edit" style="margin-top:8px" onclick="CV.pushTest()">📨 M’envoyer une notification d’essai</button>`
+      + (/Android/i.test(navigator.userAgent) ? `<div class="v-sum-small" style="margin-top:6px">Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.</div>` : '');
     const alone = !M.sync.on && !Object.keys(TS()).length;
     return h + `<div class="v-sum-small" style="margin-top:8px">Le contenu des notifications est chiffré : le serveur ne peut pas le lire. Tes compagnons choisissent les leurs.${alone ? ' Pour être prévenu des ajouts de tes compagnons, partage d’abord un voyage.' : ''}</div></div>`;
   }
@@ -2156,7 +2178,7 @@ const CV = (function(){
     if(k === 'notes') setTimeout(()=>{ try { shopSheet(); } catch(e){} }, 300);
   }
   function pushBadgeClear(){ try { pushKv('badge', 0).catch(()=>{}); if(navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{}); } catch(e){} }
-  if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev=>{ if(ev.data && ev.data.type === 'vz-open') pushOpen(ev.data.url); });
+  if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev=>{ if(ev.data && ev.data.type === 'vz-open') pushOpen(ev.data.url); else if(ev.data && ev.data.type === 'vz-push' && pushAck) pushAck(ev.data); });
   document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible') pushBadgeClear(); });
   setTimeout(()=>{ pushOpen(location.href); pushBadgeClear();
     if(PU().on){ pushRegister().catch(()=>{}); pushPlan().catch(()=>{}); } }, 3000);
@@ -11089,7 +11111,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11r';
+  const BUILD = '2026-10-11s';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
