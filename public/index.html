@@ -1528,6 +1528,32 @@ body.cv-ph-live .cv-actb .ac-path .on,body.cv-ph-live .cv-actb .ac-n{box-shadow:
 .cv-sub{top:calc(var(--sat,env(safe-area-inset-top,0px)) + var(--tb))!important}
 body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;background:none;box-shadow:none}
 </style>
+<style>
+/* 🚗 mode trajet */
+.cv-tjbtn{display:flex;gap:10px;align-items:center;width:100%;margin:8px 0 0;border:1px dashed #c4b5fd;background:#faf7ff;border-radius:14px;padding:10px 12px;text-align:left;font:inherit;color:inherit}
+.cv-tjbtn>span:first-child{font-size:1.4rem}.cv-tjbtn b{display:block}.cv-tjbtn small{color:#6b5b7b;font-size:.78rem}
+.cv-tj{position:fixed;inset:0;z-index:9998;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:calc(env(safe-area-inset-top,0px) + 24px) 22px calc(env(safe-area-inset-bottom,0px) + 24px);text-align:center;transition:opacity .4s}
+.cv-tj.dim{opacity:.25}.cv-tj .tj-top b{display:block;font-size:1.2rem}.cv-tj .tj-top small{color:#a1a1aa;font-size:.8rem}
+.cv-tj .tj-big b{font-size:4.6rem;font-weight:800;letter-spacing:-.02em}.cv-tj .tj-big span{font-size:1.4rem;margin-left:6px;color:#c4b5fd}
+.cv-tj .tj-row{display:flex;gap:10px;width:100%;max-width:420px}.cv-tj .tj-row div{flex:1;background:#18181b;border-radius:14px;padding:10px 6px}
+.cv-tj .tj-row small{display:block;color:#a1a1aa;font-size:.72rem}.cv-tj .tj-row b{font-size:1.05rem}
+.cv-tj p{color:#a1a1aa;font-size:.82rem;max-width:420px;margin:0}.cv-tj .tj-warn{color:#fbbf24}
+.cv-tj .tj-end{border:0;border-radius:14px;padding:14px 22px;background:#7c3aed;color:#fff;font:inherit;font-weight:700}
+/* 🗺️ cartes hors ligne */
+#cv-omap{position:fixed;inset:0;z-index:9997;background:#e8eaed;display:none}#om-map{position:absolute;inset:0}
+#cv-omap .om-x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);left:12px;z-index:3;width:42px;height:42px;border-radius:50%;border:0;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.25);font-size:1.1rem}
+#cv-omap .om-info{position:absolute;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:3;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;font-size:.85rem}
+#cv-omap .om-info button,#cv-omap .om-info span{border:0;border-radius:999px;background:#fff;padding:8px 12px;box-shadow:0 2px 8px rgba(0,0,0,.2);font:inherit}
+#cv-omap .om-info span:empty{display:none}
+#cv-omap .maplibregl-ctrl-top-right{top:calc(env(safe-area-inset-top,0px) + 8px)}
+.om-mk{font-size:1.5rem;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));cursor:pointer}
+/* 📍 fiche d'un lieu */
+.cv-plk{text-decoration:underline dotted;cursor:pointer}
+.pi-oh{background:#faf7ff;border-radius:12px;padding:10px 12px;margin:10px 0}.pi-oh b{display:block;margin-bottom:6px}
+.pi-oh table{width:100%;border-collapse:collapse;font-size:.85rem}.pi-oh td{padding:2px 4px}.pi-oh td:first-child{width:70px;color:#6b5b7b;text-transform:capitalize}.pi-oh tr.on td{font-weight:700;color:#4c1d95}
+.pi-oh small{display:block;color:#9b8fab;font-size:.7rem;margin-top:6px;word-break:break-word}
+.pi-walk{margin:8px 0;font-size:.9rem}.pi-walk small{color:#6b5b7b}
+</style>
 </head>
 <body class="is-public">
 <div class="cv-statusbar"></div>
@@ -1873,12 +1899,14 @@ const CV = (function(){
 
   async function call(since, changes, code){
     const url = apiUrl(); if(!url) throw new Error('Adresse du serveur inconnue');
+    const orig = changes;
     changes = E2E ? await Promise.all(changes.map(r=>sealRec(r, code))) : changes.map(slim);
     const res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json','X-Carnet-Code':await authCode(code)}, body:JSON.stringify({since, changes})});
     let j = {}; try { j = await res.json(); } catch(e){}
     if(!res.ok) throw new Error(j.error || ('Erreur serveur ' + res.status));
     if(!Array.isArray(j.records)) throw new Error('Réponse inattendue du serveur');
     if(E2E) j.records = (await Promise.all(j.records.map(x=>openRec(x, code)))).filter(Boolean);
+    try { if(orig.length) pushNote(orig, code || M.sync.code); } catch(e){}
     return j;
   }
   function mergeRemote(records){
@@ -1947,8 +1975,189 @@ const CV = (function(){
     lastSyncAt = Date.now();
     pollGap = M.sync.err ? 300000 : liveShared() ? 300000 : AUTO_SYNC;   // voyage en cours partagé : toutes les 5 min, pour voir où sont les autres   // en cas d'erreur on réessaie dans 5 min, sinon dans 1 h
     softRefresh(changed);
+    if(PU().on) setTimeout(()=>{ pushRegister().catch(()=>{}); pushPlan().catch(()=>{}); }, 2500);
     if(again){ again = false; syncNow(); }
   }
+  /* ══════════ 🔔 Notifications (Web Push) ══════════
+     Chacun choisit ce qu’il reçoit (Plus → ⚙️ Réglages). Le texte part chiffré avec la clé du voyage :
+     le serveur ne le lit pas, il le transmet seulement ; le téléphone qui le reçoit le déchiffre et l’écrit
+     dans SA langue. Les rappels (départ, enregistrement en ligne, échéances) sont programmés par ce
+     téléphone pour lui seul, chiffrés avec sa propre clé. */
+  const PUSH_KINDS = [['depense','💶','Dépenses et remboursements'], ['resa','🗓️','Réservations et programme'], ['souv','📸','Souvenirs et photos'],
+    ['sondage','🗳️','Sondages'], ['notes','🛒','Courses et notes'], ['rappel','⏰','Rappels : départ, enregistrement en ligne, échéances']];
+  const PUSH_TPL = {depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
+    resa1:'{0} a ajouté au programme : {1}', resaN:'{0} a ajouté {1} éléments au programme', resaCh:'{0} a changé l’horaire : {1}',
+    souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
+    notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
+    depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
+    test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un'};
+  const PU = () => { const p = M.push || (M.push = {on:false, quiet:true}); p.kinds = Object.assign({depense:1, resa:1, souv:1, sondage:1, notes:1, rappel:1}, p.kinds || {}); return p; };
+  const pushApi = () => { const u = apiUrl(); return u ? u.replace(/\/api\/sync$/, '/api/push') : ''; };
+  const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && !!pushApi();
+  const isIOSDev = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const standaloneApp = () => { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch(e){ return false; } };
+  const pushDevCode = () => M.pushCode || (M.pushCode = 'dv-' + uid() + uid());
+  const b64url = u8 => b64(u8).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  const unb64url = s => { s = String(s).replace(/-/g,'+').replace(/_/g,'/'); while(s.length % 4) s += '='; return unb64(s); };
+  // petite base IndexedDB partagée avec le service worker : clés des voyages (non exportables), textes traduits, compteur
+  function pushDb(){ return new Promise((res, rej)=>{ const q = indexedDB.open('vz-push', 1); q.onupgradeneeded = () => q.result.createObjectStore('kv'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
+  async function pushKv(k, v){ const db = await pushDb(); return new Promise((res, rej)=>{ const tx = db.transaction('kv', v === undefined ? 'readonly' : 'readwrite'), st = tx.objectStore('kv');
+    const q = v === undefined ? st.get(k) : v === null ? st.delete(k) : st.put(v, k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
+  // espaces partagés de CE téléphone : le carnet principal et les voyages partagés avec leur propre code (pas les abonnés)
+  function pushSpaces(){
+    const P = PU(), want = PUSH_KINDS.map(k=>k[0]).filter(k=>k !== 'rappel' && P.kinds[k]), codes = new Set();
+    if(M.sync.on && M.sync.code) codes.add(M.sync.code);
+    Object.entries(TS()).forEach(([tid, c])=>{ if(c && spaceObj(c) && R[tid] && R[tid].type === 'trip') codes.add(c); });
+    return [...codes].map(code=>({code, kinds:want})).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
+  }
+  async function pushPost(code, body){
+    const r = await fetch(pushApi(), {method:'POST', headers:{'Content-Type':'application/json', 'X-Carnet-Code':await authCode(code)}, body:JSON.stringify(Object.assign({dev:devId()}, body))});
+    let j = {}; try { j = await r.json(); } catch(e){} if(!r.ok) throw new Error(j.error || ('Erreur serveur ' + r.status)); return j;
+  }
+  async function pushSub(){
+    const reg = await navigator.serviceWorker.ready;
+    const pub = (await (await fetch(pushApi() + '?a=key')).json()).pub;
+    let sub = await reg.pushManager.getSubscription();
+    try { if(sub && sub.options && sub.options.applicationServerKey && b64url(new Uint8Array(sub.options.applicationServerKey)) !== pub){ await sub.unsubscribe(); sub = null; } } catch(e){}
+    if(!sub) sub = await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:unb64url(pub)});
+    return sub;
+  }
+  // enregistre (ou met à jour) l’abonnement de ce téléphone dans chacun de ses espaces
+  async function pushRegister(force){
+    const P = PU(); if(!P.on || !pushOk() || Notification.permission !== 'granted') return;
+    const sub = await pushSub(), sj = sub.toJSON(), spaces = pushSpaces();
+    const tz = (()=>{ try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e){ return ''; } })();
+    const sig = JSON.stringify([sj.endpoint, spaces.map(s=>[s.code.slice(0,6), s.kinds]), P.quiet, tz, (window.I18N && I18N.lang) || 'fr']);
+    if(!force && sig === P.sig && Date.now() - (P.regAt||0) < 7*864e5) return;
+    const tpl = {}; Object.entries(PUSH_TPL).forEach(([k, s])=>tpl[k] = window.I18N && I18N.tr ? I18N.tr(s) : s);
+    await pushKv('tpl', tpl);
+    const toks = {};
+    for(const s of spaces){
+      const kk = await keys(s.code), kid = kk.token.slice(0, 16); await pushKv('k:' + kid, kk.key); toks[kk.token] = 1;
+      await pushPost(s.code, {a:'sub', sub:sj, kinds:s.kinds, tz, quiet:!!P.quiet});
+    }
+    // espaces quittés depuis (voyage plus partagé) : on se désabonne
+    for(const tk of Object.keys(P.toks || {})) if(!toks[tk]) fetch(pushApi(), {method:'POST', headers:{'Content-Type':'application/json', 'X-Carnet-Code':tk}, body:JSON.stringify({a:'unsub', dev:devId()})}).catch(()=>{});
+    P.toks = toks; P.sig = sig; P.regAt = Date.now(); persist();
+  }
+  async function pushTog(on){
+    const P = PU();
+    if(on){
+      if(!pushOk()){ alert(isIOSDev && !standaloneApp() ? 'Sur iPhone, les notifications marchent quand Vezoria est ajoutée à l’écran d’accueil (Partager → « Sur l’écran d’accueil »), avec iOS 16.4 ou plus récent.' : 'Ce navigateur ne sait pas recevoir de notifications.'); renderPrefsKeep(); return; }
+      let perm = Notification.permission; if(perm === 'default') perm = await Notification.requestPermission();
+      if(perm !== 'granted'){ alert('Notifications refusées. Pour les autoriser : réglages du téléphone → Notifications → Vezoria.'); renderPrefsKeep(); return; }
+      P.on = true; persist(); toast('🔔 …');
+      try { await pushRegister(true); await pushPlan(true); toast('🔔 Notifications activées'); } catch(e){ P.on = false; persist(); alert('Activation impossible : ' + e.message); }
+    } else {
+      P.on = false; persist();
+      try { for(const s of pushSpaces()) await pushPost(s.code, {a:'unsub'}).catch(()=>{}); const reg = await navigator.serviceWorker.ready, sub = await reg.pushManager.getSubscription(); if(sub) await sub.unsubscribe(); } catch(e){}
+      P.sig = ''; P.toks = {}; P.planSig = ''; persist(); toast('🔕 Notifications désactivées');
+    }
+    renderPrefsKeep();
+  }
+  async function pushKind(k, on){ const P = PU(); P.kinds[k] = on ? 1 : 0; persist(); try { if(k === 'rappel') await pushPlan(true); else await pushRegister(true); } catch(e){} toast(on ? '🔔 ' + (PUSH_KINDS.find(x=>x[0]===k)||[,'',''])[1] : '🔕'); }
+  async function pushQuiet(on){ PU().quiet = !!on; persist(); try { await pushRegister(true); } catch(e){} }
+  async function pushTest(){ try { await pushPlan(true, {id:'test-' + Date.now(), at:Date.now() - 1000, p:{k:'rappel', r:'test', a:[], tt:'Vezoria'}}); toast('📨 Notification d’essai envoyée'); } catch(e){ alert('Envoi impossible : ' + e.message); } }
+  function renderPrefsKeep(){ if(M.tab === 'prefs'){ const y = window.scrollY; renderPrefs(); window.scrollTo({top:y}); } }
+  function pushBox(){
+    const P = PU(), ok = pushOk(), denied = ok && Notification.permission === 'denied';
+    let h = `<div class="v-box" id="cv-push"><h3>🔔 Notifications</h3>`;
+    if(!ok) return h + `<div class="v-sum-small">${isIOSDev && !standaloneApp() ? 'Sur iPhone, les notifications marchent quand Vezoria est ajoutée à l’écran d’accueil (Partager → « Sur l’écran d’accueil »), avec iOS 16.4 ou plus récent.' : 'Ce navigateur ne sait pas recevoir de notifications.'}</div></div>`;
+    if(denied) return h + `<div class="v-sum-small">Les notifications sont bloquées pour Vezoria dans les réglages du téléphone. Autorise-les, puis reviens ici.</div></div>`;
+    h += `<label class="cv-checkline"><input type="checkbox" ${P.on ? 'checked' : ''} onchange="CV.pushTog(this.checked)"> <span><b>Recevoir des notifications</b></span></label>`;
+    if(P.on) h += `<div class="v-sum-small" style="margin:8px 0 4px">Choisis ce qui t’intéresse :</div>`
+      + PUSH_KINDS.map(([k, ic, l])=>`<label class="cv-checkline cv-pref"><input type="checkbox" ${P.kinds[k] ? 'checked' : ''} onchange="CV.pushKind('${k}', this.checked)"> <span>${ic} ${l}</span></label>`).join('')
+      + `<label class="cv-checkline cv-pref"><input type="checkbox" ${P.quiet ? 'checked' : ''} onchange="CV.pushQuiet(this.checked)"> <span>🌙 Ne pas déranger la nuit (22 h – 8 h)</span></label>`
+      + `<button type="button" class="v-day-edit" style="margin-top:8px" onclick="CV.pushTest()">📨 M’envoyer une notification d’essai</button>`;
+    const alone = !M.sync.on && !Object.keys(TS()).length;
+    return h + `<div class="v-sum-small" style="margin-top:8px">Le contenu des notifications est chiffré : le serveur ne peut pas le lire. Tes compagnons choisissent les leurs.${alone ? ' Pour être prévenu des ajouts de tes compagnons, partage d’abord un voyage.' : ''}</div></div>`;
+  }
+
+  // ── Envoi : après chaque synchro, ce que J’AI ajouté est annoncé aux autres (regroupé par voyage et par sorte) ──
+  let pushBuf = {}, pushT = null;
+  function pushWhat(r){
+    if(!r || r.demo || r.deleted || r.updatedBy !== M.me || !M.me) return null;
+    const t = r.trip ? R[r.trip] : null; if(r.trip && (!t || t.demo || t.type !== 'trip')) return null;
+    const seenAll = M.pushSeen || (M.pushSeen = {}), seen = seenAll[r.id];
+    const isNew = r.createdBy === M.me && (r.updatedAt || 0) - (r.createdAt || 0) < 4000;
+    let o = null;
+    if(r.type === 'item' && r.trip){
+      if(r.cat === 'divers'){ if(isNew && !seen) o = {k:'depense', x:r.titre || '', v: num(r.prix) ? eur(num(r.prix)) : ''}; }
+      else { const sig = [r.date, r.heure, r.heureDep, r.heureArr].join('|');
+        if(isNew && !seen) o = {k:'resa', x:r.titre || r.nom || ''};
+        else if(seen && seen !== 1 && seen !== sig) o = {k:'resa', ch:1, x:r.titre || r.nom || '', h:[r.date ? fshort(r.date) : '', r.heureDep || r.heure || ''].filter(Boolean).join(' ')};
+        seenAll[r.id] = sig; return o ? Object.assign(o, {trip:r.trip}) : null; }
+    } else if(r.type === 'remb' && r.trip){ if(isNew && !seen) o = {k:'depense', rb:1, x:eur(num(r.montant)), w:pname(r.a)}; }
+    else if(r.type === 'souv' && r.trip){ if(isNew && !seen) o = {k:'souv', x:r.titre || r.lieu || ''}; }
+    else if(r.type === 'poll'){ if(isNew && !seen) o = {k:'sondage', x:r.question || ''}; }
+    else if(r.type === 'check' && r.trip && /courses/i.test(r.cat || '')){ if(isNew && !seen) o = {k:'notes', x:r.label || ''}; }
+    else if(r.type === 'note' && r.trip){ if(isNew && !seen) o = {k:'notes', note:1, x:String(r.texte || '').slice(0, 80)}; }
+    else if(r.type === 'place' && r.trip){ if(isNew && !seen) o = {k:'resa', x:r.nom || ''}; }
+    if(o){ seenAll[r.id] = 1; o.trip = r.trip || ''; }
+    return o;
+  }
+  function pushNote(recs, code){
+    if(!pushApi() || !code) return;
+    const out = recs.map(pushWhat).filter(Boolean); if(!out.length) return;
+    const ks = Object.keys(M.pushSeen); if(ks.length > 4000) ks.slice(0, ks.length - 3000).forEach(k=>delete M.pushSeen[k]);
+    (pushBuf[code] = pushBuf[code] || []).push(...out);
+    clearTimeout(pushT); pushT = setTimeout(pushOut, 1500);
+  }
+  async function pushOut(){
+    const buf = pushBuf; pushBuf = {};
+    for(const [code, list] of Object.entries(buf)){
+      const by = {}; list.forEach(o=>{ const k = o.k + '|' + (o.ch ? 'ch|' : '') + o.trip; (by[k] = by[k] || []).push(o); });
+      for(const arr of Object.values(by)){
+        try {
+          const o0 = arr[0], t = R[o0.trip], kk = await keys(code), kid = kk.token.slice(0, 16);
+          const p = {k:o0.k, who:myName(), trip:o0.trip, tt:t ? t.titre : '', it:arr.slice(0, 5).map(o=>{ const c = Object.assign({}, o); delete c.k; delete c.trip; return c; }), n:arr.length};
+          const msg = b64(await seal(te.encode(JSON.stringify(p)), code));
+          await pushPost(code, {a:'send', kind:o0.k, kid, msg, tag:o0.k + '-' + (o0.trip || '')});
+        } catch(e){}
+      }
+    }
+  }
+
+  // ── Rappels programmés pour CE téléphone (départ la veille à 19 h, enregistrement en ligne 24 h avant, échéances à 9 h) ──
+  async function pushPlan(force, extra){
+    const P = PU(); if(!P.on || !pushOk()) return;
+    const code = pushDevCode(), now = Date.now(), items = [];
+    const at = (d, hm) => new Date(d + 'T' + hm + ':00').getTime();
+    const money = (n, t) => Math.round(n * 100) / 100 + ' ' + (CURS[(t && t.devise) || 'EUR'] || (t && t.devise) || '€');
+    if(P.kinds.rappel) trips().filter(t=>!t.demo && !t.deleted).forEach(t=>{
+      const its = Object.values(R).filter(r=>r.type === 'item' && r.trip === t.id && !r.deleted);
+      if(t.debut){ const first = its.filter(i=>i.cat === 'transport' && i.date === t.debut).sort((a,b)=>String(a.heureDep||'').localeCompare(String(b.heureDep||'')))[0];
+        items.push({id:'dep-' + t.id, at:at(addD(t.debut, -1), '19:00'), p:{k:'rappel', r:'depart', a:[t.titre], sub:first ? [first.heureDep || '', first.titre || ''].join(' ').trim() : '', trip:t.id, tt:t.titre}}); }
+      its.filter(i=>i.cat === 'transport' && /avion|vol\b|flight|plane/i.test((i.mode || '') + ' ' + (i.titre || '')) && i.date && i.heureDep).forEach(i=>{
+        const d = new Date(at(i.date, i.heureDep) - 24 * 3600e3); if(d.getHours() >= 22) d.setHours(21, 30, 0, 0); else if(d.getHours() < 8) d.setHours(8, 0, 0, 0);
+        items.push({id:'ck-' + i.id, at:d.getTime(), p:{k:'rappel', r:'checkin', a:[[i.titre, i.compagnie].filter(Boolean).join(' · ')], trip:t.id, tt:t.titre}}); });
+      its.forEach(i=>(i.echeances || []).forEach((e, k)=>{ if(!e.fait && e.date) items.push({id:'ec-' + i.id + '-' + k, at:at(e.date, '09:00'), p:{k:'rappel', r:'echeance', a:[(i.titre || '') + (num(e.montant) ? ' (' + money(num(e.montant), t) + ')' : '')], trip:t.id, tt:t.titre}}); }));
+    });
+    const keep = items.filter(x=>x.at > now && x.at < now + 150 * 864e5).sort((a,b)=>a.at - b.at).slice(0, 50);
+    if(extra) keep.unshift(extra);
+    const sig = JSON.stringify(keep.map(x=>[x.id, x.at, x.p.a, x.p.sub]));
+    if(!force && sig === P.planSig && now - (P.planAt || 0) < 12 * 3600e3) return;
+    const kk = await keys(code), kid = kk.token.slice(0, 16); await pushKv('k:' + kid, kk.key);
+    const out = []; for(const x of keep) out.push({id:x.id, at:x.at, msg:b64(await seal(te.encode(JSON.stringify(x.p)), code))});
+    await pushPost(code, {a:'plan', kid, items:out});
+    P.planSig = extra ? '' : sig; P.planAt = now; persist();
+  }
+  // Toucher une notification : ouvre le bon voyage au bon endroit
+  function pushOpen(href){
+    let u; try { u = new URL(href, location.href); } catch(e){ return; }
+    const tid = u.searchParams.get('vzt'), k = u.searchParams.get('vzk'); if(tid === null) return;
+    if(/[?&]vzt=/.test(location.search)) history.replaceState(null, '', location.pathname);
+    if(tid && R[tid] && !R[tid].deleted){ M.trip = tid; M.who = 'all'; }
+    const tb = {depense:'budget', resa:'prog', souv:'souv', sondage:'envies', notes:'prog', rappel:'prog'}[k] || 'prog';
+    M.mode = 'prep'; M.tab = tb; persist(); applyMode(); window.scrollTo({top:0});
+    if(k === 'notes') setTimeout(()=>{ try { shopSheet(); } catch(e){} }, 300);
+  }
+  function pushBadgeClear(){ try { pushKv('badge', 0).catch(()=>{}); if(navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{}); } catch(e){} }
+  if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev=>{ if(ev.data && ev.data.type === 'vz-open') pushOpen(ev.data.url); });
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible') pushBadgeClear(); });
+  setTimeout(()=>{ pushOpen(location.href); pushBadgeClear();
+    if(PU().on){ pushRegister().catch(()=>{}); pushPlan().catch(()=>{}); } }, 3000);
+
   /* Ne jamais redessiner l'écran pendant que l'utilisateur touche, tape ou ouvre une liste :
      sinon le bouton ou la liste « disparaît » sous le doigt et il faut retoucher plusieurs fois. */
   var lastTouch = 0, softT = null, softWant = 0;
@@ -3757,7 +3966,7 @@ const CV = (function(){
     if(!pl.length) return '';
     const byId = Object.fromEntries(pl.map(p=>[p.id,p]));
     const fresh = r && r.ids && r.ids.every(id=>byId[id]) && pl.every(p=>r.ids.includes(p.id) || (r.miss||[]).includes(p.id));
-    if(!fresh) return compact ? `<div class="cv-route-mini">📍 ${pl.map(p=>esc(p.nom)).join(' · ')}<div class="v-sum-small">⚡ ordre pas encore optimisé</div></div>` : '';
+    if(!fresh) return compact ? `<div class="cv-route-mini">📍 ${pl.map(p=>`<span class="cv-plk" onclick="event.stopPropagation();CV.plInfo('${p.id}')">${esc(p.nom)}</span>`).join(' · ')}<div class="v-sum-small">⚡ ordre pas encore optimisé</div></div>` : '';
     const stops = [r.start, ...r.ids.map(id=>Object.assign({}, r.pts[id], {nom:byId[id].nom})), r.end];
     let tot = 0, walk = 0, mins = 0; const legs = [];
     for(let i=1;i<stops.length;i++){ const dk = km(stops[i-1], stops[i]), a = legAdvice(dk, r.walk||2.5, (r.tr||[]).includes(i-1)); tot += dk; if(a.mode==='walking') walk += dk; mins += a.min; legs.push({dk, a, from:stops[i-1], to:stops[i]}); }
@@ -3765,11 +3974,11 @@ const CV = (function(){
     const full = way.length <= 9 ? [dirUrl(r.start, r.end, 'walking', way)] : [dirUrl(r.start, way[8], 'walking', way.slice(0,8)), dirUrl(way[8], r.end, 'walking', way.slice(9))];
     const gm = full.map((u,i)=>`<a class="cv-gm" href="${u}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🗺️ Ouvrir dans Google Maps${full.length>1?' ('+(i+1)+'/'+full.length+')':''}</a>`).join('');
     const sum = `≈ ${fmtKm(tot)} dont ${fmtKm(walk)} à pied · ${fmtMin(mins)} de trajets`;
-    if(compact) return `<div class="cv-route-mini">🗺️ ${r.ids.map((id,i)=>`<b>${i+1}</b> ${esc(byId[id].nom)}`).join(' → ')}${r.loop?' ↩️':''}<div class="v-sum-small">${sum}</div>${gm}</div>`;
+    if(compact) return `<div class="cv-route-mini">🗺️ ${r.ids.map((id,i)=>`<b>${i+1}</b> <span class="cv-plk" onclick="event.stopPropagation();CV.plInfo('${id}')">${esc(byId[id].nom)}</span>`).join(' → ')}${r.loop?' ↩️':''}<div class="v-sum-small">${sum}</div>${gm}</div>`;
     return `<div class="cv-route">
       <div class="cv-stop s">🏁 ${esc(r.start.lbl||'Départ')}</div>
       ${legs.map((L,i)=>`<a class="cv-leg" href="${dirUrl(L.from, L.to, L.a.mode)}" target="_blank" rel="noopener">${L.a.icon} ${L.a.txt} · ${fmtKm(L.dk)} · ~${fmtMin(L.a.min)}${L.a.alt ? ' <span>('+L.a.alt+')</span>' : ''} ↗</a>
-        <div class="cv-stop${i===legs.length-1?' s':''}">${i===legs.length-1 ? (r.loop ? '↩️ Retour · ' : '🏁 ') + esc(r.end.lbl||'Arrivée') : '<b>'+(i+1)+'</b> '+esc(L.to.nom)}</div>`).join('')}
+        <div class="cv-stop${i===legs.length-1?' s':''}">${i===legs.length-1 ? (r.loop ? '↩️ Retour · ' : '🏁 ') + esc(r.end.lbl||'Arrivée') : '<b>'+(i+1)+'</b> <span class="cv-plk" onclick="event.stopPropagation();CV.plInfo(\''+r.ids[i]+'\')">'+esc(L.to.nom)+'</span>'}</div>`).join('')}
       <div class="cv-route-sum">${sum}</div>${gm}
       <div class="cv-rmap" data-rmap="${d}"></div>
       ${(r.miss||[]).length ? `<div class="v-sum-small" style="color:var(--red)">Introuvable(s) : ${r.miss.map(id=>byId[id] ? esc(byId[id].nom) : '').filter(Boolean).join(', ')} — ajoute une adresse précise ou un lien Google Maps.</div>` : ''}
@@ -3786,7 +3995,7 @@ const CV = (function(){
       <div class="v-f"><label>Arrivée</label>${sel('pl-arr', cfg.arr, true)}
         <input class="v-in" id="pl-arrt" style="margin-top:6px;${cfg.arr==='libre'?'':'display:none'}" value="${esc(cfg.arrTxt)}" placeholder="Adresse, lieu ou lien Google Maps" onchange="CV.plCfg()"></div>
       <div class="v-f"><label>Ce que tu veux voir (${pl.length})</label>
-        <div>${pl.map((p,i)=>`<div class="cv-place"><span class="n">${i+1}</span><span class="x">${esc(p.nom)}${p.adresse && p.adresse!==p.nom ? `<small>${esc(p.adresse.slice(0,60))}</small>` : ''}${byline(p).replace('cv-by','cv-by s')}</span>
+        <div>${pl.map((p,i)=>`<div class="cv-place"><span class="n">${i+1}</span><span class="x" role="button" onclick="CV.plInfo('${p.id}')"><u>${esc(p.nom)}</u> ⓘ${p.adresse && p.adresse!==p.nom ? `<small>${esc(p.adresse.slice(0,60))}</small>` : ''}${byline(p).replace('cv-by','cv-by s')}</span>
           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(coordsIn(p.adresse||'') ? ll(coordsIn(p.adresse)) : (p.adresse||p.nom) + (city ? ', ' + city : ''))}" target="_blank" rel="noopener">📍</a>
           <button type="button" class="cv-x" onclick="CV.plDel('${p.id}')">✕</button></div>`).join('') || '<div class="v-sum-small">Ajoute les lieux de la journée, dans n’importe quel ordre.</div>'}</div>
         <div class="cv-row" style="margin-top:6px"><input class="v-in" id="pl-new" placeholder="Ex. Colisée ; Trastevere ; Bocca della Verità" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.plAdd()}">
@@ -6093,13 +6302,14 @@ const CV = (function(){
       <div class="v-sum-small">Tout fonctionne sur ton téléphone. Rien n’est envoyé à l’éditeur de l’appli.</div></div>`;
     h += box('📄','Importer une réservation','Le PDF de la réservation (Booking, compagnie, SNCF…) : la fiche se crée toute seule, avec le PDF joint comme billet.', `<button class="v-btn" onclick="CV.impSheet()">📄 Importer une réservation</button>`);
     h += box('🌍','Carte du monde 3D','Ton globe à toi : tous tes voyages, tes steps 📍 et les pays visités. Zoome et fais tourner la Terre du bout des doigts.', `<button class="v-btn sec" onclick="CV.worldMap()">🌍 Ouvrir la carte du monde</button>`);
+    h += box('📶','Cartes hors ligne','Rues, lieux à voir, hôtels et ta position sur une carte zoomable, même sans réseau ni données à l’étranger. À télécharger en Wi-Fi avant de partir.', `<button class="v-btn sec" onclick="CV.omapSheet()">🗺️ Cartes hors ligne</button>`);
     h += box('🪄','Remplir mes journées','Les lieux les plus connus de chaque étape, répartis sur tes jours libres (sans toucher à ce qui est déjà prévu).', `<button class="v-btn sec" onclick="CV.tlFill()">🪄 Remplir mes journées</button>`);
     h += box('📍','Steps : je suis ici','Comme Polarsteps : pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.', `<button class="v-btn sec" onclick="CV.hereNow()">📍 Je suis ici</button><button class="v-btn sec" onclick="CV.tlStats()">📊 Mes stats (pays, km, nuits)</button>`);
     h += box('🌍','Empreinte carbone et conseils','CO2 estimé de chaque trajet, comparaison avec le train, et le bon moment pour réserver les vols encore à réserver.', `<button class="v-btn sec" onclick="CV.tlCo2()">🌍 Calculer</button>`);
     h += box('🗺️','Exporter l’itinéraire','Étapes, lieux à voir et tracés à pied dans un fichier KML : à ouvrir dans Google My Maps, Google Earth ou <b>Organic Maps</b> (cartes hors ligne gratuites).', `<button class="v-btn sec" onclick="CV.tlKml()">🗺️ Exporter (KML)</button>`);
     h += box('📴','Fiche du jour','Billets, horaires, adresses, téléphones et références d’aujourd’hui et de demain, sur une seule page lisible même sans réseau.',
       `<button class="v-btn" onclick="CV.tlDay()">📴 Ouvrir la fiche du jour</button>`);
-    h += box('🔔','Rappels dans le calendrier','Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pas de notification de l’appli.',
+    h += box('🔔','Rappels dans le calendrier','Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.',
       `<button class="v-btn sec" onclick="CV.tlIcs()">📅 Rappels dans mon calendrier</button>`);
     h += box('💱','Convertisseur de devises','Saisis un montant en monnaie locale, l’appli le convertit dans la devise du voyage (aussi dans chaque fiche, sous « Prix réel »).',
       `<div class="cv-fx"><input class="v-in" id="fxo-a" inputmode="decimal" placeholder="Montant"><select class="v-in" id="fxo-c">${fxOpts(M.fxLast||'USD')}</select><button type="button" class="v-btn sec" onclick="CV.fxTool()">= ${CS()}</button></div><div class="v-sum-small" id="fxo-r"></div>`);
@@ -6120,6 +6330,203 @@ const CV = (function(){
     h += box('📦','Partager sans serveur','Pour ceux qui ne veulent pas de la synchro en ligne : un fichier chiffré à s’envoyer (WhatsApp, Messages, AirDrop…). Voir Partage &amp; profils.',
       `<button class="v-btn sec" onclick="CV.pkgSheet()">📤 Envoyer un paquet</button><button class="v-btn sec" onclick="CV.pkgImport()">📥 Recevoir un paquet</button>`);
     document.getElementById('cv-body').innerHTML = h;
+  }
+
+  /* ══════════ 🗺️ Cartes hors ligne ══════════
+     Carte zoomable des villes du voyage (fond OpenFreeMap, libre et sans clé), téléchargée à l’avance
+     sur le téléphone : rues, lieux, hôtels et ta position, même sans réseau. Les morceaux de carte sont
+     rangés par le service worker (cache « vz-maps »), à part de l’appli : une mise à jour ne les efface pas. */
+  const OFM = 'https://tiles.openfreemap.org/styles/liberty';
+  const OM = () => M.omap || (M.omap = {});
+  const OMZ = [[0, 9, 40], [10, 11, 25], [12, 13, 10], [14, 14, 6]];   // [zoom min, zoom max, rayon en km]
+  async function omapPoints(){
+    const t = trip(); if(!t) return [];
+    const st = tlStages(), out = [];
+    for(const s of st){
+      const c = await geocode(s.city, null).catch(()=>null); if(!c) continue;
+      const h = s.h && (s.h.adresse || s.h.nom) ? await geocode(s.h.adresse || s.h.nom, s.city).catch(()=>null) : null;
+      const same = out.find(o=>normQ(o.city) === normQ(s.city)), hn = s.h ? (s.h.nom || s.h.titre || '') : '';
+      if(same){ if(hn && !same.hotel.includes(hn)) same.hotel = [same.hotel, hn].filter(Boolean).join(' · '); if(h) (same.more = same.more || []).push({h, hotel:hn}); continue; }   // même ville plusieurs fois (aller et retour)
+      out.push({city:s.city, lat:c.lat, lng:c.lng, h, hotel:hn});
+    }
+    if(!out.length){ const c = await geocode(cityOf(t.titre) || t.titre, null).catch(()=>null); if(c) out.push({city:cityOf(t.titre) || t.titre, lat:c.lat, lng:c.lng}); }
+    return out;
+  }
+  const omapTiles = (lat, lng) => { const out = [];
+    OMZ.forEach(([z0, z1, r])=>{ for(let z = z0; z <= z1; z++){ const dLat = r / 111, dLng = r / (111 * Math.cos(lat * Math.PI / 180));
+      const x0 = Math.floor(lon2x(lng - dLng, z) / 256), x1 = Math.floor(lon2x(lng + dLng, z) / 256), y0 = Math.floor(lat2y(lat + dLat, z) / 256), y1 = Math.floor(lat2y(lat - dLat, z) / 256), n = Math.pow(2, z);
+      for(let x = x0; x <= x1; x++) for(let y = Math.max(0, y0); y <= Math.min(n - 1, y1); y++) out.push([z, ((x % n) + n) % n, y]); } });
+    return out; };
+  async function omapSheet(){
+    const t = trip(); if(!t) return;
+    openSheet(`<h2>🗺️ Cartes hors ligne</h2><div class="cv-route-load" id="om-box">📡 Recherche des étapes…</div>`);
+    const pts = await omapPoints(), box = document.getElementById('om-box'); if(!box) return; box.className = '';
+    const have = OM()[t.id], est = pts.reduce((s, p)=>s + omapTiles(p.lat, p.lng).length, 0);
+    let used = ''; try { const e = await navigator.storage.estimate(); if(e && e.usage) used = Math.round(e.usage / 1048576) + ' Mo'; } catch(e){}
+    box.innerHTML = `<div class="v-sum-small" style="margin-bottom:8px">Rues, lieux à voir, hôtels et ta position, même sans réseau ni données à l’étranger. À télécharger en Wi-Fi avant le départ.</div>
+      ${pts.length ? `<div class="v-box" style="margin:0 0 10px">${pts.map(p=>`<div>📍 <b>${esc(p.city)}</b>${p.hotel ? ` <small>· ${esc(p.hotel)}</small>` : ''}</div>`).join('')}</div>
+      <div class="v-sum-small">≈ ${est} morceaux de carte · ≈ ${Math.max(1, Math.round(est * 0.035))} Mo${used ? ' · place utilisée par l’appli : ' + used : ''}</div>` : '<div class="v-sum-small">Ajoute d’abord les hébergements du voyage (une ville par étape).</div>'}
+      ${have ? `<div class="v-sum-small" style="margin-top:6px">✅ Téléchargées le ${new Date(have.at).toLocaleDateString((window.I18N ? I18N.locale : 'fr-FR'))} (${have.n} morceaux).</div>` : ''}
+      <div id="om-prog" class="v-sum-small" style="margin-top:8px"></div>
+      <div class="v-actions">${pts.length ? `<button type="button" class="v-btn" id="om-go" onclick="CV.omapGo()">📥 ${have ? 'Mettre à jour' : 'Télécharger'} les cartes</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.omapOpen()">🗺️ Ouvrir la carte</button>${have ? `<button type="button" class="v-btn sec" onclick="CV.omapDel()">🗑 Effacer les cartes</button>` : ''}<button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`;
+  }
+  async function omapGo(){
+    const t = trip(); if(!t) return; const btn = document.getElementById('om-go'), prog = document.getElementById('om-prog');
+    const say = m => { const e = document.getElementById('om-prog'); if(e) e.textContent = m; };
+    if(btn) btn.disabled = true;
+    try {
+      try { if(navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch(e){}
+      say('📡 Préparation…');
+      const cache = await caches.open('vz-maps'), get = async u => { const r = await fetch(u, {mode:'cors'}); if(!r.ok) throw new Error(r.status); await cache.put(u, r.clone()); return r; };
+      const style = await (await get(OFM)).json(), tpl = {}, urls = new Set();
+      for(const [k, s] of Object.entries(style.sources || {})){
+        let tiles = s.tiles, mx = s.maxzoom;
+        if(s.url){ const j = await (await get(s.url)).json(); tiles = j.tiles; mx = j.maxzoom; }
+        if(tiles && tiles[0]) tpl[k] = {t:tiles[0], mx:Math.min(14, mx == null ? 14 : mx), type:s.type};
+      }
+      const pts = await omapPoints();
+      pts.forEach(p=>omapTiles(p.lat, p.lng).forEach(([z, x, y])=>Object.values(tpl).forEach(s=>{ if(z <= s.mx) urls.add(s.t.replace('{z}', z).replace('{x}', x).replace('{y}', y)); })));
+      if(style.sprite){ const sp = Array.isArray(style.sprite) ? style.sprite.map(x=>x.url) : [style.sprite]; sp.forEach(b=>['.json', '.png', '@2x.json', '@2x.png'].forEach(e=>urls.add(b + e))); }
+      if(style.glyphs){ const fonts = new Set(); (style.layers || []).forEach(l=>{ const f = l.layout && l.layout['text-font']; if(Array.isArray(f) && typeof f[0] === 'string') fonts.add(f.join(',')); });
+        fonts.forEach(f=>['0-255', '256-511', '512-767', '768-1023', '1024-1279', '8192-8447'].forEach(r=>urls.add(style.glyphs.replace('{fontstack}', encodeURIComponent(f)).replace('{range}', r)))); }
+      [(window.VZ_B || '') + 'vendor/maplibre-gl.js', (window.VZ_B || '') + 'vendor/maplibre-gl.css'].forEach(u=>fetch(u).catch(()=>{}));
+      const list = [...urls]; let done = 0, fail = 0, i = 0;
+      const worker = async () => { while(i < list.length){ const u = list[i++]; try { if(!(await cache.match(u))) await get(u); } catch(e){ fail++; } done++; if(done % 20 === 0 || done === list.length) say(`📥 ${done} / ${list.length}`); } };
+      await Promise.all([1, 2, 3, 4, 5, 6].map(worker));
+      OM()[t.id] = {at:Date.now(), n:list.length - fail, tpl, style:OFM}; persist();
+      say(fail ? `⚠️ ${fail} morceaux non téléchargés (réseau ?). Réessaie en Wi-Fi.` : '✅ Cartes prêtes : elles marchent maintenant sans réseau.');
+      setTimeout(omapSheet, fail ? 2500 : 1200);
+    } catch(e){ say('⚠️ ' + (e.message || e)); if(btn) btn.disabled = false; }
+  }
+  async function omapDel(){
+    if(!(await uiConfirm('Effacer les cartes hors ligne de ce téléphone ?'))) return;
+    try { await caches.delete('vz-maps'); } catch(e){} M.omap = {}; persist(); toast('🗑 Cartes effacées'); omapSheet();
+  }
+  let OMV = null;
+  async function omapOpen(){
+    const t = trip(); if(!t) return; closeSheet(true);
+    let ov = document.getElementById('cv-omap'); if(!ov){ ov = document.createElement('div'); ov.id = 'cv-omap'; document.body.appendChild(ov); }
+    ov.innerHTML = `<div id="om-map"></div><button type="button" class="om-x" onclick="CV.omapClose()">✕</button><div class="om-info" id="om-info">🗺️ Chargement de la carte…</div>`;
+    ov.style.display = 'block'; document.body.style.overflow = 'hidden';
+    try {
+      await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
+      if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
+      const style = await withTimeout(fetch(OFM).then(r=>r.json()), 8000);
+      const saved = OM()[t.id];
+      if(saved && saved.tpl) Object.entries(saved.tpl).forEach(([k, s])=>{ const src = style.sources[k]; if(src){ delete src.url; src.tiles = [s.t]; src.maxzoom = s.mx; } });   // mêmes morceaux que ceux téléchargés
+      const lang = (l => /^(ar|hi)$/.test(l) ? 'en' : l)((window.I18N && I18N.lang) || 'fr');
+      (style.layers || []).forEach(l=>{ if(l.type === 'symbol' && l.layout && l.layout['text-field']) l.layout['text-field'] = ['coalesce', ['get', 'name:' + lang], ['get', 'name:latin'], ['get', 'name']]; });
+      const pts = await omapPoints(), first = pts[0] || {lat:48.85, lng:2.35};
+      const map = new maplibregl.Map({container:'om-map', style, center:[first.lng, first.lat], zoom:12.5, maxZoom:18, attributionControl:{compact:true}, pixelRatio:Math.min(2, window.devicePixelRatio || 1)});
+      OMV = map;
+      map.addControl(new maplibregl.NavigationControl({showCompass:true}), 'top-right');
+      map.addControl(new maplibregl.GeolocateControl({positionOptions:{enableHighAccuracy:true}, trackUserLocation:true, showUserLocation:true}), 'top-right');
+      const mk = (lng, lat, html, cls) => { const el = document.createElement('div'); el.className = 'om-mk ' + (cls || ''); el.innerHTML = html; new maplibregl.Marker({element:el}).setLngLat([lng, lat]).addTo(map); return el; };
+      pts.forEach(p=>[{h:p.h, hotel:p.hotel}].concat(p.more || []).forEach(x=>{ if(x.h) mk(x.h.lng, x.h.lat, '🏨', 'h').title = x.hotel; }));
+      list('place', p=>p.trip === t.id && !p.deleted && p.lat != null).forEach(p=>{ const el = mk(p.lng, p.lat, '📍', 'p'); el.title = p.nom; el.onclick = ev => { ev.stopPropagation(); omapClose(); plInfo(p.id); }; });
+      const info = document.getElementById('om-info');
+      if(info) info.innerHTML = pts.length > 1 ? pts.map((p, i)=>`<button type="button" onclick="CV.omapFly(${i})">${esc(p.city)}</button>`).join('') : `<span>${navigator.onLine === false ? (OM()[t.id] ? '📴 Carte hors ligne' : '📴 Pas de réseau : télécharge les cartes avant le départ (Outils).') : ''}</span>`;
+      OMV.pts = pts;
+    } catch(e){ const info = document.getElementById('om-info'); if(info) info.textContent = '⚠️ Carte indisponible : ' + (e.message || e); }
+  }
+  function omapFly(i){ if(OMV && OMV.pts && OMV.pts[i]) OMV.flyTo({center:[OMV.pts[i].lng, OMV.pts[i].lat], zoom:13}); }
+  function omapClose(){ const ov = document.getElementById('cv-omap'); if(ov){ ov.style.display = 'none'; ov.innerHTML = ''; } try { if(OMV) OMV.remove(); } catch(e){} OMV = null; document.body.style.overflow = ''; }
+  /* ══════════ 📍 Fiche d’un lieu : photo, résumé, horaires du jour prévu, accès ══════════
+     Sources libres et sans clé : OpenStreetMap (horaires, site, téléphone, accessibilité) et Wikipédia (résumé, photo),
+     dans la langue de l’appli. Ce qui est trouvé est gardé dans la fiche du lieu : disponible hors ligne et pour tout le groupe. */
+  const OH_D = ['Mo','Tu','We','Th','Fr','Sa','Su'], OH_M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  // horaires OpenStreetMap (« Mo-Fr 09:00-18:00; Sa 10:00-17:00; Su off ») → plages du jour donné ; null = inconnu
+  function ohDay(oh, iso){
+    if(!oh) return null; oh = String(oh).trim(); if(oh === '24/7') return ['00:00-24:00'];
+    const dt = new Date(iso + 'T12:00:00'), wd = (dt.getDay() + 6) % 7, mo = dt.getMonth();
+    let res = null, any = false;
+    for(let rule of oh.split(';').map(s=>s.trim()).filter(Boolean)){
+      rule = rule.replace(/\s*"[^"]*"\s*/g, ' ').trim();
+      if(/^PH\b|^SH\b/.test(rule)) continue;
+      // mois (« Apr-Oct ») en tête de règle
+      const mm = rule.match(/^((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?:-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec))?(?:,(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?:-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec))?)*)\s*:?\s*/);
+      if(mm){ const ok = mm[1].split(',').some(p=>{ const [a, b] = p.split('-').map(x=>OH_M.indexOf(x)); return b == null ? mo === a : a <= b ? mo >= a && mo <= b : mo >= a || mo <= b; }); rule = rule.slice(mm[0].length); if(!ok) continue;
+        const dd = rule.match(/^(\d{1,2})(?:-(\d{1,2}))?(?=\s|$)/);   // « Dec 25 off » : un jour précis du mois
+        if(dd){ const a = +dd[1], b = dd[2] ? +dd[2] : a, dn = dt.getDate(); if(dn < a || dn > b) continue; rule = rule.slice(dd[0].length).trim(); any = true; if(/^(off|closed)\b/i.test(rule)){ res = []; continue; } const tr = rule.match(/\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}\+?/g); if(tr) res = tr.map(x=>x.replace(/\s/g, '')); continue; } }
+      const dm = rule.match(/^((?:Mo|Tu|We|Th|Fr|Sa|Su)(?:-(?:Mo|Tu|We|Th|Fr|Sa|Su))?(?:\[[^\]]*\])?(?:,(?:Mo|Tu|We|Th|Fr|Sa|Su)(?:-(?:Mo|Tu|We|Th|Fr|Sa|Su))?(?:\[[^\]]*\])?)*)\s*/);
+      let hit = true;
+      if(dm){ hit = dm[1].replace(/\[[^\]]*\]/g, '').split(',').some(p=>{ const [a, b] = p.split('-').map(x=>OH_D.indexOf(x)); return b == null ? wd === a : a <= b ? wd >= a && wd <= b : wd >= a || wd <= b; }); rule = rule.slice(dm[0].length); }
+      else if(!/^\d/.test(rule) && !/^(off|closed)$/i.test(rule)) continue;   // forme inconnue : ignorée
+      if(!hit) continue;
+      any = true;
+      if(/^(off|closed)\b/i.test(rule)){ res = []; continue; }
+      const tr = rule.match(/\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}\+?/g); if(tr) res = tr.map(x=>x.replace(/\s/g, ''));
+    }
+    return any ? (res || []) : null;
+  }
+  const ohNow = (ranges, hm) => (ranges || []).some(r=>{ const [a, b] = r.replace('+', '').split('-'); return hm >= a.padStart(5, '0') && hm < (b === '24:00' ? '24:00' : b.padStart(5, '0')); });
+  async function placeLookup(p, city){
+    const lang = (window.I18N && I18N.lang) || 'fr', info = {ts:Date.now()};
+    // 1) OpenStreetMap : la fiche du lieu, avec ses étiquettes (horaires, site, téléphone…)
+    try {
+      let q = `https://nominatim.openstreetmap.org/search?format=jsonv2&extratags=1&limit=1&accept-language=${lang}&q=` + encodeURIComponent(p.nom + (city && !normQ(p.nom).includes(normQ(city)) ? ', ' + city : ''));
+      if(p.lat != null) q += `&viewbox=${p.lng - 0.03},${p.lat + 0.03},${p.lng + 0.03},${p.lat - 0.03}&bounded=1`;
+      const j = await withTimeout(fetch(q).then(r=>r.json()), 9000), o = j && j[0];
+      if(o){ const x = o.extratags || {};
+        Object.assign(info, {oh:x.opening_hours || '', web:x.website || x['contact:website'] || x.url || '', tel:x.phone || x['contact:phone'] || '', wc:x.wheelchair || '', fee:x.fee || '', wiki:x.wikipedia || '', lat:+o.lat, lng:+o.lon}); }
+    } catch(e){}
+    // 2) Wikipédia : résumé et photo, dans la langue de l’appli si l’article existe, sinon en anglais
+    try {
+      let w = info.wiki ? wkParse(info.wiki) : null, data = null;
+      const one = async (lg, title) => { const j = await withTimeout(fetch(`https://${lg}.wikipedia.org/w/api.php?action=query&prop=pageimages|extracts|langlinks&piprop=thumbnail&pithumbsize=640&exintro=1&explaintext=1&exsentences=4&lllang=${lang}&redirects=1&format=json&origin=*&titles=` + encodeURIComponent(title)).then(r=>r.json()), 9000); return Object.values((j.query||{}).pages||{})[0]; };
+      if(!w){ const s = await withTimeout(fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srlimit=1&format=json&origin=*&srsearch=` + encodeURIComponent(p.nom + ' ' + (city || ''))).then(r=>r.json()), 9000);
+        const hit = ((s.query||{}).search||[])[0]; if(hit) w = {lang, title:hit.title}; }
+      if(w){ data = await one(w.lang, w.title);
+        const ll = data && (data.langlinks || [])[0]; if(w.lang !== lang && ll && ll['*']){ const d2 = await one(lang, ll['*']).catch(()=>null); if(d2 && d2.extract){ data = Object.assign(d2, {thumbnail: d2.thumbnail || data.thumbnail}); w = {lang, title:ll['*']}; } } }
+      if(data && data.extract){ info.txt = data.extract.slice(0, 700); info.wl = w.lang; info.wt = data.title || w.title; }
+      if(data && data.thumbnail) info.img = data.thumbnail.source;
+    } catch(e){}
+    return info;
+  }
+  async function plInfo(id, refresh){
+    const p = R[id]; if(!p) return;
+    const d = p.date || '', city = (d && dayCity(d)) || cityOf((trip() || {}).titre || '');
+    const back = planD ? `<button type="button" class="v-btn sec" onclick="CV.planDay('${planD}')">← ${esc(fdate(planD))}</button>` : '';
+    openSheet(`<h2>📍 ${esc(p.nom)}</h2><div id="pi-box" class="cv-route-load">📖 Recherche des informations…</div>
+      <div class="v-actions">${back}<button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+    let info = p.info;
+    if(!info || refresh || Date.now() - (info.ts || 0) > 30 * 864e5){
+      if(navigator.onLine !== false){ const got = await placeLookup(p, city);
+        if(got.oh || got.txt || got.web || got.img){ info = got; const c = clone(R[id]); c.info = got; if(c.lat == null && got.lat){ c.lat = got.lat; c.lng = got.lng; } put(c, false); } else if(!info) info = got; }
+    }
+    const box = document.getElementById('pi-box'); if(!box || !R[id]) return; box.className = '';
+    const P = R[id], I = info || {}, L = (window.I18N && I18N.locale) || 'fr-FR';
+    // horaires du jour prévu (ou d’aujourd’hui)
+    const day = d || isoToday(), rg = ohDay(I.oh, day), dayLbl = d ? fdate(d) : 'Aujourd’hui';
+    let hours = '';
+    if(I.oh){
+      const today = rg == null ? '' : rg.length ? rg.join(', ') : 'Fermé';
+      const now = !d || d === isoToday() ? (rg && rg.length ? (ohNow(rg, new Date().toTimeString().slice(0, 5)) ? ' · 🟢 Ouvert maintenant' : ' · 🔴 Fermé maintenant') : '') : '';
+      const base = new Date(day + 'T12:00:00'), mon = addD(day, -((base.getDay() + 6) % 7));
+      const week = [...Array(7).keys()].map(i=>{ const di = addD(mon, i), r = ohDay(I.oh, di); return `<tr${di === day ? ' class="on"' : ''}><td>${new Intl.DateTimeFormat(L, {weekday:'short'}).format(new Date(di + 'T12:00:00'))}</td><td>${r == null ? '?' : r.length ? r.join(', ') : 'Fermé'}</td></tr>`; }).join('');
+      hours = `<div class="pi-oh"><b>🕘 ${esc(dayLbl)} : ${esc(today || '?')}${now}</b><table>${week}</table><small>${esc(I.oh)}</small></div>`;
+    }
+    // accès à pied depuis l’hôtel du jour
+    let walk = '';
+    try { const h = d ? items(i=>i.cat === 'hotel' && i.date && i.date <= d && (!i.dateFin || i.dateFin > d))[0] : null;
+      if(h && P.lat != null){ const hc = await geocode(h.adresse || h.nom || h.titre, city).catch(()=>null);
+        if(hc && km(hc, P) > 0.05){ const dk = km(hc, P) * 1.25, min = Math.round(dk / 4.5 * 60);
+          walk = `<div class="pi-walk">🚶 ${fmtKm(dk)} · ≈ ${fmtMin(min)} à pied depuis l’hôtel <small>(${esc(h.nom || h.titre)})</small></div>`; } } } catch(e){}
+    const q = P.lat != null ? P.lat + ',' + P.lng : (P.adresse || P.nom) + (city ? ', ' + city : '');
+    const wurl = I.wt ? `https://${I.wl}.wikipedia.org/wiki/${encodeURIComponent(I.wt.replace(/ /g, '_'))}` : '';
+    box.innerHTML = (I.img ? `<img class="wk-img" src="${esc(I.img)}" alt="">` : '')
+      + (I.txt ? `<p class="wk-tx">${esc(I.txt)}</p>` : '')
+      + hours + walk
+      + (I.wc === 'yes' ? `<div class="v-sum-small">♿ Accessible en fauteuil roulant</div>` : I.wc === 'limited' ? `<div class="v-sum-small">♿ Accès en fauteuil limité</div>` : '')
+      + (I.fee === 'no' ? `<div class="v-sum-small">🆓 Entrée gratuite</div>` : '')
+      + (!I.oh && !I.txt ? `<div class="v-sum-small">Pas d’horaires ni de description trouvés pour ce lieu.</div>` : '')
+      + `<div class="cv-row" style="gap:6px;flex-wrap:wrap;margin-top:8px">
+          <a class="v-day-edit" href="https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=${encodeURIComponent(q)}" target="_blank" rel="noopener">🧭 Itinéraire</a>
+          ${I.web ? `<a class="v-day-edit" href="${esc(/^https?:/.test(I.web) ? I.web : 'https://' + I.web)}" target="_blank" rel="noopener">🌐 Site officiel</a>` : ''}
+          ${I.tel ? `<a class="v-day-edit" href="tel:${esc(I.tel.split(';')[0].replace(/[^\d+]/g, ''))}">📞 Appeler</a>` : ''}
+          ${wurl ? `<a class="v-day-edit" href="${wurl}" target="_blank" rel="noopener">📖 Wikipédia</a>` : ''}
+          <button type="button" class="v-day-edit" onclick="CV.plInfo('${id}', true)">🔄 Actualiser</button></div>`
+      + `<div class="v-sum-small" style="margin-top:8px">Infos : OpenStreetMap${I.txt ? ' et Wikipédia (CC BY-SA)' : ''}. Horaires à confirmer sur place ou sur le site du lieu. ${I.ts ? 'Mises à jour le ' + new Date(I.ts).toLocaleDateString(L) + ', disponibles hors ligne.' : ''}</div>`;
   }
 
   /* ---------- 📴 Fiche du jour ---------- */
@@ -6178,7 +6585,7 @@ const CV = (function(){
     const t = trip(); if(!t) return;
     const on = M.icsOn || {ech:1, chk:1, vol:1, htl:1, act:1};
     openSheet(`<h2>📅 Rappels dans mon calendrier</h2>
-      <div class="v-sum-small" style="margin-bottom:8px">Pas de notification de l’appli : tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.</div>
+      <div class="v-sum-small" style="margin-bottom:8px">Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.</div>
       <div class="v-f">${ICS_KINDS.map(([k,l])=>`<label class="cv-checkline"><input type="checkbox" id="ics-${k}"${on[k]?' checked':''}> ${l}</label>`).join('')}</div>
       <div id="ics-msg" class="v-sum-small" style="margin:6px 0"></div>
       <button type="button" class="v-btn" onclick="CV.tlIcsGo()">📅 Ajouter à mon calendrier</button>
@@ -7494,7 +7901,7 @@ ${pm.join('\n')}</Document></kml>`;
     const on = trkOn() && M.trk.trip === t.id, today = trkRec(t.id, isoToday(), M.me), n = today ? today.pts.length : 0;
     let km_ = 0; if(today) for(let i=1;i<today.pts.length;i++) km_ += km({lat:today.pts[i-1][0], lng:today.pts[i-1][1]}, {lat:today.pts[i][0], lng:today.pts[i][1]});
     return `<div class="cv-trk${on?' on':''}"><span class="dot"></span><span class="tx"><b>${on ? 'Voyage suivi' : 'Suivi arrêté'}</b><small>${on ? `${n} point${n>1?'s':''} aujourd’hui · ${km_ < 10 ? km_.toFixed(1) : Math.round(km_)} km · enregistre ta route quand l’appli est ouverte` : 'Active-le pour tracer ta route sur la carte du monde'}</small></span>
-      <button type="button" onclick="CV.trkToggle()">${on ? 'Arrêter' : 'Activer'}</button></div>${feedCode(t.id) ? `<button type="button" class="cv-trkpub${trkPubOn(t.id) ? ' on' : ''}" onclick="CV.trkPub()"><span>${trkPubOn(t.id) ? '👀' : '🔒'}</span><span><b>${trkPubOn(t.id) ? 'Ta route est visible des abonnés' : 'Ta route est cachée aux abonnés'}</b><small>${trkPubOn(t.id) ? 'Touche pour la cacher' : 'Touche pour la montrer sur leur carte'}</small></span></button>` : ''}`;
+      <button type="button" onclick="CV.trkToggle()">${on ? 'Arrêter' : 'Activer'}</button></div>${on ? `<button type="button" class="cv-tjbtn" onclick="CV.tjOpen()"><span>🚗</span><span><b>Mode trajet</b><small>Écran allumé, GPS précis : pour une route, un train, une rando</small></span></button>` : ''}${feedCode(t.id) ? `<button type="button" class="cv-trkpub${trkPubOn(t.id) ? ' on' : ''}" onclick="CV.trkPub()"><span>${trkPubOn(t.id) ? '👀' : '🔒'}</span><span><b>${trkPubOn(t.id) ? 'Ta route est visible des abonnés' : 'Ta route est cachée aux abonnés'}</b><small>${trkPubOn(t.id) ? 'Touche pour la cacher' : 'Touche pour la montrer sur leur carte'}</small></span></button>` : ''}`;
   }
   async function trkToggle(){
     const t = trip(); if(!t) return;
@@ -7505,24 +7912,63 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function trkAdd(pos){
     if(!trkOn()) return; const t = R[M.trk.trip]; if(!t || t.deleted) return;
-    const p = [+pos.coords.latitude.toFixed(5), +pos.coords.longitude.toFixed(5), Date.now()], d = isoToday(), id = 'trk:' + t.id + ':' + d + ':' + (M.me || 'moi');   // une trace par personne : deux téléphones ne s'écrasent plus
+    const c = pos.coords, ts = Math.min(Date.now(), pos.timestamp || Date.now()), drive = !!TJ;
+    if(TJ){ TJ.acc = c.accuracy; TJ.sp = (c.speed != null && c.speed >= 0) ? c.speed * 3.6 : TJ.sp; TJ.fix = Date.now(); }
+    if(c.accuracy && c.accuracy > (drive ? 80 : 500)) return;                                                   // position trop imprécise
+    const p = [+c.latitude.toFixed(5), +c.longitude.toFixed(5), ts], d = isoToday(), id = 'trk:' + t.id + ':' + d + ':' + (M.me || 'moi');   // une trace par personne : deux téléphones ne s'écrasent plus
     const r = trkBuf && trkBuf.id === id ? trkBuf : (R[id] ? clone(R[id]) : {id, type:'trk', trip:t.id, date:d, who:M.me || '', pts:[]});
     const last = r.pts[r.pts.length - 1];
-    if(last && km({lat:last[0], lng:last[1]}, {lat:p[0], lng:p[1]}) < 0.3 && p[2] - last[2] < 15*60000) return;   // < 300 m et < 15 min : on ignore
-    if(pos.coords.accuracy && pos.coords.accuracy > 500) return;                                                  // position trop imprécise
+    if(last){
+      const dk = km({lat:last[0], lng:last[1]}, {lat:p[0], lng:p[1]}), dh = Math.max(1000, ts - (last[2] || 0)) / 3600e3;
+      if(dk < (drive ? 0.05 : 0.3) && ts - (last[2] || 0) < (drive ? 3 : 15) * 60000) return;   // trop près du point précédent
+      if(dk / dh > 950 && dh < 0.5) return;                                                     // saut impossible (> 950 km/h) : erreur de localisation
+      if(TJ){ TJ.km += dk; if(c.speed == null) TJ.sp = dk / dh; }
+    }
     r.pts.push(p); trkBuf = r;
-    if(Date.now() - trkLastSave > 5*60000 || r.pts.length === 1){ trkLastSave = Date.now(); put(r, false); trkBuf = null; }
+    if(Date.now() - trkLastSave > (drive ? 60000 : 5 * 60000) || r.pts.length === 1){ trkLastSave = Date.now(); put(r, false); trkBuf = null; }
     const el = document.querySelector('.cv-trk small'); if(el && M.tab==='prog') el.textContent = r.pts.length + ' point(s) aujourd’hui';
+  }
+  /* 🚗 Mode trajet : écran maintenu allumé (Wake Lock), GPS précis, un point tous les 50 m environ.
+     Une appli web ne peut pas suivre téléphone en poche ; pour une route en voiture, un trajet en train ou une
+     rando, ce mode garde l’appli au premier plan. Écran noir : très peu de batterie sur les écrans OLED. */
+  let TJ = null;
+  async function tjLock(){ try { if(TJ && 'wakeLock' in navigator && document.visibilityState === 'visible'){ TJ.lock = await navigator.wakeLock.request('screen'); TJ.noLock = 0; } else if(TJ && !('wakeLock' in navigator)) TJ.noLock = 1; } catch(e){ if(TJ) TJ.noLock = 1; } }
+  async function tjOpen(){
+    const t = trip(); if(!t || TJ) return;
+    if(!(trkOn() && M.trk.trip === t.id)){ await trkToggle(); if(!(trkOn() && M.trk.trip === t.id)) return; }
+    TJ = {t0:Date.now(), km:0, sp:null, acc:null, dim:false, fix:0};
+    if(trkWatch !== null){ navigator.geolocation.clearWatch(trkWatch); trkWatch = null; } trkStart();
+    const ov = document.createElement('div'); ov.id = 'cv-tj'; ov.className = 'cv-tj'; ov.onclick = () => { if(TJ){ TJ.dim = !TJ.dim; tjDraw(); } };
+    document.body.appendChild(ov); document.body.style.overflow = 'hidden';
+    await tjLock(); tjDraw(); TJ.iv = setInterval(tjDraw, 1000);
+  }
+  function tjDraw(){
+    const ov = document.getElementById('cv-tj'); if(!ov || !TJ) return;
+    const s = Math.floor((Date.now() - TJ.t0) / 1000), two = n => String(n).padStart(2, '0');
+    ov.classList.toggle('dim', TJ.dim);
+    ov.innerHTML = `<div class="tj-top"><b>🚗 Mode trajet</b><small>${TJ.noLock ? '⚠️ Ce téléphone ne peut pas garder l’écran allumé : désactive la mise en veille automatique le temps du trajet.' : '🔆 Écran maintenu allumé'}</small></div>
+      <div class="tj-big"><b>${TJ.km < 10 ? TJ.km.toFixed(2) : TJ.km.toFixed(1)}</b><span>km</span></div>
+      <div class="tj-row"><div><small>Durée</small><b>${Math.floor(s / 3600)}:${two(Math.floor(s % 3600 / 60))}:${two(s % 60)}</b></div><div><small>Vitesse</small><b>${TJ.sp == null ? '—' : Math.round(TJ.sp) + ' km/h'}</b></div><div><small>Précision</small><b>${TJ.acc == null ? '…' : '± ' + Math.round(TJ.acc) + ' m'}</b></div></div>
+      ${TJ.fix && Date.now() - TJ.fix > 120000 ? `<p class="tj-warn">📡 Pas de position depuis ${Math.round((Date.now() - TJ.fix) / 60000)} min</p>` : ''}
+      <p>Garde Vezoria ouverte au premier plan, téléphone branché de préférence : ta route s’enregistre tous les 50 m environ. Touche l’écran pour l’assombrir.</p>
+      <button type="button" class="tj-end" onclick="event.stopPropagation();CV.tjClose()">⏹ Terminer le mode trajet</button>`;
+  }
+  function tjClose(){
+    if(!TJ) return; clearInterval(TJ.iv); try { if(TJ.lock) TJ.lock.release(); } catch(e){}
+    const k = TJ.km; TJ = null; trkFlush();
+    const ov = document.getElementById('cv-tj'); if(ov) ov.remove(); document.body.style.overflow = '';
+    if(trkWatch !== null){ navigator.geolocation.clearWatch(trkWatch); trkWatch = null; } trkStart();
+    toast('🚗 ' + fmtKm(k)); refresh();
   }
   function trkFlush(){ if(trkBuf){ put(trkBuf, false); trkBuf = null; trkLastSave = Date.now(); } }
   function trkStart(){
     if(!trkOn() || trkWatch !== null || !navigator.geolocation) return;
-    trkWatch = navigator.geolocation.watchPosition(trkAdd, ()=>{}, {enableHighAccuracy:false, maximumAge:120000, timeout:60000});
+    trkWatch = navigator.geolocation.watchPosition(trkAdd, ()=>{}, TJ ? {enableHighAccuracy:true, maximumAge:5000, timeout:30000} : {enableHighAccuracy:false, maximumAge:120000, timeout:60000});
   }
   function trkStop(){ if(trkWatch !== null){ navigator.geolocation.clearWatch(trkWatch); trkWatch = null; } trkFlush(); }
   document.addEventListener('visibilitychange', ()=>{
     if(document.visibilityState === 'hidden'){ trkFlush(); if(trkWatch !== null){ navigator.geolocation.clearWatch(trkWatch); trkWatch = null; } }
-    else if(trkOn()){ navigator.geolocation.getCurrentPosition(trkAdd, ()=>{}, {enableHighAccuracy:false, maximumAge:300000, timeout:30000}); trkStart(); }
+    else if(trkOn()){ navigator.geolocation.getCurrentPosition(trkAdd, ()=>{}, {enableHighAccuracy:!!TJ, maximumAge:TJ ? 5000 : 300000, timeout:30000}); trkStart(); if(TJ) tjLock(); }
   });
   setTimeout(()=>{ if(trkOn()){ trkStart(); navigator.geolocation && navigator.geolocation.getCurrentPosition(trkAdd, ()=>{}, {enableHighAccuracy:false, maximumAge:300000, timeout:30000}); } }, 2500);
 
@@ -8882,6 +9328,7 @@ ${pm.join('\n')}</Document></kml>`;
         <div class="cv-row" style="gap:6px;margin-top:10px"><button type="button" class="v-day-edit" onclick="CV.prefPreset('simple')">🌱 Version simple</button><button type="button" class="v-day-edit" onclick="CV.prefPreset('all')">✨ Tout afficher</button></div></div>`;
     if(window.I18N) h += `<div class="v-box"><h3>🌐 Langue</h3><select class="v-in" aria-label="Langue" onchange="CV.setLang(this.value, this)">${Object.entries(I18N.langs).map(([k,l])=>`<option value="${k}"${k===I18N.lang?' selected':''}>${l}</option>`).join('')}</select><div class="v-sum-small" style="margin-top:6px">Tes fiches restent dans la langue où tu les as écrites.</div></div>`;
     h += `<div class="v-box"><h3>💱 Devise</h3><select class="v-in" aria-label="Devise" onchange="CV.setCur(this.value)">${Object.keys(CURS).map(c=>`<option value="${c}"${c===(M.cur||'EUR')?' selected':''}>${c} · ${CURS[c]}</option>`).join('')}</select><div class="v-sum-small" style="margin-top:6px">Devise proposée pour les nouveaux voyages. Un voyage déjà créé garde la sienne : change-la en modifiant le voyage.</div></div>`;
+    h += pushBox();
     { const pn = pins();
       h += `<div class="v-box"><h3>📌 Mes raccourcis</h3><div class="v-sum-small" style="margin-bottom:8px">Épingle un écran pour qu’il apparaisse en haut de l’écran principal. Sans rien d’épinglé, cette barre n’apparaît pas. La barre du bas reste la même.</div>
         ${DEST.filter(d=>!['prog','resas','sous'].includes(d[0])).map(([k,ic,l])=>{ const bark = k === 'live', st = destHidden(k) ? 'hide' : bark ? 'bar' : pn.includes(k) ? 'pin' : 'plus', canHide = !!DEST_HIDE(k);
@@ -10117,13 +10564,15 @@ ${pm.join('\n')}</Document></kml>`;
   }
 
   /* ---------- Suivi GPS : où sont les autres (carte du voyage en cours) ---------- */
-  function trkByWho(tid){
+  function trkByWho(tid, withPhotos){
     const by = {}; list('trk', r=>r.trip===tid && !r.deleted && (r.pts||[]).length).forEach(r=>{ const w = r.who || r.id.split(':')[3] || ''; (by[w] = by[w] || []).push(...r.pts); });
+    // les photos géolocalisées complètent la route quand l’appli était fermée (téléphone en poche)
+    if(withPhotos) list('souv', x=>x.trip===tid && !x.deleted && (x.pts||[]).length).forEach(x=>{ const w = x.createdBy || ''; (by[w] = by[w] || []).push(...x.pts.filter(p=>p[2]).map(p=>[p[0], p[1], p[2]])); });
     Object.values(by).forEach(a=>a.sort((x,y)=>(x[2]||0)-(y[2]||0))); return by;
   }
   function liveMapCard(){
     const t = trip(); if(!t || tripPhase(t) !== 'live' || hidden('blk:lmap')) return '';
-    const by = trkByWho(t.id), ws = Object.keys(by); if(!ws.length) return '';
+    const by = trkByWho(t.id, true), ws = Object.keys(by); if(!ws.length) return '';
     return `<div class="cv-lmap"><div class="lm-h">🛰️ Où on en est</div><div class="lm-map" data-lmap="${t.id}"><div class="v-sum-small">🗺️ Carte en cours…</div></div>
       <div class="lm-l">${ws.map(w=>{ const l = by[w][by[w].length-1]; return `<span><i style="background:${w ? pcol(w) : '#0ea5e9'}"></i>${esc(w ? pname(w) : '—')} <small>${l[2] ? when(l[2]) : ''}</small></span>`; }).join('')}</div>
       <button type="button" class="v-btn sec" onclick="CV.worldTrip('${t.id}')">🌍 Voir sur la carte du monde</button></div>`;
@@ -10131,7 +10580,7 @@ ${pm.join('\n')}</Document></kml>`;
   const LMAP = {};
   async function liveMapHydrate(){
     const el = document.querySelector('[data-lmap]:not([data-ok])'); if(!el) return; el.dataset.ok = '1';
-    const by = trkByWho(el.dataset.lmap), E = Object.entries(by); if(!E.length){ el.innerHTML = ''; return; }
+    const by = trkByWho(el.dataset.lmap, true), E = Object.entries(by); if(!E.length){ el.innerHTML = ''; return; }
     const lines = E.map(([w, pts])=>({pts: pts.map(p=>[p[0], p[1]]), color: w ? pcol(w) : '#0ea5e9'}));
     const markers = E.map(([w, pts])=>{ const l = pts[pts.length-1]; return {lat:l[0], lng:l[1], label:((w ? pname(w) : '?')[0] || '?').toUpperCase(), color: w ? pcol(w) : '#0ea5e9'}; });
     const lk = JSON.stringify([lines.map(l=>[l.color, l.pts.length, l.pts[0], l.pts[l.pts.length-1]]), markers.map(m=>[m.label, m.color])]);
@@ -10609,7 +11058,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11o';
+  const BUILD = '2026-10-11p';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -10619,7 +11068,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
