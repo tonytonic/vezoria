@@ -3192,4 +3192,6 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"За 25 секунд уведомление не пришло. Подписка этого телефона только что обновлена: попробуй ещё раз. Если ничего не придёт, проверь Настройки телефона → Приложения → Vezoria → Уведомления.",
 "Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"Этот телефон ещё не разрешил уведомления для Vezoria.",
 "🔔 Autoriser sur ce téléphone":"🔔 Разрешить на этом телефоне",
-"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"Ничего не появляется? Настройки телефона → Приложения → Vezoria → Уведомления: разреши их."});
+"Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"Нет баннера вверху экрана? Настройки телефона → Приложения → Vezoria → Уведомления → нажми на категорию и включи «Всплывающее уведомление» (или «Со звуком»).",
+"{0} nouveautés":"Новое: {0}",
+"🔔 Pendant ton absence":"🔔 Пока тебя не было"});

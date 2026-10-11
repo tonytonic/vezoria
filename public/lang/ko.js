@@ -3192,4 +3192,6 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"25초 동안 알림이 오지 않았어요. 이 휴대폰의 구독을 방금 갱신했어요: 다시 시도하세요. 그래도 안 오면 휴대폰 설정 → 앱 → Vezoria → 알림을 확인하세요.",
 "Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"이 휴대폰은 아직 Vezoria 알림을 허용하지 않았어요.",
 "🔔 Autoriser sur ce téléphone":"🔔 이 휴대폰에서 허용",
-"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"아무것도 안 보이나요? 휴대폰 설정 → 앱 → Vezoria → 알림: 허용하세요."});
+"Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"화면 위에 배너가 안 뜨나요? 휴대폰 설정 → 앱 → Vezoria → 알림 → 카테고리를 누르고 “팝업으로 표시”(또는 “알림”)를 켜세요.",
+"{0} nouveautés":"새 소식 {0}개",
+"🔔 Pendant ton absence":"🔔 없는 동안"});

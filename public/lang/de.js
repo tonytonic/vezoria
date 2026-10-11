@@ -250,4 +250,6 @@ I18N.load({
 "Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"Nach 25 Sekunden keine Benachrichtigung erhalten. Das Abo dieses Telefons wurde gerade erneuert: versuche es noch einmal. Kommt nichts, prüfe Telefoneinstellungen → Apps → Vezoria → Benachrichtigungen.",
 "Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"Dieses Telefon hat Benachrichtigungen für Vezoria noch nicht erlaubt.",
 "🔔 Autoriser sur ce téléphone":"🔔 Auf diesem Telefon erlauben",
-"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"Nichts zu sehen? Telefoneinstellungen → Apps → Vezoria → Benachrichtigungen: erlauben."});
+"Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"Kein Banner oben auf dem Bildschirm? Telefoneinstellungen → Apps → Vezoria → Benachrichtigungen → tippe auf die Kategorie und aktiviere „Pop-up auf dem Bildschirm“ (oder „Benachrichtigen“).",
+"{0} nouveautés":"{0} Neuigkeiten",
+"🔔 Pendant ton absence":"🔔 Während du weg warst"});

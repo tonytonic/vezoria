@@ -3192,4 +3192,6 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"25 秒内没有收到通知。已为这台手机重新订阅：请再试一次。如果仍然没有，请检查 手机设置 → 应用 → Vezoria → 通知。",
 "Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"这台手机尚未允许 Vezoria 的通知。",
 "🔔 Autoriser sur ce téléphone":"🔔 在这台手机上允许",
-"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"什么都没显示？手机设置 → 应用 → Vezoria → 通知：请允许。"});
+"Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"屏幕顶部没有横幅？手机设置 → 应用 → Vezoria → 通知 → 点击类别，开启「在屏幕上弹出」（或「提醒」）。",
+"{0} nouveautés":"{0} 条新动态",
+"🔔 Pendant ton absence":"🔔 你不在时"});

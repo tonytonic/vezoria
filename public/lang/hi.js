@@ -3192,4 +3192,6 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"25 सेकंड में कोई सूचना नहीं आई। इस फ़ोन की सदस्यता अभी नवीनीकृत की गई है: फिर से कोशिश करो। अगर कुछ न आए, तो फ़ोन सेटिंग्स → ऐप्स → Vezoria → सूचनाएँ देखो।",
 "Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"इस फ़ोन ने अभी तक Vezoria की सूचनाओं की अनुमति नहीं दी है।",
 "🔔 Autoriser sur ce téléphone":"🔔 इस फ़ोन पर अनुमति दो",
-"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"कुछ नहीं दिख रहा? फ़ोन सेटिंग्स → ऐप्स → Vezoria → सूचनाएँ: इन्हें अनुमति दो।"});
+"Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"स्क्रीन के ऊपर बैनर नहीं दिखता? फ़ोन सेटिंग्स → ऐप्स → Vezoria → सूचनाएँ → श्रेणी पर टैप करो और “स्क्रीन पर पॉप-अप” (या “अलर्ट”) चालू करो।",
+"{0} nouveautés":"{0} नई बातें",
+"🔔 Pendant ton absence":"🔔 तुम्हारी ग़ैरमौजूदगी में"});

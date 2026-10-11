@@ -250,4 +250,6 @@ I18N.load({
 "Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"Na 25 seconden geen melding ontvangen. Het abonnement van deze telefoon is net vernieuwd: probeer het opnieuw. Komt er niets, controleer Telefooninstellingen → Apps → Vezoria → Meldingen.",
 "Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"Deze telefoon heeft meldingen voor Vezoria nog niet toegestaan.",
 "🔔 Autoriser sur ce téléphone":"🔔 Toestaan op deze telefoon",
-"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"Zie je niets? Telefooninstellingen → Apps → Vezoria → Meldingen: sta ze toe."});
+"Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).":"Geen banner bovenaan het scherm? Telefooninstellingen → Apps → Vezoria → Meldingen → tik op de categorie en zet ‘Pop-up op scherm’ aan (of ‘Waarschuwen’).",
+"{0} nouveautés":"{0} nieuwe dingen",
+"🔔 Pendant ton absence":"🔔 Terwijl je weg was"});
