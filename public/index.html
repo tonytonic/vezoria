@@ -2261,6 +2261,17 @@ const CV = (function(){
   const DEMO_TXT = {Tokyo:['Shibuya de nuit, des néons partout','Les cerisiers d’Ueno en pleine floraison','Le meilleur ramen de la ville, 20 min de queue','Meiji-jingu au calme du matin'],
     Hakone:['Le Fuji enfin sorti des nuages','Onsen au coucher du soleil'], Kyoto:['Mille torii de Fushimi Inari à l’aube','La bambouseraie d’Arashiyama','Le pavillon d’or sous le soleil','Promenade sur le chemin des philosophes'],
     Hiroshima:['Le torii flottant de Miyajima à marée haute','Les daims de Miyajima nous suivent partout'], Osaka:['Dōtonbori et ses enseignes géantes','Takoyaki dans la rue']};
+  /* La démo suit la devise choisie dans Réglages : ses montants (en euros à l’origine) sont convertis à un taux
+     approximatif et arrondis, et ses voyages passent dans cette devise. Les vrais voyages ne sont jamais convertis. */
+  const DEMO_FX = {EUR:1, USD:1.1, GBP:0.85, CHF:0.94, CAD:1.5, AUD:1.65, NZD:1.8, JPY:165, CNY:7.9, SEK:11.2, NOK:11.7, DKK:7.46, PLN:4.3, CZK:25, HUF:395, RON:5, MXN:21, BRL:6.2, MAD:10.8, TND:3.4, TRY:42, AED:4, THB:38, INR:95, ZAR:20, KRW:1550};
+  function demoCur(c){
+    const rate = DEMO_FX[c] || 1, nice = v => { const x = v * rate; if(rate === 1 || !x) return v; const p = Math.pow(10, Math.max(0, Math.floor(Math.log10(Math.abs(x))) - 2)); return Math.round(x / p) * p; };
+    const cv = (o, k, b) => { if(b != null && String(b).trim() !== '') o[k] = String(nice(num(b))); };
+    Object.values(R).filter(r=>r.demo).forEach(r=>{
+      if(!r._eur) r._eur = {prix:r.prix, estime:r.estime, montant:r.montant, objectif:r.objectif, plafond:r.plafond, ech:(r.echeances||[]).map(e=>e.montant)};
+      const b = r._eur; ['prix','estime','montant','objectif','plafond'].forEach(k=>cv(r, k, b[k])); (r.echeances||[]).forEach((e,i)=>cv(e, 'montant', b.ech[i]));
+      if(r.type==='trip') r.devise = c; });
+  }
   async function demoLoad(){
     if(!M.me){ alert('Indique d’abord ton prénom.'); return; }
     const ex = demoTrip(); if(ex){ closeSheet(true); M.mode = 'live'; const lv = list('trip', t=>t.demo && tripPhase(t)==='live')[0]; go((lv||ex).id); return; }
@@ -2312,7 +2323,7 @@ const CV = (function(){
     R['po' + uid() + 'dm'] = {id:'po' + uid() + 'dm', type:'poll', question:'Prochain voyage : on part où ?', options:['Islande','Lisbonne','Vietnam'], votes:{[M.me]:0, [p1]:2, [p2]:0}, closed:false, demo:true, createdBy:p1, createdAt:now, updatedAt:now};
     for(const v of [prep, live, past]) Object.values(R).filter(r=>r.demo && (r.trip===v.tid || r.id===v.tid)).forEach(r=>{ r.demo = true; });
     { const dm = new Set(Object.values(R).filter(r=>r.demo).flatMap(r=>[...(r.photos||[]), r.recu].filter(Boolean))); M.pq = (M.pq||[]).filter(x=>!dm.has(String(x).replace(/\.t$/,''))); }
-    persist(); M.mode = 'live'; M.tab = 'prog'; go(live.tid);
+    demoCur(M.cur || 'EUR'); persist(); M.mode = 'live'; M.tab = 'prog'; go(live.tid);
     setTimeout(()=>alert('👀 3 voyages de démo sont prêts (rien n’est partagé) :\n\n📍 En cours : on est au jour 7 — traceur, steps, tickets, courses, plafond, parts inégales.\n🧳 Préparation : le même Japon dans 6 mois, à organiser.\n🗺️ Passés / 🏁 Bilan : le voyage terminé avec ses photos, son album et ses comptes.\n\nPasse d’un onglet à l’autre en haut de l’écran. « Supprimer la démo » efface tout.'), 300);
   }
   async function demoDel(){
@@ -4306,7 +4317,14 @@ const CV = (function(){
     if(window.I18N && l && l !== I18N.lang){ I18N.set(l); return; }   // recharge l'appli dans la langue choisie
     closeSheet(true); const k = setupCont; setupCont = null; if(k) k();
   }
-  function setCur(c){ if(CURS[c]){ M.cur = c; persist(); toast('💱 ' + c); } }
+  async function setCur(c){
+    if(!CURS[c]) return; M.cur = c;
+    if(demoTrip()) demoCur(c);   // la démo change de devise avec le réglage
+    persist(); toast('💱 ' + c);
+    const t = trip();   // le voyage ouvert (un vrai) garde sa devise, sauf si on le demande
+    if(t && !t.demo && (t.devise || 'EUR') !== c && await uiConfirm(`Passer aussi le voyage « ${t.titre} » en ${c} ?\n\nLes montants déjà saisis ne sont pas convertis : seul le symbole de la devise change.`)){ t.devise = c; put(t, '💱 ' + c); }
+    render();
+  }
   function init(){
     setTimeout(shareInbox, 600); setTimeout(hashJoin, 1200);
     try { const hq = document.getElementById('cv-hero-qr'); if(hq) hq.innerHTML = qrSVG(APP_URL(), 'q') + '<span>📤 Partager</span>'; } catch(e){}
@@ -10591,7 +10609,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11n';
+  const BUILD = '2026-10-11o';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
