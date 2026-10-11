@@ -1,7 +1,7 @@
 // Carnet de voyage — fonctionnement hors ligne
 // Pages et fichiers de l'appli : réseau d'abord (toujours la dernière version), copie locale si pas de réseau.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-11s';
+const CACHE = 'vezoria-2026-10-11t';
 const CORE = ['./', './index.html', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
@@ -80,7 +80,7 @@ const TPL0 = {depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajout
   souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
   notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
   depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
-  test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un'};
+  test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés'};
 const pdb = () => new Promise((res, rej) => { const q = indexedDB.open('vz-push', 1); q.onupgradeneeded = () => q.result.createObjectStore('kv'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
 const kvGet = async k => { try { const db = await pdb(); return await new Promise(res => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(undefined); }); } catch (_) { return undefined; } };
 const kvPut = async (k, v) => { try { const db = await pdb(); await new Promise(res => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = res; tx.onerror = res; }); } catch (_) {} };
@@ -113,9 +113,26 @@ self.addEventListener('push', e => {
     } catch (_) {}
     const n = ((await kvGet('badge')) || 0) + 1; await kvPut('badge', n);
     try { if (self.navigator && self.navigator.setAppBadge) await self.navigator.setAppBadge(n); } catch (_) {}
-    let ack = { type: 'vz-push', ok: true };
-    try { await self.registration.showNotification(title, { body, tag: d.t || 'vezoria', renotify: true, icon: './icon-192.png', badge: './icons/badge-96.png', data: { url } }); }
-    catch (err) { ack = { type: 'vz-push', ok: false, m: String(err && err.message || err) }; }
+    // boîte de réception : l’appli en fait le récap à l’ouverture
+    const now = Date.now(), isTest = /^rappel-test-/.test(String(d.t || ''));
+    const trip = (/[?&]vzt=([^&]*)/.exec(url) || [])[1] || '';
+    const box = ((await kvGet('inbox')) || []).filter(x => now - x.at < 7 * 864e5);
+    if (!isTest) { box.push({ at: now, title, body, url, trip }); while (box.length > 60) box.shift(); await kvPut('inbox', box); }
+    // regroupement : une seule notification par voyage, qui se complète ; pas de nouvelle sonnerie avant 5 min
+    let tag = d.t || 'vezoria', nTitle = title, nBody = body, silent = false;
+    if (!isTest && trip) {
+      tag = 'vz-' + trip;
+      const mine = box.filter(x => x.trip === trip);
+      if (mine.length > 1) {
+        nTitle = title + ' · ' + fill(tt('grp'), [mine.length]);
+        nBody = mine.slice(-5).reverse().map(x => '• ' + String(x.body).split('\n')[0]).join('\n') + (mine.length > 5 ? '\n…' : '');
+      }
+      const last = (await kvGet('la:' + tag)) || 0;
+      if (now - last < 5 * 60e3) silent = true; else await kvPut('la:' + tag, now);
+    }
+    let ack = { type: 'vz-push', ok: true, test: isTest, title, body, url };
+    try { await self.registration.showNotification(nTitle, { body: nBody, tag, renotify: !silent, silent, icon: './icon-192.png', badge: './icons/badge-96.png', data: { url } }); }
+    catch (err) { ack = { type: 'vz-push', ok: false, test: isTest, m: String(err && err.message || err) }; }
     try { (await self.clients.matchAll({ type: 'window', includeUncontrolled: true })).forEach(c => c.postMessage(ack)); } catch (_) {}
   })());
 });

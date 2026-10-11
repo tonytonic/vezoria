@@ -1529,6 +1529,12 @@ body.cv-ph-live .cv-actb .ac-path .on,body.cv-ph-live .cv-actb .ac-n{box-shadow:
 body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;background:none;box-shadow:none}
 </style>
 <style>
+/* 🔔 récap des notifications + bandeau dans l’appli */
+.cv-rcp-t{font-weight:700;margin:14px 0 6px;font-size:.95rem}
+.cv-rcp{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;width:100%;text-align:left;background:var(--card,#fff);border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:10px 12px;margin:0 0 6px;font:inherit;color:inherit;cursor:pointer}
+.cv-rcp small{opacity:.6;white-space:nowrap;font-size:.75rem}
+#cv-inb{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:3000;display:flex;flex-direction:column;gap:2px;text-align:left;background:#2b1840;color:#fff;border:0;border-radius:14px;padding:10px 14px;box-shadow:0 8px 24px rgba(0,0,0,.25);font:inherit;transform:translateY(-140%);transition:transform .3s ease;max-width:560px;margin:0 auto}
+#cv-inb.show{transform:none}#cv-inb span{font-size:.88rem;opacity:.9}
 /* 🎟️ invitation reçue, sur la page d’installation */
 #cv-gate .gv{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:12px 14px;margin:12px 0;text-align:left}
 #cv-gate .gv b{display:block;margin-bottom:4px}#cv-gate .gv p{margin:0 0 10px;font-size:.88rem;opacity:.9}
@@ -1993,7 +1999,7 @@ const CV = (function(){
     souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
     notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
     depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
-    test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un'};
+    test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés'};
   const PU = () => { const p = M.push || (M.push = {on:false, quiet:true}); p.kinds = Object.assign({depense:1, resa:1, souv:1, sondage:1, notes:1, rappel:1}, p.kinds || {}); return p; };
   const pushApi = () => { const u = apiUrl(); return u ? u.replace(/\/api\/sync$/, '/api/push') : ''; };
   const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && !!pushApi();
@@ -2093,7 +2099,7 @@ const CV = (function(){
       + PUSH_KINDS.map(([k, ic, l])=>`<label class="cv-checkline cv-pref"><input type="checkbox" ${P.kinds[k] ? 'checked' : ''} onchange="CV.pushKind('${k}', this.checked)"> <span>${ic} ${l}</span></label>`).join('')
       + `<label class="cv-checkline cv-pref"><input type="checkbox" ${P.quiet ? 'checked' : ''} onchange="CV.pushQuiet(this.checked)"> <span>🌙 Ne pas déranger la nuit (22 h – 8 h)</span></label>`
       + `<button type="button" class="v-day-edit" style="margin-top:8px" onclick="CV.pushTest()">📨 M’envoyer une notification d’essai</button>`
-      + (/Android/i.test(navigator.userAgent) ? `<div class="v-sum-small" style="margin-top:6px">Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.</div>` : '');
+      + (/Android/i.test(navigator.userAgent) ? `<div class="v-sum-small" style="margin-top:6px">Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).</div>` : '');
     const alone = !M.sync.on && !Object.keys(TS()).length;
     return h + `<div class="v-sum-small" style="margin-top:8px">Le contenu des notifications est chiffré : le serveur ne peut pas le lire. Tes compagnons choisissent les leurs.${alone ? ' Pour être prévenu des ajouts de tes compagnons, partage d’abord un voyage.' : ''}</div></div>`;
   }
@@ -2179,9 +2185,45 @@ const CV = (function(){
   }
   function pushBadgeClear(){ try { pushKv('badge', 0).catch(()=>{}); if(navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{});
     if('serviceWorker' in navigator) navigator.serviceWorker.ready.then(reg=>reg.getNotifications ? reg.getNotifications() : []).then(ns=>ns.forEach(n=>n.close())).catch(()=>{}); } catch(e){} }
-  if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev=>{ if(ev.data && ev.data.type === 'vz-open') pushOpen(ev.data.url); else if(ev.data && ev.data.type === 'vz-push' && pushAck) pushAck(ev.data); });
-  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible') pushBadgeClear(); });
-  setTimeout(()=>{ pushOpen(location.href); pushBadgeClear();
+  /* 🔔 Récap : ce qui est arrivé pendant que l’appli était fermée (Android n’affiche pas toujours de bandeau) */
+  let recapVia = '', recapT = null;
+  const recapBusy = () => document.querySelector('#v-sheet-bg, .ui-dlg, #cv-gate, #cv-film, #cv-tj, .cv-first');
+  async function pushRecap(){
+    if(!pushOk()) return;
+    let box = []; try { box = (await pushKv('inbox')) || []; } catch(e){ return; }
+    box = box.filter(x=>Date.now() - x.at < 7 * 864e5);
+    if(!box.length) return;
+    // ouverte en touchant la seule notification : elle s’affiche déjà, pas besoin de récap
+    const qs = u => { try { return new URL(u, location.href).search; } catch(e){ return ''; } };
+    if(box.length === 1 && recapVia && qs(box[0].url) === qs(recapVia)){ recapVia = ''; await pushKv('inbox', []); return; }
+    recapVia = '';
+    if(recapBusy()){ clearTimeout(recapT); recapT = setTimeout(pushRecap, 4000); return; }
+    await pushKv('inbox', []);
+    pushRecapBox = box.slice().reverse();
+    const lang = (window.I18N && I18N.lang) || 'fr', hm = t => { const d = new Date(t), td = new Date(); const s = d.toLocaleTimeString(lang, {hour:'2-digit', minute:'2-digit'});
+      return d.toDateString() === td.toDateString() ? s : d.toLocaleDateString(lang, {weekday:'short', day:'numeric'}) + ' ' + s; };
+    const by = {}; pushRecapBox.forEach((x, i)=>{ (by[x.trip || '-'] = by[x.trip || '-'] || []).push([x, i]); });
+    openSheet(`<h2>🔔 Pendant ton absence</h2>`
+      + Object.values(by).map(arr=>`<div class="cv-rcp-t">${esc(arr[0][0].title || 'Vezoria')}</div>`
+        + arr.map(([x, i])=>`<button type="button" class="cv-rcp" onclick="CV.recapGo(${i})"><span>${esc(String(x.body || '')).replace(/\n/g, '<br>')}</span><small>${hm(x.at)}</small></button>`).join('')).join('')
+      + `<div class="v-actions"><button type="button" class="v-btn" onclick="CV.close()">OK</button></div>`);
+  }
+  let pushRecapBox = [];
+  function recapGo(i){ const x = pushRecapBox[i]; closeSheet(); if(x) pushOpen(x.url); }
+  // appli ouverte : petit bandeau en haut, touchable
+  function pushBanner(d){
+    if(!d || d.test || !d.body || document.visibilityState !== 'visible') return;
+    pushKv('inbox', []).catch(()=>{}); pushBadgeClear();
+    let b = document.getElementById('cv-inb'); if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'cv-inb'; document.body.appendChild(b); }
+    b.innerHTML = `<b>🔔 ${esc(d.title || 'Vezoria')}</b><span>${esc(String(d.body).split('\n')[0])}</span>`;
+    b.onclick = ()=>{ b.classList.remove('show'); pushOpen(d.url); };
+    requestAnimationFrame(()=>b.classList.add('show')); clearTimeout(b._t); b._t = setTimeout(()=>b.classList.remove('show'), 6000);
+  }
+  if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev=>{ const d = ev.data || {};
+    if(d.type === 'vz-open'){ recapVia = d.url; pushOpen(d.url); pushKv('inbox', []).catch(()=>{}); }
+    else if(d.type === 'vz-push'){ if(pushAck) pushAck(d); else pushBanner(d); } });
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible'){ pushBadgeClear(); clearTimeout(recapT); recapT = setTimeout(pushRecap, 1200); } });
+  setTimeout(()=>{ if(/[?&]vzt=/.test(location.search)) recapVia = location.href; pushOpen(location.href); pushBadgeClear(); setTimeout(pushRecap, 1500);
     if(PU().on){ pushRegister().catch(()=>{}); pushPlan().catch(()=>{}); } }, 3000);
 
   /* Ne jamais redessiner l'écran pendant que l'utilisateur touche, tape ou ouvre une liste :
@@ -11112,7 +11154,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11s';
+  const BUILD = '2026-10-11t';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -11122,7 +11164,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
