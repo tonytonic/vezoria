@@ -3202,9 +3202,9 @@ const CV = (function(){
       b.replaceWith(d);
     });
   }
-  async function syncOn(){
+  async function syncOn(codeArg){
     const urlEl = document.getElementById('cv-surl');
-    const code = document.getElementById('cv-scode').value.trim().toUpperCase();
+    const code = String(typeof codeArg === 'string' ? codeArg : ((document.getElementById('cv-scode') || {}).value || '')).trim().toUpperCase();
     if(code.length < 8){ alert('Choisis ou génère un code d’au moins 8 caractères.'); return; }
     const prev = clone(M.sync);
     M.sync.url = urlEl ? urlEl.value.trim() : M.sync.url; M.sync.code = code;
@@ -10171,16 +10171,35 @@ ${pm.join('\n')}</Document></kml>`;
     const st = syncState(), L = {ok:['☁️','À jour'], wait:['⏳','Envoi…'], err:['⚠️','Souci'], offline:['📴','Hors ligne'], off:['☁️','Local']};
     b.className = 'cv-syncpill ' + st; b.innerHTML = `<span>${L[st][0]}</span><small>${L[st][1]}</small>`; b.setAttribute('aria-label', 'Synchronisation : ' + L[st][1]);
   }
+  async function syncMainNew(){
+    if(!(await uiConfirm('Créer ton code principal ?\n\nTous tes voyages seront sauvegardés sur le serveur, chiffrés sur ce téléphone : personne d’autre ne peut les lire. Garde bien ce code : c’est lui qui ouvre ton carnet sur un autre appareil.'))) return;
+    closeSheet(true); await syncOn(genCode());
+  }
+  async function syncMainJoin(){
+    const v = ((document.getElementById('sy-join') || {}).value || '').trim().toUpperCase();
+    if(v.length < 8){ alert('Code trop court (au moins 8 caractères).'); return; }
+    closeSheet(true); await syncOn(v);
+  }
   function syncSheet(){
     const s = M.sync, rows = [];
     if(s.on && s.code) rows.push(`<div class="sy-r"><b>📱 Mes voyages sur tous mes appareils</b><small>${s.err ? '⚠️ ' + esc(s.err) : M.dirty.length ? '⏳ ' + M.dirty.length + ' modif(s) à envoyer' : '✓ à jour' + (s.last ? ' · ' + when(s.last) : '')}</small></div>`);
     Object.entries(TS()).forEach(([tid, c])=>{ const sp = spaceObj(c), t = R[tid]; if(!sp || !t) return;
       const kind = FT()[tid.replace(/^ft:/,'')] === c ? '👀 Mes abonnés : ' : t.type === 'feedtrip' ? '👀 Je suis : ' : '🔗 ';
       rows.push(`<div class="sy-r"><b>${kind}${esc(t.titre || '')}</b><small>${sp.err ? '⚠️ ' + esc(sp.err) : (sp.dirty||[]).length ? '⏳ ' + sp.dirty.length + ' modif(s) à envoyer' : '✓ à jour' + (sp.last ? ' · ' + when(sp.last) : '')}</small></div>`); });
-    const ph = pqN() + (M.fq||[]).length;
+    const ph = pqN() + (M.fq||[]).length, t = trip(), tc = t && !t.demo && TS()[t.id] && spaceObj(TS()[t.id]) ? TS()[t.id] : '';
+    const mainBox = s.on && s.code
+      ? `<div class="sy-r"><b>🔑 Mon code principal</b><small>Le même code sur ton autre téléphone ou ta tablette : tous tes voyages y arrivent.</small><div class="cv-row" style="margin-top:6px"><b class="cv-code">${esc(s.code)}</b><button type="button" class="v-btn sec" style="width:auto;margin:0 0 0 auto;padding:6px 12px" onclick="CV.copyCode()">📋 Copier</button></div></div>`
+      : `<div class="sy-r"><b>📱 Tous mes voyages sur tous mes appareils</b><small>Crée ton code principal : tes voyages sont sauvegardés (chiffrés) et arrivent sur ton autre téléphone avec le même code.</small>
+          <button type="button" class="v-btn" style="margin-top:8px" onclick="CV.syncMainNew()">☁️ Créer mon code principal</button>
+          <div class="cv-row" style="margin-top:8px"><input class="v-in" id="sy-join" placeholder="J’ai déjà un code" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.syncMainJoin()">Utiliser</button></div></div>`;
+    const tripBox = t && !t.demo
+      ? (tc ? `<div class="sy-r"><b>🔗 Code du voyage « ${esc(t.titre)} »</b><small>À donner à tes compagnons : ils rejoignent seulement ce voyage.</small><div class="cv-row" style="margin-top:6px"><b class="cv-code">${esc(tc)}</b><button type="button" class="v-btn sec" style="width:auto;margin:0 0 0 auto;padding:6px 12px" onclick="CV.close();CV.tripInviteNow('${t.id}')">📤 Inviter</button></div></div>`
+            : `<div class="sy-r"><b>🔗 Partager « ${esc(t.titre)} »</b><small>Crée le code de ce voyage et invite tes compagnons : ils ne voient que ce voyage, le reste reste privé.</small><button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.close();CV.tripInviteNow('${t.id}')">🔗 Créer le code et inviter</button></div>`)
+      : '';
     openSheet(`<h2>☁️ Synchronisation</h2>
       <div class="v-sum-small" style="margin-bottom:10px">Tout part tout seul : à l’ouverture, après chaque modification, puis régulièrement. Hors connexion, rien n’est perdu : ça part dès que le réseau revient.</div>
-      ${rows.join('') || '<div class="v-sum-small">Rien n’est partagé pour l’instant : tes voyages restent sur ce téléphone. Partage un voyage depuis son bouton 🔗 Partager.</div>'}
+      ${rows.join('') || '<div class="v-sum-small" style="margin-bottom:8px">Rien n’est en ligne pour l’instant : tes voyages restent sur ce téléphone.</div>'}
+      ${mainBox}${tripBox}<button type="button" class="v-btn sec" onclick="CV.close();CV.tripJoin()">🤝 Rejoindre un voyage avec un code</button>
       ${ph ? `<div class="sy-r"><b>📸 Photos</b><small>${M.pqErr ? '⚠️ ' + esc(M.pqErr) + ' · ' : ''}⏳ ${ph} en attente d’envoi${(M.pq||[]).length && !(M.pq||[]).some(id=>photoCode(id)) ? ' · voyage pas encore partagé : touche 🔗 Partager' : ''}</small></div>` : ''}
       <div class="v-actions">${rows.length ? `<button type="button" class="v-btn" onclick="CV.syncNow(true);CV.close()">🔄 Synchroniser maintenant</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.close();CV.tab('reglages')">⚙️ Réglages du partage</button></div>`);
   }
@@ -10491,7 +10510,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11k';
+  const BUILD = '2026-10-11l';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -10501,7 +10520,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {objAsk, budTog, syncSheet, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
