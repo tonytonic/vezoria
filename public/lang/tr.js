@@ -3178,4 +3178,12 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"Bilgiler: OpenStreetMap. Çalışma saatlerini yerinde ya da sitesinde doğrula.",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"Ödeme tarihleri, uçuş check-in’i (24 sa önce), otele varışlar: tek dokunuşla telefonunun takvimine, uyarılarla. Uygulama bildirimleri için: Daha fazla → ⚙️ Ayarlar → 🔔 Bildirimler.",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"Hatırlatıcıların telefonunun takvimine gider. Diğer randevuların gibi orada değiştir ya da sil.",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Mesajla gelen bir seyahat kodu burada çalışır: yalnızca o seyahat eklenir, çevrimiçi defter oluşturulmaz."});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Mesajla gelen bir seyahat kodu burada çalışır: yalnızca o seyahat eklenir, çevrimiçi defter oluşturulmaz.",
+"C’est gratuit et ça prend 10 secondes.":"Ücretsizdir ve 10 saniye sürer.",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ Bir seyahate davet edildin",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"Kurulumdan sonra katılmak için: “Daveti kopyala”ya dokun, uygulamayı kur, sonra Vezoria’da “Daveti yapıştır”a dokun.",
+"📋 Copier l’invitation":"📋 Daveti kopyala",
+"📋 Invitation copiée":"📋 Davet kopyalandı",
+"📋 Coller l’invitation":"📋 Daveti yapıştır",
+"Invitation reçue (lien ou code)":"Gelen davet (bağlantı veya kod)",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"Panoda davet bulunamadı: alana yapıştır."});

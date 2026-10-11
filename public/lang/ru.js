@@ -3178,4 +3178,12 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"Данные: OpenStreetMap. Часы работы уточняй на месте или на сайте.",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"Сроки платежей, регистрация на рейс (за 24 ч), заселение в отели: одним касанием в календарь телефона, с оповещениями. Уведомления приложения: Ещё → ⚙️ Настройки → 🔔 Уведомления.",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"Напоминания попадают в календарь телефона. Меняй или удаляй их там, как и другие встречи.",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Здесь подойдёт код поездки из сообщения: добавится только эта поездка, без создания онлайн-блокнота."});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Здесь подойдёт код поездки из сообщения: добавится только эта поездка, без создания онлайн-блокнота.",
+"C’est gratuit et ça prend 10 secondes.":"Это бесплатно и занимает 10 секунд.",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ Тебя пригласили в поездку",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"Чтобы присоединиться после установки: нажми «Скопировать приглашение», установи приложение, затем в Vezoria нажми «Вставить приглашение».",
+"📋 Copier l’invitation":"📋 Скопировать приглашение",
+"📋 Invitation copiée":"📋 Приглашение скопировано",
+"📋 Coller l’invitation":"📋 Вставить приглашение",
+"Invitation reçue (lien ou code)":"Полученное приглашение (ссылка или код)",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"В буфере обмена нет приглашения: вставь его в поле."});

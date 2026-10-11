@@ -3178,4 +3178,12 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"जानकारी: OpenStreetMap। समय मौके पर या जगह की वेबसाइट पर पक्का करो।",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"भुगतान की तारीख़ें, फ़्लाइट चेक-इन (24 घंटे पहले), होटल आगमन: एक टैप में तुम्हारे फ़ोन के कैलेंडर में, अलर्ट के साथ। ऐप के नोटिफ़िकेशन के लिए: और → ⚙️ सेटिंग्स → 🔔 नोटिफ़िकेशन।",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"तुम्हारे रिमाइंडर फ़ोन के कैलेंडर में जाते हैं। उन्हें वहीं बदलो या हटाओ, अपनी बाकी अपॉइंटमेंट की तरह।",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"मैसेज में मिला यात्रा कोड यहाँ काम करता है: सिर्फ़ वही यात्रा जुड़ती है, कोई ऑनलाइन नोटबुक नहीं बनती।"});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"मैसेज में मिला यात्रा कोड यहाँ काम करता है: सिर्फ़ वही यात्रा जुड़ती है, कोई ऑनलाइन नोटबुक नहीं बनती।",
+"C’est gratuit et ça prend 10 secondes.":"यह मुफ़्त है और 10 सेकंड लगते हैं।",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ तुम्हें एक यात्रा में बुलाया गया है",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"इंस्टॉल करने के बाद जुड़ने के लिए: “न्योता कॉपी करो” दबाओ, ऐप इंस्टॉल करो, फिर Vezoria में “न्योता पेस्ट करो” दबाओ।",
+"📋 Copier l’invitation":"📋 न्योता कॉपी करो",
+"📋 Invitation copiée":"📋 न्योता कॉपी हो गया",
+"📋 Coller l’invitation":"📋 न्योता पेस्ट करो",
+"Invitation reçue (lien ou code)":"मिला हुआ न्योता (लिंक या कोड)",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"क्लिपबोर्ड में कोई न्योता नहीं मिला: उसे खाने में पेस्ट करो।"});

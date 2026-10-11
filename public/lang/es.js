@@ -236,4 +236,12 @@ I18N.load({
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"Info: OpenStreetMap. Confirma los horarios en el lugar o en su web.",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"Plazos de pago, check-in de los vuelos (24 h antes), llegadas al hotel: se añaden con un gesto al calendario de tu móvil, con alertas. Para las notificaciones de la app: Más → ⚙️ Ajustes → 🔔 Notificaciones.",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"Tus recordatorios van al calendario de tu móvil. Los cambias o los borras allí, como tus otras citas.",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Aquí funciona un código de viaje recibido por mensaje: solo se añade ese viaje, sin crear un cuaderno en línea."});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Aquí funciona un código de viaje recibido por mensaje: solo se añade ese viaje, sin crear un cuaderno en línea.",
+"C’est gratuit et ça prend 10 secondes.":"Es gratis y lleva 10 segundos.",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ Te han invitado a un viaje",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"Para unirte tras la instalación: toca «Copiar la invitación», instala la app y luego, en Vezoria, toca «Pegar la invitación».",
+"📋 Copier l’invitation":"📋 Copiar la invitación",
+"📋 Invitation copiée":"📋 Invitación copiada",
+"📋 Coller l’invitation":"📋 Pegar la invitación",
+"Invitation reçue (lien ou code)":"Invitación recibida (enlace o código)",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"No hay ninguna invitación en el portapapeles: pégala en el campo."});

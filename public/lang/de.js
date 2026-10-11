@@ -236,4 +236,12 @@ I18N.load({
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"Infos: OpenStreetMap. Öffnungszeiten vor Ort oder auf der Website prüfen.",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"Zahlungstermine, Flug-Check-in (24 Std. vorher), Hotel-Ankunft: mit einem Tipp in den Kalender deines Handys, mit Alarmen. Für Benachrichtigungen der App: Mehr → ⚙️ Einstellungen → 🔔 Benachrichtigungen.",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"Deine Erinnerungen landen im Kalender deines Handys. Dort änderst oder löschst du sie, wie deine anderen Termine.",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Ein per Nachricht erhaltener Reisecode funktioniert hier: Nur diese Reise wird hinzugefügt, ohne ein Online-Tagebuch anzulegen."});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Ein per Nachricht erhaltener Reisecode funktioniert hier: Nur diese Reise wird hinzugefügt, ohne ein Online-Tagebuch anzulegen.",
+"C’est gratuit et ça prend 10 secondes.":"Es ist kostenlos und dauert 10 Sekunden.",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ Du bist zu einer Reise eingeladen",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"Um nach der Installation beizutreten: Tippe auf „Einladung kopieren“, installiere die App und tippe dann in Vezoria auf „Einladung einfügen“.",
+"📋 Copier l’invitation":"📋 Einladung kopieren",
+"📋 Invitation copiée":"📋 Einladung kopiert",
+"📋 Coller l’invitation":"📋 Einladung einfügen",
+"Invitation reçue (lien ou code)":"Erhaltene Einladung (Link oder Code)",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"Keine Einladung in der Zwischenablage: Füge sie in das Feld ein."});

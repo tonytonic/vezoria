@@ -3178,4 +3178,12 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"정보: OpenStreetMap. 영업시간은 현장이나 공식 사이트에서 확인하세요.",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"결제일, 항공편 체크인(24시간 전), 호텔 도착: 한 번에 휴대폰 캘린더에 알림과 함께 추가. 앱 알림은: 더보기 → ⚙️ 설정 → 🔔 알림.",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"알림은 휴대폰 캘린더로 가요. 다른 일정처럼 거기서 수정하거나 삭제하세요.",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"메시지로 받은 여행 코드도 여기서 쓸 수 있어요: 그 여행만 추가되고 온라인 수첩은 만들어지지 않아요."});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"메시지로 받은 여행 코드도 여기서 쓸 수 있어요: 그 여행만 추가되고 온라인 수첩은 만들어지지 않아요.",
+"C’est gratuit et ça prend 10 secondes.":"무료이고 10초면 돼요.",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ 여행에 초대받았어요",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"설치 후 참여하려면: “초대 복사”를 누르고 앱을 설치한 다음, Vezoria에서 “초대 붙여넣기”를 누르세요.",
+"📋 Copier l’invitation":"📋 초대 복사",
+"📋 Invitation copiée":"📋 초대를 복사했어요",
+"📋 Coller l’invitation":"📋 초대 붙여넣기",
+"Invitation reçue (lien ou code)":"받은 초대(링크 또는 코드)",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"클립보드에 초대가 없어요: 칸에 붙여넣으세요."});

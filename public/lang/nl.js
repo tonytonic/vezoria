@@ -236,4 +236,12 @@ I18N.load({
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"Info: OpenStreetMap. Controleer de openingstijden ter plaatse of op de website.",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"Betaaltermijnen, online inchecken voor vluchten (24 u vooraf), aankomst in het hotel: in één tik in de agenda van je telefoon, met meldingen. Voor meldingen van de app: Meer → ⚙️ Instellingen → 🔔 Meldingen.",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"Je herinneringen gaan naar de agenda van je telefoon. Daar wijzig of verwijder je ze, net als je andere afspraken.",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Een reiscode die je per bericht kreeg, werkt hier: alleen die reis wordt toegevoegd, zonder online notitieboek aan te maken."});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Een reiscode die je per bericht kreeg, werkt hier: alleen die reis wordt toegevoegd, zonder online notitieboek aan te maken.",
+"C’est gratuit et ça prend 10 secondes.":"Het is gratis en duurt 10 seconden.",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ Je bent uitgenodigd voor een reis",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"Om na de installatie mee te doen: tik op ‘Uitnodiging kopiëren’, installeer de app en tik dan in Vezoria op ‘Uitnodiging plakken’.",
+"📋 Copier l’invitation":"📋 Uitnodiging kopiëren",
+"📋 Invitation copiée":"📋 Uitnodiging gekopieerd",
+"📋 Coller l’invitation":"📋 Uitnodiging plakken",
+"Invitation reçue (lien ou code)":"Ontvangen uitnodiging (link of code)",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"Geen uitnodiging op het klembord: plak hem in het veld."});

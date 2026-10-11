@@ -3178,4 +3178,12 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"信息来源：OpenStreetMap。营业时间请以现场或官网为准。",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"付款到期、航班值机（提前 24 小时）、酒店入住：一键加入手机日历，并带提醒。应用通知请到：更多 → ⚙️ 设置 → 🔔 通知。",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"提醒会进入你手机的日历。你可以在日历中修改或删除，就像其他日程一样。",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"通过消息收到的旅行码可以在这里使用：只会添加这一次旅行，不会创建在线手账。"});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"通过消息收到的旅行码可以在这里使用：只会添加这一次旅行，不会创建在线手账。",
+"C’est gratuit et ça prend 10 secondes.":"免费，只需 10 秒。",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ 你被邀请加入一次旅行",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"安装后加入的方法：点击「复制邀请」，安装应用，然后在 Vezoria 中点击「粘贴邀请」。",
+"📋 Copier l’invitation":"📋 复制邀请",
+"📋 Invitation copiée":"📋 邀请已复制",
+"📋 Coller l’invitation":"📋 粘贴邀请",
+"Invitation reçue (lien ou code)":"收到的邀请（链接或代码）",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"剪贴板中没有找到邀请：请把它粘贴到输入框中。"});

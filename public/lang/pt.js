@@ -236,4 +236,12 @@ I18N.load({
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"Info: OpenStreetMap. Confirme os horários no local ou no site do lugar.",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"Parcelas de pagamento, check-in dos voos (24 h antes), chegadas ao hotel: adicionados com um toque ao calendário do telefone, com alertas. Para as notificações do app: Mais → ⚙️ Configurações → 🔔 Notificações.",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"Seus lembretes vão para o calendário do telefone. Você os edita ou apaga lá, como seus outros compromissos.",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Um código de viagem recebido por mensagem funciona aqui: só essa viagem é adicionada, sem criar um caderno online."});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Um código de viagem recebido por mensagem funciona aqui: só essa viagem é adicionada, sem criar um caderno online.",
+"C’est gratuit et ça prend 10 secondes.":"É grátis e leva 10 segundos.",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ Você foi convidado(a) para uma viagem",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"Para entrar depois da instalação: toque em “Copiar o convite”, instale o app e depois, no Vezoria, toque em “Colar o convite”.",
+"📋 Copier l’invitation":"📋 Copiar o convite",
+"📋 Invitation copiée":"📋 Convite copiado",
+"📋 Coller l’invitation":"📋 Colar o convite",
+"Invitation reçue (lien ou code)":"Convite recebido (link ou código)",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"Nenhum convite na área de transferência: cole-o no campo."});

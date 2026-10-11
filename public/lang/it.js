@@ -236,4 +236,12 @@ I18N.load({
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"Info: OpenStreetMap. Verifica gli orari sul posto o sul sito del luogo.",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"Scadenze di pagamento, check-in dei voli (24 h prima), arrivi in hotel: aggiunti con un gesto al calendario del telefono, con avvisi. Per le notifiche dell’app: Altro → ⚙️ Impostazioni → 🔔 Notifiche.",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"I promemoria vanno nel calendario del telefono. Li modifichi o li elimini lì, come gli altri appuntamenti.",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Qui funziona un codice di viaggio ricevuto per messaggio: viene aggiunto solo quel viaggio, senza creare un taccuino online."});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"Qui funziona un codice di viaggio ricevuto per messaggio: viene aggiunto solo quel viaggio, senza creare un taccuino online.",
+"C’est gratuit et ça prend 10 secondes.":"È gratis e ci vogliono 10 secondi.",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ Sei invitato/a a un viaggio",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"Per unirti dopo l’installazione: tocca «Copia l’invito», installa l’app, poi in Vezoria tocca «Incolla l’invito».",
+"📋 Copier l’invitation":"📋 Copia l’invito",
+"📋 Invitation copiée":"📋 Invito copiato",
+"📋 Coller l’invitation":"📋 Incolla l’invito",
+"Invitation reçue (lien ou code)":"Invito ricevuto (link o codice)",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"Nessun invito negli appunti: incollalo nel campo."});

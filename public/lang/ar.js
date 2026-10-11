@@ -3178,4 +3178,12 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"المعلومات: OpenStreetMap. تحقّق من المواعيد في المكان أو على موقعه.",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"مواعيد الدفع، تسجيل الوصول للطيران (قبل 24 ساعة)، الوصول إلى الفندق: تُضاف بلمسة إلى تقويم هاتفك، مع تنبيهات. لإشعارات التطبيق: المزيد ← ⚙️ الإعدادات ← 🔔 الإشعارات.",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"تذهب تذكيراتك إلى تقويم هاتفك. عدّلها أو احذفها هناك، مثل مواعيدك الأخرى.",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"يعمل هنا رمز الرحلة الذي وصلك برسالة: تُضاف هذه الرحلة فقط، دون إنشاء دفتر على الإنترنت."});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"يعمل هنا رمز الرحلة الذي وصلك برسالة: تُضاف هذه الرحلة فقط، دون إنشاء دفتر على الإنترنت.",
+"C’est gratuit et ça prend 10 secondes.":"مجاني ويستغرق 10 ثوانٍ.",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ أنت مدعو إلى رحلة",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"للانضمام بعد التثبيت: المس «نسخ الدعوة»، ثبّت التطبيق، ثم في Vezoria المس «لصق الدعوة».",
+"📋 Copier l’invitation":"📋 نسخ الدعوة",
+"📋 Invitation copiée":"📋 تم نسخ الدعوة",
+"📋 Coller l’invitation":"📋 لصق الدعوة",
+"Invitation reçue (lien ou code)":"الدعوة المستلمة (رابط أو رمز)",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"لم يُعثر على دعوة في الحافظة: الصقها في الحقل."});

@@ -236,4 +236,12 @@ I18N.load({
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"Info: OpenStreetMap. Check opening hours on site or on the place’s website.",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"Payment due dates, flight check-in (24 h before), hotel arrivals: added in one tap to your phone's calendar, with alerts. For app notifications: More → ⚙️ Settings → 🔔 Notifications.",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"Your reminders go into your phone's calendar. You edit or delete them there, like your other appointments.",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"A trip code received by message works here: only that trip is added, without creating an online notebook."});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"A trip code received by message works here: only that trip is added, without creating an online notebook.",
+"C’est gratuit et ça prend 10 secondes.":"It’s free and takes 10 seconds.",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ You’re invited to a trip",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"To join it after installing: tap “Copy the invitation”, install the app, then in Vezoria tap “Paste the invitation”.",
+"📋 Copier l’invitation":"📋 Copy the invitation",
+"📋 Invitation copiée":"📋 Invitation copied",
+"📋 Coller l’invitation":"📋 Paste the invitation",
+"Invitation reçue (lien ou code)":"Invitation received (link or code)",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"No invitation found in the clipboard: paste it into the field."});

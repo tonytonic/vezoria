@@ -3178,4 +3178,12 @@ I18N.load({"🔑 Mon code principal":"🔑 メインコード",
 "Infos : OpenStreetMap. Horaires à confirmer sur place ou sur le site du lieu.":"情報：OpenStreetMap。営業時間は現地または公式サイトで確認してください。",
 "Échéances de paiement, enregistrement des vols (24 h avant), arrivées à l’hôtel : ajoutés en un geste au calendrier de ton téléphone, avec alertes. Pour les notifications de l’appli : Plus → ⚙️ Réglages → 🔔 Notifications.":"支払期日、フライトのチェックイン（24時間前）、ホテル到着：ワンタップでスマホのカレンダーにアラーム付きで追加。アプリの通知は：その他 → ⚙️ 設定 → 🔔 通知。",
 "Tes rappels vont dans le calendrier de ton téléphone. Tu les modifies ou les supprimes là-bas, comme tes autres rendez-vous.":"リマインダーはスマホのカレンダーに入ります。ほかの予定と同じく、カレンダーで編集・削除できます。",
-"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"メッセージで受け取った旅行コードもここで使えます：その旅行だけが追加され、オンラインの手帳は作成されません。"});
+"Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.":"メッセージで受け取った旅行コードもここで使えます：その旅行だけが追加され、オンラインの手帳は作成されません。",
+"C’est gratuit et ça prend 10 secondes.":"無料で、10秒で済みます。",
+"🎟️ Tu es invité(e) dans un voyage":"🎟️ 旅行に招待されています",
+"Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».":"インストール後に参加するには：「招待をコピー」をタップしてアプリをインストールし、Vezoriaで「招待を貼り付け」をタップしてください。",
+"📋 Copier l’invitation":"📋 招待をコピー",
+"📋 Invitation copiée":"📋 招待をコピーしました",
+"📋 Coller l’invitation":"📋 招待を貼り付け",
+"Invitation reçue (lien ou code)":"受け取った招待（リンクまたはコード）",
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"クリップボードに招待が見つかりません：欄に貼り付けてください。"});
