@@ -2301,6 +2301,7 @@ const CV = (function(){
       <button class="v-btn sec" style="margin-top:10px" onclick="CV.tripWhoSet('${id}','')">＋ Je n’y suis pas : m’ajouter${M.me && prof(M.me) ? ' (' + esc(pname(M.me)) + ')' : ''}</button>`, true);
   }
   function tripWhoSet(id, pid){
+    if(!pid && !(M.me && prof(M.me))){ M.joinAdd = id; persist(); editProfile(null); return; }
     if(pid){ M.me = pid; persist(); }
     else { const t = clone(R[id]); t.voyageurs = [...new Set([...(t.voyageurs||[]), M.me])]; put(t, '👋 Tu es ajouté au voyage'); }
     closeSheet(true); applyMode(); refresh(); queueSync();
@@ -3324,7 +3325,9 @@ const CV = (function(){
     const rb = document.getElementById('cv-prb'); if(rb) p.rembours = rb.value.trim();
     if(!p.id) p.id = 'p' + uid();
     if(!prof(M.me)) M.me = p.id;
-    put(p); closeSheet(true); refresh();
+    put(p); closeSheet(true);
+    if(M.joinAdd && R[M.joinAdd]){ const t = clone(R[M.joinAdd]); t.voyageurs = [...new Set([...(t.voyageurs||[]), M.me])]; delete M.joinAdd; put(t, '👋 Tu es ajouté au voyage'); applyMode(); }
+    refresh();
   }
   async function delProfile(id){ if(!(await uiConfirm('Supprimer le profil ' + pname(id) + ' ? Ses fiches restent.'))) return; drop(id); closeSheet(); refresh(); }
   function whoSheet(){
@@ -3556,6 +3559,7 @@ const CV = (function(){
       <div id="cv-ob-join" style="display:none">
         ${hosted ? '' : `<div class="v-f"><label>Adresse de l’appli en ligne</label><input class="v-in" id="cv-surl" placeholder="https://carnet-voyage.pages.dev"></div>`}
         <div class="v-f"><label>Code du carnet reçu</label><input class="v-in" id="cv-scode" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters"></div>
+        <div class="v-sum-small" style="margin:-4px 0 10px">Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.</div>
         <button class="v-btn" onclick="CV.obJoin()">Rejoindre</button>
       </div>`, true);
     document.querySelectorAll('#cv-ob button').forEach(b=>b.addEventListener('click', ()=>{
@@ -3563,7 +3567,9 @@ const CV = (function(){
       document.getElementById('cv-ob-new').style.display = j ? 'none' : 'block';
       document.getElementById('cv-ob-join').style.display = j ? 'block' : 'none';
     }));
+    if(M.joinCode) obJoinPrefill();
   }
+  function obJoinPrefill(){ const jb = document.querySelector('#cv-ob button[data-v="join"]'), ci = document.getElementById('cv-scode'); if(jb) jb.click(); if(ci && M.joinCode) ci.value = M.joinCode; }
   function obCreate(mode){
     const nom = document.getElementById('cv-pnom').value.trim();
     if(!nom){ alert('Indique ton prénom.'); return; }
@@ -3587,11 +3593,21 @@ const CV = (function(){
     const urlEl = document.getElementById('cv-surl');
     const code = document.getElementById('cv-scode').value.trim().toUpperCase();
     if(code.length < 8){ alert('Colle le code reçu (au moins 8 caractères).'); return; }
-    M.sync.url = urlEl ? urlEl.value.trim() : ''; M.sync.code = code;
+    if(urlEl && urlEl.value.trim()) M.sync.url = urlEl.value.trim();
+    // 1) code d’un voyage partagé (le cas le plus courant : une invitation reçue) → seul ce voyage est ajouté
+    try {
+      if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
+      const sp = spaceObj(code); await syncSpace(sp, true);
+      const got = sp.err ? [] : Object.entries(TS()).filter(([, c])=>c === code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip');
+      if(got.length){ delete M.joinCode; persist(); closeSheet(true); go(got[0].id); refresh(); tripWho(got[0].id); return; }
+      M.spaces = (M.spaces || []).filter(x=>x.code !== code);
+    } catch(e){ M.spaces = (M.spaces || []).filter(x=>x.code !== code); }
+    // 2) sinon : code du carnet complet (mes voyages sur un autre appareil)
+    M.sync.code = code;
     try {
       const j = await call(0, []);
       mergeRemote(j.records);
-      M.sync.on = true; M.sync.since = j.now; M.sync.err = ''; M.sync.last = Date.now();
+      M.sync.on = true; M.sync.since = j.now; M.sync.err = ''; M.sync.last = Date.now(); delete M.joinCode;
       persist(); closeSheet(true);
       applyMode();
       if(!profiles().length){ editProfile(null); return; }
@@ -10775,6 +10791,7 @@ ${pm.join('\n')}</Document></kml>`;
     const h = decodeURIComponent(location.hash || ''); const m = h.match(/#(rejoindre|suivre)=([A-Z0-9-]{8,})/i); if(!m) return;
     history.replaceState(null, '', location.pathname + location.search);
     const code = m[2].toUpperCase();
+    if(m[1].toLowerCase() !== 'suivre' && !(M.me && prof(M.me))){ M.joinCode = code; persist(); const ci = document.getElementById('cv-scode'); if(ci) obJoinPrefill(); return; }
     if(m[1].toLowerCase() === 'suivre'){ followGo(code); return; }
     if(Object.values(TS()).includes(code)){ const tid = Object.keys(TS()).find(k=>TS()[k]===code); if(R[tid]) go(tid); return; }
     if(!(await uiConfirm('Rejoindre le voyage partagé avec toi ?\n\nCode : ' + code))) return;
@@ -11058,7 +11075,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11p';
+  const BUILD = '2026-10-11q';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
