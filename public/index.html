@@ -1999,7 +1999,7 @@ const CV = (function(){
     souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
     notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
     depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
-    test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés'};
+    test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés', fb_depense:'Nouvelle dépense dans ton voyage', fb_resa:'Le programme du voyage a changé', fb_souv:'Nouveau souvenir dans ton voyage', fb_sondage:'Nouveau sondage dans ton voyage', fb_notes:'Nouveautés dans les courses et les notes', fb_rappel:'Rappel pour ton voyage'};
   const PU = () => { const p = M.push || (M.push = {on:false, quiet:true}); p.kinds = Object.assign({depense:1, resa:1, souv:1, sondage:1, notes:1, rappel:1}, p.kinds || {}); return p; };
   const pushApi = () => { const u = apiUrl(); return u ? u.replace(/\/api\/sync$/, '/api/push') : ''; };
   const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && !!pushApi();
@@ -2045,7 +2045,7 @@ const CV = (function(){
     let err = null;
     for(const s of spaces.slice().sort((a, b)=>(b.dev ? 1 : 0) - (a.dev ? 1 : 0))){
       try {
-        const kk = await keys(s.code), kid = kk.token.slice(0, 16); await pushKv('k:' + kid, kk.key); toks[kk.token] = 1;
+        const kk = await keys(s.code), kid = await pushKeyStore(s.code); toks[kk.token] = 1;
         await pushPost(s.code, {a:'sub', sub:sj, kinds:s.kinds, tz, quiet:!!P.quiet});
       } catch(e){ if(s.dev) throw e; err = e; }
     }
@@ -2053,6 +2053,19 @@ const CV = (function(){
     // espaces quittés depuis (voyage plus partagé) : on se désabonne
     for(const tk of Object.keys(P.toks || {})) if(!toks[tk]) fetch(pushApi(), {method:'POST', headers:{'Content-Type':'application/json', 'X-Carnet-Code':tk}, body:JSON.stringify({a:'unsub', dev:devId()})}).catch(()=>{});
     P.toks = toks; P.sig = sig; P.regAt = Date.now(); persist();
+  }
+  // Safari (iPhone) ne relit pas dans le service worker une CryptoKey rangée par la page : on y range aussi la clé brute
+  // (même dérivation que keys() : PBKDF2 200 000 tours → 256 bits = la clé AES-GCM du voyage)
+  const pushRaw = {};
+  async function pushKeyStore(code){
+    const kk = await keys(code), kid = kk.token.slice(0, 16);
+    await pushKv('k:' + kid, kk.key);
+    if(isIOSDev){
+      if(!pushRaw[code]){ const base = await crypto.subtle.importKey('raw', te.encode(code), 'PBKDF2', false, ['deriveBits']);
+        pushRaw[code] = new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2', salt:te.encode('carnet-voyage/e2e/v1'), iterations:200000, hash:'SHA-256'}, base, 256)); }
+      await pushKv('r:' + kid, pushRaw[code]);
+    }
+    return kid;
   }
   async function pushTog(on){
     const P = PU();
@@ -2173,7 +2186,7 @@ const CV = (function(){
     if(extra) keep.unshift(extra);
     const sig = JSON.stringify(keep.map(x=>[x.id, x.at, x.p.a, x.p.sub]));
     if(!force && sig === P.planSig && now - (P.planAt || 0) < 12 * 3600e3) return;
-    const kk = await keys(code), kid = kk.token.slice(0, 16); await pushKv('k:' + kid, kk.key);
+    const kid = await pushKeyStore(code);
     const out = []; for(const x of keep) out.push({id:x.id, at:x.at, msg:b64(await seal(te.encode(JSON.stringify(x.p)), code))});
     await pushPost(code, {a:'plan', kid, items:out});
     P.planSig = extra ? '' : sig; P.planAt = now; persist();
@@ -2195,6 +2208,7 @@ const CV = (function(){
   const recapBusy = () => document.querySelector('#v-sheet-bg, .ui-dlg, #cv-gate, #cv-film, #cv-tj, .cv-first');
   async function pushRecap(){
     if(!pushOk()) return;
+    try { if(await pushKv('nokey')){ await pushKv('nokey', null); if(PU().on && Notification.permission === 'granted'){ PU().sig = ''; pushRegister(true).catch(()=>{}); } } } catch(e){}
     let box = []; try { box = (await pushKv('inbox')) || []; } catch(e){ return; }
     box = box.filter(x=>Date.now() - x.at < 7 * 864e5);
     if(!box.length) return;
@@ -11159,7 +11173,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11t';
+  const BUILD = '2026-10-11u';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

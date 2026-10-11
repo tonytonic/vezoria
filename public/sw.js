@@ -1,7 +1,7 @@
 // Carnet de voyage — fonctionnement hors ligne
 // Pages et fichiers de l'appli : réseau d'abord (toujours la dernière version), copie locale si pas de réseau.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-11t';
+const CACHE = 'vezoria-2026-10-11u';
 const CORE = ['./', './index.html', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
@@ -80,7 +80,7 @@ const TPL0 = {depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajout
   souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
   notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
   depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
-  test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés'};
+  test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés', fb_depense:'Nouvelle dépense dans ton voyage', fb_resa:'Le programme du voyage a changé', fb_souv:'Nouveau souvenir dans ton voyage', fb_sondage:'Nouveau sondage dans ton voyage', fb_notes:'Nouveautés dans les courses et les notes', fb_rappel:'Rappel pour ton voyage'};
 const pdb = () => new Promise((res, rej) => { const q = indexedDB.open('vz-push', 1); q.onupgradeneeded = () => q.result.createObjectStore('kv'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
 const kvGet = async k => { try { const db = await pdb(); return await new Promise(res => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(undefined); }); } catch (_) { return undefined; } };
 const kvPut = async (k, v) => { try { const db = await pdb(); await new Promise(res => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = res; tx.onerror = res; }); } catch (_) {} };
@@ -101,16 +101,18 @@ self.addEventListener('push', e => {
   e.waitUntil((async () => {
     let d = {}; try { d = e.data ? e.data.json() : {}; } catch (_) {}
     const T = (await kvGet('tpl')) || {}, tt = k => T[k] || TPL0[k] || '';
-    let title = 'Vezoria', body = tt('fb'), url = './';
-    try {
-      const key = await kvGet('k:' + d.i);
-      if (key && d.m) {
-        const raw = Uint8Array.from(atob(d.m), c => c.charCodeAt(0));
-        const p = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: raw.slice(0, 12) }, key, raw.slice(12))));
-        ({ title, body } = compose(p, tt));
-        url = './?vzt=' + encodeURIComponent(p.trip || '') + '&vzk=' + encodeURIComponent(p.k || '');
-      }
-    } catch (_) {}
+    // texte de secours : la catégorie (connue du serveur) si le contenu ne peut pas être déchiffré
+    let title = 'Vezoria', body = tt('fb_' + d.k) || tt('fb'), url = './?vzt=&vzk=' + encodeURIComponent(d.k || '');
+    if (d.m) {
+      const raw = Uint8Array.from(atob(d.m), c => c.charCodeAt(0));
+      // iPhone : le service worker ne sait pas relire une CryptoKey rangée par la page → clé brute « r: » en second essai
+      const tryKey = async key => { try { return key ? JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: raw.slice(0, 12) }, key, raw.slice(12)))) : null; } catch (_) { return null; } };
+      let p = null;
+      try { p = await tryKey(await kvGet('k:' + d.i)); } catch (_) {}
+      if (!p) { try { const rk = await kvGet('r:' + d.i); if (rk) p = await tryKey(await crypto.subtle.importKey('raw', rk, 'AES-GCM', false, ['decrypt'])); } catch (_) {} }
+      if (p) { try { ({ title, body } = compose(p, tt)); url = './?vzt=' + encodeURIComponent(p.trip || '') + '&vzk=' + encodeURIComponent(p.k || ''); } catch (_) {} }
+      else await kvPut('nokey', 1);
+    }
     const n = ((await kvGet('badge')) || 0) + 1; await kvPut('badge', n);
     try { if (self.navigator && self.navigator.setAppBadge) await self.navigator.setAppBadge(n); } catch (_) {}
     // boîte de réception : l’appli en fait le récap à l’ouverture
