@@ -67,6 +67,7 @@ async function wipeSpace(env, space) {
   const rec = await env.DB.prepare('DELETE FROM records WHERE space = ?1').bind(space).run();
   let d1p = { meta: { changes: 0 } };
   try { d1p = await env.DB.prepare('DELETE FROM photos WHERE space = ?1').bind(space).run(); } catch (e) {}
+  try { await env.DB.batch([env.DB.prepare('DELETE FROM push_subs WHERE space = ?1').bind(space), env.DB.prepare('DELETE FROM push_due WHERE space = ?1').bind(space)]); } catch (e) {}   // notifications
   try {
     await env.DB.prepare("UPDATE photo_stats SET v = MAX(0, v - ?1) WHERE k = 'r2'").bind(freed).run();
     await env.DB.prepare('DELETE FROM photo_stats WHERE k = ?1').bind('s:' + space).run();
