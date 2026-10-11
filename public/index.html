@@ -2177,7 +2177,8 @@ const CV = (function(){
     M.mode = 'prep'; M.tab = tb; persist(); applyMode(); window.scrollTo({top:0});
     if(k === 'notes') setTimeout(()=>{ try { shopSheet(); } catch(e){} }, 300);
   }
-  function pushBadgeClear(){ try { pushKv('badge', 0).catch(()=>{}); if(navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{}); } catch(e){} }
+  function pushBadgeClear(){ try { pushKv('badge', 0).catch(()=>{}); if(navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{});
+    if('serviceWorker' in navigator) navigator.serviceWorker.ready.then(reg=>reg.getNotifications ? reg.getNotifications() : []).then(ns=>ns.forEach(n=>n.close())).catch(()=>{}); } catch(e){} }
   if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev=>{ if(ev.data && ev.data.type === 'vz-open') pushOpen(ev.data.url); else if(ev.data && ev.data.type === 'vz-push' && pushAck) pushAck(ev.data); });
   document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible') pushBadgeClear(); });
   setTimeout(()=>{ pushOpen(location.href); pushBadgeClear();
