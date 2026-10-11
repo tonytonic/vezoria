@@ -95,7 +95,7 @@ async function vapidAuth(env, endpoint, v) {
 async function sendOne(env, v, sub, payload, ttl) {
   const body = await encrypt(sub, te.encode(JSON.stringify(payload)));
   const r = await fetch(sub.endpoint, { method: 'POST', body, headers: {
-    'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream', TTL: String(ttl || 86400), Urgency: 'normal',
+    'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream', TTL: String(ttl || 86400), Urgency: 'high',
     Authorization: await vapidAuth(env, sub.endpoint, v) } });
   return r.status;
 }
@@ -188,7 +188,9 @@ export async function onRequestPost({ request, env, waitUntil }) {
   }
 
   if (b.a === 'plan') {
-    const items = (Array.isArray(b.items) ? b.items : []).slice(0, 60).filter(x => x && x.id && Number(x.at) > Date.now() - 60e3 && x.msg);
+    // l’essai part tout de suite à l’heure du serveur (l’horloge du téléphone peut avancer ou retarder)
+    const items = (Array.isArray(b.items) ? b.items : []).slice(0, 60).map(x => x && /^test-/.test(String(x.id)) ? Object.assign({}, x, { at: Date.now() - 1000 }) : x)
+      .filter(x => x && x.id && Number(x.at) > Date.now() - 60e3 && x.msg);
     const st = [db.prepare('DELETE FROM push_due WHERE space = ?1 AND dev = ?2').bind(space, dev)];
     items.forEach(x => st.push(db.prepare('INSERT OR REPLACE INTO push_due (space, dev, id, at, kid, msg) VALUES (?1, ?2, ?3, ?4, ?5, ?6)').bind(space, dev, clean(x.id, 60), Math.round(Number(x.at)), clean(b.kid, 24), clean(x.msg, 3000))));
     await db.batch(st);
