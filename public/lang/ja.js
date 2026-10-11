@@ -3186,4 +3186,10 @@ I18N.load({"🔑 Mon code principal":"🔑 メインコード",
 "📋 Invitation copiée":"📋 招待をコピーしました",
 "📋 Coller l’invitation":"📋 招待を貼り付け",
 "Invitation reçue (lien ou code)":"受け取った招待（リンクまたはコード）",
-"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"クリップボードに招待が見つかりません：欄に貼り付けてください。"});
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"クリップボードに招待が見つかりません：欄に貼り付けてください。",
+"✅ Notification reçue par le téléphone":"✅ 端末が通知を受信しました",
+"Le téléphone a reçu la notification mais n’a pas pu l’afficher. Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"端末は通知を受信しましたが表示できませんでした。端末の設定 → アプリ → Vezoria → 通知：許可してください。",
+"Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"25秒たっても通知が届きませんでした。この端末の登録を更新しました。もう一度お試しください。届かない場合は、端末の設定 → アプリ → Vezoria → 通知 を確認してください。",
+"Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"この端末ではまだVezoriaの通知が許可されていません。",
+"🔔 Autoriser sur ce téléphone":"🔔 この端末で許可する",
+"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"何も表示されませんか？端末の設定 → アプリ → Vezoria → 通知：許可してください。"});

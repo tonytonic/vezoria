@@ -3186,4 +3186,10 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "📋 Invitation copiée":"📋 Приглашение скопировано",
 "📋 Coller l’invitation":"📋 Вставить приглашение",
 "Invitation reçue (lien ou code)":"Полученное приглашение (ссылка или код)",
-"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"В буфере обмена нет приглашения: вставь его в поле."});
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"В буфере обмена нет приглашения: вставь его в поле.",
+"✅ Notification reçue par le téléphone":"✅ Телефон получил уведомление",
+"Le téléphone a reçu la notification mais n’a pas pu l’afficher. Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"Телефон получил уведомление, но не смог его показать. Настройки телефона → Приложения → Vezoria → Уведомления: разреши их.",
+"Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"За 25 секунд уведомление не пришло. Подписка этого телефона только что обновлена: попробуй ещё раз. Если ничего не придёт, проверь Настройки телефона → Приложения → Vezoria → Уведомления.",
+"Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"Этот телефон ещё не разрешил уведомления для Vezoria.",
+"🔔 Autoriser sur ce téléphone":"🔔 Разрешить на этом телефоне",
+"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"Ничего не появляется? Настройки телефона → Приложения → Vezoria → Уведомления: разреши их."});

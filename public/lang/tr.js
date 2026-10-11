@@ -3186,4 +3186,10 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "📋 Invitation copiée":"📋 Davet kopyalandı",
 "📋 Coller l’invitation":"📋 Daveti yapıştır",
 "Invitation reçue (lien ou code)":"Gelen davet (bağlantı veya kod)",
-"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"Panoda davet bulunamadı: alana yapıştır."});
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"Panoda davet bulunamadı: alana yapıştır.",
+"✅ Notification reçue par le téléphone":"✅ Bildirim telefona ulaştı",
+"Le téléphone a reçu la notification mais n’a pas pu l’afficher. Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"Telefon bildirimi aldı ama gösteremedi. Telefon ayarları → Uygulamalar → Vezoria → Bildirimler: izin ver.",
+"Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"25 saniye içinde bildirim gelmedi. Bu telefonun aboneliği az önce yenilendi: tekrar dene. Hiçbir şey gelmezse Telefon ayarları → Uygulamalar → Vezoria → Bildirimler’i kontrol et.",
+"Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"Bu telefon Vezoria bildirimlerine henüz izin vermedi.",
+"🔔 Autoriser sur ce téléphone":"🔔 Bu telefonda izin ver",
+"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"Hiçbir şey görünmüyor mu? Telefon ayarları → Uygulamalar → Vezoria → Bildirimler: izin ver."});

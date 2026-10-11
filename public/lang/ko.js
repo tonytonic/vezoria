@@ -3186,4 +3186,10 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "📋 Invitation copiée":"📋 초대를 복사했어요",
 "📋 Coller l’invitation":"📋 초대 붙여넣기",
 "Invitation reçue (lien ou code)":"받은 초대(링크 또는 코드)",
-"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"클립보드에 초대가 없어요: 칸에 붙여넣으세요."});
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"클립보드에 초대가 없어요: 칸에 붙여넣으세요.",
+"✅ Notification reçue par le téléphone":"✅ 휴대폰이 알림을 받았어요",
+"Le téléphone a reçu la notification mais n’a pas pu l’afficher. Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"휴대폰이 알림을 받았지만 표시하지 못했어요. 휴대폰 설정 → 앱 → Vezoria → 알림: 허용하세요.",
+"Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"25초 동안 알림이 오지 않았어요. 이 휴대폰의 구독을 방금 갱신했어요: 다시 시도하세요. 그래도 안 오면 휴대폰 설정 → 앱 → Vezoria → 알림을 확인하세요.",
+"Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"이 휴대폰은 아직 Vezoria 알림을 허용하지 않았어요.",
+"🔔 Autoriser sur ce téléphone":"🔔 이 휴대폰에서 허용",
+"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"아무것도 안 보이나요? 휴대폰 설정 → 앱 → Vezoria → 알림: 허용하세요."});

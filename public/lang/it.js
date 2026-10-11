@@ -244,4 +244,10 @@ I18N.load({
 "📋 Invitation copiée":"📋 Invito copiato",
 "📋 Coller l’invitation":"📋 Incolla l’invito",
 "Invitation reçue (lien ou code)":"Invito ricevuto (link o codice)",
-"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"Nessun invito negli appunti: incollalo nel campo."});
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"Nessun invito negli appunti: incollalo nel campo.",
+"✅ Notification reçue par le téléphone":"✅ Notifica ricevuta dal telefono",
+"Le téléphone a reçu la notification mais n’a pas pu l’afficher. Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"Il telefono ha ricevuto la notifica ma non è riuscito a mostrarla. Impostazioni del telefono → App → Vezoria → Notifiche: consentile.",
+"Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"Nessuna notifica ricevuta dopo 25 secondi. L’iscrizione di questo telefono è appena stata rinnovata: riprova. Se non arriva nulla, controlla Impostazioni del telefono → App → Vezoria → Notifiche.",
+"Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"Questo telefono non ha ancora consentito le notifiche per Vezoria.",
+"🔔 Autoriser sur ce téléphone":"🔔 Consenti su questo telefono",
+"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"Non compare nulla? Impostazioni del telefono → App → Vezoria → Notifiche: consentile."});

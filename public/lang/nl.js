@@ -244,4 +244,10 @@ I18N.load({
 "📋 Invitation copiée":"📋 Uitnodiging gekopieerd",
 "📋 Coller l’invitation":"📋 Uitnodiging plakken",
 "Invitation reçue (lien ou code)":"Ontvangen uitnodiging (link of code)",
-"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"Geen uitnodiging op het klembord: plak hem in het veld."});
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"Geen uitnodiging op het klembord: plak hem in het veld.",
+"✅ Notification reçue par le téléphone":"✅ Melding ontvangen door de telefoon",
+"Le téléphone a reçu la notification mais n’a pas pu l’afficher. Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"De telefoon heeft de melding ontvangen maar kon hem niet tonen. Telefooninstellingen → Apps → Vezoria → Meldingen: sta ze toe.",
+"Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"Na 25 seconden geen melding ontvangen. Het abonnement van deze telefoon is net vernieuwd: probeer het opnieuw. Komt er niets, controleer Telefooninstellingen → Apps → Vezoria → Meldingen.",
+"Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"Deze telefoon heeft meldingen voor Vezoria nog niet toegestaan.",
+"🔔 Autoriser sur ce téléphone":"🔔 Toestaan op deze telefoon",
+"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"Zie je niets? Telefooninstellingen → Apps → Vezoria → Meldingen: sta ze toe."});

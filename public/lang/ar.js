@@ -3186,4 +3186,10 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "📋 Invitation copiée":"📋 تم نسخ الدعوة",
 "📋 Coller l’invitation":"📋 لصق الدعوة",
 "Invitation reçue (lien ou code)":"الدعوة المستلمة (رابط أو رمز)",
-"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"لم يُعثر على دعوة في الحافظة: الصقها في الحقل."});
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"لم يُعثر على دعوة في الحافظة: الصقها في الحقل.",
+"✅ Notification reçue par le téléphone":"✅ استلم الهاتف الإشعار",
+"Le téléphone a reçu la notification mais n’a pas pu l’afficher. Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"استلم الهاتف الإشعار لكنه لم يتمكن من عرضه. إعدادات الهاتف ← التطبيقات ← Vezoria ← الإشعارات: اسمح بها.",
+"Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"لم يصل أي إشعار بعد 25 ثانية. تم تجديد اشتراك هذا الهاتف للتو: حاول مرة أخرى. إذا لم يصل شيء، تحقق من إعدادات الهاتف ← التطبيقات ← Vezoria ← الإشعارات.",
+"Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"لم يسمح هذا الهاتف بعد بإشعارات Vezoria.",
+"🔔 Autoriser sur ce téléphone":"🔔 السماح على هذا الهاتف",
+"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"لا يظهر شيء؟ إعدادات الهاتف ← التطبيقات ← Vezoria ← الإشعارات: اسمح بها."});

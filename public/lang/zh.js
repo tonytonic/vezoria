@@ -3186,4 +3186,10 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "📋 Invitation copiée":"📋 邀请已复制",
 "📋 Coller l’invitation":"📋 粘贴邀请",
 "Invitation reçue (lien ou code)":"收到的邀请（链接或代码）",
-"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"剪贴板中没有找到邀请：请把它粘贴到输入框中。"});
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"剪贴板中没有找到邀请：请把它粘贴到输入框中。",
+"✅ Notification reçue par le téléphone":"✅ 手机已收到通知",
+"Le téléphone a reçu la notification mais n’a pas pu l’afficher. Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"手机收到了通知，但无法显示。手机设置 → 应用 → Vezoria → 通知：请允许。",
+"Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"25 秒内没有收到通知。已为这台手机重新订阅：请再试一次。如果仍然没有，请检查 手机设置 → 应用 → Vezoria → 通知。",
+"Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"这台手机尚未允许 Vezoria 的通知。",
+"🔔 Autoriser sur ce téléphone":"🔔 在这台手机上允许",
+"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"什么都没显示？手机设置 → 应用 → Vezoria → 通知：请允许。"});

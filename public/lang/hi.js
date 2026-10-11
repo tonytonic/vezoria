@@ -3186,4 +3186,10 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "📋 Invitation copiée":"📋 न्योता कॉपी हो गया",
 "📋 Coller l’invitation":"📋 न्योता पेस्ट करो",
 "Invitation reçue (lien ou code)":"मिला हुआ न्योता (लिंक या कोड)",
-"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"क्लिपबोर्ड में कोई न्योता नहीं मिला: उसे खाने में पेस्ट करो।"});
+"Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.":"क्लिपबोर्ड में कोई न्योता नहीं मिला: उसे खाने में पेस्ट करो।",
+"✅ Notification reçue par le téléphone":"✅ फ़ोन को सूचना मिल गई",
+"Le téléphone a reçu la notification mais n’a pas pu l’afficher. Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"फ़ोन को सूचना मिली पर वह दिखा नहीं सका। फ़ोन सेटिंग्स → ऐप्स → Vezoria → सूचनाएँ: इन्हें अनुमति दो।",
+"Aucune notification reçue au bout de 25 secondes. L’abonnement de ce téléphone vient d’être renouvelé : réessaie. Si rien n’arrive, vérifie Réglages du téléphone → Applications → Vezoria → Notifications.":"25 सेकंड में कोई सूचना नहीं आई। इस फ़ोन की सदस्यता अभी नवीनीकृत की गई है: फिर से कोशिश करो। अगर कुछ न आए, तो फ़ोन सेटिंग्स → ऐप्स → Vezoria → सूचनाएँ देखो।",
+"Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.":"इस फ़ोन ने अभी तक Vezoria की सूचनाओं की अनुमति नहीं दी है।",
+"🔔 Autoriser sur ce téléphone":"🔔 इस फ़ोन पर अनुमति दो",
+"Rien ne s’affiche ? Réglages du téléphone → Applications → Vezoria → Notifications : autorise-les.":"कुछ नहीं दिख रहा? फ़ोन सेटिंग्स → ऐप्स → Vezoria → सूचनाएँ: इन्हें अनुमति दो।"});
