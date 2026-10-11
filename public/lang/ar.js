@@ -3087,4 +3087,5 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "📍 Jour {0} du voyage · {1}":"📍 اليوم {0} من الرحلة · {1}",
 "au total · {0} par personne · budget visé {1} / pers.":"إجمالًا · {0} للشخص · الميزانية المستهدفة {1} / للشخص",
 "au total · {0} par personne":"إجمالًا · {0} للشخص",
-"au total · budget visé {0} / pers.":"إجمالًا · الميزانية المستهدفة {0} / للشخص"});
+"au total · budget visé {0} / pers.":"إجمالًا · الميزانية المستهدفة {0} / للشخص",
+"souvenirs":"لحظات"});

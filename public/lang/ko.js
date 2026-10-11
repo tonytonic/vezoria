@@ -3087,4 +3087,5 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "📍 Jour {0} du voyage · {1}":"📍 여행 {0}일째 · {1}",
 "au total · {0} par personne · budget visé {1} / pers.":"합계 · 1인당 {0} · 목표 예산 {1} / 1인",
 "au total · {0} par personne":"합계 · 1인당 {0}",
-"au total · budget visé {0} / pers.":"합계 · 목표 예산 {0} / 1인"});
+"au total · budget visé {0} / pers.":"합계 · 목표 예산 {0} / 1인",
+"souvenirs":"순간"});

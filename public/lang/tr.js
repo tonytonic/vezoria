@@ -3087,4 +3087,5 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "📍 Jour {0} du voyage · {1}":"📍 Seyahatin {0}. günü · {1}",
 "au total · {0} par personne · budget visé {1} / pers.":"toplam · kişi başı {0} · hedef bütçe {1} / kişi",
 "au total · {0} par personne":"toplam · kişi başı {0}",
-"au total · budget visé {0} / pers.":"toplam · hedef bütçe {0} / kişi"});
+"au total · budget visé {0} / pers.":"toplam · hedef bütçe {0} / kişi",
+"souvenirs":"an"});

@@ -145,4 +145,5 @@ I18N.load({
 "📍 Jour {0} du voyage · {1}":"📍 Giorno {0} del viaggio · {1}",
 "au total · {0} par personne · budget visé {1} / pers.":"in totale · {0} a persona · budget previsto {1} / pers.",
 "au total · {0} par personne":"in totale · {0} a persona",
-"au total · budget visé {0} / pers.":"in totale · budget previsto {0} / pers."});
+"au total · budget visé {0} / pers.":"in totale · budget previsto {0} / pers.",
+"souvenirs":"ricordi"});

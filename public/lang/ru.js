@@ -3087,4 +3087,5 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "📍 Jour {0} du voyage · {1}":"📍 День {0} поездки · {1}",
 "au total · {0} par personne · budget visé {1} / pers.":"всего · {0} на человека · целевой бюджет {1} / чел.",
 "au total · {0} par personne":"всего · {0} на человека",
-"au total · budget visé {0} / pers.":"всего · целевой бюджет {0} / чел."});
+"au total · budget visé {0} / pers.":"всего · целевой бюджет {0} / чел.",
+"souvenirs":"моментов"});

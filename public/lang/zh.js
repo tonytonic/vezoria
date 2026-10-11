@@ -3087,4 +3087,5 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "📍 Jour {0} du voyage · {1}":"📍 旅行第 {0} 天 · {1}",
 "au total · {0} par personne · budget visé {1} / pers.":"总计 · 每人 {0} · 人均目标预算 {1}",
 "au total · {0} par personne":"总计 · 每人 {0}",
-"au total · budget visé {0} / pers.":"总计 · 人均目标预算 {0}"});
+"au total · budget visé {0} / pers.":"总计 · 人均目标预算 {0}",
+"souvenirs":"回忆"});

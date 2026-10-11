@@ -3087,4 +3087,5 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "📍 Jour {0} du voyage · {1}":"📍 यात्रा का दिन {0} · {1}",
 "au total · {0} par personne · budget visé {1} / pers.":"कुल · {0} प्रति व्यक्ति · लक्ष्य बजट {1} / व्यक्ति",
 "au total · {0} par personne":"कुल · {0} प्रति व्यक्ति",
-"au total · budget visé {0} / pers.":"कुल · लक्ष्य बजट {0} / व्यक्ति"});
+"au total · budget visé {0} / pers.":"कुल · लक्ष्य बजट {0} / व्यक्ति",
+"souvenirs":"पल"});
