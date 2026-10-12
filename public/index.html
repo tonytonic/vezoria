@@ -1561,6 +1561,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 #cv-exp .ex-card:active{transform:scale(.97)}
 #cv-exp .ex-ph{height:172px;background-size:cover;background-position:center;position:relative;display:flex;align-items:center;justify-content:center}
 #cv-exp .ex-ic{font-size:3.1rem;filter:drop-shadow(0 6px 12px rgba(0,0,0,.3))}
+#cv-exp img.ex-pic{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s ease}#cv-exp img.ex-pic.ok{opacity:1}#cv-exp .ex-dph img.ex-pic{border-radius:26px 26px 0 0}#cv-exp .ex-ok,#cv-exp .ex-dx{z-index:1}
 #cv-exp .ex-ok{position:absolute;top:10px;right:10px;background:#10b981;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 #cv-exp .ex-card b{display:block;margin:11px 14px 4px;font-size:1rem;line-height:1.25}
 #cv-exp .ex-card small{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0 14px;color:rgba(255,255,255,.72);font-size:.82rem;line-height:1.42}
@@ -2712,7 +2713,7 @@ const CV = (function(){
     return {lg, title, items, lead};
   }
   // photos : fichier donné par la fiche, sinon l’image Wikidata (une seule requête pour toute la ville)
-  const commons = (f, w) => 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(String(f).replace(/^(file|fichier|image|datei):/i, '').trim()) + '?width=' + (w || 640);
+  const commons = (f, w) => 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(String(f).replace(/^(file|fichier|image|datei):/i, '').trim()) + '?width=' + (w || 500);
   async function expPhotos(items){
     items.forEach(it=>{ if(it.img && !/^https?:/.test(it.img)) it.ph = commons(it.img); });
     const need = items.filter(it=>!it.ph && it.wd).slice(0, 150);
@@ -2720,13 +2721,13 @@ const CV = (function(){
       const chunk = need.slice(i, i + 60), q = `SELECT ?i ?img WHERE { VALUES ?i { ${chunk.map(x=>'wd:' + x.wd).join(' ')} } ?i wdt:P18 ?img }`;
       try { const j = await expJ('https://query.wikidata.org/sparql?format=json&query=' + encodeURIComponent(q), 15000);
         const map = {}; (j.results && j.results.bindings || []).forEach(b=>{ const id = b.i.value.split('/').pop(); if(!map[id]) map[id] = b.img.value; });
-        chunk.forEach(x=>{ const u = map[x.wd]; if(u) x.ph = commons(decodeURIComponent(u.split('/FilePath/').pop()), 640); });
+        chunk.forEach(x=>{ const u = map[x.wd]; if(u) x.ph = commons(decodeURIComponent(u.split('/FilePath/').pop()), 500); });
       } catch(e){}
     }
   }
   // ── tout ce qu’il faut pour une ville ──
   async function expLoad(city){
-    const lang = (window.I18N && I18N.lang) || 'fr', key = 'c:' + normQ(city) + ':' + lang;
+    const lang = (window.I18N && I18N.lang) || 'fr', key = 'c2:' + normQ(city) + ':' + lang;
     const old = await expKv(key).catch(()=>null);
     if(old && Date.now() - old.t < 30 * 864e5 && old.n) return old;
     const geo = await expJ('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&accept-language=' + lang + '&q=' + encodeURIComponent(city), 10000).catch(()=>null);
@@ -2750,11 +2751,17 @@ const CV = (function(){
     // les plus parlants d’abord : avec photo et description
     items.sort((a, b)=>(!!b.ph - !!a.ph) || ((b.d || '').length > 40) - ((a.d || '').length > 40));
     const cats = {}; EXP_CATS.forEach(([k])=>{ cats[k] = items.filter(x=>x.cat === k).slice(0, 40); });
+    const bad = u => !u || /montage|collage|mosai|composite|compilation|map|karte|carte|plan_|flag|drapeau|bandera|coat|blason|wappen|seal|logo|\.svg|locator|location|skyline_collage/i.test(decodeURIComponent(u));
+    const heroes = [];
+    if(wp && wp.wikibase_item){ try { const j = await expJ('https://query.wikidata.org/sparql?format=json&query=' + encodeURIComponent(`SELECT ?img WHERE { wd:${wp.wikibase_item} wdt:P18 ?img }`), 8000);
+      (j.results && j.results.bindings || []).forEach(b=>{ const u = commons(decodeURIComponent(b.img.value.split('/FilePath/').pop()), 1280); if(!bad(u)) heroes.push(u); }); } catch(e){} }
     const oi = wp && wp.originalimage, th = wp && wp.thumbnail;
-    let hero = oi && oi.width && oi.width <= 2400 ? oi.source : th ? th.source.replace(/\/(\d+)px-/, '/1280px-') : oi ? oi.source : '';
-    if(!hero || /montage|collage|map|karte|carte|flag|drapeau|coat|blason|logo|\.svg|locator|location/i.test(hero)){ const f = (cats.see || []).find(x=>x.ph); hero = f ? f.ph.replace(/width=\d+/, 'width=1280') : ''; }
+    const wpi = th ? th.source.replace(/\/(\d+)px-/, '/1280px-') : oi ? oi.source : '';
+    if(wpi && !bad(wpi)) heroes.push(wpi);
+    (cats.see || []).filter(x=>x.ph).slice(0, 3).forEach(x=>heroes.push(x.ph.replace(/width=\d+/, 'width=1280')));
+    const hero = heroes[0] || '';
     const raw = ((wp && wp.extract) || (wv && wv.lead) || '').trim(), mm = raw.match(/^([\s\S]+?[.!?。])(\s+[\s\S]+?[.!?。])?(\s|$)/), intro = mm ? mm[1] + (mm[2] || '') : raw.slice(0, 300);
-    const d = {t:Date.now(), city, cc, country:g && g.address ? g.address.country || '' : '', lat, lng, hero, intro, src:wv ? wv.lg : '', tz:wx && wx.timezone || '', temp:wx && wx.current ? Math.round(wx.current.temperature_2m) : null, code:wx && wx.current ? wx.current.weather_code : null, day:wx && wx.current ? wx.current.is_day : 1, cats, n:items.length};
+    const d = {t:Date.now(), city, cc, country:g && g.address ? g.address.country || '' : '', lat, lng, hero, heroes, intro, src:wv ? wv.lg : '', tz:wx && wx.timezone || '', temp:wx && wx.current ? Math.round(wx.current.temperature_2m) : null, code:wx && wx.current ? wx.current.weather_code : null, day:wx && wx.current ? wx.current.is_day : 1, cats, n:items.length};
     if(d.n) expKv(key, d).catch(()=>{});
     return d;
   }
@@ -2781,8 +2788,9 @@ const CV = (function(){
   }
   function expFill(){
     const d = exp.d, $ = id => document.getElementById(id); if(!$('ex-body')) return;
-    if(d.hero){ const im = new Image(); im.onload = () => { const el = $('ex-img'); if(el){ el.style.backgroundImage = `url("${d.hero}")`; el.classList.add('on'); } }; im.src = d.hero; }
-    else { const el = $('ex-img'); if(el){ el.style.backgroundImage = EXP_GRAD.see; el.classList.add('on'); } }
+    const hs = (d.heroes || [d.hero]).filter(Boolean);
+    const tryHero = n => { if(n >= hs.length) return; const im = new Image(); im.onload = () => { const el = $('ex-img'); if(el){ el.style.backgroundImage = `url("${hs[n]}")`; el.classList.add('on'); } }; im.onerror = () => tryHero(n + 1); im.src = hs[n]; };
+    tryHero(0);
     $('ex-flag').textContent = expFlag(d.cc); $('ex-hi').textContent = EXP_HI[d.cc] || '';
     $('ex-ctry').textContent = d.country || '';
     const time = d.tz ? (()=>{ try { return new Intl.DateTimeFormat((window.I18N && I18N.locale) || 'fr-FR', {hour:'2-digit', minute:'2-digit', timeZone:d.tz}).format(new Date()); } catch(e){ return ''; } })() : '';
@@ -2790,7 +2798,7 @@ const CV = (function(){
     const added = new Set(exp.hid ? placesOfStay(exp.hid).map(p=>normQ(p.nom)) : []);
     const secs = EXP_CATS.filter(([k])=>(d.cats[k] || []).length).map(([k, ic, lbl])=>`<section class="ex-sec"><h2><span>${ic}</span> <span>${lbl}</span> <small>${d.cats[k].length}</small></h2>
       <div class="ex-row">${d.cats[k].map((it, i)=>`<button type="button" class="ex-card" onclick="CV.expOpen('${k}',${i})">
-        <div class="ex-ph" style="background-image:${it.ph ? `url('${esc(it.ph)}')` : EXP_GRAD[k]}">${it.ph ? '' : `<span class="ex-ic">${ic}</span>`}${added.has(normQ(it.n)) ? '<i class="ex-ok">✓</i>' : ''}</div>
+        <div class="ex-ph" style="background-image:${EXP_GRAD[k]}"><span class="ex-ic">${ic}</span>${it.ph ? `<img class="ex-pic" src="${esc(it.ph)}" alt="" loading="lazy" decoding="async" onload="this.classList.add('ok')" onerror="this.remove()">` : ''}${added.has(normQ(it.n)) ? '<i class="ex-ok">✓</i>' : ''}</div>
         <b data-notr>${esc(it.n)}</b><small data-notr>${esc(it.d || it.a || '')}</small>${it.pr || it.h ? `<em data-notr>${esc(it.pr ? '💶 ' + it.pr : '🕒 ' + it.h)}</em>` : ''}</button>`).join('')}</div></section>`).join('');
     $('ex-body').innerHTML = (d.intro ? `<p class="ex-intro" data-notr>${esc(d.intro)}</p>` : '')
       + (secs || '<div class="ex-empty">Rien trouvé pour cette ville pour l’instant.</div>')
@@ -2806,7 +2814,7 @@ const CV = (function(){
     const has = exp.hid && placesOfStay(exp.hid).some(p=>normQ(p.nom) === normQ(it.n));
     const go = it.lat != null ? `${it.lat},${it.lng}` : it.n + ', ' + exp.city;
     det.innerHTML = `<div class="ex-dbg" onclick="CV.expShut()"></div><div class="ex-dc">
-      <div class="ex-dph" style="background-image:${it.ph ? `url('${esc(it.ph.replace(/width=\d+/, 'width=1024'))}')` : EXP_GRAD[k]}">${it.ph ? '' : `<span class="ex-ic">${ic}</span>`}<button type="button" class="ex-dx" onclick="CV.expShut()">✕</button></div>
+      <div class="ex-dph" style="background-image:${EXP_GRAD[k]}"><span class="ex-ic">${ic}</span>${it.ph ? `<img class="ex-pic" src="${esc(it.ph.replace(/width=\d+/, 'width=960'))}" alt="" decoding="async" onload="this.classList.add('ok')" onerror="this.remove()">` : ''}<button type="button" class="ex-dx" onclick="CV.expShut()">✕</button></div>
       <div class="ex-dt"><h3 data-notr>${esc(it.n)}</h3>${it.d ? `<p data-notr>${esc(it.d)}</p>` : ''}
         ${it.a ? `<div class="ex-ln"><span>📍</span><span data-notr>${esc(it.a)}</span></div>` : ''}${it.h ? `<div class="ex-ln"><span>🕒</span><span data-notr>${esc(it.h)}</span></div>` : ''}${it.pr ? `<div class="ex-ln"><span>💶</span><span data-notr>${esc(it.pr)}</span></div>` : ''}
         <div class="ex-acts">${exp.hid ? `<button type="button" class="v-btn${has ? ' sec' : ''}" onclick="CV.expAdd('${k}',${i})">${has ? '✓ Dans ton programme' : '＋ Ajouter à l’étape'}</button>` : ''}
