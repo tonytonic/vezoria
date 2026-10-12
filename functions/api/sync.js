@@ -81,13 +81,23 @@ async function sweepInactive(env) {
   const limit = Date.now() - days * 864e5;
   const { results } = await env.DB.prepare('SELECT space FROM records GROUP BY space HAVING MAX(rev) < ?1 LIMIT 3').bind(limit).all();
   for (const r of results || []) await wipeSpace(env, r.space);
+  try { await env.DB.prepare('DELETE FROM space_wipes WHERE at < ?1').bind(Date.now() - 730 * 864e5).run(); } catch (e) {}
+}
+
+// date du dernier effacement d’un espace : les autres membres en sont prévenus à leur synchro suivante
+async function wipeMark(env, space, at) {
+  try {
+    await env.DB.prepare('CREATE TABLE IF NOT EXISTS space_wipes (space TEXT PRIMARY KEY, at INTEGER NOT NULL)').run();
+    await env.DB.prepare('INSERT INTO space_wipes (space, at) VALUES (?1, ?2) ON CONFLICT (space) DO UPDATE SET at = ?2').bind(space, at).run();
+  } catch (e) {}
 }
 
 export async function onRequestDelete({ request, env }) {
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
   const out = await wipeSpace(env, space);
-  return json({ ok: true, ...out });
+  const at = Date.now(); await wipeMark(env, space, at);
+  return json({ ok: true, ...out, at });
 }
 
 export async function onRequestPost({ request, env, waitUntil }) {
@@ -123,7 +133,9 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (Math.random() < 0.002 && waitUntil) waitUntil(sweepInactive(env).catch(() => {}));
   // rappels programmés (notifications) : envoyés quand c'est l'heure, à l'occasion des synchros
   if (Math.random() < 0.25 && waitUntil) waitUntil(fetch(new URL('/api/push?a=flush', request.url)).catch(() => {}));
-  return json({ now, records: results.map(r => JSON.parse(r.data)) });
+  let wiped = 0;
+  try { const w = await env.DB.prepare('SELECT at FROM space_wipes WHERE space = ?1').bind(space).first(); if (w) wiped = w.at; } catch (e) {}
+  return json(wiped ? { now, records: results.map(r => JSON.parse(r.data)), wiped } : { now, records: results.map(r => JSON.parse(r.data)) });
 }
 
 export const onRequestGet = () => json({ ok: true, service: 'carnet-voyage' });
