@@ -1650,6 +1650,18 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .pi-oh small{display:block;color:#9b8fab;font-size:.7rem;margin-top:6px;word-break:break-word}
 .pi-walk{margin:8px 0;font-size:.9rem}.pi-walk small{color:#6b5b7b}
 </style>
+<style>
+/* Fenêtres : croix ✕ et flèche ← toujours visibles en haut */
+.v-sheet{position:relative}
+.sh-bar{position:sticky;top:-8px;z-index:6;height:0;display:flex;align-items:flex-start;pointer-events:none;margin:0 -6px}
+.sh-bar button{pointer-events:auto;width:36px;height:36px;border-radius:50%;border:0;padding:0;margin-top:2px;
+  background:rgba(120,120,140,.18);color:inherit;font-size:18px;line-height:36px;text-align:center;cursor:pointer;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);-webkit-tap-highlight-color:transparent}
+.sh-bar button:active{transform:scale(.92)}
+.sh-bar .sh-x{margin-left:auto}
+.v-sheet h2{padding-right:40px}
+.v-sheet.has-bk h2:first-of-type{padding-left:42px}
+</style>
 </head>
 <body class="is-public">
 <div class="cv-statusbar"></div>
@@ -3149,13 +3161,64 @@ const CV = (function(){
   function field(lbl, name, val, type, extra){
     return `<div class="v-f"><label>${lbl}</label><input class="v-in" name="${name}" type="${type||'text'}" value="${esc(val)}" ${extra||''}></div>`;
   }
+    /* ── Fenêtres : croix ✕ toujours visible, flèche ← vers l’écran d’avant, glisser vers le bas pour fermer ── */
+  let shStack = [], shCur = '', shPend = null, shBack = false;
+  const shTitle = h => ((String(h).match(/<h2[^>]*>([\s\S]*?)<\/h2>/) || [])[1] || '').replace(/<[^>]+>/g, '').trim();
+  const shMenu = h => !/<form|<input|<textarea|<select/i.test(h);   // un menu (des choix) : on peut y revenir sans rien perdre
+  function shNav(html, locked, prevOpen){
+    if(locked){ shStack = []; shPend = null; shCur = ''; return; }
+    let from = null;
+    if(prevOpen) from = shCur;
+    else if(shPend){ from = shPend.cur; shStack = shPend.stack; }
+    else shStack = [];
+    if(from && !shBack && shTitle(from) !== shTitle(html)){
+      if(shMenu(from)) shStack.push(from);
+      if(shStack.length > 8) shStack.shift();
+    }
+    shPend = null; shBack = false; shCur = html;
+  }
+  const shBar = locked => locked ? '' : `<div class="sh-bar">${shStack.length ? '<button type="button" class="sh-bk" aria-label="Retour" onclick="CV.sheetBack()">←</button>' : ''}<button type="button" class="sh-x" aria-label="Fermer" onclick="CV.xClose()">✕</button></div>`;
+  function sheetBack(){
+    const h = shStack.pop(); if(!h){ xClose(); return; }
+    shBack = true; openSheet(h);
+  }
+  async function xClose(){
+    // l’assistant de création déjà commencé : on demande avant de tout perdre
+    const wt = document.getElementById('wz-titre');
+    if(document.getElementById('wz') && typeof wz === 'object' && wz && (wz.step > 1 || (wz.titre || '').trim() || (wt && wt.value.trim()))){
+      if(!(await uiConfirm('Abandonner la création du voyage ?'))) return;
+    }
+    shStack = []; closeSheet();
+  }
+  function shSwipe(bg){
+    let y0 = null, dy = 0, sh = null;
+    bg.addEventListener('touchstart', e => {
+      sh = bg.querySelector('.v-sheet'); y0 = null; dy = 0;
+      if(!sh || bg.dataset.locked || e.touches.length !== 1) return;
+      const t = e.touches[0], r = sh.getBoundingClientRect();
+      if(sh.scrollTop <= 0 && t.clientY - r.top < 64 && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) y0 = t.clientY;
+    }, {passive:true});
+    bg.addEventListener('touchmove', e => {
+      if(y0 === null || !sh) return;
+      dy = Math.max(0, e.touches[0].clientY - y0);
+      sh.style.transition = 'none'; sh.style.transform = dy ? `translateY(${dy}px)` : '';
+    }, {passive:true});
+    bg.addEventListener('touchend', () => {
+      if(y0 === null || !sh) return;
+      const s = sh; y0 = null;
+      if(dy > 90){ s.style.transition = 'transform .18s ease-in'; s.style.transform = 'translateY(110%)'; setTimeout(() => { if(s.isConnected){ s.style.transform = ''; xClose(); } }, 170); }
+      else { s.style.transition = 'transform .2s ease-out'; s.style.transform = ''; }
+      dy = 0;
+    }, {passive:true});
+  }
   function openSheet(html, locked){
     const prev = document.getElementById('v-sheet-bg');
+    shNav(html, locked, !!(prev && !prev.dataset.locked));
     if(prev && !prev.dataset.locked === !locked){   // fenêtre déjà ouverte : on change son contenu sans rejouer l’animation (plus de flash)
       const ro = M.lock && /<form|v-actions/.test(html) && !locked;
       prev.className = 'v-sheet-bg';
-      const sh = document.createElement('div'); sh.className = 'v-sheet' + (ro ? ' ro' : ''); sh.style.animation = 'none';
-      sh.innerHTML = `${locked?'':'<div class="v-grab"></div>'}${ro?'<div class="cv-robanner">🔒 Lecture seule</div>':''}${html}`;
+      const sh = document.createElement('div'); sh.className = 'v-sheet' + (ro ? ' ro' : '') + (!locked && shStack.length ? ' has-bk' : ''); sh.style.animation = 'none';
+      sh.innerHTML = `${shBar(locked)}${locked?'':'<div class="v-grab"></div>'}${ro?'<div class="cv-robanner">🔒 Lecture seule</div>':''}${html}`;
       const old = prev.querySelector('.v-sheet'); if(old) old.replaceWith(sh); else prev.appendChild(sh);
       document.body.style.overflow = 'hidden';
       if(/data-[rt]map=/.test(html)) setTimeout(hydrateMaps, 30);
@@ -3166,8 +3229,8 @@ const CV = (function(){
     const bg = document.createElement('div');
     bg.className = 'v-sheet-bg'; bg.id = 'v-sheet-bg';
     const ro = M.lock && /<form|v-actions/.test(html) && !locked;
-    bg.innerHTML = `<div class="v-sheet${ro?' ro':''}">${locked?'':'<div class="v-grab"></div>'}${ro?'<div class="cv-robanner">🔒 Lecture seule</div>':''}${html}</div>`;
-    if(!locked) bg.addEventListener('click', e=>{ if(e.target===bg) closeSheet(); });
+    bg.innerHTML = `<div class="v-sheet${ro?' ro':''}${!locked && shStack.length ? ' has-bk' : ''}">${shBar(locked)}${locked?'':'<div class="v-grab"></div>'}${ro?'<div class="cv-robanner">🔒 Lecture seule</div>':''}${html}</div>`;
+    if(!locked){ bg.addEventListener('click', e=>{ if(e.target===bg) xClose(); }); shSwipe(bg); }
     if(locked) bg.dataset.locked = '1';
     document.body.appendChild(bg);
     document.body.style.overflow = 'hidden';
@@ -3177,6 +3240,8 @@ const CV = (function(){
   function closeSheet(force){
     const bg = document.getElementById('v-sheet-bg');
     if(bg && bg.dataset.locked && force!==true) return;
+    if(bg && !bg.dataset.locked && shCur){ const pend = shPend = {cur: shCur, stack: shStack}; setTimeout(() => { if(shPend === pend) shPend = null; }, 0); }
+    shStack = []; shCur = '';
     if(bg) bg.remove();
     try { localStorage.removeItem('cv-resume'); } catch(e){}
     document.body.style.overflow = '';
@@ -11704,7 +11769,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-12h';
+  const BUILD = '2026-10-12i';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -11797,7 +11862,7 @@ ${pm.join('\n')}</Document></kml>`;
   setTimeout(vzPaint, 0);
   var VZAPI = {vzGo, vzHide, vzNews, vzAvis, vzStar, vzSend, vzRestore, vzPaint};
 
-  const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, add,
+  const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
