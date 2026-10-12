@@ -1533,6 +1533,14 @@ body.cv-ph-live .cv-actb .ac-path .on,body.cv-ph-live .cv-actb .ac-n{box-shadow:
 body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;background:none;box-shadow:none}
 </style>
 <style>
+/* ☁️ Cloud Vezoria */
+.cv-cl-mode{display:flex;align-items:center;gap:8px;background:#f6f0fc;border-radius:14px;padding:10px 12px;margin:0 0 12px}.cv-cl-mode span{font-size:1.3rem}.cv-cl-mode b{flex:1}
+.cv-cl-ch{border:0;background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-weight:700;font-size:.8rem;color:#6b2fa0;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.cv-cl-h{font-weight:800;margin:14px 0 8px}.cv-cl-sub{font-size:.82rem;color:var(--gray,#666);margin:4px 0 8px}
+.cv-cl-t{display:flex;align-items:center;gap:10px;justify-content:space-between;background:#fff;border:1px solid #eee3f7;border-radius:14px;padding:8px 10px;margin:0 0 6px}
+.cv-cl-t span{display:flex;flex-direction:column;min-width:0}.cv-cl-t small{color:var(--gray,#666);font-size:.74rem}.cv-cl-t .v-btn{width:auto;margin:0;padding:6px 10px;font-size:.78rem;flex:none}
+.cv-choice.on{border-color:#8b5cf6;background:#f6f0fc}
+.cv-syncpill.new{box-shadow:0 0 0 2px #fbbf24}
 /* 🔔 récap des notifications + bandeau dans l’appli */
 .cv-rcp-t{font-weight:700;margin:14px 0 6px;font-size:.95rem}
 .cv-rcp{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;width:100%;text-align:left;background:var(--card,#fff);border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:10px 12px;margin:0 0 6px;font:inherit;color:inherit;cursor:pointer}
@@ -1920,7 +1928,32 @@ const CV = (function(){
     if(!Array.isArray(j.records)) throw new Error('Réponse inattendue du serveur');
     if(E2E) j.records = (await Promise.all(j.records.map(x=>openRec(x, code)))).filter(Boolean);
     try { if(orig.length) pushNote(orig, code || M.sync.code); } catch(e){}
+    try { if(j.wiped) wipeCheck(code, j.wiped, since); } catch(e){}
     return j;
+  }
+  /* 🗑 Un compagnon a vidé le serveur d’un voyage partagé (ou du carnet commun) : ce téléphone a encore tout ce qu’il a vu.
+     On propose de le remettre en ligne pour tout le monde. Jamais pour un voyage suivi en abonné (il n’est pas à nous). */
+  const wipeQ = [];
+  function wipeCheck(code, at, since){
+    const main = !code || code === M.sync.code, sp = main ? M.sync : spaceObj(code); if(!sp) return;
+    if(at <= (sp.wipeSeen || 0)) return;
+    sp.wipeSeen = at; persist();
+    if(!(since > 0 && since < at)) return;          // premier passage ou c’est nous qui venons d’effacer : rien à proposer
+    const tid = main ? '' : Object.keys(TS()).find(k=>TS()[k] === code && R[k] && R[k].type === 'trip' && !R[k].deleted);
+    if(!main && !tid) return;
+    if(!wipeQ.some(x=>x.tid === tid)) wipeQ.push({tid});
+    setTimeout(wipeAskNext, 1500);
+  }
+  let wipeAsking = false;
+  async function wipeAskNext(){
+    if(wipeAsking || !wipeQ.length) return; wipeAsking = true;
+    const {tid} = wipeQ.shift(), T = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
+    try {
+      const msg = tid ? T('🗑 Le voyage « {0} » a été vidé du serveur (par un compagnon ou un autre de tes appareils).\n\nTon téléphone a encore tout ce que tu as vu : fiches et photos. Le remettre en ligne pour tout le monde ?').replace('{0}', (R[tid] && R[tid].titre) || '')
+                      : T('🗑 Ton carnet commun a été vidé du serveur (par une personne qui a le code ou un autre de tes appareils).\n\nTon téléphone a encore tout ce que tu as vu : fiches et photos. Le remettre en ligne pour tout le monde ?');
+      if(await uiConfirm(msg)){ await photoResend(tid || undefined); toast('📤 Remise en ligne en cours…'); }
+    } catch(e){}
+    wipeAsking = false; if(wipeQ.length) setTimeout(wipeAskNext, 800);
   }
   function mergeRemote(records){
     let changed = 0;
@@ -2122,6 +2155,7 @@ const CV = (function(){
       + `<label class="cv-checkline cv-pref"><input type="checkbox" ${P.quiet ? 'checked' : ''} onchange="CV.pushQuiet(this.checked)"> <span>🌙 Ne pas déranger la nuit (22 h – 8 h)</span></label>`
       + `<button type="button" class="v-day-edit" style="margin-top:8px" onclick="CV.pushTest()">📨 M’envoyer une notification d’essai</button>`
       + (/Android/i.test(navigator.userAgent) ? `<div class="v-sum-small" style="margin-top:6px">Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).</div>` : '');
+    if(cloudMode() === 'none') return h + `<div class="v-sum-small" style="margin-top:8px">📱 Mode sans cloud : tes rappels personnels arrivent, mais pas les notifications de tes amis (elles passent par le cloud).</div></div>`;
     const alone = !M.sync.on && !Object.keys(TS()).length;
     return h + `<div class="v-sum-small" style="margin-top:8px">Le contenu des notifications est chiffré : le serveur ne peut pas le lire. Tes compagnons choisissent les leurs.${alone ? ' Pour être prévenu des ajouts de tes compagnons, partage d’abord un voyage.' : ''}</div></div>`;
   }
@@ -3457,27 +3491,10 @@ const CV = (function(){
         </div>`;
     if(!isInstalled()) h += `<div class="v-box">${installHTML(false)}</div>`;
     if(PUBLIC) h += `<div class="v-box"><h3>🔐 Confidentialité</h3><p>Ton carnet est chiffré avec son code : personne d’autre que vous ne peut le lire.</p><button class="v-btn sec" onclick="CV.infoSheet()">Comment ça marche ?</button>${s.on ? `<button class="v-btn sec" onclick="CV.codeSheet()">📝 Revoir mon code</button>` : ''}</div>`;
-    { const sh = Object.entries(TS()).map(([tid,c])=>({t:R[tid], c, sp:spaceObj(c)})).filter(x=>x.t && x.sp);
-      h += `<div class="v-box"><h3>🔗 Voyages partagés séparément</h3><p>Un voyage peut avoir son propre code : seuls ceux qui l’ont le voient (par ex. Claire voit 2 voyages, Alex 1 seul). Ton code principal ci-dessous partage le reste.</p>
-        ${sh.map(x=>`<button class="cv-prow" onclick="CV.tripShareSheet('${x.t.id}')"><span>🔗 <b>${esc(x.t.titre)}</b></span><span>${x.sp.err ? '🔴' : (x.sp.dirty||[]).length ? '🟠' : '🟢'} ${esc(x.c)}</span></button>`).join('') || '<div class="v-sum-small">Aucun pour l’instant.</div>'}
-        ${trip() && !trip().demo && !TS()[M.trip] ? `<button class="v-btn sec" onclick="CV.tripShare('${M.trip}')">🔗 Partager « ${esc(trip().titre)} » seul</button>` : ''}
-        <button class="v-btn sec" onclick="CV.tripJoin()">🔗 Rejoindre un voyage partagé</button></div>`; }
-    h += `<div class="v-box"><h3>☁️ Carnet partagé (code principal)</h3>`;
-    if(s.on){
-      h += `<p>État : <b>${state}</b><br>Dernière synchro : ${s.last ? when(s.last) : 'jamais'}<br>Code du carnet : <b class="cv-code">${esc(s.code)}</b>${s.url?'<br>Serveur : '+esc(s.url):''}</p>
-        <button class="v-btn" onclick="CV.syncNow(true)">🔄 Synchroniser maintenant</button>
-        <button class="v-btn sec" onclick="CV.shareCode()">📤 Envoyer l’invitation (adresse + code)</button>
-        <button class="v-btn danger" onclick="CV.syncOff()">Désactiver la synchro sur ce téléphone</button>`;
-    } else {
-      h += `<p>Facultatif : sauvegarde en ligne de tous tes voyages, pour les retrouver sur ton autre téléphone ou ta tablette avec le même code. Hors connexion, tout reste sur le téléphone et part dès que le réseau revient.</p>
-        <p class="v-sum-small">Pour partager un seul voyage, inutile : dans le voyage, touche Partager. Seul ce voyage est alors stocké sur le serveur, tes autres voyages restent sur ton téléphone.</p>
-        ${hosted ? '' : `<div class="v-f"><label>Adresse de l’appli en ligne</label><input class="v-in" id="cv-surl" value="${esc(s.url)}" placeholder="https://carnet-voyage.pages.dev"></div>`}
-        <div class="v-f"><label>Code du carnet</label><div class="cv-row"><input class="v-in" id="cv-scode" value="${esc(s.code)}" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters">
-          <button class="v-btn sec cv-sq" type="button" onclick="document.getElementById('cv-scode').value=CV.genCode()">🎲</button></div>
-          <div class="v-sum-small" style="margin-top:4px">🎲 pour créer un nouveau carnet, ou colle le code reçu pour rejoindre.</div></div>
-        <button class="v-btn" onclick="CV.syncOn()">Activer la synchro</button>`;
-    }
-    h += `</div>`;
+    { const md = cloudMode(), L = md ? CLOUD_L[md] : ['☁️', 'Pas encore choisi'];
+      h += `<div class="v-box"><h3>☁️ Cloud Vezoria</h3><p>Mode : <b>${L[0]} ${L[1]}</b>${md && md !== 'none' ? '<br>État : ' + state : ''}</p>
+        <button class="v-btn" onclick="CV.cloudSheet()">☁️ Ouvrir le cloud</button>
+        <button class="v-btn sec" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>`; }
     if(t){
       h += `<div class="v-box"><h3>🧳 Ce voyage</h3><p><b>${esc(t.titre)}</b>${t.debut?' · '+tripDates(t):''}${t.archived?' · ✓ clôturé':''}</p>
         <button class="v-btn sec" onclick="CV.editTrip('${t.id}')">✏️ Modifier (nom, dates, voyageurs)</button>
@@ -3486,7 +3503,6 @@ const CV = (function(){
         <button class="v-btn sec" onclick="CV.pdfSheet()">🖨️ Carnet de route à imprimer (PDF)</button>
         <button class="v-btn sec" onclick="CV.newTrip()">＋ Nouveau voyage</button></div>`;
     }
-    h += pkgBox();
     h += `<div class="v-box"><h3>📤 Inviter un ami</h3><p>Montre-lui le QR code ou envoie-lui le lien de l’appli.</p><button class="v-btn" onclick="CV.shareSheet()">📤 Partager l’appli (QR code)</button></div>`;
     h += `<div class="v-box"><h3>🎬 Tutos</h3><p>Les 4 espaces du carnet (Préparation, En cours, Passés, Bilan), et l’essentiel pour bien commencer.</p>${tutoBtn()}${ESCALE ? `<button type="button" class="v-btn sec" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button><button type="button" class="v-btn sec" onclick="CV.radarTuto()">✦ Tuto Radar des prix (3 min)</button>` : ''}</div>`;
     h += `<div class="v-box"><h3>🕘 Activité récente</h3>${activity()}</div>
@@ -3546,7 +3562,7 @@ const CV = (function(){
   async function syncOff(){ if(!(await uiConfirm('Désactiver la synchro sur ce téléphone ? Les données restent ici.'))) return; M.sync.on = false; persist(); refresh(); }
   async function shareCode(){
     const url = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
-    const text = `Rejoins notre carnet de voyage 🧳\n${url}\nCode du carnet : ${M.sync.code}\n(⚙️ Partage → colle le code → Activer la synchro)`;
+    const text = `Rejoins mon carnet Vezoria 🧳\n${url}\nCode principal : ${M.sync.code}\n(☁️ Cloud → « Tu as déjà un code principal ? » → colle le code)`;
     if(navigator.share){ try { await navigator.share({title:'Vezoria', text}); return; } catch(e){ return; } }
     try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
   }
@@ -5049,7 +5065,7 @@ const CV = (function(){
       <div style="margin-bottom:12px">${pchip(M.me)}</div>
       <div class="v-sum-small" style="margin-bottom:12px">Ce téléphone est le tien : tout ce que tu ajoutes est signé ${esc(pname(M.me))}.</div>
       <button class="v-btn sec" onclick="CV.editProfile('${M.me}')">🎨 Changer mon nom / ma couleur</button>
-      <button class="v-btn sec" style="margin-top:10px" onclick="CV.syncSheet()">☁️ État de la synchro</button>
+      <button class="v-btn sec" style="margin-top:10px" onclick="CV.cloudSheet()">☁️ Cloud Vezoria</button>
       <div class="v-sum-small" style="margin-top:10px">Synchro : ${!M.sync.on ? 'désactivée' : M.sync.err ? '🔴 ' + esc(M.sync.err) : (M.dirty.length || (M.pq||[]).length) ? '🟠 envoi en cours' : '🟢 à jour'}${M.sync.on ? ' · automatique toutes les heures' : ''}</div>`);
   }
   let tapN = 0, tapT = 0;
@@ -8924,12 +8940,17 @@ ${pm.join('\n')}</Document></kml>`;
   function gateRender(){
     const g = document.getElementById('cv-gate'); if(!g) return;
     const ua = navigator.userAgent, ios = isIOS(), iosOther = ios && /CriOS|FxiOS|EdgiOS|OPiOS/.test(ua), android = /Android/i.test(ua);
-    const steps = ios ? (iosOther ? `<li>Ouvre cette page dans <b>Safari</b> (sur iPhone, seul Safari sait installer une appli web).</li><li>Puis suis les étapes ci-dessous.</li>` : '')
-        + `<li>Touche <b>Partager</b> <span class="gk">⬆︎</span> en bas de Safari.</li><li>Choisis <b>« Sur l’écran d’accueil »</b> <span class="gk">＋</span>.</li><li>Touche <b>Ajouter</b>, puis ouvre <b>Vezoria</b> depuis ton écran d’accueil.</li>`
-      : android ? `<li>Ouvre cette page dans <b>Chrome</b> (pas depuis WhatsApp, Messenger ou Gmail : menu ⋮ → « Ouvrir dans Chrome »).</li><li>${installEvt ? 'Touche le bouton ci-dessous' : 'Touche le menu <b>⋮</b> de Chrome, puis <b>« Installer l’application »</b> (ou « Ajouter à l’écran d’accueil »)'}.</li><li>Ouvre <b>Vezoria</b> depuis ton écran d’accueil, ou glisse vers le haut pour la trouver dans tes applis.</li></ol><p class="gw">⚠️ Icône introuvable (Honor, Huawei, Xiaomi…) ? Autorise Chrome à créer des raccourcis : <b>Paramètres → Applications → Chrome → Autorisations → « Créer des raccourcis sur l’écran d’accueil »</b>, puis réinstalle. Sur Honor, glisse vers le bas au milieu de l’écran et tape « Vezoria » pour la chercher.</p><ol class="gs" style="display:none">`
-      : `<li>${installEvt ? 'Clique sur le bouton ci-dessous' : 'Dans Chrome ou Edge : l’icône <b>Installer</b> à droite de la barre d’adresse. Dans Safari (Mac) : menu <b>Fichier → Ajouter au Dock</b>'}.</li><li>Ouvre <b>Vezoria</b> depuis tes applications.</li>`;
+    // chaque étape = une phrase entière (traduite d’un bloc : bon ordre des mots dans toutes les langues), l’icône à part
+    const li = (t, k) => `<li><span>${t}</span>${k ? ` <span class="gk">${k}</span>` : ''}</li>`;
+    const steps = ios ? (iosOther ? li('Ouvre cette page dans Safari : sur iPhone, seul Safari sait installer une appli web.') + li('Puis suis les étapes ci-dessous.') : '')
+        + li('Touche « Partager » en bas de Safari.', '⬆︎') + li('Choisis « Sur l’écran d’accueil ».', '＋') + li('Touche « Ajouter », puis ouvre Vezoria depuis ton écran d’accueil.')
+      : android ? li('Ouvre cette page dans Chrome, pas depuis WhatsApp, Messenger ou Gmail (menu ⋮ → « Ouvrir dans Chrome »).')
+          + li(installEvt ? 'Touche le bouton ci-dessous.' : 'Touche le menu ⋮ de Chrome, puis « Installer l’application » (ou « Ajouter à l’écran d’accueil »).')
+          + li('Ouvre Vezoria depuis ton écran d’accueil, ou glisse vers le haut pour la trouver dans tes applis.')
+          + `</ol><p class="gw"><span>⚠️ Icône introuvable (Honor, Huawei, Xiaomi…) ? Autorise Chrome à créer des raccourcis : Paramètres → Applications → Chrome → Autorisations → « Créer des raccourcis sur l’écran d’accueil », puis réinstalle.</span> <span>Sur Honor, glisse vers le bas au milieu de l’écran et tape « Vezoria » pour la chercher.</span></p><ol class="gs" style="display:none">`
+      : li(installEvt ? 'Clique sur le bouton ci-dessous.' : 'Dans Chrome ou Edge : l’icône « Installer » à droite de la barre d’adresse. Dans Safari (Mac) : menu Fichier → Ajouter au Dock.') + li('Ouvre Vezoria depuis tes applications.');
     g.innerHTML = `<div class="gt"><img src="icon-192.png" alt="" class="gi"><h1>Vezoria</h1>
-      <p>Pour garder tes voyages <b>sur ton téléphone</b>, fonctionner <b>sans réseau</b> et protéger tes données, l’appli s’utilise <b>installée sur ton écran d’accueil</b>. C’est gratuit et ça prend 10 secondes.</p>
+      <p><span>Pour garder tes voyages sur ton téléphone, fonctionner sans réseau et protéger tes données, l’appli s’utilise installée sur ton écran d’accueil.</span> <b>C’est gratuit et ça prend 10 secondes.</b></p>
       ${/[#&]rejoindre=/i.test(location.hash) ? `<div class="gv"><b>🎟️ Tu es invité(e) dans un voyage</b><p>Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».</p><button type="button" class="v-btn sec" id="gv-copy" onclick="CV.gateCopy()">📋 Copier l’invitation</button></div>` : ''}
       <ol class="gs">${steps}</ol>
       ${installEvt ? `<button type="button" class="v-btn" onclick="CV.gateInstall()">📲 Installer l’appli</button>` : ''}
@@ -9372,8 +9393,15 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="cv-bigcode">${esc(M.sync.code)}</div>
       <p class="cv-warn">C’est la seule clé de ton carnet : sans lui, personne ne pourra le récupérer, même pas l’administrateur.</p>
       <button class="v-btn" onclick="CV.copyCode()">📋 Copier le code</button>
-      <button class="v-btn sec" onclick="CV.shareCode()">📤 L’envoyer à mes compagnons de voyage</button>
-      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">C’est noté</button></div>`);
+      <button class="v-btn sec" onclick="CV.codeKeep()">📤 Me l’envoyer pour le garder (notes, e-mail…)</button>
+      <div class="v-sum-small" style="margin-top:6px">Ne le donne qu’à toi-même : il ouvre tout ton carnet. Pour inviter des amis, utilise ☁️ Cloud → Partager avec mes amis.</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close();CV.cloudSheet()">C’est noté</button></div>`);
+  }
+  async function codeKeep(){
+    const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
+    const text = MSG('Mon code principal Vezoria (à garder pour moi, ne pas partager) :') + '\n' + M.sync.code;
+    if(navigator.share){ try { await navigator.share({title:'Vezoria', text}); return; } catch(e){ return; } }
+    copyCode();
   }
   async function copyCode(){ try { await navigator.clipboard.writeText(M.sync.code); toast('📋 Code copié'); } catch(e){ (await uiPrompt('Copie ton code :', M.sync.code)); } }
 
@@ -9656,7 +9684,7 @@ ${pm.join('\n')}</Document></kml>`;
         <button type="button" class="v-btn sec" onclick="CV.editTrip('${t.id}')">👥 Choisir les voyageurs</button>
         <button type="button" class="v-btn sec" onclick="CV.tripJoin()">🔗 J’ai reçu un code : rejoindre un voyage</button>
         <button type="button" class="v-btn sec" onclick="CV.socialHub()">👥 Abonnés, abonnements et codes</button>
-        <button type="button" class="v-btn sec" onclick="CV.close();CV.tab('reglages')">📱 Mes voyages sur tous mes appareils</button>
+        <button type="button" class="v-btn sec" onclick="CV.cloudSheet()">☁️ Cloud Vezoria</button>
         <button type="button" class="v-btn sec" onclick="CV.shareSheet()">📤 Faire découvrir l’appli (QR code)</button></details>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`;
     openSheet(h);
@@ -9933,9 +9961,9 @@ ${pm.join('\n')}</Document></kml>`;
     const s = M.sync, sh = Object.entries(TS()).map(([tid,c])=>({t:R[tid], c})).filter(x=>x.t && spaceObj(x.c));
     openSheet(`<h2>🗑 Supprimer mes données du serveur</h2>
       <div class="v-sum-small" style="margin-bottom:10px">Efface du serveur toutes les fiches et photos du carnet choisi, <b>pour toutes les personnes qui ont son code</b>. Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).</div>
-      ${s.on ? `<button type="button" class="v-btn danger" onclick="CV.serverWipe('')">🗑 Carnet principal (${esc(s.code.slice(0,4))}…)</button>` : ''}
+      ${s.code ? `<button type="button" class="v-btn danger" onclick="CV.serverWipe('')">🗑 Carnet principal (${esc(s.code.slice(0,4))}…)</button>` : ''}
       ${sh.map(x=>`<button type="button" class="v-btn danger" onclick="CV.serverWipe('${esc(x.c)}')">🗑 Voyage partagé « ${esc(x.t.titre)} »</button>`).join('')}
-      ${!s.on && !sh.length ? '<div class="v-sum-small">Rien n’est enregistré sur le serveur depuis ce téléphone : tes données sont seulement ici. « Effacer ce téléphone » (Sauvegarde) les supprime.</div>' : ''}
+      ${!s.code && !sh.length ? '<div class="v-sum-small">Rien n’est enregistré sur le serveur depuis ce téléphone : tes données sont seulement ici. « Effacer ce téléphone » (Sauvegarde) les supprime.</div>' : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
   }
   async function serverWipe(code){
@@ -10836,9 +10864,10 @@ ${pm.join('\n')}</Document></kml>`;
     // version test ouverte depuis un carnet : pas de voyant (le carnet n'en a pas, la synchro passe par le serveur du carnet)
     if(window.VZ_HOST){ if(b) b.remove(); return; }
     const btns = document.querySelector('.hero-btns'); if(!btns) return;
-    if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'cv-syncpill'; b.className = 'cv-syncpill'; b.onclick = () => CV.syncSheet(); btns.prepend(b); }
+    if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'cv-syncpill'; b.className = 'cv-syncpill'; b.onclick = () => CV.cloudSheet(); btns.prepend(b); }
     const st = syncState(), L = {ok:['☁️','À jour'], wait:['⏳','Envoi…'], err:['⚠️','Souci'], offline:['📴','Hors ligne'], off:['☁️','Local']};
-    b.className = 'cv-syncpill ' + st; b.innerHTML = `<span>${L[st][0]}</span><small>${L[st][1]}</small>`; b.setAttribute('aria-label', 'Synchronisation : ' + L[st][1]);
+    const md = cloudMode(); if(st === 'off') L.off = md === 'none' ? ['📱','Sans cloud'] : ['☁️','Cloud']; if(md === 'none' && st === 'ok') L.ok = ['📱','Sans cloud'];
+    b.className = 'cv-syncpill ' + st + (md ? '' : ' new'); b.innerHTML = `<span>${L[st][0]}</span><small>${L[st][1]}</small>`; b.setAttribute('aria-label', 'Cloud Vezoria : ' + L[st][1]);
   }
   async function syncMainNew(){
     if(!(await uiConfirm('Créer ton code principal ?\n\nTous tes voyages seront sauvegardés sur le serveur, chiffrés sur ce téléphone : personne d’autre ne peut les lire. Garde bien ce code : c’est lui qui ouvre ton carnet sur un autre appareil.'))) return;
@@ -10849,7 +10878,186 @@ ${pm.join('\n')}</Document></kml>`;
     if(v.length < 8){ alert('Code trop court (au moins 8 caractères).'); return; }
     closeSheet(true); await syncOn(v);
   }
-  function syncSheet(){
+  /* ══════════ ☁️ Cloud Vezoria : un seul bouton en haut, trois choix simples ══════════
+     1. Tout mon carnet dans le cloud (code principal)   2. Voyage par voyage (jamais la totalité)
+     3. Sans cloud : tout reste ici, partage par paquets chiffrés envoyés soi-même.
+     Choisir un cloud ne partage RIEN : le partage avec les amis est une étape à part (tout / au choix). */
+  const myTrips = () => trips().filter(t=>t && !t.demo && !t.deleted && t.type === 'trip');
+  const tripInCloud = id => !!(TS()[id] && spaceObj(TS()[id]));
+  const cloudMode = () => M.cloud || (M.sync.on && M.sync.code ? 'all' : myTrips().some(t=>tripInCloud(t.id)) ? 'trips' : '');
+  const CLOUD_L = {all:['☁️', 'Tout mon carnet dans le cloud'], trips:['🧳', 'Voyage par voyage'], none:['📱', 'Sans cloud']};
+  function cloudState(sp){ return sp.err ? '⚠️ ' + esc(sp.err) : (sp.dirty||[]).length ? '⏳ ' + sp.dirty.length + ' modif(s) à envoyer' : '✓ à jour' + (sp.last ? ' · ' + when(sp.last) : ''); }
+  function cloudSheet(view){
+    const mode = cloudMode(), choose = view === 'choose' || !mode;
+    if(choose){
+      openSheet(`<h2>☁️ Cloud Vezoria</h2>
+        <div class="v-sum-small" style="margin-bottom:12px">Où gardes-tu tes voyages ?<br><b>À cette étape, rien n’est partagé avec tes compagnons.</b><br>C’est ton cloud perso, chiffré sur ce téléphone : personne d’autre ne peut le lire, pas même nous.</div>
+        <button type="button" class="cv-choice${mode === 'all' ? ' on' : ''}" onclick="CV.cloudPick('all')"><i>☁️</i><span><b>Tout mon carnet dans le cloud</b><small>Tous tes voyages sont sauvegardés et arrivent sur ton autre téléphone avec ton code.</small></span></button>
+        <button type="button" class="cv-choice${mode === 'trips' ? ' on' : ''}" onclick="CV.cloudPick('trips')"><i>🧳</i><span><b>Voyage par voyage</b><small>Tu choisis les voyages à mettre dans le cloud. Jamais la totalité du carnet.</small></span></button>
+        <button type="button" class="cv-choice${mode === 'none' ? ' on' : ''}" onclick="CV.cloudPick('none')"><i>📱</i><span><b>Sans cloud</b><small>Tout reste sur ce téléphone. Pour ton cercle, l’appli crée des paquets chiffrés que tu envoies toi-même. Les notifications entre amis ne marchent pas dans ce mode.</small></span></button>
+        <div class="sy-r" style="margin-top:6px"><b>🔑 Tu as déjà un code principal ?</b><small>Celui de ton autre téléphone : tout ton carnet arrive ici.</small>
+          <div class="cv-row" style="margin-top:6px"><input class="v-in" id="sy-join" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.cloudJoinMain()">Utiliser</button></div></div>
+        <button type="button" class="v-btn sec" onclick="CV.close();CV.tripJoin()">🤝 J’ai reçu une invitation dans un voyage</button>
+        <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${mode ? 'Annuler' : 'Plus tard'}</button></div>`);
+      return;
+    }
+    const [ic, lab] = CLOUD_L[mode], s = M.sync, ph = pqN() + (M.fq||[]).length;
+    let h = `<h2>☁️ Cloud Vezoria</h2>
+      <div class="cv-cl-mode"><span>${ic}</span><b>${lab}</b><button type="button" class="cv-cl-ch" onclick="CV.cloudSheet('choose')">Changer</button></div>`;
+    if(mode === 'all'){
+      h += `<div class="sy-r"><b>🔑 Mon code principal</b><small>${s.on && s.code ? cloudState(s) : ''}</small>
+          <div class="cv-row" style="margin-top:6px"><b class="cv-code">${esc(s.code || '')}</b><button type="button" class="v-btn sec" style="width:auto;margin:0 0 0 auto;padding:6px 12px" onclick="CV.copyCode()">📋 Copier</button></div>
+          <small>Garde-le bien : c’est lui qui ouvre ton carnet sur un autre appareil.</small></div>`;
+    }
+    if(mode === 'trips'){
+      const ts = myTrips();
+      h += `<div class="cv-cl-h">Mes voyages dans le cloud</div>`
+        + (ts.map(t=>{ const c = TS()[t.id], sp = c && spaceObj(c);
+            return `<div class="cv-cl-t"><span><b>${esc(t.titre || '')}</b><small>${sp ? '☁️ ' + cloudState(sp) : 'Seulement sur ce téléphone'}</small></span>`
+              + (sp ? '' : `<button type="button" class="v-btn sec" onclick="CV.cloudTrip('${t.id}')">☁️ Mettre dans le cloud</button>`) + `</div>`; }).join('')
+          || '<div class="v-sum-small">Aucun voyage pour l’instant : crée-en un, puis reviens ici.</div>');
+    }
+    if(mode === 'none'){
+      h += `<div class="v-sum-small" style="margin:4px 0 10px">Tout reste sur ce téléphone. Pour partager avec ton cercle, envoie un paquet chiffré (un fichier) par ta messagerie : tes amis l’ouvrent avec la phrase secrète que tu leur donnes.<br><br>Tes rappels personnels arrivent quand même ; les notifications entre amis demandent le cloud.</div>
+        <div class="cv-row"><button type="button" class="v-btn" onclick="CV.close();CV.pkgSheet()">📤 Envoyer un paquet</button><button type="button" class="v-btn sec" onclick="CV.close();CV.pkgImport()">📥 Recevoir un paquet</button></div>
+        ${M.pkgLast ? `<div class="v-sum-small" style="margin-top:6px">${(window.I18N && I18N.msg ? I18N.msg('Dernier paquet envoyé : {0}') : 'Dernier paquet envoyé : {0}').replace('{0}', when(M.pkgLast))}</div>` : ''}`;
+      if(myFeeds().length) h += `<div class="sy-r" style="margin-top:8px"><b>👀 ${myFeeds().length} voyage(s) encore publié(s) pour des abonnés</b><small>Ils y ont toujours accès, même aux voyages terminés.</small><button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.cloudFeedCut()">🚫 Couper l’accès de mes abonnés</button></div>`;
+      const left = !!s.code || myTrips().some(t=>tripInCloud(t.id));
+      if(left) h += `<div class="v-sum-small" style="margin-top:8px">ℹ️ Des voyages sont encore sur le serveur (partages en cours).</div><button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.close();CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button>`;
+    } else {
+      // ── partage avec les amis : étape à part ──
+      const ts = myTrips();
+      h += `<div class="cv-cl-h">👥 Partager avec mes amis</div>`;
+      if(mode === 'all') h += `<button type="button" class="cv-choice" onclick="CV.cloudShareAll()"><i>🌍</i><span><b>Je partage tout</b><small>Ils reçoivent ton code principal et voient tous tes voyages. Pour ta famille ou ton couple.</small></span></button>`;
+      h += `<div class="cv-cl-sub">${mode === 'all' ? 'Je choisis quoi partager : un voyage à la fois, ils ne voient que lui.' : 'Invite tes compagnons voyage par voyage : ils ne voient que ce voyage.'}</div>`
+        + ts.map(t=>`<div class="cv-cl-t"><span><b>${esc(t.titre || '')}</b><small>${tripInCloud(t.id) && (M.cloudInv||{})[t.id] ? 'Invitation déjà envoyée' : 'Pas encore partagé'}</small></span><button type="button" class="v-btn sec" onclick="CV.close();CV.cloudInvite('${t.id}')">📤 Inviter</button></div>`).join('');
+    }
+    h += `<button type="button" class="v-btn sec" style="margin-top:10px" onclick="CV.close();CV.tripJoin()">🤝 J’ai reçu une invitation dans un voyage</button>`;
+    if(ph && mode !== 'none') h += `<div class="v-sum-small" style="margin-top:6px">📸 ${ph} photo(s) en attente d’envoi</div>`;   // modèle traduit « 📸 {0} photo(s) en attente d’envoi »
+    h += `<div class="v-actions">${mode !== 'none' ? `<button type="button" class="v-btn" onclick="CV.syncNow(true);CV.close()">🔄 Synchroniser maintenant</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.close()">OK</button></div>`;
+    openSheet(h);
+  }
+  async function cloudPick(m){
+    const s = M.sync, mainOn = !!(s.on && s.code), anyTrip = myTrips().some(t=>tripInCloud(t.id));
+    if(m === 'all'){
+      // carnet gardé dans le cloud lors d’un départ : on le reprend avec le même code (rien à régénérer)
+      if(!mainOn && s.code){
+        if(await uiConfirm('Reprendre ton carnet gardé dans le cloud ?\n\nOK = le reprendre avec ton ancien code : ce que tu as ajouté entre-temps sur ce téléphone y est envoyé.\nAnnuler = créer un nouveau code.')){ closeSheet(true); await cloudResume(); return; }
+      }
+      if(!mainOn){
+        if(!(await uiConfirm('Mettre tout ton carnet dans le cloud ?\n\nTous tes voyages seront sauvegardés, chiffrés sur ce téléphone : personne d’autre ne peut les lire. Rien n’est partagé avec tes amis tant que tu ne le décides pas.'))) return;
+        closeSheet(true); await syncOn(genCode());
+        if(!(M.sync.on && M.sync.code)) return;
+      }
+      M.cloud = 'all'; persist(); cloudSheet(); refresh(); return;
+    }
+    // quitter « tout mon carnet » : on demande ce que devient la copie dans le cloud
+    if((m === 'trips' || m === 'none') && mainOn){ cloudLeaveSheet(m); return; }
+    if(m === 'trips'){ M.cloud = 'trips'; persist(); cloudSheet(); refresh(); return; }
+    if(m === 'none'){
+      if(anyTrip && !(await uiConfirm('Passer en « sans cloud » ?\n\nLes voyages déjà partagés continuent pour tes compagnons ; pour les retirer du serveur : Réglages → Supprimer mes données du serveur.'))) return;
+      M.cloud = 'none'; persist(); if(!cloudFeedAsk()) cloudSheet(); refresh(); return;
+    }
+  }
+  function cloudLeaveSheet(m){
+    openSheet(`<h2>☁️ Et ton carnet dans le cloud ?</h2>
+      <div class="v-sum-small" style="margin-bottom:12px">Ce téléphone n’enverra plus tout le carnet. Que fait-on de la copie déjà dans le cloud ?</div>
+      <button type="button" class="cv-choice" onclick="CV.cloudLeave('${m}','wipe')"><i>🗑</i><span><b>L’effacer du cloud</b><small>Fiches et photos supprimées du serveur, pour de bon. Ce qui est sur ce téléphone reste ici.</small></span></button>
+      <button type="button" class="cv-choice" onclick="CV.cloudLeave('${m}','keep')"><i>🗄️</i><span><b>La garder dans le cloud</b><small>Elle reste en sécurité (chiffrée), sans mise à jour. Tu pourras l’effacer plus tard dans Réglages.</small></span></button>
+      <div class="v-sum-small" style="margin-top:6px">⚠️ Si tu as donné ton code principal à quelqu’un (« Je partage tout »), l’effacer le supprime aussi pour lui.</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet('choose')">Annuler</button></div>`);
+  }
+  async function cloudLeave(m, how){
+    const s = M.sync;
+    if(how === 'wipe'){
+      if(!(await uiConfirm('Effacer définitivement ton carnet du cloud ?\n\nCette action ne peut pas être annulée. Ce qui est sur ce téléphone reste ici.'))) return;
+      try {
+        const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(s.code)}});
+        let j = {}; try { j = await r.json(); } catch(e){}
+        if(!r.ok) throw new Error(j.error || ('erreur ' + r.status));
+        M.pq = []; M.pgone = []; toast('🗑 Carnet effacé du cloud');
+      } catch(e){ alert('Effacement impossible : ' + e.message + '\nRien n’a changé : réessaie quand tu as du réseau.'); return; }
+      s.since = 0; M.dirty = []; s.code = '';
+    }
+    s.on = false; M.cloud = m; persist(); if(!(m === 'none' && cloudFeedAsk())) cloudSheet(); refresh();
+  }
+  // ── abonnés : ce ne sont pas des compagnons de voyage → en quittant le cloud, on propose de leur couper l’accès ──
+  const myFeeds = () => myTrips().filter(t=>feedCode(t.id));
+  function cloudFeedAsk(){
+    const fs = myFeeds(); if(!fs.length) return false;
+    openSheet(`<h2>👀 Et tes abonnés ?</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">Ces voyages sont publiés pour des abonnés (famille, amis qui te suivent). Ils ne sont pas tes compagnons de voyage : tu peux leur couper l’accès, y compris aux voyages terminés.</div>
+      ${fs.map(t=>`<div class="cv-cl-t"><span><b>${esc(t.titre || '')}</b><small>👀 Publié pour des abonnés</small></span></div>`).join('')}
+      <button type="button" class="v-btn danger" style="margin-top:8px" onclick="CV.cloudFeedCut()">🚫 Couper l’accès de mes abonnés</button>
+      <div class="v-sum-small" style="margin-top:6px">Les publications disparaissent de leur appli à leur prochaine ouverture, et les photos publiées sont retirées du serveur. Tes compagnons de voyage, eux, ne sont pas concernés.</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">Garder les publications</button></div>`);
+    return true;
+  }
+  function feedCut(tid){
+    const c = FT()[tid]; if(!c) return;
+    const out = list('feed', f=>f.trip===ftId(tid)).map(f=>Object.assign(clone(f), {deleted:true})); if(R[ftId(tid)]) out.push(Object.assign(clone(R[ftId(tid)]), {deleted:true}));
+    putQuiet(out);
+    return c;
+  }
+  async function cloudFeedCut(){
+    const fs = myFeeds(); if(!fs.length){ cloudSheet(); return; }
+    if(!(await uiConfirm('Couper l’accès de tous tes abonnés ?\n\nIls ne verront plus aucun de ces voyages, même terminés.'))) return;
+    const done = fs.map(t=>[t.id, feedCut(t.id)]).filter(x=>x[1]);
+    try { await syncNow(); } catch(e){}
+    done.forEach(([tid, c])=>{ delete FT()[tid]; delete TS()[ftId(tid)]; M.spaces = (M.spaces||[]).filter(x=>x.code !== c); });
+    persist(); toast('🚫 Accès des abonnés coupé'); cloudSheet(); refresh();
+  }
+  async function cloudResume(){
+    const s = M.sync;
+    try {
+      const j = await call(0, [], s.code);
+      mergeRemote(j.records);
+      M.dirty = []; Object.values(R).filter(r=>!r.demo).forEach(r=>markDirty(r.id));
+      s.on = true; s.since = j.now; s.err = ''; M.cloud = 'all';
+      if(!j.records.filter(r=>!r.deleted).length) await photoQueueAll();
+      persist(); toast('☁️ Carnet repris dans le cloud'); await syncNow(); refresh(); cloudSheet();
+    } catch(e){ alert('Reprise impossible : ' + e.message); }
+  }
+  async function cloudJoinMain(){
+    const v = ((document.getElementById('sy-join') || {}).value || '').trim().toUpperCase();
+    if(v.length < 8){ alert('Colle le code principal de ton autre appareil.'); return; }
+    closeSheet(true); await syncOn(v);
+    if(M.sync.on && M.sync.code){ M.cloud = 'all'; persist(); refresh(); }
+  }
+  // un voyage dans le cloud perso (privé tant qu’on n’invite personne)
+  function cloudSpace(id){
+    const t = R[id]; if(!t || t.demo) return false;
+    if(tripInCloud(t.id)) return false;
+    const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t.id] = c;
+    Object.values(R).filter(r=>!r.demo && (r.id===t.id || r.trip===t.id)).forEach(r=>markDirty(r.id));
+    persist();
+    setTimeout(async ()=>{ try { await photoQueueAll(t.id); persist(); await syncNow(); uploadQueue(); refresh(); } catch(e){} }, 50);
+    return true;
+  }
+  let cloudAskBusy = false;
+  async function cloudNewTripCheck(){
+    if(cloudAskBusy || cloudMode() !== 'trips' || !M.me || document.visibilityState !== 'visible') return;
+    if(document.querySelector('#v-sheet-bg, .ui-dlg, #cv-gate, #cv-film, #cv-world, #cv-tj')) return;
+    const asked = M.cloudAsked || (M.cloudAsked = {}), now = Date.now();
+    const t = myTrips().find(t=>!asked[t.id] && !tripInCloud(t.id) && (t.createdAt || 0) > now - 15 * 60e3 && (!t.createdBy || t.createdBy === M.me));
+    if(!t) return;
+    cloudAskBusy = true; asked[t.id] = now; persist();
+    try {
+      const T = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
+      const msg = T('☁️ Mettre « {0} » dans ton cloud ?\n\nTu es en mode « voyage par voyage » : ce nouveau voyage est pour l’instant seulement sur ce téléphone.\nOK = le sauvegarder dans ton cloud (privé : rien n’est partagé).').replace('{0}', t.titre || '');
+      if(await uiConfirm(msg)){ if(cloudSpace(t.id)) toast('☁️ Voyage mis dans ton cloud (privé)'); refresh(); }
+    } catch(e){}
+    cloudAskBusy = false;
+  }
+  setInterval(()=>{ try { cloudNewTripCheck(); } catch(e){} }, 4000);
+  function cloudTrip(id){ if(cloudSpace(id)) toast('☁️ Voyage mis dans ton cloud (privé)'); if(!M.cloud){ M.cloud = 'trips'; persist(); } cloudSheet(); }
+  async function cloudInvite(id){ (M.cloudInv = M.cloudInv || {})[id] = Date.now(); persist(); await tripInviteNow(id); }
+  async function cloudShareAll(){
+    if(!(await uiConfirm('Partager tout ton carnet ?\n\nLa personne recevra ton code principal et verra TOUS tes voyages, et pourra les modifier. Pour ne partager qu’un voyage, utilise plutôt « Inviter » sur ce voyage.'))) return;
+    closeSheet(true); shareCode();
+  }
+  function syncSheet(){ return cloudSheet(); }
+  function syncSheetOld(){
     const s = M.sync, rows = [];
     if(s.on && s.code) rows.push(`<div class="sy-r"><b>📱 Mes voyages sur tous mes appareils</b><small>${s.err ? '⚠️ ' + esc(s.err) : M.dirty.length ? '⏳ ' + M.dirty.length + ' modif(s) à envoyer' : '✓ à jour' + (s.last ? ' · ' + when(s.last) : '')}</small></div>`);
     Object.entries(TS()).forEach(([tid, c])=>{ const sp = spaceObj(c), t = R[tid]; if(!sp || !t) return;
@@ -10877,6 +11085,10 @@ ${pm.join('\n')}</Document></kml>`;
   // ---------- Inviter dans un voyage en un geste (le lien contient le code) ----------
   async function tripInviteNow(id){
     const t = R[id || M.trip]; if(!t || t.demo) return;
+    if(cloudMode() === 'none' && !tripInCloud(t.id)){
+      if(!(await uiConfirm('Tu es en mode « sans cloud ».\n\nPour inviter quelqu’un, ce voyage doit aller dans le cloud (chiffré, seulement ce voyage). OK = le mettre dans le cloud et inviter.\nAnnuler = envoyer plutôt un paquet chiffré.'))){ pkgSheet(); return; }
+      M.cloud = 'trips'; persist();
+    }
     if(!(TS()[t.id] && spaceObj(TS()[t.id]))){
       const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t.id] = c;
       Object.values(R).filter(r=>!r.demo && (r.id===t.id || r.trip===t.id)).forEach(r=>markDirty(r.id));
@@ -11180,7 +11392,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-11v';
+  const BUILD = '2026-10-12e';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -11190,7 +11402,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════

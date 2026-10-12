@@ -32,7 +32,7 @@
     <p style="font-size:.85em"><a href="privacy.html" lang="fr">Version française</a></p>
 
     <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: 11 October 2026 (notifications, journey mode, offline maps, place cards)</p>
+    <p class="updated">Last updated: 12 October 2026 (cloud of your choice, putting an erased trip back online)</p>
 
     <p>This Privacy Policy describes how the <strong>Vezoria</strong> app (“Vezoria”) handles your information. The App is free, ad-free, account-free and non-profit. It is available on the web and on Google Play.</p>
 
@@ -41,7 +41,8 @@
             <li>Your trips, notes, expenses and photos are <strong>encrypted on your phone</strong> before anything is sent. Neither the publisher nor the hosting provider can read them.</li>
             <li>No advertising, no cookies, no advertising trackers, no third-party analytics tool (Google Analytics, Firebase…). Only <strong>anonymous</strong> counters (number of installs, space used on the server) are used to run the service.</li>
             <li>Permissions (location, photos) are only requested when you use the feature concerned, and you can refuse them.</li>
-            <li>You can erase everything: on your phone in one tap, on the server on simple request.</li>
+            <li>You choose where your trips go (☁️ Cloud button): <strong>your whole notebook</strong> in the cloud, <strong>trip by trip</strong>, or <strong>no cloud</strong> (everything stays on your phone; to share, you send encrypted packages yourself).</li>
+            <li>You can erase everything: on your phone in one tap, on the server from the app or on simple request.</li>
         </ul>
     </div>
 
@@ -54,8 +55,9 @@
     <div class="box">
         <table>
             <tr><th>Data</th><th>Where</th><th>Why</th></tr>
-            <tr><td>First name and profile colour, trips, stops, bookings, expenses, notes, checklist, memories and photos</td><td>On your device. If sync is enabled: also on the server, <strong>encrypted</strong></td><td>To run the notebook and share it with the members of the group</td></tr>
+            <tr><td>First name and profile colour, trips, stops, bookings, expenses, notes, checklist, memories and photos</td><td>On your device. If you choose the cloud (whole notebook, or only the trips you put there): also on the server, <strong>encrypted</strong></td><td>To run the notebook and share it with the members of the group</td></tr>
             <tr><td>Fingerprint (hash) of the notebook code (the code itself is never sent)</td><td>Server</td><td>To store each notebook’s data separately</td></tr>
+            <tr><td>Date of the last erasure of a notebook or shared trip, stored with its anonymous fingerprint</td><td>Server</td><td>To tell the other members that the trip was emptied from the server and offer to put it back online with what their phone kept</td></tr>
             <tr><td>Travel documents (type, expiry date; optional number and note) and photographed receipts, reimbursement method entered in a profile (optional), poll votes, shopping lists, tickets and documents attached to records, positions saved with “I’m here” (only when you tap the button)</td><td>Like the other records: on your device, and on the server if sync is enabled</td><td>Expiry alerts before departure, expense sharing</td></tr>
             <tr><td><strong>Trip tracking</strong> (off by default): positions recorded roughly every 300 m (every 50 m in “journey mode”, which you start yourself), <strong>only while the app is open</strong> and only during an ongoing trip. Positions already stored in your memory photos may complete the route shown on your device</td><td>On your device, and for the members of the shared trip (encrypted)</td><td>Draw your route on the map and in the trip film</td></tr>
             <tr><td><strong>Followers</strong> (only if you publish a trip): non-private memories (photos as thumbnails, titles, places, stories); your route, only if <em>you</em> turn it on (rounded to about 100 m); on the follower side: the chosen first name, ❤️ and comments</td><td>Server, encrypted with the follower code: anyone who received the follower link or code can read them</td><td>Let your loved ones follow the trip and react</td></tr>
@@ -71,6 +73,7 @@
     <h2>3. End-to-end encryption</h2>
     <div class="box">
         <p>Before anything is sent, your device encrypts the data with <strong>AES-256-GCM</strong>, using a key derived from your notebook code (PBKDF2, 200,000 iterations). The server only receives a fingerprint of this code, which cannot be used to decrypt. Photo names are also replaced by encrypted identifiers.</p>
+        <p>To show the text of notifications, each trip’s key is kept in the app on your phone (on iPhone, in a form the app’s “notifications” part can read). It never leaves your device.</p>
     </div>
     <div class="warn">
         <p><strong>Lost code = notebook unrecoverable</strong> from the server. Nobody, not even the publisher, can retrieve it. Keep your code in a safe place and export regularly.</p>
@@ -127,6 +130,7 @@
             <li><strong>On your device</strong>: until you erase the notebook or the browser data.</li>
             <li><strong>On the server</strong>: as long as the notebook is in use. A notebook with no activity for 24 months is automatically deleted from the server (its data remains on your devices). A photo removed from a memory, or a deleted memory or trip, is erased from the server.</li>
             <li><strong>Notifications</strong>: a device’s subscription is erased from the server as soon as you turn notifications off, when the phone no longer accepts it, or when the notebook is erased. A scheduled reminder is erased as soon as it is sent (at the latest 2 days after its scheduled time).</li>
+            <li><strong>Erasure date</strong> of a notebook or shared trip: at most 24 months.</li>
             <li><strong>Reports</strong>: when a report is made, the publisher keeps a log (date, anonymous fingerprint of the notebook, action taken, reason given by the reporter) for as long as needed to handle it and for any legal follow-up, at most 3 years.</li>
             <li><strong>Hosting provider’s technical logs</strong>: according to Cloudflare’s policy, generally a few days.</li>
         </ul>
@@ -139,7 +143,7 @@
             <li><strong>Access and portability</strong>: More → Sharing &amp; profiles → Export (readable .json file).</li>
             <li><strong>Rectification</strong>: edit your records and your profile directly in the App.</li>
             <li><strong>Erasure on the device</strong>: More → Sharing &amp; profiles → “Erase this phone”.</li>
-            <li><strong>Erasure on the server</strong>: More → Sharing &amp; profiles → “🗑 Delete my data from the server”: the records and photos of the chosen notebook are erased immediately from the server, for all its members. You can also write to the contact address above. See also the <a href="suppression-donnees.html#en">Delete my data</a> page.</li>
+            <li><strong>Erasure on the server</strong>: ☁️ Cloud button at the top of the screen, or More → Sharing &amp; profiles → “🗑 Delete my data from the server”: the records, photos and notification subscriptions of the chosen notebook are erased immediately from the server, for all its members. The other members of a shared trip keep what their phone already holds and can put it back online. When leaving the cloud, you can also cut your followers’ access. You can also write to the contact address above. See also the <a href="suppression-donnees.html#en">Delete my data</a> page.</li>
         </ul>
         <p>If you believe your rights are not being respected, you can lodge a complaint with the CNIL (French data protection authority): <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">cnil.fr/fr/plaintes</a>. If you live outside France, you can also contact your local data protection authority.</p>
     </div>

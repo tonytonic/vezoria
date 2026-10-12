@@ -32,7 +32,7 @@
     <p style="font-size:.85em"><a href="privacy-en.html">English version</a></p>
 
     <h1>Politique de Confidentialité</h1>
-    <p class="updated">Dernière mise à jour : 11 octobre 2026 (notifications, mode trajet, cartes hors ligne, fiches de lieux)</p>
+    <p class="updated">Dernière mise à jour : 12 octobre 2026 (cloud au choix, remise en ligne d'un voyage effacé)</p>
 
     <p>Cette Politique de Confidentialité décrit comment l'application <strong>Vezoria</strong> traite vos informations. L'Application est gratuite, sans publicité, sans compte et sans but lucratif. Elle est disponible sur le web et sur Google Play.</p>
 
@@ -41,6 +41,7 @@
             <li>Vos voyages, notes, dépenses et photos sont <strong>chiffrés sur votre téléphone</strong> avant tout envoi. Ni l'éditeur ni l'hébergeur ne peuvent les lire.</li>
             <li>Aucune publicité, aucun cookie, aucun traceur publicitaire, aucun outil d'analyse tiers (Google Analytics, Firebase…). Seuls des compteurs <strong>anonymes</strong> (nombre d'installations, place utilisée sur le serveur) servent à faire tourner le service.</li>
             <li>Les autorisations (position, photos) ne sont demandées qu'au moment où vous utilisez la fonction concernée, et vous pouvez les refuser.</li>
+            <li>Vous choisissez où vont vos voyages (bouton ☁️ Cloud) : <strong>tout votre carnet</strong> dans le cloud, <strong>voyage par voyage</strong>, ou <strong>sans cloud</strong> (tout reste sur votre téléphone ; pour partager, vous envoyez vous-même des paquets chiffrés).</li>
             <li>Vous pouvez tout effacer : sur votre téléphone en un geste, sur le serveur depuis l'appli ou sur simple demande.</li>
         </ul>
     </div>
@@ -54,7 +55,7 @@
     <div class="box">
         <table>
             <tr><th>Données</th><th>Où</th><th>Pourquoi</th></tr>
-            <tr><td>Prénom et couleur de profil, voyages, étapes, réservations, dépenses, notes, checklist, souvenirs et photos</td><td>Sur votre appareil. Si la synchro est activée : aussi sur le serveur, <strong>chiffrées</strong></td><td>Faire fonctionner le carnet et le partager avec les membres du groupe</td></tr>
+            <tr><td>Prénom et couleur de profil, voyages, étapes, réservations, dépenses, notes, checklist, souvenirs et photos</td><td>Sur votre appareil. Si vous choisissez le cloud (tout le carnet, ou seulement les voyages que vous y mettez) : aussi sur le serveur, <strong>chiffrées</strong></td><td>Faire fonctionner le carnet et le partager avec les membres du groupe</td></tr>
             <tr><td>Empreinte du code du carnet (le code lui-même n'est jamais envoyé)</td><td>Serveur</td><td>Ranger séparément les données de chaque carnet</td></tr>
             <tr><td>Documents de voyage (type, date d'expiration ; numéro et note facultatifs) et reçus photographiés, moyen de remboursement indiqué dans un profil (facultatif), votes aux sondages, listes de courses, billets et documents joints aux fiches, positions enregistrées avec « Je suis ici » (seulement quand vous touchez le bouton)</td><td>Comme les autres fiches : sur votre appareil, et sur le serveur si la synchro est activée</td><td>Alertes d'expiration avant le départ, partage des dépenses</td></tr>
             <tr><td><strong>Suivi du voyage</strong> (désactivé par défaut) : positions relevées environ tous les 300 m (tous les 50 m en « mode trajet », que vous lancez vous-même), <strong>uniquement quand l'appli est ouverte</strong> et seulement pendant un voyage en cours. Les positions déjà enregistrées dans vos photos de souvenirs peuvent compléter la route affichée sur votre appareil</td><td>Sur votre appareil, et pour les membres du voyage partagé (chiffré)</td><td>Tracer votre route sur la carte et dans le film du voyage</td></tr>
@@ -62,6 +63,7 @@
             <tr><td>Compteur d'installations : un identifiant tiré au hasard (sans lien avec vous ni avec vos voyages), le type d'appareil (iPhone, Android, ordinateur) et la date, envoyés une seule fois</td><td>Serveur</td><td>Connaître le nombre d'installations de l'appli</td></tr>
             <tr><td>Statistiques globales du serveur : place totale occupée par les photos, nombre de carnets et de fiches (chiffres d'ensemble, sans contenu ni identité)</td><td>Serveur ; consultées par l'éditeur</td><td>Surveiller le stockage et éviter de dépasser les limites du service</td></tr>
             <tr><td><strong>Notifications</strong> (désactivées par défaut, seulement si vous les activez) : l'adresse d'abonnement fournie par votre téléphone (Apple, Google ou Mozilla), un identifiant tiré au hasard pour cet appareil, les catégories que vous avez choisies (dépenses, réservations, souvenirs, sondages, courses, rappels), votre fuseau horaire et l'option « ne pas déranger la nuit ». Le <strong>texte</strong> des notifications et des rappels programmés est chiffré par les téléphones : le serveur ne peut pas le lire</td><td>Serveur, rangé avec l'empreinte du carnet ou du voyage concerné</td><td>Prévenir les membres d'un voyage de ce qui a été ajouté, et vous envoyer vos rappels à l'heure prévue</td></tr>
+            <tr><td>Date du dernier effacement d'un carnet ou d'un voyage partagé, rangée avec son empreinte anonyme</td><td>Serveur</td><td>Prévenir les autres membres que le voyage a été vidé du serveur et leur proposer de le remettre en ligne avec ce que leur téléphone a gardé</td></tr>
             <tr><td>Adresse IP, date et taille des envois</td><td>Serveur et journaux techniques de l'hébergeur</td><td>Acheminer les données, sécurité, protection contre les abus</td></tr>
         </table>
         <p style="font-size:0.9em;color:#666;">Bases légales : exécution du service demandé (art. 6.1.b du RGPD) et intérêt légitime à sécuriser le service (art. 6.1.f).</p>
@@ -71,6 +73,7 @@
     <h2>3. Chiffrement de bout en bout</h2>
     <div class="box">
         <p>Avant tout envoi, votre appareil chiffre les données avec <strong>AES-256-GCM</strong>, à l'aide d'une clé dérivée du code de votre carnet (PBKDF2, 200 000 itérations). Le serveur ne reçoit qu'une empreinte de ce code, qui ne permet pas de déchiffrer. Les noms des photos sont eux aussi remplacés par des identifiants chiffrés.</p>
+        <p>Pour afficher le texte des notifications, la clé de chaque voyage est gardée dans l'appli sur votre téléphone (sur iPhone, sous une forme que la partie « notifications » de l'appli peut relire). Elle ne quitte jamais votre appareil.</p>
     </div>
     <div class="warn">
         <p><strong>Code perdu = carnet irrécupérable</strong> depuis le serveur. Personne, pas même l'éditeur, ne peut le retrouver. Conservez votre code en lieu sûr et faites des exports réguliers.</p>
@@ -128,6 +131,7 @@
             <li><strong>Sur le serveur</strong> : tant que le carnet est utilisé. Un carnet sans aucune activité depuis 24 mois est supprimé automatiquement du serveur (ses données restent sur vos appareils). Une photo retirée d'un souvenir, ou un souvenir ou voyage supprimé, est effacée du serveur.</li>
             <li><strong>Notifications</strong> : l'abonnement d'un appareil est effacé du serveur dès que vous désactivez les notifications, quand le téléphone ne l'accepte plus, ou quand le carnet est effacé. Un rappel programmé est effacé dès son envoi (au plus tard 2 jours après l'heure prévue).</li>
             <li><strong>Signalements</strong> : en cas de signalement, l'éditeur garde un journal (date, empreinte anonyme du carnet, action menée, motif indiqué par la personne qui signale) le temps nécessaire au traitement et à d'éventuelles suites judiciaires, au plus 3 ans.</li>
+            <li><strong>Date d'effacement</strong> d'un carnet ou d'un voyage partagé : au plus 24 mois.</li>
             <li><strong>Journaux techniques de l'hébergeur</strong> : selon la politique de Cloudflare, en général quelques jours.</li>
         </ul>
     </div>
@@ -139,7 +143,7 @@
             <li><strong>Accès et portabilité</strong> : Plus → Partage &amp; profils → Exporter (fichier .json lisible).</li>
             <li><strong>Rectification</strong> : modifiez directement vos fiches et votre profil dans l'Application.</li>
             <li><strong>Effacement sur l'appareil</strong> : Plus → Partage &amp; profils → « Effacer ce téléphone ».</li>
-            <li><strong>Effacement sur le serveur</strong> : Plus → Partage &amp; profils → « 🗑 Supprimer mes données du serveur » : les fiches et photos du carnet choisi sont effacées immédiatement du serveur, pour tous ses membres. Vous pouvez aussi écrire à l'adresse de contact ci-dessus. Voir aussi la page <a href="suppression-donnees.html">Supprimer mes données</a>.</li>
+            <li><strong>Effacement sur le serveur</strong> : bouton ☁️ Cloud en haut de l'écran, ou Plus → Partage &amp; profils → « 🗑 Supprimer mes données du serveur » : les fiches, photos et abonnements aux notifications du carnet choisi sont effacés immédiatement du serveur, pour tous ses membres. Les autres membres d'un voyage partagé gardent ce que leur téléphone contient déjà et peuvent le remettre en ligne. En quittant le cloud, vous pouvez aussi couper l'accès de vos abonnés. Vous pouvez aussi écrire à l'adresse de contact ci-dessus. Voir aussi la page <a href="suppression-donnees.html">Supprimer mes données</a>.</li>
         </ul>
         <p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL : <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">cnil.fr/fr/plaintes</a>.</p>
     </div>
