@@ -3376,4 +3376,5 @@ I18N.load({"🔑 Mon code principal":"🔑 メインコード",
 "🌐 Site":"🌐 サイト",
 "🧭 Explorer les étapes du voyage":"🧭 旅の行き先を探検",
 "Les plus beaux endroits, quoi faire, où manger… Touche une ville pour partir à la découverte.":"最高の名所、楽しみ方、食事処… 街をタップして探検を始めよう。",
-"🧭 Explorer {0}":"🧭 {0}を探検"});
+"🧭 Explorer {0}":"🧭 {0}を探検",
+"Abandonner la création du voyage ?":"旅行の作成をやめますか？"});

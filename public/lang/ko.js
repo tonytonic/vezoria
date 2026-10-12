@@ -3376,4 +3376,5 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "🌐 Site":"🌐 웹사이트",
 "🧭 Explorer les étapes du voyage":"🧭 여행지 탐험하기",
 "Les plus beaux endroits, quoi faire, où manger… Touche une ville pour partir à la découverte.":"가장 아름다운 곳, 할 것, 먹을 곳… 도시를 눌러 탐험을 시작하세요.",
-"🧭 Explorer {0}":"🧭 {0} 탐험"});
+"🧭 Explorer {0}":"🧭 {0} 탐험",
+"Abandonner la création du voyage ?":"여행 만들기를 그만둘까요?"});

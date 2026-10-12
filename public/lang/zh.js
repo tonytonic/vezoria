@@ -3376,4 +3376,5 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "🌐 Site":"🌐 网站",
 "🧭 Explorer les étapes du voyage":"🧭 探索旅途的每一站",
 "Les plus beaux endroits, quoi faire, où manger… Touche une ville pour partir à la découverte.":"最美的地方、玩什么、吃什么……点一座城市，开始探索。",
-"🧭 Explorer {0}":"🧭 探索{0}"});
+"🧭 Explorer {0}":"🧭 探索{0}",
+"Abandonner la création du voyage ?":"放弃创建这次旅行？"});

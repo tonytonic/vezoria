@@ -434,4 +434,5 @@ I18N.load({
 "🌐 Site":"🌐 Website",
 "🧭 Explorer les étapes du voyage":"🧭 Die Reiseetappen erkunden",
 "Les plus beaux endroits, quoi faire, où manger… Touche une ville pour partir à la découverte.":"Die schönsten Orte, was man unternehmen kann, wo man isst … Tippe auf eine Stadt und entdecke sie.",
-"🧭 Explorer {0}":"🧭 {0} erkunden"});
+"🧭 Explorer {0}":"🧭 {0} erkunden",
+"Abandonner la création du voyage ?":"Erstellung der Reise abbrechen?"});

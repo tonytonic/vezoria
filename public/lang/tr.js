@@ -3376,4 +3376,5 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "🌐 Site":"🌐 Web sitesi",
 "🧭 Explorer les étapes du voyage":"🧭 Seyahatin duraklarını keşfet",
 "Les plus beaux endroits, quoi faire, où manger… Touche une ville pour partir à la découverte.":"En güzel yerler, ne yapılır, nerede yenir… Keşfetmek için bir şehre dokun.",
-"🧭 Explorer {0}":"🧭 {0} keşfet"});
+"🧭 Explorer {0}":"🧭 {0} keşfet",
+"Abandonner la création du voyage ?":"Seyahat oluşturmaktan vazgeçilsin mi?"});

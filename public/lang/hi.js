@@ -3376,4 +3376,5 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "🌐 Site":"🌐 वेबसाइट",
 "🧭 Explorer les étapes du voyage":"🧭 यात्रा के पड़ाव खोजो",
 "Les plus beaux endroits, quoi faire, où manger… Touche une ville pour partir à la découverte.":"सबसे सुंदर जगहें, क्या करें, कहाँ खाएँ… खोज शुरू करने के लिए किसी शहर को छुओ।",
-"🧭 Explorer {0}":"🧭 {0} खोजो"});
+"🧭 Explorer {0}":"🧭 {0} खोजो",
+"Abandonner la création du voyage ?":"यात्रा बनाना छोड़ दें?"});

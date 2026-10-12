@@ -3376,4 +3376,5 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "🌐 Site":"🌐 الموقع",
 "🧭 Explorer les étapes du voyage":"🧭 استكشف محطات الرحلة",
 "Les plus beaux endroits, quoi faire, où manger… Touche une ville pour partir à la découverte.":"أجمل الأماكن، ما تفعله، أين تأكل… المس مدينة لتبدأ الاكتشاف.",
-"🧭 Explorer {0}":"🧭 استكشف {0}"});
+"🧭 Explorer {0}":"🧭 استكشف {0}",
+"Abandonner la création du voyage ?":"هل تريد التخلي عن إنشاء الرحلة؟"});

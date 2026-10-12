@@ -3376,4 +3376,5 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "🌐 Site":"🌐 Сайт",
 "🧭 Explorer les étapes du voyage":"🧭 Исследуй этапы поездки",
 "Les plus beaux endroits, quoi faire, où manger… Touche une ville pour partir à la découverte.":"Самые красивые места, чем заняться, где поесть… Нажми на город, чтобы открыть его.",
-"🧭 Explorer {0}":"🧭 Исследовать: {0}"});
+"🧭 Explorer {0}":"🧭 Исследовать: {0}",
+"Abandonner la création du voyage ?":"Отменить создание поездки?"});
