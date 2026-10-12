@@ -31,6 +31,26 @@ async function sha256(text) {
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+// ── Limite d'envois par connexion (protection contre les robots) ──
+// On ne garde qu'une empreinte de l'adresse IP (jamais l'adresse), par heure, effacée après 2 h.
+let rateReady = false;
+async function rateIp(env, request, bucket, limit, cost = 1) {
+  try {
+    const ip = request.headers.get('CF-Connecting-IP') || ''; if (!ip || !env.DB) return true;
+    const enc = new TextEncoder().encode('vz-ip:' + ip + ':' + bucket);
+    const key = [...new Uint8Array(await crypto.subtle.digest('SHA-256', enc))].slice(0, 12).map(b => b.toString(16).padStart(2, '0')).join('');
+    const hour = Math.floor(Date.now() / 3600e3);
+    if (!rateReady) { await env.DB.prepare('CREATE TABLE IF NOT EXISTS rate_ip (k TEXT PRIMARY KEY, hour INTEGER NOT NULL, n INTEGER NOT NULL)').run(); rateReady = true; }
+    const r = await env.DB.prepare('SELECT hour, n FROM rate_ip WHERE k = ?1').bind(key).first();
+    if (r && r.hour === hour && (cost ? r.n + cost > limit : r.n >= limit)) return false;
+    if (!cost) return true;   // simple vérification, sans compter
+    await env.DB.prepare('INSERT INTO rate_ip (k, hour, n) VALUES (?1, ?2, ?3) ON CONFLICT (k) DO UPDATE SET n = CASE WHEN rate_ip.hour = ?2 THEN rate_ip.n + ?3 ELSE ?3 END, hour = ?2').bind(key, hour, cost).run();
+    if (Math.random() < 0.01) await env.DB.prepare('DELETE FROM rate_ip WHERE hour < ?1').bind(hour - 2).run();
+    return true;
+  } catch (e) { return true; }   // en cas de souci, on ne bloque jamais un vrai voyageur
+}
+const TOO_MANY = 'Trop d’envois depuis cette connexion : réessaie dans une heure. — Too many uploads from this connection: try again in an hour.';
+
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 
 async function spaceOf(request, env) {
@@ -108,6 +128,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
   try { body = await request.json(); } catch { return json({ error: 'Requête illisible' }, 400); }
   const since = Math.max(0, Number(body.since) || 0);
   const changes = Array.isArray(body.changes) ? body.changes.slice(0, MAX_CHANGES) : [];
+  if (!(await rateIp(env, request, 'sy', 6000))) return json({ error: TOO_MANY, retry: 3600 }, 429);
+  if (changes.length && !(await rateIp(env, request, 'sc', 50000, changes.length))) return json({ error: TOO_MANY, retry: 3600 }, 429);
   const now = Date.now();
 
   if (changes.length) {
