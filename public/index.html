@@ -1679,6 +1679,11 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .hero-foot .cv-hero-qr{margin-left:0}
 .hero-foot.hs-on .cv-av-names{display:none}
 .hero-foot.hs-on .cv-av{margin-right:-11px}
+.hero-foot.hs-on .cv-avs{flex:0 0 auto;margin-right:10px}
+.hero-foot.hs-on .cv-avs .cv-av:last-of-type{margin-right:0}
+.hero-foot.hs-stack{flex-wrap:wrap;row-gap:12px}
+.hero-foot.hs-stack .cv-hstats{order:-1;flex:1 1 100%;margin:0;justify-content:space-around}
+@media (max-width:420px){.hero-foot.hs-on .hs-c{min-width:36px;padding:0 2px}.hero-foot.hs-on .hs-c b{font-size:.95rem}.hero-foot.hs-on .hs-c small{font-size:.56rem}.hero-foot.hs-on .cv-hstats{padding:5px 3px;margin-right:6px}}
 .hero-foot.hs-on .hero-count{flex:0 0 auto}
 .hero-foot.hs-on .hero-count b{font-size:1.65rem;white-space:nowrap}
 .hero-foot.hs-on .cv-hero-qr svg{width:40px;height:40px}
@@ -2557,6 +2562,11 @@ const CV = (function(){
     };
     box.innerHTML = cell('fw', fw, 'abonnés') + cell('lk', lk, 'j’aime') + cell('fo', fo, 'suivis');
     box.style.display = ''; box.parentNode.classList.add('hs-on');
+    // grands caractères (réglage du téléphone) ou petit écran : si ça ne tient pas sur une ligne, les compteurs passent au-dessus
+    const ft = box.parentNode; ft.classList.remove('hs-stack');
+    requestAnimationFrame(()=>{ try { const av = ft.querySelector('.cv-avs'), q = document.getElementById('cv-hero-qr'), c = document.getElementById('cv-count');
+      const a = av.getBoundingClientRect(), b = box.getBoundingClientRect(), qq = q.getBoundingClientRect(), cc = c.getBoundingClientRect();
+      if(cc.right > ft.getBoundingClientRect().right + 2 || b.left < a.right + 4 || qq.left < b.right + 2 || cc.left < qq.right) ft.classList.add('hs-stack'); } catch(e){} });
     if(!old || old.fw !== fw || old.lk !== lk || old.fo !== fo){ M.hStat = now; try { persist(); } catch(e){} }
   }
   function renderHeader(){
@@ -12360,7 +12370,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13c';
+  const BUILD = '2026-10-13d';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
