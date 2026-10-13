@@ -673,4 +673,16 @@ I18N.load({
 "📤 Photos pour tes abonnés… ({0} restantes)":"📤 Fotos für deine Follower… (noch {0})",
 "Musique":"Musik",
 "🔇 Sans":"🔇 Ohne",
-"Sans":"Ohne"});
+"Sans":"Ohne",
+"👥 Partager":"👥 Teilen",
+"🔑 J’ai reçu un code":"🔑 Ich habe einen Code bekommen",
+"J’ai reçu un code":"Ich habe einen Code bekommen",
+"💌 Faire découvrir Vezoria":"💌 Vezoria weiterempfehlen",
+"Faire découvrir Vezoria":"Vezoria weiterempfehlen",
+"👀 Voir comme un abonné":"👀 Als Follower ansehen",
+"👥 Partager, inviter, suivre":"👥 Teilen, einladen, folgen",
+"👥 Partager ce voyage":"👥 Diese Reise teilen",
+"Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.":"Mitreisende, Follower, Reisen, denen du folgst, erhaltene Codes und der QR-Code der App: alles an einem Ort.",
+"👥 Ouvrir Partager":"👥 Teilen öffnen",
+"👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».":"👥 Mitreisende einladen, für Follower veröffentlichen, einer Reise beitreten: alles unter „Teilen“.",
+"🔑 Codes de mes voyages":"🔑 Codes meiner Reisen"});

@@ -3604,4 +3604,16 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "📤 Photos pour tes abonnés… ({0} restantes)":"📤 तुम्हारे फ़ॉलोअर्स के लिए फ़ोटो… ({0} बाकी)",
 "Musique":"संगीत",
 "🔇 Sans":"🔇 बिना",
-"Sans":"बिना"});
+"Sans":"बिना",
+"👥 Partager":"👥 शेयर करें",
+"🔑 J’ai reçu un code":"🔑 मुझे एक कोड मिला",
+"J’ai reçu un code":"मुझे एक कोड मिला",
+"💌 Faire découvrir Vezoria":"💌 Vezoria के बारे में बताएँ",
+"Faire découvrir Vezoria":"Vezoria के बारे में बताएँ",
+"👀 Voir comme un abonné":"👀 फ़ॉलोअर की तरह देखें",
+"👥 Partager, inviter, suivre":"👥 शेयर करें, बुलाएँ, फ़ॉलो करें",
+"👥 Partager ce voyage":"👥 यह यात्रा शेयर करें",
+"Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.":"साथी, फ़ॉलोअर्स, जिन यात्राओं को तुम फ़ॉलो करते हो, मिले कोड और ऐप का QR कोड: सब एक जगह।",
+"👥 Ouvrir Partager":"👥 शेयर खोलें",
+"👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».":"👥 साथियों को बुलाना, फ़ॉलोअर्स के लिए प्रकाशित करना, किसी यात्रा से जुड़ना: सब «शेयर करें» में।",
+"🔑 Codes de mes voyages":"🔑 मेरी यात्राओं के कोड"});
