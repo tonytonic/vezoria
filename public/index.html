@@ -1845,6 +1845,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .wr-none small{font-size:.58rem;font-weight:700}
 </style>
 <style>
+.cp-mus{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}.cp-mus .cp-ch{flex:0 0 auto;white-space:nowrap}
 .ps-bgnote{margin:10px 0 4px;padding:10px 12px;border-radius:14px;background:#fff6e5;color:#5a3b10;font-size:.82rem;line-height:1.4}
 .ps-pill{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom));z-index:700;display:flex;align-items:center;gap:8px;
   max-width:calc(100% - 32px);border:0;border-radius:22px;padding:10px 16px;background:#2a1238;color:#fff;font:inherit;font-size:.82rem;font-weight:700;
@@ -5236,7 +5237,7 @@ const CV = (function(){
     M.pq = M.pq || []; M.pq.push(id);   // seule la grande photo part sur le serveur : la vignette est refaite sur chaque téléphone
   }
   const pqN = () => (M.pq||[]).length;
-  let uploading = false;
+  let uploading = false, upHalt = false;   // upHalt : on arrête les envois (suppression du serveur en cours)
   async function uploadQueue(){
     if(uploading || !(M.pq||[]).length || !photoApi()) return;
     if(!(M.sync.on && M.sync.code) && !(M.spaces||[]).length){ M.pqWait = (M.pq||[]).length; return; }
@@ -5272,7 +5273,7 @@ const CV = (function(){
       M.pq = M.pq.filter(x=>x!==id); syncDot();
       left--; if(left && !(left % 3)){ persist(); cryptShow('🔐 Chiffrement des photos… (' + left + ' restante' + (left > 1 ? 's' : '') + ')'); }
     };
-    const worker = async () => { while(!stop && todo.length){ const id = todo.shift(); try { await one(id); } catch(e){ upErr = upErr || (e && e.message) || String(e); stop = true; } } };
+    const worker = async () => { while(!stop && !upHalt && todo.length){ const id = todo.shift(); try { await one(id); } catch(e){ upErr = upErr || (e && e.message) || String(e); stop = true; } } };
     try { await Promise.all([worker(), worker(), worker()]); }   // 3 envois en même temps : bien plus rapide sur mobile
     catch(e){ upErr = 'réseau : ' + (e && e.message || e); }
     if(/Failed to fetch|NetworkError|Load failed/i.test(upErr)) upErr = 'réseau : ' + upErr;
@@ -9307,6 +9308,7 @@ ${pm.join('\n')}</Document></kml>`;
   const ciZoom = d => d < 25 ? 11 : d < 120 ? 9.5 : d < 500 ? 8 : d < 1500 ? 6.5 : 5;
   async function flyover(id, rec, go){
     id = id || M.trip; if(!R[id]) return;
+    if(ciOpt().mus !== 'off') try { filmAudioInit(); } catch(e){}   // dans le geste : sinon l’iPhone refuse le son
     cineStop();
     closeSheet(true); worldTrip(id);
     for(let k = 0; k < 160 && !(wm && wm.data && wm.data.trips && wm.map); k++) await ciWait(250);
@@ -9326,7 +9328,18 @@ ${pm.join('\n')}</Document></kml>`;
   function flyoverRec(id){ flyover(id, true, 1); }
   /* ── 🌍 Survol 3D : réglages (vitesse, fond de carte, couleur, textes, étapes) ── */
   let ciSp = 1, ciLH = [], CP = null;
-  const CI_DEF = {sp:'n', map:'mix', col:'or', intro:1, cap:1, ph:1, names:1, end:1, sig:1};
+  const CI_DEF = {sp:'n', map:'mix', col:'or', intro:1, cap:1, ph:1, names:1, end:1, sig:1, mus:'1'};
+  // 🎵 musique du survol : mêmes morceaux libres de droits que le film
+  let ciPrevT = null;
+  function ciMusic(o, on){
+    if(!o || o.mus === 'off'){ if(FA && !(FM && FM.playing)) filmAudioStop(); return; }
+    filmAudioInit(); if(!FA) return;
+    const k = Math.max(0, (+o.mus || 1) - 1) % TRACKS.length;
+    if(FA.k !== k || !FA.el.src){ FA.k = k; FA.el.src = TRACKS[k]; }
+    if(on){ FA.on = true; filmAudioStart(); }
+  }
+  function ciMusicOff(){ clearTimeout(ciPrevT); if(FA && !(FM && FM.playing)){ filmAudioStop(); setTimeout(()=>{ if(FA) FA.on = !M.filmMute; }, 1000); } }
+
   const CI_SP = {l:1.45, n:1, r:.62};
   const CI_COL = {or:['#ffd28a','#ffe2a8'], rose:['#ff4f8b','#ffc2d6'], cyan:['#38bdf8','#d4f1ff'], blanc:['#ffffff','#ffffff'], vert:['#4ade80','#d9fbe5']};
   const CI_BASE = {
@@ -9413,6 +9426,7 @@ ${pm.join('\n')}</Document></kml>`;
         <label class="cp-l">Vitesse</label><div class="cp-row">${ch('sp', 'l', '🐢 Lente')}${ch('sp', 'n', 'Normale')}${ch('sp', 'r', '⚡ Rapide')}</div>
         <label class="cp-l">Carte</label><div class="cp-row">${ch('map', 'mix', '🌍 Globe')}${ch('map', 'sat', '🛰️ Satellite')}${ch('map', 'plan', '🗺️ Plan')}${ch('map', 'sombre', '🌑 Sombre')}</div>
         <label class="cp-l">Couleur du trajet</label><div class="cp-row">${sw}</div>
+        <label class="cp-l">Musique</label><div class="cp-row cp-mus">${ch('mus', 'off', '🔇 Sans')}${TRACK_N.map((n, k)=>ch('mus', String(k + 1), '🎵 ' + n)).join('')}</div>
         <label class="cp-l">Afficher</label><div class="cp-row">${tg('intro', 'Titre au début')}${tg('cap', 'Légendes des étapes')}${tg('ph', 'Photos')}${tg('names', 'Noms des villes')}${tg('end', 'Bilan à la fin')}${tg('sig', 'Signature Vezoria')}</div>
         <label class="cp-l">Étapes <span class="cp-n">${n} / ${CP.all.length}</span></label>
         <div class="cp-row"><button type="button" class="cp-ch" onclick="CV.cineSteps('all')">Toutes</button><button type="button" class="cp-ch" onclick="CV.cineSteps('auto')">✨ Les plus belles</button><button type="button" class="cp-ch" onclick="CV.cineSteps('ph')">📷 Avec photo</button></div>
@@ -9421,6 +9435,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="ci-btns"><button type="button" onclick="CV.cineGo(0)">▶ Lancer le survol</button>${cineCanRec() ? `<button type="button" onclick="CV.cineGo(1)">⏺ Enregistrer la vidéo</button>` : ''}
         <button type="button" onclick="CV.cineOpen()">${CP.open ? '✓ Fermer les réglages' : '⚙️ Personnaliser'}</button></div></div>`;
     const cd = el.querySelector('.cp-card'); if(cd) cd.scrollTop = keepY;
+    const mo = el.querySelector('.cp-mus .on'); if(mo) mo.parentNode.scrollLeft = Math.max(0, mo.offsetLeft - 40);
     hydrate();
   }
   function ciSave(){
@@ -9434,6 +9449,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(k === 'title'){ CP.title = el.value.trim(); const b = document.getElementById('cp-t'); if(b) b.textContent = CP.title || CP.t.titre; ciSave(); return; }
     if(v === undefined) CP.o[k] = CP.o[k] ? 0 : 1; else CP.o[k] = v;
     if(k === 'map' || k === 'names') ciLook(CP.o);
+    if(k === 'mus'){ clearTimeout(ciPrevT); if(v === 'off') ciMusicOff(); else { ciMusic(CP.o, true); ciPrevT = setTimeout(ciMusicOff, 8000); } }   // écoute de 8 s
     ciSave(); cinePreDraw();
   }
   function cineStep(el){
@@ -9465,7 +9481,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function cineGrab(){ if(!CI || !CI.snap) return; try { const c = wm.map.getCanvas(), x = CI.snap.getContext('2d'); x.drawImage(c, 0, 0, CI.snap.width, CI.snap.height); } catch(e){} }
   function cineStop(){
-    ciSp = 1; ciLookOff(); CP = null; const pp = document.getElementById('wm-cpre'); if(pp) pp.remove();
+    ciSp = 1; ciLookOff(); ciMusicOff(); CP = null; const pp = document.getElementById('wm-cpre'); if(pp) pp.remove();
     if(!CI){ const w0 = document.getElementById('cv-world'); if(w0) w0.classList.remove('wm-cine'); return; } const ci = CI; ci.stop = true; CI = null;
     if(ci.raf) cancelAnimationFrame(ci.raf); if(ci.lineRaf) cancelAnimationFrame(ci.lineRaf);
     if(ci.rec && ci.rec.state !== 'inactive'){ ci.cancel = true; try { ci.rec.stop(); } catch(e){} }
@@ -9498,6 +9514,7 @@ ${pm.join('\n')}</Document></kml>`;
   async function cineStart(t, seq, rec, o){
     const w = document.getElementById('cv-world'); if(!w) return;
     o = Object.assign({}, CI_DEF, o || ciOpt()); ciSp = CI_SP[o.sp] || 1;
+    clearTimeout(ciPrevT); if(o.mus !== 'off') ciMusic(o, true); else ciMusicOff();
     stopStory(); wm.spin = false; w.classList.add('wm-cine'); ciLook(o);
     const ov = document.createElement('div'); ov.id = 'wm-cine'; if(!o.cap) ov.className = 'no-cap';
     ov.innerHTML = `<div class="ci-bar"><button type="button" class="ci-x" onclick="CV.cineStop()" aria-label="Fermer">✕</button><span class="ci-rec" id="ci-rec"></span></div>
@@ -9552,6 +9569,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(e){ e.hidden = false; e.innerHTML = `${o.end ? `<b data-notr>${esc(t.titre)}</b><span>${stats}</span>` : ''}
       <div class="ci-btns"><button type="button" onclick="CV.flyover('${t.id}',0,1)">↺ Revoir</button>${cineCanRec() ? `<button type="button" onclick="CV.flyoverRec('${t.id}')">⏺ Enregistrer la vidéo</button>` : ''}<button type="button" onclick="CV.flyover('${t.id}')">⚙️ Personnaliser</button><button type="button" onclick="CV.cineStop()">🌍 Rester sur le globe</button></div><small class="ci-cred" data-notr>${esc(ciCred(o))}</small>`; }
     if(rec) setTimeout(cineRecEnd, 3500);
+    setTimeout(()=>{ if(CI && CI.fin) ciMusicOff(); }, rec ? 3300 : 5000);
   }
   const cineCanRec = () => !!(document.createElement('canvas').captureStream && typeof MediaRecorder !== 'undefined');
   async function cineRecStart(){
@@ -9581,7 +9599,8 @@ ${pm.join('\n')}</Document></kml>`;
     };
     draw();
     const types = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'], mime = types.find(t => MediaRecorder.isTypeSupported(t)) || '';
-    let rec; try { rec = new MediaRecorder(cv.captureStream(30), mime ? {mimeType:mime, videoBitsPerSecond:5000000} : {}); } catch(e){ alert('Enregistrement impossible : ' + e.message); return false; }
+    let rec; try { const stm = cv.captureStream(30); try { if(CI.o.mus !== 'off' && FA && FA.dest) FA.dest.stream.getAudioTracks().forEach(t=>stm.addTrack(t)); } catch(e){}
+    rec = new MediaRecorder(stm, mime ? {mimeType:mime, videoBitsPerSecond:5000000} : {}); } catch(e){ alert('Enregistrement impossible : ' + e.message); return false; }
     const chunks = [], ci = CI, name = 'survol-' + String(ci.t.titre || 'voyage').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     rec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
     rec.onstop = async () => {
@@ -11164,6 +11183,12 @@ ${pm.join('\n')}</Document></kml>`;
   async function serverWipe(code){
     const main = !code; code = code || M.sync.code; if(!code) return;
     if(!(await uiConfirm('Supprimer définitivement ce carnet du serveur, pour tout le monde ?\nCette action ne peut pas être annulée.'))) return;
+    // d’abord on arrête les envois en cours (sinon des photos arriveraient encore après la suppression)
+    upHalt = true; for(let k = 0; k < 150 && uploading; k++) await new Promise(r=>setTimeout(r, 200));
+    // la file d’attente des autres voyages est gardée ; seules les photos de ce carnet en sortent
+    const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
+    const codeOfPh = id => { const r = owner[String(id).replace(/\.t$/,'')]; if(!r) return null; const t = targets(r)[0]; return t === 'main' ? M.sync.code : t; };
+    const pqKeep = (M.pq||[]).filter(id=>codeOfPh(id) !== code);
     try {
       const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}});
       let j = {}; try { j = await r.json(); } catch(e){}
@@ -11172,9 +11197,10 @@ ${pm.join('\n')}</Document></kml>`;
       if(keep){ if(main){ M.sync.since = 0; M.dirty = []; } else { const sp = spaceObj(code); if(sp){ sp.since = 0; sp.dirty = []; } } }
       else if(main){ M.sync.on = false; M.sync.since = 0; M.dirty = []; }
       else { Object.keys(TS()).forEach(tid=>{ if(TS()[tid] === code) delete TS()[tid]; }); M.spaces = (M.spaces||[]).filter(x=>x.code !== code); }
-      M.pq = []; M.pgone = []; persist(); closeSheet(true); refresh();
+      M.pq = pqKeep; M.pgone = (M.pgone||[]).filter(g=>g.code !== code); persist(); closeSheet(true); refresh();
       if(keep) alert('Le code est gardé. Pour tout remettre sur le serveur : ' + (main ? 'Réglages' : 'Mes voyages → le voyage → code') + ' → « Tout renvoyer ».');
     } catch(e){ alert('Suppression impossible : ' + e.message); }
+    finally { upHalt = false; }
   }
   const coffeeOn = () => !!COFFEE_URL && !/TON_PSEUDO/.test(COFFEE_URL) && !isPlay();
   function coffeeBox(){
@@ -12554,6 +12580,7 @@ ${pm.join('\n')}</Document></kml>`;
       let left = todo.length, stop = false; const shown = left > 6;
       if(shown) cryptShow('📤 Photos pour tes abonnés… (' + left + ')');
       const one = async ([code, id]) => {
+        if(!Object.values(FT()).includes(code)){ M.fq = (M.fq||[]).filter(x=>x[0] !== code); return; }
         // abonnés : uniquement la vignette (≈ 30 à 50 Ko), jamais la grande photo → 2 à 3 fois moins de place sur le serveur
         let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
         if(!tb){ let o = null; try { o = await IDB.get(id); } catch(e){} if(o && o.blob) try { tb = await shrink(o.blob, 480, .74); } catch(e){} }
@@ -12570,7 +12597,20 @@ ${pm.join('\n')}</Document></kml>`;
       if(shown) cryptHide(left ? '⏳ Photos des abonnés : la suite part à la prochaine synchro' : '👀 Photos envoyées à tes abonnés');
     } catch(e){} finally { feedUp = false; persist(); }
   }
-  function feedAll(){ Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); feedUpload(); }
+  // vignettes d’un voyage dont la publication est arrêtée : effacées du serveur (4 à la fois, reprend à la prochaine synchro si coupé)
+  let feedDel = false;
+  async function feedPurge(){
+    if(feedDel || !(M.fdel||[]).length || !photoApi()) return; feedDel = true;
+    try {
+      while((M.fdel||[]).length){
+        const batch = M.fdel.slice(0, 4); let ok = true;
+        await Promise.all(batch.map(async ([code, id])=>{ try { const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(id + '.t', code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}});
+          if(!r.ok && r.status !== 404 && r.status !== 405) ok = false; } catch(e){ ok = false; } }));
+        if(!ok) break; M.fdel = M.fdel.slice(batch.length); if(!(M.fdel.length % 40)) persist();
+      }
+    } finally { feedDel = false; persist(); }
+  }
+  function feedAll(){ feedPurge(); Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); feedUpload(); }
   setInterval(()=>{ if(document.visibilityState === 'visible' && Object.keys(FT()).length) feedAll(); }, 60000);
   setTimeout(feedAll, 5000);
   async function feedPublish(tid){
@@ -12592,7 +12632,9 @@ ${pm.join('\n')}</Document></kml>`;
     const c = FT()[tid]; if(!c) return;
     if(!(await uiConfirm('Arrêter la publication ? Tes abonnés ne verront plus ce voyage.'))) return;
     const out = list('feed', f=>f.trip===ftId(tid)).map(f=>Object.assign(clone(f), {deleted:true})); if(R[ftId(tid)]) out.push(Object.assign(clone(R[ftId(tid)]), {deleted:true}));
-    putQuiet(out); syncNow().then(()=>{ delete FT()[tid]; delete TS()[ftId(tid)]; M.spaces = (M.spaces||[]).filter(x=>x.code !== c); persist(); refresh(); });
+    putQuiet(out); syncNow().then(()=>{ delete FT()[tid]; delete TS()[ftId(tid)]; M.spaces = (M.spaces||[]).filter(x=>x.code !== c);
+      M.fdel = (M.fdel||[]).concat(Object.keys((M.fup||{})[c] || {}).map(id=>[c, id])); if(M.fup) delete M.fup[c]; M.fq = (M.fq||[]).filter(x=>x[0] !== c);
+      persist(); refresh(); feedPurge(); });
     toast('👀 Publication arrêtée');
   }
   // côté abonné
@@ -12802,7 +12844,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13j';
+  const BUILD = '2026-10-13k';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
