@@ -670,4 +670,7 @@ I18N.load({
 "⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ Followers’ photos: the rest goes at the next sync",
 "👀 Photos envoyées à tes abonnés":"👀 Photos sent to your followers",
 "📤 Photos pour tes abonnés… ({0})":"📤 Photos for your followers… ({0})",
-"📤 Photos pour tes abonnés… ({0} restantes)":"📤 Photos for your followers… ({0} left)"});
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 Photos for your followers… ({0} left)",
+"Musique":"Music",
+"🔇 Sans":"🔇 None",
+"Sans":"None"});

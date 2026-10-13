@@ -3601,4 +3601,7 @@ I18N.load({"🔑 Mon code principal":"🔑 メインコード",
 "⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ フォロワー向けの写真：残りは次の同期で送信",
 "👀 Photos envoyées à tes abonnés":"👀 フォロワーに写真を送りました",
 "📤 Photos pour tes abonnés… ({0})":"📤 フォロワー向けの写真…（{0}）",
-"📤 Photos pour tes abonnés… ({0} restantes)":"📤 フォロワー向けの写真…（残り{0}）"});
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 フォロワー向けの写真…（残り{0}）",
+"Musique":"音楽",
+"🔇 Sans":"🔇 なし",
+"Sans":"なし"});

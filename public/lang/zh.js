@@ -3601,4 +3601,7 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ 关注者的照片：剩下的将在下次同步时发送",
 "👀 Photos envoyées à tes abonnés":"👀 照片已发送给你的关注者",
 "📤 Photos pour tes abonnés… ({0})":"📤 正在发送给关注者的照片…（{0}）",
-"📤 Photos pour tes abonnés… ({0} restantes)":"📤 正在发送给关注者的照片…（剩余 {0}）"});
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 正在发送给关注者的照片…（剩余 {0}）",
+"Musique":"音乐",
+"🔇 Sans":"🔇 无",
+"Sans":"无"});

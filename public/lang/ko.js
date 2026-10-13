@@ -3601,4 +3601,7 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ 팔로워 사진: 나머지는 다음 동기화 때 보내요",
 "👀 Photos envoyées à tes abonnés":"👀 팔로워에게 사진을 보냈어요",
 "📤 Photos pour tes abonnés… ({0})":"📤 팔로워를 위한 사진… ({0})",
-"📤 Photos pour tes abonnés… ({0} restantes)":"📤 팔로워를 위한 사진… ({0}장 남음)"});
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 팔로워를 위한 사진… ({0}장 남음)",
+"Musique":"음악",
+"🔇 Sans":"🔇 없음",
+"Sans":"없음"});

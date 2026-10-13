@@ -3601,4 +3601,7 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ Takipçi fotoğrafları: kalanı bir sonraki eşitlemede gider",
 "👀 Photos envoyées à tes abonnés":"👀 Fotoğraflar takipçilerine gönderildi",
 "📤 Photos pour tes abonnés… ({0})":"📤 Takipçilerin için fotoğraflar… ({0})",
-"📤 Photos pour tes abonnés… ({0} restantes)":"📤 Takipçilerin için fotoğraflar… ({0} kaldı)"});
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 Takipçilerin için fotoğraflar… ({0} kaldı)",
+"Musique":"Müzik",
+"🔇 Sans":"🔇 Müziksiz",
+"Sans":"Müziksiz"});

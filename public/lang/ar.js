@@ -3601,4 +3601,7 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ صور المتابعين: الباقي في المزامنة القادمة",
 "👀 Photos envoyées à tes abonnés":"👀 أُرسلت الصور إلى متابعيك",
 "📤 Photos pour tes abonnés… ({0})":"📤 صور لمتابعيك… ({0})",
-"📤 Photos pour tes abonnés… ({0} restantes)":"📤 صور لمتابعيك… (متبقٍ {0})"});
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 صور لمتابعيك… (متبقٍ {0})",
+"Musique":"الموسيقى",
+"🔇 Sans":"🔇 بدون",
+"Sans":"بدون"});

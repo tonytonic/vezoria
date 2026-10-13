@@ -3601,4 +3601,7 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ फ़ॉलोअर्स की फ़ोटो: बाकी अगले सिंक में जाएँगी",
 "👀 Photos envoyées à tes abonnés":"👀 फ़ोटो फ़ॉलोअर्स को भेजी गईं",
 "📤 Photos pour tes abonnés… ({0})":"📤 तुम्हारे फ़ॉलोअर्स के लिए फ़ोटो… ({0})",
-"📤 Photos pour tes abonnés… ({0} restantes)":"📤 तुम्हारे फ़ॉलोअर्स के लिए फ़ोटो… ({0} बाकी)"});
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 तुम्हारे फ़ॉलोअर्स के लिए फ़ोटो… ({0} बाकी)",
+"Musique":"संगीत",
+"🔇 Sans":"🔇 बिना",
+"Sans":"बिना"});

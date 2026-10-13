@@ -3601,4 +3601,7 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ Фото для подписчиков: остальное уйдёт при следующей синхронизации",
 "👀 Photos envoyées à tes abonnés":"👀 Фото отправлены подписчикам",
 "📤 Photos pour tes abonnés… ({0})":"📤 Фото для подписчиков… ({0})",
-"📤 Photos pour tes abonnés… ({0} restantes)":"📤 Фото для подписчиков… (осталось {0})"});
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 Фото для подписчиков… (осталось {0})",
+"Musique":"Музыка",
+"🔇 Sans":"🔇 Без музыки",
+"Sans":"Без музыки"});
