@@ -1919,6 +1919,13 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 .ps-ask{display:flex;flex-direction:column;gap:8px;text-align:center}.ps-ask .ui-msg{margin-bottom:4px}.ps-ask small{font-size:.76rem;opacity:.75;margin:-2px 0 4px}
 .ps-ask .v-btn{margin:0}.ps-ask .cv-checkline{justify-content:center;font-size:.82rem;margin-top:4px}
 </style>
+<style>
+.hdr-chips{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.hdr-chips:empty{display:none}
+.hdr-chips span{background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:12px;padding:4px 10px;font-size:.78rem;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+.hdr-chips b{font-weight:800}.hdr-chips i{font-style:normal;opacity:.85}
+.hero-foot .cv-hero-qr{margin-left:auto}
+</style>
 </head>
 <body class="is-public">
 <div class="cv-statusbar"></div>
@@ -1931,7 +1938,7 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
       <button class="cv-me" id="cv-me" onclick="CV.mySheet()" aria-label="Mon profil"></button></div>
     </div>
     <h1 id="hdr-title">Vezoria</h1>
-    <div class="sub" id="hdr-sub"></div>
+    <div class="sub" id="hdr-sub"></div><div class="hdr-chips" id="hdr-chips"></div>
     <div class="hero-foot"><div class="cv-avs" id="cv-avs"></div><button class="cv-hero-qr" id="cv-hero-qr" type="button" onclick="CV.shareSheet()" aria-label="Partager l’appli à un ami (QR code)"></button><div class="hero-count" id="cv-count"></div></div>
   </div>
 </div>
@@ -2374,15 +2381,15 @@ const CV = (function(){
      dans SA langue. Les rappels (départ, enregistrement en ligne, échéances) sont programmés par ce
      téléphone pour lui seul, chiffrés avec sa propre clé. */
   const PUSH_KINDS = [['depense','💶','Dépenses et remboursements'], ['resa','🗓️','Réservations et programme'], ['souv','📸','Souvenirs et photos'],
-    ['sondage','🗳️','Sondages'], ['notes','🛒','Courses et notes'], ['rappel','⏰','Rappels : départ, enregistrement en ligne, échéances'], ['soir','🌙','Le soir en voyage : « raconte ta journée » et souvenirs « il y a un an »']];
-  const PUSH_TPL = {depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
+    ['sondage','🗳️','Sondages'], ['notes','🛒','Courses et notes'], ['social','💬','Abonnés : commentaires, ❤️ et nouveaux abonnés'], ['rappel','⏰','Rappels : départ, enregistrement en ligne, échéances'], ['soir','🌙','Le soir en voyage : « raconte ta journée » et souvenirs « il y a un an »']];
+  const PUSH_TPL = {soc_cm:'💬 {0} a commenté : « {1} »', soc_lk:'❤️ {0} aime ta publication : {1}', soc_fw:'👀 {0} suit maintenant ton voyage', fb_social:'Du nouveau chez tes abonnés', depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
     resa1:'{0} a ajouté au programme : {1}', resaN:'{0} a ajouté {1} éléments au programme', resaCh:'{0} a changé l’horaire : {1}',
     souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
     notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
     depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
     soir:'Comment s’est passée ta journée ? Ajoute tes photos et quelques mots à ton carnet 📸', anniv1:'Il y a un an, tu partais : « {0} » ✨', annivN:'Il y a {1} ans, tu partais : « {0} » ✨', 
     test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés', fb_depense:'Nouvelle dépense dans ton voyage', fb_resa:'Le programme du voyage a changé', fb_souv:'Nouveau souvenir dans ton voyage', fb_sondage:'Nouveau sondage dans ton voyage', fb_notes:'Nouveautés dans les courses et les notes', fb_rappel:'Rappel pour ton voyage'};
-  const PU = () => { const p = M.push || (M.push = {on:false, quiet:true}); p.kinds = Object.assign({depense:1, resa:1, souv:1, sondage:1, notes:1, rappel:1, soir:1}, p.kinds || {}); return p; };
+  const PU = () => { const p = M.push || (M.push = {on:false, quiet:true}); p.kinds = Object.assign({depense:1, resa:1, souv:1, sondage:1, notes:1, rappel:1, soir:1, social:1}, p.kinds || {}); return p; };
   const pushApi = () => { const u = apiUrl(); return u ? u.replace(/\/api\/sync$/, '/api/push') : ''; };
   const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && !!pushApi();
   const isIOSDev = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -2399,7 +2406,18 @@ const CV = (function(){
     const P = PU(), want = PUSH_KINDS.map(k=>k[0]).filter(k=>k !== 'rappel' && P.kinds[k]), codes = new Set();
     if(M.sync.on && M.sync.code) codes.add(M.sync.code);
     Object.entries(TS()).forEach(([tid, c])=>{ if(c && spaceObj(c) && R[tid] && R[tid].type === 'trip') codes.add(c); });
-    return [...codes].map(code=>({code, kinds:want})).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
+    const feeds = P.kinds.social ? Object.values(FT()).filter(Boolean) : [];
+    return [...codes].map(code=>({code, kinds:want.filter(k=>k !== 'social')})).concat(feeds.map(code=>({code, kinds:['social']}))).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
+  }
+  // 🔔 l’auteur est prévenu quand un abonné commente, aime ou commence à suivre (même un abonné sans l’appli)
+  async function socialPush(ftid, s, x){
+    try {
+      const code = TS()[ftid]; if(!code || !pushApi()) return;
+      const ft = R[ftid] || {}, tid = String(ftid).replace(/^ft:/, ''), kk = await keys(code), kid = kk.token.slice(0, 16);
+      const p = {k:'social', who: myName() || 'Un proche', trip: tid, tt: ft.titre || '', it:[{s, x: String(x || '').slice(0, 120)}], n:1};
+      const msg = b64(await seal(te.encode(JSON.stringify(p)), code));
+      await pushPost(code, {a:'send', kind:'social', kid, msg, tag:'social-' + tid});
+    } catch(e){}
   }
   async function pushPost(code, body){
     const r = await fetch(pushApi(), {method:'POST', headers:{'Content-Type':'application/json', 'X-Carnet-Code':await authCode(code)}, body:JSON.stringify(Object.assign({dev:devId()}, body))});
@@ -2718,6 +2736,10 @@ const CV = (function(){
     } else if(t){
       title.textContent = t.titre || 'Voyage';
       sub.textContent = [tripDatesLong(t), t.sous||''].filter(Boolean).join(' · ');
+      { const hc = document.getElementById('hdr-chips'); if(hc){ const sv = list('souv', s=>s.trip === t.id && !s.deleted), nph = sv.reduce((n, s)=>n + (s.photos||[]).length, 0);
+          const ncc = new Set(sv.map(s=>s.cc).filter(Boolean)).size, nd = t.debut && t.fin ? nights(t.debut, t.fin) + 1 : 0;
+          const chip = (ic, n, one, many) => n ? `<span>${ic} <b>${n.toLocaleString()}</b> <i>${n > 1 ? many : one}</i></span>` : '';
+          hc.innerHTML = chip('🗓️', nd, 'jour', 'jours') + chip('📍', sv.length, 'étape', 'étapes') + chip('📸', nph, 'photo', 'photos') + chip('🌍', ncc, 'pays', 'pays'); } }
       pill.textContent = trips().length > 1 ? trips().length + ' voyages' : 'Mes voyages';
       cd.innerHTML = countdown(t);
       const vv = tv(), shown = vv.slice(0, 8);
@@ -2725,7 +2747,7 @@ const CV = (function(){
         + (vv.length > 8 ? `<span class="cv-av" style="background:#444" title="${vv.length - 8} autres">+${vv.length - 8}</span>` : '')
         + `<span class="cv-av-names">${vv.length <= 3 ? vv.map(id=>esc(pname(id))).join(' & ') : vv.slice(0,2).map(id=>esc(pname(id))).join(', ') + ' et ' + (vv.length - 2) + ' autres'}</span>`;
       document.title = 'Vezoria · ' + (t.titre||'Voyage');
-    } else { title.textContent = 'Vezoria'; sub.textContent = 'Ton premier voyage t’attend'; pill.textContent = 'Mes voyages'; cd.innerHTML = ''; av.innerHTML = ''; }
+    } else { { const hc = document.getElementById('hdr-chips'); if(hc) hc.innerHTML = ''; } title.textContent = 'Vezoria'; sub.textContent = 'Ton premier voyage t’attend'; pill.textContent = 'Mes voyages'; cd.innerHTML = ''; av.innerHTML = ''; }
     try { heroStats(!legacy && !!t); } catch(e){}
     try { badgeCheck(); } catch(e){}
     phaseTheme();
@@ -12610,9 +12632,10 @@ ${pm.join('\n')}</Document></kml>`;
       if(!(await uiConfirm('Tu es en mode « sans cloud ».\n\nPour inviter quelqu’un, ce voyage doit aller dans le cloud (chiffré, seulement ce voyage). OK = le mettre dans le cloud et inviter.\nAnnuler = envoyer plutôt un paquet chiffré.'))){ pkgSheet(); return; }
       M.cloud = 'trips'; persist();
     }
-    // nouveau partage : le code est prêt sur le téléphone, mais RIEN ne part avant que l’invitation soit vraiment envoyée
+    // pas encore en ligne : on demande d’abord la permission d’envoyer le voyage sur le serveur
     let fresh = false;
     if(!(TS()[t.id] && spaceObj(TS()[t.id]))){
+      if(!(await uiConfirm('Envoyer « ' + t.titre + ' » sur le serveur ?\nPour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.\nAnnuler = rien ne part.'))){ M.cloud = cloud0; persist(); return; }
       const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t.id] = c; fresh = true; persist();
     }
     const code = TS()[t.id], url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : '';
@@ -12621,11 +12644,10 @@ ${pm.join('\n')}</Document></kml>`;
     const go = () => { if(!fresh) return; fresh = false;   // invitation envoyée : le voyage et ses photos partent maintenant
       Object.values(R).filter(r=>!r.demo && (r.id===t.id || r.trip===t.id)).forEach(r=>markDirty(r.id)); persist(); toast('🔐 Voyage mis en ligne (chiffré)…');
       setTimeout(async ()=>{ try { await photoQueueAll(t.id); persist(); await syncNow(); uploadQueue(); refresh(); } catch(e){} }, 50); };
-    const undo = () => { if(!fresh) return;   // fenêtre fermée sans rien envoyer : on oublie tout, rien n’est parti
-      delete TS()[t.id]; M.spaces = (M.spaces||[]).filter(x=>x.code !== code); M.cloud = cloud0; persist(); toast('Invitation annulée : le voyage reste seulement sur ce téléphone'); };
-    if(navigator.share){ try { await navigator.share({title:t.titre, text}); go(); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ undo(); refresh(); return; } } }
-    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); go(); }
-    catch(e){ const r = await uiPrompt('Copie ce texte :', text); if(r === null) undo(); else go(); }
+    go();
+    if(navigator.share){ try { await navigator.share({title:t.titre, text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
+    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); }
+    catch(e){ await uiPrompt('Copie ce texte :', text); }
     refresh();
   }
   // lien reçu : #rejoindre=CODE (voyage partagé) ou #suivre=CODE (abonné)
@@ -12722,7 +12744,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(!myName()){ const n = (await uiPrompt('Ton prénom (affiché à tes abonnés) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
     if(!feedCode(t.id)){
       if(!(await uiConfirm(`Publier « ${t.titre} » pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.\nUn souvenir marqué « privé » n’est jamais publié.\nIls voient les photos en vignettes (taille réduite).\nTa position n’est jamais montrée, sauf si chaque voyageur l’active lui-même dans le suivi du voyage.\nIls pourront mettre des ❤️ et des commentaires.`))) return;
-      const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); FT()[t.id] = c; persist();
+      const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); FT()[t.id] = c; persist(); setTimeout(()=>{ try { pushRegister(true); } catch(e){} }, 2500);
     }
     feedBuild(t.id); await syncNow(); feedUpload();
     const link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(FT()[t.id]) : '';
@@ -12750,7 +12772,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(sp.err){ alert('⚠️ ' + sp.err); return; }
     const ft = Object.entries(TS()).filter(([k,c])=>c===code && R[k] && R[k].type==='feedtrip' && !R[k].deleted).map(([k])=>R[k])[0];
     if(!ft){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); alert('Aucun voyage publié avec ce code.'); return; }
-    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who: myName() || 'Un proche'}; if(!R[fw.id]) putQuiet([fw]);
+    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who: myName() || 'Un proche'}; if(!R[fw.id]){ putQuiet([fw]); socialPush(ft.id, 'follow', ''); }
     persist(); syncNow(); closeSheet(true); feedView(ft.id); toast('👀 Tu suis « ' + ft.titre + ' »');
   }
   function followSheet(){
@@ -12879,12 +12901,12 @@ ${pm.join('\n')}</Document></kml>`;
     const f = R[fid]; if(!f) return; if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
     const id = 'lk:' + fid + ':' + devId(), cur = R[id];
     putQuiet([{id, type:'like', trip:f.trip, feed:fid, who:myName(), on: !(cur && cur.on)}]); syncNow(); feedPaint(fid);
-    if(!(cur && cur.on)) fxPlay && fxHeart();
+    if(!(cur && cur.on)){ fxPlay && fxHeart(); socialPush(f.trip, 'like', f.titre || f.lieu || ''); }
   }
   async function feedComment(fid){
     const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
     if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
-    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:myName(), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); i.value = ''; syncNow(); feedPaint(fid);
+    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:myName(), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socialPush(f.trip, 'comment', txt); i.value = ''; syncNow(); feedPaint(fid);
   }
   function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="' + (window.VZ_B || '') + 'anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
   function feedPostHTML(f){
@@ -12951,7 +12973,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13q';
+  const BUILD = '2026-10-13s';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
