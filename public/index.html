@@ -12557,22 +12557,27 @@ ${pm.join('\n')}</Document></kml>`;
   // ---------- Inviter dans un voyage en un geste (le lien contient le code) ----------
   async function tripInviteNow(id){
     const t = R[id || M.trip]; if(!t || t.demo) return;
+    const cloud0 = M.cloud;
     if(cloudMode() === 'none' && !tripInCloud(t.id)){
       if(!(await uiConfirm('Tu es en mode « sans cloud ».\n\nPour inviter quelqu’un, ce voyage doit aller dans le cloud (chiffré, seulement ce voyage). OK = le mettre dans le cloud et inviter.\nAnnuler = envoyer plutôt un paquet chiffré.'))){ pkgSheet(); return; }
       M.cloud = 'trips'; persist();
     }
+    // nouveau partage : le code est prêt sur le téléphone, mais RIEN ne part avant que l’invitation soit vraiment envoyée
+    let fresh = false;
     if(!(TS()[t.id] && spaceObj(TS()[t.id]))){
-      const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t.id] = c;
-      Object.values(R).filter(r=>!r.demo && (r.id===t.id || r.trip===t.id)).forEach(r=>markDirty(r.id));
-      persist(); toast('🔐 Voyage mis en ligne (chiffré)…');
-      // en arrière-plan : l’envoi ne bloque pas l’invitation (sur iPhone, la fenêtre « Partager » doit s’ouvrir tout de suite après le geste)
-      setTimeout(async ()=>{ try { await photoQueueAll(t.id); persist(); await syncNow(); uploadQueue(); refresh(); } catch(e){} }, 50);
+      const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t.id] = c; fresh = true; persist();
     }
     const code = TS()[t.id], url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : '';
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
     const text = MSG(`Rejoins notre voyage « ${t.titre} » sur Vezoria 🧳`) + '\n' + (link || url);
-    if(navigator.share){ try { await navigator.share({title:t.titre, text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
-    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
+    const go = () => { if(!fresh) return; fresh = false;   // invitation envoyée : le voyage et ses photos partent maintenant
+      Object.values(R).filter(r=>!r.demo && (r.id===t.id || r.trip===t.id)).forEach(r=>markDirty(r.id)); persist(); toast('🔐 Voyage mis en ligne (chiffré)…');
+      setTimeout(async ()=>{ try { await photoQueueAll(t.id); persist(); await syncNow(); uploadQueue(); refresh(); } catch(e){} }, 50); };
+    const undo = () => { if(!fresh) return;   // fenêtre fermée sans rien envoyer : on oublie tout, rien n’est parti
+      delete TS()[t.id]; M.spaces = (M.spaces||[]).filter(x=>x.code !== code); M.cloud = cloud0; persist(); toast('Invitation annulée : le voyage reste seulement sur ce téléphone'); };
+    if(navigator.share){ try { await navigator.share({title:t.titre, text}); go(); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ undo(); refresh(); return; } } }
+    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); go(); }
+    catch(e){ const r = await uiPrompt('Copie ce texte :', text); if(r === null) undo(); else go(); }
     refresh();
   }
   // lien reçu : #rejoindre=CODE (voyage partagé) ou #suivre=CODE (abonné)
@@ -12898,7 +12903,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13m';
+  const BUILD = '2026-10-13n';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
