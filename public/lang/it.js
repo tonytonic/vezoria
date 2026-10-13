@@ -694,4 +694,7 @@ I18N.load({
 "Cette action ne peut pas être annulée.":"Questa azione non può essere annullata.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Eliminato dal server: {0} schede e {1} foto.",
 "Le voyage reste sur ce téléphone, sans partage.":"Il viaggio resta su questo telefono, non più condiviso.",
-"Invitation annulée : le voyage reste seulement sur ce téléphone":"Invito annullato: il viaggio resta solo su questo telefono"});
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"Invito annullato: il viaggio resta solo su questo telefono",
+"Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.":"I tuoi cari seguono il viaggio (foto, luoghi, racconti) e lasciano ❤️ e commenti. Il resto resta privato.",
+"Pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.":"Durante il viaggio, registra dove sei con foto e un racconto. Lo step finisce nei Ricordi, compare sulle mappe e nel diario.",
+"👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.":"👀 Follower: i tuoi cari seguono il viaggio (foto in miniatura e racconti), mettono ❤️ e commenti."});

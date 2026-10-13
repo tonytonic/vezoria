@@ -694,4 +694,7 @@ I18N.load({
 "Cette action ne peut pas être annulée.":"This cannot be undone.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Deleted from the server: {0} record(s) and {1} photo(s).",
 "Le voyage reste sur ce téléphone, sans partage.":"The trip stays on this phone, no longer shared.",
-"Invitation annulée : le voyage reste seulement sur ce téléphone":"Invitation cancelled: the trip stays on this phone only"});
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"Invitation cancelled: the trip stays on this phone only",
+"Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.":"Your loved ones follow the trip (photos, places, stories) and leave ❤️ and comments. Everything else stays private.",
+"Pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.":"During the trip, record where you are with photos and a story. The step goes into Memories, shows up on the maps and in the diary.",
+"👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.":"👀 Followers: your loved ones follow the trip (photo thumbnails and stories), leave ❤️ and comments."});

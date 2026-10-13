@@ -3625,4 +3625,7 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "Cette action ne peut pas être annulée.":"Bu işlem geri alınamaz.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Sunucudan silindi: {0} kayıt ve {1} fotoğraf.",
 "Le voyage reste sur ce téléphone, sans partage.":"Seyahat bu telefonda kalır, artık paylaşılmaz.",
-"Invitation annulée : le voyage reste seulement sur ce téléphone":"Davet iptal edildi: seyahat yalnızca bu telefonda kalır"});
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"Davet iptal edildi: seyahat yalnızca bu telefonda kalır",
+"Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.":"Yakınların seyahati takip eder (fotoğraflar, yerler, anlatılar), ❤️ ve yorum bırakır. Gerisi gizli kalır.",
+"Pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.":"Seyahat sırasında nerede olduğunu fotoğraflar ve bir anlatıyla kaydet. Adım Anılar’a girer, haritalarda ve günlükte görünür.",
+"👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.":"👀 Takipçiler: yakınların seyahati takip eder (fotoğraf küçük resimleri ve anlatılar), ❤️ ve yorum bırakır."});

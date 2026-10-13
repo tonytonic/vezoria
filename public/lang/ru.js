@@ -3625,4 +3625,7 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "Cette action ne peut pas être annulée.":"Это действие нельзя отменить.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Удалено с сервера: записей — {0}, фото — {1}.",
 "Le voyage reste sur ce téléphone, sans partage.":"Поездка остаётся на этом телефоне, без общего доступа.",
-"Invitation annulée : le voyage reste seulement sur ce téléphone":"Приглашение отменено: поездка остаётся только на этом телефоне"});
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"Приглашение отменено: поездка остаётся только на этом телефоне",
+"Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.":"Близкие следят за поездкой (фото, места, рассказы), ставят ❤️ и пишут комментарии. Остальное остаётся личным.",
+"Pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.":"Во время поездки отмечай, где ты, с фото и рассказом. Шаг попадает в Воспоминания, на карты и в журнал.",
+"👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.":"👀 Подписчики: близкие следят за поездкой (миниатюры фото и рассказы), ставят ❤️ и пишут комментарии."});

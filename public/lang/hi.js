@@ -3625,4 +3625,7 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "Cette action ne peut pas être annulée.":"यह क्रिया वापस नहीं हो सकती।",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 सर्वर से हटाया गया: {0} कार्ड और {1} फ़ोटो।",
 "Le voyage reste sur ce téléphone, sans partage.":"यात्रा इस फ़ोन पर रहती है, बिना साझा किए।",
-"Invitation annulée : le voyage reste seulement sur ce téléphone":"न्योता रद्द: यात्रा सिर्फ़ इसी फ़ोन पर रहती है"});
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"न्योता रद्द: यात्रा सिर्फ़ इसी फ़ोन पर रहती है",
+"Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.":"तुम्हारे अपने लोग यात्रा फ़ॉलो करते हैं (फ़ोटो, जगहें, कहानियाँ), ❤️ और टिप्पणियाँ देते हैं। बाकी सब निजी रहता है।",
+"Pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.":"यात्रा के दौरान, फ़ोटो और कहानी के साथ दर्ज करो कि तुम कहाँ हो। क़दम यादों में जाता है, नक्शों पर और रोज़नामचे में दिखता है।",
+"👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.":"👀 फ़ॉलोअर्स: तुम्हारे अपने लोग यात्रा फ़ॉलो करते हैं (फ़ोटो थंबनेल और कहानियाँ), ❤️ और टिप्पणियाँ देते हैं।"});

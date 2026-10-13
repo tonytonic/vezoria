@@ -3625,4 +3625,7 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "Cette action ne peut pas être annulée.":"此操作无法撤销。",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 已从服务器删除：{0} 条记录和 {1} 张照片。",
 "Le voyage reste sur ce téléphone, sans partage.":"旅行保留在此手机上，不再共享。",
-"Invitation annulée : le voyage reste seulement sur ce téléphone":"邀请已取消：旅行只保留在此手机上"});
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"邀请已取消：旅行只保留在此手机上",
+"Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.":"亲友关注旅行（照片、地点、游记），点 ❤️ 和评论。其他内容保持私密。",
+"Pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.":"旅行中用照片和文字记录你所在的地方。足迹会存入回忆，并显示在地图和日记中。",
+"👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.":"👀 关注者：亲友可以关注旅行（照片缩略图和游记），点 ❤️ 和评论。"});

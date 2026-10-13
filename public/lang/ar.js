@@ -3625,4 +3625,7 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "Cette action ne peut pas être annulée.":"لا يمكن التراجع عن هذا الإجراء.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 حُذف من الخادم: {0} بطاقة و{1} صورة.",
 "Le voyage reste sur ce téléphone, sans partage.":"تبقى الرحلة على هذا الهاتف دون مشاركة.",
-"Invitation annulée : le voyage reste seulement sur ce téléphone":"أُلغيت الدعوة: تبقى الرحلة على هذا الهاتف فقط"});
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"أُلغيت الدعوة: تبقى الرحلة على هذا الهاتف فقط",
+"Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.":"يتابع أحبّاؤك الرحلة (صور، أماكن، حكايات)، ويضعون ❤️ وتعليقات. يبقى الباقي خاصًا.",
+"Pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.":"أثناء الرحلة، سجّل مكانك مع صور وحكاية. تُحفظ الخطوة في الذكريات، وتظهر على الخرائط وفي اليوميات.",
+"👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.":"👀 متابعون: يتابع أحبّاؤك الرحلة (صور مصغّرة وحكايات)، ويضعون ❤️ وتعليقات."});

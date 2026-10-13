@@ -694,4 +694,7 @@ I18N.load({
 "Cette action ne peut pas être annulée.":"Esta acción no se puede deshacer.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Borrado del servidor: {0} ficha(s) y {1} foto(s).",
 "Le voyage reste sur ce téléphone, sans partage.":"El viaje se queda en este teléfono, sin compartir.",
-"Invitation annulée : le voyage reste seulement sur ce téléphone":"Invitación cancelada: el viaje se queda solo en este teléfono"});
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"Invitación cancelada: el viaje se queda solo en este teléfono",
+"Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.":"Tus allegados siguen el viaje (fotos, lugares, relatos) y dejan ❤️ y comentarios. El resto sigue privado.",
+"Pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.":"Durante el viaje, guarda dónde estás con fotos y un relato. El paso se guarda en Recuerdos y aparece en los mapas y en el diario.",
+"👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.":"👀 Seguidores: tus allegados siguen el viaje (fotos en miniatura y relatos) y dejan ❤️ y comentarios."});

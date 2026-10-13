@@ -694,4 +694,7 @@ I18N.load({
 "Cette action ne peut pas être annulée.":"Dit kan niet ongedaan worden gemaakt.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Van de server verwijderd: {0} items en {1} foto’s.",
 "Le voyage reste sur ce téléphone, sans partage.":"De reis blijft op deze telefoon, niet meer gedeeld.",
-"Invitation annulée : le voyage reste seulement sur ce téléphone":"Uitnodiging geannuleerd: de reis blijft alleen op deze telefoon"});
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"Uitnodiging geannuleerd: de reis blijft alleen op deze telefoon",
+"Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.":"Je naasten volgen de reis (foto’s, plekken, verhalen) en laten ❤️ en reacties achter. De rest blijft privé.",
+"Pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.":"Leg tijdens de reis vast waar je bent, met foto’s en een verhaal. De step komt bij de Herinneringen, op de kaarten en in het journaal.",
+"👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.":"👀 Volgers: je naasten volgen de reis (foto’s als miniaturen en verhalen) en laten ❤️ en reacties achter."});

@@ -3625,4 +3625,7 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "Cette action ne peut pas être annulée.":"이 작업은 되돌릴 수 없어요.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 서버에서 삭제됨: 기록 {0}개, 사진 {1}장.",
 "Le voyage reste sur ce téléphone, sans partage.":"여행은 공유 없이 이 휴대폰에 남아요.",
-"Invitation annulée : le voyage reste seulement sur ce téléphone":"초대를 취소했어요: 여행은 이 휴대폰에만 남아요"});
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"초대를 취소했어요: 여행은 이 휴대폰에만 남아요",
+"Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.":"가족과 친구가 여행(사진, 장소, 여행기)을 팔로우하고 ❤️와 댓글을 남겨요. 나머지는 비공개로 유지됩니다.",
+"Pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.":"여행 중 지금 있는 곳을 사진과 글로 기록하세요. 걸음은 추억에 저장되고 지도와 일기에 표시돼요.",
+"👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.":"👀 팔로워: 가족과 친구가 여행을 팔로우하고(사진 썸네일과 여행기) ❤️와 댓글을 남겨요."});
