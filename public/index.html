@@ -7241,7 +7241,7 @@ const CV = (function(){
     h += box('🌍','Carte du monde 3D','Ton globe à toi : tous tes voyages, tes steps 📍 et les pays visités. Zoome et fais tourner la Terre du bout des doigts.', `<button class="v-btn sec" onclick="CV.worldMap()">🌍 Ouvrir la carte du monde</button>`);
     h += box('📶','Cartes hors ligne','Rues, lieux à voir, hôtels et ta position sur une carte zoomable, même sans réseau ni données à l’étranger. À télécharger en Wi-Fi avant de partir.', `<button class="v-btn sec" onclick="CV.omapSheet()">🗺️ Cartes hors ligne</button>`);
     h += box('🪄','Remplir mes journées','Les lieux les plus connus de chaque étape, répartis sur tes jours libres (sans toucher à ce qui est déjà prévu).', `<button class="v-btn sec" onclick="CV.tlFill()">🪄 Remplir mes journées</button>`);
-    h += box('📍','Steps : je suis ici','Comme Polarsteps : pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.', `<button class="v-btn sec" onclick="CV.hereNow()">📍 Je suis ici</button><button class="v-btn sec" onclick="CV.tlStats()">📊 Mes stats (pays, km, nuits)</button>`);
+    h += box('📍','Steps : je suis ici','Pendant le voyage, enregistre où tu es avec des photos et un récit. Le step se range dans les Souvenirs, apparaît sur les cartes et dans le journal.', `<button class="v-btn sec" onclick="CV.hereNow()">📍 Je suis ici</button><button class="v-btn sec" onclick="CV.tlStats()">📊 Mes stats (pays, km, nuits)</button>`);
     h += box('🌍','Empreinte carbone et conseils','CO2 estimé de chaque trajet, comparaison avec le train, et le bon moment pour réserver les vols encore à réserver.', `<button class="v-btn sec" onclick="CV.tlCo2()">🌍 Calculer</button>`);
     h += box('🗺️','Exporter l’itinéraire','Étapes, lieux à voir et tracés à pied dans un fichier KML : à ouvrir dans Google My Maps, Google Earth ou <b>Organic Maps</b> (cartes hors ligne gratuites).', `<button class="v-btn sec" onclick="CV.tlKml()">🗺️ Exporter (KML)</button>`);
     h += box('📴','Fiche du jour','Billets, horaires, adresses, téléphones et références d’aujourd’hui et de demain, sur une seule page lisible même sans réseau.',
@@ -8545,7 +8545,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
 
   /* ══════════════════════════════════════════════════════════════════════════
-     ⚡ ACCÈS RAPIDE · 📍 STEPS GÉOLOCALISÉS (comme Polarsteps) · 📄 IMPORT PDF / CAPTURE
+     ⚡ ACCÈS RAPIDE · 📍 STEPS GÉOLOCALISÉS · 📄 IMPORT PDF / CAPTURE
      📖 CHOIX DES PHOTOS DU JOURNAL · 🌍 CARTE DU MONDE 3D
      ══════════════════════════════════════════════════════════════════════════ */
   function quickBar(){
@@ -8813,7 +8813,7 @@ ${pm.join('\n')}</Document></kml>`;
     putMany(out, '✈️ ' + out.length + ' vol(s) créé(s)'); impCtx = null; closeSheet(true); after();
   }
 
-  /* ---------- 🛰️ Traceur de voyage (comme Polarsteps, avec les limites d'une appli web) ---------- */
+  /* ---------- 🛰️ Traceur de voyage (avec les limites d'une appli web) ---------- */
   let trkWatch = null, trkLastSave = 0, trkBuf = null;
   const trkOn = () => !!(M.trk && M.trk.on);
   const trkRec = (tid, d, who) => (who && R['trk:' + tid + ':' + d + ':' + who]) || R['trk:' + tid + ':' + d];
@@ -12887,7 +12887,7 @@ ${pm.join('\n')}</Document></kml>`;
     const seg = `<div class="cv-soin"><button type="button" class="on">📸 Souvenirs</button><button type="button" onclick="CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.filmOpen()">🎬 Film</button><button type="button" onclick="CV.flyover()">🌍 Survol 3D</button><button type="button" onclick="CV.wrapped()">✨ Récap</button><button type="button" onclick="CV.albumSheet()">📕 Album</button></div>`;
     if(t.demo || hidden('blk:fban')) return seg;
     const fc = feedCode(t.id);
-    if(!fc) return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>Partage tes souvenirs avec tes proches</b><small>Comme Polarsteps : ils suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.</small></span><button type="button" onclick="CV.feedPublish('${t.id}')">Publier</button></div>`;
+    if(!fc) return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>Partage tes souvenirs avec tes proches</b><small>Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.</small></span><button type="button" onclick="CV.feedPublish('${t.id}')">Publier</button></div>`;
     const nfw = list('follower', x=>x.trip===ftId(t.id) && !isBlk(x)).length, nlk = list('like', l=>l.trip===ftId(t.id) && l.on && !isBlk(l)).length, ncm = list('comment', c=>c.trip===ftId(t.id) && !isBlk(c)).length;
     return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>${nfw} abonné${nfw>1?'s':''} · ❤️ ${nlk} · 💬 ${ncm}</b><small>Tes souvenirs sont publiés. Touche ❤️ / 💬 sous un souvenir pour lire et répondre.</small></span><button type="button" onclick="CV.feedPublish('${t.id}')">Inviter</button></div>`;
   }
@@ -12903,7 +12903,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13n';
+  const BUILD = '2026-10-13o';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -12922,7 +12922,7 @@ ${pm.join('\n')}</Document></kml>`;
   const VZ_SIDE = 'vezoria', VZ_MAIL = 'appareils.treves6g@icloud.com';
   const VZ_ON = VZ_SIDE === 'carnet' ? /^https?:/.test(location.protocol) : !!window.VZ_HOST;
   const VZ_T = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
-  const VZ_NEW = ['🌍 14 langues (français, anglais, espagnol, allemand, italien, portugais, néerlandais, russe, turc, arabe, hindi, chinois, japonais, coréen) et la devise de ton choix.','👀 Des abonnés, comme Polarsteps : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.','👥 Une fenêtre « Abonnés & partages », avec une pastille dès qu’il y a du nouveau.','🛰️ Ta route sur la carte pour tes abonnés, seulement si tu l’actives.','🚩 Signaler, bloquer ou masquer quelqu’un, et créer un nouveau lien abonné.','🎬 Le film du voyage en musique (11 musiques), avec la carte zoomée région par région.','📷 « Ranger mes photos » : les photos se placent toutes seules au bon jour et au bon endroit.','🗺️ Le programme et le voyage en cours sur la carte.','💱 La conversion des devises dans les dépenses et les tickets.','🎨 Des couleurs pour chaque moment : préparation, voyage en cours, souvenirs.','☁️ Une synchro plus économe, voyage par voyage, avec l’état de l’envoi en un coup d’œil.','🔐 Un chiffrement renforcé dans la version finale.','🎓 Un nouveau tuto vidéo de 3 minutes.'], VZ_OUT = ['🛫 Escale (recherche de vols, Radar des prix) : pour respecter les règles de Google Play, Escale ne sera pas dans la version finale de Vezoria. Le module fait appel à trop de services extérieurs pour être publié.','🔕 Aucune notification : Vezoria ne t’envoie rien.','📥 L’import depuis Polarsteps n’est pas encore dans Vezoria.'], VZ_DATA = ['Cette version test garde le stockage du carnet : même serveur, mêmes codes. Tes compagnons restés sur le carnet voient ce que tu fais dans Vezoria, et inversement.','Avant la première ouverture de Vezoria, une copie de sauvegarde de ton carnet est gardée sur ce téléphone.','📱 Vezoria sera sur Google Play (Android) et en appli web sur iPhone.'];
+  const VZ_NEW = ['🌍 14 langues (français, anglais, espagnol, allemand, italien, portugais, néerlandais, russe, turc, arabe, hindi, chinois, japonais, coréen) et la devise de ton choix.','👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.','👥 Une fenêtre « Abonnés & partages », avec une pastille dès qu’il y a du nouveau.','🛰️ Ta route sur la carte pour tes abonnés, seulement si tu l’actives.','🚩 Signaler, bloquer ou masquer quelqu’un, et créer un nouveau lien abonné.','🎬 Le film du voyage en musique (11 musiques), avec la carte zoomée région par région.','📷 « Ranger mes photos » : les photos se placent toutes seules au bon jour et au bon endroit.','🗺️ Le programme et le voyage en cours sur la carte.','💱 La conversion des devises dans les dépenses et les tickets.','🎨 Des couleurs pour chaque moment : préparation, voyage en cours, souvenirs.','☁️ Une synchro plus économe, voyage par voyage, avec l’état de l’envoi en un coup d’œil.','🔐 Un chiffrement renforcé dans la version finale.','🎓 Un nouveau tuto vidéo de 3 minutes.'], VZ_OUT = ['🛫 Escale (recherche de vols, Radar des prix) : pour respecter les règles de Google Play, Escale ne sera pas dans la version finale de Vezoria. Le module fait appel à trop de services extérieurs pour être publié.','🔕 Aucune notification : Vezoria ne t’envoie rien.','📥 L’import depuis Polarsteps n’est pas encore dans Vezoria.'], VZ_DATA = ['Cette version test garde le stockage du carnet : même serveur, mêmes codes. Tes compagnons restés sur le carnet voient ce que tu fais dans Vezoria, et inversement.','Avant la première ouverture de Vezoria, une copie de sauvegarde de ton carnet est gardée sur ce téléphone.','📱 Vezoria sera sur Google Play (Android) et en appli web sur iPhone.'];
   const vzSrc = () => { if(VZ_SIDE === 'carnet') return PUBLIC ? 'carnet public' : 'carnet perso'; try { return (JSON.parse(localStorage.getItem('vz_host') || '{}').src === 'perso' ? 'carnet perso' : 'carnet public'); } catch(e){ return 'carnet'; } };
   if(VZ_SIDE === 'carnet') try { localStorage.setItem('vz_host', JSON.stringify({e2e: !!E2E, src: PUBLIC ? 'public' : 'perso'})); } catch(e){}
   const vzHideK = VZ_SIDE === 'carnet' ? 'vzHideC' : 'vzHideV';
