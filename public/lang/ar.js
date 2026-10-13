@@ -3624,4 +3624,5 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"سيفقد رفاق السفر والمتابعون الوصول. ما على هذا الهاتف يبقى هنا.",
 "Cette action ne peut pas être annulée.":"لا يمكن التراجع عن هذا الإجراء.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 حُذف من الخادم: {0} بطاقة و{1} صورة.",
-"Le voyage reste sur ce téléphone, sans partage.":"تبقى الرحلة على هذا الهاتف دون مشاركة."});
+"Le voyage reste sur ce téléphone, sans partage.":"تبقى الرحلة على هذا الهاتف دون مشاركة.",
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"أُلغيت الدعوة: تبقى الرحلة على هذا الهاتف فقط"});

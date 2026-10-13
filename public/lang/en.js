@@ -693,4 +693,5 @@ I18N.load({
 "Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"Companions and followers will lose access. What’s on this phone stays here.",
 "Cette action ne peut pas être annulée.":"This cannot be undone.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Deleted from the server: {0} record(s) and {1} photo(s).",
-"Le voyage reste sur ce téléphone, sans partage.":"The trip stays on this phone, no longer shared."});
+"Le voyage reste sur ce téléphone, sans partage.":"The trip stays on this phone, no longer shared.",
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"Invitation cancelled: the trip stays on this phone only"});

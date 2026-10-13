@@ -693,4 +693,5 @@ I18N.load({
 "Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"Companheiros e seguidores perdem o acesso. O que está neste telemóvel fica aqui.",
 "Cette action ne peut pas être annulée.":"Esta ação não pode ser anulada.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Apagado do servidor: {0} ficha(s) e {1} foto(s).",
-"Le voyage reste sur ce téléphone, sans partage.":"A viagem fica neste telemóvel, sem partilha."});
+"Le voyage reste sur ce téléphone, sans partage.":"A viagem fica neste telemóvel, sem partilha.",
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"Convite cancelado: a viagem fica só neste telemóvel"});

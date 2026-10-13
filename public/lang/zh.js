@@ -3624,4 +3624,5 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"同行者和关注者将无法再访问。此手机上的内容会保留。",
 "Cette action ne peut pas être annulée.":"此操作无法撤销。",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 已从服务器删除：{0} 条记录和 {1} 张照片。",
-"Le voyage reste sur ce téléphone, sans partage.":"旅行保留在此手机上，不再共享。"});
+"Le voyage reste sur ce téléphone, sans partage.":"旅行保留在此手机上，不再共享。",
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"邀请已取消：旅行只保留在此手机上"});

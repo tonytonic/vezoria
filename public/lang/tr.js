@@ -3624,4 +3624,5 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"Yol arkadaşları ve takipçiler erişimi kaybeder. Bu telefondakiler burada kalır.",
 "Cette action ne peut pas être annulée.":"Bu işlem geri alınamaz.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Sunucudan silindi: {0} kayıt ve {1} fotoğraf.",
-"Le voyage reste sur ce téléphone, sans partage.":"Seyahat bu telefonda kalır, artık paylaşılmaz."});
+"Le voyage reste sur ce téléphone, sans partage.":"Seyahat bu telefonda kalır, artık paylaşılmaz.",
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"Davet iptal edildi: seyahat yalnızca bu telefonda kalır"});

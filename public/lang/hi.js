@@ -3624,4 +3624,5 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"साथी और फ़ॉलोअर्स की पहुँच खत्म हो जाएगी। इस फ़ोन पर जो है, यहीं रहेगा।",
 "Cette action ne peut pas être annulée.":"यह क्रिया वापस नहीं हो सकती।",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 सर्वर से हटाया गया: {0} कार्ड और {1} फ़ोटो।",
-"Le voyage reste sur ce téléphone, sans partage.":"यात्रा इस फ़ोन पर रहती है, बिना साझा किए।"});
+"Le voyage reste sur ce téléphone, sans partage.":"यात्रा इस फ़ोन पर रहती है, बिना साझा किए।",
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"न्योता रद्द: यात्रा सिर्फ़ इसी फ़ोन पर रहती है"});

@@ -3624,4 +3624,5 @@ I18N.load({"🔑 Mon code principal":"🔑 メインコード",
 "Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"仲間とフォロワーはアクセスできなくなります。このスマホのデータはそのまま残ります。",
 "Cette action ne peut pas être annulée.":"この操作は取り消せません。",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 サーバーから削除しました：記録{0}件、写真{1}枚。",
-"Le voyage reste sur ce téléphone, sans partage.":"旅はこのスマホに残り、共有は解除されます。"});
+"Le voyage reste sur ce téléphone, sans partage.":"旅はこのスマホに残り、共有は解除されます。",
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"招待を取り消しました：旅はこのスマホだけに残ります"});

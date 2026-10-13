@@ -3624,4 +3624,5 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"Попутчики и подписчики потеряют доступ. То, что на этом телефоне, останется здесь.",
 "Cette action ne peut pas être annulée.":"Это действие нельзя отменить.",
 "🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Удалено с сервера: записей — {0}, фото — {1}.",
-"Le voyage reste sur ce téléphone, sans partage.":"Поездка остаётся на этом телефоне, без общего доступа."});
+"Le voyage reste sur ce téléphone, sans partage.":"Поездка остаётся на этом телефоне, без общего доступа.",
+"Invitation annulée : le voyage reste seulement sur ce téléphone":"Приглашение отменено: поездка остаётся только на этом телефоне"});
