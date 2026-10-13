@@ -1844,6 +1844,18 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .wr-none{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:1.3rem;background:linear-gradient(135deg,#1a0b3d,#6b2fa0);color:#fff}
 .wr-none small{font-size:.58rem;font-weight:700}
 </style>
+<style>
+.ps-bgnote{margin:10px 0 4px;padding:10px 12px;border-radius:14px;background:#fff6e5;color:#5a3b10;font-size:.82rem;line-height:1.4}
+.ps-pill{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom));z-index:700;display:flex;align-items:center;gap:8px;
+  max-width:calc(100% - 32px);border:0;border-radius:22px;padding:10px 16px;background:#2a1238;color:#fff;font:inherit;font-size:.82rem;font-weight:700;
+  box-shadow:0 10px 26px rgba(42,18,56,.45);white-space:nowrap;animation:sheetUp .3s ease-out}
+.ps-pill span{overflow:hidden;text-overflow:ellipsis}
+.ps-pill .ps-st{opacity:.75;font-weight:600}
+.ps-pill.done{background:#14824a}
+.ps-pill.done b{background:#fff;color:#14824a;border-radius:12px;padding:3px 10px}
+.ps-spin{flex:0 0 14px;width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:psSpin .9s linear infinite}
+@keyframes psSpin{to{transform:rotate(360deg)}}
+</style>
 </head>
 <body class="is-public">
 <div class="cv-statusbar"></div>
@@ -9744,20 +9756,38 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
   }
   /* ══════════ 📥 Import Polarsteps : l’utilisateur reprend SES données (fichier d’export de Polarsteps) ══════════ */
+  /* ── 📥 Import Polarsteps en arrière-plan : pastille d’avancement visible partout dans l’appli ── */
+  let PSRUN = null;
+  function psPill(html, done){
+    let p = document.getElementById('ps-pill');
+    if(!html){ if(p) p.remove(); return; }
+    if(!p){ p = document.createElement('button'); p.id = 'ps-pill'; p.type = 'button'; document.body.appendChild(p); }
+    p.className = 'ps-pill' + (done ? ' done' : ''); p.innerHTML = html;
+    p.onclick = done ? () => { psPill(''); if(typeof done === 'string' && R[done]){ go(done); M.mode = 'bilan'; persist(); applyMode(); } } : () => psImport();
+  }
+  async function psLock(on){
+    try { if(on && navigator.wakeLock && !PSRUN.lock) PSRUN.lock = await navigator.wakeLock.request('screen');
+      if(!on && PSRUN && PSRUN.lock){ await PSRUN.lock.release(); PSRUN.lock = null; } } catch(e){}
+  }
   function psImport(){
     openSheet(`<h2>📥 Importer mes voyages Polarsteps</h2>
       <ol class="ps-how"><li>Dans Polarsteps : Profil → Paramètres → Télécharger mes données. Tu reçois un fichier ZIP par e-mail.</li><li>Choisis ce fichier ici (ou le fichier trip.json d’un voyage).</li></ol>
       <div class="v-sum-small" style="margin:8px 0">Tes étapes, lieux, récits et photos deviennent des souvenirs Vezoria. Tout se passe sur ton téléphone : le fichier n’est envoyé nulle part. Vezoria n’est pas lié à Polarsteps.</div>
       <label class="cv-checkline"><input type="checkbox" id="ps-all"> Importer toutes les photos (sinon 3 par étape : plus léger pour ton téléphone)</label>
-      <div id="ps-msg" class="ps-msg"></div>
+      <div id="ps-msg" class="ps-msg">${PSRUN && PSRUN.m ? esc(PSRUN.m) : ''}</div>
+      <div class="ps-bgnote">⏳ L’import se fait en arrière-plan : une fois le fichier choisi, tu peux fermer cette fenêtre et continuer à utiliser Vezoria. Garde juste l’appli ouverte, une pastille en bas t’indique où il en est.</div>
       <div class="v-actions"><label class="v-btn ps-pick">📂 Choisir le fichier<input type="file" accept=".zip,.json,application/zip,application/json" hidden onchange="CV.psFile(this)"></label></div>`);
   }
   const psIso = ts => { const n = +ts; if(!n) return ''; try { return new Date(n > 1e12 ? n : n * 1000).toISOString().slice(0, 10); } catch(e){ return ''; } };
   async function psFile(input){
     const f = input.files && input.files[0]; if(!f) return; input.value = '';
+    if(PSRUN){ alert('Un import Polarsteps est déjà en cours.'); return; }
     const all = !!(document.getElementById('ps-all') || {}).checked;
-    const msg = m => { const e = document.getElementById('ps-msg'); if(e) e.textContent = m; };
+    PSRUN = {m:''}; psLock(true);
+    const msg = m => { if(PSRUN) PSRUN.m = m; const e = document.getElementById('ps-msg'); if(e) e.textContent = m;
+      if(m) psPill(`<i class="ps-spin"></i><span>📥 Import Polarsteps</span><span class="ps-st">${esc(m)}</span>`); };
     let rd = null;
+    msg('📦 Lecture du fichier…'); toast('📥 Import lancé : tu peux continuer à utiliser l’appli');
     try {
       const list_ = [];
       if(/\.json$/i.test(f.name) || f.type === 'application/json') list_.push({j:JSON.parse(await f.text()), base:'', ents:null, z:null});
@@ -9768,12 +9798,17 @@ ${pm.join('\n')}</Document></kml>`;
       if(!list_.length) throw new Error('aucun voyage Polarsteps trouvé dans ce fichier (il faut le ZIP de Polarsteps ou un fichier trip.json).');
       let nS = 0, nP = 0, last = '';
       for(let k = 0; k < list_.length; k++){ msg(`🧳 Voyage ${k + 1} / ${list_.length}…`); const r = await psOne(list_[k], all, msg); nS += r.s; nP += r.p; last = r.tid; }
-      closeSheet(true);
-      if(last){ go(last); M.mode = 'bilan'; persist(); applyMode(); }
-      setTimeout(()=>alert(`✅ ${list_.length} voyage${list_.length > 1 ? 's' : ''} importé${list_.length > 1 ? 's' : ''} : ${nS} étapes, ${nP} photos.`), 300);
+      const done = `✅ ${list_.length} voyage${list_.length > 1 ? 's' : ''} importé${list_.length > 1 ? 's' : ''} : ${nS} étapes, ${nP} photos.`;
+      if(document.getElementById('ps-msg')){   // toujours devant la fenêtre d’import : on ouvre directement le voyage
+        psPill(''); closeSheet(true);
+        if(last){ go(last); M.mode = 'bilan'; persist(); applyMode(); }
+        setTimeout(()=>alert(done), 300);
+      } else {   // parti faire autre chose : on ne le dérange pas, la pastille propose d’ouvrir le voyage
+        psPill(`<span>✅ Import terminé</span><b>Voir</b>`, last || true);
+      }
       uploadQueue();
-    } catch(e){ msg(''); alert('Import impossible : ' + e.message); }
-    finally { try { rd && rd.close(); } catch(e){} }
+    } catch(e){ psPill(''); const el = document.getElementById('ps-msg'); if(el) el.textContent = ''; alert('Import impossible : ' + e.message); }
+    finally { try { rd && rd.close(); } catch(e){} await psLock(false); PSRUN = null; }
   }
   async function psOne(tr, all, msg){
     const j = tr.j || {}, steps = (j.all_steps || j.steps || []).slice().sort((a, b)=>(+a.start_time || 0) - (+b.start_time || 0));
@@ -12662,7 +12697,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13e';
+  const BUILD = '2026-10-13f';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
