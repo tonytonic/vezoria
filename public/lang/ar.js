@@ -3583,4 +3583,10 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "Autour":"إضافات",
 "Drapeaux":"الأعلام",
 "Photos en bas":"صور في الأسفل",
-"Réglages d’origine":"الإعدادات الأصلية"});
+"Réglages d’origine":"الإعدادات الأصلية",
+"⏳ L’import se fait en arrière-plan : une fois le fichier choisi, tu peux fermer cette fenêtre et continuer à utiliser Vezoria. Garde juste l’appli ouverte, une pastille en bas t’indique où il en est.":"⏳ يتم الاستيراد في الخلفية: بعد اختيار الملف يمكنك إغلاق هذه النافذة ومتابعة استخدام Vezoria. فقط اترك التطبيق مفتوحًا؛ تُظهر شارة في الأسفل مدى التقدم.",
+"Un import Polarsteps est déjà en cours.":"هناك استيراد من Polarsteps قيد التنفيذ بالفعل.",
+"📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 بدأ الاستيراد: يمكنك متابعة استخدام التطبيق",
+"Import Polarsteps":"استيراد Polarsteps",
+"✅ Import terminé":"✅ اكتمل الاستيراد",
+"Import terminé":"اكتمل الاستيراد"});

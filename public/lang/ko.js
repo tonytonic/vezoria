@@ -3583,4 +3583,10 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "Autour":"기타",
 "Drapeaux":"국기",
 "Photos en bas":"아래 사진",
-"Réglages d’origine":"기본 설정으로"});
+"Réglages d’origine":"기본 설정으로",
+"⏳ L’import se fait en arrière-plan : une fois le fichier choisi, tu peux fermer cette fenêtre et continuer à utiliser Vezoria. Garde juste l’appli ouverte, une pastille en bas t’indique où il en est.":"⏳ 가져오기는 백그라운드에서 진행돼요. 파일을 고른 뒤 이 창을 닫고 Vezoria를 계속 사용해도 돼요. 앱만 열어 두세요. 아래 배지에 진행 상황이 보여요.",
+"Un import Polarsteps est déjà en cours.":"Polarsteps 가져오기가 이미 진행 중이에요.",
+"📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 가져오기 시작: 앱을 계속 사용해도 돼요",
+"Import Polarsteps":"Polarsteps 가져오기",
+"✅ Import terminé":"✅ 가져오기 완료",
+"Import terminé":"가져오기 완료"});

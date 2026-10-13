@@ -3583,4 +3583,10 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "Autour":"Дополнительно",
 "Drapeaux":"Флаги",
 "Photos en bas":"Фото внизу",
-"Réglages d’origine":"Исходные настройки"});
+"Réglages d’origine":"Исходные настройки",
+"⏳ L’import se fait en arrière-plan : une fois le fichier choisi, tu peux fermer cette fenêtre et continuer à utiliser Vezoria. Garde juste l’appli ouverte, une pastille en bas t’indique où il en est.":"⏳ Импорт идёт в фоне: после выбора файла можно закрыть это окно и пользоваться Vezoria дальше. Просто не закрывай приложение — внизу видно, как идёт импорт.",
+"Un import Polarsteps est déjà en cours.":"Импорт из Polarsteps уже идёт.",
+"📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 Импорт запущен: можно пользоваться приложением",
+"Import Polarsteps":"Импорт Polarsteps",
+"✅ Import terminé":"✅ Импорт завершён",
+"Import terminé":"Импорт завершён"});

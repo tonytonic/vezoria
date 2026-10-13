@@ -3583,4 +3583,10 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "Autour":"Ekstralar",
 "Drapeaux":"Bayraklar",
 "Photos en bas":"Altta fotoğraflar",
-"Réglages d’origine":"Varsayılan ayarlar"});
+"Réglages d’origine":"Varsayılan ayarlar",
+"⏳ L’import se fait en arrière-plan : une fois le fichier choisi, tu peux fermer cette fenêtre et continuer à utiliser Vezoria. Garde juste l’appli ouverte, une pastille en bas t’indique où il en est.":"⏳ İçe aktarma arka planda yapılır: dosyayı seçtikten sonra bu pencereyi kapatıp Vezoria'yı kullanmaya devam edebilirsin. Uygulamayı açık tut yeter; alttaki rozet ilerlemeyi gösterir.",
+"Un import Polarsteps est déjà en cours.":"Zaten devam eden bir Polarsteps içe aktarması var.",
+"📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 İçe aktarma başladı: uygulamayı kullanmaya devam edebilirsin",
+"Import Polarsteps":"Polarsteps içe aktarma",
+"✅ Import terminé":"✅ İçe aktarma tamamlandı",
+"Import terminé":"İçe aktarma tamamlandı"});

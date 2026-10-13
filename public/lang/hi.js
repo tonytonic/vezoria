@@ -3583,4 +3583,10 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "Autour":"और",
 "Drapeaux":"झंडे",
 "Photos en bas":"नीचे फ़ोटो",
-"Réglages d’origine":"मूल सेटिंग्स"});
+"Réglages d’origine":"मूल सेटिंग्स",
+"⏳ L’import se fait en arrière-plan : une fois le fichier choisi, tu peux fermer cette fenêtre et continuer à utiliser Vezoria. Garde juste l’appli ouverte, une pastille en bas t’indique où il en est.":"⏳ आयात बैकग्राउंड में होता है: फ़ाइल चुनने के बाद तुम यह विंडो बंद करके Vezoria इस्तेमाल करते रह सकते हो। बस ऐप खुला रखो; नीचे एक बैज प्रगति दिखाता है।",
+"Un import Polarsteps est déjà en cours.":"Polarsteps का एक आयात पहले से चल रहा है।",
+"📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 आयात शुरू: तुम ऐप इस्तेमाल करते रह सकते हो",
+"Import Polarsteps":"Polarsteps आयात",
+"✅ Import terminé":"✅ आयात पूरा",
+"Import terminé":"आयात पूरा"});

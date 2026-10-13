@@ -3583,4 +3583,10 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "Autour":"其他",
 "Drapeaux":"国旗",
 "Photos en bas":"底部照片",
-"Réglages d’origine":"恢复默认设置"});
+"Réglages d’origine":"恢复默认设置",
+"⏳ L’import se fait en arrière-plan : une fois le fichier choisi, tu peux fermer cette fenêtre et continuer à utiliser Vezoria. Garde juste l’appli ouverte, une pastille en bas t’indique où il en est.":"⏳ 导入在后台进行：选好文件后，你可以关闭此窗口，继续使用 Vezoria。只需保持应用打开，底部的小标签会显示进度。",
+"Un import Polarsteps est déjà en cours.":"已有一个 Polarsteps 导入正在进行。",
+"📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 导入已开始：你可以继续使用应用",
+"Import Polarsteps":"Polarsteps 导入",
+"✅ Import terminé":"✅ 导入完成",
+"Import terminé":"导入完成"});

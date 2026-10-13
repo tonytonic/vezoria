@@ -651,4 +651,11 @@ I18N.load({
 "Autour":"Extras",
 "Drapeaux":"Flags",
 "Photos en bas":"Photos at the bottom",
-"Réglages d’origine":"Original settings"});
+"Réglages d’origine":"Original settings",
+"⏳ L’import se fait en arrière-plan : une fois le fichier choisi, tu peux fermer cette fenêtre et continuer à utiliser Vezoria. Garde juste l’appli ouverte, une pastille en bas t’indique où il en est.":"⏳ The import runs in the background: once you've chosen the file, you can close this window and keep using Vezoria. Just keep the app open; a badge at the bottom shows the progress.",
+"Un import Polarsteps est déjà en cours.":"A Polarsteps import is already running.",
+"📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 Import started: you can keep using the app",
+"📥 Import Polarsteps":"📥 Polarsteps import",
+"Import Polarsteps":"Polarsteps import",
+"✅ Import terminé":"✅ Import complete",
+"Import terminé":"Import complete"});
