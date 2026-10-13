@@ -87,7 +87,7 @@ export async function onRequestPost({ request, env }) {
   const buf = await request.arrayBuffer();
   if (!buf.byteLength) return json({ error: 'Photo vide' }, 400);
   if (buf.byteLength > MAX_PHOTO) return json({ error: 'Photo trop lourde' }, 413);
-  if (!(await rateIp(env, request, 'ph', 4000, Math.ceil(buf.byteLength / 100_000)))) return json({ error: TOO_MANY, retry: 3600 }, 429);
+  if (!(await rateIp(env, request, 'ph', 30000, Math.ceil(buf.byteLength / 100_000)))) return json({ error: TOO_MANY, retry: 3600 }, 429);
 
   // ── R2 ──
   if (env.PHOTOS) {
