@@ -5202,15 +5202,18 @@ const CV = (function(){
     if(uploading || !(M.pq||[]).length || !photoApi()) return;
     if(!(M.sync.on && M.sync.code) && !(M.spaces||[]).length){ M.pqWait = (M.pq||[]).length; return; }
     uploading = true; let upErr = '', waiting = 0, stop = false;
-    cryptShow('🔐 Chiffrement des photos… (' + pqN() + ')');
     // photo → code du carnet, calculé une seule fois (rapide même avec des milliers de photos)
     const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
     const codeOf = id => { const base = String(id).replace(/\.t$/,''), r = owner[base]; if(!r) return photoCode(id); if(r.demo) return null; const t = targets(r)[0]; return t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t; };
+    // seules les photos des voyages en ligne partent ; les autres attendent sur le téléphone, sans être comptées
+    const todo = M.pq.filter(id=>codeOf(id)); waiting = M.pq.length - todo.length; let left = todo.length;
+    if(!left){ M.pqWait = waiting; uploading = false; syncDot(); return; }
+    cryptShow('🔐 Chiffrement des photos… (' + left + ')');
     const send = async (blob, pid, code) => { const body = E2E ? new Blob([await seal(new Uint8Array(await blob.arrayBuffer()), code)], {type:'image/jpeg'}) : blob;
       const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(pid, code), 'Content-Type':'image/jpeg'}, body});
       if(!r.ok && r.status !== 413){ let er = ''; try { er = ((await r.json()).error) || ''; } catch(e){} throw new Error((er ? er + ' ' : '') + '(' + r.status + ')'); } };
     const one = async id => {
-      const code = codeOf(id); if(!code){ waiting++; return; }          // pas encore de carnet en ligne pour cette photo : on la garde
+      const code = codeOf(id); if(!code) return;          // voyage repassé hors ligne entre-temps : la photo reste sur le téléphone
       let o = null; try { o = await IDB.get(id); } catch(e){}
       if(/\.t$/.test(id)){   // vignette seule (paquet sans grand format) : envoyée telle quelle ; sinon elle part avec sa grande photo
         let big = null; try { big = await IDB.get(id.slice(0, -2)); } catch(e){}
@@ -5227,15 +5230,14 @@ const CV = (function(){
         try { await IDB.put({id, blob:new Blob([await o.blob.arrayBuffer()], {type:o.blob.type || 'image/jpeg'}), up:1}); } catch(e){}   // copie : Safari perd le fichier si on réenregistre le même objet
       }
       M.pq = M.pq.filter(x=>x!==id); syncDot();
-      if(M.pq.length && !(M.pq.length % 3)){ persist(); cryptShow('🔐 Chiffrement des photos… (' + pqN() + ' restante' + (pqN() > 1 ? 's' : '') + ')'); }
+      left--; if(left && !(left % 3)){ persist(); cryptShow('🔐 Chiffrement des photos… (' + left + ' restante' + (left > 1 ? 's' : '') + ')'); }
     };
-    const todo = [...M.pq];
     const worker = async () => { while(!stop && todo.length){ const id = todo.shift(); try { await one(id); } catch(e){ upErr = upErr || (e && e.message) || String(e); stop = true; } } };
     try { await Promise.all([worker(), worker(), worker()]); }   // 3 envois en même temps : bien plus rapide sur mobile
     catch(e){ upErr = 'réseau : ' + (e && e.message || e); }
     if(/Failed to fetch|NetworkError|Load failed/i.test(upErr)) upErr = 'réseau : ' + upErr;
     M.pqWait = waiting; M.pqErr = upErr || ''; persist();
-    cryptHide(M.pq.length ? (upErr ? '⚠️ Photos non envoyées : ' + upErr : (waiting ? '⏳ Photos en attente : voyage pas encore en ligne' : '')) : '🔒 Photos chiffrées et envoyées');
+    cryptHide(upErr ? '⚠️ Photos non envoyées : ' + upErr : left ? '' : '🔒 Photos chiffrées et envoyées');
     uploading = false; syncDot();
     photoPurge();
   }
@@ -12697,7 +12699,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13f';
+  const BUILD = '2026-10-13g';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
