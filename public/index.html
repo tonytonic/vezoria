@@ -1889,6 +1889,14 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .wr-pk-more{width:100%;margin-top:10px}
 </style>
 <style>.fd-ph img.miss{opacity:0}.fd-ph span:has(>img.miss),.fd-ph button:has(>img.miss){background:#f3e9ee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ctext x='20' y='27' font-size='20' text-anchor='middle'%3E%E2%8F%B3%3C/text%3E%3C/svg%3E") center/40px no-repeat!important}</style>
+<style>
+.sh-sec{font-weight:800;font-size:.95rem;color:var(--navy,#2A1238);margin:2px 0 8px}
+.sh-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.sh-links button{border:0;background:#f3ecf6;color:#2a1238;border-radius:14px;padding:7px 11px;font:inherit;font-size:.8rem;font-weight:700}
+.sh-note{margin-top:12px;padding:12px;border-radius:14px;background:#f6f1f7;font-size:.85rem;line-height:1.4}
+@media (max-width:419px){.cv-socpill small{display:none}}
+details.sh-more>summary{cursor:pointer;font-weight:800;padding:10px 0;color:var(--navy,#2A1238)}
+</style>
 </head>
 <body class="is-public">
 <div class="cv-statusbar"></div>
@@ -2796,12 +2804,9 @@ const CV = (function(){
       </div>
       <button class="v-btn" onclick="CV.newTrip()">＋ Préparer un nouveau voyage</button>
       ${demoBtn()}
-      <button class="v-btn sec" onclick="CV.shareSheet()">📤 Partager l’appli à un ami (QR code)</button>
+      <button class="v-btn sec" onclick="CV.close();CV.shareHub()">👥 Partager, inviter, suivre</button>
       ${!PUBLIC && !(R.t2025 && !R.t2025.deleted) ? `<button class="v-btn sec" onclick="CV.seedUSA2025()">📦 Ajouter l’archive USA 2025</button>` : ''}
       ${ESCALE ? `<a class="v-btn sec cv-escale" href="${ESCALE}">✈️ Chercher des vols avec Escale</a><button class="v-btn sec" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button><button class="v-btn sec" onclick="CV.radarTuto()">✦ Tuto Radar des prix</button>` : ''}
-      ${trip() && !trip().demo ? `<button class="v-btn sec" onclick="CV.tripShare('${M.trip}')">🔗 ${TS()[M.trip] ? 'Partage de « ' + esc(trip().titre) + ' » (code du voyage)' : 'Partager « ' + esc(trip().titre) + ' » seul (son propre code)'}</button>` : ''}
-      <button class="v-btn sec" onclick="CV.tripJoin()">🔗 Rejoindre un voyage partagé (code)</button>
-      <button class="v-btn sec" onclick="CV.followSheet()">👀 Voyages que je suis${list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')]).length ? ' (' + list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')]).length + ')' : ''}</button>
       ${trip() ? `<button class="v-btn sec" onclick="CV.editTrip('${M.trip}')">✏️ Modifier « ${esc(trip().titre)} »</button>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">✕ Fermer</button></div>`);
     requestAnimationFrame(tripSheetScroll);
@@ -4281,11 +4286,11 @@ const CV = (function(){
       h += `<div class="v-box"><h3>🧳 Ce voyage</h3><p><b>${esc(t.titre)}</b>${t.debut?' · '+tripDates(t):''}${t.archived?' · ✓ clôturé':''}</p>
         <button class="v-btn sec" onclick="CV.editTrip('${t.id}')">✏️ Modifier (nom, dates, voyageurs)</button>
         ${t.archived ? `<button class="v-btn sec" onclick="CV.reopenTrip()">↺ Rouvrir le voyage</button>` : `<button class="v-btn sec" onclick="CV.closeTrip()">✓ Clôturer (tout payé et coché, garder la trace)</button>`}
-        ${t.demo ? '' : (TS()[t.id] && spaceObj(TS()[t.id]) ? `<button class="v-btn" onclick="CV.tripInvite('${t.id}')">📤 Envoyer l’invitation (lien + code)</button><button class="v-btn sec" onclick="CV.tripShareSheet('${t.id}')">Voir le code et l’état du partage</button>` : `<button class="v-btn" onclick="CV.tripShare('${t.id}')">🔗 Partager ce voyage seul (son propre code)</button>`)}
+        ${t.demo ? '' : `<button class="v-btn" onclick="CV.shareHub()">👥 Partager ce voyage</button>`}
         <button class="v-btn sec" onclick="CV.pdfSheet()">🖨️ Carnet de route à imprimer (PDF)</button>
         <button class="v-btn sec" onclick="CV.newTrip()">＋ Nouveau voyage</button></div>`;
     }
-    h += `<div class="v-box"><h3>📤 Inviter un ami</h3><p>Montre-lui le QR code ou envoie-lui le lien de l’appli.</p><button class="v-btn" onclick="CV.shareSheet()">📤 Partager l’appli (QR code)</button></div>`;
+    h += `<div class="v-box"><h3>👥 Partager</h3><p>Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.</p><button class="v-btn" onclick="CV.shareHub()">👥 Ouvrir Partager</button></div>`;
     h += `<div class="v-box"><h3>🎬 Tutos</h3><p>Les 4 espaces du carnet (Préparation, En cours, Passés, Bilan), et l’essentiel pour bien commencer.</p>${tutoBtn()}${ESCALE ? `<button type="button" class="v-btn sec" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button><button type="button" class="v-btn sec" onclick="CV.radarTuto()">✦ Tuto Radar des prix (3 min)</button>` : ''}</div>`;
     h += `<div class="v-box"><h3>🕘 Activité récente</h3>${activity()}</div>
       ${coffeeBox()}<div class="v-box"><h3>🔄 Mise à jour de l’appli</h3><p>Version installée : ${BUILD}. Si une nouveauté n’apparaît pas, touche le bouton : tes voyages et tes photos ne sont pas touchés.</p><button class="v-btn sec" onclick="CV.forceUpdate()">🔄 Mettre à jour maintenant</button></div><div class="v-box"><h3>📤 Voyage ou photos non arrivés ?</h3><p>Renvoie vers le serveur toutes les fiches et toutes les photos de ce téléphone, par exemple après une suppression sur le serveur. Rien n’est dupliqué.</p><button class="v-btn" onclick="CV.photoResend()">📤 Tout renvoyer</button></div>${window.VZ_HOST ? '' : `<div class="v-box"><h3>🗑 Mes données sur le serveur</h3><p>Tu peux effacer à tout moment ton carnet du serveur (fiches et photos), pour toi et tes compagnons.</p><button class="v-btn danger" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>`}
@@ -5186,7 +5191,7 @@ const CV = (function(){
   async function photoURL(id){
     if(urls[id]) return urls[id];
     if(phMiss[id] && Date.now() - phMiss[id] < 60000) return null;
-    const b = await photoBlob(id); if(!b){ phMiss[id] = Date.now(); return null; }
+    let b = await photoBlob(id); if(b) b = await sniffImg(b); if(!b){ phMiss[id] = Date.now(); return null; }
     delete phMiss[id];
     return urls[id] = URL.createObjectURL(b);
   }
@@ -5230,6 +5235,17 @@ const CV = (function(){
     return new Promise(r => c.toBlob(r, 'image/jpeg', q));
   }
   // Une photo = deux versions : grande (1280 px) et vignette (420 px, id + '.t')
+  // copie pour le serveur : 1080 px sur le petit côté (1920 max sur le grand), WebP 80 % (sinon JPEG 80 %) ; l’original reste ici
+  async function cloudCopy(blob){
+    try {
+      const bmp = await decodeImg(blob), W = bmp.width, H = bmp.height, s = Math.min(1, 1080 / Math.min(W, H), 1920 / Math.max(W, H));
+      const c = document.createElement('canvas'); c.width = Math.round(W * s); c.height = Math.round(H * s);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height); if(bmp.close) bmp.close();
+      let out = await new Promise(r => c.toBlob(r, 'image/webp', 0.8));
+      if(!(out && out.type === 'image/webp' && out.size)) out = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.8));
+      return out && out.size && out.size < blob.size ? out : blob;
+    } catch(e){ return blob; }
+  }
   async function storePhoto(blob, id){
     const full = await shrink(blob, 2048, 0.88), thumb = await shrink(blob, 480, 0.74);
     await IDB.put({id, blob:full, up:0}); await IDB.put({id:id+'.t', blob:thumb, up:1});
@@ -5260,7 +5276,9 @@ const CV = (function(){
         let big = null; try { big = await IDB.get(id.slice(0, -2)); } catch(e){}
         if(o && o.blob && !(big && big.blob)) await send(o.blob, id, code);
       } else if(o && o.blob){
-        let ub = o.blob;   // anciennes photos plus lourdes que la limite du serveur (1,9 Mo) : on les réduit pour l’envoi
+        let ub = o.blob;
+        { const ow = owner[id]; if(ow && (ow.photos||[]).includes(id)) ub = await cloudCopy(ub); }   // photos de souvenirs : copie légère façon Instagram (tickets et pièces jointes : intacts)
+        // encore plus lourde que la limite du serveur (1,9 Mo) : on la réduit
         if(ub.size > 1700000){ for(const [mx, q] of [[2048,0.8],[1800,0.7],[1500,0.62],[1200,0.55]]){ try { ub = await shrink(o.blob, mx, q); } catch(e){ break; } if(ub.size <= 1700000) break; } }
         await send(ub, id, code);
         try {   // + vignette légère (≈ 30 Ko) pour que l’autre téléphone affiche vite la grille
@@ -5452,7 +5470,7 @@ const CV = (function(){
   }
   function init(){
     setTimeout(shareInbox, 600); setTimeout(hashJoin, 1200);
-    try { const hq = document.getElementById('cv-hero-qr'); if(hq) hq.innerHTML = qrSVG(APP_URL(), 'q') + '<span>📤 Partager</span>'; } catch(e){}
+    try { const hq = document.getElementById('cv-hero-qr'); if(hq) hq.innerHTML = qrSVG(APP_URL(), 'q') + '<span>💌 Vezoria</span>'; } catch(e){}
     loadStore();
     if(window.VZ_HOST && M.trip === LEGACY) M.trip = R.t2026 && !R.t2026.deleted ? 't2026' : null;
     document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ if(vw) viewClose(); else closeSheet(); } if(vw && e.key==='ArrowRight') viewGo(1); if(vw && e.key==='ArrowLeft') viewGo(-1); });
@@ -10733,7 +10751,7 @@ ${pm.join('\n')}</Document></kml>`;
     const t = trip(); if(!t || hidden('blk:days')) return '';
     const n = dayList().length;
     return `<div class="cv-daysbar"><button type="button" class="cv-db-dates" onclick="CV.datesSheet()"><i>📅</i><span><b>${t.debut ? esc(tripDatesLong(t)) : 'Dates à fixer'}</b><small>${n ? n + ' jour' + (n>1?'s':'') + ' · ' : ''}modifier les dates</small></span></button>
-      <button type="button" class="cv-db-share" onclick="CV.shareHub()">🔗 Partager</button></div>`;
+      <button type="button" class="cv-db-share" onclick="CV.shareHub()">👥 Partager</button></div>`;
   }
   function datesSheet(){
     const t = trip(); if(!t) return;
@@ -10879,29 +10897,27 @@ ${pm.join('\n')}</Document></kml>`;
 
   /* ---------- 🔗 Partager le voyage (compagnon, amis) ---------- */
   function shareHub(){
-    const t = trip(); if(!t) return;
-    if(t.demo){ alert('C’est le voyage de démo : crée ton propre voyage (Mes voyages → ＋) pour le partager.'); return; }
-    const code = TS()[t.id], on = code && spaceObj(code), sp = on ? spaceObj(code) : null, v = (t.voyageurs||[]).filter(prof), fc = feedCode(t.id);
-    const nfw = fc ? list('follower', x=>x.trip===ftId(t.id)).length : 0, nlk = fc ? list('like', l=>l.trip===ftId(t.id) && l.on).length : 0, ncm = fc ? list('comment', c=>c.trip===ftId(t.id)).length : 0;
-    let h = `<h2>🔗 Partager « ${esc(t.titre)} »</h2>
+    const t0 = trip(), t = t0 && !t0.demo ? t0 : null;
+    let h = `<h2>👥 Partager</h2>`;
+    if(t){
+      const code = TS()[t.id], on = code && spaceObj(code), sp = on ? spaceObj(code) : null, v = (t.voyageurs||[]).filter(prof), fc = feedCode(t.id);
+      const nfw = fc ? list('follower', x=>x.trip===ftId(t.id) && !isBlk(x)).length : 0, nlk = fc ? list('like', l=>l.trip===ftId(t.id) && l.on && !isBlk(l)).length : 0, ncm = fc ? list('comment', c=>c.trip===ftId(t.id) && !isBlk(c)).length : 0;
+      h += `<div class="sh-sec" data-notr>🧳 ${esc(t.titre)}</div>
       <div class="sh-card"><div class="sh-k">👥 Voyager ensemble</div><p>Tes compagnons voient tout le voyage et le complètent avec toi : programme, résas, budget, souvenirs. Chaque ajout est signé.</p>
         <div class="cv-row" style="gap:6px;flex-wrap:wrap;margin:6px 0 10px">${v.map(pid=>pchip(pid)).join('') || '<span class="v-sum-small">Personne d’autre pour l’instant</span>'}</div>
         <button type="button" class="v-btn" onclick="CV.tripInviteNow('${t.id}')">📤 Inviter quelqu’un dans ce voyage</button>
-        <div class="v-sum-small" style="margin-top:6px">${on ? `☁️ En ligne et chiffré · ${sp.err ? '⚠️ ' + esc(sp.err) : (sp.dirty||[]).length ? '⏳ envoi en cours' : '✓ à jour'}` : 'Un seul geste : le voyage est mis en ligne (chiffré) et tu envoies le lien par message. Tes autres voyages restent privés.'}</div></div>
+        <div class="v-sum-small" style="margin-top:6px">${on ? `☁️ En ligne et chiffré · ${sp.err ? '⚠️ ' + esc(sp.err) : (sp.dirty||[]).length ? '⏳ envoi en cours' : '✓ à jour'}` : 'Un seul geste : le voyage est mis en ligne (chiffré) et tu envoies le lien par message. Tes autres voyages restent privés.'}</div>
+        <div class="sh-links">${on ? `<button type="button" onclick="CV.tripShareSheet('${t.id}')">🔑 Code du voyage et état du partage</button>` : `<button type="button" onclick="CV.tripShare('${t.id}')">🔑 Réutiliser un ancien code de voyage</button>`}<button type="button" onclick="CV.editTrip('${t.id}')">👥 Choisir les voyageurs</button></div></div>
       <div class="sh-card"><div class="sh-k">👀 Abonnés</div><p>Ta famille et tes amis suivent le voyage comme un carnet de bord : uniquement les photos, les lieux et les récits. Ils mettent des ❤️ et des commentaires. Le reste reste privé.</p>
         ${fc ? `<div class="sh-st"><span>👀 <b>${nfw}</b> abonné${nfw>1?'s':''}</span><span>❤️ <b>${nlk}</b></span><span>💬 <b>${ncm}</b></span></div>
           <button type="button" class="v-btn" onclick="CV.feedPublish('${t.id}')">📤 Inviter des abonnés</button>
-          <button type="button" class="v-btn sec" onclick="CV.feedStop('${t.id}')">Arrêter la publication</button>`
-        : `<button type="button" class="v-btn" onclick="CV.feedPublish('${t.id}')">👀 Publier pour des abonnés</button>`}</div>
-      <details class="sh-more"><summary>Plus d’options</summary>
-        ${on ? `<button type="button" class="v-btn sec" onclick="CV.tripShareSheet('${t.id}')">🔑 Code du voyage et état du partage</button>` : `<button type="button" class="v-btn sec" onclick="CV.tripShare('${t.id}')">🔑 Réutiliser un ancien code de voyage</button>`}
-        <button type="button" class="v-btn sec" onclick="CV.editTrip('${t.id}')">👥 Choisir les voyageurs</button>
-        <button type="button" class="v-btn sec" onclick="CV.tripJoin()">🔗 J’ai reçu un code : rejoindre un voyage</button>
-        <button type="button" class="v-btn sec" onclick="CV.socialHub()">👥 Abonnés, abonnements et codes</button>
-        <button type="button" class="v-btn sec" onclick="CV.cloudSheet()">☁️ Cloud Vezoria</button>
-        <button type="button" class="v-btn sec" onclick="CV.shareSheet()">📤 Faire découvrir l’appli (QR code)</button></details>
-      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`;
+          <div class="sh-links"><button type="button" onclick="CV.feedView('${ftId(t.id)}')">👀 Voir comme un abonné</button><button type="button" onclick="CV.feedStop('${t.id}')">Arrêter la publication</button></div>`
+        : `<button type="button" class="v-btn" onclick="CV.feedPublish('${t.id}')">👀 Publier pour des abonnés</button>`}</div>`;
+    } else if(t0 && t0.demo) h += `<div class="v-sum-small" style="margin-bottom:10px">C’est le voyage de démo : crée ton propre voyage (Mes voyages → ＋) pour le partager.</div>`;
+    h += socialHTML(t ? t.id : '');
+    h += `<div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`;
     openSheet(h);
+    M.socSeen = Date.now(); persist(); setTimeout(socPill, 50);
   }
 
   /* ---------- 🔎 « Que voir » : lieux ajoutés à la main (ville sans hôtel, excursion…) ---------- */
@@ -12346,14 +12362,8 @@ ${pm.join('\n')}</Document></kml>`;
       const left = !!s.code || myTrips().some(t=>tripInCloud(t.id));
       if(left) h += `<div class="v-sum-small" style="margin-top:8px">ℹ️ Des voyages sont encore sur le serveur (partages en cours).</div><button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.close();CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button>`;
     } else {
-      // ── partage avec les amis : étape à part ──
-      const ts = myTrips();
-      h += `<div class="cv-cl-h">👥 Partager avec mes amis</div>`;
-      if(mode === 'all') h += `<button type="button" class="cv-choice" onclick="CV.cloudShareAll()"><i>🌍</i><span><b>Je partage tout</b><small>Ils reçoivent ton code principal et voient tous tes voyages. Pour ta famille ou ton couple.</small></span></button>`;
-      h += `<div class="cv-cl-sub">${mode === 'all' ? 'Je choisis quoi partager : un voyage à la fois, ils ne voient que lui.' : 'Invite tes compagnons voyage par voyage : ils ne voient que ce voyage.'}</div>`
-        + ts.map(t=>`<div class="cv-cl-t"><span><b>${esc(t.titre || '')}</b><small>${tripInCloud(t.id) && (M.cloudInv||{})[t.id] ? 'Invitation déjà envoyée' : 'Pas encore partagé'}</small></span><button type="button" class="v-btn sec" onclick="CV.close();CV.cloudInvite('${t.id}')">📤 Inviter</button></div>`).join('');
+      h += `<div class="sh-note">👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».<button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.close();CV.shareHub()">👥 Ouvrir Partager</button></div>`;
     }
-    h += `<button type="button" class="v-btn sec" style="margin-top:10px" onclick="CV.close();CV.tripJoin()">🤝 J’ai reçu une invitation dans un voyage</button>`;
     if(ph && mode !== 'none') h += `<div class="v-sum-small" style="margin-top:6px">📸 ${ph} photo(s) en attente d’envoi</div>`;   // modèle traduit « 📸 {0} photo(s) en attente d’envoi »
     h += `<div class="v-actions">${mode !== 'none' ? `<button type="button" class="v-btn" onclick="CV.syncNow(true);CV.close()">🔄 Synchroniser maintenant</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.close()">OK</button></div>`;
     openSheet(h);
@@ -12396,7 +12406,9 @@ ${pm.join('\n')}</Document></kml>`;
         const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(s.code)}});
         let j = {}; try { j = await r.json(); } catch(e){}
         if(!r.ok) throw new Error(j.error || ('erreur ' + r.status));
-        M.pq = []; M.pgone = []; toast('🗑 Carnet effacé du cloud');
+        { const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
+          M.pq = (M.pq||[]).filter(id=>{ const r = owner[String(id).replace(/\.t$/,'')]; return r && targets(r)[0] !== 'main'; }); }
+        M.pgone = (M.pgone||[]).filter(g=>g.code !== s.code); toast('🗑 Carnet effacé du cloud');
       } catch(e){ alert('Effacement impossible : ' + e.message + '\nRien n’a changé : réessaie quand tu as du réseau.'); return; }
       s.since = 0; M.dirty = []; s.code = '';
     }
@@ -12675,13 +12687,13 @@ ${pm.join('\n')}</Document></kml>`;
     const btns = document.querySelector('.hero-btns'); if(!btns) return;
     const any = Object.keys(FT()).length || list('feedtrip', f=>TS()[f.id]).length || Object.keys(TS()).length;
     let b = document.getElementById('cv-socpill');
-    if(!any){ if(b) b.remove(); return; }
-    if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'cv-socpill'; b.className = 'cv-syncpill cv-socpill'; b.onclick = () => CV.socialHub(); const sp = document.getElementById('cv-syncpill'); sp ? sp.after(b) : btns.prepend(b); }
-    const n = socEvents().length, h = `<span>👥</span>${n ? `<b class="cv-badge">${n > 99 ? '99+' : n}</b>` : ''}`;
-    if(b.dataset.h !== h){ b.dataset.h = h; b.innerHTML = h; b.setAttribute('aria-label', n ? n + ' nouveauté(s)' : 'Abonnés et partages'); }
+    if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'cv-socpill'; b.className = 'cv-syncpill cv-socpill'; b.onclick = () => CV.shareHub(); const sp = document.getElementById('cv-syncpill'); sp ? sp.after(b) : btns.prepend(b); }
+    const n = socEvents().length, h = `<span>👥</span><small>Partager</small>${n ? `<b class="cv-badge">${n > 99 ? '99+' : n}</b>` : ''}`;
+    if(b.dataset.h !== h){ b.dataset.h = h; b.innerHTML = h; b.setAttribute('aria-label', n ? n + ' nouveauté(s)' : 'Partager'); }
   }
-  function socialHub(){
-    const ev = socEvents(), mineT = Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted);
+  function socialHub(){ shareHub(); }
+  function socialHTML(cur){
+    const ev = socEvents(), mineT = Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted), others = mineT.filter(x=>x !== cur);
     const fol = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted);
     const ttl = ftid => { const ft = R[ftid]; return ft ? ft.titre : ''; };
     const evRow = e => { const r = e.r, w = esc(r.who || 'Quelqu’un');
@@ -12698,17 +12710,20 @@ ${pm.join('\n')}</Document></kml>`;
     const codeRow = t => { const c = TS()[t.id] && spaceObj(TS()[t.id]) ? TS()[t.id] : '', who = (t.voyageurs||[]).filter(prof).map(p=>esc(pname(p))).join(', ');
       return `<div class="cv-prow" style="cursor:default"><span><b>${esc(t.titre)}</b><small class="v-sum-small" style="display:block">${who || 'seul(e)'}${t.debut ? ' · ' + tripDates(t) : ''}</small></span>
         ${c ? `<button type="button" class="cv-code" style="border:0;background:none;font:inherit;font-weight:700" onclick="CV.tripShareSheet('${t.id}')">${esc(c)}</button>` : `<button type="button" class="v-btn sec" style="width:auto;padding:6px 10px;margin:0" onclick="CV.go('${t.id}');CV.shareHub()">🔗 Partager</button>`}</div>`; };
-    openSheet(`<h2>👥 Abonnés & partages</h2>
+    return `
       ${ev.length ? `<div class="sh-card"><div class="sh-k">✨ Nouveautés (${ev.length})</div>${ev.slice(0, 30).map(evRow).join('')}</div>` : '<div class="v-sum-small" style="margin-bottom:10px">Rien de nouveau depuis ta dernière visite.</div>'}
       <div class="sh-st" style="margin:4px 0 12px"><span>👀 <b>${nFw}</b> abonné${nFw>1?'s':''}</span><span>➡️ <b>${fol.length}</b> voyage${fol.length>1?'s':''} suivi${fol.length>1?'s':''}</span></div>
-      <h3>📣 Mes voyages publiés</h3>${mineT.map(pubRow).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Aucun voyage publié pour l’instant : dans un voyage, touche Partager puis Publier pour des abonnés.</div>'}
+      ${others.length ? `<h3>📣 Mes voyages publiés</h3>${others.map(pubRow).join('')}` : (cur ? '' : '<h3>📣 Mes voyages publiés</h3><div class="v-sum-small" style="margin-bottom:8px">Aucun voyage publié pour l’instant : dans un voyage, touche Partager puis Publier pour des abonnés.</div>')}
       <h3>➡️ Les voyages que je suis</h3>${fol.map(f=>{ const n = list('feed', x=>x.trip===f.id && !x.deleted).length; return `<button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b>${esc(f.titre)}</b><small class="v-sum-small" style="display:block"><span>par ${esc(f.owner || '?')}</span> · <span>${n} étape${n>1?'s':''}</span> · <span>code ${esc(TS()[f.id])}</span></small></span><span>›</span></button>`; }).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Aucun pour l’instant.</div>'}
-      <button type="button" class="v-btn sec" onclick="CV.followSheet()">➕ Suivre un voyage avec un code</button>
-      <h3>🔑 Codes de mes voyages</h3><div class="v-sum-small" style="margin-bottom:6px">Le code d’un voyage permet à tes compagnons de le rejoindre (tout le voyage, pas seulement les photos).</div>
+      <div class="sh-card"><div class="sh-k">🔑 J’ai reçu un code</div>
+        <button type="button" class="v-btn sec" onclick="CV.tripJoin()">🔗 J’ai reçu un code : rejoindre un voyage</button>
+        <button type="button" class="v-btn sec" onclick="CV.followSheet()">➕ Suivre un voyage avec un code</button></div>
+      <div class="sh-card"><div class="sh-k">💌 Faire découvrir Vezoria</div><button type="button" class="v-btn sec" onclick="CV.shareSheet()">📤 Faire découvrir l’appli (QR code)</button></div>
+      <details class="sh-more"><summary>🔑 Codes de mes voyages</summary><div class="v-sum-small" style="margin-bottom:6px">Le code d’un voyage permet à tes compagnons de le rejoindre (tout le voyage, pas seulement les photos).</div>
       ${tripsAll.map(codeRow).join('') || '<div class="v-sum-small">Aucun voyage.</div>'}
       ${M.sync.on && M.sync.code ? `<div class="v-sum-small" style="margin-top:8px">📱 Code de tous mes appareils : <b class="cv-code">${esc(M.sync.code)}</b></div>` : ''}
-      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
-    M.socSeen = Date.now(); persist(); setTimeout(socPill, 50);
+      ${cloudMode() === 'all' ? `<button type="button" class="cv-choice" style="margin-top:8px" onclick="CV.cloudShareAll()"><i>🌍</i><span><b>Je partage tout</b><small>Ils reçoivent ton code principal et voient tous tes voyages. Pour ta famille ou ton couple.</small></span></button>` : ''}</details>
+      <button type="button" class="v-btn sec" style="margin-top:10px" onclick="CV.cloudSheet()">☁️ Cloud Vezoria</button>`;
   }
   // 🚫 Blocage : l'auteur bloque pour tous ses abonnés (liste blk du voyage publié), chacun peut aussi masquer quelqu'un chez lui
   const devOfRec = r => r ? (r.dev || (/^(lk|fw):/.test(r.id) ? r.id.split(':').pop() : '')) : '';
@@ -12844,7 +12859,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13k';
+  const BUILD = '2026-10-13l';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
