@@ -2,11 +2,13 @@
 // Stockage : Cloudflare R2 (binding « PHOTOS ») si relié, sinon la base D1 (binding « DB »).
 // Les anciennes photos restées dans D1 sont toujours lues : rien n'est perdu au passage sur R2.
 const MAX_PHOTO = 1_900_000;
-// Garde-fous : D1 gratuit = 500 Mo par base → arrêt à 400 Mo. R2 gratuit = 10 Go → arrêt à 9 Go.
+// Garde-fous : D1 gratuit = 500 Mo par base → arrêt à 400 Mo.
+// R2 : budget d'environ 15 € par mois → arrêt à 1 000 Go (10 Go gratuits + ~990 Go à 0,015 $ ≈ 14,85 $, envois compris ≈ 15 €).
+// Pour changer le budget sans toucher au code : variable R2_MAX_GB dans les réglages Cloudflare (ex. 2000 pour ~30 €/mois).
 const MAX_TOTAL_D1 = 400_000_000;
-const MAX_TOTAL_R2 = 9_000_000_000;
-// Plafond par carnet (variable facultative SPACE_MAX_MB, 1 Go par défaut) : évite qu'un seul carnet remplisse tout
-const spaceMax = env => (Number(env.SPACE_MAX_MB) || 1000) * 1_000_000;
+const R2_MAX = env => (Number(env.R2_MAX_GB) || 1000) * 1_000_000_000;
+// Plafond par carnet (variable facultative SPACE_MAX_MB, 2 Go par défaut) : évite qu'un seul carnet remplisse tout
+const spaceMax = env => (Number(env.SPACE_MAX_MB) || 2000) * 1_000_000;
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
@@ -93,7 +95,7 @@ export async function onRequestPost({ request, env }) {
     const total = await getTotal(env, 'r2');
     const old = await env.PHOTOS.head(key);          // photo renvoyée une 2e fois : on ne compte que la différence
     const delta = buf.byteLength - (old ? old.size : 0);
-    if (total + delta > MAX_TOTAL_R2) return json({ error: 'Stockage des photos plein', total }, 507);
+    if (total + delta > R2_MAX(env)) return json({ error: 'Stockage des photos plein', total }, 507);
     const sk = 's:' + space, mine = await getTotal(env, sk);
     if (mine + delta > spaceMax(env)) return json({ error: 'Ce carnet a atteint sa place maximale pour les photos', total: mine }, 507);
     await env.PHOTOS.put(key, buf, { httpMetadata: { contentType: mime } });
