@@ -3589,4 +3589,11 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 İçe aktarma başladı: uygulamayı kullanmaya devam edebilirsin",
 "Import Polarsteps":"Polarsteps içe aktarma",
 "✅ Import terminé":"✅ İçe aktarma tamamlandı",
-"Import terminé":"İçe aktarma tamamlandı"});
+"Import terminé":"İçe aktarma tamamlandı",
+"Photo de cette étape dans le survol":"Uçuşta bu durağın fotoğrafı",
+"Photos du bas":"Alttaki fotoğraflar",
+"Choisis la photo de fond":"Arka plan fotoğrafını seç",
+"Choisis la photo {0} du bas":"Alttaki {0}. fotoğrafı seç",
+"Toutes les étapes":"Tüm duraklar",
+"Plus de photos ({0})":"Daha fazla fotoğraf ({0})",
+"Automatique":"Otomatik"});

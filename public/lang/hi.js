@@ -3589,4 +3589,11 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 आयात शुरू: तुम ऐप इस्तेमाल करते रह सकते हो",
 "Import Polarsteps":"Polarsteps आयात",
 "✅ Import terminé":"✅ आयात पूरा",
-"Import terminé":"आयात पूरा"});
+"Import terminé":"आयात पूरा",
+"Photo de cette étape dans le survol":"उड़ान में इस पड़ाव की फ़ोटो",
+"Photos du bas":"नीचे की फ़ोटो",
+"Choisis la photo de fond":"पृष्ठभूमि फ़ोटो चुनें",
+"Choisis la photo {0} du bas":"नीचे की फ़ोटो {0} चुनें",
+"Toutes les étapes":"सभी पड़ाव",
+"Plus de photos ({0})":"और फ़ोटो ({0})",
+"Automatique":"अपने-आप"});

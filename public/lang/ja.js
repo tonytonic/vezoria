@@ -3589,4 +3589,11 @@ I18N.load({"🔑 Mon code principal":"🔑 メインコード",
 "📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 インポート開始：アプリをそのまま使えます",
 "Import Polarsteps":"Polarstepsインポート",
 "✅ Import terminé":"✅ インポート完了",
-"Import terminé":"インポート完了"});
+"Import terminé":"インポート完了",
+"Photo de cette étape dans le survol":"フライオーバーでのこの立ち寄り先の写真",
+"Photos du bas":"下の写真",
+"Choisis la photo de fond":"背景の写真を選ぶ",
+"Choisis la photo {0} du bas":"下の写真{0}を選ぶ",
+"Toutes les étapes":"すべての立ち寄り先",
+"Plus de photos ({0})":"ほかの写真（{0}）",
+"Automatique":"自動"});

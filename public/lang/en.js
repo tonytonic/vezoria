@@ -658,4 +658,11 @@ I18N.load({
 "📥 Import Polarsteps":"📥 Polarsteps import",
 "Import Polarsteps":"Polarsteps import",
 "✅ Import terminé":"✅ Import complete",
-"Import terminé":"Import complete"});
+"Import terminé":"Import complete",
+"Photo de cette étape dans le survol":"Photo for this stop in the flyover",
+"Photos du bas":"Bottom photos",
+"Choisis la photo de fond":"Choose the background photo",
+"Choisis la photo {0} du bas":"Choose bottom photo {0}",
+"Toutes les étapes":"All stops",
+"Plus de photos ({0})":"More photos ({0})",
+"Automatique":"Automatic"});

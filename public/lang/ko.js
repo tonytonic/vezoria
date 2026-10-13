@@ -3589,4 +3589,11 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 가져오기 시작: 앱을 계속 사용해도 돼요",
 "Import Polarsteps":"Polarsteps 가져오기",
 "✅ Import terminé":"✅ 가져오기 완료",
-"Import terminé":"가져오기 완료"});
+"Import terminé":"가져오기 완료",
+"Photo de cette étape dans le survol":"비행에서 이 장소의 사진",
+"Photos du bas":"아래 사진",
+"Choisis la photo de fond":"배경 사진 선택",
+"Choisis la photo {0} du bas":"아래 사진 {0} 선택",
+"Toutes les étapes":"모든 장소",
+"Plus de photos ({0})":"사진 더 보기 ({0})",
+"Automatique":"자동"});

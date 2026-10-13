@@ -3589,4 +3589,11 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 Импорт запущен: можно пользоваться приложением",
 "Import Polarsteps":"Импорт Polarsteps",
 "✅ Import terminé":"✅ Импорт завершён",
-"Import terminé":"Импорт завершён"});
+"Import terminé":"Импорт завершён",
+"Photo de cette étape dans le survol":"Фото этого этапа в облёте",
+"Photos du bas":"Фото внизу",
+"Choisis la photo de fond":"Выбери фоновое фото",
+"Choisis la photo {0} du bas":"Выбери фото {0} внизу",
+"Toutes les étapes":"Все этапы",
+"Plus de photos ({0})":"Ещё фото ({0})",
+"Automatique":"Автоматически"});

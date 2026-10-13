@@ -3589,4 +3589,11 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "📥 Import lancé : tu peux continuer à utiliser l’appli":"📥 بدأ الاستيراد: يمكنك متابعة استخدام التطبيق",
 "Import Polarsteps":"استيراد Polarsteps",
 "✅ Import terminé":"✅ اكتمل الاستيراد",
-"Import terminé":"اكتمل الاستيراد"});
+"Import terminé":"اكتمل الاستيراد",
+"Photo de cette étape dans le survol":"صورة هذه المحطة في التحليق",
+"Photos du bas":"الصور في الأسفل",
+"Choisis la photo de fond":"اختر صورة الخلفية",
+"Choisis la photo {0} du bas":"اختر الصورة {0} في الأسفل",
+"Toutes les étapes":"كل المحطات",
+"Plus de photos ({0})":"صور أخرى ({0})",
+"Automatique":"تلقائي"});

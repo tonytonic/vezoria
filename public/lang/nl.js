@@ -658,4 +658,11 @@ I18N.load({
 "📥 Import Polarsteps":"📥 Polarsteps-import",
 "Import Polarsteps":"Polarsteps-import",
 "✅ Import terminé":"✅ Import klaar",
-"Import terminé":"Import klaar"});
+"Import terminé":"Import klaar",
+"Photo de cette étape dans le survol":"Foto van deze etappe in de vlucht",
+"Photos du bas":"Foto’s onderaan",
+"Choisis la photo de fond":"Kies de achtergrondfoto",
+"Choisis la photo {0} du bas":"Kies foto {0} onderaan",
+"Toutes les étapes":"Alle etappes",
+"Plus de photos ({0})":"Meer foto’s ({0})",
+"Automatique":"Automatisch"});
