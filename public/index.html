@@ -1890,6 +1890,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 </style>
 <style>.fd-ph img.miss{opacity:0}.fd-ph span:has(>img.miss),.fd-ph button:has(>img.miss){background:#f3e9ee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ctext x='20' y='27' font-size='20' text-anchor='middle'%3E%E2%8F%B3%3C/text%3E%3C/svg%3E") center/40px no-repeat!important}</style>
 <style>
+.sw-row{display:flex;flex-direction:column;align-items:center;gap:2px}.sw-row small{font-size:.72rem;font-weight:600;opacity:.85}
 .sh-sec{font-weight:800;font-size:.95rem;color:var(--navy,#2A1238);margin:2px 0 8px}
 .sh-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .sh-links button{border:0;background:#f3ecf6;color:#2a1238;border-radius:14px;padding:7px 11px;font:inherit;font-size:.8rem;font-weight:700}
@@ -9348,15 +9349,17 @@ ${pm.join('\n')}</Document></kml>`;
   let ciSp = 1, ciLH = [], CP = null;
   const CI_DEF = {sp:'n', map:'mix', col:'or', intro:1, cap:1, ph:1, names:1, end:1, sig:1, mus:'1'};
   // 🎵 musique du survol : mêmes morceaux libres de droits que le film
-  let ciPrevT = null;
+  let ciPrevT = null, ciMusOn = false;   // ciMusOn : la musique du survol joue (personne ne doit la mettre en pause)
   function ciMusic(o, on){
     if(!o || o.mus === 'off'){ if(FA && !(FM && FM.playing)) filmAudioStop(); return; }
-    filmAudioInit(); if(!FA) return;
+    if(on) ciMusOn = true;
+    if(!FA) filmAudioInit(); if(!FA) return;
+    if(FA.ac && FA.ac.state === 'suspended') try { FA.ac.resume(); } catch(e){}
     const k = Math.max(0, (+o.mus || 1) - 1) % TRACKS.length;
     if(FA.k !== k || !FA.el.src){ FA.k = k; FA.el.src = TRACKS[k]; }
     if(on){ FA.on = true; filmAudioStart(); }
   }
-  function ciMusicOff(){ clearTimeout(ciPrevT); if(FA && !(FM && FM.playing)){ filmAudioStop(); setTimeout(()=>{ if(FA) FA.on = !M.filmMute; }, 1000); } }
+  function ciMusicOff(){ clearTimeout(ciPrevT); ciMusOn = false; if(FA && !(FM && FM.playing)){ filmAudioStop(); setTimeout(()=>{ if(FA) FA.on = !M.filmMute; }, 1000); } }
 
   const CI_SP = {l:1.45, n:1, r:.62};
   const CI_COL = {or:['#ffd28a','#ffe2a8'], rose:['#ff4f8b','#ffc2d6'], cyan:['#38bdf8','#d4f1ff'], blanc:['#ffffff','#ffffff'], vert:['#4ade80','#d9fbe5']};
@@ -11188,13 +11191,49 @@ ${pm.join('\n')}</Document></kml>`;
   }
   // Supprimer le carnet du serveur (exigé par Google Play) : fiches + photos, pour tout le monde
   function serverWipeSheet(){
-    const s = M.sync, sh = Object.entries(TS()).map(([tid,c])=>({t:R[tid], c})).filter(x=>x.t && spaceObj(x.c));
+    const s = M.sync;
+    // mes voyages qui ont quelque chose sur le serveur : le voyage partagé (compagnons) et/ou la publication (abonnés)
+    const rows = trips().filter(t=>t && !t.deleted && t.type === 'trip' && !t.demo).map(t=>{
+      const tc = TS()[t.id] && spaceObj(TS()[t.id]) ? TS()[t.id] : '', fc = FT()[t.id] || ''; return {t, tc, fc}; }).filter(x=>x.tc || x.fc);
     openSheet(`<h2>🗑 Supprimer mes données du serveur</h2>
       <div class="v-sum-small" style="margin-bottom:10px">Efface du serveur toutes les fiches et photos du carnet choisi, <b>pour toutes les personnes qui ont son code</b>. Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).</div>
       ${s.code ? `<button type="button" class="v-btn danger" onclick="CV.serverWipe('')">🗑 Carnet principal (${esc(s.code.slice(0,4))}…)</button>` : ''}
-      ${sh.map(x=>`<button type="button" class="v-btn danger" onclick="CV.serverWipe('${esc(x.c)}')">🗑 Voyage partagé « ${esc(x.t.titre)} »</button>`).join('')}
-      ${!s.code && !sh.length ? '<div class="v-sum-small">Rien n’est enregistré sur le serveur depuis ce téléphone : tes données sont seulement ici. « Effacer ce téléphone » (Sauvegarde) les supprime.</div>' : ''}
+      ${rows.map(x=>`<button type="button" class="v-btn danger sw-row" onclick="CV.serverWipeTrip('${x.t.id}')"><span data-notr>🗑 « ${esc(x.t.titre)} »</span><small>${x.tc && x.fc ? 'Voyage partagé + abonnés' : x.fc ? 'Abonnés' : 'Voyage partagé'}</small></button>`).join('')}
+      ${!s.code && !rows.length ? '<div class="v-sum-small">Rien n’est enregistré sur le serveur depuis ce téléphone : tes données sont seulement ici. « Effacer ce téléphone » (Sauvegarde) les supprime.</div>' : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
+  }
+  // photos encore à envoyer : on garde celles des autres carnets, on retire celles des codes effacés
+  function pqWithout(codes){
+    const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
+    return (M.pq||[]).filter(id=>{ const r = owner[String(id).replace(/\.t$/,'')]; if(!r) return false; const t = targets(r)[0], c = t === 'main' ? M.sync.code : t; return !codes.has(c); });
+  }
+  async function serverWipeTrip(tid){
+    const t = R[tid]; if(!t) return;
+    const tc = TS()[tid] && spaceObj(TS()[tid]) ? TS()[tid] : '', fc = FT()[tid] || '', codes = new Set([tc, fc].filter(Boolean));
+    if(!codes.size){ serverWipeSheet(); return; }
+    if(!(await uiConfirm('Supprimer « ' + t.titre + ' » du serveur, pour tout le monde ?\nCompagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.\nCette action ne peut pas être annulée.'))) return;
+    // d’abord on arrête les envois en cours (sinon des photos arriveraient encore après la suppression)
+    upHalt = true; for(let k = 0; k < 150 && uploading; k++) await new Promise(r=>setTimeout(r, 200));
+    let nR = 0, nP = 0;
+    try {
+      for(const code of codes){
+        const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}});
+        let j = {}; try { j = await r.json(); } catch(e){}
+        if(!r.ok) throw new Error(j.error || ('erreur ' + r.status));
+        nR += j.records || 0; nP += j.photos || 0;
+      }
+      // le téléphone oublie ces codes : le voyage redevient « seulement sur ce téléphone » et n’est plus proposé ici
+      M.pq = pqWithout(codes);
+      if(tc) delete TS()[tid];
+      if(fc){ delete FT()[tid]; delete TS()[ftId(tid)];
+        Object.values(R).forEach(r=>{ if(r && (r.trip === ftId(tid) || r.id === ftId(tid) || r.id === 'fk:' + tid)) delete R[r.id]; });
+        if(M.fup) delete M.fup[fc]; M.fq = (M.fq||[]).filter(x=>x[0] !== fc); M.fdel = (M.fdel||[]).filter(x=>x[0] !== fc); }
+      M.spaces = (M.spaces||[]).filter(x=>!codes.has(x.code)); M.pgone = (M.pgone||[]).filter(g=>!codes.has(g.code));
+      if(M.cloudInv) delete M.cloudInv[tid];
+      persist(); closeSheet(true); refresh();
+      alert('🗑 Supprimé du serveur : ' + nR + ' fiche(s) et ' + nP + ' photo(s).\nLe voyage reste sur ce téléphone, sans partage.');
+    } catch(e){ alert('Suppression impossible : ' + e.message); }
+    finally { upHalt = false; }
   }
   async function serverWipe(code){
     const main = !code; code = code || M.sync.code; if(!code) return;
@@ -12080,7 +12119,7 @@ ${pm.join('\n')}</Document></kml>`;
         el.src = TRACKS[FA.k];
       }
       if(FA.ac && FA.ac.state === 'suspended') FA.ac.resume();
-      const pr = FA.el.play(); if(pr && pr.then) pr.then(()=>{ if(!FM || !FM.playing) FA.el.pause(); }).catch(()=>{});
+      const pr = FA.el.play(); if(pr && pr.then) pr.then(()=>{ if((!FM || !FM.playing) && !ciMusOn) FA.el.pause(); }).catch(()=>{});
     } catch(e){ FA = null; }
   }
   function filmVol(v, t){
@@ -12094,7 +12133,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(FA.ac && FA.ac.state === 'suspended') FA.ac.resume();
     const pr = FA.el.play(); if(pr && pr.catch) pr.catch(()=>{}); filmVol(.9, 1.2);
   }
-  function filmAudioStop(){ if(!FA) return; filmVol(0, .8); setTimeout(()=>{ if(FA && (!FM || !FM.playing)) FA.el.pause(); }, 900); }
+  function filmAudioStop(){ if(!FA) return; filmVol(0, .8); setTimeout(()=>{ if(FA && (!FM || !FM.playing) && !ciMusOn) FA.el.pause(); }, 900); }
   function filmMute(){ M.filmMute = !M.filmMute; persist(); if(FA){ FA.on = !M.filmMute; filmVol(.9, .2); } const b = document.getElementById('cv-film-snd'); if(b) b.textContent = M.filmMute ? '🔇' : '🔊'; }
   function filmTrack(){
     M.filmTrack = ((M.filmTrack || 0) + 1) % TRACKS.length; persist();
@@ -12859,7 +12898,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13l';
+  const BUILD = '2026-10-13m';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -12869,7 +12908,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
