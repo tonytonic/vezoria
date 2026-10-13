@@ -1915,6 +1915,10 @@ body.cv-ph-past .cv-disc-card .dc button.add{background:#1E2C5C;color:#fff}
 body.cv-ph-past .cv-sub .active,body.cv-ph-past .cv-sub .on{background:#0E1838!important;color:#fff}
 body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 </style>
+<style>
+.ps-ask{display:flex;flex-direction:column;gap:8px;text-align:center}.ps-ask .ui-msg{margin-bottom:4px}.ps-ask small{font-size:.76rem;opacity:.75;margin:-2px 0 4px}
+.ps-ask .v-btn{margin:0}.ps-ask .cv-checkline{justify-content:center;font-size:.82rem;margin-top:4px}
+</style>
 </head>
 <body class="is-public">
 <div class="cv-statusbar"></div>
@@ -9899,6 +9903,24 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="v-actions"><label class="v-btn ps-pick">📂 Choisir le fichier<input type="file" accept=".zip,.json,application/zip,application/json" hidden onchange="CV.psFile(this)"></label></div>`);
   }
   const psIso = ts => { const n = +ts; if(!n) return ''; try { return new Date(n > 1e12 ? n : n * 1000).toISOString().slice(0, 10); } catch(e){ return ''; } };
+  // voyage déjà importé ? même identifiant Polarsteps, ou (anciens imports) même nom et même date de départ
+  function psFind(j){
+    const id = String(j.id || ''), nm = String(j.name || j.title || 'Voyage Polarsteps').slice(0, 120), d = psIso(j.start_date);
+    return trips().find(t=>t && !t.deleted && t.type === 'trip' && t.src === 'polarsteps' && ((id && t.psId === id) || (!t.psId && t.titre === nm && (!d || !t.debut || t.debut === d)))) || null;
+  }
+  function psAsk(name){
+    return new Promise(res=>{
+      const ov = document.createElement('div'); ov.className = 'ui-dlg'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true');
+      ov.innerHTML = `<div class="ui-box ps-ask"><div class="ui-msg"><b data-notr>« ${esc(name)} »</b><br><span>est déjà dans tes voyages.</span></div>
+        <button type="button" class="v-btn" data-v="replace">🔄 Remplacer</button>
+        <small>Les souvenirs importés sont remplacés. Le reste du voyage (programme, budget, compagnons, abonnés) est gardé.</small>
+        <button type="button" class="v-btn sec" data-v="both">➕ Garder les deux</button>
+        <button type="button" class="v-btn sec" data-v="skip">Ne pas importer ce voyage</button>
+        <label class="cv-checkline"><input type="checkbox" class="ps-same"> Même choix pour les voyages suivants</label></div>`;
+      ov.querySelectorAll('[data-v]').forEach(b=>{ b.onclick = () => { const same = ov.querySelector('.ps-same').checked; ov.remove(); res({v:b.dataset.v, same}); }; });
+      document.body.appendChild(ov);
+    });
+  }
   async function psFile(input){
     const f = input.files && input.files[0]; if(!f) return; input.value = '';
     if(PSRUN){ alert('Un import Polarsteps est déjà en cours.'); return; }
@@ -9917,7 +9939,13 @@ ${pm.join('\n')}</Document></kml>`;
       }
       if(!list_.length) throw new Error('aucun voyage Polarsteps trouvé dans ce fichier (il faut le ZIP de Polarsteps ou un fichier trip.json).');
       let nS = 0, nP = 0, last = '';
-      for(let k = 0; k < list_.length; k++){ msg(`🧳 Voyage ${k + 1} / ${list_.length}…`); const r = await psOne(list_[k], all, msg); nS += r.s; nP += r.p; last = r.tid; }
+      let same = null;   // « Même choix pour les voyages suivants »
+      for(let k = 0; k < list_.length; k++){
+        const old = psFind(list_[k].j || {}); let how = 'new';
+        if(old){ if(same) how = same; else { const a = await psAsk(old.titre); how = a.v; if(a.same) same = a.v; } }
+        if(how === 'skip') continue;
+        msg(`🧳 Voyage ${k + 1} / ${list_.length}…`); const r = await psOne(list_[k], all, msg, how === 'replace' ? old : null); nS += r.s; nP += r.p; last = r.tid; }
+      if(!last){ psPill(''); const el = document.getElementById('ps-msg'); if(el) el.textContent = ''; toast('Rien de nouveau importé'); return; }
       const done = `✅ ${list_.length} voyage${list_.length > 1 ? 's' : ''} importé${list_.length > 1 ? 's' : ''} : ${nS} étapes, ${nP} photos.`;
       if(document.getElementById('ps-msg')){   // toujours devant la fenêtre d’import : on ouvre directement le voyage
         psPill(''); closeSheet(true);
@@ -9930,17 +9958,20 @@ ${pm.join('\n')}</Document></kml>`;
     } catch(e){ psPill(''); const el = document.getElementById('ps-msg'); if(el) el.textContent = ''; alert('Import impossible : ' + e.message); }
     finally { try { rd && rd.close(); } catch(e){} await psLock(false); PSRUN = null; }
   }
-  async function psOne(tr, all, msg){
+  async function psOne(tr, all, msg, old){
     const j = tr.j || {}, steps = (j.all_steps || j.steps || []).slice().sort((a, b)=>(+a.start_time || 0) - (+b.start_time || 0));
-    const tid = 't' + uid(), debut = psIso(j.start_date) || psIso((steps[0] || {}).start_time), fin = psIso(j.end_date) || psIso((steps[steps.length - 1] || {}).start_time) || debut;
-    const out = [{id:tid, type:'trip', titre:String(j.name || j.title || 'Voyage Polarsteps').slice(0, 120), sous:String(j.summary || '').slice(0, 160), debut, fin, voyageurs:M.me ? [M.me] : [], objectif:'', src:'polarsteps'}];
+    const tid = old ? old.id : 't' + uid(), debut = psIso(j.start_date) || psIso((steps[0] || {}).start_time), fin = psIso(j.end_date) || psIso((steps[steps.length - 1] || {}).start_time) || debut;
+    const head = {id:tid, type:'trip', titre:String(j.name || j.title || 'Voyage Polarsteps').slice(0, 120), sous:String(j.summary || '').slice(0, 160), debut, fin, voyageurs:M.me ? [M.me] : [], objectif:'', src:'polarsteps', psId:String(j.id || '')};
+    // remplacer : même voyage (compagnons, abonnés, budget… gardés), seuls ses souvenirs importés repartent de zéro
+    const out = [old ? Object.assign(clone(old), {titre:head.titre, sous:head.sous || old.sous || '', debut:debut || old.debut, fin:fin || old.fin, src:'polarsteps', psId:head.psId}) : head];
+    if(old) list('souv', s=>s.trip === tid && !s.deleted && (s.src === 'polarsteps' || !old.psId)).forEach(s=>out.push(Object.assign(clone(s), {deleted:true})));
     let p = 0;
     const photos = tr.ents ? tr.ents.filter(e=>!e.directory && e.filename.startsWith(tr.base) && /\.(jpe?g|png|webp)$/i.test(e.filename) && /\/photos?\//i.test(e.filename)) : [];
     for(let i = 0; i < steps.length; i++){
       const s = steps[i] || {}, L = s.location || {}, key = String(s.id || ''), slug = String(s.slug || '');
       const lat = L.lat != null ? +L.lat : s.lat != null ? +s.lat : null, lng = L.lon != null ? +L.lon : L.lng != null ? +L.lng : s.lon != null ? +s.lon : null;
       const sv = {id:'sv' + uid() + i, type:'souv', trip:tid, date:psIso(s.start_time) || debut, titre:String(s.display_name || s.name || L.name || ('Étape ' + (i + 1))).slice(0, 120),
-        lieu:[L.name, L.detail].filter(Boolean).join(', ').slice(0, 160), texte:String(s.description || '').slice(0, 20000), photos:[], cc:String(L.country_code || '').toUpperCase().slice(0, 2), pays:L.country || ''};
+        lieu:[L.name, L.detail].filter(Boolean).join(', ').slice(0, 160), texte:String(s.description || '').slice(0, 20000), photos:[], cc:String(L.country_code || '').toUpperCase().slice(0, 2), pays:L.country || '', src:'polarsteps'};
       if(lat != null && isFinite(lat) && lng != null && isFinite(lng)){ sv.lat = lat; sv.lng = lng; }
       let ph = photos.filter(e=>e.filename.split('/').some(g=>(key && (g === key || g.endsWith('_' + key))) || (!key && slug && g.startsWith(slug + '_'))));
       if(!all) ph = ph.slice(0, 3);
@@ -12920,7 +12951,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13p';
+  const BUILD = '2026-10-13q';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
