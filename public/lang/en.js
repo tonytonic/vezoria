@@ -685,4 +685,12 @@ I18N.load({
 "Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.":"Travel companions, followers, trips you follow, codes you received and the app’s QR code: everything is in one place.",
 "👥 Ouvrir Partager":"👥 Open Share",
 "👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».":"👥 Invite your companions, publish for followers, join a trip: it’s all done in “Share”.",
-"🔑 Codes de mes voyages":"🔑 My trip codes"});
+"🔑 Codes de mes voyages":"🔑 My trip codes",
+"Voyage partagé + abonnés":"Shared trip + followers",
+"Abonnés":"Followers",
+"Voyage partagé":"Shared trip",
+"Supprimer « {0} » du serveur, pour tout le monde ?":"Delete “{0}” from the server, for everyone?",
+"Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"Companions and followers will lose access. What’s on this phone stays here.",
+"Cette action ne peut pas être annulée.":"This cannot be undone.",
+"🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Deleted from the server: {0} record(s) and {1} photo(s).",
+"Le voyage reste sur ce téléphone, sans partage.":"The trip stays on this phone, no longer shared."});

@@ -3616,4 +3616,12 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.":"Yol arkadaşları, takipçiler, takip ettiğin seyahatler, aldığın kodlar ve uygulamanın QR kodu: hepsi tek yerde.",
 "👥 Ouvrir Partager":"👥 Paylaş’ı aç",
 "👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».":"👥 Yol arkadaşlarını davet et, takipçiler için yayınla, bir seyahate katıl: hepsi «Paylaş» içinde.",
-"🔑 Codes de mes voyages":"🔑 Seyahatlerimin kodları"});
+"🔑 Codes de mes voyages":"🔑 Seyahatlerimin kodları",
+"Voyage partagé + abonnés":"Paylaşılan seyahat + takipçiler",
+"Abonnés":"Takipçiler",
+"Voyage partagé":"Paylaşılan seyahat",
+"Supprimer « {0} » du serveur, pour tout le monde ?":"«{0}» herkes için sunucudan silinsin mi?",
+"Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"Yol arkadaşları ve takipçiler erişimi kaybeder. Bu telefondakiler burada kalır.",
+"Cette action ne peut pas être annulée.":"Bu işlem geri alınamaz.",
+"🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Sunucudan silindi: {0} kayıt ve {1} fotoğraf.",
+"Le voyage reste sur ce téléphone, sans partage.":"Seyahat bu telefonda kalır, artık paylaşılmaz."});

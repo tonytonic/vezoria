@@ -3616,4 +3616,12 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.":"Попутчики, подписчики, поездки, на которые ты подписан, полученные коды и QR-код приложения — всё в одном месте.",
 "👥 Ouvrir Partager":"👥 Открыть «Поделиться»",
 "👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».":"👥 Пригласить попутчиков, публиковать для подписчиков, присоединиться к поездке — всё в разделе «Поделиться».",
-"🔑 Codes de mes voyages":"🔑 Коды моих поездок"});
+"🔑 Codes de mes voyages":"🔑 Коды моих поездок",
+"Voyage partagé + abonnés":"Общая поездка + подписчики",
+"Abonnés":"Подписчики",
+"Voyage partagé":"Общая поездка",
+"Supprimer « {0} » du serveur, pour tout le monde ?":"Удалить «{0}» с сервера для всех?",
+"Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"Попутчики и подписчики потеряют доступ. То, что на этом телефоне, останется здесь.",
+"Cette action ne peut pas être annulée.":"Это действие нельзя отменить.",
+"🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Удалено с сервера: записей — {0}, фото — {1}.",
+"Le voyage reste sur ce téléphone, sans partage.":"Поездка остаётся на этом телефоне, без общего доступа."});

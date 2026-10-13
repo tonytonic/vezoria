@@ -685,4 +685,12 @@ I18N.load({
 "Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.":"Reisgenoten, volgers, reizen die je volgt, ontvangen codes en de QR-code van de app: alles op één plek.",
 "👥 Ouvrir Partager":"👥 Delen openen",
 "👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».":"👥 Reisgenoten uitnodigen, publiceren voor volgers, aansluiten bij een reis: alles via ‘Delen’.",
-"🔑 Codes de mes voyages":"🔑 Codes van mijn reizen"});
+"🔑 Codes de mes voyages":"🔑 Codes van mijn reizen",
+"Voyage partagé + abonnés":"Gedeelde reis + volgers",
+"Abonnés":"Volgers",
+"Voyage partagé":"Gedeelde reis",
+"Supprimer « {0} » du serveur, pour tout le monde ?":"‘{0}’ voor iedereen van de server verwijderen?",
+"Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"Reisgenoten en volgers verliezen de toegang. Wat op deze telefoon staat, blijft hier.",
+"Cette action ne peut pas être annulée.":"Dit kan niet ongedaan worden gemaakt.",
+"🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Van de server verwijderd: {0} items en {1} foto’s.",
+"Le voyage reste sur ce téléphone, sans partage.":"De reis blijft op deze telefoon, niet meer gedeeld."});

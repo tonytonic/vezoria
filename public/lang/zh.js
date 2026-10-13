@@ -3616,4 +3616,12 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.":"同行者、关注者、你关注的旅行、收到的代码和应用二维码：都在一个地方。",
 "👥 Ouvrir Partager":"👥 打开分享",
 "👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».":"👥 邀请同行者、为关注者发布、加入旅行：都在「分享」里完成。",
-"🔑 Codes de mes voyages":"🔑 我的旅行代码"});
+"🔑 Codes de mes voyages":"🔑 我的旅行代码",
+"Voyage partagé + abonnés":"共享旅行 + 关注者",
+"Abonnés":"关注者",
+"Voyage partagé":"共享旅行",
+"Supprimer « {0} » du serveur, pour tout le monde ?":"要为所有人从服务器删除「{0}」吗？",
+"Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"同行者和关注者将无法再访问。此手机上的内容会保留。",
+"Cette action ne peut pas être annulée.":"此操作无法撤销。",
+"🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 已从服务器删除：{0} 条记录和 {1} 张照片。",
+"Le voyage reste sur ce téléphone, sans partage.":"旅行保留在此手机上，不再共享。"});

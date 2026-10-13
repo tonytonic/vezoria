@@ -685,4 +685,12 @@ I18N.load({
 "Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.":"Companheiros, seguidores, viagens que segues, códigos recebidos e o QR da app: tudo no mesmo sítio.",
 "👥 Ouvrir Partager":"👥 Abrir Partilhar",
 "👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».":"👥 Convidar companheiros, publicar para seguidores, entrar numa viagem: tudo em «Partilhar».",
-"🔑 Codes de mes voyages":"🔑 Códigos das minhas viagens"});
+"🔑 Codes de mes voyages":"🔑 Códigos das minhas viagens",
+"Voyage partagé + abonnés":"Viagem partilhada + seguidores",
+"Abonnés":"Seguidores",
+"Voyage partagé":"Viagem partilhada",
+"Supprimer « {0} » du serveur, pour tout le monde ?":"Apagar «{0}» do servidor, para todos?",
+"Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"Companheiros e seguidores perdem o acesso. O que está neste telemóvel fica aqui.",
+"Cette action ne peut pas être annulée.":"Esta ação não pode ser anulada.",
+"🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 Apagado do servidor: {0} ficha(s) e {1} foto(s).",
+"Le voyage reste sur ce téléphone, sans partage.":"A viagem fica neste telemóvel, sem partilha."});

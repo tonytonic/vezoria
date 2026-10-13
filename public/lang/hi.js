@@ -3616,4 +3616,12 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.":"साथी, फ़ॉलोअर्स, जिन यात्राओं को तुम फ़ॉलो करते हो, मिले कोड और ऐप का QR कोड: सब एक जगह।",
 "👥 Ouvrir Partager":"👥 शेयर खोलें",
 "👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».":"👥 साथियों को बुलाना, फ़ॉलोअर्स के लिए प्रकाशित करना, किसी यात्रा से जुड़ना: सब «शेयर करें» में।",
-"🔑 Codes de mes voyages":"🔑 मेरी यात्राओं के कोड"});
+"🔑 Codes de mes voyages":"🔑 मेरी यात्राओं के कोड",
+"Voyage partagé + abonnés":"साझा यात्रा + फ़ॉलोअर्स",
+"Abonnés":"फ़ॉलोअर्स",
+"Voyage partagé":"साझा यात्रा",
+"Supprimer « {0} » du serveur, pour tout le monde ?":"«{0}» को सर्वर से सबके लिए हटाएँ?",
+"Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"साथी और फ़ॉलोअर्स की पहुँच खत्म हो जाएगी। इस फ़ोन पर जो है, यहीं रहेगा।",
+"Cette action ne peut pas être annulée.":"यह क्रिया वापस नहीं हो सकती।",
+"🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 सर्वर से हटाया गया: {0} कार्ड और {1} फ़ोटो।",
+"Le voyage reste sur ce téléphone, sans partage.":"यात्रा इस फ़ोन पर रहती है, बिना साझा किए।"});

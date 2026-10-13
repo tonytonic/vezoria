@@ -3616,4 +3616,12 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.":"동행, 팔로워, 팔로우 중인 여행, 받은 코드, 앱 QR 코드: 모두 한곳에 있어요.",
 "👥 Ouvrir Partager":"👥 공유 열기",
 "👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».":"👥 동행 초대, 팔로워용 게시, 여행 참여: 모두 «공유»에서 해요.",
-"🔑 Codes de mes voyages":"🔑 내 여행 코드"});
+"🔑 Codes de mes voyages":"🔑 내 여행 코드",
+"Voyage partagé + abonnés":"공유 여행 + 팔로워",
+"Abonnés":"팔로워",
+"Voyage partagé":"공유 여행",
+"Supprimer « {0} » du serveur, pour tout le monde ?":"«{0}»을(를) 서버에서 모두를 위해 삭제할까요?",
+"Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"동행과 팔로워는 더 이상 볼 수 없어요. 이 휴대폰의 내용은 그대로 남아요.",
+"Cette action ne peut pas être annulée.":"이 작업은 되돌릴 수 없어요.",
+"🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 서버에서 삭제됨: 기록 {0}개, 사진 {1}장.",
+"Le voyage reste sur ce téléphone, sans partage.":"여행은 공유 없이 이 휴대폰에 남아요."});

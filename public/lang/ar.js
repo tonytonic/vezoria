@@ -3616,4 +3616,12 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.":"رفاق السفر والمتابعون والرحلات التي تتابعها والرموز التي وصلتك ورمز QR للتطبيق: كل شيء في مكان واحد.",
 "👥 Ouvrir Partager":"👥 افتح المشاركة",
 "👥 Inviter tes compagnons, publier pour des abonnés, rejoindre un voyage : tout se fait dans « Partager ».":"👥 دعوة رفاقك، النشر للمتابعين، الانضمام إلى رحلة: كل ذلك من «مشاركة».",
-"🔑 Codes de mes voyages":"🔑 رموز رحلاتي"});
+"🔑 Codes de mes voyages":"🔑 رموز رحلاتي",
+"Voyage partagé + abonnés":"رحلة مشتركة + متابعون",
+"Abonnés":"المتابعون",
+"Voyage partagé":"رحلة مشتركة",
+"Supprimer « {0} » du serveur, pour tout le monde ?":"حذف «{0}» من الخادم للجميع؟",
+"Compagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.":"سيفقد رفاق السفر والمتابعون الوصول. ما على هذا الهاتف يبقى هنا.",
+"Cette action ne peut pas être annulée.":"لا يمكن التراجع عن هذا الإجراء.",
+"🗑 Supprimé du serveur : {0} fiche(s) et {1} photo(s).":"🗑 حُذف من الخادم: {0} بطاقة و{1} صورة.",
+"Le voyage reste sur ce téléphone, sans partage.":"تبقى الرحلة على هذا الهاتف دون مشاركة."});
