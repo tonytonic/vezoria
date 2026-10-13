@@ -665,4 +665,9 @@ I18N.load({
 "Choisis la photo {0} du bas":"Kies foto {0} onderaan",
 "Toutes les étapes":"Alle etappes",
 "Plus de photos ({0})":"Meer foto’s ({0})",
-"Automatique":"Automatisch"});
+"Automatique":"Automatisch",
+"📤 Photos pour tes abonnés…":"📤 Foto’s voor je volgers…",
+"⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ Foto’s voor volgers: de rest gaat bij de volgende synchronisatie",
+"👀 Photos envoyées à tes abonnés":"👀 Foto’s naar je volgers verstuurd",
+"📤 Photos pour tes abonnés… ({0})":"📤 Foto’s voor je volgers… ({0})",
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 Foto’s voor je volgers… (nog {0})"});

@@ -3596,4 +3596,9 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "Choisis la photo {0} du bas":"Выбери фото {0} внизу",
 "Toutes les étapes":"Все этапы",
 "Plus de photos ({0})":"Ещё фото ({0})",
-"Automatique":"Автоматически"});
+"Automatique":"Автоматически",
+"📤 Photos pour tes abonnés…":"📤 Фото для подписчиков…",
+"⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ Фото для подписчиков: остальное уйдёт при следующей синхронизации",
+"👀 Photos envoyées à tes abonnés":"👀 Фото отправлены подписчикам",
+"📤 Photos pour tes abonnés… ({0})":"📤 Фото для подписчиков… ({0})",
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 Фото для подписчиков… (осталось {0})"});

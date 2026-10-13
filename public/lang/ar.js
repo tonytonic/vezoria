@@ -3596,4 +3596,9 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "Choisis la photo {0} du bas":"اختر الصورة {0} في الأسفل",
 "Toutes les étapes":"كل المحطات",
 "Plus de photos ({0})":"صور أخرى ({0})",
-"Automatique":"تلقائي"});
+"Automatique":"تلقائي",
+"📤 Photos pour tes abonnés…":"📤 صور لمتابعيك…",
+"⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ صور المتابعين: الباقي في المزامنة القادمة",
+"👀 Photos envoyées à tes abonnés":"👀 أُرسلت الصور إلى متابعيك",
+"📤 Photos pour tes abonnés… ({0})":"📤 صور لمتابعيك… ({0})",
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 صور لمتابعيك… (متبقٍ {0})"});

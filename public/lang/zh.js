@@ -3596,4 +3596,9 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "Choisis la photo {0} du bas":"选择底部第 {0} 张照片",
 "Toutes les étapes":"所有站点",
 "Plus de photos ({0})":"更多照片（{0}）",
-"Automatique":"自动"});
+"Automatique":"自动",
+"📤 Photos pour tes abonnés…":"📤 正在发送给关注者的照片…",
+"⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ 关注者的照片：剩下的将在下次同步时发送",
+"👀 Photos envoyées à tes abonnés":"👀 照片已发送给你的关注者",
+"📤 Photos pour tes abonnés… ({0})":"📤 正在发送给关注者的照片…（{0}）",
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 正在发送给关注者的照片…（剩余 {0}）"});

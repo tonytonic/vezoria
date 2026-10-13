@@ -665,4 +665,9 @@ I18N.load({
 "Choisis la photo {0} du bas":"Elige la foto {0} de abajo",
 "Toutes les étapes":"Todas las etapas",
 "Plus de photos ({0})":"Más fotos ({0})",
-"Automatique":"Automático"});
+"Automatique":"Automático",
+"📤 Photos pour tes abonnés…":"📤 Fotos para tus seguidores…",
+"⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ Fotos de los seguidores: el resto sale en la próxima sincronización",
+"👀 Photos envoyées à tes abonnés":"👀 Fotos enviadas a tus seguidores",
+"📤 Photos pour tes abonnés… ({0})":"📤 Fotos para tus seguidores… ({0})",
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 Fotos para tus seguidores… (quedan {0})"});

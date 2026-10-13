@@ -3596,4 +3596,9 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "Choisis la photo {0} du bas":"아래 사진 {0} 선택",
 "Toutes les étapes":"모든 장소",
 "Plus de photos ({0})":"사진 더 보기 ({0})",
-"Automatique":"자동"});
+"Automatique":"자동",
+"📤 Photos pour tes abonnés…":"📤 팔로워를 위한 사진…",
+"⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ 팔로워 사진: 나머지는 다음 동기화 때 보내요",
+"👀 Photos envoyées à tes abonnés":"👀 팔로워에게 사진을 보냈어요",
+"📤 Photos pour tes abonnés… ({0})":"📤 팔로워를 위한 사진… ({0})",
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 팔로워를 위한 사진… ({0}장 남음)"});

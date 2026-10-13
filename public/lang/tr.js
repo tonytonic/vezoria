@@ -3596,4 +3596,9 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "Choisis la photo {0} du bas":"Alttaki {0}. fotoğrafı seç",
 "Toutes les étapes":"Tüm duraklar",
 "Plus de photos ({0})":"Daha fazla fotoğraf ({0})",
-"Automatique":"Otomatik"});
+"Automatique":"Otomatik",
+"📤 Photos pour tes abonnés…":"📤 Takipçilerin için fotoğraflar…",
+"⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ Takipçi fotoğrafları: kalanı bir sonraki eşitlemede gider",
+"👀 Photos envoyées à tes abonnés":"👀 Fotoğraflar takipçilerine gönderildi",
+"📤 Photos pour tes abonnés… ({0})":"📤 Takipçilerin için fotoğraflar… ({0})",
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 Takipçilerin için fotoğraflar… ({0} kaldı)"});

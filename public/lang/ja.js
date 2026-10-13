@@ -3596,4 +3596,9 @@ I18N.load({"🔑 Mon code principal":"🔑 メインコード",
 "Choisis la photo {0} du bas":"下の写真{0}を選ぶ",
 "Toutes les étapes":"すべての立ち寄り先",
 "Plus de photos ({0})":"ほかの写真（{0}）",
-"Automatique":"自動"});
+"Automatique":"自動",
+"📤 Photos pour tes abonnés…":"📤 フォロワー向けの写真…",
+"⏳ Photos des abonnés : la suite part à la prochaine synchro":"⏳ フォロワー向けの写真：残りは次の同期で送信",
+"👀 Photos envoyées à tes abonnés":"👀 フォロワーに写真を送りました",
+"📤 Photos pour tes abonnés… ({0})":"📤 フォロワー向けの写真…（{0}）",
+"📤 Photos pour tes abonnés… ({0} restantes)":"📤 フォロワー向けの写真…（残り{0}）"});
