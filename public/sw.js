@@ -2,7 +2,7 @@
 // Pages et fichiers de l'appli : réseau s'il répond vite (dernière version), sinon copie locale tout de suite
 // (réseau lent ou absent) ; la copie se met à jour en arrière-plan.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-13s';
+const CACHE = 'vezoria-2026-10-13u';
 const CORE = ['./', './index.html', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
@@ -53,9 +53,12 @@ self.addEventListener('fetch', e => {
     }   // vidéo du tuto, musiques du film : lues en direct (lecture par morceaux)
     e.respondWith((async () => {
       const net = fetch(req).then(r => { if (r && r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; });
-      const cached = (await caches.match(req, {ignoreSearch: true})) || (req.mode === 'navigate' ? await caches.match('./index.html') : null);
-      if (!cached) return timeout(net, 15000).catch(() => caches.match('./index.html'));
-      try { const r = await timeout(net, 1500); return r && r.ok ? r : cached; }
+      // l’accueil de l’appli ne sert de secours QUE pour l’accueil (pas pour les pages légales ou autres)
+      const home = req.mode === 'navigate' && /\/(index\.html)?$/.test(url.pathname);
+      const cached = (await caches.match(req, {ignoreSearch: true})) || (home ? await caches.match('./index.html') : null);
+      if (!cached) return timeout(net, 15000).catch(() => home ? caches.match('./index.html') : Response.error());
+      // redirection (ex. « page.html » → « page ») ou page absente : la réponse du serveur est rendue telle quelle
+      try { const r = await timeout(net, 1500); return r && (r.ok || r.type === 'opaqueredirect' || r.redirected || (r.status >= 300 && r.status < 500)) ? r : cached; }
       catch (_) { e.waitUntil(net.catch(() => null)); return cached; }   // réseau lent : on ouvre la copie locale tout de suite
     })());
     return;

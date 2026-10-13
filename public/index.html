@@ -1944,7 +1944,7 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 </div>
 <!-- ═══ CARNET PARTAGÉ ═══════════════════════════════ -->
 <div id="appC" style="display:none"><button class="cv-hstats" id="cv-hstats" type="button" onclick="CV.socialHub()" aria-label="Abonnés et j’aime" style="display:none"></button><div id="vz-band"></div><div class="tabs cv-sub" id="tabsC"></div><div id="cv-body"></div>
-<footer class="cv-foot"><a href="mentions-legales.html">Mentions légales</a> · <a href="privacy.html">Confidentialité</a></footer></div>
+<footer class="cv-foot"><a href="mentions-legales">Mentions légales</a> · <a href="privacy">Confidentialité</a></footer></div>
 <nav class="cv-nav" id="cv-nav" style="display:none"></nav>
 <button class="v-fab" id="cv-fab" style="display:none" onclick="CV.add()">＋</button>
 <div class="v-toast" id="cv-toast">💾 Enregistré</div>
@@ -4346,7 +4346,7 @@ const CV = (function(){
         <button class="v-btn sec" onclick="CV.importPick()">📥 Importer un export (ancien ou nouveau format)</button>
         <button class="v-btn danger" onclick="CV.wipe()">Effacer ce téléphone</button>
         ${s.on ? `<button class="v-btn sec" onclick="CV.askErase()">🗑 Demander l’effacement sur le serveur</button>` : ''}
-        <a class="v-btn sec" href="mentions-legales.html" style="display:block;text-align:center;text-decoration:none">🔒 Mentions légales et confidentialité</a></div>`;
+        <a class="v-btn sec" href="mentions-legales" style="display:block;text-align:center;text-decoration:none">🔒 Mentions légales et confidentialité</a></div>`;
     document.getElementById('cv-body').innerHTML = h;
     accordion();
   }
@@ -10259,7 +10259,7 @@ ${pm.join('\n')}</Document></kml>`;
       <ol class="gs">${steps}</ol>
       ${installEvt ? `<button type="button" class="v-btn" onclick="CV.gateInstall()">📲 Installer l’appli</button>` : ''}
       ${webFollowing() ? `<div class="gb"><button type="button" onclick="CV.webBack()">← Revenir au voyage que je suis</button><button type="button" id="gw-copy" onclick="CV.webCopy()">📋 Copier le lien du voyage (à coller dans l’appli installée)</button></div>` : ''}
-      <p class="gm">Aucune inscription, aucune publicité. <a href="mentions-legales.html">Mentions légales</a> · <a href="privacy.html">Confidentialité</a></p></div>`;
+      <p class="gm">Aucune inscription, aucune publicité. <a href="mentions-legales">Mentions légales</a> · <a href="privacy">Confidentialité</a></p></div>`;
   }
   // l’appli installée sur iPhone ne voit pas le lien ouvert dans Safari : l’invitation passe par le presse-papiers
   async function gateCopy(){ const b = document.getElementById('gv-copy'); try { await navigator.clipboard.writeText(location.href); if(b) b.textContent = '📋 Invitation copiée'; } catch(e){ await uiPrompt('Copie ce texte :', location.href); } }
@@ -10661,7 +10661,7 @@ ${pm.join('\n')}</Document></kml>`;
   window.addEventListener('pagehide', resumeSave);
   function infoHTML(){
     return `<div class="cv-info">
-      <p style="text-align:center;margin:6px 0 10px"><a href="mentions-legales.html">🔒 Mentions légales</a> · <a href="privacy.html">Confidentialité</a></p>
+      <p style="text-align:center;margin:6px 0 10px"><a href="mentions-legales">🔒 Mentions légales</a> · <a href="privacy">Confidentialité</a></p>
       ${installHTML(false)}
       <h3>🔐 Vos données restent à vous</h3>
       <p>Vos voyages, notes, dépenses et photos sont <b>chiffrés sur votre téléphone</b>, avec le code de votre carnet, avant d’être envoyés sur le serveur.</p>
@@ -10678,7 +10678,7 @@ ${pm.join('\n')}</Document></kml>`;
   function infoSheet(first){
     openSheet(`<h2>${first ? 'Avant de commencer' : 'Comment ça marche'}</h2>
       ${first ? `<div class="v-sum-small" style="margin-bottom:10px">Lis ces quelques lignes et accepte les conditions pour accéder à l’appli.</div>` : ''}${infoHTML()}
-      ${first ? `<div class="cv-cgu"><label class="cv-checkline"><input type="checkbox" id="if-cgu"> J’ai lu et j’accepte les <a href="mentions-legales.html" target="_blank" rel="noopener">mentions légales</a> et la <a href="privacy.html" target="_blank" rel="noopener">politique de confidentialité</a>.</label>
+      ${first ? `<div class="cv-cgu"><label class="cv-checkline"><input type="checkbox" id="if-cgu"> J’ai lu et j’accepte les <a href="mentions-legales" target="_blank" rel="noopener">mentions légales</a> et la <a href="privacy" target="_blank" rel="noopener">politique de confidentialité</a>.</label>
       <label class="cv-checkline"><input type="checkbox" id="if-ok"> J’ai compris : je garderai précieusement le code de mon carnet.</label></div>` : ''}
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.infoOk(${first?'true':'false'})">${first ? 'J’accepte et je continue' : 'Fermer'}</button></div>`, !!first);
     if(first){ const bg = document.getElementById('v-sheet-bg'); if(bg) bg.classList.add('cv-first'); }
@@ -11283,7 +11283,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(!codes.size){ serverWipeSheet(); return; }
     if(!(await uiConfirm('Supprimer « ' + t.titre + ' » du serveur, pour tout le monde ?\nCompagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.\nCette action ne peut pas être annulée.'))) return;
     // d’abord on arrête les envois en cours (sinon des photos arriveraient encore après la suppression)
-    upHalt = true; for(let k = 0; k < 150 && uploading; k++) await new Promise(r=>setTimeout(r, 200));
+    upHalt = true; for(let k = 0; k < 150 && (uploading || feedUp); k++) await new Promise(r=>setTimeout(r, 200));
     let nR = 0, nP = 0;
     try {
       for(const code of codes){
@@ -11309,7 +11309,7 @@ ${pm.join('\n')}</Document></kml>`;
     const main = !code; code = code || M.sync.code; if(!code) return;
     if(!(await uiConfirm('Supprimer définitivement ce carnet du serveur, pour tout le monde ?\nCette action ne peut pas être annulée.'))) return;
     // d’abord on arrête les envois en cours (sinon des photos arriveraient encore après la suppression)
-    upHalt = true; for(let k = 0; k < 150 && uploading; k++) await new Promise(r=>setTimeout(r, 200));
+    upHalt = true; for(let k = 0; k < 150 && (uploading || feedUp); k++) await new Promise(r=>setTimeout(r, 200));
     // la file d’attente des autres voyages est gardée ; seules les photos de ce carnet en sortent
     const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
     const codeOfPh = id => { const r = owner[String(id).replace(/\.t$/,'')]; if(!r) return null; const t = targets(r)[0]; return t === 'main' ? M.sync.code : t; };
@@ -12706,6 +12706,7 @@ ${pm.join('\n')}</Document></kml>`;
       let left = todo.length, stop = false; const shown = left > 6;
       if(shown) cryptShow('📤 Photos pour tes abonnés… (' + left + ')');
       const one = async ([code, id]) => {
+        if(upHalt){ stop = true; return; }   // suppression du serveur en cours : on s’arrête tout de suite
         if(!Object.values(FT()).includes(code)){ M.fq = (M.fq||[]).filter(x=>x[0] !== code); return; }
         // abonnés : uniquement la vignette (≈ 30 à 50 Ko), jamais la grande photo → 2 à 3 fois moins de place sur le serveur
         let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
@@ -12973,7 +12974,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13s';
+  const BUILD = '2026-10-13u';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
