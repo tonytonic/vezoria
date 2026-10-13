@@ -1685,6 +1685,92 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 @media (max-width:360px){.hs-c{min-width:38px;padding:0 2px}.hs-c small{font-size:.54rem}}
 @media (prefers-reduced-motion:reduce){.hs-c.up b,.hs-plus{animation:none}}
 </style>
+<style>
+/* 👀 Suivre sans installer */
+.fd-cta{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;margin:14px -16px calc(-30px - env(safe-area-inset-bottom));padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(135deg,#2a1238,#6b2fa0 60%,#be185d);color:#fff;box-shadow:0 -10px 30px rgba(42,18,56,.25)}
+.fd-cta span{flex:1;min-width:0}.fd-cta b{display:block;font-size:.92rem}.fd-cta small{display:block;font-size:.72rem;opacity:.85}
+.fd-cta button{flex:0 0 auto;border:0;border-radius:22px;padding:10px 14px;background:#fff;color:#2a1238;font:inherit;font-weight:800;font-size:.84rem;cursor:pointer}
+#cv-gate .gb{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+#cv-gate .gb button{border:1.5px solid rgba(255,255,255,.6);background:transparent;color:#fff;border-radius:22px;padding:10px 14px;font:inherit;font-weight:700}
+</style>
+<style>
+/* 🌍 Survol 3D */
+#cv-world.wm-cine .wm-top,#cv-world.wm-cine .wm-bottom,#cv-world.wm-cine .wm-chips,#cv-world.wm-cine .wm-story,#cv-world.wm-cine .maplibregl-ctrl-top-right,#cv-world.wm-cine .maplibregl-marker{display:none!important}
+#cv-world.wm-cine .maplibregl-ctrl-bottom-right,#cv-world.wm-cine .maplibregl-ctrl-bottom-left{bottom:auto;left:auto;right:6px;top:calc(var(--sat,env(safe-area-inset-top,0px)) + 56px);max-width:62%;opacity:.6;font-size:9px}
+#wm-cine{position:absolute;inset:0;z-index:6;pointer-events:none;color:#fff}
+#wm-cine button{pointer-events:auto}
+.ci-bar{position:absolute;top:calc(var(--sat,env(safe-area-inset-top,0px)) + 10px);left:12px;right:12px;display:flex;align-items:center;gap:10px}
+.ci-x{width:40px;height:40px;border-radius:50%;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:18px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.ci-rec{font-size:.8rem;font-weight:700;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.ci-title{position:absolute;left:24px;right:24px;top:38%;text-align:center;transition:opacity .8s,transform .8s;text-shadow:0 2px 18px rgba(0,0,0,.7)}
+.ci-title small{display:block;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.ci-title b{display:block;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:2.3rem;line-height:1.1;margin:8px 0}
+.ci-title span{font-size:.95rem;opacity:.9}.ci-title.out{opacity:0;transform:translateY(-20px)}
+.ci-cap{position:absolute;left:14px;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);opacity:0;transform:translateY(24px);transition:opacity .5s,transform .5s}
+.ci-cap.in{opacity:1;transform:none}
+.ci-ph{border-radius:20px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.5);margin-bottom:10px;max-height:42vh}
+.ci-ph img{display:block;width:100%;max-height:42vh;object-fit:cover;animation:ciKen 6s ease-out both}
+@keyframes ciKen{from{transform:scale(1.12)}to{transform:scale(1)}}
+.ci-tx{text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.8)}
+.ci-n{display:inline-block;font-size:.7rem;font-weight:800;background:rgba(255,59,107,.9);border-radius:10px;padding:2px 8px;margin-bottom:6px}
+.ci-tx b{display:block;font-size:1.35rem;line-height:1.2}.ci-tx small{display:block;font-size:.82rem;opacity:.9;margin-top:3px}
+.ci-tx p{font-size:.85rem;opacity:.9;margin:6px auto 0;max-width:34ch}
+.ci-end{position:absolute;left:18px;right:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);text-align:center;background:rgba(10,8,30,.6);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-radius:22px;padding:18px 16px;animation:sheetUp .4s ease-out}
+.ci-end b{display:block;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:1.6rem}
+.ci-end>span{display:block;color:#ffd28a;font-weight:800;margin:4px 0 12px}.ci-end>span i{font-style:normal}
+.ci-btns{display:flex;flex-direction:column;gap:8px}
+.ci-btns button{border:0;border-radius:22px;padding:11px 14px;font:inherit;font-weight:800;background:#fff;color:#2a1238}
+.ci-btns button+button{background:rgba(255,255,255,.14);color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)}
+</style>
+<style>
+.wr-img{display:block;width:min(100%,300px);margin:4px auto 12px;border-radius:18px;box-shadow:0 14px 34px rgba(42,18,56,.35)}
+</style>
+<style>
+.otd-k{display:inline-block;background:linear-gradient(135deg,#ff3b6b,#a855f7);color:#fff;border-radius:14px;padding:3px 10px;font-weight:800;font-size:.78rem;margin-bottom:10px}
+.otd-ph{display:block;width:100%;border:0;padding:0;border-radius:18px;overflow:hidden;margin-bottom:10px;box-shadow:0 12px 28px rgba(42,18,56,.25)}
+.otd-ph img{display:block;width:100%;max-height:46vh;object-fit:cover}
+.otd-t b{display:block;font-size:1.05rem}.otd-t small{display:block;color:var(--gray);margin-top:2px}.otd-t p{margin:8px 0 0;font-size:.9rem;line-height:1.45}
+</style>
+<style>
+/* 🏅 Badges */
+.bdg-w{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,#2a1238,#6b2fa0);color:#fff;border-radius:22px;padding:16px;margin-bottom:14px}
+.bdg-w .v-sum-small{color:rgba(255,255,255,.8)}
+.bdg-ring{flex:0 0 104px;width:104px;height:104px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(closest-side,#3b1a5c 78%,transparent 80% 100%),conic-gradient(#ffd28a calc(var(--p)*1%),rgba(255,255,255,.18) 0)}
+.bdg-ring b{font-size:1.15rem}.bdg-ring small{font-size:.66rem;opacity:.85}
+.bdg-big{font-size:2rem;font-family:var(--display,Georgia),serif;font-style:italic}
+.bdg-fl{font-size:1.1rem;margin:4px 0;line-height:1.5}
+.bdg-h{display:flex;justify-content:space-between;align-items:baseline;margin:6px 2px 10px}.bdg-h small{color:var(--gray);font-weight:600}
+.bdg-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bdg-c{background:#fff;border-radius:16px;padding:10px 8px;text-align:center;box-shadow:0 2px 10px rgba(42,18,56,.06);opacity:.55;filter:grayscale(1)}
+.bdg-c.ok{opacity:1;filter:none;box-shadow:0 6px 18px rgba(255,159,67,.25);background:linear-gradient(160deg,#fff,#fff6e6)}
+.bdg-c i{display:block;font-style:normal;font-size:1.7rem}.bdg-c b{display:block;font-size:.78rem;margin-top:4px}.bdg-c small{display:block;font-size:.64rem;color:var(--gray);margin-top:2px}
+.bdg-p{display:block;height:5px;border-radius:3px;background:#eee;margin-top:6px;overflow:hidden}.bdg-p span{display:block;height:100%;background:linear-gradient(90deg,#a855f7,#ff3b6b)}
+</style>
+<style>
+/* 📊 Analyse des dépenses */
+.an{display:flex;align-items:center;gap:12px}.an-d{flex:0 0 132px;width:132px;height:132px}
+.an-t1{font-weight:800;font-size:15px;fill:var(--ink,#2a1238)}.an-t2{font-size:10px;fill:#6b5670}
+.an-leg{flex:1;min-width:0}.an-l{display:grid;grid-template-columns:10px 1fr auto;gap:2px 6px;align-items:center;font-size:.78rem;padding:3px 0}
+.an-l i{width:10px;height:10px;border-radius:3px}.an-l small{grid-column:2/4;color:#6b5670;font-size:.68rem;margin-top:-3px}
+.an-k{display:flex;gap:8px;margin-top:12px}.an-k>div{flex:1;background:#faf6fd;border-radius:14px;padding:8px;text-align:center}
+.an-k b{display:block;font-size:.95rem}.an-k small{display:block;font-size:.64rem;color:#6b5670}.an-k .bad b{color:#b91c1c}.an-k .ok b{color:#15803d}
+.an-bars{display:flex;align-items:flex-end;gap:2px;height:90px;padding:4px 0;border-bottom:1px solid #eadfe6}
+.an-bars span{flex:1;height:100%;display:flex;align-items:flex-end}.an-bars i{display:block;width:100%;border-radius:4px 4px 0 0;background:linear-gradient(180deg,#a855f7,#ec4899)}
+.an-bars span.on i{background:#f97316}.an-ax{display:flex;justify-content:space-between;font-size:.66rem;color:#6b5670}
+.an-r{display:flex;justify-content:space-between;gap:8px;font-size:.82rem;padding:6px 0;border-top:1px dashed #eadfe6}
+/* 🧳 Valise intelligente */
+.sp-card{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:18px;padding:12px 14px;margin-bottom:12px;background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;font:inherit;text-align:left;cursor:pointer}
+.sp-card i{font-style:normal;font-size:1.6rem}.sp-card b{display:block}.sp-card small{display:block;opacity:.9;font-size:.74rem}
+.sp-r{display:flex;align-items:flex-start;gap:10px;padding:8px 2px;border-bottom:1px solid #f1e8f3;font-size:.9rem}
+.sp-r input{margin-top:3px;width:18px;height:18px;accent-color:#7c3aed}.sp-r small{display:block;color:#6b5670;font-size:.72rem}.sp-r.has{opacity:.55}
+</style>
+<style>
+.ps-how{background:#f3eefc;border-radius:14px;padding:10px 12px 10px 30px;font-size:.86rem;line-height:1.5;margin:0}
+.ps-msg{font-weight:700;color:#7c3aed;min-height:1.2em;margin:6px 0}
+.ps-pick{display:flex;align-items:center;justify-content:center;cursor:pointer}
+</style>
 </head>
 <body class="is-public">
 <div class="cv-statusbar"></div>
@@ -2140,14 +2226,15 @@ const CV = (function(){
      dans SA langue. Les rappels (départ, enregistrement en ligne, échéances) sont programmés par ce
      téléphone pour lui seul, chiffrés avec sa propre clé. */
   const PUSH_KINDS = [['depense','💶','Dépenses et remboursements'], ['resa','🗓️','Réservations et programme'], ['souv','📸','Souvenirs et photos'],
-    ['sondage','🗳️','Sondages'], ['notes','🛒','Courses et notes'], ['rappel','⏰','Rappels : départ, enregistrement en ligne, échéances']];
+    ['sondage','🗳️','Sondages'], ['notes','🛒','Courses et notes'], ['rappel','⏰','Rappels : départ, enregistrement en ligne, échéances'], ['soir','🌙','Le soir en voyage : « raconte ta journée » et souvenirs « il y a un an »']];
   const PUSH_TPL = {depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
     resa1:'{0} a ajouté au programme : {1}', resaN:'{0} a ajouté {1} éléments au programme', resaCh:'{0} a changé l’horaire : {1}',
     souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
     notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
     depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
+    soir:'Comment s’est passée ta journée ? Ajoute tes photos et quelques mots à ton carnet 📸', anniv1:'Il y a un an, tu partais : « {0} » ✨', annivN:'Il y a {1} ans, tu partais : « {0} » ✨', 
     test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés', fb_depense:'Nouvelle dépense dans ton voyage', fb_resa:'Le programme du voyage a changé', fb_souv:'Nouveau souvenir dans ton voyage', fb_sondage:'Nouveau sondage dans ton voyage', fb_notes:'Nouveautés dans les courses et les notes', fb_rappel:'Rappel pour ton voyage'};
-  const PU = () => { const p = M.push || (M.push = {on:false, quiet:true}); p.kinds = Object.assign({depense:1, resa:1, souv:1, sondage:1, notes:1, rappel:1}, p.kinds || {}); return p; };
+  const PU = () => { const p = M.push || (M.push = {on:false, quiet:true}); p.kinds = Object.assign({depense:1, resa:1, souv:1, sondage:1, notes:1, rappel:1, soir:1}, p.kinds || {}); return p; };
   const pushApi = () => { const u = apiUrl(); return u ? u.replace(/\/api\/sync$/, '/api/push') : ''; };
   const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && !!pushApi();
   const isIOSDev = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -2330,6 +2417,13 @@ const CV = (function(){
         items.push({id:'ck-' + i.id, at:d.getTime(), p:{k:'rappel', r:'checkin', a:[[i.titre, i.compagnie].filter(Boolean).join(' · ')], trip:t.id, tt:t.titre}}); });
       its.forEach(i=>(i.echeances || []).forEach((e, k)=>{ if(!e.fait && e.date) items.push({id:'ec-' + i.id + '-' + k, at:at(e.date, '09:00'), p:{k:'rappel', r:'echeance', a:[(i.titre || '') + (num(e.montant) ? ' (' + money(num(e.montant), t) + ')' : '')], trip:t.id, tt:t.titre}}); }));
     });
+    // 🌙 le soir pendant le voyage, et 📅 l’anniversaire du départ des voyages passés
+    if(P.kinds.soir) trips().filter(t=>!t.demo && !t.deleted && t.debut).forEach(t=>{
+      const fin = t.fin || t.debut, today = isoToday();
+      for(let d = t.debut > today ? t.debut : today, k = 0; d <= fin && k < 40; d = addD(d, 1), k++) items.push({id:'soir-' + t.id + '-' + d, at:at(d, '21:00'), p:{k:'rappel', r:'soir', a:[t.titre], trip:t.id, tt:t.titre}});
+      if(fin < today){ const y0 = +t.debut.slice(0, 4), md = t.debut.slice(4); let y = +today.slice(0, 4); if(String(y) + md <= today) y++;
+        const n = y - y0; if(n >= 1) items.push({id:'anniv-' + t.id + '-' + y, at:at(String(y) + md, '10:00'), p:{k:'rappel', r:n === 1 ? 'anniv1' : 'annivN', a:[t.titre, n], trip:t.id, tt:t.titre}}); }
+    });
     const keep = items.filter(x=>x.at > now && x.at < now + 150 * 864e5).sort((a,b)=>a.at - b.at).slice(0, 50);
     if(extra) keep.unshift(extra);
     const sig = JSON.stringify(keep.map(x=>[x.id, x.at, x.p.a, x.p.sub]));
@@ -2342,12 +2436,27 @@ const CV = (function(){
   // Toucher une notification : ouvre le bon voyage au bon endroit
   function pushOpen(href){
     let u; try { u = new URL(href, location.href); } catch(e){ return; }
-    const tid = u.searchParams.get('vzt'), k = u.searchParams.get('vzk'); if(tid === null) return;
+    const tid = u.searchParams.get('vzt'), k = u.searchParams.get('vzk'), rr = u.searchParams.get('vzr') || ''; if(tid === null) return;
     if(/[?&]vzt=/.test(location.search)) history.replaceState(null, '', location.pathname);
     if(tid && R[tid] && !R[tid].deleted){ M.trip = tid; M.who = 'all'; }
-    const tb = {depense:'budget', resa:'prog', souv:'souv', sondage:'envies', notes:'prog', rappel:'prog'}[k] || 'prog';
+    const tb = /^(soir|anniv)/.test(rr) ? 'souv' : {depense:'budget', resa:'prog', souv:'souv', sondage:'envies', notes:'prog', rappel:'prog'}[k] || 'prog';
     M.mode = 'prep'; M.tab = tb; persist(); applyMode(); window.scrollTo({top:0});
     if(k === 'notes') setTimeout(()=>{ try { shopSheet(); } catch(e){} }, 300);
+  }
+  /* ── 📅 Ce jour-là : un souvenir pris le même jour, une année précédente ── */
+  function onThisDay(force){
+    const today = isoToday(), md = today.slice(4), y = +today.slice(0, 4);
+    if(!force && (M.otdSeen === today || document.querySelector('#v-sheet-bg, .ui-dlg, #cv-gate, #cv-film, #cv-world, #cv-feed, #cv-tj, .cv-first'))) return;
+    const cand = list('souv', s=>!s.deleted && !s.demo && s.date && s.date.slice(4) === md && +s.date.slice(0, 4) < y && R[s.trip] && !R[s.trip].deleted)
+      .sort((a, b)=>((b.photos||[]).length ? 1 : 0) - ((a.photos||[]).length ? 1 : 0) || b.date.localeCompare(a.date));
+    if(!cand.length){ if(force) alert('Aucun souvenir pris un ' + fdate(today).replace(/^\S+\s/, '') + ' les années précédentes.'); return; }
+    const s = cand[0], n = y - +s.date.slice(0, 4), t = R[s.trip], ph = (s.photos || [])[0];
+    M.otdSeen = today; M.seen = M.seen || {}; M.seen['anniv:' + today] = 1; persist();
+    openSheet(`<h2>📅 Ce jour-là</h2>
+      <div class="otd-k">${n === 1 ? 'Il y a un an' : `Il y a ${n} ans`}</div>
+      ${ph ? `<button type="button" class="otd-ph" onclick="CV.view('${s.id}',0)"><img data-ph="${esc(ph)}" alt=""></button>` : ''}
+      <div class="otd-t"><b data-notr>${esc(s.titre || s.lieu || t.titre)}</b><small data-notr>${esc(t.titre)}${s.lieu ? ' · ' + esc(s.lieu) : ''}</small>${s.texte ? `<p data-notr>${esc(String(s.texte).slice(0, 220))}</p>` : ''}</div>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.close();CV.go('${t.id}');CV.modeGo('bilan')">📸 Revoir ce voyage</button><button type="button" class="v-btn sec" onclick="CV.flyover('${t.id}')">🌍 Survol 3D</button></div>`);
   }
   function pushBadgeClear(){ try { pushKv('badge', 0).catch(()=>{}); if(navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{});
     if('serviceWorker' in navigator) navigator.serviceWorker.ready.then(reg=>reg.getNotifications ? reg.getNotifications() : []).then(ns=>ns.forEach(n=>n.close())).catch(()=>{}); } catch(e){} }
@@ -2415,7 +2524,7 @@ const CV = (function(){
     {id:'resas',  icon:'🎫', lbl:'Résas',     tabs:[['transport','✈️ Trajets'], ['hotel','🏨 Hôtels'], ['activite','🎟️ Visites'], ['divers','🧾 Divers']]},
     {id:'sous',   icon:'💸', lbl:'Budget',    tabs:[['budget','Qui paie quoi'], ['ech','📆 Échéancier']]},
     {id:'envies', icon:'✨', lbl:'Envies',    tabs:[['envies','Envies']]},
-    {id:'plus',   icon:'🧳', lbl:'Plus',      tabs:[['check','✅ Checklist'], ['reglages','👥 Partage & profils'], ['prefs','⚙️ Réglages'], ['livret','📖 Livret']]},
+    {id:'plus',   icon:'🧳', lbl:'Plus',      tabs:[['check','✅ Checklist'], ['reglages','👥 Partage & profils'], ['prefs','⚙️ Réglages'], ['livret','📖 Livret'], ['badges','🏅 Badges']]},
   ];
   const groupOf = id => GROUPS.find(g=>g.tabs.some(t=>t[0]===id)) || GROUPS[0];
   const MOIS = (window.I18N && I18N.lang !== 'fr') ? [...Array(12).keys()].map(i=>new Intl.DateTimeFormat(I18N.locale, {month:'short'}).format(new Date(2024, i, 15))) : ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
@@ -2470,6 +2579,7 @@ const CV = (function(){
       document.title = 'Vezoria · ' + (t.titre||'Voyage');
     } else { title.textContent = 'Vezoria'; sub.textContent = 'Ton premier voyage t’attend'; pill.textContent = 'Mes voyages'; cd.innerHTML = ''; av.innerHTML = ''; }
     try { heroStats(!legacy && !!t); } catch(e){}
+    try { badgeCheck(); } catch(e){}
     phaseTheme();
     document.body.classList.toggle('cv-jourj', !!(t && t.debut && t.debut === isoToday()));
     const me = document.getElementById('cv-me');
@@ -2594,7 +2704,7 @@ const CV = (function(){
   const DEST = [
     ['prog','🗓️','Programme'], ['resas','🎫','Résas'], ['sous','💸','Budget'], ['live','📍','En cours'],
     ['souv','📸','Souvenirs & bilan'], ['notes','📌','Notes'], ['outils','🧰','Outils'], ['envies','✨','Envies'],
-    ['check','✅','Checklist'], ['ech','📆','Échéancier'], ['past','🗺️','Passés'], ['reglages','👥','Partage & profils'], ['livret','📖','Livret']];
+    ['check','✅','Checklist'], ['ech','📆','Échéancier'], ['past','🗺️','Passés'], ['reglages','👥','Partage & profils'], ['livret','📖','Livret'], ['badges','🏅','Badges']];
   const DEST_DEF = ['prog','resas','sous','live'];
   const DEST_HIDE = k => (k==='live'||k==='past'||k==='bilan') ? 'mode:' + k : ['souv','notes','outils','envies','check','ech'].includes(k) ? 'tab:' + k : '';
   const destHidden = k => { const h = DEST_HIDE(k); return !!h && hidden(h); };
@@ -2649,6 +2759,56 @@ const CV = (function(){
       persist(); navGo(k); return;
     }
     M.tab = k; persist(); applyMode(); window.scrollTo({top:0, behavior: was==='prep' ? 'smooth' : 'auto'});
+  }
+  /* ══════════ 🏅 Badges et part du monde visitée (calculés sur le téléphone) ══════════ */
+  const WORLD_N = 195;   // 193 pays membres de l’ONU + 2 observateurs
+  function travelStats(){
+    const today = isoToday(), ts = trips().filter(t=>!t.demo && !t.deleted && t.debut && t.debut <= today);
+    const ids = new Set(ts.map(t=>t.id)), ccs = new Set(); let km = 0, ph = 0, sv = 0, nights = 0, gang = 0;
+    const byT = {}; Object.values(R).forEach(r=>{ if(!r || r.deleted || !ids.has(r.trip)) return; (byT[r.trip] = byT[r.trip] || []).push(r); });
+    ts.forEach(t=>{
+      const rs = byT[t.id] || [], pts = [];
+      if((t.voyageurs || []).length >= 3) gang++;
+      rs.forEach(r=>{
+        if(r.type === 'souv'){ sv++; ph += (r.photos || []).length; const cc = r.cc || ccOf(r.pays); if(cc) ccs.add(cc); if(r.lat != null) pts.push({lat:+r.lat, lng:+r.lng, d:r.date || ''}); }
+        else if(r.type === 'item' && r.cat === 'hotel'){ nights += bdgNights(r); const co = (M.ctry || {})[normQ(cityOf(r.titre))]; if(co && co.cc) ccs.add(co.cc); if(r.lat != null && isFinite(+r.lat)) pts.push({lat:+r.lat, lng:+r.lng, d:r.date || ''}); }
+      });
+      pts.sort((a, b)=>a.d.localeCompare(b.d)); for(let i = 1; i < pts.length; i++){ const d = hav(pts[i-1], pts[i]); if(d > 1) km += d; }
+    });
+    const me = devId(), mine = new Set(Object.keys(FT()).map(ftId));
+    const fw = new Set(list('follower', x=>mine.has(x.trip) && !isBlk(x) && !String(x.id).endsWith(':' + me)).map(x=>String(x.id).split(':').pop())).size;
+    const lk = list('like', l=>mine.has(l.trip) && l.on && !isBlk(l) && !String(l.id).endsWith(':' + me)).length;
+    return {trips:ts.length, ccs:[...ccs], pays:ccs.size, km:Math.round(km), photos:ph, souv:sv, nights, gang, fw, lk};
+  }
+  const bdgNights = i => { try { return nights(i.date, i.dateFin) || 0; } catch(e){ return 0; } };
+  const BADGES = [
+    ['v1','🧳','Premier voyage','Un premier voyage dans ton carnet','trips',1], ['v5','🎒','Globe-trotter','5 voyages','trips',5], ['v10','🏆','Grand voyageur','10 voyages','trips',10],
+    ['p3','🗺️','Explorateur','3 pays visités','pays',3], ['p10','🌍','Citoyen du monde','10 pays visités','pays',10], ['p25','🧭','Aventurier','25 pays visités','pays',25], ['p50','👑','Légende','50 pays visités','pays',50],
+    ['k1','🛣️','En route','1 000 km parcourus','km',1000], ['k10','✈️','Long-courrier','10 000 km parcourus','km',10000], ['k40','🌐','Le tour de la Terre','40 075 km parcourus','km',40075],
+    ['f100','📸','Photographe','100 photos','photos',100], ['f1k','🎞️','Reporter','1 000 photos','photos',1000], ['s30','✍️','Conteur','30 souvenirs racontés','souv',30],
+    ['n30','🛏️','Nomade','30 nuits en voyage','nights',30], ['g1','👥','La bande','Un voyage à 3 ou plus','gang',1],
+    ['a1','👀','Premier abonné','Quelqu’un suit tes voyages','fw',1], ['a10','📣','Influenceur','10 abonnés','fw',10], ['l50','❤️','Coup de cœur','50 j’aime reçus','lk',50]];
+  function renderBadges(){
+    const body = document.getElementById('cv-body'), S = travelStats(), pct = Math.round(S.pays / WORLD_N * 1000) / 10;
+    const got = BADGES.filter(b=>S[b[4]] >= b[5]).length;
+    body.innerHTML = `<div class="bdg"><div class="bdg-w"><div class="bdg-ring" style="--p:${Math.min(100, pct)}"><b>${String(pct).replace('.', ',')} %</b><small>du monde</small></div>
+        <div><b class="bdg-big">${S.pays}</b><br><span>${S.pays > 1 ? `pays visités sur ${WORLD_N}` : `pays visité sur ${WORLD_N}`}</span><div class="bdg-fl">${S.ccs.slice(0, 30).map(flag).join(' ')}</div>
+        <div class="v-sum-small"><span>${S.trips} voyage${S.trips > 1 ? 's' : ''}</span> · <span>${S.km.toLocaleString(NL())} km</span> · <span>${S.photos} photo${S.photos > 1 ? 's' : ''}</span></div></div></div>
+      <h3 class="bdg-h">🏅 Mes badges <small>${got} / ${BADGES.length}</small></h3>
+      <div class="bdg-g">${BADGES.map(b=>{ const v = S[b[4]] || 0, ok = v >= b[5], p = Math.min(100, Math.round(v / b[5] * 100));
+        return `<div class="bdg-c${ok ? ' ok' : ''}"><i>${b[1]}</i><b>${b[2]}</b><small>${b[3]}</small>${ok ? '' : `<span class="bdg-p"><span style="width:${p}%"></span></span>`}</div>`; }).join('')}</div>
+      <div class="v-sum-small" style="margin:12px 0 4px">Calculé sur ton téléphone à partir de tes voyages commencés (sans les voyages de démo). Les pays viennent des lieux de tes souvenirs et de tes hébergements.</div>
+      <button type="button" class="v-btn sec" onclick="CV.worldMap();setTimeout(()=>CV.worldMode('pays'),1500)">🌍 Voir mes pays sur le globe</button></div>`;
+  }
+  let bdgT = 0;
+  function badgeCheck(){
+    if(Date.now() - bdgT < 30000) return; bdgT = Date.now();
+    setTimeout(()=>{ try {
+      const S = travelStats(), now = BADGES.filter(b=>S[b[4]] >= b[5]).map(b=>b[0]);
+      if(!M.badges){ M.badges = now; persist(); return; }   // première fois : on ne fête pas tout d’un coup
+      const fresh = now.filter(id=>!M.badges.includes(id));
+      if(fresh.length){ M.badges = now; persist(); const b = BADGES.find(x=>x[0] === fresh[fresh.length - 1]); const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x); toast('🏅 ' + MSG('Nouveau badge') + ' : ' + MSG(b[2])); }
+    } catch(e){} }, 1500);
   }
   /* ══════════ 📖 Livret : l’histoire d’un voyage entre amis (sans détails techniques) ══════════ */
   const LIVRET = [{"k": "pro", "bg": "linear-gradient(135deg,#2b1840,#6b2fa0 60%,#f0a35e)", "em": ["📖", "✨", "🧳", "🗺️", "📸"], "kick": "Prologue", "title": "Il était une fois un carnet", "story": "Avant, un voyage entre amis, c’était cinq applis, des captures d’écran perdues, un tableau de comptes que personne ne mettait à jour et des photos éparpillées dans dix conversations. Un soir, Inès a soupiré : « Il nous faudrait un seul carnet, pour tout. » Ce carnet, c’est moi : Vezoria. Laisse-moi te raconter leur voyage au Japon.", "pts": [], "btn": [["👀 Ouvrir le voyage de démo", "demo"]]}, {"k": "reve", "bg": "linear-gradient(135deg,#1e3a8a,#7c3aed 55%,#f472b6)", "em": ["✨", "🌍", "🗳️", "💭", "🏔️"], "kick": "Chapitre 1 · Le rêve", "title": "Où partir ?", "story": "Tout commence par une envie. Léo rêve du Japon, Inès hésite avec l’Islande. Chacun note ses idées, le groupe vote, et le rêve devient un vrai projet en un geste.", "pts": ["✨ Notez vos envies de voyage et votez ensemble.", "🌍 Dessinez votre itinéraire en touchant les villes sur le globe.", "💡 Trouvez l’inspiration : saison idéale, budget, idées de visites."], "btn": [["✨ Voir les envies", "envies"]]}, {"k": "prep", "bg": "linear-gradient(135deg,#0f766e,#14b8a6 55%,#fde68a)", "em": ["🗓️", "🎫", "🏨", "✅", "💶"], "kick": "Chapitre 2 · La préparation", "title": "Tout au même endroit", "story": "Les billets d’avion arrivent par e-mail, l’hôtel de Kyoto par une autre appli, le train pour Hiroshima par une troisième. Inès range tout dans le carnet : chaque jour du voyage se dessine, heure par heure.", "pts": ["🗓️ Un programme jour par jour, avec les trajets, les hôtels et les visites.", "💶 Un budget qui se calcule tout seul, et les dates de paiement à ne pas oublier.", "✅ Une checklist et un rappel quand un passeport va expirer."], "btn": [["🗓️ Voir le programme", "prep"]]}, {"k": "amis", "bg": "linear-gradient(135deg,#9a3412,#f97316 55%,#fde047)", "em": ["👥", "🤝", "🔔", "✍️", "💬"], "kick": "Chapitre 3 · Embarquer les amis", "title": "Un carnet, toute la bande", "story": "Inès envoie un simple lien dans la conversation du groupe. Léo et Anthony le touchent : ils voient le même voyage et le complètent. Pas de compte à créer, pas de mot de passe à retenir.", "pts": ["🤝 Invitez vos compagnons voyage par voyage : ils ne voient que celui-là.", "✍️ Chaque ajout est signé : on sait qui a fait quoi.", "🔔 Chacun choisit les notifications qu’il veut recevoir."], "btn": [["☁️ Choisir mon cloud", "cloud"]]}, {"k": "live", "bg": "linear-gradient(135deg,#064e3b,#10b981 55%,#a7f3d0)", "em": ["📍", "🗺️", "🚶", "🚇", "🏯"], "kick": "Chapitre 4 · Le grand départ", "title": "Le carnet passe en mode voyage", "story": "Le jour J, le carnet change de visage : il montre la journée en cours, la prochaine étape et le chemin pour y aller. Dans le métro de Tokyo, sans réseau, la carte est toujours là.", "pts": ["📍 Le programme du jour et la prochaine étape, d’un coup d’œil.", "🗺️ Des cartes qui marchent sans réseau, et les horaires des lieux à visiter.", "🚶 Le tracé de vos balades, pour revivre le chemin parcouru."], "btn": [["📍 Voir le mode En cours", "live"]]}, {"k": "comptes", "bg": "linear-gradient(135deg,#713f12,#eab308 55%,#fef9c3)", "em": ["💸", "⚖️", "🧾", "🍜", "💳"], "kick": "Chapitre 5 · Les bons comptes", "title": "Les bons comptes font les bons amis", "story": "Un dîner de ramens payé par Léo, les billets de musée par Inès, le taxi par Anthony… Le carnet fait les calculs. À la fin, chacun sait exactement qui doit combien à qui, en euros ou en yens.", "pts": ["💸 Chaque dépense notée en quelques secondes, même hors connexion.", "⚖️ Le moins de remboursements possible pour tout équilibrer.", "💬 Un petit message tout prêt pour demander un remboursement."], "btn": [["💸 Voir le budget", "budget"]]}, {"k": "souv", "bg": "linear-gradient(135deg,#831843,#ec4899 55%,#fbcfe8)", "em": ["📸", "❤️", "✍️", "🌸", "👀"], "kick": "Chapitre 6 · Les souvenirs", "title": "Chaque jour a son histoire", "story": "Le soir, à Kyoto, Inès ajoute trois photos et deux lignes sur les temples dorés. Sa grand-mère, restée en France, suit le voyage, met un cœur et laisse un mot doux.", "pts": ["📸 Photos et récits rangés jour par jour, au bon endroit.", "👀 Votre famille peut suivre le voyage, sans voir les dépenses ni les détails privés.", "❤️ Des cœurs et des commentaires, seulement de ceux que vous invitez."], "btn": [["📸 Voir les souvenirs", "souv"]]}, {"k": "retour", "bg": "linear-gradient(135deg,#1e1b4b,#4338ca 55%,#60a5fa)", "em": ["🎬", "🌍", "📕", "🎵", "🎉"], "kick": "Chapitre 7 · Le retour", "title": "Revivre le voyage", "story": "De retour à la maison, la bande se retrouve autour d’un écran. Le carnet a préparé un film du voyage, en musique, sur la route parcourue. Et sur le globe, un nouveau pays s’allume.", "pts": ["🎬 Un film du voyage, prêt à partager.", "📕 Un album et un carnet de route à imprimer.", "🌍 Un globe en 3D avec tous vos voyages, vos photos et vos pays."], "btn": [["🎬 Voir le bilan", "bilan"], ["🌍 Ouvrir le globe", "world"]]}, {"k": "secret", "bg": "linear-gradient(135deg,#111827,#374151 55%,#9ca3af)", "em": ["🔐", "☁️", "📱", "🔑", "🛡️"], "kick": "Chapitre 8 · Le secret du carnet", "title": "Tes voyages restent à toi", "story": "Le carnet a une règle d’or : ce qui est à toi reste à toi. Pas de publicité, pas de compte, pas de revente de données. Tu choisis où vont tes voyages et avec qui tu les partages.", "pts": ["🔐 Tes voyages sont protégés : seuls toi et ceux que tu invites peuvent les lire.", "☁️ Tu choisis : tout sur ton téléphone, ou une sauvegarde dans ton cloud perso.", "🗑️ Tu peux tout effacer, quand tu veux."], "btn": [["☁️ Ouvrir le cloud", "cloud"]]}, {"k": "fin", "bg": "linear-gradient(135deg,#6b2fa0,#ec4899 50%,#fbbf24)", "em": ["🌅", "🧳", "✈️", "✨", "🗺️"], "kick": "Épilogue", "title": "Et maintenant, à toi !", "story": "Inès, Léo et Anthony préparent déjà leur prochain voyage. Et toi, où partiras-tu ? Ouvre une nouvelle page du carnet : je t’accompagne.", "pts": [], "btn": [["＋ Créer mon voyage", "new"]]}];
@@ -3061,7 +3221,7 @@ const CV = (function(){
     const t = trip();
     fab.style.display = 'none';
     if(modeRender()) return;
-    if(!t && !['envies','reglages','prefs','livret'].includes(M.tab)){
+    if(!t && !['envies','reglages','prefs','livret','badges'].includes(M.tab)){
       body.innerHTML = `<div class="v-box"><h3>Aucun voyage</h3><p>Crée un voyage, ou transforme une envie en voyage depuis l’onglet ✨ Envies.</p>
         <button class="v-btn" onclick="CV.newTrip()">＋ Nouveau voyage</button>${tutoBtn()}${demoBtn()}</div>`;
       return;
@@ -3077,6 +3237,7 @@ const CV = (function(){
     else if(M.tab==='outils') renderOutils();
     else if(M.tab==='prefs') renderPrefs();
     else if(M.tab==='livret') renderLivret();
+    else if(M.tab==='badges') renderBadges();
     else renderReglages();
     const fabs = {transport:1, hotel:1, activite:1, divers:1, notes:1, envies:1, prog:1, souv:1};
     if(fabs[M.tab] && (t || M.tab==='envies')){
@@ -3586,6 +3747,7 @@ const CV = (function(){
       <div class="cv-quick2">${r('🧾','Dépense',"CV.tlReceipt()")}${r('📷','Tickets',"CV.tlReceipts()")}${v.length > 1 ? r('💸','Rembourser',"document.getElementById('bu-eq')&&document.getElementById('bu-eq').scrollIntoView({behavior:'smooth'})") : ''}${r('⚖️','Parts',"CV.partsSheet()")}${r('💱','Convertir',"CV.fxTool()")}</div>
       ${v.length > 1 ? `<div id="bu-eq">${equilibreHTML()}</div>` : ''}
       <div class="bu-cats"><div class="bu-h">Par poste</div>${rows.filter(x=>x.proj > 0 || x.paye > 0).map(x=>`<button type="button" class="bu-cat" onclick="CV.tab('${x.c}')"><span>${CATS[x.c].icon} ${CATS[x.c].lbl}</span><b>${eur(x.proj)}</b><i><em style="width:${(x.proj / mx * 100).toFixed(1)}%"></em><u style="width:${(x.paye / mx * 100).toFixed(1)}%"></u></i></button>`).join('') || '<div class="v-sum-small">Ajoute des trajets, hébergements, visites ou dépenses : le budget se remplit tout seul.</div>'}</div>
+      ${acc('ana', `📊 Analyse des dépenses <small>par poste et par jour</small>`, anaHTML())}
       ${acc('pers', `👥 Par personne <small>${v.length} voyageur${v.length>1?'s':''}</small>`, `
         <div class="v-perslist">${v.map(pid=>pchip(pid, v.length>1 ? `<button onclick="CV.removeCompanion('${pid}')" aria-label="Retirer">✕</button>` : '')).join('')}</div>
         <div class="cv-row" style="gap:6px;margin:8px 0"><button class="v-chip" onclick="CV.partsSheet()">⚖️ Parts & foyers</button><button class="v-chip" onclick="CV.addCompanion()">＋ Compagnon</button></div>
@@ -3644,7 +3806,7 @@ const CV = (function(){
     const cl = list('check', c=>c.trip===M.trip).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0) || a.id.localeCompare(b.id));
     const cats = [...new Set(cl.map(i=>i.cat))];
     const done = cl.filter(i=>i.done).length;
-    let h = `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">${done} / ${cl.length}</div><div class="v-sum-small">éléments cochés</div></div>
+    let h = `<button type="button" class="sp-card" onclick="CV.smartPack()"><i>🧳</i><span><b>Valise intelligente</b><small>Selon la météo de tes étapes et tes activités : les idées à ne pas oublier.</small></span></button><div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">${done} / ${cl.length}</div><div class="v-sum-small">éléments cochés</div></div>
       <div class="v-bar"><span class="b-paid" style="width:${cl.length?done/cl.length*100:0}%"></span></div></div>`;
     cats.forEach(c=>{
       h += `<div class="v-cl-cat">${esc(c)}</div>`;
@@ -3657,6 +3819,89 @@ const CV = (function(){
       <input class="v-in" id="v-cl-new" placeholder="Ajouter un élément" onkeydown="if(event.key==='Enter')CV.addCheck()">
       <button class="v-btn" style="width:auto;margin:0;padding:0 14px" onclick="CV.addCheck()">＋</button></div>`;
     document.getElementById('cv-body').innerHTML = h;
+  }
+  /* ══════════ 📊 Analyse des dépenses ══════════ */
+  const ANA = [['transport','✈️','Trajets','#6366f1'], ['hotel','🏨','Hébergements','#a855f7'], ['activite','🎟️','Visites & résas','#ec4899'],
+    ['repas','🍽️','Repas','#f97316'], ['courses','🛒','Courses','#eab308'], ['local','🚕','Transports sur place','#14b8a6'], ['shop','🛍️','Shopping','#06b6d4'], ['autre','🧾','Autres','#94a3b8']];
+  const nzTxt = s => ' ' + String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ') + ' ';
+  function anaKey(i){
+    if(i.cat !== 'divers') return i.cat;
+    const s = nzTxt((i.titre || '') + ' ' + (i.notes || ''));
+    if(/restau|repas|dejeuner|diner|petit dej|cafe|bar |boisson|ramen|sushi|pizza|brunch|snack|glace|boulang|bistro|brasserie|izakaya|tapas/.test(s)) return 'repas';
+    if(/course|supermarch|epicerie|marche |konbini|carrefour|lidl|aldi|monoprix|spar/.test(s)) return 'courses';
+    if(/taxi|uber|metro|bus |tram|ticket|pass |navette|essence|carburant|peage|parking|location velo|ferry|suica|pasmo/.test(s)) return 'local';
+    if(/souvenir|shopping|cadeau|vetement|boutique|magasin/.test(s)) return 'shop';
+    return 'autre';
+  }
+  function anaHTML(){
+    const all = items(), t = trip(), v = tv(), days = dayList(), nd = Math.max(1, days.length);
+    const by = {}; let tot = 0; all.forEach(i=>{ const x = totalOf(i); if(x > 0){ const k = anaKey(i); by[k] = (by[k] || 0) + x; tot += x; } });
+    if(!tot) return '<div class="v-sum-small">Ajoute des dépenses pour voir l’analyse.</div>';
+    // camembert (anneau)
+    let a0 = 0; const R0 = 54, C = 2 * Math.PI * R0, segs = ANA.filter(c=>by[c[0]] > 0).map(c=>{ const f = by[c[0]] / tot, s = `<circle r="${R0}" cx="70" cy="70" fill="none" stroke="${c[3]}" stroke-width="22" stroke-dasharray="${(f * C).toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-a0 * C).toFixed(2)}" transform="rotate(-90 70 70)"/>`; a0 += f; return s; }).join('');
+    const leg = ANA.filter(c=>by[c[0]] > 0).sort((x, y)=>by[y[0]] - by[x[0]]).map(c=>`<div class="an-l"><i style="background:${c[3]}"></i><span>${c[1]} ${c[2]}</span><b>${Math.round(by[c[0]] / tot * 100)} %</b><small>${eur(by[c[0]])}</small></div>`).join('');
+    // par jour (les hébergements sont étalés sur leurs nuits)
+    const pd = {}; days.forEach(d=>pd[d] = 0);
+    all.forEach(i=>{ const x = totalOf(i); if(!(x > 0) || !i.date) return;
+      if(i.cat === 'hotel' && i.dateFin && i.dateFin > i.date){ const r = range(i.date, addD(i.dateFin, -1)); r.forEach(d=>pd[d] = (pd[d] || 0) + x / r.length); }
+      else pd[i.date] = (pd[i.date] || 0) + x; });
+    const pdk = Object.keys(pd).filter(d=>!t.debut || (d >= t.debut && d <= (t.fin || t.debut))).sort(), mx = Math.max(1, ...pdk.map(d=>pd[d])), today = isoToday();
+    const bars = pdk.length > 1 ? `<div class="an-bars">${pdk.map(d=>`<span class="${d === today ? 'on' : ''}" title="${fshort(d)} · ${eur(pd[d])}"><i style="height:${Math.max(2, pd[d] / mx * 100).toFixed(1)}%"></i></span>`).join('')}</div><div class="an-ax"><span>${fshort(pdk[0])}</span><span>${fshort(pdk[pdk.length - 1])}</span></div>` : '';
+    const top = pdk.filter(d=>pd[d] > 0).sort((x, y)=>pd[y] - pd[x]).slice(0, 3);
+    const big = all.filter(i=>totalOf(i) > 0).sort((x, y)=>totalOf(y) - totalOf(x))[0];
+    const per = v.length ? tot / v.length : tot, obj = num(t.objectif);
+    return `<div class="an"><svg viewBox="0 0 140 140" class="an-d">${segs}<text x="70" y="66" text-anchor="middle" class="an-t1">${eur(tot)}</text><text x="70" y="84" text-anchor="middle" class="an-t2">${v.length > 1 ? eur(per) + ' / pers.' : ''}</text></svg><div class="an-leg">${leg}</div></div>
+      <div class="an-k"><div><b>${eur(tot / nd)}</b><small>par jour</small></div><div><b>${eur(per / nd)}</b><small>par jour et par personne</small></div>${obj ? `<div class="${per > obj ? 'bad' : 'ok'}"><b>${eur(obj / nd)}</b><small>objectif par jour et par personne</small></div>` : ''}</div>
+      ${bars ? `<div class="bu-h" style="margin-top:12px">Jour après jour</div>${bars}` : ''}
+      ${top.length ? `<div class="bu-h" style="margin-top:12px">Les jours les plus chers</div>${top.map(d=>`<div class="an-r"><span>${fdate(d)}</span><b>${eur(pd[d])}</b></div>`).join('')}` : ''}
+      ${big ? `<div class="an-r"><span>💎 Plus grosse dépense : ${esc(big.titre || '')}</span><b>${eur(totalOf(big))}</b></div>` : ''}`;
+  }
+
+  /* ══════════ 🧳 Valise intelligente : météo des étapes + activités prévues ══════════ */
+  let spSug = [];
+  async function smartPack(){
+    const t = trip(); if(!t) return;
+    openSheet(`<h2>🧳 Valise intelligente</h2><div class="v-sum-small" id="sp-msg">🌤️ Je regarde la météo de tes étapes et tes activités…</div><div id="sp-list"></div>`);
+    const st = tlStages(); let mn = 99, mx = -99, rain = 0, rainTxt = '', meteoOk = 0;
+    for(const s of st.slice(0, 8)){ try { const v = await meteoFor(s); meteoOk++; mn = Math.min(mn, v.min); mx = Math.max(mx, v.max);
+      const r = v.kind === 'prev' ? (v.pluie >= 50) : (v.jp >= Math.max(2, v.n / 4)); if(r){ rain++; rainTxt = rainTxt || s.city; } } catch(e){} }
+    const txt = nzTxt(items().map(i=>(i.titre || '') + ' ' + (i.notes || '') + ' ' + (i.mode || '')).join(' ') + ' ' + list('place', p=>p.trip===M.trip).map(p=>p.titre || p.nom || '').join(' ') + ' ' + (t.titre || '') + ' ' + (t.sous || ''));
+    const ccs = new Set(st.map(s=>((M.ctry || {})[normQ(s.city)] || {}).cc).filter(Boolean));
+    const EU = /^(FR|BE|DE|ES|IT|PT|NL|LU|AT|GR|PL|CZ|SK|HU|SI|HR|RO|BG|DK|SE|FI|NO|EE|LV|LT|IS|MC|AD)$/;
+    const nn = Math.max(1, dayList().length - 1), S = [];
+    const add = (cat, l, why) => S.push({cat, l, why});
+    add('Documents', 'Passeport ou carte d’identité', ''); add('Documents', 'Carte bancaire et un peu de liquide', ''); add('Documents', 'Assurance voyage (numéro d’assistance)', '');
+    add('Électronique', 'Chargeur de téléphone', ''); add('Électronique', 'Batterie externe', '');
+    if([...ccs].some(c=>!EU.test(c))) add('Électronique', 'Adaptateur de prise', '🔌 autre type de prise sur place');
+    add('Santé', 'Petite trousse à pharmacie', '');
+    if(meteoOk){
+      if(mn <= 5){ add('Vêtements', 'Manteau chaud', `🥶 jusqu’à ${mn}°`); add('Vêtements', 'Bonnet, gants et écharpe', `🥶 jusqu’à ${mn}°`); }
+      else if(mn <= 13) add('Vêtements', 'Pull ou polaire', `🌬️ ${mn}° le matin`);
+      if(mn <= 16) add('Vêtements', 'Veste légère', `🌥️ ${mn}° → ${mx}°`);
+      if(mx >= 24){ add('Vêtements', 'Shorts et t-shirts', `☀️ jusqu’à ${mx}°`); add('Santé', 'Crème solaire', `☀️ jusqu’à ${mx}°`); add('Vêtements', 'Lunettes de soleil et casquette', `☀️ jusqu’à ${mx}°`); }
+      if(mx >= 27) add('Santé', 'Anti-moustiques', `🦟 chaleur (${mx}°)`);
+      if(rain){ add('Vêtements', 'Imperméable ou K-way', `☔ pluie annoncée à ${rainTxt}`); add('Vêtements', 'Parapluie pliant', `☔ pluie annoncée à ${rainTxt}`); }
+    }
+    if(/rando|trek|hike|montagne|sentier|volcan|glacier/.test(txt)){ add('Activités', 'Chaussures de randonnée', '🥾 randonnée prévue'); add('Activités', 'Gourde', '🥾 randonnée prévue'); add('Activités', 'Petit sac à dos', '🥾 randonnée prévue'); }
+    if(/plage|beach|baignade|piscine|snorkel|plongee|lagon|crique|mer /.test(txt)){ add('Activités', 'Maillot de bain', '🏖️ plage ou piscine'); add('Activités', 'Serviette microfibre', '🏖️ plage ou piscine'); }
+    if(/onsen|spa|thermes|hammam|bain/.test(txt)) add('Activités', 'Petite serviette pour les bains', '♨️ bains prévus');
+    if(/ski|snowboard|neige|station/.test(txt)){ add('Activités', 'Gants et masque de ski', '⛷️ neige prévue'); add('Vêtements', 'Sous-vêtements thermiques', '⛷️ neige prévue'); }
+    if(/temple|sanctuaire|shrine|mosquee|eglise|cathedrale|basilique|monastere|pagode/.test(txt)) add('Vêtements', 'Une tenue qui couvre épaules et genoux', '⛩️ lieux de culte au programme');
+    if(/avion|vol |flight|aeroport/.test(txt)){ add('Voyage', 'Liquides de moins de 100 ml dans un sachet', '✈️ vol prévu'); add('Voyage', 'Coussin de voyage et bouchons d’oreilles', '✈️ vol prévu'); }
+    if(/train|shinkansen|tgv|bus/.test(txt)) add('Voyage', 'En-cas pour le trajet', '🚆 trajets en train ou bus');
+    if(nn >= 7) add('Vêtements', 'Lessive de voyage', `🧺 ${nn} nuits`);
+    const have = new Set(list('check', c=>c.trip===M.trip).map(c=>normQ(c.label)));
+    spSug = S.filter((x, i, a)=>a.findIndex(y=>y.l === x.l) === i).map(x=>Object.assign(x, {has: have.has(normQ(x.l))}));
+    const msg = document.getElementById('sp-msg'), box = document.getElementById('sp-list'); if(!box) return;
+    if(msg) msg.innerHTML = meteoOk ? `<span>${meteoOk > 1 ? `🌤️ Météo de ${meteoOk} étapes` : '🌤️ Météo de ton étape'}</span> <b>${mn}° → ${mx}°</b>${rain ? ' <span>☔ pluie possible</span>' : ''}<br><span>Coche ce que tu veux ajouter à ta checklist.</span>` : '<span>Pas de météo (ajoute des hébergements avec une ville et des dates). Voici l’essentiel selon ton programme :</span>';
+    const cats = [...new Set(spSug.map(x=>x.cat))];
+    box.innerHTML = cats.map(c=>`<div class="v-cl-cat">${esc(c)}</div>` + spSug.map((x, i)=>x.cat === c ? `<label class="sp-r${x.has ? ' has' : ''}"><input type="checkbox" data-sp="${i}" ${x.has ? 'disabled' : 'checked'}><span>${esc(x.l)}${x.why ? `<small>${esc(x.why)}</small>` : ''}${x.has ? '<small>✓ déjà dans ta checklist</small>' : ''}</span></label>` : '').join('')).join('')
+      + `<div class="v-actions"><button type="button" class="v-btn" onclick="CV.smartPackAdd()">＋ Ajouter à ma checklist</button></div>`;
+  }
+  function smartPackAdd(){
+    const sel = [...document.querySelectorAll('[data-sp]:checked')].map(i=>spSug[+i.dataset.sp]).filter(x=>x && !x.has);
+    sel.forEach((x, k)=>put({id:'c' + uid() + k, type:'check', trip:M.trip, cat:x.cat, label:x.l, done:false}));
+    closeSheet(); const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x); toast('🧳 ' + MSG(sel.length > 1 ? `${sel.length} éléments ajoutés` : `${sel.length} élément ajouté`)); if(M.tab === 'check') renderCheck(); else render();
   }
   function check(id){ const i = R[id]; if(!i) return; i.done = !i.done; put(i, i.done ? '✓ Coché' : 'Décoché'); renderCheck(); }
   async function delCheck(id){ const i = R[id]; if(i && (await uiConfirm('Retirer « ' + i.label + ' » ?'))){ drop(id); renderCheck(); } }
@@ -5088,6 +5333,7 @@ const CV = (function(){
     // synchro automatique toutes les heures quand l'appli est à l'écran (+ à chaque modification, à l'ouverture et au retour du réseau)
     (function poll(){ setTimeout(()=>{ if(document.visibilityState==='visible' && !sheetOpen()) syncNow(); poll(); }, pollGap); })();
     bootOffline();
+    if(webFollowBoot()) return;
     if(installGate()) return;
     applyMode(); applyLock(); countInstall();
     setTimeout(backupNag, 4000);
@@ -5097,6 +5343,7 @@ const CV = (function(){
       else setTimeout(resumeLoad, 300);
     };
     if(!M.setup) setupSheet(boot2); else boot2();
+    setTimeout(()=>{ try { if(M.me) onThisDay(); } catch(e){} }, 6000);
     syncNow();
   }
 
@@ -7868,7 +8115,7 @@ const CV = (function(){
       const ago = (Date.now() - new Date(fin + 'T23:59:00')) / 864e5; if(ago > 30) return '';
       const tr = settle(balances());
       return `<div class="cv-live done"><div class="lk">🏡 De retour à la maison</div><div class="lt">Quel voyage ! ${tr.length ? `Il reste ${tr.length} remboursement${tr.length>1?'s':''} entre vous, et c’est bouclé.` : 'Tout est réglé entre vous. 🎉'}</div>
-        <div class="lb"><button type="button" onclick="CV.tab('budget')">💸 Bilan et remboursements</button><button type="button" onclick="CV.filmOpen()">🎬 Film du voyage</button><button type="button" onclick="CV.jrSheet()">📖 Journal</button></div></div>`;
+        <div class="lb"><button type="button" onclick="CV.tab('budget')">💸 Bilan et remboursements</button><button type="button" onclick="CV.filmOpen()">🎬 Film du voyage</button><button type="button" onclick="CV.flyover()">🌍 Survol 3D du voyage</button><button type="button" onclick="CV.wrapped()">✨ Récap story à partager</button><button type="button" onclick="CV.jrSheet()">📖 Journal</button></div></div>`;
     }
     const k = ds.indexOf(td), info = dayInfo(td), spent = spentOn(td), cap = num(t.plafond);
     const bar = cap ? `<div class="lcap${spent > cap ? ' over' : ''}"><span style="width:${Math.min(100, spent/cap*100)}%"></span></div>` : '';
@@ -8912,7 +9159,7 @@ ${pm.join('\n')}</Document></kml>`;
     const b = bounds(t.pts), single = t.pts.length < 2;
     if(single) wm.map.flyTo({center:[t.pts[0].lng, t.pts[0].lat], zoom:8, pitch:35, bearing:-15, duration:2600, essential:true});
     else wm.map.fitBounds(b, {padding:{top:110, bottom:230, left:40, right:40}, pitch:30, bearing:-10, duration:2600, maxZoom:9});
-    wmInfo(`<b>${esc(t.titre)}</b> · ${esc(t.dates)}${t.steps.length ? `<div class="wm-tl"><button type="button" class="wm-play" onclick="CV.worldStory('${id}')">▶ Revivre le voyage</button><input type="range" min="0" max="${t.steps.length-1}" value="0" oninput="CV.worldStep('${id}', this.value)" aria-label="Frise des steps"></div>` : '<br><small>Ajoute des steps 📍 pour la frise et « Revivre le voyage ».</small>'}<button type="button" class="wm-open" onclick="CV.worldOpen('${id}')">Ouvrir ce voyage</button>`);
+    wmInfo(`<b>${esc(t.titre)}</b> · ${esc(t.dates)}${t.steps.length ? `<div class="wm-tl"><button type="button" class="wm-play" onclick="CV.worldStory('${id}')">▶ Revivre le voyage</button><button type="button" class="wm-play" onclick="CV.flyover('${id}')">🎥 Survol 3D</button><input type="range" min="0" max="${t.steps.length-1}" value="0" oninput="CV.worldStep('${id}', this.value)" aria-label="Frise des steps"></div>` : '<br><small>Ajoute des steps 📍 pour la frise et « Revivre le voyage ».</small>'}<button type="button" class="wm-open" onclick="CV.worldOpen('${id}')">Ouvrir ce voyage</button>`);
   }
   function stepCard(s){
     const box = document.getElementById('wm-story'); if(!box) return;
@@ -8926,6 +9173,156 @@ ${pm.join('\n')}</Document></kml>`;
     wm.map.flyTo({center:[s.lng, s.lat], zoom:Math.max(7, Math.min(10, wm.map.getZoom())), pitch:40, bearing:(+i * 37) % 360 - 30, duration:1800, essential:true});
     stepCard(s);
   }
+  /* ══════════ 🌍 Survol 3D : la caméra suit le trajet, les photos apparaissent à chaque étape ══════════ */
+  let CI = null;
+  const ciWait = ms => new Promise(r=>setTimeout(r, ms));
+  const ciBrg = (a, b) => { const r = Math.PI / 180, y = Math.sin((b.lng - a.lng) * r) * Math.cos(b.lat * r), x = Math.cos(a.lat * r) * Math.sin(b.lat * r) - Math.sin(a.lat * r) * Math.cos(b.lat * r) * Math.cos((b.lng - a.lng) * r); return Math.atan2(y, x) / r; };
+  const ciZoom = d => d < 25 ? 11 : d < 120 ? 9.5 : d < 500 ? 8 : d < 1500 ? 6.5 : 5;
+  async function flyover(id, rec){
+    id = id || M.trip; if(!R[id]) return;
+    if(CI) cineStop();
+    closeSheet(true); worldTrip(id);
+    for(let k = 0; k < 160 && !(wm && wm.data && wm.data.trips && wm.map); k++) await ciWait(250);
+    if(!wm || !wm.data){ alert('Le globe n’a pas pu se charger. Vérifie ta connexion et réessaie.'); return; }
+    const t = wm.data.trips.find(x=>x.id===id);
+    let seq = t ? (t.steps.length >= 2 ? t.steps : t.pts) : [];
+    seq = seq.filter((p, i) => i === 0 || Math.abs(p.lat - seq[i-1].lat) + Math.abs(p.lng - seq[i-1].lng) > 0.001);
+    if(!seq.length){ alert('Pour le survol, ajoute des souvenirs avec un lieu ou des hébergements avec une ville.'); return; }
+    if(seq.length > 15){ // les plus belles étapes : on garde celles avec photo en priorité, dans l’ordre du voyage
+      const keep = new Set([0, seq.length - 1]); const withPh = seq.map((s, i)=>[s, i]).filter(([s])=>s.ph).map(([, i])=>i);
+      const pool = withPh.length >= 13 ? withPh : seq.map((s, i)=>i); const st = pool.length / 13; for(let k = 0; k < 13; k++) keep.add(pool[Math.floor(k * st)]);
+      seq = [...keep].sort((a, b)=>a - b).map(i=>seq[i]); }
+    cineStart(t, seq, !!rec);
+  }
+  function flyoverRec(id){ flyover(id, true); }
+  function cineGrab(){ if(!CI || !CI.snap) return; try { const c = wm.map.getCanvas(), x = CI.snap.getContext('2d'); x.drawImage(c, 0, 0, CI.snap.width, CI.snap.height); } catch(e){} }
+  function cineStop(){
+    if(!CI) return; const ci = CI; ci.stop = true; CI = null;
+    if(ci.raf) cancelAnimationFrame(ci.raf); if(ci.lineRaf) cancelAnimationFrame(ci.lineRaf);
+    if(ci.rec && ci.rec.state !== 'inactive'){ ci.cancel = true; try { ci.rec.stop(); } catch(e){} }
+    const o = document.getElementById('wm-cine'); if(o) o.remove();
+    const w = document.getElementById('cv-world'); if(w) w.classList.remove('wm-cine');
+    if(wm && wm.map){ try { (ci.hid || []).forEach(l=>{ if(wm.map.getLayer(l)) wm.map.setLayoutProperty(l, 'visibility', 'visible'); }); } catch(e){} try { wm.map.off('render', cineGrab); ['ci-glow','ci-line','ci-dot'].forEach(l=>{ if(wm.map.getLayer(l)) wm.map.removeLayer(l); }); ['ci-line','ci-dot'].forEach(s=>{ if(wm.map.getSource(s)) wm.map.removeSource(s); }); } catch(e){} }
+  }
+  function ciFly(o){
+    return new Promise(res=>{ if(!CI || CI.stop || !wm) return res(); let done = false; const fin = () => { if(!done){ done = true; res(); } };
+      wm.map.once('moveend', fin); setTimeout(fin, (o.duration || 2000) + 1200); wm.map.flyTo(Object.assign({essential:true}, o)); });
+  }
+  function ciSet(coords, dot){
+    try { const s = wm.map.getSource('ci-line'); if(s) s.setData({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:coords.length > 1 ? coords : [coords[0], coords[0]]}});
+      const d = wm.map.getSource('ci-dot'); if(d && dot) d.setData({type:'Feature', properties:{}, geometry:{type:'Point', coordinates:dot}}); } catch(e){}
+  }
+  function ciDraw(from, to, ms){
+    return new Promise(res=>{ const t0 = performance.now(), base = CI.coords.slice();
+      const step = now => { if(!CI || CI.stop) return res(); const k = Math.min(1, (now - t0) / ms), e = k < .5 ? 2*k*k : 1 - Math.pow(-2*k + 2, 2) / 2;
+        const p = [from.lng + (to.lng - from.lng) * e, from.lat + (to.lat - from.lat) * e]; ciSet(base.concat([p]), p);
+        if(k < 1) CI.lineRaf = requestAnimationFrame(step); else { CI.coords = base.concat([[to.lng, to.lat]]); res(); } };
+      CI.lineRaf = requestAnimationFrame(step); });
+  }
+  function ciCap(html, data){
+    const c = document.getElementById('ci-cap'); if(!c) return;
+    c.classList.remove('in'); void c.offsetWidth; c.innerHTML = html; if(html) c.classList.add('in'); hydrate();
+    if(CI) CI.cap = data || null;
+  }
+  async function cineStart(t, seq, rec){
+    const w = document.getElementById('cv-world'); if(!w) return;
+    stopStory(); wm.spin = false; w.classList.add('wm-cine');
+    const ov = document.createElement('div'); ov.id = 'wm-cine';
+    ov.innerHTML = `<div class="ci-bar"><button type="button" class="ci-x" onclick="CV.cineStop()" aria-label="Fermer">✕</button><span class="ci-rec" id="ci-rec"></span></div>
+      <div class="ci-title" id="ci-title"><small>🌍 Survol 3D</small><b data-notr>${esc(t.titre)}</b><span>${esc(t.dates || '')}</span></div>
+      <div class="ci-cap" id="ci-cap"></div><div class="ci-end" id="ci-end" hidden></div>`;
+    w.appendChild(ov);
+    CI = {id:t.id, t, seq, coords:[], stop:false, cap:null, title:{t:t.titre, d:t.dates || ''}, bmps:{}};
+    const map = wm.map;
+    try {
+      ['ci-glow','ci-line','ci-dot'].forEach(l=>{ if(map.getLayer(l)) map.removeLayer(l); }); ['ci-line','ci-dot'].forEach(s=>{ if(map.getSource(s)) map.removeSource(s); });
+      map.addSource('ci-line', {type:'geojson', data:{type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:[[seq[0].lng, seq[0].lat],[seq[0].lng, seq[0].lat]]}}});
+      map.addSource('ci-dot', {type:'geojson', data:{type:'Feature', properties:{}, geometry:{type:'Point', coordinates:[seq[0].lng, seq[0].lat]}}});
+      map.addLayer({id:'ci-glow', type:'line', source:'ci-line', layout:{'line-cap':'round','line-join':'round'}, paint:{'line-color':'#ffd28a','line-width':12,'line-opacity':.35,'line-blur':8}});
+      map.addLayer({id:'ci-line', type:'line', source:'ci-line', layout:{'line-cap':'round','line-join':'round'}, paint:{'line-color':'#ffe2a8','line-width':4}});
+      map.addLayer({id:'ci-dot', type:'circle', source:'ci-dot', paint:{'circle-radius':8,'circle-color':'#ffffff','circle-stroke-color':'#ff3b6b','circle-stroke-width':4}});
+      // pendant le survol, seuls le trajet en cours et le globe restent visibles
+      CI.hid = (map.getStyle().layers || []).filter(l=>l.source && l.source !== 'ofm' && !/^ci-/.test(l.id) && /^(line|circle|symbol|heatmap|fill)$/.test(l.type) && (map.getLayoutProperty(l.id, 'visibility') || 'visible') === 'visible').map(l=>l.id);
+      CI.hid.forEach(l=>map.setLayoutProperty(l, 'visibility', 'none'));
+    } catch(e){}
+    if(rec && !(await cineRecStart())) rec = false;
+    // 1. depuis l’espace jusqu’à la première étape
+    map.jumpTo({center:[seq[0].lng, seq[0].lat], zoom:1.4, pitch:0, bearing:0});
+    await ciWait(1800); if(!CI || CI.stop) return;
+    const tt = document.getElementById('ci-title'); if(tt) tt.classList.add('out'); if(CI) CI.title = null;
+    await ciFly({center:[seq[0].lng, seq[0].lat], zoom:ciZoom(seq.length > 1 ? km(seq[0], seq[1]) : 50), pitch:60, bearing:-20, duration:4200, curve:1.6});
+    CI && (CI.coords = [[seq[0].lng, seq[0].lat]]);
+    // 2. étape par étape
+    for(let i = 0; i < seq.length; i++){
+      if(!CI || CI.stop) return;
+      const s = seq[i], ph = s.ph || null;
+      const bmp = ph && rec ? await photoBlob(ph).then(b=>b ? decodeImg(b) : null).catch(()=>null) : null;
+      const ttl = s.titre || s.city || s.lieu || '', sub = [s.date ? fdate(s.date) : '', s.lieu && s.lieu !== ttl ? s.lieu : ''].filter(Boolean).join(' · ');
+      ciCap(`${ph ? `<div class="ci-ph"><img data-ph="${esc(ph)}" alt=""></div>` : ''}<div class="ci-tx"><span class="ci-n">${i + 1} / ${seq.length}</span><b data-notr>${s.cc ? flag(s.cc) + ' ' : ''}${esc(ttl)}</b>${sub ? `<small data-notr>${esc(sub)}</small>` : ''}${s.texte ? `<p data-notr>${esc(String(s.texte).slice(0, 140))}${s.texte.length > 140 ? '…' : ''}</p>` : ''}</div>`, {t:ttl, s:sub, bmp, n:(i + 1) + ' / ' + seq.length});
+      await ciWait(ph ? 2900 : 1700); if(!CI || CI.stop) return;
+      const nx = seq[i + 1]; if(!nx) break;
+      ciCap('', null);
+      const d = km(s, nx);
+      await Promise.all([ciDraw(s, nx, d > 800 ? 3600 : 2600), ciFly({center:[nx.lng, nx.lat], zoom:ciZoom(d), pitch:d > 800 ? 35 : 58, bearing:ciBrg(s, nx), duration:d > 800 ? 3600 : 2600, curve:d > 800 ? 1.8 : 1.1})]);
+    }
+    // 3. vue d’ensemble + bilan
+    if(!CI || CI.stop) return;
+    ciCap('', null);
+    try { const line = t.line && t.line.length > 1 ? t.line : seq.map(p=>[p.lng, p.lat]); let mn = [180, 90], mx = [-180, -90]; line.forEach(([x, y])=>{ mn = [Math.min(mn[0], x), Math.min(mn[1], y)]; mx = [Math.max(mx[0], x), Math.max(mx[1], y)]; });
+      if(seq.length > 1) map.fitBounds([mn, mx], {padding:{top:120, bottom:260, left:50, right:50}, pitch:30, bearing:0, duration:3000, maxZoom:9}); } catch(e){}
+    await ciWait(3200); if(!CI || CI.stop) return;
+    const pays = new Set(seq.map(s=>s.cc).filter(Boolean)).size, kmT = Math.round(t.km || 0);
+    const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
+    const parts = [kmT ? kmT.toLocaleString('fr-FR') + ' km' : '', seq.length + ' étape' + (seq.length > 1 ? 's' : ''), pays ? pays + ' pays' : ''].filter(Boolean);
+    const stats = parts.map(x=>`<i>${esc(x)}</i>`).join(' · ');
+    if(CI) CI.end = {t:t.titre, s:parts.map(MSG).join(' · ')};
+    const e = document.getElementById('ci-end');
+    if(e){ e.hidden = false; e.innerHTML = `<b data-notr>${esc(t.titre)}</b><span>${stats}</span>
+      <div class="ci-btns"><button type="button" onclick="CV.flyover('${t.id}')">↺ Revoir</button>${cineCanRec() ? `<button type="button" onclick="CV.flyoverRec('${t.id}')">⏺ Enregistrer la vidéo</button>` : ''}<button type="button" onclick="CV.cineStop()">🌍 Rester sur le globe</button></div>`; }
+    if(rec) setTimeout(cineRecEnd, 3500);
+  }
+  const cineCanRec = () => !!(document.createElement('canvas').captureStream && typeof MediaRecorder !== 'undefined');
+  async function cineRecStart(){
+    if(!cineCanRec()){ alert('Ce téléphone ne sait pas enregistrer la vidéo. Fais plutôt une capture vidéo de l’écran pendant le survol.'); return false; }
+    const W = 720, H = 1280, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const mc = wm.map.getCanvas(), snap = document.createElement('canvas'); snap.width = mc.width; snap.height = mc.height;
+    CI.snap = snap; wm.map.on('render', cineGrab); wm.map.triggerRepaint();
+    const x = cv.getContext('2d');
+    const wrap = (txt, maxW) => { const words = String(txt).split(/\s+/), out = []; let l = ''; words.forEach(w=>{ const t2 = l ? l + ' ' + w : w; if(x.measureText(t2).width > maxW && l){ out.push(l); l = w; } else l = t2; }); if(l) out.push(l); return out.slice(0, 3); };
+    const draw = () => {
+      if(!CI || CI.stop) return;
+      const sc = Math.max(W / snap.width, H / snap.height), dw = snap.width * sc, dh = snap.height * sc;
+      x.fillStyle = '#02040a'; x.fillRect(0, 0, W, H); x.drawImage(snap, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      const g = x.createLinearGradient(0, H * .55, 0, H); g.addColorStop(0, 'rgba(2,4,10,0)'); g.addColorStop(1, 'rgba(2,4,10,.85)'); x.fillStyle = g; x.fillRect(0, H * .55, W, H * .45);
+      x.textAlign = 'center'; x.fillStyle = '#fff'; x.shadowColor = 'rgba(0,0,0,.6)'; x.shadowBlur = 12;
+      if(CI.title){ x.font = 'italic 600 58px Georgia, serif'; wrap(CI.title.t, W - 100).forEach((l, i)=>x.fillText(l, W / 2, H * .42 + i * 66)); x.font = '600 30px system-ui, sans-serif'; x.fillText(CI.title.d, W / 2, H * .42 + 120); }
+      const c = CI.cap;
+      if(c){ let y = H - 120;
+        if(c.bmp){ const bw = W - 120, bh = Math.min(560, bw * c.bmp.height / c.bmp.width), by = H - 300 - bh; x.save(); x.beginPath(); x.roundRect ? x.roundRect(60, by, bw, bh, 28) : x.rect(60, by, bw, bh); x.clip(); const s2 = Math.max(bw / c.bmp.width, bh / c.bmp.height); x.drawImage(c.bmp, 60 + (bw - c.bmp.width * s2) / 2, by + (bh - c.bmp.height * s2) / 2, c.bmp.width * s2, c.bmp.height * s2); x.restore(); }
+        x.font = '700 26px system-ui, sans-serif'; x.fillStyle = 'rgba(255,255,255,.75)'; x.fillText(c.n || '', W / 2, y - 120);
+        x.fillStyle = '#fff'; x.font = '800 46px system-ui, sans-serif'; wrap(c.t, W - 100).slice(0, 2).forEach((l, i)=>x.fillText(l, W / 2, y - 66 + i * 52));
+        if(c.s){ x.font = '500 28px system-ui, sans-serif'; x.fillStyle = 'rgba(255,255,255,.85)'; x.fillText(c.s, W / 2, y + 40); } }
+      if(CI.end){ x.font = 'italic 600 54px Georgia, serif'; x.fillStyle = '#fff'; wrap(CI.end.t, W - 100).forEach((l, i)=>x.fillText(l, W / 2, H - 260 + i * 60)); x.font = '700 32px system-ui, sans-serif'; x.fillStyle = '#ffd28a'; x.fillText(CI.end.s, W / 2, H - 120); }
+      x.shadowBlur = 0; x.font = '700 24px system-ui, sans-serif'; x.fillStyle = 'rgba(255,255,255,.8)'; x.fillText('Vezoria', W / 2, H - 40);
+      CI.raf = requestAnimationFrame(draw);
+    };
+    draw();
+    const types = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'], mime = types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+    let rec; try { rec = new MediaRecorder(cv.captureStream(30), mime ? {mimeType:mime, videoBitsPerSecond:5000000} : {}); } catch(e){ alert('Enregistrement impossible : ' + e.message); return false; }
+    const chunks = [], ci = CI, name = 'survol-' + String(ci.t.titre || 'voyage').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    rec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+    rec.onstop = async () => {
+      if(ci.cancel) return;
+      const type = rec.mimeType || mime || 'video/webm', blob = new Blob(chunks, {type}), file = new File([blob], name + (/mp4/.test(type) ? '.mp4' : '.webm'), {type});
+      const m = document.getElementById('ci-rec'); if(m) m.textContent = '✅ Vidéo prête';
+      try { if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:ci.t.titre}); return; } } catch(e){ if(e && e.name === 'AbortError') return; }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.appendChild(a); a.click(); setTimeout(()=>{ a.remove(); URL.revokeObjectURL(a.href); }, 5000);
+    };
+    CI.rec = rec; rec.start(500);
+    const m = document.getElementById('ci-rec'); if(m) m.textContent = '🔴 Enregistrement… reste sur cet écran';
+    return true;
+  }
+  function cineRecEnd(){ if(!CI || !CI.rec || CI.rec.state === 'inactive') return; try { CI.rec.stop(); } catch(e){} if(CI.raf) cancelAnimationFrame(CI.raf); try { wm.map.off('render', cineGrab); } catch(e){} }
   function stopStory(){ if(wm && wm.play){ clearTimeout(wm.play); wm.play = null; } const b = document.querySelector('.wm-play'); if(b) b.textContent = '▶ Revivre le voyage'; }
   function worldStory(id){
     if(!wm) return; if(wm.play){ stopStory(); return; }
@@ -9061,7 +9458,7 @@ ${pm.join('\n')}</Document></kml>`;
     }
   }
   function worldOpen(id){ worldClose(); go(id); M.mode = tripPhase(R[id]) === 'past' ? 'bilan' : tripPhase(R[id]); persist(); applyMode(); }
-  function worldClose(){ stopStory(); const ov = document.getElementById('cv-world'); if(wm) wm.spin = false; if(ov) ov.style.display = 'none'; document.body.style.overflow = ''; }   // la carte reste prête pour la prochaine ouverture
+  function worldClose(){ stopStory(); cineStop(); const ov = document.getElementById('cv-world'); if(wm) wm.spin = false; if(ov) ov.style.display = 'none'; document.body.style.overflow = ''; }   // la carte reste prête pour la prochaine ouverture
 
   /* ══════════════════════════════════════════════════════════════════════════
      ⚖️ PARTS INÉGALES & FOYERS · 🔎 LIEUX ILLUSTRÉS (Wikipédia) · 🧭 NOUVEAU VOYAGE : 3 FAÇONS
@@ -9145,7 +9542,60 @@ ${pm.join('\n')}</Document></kml>`;
       <button type="button" class="cv-choice" onclick="CV.worldNew()"><i>🌍</i><span><b>Je le dessine sur le globe</b><small>Touche les villes sur la Terre, dans l’ordre : la route se trace et le voyage est créé.</small></span></button>
       <button type="button" class="cv-choice" onclick="CV.inspire()"><i>💡</i><span><b>Je ne sais pas encore où aller</b><small>Quelques questions, et l’appli te propose des destinations adaptées avec ses conseils.</small></span></button>
       <button type="button" class="cv-choice" onclick="CV.blankTrip()"><i>📄</i><span><b>Voyage vierge</b><small>Juste un nom : tu remplis tout toi-même, à ton rythme.</small></span></button>
+      <button type="button" class="cv-choice" onclick="CV.psImport()"><i>📥</i><span><b>J’importe mes voyages Polarsteps</b><small>Tes étapes, récits et photos, à partir du fichier de données que Polarsteps t’envoie.</small></span></button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
+  }
+  /* ══════════ 📥 Import Polarsteps : l’utilisateur reprend SES données (fichier d’export de Polarsteps) ══════════ */
+  function psImport(){
+    openSheet(`<h2>📥 Importer mes voyages Polarsteps</h2>
+      <ol class="ps-how"><li>Dans Polarsteps : Profil → Paramètres → Télécharger mes données. Tu reçois un fichier ZIP par e-mail.</li><li>Choisis ce fichier ici (ou le fichier trip.json d’un voyage).</li></ol>
+      <div class="v-sum-small" style="margin:8px 0">Tes étapes, lieux, récits et photos deviennent des souvenirs Vezoria. Tout se passe sur ton téléphone : le fichier n’est envoyé nulle part. Vezoria n’est pas lié à Polarsteps.</div>
+      <label class="cv-checkline"><input type="checkbox" id="ps-all"> Importer toutes les photos (sinon 3 par étape : plus léger pour ton téléphone)</label>
+      <div id="ps-msg" class="ps-msg"></div>
+      <div class="v-actions"><label class="v-btn ps-pick">📂 Choisir le fichier<input type="file" accept=".zip,.json,application/zip,application/json" hidden onchange="CV.psFile(this)"></label></div>`);
+  }
+  const psIso = ts => { const n = +ts; if(!n) return ''; try { return new Date(n > 1e12 ? n : n * 1000).toISOString().slice(0, 10); } catch(e){ return ''; } };
+  async function psFile(input){
+    const f = input.files && input.files[0]; if(!f) return; input.value = '';
+    const all = !!(document.getElementById('ps-all') || {}).checked;
+    const msg = m => { const e = document.getElementById('ps-msg'); if(e) e.textContent = m; };
+    let rd = null;
+    try {
+      const list_ = [];
+      if(/\.json$/i.test(f.name) || f.type === 'application/json') list_.push({j:JSON.parse(await f.text()), base:'', ents:null, z:null});
+      else {
+        msg('📦 Lecture du fichier…'); const z = await loadZip(); rd = new z.ZipReader(new z.BlobReader(f)); const ents = await rd.getEntries();
+        for(const e of ents.filter(e=>!e.directory && /(^|\/)trip\.json$/i.test(e.filename))){ try { list_.push({j:JSON.parse(await e.getData(new z.TextWriter())), base:e.filename.replace(/trip\.json$/i, ''), ents, z}); } catch(err){} }
+      }
+      if(!list_.length) throw new Error('aucun voyage Polarsteps trouvé dans ce fichier (il faut le ZIP de Polarsteps ou un fichier trip.json).');
+      let nS = 0, nP = 0, last = '';
+      for(let k = 0; k < list_.length; k++){ msg(`🧳 Voyage ${k + 1} / ${list_.length}…`); const r = await psOne(list_[k], all, msg); nS += r.s; nP += r.p; last = r.tid; }
+      closeSheet(true);
+      if(last){ go(last); M.mode = 'bilan'; persist(); applyMode(); }
+      setTimeout(()=>alert(`✅ ${list_.length} voyage${list_.length > 1 ? 's' : ''} importé${list_.length > 1 ? 's' : ''} : ${nS} étapes, ${nP} photos.`), 300);
+      uploadQueue();
+    } catch(e){ msg(''); alert('Import impossible : ' + e.message); }
+    finally { try { rd && rd.close(); } catch(e){} }
+  }
+  async function psOne(tr, all, msg){
+    const j = tr.j || {}, steps = (j.all_steps || j.steps || []).slice().sort((a, b)=>(+a.start_time || 0) - (+b.start_time || 0));
+    const tid = 't' + uid(), debut = psIso(j.start_date) || psIso((steps[0] || {}).start_time), fin = psIso(j.end_date) || psIso((steps[steps.length - 1] || {}).start_time) || debut;
+    const out = [{id:tid, type:'trip', titre:String(j.name || j.title || 'Voyage Polarsteps').slice(0, 120), sous:String(j.summary || '').slice(0, 160), debut, fin, voyageurs:M.me ? [M.me] : [], objectif:'', src:'polarsteps'}];
+    let p = 0;
+    const photos = tr.ents ? tr.ents.filter(e=>!e.directory && e.filename.startsWith(tr.base) && /\.(jpe?g|png|webp)$/i.test(e.filename) && /\/photos?\//i.test(e.filename)) : [];
+    for(let i = 0; i < steps.length; i++){
+      const s = steps[i] || {}, L = s.location || {}, key = String(s.id || ''), slug = String(s.slug || '');
+      const lat = L.lat != null ? +L.lat : s.lat != null ? +s.lat : null, lng = L.lon != null ? +L.lon : L.lng != null ? +L.lng : s.lon != null ? +s.lon : null;
+      const sv = {id:'sv' + uid() + i, type:'souv', trip:tid, date:psIso(s.start_time) || debut, titre:String(s.display_name || s.name || L.name || ('Étape ' + (i + 1))).slice(0, 120),
+        lieu:[L.name, L.detail].filter(Boolean).join(', ').slice(0, 160), texte:String(s.description || '').slice(0, 20000), photos:[], cc:String(L.country_code || '').toUpperCase().slice(0, 2), pays:L.country || ''};
+      if(lat != null && isFinite(lat) && lng != null && isFinite(lng)){ sv.lat = lat; sv.lng = lng; }
+      let ph = photos.filter(e=>(key && e.filename.includes(key)) || (slug && e.filename.includes(slug + '_')));
+      if(!all) ph = ph.slice(0, 3);
+      for(const e of ph){ try { const b = await e.getData(new tr.z.BlobWriter(/\.png$/i.test(e.filename) ? 'image/png' : 'image/jpeg')); const pid = 'ph' + uid() + p; await storePhoto(b, pid); sv.photos.push(pid); p++; if(p % 3 === 0) msg(`📸 ${p} photos…`); } catch(err){} }
+      out.push(sv);
+    }
+    putMany(out, '📥 Voyage importé');
+    return {tid, s:steps.length, p};
   }
   async function blankTrip(){
     const n = (await uiPrompt('Nom du voyage :', 'Mon prochain voyage')); if(n === null) return;
@@ -9350,6 +9800,35 @@ ${pm.join('\n')}</Document></kml>`;
   }
 
 
+  /* ── 👀 Suivre sans installer : un proche ouvre le lien abonné dans son navigateur et voit le voyage tout de suite ── */
+  const webFollowing = () => document.body.classList.contains('vz-webf');
+  function webFollowBoot(){
+    if(isInstalled() || !/^https?:/.test(location.protocol)) return false;
+    const m = decodeURIComponent(location.hash || '').match(/#suivre=([A-Z0-9-]{8,})/i);
+    const fl = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted);
+    if(!m && !(M.webFollow && fl.length)) return false;
+    M.webFollow = true; persist(); document.body.classList.add('vz-webf');
+    try { applyMode(); applyLock(); } catch(e){}
+    if(m){ history.replaceState(null, '', location.pathname + location.search); followGo(m[1].toUpperCase(), true); }
+    else feedView(fl[0].id);
+    return true;
+  }
+  function webCta(){
+    if(!webFollowing()) return '';
+    return `<div class="fd-cta"><span><b>Toi aussi, raconte tes voyages</b><small>Carnet de voyage gratuit, sans compte, sans publicité.</small></span><button type="button" onclick="CV.webCreate()">✨ Créer mon carnet</button></div>`;
+  }
+  function webCreate(){
+    let g = document.getElementById('cv-gate'); if(!g){ g = document.createElement('div'); g.id = 'cv-gate'; document.body.appendChild(g); }
+    gateRender();
+  }
+  function webBack(){ const g = document.getElementById('cv-gate'); if(g) g.remove(); const fl = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted); if(fl.length && !document.getElementById('cv-feed')) feedView((fl.find(f=>f.id===M.feedLast) || fl[0]).id); }
+  async function webCopy(){
+    const c = (list('feedtrip', f=>TS()[f.id] && !f.deleted).map(f=>TS()[f.id]))[0] || '';
+    const txt = (typeof appUrl === 'function' && appUrl() ? appUrl() : location.origin + '/') + '#suivre=' + c;
+    const b = document.getElementById('gw-copy');
+    try { await navigator.clipboard.writeText(txt); if(b) b.textContent = '📋 Lien copié'; } catch(e){ await uiPrompt('Copie ce texte :', txt); }
+  }
+
   /* ══════════ 📲 Appli à installer obligatoirement (écran d'accueil) + compteur anonyme ══════════ */
   function installGate(){
     if(window.VZ_HOST || isInstalled() || !/^https?:/.test(location.protocol) || /^(localhost|127\.)/.test(location.hostname) || /[?&]web=1/.test(location.search)) return false;
@@ -9373,6 +9852,7 @@ ${pm.join('\n')}</Document></kml>`;
       ${/[#&]rejoindre=/i.test(location.hash) ? `<div class="gv"><b>🎟️ Tu es invité(e) dans un voyage</b><p>Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».</p><button type="button" class="v-btn sec" id="gv-copy" onclick="CV.gateCopy()">📋 Copier l’invitation</button></div>` : ''}
       <ol class="gs">${steps}</ol>
       ${installEvt ? `<button type="button" class="v-btn" onclick="CV.gateInstall()">📲 Installer l’appli</button>` : ''}
+      ${webFollowing() ? `<div class="gb"><button type="button" onclick="CV.webBack()">← Revenir au voyage que je suis</button><button type="button" id="gw-copy" onclick="CV.webCopy()">📋 Copier le lien du voyage (à coller dans l’appli installée)</button></div>` : ''}
       <p class="gm">Aucune inscription, aucune publicité. <a href="mentions-legales.html">Mentions légales</a> · <a href="privacy.html">Confidentialité</a></p></div>`;
   }
   // l’appli installée sur iPhone ne voit pas le lien ouvert dans Safari : l’invitation passe par le presse-papiers
@@ -10596,6 +11076,74 @@ ${pm.join('\n')}</Document></kml>`;
   const filmEase = x => x < .5 ? 2*x*x : 1 - Math.pow(-2*x + 2, 2) / 2;
   const FW = 720, FH = 1280;
   let FM = null;
+  /* ══════════ ✨ Récap story : une image verticale du voyage à partager (format story 1080 × 1920) ══════════ */
+  let wrBlob = null;
+  async function wrapped(){
+    const t = trip(); if(!t){ alert('Ouvre d’abord un voyage.'); return; }
+    toast('✨ Création de ton récap…');
+    const D = await filmData();
+    const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920;
+    const c = cv.getContext('2d'); c.scale(1080 / FW, 1920 / FH); c.textAlign = 'center';
+    const ids = D.pick.map(p=>p.id), cov = coverId(t); if(cov && !ids.includes(cov)) ids.unshift(cov);
+    const bm = []; for(const id of ids.slice(0, 5)){ try { const b = await photoBlob(id); if(b) bm.push(await decodeImg(b)); } catch(e){} }
+    const rr = (x, y, w, h, r) => { c.beginPath(); c.roundRect ? c.roundRect(x, y, w, h, r) : c.rect(x, y, w, h); };
+    // fond : la plus belle photo, assombrie
+    fBg(c, '#1a0b3d', '#6b2fa0');
+    if(bm[0]){ fCover(c, bm[0], 0, 0, FW, FH, 1.08, 0, 0); const g = c.createLinearGradient(0, 0, 0, FH); g.addColorStop(0, 'rgba(20,8,45,.72)'); g.addColorStop(.45, 'rgba(20,8,45,.55)'); g.addColorStop(1, 'rgba(20,8,45,.92)'); c.fillStyle = g; c.fillRect(0, 0, FW, FH); }
+    // titre
+    c.fillStyle = 'rgba(255,255,255,.85)'; fz(c, 22, 800); c.fillText(TT('✈  MON VOYAGE'), FW/2, 92);
+    c.fillStyle = '#fff'; fz(c, 52, 800); const tl = fLines(c, TT(String(t.titre || '')), FW - 90).slice(0, 2); tl.forEach((l, i)=>c.fillText(l, FW/2, 160 + i * 58));
+    let y = 160 + tl.length * 58; c.fillStyle = 'rgba(255,255,255,.8)'; fz(c, 24, 500); if(t.debut) c.fillText(tripDatesLong(t), FW/2, y); y += 34;
+    // la route
+    const px = 40, py = y, pw = FW - 80, ph = 300;
+    c.save(); rr(px, py, pw, ph, 30); c.fillStyle = 'rgba(255,255,255,.08)'; c.fill(); c.clip();
+    const P = D.pts;
+    if(P.length >= 2){
+      const my = v => Math.log(Math.tan(Math.PI/4 + Math.max(-80, Math.min(80, v)) * Math.PI/360));
+      const lo = P.map(p=>p.lng), la = P.map(p=>my(p.lat)), x0 = Math.min(...lo), x1 = Math.max(...lo), y0 = Math.min(...la), y1 = Math.max(...la);
+      const sx = (pw - 90) / ((x1 - x0) * Math.PI/180 || 1e-3), sy = (ph - 90) / ((y1 - y0) || 1e-3), s = Math.min(sx, sy);
+      const ox = px + (pw - (x1 - x0) * Math.PI/180 * s) / 2, oy = py + (ph - (y1 - y0) * s) / 2;
+      const X = v => ox + (v - x0) * Math.PI/180 * s, Y = v => oy + (y1 - my(v)) * s;
+      c.lineCap = 'round'; c.lineJoin = 'round'; c.shadowColor = '#ffd28a'; c.shadowBlur = 22; c.strokeStyle = '#ffe2a8'; c.lineWidth = 6;
+      c.beginPath(); P.forEach((p, i)=> i ? c.lineTo(X(p.lng), Y(p.lat)) : c.moveTo(X(p.lng), Y(p.lat))); c.stroke(); c.shadowBlur = 0;
+      P.forEach((p, i)=>{ c.beginPath(); c.arc(X(p.lng), Y(p.lat), i === 0 || i === P.length - 1 ? 11 : 6, 0, Math.PI * 2); c.fillStyle = i === 0 || i === P.length - 1 ? '#ff3b6b' : '#fff'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#fff'; c.stroke(); });
+      const lbl = (p, up) => { if(!p.name) return; fz(c, 20, 800); c.fillStyle = '#fff'; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 8; c.fillText(TT(p.name), Math.max(px + 80, Math.min(px + pw - 80, X(p.lng))), Y(p.lat) + (up ? -18 : 34)); c.shadowBlur = 0; };
+      lbl(P[0], true); const last = [...P].reverse().find(p=>p.name); if(last && last !== P[0] && last.name !== P[0].name) lbl(last, false);
+    } else if(bm[1] || bm[0]) fCover(c, bm[1] || bm[0], px, py, pw, ph, 1.05, 0, 0);
+    else { fz(c, 120, 400); c.fillStyle = '#fff'; c.fillText('🌍', FW/2, py + ph/2 + 40); }
+    c.restore(); y = py + ph + 26;
+    // les chiffres
+    const T = [['🗓️', D.days, 'jours', 'un jour'], ['🛣️', Math.round(D.dist), 'km', 'km'], ['🌍', D.ccs.length, 'pays', 'un pays'], ['📸', D.nph, 'photos', 'une photo'], ['🛏️', D.nights, 'nuits', 'une nuit'], ['📍', P.length, 'étapes', 'une étape']]
+      .map(x => [x[0], x[1], filmUnit(x[2], x[1]) || (x[1] === 1 ? TT(x[3]).replace(/^\S+\s+/, '') : TT(x[2]))]).filter(x => x[1] > 0).slice(0, 6);
+    const cw = (FW - 80 - 2 * 14) / 3, chh = 100;
+    T.forEach((x, i)=>{ const cx = 40 + (i % 3) * (cw + 14), cy = y + Math.floor(i / 3) * (chh + 14);
+      rr(cx, cy, cw, chh, 22); c.fillStyle = 'rgba(255,255,255,.12)'; c.fill();
+      fz(c, 24, 400); c.fillStyle = '#fff'; c.fillText(x[0], cx + cw/2, cy + 30);
+      fz(c, 36, 800); c.fillText(Math.round(x[1]).toLocaleString(NL()), cx + cw/2, cy + 68);
+      fz(c, 17, 600); c.fillStyle = 'rgba(255,255,255,.75)'; c.fillText(x[2], cx + cw/2, cy + 90); });
+    y += Math.ceil(T.length / 3) * (chh + 14) + 6;
+    if(D.ccs.length){ fz(c, 34, 400); c.fillStyle = '#fff'; c.fillText(D.ccs.slice(0, 8).map(flag).join(' '), FW/2, y + 30); y += 52; }
+    // trois photos
+    const strip = bm.slice(1, 4); if(strip.length && y < FH - 250){ const sw = (FW - 80 - (strip.length - 1) * 12) / strip.length, sh = Math.min(170, FH - 110 - y);
+      strip.forEach((b, i)=>{ const sx2 = 40 + i * (sw + 12); c.save(); rr(sx2, y, sw, sh, 18); c.clip(); fCover(c, b, sx2, y, sw, sh, 1, 0, 0); c.restore(); }); }
+    // signature
+    c.fillStyle = 'rgba(255,255,255,.9)'; fz(c, 22, 800); c.fillText('Vezoria', FW/2, FH - 52);
+    c.fillStyle = 'rgba(255,255,255,.65)'; fz(c, 16, 500); c.fillText(TT('Mon carnet de voyage'), FW/2, FH - 28);
+    bm.forEach(b=>{ try { b.close && b.close(); } catch(e){} });
+    wrBlob = await new Promise(r=>cv.toBlob(r, 'image/jpeg', .9));
+    if(!wrBlob){ alert('Impossible de créer l’image sur ce téléphone.'); return; }
+    const url = URL.createObjectURL(wrBlob);
+    openSheet(`<h2>✨ Ton récap à partager</h2><div class="v-sum-small" style="margin-bottom:8px">Au format story : Instagram, WhatsApp, Facebook… Tes proches voient ton voyage en un coup d’œil.</div>
+      <img class="wr-img" src="${url}" alt="">
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.wrappedShare()">📤 Partager</button><button type="button" class="v-btn sec" onclick="CV.wrappedSave()">💾 Enregistrer</button></div>`);
+  }
+  const wrName = () => 'recap-' + String((trip() || {}).titre || 'voyage').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.jpg';
+  async function wrappedShare(){
+    if(!wrBlob) return; const file = new File([wrBlob], wrName(), {type:'image/jpeg'});
+    try { if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file]}); return; } } catch(e){ if(e && e.name === 'AbortError') return; }
+    wrappedSave();
+  }
+  function wrappedSave(){ if(!wrBlob) return; const a = document.createElement('a'); a.href = URL.createObjectURL(wrBlob); a.download = wrName(); document.body.appendChild(a); a.click(); setTimeout(()=>{ a.remove(); URL.revokeObjectURL(a.href); }, 5000); }
   async function filmData(){
     const t = trip(), sv = souvs(), all = items();
     const geo = [...geoSouvs(M.trip), ...all.filter(i=>i.cat==='hotel' && i.lat != null && i.date).map(i=>({lat:i.lat, lng:i.lng, date:i.date, titre:i.titre, lieu:i.titre}))]
@@ -11611,15 +12159,15 @@ ${pm.join('\n')}</Document></kml>`;
     toast('👀 Publication arrêtée');
   }
   // côté abonné
-  async function followGo(code){
+  async function followGo(code, web){
     code = String(code || '').trim().toUpperCase(); if(code.length < 8){ alert('Code trop court.'); return; }
-    if(!myName()){ const n = (await uiPrompt('Ton prénom (pour signer tes ❤️ et commentaires) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
+    if(!myName() && !web){ const n = (await uiPrompt('Ton prénom (pour signer tes ❤️ et commentaires) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
     if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
     toast('📡 Connexion…'); const sp = spaceObj(code); await syncSpace(sp, true);
     if(sp.err){ alert('⚠️ ' + sp.err); return; }
     const ft = Object.entries(TS()).filter(([k,c])=>c===code && R[k] && R[k].type==='feedtrip' && !R[k].deleted).map(([k])=>R[k])[0];
     if(!ft){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); alert('Aucun voyage publié avec ce code.'); return; }
-    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who: myName()}; if(!R[fw.id]) putQuiet([fw]);
+    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who: myName() || 'Un proche'}; if(!R[fw.id]) putQuiet([fw]);
     persist(); syncNow(); closeSheet(true); feedView(ft.id); toast('👀 Tu suis « ' + ft.titre + ' »');
   }
   function followSheet(){
@@ -11772,7 +12320,8 @@ ${pm.join('\n')}</Document></kml>`;
     const fw = list('follower', x=>x.trip===ftid).length;
     ov.innerHTML = `<div class="fd-top"><button type="button" class="fd-x" onclick="CV.feedClose()">✕</button><div><small>Voyage de ${esc(ft.owner||'?')}</small><b>${esc(ft.titre)}</b><small>${ft.debut ? tripDatesLong(ft) : ''}${fw ? ' · 👀 ' + fw + ' abonné' + (fw>1?'s':'') : ''}</small></div></div>
       <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
-    document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; feedMapHydrate();
+    document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; M.feedLast = ftid; feedMapHydrate();
+    if(webFollowing()) ov.insertAdjacentHTML('beforeend', webCta().replace('class="fd-cta"', 'class="fd-cta" style="position:relative;margin:0"'));
     syncNow().then(()=>{ if(M.feedOpen === ftid && document.getElementById('cv-feed')){ const y = ov.querySelector('.fd-list').scrollTop; const p2 = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||'')); ov.querySelector('.fd-list').innerHTML = feedMapHTML(ftid) + (p2.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'); setTimeout(feedMapHydrate, 30); ov.querySelector('.fd-list').scrollTop = y; hydrate(); } });
   }
   const feedTrkRec = ftid => { const r = R['fk:' + String(ftid).replace(/^ft:/,'')]; return r && !r.deleted && (r.people||[]).length ? r : null; };
@@ -11788,11 +12337,11 @@ ${pm.join('\n')}</Document></kml>`;
     const markers = r.people.map(p=>{ const l = p.pts[p.pts.length-1]; return {lat:l[0], lng:l[1], label:((p.n || '?')[0] || '?').toUpperCase(), color:p.c || '#0ea5e9'}; });
     try { const c = await drawMap({w:640, h:360, lines, markers, maxZoom:13}); if(el.isConnected) el.innerHTML = `<img src="${c.toDataURL('image/jpeg', .86)}" alt="" style="width:100%;display:block;border-radius:14px">`; } catch(e){ el.innerHTML = ''; }
   }
-  function feedClose(){ const ov = document.getElementById('cv-feed'); if(ov) ov.remove(); document.body.style.overflow = ''; M.feedOpen = null; }
+  function feedClose(){ const ov = document.getElementById('cv-feed'); if(ov) ov.remove(); document.body.style.overflow = ''; M.feedOpen = null; if(webFollowing() && !isInstalled()) webCreate(); }
   // côté auteur : ❤️ et 💬 sur ses souvenirs
   function souvTop(){
     const t = trip(); if(!t) return '';
-    const seg = `<div class="cv-soin"><button type="button" class="on">📸 Souvenirs</button><button type="button" onclick="CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.filmOpen()">🎬 Film</button><button type="button" onclick="CV.albumSheet()">📕 Album</button></div>`;
+    const seg = `<div class="cv-soin"><button type="button" class="on">📸 Souvenirs</button><button type="button" onclick="CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.filmOpen()">🎬 Film</button><button type="button" onclick="CV.flyover()">🌍 Survol 3D</button><button type="button" onclick="CV.wrapped()">✨ Récap</button><button type="button" onclick="CV.albumSheet()">📕 Album</button></div>`;
     if(t.demo || hidden('blk:fban')) return seg;
     const fc = feedCode(t.id);
     if(!fc) return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>Partage tes souvenirs avec tes proches</b><small>Comme Polarsteps : ils suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.</small></span><button type="button" onclick="CV.feedPublish('${t.id}')">Publier</button></div>`;
@@ -11811,7 +12360,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13b';
+  const BUILD = '2026-10-13c';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -11821,7 +12370,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
@@ -11904,13 +12453,13 @@ ${pm.join('\n')}</Document></kml>`;
   setTimeout(vzPaint, 0);
   var VZAPI = {vzGo, vzHide, vzNews, vzAvis, vzStar, vzSend, vzRestore, vzPaint};
 
-  const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, sheetBack, add,
+  const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
     editTrip, saveTrip, delTrip, closeTrip, reopenTrip,
     live, one, echAdd, echDel, echSpread, echToggle, lisser, echReset, echRange, echRangeReset,
-    planDay, plCfg, plAdd, plDel, plOpt, wizard, radarTuto, rcOpen, rbSheet, rbPhoto, rbSave, zipSavePart, zipCancel, innerGo, inspDeal, inspOpen, compN, compDel, compAdd, compTog, compCreate, inspBack, inspMore, inspFav, inspSurprise, inspVote, gateInstall, partsSheet, partsSave, discInfo, discBack, newTrip, blankTrip, inspire, inspireDemo, inspireGo, inspireCreate, zipSheet, zipExport, zipImport, worldFly, worldStep, worldStory, cfSegGo, trkToggle, modeGo, bilanClose, albumSheet, albCover, albumGo, tripShare, tripShareSheet, tripInvite, tripNewCode, tripUnshare, tripJoin, tripJoinGo, tripWho, tripWhoSet, impSheet, impPick, jrSheet, jrTog, jrAll, worldMap, worldMode, worldOpen, worldClose, pjAdd, pjDel, pjOpen, cfSheet, cfGo, tlCo2, hereNow, tlStats, tlKml, tlFill, tlFillGo, rcView, rcAttach, tlIcsGo, capSet, shopSheet, shopAdd, shopTick, shopClear, rembAsk, pollNew, pollSave, pollVote, pollClose, pollDel, pdfRoute, pdfJournal, pdfShare, pdfOpen, pkgPick, pkgApply, hydrateMaps, renderOutils, tlDay, tlIcs, fxTool, fxFill, tlMeteo, tlReceipt, tlRcPhoto, tlRcOcr, tlRcSave, rcFx, socialHub, trkPub, tlReceipts, tlMap, tlBags, tlBagsGo, tlDocs, tlDocEdit, tlDocSave, tlDocDel, tlJournal, pkgSheet, pkgExport, pkgImport, pinToggle, shareSheet, shareLink, askErase, tutoSheet, escaleTuto, demoLoad, demoDel, demoReset, wzGo, wzDates, wzEt, wzSum, wzTpl, wzCreate,
+    planDay, plCfg, plAdd, plDel, plOpt, wizard, radarTuto, rcOpen, rbSheet, rbPhoto, rbSave, zipSavePart, zipCancel, innerGo, inspDeal, inspOpen, compN, compDel, compAdd, compTog, compCreate, inspBack, inspMore, inspFav, inspSurprise, inspVote, gateInstall, partsSheet, partsSave, discInfo, discBack, newTrip, blankTrip, psImport, psFile, inspire, inspireDemo, inspireGo, inspireCreate, zipSheet, zipExport, zipImport, worldFly, worldStep, worldStory, cfSegGo, trkToggle, modeGo, bilanClose, albumSheet, albCover, albumGo, tripShare, tripShareSheet, tripInvite, tripNewCode, tripUnshare, tripJoin, tripJoinGo, tripWho, tripWhoSet, impSheet, impPick, jrSheet, jrTog, jrAll, worldMap, worldMode, worldOpen, worldClose, pjAdd, pjDel, pjOpen, cfSheet, cfGo, tlCo2, hereNow, tlStats, tlKml, tlFill, tlFillGo, rcView, rcAttach, tlIcsGo, capSet, shopSheet, shopAdd, shopTick, shopClear, rembAsk, pollNew, pollSave, pollVote, pollClose, pollDel, pdfRoute, pdfJournal, pdfShare, pdfOpen, pkgPick, pkgApply, hydrateMaps, renderOutils, tlDay, tlIcs, fxTool, fxFill, tlMeteo, tlReceipt, tlRcPhoto, tlRcOcr, tlRcSave, rcFx, socialHub, trkPub, tlReceipts, tlMap, tlBags, tlBagsGo, tlDocs, tlDocEdit, tlDocSave, tlDocDel, tlJournal, pkgSheet, pkgExport, pkgImport, pinToggle, shareSheet, shareLink, askErase, tutoSheet, escaleTuto, demoLoad, demoDel, demoReset, wzGo, wzDates, wzEt, wzSum, wzTpl, wzCreate,
     pickColor, newProfile, editProfile, saveProfile, delProfile, whoSheet, setMe,
     genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin,
     _R:()=>R, _M:()=>M, ...VZAPI, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};

@@ -1,7 +1,8 @@
 // Carnet de voyage — fonctionnement hors ligne
-// Pages et fichiers de l'appli : réseau d'abord (toujours la dernière version), copie locale si pas de réseau.
+// Pages et fichiers de l'appli : réseau s'il répond vite (dernière version), sinon copie locale tout de suite
+// (réseau lent ou absent) ; la copie se met à jour en arrière-plan.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-13b';
+const CACHE = 'vezoria-2026-10-13c';
 const CORE = ['./', './index.html', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
@@ -50,9 +51,13 @@ self.addEventListener('fetch', e => {
       e.respondWith(caches.match(req).then(m => m || fetch(req).then(r => { if (r && r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; })));
       return;
     }   // vidéo du tuto, musiques du film : lues en direct (lecture par morceaux)
-    e.respondWith(timeout(fetch(req), 6000)
-      .then(r => { if (r && r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; })
-      .catch(() => caches.match(req, {ignoreSearch: true}).then(m => m || caches.match('./index.html'))));
+    e.respondWith((async () => {
+      const net = fetch(req).then(r => { if (r && r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; });
+      const cached = (await caches.match(req, {ignoreSearch: true})) || (req.mode === 'navigate' ? await caches.match('./index.html') : null);
+      if (!cached) return timeout(net, 15000).catch(() => caches.match('./index.html'));
+      try { const r = await timeout(net, 1500); return r && r.ok ? r : cached; }
+      catch (_) { e.waitUntil(net.catch(() => null)); return cached; }   // réseau lent : on ouvre la copie locale tout de suite
+    })());
     return;
   }
   // 🗺️ Cartes (OpenFreeMap) : morceaux de carte, polices et icônes d'abord depuis le téléphone ; le style, réseau d'abord
@@ -80,6 +85,7 @@ const TPL0 = {depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajout
   souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
   notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
   depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
+  soir:'Comment s’est passée ta journée ? Ajoute tes photos et quelques mots à ton carnet 📸', anniv1:'Il y a un an, tu partais : « {0} » ✨', annivN:'Il y a {1} ans, tu partais : « {0} » ✨', 
   test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés', fb_depense:'Nouvelle dépense dans ton voyage', fb_resa:'Le programme du voyage a changé', fb_souv:'Nouveau souvenir dans ton voyage', fb_sondage:'Nouveau sondage dans ton voyage', fb_notes:'Nouveautés dans les courses et les notes', fb_rappel:'Rappel pour ton voyage'};
 const pdb = () => new Promise((res, rej) => { const q = indexedDB.open('vz-push', 1); q.onupgradeneeded = () => q.result.createObjectStore('kv'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
 const kvGet = async k => { try { const db = await pdb(); return await new Promise(res => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(undefined); }); } catch (_) { return undefined; } };
@@ -110,7 +116,7 @@ self.addEventListener('push', e => {
       let p = null;
       try { p = await tryKey(await kvGet('k:' + d.i)); } catch (_) {}
       if (!p) { try { const rk = await kvGet('r:' + d.i); if (rk) p = await tryKey(await crypto.subtle.importKey('raw', rk, 'AES-GCM', false, ['decrypt'])); } catch (_) {} }
-      if (p) { try { ({ title, body } = compose(p, tt)); url = './?vzt=' + encodeURIComponent(p.trip || '') + '&vzk=' + encodeURIComponent(p.k || ''); } catch (_) {} }
+      if (p) { try { ({ title, body } = compose(p, tt)); url = './?vzt=' + encodeURIComponent(p.trip || '') + '&vzk=' + encodeURIComponent(p.k || '') + (p.r ? '&vzr=' + encodeURIComponent(p.r) : ''); } catch (_) {} }
       else await kvPut('nokey', 1);
     }
     const n = ((await kvGet('badge')) || 0) + 1; await kvPut('badge', n);
