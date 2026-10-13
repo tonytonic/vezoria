@@ -1662,6 +1662,29 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .v-sheet h2{padding-right:40px}
 .v-sheet.has-bk h2:first-of-type{padding-left:42px}
 </style>
+<style>
+/* 📊 Compteurs de l’en-tête */
+.cv-hstats{position:relative;z-index:2;flex:0 1 auto;margin:0 8px 0 auto;display:flex;gap:2px;padding:6px 4px;border:0;border-radius:14px;
+  background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;cursor:pointer;font:inherit;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);-webkit-tap-highlight-color:transparent}
+.cv-hstats:active{transform:scale(.96)}
+.hs-c{position:relative;display:flex;flex-direction:column;align-items:center;min-width:40px;padding:0 3px;line-height:1.05}
+.hs-c b{font-size:1.02rem;font-weight:800;letter-spacing:-.01em;text-shadow:0 1px 8px rgba(0,0,0,.25)}
+.hs-c small{font-size:.6rem;font-weight:600;opacity:.88;margin-top:2px;white-space:nowrap}
+.hs-c.up b{animation:hsPop .9s cubic-bezier(.2,1.6,.4,1) both;color:var(--gold2,#ffd28a)}
+.hs-plus{position:absolute;top:-14px;right:-2px;font-style:normal;font-size:.62rem;font-weight:800;color:#fff;background:#ff3b6b;border-radius:10px;padding:1px 5px;
+  box-shadow:0 3px 10px rgba(255,59,107,.5);animation:hsPlus 2.4s ease-out both;pointer-events:none}
+@keyframes hsPop{0%{transform:scale(.6)}55%{transform:scale(1.35)}100%{transform:scale(1)}}
+@keyframes hsPlus{0%{opacity:0;transform:translateY(6px) scale(.7)}15%{opacity:1;transform:translateY(0) scale(1.1)}75%{opacity:1;transform:translateY(-4px)}100%{opacity:0;transform:translateY(-12px)}}
+.hero-foot .cv-hero-qr{margin-left:0}
+.hero-foot.hs-on .cv-av-names{display:none}
+.hero-foot.hs-on .cv-av{margin-right:-11px}
+.hero-foot.hs-on .hero-count{flex:0 0 auto}
+.hero-foot.hs-on .hero-count b{font-size:1.65rem;white-space:nowrap}
+.hero-foot.hs-on .cv-hero-qr svg{width:40px;height:40px}
+@media (max-width:360px){.hs-c{min-width:38px;padding:0 2px}.hs-c small{font-size:.54rem}}
+@media (prefers-reduced-motion:reduce){.hs-c.up b,.hs-plus{animation:none}}
+</style>
 </head>
 <body class="is-public">
 <div class="cv-statusbar"></div>
@@ -1675,7 +1698,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
     </div>
     <h1 id="hdr-title">Vezoria</h1>
     <div class="sub" id="hdr-sub"></div>
-    <div class="hero-foot"><div class="cv-avs" id="cv-avs"></div><button class="cv-hero-qr" id="cv-hero-qr" type="button" onclick="CV.shareSheet()" aria-label="Partager l’appli à un ami (QR code)"></button><div class="hero-count" id="cv-count"></div></div>
+    <div class="hero-foot"><div class="cv-avs" id="cv-avs"></div><button class="cv-hstats" id="cv-hstats" type="button" onclick="CV.socialHub()" aria-label="Abonnés et j’aime" style="display:none"></button><button class="cv-hero-qr" id="cv-hero-qr" type="button" onclick="CV.shareSheet()" aria-label="Partager l’appli à un ami (QR code)"></button><div class="hero-count" id="cv-count"></div></div>
   </div>
 </div>
 <!-- ═══ CARNET PARTAGÉ ═══════════════════════════════ -->
@@ -2409,6 +2432,24 @@ const CV = (function(){
     if(!t.fin || today <= t.fin){ const k = nights(t.debut, today) + 1, tot = nights(t.debut, t.fin||t.debut) + 1; return `<b>Jour ${k}</b><span>sur ${tot}, profitez</span>`; }
     return `<b>✓</b><span>souvenirs</span>`;
   }
+  /* ── 📊 Compteurs de l’en-tête : abonnés · j’aime · abonnements (calculés sur le téléphone, rien de plus sur le serveur) ── */
+  function heroStats(show){
+    const box = document.getElementById('cv-hstats'); if(!box) return;
+    if(!show){ box.style.display = 'none'; box.parentNode.classList.remove('hs-on'); return; }
+    const me = devId(), mine = new Set(Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted).map(ftId));
+    const fw = new Set(list('follower', x=>mine.has(x.trip) && !isBlk(x) && !String(x.id).endsWith(':' + me)).map(x=>String(x.id).split(':').pop())).size;
+    const lk = list('like', l=>mine.has(l.trip) && l.on && !isBlk(l) && !String(l.id).endsWith(':' + me)).length;
+    const fo = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted).length;
+    const now = {fw, lk, fo}, old = M.hStat || null;
+    const fmt = n => n >= 10000 ? Math.round(n / 1000) + 'k' : n >= 1000 ? (Math.round(n / 100) / 10).toString().replace('.', ',') + 'k' : String(n);
+    const cell = (k, n, lbl) => {
+      const up = old && n > (old[k] || 0) ? n - (old[k] || 0) : 0;
+      return `<span class="hs-c${up ? ' up' : ''}"><b>${fmt(n)}</b><small>${lbl}</small>${up ? `<i class="hs-plus">+${up}</i>` : ''}</span>`;
+    };
+    box.innerHTML = cell('fw', fw, 'abonnés') + cell('lk', lk, 'j’aime') + cell('fo', fo, 'suivis');
+    box.style.display = ''; box.parentNode.classList.add('hs-on');
+    if(!old || old.fw !== fw || old.lk !== lk || old.fo !== fo){ M.hStat = now; try { persist(); } catch(e){} }
+  }
   function renderHeader(){
     const legacy = M.trip===LEGACY, t = trip();
     const title = document.getElementById('hdr-title'), sub = document.getElementById('hdr-sub');
@@ -2422,12 +2463,13 @@ const CV = (function(){
       sub.textContent = [tripDatesLong(t), t.sous||''].filter(Boolean).join(' · ');
       pill.textContent = trips().length > 1 ? trips().length + ' voyages' : 'Mes voyages';
       cd.innerHTML = countdown(t);
-      const vv = tv(), shown = vv.slice(0, 8);
+      const vv = tv(), shown = vv.slice(0, 3);   // 3 visages + « +N » : la place sert aux compteurs
       av.innerHTML = shown.map(id=>`<span class="cv-av" style="background:${pcol(id)}" title="${esc(pname(id))}">${esc((pname(id)[0]||'?').toUpperCase())}</span>`).join('')
-        + (vv.length > 8 ? `<span class="cv-av" style="background:#444" title="${vv.length - 8} autres">+${vv.length - 8}</span>` : '')
+        + (vv.length > 3 ? `<span class="cv-av" style="background:#444" title="${vv.length - 3} autres">+${vv.length - 3}</span>` : '')
         + `<span class="cv-av-names">${vv.length <= 3 ? vv.map(id=>esc(pname(id))).join(' & ') : vv.slice(0,2).map(id=>esc(pname(id))).join(', ') + ' et ' + (vv.length - 2) + ' autres'}</span>`;
       document.title = 'Vezoria · ' + (t.titre||'Voyage');
     } else { title.textContent = 'Vezoria'; sub.textContent = 'Ton premier voyage t’attend'; pill.textContent = 'Mes voyages'; cd.innerHTML = ''; av.innerHTML = ''; }
+    try { heroStats(!legacy && !!t); } catch(e){}
     phaseTheme();
     document.body.classList.toggle('cv-jourj', !!(t && t.debut && t.debut === isoToday()));
     const me = document.getElementById('cv-me');
@@ -11769,7 +11811,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-12i';
+  const BUILD = '2026-10-13b';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
