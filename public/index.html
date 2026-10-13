@@ -1887,6 +1887,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .wr-grid img[data-ph]{width:100%;height:100%;object-fit:cover;display:block}
 .wr-pk-more{width:100%;margin-top:10px}
 </style>
+<style>.fd-ph img.miss{opacity:0}.fd-ph span:has(>img.miss),.fd-ph button:has(>img.miss){background:#f3e9ee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ctext x='20' y='27' font-size='20' text-anchor='middle'%3E%E2%8F%B3%3C/text%3E%3C/svg%3E") center/40px no-repeat!important}</style>
 </head>
 <body class="is-public">
 <div class="cv-statusbar"></div>
@@ -5180,25 +5181,32 @@ const CV = (function(){
       return b;
     } catch(e){ return thumbOnly(); }
   }
+  const phMiss = {};   // photo introuvable (pas encore envoyée) : on ne la redemande qu’après une minute
   async function photoURL(id){
     if(urls[id]) return urls[id];
-    const b = await photoBlob(id); if(!b) return null;
+    if(phMiss[id] && Date.now() - phMiss[id] < 60000) return null;
+    const b = await photoBlob(id); if(!b){ phMiss[id] = Date.now(); return null; }
+    delete phMiss[id];
     return urls[id] = URL.createObjectURL(b);
   }
   let hydrating = false;
   async function hydrate(){
+    // déjà en mémoire : tout de suite, sans attendre (évite le clignotement quand une page est redessinée)
+    document.querySelectorAll('img[data-ph]:not([data-ok])').forEach(img=>{ const u = urls[img.dataset.ph]; if(u){ img.src = u; img.dataset.ok = '1'; } });
     if(hydrating) return; hydrating = true;
     try {
-      const imgs = [...document.querySelectorAll('img[data-ph]:not([data-ok])')];
-      for(let i = 0; i < imgs.length; i += 4){
-        await Promise.all(imgs.slice(i, i+4).map(async img => {
-          const u = await photoURL(img.dataset.ph);
-          img.dataset.ok = '1';
-          if(u) img.src = u; else img.classList.add('miss');
+      for(let guard = 0; guard < 5000; guard++){
+        const all = [...document.querySelectorAll('img[data-ph]:not([data-ok]):not([data-ld])')]; if(!all.length) break;
+        const vh = window.innerHeight || 800, near = img => { const r = img.getBoundingClientRect(); return (r.width || r.height) && r.bottom > -vh * .5 && r.top < vh * 1.8; };
+        const vis = all.filter(near), batch = (vis.length ? vis : all).slice(0, 4);   // celles à l’écran d’abord
+        batch.forEach(i=>{ i.dataset.ld = '1'; });
+        await Promise.all(batch.map(async img => {
+          const id = img.dataset.ph, u = await photoURL(id);
+          // la page a pu être redessinée pendant le téléchargement : on remplit aussi les nouvelles images de la même photo
+          [img, ...document.querySelectorAll('img[data-ph]:not([data-ok])')].filter(x=>x.dataset.ph === id).forEach(x=>{ x.dataset.ok = '1'; if(u) x.src = u; else x.classList.add('miss'); });
         }));
       }
     } finally { hydrating = false; }
-    if(document.querySelector('img[data-ph]:not([data-ok])')) setTimeout(hydrate, 50);
   }
   async function sniffImg(blob){
     try { const h = new Uint8Array(await blob.slice(0, 12).arrayBuffer());
@@ -12750,8 +12758,13 @@ ${pm.join('\n')}</Document></kml>`;
     ov.innerHTML = `<div class="fd-top"><button type="button" class="fd-x" onclick="CV.feedClose()">✕</button><div><small>Voyage de ${esc(ft.owner||'?')}</small><b>${esc(ft.titre)}</b><small>${ft.debut ? tripDatesLong(ft) : ''}${fw ? ' · 👀 ' + fw + ' abonné' + (fw>1?'s':'') : ''}</small></div></div>
       <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; M.feedLast = ftid; feedMapHydrate();
+    ov._h = posts.map(feedPostHTML).join('') + '|' + !!feedTrkRec(ftid);
+    // photos pas encore arrivées chez l’abonné (le voyageur les envoie encore) : on réessaie chaque minute
+    if(!window._fdRetry) window._fdRetry = setInterval(()=>{ if(!document.getElementById('cv-feed') || document.visibilityState !== 'visible') return;
+      const m = document.querySelectorAll('#cv-feed img.miss'); if(!m.length) return; m.forEach(i=>{ i.classList.remove('miss'); delete i.dataset.ok; delete i.dataset.ld; }); hydrate(); }, 61000);
     if(webFollowing()) ov.insertAdjacentHTML('beforeend', webCta().replace('class="fd-cta"', 'class="fd-cta" style="position:relative;margin:0"'));
-    syncNow().then(()=>{ if(M.feedOpen === ftid && document.getElementById('cv-feed')){ const y = ov.querySelector('.fd-list').scrollTop; const p2 = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||'')); ov.querySelector('.fd-list').innerHTML = feedMapHTML(ftid) + (p2.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'); setTimeout(feedMapHydrate, 30); ov.querySelector('.fd-list').scrollTop = y; hydrate(); } });
+    syncNow().then(()=>{ if(M.feedOpen === ftid && document.getElementById('cv-feed')){ const y = ov.querySelector('.fd-list').scrollTop; const p2 = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+      const h2 = p2.map(feedPostHTML).join('') + '|' + !!feedTrkRec(ftid); if(h2 === ov._h){ hydrate(); return; } ov._h = h2; ov.querySelector('.fd-list').innerHTML = feedMapHTML(ftid) + (p2.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'); setTimeout(feedMapHydrate, 30); ov.querySelector('.fd-list').scrollTop = y; hydrate(); } });
   }
   const feedTrkRec = ftid => { const r = R['fk:' + String(ftid).replace(/^ft:/,'')]; return r && !r.deleted && (r.people||[]).length ? r : null; };
   function feedMapHTML(ftid){
@@ -12789,7 +12802,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13i';
+  const BUILD = '2026-10-13j';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
