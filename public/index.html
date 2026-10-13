@@ -1856,6 +1856,37 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .ps-spin{flex:0 0 14px;width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:psSpin .9s linear infinite}
 @keyframes psSpin{to{transform:rotate(360deg)}}
 </style>
+<style>
+/* survol : choix de la photo d’une étape */
+.cp-st{padding:6px 10px 6px 6px}
+.cp-tk{border:0;background:none;color:inherit;font:inherit;padding:4px;text-align:left;display:flex;align-items:center}
+.cp-tk.cp-nm{display:block;flex:1;min-width:0;padding:4px 0}
+.cp-th{position:relative;flex:0 0 42px;border:0;padding:0;background:none;border-radius:10px}
+.cp-th.open{box-shadow:0 0 0 2px #ffd28a}
+.cp-th em{position:absolute;right:-5px;bottom:-5px;font-style:normal;font-size:.6rem;font-weight:800;background:#ff3b6b;color:#fff;border-radius:8px;padding:1px 5px}
+.cp-phs{margin:-2px 0 4px;padding:8px 10px 10px;border-radius:14px;background:rgba(255,255,255,.08)}
+.cp-phs small{display:block;font-size:.72rem;opacity:.8;margin-bottom:6px}
+.cp-phs>div{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.cp-phs button{flex:0 0 64px;height:64px;border:0;padding:0;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.1)}
+.cp-phs button.on{box-shadow:inset 0 0 0 3px #ff3b6b}
+.cp-phs img[data-ph]{width:100%;height:100%;object-fit:cover;display:block}
+/* récap : photos au choix */
+.wr-more{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.4rem;color:#2a1238;background:#f6f1f7}
+.wr-more small,.wr-slot small{font-size:.58rem;font-weight:700}
+.wr-slots{display:flex;gap:10px}.wr-slots.off{opacity:.45}
+.wr-slot{position:relative}
+.wr-slot .wr-ph{flex:none;width:84px;height:84px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#2a1238}
+.wr-slot .wr-ph small{position:absolute;left:0;right:0;bottom:0;background:rgba(42,18,56,.7);color:#fff;padding:3px 0}
+.wr-sx{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:#2a1238;color:#fff;font-size:.7rem;padding:0}
+.wr-pick{margin-top:14px;padding:12px;border-radius:16px;background:#f6f1f7}
+.wr-pk-h{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#2a1238}.wr-pk-h b{flex:1}
+.wr-pk-h button{width:30px;height:30px;border-radius:50%;border:0;background:#fff;color:#2a1238}
+.wr-pick select.cp-in{background:#fff}
+.wr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:10px}
+.wr-grid button{aspect-ratio:1;border:0;padding:0;border-radius:8px;overflow:hidden;background:#e9e1ec}
+.wr-grid img[data-ph]{width:100%;height:100%;object-fit:cover;display:block}
+.wr-pk-more{width:100%;margin-top:10px}
+</style>
 </head>
 <body class="is-public">
 <div class="cv-statusbar"></div>
@@ -9273,11 +9304,12 @@ ${pm.join('\n')}</Document></kml>`;
     if(!wm || !wm.data){ alert('Le globe n’a pas pu se charger. Vérifie ta connexion et réessaie.'); return; }
     const t = wm.data.trips.find(x=>x.id===id);
     let seq = t ? (t.steps.length >= 2 ? t.steps : t.pts) : [];
-    seq = seq.filter((p, i) => i === 0 || Math.abs(p.lat - seq[i-1].lat) + Math.abs(p.lng - seq[i-1].lng) > 0.001);
+    seq = seq.filter((p, i) => i === 0 || Math.abs(p.lat - seq[i-1].lat) + Math.abs(p.lng - seq[i-1].lng) > 0.001).map(s=>Object.assign({}, s));
     if(!seq.length){ alert('Pour le survol, ajoute des souvenirs avec un lieu ou des hébergements avec une ville.'); return; }
     const mine = (M.cineSteps || {})[id]; let pick = null;
     if(mine && mine.length){ const S = new Set(mine); pick = seq.filter(s=>S.has(ciKey(s))); if(!pick.length) pick = null; }
     pick = pick || ciAuto(seq);
+    await ciPhotos(seq);
     const tt = Object.assign({}, t, {titre: ((M.cineTitle || {})[id]) || t.titre});
     if(go) return cineStart(tt, pick, !!rec, ciOpt());
     cinePre(t, seq, pick);
@@ -9321,6 +9353,22 @@ ${pm.join('\n')}</Document></kml>`;
     try { if(map.getLayer('ci-base')) map.removeLayer('ci-base'); if(map.getSource('ci-base')) map.removeSource('ci-base'); } catch(e){}
     ciLH.forEach(l=>{ try { if(map.getLayer(l)) map.setLayoutProperty(l, 'visibility', 'visible'); } catch(e){} }); ciLH = [];
   }
+  // photo de chaque étape : celle choisie, sinon la première qui n’est pas déjà montrée à l’étape d’avant (même fichier = même taille)
+  const ciSig = async id => { try { const o = await IDB.get(id); return o && o.blob ? o.blob.size + '|' + o.blob.type : 'i' + id; } catch(e){ return 'i' + id; } };
+  async function ciPhotos(seq){
+    const mine = M.cinePh || {}, seen = new Set();
+    for(const s of seq){ const r = R[s.id], L = (r && r.photos) || []; if(!L.length) continue;
+      if(mine[s.id] && L.includes(mine[s.id])){ s.ph = mine[s.id]; seen.add(await ciSig(s.ph)); continue; }
+      for(const id of L.slice(0, 8)){ const g = await ciSig(id); if(!seen.has(g)){ s.ph = id; seen.add(g); break; } } }
+  }
+  function cinePhs(i){ if(!CP) return; CP.phOpen = CP.phOpen === i ? null : i; cinePreDraw(); }
+  function cinePh(i, id){
+    if(!CP) return; const s = CP.all[i]; if(!s) return; s.ph = id;
+    M.cinePh = Object.assign({}, M.cinePh || {}, {[s.id]: id});
+    CP.sel.add(ciKey(s)); M.cineSteps = Object.assign({}, M.cineSteps || {}, {[CP.t.id]: [...CP.sel]});
+    try { persist(); } catch(e){}
+    CP.phOpen = null; cinePreDraw();
+  }
   function cinePre(t, all, pick){
     const w = document.getElementById('cv-world'); if(!w) return;
     stopStory(); wm.spin = false; w.classList.add('wm-cine');
@@ -9341,8 +9389,12 @@ ${pm.join('\n')}</Document></kml>`;
     const ch = (k, v, lbl) => `<button type="button" class="cp-ch${String(o[k]) === String(v) ? ' on' : ''}" data-k="${k}" data-v="${v}" onclick="CV.cineSet(this)">${lbl}</button>`;
     const tg = (k, lbl) => `<button type="button" class="cp-ch cp-tg${o[k] ? ' on' : ''}" data-k="${k}" onclick="CV.cineSet(this)">${o[k] ? '✓ ' : ''}${lbl}</button>`;
     const sw = Object.entries(CI_COL).map(([k, c])=>`<button type="button" class="cp-sw${o.col === k ? ' on' : ''}" data-k="col" data-v="${k}" onclick="CV.cineSet(this)" style="background:${c[0]}" aria-label="${k}"></button>`).join('');
-    const steps = CP.all.map((s, i)=>{ const on = CP.sel.has(ciKey(s)), nm = s.titre || s.city || s.lieu || '📍';
-      return `<button type="button" class="cp-st${on ? ' on' : ''}" data-i="${i}" onclick="CV.cineStep(this)"><span class="cp-ck">${on ? '✓' : ''}</span>${s.ph ? `<img data-ph="${esc(s.ph)}" alt="">` : '<i>📍</i>'}<span class="cp-nm"><b data-notr>${s.cc ? flag(s.cc) + ' ' : ''}${esc(nm)}</b>${s.date ? `<small data-notr>${esc(fdate(s.date))}</small>` : ''}</span></button>`; }).join('');
+    const steps = CP.all.map((s, i)=>{ const on = CP.sel.has(ciKey(s)), nm = s.titre || s.city || s.lieu || '📍', L = ((R[s.id] || {}).photos) || [];
+      const row = `<div class="cp-st${on ? ' on' : ''}"><button type="button" class="cp-tk" data-i="${i}" onclick="CV.cineStep(this)" aria-label="✓"><span class="cp-ck">${on ? '✓' : ''}</span></button>`
+        + (s.ph ? `<button type="button" class="cp-th${CP.phOpen === i ? ' open' : ''}" onclick="CV.cinePhs(${i})"><img data-ph="${esc(s.ph)}" alt="">${L.length > 1 ? `<em>${L.length}</em>` : ''}</button>` : '<i>📍</i>')
+        + `<button type="button" class="cp-tk cp-nm" data-i="${i}" onclick="CV.cineStep(this)"><b data-notr>${s.cc ? flag(s.cc) + ' ' : ''}${esc(nm)}</b>${s.date ? `<small data-notr>${esc(fdate(s.date))}</small>` : ''}</button></div>`;
+      const strip = CP.phOpen === i && L.length ? `<div class="cp-phs"><small>Photo de cette étape dans le survol</small><div>${L.slice(0, 80).map(id=>`<button type="button" class="${id === s.ph ? 'on' : ''}" onclick="CV.cinePh(${i},'${esc(id)}')"><img data-ph="${esc(id)}" alt=""></button>`).join('')}</div></div>` : '';
+      return row + strip; }).join('');
     el.innerHTML = `<div class="cp-card">
       <button type="button" class="ci-x cp-x" onclick="CV.cinePreX()" aria-label="Fermer">✕</button>
       <small class="cp-k">🌍 Survol 3D</small><b class="cp-t" id="cp-t" data-notr>${esc(CP.title || CP.t.titre)}</b>
@@ -9824,7 +9876,7 @@ ${pm.join('\n')}</Document></kml>`;
       const sv = {id:'sv' + uid() + i, type:'souv', trip:tid, date:psIso(s.start_time) || debut, titre:String(s.display_name || s.name || L.name || ('Étape ' + (i + 1))).slice(0, 120),
         lieu:[L.name, L.detail].filter(Boolean).join(', ').slice(0, 160), texte:String(s.description || '').slice(0, 20000), photos:[], cc:String(L.country_code || '').toUpperCase().slice(0, 2), pays:L.country || ''};
       if(lat != null && isFinite(lat) && lng != null && isFinite(lng)){ sv.lat = lat; sv.lng = lng; }
-      let ph = photos.filter(e=>(key && e.filename.includes(key)) || (slug && e.filename.includes(slug + '_')));
+      let ph = photos.filter(e=>e.filename.split('/').some(g=>(key && (g === key || g.endsWith('_' + key))) || (!key && slug && g.startsWith(slug + '_'))));
       if(!all) ph = ph.slice(0, 3);
       for(const e of ph){ try { const b = await e.getData(new tr.z.BlobWriter(/\.png$/i.test(e.filename) ? 'image/png' : 'image/jpeg')); const pid = 'ph' + uid() + p; await storePhoto(b, pid); sv.photos.push(pid); p++; if(p % 3 === 0) msg(`📸 ${p} photos…`); } catch(err){} }
       out.push(sv);
@@ -11364,7 +11416,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   async function wrapped(){
     const t = trip(); if(!t){ alert('Ouvre d’abord un voyage.'); return; }
-    Object.values(wrBm).forEach(b=>{ try { b && b.close && b.close(); } catch(e){} }); wrBm = {}; wrMapC = {}; wrBlob = null; wrD = null;
+    Object.values(wrBm).forEach(b=>{ try { b && b.close && b.close(); } catch(e){} }); wrBm = {}; wrMapC = {}; wrBlob = null; wrD = null; wrPk = null;
     openSheet(`<h2>✨ Ton récap à partager</h2><div class="v-sum-small" style="margin-bottom:8px">Au format story : Instagram, WhatsApp, Facebook… Tes proches voient ton voyage en un coup d’œil.</div>
       <div class="wr-box"><img class="wr-img" id="wr-img" alt=""><div class="wr-wait" id="wr-wait">✨ Création de ton récap…</div></div>
       <div id="wr-opt"></div>
@@ -11372,16 +11424,44 @@ ${pm.join('\n')}</Document></kml>`;
     wrD = await filmData();
     wrOptDraw(); await wrRender();
   }
+  let wrPk = null;   // sélecteur de photo ouvert : {slot:'bg' | 0 | 1 | 2, step, n}
+  function wrStrip(o, bgId){
+    const sp = (o.sp || []).slice(0, 3), used = new Set([bgId, ...sp].filter(Boolean)), auto = wrCands().filter(x=>!used.has(x));
+    return [0, 1, 2].map(k => sp[k] || auto.shift() || null);
+  }
+  function wrPickHTML(){
+    const S = souvs().filter(s=>(s.photos || []).length), st = wrPk.step;
+    const L = st ? ((S.find(s=>s.id === st) || {}).photos || []) : S.flatMap(s=>s.photos), shown = L.slice(0, wrPk.n), tot = S.reduce((n, s)=>n + s.photos.length, 0);
+    return `<div class="wr-pick" id="wr-pick"><div class="wr-pk-h"><b>${wrPk.slot === 'bg' ? 'Choisis la photo de fond' : `Choisis la photo ${wrPk.slot + 1} du bas`}</b><button type="button" onclick="CV.wrPickX()" aria-label="Fermer">✕</button></div>
+      <select class="cp-in" onchange="CV.wrPickStep(this.value)"><option value="">Toutes les étapes · ${tot}</option>${S.map(s=>`<option value="${esc(s.id)}"${s.id === st ? ' selected' : ''} data-notr>${esc(((s.date ? fdate(s.date) + ' · ' : '') + (s.titre || s.lieu || '')).slice(0, 60))} (${s.photos.length})</option>`).join('')}</select>
+      <div class="wr-grid">${shown.map(id=>`<button type="button" onclick="CV.wrPickSet('${esc(id)}')"><img data-ph="${esc(id)}" alt="" loading="lazy"></button>`).join('')}</div>
+      ${L.length > shown.length ? `<button type="button" class="cp-ch wr-pk-more" onclick="CV.wrPickMore()">Plus de photos (${L.length - shown.length})</button>` : ''}</div>`;
+  }
+  function wrPick(slot){ wrPk = {slot, step:'', n:48}; wrOpen = true; wrOptDraw(); setTimeout(()=>{ const p = document.getElementById('wr-pick'); if(p) p.scrollIntoView({block:'start', behavior:'smooth'}); }, 60); }
+  function wrPickX(){ wrPk = null; wrOptDraw(); }
+  function wrPickStep(v){ if(!wrPk) return; wrPk.step = v; wrPk.n = 48; wrOptDraw(); }
+  function wrPickMore(){ if(!wrPk) return; wrPk.n += 48; wrOptDraw(); }
+  function wrPickSet(id){
+    if(!wrPk) return; const o = wrOpt();
+    if(wrPk.slot === 'bg') o.bg = id; else { o.sp = (o.sp || []).slice(); while(o.sp.length < 3) o.sp.push(null); o.sp[wrPk.slot] = id; o.strip = 1; }
+    wrSaveO(o); wrPk = null; wrOptDraw(); wrLater(100);
+    const b = document.querySelector('.wr-box'); if(b) b.scrollIntoView({block:'start', behavior:'smooth'});
+  }
+  function wrSlotX(k){ const o = wrOpt(); o.sp = (o.sp || []).slice(); o.sp[k] = null; wrSaveO(o); wrOptDraw(); wrLater(100); }
   function wrOptDraw(){
     const el = document.getElementById('wr-opt'), t = trip(); if(!el || !t || !wrD) return;
-    const o = wrOpt(), cands = wrCands(), bgId = o.bg === 'none' ? 'none' : (o.bg && cands.includes(o.bg) ? o.bg : (cands[0] || 'none'));
+    const o = wrOpt(), cands = wrCands(), bgId = o.bg === 'none' ? 'none' : (o.bg || cands[0] || 'none');
+    if(bgId !== 'none' && !cands.includes(bgId)) cands.unshift(bgId);
+    const strip = wrStrip(o, bgId === 'none' ? null : bgId);
     const ch = (k, v, lbl) => `<button type="button" class="cp-ch${String(o[k]) === String(v) ? ' on' : ''}" data-k="${k}" data-v="${v}" onclick="CV.wrSet(this)">${lbl}</button>`;
     const tg = (k, on, lbl) => `<button type="button" class="cp-ch cp-tg${on ? ' on' : ''}" data-k="${k}" onclick="CV.wrSet(this)">${on ? '✓ ' : ''}${lbl}</button>`;
     const zones = wrD.pts.length >= 2 ? filmZones(wrD.pts).filter(z=>z.length >= 2).length : 0;
     el.innerHTML = `<details class="wr-opt"${wrOpen ? ' open' : ''} ontoggle="CV.wrTog(this.open)"><summary>⚙️ Personnaliser</summary>
       <label class="cp-l">Titre</label><input class="cp-in" data-k="title" maxlength="60" value="${esc(o.title)}" placeholder="${esc(t.titre || '')}" oninput="CV.wrSet(this)">
       <label class="cp-l">Sous-titre</label><input class="cp-in" data-k="sub" maxlength="70" value="${esc(o.sub)}" placeholder="${esc(t.debut ? tripDatesLong(t) : '')}" oninput="CV.wrSet(this)">
-      <label class="cp-l">Photo de fond</label><div class="wr-phs"><button type="button" class="wr-ph wr-none${bgId === 'none' ? ' on' : ''}" data-k="bg" data-v="none" onclick="CV.wrSet(this)">🎨<small>Couleurs</small></button>${cands.map(id=>`<button type="button" class="wr-ph${bgId === id ? ' on' : ''}" data-k="bg" data-v="${esc(id)}" onclick="CV.wrSet(this)"><img data-ph="${esc(id)}" alt=""></button>`).join('')}</div>
+      <label class="cp-l">Photo de fond</label><div class="wr-phs"><button type="button" class="wr-ph wr-none${bgId === 'none' ? ' on' : ''}" data-k="bg" data-v="none" onclick="CV.wrSet(this)">🎨<small>Couleurs</small></button><button type="button" class="wr-ph wr-more" onclick="CV.wrPick('bg')">＋<small>Toutes</small></button>${cands.map(id=>`<button type="button" class="wr-ph${bgId === id ? ' on' : ''}" data-k="bg" data-v="${esc(id)}" onclick="CV.wrSet(this)"><img data-ph="${esc(id)}" alt=""></button>`).join('')}</div>
+      <label class="cp-l">Photos du bas</label><div class="wr-slots${o.strip ? '' : ' off'}">${strip.map((id, k)=>`<div class="wr-slot"><button type="button" class="wr-ph" onclick="CV.wrPick(${k})">${id ? `<img data-ph="${esc(id)}" alt="">` : '＋'}<small>Changer</small></button>${(o.sp || [])[k] ? `<button type="button" class="wr-sx" onclick="CV.wrSlotX(${k})" aria-label="Automatique">✕</button>` : ''}</div>`).join('')}</div>
+      ${wrPk ? wrPickHTML() : ''}
       <label class="cp-l">Couleurs</label><div class="cp-row">${Object.entries(WR_TH).map(([k, h])=>`<button type="button" class="cp-ch cp-th${o.theme === k ? ' on' : ''}" data-k="theme" data-v="${k}" onclick="CV.wrSet(this)"><i style="background:linear-gradient(135deg,${h.a},${h.b})"></i>${WR_THN[k]}</button>`).join('')}</div>
       <label class="cp-l">Carte</label><div class="cp-row">${ch('map', 'dark', '🌑 Sombre')}${ch('map', 'plan', '🗺️ Plan')}${ch('map', 'sat', '🛰️ Satellite')}${ch('map', 'light', '☁️ Claire')}${ch('map', 'none', '✏️ Trajet seul')}</div>
       ${zones > 1 ? `<label class="cp-l">Cadrage de la carte</label><div class="cp-row">${ch('frame', 'all', '🌍 Tout le voyage')}${ch('frame', 'main', '🎯 La destination')}</div>` : ''}
@@ -11406,9 +11486,9 @@ ${pm.join('\n')}</Document></kml>`;
     const my = ++wrN, D = wrD, o = wrOpt(), th = WR_TH[o.theme] || WR_TH.violet;
     const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920;
     const c = cv.getContext('2d'); c.scale(1080 / FW, 1920 / FH); c.textAlign = 'center';
-    const cands = wrCands(), bgId = o.bg === 'none' ? null : (o.bg && cands.includes(o.bg) ? o.bg : cands[0] || null);
+    const cands = wrCands(), bgId = o.bg === 'none' ? null : (o.bg || cands[0] || null);
     const bg = await wrPhoto(bgId);
-    const stripB = []; if(o.strip) for(const id of cands.filter(x=>x !== bgId)){ if(stripB.length >= 3) break; const b = await wrPhoto(id); if(b) stripB.push(b); }
+    const stripB = []; if(o.strip) for(const id of wrStrip(o, bgId)){ if(!id) continue; const b = await wrPhoto(id); if(b) stripB.push(b); }
     if(my !== wrN) return;
     const rr = (x, y, w, h, r) => { c.beginPath(); c.roundRect ? c.roundRect(x, y, w, h, r) : c.rect(x, y, w, h); };
     // fond : la photo choisie, voilée aux couleurs du thème (ou un dégradé)
@@ -12699,7 +12779,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13g';
+  const BUILD = '2026-10-13h';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -12709,7 +12789,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
