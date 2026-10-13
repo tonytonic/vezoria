@@ -5233,6 +5233,7 @@ const CV = (function(){
     if(uploading || !(M.pq||[]).length || !photoApi()) return;
     if(!(M.sync.on && M.sync.code) && !(M.spaces||[]).length){ M.pqWait = (M.pq||[]).length; return; }
     uploading = true; let upErr = '', waiting = 0, stop = false;
+    if((M.fq||[]).length){ try { await feedUpload(); } catch(e){} }   // les vignettes des abonnés passent avant les grandes photos
     // photo → code du carnet, calculé une seule fois (rapide même avec des milliers de photos)
     const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
     const codeOf = id => { const base = String(id).replace(/\.t$/,''), r = owner[base]; if(!r) return photoCode(id); if(r.demo) return null; const t = targets(r)[0]; return t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t; };
@@ -12539,17 +12540,26 @@ ${pm.join('\n')}</Document></kml>`;
       for(const [code, id] of olds.slice(0, 40)){
         try { const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(id, code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); if(r.ok || r.status === 404 || r.status === 405) M.fup[code][id] = 2; } catch(e){ break; }
       }
-      for(const [code, id] of [...(M.fq||[])]){
+      // les abonnés voient d’abord les étapes récentes : on envoie leurs vignettes en premier
+      const dt = {}; list('feed').forEach(f=>(f.photos||[]).forEach(p=>{ if(!(p in dt)) dt[p] = f.date || ''; }));
+      const todo = [...(M.fq||[])].sort((a, b)=>(dt[b[1]] || '').localeCompare(dt[a[1]] || ''));
+      let left = todo.length, stop = false; const shown = left > 6;
+      if(shown) cryptShow('📤 Photos pour tes abonnés… (' + left + ')');
+      const one = async ([code, id]) => {
         // abonnés : uniquement la vignette (≈ 30 à 50 Ko), jamais la grande photo → 2 à 3 fois moins de place sur le serveur
         let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
         if(!tb){ let o = null; try { o = await IDB.get(id); } catch(e){} if(o && o.blob) try { tb = await shrink(o.blob, 480, .74); } catch(e){} }
         if(tb){
           const body = E2E ? new Blob([await seal(new Uint8Array(await tb.arrayBuffer()), code)], {type:'image/jpeg'}) : tb;
           const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(id + '.t', code), 'Content-Type':'image/jpeg'}, body});
-          if(!r.ok && r.status !== 413) break;
+          if(!r.ok && r.status !== 413){ stop = true; return; }   // réessayé à la prochaine synchro (toutes les minutes, appli ouverte)
         }
-        (M.fup[code] = M.fup[code] || {})[id] = 2; M.fq = M.fq.filter(x=>!(x[0]===code && x[1]===id)); persist();
-      }
+        (M.fup[code] = M.fup[code] || {})[id] = 2; M.fq = M.fq.filter(x=>!(x[0]===code && x[1]===id)); left--;
+        if(!(left % 6)){ persist(); if(shown && left) cryptShow('📤 Photos pour tes abonnés… (' + left + ' restante' + (left > 1 ? 's' : '') + ')'); }
+      };
+      const worker = async () => { while(!stop && todo.length){ try { await one(todo.shift()); } catch(e){ stop = true; } } };
+      await Promise.all([worker(), worker(), worker()]);
+      if(shown) cryptHide(left ? '⏳ Photos des abonnés : la suite part à la prochaine synchro' : '👀 Photos envoyées à tes abonnés');
     } catch(e){} finally { feedUp = false; persist(); }
   }
   function feedAll(){ Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); feedUpload(); }
@@ -12779,7 +12789,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13h';
+  const BUILD = '2026-10-13i';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
