@@ -23,7 +23,7 @@ const CORS = {
   'Access-Control-Max-Age': '86400',
 };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
-const KINDS = ['depense', 'resa', 'souv', 'sondage', 'notes', 'rappel'];
+const KINDS = ['depense', 'resa', 'souv', 'sondage', 'notes', 'rappel', 'social'];
 const MAX_PER_HOUR = 60;        // par espace : un garde-fou contre les envois en boucle
 const te = new TextEncoder();
 
