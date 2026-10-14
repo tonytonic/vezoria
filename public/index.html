@@ -11263,6 +11263,14 @@ ${pm.join('\n')}</Document></kml>`;
     return new Uint8Array(await (await new Promise(r=>c.toBlob(r, 'image/jpeg', 0.9))).arrayBuffer());
   }
   // Supprimer le carnet du serveur (exigé par Google Play) : fiches + photos, pour tout le monde
+  function cloudTripOff(tid){
+    const t = R[tid]; if(!t) return;
+    openSheet(`<h2>☁️ Retirer « ${esc(t.titre)} » du cloud</h2>
+      <div class="v-sum-small" style="margin-bottom:12px">Ce qui est sur ce téléphone reste ici dans les deux cas.</div>
+      <button type="button" class="cv-choice" onclick="CV.close();CV.serverWipeTrip('${tid}')"><i>🗑</i><span><b>L’effacer du serveur</b><small>Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).</small></span></button>
+      <button type="button" class="cv-choice" onclick="CV.close();CV.tripUnshare('${tid}')"><i>📱</i><span><b>Le garder seulement sur ce téléphone</b><small>Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.</small></span></button>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">Annuler</button></div>`);
+  }
   function serverWipeSheet(){
     const s = M.sync;
     // mes voyages qui ont quelque chose sur le serveur : le voyage partagé (compagnons) et/ou la publication (abonnés)
@@ -12463,7 +12471,7 @@ ${pm.join('\n')}</Document></kml>`;
       h += `<div class="cv-cl-h">Mes voyages dans le cloud</div>`
         + (ts.map(t=>{ const c = TS()[t.id], sp = c && spaceObj(c);
             return `<div class="cv-cl-t"><span><b>${esc(t.titre || '')}</b><small>${sp ? '☁️ ' + cloudState(sp) : 'Seulement sur ce téléphone'}</small></span>`
-              + (sp ? '' : `<button type="button" class="v-btn sec" onclick="CV.cloudTrip('${t.id}')">☁️ Mettre dans le cloud</button>`) + `</div>`; }).join('')
+              + (sp ? `<button type="button" class="v-btn sec" onclick="CV.cloudTripOff('${t.id}')">Retirer du cloud</button>` : `<button type="button" class="v-btn sec" onclick="CV.cloudTrip('${t.id}')">☁️ Mettre dans le cloud</button>`) + `</div>`; }).join('')
           || '<div class="v-sum-small">Aucun voyage pour l’instant : crée-en un, puis reviens ici.</div>');
     }
     if(mode === 'none'){
@@ -12978,7 +12986,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-14a';
+  const BUILD = '2026-10-14c';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -12988,7 +12996,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
