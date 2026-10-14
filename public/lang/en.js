@@ -715,4 +715,11 @@ I18N.load({
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"To invite your companions, the trip and its photos go online, encrypted: only people who get the invitation can see them.",
 "Annuler = rien ne part.":"Cancel = nothing is sent.",
 "✨ Nouveautés · 24 h":"✨ What’s new · 24 h",
-"Rien de nouveau ces dernières 24 heures.":"Nothing new in the last 24 hours."});
+"Rien de nouveau ces dernières 24 heures.":"Nothing new in the last 24 hours.",
+"Retirer du cloud":"Remove from the cloud",
+"☁️ Retirer « {0} » du cloud":"☁️ Remove “{0}” from the cloud",
+"Ce qui est sur ce téléphone reste ici dans les deux cas.":"What’s on this phone stays here either way.",
+"L’effacer du serveur":"Delete it from the server",
+"Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Records and photos deleted from the server, for everyone (companions and followers lose access).",
+"Le garder seulement sur ce téléphone":"Keep it on this phone only",
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"This phone stops syncing it. Your companions keep their online copy."});

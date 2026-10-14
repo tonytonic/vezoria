@@ -715,4 +715,11 @@ I18N.load({
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"Om reisgenoten uit te nodigen, gaan de reis en de foto’s versleuteld online: alleen wie de uitnodiging krijgt, kan ze zien.",
 "Annuler = rien ne part.":"Annuleren = er wordt niets verstuurd.",
 "✨ Nouveautés · 24 h":"✨ Nieuw · 24 u",
-"Rien de nouveau ces dernières 24 heures.":"Niets nieuws in de afgelopen 24 uur."});
+"Rien de nouveau ces dernières 24 heures.":"Niets nieuws in de afgelopen 24 uur.",
+"Retirer du cloud":"Uit de cloud halen",
+"☁️ Retirer « {0} » du cloud":"☁️ ‘{0}’ uit de cloud halen",
+"Ce qui est sur ce téléphone reste ici dans les deux cas.":"Wat op deze telefoon staat, blijft hier in beide gevallen.",
+"L’effacer du serveur":"Van de server verwijderen",
+"Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Items en foto’s worden voor iedereen van de server verwijderd (reisgenoten en volgers verliezen toegang).",
+"Le garder seulement sur ce téléphone":"Alleen op deze telefoon houden",
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Deze telefoon synchroniseert hem niet meer. Je reisgenoten houden hun online kopie."});

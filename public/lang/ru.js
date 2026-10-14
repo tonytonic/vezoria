@@ -3646,4 +3646,11 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"Чтобы пригласить попутчиков, поездка и её фото загружаются в зашифрованном виде: их видят только получившие приглашение.",
 "Annuler = rien ne part.":"Отмена — ничего не отправляется.",
 "✨ Nouveautés · 24 h":"✨ Новое · 24 ч",
-"Rien de nouveau ces dernières 24 heures.":"За последние 24 часа ничего нового."});
+"Rien de nouveau ces dernières 24 heures.":"За последние 24 часа ничего нового.",
+"Retirer du cloud":"Убрать из облака",
+"☁️ Retirer « {0} » du cloud":"☁️ Убрать «{0}» из облака",
+"Ce qui est sur ce téléphone reste ici dans les deux cas.":"В обоих случаях всё на этом телефоне останется.",
+"L’effacer du serveur":"Удалить с сервера",
+"Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Записи и фото удаляются с сервера для всех (попутчики и подписчики теряют доступ).",
+"Le garder seulement sur ce téléphone":"Оставить только на этом телефоне",
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Этот телефон перестаёт синхронизировать поездку. У попутчиков остаётся их копия в сети."});

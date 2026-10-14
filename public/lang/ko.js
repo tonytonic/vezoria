@@ -3646,4 +3646,11 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"동행을 초대하려면 여행과 사진이 암호화되어 올라가요: 초대를 받은 사람만 볼 수 있어요.",
 "Annuler = rien ne part.":"취소 = 아무것도 보내지 않아요.",
 "✨ Nouveautés · 24 h":"✨ 새 소식 · 24시간",
-"Rien de nouveau ces dernières 24 heures.":"지난 24시간 동안 새 소식이 없어요."});
+"Rien de nouveau ces dernières 24 heures.":"지난 24시간 동안 새 소식이 없어요.",
+"Retirer du cloud":"클라우드에서 빼기",
+"☁️ Retirer « {0} » du cloud":"☁️ «{0}»을(를) 클라우드에서 빼기",
+"Ce qui est sur ce téléphone reste ici dans les deux cas.":"두 경우 모두 이 휴대폰의 내용은 그대로 남아요.",
+"L’effacer du serveur":"서버에서 삭제",
+"Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"기록과 사진이 모두를 위해 서버에서 삭제돼요(동행과 팔로워는 더 이상 볼 수 없어요).",
+"Le garder seulement sur ce téléphone":"이 휴대폰에만 두기",
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"이 휴대폰은 동기화를 멈춰요. 동행은 온라인 사본을 그대로 가져요."});

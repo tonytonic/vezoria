@@ -3646,4 +3646,11 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"为了邀请同行者，旅行和照片会加密上传：只有收到邀请的人能看到。",
 "Annuler = rien ne part.":"取消 = 不发送任何内容。",
 "✨ Nouveautés · 24 h":"✨ 最新动态 · 24 小时",
-"Rien de nouveau ces dernières 24 heures.":"过去 24 小时没有新动态。"});
+"Rien de nouveau ces dernières 24 heures.":"过去 24 小时没有新动态。",
+"Retirer du cloud":"从云端移除",
+"☁️ Retirer « {0} » du cloud":"☁️ 将「{0}」从云端移除",
+"Ce qui est sur ce téléphone reste ici dans les deux cas.":"两种情况下，此手机上的内容都会保留。",
+"L’effacer du serveur":"从服务器删除",
+"Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"记录和照片会为所有人从服务器删除（同行者和关注者将无法访问）。",
+"Le garder seulement sur ce téléphone":"只保留在此手机上",
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"此手机不再同步它。同行者保留各自的在线副本。"});

@@ -715,4 +715,11 @@ I18N.load({
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"Para convidar os companheiros, a viagem e as fotos ficam online, encriptadas: só quem recebe o convite as pode ver.",
 "Annuler = rien ne part.":"Cancelar = nada é enviado.",
 "✨ Nouveautés · 24 h":"✨ Novidades · 24 h",
-"Rien de nouveau ces dernières 24 heures.":"Nada de novo nas últimas 24 horas."});
+"Rien de nouveau ces dernières 24 heures.":"Nada de novo nas últimas 24 horas.",
+"Retirer du cloud":"Retirar da nuvem",
+"☁️ Retirer « {0} » du cloud":"☁️ Retirar «{0}» da nuvem",
+"Ce qui est sur ce téléphone reste ici dans les deux cas.":"O que está neste telemóvel fica aqui nos dois casos.",
+"L’effacer du serveur":"Apagar do servidor",
+"Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Fichas e fotos apagadas do servidor, para todos (companheiros e seguidores perdem o acesso).",
+"Le garder seulement sur ce téléphone":"Manter só neste telemóvel",
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Este telemóvel deixa de o sincronizar. Os teus companheiros mantêm a cópia online."});

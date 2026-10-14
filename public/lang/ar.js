@@ -3646,4 +3646,11 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"لدعوة رفاقك، تُرفع الرحلة وصورها مشفّرة: لا يراها إلا من يتلقى الدعوة.",
 "Annuler = rien ne part.":"إلغاء = لا يُرسل شيء.",
 "✨ Nouveautés · 24 h":"✨ الجديد · 24 س",
-"Rien de nouveau ces dernières 24 heures.":"لا جديد خلال آخر 24 ساعة."});
+"Rien de nouveau ces dernières 24 heures.":"لا جديد خلال آخر 24 ساعة.",
+"Retirer du cloud":"إزالة من السحابة",
+"☁️ Retirer « {0} » du cloud":"☁️ إزالة «{0}» من السحابة",
+"Ce qui est sur ce téléphone reste ici dans les deux cas.":"ما على هذا الهاتف يبقى هنا في الحالتين.",
+"L’effacer du serveur":"حذفها من الخادم",
+"Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"تُحذف البطاقات والصور من الخادم للجميع (يفقد الرفاق والمتابعون الوصول).",
+"Le garder seulement sur ce téléphone":"الاحتفاظ بها على هذا الهاتف فقط",
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"يتوقف هذا الهاتف عن مزامنتها. يحتفظ رفاقك بنسختهم على الإنترنت."});

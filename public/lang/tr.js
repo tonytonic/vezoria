@@ -3646,4 +3646,11 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"Yol arkadaşlarını davet etmek için seyahat ve fotoğrafları şifreli olarak yüklenir: yalnızca daveti alanlar görebilir.",
 "Annuler = rien ne part.":"İptal = hiçbir şey gönderilmez.",
 "✨ Nouveautés · 24 h":"✨ Yenilikler · 24 sa",
-"Rien de nouveau ces dernières 24 heures.":"Son 24 saatte yeni bir şey yok."});
+"Rien de nouveau ces dernières 24 heures.":"Son 24 saatte yeni bir şey yok.",
+"Retirer du cloud":"Buluttan kaldır",
+"☁️ Retirer « {0} » du cloud":"☁️ «{0}» buluttan kaldır",
+"Ce qui est sur ce téléphone reste ici dans les deux cas.":"Her iki durumda da bu telefondakiler burada kalır.",
+"L’effacer du serveur":"Sunucudan sil",
+"Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Kayıtlar ve fotoğraflar herkes için sunucudan silinir (yol arkadaşları ve takipçiler erişimi kaybeder).",
+"Le garder seulement sur ce téléphone":"Sadece bu telefonda tut",
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Bu telefon artık eşitlemez. Yol arkadaşların çevrimiçi kopyalarını korur."});

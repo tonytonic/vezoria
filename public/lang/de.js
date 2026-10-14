@@ -715,4 +715,11 @@ I18N.load({
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"Um Mitreisende einzuladen, gehen die Reise und ihre Fotos verschlüsselt online: Nur wer die Einladung bekommt, kann sie sehen.",
 "Annuler = rien ne part.":"Abbrechen = nichts wird gesendet.",
 "✨ Nouveautés · 24 h":"✨ Neuigkeiten · 24 Std.",
-"Rien de nouveau ces dernières 24 heures.":"Nichts Neues in den letzten 24 Stunden."});
+"Rien de nouveau ces dernières 24 heures.":"Nichts Neues in den letzten 24 Stunden.",
+"Retirer du cloud":"Aus der Cloud entfernen",
+"☁️ Retirer « {0} » du cloud":"☁️ „{0}“ aus der Cloud entfernen",
+"Ce qui est sur ce téléphone reste ici dans les deux cas.":"Was auf diesem Handy ist, bleibt in beiden Fällen hier.",
+"L’effacer du serveur":"Vom Server löschen",
+"Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Einträge und Fotos werden für alle vom Server gelöscht (Mitreisende und Follower verlieren den Zugang).",
+"Le garder seulement sur ce téléphone":"Nur auf diesem Handy behalten",
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Dieses Handy synchronisiert sie nicht mehr. Deine Mitreisenden behalten ihre Online-Kopie."});

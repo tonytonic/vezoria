@@ -3646,4 +3646,11 @@ I18N.load({"🔑 Mon code principal":"🔑 メインコード",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"仲間を招待するため、旅と写真が暗号化されてアップロードされます：招待を受け取った人だけが見られます。",
 "Annuler = rien ne part.":"キャンセル＝何も送信しません。",
 "✨ Nouveautés · 24 h":"✨ 新着・24時間",
-"Rien de nouveau ces dernières 24 heures.":"この24時間に新着はありません。"});
+"Rien de nouveau ces dernières 24 heures.":"この24時間に新着はありません。",
+"Retirer du cloud":"クラウドから外す",
+"☁️ Retirer « {0} » du cloud":"☁️「{0}」をクラウドから外す",
+"Ce qui est sur ce téléphone reste ici dans les deux cas.":"どちらを選んでも、このスマホのデータは残ります。",
+"L’effacer du serveur":"サーバーから削除する",
+"Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"記録と写真を全員分サーバーから削除します（仲間とフォロワーは見られなくなります）。",
+"Le garder seulement sur ce téléphone":"このスマホだけに残す",
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"このスマホは同期をやめます。仲間はオンラインのコピーをそのまま使えます。"});
