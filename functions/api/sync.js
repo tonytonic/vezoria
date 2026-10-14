@@ -95,6 +95,48 @@ async function wipeSpace(env, space) {
   return { records: (rec.meta && rec.meta.changes) || 0, photos: photos + ((d1p.meta && d1p.meta.changes) || 0) };
 }
 
+// 🧹 Ménage quotidien des photos : dossiers sans aucune fiche (carnet effacé, envoi arrivé après la suppression…)
+// puis recompte exact de la place utilisée. Lancé au plus une fois par 24 h, en arrière-plan d’une synchro.
+async function sweepOrphans(env) {
+  if (!env.PHOTOS || !env.DB) return;
+  const now = Date.now();
+  await env.DB.prepare('CREATE TABLE IF NOT EXISTS photo_stats (k TEXT PRIMARY KEY, v INTEGER NOT NULL)').run();
+  const st = await env.DB.prepare("SELECT v FROM photo_stats WHERE k = 'sweep_at'").first();
+  if (st && now - st.v < 864e5) return;
+  const lk = await env.DB.prepare("SELECT v FROM photo_stats WHERE k = 'sweep_lock'").first();
+  if (lk && now - lk.v < 6e5) return;   // un ménage tourne déjà
+  const mark = (k) => env.DB.prepare('INSERT INTO photo_stats (k, v) VALUES (?1, ?2) ON CONFLICT (k) DO UPDATE SET v = ?2').bind(k, now).run();
+  await mark('sweep_lock');
+  // 1. dossiers orphelins (3 au plus par passage : on reste dans les limites d’une requête ; la suite au passage suivant)
+  let cursor, done = 0;
+  do {
+    const l = await env.PHOTOS.list({ delimiter: '/', cursor, limit: 1000 });
+    for (const pfx of (l.delimitedPrefixes || [])) {
+      if (done >= 3) break;
+      const space = pfx.replace(/\/$/, '');
+      if (!/^[0-9a-f]{64}$/.test(space)) continue;
+      const has = await env.DB.prepare('SELECT 1 AS x FROM records WHERE space = ?1 LIMIT 1').bind(space).first();
+      if (has) continue;
+      const page = await env.PHOTOS.list({ prefix: pfx, limit: 1000 });   // une photo arrivée il y a moins de 7 jours ? on n’y touche pas
+      if ((page.objects || []).some(o => now - new Date(o.uploaded).getTime() < 7 * 864e5)) continue;
+      await wipeSpace(env, space); done++;
+    }
+    cursor = l.truncated && done < 3 ? l.cursor : undefined;
+  } while (cursor);
+  if (done) return;   // il en restait peut-être : on repasse à la prochaine synchro, le recompte se fera à la fin
+  // 2. recompte exact (place totale et place de chaque carnet)
+  const per = {}; let total = 0; cursor = undefined;
+  do {
+    const l = await env.PHOTOS.list({ cursor, limit: 1000 });
+    (l.objects || []).forEach(o => { total += o.size; const sp = o.key.split('/')[0]; per[sp] = (per[sp] || 0) + o.size; });
+    cursor = l.truncated ? l.cursor : undefined;
+  } while (cursor);
+  const up = (k, v) => env.DB.prepare('INSERT INTO photo_stats (k, v) VALUES (?1, ?2) ON CONFLICT (k) DO UPDATE SET v = ?2').bind(k, v);
+  const stmts = [up('r2', total), env.DB.prepare("DELETE FROM photo_stats WHERE k LIKE 's:%'")].concat(Object.entries(per).map(([sp, v]) => up('s:' + sp, v)));
+  for (let i = 0; i < stmts.length; i += 50) await env.DB.batch(stmts.slice(i, i + 50));
+  await mark('sweep_at');
+}
+
 // Ménage occasionnel (≈ 1 requête sur 500) : carnets inactifs depuis longtemps
 async function sweepInactive(env) {
   const days = Number(env.INACTIVE_DAYS) || 730;
@@ -153,6 +195,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
     .bind(space, since)
     .all();
   if (Math.random() < 0.002 && waitUntil) waitUntil(sweepInactive(env).catch(() => {}));
+  if (Math.random() < 0.1 && waitUntil) waitUntil(sweepOrphans(env).catch(() => {}));   // vérifie au plus 1 fois / 24 h
   // rappels programmés (notifications) : envoyés quand c'est l'heure, à l'occasion des synchros
   if (Math.random() < 0.25 && waitUntil) waitUntil(fetch(new URL('/api/push?a=flush', request.url)).catch(() => {}));
   let wiped = 0;
