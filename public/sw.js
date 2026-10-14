@@ -2,8 +2,8 @@
 // Pages et fichiers de l'appli : réseau s'il répond vite (dernière version), sinon copie locale tout de suite
 // (réseau lent ou absent) ; la copie se met à jour en arrière-plan.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-13w';
-const CORE = ['./', './index.html', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
+const CACHE = 'vezoria-2026-10-14a';
+const CORE = ['./', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
 self.addEventListener('install', e => {
@@ -57,9 +57,9 @@ self.addEventListener('fetch', e => {
       const net = fetch(req).then(r => { if (r && r.ok && !r.redirected) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; });
       // l’accueil de l’appli ne sert de secours QUE pour l’accueil (pas pour les pages légales ou autres)
       const home = req.mode === 'navigate' && /\/(index\.html)?$/.test(url.pathname);
-      let cached = (await caches.match(req, {ignoreSearch: true})) || (home ? await caches.match('./index.html') : null);
+      let cached = (await caches.match(req, {ignoreSearch: true})) || (home ? await caches.match('./') : null);
       if (cached && cached.redirected) cached = new Response(await cached.blob(), {status: 200, headers: cached.headers});   // ancienne copie « redirigée » : on la nettoie
-      if (!cached) return timeout(net, 15000).catch(() => home ? caches.match('./index.html') : Response.error());
+      if (!cached) return timeout(net, 15000).catch(() => home ? caches.match('./') : Response.error());
       // redirection (ex. « page.html » → « page ») ou page absente : la réponse du serveur est rendue telle quelle
       try { const r = await timeout(net, 1500);
         if (r && r.redirected && req.mode === 'navigate') return Response.redirect(r.url, 302);   // jamais de réponse « redirigée » pour une page (Safari)
