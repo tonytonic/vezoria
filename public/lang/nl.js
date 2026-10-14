@@ -713,4 +713,6 @@ I18N.load({
 "étape":"etappe",
 "Envoyer « {0} » sur le serveur ?":"‘{0}’ naar de server sturen?",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"Om reisgenoten uit te nodigen, gaan de reis en de foto’s versleuteld online: alleen wie de uitnodiging krijgt, kan ze zien.",
-"Annuler = rien ne part.":"Annuleren = er wordt niets verstuurd."});
+"Annuler = rien ne part.":"Annuleren = er wordt niets verstuurd.",
+"✨ Nouveautés · 24 h":"✨ Nieuw · 24 u",
+"Rien de nouveau ces dernières 24 heures.":"Niets nieuws in de afgelopen 24 uur."});

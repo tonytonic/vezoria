@@ -3644,4 +3644,6 @@ I18N.load({"🔑 Mon code principal":"🔑 メインコード",
 "étape":"立ち寄り先",
 "Envoyer « {0} » sur le serveur ?":"「{0}」をサーバーに送信しますか？",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"仲間を招待するため、旅と写真が暗号化されてアップロードされます：招待を受け取った人だけが見られます。",
-"Annuler = rien ne part.":"キャンセル＝何も送信しません。"});
+"Annuler = rien ne part.":"キャンセル＝何も送信しません。",
+"✨ Nouveautés · 24 h":"✨ 新着・24時間",
+"Rien de nouveau ces dernières 24 heures.":"この24時間に新着はありません。"});

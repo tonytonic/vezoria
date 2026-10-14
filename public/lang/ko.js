@@ -3644,4 +3644,6 @@ I18N.load({"🔑 Mon code principal":"🔑 내 기본 코드",
 "étape":"장소",
 "Envoyer « {0} » sur le serveur ?":"«{0}»을(를) 서버로 보낼까요?",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"동행을 초대하려면 여행과 사진이 암호화되어 올라가요: 초대를 받은 사람만 볼 수 있어요.",
-"Annuler = rien ne part.":"취소 = 아무것도 보내지 않아요."});
+"Annuler = rien ne part.":"취소 = 아무것도 보내지 않아요.",
+"✨ Nouveautés · 24 h":"✨ 새 소식 · 24시간",
+"Rien de nouveau ces dernières 24 heures.":"지난 24시간 동안 새 소식이 없어요."});

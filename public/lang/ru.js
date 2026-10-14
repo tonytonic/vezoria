@@ -3644,4 +3644,6 @@ I18N.load({"🔑 Mon code principal":"🔑 Мой основной код",
 "étape":"этап",
 "Envoyer « {0} » sur le serveur ?":"Отправить «{0}» на сервер?",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"Чтобы пригласить попутчиков, поездка и её фото загружаются в зашифрованном виде: их видят только получившие приглашение.",
-"Annuler = rien ne part.":"Отмена — ничего не отправляется."});
+"Annuler = rien ne part.":"Отмена — ничего не отправляется.",
+"✨ Nouveautés · 24 h":"✨ Новое · 24 ч",
+"Rien de nouveau ces dernières 24 heures.":"За последние 24 часа ничего нового."});

@@ -3644,4 +3644,6 @@ I18N.load({"🔑 Mon code principal":"🔑 我的主代码",
 "étape":"站点",
 "Envoyer « {0} » sur le serveur ?":"将「{0}」发送到服务器？",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"为了邀请同行者，旅行和照片会加密上传：只有收到邀请的人能看到。",
-"Annuler = rien ne part.":"取消 = 不发送任何内容。"});
+"Annuler = rien ne part.":"取消 = 不发送任何内容。",
+"✨ Nouveautés · 24 h":"✨ 最新动态 · 24 小时",
+"Rien de nouveau ces dernières 24 heures.":"过去 24 小时没有新动态。"});

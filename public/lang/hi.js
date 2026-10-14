@@ -3644,4 +3644,6 @@ I18N.load({"🔑 Mon code principal":"🔑 मेरा मुख्य को�
 "étape":"पड़ाव",
 "Envoyer « {0} » sur le serveur ?":"«{0}» को सर्वर पर भेजें?",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"साथियों को बुलाने के लिए यात्रा और उसकी फ़ोटो एन्क्रिप्ट होकर ऑनलाइन जाती हैं: सिर्फ़ न्योता पाने वाले देख सकते हैं।",
-"Annuler = rien ne part.":"रद्द करें = कुछ नहीं भेजा जाएगा।"});
+"Annuler = rien ne part.":"रद्द करें = कुछ नहीं भेजा जाएगा।",
+"✨ Nouveautés · 24 h":"✨ नया · 24 घंटे",
+"Rien de nouveau ces dernières 24 heures.":"पिछले 24 घंटों में कुछ नया नहीं।"});

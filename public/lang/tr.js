@@ -3644,4 +3644,6 @@ I18N.load({"🔑 Mon code principal":"🔑 Ana kodum",
 "étape":"durak",
 "Envoyer « {0} » sur le serveur ?":"«{0}» sunucuya gönderilsin mi?",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"Yol arkadaşlarını davet etmek için seyahat ve fotoğrafları şifreli olarak yüklenir: yalnızca daveti alanlar görebilir.",
-"Annuler = rien ne part.":"İptal = hiçbir şey gönderilmez."});
+"Annuler = rien ne part.":"İptal = hiçbir şey gönderilmez.",
+"✨ Nouveautés · 24 h":"✨ Yenilikler · 24 sa",
+"Rien de nouveau ces dernières 24 heures.":"Son 24 saatte yeni bir şey yok."});

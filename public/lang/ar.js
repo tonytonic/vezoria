@@ -3644,4 +3644,6 @@ I18N.load({"🔑 Mon code principal":"🔑 رمزي الرئيسي",
 "étape":"محطة",
 "Envoyer « {0} » sur le serveur ?":"إرسال «{0}» إلى الخادم؟",
 "Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.":"لدعوة رفاقك، تُرفع الرحلة وصورها مشفّرة: لا يراها إلا من يتلقى الدعوة.",
-"Annuler = rien ne part.":"إلغاء = لا يُرسل شيء."});
+"Annuler = rien ne part.":"إلغاء = لا يُرسل شيء.",
+"✨ Nouveautés · 24 h":"✨ الجديد · 24 س",
+"Rien de nouveau ces dernières 24 heures.":"لا جديد خلال آخر 24 ساعة."});
