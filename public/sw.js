@@ -2,7 +2,7 @@
 // Pages et fichiers de l'appli : réseau s'il répond vite (dernière version), sinon copie locale tout de suite
 // (réseau lent ou absent) ; la copie se met à jour en arrière-plan.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-13u';
+const CACHE = 'vezoria-2026-10-13w';
 const CORE = ['./', './index.html', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
@@ -45,6 +45,8 @@ self.addEventListener('fetch', e => {
       return;
     }
     if (url.pathname.startsWith('/api/')) return;
+    // pages hors appli (mentions légales, CGU, confidentialité…) : laissées au navigateur (Safari refuse une page redirigée servie par le service worker)
+    if (req.mode === 'navigate' && !/\/(index\.html)?$/.test(url.pathname)) return;
     if (/\.(mp4|mp3)$/.test(url.pathname)) return;
     // icônes et dessins : copie locale d'abord (instantané, pas de clignotement)
     if (/\/(icons|icons-live|icons-past|anim)\//.test(url.pathname)) {
@@ -52,13 +54,16 @@ self.addEventListener('fetch', e => {
       return;
     }   // vidéo du tuto, musiques du film : lues en direct (lecture par morceaux)
     e.respondWith((async () => {
-      const net = fetch(req).then(r => { if (r && r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; });
+      const net = fetch(req).then(r => { if (r && r.ok && !r.redirected) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; });
       // l’accueil de l’appli ne sert de secours QUE pour l’accueil (pas pour les pages légales ou autres)
       const home = req.mode === 'navigate' && /\/(index\.html)?$/.test(url.pathname);
-      const cached = (await caches.match(req, {ignoreSearch: true})) || (home ? await caches.match('./index.html') : null);
+      let cached = (await caches.match(req, {ignoreSearch: true})) || (home ? await caches.match('./index.html') : null);
+      if (cached && cached.redirected) cached = new Response(await cached.blob(), {status: 200, headers: cached.headers});   // ancienne copie « redirigée » : on la nettoie
       if (!cached) return timeout(net, 15000).catch(() => home ? caches.match('./index.html') : Response.error());
       // redirection (ex. « page.html » → « page ») ou page absente : la réponse du serveur est rendue telle quelle
-      try { const r = await timeout(net, 1500); return r && (r.ok || r.type === 'opaqueredirect' || r.redirected || (r.status >= 300 && r.status < 500)) ? r : cached; }
+      try { const r = await timeout(net, 1500);
+        if (r && r.redirected && req.mode === 'navigate') return Response.redirect(r.url, 302);   // jamais de réponse « redirigée » pour une page (Safari)
+        return r && (r.ok || r.type === 'opaqueredirect' || (r.status >= 300 && r.status < 500)) ? r : cached; }
       catch (_) { e.waitUntil(net.catch(() => null)); return cached; }   // réseau lent : on ouvre la copie locale tout de suite
     })());
     return;
@@ -129,18 +134,19 @@ self.addEventListener('push', e => {
     const now = Date.now(), isTest = /^rappel-test-/.test(String(d.t || ''));
     const trip = (/[?&]vzt=([^&]*)/.exec(url) || [])[1] || '';
     const box = ((await kvGet('inbox')) || []).filter(x => now - x.at < 7 * 864e5);
-    if (!isTest) { box.push({ at: now, title, body, url, trip }); while (box.length > 60) box.shift(); await kvPut('inbox', box); }
+    const soc = d.k === 'social';
+    if (!isTest) { box.push({ at: now, title, body, url, trip, soc }); while (box.length > 60) box.shift(); await kvPut('inbox', box); }
     // regroupement : une seule notification par voyage, qui se complète ; pas de nouvelle sonnerie avant 5 min
     let tag = d.t || 'vezoria', nTitle = title, nBody = body, silent = false;
     if (!isTest && trip) {
-      tag = 'vz-' + trip;
-      const mine = box.filter(x => x.trip === trip);
+      tag = (soc ? 'vz-soc-' : 'vz-') + trip;   // abonnés : une notification à part, qui sonne
+      const mine = box.filter(x => x.trip === trip && !!x.soc === soc && (!soc || now - x.at < 864e5));
       if (mine.length > 1) {
         nTitle = title + ' · ' + fill(tt('grp'), [mine.length]);
         nBody = mine.slice(-5).reverse().map(x => '• ' + String(x.body).split('\n')[0]).join('\n') + (mine.length > 5 ? '\n…' : '');
       }
       const last = (await kvGet('la:' + tag)) || 0;
-      if (now - last < 5 * 60e3) silent = true; else await kvPut('la:' + tag, now);
+      if (now - last < (soc ? 60e3 : 5 * 60e3)) silent = true; else await kvPut('la:' + tag, now);
     }
     let ack = { type: 'vz-push', ok: true, test: isTest, title, body, url };
     try { await self.registration.showNotification(nTitle, { body: nBody, tag, renotify: !silent, silent, icon: './icon-192.png', badge: './icons/badge-96.png', data: { url } }); }

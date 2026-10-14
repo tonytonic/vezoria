@@ -1926,6 +1926,9 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 .hdr-chips b{font-weight:800}.hdr-chips i{font-style:normal;opacity:.85}
 .hero-foot .cv-hero-qr{margin-left:auto}
 </style>
+<style>
+.cv-prow.sc-new{font-weight:800;background:#fff6f9;box-shadow:inset 3px 0 0 #ff3b6b}
+</style>
 </head>
 <body class="is-public">
 <div class="cv-statusbar"></div>
@@ -12784,9 +12787,9 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   // ---------- 👥 Nouveautés sociales (❤️, 💬, abonnés, nouvelles étapes) + fenêtre « Abonnés & abonnements » ----------
-  function socEvents(){
+  function socEvents(day){   // day : tout ce qui est arrivé ces dernières 24 h (les non vues sont marquées « nw »)
     if(M.socSeen == null){ M.socSeen = Date.now(); persist(); }
-    const seen = M.socSeen, me = devId(), nm = myName();
+    const seen0 = M.socSeen, seen = day ? Math.min(seen0, Date.now() - 864e5) : seen0, me = devId(), nm = myName();
     const mine = new Set(Object.keys(FT()).map(ftId)), fol = new Set(list('feedtrip', f=>TS()[f.id] && !mine.has(f.id)).map(f=>f.id)), out = [];
     for(const r of Object.values(R)){
       if(!r || r.deleted || !r.trip || !(mine.has(r.trip) || fol.has(r.trip)) || isBlk(r)) continue;
@@ -12796,6 +12799,7 @@ ${pm.join('\n')}</Document></kml>`;
       else if(r.type === 'follower' && mine.has(r.trip) && !r.id.endsWith(':' + me) && (r.createdAt||0) > seen) out.push({k:'follower', r, t});
       else if(r.type === 'feed' && fol.has(r.trip) && (r.createdAt||0) > seen) out.push({k:'post', r, t});
     }
+    out.forEach(e=>{ e.nw = e.t > seen0; });
     return out.sort((a,b)=>b.t-a.t);
   }
   function socPill(){
@@ -12808,12 +12812,12 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function socialHub(){ shareHub(); }
   function socialHTML(cur){
-    const ev = socEvents(), mineT = Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted), others = mineT.filter(x=>x !== cur);
+    const ev = socEvents(true), mineT = Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted), others = mineT.filter(x=>x !== cur);
     const fol = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted);
     const ttl = ftid => { const ft = R[ftid]; return ft ? ft.titre : ''; };
     const evRow = e => { const r = e.r, w = esc(r.who || 'Quelqu’un');
       const txt = e.k === 'like' ? `❤️ ${w} aime ta publication` : e.k === 'comment' ? `💬 ${w} : « ${esc(String(r.text||'').slice(0, 80))} »` : e.k === 'follower' ? `👀 ${w} suit ton voyage` : `📸 Nouvelle étape : ${esc(r.titre || r.lieu || '')}`;
-      return `<button type="button" class="cv-prow" onclick="CV.feedView('${esc(r.trip)}')"><span>${txt}<small class="v-sum-small" style="display:block">${esc(ttl(r.trip))} · ${when(e.t)}</small></span><span>›</span></button>`; };
+      return `<button type="button" class="cv-prow${e.nw ? ' sc-new' : ''}" onclick="CV.feedView('${esc(r.trip)}')"><span>${txt}<small class="v-sum-small" style="display:block">${esc(ttl(r.trip))} · ${when(e.t)}</small></span><span>›</span></button>`; };
     const nFw = mineT.reduce((s, tid)=>s + list('follower', x=>x.trip===ftId(tid) && !isBlk(x)).length, 0);
     const pubRow = tid => { const t = R[tid], fw = list('follower', x=>x.trip===ftId(tid) && !isBlk(x)), lk = list('like', l=>l.trip===ftId(tid) && l.on && !isBlk(l)).length, cm = list('comment', c=>c.trip===ftId(tid) && !isBlk(c)).length;
       return `<div class="sh-card"><div class="sh-k">📣 ${esc(t.titre)}</div>
@@ -12826,7 +12830,7 @@ ${pm.join('\n')}</Document></kml>`;
       return `<div class="cv-prow" style="cursor:default"><span><b>${esc(t.titre)}</b><small class="v-sum-small" style="display:block">${who || 'seul(e)'}${t.debut ? ' · ' + tripDates(t) : ''}</small></span>
         ${c ? `<button type="button" class="cv-code" style="border:0;background:none;font:inherit;font-weight:700" onclick="CV.tripShareSheet('${t.id}')">${esc(c)}</button>` : `<button type="button" class="v-btn sec" style="width:auto;padding:6px 10px;margin:0" onclick="CV.go('${t.id}');CV.shareHub()">🔗 Partager</button>`}</div>`; };
     return `
-      ${ev.length ? `<div class="sh-card"><div class="sh-k">✨ Nouveautés (${ev.length})</div>${ev.slice(0, 30).map(evRow).join('')}</div>` : '<div class="v-sum-small" style="margin-bottom:10px">Rien de nouveau depuis ta dernière visite.</div>'}
+      ${ev.length ? `<div class="sh-card"><div class="sh-k">✨ Nouveautés · 24 h</div>${ev.slice(0, 40).map(evRow).join('')}</div>` : '<div class="v-sum-small" style="margin-bottom:10px">Rien de nouveau ces dernières 24 heures.</div>'}
       <div class="sh-st" style="margin:4px 0 12px"><span>👀 <b>${nFw}</b> abonné${nFw>1?'s':''}</span><span>➡️ <b>${fol.length}</b> voyage${fol.length>1?'s':''} suivi${fol.length>1?'s':''}</span></div>
       ${others.length ? `<h3>📣 Mes voyages publiés</h3>${others.map(pubRow).join('')}` : (cur ? '' : '<h3>📣 Mes voyages publiés</h3><div class="v-sum-small" style="margin-bottom:8px">Aucun voyage publié pour l’instant : dans un voyage, touche Partager puis Publier pour des abonnés.</div>')}
       <h3>➡️ Les voyages que je suis</h3>${fol.map(f=>{ const n = list('feed', x=>x.trip===f.id && !x.deleted).length; return `<button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b>${esc(f.titre)}</b><small class="v-sum-small" style="display:block"><span>par ${esc(f.owner || '?')}</span> · <span>${n} étape${n>1?'s':''}</span> · <span>code ${esc(TS()[f.id])}</span></small></span><span>›</span></button>`; }).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Aucun pour l’instant.</div>'}
@@ -12974,7 +12978,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-13u';
+  const BUILD = '2026-10-13w';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
