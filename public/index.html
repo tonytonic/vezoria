@@ -2,6 +2,42 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>/* Filet de sécurité : jamais d’écran vide sans explication (JavaScript ancien exprès) */
+(function(){
+  var errs = [], shown = false, old = false;   // « old » : testé par le petit script suivant (pas de new Function : interdit par la CSP)
+  window.addEventListener('error', function(e){ if (errs.length < 3) errs.push((e.message || 'erreur') + (e.filename ? ' (' + String(e.filename).split('/').pop() + ':' + e.lineno + ')' : '')); });
+  window.addEventListener('unhandledrejection', function(e){ if (errs.length < 3) errs.push('promesse : ' + (e.reason && e.reason.message || e.reason)); });
+  function chrome(){ var m = navigator.userAgent.match(/Chrome\/(\d+)/); return m ? 'Chrome ' + m[1] : ''; }
+  function show(){
+    if (shown || window.__vzReady) return; shown = true;
+    var d = document.createElement('div');
+    d.setAttribute('style', 'position:fixed;inset:0;top:0;left:0;right:0;bottom:0;z-index:2147483647;background:#2A1238;color:#fff;font:15px/1.5 -apple-system,Roboto,sans-serif;padding:40px 22px;overflow:auto;text-align:left');
+    var info = (old ? 'Navigateur trop ancien / browser too old. ' : '') + chrome() + ' · ' + navigator.userAgent.replace(/^Mozilla\/5\.0 /, '').slice(0, 160) + (errs.length ? ' · ' + errs.join(' | ') : '');
+    d.innerHTML = '<div style="max-width:460px;margin:0 auto"><div style="font-size:40px">🧭</div>'
+      + '<h1 style="font-size:20px;margin:8px 0 10px">Vezoria n’arrive pas à démarrer</h1>'
+      + '<p style="margin:0 0 12px;opacity:.9">' + (old ? 'Le navigateur de ce téléphone est trop ancien pour Vezoria.' : 'Le chargement a échoué sur ce téléphone.') + '</p>'
+      + '<ol style="margin:0 0 16px;padding-left:20px;opacity:.9"><li>Play Store : mets à jour <b>Google Chrome</b> et <b>Android System WebView</b> (et active Chrome s’il est désactivé).</li>'
+      + '<li>Vérifie ta connexion Internet.</li><li>Touche « Réparer » ci-dessous.</li></ol>'
+      + '<button id="vz-boot-re" style="font:inherit;font-weight:600;padding:12px 18px;border:0;border-radius:12px;background:#a855f7;color:#fff;margin:0 8px 8px 0">Réessayer</button>'
+      + '<button id="vz-boot-fix" style="font:inherit;padding:12px 18px;border:1px solid rgba(255,255,255,.5);border-radius:12px;background:transparent;color:#fff;margin:0 0 8px">Réparer</button>'
+      + '<p style="margin:14px 0 4px;font-size:13px;opacity:.75">Can’t start Vezoria: update Google Chrome and Android System WebView from the Play Store, check your connection, then tap “Réparer” (repair).</p>'
+      + '<p style="margin:12px 0 0;font-size:11px;opacity:.55;word-break:break-word">Info : <span id="vz-boot-info"></span></p></div>';
+    (document.body || document.documentElement).appendChild(d);
+    document.getElementById('vz-boot-info').textContent = info;
+    document.getElementById('vz-boot-re').onclick = function(){ location.reload(); };
+    document.getElementById('vz-boot-fix').onclick = function(){
+      var jobs = [];   // on vide seulement le cache de l’appli (fichiers du site), jamais les voyages
+      try { if (navigator.serviceWorker) jobs.push(navigator.serviceWorker.getRegistrations().then(function(rs){ return Promise.all(rs.map(function(r){ return r.unregister(); })); })); } catch (e) {}
+      try { if (window.caches) jobs.push(caches.keys().then(function(ks){ return Promise.all(ks.map(function(k){ return caches.delete(k); })); })); } catch (e) {}
+      Promise.all(jobs).then(function(){ location.reload(); }, function(){ location.reload(); });
+    };
+  }
+  window.__vzBootFail = show;
+  document.addEventListener('DOMContentLoaded', function(){ if (!window.__vzES2020) { old = true; show(); } });
+  setTimeout(show, 8000);
+})();
+</script>
+<script>window.__vzES2020 = (null ?? ({a:1})?.a) === 1;   /* erreur de syntaxe sur un navigateur trop ancien → reste indéfini */</script>
 <script>/* Vezoria « version test » : servie par un carnet sous /vezoria/ (même adresse, même stockage, même serveur que le carnet) */
 window.VZ_HOST = /^\/vezoria(\/|$)/.test(location.pathname) && !/(^|\.)vezoria\.pages\.dev$/.test(location.hostname);
 window.VZ_B = '';
@@ -12986,7 +13022,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-14c';
+  const BUILD = '2026-10-14d';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -13101,6 +13137,7 @@ ${pm.join('\n')}</Document></kml>`;
   return api;
 })();
 CV.init();
+window.__vzReady = true;   // l’appli a démarré : le filet de sécurité ne s’affichera pas
 
 </script>
 </body>
