@@ -49,6 +49,18 @@ async function rateIp(env, request, bucket, limit, cost = 1) {
     return true;
   } catch (e) { return true; }   // en cas de souci, on ne bloque jamais un vrai voyageur
 }
+// Plafond par carnet (toutes connexions confondues) : une synchro qui tournerait en boucle ne peut pas épuiser l’offre gratuite.
+// Variable facultative SYNC_MAX_H (synchros par heure et par carnet, 120 par défaut ≈ 2 par minute).
+let rateSpReady = false;
+async function rateSpace(env, space, limit) {
+  try {
+    if (!env.DB) return true;
+    const hour = Math.floor(Date.now() / 3600e3), key = 'sp:' + space.slice(0, 24);
+    if (!rateSpReady) { await env.DB.prepare('CREATE TABLE IF NOT EXISTS rate_ip (k TEXT PRIMARY KEY, hour INTEGER NOT NULL, n INTEGER NOT NULL)').run(); rateSpReady = true; }
+    const r = await env.DB.prepare('INSERT INTO rate_ip (k, hour, n) VALUES (?1, ?2, 1) ON CONFLICT (k) DO UPDATE SET n = CASE WHEN rate_ip.hour = ?2 THEN rate_ip.n + 1 ELSE 1 END, hour = ?2 RETURNING n').bind(key, hour).first();
+    return !r || r.n <= limit;
+  } catch (e) { return true; }
+}
 const TOO_MANY = 'Trop d’envois depuis cette connexion : réessaie dans une heure. — Too many uploads from this connection: try again in an hour.';
 
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
@@ -171,6 +183,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const since = Math.max(0, Number(body.since) || 0);
   const changes = Array.isArray(body.changes) ? body.changes.slice(0, MAX_CHANGES) : [];
   if (!(await rateIp(env, request, 'sy', 6000))) return json({ error: TOO_MANY, retry: 3600 }, 429);
+  if (!(await rateSpace(env, space, Number(env.SYNC_MAX_H) || 120))) return json({ error: 'Pause de synchronisation : ce carnet s’est synchronisé très souvent. Reprise automatique dans quelques minutes.', retry: 600 }, 429);
   if (changes.length && !(await rateIp(env, request, 'sc', 50000, changes.length))) return json({ error: TOO_MANY, retry: 3600 }, 429);
   const now = Date.now();
 
@@ -197,7 +210,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (Math.random() < 0.002 && waitUntil) waitUntil(sweepInactive(env).catch(() => {}));
   if (Math.random() < 0.1 && waitUntil) waitUntil(sweepOrphans(env).catch(() => {}));   // vérifie au plus 1 fois / 24 h
   // rappels programmés (notifications) : envoyés quand c'est l'heure, à l'occasion des synchros
-  if (Math.random() < 0.25 && waitUntil) waitUntil(fetch(new URL('/api/push?a=flush', request.url)).catch(() => {}));
+  // (1 synchro sur 12 environ : chaque appel compte dans l’offre gratuite ; le « cron » facultatif fait le reste)
+  if (Math.random() < 0.08 && waitUntil) waitUntil(fetch(new URL('/api/push?a=flush', request.url)).catch(() => {}));
   let wiped = 0;
   try { const w = await env.DB.prepare('SELECT at FROM space_wipes WHERE space = ?1').bind(space).first(); if (w) wiped = w.at; } catch (e) {}
   return json(wiped ? { now, records: results.map(r => JSON.parse(r.data)), wiped } : { now, records: results.map(r => JSON.parse(r.data)) });
