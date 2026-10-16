@@ -2466,7 +2466,7 @@ const CV = (function(){
     let changed = 0; const hadDirty = M.dirty.length;
     try {
       const now0 = Date.now(), auto = manual !== true && !pull;
-      try { mvMark(); } catch(e){}
+      try { mvMark(); mbTouch(); fwKeyTouch().catch(()=>{}); } catch(e){}
       if(mainOn && !(auto && !M.dirty.length && now0 - (M.sync.last || 0) < 120000)){   // rien à envoyer et vu il y a moins de 2 min : on passe
       const ids = [...M.dirty];
       let first = true;
@@ -2487,6 +2487,7 @@ const CV = (function(){
         if(auto && !(sp.dirty || []).length && sp.last && now0 - sp.last < (fol ? 900000 : 300000)) continue;
         changed += await syncSpace(sp); }
       try { if(movedApply()) changed++; } catch(e){}
+      feedMoveCheck().catch(()=>{}); feedOldWipe().catch(()=>{});
       setTimeout(()=>{ tripExtract().catch(()=>{}); }, 20000);
       if(showC) cryptHide('🔒 Données chiffrées et synchronisées');
       else if(manual) toast('☁️ Synchronisé');
@@ -3064,18 +3065,72 @@ const CV = (function(){
     cryptHide(fail ? '⚠️ ' + fail + ' photo(s) non récupérée(s)' : '📥 Photos du voyage récupérées');
     return {n, fail};
   }
-  async function tripUnshare(id){
-    if(!(await uiConfirm('Arrêter le partage de ce voyage sur ce téléphone ?\nTon voyage reste ici ; tu ne recevras plus les modifications des autres. (Il repasse dans ton carnet principal si celui-ci est synchronisé.)'))) return;
-    // avant de quitter : toutes les photos du voyage reviennent (dans le carnet principal s’il est synchronisé, sinon sur ce téléphone)
-    if(TS()[id] && spaceObj(TS()[id]) && photoApi()){
-      const res = await tripPhotosHome(id, TS()[id]);
+  // 👥 présence : chaque téléphone membre d’un voyage partagé y dépose « je suis là » (1 fois par semaine au plus)
+  function mbTouch(){
+    const now = Date.now(), me = devId(), out = [];
+    Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(!t || t.type !== 'trip' || t.deleted || t.demo || !spaceObj(c)) return;
+      const id = 'mb:' + tid + ':' + me, cur = R[id];
+      if(!cur || cur.deleted || !cur.on || now - (cur.at || 0) > 7 * 864e5) out.push({id, type:'member', trip:tid, dev:me, who: myName() || (M.me && prof(M.me) ? pname(M.me) : ''), at:now, on:true}); });
+    if(out.length) putQuiet(out);
+  }
+  const mbOthers = tid => list('member', m=>m.trip === tid && m.dev !== devId() && m.on && Date.now() - (m.at || 0) < 60 * 864e5);
+  // envoie une version « pour le voyage partagé seulement » de quelques fiches, sans toucher à celles de ce téléphone
+  async function spacePushOnly(sp, recs){
+    const keep = recs.map(r=>R[r.id]);
+    M.leaveBak = keep.filter(Boolean).map(clone); persist();   // copie de secours : si l’appli est coupée pendant l’envoi, tout est remis au démarrage
+    recs.forEach(r=>{ stamp(r); R[r.id] = r; if(!sp.dirty.includes(r.id)) sp.dirty.push(r.id); });
+    try { await syncSpace(sp); } finally { recs.forEach((r, k)=>{ if(keep[k]) R[keep[k].id] = Object.assign(keep[k], {updatedAt: Date.now() + 1}); else delete R[r.id]; }); delete M.leaveBak; persist(); }
+  }
+  setTimeout(()=>{ try { if(M.leaveBak && M.leaveBak.length){ M.leaveBak.forEach(r=>{ R[r.id] = Object.assign(r, {updatedAt: Date.now()}); markDirty(r.id); }); delete M.leaveBak; persist(); refresh(); } } catch(e){} }, 2500);
+  // 🚪 quitter un voyage partagé : d’abord le choix pour SES photos (droit à l’image), puis le départ
+  function tripUnshare(id){
+    const t = R[id]; if(!t) return;
+    const code = TS()[id], on = code && spaceObj(code);
+    const mine = on ? Object.values(R).filter(r=>r && !r.deleted && r.trip === id && r.type !== 'member' && photoRefs(r).length && r.createdBy && r.createdBy === M.me) : [];
+    const nPh = mine.reduce((s, r)=>s + photoRefs(r).length, 0), others = on ? mbOthers(id) : [];
+    openSheet(`<h2>🚪 Quitter « <span data-notr>${esc(t.titre)}</span> »</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">Ton voyage reste sur ce téléphone avec toutes ses photos${M.sync.on && M.sync.code ? ' (et dans ton carnet en ligne)' : ''}. Tu ne recevras plus les modifications des autres.</div>
+      ${nPh ? `<div class="sh-k" style="font-size:1.05rem;margin-bottom:6px">📸 Tes photos dans ce voyage : <b data-notr>${nPh}</b></div>
+        <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${id}','keep')"><i>🤝</i><span><b>Les laisser aux autres</b><small>Tes compagnons gardent les souvenirs et photos que tu as ajoutés.</small></span></button>
+        <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${id}','take')"><i>🎒</i><span><b>Partir avec mes photos</b><small>Les souvenirs et photos que tu as ajoutés sont retirés du voyage partagé (et du serveur). Tu les gardes chez toi.</small></span></button>`
+      : `<button type="button" class="v-btn" onclick="CV.tripLeaveGo('${id}','keep')">🚪 Quitter le voyage partagé</button>`}
+      ${on && !others.length ? `<div class="v-sum-small" style="margin-top:8px">ℹ️ Personne d’autre n’a ouvert ce voyage depuis 2 mois : tu pourras effacer son dossier du serveur.</div>` : ''}
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
+  }
+  async function tripLeaveGo(id, mode){
+    const code = TS()[id], sp = code && spaceObj(code); closeSheet(true);
+    if(sp && photoApi()){
+      // 1) toutes les photos du voyage reviennent (dans le carnet principal s’il est synchronisé, sinon sur ce téléphone)
+      const res = await tripPhotosHome(id, code);
       if(res.fail && !(await uiConfirm(MSGT('{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).').replace('{0}', res.fail) + '\n\n' + MSGT('OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.')))) return;
+      try {
+        const push = [];
+        // 2) « partir avec mes photos » : mes souvenirs et photos sont retirés du voyage partagé (je les garde ici)
+        let gone = [];
+        if(mode === 'take'){
+          const mine = Object.values(R).filter(r=>r && !r.deleted && r.trip === id && r.type !== 'member' && photoRefs(r).length && r.createdBy && r.createdBy === M.me);
+          mine.forEach(r=>push.push(Object.assign(clone(r), {deleted:true})));
+          gone = mine.flatMap(photoRefs);
+        }
+        // 3) ma présence passe à « parti »
+        const mb = 'mb:' + id + ':' + devId(); push.push({id:mb, type:'member', trip:id, dev:devId(), who:(R[mb] && R[mb].who) || myName() || '', at:Date.now(), on:false});
+        await spacePushOnly(sp, push);
+        if(gone.length){ cryptShow('🎒 Je retire tes photos du voyage partagé…');
+          for(const p of gone) for(const v of [p, p + '.t']){ try { await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(v, code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); } catch(e){} }
+          cryptHide('🎒 Tes photos sont retirées du voyage partagé'); }
+        // 4) dernier à partir : le dossier du voyage ne sert plus à personne → on propose de l’effacer
+        if(!mbOthers(id).length && !Object.values(FT()).includes(code) && (await uiConfirm(MSGT('Personne d’autre n’utilise ce voyage partagé depuis 2 mois.') + '\n\n' + MSGT('Effacer aussi son dossier du serveur ? (recommandé : ton voyage et ses photos restent chez toi)')))){
+          const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); if(r.ok) toast('🗑 Dossier du voyage partagé effacé du serveur');
+        }
+      } catch(e){ /* sans réseau : on part quand même, rien n’est perdu chez moi */ }
     }
-    const code = TS()[id]; delete TS()[id];
+    delete TS()[id];
     (M.mvSkip = M.mvSkip || {})[id] = 1; if(R['mv:' + id] && !R['mv:' + id].deleted) putQuiet([Object.assign(clone(R['mv:' + id]), {deleted:true})]);   // plus de « déménagement » : les autres appareils ne le rejoignent plus d’eux-mêmes
-    if(!Object.values(TS()).includes(code)) M.spaces = (M.spaces||[]).filter(x=>x.code!==code);
+    if(code && !Object.values(TS()).includes(code)) M.spaces = (M.spaces||[]).filter(x=>x.code!==code);
+    M.pq = (M.pq||[]).filter(x=>photoCode(x) !== code);
+    Object.values(R).filter(r=>r && r.type === 'member' && r.trip === id).forEach(r=>{ delete R[r.id]; });   // la présence ne part pas dans mon carnet
     Object.values(R).filter(r=>!r.demo && (r.id===id || r.trip===id)).forEach(r=>markDirty(r.id));
-    persist(); closeSheet(true); refresh();
+    persist(); refresh(); queueSync(); toast('🚪 Tu as quitté le voyage partagé');
   }
   function tripJoin(){
     const hosted = /^https?:/.test(location.protocol);
@@ -13584,6 +13639,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.carnetPublish()">👀 Publier et inviter</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
   }
   async function carnetPublish(){
+    try { await fKey(); } catch(e){}
     const sel = [...document.querySelectorAll('.cpub:checked')].map(i=>i.value); if(!sel.length){ alert('Coche au moins un voyage.'); return; }
     if(!myName()){ const n = (await uiPrompt('Ton prénom (affiché à tes abonnés) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
     let c = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '';
@@ -13630,7 +13686,7 @@ ${pm.join('\n')}</Document></kml>`;
   function feedBuild(tid){
     const c = feedCode(tid), t = R[tid]; if(!c || !t) return 0;
     TS()[ftId(tid)] = c; const out = [], cov = coverId(t);
-    const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', cover: cov || '', blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
+    const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
     if(!R[head.id] || stripStamp(R[head.id]) !== stripStamp(head)) out.push(head);
     const keep = new Set();
     list('souv', s=>s.trip===tid && !s.priv && ((s.photos||[]).length || (s.texte||'').trim())).forEach(s=>{
@@ -13715,11 +13771,12 @@ ${pm.join('\n')}</Document></kml>`;
     if(out.length){ putQuiet(out); M.fdel = (M.fdel||[]).concat(dels); persist(); try { await syncNow(); } catch(e){} feedPurge(); }
     return n;
   }
-  function feedAll(){ feedPurge(); Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); feedUpload(); feedReconcile().then(n=>{ if(n) refresh(); }).catch(()=>{}); }
+  function feedAll(){ if(!M.fkey) fKey().catch(()=>{}); feedPurge(); Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); feedUpload(); feedReconcile().then(n=>{ if(n) refresh(); }).catch(()=>{}); }
   setInterval(()=>{ if(document.visibilityState === 'visible' && Object.keys(FT()).length) feedAll(); }, 60000);
   setTimeout(feedAll, 5000);
   async function feedPublish(tid){
     const t = R[tid || M.trip]; if(!t || t.demo) return;
+    try { await fKey(); } catch(e){}
     if(!myName()){ const n = (await uiPrompt('Ton prénom (affiché à tes abonnés) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
     if(!feedCode(t.id)){
       if(!(await uiConfirm(`Publier « ${t.titre} » pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.\nUn souvenir marqué « privé » n’est jamais publié.\nIls voient les photos en vignettes (taille réduite).\nTa position n’est jamais montrée, sauf si chaque voyageur l’active lui-même dans le suivi du voyage.\nIls pourront mettre des ❤️ et des commentaires.`))) return;
@@ -13760,7 +13817,8 @@ ${pm.join('\n')}</Document></kml>`;
     const ft = Object.entries(TS()).filter(([k,c])=>c===code && R[k] && R[k].type==='feedtrip' && !R[k].deleted).map(([k])=>R[k])[0];
     if(!ft){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); alert('Aucun voyage publié avec ce code.'); if(web) webGone(); return; }
     if(web) M.webCode = code;
-    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who: myName() || 'Un proche'}; if(!R[fw.id]){ putQuiet([fw]); socialPush(ft.id, 'follow', ''); }
+    let pk; try { pk = (await fKey()).pub; } catch(e){}
+    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who: myName() || 'Un proche', pk}; if(!R[fw.id]){ putQuiet([fw]); socialPush(ft.id, 'follow', ''); }
     persist(); syncNow(); closeSheet(true); feedView(ft.id); toast('👀 Tu suis « ' + ft.titre + ' »');
   }
   function followSheet(){
@@ -13878,10 +13936,83 @@ ${pm.join('\n')}</Document></kml>`;
   async function userHide(id){ const d = devOfRec(R[id]); if(!d) return; if(!(await uiConfirm('Masquer les commentaires et ❤️ de cette personne sur ce téléphone ?'))) return; (M.blkDev = M.blkDev || {})[d] = 1; persist(); closeSheet(true); feedRepaintAll(); toast('🙈 Masqué'); }
   async function userBlock(id){
     const r = R[id], d = devOfRec(r); if(!r || !d) return; const tid = String(r.trip).replace(/^ft:/,'');
-    if(!(await uiConfirm(`Bloquer ${r.who || 'cette personne'} ?\n\nSes commentaires et ❤️ sont masqués pour tous tes abonnés et elle est retirée de la liste.\nPour l’empêcher aussi de voir tes souvenirs, touche ensuite « 🔁 Nouveau lien abonné » et renvoie le lien seulement aux personnes de ton choix.`))) return;
-    const b = (M.feedBlk = M.feedBlk || {})[tid] || (M.feedBlk[tid] = []); if(!b.includes(d)) b.push(d);
-    const fw = R['fw:' + ftId(tid) + ':' + d]; if(fw) putQuiet([Object.assign(clone(fw), {deleted:true})]);
-    persist(); feedBuild(tid); syncNow(); closeSheet(true); feedRepaintAll(); toast('🚫 Bloqué');
+    if(!(await uiConfirm(`Bloquer ${r.who || 'cette personne'} ?\n\nSes commentaires et ❤️ sont masqués pour tous tes abonnés, elle est retirée de la liste et ne voit plus tes souvenirs : un nouveau lien est transmis automatiquement à tes autres abonnés, pas à elle.`))) return;
+    const code = FT()[tid], grp = code ? Object.keys(FT()).filter(x=>FT()[x] === code) : [tid];
+    grp.forEach(x=>{ const b = (M.feedBlk = M.feedBlk || {})[x] || (M.feedBlk[x] = []); if(!b.includes(d)) b.push(d); });
+    persist(); closeSheet(true);
+    await feedRevoke(tid, d, r.who || '');
+    feedRepaintAll();
+  }
+  // 🔑 clés personnelles (ECDH P-256) : l’auteur transmet un nouveau lien à chaque abonné, illisible pour les autres
+  async function fKey(){
+    if(M.fkey && M.fkey.pub && M.fkey.priv) return M.fkey;
+    const kp = await crypto.subtle.generateKey({name:'ECDH', namedCurve:'P-256'}, true, ['deriveKey']);
+    const [pub, priv] = await Promise.all([crypto.subtle.exportKey('jwk', kp.publicKey), crypto.subtle.exportKey('jwk', kp.privateKey)]);
+    M.fkey = {pub:{kty:pub.kty, crv:pub.crv, x:pub.x, y:pub.y}, priv}; persist(); return M.fkey;
+  }
+  async function fShared(privJwk, pubJwk){
+    const [pr, pu] = await Promise.all([crypto.subtle.importKey('jwk', privJwk, {name:'ECDH', namedCurve:'P-256'}, false, ['deriveKey']),
+      crypto.subtle.importKey('jwk', pubJwk, {name:'ECDH', namedCurve:'P-256'}, false, [])]);
+    return crypto.subtle.deriveKey({name:'ECDH', public:pu}, pr, {name:'AES-GCM', length:256}, false, ['encrypt', 'decrypt']);
+  }
+  // abonné : sa serrure (clé publique) part avec sa fiche « abonné »
+  async function fwKeyTouch(){
+    const me = devId(), mine = list('follower', f=>String(f.id).endsWith(':' + me) && !f.pk && TS()[f.trip] && !FT()[String(f.trip).replace(/^ft:/,'')]); if(!mine.length) return;
+    const k = await fKey(); putQuiet(mine.map(f=>Object.assign(clone(f), {pk:k.pub})));
+  }
+  // auteur : retirer vraiment l’accès d’un abonné = nouveau lien, transmis chiffré à chacun des autres
+  async function feedRevoke(tid, dev, who){
+    const old = FT()[tid], oldSp = old && spaceObj(old); if(!old || !oldSp) return;
+    const grp = Object.keys(FT()).filter(x=>FT()[x] === old), ids = new Set(grp.map(ftId)), me = devId();
+    const byDev = {}; list('follower', f=>ids.has(f.trip)).forEach(f=>{ const d = String(f.id).split(':').pop(); if(d !== dev && d !== me && !(M.blkDev||{})[d]) byDev[d] = (byDev[d] && byDev[d].pk) ? byDev[d] : f; });
+    const withKey = Object.values(byDev).filter(f=>f.pk), noKey = Object.values(byDev).filter(f=>!f.pk);
+    cryptShow('🔑 Nouveau lien pour tes abonnés…');
+    try {
+      const k = await fKey(), c = genCode(), env = [];
+      for(const f of withKey){ const d = String(f.id).split(':').pop();
+        try { const key = await fShared(k.priv, f.pk), iv = crypto.getRandomValues(new Uint8Array(12));
+          const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(c)));
+          env.push({id:'fx:' + d, type:'feedmove', trip:ftId(grp[0]), dev:d, opk:k.pub, iv:b64(iv), ct:b64(ct), at:Date.now()}); } catch(e){} }
+      // l’ancien lien ne montre plus rien : tout y est retiré, il ne reste que les nouveaux liens chiffrés
+      const all = Object.values(R).filter(r=>r && !r.deleted && (ids.has(r.trip) || ids.has(r.id) || grp.some(x=>r.id === 'fk:' + x)));
+      await spacePushOnly(oldSp, [...all.map(r=>Object.assign(clone(r), {deleted:true})), ...env]);
+      // nouveau lien : mêmes voyages, mêmes ❤️ et commentaires (sauf ceux de la personne bloquée)
+      (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
+      grp.forEach(x=>{ FT()[x] = c; TS()[ftId(x)] = c; }); if(M.feedAll === old) M.feedAll = c;
+      Object.values(R).filter(r=>r && (ids.has(r.trip) || ids.has(r.id)) && String(r.id).split(':').pop() === dev && /^(fw|lk):/.test(r.id)).forEach(r=>{ r.deleted = true; });
+      Object.values(R).filter(r=>r && (ids.has(r.trip) || ids.has(r.id) || grp.some(x=>r.id === 'fk:' + x))).forEach(r=>markDirty(r.id));
+      M.spaces = M.spaces.filter(x=>x.code !== old); (M.fold = M.fold || []).push({code:old, at:Date.now()});   // l’ancien lien est effacé du serveur dans 2 mois
+      if(M.fup) delete M.fup[old]; M.fq = (M.fq||[]).filter(x=>x[0] !== old); M.fdel = (M.fdel||[]).filter(x=>x[0] !== old); M.fwipe = (M.fwipe||[]).concat([old]);   // vignettes de l’ancien lien : effacées
+      persist(); grp.forEach(x=>feedBuild(x));
+      try { await syncNow(); feedUpload(); feedPurge(); } catch(e){}
+      cryptHide('🔑 Accès retiré' + (who ? ' à ' + who : ''));
+      toast(withKey.length ? `🔑 ${withKey.length} abonné(s) passent automatiquement au nouveau lien` : '🔑 Nouveau lien créé');
+      if(noKey.length && (await uiConfirm(MSGT('{0} abonné(s) ont une ancienne version de l’appli et ne reçoivent pas le nouveau lien automatiquement.').replace('{0}', noKey.length) + '\n\n' + MSGT('Leur envoyer le nouveau lien maintenant (pas à la personne bloquée) ?')))) await carnetInvite(c);
+    } catch(e){ cryptHide(); alert('Retrait impossible pour l’instant (réseau ?) : ' + (e.message || e)); }
+    refresh();
+  }
+  // abonné : l’auteur a changé de lien → on passe au nouveau, sans rien demander
+  async function feedMoveCheck(){
+    const me = devId(), done = M.fmoved || (M.fmoved = {});
+    for(const m of list('feedmove', x=>x.dev === me && x.opk && x.ct && TS()[x.trip])){
+      const old = TS()[m.trip], key = m.id + ':' + old; if(done[key]) continue; done[key] = 1;
+      try {
+        const k = await fKey(), sk = await fShared(k.priv, m.opk);
+        const c = new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(m.iv)}, sk, unb64(m.ct)));
+        if(!/^[A-Z0-9-]{8,}$/.test(c) || spaceObj(c)) continue;
+        Object.keys(TS()).forEach(x=>{ if(TS()[x] === old) delete TS()[x]; }); M.spaces = (M.spaces||[]).filter(x=>x.code !== old);
+        if(M.webCode === old) M.webCode = c;
+        M.spaces.push({code:c, since:0, dirty:[], last:0, err:''}); const sp = spaceObj(c); await syncSpace(sp, true);
+        list('feedtrip', f=>TS()[f.id] === c && !f.deleted).forEach(ft=>{ const id = 'fw:' + ft.id + ':' + me; if(!R[id] || R[id].deleted) putQuiet([{id, type:'follower', trip:ft.id, who: myName() || 'Un proche', pk:k.pub}]); });
+        persist(); refresh();
+      } catch(e){}
+    }
+  }
+  // anciens liens retirés : effacés du serveur 2 mois après (le temps que tous les abonnés soient passés au nouveau)
+  async function feedOldWipe(){
+    const due = (M.fold||[]).filter(x=>Date.now() - x.at > 60 * 864e5); if(!due.length || !apiUrl()) return;
+    for(const x of due){ try { const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(x.code)}}); if(r.ok || r.status === 404) M.fold = M.fold.filter(y=>y !== x); } catch(e){} }
+    persist();
   }
   function fwBlock(fwid){ userBlock(fwid); setTimeout(()=>{ try { socialHub(); } catch(e){} }, 150); }
   async function feedReset(tid){
@@ -14001,7 +14132,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-16r';
+  const BUILD = '2026-10-16s';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -14011,7 +14142,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, tripLeaveGo, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
