@@ -1,4 +1,6 @@
 I18N.load({
+"📸 Photos : {0} / {1}…":"📸 Fotoğraflar: {0} / {1}…",
+"Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"«Değiştir» ile iki kez içe aktarılan bir seyahatin fazla fotoğrafları hemen aşağıda temizlenir.",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"Yeni bir şey yok: bu dosyadaki her şey zaten bu telefonda.",
 "{0} photo(s) déjà sur ce téléphone, gardées telles quelles.":"{0} fotoğraf zaten bu telefonda, olduğu gibi bırakıldı.",
 "✈️ Carte d’embarquement lue — vérifie puis Enregistrer":"✈️ Biniş kartı okundu — kontrol et, sonra Kaydet",

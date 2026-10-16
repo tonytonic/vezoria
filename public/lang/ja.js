@@ -1,4 +1,6 @@
 I18N.load({
+"📸 Photos : {0} / {1}…":"📸 写真：{0} / {1}…",
+"Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"「置き換え」で 2 回インポートした旅行の余分な写真は、すぐ下で整理できます。",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"新しいものはありません：このファイルの内容はすべてこのスマホにあります。",
 "{0} photo(s) déjà sur ce téléphone, gardées telles quelles.":"{0} 枚の写真はすでにこのスマホにあるので、そのまま残しました。",
 "✈️ Carte d’embarquement lue — vérifie puis Enregistrer":"✈️ 搭乗券を読み取りました — 確認して保存してね",

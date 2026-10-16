@@ -1,4 +1,6 @@
 I18N.load({
+"📸 Photos : {0} / {1}…":"📸 फ़ोटो: {0} / {1}…",
+"Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"“बदलें” से दो बार इम्पोर्ट हुई यात्रा की फ़ालतू फ़ोटो ठीक नीचे साफ़ होती हैं।",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"कुछ नया नहीं: इस फ़ाइल में जो कुछ है वह पहले से इस फ़ोन पर है।",
 "{0} photo(s) déjà sur ce téléphone, gardées telles quelles.":"{0} फ़ोटो पहले से इस फ़ोन पर थीं, जैसी थीं वैसी रखी गईं।",
 "✈️ Carte d’embarquement lue — vérifie puis Enregistrer":"✈️ बोर्डिंग पास पढ़ लिया — जाँचें, फिर सेव करें",

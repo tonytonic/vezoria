@@ -1,4 +1,6 @@
 I18N.load({
+"📸 Photos : {0} / {1}…":"📸 Fotos: {0} / {1}…",
+"Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"As fotos a mais de uma viagem importada duas vezes com «Substituir» são limpas logo abaixo.",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"Nada de novo: tudo o que este arquivo contém já está neste celular.",
 "{0} photo(s) déjà sur ce téléphone, gardées telles quelles.":"{0} foto(s) já neste celular, mantida(s) como estão.",
 "✈️ Carte d’embarquement lue — vérifie puis Enregistrer":"✈️ Cartão de embarque lido — confira e depois Salvar",
