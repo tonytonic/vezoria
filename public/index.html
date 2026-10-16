@@ -1019,6 +1019,7 @@ body.cv-ph-past .cv-nav{background:rgba(58,33,25,.94);box-shadow:0 14px 34px -10
 .cv-tripcard{display:grid;grid-template-columns:1fr auto;gap:2px 10px;width:100%;text-align:left;background:#fff;border:2px solid transparent;border-radius:18px;
   padding:14px 16px;margin-bottom:8px;box-shadow:var(--shadow);cursor:pointer;color:var(--ink)}
 .cv-tripcard.on{border-color:var(--sun2)}
+.cv-tripw{margin-bottom:12px}.cv-tripw>.cv-tripcard{margin-bottom:6px}.cv-tripact{display:flex;gap:6px}.cv-tripact button{flex:1;min-width:0;border:1.5px solid var(--light);background:#fff;border-radius:12px;padding:7px 8px;font:600 .76rem/1.2 var(--ui);color:var(--ink);cursor:pointer}.cv-tripact button.on{border-color:#86efac;background:#f0fdf4}
 .cv-tripcard .tt{font-family:var(--display);font-style:italic;font-weight:600;font-size:1.2rem}
 .cv-tripcard .tt small{font-family:var(--ui);font-style:normal;font-size:.7rem;color:var(--green)}
 .cv-tripcard .td{grid-column:1;font-size:.8rem;color:var(--gray)}
@@ -11934,10 +11935,12 @@ ${pm.join('\n')}</Document></kml>`;
     ts.forEach(t=>{
       const p = !t.debut ? 'prep' : ph(t);
       if(many && p !== last){ h += `<div class="cv-triph">${lbl[p]}</div>`; last = p; }
-      h += `<button class="cv-tripcard${t.id===cur?' on':''}" data-ph="${p}" onclick="CV.close();CV.go('${t.id}')">
-          <span class="tt">${TS()[t.id] ? '🔗 ' : ''}${esc(t.titre)}${t.archived?' <small>✓ clôturé</small>':''}</span>
+      const act = !t.demo;   // 2 raccourcis par voyage : abonnés (lecture seule) · compagnon (voyage complet)
+      h += `<div class="cv-tripw"><button class="cv-tripcard${t.id===cur?' on':''}" data-ph="${p}" onclick="CV.close();CV.go('${t.id}')">
+          <span class="tt">${TS()[t.id] ? '🔗 ' : ''}<span data-notr>${esc(t.titre)}</span>${t.archived?' <small>✓ clôturé</small>':''}</span>
           <span class="td">${tripDatesLong(t) || 'dates à fixer'}</span>
-          <span class="ins">${(t.voyageurs||[]).filter(prof).map(ini).join('')}</span></button>`;
+          <span class="ins">${(t.voyageurs||[]).filter(prof).map(ini).join('')}</span></button>
+        ${act ? `<div class="cv-tripact"><button type="button" class="${FT()[t.id] ? 'on' : ''}" onclick="CV.close();CV.feedPublish('${t.id}')">${FT()[t.id] ? '👀 Publié · inviter des abonnés' : '👀 Publier pour des abonnés'}</button><button type="button" onclick="CV.close();CV.tripInviteNow('${t.id}')">👥 Ajouter un compagnon</button></div>` : ''}</div>`;
     });
     return h;
   }
@@ -13884,7 +13887,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-16n';
+  const BUILD = '2026-10-16o';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
