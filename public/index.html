@@ -2443,7 +2443,8 @@ const CV = (function(){
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id]));
-        j.records.forEach(r=>{ if(r && (r.type==='trip' || r.type==='feedtrip') && (force || !TS()[r.id])) TS()[r.id] = sp.code; });
+        j.records.forEach(r=>{ if(r && (r.type==='trip' || r.type==='feedtrip') && (force || !TS()[r.id])) TS()[r.id] = sp.code;
+          if(r && (r.type==='feedgrant' || r.type==='packtrip') && r.trip && !TS()[r.trip]) TS()[r.trip] = sp.code; });
         changed += mergeRemote(j.records); sp.since = j.now;
       }
       sp.last = Date.now(); sp.err = '';
@@ -2487,7 +2488,8 @@ const CV = (function(){
         if(auto && !(sp.dirty || []).length && sp.last && now0 - sp.last < (fol ? 900000 : 300000)) continue;
         changed += await syncSpace(sp); }
       try { if(movedApply()) changed++; } catch(e){}
-      feedMoveCheck().catch(()=>{}); feedOldWipe().catch(()=>{});
+      feedMoveCheck().catch(()=>{}); feedGrantCheck().catch(()=>{}); feedOldWipe().catch(()=>{});
+      try { if(await packApply()) { changed++; setTimeout(()=>{ try { syncNow(); } catch(e){} }, 800); } await tripMoveCheck(); } catch(e){}
       setTimeout(()=>{ tripExtract().catch(()=>{}); }, 20000);
       if(showC) cryptHide('🔒 Données chiffrées et synchronisées');
       else if(manual) toast('☁️ Synchronisé');
@@ -3070,7 +3072,8 @@ const CV = (function(){
     const now = Date.now(), me = devId(), out = [];
     Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(!t || t.type !== 'trip' || t.deleted || t.demo || !spaceObj(c)) return;
       const id = 'mb:' + tid + ':' + me, cur = R[id];
-      if(!cur || cur.deleted || !cur.on || now - (cur.at || 0) > 7 * 864e5) out.push({id, type:'member', trip:tid, dev:me, who: myName() || (M.me && prof(M.me) ? pname(M.me) : ''), at:now, on:true}); });
+      const via = (M.viaH||{})[tid] || 'direct', pk = M.fkey && M.fkey.pub;
+      if(!cur || cur.deleted || !cur.on || now - (cur.at || 0) > 7 * 864e5 || cur.via !== via || (pk && !cur.pk)) out.push({id, type:'member', trip:tid, dev:me, who: myName() || (M.me && prof(M.me) ? pname(M.me) : ''), at:now, on:true, via, pk}); });
     if(out.length) putQuiet(out);
   }
   const mbOthers = tid => list('member', m=>m.trip === tid && m.dev !== devId() && m.on && Date.now() - (m.at || 0) < 60 * 864e5);
@@ -3082,6 +3085,116 @@ const CV = (function(){
     try { await syncSpace(sp); } finally { recs.forEach((r, k)=>{ if(keep[k]) R[keep[k].id] = Object.assign(keep[k], {updatedAt: Date.now() + 1}); else delete R[r.id]; }); delete M.leaveBak; persist(); }
   }
   setTimeout(()=>{ try { if(M.leaveBak && M.leaveBak.length){ M.leaveBak.forEach(r=>{ R[r.id] = Object.assign(r, {updatedAt: Date.now()}); markDirty(r.id); }); delete M.leaveBak; persist(); refresh(); } } catch(e){} }, 2500);
+  /* ══════════ 📦 Compagnons : un « paquet de voyages » par personne ══════════
+     Chaque personne invitée reçoit son propre code de paquet, qui liste les codes des voyages qu’on partage avec elle.
+     Retirer un voyage de son paquet = ce voyage change de code ; les autres le reçoivent (leur paquet, ou chiffré pour eux),
+     elle garde sa copie (avec toutes les photos) mais ne reçoit plus rien. */
+  const PACKS = () => M.packs || (M.packs = {});
+  const viaHash = (tid, P) => sid('via:' + tid, P);
+  function packSheet(P){
+    const pk = P ? PACKS()[P] : null, ts = myTrips().sort((a,b)=>(b.debut||'').localeCompare(a.debut||''));
+    if(!ts.length){ alert('Crée d’abord un voyage.'); return; }
+    if(!(M.sync.on && M.sync.code) && !(M.spaces||[]).length && !apiUrl()){ alert('Le partage a besoin de l’appli en ligne.'); return; }
+    openSheet(`<h2>👥 ${pk ? 'Voyages partagés avec <span data-notr>' + esc(pk.who || '?') + '</span>' : 'Inviter un compagnon'}</h2>
+      <div class="v-sum-small" style="margin-bottom:8px">Coche les voyages que cette personne voit et complète avec toi. Tu pourras en retirer un à tout moment, pour elle seulement.</div>
+      ${pk ? '' : `<div class="v-f"><label>Pour qui ?</label><input class="v-in" id="pk-who" placeholder="Prénom (pour t’y retrouver)" maxlength="40"></div>`}
+      ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="pkt" value="${t.id}"${pk ? (pk.trips.includes(t.id) ? ' checked' : '') : ''}> <span data-notr>${esc(t.titre)}</span>${t.debut ? ' <small>' + esc(tripDatesLong(t)) + '</small>' : ''}</label>`).join('')}
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.packSave('${P || ''}')">${pk ? '✅ Enregistrer' : '📤 Créer l’invitation'}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+  }
+  async function packSave(P){
+    const sel = [...document.querySelectorAll('.pkt:checked')].map(i=>i.value), who = ((document.getElementById('pk-who')||{}).value || '').trim();
+    if(!sel.length && !P){ alert('Coche au moins un voyage.'); return; }
+    closeSheet(true);
+    const isNew = !P;
+    if(isNew){ P = genCode(); (M.spaces = M.spaces || []).push({code:P, since:0, dirty:[], last:0, err:''}); PACKS()[P] = {who: who || '?', trips:[], at:Date.now()}; }
+    const pk = PACKS()[P]; TS()['pa:' + P] = P;
+    const add = sel.filter(t=>!pk.trips.includes(t)), rem = pk.trips.filter(t=>!sel.includes(t)), out = [];
+    for(const t of add){
+      if(!(TS()[t] && spaceObj(TS()[t]))){ const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t] = c; photoResend(t); }   // le voyage part sur son propre code (extrait du carnet)
+      out.push({id:'pt:' + t + '@' + P, type:'packtrip', trip:'pa:' + P, tid:t, code:TS()[t], titre:R[t].titre || ''}); pk.trips.push(t); }
+    if(out.length) putQuiet(out);
+    for(const t of rem) await packRemoveTrip(P, t, true);
+    persist(); try { await syncNow(); } catch(e){}
+    if(isNew) inviteSheet('', 'pack', P); else { toast('👥 C’est enregistré'); refresh(); }
+  }
+  // retirer UN voyage à UNE personne
+  async function packRemoveTrip(P, t, quiet){
+    const pk = PACKS()[P], old = TS()[t], oldSp = old && spaceObj(old); if(!pk) return;
+    if(!quiet && !(await uiConfirm(MSGT('Ne plus partager ce voyage avec cette personne ?') + '\n\n' + (pk.who || '') + ' · ' + ((R[t]||{}).titre || '') + '\n\n' + MSGT('Elle garde sa copie (avec les photos) mais ne reçoit plus tes modifications. Les autres compagnons continuent normalement.')))) return;
+    pk.trips = pk.trips.filter(x=>x !== t); persist();
+    { const x = R['pt:' + t + '@' + P] || {id:'pt:' + t + '@' + P, type:'packtrip', trip:'pa:' + P, tid:t};   // retiré de SON paquet seulement
+      TS()['pa:' + P] = P; putQuiet([Object.assign(clone(x), {deleted:true})]); }
+    if(!old || !oldSp) return;
+    cryptShow('🔑 Nouveau code pour ce voyage…');
+    try {
+      const c = genCode(), me = devId(), k = await fKey(), bad = await viaHash(t, P), env = [];
+      // compagnons venus directement (sans paquet) : le nouveau code, chiffré pour chacun
+      for(const m of list('member', y=>y.trip === t && y.on && y.dev !== me && y.pk && y.via && y.via !== bad)){
+        try { const key = await fShared(k.priv, m.pk), iv = crypto.getRandomValues(new Uint8Array(12));
+          const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(c)));
+          env.push({id:'tx:' + t + ':' + m.dev, type:'tripmove', trip:'tm:' + t, tid:t, dev:m.dev, opk:k.pub, iv:b64(iv), ct:b64(ct)}); } catch(e){} }
+      if(env.length) await spacePushOnly(oldSp, env);
+      (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t] = c;
+      Object.values(R).filter(r=>r && !r.demo && (r.id === t || r.trip === t) && r.type !== 'member').forEach(r=>markDirty(r.id));
+      // les autres paquets qui contiennent ce voyage reçoivent le nouveau code
+      const up = []; Object.entries(PACKS()).forEach(([Q, q])=>{ if(Q !== P && q.trips.includes(t)){ TS()['pa:' + Q] = Q; up.push({id:'pt:' + t + '@' + Q, type:'packtrip', trip:'pa:' + Q, tid:t, code:c, titre:(R[t]||{}).titre || ''}); } });
+      if(up.length) putQuiet(up);
+      // photos : recopiées vers le nouveau code (jamais perdues)
+      const ids = new Set(); Object.values(R).forEach(r=>{ if(r && !r.deleted && (r.id === t || r.trip === t)) photoRefs(r).forEach(x=>ids.add(String(x))); });
+      await photosCopy([...ids], old, c);
+      M.spaces = M.spaces.filter(x=>x.code !== old || Object.values(TS()).includes(old)); (M.fold = M.fold || []).push({code:old, at:Date.now()});   // l’ancien code est effacé du serveur dans 2 mois
+      persist(); try { await syncNow(); } catch(e){}
+    } finally { cryptHide('🔑 Voyage retiré pour cette personne'); }
+    if(!quiet){ toast('👥 C’est fait'); refresh(); }
+  }
+  async function packDel(P){
+    const pk = PACKS()[P]; if(!pk) return;
+    if(!(await uiConfirm(MSGT('Ne plus rien partager avec cette personne ?') + '\n\n' + (pk.who || '') + '\n\n' + MSGT('Elle garde sa copie de vos voyages mais ne reçoit plus rien.')))) return;
+    for(const t of [...pk.trips]) await packRemoveTrip(P, t, true);
+    try { await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(P)}}); } catch(e){}
+    delete PACKS()[P]; delete TS()['pa:' + P]; M.spaces = (M.spaces||[]).filter(x=>x.code !== P); persist(); toast('👥 Partage arrêté'); refresh();
+  }
+  // copie de photos d’un code à un autre (photo du téléphone si présente, sinon celle du serveur)
+  async function photosCopy(ids, from, to){
+    let fail = 0;
+    for(const id of ids) for(const v of [id, id + '.t']){
+      try {
+        let blob = null; try { const o = await IDB.get(v); if(o && o.blob){ await o.blob.slice(0, 1).arrayBuffer(); blob = o.blob; } } catch(e){ blob = null; }
+        let u8;
+        if(blob) u8 = new Uint8Array(await blob.arrayBuffer());
+        else { const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(v, from)), {headers:{'X-Carnet-Code':await authCode(from)}}); if(!r.ok) continue; u8 = new Uint8Array(await r.arrayBuffer()); if(E2E) u8 = await unseal(u8, from); }
+        const body = E2E ? await seal(u8, to) : u8;
+        const up = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(to), 'X-Photo-Id':await sid(v, to), 'Content-Type':'image/jpeg'}, body:new Blob([body], {type:'image/jpeg'})});
+        if(!up.ok && v === id) fail++;
+      } catch(e){ if(v === id) fail++; }
+    }
+    return fail;
+  }
+  // compagnon : mes paquets → je rejoins les voyages listés, je suis les changements de code, je garde ma copie d’un voyage retiré
+  async function packApply(){
+    const mine = PACKS(), viaP = M.viaP || (M.viaP = {}), viaH = M.viaH || (M.viaH = {}); let n = 0;
+    for(const r of list('packtrip', x=>TS()[x.trip] && !mine[TS()[x.trip]])){
+      const P = TS()[r.trip]; viaP[r.tid] = P; if(!viaH[r.tid]) viaH[r.tid] = await viaHash(r.tid, P);
+      if(r.code && TS()[r.tid] !== r.code){ const prev = TS()[r.tid]; TS()[r.tid] = r.code; if(!spaceObj(r.code)) (M.spaces = M.spaces || []).push({code:r.code, since:0, dirty:[], last:0, err:''});
+        if(prev && !Object.values(TS()).includes(prev)) M.spaces = (M.spaces||[]).filter(x=>x.code !== prev); n++; } }
+    for(const r of Object.values(R).filter(x=>x && x.type === 'packtrip' && x.deleted && TS()[x.trip] && !mine[TS()[x.trip]])){
+      const tid = r.tid || String(r.id).slice(3).split('@')[0]; if(viaP[tid] !== TS()[r.trip] || !TS()[tid]) continue;
+      if(await tripLeaveGo(tid, 'keep', true)){ delete viaP[tid]; delete viaH[tid]; n++; } }
+    if(n) persist();
+    return n;
+  }
+  // compagnon venu directement : l’auteur a changé le code du voyage → je suis le nouveau
+  async function tripMoveCheck(){
+    const me = devId(), done = M.tmoved || (M.tmoved = {});
+    for(const m of list('tripmove', x=>x.dev === me && x.opk && x.ct && TS()[x.tid] && !(M.viaP||{})[x.tid])){
+      const key = m.id + ':' + m.ct.slice(0, 12); if(done[key]) continue; done[key] = 1;
+      try { const k = await fKey(), sk = await fShared(k.priv, m.opk);
+        const c = new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(m.iv)}, sk, unb64(m.ct)));
+        if(!/^[A-Z0-9-]{8,}$/.test(c) || TS()[m.tid] === c) continue;
+        const prev = TS()[m.tid]; TS()[m.tid] = c; if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
+        if(prev && !Object.values(TS()).includes(prev)) M.spaces = (M.spaces||[]).filter(x=>x.code !== prev);
+        persist(); } catch(e){} }
+  }
   // 🚪 quitter un voyage partagé : d’abord le choix pour SES photos (droit à l’image), puis le départ
   function tripUnshare(id){
     const t = R[id]; if(!t) return;
@@ -3097,12 +3210,12 @@ const CV = (function(){
       ${on && !others.length ? `<div class="v-sum-small" style="margin-top:8px">ℹ️ Personne d’autre n’a ouvert ce voyage depuis 2 mois : tu pourras effacer son dossier du serveur.</div>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
   }
-  async function tripLeaveGo(id, mode){
-    const code = TS()[id], sp = code && spaceObj(code); closeSheet(true);
+  async function tripLeaveGo(id, mode, silent){
+    const code = TS()[id], sp = code && spaceObj(code); if(!silent) closeSheet(true);
     if(sp && photoApi()){
       // 1) toutes les photos du voyage reviennent (dans le carnet principal s’il est synchronisé, sinon sur ce téléphone)
       const res = await tripPhotosHome(id, code);
-      if(res.fail && !(await uiConfirm(MSGT('{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).').replace('{0}', res.fail) + '\n\n' + MSGT('OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.')))) return;
+      if(res.fail && (silent || !(await uiConfirm(MSGT('{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).').replace('{0}', res.fail) + '\n\n' + MSGT('OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.'))))) return false;
       try {
         const push = [];
         // 2) « partir avec mes photos » : mes souvenirs et photos sont retirés du voyage partagé (je les garde ici)
@@ -3119,7 +3232,7 @@ const CV = (function(){
           for(const p of gone) for(const v of [p, p + '.t']){ try { await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(v, code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); } catch(e){} }
           cryptHide('🎒 Tes photos sont retirées du voyage partagé'); }
         // 4) dernier à partir : le dossier du voyage ne sert plus à personne → on propose de l’effacer
-        if(!mbOthers(id).length && !Object.values(FT()).includes(code) && (await uiConfirm(MSGT('Personne d’autre n’utilise ce voyage partagé depuis 2 mois.') + '\n\n' + MSGT('Effacer aussi son dossier du serveur ? (recommandé : ton voyage et ses photos restent chez toi)')))){
+        if(!silent && !mbOthers(id).length && !Object.values(FT()).includes(code) && (await uiConfirm(MSGT('Personne d’autre n’utilise ce voyage partagé depuis 2 mois.') + '\n\n' + MSGT('Effacer aussi son dossier du serveur ? (recommandé : ton voyage et ses photos restent chez toi)')))){
           const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); if(r.ok) toast('🗑 Dossier du voyage partagé effacé du serveur');
         }
       } catch(e){ /* sans réseau : on part quand même, rien n’est perdu chez moi */ }
@@ -3130,7 +3243,10 @@ const CV = (function(){
     M.pq = (M.pq||[]).filter(x=>photoCode(x) !== code);
     Object.values(R).filter(r=>r && r.type === 'member' && r.trip === id).forEach(r=>{ delete R[r.id]; });   // la présence ne part pas dans mon carnet
     Object.values(R).filter(r=>!r.demo && (r.id===id || r.trip===id)).forEach(r=>markDirty(r.id));
-    persist(); refresh(); queueSync(); toast('🚪 Tu as quitté le voyage partagé');
+    (M.cloudAsked = M.cloudAsked || {})[id] = Date.now();   // pas de question « mettre ce nouveau voyage dans le cloud ? » pour une copie qu’on garde
+    if(cloudMode() === 'trips' && !(M.sync.on && M.sync.code)) { try { cloudSpace(id); } catch(e){} }   // rangé voyage par voyage : la copie va dans SON cloud privé
+    persist(); refresh(); queueSync(); toast(silent ? '📦 Un voyage n’est plus partagé avec toi : tu gardes ta copie' : '🚪 Tu as quitté le voyage partagé');
+    return true;
   }
   function tripJoin(){
     const hosted = /^https?:/.test(location.protocol);
@@ -3224,13 +3340,19 @@ const CV = (function(){
     if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
     const sp = spaceObj(code); try { await syncSpace(sp, true); } catch(e){}
     if(sp.err){ msg.textContent = '⚠️ ' + sp.err; return; }
+    if(list('packtrip', r=>TS()[r.trip] === code).length){   // paquet de voyages : on rejoint chacun d’eux
+      msg.textContent = '📡 Voyages partagés…';
+      await packApply(); const codes = [...new Set(list('packtrip', r=>TS()[r.trip] === code).map(r=>r.code))];
+      for(const c of codes){ try { await syncSpace(spaceObj(c), true); } catch(e){} }
+      persist(); closeSheet(true); refresh(); const first = Object.keys(TS()).find(k=>codes.includes(TS()[k]) && R[k] && R[k].type === 'trip'); if(first) go(first); joinPick(codes); return; }
     const got = Object.entries(TS()).filter(([, c])=>c === code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted);
     if(got.some(t=>t.type === 'trip')){ persist(); closeSheet(true); go(got.find(t=>t.type === 'trip').id); refresh(); joinPick(code); return; }
     M.spaces = (M.spaces || []).filter(x=>x.code !== code); persist();
     closeSheet(true); followGo(code);   // pas de voyage à compléter : c’est peut-être un code d’abonné
   }
   function joinPick(code){
-    const ts = Object.entries(TS()).filter(([, c])=>c === code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip').sort((a, b)=>(a.debut||'9').localeCompare(b.debut||'9'));
+    const codes = [].concat(code); code = codes.join(',');
+    const ts = Object.entries(TS()).filter(([, c])=>codes.includes(c)).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip').sort((a, b)=>(a.debut||'9').localeCompare(b.debut||'9'));
     if(!ts.length) return;
     const ppl = [...new Set(ts.flatMap(t=>t.voyageurs || []))].filter(prof), me = M.me && prof(M.me) ? M.me : '';
     const meIn = me && ppl.includes(me);
@@ -3248,8 +3370,8 @@ const CV = (function(){
     if(me === 'new' || !me){ const nom = ((document.getElementById('jp-nom') || {}).value || '').trim(); if(!nom){ alert('Indique ton prénom.'); return; }
       const cols = ['#2563eb','#db2777','#16a34a','#ea580c','#7c3aed','#0891b2','#ca8a04'], p = {id:'p' + uid(), type:'profile', nom, couleur:cols[profiles().length % cols.length]}; put(p, false); me = p.id; }
     M.me = me; delete M.joinAdd;
-    const on = new Set([...document.querySelectorAll('.jp-t:checked')].map(i=>i.value)), out = [];
-    Object.entries(TS()).filter(([, c])=>c === code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip').forEach(t=>{
+    const on = new Set([...document.querySelectorAll('.jp-t:checked')].map(i=>i.value)), out = [], codes = String(code).split(',');
+    Object.entries(TS()).filter(([, c])=>codes.includes(c)).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip').forEach(t=>{
       const v = new Set(t.voyageurs || []), had = v.has(me); if(on.has(t.id)) v.add(me); else v.delete(me);
       if(had !== v.has(me)) out.push(Object.assign(clone(t), {voyageurs:[...v]})); });
     if(out.length) putMany(out, false);
@@ -13596,24 +13718,26 @@ ${pm.join('\n')}</Document></kml>`;
   }
   /* ---------- 📤 Invitation guidée : la personne est à côté (QR code) ou loin (message avec le lien et le code) ---------- */
   const inviteText = (kind, titre, code) => { const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : '';
-    return (kind === 'carnet' ? MSG('Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble') : MSG(`Rejoins notre voyage « ${titre} » sur Vezoria 🧳`))
+    return (kind === 'pack' ? MSG('Rejoins nos voyages sur Vezoria 🧳 : à compléter ensemble') : kind === 'carnet' ? MSG('Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble') : MSG(`Rejoins notre voyage « ${titre} » sur Vezoria 🧳`))
       + '\n' + (link || url) + '\n' + MSG('Code :') + ' ' + code + '\n' + MSG('(Vezoria déjà installée ? Ouvre-la → 👥 Partager → « Rejoindre avec un code » et colle le code.)'); };
-  function inviteSheet(tid, kind){
-    kind = kind || 'trip'; const t = tid ? R[tid] : null, code = kind === 'carnet' ? M.sync.code : TS()[tid]; if(!code) return;
+  function inviteSheet(tid, kind, code0){
+    kind = kind || 'trip'; const t = tid ? R[tid] : null, code = kind === 'pack' ? code0 : kind === 'carnet' ? M.sync.code : TS()[tid]; if(!code) return;
+    const pk = kind === 'pack' ? PACKS()[code] : null;
     const url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : code;
-    openSheet(`<h2>📤 ${kind === 'carnet' ? 'Inviter dans tout mon carnet' : 'Inviter dans « ' + esc(t ? t.titre : '') + ' »'}</h2>
-      <div class="v-sum-small" style="margin-bottom:8px">${kind === 'carnet' ? 'Ton compagnon verra et complètera tous tes voyages, et les voyages qu’il créera avec toi arriveront chez toi.' : 'La personne verra et complètera ce voyage seulement. Tes autres voyages restent privés.'}</div>
+    openSheet(`<h2>📤 ${pk ? 'Invitation pour <span data-notr>' + esc(pk.who || '?') + '</span>' : kind === 'carnet' ? 'Inviter dans tout mon carnet' : 'Inviter dans « ' + esc(t ? t.titre : '') + ' »'}</h2>
+      ${pk ? `<div class="v-sum-small" style="margin-bottom:6px">${pk.trips.map(x=>'🧳 <span data-notr>' + esc((R[x]||{}).titre || '') + '</span>').join(' · ')}</div>` : ''}
+      <div class="v-sum-small" style="margin-bottom:8px">${pk ? 'Cette personne verra et complètera ces voyages seulement. Tu pourras en retirer un à tout moment.' : kind === 'carnet' ? 'Ton compagnon verra et complètera tous tes voyages, et les voyages qu’il créera avec toi arriveront chez toi.' : 'La personne verra et complètera ce voyage seulement. Tes autres voyages restent privés.'}</div>
       <div class="iv-step"><b>📱 Elle est à côté de toi</b><span>Elle scanne ce QR code avec l’appareil photo de son téléphone. Vezoria déjà installée ? Elle ouvre 👥 Partager → « Rejoindre avec un code » et tape le code.</span></div>
       <div class="iv-qr">${qrSVG(link)}</div>
       <div class="cv-bigcode" data-notr>${esc(code)}</div>
       <div class="iv-step"><b>💬 Elle est loin</b><span>Envoie-lui le message : il contient le lien et le code (utile si elle a déjà l’appli).</span></div>
-      <button type="button" class="v-btn" onclick="CV.inviteSend('${tid || ''}','${kind}')">💬 Envoyer l’invitation</button>
+      <button type="button" class="v-btn" onclick="CV.inviteSend('${tid || ''}','${kind}','${pk ? esc(code) : ''}')">💬 Envoyer l’invitation</button>
       <button type="button" class="v-btn sec" onclick="CV.inviteCopy('${esc(code)}')">📋 Copier le code</button>
       <div class="v-sum-small" style="margin-top:8px">${kind === 'carnet' ? '🔐 Tout est chiffré : seules les personnes qui ont ce code peuvent lire ton carnet.' : '🔐 Tout est chiffré : seules les personnes qui ont ce code peuvent lire ce voyage.'}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
-  async function inviteSend(tid, kind){
-    const t = tid ? R[tid] : null, code = kind === 'carnet' ? M.sync.code : TS()[tid]; if(!code) return;
+  async function inviteSend(tid, kind, code0){
+    const t = tid ? R[tid] : null, code = kind === 'pack' ? code0 : kind === 'carnet' ? M.sync.code : TS()[tid]; if(!code) return;
     const text = inviteText(kind, t ? t.titre : '', code);
     if(navigator.share){ try { await navigator.share({title: t ? t.titre : 'Vezoria', text}); return; } catch(e){ if(e && e.name === 'AbortError') return; } }
     try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); } catch(e){ await uiPrompt('Copie ce texte :', text); }
@@ -13622,10 +13746,11 @@ ${pm.join('\n')}</Document></kml>`;
   // 📚 Tout le carnet : pour un compagnon (il complète tout) ou pour des abonnés (lecture seule, photos et récits)
   function carnetShareSheet(){
     const mainOn = !!(M.sync.on && M.sync.code), ac = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '';
-    const pub = ac ? myTrips().filter(t=>FT()[t.id] === ac) : [];
+    const pub = ac ? myTrips().filter(t=>grpCodeOf(t.id) === ac) : [];
     openSheet(`<h2>📚 Partager tout mon carnet</h2>
-      <div class="sh-card"><div class="sh-k">👥 Avec un compagnon de voyage</div><p>Il voit et complète tous tes voyages (programme, résas, budget, souvenirs). Ensuite, tu choisis voyage par voyage ceux où il part vraiment.</p>
-        ${mainOn ? `<button type="button" class="v-btn" onclick="CV.inviteSheet('', 'carnet')">📤 Inviter un compagnon dans mon carnet</button>` : `<div class="v-sum-small" style="margin-bottom:6px">Ton carnet n’est pas encore dans le cloud : active-le d’abord (chiffré), puis reviens ici.</div><button type="button" class="v-btn" onclick="CV.close();CV.cloudSheet()">☁️ Mettre mon carnet dans le cloud</button>`}</div>
+      <div class="sh-card"><div class="sh-k">👥 Avec un compagnon de voyage</div><p>Il voit et complète les voyages que tu choisis (programme, résas, budget, souvenirs). Tu pourras en retirer un à tout moment, pour lui seulement.</p>
+        <button type="button" class="v-btn" onclick="CV.packSheet('')">📤 Inviter un compagnon (je choisis les voyages)</button>
+        ${mainOn ? `<button type="button" class="v-btn sec" onclick="CV.inviteSheet('', 'carnet')">💞 Tout partager, tout ou rien (couple : mon code principal)</button>` : `<div class="v-sum-small" style="margin-bottom:6px">Ton carnet n’est pas encore dans le cloud : active-le d’abord (chiffré), puis reviens ici.</div><button type="button" class="v-btn" onclick="CV.close();CV.cloudSheet()">☁️ Mettre mon carnet dans le cloud</button>`}</div>
       <div class="sh-card"><div class="sh-k">👀 Avec des abonnés (lecture seule)</div><p>Comme Polarsteps : ta famille et tes amis voient uniquement les photos, les étapes, les lieux et les récits de tes voyages, avec un seul lien. Le budget, les résas, les documents et les notes ne sortent jamais. Les souvenirs « 🔒 privés » restent cachés.</p>
         ${ac ? `<div class="v-sum-small" style="margin-bottom:6px">✓ ${pub.length} voyage(s) publié(s) avec le lien du carnet.</div>` : ''}
         <button type="button" class="v-btn" onclick="CV.carnetPublishSheet()">${ac ? '👀 Choisir les voyages publiés et inviter' : '👀 Publier mon carnet pour des abonnés'}</button></div>
@@ -13635,7 +13760,7 @@ ${pm.join('\n')}</Document></kml>`;
     const ac = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '', ts = myTrips();
     if(!ts.length){ alert('Crée d’abord un voyage.'); return; }
     openSheet(`<h2>👀 Mon carnet pour des abonnés</h2><div class="v-sum-small" style="margin-bottom:8px">Coche les voyages à montrer. Tes abonnés passent de l’un à l’autre avec un seul lien.</div>
-      ${ts.map(t=>{ const own = FT()[t.id] && FT()[t.id] !== ac; return `<label class="cv-checkline"><input type="checkbox" class="cpub" value="${t.id}"${(ac && FT()[t.id] === ac) || (!ac && !own) ? ' checked' : ''}${own ? ' disabled' : ''}> <span data-notr>${esc(t.titre)}</span>${own ? ' <small>(déjà publié avec son propre lien)</small>' : ''}</label>`; }).join('')}
+      ${ts.map(t=>{ const own = FT()[t.id] && grpCodeOf(t.id) !== ac; return `<label class="cv-checkline"><input type="checkbox" class="cpub" value="${t.id}"${(ac && grpCodeOf(t.id) === ac) || (!ac && !own) ? ' checked' : ''}${own ? ' disabled' : ''}> <span data-notr>${esc(t.titre)}</span>${own ? ' <small>(déjà publié avec son propre lien)</small>' : ''}</label>`; }).join('')}
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.carnetPublish()">👀 Publier et inviter</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
   }
   async function carnetPublish(){
@@ -13646,7 +13771,8 @@ ${pm.join('\n')}</Document></kml>`;
     if(!c){ if(!(await uiConfirm('Publier ces voyages pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.'))) return;
       c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); M.feedAll = c; }
     // voyages décochés : retirés du carnet publié (leurs publications et photos d’abonnés partent)
-    for(const tid of Object.keys(FT())) if(FT()[tid] === c && !sel.includes(tid)) await feedStop(tid, true);   // aussi les voyages supprimés ou remplacés depuis
+    for(const tid of Object.keys(FT())) if(grpCodeOf(tid) === c && !sel.includes(tid)) await feedStop(tid, true);   // aussi les voyages supprimés ou remplacés depuis
+    fgAt = 0;
     feedFixAt = 0;
     sel.forEach(tid=>{ if(!FT()[tid]) FT()[tid] = c; });
     persist(); sel.forEach(tid=>feedBuild(tid)); closeSheet(true); toast('👀 Publication en cours…');
@@ -13722,6 +13848,7 @@ ${pm.join('\n')}</Document></kml>`;
         // abonnés : uniquement la vignette (≈ 30 à 50 Ko), jamais la grande photo → 2 à 3 fois moins de place sur le serveur
         let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
         if(!tb){ let o = null; try { o = await IDB.get(id); } catch(e){} if(o && o.blob) try { tb = await shrink(o.blob, 480, .74); } catch(e){} }
+        if(!tb){ try { tb = await photoBlob(id + '.t'); } catch(e){} }   // photo plus sur ce téléphone : sa vignette du serveur
         if(tb){
           const body = E2E ? new Blob([await seal(new Uint8Array(await tb.arrayBuffer()), code)], {type:'image/jpeg'}) : tb;
           const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(id + '.t', code), 'Content-Type':'image/jpeg'}, body});
@@ -13771,7 +13898,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(out.length){ putQuiet(out); M.fdel = (M.fdel||[]).concat(dels); persist(); try { await syncNow(); } catch(e){} feedPurge(); }
     return n;
   }
-  function feedAll(){ if(!M.fkey) fKey().catch(()=>{}); feedPurge(); Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); feedUpload(); feedReconcile().then(n=>{ if(n) refresh(); }).catch(()=>{}); }
+  function feedAll(){ if(!M.fkey) fKey().catch(()=>{}); feedGrantAll().catch(()=>{}); feedPurge(); Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); feedUpload(); feedReconcile().then(n=>{ if(n) refresh(); }).catch(()=>{}); }
   setInterval(()=>{ if(document.visibilityState === 'visible' && Object.keys(FT()).length) feedAll(); }, 60000);
   setTimeout(feedAll, 5000);
   async function feedPublish(tid){
@@ -13792,6 +13919,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   async function feedStop(tid, silent){
     const c = FT()[tid]; if(!c) return;
+    if(FRX()[tid]){ const gr = list('feedgrant', x=>x.tid === tid); if(gr.length) putQuiet(gr.map(x=>Object.assign(clone(x), {deleted:true}))); delete FRX()[tid]; persist(); }
     if(!silent && !(await uiConfirm('Arrêter la publication ? Tes abonnés ne verront plus ce voyage.'))) return;
     const out = list('feed', f=>f.trip===ftId(tid)).map(f=>Object.assign(clone(f), {deleted:true})); if(R[ftId(tid)]) out.push(Object.assign(clone(R[ftId(tid)]), {deleted:true}));
     // carnet publié : d’autres voyages utilisent le même lien → seules les photos de CE voyage partent, le lien reste
@@ -13882,20 +14010,22 @@ ${pm.join('\n')}</Document></kml>`;
       return `<button type="button" class="cv-prow${e.nw ? ' sc-new' : ''}" onclick="CV.feedView('${esc(r.trip)}')"><span>${txt}<small class="v-sum-small" style="display:block">${esc(ttl(r.trip))} · ${when(e.t)}</small></span><span>›</span></button>`; };
     const fwDev = x => String(x.id).split(':').pop();   // un abonné = un appareil, même s’il a ouvert plusieurs voyages du carnet
     const nFw = new Set(mineT.flatMap(tid=>list('follower', x=>x.trip===ftId(tid) && !isBlk(x)).map(fwDev))).size;
-    const byCode = {}; mineT.forEach(tid=>{ (byCode[FT()[tid]] = byCode[FT()[tid]] || []).push(tid); });
+    const byCode = {}; mineT.forEach(tid=>{ const g = grpCodeOf(tid); (byCode[g] = byCode[g] || []).push(tid); });
     const grpRow = (c, tids) => { const ids = new Set(tids.map(ftId)), fw0 = list('follower', x=>ids.has(x.trip) && !isBlk(x)), seen = new Set(), fw = fw0.filter(x=>!seen.has(fwDev(x)) && seen.add(fwDev(x)));
       const lk = list('like', l=>ids.has(l.trip) && l.on && !isBlk(l)).length, cm = list('comment', x=>ids.has(x.trip) && !isBlk(x)).length;
       tids.sort((a,b)=>(R[b].debut||'').localeCompare(R[a].debut||''));
       return `<div class="sh-card"><div class="sh-k">📚 Mon carnet publié</div><div class="v-sum-small">${tids.length} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.</div>
         <div class="sh-st" style="margin-top:6px"><span>👀 <b>${fw.length}</b> abonné${fw.length>1?'s':''}</span><span>❤️ <b>${lk}</b></span><span>💬 <b>${cm}</b></span></div>
-        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>fwDev(x) === devId() ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><span data-notr>${esc(x.who || '?')}</span><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
+        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>{ const d = fwDev(x), nh = tids.filter(t=>((FRX()[t]||{}).ex||[]).includes(d)).length;
+          return d === devId() ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><span data-notr>${esc(x.who || '?')}</span>${nh ? `<small>🙈${nh}</small>` : ''}<button type="button" aria-label="Ce qu’elle voit" onclick="CV.fwTripsSheet('${esc(c)}','${esc(d)}')">👁️</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`; }).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
+        ${fw.length ? `<div class="v-sum-small" style="margin-bottom:4px">👁️ = choisir les voyages que voit cette personne · 🚫 = la bloquer</div>` : ''}
         <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(c)}</b></div>
         <details class="sh-more" style="margin-top:6px"><summary>🧳 Les ${tids.length} voyages</summary>${tids.map(tid=>`<button type="button" class="cv-prow" onclick="CV.feedView('${ftId(tid)}')"><span data-notr>${esc(R[tid].titre)}</span><span>›</span></button>`).join('')}</details>
         <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tids[0])}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.carnetPublishSheet()">📤 Inviter · choisir</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tids[0]}')">🔁 Nouveau lien abonné</button></div></div>`; };
     const pubRow = tid => { const t = R[tid], fw = list('follower', x=>x.trip===ftId(tid) && !isBlk(x)), lk = list('like', l=>l.trip===ftId(tid) && l.on && !isBlk(l)).length, cm = list('comment', c=>c.trip===ftId(tid) && !isBlk(c)).length;
       return `<div class="sh-card"><div class="sh-k">📣 ${esc(t.titre)}</div>
         <div class="sh-st"><span>👀 <b>${fw.length}</b> abonné${fw.length>1?'s':''}</span><span>❤️ <b>${lk}</b></span><span>💬 <b>${cm}</b></span></div>
-        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>x.id.endsWith(':' + devId()) ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><span data-notr>${esc(x.who || '?')}</span><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
+        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>x.id.endsWith(':' + devId()) ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><span data-notr>${esc(x.who || '?')}</span><button type="button" aria-label="Ne plus lui montrer" onclick="CV.fwHideOne('${tid}','${esc(x.id)}')">🙈</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
         <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(FT()[tid])}</b></div>
         <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tid)}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.feedPublish('${tid}')">📤 Inviter</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tid}')">🔁 Nouveau lien abonné</button></div></div>`; };
     const tripsAll = trips().filter(t=>!t.demo).sort((a,b)=>(b.debut||'').localeCompare(a.debut||''));
@@ -13907,6 +14037,9 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="sh-st" style="margin:4px 0 12px"><span>👀 <b>${nFw}</b> abonné${nFw>1?'s':''}</span><span>➡️ <b>${fol.length}</b> voyage${fol.length>1?'s':''} suivi${fol.length>1?'s':''}</span></div>
       ${Object.values(byCode).some(g=>g.length > 1 || g[0] !== cur) ? `<h3>📣 Mes voyages publiés</h3>${Object.entries(byCode).map(([c, tids])=>tids.length > 1 ? grpRow(c, tids) : tids[0] !== cur ? pubRow(tids[0]) : '').join('')}` : (cur ? '' : '<h3>📣 Mes voyages publiés</h3><div class="v-sum-small" style="margin-bottom:8px">Aucun voyage publié pour l’instant : dans un voyage, touche Partager puis Publier pour des abonnés.</div>')}
       ${fol.length ? '' : '<h3>➡️ Les voyages que je suis</h3><div class="v-sum-small" style="margin-bottom:8px">Aucun pour l’instant.</div>'}
+      ${Object.keys(PACKS()).length ? `<h3>👥 Mes compagnons</h3>${Object.entries(PACKS()).map(([P, pk])=>`<div class="sh-card"><div class="sh-k">👤 <span data-notr>${esc(pk.who || '?')}</span></div>
+        ${pk.trips.filter(t=>R[t] && !R[t].deleted).map(t=>`<div class="cv-prow" style="cursor:default"><span data-notr>🧳 ${esc(R[t].titre)}</span><button type="button" class="v-btn sec" style="width:auto;padding:4px 10px;margin:0" onclick="CV.packRemoveTrip('${esc(P)}','${t}')">✕ Retirer</button></div>`).join('') || '<div class="v-sum-small">Aucun voyage partagé.</div>'}
+        <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.packSheet('${esc(P)}')">✏️ Choisir les voyages</button><button type="button" class="v-btn sec" onclick="CV.inviteSheet('', 'pack', '${esc(P)}')">📤 Invitation</button><button type="button" class="v-btn sec" onclick="CV.packDel('${esc(P)}')">🚫 Tout arrêter</button></div></div>`).join('')}` : ''}
       <div class="sh-card"><div class="sh-k">🔑 J’ai reçu un code</div>
         <button type="button" class="v-btn sec" onclick="CV.joinAny()">🔗 J’ai reçu un code : rejoindre un voyage</button>
         <button type="button" class="v-btn sec" onclick="CV.followSheet()">➕ Suivre un voyage avec un code</button></div>
@@ -13962,7 +14095,10 @@ ${pm.join('\n')}</Document></kml>`;
   }
   // auteur : retirer vraiment l’accès d’un abonné = nouveau lien, transmis chiffré à chacun des autres
   async function feedRevoke(tid, dev, who){
-    const old = FT()[tid], oldSp = old && spaceObj(old); if(!old || !oldSp) return;
+    const g0 = grpCodeOf(tid);
+    for(const t of grpTrips(g0)) if(FRX()[t] && !FRX()[t].ex.includes(dev)) await feedRestrict(t, dev);   // voyages « à part » : cachés à cette personne aussi
+    if(!Object.keys(FT()).some(x=>FT()[x] === g0)){ try { await syncNow(); feedUpload(); feedPurge(); } catch(e){} toast('🔑 Accès retiré'); refresh(); return; }
+    const old = g0, oldSp = old && spaceObj(old); if(!old || !oldSp) return;
     const grp = Object.keys(FT()).filter(x=>FT()[x] === old), ids = new Set(grp.map(ftId)), me = devId();
     const byDev = {}; list('follower', f=>ids.has(f.trip)).forEach(f=>{ const d = String(f.id).split(':').pop(); if(d !== dev && d !== me && !(M.blkDev||{})[d]) byDev[d] = (byDev[d] && byDev[d].pk) ? byDev[d] : f; });
     const withKey = Object.values(byDev).filter(f=>f.pk), noKey = Object.values(byDev).filter(f=>!f.pk);
@@ -13982,6 +14118,7 @@ ${pm.join('\n')}</Document></kml>`;
       Object.values(R).filter(r=>r && (ids.has(r.trip) || ids.has(r.id)) && String(r.id).split(':').pop() === dev && /^(fw|lk):/.test(r.id)).forEach(r=>{ r.deleted = true; });
       Object.values(R).filter(r=>r && (ids.has(r.trip) || ids.has(r.id) || grp.some(x=>r.id === 'fk:' + x))).forEach(r=>markDirty(r.id));
       M.spaces = M.spaces.filter(x=>x.code !== old); (M.fold = M.fold || []).push({code:old, at:Date.now()});   // l’ancien lien est effacé du serveur dans 2 mois
+      Object.values(FRX()).forEach(x=>{ if(x.g === old){ x.g = c; x.sent = {}; } }); fgAt = 0;   // voyages « à part » : leurs codes repartent sous le nouveau lien
       if(M.fup) delete M.fup[old]; M.fq = (M.fq||[]).filter(x=>x[0] !== old); M.fdel = (M.fdel||[]).filter(x=>x[0] !== old); M.fwipe = (M.fwipe||[]).concat([old]);   // vignettes de l’ancien lien : effacées
       persist(); grp.forEach(x=>feedBuild(x));
       try { await syncNow(); feedUpload(); feedPurge(); } catch(e){}
@@ -14008,22 +14145,115 @@ ${pm.join('\n')}</Document></kml>`;
       } catch(e){}
     }
   }
+  /* ══════════ 👁️ Abonnés : ce que voit CHAQUE personne (voyage par voyage) ══════════
+     Un voyage caché à quelqu’un quitte le lien du carnet et passe sur son propre code, transmis chiffré
+     (clé personnelle de chaque téléphone) à tous les autres abonnés du carnet. Ceux qui arrivent ensuite le reçoivent aussi. */
+  const FRX = () => M.fRx || (M.fRx = {});                       // voyage → {g: lien du carnet, c: son code, ex: [appareils exclus], sent: {appareil: code}}
+  const grpCodeOf = tid => (FRX()[tid] && FRX()[tid].g) || FT()[tid];
+  const grpTrips = g => Object.keys(FT()).filter(t=>R[t] && !R[t].deleted && grpCodeOf(t) === g);
+  function grpFollowers(g){   // un abonné = un appareil (le plus récent), sans les bloqués ni moi
+    const ids = new Set(grpTrips(g).map(ftId)), me = devId(), by = {};
+    list('follower', f=>ids.has(f.trip) && !isBlk(f)).forEach(f=>{ const d = String(f.id).split(':').pop(); if(d === me || (M.blkDev||{})[d]) return; if(!by[d] || (f.pk && !by[d].pk)) by[d] = f; });
+    return by;
+  }
+  function fwTripsSheet(g, dev){
+    const ts = grpTrips(g).sort((a,b)=>(R[b].debut||'').localeCompare(R[a].debut||'')), f = grpFollowers(g)[dev]; if(!f) return;
+    openSheet(`<h2>👁️ Ce que voit <span data-notr>${esc(f.who || '?')}</span></h2>
+      <div class="v-sum-small" style="margin-bottom:8px">Décoche un voyage pour le cacher à cette personne seulement. Tes autres abonnés le voient toujours.</div>
+      ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="fwt" value="${t}"${((FRX()[t]||{}).ex||[]).includes(dev) ? '' : ' checked'}> <span data-notr>${esc(R[t].titre)}</span></label>`).join('')}
+      ${f.pk ? '' : `<div class="v-sum-small" style="margin-top:6px">⚠️ Cette personne a une ancienne version de l’appli : un voyage caché ne lui sera plus montré, mais un voyage remis ne lui reviendra qu’après sa mise à jour.</div>`}
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.fwTripsSave('${esc(g)}','${esc(dev)}')">✅ Enregistrer</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+  }
+  async function fwTripsSave(g, dev){
+    const on = new Set([...document.querySelectorAll('.fwt:checked')].map(i=>i.value)), ts = grpTrips(g); closeSheet(true);
+    let hid = 0, shown = 0;
+    for(const t of ts){ const r = FRX()[t], ex = (r && r.ex) || [];
+      if(on.has(t) && ex.includes(dev)){ r.ex = ex.filter(x=>x !== dev); persist(); shown++; }
+      else if(!on.has(t) && !ex.includes(dev)){ await feedRestrict(t, dev); hid++; } }
+    for(const t of ts) if(FRX()[t]) await feedGrantSync(t);
+    try { await syncNow(); feedUpload(); feedPurge(); } catch(e){}
+    toast(hid || shown ? '👁️ C’est enregistré' : 'Rien n’a changé'); refresh();
+  }
+  // cacher le voyage t à l’appareil dev : nouveau code pour ce voyage, l’ancien ne montre plus rien
+  async function feedRestrict(t, dev){
+    const old = FT()[t], g = grpCodeOf(t), oldSp = old && spaceObj(old); if(!old || !oldSp) return;
+    const r = FRX()[t] || (FRX()[t] = {g, c:old, ex:[], sent:{}}); if(dev && !r.ex.includes(dev)) r.ex.push(dev);
+    cryptShow('👁️ Je cache ce voyage…');
+    try {
+      const id = ftId(t), all = Object.values(R).filter(x=>x && !x.deleted && (x.trip === id || x.id === id || x.id === 'fk:' + t));
+      const grants = list('feedgrant', x=>x.tid === t && (!dev || String(x.id).endsWith(':' + dev)));
+      await spacePushOnly(oldSp, all.map(x=>Object.assign(clone(x), {deleted:true})));
+      if(grants.length) putQuiet(grants.map(x=>Object.assign(clone(x), {deleted:true})));
+      // vignettes de ce voyage sous l’ancien code : effacées
+      const phs = new Set(list('feed', x=>x.trip === id).flatMap(x=>(x.photos||[]).map(String)));
+      if(old === g) M.fdel = (M.fdel||[]).concat(Object.keys((M.fup||{})[old] || {}).filter(p=>phs.has(String(p).replace(/\.t$/, ''))).map(p=>[old, p]));
+      else { M.fwipe = (M.fwipe||[]).concat([old]); if(M.fup) delete M.fup[old]; M.fq = (M.fq||[]).filter(x=>x[0] !== old); M.spaces = (M.spaces||[]).filter(x=>x.code !== old); (M.fold = M.fold || []).push({code:old, at:Date.now()}); }
+      const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
+      FT()[t] = c; TS()[id] = c; r.c = c; r.sent = {};
+      Object.values(R).filter(x=>x && (x.trip === id || x.id === id || x.id === 'fk:' + t) && !(dev && /^(fw|lk):/.test(x.id) && String(x.id).split(':').pop() === dev)).forEach(x=>markDirty(x.id));
+      persist(); feedBuild(t);
+    } finally { cryptHide('👁️ Voyage caché à cette personne'); }
+  }
+  // donne le code d’un voyage « à part » à chaque abonné du carnet qui a le droit de le voir (chiffré pour lui seul)
+  async function feedGrantSync(t){
+    const r = FRX()[t]; if(!r || !FT()[t]) return 0;
+    const g = r.g; if(!spaceObj(g)) return 0;
+    TS()['fa:' + g] = g; r.sent = r.sent || {};
+    const k = await fKey(), fws = grpFollowers(g), out = []; let n = 0;
+    for(const [d, f] of Object.entries(fws)){
+      if(r.ex.includes(d) || !f.pk || r.sent[d] === r.c) continue;
+      try { const key = await fShared(k.priv, f.pk), iv = crypto.getRandomValues(new Uint8Array(12));
+        const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(r.c)));
+        out.push({id:'fg:' + t + ':' + d, type:'feedgrant', trip:'fa:' + g, tid:t, dev:d, opk:k.pub, iv:b64(iv), ct:b64(ct)}); r.sent[d] = r.c; n++; } catch(e){} }
+    r.ex.forEach(d=>{ const x = R['fg:' + t + ':' + d]; if(x && !x.deleted) out.push(Object.assign(clone(x), {deleted:true})); });
+    if(out.length){ putQuiet(out); persist(); }
+    return n;
+  }
+  let fgAt = 0;
+  async function feedGrantAll(){ if(Date.now() - fgAt < 60000) return; fgAt = Date.now(); for(const t of Object.keys(FRX())) { if(FT()[t]) await feedGrantSync(t).catch(()=>0); else delete FRX()[t]; } }
+  // abonné : on m’a donné le code d’un voyage « à part » → je le suis, sans rien demander
+  async function feedGrantCheck(){
+    const me = devId(), got = M.fgot || (M.fgot = {});
+    for(const x of list('feedgrant', y=>y.dev === me && y.opk && y.ct)){
+      try {
+        const k = await fKey(), sk = await fShared(k.priv, x.opk);
+        const c = new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(x.iv)}, sk, unb64(x.ct)));
+        if(!/^[A-Z0-9-]{8,}$/.test(c) || got[x.tid] === c && spaceObj(c)) continue;
+        const prev = got[x.tid]; got[x.tid] = c;
+        if(prev && prev !== c){ M.spaces = (M.spaces||[]).filter(s=>s.code !== prev); Object.keys(TS()).forEach(z=>{ if(TS()[z] === prev) delete TS()[z]; }); }
+        if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
+        await syncSpace(spaceObj(c), true);
+        list('feedtrip', f=>TS()[f.id] === c && !f.deleted).forEach(ft=>{ const id = 'fw:' + ft.id + ':' + me; if(!R[id] || R[id].deleted) putQuiet([{id, type:'follower', trip:ft.id, who: myName() || 'Un proche', pk:k.pub}]); });
+        persist(); refresh();
+      } catch(e){}
+    }
+    // voyage qu’on m’a retiré : j’arrête de le suivre
+    Object.entries(got).forEach(([t, c])=>{ const x = R['fg:' + t + ':' + me]; if(x && x.deleted){ M.spaces = (M.spaces||[]).filter(s=>s.code !== c); delete got[t]; persist(); } });
+  }
   // anciens liens retirés : effacés du serveur 2 mois après (le temps que tous les abonnés soient passés au nouveau)
   async function feedOldWipe(){
     const due = (M.fold||[]).filter(x=>Date.now() - x.at > 60 * 864e5); if(!due.length || !apiUrl()) return;
     for(const x of due){ try { const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(x.code)}}); if(r.ok || r.status === 404) M.fold = M.fold.filter(y=>y !== x); } catch(e){} }
     persist();
   }
+  // voyage publié seul : ne plus le montrer à une personne, sans la bloquer (nouveau lien chiffré pour les autres)
+  async function fwHideOne(tid, fwid){
+    const f = R[fwid], d = devOfRec(f), t = R[tid]; if(!f || !d || !t) return;
+    if(!(await uiConfirm(MSGT('Ne plus montrer ce voyage à cette personne ?') + '\n\n' + (f.who || '') + ' · ' + (t.titre || '') + '\n\n' + MSGT('Elle n’est pas bloquée : ses ❤️ et commentaires restent. Tes autres abonnés reçoivent automatiquement le nouveau lien.')))) return;
+    await feedRevoke(tid, d, f.who || '');
+  }
   function fwBlock(fwid){ userBlock(fwid); setTimeout(()=>{ try { socialHub(); } catch(e){} }, 150); }
   async function feedReset(tid){
     const old = FT()[tid]; if(!old) return;
-    const grp = Object.keys(FT()).filter(x=>FT()[x] === old), many = grp.length > 1;   // carnet publié d’un coup : un seul lien pour tous ses voyages
+    if(FRX()[tid]) return feedReset(Object.keys(FT()).find(x=>FT()[x] === FRX()[tid].g) || tid);
+    const grp = Object.keys(FT()).filter(x=>FT()[x] === old), many = grp.length > 1 || Object.values(FRX()).some(x=>x.g === old);   // carnet publié d’un coup : un seul lien pour tous ses voyages
     if(!(await uiConfirm((many ? `Créer un nouveau lien abonné pour tes ${grp.length} voyages publiés ensemble ?` : 'Créer un nouveau lien abonné ?') + '\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.'))) return;
     const ids = new Set(grp.map(ftId)), out = Object.values(R).filter(r=>r && !r.deleted && (ids.has(r.trip) || ids.has(r.id))).map(r=>Object.assign(clone(r), {deleted:true}));
     putQuiet(out); try { await syncNow(); } catch(e){}
     out.forEach(r=>{ delete R[r.id]; }); M.spaces = (M.spaces||[]).filter(x=>x.code !== old); grp.forEach(x=>{ delete FT()[x]; delete TS()[ftId(x)]; });
     if(M.fup) delete M.fup[old]; M.fq = (M.fq||[]).filter(x=>x[0] !== old);
     const c = genCode(); M.spaces.push({code:c, since:0, dirty:[], last:0, err:''}); grp.forEach(x=>{ FT()[x] = c; }); if(M.feedAll === old) M.feedAll = c; persist(); closeSheet(true);
+    for(const t of Object.keys(FRX())) if(FRX()[t].g === old){ await feedRestrict(t, null); FRX()[t].g = c; FRX()[t].sent = {}; }   // voyages « à part » : nouveaux codes aussi
     if(!many){ await feedPublish(tid); return; }
     grp.forEach(x=>feedBuild(x)); toast('👀 Publication en cours…');
     try { await syncNow(); feedUpload(); } catch(e){}
@@ -14132,7 +14362,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-16s';
+  const BUILD = '2026-10-16t';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -14142,7 +14372,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, tripLeaveGo, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
