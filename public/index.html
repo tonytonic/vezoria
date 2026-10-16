@@ -2025,6 +2025,8 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 .fd-trips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:8px 12px;background:#fff;border-bottom:1px solid rgba(0,0,0,.06)}
 .fd-trips button{flex:0 0 auto;border:0;border-radius:99px;padding:7px 12px;font:600 .82rem inherit;background:#f3eefc;color:#2A1238}
 .fd-trips button.on{background:#2A1238;color:#fff}
+.sp-ent{display:flex;flex-direction:column;gap:6px;background:#f6f1fb;border-radius:14px;padding:10px 12px;margin:8px 0 6px}
+.sp-ent label{font-weight:700;font-size:.85rem}.sp-ent small{font-size:.72rem;color:var(--gray)}
 /* 🔔 Cloche de l’accueil */
 .hero-foot .cv-bell{margin-left:auto}
 .hero-foot .cv-bell+.cv-hero-qr{margin-left:10px}
@@ -2736,7 +2738,11 @@ const CV = (function(){
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.close();CV.go('${t.id}');CV.modeGo('bilan')">📸 Revoir ce voyage</button><button type="button" class="v-btn sec" onclick="CV.flyover('${t.id}')">🌍 Survol 3D</button></div>`);
   }
   function pushBadgeClear(){ try { pushKv('badge', 0).catch(()=>{}); if(navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{});
-    if('serviceWorker' in navigator) navigator.serviceWorker.ready.then(reg=>reg.getNotifications ? reg.getNotifications() : []).then(ns=>ns.forEach(n=>n.close())).catch(()=>{}); } catch(e){} }
+    if('serviceWorker' in navigator) navigator.serviceWorker.ready.then(reg=>{
+      // les notifications de chaque voyage (regroupées par étiquette) : fermées depuis la page ET par le service worker
+      const tags = ['vezoria', ...trips().flatMap(t=>['vz-' + t.id, 'vz-soc-' + t.id]), ...list('feedtrip').map(f=>'vz-soc-' + f.id)];
+      try { (reg.active || navigator.serviceWorker.controller) && (reg.active || navigator.serviceWorker.controller).postMessage({type:'vz-clear', tags}); } catch(e){}
+      return reg.getNotifications ? reg.getNotifications() : []; }).then(ns=>ns.forEach(n=>n.close())).catch(()=>{}); } catch(e){} }
   /* 🔔 Récap : ce qui est arrivé pendant que l’appli était fermée (Android n’affiche pas toujours de bandeau) */
   let recapVia = '', recapT = null;
   const recapBusy = () => document.querySelector('#v-sheet-bg, .ui-dlg, #cv-gate, #cv-film, #cv-tj, .cv-first');
@@ -4298,9 +4304,9 @@ const CV = (function(){
 
   /* ══════════ 🧳 Valise intelligente : météo des étapes + activités prévues ══════════ */
   let spSug = [];
-  async function smartPack(){
+  async function smartPack(again){
     const t = trip(); if(!t) return;
-    openSheet(`<h2>🧳 Valise intelligente</h2><div class="v-sum-small" id="sp-msg">🌤️ Je regarde la météo de tes étapes et tes activités…</div><div id="sp-list"></div>`);
+    if(!again || !document.getElementById('sp-list')) openSheet(`<h2>🧳 Valise intelligente</h2><div class="v-sum-small" id="sp-msg">🌤️ Je regarde la météo de tes étapes et tes activités…</div><div id="sp-list"></div>`);
     const st = tlStages(); let mn = 99, mx = -99, rain = 0, rainTxt = '', meteoOk = 0;
     for(const s of st.slice(0, 8)){ try { const v = await meteoFor(s); meteoOk++; mn = Math.min(mn, v.min); mx = Math.max(mx, v.max);
       const r = v.kind === 'prev' ? (v.pluie >= 50) : (v.jp >= Math.max(2, v.n / 4)); if(r){ rain++; rainTxt = rainTxt || s.city; } } catch(e){} }
@@ -4309,9 +4315,19 @@ const CV = (function(){
     const EU = /^(FR|BE|DE|ES|IT|PT|NL|LU|AT|GR|PL|CZ|SK|HU|SI|HR|RO|BG|DK|SE|FI|NO|EE|LV|LT|IS|MC|AD)$/;
     const nn = Math.max(1, dayList().length - 1), S = [];
     const add = (cat, l, why) => S.push({cat, l, why});
-    add('Documents', 'Passeport ou carte d’identité', ''); add('Documents', 'Carte bancaire et un peu de liquide', ''); add('Documents', 'Assurance voyage (numéro d’assistance)', '');
+    // 🛂 formalités d’entrée selon les pays visités et le pays du passeport
+    const from = bagFromDefault(), mine = (M.packCc || {})[t.id];
+    const dest = mine != null ? [...new Set(String(mine).split(',').map(x=>ccOf(x.trim())).filter(Boolean))] : [...new Set([...ccs, ...bagCcs()])];
+    const rules = dest.map(cc=>[cc, entryRules(cc, from)]), multi = dest.length > 1, nm = cc => flag(cc) + ' ' + ccName(cc);
+    const pass = rules.some(([, r])=>/Passeport/i.test(r.doc) && !/ou passeport|passeport conseillé/i.test(r.doc));
+    add('Documents', pass ? 'Passeport (vérifier la date d’expiration)' : 'Passeport ou carte d’identité', pass ? '🛂 ' + rules.filter(([, r])=>/Passeport/i.test(r.doc) && !/ou passeport|passeport conseillé/i.test(r.doc)).map(([c])=>nm(c)).join(', ') : '');
+    rules.forEach(([cc, r])=>r.x.filter(x=>!/CEAM/.test(x)).forEach(x=>add('Formalités', x + (multi ? ' — ' + ccName(cc) : ''), '🛂 ' + nm(cc))));
+    if(from === 'eu' && dest.some(c=>EU_CEAM.includes(c))) add('Documents', 'Carte européenne d’assurance maladie (CEAM)', '🇪🇺 ' + dest.filter(c=>EU_CEAM.includes(c)).map(ccName).join(', '));
+    add('Documents', 'Carte bancaire et un peu de liquide', ''); add('Documents', 'Assurance voyage (numéro d’assistance)', '');
     add('Électronique', 'Chargeur de téléphone', ''); add('Électronique', 'Batterie externe', '');
-    if([...ccs].some(c=>!EU.test(c))) add('Électronique', 'Adaptateur de prise', '🔌 autre type de prise sur place');
+    { const pl = from === 'eu' ? [...new Set(dest.map(c=>PLUG[c]).filter(Boolean))] : [];
+      if(pl.length) add('Électronique', 'Adaptateur de prise (type ' + pl.join(', ') + ')', '🔌 ' + dest.filter(c=>PLUG[c]).map(nm).join(', '));
+      else if(from !== 'eu' || [...ccs].some(c=>!EU.test(c))) add('Électronique', 'Adaptateur de prise', '🔌 autre type de prise sur place'); }
     add('Santé', 'Petite trousse à pharmacie', '');
     if(meteoOk){
       if(mn <= 5){ add('Vêtements', 'Manteau chaud', `🥶 jusqu’à ${mn}°`); add('Vêtements', 'Bonnet, gants et écharpe', `🥶 jusqu’à ${mn}°`); }
@@ -4334,9 +4350,16 @@ const CV = (function(){
     const msg = document.getElementById('sp-msg'), box = document.getElementById('sp-list'); if(!box) return;
     if(msg) msg.innerHTML = meteoOk ? `<span>${meteoOk > 1 ? `🌤️ Météo de ${meteoOk} étapes` : '🌤️ Météo de ton étape'}</span> <b>${mn}° → ${mx}°</b>${rain ? ' <span>☔ pluie possible</span>' : ''}<br><span>Coche ce que tu veux ajouter à ta checklist.</span>` : '<span>Pas de météo (ajoute des hébergements avec une ville et des dates). Voici l’essentiel selon ton programme :</span>';
     const cats = [...new Set(spSug.map(x=>x.cat))];
-    box.innerHTML = cats.map(c=>`<div class="v-cl-cat">${esc(c)}</div>` + spSug.map((x, i)=>x.cat === c ? `<label class="sp-r${x.has ? ' has' : ''}"><input type="checkbox" data-sp="${i}" ${x.has ? 'disabled' : 'checked'}><span>${esc(x.l)}${x.why ? `<small>${esc(x.why)}</small>` : ''}${x.has ? '<small>✓ déjà dans ta checklist</small>' : ''}</span></label>` : '').join('')).join('')
+    const head = `<div class="sp-ent"><label>🛂 Ton passeport ou ta carte d’identité vient de…</label><select class="v-in" onchange="CV.packFrom(this.value)">${BAG_FROM.map(([k, l])=>`<option value="${k}"${k === from ? ' selected' : ''}>${l}</option>`).join('')}</select>
+      <label>🌍 Pays visités</label><input class="v-in" id="sp-cc" value="${esc(dest.map(ccName).join(', '))}" placeholder="Ex. Italie, Malte" onchange="CV.packCc(this.value)">
+      <small>Règles générales pour un court séjour touristique. Vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.</small></div>`;
+    // pays pas encore connus (ville d’hébergement jamais cherchée) : on les cherche, puis on met la liste à jour une fois
+    if(mine == null && !again) setTimeout(async ()=>{ let nw = 0; for(const c of bagCities()){ if((M.ctry || {})[normQ(c)] || ccOf(c)) continue; try { const r = await countryOf(c); if(r && r.cc) nw++; } catch(e){} if(!document.getElementById('sp-list')) return; } if(nw) smartPack(true); }, 50);
+    box.innerHTML = head + cats.map(c=>`<div class="v-cl-cat">${esc(c)}</div>` + spSug.map((x, i)=>x.cat === c ? `<label class="sp-r${x.has ? ' has' : ''}"><input type="checkbox" data-sp="${i}" ${x.has ? 'disabled' : 'checked'}><span>${esc(x.l)}${x.why ? `<small>${esc(x.why)}</small>` : ''}${x.has ? '<small>✓ déjà dans ta checklist</small>' : ''}</span></label>` : '').join('')).join('')
       + `<div class="v-actions"><button type="button" class="v-btn" onclick="CV.smartPackAdd()">＋ Ajouter à ma checklist</button></div>`;
   }
+  function packFrom(v){ M.bagFrom = v; persist(); smartPack(true); }
+  function packCc(v){ const t = trip(); if(!t) return; M.packCc = Object.assign({}, M.packCc || {}, {[t.id]: String(v || '').trim()}); persist(); smartPack(true); }
   function smartPackAdd(){
     const sel = [...document.querySelectorAll('[data-sp]:checked')].map(i=>spSug[+i.dataset.sp]).filter(x=>x && !x.has);
     sel.forEach((x, k)=>put({id:'c' + uid() + k, type:'check', trip:M.trip, cat:x.cat, label:x.l, done:false}));
@@ -9154,6 +9177,74 @@ ${pm.join('\n')}</Document></kml>`;
   // erreurs fréquentes de lecture sur les captures (heures « 14h05 », « O » pour « 0 » dans les heures et les numéros de vol)
   const cfOcrFix = t => String(t || '').replace(/(\d{1,2})\s?[hH]\s?(\d{2})\b/g, '$1:$2').replace(/\b([0-2]?\d)[:.]([0-5])[oO]\b/g, '$1:$20').replace(/\b([A-Z]{2})\s?[oO](\d{2,3})\b/g, '$10$2').replace(/[|¦]/g, ' ');
 
+  /* ---------- ✈️ Carte d’embarquement (capture d’écran Wallet, appli de la compagnie, PDF) : lecture dédiée ---------- */
+  const IATA = (() => { const o = {}; ('CDG Paris|ORY Paris|BVA Paris-Beauvais|NTE Nantes|BES Brest|RNS Rennes|LYS Lyon|MRS Marseille|NCE Nice|BOD Bordeaux|TLS Toulouse|LIL Lille|SXB Strasbourg|MPL Montpellier|BIQ Biarritz|GNB Grenoble|MLH Bâle-Mulhouse|BSL Bâle-Mulhouse|LRT Lorient|QIP Quimper|UIP Quimper|CFE Clermont-Ferrand|PUF Pau|AJA Ajaccio|BIA Bastia|FSC Figari|CLY Calvi|TLN Toulon|PGF Perpignan|GVA Genève|ZRH Zurich|BRU Bruxelles|CRL Charleroi|LUX Luxembourg|AMS Amsterdam|EIN Eindhoven|RTM Rotterdam|LHR Londres|LGW Londres|STN Londres|LTN Londres|LCY Londres|SEN Londres|MAN Manchester|BHX Birmingham|BRS Bristol|EDI Édimbourg|GLA Glasgow|BFS Belfast|DUB Dublin|SNN Shannon|ORK Cork|MAD Madrid|BCN Barcelone|AGP Malaga|PMI Palma|SVQ Séville|VLC Valence|ALC Alicante|IBZ Ibiza|MAH Minorque|BIO Bilbao|SCQ Saint-Jacques-de-Compostelle|TFS Tenerife|TFN Tenerife|LPA Las Palmas|ACE Lanzarote|FUE Fuerteventura|LIS Lisbonne|OPO Porto|FAO Faro|FNC Funchal|PDL Ponta Delgada|FCO Rome|CIA Rome|MXP Milan|LIN Milan|BGY Bergame|VCE Venise|TSF Trévise|NAP Naples|FLR Florence|PSA Pise|BLQ Bologne|TRN Turin|VRN Vérone|CTA Catane|PMO Palerme|BRI Bari|BDS Brindisi|CAG Cagliari|OLB Olbia|AHO Alghero|MLA Malte|ATH Athènes|JTR Santorin|JMK Mykonos|HER Héraklion|CHQ La Canée|RHO Rhodes|CFU Corfou|SKG Thessalonique|KGS Kos|ZTH Zante|IST Istanbul|SAW Istanbul|AYT Antalya|ADB Izmir|DLM Dalaman|BJV Bodrum|BER Berlin|MUC Munich|FRA Francfort|DUS Düsseldorf|HAM Hambourg|CGN Cologne|STR Stuttgart|VIE Vienne|SZG Salzbourg|INN Innsbruck|PRG Prague|BUD Budapest|WAW Varsovie|KRK Cracovie|GDN Gdansk|CPH Copenhague|ARN Stockholm|GOT Göteborg|OSL Oslo|BGO Bergen|TOS Tromsø|HEL Helsinki|RVN Rovaniemi|KEF Reykjavik|RIX Riga|TLL Tallinn|VNO Vilnius|DBV Dubrovnik|SPU Split|ZAD Zadar|PUY Pula|ZAG Zagreb|LJU Ljubljana|OTP Bucarest|SOF Sofia|TIA Tirana|TGD Podgorica|TIV Tivat|BEG Belgrade|SKP Skopje|LCA Larnaca|PFO Paphos|RAK Marrakech|CMN Casablanca|AGA Agadir|FEZ Fès|RBA Rabat|TNG Tanger|ESU Essaouira|OUD Oujda|TUN Tunis|DJE Djerba|MIR Monastir|NBE Enfidha|ALG Alger|ORN Oran|CAI Le Caire|HRG Hurghada|SSH Charm el-Cheikh|RMF Marsa Alam|LXR Louxor|ASW Assouan|TLV Tel Aviv|AMM Amman|AQJ Aqaba|DXB Dubaï|DOH Doha|AUH Abu Dhabi|MCT Mascate|JFK New York|EWR New York|LGA New York|BOS Boston|IAD Washington|MIA Miami|MCO Orlando|LAX Los Angeles|SFO San Francisco|LAS Las Vegas|SEA Seattle|ORD Chicago|ATL Atlanta|DFW Dallas|YUL Montréal|YYZ Toronto|YVR Vancouver|YQB Québec|CUN Cancún|MEX Mexico|PTP Pointe-à-Pitre|FDF Fort-de-France|RUN La Réunion|CAY Cayenne|PPT Papeete|NOU Nouméa|NRT Tokyo|HND Tokyo|KIX Osaka|ICN Séoul|PEK Pékin|PVG Shanghai|HKG Hong Kong|TPE Taipei|BKK Bangkok|HKT Phuket|CNX Chiang Mai|USM Koh Samui|SGN Hô Chi Minh-Ville|HAN Hanoï|DAD Da Nang|REP Siem Reap|PNH Phnom Penh|DPS Bali|CGK Jakarta|SIN Singapour|KUL Kuala Lumpur|MNL Manille|DEL Delhi|BOM Bombay|GOI Goa|CMB Colombo|MLE Malé|MRU Maurice|SEZ Seychelles|SYD Sydney|MEL Melbourne|AKL Auckland|GRU São Paulo|GIG Rio de Janeiro|EZE Buenos Aires|LIM Lima|CUZ Cuzco|BOG Bogota|SCL Santiago|SJO San José|HAV La Havane|PUJ Punta Cana|SDQ Saint-Domingue|SID Sal|RAI Praia|BVC Boa Vista|DSS Dakar|ABJ Abidjan|NBO Nairobi|ZNZ Zanzibar|JRO Kilimandjaro|JNB Johannesburg|CPT Le Cap|TNR Antananarivo|NOS Nosy Be').split('|').forEach(x=>{ o[x.slice(0, 3)] = x.slice(4); }); return o; })();
+  const AIRL = {EZY:'easyJet', EZS:'easyJet', U2:'easyJet', DS:'easyJet', FR:'Ryanair', RYR:'Ryanair', AF:'Air France', AFR:'Air France', KL:'KLM', LH:'Lufthansa', BA:'British Airways', VY:'Vueling', TO:'Transavia', HV:'Transavia', V7:'Volotea', W6:'Wizz Air', W4:'Wizz Air', IB:'Iberia', UX:'Air Europa', TP:'TAP Air Portugal', AZ:'ITA Airways', LX:'Swiss', SN:'Brussels Airlines', OS:'Austrian', SK:'SAS', AY:'Finnair', DY:'Norwegian', D8:'Norwegian', EI:'Aer Lingus', TK:'Turkish Airlines', PC:'Pegasus', EK:'Emirates', QR:'Qatar Airways', EY:'Etihad', SE:'XL Airways', SS:'Corsair', TX:'Air Caraïbes', BF:'French Bee', A5:'HOP!', XK:'Air Corsica', DL:'Delta', UA:'United', AA:'American Airlines', AC:'Air Canada', TS:'Air Transat', AT:'Royal Air Maroc', TU:'Tunisair', MS:'EgyptAir', LY:'El Al', BT:'airBaltic', FI:'Icelandair', LO:'LOT', OU:'Croatia Airlines', A3:'Aegean', JU:'Air Serbia', X3:'TUIfly', BY:'TUI', LS:'Jet2', ZB:'Air Albania', QS:'Smartwings'};
+  const BP_STOP = new Set('MR MRS MS MME MLE THE AND FOR NOM BDG BAG SEQ PNR REF NON OUI YES DEP ARR ETA ETD GMT UTC VIA TER ZONE GATE SEAT DATE FROM TO JAN FEB MAR APR MAY JUN JUL AUG SEP SEPT OCT NOV DEC JANV FEV FEVR MARS AVR MAI JUIN JUIL AOUT DEC CHD INF ADT ECO EUR USD CHF GBP'.split(' '));
+  function bpCode(tok){   // code d’aéroport, même mal lu (« NITE » pour « NTE »)
+    tok = String(tok || '').toUpperCase().replace(/[^A-Z]/g, ''); if(BP_STOP.has(tok)) return '';
+    if(tok.length === 3 && IATA[tok]) return tok;
+    if(tok.length === 4) for(let i = 0; i < 4; i++){ const t = tok.slice(0, i) + tok.slice(i + 1); if(IATA[t]) return t; }
+    return tok.length === 3 ? tok : '';
+  }
+  function boardingParse(T){
+    let L = cfPre(T).split('\n').map(l=>l.trim()).filter(Boolean);
+    const up = L.map(l=>l.toUpperCase());
+    // deux codes d’aéroport côte à côte (ou sur deux lignes), connus de préférence
+    let from = '', to = '', ci = -1;
+    for(let i = 0; i < up.length && !to; i++){
+      const toks = up[i].split(/[\s→>✈\-–—]+/).filter(Boolean), cs = toks.map(bpCode).filter(Boolean);
+      const known = cs.filter(c=>IATA[c]);
+      if(toks.length <= 4 && cs.length >= 2 && (known.length >= 1)){ from = cs[0]; to = cs[1]; ci = i; }
+    }
+    if(!from){ for(let i = 0; i + 1 < up.length && !to; i++){ const a = bpCode(up[i]), b = bpCode(up[i + 1]); if(a && b && IATA[a] && IATA[b] && up[i].length <= 5 && up[i+1].length <= 5){ from = a; to = b; ci = i; } } }
+    const flightRe = /\b(?:[A-Z]{3}|[A-Z]{2}|[A-Z]\d|\d[A-Z])\s?\d{1,4}\b/;
+    const isLbl = re => up.findIndex(l=>re.test(l));
+    const fli = isLbl(/\b(FLIGHT|VOL|FLUG|VUELO|VOLO|VOO)\b/);
+    let flight = '';
+    for(const i of [fli, fli + 1].filter(i=>i >= 0 && i < up.length)){ const m = up[i].replace(/\b(FLIGHT|VOL|FLUG|VUELO|VOLO|VOO|DATE)\b/g, ' ').match(flightRe); if(m && !/^\d{1,2}:\d{2}/.test(m[0])){ flight = m[0].replace(/\s/g, ''); break; } }
+    if(!flight){ for(const l of up){ const m = l.match(/\b(?:[A-Z]{3}|[A-Z]{2}|[A-Z]\d|\d[A-Z])\s?\d{2,4}\b/); if(m && !/\d[A-K]$/.test(m[0]) && !BP_STOP.has(m[0].replace(/[\s\d]/g, ''))){ flight = m[0].replace(/\s/g, ''); break; } } }
+    const looks = /BOARDING|EMBARQUEMENT|GATE|PORTE|SEAT|SI[EÈ]GE|FLIGHT|\bVOL\b|PASSENGER|PASSAGER|BORDKARTE|TARJETA DE EMBARQUE/.test(up.join(' '));
+    if(!(from && to && (flight || looks))) return null;
+    // fin de la première carte (une autre carte Wallet peut dépasser en bas de la capture)
+    const endAt = (() => { for(let i = Math.max(ci, fli) + 1; i < up.length; i++){ if(i > ci + 1 && up[i] !== up[fli] && /\b(?:[A-Z]{2,3}|[A-Z]\d|\d[A-Z])\d{2,4}\/\d{1,2}[A-Z]{3}/.test(up[i])) return i; } return up.length; })();
+    L = L.slice(0, endAt); const U = up.slice(0, endAt), all = U.join('\n');
+    // date : « 08 NOV », « 08NOV », « 8 nov. 2026 », « 08/11/2026 »
+    let date = '';
+    const dm = all.match(/\b(\d{1,2})\s?([A-ZÉÛ]{3,5})\.?\s?(20\d{2})?\b/g) || [];
+    for(const x of dm){ const m = x.match(/(\d{1,2})\s?([A-ZÉÛ]{3,5})\.?\s?(20\d{2})?/); const k = m[2].normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); const mo = MOIS_FR[k] || MOIS_FR[k.slice(0, 3)]; if(mo && +m[1] >= 1 && +m[1] <= 31){ date = m[3] ? `${m[3]}-${String(mo).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}` : yearFor(T, mo, +m[1]); break; } }
+    if(!date){ const m = all.match(/\b(\d{1,2})[\/.](\d{1,2})[\/.](20\d{2}|\d{2})\b/); if(m){ const y = m[3].length === 2 ? '20' + m[3] : m[3]; date = `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`; } }
+    // heures : rangées sous leurs titres (« GATE CLOSES · DEPARTS · … » puis « 12:15 · 12:45 · … »)
+    let dep = '', arr = '', board = '';
+    for(let i = 1; i < U.length && !dep; i++){
+      const tm = U[i].match(/\b\d{1,2}:\d{2}\b/g); if(!tm) continue;
+      const LBL = /GATE CLOSES|GATE CLOSE|BOARDING|BOARDS|EMBARQUEMENT|FIN D.EMBARQUEMENT|PORTE FERME\w*|DEPARTS|DEPARTURE|D[ÉE]PART|ABFLUG|SALIDA|\bDEP\b|ARRIVES|ARRIVAL|ARRIV[ÉE]E|ANKUNFT|LLEGADA|\bARR\b/g;
+      const kindOf = w => /GATE|BOARD|EMBARQ|PORTE/.test(w) ? 'b' : /ARR|ANK|LLEG/.test(w) ? 'a' : 'd';
+      if(LBL.test(U[i])){ LBL.lastIndex = 0;   // titres et heures sur la même ligne : chaque heure prend le titre qui la précède
+        const labs = []; U[i].replace(LBL, (w, p)=>{ labs.push([p, kindOf(w)]); return w; }); let k = 0;
+        U[i].replace(/\b\d{1,2}:\d{2}\b/g, (t, p)=>{ const l = labs.filter(x=>x[0] < p).pop(); const kd = l ? l[1] : 'd'; if(kd === 'd' && !dep) dep = t; else if(kd === 'a' && !arr) arr = t; else if(kd === 'b' && !board) board = t; return t; });
+        if(dep) break; continue; }
+      LBL.lastIndex = 0;
+      const lab = U[i - 1], kinds = [];
+      lab.replace(/GATE CLOSES|GATE CLOSE|BOARDING|BOARDS|EMBARQUEMENT|FIN D.EMBARQUEMENT|PORTE FERME\w*|DEPARTS|DEPARTURE|D[ÉE]PART|ABFLUG|SALIDA|\bDEP\b|ARRIVES|ARRIVAL|ARRIV[ÉE]E|ANKUNFT|LLEGADA|\bARR\b/g, (w, p)=>{ kinds.push([p, /GATE|BOARD|EMBARQ|PORTE/.test(w) ? 'b' : /ARR|ANK|LLEG/.test(w) ? 'a' : 'd']); return w; });
+      kinds.sort((x, y)=>x[0] - y[0]);
+      if(kinds.length){ tm.forEach((t, k)=>{ const kd = (kinds[k] || [])[1]; if(kd === 'd' && !dep) dep = t; else if(kd === 'a' && !arr) arr = t; else if(kd === 'b' && !board) board = t; }); }
+      else if(tm.length >= 2){ dep = tm[0]; arr = tm[1]; } else dep = tm[0];
+    }
+    if(!dep){ const tm = all.match(/\b\d{1,2}:\d{2}\b/g) || []; if(tm.length) dep = tm[tm.length > 1 ? 1 : 0]; }
+    const seatL = U.findIndex(l=>/\b(SEAT|SI[EÈ]GE|PLACE|SITZ|ASIENTO|POSTO)\b/.test(l));
+    let seat = ''; for(const i of [seatL, seatL + 1].filter(i=>i >= 0 && i < U.length)){ const m = U[i].match(/\b\d{1,2}[A-K]\b/); if(m){ seat = m[0]; break; } }
+    let ref = ''; { const i = U.findIndex(l=>/\b(BOOKING|PNR|R[ÉE]SERVATION|CONFIRMATION|BUCHUNG|LOCALIZADOR|DOSSIER)\b/.test(l));
+      const pick = l => (l.match(/\b(?=[A-Z0-9]*\d)(?=[A-Z0-9]*[A-Z])[A-Z0-9]{5,8}\b/g) || []).find(x=>x !== flight && !/^\d{1,2}[A-K]$/.test(x));
+      if(i >= 0) ref = pick(U[i].replace(/.*?(BOOKING|PNR|R[ÉE]SERVATION|CONFIRMATION|BUCHUNG|LOCALIZADOR|DOSSIER)\S*/, '')) || pick(U[i + 1] || '') || '';
+      if(!ref) for(let k = U.length - 1; k > ci; k--){ const x = pick(U[k]); if(x && x.replace(/\s/g, '') !== flight){ ref = x; break; } } }
+    const pi = U.findIndex(l=>/\b(PASSENGER|PASSAGER|NAME|NOM|PASAJERO|PASSAGIER)\b/.test(l));
+    const pax = pi >= 0 && U[pi + 1] ? L[pi + 1].replace(/\b\d{1,2}[A-K]\b/, '').trim() : '';
+    const pre = (flight.match(/^[A-Z]{3}|^[A-Z0-9]{2}/) || [''])[0], al = AIRL[pre] || AIRL[pre.slice(0, 2)] || (all.match(/EASYJET|RYANAIR|AIR FRANCE|VUELING|TRANSAVIA|VOLOTEA|WIZZ|LUFTHANSA|KLM|IBERIA|BRITISH AIRWAYS|SWISS|TAP|CORSAIR|AIR CARA[IÏ]BES|FRENCH BEE/) || [''])[0].toLowerCase().replace(/(^|\s)\w/g, c=>c.toUpperCase()).replace('Easyjet', 'easyJet');
+    const city = c => IATA[c] ? IATA[c] + ' (' + c + ')' : c;
+    return {from:city(from), to:city(to), date, heure:dep, heureArr:arr, board, flight, compagnie:[al, flight].filter(Boolean).join(' '), seat, ref, pax};
+  }
+
   /* ---------- 🎫 Carte Apple Wallet (.pkpass) : billet d’avion, de train, de bus, de bateau, d’événement ---------- */
   async function impPass(file){
     try {
@@ -9218,7 +9309,14 @@ ${pm.join('\n')}</Document></kml>`;
       const id = 'pj' + uid();
       if(isPdf) await IDB.put({id, blob:file, up:1}); else { await storePhoto(file, id); uploadQueue(); }
       closeSheet(true);
-      cfImport(txt, [{id, t: isPdf ? 'pdf' : 'img', n: (file.name || (isPdf ? 'reservation' : 'capture')).replace(/\.[a-z0-9]+$/i,'').slice(0,40)}]);
+      const pj = [{id, t: isPdf ? 'pdf' : 'img', n: (file.name || (isPdf ? 'reservation' : 'capture')).replace(/\.[a-z0-9]+$/i,'').slice(0,40)}];
+      // carte d’embarquement (capture Wallet ou appli de la compagnie) : lecture dédiée, la capture devient le billet de la fiche
+      const bp = isPdf ? null : boardingParse(txt);
+      if(bp){ pj[0].n = 'Carte d’embarquement';
+        edit({type:'item', trip:M.trip, cat:'transport', mode:'Avion', from:bp.from, to:bp.to, titre:bp.from + ' → ' + bp.to, date:bp.date, heureDep:bp.heure, heureArr:bp.heureArr, compagnie:bp.compagnie, ref:bp.ref, statut:'booked', pj,
+          note:[bp.seat && 'Place : ' + bp.seat, bp.board && 'Embarquement / fermeture de la porte : ' + bp.board, bp.pax && 'Passager : ' + bp.pax].filter(Boolean).join('\n')});
+        toast('✈️ Carte d’embarquement lue — vérifie puis Enregistrer'); return; }
+      cfImport(txt, pj);
     } catch(e){ impSay('⚠️ ' + e.message); }
   }
   // Prétraitement commun (espaces, heures « 14 : 00 », montants « 144 , 30 »)
@@ -9723,15 +9821,20 @@ ${pm.join('\n')}</Document></kml>`;
     end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, csize, true); end.setUint32(16, off, true);
     return new Blob([...parts, ...central, end.buffer], {type:'application/zip'});
   }
+  // Lecture d’un ZIP par morceaux (sans charger tout le fichier en mémoire : les grosses sauvegardes passent aussi sur iPhone)
   async function zipRead(blob){
-    const buf = new Uint8Array(await blob.arrayBuffer()), dv = new DataView(buf.buffer), out = {};
-    let e = buf.length - 22; while(e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--; if(e < 0) throw new Error('fichier ZIP illisible');
-    let p = dv.getUint32(e + 16, true); const n = dv.getUint16(e + 10, true);
-    for(let i=0;i<n;i++){
+    const rd = async (a, b) => new Uint8Array(await blob.slice(a, b).arrayBuffer());
+    const tailN = Math.min(blob.size, 65557), tail = await rd(blob.size - tailN, blob.size), tv = new DataView(tail.buffer);
+    let e = tail.length - 22; while(e >= 0 && tv.getUint32(e, true) !== 0x06054b50) e--; if(e < 0) throw new Error('fichier ZIP illisible');
+    const n = tv.getUint16(e + 10, true), cdSize = tv.getUint32(e + 12, true), cdOff = tv.getUint32(e + 16, true), out = {};
+    const cd = await rd(cdOff, cdOff + cdSize), dv = new DataView(cd.buffer); let p = 0;
+    for(let i = 0; i < n && p + 46 <= cd.length; i++){
       const meth = dv.getUint16(p + 10, true), csz = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true), el = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), lo = dv.getUint32(p + 42, true);
-      const name = new TextDecoder().decode(buf.subarray(p + 46, p + 46 + nl));
-      const ds = lo + 30 + dv.getUint16(lo + 26, true) + dv.getUint16(lo + 28, true), raw = buf.subarray(ds, ds + csz);
-      out[name] = meth === 0 ? raw : meth === 8 ? async () => new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer()) : null;
+      const name = new TextDecoder().decode(cd.subarray(p + 46, p + 46 + nl));
+      if(meth === 0 || meth === 8) out[name] = async () => {
+        const lh = await rd(lo, lo + 30), lv = new DataView(lh.buffer), ds = lo + 30 + lv.getUint16(26, true) + lv.getUint16(28, true), part = blob.slice(ds, ds + csz);
+        return meth === 0 ? new Uint8Array(await part.arrayBuffer()) : new Uint8Array(await new Response(part.stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+      };
       p += 46 + nl + el + cl;
     }
     return out;
@@ -9806,8 +9909,8 @@ ${pm.join('\n')}</Document></kml>`;
       const replace = Object.values(R).some(r=>!r.demo && r.type!=='profile') && (await uiConfirm(`Sauvegarde du ${new Date(data.exportedAt).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'))} : ${data.records.length} fiches.\n\nOK = REMPLACER tout le carnet de ce téléphone par la sauvegarde.\nAnnuler = FUSIONNER (garder les deux ; la version la plus récente de chaque fiche gagne).`));
       if(replace) Object.keys(R).forEach(id=>{ if(!R[id].demo) delete R[id]; });
       let n = 0; data.records.forEach(r=>{ if(!r || !r.id) return; const cur = R[r.id]; if(cur && cur.deleted && !r.deleted){ r = Object.assign({}, r, {updatedAt: Date.now()}); R[r.id] = r; markDirty(r.id); n++; return; } if(!cur || (r.updatedAt||0) >= (cur.updatedAt||0)){ R[r.id] = r; markDirty(r.id); n++; } });
-      let nf = 0; const names = Object.keys(z).filter(k=>/^(photos|docs)\//.test(k));
-      for(const k of names){ const id = k.replace(/^(photos|docs)\//,'').replace(/\.(jpg|pdf)$/,''); const ex = await IDB.get(id).catch(()=>null); if(ex && ex.blob) continue;
+      let nf = 0, nh = 0; const names = Object.keys(z).filter(k=>/^(photos|docs)\//.test(k));
+      for(const k of names){ const id = k.replace(/^(photos|docs)\//,'').replace(/\.(jpg|pdf)$/,''); const ex = await IDB.get(id).catch(()=>null); if(ex && ex.blob){ nh++; continue; }
         const u8 = await get(k); if(!u8) continue; await IDB.put({id, blob:new Blob([u8], {type: k.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg'}), up:0}); nf++;
         if(!k.endsWith('.pdf')){ M.pq = M.pq || []; if(!M.pq.includes(id)) M.pq.push(id); }
         if(nf % 20 === 0) msg(`📸 ${nf} / ${names.length} fichiers…`); }
@@ -9819,8 +9922,10 @@ ${pm.join('\n')}</Document></kml>`;
       }
       if(!M.trip || !R[M.trip]){ const t = trips()[0]; if(t) M.trip = t.id; }
       persist(); closeSheet(true); applyMode(); queueSync(); uploadQueue();
-      if(multi) toast(`💾 ${n} fiche(s), ${nf} photo(s)`); else alert(`💾 Sauvegarde restaurée : ${n} fiche(s), ${nf} photo(s)/PDF.`);
-    } catch(e){ msg('⚠️ ' + e.message); }
+      const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
+      const why = (!n && !nf ? '\n\n' + MSG('Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.') : '') + (nh ? '\n' + MSG(`${nh} photo(s) déjà sur ce téléphone, gardées telles quelles.`) : '');
+      if(multi) toast(`💾 ${n} fiche(s), ${nf} photo(s)`); else alert(MSG(`💾 Sauvegarde restaurée : ${n} fiche(s), ${nf} photo(s)/PDF.`) + why);
+    } catch(e){ msg('⚠️ ' + e.message); if(!document.getElementById('zp-msg')) alert('Import impossible : ' + (e.message || e)); }
   }
 
   /* ══════════════════════════════════════════════════════════════════════════
@@ -10034,7 +10139,7 @@ ${pm.join('\n')}</Document></kml>`;
   function cinePreDraw(){
     const el = document.getElementById('wm-cpre'); if(!el || !CP) return;
     const o = CP.o, n = CP.all.filter(s=>CP.sel.has(ciKey(s))).length, keepY = (el.querySelector('.cp-card') || {}).scrollTop || 0;
-    const pool = imgPool(el), stripX = el.dataset.pho === String(CP.phOpen) ? ((el.querySelector('.cp-phs>div') || {}).scrollLeft || 0) : 0;
+    const pool = imgPool(el), stripX = el.dataset.pho === String(CP.phOpen) ? ((el.querySelector('.cp-phs>div') || {}).scrollLeft || 0) : 0, again = !!el.querySelector('.cp-card');
     const ch = (k, v, lbl) => `<button type="button" class="cp-ch${String(o[k]) === String(v) ? ' on' : ''}" data-k="${k}" data-v="${v}" onclick="CV.cineSet(this)">${lbl}</button>`;
     const tg = (k, lbl) => `<button type="button" class="cp-ch cp-tg${o[k] ? ' on' : ''}" data-k="${k}" onclick="CV.cineSet(this)">${o[k] ? '✓ ' : ''}${lbl}</button>`;
     const sw = Object.entries(CI_COL).map(([k, c])=>`<button type="button" class="cp-sw${o.col === k ? ' on' : ''}" data-k="col" data-v="${k}" onclick="CV.cineSet(this)" style="background:${c[0]}" aria-label="${k}"></button>`).join('');
@@ -10062,7 +10167,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="ci-btns"><button type="button" onclick="CV.cineGo(0)">▶ Lancer le survol</button>${cineCanRec() ? `<button type="button" onclick="CV.cineGo(1)">⏺ Enregistrer la vidéo</button>` : ''}
         <button type="button" onclick="CV.cineOpen()">${CP.open ? '✓ Fermer les réglages' : '⚙️ Personnaliser'}</button></div></div>`;
     imgReuse(el, pool); el.dataset.pho = String(CP.phOpen);
-    const cd = el.querySelector('.cp-card'); if(cd) cd.scrollTop = keepY;
+    const cd = el.querySelector('.cp-card'); if(cd){ if(again) cd.style.animation = 'none'; cd.scrollTop = keepY; }
     const sx = el.querySelector('.cp-phs>div'); if(sx && stripX) sx.scrollLeft = stripX;
     const mo = el.querySelector('.cp-mus .on'); if(mo) mo.parentNode.scrollLeft = Math.max(0, mo.offsetLeft - 40);
     hydrate();
@@ -10079,13 +10184,24 @@ ${pm.join('\n')}</Document></kml>`;
     if(v === undefined) CP.o[k] = CP.o[k] ? 0 : 1; else CP.o[k] = v;
     if(k === 'map' || k === 'names') ciLook(CP.o);
     if(k === 'mus'){ clearTimeout(ciPrevT); if(v === 'off') ciMusicOff(); else { ciMusic(CP.o, true); ciPrevT = setTimeout(ciMusicOff, 8000); } }   // écoute de 8 s
-    ciSave(); cinePreDraw();
+    ciSave();
+    const row = el.closest('.cp-row');
+    if(row && v !== undefined){ row.querySelectorAll('[data-k="' + k + '"]').forEach(b=>b.classList.toggle('on', b.dataset.v === String(v))); cineSum(); return; }
+    if(row && v === undefined){ el.classList.toggle('on', !!CP.o[k]); el.textContent = (CP.o[k] ? '✓ ' : '') + el.textContent.replace(/^✓ /, ''); cineSum(); return; }
+    cinePreDraw();
   }
   function cineStep(el){
     if(!CP) return; const s = CP.all[+el.dataset.i]; if(!s) return; const k = ciKey(s);
     if(CP.sel.has(k)) CP.sel.delete(k); else CP.sel.add(k);
     M.cineSteps = Object.assign({}, M.cineSteps || {}, {[CP.t.id]: [...CP.sel]}); try { persist(); } catch(e){}
+    const row = el.closest('.cp-st'); if(row){ const on = CP.sel.has(k); row.classList.toggle('on', on); const ck = row.querySelector('.cp-ck'); if(ck) ck.textContent = on ? '✓' : ''; cineSum(); return; }
     cinePreDraw();
+  }
+  // le résumé (nombre d’étapes, durée) seul, sans redessiner la carte
+  function cineSum(){
+    const el = document.getElementById('wm-cpre'); if(!el || !CP) return; const n = CP.all.filter(s=>CP.sel.has(ciKey(s))).length;
+    const sm = el.querySelector('.cp-sum'); if(sm) sm.innerHTML = `<span>${n} étape${n > 1 ? 's' : ''}</span> · <span>${ciDur()}</span>`;
+    const cn = el.querySelector('.cp-n'); if(cn) cn.textContent = n + ' / ' + CP.all.length;
   }
   function cineSteps(how){
     if(!CP) return;
@@ -13685,7 +13801,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-16f';
+  const BUILD = '2026-10-16h';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -13786,7 +13902,7 @@ ${pm.join('\n')}</Document></kml>`;
     live, one, echAdd, echDel, echSpread, echToggle, lisser, echReset, echRange, echRangeReset,
     planDay, plCfg, plAdd, plDel, plOpt, wizard, radarTuto, rcOpen, rbSheet, rbPhoto, rbSave, zipSavePart, zipCancel, innerGo, inspDeal, inspOpen, compN, compDel, compAdd, compTog, compCreate, inspBack, inspMore, inspFav, inspSurprise, inspVote, gateInstall, partsSheet, partsSave, discInfo, discBack, newTrip, blankTrip, psImport, psFile, inspire, inspireDemo, inspireGo, inspireCreate, zipSheet, zipExport, zipImport, worldFly, worldStep, worldStory, cfSegGo, trkToggle, modeGo, bilanClose, albumSheet, albCover, albumGo, tripShare, tripShareSheet, tripInvite, tripNewCode, tripUnshare, tripJoin, tripJoinGo, tripWho, tripWhoSet, impSheet, impPick, jrSheet, jrTog, jrAll, worldMap, worldMode, worldOpen, worldClose, pjAdd, pjDel, pjOpen, cfSheet, cfGo, tlCo2, hereNow, tlStats, tlKml, tlFill, tlFillGo, rcView, rcAttach, tlIcsGo, capSet, shopSheet, shopAdd, shopTick, shopClear, rembAsk, pollNew, pollSave, pollVote, pollClose, pollDel, pdfRoute, pdfJournal, pdfShare, pdfOpen, pkgPick, pkgApply, hydrateMaps, renderOutils, tlDay, tlIcs, fxTool, fxFill, tlMeteo, tlReceipt, tlRcPhoto, tlRcOcr, tlRcSave, rcFx, socialHub, trkPub, tlReceipts, tlMap, tlBags, tlBagsGo, tlDocs, tlDocEdit, tlDocSave, tlDocDel, tlJournal, pkgSheet, pkgExport, pkgImport, pinToggle, shareSheet, shareLink, askErase, tutoSheet, escaleTuto, demoLoad, demoDel, demoReset, wzGo, wzDates, wzEt, wzSum, wzTpl, wzCreate,
     pickColor, newProfile, editProfile, saveProfile, delProfile, whoSheet, setMe,
-    bellSheet, bellGo, bellClear, rateGo, inviteSheet, inviteSend, inviteCopy, carnetShareSheet, carnetPublishSheet, carnetPublish, joinPick, joinPickSave, withWhom, withWhomUpd, withWhomGo, joinAny, joinPaste, joinAnyGo, dupSheet, dupTripsGo, photoSweep, spaceSheet, spaceFree, bagEntryUpd, impPickShot, impPickPass, impPass,
+    bellSheet, bellGo, bellClear, rateGo, packFrom, packCc, inviteSheet, inviteSend, inviteCopy, carnetShareSheet, carnetPublishSheet, carnetPublish, joinPick, joinPickSave, withWhom, withWhomUpd, withWhomGo, joinAny, joinPaste, joinAnyGo, dupSheet, dupTripsGo, photoSweep, spaceSheet, spaceFree, bagEntryUpd, impPickShot, impPickPass, impPass,
     genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin,
     _R:()=>R, _M:()=>M, ...VZAPI, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
   // En mode lecture, toutes les actions qui modifient sont bloquées

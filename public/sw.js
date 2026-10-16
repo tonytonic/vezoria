@@ -2,7 +2,7 @@
 // Pages et fichiers de l'appli : réseau s'il répond vite (dernière version), sinon copie locale tout de suite
 // (réseau lent ou absent) ; la copie se met à jour en arrière-plan.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-16f';
+const CACHE = 'vezoria-2026-10-16h';
 const CORE = ['./', './splash.webp', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
@@ -149,6 +149,10 @@ self.addEventListener('push', e => {
       if (now - last < (soc ? 60e3 : 5 * 60e3)) silent = true; else await kvPut('la:' + tag, now);
     }
     let ack = { type: 'vz-push', ok: true, test: isTest, title, body, url };
+    // appli ouverte à l’écran : pas de notification système (elle resterait dans la barre d’Android), seulement le bandeau dans l’appli
+    let shown = false;
+    try { const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true }); shown = !isTest && cs.some(c => c.visibilityState === 'visible' && c.focused); } catch (_) {}
+    if (shown) { try { (await self.clients.matchAll({ type: 'window', includeUncontrolled: true })).forEach(c => c.postMessage(ack)); } catch (_) {} return; }
     try { await self.registration.showNotification(nTitle, { body: nBody, tag, renotify: !silent, silent, icon: './icon-192.png', badge: './icons/badge-96.png', data: { url } }); }
     catch (err) { ack = { type: 'vz-push', ok: false, test: isTest, m: String(err && err.message || err) }; }
     try { (await self.clients.matchAll({ type: 'window', includeUncontrolled: true })).forEach(c => c.postMessage(ack)); } catch (_) {}
@@ -161,5 +165,17 @@ self.addEventListener('notificationclick', e => {
     const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for (const c of cs) { if (c.url.startsWith(self.registration.scope)) { try { await c.focus(); } catch (_) {} c.postMessage({ type: 'vz-open', url }); return; } }
     if (self.clients.openWindow) await self.clients.openWindow(url);
+  })());
+});
+
+// 🔔 L’appli demande d’effacer les notifications (ouverture, cloche) : le service worker les ferme lui-même,
+// y compris celles affichées en silence (regroupées), et remet le compteur à zéro
+self.addEventListener('message', e => {
+  const d = e.data || {}; if (d.type !== 'vz-clear') return;
+  e.waitUntil((async () => {
+    try { const ns = await self.registration.getNotifications(); ns.forEach(n => n.close()); } catch (_) {}
+    try { for (const t of (d.tags || [])) { const ns = await self.registration.getNotifications({ tag: t }); ns.forEach(n => n.close()); } } catch (_) {}
+    try { await kvPut('badge', 0); } catch (_) {}
+    try { if (self.navigator && self.navigator.clearAppBadge) await self.navigator.clearAppBadge(); } catch (_) {}
   })());
 });
