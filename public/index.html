@@ -1963,6 +1963,8 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 <style>.fd-ph img.miss{opacity:0}.fd-ph span:has(>img.miss),.fd-ph button:has(>img.miss){background:#f3e9ee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ctext x='20' y='27' font-size='20' text-anchor='middle'%3E%E2%8F%B3%3C/text%3E%3C/svg%3E") center/40px no-repeat!important}</style>
 <style>
 .sw-row{display:flex;flex-direction:column;align-items:center;gap:2px}.sw-row small{font-size:.72rem;font-weight:600;opacity:.85}
+.cv-folg{border-top:1px solid var(--light)}.cv-folg:first-of-type{border-top:0}.cv-folg>summary{display:flex;align-items:center;gap:10px;padding:10px 2px;cursor:pointer;list-style:none}.cv-folg>summary::-webkit-details-marker{display:none}.cv-folg>summary>i{flex:none;width:30px;height:30px;border-radius:50%;background:var(--navy,#2A1238);color:#fff;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center}.cv-folg>summary>b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cv-folg>summary>small{color:var(--gray);font-size:.8rem}.cv-folg>summary::after{content:'›';color:var(--gray);transition:transform .2s}.cv-folg[open]>summary::after{transform:rotate(90deg)}.cv-folg .cv-prow{margin-left:40px;width:calc(100% - 40px)}.cv-folg .cv-badge{position:static;transform:none;flex:none;margin:0 2px}
+.fd-ph .fd-more-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1;border:0;border-radius:12px;background:var(--navy,#2A1238);color:#fff;font:inherit;cursor:pointer}.fd-ph:not(.grid) .fd-more-ph{flex:0 0 40%;aspect-ratio:auto}.fd-more-ph b{font-size:1.4rem}.fd-more-ph small{font-size:.75rem;opacity:.85}
 .sh-sec{font-weight:800;font-size:.95rem;color:var(--navy,#2A1238);margin:2px 0 8px}
 .sh-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .sh-links button{border:0;background:#f3ecf6;color:#2a1238;border-radius:14px;padding:7px 11px;font:inherit;font-size:.8rem;font-weight:700}
@@ -2333,7 +2335,9 @@ const CV = (function(){
     if(!u && /^https?:/.test(location.protocol)) u = location.origin;
     return u ? u.replace(/\/+$/,'') + '/api/sync' : '';
   }
-  function queueSync(){ if(!M.sync.on && !(M.spaces||[]).length) return; syncDot(); clearTimeout(syncT); syncT = setTimeout(()=>syncNow(), 1200); }
+  function queueSync(){ if(!M.sync.on && !(M.spaces||[]).length) return; syncDot(); clearTimeout(syncT);
+    const wait = Math.max(3000, 15000 - (Date.now() - (typeof lastSyncAt === 'number' ? lastSyncAt : 0)));   // économe : modifs regroupées, 15 s mini entre deux synchros
+    syncT = setTimeout(()=>syncNow(), wait); }
   /* ── Chiffrement de bout en bout (version publique) ──
      Le code du carnet ne quitte jamais le téléphone : le serveur reçoit seulement une empreinte
      (pour ranger les données) et des fiches/photos chiffrées en AES-256-GCM avec une clé tirée du code. */
@@ -2386,6 +2390,7 @@ const CV = (function(){
     changes = E2E ? await Promise.all(changes.map(r=>sealRec(r, code))) : changes.map(slim);
     const res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json','X-Carnet-Code':await authCode(code)}, body:JSON.stringify({since, changes})});
     let j = {}; try { j = await res.json(); } catch(e){}
+    if(res.status === 429){ M.syncPause = Date.now() + Math.min(3600, Math.max(60, +j.retry || 600)) * 1000; persist(); }
     if(!res.ok) throw new Error(j.error || ('Erreur serveur ' + res.status));
     if(!Array.isArray(j.records)) throw new Error('Réponse inattendue du serveur');
     if(E2E) j.records = (await Promise.all(j.records.map(x=>openRec(x, code)))).filter(Boolean);
@@ -2448,16 +2453,19 @@ const CV = (function(){
   const liveShared = () => { try { return trips().some(t=>tripPhase(t)==='live' && !t.demo && (TS()[t.id] || (M.sync && M.sync.on))) || list('feedtrip', f=>TS()[f.id] && tripPhase(f)==='live').length > 0; } catch(e){ return false; } };
   var AUTO_SYNC = 3600000, pollGap = AUTO_SYNC, lastSyncAt = 0;
   async function syncNow(manual){
+    const pull = manual === 'pull'; if(pull) manual = false;   // « pull » : aller chercher les nouveautés tout de suite (notification touchée), sans message
     if(manual === true){ M.pqPause = 0; M.pqFull = {}; }   // « Synchroniser » à la main : on réessaie d’envoyer les photos tout de suite
     const mainOn = !!(M.sync.on && M.sync.code);
     if(!mainOn && !(M.spaces||[]).length) return;
+    if(manual !== true && !pull && M.syncPause && Date.now() < M.syncPause) return;   // pause demandée par le serveur (trop de synchros)
     if(syncing){ again = true; return; }
     syncing = true; syncDot();
     const showC = E2E && !!manual;
     if(showC) cryptShow('🔐 Chiffrement de tes données en cours…');
     let changed = 0; const hadDirty = M.dirty.length;
     try {
-      if(mainOn){
+      const now0 = Date.now(), auto = manual !== true && !pull;
+      if(mainOn && !(auto && !M.dirty.length && now0 - (M.sync.last || 0) < 120000)){   // rien à envoyer et vu il y a moins de 2 min : on passe
       const ids = [...M.dirty];
       let first = true;
       for(let i = 0; first || i < ids.length; i += 500){
@@ -2471,7 +2479,11 @@ const CV = (function(){
       }
       M.sync.last = Date.now(); M.sync.err = '';
       }
-      for(const sp of (M.spaces||[])) changed += await syncSpace(sp);
+      for(const sp of (M.spaces||[])){
+        // carnets sans modif à envoyer : 5 min mini entre deux passages (15 min pour les voyages suivis en abonné)
+        const fol = list('feedtrip', f=>TS()[f.id] === sp.code).length && !Object.values(FT()).includes(sp.code);
+        if(auto && !(sp.dirty || []).length && sp.last && now0 - sp.last < (fol ? 900000 : 300000)) continue;
+        changed += await syncSpace(sp); }
       if(showC) cryptHide('🔒 Données chiffrées et synchronisées');
       else if(manual) toast('☁️ Synchronisé');
       setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500);
@@ -2721,6 +2733,7 @@ const CV = (function(){
     const tb = /^(soir|anniv)/.test(rr) ? 'souv' : {depense:'budget', resa:'prog', souv:'souv', sondage:'envies', notes:'prog', rappel:'prog'}[k] || 'prog';
     M.mode = 'prep'; M.tab = tb; persist(); applyMode(); window.scrollTo({top:0});
     if(k === 'notes') setTimeout(()=>{ try { shopSheet(); } catch(e){} }, 300);
+    if(k && k !== 'rappel') setTimeout(()=>syncNow('pull'), 400);   // la nouveauté annoncée arrive tout de suite
   }
   /* ── 📅 Ce jour-là : un souvenir pris le même jour, une année précédente ── */
   function onThisDay(force){
@@ -11691,7 +11704,7 @@ ${pm.join('\n')}</Document></kml>`;
   /* ---------- 🔗 Partager le voyage (compagnon, amis) ---------- */
   function shareHub(){
     const t0 = trip(), t = t0 && !t0.demo ? t0 : null;
-    let h = `<h2>👥 Partager</h2>`;
+    let h = `<h2>👥 Partager</h2>` + followHTML();
     if(t){
       const code = TS()[t.id], on = code && spaceObj(code), sp = on ? spaceObj(code) : null, v = (t.voyageurs||[]).filter(prof), fc = feedCode(t.id);
       const nfw = fc ? list('follower', x=>x.trip===ftId(t.id) && !isBlk(x)).length : 0, nlk = fc ? list('like', l=>l.trip===ftId(t.id) && l.on && !isBlk(l)).length : 0, ncm = fc ? list('comment', c=>c.trip===ftId(t.id) && !isBlk(c)).length : 0;
@@ -11713,7 +11726,7 @@ ${pm.join('\n')}</Document></kml>`;
       <button type="button" class="v-btn sec" onclick="CV.joinAny()">🔗 Rejoindre avec un code</button></div>`;
     h += socialHTML(t ? t.id : '');
     h += `<div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`;
-    openSheet(h);
+    openSheet(h); { const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = 0; }
     M.socSeen = Date.now(); persist(); setTimeout(socPill, 50);
   }
 
@@ -13497,7 +13510,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(!R[head.id] || stripStamp(R[head.id]) !== stripStamp(head)) out.push(head);
     const keep = new Set();
     list('souv', s=>s.trip===tid && !s.priv && ((s.photos||[]).length || (s.texte||'').trim())).forEach(s=>{
-      const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 24), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''};
+      const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 2000), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''};
       keep.add(f.id); if(!R[f.id] || R[f.id].deleted || stripStamp(R[f.id]) !== stripStamp(f)) out.push(f);
       f.photos.forEach(p=>feedPhotoQ(c, p)); if(cov) feedPhotoQ(c, cov);
     });
@@ -13642,6 +13655,26 @@ ${pm.join('\n')}</Document></kml>`;
     if(b.dataset.h !== h){ b.dataset.h = h; b.innerHTML = h; b.setAttribute('aria-label', n ? n + ' nouveauté(s)' : 'Partager'); }
   }
   function socialHub(){ shareHub(); }
+  // ➡️ Les voyages que je suis : en haut, rangés par personne (A → Z), chaque personne se déplie sur ses voyages
+  function followHTML(){
+    const fol = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted); if(!fol.length) return '';
+    const nw = {}; socEvents().forEach(e=>{ if(e.k === 'post') nw[e.r.trip] = (nw[e.r.trip]||0) + 1; });
+    const G = {}; fol.forEach(f=>{ const n = String(f.owner||'').trim() || '?', k = n.toLocaleLowerCase(); (G[k] = G[k] || {n, t:[]}).t.push(f); });
+    const gs = Object.values(G).sort((a,b)=>a.n.localeCompare(b.n, undefined, {sensitivity:'base', numeric:true})), many = gs.length > 3;
+    const row = f => { const n = list('feed', x=>x.trip===f.id && !x.deleted).length, k = nw[f.id] || 0;
+      return `<button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b data-notr>${esc(f.titre)}</b><small class="v-sum-small" style="display:block">${f.debut ? `<span>${esc(tripDates(f))}</span> · ` : ''}<span>${n} étape${n>1?'s':''}</span></small></span>${k ? `<b class="cv-badge">${k}</b>` : ''}<span>›</span></button>`; };
+    return `<div class="sh-sec">➡️ Les voyages que je suis</div><div class="sh-card cv-folw">
+      ${gs.length > 6 ? `<input type="search" class="v-in" style="margin-bottom:8px" placeholder="🔎 Chercher une personne ou un voyage" oninput="CV.folFilter(this)">` : ''}
+      <div class="sh-st" style="margin-bottom:6px"><span>👥 ${gs.length} personne${gs.length>1?'s':''}</span><span>🧳 ${fol.length} voyage${fol.length>1?'s':''}</span></div>
+      ${gs.map(g=>{ g.t.sort((a,b)=>(b.debut||'').localeCompare(a.debut||'')); const k = g.t.reduce((s, f)=>s + (nw[f.id]||0), 0);
+        return `<details class="cv-folg" data-q="${esc((g.n + ' ' + g.t.map(f=>f.titre).join(' ')).toLocaleLowerCase())}"${many && !k ? '' : ' open'}><summary><i data-notr>${esc((g.n.match(/\p{L}|\d/u)||['?'])[0].toUpperCase())}</i><b data-notr>${esc(g.n)}</b><small>${g.t.length} voyage${g.t.length>1?'s':''}</small>${k ? `<b class="cv-badge">${k}</b>` : ''}</summary>${g.t.map(row).join('')}</details>`; }).join('')}
+      <div class="v-sum-small cv-folnone" style="display:none">Personne ne correspond.</div></div>`;
+  }
+  function folFilter(inp){
+    const q = inp.value.trim().toLocaleLowerCase(), box = inp.closest('.cv-folw'); let n = 0;
+    box.querySelectorAll('.cv-folg').forEach(d=>{ const ok = !q || d.dataset.q.includes(q); d.style.display = ok ? '' : 'none'; if(ok) n++; if(q && ok) d.open = true; });
+    box.querySelector('.cv-folnone').style.display = n ? 'none' : '';
+  }
   function socialHTML(cur){
     const ev = socEvents(true), mineT = Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted), others = mineT.filter(x=>x !== cur);
     const fol = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted);
@@ -13664,7 +13697,7 @@ ${pm.join('\n')}</Document></kml>`;
       ${ev.length ? `<div class="sh-card"><div class="sh-k">✨ Nouveautés · 24 h</div>${ev.slice(0, 40).map(evRow).join('')}</div>` : '<div class="v-sum-small" style="margin-bottom:10px">Rien de nouveau ces dernières 24 heures.</div>'}
       <div class="sh-st" style="margin:4px 0 12px"><span>👀 <b>${nFw}</b> abonné${nFw>1?'s':''}</span><span>➡️ <b>${fol.length}</b> voyage${fol.length>1?'s':''} suivi${fol.length>1?'s':''}</span></div>
       ${others.length ? `<h3>📣 Mes voyages publiés</h3>${others.map(pubRow).join('')}` : (cur ? '' : '<h3>📣 Mes voyages publiés</h3><div class="v-sum-small" style="margin-bottom:8px">Aucun voyage publié pour l’instant : dans un voyage, touche Partager puis Publier pour des abonnés.</div>')}
-      <h3>➡️ Les voyages que je suis</h3>${fol.map(f=>{ const n = list('feed', x=>x.trip===f.id && !x.deleted).length; return `<button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b>${esc(f.titre)}</b><small class="v-sum-small" style="display:block"><span>par ${esc(f.owner || '?')}</span> · <span>${n} étape${n>1?'s':''}</span> · <span>code ${esc(TS()[f.id])}</span></small></span><span>›</span></button>`; }).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Aucun pour l’instant.</div>'}
+      ${fol.length ? '' : '<h3>➡️ Les voyages que je suis</h3><div class="v-sum-small" style="margin-bottom:8px">Aucun pour l’instant.</div>'}
       <div class="sh-card"><div class="sh-k">🔑 J’ai reçu un code</div>
         <button type="button" class="v-btn sec" onclick="CV.joinAny()">🔗 J’ai reçu un code : rejoindre un voyage</button>
         <button type="button" class="v-btn sec" onclick="CV.followSheet()">➕ Suivre un voyage avec un code</button></div>
@@ -13749,12 +13782,14 @@ ${pm.join('\n')}</Document></kml>`;
     const lk = likesOf(f.id), mine = lk.some(l=>l.id.endsWith(':' + devId())), cm = commentsOf(f.id), open = (M.cmOpen||{})[f.id];
     return `<article class="fd-post" id="fp-${f.id}"><div class="fd-d">${f.date ? fdate(f.date) : ''}${f.lieu ? ' · ' + esc(f.lieu) : ''}${f.cc ? ' ' + flag(f.cc) : ''}</div>
       ${f.titre ? `<h3>${esc(f.titre)}</h3>` : ''}
-      ${(f.photos||[]).length ? `<div class="fd-ph${FT()[String(f.trip).replace(/^ft:/,'')] ? '' : ' grid'}">${f.photos.map((p,i)=> FT()[String(f.trip).replace(/^ft:/,'')] ? `<button type="button" onclick="CV.view('${f.id}',${i})"><img data-ph="${esc(p)}.t" alt=""></button>` : `<span><img data-ph="${esc(p)}.t" alt=""></span>`).join('')}</div>` : ''}
+      ${(f.photos||[]).length ? (()=>{ const au = FT()[String(f.trip).replace(/^ft:/,'')], all = f.photos, nShow = (M.fdMore||{})[f.id] || 12, sh = all.length > nShow + 3 ? all.slice(0, nShow) : all, rest = all.length - sh.length;
+        return `<div class="fd-ph${au ? '' : ' grid'}">${sh.map((p,i)=> au ? `<button type="button" onclick="CV.view('${f.id}',${i})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join('')}${rest ? `<button type="button" class="fd-more-ph" onclick="CV.feedMorePh('${f.id}')"><b>+${rest}</b><small>Voir la suite</small></button>` : ''}</div>`; })() : ''}
       ${f.texte ? `<p class="fd-t">${esc(f.texte)}</p>` : ''}
       <div class="fd-a"><button type="button" class="${mine ? 'on' : ''}" onclick="CV.feedLike('${f.id}')">${mine ? '❤️' : '🤍'} <b>${lk.length || ''}</b></button><button type="button" onclick="CV.feedTogC('${f.id}')">💬 <b>${cm.length || ''}</b></button>${lk.length ? `<small>${lk.slice(0,3).map(l=>esc(l.who||'')).join(', ')}${lk.length > 3 ? '…' : ''}</small>` : ''}${isAuthorOf(f.trip) ? '' : `<button type="button" class="fd-more" aria-label="Signaler ou ne plus suivre" onclick="CV.postMenu('${f.id}')">⋯</button>`}</div>
       ${open ? `<div class="fd-c">${cm.map(c=>`<div><b>${esc(c.who||'?')}</b> ${esc(c.text)} <small>${c.at ? when(c.at) : ''}</small><button type="button" class="fd-cmore" aria-label="Options" onclick="CV.cmMenu('${c.id}')">⋯</button></div>`).join('') || '<div class="v-sum-small">Pas encore de commentaire.</div>'}
         <div class="cv-row"><input class="v-in" id="cm-${f.id}" placeholder="Écrire un commentaire…" maxlength="600"><button type="button" class="fd-send" onclick="CV.feedComment('${f.id}')">Envoyer</button></div></div>` : ''}</article>`;
   }
+  function feedMorePh(fid){ (M.fdMore = M.fdMore || {})[fid] = ((M.fdMore[fid]) || 12) + 60; feedPaint(fid); }
   function feedPaint(fid){ const el = document.getElementById('fp-' + fid), f = R[fid]; if(el && f){ el.outerHTML = feedPostHTML(f); hydrate(); } }
   function feedTogC(fid){ M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = !M.cmOpen[fid]; feedPaint(fid); }
   function feedView(ftid){
@@ -13811,7 +13846,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-16j';
+  const BUILD = '2026-10-16k';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -13821,7 +13856,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
