@@ -2,8 +2,9 @@
  * Carnet de voyage — synchronisation (Cloudflare Pages Function + D1)
  *
  * DELETE /api/sync  (en-tête X-Carnet-Code) : efface tout le carnet du serveur (fiches + photos).
- * Ménage automatique : de temps en temps, les carnets sans aucune activité depuis
- * INACTIVE_DAYS jours (730 par défaut, variable facultative) sont effacés du serveur.
+ * Ménage automatique : de temps en temps, les carnets ni modifiés NI ouverts depuis
+ * INACTIVE_DAYS jours (730 par défaut, variable facultative) sont effacés du serveur
+ * (un vieux voyage qu’on ne fait que regarder reste donc en ligne).
  * Les données restent sur les téléphones.
  *
  * POST /api/sync
@@ -149,12 +150,34 @@ async function sweepOrphans(env) {
   await mark('sweep_at');
 }
 
-// Ménage occasionnel (≈ 1 requête sur 500) : carnets inactifs depuis longtemps
+// dernière ouverture d’un carnet (1 écriture par jour au plus) : un carnet qu’on ouvre sans le modifier reste « actif »
+let seenReady = false;
+async function seenTable(env) {
+  if (seenReady) return;
+  await env.DB.prepare('CREATE TABLE IF NOT EXISTS space_seen (space TEXT PRIMARY KEY, at INTEGER NOT NULL)').run();
+  await env.DB.prepare('CREATE TABLE IF NOT EXISTS photo_stats (k TEXT PRIMARY KEY, v INTEGER NOT NULL)').run();
+  // date de mise en route : les carnets pas encore revus depuis comptent comme ouverts ce jour-là (jamais effacés trop tôt)
+  await env.DB.prepare("INSERT OR IGNORE INTO photo_stats (k, v) VALUES ('seen_since', ?1)").bind(Date.now()).run();
+  seenReady = true;
+}
+async function markSeen(env, space, now) {
+  try {
+    await seenTable(env);
+    await env.DB.prepare('INSERT INTO space_seen (space, at) VALUES (?1, ?2) ON CONFLICT (space) DO UPDATE SET at = ?2 WHERE space_seen.at < ?2 - 86400000').bind(space, now).run();
+  } catch (e) {}
+}
+
+// Ménage occasionnel (≈ 1 requête sur 500) : carnets orphelins = ni modifiés ni ouverts depuis longtemps
 async function sweepInactive(env) {
   const days = Number(env.INACTIVE_DAYS) || 730;
   const limit = Date.now() - days * 864e5;
-  const { results } = await env.DB.prepare('SELECT space FROM records GROUP BY space HAVING MAX(rev) < ?1 LIMIT 3').bind(limit).all();
-  for (const r of results || []) await wipeSpace(env, r.space);
+  await seenTable(env);
+  const since = await env.DB.prepare("SELECT v FROM photo_stats WHERE k = 'seen_since'").first();
+  const { results } = await env.DB.prepare(
+    `SELECT r.space AS space FROM records r LEFT JOIN space_seen s ON s.space = r.space
+     GROUP BY r.space HAVING MAX(r.rev) < ?1 AND COALESCE(MAX(s.at), ?2) < ?1 LIMIT 3`
+  ).bind(limit, (since && since.v) || Date.now()).all();
+  for (const r of results || []) { await wipeSpace(env, r.space); try { await env.DB.prepare('DELETE FROM space_seen WHERE space = ?1').bind(r.space).run(); } catch (e) {} }
   try { await env.DB.prepare('DELETE FROM space_wipes WHERE at < ?1').bind(Date.now() - 730 * 864e5).run(); } catch (e) {}
 }
 
@@ -186,6 +209,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (!(await rateSpace(env, space, Number(env.SYNC_MAX_H) || 120))) return json({ error: 'Pause de synchronisation : ce carnet s’est synchronisé très souvent. Reprise automatique dans quelques minutes.', retry: 600 }, 429);
   if (changes.length && !(await rateIp(env, request, 'sc', 50000, changes.length))) return json({ error: TOO_MANY, retry: 3600 }, 429);
   const now = Date.now();
+  if (waitUntil) waitUntil(markSeen(env, space, now)); else await markSeen(env, space, now);
 
   if (changes.length) {
     const stmt = env.DB.prepare(
