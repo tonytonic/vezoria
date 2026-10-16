@@ -4652,7 +4652,7 @@ const CV = (function(){
         <button class="v-btn" onclick="CV.zipSheet()">💾 Sauvegarde complète ZIP (avec photos)</button>
         <button class="v-btn sec" onclick="CV.exportShare()">📤 Exporter / envoyer (.json, sans photos)</button>
         <button class="v-btn sec" onclick="CV.exportDownload()">⬇️ Télécharger le fichier</button>
-        <button class="v-btn sec" onclick="CV.importPick()">📥 Importer un export (ancien ou nouveau format)</button>
+        <button class="v-btn sec" onclick="CV.importPick()">📥 Importer un export ou une sauvegarde (JSON ou ZIP)</button>
         <button class="v-btn danger" onclick="CV.wipe()">Effacer ce téléphone</button>
         ${s.on ? `<button class="v-btn sec" onclick="CV.askErase()">🗑 Demander l’effacement sur le serveur</button>` : ''}
         <a class="v-btn sec" href="mentions-legales" style="display:block;text-align:center;text-decoration:none">🔒 Mentions légales et confidentialité</a></div>`;
@@ -4740,9 +4740,15 @@ const CV = (function(){
     return n;
   }
   function importPick(){
-    const inp = document.createElement('input'); inp.type = 'file'; if(!isIOSDev) inp.accept = 'application/json,.json';
-    inp.onchange = e => {
-      const f = e.target.files && e.target.files[0]; if(!f) return;
+    const inp = document.createElement('input'); inp.type = 'file'; inp.multiple = true; if(!isIOSDev) inp.accept = 'application/json,.json,.zip,application/zip,application/x-zip-compressed';
+    inp.style.cssText = 'position:fixed;left:-1000px;top:0;opacity:0'; document.body.appendChild(inp);
+    inp.onchange = async e => {
+      const fs = [...(e.target.files || [])]; setTimeout(()=>inp.remove(), 1000); if(!fs.length) return;
+      // une sauvegarde ZIP (une ou plusieurs parties) choisie ici : elle part dans la restauration ZIP
+      const isZip = async x => { try { const h = new Uint8Array(await x.slice(0, 2).arrayBuffer()); return h[0] === 0x50 && h[1] === 0x4b; } catch(err){ return false; } };
+      const zips = []; for(const x of fs) if(await isZip(x)) zips.push(x);
+      if(zips.length){ zips.sort((a,b)=>a.name.localeCompare(b.name, 'fr', {numeric:true})); for(const z of zips) await zipRestore(z, zips.length > 1); if(zips.length > 1) alert('💾 ' + zips.length + ' parties restaurées.'); return; }
+      const f = fs[0];
       const rd = new FileReader();
       rd.onload = async () => {
         let data; try { data = JSON.parse(rd.result); } catch(err){ alert('Fichier illisible : ce n’est pas un export JSON valide.'); return; }
@@ -13887,7 +13893,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-16o';
+  const BUILD = '2026-10-16p';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
