@@ -1,4 +1,7 @@
 I18N.load({
+"👀 Publié · inviter des abonnés":"👀 منشور · دعوة متابعين",
+"👀 Publier pour des abonnés":"👀 نشر للمتابعين",
+"👥 Ajouter un compagnon":"👥 إضافة رفيق",
 "Personne pour l’instant : envoie le lien abonné.":"لا أحد حتى الآن: أرسل رابط المتابعين.",
 "📚 Mon carnet publié":"📚 دفتري المنشور",
 "{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} رحلات برابط واحد: يرى متابعوك كل هذه الرحلات وينتقلون من رحلة إلى أخرى.",

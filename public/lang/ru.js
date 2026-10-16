@@ -1,4 +1,7 @@
 I18N.load({
+"👀 Publié · inviter des abonnés":"👀 Опубликовано · пригласить подписчиков",
+"👀 Publier pour des abonnés":"👀 Опубликовать для подписчиков",
+"👥 Ajouter un compagnon":"👥 Добавить попутчика",
 "Personne pour l’instant : envoie le lien abonné.":"Пока никого: отправь ссылку для подписчиков.",
 "📚 Mon carnet publié":"📚 Мой опубликованный дневник",
 "{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} поездок по одной ссылке: подписчики видят все эти поездки и переходят от одной к другой.",

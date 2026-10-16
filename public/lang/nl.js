@@ -1,4 +1,7 @@
 I18N.load({
+"👀 Publié · inviter des abonnés":"👀 Gepubliceerd · volgers uitnodigen",
+"👀 Publier pour des abonnés":"👀 Publiceren voor volgers",
+"👥 Ajouter un compagnon":"👥 Reisgenoot toevoegen",
 "Personne pour l’instant : envoie le lien abonné.":"Nog niemand: stuur de volgerslink.",
 "📚 Mon carnet publié":"📚 Mijn gepubliceerde dagboek",
 "{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} reizen met één link: je volgers zien al deze reizen en gaan van de ene naar de andere.",

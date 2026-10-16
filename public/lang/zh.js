@@ -1,4 +1,7 @@
 I18N.load({
+"👀 Publié · inviter des abonnés":"👀 已发布 · 邀请关注者",
+"👀 Publier pour des abonnés":"👀 发布给关注者",
+"👥 Ajouter un compagnon":"👥 添加旅伴",
 "Personne pour l’instant : envoie le lien abonné.":"暂时还没有人：发送关注者链接吧。",
 "📚 Mon carnet publié":"📚 我发布的日志",
 "{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} 次旅行共用一个链接：你的关注者可以看到所有这些旅行并逐一浏览。",

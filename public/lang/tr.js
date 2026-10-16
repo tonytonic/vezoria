@@ -1,4 +1,7 @@
 I18N.load({
+"👀 Publié · inviter des abonnés":"👀 Yayında · takipçi davet et",
+"👀 Publier pour des abonnés":"👀 Takipçiler için yayınla",
+"👥 Ajouter un compagnon":"👥 Yol arkadaşı ekle",
 "Personne pour l’instant : envoie le lien abonné.":"Henüz kimse yok: takipçi bağlantısını gönder.",
 "📚 Mon carnet publié":"📚 Yayınlanan günlüğüm",
 "{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"Tek bağlantıyla {0} seyahat: takipçilerin tüm bu seyahatleri görür ve birinden diğerine geçer.",

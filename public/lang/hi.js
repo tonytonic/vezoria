@@ -1,4 +1,7 @@
 I18N.load({
+"👀 Publié · inviter des abonnés":"👀 प्रकाशित · फ़ॉलोअर आमंत्रित करें",
+"👀 Publier pour des abonnés":"👀 फ़ॉलोअर के लिए प्रकाशित करें",
+"👥 Ajouter un compagnon":"👥 साथी जोड़ें",
 "Personne pour l’instant : envoie le lien abonné.":"अभी कोई नहीं: फ़ॉलोअर लिंक भेजें।",
 "📚 Mon carnet publié":"📚 मेरी प्रकाशित डायरी",
 "{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"एक ही लिंक से {0} यात्राएँ: आपके फ़ॉलोअर ये सभी यात्राएँ देखते हैं और एक से दूसरी पर जाते हैं।",

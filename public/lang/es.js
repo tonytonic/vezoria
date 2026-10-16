@@ -1,4 +1,7 @@
 I18N.load({
+"👀 Publié · inviter des abonnés":"👀 Publicado · invitar seguidores",
+"👀 Publier pour des abonnés":"👀 Publicar para seguidores",
+"👥 Ajouter un compagnon":"👥 Añadir un acompañante",
 "Personne pour l’instant : envoie le lien abonné.":"Nadie por ahora: envía el enlace de seguidor.",
 "📚 Mon carnet publié":"📚 Mi diario publicado",
 "{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} viajes con un solo enlace: tus seguidores ven todos estos viajes y pasan de uno a otro.",

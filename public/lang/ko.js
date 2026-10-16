@@ -1,4 +1,7 @@
 I18N.load({
+"👀 Publié · inviter des abonnés":"👀 공개됨 · 팔로워 초대",
+"👀 Publier pour des abonnés":"👀 팔로워에게 공개",
+"👥 Ajouter un compagnon":"👥 동행자 추가",
 "Personne pour l’instant : envoie le lien abonné.":"아직 아무도 없어요: 팔로워 링크를 보내세요.",
 "📚 Mon carnet publié":"📚 공개한 내 일지",
 "{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"링크 하나로 여행 {0}개: 팔로워가 이 여행을 모두 보고 하나씩 넘겨 볼 수 있어요.",

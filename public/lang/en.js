@@ -1,4 +1,7 @@
 I18N.load({
+"👀 Publié · inviter des abonnés":"👀 Published · invite followers",
+"👀 Publier pour des abonnés":"👀 Publish for followers",
+"👥 Ajouter un compagnon":"👥 Add a companion",
 "Personne pour l’instant : envoie le lien abonné.":"Nobody yet: send the follower link.",
 "📚 Mon carnet publié":"📚 My published journal",
 "{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} trips with a single link: your followers see all these trips and move from one to the next.",

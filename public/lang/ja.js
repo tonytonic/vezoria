@@ -1,4 +1,7 @@
 I18N.load({
+"👀 Publié · inviter des abonnés":"👀 公開中 · フォロワーを招待",
+"👀 Publier pour des abonnés":"👀 フォロワー向けに公開",
+"👥 Ajouter un compagnon":"👥 同行者を追加",
 "Personne pour l’instant : envoie le lien abonné.":"まだ誰もいません：フォロワーリンクを送りましょう。",
 "📚 Mon carnet publié":"📚 公開中の日記",
 "{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} 件の旅をひとつのリンクで：フォロワーはすべての旅を見て、旅から旅へ移動できます。",
