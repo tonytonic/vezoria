@@ -2,6 +2,22 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<style>/* Écran de démarrage : peint dès les premiers octets, avant les styles et la traduction */
+:root{color-scheme:only light}
+html,body{background:#2A1238}
+#vz-splash{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483000;background:#2A1238;background:linear-gradient(#3a1750,#2A1238);overflow:hidden;transition:opacity .45s ease;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans",sans-serif;-webkit-user-select:none;user-select:none}
+#vz-splash.out{opacity:0;pointer-events:none}
+#vz-splash .sp-f{position:absolute;top:0;left:50%;height:100vh;height:100dvh;width:55.814vh;width:55.814dvh;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:url(splash.webp) center/100% 100% no-repeat}
+#vz-splash .sp-t{position:absolute;left:4%;right:4%;top:25.4%;text-align:center;color:#fff;font-weight:300;font-size:3.2vh;font-size:3.2dvh;letter-spacing:.02em;text-shadow:0 1px 8px rgba(40,10,60,.55);white-space:nowrap}
+#vz-splash .sp-r{position:absolute;left:50%;top:84.6%;width:7.4%;aspect-ratio:1;margin-left:-3.7%;border-radius:50%;border:3px solid rgba(233,196,106,.95);border-top-color:transparent;animation:vzsp-r 1.1s linear infinite}
+#vz-splash .sp-b{position:absolute;left:17%;right:17%;top:92.3%;height:.55%;min-height:3px;border-radius:9px;background:rgba(255,255,255,.28);overflow:hidden}
+#vz-splash .sp-b i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,#c9a84c,#f3d98b);animation:vzsp-b 14s cubic-bezier(.2,.6,.35,1) forwards}
+#vz-splash .sp-l{position:absolute;left:3%;right:3%;top:93.6%;text-align:center;color:#fff;font-size:1.85vh;font-size:1.85dvh;opacity:.95;text-shadow:0 1px 6px rgba(20,5,30,.7)}
+@keyframes vzsp-r{to{transform:rotate(360deg)}}
+@keyframes vzsp-b{0%{width:4%}100%{width:94%}}
+@media (prefers-reduced-motion:reduce){#vz-splash .sp-r,#vz-splash .sp-b i{animation-duration:20s}}
+</style>
+
 <script>/* Filet de sécurité : jamais d’écran vide sans explication (JavaScript ancien exprès) */
 (function(){
   var errs = [], shown = false, old = false;   // « old » : testé par le petit script suivant (pas de new Function : interdit par la CSP)
@@ -46,6 +62,55 @@ if(window.VZ_HOST){ try {
   localStorage.setItem('app_last', 'vezoria'); sessionStorage.setItem('app_started', '1');
   if(!localStorage.getItem('vz_bk')) window.VZ_RAW0 = localStorage.getItem('carnet_v2');
 } catch(e){} }
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="color-scheme" content="only light">
+<meta name="theme-color" content="#2A1238">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Vezoria</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script>if(!window.VZ_HOST) document.write('<link rel="manifest" href="manifest.json">');</script>
+<meta name="apple-mobile-web-app-title" content="Vezoria">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script>/* iPhone (iOS 26) : sur certaines versions, l'appli installée reçoit une marge haute nulle (bug WebKit 301994) :
+   le haut de la page passe sous l'heure et la batterie, et iOS y pose un flou. On mesure alors la vraie hauteur de la barre d'état. */
+(function(){ function fix(){ try {
+  var ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var sa = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  var root = document.documentElement; if(!ios || !sa || !document.body){ return; }
+  var p = document.createElement('div'); p.style.cssText = 'position:fixed;top:0;left:0;width:1px;visibility:hidden;pointer-events:none;height:env(safe-area-inset-top,0px)';
+  document.body.appendChild(p); var env = p.getBoundingClientRect().height;
+  p.remove();
+  if(env > 0){ root.style.removeProperty('--sat'); return; }
+  // si iOS garde déjà une bande pleine pour l'heure (la page commence en dessous), il n'y a rien à compenser
+  var sh = Math.max(screen.width, screen.height), ih = window.innerHeight || document.documentElement.clientHeight;
+  if(sh - ih >= 20){ root.style.setProperty('--sat', '0px'); return; }
+  var w = Math.min(screen.width, screen.height), h = sh;
+  var t = (w >= 402 && h >= 874 && !(w === 414 && h === 896) && !(w === 428 && h === 926) && !(w === 430 && h === 932)) ? 62 : (w === 393 && h === 852) || (w === 430 && h === 932) ? 59 : (w === 390 && h === 844) || (w === 428 && h === 926) ? 47 : (w === 375 && h === 812) ? 44 : (w === 414 && h === 896) ? 48 : 20;
+  root.style.setProperty('--sat', Math.round(t) + 'px');
+} catch(e){} }
+  document.addEventListener('DOMContentLoaded', fix); window.addEventListener('pageshow', fix);   // pas au redimensionnement : le clavier change la hauteur
+})();
+</script>
+</head>
+<body class="is-public">
+<div id="vz-splash" aria-hidden="true" translate="no"><div class="sp-f"><div class="sp-t" id="vz-sp-t">carnet de voyage</div><div class="sp-r"></div><div class="sp-b"><i></i></div><div class="sp-l" id="vz-sp-l">Chargement de vos souvenirs…</div></div></div>
+<script>/* textes de l’écran de démarrage dans la langue du téléphone (avant le chargement de la traduction) */
+(function(){ try {
+  var T = {fr:['carnet de voyage','Chargement de vos souvenirs…'], en:['travel journal','Loading your memories…'], es:['cuaderno de viaje','Cargando tus recuerdos…'],
+    de:['Reisetagebuch','Deine Erinnerungen werden geladen…'], it:['diario di viaggio','Caricamento dei tuoi ricordi…'], pt:['diário de viagem','Carregando suas lembranças…'],
+    nl:['reisdagboek','Je herinneringen worden geladen…'], ru:['дневник путешествий','Загружаем ваши воспоминания…'], tr:['seyahat günlüğü','Anıların yükleniyor…'],
+    ar:['دفتر الرحلات','جارٍ تحميل ذكرياتك…'], hi:['यात्रा डायरी','आपकी यादें लोड हो रही हैं…'], zh:['旅行手账','正在加载你的回忆…'], ja:['旅行手帳','思い出を読み込み中…'], ko:['여행 일기','추억을 불러오는 중…']};
+  var l = null; try { l = localStorage.getItem('cv-lang'); } catch(e){}
+  if (!T[l]) { var n = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'fr']; l = null;
+    for (var i = 0; i < n.length && !l; i++) { var c = String(n[i]).slice(0,2).toLowerCase(); if (T[c]) l = c; } l = l || 'en'; }
+  document.getElementById('vz-sp-t').textContent = T[l][0]; document.getElementById('vz-sp-l').textContent = T[l][1];
+  if (l === 'ar') document.getElementById('vz-splash').dir = 'rtl';
+} catch(e){} })();
+window.__vzSplashOff = function(){ var s = document.getElementById('vz-splash'); if (!s || s.__off) return; s.__off = 1;
+  s.classList.add('out'); setTimeout(function(){ if (s.parentNode) s.parentNode.removeChild(s); }, 500); };
 </script>
 <script src="i18n.js"></script>
 <style>html,body{background:#2A1238}
@@ -167,39 +232,7 @@ body .cv-live.done{background:linear-gradient(135deg,#3A2119,#8E3B2E)}
 .fx-burst{position:absolute;left:50%;top:44%}.fx-burst i{position:absolute;left:0;top:0;animation:fxStar 1.3s var(--d) cubic-bezier(.2,.7,.2,1) both}.fx-burst .fx-e{font-size:30px}
 @keyframes fxStar{0%{transform:rotate(var(--a)) translateY(0) scale(.2);opacity:0}30%{opacity:1}100%{transform:rotate(var(--a)) translateY(-150px) scale(1);opacity:0}}
 </style>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>/* iPhone : pas de zoom automatique quand on touche un champ (iOS zoome sous 16 px). Le zoom à deux doigts reste possible. */@supports(-webkit-touch-callout:none){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),select,textarea{font-size:max(16px,1em)!important}}</style>
-<meta name="color-scheme" content="light">
-<meta name="theme-color" content="#2A1238">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Vezoria</title>
-<link rel="icon" type="image/png" href="data:image/png;base64,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">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script>if(!window.VZ_HOST) document.write('<link rel="manifest" href="manifest.json">');</script>
-<meta name="apple-mobile-web-app-title" content="Vezoria">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<script>/* iPhone (iOS 26) : sur certaines versions, l'appli installée reçoit une marge haute nulle (bug WebKit 301994) :
-   le haut de la page passe sous l'heure et la batterie, et iOS y pose un flou. On mesure alors la vraie hauteur de la barre d'état. */
-(function(){ function fix(){ try {
-  var ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
-  var sa = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
-  var root = document.documentElement; if(!ios || !sa || !document.body){ return; }
-  var p = document.createElement('div'); p.style.cssText = 'position:fixed;top:0;left:0;width:1px;visibility:hidden;pointer-events:none;height:env(safe-area-inset-top,0px)';
-  document.body.appendChild(p); var env = p.getBoundingClientRect().height;
-  p.remove();
-  if(env > 0){ root.style.removeProperty('--sat'); return; }
-  // si iOS garde déjà une bande pleine pour l'heure (la page commence en dessous), il n'y a rien à compenser
-  var sh = Math.max(screen.width, screen.height), ih = window.innerHeight || document.documentElement.clientHeight;
-  if(sh - ih >= 20){ root.style.setProperty('--sat', '0px'); return; }
-  var w = Math.min(screen.width, screen.height), h = sh;
-  var t = (w >= 402 && h >= 874 && !(w === 414 && h === 896) && !(w === 428 && h === 926) && !(w === 430 && h === 932)) ? 62 : (w === 393 && h === 852) || (w === 430 && h === 932) ? 59 : (w === 390 && h === 844) || (w === 428 && h === 926) ? 47 : (w === 375 && h === 812) ? 44 : (w === 414 && h === 896) ? 48 : 20;
-  root.style.setProperty('--sat', Math.round(t) + 'px');
-} catch(e){} }
-  document.addEventListener('DOMContentLoaded', fix); window.addEventListener('pageshow', fix);   // pas au redimensionnement : le clavier change la hauteur
-})();
-</script>
-
-
 <style>
 :root {
   --navy:   #16213e;
@@ -1122,6 +1155,7 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .cv-tuto video{width:100%;max-height:68vh;border-radius:14px;background:#000;display:block}
 .cv-escale-tuto{display:block;width:100%;margin:-6px 0 14px;background:#F3EAFF;border:1.5px dashed #C4A5F5;color:#4C1D95;font:inherit;font-weight:700;font-size:.82rem;padding:9px 12px;border-radius:14px;text-align:center}
 .cv-foot{text-align:center;font-size:.72rem;padding:18px 12px 8px;color:var(--gray)}
+.cv-top{display:block;margin:0 auto 12px;width:40px;height:40px;border-radius:50%;border:0;background:var(--navy,#2A1238);color:#fff;font-size:20px;font-weight:700;line-height:40px;padding:0;box-shadow:0 3px 10px rgba(0,0,0,.18);cursor:pointer}
 .cv-foot a{color:inherit}
 .hero-top{position:relative}
 .cv-hero-qr{position:relative;flex:0 0 auto;margin:0 12px 0 auto;z-index:2;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 6px 4px;border:0;border-radius:12px;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;color:#2A1238;font:700 .62rem/1 inherit}
@@ -1129,6 +1163,7 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .cv-hero-qr span{font-size:.62rem;font-weight:800;letter-spacing:.02em}
 .cv-share-qr{display:block;margin:6px auto 10px;width:min(64vw,240px);height:auto;background:#fff;border-radius:14px;padding:10px}
 .cv-share-url{font-size:.78rem;text-align:center;word-break:break-all;color:var(--gray);margin-bottom:10px}
+.cv-qr2{display:flex;gap:10px;margin:6px 0 12px}.cv-qr2>div{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;background:#f6f1fb;border-radius:16px;padding:10px 6px}.cv-qr2 b{font-size:.9rem}.cv-qr2 .cv-share-qr{width:100%;max-width:170px;margin:6px auto;padding:6px}.cv-qr2 small{font-size:.7rem;color:var(--gray);line-height:1.3}
 .cv-rmap{margin-top:10px}
 .bb-state{margin-top:8px;font-weight:700;font-size:.86rem;border-radius:12px;padding:7px 10px}
 .bb-state.ok{background:#dcfce7;color:#14532d}.bb-state.wait{background:#fef3c7;color:#78350f}
@@ -1730,6 +1765,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 /* 👀 Suivre sans installer */
 .fd-cta{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;margin:14px -16px calc(-30px - env(safe-area-inset-bottom));padding:12px 16px calc(12px + env(safe-area-inset-bottom));
   background:linear-gradient(135deg,#2a1238,#6b2fa0 60%,#be185d);color:#fff;box-shadow:0 -10px 30px rgba(42,18,56,.25)}
+.fd-wcode{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:14px 0 0;padding:12px 14px;border-radius:16px;background:#fff;border:1px dashed rgba(42,18,56,.25)}.fd-wcode span{flex:1 1 220px}.fd-wcode small{display:block;font-size:.8rem;opacity:.75}.fd-wcode button{border:0;border-radius:999px;padding:8px 14px;background:var(--navy);color:#fff;font:700 .82rem system-ui;cursor:pointer}
 .fd-cta span{flex:1;min-width:0}.fd-cta b{display:block;font-size:.92rem}.fd-cta small{display:block;font-size:.72rem;opacity:.85}
 .fd-cta button{flex:0 0 auto;border:0;border-radius:22px;padding:10px 14px;background:#fff;color:#2a1238;font:inherit;font-weight:800;font-size:.84rem;cursor:pointer}
 #cv-gate .gb{display:flex;flex-direction:column;gap:8px;margin-top:14px}
@@ -1963,10 +1999,42 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 .hero-foot .cv-hero-qr{margin-left:auto}
 </style>
 <style>
+/* 🛂 Formalités par pays (liste de bagages) */
+.bg-ents{display:flex;flex-direction:column;gap:6px;margin:0 0 12px}
+.bg-ent{display:flex;flex-direction:column;gap:2px;background:#f6f1fb;border-radius:12px;padding:8px 10px;font-size:.84rem}
+.bg-ent b{font-size:.92rem}
+.bg-ent i{font-style:normal}
+/* 🏅 Nouveau badge */
+.bdg-pop{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:9800;display:flex;align-items:center;gap:12px;width:min(92vw,380px);border:0;border-radius:20px;padding:12px 16px;text-align:left;font:inherit;color:#fff;background:linear-gradient(135deg,#2a1238,#6b2fa0 60%,#f0a35e);box-shadow:0 14px 34px rgba(42,18,56,.45);transform:translate(-50%,140%);opacity:0;transition:transform .45s cubic-bezier(.2,.9,.3,1.2),opacity .3s}
+.bdg-pop.show{transform:translate(-50%,0);opacity:1}
+.bdg-pop>i{font-size:40px;font-style:normal;line-height:1;animation:bdgspin 1s ease .3s}
+.bdg-pop>i img.vi{width:42px;height:42px}
+.bdg-pop span{display:flex;flex-direction:column;gap:1px;min-width:0}
+.bdg-pop small{font-size:.72rem;opacity:.85;font-weight:700}
+.bdg-pop b{font-size:1.05rem}
+.bdg-pop em{font-style:normal;font-size:.8rem;opacity:.9}
+@keyframes bdgspin{0%{transform:scale(.4) rotate(-30deg)}60%{transform:scale(1.25) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
+/* 🔁 Doublons */
+.dup-g span{display:flex;flex-direction:column;gap:2px}.dup-g small{font-size:.75rem;color:var(--gray)}
+/* 📤 Invitation guidée, rejoindre, avec qui */
+.iv-step{display:flex;flex-direction:column;gap:2px;background:#f6f1fb;border-radius:12px;padding:8px 10px;margin:8px 0 4px;font-size:.85rem}
+.iv-qr .cv-share-qr{width:min(56vw,210px)}
+.jp-who{display:flex;flex-direction:column;gap:6px}
+.jp-p{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:12px;background:#f6f1fb}
+.jp-p small{color:var(--gray)}
+.fd-trips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:8px 12px;background:#fff;border-bottom:1px solid rgba(0,0,0,.06)}
+.fd-trips button{flex:0 0 auto;border:0;border-radius:99px;padding:7px 12px;font:600 .82rem inherit;background:#f3eefc;color:#2A1238}
+.fd-trips button.on{background:#2A1238;color:#fff}
+/* 🔔 Cloche de l’accueil */
+.hero-foot .cv-bell{margin-left:auto}
+.hero-foot .cv-bell+.cv-hero-qr{margin-left:10px}
+.cv-bell{position:relative;z-index:2;flex:0 0 auto;align-self:center;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(0,0,0,.25);font-size:21px;line-height:44px;padding:0;cursor:pointer;color:#2A1238}
+.cv-bell img.vi{width:24px;height:24px;vertical-align:middle}
+.cv-bell-n{position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;padding:0 5px;box-sizing:border-box;border-radius:10px;background:#ff3b30;color:#fff;font:800 11px/19px -apple-system,Roboto,sans-serif;font-style:normal;text-align:center;box-shadow:0 0 0 2px #fff}
+.cv-rcp.nw{border-color:#ff3b6b;box-shadow:inset 3px 0 0 #ff3b6b}
+body.vz-webf .cv-bell{display:none}
 .cv-prow.sc-new{font-weight:800;background:#fff6f9;box-shadow:inset 3px 0 0 #ff3b6b}
 </style>
-</head>
-<body class="is-public">
 <div class="cv-statusbar"></div>
 <div class="header">
   <div class="hero">
@@ -1978,12 +2046,12 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
     </div>
     <h1 id="hdr-title">Vezoria</h1>
     <div class="sub" id="hdr-sub"></div><div class="hdr-chips" id="hdr-chips"></div>
-    <div class="hero-foot"><div class="cv-avs" id="cv-avs"></div><button class="cv-hero-qr" id="cv-hero-qr" type="button" onclick="CV.shareSheet()" aria-label="Partager l’appli à un ami (QR code)"></button><div class="hero-count" id="cv-count"></div></div>
+    <div class="hero-foot"><div class="cv-avs" id="cv-avs"></div><button class="cv-bell" id="cv-bell" type="button" onclick="CV.bellSheet()" aria-label="Notifications">🔔</button><button class="cv-hero-qr" id="cv-hero-qr" type="button" onclick="CV.shareSheet()" aria-label="Partager l’appli à un ami (QR code)"></button><div class="hero-count" id="cv-count"></div></div>
   </div>
 </div>
 <!-- ═══ CARNET PARTAGÉ ═══════════════════════════════ -->
 <div id="appC" style="display:none"><button class="cv-hstats" id="cv-hstats" type="button" onclick="CV.socialHub()" aria-label="Abonnés et j’aime" style="display:none"></button><div id="vz-band"></div><div class="tabs cv-sub" id="tabsC"></div><div id="cv-body"></div>
-<footer class="cv-foot"><a href="mentions-legales">Mentions légales</a> · <a href="privacy">Confidentialité</a></footer></div>
+<footer class="cv-foot"><button class="cv-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Remonter en haut de la page">↑</button><a href="mentions-legales">Mentions légales</a> · <a href="privacy">Confidentialité</a></footer></div>
 <nav class="cv-nav" id="cv-nav" style="display:none"></nav>
 <button class="v-fab" id="cv-fab" style="display:none" onclick="CV.add()">＋</button>
 <div class="v-toast" id="cv-toast">💾 Enregistré</div>
@@ -2125,14 +2193,16 @@ const CV = (function(){
       if(t !== 'main' && r && r.type==='trip') (r.voyageurs||[]).forEach(pid=>{ if(R[pid] && !L.includes(pid)) L.push(pid); }); });
   }
   const isDirty = id => M.dirty.includes(id) || (M.spaces||[]).some(x=>(x.dirty||[]).includes(id));
-  function put(r, msg){ if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); persist(); toast(msg); queueSync(); return r; }
-  function putMany(arr, msg){ arr.forEach(r=>{ if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); persist(); toast(msg); queueSync(); }
+  // nouveau voyage créé ici (pas reçu, pas importé) : on demande avec qui on part, une fois l’écran du voyage affiché
+  const newTripHook = r => { if(r && r.type === 'trip' && !R[r.id] && !r.createdAt && !r.demo && !r.deleted && r.src !== 'polarsteps' && !r.feed) setTimeout(()=>{ try { withWhom(r.id); } catch(e){} }, 1400); };
+  function put(r, msg){ newTripHook(r); if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); persist(); toast(msg); queueSync(); return r; }
+  function putMany(arr, msg){ arr.forEach(newTripHook); arr.forEach(r=>{ if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); persist(); toast(msg); queueSync(); }
   function drop(id, msg){ const r = R[id]; if(!r) return; r.deleted = true; put(r, msg || '🗑 Supprimé'); }
   const clone = o => JSON.parse(JSON.stringify(o));
 
   /* ── Affichage des personnes ── */
   const ini = id => `<span class="cv-ini" style="background:${pcol(id)}" title="${esc(pname(id))}">${esc((pname(id)[0]||'?').toUpperCase())}</span>`;
-  const pchip = (id, extra) => `<span class="cv-pchip" style="--pc:${pcol(id)}">${esc(pname(id))}${extra||''}</span>`;
+  const pchip = (id, extra) => `<span class="cv-pchip" style="--pc:${pcol(id)}"><span data-notr>${esc(pname(id))}</span>${extra||''}</span>`;
   const pname_c = id => `<b style="color:${pcol(id)}">${esc(pname(id))}</b>`;
   function when(ts){
     const d = new Date(ts), n = new Date(), s = (n - d)/1000;
@@ -2376,6 +2446,7 @@ const CV = (function(){
   const liveShared = () => { try { return trips().some(t=>tripPhase(t)==='live' && !t.demo && (TS()[t.id] || (M.sync && M.sync.on))) || list('feedtrip', f=>TS()[f.id] && tripPhase(f)==='live').length > 0; } catch(e){ return false; } };
   var AUTO_SYNC = 3600000, pollGap = AUTO_SYNC, lastSyncAt = 0;
   async function syncNow(manual){
+    if(manual === true){ M.pqPause = 0; M.pqFull = {}; }   // « Synchroniser » à la main : on réessaie d’envoyer les photos tout de suite
     const mainOn = !!(M.sync.on && M.sync.code);
     if(!mainOn && !(M.spaces||[]).length) return;
     if(syncing){ again = true; return; }
@@ -2582,6 +2653,7 @@ const CV = (function(){
     else if(r.type === 'check' && r.trip && /courses/i.test(r.cat || '')){ if(isNew && !seen) o = {k:'notes', x:r.label || ''}; }
     else if(r.type === 'note' && r.trip){ if(isNew && !seen) o = {k:'notes', note:1, x:String(r.texte || '').slice(0, 80)}; }
     else if(r.type === 'place' && r.trip){ if(isNew && !seen) o = {k:'resa', x:r.nom || ''}; }
+    else if(r.type === 'trip' && !r.demo && (r.voyageurs || []).length > 1 && !seen && r.createdBy === M.me && Date.now() - (r.createdAt || 0) < 3 * 864e5){ seenAll[r.id] = 1; return {k:'resa', x:'🧳 ' + (r.titre || ''), trip:r.id}; }   // voyage partagé avec moi : « Nouveau voyage »
     if(o){ seenAll[r.id] = 1; o.trip = r.trip || ''; }
     return o;
   }
@@ -2674,37 +2746,71 @@ const CV = (function(){
     let box = []; try { box = (await pushKv('inbox')) || []; } catch(e){ return; }
     box = box.filter(x=>Date.now() - x.at < 7 * 864e5);
     if(!box.length) return;
+    nhAdd(box);   // 🔔 gardées dans l’historique de la cloche
     // ouverte en touchant la seule notification : elle s’affiche déjà, pas besoin de récap
     const qs = u => { try { return new URL(u, location.href).search; } catch(e){ return ''; } };
-    if(box.length === 1 && recapVia && qs(box[0].url) === qs(recapVia)){ recapVia = ''; await pushKv('inbox', []); return; }
+    if(box.length === 1 && recapVia && qs(box[0].url) === qs(recapVia)){ recapVia = ''; nhRead(box); await pushKv('inbox', []); return; }
     recapVia = '';
     if(recapBusy()){ clearTimeout(recapT); recapT = setTimeout(pushRecap, 4000); return; }
-    await pushKv('inbox', []);
+    await pushKv('inbox', []); nhRead(box);
     pushRecapBox = box.slice().reverse();
     const lang = (window.I18N && I18N.lang) || 'fr', hm = t => { const d = new Date(t), td = new Date(); const s = d.toLocaleTimeString(lang, {hour:'2-digit', minute:'2-digit'});
       return d.toDateString() === td.toDateString() ? s : d.toLocaleDateString(lang, {weekday:'short', day:'numeric'}) + ' ' + s; };
     const by = {}; pushRecapBox.forEach((x, i)=>{ (by[x.trip || '-'] = by[x.trip || '-'] || []).push([x, i]); });
     openSheet(`<h2>🔔 Pendant ton absence</h2>`
       + Object.values(by).map(arr=>`<div class="cv-rcp-t">${esc(arr[0][0].title || 'Vezoria')}</div>`
-        + arr.map(([x, i])=>`<button type="button" class="cv-rcp" onclick="CV.recapGo(${i})"><span>${esc(String(x.body || '')).replace(/\n/g, '<br>')}</span><small>${hm(x.at)}</small></button>`).join('')).join('')
+        + arr.map(([x, i])=>`<button type="button" class="cv-rcp" onclick="CV.recapGo(${i})"><span data-notr>${esc(String(x.body || '')).replace(/\n/g, '<br>')}</span><small>${hm(x.at)}</small></button>`).join('')).join('')
       + `<div class="v-actions"><button type="button" class="v-btn" onclick="CV.close()">OK</button></div>`);
   }
   let pushRecapBox = [];
+  /* 🔔 Cloche de l’accueil : historique des notifications (30 jours, sur ce téléphone seulement) ; le chiffre rouge = non lues */
+  const NH_K = 'cv-nh';
+  function nhGet(){ try { const a = JSON.parse(localStorage.getItem(NH_K) || '[]'); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function nhSet(a){ try { localStorage.setItem(NH_K, JSON.stringify(a.filter(x=>Date.now() - x.at < 30 * 864e5).slice(-80))); } catch(e){} bellDraw(); }
+  const nhKey = x => x.at + '|' + String(x.body || '').slice(0, 60);
+  function nhAdd(items, read){ const a = nhGet(), ks = new Set(a.map(nhKey));
+    (items || []).forEach(x=>{ if(!x || !x.body) return; const k = nhKey(x); if(ks.has(k)) return; ks.add(k);
+      a.push({at:x.at || Date.now(), title:x.title || 'Vezoria', body:String(x.body), url:x.url || '', read:!!read}); });
+    a.sort((p, q)=>p.at - q.at); nhSet(a); }
+  function nhRead(items){ const ks = new Set((items || []).map(nhKey)); nhSet(nhGet().map(x=>ks.has(nhKey(x)) ? Object.assign(x, {read:true}) : x)); }
+  function bellDraw(){
+    const b = document.getElementById('cv-bell'); if(!b) return;
+    const n = nhGet().filter(x=>!x.read).length;
+    b.innerHTML = '🔔' + (n ? `<i class="cv-bell-n">${n > 9 ? '9+' : n}</i>` : '');
+    b.setAttribute('aria-label', n ? 'Notifications : ' + n + ' non lue' + (n > 1 ? 's' : '') : 'Notifications');
+  }
+  function bellSheet(){
+    const a = nhGet().sort((p, q)=>q.at - p.at); NHV = a;
+    const lang = (window.I18N && I18N.lang) || 'fr', hm = t => { const d = new Date(t), td = new Date(); const s = d.toLocaleTimeString(lang, {hour:'2-digit', minute:'2-digit'});
+      return d.toDateString() === td.toDateString() ? s : d.toLocaleDateString(lang, {weekday:'short', day:'numeric', month:'short'}) + ' ' + s; };
+    openSheet(`<h2>🔔 Notifications</h2>`
+      + (a.length ? a.map((x, i)=>`<button type="button" class="cv-rcp${x.read ? '' : ' nw'}" onclick="CV.bellGo(${i})"><span data-notr><b>${esc(x.title)}</b><br>${esc(x.body).replace(/\n/g, '<br>')}</span><small>${hm(x.at)}</small></button>`).join('')
+        : `<div class="v-empty">Aucune notification pour l’instant.</div>`)
+      + `<div class="v-sum-small" style="margin-top:8px">${PU().on ? 'Les notifications des 30 derniers jours restent ici, sur ce téléphone.' : 'Les notifications sont désactivées : active-les dans Plus → ⚙️ Réglages.'}</div>`
+      + `<div class="v-actions">${a.length ? `<button type="button" class="v-btn sec" onclick="CV.bellClear()">🗑 Tout effacer</button>` : ''}${PU().on ? '' : `<button type="button" class="v-btn sec" onclick="CV.close();CV.plusGo('prefs')">⚙️ Réglages</button>`}<button type="button" class="v-btn" onclick="CV.close()">OK</button></div>`);
+    nhSet(nhGet().map(x=>Object.assign(x, {read:true})));   // tout est lu : le chiffre rouge disparaît
+    pushBadgeClear(); pushKv('inbox').then(b=>{ if(b && b.length){ nhAdd(b, true); return pushKv('inbox', []); } }).catch(()=>{});
+  }
+  let NHV = [];
+  function bellGo(i){ const x = NHV[i]; closeSheet(); if(x && x.url) pushOpen(x.url); }
+  async function bellClear(){ if(!(await uiConfirm('Effacer toutes les notifications de la cloche ?'))) return; nhSet([]); closeSheet(); }
+  // notifications arrivées pendant que l’appli dormait : le chiffre rouge de la cloche se met à jour à l’ouverture
+  async function bellSync(){ try { if(!pushOk()) return; const b = (await pushKv('inbox')) || []; if(b.length) nhAdd(b.filter(x=>Date.now() - x.at < 7 * 864e5)); } catch(e){} }
   function recapGo(i){ const x = pushRecapBox[i]; closeSheet(); if(x) pushOpen(x.url); }
   // appli ouverte : petit bandeau en haut, touchable
   function pushBanner(d){
     if(!d || d.test || !d.body || document.visibilityState !== 'visible') return;
-    pushKv('inbox', []).catch(()=>{}); pushBadgeClear();
+    pushKv('inbox', []).catch(()=>{}); pushBadgeClear(); nhAdd([{at:Date.now(), title:d.title, body:d.body, url:d.url}], true);
     let b = document.getElementById('cv-inb'); if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'cv-inb'; document.body.appendChild(b); }
     b.innerHTML = `<b>🔔 ${esc(d.title || 'Vezoria')}</b><span>${esc(String(d.body).split('\n')[0])}</span>`;
     b.onclick = ()=>{ b.classList.remove('show'); pushOpen(d.url); };
     requestAnimationFrame(()=>b.classList.add('show')); clearTimeout(b._t); b._t = setTimeout(()=>b.classList.remove('show'), 6000);
   }
   if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev=>{ const d = ev.data || {};
-    if(d.type === 'vz-open'){ recapVia = d.url; pushOpen(d.url); pushKv('inbox', []).catch(()=>{}); }
+    if(d.type === 'vz-open'){ recapVia = d.url; pushOpen(d.url); pushKv('inbox').then(b=>{ if(b && b.length) nhAdd(b, true); return pushKv('inbox', []); }).catch(()=>{}); }
     else if(d.type === 'vz-push'){ if(pushAck) pushAck(d); else pushBanner(d); } });
-  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible'){ pushBadgeClear(); clearTimeout(recapT); recapT = setTimeout(pushRecap, 1200); } });
-  setTimeout(()=>{ if(/[?&]vzt=/.test(location.search)) recapVia = location.href; pushOpen(location.href); pushBadgeClear(); setTimeout(pushRecap, 1500);
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible'){ pushBadgeClear(); bellSync(); clearTimeout(recapT); recapT = setTimeout(pushRecap, 1200); } });
+  setTimeout(()=>{ if(/[?&]vzt=/.test(location.search)) recapVia = location.href; pushOpen(location.href); pushBadgeClear(); bellSync(); bellDraw(); setTimeout(pushRecap, 1500);
     if(PU().on){ pushRegister().catch(()=>{}); pushPlan().catch(()=>{}); } }, 3000);
 
   /* Ne jamais redessiner l'écran pendant que l'utilisateur touche, tape ou ouvre une liste :
@@ -2864,8 +2970,107 @@ const CV = (function(){
     if(!got.length){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); msg.textContent = 'Aucun voyage trouvé avec ce code. Vérifie-le auprès de la personne qui te l’a envoyé.'; return; }
     M.spaces = (M.spaces||[]).filter(x=>x.code === code || Object.values(TS()).includes(x.code));   // ancien code mort : on l’oublie
     persist(); closeSheet(true); go(got[0].id); refresh();
-    const t = got[0];
-    if(M.me && !(t.voyageurs||[]).includes(M.me)) tripWho(t.id); else toast('🔗 Voyage « ' + t.titre + ' » ajouté');
+    joinPick(code);
+  }
+  /* ---------- 🙋 Après avoir rejoint : qui es-tu, et dans quels voyages pars-tu vraiment ? (budget, dépenses, « qui doit quoi ») ---------- */
+  /* ---------- 👥 Nouveau voyage : avec qui pars-tu ? Le voyage arrive chez eux (avec une notification) ---------- */
+  // les personnes que je connais, et par quel carnet partagé chacune peut recevoir un voyage
+  function spaceMembers(){
+    const m = {};
+    trips().filter(t=>!t.demo && !t.deleted).forEach(t=>{ const c = TS()[t.id] && spaceObj(TS()[t.id]) ? TS()[t.id] : (M.sync.on && M.sync.code ? 'main' : ''); if(!c) return;
+      if(Object.values(FT()).includes(c)) return; (m[c] = m[c] || new Set()); (t.voyageurs || []).forEach(p=>m[c].add(p)); });
+    return m;
+  }
+  function withWhom(tid, n){
+    const t = R[tid]; if(!t || t.deleted || M.wwSeen && M.wwSeen[tid]) return;
+    // une fenêtre est ouverte (ex. « Modifier le voyage ») : on attend qu’elle soit fermée (2 min au plus)
+    if(document.getElementById('v-sheet-bg') || document.querySelector('.ui-dlg, #cv-gate, #cv-world')){ if((n || 0) < 80) setTimeout(()=>withWhom(tid, (n || 0) + 1), 1500); return; }
+    M.wwSeen = Object.assign({}, M.wwSeen || {}, {[tid]:1}); persist();
+    const me = M.me, ppl = profiles().filter(p=>p.id !== me).map(p=>p.id), v = new Set(t.voyageurs || []);
+    openSheet(`<h2>👥 Avec qui pars-tu ?</h2><div class="v-sum-small" style="margin-bottom:8px">« ${esc(t.titre)} » arrive chez tes compagnons, qui reçoivent une notification. Ils pourront le compléter avec toi.</div>
+      ${ppl.length ? `<div class="jp-who">${ppl.map(pid=>`<label class="jp-p"><input type="checkbox" class="ww-p" value="${pid}"${v.has(pid) ? ' checked' : ''} onchange="CV.withWhomUpd('${tid}')"> ${pchip(pid)}</label>`).join('')}</div>` : `<div class="v-sum-small">Tu n’as pas encore de compagnon dans Vezoria.</div>`}
+      <div id="ww-msg" class="v-sum-small" style="margin:8px 0"></div>
+      <div class="v-actions" style="flex-direction:column">${ppl.length ? `<button type="button" class="v-btn" onclick="CV.withWhomGo('${tid}')">✅ Partager avec eux</button>` : ''}
+        <button type="button" class="v-btn sec" onclick="CV.close();CV.tripInviteNow('${tid}')">📤 Inviter quelqu’un de nouveau</button>
+        <button type="button" class="v-btn sec" onclick="CV.close()">🧍 Je pars seul(e) / plus tard</button></div>`);
+    withWhomUpd(tid);
+  }
+  // le meilleur carnet partagé pour ces personnes : tout le monde dedans, le moins d’autres personnes possible
+  function withWhomPick(sel){
+    const m = spaceMembers(), me = M.me; let best = null;
+    Object.entries(m).forEach(([c, mem])=>{ if(!sel.every(p=>mem.has(p))) return; const extra = [...mem].filter(p=>p !== me && !sel.includes(p));
+      if(!best || extra.length < best.extra.length || (extra.length === best.extra.length && c === 'main')) best = {c, extra}; });
+    return best;
+  }
+  function withWhomUpd(tid){
+    const el = document.getElementById('ww-msg'); if(!el) return;
+    const sel = [...document.querySelectorAll('.ww-p:checked')].map(i=>i.value); if(!sel.length){ el.textContent = ''; return; }
+    const b = withWhomPick(sel);
+    el.innerHTML = !b ? '📤 Ils n’ont pas encore de voyage partagé avec toi : tu vas leur envoyer une invitation (QR code ou message).'
+      : b.extra.length ? '👀 ' + esc(b.extra.map(pname).join(', ')) + ' le verra aussi (même carnet partagé).' : '✓ Le voyage arrivera chez eux à la prochaine synchro.';
+  }
+  async function withWhomGo(tid){
+    const t = R[tid]; if(!t) return;
+    const sel = [...document.querySelectorAll('.ww-p:checked')].map(i=>i.value); if(!sel.length){ closeSheet(true); return; }
+    const nt = Object.assign(clone(t), {voyageurs:[...new Set([...(t.voyageurs || []), M.me, ...sel].filter(Boolean))]});
+    const b = withWhomPick(sel);
+    if(!b){ put(nt, false); closeSheet(true); tripInviteNow(tid); return; }   // pas de carnet commun : invitation classique
+    if(b.c !== 'main'){ if(cloudMode() === 'none'){ M.cloud = 'trips'; } TS()[tid] = b.c; persist(); }
+    put(nt, '👥 Voyage partagé avec ' + sel.map(pname).join(', '));
+    Object.values(R).filter(r=>!r.demo && (r.id === tid || r.trip === tid)).forEach(r=>markDirty(r.id));
+    persist(); closeSheet(true); queueSync(); try { photoQueueAll(tid); } catch(e){} refresh();
+  }
+  // un seul champ pour tout : lien ou code de voyage, de carnet ou d’abonné
+  function joinAny(){
+    openSheet(`<h2>🔗 Rejoindre avec un code</h2><div class="v-sum-small" style="margin-bottom:8px">Colle le message, le lien ou le code reçu.</div>
+      <textarea class="v-in" id="ja-code" rows="3" placeholder="XXXX-XXXX-XXXX ou le lien reçu"></textarea>
+      ${navigator.clipboard && navigator.clipboard.readText ? `<button type="button" class="v-day-edit" style="margin-top:6px" onclick="CV.joinPaste()">📋 Coller</button>` : ''}
+      <div id="ja-msg" class="v-sum-small" style="margin-top:6px"></div>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.joinAnyGo()">🔗 Rejoindre</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+  }
+  async function joinPaste(){ try { const t = await navigator.clipboard.readText(); const e = document.getElementById('ja-code'); if(e && t) e.value = t; } catch(e){ toast('Touche longuement la zone de texte → Coller'); } }
+  async function joinAnyGo(){
+    const raw = (document.getElementById('ja-code') || {}).value || '', msg = document.getElementById('ja-msg');
+    const fm = raw.match(/suivre=([A-Za-z0-9-]{8,})/i); if(fm){ closeSheet(true); followGo(fm[1].toUpperCase()); return; }
+    const cm = raw.match(/rejoindre=([A-Za-z0-9-]{8,})/i) || raw.match(/\b([A-Z0-9]{4}(?:-[A-Z0-9]{4}){2,})\b/i);
+    const code = cm ? cm[1].toUpperCase() : raw.trim().toUpperCase();
+    if(code.length < 8){ msg.textContent = 'Colle le code complet (au moins 8 caractères).'; return; }
+    if(code === M.sync.code){ msg.textContent = 'C’est le code de ton propre carnet : tu as déjà ces voyages.'; return; }
+    if(Object.values(FT()).includes(code)){ msg.textContent = 'C’est ton propre lien d’abonnés.'; return; }
+    msg.textContent = '📡 Connexion…';
+    if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
+    const sp = spaceObj(code); try { await syncSpace(sp, true); } catch(e){}
+    if(sp.err){ msg.textContent = '⚠️ ' + sp.err; return; }
+    const got = Object.entries(TS()).filter(([, c])=>c === code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted);
+    if(got.some(t=>t.type === 'trip')){ persist(); closeSheet(true); go(got.find(t=>t.type === 'trip').id); refresh(); joinPick(code); return; }
+    M.spaces = (M.spaces || []).filter(x=>x.code !== code); persist();
+    closeSheet(true); followGo(code);   // pas de voyage à compléter : c’est peut-être un code d’abonné
+  }
+  function joinPick(code){
+    const ts = Object.entries(TS()).filter(([, c])=>c === code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip').sort((a, b)=>(a.debut||'9').localeCompare(b.debut||'9'));
+    if(!ts.length) return;
+    const ppl = [...new Set(ts.flatMap(t=>t.voyageurs || []))].filter(prof), me = M.me && prof(M.me) ? M.me : '';
+    const meIn = me && ppl.includes(me);
+    openSheet(`<h2>🙋 Bienvenue !</h2><div class="v-sum-small" style="margin-bottom:8px">${ts.length > 1 ? ts.length + ' voyages sont maintenant sur ton téléphone.' : 'Le voyage « ' + esc(ts[0].titre) + ' » est maintenant sur ton téléphone.'}</div>
+      <div class="v-f"><label>Qui es-tu ?</label><div class="jp-who">
+        ${ppl.map(pid=>`<label class="jp-p"><input type="radio" name="jp-me" value="${pid}"${pid === me ? ' checked' : ''}> ${pchip(pid)}</label>`).join('')}
+        ${me && !meIn ? `<label class="jp-p"><input type="radio" name="jp-me" value="${me}" checked> ${pchip(me)} <small>(ton profil)</small></label>` : ''}
+        <label class="jp-p"><input type="radio" name="jp-me" value="new"${!me ? ' checked' : ''}> ✏️ Je ne suis pas dans la liste : <input class="v-in" id="jp-nom" placeholder="Ton prénom" style="flex:1;min-width:0"></label></div></div>
+      <div class="v-f"><label>Dans quels voyages pars-tu vraiment ?</label><div class="v-sum-small" style="margin-bottom:4px">Tu comptes alors dans le budget, les dépenses et « qui doit quoi ». Tu vois quand même tous les voyages.</div>
+        ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="jp-t" value="${t.id}"${!me || (t.voyageurs||[]).includes(me) || ts.length === 1 ? ' checked' : ''}> <span data-notr>${esc(t.titre)}</span>${t.debut ? ' <small>' + esc(tripDatesLong(t)) + '</small>' : ''}</label>`).join('')}</div>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.joinPickSave('${esc(code)}')">✅ C’est bon</button></div>`, true);
+  }
+  function joinPickSave(code){
+    const r = document.querySelector('input[name=jp-me]:checked'); let me = r ? r.value : '';
+    if(me === 'new' || !me){ const nom = ((document.getElementById('jp-nom') || {}).value || '').trim(); if(!nom){ alert('Indique ton prénom.'); return; }
+      const cols = ['#2563eb','#db2777','#16a34a','#ea580c','#7c3aed','#0891b2','#ca8a04'], p = {id:'p' + uid(), type:'profile', nom, couleur:cols[profiles().length % cols.length]}; put(p, false); me = p.id; }
+    M.me = me; delete M.joinAdd;
+    const on = new Set([...document.querySelectorAll('.jp-t:checked')].map(i=>i.value)), out = [];
+    Object.entries(TS()).filter(([, c])=>c === code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip').forEach(t=>{
+      const v = new Set(t.voyageurs || []), had = v.has(me); if(on.has(t.id)) v.add(me); else v.delete(me);
+      if(had !== v.has(me)) out.push(Object.assign(clone(t), {voyageurs:[...v]})); });
+    if(out.length) putMany(out, false);
+    persist(); closeSheet(true); applyMode(); refresh(); queueSync(); toast('👋 Bienvenue ' + pname(me) + ' !');
   }
   function tripWho(id){
     const t = R[id];
@@ -2984,8 +3189,21 @@ const CV = (function(){
     const me = devId(), mine = new Set(Object.keys(FT()).map(ftId));
     const fw = new Set(list('follower', x=>mine.has(x.trip) && !isBlk(x) && !String(x.id).endsWith(':' + me)).map(x=>String(x.id).split(':').pop())).size;
     const lk = list('like', l=>mine.has(l.trip) && l.on && !isBlk(l) && !String(l.id).endsWith(':' + me)).length;
-    return {trips:ts.length, ccs:[...ccs], pays:ccs.size, km:Math.round(km), photos:ph, souv:sv, nights, gang, fw, lk};
+    // organisation (tous les voyages, même à venir), continents, plus long voyage
+    const allT = new Set(trips().filter(t=>!t.demo && !t.deleted).map(t=>t.id));
+    const resas = list('item', i=>allT.has(i.trip) && ['transport','hotel','activite'].includes(i.cat) && (i.statut === 'booked' || i.statut === 'paid')).length;
+    const ckd = list('check', c=>allT.has(c.trip) && c.done).length, polls = list('poll', x=>allT.has(x.trip)).length, wishes = list('wish').length;
+    const cont = new Set([...ccs].map(c=>CONT_OF[c]).filter(Boolean)).size;
+    const long = ts.reduce((m, t)=>Math.max(m, t.fin ? Math.round((new Date(t.fin) - new Date(t.debut)) / 864e5) + 1 : 1), 0);
+    return {trips:ts.length, ccs:[...ccs], pays:ccs.size, km:Math.round(km), photos:ph, souv:sv, nights, gang, fw, lk, resas, ckd, polls, wishes, cont, long};
   }
+  // continent de chaque pays (pour les badges)
+  const CONT_OF = (() => { const o = {}; Object.entries({
+    eu:'AD AL AT BA BE BG BY CH CY CZ DE DK EE ES FI FO FR GB GI GR HR HU IE IS IT LI LT LU LV MC MD ME MK MT NL NO PL PT RO RS RU SE SI SK SM UA VA XK',
+    af:'DZ AO BJ BW BF BI CM CV CF TD KM CG CD CI DJ EG GQ ER ET GA GM GH GN GW KE LS LR LY MG MW ML MR MU MA MZ NA NE NG RW ST SN SC SL SO ZA SS SD SZ TZ TG TN UG ZM ZW RE YT',
+    as:'AF AM AZ BH BD BT BN KH CN GE HK IN ID IR IQ IL JP JO KZ KW KG LA LB MO MY MV MN MM NP KP OM PK PS PH QA SA SG KR LK SY TW TJ TH TL TR TM AE UZ VN YE',
+    na:'US CA MX GT BZ HN SV NI CR PA CU DO HT JM BS BB TT PR GP MQ AG DM GD KN LC VC AW CW BM KY TC VG VI GL PM',
+    sa:'AR BO BR CL CO EC GY PY PE SR UY VE GF FK', oc:'AU NZ FJ PG SB VU NC PF WS TO KI FM MH NR PW TV CK'}).forEach(([k, v])=>v.split(' ').forEach(c=>{ o[c] = k; })); return o; })();
   const bdgNights = i => { try { return nights(i.date, i.dateFin) || 0; } catch(e){ return 0; } };
   const BADGES = [
     ['v1','🧳','Premier voyage','Un premier voyage dans ton carnet','trips',1], ['v5','🎒','Globe-trotter','5 voyages','trips',5], ['v10','🏆','Grand voyageur','10 voyages','trips',10],
@@ -2993,7 +3211,12 @@ const CV = (function(){
     ['k1','🛣️','En route','1 000 km parcourus','km',1000], ['k10','✈️','Long-courrier','10 000 km parcourus','km',10000], ['k40','🌐','Le tour de la Terre','40 075 km parcourus','km',40075],
     ['f100','📸','Photographe','100 photos','photos',100], ['f1k','🎞️','Reporter','1 000 photos','photos',1000], ['s30','✍️','Conteur','30 souvenirs racontés','souv',30],
     ['n30','🛏️','Nomade','30 nuits en voyage','nights',30], ['g1','👥','La bande','Un voyage à 3 ou plus','gang',1],
-    ['a1','👀','Premier abonné','Quelqu’un suit tes voyages','fw',1], ['a10','📣','Influenceur','10 abonnés','fw',10], ['l50','❤️','Coup de cœur','50 j’aime reçus','lk',50]];
+    ['a1','👀','Premier abonné','Quelqu’un suit tes voyages','fw',1], ['a10','📣','Influenceur','10 abonnés','fw',10], ['l50','❤️','Coup de cœur','50 j’aime reçus','lk',50],
+    ['c2','🌎','Intercontinental','2 continents visités','cont',2], ['c4','🧗','Grand explorateur','4 continents visités','cont',4], ['c6','🪐','Les six continents','6 continents visités','cont',6],
+    ['d14','🗓️','Grand départ','Un voyage de 2 semaines','long',14], ['d30','🐫','Odyssée','Un voyage d’un mois','long',30],
+    ['r10','📋','Organisé','10 réservations faites','resas',10], ['r50','🎼','Chef d’orchestre','50 réservations faites','resas',50],
+    ['ck50','✅','Rien d’oublié','50 cases cochées dans les checklists','ckd',50], ['po1','🗳️','On vote !','Un premier sondage entre compagnons','polls',1],
+    ['w5','💭','Rêveur','5 envies de voyage notées','wishes',5], ['n100','🌙','Cent nuits','100 nuits en voyage','nights',100]];
   function renderBadges(){
     const body = document.getElementById('cv-body'), S = travelStats(), pct = Math.round(S.pays / WORLD_N * 1000) / 10;
     const got = BADGES.filter(b=>S[b[4]] >= b[5]).length;
@@ -3013,8 +3236,17 @@ const CV = (function(){
       const S = travelStats(), now = BADGES.filter(b=>S[b[4]] >= b[5]).map(b=>b[0]);
       if(!M.badges){ M.badges = now; persist(); return; }   // première fois : on ne fête pas tout d’un coup
       const fresh = now.filter(id=>!M.badges.includes(id));
-      if(fresh.length){ M.badges = now; persist(); const b = BADGES.find(x=>x[0] === fresh[fresh.length - 1]); const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x); toast('🏅 ' + MSG('Nouveau badge') + ' : ' + MSG(b[2])); }
+      if(fresh.length){ M.badges = now; persist(); badgePop(BADGES.find(x=>x[0] === fresh[fresh.length - 1]), fresh.length); }
     } catch(e){} }, 1500);
+  }
+  // 🏅 Nouveau badge : une petite carte qui apparaît en bas (touchable → mes badges), puis s’en va
+  function badgePop(b, n){
+    if(!b) return; const old = document.getElementById('cv-bpop'); if(old) old.remove();
+    const el = document.createElement('button'); el.type = 'button'; el.id = 'cv-bpop'; el.className = 'bdg-pop';
+    el.innerHTML = `<i>${b[1]}</i><span><small>🏅 Nouveau badge</small><b>${esc(b[2])}</b><em>${esc(b[3])}</em>${n > 1 ? `<em>+ ${n - 1} autre(s)</em>` : ''}</span>`;
+    el.onclick = () => { el.remove(); try { plusGo('badges'); } catch(e){} };
+    document.body.appendChild(el); requestAnimationFrame(()=>el.classList.add('show'));
+    setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(), 500); }, 7000);
   }
   /* ══════════ 📖 Livret : l’histoire d’un voyage entre amis (sans détails techniques) ══════════ */
   const LIVRET = [{"k": "pro", "bg": "linear-gradient(135deg,#2b1840,#6b2fa0 60%,#f0a35e)", "em": ["📖", "✨", "🧳", "🗺️", "📸"], "kick": "Prologue", "title": "Il était une fois un carnet", "story": "Avant, un voyage entre amis, c’était cinq applis, des captures d’écran perdues, un tableau de comptes que personne ne mettait à jour et des photos éparpillées dans dix conversations. Un soir, Inès a soupiré : « Il nous faudrait un seul carnet, pour tout. » Ce carnet, c’est moi : Vezoria. Laisse-moi te raconter leur voyage au Japon.", "pts": [], "btn": [["👀 Ouvrir le voyage de démo", "demo"]]}, {"k": "reve", "bg": "linear-gradient(135deg,#1e3a8a,#7c3aed 55%,#f472b6)", "em": ["✨", "🌍", "🗳️", "💭", "🏔️"], "kick": "Chapitre 1 · Le rêve", "title": "Où partir ?", "story": "Tout commence par une envie. Léo rêve du Japon, Inès hésite avec l’Islande. Chacun note ses idées, le groupe vote, et le rêve devient un vrai projet en un geste.", "pts": ["✨ Notez vos envies de voyage et votez ensemble.", "🌍 Dessinez votre itinéraire en touchant les villes sur le globe.", "💡 Trouvez l’inspiration : saison idéale, budget, idées de visites."], "btn": [["✨ Voir les envies", "envies"]]}, {"k": "prep", "bg": "linear-gradient(135deg,#0f766e,#14b8a6 55%,#fde68a)", "em": ["🗓️", "🎫", "🏨", "✅", "💶"], "kick": "Chapitre 2 · La préparation", "title": "Tout au même endroit", "story": "Les billets d’avion arrivent par e-mail, l’hôtel de Kyoto par une autre appli, le train pour Hiroshima par une troisième. Inès range tout dans le carnet : chaque jour du voyage se dessine, heure par heure.", "pts": ["🗓️ Un programme jour par jour, avec les trajets, les hôtels et les visites.", "💶 Un budget qui se calcule tout seul, et les dates de paiement à ne pas oublier.", "✅ Une checklist et un rappel quand un passeport va expirer."], "btn": [["🗓️ Voir le programme", "prep"]]}, {"k": "amis", "bg": "linear-gradient(135deg,#9a3412,#f97316 55%,#fde047)", "em": ["👥", "🤝", "🔔", "✍️", "💬"], "kick": "Chapitre 3 · Embarquer les amis", "title": "Un carnet, toute la bande", "story": "Inès envoie un simple lien dans la conversation du groupe. Léo et Anthony le touchent : ils voient le même voyage et le complètent. Pas de compte à créer, pas de mot de passe à retenir.", "pts": ["🤝 Invitez vos compagnons voyage par voyage : ils ne voient que celui-là.", "✍️ Chaque ajout est signé : on sait qui a fait quoi.", "🔔 Chacun choisit les notifications qu’il veut recevoir."], "btn": [["☁️ Choisir mon cloud", "cloud"]]}, {"k": "live", "bg": "linear-gradient(135deg,#064e3b,#10b981 55%,#a7f3d0)", "em": ["📍", "🗺️", "🚶", "🚇", "🏯"], "kick": "Chapitre 4 · Le grand départ", "title": "Le carnet passe en mode voyage", "story": "Le jour J, le carnet change de visage : il montre la journée en cours, la prochaine étape et le chemin pour y aller. Dans le métro de Tokyo, sans réseau, la carte est toujours là.", "pts": ["📍 Le programme du jour et la prochaine étape, d’un coup d’œil.", "🗺️ Des cartes qui marchent sans réseau, et les horaires des lieux à visiter.", "🚶 Le tracé de vos balades, pour revivre le chemin parcouru."], "btn": [["📍 Voir le mode En cours", "live"]]}, {"k": "comptes", "bg": "linear-gradient(135deg,#713f12,#eab308 55%,#fef9c3)", "em": ["💸", "⚖️", "🧾", "🍜", "💳"], "kick": "Chapitre 5 · Les bons comptes", "title": "Les bons comptes font les bons amis", "story": "Un dîner de ramens payé par Léo, les billets de musée par Inès, le taxi par Anthony… Le carnet fait les calculs. À la fin, chacun sait exactement qui doit combien à qui, en euros ou en yens.", "pts": ["💸 Chaque dépense notée en quelques secondes, même hors connexion.", "⚖️ Le moins de remboursements possible pour tout équilibrer.", "💬 Un petit message tout prêt pour demander un remboursement."], "btn": [["💸 Voir le budget", "budget"]]}, {"k": "souv", "bg": "linear-gradient(135deg,#831843,#ec4899 55%,#fbcfe8)", "em": ["📸", "❤️", "✍️", "🌸", "👀"], "kick": "Chapitre 6 · Les souvenirs", "title": "Chaque jour a son histoire", "story": "Le soir, à Kyoto, Inès ajoute trois photos et deux lignes sur les temples dorés. Sa grand-mère, restée en France, suit le voyage, met un cœur et laisse un mot doux.", "pts": ["📸 Photos et récits rangés jour par jour, au bon endroit.", "👀 Votre famille peut suivre le voyage, sans voir les dépenses ni les détails privés.", "❤️ Des cœurs et des commentaires, seulement de ceux que vous invitez."], "btn": [["📸 Voir les souvenirs", "souv"]]}, {"k": "retour", "bg": "linear-gradient(135deg,#1e1b4b,#4338ca 55%,#60a5fa)", "em": ["🎬", "🌍", "📕", "🎵", "🎉"], "kick": "Chapitre 7 · Le retour", "title": "Revivre le voyage", "story": "De retour à la maison, la bande se retrouve autour d’un écran. Le carnet a préparé un film du voyage, en musique, sur la route parcourue. Et sur le globe, un nouveau pays s’allume.", "pts": ["🎬 Un film du voyage, prêt à partager.", "📕 Un album et un carnet de route à imprimer.", "🌍 Un globe en 3D avec tous vos voyages, vos photos et vos pays."], "btn": [["🎬 Voir le bilan", "bilan"], ["🌍 Ouvrir le globe", "world"]]}, {"k": "secret", "bg": "linear-gradient(135deg,#111827,#374151 55%,#9ca3af)", "em": ["🔐", "☁️", "📱", "🔑", "🛡️"], "kick": "Chapitre 8 · Le secret du carnet", "title": "Tes voyages restent à toi", "story": "Le carnet a une règle d’or : ce qui est à toi reste à toi. Pas de publicité, pas de compte, pas de revente de données. Tu choisis où vont tes voyages et avec qui tu les partages.", "pts": ["🔐 Tes voyages sont protégés : seuls toi et ceux que tu invites peuvent les lire.", "☁️ Tu choisis : tout sur ton téléphone, ou une sauvegarde dans ton cloud perso.", "🗑️ Tu peux tout effacer, quand tu veux."], "btn": [["☁️ Ouvrir le cloud", "cloud"]]}, {"k": "fin", "bg": "linear-gradient(135deg,#6b2fa0,#ec4899 50%,#fbbf24)", "em": ["🌅", "🧳", "✈️", "✨", "🗺️"], "kick": "Épilogue", "title": "Et maintenant, à toi !", "story": "Inès, Léo et Anthony préparent déjà leur prochain voyage. Et toi, où partiras-tu ? Ouvre une nouvelle page du carnet : je t’accompagne.", "pts": [], "btn": [["＋ Créer mon voyage", "new"]]}];
@@ -3628,7 +3860,8 @@ const CV = (function(){
       prev.className = 'v-sheet-bg';
       const sh = document.createElement('div'); sh.className = 'v-sheet' + (ro ? ' ro' : '') + (!locked && shStack.length ? ' has-bk' : ''); sh.style.animation = 'none';
       sh.innerHTML = `${shBar(locked)}${locked?'':'<div class="v-grab"></div>'}${ro?'<div class="cv-robanner">🔒 Lecture seule</div>':''}${html}`;
-      const old = prev.querySelector('.v-sheet'); if(old) old.replaceWith(sh); else prev.appendChild(sh);
+      const old = prev.querySelector('.v-sheet'), pool = imgPool(old); if(old) old.replaceWith(sh); else prev.appendChild(sh);
+      imgReuse(sh, pool);
       document.body.style.overflow = 'hidden';
       if(/data-[rt]map=/.test(html)) setTimeout(hydrateMaps, 30);
       if(/data-ph=/.test(html)) setTimeout(hydrate, 30);
@@ -4470,7 +4703,7 @@ const CV = (function(){
     return n;
   }
   function importPick(){
-    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json,.json';
+    const inp = document.createElement('input'); inp.type = 'file'; if(!isIOSDev) inp.accept = 'application/json,.json';
     inp.onchange = e => {
       const f = e.target.files && e.target.files[0]; if(!f) return;
       const rd = new FileReader();
@@ -4577,7 +4810,7 @@ const CV = (function(){
       if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
       const sp = spaceObj(code); await syncSpace(sp, true);
       const got = sp.err ? [] : Object.entries(TS()).filter(([, c])=>c === code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip');
-      if(got.length){ delete M.joinCode; persist(); closeSheet(true); go(got[0].id); refresh(); tripWho(got[0].id); return; }
+      if(got.length){ delete M.joinCode; persist(); closeSheet(true); go(got[0].id); refresh(); joinPick(code); return; }
       M.spaces = (M.spaces || []).filter(x=>x.code !== code);
     } catch(e){ M.spaces = (M.spaces || []).filter(x=>x.code !== code); }
     // 2) sinon : code du carnet complet (mes voyages sur un autre appareil)
@@ -5224,7 +5457,7 @@ const CV = (function(){
     const op = async (mode, fn) => { const d = await db(); return new Promise((res, rej) => {
       const tx = d.transaction('p', mode), rq = fn(tx.objectStore('p'));
       tx.oncomplete = () => res(rq ? rq.result : undefined); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error); }); };
-    return { get: id => op('readonly', s => s.get(id)), put: o => op('readwrite', s => s.put(o)) };
+    return { get: id => op('readonly', s => s.get(id)), put: o => op('readwrite', s => s.put(o)), del: id => op('readwrite', s => s.delete(id)), keys: () => op('readonly', s => s.getAllKeys()) };
   })();
   const urls = {};
   const photoApi = () => { const u = apiUrl(); return u ? u.replace(/\/sync$/, '/photo') : ''; };
@@ -5279,6 +5512,15 @@ const CV = (function(){
     return urls[id] = URL.createObjectURL(b);
   }
   let hydrating = false;
+  // Redessin sans clignotement : les images déjà affichées sont gardées (déplacées) au lieu d’être recréées puis redécodées
+  function imgPool(root){ const p = {}; if(root) root.querySelectorAll('img[data-ph][data-ok]').forEach(i=>{ if(i.complete && i.naturalWidth) (p[i.dataset.ph] = p[i.dataset.ph] || []).push(i); }); return p; }
+  function imgReuse(root, p){
+    if(!root) return;
+    root.querySelectorAll('img[data-ph]').forEach(n=>{ const o = (p[n.dataset.ph] || []).shift(); if(!o) return;
+      [...o.attributes].forEach(a=>{ if(!n.hasAttribute(a.name) && a.name !== 'src' && a.name !== 'data-ok') o.removeAttribute(a.name); });
+      [...n.attributes].forEach(a=>{ if(a.name !== 'src') o.setAttribute(a.name, a.value); });
+      o.dataset.ok = '1'; n.replaceWith(o); });
+  }
   async function hydrate(){
     // déjà en mémoire : tout de suite, sans attendre (évite le clignotement quand une page est redessinée)
     document.querySelectorAll('img[data-ph]:not([data-ok])').forEach(img=>{ const u = urls[img.dataset.ph]; if(u){ img.src = u; img.dataset.ok = '1'; } });
@@ -5324,10 +5566,123 @@ const CV = (function(){
       const bmp = await decodeImg(blob), W = bmp.width, H = bmp.height, s = Math.min(1, 1080 / Math.min(W, H), 1920 / Math.max(W, H));
       const c = document.createElement('canvas'); c.width = Math.round(W * s); c.height = Math.round(H * s);
       c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height); if(bmp.close) bmp.close();
-      let out = await new Promise(r => c.toBlob(r, 'image/webp', 0.8));
-      if(!(out && out.type === 'image/webp' && out.size)) out = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.8));
+      let out = await new Promise(r => c.toBlob(r, 'image/webp', 0.76));   // ≈ 15 % plus léger, même rendu sur un écran de téléphone
+      if(!(out && out.type === 'image/webp' && out.size)) out = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.74));   // iPhone (pas de WebP) : ≈ 25 % plus léger
       return out && out.size && out.size < blob.size ? out : blob;
     } catch(e){ return blob; }
+  }
+  /* ---------- 📱 Place sur le téléphone : stockage protégé + libérer la place des grandes photos déjà sur le serveur ---------- */
+  async function spaceSheet(){
+    let used = 0, quota = 0, kept = false;
+    try { const e = await navigator.storage.estimate(); used = e.usage || 0; quota = e.quota || 0; } catch(e){}
+    try { kept = navigator.storage && navigator.storage.persisted ? await navigator.storage.persisted() : false; } catch(e){}
+    if(!kept){ try { kept = navigator.storage && navigator.storage.persist ? await navigator.storage.persist() : false; } catch(e){} }
+    const mo = b => b >= 1e9 ? (Math.round(b / 1e8) / 10).toString().replace('.', ',') + ' Go' : Math.round(b / 1e6) + ' Mo';
+    const past = trips().filter(t=>!t.demo && tripPhase(t) === 'past').length;
+    openSheet(`<h2>📱 Place sur ce téléphone</h2>
+      <div class="v-box" style="margin:0 0 10px"><div>💾 Utilisé par Vezoria : <b>${used ? mo(used) : '?'}</b></div>${quota ? `<div class="v-sum-small">Place disponible pour l’appli : ${mo(quota)}</div>` : ''}
+        <div style="margin-top:6px">${kept ? '🔒 Stockage protégé : le téléphone ne fera pas de ménage dans tes voyages et tes photos.' : '⚠️ Stockage non protégé : si le téléphone manque de place, il peut effacer les données de l’appli.'}</div></div>
+      ${kept ? '' : `<div class="v-sum-small" style="margin-bottom:10px">${isIOSDev ? 'Sur iPhone : ajoute Vezoria à l’écran d’accueil (Safari → Partager → « Sur l’écran d’accueil ») et ouvre-la de là. Garde aussi une 💾 sauvegarde complète de temps en temps.' : 'Installe Vezoria (Google Play ou « Installer l’appli ») et ouvre-la souvent : Android protège alors son stockage. Garde aussi une 💾 sauvegarde complète de temps en temps.'}</div>`}
+      <h3 style="margin:8px 0 4px">🧹 Libérer de la place</h3>
+      <div class="v-sum-small">Pour les voyages terminés (${past}), les grandes photos déjà envoyées sur le serveur sont retirées de ce téléphone. Les vignettes restent : la grille et le film s’affichent toujours, et la grande photo revient du serveur, en version allégée, quand tu l’ouvres (il faut du réseau). Les photos pas encore envoyées ne sont jamais touchées.</div>
+      <div id="sp-msg" class="v-sum-small" style="margin-top:6px"></div>
+      <div class="v-actions"><button type="button" class="v-btn" id="sp-go" onclick="CV.spaceFree()"${past ? '' : ' disabled'}>🧹 Libérer de la place</button></div>
+      <h3 style="margin:14px 0 4px">🔁 Doublons et photos inutiles</h3>
+      <div class="v-sum-small">Un voyage importé deux fois, des souvenirs remplacés : l’appli retrouve les copies en trop et les photos qui ne servent plus à rien, sur ce téléphone et sur le serveur.</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.dupSheet()">🔁 Chercher les doublons</button><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  /* ---------- 🔁 Doublons : voyages importés deux fois, puis ménage des photos qui ne servent plus ---------- */
+  let DUPG = [];
+  function dupGroups(){
+    const g = {};
+    trips().filter(t=>!t.demo && !t.deleted).forEach(t=>{ const k = t.src === 'polarsteps' && t.psId ? 'ps:' + t.psId : 't:' + normQ(t.titre || '') + '|' + (t.debut || '') + '|' + (t.fin || ''); (g[k] = g[k] || []).push(t); });
+    const n = t => Object.values(R).filter(r=>r && !r.deleted && r.trip === t.id && r.type !== 'souv').length;
+    return Object.values(g).filter(a=>a.length > 1).map(a=>a.slice().sort((x, y)=>(TS()[y.id] || FT()[y.id] ? 1 : 0) - (TS()[x.id] || FT()[x.id] ? 1 : 0) || n(y) - n(x) || (x.createdAt || 0) - (y.createdAt || 0)));
+  }
+  function dupSheet(){
+    DUPG = dupGroups();
+    const sv = t => list('souv', s=>s.trip === t.id), nph = t => sv(t).reduce((k, s)=>k + (s.photos || []).length, 0), fd = t => t.createdAt ? new Date(t.createdAt).toLocaleDateString((window.I18N ? I18N.locale : 'fr-FR')) : '?';
+    openSheet(`<h2>🔁 Doublons</h2>
+      ${DUPG.length ? `<div class="v-sum-small" style="margin-bottom:8px">Ces voyages existent en plusieurs exemplaires. On garde celui qui est partagé ou le plus complet, les copies en trop sont supprimées (leurs photos aussi, si elles ne servent pas ailleurs).</div>`
+        + DUPG.map((a, i)=>`<label class="cv-checkline dup-g"><input type="checkbox" id="dup-${i}" checked><span><b data-notr>${esc(a[0].titre)}</b> ×${a.length}<small>On garde : créé le ${fd(a[0])} · ${sv(a[0]).length} souvenirs · ${nph(a[0])} photos</small><small>À supprimer : ${a.slice(1).map(t=>`créé le ${fd(t)} · ${sv(t).length} souvenirs · ${nph(t)} photos`).join(' / ')}</small></span></label>`).join('')
+        + `<div class="v-actions"><button type="button" class="v-btn" onclick="CV.dupTripsGo()">🗑 Supprimer les copies cochées</button></div>`
+        : `<div class="v-empty">Aucun voyage en double. 👍</div>`}
+      <h3 style="margin:14px 0 4px">🧹 Photos qui ne servent plus</h3>
+      <div class="v-sum-small">Photos de souvenirs supprimés ou remplacés, restées sur ce téléphone ou sur le serveur. L’appli synchronise d’abord, puis ne retire que les photos qui ne sont dans aucune fiche. Sur le serveur, seules celles envoyées il y a plus de 3 jours partent (le temps que tous les téléphones aient synchronisé).</div>
+      <div id="dup-msg" class="v-sum-small" style="margin-top:6px"></div>
+      <div class="v-actions"><button type="button" class="v-btn" id="dup-ph" onclick="CV.photoSweep()">🧹 Faire le ménage des photos</button><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  async function dupTripsGo(){
+    const del = DUPG.filter((a, i)=>{ const c = document.getElementById('dup-' + i); return c && c.checked; }).flatMap(a=>a.slice(1));
+    if(!del.length) return;
+    if(!(await uiConfirm('Supprimer ' + del.length + ' copie(s) de voyage, avec leurs fiches ? (pour tout le monde si la synchro est active)'))) return;
+    const out = [];
+    del.forEach(t=>{ Object.values(R).filter(r=>r && r.trip === t.id && !r.deleted).forEach(r=>out.push(Object.assign(clone(r), {deleted:true}))); out.push(Object.assign(clone(t), {deleted:true})); });
+    putMany(out, '🗑 ' + del.length + ' copie(s) supprimée(s)');
+    if(del.some(t=>t.id === M.trip)){ M.trip = (DUPG.find(a=>a.slice(1).some(t=>t.id === M.trip)) || [])[0]?.id || null; persist(); }
+    dupSheet(); refresh();
+  }
+  async function photoSweep(){
+    const say = m => { const e = document.getElementById('dup-msg'); if(e) e.textContent = m; }, btn = document.getElementById('dup-ph');
+    if(btn) btn.disabled = true;
+    try {
+      // 1. synchroniser : on doit connaître toutes les fiches (celles des compagnons aussi) avant de juger qu’une photo ne sert plus
+      if(M.sync.on || (M.spaces || []).length){ say('🔄 Synchronisation…'); try { await syncNow(true); } catch(e){} try { await photoPurge(); } catch(e){} }
+      const liveRecs = Object.values(R).filter(r=>r && !r.deleted), live = new Set(liveRecs.flatMap(photoRefs)), pend = new Set((M.pq || []).map(x=>String(x).replace(/\.t$/, '')));
+      // une photo citée n’importe où (couverture, avatar…) est gardée : tous les identifiants présents dans les fiches et les réglages
+      const cited = new Set(); (JSON.stringify(liveRecs) + JSON.stringify(Object.assign({}, M, {pq:null, pgone:null, fdel:null}))).replace(/"([\w.-]{6,80})"/g, (_, x)=>{ cited.add(x); return ''; });
+      // 2. ce téléphone
+      say('📱 Ménage sur ce téléphone…');
+      let nLoc = 0, frLoc = 0;
+      for(const k of (await IDB.keys()) || []){
+        const b = String(k).replace(/\.t$/, ''); if(live.has(b) || pend.has(b) || cited.has(b)) continue;
+        try { const o = await IDB.get(k); frLoc += (o && o.blob && o.blob.size) || 0; await IDB.del(k); nLoc++; if(urls[k]){ try { URL.revokeObjectURL(urls[k]); } catch(e){} delete urls[k]; } } catch(e){}
+      }
+      // 3. le serveur : chaque carnet de ce téléphone (code principal + voyages partagés avec leur propre code)
+      const codes = [...new Set([M.sync.on && M.sync.code, ...Object.values(TS()).filter(c=>spaceObj(c))].filter(Boolean))];
+      // carnet de chaque photo (même règle que pour l’envoi), calculé une seule fois
+      const phCode = new Map(); [...liveRecs.filter(r=>r.type !== 'feed'), ...liveRecs.filter(r=>r.type === 'feed')].forEach(r=>{ if(r.demo) return; const t = targets(r)[0], c = t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t;
+        photoRefs(r).forEach(id=>{ if(!phCode.has(id)) phCode.set(id, c); }); });
+      let nSrv = 0, frSrv = 0, skip = 0;
+      for(const code of codes){
+        say('☁️ Ménage sur le serveur…');
+        const want = new Set();
+        for(const [id, c] of phCode) if(c === code){ want.add(await sid(id, code)); want.add(await sid(id + '.t', code)); }
+        let cursor = '', extra = [];
+        do {
+          const r = await fetch(photoApi() + '?list=1' + (cursor ? '&cursor=' + encodeURIComponent(cursor) : ''), {headers:{'X-Carnet-Code':await authCode(code)}});
+          if(!r.ok){ skip++; extra = null; break; }
+          const j = await r.json(); if(!j || !Array.isArray(j.ids)){ skip++; extra = null; break; }   // serveur ancien (version test dans un carnet) : on passe
+          j.ids.forEach(o=>{ if(!want.has(o.i)) extra.push(o.i); }); cursor = j.cursor || '';
+        } while(cursor);
+        if(!extra) continue;
+        for(let i = 0; i < extra.length; i += 1000){
+          const r = await fetch(photoApi() + '?bulk=1', {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code), 'Content-Type':'application/json'}, body:JSON.stringify({ids:extra.slice(i, i + 1000)})});
+          if(r.ok){ const j = await r.json(); nSrv += j.deleted || 0; frSrv += j.freed || 0; }
+          say('☁️ ' + nSrv + ' photo(s) retirée(s) du serveur…');
+        }
+      }
+      const mo = b => Math.round(b / 1e6);
+      say('✅ Ce téléphone : ' + nLoc + ' fichier(s), ' + mo(frLoc) + ' Mo · Serveur : ' + nSrv + ' fichier(s), ' + mo(frSrv) + ' Mo.' + (skip ? ' (Serveur non nettoyé pour ' + skip + ' carnet(s) : mise à jour du serveur nécessaire.)' : ''));
+    } catch(e){ say('⚠️ ' + (e.message || e)); }
+    if(btn) btn.disabled = false;
+  }
+  async function spaceFree(){
+    const say = m => { const e = document.getElementById('sp-msg'); if(e) e.textContent = m; }, btn = document.getElementById('sp-go');
+    if(!(await uiConfirm('Retirer de ce téléphone les grandes photos des voyages terminés déjà sur le serveur ? Les vignettes restent, et chaque grande photo revient quand tu l’ouvres.'))) return;
+    if(btn) btn.disabled = true;
+    const pend = new Set(M.pq || []), ids = [];
+    trips().filter(t=>!t.demo && tripPhase(t) === 'past').forEach(t=>list('souv', x=>x.trip === t.id).forEach(x=>(x.photos || []).forEach(p=>{ if(!pend.has(p) && photoCode(p)) ids.push(p); })));
+    let n = 0, freed = 0;
+    for(let i = 0; i < ids.length; i++){
+      const id = ids[i];
+      try { const o = await IDB.get(id); if(!(o && o.blob && o.up)) continue;
+        const th = await IDB.get(id + '.t'); if(!(th && th.blob)) continue;   // jamais sans vignette
+        freed += o.blob.size || 0; await IDB.del(id); if(urls[id]){ try { URL.revokeObjectURL(urls[id]); } catch(e){} delete urls[id]; } n++; } catch(e){}
+      if(!(i % 40)) say('🧹 ' + (i + 1) + ' / ' + ids.length + '…');
+    }
+    say(n ? '✅ ' + n + ' grande(s) photo(s) retirée(s) de ce téléphone · ' + Math.round(freed / 1e6) + ' Mo libérés.' : 'Rien à libérer pour le moment (photos pas encore envoyées, ou déjà libérées).');
+    if(btn) btn.disabled = false;
   }
   async function storePhoto(blob, id){
     const full = await shrink(blob, 2048, 0.88), thumb = await shrink(blob, 480, 0.74);
@@ -5339,19 +5694,25 @@ const CV = (function(){
   let uploading = false, upHalt = false;   // upHalt : on arrête les envois (suppression du serveur en cours)
   async function uploadQueue(){
     if(uploading || !(M.pq||[]).length || !photoApi()) return;
+    if(M.pqPause && Date.now() < M.pqPause) return;   // pause de sécurité ou serveur plein : on réessaie plus tard
     if(!(M.sync.on && M.sync.code) && !(M.spaces||[]).length){ M.pqWait = (M.pq||[]).length; return; }
     uploading = true; let upErr = '', waiting = 0, stop = false;
     if((M.fq||[]).length){ try { await feedUpload(); } catch(e){} }   // les vignettes des abonnés passent avant les grandes photos
     // photo → code du carnet, calculé une seule fois (rapide même avec des milliers de photos)
-    const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
+    const owner = {}, dead = new Set(); Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(!p) return; if(x.deleted) dead.add(p); else if(!owner[p]) owner[p] = x; }); });
+    // photos de fiches supprimées (ex. souvenirs remplacés par un nouvel import) : elles ne partent plus et quittent la file
+    { const n0 = M.pq.length; M.pq = M.pq.filter(id=>{ const b = String(id).replace(/\.t$/, ''); return owner[b] || !dead.has(b); }); if(M.pq.length !== n0) persist(); }
     const codeOf = id => { const base = String(id).replace(/\.t$/,''), r = owner[base]; if(!r) return photoCode(id); if(r.demo) return null; const t = targets(r)[0]; return t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t; };
     // seules les photos des voyages en ligne partent ; les autres attendent sur le téléphone, sans être comptées
-    const todo = M.pq.filter(id=>codeOf(id)); waiting = M.pq.length - todo.length; let left = todo.length;
+    M.pqFull = M.pqFull || {}; Object.keys(M.pqFull).forEach(c=>{ if(Date.now() > M.pqFull[c]) delete M.pqFull[c]; });
+    const isFull = id => { const c = codeOf(id); return !!(c && M.pqFull[c]); };
+    const todo = M.pq.filter(id=>codeOf(id) && !isFull(id)); waiting = M.pq.length - todo.length; let left = todo.length;
     if(!left){ M.pqWait = waiting; uploading = false; syncDot(); return; }
     cryptShow('🔐 Chiffrement des photos… (' + left + ')');
     const send = async (blob, pid, code) => { const body = E2E ? new Blob([await seal(new Uint8Array(await blob.arrayBuffer()), code)], {type:'image/jpeg'}) : blob;
       const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(pid, code), 'Content-Type':'image/jpeg'}, body});
-      if(!r.ok && r.status !== 413){ let er = ''; try { er = ((await r.json()).error) || ''; } catch(e){} throw new Error((er ? er + ' ' : '') + '(' + r.status + ')'); } };
+      if(!r.ok && r.status !== 413){ let j = {}; try { j = (await r.json()) || {}; } catch(e){}
+        const er = new Error((j.error ? j.error + ' ' : '') + '(' + r.status + ')'); er.st = r.status; er.j = j; er.code = code; throw er; } };
     const one = async id => {
       const code = codeOf(id); if(!code) return;          // voyage repassé hors ligne entre-temps : la photo reste sur le téléphone
       let o = null; try { o = await IDB.get(id); } catch(e){}
@@ -5374,12 +5735,24 @@ const CV = (function(){
       M.pq = M.pq.filter(x=>x!==id); syncDot();
       left--; if(left && !(left % 3)){ persist(); cryptShow('🔐 Chiffrement des photos… (' + left + ' restante' + (left > 1 ? 's' : '') + ')'); }
     };
-    const worker = async () => { while(!stop && !upHalt && todo.length){ const id = todo.shift(); try { await one(id); } catch(e){ upErr = upErr || (e && e.message) || String(e); stop = true; } } };
+    let upSt = 0, upJ = null;
+    const worker = async () => { while(!stop && !upHalt && todo.length){ const id = todo.shift(); if(isFull(id)){ waiting++; continue; }
+      try { await one(id); } catch(e){
+        // place de CE carnet pleine : ses photos restent sur le téléphone, celles des autres voyages continuent de partir
+        if(e && e.st === 507 && e.code && /carnet/i.test(e.j && e.j.error || '')){ M.pqFull[e.code] = Date.now() + 3600000; waiting++; if(!upErr || upSt !== 507){ upErr = e.message; upSt = 507; upJ = e.j; } continue; }
+        if(!upErr || upSt === 507){ upErr = (e && e.message) || String(e); upSt = e && e.st || 0; upJ = e && e.j; } stop = true; } } };
     try { await Promise.all([worker(), worker(), worker()]); }   // 3 envois en même temps : bien plus rapide sur mobile
     catch(e){ upErr = 'réseau : ' + (e && e.message || e); }
     if(/Failed to fetch|NetworkError|Load failed/i.test(upErr)) upErr = 'réseau : ' + upErr;
+    // messages clairs : pause de sécurité (trop d’envois d’un coup) ou place du serveur pleine
+    if(upSt === 429){ const min = Math.max(1, Math.round(((upJ && upJ.retry) || 600) / 60)); M.pqPause = Date.now() + min * 60000;
+      upErr = '⏸️ Pause de sécurité : beaucoup de photos envoyées d’un coup. L’envoi reprend tout seul dans ' + min + ' min.'; }
+    else if(upSt === 507){ const go = upJ && upJ.max ? Math.round(upJ.max / 1e8) / 10 : 0;
+      upErr = /carnet/i.test(upJ && upJ.error || '') ? (go ? '📦 Place photos de ce carnet pleine sur le serveur (' + String(go).replace('.', ',') + ' Go) : les photos restantes restent sur ce téléphone, rien n’est perdu.' : '📦 Place photos de ce carnet pleine sur le serveur : les photos restantes restent sur ce téléphone, rien n’est perdu.')
+        : '📦 Le serveur photos est plein pour le moment : les photos restantes restent sur ce téléphone, rien n’est perdu.';
+      if(!/carnet/i.test(upJ && upJ.error || '')) M.pqPause = Date.now() + 3600000; }
     M.pqWait = waiting; M.pqErr = upErr || ''; persist();
-    cryptHide(upErr ? '⚠️ Photos non envoyées : ' + upErr : left ? '' : '🔒 Photos chiffrées et envoyées');
+    cryptHide(upErr ? (upSt === 429 || upSt === 507 ? upErr : '⚠️ Photos non envoyées : ' + upErr) : left ? '' : '🔒 Photos chiffrées et envoyées');
     uploading = false; syncDot();
     photoPurge();
   }
@@ -7264,26 +7637,29 @@ const CV = (function(){
   
   return module.exports;})();
   return {make:function(text){var q=new M['index'](-1,M['QRErrorCorrectLevel'].M);q.addData(text);q.make();var n=q.getModuleCount(),a=[];for(var r=0;r<n;r++){var row=[];for(var c=0;c<n;c++)row.push(q.isDark(r,c));a.push(row);}return a;}};})();
-  const APP_URL = () => location.origin + '/';
+  const PLAY_URL = 'https://play.google.com/store/apps/details?id=fr.vezoria.app';
+  const APP_URL = () => /Android/i.test(navigator.userAgent || '') ? PLAY_URL : window.VZ_HOST ? 'https://vezoria.pages.dev/' : location.origin + '/';
   function qrSVG(text, cls){
     const m = CVQR.make(text), n = m.length, q = 2; let d = '';
     for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(m[r][c]) d += `M${c+q} ${r+q}h1v1h-1z`;
     return `<svg class="${cls||'cv-share-qr'}" viewBox="0 0 ${n+2*q} ${n+2*q}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" role="img" aria-label="QR code de l’appli"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="#2A1238"/></svg>`;
   }
+  const WEB_URL = () => window.VZ_HOST ? 'https://vezoria.pages.dev/' : location.origin + '/';
   function shareSheet(){
-    const url = APP_URL();
+    // deux QR codes : l’appli web pour iPhone, la fiche Google Play pour Android
     openSheet(`<h2>📤 Partager l’appli à un ami</h2>
-      <div class="v-sum-small" style="margin-bottom:6px;text-align:center">Ton ami scanne ce code avec l’appareil photo de son téléphone, puis installe l’appli sur son écran d’accueil.</div>
-      ${qrSVG(url)}
-      <div class="cv-share-url">${esc(url)}</div>
-      <button type="button" class="v-btn" onclick="CV.shareLink()">📤 Envoyer le lien</button>
+      <div class="v-sum-small" style="margin-bottom:6px;text-align:center">Ton ami scanne le code de son téléphone avec l’appareil photo.</div>
+      <div class="cv-qr2"><div><b>📱 iPhone</b>${qrSVG(WEB_URL())}<small>Safari → « Partager » → « Sur l’écran d’accueil »</small></div>
+        <div><b>🤖 Android</b>${qrSVG(PLAY_URL)}<small>Google Play</small></div></div>
+      <button type="button" class="v-btn" onclick="CV.shareLink()">📤 Envoyer les liens</button>
       <div class="v-sum-small" style="margin-top:10px">Ce lien donne l’appli, <b>pas ton carnet</b>. Pour voyager ensemble sur le même carnet, envoie aussi ton <b>code de partage</b> (Plus → Partage &amp; profils).</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   async function shareLink(){
-    const url = APP_URL(), text = 'Je t’invite sur Vezoria : on prépare nos voyages à plusieurs (programme, budget, souvenirs), et tout est chiffré.';
-    try { if(navigator.share){ await navigator.share({title:'Vezoria', text, url}); return; } } catch(e){ if(e && e.name === 'AbortError') return; }
-    try { await navigator.clipboard.writeText(text + ' ' + url); toast('🔗 Lien copié'); } catch(e){ (await uiPrompt('Copie ce lien :', url)); }
+    const base = 'Je t’invite sur Vezoria : on prépare nos voyages à plusieurs (programme, budget, souvenirs), et tout est chiffré.';
+    const text = (window.I18N && I18N.msg ? I18N.msg(base) : base) + '\n📱 iPhone : ' + WEB_URL() + '\n🤖 Android : ' + PLAY_URL;
+    try { if(navigator.share){ await navigator.share({title:'Vezoria', text}); return; } } catch(e){ if(e && e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(text); toast('🔗 Lien copié'); } catch(e){ (await uiPrompt('Copie ce lien :', text)); }
   }
   /* ══════════════════════════════════════════════════════════════════════════
      🧰 OUTILS DU VOYAGE (5 octobre 2026)
@@ -7826,31 +8202,105 @@ const CV = (function(){
     openSheet(`<h2>🗺️ Carte du voyage</h2><div data-tmap="1"></div><div class="v-sum-small">Fond de carte © contributeurs OpenStreetMap. Elle est aussi ajoutée au carnet de route PDF.</div><div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   /* ---------- 🧳 Bagages ---------- */
+  /* ---------- 🛂 Formalités d’entrée selon le pays et le passeport (règles générales, à vérifier avant le départ) ---------- */
+  const SCH = 'AT BE BG CH CZ DE DK EE ES FI FR GR HR HU IS IT LI LT LU LV MT NL NO PL PT RO SE SI SK'.split(' ');
+  const EUX = 'IE CY MC SM VA AD'.split(' ');   // UE hors Schengen et micro-États : carte d’identité aussi
+  const ID_OK = 'AL BA ME MK RS TR GE MD XK FO GI'.split(' ');   // carte d’identité acceptée pour beaucoup d’Européens
+  const EU_CEAM = 'AT BE BG CH CY CZ DE DK EE ES FI FR GR HR HU IE IS IT LI LT LU LV MT NL NO PL PT RO SE SI SK'.split(' ');
+  const PLUG = {GB:'G',IE:'G',MT:'G',CY:'G',HK:'G',SG:'G',MY:'G',AE:'G',QA:'G',KE:'G',US:'A/B',CA:'A/B',MX:'A/B',JP:'A/B',CO:'A/B',CU:'A/B',DO:'A/B',PH:'A/B',TW:'A/B',
+    AU:'I',NZ:'I',CN:'I/A',AR:'I',FJ:'I',CH:'J',LI:'J',IT:'L',BR:'N',IN:'D/M',ZA:'M/N',IL:'H',TH:'A/B/O',LK:'D/G',NP:'D',MV:'G',MU:'G',SC:'G',JM:'A/B',CR:'A/B',PE:'A/C',EC:'A/B',VN:'A/C',ID:'C/F'};
+  const BAG_FROM = [['eu','🇪🇺 UE · Schengen · Suisse'],['gb','🇬🇧 Royaume-Uni'],['us','🇺🇸 États-Unis'],['ca','🇨🇦 Canada'],['other','🌍 Autre pays']];
+  function entryRules(cc, from){
+    const inEU = SCH.includes(cc) || EUX.includes(cc), out = {doc:'', x:[]};
+    const X = {US:'ESTA (en ligne, au moins 72 h avant le départ)', CA:'AVE / eTA du Canada si tu arrives en avion (en ligne)', GB:'Autorisation ETA du Royaume-Uni (en ligne, avant le départ)',
+      AU:'Autorisation eVisitor ou ETA pour l’Australie (en ligne)', NZ:'NZeTA pour la Nouvelle-Zélande (en ligne)', IN:'e-Visa indien (en ligne)', EG:'Visa pour l’Égypte (e-Visa en ligne ou à l’arrivée)',
+      IL:'ETA-IL pour Israël (en ligne)', LK:'ETA pour le Sri Lanka (en ligne)', KH:'Visa pour le Cambodge (e-Visa ou à l’arrivée)', LA:'Visa pour le Laos (e-Visa ou à l’arrivée)', NP:'Visa pour le Népal (en ligne ou à l’arrivée)',
+      KE:'eTA pour le Kenya (en ligne)', TZ:'Visa pour la Tanzanie (e-Visa en ligne)', CU:'Carte de tourisme / e-Visa pour Cuba', TH:'Carte d’arrivée numérique TDAC (en ligne, dans les 3 jours avant l’arrivée)',
+      KR:'K-ETA pour la Corée du Sud : vérifie si elle est exigée à tes dates', CN:'Chine : vérifie que l’exemption de visa court séjour s’applique à tes dates', JP:'Visit Japan Web pour les formalités d’arrivée (conseillé)',
+      ID:'Visa à l’arrivée (e-VOA) pour l’Indonésie, + taxe touristique à Bali', TR:'', MA:'', TN:''};
+    if(from === 'eu'){
+      if(inEU){ out.doc = 'Carte d’identité ou passeport en cours de validité'; if(EU_CEAM.includes(cc)) out.x.push('Carte européenne d’assurance maladie (CEAM)'); return out; }
+      if(ID_OK.includes(cc)){ out.doc = 'Carte d’identité acceptée pour beaucoup d’Européens (passeport conseillé)'; return out; }
+      out.doc = cc === 'GB' ? 'Passeport (la carte d’identité ne suffit plus)' : cc === 'US' ? 'Passeport électronique (biométrique)' : 'Passeport (souvent valable 6 mois après le retour)';
+      if(X[cc]) out.x.push(X[cc]); else if(X[cc] === undefined) out.x.push('Vérifie s’il faut un visa (fiche « Conseils aux voyageurs » du pays)');
+      return out;
+    }
+    // passeport britannique, américain, canadien ou autre
+    if(inEU){ out.doc = 'Passeport (valable au moins 3 mois après la sortie de l’espace Schengen)';
+      out.x.push('Enregistrement biométrique EES à la frontière (prévois du temps)', 'ETIAS : vérifie s’il est déjà exigé à tes dates');
+      if(from === 'other') out.x.push('Vérifie s’il faut un visa Schengen pour ta nationalité'); return out; }
+    out.doc = 'Passeport (souvent valable 6 mois après le retour)';
+    const home = {gb:'GB', us:'US', ca:'CA'}[from];
+    if(cc === home) { out.doc = 'Passeport ou pièce d’identité de ton pays'; return out; }
+    if(from === 'us' && cc === 'CA' || from === 'ca' && cc === 'US') { out.doc = 'Passeport (ou carte NEXUS / permis Enhanced)'; return out; }
+    if(from !== 'other' && X[cc] && !(from === 'gb' && cc === 'GB')) out.x.push(X[cc]);
+    else out.x.push('Vérifie s’il faut un visa pour ta nationalité');
+    return out;
+  }
+  // pays du voyage : hébergements, souvenirs, trajets, titre (le nom du pays est cherché une fois puis gardé)
+  function bagCities(){
+    const t = trip(), cs = new Set();
+    items(i=>i.cat==='hotel').forEach(h=>{ const c = cityOf(h.titre||''); if(c) cs.add(c); });
+    // la ville de départ (premier trajet) n’est pas une destination : le retour y ramène
+    const tr = items(i=>i.cat==='transport').sort((a, b)=>(a.date||'').localeCompare(b.date||'')), home = tr[0] && tr[0].from ? normQ(cityOf(tr[0].from)) : '';
+    tr.forEach(i=>{ const c = i.to && cityOf(i.to); if(c && normQ(c) !== home) cs.add(c); });
+    if(t && t.titre && ccOf(t.titre)) cs.add(t.titre);
+    return [...cs].filter(c=>normQ(c) !== home).slice(0, 12);
+  }
+  function bagCcs(){
+    const t = trip(), out = new Set();
+    bagCities().forEach(c=>{ const k = (M.ctry || {})[normQ(c)]; if(k && k.cc) out.add(k.cc); const d = ccOf(c); if(d) out.add(d); });
+    souvs().forEach(s=>{ const cc = s.cc || ccOf(s.pays); if(cc) out.add(cc); });
+    const home = (M.bagHome || '').toUpperCase(); if(home) out.delete(home);   // le pays de départ n’est pas une destination
+    return [...out];
+  }
+  const ccName = cc => { try { return new Intl.DisplayNames([(window.I18N && I18N.lang) || 'fr'], {type:'region'}).of(cc); } catch(e){ return cc; } };
+  function bagFromDefault(){ return M.bagFrom || (/^(fr|de|es|it|pt|nl)/.test(((window.I18N && I18N.lang) || navigator.language || 'fr')) ? 'eu' : 'other'); }
+  function bagEntryHtml(){
+    const from = (document.getElementById('bg-from') || {}).value || bagFromDefault();
+    const txt = ((document.getElementById('bg-cc') || {}).value || '').split(',').map(x=>x.trim()).filter(Boolean);
+    const ccs = [...new Set(txt.map(ccOf).filter(Boolean))];
+    if(!ccs.length) return `<div class="v-sum-small">Indique les pays visités pour voir les papiers à prévoir.</div>`;
+    return ccs.map(cc=>{ const r = entryRules(cc, from); return `<div class="bg-ent"><b>${flag(cc)} ${esc(ccName(cc))}</b><span><i>🪪</i> ${esc(r.doc)}</span>${r.x.map(x=>`<span><i>📝</i> ${esc(x)}</span>`).join('')}${PLUG[cc] && from === 'eu' ? `<span><i>🔌</i> Prise de type ${esc(PLUG[cc])} : adaptateur</span>` : ''}</div>`; }).join('')
+      + `<div class="v-sum-small" style="margin-top:6px">Règles générales pour un court séjour touristique. Vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.</div>`;
+  }
+  function bagEntryUpd(){ const e = document.getElementById('bg-ent'); if(e) e.innerHTML = bagEntryHtml(); try { M.bagFrom = document.getElementById('bg-from').value; persist(); } catch(x){} }
+  async function bagCcFill(){
+    const inp = document.getElementById('bg-cc'); if(!inp || inp.dataset.edited) return;
+    const names = () => bagCcs().map(ccName).join(', ');
+    inp.value = names(); bagEntryUpd();
+    for(const c of bagCities()){ if((M.ctry || {})[normQ(c)] || ccOf(c)) continue; try { await countryOf(c); } catch(e){} if(!document.getElementById('bg-cc') || inp.dataset.edited) return; inp.value = names(); bagEntryUpd(); }
+  }
   function tlBags(){
-    const t = trip(), v = tv(), n = Math.max(1, nights(t.debut, t.fin || t.debut));
+    const t = trip(), v = tv(), n = Math.max(1, nights(t.debut, t.fin || t.debut)), from = bagFromDefault();
     openSheet(`<h2>🧳 Liste de bagages</h2><div class="v-sum-small" style="margin-bottom:8px">${n} nuit${n>1?'s':''}. La liste s’ajoute à la ✅ Checklist, cochable par chacun.</div>
       <div class="v-f"><label>Pour qui ?</label><select class="v-in" id="bg-who"><option value="">Tout le monde (une liste commune)</option>${v.map(p=>`<option value="${p}">${esc(pname(p))}</option>`).join('')}<option value="each">Une liste par voyageur</option></select></div>
+      <div class="v-f"><label>🛂 Ton passeport ou ta carte d’identité vient de…</label><select class="v-in" id="bg-from" onchange="CV.bagEntryUpd()">${BAG_FROM.map(([k,l])=>`<option value="${k}"${k===from?' selected':''}>${l}</option>`).join('')}</select></div>
+      <div class="v-f"><label>Pays visités</label><input class="v-in" id="bg-cc" placeholder="Ex. Italie, Malte" oninput="this.dataset.edited=1;CV.bagEntryUpd()"></div>
+      <div id="bg-ent" class="bg-ents"></div>
       <div class="v-f"><label>Climat</label><select class="v-in" id="bg-cl"><option value="auto">Automatique (météo des étapes)</option><option value="chaud">Chaud</option><option value="doux">Tempéré</option><option value="froid">Froid</option></select></div>
       <div class="v-f"><label>Activités</label>${[['plage','🏖️ Plage / piscine'],['rando','🥾 Randonnée'],['ville','🏙️ Ville & soirées'],['sport','⛷️ Sport / ski'],['pro','💼 Travail'],['enfant','👶 Avec enfants']].map(([k,l])=>`<label class="cv-checkline"><input type="checkbox" id="bg-${k}"${k==='ville'?' checked':''}> ${l}</label>`).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.tlBagsGo()">🧳 Ajouter à la checklist</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+    bagCcFill();
   }
   async function tlBagsGo(){
     const t = trip(), n = Math.max(1, nights(t.debut, t.fin || t.debut)), q = k => Math.min(n + 1, k);
     const on = k => { const e = document.getElementById('bg-' + k); return e && e.checked; };
     let cl = document.getElementById('bg-cl').value; const who = document.getElementById('bg-who').value;
+    const from = (document.getElementById('bg-from') || {}).value || 'eu', ccs = [...new Set(((document.getElementById('bg-cc') || {}).value || '').split(',').map(x=>ccOf(x.trim())).filter(Boolean))];
+    M.bagFrom = from;
     if(cl === 'auto'){ cl = 'doux'; try { const st = tlStages(); if(st.length){ const vs = []; for(const s of st.slice(0,4)) vs.push(await meteoFor(s)); const mx = Math.max(...vs.map(v=>v.max)), mn = Math.min(...vs.map(v=>v.min)); cl = mx >= 25 ? 'chaud' : mn <= 5 ? 'froid' : 'doux'; } } catch(e){} }
+    // papiers et prises selon les pays : remplacent les lignes génériques
+    const ent = [], plugs = new Set(); let needPass = false;
+    ccs.forEach(cc=>{ const r = entryRules(cc, from); if(/Passeport/i.test(r.doc) && !/ou passeport|passeport conseillé/i.test(r.doc)) needPass = true;
+      r.x.filter(x=>!/CEAM/.test(x)).forEach(x=>ent.push(['🛂 Formalités', x + (ccs.length > 1 ? ' — ' + ccName(cc) : '')])); if(from === 'eu' && PLUG[cc]) plugs.add(PLUG[cc]); });
+    const papers = !ccs.length ? 'Pièce d’identité / passeport' : needPass ? 'Passeport (vérifier la date d’expiration)' : 'Carte d’identité ou passeport';
+    const plugLine = !ccs.length || from !== 'eu' ? 'Adaptateur de prise' : plugs.size ? 'Adaptateur de prise (type ' + [...plugs].join(', ') + ')' : '';
     const L = [['🧳 Vêtements', `Sous-vêtements ×${q(8)}`], ['🧳 Vêtements', `Chaussettes ×${q(8)}`], ['🧳 Vêtements', `Tee-shirts / hauts ×${q(7)}`], ['🧳 Vêtements', `Pantalons / jupes ×${Math.min(4, Math.ceil(n/3)+1)}`],
       ['🧳 Vêtements', 'Pyjama'], ['🧳 Vêtements', 'Chaussures confortables'], ['🧴 Toilette', 'Trousse de toilette (brosse à dents, dentifrice, déodorant)'], ['🧴 Toilette', 'Médicaments personnels + ordonnances'],
-      ['🔌 Tech', 'Chargeurs + batterie externe'], ['🔌 Tech', 'Adaptateur de prise'], ['📄 Papiers', 'Pièce d’identité / passeport'], ['📄 Papiers', 'Carte bancaire + un peu d’espèces']];
-    if(cl==='chaud') L.push(['🧳 Vêtements','Shorts / robes légères'], ['🧴 Toilette','Crème solaire indice 50'], ['🧳 Vêtements','Chapeau / casquette'], ['🧳 Vêtements','Lunettes de soleil'], ['🧴 Toilette','Anti-moustiques']);
-    if(cl==='doux') L.push(['🧳 Vêtements','Pull ou sweat'], ['🧳 Vêtements','Veste légère imperméable']);
-    if(cl==='froid') L.push(['🧳 Vêtements','Manteau chaud'], ['🧳 Vêtements','Bonnet, gants, écharpe'], ['🧳 Vêtements','Sous-couche thermique'], ['🧴 Toilette','Baume à lèvres']);
-    if(on('plage')) L.push(['🏖️ Plage','Maillot de bain ×2'], ['🏖️ Plage','Serviette de plage'], ['🏖️ Plage','Tongs / sandales'], ['🏖️ Plage','Sac étanche']);
-    if(on('rando')) L.push(['🥾 Rando','Chaussures de marche'], ['🥾 Rando','Gourde'], ['🥾 Rando','Petit sac à dos'], ['🥾 Rando','Coupe-vent'], ['🥾 Rando','Pansements anti-ampoules']);
-    if(on('ville')) L.push(['🏙️ Ville','Tenue pour sortir le soir'], ['🏙️ Ville','Sac banane / antivol']);
-    if(on('sport')) L.push(['⛷️ Sport','Tenue de sport'], ['⛷️ Sport','Masque / gants / lunettes de ski'], ['⛷️ Sport','Assurance activités sportives']);
-    if(on('pro')) L.push(['💼 Travail','Ordinateur + chargeur'], ['💼 Travail','Tenue professionnelle'], ['💼 Travail','Cartes de visite / badges']);
-    if(on('enfant')) L.push(['👶 Enfants','Doudou / jouets'], ['👶 Enfants','Couches / lingettes'], ['👶 Enfants','Carnet de santé'], ['👶 Enfants','Goûters pour le trajet']);
+      ['🔌 Tech', 'Chargeurs + batterie externe'], ...(plugLine ? [['🔌 Tech', plugLine]] : []), ['📄 Papiers', papers], ['📄 Papiers', 'Carte bancaire + un peu d’espèces'], ...ent];
+    if(ccs.some(cc=>EU_CEAM.includes(cc)) && from === 'eu') L.push(['📄 Papiers', 'Carte européenne d’assurance maladie (CEAM)']);
+    if(ccs.some(cc=>!SCH.includes(cc) && !EUX.includes(cc))) L.push(['📄 Papiers', 'Assurance voyage (frais médicaux à l’étranger)']);
     const owners = who === 'each' ? tv() : [who];
     const out = [];
     owners.forEach(pid => L.forEach(([cat,label],i) => out.push({id:'c'+uid()+i, type:'check', trip:M.trip, cat: pid ? cat + ' · ' + pname(pid) : cat, label, done:false})));
@@ -8661,6 +9111,8 @@ ${pm.join('\n')}</Document></kml>`;
     openSheet(`<h2>📄 Importer une réservation</h2>
       <div class="v-sum-small" style="margin-bottom:10px">Le <b>PDF</b> ou le <b>mail</b> de confirmation ${what || '(hôtel, vol, train, bus, ferry, visite, activité…)'} : l’appli le lit <b>sur ton téléphone</b>, reconnaît le type de réservation, crée la fiche (ou les vols d’un aller-retour) et te laisse vérifier.</div>
       <button type="button" class="v-btn" onclick="CV.impPick()">📄 Choisir le PDF de la réservation</button>
+      <button type="button" class="v-btn sec" onclick="CV.impPickShot()">📸 Une capture d’écran (appli, mail, Wallet)</button>
+      <button type="button" class="v-btn sec" onclick="CV.impPickPass()">🎫 Une carte Wallet (.pkpass)</button>
       <button type="button" class="v-btn sec" onclick="CV.impMail()">✉️ Coller le texte du mail</button>
       <button type="button" class="v-btn sec" onclick="CV.impPickAny()">📨 Choisir un mail enregistré (.eml)</button>
       <div class="v-sum-small" style="margin-top:10px"><b>Depuis Mail sur iPhone :</b> touche la pièce jointe PDF → Partager → <i>Enregistrer dans Fichiers</i>, puis choisis-la ici. Pas de PDF ? Copie le texte du mail et touche « Coller le texte du mail ».<br><b>Sur Android :</b> depuis Gmail ou Booking, Partager → <i>Vezoria</i> (appli installée) : l’import démarre tout seul.<br>Si une fiche existe déjà aux mêmes dates (hôtel ou trajet), l’appli te demande : <b>conserver</b> les deux ou <b>remplacer</b>.</div>
@@ -8683,14 +9135,85 @@ ${pm.join('\n')}</Document></kml>`;
   }
   async function ocrText(file){
     if(!window.Tesseract) await new Promise((res, rej)=>{ const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'; s.onload = res; s.onerror = ()=>rej(new Error('outil de lecture indisponible (réseau ?)')); document.head.appendChild(s); });
-    const small = await shrink(file, 2000, 0.9); const {data} = await Tesseract.recognize(small, 'fra+eng'); return (data && data.text) || '';
+    const small = await ocrPrep(file); const {data} = await Tesseract.recognize(small, 'fra+eng'); return (data && data.text) || '';
   }
-  async function impFile(file, extraText){
-    const isPdf = /pdf/i.test(file.type) || /\.pdf$/i.test(file.name||'');
-    if(!isPdf){ impSay('⚠️ Choisis le PDF de la réservation (dans Mail : la pièce jointe → Partager → Enregistrer dans Fichiers).'); return; }
+  // capture d’écran : niveaux de gris + contraste, et agrandie si l’écran est petit (meilleure lecture des petits caractères)
+  async function ocrPrep(file){
     try {
-      impSay(isPdf ? '📄 Lecture du PDF…' : '🔍 Lecture de l’image… (la 1re fois l’outil se télécharge, ~15 s)');
-      const txt = (isPdf ? await pdfText(file) : await ocrText(file)) + (extraText ? '\n' + extraText : '');
+      const bm = await decodeImg(file), k = Math.min(2.2, Math.max(1, 1600 / Math.min(bm.width, bm.height))) * Math.min(1, 2600 / Math.max(bm.width, bm.height));
+      const c = document.createElement('canvas'); c.width = Math.round(bm.width * k); c.height = Math.round(bm.height * k);
+      const g = c.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(bm, 0, 0, c.width, c.height);
+      const im = g.getImageData(0, 0, c.width, c.height), d = im.data; let sum = 0;
+      for(let i = 0; i < d.length; i += 4) sum += d[i] * .299 + d[i+1] * .587 + d[i+2] * .114;
+      const dark = sum / (d.length / 4) < 110;   // mode sombre (texte clair sur fond foncé) : on inverse
+      for(let i = 0; i < d.length; i += 4){ let y = d[i] * .299 + d[i+1] * .587 + d[i+2] * .114; if(dark) y = 255 - y; y = Math.max(0, Math.min(255, (y - 128) * 1.35 + 128)); d[i] = d[i+1] = d[i+2] = y; }
+      g.putImageData(im, 0, 0);
+      return await new Promise(r => c.toBlob(r, 'image/png'));
+    } catch(e){ return await shrink(file, 2000, 0.9); }
+  }
+  // erreurs fréquentes de lecture sur les captures (heures « 14h05 », « O » pour « 0 » dans les heures et les numéros de vol)
+  const cfOcrFix = t => String(t || '').replace(/(\d{1,2})\s?[hH]\s?(\d{2})\b/g, '$1:$2').replace(/\b([0-2]?\d)[:.]([0-5])[oO]\b/g, '$1:$20').replace(/\b([A-Z]{2})\s?[oO](\d{2,3})\b/g, '$10$2').replace(/[|¦]/g, ' ');
+
+  /* ---------- 🎫 Carte Apple Wallet (.pkpass) : billet d’avion, de train, de bus, de bateau, d’événement ---------- */
+  async function impPass(file){
+    try {
+      impSay('🎫 Lecture de la carte Wallet…');
+      const z = await zipRead(file), get = async n => { const v = z[n]; return typeof v === 'function' ? await v() : v; };
+      const raw = await get('pass.json'); if(!raw) throw new Error('ce fichier n’est pas une carte Wallet');
+      const P = JSON.parse(new TextDecoder().decode(raw).replace(/^\uFEFF/, ''));
+      // textes traduits du billet (fr, sinon en) : « label » et « value » peuvent être des clés
+      let loc = {}; for(const lg of ['fr', 'en']){ const b = await get(lg + '.lproj/pass.strings'); if(b){ const tx = (b[0] === 0xFF || b[0] === 0xFE) ? new TextDecoder('utf-16le').decode(b) : new TextDecoder().decode(b);
+        tx.replace(/"((?:[^"\\]|\\.)*)"\s*=\s*"((?:[^"\\]|\\.)*)"\s*;/g, (_, k, v) => { if(!(k in loc)) loc[k] = v.replace(/\\n/g, '\n').replace(/\\"/g, '"'); return ''; }); } }
+      const L = x => x == null ? '' : String(loc[x] != null ? loc[x] : x);
+      const kind = ['boardingPass', 'eventTicket', 'coupon', 'storeCard', 'generic'].find(k=>P[k]) || 'generic', S = P[kind] || {};
+      const F = [...(S.headerFields||[]), ...(S.primaryFields||[]), ...(S.secondaryFields||[]), ...(S.auxiliaryFields||[]), ...(S.backFields||[])]
+        .map(f=>({k:String(f.key||'').toLowerCase(), l:L(f.label), v:L(f.value), d:f.dateStyle || f.timeStyle}));
+      const fv = re => { const f = F.find(x=>re.test(x.k) || re.test(x.l)); return f ? f.v : ''; };
+      const iso = v => { const m = /^(\d{4}-\d{2}-\d{2})(?:T(\d{2}:\d{2}))?/.exec(String(v||'')); return m ? {d:m[1], t:m[2] || ''} : null; };
+      // la date locale du départ : champ daté du billet, sinon « relevantDate »
+      const dt = (F.map(f=>f.d ? iso(f.v) : null).find(Boolean)) || iso(P.relevantDate) || iso(P.expirationDate) || {d:'', t:''};
+      const ref = fv(/conf|pnr|book|record|r[ée]f|reserv|dossier|locator/i), seat = fv(/seat|si[eè]ge|place/i), gate = fv(/gate|porte/i), cl = fv(/class|classe|cabin|voiture|coach/i);
+      const note = ['Carte Wallet : ' + (P.organizationName || ''), seat && 'Place : ' + seat, cl && 'Classe / voiture : ' + cl, gate && 'Porte : ' + gate,
+        ...F.filter(f=>f.v && f.v.length < 80 && !/seat|gate|conf|pnr|book|class/i.test(f.k)).slice(0, 8).map(f=>(f.l ? f.l + ' : ' : '') + f.v)].filter(Boolean).join('\n');
+      // le code-barres du billet (QR) devient une image du billet, lisible hors ligne dans la fiche du jour
+      const bc = (P.barcodes && P.barcodes[0]) || P.barcode; let pj;
+      if(bc && bc.message && /QR/i.test(bc.format || '')){
+        try { const id = 'pj' + uid(), svg = qrSVG(bc.message), img = new Image();
+          img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.replace('<svg ', '<svg width="900" height="900" '));
+          await img.decode(); const c = document.createElement('canvas'); c.width = c.height = 900; const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, 900, 900); g.drawImage(img, 0, 0, 900, 900);
+          await storePhoto(await new Promise(r => c.toBlob(r, 'image/png')), id); uploadQueue(); pj = [{id, t:'img', n:'Billet Wallet'}]; } catch(e){}
+      }
+      const base = {type:'item', trip:M.trip, date:dt.d, ref, statut:'booked', note: note + (bc && bc.message && !pj ? '\nCode du billet : ' + bc.message : '')};
+      let d;
+      if(kind === 'boardingPass'){
+        const tt = String(S.transitType || ''), mode = /Air/.test(tt) ? 'Avion' : /Bus/.test(tt) ? 'Bus' : /Boat/.test(tt) ? 'Bateau' : 'Train';
+        const pf = S.primaryFields || [], o = pf[0] || {}, a = pf[1] || {};
+        const place = f => { const l = L(f.label), v = L(f.value); return l && v && l !== v && !/^(from|to|de|à|vers|départ|arrivée|origin|destination)$/i.test(l) ? l + ' (' + v + ')' : v || l; };
+        const from = place(o), to = place(a), flight = fv(/flight|vol|train|bus|num|service/i);
+        d = Object.assign(base, {cat:'transport', mode, from, to, titre: from && to ? from + ' → ' + to : (mode === 'Avion' ? 'Vol' : 'Trajet'),
+          heureDep: dt.t || fv(/depart|boarding|embarq|départ/i).match(/\d{1,2}:\d{2}/)?.[0] || '', heureArr: (fv(/arriv/i).match(/\d{1,2}:\d{2}/) || [''])[0],
+          compagnie: [P.organizationName, flight].filter(Boolean).join(' ')});
+      } else if(kind === 'eventTicket'){
+        const ev = fv(/event|[ée]v[ée]nement|show|spectacle|match/i) || P.description || P.logoText || P.organizationName || 'Événement';
+        d = Object.assign(base, {cat:'activite', titre: ev, heure: dt.t, adresse: fv(/venue|lieu|location|adresse|salle|stade/i), lat: P.locations && P.locations[0] ? P.locations[0].latitude : undefined, lng: P.locations && P.locations[0] ? P.locations[0].longitude : undefined});
+      } else {
+        // carte « générique » : le texte passe par la lecture habituelle des réservations (hôtel, location…)
+        const txt = [P.organizationName, P.description, P.logoText, dt.d && 'Date : ' + dt.d, ...F.map(f=>(f.l ? f.l + ' : ' : '') + f.v)].filter(Boolean).join('\n');
+        closeSheet(true); cfImport(txt, pj); return;
+      }
+      if(pj) d.pj = pj;
+      closeSheet(true); edit(d); toast('🎫 Fiche créée depuis Wallet — vérifie puis Enregistrer');
+    } catch(e){ impSay('⚠️ ' + (e.message || e)); }
+  }
+  function impPickPass(){ tlPickFile(isIOSDev ? '' : '.pkpass,application/vnd.apple.pkpass,application/octet-stream', f => impPass(f)); }
+  function impPickShot(){ tlPickFile('image/*', f => impFile(f)); }
+  async function impFile(file, extraText){
+    const isPdf = /pdf/i.test(file.type) || /\.pdf$/i.test(file.name||''), isImg = /^image\//i.test(file.type) || /\.(png|jpe?g|heic|heif|webp)$/i.test(file.name||'');
+    if(/\.pkpass$/i.test(file.name||'') || /pkpass/i.test(file.type)) return impPass(file);
+    if(!isPdf && !isImg){ impSay('⚠️ Choisis le PDF, la capture d’écran ou la carte Wallet (.pkpass) de la réservation.'); return; }
+    try {
+      impSay(isPdf ? '📄 Lecture du PDF…' : '🔍 Lecture de la capture… (la 1re fois l’outil se télécharge, ~15 s)');
+      const txt = (isPdf ? await pdfText(file) : cfOcrFix(await ocrText(file))) + (extraText ? '\n' + extraText : '');
       if(txt.replace(/\s/g,'').length < 30) throw new Error(isPdf ? 'ce PDF ne contient pas de texte lisible (c’est peut-être une image) : essaie une capture d’écran' : 'aucun texte reconnu');
       const id = 'pj' + uid();
       if(isPdf) await IDB.put({id, blob:file, up:1}); else { await storePhoto(file, id); uploadQueue(); }
@@ -9265,7 +9788,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function zipCancel(){ zipJob = null; closeSheet(true); }
   function zipImport(){
-    const i = document.createElement('input'); i.type = 'file'; i.multiple = true; i.accept = '.zip,application/zip,application/x-zip-compressed';
+    const i = document.createElement('input'); i.type = 'file'; i.multiple = true; if(!isIOSDev) i.accept = '.zip,application/zip,application/x-zip-compressed';   // iPhone : sans filtre, sinon les ZIP enregistrés dans Fichiers restent grisés
     i.style.cssText = 'position:fixed;left:-1000px;top:0;opacity:0'; document.body.appendChild(i);
     i.addEventListener('change', async () => { const fs = [...(i.files||[])].sort((a,b)=>a.name.localeCompare(b.name, 'fr', {numeric:true})); setTimeout(()=>i.remove(), 1000); for(const f of fs) await zipRestore(f, fs.length > 1); if(fs.length > 1) alert('💾 ' + fs.length + ' parties restaurées.'); });
     i.click();
@@ -9511,14 +10034,15 @@ ${pm.join('\n')}</Document></kml>`;
   function cinePreDraw(){
     const el = document.getElementById('wm-cpre'); if(!el || !CP) return;
     const o = CP.o, n = CP.all.filter(s=>CP.sel.has(ciKey(s))).length, keepY = (el.querySelector('.cp-card') || {}).scrollTop || 0;
+    const pool = imgPool(el), stripX = el.dataset.pho === String(CP.phOpen) ? ((el.querySelector('.cp-phs>div') || {}).scrollLeft || 0) : 0;
     const ch = (k, v, lbl) => `<button type="button" class="cp-ch${String(o[k]) === String(v) ? ' on' : ''}" data-k="${k}" data-v="${v}" onclick="CV.cineSet(this)">${lbl}</button>`;
     const tg = (k, lbl) => `<button type="button" class="cp-ch cp-tg${o[k] ? ' on' : ''}" data-k="${k}" onclick="CV.cineSet(this)">${o[k] ? '✓ ' : ''}${lbl}</button>`;
     const sw = Object.entries(CI_COL).map(([k, c])=>`<button type="button" class="cp-sw${o.col === k ? ' on' : ''}" data-k="col" data-v="${k}" onclick="CV.cineSet(this)" style="background:${c[0]}" aria-label="${k}"></button>`).join('');
     const steps = CP.all.map((s, i)=>{ const on = CP.sel.has(ciKey(s)), nm = s.titre || s.city || s.lieu || '📍', L = ((R[s.id] || {}).photos) || [];
       const row = `<div class="cp-st${on ? ' on' : ''}"><button type="button" class="cp-tk" data-i="${i}" onclick="CV.cineStep(this)" aria-label="✓"><span class="cp-ck">${on ? '✓' : ''}</span></button>`
-        + (s.ph ? `<button type="button" class="cp-th${CP.phOpen === i ? ' open' : ''}" onclick="CV.cinePhs(${i})"><img data-ph="${esc(s.ph)}" alt="">${L.length > 1 ? `<em>${L.length}</em>` : ''}</button>` : '<i>📍</i>')
+        + (s.ph ? `<button type="button" class="cp-th${CP.phOpen === i ? ' open' : ''}" onclick="CV.cinePhs(${i})"><img data-ph="${esc(s.ph)}.t" alt="">${L.length > 1 ? `<em>${L.length}</em>` : ''}</button>` : '<i>📍</i>')
         + `<button type="button" class="cp-tk cp-nm" data-i="${i}" onclick="CV.cineStep(this)"><b data-notr>${s.cc ? flag(s.cc) + ' ' : ''}${esc(nm)}</b>${s.date ? `<small data-notr>${esc(fdate(s.date))}</small>` : ''}</button></div>`;
-      const strip = CP.phOpen === i && L.length ? `<div class="cp-phs"><small>Photo de cette étape dans le survol</small><div>${L.slice(0, 80).map(id=>`<button type="button" class="${id === s.ph ? 'on' : ''}" onclick="CV.cinePh(${i},'${esc(id)}')"><img data-ph="${esc(id)}" alt=""></button>`).join('')}</div></div>` : '';
+      const strip = CP.phOpen === i && L.length ? `<div class="cp-phs"><small>Photo de cette étape dans le survol</small><div>${L.slice(0, 80).map(id=>`<button type="button" class="${id === s.ph ? 'on' : ''}" onclick="CV.cinePh(${i},'${esc(id)}')"><img data-ph="${esc(id)}.t" alt=""></button>`).join('')}</div></div>` : '';
       return row + strip; }).join('');
     el.innerHTML = `<div class="cp-card">
       <button type="button" class="ci-x cp-x" onclick="CV.cinePreX()" aria-label="Fermer">✕</button>
@@ -9537,7 +10061,9 @@ ${pm.join('\n')}</Document></kml>`;
       </div>
       <div class="ci-btns"><button type="button" onclick="CV.cineGo(0)">▶ Lancer le survol</button>${cineCanRec() ? `<button type="button" onclick="CV.cineGo(1)">⏺ Enregistrer la vidéo</button>` : ''}
         <button type="button" onclick="CV.cineOpen()">${CP.open ? '✓ Fermer les réglages' : '⚙️ Personnaliser'}</button></div></div>`;
+    imgReuse(el, pool); el.dataset.pho = String(CP.phOpen);
     const cd = el.querySelector('.cp-card'); if(cd) cd.scrollTop = keepY;
+    const sx = el.querySelector('.cp-phs>div'); if(sx && stripX) sx.scrollLeft = stripX;
     const mo = el.querySelector('.cp-mus .on'); if(mo) mo.parentNode.scrollLeft = Math.max(0, mo.offsetLeft - 40);
     hydrate();
   }
@@ -9961,7 +10487,7 @@ ${pm.join('\n')}</Document></kml>`;
       <label class="cv-checkline"><input type="checkbox" id="ps-all"> Importer toutes les photos (sinon 3 par étape : plus léger pour ton téléphone)</label>
       <div id="ps-msg" class="ps-msg">${PSRUN && PSRUN.m ? esc(PSRUN.m) : ''}</div>
       <div class="ps-bgnote">⏳ L’import se fait en arrière-plan : une fois le fichier choisi, tu peux fermer cette fenêtre et continuer à utiliser Vezoria. Garde juste l’appli ouverte, une pastille en bas t’indique où il en est.</div>
-      <div class="v-actions"><label class="v-btn ps-pick">📂 Choisir le fichier<input type="file" accept=".zip,.json,application/zip,application/json" hidden onchange="CV.psFile(this)"></label></div>`);
+      <div class="v-actions"><label class="v-btn ps-pick">📂 Choisir le fichier<input type="file"${isIOSDev ? '' : ' accept=".zip,.json,application/zip,application/json"'} hidden onchange="CV.psFile(this)"></label></div>`);
   }
   const psIso = ts => { const n = +ts; if(!n) return ''; try { return new Date(n > 1e12 ? n : n * 1000).toISOString().slice(0, 10); } catch(e){ return ''; } };
   // voyage déjà importé ? même identifiant Polarsteps, ou (anciens imports) même nom et même date de départ
@@ -10025,20 +10551,29 @@ ${pm.join('\n')}</Document></kml>`;
     const head = {id:tid, type:'trip', titre:String(j.name || j.title || 'Voyage Polarsteps').slice(0, 120), sous:String(j.summary || '').slice(0, 160), debut, fin, voyageurs:M.me ? [M.me] : [], objectif:'', src:'polarsteps', psId:String(j.id || '')};
     // remplacer : même voyage (compagnons, abonnés, budget… gardés), seuls ses souvenirs importés repartent de zéro
     const out = [old ? Object.assign(clone(old), {titre:head.titre, sous:head.sous || old.sous || '', debut:debut || old.debut, fin:fin || old.fin, src:'polarsteps', psId:head.psId}) : head];
-    if(old) list('souv', s=>s.trip === tid && !s.deleted && (s.src === 'polarsteps' || !old.psId)).forEach(s=>out.push(Object.assign(clone(s), {deleted:true})));
-    let p = 0;
+    // identifiants stables : réimporter le même ZIP ne crée ni nouveau souvenir ni nouvelle photo (pas de doublon sur le téléphone ni sur le serveur)
+    const psH = async x => 'ps' + hex(await crypto.subtle.digest('SHA-256', te.encode(x))).slice(0, 20);
+    const keep = new Set(); let p = 0;
     const photos = tr.ents ? tr.ents.filter(e=>!e.directory && e.filename.startsWith(tr.base) && /\.(jpe?g|png|webp)$/i.test(e.filename) && /\/photos?\//i.test(e.filename)) : [];
     for(let i = 0; i < steps.length; i++){
       const s = steps[i] || {}, L = s.location || {}, key = String(s.id || ''), slug = String(s.slug || '');
       const lat = L.lat != null ? +L.lat : s.lat != null ? +s.lat : null, lng = L.lon != null ? +L.lon : L.lng != null ? +L.lng : s.lon != null ? +s.lon : null;
-      const sv = {id:'sv' + uid() + i, type:'souv', trip:tid, date:psIso(s.start_time) || debut, titre:String(s.display_name || s.name || L.name || ('Étape ' + (i + 1))).slice(0, 120),
+      const svId = await psH('sv|' + tid + '|' + (key || slug || i) + '|' + (s.start_time || '')); keep.add(svId);
+      const sv = {id:svId, type:'souv', trip:tid, date:psIso(s.start_time) || debut, titre:String(s.display_name || s.name || L.name || ('Étape ' + (i + 1))).slice(0, 120),
         lieu:[L.name, L.detail].filter(Boolean).join(', ').slice(0, 160), texte:String(s.description || '').slice(0, 20000), photos:[], cc:String(L.country_code || '').toUpperCase().slice(0, 2), pays:L.country || '', src:'polarsteps'};
       if(lat != null && isFinite(lat) && lng != null && isFinite(lng)){ sv.lat = lat; sv.lng = lng; }
       let ph = photos.filter(e=>e.filename.split('/').some(g=>(key && (g === key || g.endsWith('_' + key))) || (!key && slug && g.startsWith(slug + '_'))));
       if(!all) ph = ph.slice(0, 3);
-      for(const e of ph){ try { const b = await e.getData(new tr.z.BlobWriter(/\.png$/i.test(e.filename) ? 'image/png' : 'image/jpeg')); const pid = 'ph' + uid() + p; await storePhoto(b, pid); sv.photos.push(pid); p++; if(p % 3 === 0) msg(`📸 ${p} photos…`); } catch(err){} }
+      for(const e of ph){ try {
+        const pid = await psH('ph|' + head.psId + '|' + e.filename.split('/').slice(-3).join('/') + '|' + (e.uncompressedSize || ''));
+        let have = null; try { have = await IDB.get(pid + '.t'); } catch(x){}
+        if(!(have && have.blob)){ const b = await e.getData(new tr.z.BlobWriter(/\.png$/i.test(e.filename) ? 'image/png' : 'image/jpeg')); await storePhoto(b, pid); }   // déjà là : rien à refaire ni à renvoyer
+        if(!sv.photos.includes(pid)) sv.photos.push(pid); p++; if(p % 3 === 0) msg(`📸 ${p} photos…`); } catch(err){} }
+      const prev = R[svId]; if(prev && !prev.deleted) Object.assign(sv, {createdAt:prev.createdAt, createdBy:prev.createdBy, priv:prev.priv});
       out.push(sv);
     }
+    // remplacer : les anciens souvenirs importés absents du nouveau ZIP sont retirés (et leurs photos du serveur)
+    if(old) list('souv', s=>s.trip === tid && !s.deleted && !keep.has(s.id) && (s.src === 'polarsteps' || !old.psId)).forEach(s=>out.push(Object.assign(clone(s), {deleted:true})));
     putMany(out, '📥 Voyage importé');
     return {tid, s:steps.length, p};
   }
@@ -10255,18 +10790,37 @@ ${pm.join('\n')}</Document></kml>`;
     M.webFollow = true; persist(); document.body.classList.add('vz-webf');
     try { applyMode(); applyLock(); } catch(e){}
     if(m){ history.replaceState(null, '', location.pathname + location.search); followGo(m[1].toUpperCase(), true); }
-    else feedView(fl[0].id);
+    else { feedView(fl[0].id); setTimeout(webCheck, 800); }
     return true;
+  }
+  // le voyage suivi a été retiré par son auteur : plus d'aperçu, retour à la page d'installation classique
+  async function webCheck(){
+    const codes = [...new Set(list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')]).map(f=>TS()[f.id]))];
+    for(const c of codes){ const sp = spaceObj(c); if(sp) try { await syncSpace(sp, true); } catch(e){} }
+    const alive = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted);
+    if(!alive.length){ webGone(); return; }
+    if(M.feedOpen && !alive.some(f=>f.id === M.feedOpen)) feedView(alive[0].id);
+  }
+  function webGone(){
+    M.webFollow = false; persist(); document.body.classList.remove('vz-webf');
+    const ov = document.getElementById('cv-feed'); if(ov) ov.remove(); document.body.style.overflow = ''; M.feedOpen = null;
+    if(!isInstalled()) installGate();
   }
   function webCta(){
     if(!webFollowing()) return '';
-    return `<div class="fd-cta"><span><b>Toi aussi, raconte tes voyages</b><small>Carnet de voyage gratuit, sans compte, sans publicité.</small></span><button type="button" onclick="CV.webCreate()">✨ Créer mon carnet</button></div>`;
+    const c = M.webCode || (list('feedtrip', f=>TS()[f.id] && !f.deleted).map(f=>TS()[f.id]))[0] || '';
+    return `<div class="fd-cta"><span><b>Toi aussi, raconte tes voyages</b><small>Carnet de voyage gratuit, sans compte, sans publicité.</small></span><button type="button" onclick="CV.webCreate()">✨ Créer mon carnet</button></div>`
+      + (c ? `<div class="fd-wcode"><span><b>Suivre ce voyage dans l’appli</b><small>Installe Vezoria, puis touche 👥 → « Suivre un voyage avec un code » et entre ce code :</small></span><b class="cv-code">${esc(c)}</b><button type="button" id="gw-copy2" onclick="CV.webCopyCode()">📋 Copier le code</button></div>` : '');
   }
   function webCreate(){
     let g = document.getElementById('cv-gate'); if(!g){ g = document.createElement('div'); g.id = 'cv-gate'; document.body.appendChild(g); }
     gateRender();
   }
   function webBack(){ const g = document.getElementById('cv-gate'); if(g) g.remove(); const fl = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted); if(fl.length && !document.getElementById('cv-feed')) feedView((fl.find(f=>f.id===M.feedLast) || fl[0]).id); }
+  async function webCopyCode(){
+    const c = M.webCode || (list('feedtrip', f=>TS()[f.id] && !f.deleted).map(f=>TS()[f.id]))[0] || '', b = document.getElementById('gw-copy2');
+    try { await navigator.clipboard.writeText(c); if(b) b.textContent = '📋 Code copié'; } catch(e){ await uiPrompt('Copie ce code :', c); }
+  }
   async function webCopy(){
     const c = (list('feedtrip', f=>TS()[f.id] && !f.deleted).map(f=>TS()[f.id]))[0] || '';
     const txt = (typeof appUrl === 'function' && appUrl() ? appUrl() : location.origin + '/') + '#suivre=' + c;
@@ -10294,7 +10848,7 @@ ${pm.join('\n')}</Document></kml>`;
       : li(installEvt ? 'Clique sur le bouton ci-dessous.' : 'Dans Chrome ou Edge : l’icône « Installer » à droite de la barre d’adresse. Dans Safari (Mac) : menu Fichier → Ajouter au Dock.') + li('Ouvre Vezoria depuis tes applications.');
     g.innerHTML = `<div class="gt"><img src="icon-192.png" alt="" class="gi"><h1>Vezoria</h1>
       <p><span>Pour garder tes voyages sur ton téléphone, fonctionner sans réseau et protéger tes données, l’appli s’utilise installée sur ton écran d’accueil.</span> <b>C’est gratuit et ça prend 10 secondes.</b></p>
-      ${/[#&]rejoindre=/i.test(location.hash) ? `<div class="gv"><b>🎟️ Tu es invité(e) dans un voyage</b><p>Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».</p><button type="button" class="v-btn sec" id="gv-copy" onclick="CV.gateCopy()">📋 Copier l’invitation</button></div>` : ''}
+      ${/[#&]rejoindre=/i.test(location.hash) || M.joinCode ? `<div class="gv"><b>🎟️ Tu es invité(e) dans un voyage</b><b class="cv-code" data-notr>${esc(((location.hash.match(/rejoindre=([A-Za-z0-9-]{8,})/i) || [])[1] || M.joinCode || '').toUpperCase())}</b><p>Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».</p><button type="button" class="v-btn sec" id="gv-copy" onclick="CV.gateCopy()">📋 Copier l’invitation</button></div>` : ''}
       <ol class="gs">${steps}</ol>
       ${installEvt ? `<button type="button" class="v-btn" onclick="CV.gateInstall()">📲 Installer l’appli</button>` : ''}
       ${webFollowing() ? `<div class="gb"><button type="button" onclick="CV.webBack()">← Revenir au voyage que je suis</button><button type="button" id="gw-copy" onclick="CV.webCopy()">📋 Copier le lien du voyage (à coller dans l’appli installée)</button></div>` : ''}
@@ -10822,6 +11376,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(window.I18N) h += `<div class="v-box"><h3>🌐 Langue</h3><select class="v-in" aria-label="Langue" onchange="CV.setLang(this.value, this)">${Object.entries(I18N.langs).map(([k,l])=>`<option value="${k}"${k===I18N.lang?' selected':''}>${l}</option>`).join('')}</select><div class="v-sum-small" style="margin-top:6px">Tes fiches restent dans la langue où tu les as écrites.</div></div>`;
     h += `<div class="v-box"><h3>💱 Devise</h3><select class="v-in" aria-label="Devise" onchange="CV.setCur(this.value)">${Object.keys(CURS).map(c=>`<option value="${c}"${c===(M.cur||'EUR')?' selected':''}>${c} · ${CURS[c]}</option>`).join('')}</select><div class="v-sum-small" style="margin-top:6px">Devise proposée pour les nouveaux voyages. Un voyage déjà créé garde la sienne : change-la en modifiant le voyage.</div></div>`;
     h += pushBox();
+    h += `<div class="v-box"><h3>📱 Place sur ce téléphone</h3><div class="v-sum-small">Protège tes photos contre le ménage automatique du téléphone, et libère de la place sans rien perdre.</div><button type="button" class="v-day-edit" style="margin-top:8px" onclick="CV.spaceSheet()">📱 Voir la place utilisée</button></div>`;
     { const pn = pins();
       h += `<div class="v-box"><h3>📌 Mes raccourcis</h3><div class="v-sum-small" style="margin-bottom:8px">Épingle un écran pour qu’il apparaisse en haut de l’écran principal. Sans rien d’épinglé, cette barre n’apparaît pas. La barre du bas reste la même.</div>
         ${DEST.filter(d=>!['prog','resas','sous'].includes(d[0])).map(([k,ic,l])=>{ const bark = k === 'live', st = destHidden(k) ? 'hide' : bark ? 'bar' : pn.includes(k) ? 'pin' : 'plus', canHide = !!DEST_HIDE(k);
@@ -11026,6 +11581,10 @@ ${pm.join('\n')}</Document></kml>`;
           <div class="sh-links"><button type="button" onclick="CV.feedView('${ftId(t.id)}')">👀 Voir comme un abonné</button><button type="button" onclick="CV.feedStop('${t.id}')">Arrêter la publication</button></div>`
         : `<button type="button" class="v-btn" onclick="CV.feedPublish('${t.id}')">👀 Publier pour des abonnés</button>`}</div>`;
     } else if(t0 && t0.demo) h += `<div class="v-sum-small" style="margin-bottom:10px">C’est le voyage de démo : crée ton propre voyage (Mes voyages → ＋) pour le partager.</div>`;
+    h += `<div class="sh-sec">📚 Tout mon carnet</div><div class="sh-card"><p>Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits, comme Polarsteps).</p>
+      <button type="button" class="v-btn sec" onclick="CV.carnetShareSheet()">📚 Partager tout mon carnet</button></div>
+      <div class="sh-sec">🔗 On t’a invité ?</div><div class="sh-card"><p>Un code ou un lien reçu par message : colle-le ici pour rejoindre un voyage, un carnet, ou suivre un voyage.</p>
+      <button type="button" class="v-btn sec" onclick="CV.joinAny()">🔗 Rejoindre avec un code</button></div>`;
     h += socialHTML(t ? t.id : '');
     h += `<div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`;
     openSheet(h);
@@ -11075,6 +11634,8 @@ ${pm.join('\n')}</Document></kml>`;
   async function impAny(file, extra){
     const nm = file.name || '';
     if(/pdf/i.test(file.type) || /\.pdf$/i.test(nm)) return impFile(file, extra);
+    if(/\.pkpass$/i.test(nm) || /pkpass/i.test(file.type)) return impPass(file);
+    if(/^image\//i.test(file.type) || /\.(png|jpe?g|heic|heif|webp)$/i.test(nm)) return impFile(file, extra);
     if(/rfc822|text\/|octet-stream/i.test(file.type || 'text/') || /\.(eml|txt|html?|msg)$/i.test(nm)){
       try {
         const raw = await file.text(), m = mimeParse(raw);
@@ -11242,7 +11803,7 @@ ${pm.join('\n')}</Document></kml>`;
 
   var NEWAPI = {renderPrefs, prefTog, prefPreset, datesSheet, datesSave, dayMenu, dayIns, dayAdd, dayDelAsk, dayDel, shareHub,
     voirAdd, voirSave, voirDel, impMail, impPaste, impMailGo, impPickAny, impRetype, dupGo, dupBack, dupCancel};
-  var NEWMUT = ['datesSave','dayIns','dayAdd','dayDel','dayDelAsk','voirSave','voirDel','dupGo','impMailGo','impPickAny','impRetype'];
+  var NEWMUT = ['datesSave','dayIns','dayAdd','dayDel','dayDelAsk','voirSave','voirDel','dupGo','dupTripsGo','impMailGo','impPickAny','impRetype'];
 
 
 
@@ -11261,6 +11822,32 @@ ${pm.join('\n')}</Document></kml>`;
     } catch(e){ return false; }
   }
   isPlay();
+  /* ⭐ Noter l’appli : seulement dans l’appli Google Play, après une vraie utilisation (5 jours différents, 1 voyage), jamais pendant une saisie.
+     « Plus tard » : redemandé dans 30 jours ; « Non merci » ou « Noter » : plus jamais. */
+  function rateTick(){
+    try {
+      if(!isPlay() || M.webFollow) return;
+      const k = 'cv-rate', o = JSON.parse(localStorage.getItem(k) || '{}'), d = isoToday();
+      if(o.st === 'no' || o.st === 'done') return;
+      o.days = o.days || []; if(!o.days.includes(d)){ o.days.push(d); o.days = o.days.slice(-10); }
+      localStorage.setItem(k, JSON.stringify(o));
+      if(o.days.length < 5 || (o.later && Date.now() < o.later) || !trips().some(t=>!t.demo)) return;
+      setTimeout(()=>{ if(document.querySelector('#v-sheet-bg, .ui-dlg, #cv-gate, #cv-film, #cv-tj, .cv-first, #cv-world') || document.visibilityState !== 'visible') return;
+        openSheet(`<h2>⭐ Vezoria te plaît ?</h2>
+          <div class="v-sum-small" style="margin:4px 0 12px">Une note sur Google Play aide d’autres voyageurs à trouver l’appli, et m’encourage à continuer à l’améliorer. Ça prend 30 secondes. Merci 🙏</div>
+          <div class="v-actions" style="flex-direction:column"><button type="button" class="v-btn" onclick="CV.rateGo('done')">⭐ Noter sur Google Play</button>
+          <button type="button" class="v-btn sec" onclick="CV.rateGo('later')">Plus tard</button><button type="button" class="v-btn sec" onclick="CV.rateGo('no')">Non merci</button></div>`);
+      }, 9000);
+    } catch(e){}
+  }
+  function rateGo(how){
+    try { const o = JSON.parse(localStorage.getItem('cv-rate') || '{}');
+      if(how === 'later'){ o.later = Date.now() + 30 * 864e5; } else o.st = how;
+      localStorage.setItem('cv-rate', JSON.stringify(o)); } catch(e){}
+    closeSheet();
+    if(how === 'done') window.open(PLAY_URL, '_blank');
+  }
+  setTimeout(rateTick, 5000);
   // Les photos sorties d'une fiche ou d'une fiche supprimée sont aussi effacées du serveur
   function photoRefs(r){ return r ? [...(r.photos||[]), r.recu, r.preuve, ...((r.pj||[]).map(p=>p && p.id))].filter(Boolean) : []; }
   function photoGone(prev, next){
@@ -12033,7 +12620,7 @@ ${pm.join('\n')}</Document></kml>`;
       {k:'aller', l:'Trajet aller réservé', ok:tr.some(i=>ok(i) && (!t.debut || i.date === t.debut || i.date < t.debut)) || tr.some(ok), fn:`CV.tab('transport')`},
       {k:'nuits', l: ns.length ? 'Nuits réservées' : 'Hébergement', ok: ns.length ? covered === ns.length && ho.every(h=>ok(h) || !h.date) : ho.some(ok), n: ns.length ? covered + '/' + ns.length : '', fn:`CV.tab('hotel')`},
       {k:'retour', l:'Trajet retour réservé', ok: !t.fin || tr.some(i=>ok(i) && i.date && i.date >= t.fin), fn:`CV.tab('transport')`},
-      {k:'budget', l:'Budget fixé', ok:!!num(t.objectif), fn:`CV.editTrip('${t.id}')`},
+      {k:'budget', l:'Budget fixé', ok:!!num(t.objectif), opt:true, fn:`CV.editTrip('${t.id}')`},   // facultatif : ne compte que s’il est fixé
       {k:'docs', l:'Documents vérifiés', ok:!di.length, fn:'CV.tlDocs()'},
       {k:'check', l:'Checklist', ok: ck.length > 0 && ckd === ck.length, n: ck.length ? ckd + '/' + ck.length : '', fn:`CV.tab('check')`}
     ];
@@ -12261,7 +12848,7 @@ ${pm.join('\n')}</Document></kml>`;
   /* ---------- Niveau de préparation : la route jusqu'au décollage ---------- */
   function prepGauge(){
     const t = trip(); if(!t || t.archived || tripPhase(t) !== 'prep' || hidden('blk:prep')) return '';
-    const S = prepSteps(), done = S.filter(s=>s.ok).length, pct = Math.round(done / S.length * 100), nxt = S.find(s=>!s.ok), open = !!M.prepOpen;
+    const SA = prepSteps(), S = SA.filter(s=>!s.opt || s.ok), done = S.filter(s=>s.ok).length, pct = Math.round(done / S.length * 100), nxt = S.find(s=>!s.ok), open = !!M.prepOpen;
     const lv = pct >= 100 ? ['✅','Prêt à partir'] : pct >= 75 ? ['🎒','Presque prêt'] : pct >= 45 ? ['🧩','En préparation'] : pct >= 15 ? ['✏️','Esquisse'] : ['💭','Rêve'];
     const A = [26, 92], B = [180, -4], C = [334, 92], path = `M${A} Q${B} ${C}`;
     const q = u => [(1-u)*(1-u)*A[0] + 2*(1-u)*u*B[0] + u*u*C[0], (1-u)*(1-u)*A[1] + 2*(1-u)*u*B[1] + u*u*C[1]];
@@ -12279,7 +12866,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="p2-msg">${nxt ? `${S.length - done} étape(s) avant le décollage${jd > 0 ? ` · J-${jd}` : ''}` : 'Tout est prêt, il ne reste qu’à partir !'}</div>
       ${nxt ? `<button type="button" class="p2-next" onclick="${nxt.fn}"><span>Prochaine étape :</span> <b>${nxt.l}</b><i>→</i></button>` : ''}
       <button type="button" class="p2-tog" onclick="CV.prepTog()">${open ? 'Masquer les étapes' : 'Voir les étapes'}</button>
-      ${open ? `<div class="p2-list">${S.map(s=>`<button type="button" class="${s.ok ? 'ok' : ''}" onclick="${s.fn}"><i>${s.ok ? '✓' : '○'}</i><span>${s.l}</span>${s.n ? `<small>${s.n}</small>` : ''}</button>`).join('')}</div>` : ''}</div>`;
+      ${open ? `<div class="p2-list">${SA.map(s=>`<button type="button" class="${s.ok ? 'ok' : ''}" onclick="${s.fn}"><i>${s.ok ? '✓' : '○'}</i><span>${s.l}</span>${s.n ? `<small>${s.n}</small>` : s.opt && !s.ok ? `<small>facultatif</small>` : ''}</button>`).join('')}</div>` : ''}</div>`;
   }
 
   /* ---------- Fin du voyage : « Quel voyage ! » ---------- */
@@ -12402,7 +12989,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(!t) return ACTS[0]; const ph = tripPhase(t);
     if(ph === 'past' || t.archived) return ACTS[4]; if(ph === 'live') return ACTS[3];
     if(!t.debut || !items().length) return ACTS[0];
-    const S = prepSteps(), pct = S.filter(s=>s.ok).length / S.length;
+    const S = prepSteps().filter(s=>!s.opt || s.ok), pct = S.filter(s=>s.ok).length / S.length;
     return pct >= .7 ? ACTS[2] : ACTS[1];
   }
   function actBand(){
@@ -12666,7 +13253,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="v-sum-small" style="margin-bottom:10px">Tout part tout seul : à l’ouverture, après chaque modification, puis régulièrement. Hors connexion, rien n’est perdu : ça part dès que le réseau revient.</div>
       ${rows.join('') || '<div class="v-sum-small" style="margin-bottom:8px">Rien n’est en ligne pour l’instant : tes voyages restent sur ce téléphone.</div>'}
       ${mainBox}${tripBox}<button type="button" class="v-btn sec" onclick="CV.close();CV.tripJoin()">🤝 Rejoindre un voyage avec un code</button>
-      ${ph ? `<div class="sy-r"><b>📸 Photos</b><small>${M.pqErr ? '⚠️ ' + esc(M.pqErr) + ' · ' : ''}⏳ ${ph} en attente d’envoi${(M.pq||[]).length && !(M.pq||[]).some(id=>photoCode(id)) ? ' · voyage pas encore partagé : touche 🔗 Partager' : ''}</small></div>` : ''}
+      ${ph ? `<div class="sy-r"><b>📸 Photos</b><small>${M.pqErr ? (/^(⏸|📦)/.test(M.pqErr) ? '' : '⚠️ ') + '<span>' + esc(M.pqErr) + '</span> · ' : ''}⏳ ${ph} en attente d’envoi${(M.pq||[]).length && !(M.pq||[]).some(id=>photoCode(id)) ? ' · voyage pas encore partagé : touche 🔗 Partager' : ''}</small></div>` : ''}
       <div class="v-actions">${rows.length ? `<button type="button" class="v-btn" onclick="CV.syncNow(true);CV.close()">🔄 Synchroniser maintenant</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.close();CV.tab('reglages')">⚙️ Réglages du partage</button></div>`);
   }
   setInterval(()=>{ syncPill(); try { socPill(); } catch(e){} }, 2500);
@@ -12691,10 +13278,68 @@ ${pm.join('\n')}</Document></kml>`;
     const go = () => { if(!fresh) return; fresh = false;   // invitation envoyée : le voyage et ses photos partent maintenant
       Object.values(R).filter(r=>!r.demo && (r.id===t.id || r.trip===t.id)).forEach(r=>markDirty(r.id)); persist(); toast('🔐 Voyage mis en ligne (chiffré)…');
       setTimeout(async ()=>{ try { await photoQueueAll(t.id); persist(); await syncNow(); uploadQueue(); refresh(); } catch(e){} }, 50); };
-    go();
-    if(navigator.share){ try { await navigator.share({title:t.titre, text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
-    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); }
-    catch(e){ await uiPrompt('Copie ce texte :', text); }
+    go(); refresh();
+    inviteSheet(t.id);   // invitation guidée : QR code (la personne est à côté) ou message avec le lien ET le code
+  }
+  /* ---------- 📤 Invitation guidée : la personne est à côté (QR code) ou loin (message avec le lien et le code) ---------- */
+  const inviteText = (kind, titre, code) => { const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : '';
+    return (kind === 'carnet' ? MSG('Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble') : MSG(`Rejoins notre voyage « ${titre} » sur Vezoria 🧳`))
+      + '\n' + (link || url) + '\n' + MSG('Code :') + ' ' + code + '\n' + MSG('(Vezoria déjà installée ? Ouvre-la → 👥 Partager → « Rejoindre avec un code » et colle le code.)'); };
+  function inviteSheet(tid, kind){
+    kind = kind || 'trip'; const t = tid ? R[tid] : null, code = kind === 'carnet' ? M.sync.code : TS()[tid]; if(!code) return;
+    const url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : code;
+    openSheet(`<h2>📤 ${kind === 'carnet' ? 'Inviter dans tout mon carnet' : 'Inviter dans « ' + esc(t ? t.titre : '') + ' »'}</h2>
+      <div class="v-sum-small" style="margin-bottom:8px">${kind === 'carnet' ? 'Ton compagnon verra et complètera tous tes voyages, et les voyages qu’il créera avec toi arriveront chez toi.' : 'La personne verra et complètera ce voyage seulement. Tes autres voyages restent privés.'}</div>
+      <div class="iv-step"><b>📱 Elle est à côté de toi</b><span>Elle scanne ce QR code avec l’appareil photo de son téléphone. Vezoria déjà installée ? Elle ouvre 👥 Partager → « Rejoindre avec un code » et tape le code.</span></div>
+      <div class="iv-qr">${qrSVG(link)}</div>
+      <div class="cv-bigcode" data-notr>${esc(code)}</div>
+      <div class="iv-step"><b>💬 Elle est loin</b><span>Envoie-lui le message : il contient le lien et le code (utile si elle a déjà l’appli).</span></div>
+      <button type="button" class="v-btn" onclick="CV.inviteSend('${tid || ''}','${kind}')">💬 Envoyer l’invitation</button>
+      <button type="button" class="v-btn sec" onclick="CV.inviteCopy('${esc(code)}')">📋 Copier le code</button>
+      <div class="v-sum-small" style="margin-top:8px">${kind === 'carnet' ? '🔐 Tout est chiffré : seules les personnes qui ont ce code peuvent lire ton carnet.' : '🔐 Tout est chiffré : seules les personnes qui ont ce code peuvent lire ce voyage.'}</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  async function inviteSend(tid, kind){
+    const t = tid ? R[tid] : null, code = kind === 'carnet' ? M.sync.code : TS()[tid]; if(!code) return;
+    const text = inviteText(kind, t ? t.titre : '', code);
+    if(navigator.share){ try { await navigator.share({title: t ? t.titre : 'Vezoria', text}); return; } catch(e){ if(e && e.name === 'AbortError') return; } }
+    try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); } catch(e){ await uiPrompt('Copie ce texte :', text); }
+  }
+  async function inviteCopy(code){ try { await navigator.clipboard.writeText(code); toast('📋 Code copié'); } catch(e){ await uiPrompt('Copie ce code :', code); } }
+  // 📚 Tout le carnet : pour un compagnon (il complète tout) ou pour des abonnés (lecture seule, photos et récits)
+  function carnetShareSheet(){
+    const mainOn = !!(M.sync.on && M.sync.code), ac = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '';
+    const pub = ac ? myTrips().filter(t=>FT()[t.id] === ac) : [];
+    openSheet(`<h2>📚 Partager tout mon carnet</h2>
+      <div class="sh-card"><div class="sh-k">👥 Avec un compagnon de voyage</div><p>Il voit et complète tous tes voyages (programme, résas, budget, souvenirs). Ensuite, tu choisis voyage par voyage ceux où il part vraiment.</p>
+        ${mainOn ? `<button type="button" class="v-btn" onclick="CV.inviteSheet('', 'carnet')">📤 Inviter un compagnon dans mon carnet</button>` : `<div class="v-sum-small" style="margin-bottom:6px">Ton carnet n’est pas encore dans le cloud : active-le d’abord (chiffré), puis reviens ici.</div><button type="button" class="v-btn" onclick="CV.close();CV.cloudSheet()">☁️ Mettre mon carnet dans le cloud</button>`}</div>
+      <div class="sh-card"><div class="sh-k">👀 Avec des abonnés (lecture seule)</div><p>Comme Polarsteps : ta famille et tes amis voient uniquement les photos, les étapes, les lieux et les récits de tes voyages, avec un seul lien. Le budget, les résas, les documents et les notes ne sortent jamais. Les souvenirs « 🔒 privés » restent cachés.</p>
+        ${ac ? `<div class="v-sum-small" style="margin-bottom:6px">✓ ${pub.length} voyage(s) publié(s) avec le lien du carnet.</div>` : ''}
+        <button type="button" class="v-btn" onclick="CV.carnetPublishSheet()">${ac ? '👀 Choisir les voyages publiés et inviter' : '👀 Publier mon carnet pour des abonnés'}</button></div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  function carnetPublishSheet(){
+    const ac = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '', ts = myTrips();
+    if(!ts.length){ alert('Crée d’abord un voyage.'); return; }
+    openSheet(`<h2>👀 Mon carnet pour des abonnés</h2><div class="v-sum-small" style="margin-bottom:8px">Coche les voyages à montrer. Tes abonnés passent de l’un à l’autre avec un seul lien.</div>
+      ${ts.map(t=>{ const own = FT()[t.id] && FT()[t.id] !== ac; return `<label class="cv-checkline"><input type="checkbox" class="cpub" value="${t.id}"${(ac && FT()[t.id] === ac) || (!ac && !own) ? ' checked' : ''}${own ? ' disabled' : ''}> <span data-notr>${esc(t.titre)}</span>${own ? ' <small>(déjà publié avec son propre lien)</small>' : ''}</label>`; }).join('')}
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.carnetPublish()">👀 Publier et inviter</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+  }
+  async function carnetPublish(){
+    const sel = [...document.querySelectorAll('.cpub:checked')].map(i=>i.value); if(!sel.length){ alert('Coche au moins un voyage.'); return; }
+    if(!myName()){ const n = (await uiPrompt('Ton prénom (affiché à tes abonnés) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
+    let c = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '';
+    if(!c){ if(!(await uiConfirm('Publier ces voyages pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.'))) return;
+      c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); M.feedAll = c; }
+    // voyages décochés : retirés du carnet publié (leurs publications et photos d’abonnés partent)
+    for(const t of myTrips()) if(FT()[t.id] === c && !sel.includes(t.id)) await feedStop(t.id, true);
+    sel.forEach(tid=>{ if(!FT()[tid]) FT()[tid] = c; });
+    persist(); sel.forEach(tid=>feedBuild(tid)); closeSheet(true); toast('👀 Publication en cours…');
+    try { await syncNow(); feedUpload(); setTimeout(()=>{ try { pushRegister(true); } catch(e){} }, 2500); } catch(e){}
+    const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(c) : '';
+    const text = MSG(`Suis mes voyages sur Vezoria ✈️ : photos et récits au fil des étapes`) + '\n' + link + '\n' + MSG(`(code abonné : ${c})`);
+    if(navigator.share){ try { await navigator.share({title:'Vezoria', text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
+    try { await navigator.clipboard.writeText(text); toast('📋 Lien abonné copié'); } catch(e){ await uiPrompt('Copie ce texte :', text); }
     refresh();
   }
   // lien reçu : #rejoindre=CODE (voyage partagé) ou #suivre=CODE (abonné)
@@ -12706,7 +13351,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(m[1].toLowerCase() === 'suivre'){ followGo(code); return; }
     if(Object.values(TS()).includes(code)){ const tid = Object.keys(TS()).find(k=>TS()[k]===code); if(R[tid]) go(tid); return; }
     if(!(await uiConfirm('Rejoindre le voyage partagé avec toi ?\n\nCode : ' + code))) return;
-    tripJoin(); setTimeout(()=>{ const i = document.getElementById('tj-code'); if(i){ i.value = code; tripJoinGo(); } }, 120);
+    joinAny(); setTimeout(()=>{ const i = document.getElementById('ja-code'); if(i){ i.value = code; joinAnyGo(); } }, 120);
   }
   window.addEventListener('hashchange', hashJoin);
 
@@ -12774,8 +13419,15 @@ ${pm.join('\n')}</Document></kml>`;
   // vignettes d’un voyage dont la publication est arrêtée : effacées du serveur (4 à la fois, reprend à la prochaine synchro si coupé)
   let feedDel = false;
   async function feedPurge(){
-    if(feedDel || !(M.fdel||[]).length || !photoApi()) return; feedDel = true;
+    if(feedDel || !((M.fdel||[]).length || (M.fwipe||[]).length) || !photoApi()) return; feedDel = true;
     try {
+      // dossier photos entier d'une publication arrêtée : une seule requête (serveur récent) ; sinon, photo par photo
+      for(const code of [...(M.fwipe||[])]){
+        try { const r = await fetch(photoApi() + '?all=1', {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}});
+          if(r.ok){ M.fwipe = M.fwipe.filter(x=>x !== code); M.fdel = (M.fdel||[]).filter(x=>x[0] !== code); persist(); }
+          else if(r.status === 400 || r.status === 404 || r.status === 405){ M.fwipe = M.fwipe.filter(x=>x !== code); persist(); }
+        } catch(e){ break; }
+      }
       while((M.fdel||[]).length){
         const batch = M.fdel.slice(0, 4); let ok = true;
         await Promise.all(batch.map(async ([code, id])=>{ try { const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(id + '.t', code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}});
@@ -12802,12 +13454,20 @@ ${pm.join('\n')}</Document></kml>`;
     try { await navigator.clipboard.writeText(text); toast('📋 Lien abonné copié'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
     refresh();
   }
-  async function feedStop(tid){
+  async function feedStop(tid, silent){
     const c = FT()[tid]; if(!c) return;
-    if(!(await uiConfirm('Arrêter la publication ? Tes abonnés ne verront plus ce voyage.'))) return;
+    if(!silent && !(await uiConfirm('Arrêter la publication ? Tes abonnés ne verront plus ce voyage.'))) return;
     const out = list('feed', f=>f.trip===ftId(tid)).map(f=>Object.assign(clone(f), {deleted:true})); if(R[ftId(tid)]) out.push(Object.assign(clone(R[ftId(tid)]), {deleted:true}));
-    putQuiet(out); syncNow().then(()=>{ delete FT()[tid]; delete TS()[ftId(tid)]; M.spaces = (M.spaces||[]).filter(x=>x.code !== c);
+    // carnet publié : d’autres voyages utilisent le même lien → seules les photos de CE voyage partent, le lien reste
+    if(Object.entries(FT()).some(([k, x])=>k !== tid && x === c)){
+      const ids = new Set(list('feed', f=>f.trip===ftId(tid)).flatMap(f=>(f.photos||[]).map(String)));
+      putQuiet(out); delete FT()[tid]; delete TS()[ftId(tid)];
+      M.fdel = (M.fdel||[]).concat(Object.keys((M.fup||{})[c] || {}).filter(id=>ids.has(String(id).replace(/\.t$/, ''))).map(id=>[c, id]));
+      persist(); syncNow().then(()=>{ refresh(); feedPurge(); }); if(!silent) toast('👀 Publication arrêtée'); return;
+    }
+    putQuiet(out); syncNow().then(()=>{ delete FT()[tid]; delete TS()[ftId(tid)]; M.spaces = (M.spaces||[]).filter(x=>x.code !== c); if(M.feedAll === c) delete M.feedAll;
       M.fdel = (M.fdel||[]).concat(Object.keys((M.fup||{})[c] || {}).map(id=>[c, id])); if(M.fup) delete M.fup[c]; M.fq = (M.fq||[]).filter(x=>x[0] !== c);
+      M.fwipe = (M.fwipe||[]).concat([c]);   // et on vide tout le dossier photos des abonnés sur le serveur (même les vignettes non notées)
       persist(); refresh(); feedPurge(); });
     toast('👀 Publication arrêtée');
   }
@@ -12819,7 +13479,8 @@ ${pm.join('\n')}</Document></kml>`;
     toast('📡 Connexion…'); const sp = spaceObj(code); await syncSpace(sp, true);
     if(sp.err){ alert('⚠️ ' + sp.err); return; }
     const ft = Object.entries(TS()).filter(([k,c])=>c===code && R[k] && R[k].type==='feedtrip' && !R[k].deleted).map(([k])=>R[k])[0];
-    if(!ft){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); alert('Aucun voyage publié avec ce code.'); return; }
+    if(!ft){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); alert('Aucun voyage publié avec ce code.'); if(web) webGone(); return; }
+    if(web) M.webCode = code;
     const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who: myName() || 'Un proche'}; if(!R[fw.id]){ putQuiet([fw]); socialPush(ft.id, 'follow', ''); }
     persist(); syncNow(); closeSheet(true); feedView(ft.id); toast('👀 Tu suis « ' + ft.titre + ' »');
   }
@@ -12976,6 +13637,8 @@ ${pm.join('\n')}</Document></kml>`;
     const posts = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
     const fw = list('follower', x=>x.trip===ftid).length;
     ov.innerHTML = `<div class="fd-top"><button type="button" class="fd-x" onclick="CV.feedClose()">✕</button><div><small>Voyage de ${esc(ft.owner||'?')}</small><b>${esc(ft.titre)}</b><small>${ft.debut ? tripDatesLong(ft) : ''}${fw ? ' · 👀 ' + fw + ' abonné' + (fw>1?'s':'') : ''}</small></div></div>
+      ${(()=>{ const c = TS()[ftid], sib = c ? list('feedtrip', f=>TS()[f.id] === c && !f.deleted).sort((a, b)=>(b.debut||'').localeCompare(a.debut||'')) : [];
+        return sib.length > 1 ? `<div class="fd-trips">${sib.map(f=>`<button type="button" class="${f.id === ftid ? 'on' : ''}" onclick="CV.feedView('${esc(f.id)}')" data-notr>${esc(f.titre)}</button>`).join('')}</div>` : ''; })()}
       <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; M.feedLast = ftid; feedMapHydrate();
     ov._h = posts.map(feedPostHTML).join('') + '|' + !!feedTrkRec(ftid);
@@ -13022,7 +13685,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-14d';
+  const BUILD = '2026-10-16f';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -13032,7 +13695,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
@@ -13123,6 +13786,7 @@ ${pm.join('\n')}</Document></kml>`;
     live, one, echAdd, echDel, echSpread, echToggle, lisser, echReset, echRange, echRangeReset,
     planDay, plCfg, plAdd, plDel, plOpt, wizard, radarTuto, rcOpen, rbSheet, rbPhoto, rbSave, zipSavePart, zipCancel, innerGo, inspDeal, inspOpen, compN, compDel, compAdd, compTog, compCreate, inspBack, inspMore, inspFav, inspSurprise, inspVote, gateInstall, partsSheet, partsSave, discInfo, discBack, newTrip, blankTrip, psImport, psFile, inspire, inspireDemo, inspireGo, inspireCreate, zipSheet, zipExport, zipImport, worldFly, worldStep, worldStory, cfSegGo, trkToggle, modeGo, bilanClose, albumSheet, albCover, albumGo, tripShare, tripShareSheet, tripInvite, tripNewCode, tripUnshare, tripJoin, tripJoinGo, tripWho, tripWhoSet, impSheet, impPick, jrSheet, jrTog, jrAll, worldMap, worldMode, worldOpen, worldClose, pjAdd, pjDel, pjOpen, cfSheet, cfGo, tlCo2, hereNow, tlStats, tlKml, tlFill, tlFillGo, rcView, rcAttach, tlIcsGo, capSet, shopSheet, shopAdd, shopTick, shopClear, rembAsk, pollNew, pollSave, pollVote, pollClose, pollDel, pdfRoute, pdfJournal, pdfShare, pdfOpen, pkgPick, pkgApply, hydrateMaps, renderOutils, tlDay, tlIcs, fxTool, fxFill, tlMeteo, tlReceipt, tlRcPhoto, tlRcOcr, tlRcSave, rcFx, socialHub, trkPub, tlReceipts, tlMap, tlBags, tlBagsGo, tlDocs, tlDocEdit, tlDocSave, tlDocDel, tlJournal, pkgSheet, pkgExport, pkgImport, pinToggle, shareSheet, shareLink, askErase, tutoSheet, escaleTuto, demoLoad, demoDel, demoReset, wzGo, wzDates, wzEt, wzSum, wzTpl, wzCreate,
     pickColor, newProfile, editProfile, saveProfile, delProfile, whoSheet, setMe,
+    bellSheet, bellGo, bellClear, rateGo, inviteSheet, inviteSend, inviteCopy, carnetShareSheet, carnetPublishSheet, carnetPublish, joinPick, joinPickSave, withWhom, withWhomUpd, withWhomGo, joinAny, joinPaste, joinAnyGo, dupSheet, dupTripsGo, photoSweep, spaceSheet, spaceFree, bagEntryUpd, impPickShot, impPickPass, impPass,
     genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin,
     _R:()=>R, _M:()=>M, ...VZAPI, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
   // En mode lecture, toutes les actions qui modifient sont bloquées
@@ -13138,6 +13802,7 @@ ${pm.join('\n')}</Document></kml>`;
 })();
 CV.init();
 window.__vzReady = true;   // l’appli a démarré : le filet de sécurité ne s’affichera pas
+requestAnimationFrame(function(){ requestAnimationFrame(function(){ window.__vzSplashOff && window.__vzSplashOff(); }); });
 
 </script>
 </body>

@@ -87,7 +87,9 @@
             "text/plain",
             "text/html",
             "message/rfc822",
-            ".eml"
+            ".eml",
+            "application/vnd.apple.pkpass",
+            ".pkpass"
           ]
         }
       ]

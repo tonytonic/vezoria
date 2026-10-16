@@ -2,8 +2,8 @@
 // Pages et fichiers de l'appli : réseau s'il répond vite (dernière version), sinon copie locale tout de suite
 // (réseau lent ou absent) ; la copie se met à jour en arrière-plan.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-14d';
-const CORE = ['./', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
+const CACHE = 'vezoria-2026-10-16f';
+const CORE = ['./', './splash.webp', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
 self.addEventListener('install', e => {
