@@ -7716,7 +7716,8 @@ const CV = (function(){
   }
   function tlPickFile(accept, cb, capture){
     // iOS ne déclenche « change » que si le champ fait partie de la page
-    const i = document.createElement('input'); i.type = 'file'; i.accept = accept; if(capture) i.setAttribute('capture', 'environment');
+    const i = document.createElement('input'); i.type = 'file'; if(!(isIOSDev && !/image|video/.test(accept))) i.accept = accept;   // iPhone : sans filtre, sinon les .carnet / .pkpass / .ics restent grisés dans Fichiers
+    if(capture) i.setAttribute('capture', 'environment');
     i.style.cssText = 'position:fixed;left:-1000px;top:0;width:1px;height:1px;opacity:0';
     document.body.appendChild(i);
     i.addEventListener('change', () => { const f = i.files && i.files[0]; setTimeout(()=>i.remove(), 1000); if(f) cb(f); });
@@ -13846,7 +13847,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-16k';
+  const BUILD = '2026-10-16l';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
