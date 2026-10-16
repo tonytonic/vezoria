@@ -7,8 +7,8 @@ const MAX_PHOTO = 1_900_000;
 // Pour changer le budget sans toucher au code : variable R2_MAX_GB dans les réglages Cloudflare (ex. 2000 pour ~30 €/mois).
 const MAX_TOTAL_D1 = 400_000_000;
 const R2_MAX = env => (Number(env.R2_MAX_GB) || 1000) * 1_000_000_000;
-// Plafond par carnet (variable facultative SPACE_MAX_MB, 2 Go par défaut) : évite qu'un seul carnet remplisse tout
-const spaceMax = env => (Number(env.SPACE_MAX_MB) || 2000) * 1_000_000;
+// Plafond par carnet (6 Go par défaut ; variable facultative SPACE_MAX_MB dans Cloudflare pour le changer sans toucher au code) : évite qu'un seul carnet remplisse tout
+const spaceMax = env => (Number(env.SPACE_MAX_MB) || 6000) * 1_000_000;
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
@@ -97,7 +97,7 @@ export async function onRequestPost({ request, env }) {
     const delta = buf.byteLength - (old ? old.size : 0);
     if (total + delta > R2_MAX(env)) return json({ error: 'Stockage des photos plein', total }, 507);
     const sk = 's:' + space, mine = await getTotal(env, sk);
-    if (mine + delta > spaceMax(env)) return json({ error: 'Ce carnet a atteint sa place maximale pour les photos', total: mine }, 507);
+    if (mine + delta > spaceMax(env)) return json({ error: 'Ce carnet a atteint sa place maximale pour les photos', total: mine, max: spaceMax(env) }, 507);
     await env.PHOTOS.put(key, buf, { httpMetadata: { contentType: mime } });
     await env.DB.batch([
       env.DB.prepare("UPDATE photo_stats SET v = v + ?1 WHERE k = 'r2'").bind(delta),
@@ -121,7 +121,54 @@ export async function onRequestPost({ request, env }) {
 export async function onRequestDelete({ request, env }) {
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
-  const id = new URL(request.url).searchParams.get('id') || request.headers.get('X-Photo-Id') || '';
+  const u = new URL(request.url);
+  // ?all=1 : efface TOUTES les photos de ce carnet (ex. arrêt de la publication pour les abonnés), les fiches restent
+  if (u.searchParams.get('all') === '1') {
+    let freed = 0, n = 0;
+    if (env.PHOTOS) {
+      let cursor;
+      do {
+        const l = await env.PHOTOS.list({ prefix: space + '/', cursor, limit: 1000 });
+        const keys = l.objects.map(o => o.key); l.objects.forEach(o => { freed += o.size; });
+        if (keys.length) await env.PHOTOS.delete(keys);
+        n += keys.length; cursor = l.truncated ? l.cursor : undefined;
+      } while (cursor);
+    }
+    try {
+      const r = await env.DB.prepare('SELECT COALESCE(SUM(size),0) AS s, COUNT(*) AS c FROM photos WHERE space = ?1').bind(space).first();
+      if (r && r.c) { await env.DB.batch([
+        env.DB.prepare('DELETE FROM photos WHERE space = ?1').bind(space),
+        env.DB.prepare("UPDATE photo_stats SET v = MAX(0, v - ?1) WHERE k = 'total'").bind(r.s),
+      ]); n += r.c; }
+    } catch (e) {}
+    try { await env.DB.batch([
+      env.DB.prepare("UPDATE photo_stats SET v = MAX(0, v - ?1) WHERE k = 'r2'").bind(freed),
+      env.DB.prepare('DELETE FROM photo_stats WHERE k = ?1').bind('s:' + space),
+    ]); } catch (e) {}
+    return json({ ok: true, deleted: n, freed });
+  }
+  // ?bulk=1 : efface une liste de photos devenues inutiles (doublons, photos de fiches supprimées).
+  // Garde-fou : seules les photos envoyées il y a plus de 3 jours partent (un autre téléphone n’a peut-être pas encore synchronisé ses fiches).
+  if (u.searchParams.get('bulk') === '1') {
+    if (!env.PHOTOS) return json({ ok: true, deleted: 0, freed: 0 });
+    let body = {}; try { body = await request.json(); } catch (e) {}
+    const ids = (Array.isArray(body.ids) ? body.ids : []).filter(validId).slice(0, 1000), now = Date.now();
+    let freed = 0; const del = [];
+    for (let i = 0; i < ids.length; i += 50) {
+      const heads = await Promise.all(ids.slice(i, i + 50).map(x => env.PHOTOS.head(r2Key(space, x))));
+      heads.forEach(h => { if (h && now - new Date(h.uploaded).getTime() > 3 * 864e5) { del.push(h.key); freed += h.size; } });
+    }
+    if (del.length) {
+      await env.PHOTOS.delete(del);
+      await getTotal(env, 's:' + space);
+      await env.DB.batch([
+        env.DB.prepare("UPDATE photo_stats SET v = MAX(0, v - ?1) WHERE k = 'r2'").bind(freed),
+        env.DB.prepare('UPDATE photo_stats SET v = MAX(0, v - ?1) WHERE k = ?2').bind(freed, 's:' + space),
+      ]);
+    }
+    return json({ ok: true, deleted: del.length, freed });
+  }
+  const id = u.searchParams.get('id') || request.headers.get('X-Photo-Id') || '';
   if (!validId(id)) return json({ error: 'Identifiant de photo invalide' }, 400);
   let freed = 0;
   if (env.PHOTOS) {
@@ -151,7 +198,14 @@ export async function onRequestDelete({ request, env }) {
 export async function onRequestGet({ request, env }) {
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
-  const id = new URL(request.url).searchParams.get('id') || '';
+  const q = new URL(request.url).searchParams;
+  // ?list=1 : liste des photos de CE carnet (identifiants chiffrés, taille, date d’envoi), par pages de 1000 — pour le ménage des doublons
+  if (q.get('list') === '1') {
+    if (!env.PHOTOS) return json({ ids: [], cursor: '' });
+    const l = await env.PHOTOS.list({ prefix: space + '/', cursor: q.get('cursor') || undefined, limit: 1000 });
+    return json({ ids: l.objects.map(o => ({ i: o.key.slice(space.length + 1), s: o.size, u: new Date(o.uploaded).getTime() })), cursor: l.truncated ? l.cursor : '' });
+  }
+  const id = q.get('id') || '';
   if (!validId(id)) return json({ error: 'Identifiant de photo invalide' }, 400);
   const cache = 'private, max-age=31536000, immutable';
 
