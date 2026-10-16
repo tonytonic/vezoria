@@ -5629,7 +5629,7 @@ const CV = (function(){
       ${DUPG.length ? `<div class="v-sum-small" style="margin-bottom:8px">Ces voyages existent en plusieurs exemplaires. On garde celui qui est partagé ou le plus complet, les copies en trop sont supprimées (leurs photos aussi, si elles ne servent pas ailleurs).</div>`
         + DUPG.map((a, i)=>`<label class="cv-checkline dup-g"><input type="checkbox" id="dup-${i}" checked><span><b data-notr>${esc(a[0].titre)}</b> ×${a.length}<small>On garde : créé le ${fd(a[0])} · ${sv(a[0]).length} souvenirs · ${nph(a[0])} photos</small><small>À supprimer : ${a.slice(1).map(t=>`créé le ${fd(t)} · ${sv(t).length} souvenirs · ${nph(t)} photos`).join(' / ')}</small></span></label>`).join('')
         + `<div class="v-actions"><button type="button" class="v-btn" onclick="CV.dupTripsGo()">🗑 Supprimer les copies cochées</button></div>`
-        : `<div class="v-empty">Aucun voyage en double. 👍</div>`}
+        : `<div class="v-empty">Aucun voyage en double. 👍</div><div class="v-sum-small">Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.</div>`}
       <h3 style="margin:14px 0 4px">🧹 Photos qui ne servent plus</h3>
       <div class="v-sum-small">Photos de souvenirs supprimés ou remplacés, restées sur ce téléphone ou sur le serveur. L’appli synchronise d’abord, puis ne retire que les photos qui ne sont dans aucune fiche. Sur le serveur, seules celles envoyées il y a plus de 3 jours partent (le temps que tous les téléphones aient synchronisé).</div>
       <div id="dup-msg" class="v-sum-small" style="margin-top:6px"></div>
@@ -9857,12 +9857,13 @@ ${pm.join('\n')}</Document></kml>`;
     const msg = m => { const e = document.getElementById('zp-msg'); if(e) e.textContent = m; };
     const withPh = document.getElementById('zp-ph').checked, withPdf = document.getElementById('zp-pdf').checked, withCodes = document.getElementById('zp-codes').checked, thumb = (document.getElementById('zp-thumb')||{}).checked;
     const recs = Object.values(R).filter(r=>!r.demo), te_ = new TextEncoder(), ids = new Set(), pdfs = new Set();
-    recs.forEach(r=>{ (r.photos||[]).forEach(p=>ids.add(p)); if(r.recu) ids.add(r.recu); (r.pj||[]).forEach(p=>(p.t==='pdf' ? pdfs : ids).add(p.id)); });
+    // photos des fiches supprimées (souvenirs remplacés…) : pas dans la sauvegarde
+    recs.filter(r=>!r.deleted).forEach(r=>{ (r.photos||[]).forEach(p=>ids.add(p)); if(r.recu) ids.add(r.recu); if(r.preuve) ids.add(r.preuve); (r.pj||[]).forEach(p=>(p.t==='pdf' ? pdfs : ids).add(p.id)); });
     const entries = [];
     if(withPh) ids.forEach(id=>(thumb ? [id + '.t'] : [id, id + '.t']).forEach(v=>entries.push({name:'photos/' + v + '.jpg', id:v})));
     if(withPdf) pdfs.forEach(id=>entries.push({name:'docs/' + id + '.pdf', id}));
     const meta = {me:M.me, trip:M.trip, ...(withCodes ? {sync:{url:M.sync.url, code:M.sync.code, on:M.sync.on}, spaces:(M.spaces||[]).map(x=>({code:x.code})), tripSpace:M.tripSpace||{}} : {})};
-    zipJob = {entries, i:0, part:1, ok:0, skip:0, stamp:isoToday(), head:[
+    zipJob = {entries, i:0, part:1, ok:0, skip:0, per: thumb ? 1 : 2, nph: (withPh ? ids.size : 0) + (withPdf ? pdfs.size : 0), stamp:isoToday(), head:[
       {name:'LISEZMOI.txt', data:te_.encode(`Sauvegarde Vezoria du ${new Date().toLocaleString((window.I18N ? I18N.locale : 'fr-FR'))}\n${recs.length} fiches.\nRestaurer : Partage & profils → 💾 Sauvegarde complète → Restaurer (choisis toutes les parties d’un coup ou l’une après l’autre).\n`)},
       {name:'carnet.json', data:te_.encode(JSON.stringify({app:'carnet-voyage', format:3, exportedAt:new Date().toISOString(), meta, records:recs}))}]};
     msg('📦 Préparation…'); zipNext();
@@ -9871,7 +9872,7 @@ ${pm.join('\n')}</Document></kml>`;
     const J = zipJob; if(!J) return; const LIMIT = 120 * 1048576, files = J.part === 1 ? J.head.slice() : [{name:'partie.txt', data:new TextEncoder().encode('Vezoria — partie ' + J.part)}];
     let size = 0; const msg = m => { const e = document.getElementById('zp-msg'); if(e) e.textContent = m; else toast(m); };
     while(J.i < J.entries.length && size < LIMIT){
-      const en = J.entries[J.i++]; if(J.i % 15 === 0) msg(`📸 Fichiers : ${J.i} / ${J.entries.length}…`);
+      const en = J.entries[J.i++]; if(J.i % 15 === 0) msg(`📸 Photos : ${Math.ceil(J.i / J.per)} / ${J.nph}…`);
       try { const b = await photoBlob(en.id); if(!b){ J.skip++; continue; } const u8 = new Uint8Array(await b.arrayBuffer()); files.push({name:en.name, data:u8}); size += u8.length; J.ok++; }
       catch(e){ J.skip++; }
     }
@@ -13801,7 +13802,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-16h';
+  const BUILD = '2026-10-16i';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
