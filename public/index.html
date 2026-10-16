@@ -13473,9 +13473,11 @@ ${pm.join('\n')}</Document></kml>`;
     if(!c){ if(!(await uiConfirm('Publier ces voyages pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.'))) return;
       c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); M.feedAll = c; }
     // voyages décochés : retirés du carnet publié (leurs publications et photos d’abonnés partent)
-    for(const t of myTrips()) if(FT()[t.id] === c && !sel.includes(t.id)) await feedStop(t.id, true);
+    for(const tid of Object.keys(FT())) if(FT()[tid] === c && !sel.includes(tid)) await feedStop(tid, true);   // aussi les voyages supprimés ou remplacés depuis
+    feedFixAt = 0;
     sel.forEach(tid=>{ if(!FT()[tid]) FT()[tid] = c; });
     persist(); sel.forEach(tid=>feedBuild(tid)); closeSheet(true); toast('👀 Publication en cours…');
+    try { await feedReconcile(); } catch(e){}
     try { await syncNow(); feedUpload(); setTimeout(()=>{ try { pushRegister(true); } catch(e){} }, 2500); } catch(e){}
     await carnetInvite(c);
   }
@@ -13580,7 +13582,23 @@ ${pm.join('\n')}</Document></kml>`;
       }
     } finally { feedDel = false; persist(); }
   }
-  function feedAll(){ feedPurge(); Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); feedUpload(); }
+  // 🧹 ménage : les abonnés voient exactement les voyages publiés qui existent encore chez moi
+  //   1) voyage publié puis supprimé / dédoublonné / remplacé à l’import → sa publication est retirée
+  //   2) restes en ligne d’un ancien voyage (ancien identifiant) sous un de mes liens abonné → retirés aussi
+  let feedFixAt = 0;
+  async function feedReconcile(){
+    if(Date.now() - feedFixAt < 60000 || !Object.keys(FT()).length || !list('trip').length) return 0; feedFixAt = Date.now();
+    let n = 0;
+    for(const tid of Object.keys(FT())){ const t = R[tid]; if(!t || t.deleted || t.demo || t.type !== 'trip'){ await feedStop(tid, true); n++; } }
+    const mine = new Set(Object.values(FT())), out = [], dels = [];
+    list('feedtrip', f=>mine.has(TS()[f.id]) && FT()[String(f.id).replace(/^ft:/,'')] !== TS()[f.id]).forEach(f=>{
+      const c = TS()[f.id], posts = Object.values(R).filter(r=>r && !r.deleted && r.trip === f.id);
+      posts.forEach(r=>{ out.push(Object.assign(clone(r), {deleted:true})); (r.photos||[]).forEach(p=>{ if(((M.fup||{})[c]||{})[p]) dels.push([c, p]); }); });
+      out.push(Object.assign(clone(f), {deleted:true})); delete TS()[f.id]; n++; });
+    if(out.length){ putQuiet(out); M.fdel = (M.fdel||[]).concat(dels); persist(); try { await syncNow(); } catch(e){} feedPurge(); }
+    return n;
+  }
+  function feedAll(){ feedPurge(); Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); feedUpload(); feedReconcile().then(n=>{ if(n) refresh(); }).catch(()=>{}); }
   setInterval(()=>{ if(document.visibilityState === 'visible' && Object.keys(FT()).length) feedAll(); }, 60000);
   setTimeout(feedAll, 5000);
   async function feedPublish(tid){
@@ -13866,7 +13884,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-16m';
+  const BUILD = '2026-10-16n';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
