@@ -1,4 +1,10 @@
 I18N.load({
+"📥 Je récupère les photos du voyage… ({0})":"📥 Забираю фото поездки… ({0})",
+"📥 Photos du voyage : {0} / {1}":"📥 Фото поездки: {0} / {1}",
+"⚠️ {0} photo(s) non récupérée(s)":"⚠️ Не получено фото: {0}",
+"📥 Photos du voyage récupérées":"📥 Фото поездки получены",
+"{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).":"Не удалось получить фото: {0} (нет сети?).",
+"OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.":"OK = всё равно выйти (они останутся в общей поездке, а не у тебя). Отмена = попробовать позже.",
 "📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 Импорт экспорта или резервной копии (JSON или ZIP)",
 "👀 Publié · inviter des abonnés":"👀 Опубликовано · пригласить подписчиков",
 "👀 Publier pour des abonnés":"👀 Опубликовать для подписчиков",

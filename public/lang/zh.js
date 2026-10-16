@@ -1,4 +1,10 @@
 I18N.load({
+"📥 Je récupère les photos du voyage… ({0})":"📥 正在取回本次旅行的照片…（{0}）",
+"📥 Photos du voyage : {0} / {1}":"📥 旅行照片：{0} / {1}",
+"⚠️ {0} photo(s) non récupérée(s)":"⚠️ {0} 张照片未能取回",
+"📥 Photos du voyage récupérées":"📥 旅行照片已取回",
+"{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).":"有 {0} 张照片无法取回（没有网络？）。",
+"OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.":"确定 = 仍然退出（照片留在共享旅行中，不在你这里）。取消 = 稍后再试。",
 "📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 导入导出文件或备份（JSON 或 ZIP）",
 "👀 Publié · inviter des abonnés":"👀 已发布 · 邀请关注者",
 "👀 Publier pour des abonnés":"👀 发布给关注者",

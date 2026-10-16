@@ -1,4 +1,10 @@
 I18N.load({
+"📥 Je récupère les photos du voyage… ({0})":"📥 A recuperar as fotos da viagem… ({0})",
+"📥 Photos du voyage : {0} / {1}":"📥 Fotos da viagem: {0} / {1}",
+"⚠️ {0} photo(s) non récupérée(s)":"⚠️ {0} foto(s) não recuperada(s)",
+"📥 Photos du voyage récupérées":"📥 Fotos da viagem recuperadas",
+"{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).":"Não foi possível recuperar {0} foto(s) (sem rede?).",
+"OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.":"OK = sair mesmo assim (ficam na viagem partilhada, não contigo). Cancelar = tentar mais tarde.",
 "📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 Importar uma exportação ou cópia de segurança (JSON ou ZIP)",
 "👀 Publié · inviter des abonnés":"👀 Publicado · convidar seguidores",
 "👀 Publier pour des abonnés":"👀 Publicar para seguidores",

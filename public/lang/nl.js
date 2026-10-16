@@ -1,4 +1,10 @@
 I18N.load({
+"📥 Je récupère les photos du voyage… ({0})":"📥 Ik haal de foto’s van de reis terug… ({0})",
+"📥 Photos du voyage : {0} / {1}":"📥 Reisfoto’s: {0} / {1}",
+"⚠️ {0} photo(s) non récupérée(s)":"⚠️ {0} foto(’s) niet opgehaald",
+"📥 Photos du voyage récupérées":"📥 Reisfoto’s opgehaald",
+"{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).":"{0} foto(’s) konden niet worden opgehaald (geen netwerk?).",
+"OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.":"OK = toch verlaten (ze blijven in de gedeelde reis, niet bij jou). Annuleren = later opnieuw proberen.",
 "📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 Export of back-up importeren (JSON of ZIP)",
 "👀 Publié · inviter des abonnés":"👀 Gepubliceerd · volgers uitnodigen",
 "👀 Publier pour des abonnés":"👀 Publiceren voor volgers",

@@ -1,4 +1,10 @@
 I18N.load({
+"📥 Je récupère les photos du voyage… ({0})":"📥 Ich hole die Fotos der Reise zurück… ({0})",
+"📥 Photos du voyage : {0} / {1}":"📥 Reisefotos: {0} / {1}",
+"⚠️ {0} photo(s) non récupérée(s)":"⚠️ {0} Foto(s) nicht abgerufen",
+"📥 Photos du voyage récupérées":"📥 Reisefotos abgerufen",
+"{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).":"{0} Foto(s) konnten nicht abgerufen werden (kein Netz?).",
+"OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.":"OK = trotzdem verlassen (sie bleiben in der geteilten Reise, nicht bei dir). Abbrechen = später erneut versuchen.",
 "📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 Export oder Sicherung importieren (JSON oder ZIP)",
 "👀 Publié · inviter des abonnés":"👀 Veröffentlicht · Follower einladen",
 "👀 Publier pour des abonnés":"👀 Für Follower veröffentlichen",

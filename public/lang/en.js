@@ -1,4 +1,10 @@
 I18N.load({
+"📥 Je récupère les photos du voyage… ({0})":"📥 Getting the trip’s photos back… ({0})",
+"📥 Photos du voyage : {0} / {1}":"📥 Trip photos: {0} / {1}",
+"⚠️ {0} photo(s) non récupérée(s)":"⚠️ {0} photo(s) not retrieved",
+"📥 Photos du voyage récupérées":"📥 Trip photos retrieved",
+"{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).":"{0} photo(s) could not be retrieved (no network?).",
+"OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.":"OK = leave anyway (they stay in the shared trip, not with you). Cancel = try again later.",
 "📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 Import an export or a backup (JSON or ZIP)",
 "👀 Publié · inviter des abonnés":"👀 Published · invite followers",
 "👀 Publier pour des abonnés":"👀 Publish for followers",

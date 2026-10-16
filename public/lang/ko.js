@@ -1,4 +1,10 @@
 I18N.load({
+"📥 Je récupère les photos du voyage… ({0})":"📥 여행 사진을 가져오는 중… ({0})",
+"📥 Photos du voyage : {0} / {1}":"📥 여행 사진: {0} / {1}",
+"⚠️ {0} photo(s) non récupérée(s)":"⚠️ 사진 {0}장을 가져오지 못했어요",
+"📥 Photos du voyage récupérées":"📥 여행 사진을 가져왔어요",
+"{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).":"사진 {0}장을 가져올 수 없었어요 (네트워크 없음?).",
+"OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.":"확인 = 그래도 나가기 (사진은 공유 여행에 남고 내 쪽엔 없어요). 취소 = 나중에 다시 시도.",
 "📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 내보내기 또는 백업 가져오기 (JSON 또는 ZIP)",
 "👀 Publié · inviter des abonnés":"👀 공개됨 · 팔로워 초대",
 "👀 Publier pour des abonnés":"👀 팔로워에게 공개",

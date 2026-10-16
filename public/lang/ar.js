@@ -1,4 +1,10 @@
 I18N.load({
+"📥 Je récupère les photos du voyage… ({0})":"📥 أستعيد صور الرحلة… ({0})",
+"📥 Photos du voyage : {0} / {1}":"📥 صور الرحلة: {0} / {1}",
+"⚠️ {0} photo(s) non récupérée(s)":"⚠️ لم تُستعد {0} صورة",
+"📥 Photos du voyage récupérées":"📥 تمت استعادة صور الرحلة",
+"{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).":"تعذّرت استعادة {0} صورة (لا توجد شبكة؟).",
+"OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.":"موافق = المغادرة على أي حال (تبقى في الرحلة المشتركة، لا عندك). إلغاء = إعادة المحاولة لاحقًا.",
 "📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 استيراد تصدير أو نسخة احتياطية (JSON أو ZIP)",
 "👀 Publié · inviter des abonnés":"👀 منشور · دعوة متابعين",
 "👀 Publier pour des abonnés":"👀 نشر للمتابعين",

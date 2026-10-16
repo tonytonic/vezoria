@@ -1,4 +1,10 @@
 I18N.load({
+"📥 Je récupère les photos du voyage… ({0})":"📥 Seyahatin fotoğraflarını geri alıyorum… ({0})",
+"📥 Photos du voyage : {0} / {1}":"📥 Seyahat fotoğrafları: {0} / {1}",
+"⚠️ {0} photo(s) non récupérée(s)":"⚠️ {0} fotoğraf alınamadı",
+"📥 Photos du voyage récupérées":"📥 Seyahat fotoğrafları alındı",
+"{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).":"{0} fotoğraf alınamadı (ağ yok mu?).",
+"OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.":"Tamam = yine de ayrıl (paylaşılan seyahatte kalırlar, sende değil). İptal = daha sonra tekrar dene.",
 "📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 Dışa aktarım veya yedek içe aktar (JSON ya da ZIP)",
 "👀 Publié · inviter des abonnés":"👀 Yayında · takipçi davet et",
 "👀 Publier pour des abonnés":"👀 Takipçiler için yayınla",

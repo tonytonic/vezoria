@@ -1,4 +1,10 @@
 I18N.load({
+"📥 Je récupère les photos du voyage… ({0})":"📥 旅の写真を取り戻しています…（{0}）",
+"📥 Photos du voyage : {0} / {1}":"📥 旅の写真：{0} / {1}",
+"⚠️ {0} photo(s) non récupérée(s)":"⚠️ {0} 枚の写真を取得できませんでした",
+"📥 Photos du voyage récupérées":"📥 旅の写真を取り戻しました",
+"{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).":"{0} 枚の写真を取得できませんでした（ネットワークなし？）。",
+"OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.":"OK = それでも退出する（写真は共有の旅に残り、あなたの手元には残りません）。キャンセル = 後でもう一度。",
 "📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 エクスポートまたはバックアップを読み込む（JSON または ZIP）",
 "👀 Publié · inviter des abonnés":"👀 公開中 · フォロワーを招待",
 "👀 Publier pour des abonnés":"👀 フォロワー向けに公開",

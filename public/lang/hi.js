@@ -1,4 +1,10 @@
 I18N.load({
+"📥 Je récupère les photos du voyage… ({0})":"📥 यात्रा की फ़ोटो वापस ला रहा हूँ… ({0})",
+"📥 Photos du voyage : {0} / {1}":"📥 यात्रा की फ़ोटो: {0} / {1}",
+"⚠️ {0} photo(s) non récupérée(s)":"⚠️ {0} फ़ोटो वापस नहीं आईं",
+"📥 Photos du voyage récupérées":"📥 यात्रा की फ़ोटो वापस आ गईं",
+"{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).":"{0} फ़ोटो वापस नहीं लाई जा सकीं (नेटवर्क नहीं?)।",
+"OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.":"OK = फिर भी छोड़ें (वे साझा यात्रा में रहेंगी, आपके पास नहीं)। रद्द करें = बाद में फिर कोशिश करें।",
 "📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 एक्सपोर्ट या बैकअप आयात करें (JSON या ZIP)",
 "👀 Publié · inviter des abonnés":"👀 प्रकाशित · फ़ॉलोअर आमंत्रित करें",
 "👀 Publier pour des abonnés":"👀 फ़ॉलोअर के लिए प्रकाशित करें",
