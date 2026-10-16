@@ -1,4 +1,10 @@
 I18N.load({
+"Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"لا جديد: كل ما في هذا الملف موجود مسبقًا على هذا الهاتف.",
+"{0} photo(s) déjà sur ce téléphone, gardées telles quelles.":"{0} صورة موجودة مسبقًا على هذا الهاتف، تُركت كما هي.",
+"✈️ Carte d’embarquement lue — vérifie puis Enregistrer":"✈️ قُرئت بطاقة الصعود — راجعها ثم احفظ",
+"🌍 Pays visités":"🌍 البلدان التي ستزورها",
+"Formalités":"إجراءات الدخول",
+"Carte d’embarquement":"بطاقة الصعود",
 "Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble":"انضم إلى دفتر رحلاتي على Vezoria 🧳: كل رحلاتي، لنكملها معًا",
 "Code :":"الرمز:",
 "(Vezoria déjà installée ? Ouvre-la → 👥 Partager → « Rejoindre avec un code » et colle le code.)":"(هل Vezoria مثبّت لديك؟ افتحه ← 👥 مشاركة ← «الانضمام برمز» والصق الرمز.)",

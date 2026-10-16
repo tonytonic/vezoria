@@ -1,4 +1,10 @@
 I18N.load({
+"Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"Yeni bir şey yok: bu dosyadaki her şey zaten bu telefonda.",
+"{0} photo(s) déjà sur ce téléphone, gardées telles quelles.":"{0} fotoğraf zaten bu telefonda, olduğu gibi bırakıldı.",
+"✈️ Carte d’embarquement lue — vérifie puis Enregistrer":"✈️ Biniş kartı okundu — kontrol et, sonra Kaydet",
+"🌍 Pays visités":"🌍 Ziyaret edilen ülkeler",
+"Formalités":"Giriş işlemleri",
+"Carte d’embarquement":"Biniş kartı",
 "Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble":"Vezoria’daki seyahat günlüğüme katıl 🧳: tüm seyahatlerim, birlikte dolduralım",
 "Code :":"Kod:",
 "(Vezoria déjà installée ? Ouvre-la → 👥 Partager → « Rejoindre avec un code » et colle le code.)":"(Vezoria zaten yüklü mü? Aç → 👥 Paylaş → «Kodla katıl» ve kodu yapıştır.)",

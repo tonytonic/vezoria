@@ -1,4 +1,10 @@
 I18N.load({
+"Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"Niente di nuovo: tutto ciò che contiene questo file è già su questo telefono.",
+"{0} photo(s) déjà sur ce téléphone, gardées telles quelles.":"{0} foto già su questo telefono, tenute così come sono.",
+"✈️ Carte d’embarquement lue — vérifie puis Enregistrer":"✈️ Carta d’imbarco letta: controllala, poi Salva",
+"🌍 Pays visités":"🌍 Paesi visitati",
+"Formalités":"Formalità d’ingresso",
+"Carte d’embarquement":"Carta d’imbarco",
 "Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble":"Entra nel mio diario di viaggio su Vezoria 🧳: tutti i miei viaggi, da completare insieme",
 "Code :":"Codice:",
 "(Vezoria déjà installée ? Ouvre-la → 👥 Partager → « Rejoindre avec un code » et colle le code.)":"(Hai già Vezoria? Aprila → 👥 Condividi → «Unisciti con un codice» e incolla il codice.)",

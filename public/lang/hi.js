@@ -1,4 +1,10 @@
 I18N.load({
+"Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"कुछ नया नहीं: इस फ़ाइल में जो कुछ है वह पहले से इस फ़ोन पर है।",
+"{0} photo(s) déjà sur ce téléphone, gardées telles quelles.":"{0} फ़ोटो पहले से इस फ़ोन पर थीं, जैसी थीं वैसी रखी गईं।",
+"✈️ Carte d’embarquement lue — vérifie puis Enregistrer":"✈️ बोर्डिंग पास पढ़ लिया — जाँचें, फिर सेव करें",
+"🌍 Pays visités":"🌍 घूमे जाने वाले देश",
+"Formalités":"प्रवेश औपचारिकताएँ",
+"Carte d’embarquement":"बोर्डिंग पास",
 "Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble":"Vezoria पर मेरी यात्रा डायरी से जुड़ें 🧳: मेरी सारी यात्राएँ, मिलकर भरने के लिए",
 "Code :":"कोड:",
 "(Vezoria déjà installée ? Ouvre-la → 👥 Partager → « Rejoindre avec un code » et colle le code.)":"(Vezoria पहले से इंस्टॉल है? खोलें → 👥 शेयर करें → “कोड से जुड़ें” और कोड पेस्ट करें।)",

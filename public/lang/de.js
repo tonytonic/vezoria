@@ -1,4 +1,10 @@
 I18N.load({
+"Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"Nichts Neues: Alles in dieser Datei ist schon auf diesem Handy.",
+"{0} photo(s) déjà sur ce téléphone, gardées telles quelles.":"{0} Foto(s) schon auf diesem Handy, unverändert behalten.",
+"✈️ Carte d’embarquement lue — vérifie puis Enregistrer":"✈️ Bordkarte gelesen – prüfen, dann Speichern",
+"🌍 Pays visités":"🌍 Besuchte Länder",
+"Formalités":"Einreiseformalitäten",
+"Carte d’embarquement":"Bordkarte",
 "Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble":"Komm in mein Reisetagebuch auf Vezoria 🧳: alle meine Reisen, gemeinsam zu ergänzen",
 "Code :":"Code:",
 "(Vezoria déjà installée ? Ouvre-la → 👥 Partager → « Rejoindre avec un code » et colle le code.)":"(Vezoria schon installiert? Öffne sie → 👥 Teilen → „Mit einem Code beitreten“ und füge den Code ein.)",

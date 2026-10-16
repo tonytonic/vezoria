@@ -1,4 +1,10 @@
 I18N.load({
+"Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"새로운 게 없어요: 이 파일의 내용은 모두 이미 이 휴대폰에 있어요.",
+"{0} photo(s) déjà sur ce téléphone, gardées telles quelles.":"사진 {0}장은 이미 이 휴대폰에 있어 그대로 두었어요.",
+"✈️ Carte d’embarquement lue — vérifie puis Enregistrer":"✈️ 탑승권을 읽었어요 — 확인 후 저장하세요",
+"🌍 Pays visités":"🌍 방문할 나라",
+"Formalités":"입국 절차",
+"Carte d’embarquement":"탑승권",
 "Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble":"Vezoria의 내 여행 일기에 함께해요 🧳: 내 모든 여행을 같이 채워요",
 "Code :":"코드:",
 "(Vezoria déjà installée ? Ouvre-la → 👥 Partager → « Rejoindre avec un code » et colle le code.)":"(Vezoria가 이미 있나요? 열고 → 👥 공유 → ‘코드로 참여’에서 코드를 붙여 넣으세요.)",

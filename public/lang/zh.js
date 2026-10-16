@@ -1,4 +1,10 @@
 I18N.load({
+"Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"没有新内容：这个文件里的所有内容这部手机上都已经有了。",
+"{0} photo(s) déjà sur ce téléphone, gardées telles quelles.":"{0} 张照片已在这部手机上，保持不变。",
+"✈️ Carte d’embarquement lue — vérifie puis Enregistrer":"✈️ 已读取登机牌 — 检查后点保存",
+"🌍 Pays visités":"🌍 要去的国家",
+"Formalités":"入境手续",
+"Carte d’embarquement":"登机牌",
 "Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble":"加入我在 Vezoria 上的旅行手账 🧳：我所有的旅行，一起来完善",
 "Code :":"代码：",
 "(Vezoria déjà installée ? Ouvre-la → 👥 Partager → « Rejoindre avec un code » et colle le code.)":"（已经装了 Vezoria？打开 → 👥 分享 →「用代码加入」，粘贴代码。）",
