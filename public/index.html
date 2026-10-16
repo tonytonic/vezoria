@@ -2466,6 +2466,7 @@ const CV = (function(){
     let changed = 0; const hadDirty = M.dirty.length;
     try {
       const now0 = Date.now(), auto = manual !== true && !pull;
+      try { mvMark(); } catch(e){}
       if(mainOn && !(auto && !M.dirty.length && now0 - (M.sync.last || 0) < 120000)){   // rien à envoyer et vu il y a moins de 2 min : on passe
       const ids = [...M.dirty];
       let first = true;
@@ -2485,6 +2486,8 @@ const CV = (function(){
         const fol = list('feedtrip', f=>TS()[f.id] === sp.code).length && !Object.values(FT()).includes(sp.code);
         if(auto && !(sp.dirty || []).length && sp.last && now0 - sp.last < (fol ? 900000 : 300000)) continue;
         changed += await syncSpace(sp); }
+      try { if(movedApply()) changed++; } catch(e){}
+      setTimeout(()=>{ tripExtract().catch(()=>{}); }, 20000);
       if(showC) cryptHide('🔒 Données chiffrées et synchronisées');
       else if(manual) toast('☁️ Synchronisé');
       setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500);
@@ -2962,9 +2965,114 @@ const CV = (function(){
     if(navigator.share){ try { await navigator.share({title:t.titre, text}); return; } catch(e){ return; } }
     try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
   }
+  /* ══════════ 📦 Voyage partagé = extrait du carnet principal (pas de photos en double sur le serveur) ══════════
+     1) un mot chiffré « ce voyage a déménagé, voici son code » est déposé dans le carnet principal
+     2) les autres appareils du même carnet le lisent et rejoignent le voyage tout seuls
+     3) 24 h après, quand chaque photo est bien dans le dossier du voyage (sinon elle y est recopiée), sa copie du carnet principal est effacée */
+  function mvMark(){
+    if(!(M.sync.on && M.sync.code)) return;
+    const out = [];
+    Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid], id = 'mv:' + tid, cur = R[id];
+      if(!t || t.type !== 'trip' || t.deleted || t.demo || !spaceObj(c)) return;
+      if(!cur || cur.deleted || cur.code !== c) out.push({id, type:'moved', tid, code:c, at:Date.now()}); });
+    if(out.length) putQuiet(out);
+  }
+  function movedApply(){
+    let n = 0;
+    list('moved', m=>!m.deleted && m.tid && m.code && !TS()[m.tid] && !(M.mvSkip||{})[m.tid]).forEach(m=>{
+      TS()[m.tid] = m.code; if(!spaceObj(m.code)) (M.spaces = M.spaces || []).push({code:m.code, since:0, dirty:[], last:0, err:''}); n++; });
+    if(n){ persist(); setTimeout(()=>{ try { syncNow(); } catch(e){} }, 800); }
+    return n;
+  }
+  let mvBusy = false;
+  async function tripExtract(force){
+    const main = M.sync.on && M.sync.code;
+    if(mvBusy || !main || !photoApi() || (!force && M.mvAt && Date.now() - M.mvAt < 6 * 3600e3)) return 0;
+    const todo = list('moved', m=>!m.deleted && TS()[m.tid] === m.code && spaceObj(m.code) && (M.mvDone||{})[m.tid] !== m.code && Date.now() - (m.at || m.createdAt || 0) > 864e5);
+    if(!todo.length) return 0;
+    mvBusy = true; M.mvAt = Date.now(); persist(); let freedN = 0;
+    const listAll = async code => { const set = new Set(); let cur = '';
+      do { const r = await fetch(photoApi() + '?list=1' + (cur ? '&cursor=' + encodeURIComponent(cur) : ''), {headers:{'X-Carnet-Code':await authCode(code)}}); if(!r.ok) return null;
+        const j = await r.json(); if(!j || !Array.isArray(j.ids)) return null; j.ids.forEach(o=>set.add(o.i)); cur = j.cursor || ''; } while(cur);
+      return set; };
+    try {
+      const inMain = await listAll(main); if(!inMain) return 0;
+      // photo encore utilisée par une fiche du carnet principal (couverture, profil…) : on la garde
+      const mainUse = new Set(); Object.values(R).forEach(r=>{ if(r && !r.deleted && !r.demo && targets(r).includes('main')) photoRefs(r).forEach(x=>mainUse.add(String(x))); });
+      for(const m of todo){
+        const c = m.code, sp = spaceObj(c); if(!sp || sp.err || (sp.dirty||[]).length) continue;
+        const ids = new Set(); Object.values(R).forEach(r=>{ if(r && !r.deleted && (r.id === m.tid || r.trip === m.tid)) photoRefs(r).forEach(x=>ids.add(String(x))); });
+        if((M.pq||[]).some(x=>ids.has(String(x).replace(/\.t$/, '')))) continue;   // des photos sont encore en route vers le voyage
+        const inTrip = await listAll(c); if(!inTrip) continue;
+        const del = []; let keep = 0;
+        for(const id of ids){ const keepMain = mainUse.has(id);   // aussi utilisée hors du voyage : recopiée dans le voyage, mais gardée dans le carnet principal
+          for(const v of [id, id + '.t']){
+            const sm = await sid(v, main); if(!inMain.has(sm)) continue;
+            const st = await sid(v, c);
+            if(!inTrip.has(st)){   // pas encore dans le dossier du voyage : on l’y recopie d’abord (jamais de photo perdue)
+              try {
+                const r = await fetch(photoApi() + '?id=' + encodeURIComponent(sm), {headers:{'X-Carnet-Code':await authCode(main)}}); if(!r.ok){ keep++; continue; }
+                let u8 = new Uint8Array(await r.arrayBuffer()); if(E2E) u8 = await seal(await unseal(u8, main), c);
+                const up = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(c), 'X-Photo-Id':st, 'Content-Type':'image/jpeg'}, body:new Blob([u8], {type:'image/jpeg'})});
+                if(!up.ok){ keep++; continue; }
+              } catch(e){ keep++; continue; }
+            }
+            if(!keepMain) del.push(sm);
+          } }
+        let left = keep;
+        for(let i = 0; i < del.length; i += 1000){
+          const part = del.slice(i, i + 1000);
+          const r = await fetch(photoApi() + '?bulk=1', {method:'DELETE', headers:{'X-Carnet-Code':await authCode(main), 'Content-Type':'application/json'}, body:JSON.stringify({ids:part})});
+          if(!r.ok){ left += del.length - i; break; }
+          const j = await r.json(); freedN += j.deleted || 0; left += part.length - (j.deleted || 0);   // envoyées il y a moins de 3 jours : retirées au prochain passage
+        }
+        if(!left){ (M.mvDone = M.mvDone || {})[m.tid] = c; persist(); }
+      }
+    } catch(e){} finally { mvBusy = false; }
+    return freedN;
+  }
+  // 📥 rapatrie les photos d’un voyage partagé avant de le quitter : jamais de photo perdue
+  async function tripPhotosHome(tid, code){
+    const main = M.sync.on && M.sync.code ? M.sync.code : '';
+    const ids = new Set(); Object.values(R).forEach(r=>{ if(r && !r.deleted && !r.demo && (r.id === tid || r.trip === tid)) photoRefs(r).forEach(x=>ids.add(String(x))); });
+    if(!ids.size) return {n:0, fail:0};
+    let inMain = null;
+    if(main){ inMain = new Set(); let cur = '';
+      try { do { const r = await fetch(photoApi() + '?list=1' + (cur ? '&cursor=' + encodeURIComponent(cur) : ''), {headers:{'X-Carnet-Code':await authCode(main)}}); if(!r.ok){ inMain = null; break; }
+        const j = await r.json(); (j.ids||[]).forEach(o=>inMain.add(o.i)); cur = j.cursor || ''; } while(cur); } catch(e){ inMain = null; } }
+    let n = 0, fail = 0, k = 0; const tot = ids.size;
+    cryptShow('📥 Je récupère les photos du voyage… (' + tot + ')');
+    for(const id of ids){ k++; if(k % 10 === 0) cryptShow('📥 Photos du voyage : ' + k + ' / ' + tot);
+      for(const v of [id, id + '.t']){
+        try {
+          if(main && inMain && inMain.has(await sid(v, main))) continue;                       // déjà dans le carnet principal
+          let blob = null; try { const o = await IDB.get(v); if(o && o.blob){ await o.blob.slice(0, 1).arrayBuffer(); blob = o.blob; } } catch(e){ blob = null; }
+          if(!blob){   // pas sur ce téléphone : on la prend dans le voyage partagé
+            const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(v, code)), {headers:{'X-Carnet-Code':await authCode(code)}});
+            if(!r.ok){ if(v === id && r.status !== 404) fail++; continue; }                     // vignette ou photo absente du serveur : rien à récupérer
+            let u8 = new Uint8Array(await r.arrayBuffer()); if(E2E) u8 = await unseal(u8, code);
+            blob = new Blob([u8], {type:'image/jpeg'});
+            if(!main){ await IDB.put({id:v, blob, up:1}); n++; continue; }                         // sans cloud : gardée sur ce téléphone
+          }
+          if(main){
+            const body = E2E ? new Blob([await seal(new Uint8Array(await blob.arrayBuffer()), main)], {type:'image/jpeg'}) : blob;
+            const up = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(main), 'X-Photo-Id':await sid(v, main), 'Content-Type':'image/jpeg'}, body});
+            if(up.ok) n++; else if(v === id) fail++;
+          }
+        } catch(e){ if(v === id) fail++; }
+      } }
+    cryptHide(fail ? '⚠️ ' + fail + ' photo(s) non récupérée(s)' : '📥 Photos du voyage récupérées');
+    return {n, fail};
+  }
   async function tripUnshare(id){
     if(!(await uiConfirm('Arrêter le partage de ce voyage sur ce téléphone ?\nTon voyage reste ici ; tu ne recevras plus les modifications des autres. (Il repasse dans ton carnet principal si celui-ci est synchronisé.)'))) return;
+    // avant de quitter : toutes les photos du voyage reviennent (dans le carnet principal s’il est synchronisé, sinon sur ce téléphone)
+    if(TS()[id] && spaceObj(TS()[id]) && photoApi()){
+      const res = await tripPhotosHome(id, TS()[id]);
+      if(res.fail && !(await uiConfirm(MSGT('{0} photo(s) n’ont pas pu être récupérées (pas de réseau ?).').replace('{0}', res.fail) + '\n\n' + MSGT('OK = quitter quand même (elles restent dans le voyage partagé, pas chez toi). Annuler = réessayer plus tard.')))) return;
+    }
     const code = TS()[id]; delete TS()[id];
+    (M.mvSkip = M.mvSkip || {})[id] = 1; if(R['mv:' + id] && !R['mv:' + id].deleted) putQuiet([Object.assign(clone(R['mv:' + id]), {deleted:true})]);   // plus de « déménagement » : les autres appareils ne le rejoignent plus d’eux-mêmes
     if(!Object.values(TS()).includes(code)) M.spaces = (M.spaces||[]).filter(x=>x.code!==code);
     Object.values(R).filter(r=>!r.demo && (r.id===id || r.trip===id)).forEach(r=>markDirty(r.id));
     persist(); closeSheet(true); refresh();
@@ -13893,7 +14001,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-16p';
+  const BUILD = '2026-10-16r';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
