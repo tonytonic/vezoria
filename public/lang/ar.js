@@ -1,4 +1,13 @@
 I18N.load({
+"Voir la suite":"عرض المزيد",
+"👥 {0} personnes":"👥 {0} أشخاص",
+"👥 {0} personne":"👥 {0} شخص",
+"🧳 {0} voyages":"🧳 {0} رحلات",
+"🧳 {0} voyage":"🧳 {0} رحلة",
+"{0} voyages":"{0} رحلات",
+"🔎 Chercher une personne ou un voyage":"🔎 ابحث عن شخص أو رحلة",
+"Personne ne correspond.":"لا أحد مطابق.",
+"Pause de synchronisation : ce carnet s’est synchronisé très souvent. Reprise automatique dans quelques minutes.":"المزامنة متوقفة مؤقتًا: تمت مزامنة هذا الدفتر كثيرًا. ستُستأنف تلقائيًا خلال بضع دقائق.",
 "Je rejoins le voyage ou le carnet d’un ami":"أنضم إلى رحلة صديق أو دفتره",
 "Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"تلقّيت رمزًا أو رابطًا: الصقه، فتصل الرحلة (أو كل رحلاته) إلى هاتفك.",
 "📸 Photos : {0} / {1}…":"📸 الصور: {0} / {1}…",

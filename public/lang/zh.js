@@ -1,4 +1,13 @@
 I18N.load({
+"Voir la suite":"查看更多",
+"👥 {0} personnes":"👥 {0}人",
+"👥 {0} personne":"👥 {0}人",
+"🧳 {0} voyages":"🧳 {0}次旅行",
+"🧳 {0} voyage":"🧳 {0}次旅行",
+"{0} voyages":"{0}次旅行",
+"🔎 Chercher une personne ou un voyage":"🔎 搜索某人或某次旅行",
+"Personne ne correspond.":"没有匹配的人。",
+"Pause de synchronisation : ce carnet s’est synchronisé très souvent. Reprise automatique dans quelques minutes.":"同步已暂停：此日志同步过于频繁。几分钟后将自动恢复。",
 "Je rejoins le voyage ou le carnet d’un ami":"加入朋友的旅行或手账",
 "Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"收到了代码或链接：粘贴进来，旅行（或他所有的旅行）就会同步到你的手机。",
 "📸 Photos : {0} / {1}…":"📸 照片：{0} / {1}…",

@@ -1,4 +1,13 @@
 I18N.load({
+"Voir la suite":"続きを見る",
+"👥 {0} personnes":"👥 {0}人",
+"👥 {0} personne":"👥 {0}人",
+"🧳 {0} voyages":"🧳 {0}件の旅",
+"🧳 {0} voyage":"🧳 {0}件の旅",
+"{0} voyages":"{0}件の旅",
+"🔎 Chercher une personne ou un voyage":"🔎 人または旅を検索",
+"Personne ne correspond.":"該当する人はいません。",
+"Pause de synchronisation : ce carnet s’est synchronisé très souvent. Reprise automatique dans quelques minutes.":"同期を一時停止中：この日記は頻繁に同期されています。数分後に自動で再開します。",
 "Je rejoins le voyage ou le carnet d’un ami":"友だちの旅行や手帳に参加する",
 "Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"コードやリンクを受け取ったら貼り付けてね。旅行（またはその人の旅行すべて）がスマホに届きます。",
 "📸 Photos : {0} / {1}…":"📸 写真：{0} / {1}…",

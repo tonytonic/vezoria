@@ -1,4 +1,13 @@
 I18N.load({
+"Voir la suite":"Показать ещё",
+"👥 {0} personnes":"👥 {0} чел.",
+"👥 {0} personne":"👥 {0} чел.",
+"🧳 {0} voyages":"🧳 {0} поездки",
+"🧳 {0} voyage":"🧳 {0} поездка",
+"{0} voyages":"{0} поездки",
+"🔎 Chercher une personne ou un voyage":"🔎 Найти человека или поездку",
+"Personne ne correspond.":"Никого не найдено.",
+"Pause de synchronisation : ce carnet s’est synchronisé très souvent. Reprise automatique dans quelques minutes.":"Синхронизация приостановлена: этот дневник синхронизировался слишком часто. Она возобновится автоматически через несколько минут.",
 "Je rejoins le voyage ou le carnet d’un ami":"Присоединиться к поездке или дневнику друга",
 "Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"Ты получил код или ссылку: вставь её, и поездка (или все его поездки) появится на твоём телефоне.",
 "📸 Photos : {0} / {1}…":"📸 Фото: {0} / {1}…",

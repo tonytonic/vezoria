@@ -1,4 +1,13 @@
 I18N.load({
+"Voir la suite":"Ver mais",
+"👥 {0} personnes":"👥 {0} pessoas",
+"👥 {0} personne":"👥 {0} pessoa",
+"🧳 {0} voyages":"🧳 {0} viagens",
+"🧳 {0} voyage":"🧳 {0} viagem",
+"{0} voyages":"{0} viagens",
+"🔎 Chercher une personne ou un voyage":"🔎 Procurar uma pessoa ou uma viagem",
+"Personne ne correspond.":"Ninguém corresponde.",
+"Pause de synchronisation : ce carnet s’est synchronisé très souvent. Reprise automatique dans quelques minutes.":"Sincronização em pausa: este diário sincronizou muitas vezes. Retoma automaticamente dentro de alguns minutos.",
 "Je rejoins le voyage ou le carnet d’un ami":"Entro na viagem ou no diário de um amigo",
 "Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"Recebeu um código ou link: cole-o e a viagem (ou todas as viagens dele) chega ao seu celular.",
 "📸 Photos : {0} / {1}…":"📸 Fotos: {0} / {1}…",

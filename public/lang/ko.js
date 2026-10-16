@@ -1,4 +1,13 @@
 I18N.load({
+"Voir la suite":"더 보기",
+"👥 {0} personnes":"👥 {0}명",
+"👥 {0} personne":"👥 {0}명",
+"🧳 {0} voyages":"🧳 {0}개 여행",
+"🧳 {0} voyage":"🧳 {0}개 여행",
+"{0} voyages":"{0}개 여행",
+"🔎 Chercher une personne ou un voyage":"🔎 사람 또는 여행 검색",
+"Personne ne correspond.":"일치하는 사람이 없어요.",
+"Pause de synchronisation : ce carnet s’est synchronisé très souvent. Reprise automatique dans quelques minutes.":"동기화 일시 중지: 이 일지가 너무 자주 동기화되었어요. 몇 분 후 자동으로 다시 시작됩니다.",
 "Je rejoins le voyage ou le carnet d’un ami":"친구의 여행이나 일기에 참여해요",
 "Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"코드나 링크를 받았다면 붙여 넣으세요. 여행(또는 친구의 모든 여행)이 휴대폰으로 와요.",
 "📸 Photos : {0} / {1}…":"📸 사진: {0} / {1}…",

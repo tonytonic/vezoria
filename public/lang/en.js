@@ -1,4 +1,13 @@
 I18N.load({
+"Voir la suite":"See more",
+"👥 {0} personnes":"👥 {0} people",
+"👥 {0} personne":"👥 {0} person",
+"🧳 {0} voyages":"🧳 {0} trips",
+"🧳 {0} voyage":"🧳 {0} trip",
+"{0} voyages":"{0} trips",
+"🔎 Chercher une personne ou un voyage":"🔎 Search a person or a trip",
+"Personne ne correspond.":"Nobody matches.",
+"Pause de synchronisation : ce carnet s’est synchronisé très souvent. Reprise automatique dans quelques minutes.":"Sync paused: this journal has synced very often. It will resume automatically in a few minutes.",
 "Je rejoins le voyage ou le carnet d’un ami":"I’m joining a friend’s trip or journal",
 "Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"You received a code or a link: paste it, and the trip (or all their trips) arrives on your phone.",
 "📸 Photos : {0} / {1}…":"📸 Photos: {0} / {1}…",

@@ -1,4 +1,13 @@
 I18N.load({
+"Voir la suite":"और देखें",
+"👥 {0} personnes":"👥 {0} लोग",
+"👥 {0} personne":"👥 {0} व्यक्ति",
+"🧳 {0} voyages":"🧳 {0} यात्राएँ",
+"🧳 {0} voyage":"🧳 {0} यात्रा",
+"{0} voyages":"{0} यात्राएँ",
+"🔎 Chercher une personne ou un voyage":"🔎 किसी व्यक्ति या यात्रा को खोजें",
+"Personne ne correspond.":"कोई मेल नहीं खाता।",
+"Pause de synchronisation : ce carnet s’est synchronisé très souvent. Reprise automatique dans quelques minutes.":"सिंक रुका हुआ है: यह जर्नल बहुत बार सिंक हुआ है। कुछ मिनटों में यह अपने आप फिर शुरू होगा।",
 "Je rejoins le voyage ou le carnet d’un ami":"मैं किसी दोस्त की यात्रा या डायरी से जुड़ रहा हूँ",
 "Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"आपको कोड या लिंक मिला है: उसे पेस्ट करें, यात्रा (या उसकी सारी यात्राएँ) आपके फ़ोन पर आ जाएँगी।",
 "📸 Photos : {0} / {1}…":"📸 फ़ोटो: {0} / {1}…",

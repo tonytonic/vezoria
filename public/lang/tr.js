@@ -1,4 +1,13 @@
 I18N.load({
+"Voir la suite":"Devamını gör",
+"👥 {0} personnes":"👥 {0} kişi",
+"👥 {0} personne":"👥 {0} kişi",
+"🧳 {0} voyages":"🧳 {0} seyahat",
+"🧳 {0} voyage":"🧳 {0} seyahat",
+"{0} voyages":"{0} seyahat",
+"🔎 Chercher une personne ou un voyage":"🔎 Bir kişi veya seyahat ara",
+"Personne ne correspond.":"Eşleşen kimse yok.",
+"Pause de synchronisation : ce carnet s’est synchronisé très souvent. Reprise automatique dans quelques minutes.":"Senkronizasyon duraklatıldı: bu günlük çok sık senkronize edildi. Birkaç dakika içinde otomatik olarak devam edecek.",
 "Je rejoins le voyage ou le carnet d’un ami":"Bir arkadaşımın seyahatine veya günlüğüne katılıyorum",
 "Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"Bir kod veya bağlantı aldın: yapıştır, seyahat (ya da tüm seyahatleri) telefonuna gelsin.",
 "📸 Photos : {0} / {1}…":"📸 Fotoğraflar: {0} / {1}…",
