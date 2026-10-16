@@ -1,4 +1,5 @@
 I18N.load({
+"📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 Export of back-up importeren (JSON of ZIP)",
 "👀 Publié · inviter des abonnés":"👀 Gepubliceerd · volgers uitnodigen",
 "👀 Publier pour des abonnés":"👀 Publiceren voor volgers",
 "👥 Ajouter un compagnon":"👥 Reisgenoot toevoegen",

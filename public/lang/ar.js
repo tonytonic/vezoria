@@ -1,4 +1,5 @@
 I18N.load({
+"📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 استيراد تصدير أو نسخة احتياطية (JSON أو ZIP)",
 "👀 Publié · inviter des abonnés":"👀 منشور · دعوة متابعين",
 "👀 Publier pour des abonnés":"👀 نشر للمتابعين",
 "👥 Ajouter un compagnon":"👥 إضافة رفيق",

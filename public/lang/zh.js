@@ -1,4 +1,5 @@
 I18N.load({
+"📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 导入导出文件或备份（JSON 或 ZIP）",
 "👀 Publié · inviter des abonnés":"👀 已发布 · 邀请关注者",
 "👀 Publier pour des abonnés":"👀 发布给关注者",
 "👥 Ajouter un compagnon":"👥 添加旅伴",

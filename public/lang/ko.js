@@ -1,4 +1,5 @@
 I18N.load({
+"📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 내보내기 또는 백업 가져오기 (JSON 또는 ZIP)",
 "👀 Publié · inviter des abonnés":"👀 공개됨 · 팔로워 초대",
 "👀 Publier pour des abonnés":"👀 팔로워에게 공개",
 "👥 Ajouter un compagnon":"👥 동행자 추가",

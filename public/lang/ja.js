@@ -1,4 +1,5 @@
 I18N.load({
+"📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 エクスポートまたはバックアップを読み込む（JSON または ZIP）",
 "👀 Publié · inviter des abonnés":"👀 公開中 · フォロワーを招待",
 "👀 Publier pour des abonnés":"👀 フォロワー向けに公開",
 "👥 Ajouter un compagnon":"👥 同行者を追加",

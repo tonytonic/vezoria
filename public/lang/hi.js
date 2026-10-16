@@ -1,4 +1,5 @@
 I18N.load({
+"📥 Importer un export ou une sauvegarde (JSON ou ZIP)":"📥 एक्सपोर्ट या बैकअप आयात करें (JSON या ZIP)",
 "👀 Publié · inviter des abonnés":"👀 प्रकाशित · फ़ॉलोअर आमंत्रित करें",
 "👀 Publier pour des abonnés":"👀 फ़ॉलोअर के लिए प्रकाशित करें",
 "👥 Ajouter un compagnon":"👥 साथी जोड़ें",
