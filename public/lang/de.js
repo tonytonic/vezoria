@@ -1,4 +1,13 @@
 I18N.load({
+"Personne pour l’instant : envoie le lien abonné.":"Noch niemand: Schick den Follower-Link.",
+"📚 Mon carnet publié":"📚 Mein veröffentlichtes Tagebuch",
+"{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} Reisen mit einem einzigen Link: Deine Follower sehen alle diese Reisen und wechseln von einer zur anderen.",
+"🧳 Les {0} voyages":"🧳 Die {0} Reisen",
+"📤 Inviter · choisir":"📤 Einladen · auswählen",
+"📚 Publié avec tout ton carnet : {0} voyages, un seul lien.":"📚 Mit deinem ganzen Tagebuch veröffentlicht: {0} Reisen, ein Link.",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?":"Neuen Follower-Link für deine {0} gemeinsam veröffentlichten Reisen erstellen?",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"Neuen Follower-Link für deine {0} gemeinsam veröffentlichten Reisen erstellen?\n\nDer alte Link funktioniert nicht mehr: Niemand sieht deine Erinnerungen, bis du den neuen Link verschickst. Bisherige ❤️ und Kommentare werden gelöscht.",
+"L’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"Der alte Link funktioniert nicht mehr: Niemand sieht deine Erinnerungen, bis du den neuen Link verschickst. Bisherige ❤️ und Kommentare werden gelöscht.",
 "Voir la suite":"Mehr ansehen",
 "👥 {0} personnes":"👥 {0} Personen",
 "👥 {0} personne":"👥 {0} Person",

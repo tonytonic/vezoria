@@ -1,4 +1,13 @@
 I18N.load({
+"Personne pour l’instant : envoie le lien abonné.":"अभी कोई नहीं: फ़ॉलोअर लिंक भेजें।",
+"📚 Mon carnet publié":"📚 मेरी प्रकाशित डायरी",
+"{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"एक ही लिंक से {0} यात्राएँ: आपके फ़ॉलोअर ये सभी यात्राएँ देखते हैं और एक से दूसरी पर जाते हैं।",
+"🧳 Les {0} voyages":"🧳 सभी {0} यात्राएँ",
+"📤 Inviter · choisir":"📤 आमंत्रित करें · चुनें",
+"📚 Publié avec tout ton carnet : {0} voyages, un seul lien.":"📚 पूरी डायरी के साथ प्रकाशित: {0} यात्राएँ, एक लिंक।",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?":"साथ में प्रकाशित अपनी {0} यात्राओं के लिए नया फ़ॉलोअर लिंक बनाएँ?",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"साथ में प्रकाशित अपनी {0} यात्राओं के लिए नया फ़ॉलोअर लिंक बनाएँ?\n\nपुराना लिंक काम करना बंद कर देगा: जब तक तुम नया लिंक नहीं भेजते, कोई तुम्हारी यादें नहीं देख पाएगा। पिछले ❤️ और टिप्पणियाँ मिट जाएँगी।",
+"L’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"पुराना लिंक काम करना बंद कर देगा: जब तक तुम नया लिंक नहीं भेजते, कोई तुम्हारी यादें नहीं देख पाएगा। पिछले ❤️ और टिप्पणियाँ मिट जाएँगी।",
 "Voir la suite":"और देखें",
 "👥 {0} personnes":"👥 {0} लोग",
 "👥 {0} personne":"👥 {0} व्यक्ति",

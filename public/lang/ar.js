@@ -1,4 +1,13 @@
 I18N.load({
+"Personne pour l’instant : envoie le lien abonné.":"لا أحد حتى الآن: أرسل رابط المتابعين.",
+"📚 Mon carnet publié":"📚 دفتري المنشور",
+"{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} رحلات برابط واحد: يرى متابعوك كل هذه الرحلات وينتقلون من رحلة إلى أخرى.",
+"🧳 Les {0} voyages":"🧳 الرحلات الـ{0}",
+"📤 Inviter · choisir":"📤 دعوة · اختيار",
+"📚 Publié avec tout ton carnet : {0} voyages, un seul lien.":"📚 منشور مع دفترك كاملًا: {0} رحلات، رابط واحد.",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?":"إنشاء رابط متابعين جديد لرحلاتك الـ{0} المنشورة معًا؟",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"إنشاء رابط متابعين جديد لرحلاتك الـ{0} المنشورة معًا؟\n\nسيتوقف الرابط القديم عن العمل: لن يرى أحد ذكرياتك حتى ترسل الرابط الجديد. تُحذف ❤️ والتعليقات السابقة.",
+"L’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"سيتوقف الرابط القديم عن العمل: لن يرى أحد ذكرياتك حتى ترسل الرابط الجديد. تُحذف ❤️ والتعليقات السابقة.",
 "Voir la suite":"عرض المزيد",
 "👥 {0} personnes":"👥 {0} أشخاص",
 "👥 {0} personne":"👥 {0} شخص",

@@ -1,4 +1,13 @@
 I18N.load({
+"Personne pour l’instant : envoie le lien abonné.":"Пока никого: отправь ссылку для подписчиков.",
+"📚 Mon carnet publié":"📚 Мой опубликованный дневник",
+"{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} поездок по одной ссылке: подписчики видят все эти поездки и переходят от одной к другой.",
+"🧳 Les {0} voyages":"🧳 Все поездки: {0}",
+"📤 Inviter · choisir":"📤 Пригласить · выбрать",
+"📚 Publié avec tout ton carnet : {0} voyages, un seul lien.":"📚 Опубликовано со всем дневником: {0} поездок, одна ссылка.",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?":"Создать новую ссылку для подписчиков для {0} поездок, опубликованных вместе?",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"Создать новую ссылку для подписчиков для {0} поездок, опубликованных вместе?\n\nСтарая ссылка перестанет работать: никто не увидит твои воспоминания, пока ты не отправишь новую. Прежние ❤️ и комментарии удаляются.",
+"L’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"Старая ссылка перестанет работать: никто не увидит твои воспоминания, пока ты не отправишь новую. Прежние ❤️ и комментарии удаляются.",
 "Voir la suite":"Показать ещё",
 "👥 {0} personnes":"👥 {0} чел.",
 "👥 {0} personne":"👥 {0} чел.",

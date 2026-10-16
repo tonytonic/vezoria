@@ -1,4 +1,13 @@
 I18N.load({
+"Personne pour l’instant : envoie le lien abonné.":"Nobody yet: send the follower link.",
+"📚 Mon carnet publié":"📚 My published journal",
+"{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} trips with a single link: your followers see all these trips and move from one to the next.",
+"🧳 Les {0} voyages":"🧳 The {0} trips",
+"📤 Inviter · choisir":"📤 Invite · choose",
+"📚 Publié avec tout ton carnet : {0} voyages, un seul lien.":"📚 Published with your whole journal: {0} trips, one link.",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?":"Create a new follower link for your {0} trips published together?",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"Create a new follower link for your {0} trips published together?\n\nThe old link will stop working: nobody sees your memories until you send the new link. Past ❤️ and comments are deleted.",
+"L’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"The old link will stop working: nobody sees your memories until you send the new link. Past ❤️ and comments are deleted.",
 "Voir la suite":"See more",
 "👥 {0} personnes":"👥 {0} people",
 "👥 {0} personne":"👥 {0} person",

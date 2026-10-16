@@ -1,4 +1,13 @@
 I18N.load({
+"Personne pour l’instant : envoie le lien abonné.":"Nog niemand: stuur de volgerslink.",
+"📚 Mon carnet publié":"📚 Mijn gepubliceerde dagboek",
+"{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} reizen met één link: je volgers zien al deze reizen en gaan van de ene naar de andere.",
+"🧳 Les {0} voyages":"🧳 De {0} reizen",
+"📤 Inviter · choisir":"📤 Uitnodigen · kiezen",
+"📚 Publié avec tout ton carnet : {0} voyages, un seul lien.":"📚 Gepubliceerd met je hele dagboek: {0} reizen, één link.",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?":"Een nieuwe volgerslink maken voor je {0} samen gepubliceerde reizen?",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"Een nieuwe volgerslink maken voor je {0} samen gepubliceerde reizen?\n\nDe oude link werkt niet meer: niemand ziet je herinneringen tot je de nieuwe link verstuurt. Eerdere ❤️ en reacties worden gewist.",
+"L’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"De oude link werkt niet meer: niemand ziet je herinneringen tot je de nieuwe link verstuurt. Eerdere ❤️ en reacties worden gewist.",
 "Voir la suite":"Meer zien",
 "👥 {0} personnes":"👥 {0} personen",
 "👥 {0} personne":"👥 {0} persoon",

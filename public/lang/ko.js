@@ -1,4 +1,13 @@
 I18N.load({
+"Personne pour l’instant : envoie le lien abonné.":"아직 아무도 없어요: 팔로워 링크를 보내세요.",
+"📚 Mon carnet publié":"📚 공개한 내 일지",
+"{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"링크 하나로 여행 {0}개: 팔로워가 이 여행을 모두 보고 하나씩 넘겨 볼 수 있어요.",
+"🧳 Les {0} voyages":"🧳 여행 {0}개",
+"📤 Inviter · choisir":"📤 초대 · 선택",
+"📚 Publié avec tout ton carnet : {0} voyages, un seul lien.":"📚 일지 전체와 함께 공개: 여행 {0}개, 링크 하나.",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?":"함께 공개한 여행 {0}개에 대한 새 팔로워 링크를 만들까요?",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"함께 공개한 여행 {0}개에 대한 새 팔로워 링크를 만들까요?\n\n이전 링크는 더 이상 작동하지 않아요: 새 링크를 보내기 전까지 아무도 추억을 볼 수 없습니다. 지난 ❤️와 댓글은 삭제됩니다.",
+"L’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"이전 링크는 더 이상 작동하지 않아요: 새 링크를 보내기 전까지 아무도 추억을 볼 수 없습니다. 지난 ❤️와 댓글은 삭제됩니다.",
 "Voir la suite":"더 보기",
 "👥 {0} personnes":"👥 {0}명",
 "👥 {0} personne":"👥 {0}명",

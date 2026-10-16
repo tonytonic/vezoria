@@ -1,4 +1,13 @@
 I18N.load({
+"Personne pour l’instant : envoie le lien abonné.":"暂时还没有人：发送关注者链接吧。",
+"📚 Mon carnet publié":"📚 我发布的日志",
+"{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} 次旅行共用一个链接：你的关注者可以看到所有这些旅行并逐一浏览。",
+"🧳 Les {0} voyages":"🧳 全部 {0} 次旅行",
+"📤 Inviter · choisir":"📤 邀请 · 选择",
+"📚 Publié avec tout ton carnet : {0} voyages, un seul lien.":"📚 与整个日志一起发布：{0} 次旅行，一个链接。",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?":"为一起发布的 {0} 次旅行创建新的关注者链接？",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"为一起发布的 {0} 次旅行创建新的关注者链接？\n\n旧链接将失效：在你重新发送新链接之前，没有人能看到你的回忆。之前的 ❤️ 和评论会被删除。",
+"L’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"旧链接将失效：在你重新发送新链接之前，没有人能看到你的回忆。之前的 ❤️ 和评论会被删除。",
 "Voir la suite":"查看更多",
 "👥 {0} personnes":"👥 {0}人",
 "👥 {0} personne":"👥 {0}人",

@@ -1,4 +1,13 @@
 I18N.load({
+"Personne pour l’instant : envoie le lien abonné.":"まだ誰もいません：フォロワーリンクを送りましょう。",
+"📚 Mon carnet publié":"📚 公開中の日記",
+"{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"{0} 件の旅をひとつのリンクで：フォロワーはすべての旅を見て、旅から旅へ移動できます。",
+"🧳 Les {0} voyages":"🧳 {0} 件の旅",
+"📤 Inviter · choisir":"📤 招待 · 選択",
+"📚 Publié avec tout ton carnet : {0} voyages, un seul lien.":"📚 日記全体で公開中：{0} 件の旅、ひとつのリンク。",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?":"一緒に公開した {0} 件の旅の新しいフォロワーリンクを作成しますか？",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"一緒に公開した {0} 件の旅の新しいフォロワーリンクを作成しますか？\n\n古いリンクは使えなくなります：新しいリンクを送るまで、誰もあなたの思い出を見られません。これまでの ❤️ とコメントは消去されます。",
+"L’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"古いリンクは使えなくなります：新しいリンクを送るまで、誰もあなたの思い出を見られません。これまでの ❤️ とコメントは消去されます。",
 "Voir la suite":"続きを見る",
 "👥 {0} personnes":"👥 {0}人",
 "👥 {0} personne":"👥 {0}人",

@@ -1,4 +1,13 @@
 I18N.load({
+"Personne pour l’instant : envoie le lien abonné.":"Henüz kimse yok: takipçi bağlantısını gönder.",
+"📚 Mon carnet publié":"📚 Yayınlanan günlüğüm",
+"{0} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.":"Tek bağlantıyla {0} seyahat: takipçilerin tüm bu seyahatleri görür ve birinden diğerine geçer.",
+"🧳 Les {0} voyages":"🧳 {0} seyahat",
+"📤 Inviter · choisir":"📤 Davet et · seç",
+"📚 Publié avec tout ton carnet : {0} voyages, un seul lien.":"📚 Tüm günlüğünle yayınlandı: {0} seyahat, tek bağlantı.",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?":"Birlikte yayınlanan {0} seyahatin için yeni bir takipçi bağlantısı oluşturulsun mu?",
+"Créer un nouveau lien abonné pour tes {0} voyages publiés ensemble ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"Birlikte yayınlanan {0} seyahatin için yeni bir takipçi bağlantısı oluşturulsun mu?\n\nEski bağlantı artık çalışmaz: yeni bağlantıyı gönderene kadar kimse anılarını göremez. Geçmiş ❤️’ler ve yorumlar silinir.",
+"L’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.":"Eski bağlantı artık çalışmaz: yeni bağlantıyı gönderene kadar kimse anılarını göremez. Geçmiş ❤️’ler ve yorumlar silinir.",
 "Voir la suite":"Devamını gör",
 "👥 {0} personnes":"👥 {0} kişi",
 "👥 {0} personne":"👥 {0} kişi",
