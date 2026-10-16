@@ -1,4 +1,6 @@
 I18N.load({
+"Je rejoins le voyage ou le carnet d’un ami":"Bir arkadaşımın seyahatine veya günlüğüne katılıyorum",
+"Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"Bir kod veya bağlantı aldın: yapıştır, seyahat (ya da tüm seyahatleri) telefonuna gelsin.",
 "📸 Photos : {0} / {1}…":"📸 Fotoğraflar: {0} / {1}…",
 "Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"«Değiştir» ile iki kez içe aktarılan bir seyahatin fazla fotoğrafları hemen aşağıda temizlenir.",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"Yeni bir şey yok: bu dosyadaki her şey zaten bu telefonda.",

@@ -1,4 +1,6 @@
 I18N.load({
+"Je rejoins le voyage ou le carnet d’un ami":"मैं किसी दोस्त की यात्रा या डायरी से जुड़ रहा हूँ",
+"Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"आपको कोड या लिंक मिला है: उसे पेस्ट करें, यात्रा (या उसकी सारी यात्राएँ) आपके फ़ोन पर आ जाएँगी।",
 "📸 Photos : {0} / {1}…":"📸 फ़ोटो: {0} / {1}…",
 "Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"“बदलें” से दो बार इम्पोर्ट हुई यात्रा की फ़ालतू फ़ोटो ठीक नीचे साफ़ होती हैं।",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"कुछ नया नहीं: इस फ़ाइल में जो कुछ है वह पहले से इस फ़ोन पर है।",

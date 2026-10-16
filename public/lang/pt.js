@@ -1,4 +1,6 @@
 I18N.load({
+"Je rejoins le voyage ou le carnet d’un ami":"Entro na viagem ou no diário de um amigo",
+"Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"Recebeu um código ou link: cole-o e a viagem (ou todas as viagens dele) chega ao seu celular.",
 "📸 Photos : {0} / {1}…":"📸 Fotos: {0} / {1}…",
 "Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"As fotos a mais de uma viagem importada duas vezes com «Substituir» são limpas logo abaixo.",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"Nada de novo: tudo o que este arquivo contém já está neste celular.",

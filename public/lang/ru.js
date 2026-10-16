@@ -1,4 +1,6 @@
 I18N.load({
+"Je rejoins le voyage ou le carnet d’un ami":"Присоединиться к поездке или дневнику друга",
+"Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"Ты получил код или ссылку: вставь её, и поездка (или все его поездки) появится на твоём телефоне.",
 "📸 Photos : {0} / {1}…":"📸 Фото: {0} / {1}…",
 "Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"Лишние фото поездки, импортированной дважды с «Заменить», удаляются чуть ниже.",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"Ничего нового: всё из этого файла уже есть на телефоне.",

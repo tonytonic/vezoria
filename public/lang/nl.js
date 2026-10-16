@@ -1,4 +1,6 @@
 I18N.load({
+"Je rejoins le voyage ou le carnet d’un ami":"Ik doe mee met de reis of het reisdagboek van een vriend",
+"Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"Je kreeg een code of link: plak hem, en de reis (of al zijn reizen) komt op je telefoon.",
 "📸 Photos : {0} / {1}…":"📸 Foto’s: {0} / {1}…",
 "Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"Overtollige foto’s van een reis die twee keer met ‘Vervangen’ is geïmporteerd, ruim je hieronder op.",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"Niets nieuws: alles in dit bestand staat al op deze telefoon.",

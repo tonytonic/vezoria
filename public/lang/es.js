@@ -1,4 +1,6 @@
 I18N.load({
+"Je rejoins le voyage ou le carnet d’un ami":"Me uno al viaje o al cuaderno de un amigo",
+"Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"Has recibido un código o un enlace: pégalo y el viaje (o todos sus viajes) llega a tu teléfono.",
 "📸 Photos : {0} / {1}…":"📸 Fotos: {0} / {1}…",
 "Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"Las fotos de más de un viaje importado dos veces con «Reemplazar» se limpian justo debajo.",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"Nada nuevo: todo lo que contiene este archivo ya está en este teléfono.",

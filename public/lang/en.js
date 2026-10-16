@@ -1,4 +1,6 @@
 I18N.load({
+"Je rejoins le voyage ou le carnet d’un ami":"I’m joining a friend’s trip or journal",
+"Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"You received a code or a link: paste it, and the trip (or all their trips) arrives on your phone.",
 "📸 Photos : {0} / {1}…":"📸 Photos: {0} / {1}…",
 "Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"Extra photos from a trip imported twice with “Replace” are cleaned up just below.",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"Nothing new: everything in this file is already on this phone.",

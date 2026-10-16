@@ -1,4 +1,6 @@
 I18N.load({
+"Je rejoins le voyage ou le carnet d’un ami":"친구의 여행이나 일기에 참여해요",
+"Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"코드나 링크를 받았다면 붙여 넣으세요. 여행(또는 친구의 모든 여행)이 휴대폰으로 와요.",
 "📸 Photos : {0} / {1}…":"📸 사진: {0} / {1}…",
 "Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"‘바꾸기’로 두 번 가져온 여행의 남는 사진은 바로 아래에서 정리해요.",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"새로운 게 없어요: 이 파일의 내용은 모두 이미 이 휴대폰에 있어요.",

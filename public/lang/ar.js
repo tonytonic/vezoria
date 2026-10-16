@@ -1,4 +1,6 @@
 I18N.load({
+"Je rejoins le voyage ou le carnet d’un ami":"أنضم إلى رحلة صديق أو دفتره",
+"Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.":"تلقّيت رمزًا أو رابطًا: الصقه، فتصل الرحلة (أو كل رحلاته) إلى هاتفك.",
 "📸 Photos : {0} / {1}…":"📸 الصور: {0} / {1}…",
 "Les photos en trop d’un voyage importé deux fois avec « Remplacer » se nettoient juste en dessous.":"الصور الزائدة لرحلة استُوردت مرتين بخيار «استبدال» تُنظَّف أدناه مباشرة.",
 "Rien de nouveau : tout ce que contient ce fichier est déjà sur ce téléphone.":"لا جديد: كل ما في هذا الملف موجود مسبقًا على هذا الهاتف.",
