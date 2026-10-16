@@ -11708,7 +11708,8 @@ ${pm.join('\n')}</Document></kml>`;
     let h = `<h2>👥 Partager</h2>` + followHTML();
     if(t){
       const code = TS()[t.id], on = code && spaceObj(code), sp = on ? spaceObj(code) : null, v = (t.voyageurs||[]).filter(prof), fc = feedCode(t.id);
-      const nfw = fc ? list('follower', x=>x.trip===ftId(t.id) && !isBlk(x)).length : 0, nlk = fc ? list('like', l=>l.trip===ftId(t.id) && l.on && !isBlk(l)).length : 0, ncm = fc ? list('comment', c=>c.trip===ftId(t.id) && !isBlk(c)).length : 0;
+      const grpT = fc ? Object.keys(FT()).filter(x=>FT()[x] === fc && R[x] && !R[x].deleted) : [], gIds = new Set(grpT.map(ftId));   // carnet publié d’un coup : les abonnés voient tous ces voyages
+      const nfw = fc ? new Set(list('follower', x=>gIds.has(x.trip) && !isBlk(x)).map(x=>String(x.id).split(':').pop())).size : 0, nlk = fc ? list('like', l=>l.trip===ftId(t.id) && l.on && !isBlk(l)).length : 0, ncm = fc ? list('comment', c=>c.trip===ftId(t.id) && !isBlk(c)).length : 0;
       h += `<div class="sh-sec" data-notr>🧳 ${esc(t.titre)}</div>
       <div class="sh-card"><div class="sh-k">👥 Voyager ensemble</div><p>Tes compagnons voient tout le voyage et le complètent avec toi : programme, résas, budget, souvenirs. Chaque ajout est signé.</p>
         <div class="cv-row" style="gap:6px;flex-wrap:wrap;margin:6px 0 10px">${v.map(pid=>pchip(pid)).join('') || '<span class="v-sum-small">Personne d’autre pour l’instant</span>'}</div>
@@ -11716,7 +11717,7 @@ ${pm.join('\n')}</Document></kml>`;
         <div class="v-sum-small" style="margin-top:6px">${on ? `☁️ En ligne et chiffré · ${sp.err ? '⚠️ ' + esc(sp.err) : (sp.dirty||[]).length ? '⏳ envoi en cours' : '✓ à jour'}` : 'Un seul geste : le voyage est mis en ligne (chiffré) et tu envoies le lien par message. Tes autres voyages restent privés.'}</div>
         <div class="sh-links">${on ? `<button type="button" onclick="CV.tripShareSheet('${t.id}')">🔑 Code du voyage et état du partage</button>` : `<button type="button" onclick="CV.tripShare('${t.id}')">🔑 Réutiliser un ancien code de voyage</button>`}<button type="button" onclick="CV.editTrip('${t.id}')">👥 Choisir les voyageurs</button></div></div>
       <div class="sh-card"><div class="sh-k">👀 Abonnés</div><p>Ta famille et tes amis suivent le voyage comme un carnet de bord : uniquement les photos, les lieux et les récits. Ils mettent des ❤️ et des commentaires. Le reste reste privé.</p>
-        ${fc ? `<div class="sh-st"><span>👀 <b>${nfw}</b> abonné${nfw>1?'s':''}</span><span>❤️ <b>${nlk}</b></span><span>💬 <b>${ncm}</b></span></div>
+        ${fc ? `${grpT.length > 1 ? `<div class="v-sum-small" style="margin-bottom:6px">📚 Publié avec tout ton carnet : ${grpT.length} voyages, un seul lien.</div>` : ''}<div class="sh-st"><span>👀 <b>${nfw}</b> abonné${nfw>1?'s':''}</span><span>❤️ <b>${nlk}</b></span><span>💬 <b>${ncm}</b></span></div>
           <button type="button" class="v-btn" onclick="CV.feedPublish('${t.id}')">📤 Inviter des abonnés</button>
           <div class="sh-links"><button type="button" onclick="CV.feedView('${ftId(t.id)}')">👀 Voir comme un abonné</button><button type="button" onclick="CV.feedStop('${t.id}')">Arrêter la publication</button></div>`
         : `<button type="button" class="v-btn" onclick="CV.feedPublish('${t.id}')">👀 Publier pour des abonnés</button>`}</div>`;
@@ -13476,6 +13477,9 @@ ${pm.join('\n')}</Document></kml>`;
     sel.forEach(tid=>{ if(!FT()[tid]) FT()[tid] = c; });
     persist(); sel.forEach(tid=>feedBuild(tid)); closeSheet(true); toast('👀 Publication en cours…');
     try { await syncNow(); feedUpload(); setTimeout(()=>{ try { pushRegister(true); } catch(e){} }, 2500); } catch(e){}
+    await carnetInvite(c);
+  }
+  async function carnetInvite(c){
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(c) : '';
     const text = MSG(`Suis mes voyages sur Vezoria ✈️ : photos et récits au fil des étapes`) + '\n' + link + '\n' + MSG(`(code abonné : ${c})`);
     if(navigator.share){ try { await navigator.share({title:'Vezoria', text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
@@ -13683,11 +13687,22 @@ ${pm.join('\n')}</Document></kml>`;
     const evRow = e => { const r = e.r, w = esc(r.who || 'Quelqu’un');
       const txt = e.k === 'like' ? `❤️ ${w} aime ta publication` : e.k === 'comment' ? `💬 ${w} : « ${esc(String(r.text||'').slice(0, 80))} »` : e.k === 'follower' ? `👀 ${w} suit ton voyage` : `📸 Nouvelle étape : ${esc(r.titre || r.lieu || '')}`;
       return `<button type="button" class="cv-prow${e.nw ? ' sc-new' : ''}" onclick="CV.feedView('${esc(r.trip)}')"><span>${txt}<small class="v-sum-small" style="display:block">${esc(ttl(r.trip))} · ${when(e.t)}</small></span><span>›</span></button>`; };
-    const nFw = mineT.reduce((s, tid)=>s + list('follower', x=>x.trip===ftId(tid) && !isBlk(x)).length, 0);
+    const fwDev = x => String(x.id).split(':').pop();   // un abonné = un appareil, même s’il a ouvert plusieurs voyages du carnet
+    const nFw = new Set(mineT.flatMap(tid=>list('follower', x=>x.trip===ftId(tid) && !isBlk(x)).map(fwDev))).size;
+    const byCode = {}; mineT.forEach(tid=>{ (byCode[FT()[tid]] = byCode[FT()[tid]] || []).push(tid); });
+    const grpRow = (c, tids) => { const ids = new Set(tids.map(ftId)), fw0 = list('follower', x=>ids.has(x.trip) && !isBlk(x)), seen = new Set(), fw = fw0.filter(x=>!seen.has(fwDev(x)) && seen.add(fwDev(x)));
+      const lk = list('like', l=>ids.has(l.trip) && l.on && !isBlk(l)).length, cm = list('comment', x=>ids.has(x.trip) && !isBlk(x)).length;
+      tids.sort((a,b)=>(R[b].debut||'').localeCompare(R[a].debut||''));
+      return `<div class="sh-card"><div class="sh-k">📚 Mon carnet publié</div><div class="v-sum-small">${tids.length} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.</div>
+        <div class="sh-st" style="margin-top:6px"><span>👀 <b>${fw.length}</b> abonné${fw.length>1?'s':''}</span><span>❤️ <b>${lk}</b></span><span>💬 <b>${cm}</b></span></div>
+        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>fwDev(x) === devId() ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><span data-notr>${esc(x.who || '?')}</span><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
+        <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(c)}</b></div>
+        <details class="sh-more" style="margin-top:6px"><summary>🧳 Les ${tids.length} voyages</summary>${tids.map(tid=>`<button type="button" class="cv-prow" onclick="CV.feedView('${ftId(tid)}')"><span data-notr>${esc(R[tid].titre)}</span><span>›</span></button>`).join('')}</details>
+        <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tids[0])}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.carnetPublishSheet()">📤 Inviter · choisir</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tids[0]}')">🔁 Nouveau lien abonné</button></div></div>`; };
     const pubRow = tid => { const t = R[tid], fw = list('follower', x=>x.trip===ftId(tid) && !isBlk(x)), lk = list('like', l=>l.trip===ftId(tid) && l.on && !isBlk(l)).length, cm = list('comment', c=>c.trip===ftId(tid) && !isBlk(c)).length;
       return `<div class="sh-card"><div class="sh-k">📣 ${esc(t.titre)}</div>
         <div class="sh-st"><span>👀 <b>${fw.length}</b> abonné${fw.length>1?'s':''}</span><span>❤️ <b>${lk}</b></span><span>💬 <b>${cm}</b></span></div>
-        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>x.id.endsWith(':' + devId()) ? esc(x.who || '?') : `<span class="sh-fw">${esc(x.who || '?')}<button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
+        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>x.id.endsWith(':' + devId()) ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><span data-notr>${esc(x.who || '?')}</span><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
         <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(FT()[tid])}</b></div>
         <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tid)}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.feedPublish('${tid}')">📤 Inviter</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tid}')">🔁 Nouveau lien abonné</button></div></div>`; };
     const tripsAll = trips().filter(t=>!t.demo).sort((a,b)=>(b.debut||'').localeCompare(a.debut||''));
@@ -13697,7 +13712,7 @@ ${pm.join('\n')}</Document></kml>`;
     return `
       ${ev.length ? `<div class="sh-card"><div class="sh-k">✨ Nouveautés · 24 h</div>${ev.slice(0, 40).map(evRow).join('')}</div>` : '<div class="v-sum-small" style="margin-bottom:10px">Rien de nouveau ces dernières 24 heures.</div>'}
       <div class="sh-st" style="margin:4px 0 12px"><span>👀 <b>${nFw}</b> abonné${nFw>1?'s':''}</span><span>➡️ <b>${fol.length}</b> voyage${fol.length>1?'s':''} suivi${fol.length>1?'s':''}</span></div>
-      ${others.length ? `<h3>📣 Mes voyages publiés</h3>${others.map(pubRow).join('')}` : (cur ? '' : '<h3>📣 Mes voyages publiés</h3><div class="v-sum-small" style="margin-bottom:8px">Aucun voyage publié pour l’instant : dans un voyage, touche Partager puis Publier pour des abonnés.</div>')}
+      ${Object.values(byCode).some(g=>g.length > 1 || g[0] !== cur) ? `<h3>📣 Mes voyages publiés</h3>${Object.entries(byCode).map(([c, tids])=>tids.length > 1 ? grpRow(c, tids) : tids[0] !== cur ? pubRow(tids[0]) : '').join('')}` : (cur ? '' : '<h3>📣 Mes voyages publiés</h3><div class="v-sum-small" style="margin-bottom:8px">Aucun voyage publié pour l’instant : dans un voyage, touche Partager puis Publier pour des abonnés.</div>')}
       ${fol.length ? '' : '<h3>➡️ Les voyages que je suis</h3><div class="v-sum-small" style="margin-bottom:8px">Aucun pour l’instant.</div>'}
       <div class="sh-card"><div class="sh-k">🔑 J’ai reçu un code</div>
         <button type="button" class="v-btn sec" onclick="CV.joinAny()">🔗 J’ai reçu un code : rejoindre un voyage</button>
@@ -13736,13 +13751,17 @@ ${pm.join('\n')}</Document></kml>`;
   function fwBlock(fwid){ userBlock(fwid); setTimeout(()=>{ try { socialHub(); } catch(e){} }, 150); }
   async function feedReset(tid){
     const old = FT()[tid]; if(!old) return;
-    if(!(await uiConfirm('Créer un nouveau lien abonné ?\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.'))) return;
-    const out = Object.values(R).filter(r=>r && !r.deleted && r.trip === ftId(tid)).map(r=>Object.assign(clone(r), {deleted:true})); if(R[ftId(tid)]) out.push(Object.assign(clone(R[ftId(tid)]), {deleted:true}));
+    const grp = Object.keys(FT()).filter(x=>FT()[x] === old), many = grp.length > 1;   // carnet publié d’un coup : un seul lien pour tous ses voyages
+    if(!(await uiConfirm((many ? `Créer un nouveau lien abonné pour tes ${grp.length} voyages publiés ensemble ?` : 'Créer un nouveau lien abonné ?') + '\n\nL’ancien lien ne marchera plus : plus personne ne voit tes souvenirs tant que tu n’as pas renvoyé le nouveau lien. Les ❤️ et commentaires passés sont effacés.'))) return;
+    const ids = new Set(grp.map(ftId)), out = Object.values(R).filter(r=>r && !r.deleted && (ids.has(r.trip) || ids.has(r.id))).map(r=>Object.assign(clone(r), {deleted:true}));
     putQuiet(out); try { await syncNow(); } catch(e){}
-    out.forEach(r=>{ delete R[r.id]; }); M.spaces = (M.spaces||[]).filter(x=>x.code !== old); delete FT()[tid]; delete TS()[ftId(tid)];
+    out.forEach(r=>{ delete R[r.id]; }); M.spaces = (M.spaces||[]).filter(x=>x.code !== old); grp.forEach(x=>{ delete FT()[x]; delete TS()[ftId(x)]; });
     if(M.fup) delete M.fup[old]; M.fq = (M.fq||[]).filter(x=>x[0] !== old);
-    const c = genCode(); M.spaces.push({code:c, since:0, dirty:[], last:0, err:''}); FT()[tid] = c; persist(); closeSheet(true);
-    await feedPublish(tid);
+    const c = genCode(); M.spaces.push({code:c, since:0, dirty:[], last:0, err:''}); grp.forEach(x=>{ FT()[x] = c; }); if(M.feedAll === old) M.feedAll = c; persist(); closeSheet(true);
+    if(!many){ await feedPublish(tid); return; }
+    grp.forEach(x=>feedBuild(x)); toast('👀 Publication en cours…');
+    try { await syncNow(); feedUpload(); } catch(e){}
+    await carnetInvite(c);
   }
   // 🚩 Signalement : un e-mail prérempli à l'éditeur, avec le code abonné (sans lui, impossible de retrouver le carnet). Aucune photo n'est envoyée.
   async function ugcReport(kind, id){
@@ -13847,7 +13866,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-16l';
+  const BUILD = '2026-10-16m';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
