@@ -1,4 +1,9 @@
 I18N.load({
+"Ce prénom est déjà pris : tu apparais comme « {0} »":"Deze naam is al bezet: je verschijnt als ‘{0}’",
+"Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"Iemand die ‘{0}’ heet, volgt deze reis al.",
+"OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"OK = dat ben ik (op een andere telefoon of in de browser).",
+"Annuler = je suis une autre personne : j’ajoute l’initiale de mon nom.":"Annuleren = ik ben iemand anders: ik voeg de eerste letter van mijn achternaam toe.",
+"Ton prénom et l’initiale de ton nom (ex. Claire M.) :":"Je voornaam en de eerste letter van je achternaam (bv. Claire M.):",
 "Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"Wie is dit? Geef een naam zodat je het weet (alleen jij ziet die).",
 "Qui est-ce ?":"Wie is dit?",
 "👋 Ton prénom ?":"👋 Je voornaam?",

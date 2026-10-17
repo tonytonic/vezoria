@@ -1,4 +1,9 @@
 I18N.load({
+"Ce prénom est déjà pris : tu apparais comme « {0} »":"यह नाम पहले से लिया गया है: आप «{0}» के रूप में दिखेंगे",
+"Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"«{0}» नाम का कोई पहले से यह यात्रा फ़ॉलो कर रहा है।",
+"OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"OK = यह मैं ही हूँ (दूसरे फ़ोन या ब्राउज़र में)।",
+"Annuler = je suis une autre personne : j’ajoute l’initiale de mon nom.":"रद्द करें = मैं कोई और हूँ: मैं अपने उपनाम का पहला अक्षर जोड़ूँगा/गी।",
+"Ton prénom et l’initiale de ton nom (ex. Claire M.) :":"आपका नाम और उपनाम का पहला अक्षर (जैसे Claire M.):",
 "Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"यह कौन है? पहचानने के लिए नाम दें (सिर्फ़ आप देखेंगे)।",
 "Qui est-ce ?":"यह कौन है?",
 "👋 Ton prénom ?":"👋 आपका नाम?",

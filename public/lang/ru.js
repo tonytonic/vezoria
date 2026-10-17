@@ -1,4 +1,9 @@
 I18N.load({
+"Ce prénom est déjà pris : tu apparais comme « {0} »":"Это имя уже занято: ты отображаешься как «{0}»",
+"Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"Кто-то по имени «{0}» уже следит за этой поездкой.",
+"OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"OK = это я (на другом телефоне или в браузере).",
+"Annuler = je suis une autre personne : j’ajoute l’initiale de mon nom.":"Отмена = я другой человек: добавлю инициал фамилии.",
+"Ton prénom et l’initiale de ton nom (ex. Claire M.) :":"Имя и инициал фамилии (напр. Claire M.):",
 "Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"Кто это? Дай имя, чтобы узнавать (видишь только ты).",
 "Qui est-ce ?":"Кто это?",
 "👋 Ton prénom ?":"👋 Как тебя зовут?",

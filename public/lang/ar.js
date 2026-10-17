@@ -1,4 +1,9 @@
 I18N.load({
+"Ce prénom est déjà pris : tu apparais comme « {0} »":"هذا الاسم مستخدم بالفعل: ستظهر باسم «{0}»",
+"Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"شخص اسمه «{0}» يتابع هذه الرحلة بالفعل.",
+"OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"موافق = إنه أنا (على هاتف آخر أو في المتصفح).",
+"Annuler = je suis une autre personne : j’ajoute l’initiale de mon nom.":"إلغاء = أنا شخص آخر: سأضيف الحرف الأول من اسم عائلتي.",
+"Ton prénom et l’initiale de ton nom (ex. Claire M.) :":"اسمك والحرف الأول من اسم العائلة (مثل Claire M.):",
 "Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"من هذا؟ أعطه اسمًا لتتعرف عليه (أنت فقط تراه).",
 "Qui est-ce ?":"من هذا؟",
 "👋 Ton prénom ?":"👋 ما اسمك؟",

@@ -1,4 +1,9 @@
 I18N.load({
+"Ce prénom est déjà pris : tu apparais comme « {0} »":"この名前はすでに使われています。「{0}」として表示されます",
+"Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"「{0}」という名前の人がすでにこの旅をフォローしています。",
+"OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"OK = 私です（別のスマホまたはブラウザ）。",
+"Annuler = je suis une autre personne : j’ajoute l’initiale de mon nom.":"キャンセル = 別人です：名字の頭文字を付けます。",
+"Ton prénom et l’initiale de ton nom (ex. Claire M.) :":"名前と名字の頭文字（例：Claire M.）：",
 "Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"これは誰？わかるように名前を付けましょう（あなただけに表示）。",
 "Qui est-ce ?":"これは誰？",
 "👋 Ton prénom ?":"👋 お名前は？",

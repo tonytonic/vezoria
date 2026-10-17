@@ -1,4 +1,9 @@
 I18N.load({
+"Ce prénom est déjà pris : tu apparais comme « {0} »":"Bu ad zaten alınmış: «{0}» olarak görünüyorsun",
+"Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"«{0}» adlı biri bu seyahati zaten takip ediyor.",
+"OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"Tamam = benim (başka bir telefonda ya da tarayıcıda).",
+"Annuler = je suis une autre personne : j’ajoute l’initiale de mon nom.":"İptal = başka biriyim: soyadımın baş harfini ekliyorum.",
+"Ton prénom et l’initiale de ton nom (ex. Claire M.) :":"Adın ve soyadının baş harfi (örn. Claire M.):",
 "Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"Bu kim? Tanımak için bir ad ver (yalnızca sen görürsün).",
 "Qui est-ce ?":"Bu kim?",
 "👋 Ton prénom ?":"👋 Adın ne?",

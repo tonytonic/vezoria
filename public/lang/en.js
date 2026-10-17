@@ -1,4 +1,9 @@
 I18N.load({
+"Ce prénom est déjà pris : tu apparais comme « {0} »":"This name is already taken: you appear as “{0}”",
+"Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"Someone called “{0}” already follows this trip.",
+"OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"OK = it’s me (on another phone or in the browser).",
+"Annuler = je suis une autre personne : j’ajoute l’initiale de mon nom.":"Cancel = I’m someone else: I’ll add my last-name initial.",
+"Ton prénom et l’initiale de ton nom (ex. Claire M.) :":"Your first name and last-name initial (e.g. Claire M.):",
 "Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"Who is this? Give them a name so you can tell (only you see it).",
 "Qui est-ce ?":"Who is this?",
 "👋 Ton prénom ?":"👋 Your first name?",

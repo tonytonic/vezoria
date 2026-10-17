@@ -1,4 +1,9 @@
 I18N.load({
+"Ce prénom est déjà pris : tu apparais comme « {0} »":"Este nombre ya está cogido: apareces como «{0}»",
+"Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"Alguien llamado «{0}» ya sigue este viaje.",
+"OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"Aceptar = soy yo (en otro teléfono o en el navegador).",
+"Annuler = je suis une autre personne : j’ajoute l’initiale de mon nom.":"Cancelar = soy otra persona: añado la inicial de mi apellido.",
+"Ton prénom et l’initiale de ton nom (ex. Claire M.) :":"Tu nombre y la inicial de tu apellido (ej. Claire M.):",
 "Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"¿Quién es? Ponle un nombre para reconocerlo (solo tú lo ves).",
 "Qui est-ce ?":"¿Quién es?",
 "👋 Ton prénom ?":"👋 ¿Tu nombre?",

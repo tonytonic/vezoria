@@ -1,4 +1,9 @@
 I18N.load({
+"Ce prénom est déjà pris : tu apparais comme « {0} »":"这个名字已被使用：你将显示为「{0}」",
+"Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"已经有名叫「{0}」的人在关注这段旅行。",
+"OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"确定 = 是我（在另一部手机或浏览器上）。",
+"Annuler = je suis une autre personne : j’ajoute l’initiale de mon nom.":"取消 = 我是另一个人：我会加上姓氏首字母。",
+"Ton prénom et l’initiale de ton nom (ex. Claire M.) :":"你的名字和姓氏首字母（例如 Claire M.）：",
 "Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"这是谁？起个名字方便辨认（只有你能看到）。",
 "Qui est-ce ?":"这是谁？",
 "👋 Ton prénom ?":"👋 你的名字？",

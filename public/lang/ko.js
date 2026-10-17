@@ -1,4 +1,9 @@
 I18N.load({
+"Ce prénom est déjà pris : tu apparais comme « {0} »":"이미 사용 중인 이름이에요. 「{0}」(으)로 표시돼요",
+"Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"「{0}」(이)라는 이름의 사람이 이미 이 여행을 팔로우하고 있어요.",
+"OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"확인 = 저예요 (다른 휴대폰이나 브라우저에서).",
+"Annuler = je suis une autre personne : j’ajoute l’initiale de mon nom.":"취소 = 다른 사람이에요: 성의 첫 글자를 붙일게요.",
+"Ton prénom et l’initiale de ton nom (ex. Claire M.) :":"이름과 성의 첫 글자 (예: Claire M.):",
 "Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"누구인가요? 알아볼 수 있게 이름을 붙이세요 (나만 볼 수 있어요).",
 "Qui est-ce ?":"누구인가요?",
 "👋 Ton prénom ?":"👋 이름이 뭐예요?",
