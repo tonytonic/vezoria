@@ -1,4 +1,5 @@
 I18N.load({
+"Choisis le téléphone de ton ami : il scanne le code avec son appareil photo.":"Выбери телефон друга: он сканирует код камерой.",
 "📷 Scanner le QR code":"📷 Сканировать QR-код",
 "Ou colle le message, le lien ou le code reçu.":"Или вставь полученное сообщение, ссылку или код.",
 "Lecteur de QR code indisponible (pas de réseau ?)":"Сканер QR недоступен (нет сети?)",

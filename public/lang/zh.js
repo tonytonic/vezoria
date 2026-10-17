@@ -1,4 +1,5 @@
 I18N.load({
+"Choisis le téléphone de ton ami : il scanne le code avec son appareil photo.":"选择朋友的手机：让他用相机扫描二维码。",
 "📷 Scanner le QR code":"📷 扫描二维码",
 "Ou colle le message, le lien ou le code reçu.":"或粘贴收到的消息、链接或代码。",
 "Lecteur de QR code indisponible (pas de réseau ?)":"二维码识别不可用（没有网络？）",

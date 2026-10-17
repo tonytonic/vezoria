@@ -1,4 +1,5 @@
 I18N.load({
+"Choisis le téléphone de ton ami : il scanne le code avec son appareil photo.":"Arkadaşının telefonunu seç: kodu kamerasıyla tarasın.",
 "📷 Scanner le QR code":"📷 QR kodu tara",
 "Ou colle le message, le lien ou le code reçu.":"Ya da aldığın mesajı, bağlantıyı veya kodu yapıştır.",
 "Lecteur de QR code indisponible (pas de réseau ?)":"QR okuyucu kullanılamıyor (ağ yok mu?)",

@@ -1,4 +1,5 @@
 I18N.load({
+"Choisis le téléphone de ton ami : il scanne le code avec son appareil photo.":"اختر هاتف صديقك: يمسح الرمز بكاميرا هاتفه.",
 "📷 Scanner le QR code":"📷 امسح رمز QR",
 "Ou colle le message, le lien ou le code reçu.":"أو الصق الرسالة أو الرابط أو الرمز الذي وصلك.",
 "Lecteur de QR code indisponible (pas de réseau ?)":"قارئ QR غير متاح (لا يوجد اتصال؟)",

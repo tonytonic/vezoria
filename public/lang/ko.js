@@ -1,4 +1,5 @@
 I18N.load({
+"Choisis le téléphone de ton ami : il scanne le code avec son appareil photo.":"친구의 휴대폰을 고르세요. 카메라로 코드를 스캔하면 돼요.",
 "📷 Scanner le QR code":"📷 QR 코드 스캔",
 "Ou colle le message, le lien ou le code reçu.":"또는 받은 메시지, 링크 또는 코드를 붙여넣으세요.",
 "Lecteur de QR code indisponible (pas de réseau ?)":"QR 리더를 사용할 수 없어요 (네트워크 없음?)",
