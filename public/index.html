@@ -2237,7 +2237,7 @@ const CV = (function(){
     if(/^ft:/.test(r.trip || '')) return sp(r.trip) ? [sp(r.trip)] : [];
     if(r.type==='trip') return [sp(r.id) || 'main'];
     if(r.trip) return [sp(r.trip) || 'main'];
-    if(r.type==='profile'){ const out = new Set(['main']); Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(t && spaceObj(c) && (t.voyageurs||[]).includes(r.id)) out.add(c); }); return [...out]; }
+    if(r.type==='profile'){ const out = new Set(['main']); Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(t && t.type === 'trip' && spaceObj(c) && ((t.voyageurs||[]).includes(r.id) || r.id === M.me)) out.add(c); }); return [...out]; }
     return ['main'];
   }
   function markDirty(id){
@@ -3125,6 +3125,17 @@ const CV = (function(){
       const via = (M.viaH||{})[tid] || 'direct', pk = M.fkey && M.fkey.pub, pid = M.me && prof(M.me) ? M.me : '', ib = pk ? inbox() : '';
       if(!cur || cur.deleted || !cur.on || now - (cur.at || 0) > 7 * 864e5 || cur.via !== via || (pk && !cur.pk) || (cur.pid || '') !== pid || (ib && cur.ib !== ib)) out.push({id, type:'member', trip:tid, dev:me, who: myName() || (M.me && prof(M.me) ? pname(M.me) : ''), at:now, on:true, via, pk, pid, ib}); });
     if(out.length) putQuiet(out);
+    // je fais partie de chaque voyage partagé où je suis : on m’ajoute aux voyageurs une fois
+    //   (pas si j’ai dit que je n’y pars pas, ni si on m’a retiré après m’y avoir vu)
+    if(M.me && prof(M.me)){
+      const seen = M.selfIn || (M.selfIn = {}), no = M.notTrav || {}, add = [], sent = M.profSent || (M.profSent = {}); let fresh = false;
+      Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(!t || t.type !== 'trip' || t.deleted || t.demo || !spaceObj(c)) return;
+        if(!sent[c]){ sent[c] = 1; fresh = true; }
+        const v = t.voyageurs || []; if(v.includes(M.me)){ seen[tid] = 1; return; }
+        if(seen[tid] || no[tid]) return; add.push(Object.assign(clone(t), {voyageurs:[...new Set([...v, M.me])]})); });
+      if(add.length) putQuiet(add);
+      if(fresh) markDirty(M.me);
+    }
     // mon profil porte l’appareil qui l’utilise : les autres ne peuvent plus le modifier
     if(M.me && R[M.me] && R[M.me].type === 'profile' && !R[M.me].dev && list('member', x=>x.dev !== me).length) putQuiet([Object.assign(clone(R[M.me]), {dev:me})]);
   }
@@ -3592,7 +3603,7 @@ const CV = (function(){
         ${me && !meIn ? `<label class="jp-p"><input type="radio" name="jp-me" value="${me}" checked> ${pchip(me)} <small>(ton profil)</small></label>` : ''}
         <label class="jp-p"><input type="radio" name="jp-me" value="new"${!me ? ' checked' : ''}> ✏️ Je ne suis pas dans la liste : <input class="v-in" id="jp-nom" placeholder="Ton prénom" style="flex:1;min-width:0"></label></div></div>
       <div class="v-f"><label>Dans quels voyages pars-tu vraiment ?</label><div class="v-sum-small" style="margin-bottom:4px">Tu comptes alors dans le budget, les dépenses et « qui doit quoi ». Tu vois quand même tous les voyages.</div>
-        ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="jp-t" value="${t.id}"${!me || (t.voyageurs||[]).includes(me) || ts.length === 1 ? ' checked' : ''}> <span data-notr>${esc(t.titre)}</span>${t.debut ? ' <small>' + esc(tripDatesLong(t)) + '</small>' : ''}</label>`).join('')}</div>
+        ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="jp-t" value="${t.id}"${(M.notTrav||{})[t.id] && me && !(t.voyageurs||[]).includes(me) ? '' : ' checked'}> <span data-notr>${esc(t.titre)}</span>${t.debut ? ' <small>' + esc(tripDatesLong(t)) + '</small>' : ''}</label>`).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.joinPickSave('${esc(code)}')">✅ C’est bon</button></div>`, true);
   }
   function joinPickSave(code){
@@ -3603,7 +3614,7 @@ const CV = (function(){
     M.me = me; delete M.joinAdd;
     const on = new Set([...document.querySelectorAll('.jp-t:checked')].map(i=>i.value)), out = [], codes = String(code).split(',');
     Object.entries(TS()).filter(([, c])=>codes.includes(c)).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip').forEach(t=>{
-      const v = new Set(t.voyageurs || []), had = v.has(me); if(on.has(t.id)) v.add(me); else v.delete(me);
+      const v = new Set(t.voyageurs || []), had = v.has(me); if(on.has(t.id)){ v.add(me); if(M.notTrav) delete M.notTrav[t.id]; } else { v.delete(me); (M.notTrav = M.notTrav || {})[t.id] = 1; }
       if(had !== v.has(me)) out.push(Object.assign(clone(t), {voyageurs:[...v]})); });
     if(out.length) putMany(out, false);
     persist(); closeSheet(true); applyMode(); refresh(); queueSync(); toast('👋 Bienvenue ' + pname(me) + ' !');
@@ -4766,7 +4777,7 @@ const CV = (function(){
   }
   async function removeCompanion(pid){
     const t = trip(); if(!(await uiConfirm('Retirer ' + pname(pid) + ' de ce voyage ? (ses fiches restent)'))) return;
-    t.voyageurs = tv().filter(x=>x!==pid); put(t); refresh();
+    t.voyageurs = tv().filter(x=>x!==pid); if(pid === M.me) (M.notTrav = M.notTrav || {})[t.id] = 1; put(t); refresh();
   }
 
   /* ══════════ Checklist ══════════ */
@@ -14634,7 +14645,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-17y';
+  const BUILD = '2026-10-17z';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
