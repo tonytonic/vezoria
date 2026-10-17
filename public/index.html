@@ -14431,7 +14431,8 @@ ${pm.join('\n')}</Document></kml>`;
     if(!ft){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); alert('Aucun voyage publié avec ce code.'); if(web) webGone(); return; }
     if(web) M.webCode = code;
     let pk; try { pk = (await fKey()).pub; } catch(e){}
-    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who: myName() || 'Un proche', pk}; if(!R[fw.id]){ putQuiet([fw]); socialPush(ft.id, 'follow', ''); }
+    if(myName() && !(M.fwChk = M.fwChk || {})[code]){ M.fwChk[code] = 1; const r = await fwNameResolve(myName()); if(r && r.n !== myName()) (M.fwAs = M.fwAs || {})[code] = r.n; }
+    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who: fwAsFor(code) || 'Un proche', pk}; if(!R[fw.id]){ putQuiet([fw]); socialPush(ft.id, 'follow', ''); }
     persist(); syncNow(); closeSheet(true); feedView(ft.id); toast('👀 Tu suis « ' + ft.titre + ' »');
   }
   function followSheet(){
@@ -14496,22 +14497,22 @@ ${pm.join('\n')}</Document></kml>`;
     const fwDev = x => String(x.id).split(':').pop();   // un abonné = un appareil, même s’il a ouvert plusieurs voyages du carnet
     const nFw = new Set(mineT.flatMap(tid=>list('follower', x=>x.trip===ftId(tid) && !isBlk(x)).map(fwKey))).size;
     const byCode = {}; mineT.forEach(tid=>{ const g = grpCodeOf(tid); (byCode[g] = byCode[g] || []).push(tid); });
-    const grpRow = (c, tids) => { const ids = new Set(tids.map(ftId)), fw0 = list('follower', x=>ids.has(x.trip) && !isBlk(x)), fw = fwUniq(fw0);
+    const grpRow = (c, tids) => { const ids = new Set(tids.map(ftId)), fw0 = list('follower', x=>ids.has(x.trip) && !isBlk(x)), fw = fwUniq(fw0), fwN = fwNames(fw);
       const lk = list('like', l=>ids.has(l.trip) && l.on && !isBlk(l)).length, cm = list('comment', x=>ids.has(x.trip) && !isBlk(x)).length;
       tids.sort((a,b)=>(R[b].debut||'').localeCompare(R[a].debut||''));
       return `<div class="sh-card sh-tb" data-t="ab"><div class="sh-k">📚 Mon carnet publié</div><div class="v-sum-small">${tids.length} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.</div>
         <div class="sh-st" style="margin-top:6px"><span>👀 <b>${fw.length}</b> abonné${fw.length>1?'s':''}</span><span>❤️ <b>${lk}</b></span><span>💬 <b>${cm}</b></span></div>
         <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>{ const d = fwDev(x), nh = tids.filter(t=>((FRX()[t]||{}).ex||[]).includes(d)).length;
-          return d === devId() ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><button type="button" class="sh-fwn${fwLabel(x) ? '' : ' unk'}" onclick="CV.fwNickAsk('${esc(d)}')" data-notr>${esc(fwLabel(x) || '❓ ' + MSGT('Qui est-ce ?'))}</button>${nh ? `<small>🙈${nh}</small>` : ''}<button type="button" aria-label="Ce qu’elle voit" onclick="CV.fwTripsSheet('${esc(c)}','${esc(d)}')">👁️</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`; }).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
+          return d === devId() ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><button type="button" class="sh-fwn${fwLabel(x) ? '' : ' unk'}" onclick="CV.fwNickAsk('${esc(d)}')" data-notr>${esc(fwN[x.id] || '❓ ' + MSGT('Qui est-ce ?'))}</button>${nh ? `<small>🙈${nh}</small>` : ''}<button type="button" aria-label="Ce qu’elle voit" onclick="CV.fwTripsSheet('${esc(c)}','${esc(d)}')">👁️</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`; }).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
         ${fw.length ? `<div class="v-sum-small" style="margin-bottom:4px">👁️ = choisir les voyages que voit cette personne · 🚫 = la bloquer</div>` : ''}
         <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(c)}</b></div>
         <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.feedShareLink('${tids[0]}')">🔗 Partager le lien (sans installer l’appli)</button>
         <details class="sh-more" style="margin-top:6px"><summary>🧳 Les ${tids.length} voyages</summary><div class="v-sum-small" style="margin:4px 0 6px">🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.</div>${tids.map(tid=>`<div class="cv-folr" style="margin-left:0"><button type="button" class="cv-prow" onclick="CV.feedView('${ftId(tid)}')"><span data-notr>${esc(R[tid].titre)}</span><span>›</span></button><button type="button" class="cv-x" title="Lien pour ce voyage seulement" onclick="CV.feedShareOne('${tid}')">🔗</button></div>`).join('')}</details>
         <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tids[0])}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.carnetPublishSheet()">📤 Inviter · choisir</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tids[0]}')">🔁 Nouveau lien abonné</button></div></div>`; };
-    const pubRow = tid => { const t = R[tid], fw = fwUniq(list('follower', x=>x.trip===ftId(tid) && !isBlk(x))), lk = list('like', l=>l.trip===ftId(tid) && l.on && !isBlk(l)).length, cm = list('comment', c=>c.trip===ftId(tid) && !isBlk(c)).length;
+    const pubRow = tid => { const t = R[tid], fw = fwUniq(list('follower', x=>x.trip===ftId(tid) && !isBlk(x))), fwN = fwNames(fw), lk = list('like', l=>l.trip===ftId(tid) && l.on && !isBlk(l)).length, cm = list('comment', c=>c.trip===ftId(tid) && !isBlk(c)).length;
       return `<div class="sh-card sh-tb" data-t="ab"><div class="sh-k">📣 ${esc(t.titre)}</div>
         <div class="sh-st"><span>👀 <b>${fw.length}</b> abonné${fw.length>1?'s':''}</span><span>❤️ <b>${lk}</b></span><span>💬 <b>${cm}</b></span></div>
-        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>x.id.endsWith(':' + devId()) ? `<span data-notr>${esc(x.who || '?')}</span>` :  `<span class="sh-fw"><button type="button" class="sh-fwn${fwLabel(x) ? '' : ' unk'}" onclick="CV.fwNickAsk('${esc(fwDevOf(x))}')" data-notr>${esc(fwLabel(x) || '❓ ' + MSGT('Qui est-ce ?'))}</button><button type="button" aria-label="Ne plus lui montrer" onclick="CV.fwHideOne('${tid}','${esc(x.id)}')">🙈</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
+        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>x.id.endsWith(':' + devId()) ? `<span data-notr>${esc(x.who || '?')}</span>` :  `<span class="sh-fw"><button type="button" class="sh-fwn${fwLabel(x) ? '' : ' unk'}" onclick="CV.fwNickAsk('${esc(fwDevOf(x))}')" data-notr>${esc(fwN[x.id] || '❓ ' + MSGT('Qui est-ce ?'))}</button><button type="button" aria-label="Ne plus lui montrer" onclick="CV.fwHideOne('${tid}','${esc(x.id)}')">🙈</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
         <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(FT()[tid])}</b></div>
         <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.feedShareLink('${tid}')">🔗 Partager le lien (sans installer l’appli)</button>
         <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tid)}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.feedPublish('${tid}')">📤 Inviter</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tid}')">🔁 Nouveau lien abonné</button></div></div>`; };
@@ -14577,8 +14578,8 @@ ${pm.join('\n')}</Document></kml>`;
   }
   // abonné : sa serrure (clé publique) part avec sa fiche « abonné »
   async function fwKeyTouch(){
-    const me = devId(), ib = M.ib, nm = myName(), mine = list('follower', f=>String(f.id).endsWith(':' + me) && (!f.pk || !f.ib || (ib && f.ib !== ib) || (nm && f.who !== nm)) && TS()[f.trip] && !FT()[String(f.trip).replace(/^ft:/,'')]); if(!mine.length) return;
-    const k = await fKey(), b = inbox(); putQuiet(mine.map(f=>Object.assign(clone(f), {pk:k.pub, ib:b}, nm ? {who:nm} : {})));
+    const me = devId(), ib = M.ib, nm = f => fwAsFor(TS()[f.trip]), mine = list('follower', f=>String(f.id).endsWith(':' + me) && (!f.pk || !f.ib || (ib && f.ib !== ib) || (nm(f) && f.who !== nm(f))) && TS()[f.trip] && !FT()[String(f.trip).replace(/^ft:/,'')]); if(!mine.length) return;
+    const k = await fKey(), b = inbox(); putQuiet(mine.map(f=>Object.assign(clone(f), {pk:k.pub, ib:b}, nm(f) ? {who:nm(f)} : {})));
   }
   // auteur : retirer vraiment l’accès d’un abonné = nouveau lien, transmis chiffré à chacun des autres
   async function feedRevoke(tid, dev, who){
@@ -14643,8 +14644,14 @@ ${pm.join('\n')}</Document></kml>`;
   const fwDevOf = x => String(x.id).split(':').pop();
   const fwGeneric = n => !n || /^(un proche|someone|\?)$/i.test(String(n).trim());
   const fwLabel = x => ((M.fwNick || {})[fwDevOf(x)]) || (fwGeneric(x.who) ? '' : x.who);
-  const fwKey = x => { const n = String(fwLabel(x)).trim().toLowerCase(); return n ? 'n:' + n : 'd:' + fwDevOf(x); };
+  const fwRoot = d => { const seen = new Set(); while(d && !seen.has(d)){ seen.add(d); const f = list('follower', x=>fwDevOf(x) === d && x.same)[0]; if(!f || f.same === d) break; d = f.same; } return d; };
+  const fwKey = x => { const n = ((M.fwNick || {})[fwDevOf(x)] || '').trim().toLowerCase(); return n ? 'n:' + n : 'd:' + fwDevOf(x); };
   function fwUniq(arr){ const by = {}; arr.forEach(x=>{ const k = fwKey(x), c = by[k]; if(!c || (x.updatedAt || 0) > (c.updatedAt || 0)) by[k] = x; }); return Object.values(by); }
+  // deux personnes différentes avec le même prénom : « Claire », « Claire (2) »
+  function fwNames(arr){ const n = {}, out = {};
+    profiles().forEach(p=>{ const k = String(p.nom || '').trim().toLowerCase(); if(k) n[k] = 1; });   // un abonné ne porte jamais le nom d’un compagnon
+    arr.slice().sort((a, b)=>(a.createdAt || 0) - (b.createdAt || 0)).forEach(x=>{ const l = fwLabel(x); if(!l) return; const k = l.trim().toLowerCase(); n[k] = (n[k] || 0) + 1; out[x.id] = n[k] > 1 ? l + ' ' + n[k] : l; });
+    return out; }
   // tous les appareils d’une même personne parmi mes abonnés (même prénom ou même nom donné)
   function fwTwins(d){ const mine = new Set(Object.keys(FT()).map(ftId)), all = list('follower', f=>mine.has(f.trip)), me = all.find(f=>fwDevOf(f) === d);
     if(!me) return [d]; const k = fwKey(me); return [...new Set([d, ...all.filter(f=>fwKey(f) === k).map(fwDevOf)])]; }
@@ -14779,9 +14786,22 @@ ${pm.join('\n')}</Document></kml>`;
       <button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(f.trip)}')">🚫 Ne plus suivre « ${esc(ft.titre || '')} »</button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
+  // prénom déjà pris par un autre abonné de ces voyages : c'est moi (autre téléphone / navigateur) ou une autre personne ?
+  // le nom sous lequel j'apparais chez cet auteur (« Claire 2 » si « Claire » était déjà pris chez lui)
+  const fwAsFor = code => ((M.fwAs || {})[code]) || myName();
+  async function fwNameResolve(n){
+    n = String(n || '').trim().slice(0, 36); if(!n) return null;
+    const me = devId(), fol = new Set(list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')]).map(f=>f.id));
+    const taken = new Set(list('follower', x=>fol.has(x.trip) && !x.deleted && fwDevOf(x) !== me).map(x=>String(x.who || '').trim().toLowerCase()));
+    list('feedtrip', f=>fol.has(f.id)).forEach(f=>taken.add(String(f.owner || '').trim().toLowerCase()));
+    if(!taken.has(n.toLowerCase())) return {n, same:''};
+    let k = 2; while(taken.has((n + ' ' + k).toLowerCase())) k++;
+    const n2 = n + ' ' + k; toast('👤 ' + MSGT('Ce prénom est déjà pris : tu apparais comme « {0} »').replace('{0}', n2));
+    return {n: n2, same:''};
+  }
   async function fwNameSave(form){
-    const n = ((form && form.n && form.n.value) || '').trim(); if(!n) return;
-    M.followName = n.slice(0, 40); persist(); if(form) form.remove();
+    const r = await fwNameResolve(((form && form.n && form.n.value) || '').trim()); if(!r) return;
+    M.followName = r.n; persist(); if(form) form.remove();
     try { await fwKeyTouch(); await syncNow(); } catch(e){}
     toast('👋 ' + MSGT('Merci') + ' ' + M.followName + ' !');
   }
@@ -14805,13 +14825,13 @@ ${pm.join('\n')}</Document></kml>`;
   async function feedLike(fid){
     const f = R[fid]; if(!f) return; if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
     const id = 'lk:' + fid + ':' + devId(), cur = R[id];
-    putQuiet([{id, type:'like', trip:f.trip, feed:fid, who:myName(), on: !(cur && cur.on)}]); syncNow(); feedPaint(fid);
+    putQuiet([{id, type:'like', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), on: !(cur && cur.on)}]); syncNow(); feedPaint(fid);
     if(!(cur && cur.on)){ fxPlay && fxHeart(); socialPush(f.trip, 'like', f.titre || f.lieu || ''); }
   }
   async function feedComment(fid){
     const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
     if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
-    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:myName(), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socialPush(f.trip, 'comment', txt); i.value = ''; syncNow(); feedPaint(fid);
+    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socialPush(f.trip, 'comment', txt); i.value = ''; syncNow(); feedPaint(fid);
   }
   function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="' + (window.VZ_B || '') + 'anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
   function feedPostHTML(f){
@@ -14883,7 +14903,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18g';
+  const BUILD = '2026-10-18i';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
