@@ -14377,6 +14377,16 @@ ${pm.join('\n')}</Document></kml>`;
     if(followInviteSheet(t.id)){ refresh(); return; }
     return feedShareLink(t.id);
   }
+  // lien pour UN voyage du carnet publié : le voyage passe sur son propre code ; les abonnés du carnet le gardent (code transmis chiffré)
+  async function feedShareOne(tid){
+    const t = R[tid]; if(!t || !FT()[tid]) return;
+    const g = grpCodeOf(tid), shared = Object.keys(FT()).some(x=>x !== tid && grpCodeOf(x) === g && FT()[x] === FT()[tid]);
+    if(shared){
+      if(!(await uiConfirm(MSGT('Créer un lien pour « {0} » seulement ?').replace('{0}', t.titre) + '\n\n' + MSGT('La personne qui le reçoit ne verra que ce voyage. Tes abonnés du carnet continuent de le voir comme avant.')))) return;
+      try { await feedRestrict(tid, ''); await feedGrantSync(tid); await syncNow(); feedUpload(); } catch(e){ alert(MSGT('Lien impossible pour le moment (pas de réseau ?).')); return; }
+    }
+    return feedShareLink(tid);
+  }
   async function feedShareLink(tid){
     const t = R[tid]; if(!t || !FT()[t.id]) return;
     const link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(FT()[t.id]) : '';
@@ -14491,7 +14501,7 @@ ${pm.join('\n')}</Document></kml>`;
         ${fw.length ? `<div class="v-sum-small" style="margin-bottom:4px">👁️ = choisir les voyages que voit cette personne · 🚫 = la bloquer</div>` : ''}
         <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(c)}</b></div>
         <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.feedShareLink('${tids[0]}')">🔗 Partager le lien (sans installer l’appli)</button>
-        <details class="sh-more" style="margin-top:6px"><summary>🧳 Les ${tids.length} voyages</summary>${tids.map(tid=>`<button type="button" class="cv-prow" onclick="CV.feedView('${ftId(tid)}')"><span data-notr>${esc(R[tid].titre)}</span><span>›</span></button>`).join('')}</details>
+        <details class="sh-more" style="margin-top:6px"><summary>🧳 Les ${tids.length} voyages</summary><div class="v-sum-small" style="margin:4px 0 6px">🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.</div>${tids.map(tid=>`<div class="cv-folr" style="margin-left:0"><button type="button" class="cv-prow" onclick="CV.feedView('${ftId(tid)}')"><span data-notr>${esc(R[tid].titre)}</span><span>›</span></button><button type="button" class="cv-x" title="Lien pour ce voyage seulement" onclick="CV.feedShareOne('${tid}')">🔗</button></div>`).join('')}</details>
         <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tids[0])}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.carnetPublishSheet()">📤 Inviter · choisir</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tids[0]}')">🔁 Nouveau lien abonné</button></div></div>`; };
     const pubRow = tid => { const t = R[tid], fw = list('follower', x=>x.trip===ftId(tid) && !isBlk(x)), lk = list('like', l=>l.trip===ftId(tid) && l.on && !isBlk(l)).length, cm = list('comment', c=>c.trip===ftId(tid) && !isBlk(c)).length;
       return `<div class="sh-card sh-tb" data-t="ab"><div class="sh-k">📣 ${esc(t.titre)}</div>
@@ -14650,7 +14660,7 @@ ${pm.join('\n')}</Document></kml>`;
   async function feedRestrict(t, dev){
     const old = FT()[t], g = grpCodeOf(t), oldSp = old && spaceObj(old); if(!old || !oldSp) return;
     const r = FRX()[t] || (FRX()[t] = {g, c:old, ex:[], sent:{}}); if(dev && !r.ex.includes(dev)) r.ex.push(dev);
-    cryptShow('👁️ Je cache ce voyage…');
+    cryptShow(dev ? '👁️ Je cache ce voyage…' : '🔗 Lien du voyage…');
     try {
       const id = ftId(t), all = Object.values(R).filter(x=>x && !x.deleted && (x.trip === id || x.id === id || x.id === 'fk:' + t));
       const grants = list('feedgrant', x=>x.tid === t && (!dev || String(x.id).endsWith(':' + dev)));
@@ -14664,7 +14674,7 @@ ${pm.join('\n')}</Document></kml>`;
       FT()[t] = c; TS()[id] = c; r.c = c; r.sent = {};
       Object.values(R).filter(x=>x && (x.trip === id || x.id === id || x.id === 'fk:' + t) && !(dev && /^(fw|lk):/.test(x.id) && String(x.id).split(':').pop() === dev)).forEach(x=>markDirty(x.id));
       persist(); feedBuild(t);
-    } finally { cryptHide('👁️ Voyage caché à cette personne'); }
+    } finally { cryptHide(dev ? '👁️ Voyage caché à cette personne' : '🔗 Ce voyage a son propre lien'); }
   }
   // donne le code d’un voyage « à part » à chaque abonné du carnet qui a le droit de le voir (chiffré pour lui seul)
   async function feedGrantSync(t){
@@ -14845,7 +14855,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18c';
+  const BUILD = '2026-10-18d';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -14855,7 +14865,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
