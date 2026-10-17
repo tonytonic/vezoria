@@ -1,4 +1,8 @@
 I18N.load({
+"PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF أو لقطة شاشة أو تذكرة أو رمز QR: تمتلئ البطاقة تلقائيًا",
+"🔗 Partager le lien (sans installer l’appli)":"🔗 مشاركة الرابط (دون تثبيت التطبيق)",
+"🔗 Lien abonnés (sans installer l’appli)":"🔗 رابط المتابعين (دون تثبيت التطبيق)",
+"Le lien s’ouvre directement, sans rien installer :":"يُفتح الرابط مباشرة، دون تثبيت أي شيء:",
 "🚫 Ne plus suivre ce voyage":"🚫 إلغاء متابعة هذه الرحلة",
 "🚫 Ne plus suivre":"🚫 إلغاء متابعة",
 "(tous ses voyages)":"(كل رحلاته)",

@@ -1,4 +1,8 @@
 I18N.load({
+"PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF、スクリーンショット、チケット、QRコード：自動で入力されます",
+"🔗 Partager le lien (sans installer l’appli)":"🔗 リンクを共有（アプリ不要）",
+"🔗 Lien abonnés (sans installer l’appli)":"🔗 フォロワー用リンク（アプリ不要）",
+"Le lien s’ouvre directement, sans rien installer :":"リンクはそのまま開けます。インストール不要：",
 "🚫 Ne plus suivre ce voyage":"🚫 この旅のフォローをやめる",
 "🚫 Ne plus suivre":"🚫 フォローをやめる：",
 "(tous ses voyages)":"（すべての旅）",

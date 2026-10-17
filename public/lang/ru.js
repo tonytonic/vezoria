@@ -1,4 +1,8 @@
 I18N.load({
+"PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF, скриншот, билет или QR-код: карточка заполнится сама",
+"🔗 Partager le lien (sans installer l’appli)":"🔗 Поделиться ссылкой (без приложения)",
+"🔗 Lien abonnés (sans installer l’appli)":"🔗 Ссылка для подписчиков (без приложения)",
+"Le lien s’ouvre directement, sans rien installer :":"Ссылка открывается сразу, ничего не нужно устанавливать:",
 "🚫 Ne plus suivre ce voyage":"🚫 Отписаться от поездки",
 "🚫 Ne plus suivre":"🚫 Отписаться от",
 "(tous ses voyages)":"(все поездки)",

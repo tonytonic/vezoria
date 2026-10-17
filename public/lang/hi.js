@@ -1,4 +1,8 @@
 I18N.load({
+"PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF, स्क्रीनशॉट, टिकट या QR कोड: फ़ॉर्म अपने-आप भर जाता है",
+"🔗 Partager le lien (sans installer l’appli)":"🔗 लिंक साझा करें (ऐप के बिना)",
+"🔗 Lien abonnés (sans installer l’appli)":"🔗 फ़ॉलोअर्स लिंक (ऐप के बिना)",
+"Le lien s’ouvre directement, sans rien installer :":"लिंक सीधे खुलता है, कुछ भी इंस्टॉल नहीं करना:",
 "🚫 Ne plus suivre ce voyage":"🚫 यह यात्रा फ़ॉलो करना बंद करें",
 "🚫 Ne plus suivre":"🚫 फ़ॉलो करना बंद करें:",
 "(tous ses voyages)":"(सभी यात्राएँ)",

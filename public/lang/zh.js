@@ -1,4 +1,8 @@
 I18N.load({
+"PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF、截图、车票或二维码：表单会自动填写",
+"🔗 Partager le lien (sans installer l’appli)":"🔗 分享链接（无需安装应用）",
+"🔗 Lien abonnés (sans installer l’appli)":"🔗 关注者链接（无需安装应用）",
+"Le lien s’ouvre directement, sans rien installer :":"链接可直接打开，无需安装任何东西：",
 "🚫 Ne plus suivre ce voyage":"🚫 取消关注这段旅行",
 "🚫 Ne plus suivre":"🚫 取消关注",
 "(tous ses voyages)":"（全部旅行）",

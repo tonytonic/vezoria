@@ -1,4 +1,8 @@
 I18N.load({
+"PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF, 스크린샷, 티켓 또는 QR 코드: 자동으로 채워져요",
+"🔗 Partager le lien (sans installer l’appli)":"🔗 링크 공유 (앱 설치 불필요)",
+"🔗 Lien abonnés (sans installer l’appli)":"🔗 팔로워 링크 (앱 설치 불필요)",
+"Le lien s’ouvre directement, sans rien installer :":"링크가 바로 열려요. 아무것도 설치할 필요 없어요:",
 "🚫 Ne plus suivre ce voyage":"🚫 이 여행 팔로우 취소",
 "🚫 Ne plus suivre":"🚫 팔로우 취소:",
 "(tous ses voyages)":"(모든 여행)",

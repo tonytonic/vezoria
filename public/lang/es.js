@@ -1,4 +1,9 @@
 I18N.load({
+"Importer une réservation":"Importar una reserva",
+"PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF, captura, billete o código QR: la ficha se rellena sola",
+"🔗 Partager le lien (sans installer l’appli)":"🔗 Compartir el enlace (sin instalar la app)",
+"🔗 Lien abonnés (sans installer l’appli)":"🔗 Enlace de seguidores (sin instalar la app)",
+"Le lien s’ouvre directement, sans rien installer :":"El enlace se abre directamente, sin instalar nada:",
 "🚫 Ne plus suivre ce voyage":"🚫 Dejar de seguir este viaje",
 "🚫 Ne plus suivre":"🚫 Dejar de seguir a",
 "(tous ses voyages)":"(todos sus viajes)",

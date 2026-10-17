@@ -1,4 +1,8 @@
 I18N.load({
+"PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF, ekran görüntüsü, bilet veya QR kod: kart kendiliğinden dolar",
+"🔗 Partager le lien (sans installer l’appli)":"🔗 Bağlantıyı paylaş (uygulama gerekmez)",
+"🔗 Lien abonnés (sans installer l’appli)":"🔗 Takipçi bağlantısı (uygulama gerekmez)",
+"Le lien s’ouvre directement, sans rien installer :":"Bağlantı doğrudan açılır, hiçbir şey yüklemeye gerek yok:",
 "🚫 Ne plus suivre ce voyage":"🚫 Bu seyahati takip etmeyi bırak",
 "🚫 Ne plus suivre":"🚫 Takibi bırak:",
 "(tous ses voyages)":"(tüm seyahatleri)",

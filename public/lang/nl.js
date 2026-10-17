@@ -1,4 +1,9 @@
 I18N.load({
+"Importer une réservation":"Boeking importeren",
+"PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"Pdf, screenshot, ticket of QR-code: het formulier vult zichzelf in",
+"🔗 Partager le lien (sans installer l’appli)":"🔗 Link delen (zonder app)",
+"🔗 Lien abonnés (sans installer l’appli)":"🔗 Volgerslink (zonder app)",
+"Le lien s’ouvre directement, sans rien installer :":"De link opent meteen, niets te installeren:",
 "🚫 Ne plus suivre ce voyage":"🚫 Deze reis niet meer volgen",
 "🚫 Ne plus suivre":"🚫 Niet meer volgen:",
 "(tous ses voyages)":"(al zijn/haar reizen)",
