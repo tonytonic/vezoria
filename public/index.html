@@ -1970,6 +1970,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .cv-cgu-line{text-align:center;margin:0 0 8px;line-height:1.35}.cv-cgu-line a{color:var(--ink);text-decoration:underline}
 .sh-tabs{display:flex;gap:6px;position:sticky;top:-8px;z-index:3;background:var(--cream);padding:6px 0 10px;margin-bottom:4px}.sh-tab{flex:1;min-width:0;position:relative;border:1.5px solid var(--light);background:#fff;border-radius:14px;padding:9px 4px;font:700 .8rem/1.15 var(--ui);color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}.sh-tab.on{background:var(--ink,#2A1238);border-color:var(--ink,#2A1238);color:#fff}.sh-tab .cv-badge{top:-6px;right:-4px}
 .sh-hub[data-on="comp"] .sh-tb:not([data-t~="comp"]),.sh-hub[data-on="ab"] .sh-tb:not([data-t~="ab"]),.sh-hub[data-on="suis"] .sh-tb:not([data-t~="suis"]){display:none!important}
+.cv-phrow{gap:8px}.cv-phrow .cv-addph{flex:1;margin:0}
 .sh-sec{font-weight:800;font-size:.95rem;color:var(--navy,#2A1238);margin:2px 0 8px}
 .sh-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .sh-links button{border:0;background:#f3ecf6;color:#2a1238;border-radius:14px;padding:7px 11px;font:inherit;font-size:.8rem;font-weight:700}
@@ -2145,8 +2146,27 @@ const CV = (function(){
   let M = {};   // réglages propres à ce téléphone
   function baseMeta(){ return {me:null, trip:null, tab:'prog', who:'all', filt:{}, envF:'all', envP:'all', dirty:[],
     sync:{url:'', code:'', on:false, since:0, last:0, err:''}}; }
+  /* Rangement du carnet (B1) : le texte du carnet va dans la base du téléphone (IndexedDB, plusieurs centaines de Mo possibles),
+     seuls les réglages restent dans le petit stockage local (≈ 5 Mo sur iPhone). Jamais pour la version hébergée dans un carnet,
+     qui partage son stockage avec ce carnet. Si la base est indisponible : retour à l’ancien rangement, sans rien perdre. */
+  const STORE_IDB = !window.VZ_HOST && typeof indexedDB !== 'undefined';
+  const RDB = (() => {
+    let p = null;
+    const db = () => p || (p = new Promise((res, rej) => { const r = indexedDB.open('vz-carnet', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }));
+    return {
+      get: async k => { const d = await db(); return new Promise((res, rej) => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); },
+      put: async (k, v) => { const d = await db(); return new Promise((res, rej) => { const tx = d.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error); }); },
+    };
+  })();
+  let storeIdb = false, storeLoading = false, storeBroken = false;
+  async function loadStoreIdb(){
+    try { const r = await RDB.get('R'); if(r && typeof r === 'object') R = r; }
+    catch(e){   // jamais d’écriture d’un carnet vide par-dessus le vrai : on bloque et on prévient
+      console.warn('carnet : lecture de la base impossible', e); persistOff = true; storeBroken = true;
+      setTimeout(()=>alert(MSGT('Ton carnet n’a pas pu être lu sur ce téléphone. Ferme complètement l’appli puis rouvre-la : rien n’a été effacé.')), 1500); }
+  }
   function loadStore(){
-    try { const raw = localStorage.getItem(KEY); if(raw){ const o = JSON.parse(raw); R = o.records || {}; M = o.meta || {}; } } catch(e){ R = {}; M = {}; }
+    try { const raw = localStorage.getItem(KEY); if(raw){ const o = JSON.parse(raw); R = o.records || {}; M = o.meta || {}; storeIdb = !!o.idb; } } catch(e){ R = {}; M = {}; }
     M = Object.assign(baseMeta(), M);
     M.sync = Object.assign(baseMeta().sync, M.sync || {});
     if(!Array.isArray(M.dirty)) M.dirty = [];
@@ -2154,10 +2174,18 @@ const CV = (function(){
   // Enregistrement regroupé : plusieurs modifications d’affilée = une seule écriture (300 ms après la dernière).
   // Rien ne se perd : écrit tout de suite quand l’appli passe en arrière-plan, se ferme ou se recharge.
   let persistT = 0, persistOff = false;
+  function persistLegacy(){
+    try { localStorage.setItem(KEY, JSON.stringify({records:R, meta:M})); storeIdb = false; return true; }
+    catch(e){ alert('Sauvegarde impossible (stockage plein ou bloqué). Exporte tes données.'); return false; }
+  }
   function persistNow(){
-    clearTimeout(persistT); persistT = 0; if(persistOff) return;
-    try { localStorage.setItem(KEY, JSON.stringify({records:R, meta:M})); }
-    catch(e){ alert('Sauvegarde impossible (stockage plein ou bloqué). Exporte tes données.'); }
+    clearTimeout(persistT); persistT = 0; if(persistOff || storeLoading) return Promise.resolve();
+    if(!STORE_IDB){ persistLegacy(); return Promise.resolve(); }
+    if(storeIdb){ try { localStorage.setItem(KEY, JSON.stringify({idb:1, meta:M})); } catch(e){} }   // réglages : tout de suite
+    return RDB.put('R', R).then(()=>{   // le carnet : dans la base ; le petit stockage ne garde plus que les réglages
+      if(persistOff) return;
+      try { localStorage.setItem(KEY, JSON.stringify({idb:1, meta:M})); storeIdb = true; } catch(e){}
+    }).catch(e=>{ console.warn('carnet : base indisponible, ancien rangement', e); persistLegacy(); });
   }
   function persist(){ if(persistOff || persistT) return; persistT = setTimeout(persistNow, 300); }
   ['pagehide', 'beforeunload'].forEach(ev=>addEventListener(ev, ()=>{ if(persistT) persistNow(); }));
@@ -2466,6 +2494,7 @@ const CV = (function(){
   const liveShared = () => { try { return trips().some(t=>tripPhase(t)==='live' && !t.demo && (TS()[t.id] || (M.sync && M.sync.on))) || list('feedtrip', f=>TS()[f.id] && tripPhase(f)==='live').length > 0; } catch(e){ return false; } };
   var AUTO_SYNC = 3600000, pollGap = AUTO_SYNC, lastSyncAt = 0;
   async function syncNow(manual){
+    if(storeLoading || storeBroken) return;   // carnet pas encore lu depuis la base
     const pull = manual === 'pull'; if(pull) manual = false;   // « pull » : aller chercher les nouveautés tout de suite (notification touchée), sans message
     if(manual === true){ M.pqPause = 0; M.pqFull = {}; }   // « Synchroniser » à la main : on réessaie d’envoyer les photos tout de suite
     const mainOn = !!(M.sync.on && M.sync.code);
@@ -4918,7 +4947,7 @@ const CV = (function(){
   }
   function renderReglages(){
     const t = trip(), s = M.sync, hosted = /^https?:/.test(location.protocol);
-    let size = 0; try { size = (localStorage.getItem(KEY)||'').length; } catch(e){}
+    let size = 0; try { size = storeIdb ? JSON.stringify(R).length : (localStorage.getItem(KEY)||'').length; } catch(e){}
     const state = !s.on ? '⚪ Désactivée' : s.err ? '🔴 ' + esc(s.err) : M.dirty.length ? '🟠 ' + M.dirty.length + ' modif(s) en attente' : '🟢 À jour' + (E2E ? ' · 🔐 chiffré' : '');
     let h = `<div class="v-box"><h3>👤 Profils</h3>
         <p>Chacun son prénom et sa couleur. Toutes les fiches indiquent qui les a ajoutées ou modifiées.</p>
@@ -5051,7 +5080,7 @@ const CV = (function(){
         try {
           const n = await importData(data);
           if(data.archive2026 && (await uiConfirm('Le fichier contient aussi l’archive 2026. La restaurer ?'))) localStorage.setItem(ARCHIVE_KEY, JSON.stringify(data.archive2026));
-          persistNow(); queueSync(); alert(n + ' fiche(s) importée(s) (les plus récentes gagnent).'); location.reload();
+          await persistNow(); queueSync(); alert(n + ' fiche(s) importée(s) (les plus récentes gagnent).'); location.reload();
         } catch(err){ alert(err.message); }
       };
       rd.readAsText(f);
@@ -5074,6 +5103,7 @@ const CV = (function(){
     persistOff = true; clearTimeout(persistT);   // plus aucune écriture : sinon le carnet serait réécrit juste avant le rechargement
     localStorage.removeItem(KEY);
     try { indexedDB.deleteDatabase('carnet-photos'); } catch(e){}
+    try { indexedDB.deleteDatabase('vz-carnet'); } catch(e){}
     location.reload();
   }
 
@@ -6143,7 +6173,7 @@ const CV = (function(){
         <div class="v-f"><label>Récit</label><textarea class="v-in" name="texte" style="min-height:120px">${esc(s.texte)}</textarea></div>
         <div class="v-f"><label>Photos (${(s.photos||[]).length})</label>
           <div class="cv-grid" id="sv-grid">${(s.photos||[]).map((p,i)=>`<div class="cv-th"><img data-ph="${esc(p)}.t" alt=""><button type="button" class="cv-thx" onclick="CV.souvDelPhoto(${i})">✕</button></div>`).join('')}</div>
-          <label class="v-btn sec cv-addph">📷 Ajouter des photos<input type="file" accept="image/*" multiple onchange="CV.souvAddPhotos(this)"></label>
+          <div class="cv-row cv-phrow"><label class="v-btn cv-addph">📸 Prendre une photo<input type="file" accept="image/*" capture="environment" onchange="CV.souvAddPhotos(this)"></label><label class="v-btn sec cv-addph">🖼️ Mes photos<input type="file" accept="image/*" multiple onchange="CV.souvAddPhotos(this)"></label></div>
           <div class="v-sum-small" id="sv-prog"></div></div>
         ${feedCode(s.trip) ? `<label class="cv-checkline" style="margin:4px 0 10px"><input type="checkbox" name="priv"${s.priv ? ' checked' : ''}> 🔒 Privé : ne pas montrer à mes abonnés</label>` : ''}
         ${actions(id ? `CV.delSouv('${id}')` : '')}
@@ -6268,6 +6298,11 @@ const CV = (function(){
     setTimeout(shareInbox, 600); setTimeout(hashJoin, 1200);
     try { const hq = document.getElementById('cv-hero-qr'); if(hq) hq.innerHTML = qrSVG(APP_URL(), 'q') + '<span>💌 Vezoria</span>'; } catch(e){}
     loadStore();
+    if(storeIdb){ storeLoading = true; loadStoreIdb().finally(()=>{ storeLoading = false; init2(); }); return; }
+    init2();
+    if(STORE_IDB && !storeIdb && Object.keys(R).length) setTimeout(persistNow, 1500);   // carnet existant : transféré dans la base au premier lancement
+  }
+  function init2(){
     if(window.VZ_HOST && M.trip === LEGACY) M.trip = R.t2026 && !R.t2026.deleted ? 't2026' : null;
     document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ if(vw) viewClose(); else closeSheet(); } if(vw && e.key==='ArrowRight') viewGo(1); if(vw && e.key==='ArrowLeft') viewGo(-1); });
     document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && (M.dirty.length || Date.now() - lastSyncAt > AUTO_SYNC)) syncNow(); });
@@ -8441,7 +8476,7 @@ const CV = (function(){
     rcpt = {photo:null, blob:null};
     const v = tv();
     openSheet(`<h2>🧾 Ticket ou reçu</h2>
-      <button type="button" class="v-btn sec" onclick="CV.tlRcPhoto()">📷 Prendre la photo du ticket</button>
+      <button type="button" class="v-btn sec" onclick="CV.tlRcPhoto(true)">📸 Prendre la photo du ticket</button><button type="button" class="v-btn sec" onclick="CV.tlRcPhoto(false)">🖼️ Choisir dans mes photos</button>
       <div id="rc-prev" class="v-sum-small" style="margin:8px 0"></div>
       <form id="v-form" onsubmit="event.preventDefault();CV.tlRcSave()">
         ${field('Quoi ?','titre','','text','placeholder="Ex. Dîner à Trastevere" required')}
@@ -8464,11 +8499,11 @@ const CV = (function(){
       else out.textContent = note + ' ≈ ' + eur(e) + ' · touche Convertir'; } catch(e){ out.textContent = '⚠️ ' + e.message; } };
     if(apply) go(); else rcFxT = setTimeout(go, 300);
   }
-  function tlRcPhoto(){
+  function tlRcPhoto(cam){
     tlPickFile('image/*', async f => {
       rcpt.blob = f; const pv = document.getElementById('rc-prev');
       pv.innerHTML = `<img src="${URL.createObjectURL(f)}" style="max-width:100%;max-height:180px;border-radius:10px;display:block;margin-bottom:6px"><button type="button" class="v-btn sec" onclick="CV.tlRcOcr()">🔍 Lire le montant automatiquement</button><span id="rc-ocr"></span>`;
-    }, true);
+    }, cam !== false);
   }
   async function tlRcOcr(){
     const o = document.getElementById('rc-ocr'); if(!rcpt || !rcpt.blob) return;
@@ -9222,7 +9257,7 @@ const CV = (function(){
     return l.length ? `<div class="cv-pjl">${l.map((p,i)=>`<span class="cv-pj"><button type="button" onclick="CV.pjOpen('${esc(p.id)}','${p.t}')">${p.t==='img' ? `<img data-ph="${esc(p.id)}.t" alt="">` : '<span class="pdf">PDF</span>'}<small>${esc(p.n||'billet')}</small></button><button type="button" class="x" onclick="CV.pjDel(${i})" aria-label="Retirer">✕</button></span>`).join('')}</div>` : '<div class="v-sum-small">Aucun billet joint.</div>';
   }
   const pjBlock = it => `<div class="v-f"><label>🎫 Billets, cartes d’embarquement, PDF</label><div id="pj-box">${pjListHTML(it)}</div>
-    <button type="button" class="v-day-edit" onclick="CV.pjAdd()">📎 Joindre (photo, capture du QR code ou PDF)</button>
+    <button type="button" class="v-day-edit" onclick="CV.pjAdd(true)">📸 Photographier le billet ou le QR code</button><button type="button" class="v-day-edit" onclick="CV.pjAdd()">📎 Joindre (capture d’écran ou PDF)</button>
     <div class="v-sum-small">Gardés dans le téléphone : lisibles sans réseau. Les photos sont aussi partagées avec le groupe ; les PDF restent sur ce téléphone.</div></div>`;
   function pjRefresh(){ const b = document.getElementById('pj-box'); if(b && editing){ b.innerHTML = pjListHTML(editing); hydrate(); } }
   function pjSave(pj){
@@ -9230,13 +9265,13 @@ const CV = (function(){
     if(editing.id && R[editing.id]){ const r = clone(R[editing.id]); r.pj = pj; put(r); }
     pjRefresh();
   }
-  function pjAdd(){
-    tlPickFile('image/*,application/pdf', async f => {
+  function pjAdd(cam){
+    tlPickFile(cam ? 'image/*' : 'image/*,application/pdf', async f => {
       const id = 'pj' + uid(), isPdf = /pdf/i.test(f.type) || /\.pdf$/i.test(f.name||'');
       try { if(isPdf) await IDB.put({id, blob:f, up:1}); else { await storePhoto(f, id); uploadQueue(); } }
       catch(e){ alert('Fichier impossible à enregistrer.'); return; }
       pjSave([...pjOf(editing), {id, t: isPdf ? 'pdf' : 'img', n: (f.name || (isPdf ? 'billet.pdf' : 'billet')).replace(/\.[a-z0-9]+$/i,'').slice(0,40)}]);
-    });
+    }, !!cam);
   }
   async function pjDel(i){ if(!(await uiConfirm('Retirer ce document de la fiche ?'))) return; const l = pjOf(editing).slice(); l.splice(i,1); pjSave(l); }
   async function pjOpen(id, t){
@@ -9452,7 +9487,7 @@ ${pm.join('\n')}</Document></kml>`;
     openSheet(`<h2>📄 Importer une réservation</h2>
       <div class="v-sum-small" style="margin-bottom:10px">Le <b>PDF</b> ou le <b>mail</b> de confirmation ${what || '(hôtel, vol, train, bus, ferry, visite, activité…)'} : l’appli le lit <b>sur ton téléphone</b>, reconnaît le type de réservation, crée la fiche (ou les vols d’un aller-retour) et te laisse vérifier.</div>
       <button type="button" class="v-btn" onclick="CV.impPick()">📄 Choisir le PDF de la réservation</button>
-      <button type="button" class="v-btn sec" onclick="CV.impPickShot()">📸 Une capture d’écran (appli, mail, Wallet)</button>
+      <button type="button" class="v-btn sec" onclick="CV.impPickCam()">📸 Photographier un billet papier</button><button type="button" class="v-btn sec" onclick="CV.impPickShot()">🖼️ Une capture d’écran (appli, mail, Wallet)</button>
       <button type="button" class="v-btn sec" onclick="CV.impPickPass()">🎫 Une carte Wallet (.pkpass)</button>
       <button type="button" class="v-btn sec" onclick="CV.impMail()">✉️ Coller le texte du mail</button>
       <button type="button" class="v-btn sec" onclick="CV.impPickAny()">📨 Choisir un mail enregistré (.eml)</button>
@@ -9623,6 +9658,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function impPickPass(){ tlPickFile(isIOSDev ? '' : '.pkpass,application/vnd.apple.pkpass,application/octet-stream', f => impPass(f)); }
   function impPickShot(){ tlPickFile('image/*', f => impFile(f)); }
+  function impPickCam(){ tlPickFile('image/*', f => impFile(f), true); }
   async function impFile(file, extraText){
     const isPdf = /pdf/i.test(file.type) || /\.pdf$/i.test(file.name||''), isImg = /^image\//i.test(file.type) || /\.(png|jpe?g|heic|heif|webp)$/i.test(file.name||'');
     if(/\.pkpass$/i.test(file.name||'') || /pkpass/i.test(file.type)) return impPass(file);
@@ -13177,7 +13213,7 @@ ${pm.join('\n')}</Document></kml>`;
     return `<div class="cv-eve"><div class="ev-k">🌙 Ta journée en 30 secondes</div><div class="ev-t">J${k+1} · ${fdate(td)}</div>
       <textarea class="v-in" id="ev-txt" rows="2" placeholder="Une phrase sur ta journée…"></textarea>
       <div class="ev-ph" id="ev-ph"></div>
-      <div class="ev-b"><label class="ev-add">📷 Photos du jour<input type="file" accept="image/*" multiple onchange="CV.evePhotos(this)"></label><button type="button" class="pri" onclick="CV.eveSave()">✨ Garder ce souvenir</button><button type="button" class="ev-no" onclick="CV.eveSkip()">Pas ce soir</button></div></div>`;
+      <div class="ev-b"><label class="ev-add">📸 Prendre une photo<input type="file" accept="image/*" capture="environment" onchange="CV.evePhotos(this)"></label><label class="ev-add">🖼️ Photos du jour<input type="file" accept="image/*" multiple onchange="CV.evePhotos(this)"></label><button type="button" class="pri" onclick="CV.eveSave()">✨ Garder ce souvenir</button><button type="button" class="ev-no" onclick="CV.eveSkip()">Pas ce soir</button></div></div>`;
   }
   let evePh = [];
   async function evePhotos(input){
@@ -14388,7 +14424,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-17u';
+  const BUILD = '2026-10-17v';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -14398,7 +14434,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
