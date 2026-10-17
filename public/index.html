@@ -1971,6 +1971,15 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .sh-tabs{display:flex;gap:6px;position:sticky;top:-8px;z-index:3;background:var(--cream);padding:6px 0 10px;margin-bottom:4px}.sh-tab{flex:1;min-width:0;position:relative;border:1.5px solid var(--light);background:#fff;border-radius:14px;padding:9px 4px;font:700 .8rem/1.15 var(--ui);color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}.sh-tab.on{background:var(--ink,#2A1238);border-color:var(--ink,#2A1238);color:#fff}.sh-tab .cv-badge{top:-6px;right:-4px}
 .sh-hub[data-on="comp"] .sh-tb:not([data-t~="comp"]),.sh-hub[data-on="ab"] .sh-tb:not([data-t~="ab"]),.sh-hub[data-on="suis"] .sh-tb:not([data-t~="suis"]){display:none!important}
 .cv-phrow{gap:8px}.cv-phrow .cv-addph{flex:1;margin:0}
+.qr-btn{width:100%;margin:0 0 10px}
+.qr-ov{position:fixed;inset:0;z-index:2147483000;background:#000;display:flex;align-items:center;justify-content:center}
+.qr-ov video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.qr-frame{position:relative;width:min(70vw,300px);aspect-ratio:1;border:3px solid #fff;border-radius:22px;box-shadow:0 0 0 100vmax rgba(0,0,0,.45)}
+.qr-top{position:absolute;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 14px) 16px 14px;display:flex;align-items:center;gap:12px;color:#fff;font-weight:700;font-size:16px}
+.qr-top span{flex:1}
+.qr-x{width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.2);color:#fff;font-size:20px}
+.qr-msg{position:absolute;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom) + 86px);color:#fff;text-align:center;font-size:15px;text-shadow:0 1px 3px #000}
+.qr-ov .qr-ph{position:absolute;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom) + 18px);margin:0;width:auto;background:#fff;color:#2A1238;border-color:#fff}
 .sh-sec{font-weight:800;font-size:.95rem;color:var(--navy,#2A1238);margin:2px 0 8px}
 .sh-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .sh-links button{border:0;background:#f3ecf6;color:#2a1238;border-radius:14px;padding:7px 11px;font:inherit;font-size:.8rem;font-weight:700}
@@ -3292,7 +3301,7 @@ const CV = (function(){
     const hosted = /^https?:/.test(location.protocol);
     openSheet(`<h2>🔗 Rejoindre un voyage partagé</h2><div class="v-sum-small" style="margin-bottom:8px">Colle le <b>code du voyage</b> reçu : ce voyage s’ajoute à tes voyages, sans rien partager des tiens.</div>
       ${hosted || M.sync.url ? '' : `<div class="v-f"><label>Adresse de l’appli en ligne</label><input class="v-in" id="tj-url" placeholder="https://carnet-voyage.pages.dev"></div>`}
-      <div class="v-f"><label>Code du voyage</label><input class="v-in" id="tj-code" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"></div>
+      ${qrBtn('tj-code')}<div class="v-f"><label>Code du voyage</label><input class="v-in" id="tj-code" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"></div>
       <div id="tj-msg" class="v-sum-small"></div>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.tripJoinGo()">🔗 Rejoindre</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
   }
@@ -3359,9 +3368,61 @@ const CV = (function(){
     Object.values(R).filter(r=>!r.demo && (r.id === tid || r.trip === tid)).forEach(r=>markDirty(r.id));
     persist(); closeSheet(true); queueSync(); try { photoQueueAll(tid); } catch(e){} refresh();
   }
+  /* ══════════ 📷 Scanner un QR code d’invitation (caméra en direct) ══════════
+     Lecture : BarcodeDetector quand le téléphone l’a (Android/Chrome), sinon jsQR (vendor/jsqr.min.js, chargé au premier scan).
+     Si la caméra est refusée ou indisponible : photo du QR code à la place. Le texte lu remplit le champ puis lance l’action. */
+  let qrSt = null; window.addEventListener('pagehide', ()=>qrStop());
+  const QR_GO = {'ja-code':()=>joinAnyGo(), 'tj-code':()=>tripJoinGo(), 'cv-scode':()=>obJoin(), 'fw-code':()=>followGo(document.getElementById('fw-code').value)};
+  async function qrDecoder(){
+    try { if('BarcodeDetector' in window && (await BarcodeDetector.getSupportedFormats()).includes('qr_code')){ const d = new BarcodeDetector({formats:['qr_code']}); return async src => { const r = await d.detect(src); return r[0] ? r[0].rawValue : ''; }; } } catch(e){}
+    if(!window.jsQR) await new Promise((res, rej)=>{ const sc = document.createElement('script'); sc.src = (window.VZ_B || '') + 'vendor/jsqr.min.js'; sc.onload = res; sc.onerror = ()=>rej(new Error(MSGT('Lecteur de QR code indisponible (pas de réseau ?)'))); document.head.appendChild(sc); });
+    const cv = document.createElement('canvas'), cx = cv.getContext('2d', {willReadFrequently:true});
+    return async src => { const w0 = src.videoWidth || src.naturalWidth || src.width, h0 = src.videoHeight || src.naturalHeight || src.height; if(!w0) return '';
+      const k = Math.min(1, 800 / Math.max(w0, h0)); cv.width = Math.round(w0 * k); cv.height = Math.round(h0 * k); cx.drawImage(src, 0, 0, cv.width, cv.height);
+      const r = window.jsQR(cx.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height, {inversionAttempts:'attemptBoth'}); return r ? r.data : ''; };
+  }
+  function qrFound(id, txt){
+    qrStop(); const el = document.getElementById(id); if(!el) return;
+    if(id === 'fw-code' || id === 'tj-code'){ const m = txt.match(/(?:suivre|rejoindre)=([A-Za-z0-9-]{8,})/i) || txt.match(/\b([A-Z0-9]{4}(?:-[A-Z0-9]{4}){2,})\b/i); if(m) txt = m[1].toUpperCase(); }
+    el.value = txt; try { navigator.vibrate && navigator.vibrate(60); } catch(e){}
+    toast('✅ ' + MSGT('QR code lu')); if(QR_GO[id]) setTimeout(QR_GO[id], 250);
+  }
+  function qrStop(){
+    const st = qrSt; qrSt = null; if(!st) return; st.off = true; clearTimeout(st.t);
+    try { st.stream && st.stream.getTracks().forEach(t=>t.stop()); } catch(e){}
+    const o = document.getElementById('qr-ov'); if(o) o.remove();
+  }
+  async function qrScan(id){
+    qrStop();
+    const o = document.createElement('div'); o.id = 'qr-ov'; o.className = 'qr-ov';
+    o.innerHTML = `<video playsinline muted autoplay></video><div class="qr-frame"></div>
+      <div class="qr-top"><span>${esc(MSGT('Vise le QR code de l’invitation'))}</span><button type="button" class="qr-x" onclick="CV.qrStop()" title="${esc(MSGT('Fermer'))}">✕</button></div>
+      <div class="qr-msg" id="qr-msg" data-notr></div>
+      <label class="v-btn sec qr-ph">🖼️ ${esc(MSGT('Lire le QR code sur une photo'))}<input type="file" accept="image/*" hidden onchange="CV.qrPhoto(this,'${id}')"></label>`;
+    document.body.appendChild(o);
+    const st = qrSt = {id}, msg = t => { const m = document.getElementById('qr-msg'); if(m) m.textContent = t; };
+    let dec; try { dec = await qrDecoder(); } catch(e){ msg(e.message); return; }
+    st.dec = dec; if(st.off) return;
+    if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)){ msg(MSGT('La caméra en direct n’est pas disponible ici : prends le QR code en photo.')); return; }
+    try { st.stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}, width:{ideal:1280}, height:{ideal:720}}, audio:false}); }
+    catch(e){ msg(MSGT('Accès à la caméra refusé. Autorise l’appareil photo pour Vezoria dans les réglages du téléphone, ou prends le QR code en photo.')); return; }
+    if(st.off){ st.stream.getTracks().forEach(t=>t.stop()); return; }
+    const v = o.querySelector('video'); v.srcObject = st.stream; try { await v.play(); } catch(e){}
+    const tick = async () => { if(st.off) return; let txt = ''; try { if(v.readyState >= 2) txt = await dec(v); } catch(e){}
+      if(st.off) return; if(txt) qrFound(id, txt); else st.t = setTimeout(tick, 220); };
+    tick();
+  }
+  async function qrPhoto(inp, id){
+    const f = inp.files && inp.files[0]; if(!f) return; const m = document.getElementById('qr-msg');
+    try { const dec = (qrSt && qrSt.dec) || await qrDecoder(); const img = new Image(), u = URL.createObjectURL(f);
+      await new Promise((res, rej)=>{ img.onload = res; img.onerror = rej; img.src = u; }); const txt = await dec(img); URL.revokeObjectURL(u);
+      if(txt) qrFound(id, txt); else if(m) m.textContent = MSGT('Aucun QR code trouvé sur cette photo.'); }
+    catch(e){ if(m) m.textContent = MSGT('Aucun QR code trouvé sur cette photo.'); }
+  }
+  const qrBtn = id => `<button type="button" class="v-btn sec qr-btn" onclick="CV.qrScan('${id}')">📷 Scanner le QR code</button>`;
   // un seul champ pour tout : lien ou code de voyage, de carnet ou d’abonné
   function joinAny(){
-    openSheet(`<h2>🔗 Rejoindre avec un code</h2><div class="v-sum-small" style="margin-bottom:8px">Colle le message, le lien ou le code reçu.</div>
+    openSheet(`<h2>🔗 Rejoindre avec un code</h2>${qrBtn('ja-code')}<div class="v-sum-small" style="margin-bottom:8px">Ou colle le message, le lien ou le code reçu.</div>
       <textarea class="v-in" id="ja-code" rows="3" placeholder="XXXX-XXXX-XXXX ou le lien reçu"></textarea>
       ${navigator.clipboard && navigator.clipboard.readText ? `<button type="button" class="v-day-edit" style="margin-top:6px" onclick="CV.joinPaste()">📋 Coller</button>` : ''}
       <div id="ja-msg" class="v-sum-small" style="margin-top:6px"></div>
@@ -5139,7 +5200,7 @@ const CV = (function(){
       <div id="cv-ob-join" style="display:none">
         ${hosted ? '' : `<div class="v-f"><label>Adresse de l’appli en ligne</label><input class="v-in" id="cv-surl" placeholder="https://carnet-voyage.pages.dev"></div>`}
         <div class="v-f"><label>Invitation reçue (lien ou code)</label><input class="v-in" id="cv-scode" placeholder="https://… ou XXXX-XXXX-XXXX" autocapitalize="characters"></div>
-        <button type="button" class="v-btn sec" style="margin-bottom:8px" onclick="CV.obPaste()">📋 Coller l’invitation</button>
+        ${qrBtn('cv-scode')}<button type="button" class="v-btn sec" style="margin-bottom:8px" onclick="CV.obPaste()">📋 Coller l’invitation</button>
         <div class="v-sum-small" style="margin:-4px 0 10px">Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.</div>
         <button class="v-btn" onclick="CV.obJoin()">Rejoindre</button>
       </div>`, true);
@@ -14015,7 +14076,7 @@ ${pm.join('\n')}</Document></kml>`;
     const fl = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')]);
     openSheet(`<h2>👀 Voyages que je suis</h2>
       ${fl.map(f=>{ const n = list('feed', x=>x.trip===f.id).length; return `<button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b>${esc(f.titre)}</b><small style="display:block" class="v-sum-small">par ${esc(f.owner || '?')} · ${n} étape${n>1?'s':''}</small></span><span>›</span></button>`; }).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Tu ne suis aucun voyage pour l’instant.</div>'}
-      <div class="v-f" style="margin-top:10px"><label>Suivre un voyage avec un code abonné</label><div class="cv-row"><input class="v-in" id="fw-code" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.followGo(document.getElementById('fw-code').value)">Suivre</button></div></div>
+      <div class="v-f" style="margin-top:10px"><label>Suivre un voyage avec un code abonné</label>${qrBtn('fw-code')}<div class="cv-row"><input class="v-in" id="fw-code" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.followGo(document.getElementById('fw-code').value)">Suivre</button></div></div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   // ---------- 👥 Nouveautés sociales (❤️, 💬, abonnés, nouvelles étapes) + fenêtre « Abonnés & abonnements » ----------
@@ -14424,7 +14485,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-17v';
+  const BUILD = '2026-10-17w';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -14434,7 +14495,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════

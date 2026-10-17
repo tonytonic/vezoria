@@ -6,7 +6,7 @@
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), payment=(), usb=(), serial=(), bluetooth=(), midi=(), magnetometer=(), gyroscope=(), accelerometer=(), browsing-topics=(), geolocation=(self), clipboard-read=(self), clipboard-write=(self)
+  Permissions-Policy: camera=(self), microphone=(), payment=(), usb=(), serial=(), bluetooth=(), midi=(), magnetometer=(), gyroscope=(), accelerometer=(), browsing-topics=(), geolocation=(self), clipboard-read=(self), clipboard-write=(self)
   Cross-Origin-Opener-Policy: same-origin
 
 /music/*
