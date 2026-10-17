@@ -3650,6 +3650,7 @@ const CV = (function(){
     if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
     const sp = spaceObj(code); try { await syncSpace(sp, true); } catch(e){}
     if(sp.err){ msg.textContent = '⚠️ ' + sp.err; return; }
+    { const xf = list('xfer', r=>r.trip === 'xf:' + code)[0]; if(xf){ await xferApply(xf, code); return; } }
     if(list('packtrip', r=>TS()[r.trip] === code).length){   // paquet de voyages : on rejoint chacun d’eux
       msg.textContent = '📡 Voyages partagés…';
       if(M.left) list('packtrip', r=>TS()[r.trip] === code).forEach(r=>{ delete M.left[r.tid]; });   // rejoindre exprès : les voyages quittés reviennent
@@ -5466,6 +5467,7 @@ const CV = (function(){
     try {
       if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
       const sp = spaceObj(code); await syncSpace(sp, true);
+      { const xf = !sp.err && list('xfer', r=>r.trip === 'xf:' + code)[0]; if(xf){ delete M.joinCode; persist(); await xferApply(xf, code); return; } }
       const got = sp.err ? [] : Object.entries(TS()).filter(([, c])=>c === code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip');
       if(got.length){ delete M.joinCode; persist(); closeSheet(true); go(got[0].id); refresh(); joinPick(code); return; }
       M.spaces = (M.spaces || []).filter(x=>x.code !== code);
@@ -11697,7 +11699,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(!webFollowing()) return '';
     const c = M.webCode || (list('feedtrip', f=>TS()[f.id] && !f.deleted).map(f=>TS()[f.id]))[0] || '';
     return `<div class="fd-cta"><span><b>Toi aussi, raconte tes voyages</b><small>Carnet de voyage gratuit, sans compte, sans publicité.</small></span><button type="button" onclick="CV.webCreate()">✨ Créer mon carnet</button></div>`
-      + (c ? `<div class="fd-wcode"><span><b>Suivre ce voyage dans l’appli</b><small>Installe Vezoria, puis touche 👥 → « Suivre un voyage avec un code » et entre ce code :</small></span><b class="cv-code">${esc(c)}</b><button type="button" id="gw-copy2" onclick="CV.webCopyCode()">📋 Copier le code</button></div>` : '');
+      + (c ? `<div class="fd-wcode"><span><b>📲 Passer à l’appli sans rien perdre</b><small>Installe Vezoria, puis colle ce code dans l’appli (à l’accueil « J’ai reçu une invitation », ou 👥 → « Rejoindre avec un code ») : tu retrouves tes voyages suivis, sous ton nom, sans compter deux fois.</small></span><b class="cv-code" id="gw-xcode">${M.xfer && M.xfer.c ? esc(M.xfer.c) : '••••-••••-••••'}</b><button type="button" id="gw-copy2" onclick="CV.webCopyCode()">📋 Copier mon code de passage</button></div>` : '');
   }
   function webCreate(){
     let g = document.getElementById('cv-gate'); if(!g){ g = document.createElement('div'); g.id = 'cv-gate'; document.body.appendChild(g); }
@@ -11705,12 +11707,51 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function webBack(){ const g = document.getElementById('cv-gate'); if(g) g.remove(); const fl = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted); if(fl.length && !document.getElementById('cv-feed')) feedView((fl.find(f=>f.id===M.feedLast) || fl[0]).id); }
   async function webCopyCode(){
-    const c = M.webCode || (list('feedtrip', f=>TS()[f.id] && !f.deleted).map(f=>TS()[f.id]))[0] || '', b = document.getElementById('gw-copy2');
-    try { await navigator.clipboard.writeText(c); if(b) b.textContent = '📋 Code copié'; } catch(e){ await uiPrompt('Copie ce code :', c); }
+    const b = document.getElementById('gw-copy2'); let c = '';
+    try { c = await xferCode(); } catch(e){ alert(MSGT('Code impossible pour le moment (pas de réseau ?).')); return; }
+    const el = document.getElementById('gw-xcode'); if(el) el.textContent = c;
+    try { await navigator.clipboard.writeText(c); if(b) b.textContent = '📋 ' + MSGT('Code copié'); } catch(e){ await uiPrompt('Copie ce code :', c); }
+  }
+  /* 📲 Passage navigateur → appli : un code secret, valable une seule fois, dépose dans un petit dossier chiffré
+     « qui je suis » (mon appareil, mon nom chez chaque auteur, les voyages que je suis). L’appli qui le colle reprend
+     ces abonnements sous le même nom et retire l’ancien abonné du navigateur : pas de doublon, et personne d’autre
+     ne peut se faire passer pour moi (il faudrait ce code, qui n’existe que sur mon téléphone). */
+  async function xferCode(){
+    const codes = [...new Set(list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted).map(f=>TS()[f.id]))].sort();
+    const sig = codes.join(',') + '|' + myName() + '|' + JSON.stringify(M.fwAs || {});
+    if(M.xfer && M.xfer.c && M.xfer.sig === sig && Date.now() - M.xfer.at < 30 * 864e5) return M.xfer.c;
+    const c = genCode(), rec = {id:'xf:' + devId(), type:'xfer', trip:'xf:' + c, dev:devId(), who:myName() || '', as:M.fwAs || {}, codes, at:Date.now()};
+    const sp = {code:c, since:0, dirty:[], last:0, err:''}; (M.spaces = M.spaces || []).push(sp); TS()['xf:' + c] = c;
+    try { await spacePushOnly(sp, [rec]); }
+    finally { M.spaces = M.spaces.filter(x=>x !== sp); delete TS()['xf:' + c]; delete R[rec.id]; persist(); }
+    if(sp.err) throw new Error(sp.err);
+    M.xfer = {c, sig, at:Date.now()}; persist(); return c;
+  }
+  // côté appli : le code de passage collé → mes abonnements du navigateur arrivent ici, l'ancien abonné s'efface
+  async function xferApply(x, code){
+    closeSheet(true); cryptShow('📲 ' + MSGT('Je récupère les voyages que tu suis…'));
+    try {
+      if(x.who && !M.followName) M.followName = x.who;
+      M.fwAs = Object.assign(M.fwAs || {}, x.as || {}); M.fwChk = M.fwChk || {};
+      const k = await fKey(), ib = inbox();
+      for(const c of x.codes || []){
+        M.fwChk[c] = 1; if(!M.fwAs[c] && x.who) M.fwAs[c] = x.who;
+        if(M.unfol) Object.keys(M.unfol).forEach(id=>{ if(TS()[id] === c) delete M.unfol[id]; });
+        if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
+        const sp = spaceObj(c); sp.since = 0; try { await syncSpace(sp, true); } catch(e){}
+        const old = list('follower', f=>fwDevOf(f) === x.dev && TS()[f.trip] === c);
+        const mine = list('feedtrip', f=>TS()[f.id] === c && !f.deleted).map(ft=>({id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who:fwAsFor(c) || 'Un proche', pk:k.pub, ib}));
+        putQuiet([...old.map(f=>Object.assign(clone(f), {deleted:true})), ...mine]);
+      }
+      const sp0 = spaceObj(code); if(sp0){ try { await spacePushOnly(sp0, [Object.assign(clone(x), {deleted:true})]); } catch(e){} }   // le code ne sert qu’une fois
+      M.spaces = (M.spaces || []).filter(z=>z.code !== code); delete R[x.id]; persist();
+      try { await syncNow(); } catch(e){}
+    } finally { cryptHide('✅ ' + MSGT('Tes voyages suivis sont dans l’appli')); }
+    refresh();
   }
   async function webCopy(){
-    const c = (list('feedtrip', f=>TS()[f.id] && !f.deleted).map(f=>TS()[f.id]))[0] || '';
-    const txt = (typeof appUrl === 'function' && appUrl() ? appUrl() : location.origin + '/') + '#suivre=' + c;
+    let c = ''; try { c = await xferCode(); } catch(e){ alert(MSGT('Code impossible pour le moment (pas de réseau ?).')); return; }
+    const txt = (typeof appUrl === 'function' && appUrl() ? appUrl() : location.origin + '/') + '#rejoindre=' + c;
     const b = document.getElementById('gw-copy');
     try { await navigator.clipboard.writeText(txt); if(b) b.textContent = '📋 Lien copié'; } catch(e){ await uiPrompt('Copie ce texte :', txt); }
   }
@@ -11738,7 +11779,7 @@ ${pm.join('\n')}</Document></kml>`;
       ${/[#&]rejoindre=/i.test(location.hash) || M.joinCode ? `<div class="gv"><b>🎟️ Tu es invité(e) dans un voyage</b><b class="cv-code" data-notr>${esc(((location.hash.match(/rejoindre=([A-Za-z0-9-]{8,})/i) || [])[1] || M.joinCode || '').toUpperCase())}</b><p>Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».</p><button type="button" class="v-btn sec" id="gv-copy" onclick="CV.gateCopy()">📋 Copier l’invitation</button></div>` : ''}
       <ol class="gs">${steps}</ol>
       ${installEvt ? `<button type="button" class="v-btn" onclick="CV.gateInstall()">📲 Installer l’appli</button>` : ''}
-      ${webFollowing() ? `<div class="gb"><button type="button" onclick="CV.webBack()">← Revenir au voyage que je suis</button><button type="button" id="gw-copy" onclick="CV.webCopy()">📋 Copier le lien du voyage (à coller dans l’appli installée)</button></div>` : ''}
+      ${webFollowing() ? `<div class="gb"><button type="button" onclick="CV.webBack()">← Revenir au voyage que je suis</button><button type="button" id="gw-copy" onclick="CV.webCopy()">📋 Copier mon lien de passage (à coller dans l’appli installée)</button></div>` : ''}
       <p class="gm">Aucune inscription, aucune publicité. <a href="mentions-legales">Mentions légales</a> · <a href="privacy">Confidentialité</a></p></div>`;
   }
   // l’appli installée sur iPhone ne voit pas le lien ouvert dans Safari : l’invitation passe par le presse-papiers
@@ -14903,7 +14944,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18i';
+  const BUILD = '2026-10-18j';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -14913,7 +14954,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
