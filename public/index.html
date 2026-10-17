@@ -1973,6 +1973,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .sh-hub[data-on="comp"] .sh-tb:not([data-t~="comp"]),.sh-hub[data-on="ab"] .sh-tb:not([data-t~="ab"]),.sh-hub[data-on="suis"] .sh-tb:not([data-t~="suis"]){display:none!important}
 .cv-phrow{gap:8px}.cv-phrow .cv-addph{flex:1;margin:0}
 .qr-btn{width:100%;margin:0 0 10px}
+.pl-exp{margin:0 0 12px}
 .cv-pend{padding:10px 12px}.cv-pend-r{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:4px 0}.cv-pend-r small{color:var(--gray)}.cv-pend-r .v-day-edit{margin-left:6px}
 .qr-ov{position:fixed;inset:0;z-index:2147483000;background:#000;display:flex;align-items:center;justify-content:center}
 .qr-ov video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -4027,12 +4028,13 @@ const CV = (function(){
   const expWx = (c, day) => c == null ? '' : c === 0 ? (day ? '☀️' : '🌙') : c <= 2 ? (day ? '🌤️' : '🌙') : c === 3 ? '☁️' : c <= 48 ? '🌫️' : c <= 67 ? '🌧️' : c <= 77 ? '❄️' : c <= 82 ? '🌦️' : c <= 86 ? '🌨️' : '⛈️';
   let exp = null;
   function explore(hid){ const h = R[hid]; if(!h) return; exploreCity(cityOf(h.titre), hid); }
-  async function exploreCity(city, hid){
+  async function exploreCity(city, hid, day){
     city = String(city || '').trim(); if(!city) return;
+    if(day) closeSheet(true);
     let ov = document.getElementById('cv-exp'); if(ov) ov.remove();
     ov = document.createElement('div'); ov.id = 'cv-exp'; document.body.appendChild(ov); document.body.style.overflow = 'hidden';
     const first = !((M.expSeen || (M.expSeen = {}))[normQ(city)]); M.expSeen[normQ(city)] = Date.now(); persist();
-    exp = {city, hid, d:null};
+    exp = {city, hid, day: day || '', d:null};
     const letters = [...city].map((ch, i)=>`<span style="animation-delay:${(first ? 0.55 : 0.15) + i * 0.045}s">${ch === ' ' ? '&nbsp;' : esc(ch)}</span>`).join('');
     ov.className = first ? 'ex-first' : '';
     ov.innerHTML = `<div class="ex-scroll" id="ex-scroll"><div class="ex-hero"><div class="ex-img" id="ex-img"></div><div class="ex-shade"></div>
@@ -4053,14 +4055,14 @@ const CV = (function(){
     $('ex-ctry').textContent = d.country || '';
     const time = d.tz ? (()=>{ try { return new Intl.DateTimeFormat((window.I18N && I18N.locale) || 'fr-FR', {hour:'2-digit', minute:'2-digit', timeZone:d.tz}).format(new Date()); } catch(e){ return ''; } })() : '';
     $('ex-chips').innerHTML = [time ? `<span>🕒 ${time}</span>` : '', d.temp != null ? `<span>${expWx(d.code, d.day)} ${d.temp}°</span>` : ''].join('');
-    const added = new Set(exp.hid ? placesOfStay(exp.hid).map(p=>normQ(p.nom)) : []);
+    const added = new Set(exp.day ? placesOf(exp.day).map(p=>normQ(p.nom)) : exp.hid ? placesOfStay(exp.hid).map(p=>normQ(p.nom)) : []);
     const secs = EXP_CATS.filter(([k])=>(d.cats[k] || []).length).map(([k, ic, lbl])=>`<section class="ex-sec"><h2><span>${ic}</span> <span>${lbl}</span> <small>${d.cats[k].length}</small></h2>
       <div class="ex-row">${d.cats[k].map((it, i)=>`<button type="button" class="ex-card" onclick="CV.expOpen('${k}',${i})">
         <div class="ex-ph" style="background-image:${EXP_GRAD[k]}"><span class="ex-ic">${ic}</span>${it.ph ? `<img class="ex-pic" src="${esc(it.ph)}" alt="" loading="lazy" decoding="async" onload="this.classList.add('ok')" onerror="this.remove()">` : ''}${added.has(normQ(it.n)) ? '<i class="ex-ok">✓</i>' : ''}</div>
         <b data-notr>${esc(it.n)}</b><small data-notr>${esc(it.d || it.a || '')}</small>${it.pr || it.h ? `<em data-notr>${esc(it.pr ? '💶 ' + it.pr : '🕒 ' + it.h)}</em>` : ''}</button>`).join('')}</div></section>`).join('');
     $('ex-body').innerHTML = (d.intro ? `<p class="ex-intro" data-notr>${esc(d.intro)}</p>` : '')
       + (secs || '<div class="ex-empty">Rien trouvé pour cette ville pour l’instant.</div>')
-      + (exp.hid ? `<button type="button" class="v-btn sec ex-more" onclick="CV.expClose();CV.discover('${exp.hid}')">🔎 Tous les lieux autour, sur la carte</button>` : '')
+      + (exp.hid && !exp.day ? `<button type="button" class="v-btn sec ex-more" onclick="CV.expClose();CV.discover('${exp.hid}')">🔎 Tous les lieux autour, sur la carte</button>` : '')
       + `<div class="ex-src">Textes : Wikivoyage et Wikipédia (CC BY-SA) · Photos : Wikimedia Commons · Météo : Open-Meteo</div>`;
     // les rubriques apparaissent en glissant
     try { const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), {root:$('ex-scroll'), threshold:.12});
@@ -4069,27 +4071,27 @@ const CV = (function(){
   function expOpen(k, i){
     const it = exp && exp.d && exp.d.cats[k] && exp.d.cats[k][i]; if(!it) return;
     const det = document.getElementById('ex-det'), ic = (EXP_CATS.find(x=>x[0] === k) || [])[1] || '📍';
-    const has = exp.hid && placesOfStay(exp.hid).some(p=>normQ(p.nom) === normQ(it.n));
+    const has = exp.day ? placesOf(exp.day).some(p=>normQ(p.nom) === normQ(it.n)) : exp.hid && placesOfStay(exp.hid).some(p=>normQ(p.nom) === normQ(it.n));
     const go = it.lat != null ? `${it.lat},${it.lng}` : it.n + ', ' + exp.city;
     det.innerHTML = `<div class="ex-dbg" onclick="CV.expShut()"></div><div class="ex-dc">
       <div class="ex-dph" style="background-image:${EXP_GRAD[k]}"><span class="ex-ic">${ic}</span>${it.ph ? `<img class="ex-pic" src="${esc(it.ph.replace(/width=\d+/, 'width=960'))}" alt="" decoding="async" onload="this.classList.add('ok')" onerror="this.remove()">` : ''}<button type="button" class="ex-dx" onclick="CV.expShut()">✕</button></div>
       <div class="ex-dt"><h3 data-notr>${esc(it.n)}</h3>${it.d ? `<p data-notr>${esc(it.d)}</p>` : ''}
         ${it.a ? `<div class="ex-ln"><span>📍</span><span data-notr>${esc(it.a)}</span></div>` : ''}${it.h ? `<div class="ex-ln"><span>🕒</span><span data-notr>${esc(it.h)}</span></div>` : ''}${it.pr ? `<div class="ex-ln"><span>💶</span><span data-notr>${esc(it.pr)}</span></div>` : ''}
-        <div class="ex-acts">${exp.hid ? `<button type="button" class="v-btn${has ? ' sec' : ''}" onclick="CV.expAdd('${k}',${i})">${has ? '✓ Dans ton programme' : '＋ Ajouter à l’étape'}</button>` : ''}
+        <div class="ex-acts">${exp.hid || exp.day ? `<button type="button" class="v-btn${has ? ' sec' : ''}" onclick="CV.expAdd('${k}',${i})">${has ? '✓ Dans ton programme' : exp.day ? '＋ Ajouter à ma journée' : '＋ Ajouter à l’étape'}</button>` : ''}
           <a class="v-btn sec" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(go)}" target="_blank" rel="noopener">🧭 Y aller</a>
           ${it.u ? `<a class="v-btn sec" href="${esc(it.u)}" target="_blank" rel="noopener">🌐 Site</a>` : ''}</div></div></div>`;
     det.hidden = false; requestAnimationFrame(()=>det.classList.add('on'));
   }
   function expShut(){ const det = document.getElementById('ex-det'); if(!det) return; det.classList.remove('on'); setTimeout(()=>{ det.hidden = true; }, 260); }
   function expAdd(k, i){
-    const it = exp && exp.d && exp.d.cats[k] && exp.d.cats[k][i]; if(!it || !exp.hid) return;
-    const ex = placesOfStay(exp.hid).find(x=>normQ(x.nom) === normQ(it.n));
+    const it = exp && exp.d && exp.d.cats[k] && exp.d.cats[k][i]; if(!it || !(exp.hid || exp.day)) return;
+    const ex = (exp.day ? placesOf(exp.day) : placesOfStay(exp.hid)).find(x=>normQ(x.nom) === normQ(it.n));
     if(ex) drop(ex.id, '↩️ Retiré');
-    else put({id:'pl' + uid(), type:'place', trip:M.trip, stay:exp.hid, date:(R[exp.hid] && R[exp.hid].type === 'city' && R[exp.hid].date) || '', nom:it.n, adresse:it.a || '', lat:it.lat, lng:it.lng, cat:k === 'see' ? wikiCat(it.n + ' ') : 'loisir', lock:false}, '📍 ' + it.n);
+    else put({id:'pl' + uid(), type:'place', trip:M.trip, stay:exp.hid || '', date:exp.day || (R[exp.hid] && R[exp.hid].type === 'city' && R[exp.hid].date) || '', nom:it.n, adresse:it.a || '', lat:it.lat, lng:it.lng, cat:k === 'see' ? wikiCat(it.n + ' ') : 'loisir', lock:false}, '📍 ' + it.n);
     expOpen(k, i);
     const sc = document.getElementById('ex-scroll'), y = sc ? sc.scrollTop : 0; expFill(); if(sc) sc.scrollTop = y;
   }
-  function expClose(){ const ov = document.getElementById('cv-exp'); if(ov) ov.remove(); document.body.style.overflow = ''; exp = null; refresh(); }
+  function expClose(){ const ov = document.getElementById('cv-exp'), back = exp && exp.day; if(ov) ov.remove(); document.body.style.overflow = ''; exp = null; refresh(); if(back) setTimeout(()=>planDay(back), 60); }
   function plusSheet(){
     const p = bar(), ent = DEST.filter(d=>!p.includes(d[0]) && !destHidden(d[0]) && d[0] !== 'prog')
       .map(d=>[`CV.plusGo('${d[0]}')`, d[1], d[2]]);
@@ -5766,7 +5768,13 @@ const CV = (function(){
     return {night: H.find(h=>h.date<=d && (h.dateFin ? d<h.dateFin : h.date===d)), prev: H.find(h=>h.dateFin===d)};
   }
   const hotelQ = h => h.adresse || [h.nom, cityOf(h.titre)].filter(Boolean).join(', ');
-  function dayCity(d){ const {night, prev} = hotelsAround(d); return cityOf((night||prev||{}).titre || ''); }
+  function dayCity(d){ const {night, prev} = hotelsAround(d); const c = cityOf((night||prev||{}).titre || ''); if(c) return c;
+    const tr = items(i=>i.cat==='transport' && i.date===d && i.to).pop(); return tr ? cityOf(tr.to.replace(/\(.*?\)/g,'').trim()) : ''; }
+  async function planExplore(d){
+    let city = dayCity(d);
+    if(!city){ const c = await uiPrompt('Quelle ville veux-tu explorer ?', ''); if(!c || !c.trim()) return; city = c.trim(); }
+    const st = hotelsAround(d).night; exploreCity(city, st ? st.id : '', d);
+  }
   function pointOptions(d){
     const o = [], {night, prev} = hotelsAround(d);
     [night, prev].filter(Boolean).forEach(h=>{ if(!o.some(x=>x.k==='item:'+h.id)) o.push({k:'item:'+h.id, lbl:'🏨 '+(h.nom ? h.nom+' · ' : 'Hôtel · ')+cityOf(h.titre), q:hotelQ(h), ctx:false}); });
@@ -5863,6 +5871,7 @@ const CV = (function(){
         <input class="v-in" id="pl-dept" style="margin-top:6px;${cfg.dep==='libre'?'':'display:none'}" value="${esc(cfg.depTxt)}" placeholder="Adresse, lieu ou lien Google Maps" onchange="CV.plCfg()"></div>
       <div class="v-f"><label>Arrivée</label>${sel('pl-arr', cfg.arr, true)}
         <input class="v-in" id="pl-arrt" style="margin-top:6px;${cfg.arr==='libre'?'':'display:none'}" value="${esc(cfg.arrTxt)}" placeholder="Adresse, lieu ou lien Google Maps" onchange="CV.plCfg()"></div>
+      <button type="button" class="cv-tjbtn pl-exp" onclick="CV.planExplore('${d}')"><span>🧭</span><span><b>Explorer ${city ? esc(city) : 'la ville'}</b><small>Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée</small></span></button>
       <div class="v-f"><label>Ce que tu veux voir (${pl.length})</label>
         <div>${pl.map((p,i)=>`<div class="cv-place"><span class="n">${i+1}</span><span class="x" role="button" onclick="CV.plInfo('${p.id}')"><u>${esc(p.nom)}</u> ⓘ${p.adresse && p.adresse!==p.nom ? `<small>${esc(p.adresse.slice(0,60))}</small>` : ''}${byline(p).replace('cv-by','cv-by s')}</span>
           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(coordsIn(p.adresse||'') ? ll(coordsIn(p.adresse)) : (p.adresse||p.nom) + (city ? ', ' + city : ''))}" target="_blank" rel="noopener">📍</a>
@@ -5870,7 +5879,7 @@ const CV = (function(){
         <div class="cv-row" style="margin-top:6px"><input class="v-in" id="pl-new" placeholder="Ex. Colisée ; Trastevere ; Bocca della Verità" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.plAdd()}">
           <button type="button" class="v-btn sec cv-sq" onclick="CV.plAdd()">＋</button></div>
         <div class="v-sum-small" style="margin-top:4px">Un nom suffit${city ? ' (« ' + esc(city) + ' » est ajouté pour la recherche)' : ''}, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».</div></div>
-      ${hotelsAround(d).night ? `<div class="cv-row" style="margin-bottom:10px"><button type="button" class="v-day-edit" onclick="CV.explore('${hotelsAround(d).night.id}')">🧭 Explorer ${esc(city)}</button><button type="button" class="v-day-edit" onclick="CV.planCity('${hotelsAround(d).night.id}')">🏙️ Organiser toute l’étape</button></div>` : ''}
+      ${hotelsAround(d).night ? `<div class="cv-row" style="margin-bottom:10px"><button type="button" class="v-day-edit" onclick="CV.planCity('${hotelsAround(d).night.id}')">🏙️ Organiser toute l’étape</button></div>` : ''}
       <div class="v-f"><label>Je marche jusqu’à</label><div class="cv-row"><input class="v-in cv-num" id="pl-walk" inputmode="decimal" value="${esc(t.marche||2.5)}" onchange="CV.plCfg()">
         <span class="v-sum-small">km par trajet ; au-delà : métro / bus, puis taxi</span></div></div>
       <button type="button" class="v-btn" id="pl-go" onclick="CV.plOpt()">⚡ Optimiser l’itinéraire</button>
@@ -14763,7 +14772,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-17z6';
+  const BUILD = '2026-10-17z7';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -14773,7 +14782,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
