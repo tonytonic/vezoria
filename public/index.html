@@ -3422,21 +3422,22 @@ const CV = (function(){
     setTimeout(()=>inviteCheck().catch(()=>{}), 1500);
   }
   // 🚪 quitter un voyage partagé : d’abord le choix pour SES photos (droit à l’image), puis le départ
-  function tripUnshare(id){
-    const t = R[id]; if(!t) return;
+  function tripUnshare(id, drop){
+    const t = R[id]; if(!t) return; drop = drop ? 1 : 0;
+    const mineT = !t.createdBy || t.createdBy === M.me, owner = t.createdBy && prof(t.createdBy) ? pname(t.createdBy) : 'quelqu’un d’autre';
     const code = TS()[id], on = code && spaceObj(code);
     const mine = on ? Object.values(R).filter(r=>r && !r.deleted && r.trip === id && r.type !== 'member' && photoRefs(r).length && r.createdBy && r.createdBy === M.me) : [];
     const nPh = mine.reduce((s, r)=>s + photoRefs(r).length, 0), others = on ? mbOthers(id) : [];
-    openSheet(`<h2>🚪 Quitter « <span data-notr>${esc(t.titre)}</span> »</h2>
-      <div class="v-sum-small" style="margin-bottom:10px">Ton voyage reste sur ce téléphone avec toutes ses photos${M.sync.on && M.sync.code ? ' (et dans ton carnet en ligne)' : ''}. Tu ne recevras plus les modifications des autres.</div>
+    openSheet(`<h2>${drop ? '🗑 Supprimer' : '🚪 Quitter'} « <span data-notr>${esc(t.titre)}</span> »</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">${drop ? (mineT && !(M.viaP || {})[id] ? 'Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.' : `<span data-notr>${esc(owner)}</span> · <span>a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.</span>`) : `Ton voyage reste sur ce téléphone avec toutes ses photos${M.sync.on && M.sync.code ? ' (et dans ton carnet en ligne)' : ''}. Tu ne recevras plus les modifications des autres.`}</div>
       ${nPh ? `<div class="sh-k" style="font-size:1.05rem;margin-bottom:6px">📸 Tes photos dans ce voyage : <b data-notr>${nPh}</b></div>
-        <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${id}','keep')"><i>🤝</i><span><b>Les laisser aux autres</b><small>Tes compagnons gardent les souvenirs et photos que tu as ajoutés.</small></span></button>
-        <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${id}','take')"><i>🎒</i><span><b>Partir avec mes photos</b><small>Les souvenirs et photos que tu as ajoutés sont retirés du voyage partagé (et du serveur). Tu les gardes chez toi.</small></span></button>`
-      : `<button type="button" class="v-btn" onclick="CV.tripLeaveGo('${id}','keep')">🚪 Quitter le voyage partagé</button>`}
+        <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${id}','keep',0,${drop})"><i>🤝</i><span><b>Les laisser aux autres</b><small>Tes compagnons gardent les souvenirs et photos que tu as ajoutés.</small></span></button>
+        <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${id}','take',0,${drop})"><i>🎒</i><span><b>Partir avec mes photos</b><small>Les souvenirs et photos que tu as ajoutés sont retirés du voyage partagé (et du serveur). Tu les gardes chez toi.</small></span></button>`
+      : `<button type="button" class="v-btn" onclick="CV.tripLeaveGo('${id}','keep',0,${drop})">${drop ? '🗑 Quitter et retirer de mon téléphone' : '🚪 Quitter le voyage partagé'}</button>`}
       ${on && !others.length ? `<div class="v-sum-small" style="margin-top:8px">ℹ️ Personne d’autre n’a ouvert ce voyage depuis 2 mois : tu pourras effacer son dossier du serveur.</div>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
   }
-  async function tripLeaveGo(id, mode, silent){
+  async function tripLeaveGo(id, mode, silent, drop){
     const code = TS()[id], sp = code && spaceObj(code); if(!silent) closeSheet(true);
     if(sp && photoApi()){
       // 1) toutes les photos du voyage reviennent (dans le carnet principal s’il est synchronisé, sinon sur ce téléphone)
@@ -3468,6 +3469,12 @@ const CV = (function(){
     if(code && !Object.values(TS()).includes(code)) M.spaces = (M.spaces||[]).filter(x=>x.code!==code);
     M.pq = (M.pq||[]).filter(x=>photoCode(x) !== code);
     Object.values(R).filter(r=>r && r.type === 'member' && r.trip === id).forEach(r=>{ delete R[r.id]; });   // la présence ne part pas dans mon carnet
+    if(drop){   // « supprimer » un voyage créé par un autre : retiré de ce téléphone seulement (plus relié au dossier partagé)
+      (M.left = M.left || {})[id] = 1;   // un paquet de voyages ne le fait pas revenir tout seul
+      const t = R[id], out = Object.values(R).filter(r=>r && r.trip === id && !r.deleted); out.forEach(r=>r.deleted = true);
+      if(t){ t.deleted = true; out.push(t); }
+      putMany(out, '🗑 ' + MSGT('Voyage retiré de ton téléphone')); M.trip = null; applyMode(); return true;
+    }
     Object.values(R).filter(r=>!r.demo && (r.id===id || r.trip===id)).forEach(r=>markDirty(r.id));
     (M.cloudAsked = M.cloudAsked || {})[id] = Date.now();   // pas de question « mettre ce nouveau voyage dans le cloud ? » pour une copie qu’on garde
     if(cloudMode() === 'trips' && !(M.sync.on && M.sync.code)) { try { cloudSpace(id); } catch(e){} }   // rangé voyage par voyage : la copie va dans SON cloud privé
@@ -5111,14 +5118,8 @@ const CV = (function(){
     const t = R[id]; if(!t) return;
     // voyage partagé créé par quelqu’un d’autre : on ne le supprime que chez soi (on le quitte), jamais chez les autres
     const sc = TS()[id], shared = sc && spaceObj(sc), notMine = (t.createdBy && t.createdBy !== M.me) || (!t.createdBy && (M.viaP || {})[id]);
-    if(shared && notMine){
-      const who = t.createdBy && prof(t.createdBy) ? pname(t.createdBy) : MSGT('quelqu’un d’autre');
-      if(!(await uiConfirm(MSGT('Ce voyage a été créé par {0} : il reste chez tes compagnons.').replace('{0}', who) + '\n\n' + MSGT('OK = le quitter et le retirer de ton téléphone seulement.')))) return;
-      closeSheet(true);
-      if(!(await tripLeaveGo(id, 'keep', true))) return;
-      (M.left = M.left || {})[id] = 1;   // un paquet de voyages ne le fait pas revenir tout seul
-      const out = Object.values(R).filter(r=>r.trip===id && !r.deleted && r.type !== 'member'); out.forEach(r=>r.deleted = true); t.deleted = true;
-      putMany([...out, t], '🚪 ' + MSGT('Voyage retiré de ton téléphone')); M.trip = null; applyMode(); return;
+    if(shared && (notMine || mbOthers(id).length)){   // créateur aussi : s’il reste des compagnons, le voyage continue pour eux
+      tripUnshare(id, 1); return;   // même choix que « quitter » : mes photos restent ou partent avec moi
     }
     if(!(await uiConfirm('Supprimer le voyage « ' + t.titre + ' » et toutes ses fiches ? (pour tout le monde si la synchro est active)'))) return;
     const out = Object.values(R).filter(r=>r.trip===id && !r.deleted);
@@ -9812,7 +9813,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   // barre d’état du téléphone en haut de la capture (« 08:24 … 100 ») : ce n’est pas l’heure du trajet
   const stripStatus = T => { const L = String(T || '').split('\n'); let k = 0;
-    while(k < Math.min(3, L.length) && (!L[k].trim() || /^\W*\d{1,2}[:.h]\d{2}\b[^A-Za-zÀ-ÿ]{0,25}$/.test(L[k].trim()) || /^[^A-Za-zÀ-ÿ0-9]{0,6}(\d{1,3}\s?%?)?[^A-Za-zÀ-ÿ0-9]{0,6}$/.test(L[k].trim()))) k++;
+    while(k < Math.min(3, L.length) && (!L[k].trim() || /^\W*\d{1,2}[:.h]\d{2}\b[^A-Za-zÀ-ÿ]{0,25}$/.test(L[k].trim()) || (/^\W*\d{1,2}[:.h]\d{2}\b/.test(L[k].trim()) && L[k].trim().length < 32 && !/\p{L}{4,}/u.test(L[k])) || /^[^A-Za-zÀ-ÿ0-9]{0,6}(\d{1,3}\s?%?)?[^A-Za-zÀ-ÿ0-9]{0,6}$/.test(L[k].trim()))) k++;
     return L.slice(k).join('\n'); };
   function boardingParse(T){
     let L = cfPre(stripStatus(T)).split('\n').map(l=>l.trim()).filter(Boolean);
@@ -10005,16 +10006,70 @@ ${pm.join('\n')}</Document></kml>`;
     r.note = ['Booking.com', pin ? 'code confidentiel ' + pin : '', room, free ? 'annulation gratuite jusqu’au ' + free : ''].filter(Boolean).join(' · ');
     return r;
   }
+  /* 🏨 Écran de réservation d’hébergement (appli Booking, Airbnb, Hotels.com, Expedia, mail…) :
+     nom au-dessus des dates, adresse sous « Adresse … », heure d’arrivée « à partir de 14:00 », téléphone « Appeler le … » */
+  function hotelFix(T, r){
+    const L = T.split('\n').map(l=>l.trim()).filter(Boolean);
+    const stop = l => /voir plus|see more|paiement|payment|carte|card|modifier|change|itin[ée]raire|directions|conditions|contacter|contact|message|appeler|call|booking\.com|airbnb|expedia|hotels\.com|r[ée]servation|booking|confirm/i.test(l);
+    const noise = l => (l.match(/\p{L}/gu) || []).length < 4;
+    const nz = x => x.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\./g,'');
+    const dms = l => [...l.matchAll(/\b(\d{1,2})\s+([A-Za-zÀ-ÿ]{3,10})\.?/g)].map(m=>({d:+m[1], mo:MOIS_FR[nz(m[2])]})).filter(x=>x.mo);
+    const hi = L.findIndex(l=>/arriv|check[- ]?in/i.test(l) && /d[ée]part|check[- ]?out/i.test(l));   // en-tête de deux colonnes
+    if(hi >= 0){
+      if(!r.date || !r.dateFin){ const dl = L.slice(hi + 1, hi + 4).find(l=>dms(l).length >= 2); if(dl){ const [a, b] = dms(dl); r.date = r.date || yearFor(T, a.mo, a.d); r.dateFin = r.dateFin || yearFor(T, b.mo, b.d); if(r.dateFin < r.date) r.dateFin = yearFor(T, b.mo, b.d).replace(/^\d{4}/, y=>+y + 1); } }
+      const tl = L.slice(hi + 1, hi + 5).find(l=>(l.match(/\b\d{1,2}[:h]\d{2}\b/g) || []).length >= 2);
+      if(tl){ const tt = tl.match(/\b\d{1,2}[:h]\d{2}\b/g).map(x=>x.replace('h', ':').padStart(5, '0')); r.heure = tt[0]; r.note = [r.note && r.note !== 'Créée depuis un document importé' ? r.note : '', 'Départ avant ' + tt[1]].filter(Boolean).join(' · '); r._hcol = 1; }
+    }
+    // dates du séjour (« ven. 6 nov. 2026 - dim. 8 nov. 2026 », « 6–8 nov. », « Arrivée … »)
+    let di = L.findIndex(l=>cfDates(l).length && (/\s[-–—]\s|\bau\b|\bto\b|→/.test(l) || /arriv|check/i.test(l)));
+    if(di < 0) di = hi;
+    if(di > 0){ const nm = [];
+      for(let k = di - 1; k >= Math.max(0, di - 5); k--){ const l = L[k]; if(stop(l)) break; if(noise(l) || /^\d/.test(l)) continue; nm.unshift(l); if(nm.length >= 2) break; }
+      const n = nm.join(' ').replace(/\s+/g,' ').trim(); if(n.length >= 4 && n.length <= 90) r.nom = n; }
+    // adresse
+    const ai = L.findIndex(l=>/^\W{0,3}\s*(?:adresse|address|emplacement|location)\b/i.test(l));
+    if(ai >= 0){ const first = L[ai].replace(/^.*?\b(?:adresse|address|emplacement|location)\b(?:\s+(?:de\s+l['’ ]?\s*[ée]tablissement|du logement|de la propri[ée]t[ée]|of the property|de l['’ ]?h[ôo]tel))?\s*:?\s*/i,'').trim(), parts = first ? [first] : [];
+      for(let k = ai + 1; k < Math.min(L.length, ai + 4); k++){ if(stop(L[k]) || /t[ée]l[ée]phone|phone|^\W*(?:arriv|d[ée]part|check)/i.test(L[k])) break; parts.push(L[k]);
+        if(/\b(?:france|belgique|belgium|suisse|switzerland|schweiz|espa[ñn]a|spain|espagne|ital(?:ia|y|ie)|portugal|deutschland|germany|allemagne|royaume-uni|united kingdom|uk|usa|united states|[ée]tats-unis|nederland|netherlands|pays-bas|gr[èe]ce|greece|malta|malte|[ée]gypte|egypt)\b/i.test(L[k])) break; }
+      const ad = parts.join(' ').split(/\s+/).filter(w=>!/^[^\p{L}\d]+$/u.test(w) && !/^[^(]*\)$/.test(w)).join(' ').replace(/\s+,/g,',').trim();
+      if(/\d/.test(ad) && ad.length >= 8) r.adresse = ad; }
+    // ville : « 01280 Prévessin-Moëns » dans l’adresse
+    const cv = (r.adresse || '').match(/\b\d{4,5}(?:-\d{3,4})?\s+([\p{L}][\p{L}'’ -]{1,40}?)(?:,|$|\s+(?:France|Belgique|Suisse|Cedex))/u); if(cv) r.ville = cv[1].trim();
+    // heures d'arrivée / de départ
+    const hm = re => { const m = T.match(re); return m ? m[1].replace('h', ':').replace(/^(\d):/, '0$1:') : ''; };
+    const hin = hm(/(?:arriv[ée]e|check[- ]?in|enregistrement)[^\n]{0,30}?\b(\d{1,2}[:h]\d{2})\b/i), hout = hm(/(?:d[ée]part|check[- ]?out|lib[ée]ration)[^\n]{0,30}?\b(\d{1,2}[:h]\d{2})\b/i);
+    if(hin && !r._hcol) r.heure = hin;
+    if(hout && !r._hcol) r.note = [r.note && r.note !== 'Créée depuis un document importé' ? r.note : '', 'Départ avant ' + hout].filter(Boolean).join(' · ');
+    // téléphone
+    const tl = T.match(/(?:t[ée]l[ée]phone|t[ée]l\.?|appeler(?:\s+le)?|call|phone)\s*:?\s*(\+?\d[\d\s.()-]{7,18}\d)/i) || T.match(/(\+\d{2}[\d\s.]{8,14}\d)/);
+    if(tl) r.tel = tl[1].replace(/\s+/g, ' ').trim();
+    delete r._hcol; return r;
+  }
+  // 🚆 billet affiché dans une appli (SNCF Connect, Trainline, Ouigo, FlixBus…) : « 10:04 Quimper » … « 14:52 Paris Montparnasse »
+  function tripFix(T, r){
+    const L = T.split('\n').map(l=>l.trim()).filter(Boolean);
+    const st = L.map(l=>l.match(/^(\d{1,2}[:h]\d{2})\s+([A-ZÀ-Ý][\p{L}'’ .()-]{1,45})$/u)).filter(Boolean).filter(m=>!/^(?:voiture|place|coach|seat|quai|platform|dur[ée]e|duration)/i.test(m[2]));
+    if(st.length >= 2){ const a = st[0], b = st[st.length - 1];
+      if(!r.from) r.from = a[2].trim(); if(!r.to) r.to = b[2].trim();
+      if(!r.heure) r.heure = a[1].replace('h', ':').padStart(5, '0'); if(!r.heureArr) r.heureArr = b[1].replace('h', ':').padStart(5, '0'); }
+    const tn = T.match(/\b(TGV(?: INOUI)?|OUIGO|TER|Intercit[ée]s|Eurostar|Thalys|Lyria|ICE|Frecciarossa|Italo|AVE|FlixBus|BlaBlaCar Bus)\s*(?:n°\s*)?(\d{2,5})\b/i);
+    if(tn && (!r.compagnie || !/\d/.test(r.compagnie))) r.compagnie = (tn[1] + ' ' + tn[2]).trim();
+    const seat = T.match(/voiture\s*(\d{1,3})[^\n]{0,12}?place\s*(\d{1,3})/i) || T.match(/coach\s*(\d{1,3})[^\n]{0,12}?seat\s*(\d{1,3}[A-Z]?)/i);
+    if(seat) r.note = [r.note, 'Voiture ' + seat[1] + ' · place ' + seat[2]].filter(Boolean).join(' · ');
+    return r;
+  }
   function cfDraft(raw, force){
     const T = cfPre(raw);
     const r = ((!force || force === 'hotel') && /NUM[ÉE]RO DE CONFIRMATION/i.test(T) && /ARRIV[ÉE]E/i.test(T)) ? bookingParse(T)
       : ((!force || force === 'hotel') && /Confirmation\s*:\s*\d{6,}/i.test(T) && /Arriv[ée]e\s+\p{L}+\.?\s+\d{1,2}\s+\p{L}+\.?\s+\d{4}/iu.test(T) && /D[ée]part\s+\p{L}+\.?\s+\d{1,2}\s+\p{L}+/iu.test(T)) ? bookingParse2(T) : cfParse(T, force);
+    if(r.kind === 'hotel' && !/NUM[ÉE]RO DE CONFIRMATION/i.test(T)) hotelFix(T, r);
+    if(/^(?:train|bus|ferry|vol)$/.test(r.kind || '')) tripFix(T, r);
     if(r.kind === 'hotel') return {cat:'hotel', type:'item', trip:M.trip, titre: r.ville || cityOf(r.adresse ? r.adresse.split(',').slice(-2,-1)[0] || '' : '').replace(/\b\d{3,}\b/g,'').trim() || 'Hébergement',
       nom:r.nom||'', adresse:r.adresse||'', tel:r.tel||'', date:r.date||'', dateFin:r.dateFin||'', heure:r.heure||'', ref:r.ref||'', prix:r.prix||'', partage:'grp', statut:'booked', lat:r.lat, lng:r.lng, note:r.note || 'Créée depuis un document importé'};
     if(r.kind === 'autre') return {cat:'activite', type:'item', trip:M.trip, titre: r.titre || (r.compagnie ? 'Activité ' + r.compagnie : 'Visite / activité'), date:r.date||'', heure:r.heure||'', adresse:r.adresse||'', ref:r.ref||'', prix:r.prix||'', statut: r.prix ? 'paid' : 'booked', note:(r.compagnie ? r.compagnie + ' · ' : '') + 'Créée depuis un document importé'};
     const mode = r.kind==='vol' ? 'Avion' : r.kind==='bus' ? 'Bus' : r.kind==='ferry' ? 'Bateau' : 'Train';
     return {cat:'transport', type:'item', trip:M.trip, mode, from:r.from||'', to:r.to||'', titre:(r.from && r.to) ? r.from + ' → ' + r.to : (r.kind==='vol' ? 'Vol' : r.kind==='ferry' ? 'Traversée' : 'Trajet'),
-      date:r.date||'', heureDep:r.heure||'', heureArr:r.heureArr||'', compagnie:r.compagnie||'', ref:r.ref||'', prix:r.prix||'', statut: r.prix ? 'paid' : 'booked', note:'Créée depuis un document importé'};
+      date:r.date||'', heureDep:r.heure||'', heureArr:r.heureArr||'', compagnie:r.compagnie||'', ref:r.ref||'', prix:r.prix||'', statut: r.prix ? 'paid' : 'booked', note:r.note || 'Créée depuis un document importé'};
   }
   // Partage Android (« Partager → Vezoria ») : le service worker a rangé le fichier ou le texte
   async function shareInbox(){
@@ -14699,7 +14754,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-17z2';
+  const BUILD = '2026-10-17z5';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
