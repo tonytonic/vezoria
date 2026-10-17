@@ -1974,6 +1974,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .cv-phrow{gap:8px}.cv-phrow .cv-addph{flex:1;margin:0}
 .qr-btn{width:100%;margin:0 0 10px}
 .pl-exp{margin:0 0 12px}
+.home-fol{margin:0 0 14px}.home-fol .sh-sec{font-weight:800;font-size:1.05rem;margin:2px 4px 8px}
 .ed-imp{margin:0 0 12px}.cv-tripact{flex-wrap:wrap}.cv-tripact .cv-ta-w{flex:1 1 100%}
 .cv-folr{display:flex;align-items:center;gap:6px;margin-left:40px}.cv-folr .cv-prow{margin-left:0!important;width:auto!important;flex:1;min-width:0}.cv-folall{margin:4px 0 10px 40px}.fd-unf{padding:8px 16px 4px;display:flex;flex-direction:column;gap:8px}.fd-unf .v-btn{margin:0}
 .wz-pp{border:1px solid var(--line,#eadde6);border-radius:14px;padding:10px;margin-bottom:8px;background:#fff}.wz-pl{display:grid;grid-template-columns:76px 1fr 112px;gap:6px;align-items:center;margin-top:6px}.wz-pl span{font-size:.8rem;font-weight:700;color:var(--gray)}.wz-pl .v-in{margin:0;min-width:0}
@@ -4275,7 +4276,9 @@ const CV = (function(){
     fab.style.display = 'none';
     if(modeRender()) return;
     if(!t && !['envies','reglages','prefs','livret','badges'].includes(M.tab)){
-      body.innerHTML = `<div class="v-box"><h2 class="vb-h">Aucun voyage</h2><p>Crée un voyage, ou transforme une envie en voyage depuis l’onglet ✨ Envies.</p>
+      // abonné qui n’a pas encore de voyage à lui : les personnes qu’il suit d’abord, chacune vers son carnet
+      const fol = (()=>{ try { return followHTML(); } catch(e){ return ''; } })();
+      body.innerHTML = (fol ? `<div class="home-fol">${fol}</div>` : '') + `<div class="v-box"><h2 class="vb-h">${fol ? 'Mes propres voyages' : 'Aucun voyage'}</h2><p>${fol ? 'Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.' : 'Crée un voyage, ou transforme une envie en voyage depuis l’onglet ✨ Envies.'}</p>
         <button class="v-btn" onclick="CV.newTrip()">＋ Nouveau voyage</button>${tutoBtn()}${demoBtn()}</div>`;
       return;
     }
@@ -14855,7 +14858,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18d';
+  const BUILD = '2026-10-18e';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
