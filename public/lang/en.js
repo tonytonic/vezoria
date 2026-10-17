@@ -1,4 +1,10 @@
 I18N.load({
+"Compagnons":"Companions",
+"Je suis":"Following",
+"Vezoria, ton carnet de voyage gratuit : prépare, vis et raconte tes voyages, seul ou à plusieurs. Résas, budget, valise, souvenirs et abonnés, tout est chiffré.":"Vezoria, your free travel journal: plan, live and tell your trips, alone or together. Bookings, budget, packing, memories and followers, all encrypted.",
+"En continuant, tu acceptes les mentions légales et la politique de confidentialité (liens en haut), et tu gardes précieusement le code de ton carnet.":"By continuing, you accept the legal notice and the privacy policy (links at the top), and you’ll keep your journal code safe.",
+"Changer de voyage":"Switch trip",
+"Partager l’appli à un ami (QR code)":"Share the app with a friend (QR code)",
 "👁️ Ce que voit":"👁️ What sees",
 "Décoche un voyage pour le cacher à cette personne seulement. Tes autres abonnés le voient toujours.":"Untick a trip to hide it from this person only. Your other followers still see it.",
 "⚠️ Cette personne a une ancienne version de l’appli : un voyage caché ne lui sera plus montré, mais un voyage remis ne lui reviendra qu’après sa mise à jour.":"⚠️ This person has an older version of the app: a hidden trip will no longer be shown to them, but a trip shown again will only come back after they update.",

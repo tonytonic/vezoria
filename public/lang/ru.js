@@ -1,4 +1,10 @@
 I18N.load({
+"Compagnons":"Попутчики",
+"Je suis":"Я слежу",
+"Vezoria, ton carnet de voyage gratuit : prépare, vis et raconte tes voyages, seul ou à plusieurs. Résas, budget, valise, souvenirs et abonnés, tout est chiffré.":"Vezoria — бесплатный дневник путешествий: планируй, проживай и рассказывай о поездках один или вместе. Брони, бюджет, багаж, воспоминания и подписчики — всё зашифровано.",
+"En continuant, tu acceptes les mentions légales et la politique de confidentialité (liens en haut), et tu gardes précieusement le code de ton carnet.":"Продолжая, ты принимаешь правовую информацию и политику конфиденциальности (ссылки вверху) и обязуешься хранить код своего дневника.",
+"Changer de voyage":"Сменить поездку",
+"Partager l’appli à un ami (QR code)":"Поделиться приложением с другом (QR-код)",
 "👁️ Ce que voit":"👁️ Что видит",
 "Décoche un voyage pour le cacher à cette personne seulement. Tes autres abonnés le voient toujours.":"Сними отметку с поездки, чтобы скрыть её только от этого человека. Остальные подписчики по-прежнему её видят.",
 "⚠️ Cette personne a une ancienne version de l’appli : un voyage caché ne lui sera plus montré, mais un voyage remis ne lui reviendra qu’après sa mise à jour.":"⚠️ У этого человека старая версия приложения: скрытая поездка больше не будет показана, а возвращённая появится только после обновления.",

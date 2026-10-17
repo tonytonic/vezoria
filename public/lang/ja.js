@@ -1,4 +1,10 @@
 I18N.load({
+"Compagnons":"同行者",
+"Je suis":"フォロー中",
+"Vezoria, ton carnet de voyage gratuit : prépare, vis et raconte tes voyages, seul ou à plusieurs. Résas, budget, valise, souvenirs et abonnés, tout est chiffré.":"Vezoria は無料の旅日記：ひとりでもみんなでも、旅を計画し、楽しみ、記録できます。予約、予算、荷物、思い出、フォロワー、すべて暗号化。",
+"En continuant, tu acceptes les mentions légales et la politique de confidentialité (liens en haut), et tu gardes précieusement le code de ton carnet.":"続行すると、法的情報とプライバシーポリシー（上部のリンク）に同意し、日記のコードを大切に保管することになります。",
+"Changer de voyage":"旅を切り替える",
+"Partager l’appli à un ami (QR code)":"友達にアプリを共有（QR コード）",
 "👁️ Ce que voit":"👁️ 見られる内容：",
 "Décoche un voyage pour le cacher à cette personne seulement. Tes autres abonnés le voient toujours.":"旅のチェックを外すと、この人にだけ非表示になります。ほかのフォロワーには引き続き表示されます。",
 "⚠️ Cette personne a une ancienne version de l’appli : un voyage caché ne lui sera plus montré, mais un voyage remis ne lui reviendra qu’après sa mise à jour.":"⚠️ この人は古いバージョンのアプリを使っています：非表示にした旅は表示されなくなりますが、再表示した旅はアップデート後にしか戻りません。",

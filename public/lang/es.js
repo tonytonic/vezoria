@@ -1,4 +1,10 @@
 I18N.load({
+"Compagnons":"Acompañantes",
+"Je suis":"Sigo",
+"Vezoria, ton carnet de voyage gratuit : prépare, vis et raconte tes voyages, seul ou à plusieurs. Résas, budget, valise, souvenirs et abonnés, tout est chiffré.":"Vezoria, tu diario de viaje gratuito: prepara, vive y cuenta tus viajes, solo o en grupo. Reservas, presupuesto, maleta, recuerdos y seguidores, todo cifrado.",
+"En continuant, tu acceptes les mentions légales et la politique de confidentialité (liens en haut), et tu gardes précieusement le code de ton carnet.":"Al continuar, aceptas el aviso legal y la política de privacidad (enlaces arriba), y guardarás bien el código de tu diario.",
+"Changer de voyage":"Cambiar de viaje",
+"Partager l’appli à un ami (QR code)":"Compartir la app con un amigo (código QR)",
 "👁️ Ce que voit":"👁️ Lo que ve",
 "Décoche un voyage pour le cacher à cette personne seulement. Tes autres abonnés le voient toujours.":"Desmarca un viaje para ocultarlo solo a esta persona. Tus otros seguidores lo siguen viendo.",
 "⚠️ Cette personne a une ancienne version de l’appli : un voyage caché ne lui sera plus montré, mais un voyage remis ne lui reviendra qu’après sa mise à jour.":"⚠️ Esta persona tiene una versión antigua de la app: un viaje oculto ya no se le mostrará, pero un viaje que vuelvas a mostrar solo le llegará cuando actualice.",
