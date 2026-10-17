@@ -1,4 +1,8 @@
 I18N.load({
+"Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"Спутники её сохранят: для них поездка продолжается. Она убирается только с твоего телефона.",
+"🗑 Supprimer «":"🗑 Удалить «",
+"a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"создал(а) эту поездку: у твоих спутников она останется. Она убирается только с твоего телефона.",
+"🗑 Quitter et retirer de mon téléphone":"🗑 Выйти и убрать с моего телефона",
 "📩 {0} t’invite dans le voyage « {1} »":"📩 {0} приглашает тебя в поездку «{1}»",
 "📩 {0} te propose de suivre « {1} »":"📩 {0} предлагает следить за «{1}»",
 "✅ {0} a rejoint « {1} »":"✅ {0} присоединяется к «{1}»",

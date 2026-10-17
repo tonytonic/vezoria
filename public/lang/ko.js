@@ -1,4 +1,8 @@
 I18N.load({
+"Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"동행자에게는 남아 여행이 계속돼요. 내 휴대폰에서만 지워져요.",
+"🗑 Supprimer «":"🗑 삭제 「",
+"a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"님이 만든 여행이에요. 동행자에게는 남고 내 휴대폰에서만 지워져요.",
+"🗑 Quitter et retirer de mon téléphone":"🗑 나가고 내 휴대폰에서 지우기",
 "📩 {0} t’invite dans le voyage « {1} »":"📩 {0} 님이 「{1}」 여행에 초대했어요",
 "📩 {0} te propose de suivre « {1} »":"📩 {0} 님이 「{1}」 팔로우를 제안했어요",
 "✅ {0} a rejoint « {1} »":"✅ {0} 님이 「{1}」에 참여했어요",

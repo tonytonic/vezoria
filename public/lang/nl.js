@@ -1,4 +1,8 @@
 I18N.load({
+"Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"Je reisgenoten houden hem: de reis gaat voor hen door. Hij wordt alleen van je telefoon verwijderd.",
+"🗑 Supprimer «":"🗑 Verwijderen «",
+"a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"heeft deze reis gemaakt: hij blijft bij je reisgenoten. Hij wordt alleen van je telefoon verwijderd.",
+"🗑 Quitter et retirer de mon téléphone":"🗑 Verlaten en van mijn telefoon verwijderen",
 "📩 {0} t’invite dans le voyage « {1} »":"📩 {0} nodigt je uit voor de reis ‘{1}’",
 "📩 {0} te propose de suivre « {1} »":"📩 {0} stelt voor ‘{1}’ te volgen",
 "✅ {0} a rejoint « {1} »":"✅ {0} doet mee aan ‘{1}’",

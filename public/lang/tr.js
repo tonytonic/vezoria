@@ -1,4 +1,8 @@
 I18N.load({
+"Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"Yol arkadaşların onu tutar: seyahat onlar için devam eder. Yalnızca senin telefonundan kaldırılır.",
+"🗑 Supprimer «":"🗑 Sil «",
+"a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"bu seyahati oluşturdu: yol arkadaşlarında kalır. Yalnızca senin telefonundan kaldırılır.",
+"🗑 Quitter et retirer de mon téléphone":"🗑 Ayrıl ve telefonumdan kaldır",
 "📩 {0} t’invite dans le voyage « {1} »":"📩 {0} seni «{1}» seyahatine davet ediyor",
 "📩 {0} te propose de suivre « {1} »":"📩 {0} «{1}» seyahatini takip etmeni öneriyor",
 "✅ {0} a rejoint « {1} »":"✅ {0} «{1}» seyahatine katıldı",

@@ -1,4 +1,8 @@
 I18N.load({
+"Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"你的同伴会保留它：旅行对他们继续进行，只从你的手机上移除。",
+"🗑 Supprimer «":"🗑 删除「",
+"a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"创建了这段旅行：它会保留在你的同伴那里，只从你的手机上移除。",
+"🗑 Quitter et retirer de mon téléphone":"🗑 退出并从我的手机移除",
 "📩 {0} t’invite dans le voyage « {1} »":"📩 {0} 邀请你加入旅行「{1}」",
 "📩 {0} te propose de suivre « {1} »":"📩 {0} 建议你关注「{1}」",
 "✅ {0} a rejoint « {1} »":"✅ {0} 已加入「{1}」",

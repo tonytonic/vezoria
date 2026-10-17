@@ -1,4 +1,8 @@
 I18N.load({
+"Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"Deine Mitreisenden behalten sie: Die Reise geht für sie weiter. Sie wird nur von deinem Handy entfernt.",
+"🗑 Supprimer «":"🗑 Löschen «",
+"a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"hat diese Reise erstellt: Sie bleibt bei deinen Mitreisenden. Sie wird nur von deinem Handy entfernt.",
+"🗑 Quitter et retirer de mon téléphone":"🗑 Verlassen und von meinem Handy entfernen",
 "📩 {0} t’invite dans le voyage « {1} »":"📩 {0} lädt dich zur Reise „{1}“ ein",
 "📩 {0} te propose de suivre « {1} »":"📩 {0} schlägt dir vor, „{1}“ zu folgen",
 "✅ {0} a rejoint « {1} »":"✅ {0} ist „{1}“ beigetreten",

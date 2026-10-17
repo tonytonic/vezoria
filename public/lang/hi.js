@@ -1,4 +1,8 @@
 I18N.load({
+"Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"आपके साथी इसे रखेंगे: उनके लिए यात्रा जारी रहेगी। यह सिर्फ़ आपके फ़ोन से हटेगी।",
+"🗑 Supprimer «":"🗑 हटाएँ «",
+"a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"ने यह यात्रा बनाई है: यह आपके साथियों के पास रहेगी। यह सिर्फ़ आपके फ़ोन से हटेगी।",
+"🗑 Quitter et retirer de mon téléphone":"🗑 छोड़ें और मेरे फ़ोन से हटाएँ",
 "📩 {0} t’invite dans le voyage « {1} »":"📩 {0} आपको «{1}» यात्रा में आमंत्रित कर रहे हैं",
 "📩 {0} te propose de suivre « {1} »":"📩 {0} आपको «{1}» फ़ॉलो करने का सुझाव दे रहे हैं",
 "✅ {0} a rejoint « {1} »":"✅ {0} «{1}» में शामिल हो गए",

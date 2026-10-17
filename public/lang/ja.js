@@ -1,4 +1,8 @@
 I18N.load({
+"Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"同行者の端末には残り、旅は続きます。あなたのスマホからだけ削除されます。",
+"🗑 Supprimer «":"🗑 削除「",
+"a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"さんがこの旅を作成しました。同行者の端末には残り、あなたのスマホからだけ削除されます。",
+"🗑 Quitter et retirer de mon téléphone":"🗑 退出して自分のスマホから削除",
 "📩 {0} t’invite dans le voyage « {1} »":"📩 {0} さんが旅「{1}」に招待しています",
 "📩 {0} te propose de suivre « {1} »":"📩 {0} さんが「{1}」のフォローを提案しています",
 "✅ {0} a rejoint « {1} »":"✅ {0} さんが「{1}」に参加しました",
