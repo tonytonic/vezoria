@@ -1165,6 +1165,7 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .cv-hero-qr span{font-size:.62rem;font-weight:800;letter-spacing:.02em}
 .cv-share-qr{display:block;margin:6px auto 10px;width:min(64vw,240px);height:auto;background:#fff;border-radius:14px;padding:10px}
 .cv-share-url{font-size:.78rem;text-align:center;word-break:break-all;color:var(--gray);margin-bottom:10px}
+.cv-qrsw{display:flex;gap:10px;margin:0 0 10px}.cv-qrsw .v-btn{flex:1;margin:0}.cv-qrsw .v-btn.on{background:var(--ink,#2A1238);color:#fff}.cv-qrbox{display:flex;flex-direction:column;align-items:center;text-align:center;background:#f6f1fb;border-radius:16px;padding:12px;margin:0 0 12px}.cv-qrbox[hidden]{display:none}.cv-qrbox .cv-share-qr{width:100%;max-width:230px;margin:8px auto;padding:6px}.cv-qrbox small{font-size:.75rem;color:var(--gray);line-height:1.3}
 .cv-qr2{display:flex;gap:10px;margin:6px 0 12px}.cv-qr2>div{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;background:#f6f1fb;border-radius:16px;padding:10px 6px}.cv-qr2 b{font-size:.9rem}.cv-qr2 .cv-share-qr{width:100%;max-width:170px;margin:6px auto;padding:6px}.cv-qr2 small{font-size:.7rem;color:var(--gray);line-height:1.3}
 .cv-rmap{margin-top:10px}
 .bb-state{margin-top:8px;font-weight:700;font-size:.86rem;border-radius:12px;padding:7px 10px}
@@ -8082,14 +8083,22 @@ const CV = (function(){
   }
   const WEB_URL = () => window.VZ_HOST ? 'https://vezoria.pages.dev/' : location.origin + '/';
   function shareSheet(){
-    // deux QR codes : l’appli web pour iPhone, la fiche Google Play pour Android
+    // deux boutons : chacun ouvre son QR code (l’appli web pour iPhone, la fiche Google Play pour Android)
     openSheet(`<h2>📤 Partager l’appli à un ami</h2>
-      <div class="v-sum-small" style="margin-bottom:6px;text-align:center">Ton ami scanne le code de son téléphone avec l’appareil photo.</div>
-      <div class="cv-qr2"><div><b>📱 iPhone</b>${qrSVG(WEB_URL())}<small>Safari → « Partager » → « Sur l’écran d’accueil »</small></div>
-        <div><b>🤖 Android</b>${qrSVG(PLAY_URL)}<small>Google Play</small></div></div>
+      <div class="v-sum-small" style="margin-bottom:8px;text-align:center">Choisis le téléphone de ton ami : il scanne le code avec son appareil photo.</div>
+      <div class="cv-qrsw"><button type="button" class="v-btn sec" data-k="ios" onclick="CV.shareQr('ios')">📱 iPhone</button><button type="button" class="v-btn sec" data-k="and" onclick="CV.shareQr('and')">🤖 Android</button></div>
+      <div id="cv-qrbox" class="cv-qrbox" hidden></div>
       <button type="button" class="v-btn" onclick="CV.shareLink()">📤 Envoyer les liens</button>
       <div class="v-sum-small" style="margin-top:10px">Ce lien donne l’appli, <b>pas ton carnet</b>. Pour voyager ensemble sur le même carnet, envoie aussi ton <b>code de partage</b> (Plus → Partage &amp; profils).</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  function shareQr(k){
+    const box = document.getElementById('cv-qrbox'); if(!box) return;
+    const same = !box.hidden && box.dataset.k === k;
+    document.querySelectorAll('.cv-qrsw button').forEach(b=>b.classList.toggle('on', !same && b.dataset.k === k));
+    if(same){ box.hidden = true; box.dataset.k = ''; return; }
+    box.dataset.k = k; box.hidden = false;
+    box.innerHTML = k === 'ios' ? `<b>📱 iPhone</b>${qrSVG(WEB_URL())}<small>Safari → « Partager » → « Sur l’écran d’accueil »</small>` : `<b>🤖 Android</b>${qrSVG(PLAY_URL)}<small>Google Play</small>`;
   }
   async function shareLink(){
     const base = 'Je t’invite sur Vezoria : on prépare nos voyages à plusieurs (programme, budget, souvenirs), et tout est chiffré.';
@@ -14485,7 +14494,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-17w';
+  const BUILD = '2026-10-17x';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -14495,7 +14504,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
