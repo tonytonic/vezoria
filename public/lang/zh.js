@@ -1,4 +1,13 @@
 I18N.load({
+"📷 Scanner le QR code":"📷 扫描二维码",
+"Ou colle le message, le lien ou le code reçu.":"或粘贴收到的消息、链接或代码。",
+"Lecteur de QR code indisponible (pas de réseau ?)":"二维码识别不可用（没有网络？）",
+"QR code lu":"已识别二维码",
+"Vise le QR code de l’invitation":"请对准邀请的二维码",
+"Lire le QR code sur une photo":"从照片识别二维码",
+"La caméra en direct n’est pas disponible ici : prends le QR code en photo.":"此处无法使用实时相机：请拍一张二维码照片。",
+"Accès à la caméra refusé. Autorise l’appareil photo pour Vezoria dans les réglages du téléphone, ou prends le QR code en photo.":"相机权限被拒绝。请在手机设置中允许 Vezoria 使用相机，或拍一张二维码照片。",
+"Aucun QR code trouvé sur cette photo.":"这张照片中没有找到二维码。",
 "📸 Prendre une photo":"📸 拍照",
 "🖼️ Mes photos":"🖼️ 我的照片",
 "🖼️ Photos du jour":"🖼️ 当天的照片",

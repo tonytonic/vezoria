@@ -1,4 +1,13 @@
 I18N.load({
+"📷 Scanner le QR code":"📷 امسح رمز QR",
+"Ou colle le message, le lien ou le code reçu.":"أو الصق الرسالة أو الرابط أو الرمز الذي وصلك.",
+"Lecteur de QR code indisponible (pas de réseau ?)":"قارئ QR غير متاح (لا يوجد اتصال؟)",
+"QR code lu":"تمت قراءة رمز QR",
+"Vise le QR code de l’invitation":"وجّه الكاميرا نحو رمز QR الخاص بالدعوة",
+"Lire le QR code sur une photo":"اقرأ رمز QR من صورة",
+"La caméra en direct n’est pas disponible ici : prends le QR code en photo.":"الكاميرا المباشرة غير متاحة هنا: التقط صورة لرمز QR.",
+"Accès à la caméra refusé. Autorise l’appareil photo pour Vezoria dans les réglages du téléphone, ou prends le QR code en photo.":"تم رفض الوصول إلى الكاميرا. اسمح بالكاميرا لـ Vezoria في إعدادات الهاتف، أو التقط صورة لرمز QR.",
+"Aucun QR code trouvé sur cette photo.":"لم يُعثر على رمز QR في هذه الصورة.",
 "📸 Prendre une photo":"📸 التقط صورة",
 "🖼️ Mes photos":"🖼️ صوري",
 "🖼️ Photos du jour":"🖼️ صور اليوم",

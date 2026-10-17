@@ -1,4 +1,13 @@
 I18N.load({
+"📷 Scanner le QR code":"📷 QR kodu tara",
+"Ou colle le message, le lien ou le code reçu.":"Ya da aldığın mesajı, bağlantıyı veya kodu yapıştır.",
+"Lecteur de QR code indisponible (pas de réseau ?)":"QR okuyucu kullanılamıyor (ağ yok mu?)",
+"QR code lu":"QR kod okundu",
+"Vise le QR code de l’invitation":"Kamerayı davetin QR koduna tut",
+"Lire le QR code sur une photo":"QR kodu bir fotoğraftan oku",
+"La caméra en direct n’est pas disponible ici : prends le QR code en photo.":"Canlı kamera burada kullanılamıyor: QR kodun fotoğrafını çek.",
+"Accès à la caméra refusé. Autorise l’appareil photo pour Vezoria dans les réglages du téléphone, ou prends le QR code en photo.":"Kamera erişimi reddedildi. Telefon ayarlarından Vezoria için kameraya izin ver ya da QR kodun fotoğrafını çek.",
+"Aucun QR code trouvé sur cette photo.":"Bu fotoğrafta QR kod bulunamadı.",
 "📸 Prendre une photo":"📸 Fotoğraf çek",
 "🖼️ Mes photos":"🖼️ Fotoğraflarım",
 "🖼️ Photos du jour":"🖼️ Günün fotoğrafları",

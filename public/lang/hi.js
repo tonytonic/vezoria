@@ -1,4 +1,13 @@
 I18N.load({
+"📷 Scanner le QR code":"📷 QR कोड स्कैन करें",
+"Ou colle le message, le lien ou le code reçu.":"या मिला हुआ संदेश, लिंक या कोड पेस्ट करें।",
+"Lecteur de QR code indisponible (pas de réseau ?)":"QR रीडर उपलब्ध नहीं (नेटवर्क नहीं?)",
+"QR code lu":"QR कोड पढ़ लिया गया",
+"Vise le QR code de l’invitation":"कैमरा निमंत्रण के QR कोड पर रखें",
+"Lire le QR code sur une photo":"फ़ोटो से QR कोड पढ़ें",
+"La caméra en direct n’est pas disponible ici : prends le QR code en photo.":"लाइव कैमरा यहाँ उपलब्ध नहीं है: QR कोड की फ़ोटो लें।",
+"Accès à la caméra refusé. Autorise l’appareil photo pour Vezoria dans les réglages du téléphone, ou prends le QR code en photo.":"कैमरा की अनुमति नहीं मिली। फ़ोन की सेटिंग में Vezoria के लिए कैमरा चालू करें, या QR कोड की फ़ोटो लें।",
+"Aucun QR code trouvé sur cette photo.":"इस फ़ोटो में कोई QR कोड नहीं मिला।",
 "📸 Prendre une photo":"📸 फ़ोटो लें",
 "🖼️ Mes photos":"🖼️ मेरी फ़ोटो",
 "🖼️ Photos du jour":"🖼️ आज की फ़ोटो",

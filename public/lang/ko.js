@@ -1,4 +1,13 @@
 I18N.load({
+"📷 Scanner le QR code":"📷 QR 코드 스캔",
+"Ou colle le message, le lien ou le code reçu.":"또는 받은 메시지, 링크 또는 코드를 붙여넣으세요.",
+"Lecteur de QR code indisponible (pas de réseau ?)":"QR 리더를 사용할 수 없어요 (네트워크 없음?)",
+"QR code lu":"QR 코드를 읽었어요",
+"Vise le QR code de l’invitation":"초대장의 QR 코드에 카메라를 맞추세요",
+"Lire le QR code sur une photo":"사진에서 QR 코드 읽기",
+"La caméra en direct n’est pas disponible ici : prends le QR code en photo.":"여기서는 실시간 카메라를 쓸 수 없어요. QR 코드를 사진으로 찍어 주세요.",
+"Accès à la caméra refusé. Autorise l’appareil photo pour Vezoria dans les réglages du téléphone, ou prends le QR code en photo.":"카메라 접근이 거부되었어요. 휴대폰 설정에서 Vezoria의 카메라를 허용하거나 QR 코드를 사진으로 찍어 주세요.",
+"Aucun QR code trouvé sur cette photo.":"이 사진에서 QR 코드를 찾지 못했어요.",
 "📸 Prendre une photo":"📸 사진 찍기",
 "🖼️ Mes photos":"🖼️ 내 사진",
 "🖼️ Photos du jour":"🖼️ 오늘의 사진",
