@@ -2887,9 +2887,13 @@ const CV = (function(){
   }
   if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev=>{ const d = ev.data || {};
     if(d.type === 'vz-open'){ recapVia = d.url; pushOpen(d.url); pushKv('inbox').then(b=>{ if(b && b.length) nhAdd(b, true); return pushKv('inbox', []); }).catch(()=>{}); }
-    else if(d.type === 'vz-push'){ if(pushAck) pushAck(d); else pushBanner(d); } });
-  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible'){ pushBadgeClear(); bellSync(); clearTimeout(recapT); recapT = setTimeout(pushRecap, 1200); } });
-  setTimeout(()=>{ if(/[?&]vzt=/.test(location.search)) recapVia = location.href; pushOpen(location.href); pushBadgeClear(); bellSync(); bellDraw(); setTimeout(pushRecap, 1500);
+    else if(d.type === 'vz-push'){ if(pushAck) pushAck(d); else { pushBanner(d); if(!d.test) pushPull(true); } } });
+  // une notification est arrivée : on va chercher les modifications tout de suite (sans attendre la synchro de l’heure)
+  let pullT = 0;
+  function pushPull(now){ clearTimeout(pullT); pullT = setTimeout(()=>{ try { syncNow('pull'); } catch(e){} }, now ? 400 : 900); }
+  async function pushPullIfNew(){ try { const b = await pushKv('inbox'), n = await pushKv('badge'); if((b && b.length) || n) pushPull(); } catch(e){} }
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible'){ pushPullIfNew(); setTimeout(pushBadgeClear, 300); bellSync(); clearTimeout(recapT); recapT = setTimeout(pushRecap, 1200); } });
+  setTimeout(()=>{ if(/[?&]vzt=/.test(location.search)) recapVia = location.href; pushPullIfNew(); pushOpen(location.href); setTimeout(pushBadgeClear, 300); bellSync(); bellDraw(); setTimeout(pushRecap, 1500);
     if(PU().on){ pushRegister().catch(()=>{}); pushPlan().catch(()=>{}); } }, 3000);
 
   /* Ne jamais redessiner l'écran pendant que l'utilisateur touche, tape ou ouvre une liste :
@@ -9989,6 +9993,11 @@ ${pm.join('\n')}</Document></kml>`;
       closeSheet(true);
       const pj = [{id, t: isPdf ? 'pdf' : 'img', n: (file.name || (isPdf ? 'reservation' : 'capture')).replace(/\.[a-z0-9]+$/i,'').slice(0,40)}];
       // carte d’embarquement (capture Wallet ou appli de la compagnie) : lecture dédiée, la capture devient le billet de la fiche
+      const many = isPdf ? [] : multiCards(txt);
+      if(many.length >= 2){ const ref = cfRef(txt, pj);
+        cfPending = many.map(bp=>({type:'item', trip:M.trip, cat:'transport', mode:'Avion', from:bp.from, to:bp.to, titre:bp.from + ' → ' + bp.to, date:bp.date, heureDep:bp.heure, heureArr:bp.heureArr, compagnie:bp.compagnie, ref:bp.ref || ref, statut:'booked', pj:clone(pj),
+          note:[bp.seat && 'Place : ' + bp.seat, bp.board && 'Embarquement / fermeture de la porte : ' + bp.board, bp.pax && 'Passager : ' + bp.pax].filter(Boolean).join('\n')}));
+        impCtx = {raw:txt, pj}; cfSegSheet(); return; }
       const bp = isPdf ? null : boardingParse(txt);
       if(!isPdf && !bp){ closeSheet(true); cfImport(stripStatus(txt), pj); return; }
       if(bp){ pj[0].n = 'Carte d’embarquement';
@@ -10228,10 +10237,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(segs.length >= 2){
       cfPending = segs.map(s=>({type:'item', trip:M.trip, cat:'transport', mode:'Avion', from:s.from, to:s.to, titre:(s.from && s.to) ? s.from + ' → ' + s.to : 'Vol ' + s.code,
         date:s.date, heureDep:s.heure, heureArr:s.heureArr, compagnie:s.compagnie, ref, statut:'booked', note:s.note, pj: pj ? clone(pj) : undefined}));
-      openSheet(`<h2>✈️ ${segs.length} vols trouvés</h2><div class="v-sum-small" style="margin-bottom:8px">Aller-retour ou escales : une fiche par vol. Décoche ceux à ne pas créer.</div>
-        ${cfPending.map((it,i)=>`<label class="cv-checkline cv-seg"><input type="checkbox" id="cfs-${i}" checked> <span><b>${esc(it.titre)}</b><small>${it.date ? fdate(it.date) : 'date ?'} · ${esc(it.heureDep||'?')} → ${esc(it.heureArr||'?')} · ${esc(it.compagnie)}${it.note ? '<br>' + esc(it.note) : ''}</small></span></label>`).join('')}
-        <div class="v-actions"><button type="button" class="v-btn" onclick="CV.cfSegGo()">✅ Créer les vols</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
-      return;
+      cfSegSheet(); return;
     }
     const d = cfDraft(raw, force);
     if(segs.length === 1 && d.cat === 'transport'){ const s = segs[0]; Object.assign(d, {from:d.from||s.from, to:d.to||s.to, date:d.date||s.date, heureDep:d.heureDep||s.heure, heureArr:d.heureArr||s.heureArr, compagnie:s.compagnie, note:s.note||d.note});
@@ -10240,6 +10246,22 @@ ${pm.join('\n')}</Document></kml>`;
     edit(d); toast('📄 Fiche créée — vérifie puis Enregistrer');
   }
   let cfPending = null;
+  function cfSegSheet(){
+    openSheet(`<h2>✈️ ${cfPending.length} vols trouvés</h2><div class="v-sum-small" style="margin-bottom:8px">Aller-retour ou escales : une fiche par vol. Décoche ceux à ne pas créer.</div>
+      ${cfPending.map((it,i)=>`<label class="cv-checkline cv-seg"><input type="checkbox" id="cfs-${i}" checked> <span><b>${esc(it.titre)}</b><small>${it.date ? fdate(it.date) : 'date ?'} · ${esc(it.heureDep||'?')} → ${esc(it.heureArr||'?')} · ${esc(it.compagnie||'')}${it.note ? '<br>' + esc(it.note) : ''}</small></span></label>`).join('')}
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.cfSegGo()">✅ Créer les vols</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+  }
+  // plusieurs cartes de vol sur une même capture (appli de la compagnie : aller + retour l’un sous l’autre)
+  function multiCards(T){
+    const L = cfPre(stripStatus(T)).split('\n').map(l=>l.trim()).filter(Boolean), up = L.map(l=>l.toUpperCase());
+    const pairs = up.map((l, i)=>{ const cs = l.split(/[^A-Z]+/).filter(w=>w.length === 3 && IATA[w] && !BP_STOP.has(w)); return cs.length >= 2 && l.length <= 48 ? i : -1; }).filter(i=>i >= 0);
+    if(pairs.length < 2) return [];
+    const head = i => i > 0 && (cfDates(L[i-1]).length || /\b\d{1,2}\s+[A-ZÉÛ]{3,5}\.?/.test(up[i-1]) || /\b(?:[A-Z]{2,3}|[A-Z]\d|\d[A-Z])\s?\d{2,4}\b/.test(up[i-1]));
+    const starts = pairs.map(i=>head(i) ? i - 1 : i);
+    const out = [];
+    starts.forEach((st, k)=>{ const blk = L.slice(st, k + 1 < starts.length ? starts[k+1] : L.length).join('\n'); const bp = boardingParse(blk); if(bp && bp.from && bp.to) out.push(bp); });
+    return out.length >= 2 ? out : [];
+  }
   function cfSegGo(){
     const out = (cfPending||[]).filter((_,i)=>{ const c = document.getElementById('cfs-' + i); return c && c.checked; }).map((it,k)=>Object.assign({id:'i'+uid()+k}, it));
     if(!out.length) return;
@@ -12465,7 +12487,7 @@ ${pm.join('\n')}</Document></kml>`;
       <form id="v-form" onsubmit="event.preventDefault();CV.voirSave()">
         ${field('Ville ou lieu','titre','','text','required placeholder="Ex. Annecy, Montmartre, Chamonix, Lac de Côme"')}
         ${ds.length ? `<div class="v-f"><label>Pour quel jour ? (facultatif)</label><select class="v-in" name="date"><option value="">Pas de jour précis</option>${ds.map((d,k)=>`<option value="${d}">J${k+1} · ${fdate(d)}</option>`).join('')}</select></div>` : ''}
-        <div class="v-actions"><button type="submit" class="v-btn">🔎 Ajouter et voir les lieux</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>
+        <div class="v-actions"><button type="submit" class="v-btn">🧭 Ajouter et explorer</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>
       </form>
       ${cs.length ? `<div class="v-f" style="margin-top:12px"><label>Lieux déjà ajoutés</label>${cs.map(c=>`<div class="cv-place"><span class="x">📍 ${esc(c.titre)}${c.date ? ' <small>· ' + fdate(c.date) + '</small>' : ''}</span><button type="button" class="cv-x" onclick="CV.discover('${c.id}')">🔎</button><button type="button" class="cv-x" onclick="CV.voirDel('${c.id}')">✕</button></div>`).join('')}</div>` : ''}`);
     setTimeout(()=>{ const i = document.querySelector('#v-form [name=titre]'); if(i) i.focus(); }, 60);
@@ -12474,7 +12496,7 @@ ${pm.join('\n')}</Document></kml>`;
     const f = document.getElementById('v-form'), titre = (f.titre.value || '').trim(); if(!titre) return;
     const d = f.date ? f.date.value : '';
     const r = put({id:'cy' + uid(), type:'city', trip:M.trip, titre, date:d, dateFin:''}, '📍 ' + titre + ' ajouté');
-    closeSheet(true); render(); discover(r.id);
+    closeSheet(true); render(); explore(r.id);   // le lieu est ajouté : l’Explorer démarre tout de suite
   }
   async function voirDel(id){
     const c = R[id]; if(!c || !(await uiConfirm('Retirer « ' + c.titre + ' » de « Que voir » ?\nLes lieux déjà placés dans tes journées restent.'))) return;
@@ -14800,7 +14822,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-17z8';
+  const BUILD = '2026-10-17z9';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
