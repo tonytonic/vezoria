@@ -1,4 +1,6 @@
 I18N.load({
+"Aucun pays pour l’instant.":"还没有国家。",
+"＋ Ajouter un pays…":"＋ 添加国家…",
 "Concerts et spectacles":"演唱会和演出",
 "🛒 Réserver…":"🛒 预订…",
 "🛒 Comparer et réserver":"🛒 比较并预订",

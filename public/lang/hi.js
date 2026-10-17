@@ -1,4 +1,6 @@
 I18N.load({
+"Aucun pays pour l’instant.":"अभी कोई देश नहीं।",
+"＋ Ajouter un pays…":"＋ देश जोड़ें…",
 "Concerts et spectacles":"कॉन्सर्ट और शो",
 "🛒 Réserver…":"🛒 बुक करें…",
 "🛒 Comparer et réserver":"🛒 तुलना करें और बुक करें",

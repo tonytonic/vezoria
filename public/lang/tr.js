@@ -1,4 +1,6 @@
 I18N.load({
+"Aucun pays pour l’instant.":"Henüz ülke yok.",
+"＋ Ajouter un pays…":"＋ Ülke ekle…",
 "Concerts et spectacles":"Konserler ve gösteriler",
 "🛒 Réserver…":"🛒 Rezervasyon…",
 "🛒 Comparer et réserver":"🛒 Karşılaştır ve rezervasyon yap",

@@ -1,4 +1,6 @@
 I18N.load({
+"Aucun pays pour l’instant.":"아직 국가가 없어요.",
+"＋ Ajouter un pays…":"＋ 국가 추가…",
 "Concerts et spectacles":"콘서트와 공연",
 "🛒 Réserver…":"🛒 예약…",
 "🛒 Comparer et réserver":"🛒 비교하고 예약",

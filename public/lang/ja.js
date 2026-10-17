@@ -1,4 +1,6 @@
 I18N.load({
+"Aucun pays pour l’instant.":"まだ国がありません。",
+"＋ Ajouter un pays…":"＋ 国を追加…",
 "Concerts et spectacles":"コンサートとショー",
 "🛒 Réserver…":"🛒 予約…",
 "🛒 Comparer et réserver":"🛒 比較して予約",

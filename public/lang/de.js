@@ -1,4 +1,6 @@
 I18N.load({
+"Aucun pays pour l’instant.":"Noch kein Land.",
+"＋ Ajouter un pays…":"＋ Land hinzufügen…",
 "Concerts et spectacles":"Konzerte und Shows",
 "🛒 Réserver…":"🛒 Buchen…",
 "🛒 Comparer et réserver":"🛒 Vergleichen und buchen",

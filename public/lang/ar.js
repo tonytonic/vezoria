@@ -1,4 +1,6 @@
 I18N.load({
+"Aucun pays pour l’instant.":"لا يوجد بلد بعد.",
+"＋ Ajouter un pays…":"＋ أضف بلدًا…",
 "Concerts et spectacles":"الحفلات والعروض",
 "🛒 Réserver…":"🛒 احجز…",
 "🛒 Comparer et réserver":"🛒 قارن واحجز",
