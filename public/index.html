@@ -3281,6 +3281,13 @@ const CV = (function(){
     list('follower', f=>mine.has(f.trip) && f.pk && f.ib && !isBlk(f)).forEach(f=>{ const d = String(f.id).split(':').pop(); if(d === me || (M.blkDev||{})[d]) return;
       const c = F[d]; if(!c || c.ib !== f.ib || c.pk !== f.pk || c.who !== f.who){ F[d] = {who:f.who || '?', pk:f.pk, ib:f.ib, at:Date.now()}; ch++; } });
     Object.keys(F).forEach(d=>{ if((M.blkDev||{})[d]){ delete F[d]; ch++; } });
+    const gone = M.goneDone || (M.goneDone = {}), out = [];
+    list('member', m=>m.dev !== me && m.on === false && m.pid && m.pid !== M.me && !gone[m.id + ':' + (m.at || 0)]).forEach(m=>{
+      gone[m.id + ':' + (m.at || 0)] = 1; ch++;
+      const t = R[m.trip]; if(!t || t.deleted || !(t.voyageurs || []).includes(m.pid)) return;
+      if(list('member', x=>x.trip === m.trip && x.on && x.pid === m.pid && (x.at || 0) > (m.at || 0)).length) return;   // revenu entre-temps (ou encore là sur un autre téléphone)
+      out.push(Object.assign(clone(t), {voyageurs:(t.voyageurs || []).filter(p=>p !== m.pid)})); });
+    if(out.length){ putQuiet(out); setTimeout(()=>{ try { refresh(); } catch(e){} }, 50); }
     if(ch) persist();
   }
   // dépose une invitation chiffrée dans la boîte de quelqu’un (sans garder sa boîte dans ma synchro)
@@ -3453,7 +3460,9 @@ const CV = (function(){
           gone = mine.flatMap(photoRefs);
         }
         // 3) ma présence passe à « parti »
-        const mb = 'mb:' + id + ':' + devId(); push.push({id:mb, type:'member', trip:id, dev:devId(), who:(R[mb] && R[mb].who) || myName() || '', at:Date.now(), on:false});
+        const mb = 'mb:' + id + ':' + devId(); push.push({id:mb, type:'member', trip:id, dev:devId(), who:(R[mb] && R[mb].who) || myName() || '', at:Date.now(), on:false, pid:M.me || ''});
+        // je ne suis plus dans les voyageurs chez les autres (ma copie à moi me garde)
+        const t0 = R[id]; if(t0 && M.me && (t0.voyageurs || []).includes(M.me)) push.push(Object.assign(clone(t0), {voyageurs:(t0.voyageurs || []).filter(p=>p !== M.me)}));
         await spacePushOnly(sp, push);
         if(gone.length){ cryptShow('🎒 Je retire tes photos du voyage partagé…');
           for(const p of gone) for(const v of [p, p + '.t']){ try { await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(v, code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); } catch(e){} }
@@ -14754,7 +14763,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-17z5';
+  const BUILD = '2026-10-17z6';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
