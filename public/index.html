@@ -5814,6 +5814,10 @@ const CV = (function(){
     tiqets:['🎫','Tiqets', ()=>'https://www.tiqets.com/fr/'],
     civitatis:['🗺️','Civitatis', ()=>'https://www.civitatis.com/fr/'],
     klook:['🎡','Klook', ()=>'https://www.klook.com/fr/'],
+    bkattr:['🎡','Booking.com', ()=>'https://www.booking.com/attractions/index.fr.html'],
+    ticketmaster:['🎤','Ticketmaster', ()=>'https://www.ticketmaster.fr/'],
+    fnac:['🎭','Fnac Spectacles', ()=>'https://www.fnacspectacles.com/'],
+    fever:['✨','Fever', ()=>'https://feverup.com/fr'],
     airalo:['📶','Airalo', ()=>'https://www.airalo.com/fr'],
     holafly:['📶','Holafly', ()=>'https://esim.holafly.com/fr/'],
     yesim:['📶','Yesim', ()=>'https://yesim.app/fr/'],
@@ -5844,12 +5848,16 @@ const CV = (function(){
     } else if(it.cat==='hotel'){
       G.push({t:'Hébergements', k:['booking','airbnb','hotelscom','hostelworld','agoda'], c:{city, what:it.nom ? it.nom + ' ' + city : city, date:it.date, end:it.dateFin, n}});
     } else if(it.cat==='activite'){
-      G.push({t:'Visites et billets', k:['gyg','viator','tiqets','civitatis','klook'], c:{city, what:[it.titre, it.adresse ? cityOf(it.adresse.split(',').pop()) : ''].filter(Boolean).join(' ')}});
+      if(BK_SHOW.test(nzTxt(it.titre))) G.push(BK_SHOWG);
+      G.push({t:'Visites et billets', k:['gyg','viator','tiqets','bkattr','civitatis','klook'], c:{city, what:[it.titre, it.adresse ? cityOf(it.adresse.split(',').pop()) : ''].filter(Boolean).join(' ')}});
     } else {
       const g = checkBook(it.titre || ''); if(g) G.push(g);
+      else if(it.cat==='divers') G.push(BK_SHOWG);   // une dépense « divers » à réserver : souvent un concert, un spectacle, un match
     }
     return G;
   }
+  const BK_SHOW = /concert|spectacle|festival|theatre|opera|comedie musicale|\bshow\b|match|stade|cabaret|ballet/;
+  const BK_SHOWG = {t:'Concerts et spectacles', k:['ticketmaster','fnac','fever'], c:{}};
   // ville du voyage pour la liste : la première étape encore sans hébergement, sinon la première étape
   function tripCity(){ const H = items(i=>i.cat==='hotel').sort((a,b)=>(a.date||'').localeCompare(b.date||'')); const h = H.find(i=>i.statut==='todo') || H[0]; return h ? cityOf(h.titre) : ''; }
   function checkBook(label){
@@ -5859,7 +5867,8 @@ const CV = (function(){
     if(/carte bancaire|sans frais|devise|change /.test(s)) return {t:'Carte sans frais à l’étranger', k:['wise','revolut'], c};
     if(/hebergement|hotel|logement/.test(s)) return {t:'Hébergements', k:['booking','airbnb','hotelscom','hostelworld'], c};
     if(/trajet|billet d avion|vols? |train/.test(s)) return {t:'Trajets', k:['gflights','skyscanner','trainline','omio'], c:{}};
-    if(/visite|creneau|musee|activite|excursion/.test(s)) return {t:'Visites et billets', k:['gyg','viator','tiqets','civitatis'], c};
+    if(BK_SHOW.test(s)) return BK_SHOWG;
+    if(/visite|creneau|musee|activite|excursion/.test(s)) return {t:'Visites et billets', k:['gyg','viator','tiqets','bkattr','civitatis'], c};
     if(/location|voiture|permis/.test(s)) return {t:'Voiture', k:['discovercars','rentalcars','getaround'], c};
     return null;
   }
@@ -15045,7 +15054,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18l';
+  const BUILD = '2026-10-18m';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
