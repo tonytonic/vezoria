@@ -1973,6 +1973,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .sh-hub[data-on="comp"] .sh-tb:not([data-t~="comp"]),.sh-hub[data-on="ab"] .sh-tb:not([data-t~="ab"]),.sh-hub[data-on="suis"] .sh-tb:not([data-t~="suis"]){display:none!important}
 .cv-phrow{gap:8px}.cv-phrow .cv-addph{flex:1;margin:0}
 .qr-btn{width:100%;margin:0 0 10px}
+.cv-pend{padding:10px 12px}.cv-pend-r{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:4px 0}.cv-pend-r small{color:var(--gray)}.cv-pend-r .v-day-edit{margin-left:6px}
 .qr-ov{position:fixed;inset:0;z-index:2147483000;background:#000;display:flex;align-items:center;justify-content:center}
 .qr-ov video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .qr-frame{position:relative;width:min(70vw,300px);aspect-ratio:1;border:3px solid #fff;border-radius:22px;box-shadow:0 0 0 100vmax rgba(0,0,0,.45)}
@@ -2563,7 +2564,7 @@ const CV = (function(){
      téléphone pour lui seul, chiffrés avec sa propre clé. */
   const PUSH_KINDS = [['depense','💶','Dépenses et remboursements'], ['resa','🗓️','Réservations et programme'], ['souv','📸','Souvenirs et photos'],
     ['sondage','🗳️','Sondages'], ['notes','🛒','Courses et notes'], ['social','💬','Abonnés : commentaires, ❤️ et nouveaux abonnés'], ['rappel','⏰','Rappels : départ, enregistrement en ligne, échéances'], ['soir','🌙','Le soir en voyage : « raconte ta journée » et souvenirs « il y a un an »']];
-  const PUSH_TPL = {soc_cm:'💬 {0} a commenté : « {1} »', soc_lk:'❤️ {0} aime ta publication : {1}', soc_fw:'👀 {0} suit maintenant ton voyage', fb_social:'Du nouveau chez tes abonnés', depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
+  const PUSH_TPL = {soc_iv:'📩 {0} t’invite dans le voyage « {1} »', soc_ivf:'📩 {0} te propose de suivre « {1} »', soc_iva:'✅ {0} a rejoint « {1} »', soc_ivr:'✕ {0} a refusé l’invitation : « {1} »', soc_cm:'💬 {0} a commenté : « {1} »', soc_lk:'❤️ {0} aime ta publication : {1}', soc_fw:'👀 {0} suit maintenant ton voyage', fb_social:'Du nouveau chez tes abonnés', depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
     resa1:'{0} a ajouté au programme : {1}', resaN:'{0} a ajouté {1} éléments au programme', resaCh:'{0} a changé l’horaire : {1}',
     souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
     notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
@@ -2588,7 +2589,8 @@ const CV = (function(){
     if(M.sync.on && M.sync.code) codes.add(M.sync.code);
     Object.entries(TS()).forEach(([tid, c])=>{ if(c && spaceObj(c) && R[tid] && R[tid].type === 'trip') codes.add(c); });
     const feeds = P.kinds.social ? Object.values(FT()).filter(Boolean) : [];
-    return [...codes].map(code=>({code, kinds:want.filter(k=>k !== 'social')})).concat(feeds.map(code=>({code, kinds:['social']}))).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
+    const ib = M.ib && spaceObj(M.ib) ? [{code:M.ib, kinds:['social']}] : [];   // ma boîte aux lettres : invitations et réponses, toujours
+    return [...codes].map(code=>({code, kinds:want.filter(k=>k !== 'social')})).concat(feeds.map(code=>({code, kinds:['social']}))).concat(ib).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
   }
   // 🔔 l’auteur est prévenu quand un abonné commente, aime ou commence à suivre (même un abonné sans l’appli)
   async function socialPush(ftid, s, x){
@@ -3236,7 +3238,7 @@ const CV = (function(){
   // compagnon : mes paquets → je rejoins les voyages listés, je suis les changements de code, je garde ma copie d’un voyage retiré
   async function packApply(){
     const mine = PACKS(), viaP = M.viaP || (M.viaP = {}), viaH = M.viaH || (M.viaH = {}); let n = 0;
-    for(const r of list('packtrip', x=>TS()[x.trip] && !mine[TS()[x.trip]])){
+    for(const r of list('packtrip', x=>TS()[x.trip] && !mine[TS()[x.trip]] && !(M.left || {})[x.tid])){
       const P = TS()[r.trip]; viaP[r.tid] = P; if(!viaH[r.tid]) viaH[r.tid] = await viaHash(r.tid, P);
       if(r.code && TS()[r.tid] !== r.code){ const prev = TS()[r.tid]; TS()[r.tid] = r.code; if(!spaceObj(r.code)) (M.spaces = M.spaces || []).push({code:r.code, since:0, dirty:[], last:0, err:''});
         if(prev && !Object.values(TS()).includes(prev)) M.spaces = (M.spaces||[]).filter(x=>x.code !== prev); n++; } }
@@ -3285,7 +3287,8 @@ const CV = (function(){
   async function ivSend(lk, msg){
     if(!lk || !lk.pk || !lk.ib || lk.ib === M.ib) return false;
     const k = await fKey(), key = await fShared(k.priv, lk.pk), iv = crypto.getRandomValues(new Uint8Array(12));
-    const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(JSON.stringify(Object.assign({from: myName() || (M.me && prof(M.me) ? pname(M.me) : '')}, msg)))));
+    const from = myName() || (M.me && prof(M.me) ? pname(M.me) : '');
+    const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(JSON.stringify(Object.assign({from, dev:devId(), ib:inbox(), pid:M.me || ''}, msg)))));
     const rec = {id:'iv:' + devId() + ':' + msg.k + ':' + msg.id, type:'invite', trip:'ib:' + lk.ib, dev:lk.dev, opk:k.pub, iv:b64(iv), ct:b64(ct), at:Date.now()};
     const had = spaceObj(lk.ib), sp = had || {code:lk.ib, since:0, dirty:[], last:0, err:''};
     if(!had) (M.spaces = M.spaces || []).push(sp);
@@ -3294,7 +3297,15 @@ const CV = (function(){
     catch(e){ sp.err = sp.err || String(e && e.message || e); }
     finally { if(!had){ M.spaces = (M.spaces||[]).filter(x=>x !== sp); Object.keys(R).forEach(id=>{ const r = R[id]; if(r && r.trip === 'ib:' + lk.ib) delete R[id]; }); }
       if(!hadTS) delete TS()['ib:' + lk.ib]; persist(); }
+    if(!sp.err) ivPush(lk.ib, msg.k === 'reply' ? (msg.ok ? 'iva' : 'ivr') : msg.k === 'follow' ? 'ivf' : 'iv', msg.t || '').catch(()=>{});
     return !sp.err;
+  }
+  // 🔔 notification sur le téléphone de la personne (si elle a activé les notifications) — chiffrée avec le code de sa boîte
+  async function ivPush(ib, s, titre){
+    if(!pushApi()) return; const kk = await keys(ib), kid = kk.token.slice(0, 16);
+    const p = {k:'social', who: myName() || (M.me && prof(M.me) ? pname(M.me) : ''), trip:'', tt:'Vezoria', it:[{s, x: String(titre || '').slice(0, 120)}], n:1};
+    const msg = b64(await seal(te.encode(JSON.stringify(p)), ib));
+    await pushPost(ib, {a:'send', kind:'social', kid, msg, tag:'iv-' + s});
   }
   // voyage en ligne sur son propre code (accord demandé une fois), prêt à être rejoint
   async function tripOnline(tid){
@@ -3316,6 +3327,11 @@ const CV = (function(){
       if(!(await tripOnline(tid))) return;
       let ok = [], ko = [];
       for(const p of dir){ try { (await ivSend(L[p], {k:'trip', id:tid, c:TS()[tid], t:t.titre || ''})) ? ok.push(p) : ko.push(p); } catch(e){ ko.push(p); } }
+      if(ok.length){   // en attente de réponse : elle n’entre dans les voyageurs qu’en acceptant
+        const pend = (M.ivPend = M.ivPend || {})[tid] = Object.assign({}, (M.ivPend || {})[tid] || {});
+        ok.forEach(p=>{ pend[p] = {dev:L[p].dev, at:Date.now(), st:'wait'}; });
+        const cur = R[tid]; if(cur && (cur.voyageurs || []).some(p=>ok.includes(p))) putQuiet([Object.assign(clone(cur), {voyageurs:(cur.voyageurs || []).filter(p=>!ok.includes(p))})]);
+        persist(); }
       if(ok.length) toast('📩 ' + MSGT('Invitation envoyée dans l’appli :') + ' ' + ok.map(pname).join(', '));
       if(ko.length) oth.push(...ko);
       refresh();
@@ -3355,6 +3371,7 @@ const CV = (function(){
     for(const r of list('invite', x=>x.dev === me && x.ct && x.opk && TS()[x.trip] === M.ib)){
       const key = r.id + ':' + r.ct.slice(0, 12); if(done[key] || ivLater[key]) continue;
       let m = null; try { const sk = await fShared(k.priv, r.opk); m = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(r.iv)}, sk, unb64(r.ct)))); } catch(e){}
+      if(m && m.k === 'reply'){ done[key] = 1; putQuiet([Object.assign(clone(r), {deleted:true})]); ivReply(m); continue; }
       if(!m || !/^[A-Z0-9-]{8,}$/.test(m.c || '')){ done[key] = 1; continue; }
       const already = m.k === 'follow' ? list('feedtrip', f=>TS()[f.id] === m.c && !f.deleted).length : Object.values(TS()).includes(m.c);
       if(already){ done[key] = 1; putQuiet([Object.assign(clone(r), {deleted:true})]); continue; }
@@ -3371,11 +3388,36 @@ const CV = (function(){
         <button type="button" class="v-btn sec" onclick="CV.inviteAnswer('${esc(key)}',-1)">✕ Refuser</button></div>`, true);
     inviteCheck.cur = {r, key, m};
   }
+  // réponse à MON invitation : oui → elle arrive dans le voyage ; non → je le vois
+  function ivReply(m){
+    const pend = (M.ivPend || {})[m.id]; if(!pend) return;
+    const pid = Object.keys(pend).find(p=>pend[p].dev === m.dev) || (m.pid && pend[m.pid] ? m.pid : ''); if(!pid) return;
+    if(m.ok){ delete pend[pid];
+      const t = R[m.id]; if(t && !t.deleted && !(t.voyageurs || []).includes(pid) && prof(pid)) putQuiet([Object.assign(clone(t), {voyageurs:[...(t.voyageurs || []), pid]})]);   // elle a dit oui : elle entre dans les voyageurs
+      toast('✅ ' + (m.from || pname(pid)) + ' · ' + MSGT('a accepté l’invitation')); }
+    else { pend[pid] = Object.assign(pend[pid], {st:'no', at:Date.now()}); toast('✕ ' + (m.from || pname(pid)) + ' · ' + MSGT('a refusé l’invitation')); }
+    if(!Object.keys(pend).length) delete M.ivPend[m.id];
+    persist(); refresh();
+  }
+  // bandeau du voyage : invitations en attente / refusées
+  function pendBar(){
+    const tid = M.trip, pend = (M.ivPend || {})[tid]; if(!pend) return '';
+    const t = R[tid] || {}, v = t.voyageurs || [];
+    Object.keys(pend).forEach(p=>{ if(v.includes(p) || inTrip(tid, p) || !prof(p)) delete pend[p]; });
+    const ks = Object.keys(pend); if(!ks.length){ delete M.ivPend[tid]; return ''; }
+    return `<div class="v-sum cv-pend">${ks.map(p=>`<div class="cv-pend-r"><span>${pend[p].st === 'no' ? '✕' : '⏳'} ${pchip(p)} <small>${pend[p].st === 'no' ? 'a refusé l’invitation' : 'en attente de réponse'}</small></span>
+      <span>${pend[p].st === 'no' ? '' : `<button type="button" class="v-day-edit" onclick="CV.pendAgain('${tid}','${p}')">🔁 Relancer</button>`}<button type="button" class="v-day-edit" onclick="CV.pendDrop('${tid}','${p}')" title="Retirer">✕</button></span></div>`).join('')}</div>`;
+  }
+  async function pendAgain(tid, p){ const t = R[tid], lk = (M.links || {})[p]; if(!t || !lk) return;
+    const ok = await ivSend(lk, {k:'trip', id:tid, c:TS()[tid], t:t.titre || ''}).catch(()=>false);
+    if(ok){ M.ivPend[tid][p].at = Date.now(); persist(); toast('📩 ' + MSGT('Invitation envoyée dans l’appli :') + ' ' + pname(p)); } else toast('⚠️ ' + MSGT('Envoi impossible pour le moment')); }
+  function pendDrop(tid, p){ const pend = (M.ivPend || {})[tid]; if(pend){ delete pend[p]; if(!Object.keys(pend).length) delete M.ivPend[tid]; persist(); refresh(); } }
   async function inviteAnswer(key, a){
     const cur = inviteCheck.cur; ivOpen = false; inviteCheck.cur = null; closeSheet(true);
     if(!cur || cur.key !== key) return;
     if(a === 0){ ivLater[key] = 1; return; }
     (M.ivDone = M.ivDone || {})[key] = 1; putQuiet([Object.assign(clone(cur.r), {deleted:true})]); persist();
+    if(cur.m.ib && cur.r.opk && cur.m.k === 'trip') ivSend({dev:cur.m.dev, pk:cur.r.opk, ib:cur.m.ib}, {k:'reply', id:cur.m.id, ok:a === 1, t:cur.m.t || ''}).catch(()=>{});   // l’auteur sait si c’est oui ou non
     if(a === 1){ if(cur.m.k === 'follow') await followGo(cur.m.c); else await joinCodeGo(cur.m.c, t=>toast(t)); }
     setTimeout(()=>inviteCheck().catch(()=>{}), 1500);
   }
@@ -3583,6 +3625,7 @@ const CV = (function(){
     if(sp.err){ msg.textContent = '⚠️ ' + sp.err; return; }
     if(list('packtrip', r=>TS()[r.trip] === code).length){   // paquet de voyages : on rejoint chacun d’eux
       msg.textContent = '📡 Voyages partagés…';
+      if(M.left) list('packtrip', r=>TS()[r.trip] === code).forEach(r=>{ delete M.left[r.tid]; });   // rejoindre exprès : les voyages quittés reviennent
       await packApply(); const codes = [...new Set(list('packtrip', r=>TS()[r.trip] === code).map(r=>r.code))];
       for(const c of codes){ try { await syncSpace(spaceObj(c), true); } catch(e){} }
       persist(); closeSheet(true); refresh(); const first = Object.keys(TS()).find(k=>codes.includes(TS()[k]) && R[k] && R[k].type === 'trip'); if(first) go(first); joinPick(codes); return; }
@@ -4574,7 +4617,7 @@ const CV = (function(){
   function pinToggle(){ M.pinOpen = M.pinOpen === false; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function renderProg(){
     const ds = dayList();
-    let h = pinBar() + actBand() + annivCard() + nextHero() + eveCard() + prepGauge() + liveCard() + daysBar() + quickBar() + progMap() + whoBar() + pinBoard() + pinnedPolls();
+    let h = pinBar() + actBand() + annivCard() + nextHero() + eveCard() + prepGauge() + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + pinnedPolls();
     const tt = trip();
     if(tt && tt.demo) h = `<div class="cv-demo-bar">👀 <b>Voyage de démo</b> : touche à tout, modifie, supprime. Il reste sur ce téléphone et n’est jamais partagé.
         <span class="cv-demo-btns"><button type="button" onclick="CV.demoReset()">↺ Recommencer</button><button type="button" onclick="CV.demoDel()">Supprimer la démo</button></span></div>` + h;
@@ -5066,6 +5109,17 @@ const CV = (function(){
   }
   async function delTrip(id){
     const t = R[id]; if(!t) return;
+    // voyage partagé créé par quelqu’un d’autre : on ne le supprime que chez soi (on le quitte), jamais chez les autres
+    const sc = TS()[id], shared = sc && spaceObj(sc), notMine = (t.createdBy && t.createdBy !== M.me) || (!t.createdBy && (M.viaP || {})[id]);
+    if(shared && notMine){
+      const who = t.createdBy && prof(t.createdBy) ? pname(t.createdBy) : MSGT('quelqu’un d’autre');
+      if(!(await uiConfirm(MSGT('Ce voyage a été créé par {0} : il reste chez tes compagnons.').replace('{0}', who) + '\n\n' + MSGT('OK = le quitter et le retirer de ton téléphone seulement.')))) return;
+      closeSheet(true);
+      if(!(await tripLeaveGo(id, 'keep', true))) return;
+      (M.left = M.left || {})[id] = 1;   // un paquet de voyages ne le fait pas revenir tout seul
+      const out = Object.values(R).filter(r=>r.trip===id && !r.deleted && r.type !== 'member'); out.forEach(r=>r.deleted = true); t.deleted = true;
+      putMany([...out, t], '🚪 ' + MSGT('Voyage retiré de ton téléphone')); M.trip = null; applyMode(); return;
+    }
     if(!(await uiConfirm('Supprimer le voyage « ' + t.titre + ' » et toutes ses fiches ? (pour tout le monde si la synchro est active)'))) return;
     const out = Object.values(R).filter(r=>r.trip===id && !r.deleted);
     out.forEach(r=>r.deleted = true); t.deleted = true;
@@ -14645,7 +14699,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-17z';
+  const BUILD = '2026-10-17z2';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -14655,7 +14709,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════

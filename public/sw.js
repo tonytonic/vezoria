@@ -2,7 +2,7 @@
 // Pages et fichiers de l'appli : réseau s'il répond vite (dernière version), sinon copie locale tout de suite
 // (réseau lent ou absent) ; la copie se met à jour en arrière-plan.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-17z';
+const CACHE = 'vezoria-2026-10-17z2';
 const CORE = ['./', './splash.webp', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
@@ -88,7 +88,7 @@ self.addEventListener('fetch', e => {
 // ── 🔔 Notifications ──
 // Le texte arrive chiffré avec la clé du voyage (rangée dans IndexedDB par l’appli) : il est déchiffré ici,
 // sur le téléphone, et écrit dans la langue de l’appli (modèles traduits rangés par l’appli).
-const TPL0 = {soc_cm:'💬 {0} a commenté : « {1} »', soc_lk:'❤️ {0} aime ta publication : {1}', soc_fw:'👀 {0} suit maintenant ton voyage', fb_social:'Du nouveau chez tes abonnés', depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
+const TPL0 = {soc_iv:'📩 {0} t’invite dans le voyage « {1} »', soc_ivf:'📩 {0} te propose de suivre « {1} »', soc_iva:'✅ {0} a rejoint « {1} »', soc_ivr:'✕ {0} a refusé l’invitation : « {1} »', soc_cm:'💬 {0} a commenté : « {1} »', soc_lk:'❤️ {0} aime ta publication : {1}', soc_fw:'👀 {0} suit maintenant ton voyage', fb_social:'Du nouveau chez tes abonnés', depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
   resa1:'{0} a ajouté au programme : {1}', resaN:'{0} a ajouté {1} éléments au programme', resaCh:'{0} a changé l’horaire : {1}',
   souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
   notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
@@ -108,7 +108,7 @@ function compose(p, tt) {
   else if (p.k === 'resa') b = x0.ch ? fill(tt('resaCh'), [who, x0.x + (x0.h ? ' · ' + x0.h : '')]) : n > 1 ? fill(tt('resaN'), [who, n]) + '\n' + names : fill(tt('resa1'), [who, x0.x]);
   else if (p.k === 'souv') b = n > 1 ? fill(tt('souvN'), [who, n]) + '\n' + names : fill(tt('souv1'), [who, x0.x]);
   else if (p.k === 'sondage') b = fill(tt('sondage'), [who, x0.x]);
-  else if (p.k === 'social') b = x0.s === 'comment' ? fill(tt('soc_cm'), [who, x0.x]) : x0.s === 'like' ? fill(tt('soc_lk'), [who, x0.x]) : fill(tt('soc_fw'), [who]);
+  else if (p.k === 'social') b = /^iv[far]?$/.test(x0.s || '') ? fill(tt('soc_' + x0.s), [who, x0.x]) : x0.s === 'comment' ? fill(tt('soc_cm'), [who, x0.x]) : x0.s === 'like' ? fill(tt('soc_lk'), [who, x0.x]) : fill(tt('soc_fw'), [who]);
   else if (p.k === 'notes') b = x0.note ? fill(tt('note'), [who, x0.x]) : n > 1 ? fill(tt('notesN'), [who, n]) + '\n' + names : fill(tt('notes1'), [who, x0.x]);
   return { title: p.tt || 'Vezoria', body: b || tt('fb') };
 }
