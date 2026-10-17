@@ -793,6 +793,7 @@ textarea.v-in{min-height:70px;resize:vertical;}
 .cv-links.big a{font-size:.76rem;padding:7px 12px;background:#fff;border:1px solid #e3dccb}
 .cv-links .bk-chip{font:inherit;font-size:.66rem;font-weight:700;color:var(--navy);background:transparent;border:1px dashed #d8cfbb;border-radius:12px;padding:3px 9px;cursor:pointer;white-space:nowrap}
 .bk-box{margin:-2px 0 12px;padding:10px 11px;border:1px solid #ece4d3;border-radius:14px;background:#fffdf8}
+.bk-box.top{margin:0 0 12px}
 .bk-h{font-size:.78rem;font-weight:800;margin-bottom:4px}
 .bk-g{margin-top:6px}.bk-g>small{font-size:.66rem;font-weight:700;opacity:.65}.bk-g .cv-links{margin-top:3px}
 .bk-ft{font-size:.62rem;opacity:.6;margin-top:8px;line-height:1.35}
@@ -4547,6 +4548,7 @@ const CV = (function(){
     if(!id && !draft && ['transport','hotel','activite'].includes(c)) h += `<button type="button" class="cv-tjbtn ed-imp" onclick="CV.impSheet('${c}')"><span>📄</span><span><b>Importer une réservation</b><small>PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule</small></span></button>`;
     if(id) h += byline(it);
     if(it.hint) h += `<div class="v-hint">💡 ${esc(it.hint)}</div>`;
+    h += `<div id="cv-fbook">${bookHTML(it)}</div>`;
     h += `<form id="v-form" onsubmit="event.preventDefault();CV.saveForm()" oninput="CV.live()">`;
     h += `<div class="v-f"><label>Statut</label><div class="v-seg" id="v-seg">${Object.entries(STATUTS).map(([k,l])=>
       `<button type="button" class="${k}${it.statut===k?' on':''}" data-v="${k}" onclick="CV.seg(this)">${l}</button>`).join('')}</div></div>`;
@@ -5601,6 +5603,7 @@ const CV = (function(){
     if(sch > 0) h += `<div class="cv-live-s">📆 ${eur(sch)} planifiés${Math.abs(sch-T) > 0.5 ? ` · <b style="color:${sch>T?'var(--red)':'#a06d00'}">${sch>T ? 'dépasse de '+eur(sch-T) : 'reste '+eur(T-sch)+' à planifier'}</b>` : ' ✓'}</div>`;
     document.getElementById('cv-live').innerHTML = h;
     const fl = document.getElementById('cv-flinks'); if(fl) fl.innerHTML = linksHTML(tmp, true);
+    const fb = document.getElementById('cv-fbook'); if(fb){ const x = bookHTML(tmp); if(fb.dataset.h !== x){ fb.dataset.h = x; fb.innerHTML = x; } }
   }
   function one(btn){ btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); live(); }
   function equilibreHTML(){
@@ -5771,12 +5774,14 @@ const CV = (function(){
     return L;
   }
   function linksHTML(it, big){
-    const L = links(it), bk = bookOn(it) ? bookGroups(it) : [];
+    const L = links(it), bk = !big && bookOn(it) ? bookGroups(it) : [];
     if(!L.length && !bk.length) return '';
     const a = ([i,l,u]) => `<a href="${esc(u)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${i} ${l}</a>`;
     if(!big) return `<div class="cv-links">${L.map(a).join('')}${bk.length ? `<button type="button" class="bk-chip" onclick="event.stopPropagation();CV.bookSheet('${esc(it.id||'')}')">🛒 Réserver…</button>` : ''}</div>`;
-    return (L.length ? `<div class="cv-links big">${L.map(a).join('')}</div>` : '') + (bk.length ? `<div class="bk-box"><div class="bk-h">🛒 Comparer et réserver</div>${bookRows(bk)}<div class="bk-ft">${BK_FT}</div></div>` : '');
+    return `<div class="cv-links big">${L.map(a).join('')}</div>`;
   }
+  // en tête de la fiche : comparer et réserver (seulement tant que c’est « à réserver »)
+  function bookHTML(it){ const bk = bookOn(it) ? bookGroups(it) : []; return bk.length ? `<div class="bk-box top"><div class="bk-h">🛒 Comparer et réserver</div>${bookRows(bk)}<div class="bk-ft">${BK_FT}</div></div>` : ''; }
 
   /* ══════════ 🛒 Réserver avec… : liens directs vers les sites, sans pub ni pistage ══════════
      Toutes les adresses de partenaires passent par bookUrl() : le jour d’une éventuelle affiliation,
@@ -15040,7 +15045,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18k';
+  const BUILD = '2026-10-18l';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
