@@ -1,4 +1,12 @@
 I18N.load({
+"📲 Passer à l’appli sans rien perdre":"📲 Move to the app without losing anything",
+"Installe Vezoria, puis colle ce code dans l’appli (à l’accueil « J’ai reçu une invitation », ou 👥 → « Rejoindre avec un code ») : tu retrouves tes voyages suivis, sous ton nom, sans compter deux fois.":"Install Vezoria, then paste this code in the app (on the welcome screen “I got an invitation”, or 👥 → “Join with a code”): you get your followed trips back, under your name, counted only once.",
+"📋 Copier mon code de passage":"📋 Copy my transfer code",
+"Code impossible pour le moment (pas de réseau ?).":"Can’t create the code right now (no network?).",
+"Code copié":"Code copied",
+"Je récupère les voyages que tu suis…":"Getting the trips you follow…",
+"Tes voyages suivis sont dans l’appli":"Your followed trips are in the app",
+"📋 Copier mon lien de passage (à coller dans l’appli installée)":"📋 Copy my transfer link (to paste in the installed app)",
 "Ce prénom est déjà pris : tu apparais comme « {0} »":"This name is already taken: you appear as “{0}”",
 "Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"Someone called “{0}” already follows this trip.",
 "OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"OK = it’s me (on another phone or in the browser).",

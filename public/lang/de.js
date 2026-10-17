@@ -1,4 +1,12 @@
 I18N.load({
+"📲 Passer à l’appli sans rien perdre":"📲 Ohne Verlust zur App wechseln",
+"Installe Vezoria, puis colle ce code dans l’appli (à l’accueil « J’ai reçu une invitation », ou 👥 → « Rejoindre avec un code ») : tu retrouves tes voyages suivis, sous ton nom, sans compter deux fois.":"Installiere Vezoria und füge diesen Code in der App ein (beim Start „Ich habe eine Einladung“ oder 👥 → „Mit einem Code beitreten“): Du bekommst deine gefolgten Reisen unter deinem Namen zurück, ohne doppelt gezählt zu werden.",
+"📋 Copier mon code de passage":"📋 Meinen Wechselcode kopieren",
+"Code impossible pour le moment (pas de réseau ?).":"Code gerade nicht möglich (kein Netz?).",
+"Code copié":"Code kopiert",
+"Je récupère les voyages que tu suis…":"Ich hole die Reisen, denen du folgst…",
+"Tes voyages suivis sont dans l’appli":"Deine gefolgten Reisen sind in der App",
+"📋 Copier mon lien de passage (à coller dans l’appli installée)":"📋 Meinen Wechsellink kopieren (in der installierten App einfügen)",
 "Ce prénom est déjà pris : tu apparais comme « {0} »":"Dieser Name ist schon vergeben: Du erscheinst als „{0}“",
 "Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"Jemand namens „{0}“ folgt dieser Reise schon.",
 "OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"OK = das bin ich (auf einem anderen Handy oder im Browser).",

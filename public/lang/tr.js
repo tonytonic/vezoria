@@ -1,4 +1,12 @@
 I18N.load({
+"📲 Passer à l’appli sans rien perdre":"📲 Hiçbir şey kaybetmeden uygulamaya geç",
+"Installe Vezoria, puis colle ce code dans l’appli (à l’accueil « J’ai reçu une invitation », ou 👥 → « Rejoindre avec un code ») : tu retrouves tes voyages suivis, sous ton nom, sans compter deux fois.":"Vezoria’yı yükle, sonra bu kodu uygulamaya yapıştır (açılışta «Davet aldım» ya da 👥 → «Kodla katıl»): takip ettiğin seyahatler adınla geri gelir, iki kez sayılmazsın.",
+"📋 Copier mon code de passage":"📋 Geçiş kodumu kopyala",
+"Code impossible pour le moment (pas de réseau ?).":"Kod şu an oluşturulamıyor (ağ yok mu?).",
+"Code copié":"Kod kopyalandı",
+"Je récupère les voyages que tu suis…":"Takip ettiğin seyahatleri getiriyorum…",
+"Tes voyages suivis sont dans l’appli":"Takip ettiğin seyahatler uygulamada",
+"📋 Copier mon lien de passage (à coller dans l’appli installée)":"📋 Geçiş bağlantımı kopyala (yüklü uygulamaya yapıştır)",
 "Ce prénom est déjà pris : tu apparais comme « {0} »":"Bu ad zaten alınmış: «{0}» olarak görünüyorsun",
 "Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"«{0}» adlı biri bu seyahati zaten takip ediyor.",
 "OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"Tamam = benim (başka bir telefonda ya da tarayıcıda).",

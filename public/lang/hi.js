@@ -1,4 +1,12 @@
 I18N.load({
+"📲 Passer à l’appli sans rien perdre":"📲 बिना कुछ खोए ऐप पर जाएँ",
+"Installe Vezoria, puis colle ce code dans l’appli (à l’accueil « J’ai reçu une invitation », ou 👥 → « Rejoindre avec un code ») : tu retrouves tes voyages suivis, sous ton nom, sans compter deux fois.":"Vezoria इंस्टॉल करें, फिर यह कोड ऐप में पेस्ट करें (शुरुआत में «मुझे निमंत्रण मिला» या 👥 → «कोड से जुड़ें»): आपकी फ़ॉलो की गई यात्राएँ आपके नाम से वापस आ जाएँगी, दो बार गिनती नहीं होगी।",
+"📋 Copier mon code de passage":"📋 मेरा ट्रांसफ़र कोड कॉपी करें",
+"Code impossible pour le moment (pas de réseau ?).":"अभी कोड नहीं बन सकता (नेटवर्क नहीं?)।",
+"Code copié":"कोड कॉपी हुआ",
+"Je récupère les voyages que tu suis…":"आपकी फ़ॉलो की गई यात्राएँ ला रहे हैं…",
+"Tes voyages suivis sont dans l’appli":"आपकी फ़ॉलो की गई यात्राएँ ऐप में हैं",
+"📋 Copier mon lien de passage (à coller dans l’appli installée)":"📋 मेरा ट्रांसफ़र लिंक कॉपी करें (इंस्टॉल ऐप में पेस्ट करें)",
 "Ce prénom est déjà pris : tu apparais comme « {0} »":"यह नाम पहले से लिया गया है: आप «{0}» के रूप में दिखेंगे",
 "Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"«{0}» नाम का कोई पहले से यह यात्रा फ़ॉलो कर रहा है।",
 "OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"OK = यह मैं ही हूँ (दूसरे फ़ोन या ब्राउज़र में)।",

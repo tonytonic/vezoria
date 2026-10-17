@@ -1,4 +1,12 @@
 I18N.load({
+"📲 Passer à l’appli sans rien perdre":"📲 无损转到应用",
+"Installe Vezoria, puis colle ce code dans l’appli (à l’accueil « J’ai reçu une invitation », ou 👥 → « Rejoindre avec un code ») : tu retrouves tes voyages suivis, sous ton nom, sans compter deux fois.":"安装 Vezoria，然后在应用中粘贴此代码（启动时「我收到了邀请」，或 👥 → 「用代码加入」）：你关注的旅行会以你的名字回来，不会重复计算。",
+"📋 Copier mon code de passage":"📋 复制我的转移代码",
+"Code impossible pour le moment (pas de réseau ?).":"暂时无法创建代码（没有网络？）。",
+"Code copié":"代码已复制",
+"Je récupère les voyages que tu suis…":"正在取回你关注的旅行…",
+"Tes voyages suivis sont dans l’appli":"你关注的旅行已在应用中",
+"📋 Copier mon lien de passage (à coller dans l’appli installée)":"📋 复制我的转移链接（粘贴到已安装的应用）",
 "Ce prénom est déjà pris : tu apparais comme « {0} »":"这个名字已被使用：你将显示为「{0}」",
 "Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"已经有名叫「{0}」的人在关注这段旅行。",
 "OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"确定 = 是我（在另一部手机或浏览器上）。",

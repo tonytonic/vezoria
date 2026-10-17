@@ -1,4 +1,12 @@
 I18N.load({
+"📲 Passer à l’appli sans rien perdre":"📲 잃는 것 없이 앱으로 옮기기",
+"Installe Vezoria, puis colle ce code dans l’appli (à l’accueil « J’ai reçu une invitation », ou 👥 → « Rejoindre avec un code ») : tu retrouves tes voyages suivis, sous ton nom, sans compter deux fois.":"Vezoria를 설치한 뒤 앱에 이 코드를 붙여넣으세요 (시작 화면 「초대를 받았어요」 또는 👥 → 「코드로 참여」): 팔로우하던 여행이 내 이름으로 돌아오고, 두 번 세지지 않아요.",
+"📋 Copier mon code de passage":"📋 내 이동 코드 복사",
+"Code impossible pour le moment (pas de réseau ?).":"지금은 코드를 만들 수 없어요 (네트워크 없음?).",
+"Code copié":"코드를 복사했어요",
+"Je récupère les voyages que tu suis…":"팔로우하던 여행을 가져오는 중…",
+"Tes voyages suivis sont dans l’appli":"팔로우하던 여행이 앱에 있어요",
+"📋 Copier mon lien de passage (à coller dans l’appli installée)":"📋 내 이동 링크 복사 (설치한 앱에 붙여넣기)",
 "Ce prénom est déjà pris : tu apparais comme « {0} »":"이미 사용 중인 이름이에요. 「{0}」(으)로 표시돼요",
 "Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"「{0}」(이)라는 이름의 사람이 이미 이 여행을 팔로우하고 있어요.",
 "OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"확인 = 저예요 (다른 휴대폰이나 브라우저에서).",

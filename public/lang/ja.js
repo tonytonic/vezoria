@@ -1,4 +1,12 @@
 I18N.load({
+"📲 Passer à l’appli sans rien perdre":"📲 何も失わずにアプリへ移行",
+"Installe Vezoria, puis colle ce code dans l’appli (à l’accueil « J’ai reçu une invitation », ou 👥 → « Rejoindre avec un code ») : tu retrouves tes voyages suivis, sous ton nom, sans compter deux fois.":"Vezoria をインストールし、アプリにこのコードを貼り付けてください（起動時「招待を受け取った」または 👥 →「コードで参加」）。フォロー中の旅があなたの名前で戻り、二重に数えられません。",
+"📋 Copier mon code de passage":"📋 移行コードをコピー",
+"Code impossible pour le moment (pas de réseau ?).":"今はコードを作れません（ネットワークなし？）。",
+"Code copié":"コードをコピーしました",
+"Je récupère les voyages que tu suis…":"フォロー中の旅を取り込み中…",
+"Tes voyages suivis sont dans l’appli":"フォロー中の旅がアプリに入りました",
+"📋 Copier mon lien de passage (à coller dans l’appli installée)":"📋 移行リンクをコピー（インストールしたアプリに貼り付け）",
 "Ce prénom est déjà pris : tu apparais comme « {0} »":"この名前はすでに使われています。「{0}」として表示されます",
 "Quelqu’un qui s’appelle « {0} » suit déjà ce voyage.":"「{0}」という名前の人がすでにこの旅をフォローしています。",
 "OK = c’est moi (sur un autre téléphone ou dans le navigateur).":"OK = 私です（別のスマホまたはブラウザ）。",
