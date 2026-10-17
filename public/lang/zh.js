@@ -1,4 +1,8 @@
 I18N.load({
+"Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"每个住宿城市一行。交通方式是从上一站到达那里的方式（第 1 站由每个人在下一步各自选择）。",
+"D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"每个人从哪里出发去 {0}、怎么去，{1} 之后回到哪里？各走各的：有人开车，有人坐火车或飞机。",
+"🛫 Aller":"🛫 去程",
+"🏠 Retour":"🏠 回程",
 "Arrivée introuvable : précise l’adresse.":"找不到到达地点：请写得更具体。",
 "Chaque jour, je pars de":"每天出发地点",
 "🏨 L’hôtel":"🏨 酒店",

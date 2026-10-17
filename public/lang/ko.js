@@ -1,4 +1,8 @@
 I18N.load({
+"Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"숙박하는 도시마다 한 줄. 교통수단은 이전 일정에서 그곳까지 가는 방법이에요 (첫 번째는 다음 단계에서 각자 고르세요).",
+"D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"각자 어디서 {0}(으)로, 무엇을 타고 가고, {1} 이후 어디로 돌아가나요? 각자 자기 방식대로: 누구는 차로, 누구는 기차나 비행기로.",
+"🛫 Aller":"🛫 가는 길",
+"🏠 Retour":"🏠 오는 길",
 "Arrivée introuvable : précise l’adresse.":"도착지를 찾을 수 없어요: 주소를 더 정확히 입력하세요.",
 "Chaque jour, je pars de":"매일 출발하는 곳",
 "🏨 L’hôtel":"🏨 호텔",

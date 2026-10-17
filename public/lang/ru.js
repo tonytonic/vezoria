@@ -1,4 +1,8 @@
 I18N.load({
+"Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"Одна строка на каждый город, где вы ночуете. Транспорт — как вы добираетесь туда с предыдущего этапа (для 1-го каждый выбирает свой на следующем шаге).",
+"D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Откуда каждый едет в {0}, на чём и куда возвращается после {1}? Каждый по-своему: кто-то на машине, кто-то на поезде или самолёте.",
+"🛫 Aller":"🛫 Туда",
+"🏠 Retour":"🏠 Обратно",
 "Arrivée introuvable : précise l’adresse.":"Точка прибытия не найдена: уточни адрес.",
 "Chaque jour, je pars de":"Каждый день я выхожу из",
 "🏨 L’hôtel":"🏨 Отеля",

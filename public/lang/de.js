@@ -1,4 +1,8 @@
 I18N.load({
+"Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"Eine Zeile pro Stadt, in der ihr übernachtet. Das Verkehrsmittel ist, wie ihr von der vorherigen Etappe dorthin kommt (für die 1. wählt jeder im nächsten Schritt sein eigenes).",
+"D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Von wo fährt jeder nach {0}, womit, und wohin geht es nach {1} zurück? Jeder auf seine Art: einer mit dem Auto, ein anderer mit Zug oder Flugzeug.",
+"🛫 Aller":"🛫 Hinreise",
+"🏠 Retour":"🏠 Rückreise",
 "Arrivée introuvable : précise l’adresse.":"Ziel nicht gefunden: Adresse genauer angeben.",
 "Chaque jour, je pars de":"Jeden Tag starte ich von",
 "🏨 L’hôtel":"🏨 Dem Hotel",

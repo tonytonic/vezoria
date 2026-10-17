@@ -1,4 +1,8 @@
 I18N.load({
+"Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"سطر لكل مدينة تبيتون فيها. الوسيلة هي كيف تصلون إليها من المحطة السابقة (للأولى، يختار كل واحد وسيلته في الخطوة التالية).",
+"D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"من أين ينطلق كل واحد إلى {0}، وبأي وسيلة، وإلى أين يعود بعد {1}؟ كل واحد على طريقته: أحدهم بالسيارة وآخر بالقطار أو بالطائرة.",
+"🛫 Aller":"🛫 الذهاب",
+"🏠 Retour":"🏠 العودة",
 "Arrivée introuvable : précise l’adresse.":"لم يُعثر على نقطة الوصول: حدّد العنوان بدقة.",
 "Chaque jour, je pars de":"كل يوم أنطلق من",
 "🏨 L’hôtel":"🏨 الفندق",

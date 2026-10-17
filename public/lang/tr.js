@@ -1,4 +1,8 @@
 I18N.load({
+"Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"Konakladığınız her şehir için bir satır. Ulaşım, bir önceki duraktan oraya nasıl gittiğinizdir (1. için herkes kendininkini bir sonraki adımda seçer).",
+"D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Herkes {0} için nereden, nasıl çıkıyor ve {1} sonrası nereye dönüyor? Herkes kendi yoluyla: biri arabayla, diğeri trenle ya da uçakla.",
+"🛫 Aller":"🛫 Gidiş",
+"🏠 Retour":"🏠 Dönüş",
 "Arrivée introuvable : précise l’adresse.":"Varış noktası bulunamadı: adresi netleştir.",
 "Chaque jour, je pars de":"Her gün şuradan çıkıyorum",
 "🏨 L’hôtel":"🏨 Otel",

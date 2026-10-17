@@ -1,4 +1,8 @@
 I18N.load({
+"Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"泊まる街ごとに1行。移動手段は前の行程からの行き方です（1つ目は次のステップでそれぞれが選びます）。",
+"D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"それぞれどこから {0} へ、何で向かい、{1} の後はどこへ帰りますか？人それぞれ：車の人も、電車や飛行機の人も。",
+"🛫 Aller":"🛫 行き",
+"🏠 Retour":"🏠 帰り",
 "Arrivée introuvable : précise l’adresse.":"到着地が見つかりません：住所を詳しく入力してください。",
 "Chaque jour, je pars de":"毎日の出発地",
 "🏨 L’hôtel":"🏨 ホテル",

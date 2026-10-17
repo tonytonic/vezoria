@@ -1,4 +1,8 @@
 I18N.load({
+"Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"Eén regel per stad waar jullie slapen. De vervoerswijze is hoe je er vanaf de vorige etappe komt (voor de 1e kiest iedereen die in de volgende stap zelf).",
+"D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Waar vertrekt iedereen naar {0}, hoe, en waar gaat hij na {1} heen terug? Ieder op zijn manier: de een met de auto, de ander met trein of vliegtuig.",
+"🛫 Aller":"🛫 Heen",
+"🏠 Retour":"🏠 Terug",
 "Arrivée introuvable : précise l’adresse.":"Aankomstpunt niet gevonden: maak het adres preciezer.",
 "Chaque jour, je pars de":"Elke dag vertrek ik vanaf",
 "🏨 L’hôtel":"🏨 Het hotel",
