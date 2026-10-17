@@ -1974,6 +1974,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .cv-phrow{gap:8px}.cv-phrow .cv-addph{flex:1;margin:0}
 .qr-btn{width:100%;margin:0 0 10px}
 .pl-exp{margin:0 0 12px}
+.ed-imp{margin:0 0 12px}.cv-tripact{flex-wrap:wrap}.cv-tripact .cv-ta-w{flex:1 1 100%}
 .cv-folr{display:flex;align-items:center;gap:6px;margin-left:40px}.cv-folr .cv-prow{margin-left:0!important;width:auto!important;flex:1;min-width:0}.cv-folall{margin:4px 0 10px 40px}.fd-unf{padding:8px 16px 4px;display:flex;flex-direction:column;gap:8px}.fd-unf .v-btn{margin:0}
 .wz-pp{border:1px solid var(--line,#eadde6);border-radius:14px;padding:10px;margin-bottom:8px;background:#fff}.wz-pl{display:grid;grid-template-columns:76px 1fr 112px;gap:6px;align-items:center;margin-top:6px}.wz-pl span{font-size:.8rem;font-weight:700;color:var(--gray)}.wz-pl .v-in{margin:0;min-width:0}
 .cv-pend{padding:10px 12px}.cv-pend-r{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:4px 0}.cv-pend-r small{color:var(--gray)}.cv-pend-r .v-day-edit{margin-left:6px}
@@ -4527,6 +4528,7 @@ const CV = (function(){
     const c = it.cat;
     let h = `<h2>${icon(it)} ${id ? esc(it.titre) : 'Nouveau ' + CATS[c].one}</h2>`;
     if(draft && impCtx) h += impTypeBar(c);
+    if(!id && !draft && ['transport','hotel','activite'].includes(c)) h += `<button type="button" class="cv-tjbtn ed-imp" onclick="CV.impSheet('${c}')"><span>📄</span><span><b>Importer une réservation</b><small>PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule</small></span></button>`;
     if(id) h += byline(it);
     if(it.hint) h += `<div class="v-hint">💡 ${esc(it.hint)}</div>`;
     h += `<form id="v-form" onsubmit="event.preventDefault();CV.saveForm()" oninput="CV.live()">`;
@@ -12693,7 +12695,7 @@ ${pm.join('\n')}</Document></kml>`;
           <span class="tt">${TS()[t.id] ? '🔗 ' : ''}<span data-notr>${esc(t.titre)}</span>${t.archived?' <small>✓ clôturé</small>':''}</span>
           <span class="td">${tripDatesLong(t) || 'dates à fixer'}</span>
           <span class="ins">${(t.voyageurs||[]).filter(prof).map(ini).join('')}</span></button>
-        ${act ? `<div class="cv-tripact"><button type="button" class="${FT()[t.id] ? 'on' : ''}" onclick="CV.close();CV.feedPublish('${t.id}')">${FT()[t.id] ? '👀 Publié · inviter des abonnés' : '👀 Publier pour des abonnés'}</button><button type="button" onclick="CV.close();CV.tripInviteNow('${t.id}')">👥 Ajouter un compagnon</button></div>` : ''}</div>`;
+        ${act ? `<div class="cv-tripact"><button type="button" class="${FT()[t.id] ? 'on' : ''}" onclick="CV.close();CV.feedPublish('${t.id}')">${FT()[t.id] ? '👀 Publié · inviter des abonnés' : '👀 Publier pour des abonnés'}</button><button type="button" onclick="CV.close();CV.tripInviteNow('${t.id}')">👥 Ajouter un compagnon</button>${FT()[t.id] ? `<button type="button" class="cv-ta-w" onclick="CV.feedShareLink('${t.id}')">🔗 Lien abonnés (sans installer l’appli)</button>` : ''}</div>` : ''}</div>`;
     });
     return h;
   }
@@ -14379,7 +14381,7 @@ ${pm.join('\n')}</Document></kml>`;
     const t = R[tid]; if(!t || !FT()[t.id]) return;
     const link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(FT()[t.id]) : '';
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
-    const text = MSG(`Suis mon voyage « ${t.titre} » sur Vezoria ✈️ : photos et récits au fil des étapes`) + '\n' + link + '\n' + MSG(`(code abonné : ${FT()[t.id]})`);
+    const text = MSG(`Suis mon voyage « ${t.titre} » sur Vezoria ✈️ : photos et récits au fil des étapes`) + '\n' + MSG('Le lien s’ouvre directement, sans rien installer :') + '\n' + link + '\n' + MSG(`(code abonné : ${FT()[t.id]})`);
     if(navigator.share){ try { await navigator.share({title:t.titre, text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
     try { await navigator.clipboard.writeText(text); toast('📋 Lien abonné copié'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
     refresh();
@@ -14488,6 +14490,7 @@ ${pm.join('\n')}</Document></kml>`;
           return d === devId() ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><span data-notr>${esc(x.who || '?')}</span>${nh ? `<small>🙈${nh}</small>` : ''}<button type="button" aria-label="Ce qu’elle voit" onclick="CV.fwTripsSheet('${esc(c)}','${esc(d)}')">👁️</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`; }).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
         ${fw.length ? `<div class="v-sum-small" style="margin-bottom:4px">👁️ = choisir les voyages que voit cette personne · 🚫 = la bloquer</div>` : ''}
         <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(c)}</b></div>
+        <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.feedShareLink('${tids[0]}')">🔗 Partager le lien (sans installer l’appli)</button>
         <details class="sh-more" style="margin-top:6px"><summary>🧳 Les ${tids.length} voyages</summary>${tids.map(tid=>`<button type="button" class="cv-prow" onclick="CV.feedView('${ftId(tid)}')"><span data-notr>${esc(R[tid].titre)}</span><span>›</span></button>`).join('')}</details>
         <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tids[0])}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.carnetPublishSheet()">📤 Inviter · choisir</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tids[0]}')">🔁 Nouveau lien abonné</button></div></div>`; };
     const pubRow = tid => { const t = R[tid], fw = list('follower', x=>x.trip===ftId(tid) && !isBlk(x)), lk = list('like', l=>l.trip===ftId(tid) && l.on && !isBlk(l)).length, cm = list('comment', c=>c.trip===ftId(tid) && !isBlk(c)).length;
@@ -14495,6 +14498,7 @@ ${pm.join('\n')}</Document></kml>`;
         <div class="sh-st"><span>👀 <b>${fw.length}</b> abonné${fw.length>1?'s':''}</span><span>❤️ <b>${lk}</b></span><span>💬 <b>${cm}</b></span></div>
         <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>x.id.endsWith(':' + devId()) ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><span data-notr>${esc(x.who || '?')}</span><button type="button" aria-label="Ne plus lui montrer" onclick="CV.fwHideOne('${tid}','${esc(x.id)}')">🙈</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
         <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(FT()[tid])}</b></div>
+        <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.feedShareLink('${tid}')">🔗 Partager le lien (sans installer l’appli)</button>
         <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tid)}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.feedPublish('${tid}')">📤 Inviter</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tid}')">🔁 Nouveau lien abonné</button></div></div>`; };
     const tripsAll = trips().filter(t=>!t.demo).sort((a,b)=>(b.debut||'').localeCompare(a.debut||''));
     const codeRow = t => { const c = TS()[t.id] && spaceObj(TS()[t.id]) ? TS()[t.id] : '', who = (t.voyageurs||[]).filter(prof).map(p=>esc(pname(p))).join(', ');
@@ -14841,7 +14845,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18b';
+  const BUILD = '2026-10-18c';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
