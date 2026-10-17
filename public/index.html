@@ -1974,6 +1974,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .cv-phrow{gap:8px}.cv-phrow .cv-addph{flex:1;margin:0}
 .qr-btn{width:100%;margin:0 0 10px}
 .pl-exp{margin:0 0 12px}
+.wz-pp{border:1px solid var(--line,#eadde6);border-radius:14px;padding:10px;margin-bottom:8px;background:#fff}.wz-pl{display:grid;grid-template-columns:76px 1fr 112px;gap:6px;align-items:center;margin-top:6px}.wz-pl span{font-size:.8rem;font-weight:700;color:var(--gray)}.wz-pl .v-in{margin:0;min-width:0}
 .cv-pend{padding:10px 12px}.cv-pend-r{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:4px 0}.cv-pend-r small{color:var(--gray)}.cv-pend-r .v-day-edit{margin-left:6px}
 .qr-ov{position:fixed;inset:0;z-index:2147483000;background:#000;display:flex;align-items:center;justify-content:center}
 .qr-ov video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -5976,7 +5977,8 @@ const CV = (function(){
     if(wz.step===2){ wz.debut = g('wz-debut'); wz.nuits = Math.max(1, parseInt(g('wz-nuits'))||1); }
     if(wz.step===3) wz.etapes = [...document.querySelectorAll('.wz-et')].map(r=>({ville:r.querySelector('[data-k=ville]').value.trim(),
       nuits:Math.max(0, parseInt(r.querySelector('[data-k=nuits]').value)||0), mode:r.querySelector('[data-k=mode]').value}));
-    if(wz.step===4){ const gg = {}; document.querySelectorAll('[data-wdep]').forEach(i=>{ const pid = i.dataset.wdep; gg[pid] = {dep:i.value.trim(), ret:document.querySelector(`[data-wret="${pid}"]`).value.trim()}; }); wz.gens = gg; wz.modeRetour = g('wz-mret') || 'Avion'; }
+    if(wz.step===4){ const gg = {}; document.querySelectorAll('[data-wdep]').forEach(i=>{ const pid = i.dataset.wdep, q = a => document.querySelector(`[${a}="${pid}"]`);
+      gg[pid] = {dep:i.value.trim(), ret:q('data-wret').value.trim(), mDep:q('data-wmdep').value, mRet:q('data-wmret').value}; }); wz.gens = gg; }
     if(wz.step===5){ wz.tpl = g('wz-tpl'); const cc = document.getElementById('wz-cc'), cd = document.getElementById('wz-cd'); wz.copyCheck = cc ? cc.checked : true; wz.copyDivers = cd ? cd.checked : false; }
   }
   function wzGo(n){
@@ -6034,7 +6036,7 @@ const CV = (function(){
         <div class="cv-row">${[2,3,7,14,19,21].map(n=>`<button type="button" class="v-chip" onclick="document.getElementById('wz-nuits').value=${n};CV.wzDates('n')">${n===2?'Week-end (2)':n+' nuits'}</button>`).join('')}</div>`;
     }
     if(s===3){
-      h += `<div class="v-sum-small" style="margin-bottom:8px">Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez (pour la 1ʳᵉ : depuis chez vous).</div>
+      h += `<div class="v-sum-small" style="margin-bottom:8px">Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).</div>
         <div oninput="CV.wzSum()">${wz.etapes.map((e,i)=>`<div class="wz-et"><span class="n">${i+1}</span>
           <input class="v-in" data-k="ville" value="${esc(e.ville)}" placeholder="Ville">
           <input class="v-in cv-num" data-k="nuits" type="number" min="0" value="${e.nuits}"><span class="v-sum-small">nuit${e.nuits>1?'s':''}</span>
@@ -6045,9 +6047,11 @@ const CV = (function(){
     }
     if(s===4){
       const plan = wzPlan(), first = plan.st[0] ? plan.st[0].ville : '…', last = plan.st.length ? plan.st[plan.st.length-1].ville : '…';
-      h += `<div class="v-sum-small" style="margin-bottom:8px">D’où part chacun vers ${esc(first)}, et où rentre-t-il après ${esc(last)} ? Des villes différentes = un trajet aller et un trajet retour pour chacun.</div>
-        ${wz.voyageurs.map(pid=>`<div class="cv-deprow">${pchip(pid)}<input class="v-in" data-wdep="${pid}" value="${esc((wz.gens[pid]||{}).dep)}" placeholder="départ de…"><input class="v-in" data-wret="${pid}" value="${esc((wz.gens[pid]||{}).ret)}" placeholder="retour vers…"></div>`).join('')}
-        <div class="v-f" style="margin-top:8px"><label>Mode du retour</label><select class="v-in" id="wz-mret">${modes(wz.modeRetour)}</select></div>`;
+      const m0 = (plan.st[0] || {}).mode || 'Avion';
+      h += `<div class="v-sum-small" style="margin-bottom:8px">D’où part chacun vers ${esc(first)}, comment, et où rentre-t-il après ${esc(last)} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.</div>
+        ${wz.voyageurs.map(pid=>{ const g = wz.gens[pid] || {}; return `<div class="wz-pp">${pchip(pid)}
+          <div class="wz-pl"><span>🛫 Aller</span><input class="v-in" data-wdep="${pid}" value="${esc(g.dep)}" placeholder="départ de…"><select class="v-in" data-wmdep="${pid}">${modes(g.mDep || m0)}</select></div>
+          <div class="wz-pl"><span>🏠 Retour</span><input class="v-in" data-wret="${pid}" value="${esc(g.ret)}" placeholder="retour vers…"><select class="v-in" data-wmret="${pid}">${modes(g.mRet || g.mDep || wz.modeRetour || m0)}</select></div></div>`; }).join('')}`;
     }
     if(s===5){
       const {st, fin} = wzPlan(), nt = nights(wz.debut, fin);
@@ -6088,10 +6092,12 @@ const CV = (function(){
     });
     const last = st[st.length-1];
     day(fin, (days[fin] && days[fin].titre && fin===last.debut ? days[fin].titre + ' · ' : last.ville + ' → ') + 'retour');
-    const group = key => { const m = new Map(); v.forEach(pid=>{ const g = wz.gens[pid] || {}; const c = key==='dep' ? (g.dep||'') : (g.ret||g.dep||''); if(!m.has(c)) m.set(c, []); m.get(c).push(pid); }); return m; };
+    // un trajet aller et un trajet retour par groupe (même ville ET même moyen de transport)
+    const group = key => { const m = new Map(); v.forEach(pid=>{ const g = wz.gens[pid] || {}; const c = key==='dep' ? (g.dep||'') : (g.ret||g.dep||''), md = key==='dep' ? (g.mDep || st[0].mode) : (g.mRet || g.mDep || wz.modeRetour || st[0].mode), kk = c + '|' + md;
+      if(!m.has(kk)) m.set(kk, {c, md, pids:[]}); m.get(kk).pids.push(pid); }); return m; };
     let k = 0;
-    group('dep').forEach((pids, c)=>T({mode:st[0].mode, titre:(c||'Départ')+' → '+st[0].ville, from:c, to:st[0].ville, date:wz.debut, qui: pids.length===v.length ? [] : pids}, 'a'+(k++)));
-    group('ret').forEach((pids, c)=>T({mode:wz.modeRetour, titre:last.ville+' → '+(c||'Retour'), from:last.ville, to:c, date:fin, qui: pids.length===v.length ? [] : pids}, 'r'+(k++)));
+    group('dep').forEach(({c, md, pids})=>T({mode:md, titre:(c||'Départ')+' → '+st[0].ville, from:c, to:st[0].ville, date:wz.debut, qui: pids.length===v.length ? [] : pids}, 'a'+(k++)));
+    group('ret').forEach(({c, md, pids})=>T({mode:md, titre:last.ville+' → '+(c||'Retour'), from:last.ville, to:c, date:fin, qui: pids.length===v.length ? [] : pids}, 'r'+(k++)));
     out.push(...Object.values(days));
     const tpl = wz.tpl && R[wz.tpl];
     if(tpl && wz.copyCheck) list('check', c=>c.trip===tpl.id).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)).forEach((c,i)=>out.push({id:'c'+uid()+i, type:'check', trip:tid, cat:c.cat, label:c.label, done:false}));
@@ -14822,7 +14828,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-17z9';
+  const BUILD = '2026-10-18a';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
