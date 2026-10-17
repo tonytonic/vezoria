@@ -5787,7 +5787,7 @@ const CV = (function(){
   }
   function dayCfg(d){
     const i = dayInfo(d), opts = pointOptions(d), ok = k => k==='libre' || opts.some(o=>o.k===k);
-    return {dep: i.dep && ok(i.dep) ? i.dep : opts[0].k, depTxt: i.depTxt||'', arr: i.arr==='boucle' || (i.arr && ok(i.arr)) ? i.arr : 'boucle', arrTxt: i.arrTxt||''};
+    return {dep: i.dep && ok(i.dep) ? i.dep : opts[0].k, depTxt: i.depTxt||'', arr: i.arr==='boucle' || i.arr==='fin' || (i.arr && ok(i.arr)) ? i.arr : 'boucle', arrTxt: i.arrTxt||''};
   }
   const normQ = q => String(q||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim().slice(0,100);
   function coordsIn(q){ const m = String(q).match(/(-?\d{1,2}\.\d{3,})\s*,\s*(-?\d{1,3}\.\d{3,})/); return m ? {lat:+m[1], lng:+m[2]} : null; }
@@ -5816,7 +5816,7 @@ const CV = (function(){
     const n = pts.length; if(n < 2) return pts.map((_,i)=>i);
     let order = [], left = new Set(pts.map((_,i)=>i)), cur = start;
     while(left.size){ let b = null, bd = Infinity; left.forEach(i=>{ const d = km(cur, pts[i]); if(d < bd){ bd = d; b = i; } }); order.push(b); left.delete(b); cur = pts[b]; }
-    const len = o => { let s = km(start, pts[o[0]]); for(let i=1;i<o.length;i++) s += km(pts[o[i-1]], pts[o[i]]); return s + km(pts[o[o.length-1]], end); };
+    const len = o => { let s = km(start, pts[o[0]]); for(let i=1;i<o.length;i++) s += km(pts[o[i-1]], pts[o[i]]); return s + (end ? km(pts[o[o.length-1]], end) : 0); };
     let best = len(order), improved = true, guard = 0;
     while(improved && guard++ < 300){
       improved = false;
@@ -5844,7 +5844,7 @@ const CV = (function(){
     const byId = Object.fromEntries(pl.map(p=>[p.id,p]));
     const fresh = r && r.ids && r.ids.every(id=>byId[id]) && pl.every(p=>r.ids.includes(p.id) || (r.miss||[]).includes(p.id));
     if(!fresh) return compact ? `<div class="cv-route-mini">📍 ${pl.map(p=>`<span class="cv-plk" onclick="event.stopPropagation();CV.plInfo('${p.id}')">${esc(p.nom)}</span>`).join(' · ')}<div class="v-sum-small">⚡ ordre pas encore optimisé</div></div>` : '';
-    const stops = [r.start, ...r.ids.map(id=>Object.assign({}, r.pts[id], {nom:byId[id].nom})), r.end];
+    const stops = [r.start, ...r.ids.map(id=>Object.assign({}, r.pts[id], {nom:byId[id].nom})), ...(r.fin ? [] : [r.end])];
     let tot = 0, walk = 0, mins = 0; const legs = [];
     for(let i=1;i<stops.length;i++){ const dk = km(stops[i-1], stops[i]), a = legAdvice(dk, r.walk||2.5, (r.tr||[]).includes(i-1)); tot += dk; if(a.mode==='walking') walk += dk; mins += a.min; legs.push({dk, a, from:stops[i-1], to:stops[i]}); }
     const way = r.ids.map(id=>r.pts[id]);
@@ -5855,7 +5855,7 @@ const CV = (function(){
     return `<div class="cv-route">
       <div class="cv-stop s">🏁 ${esc(r.start.lbl||'Départ')}</div>
       ${legs.map((L,i)=>`<a class="cv-leg" href="${dirUrl(L.from, L.to, L.a.mode)}" target="_blank" rel="noopener">${L.a.icon} ${L.a.txt} · ${fmtKm(L.dk)} · ~${fmtMin(L.a.min)}${L.a.alt ? ' <span>('+L.a.alt+')</span>' : ''} ↗</a>
-        <div class="cv-stop${i===legs.length-1?' s':''}">${i===legs.length-1 ? (r.loop ? '↩️ Retour · ' : '🏁 ') + esc(r.end.lbl||'Arrivée') : '<b>'+(i+1)+'</b> <span class="cv-plk" onclick="event.stopPropagation();CV.plInfo(\''+r.ids[i]+'\')">'+esc(L.to.nom)+'</span>'}</div>`).join('')}
+        <div class="cv-stop${i===legs.length-1?' s':''}">${i===legs.length-1 && !r.fin ? (r.loop ? '↩️ Retour · ' : '🏁 ') + esc(r.end.lbl||'Arrivée') : i===legs.length-1 ? '🏁 <b>'+(i+1)+'</b> <span class="cv-plk" onclick="event.stopPropagation();CV.plInfo(\''+r.ids[i]+'\')">'+esc(L.to.nom)+'</span>' : '<b>'+(i+1)+'</b> <span class="cv-plk" onclick="event.stopPropagation();CV.plInfo(\''+r.ids[i]+'\')">'+esc(L.to.nom)+'</span>'}</div>`).join('')}
       <div class="cv-route-sum">${sum}</div>${gm}
       <div class="cv-rmap" data-rmap="${d}"></div>
       ${(r.miss||[]).length ? `<div class="v-sum-small" style="color:var(--red)">Introuvable(s) : ${r.miss.map(id=>byId[id] ? esc(byId[id].nom) : '').filter(Boolean).join(', ')} — ajoute une adresse précise ou un lien Google Maps.</div>` : ''}
@@ -5865,7 +5865,7 @@ const CV = (function(){
   function planDay(d){
     planD = d;
     const cfg = dayCfg(d), opts = pointOptions(d), pl = placesOf(d), t = trip(), city = dayCity(d);
-    const sel = (id, cur, loop) => `<select class="v-in" id="${id}" onchange="CV.plCfg()">${loop ? `<option value="boucle"${cur==='boucle'?' selected':''}>↩️ Retour au point de départ (boucle)</option>` : ''}${opts.map(o=>`<option value="${o.k}"${o.k===cur?' selected':''}>${esc(o.lbl)}</option>`).join('')}</select>`;
+    const sel = (id, cur, loop) => `<select class="v-in" id="${id}" onchange="CV.plCfg()">${loop ? `<option value="boucle"${cur==='boucle'?' selected':''}>↩️ Retour au point de départ (boucle)</option><option value="fin"${cur==='fin'?' selected':''}>🏁 Fin au dernier lieu visité</option>` : ''}${opts.map(o=>`<option value="${o.k}"${o.k===cur?' selected':''}>${esc(o.lbl)}</option>`).join('')}</select>`;
     openSheet(`<h2>🗺️ ${fdate(d)}${dayInfo(d).titre ? ' · ' + esc(dayInfo(d).titre) : ''}</h2>
       <div class="v-f"><label>Point de départ</label>${sel('pl-dep', cfg.dep)}
         <input class="v-in" id="pl-dept" style="margin-top:6px;${cfg.dep==='libre'?'':'display:none'}" value="${esc(cfg.depTxt)}" placeholder="Adresse, lieu ou lien Google Maps" onchange="CV.plCfg()"></div>
@@ -5926,7 +5926,8 @@ const CV = (function(){
       const start = await geocode(depQ, (!o1 || o1.ctx) ? city : null);
       if(!start) throw new Error('Point de départ introuvable : précise l’adresse, ou colle un lien Google Maps.');
       let end = start, endLbl = o1 ? o1.lbl.replace(/^\S+\s/,'') : cfg.depTxt;
-      if(cfg.arr !== 'boucle'){
+      if(cfg.arr === 'fin') end = null;
+      else if(cfg.arr !== 'boucle'){
         const o2 = pt(cfg.arr), arrQ = o2 ? o2.q : cfg.arrTxt;
         say('📡 Je localise l’arrivée…');
         end = arrQ ? await geocode(arrQ, (!o2 || o2.ctx) ? city : null) : null;
@@ -5942,8 +5943,10 @@ const CV = (function(){
       const ok = pl.filter(p=>pts[p.id]);
       const order = bestOrder(start, end, ok.map(p=>pts[p.id]));
       const info = Object.assign(clone(R[dayId(d)] || {}), {id:dayId(d), type:'day', trip:M.trip, date:d}); delete info.deleted;
+      const lastP = ok.length ? ok[order[order.length - 1]] : null;
+      if(!end) end = lastP ? Object.assign({}, pts[lastP.id]) : start, endLbl = lastP ? lastP.nom : endLbl;
       info.route = {start:Object.assign({}, start, {lbl: o1 ? o1.lbl.replace(/^\S+\s/,'') : cfg.depTxt}), end:Object.assign({}, end, {lbl:endLbl}),
-        loop: cfg.arr==='boucle', ids: order.map(i=>ok[i].id), pts, miss, walk: num(val('pl-walk')) || 2.5};
+        loop: cfg.arr==='boucle', fin: cfg.arr==='fin', ids: order.map(i=>ok[i].id), pts, miss, walk: num(val('pl-walk')) || 2.5};
       put(info, '⚡ Itinéraire optimisé');
       planDay(d);
       const r2 = document.getElementById('pl-res'); if(r2) r2.scrollIntoView({block:'start', behavior:'smooth'});
@@ -6748,6 +6751,13 @@ const CV = (function(){
       <div class="cv-paybox" style="margin-top:12px"><div class="cv-paybox-h">⚡ Optimisation</div>
         <label class="cv-checkline"><input type="checkbox" id="cy-spread" ${h.planEtaler===false?'':'checked'}> Répartir les lieux sur les jours (sinon : chaque lieu garde son jour, seul l’ordre change)</label>
         <div class="v-f"><label>Jours à remplir</label><div class="cv-qsel" id="cy-days">${ds.map(d=>`<button type="button" class="${sel.has(d)?'on':''}" data-p="${d}" style="--pc:var(--navy)" onclick="this.classList.toggle('on')">${fdate(d)}</button>`).join('')}</div></div>
+        <div class="v-f2"><div class="v-f"><label>Chaque jour, je pars de</label><select class="v-in" id="cy-dep" onchange="document.getElementById('cy-dept').style.display=this.value==='libre'?'':'none'">
+            <option value="hotel"${h.planDep!=='libre'?' selected':''}>🏨 L’hôtel</option><option value="libre"${h.planDep==='libre'?' selected':''}>📍 Une autre adresse</option></select>
+            <input class="v-in" id="cy-dept" style="margin-top:6px;${h.planDep==='libre'?'':'display:none'}" value="${esc(h.planDepTxt||'')}" placeholder="Adresse ou lien Google Maps"></div>
+          <div class="v-f"><label>Et je finis</label><select class="v-in" id="cy-arr" onchange="document.getElementById('cy-arrt').style.display=this.value==='libre'?'':'none'">
+            <option value="boucle"${!h.planArr||h.planArr==='boucle'?' selected':''}>↩️ Retour à l’hôtel</option><option value="fin"${h.planArr==='fin'?' selected':''}>🏁 Au dernier lieu visité</option><option value="libre"${h.planArr==='libre'?' selected':''}>📍 À une autre adresse</option></select>
+            <input class="v-in" id="cy-arrt" style="margin-top:6px;${h.planArr==='libre'?'':'display:none'}" value="${esc(h.planArrTxt||'')}" placeholder="Adresse ou lien Google Maps"></div></div>
+        <label class="cv-checkline"><input type="checkbox" id="cy-tr" ${h.planTr===false?'':'checked'}> Jour d’arrivée ou de départ : partir de la gare / l’aéroport, ou y finir</label>
         <div class="v-f2"><div class="v-f"><label>À pied par trajet (km)</label><input class="v-in" id="cy-walk" inputmode="decimal" value="${esc(t.marche||2.5)}"></div>
           <div class="v-f"><label>À pied par jour (km)</label><input class="v-in" id="cy-day" inputmode="decimal" value="${esc(t.marcheJour||25)}"></div></div>
         <button class="v-btn" id="cy-go" onclick="CV.cityOpt()">⚡ Optimiser l’étape</button>
@@ -6795,7 +6805,10 @@ const CV = (function(){
     const walk = num(val('cy-walk')) || 2.5, walkDay = num(val('cy-day')) || 25;
     if(!days.length){ alert('Choisis au moins un jour.'); return; }
     const t = trip(); t.marche = walk; t.marcheJour = walkDay; put(t, false);
-    Object.assign(h, {planJours:days, planEtaler:spread}); put(h, false);
+    const depM = val('cy-dep') || 'hotel', depT = val('cy-dept'), arrM = val('cy-arr') || 'boucle', arrT = val('cy-arrt'), useTr = !!(document.getElementById('cy-tr') || {}).checked;
+    if(depM === 'libre' && !depT){ alert('Indique l’adresse de départ.'); return; }
+    if(arrM === 'libre' && !arrT){ alert('Indique l’adresse d’arrivée.'); return; }
+    Object.assign(h, {planJours:days, planEtaler:spread, planDep:depM, planDepTxt:depT, planArr:arrM, planArrTxt:arrT, planTr:useTr}); put(h, false);
     const res = document.getElementById('cy-res'), btn = document.getElementById('cy-go');
     const say = m => { if(res) res.innerHTML = `<div class="cv-route-load">${m}</div>`; };
     btn.disabled = true;
@@ -6804,6 +6817,18 @@ const CV = (function(){
       say('📡 Je localise l’hôtel…');
       const home = await geocode(hotelQ(h), null) || await geocode(city, null);
       if(!home) throw new Error('Hôtel introuvable : ajoute son adresse dans la fiche.');
+      const hLbl = (h.nom ? h.nom + ' · ' : 'Hôtel · ') + city;
+      let dep0 = {pt:home, lbl:hLbl, k:'item:' + hid}, arr0 = arrM === 'fin' ? null : {pt:home, lbl:hLbl, k:'item:' + hid};
+      if(depM === 'libre'){ say('📡 Je localise le point de départ…'); const g = await geocode(depT, city); if(!g) throw new Error('Point de départ introuvable : précise l’adresse.'); dep0 = {pt:g, lbl:depT, k:'libre', txt:depT}; }
+      if(arrM === 'libre'){ say('📡 Je localise l’arrivée…'); const g = await geocode(arrT, city); if(!g) throw new Error('Arrivée introuvable : précise l’adresse.'); arr0 = {pt:g, lbl:arrT, k:'libre', txt:arrT}; }
+      // jour d’arrivée / de départ : gare ou aéroport
+      const trAt = {};
+      const sd = stayDays(h), isCity = x => { const a = normQ(cityOf(String(x||'').replace(/\(.*?\)/g,''))), b = normQ(city); return !!a && !!b && (a.includes(b) || b.includes(a)); };
+      if(useTr) for(const d of days){ const ts = items(i=>i.cat==='transport' && i.date===d);
+        let tin = ts.find(t=>t.to && isCity(t.to)), tout = ts.find(t=>t.from && isCity(t.from) && t !== tin);
+        if(!tin && !tout && ts.length === 1){ if(d === sd[0]) tin = ts[0].to ? ts[0] : null; else tout = ts[0].from ? ts[0] : null; }
+        if(tin){ say('📡 Je localise ' + esc(tin.to) + '…'); const g = await geocode(tin.to, null); if(g) (trAt[d] = trAt[d] || {}).dep = {pt:g, lbl:tin.to, k:'to:' + tin.id}; }
+        if(tout){ say('📡 Je localise ' + esc(tout.from) + '…'); const g = await geocode(tout.from, null); if(g) (trAt[d] = trAt[d] || {}).arr = {pt:g, lbl:tout.from, k:'from:' + tout.id}; } }
       const pl = placesOfStay(hid), pts = {}, miss = [];
       for(let i=0;i<pl.length;i++){
         const p = pl[i];
@@ -6823,11 +6848,12 @@ const CV = (function(){
       const out = [], resume = [];
       days.forEach((d, j)=>{
         const mine = ok.filter((p,i)=>asg[i]===j);
-        const order = bestOrder(home, home, mine.map(p=>pts[p.id]));
+        const A = (trAt[d] || {}).dep || dep0, B = (trAt[d] || {}).arr || arr0, start = A.pt, end = B ? B.pt : null;
+        const order = bestOrder(start, end, mine.map(p=>pts[p.id]));
         const ids = order.map(i=>mine[i].id);
         ids.forEach((id, k)=>{ const p = R[id]; if(p.date!==d || p.ordre!==k || p.stay!==hid){ p.date = d; p.ordre = k; p.stay = hid; out.push(p); } });
         // trajets, marche, conseils
-        const stops = [home, ...ids.map(id=>pts[id]), home];
+        const stops = [start, ...ids.map(id=>pts[id]), ...(end ? [end] : [])];
         const legs = []; for(let i=1;i<stops.length;i++) legs.push({i:i-1, dk:km(stops[i-1], stops[i])});
         const tr = [];
         let walkKm = legs.reduce((s,l)=>s+(l.dk<=walk?l.dk:0),0);
@@ -6835,7 +6861,7 @@ const CV = (function(){
         if(walkKm > walkDay){
           const cand = legs.filter(l=>l.dk<=walk).sort((a,b)=>b.dk-a.dk), names = [];
           for(const l of cand){ if(walkKm <= walkDay) break; tr.push(l.i); walkKm -= l.dk;
-            const a = l.i===0 ? 'l’hôtel' : R[ids[l.i-1]].nom, b = l.i>=ids.length ? 'l’hôtel' : R[ids[l.i]].nom; names.push(`${esc(a)} → ${esc(b)} (${fmtKm(l.dk)})`); }
+            const a = l.i===0 ? A.lbl : R[ids[l.i-1]].nom, b = l.i>=ids.length ? (B ? B.lbl : '') : R[ids[l.i]].nom; names.push(`${esc(a)} → ${esc(b)} (${fmtKm(l.dk)})`); }
           tips.push(`🚇 Plus de ${fmtKm(walkDay)} à pied : prends le métro, le bus ou le tram pour ${names.join(', ')}.`);
         }
         const longLeg = legs.filter(l=>l.dk>12);
@@ -6849,11 +6875,13 @@ const CV = (function(){
         if(!ids.length) tips.push('🌿 Journée libre (ou jour de trajet).');
         const tot = legs.reduce((s,l)=>s+l.dk,0);
         resume.push({d, n:ids.length, km:tot, walk:walkKm, min:visit+move, tips});
-        const lbl = (h.nom ? h.nom + ' · ' : 'Hôtel · ') + city;
         const info = Object.assign(clone(R[dayId(d)] || {}), {id:dayId(d), type:'day', trip:M.trip, date:d}); delete info.deleted;
         if(!info.titre) info.titre = city;
-        info.dep = 'item:' + hid; info.arr = 'boucle';
-        info.route = {start:Object.assign({}, home, {lbl}), end:Object.assign({}, home, {lbl}), loop:true, ids, pts:Object.fromEntries(ids.map(id=>[id, pts[id]])), miss:[], walk, tr};
+        // l’itinéraire du jour reprend ce choix (et on peut le changer jour par jour)
+        info.dep = A.k; info.depTxt = A.txt || ''; const loop = !!B && B.k === A.k && B.pt === A.pt;
+        info.arr = !B ? 'fin' : loop ? 'boucle' : B.k; info.arrTxt = B && B.txt || '';
+        const last = ids.length ? ids[ids.length - 1] : null, endP = B ? B.pt : last ? pts[last] : start;
+        info.route = {start:Object.assign({}, start, {lbl:A.lbl}), end:Object.assign({}, endP, {lbl: B ? B.lbl : last ? R[last].nom : A.lbl}), loop, fin:!B, ids, pts:Object.fromEntries(ids.map(id=>[id, pts[id]])), miss:[], walk, tr};
         out.push(info);
       });
       h.planRes = resume; out.push(h);
@@ -14772,7 +14800,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-17z7';
+  const BUILD = '2026-10-17z8';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
