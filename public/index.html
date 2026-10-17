@@ -2061,7 +2061,9 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 .fd-trips button{flex:0 0 auto;border:0;border-radius:99px;padding:7px 12px;font:600 .82rem inherit;background:#f3eefc;color:#2A1238}
 .fd-trips button.on{background:#2A1238;color:#fff}
 .sp-ent{display:flex;flex-direction:column;gap:6px;background:#f6f1fb;border-radius:14px;padding:10px 12px;margin:8px 0 6px}
-.sp-ent label{font-weight:700;font-size:.85rem}.sp-ent small{font-size:.72rem;color:var(--gray)}
+.sp-ent label{font-weight:700;font-size:.85rem}
+.sp-ccs{display:flex;flex-wrap:wrap;gap:5px}.sp-cc{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #e3d6f0;border-radius:14px;padding:3px 4px 3px 9px;font-size:.78rem;font-weight:700}.sp-cc button{border:0;background:#efe6f8;border-radius:50%;width:20px;height:20px;font-size:.65rem;line-height:1;cursor:pointer;color:inherit}
+.sp-ent small{font-size:.72rem;color:var(--gray)}
 /* 🔔 Cloche de l’accueil */
 .hero-foot .cv-bell{margin-left:auto}
 .hero-foot .cv-bell+.cv-hero-qr{margin-left:10px}
@@ -4979,7 +4981,9 @@ const CV = (function(){
     if(msg) msg.innerHTML = meteoOk ? `<span>${meteoOk > 1 ? `🌤️ Météo de ${meteoOk} étapes` : '🌤️ Météo de ton étape'}</span> <b>${mn}° → ${mx}°</b>${rain ? ' <span>☔ pluie possible</span>' : ''}<br><span>Coche ce que tu veux ajouter à ta checklist.</span>` : '<span>Pas de météo (ajoute des hébergements avec une ville et des dates). Voici l’essentiel selon ton programme :</span>';
     const cats = [...new Set(spSug.map(x=>x.cat))];
     const head = `<div class="sp-ent"><label>🛂 Ton passeport ou ta carte d’identité vient de…</label><select class="v-in" onchange="CV.packFrom(this.value)">${BAG_FROM.map(([k, l])=>`<option value="${k}"${k === from ? ' selected' : ''}>${l}</option>`).join('')}</select>
-      <label>🌍 Pays visités</label><input class="v-in" id="sp-cc" value="${esc(dest.map(ccName).join(', '))}" placeholder="Ex. Italie, Malte" onchange="CV.packCc(this.value)">
+      <label>🌍 Pays visités${dest.length > 1 ? ` <small>(${dest.length})</small>` : ''}</label>
+      <div class="sp-ccs">${dest.map(cc=>`<span class="sp-cc">${flag(cc)} ${esc(ccName(cc))}<button type="button" onclick="CV.packCcDel('${cc}')" aria-label="Retirer">✕</button></span>`).join('') || '<small>Aucun pays pour l’instant.</small>'}</div>
+      <select class="v-in" onchange="CV.packCcAdd(this.value)"><option value="">＋ Ajouter un pays…</option>${ISO.filter(c=>!dest.includes(c)).map(c=>[c, ccName(c)]).sort((a, b)=>a[1].localeCompare(b[1])).map(([c, n])=>`<option value="${c}">${flag(c)} ${esc(n)}</option>`).join('')}</select>
       <small>Règles générales pour un court séjour touristique. Vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.</small></div>`;
     // pays pas encore connus (ville d’hébergement jamais cherchée) : on les cherche, puis on met la liste à jour une fois
     if(mine == null && !again) setTimeout(async ()=>{ let nw = 0; for(const c of bagCities()){ if((M.ctry || {})[normQ(c)] || ccOf(c)) continue; try { const r = await countryOf(c); if(r && r.cc) nw++; } catch(e){} if(!document.getElementById('sp-list')) return; } if(nw) smartPack(true); }, 50);
@@ -4987,6 +4991,9 @@ const CV = (function(){
       + `<div class="v-actions"><button type="button" class="v-btn" onclick="CV.smartPackAdd()">＋ Ajouter à ma checklist</button></div>`;
   }
   function packFrom(v){ M.bagFrom = v; persist(); smartPack(true); }
+  function packDest(){ const t = trip(), mine = (M.packCc || {})[t.id]; return mine != null ? [...new Set(String(mine).split(',').map(x=>ccOf(x.trim())).filter(Boolean))] : [...new Set([...tlStages().map(s=>((M.ctry || {})[normQ(s.city)] || {}).cc).filter(Boolean), ...bagCcs()])]; }
+  function packCcAdd(cc){ if(!cc) return; const d = packDest(); if(!d.includes(cc)) d.push(cc); packCc(d.join(',')); }
+  function packCcDel(cc){ packCc(packDest().filter(c=>c !== cc).join(',')); }
   function packCc(v){ const t = trip(); if(!t) return; M.packCc = Object.assign({}, M.packCc || {}, {[t.id]: String(v || '').trim()}); persist(); smartPack(true); }
   function smartPackAdd(){
     const sel = [...document.querySelectorAll('[data-sp]:checked')].map(i=>spSug[+i.dataset.sp]).filter(x=>x && !x.has);
@@ -15054,7 +15061,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18m';
+  const BUILD = '2026-10-18n';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15148,7 +15155,7 @@ ${pm.join('\n')}</Document></kml>`;
   setTimeout(vzPaint, 0);
   var VZAPI = {vzGo, vzHide, vzNews, vzAvis, vzStar, vzSend, vzRestore, vzPaint};
 
-  const api = {bookSheet, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
+  const api = {bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
