@@ -1,4 +1,11 @@
 I18N.load({
+"🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = um link só para esta viagem, para quem só deva ver esta.",
+"Lien pour ce voyage seulement":"Link só para esta viagem",
+"Créer un lien pour « {0} » seulement ?":"Criar um link só para «{0}»?",
+"La personne qui le reçoit ne verra que ce voyage. Tes abonnés du carnet continuent de le voir comme avant.":"Quem o receber só verá esta viagem. Os seguidores do diário continuam a vê-la como antes.",
+"Lien impossible pour le moment (pas de réseau ?).":"Não é possível criar o link agora (sem rede?).",
+"🔗 Lien du voyage…":"🔗 Link da viagem…",
+"🔗 Ce voyage a son propre lien":"🔗 Esta viagem tem o seu próprio link",
 "Importer une réservation":"Importar uma reserva",
 "PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF, captura de ecrã, bilhete ou código QR: a ficha preenche-se sozinha",
 "🔗 Partager le lien (sans installer l’appli)":"🔗 Partilhar o link (sem instalar a app)",

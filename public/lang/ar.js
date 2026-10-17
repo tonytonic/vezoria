@@ -1,4 +1,11 @@
 I18N.load({
+"🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = رابط لهذه الرحلة فقط، لمن يجب أن يرى هذه الرحلة وحدها.",
+"Lien pour ce voyage seulement":"رابط لهذه الرحلة فقط",
+"Créer un lien pour « {0} » seulement ?":"إنشاء رابط لـ «{0}» فقط؟",
+"La personne qui le reçoit ne verra que ce voyage. Tes abonnés du carnet continuent de le voir comme avant.":"من يتلقاه سيرى هذه الرحلة فقط. يواصل متابعو دفترك رؤيتها كما من قبل.",
+"Lien impossible pour le moment (pas de réseau ?).":"تعذّر إنشاء الرابط حاليًا (لا يوجد اتصال؟).",
+"🔗 Lien du voyage…":"🔗 رابط الرحلة…",
+"🔗 Ce voyage a son propre lien":"🔗 لهذه الرحلة الآن رابطها الخاص",
 "PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF أو لقطة شاشة أو تذكرة أو رمز QR: تمتلئ البطاقة تلقائيًا",
 "🔗 Partager le lien (sans installer l’appli)":"🔗 مشاركة الرابط (دون تثبيت التطبيق)",
 "🔗 Lien abonnés (sans installer l’appli)":"🔗 رابط المتابعين (دون تثبيت التطبيق)",

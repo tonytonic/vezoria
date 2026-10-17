@@ -1,4 +1,11 @@
 I18N.load({
+"🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = een link alleen voor deze reis, voor iemand die alleen deze mag zien.",
+"Lien pour ce voyage seulement":"Link alleen voor deze reis",
+"Créer un lien pour « {0} » seulement ?":"Een link alleen voor ‘{0}’ maken?",
+"La personne qui le reçoit ne verra que ce voyage. Tes abonnés du carnet continuent de le voir comme avant.":"Wie hem krijgt, ziet alleen deze reis. Je dagboekvolgers zien hem gewoon zoals voorheen.",
+"Lien impossible pour le moment (pas de réseau ?).":"Link nu niet mogelijk (geen netwerk?).",
+"🔗 Lien du voyage…":"🔗 Reislink…",
+"🔗 Ce voyage a son propre lien":"🔗 Deze reis heeft nu een eigen link",
 "Importer une réservation":"Boeking importeren",
 "PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"Pdf, screenshot, ticket of QR-code: het formulier vult zichzelf in",
 "🔗 Partager le lien (sans installer l’appli)":"🔗 Link delen (zonder app)",

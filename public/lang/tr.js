@@ -1,4 +1,11 @@
 I18N.load({
+"🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = yalnızca bu seyahat için bağlantı; sadece bunu görmesi gereken birine gönder.",
+"Lien pour ce voyage seulement":"Yalnızca bu seyahat için bağlantı",
+"Créer un lien pour « {0} » seulement ?":"Yalnızca «{0}» için bağlantı oluşturulsun mu?",
+"La personne qui le reçoit ne verra que ce voyage. Tes abonnés du carnet continuent de le voir comme avant.":"Alan kişi yalnızca bu seyahati görür. Günlüğünün takipçileri onu eskisi gibi görmeye devam eder.",
+"Lien impossible pour le moment (pas de réseau ?).":"Bağlantı şu an oluşturulamıyor (ağ yok mu?).",
+"🔗 Lien du voyage…":"🔗 Seyahat bağlantısı…",
+"🔗 Ce voyage a son propre lien":"🔗 Bu seyahatin artık kendi bağlantısı var",
 "PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF, ekran görüntüsü, bilet veya QR kod: kart kendiliğinden dolar",
 "🔗 Partager le lien (sans installer l’appli)":"🔗 Bağlantıyı paylaş (uygulama gerekmez)",
 "🔗 Lien abonnés (sans installer l’appli)":"🔗 Takipçi bağlantısı (uygulama gerekmez)",

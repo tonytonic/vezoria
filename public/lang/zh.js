@@ -1,4 +1,11 @@
 I18N.load({
+"🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = 仅限这段旅行的链接，发给只应看到这段旅行的人。",
+"Lien pour ce voyage seulement":"仅限这段旅行的链接",
+"Créer un lien pour « {0} » seulement ?":"只为「{0}」创建链接？",
+"La personne qui le reçoit ne verra que ce voyage. Tes abonnés du carnet continuent de le voir comme avant.":"收到的人只能看到这段旅行。你手账的关注者照常可见。",
+"Lien impossible pour le moment (pas de réseau ?).":"暂时无法创建链接（没有网络？）。",
+"🔗 Lien du voyage…":"🔗 旅行链接…",
+"🔗 Ce voyage a son propre lien":"🔗 这段旅行现在有了自己的链接",
 "PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF、截图、车票或二维码：表单会自动填写",
 "🔗 Partager le lien (sans installer l’appli)":"🔗 分享链接（无需安装应用）",
 "🔗 Lien abonnés (sans installer l’appli)":"🔗 关注者链接（无需安装应用）",

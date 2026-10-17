@@ -1,4 +1,11 @@
 I18N.load({
+"🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = この旅だけのリンク。この旅だけを見てほしい人に送ります。",
+"Lien pour ce voyage seulement":"この旅だけのリンク",
+"Créer un lien pour « {0} » seulement ?":"「{0}」だけのリンクを作りますか？",
+"La personne qui le reçoit ne verra que ce voyage. Tes abonnés du carnet continuent de le voir comme avant.":"受け取った人はこの旅だけを見られます。日記のフォロワーはこれまでどおり見られます。",
+"Lien impossible pour le moment (pas de réseau ?).":"今はリンクを作れません（ネットワークなし？）。",
+"🔗 Lien du voyage…":"🔗 旅のリンク…",
+"🔗 Ce voyage a son propre lien":"🔗 この旅に専用リンクができました",
 "PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF、スクリーンショット、チケット、QRコード：自動で入力されます",
 "🔗 Partager le lien (sans installer l’appli)":"🔗 リンクを共有（アプリ不要）",
 "🔗 Lien abonnés (sans installer l’appli)":"🔗 フォロワー用リンク（アプリ不要）",

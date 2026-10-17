@@ -1,4 +1,11 @@
 I18N.load({
+"🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = 이 여행만 볼 수 있는 링크예요. 이 여행만 봐야 하는 사람에게 보내세요.",
+"Lien pour ce voyage seulement":"이 여행 전용 링크",
+"Créer un lien pour « {0} » seulement ?":"「{0}」 전용 링크를 만들까요?",
+"La personne qui le reçoit ne verra que ce voyage. Tes abonnés du carnet continuent de le voir comme avant.":"받는 사람은 이 여행만 볼 수 있어요. 일지 팔로워는 지금처럼 계속 볼 수 있어요.",
+"Lien impossible pour le moment (pas de réseau ?).":"지금은 링크를 만들 수 없어요 (네트워크 없음?).",
+"🔗 Lien du voyage…":"🔗 여행 링크…",
+"🔗 Ce voyage a son propre lien":"🔗 이 여행에 전용 링크가 생겼어요",
 "PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF, 스크린샷, 티켓 또는 QR 코드: 자동으로 채워져요",
 "🔗 Partager le lien (sans installer l’appli)":"🔗 링크 공유 (앱 설치 불필요)",
 "🔗 Lien abonnés (sans installer l’appli)":"🔗 팔로워 링크 (앱 설치 불필요)",

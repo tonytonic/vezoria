@@ -1,4 +1,11 @@
 I18N.load({
+"🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = ссылка только на эту поездку — для того, кто должен видеть только её.",
+"Lien pour ce voyage seulement":"Ссылка только на эту поездку",
+"Créer un lien pour « {0} » seulement ?":"Создать ссылку только на «{0}»?",
+"La personne qui le reçoit ne verra que ce voyage. Tes abonnés du carnet continuent de le voir comme avant.":"Получатель увидит только эту поездку. Подписчики дневника видят её как раньше.",
+"Lien impossible pour le moment (pas de réseau ?).":"Сейчас не удаётся создать ссылку (нет сети?).",
+"🔗 Lien du voyage…":"🔗 Ссылка на поездку…",
+"🔗 Ce voyage a son propre lien":"🔗 У поездки теперь своя ссылка",
 "PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF, скриншот, билет или QR-код: карточка заполнится сама",
 "🔗 Partager le lien (sans installer l’appli)":"🔗 Поделиться ссылкой (без приложения)",
 "🔗 Lien abonnés (sans installer l’appli)":"🔗 Ссылка для подписчиков (без приложения)",

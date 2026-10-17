@@ -1,4 +1,11 @@
 I18N.load({
+"🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = सिर्फ़ इस यात्रा का लिंक, उसके लिए जिसे सिर्फ़ यही दिखनी चाहिए।",
+"Lien pour ce voyage seulement":"सिर्फ़ इस यात्रा का लिंक",
+"Créer un lien pour « {0} » seulement ?":"सिर्फ़ «{0}» के लिए लिंक बनाएँ?",
+"La personne qui le reçoit ne verra que ce voyage. Tes abonnés du carnet continuent de le voir comme avant.":"पाने वाला सिर्फ़ यही यात्रा देखेगा। आपकी डायरी के फ़ॉलोअर्स इसे पहले की तरह देखते रहेंगे।",
+"Lien impossible pour le moment (pas de réseau ?).":"अभी लिंक नहीं बन सकता (नेटवर्क नहीं?)।",
+"🔗 Lien du voyage…":"🔗 यात्रा का लिंक…",
+"🔗 Ce voyage a son propre lien":"🔗 इस यात्रा का अब अपना लिंक है",
 "PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule":"PDF, स्क्रीनशॉट, टिकट या QR कोड: फ़ॉर्म अपने-आप भर जाता है",
 "🔗 Partager le lien (sans installer l’appli)":"🔗 लिंक साझा करें (ऐप के बिना)",
 "🔗 Lien abonnés (sans installer l’appli)":"🔗 फ़ॉलोअर्स लिंक (ऐप के बिना)",
