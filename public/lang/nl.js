@@ -1,4 +1,5 @@
 I18N.load({
+"Concerts et spectacles":"Concerten en shows",
 "🛒 Réserver…":"🛒 Boeken…",
 "🛒 Comparer et réserver":"🛒 Vergelijken en boeken",
 "Liens directs vers les sites : pas de pub, pas de pistage, Vezoria ne touche rien.":"Directe links naar de sites: geen reclame, geen tracking, Vezoria verdient niets.",

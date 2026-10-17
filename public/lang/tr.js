@@ -1,4 +1,5 @@
 I18N.load({
+"Concerts et spectacles":"Konserler ve gösteriler",
 "🛒 Réserver…":"🛒 Rezervasyon…",
 "🛒 Comparer et réserver":"🛒 Karşılaştır ve rezervasyon yap",
 "Liens directs vers les sites : pas de pub, pas de pistage, Vezoria ne touche rien.":"Sitelere doğrudan bağlantılar: reklam yok, takip yok, Vezoria hiçbir şey kazanmıyor.",

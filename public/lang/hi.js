@@ -1,4 +1,5 @@
 I18N.load({
+"Concerts et spectacles":"कॉन्सर्ट और शो",
 "🛒 Réserver…":"🛒 बुक करें…",
 "🛒 Comparer et réserver":"🛒 तुलना करें और बुक करें",
 "Liens directs vers les sites : pas de pub, pas de pistage, Vezoria ne touche rien.":"साइटों के सीधे लिंक: कोई विज्ञापन नहीं, कोई ट्रैकिंग नहीं, Vezoria कुछ नहीं कमाता।",

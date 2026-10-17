@@ -1,4 +1,5 @@
 I18N.load({
+"Concerts et spectacles":"演唱会和演出",
 "🛒 Réserver…":"🛒 预订…",
 "🛒 Comparer et réserver":"🛒 比较并预订",
 "Liens directs vers les sites : pas de pub, pas de pistage, Vezoria ne touche rien.":"直达各网站的链接：无广告、无追踪，Vezoria 不赚取任何费用。",

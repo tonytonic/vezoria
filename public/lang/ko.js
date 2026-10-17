@@ -1,4 +1,5 @@
 I18N.load({
+"Concerts et spectacles":"콘서트와 공연",
 "🛒 Réserver…":"🛒 예약…",
 "🛒 Comparer et réserver":"🛒 비교하고 예약",
 "Liens directs vers les sites : pas de pub, pas de pistage, Vezoria ne touche rien.":"사이트로 바로 가는 링크: 광고 없음, 추적 없음, Vezoria는 아무것도 받지 않아요.",
