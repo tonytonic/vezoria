@@ -1,4 +1,6 @@
 I18N.load({
+"Mes propres voyages":"我自己的旅行",
+"Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"你还没有自己的旅行：随时开始规划吧。",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = 仅限这段旅行的链接，发给只应看到这段旅行的人。",
 "Lien pour ce voyage seulement":"仅限这段旅行的链接",
 "Créer un lien pour « {0} » seulement ?":"只为「{0}」创建链接？",

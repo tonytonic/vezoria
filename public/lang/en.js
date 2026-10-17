@@ -1,4 +1,6 @@
 I18N.load({
+"Mes propres voyages":"My own trips",
+"Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"You don’t have a trip of your own yet: plan yours whenever you like.",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = a link for this trip only, to send to someone who should see only it.",
 "Lien pour ce voyage seulement":"Link for this trip only",
 "Créer un lien pour « {0} » seulement ?":"Create a link for “{0}” only?",

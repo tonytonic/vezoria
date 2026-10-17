@@ -1,4 +1,6 @@
 I18N.load({
+"Mes propres voyages":"رحلاتي الخاصة",
+"Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"ليست لديك رحلة خاصة بك بعد: حضّر رحلتك متى شئت.",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = رابط لهذه الرحلة فقط، لمن يجب أن يرى هذه الرحلة وحدها.",
 "Lien pour ce voyage seulement":"رابط لهذه الرحلة فقط",
 "Créer un lien pour « {0} » seulement ?":"إنشاء رابط لـ «{0}» فقط؟",

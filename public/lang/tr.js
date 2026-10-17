@@ -1,4 +1,6 @@
 I18N.load({
+"Mes propres voyages":"Kendi seyahatlerim",
+"Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"Henüz kendi seyahatin yok: istediğin zaman hazırla.",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = yalnızca bu seyahat için bağlantı; sadece bunu görmesi gereken birine gönder.",
 "Lien pour ce voyage seulement":"Yalnızca bu seyahat için bağlantı",
 "Créer un lien pour « {0} » seulement ?":"Yalnızca «{0}» için bağlantı oluşturulsun mu?",

@@ -1,4 +1,6 @@
 I18N.load({
+"Mes propres voyages":"मेरी अपनी यात्राएँ",
+"Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"अभी आपकी अपनी कोई यात्रा नहीं है: जब चाहें अपनी यात्रा तैयार करें।",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = सिर्फ़ इस यात्रा का लिंक, उसके लिए जिसे सिर्फ़ यही दिखनी चाहिए।",
 "Lien pour ce voyage seulement":"सिर्फ़ इस यात्रा का लिंक",
 "Créer un lien pour « {0} » seulement ?":"सिर्फ़ «{0}» के लिए लिंक बनाएँ?",

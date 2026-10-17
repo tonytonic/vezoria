@@ -1,4 +1,6 @@
 I18N.load({
+"Mes propres voyages":"自分の旅",
+"Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"まだ自分の旅はありません。好きなときに準備しましょう。",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = この旅だけのリンク。この旅だけを見てほしい人に送ります。",
 "Lien pour ce voyage seulement":"この旅だけのリンク",
 "Créer un lien pour « {0} » seulement ?":"「{0}」だけのリンクを作りますか？",

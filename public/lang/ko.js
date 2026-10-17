@@ -1,4 +1,6 @@
 I18N.load({
+"Mes propres voyages":"내 여행",
+"Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"아직 내 여행이 없어요. 원할 때 준비해 보세요.",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = 이 여행만 볼 수 있는 링크예요. 이 여행만 봐야 하는 사람에게 보내세요.",
 "Lien pour ce voyage seulement":"이 여행 전용 링크",
 "Créer un lien pour « {0} » seulement ?":"「{0}」 전용 링크를 만들까요?",
