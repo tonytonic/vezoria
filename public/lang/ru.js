@@ -1,4 +1,9 @@
 I18N.load({
+"Explorer {0}":"Исследовать {0}",
+"Explorer la ville":"Исследовать город",
+"Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée":"Достопримечательности, районы, музеи, где поесть: нажми, чтобы добавить в свой день",
+"＋ Ajouter à ma journée":"＋ Добавить в мой день",
+"Quelle ville veux-tu explorer ?":"Какой город хочешь исследовать?",
 "Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"Спутники её сохранят: для них поездка продолжается. Она убирается только с твоего телефона.",
 "🗑 Supprimer «":"🗑 Удалить «",
 "a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"создал(а) эту поездку: у твоих спутников она останется. Она убирается только с твоего телефона.",

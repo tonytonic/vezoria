@@ -1,4 +1,9 @@
 I18N.load({
+"Explorer {0}":"{0} 둘러보기",
+"Explorer la ville":"도시 둘러보기",
+"Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée":"명소, 동네, 박물관, 맛집: 눌러서 오늘 일정에 추가하세요",
+"＋ Ajouter à ma journée":"＋ 내 하루에 추가",
+"Quelle ville veux-tu explorer ?":"어느 도시를 둘러볼까요?",
 "Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"동행자에게는 남아 여행이 계속돼요. 내 휴대폰에서만 지워져요.",
 "🗑 Supprimer «":"🗑 삭제 「",
 "a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"님이 만든 여행이에요. 동행자에게는 남고 내 휴대폰에서만 지워져요.",

@@ -1,4 +1,9 @@
 I18N.load({
+"Explorer {0}":"{0} ontdekken",
+"Explorer la ville":"De stad ontdekken",
+"Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée":"Bezienswaardigheden, wijken, musea, eten: tik om aan je dag toe te voegen",
+"＋ Ajouter à ma journée":"＋ Aan mijn dag toevoegen",
+"Quelle ville veux-tu explorer ?":"Welke stad wil je ontdekken?",
 "Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"Je reisgenoten houden hem: de reis gaat voor hen door. Hij wordt alleen van je telefoon verwijderd.",
 "🗑 Supprimer «":"🗑 Verwijderen «",
 "a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"heeft deze reis gemaakt: hij blijft bij je reisgenoten. Hij wordt alleen van je telefoon verwijderd.",

@@ -1,4 +1,9 @@
 I18N.load({
+"Explorer {0}":"{0}を探検",
+"Explorer la ville":"街を探検",
+"Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée":"名所・街並み・美術館・食事：タップしてその日の予定に追加",
+"＋ Ajouter à ma journée":"＋ この日に追加",
+"Quelle ville veux-tu explorer ?":"どの街を探検しますか？",
 "Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"同行者の端末には残り、旅は続きます。あなたのスマホからだけ削除されます。",
 "🗑 Supprimer «":"🗑 削除「",
 "a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"さんがこの旅を作成しました。同行者の端末には残り、あなたのスマホからだけ削除されます。",

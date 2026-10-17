@@ -1,4 +1,9 @@
 I18N.load({
+"Explorer {0}":"استكشف {0}",
+"Explorer la ville":"استكشف المدينة",
+"Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée":"معالم، أحياء، متاحف، أين تأكل: المس للإضافة إلى يومك",
+"＋ Ajouter à ma journée":"＋ أضف إلى يومي",
+"Quelle ville veux-tu explorer ?":"أي مدينة تريد استكشافها؟",
 "Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"يحتفظ بها رفاقك: تستمر الرحلة لهم. تُزال من هاتفك فقط.",
 "🗑 Supprimer «":"🗑 حذف «",
 "a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"أنشأ هذه الرحلة: تبقى لدى رفاقك. تُزال من هاتفك فقط.",

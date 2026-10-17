@@ -1,4 +1,9 @@
 I18N.load({
+"Explorer {0}":"探索{0}",
+"Explorer la ville":"探索这座城市",
+"Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée":"景点、街区、博物馆、美食：点按即可加入你的一天",
+"＋ Ajouter à ma journée":"＋ 加入我的一天",
+"Quelle ville veux-tu explorer ?":"你想探索哪座城市？",
 "Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"你的同伴会保留它：旅行对他们继续进行，只从你的手机上移除。",
 "🗑 Supprimer «":"🗑 删除「",
 "a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"创建了这段旅行：它会保留在你的同伴那里，只从你的手机上移除。",

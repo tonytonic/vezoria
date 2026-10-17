@@ -1,4 +1,9 @@
 I18N.load({
+"Explorer {0}":"{0} keşfet",
+"Explorer la ville":"Şehri keşfet",
+"Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée":"Görülecek yerler, mahalleler, müzeler, yemek: gününe eklemek için dokun",
+"＋ Ajouter à ma journée":"＋ Günüme ekle",
+"Quelle ville veux-tu explorer ?":"Hangi şehri keşfetmek istiyorsun?",
 "Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"Yol arkadaşların onu tutar: seyahat onlar için devam eder. Yalnızca senin telefonundan kaldırılır.",
 "🗑 Supprimer «":"🗑 Sil «",
 "a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"bu seyahati oluşturdu: yol arkadaşlarında kalır. Yalnızca senin telefonundan kaldırılır.",

@@ -1,4 +1,9 @@
 I18N.load({
+"Explorer {0}":"Explore {0}",
+"Explorer la ville":"Explore the city",
+"Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée":"Sights, neighbourhoods, museums, where to eat: tap to add to your day",
+"＋ Ajouter à ma journée":"＋ Add to my day",
+"Quelle ville veux-tu explorer ?":"Which city do you want to explore?",
 "Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"Your companions keep it: the trip goes on for them. It is only removed from your phone.",
 "🗑 Supprimer «":"🗑 Delete «",
 "a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"created this trip: it stays with your companions. It is only removed from your phone.",

@@ -1,4 +1,9 @@
 I18N.load({
+"Explorer {0}":"{0} घूमें",
+"Explorer la ville":"शहर घूमें",
+"Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée":"स्मारक, मोहल्ले, संग्रहालय, कहाँ खाएँ: अपने दिन में जोड़ने के लिए छुएँ",
+"＋ Ajouter à ma journée":"＋ मेरे दिन में जोड़ें",
+"Quelle ville veux-tu explorer ?":"आप कौन-सा शहर घूमना चाहते हैं?",
 "Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"आपके साथी इसे रखेंगे: उनके लिए यात्रा जारी रहेगी। यह सिर्फ़ आपके फ़ोन से हटेगी।",
 "🗑 Supprimer «":"🗑 हटाएँ «",
 "a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"ने यह यात्रा बनाई है: यह आपके साथियों के पास रहेगी। यह सिर्फ़ आपके फ़ोन से हटेगी।",

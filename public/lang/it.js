@@ -1,4 +1,9 @@
 I18N.load({
+"Explorer {0}":"Esplora {0}",
+"Explorer la ville":"Esplora la città",
+"Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée":"Monumenti, quartieri, musei, dove mangiare: tocca per aggiungere alla tua giornata",
+"＋ Ajouter à ma journée":"＋ Aggiungi alla mia giornata",
+"Quelle ville veux-tu explorer ?":"Quale città vuoi esplorare?",
 "Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.":"I tuoi compagni lo tengono: il viaggio continua per loro. Viene tolto solo dal tuo telefono.",
 "🗑 Supprimer «":"🗑 Elimina «",
 "a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.":"ha creato questo viaggio: resta ai tuoi compagni. Viene tolto solo dal tuo telefono.",
