@@ -1,4 +1,10 @@
 I18N.load({
+"🚫 Ne plus suivre ce voyage":"🚫 Bu seyahati takip etmeyi bırak",
+"🚫 Ne plus suivre":"🚫 Takibi bırak:",
+"(tous ses voyages)":"(tüm seyahatleri)",
+"Ne plus suivre aucun voyage de {0} ? Ils disparaissent de ce téléphone.":"{0} kişisinin tüm seyahatlerini takip etmeyi bırak? Bu telefondan kaybolurlar.",
+"Tu ne suis plus":"Artık takip etmiyorsun:",
+"Ne plus suivre":"Takibi bırak",
 "Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"Konakladığınız her şehir için bir satır. Ulaşım, bir önceki duraktan oraya nasıl gittiğinizdir (1. için herkes kendininkini bir sonraki adımda seçer).",
 "D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Herkes {0} için nereden, nasıl çıkıyor ve {1} sonrası nereye dönüyor? Herkes kendi yoluyla: biri arabayla, diğeri trenle ya da uçakla.",
 "🛫 Aller":"🛫 Gidiş",

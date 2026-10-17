@@ -1,4 +1,10 @@
 I18N.load({
+"🚫 Ne plus suivre ce voyage":"🚫 この旅のフォローをやめる",
+"🚫 Ne plus suivre":"🚫 フォローをやめる：",
+"(tous ses voyages)":"（すべての旅）",
+"Ne plus suivre aucun voyage de {0} ? Ils disparaissent de ce téléphone.":"{0} さんの旅のフォローをすべてやめますか？このスマホから消えます。",
+"Tu ne suis plus":"フォローをやめました：",
+"Ne plus suivre":"フォローをやめる",
 "Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"泊まる街ごとに1行。移動手段は前の行程からの行き方です（1つ目は次のステップでそれぞれが選びます）。",
 "D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"それぞれどこから {0} へ、何で向かい、{1} の後はどこへ帰りますか？人それぞれ：車の人も、電車や飛行機の人も。",
 "🛫 Aller":"🛫 行き",

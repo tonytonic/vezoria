@@ -1,4 +1,10 @@
 I18N.load({
+"🚫 Ne plus suivre ce voyage":"🚫 Deixar de seguir esta viagem",
+"🚫 Ne plus suivre":"🚫 Deixar de seguir",
+"(tous ses voyages)":"(todas as viagens)",
+"Ne plus suivre aucun voyage de {0} ? Ils disparaissent de ce téléphone.":"Deixar de seguir todas as viagens de {0}? Desaparecem deste telemóvel.",
+"Tu ne suis plus":"Já não segues",
+"Ne plus suivre":"Deixar de seguir",
 "Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"Uma linha por cidade onde dormem. O meio é como chegam desde a etapa anterior (para a 1.ª, cada um escolhe o seu no passo seguinte).",
 "D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"De onde parte cada um para {0}, como, e para onde volta depois de {1}? Cada um à sua maneira: um de carro, outro de comboio ou de avião.",
 "🛫 Aller":"🛫 Ida",

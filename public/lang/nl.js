@@ -1,4 +1,10 @@
 I18N.load({
+"🚫 Ne plus suivre ce voyage":"🚫 Deze reis niet meer volgen",
+"🚫 Ne plus suivre":"🚫 Niet meer volgen:",
+"(tous ses voyages)":"(al zijn/haar reizen)",
+"Ne plus suivre aucun voyage de {0} ? Ils disparaissent de ce téléphone.":"Geen enkele reis van {0} meer volgen? Ze verdwijnen van deze telefoon.",
+"Tu ne suis plus":"Je volgt niet meer",
+"Ne plus suivre":"Niet meer volgen",
 "Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"Eén regel per stad waar jullie slapen. De vervoerswijze is hoe je er vanaf de vorige etappe komt (voor de 1e kiest iedereen die in de volgende stap zelf).",
 "D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Waar vertrekt iedereen naar {0}, hoe, en waar gaat hij na {1} heen terug? Ieder op zijn manier: de een met de auto, de ander met trein of vliegtuig.",
 "🛫 Aller":"🛫 Heen",

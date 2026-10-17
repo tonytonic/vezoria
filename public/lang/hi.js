@@ -1,4 +1,10 @@
 I18N.load({
+"🚫 Ne plus suivre ce voyage":"🚫 यह यात्रा फ़ॉलो करना बंद करें",
+"🚫 Ne plus suivre":"🚫 फ़ॉलो करना बंद करें:",
+"(tous ses voyages)":"(सभी यात्राएँ)",
+"Ne plus suivre aucun voyage de {0} ? Ils disparaissent de ce téléphone.":"{0} की सभी यात्राएँ फ़ॉलो करना बंद करें? वे इस फ़ोन से हट जाएँगी।",
+"Tu ne suis plus":"अब आप फ़ॉलो नहीं करते:",
+"Ne plus suivre":"फ़ॉलो करना बंद करें",
 "Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"जिस शहर में रुकते हैं, उसके लिए एक पंक्ति। साधन का मतलब है पिछले पड़ाव से वहाँ कैसे पहुँचते हैं (पहले के लिए, हर कोई अगले चरण में अपना चुनता है)।",
 "D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"हर कोई {0} के लिए कहाँ से, कैसे निकलता है, और {1} के बाद कहाँ लौटता है? सबका अपना तरीका: कोई कार से, कोई ट्रेन या हवाई जहाज़ से।",
 "🛫 Aller":"🛫 जाना",

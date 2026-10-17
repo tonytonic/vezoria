@@ -1,4 +1,10 @@
 I18N.load({
+"🚫 Ne plus suivre ce voyage":"🚫 取消关注这段旅行",
+"🚫 Ne plus suivre":"🚫 取消关注",
+"(tous ses voyages)":"（全部旅行）",
+"Ne plus suivre aucun voyage de {0} ? Ils disparaissent de ce téléphone.":"取消关注 {0} 的所有旅行？它们将从此手机上消失。",
+"Tu ne suis plus":"你已不再关注",
+"Ne plus suivre":"取消关注",
 "Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"每个住宿城市一行。交通方式是从上一站到达那里的方式（第 1 站由每个人在下一步各自选择）。",
 "D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"每个人从哪里出发去 {0}、怎么去，{1} 之后回到哪里？各走各的：有人开车，有人坐火车或飞机。",
 "🛫 Aller":"🛫 去程",

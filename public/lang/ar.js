@@ -1,4 +1,10 @@
 I18N.load({
+"🚫 Ne plus suivre ce voyage":"🚫 إلغاء متابعة هذه الرحلة",
+"🚫 Ne plus suivre":"🚫 إلغاء متابعة",
+"(tous ses voyages)":"(كل رحلاته)",
+"Ne plus suivre aucun voyage de {0} ? Ils disparaissent de ce téléphone.":"إلغاء متابعة كل رحلات {0}؟ ستختفي من هذا الهاتف.",
+"Tu ne suis plus":"لم تعد تتابع",
+"Ne plus suivre":"إلغاء المتابعة",
 "Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"سطر لكل مدينة تبيتون فيها. الوسيلة هي كيف تصلون إليها من المحطة السابقة (للأولى، يختار كل واحد وسيلته في الخطوة التالية).",
 "D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"من أين ينطلق كل واحد إلى {0}، وبأي وسيلة، وإلى أين يعود بعد {1}؟ كل واحد على طريقته: أحدهم بالسيارة وآخر بالقطار أو بالطائرة.",
 "🛫 Aller":"🛫 الذهاب",

@@ -1,4 +1,10 @@
 I18N.load({
+"🚫 Ne plus suivre ce voyage":"🚫 Unfollow this trip",
+"🚫 Ne plus suivre":"🚫 Unfollow",
+"(tous ses voyages)":"(all their trips)",
+"Ne plus suivre aucun voyage de {0} ? Ils disparaissent de ce téléphone.":"Unfollow all of {0}’s trips? They disappear from this phone.",
+"Tu ne suis plus":"You no longer follow",
+"Ne plus suivre":"Unfollow",
 "Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).":"One line per city where you sleep. The mode is how you get there from the previous stop (for the 1st one, everyone picks their own in the next step).",
 "D’où part chacun vers {0}, comment, et où rentre-t-il après {1} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Where does each person leave from to {0}, how, and where do they go home to after {1}? Everyone their own way: one by car, another by train or plane.",
 "🛫 Aller":"🛫 Outbound",
