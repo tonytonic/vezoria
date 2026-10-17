@@ -791,6 +791,14 @@ textarea.v-in{min-height:70px;resize:vertical;}
 .cv-links a{font-size:.66rem;font-weight:700;color:var(--navy);background:var(--light);border-radius:12px;padding:4px 9px;text-decoration:none;white-space:nowrap}
 .cv-links.big{margin:-4px 0 12px}
 .cv-links.big a{font-size:.76rem;padding:7px 12px;background:#fff;border:1px solid #e3dccb}
+.cv-links .bk-chip{font:inherit;font-size:.66rem;font-weight:700;color:var(--navy);background:transparent;border:1px dashed #d8cfbb;border-radius:12px;padding:3px 9px;cursor:pointer;white-space:nowrap}
+.bk-box{margin:-2px 0 12px;padding:10px 11px;border:1px solid #ece4d3;border-radius:14px;background:#fffdf8}
+.bk-h{font-size:.78rem;font-weight:800;margin-bottom:4px}
+.bk-g{margin-top:6px}.bk-g>small{font-size:.66rem;font-weight:700;opacity:.65}.bk-g .cv-links{margin-top:3px}
+.bk-ft{font-size:.62rem;opacity:.6;margin-top:8px;line-height:1.35}
+.v-cl .bk-ck{font:inherit;font-size:.66rem;font-weight:700;border:1px dashed #d8cfbb;background:transparent;border-radius:10px;padding:2px 7px;margin-left:4px;white-space:nowrap;color:inherit;cursor:pointer}
+.ex-bk{margin-top:10px;font-size:.72rem;opacity:.9;display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ex-bk a{color:#fff;background:rgba(255,255,255,.12);border-radius:12px;padding:4px 9px;text-decoration:none;font-weight:700}
+
 .cv-bal{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:7px 0;border-top:1px solid #f0ece4;font-size:.74rem;color:#555}
 .cv-bal:first-of-type{margin-top:8px}
 .cv-settle{background:#eef6f1;border-radius:9px;padding:9px 11px;margin-top:8px;font-size:.8rem;line-height:1.6}
@@ -4074,6 +4082,7 @@ const CV = (function(){
     $('ex-body').innerHTML = (d.intro ? `<p class="ex-intro" data-notr>${esc(d.intro)}</p>` : '')
       + (secs || '<div class="ex-empty">Rien trouvé pour cette ville pour l’instant.</div>')
       + (exp.hid && !exp.day ? `<button type="button" class="v-btn sec ex-more" onclick="CV.expClose();CV.discover('${exp.hid}')">🔎 Tous les lieux autour, sur la carte</button>` : '')
+      + (hidden('blk:book') ? '' : `<div class="ex-bk" style="margin:14px 22px 0;justify-content:center"><span>🧳 Pour ton séjour :</span>${['booking','airbnb','gyg','viator'].map(b=>bookA(b, {city:exp.city, what:exp.city})).join('')}</div>`)
       + `<div class="ex-src">Textes : Wikivoyage et Wikipédia (CC BY-SA) · Photos : Wikimedia Commons · Météo : Open-Meteo</div>`;
     // les rubriques apparaissent en glissant
     try { const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), {root:$('ex-scroll'), threshold:.12});
@@ -4090,7 +4099,8 @@ const CV = (function(){
         ${it.a ? `<div class="ex-ln"><span>📍</span><span data-notr>${esc(it.a)}</span></div>` : ''}${it.h ? `<div class="ex-ln"><span>🕒</span><span data-notr>${esc(it.h)}</span></div>` : ''}${it.pr ? `<div class="ex-ln"><span>💶</span><span data-notr>${esc(it.pr)}</span></div>` : ''}
         <div class="ex-acts">${exp.hid || exp.day ? `<button type="button" class="v-btn${has ? ' sec' : ''}" onclick="CV.expAdd('${k}',${i})">${has ? '✓ Dans ton programme' : exp.day ? '＋ Ajouter à ma journée' : '＋ Ajouter à l’étape'}</button>` : ''}
           <a class="v-btn sec" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(go)}" target="_blank" rel="noopener">🧭 Y aller</a>
-          ${it.u ? `<a class="v-btn sec" href="${esc(it.u)}" target="_blank" rel="noopener">🌐 Site</a>` : ''}</div></div></div>`;
+          ${it.u ? `<a class="v-btn sec" href="${esc(it.u)}" target="_blank" rel="noopener">🌐 Site</a>` : ''}</div>
+        ${(k==='see' || k==='do') && !hidden('blk:book') ? `<div class="ex-bk"><span>🎟️ Billets :</span>${['gyg','viator','tiqets'].map(b=>bookA(b, {what:it.n + ' ' + exp.city})).join('')}</div>` : ''}</div></div>`;
     det.hidden = false; requestAnimationFrame(()=>det.classList.add('on'));
   }
   function expShut(){ const det = document.getElementById('ex-det'); if(!det) return; det.classList.remove('on'); setTimeout(()=>{ det.hidden = true; }, 260); }
@@ -4872,7 +4882,7 @@ const CV = (function(){
     cats.forEach(c=>{
       h += `<div class="v-cl-cat">${esc(c)}</div>`;
       h += cl.filter(i=>i.cat===c).map(i=>`<div class="v-cl${i.done?' done':''}" onclick="CV.check('${i.id}')">
-        <div class="c">${i.done?'✓':''}</div><div class="t">${esc(i.label)}</div>
+        <div class="c">${i.done?'✓':''}</div><div class="t">${esc(i.label)}</div>${!i.done && !hidden('blk:book') && checkBook(i.label) ? `<button type="button" class="bk-ck" onclick="event.stopPropagation();CV.bookSheet('${i.id}',1)">🛒</button>` : ''}
         ${i.done && i.updatedBy && i.updatedAt>1000 ? `<span title="Coché par ${esc(pname(i.updatedBy))}">${ini(i.updatedBy)}</span>` : ''}
         <button class="del" onclick="event.stopPropagation();CV.delCheck('${i.id}')">✕</button></div>`).join('');
     });
@@ -5743,34 +5753,119 @@ const CV = (function(){
 
   /* ══════════ 🔗 Liens Maps / Booking / vols ══════════ */
   const cityOf = t => String(t||'').replace(/\(.*?\)/g,'').trim();
-  function links(it){
+  function links(it){   // liens pratiques (itinéraire, carte, suivi du vol, ma résa) : toujours là
     const L = [], q = encodeURIComponent;
     if(it.cat==='transport'){
       if(it.from && it.to){
         L.push(['🗺️','Trajet',`https://www.google.com/maps/dir/?api=1&origin=${q(it.from)}&destination=${q(it.to)}&travelmode=transit`]);
         if(it.mode==='Avion' && ESCALE) L.push(['🛫','Escale', ESCALE]);
-        if(it.mode==='Avion') L.push(['✈️','Vols',`https://www.google.com/travel/flights?hl=${((window.I18N && I18N.lang) || 'fr')}&q=${q('Flights from '+it.from+' to '+it.to+(it.date?' on '+it.date:''))}`]);
-        else L.push(['🔎','Horaires & prix',`https://www.rome2rio.com/fr/map/${q(it.from)}/${q(it.to)}`]);
-        if(/Train|Bus|Car|Voiture/i.test(it.mode||'')){
-          L.push(['🚆','Trainline',`https://www.thetrainline.com/fr`]);
-          L.push(['🧭','Omio',`https://www.omio.fr/`]);
-          L.push(['🚗','BlaBlaCar',`https://www.blablacar.fr/search?fn=${q(it.from)}&tn=${q(it.to)}${it.date ? '&db=' + it.date : ''}`]);
-        }
+        if(it.mode!=='Avion') L.push(['🔎','Horaires & prix',`https://www.rome2rio.com/fr/map/${q(it.from)}/${q(it.to)}`]);
       }
       { const fn = String(it.compagnie||'').match(/\b([A-Z0-9]{2})\s?(\d{1,4})\b/); if(it.mode==='Avion' && fn) L.push(['📡','Suivre le vol',`https://www.flightradar24.com/data/flights/${(fn[1]+fn[2]).toLowerCase()}`]);
       }
     } else {
       const where = [it.nom, it.adresse || cityOf(it.titre)].filter(Boolean).join(', ');
       if(where) L.push(['📍','Maps',`https://www.google.com/maps/search/?api=1&query=${q(where)}`]);
-      if(it.cat==='hotel') L.push(['🛏️','Booking',`https://www.booking.com/searchresults.fr.html?ss=${q(it.nom ? it.nom+' '+cityOf(it.titre) : cityOf(it.titre))}${it.date?'&checkin='+it.date:''}${it.dateFin?'&checkout='+it.dateFin:''}&group_adults=${Math.max(1,parts(it).length)}&no_rooms=1`]);
-      if(it.cat==='activite') L.push(['🎟️','Billets',`https://www.getyourguide.fr/s/?q=${q(cityOf(it.titre))}`]);
     }
     if(it.lien) L.push(['🔗','Ma réservation',it.lien]);
     return L;
   }
   function linksHTML(it, big){
-    const L = links(it); if(!L.length) return '';
-    return `<div class="cv-links${big?' big':''}">${L.map(([i,l,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${i} ${l}</a>`).join('')}</div>`;
+    const L = links(it), bk = bookOn(it) ? bookGroups(it) : [];
+    if(!L.length && !bk.length) return '';
+    const a = ([i,l,u]) => `<a href="${esc(u)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${i} ${l}</a>`;
+    if(!big) return `<div class="cv-links">${L.map(a).join('')}${bk.length ? `<button type="button" class="bk-chip" onclick="event.stopPropagation();CV.bookSheet('${esc(it.id||'')}')">🛒 Réserver…</button>` : ''}</div>`;
+    return (L.length ? `<div class="cv-links big">${L.map(a).join('')}</div>` : '') + (bk.length ? `<div class="bk-box"><div class="bk-h">🛒 Comparer et réserver</div>${bookRows(bk)}<div class="bk-ft">${BK_FT}</div></div>` : '');
+  }
+
+  /* ══════════ 🛒 Réserver avec… : liens directs vers les sites, sans pub ni pistage ══════════
+     Toutes les adresses de partenaires passent par bookUrl() : le jour d’une éventuelle affiliation,
+     c’est le seul endroit à changer (lien construit dans le téléphone, rien ne passe par notre serveur). */
+  const BK = {
+    gflights:['✈️','Google Flights', c=>c.from && c.to ? `https://www.google.com/travel/flights?hl=${(window.I18N && I18N.lang) || 'fr'}&q=${encodeURIComponent('Flights from '+c.from+' to '+c.to+(c.date?' on '+c.date:''))}` : 'https://www.google.com/travel/flights'],
+    skyscanner:['✈️','Skyscanner', ()=>'https://www.skyscanner.fr/'],
+    kayak:['✈️','Kayak', ()=>'https://www.kayak.fr/flights'],
+    kiwi:['✈️','Kiwi.com', ()=>'https://www.kiwi.com/fr/'],
+    rome2rio:['🔎','Rome2rio', c=>c.from && c.to ? `https://www.rome2rio.com/fr/map/${encodeURIComponent(c.from)}/${encodeURIComponent(c.to)}` : 'https://www.rome2rio.com/fr/'],
+    trainline:['🚆','Trainline', ()=>'https://www.thetrainline.com/fr'],
+    omio:['🧭','Omio', ()=>'https://www.omio.fr/'],
+    sncf:['🚄','SNCF Connect', ()=>'https://www.sncf-connect.com/'],
+    flixbus:['🚌','FlixBus', ()=>'https://www.flixbus.fr/'],
+    blablacar:['🚗','BlaBlaCar', c=>c.from && c.to ? `https://www.blablacar.fr/search?fn=${encodeURIComponent(c.from)}&tn=${encodeURIComponent(c.to)}${c.date ? '&db=' + c.date : ''}` : 'https://www.blablacar.fr/'],
+    ferryhopper:['⛴️','Ferryhopper', ()=>'https://www.ferryhopper.com/fr/'],
+    directferries:['⛴️','Direct Ferries', ()=>'https://www.directferries.fr/'],
+    booking:['🛏️','Booking.com', c=>`https://www.booking.com/searchresults.fr.html?ss=${encodeURIComponent(c.what || c.city || '')}${c.date ? '&checkin=' + c.date : ''}${c.end ? '&checkout=' + c.end : ''}&group_adults=${c.n || 1}&no_rooms=1`],
+    airbnb:['🏡','Airbnb', c=>c.city ? `https://www.airbnb.fr/s/${encodeURIComponent(c.city)}/homes?${c.date ? 'checkin=' + c.date + '&' : ''}${c.end ? 'checkout=' + c.end + '&' : ''}adults=${c.n || 1}` : 'https://www.airbnb.fr/'],
+    hotelscom:['🏨','Hotels.com', c=>c.city ? `https://fr.hotels.com/Hotel-Search?destination=${encodeURIComponent(c.city)}${c.date ? '&startDate=' + c.date : ''}${c.end ? '&endDate=' + c.end : ''}&adults=${c.n || 1}` : 'https://fr.hotels.com/'],
+    hostelworld:['🎒','Hostelworld', ()=>'https://www.hostelworld.com/'],
+    agoda:['🏨','Agoda', ()=>'https://www.agoda.com/fr-fr/'],
+    discovercars:['🚙','DiscoverCars', ()=>'https://www.discovercars.com/'],
+    rentalcars:['🚙','Rentalcars', ()=>'https://www.rentalcars.com/fr/'],
+    getaround:['🔑','Getaround', ()=>'https://fr.getaround.com/'],
+    welcome:['🚐','Welcome Pickups', ()=>'https://www.welcomepickups.com/'],
+    kiwitaxi:['🚕','Kiwitaxi', ()=>'https://kiwitaxi.com/'],
+    gyg:['🎟️','GetYourGuide', c=>`https://www.getyourguide.fr/s/?q=${encodeURIComponent(c.what || c.city || '')}`],
+    viator:['🎟️','Viator', c=>`https://www.viator.com/fr-FR/searchResults/all?text=${encodeURIComponent(c.what || c.city || '')}`],
+    tiqets:['🎫','Tiqets', ()=>'https://www.tiqets.com/fr/'],
+    civitatis:['🗺️','Civitatis', ()=>'https://www.civitatis.com/fr/'],
+    klook:['🎡','Klook', ()=>'https://www.klook.com/fr/'],
+    airalo:['📶','Airalo', ()=>'https://www.airalo.com/fr'],
+    holafly:['📶','Holafly', ()=>'https://esim.holafly.com/fr/'],
+    yesim:['📶','Yesim', ()=>'https://yesim.app/fr/'],
+    chapka:['🛡️','Chapka', ()=>'https://www.chapkadirect.fr/'],
+    heymondo:['🛡️','Heymondo', ()=>'https://heymondo.fr/'],
+    safetywing:['🛡️','SafetyWing', ()=>'https://safetywing.com/'],
+    wise:['💳','Wise', ()=>'https://wise.com/fr/'],
+    revolut:['💳','Revolut', ()=>'https://www.revolut.com/fr-FR/'],
+  };
+  const BK_FT = 'Liens directs vers les sites : pas de pub, pas de pistage, Vezoria ne touche rien.';
+  const bookUrl = (k, c) => BK[k] ? BK[k][2](c || {}) : '';
+  const bookA = (k, c) => `<a href="${esc(bookUrl(k, c))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${BK[k][0]} ${BK[k][1]}</a>`;
+  const bookRows = G => G.map(g=>`<div class="bk-g"><small>${g.t}</small><div class="cv-links">${g.k.map(k=>bookA(k, g.c)).join('')}</div></div>`).join('');
+  // à réserver seulement (une fiche réservée ou payée ne propose plus rien)
+  const bookOn = it => !hidden('blk:book') && it && it.type==='item' && (it.statut || 'todo')==='todo';
+  function bookGroups(it){
+    const city = cityOf(it.titre), n = Math.max(1, parts(it).length), G = [];
+    if(it.cat==='transport'){
+      const c = {from:it.from, to:it.to, date:it.date, n}, at = {city:cityOf(it.to||''), what:cityOf(it.to||''), date:it.date, n};
+      const m = it.mode || '';
+      if(m==='Avion'){ G.push({t:'Comparer les vols', k:['gflights','skyscanner','kayak','kiwi'], c}); if(it.to) G.push({t:'À l’arrivée', k:['welcome','kiwitaxi','discovercars','rentalcars'], c:at}); }
+      else if(m==='Train') G.push({t:'Trains', k:['trainline','omio','sncf','rome2rio'], c});
+      else if(m==='Bus') G.push({t:'Bus et covoiturage', k:['flixbus','blablacar','omio','rome2rio'], c});
+      else if(m==='Bateau') G.push({t:'Ferries', k:['ferryhopper','directferries','rome2rio'], c});
+      else if(m==='Voiture') G.push({t:'Voiture', k:['blablacar','discovercars','rentalcars','getaround'], c});
+      else if(/Taxi/.test(m)) G.push({t:'Transferts', k:['welcome','kiwitaxi'], c:at});
+      else G.push({t:'Comparer les trajets', k:['rome2rio','omio','trainline','gflights'], c});
+    } else if(it.cat==='hotel'){
+      G.push({t:'Hébergements', k:['booking','airbnb','hotelscom','hostelworld','agoda'], c:{city, what:it.nom ? it.nom + ' ' + city : city, date:it.date, end:it.dateFin, n}});
+    } else if(it.cat==='activite'){
+      G.push({t:'Visites et billets', k:['gyg','viator','tiqets','civitatis','klook'], c:{city, what:[it.titre, it.adresse ? cityOf(it.adresse.split(',').pop()) : ''].filter(Boolean).join(' ')}});
+    } else {
+      const g = checkBook(it.titre || ''); if(g) G.push(g);
+    }
+    return G;
+  }
+  // ville du voyage pour la liste : la première étape encore sans hébergement, sinon la première étape
+  function tripCity(){ const H = items(i=>i.cat==='hotel').sort((a,b)=>(a.date||'').localeCompare(b.date||'')); const h = H.find(i=>i.statut==='todo') || H[0]; return h ? cityOf(h.titre) : ''; }
+  function checkBook(label){
+    const s = nzTxt(label), city = tripCity(), c = {city, what:city};
+    if(/esim|\bsim\b|forfait|wi ?fi|internet|roaming|itinerance/.test(s)) return {t:'eSIM et internet', k:['airalo','holafly','yesim'], c};
+    if(/assurance|rapatriement/.test(s) && !/maladie|ceam/.test(s)) return {t:'Assurance voyage', k:['chapka','heymondo','safetywing'], c};
+    if(/carte bancaire|sans frais|devise|change /.test(s)) return {t:'Carte sans frais à l’étranger', k:['wise','revolut'], c};
+    if(/hebergement|hotel|logement/.test(s)) return {t:'Hébergements', k:['booking','airbnb','hotelscom','hostelworld'], c};
+    if(/trajet|billet d avion|vols? |train/.test(s)) return {t:'Trajets', k:['gflights','skyscanner','trainline','omio'], c:{}};
+    if(/visite|creneau|musee|activite|excursion/.test(s)) return {t:'Visites et billets', k:['gyg','viator','tiqets','civitatis'], c};
+    if(/location|voiture|permis/.test(s)) return {t:'Voiture', k:['discovercars','rentalcars','getaround'], c};
+    return null;
+  }
+  function bookSheet(id, ck){
+    let G = [];
+    if(ck){ const c = R[id]; const g = c && checkBook(c.label); if(g) G = [g]; }
+    else if(R[id]) G = bookGroups(R[id]);
+    if(!G.length) return;
+    openSheet(`<h2>🛒 Réserver avec…</h2><div class="bk-box">${bookRows(G)}<div class="bk-ft">${BK_FT}</div></div>
+      <div class="v-sum-small" style="margin:8px 2px">Tu peux masquer ces liens dans ⚙️ Réglages.</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">✕ Fermer</button></div>`);
   }
 
   /* ══════════ 🗺️ Lieux du jour & itinéraire optimisé ══════════ */
@@ -11624,7 +11719,7 @@ ${pm.join('\n')}</Document></kml>`;
         <div class="iti">🗺️ ${inspItin(x, days, S.rythme).map(([c,n])=>`${esc(c)} <small>${n} n.</small>`).join(' → ')}</div>
         <div class="bud" data-k="b">Trajet ≈ ${eur(x.trans + (x.escale ? 80 : 0))} · sur place ≈ ${eur(x.stay)} · <b>total groupe ≈ ${eur(x.est * nb)}</b></div>
         <p>💡 ${esc(x.tip)}</p>
-        <div class="cv-row" style="gap:6px;flex-wrap:wrap"><button type="button" class="v-day-edit cp-go" onclick="CV.inspOpen(${x.i})">🧩 Explorer & composer</button><button type="button" class="v-day-edit" onclick="CV.inspireCreate(${x.i})">🧳 Créer tel quel</button>${ESCALE ? `<a class="v-day-edit" href="${ESCALE}">✈️ Prix réels</a>` : ''}<a class="v-day-edit" href="https://fr.wikipedia.org/wiki/${encodeURIComponent(x.wk.replace(/ /g,'_'))}" target="_blank" rel="noopener">📖 Découvrir</a></div></div>`).join('')}
+        <div class="cv-row" style="gap:6px;flex-wrap:wrap"><button type="button" class="v-day-edit cp-go" onclick="CV.inspOpen(${x.i})">🧩 Explorer & composer</button><button type="button" class="v-day-edit" onclick="CV.inspireCreate(${x.i})">🧳 Créer tel quel</button>${ESCALE ? `<a class="v-day-edit" href="${ESCALE}">✈️ Prix réels</a>` : hidden('blk:book') ? '' : `<a class="v-day-edit" href="${esc(bookUrl('gflights', {from:S.dep === 'autre' ? S.depTxt : S.dep, to:x.nom}))}" target="_blank" rel="noopener">✈️ Vols</a><a class="v-day-edit" href="${esc(bookUrl('booking', {city:x.nom, n:nb}))}" target="_blank" rel="noopener">🛏️ Hébergements</a>`}<a class="v-day-edit" href="https://fr.wikipedia.org/wiki/${encodeURIComponent(x.wk.replace(/ /g,'_'))}" target="_blank" rel="noopener">📖 Découvrir</a></div></div>`).join('')}
       ${n < 16 && fit.length > n ? `<button type="button" class="v-btn sec" onclick="CV.inspMore()">Voir d’autres idées</button>` : ''}<div id="insp-bp"></div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.inspSurprise()">🎲 Surprends-moi</button>${fav.size >= 2 ? `<button type="button" class="v-btn" onclick="CV.inspVote()">🗳️ Faire voter (${fav.size})</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.inspire()">← Réponses</button></div>`);
     setTimeout(async ()=>{ const imgs = [...document.querySelectorAll('.cv-idea img[data-wk]')];
@@ -12291,6 +12386,7 @@ ${pm.join('\n')}</Document></kml>`;
     ['blk:who', '👥 Filtre « Voir pour » (une seule personne)'],
     ['blk:imp', '📄 Bouton « Importer une résa » dans Trajets, Hôtels, Visites'],
     ['blk:hints', '💡 Conseils sur les fiches à réserver'],
+    ['blk:book', '🛒 Liens « Réserver avec… » (sites de réservation)'],
   ];
   var PRESET_SIMPLE = ['tab:outils','tab:ech','tab:divers','tab:notes','tab:envies','mode:past','blk:docs','blk:who','blk:hints','blk:escale','blk:pins'];
   function renderPrefs(){
@@ -14944,7 +15040,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18j';
+  const BUILD = '2026-10-18k';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15038,7 +15134,7 @@ ${pm.join('\n')}</Document></kml>`;
   setTimeout(vzPaint, 0);
   var VZAPI = {vzGo, vzHide, vzNews, vzAvis, vzStar, vzSend, vzRestore, vzPaint};
 
-  const api = {init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
+  const api = {bookSheet, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
