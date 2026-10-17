@@ -60,6 +60,8 @@
     WILD.sort(byLit); PAT.forEach(function(l){ l.sort(byLit); });
     I.ready = true; memo.clear();
     if(document.documentElement) walkAll(document.documentElement);
+    // description pour les moteurs de recherche : dans la langue choisie
+    try { var md = document.querySelector('meta[name="description"]'); if(md){ if(!md.__fr) md.__fr = md.getAttribute('content'); md.setAttribute('content', msg(md.__fr)); } } catch(e){}
   }
   // une valeur insérée dans une phrase peut elle-même être un texte connu (« hébergement », « 3 jours · »)
   function sub(x, depth){
