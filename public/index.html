@@ -1974,6 +1974,7 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .cv-phrow{gap:8px}.cv-phrow .cv-addph{flex:1;margin:0}
 .qr-btn{width:100%;margin:0 0 10px}
 .pl-exp{margin:0 0 12px}
+.cv-folr{display:flex;align-items:center;gap:6px;margin-left:40px}.cv-folr .cv-prow{margin-left:0!important;width:auto!important;flex:1;min-width:0}.cv-folall{margin:4px 0 10px 40px}.fd-unf{padding:8px 16px 4px;display:flex;flex-direction:column;gap:8px}.fd-unf .v-btn{margin:0}
 .wz-pp{border:1px solid var(--line,#eadde6);border-radius:14px;padding:10px;margin-bottom:8px;background:#fff}.wz-pl{display:grid;grid-template-columns:76px 1fr 112px;gap:6px;align-items:center;margin-top:6px}.wz-pl span{font-size:.8rem;font-weight:700;color:var(--gray)}.wz-pl .v-in{margin:0;min-width:0}
 .cv-pend{padding:10px 12px}.cv-pend-r{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:4px 0}.cv-pend-r small{color:var(--gray)}.cv-pend-r .v-day-edit{margin-left:6px}
 .qr-ov{position:fixed;inset:0;z-index:2147483000;background:#000;display:flex;align-items:center;justify-content:center}
@@ -2495,7 +2496,7 @@ const CV = (function(){
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id]));
-        j.records.forEach(r=>{ if(r && (r.type==='trip' || r.type==='feedtrip') && (force || !TS()[r.id])) TS()[r.id] = sp.code;
+        j.records.forEach(r=>{ if(r && (r.type==='trip' || r.type==='feedtrip') && (force || !TS()[r.id]) && !(r.type==='feedtrip' && (M.unfol||{})[r.id] && !force)) TS()[r.id] = sp.code;
           if(r && (r.type==='feedgrant' || r.type==='packtrip') && r.trip && !TS()[r.trip]) TS()[r.trip] = sp.code; });
         changed += mergeRemote(j.records); sp.since = j.now;
       }
@@ -14406,7 +14407,8 @@ ${pm.join('\n')}</Document></kml>`;
     code = String(code || '').trim().toUpperCase(); if(code.length < 8){ alert('Code trop court.'); return; }
     if(!myName() && !web){ const n = (await uiPrompt('Ton prénom (pour signer tes ❤️ et commentaires) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
     if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
-    toast('📡 Connexion…'); const sp = spaceObj(code); await syncSpace(sp, true);
+    toast('📡 Connexion…'); const sp = spaceObj(code); sp.since = 0; await syncSpace(sp, true);
+    if(M.unfol) Object.keys(TS()).forEach(k=>{ if(TS()[k] === code) delete M.unfol[k]; });   // je suis à nouveau ce lien : ses voyages reviennent
     if(sp.err){ alert('⚠️ ' + sp.err); return; }
     const ft = Object.entries(TS()).filter(([k,c])=>c===code && R[k] && R[k].type==='feedtrip' && !R[k].deleted).map(([k])=>R[k])[0];
     if(!ft){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); alert('Aucun voyage publié avec ce code.'); if(web) webGone(); return; }
@@ -14454,12 +14456,12 @@ ${pm.join('\n')}</Document></kml>`;
     const G = {}; fol.forEach(f=>{ const n = String(f.owner||'').trim() || '?', k = n.toLocaleLowerCase(); (G[k] = G[k] || {n, t:[]}).t.push(f); });
     const gs = Object.values(G).sort((a,b)=>a.n.localeCompare(b.n, undefined, {sensitivity:'base', numeric:true})), many = gs.length > 3;
     const row = f => { const n = list('feed', x=>x.trip===f.id && !x.deleted).length, k = nw[f.id] || 0;
-      return `<button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b data-notr>${esc(f.titre)}</b><small class="v-sum-small" style="display:block">${f.debut ? `<span>${esc(tripDates(f))}</span> · ` : ''}<span>${n} étape${n>1?'s':''}</span></small></span>${k ? `<b class="cv-badge">${k}</b>` : ''}<span>›</span></button>`; };
+      return `<div class="cv-folr"><button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b data-notr>${esc(f.titre)}</b><small class="v-sum-small" style="display:block">${f.debut ? `<span>${esc(tripDates(f))}</span> · ` : ''}<span>${n} étape${n>1?'s':''}</span></small></span>${k ? `<b class="cv-badge">${k}</b>` : ''}<span>›</span></button><button type="button" class="cv-x" title="Ne plus suivre" onclick="CV.feedUnfollow('${f.id}')">✕</button></div>`; };
     return `<div class="sh-sec">➡️ Les voyages que je suis</div><div class="sh-card cv-folw">
       ${gs.length > 6 ? `<input type="search" class="v-in" style="margin-bottom:8px" placeholder="🔎 Chercher une personne ou un voyage" oninput="CV.folFilter(this)">` : ''}
       <div class="sh-st" style="margin-bottom:6px"><span>👥 ${gs.length} personne${gs.length>1?'s':''}</span><span>🧳 ${fol.length} voyage${fol.length>1?'s':''}</span></div>
       ${gs.map(g=>{ g.t.sort((a,b)=>(b.debut||'').localeCompare(a.debut||'')); const k = g.t.reduce((s, f)=>s + (nw[f.id]||0), 0);
-        return `<details class="cv-folg" data-q="${esc((g.n + ' ' + g.t.map(f=>f.titre).join(' ')).toLocaleLowerCase())}"${many && !k ? '' : ' open'}><summary><i data-notr>${esc((g.n.match(/\p{L}|\d/u)||['?'])[0].toUpperCase())}</i><b data-notr>${esc(g.n)}</b><small>${g.t.length} voyage${g.t.length>1?'s':''}</small>${k ? `<b class="cv-badge">${k}</b>` : ''}</summary>${g.t.map(row).join('')}</details>`; }).join('')}
+        return `<details class="cv-folg" data-q="${esc((g.n + ' ' + g.t.map(f=>f.titre).join(' ')).toLocaleLowerCase())}"${many && !k ? '' : ' open'}><summary><i data-notr>${esc((g.n.match(/\p{L}|\d/u)||['?'])[0].toUpperCase())}</i><b data-notr>${esc(g.n)}</b><small>${g.t.length} voyage${g.t.length>1?'s':''}</small>${k ? `<b class="cv-badge">${k}</b>` : ''}</summary>${g.t.map(row).join('')}${g.t.length > 1 ? `<button type="button" class="v-day-edit cv-folall" onclick="CV.feedUnfollow('${g.t[0].id}',1)">🚫 Ne plus suivre <span data-notr>${esc(g.n)}</span></button>` : ''}</details>`; }).join('')}
       <div class="v-sum-small cv-folnone" style="display:none">Personne ne correspond.</div></div>`;
   }
   function folFilter(inp){
@@ -14680,7 +14682,7 @@ ${pm.join('\n')}</Document></kml>`;
   // abonné : on m’a donné le code d’un voyage « à part » → je le suis, sans rien demander
   async function feedGrantCheck(){
     const me = devId(), got = M.fgot || (M.fgot = {});
-    for(const x of list('feedgrant', y=>y.dev === me && y.opk && y.ct)){
+    for(const x of list('feedgrant', y=>y.dev === me && y.opk && y.ct && !(M.unfol||{})['ft:' + y.tid])){   // voyage que je ne suis plus : pas de retour automatique
       try {
         const k = await fKey(), sk = await fShared(k.priv, x.opk);
         const c = new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(x.iv)}, sk, unb64(x.ct)));
@@ -14742,10 +14744,21 @@ ${pm.join('\n')}</Document></kml>`;
       <button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(f.trip)}')">🚫 Ne plus suivre « ${esc(ft.titre || '')} »</button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
-  async function feedUnfollow(ftid){
-    const code = TS()[ftid]; if(!(await uiConfirm('Ne plus suivre ce voyage ? Il disparaît de ce téléphone.'))) return;
-    const fw = R['fw:' + ftid + ':' + devId()]; if(fw) putQuiet([Object.assign(clone(fw), {deleted:true})]);
-    syncNow().finally(()=>{ Object.values(R).forEach(r=>{ if(r && (r.trip === ftid || r.id === ftid)) delete R[r.id]; }); delete TS()[ftid]; M.spaces = (M.spaces||[]).filter(x=>x.code !== code); persist(); closeSheet(true); feedClose(); refresh(); toast('🚫 Tu ne suis plus ce voyage'); });
+  async function feedUnfollow(ftid, all){
+    const ft = R[ftid] || {}, owner = String(ft.owner || '').trim();
+    const ids = all ? list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && String(f.owner || '').trim().toLocaleLowerCase() === owner.toLocaleLowerCase()).map(f=>f.id) : [ftid];
+    if(!ids.length) return;
+    if(!(await uiConfirm(all ? MSGT('Ne plus suivre aucun voyage de {0} ? Ils disparaissent de ce téléphone.').replace('{0}', owner || '?') + ' (' + ids.length + ')' : MSGT('Ne plus suivre ce voyage ? Il disparaît de ce téléphone.')))) return;
+    const codes = new Set(ids.map(id=>TS()[id]).filter(Boolean)), me = devId(), un = M.unfol || (M.unfol = {});
+    const out = ids.map(id=>R['fw:' + id + ':' + me]).filter(x=>x && !x.deleted).map(x=>Object.assign(clone(x), {deleted:true}));   // l’auteur voit un abonné de moins
+    if(out.length) putQuiet(out);
+    ids.forEach(id=>{ un[id] = 1; });
+    closeSheet(true); feedClose();
+    try { await syncNow(); } catch(e){}
+    ids.forEach(id=>{ Object.values(R).forEach(r=>{ if(r && (r.trip === id || r.id === id)) delete R[r.id]; }); delete TS()[id]; });
+    // le dossier n’est quitté que si plus aucun voyage suivi n’y est (carnet publié : un lien pour plusieurs voyages)
+    codes.forEach(c=>{ if(!Object.entries(TS()).some(([k, x])=>x === c && /^ft:/.test(k))) M.spaces = (M.spaces||[]).filter(x=>x.code !== c); });
+    persist(); refresh(); toast(all ? '🚫 ' + MSGT('Tu ne suis plus') + ' ' + owner : '🚫 Tu ne suis plus ce voyage');
   }
   function feedRepaintAll(){ document.querySelectorAll('.fd-post[id^="fp-"]').forEach(el=>feedPaint(el.id.slice(3))); }
   async function feedLike(fid){
@@ -14782,7 +14795,7 @@ ${pm.join('\n')}</Document></kml>`;
     ov.innerHTML = `<div class="fd-top"><button type="button" class="fd-x" onclick="CV.feedClose()">✕</button><div><small>Voyage de ${esc(ft.owner||'?')}</small><b>${esc(ft.titre)}</b><small>${ft.debut ? tripDatesLong(ft) : ''}${fw ? ' · 👀 ' + fw + ' abonné' + (fw>1?'s':'') : ''}</small></div></div>
       ${(()=>{ const c = TS()[ftid], sib = c ? list('feedtrip', f=>TS()[f.id] === c && !f.deleted).sort((a, b)=>(b.debut||'').localeCompare(a.debut||'')) : [];
         return sib.length > 1 ? `<div class="fd-trips">${sib.map(f=>`<button type="button" class="${f.id === ftid ? 'on' : ''}" onclick="CV.feedView('${esc(f.id)}')" data-notr>${esc(f.titre)}</button>`).join('')}</div>` : ''; })()}
-      <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
+      <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}${FT()[String(ftid).replace(/^ft:/,'')] || webFollowing() ? '' : `<div class="fd-unf"><button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}')">🚫 Ne plus suivre ce voyage</button>${list('feedtrip', f=>TS()[f.id] && f.id !== ftid && String(f.owner||'').trim().toLocaleLowerCase() === String(ft.owner||'').trim().toLocaleLowerCase()).length ? `<button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}',1)">🚫 Ne plus suivre <span data-notr>${esc(ft.owner || '?')}</span> (tous ses voyages)</button>` : ''}</div>`}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; M.feedLast = ftid; feedMapHydrate();
     ov._h = posts.map(feedPostHTML).join('') + '|' + !!feedTrkRec(ftid);
     // photos pas encore arrivées chez l’abonné (le voyageur les envoie encore) : on réessaie chaque minute
@@ -14828,7 +14841,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18a';
+  const BUILD = '2026-10-18b';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
