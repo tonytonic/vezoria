@@ -1,4 +1,8 @@
 I18N.load({
+"Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"누구인가요? 알아볼 수 있게 이름을 붙이세요 (나만 볼 수 있어요).",
+"Qui est-ce ?":"누구인가요?",
+"👋 Ton prénom ?":"👋 이름이 뭐예요?",
+"Pour que {0} sache qui suit son voyage.":"{0} 님이 누가 여행을 팔로우하는지 알 수 있도록요.",
 "Mes propres voyages":"내 여행",
 "Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"아직 내 여행이 없어요. 원할 때 준비해 보세요.",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = 이 여행만 볼 수 있는 링크예요. 이 여행만 봐야 하는 사람에게 보내세요.",

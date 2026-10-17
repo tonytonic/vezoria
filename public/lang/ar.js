@@ -1,4 +1,8 @@
 I18N.load({
+"Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"من هذا؟ أعطه اسمًا لتتعرف عليه (أنت فقط تراه).",
+"Qui est-ce ?":"من هذا؟",
+"👋 Ton prénom ?":"👋 ما اسمك؟",
+"Pour que {0} sache qui suit son voyage.":"ليعرف {0} من يتابع رحلته.",
 "Mes propres voyages":"رحلاتي الخاصة",
 "Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"ليست لديك رحلة خاصة بك بعد: حضّر رحلتك متى شئت.",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = رابط لهذه الرحلة فقط، لمن يجب أن يرى هذه الرحلة وحدها.",

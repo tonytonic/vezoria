@@ -1,4 +1,8 @@
 I18N.load({
+"Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"这是谁？起个名字方便辨认（只有你能看到）。",
+"Qui est-ce ?":"这是谁？",
+"👋 Ton prénom ?":"👋 你的名字？",
+"Pour que {0} sache qui suit son voyage.":"让 {0} 知道谁在关注他的旅行。",
 "Mes propres voyages":"我自己的旅行",
 "Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"你还没有自己的旅行：随时开始规划吧。",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = 仅限这段旅行的链接，发给只应看到这段旅行的人。",

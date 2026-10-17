@@ -1,4 +1,10 @@
 I18N.load({
+"Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"Wer ist das? Gib einen Namen, damit du es weißt (nur du siehst ihn).",
+"Qui est-ce ?":"Wer ist das?",
+"👋 Ton prénom ?":"👋 Dein Vorname?",
+"Pour que {0} sache qui suit son voyage.":"Damit {0} weiß, wer der Reise folgt.",
+"Merci":"Danke",
+"Prénom":"Vorname",
 "Mes propres voyages":"Meine eigenen Reisen",
 "Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"Du hast noch keine eigene Reise: Plane deine, wann du willst.",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = ein Link nur für diese Reise, für jemanden, der nur sie sehen soll.",

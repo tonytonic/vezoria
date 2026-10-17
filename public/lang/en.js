@@ -1,4 +1,10 @@
 I18N.load({
+"Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"Who is this? Give them a name so you can tell (only you see it).",
+"Qui est-ce ?":"Who is this?",
+"👋 Ton prénom ?":"👋 Your first name?",
+"Pour que {0} sache qui suit son voyage.":"So {0} knows who follows their trip.",
+"Merci":"Thanks",
+"Prénom":"First name",
 "Mes propres voyages":"My own trips",
 "Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"You don’t have a trip of your own yet: plan yours whenever you like.",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = a link for this trip only, to send to someone who should see only it.",

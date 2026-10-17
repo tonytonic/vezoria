@@ -1,4 +1,8 @@
 I18N.load({
+"Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"Bu kim? Tanımak için bir ad ver (yalnızca sen görürsün).",
+"Qui est-ce ?":"Bu kim?",
+"👋 Ton prénom ?":"👋 Adın ne?",
+"Pour que {0} sache qui suit son voyage.":"{0} seyahatini kimin takip ettiğini bilsin diye.",
 "Mes propres voyages":"Kendi seyahatlerim",
 "Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"Henüz kendi seyahatin yok: istediğin zaman hazırla.",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = yalnızca bu seyahat için bağlantı; sadece bunu görmesi gereken birine gönder.",

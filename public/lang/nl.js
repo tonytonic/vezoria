@@ -1,4 +1,10 @@
 I18N.load({
+"Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"Wie is dit? Geef een naam zodat je het weet (alleen jij ziet die).",
+"Qui est-ce ?":"Wie is dit?",
+"👋 Ton prénom ?":"👋 Je voornaam?",
+"Pour que {0} sache qui suit son voyage.":"Zodat {0} weet wie de reis volgt.",
+"Merci":"Bedankt",
+"Prénom":"Voornaam",
 "Mes propres voyages":"Mijn eigen reizen",
 "Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"Je hebt nog geen eigen reis: plan de jouwe wanneer je wilt.",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = een link alleen voor deze reis, voor iemand die alleen deze mag zien.",

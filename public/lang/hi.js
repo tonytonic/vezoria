@@ -1,4 +1,8 @@
 I18N.load({
+"Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"यह कौन है? पहचानने के लिए नाम दें (सिर्फ़ आप देखेंगे)।",
+"Qui est-ce ?":"यह कौन है?",
+"👋 Ton prénom ?":"👋 आपका नाम?",
+"Pour que {0} sache qui suit son voyage.":"ताकि {0} जान सकें कि उनकी यात्रा कौन फ़ॉलो कर रहा है।",
 "Mes propres voyages":"मेरी अपनी यात्राएँ",
 "Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"अभी आपकी अपनी कोई यात्रा नहीं है: जब चाहें अपनी यात्रा तैयार करें।",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = सिर्फ़ इस यात्रा का लिंक, उसके लिए जिसे सिर्फ़ यही दिखनी चाहिए।",

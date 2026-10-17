@@ -1,4 +1,8 @@
 I18N.load({
+"Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"Кто это? Дай имя, чтобы узнавать (видишь только ты).",
+"Qui est-ce ?":"Кто это?",
+"👋 Ton prénom ?":"👋 Как тебя зовут?",
+"Pour que {0} sache qui suit son voyage.":"Чтобы {0} знал(а), кто следит за поездкой.",
 "Mes propres voyages":"Мои поездки",
 "Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"У тебя пока нет своей поездки: подготовь её, когда захочешь.",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = ссылка только на эту поездку — для того, кто должен видеть только её.",

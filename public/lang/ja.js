@@ -1,4 +1,8 @@
 I18N.load({
+"Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).":"これは誰？わかるように名前を付けましょう（あなただけに表示）。",
+"Qui est-ce ?":"これは誰？",
+"👋 Ton prénom ?":"👋 お名前は？",
+"Pour que {0} sache qui suit son voyage.":"{0} さんが誰がフォローしているかわかるように。",
 "Mes propres voyages":"自分の旅",
 "Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.":"まだ自分の旅はありません。好きなときに準備しましょう。",
 "🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.":"🔗 = この旅だけのリンク。この旅だけを見てほしい人に送ります。",
