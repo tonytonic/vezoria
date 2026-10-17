@@ -14858,7 +14858,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18e';
+  const BUILD = '2026-10-18f';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -14969,7 +14969,11 @@ ${pm.join('\n')}</Document></kml>`;
     'check','delCheck','addCheck','like','saveWish','delWish','wishToTrip','saveTrip','delTrip','closeTrip','reopenTrip',
     'echAdd','echDel','echSpread','echToggle','lisser','echReset','echRange','echRangeReset','plCfg','plAdd','plDel','plOpt',
     'wizard','wzCreate','discAdd','cityMove','cityLock','cityDel','cityOpt','newProfile','saveProfile','delProfile','importPick','wipe','editSouv','autoPhotoPick','autoPhotoGo','coverSet','eveSave','worldPlanGo','worldNew'];
-  [...MUT, ...NEWMUT, 'serverWipe'].forEach(n=>{ const f = api[n]; if(!f) return; api[n] = (...a) => {
+  // partage, abonnés, compagnons : tout ce qui retire, bloque, coupe ou efface est aussi bloqué en mode lecture
+  const SHAREMUT = ['feedStop','feedReset','feedPublish','carnetPublish','feedShareOne','fwBlock','fwHideOne','fwTripsSave','userBlock','userHide','cmDel','feedUnfollow',
+    'packSave','packRemoveTrip','packDel','tripLeaveGo','tripUnshare','tripNewCode','serverWipeTrip','serverWipeSheet','cloudLeave','cloudTripOff','cloudFeedCut','syncOff',
+    'demoDel','demoReset','pendDrop','pendAgain','expAdd','tripInviteNow','withWhomGo','inviteAnswer','followInviteGo','pjDel','pollDel','tlDocDel','shopClear','spaceFree','photoSweep'];
+  [...MUT, ...NEWMUT, ...SHAREMUT, 'serverWipe'].forEach(n=>{ const f = api[n]; if(!f) return; api[n] = (...a) => {
     if(M.lock && !(n==='editSouv' && a[0])){ toast('🔒 Mode lecture : touche le cadenas en haut pour modifier'); return; }
     return f(...a); }; });
   return api;
