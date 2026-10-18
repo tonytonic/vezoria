@@ -5191,12 +5191,16 @@ const CV = (function(){
     if(q == null){ const f = document.getElementById('v-form'); q = (t === wz ? ((t.etapes || []).map(e=>e.ville).find(Boolean) || t.titre) : (t.id && tripPlace(t))) || (f && f.titre && f.titre.value.trim()) || t.titre || ''; }
     pk.innerHTML = `<div class="cov-q"><input class="v-in" id="cov-q" value="${esc(q)}" placeholder="Ville, monument, pays…" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.covWiki(this.value)}"><button type="button" class="v-day-edit" onclick="CV.covWiki(document.getElementById('cov-q').value)">🔎</button></div><div class="v-sum-small">Recherche…</div>`;
     if(!q.trim()) { pk.querySelector('.v-sum-small').textContent = 'Écris une ville ou un lieu.'; return; }
-    const out = [], seen = new Set(), add = u => { if(u && !seen.has(u)){ seen.add(u); out.push(u); } };
-    try { add(await wkPhoto(q)); } catch(e){}
-    try { const r = await (await fetch('https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=18&gsrsearch=' + encodeURIComponent(q + ' filetype:bitmap') + '&prop=imageinfo&iiprop=url|size&iiurlwidth=800')).json();
-      Object.values((r.query || {}).pages || {}).sort((a, b)=>(a.index||0) - (b.index||0)).forEach(p=>{ const i = (p.imageinfo || [])[0]; if(i && i.thumburl && i.width >= i.height * 0.9) add(i.thumburl); }); } catch(e){}
+    // Wikimedia n’accepte plus que des largeurs « standard » (330, 500, 960, 1280…) : vignette 330 px, couverture 960 px ou l’original s’il est plus petit
+    const out = [], seen = new Set(), add = (g, f) => { if(g && !seen.has(f || g)){ seen.add(f || g); out.push({g, f:f || g}); } };
+    try { const w = await wkPhoto(q, true); if(w) add(w.g, w.f); } catch(e){}
+    // même chemin que l’Explorer (Special:FilePath, largeurs 500 et 960) : c’est celui qui s’affiche bien sur les téléphones
+    try { const r = await (await fetch('https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=24&gsrsearch=' + encodeURIComponent(q + ' filetype:bitmap') + '&prop=imageinfo&iiprop=size|mime')).json();
+      Object.values((r.query || {}).pages || {}).sort((a, b)=>(a.index||0) - (b.index||0)).forEach(p=>{ const i = (p.imageinfo || [])[0] || {};
+        if(!p.title || !/jpe?g|png|webp/.test(i.mime || 'image/jpeg') || (i.width && i.width < i.height * 0.9)) return;
+        add(commons(p.title, 500), commons(p.title, i.width && i.width < 960 ? i.width : 960)); }); } catch(e){}
     const box = document.getElementById('cov-pick'); if(!box) return;
-    box.querySelector('.v-sum-small').outerHTML = out.length ? `<div class="cov-grid">${out.slice(0, 15).map(u=>`<button type="button" class="cov-ph" onclick="CV.covPick(this)" data-u="${esc(u)}"><img src="${esc(u.replace(/\/\d+px-/, '/320px-'))}" alt="" loading="lazy" onerror="this.parentNode.remove()"></button>`).join('')}</div><div class="v-sum-small">Photos Wikimedia Commons (licences libres). Touche celle que tu veux.</div>`
+    box.querySelector('.v-sum-small').outerHTML = out.length ? `<div class="cov-grid">${out.slice(0, 15).map(o=>`<button type="button" class="cov-ph" onclick="CV.covPick(this)" data-u="${esc(o.f)}"><img src="${esc(o.g)}" alt="" referrerpolicy="no-referrer" onerror="this.parentNode.remove()"></button>`).join('')}</div><div class="v-sum-small">Photos Wikimedia Commons (licences libres). Touche celle que tu veux.</div>`
       : '<div class="v-sum-small">Aucune photo trouvée (pas de réseau ?). Essaie un autre mot.</div>';
   }
   function covPick(b){ const editing = covT(); if(!editing) return; editing.coverWk = b.dataset.u; editing.cover = ''; document.getElementById('cov-pick').innerHTML = ''; covPrev(); }
@@ -11815,7 +11819,7 @@ ${pm.join('\n')}</Document></kml>`;
     setTimeout(async ()=>{ const imgs = [...document.querySelectorAll('.cv-idea img[data-wk]')];
       imgs.forEach(async i=>{ const w = wkParse(i.dataset.wk); if(!w) return; const k = 'sum:' + w.title;
         try { if(!(k in wkCache)){ const j = await (await fetch('https://fr.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(w.title.replace(/ /g,'_')))).json(); wkCache[k] = (j.originalimage && j.thumbnail && j.thumbnail.source) || (j.thumbnail && j.thumbnail.source) || ''; }
-          if(wkCache[k]){ i.src = wkCache[k].replace(/\/\d+px-/, '/640px-'); i.onload = () => i.parentNode.classList.add('has'); } } catch(e){} });
+          if(wkCache[k]){ i.src = wkCache[k].replace(/\/\d+px-/, '/500px-'); i.onload = () => i.parentNode.classList.add('has'); } } catch(e){} });
       if(focus != null){ const e = document.getElementById('idea-' + focus); if(e) e.scrollIntoView({behavior:'smooth', block:'start'}); }
       inspPaint(); inspEnrich(); }, 30);
   }
@@ -12939,13 +12943,16 @@ ${pm.join('\n')}</Document></kml>`;
     if(T.length) return cityOf(T[0].to);
     return String(t.sous || t.titre || '').split(/[→\/·,|–-]/)[0].trim();
   }
-  async function wkPhoto(q){
+  async function wkPhoto(q, both){
     for(const lg of ['fr', 'en']){
       try { const r = await fetch(`https://${lg}.wikipedia.org/api/rest_v1/page/summary/` + encodeURIComponent(q.replace(/ /g, '_'))); if(!r.ok) continue;
         const j = await r.json(); if(j.type === 'disambiguation') continue;
-        const u = (j.thumbnail && j.thumbnail.source) || ''; if(u) return u.replace(/\/\d+px-/, '/800px-'); } catch(e){}
+        const th = j.thumbnail && j.thumbnail.source, oi = j.originalimage || {}; if(!th && !oi.source) continue;
+        // largeurs standard Wikimedia seulement (960 px), ou l’original s’il est plus petit
+        const f = oi.source && oi.width && oi.width <= 960 ? oi.source : th ? th.replace(/([\/-])\d+px-/, '$1960px-') : oi.source;
+        return both ? {g:th ? th.replace(/([\/-])\d+px-/, '$1500px-') : f, f} : f; } catch(e){}
     }
-    return '';
+    return both ? null : '';
   }
   function tripCardsPaint(){
     document.querySelectorAll('.cv-tripcard.tc[data-tid]').forEach(async el=>{
@@ -12954,7 +12961,7 @@ ${pm.join('\n')}</Document></kml>`;
       { const u = await coverURL(t); if(u){ show(u); return; } }
       const q = tripPlace(t); if(!q) return;
       const C = M.tripImg || (M.tripImg = {}), c = C[t.id];
-      if(c && c.q === q && (c.u || Date.now() - (c.at || 0) < 3 * 864e5)){ show(c.u); return; }   // sans photo trouvée : on réessaie 3 jours plus tard (hors ligne, etc.)
+      if(c && c.q === q && !/\/800px-/.test(c.u || '') && (c.u || Date.now() - (c.at || 0) < 3 * 864e5)){ show(c.u); return; }   // sans photo trouvée : on réessaie 3 jours plus tard (hors ligne, etc.)
       const u = await wkPhoto(q); C[t.id] = {q, u, at:Date.now()}; persist(); show(u);
     });
   }
@@ -15171,7 +15178,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18r';
+  const BUILD = '2026-10-18s';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
