@@ -1034,6 +1034,22 @@ body.cv-ph-past .cv-nav{background:rgba(58,33,25,.94);box-shadow:0 14px 34px -10
 .cv-tripcard .tt small{font-family:var(--ui);font-style:normal;font-size:.7rem;color:var(--green)}
 .cv-tripcard .td{grid-column:1;font-size:.8rem;color:var(--gray)}
 .cv-tripcard .ins{grid-column:2;grid-row:1 / 3;align-self:center}
+.cv-tripcard.tc{display:flex;position:relative;gap:14px;align-items:stretch;min-height:138px;padding:14px 14px 16px;border:0;border-radius:6px;color:var(--ink);background:#fffaf0;
+  background-image:repeating-linear-gradient(135deg,#e2574c 0 10px,transparent 10px 20px,#2f6fb5 20px 30px,transparent 30px 40px);background-size:100% 5px;background-repeat:no-repeat;background-position:0 100%;
+  box-shadow:0 1px 0 #efe4cc,0 8px 18px rgba(60,40,20,.12);overflow:visible}
+.cv-tripcard.tc.on{outline:2.5px solid var(--sun2);outline-offset:3px}
+.tc .tc-pic{flex:0 0 38%;max-width:150px;background:#fff;padding:6px 6px 18px;box-shadow:0 3px 10px rgba(0,0,0,.15);transform:rotate(-2.5deg);align-self:center}
+.cv-tripw:nth-child(even) .tc .tc-pic{transform:rotate(2deg)}
+.tc .tc-img{display:block;width:100%;aspect-ratio:4/3;background:var(--tg);background-size:cover;background-position:center;position:relative}
+.tc .tc-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;padding:4px 0 0}
+.tc .tt{padding-right:58px;font-size:1.3rem;line-height:1.15;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.tc .td{padding-right:40px;font-size:.76rem;color:var(--gray);border-bottom:1px dashed #e3d7bd;padding-bottom:6px}
+.tc .tc-st{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.74rem;color:var(--gray)}.tc .tc-st b{color:var(--ink)}.tc .tc-st i{font-style:normal}
+.tc .ins{margin-top:auto;align-self:flex-start}
+.tc .tc-stamp{position:absolute;top:10px;right:10px;width:62px;height:62px;border-radius:50%;border:2px dashed var(--sc);color:var(--sc);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;transform:rotate(12deg);font:800 .56rem/1.1 var(--ui);text-transform:uppercase;letter-spacing:.04em;opacity:.85;box-shadow:inset 0 0 0 3px #fffaf0,inset 0 0 0 4px var(--sc)}
+.tc .tc-stamp small{font:700 .5rem/1.1 var(--ui);margin-top:2px;letter-spacing:.02em}
+.tc-prep{--sc:#7b3fb0}.tc-live{--sc:#0f8a5f}.tc-past{--sc:#64748b}
 .cv-tripcard.legacy{background:#F7EFEF;box-shadow:none}
 .cv-pchip{border-radius:30px}
 .archive-banner{border-radius:16px}
@@ -3726,7 +3742,7 @@ const CV = (function(){
       ${ESCALE ? `<a class="v-btn sec cv-escale" href="${ESCALE}">✈️ Chercher des vols avec Escale</a><button class="v-btn sec" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button><button class="v-btn sec" onclick="CV.radarTuto()">✦ Tuto Radar des prix</button>` : ''}
       ${trip() ? `<button class="v-btn sec" onclick="CV.editTrip('${M.trip}')">✏️ Modifier « ${esc(trip().titre)} »</button>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">✕ Fermer</button></div>`);
-    requestAnimationFrame(tripSheetScroll);
+    requestAnimationFrame(tripSheetScroll); setTimeout(tripCardsPaint, 30);
   }
   function buildTabs(){
     const g = groupOf(M.tab);
@@ -12846,6 +12862,50 @@ ${pm.join('\n')}</Document></kml>`;
     const hd = tgt.previousElementSibling && tgt.previousElementSibling.classList.contains('cv-triph') ? tgt.previousElementSibling : tgt;
     sh.scrollTop += hd.getBoundingClientRect().top - sh.getBoundingClientRect().top - 70;
   }
+  /* Une vignette photo par voyage : photo de couverture, sinon la photo Wikipédia de la destination */
+  const TC_GRAD = {prep:'linear-gradient(135deg,#2b1840,#6b2fa0 60%,#f0a35e)', live:'linear-gradient(135deg,#0f766e,#22c55e 70%,#fde68a)', past:'linear-gradient(135deg,#1e1b4b,#475569 70%,#94a3b8)'};
+  const TC_BADGE = {prep:'À venir', live:'En cours', past:'Passé'};
+  function tripCard(t, p, on){
+    const loc = (window.I18N && I18N.locale) || 'fr-FR', d0 = t.debut ? new Date(t.debut + 'T12:00') : null;
+    const nd = t.debut ? nights(t.debut, t.fin || t.debut) + 1 : 0;
+    const st = new Set(list('item', i=>i.trip===t.id && i.cat==='hotel').map(h=>normQ(cityOf(h.titre))).filter(Boolean)).size;
+    const ini3 = (t.voyageurs||[]).filter(prof);
+    return `<button class="cv-tripcard tc tc-${p}${on ? ' on' : ''}" data-ph="${p}" data-tid="${t.id}" style="--tg:${TC_GRAD[p]}" onclick="CV.close();CV.go('${t.id}')">
+        <span class="tc-pic"><span class="tc-img"></span></span>
+        <span class="tc-b"><span class="tt" data-notr>${esc(t.titre)}</span>
+          <span class="td">${tripDatesLong(t) || 'dates à fixer'}</span>
+          <span class="tc-st">${nd ? `<span>🗓️ <b data-notr>${nd}</b> <i>${nd > 1 ? 'jours' : 'jour'}</i></span>` : ''}${st ? `<span>📍 <b data-notr>${st}</b> <i>${st > 1 ? 'étapes' : 'étape'}</i></span>` : ''}${TS()[t.id] ? '<span>🔗</span>' : ''}</span>
+          ${ini3.length ? `<span class="ins">${ini3.map(ini).join('')}</span>` : ''}</span>
+        <span class="tc-stamp"><span>${t.archived ? '✓ clôturé' : TC_BADGE[p]}</span>${d0 ? `<small data-notr>${esc(new Intl.DateTimeFormat(loc, {month:'short'}).format(d0).replace('.', ''))} ${d0.getFullYear()}</small>` : ''}</span></button>`;
+  }
+  // la destination à illustrer : 1re étape, sinon 1re arrivée, sinon le sous-titre ou le titre du voyage
+  function tripPlace(t){
+    const H = list('item', i=>i.trip===t.id && i.cat==='hotel' && i.titre).sort((a, b)=>(a.date||'').localeCompare(b.date||''));
+    if(H.length) return cityOf(H[0].titre);
+    const T = list('item', i=>i.trip===t.id && i.cat==='transport' && i.to).sort((a, b)=>(a.date||'').localeCompare(b.date||''));
+    if(T.length) return cityOf(T[0].to);
+    return String(t.sous || t.titre || '').split(/[→\/·,|–-]/)[0].trim();
+  }
+  async function wkPhoto(q){
+    for(const lg of ['fr', 'en']){
+      try { const r = await fetch(`https://${lg}.wikipedia.org/api/rest_v1/page/summary/` + encodeURIComponent(q.replace(/ /g, '_'))); if(!r.ok) continue;
+        const j = await r.json(); if(j.type === 'disambiguation') continue;
+        const u = (j.thumbnail && j.thumbnail.source) || ''; if(u) return u.replace(/\/\d+px-/, '/800px-'); } catch(e){}
+    }
+    return '';
+  }
+  function tripCardsPaint(){
+    document.querySelectorAll('.cv-tripcard.tc[data-tid]').forEach(async el=>{
+      const t = R[el.dataset.tid], im = el.querySelector('.tc-img'); if(!t || !im) return;
+      const show = u => { if(!u) return; const i = new Image(); i.onload = () => { im.style.backgroundImage = `url("${u}")`; im.classList.add('ok'); }; i.src = u; };
+      const id = coverId(t);
+      if(id){ const u = urls[id + '.t'] || urls[id] || await photoURL(id + '.t').catch(()=>''); if(u){ show(u); return; } }
+      const q = tripPlace(t); if(!q) return;
+      const C = M.tripImg || (M.tripImg = {}), c = C[t.id];
+      if(c && c.q === q && (c.u || Date.now() - (c.at || 0) < 3 * 864e5)){ show(c.u); return; }   // sans photo trouvée : on réessaie 3 jours plus tard (hors ligne, etc.)
+      const u = await wkPhoto(q); C[t.id] = {q, u, at:Date.now()}; persist(); show(u);
+    });
+  }
   function tripListHTML(cur){
     const ts = trips(), ph = t => tripPhase(t), lbl = {past:'🗺️ Passés', live:'📍 En cours', prep:'🧳 À venir'};
     let last = '', h = '';
@@ -12854,10 +12914,7 @@ ${pm.join('\n')}</Document></kml>`;
       const p = !t.debut ? 'prep' : ph(t);
       if(many && p !== last){ h += `<div class="cv-triph">${lbl[p]}</div>`; last = p; }
       const act = !t.demo;   // 2 raccourcis par voyage : abonnés (lecture seule) · compagnon (voyage complet)
-      h += `<div class="cv-tripw"><button class="cv-tripcard${t.id===cur?' on':''}" data-ph="${p}" onclick="CV.close();CV.go('${t.id}')">
-          <span class="tt">${TS()[t.id] ? '🔗 ' : ''}<span data-notr>${esc(t.titre)}</span>${t.archived?' <small>✓ clôturé</small>':''}</span>
-          <span class="td">${tripDatesLong(t) || 'dates à fixer'}</span>
-          <span class="ins">${(t.voyageurs||[]).filter(prof).map(ini).join('')}</span></button>
+      h += `<div class="cv-tripw">${tripCard(t, p, t.id===cur)}
         ${act ? `<div class="cv-tripact"><button type="button" class="${FT()[t.id] ? 'on' : ''}" onclick="CV.close();CV.feedPublish('${t.id}')">${FT()[t.id] ? '👀 Publié · inviter des abonnés' : '👀 Publier pour des abonnés'}</button><button type="button" onclick="CV.close();CV.tripInviteNow('${t.id}')">👥 Ajouter un compagnon</button>${FT()[t.id] ? `<button type="button" class="cv-ta-w" onclick="CV.feedShareLink('${t.id}')">🔗 Lien abonnés (sans installer l’appli)</button>` : ''}</div>` : ''}</div>`;
     });
     return h;
@@ -15061,7 +15118,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18n';
+  const BUILD = '2026-10-18p';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
