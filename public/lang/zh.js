@@ -1,4 +1,5 @@
 I18N.load({
+"Tous les voyages que je suis":"我关注的所有旅行",
 "🖼️ Photo de couverture":"🖼️ 封面照片",
 "🌐 Chercher sur Wikipédia":"🌐 在维基百科搜索",
 "📷 Ma bibliothèque":"📷 我的相册",

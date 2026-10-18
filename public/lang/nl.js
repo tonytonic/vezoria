@@ -1,4 +1,5 @@
 I18N.load({
+"Tous les voyages que je suis":"Alle reizen die ik volg",
 "🖼️ Photo de couverture":"🖼️ Omslagfoto",
 "🌐 Chercher sur Wikipédia":"🌐 Zoeken op Wikipedia",
 "📷 Ma bibliothèque":"📷 Mijn bibliotheek",

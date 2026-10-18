@@ -1,4 +1,5 @@
 I18N.load({
+"Tous les voyages que je suis":"내가 팔로우하는 모든 여행",
 "🖼️ Photo de couverture":"🖼️ 커버 사진",
 "🌐 Chercher sur Wikipédia":"🌐 위키백과에서 찾기",
 "📷 Ma bibliothèque":"📷 내 사진첩",

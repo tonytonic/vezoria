@@ -1,4 +1,5 @@
 I18N.load({
+"Tous les voyages que je suis":"All the trips I follow",
 "🖼️ Photo de couverture":"🖼️ Cover photo",
 "🌐 Chercher sur Wikipédia":"🌐 Search Wikipedia",
 "📷 Ma bibliothèque":"📷 My library",

@@ -1,4 +1,5 @@
 I18N.load({
+"Tous les voyages que je suis":"Takip ettiğim tüm geziler",
 "🖼️ Photo de couverture":"🖼️ Kapak fotoğrafı",
 "🌐 Chercher sur Wikipédia":"🌐 Vikipedi’de ara",
 "📷 Ma bibliothèque":"📷 Kitaplığım",
