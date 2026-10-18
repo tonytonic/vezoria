@@ -2073,6 +2073,15 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 .jp-who{display:flex;flex-direction:column;gap:6px}
 .jp-p{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:12px;background:#f6f1fb}
 .jp-p small{color:var(--gray)}
+.fol-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:2px 0 12px}
+.fol-t{position:relative}.fol-c{display:block;width:100%;padding:0;border:0;text-align:left;background:#fffaf0;border-radius:6px;overflow:hidden;box-shadow:0 1px 0 #efe4cc,0 6px 14px rgba(60,40,20,.12);cursor:pointer;color:var(--ink)}
+.fol-im{display:block;aspect-ratio:4/3;background:var(--tg);position:relative;overflow:hidden}.fol-im img{width:100%;height:100%;object-fit:cover;display:block}
+.fol-c .cv-badge{position:absolute;top:8px;left:8px}
+.fol-tx{display:flex;flex-direction:column;gap:2px;padding:8px 10px 10px}.fol-tx b{font:600 .98rem/1.2 var(--ui);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.fol-tx small{font-size:.74rem;color:var(--gray)}
+.fol-x{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(20,14,38,.55);color:#fff;font-size:.72rem;cursor:pointer}
+.fd-back{display:flex;align-items:center;justify-content:center;gap:12px;width:calc(100% - 24px);margin:10px 12px 4px;padding:16px 18px;border:0;border-radius:16px;background:#2A1238;color:#fff;font:700 1.08rem/1.2 var(--ui);cursor:pointer;box-shadow:0 4px 12px rgba(42,18,56,.25)}
+.fd-back span{font-size:1.4rem;line-height:1}
+.fd-home .fd-list{overflow-y:auto}
 .fd-trips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:8px 12px;background:#fff;border-bottom:1px solid rgba(0,0,0,.06)}
 .fd-trips button{flex:0 0 auto;border:0;border-radius:99px;padding:7px 12px;font:600 .82rem inherit;background:#f3eefc;color:#2A1238}
 .fd-trips button.on{background:#2A1238;color:#fff}
@@ -4313,7 +4322,7 @@ const CV = (function(){
     if(modeRender()) return;
     if(!t && !['envies','reglages','prefs','livret','badges'].includes(M.tab)){
       // abonné qui n’a pas encore de voyage à lui : les personnes qu’il suit d’abord, chacune vers son carnet
-      const fol = (()=>{ try { return followHTML(); } catch(e){ return ''; } })();
+      const fol = (()=>{ try { return followHTML(); } catch(e){ return ''; } })(); if(fol) setTimeout(()=>{ folPaint(); hydrate(); }, 40);
       body.innerHTML = (fol ? `<div class="home-fol">${fol}</div>` : '') + `<div class="v-box"><h2 class="vb-h">${fol ? 'Mes propres voyages' : 'Aucun voyage'}</h2><p>${fol ? 'Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.' : 'Crée un voyage, ou transforme une envie en voyage depuis l’onglet ✨ Envies.'}</p>
         <button class="v-btn" onclick="CV.newTrip()">＋ Nouveau voyage</button>${tutoBtn()}${demoBtn()}</div>`;
       return;
@@ -12697,7 +12706,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function shareHub(){
     const t0 = trip(), t = t0 && !t0.demo ? t0 : null;
-    let h = `<h2>👥 Partager</h2>` + shTabsBar() + `<div class="sh-tb" data-t="suis">` + followHTML() + `</div>`;
+    let h = `<h2>👥 Partager</h2>` + shTabsBar() + `<div class="sh-tb" data-t="suis">` + followHTML() + `</div>`; setTimeout(()=>{ folPaint(); hydrate(); }, 60);
     if(t){
       const code = TS()[t.id], on = code && spaceObj(code), sp = on ? spaceObj(code) : null, v = (t.voyageurs||[]).filter(prof), fc = feedCode(t.id);
       const grpT = fc ? Object.keys(FT()).filter(x=>FT()[x] === fc && R[x] && !R[x].deleted) : [], gIds = new Set(grpT.map(ftId));   // carnet publié d’un coup : les abonnés voient tous ces voyages
@@ -14555,15 +14564,18 @@ ${pm.join('\n')}</Document></kml>`;
   // côté auteur : les souvenirs (non privés) deviennent des publications
   function feedBuild(tid){
     const c = feedCode(tid), t = R[tid]; if(!c || !t) return 0;
-    TS()[ftId(tid)] = c; const out = [], cov = coverId(t);
-    const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
+    TS()[ftId(tid)] = c; const out = [];
+    // couverture pour les abonnés : ma photo › photo Wikipédia choisie › 1re photo d’un souvenir publié (jamais d’un souvenir privé)
+    const cov = t.cover || (t.coverWk ? '' : ((list('souv', x=>x.trip===tid && !x.priv && (x.photos||[]).length).sort((a,b)=>(a.date||'').localeCompare(b.date||''))[0] || {}).photos || [])[0] || '');
+    const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
     if(!R[head.id] || stripStamp(R[head.id]) !== stripStamp(head)) out.push(head);
     const keep = new Set();
     list('souv', s=>s.trip===tid && !s.priv && ((s.photos||[]).length || (s.texte||'').trim())).forEach(s=>{
       const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 2000), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''};
       keep.add(f.id); if(!R[f.id] || R[f.id].deleted || stripStamp(R[f.id]) !== stripStamp(f)) out.push(f);
-      f.photos.forEach(p=>feedPhotoQ(c, p)); if(cov) feedPhotoQ(c, cov);
+      f.photos.forEach(p=>feedPhotoQ(c, p));
     });
+    if(cov) feedPhotoQ(c, cov);
     list('feed', f=>f.trip===ftId(tid) && !keep.has(f.id)).forEach(f=>out.push(Object.assign(clone(f), {deleted:true})));
     const people = feedTrk(tid), fkId = 'fk:' + tid;
     if(people.length){ const fk = {id:fkId, type:'feedtrk', trip:ftId(tid), people}; if(!R[fkId] || R[fkId].deleted || stripStamp(R[fkId]) !== stripStamp(fk)) out.push(fk); }
@@ -14748,14 +14760,31 @@ ${pm.join('\n')}</Document></kml>`;
     const nw = {}; socEvents().forEach(e=>{ if(e.k === 'post') nw[e.r.trip] = (nw[e.r.trip]||0) + 1; });
     const G = {}; fol.forEach(f=>{ const n = String(f.owner||'').trim() || '?', k = n.toLocaleLowerCase(); (G[k] = G[k] || {n, t:[]}).t.push(f); });
     const gs = Object.values(G).sort((a,b)=>a.n.localeCompare(b.n, undefined, {sensitivity:'base', numeric:true})), many = gs.length > 3;
-    const row = f => { const n = list('feed', x=>x.trip===f.id && !x.deleted).length, k = nw[f.id] || 0;
+    const row = f => folTile(f, nw[f.id] || 0), row0 = f => { const n = list('feed', x=>x.trip===f.id && !x.deleted).length, k = nw[f.id] || 0;
       return `<div class="cv-folr"><button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b data-notr>${esc(f.titre)}</b><small class="v-sum-small" style="display:block">${f.debut ? `<span>${esc(tripDates(f))}</span> · ` : ''}<span>${n} étape${n>1?'s':''}</span></small></span>${k ? `<b class="cv-badge">${k}</b>` : ''}<span>›</span></button><button type="button" class="cv-x" title="Ne plus suivre" onclick="CV.feedUnfollow('${f.id}')">✕</button></div>`; };
     return `<div class="sh-sec">➡️ Les voyages que je suis</div><div class="sh-card cv-folw">
       ${gs.length > 6 ? `<input type="search" class="v-in" style="margin-bottom:8px" placeholder="🔎 Chercher une personne ou un voyage" oninput="CV.folFilter(this)">` : ''}
       <div class="sh-st" style="margin-bottom:6px"><span>👥 ${gs.length} personne${gs.length>1?'s':''}</span><span>🧳 ${fol.length} voyage${fol.length>1?'s':''}</span></div>
       ${gs.map(g=>{ g.t.sort((a,b)=>(b.debut||'').localeCompare(a.debut||'')); const k = g.t.reduce((s, f)=>s + (nw[f.id]||0), 0);
-        return `<details class="cv-folg" data-q="${esc((g.n + ' ' + g.t.map(f=>f.titre).join(' ')).toLocaleLowerCase())}"${many && !k ? '' : ' open'}><summary><i data-notr>${esc((g.n.match(/\p{L}|\d/u)||['?'])[0].toUpperCase())}</i><b data-notr>${esc(g.n)}</b><small>${g.t.length} voyage${g.t.length>1?'s':''}</small>${k ? `<b class="cv-badge">${k}</b>` : ''}</summary>${g.t.map(row).join('')}${g.t.length > 1 ? `<button type="button" class="v-day-edit cv-folall" onclick="CV.feedUnfollow('${g.t[0].id}',1)">🚫 Ne plus suivre <span data-notr>${esc(g.n)}</span></button>` : ''}</details>`; }).join('')}
+        return `<details class="cv-folg" data-q="${esc((g.n + ' ' + g.t.map(f=>f.titre).join(' ')).toLocaleLowerCase())}"${many && !k ? '' : ' open'}><summary><i data-notr>${esc((g.n.match(/\p{L}|\d/u)||['?'])[0].toUpperCase())}</i><b data-notr>${esc(g.n)}</b><small>${g.t.length} voyage${g.t.length>1?'s':''}</small>${k ? `<b class="cv-badge">${k}</b>` : ''}</summary><div class="fol-grid">${g.t.map(row).join('')}</div>${g.t.length > 1 ? `<button type="button" class="v-day-edit cv-folall" onclick="CV.feedUnfollow('${g.t[0].id}',1)">🚫 Ne plus suivre <span data-notr>${esc(g.n)}</span></button>` : ''}</details>`; }).join('')}
       <div class="v-sum-small cv-folnone" style="display:none">Personne ne correspond.</div></div>`;
+  }
+  // une vignette photo par voyage suivi : on touche la photo pour l’ouvrir
+  function folTile(f, k){
+    const n = list('feed', x=>x.trip===f.id && !x.deleted).length, p = !f.debut ? 'prep' : tripPhase(f);
+    const img = f.cover ? `<img data-ph="${esc(f.cover)}.t" alt="">` : f.coverWk ? `<img src="${esc(f.coverWk)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : '';
+    return `<div class="fol-t"><button type="button" class="fol-c" style="--tg:${TC_GRAD[p]}" data-fid="${esc(f.id)}" onclick="CV.feedView('${esc(f.id)}')"><span class="fol-im">${img}</span>
+        ${k ? `<b class="cv-badge">${k}</b>` : ''}<span class="fol-tx"><b data-notr>${esc(f.titre)}</b><small>${f.debut ? `<span data-notr>${esc(tripDates(f))}</span> · ` : ''}<span>${n} étape${n>1?'s':''}</span></small></span></button>
+      <button type="button" class="fol-x" title="Ne plus suivre" aria-label="Ne plus suivre" onclick="CV.feedUnfollow('${esc(f.id)}')">✕</button></div>`;
+  }
+  // couvertures automatiques des voyages suivis (photo Wikipédia de la destination, gardée en mémoire)
+  function folPaint(root){
+    (root || document).querySelectorAll('.fol-c[data-fid]').forEach(async b=>{
+      const f = R[b.dataset.fid], im = b.querySelector('.fol-im'); if(!f || !im || im.querySelector('img') || !f.place) return;
+      const C = M.tripImg || (M.tripImg = {}), c = C[f.id]; let u = '';
+      if(c && c.q === f.place && (c.u || Date.now() - (c.at || 0) < 3 * 864e5)) u = c.u; else { u = await wkPhoto(f.place); C[f.id] = {q:f.place, u, at:Date.now()}; persist(); }
+      if(u && !im.querySelector('img')) im.innerHTML = `<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`;
+    });
   }
   function folFilter(inp){
     const q = inp.value.trim().toLocaleLowerCase(), box = inp.closest('.cv-folw'); let n = 0;
@@ -15130,7 +15159,8 @@ ${pm.join('\n')}</Document></kml>`;
     const fw = list('follower', x=>x.trip===ftid).length;
     ov.innerHTML = `<div class="fd-top"><button type="button" class="fd-x" onclick="CV.feedClose()">✕</button><div><small>Voyage de ${esc(ft.owner||'?')}</small><b>${esc(ft.titre)}</b><small>${ft.debut ? tripDatesLong(ft) : ''}${fw ? ' · 👀 ' + fw + ' abonné' + (fw>1?'s':'') : ''}</small></div></div>
       ${(()=>{ const c = TS()[ftid], sib = c ? list('feedtrip', f=>TS()[f.id] === c && !f.deleted).sort((a, b)=>(b.debut||'').localeCompare(a.debut||'')) : [];
-        return sib.length > 1 ? `<div class="fd-trips">${sib.map(f=>`<button type="button" class="${f.id === ftid ? 'on' : ''}" onclick="CV.feedView('${esc(f.id)}')" data-notr>${esc(f.titre)}</button>`).join('')}</div>` : ''; })()}
+        const nAll = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted).length;
+        return !FT()[String(ftid).replace(/^ft:/,'')] && (sib.length > 1 || nAll > 1) ? `<button type="button" class="fd-back" onclick="CV.feedBack()"><span>←</span><b>Tous les voyages que je suis</b></button>` : ''; })()}
       ${!myName() && !FT()[String(ftid).replace(/^ft:/,'')] ? `<form class="fd-name" onsubmit="event.preventDefault();CV.fwNameSave(this)"><span>👋 Ton prénom ? <small>Pour que ${esc(ft.owner || '?')} sache qui suit son voyage.</small></span><div class="cv-row"><input class="v-in" name="n" maxlength="40" placeholder="Prénom" autocomplete="given-name"><button type="submit" class="fd-send">OK</button></div></form>` : ''}
       <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}${FT()[String(ftid).replace(/^ft:/,'')] || webFollowing() ? '' : `<div class="fd-unf"><button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}')">🚫 Ne plus suivre ce voyage</button>${list('feedtrip', f=>TS()[f.id] && f.id !== ftid && String(f.owner||'').trim().toLocaleLowerCase() === String(ft.owner||'').trim().toLocaleLowerCase()).length ? `<button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}',1)">🚫 Ne plus suivre <span data-notr>${esc(ft.owner || '?')}</span> (tous ses voyages)</button>` : ''}</div>`}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; M.feedLast = ftid; feedMapHydrate();
@@ -15155,6 +15185,14 @@ ${pm.join('\n')}</Document></kml>`;
     const markers = r.people.map(p=>{ const l = p.pts[p.pts.length-1]; return {lat:l[0], lng:l[1], label:((p.n || '?')[0] || '?').toUpperCase(), color:p.c || '#0ea5e9'}; });
     try { const c = await drawMap({w:640, h:360, lines, markers, maxZoom:13}); if(el.isConnected) el.innerHTML = `<img src="${c.toDataURL('image/jpeg', .86)}" alt="" style="width:100%;display:block;border-radius:14px">`; } catch(e){ el.innerHTML = ''; }
   }
+  // retour à la grille des voyages suivis (dans l’appli : l’accueil ; dans le navigateur : la même grille en plein écran)
+  function feedBack(){
+    const ov = document.getElementById('cv-feed'); if(ov) ov.remove(); M.feedOpen = null;
+    if(!(webFollowing() && !isInstalled())){ document.body.style.overflow = ''; if(!trips().length || M.tab === 'reglages') { try { render(); } catch(e){} } else { try { shareHub(); } catch(e){} } return; }
+    const h = document.createElement('div'); h.id = 'cv-feed'; h.className = 'fd-home';
+    h.innerHTML = `<div class="fd-top"><div><b>➡️ Les voyages que je suis</b></div></div><div class="fd-list" style="padding:12px">${followHTML()}</div>`;
+    document.body.appendChild(h); document.body.style.overflow = 'hidden'; folPaint(h); hydrate();
+  }
   function feedClose(){ const ov = document.getElementById('cv-feed'); if(ov) ov.remove(); document.body.style.overflow = ''; M.feedOpen = null; if(webFollowing() && !isInstalled()) webCreate(); }
   // côté auteur : ❤️ et 💬 sur ses souvenirs
   function souvTop(){
@@ -15178,7 +15216,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18s';
+  const BUILD = '2026-10-18t';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15272,7 +15310,7 @@ ${pm.join('\n')}</Document></kml>`;
   setTimeout(vzPaint, 0);
   var VZAPI = {vzGo, vzHide, vzNews, vzAvis, vzStar, vzSend, vzRestore, vzPaint};
 
-  const api = {covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
+  const api = {feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
