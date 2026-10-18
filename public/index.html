@@ -5155,12 +5155,7 @@ const CV = (function(){
         ${field('Itinéraire / sous-titre','sous',t.sous,'text','placeholder="Ex. Rome → Malte → Athènes"')}
         <div class="v-f2">${field('Début','debut',t.debut,'date')}${field('Fin','fin',t.fin,'date')}</div>
         <div class="v-f"><label>Voyageurs</label>${peopleSel('cv-tv', pool, t.voyageurs||[])}</div>
-        <div class="v-f"><label>🖼️ Photo de couverture</label>
-          <div class="cov-prev"><span class="cov-img" id="cov-img" style="--tg:${TC_GRAD.prep}"></span><small id="cov-src"></small></div>
-          <div class="cov-btns"><button type="button" class="v-day-edit" onclick="CV.covWiki()">🌐 Chercher sur Wikipédia</button>
-            <label class="v-day-edit">📷 Ma bibliothèque<input type="file" accept="image/*" hidden onchange="CV.covFile(this)"></label>
-            <button type="button" class="v-day-edit" id="cov-del" onclick="CV.covDel()">✕ Retirer</button></div>
-          <div id="cov-pick"></div></div>
+        ${covBlock()}
         <div class="v-f"><label>Devise du voyage</label><select class="v-in" name="devise">${Object.keys(CURS).map(c=>`<option value="${c}"${c===(t.devise || (id ? 'EUR' : (M.cur || 'EUR'))) ? ' selected' : ''}>${c} · ${CURS[c]}</option>`).join('')}</select></div>
         ${field('Objectif de budget par personne (' + CS() + ')','objectif',t.objectif,'text','inputmode="decimal"')}
         ${id ? '' : `<label class="cv-checkline"><input type="checkbox" id="cv-basic" checked> Ajouter une checklist de base</label>`}
@@ -5168,25 +5163,32 @@ const CV = (function(){
       </form>`);
     covPrev();
   }
-  /* ── 🖼️ Photo de couverture : Wikipédia / Wikimedia Commons ou ma bibliothèque ── */
+  /* ── 🖼️ Photo de couverture : Wikipédia / Wikimedia Commons ou ma bibliothèque (fiche du voyage et assistant de création) ── */
+  const covBlock = () => `<div class="v-f"><label>🖼️ Photo de couverture</label>
+          <div class="cov-prev"><span class="cov-img" id="cov-img" style="--tg:${TC_GRAD.prep}"></span><small id="cov-src"></small></div>
+          <div class="cov-btns"><button type="button" class="v-day-edit" onclick="CV.covWiki()">🌐 Chercher sur Wikipédia</button>
+            <label class="v-day-edit">📷 Ma bibliothèque<input type="file" accept="image/*" hidden onchange="CV.covFile(this)"></label>
+            <button type="button" class="v-day-edit" id="cov-del" onclick="CV.covDel()">✕ Retirer</button></div>
+          <div id="cov-pick"></div></div>`;
+  const covT = () => (document.getElementById('wz-cov') && wz) ? wz : editing;   // l’assistant garde ses choix dans wz, la fiche dans editing
   async function covPrev(){
-    const t = editing, im = document.getElementById('cov-img'), src = document.getElementById('cov-src'), del = document.getElementById('cov-del'); if(!t || !im) return;
+    const t = covT(), im = document.getElementById('cov-img'), src = document.getElementById('cov-src'), del = document.getElementById('cov-del'); if(!t || !im) return;
     const u = await coverURL(t, true);
     im.style.backgroundImage = u ? `url("${u}")` : '';
     if(src) src.textContent = t.cover ? 'Ta photo' : t.coverWk ? 'Photo : Wikimedia Commons / Wikipédia' : u ? 'Automatique : une photo de tes souvenirs' : 'Automatique : la photo Wikipédia de la destination (vignette de Mes voyages)';
     if(del) del.style.display = t.cover || t.coverWk ? '' : 'none';
   }
   async function covFile(input){
-    const f = input.files && input.files[0]; if(!f || !editing) return;
+    const f = input.files && input.files[0], editing = covT(); if(!f || !editing) return;
     const src = document.getElementById('cov-src'); if(src) src.textContent = 'Préparation…';
     try { const pid = 'ph' + uid(); await storePhoto(f, pid); editing.cover = pid; editing.coverWk = ''; persist(); }
     catch(e){ toast('Cette photo n’a pas pu être lue'); }
     input.value = ''; const pk = document.getElementById('cov-pick'); if(pk) pk.innerHTML = ''; covPrev();
   }
-  function covDel(){ if(!editing) return; editing.cover = ''; editing.coverWk = ''; covPrev(); }
+  function covDel(){ const editing = covT(); if(!editing) return; editing.cover = ''; editing.coverWk = ''; covPrev(); }
   async function covWiki(q){
-    const t = editing, pk = document.getElementById('cov-pick'); if(!t || !pk) return;
-    if(q == null){ const f = document.getElementById('v-form'); q = (t.id && tripPlace(t)) || (f && f.titre && f.titre.value.trim()) || t.titre || ''; }
+    const t = covT(), pk = document.getElementById('cov-pick'); if(!t || !pk) return;
+    if(q == null){ const f = document.getElementById('v-form'); q = (t === wz ? ((t.etapes || []).map(e=>e.ville).find(Boolean) || t.titre) : (t.id && tripPlace(t))) || (f && f.titre && f.titre.value.trim()) || t.titre || ''; }
     pk.innerHTML = `<div class="cov-q"><input class="v-in" id="cov-q" value="${esc(q)}" placeholder="Ville, monument, pays…" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.covWiki(this.value)}"><button type="button" class="v-day-edit" onclick="CV.covWiki(document.getElementById('cov-q').value)">🔎</button></div><div class="v-sum-small">Recherche…</div>`;
     if(!q.trim()) { pk.querySelector('.v-sum-small').textContent = 'Écris une ville ou un lieu.'; return; }
     const out = [], seen = new Set(), add = u => { if(u && !seen.has(u)){ seen.add(u); out.push(u); } };
@@ -5197,7 +5199,7 @@ const CV = (function(){
     box.querySelector('.v-sum-small').outerHTML = out.length ? `<div class="cov-grid">${out.slice(0, 15).map(u=>`<button type="button" class="cov-ph" onclick="CV.covPick(this)" data-u="${esc(u)}"><img src="${esc(u.replace(/\/\d+px-/, '/320px-'))}" alt="" loading="lazy" onerror="this.parentNode.remove()"></button>`).join('')}</div><div class="v-sum-small">Photos Wikimedia Commons (licences libres). Touche celle que tu veux.</div>`
       : '<div class="v-sum-small">Aucune photo trouvée (pas de réseau ?). Essaie un autre mot.</div>';
   }
-  function covPick(b){ if(!editing) return; editing.coverWk = b.dataset.u; editing.cover = ''; document.getElementById('cov-pick').innerHTML = ''; covPrev(); }
+  function covPick(b){ const editing = covT(); if(!editing) return; editing.coverWk = b.dataset.u; editing.cover = ''; document.getElementById('cov-pick').innerHTML = ''; covPrev(); }
   // l'image de couverture d'un voyage : ma photo › Wikipédia choisie › 1re photo de souvenir › (vignettes) photo auto de la destination
   async function coverURL(t, noAuto){
     if(t.cover){ const u = urls[t.cover + '.t'] || urls[t.cover] || await photoURL(t.cover + '.t').catch(()=>''); if(u) return u; }
@@ -6251,6 +6253,7 @@ const CV = (function(){
         <ol>${st.map(e=>`<li>${MODE_ICON[e.mode]||''} <b>${esc(e.ville)}</b> · ${e.nuits} nuit${e.nuits>1?'s':''} <span class="v-sum-small">${fshort(e.debut)} → ${fshort(e.fin)}</span></li>`).join('')}</ol></div>
         <div class="v-f"><label>Reprendre la configuration d’un voyage (vierge)</label><select class="v-in" id="wz-tpl" onchange="CV.wzTpl()"><option value="">— Checklist de base —</option>${trips().map(t=>`<option value="${t.id}"${wz.tpl===t.id?' selected':''}>${esc(t.titre)}</option>`).join('')}</select></div>
         <div id="wz-tplx">${wzTplOpts()}</div>
+        <div id="wz-cov">${covBlock()}</div>
         <div class="v-hint">Seront créés : le programme jour par jour, un hébergement par étape, les trajets entre étapes et les allers-retours de chacun, sans prix (à remplir).</div>`;
     }
     h += `<div class="v-actions">${s>1 ? `<button type="button" class="v-btn sec cv-sq" onclick="CV.wzGo(${s-1})">←</button>` : ''}
@@ -6259,6 +6262,7 @@ const CV = (function(){
     openSheet(h);
     if(s===2) wzDates(wz.debut ? 'n' : 'd');
     if(s===3) wzSum();
+    if(s===5) covPrev();
   }
   function wzTplOpts(){
     const id = wz.tpl; if(!id || !R[id]) return '';
@@ -6273,7 +6277,7 @@ const CV = (function(){
     const tid = 't' + uid(), out = [], v = wz.voyageurs, days = {};
     const day = (date, titre) => { days[date] = {id:'day:'+tid+':'+date, type:'day', trip:tid, date, titre, plan:''}; };
     const T = (o, k) => out.push(Object.assign({id:'i'+uid()+k, type:'item', trip:tid, cat:'transport', statut:'todo', partage:'pp', qui:[]}, o));
-    out.push({id:tid, type:'trip', titre:wz.titre, sous:st.map(e=>e.ville).join(' → '), debut:wz.debut, fin, voyageurs:v, objectif: wz.objectif==='' ? '' : num(wz.objectif)});
+    out.push({id:tid, type:'trip', titre:wz.titre, sous:st.map(e=>e.ville).join(' → '), debut:wz.debut, fin, voyageurs:v, objectif: wz.objectif==='' ? '' : num(wz.objectif), cover:wz.cover || '', coverWk:wz.coverWk || ''});
     st.forEach((e,i)=>{
       if(e.nuits > 0) out.push({id:'i'+uid()+'h'+i, type:'item', trip:tid, cat:'hotel', titre:e.ville, date:e.debut, dateFin:e.fin, statut:'todo', partage:'grp', qui:[]});
       const arrive = i===0 ? 'Arrivée à ' + e.ville : st[i-1].ville + ' → ' + e.ville;
@@ -15167,7 +15171,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18q';
+  const BUILD = '2026-10-18r';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
