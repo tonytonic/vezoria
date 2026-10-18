@@ -2520,10 +2520,28 @@ const CV = (function(){
     } catch(e){}
     wipeAsking = false; if(wipeQ.length) setTimeout(wipeAskNext, 800);
   }
-  function mergeRemote(records){
+  // voyage partagé rejoint (ou rejoint de nouveau) : les fiches que j’avais retirées de MON téléphone en le quittant
+  // ne doivent pas rester « supprimées » : on efface ces traces locales, le dossier partagé fait foi
+  function tombClear(tid){
+    let n = 0; const sc = TS()[tid];
+    Object.keys(R).forEach(id=>{ const r = R[id]; if(r && r.deleted && (r.id === tid || r.trip === tid) && r.type !== 'member'){ delete R[id]; n++;
+      M.dirty = M.dirty.filter(x=>x !== id); (M.spaces||[]).forEach(sp=>{ if(sp.dirty) sp.dirty = sp.dirty.filter(x=>x !== id); }); } });
+    if(M.left) delete M.left[tid];
+    return n;
+  }
+  // réparation des téléphones déjà touchés : voyage quitté puis rejoint avant ce correctif
+  function rejoinFix(){
+    const L = M.left || {}; let n = 0;
+    Object.keys(L).forEach(tid=>{ const sp = TS()[tid] && spaceObj(TS()[tid]); if(!sp) return; n += tombClear(tid); sp.since = 0; });
+    if(n) persist();
+    return n;
+  }
+  function mergeRemote(records, fromMain){
     let changed = 0;
     for(const r of records){
       if(!r || !r.id) continue;
+      // depuis MON carnet principal : une suppression d’une fiche d’un voyage partagé ne compte pas (le dossier partagé fait foi)
+      if(fromMain && r.deleted && r.trip && TS()[r.trip] && spaceObj(TS()[r.trip]) && R[r.id] && !R[r.id].deleted) continue;
       const l = R[r.id];
       if(l && isDirty(r.id) && (l.updatedAt||0) > (r.updatedAt||0)) continue;
       if(!l || (r.updatedAt||0) > (l.updatedAt||0)){ R[r.id] = r; changed++; }
@@ -2540,7 +2558,7 @@ const CV = (function(){
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id]));
-        j.records.forEach(r=>{ if(r && (r.type==='trip' || r.type==='feedtrip') && (force || !TS()[r.id]) && !(r.type==='feedtrip' && (M.unfol||{})[r.id] && !force)) TS()[r.id] = sp.code;
+        j.records.forEach(r=>{ if(r && (r.type==='trip' || r.type==='feedtrip') && (force || !TS()[r.id]) && !(r.type==='feedtrip' && (M.unfol||{})[r.id] && !force)){ if(r.type==='trip' && !TS()[r.id]) tombClear(r.id); TS()[r.id] = sp.code; }
           if(r && (r.type==='feedgrant' || r.type==='packtrip') && r.trip && !TS()[r.trip]) TS()[r.trip] = sp.code; });
         changed += mergeRemote(j.records); sp.since = j.now;
       }
@@ -2565,7 +2583,7 @@ const CV = (function(){
     let changed = 0; const hadDirty = M.dirty.length;
     try {
       const now0 = Date.now(), auto = manual !== true && !pull;
-      try { mvMark(); mbTouch(); fwKeyTouch().catch(()=>{}); } catch(e){}
+      try { rejoinFix(); mvMark(); mbTouch(); fwKeyTouch().catch(()=>{}); } catch(e){}
       if(mainOn && !(auto && !M.dirty.length && now0 - (M.sync.last || 0) < 120000)){   // rien à envoyer et vu il y a moins de 2 min : on passe
       const ids = [...M.dirty];
       let first = true;
@@ -2575,7 +2593,7 @@ const CV = (function(){
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (M.sync.since||0) - 5000), chunk);
         M.dirty = M.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id]));
-        changed += mergeRemote(j.records);
+        changed += mergeRemote(j.records, true);
         M.sync.since = j.now;
       }
       M.sync.last = Date.now(); M.sync.err = '';
@@ -15229,7 +15247,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18u';
+  const BUILD = '2026-10-18v';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
