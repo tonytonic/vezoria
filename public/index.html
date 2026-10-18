@@ -2090,6 +2090,7 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 .cov-prev small{font-size:.72rem;color:var(--gray)}.cov-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.cov-btns label.v-day-edit{cursor:pointer}
 .cov-q{display:flex;gap:6px;margin-top:8px}.cov-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px 0 4px}
 .cov-ph{border:0;padding:0;border-radius:8px;overflow:hidden;aspect-ratio:4/3;background:#eee;cursor:pointer}.cov-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.sy-diag{display:flex;gap:8px}.sy-diag>div{flex:1;background:#fff;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px;box-shadow:var(--shadow)}.sy-diag span{font-size:.7rem;color:var(--gray)}.sy-diag b{font-size:1.3rem}.sy-diag small{font-size:.72rem;color:var(--gray)}
 .sp-ent label{font-weight:700;font-size:.85rem}
 .sp-ccs{display:flex;flex-wrap:wrap;gap:5px}.sp-cc{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #e3d6f0;border-radius:14px;padding:3px 4px 3px 9px;font-size:.78rem;font-weight:700}.sp-cc button{border:0;background:#efe6f8;border-radius:50%;width:20px;height:20px;font-size:.65rem;line-height:1;cursor:pointer;color:inherit}
 .sp-ent small{font-size:.72rem;color:var(--gray)}
@@ -2535,6 +2536,39 @@ const CV = (function(){
     Object.keys(L).forEach(tid=>{ const sp = TS()[tid] && spaceObj(TS()[tid]); if(!sp) return; n += tombClear(tid); sp.since = 0; });
     if(n) persist();
     return n;
+  }
+  // 🔄 Synchro d’un voyage partagé : ce que ce téléphone a, ce que le dossier partagé contient, et les deux réparations
+  function tripCount(id){ const all = Object.values(R).filter(r=>r && r.trip === id && !['member','invite','tripmove'].includes(r.type)); const live = all.filter(r=>!r.deleted); return {live:live.length, dead:all.length - live.length, items:live.filter(r=>r.type==='item').length, days:live.filter(r=>r.type==='day').length}; }
+  function tripSyncSheet(id){
+    const t = R[id], c = TS()[id], sp = c && spaceObj(c); if(!t || !sp) return;
+    const n = tripCount(id), mine = !t.createdBy || t.createdBy === M.me;
+    openSheet(`<h2>🔄 Synchro du voyage</h2><div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(t.titre)}</div>
+      <div class="sy-diag"><div><span>Sur ce téléphone</span><b>${n.live}</b><small><span>fiches</span> · <span data-notr>${n.items}</span> <span>résas</span> · <span data-notr>${n.days}</span> <span>jours</span></small></div>
+        <div><span>État</span><b>${sp.err ? '🔴' : (sp.dirty||[]).length ? '🟠' : '🟢'}</b><small>${sp.err ? `<span data-notr>${esc(sp.err)}</span>` : (sp.dirty||[]).length ? `<span data-notr>${sp.dirty.length}</span> <span>en attente d’envoi</span>` : sp.last ? `<span>à jour</span> · <span data-notr>${when(sp.last)}</span>` : '<span>jamais synchronisé</span>'}</small></div></div>
+      <div id="sy-res" class="v-sum-small" style="margin:8px 0"></div>
+      <button type="button" class="v-btn" onclick="CV.tripPullAll('${id}')">📥 Tout récupérer depuis le voyage partagé</button>
+      <div class="v-sum-small" style="margin:4px 0 10px">Recharge tout le voyage tel qu’il est chez les autres. Rien n’est effacé chez eux.</div>
+      <button type="button" class="v-btn sec" onclick="CV.tripPushAll('${id}')">📤 Tout renvoyer depuis ce téléphone</button>
+      <div class="v-sum-small" style="margin:4px 0 10px">${mine ? 'À faire sur le téléphone de celui qui a rempli le voyage : toutes ses fiches et photos repartent vers les compagnons.' : 'Renvoie tes fiches et tes photos vers le voyage partagé.'}</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  async function tripPullAll(id){
+    const c = TS()[id], sp = c && spaceObj(c), out = document.getElementById('sy-res'); if(!sp) return;
+    if(out) out.textContent = MSGT('Je récupère le voyage…');
+    try {
+      tombClear(id); TS()[id] = c;
+      const j = await call(0, [], c), of = j.records.filter(r=>r && r.trip === id && !['member','invite','tripmove'].includes(r.type));
+      mergeRemote(j.records); sp.since = j.now; sp.err = ''; sp.last = Date.now(); persist(); refresh();
+      const n = tripCount(id);
+      if(out) out.innerHTML = `✅ ${MSGT('Le voyage partagé contient')} <b>${of.filter(r=>!r.deleted).length}</b> ${MSGT('fiches')} · ${MSGT('ce téléphone en a maintenant')} <b>${n.live}</b>.`
+        + (of.filter(r=>!r.deleted).length < 3 ? '<br>⚠️ ' + MSGT('Le voyage partagé est presque vide : celui qui l’a rempli doit toucher « Tout renvoyer » sur son téléphone.') : '');
+    } catch(e){ if(out) out.textContent = '⚠️ ' + (e.message || e); }
+  }
+  async function tripPushAll(id){
+    const out = document.getElementById('sy-res'); if(out) out.textContent = MSGT('J’envoie tout le voyage…');
+    try { await photoResend(id); await syncNow(true); const sp = spaceObj(TS()[id]);
+      if(out) out.innerHTML = sp && sp.err ? '⚠️ ' + esc(sp.err) : `✅ ${MSGT('Voyage renvoyé :')} <b>${tripCount(id).live}</b> ${MSGT('fiches')}. ${MSGT('Les compagnons le reçoivent à leur prochaine synchro.')}`; }
+    catch(e){ if(out) out.textContent = '⚠️ ' + (e.message || e); }
   }
   function mergeRemote(records, fromMain){
     let changed = 0;
@@ -5178,6 +5212,7 @@ const CV = (function(){
     const pool = profiles().map(p=>p.id);
     openSheet(`<h2>🧳 ${id ? 'Modifier le voyage' : 'Nouveau voyage'}</h2>${byline(t)}
       <form id="v-form" onsubmit="event.preventDefault();CV.saveTrip()">
+        ${id && TS()[id] && spaceObj(TS()[id]) ? `<button type="button" class="v-btn sec" style="margin:0 0 10px" onclick="CV.tripSyncSheet('${id}')">🔄 Synchro de ce voyage partagé</button>` : ''}
         ${field('Nom du voyage','titre',t.titre,'text','required placeholder="Ex. Week-end Palma, Été 2028…"')}
         ${field('Itinéraire / sous-titre','sous',t.sous,'text','placeholder="Ex. Rome → Malte → Athènes"')}
         <div class="v-f2">${field('Début','debut',t.debut,'date')}${field('Fin','fin',t.fin,'date')}</div>
@@ -15247,7 +15282,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18v';
+  const BUILD = '2026-10-18w';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15341,7 +15376,7 @@ ${pm.join('\n')}</Document></kml>`;
   setTimeout(vzPaint, 0);
   var VZAPI = {vzGo, vzHide, vzNews, vzAvis, vzStar, vzSend, vzRestore, vzPaint};
 
-  const api = {feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
+  const api = {tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
