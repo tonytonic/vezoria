@@ -15149,7 +15149,20 @@ ${pm.join('\n')}</Document></kml>`;
       ${open ? `<div class="fd-c">${cm.map(c=>`<div><b>${esc(c.who||'?')}</b> ${esc(c.text)} <small>${c.at ? when(c.at) : ''}</small><button type="button" class="fd-cmore" aria-label="Options" onclick="CV.cmMenu('${c.id}')">⋯</button></div>`).join('') || '<div class="v-sum-small">Pas encore de commentaire.</div>'}
         <div class="cv-row"><input class="v-in" id="cm-${f.id}" placeholder="Écrire un commentaire…" maxlength="600"><button type="button" class="fd-send" onclick="CV.feedComment('${f.id}')">Envoyer</button></div></div>` : ''}</article>`;
   }
-  function feedMorePh(fid){ (M.fdMore = M.fdMore || {})[fid] = ((M.fdMore[fid]) || 12) + 60; feedPaint(fid); }
+  // « +N Voir la suite » : on ajoute les photos suivantes à la grille SANS redessiner la publication, et on garde la même hauteur à l’écran
+  function feedMorePh(fid){
+    const f = R[fid], el = document.getElementById('fp-' + fid), box = el && el.querySelector('.fd-ph'), btn = box && box.querySelector('.fd-more-ph'); if(!f) return;
+    M.fdMore = M.fdMore || {}; const was = M.fdMore[fid] || 12, now = was + 60; M.fdMore[fid] = now;
+    if(!box || !btn){ feedPaint(fid); return; }
+    const sc = el.closest('.fd-list') || document.scrollingElement, y = sc.scrollTop;
+    const au = FT()[String(f.trip).replace(/^ft:/,'')], all = f.photos || [], sh = all.length > now + 3 ? all.slice(was, now) : all.slice(was), rest = all.length - was - sh.length;
+    btn.insertAdjacentHTML('beforebegin', sh.map((p, k)=> au ? `<button type="button" onclick="CV.view('${f.id}',${was + k})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join(''));
+    if(rest > 0) btn.querySelector('b').textContent = '+' + rest; else btn.remove();
+    try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch(e){}
+    let user = false; const stop = () => { user = true; }; sc.addEventListener('touchstart', stop, {once:true, passive:true}); sc.addEventListener('wheel', stop, {once:true, passive:true});
+    const keep = () => { if(!user && Math.abs(sc.scrollTop - y) > 2) sc.scrollTop = y; };   // le doigt reprend la main dès qu’il touche l’écran
+    keep(); hydrate(); requestAnimationFrame(keep); setTimeout(keep, 120); setTimeout(keep, 400);
+  }
   function feedPaint(fid){ const el = document.getElementById('fp-' + fid), f = R[fid]; if(el && f){ el.outerHTML = feedPostHTML(f); hydrate(); } }
   function feedTogC(fid){ M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = !M.cmOpen[fid]; feedPaint(fid); }
   function feedView(ftid){
@@ -15216,7 +15229,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18t';
+  const BUILD = '2026-10-18u';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
