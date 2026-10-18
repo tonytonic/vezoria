@@ -2077,6 +2077,10 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 .fd-trips button{flex:0 0 auto;border:0;border-radius:99px;padding:7px 12px;font:600 .82rem inherit;background:#f3eefc;color:#2A1238}
 .fd-trips button.on{background:#2A1238;color:#fff}
 .sp-ent{display:flex;flex-direction:column;gap:6px;background:#f6f1fb;border-radius:14px;padding:10px 12px;margin:8px 0 6px}
+.cov-prev{display:flex;align-items:center;gap:10px}.cov-img{flex:0 0 120px;aspect-ratio:4/3;border-radius:4px;background:var(--tg);background-size:cover;background-position:center;border:5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.15);transform:rotate(-2deg)}
+.cov-prev small{font-size:.72rem;color:var(--gray)}.cov-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.cov-btns label.v-day-edit{cursor:pointer}
+.cov-q{display:flex;gap:6px;margin-top:8px}.cov-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px 0 4px}
+.cov-ph{border:0;padding:0;border-radius:8px;overflow:hidden;aspect-ratio:4/3;background:#eee;cursor:pointer}.cov-ph img{width:100%;height:100%;object-fit:cover;display:block}
 .sp-ent label{font-weight:700;font-size:.85rem}
 .sp-ccs{display:flex;flex-wrap:wrap;gap:5px}.sp-cc{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #e3d6f0;border-radius:14px;padding:3px 4px 3px 9px;font-size:.78rem;font-weight:700}.sp-cc button{border:0;background:#efe6f8;border-radius:50%;width:20px;height:20px;font-size:.65rem;line-height:1;cursor:pointer;color:inherit}
 .sp-ent small{font-size:.72rem;color:var(--gray)}
@@ -5151,11 +5155,56 @@ const CV = (function(){
         ${field('Itinéraire / sous-titre','sous',t.sous,'text','placeholder="Ex. Rome → Malte → Athènes"')}
         <div class="v-f2">${field('Début','debut',t.debut,'date')}${field('Fin','fin',t.fin,'date')}</div>
         <div class="v-f"><label>Voyageurs</label>${peopleSel('cv-tv', pool, t.voyageurs||[])}</div>
+        <div class="v-f"><label>🖼️ Photo de couverture</label>
+          <div class="cov-prev"><span class="cov-img" id="cov-img" style="--tg:${TC_GRAD.prep}"></span><small id="cov-src"></small></div>
+          <div class="cov-btns"><button type="button" class="v-day-edit" onclick="CV.covWiki()">🌐 Chercher sur Wikipédia</button>
+            <label class="v-day-edit">📷 Ma bibliothèque<input type="file" accept="image/*" hidden onchange="CV.covFile(this)"></label>
+            <button type="button" class="v-day-edit" id="cov-del" onclick="CV.covDel()">✕ Retirer</button></div>
+          <div id="cov-pick"></div></div>
         <div class="v-f"><label>Devise du voyage</label><select class="v-in" name="devise">${Object.keys(CURS).map(c=>`<option value="${c}"${c===(t.devise || (id ? 'EUR' : (M.cur || 'EUR'))) ? ' selected' : ''}>${c} · ${CURS[c]}</option>`).join('')}</select></div>
         ${field('Objectif de budget par personne (' + CS() + ')','objectif',t.objectif,'text','inputmode="decimal"')}
         ${id ? '' : `<label class="cv-checkline"><input type="checkbox" id="cv-basic" checked> Ajouter une checklist de base</label>`}
         ${actions(id ? `CV.delTrip('${id}')` : '')}
       </form>`);
+    covPrev();
+  }
+  /* ── 🖼️ Photo de couverture : Wikipédia / Wikimedia Commons ou ma bibliothèque ── */
+  async function covPrev(){
+    const t = editing, im = document.getElementById('cov-img'), src = document.getElementById('cov-src'), del = document.getElementById('cov-del'); if(!t || !im) return;
+    const u = await coverURL(t, true);
+    im.style.backgroundImage = u ? `url("${u}")` : '';
+    if(src) src.textContent = t.cover ? 'Ta photo' : t.coverWk ? 'Photo : Wikimedia Commons / Wikipédia' : u ? 'Automatique : une photo de tes souvenirs' : 'Automatique : la photo Wikipédia de la destination (vignette de Mes voyages)';
+    if(del) del.style.display = t.cover || t.coverWk ? '' : 'none';
+  }
+  async function covFile(input){
+    const f = input.files && input.files[0]; if(!f || !editing) return;
+    const src = document.getElementById('cov-src'); if(src) src.textContent = 'Préparation…';
+    try { const pid = 'ph' + uid(); await storePhoto(f, pid); editing.cover = pid; editing.coverWk = ''; persist(); }
+    catch(e){ toast('Cette photo n’a pas pu être lue'); }
+    input.value = ''; const pk = document.getElementById('cov-pick'); if(pk) pk.innerHTML = ''; covPrev();
+  }
+  function covDel(){ if(!editing) return; editing.cover = ''; editing.coverWk = ''; covPrev(); }
+  async function covWiki(q){
+    const t = editing, pk = document.getElementById('cov-pick'); if(!t || !pk) return;
+    if(q == null){ const f = document.getElementById('v-form'); q = (t.id && tripPlace(t)) || (f && f.titre && f.titre.value.trim()) || t.titre || ''; }
+    pk.innerHTML = `<div class="cov-q"><input class="v-in" id="cov-q" value="${esc(q)}" placeholder="Ville, monument, pays…" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.covWiki(this.value)}"><button type="button" class="v-day-edit" onclick="CV.covWiki(document.getElementById('cov-q').value)">🔎</button></div><div class="v-sum-small">Recherche…</div>`;
+    if(!q.trim()) { pk.querySelector('.v-sum-small').textContent = 'Écris une ville ou un lieu.'; return; }
+    const out = [], seen = new Set(), add = u => { if(u && !seen.has(u)){ seen.add(u); out.push(u); } };
+    try { add(await wkPhoto(q)); } catch(e){}
+    try { const r = await (await fetch('https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=18&gsrsearch=' + encodeURIComponent(q + ' filetype:bitmap') + '&prop=imageinfo&iiprop=url|size&iiurlwidth=800')).json();
+      Object.values((r.query || {}).pages || {}).sort((a, b)=>(a.index||0) - (b.index||0)).forEach(p=>{ const i = (p.imageinfo || [])[0]; if(i && i.thumburl && i.width >= i.height * 0.9) add(i.thumburl); }); } catch(e){}
+    const box = document.getElementById('cov-pick'); if(!box) return;
+    box.querySelector('.v-sum-small').outerHTML = out.length ? `<div class="cov-grid">${out.slice(0, 15).map(u=>`<button type="button" class="cov-ph" onclick="CV.covPick(this)" data-u="${esc(u)}"><img src="${esc(u.replace(/\/\d+px-/, '/320px-'))}" alt="" loading="lazy" onerror="this.parentNode.remove()"></button>`).join('')}</div><div class="v-sum-small">Photos Wikimedia Commons (licences libres). Touche celle que tu veux.</div>`
+      : '<div class="v-sum-small">Aucune photo trouvée (pas de réseau ?). Essaie un autre mot.</div>';
+  }
+  function covPick(b){ if(!editing) return; editing.coverWk = b.dataset.u; editing.cover = ''; document.getElementById('cov-pick').innerHTML = ''; covPrev(); }
+  // l'image de couverture d'un voyage : ma photo › Wikipédia choisie › 1re photo de souvenir › (vignettes) photo auto de la destination
+  async function coverURL(t, noAuto){
+    if(t.cover){ const u = urls[t.cover + '.t'] || urls[t.cover] || await photoURL(t.cover + '.t').catch(()=>''); if(u) return u; }
+    if(t.coverWk) return t.coverWk;
+    const id = coverId(Object.assign({}, t, {cover:''}));
+    if(id){ const u = urls[id + '.t'] || urls[id] || await photoURL(id + '.t').catch(()=>''); if(u) return u; }
+    return '';
   }
   function saveTrip(){
     const t = editing; if(!t) return;
@@ -6505,7 +6554,7 @@ const CV = (function(){
     uploading = true; let upErr = '', waiting = 0, stop = false;
     if((M.fq||[]).length){ try { await feedUpload(); } catch(e){} }   // les vignettes des abonnés passent avant les grandes photos
     // photo → code du carnet, calculé une seule fois (rapide même avec des milliers de photos)
-    const owner = {}, dead = new Set(); Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(!p) return; if(x.deleted) dead.add(p); else if(!owner[p]) owner[p] = x; }); });
+    const owner = {}, dead = new Set(); Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, x.cover, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(!p) return; if(x.deleted) dead.add(p); else if(!owner[p]) owner[p] = x; }); });
     // photos de fiches supprimées (ex. souvenirs remplacés par un nouvel import) : elles ne partent plus et quittent la file
     { const n0 = M.pq.length; M.pq = M.pq.filter(id=>{ const b = String(id).replace(/\.t$/, ''); return owner[b] || !dead.has(b); }); if(M.pq.length !== n0) persist(); }
     const codeOf = id => { const base = String(id).replace(/\.t$/,''), r = owner[base]; if(!r) return photoCode(id); if(r.demo) return null; const t = targets(r)[0]; return t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t; };
@@ -12898,8 +12947,7 @@ ${pm.join('\n')}</Document></kml>`;
     document.querySelectorAll('.cv-tripcard.tc[data-tid]').forEach(async el=>{
       const t = R[el.dataset.tid], im = el.querySelector('.tc-img'); if(!t || !im) return;
       const show = u => { if(!u) return; const i = new Image(); i.onload = () => { im.style.backgroundImage = `url("${u}")`; im.classList.add('ok'); }; i.src = u; };
-      const id = coverId(t);
-      if(id){ const u = urls[id + '.t'] || urls[id] || await photoURL(id + '.t').catch(()=>''); if(u){ show(u); return; } }
+      { const u = await coverURL(t); if(u){ show(u); return; } }
       const q = tripPlace(t); if(!q) return;
       const C = M.tripImg || (M.tripImg = {}), c = C[t.id];
       if(c && c.q === q && (c.u || Date.now() - (c.at || 0) < 3 * 864e5)){ show(c.u); return; }   // sans photo trouvée : on réessaie 3 jours plus tard (hors ligne, etc.)
@@ -13027,7 +13075,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   // photos encore à envoyer : on garde celles des autres carnets, on retire celles des codes effacés
   function pqWithout(codes){
-    const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
+    const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, x.cover, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
     return (M.pq||[]).filter(id=>{ const r = owner[String(id).replace(/\.t$/,'')]; if(!r) return false; const t = targets(r)[0], c = t === 'main' ? M.sync.code : t; return !codes.has(c); });
   }
   async function serverWipeTrip(tid){
@@ -13064,7 +13112,7 @@ ${pm.join('\n')}</Document></kml>`;
     // d’abord on arrête les envois en cours (sinon des photos arriveraient encore après la suppression)
     upHalt = true; for(let k = 0; k < 150 && (uploading || feedUp); k++) await new Promise(r=>setTimeout(r, 200));
     // la file d’attente des autres voyages est gardée ; seules les photos de ce carnet en sortent
-    const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
+    const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, x.cover, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
     const codeOfPh = id => { const r = owner[String(id).replace(/\.t$/,'')]; if(!r) return null; const t = targets(r)[0]; return t === 'main' ? M.sync.code : t; };
     const pqKeep = (M.pq||[]).filter(id=>codeOfPh(id) !== code);
     try {
@@ -13711,10 +13759,11 @@ ${pm.join('\n')}</Document></kml>`;
   async function coverPaint(t){
     const hero = document.querySelector('.header .hero'); if(!hero) return;
     let el = document.getElementById('cv-cover');
-    const id = coverId(t);
+    const id = (t && !t.cover && t.coverWk) ? 'wk:' + t.coverWk : coverId(t);
     if(!id){ if(el) el.remove(); hero.classList.remove('has-cover'); coverCur = ''; return; }
     if(id === coverCur && el) return; coverCur = id;
     if(!el){ el = document.createElement('div'); el.id = 'cv-cover'; hero.prepend(el); }
+    if(id.startsWith('wk:')){ const i = new Image(); i.onload = () => { if(coverCur === id){ el.style.backgroundImage = `url("${t.coverWk}")`; hero.classList.add('has-cover'); } }; i.src = t.coverWk; return; }
     const u = urls[id] || urls[id + '.t'] || await photoURL(id + '.t');
     if(coverCur !== id) return;
     if(u){ el.style.backgroundImage = `url("${u}")`; hero.classList.add('has-cover'); }
@@ -14268,7 +14317,7 @@ ${pm.join('\n')}</Document></kml>`;
         const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(s.code)}});
         let j = {}; try { j = await r.json(); } catch(e){}
         if(!r.ok) throw new Error(j.error || ('erreur ' + r.status));
-        { const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
+        { const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, x.cover, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
           M.pq = (M.pq||[]).filter(id=>{ const r = owner[String(id).replace(/\.t$/,'')]; return r && targets(r)[0] !== 'main'; }); }
         M.pgone = (M.pgone||[]).filter(g=>g.code !== s.code); toast('🗑 Carnet effacé du cloud');
       } catch(e){ alert('Effacement impossible : ' + e.message + '\nRien n’a changé : réessaie quand tu as du réseau.'); return; }
@@ -15118,7 +15167,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18p';
+  const BUILD = '2026-10-18q';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15212,7 +15261,7 @@ ${pm.join('\n')}</Document></kml>`;
   setTimeout(vzPaint, 0);
   var VZAPI = {vzGo, vzHide, vzNews, vzAvis, vzStar, vzSend, vzRestore, vzPaint};
 
-  const api = {bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
+  const api = {covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
