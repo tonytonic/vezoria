@@ -4208,4 +4208,5 @@ I18N.load({
 "Partagé avec tes abonnés":"已与关注者分享",
 "Partagé aux abonnés":"已分享给关注者",
 "Masqué aux abonnés":"对关注者隐藏",
-"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"一次分享你所有的旅行：和旅伴（他能补充一切），或给只读的关注者（照片和游记）。"});
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"一次分享你所有的旅行：和旅伴（他能补充一切），或给只读的关注者（照片和游记）。",
+"Replier":"收起"});

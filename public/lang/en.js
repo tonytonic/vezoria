@@ -1284,4 +1284,5 @@ I18N.load({
 "Partagé avec tes abonnés":"Shared with your followers",
 "Partagé aux abonnés":"Shared with followers",
 "Masqué aux abonnés":"Hidden from followers",
-"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Share all your trips at once: with a companion (they fill in everything), or with read-only followers (photos and stories)."});
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Share all your trips at once: with a companion (they fill in everything), or with read-only followers (photos and stories).",
+"Replier":"Collapse"});

@@ -4208,4 +4208,5 @@ I18N.load({
 "Partagé avec tes abonnés":"フォロワーに公開しました",
 "Partagé aux abonnés":"フォロワーに公開中",
 "Masqué aux abonnés":"フォロワーに非表示",
-"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"旅行をまとめて共有：旅の仲間と（すべて書き足せる）、または閲覧のみのフォロワーと（写真と旅日記）。"});
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"旅行をまとめて共有：旅の仲間と（すべて書き足せる）、または閲覧のみのフォロワーと（写真と旅日記）。",
+"Replier":"たたむ"});

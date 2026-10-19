@@ -4208,4 +4208,5 @@ I18N.load({
 "Partagé avec tes abonnés":"Takipçilerinle paylaşıldı",
 "Partagé aux abonnés":"Takipçilerle paylaşıldı",
 "Masqué aux abonnés":"Takipçilerden gizli",
-"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Tüm seyahatlerini tek seferde paylaş: bir yol arkadaşıyla (her şeyi tamamlar) ya da salt okunur takipçilerle (fotoğraflar ve hikâyeler)."});
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Tüm seyahatlerini tek seferde paylaş: bir yol arkadaşıyla (her şeyi tamamlar) ya da salt okunur takipçilerle (fotoğraflar ve hikâyeler).",
+"Replier":"Daralt"});

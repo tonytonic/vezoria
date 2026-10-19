@@ -1284,4 +1284,5 @@ I18N.load({
 "Partagé avec tes abonnés":"Gedeeld met je volgers",
 "Partagé aux abonnés":"Gedeeld met volgers",
 "Masqué aux abonnés":"Verborgen voor volgers",
-"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Deel al je reizen in één keer: met een reisgenoot (die alles aanvult) of met volgers die alleen kunnen lezen (foto’s en verhalen)."});
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Deel al je reizen in één keer: met een reisgenoot (die alles aanvult) of met volgers die alleen kunnen lezen (foto’s en verhalen).",
+"Replier":"Inklappen"});

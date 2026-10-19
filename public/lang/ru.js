@@ -4208,4 +4208,5 @@ I18N.load({
 "Partagé avec tes abonnés":"Открыто для подписчиков",
 "Partagé aux abonnés":"Открыто подписчикам",
 "Masqué aux abonnés":"Скрыто от подписчиков",
-"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Поделись всеми поездками сразу: с попутчиком (он дополняет всё) или с подписчиками в режиме чтения (фото и рассказы)."});
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Поделись всеми поездками сразу: с попутчиком (он дополняет всё) или с подписчиками в режиме чтения (фото и рассказы).",
+"Replier":"Свернуть"});

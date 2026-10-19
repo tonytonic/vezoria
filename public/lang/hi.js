@@ -4208,4 +4208,5 @@ I18N.load({
 "Partagé avec tes abonnés":"तुम्हारे फ़ॉलोअर्स के साथ साझा",
 "Partagé aux abonnés":"फ़ॉलोअर्स के साथ साझा",
 "Masqué aux abonnés":"फ़ॉलोअर्स से छिपी",
-"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"अपनी सारी यात्राएँ एक साथ शेयर करें: किसी सहयात्री के साथ (वह सब कुछ भरता है) या सिर्फ़ पढ़ने वाले फ़ॉलोअर्स के साथ (फ़ोटो और कहानियाँ)।"});
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"अपनी सारी यात्राएँ एक साथ शेयर करें: किसी सहयात्री के साथ (वह सब कुछ भरता है) या सिर्फ़ पढ़ने वाले फ़ॉलोअर्स के साथ (फ़ोटो और कहानियाँ)।",
+"Replier":"समेटें"});

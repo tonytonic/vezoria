@@ -4208,4 +4208,5 @@ I18N.load({
 "Partagé avec tes abonnés":"팔로워와 공유했어요",
 "Partagé aux abonnés":"팔로워에게 공개",
 "Masqué aux abonnés":"팔로워에게 숨김",
-"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"모든 여행을 한 번에 공유하세요: 여행 동료와(모두 채워요) 또는 읽기 전용 팔로워와(사진과 이야기)."});
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"모든 여행을 한 번에 공유하세요: 여행 동료와(모두 채워요) 또는 읽기 전용 팔로워와(사진과 이야기).",
+"Replier":"접기"});

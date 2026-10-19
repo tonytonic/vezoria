@@ -4208,4 +4208,5 @@ I18N.load({
 "Partagé avec tes abonnés":"مشاركة مع متابعيك",
 "Partagé aux abonnés":"مشاركة مع المتابعين",
 "Masqué aux abonnés":"مخفية عن المتابعين",
-"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"شارك كل رحلاتك دفعة واحدة: مع رفيق (يكمل كل شيء) أو مع متابعين للقراءة فقط (صور وقصص)."});
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"شارك كل رحلاتك دفعة واحدة: مع رفيق (يكمل كل شيء) أو مع متابعين للقراءة فقط (صور وقصص).",
+"Replier":"طيّ"});
