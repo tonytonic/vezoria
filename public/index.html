@@ -15132,6 +15132,12 @@ ${pm.join('\n')}</Document></kml>`;
     openSheet(`<h2>👁️ Ce que voit <span data-notr>${esc(f.who || '?')}</span></h2>
       <div class="v-sum-small" style="margin-bottom:8px">Décoche un voyage pour le cacher à cette personne seulement. Tes autres abonnés le voient toujours.</div>
       ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="fwt" value="${t}"${((FRX()[t]||{}).ex||[]).includes(dev) ? '' : ' checked'}> <span data-notr>${esc(R[t].titre)}</span></label>`).join('')}
+      ${(()=>{ const solo = Object.keys(FT()).filter(t=>R[t] && !R[t].deleted && grpCodeOf(t) !== g).sort((a,b)=>(R[b].debut||'').localeCompare(R[a].debut||''));
+        if(!solo.length) return '';
+        const twins = new Set(fwTwins(dev));
+        return `<div class="sh-k" style="margin-top:12px">📣 Publiés à part, avec leur propre lien</div><div class="v-sum-small" style="margin-bottom:6px">Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.</div>`
+          + solo.map(t=>{ const sees = list('follower', x=>x.trip === ftId(t) && !x.deleted && twins.has(fwDevOf(x))).length;
+            return `<div class="cv-checkline" style="cursor:default"><span>${sees ? '✅' : '➖'}</span> <span><span data-notr>${esc(R[t].titre)}</span> <small class="v-sum-small">${sees ? 'le suit' : 'ne le suit pas'}</small></span></div>`; }).join(''); })()}
       ${f.pk ? '' : `<div class="v-sum-small" style="margin-top:6px">⚠️ Cette personne a une ancienne version de l’appli : un voyage caché ne lui sera plus montré, mais un voyage remis ne lui reviendra qu’après sa mise à jour.</div>`}
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.fwTripsSave('${esc(g)}','${esc(dev)}')">✅ Enregistrer</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
   }
@@ -15444,7 +15450,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-19i';
+  const BUILD = '2026-10-19j';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
