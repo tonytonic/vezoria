@@ -113,6 +113,15 @@ if(window.VZ_HOST){ try {
 <style>.fd-by b{color:var(--navy,#2A1238)}</style>
 <style>.sh-solo>summary{cursor:pointer;list-style:none}.sh-solo>summary::-webkit-details-marker{display:none}.sh-solo .sh-card{box-shadow:none;border:1px solid var(--light);margin-top:8px}</style>
 <style>.fd-bell{overflow:hidden}.fd-bell b,.fd-bell small{min-width:0;overflow-wrap:anywhere;white-space:normal}.fd-name{box-sizing:border-box}</style>
+<style>
+.ab-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--light)}
+.ab-row:first-of-type{border-top:0}
+.ab-t{flex:1;min-width:0}.ab-t b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ab-t small{display:block}
+.ab-sw{flex:none;border:1px solid var(--light);background:#f4f1f6;color:var(--gray);border-radius:999px;padding:7px 12px;font:700 .82rem var(--ui,system-ui);cursor:pointer;min-width:104px}
+.ab-sw.on{background:#e7f8ee;border-color:#7fd3a0;color:#11683a}
+.ab-1{flex:none;border:0;background:none;font-size:1rem;padding:4px;cursor:pointer}
+</style>
+<style>.fol-c .cv-badge{right:auto!important;left:8px!important;top:8px!important;width:auto;max-width:calc(100% - 52px);transform:none;z-index:1}</style>
 </head>
 <body class="is-public">
 <div id="vz-splash" aria-hidden="true" translate="no"><div class="sp-f"><div class="sp-t" id="vz-sp-t">carnet de voyage</div><div class="sp-r"></div><div class="sp-b"><i></i></div><div class="sp-l" id="vz-sp-l">Chargement de vos souvenirs…</div></div></div>
@@ -12809,19 +12818,19 @@ ${pm.join('\n')}</Document></kml>`;
       const code = TS()[t.id], on = code && spaceObj(code), sp = on ? spaceObj(code) : null, v = (t.voyageurs||[]).filter(prof), fc = feedCode(t.id);
       const grpT = fc ? Object.keys(FT()).filter(x=>FT()[x] === fc && R[x] && !R[x].deleted) : [], gIds = new Set(grpT.map(ftId));   // carnet publié d’un coup : les abonnés voient tous ces voyages
       const nfw = fc ? new Set(list('follower', x=>gIds.has(x.trip) && !isBlk(x)).map(fwKey)).size : 0, nlk = fc ? list('like', l=>l.trip===ftId(t.id) && l.on && !isBlk(l)).length : 0, ncm = fc ? list('comment', c=>c.trip===ftId(t.id) && !isBlk(c)).length : 0;
-      h += `<div class="sh-sec sh-tb" data-t="comp ab" data-notr>🧳 ${esc(t.titre)}</div>
+      h += `<div class="sh-sec sh-tb" data-t="comp" data-notr>🧳 ${esc(t.titre)}</div>
       <div class="sh-card sh-tb" data-t="comp"><div class="sh-k">👥 Voyager ensemble</div><p>Tes compagnons voient tout le voyage et le complètent avec toi : programme, résas, budget, souvenirs. Chaque ajout est signé.</p>
         <div class="cv-row" style="gap:6px;flex-wrap:wrap;margin:6px 0 10px">${v.map(pid=>pchip(pid)).join('') || '<span class="v-sum-small">Personne d’autre pour l’instant</span>'}</div>
         <button type="button" class="v-btn" onclick="CV.tripInviteNow('${t.id}')">📤 Inviter quelqu’un dans ce voyage</button>
         <div class="v-sum-small" style="margin-top:6px">${on ? `☁️ En ligne et chiffré · ${sp.err ? '⚠️ ' + esc(sp.err) : (sp.dirty||[]).length ? '⏳ envoi en cours' : '✓ à jour'}` : 'Un seul geste : le voyage est mis en ligne (chiffré) et tu envoies le lien par message. Tes autres voyages restent privés.'}</div>
         <div class="sh-links">${on ? `<button type="button" onclick="CV.tripShareSheet('${t.id}')">🔑 Code du voyage et état du partage</button>` : `<button type="button" onclick="CV.tripShare('${t.id}')">🔑 Réutiliser un ancien code de voyage</button>`}<button type="button" onclick="CV.editTrip('${t.id}')">👥 Choisir les voyageurs</button></div></div>
-      <div class="sh-card sh-tb" data-t="ab"><div class="sh-k">👀 Abonnés</div><p>Ta famille et tes amis suivent le voyage comme un carnet de bord : uniquement les photos, les lieux et les récits. Ils mettent des ❤️ et des commentaires. Le reste reste privé.</p>
+      <div class="sh-card sh-tb" data-t="none" hidden><div class="sh-k">👀 Abonnés</div><p>Ta famille et tes amis suivent le voyage comme un carnet de bord : uniquement les photos, les lieux et les récits. Ils mettent des ❤️ et des commentaires. Le reste reste privé.</p>
         ${fc ? `${grpT.length > 1 ? `<div class="v-sum-small" style="margin-bottom:6px">📚 Publié avec tout ton carnet : ${grpT.length} voyages, un seul lien.</div>` : ''}<div class="sh-st"><span>👀 <b>${nfw}</b> abonné${nfw>1?'s':''}</span><span>❤️ <b>${nlk}</b></span><span>💬 <b>${ncm}</b></span></div>
           <button type="button" class="v-btn" onclick="CV.feedPublish('${t.id}')">📤 Inviter des abonnés</button>
           <div class="sh-links"><button type="button" onclick="CV.feedView('${ftId(t.id)}')">👀 Voir comme un abonné</button><button type="button" onclick="CV.feedStop('${t.id}')">Arrêter la publication</button></div>`
         : `<button type="button" class="v-btn" onclick="CV.feedPublish('${t.id}')">👀 Publier pour des abonnés</button>`}</div>`;
     } else if(t0 && t0.demo) h += `<div class="v-sum-small" style="margin-bottom:10px">C’est le voyage de démo : crée ton propre voyage (Mes voyages → ＋) pour le partager.</div>`;
-    h += `<div class="sh-sec sh-tb" data-t="comp ab">📚 Tout mon carnet</div><div class="sh-card sh-tb" data-t="comp ab"><p>Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits, comme Polarsteps).</p>
+    h += `<div class="sh-sec sh-tb" data-t="comp">📚 Tout mon carnet</div><div class="sh-card sh-tb" data-t="comp"><p>Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).</p>
       <button type="button" class="v-btn sec" onclick="CV.carnetShareSheet()">📚 Partager tout mon carnet</button></div>
       <div class="sh-sec sh-tb" data-t="comp">🔗 On t’a invité ?</div><div class="sh-card sh-tb" data-t="comp"><p>Un code ou un lien reçu par message : colle-le ici pour rejoindre un voyage, un carnet, ou suivre un voyage.</p>
       <button type="button" class="v-btn sec" onclick="CV.joinAny()">🔗 Rejoindre avec un code</button></div>`;
@@ -13081,7 +13090,7 @@ ${pm.join('\n')}</Document></kml>`;
       if(many && p !== last){ h += `<div class="cv-triph">${lbl[p]}</div>`; last = p; }
       const act = !t.demo;   // 2 raccourcis par voyage : abonnés (lecture seule) · compagnon (voyage complet)
       h += `<div class="cv-tripw">${tripCard(t, p, t.id===cur)}
-        ${act ? `<div class="cv-tripact"><button type="button" class="${FT()[t.id] ? 'on' : ''}" onclick="CV.close();CV.feedPublish('${t.id}')">${FT()[t.id] ? '👀 Publié · inviter des abonnés' : '👀 Publier pour des abonnés'}</button><button type="button" onclick="CV.close();CV.tripInviteNow('${t.id}')">👥 Ajouter un compagnon</button>${FT()[t.id] ? `<button type="button" class="cv-ta-w" onclick="CV.feedShareLink('${t.id}')">🔗 Lien abonnés (sans installer l’appli)</button>` : ''}</div>` : ''}</div>`;
+        ${act ? `<div class="cv-tripact"><button type="button" class="${FT()[t.id] ? 'on' : ''}" onclick="CV.carnetToggle('${t.id}').then(()=>CV.tripSheet && document.querySelector('.cv-tripw') && CV.tripSheet())">${FT()[t.id] ? '👀 Partagé aux abonnés' : '🔒 Masqué aux abonnés'}</button><button type="button" onclick="CV.close();CV.tripInviteNow('${t.id}')">👥 Ajouter un compagnon</button></div>` : ''}</div>`;
     });
     return h;
   }
@@ -14628,6 +14637,48 @@ ${pm.join('\n')}</Document></kml>`;
     recs.forEach(r=>markDirty(r.id));   // tout repart dans le carnet (❤️ et commentaires compris)
     persist();
   }
+  // 📋 tableau unique : tous mes voyages, partagé / masqué pour les abonnés
+  function abTableHTML(){
+    const ts = myTrips().sort((a,b)=>(b.debut||'').localeCompare(a.debut||'')); if(!ts.length) return '';
+    const ac = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '', nOn = ts.filter(t=>FT()[t.id]).length;
+    return `<div class="sh-card sh-tb ab-tab" data-t="ab"><div class="sh-k">📋 Mes voyages pour les abonnés</div>
+      <div class="v-sum-small" style="margin-bottom:6px">${nOn} partagé${nOn>1?'s':''} sur ${ts.length}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.</div>
+      ${ts.map(t=>{ const on = !!FT()[t.id], solo = on && ac && grpCodeOf(t.id) !== ac;
+        return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}${solo ? ' · lien à part' : ''}</small></span>
+          ${on && !solo ? `<button type="button" class="ab-1" title="Lien pour ce voyage seulement" aria-label="Lien pour ce voyage seulement" onclick="CV.feedShareOne('${t.id}')">🔗</button>` : ''}
+          <button type="button" class="ab-sw${on ? ' on' : ''}" onclick="CV.carnetToggle('${t.id}')">${on ? '👀 Partagé' : '🔒 Masqué'}</button></div>`; }).join('')}
+      <div class="v-sum-small" style="margin-top:6px">🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement</div></div>`;
+  }
+  // partager ↔ masquer un voyage pour TOUS les abonnés (il entre dans le carnet ou en sort)
+  async function carnetToggle(tid){
+    const t = R[tid]; if(!t || t.demo) return;
+    if(FT()[tid]){
+      if(!(await uiConfirm(MSGT('Masquer « {0} » à tous tes abonnés ?').replace('{0}', t.titre) + '\n\n' + MSGT('Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.')))) return;
+      await feedStop(tid, true); toast('🔒 ' + MSGT('Masqué pour tous tes abonnés')); refresh(); try { if(document.querySelector('.ab-tab')) shareHub(); } catch(e){}
+      return;
+    }
+    try { await fKey(); } catch(e){}
+    if(!myName()){ const n = (await uiPrompt('Ton prénom (affiché à tes abonnés) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
+    let c = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '', first = false;
+    if(!c){
+      if(!(await uiConfirm('Publier ces voyages pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.'))) return;
+      c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); M.feedAll = c; first = true;
+    }
+    FT()[tid] = c; persist(); feedBuild(tid); toast('👀 ' + MSGT('Partagé avec tes abonnés')); refresh(); try { if(document.querySelector('.ab-tab')) shareHub(); } catch(e){}
+    try { await feedReconcile(); } catch(e){}
+    try { await syncNow(); feedUpload(); setTimeout(()=>{ try { pushRegister(true); } catch(e){} }, 2500); } catch(e){}
+    if(first) await carnetInvite(c);
+  }
+  // ménage : les anciens voyages « à part » sans abonné rejoignent le carnet (un seul lien pour tout)
+  let soloTidyAt = 0;
+  async function soloTidy(){
+    const c = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : ''; if(!c || Date.now() - soloTidyAt < 60000) return; soloTidyAt = Date.now();
+    const ts = Object.keys(FT()).filter(t=>R[t] && !R[t].deleted && grpCodeOf(t) !== c && !FRX()[t] && !soloFw(t)); if(!ts.length) return;
+    for(const t of ts) await soloToCarnet(t, c);
+    ts.forEach(t=>feedBuild(t)); persist();
+    try { await syncNow(); feedUpload(); feedPurge(); } catch(e){}
+    try { if(document.querySelector('.ab-tab')) shareHub(); } catch(e){}
+  }
   async function carnetPublish(){
     try { await fKey(); } catch(e){}
     const sel = [...document.querySelectorAll('.cpub:checked')].map(i=>i.value); if(!sel.length){ alert('Coche au moins un voyage.'); return; }
@@ -14798,6 +14849,7 @@ ${pm.join('\n')}</Document></kml>`;
     const t = R[tid || M.trip]; if(!t || t.demo) return;
     try { await fKey(); } catch(e){}
     if(!myName()){ const n = (await uiPrompt('Ton prénom (affiché à tes abonnés) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
+    if(!feedCode(t.id) && M.feedAll && spaceObj(M.feedAll)){ FT()[t.id] = M.feedAll; persist(); setTimeout(()=>{ try { pushRegister(true); } catch(e){} }, 2500); }
     if(!feedCode(t.id)){
       if(!(await uiConfirm(`Publier « ${t.titre} » pour des abonnés ?\n\nIls verront uniquement les souvenirs : photos, titres, lieux et récits. Le programme, les réservations, le budget et les documents restent privés.\nUn souvenir marqué « privé » n’est jamais publié.\nIls voient les photos en vignettes (taille réduite).\nTa position n’est jamais montrée, sauf si chaque voyageur l’active lui-même dans le suivi du voyage.\nIls pourront mettre des ❤️ et des commentaires.`))) return;
       const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); FT()[t.id] = c; persist(); setTimeout(()=>{ try { pushRegister(true); } catch(e){} }, 2500);
@@ -14948,7 +15000,6 @@ ${pm.join('\n')}</Document></kml>`;
         ${fw.length ? `<div class="v-sum-small" style="margin-bottom:4px">👁️ = choisir les voyages que voit cette personne · 🚫 = la bloquer</div>` : ''}
         <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(c)}</b></div>
         <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.feedShareLink('${tids[0]}')">🔗 Partager le lien (sans installer l’appli)</button>
-        <details class="sh-more" style="margin-top:6px"><summary>🧳 Les ${tids.length} voyages</summary><div class="v-sum-small" style="margin:4px 0 6px">🔗 = un lien pour ce voyage seulement, à envoyer à quelqu’un qui ne doit voir que lui.</div>${tids.map(tid=>`<div class="cv-folr" style="margin-left:0"><button type="button" class="cv-prow" onclick="CV.feedView('${ftId(tid)}')"><span data-notr>${esc(R[tid].titre)}</span><span>›</span></button><button type="button" class="cv-x" title="Lien pour ce voyage seulement" onclick="CV.feedShareOne('${tid}')">🔗</button></div>`).join('')}</details>
         <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tids[0])}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.carnetPublishSheet()">📤 Inviter · choisir</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tids[0]}')">🔁 Nouveau lien abonné</button></div></div>`; };
     const pubRow = tid => { const t = R[tid], fw = fwUniq(list('follower', x=>x.trip===ftId(tid) && !isBlk(x))), fwN = fwNames(fw), lk = list('like', l=>l.trip===ftId(tid) && l.on && !isBlk(l)).length, cm = list('comment', c=>c.trip===ftId(tid) && !isBlk(c)).length;
       return `<div class="sh-card sh-tb" data-t="ab"><div class="sh-k">📣 ${esc(t.titre)}</div>
@@ -14964,7 +15015,7 @@ ${pm.join('\n')}</Document></kml>`;
     return `
       ${ev.length ? `<div class="sh-card sh-tb" data-t="ab suis"><div class="sh-k">✨ Nouveautés · 24 h</div>${ev.slice(0, 40).map(evRow).join('')}</div>` : '<div class="v-sum-small sh-tb" data-t="ab suis" style="margin-bottom:10px">Rien de nouveau ces dernières 24 heures.</div>'}
       <div class="sh-st sh-tb" data-t="ab" style="margin:4px 0 12px"><span>👀 <b>${nFw}</b> abonné${nFw>1?'s':''}</span><span>➡️ <b>${fol.length}</b> voyage${fol.length>1?'s':''} suivi${fol.length>1?'s':''}</span></div>
-      ${Object.values(byCode).some(g=>g.length > 1 || g[0] !== cur) ? `<h3 class="sh-tb" data-t="ab">📣 Mes voyages publiés</h3>${(()=>{ const E = Object.entries(byCode), grp = E.filter(([c, t])=>t.length > 1), solo = E.filter(([c, t])=>t.length === 1 && t[0] !== cur).map(([c, t])=>t[0]);
+      ${abTableHTML()}${(setTimeout(()=>soloTidy().catch(()=>{}), 400), '')}${Object.values(byCode).some(g=>g.length > 1 || g[0] !== cur) ? `<h3 class="sh-tb" data-t="ab">📣 Mes voyages publiés</h3>${(()=>{ const E = Object.entries(byCode), grp = E.filter(([c, t])=>t.length > 1), solo = E.filter(([c, t])=>t.length === 1 && t[0] !== cur).map(([c, t])=>t[0]);
         if(!grp.length || !solo.length) return E.map(([c, tids])=>tids.length > 1 ? grpRow(c, tids) : tids[0] !== cur ? pubRow(tids[0]) : '').join('');
         const empty = solo.filter(t=>!soloFw(t)).length;
         return grp.map(([c, tids])=>grpRow(c, tids)).join('') + `<details class="sh-card sh-tb sh-solo" data-t="ab"><summary><b>📣 Publiés à part, avec leur propre lien (${solo.length})</b><small class="v-sum-small" style="display:block">En dehors du carnet : chacun a son code abonné.</small></summary>
@@ -15450,7 +15501,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-19j';
+  const BUILD = '2026-10-19l';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15460,7 +15511,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
