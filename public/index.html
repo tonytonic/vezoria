@@ -122,6 +122,14 @@ if(window.VZ_HOST){ try {
 .ab-1{flex:none;border:0;background:none;font-size:1rem;padding:4px;cursor:pointer}
 </style>
 <style>.fol-c .cv-badge{right:auto!important;left:8px!important;top:8px!important;width:auto;max-width:calc(100% - 52px);transform:none;z-index:1}</style>
+<style>
+.sh-news>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none}
+.sh-news>summary::-webkit-details-marker{display:none}
+.sh-news>summary::after{content:'▾';color:var(--gray);transition:transform .15s}.sh-news[open]>summary::after{transform:rotate(180deg)}
+.sh-news[open]>summary{margin-bottom:6px}.sh-nn{display:flex;align-items:center;gap:6px;margin-left:auto}.sh-nn small{color:var(--gray);font-weight:600}
+.sh-nb{background:#EC4D6E;color:#fff;border-radius:9px;min-width:18px;padding:0 6px;font:800 .7rem/18px system-ui;text-align:center}
+.sh-news .sh-close{display:none}.sh-news[open] .sh-open{display:none}.sh-news[open] .sh-close{display:inline}
+</style>
 </head>
 <body class="is-public">
 <div id="vz-splash" aria-hidden="true" translate="no"><div class="sp-f"><div class="sp-t" id="vz-sp-t">carnet de voyage</div><div class="sp-r"></div><div class="sp-b"><i></i></div><div class="sp-l" id="vz-sp-l">Chargement de vos souvenirs…</div></div></div>
@@ -14650,6 +14658,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="v-sum-small" style="margin-top:6px">🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement</div></div>`;
   }
   // partager ↔ masquer un voyage pour TOUS les abonnés (il entre dans le carnet ou en sort)
+  function evToggle(o){ M.evOpen = !!o; persist(); }
   async function carnetToggle(tid){
     const t = R[tid]; if(!t || t.demo) return;
     if(FT()[tid]){
@@ -15013,7 +15022,7 @@ ${pm.join('\n')}</Document></kml>`;
       return `<div class="cv-prow" style="cursor:default"><span><b>${esc(t.titre)}</b><small class="v-sum-small" style="display:block">${who || 'seul(e)'}${t.debut ? ' · ' + tripDates(t) : ''}</small></span>
         ${c ? `<button type="button" class="cv-code" style="border:0;background:none;font:inherit;font-weight:700" onclick="CV.tripShareSheet('${t.id}')">${esc(c)}</button>` : `<button type="button" class="v-btn sec" style="width:auto;padding:6px 10px;margin:0" onclick="CV.go('${t.id}');CV.shareHub()">🔗 Partager</button>`}</div>`; };
     return `
-      ${ev.length ? `<div class="sh-card sh-tb" data-t="ab suis"><div class="sh-k">✨ Nouveautés · 24 h</div>${ev.slice(0, 40).map(evRow).join('')}</div>` : '<div class="v-sum-small sh-tb" data-t="ab suis" style="margin-bottom:10px">Rien de nouveau ces dernières 24 heures.</div>'}
+      ${ev.length ? (()=>{ const nw = ev.filter(e=>e.nw).length, open = M.evOpen !== false && (M.evOpen === true || ev.length <= 3); return `<details class="sh-card sh-tb sh-news" data-t="ab suis"${open ? ' open' : ''}><summary onclick="CV.evToggle(!this.parentNode.open)"><span class="sh-k" style="margin:0">✨ Nouveautés · 24 h</span><span class="sh-nn">${nw ? `<b class="sh-nb">${nw}</b> ` : ''}<small>${ev.length} · <span class="sh-open">Voir</span><span class="sh-close">Replier</span></small></span></summary>${ev.slice(0, 40).map(evRow).join('')}</details>`; })() : '<div class="v-sum-small sh-tb" data-t="ab suis" style="margin-bottom:10px">Rien de nouveau ces dernières 24 heures.</div>'}
       <div class="sh-st sh-tb" data-t="ab" style="margin:4px 0 12px"><span>👀 <b>${nFw}</b> abonné${nFw>1?'s':''}</span><span>➡️ <b>${fol.length}</b> voyage${fol.length>1?'s':''} suivi${fol.length>1?'s':''}</span></div>
       ${abTableHTML()}${(setTimeout(()=>soloTidy().catch(()=>{}), 400), '')}${Object.values(byCode).some(g=>g.length > 1 || g[0] !== cur) ? `<h3 class="sh-tb" data-t="ab">📣 Mes voyages publiés</h3>${(()=>{ const E = Object.entries(byCode), grp = E.filter(([c, t])=>t.length > 1), solo = E.filter(([c, t])=>t.length === 1 && t[0] !== cur).map(([c, t])=>t[0]);
         if(!grp.length || !solo.length) return E.map(([c, tids])=>tids.length > 1 ? grpRow(c, tids) : tids[0] !== cur ? pubRow(tids[0]) : '').join('');
@@ -15501,7 +15510,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-19l';
+  const BUILD = '2026-10-19m';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15511,7 +15520,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
