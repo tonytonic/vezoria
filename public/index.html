@@ -110,6 +110,7 @@ if(window.VZ_HOST){ try {
 .fd-cin{margin-top:4px}
 .fd-lklist{display:grid;gap:8px;margin:6px 0 10px}.fd-lklist div{display:flex;gap:8px;align-items:center}
 </style>
+<style>.fd-by b{color:var(--navy,#2A1238)}</style>
 </head>
 <body class="is-public">
 <div id="vz-splash" aria-hidden="true" translate="no"><div class="sp-f"><div class="sp-t" id="vz-sp-t">carnet de voyage</div><div class="sp-r"></div><div class="sp-b"><i></i></div><div class="sp-l" id="vz-sp-l">Chargement de vos souvenirs…</div></div></div>
@@ -10561,18 +10562,37 @@ ${pm.join('\n')}</Document></kml>`;
   /* ---------- 🛰️ Traceur de voyage (avec les limites d'une appli web) ---------- */
   let trkWatch = null, trkLastSave = 0, trkBuf = null;
   const trkOn = () => !!(M.trk && M.trk.on);
+  // le suivi n'existe que pendant le voyage : du premier au dernier jour (dates obligatoires)
+  const trkWin = t => { const td = isoToday(); if(!t || !t.debut || !t.fin) return 'nodate'; if(td < t.debut) return 'before'; if(td > t.fin) return 'after'; return 'ok'; };
+  // voyage fini (ou supprimé) : le suivi se coupe tout seul, même si l'appli a été oubliée ouverte
+  function trkAutoOff(){
+    if(!trkOn()) return false; const t = R[M.trk.trip];
+    if(t && !t.deleted && trkWin(t) === 'ok') return false;
+    M.trk.on = false; trkStop(); persist();
+    toast(t && !t.deleted && trkWin(t) === 'after' ? '🛰️ ' + MSGT('Voyage terminé : le suivi GPS s’est coupé tout seul') : '🛰️ ' + MSGT('Suivi GPS coupé'));
+    try { refresh(); } catch(e){}
+    return true;
+  }
+  // 📍 lieu de mes souvenirs sur la carte du voyage (point à mon nom) : chacun choisit, oui par défaut
+  const gpId = (tid, who) => 'gp:' + tid + ':' + (who || M.me || 'moi');
+  const geoOn = (tid, who) => { const r = R[gpId(tid, who)]; return !(r && !r.deleted && r.on === false); };
+  function geoToggle(){
+    const t = trip(); if(!t) return; const on = !geoOn(t.id);
+    put({id:gpId(t.id), type:'geopref', trip:t.id, who:M.me || '', on}, on ? '📍 ' + MSGT('Le lieu de tes souvenirs apparaît sur la carte') : '🔒 ' + MSGT('Le lieu de tes souvenirs n’apparaît plus sur la carte'));
+    if(feedCode(t.id)) feedBuild(t.id); syncNow(); refresh();
+  }
   const trkRec = (tid, d, who) => (who && R['trk:' + tid + ':' + d + ':' + who]) || R['trk:' + tid + ':' + d];
   // 👀 Chaque voyageur choisit s’il montre sa route aux abonnés (désactivé par défaut)
   const tpId = (tid, who) => 'tp:' + tid + ':' + (who || M.me || 'moi');
   const trkPubOn = (tid, who) => { const r = R[tpId(tid, who)]; return !!(r && !r.deleted && r.on); };
   async function trkPub(){
     const t = trip(); if(!t) return; const on = !trkPubOn(t.id);
-    if(on && !(await uiConfirm('Montrer ta route aux abonnés de ce voyage ?\n\nIls verront sur une carte le trajet enregistré par le suivi et ta dernière position (précision ≈ 100 m), avec l’heure.\nTu peux arrêter quand tu veux : la carte disparaît chez eux à la synchro suivante.\nTes compagnons choisissent chacun pour eux.'))) return;
+    if(on && !(await uiConfirm('Montrer ta position aux abonnés de ce voyage ?\n\nIls verront sur une carte, à ton nom : le trajet enregistré par le suivi s’il est actif, sinon le lieu de tes souvenirs (précision ≈ 100 m), avec l’heure.\nTu peux arrêter quand tu veux : la carte disparaît chez eux à la synchro suivante.\nTes compagnons choisissent chacun pour eux.'))) return;
     put({id:tpId(t.id), type:'trkpub', trip:t.id, who:M.me || '', on}, on ? '👀 Route visible des abonnés' : '🔒 Route masquée aux abonnés');
     feedBuild(t.id); syncNow(); refresh();
   }
   function feedTrk(tid){   // la route des voyageurs qui l’ont accepté, allégée (≤ 300 points, ≈ 100 m)
-    const by = trkByWho(tid), people = [];
+    const by = trkByWho(tid, true), people = [];
     Object.entries(by).forEach(([w, pts])=>{ if(!trkPubOn(tid, w) || !pts.length) return;
       const step = Math.max(1, Math.ceil(pts.length / 300)), P = pts.filter((_, i)=>i % step === 0 || i === pts.length - 1).map(p=>[+(+p[0]).toFixed(3), +(+p[1]).toFixed(3), p[2] || 0]);
       people.push({n: w ? pname(w) : '', c: w ? pcol(w) : '#0ea5e9', pts:P}); });
@@ -10580,20 +10600,22 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function trkHTML(){
     const t = trip(); if(!t) return '';
+    { const w = trkWin(t); if(w !== 'ok') return w === 'after' ? '' : `<div class="cv-trk"><span class="dot"></span><span class="tx"><b>Suivi GPS</b><small>${w === 'nodate' ? 'Ajoute les dates du voyage : le suivi est proposé seulement pendant le voyage.' : 'Proposé du ' + fdate(t.debut) + ' au ' + fdate(t.fin) + ', puis coupé automatiquement.'}</small></span></div>`; }
     const on = trkOn() && M.trk.trip === t.id, today = trkRec(t.id, isoToday(), M.me), n = today ? today.pts.length : 0;
     let km_ = 0; if(today) for(let i=1;i<today.pts.length;i++) km_ += km({lat:today.pts[i-1][0], lng:today.pts[i-1][1]}, {lat:today.pts[i][0], lng:today.pts[i][1]});
-    return `<div class="cv-trk${on?' on':''}"><span class="dot"></span><span class="tx"><b>${on ? 'Voyage suivi' : 'Suivi arrêté'}</b><small>${on ? `${n} point${n>1?'s':''} aujourd’hui · ${km_ < 10 ? km_.toFixed(1) : Math.round(km_)} km · enregistre ta route quand l’appli est ouverte` : 'Active-le pour tracer ta route sur la carte du monde'}</small></span>
-      <button type="button" onclick="CV.trkToggle()">${on ? 'Arrêter' : 'Activer'}</button></div>${on ? `<button type="button" class="cv-tjbtn" onclick="CV.tjOpen()"><span>🚗</span><span><b>Mode trajet</b><small>Écran allumé, GPS précis : pour une route, un train, une rando</small></span></button>` : ''}${feedCode(t.id) ? `<button type="button" class="cv-trkpub${trkPubOn(t.id) ? ' on' : ''}" onclick="CV.trkPub()"><span>${trkPubOn(t.id) ? '👀' : '🔒'}</span><span><b>${trkPubOn(t.id) ? 'Ta route est visible des abonnés' : 'Ta route est cachée aux abonnés'}</b><small>${trkPubOn(t.id) ? 'Touche pour la cacher' : 'Touche pour la montrer sur leur carte'}</small></span></button>` : ''}`;
+    return `<div class="cv-trk${on?' on':''}"><span class="dot"></span><span class="tx"><b>${on ? 'Voyage suivi' : 'Suivi arrêté'}</b><small>${on ? `${n} point${n>1?'s':''} aujourd’hui · ${km_ < 10 ? km_.toFixed(1) : Math.round(km_)} km · enregistre ta route quand l’appli est ouverte · coupé seul après le ${fdate(t.fin)}` : 'Chacun l’active ou le coupe quand il veut. Coupé seul après le ' + fdate(t.fin) + '.'}</small></span>
+      <button type="button" onclick="CV.trkToggle()">${on ? 'Arrêter' : 'Activer'}</button></div>${on ? `<button type="button" class="cv-tjbtn" onclick="CV.tjOpen()"><span>🚗</span><span><b>Mode trajet</b><small>Écran allumé, GPS précis : pour une route, un train, une rando</small></span></button>` : ''}${feedCode(t.id) ? `<button type="button" class="cv-trkpub${trkPubOn(t.id) ? ' on' : ''}" onclick="CV.trkPub()"><span>${trkPubOn(t.id) ? '👀' : '🔒'}</span><span><b>${trkPubOn(t.id) ? 'Ta position est visible des abonnés' : 'Ta position est cachée aux abonnés'}</b><small>${trkPubOn(t.id) ? 'Touche pour la cacher' : 'Ta route si le suivi est actif, sinon le lieu de tes souvenirs'}</small></span></button>` : ''}<button type="button" class="cv-trkpub${geoOn(t.id) ? ' on' : ''}" onclick="CV.geoToggle()"><span>${geoOn(t.id) ? '📍' : '🔒'}</span><span><b>${geoOn(t.id) ? 'Le lieu de tes souvenirs est sur la carte' : 'Le lieu de tes souvenirs est caché'}</b><small>${geoOn(t.id) ? 'Un point à ton nom quand tu partages un souvenir · touche pour le cacher' : 'Touche pour le montrer à tes compagnons'}</small></span></button>`;
   }
   async function trkToggle(){
     const t = trip(); if(!t) return;
     if(trkOn() && M.trk.trip === t.id){ M.trk.on = false; trkStop(); persist(); toast('⏸️ Suivi arrêté'); refresh(); return; }
     if(!navigator.geolocation){ alert('Localisation indisponible sur ce téléphone.'); return; }
+    { const w = trkWin(t); if(w !== 'ok'){ alert(w === 'nodate' ? 'Ajoute d’abord les dates du voyage : le suivi GPS ne fonctionne que pendant le voyage.' : w === 'before' ? 'Le suivi GPS sera proposé à partir du premier jour du voyage.' : 'Ce voyage est terminé : le suivi GPS n’est plus proposé.'); return; } }
     if(!M.trkSeen && !(await uiConfirm('Activer le suivi du voyage ?\n\n• Ta position est enregistrée environ tous les 300 m, seulement quand l’appli est ouverte (une appli web ne peut pas suivre en arrière-plan, téléphone en poche).\n• Un point est aussi ajouté à chaque ouverture de l’appli.\n• La route est partagée uniquement avec les personnes de CE voyage.\n• Tu peux l’arrêter à tout moment.'))) return;
     M.trkSeen = 1; M.trk = {on:true, trip:t.id, since:Date.now()}; persist(); trkStart(); toast('🛰️ Suivi activé'); refresh();
   }
   function trkAdd(pos){
-    if(!trkOn()) return; const t = R[M.trk.trip]; if(!t || t.deleted) return;
+    if(!trkOn() || trkAutoOff()) return; const t = R[M.trk.trip]; if(!t || t.deleted) return;
     const c = pos.coords, ts = Math.min(Date.now(), pos.timestamp || Date.now()), drive = !!TJ;
     if(TJ){ TJ.acc = c.accuracy; TJ.sp = (c.speed != null && c.speed >= 0) ? c.speed * 3.6 : TJ.sp; TJ.fix = Date.now(); }
     if(c.accuracy && c.accuracy > (drive ? 80 : 500)) return;                                                   // position trop imprécise
@@ -10642,17 +10664,18 @@ ${pm.join('\n')}</Document></kml>`;
     if(trkWatch !== null){ navigator.geolocation.clearWatch(trkWatch); trkWatch = null; } trkStart();
     toast('🚗 ' + fmtKm(k)); refresh();
   }
+  setInterval(trkAutoOff, 3600e3);
   function trkFlush(){ if(trkBuf){ put(trkBuf, false); trkBuf = null; trkLastSave = Date.now(); } }
   function trkStart(){
-    if(!trkOn() || trkWatch !== null || !navigator.geolocation) return;
+    if(!trkOn() || trkAutoOff() || trkWatch !== null || !navigator.geolocation) return;
     trkWatch = navigator.geolocation.watchPosition(trkAdd, ()=>{}, TJ ? {enableHighAccuracy:true, maximumAge:5000, timeout:30000} : {enableHighAccuracy:false, maximumAge:120000, timeout:60000});
   }
   function trkStop(){ if(trkWatch !== null){ navigator.geolocation.clearWatch(trkWatch); trkWatch = null; } trkFlush(); }
   document.addEventListener('visibilitychange', ()=>{
     if(document.visibilityState === 'hidden'){ trkFlush(); if(trkWatch !== null){ navigator.geolocation.clearWatch(trkWatch); trkWatch = null; } }
-    else if(trkOn()){ navigator.geolocation.getCurrentPosition(trkAdd, ()=>{}, {enableHighAccuracy:!!TJ, maximumAge:TJ ? 5000 : 300000, timeout:30000}); trkStart(); if(TJ) tjLock(); }
+    else if(trkOn() && !trkAutoOff()){ navigator.geolocation.getCurrentPosition(trkAdd, ()=>{}, {enableHighAccuracy:!!TJ, maximumAge:TJ ? 5000 : 300000, timeout:30000}); trkStart(); if(TJ) tjLock(); }
   });
-  setTimeout(()=>{ if(trkOn()){ trkStart(); navigator.geolocation && navigator.geolocation.getCurrentPosition(trkAdd, ()=>{}, {enableHighAccuracy:false, maximumAge:300000, timeout:30000}); } }, 2500);
+  setTimeout(()=>{ if(trkOn() && !trkAutoOff()){ trkStart(); navigator.geolocation && navigator.geolocation.getCurrentPosition(trkAdd, ()=>{}, {enableHighAccuracy:false, maximumAge:300000, timeout:30000}); } }, 2500);
 
   /* ---------- 🏳️ Pays → drapeau (noms français / anglais / codes) ---------- */
   const ISO = 'AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW'.split(' ');
@@ -14157,14 +14180,14 @@ ${pm.join('\n')}</Document></kml>`;
   function trkByWho(tid, withPhotos){
     const by = {}; list('trk', r=>r.trip===tid && !r.deleted && (r.pts||[]).length).forEach(r=>{ const w = r.who || r.id.split(':')[3] || ''; (by[w] = by[w] || []).push(...r.pts); });
     // les photos géolocalisées complètent la route quand l’appli était fermée (téléphone en poche)
-    if(withPhotos) list('souv', x=>x.trip===tid && !x.deleted && (x.pts||[]).length).forEach(x=>{ const w = x.createdBy || ''; (by[w] = by[w] || []).push(...x.pts.filter(p=>p[2]).map(p=>[p[0], p[1], p[2]])); });
+    if(withPhotos) list('souv', x=>x.trip===tid && !x.deleted && (x.pts||[]).length && geoOn(tid, x.createdBy || '')).forEach(x=>{ const w = x.createdBy || ''; (by[w] = by[w] || []).push(...x.pts.filter(p=>p[2]).map(p=>[p[0], p[1], p[2]])); });
     Object.values(by).forEach(a=>a.sort((x,y)=>(x[2]||0)-(y[2]||0))); return by;
   }
   function liveMapCard(){
     const t = trip(); if(!t || tripPhase(t) !== 'live' || hidden('blk:lmap')) return '';
     const by = trkByWho(t.id, true), ws = Object.keys(by); if(!ws.length) return '';
     return `<div class="cv-lmap"><div class="lm-h">🛰️ Où on en est</div><div class="lm-map" data-lmap="${t.id}"><div class="v-sum-small">🗺️ Carte en cours…</div></div>
-      <div class="lm-l">${ws.map(w=>{ const l = by[w][by[w].length-1]; return `<span><i style="background:${w ? pcol(w) : '#0ea5e9'}"></i>${esc(w ? pname(w) : '—')} <small>${l[2] ? when(l[2]) : ''}</small></span>`; }).join('')}</div>
+      <div class="lm-l">${ws.map(w=>{ const l = by[w][by[w].length-1]; return `<span><i style="background:${w ? pcol(w) : '#0ea5e9'}"></i>${trkRec(t.id, isoToday(), w) && (trkRec(t.id, isoToday(), w).who || '') === w ? '🛰️' : '📸'} ${esc(w ? pname(w) : '—')} <small>${l[2] ? when(l[2]) : ''}</small></span>`; }).join('')}</div>
       <button type="button" class="v-btn sec" onclick="CV.worldTrip('${t.id}')">🌍 Voir sur la carte du monde</button></div>`;
   }
   const LMAP = {};
@@ -14640,11 +14663,11 @@ ${pm.join('\n')}</Document></kml>`;
     TS()[ftId(tid)] = c; const out = [];
     // couverture pour les abonnés : ma photo › photo Wikipédia choisie › 1re photo d’un souvenir publié (jamais d’un souvenir privé)
     const cov = t.cover || (t.coverWk ? '' : ((list('souv', x=>x.trip===tid && !x.priv && (x.photos||[]).length).sort((a,b)=>(a.date||'').localeCompare(b.date||''))[0] || {}).photos || [])[0] || '');
-    const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
+    const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', team: (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').slice(0, 30), pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
     if(!R[head.id] || stripStamp(R[head.id]) !== stripStamp(head)) out.push(head);
     const keep = new Set(), first = !R[head.id] || R[head.id].deleted, fresh = [];
     list('souv', s=>s.trip===tid && !s.priv && ((s.photos||[]).length || (s.texte||'').trim())).forEach(s=>{
-      const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 2000), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''};
+      const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, by: (t.voyageurs||[]).length > 1 && s.createdBy ? pname(s.createdBy) : '', date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 2000), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''};
       keep.add(f.id); if(!R[f.id] || R[f.id].deleted || stripStamp(R[f.id]) !== stripStamp(f)){ if(!R[f.id] || R[f.id].deleted) fresh.push(f); out.push(f); }
       f.photos.forEach(p=>feedPhotoQ(c, p));
     });
@@ -14822,7 +14845,7 @@ ${pm.join('\n')}</Document></kml>`;
   function followSheet(){
     const fl = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')]);
     openSheet(`<h2>👀 Voyages que je suis</h2>
-      ${fl.map(f=>{ const n = list('feed', x=>x.trip===f.id).length; return `<button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b>${esc(f.titre)}</b><small style="display:block" class="v-sum-small">par ${esc(f.owner || '?')} · ${n} étape${n>1?'s':''}</small></span><span>›</span></button>`; }).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Tu ne suis aucun voyage pour l’instant.</div>'}
+      ${fl.map(f=>{ const n = list('feed', x=>x.trip===f.id).length; return `<button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b>${esc(f.titre)}</b><small style="display:block" class="v-sum-small">par ${esc(ftTeamTxt(f))} · ${n} étape${n>1?'s':''}</small></span><span>›</span></button>`; }).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Tu ne suis aucun voyage pour l’instant.</div>'}
       <div class="v-f" style="margin-top:10px"><label>Suivre un voyage avec un code abonné</label>${qrBtn('fw-code')}<div class="cv-row"><input class="v-in" id="fw-code" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.followGo(document.getElementById('fw-code').value)">Suivre</button></div></div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
@@ -14944,6 +14967,9 @@ ${pm.join('\n')}</Document></kml>`;
   function isBlk(r){ const d = devOfRec(r); if(!d || d === devId()) return false; if((M.blkDev||{})[d]) return true; const ft = R[r.trip]; return !!(ft && (ft.blk||[]).includes(d)); }
   const likesOf = fid => list('like', l=>l.feed===fid && l.on && !isBlk(l));
   const commentsOf = fid => list('comment', c=>c.feed===fid && !isBlk(c)).sort((a,b)=>(a.at||0)-(b.at||0));
+  // « Anthony & Claire » : celui qui publie d’abord, puis ses compagnons (sans doublon)
+  function ftTeam(ft){ const out = [], seen = new Set(); [ft && ft.owner, ...((ft && ft.team) || [])].forEach(n=>{ n = String(n || '').trim(); const k = n.toLowerCase(); if(n && !seen.has(k)){ seen.add(k); out.push(n); } }); return out; }
+  const ftTeamTxt = ft => { const a = ftTeam(ft); return a.length ? (a.length > 4 ? a.slice(0, 4).join(', ') + ' +' + (a.length - 4) : a.length === 1 ? a[0] : a.slice(0, -1).join(', ') + ' & ' + a[a.length - 1]) : '?'; };
   const isAuthorOf = ftid => !!FT()[String(ftid).replace(/^ft:/,'')];
   function cmMenu(cid){
     const c = R[cid]; if(!c) return; const mine = c.dev === devId(), author = isAuthorOf(c.trip), w = esc(c.who || '?');
@@ -15194,7 +15220,7 @@ ${pm.join('\n')}</Document></kml>`;
     n = String(n || '').trim().slice(0, 36); if(!n) return null;
     const me = devId(), fol = new Set(list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')]).map(f=>f.id));
     const taken = new Set(list('follower', x=>fol.has(x.trip) && !x.deleted && fwDevOf(x) !== me).map(x=>String(x.who || '').trim().toLowerCase()));
-    list('feedtrip', f=>fol.has(f.id)).forEach(f=>taken.add(String(f.owner || '').trim().toLowerCase()));
+    list('feedtrip', f=>fol.has(f.id)).forEach(f=>ftTeam(f).forEach(n=>taken.add(n.toLowerCase())));
     if(!taken.has(n.toLowerCase())) return {n, same:''};
     let k = 2; while(taken.has((n + ' ' + k).toLowerCase())) k++;
     const n2 = n + ' ' + k; toast('👤 ' + MSGT('Ce prénom est déjà pris : tu apparais comme « {0} »').replace('{0}', n2));
@@ -15238,7 +15264,7 @@ ${pm.join('\n')}</Document></kml>`;
   function feedPostHTML(f){
     const lk = likesOf(f.id), mine = lk.some(l=>l.id.endsWith(':' + devId())), cm = commentsOf(f.id), open = (M.cmOpen||{})[f.id], ft = R[f.trip] || {};
     const shown = open ? cm : cm.slice(-2), hid = cm.length - shown.length;
-    return `<article class="fd-post" id="fp-${f.id}" data-sg="${feedSocSig(f.id)}"><div class="fd-d">${f.date ? fdate(f.date) : ''}${f.lieu ? ' · ' + esc(f.lieu) : ''}${f.cc ? ' ' + flag(f.cc) : ''}</div>
+    return `<article class="fd-post" id="fp-${f.id}" data-sg="${feedSocSig(f.id)}"><div class="fd-d">${f.by ? `<span class="fd-by">📸 <b data-notr>${esc(f.by)}</b></span> · ` : ''}${f.date ? fdate(f.date) : ''}${f.lieu ? ' · 📍 ' + esc(f.lieu) : ''}${f.cc ? ' ' + flag(f.cc) : ''}</div>
       ${f.titre ? `<h3>${esc(f.titre)}</h3>` : ''}
       ${(f.photos||[]).length ? (()=>{ const au = FT()[String(f.trip).replace(/^ft:/,'')], all = f.photos, nShow = (M.fdMore||{})[f.id] || 12, sh = all.length > nShow + 3 ? all.slice(0, nShow) : all, rest = all.length - sh.length;
         return `<div class="fd-ph${au ? '' : ' grid'}">${sh.map((p,i)=> au ? `<button type="button" onclick="CV.view('${f.id}',${i})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join('')}${rest ? `<button type="button" class="fd-more-ph" onclick="CV.feedMorePh('${f.id}')"><b>+${rest}</b><small>Voir la suite</small></button>` : ''}</div>`; })() : ''}
@@ -15307,11 +15333,11 @@ ${pm.join('\n')}</Document></kml>`;
     let ov = document.getElementById('cv-feed'); if(ov) ov.remove(); ov = document.createElement('div'); ov.id = 'cv-feed';
     const posts = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
     const fw = list('follower', x=>x.trip===ftid).length;
-    ov.innerHTML = `<div class="fd-top"><button type="button" class="fd-x" onclick="CV.feedClose()">✕</button><div><small>Voyage de ${esc(ft.owner||'?')}</small><b>${esc(ft.titre)}</b><small>${ft.debut ? tripDatesLong(ft) : ''}${fw ? ' · 👀 ' + fw + ' abonné' + (fw>1?'s':'') : ''}</small></div></div>
+    ov.innerHTML = `<div class="fd-top"><button type="button" class="fd-x" onclick="CV.feedClose()">✕</button><div><small>Voyage de ${esc(ftTeamTxt(ft))}</small><b>${esc(ft.titre)}</b><small>${ft.debut ? tripDatesLong(ft) : ''}${fw ? ' · 👀 ' + fw + ' abonné' + (fw>1?'s':'') : ''}</small></div></div>
       ${(()=>{ const c = TS()[ftid], sib = c ? list('feedtrip', f=>TS()[f.id] === c && !f.deleted).sort((a, b)=>(b.debut||'').localeCompare(a.debut||'')) : [];
         const nAll = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted).length;
         return !FT()[String(ftid).replace(/^ft:/,'')] && (sib.length > 1 || nAll > 1) ? `<button type="button" class="fd-back" onclick="CV.feedBack()"><span>←</span><b>Tous les voyages que je suis</b></button>` : ''; })()}
-      ${!myName() && !FT()[String(ftid).replace(/^ft:/,'')] ? `<form class="fd-name" onsubmit="event.preventDefault();CV.fwNameSave(this)"><span>👋 Ton prénom ? <small>Pour que ${esc(ft.owner || '?')} sache qui suit son voyage.</small></span><div class="cv-row"><input class="v-in" name="n" maxlength="40" placeholder="Prénom" autocomplete="given-name"><button type="submit" class="fd-send">OK</button></div></form>` : ''}
+      ${!myName() && !FT()[String(ftid).replace(/^ft:/,'')] ? `<form class="fd-name" onsubmit="event.preventDefault();CV.fwNameSave(this)"><span>👋 Ton prénom ? <small>${ftTeam(ft).length > 1 ? `Pour que ${esc(ftTeamTxt(ft))} sachent qui suit leur voyage.` : `Pour que ${esc(ft.owner || '?')} sache qui suit son voyage.`}</small></span><div class="cv-row"><input class="v-in" name="n" maxlength="40" placeholder="Prénom" autocomplete="given-name"><button type="submit" class="fd-send">OK</button></div></form>` : ''}
       ${feedBellHTML(ftid)}
       <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}${FT()[String(ftid).replace(/^ft:/,'')] || webFollowing() ? '' : `<div class="fd-unf"><button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}')">🚫 Ne plus suivre ce voyage</button>${list('feedtrip', f=>TS()[f.id] && f.id !== ftid && String(f.owner||'').trim().toLocaleLowerCase() === String(ft.owner||'').trim().toLocaleLowerCase()).length ? `<button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}',1)">🚫 Ne plus suivre <span data-notr>${esc(ft.owner || '?')}</span> (tous ses voyages)</button>` : ''}</div>`}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; M.feedLast = ftid; feedMapHydrate();
@@ -15381,7 +15407,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-19a';
+  const BUILD = '2026-10-19c';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15391,7 +15417,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
