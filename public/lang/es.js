@@ -1261,4 +1261,10 @@ I18N.load({
 "Touche pour le montrer à tes compagnons":"Toca para mostrarlo a tus compañeros",
 "{0} point{1} aujourd’hui · {2} km · enregistre ta route quand l’appli est ouverte · coupé seul après le {3}":"{0} punto{1} hoy · {2} km · registra tu ruta con la app abierta · se apaga después del {3}",
 "Chacun l’active ou le coupe quand il veut. Coupé seul après le {0}.":"Cada uno lo activa o apaga cuando quiere. Se apaga solo después del {0}.",
-"Pour que {0} sachent qui suit leur voyage.":"Para que {0} sepan quién sigue su viaje."});
+"Pour que {0} sachent qui suit leur voyage.":"Para que {0} sepan quién sigue su viaje.",
+"Publiés à part, avec leur propre lien ({0})":"Publicados aparte, con su propio enlace ({0})",
+"En dehors du carnet : chacun a son code abonné.":"Fuera del cuaderno: cada uno tiene su código de seguidor.",
+"Mettre les {0} voyages sans abonné dans mon carnet":"Poner los {0} viajes sin seguidores en mi cuaderno",
+"Mettre le voyage sans abonné dans mon carnet":"Poner el viaje sin seguidores en mi cuaderno",
+"(publié à part : {0} abonné{1} sur son propre lien)":"(publicado aparte: {0} seguidor{1} en su propio enlace)",
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(publicado aparte, sin seguidores: márcalo para ponerlo en el cuaderno)"});

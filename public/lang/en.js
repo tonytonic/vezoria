@@ -1261,4 +1261,10 @@ I18N.load({
 "Touche pour le montrer à tes compagnons":"Tap to show it to your companions",
 "{0} point{1} aujourd’hui · {2} km · enregistre ta route quand l’appli est ouverte · coupé seul après le {3}":"{0} point{1} today · {2} km · records your route while the app is open · switches off after {3}",
 "Chacun l’active ou le coupe quand il veut. Coupé seul après le {0}.":"Everyone turns it on or off whenever they like. Switches off after {0}.",
-"Pour que {0} sachent qui suit leur voyage.":"So {0} know who follows their trip."});
+"Pour que {0} sachent qui suit leur voyage.":"So {0} know who follows their trip.",
+"Publiés à part, avec leur propre lien ({0})":"Published separately, with their own link ({0})",
+"En dehors du carnet : chacun a son code abonné.":"Outside the journal: each has its own follower code.",
+"Mettre les {0} voyages sans abonné dans mon carnet":"Put the {0} trips without followers in my journal",
+"Mettre le voyage sans abonné dans mon carnet":"Put the trip without followers in my journal",
+"(publié à part : {0} abonné{1} sur son propre lien)":"(published separately: {0} follower{1} on its own link)",
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(published separately, no followers: tick it to put it in the journal)"});

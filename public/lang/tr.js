@@ -4185,4 +4185,10 @@ I18N.load({
 "Touche pour le montrer à tes compagnons":"Yol arkadaşlarına göstermek için dokun",
 "{0} point{1} aujourd’hui · {2} km · enregistre ta route quand l’appli est ouverte · coupé seul après le {3}":"Bugün {0} nokta{1} · {2} km · uygulama açıkken rotanı kaydeder · {3} sonrası kapanır",
 "Chacun l’active ou le coupe quand il veut. Coupé seul après le {0}.":"Herkes istediği zaman açar veya kapatır. {0} sonrası kapanır.",
-"Pour que {0} sachent qui suit leur voyage.":"{0} seyahatlerini kimin takip ettiğini bilsin diye."});
+"Pour que {0} sachent qui suit leur voyage.":"{0} seyahatlerini kimin takip ettiğini bilsin diye.",
+"Publiés à part, avec leur propre lien ({0})":"Ayrı yayınlananlar, kendi bağlantılarıyla ({0})",
+"En dehors du carnet : chacun a son code abonné.":"Defterin dışında: her birinin kendi takipçi kodu var.",
+"Mettre les {0} voyages sans abonné dans mon carnet":"Takipçisi olmayan {0} seyahati defterime ekle",
+"Mettre le voyage sans abonné dans mon carnet":"Takipçisi olmayan seyahati defterime ekle",
+"(publié à part : {0} abonné{1} sur son propre lien)":"(ayrı yayında: kendi bağlantısında {0} takipçi{1})",
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(ayrı yayında, takipçisi yok: deftere eklemek için işaretle)"});

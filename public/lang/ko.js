@@ -4185,4 +4185,10 @@ I18N.load({
 "Touche pour le montrer à tes compagnons":"탭해서 동행에게 보여주기",
 "{0} point{1} aujourd’hui · {2} km · enregistre ta route quand l’appli est ouverte · coupé seul après le {3}":"오늘 {0}개 지점{1} · {2} km · 앱이 열려 있을 때 경로 기록 · {3} 이후 꺼짐",
 "Chacun l’active ou le coupe quand il veut. Coupé seul après le {0}.":"각자 원할 때 켜고 끌 수 있어요. {0} 이후 꺼져요.",
-"Pour que {0} sachent qui suit leur voyage.":"{0}이(가) 누가 여행을 팔로우하는지 알 수 있도록."});
+"Pour que {0} sachent qui suit leur voyage.":"{0}이(가) 누가 여행을 팔로우하는지 알 수 있도록.",
+"Publiés à part, avec leur propre lien ({0})":"따로 공개됨, 각자의 링크 ({0})",
+"En dehors du carnet : chacun a son code abonné.":"여행 수첩 밖: 각각 팔로워 코드가 있어요.",
+"Mettre les {0} voyages sans abonné dans mon carnet":"팔로워 없는 여행 {0}개를 내 수첩에 넣기",
+"Mettre le voyage sans abonné dans mon carnet":"팔로워 없는 여행을 내 수첩에 넣기",
+"(publié à part : {0} abonné{1} sur son propre lien)":"(따로 공개: 자체 링크에 팔로워 {0}명{1})",
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(따로 공개, 팔로워 없음: 체크하면 수첩에 들어가요)"});

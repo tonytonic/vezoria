@@ -4185,4 +4185,10 @@ I18N.load({
 "Touche pour le montrer à tes compagnons":"Нажмите, чтобы показать спутникам",
 "{0} point{1} aujourd’hui · {2} km · enregistre ta route quand l’appli est ouverte · coupé seul après le {3}":"{0} точ.{1} сегодня · {2} км · записывает маршрут, пока приложение открыто · выключится после {3}",
 "Chacun l’active ou le coupe quand il veut. Coupé seul après le {0}.":"Каждый включает и выключает когда хочет. Выключится после {0}.",
-"Pour que {0} sachent qui suit leur voyage.":"Чтобы {0} знали, кто следит за их поездкой."});
+"Pour que {0} sachent qui suit leur voyage.":"Чтобы {0} знали, кто следит за их поездкой.",
+"Publiés à part, avec leur propre lien ({0})":"Опубликованы отдельно, со своей ссылкой ({0})",
+"En dehors du carnet : chacun a son code abonné.":"Вне дневника: у каждой свой код подписчика.",
+"Mettre les {0} voyages sans abonné dans mon carnet":"Добавить {0} поездки без подписчиков в мой дневник",
+"Mettre le voyage sans abonné dans mon carnet":"Добавить поездку без подписчиков в мой дневник",
+"(publié à part : {0} abonné{1} sur son propre lien)":"(опубликована отдельно: подписчиков {0}{1} по своей ссылке)",
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(опубликована отдельно, без подписчиков: отметьте, чтобы добавить в дневник)"});

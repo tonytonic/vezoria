@@ -4185,4 +4185,10 @@ I18N.load({
 "Touche pour le montrer à tes compagnons":"タップして仲間に表示",
 "{0} point{1} aujourd’hui · {2} km · enregistre ta route quand l’appli est ouverte · coupé seul après le {3}":"今日 {0} 点{1} · {2} km · アプリを開いている間ルートを記録 · {3} の後オフ",
 "Chacun l’active ou le coupe quand il veut. Coupé seul après le {0}.":"各自いつでもオン・オフできます。{0} の後オフ。",
-"Pour que {0} sachent qui suit leur voyage.":"{0} が、誰が旅をフォローしているか分かるように。"});
+"Pour que {0} sachent qui suit leur voyage.":"{0} が、誰が旅をフォローしているか分かるように。",
+"Publiés à part, avec leur propre lien ({0})":"別に公開中（それぞれのリンク）（{0}）",
+"En dehors du carnet : chacun a son code abonné.":"旅帳の外：それぞれにフォロワーコードがあります。",
+"Mettre les {0} voyages sans abonné dans mon carnet":"フォロワーのいない{0}件の旅を旅帳に入れる",
+"Mettre le voyage sans abonné dans mon carnet":"フォロワーのいない旅を旅帳に入れる",
+"(publié à part : {0} abonné{1} sur son propre lien)":"（別に公開中：専用リンクにフォロワー{0}人{1}）",
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"（別に公開中、フォロワーなし：チェックすると旅帳に入ります）"});

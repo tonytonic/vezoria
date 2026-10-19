@@ -4185,4 +4185,10 @@ I18N.load({
 "Touche pour le montrer à tes compagnons":"点按向同伴显示",
 "{0} point{1} aujourd’hui · {2} km · enregistre ta route quand l’appli est ouverte · coupé seul après le {3}":"今天 {0} 个点{1} · {2} 公里 · 应用打开时记录路线 · {3} 后关闭",
 "Chacun l’active ou le coupe quand il veut. Coupé seul après le {0}.":"每个人随时开启或关闭。{0} 后关闭。",
-"Pour que {0} sachent qui suit leur voyage.":"让 {0} 知道谁在关注他们的旅行。"});
+"Pour que {0} sachent qui suit leur voyage.":"让 {0} 知道谁在关注他们的旅行。",
+"Publiés à part, avec leur propre lien ({0})":"单独发布，有自己的链接（{0}）",
+"En dehors du carnet : chacun a son code abonné.":"不在旅行手册中：每个都有自己的关注码。",
+"Mettre les {0} voyages sans abonné dans mon carnet":"把 {0} 个没有关注者的旅行放进我的手册",
+"Mettre le voyage sans abonné dans mon carnet":"把没有关注者的旅行放进我的手册",
+"(publié à part : {0} abonné{1} sur son propre lien)":"（单独发布：自己的链接上有 {0} 位关注者{1}）",
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"（单独发布，没有关注者：勾选即可放进手册）"});

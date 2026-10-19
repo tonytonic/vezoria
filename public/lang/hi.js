@@ -4185,4 +4185,10 @@ I18N.load({
 "Touche pour le montrer à tes compagnons":"साथियों को दिखाने के लिए छुओ",
 "{0} point{1} aujourd’hui · {2} km · enregistre ta route quand l’appli est ouverte · coupé seul après le {3}":"आज {0} बिंदु{1} · {2} किमी · ऐप खुला रहने पर रास्ता दर्ज करता है · {3} के बाद बंद",
 "Chacun l’active ou le coupe quand il veut. Coupé seul après le {0}.":"हर कोई जब चाहे चालू या बंद करे। {0} के बाद बंद।",
-"Pour que {0} sachent qui suit leur voyage.":"ताकि {0} जानें कि उनकी यात्रा कौन फ़ॉलो कर रहा है।"});
+"Pour que {0} sachent qui suit leur voyage.":"ताकि {0} जानें कि उनकी यात्रा कौन फ़ॉलो कर रहा है।",
+"Publiés à part, avec leur propre lien ({0})":"अलग से प्रकाशित, अपने लिंक के साथ ({0})",
+"En dehors du carnet : chacun a son code abonné.":"कारनेट से बाहर: हर एक का अपना फ़ॉलोअर कोड है।",
+"Mettre les {0} voyages sans abonné dans mon carnet":"बिना फ़ॉलोअर वाली {0} यात्राएँ मेरे कारनेट में डालें",
+"Mettre le voyage sans abonné dans mon carnet":"बिना फ़ॉलोअर वाली यात्रा मेरे कारनेट में डालें",
+"(publié à part : {0} abonné{1} sur son propre lien)":"(अलग से प्रकाशित: अपने लिंक पर {0} फ़ॉलोअर{1})",
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(अलग से प्रकाशित, कोई फ़ॉलोअर नहीं: कारनेट में डालने के लिए चुनें)"});

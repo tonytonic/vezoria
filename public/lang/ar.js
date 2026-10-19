@@ -4185,4 +4185,10 @@ I18N.load({
 "Touche pour le montrer à tes compagnons":"المس لإظهاره لرفاقك",
 "{0} point{1} aujourd’hui · {2} km · enregistre ta route quand l’appli est ouverte · coupé seul après le {3}":"{0} نقطة{1} اليوم · {2} كم · يسجّل مسارك والتطبيق مفتوح · يتوقف بعد {3}",
 "Chacun l’active ou le coupe quand il veut. Coupé seul après le {0}.":"يشغّله كل واحد أو يوقفه متى شاء. يتوقف بعد {0}.",
-"Pour que {0} sachent qui suit leur voyage.":"ليعرف {0} من يتابع رحلتهم."});
+"Pour que {0} sachent qui suit leur voyage.":"ليعرف {0} من يتابع رحلتهم.",
+"Publiés à part, avec leur propre lien ({0})":"منشورة على حدة، برابطها الخاص ({0})",
+"En dehors du carnet : chacun a son code abonné.":"خارج الدفتر: لكلٍّ منها رمز متابعة خاص.",
+"Mettre les {0} voyages sans abonné dans mon carnet":"ضع الرحلات الـ{0} بلا متابعين في دفتري",
+"Mettre le voyage sans abonné dans mon carnet":"ضع الرحلة بلا متابعين في دفتري",
+"(publié à part : {0} abonné{1} sur son propre lien)":"(منشورة على حدة: {0} متابع{1} على رابطها الخاص)",
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(منشورة على حدة، بلا متابعين: حدّدها لوضعها في الدفتر)"});

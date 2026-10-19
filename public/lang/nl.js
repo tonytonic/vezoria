@@ -1261,4 +1261,10 @@ I18N.load({
 "Touche pour le montrer à tes compagnons":"Tik om het aan je reisgenoten te tonen",
 "{0} point{1} aujourd’hui · {2} km · enregistre ta route quand l’appli est ouverte · coupé seul après le {3}":"{0} punt{1} vandaag · {2} km · neemt je route op als de app open is · uit na {3}",
 "Chacun l’active ou le coupe quand il veut. Coupé seul après le {0}.":"Iedereen zet het aan of uit wanneer hij wil. Uit na {0}.",
-"Pour que {0} sachent qui suit leur voyage.":"Zodat {0} weten wie hun reis volgt."});
+"Pour que {0} sachent qui suit leur voyage.":"Zodat {0} weten wie hun reis volgt.",
+"Publiés à part, avec leur propre lien ({0})":"Apart gepubliceerd, met eigen link ({0})",
+"En dehors du carnet : chacun a son code abonné.":"Buiten het reisboek: elk heeft een eigen volgercode.",
+"Mettre les {0} voyages sans abonné dans mon carnet":"De {0} reizen zonder volgers in mijn reisboek zetten",
+"Mettre le voyage sans abonné dans mon carnet":"De reis zonder volgers in mijn reisboek zetten",
+"(publié à part : {0} abonné{1} sur son propre lien)":"(apart gepubliceerd: {0} volger{1} via eigen link)",
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(apart gepubliceerd, geen volgers: vink aan om in het reisboek te zetten)"});
