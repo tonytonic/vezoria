@@ -1229,4 +1229,15 @@ I18N.load({
 "L’effacer du serveur":"Apagar do servidor",
 "Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Fichas e fotos apagadas do servidor, para todos (companheiros e seguidores perdem o acesso).",
 "Le garder seulement sur ce téléphone":"Manter só neste telemóvel",
-"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Este telemóvel deixa de o sincronizar. Os teus companheiros mantêm a cópia online."});
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Este telemóvel deixa de o sincronizar. Os teus companheiros mantêm a cópia online.",
+"Aimé par":"Curtido por",
+"et 1 autre":"e mais 1",
+"et {0} autres":"e mais {0}",
+"Voir les 3 commentaires":"Ver os 3 comentários",
+"Voir les {0} commentaires":"Ver os {0} comentários",
+"Réduire":"Mostrar menos",
+"Répondre":"Responder",
+"auteur":"autor",
+"toi":"você",
+"personne aime":"pessoa curtiu",
+"personnes aiment":"pessoas curtiram"});

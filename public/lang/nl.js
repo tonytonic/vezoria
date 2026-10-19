@@ -1229,4 +1229,15 @@ I18N.load({
 "L’effacer du serveur":"Van de server verwijderen",
 "Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Items en foto’s worden voor iedereen van de server verwijderd (reisgenoten en volgers verliezen toegang).",
 "Le garder seulement sur ce téléphone":"Alleen op deze telefoon houden",
-"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Deze telefoon synchroniseert hem niet meer. Je reisgenoten houden hun online kopie."});
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Deze telefoon synchroniseert hem niet meer. Je reisgenoten houden hun online kopie.",
+"Aimé par":"Leuk gevonden door",
+"et 1 autre":"en 1 ander",
+"et {0} autres":"en {0} anderen",
+"Voir les 3 commentaires":"Alle 3 reacties bekijken",
+"Voir les {0} commentaires":"Alle {0} reacties bekijken",
+"Réduire":"Minder",
+"Répondre":"Reageren",
+"auteur":"auteur",
+"toi":"jij",
+"personne aime":"persoon vindt dit leuk",
+"personnes aiment":"personen vinden dit leuk"});

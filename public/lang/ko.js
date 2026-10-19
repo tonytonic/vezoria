@@ -4153,4 +4153,15 @@ I18N.load({
 "L’effacer du serveur":"서버에서 삭제",
 "Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"기록과 사진이 모두를 위해 서버에서 삭제돼요(동행과 팔로워는 더 이상 볼 수 없어요).",
 "Le garder seulement sur ce téléphone":"이 휴대폰에만 두기",
-"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"이 휴대폰은 동기화를 멈춰요. 동행은 온라인 사본을 그대로 가져요."});
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"이 휴대폰은 동기화를 멈춰요. 동행은 온라인 사본을 그대로 가져요.",
+"Aimé par":"좋아한 사람:",
+"et 1 autre":"외 1명",
+"et {0} autres":"외 {0}명",
+"Voir les 3 commentaires":"댓글 3개 모두 보기",
+"Voir les {0} commentaires":"댓글 {0}개 모두 보기",
+"Réduire":"접기",
+"Répondre":"답글",
+"auteur":"작성자",
+"toi":"나",
+"personne aime":"명이 좋아합니다",
+"personnes aiment":"명이 좋아합니다"});

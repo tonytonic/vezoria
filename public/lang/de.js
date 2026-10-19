@@ -1229,4 +1229,15 @@ I18N.load({
 "L’effacer du serveur":"Vom Server löschen",
 "Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Einträge und Fotos werden für alle vom Server gelöscht (Mitreisende und Follower verlieren den Zugang).",
 "Le garder seulement sur ce téléphone":"Nur auf diesem Handy behalten",
-"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Dieses Handy synchronisiert sie nicht mehr. Deine Mitreisenden behalten ihre Online-Kopie."});
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Dieses Handy synchronisiert sie nicht mehr. Deine Mitreisenden behalten ihre Online-Kopie.",
+"Aimé par":"Gefällt",
+"et 1 autre":"und 1 weiteren Person",
+"et {0} autres":"und {0} weiteren",
+"Voir les 3 commentaires":"Alle 3 Kommentare ansehen",
+"Voir les {0} commentaires":"Alle {0} Kommentare ansehen",
+"Réduire":"Weniger",
+"Répondre":"Antworten",
+"auteur":"Autor",
+"toi":"dir",
+"personne aime":"Person gefällt das",
+"personnes aiment":"Personen gefällt das"});

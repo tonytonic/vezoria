@@ -4153,4 +4153,15 @@ I18N.load({
 "L’effacer du serveur":"Удалить с сервера",
 "Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Записи и фото удаляются с сервера для всех (попутчики и подписчики теряют доступ).",
 "Le garder seulement sur ce téléphone":"Оставить только на этом телефоне",
-"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Этот телефон перестаёт синхронизировать поездку. У попутчиков остаётся их копия в сети."});
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Этот телефон перестаёт синхронизировать поездку. У попутчиков остаётся их копия в сети.",
+"Aimé par":"Нравится",
+"et 1 autre":"и ещё 1",
+"et {0} autres":"и ещё {0}",
+"Voir les 3 commentaires":"Показать все 3 комментария",
+"Voir les {0} commentaires":"Показать все комментарии ({0})",
+"Réduire":"Свернуть",
+"Répondre":"Ответить",
+"auteur":"автор",
+"toi":"вам",
+"personne aime":"человеку нравится",
+"personnes aiment":"людям нравится"});

@@ -1229,4 +1229,15 @@ I18N.load({
 "L’effacer du serveur":"Delete it from the server",
 "Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Records and photos deleted from the server, for everyone (companions and followers lose access).",
 "Le garder seulement sur ce téléphone":"Keep it on this phone only",
-"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"This phone stops syncing it. Your companions keep their online copy."});
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"This phone stops syncing it. Your companions keep their online copy.",
+"Aimé par":"Liked by",
+"et 1 autre":"and 1 other",
+"et {0} autres":"and {0} others",
+"Voir les 3 commentaires":"View all 3 comments",
+"Voir les {0} commentaires":"View all {0} comments",
+"Réduire":"Show less",
+"Répondre":"Reply",
+"auteur":"author",
+"toi":"you",
+"personne aime":"person likes this",
+"personnes aiment":"people like this"});

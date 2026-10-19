@@ -4153,4 +4153,15 @@ I18N.load({
 "L’effacer du serveur":"حذفها من الخادم",
 "Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"تُحذف البطاقات والصور من الخادم للجميع (يفقد الرفاق والمتابعون الوصول).",
 "Le garder seulement sur ce téléphone":"الاحتفاظ بها على هذا الهاتف فقط",
-"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"يتوقف هذا الهاتف عن مزامنتها. يحتفظ رفاقك بنسختهم على الإنترنت."});
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"يتوقف هذا الهاتف عن مزامنتها. يحتفظ رفاقك بنسختهم على الإنترنت.",
+"Aimé par":"أعجب",
+"et 1 autre":"وشخص آخر",
+"et {0} autres":"و{0} آخرون",
+"Voir les 3 commentaires":"عرض التعليقات الثلاثة",
+"Voir les {0} commentaires":"عرض كل التعليقات ({0})",
+"Réduire":"عرض أقل",
+"Répondre":"رد",
+"auteur":"الكاتب",
+"toi":"أنت",
+"personne aime":"شخص أعجبه هذا",
+"personnes aiment":"أشخاص أعجبهم هذا"});

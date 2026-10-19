@@ -4153,4 +4153,15 @@ I18N.load({
 "L’effacer du serveur":"Sunucudan sil",
 "Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"Kayıtlar ve fotoğraflar herkes için sunucudan silinir (yol arkadaşları ve takipçiler erişimi kaybeder).",
 "Le garder seulement sur ce téléphone":"Sadece bu telefonda tut",
-"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Bu telefon artık eşitlemez. Yol arkadaşların çevrimiçi kopyalarını korur."});
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"Bu telefon artık eşitlemez. Yol arkadaşların çevrimiçi kopyalarını korur.",
+"Aimé par":"Beğenenler:",
+"et 1 autre":"ve 1 kişi daha",
+"et {0} autres":"ve {0} kişi daha",
+"Voir les 3 commentaires":"3 yorumun tümünü gör",
+"Voir les {0} commentaires":"{0} yorumun tümünü gör",
+"Réduire":"Daha az",
+"Répondre":"Yanıtla",
+"auteur":"yazar",
+"toi":"sen",
+"personne aime":"kişi beğendi",
+"personnes aiment":"kişi beğendi"});

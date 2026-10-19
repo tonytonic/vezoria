@@ -4153,4 +4153,15 @@ I18N.load({
 "L’effacer du serveur":"सर्वर से मिटाएँ",
 "Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"कार्ड और फ़ोटो सबके लिए सर्वर से मिट जाते हैं (साथियों और फ़ॉलोअर्स की पहुँच खत्म)।",
 "Le garder seulement sur ce téléphone":"सिर्फ़ इस फ़ोन पर रखें",
-"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"यह फ़ोन इसे सिंक करना बंद करता है। तुम्हारे साथियों की ऑनलाइन कॉपी बनी रहती है।"});
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"यह फ़ोन इसे सिंक करना बंद करता है। तुम्हारे साथियों की ऑनलाइन कॉपी बनी रहती है।",
+"Aimé par":"पसंद किया",
+"et 1 autre":"और 1 अन्य",
+"et {0} autres":"और {0} अन्य",
+"Voir les 3 commentaires":"सभी 3 टिप्पणियाँ देखें",
+"Voir les {0} commentaires":"सभी {0} टिप्पणियाँ देखें",
+"Réduire":"कम दिखाएँ",
+"Répondre":"जवाब दें",
+"auteur":"लेखक",
+"toi":"आप",
+"personne aime":"व्यक्ति को पसंद है",
+"personnes aiment":"लोगों को पसंद है"});

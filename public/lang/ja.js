@@ -4153,4 +4153,15 @@ I18N.load({
 "L’effacer du serveur":"サーバーから削除する",
 "Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"記録と写真を全員分サーバーから削除します（仲間とフォロワーは見られなくなります）。",
 "Le garder seulement sur ce téléphone":"このスマホだけに残す",
-"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"このスマホは同期をやめます。仲間はオンラインのコピーをそのまま使えます。"});
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"このスマホは同期をやめます。仲間はオンラインのコピーをそのまま使えます。",
+"Aimé par":"いいね：",
+"et 1 autre":"ほか1人",
+"et {0} autres":"ほか{0}人",
+"Voir les 3 commentaires":"コメント3件をすべて見る",
+"Voir les {0} commentaires":"コメント{0}件をすべて見る",
+"Réduire":"閉じる",
+"Répondre":"返信",
+"auteur":"作成者",
+"toi":"あなた",
+"personne aime":"人がいいねしました",
+"personnes aiment":"人がいいねしました"});

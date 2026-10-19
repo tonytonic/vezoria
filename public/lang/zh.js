@@ -4153,4 +4153,15 @@ I18N.load({
 "L’effacer du serveur":"从服务器删除",
 "Fiches et photos supprimées du serveur, pour tout le monde (compagnons et abonnés n’y ont plus accès).":"记录和照片会为所有人从服务器删除（同行者和关注者将无法访问）。",
 "Le garder seulement sur ce téléphone":"只保留在此手机上",
-"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"此手机不再同步它。同行者保留各自的在线副本。"});
+"Ce téléphone arrête de le synchroniser. Tes compagnons gardent leur copie en ligne.":"此手机不再同步它。同行者保留各自的在线副本。",
+"Aimé par":"赞了：",
+"et 1 autre":"等 1 人",
+"et {0} autres":"等 {0} 人",
+"Voir les 3 commentaires":"查看全部 3 条评论",
+"Voir les {0} commentaires":"查看全部 {0} 条评论",
+"Réduire":"收起",
+"Répondre":"回复",
+"auteur":"作者",
+"toi":"你",
+"personne aime":"人赞了",
+"personnes aiment":"人赞了"});
