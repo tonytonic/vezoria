@@ -1,4 +1,9 @@
 I18N.load({
+"Voyages que je suis : nouvelles étapes et photos":"Takip ettiğim seyahatler: yeni duraklar ve fotoğraflar",
+"📸 {0} a publié une nouvelle étape : {1}":"📸 {0} yeni bir durak paylaştı: {1}",
+"📸 {0} a publié {1} nouvelles étapes":"📸 {0} {1} yeni durak paylaştı",
+"Me prévenir des nouvelles étapes":"Yeni duraklardan haberdar et",
+"Une notification à chaque nouvelle publication":"Her yeni paylaşımda bir bildirim",
 "🔄 Synchro de ce voyage partagé":"🔄 Bu paylaşılan geziyi eşitle",
 "🔄 Synchro du voyage":"🔄 Gezi eşitleme",
 "Sur ce téléphone":"Bu telefonda",

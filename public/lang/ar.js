@@ -1,4 +1,9 @@
 I18N.load({
+"Voyages que je suis : nouvelles étapes et photos":"الرحلات التي أتابعها: محطات وصور جديدة",
+"📸 {0} a publié une nouvelle étape : {1}":"📸 نشر {0} محطة جديدة: {1}",
+"📸 {0} a publié {1} nouvelles étapes":"📸 نشر {0} عدد {1} محطات جديدة",
+"Me prévenir des nouvelles étapes":"أعلمني بالمحطات الجديدة",
+"Une notification à chaque nouvelle publication":"إشعار مع كل منشور جديد",
 "🔄 Synchro de ce voyage partagé":"🔄 مزامنة هذه الرحلة المشتركة",
 "🔄 Synchro du voyage":"🔄 مزامنة الرحلة",
 "Sur ce téléphone":"على هذا الهاتف",

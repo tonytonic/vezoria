@@ -1,4 +1,9 @@
 I18N.load({
+"Voyages que je suis : nouvelles étapes et photos":"जिन यात्राओं को मैं फ़ॉलो करता हूँ: नए पड़ाव और फ़ोटो",
+"📸 {0} a publié une nouvelle étape : {1}":"📸 {0} ने नया पड़ाव पोस्ट किया: {1}",
+"📸 {0} a publié {1} nouvelles étapes":"📸 {0} ने {1} नए पड़ाव पोस्ट किए",
+"Me prévenir des nouvelles étapes":"नए पड़ावों की सूचना दें",
+"Une notification à chaque nouvelle publication":"हर नई पोस्ट पर एक सूचना",
 "🔄 Synchro de ce voyage partagé":"🔄 इस साझा यात्रा को सिंक करें",
 "🔄 Synchro du voyage":"🔄 यात्रा सिंक",
 "Sur ce téléphone":"इस फ़ोन पर",

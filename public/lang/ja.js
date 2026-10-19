@@ -1,4 +1,9 @@
 I18N.load({
+"Voyages que je suis : nouvelles étapes et photos":"フォロー中の旅：新しい立ち寄り先と写真",
+"📸 {0} a publié une nouvelle étape : {1}":"📸 {0}さんが新しい立ち寄り先を投稿しました：{1}",
+"📸 {0} a publié {1} nouvelles étapes":"📸 {0}さんが新しい立ち寄り先を{1}件投稿しました",
+"Me prévenir des nouvelles étapes":"新しい立ち寄り先を通知する",
+"Une notification à chaque nouvelle publication":"新しい投稿ごとに通知",
 "🔄 Synchro de ce voyage partagé":"🔄 この共有旅行を同期",
 "🔄 Synchro du voyage":"🔄 旅行の同期",
 "Sur ce téléphone":"この端末",

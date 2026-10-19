@@ -1,4 +1,9 @@
 I18N.load({
+"Voyages que je suis : nouvelles étapes et photos":"Поездки, за которыми я слежу: новые этапы и фото",
+"📸 {0} a publié une nouvelle étape : {1}":"📸 {0} опубликовал(а) новый этап: {1}",
+"📸 {0} a publié {1} nouvelles étapes":"📸 {0} опубликовал(а) новых этапов: {1}",
+"Me prévenir des nouvelles étapes":"Сообщать о новых этапах",
+"Une notification à chaque nouvelle publication":"Уведомление о каждой новой публикации",
 "🔄 Synchro de ce voyage partagé":"🔄 Синхронизировать эту общую поездку",
 "🔄 Synchro du voyage":"🔄 Синхронизация поездки",
 "Sur ce téléphone":"На этом телефоне",

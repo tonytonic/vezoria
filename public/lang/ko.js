@@ -1,4 +1,9 @@
 I18N.load({
+"Voyages que je suis : nouvelles étapes et photos":"팔로우 중인 여행: 새 여정과 사진",
+"📸 {0} a publié une nouvelle étape : {1}":"📸 {0}님이 새 여정을 올렸어요: {1}",
+"📸 {0} a publié {1} nouvelles étapes":"📸 {0}님이 새 여정 {1}개를 올렸어요",
+"Me prévenir des nouvelles étapes":"새 여정 알림 받기",
+"Une notification à chaque nouvelle publication":"새 게시물마다 알림",
 "🔄 Synchro de ce voyage partagé":"🔄 이 공유 여행 동기화",
 "🔄 Synchro du voyage":"🔄 여행 동기화",
 "Sur ce téléphone":"이 휴대폰",

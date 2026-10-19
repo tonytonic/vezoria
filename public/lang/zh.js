@@ -1,4 +1,9 @@
 I18N.load({
+"Voyages que je suis : nouvelles étapes et photos":"我关注的旅行：新的行程站点和照片",
+"📸 {0} a publié une nouvelle étape : {1}":"📸 {0} 发布了新的站点：{1}",
+"📸 {0} a publié {1} nouvelles étapes":"📸 {0} 发布了 {1} 个新站点",
+"Me prévenir des nouvelles étapes":"有新站点时通知我",
+"Une notification à chaque nouvelle publication":"每次有新发布都会通知",
 "🔄 Synchro de ce voyage partagé":"🔄 同步这个共享旅行",
 "🔄 Synchro du voyage":"🔄 旅行同步",
 "Sur ce téléphone":"本机",

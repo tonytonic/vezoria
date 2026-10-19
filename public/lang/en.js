@@ -1,4 +1,9 @@
 I18N.load({
+"Voyages que je suis : nouvelles étapes et photos":"Trips I follow: new stops and photos",
+"📸 {0} a publié une nouvelle étape : {1}":"📸 {0} posted a new stop: {1}",
+"📸 {0} a publié {1} nouvelles étapes":"📸 {0} posted {1} new stops",
+"Me prévenir des nouvelles étapes":"Notify me of new stops",
+"Une notification à chaque nouvelle publication":"A notification for every new post",
 "🔄 Synchro de ce voyage partagé":"🔄 Sync this shared trip",
 "🔄 Synchro du voyage":"🔄 Trip sync",
 "Sur ce téléphone":"On this phone",

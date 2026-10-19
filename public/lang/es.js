@@ -1,4 +1,9 @@
 I18N.load({
+"Voyages que je suis : nouvelles étapes et photos":"Viajes que sigo: nuevas etapas y fotos",
+"📸 {0} a publié une nouvelle étape : {1}":"📸 {0} ha publicado una nueva etapa: {1}",
+"📸 {0} a publié {1} nouvelles étapes":"📸 {0} ha publicado {1} nuevas etapas",
+"Me prévenir des nouvelles étapes":"Avisarme de nuevas etapas",
+"Une notification à chaque nouvelle publication":"Una notificación por cada nueva publicación",
 "🔄 Synchro de ce voyage partagé":"🔄 Sincronizar este viaje compartido",
 "🔄 Synchro du voyage":"🔄 Sincronización del viaje",
 "Sur ce téléphone":"En este teléfono",
