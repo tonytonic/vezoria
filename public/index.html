@@ -12034,7 +12034,7 @@ ${pm.join('\n')}</Document></kml>`;
         if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
         const sp = spaceObj(c); sp.since = 0; try { await syncSpace(sp, true); } catch(e){}
         const old = list('follower', f=>fwDevOf(f) === x.dev && TS()[f.trip] === c);
-        const mine = list('feedtrip', f=>TS()[f.id] === c && !f.deleted).map(ft=>({id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who:fwAsFor(c) || 'Un proche', pk:k.pub, ib}));
+        const mine = list('feedtrip', f=>TS()[f.id] === c && !f.deleted).map(ft=>({id:'fw:' + ft.id + ':' + devId(), type:'follower', pid:fwPid(), trip:ft.id, who:fwAsFor(c) || 'Un proche', pk:k.pub, ib}));
         putQuiet([...old.map(f=>Object.assign(clone(f), {deleted:true})), ...mine]);
       }
       const sp0 = spaceObj(code); if(sp0){ try { await spacePushOnly(sp0, [Object.assign(clone(x), {deleted:true})]); } catch(e){} }   // le code ne sert qu’une fois
@@ -14663,7 +14663,7 @@ ${pm.join('\n')}</Document></kml>`;
     TS()[ftId(tid)] = c; const out = [];
     // couverture pour les abonnés : ma photo › photo Wikipédia choisie › 1re photo d’un souvenir publié (jamais d’un souvenir privé)
     const cov = t.cover || (t.coverWk ? '' : ((list('souv', x=>x.trip===tid && !x.priv && (x.photos||[]).length).sort((a,b)=>(a.date||'').localeCompare(b.date||''))[0] || {}).photos || [])[0] || '');
-    const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', team: (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').slice(0, 30), pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
+    const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', team: (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').slice(0, 30), tids: (t.voyageurs||[]).slice(0, 30), opid: (M.me && prof(M.me)) ? M.me : undefined, pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
     if(!R[head.id] || stripStamp(R[head.id]) !== stripStamp(head)) out.push(head);
     const keep = new Set(), first = !R[head.id] || R[head.id].deleted, fresh = [];
     list('souv', s=>s.trip===tid && !s.priv && ((s.photos||[]).length || (s.texte||'').trim())).forEach(s=>{
@@ -14839,7 +14839,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(web) M.webCode = code;
     let pk; try { pk = (await fKey()).pub; } catch(e){}
     if(myName() && !(M.fwChk = M.fwChk || {})[code]){ M.fwChk[code] = 1; const r = await fwNameResolve(myName()); if(r && r.n !== myName()) (M.fwAs = M.fwAs || {})[code] = r.n; }
-    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', trip:ft.id, who: fwAsFor(code) || 'Un proche', pk}; if(!R[fw.id]){ putQuiet([fw]); socialPush(ft.id, 'follow', ''); }
+    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', pid:fwPid(), trip:ft.id, who: fwAsFor(code) || 'Un proche', pk}; if(!R[fw.id]){ putQuiet([fw]); socialPush(ft.id, 'follow', ''); }
     persist(); syncNow(); closeSheet(true); feedView(ft.id); toast('👀 Tu suis « ' + ft.titre + ' »');
   }
   function followSheet(){
@@ -15005,8 +15005,8 @@ ${pm.join('\n')}</Document></kml>`;
   }
   // abonné : sa serrure (clé publique) part avec sa fiche « abonné »
   async function fwKeyTouch(){
-    const me = devId(), ib = M.ib, nm = f => fwAsFor(TS()[f.trip]), mine = list('follower', f=>String(f.id).endsWith(':' + me) && (!f.pk || !f.ib || (ib && f.ib !== ib) || (nm(f) && f.who !== nm(f))) && TS()[f.trip] && !FT()[String(f.trip).replace(/^ft:/,'')]); if(!mine.length) return;
-    const k = await fKey(), b = inbox(); putQuiet(mine.map(f=>Object.assign(clone(f), {pk:k.pub, ib:b}, nm(f) ? {who:nm(f)} : {})));
+    const me = devId(), ib = M.ib, nm = f => fwAsFor(TS()[f.trip]), mine = list('follower', f=>String(f.id).endsWith(':' + me) && (!f.pk || !f.ib || (ib && f.ib !== ib) || (nm(f) && f.who !== nm(f)) || (fwPid() && f.pid !== fwPid())) && TS()[f.trip] && !FT()[String(f.trip).replace(/^ft:/,'')]); if(!mine.length) return;
+    const k = await fKey(), b = inbox(); putQuiet(mine.map(f=>Object.assign(clone(f), {pk:k.pub, ib:b}, fwPid() ? {pid:fwPid()} : {}, nm(f) ? {who:nm(f)} : {})));
   }
   // auteur : retirer vraiment l’accès d’un abonné = nouveau lien, transmis chiffré à chacun des autres
   async function feedRevoke(tid, dev, who){
@@ -15055,7 +15055,7 @@ ${pm.join('\n')}</Document></kml>`;
         Object.keys(TS()).forEach(x=>{ if(TS()[x] === old) delete TS()[x]; }); M.spaces = (M.spaces||[]).filter(x=>x.code !== old);
         if(M.webCode === old) M.webCode = c;
         M.spaces.push({code:c, since:0, dirty:[], last:0, err:''}); const sp = spaceObj(c); await syncSpace(sp, true);
-        list('feedtrip', f=>TS()[f.id] === c && !f.deleted).forEach(ft=>{ const id = 'fw:' + ft.id + ':' + me; if(!R[id] || R[id].deleted) putQuiet([{id, type:'follower', trip:ft.id, who: myName() || 'Un proche', pk:k.pub}]); });
+        list('feedtrip', f=>TS()[f.id] === c && !f.deleted).forEach(ft=>{ const id = 'fw:' + ft.id + ':' + me; if(!R[id] || R[id].deleted) putQuiet([{id, type:'follower', pid:fwPid(), trip:ft.id, who: myName() || 'Un proche', pk:k.pub}]); });
         persist(); refresh();
       } catch(e){}
     }
@@ -15070,14 +15070,15 @@ ${pm.join('\n')}</Document></kml>`;
   //    (navigateur puis appli installée) = une seule personne, la plus récente
   const fwDevOf = x => String(x.id).split(':').pop();
   const fwGeneric = n => !n || /^(un proche|someone|\?)$/i.test(String(n).trim());
-  const fwLabel = x => ((M.fwNick || {})[fwDevOf(x)]) || (fwGeneric(x.who) ? '' : x.who);
+  const fwMate = x => !!(x && x.pid && prof(x.pid));
+  const fwLabel = x => ((M.fwNick || {})[fwDevOf(x)]) || (fwMate(x) ? pname(x.pid) : '') || (fwGeneric(x.who) ? '' : x.who);
   const fwRoot = d => { const seen = new Set(); while(d && !seen.has(d)){ seen.add(d); const f = list('follower', x=>fwDevOf(x) === d && x.same)[0]; if(!f || f.same === d) break; d = f.same; } return d; };
-  const fwKey = x => { const n = ((M.fwNick || {})[fwDevOf(x)] || '').trim().toLowerCase(); return n ? 'n:' + n : 'd:' + fwDevOf(x); };
+  const fwKey = x => { const n = ((M.fwNick || {})[fwDevOf(x)] || '').trim().toLowerCase(); return n ? 'n:' + n : fwMate(x) ? 'p:' + x.pid : 'd:' + fwDevOf(x); };
   function fwUniq(arr){ const by = {}; arr.forEach(x=>{ const k = fwKey(x), c = by[k]; if(!c || (x.updatedAt || 0) > (c.updatedAt || 0)) by[k] = x; }); return Object.values(by); }
   // deux personnes différentes avec le même prénom : « Claire », « Claire (2) »
   function fwNames(arr){ const n = {}, out = {};
     profiles().forEach(p=>{ const k = String(p.nom || '').trim().toLowerCase(); if(k) n[k] = 1; });   // un abonné ne porte jamais le nom d’un compagnon
-    arr.slice().sort((a, b)=>(a.createdAt || 0) - (b.createdAt || 0)).forEach(x=>{ const l = fwLabel(x); if(!l) return; const k = l.trim().toLowerCase(); n[k] = (n[k] || 0) + 1; out[x.id] = n[k] > 1 ? l + ' ' + n[k] : l; });
+    arr.slice().sort((a, b)=>(a.createdAt || 0) - (b.createdAt || 0)).forEach(x=>{ if(fwMate(x) && !((M.fwNick || {})[fwDevOf(x)])){ out[x.id] = '🧳 ' + pname(x.pid); return; } const l = fwLabel(x); if(!l) return; const k = l.trim().toLowerCase(); n[k] = (n[k] || 0) + 1; out[x.id] = n[k] > 1 ? l + ' ' + n[k] : l; });
     return out; }
   // tous les appareils d’une même personne parmi mes abonnés (même prénom ou même nom donné)
   function fwTwins(d){ const mine = new Set(Object.keys(FT()).map(ftId)), all = list('follower', f=>mine.has(f.trip)), me = all.find(f=>fwDevOf(f) === d);
@@ -15160,7 +15161,7 @@ ${pm.join('\n')}</Document></kml>`;
         if(prev && prev !== c){ M.spaces = (M.spaces||[]).filter(s=>s.code !== prev); Object.keys(TS()).forEach(z=>{ if(TS()[z] === prev) delete TS()[z]; }); }
         if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
         await syncSpace(spaceObj(c), true);
-        list('feedtrip', f=>TS()[f.id] === c && !f.deleted).forEach(ft=>{ const id = 'fw:' + ft.id + ':' + me; if(!R[id] || R[id].deleted) putQuiet([{id, type:'follower', trip:ft.id, who: myName() || 'Un proche', pk:k.pub}]); });
+        list('feedtrip', f=>TS()[f.id] === c && !f.deleted).forEach(ft=>{ const id = 'fw:' + ft.id + ':' + me; if(!R[id] || R[id].deleted) putQuiet([{id, type:'follower', pid:fwPid(), trip:ft.id, who: myName() || 'Un proche', pk:k.pub}]); });
         persist(); refresh();
       } catch(e){}
     }
@@ -15215,7 +15216,10 @@ ${pm.join('\n')}</Document></kml>`;
   }
   // prénom déjà pris par un autre abonné de ces voyages : c'est moi (autre téléphone / navigateur) ou une autre personne ?
   // le nom sous lequel j'apparais chez cet auteur (« Claire 2 » si « Claire » était déjà pris chez lui)
-  const fwAsFor = code => ((M.fwAs || {})[code]) || myName();
+  const fwPid = () => (M.me && prof(M.me)) ? M.me : undefined;
+  // je voyage déjà avec cet auteur (je suis dans l’un de ses voyages) : je garde mon prénom de compagnon
+  const fwIsMate = code => !!(M.me && list('feedtrip', f=>TS()[f.id] === code && !f.deleted && (((f.tids||[]).includes(M.me)) || (f.opid && f.opid !== M.me && prof(f.opid)))).length);
+  const fwAsFor = code => (fwIsMate(code) ? myName() : ((M.fwAs || {})[code])) || myName();
   async function fwNameResolve(n){
     n = String(n || '').trim().slice(0, 36); if(!n) return null;
     const me = devId(), fol = new Set(list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')]).map(f=>f.id));
@@ -15407,7 +15411,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-19c';
+  const BUILD = '2026-10-19d';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
