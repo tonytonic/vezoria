@@ -1267,4 +1267,8 @@ I18N.load({
 "Mettre les {0} voyages sans abonné dans mon carnet":"Metti i {0} viaggi senza follower nel mio diario",
 "Mettre le voyage sans abonné dans mon carnet":"Metti il viaggio senza follower nel mio diario",
 "(publié à part : {0} abonné{1} sur son propre lien)":"(pubblicato a parte: {0} follower{1} sul suo link)",
-"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(pubblicato a parte, senza follower: spuntalo per metterlo nel diario)"});
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(pubblicato a parte, senza follower: spuntalo per metterlo nel diario)",
+"Publiés à part, avec leur propre lien":"Pubblicati a parte, con il loro link",
+"Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Fuori dal diario: questa persona li vede solo se ha ricevuto il loro link.",
+"le suit":"lo segue",
+"ne le suit pas":"non lo segue"});

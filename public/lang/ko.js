@@ -4191,4 +4191,8 @@ I18N.load({
 "Mettre les {0} voyages sans abonné dans mon carnet":"팔로워 없는 여행 {0}개를 내 수첩에 넣기",
 "Mettre le voyage sans abonné dans mon carnet":"팔로워 없는 여행을 내 수첩에 넣기",
 "(publié à part : {0} abonné{1} sur son propre lien)":"(따로 공개: 자체 링크에 팔로워 {0}명{1})",
-"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(따로 공개, 팔로워 없음: 체크하면 수첩에 들어가요)"});
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(따로 공개, 팔로워 없음: 체크하면 수첩에 들어가요)",
+"Publiés à part, avec leur propre lien":"따로 공개됨, 각자의 링크",
+"Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"수첩 밖: 링크를 받은 경우에만 볼 수 있어요.",
+"le suit":"팔로우 중",
+"ne le suit pas":"팔로우 안 함"});

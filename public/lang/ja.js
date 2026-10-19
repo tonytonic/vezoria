@@ -4191,4 +4191,8 @@ I18N.load({
 "Mettre les {0} voyages sans abonné dans mon carnet":"フォロワーのいない{0}件の旅を旅帳に入れる",
 "Mettre le voyage sans abonné dans mon carnet":"フォロワーのいない旅を旅帳に入れる",
 "(publié à part : {0} abonné{1} sur son propre lien)":"（別に公開中：専用リンクにフォロワー{0}人{1}）",
-"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"（別に公開中、フォロワーなし：チェックすると旅帳に入ります）"});
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"（別に公開中、フォロワーなし：チェックすると旅帳に入ります）",
+"Publiés à part, avec leur propre lien":"別に公開中（それぞれのリンク）",
+"Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"旅帳の外：リンクを受け取った場合のみ見られます。",
+"le suit":"フォロー中",
+"ne le suit pas":"フォローしていない"});

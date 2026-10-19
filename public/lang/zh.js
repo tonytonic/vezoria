@@ -4191,4 +4191,8 @@ I18N.load({
 "Mettre les {0} voyages sans abonné dans mon carnet":"把 {0} 个没有关注者的旅行放进我的手册",
 "Mettre le voyage sans abonné dans mon carnet":"把没有关注者的旅行放进我的手册",
 "(publié à part : {0} abonné{1} sur son propre lien)":"（单独发布：自己的链接上有 {0} 位关注者{1}）",
-"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"（单独发布，没有关注者：勾选即可放进手册）"});
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"（单独发布，没有关注者：勾选即可放进手册）",
+"Publiés à part, avec leur propre lien":"单独发布，有自己的链接",
+"Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"不在手册中：此人只有收到链接才能看到。",
+"le suit":"在关注",
+"ne le suit pas":"未关注"});

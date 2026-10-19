@@ -1267,4 +1267,8 @@ I18N.load({
 "Mettre les {0} voyages sans abonné dans mon carnet":"Die {0} Reisen ohne Follower in mein Reisetagebuch",
 "Mettre le voyage sans abonné dans mon carnet":"Die Reise ohne Follower in mein Reisetagebuch",
 "(publié à part : {0} abonné{1} sur son propre lien)":"(separat veröffentlicht: {0} Follower{1} über eigenen Link)",
-"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(separat veröffentlicht, ohne Follower: ankreuzen, um sie ins Reisetagebuch zu nehmen)"});
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(separat veröffentlicht, ohne Follower: ankreuzen, um sie ins Reisetagebuch zu nehmen)",
+"Publiés à part, avec leur propre lien":"Separat veröffentlicht, mit eigenem Link",
+"Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Außerhalb des Reisetagebuchs: diese Person sieht sie nur mit ihrem Link.",
+"le suit":"folgt ihr",
+"ne le suit pas":"folgt ihr nicht"});

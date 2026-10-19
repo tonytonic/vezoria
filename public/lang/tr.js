@@ -4191,4 +4191,8 @@ I18N.load({
 "Mettre les {0} voyages sans abonné dans mon carnet":"Takipçisi olmayan {0} seyahati defterime ekle",
 "Mettre le voyage sans abonné dans mon carnet":"Takipçisi olmayan seyahati defterime ekle",
 "(publié à part : {0} abonné{1} sur son propre lien)":"(ayrı yayında: kendi bağlantısında {0} takipçi{1})",
-"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(ayrı yayında, takipçisi yok: deftere eklemek için işaretle)"});
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(ayrı yayında, takipçisi yok: deftere eklemek için işaretle)",
+"Publiés à part, avec leur propre lien":"Ayrı yayınlananlar, kendi bağlantılarıyla",
+"Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Defterin dışında: bu kişi yalnızca bağlantıyı aldıysa görür.",
+"le suit":"takip ediyor",
+"ne le suit pas":"takip etmiyor"});

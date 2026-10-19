@@ -4191,4 +4191,8 @@ I18N.load({
 "Mettre les {0} voyages sans abonné dans mon carnet":"ضع الرحلات الـ{0} بلا متابعين في دفتري",
 "Mettre le voyage sans abonné dans mon carnet":"ضع الرحلة بلا متابعين في دفتري",
 "(publié à part : {0} abonné{1} sur son propre lien)":"(منشورة على حدة: {0} متابع{1} على رابطها الخاص)",
-"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(منشورة على حدة، بلا متابعين: حدّدها لوضعها في الدفتر)"});
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(منشورة على حدة، بلا متابعين: حدّدها لوضعها في الدفتر)",
+"Publiés à part, avec leur propre lien":"منشورة على حدة، برابطها الخاص",
+"Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"خارج الدفتر: يراها هذا الشخص فقط إذا تلقى رابطها.",
+"le suit":"يتابعها",
+"ne le suit pas":"لا يتابعها"});

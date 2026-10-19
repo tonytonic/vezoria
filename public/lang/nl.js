@@ -1267,4 +1267,8 @@ I18N.load({
 "Mettre les {0} voyages sans abonné dans mon carnet":"De {0} reizen zonder volgers in mijn reisboek zetten",
 "Mettre le voyage sans abonné dans mon carnet":"De reis zonder volgers in mijn reisboek zetten",
 "(publié à part : {0} abonné{1} sur son propre lien)":"(apart gepubliceerd: {0} volger{1} via eigen link)",
-"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(apart gepubliceerd, geen volgers: vink aan om in het reisboek te zetten)"});
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(apart gepubliceerd, geen volgers: vink aan om in het reisboek te zetten)",
+"Publiés à part, avec leur propre lien":"Apart gepubliceerd, met eigen link",
+"Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Buiten het reisboek: deze persoon ziet ze alleen met hun link.",
+"le suit":"volgt hem",
+"ne le suit pas":"volgt hem niet"});

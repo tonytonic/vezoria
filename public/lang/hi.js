@@ -4191,4 +4191,8 @@ I18N.load({
 "Mettre les {0} voyages sans abonné dans mon carnet":"बिना फ़ॉलोअर वाली {0} यात्राएँ मेरे कारनेट में डालें",
 "Mettre le voyage sans abonné dans mon carnet":"बिना फ़ॉलोअर वाली यात्रा मेरे कारनेट में डालें",
 "(publié à part : {0} abonné{1} sur son propre lien)":"(अलग से प्रकाशित: अपने लिंक पर {0} फ़ॉलोअर{1})",
-"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(अलग से प्रकाशित, कोई फ़ॉलोअर नहीं: कारनेट में डालने के लिए चुनें)"});
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(अलग से प्रकाशित, कोई फ़ॉलोअर नहीं: कारनेट में डालने के लिए चुनें)",
+"Publiés à part, avec leur propre lien":"अलग से प्रकाशित, अपने लिंक के साथ",
+"Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"कारनेट से बाहर: यह व्यक्ति इन्हें तभी देखता है जब उसे लिंक मिला हो।",
+"le suit":"फ़ॉलो करता है",
+"ne le suit pas":"फ़ॉलो नहीं करता"});

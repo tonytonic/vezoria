@@ -1267,4 +1267,8 @@ I18N.load({
 "Mettre les {0} voyages sans abonné dans mon carnet":"Put the {0} trips without followers in my journal",
 "Mettre le voyage sans abonné dans mon carnet":"Put the trip without followers in my journal",
 "(publié à part : {0} abonné{1} sur son propre lien)":"(published separately: {0} follower{1} on its own link)",
-"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(published separately, no followers: tick it to put it in the journal)"});
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(published separately, no followers: tick it to put it in the journal)",
+"Publiés à part, avec leur propre lien":"Published separately, with their own link",
+"Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Outside the journal: this person sees them only if they received their link.",
+"le suit":"follows it",
+"ne le suit pas":"doesn’t follow it"});

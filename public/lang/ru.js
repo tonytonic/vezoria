@@ -4191,4 +4191,8 @@ I18N.load({
 "Mettre les {0} voyages sans abonné dans mon carnet":"Добавить {0} поездки без подписчиков в мой дневник",
 "Mettre le voyage sans abonné dans mon carnet":"Добавить поездку без подписчиков в мой дневник",
 "(publié à part : {0} abonné{1} sur son propre lien)":"(опубликована отдельно: подписчиков {0}{1} по своей ссылке)",
-"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(опубликована отдельно, без подписчиков: отметьте, чтобы добавить в дневник)"});
+"(publié à part, sans abonné : coche-le pour le mettre dans le carnet)":"(опубликована отдельно, без подписчиков: отметьте, чтобы добавить в дневник)",
+"Publiés à part, avec leur propre lien":"Опубликованы отдельно, со своей ссылкой",
+"Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Вне дневника: человек видит их, только если получил ссылку.",
+"le suit":"следит",
+"ne le suit pas":"не следит"});
