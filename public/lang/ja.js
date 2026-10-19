@@ -4195,4 +4195,17 @@ I18N.load({
 "Publiés à part, avec leur propre lien":"別に公開中（それぞれのリンク）",
 "Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"旅帳の外：リンクを受け取った場合のみ見られます。",
 "le suit":"フォロー中",
-"ne le suit pas":"フォローしていない"});
+"ne le suit pas":"フォローしていない",
+"Mes voyages pour les abonnés":"フォロワー向けの旅",
+"{0} partagé{1} sur {2}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.":"{2}件中{0}件{1}を公開中。タップで旅を全フォロワーに公開・非表示にします。",
+"lien à part":"専用リンク",
+"Partagé":"公開中",
+"Masqué":"非表示",
+"🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement":"🔗 = この旅だけのリンク · 👁️ フォロワーの横 = その人にだけ旅を隠す",
+"Masquer « {0} » à tous tes abonnés ?":"「{0}」を全フォロワーから隠しますか？",
+"Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.":"写真と記録は相手から見えなくなります。いつでも再公開できます。",
+"Masqué pour tous tes abonnés":"全フォロワーから非表示",
+"Partagé avec tes abonnés":"フォロワーに公開しました",
+"Partagé aux abonnés":"フォロワーに公開中",
+"Masqué aux abonnés":"フォロワーに非表示",
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"旅行をまとめて共有：旅の仲間と（すべて書き足せる）、または閲覧のみのフォロワーと（写真と旅日記）。"});

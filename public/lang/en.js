@@ -1271,4 +1271,17 @@ I18N.load({
 "Publiés à part, avec leur propre lien":"Published separately, with their own link",
 "Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Outside the journal: this person sees them only if they received their link.",
 "le suit":"follows it",
-"ne le suit pas":"doesn’t follow it"});
+"ne le suit pas":"doesn’t follow it",
+"Mes voyages pour les abonnés":"My trips for followers",
+"{0} partagé{1} sur {2}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.":"{0} shared{1} out of {2}. Tap to share or hide a trip, for all your followers at once.",
+"lien à part":"own link",
+"Partagé":"Shared",
+"Masqué":"Hidden",
+"🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement":"🔗 = a link for this trip only · 👁️ next to a follower = hide a trip from that person only",
+"Masquer « {0} » à tous tes abonnés ?":"Hide “{0}” from all your followers?",
+"Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.":"Its photos and stories disappear for them. You can share it again whenever you like.",
+"Masqué pour tous tes abonnés":"Hidden from all your followers",
+"Partagé avec tes abonnés":"Shared with your followers",
+"Partagé aux abonnés":"Shared with followers",
+"Masqué aux abonnés":"Hidden from followers",
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Share all your trips at once: with a companion (they fill in everything), or with read-only followers (photos and stories)."});

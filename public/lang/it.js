@@ -1271,4 +1271,17 @@ I18N.load({
 "Publiés à part, avec leur propre lien":"Pubblicati a parte, con il loro link",
 "Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Fuori dal diario: questa persona li vede solo se ha ricevuto il loro link.",
 "le suit":"lo segue",
-"ne le suit pas":"non lo segue"});
+"ne le suit pas":"non lo segue",
+"Mes voyages pour les abonnés":"I miei viaggi per i follower",
+"{0} partagé{1} sur {2}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.":"{0} condivis{1} su {2}. Tocca per condividere o nascondere un viaggio, per tutti i follower insieme.",
+"lien à part":"link a parte",
+"Partagé":"Condiviso",
+"Masqué":"Nascosto",
+"🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement":"🔗 = un link solo per questo viaggio · 👁️ accanto a un follower = nascondere un viaggio solo a quella persona",
+"Masquer « {0} » à tous tes abonnés ?":"Nascondere «{0}» a tutti i tuoi follower?",
+"Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.":"Foto e racconti spariscono per loro. Potrai ricondividerlo quando vuoi.",
+"Masqué pour tous tes abonnés":"Nascosto a tutti i follower",
+"Partagé avec tes abonnés":"Condiviso con i tuoi follower",
+"Partagé aux abonnés":"Condiviso con i follower",
+"Masqué aux abonnés":"Nascosto ai follower",
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Condividi tutti i tuoi viaggi in una volta: con un compagno (completa tutto) o con follower in sola lettura (foto e racconti)."});

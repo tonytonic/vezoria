@@ -4195,4 +4195,17 @@ I18N.load({
 "Publiés à part, avec leur propre lien":"Ayrı yayınlananlar, kendi bağlantılarıyla",
 "Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Defterin dışında: bu kişi yalnızca bağlantıyı aldıysa görür.",
 "le suit":"takip ediyor",
-"ne le suit pas":"takip etmiyor"});
+"ne le suit pas":"takip etmiyor",
+"Mes voyages pour les abonnés":"Takipçiler için seyahatlerim",
+"{0} partagé{1} sur {2}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.":"{2} seyahatten {0}{1} paylaşıldı. Bir seyahati tüm takipçiler için paylaşmak veya gizlemek için dokun.",
+"lien à part":"ayrı bağlantı",
+"Partagé":"Paylaşıldı",
+"Masqué":"Gizli",
+"🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement":"🔗 = yalnızca bu seyahat için bağlantı · 👁️ takipçinin yanında = seyahati yalnızca ondan gizle",
+"Masquer « {0} » à tous tes abonnés ?":"“{0}” tüm takipçilerinden gizlensin mi?",
+"Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.":"Fotoğraflar ve anlatılar onlarda kaybolur. İstediğin zaman yeniden paylaşabilirsin.",
+"Masqué pour tous tes abonnés":"Tüm takipçilerden gizli",
+"Partagé avec tes abonnés":"Takipçilerinle paylaşıldı",
+"Partagé aux abonnés":"Takipçilerle paylaşıldı",
+"Masqué aux abonnés":"Takipçilerden gizli",
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Tüm seyahatlerini tek seferde paylaş: bir yol arkadaşıyla (her şeyi tamamlar) ya da salt okunur takipçilerle (fotoğraflar ve hikâyeler)."});

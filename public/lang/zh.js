@@ -4195,4 +4195,17 @@ I18N.load({
 "Publiés à part, avec leur propre lien":"单独发布，有自己的链接",
 "Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"不在手册中：此人只有收到链接才能看到。",
 "le suit":"在关注",
-"ne le suit pas":"未关注"});
+"ne le suit pas":"未关注",
+"Mes voyages pour les abonnés":"给关注者的旅行",
+"{0} partagé{1} sur {2}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.":"已分享 {0}{1} / {2}。点按即可对所有关注者一起分享或隐藏某次旅行。",
+"lien à part":"单独链接",
+"Partagé":"已分享",
+"Masqué":"已隐藏",
+"🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement":"🔗 = 仅此旅行的链接 · 👁️ 在关注者旁 = 仅对此人隐藏某次旅行",
+"Masquer « {0} » à tous tes abonnés ?":"对所有关注者隐藏「{0}」？",
+"Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.":"他们将看不到其照片和故事。你随时可以再次分享。",
+"Masqué pour tous tes abonnés":"已对所有关注者隐藏",
+"Partagé avec tes abonnés":"已与关注者分享",
+"Partagé aux abonnés":"已分享给关注者",
+"Masqué aux abonnés":"对关注者隐藏",
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"一次分享你所有的旅行：和旅伴（他能补充一切），或给只读的关注者（照片和游记）。"});

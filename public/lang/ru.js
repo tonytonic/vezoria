@@ -4195,4 +4195,17 @@ I18N.load({
 "Publiés à part, avec leur propre lien":"Опубликованы отдельно, со своей ссылкой",
 "Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Вне дневника: человек видит их, только если получил ссылку.",
 "le suit":"следит",
-"ne le suit pas":"не следит"});
+"ne le suit pas":"не следит",
+"Mes voyages pour les abonnés":"Мои поездки для подписчиков",
+"{0} partagé{1} sur {2}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.":"Открыто {0}{1} из {2}. Нажмите, чтобы открыть или скрыть поездку сразу для всех подписчиков.",
+"lien à part":"своя ссылка",
+"Partagé":"Открыто",
+"Masqué":"Скрыто",
+"🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement":"🔗 = ссылка только на эту поездку · 👁️ рядом с подписчиком = скрыть поездку только от него",
+"Masquer « {0} » à tous tes abonnés ?":"Скрыть «{0}» от всех подписчиков?",
+"Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.":"Фото и рассказы исчезнут у них. Вы сможете снова открыть её когда угодно.",
+"Masqué pour tous tes abonnés":"Скрыто от всех подписчиков",
+"Partagé avec tes abonnés":"Открыто для подписчиков",
+"Partagé aux abonnés":"Открыто подписчикам",
+"Masqué aux abonnés":"Скрыто от подписчиков",
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Поделись всеми поездками сразу: с попутчиком (он дополняет всё) или с подписчиками в режиме чтения (фото и рассказы)."});

@@ -4195,4 +4195,17 @@ I18N.load({
 "Publiés à part, avec leur propre lien":"따로 공개됨, 각자의 링크",
 "Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"수첩 밖: 링크를 받은 경우에만 볼 수 있어요.",
 "le suit":"팔로우 중",
-"ne le suit pas":"팔로우 안 함"});
+"ne le suit pas":"팔로우 안 함",
+"Mes voyages pour les abonnés":"팔로워에게 보이는 여행",
+"{0} partagé{1} sur {2}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.":"{2}개 중 {0}개{1} 공개. 탭하면 모든 팔로워에게 한 번에 공개하거나 숨겨요.",
+"lien à part":"별도 링크",
+"Partagé":"공개",
+"Masqué":"숨김",
+"🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement":"🔗 = 이 여행만의 링크 · 👁️ 팔로워 옆 = 그 사람에게만 여행 숨기기",
+"Masquer « {0} » à tous tes abonnés ?":"「{0}」을(를) 모든 팔로워에게 숨길까요?",
+"Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.":"사진과 이야기가 그들에게서 사라져요. 언제든 다시 공개할 수 있어요.",
+"Masqué pour tous tes abonnés":"모든 팔로워에게 숨김",
+"Partagé avec tes abonnés":"팔로워와 공유했어요",
+"Partagé aux abonnés":"팔로워에게 공개",
+"Masqué aux abonnés":"팔로워에게 숨김",
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"모든 여행을 한 번에 공유하세요: 여행 동료와(모두 채워요) 또는 읽기 전용 팔로워와(사진과 이야기)."});

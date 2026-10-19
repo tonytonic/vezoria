@@ -4195,4 +4195,17 @@ I18N.load({
 "Publiés à part, avec leur propre lien":"منشورة على حدة، برابطها الخاص",
 "Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"خارج الدفتر: يراها هذا الشخص فقط إذا تلقى رابطها.",
 "le suit":"يتابعها",
-"ne le suit pas":"لا يتابعها"});
+"ne le suit pas":"لا يتابعها",
+"Mes voyages pour les abonnés":"رحلاتي للمتابعين",
+"{0} partagé{1} sur {2}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.":"{0} مشاركة{1} من {2}. المس لمشاركة رحلة أو إخفائها لكل المتابعين معًا.",
+"lien à part":"رابط خاص",
+"Partagé":"مشاركة",
+"Masqué":"مخفية",
+"🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement":"🔗 = رابط لهذه الرحلة فقط · 👁️ بجانب متابع = إخفاء رحلة عن هذا الشخص فقط",
+"Masquer « {0} » à tous tes abonnés ?":"إخفاء «{0}» عن كل متابعيك؟",
+"Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.":"تختفي صورها وحكاياتها لديهم. يمكنك مشاركتها مجددًا متى شئت.",
+"Masqué pour tous tes abonnés":"مخفية عن كل متابعيك",
+"Partagé avec tes abonnés":"مشاركة مع متابعيك",
+"Partagé aux abonnés":"مشاركة مع المتابعين",
+"Masqué aux abonnés":"مخفية عن المتابعين",
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"شارك كل رحلاتك دفعة واحدة: مع رفيق (يكمل كل شيء) أو مع متابعين للقراءة فقط (صور وقصص)."});

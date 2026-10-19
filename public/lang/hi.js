@@ -4195,4 +4195,17 @@ I18N.load({
 "Publiés à part, avec leur propre lien":"अलग से प्रकाशित, अपने लिंक के साथ",
 "Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"कारनेट से बाहर: यह व्यक्ति इन्हें तभी देखता है जब उसे लिंक मिला हो।",
 "le suit":"फ़ॉलो करता है",
-"ne le suit pas":"फ़ॉलो नहीं करता"});
+"ne le suit pas":"फ़ॉलो नहीं करता",
+"Mes voyages pour les abonnés":"फ़ॉलोअर्स के लिए मेरी यात्राएँ",
+"{0} partagé{1} sur {2}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.":"{2} में से {0} साझा{1}। सभी फ़ॉलोअर्स के लिए एक साथ यात्रा साझा या छिपाने के लिए छुओ।",
+"lien à part":"अलग लिंक",
+"Partagé":"साझा",
+"Masqué":"छिपी",
+"🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement":"🔗 = सिर्फ़ इस यात्रा का लिंक · 👁️ किसी फ़ॉलोअर के पास = सिर्फ़ उससे यात्रा छिपाओ",
+"Masquer « {0} » à tous tes abonnés ?":"«{0}» सभी फ़ॉलोअर्स से छिपाएँ?",
+"Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.":"उनके लिए फ़ोटो और कहानियाँ गायब हो जाएँगी। तुम जब चाहो फिर साझा कर सकते हो।",
+"Masqué pour tous tes abonnés":"सभी फ़ॉलोअर्स से छिपी",
+"Partagé avec tes abonnés":"तुम्हारे फ़ॉलोअर्स के साथ साझा",
+"Partagé aux abonnés":"फ़ॉलोअर्स के साथ साझा",
+"Masqué aux abonnés":"फ़ॉलोअर्स से छिपी",
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"अपनी सारी यात्राएँ एक साथ शेयर करें: किसी सहयात्री के साथ (वह सब कुछ भरता है) या सिर्फ़ पढ़ने वाले फ़ॉलोअर्स के साथ (फ़ोटो और कहानियाँ)।"});

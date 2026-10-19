@@ -1271,4 +1271,17 @@ I18N.load({
 "Publiés à part, avec leur propre lien":"Separat veröffentlicht, mit eigenem Link",
 "Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Außerhalb des Reisetagebuchs: diese Person sieht sie nur mit ihrem Link.",
 "le suit":"folgt ihr",
-"ne le suit pas":"folgt ihr nicht"});
+"ne le suit pas":"folgt ihr nicht",
+"Mes voyages pour les abonnés":"Meine Reisen für Follower",
+"{0} partagé{1} sur {2}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.":"{0} geteilt{1} von {2}. Tippen, um eine Reise für alle Follower zu teilen oder zu verbergen.",
+"lien à part":"eigener Link",
+"Partagé":"Geteilt",
+"Masqué":"Verborgen",
+"🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement":"🔗 = ein Link nur für diese Reise · 👁️ neben einem Follower = eine Reise nur vor dieser Person verbergen",
+"Masquer « {0} » à tous tes abonnés ?":"„{0}“ vor allen Followern verbergen?",
+"Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.":"Fotos und Berichte verschwinden bei ihnen. Du kannst sie jederzeit wieder teilen.",
+"Masqué pour tous tes abonnés":"Vor allen Followern verborgen",
+"Partagé avec tes abonnés":"Mit deinen Followern geteilt",
+"Partagé aux abonnés":"Mit Followern geteilt",
+"Masqué aux abonnés":"Vor Followern verborgen",
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Teile alle deine Reisen auf einmal: mit einem Mitreisenden (er ergänzt alles) oder mit Followern nur zum Lesen (Fotos und Berichte)."});

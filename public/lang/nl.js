@@ -1271,4 +1271,17 @@ I18N.load({
 "Publiés à part, avec leur propre lien":"Apart gepubliceerd, met eigen link",
 "Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.":"Buiten het reisboek: deze persoon ziet ze alleen met hun link.",
 "le suit":"volgt hem",
-"ne le suit pas":"volgt hem niet"});
+"ne le suit pas":"volgt hem niet",
+"Mes voyages pour les abonnés":"Mijn reizen voor volgers",
+"{0} partagé{1} sur {2}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.":"{0} gedeeld{1} van {2}. Tik om een reis te delen of te verbergen, voor al je volgers tegelijk.",
+"lien à part":"eigen link",
+"Partagé":"Gedeeld",
+"Masqué":"Verborgen",
+"🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement":"🔗 = een link alleen voor deze reis · 👁️ naast een volger = een reis alleen voor die persoon verbergen",
+"Masquer « {0} » à tous tes abonnés ?":"“{0}” verbergen voor al je volgers?",
+"Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.":"De foto’s en verhalen verdwijnen bij hen. Je kunt hem altijd weer delen.",
+"Masqué pour tous tes abonnés":"Verborgen voor al je volgers",
+"Partagé avec tes abonnés":"Gedeeld met je volgers",
+"Partagé aux abonnés":"Gedeeld met volgers",
+"Masqué aux abonnés":"Verborgen voor volgers",
+"Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Deel al je reizen in één keer: met een reisgenoot (die alles aanvult) of met volgers die alleen kunnen lezen (foto’s en verhalen)."});
