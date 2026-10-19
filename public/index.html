@@ -95,6 +95,21 @@ if(window.VZ_HOST){ try {
   document.addEventListener('DOMContentLoaded', fix); window.addEventListener('pageshow', fix);   // pas au redimensionnement : le clavier change la hauteur
 })();
 </script>
+<style>
+/* 💬 dialogue sous les publications (abonnés et auteur) */
+.fd-lk{display:block;border:0;background:none;padding:6px 2px 0;font:inherit;font-size:.84rem;color:var(--navy,#2A1238);text-align:left;cursor:pointer}
+.fd-lk b{font-weight:700}
+.fd-c{margin-top:8px}
+.fd-cm{line-height:1.4;padding:2px 0}
+.fd-cm .fd-ctx{white-space:pre-wrap;word-break:break-word}
+.fd-au{display:inline-block;font-size:.68rem;font-weight:700;color:#7c3aed;background:#f1e9fe;border-radius:6px;padding:0 5px;vertical-align:1px}
+.fd-cmeta{display:flex;gap:12px;align-items:center;margin-top:1px}
+.fd-cmeta small{color:var(--gray)}
+.fd-cmeta button{border:0;background:none;padding:2px 0;font:inherit;font-size:.78rem;font-weight:700;color:var(--gray);cursor:pointer}
+.fd-call{border:0;background:none;padding:2px 0;font:inherit;font-size:.84rem;font-weight:600;color:var(--gray);text-align:left;cursor:pointer}
+.fd-cin{margin-top:4px}
+.fd-lklist{display:grid;gap:8px;margin:6px 0 10px}.fd-lklist div{display:flex;gap:8px;align-items:center}
+</style>
 </head>
 <body class="is-public">
 <div id="vz-splash" aria-hidden="true" translate="no"><div class="sp-f"><div class="sp-t" id="vz-sp-t">carnet de voyage</div><div class="sp-r"></div><div class="sp-b"><i></i></div><div class="sp-l" id="vz-sp-l">Chargement de vos souvenirs…</div></div></div>
@@ -15217,20 +15232,60 @@ ${pm.join('\n')}</Document></kml>`;
   async function feedComment(fid){
     const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
     if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
-    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socialPush(f.trip, 'comment', txt); i.value = ''; syncNow(); feedPaint(fid);
+    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socialPush(f.trip, 'comment', txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
   }
   function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="' + (window.VZ_B || '') + 'anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
   function feedPostHTML(f){
-    const lk = likesOf(f.id), mine = lk.some(l=>l.id.endsWith(':' + devId())), cm = commentsOf(f.id), open = (M.cmOpen||{})[f.id];
-    return `<article class="fd-post" id="fp-${f.id}"><div class="fd-d">${f.date ? fdate(f.date) : ''}${f.lieu ? ' · ' + esc(f.lieu) : ''}${f.cc ? ' ' + flag(f.cc) : ''}</div>
+    const lk = likesOf(f.id), mine = lk.some(l=>l.id.endsWith(':' + devId())), cm = commentsOf(f.id), open = (M.cmOpen||{})[f.id], ft = R[f.trip] || {};
+    const shown = open ? cm : cm.slice(-2), hid = cm.length - shown.length;
+    return `<article class="fd-post" id="fp-${f.id}" data-sg="${feedSocSig(f.id)}"><div class="fd-d">${f.date ? fdate(f.date) : ''}${f.lieu ? ' · ' + esc(f.lieu) : ''}${f.cc ? ' ' + flag(f.cc) : ''}</div>
       ${f.titre ? `<h3>${esc(f.titre)}</h3>` : ''}
       ${(f.photos||[]).length ? (()=>{ const au = FT()[String(f.trip).replace(/^ft:/,'')], all = f.photos, nShow = (M.fdMore||{})[f.id] || 12, sh = all.length > nShow + 3 ? all.slice(0, nShow) : all, rest = all.length - sh.length;
         return `<div class="fd-ph${au ? '' : ' grid'}">${sh.map((p,i)=> au ? `<button type="button" onclick="CV.view('${f.id}',${i})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join('')}${rest ? `<button type="button" class="fd-more-ph" onclick="CV.feedMorePh('${f.id}')"><b>+${rest}</b><small>Voir la suite</small></button>` : ''}</div>`; })() : ''}
       ${f.texte ? `<p class="fd-t">${esc(f.texte)}</p>` : ''}
-      <div class="fd-a"><button type="button" class="${mine ? 'on' : ''}" onclick="CV.feedLike('${f.id}')">${mine ? '❤️' : '🤍'} <b>${lk.length || ''}</b></button><button type="button" onclick="CV.feedTogC('${f.id}')">💬 <b>${cm.length || ''}</b></button>${lk.length ? `<small>${lk.slice(0,3).map(l=>esc(l.who||'')).join(', ')}${lk.length > 3 ? '…' : ''}</small>` : ''}${isAuthorOf(f.trip) ? '' : `<button type="button" class="fd-more" aria-label="Signaler ou ne plus suivre" onclick="CV.postMenu('${f.id}')">⋯</button>`}</div>
-      ${open ? `<div class="fd-c">${cm.map(c=>`<div><b>${esc(c.who||'?')}</b> ${esc(c.text)} <small>${c.at ? when(c.at) : ''}</small><button type="button" class="fd-cmore" aria-label="Options" onclick="CV.cmMenu('${c.id}')">⋯</button></div>`).join('') || '<div class="v-sum-small">Pas encore de commentaire.</div>'}
-        <div class="cv-row"><input class="v-in" id="cm-${f.id}" placeholder="Écrire un commentaire…" maxlength="600"><button type="button" class="fd-send" onclick="CV.feedComment('${f.id}')">Envoyer</button></div></div>` : ''}</article>`;
+      <div class="fd-a"><button type="button" class="${mine ? 'on' : ''}" onclick="CV.feedLike('${f.id}')">${mine ? '❤️' : '🤍'} <b>${lk.length || ''}</b></button><button type="button" onclick="CV.feedCmFocus('${f.id}')">💬 <b>${cm.length || ''}</b></button>${isAuthorOf(f.trip) ? '' : `<button type="button" class="fd-more" aria-label="Signaler ou ne plus suivre" onclick="CV.postMenu('${f.id}')">⋯</button>`}</div>
+      ${lk.length ? `<button type="button" class="fd-lk" onclick="CV.feedLikers('${f.id}')">${feedLikeLine(lk)}</button>` : ''}
+      <div class="fd-c">${hid ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${f.id}')">${cm.length === 3 ? 'Voir les 3 commentaires' : `Voir les ${cm.length} commentaires`}</button>` : ''}
+        ${shown.map(c=>{ const au = ft.owner && String(c.who||'').trim().toLowerCase() === String(ft.owner).trim().toLowerCase();
+          return `<div class="fd-cm"><button type="button" class="fd-cmore" aria-label="Options" onclick="CV.cmMenu('${c.id}')">⋯</button><b data-notr>${esc(c.who||'?')}</b>${au ? ' <span class="fd-au">auteur</span>' : ''} <span class="fd-ctx" data-notr>${esc(c.text)}</span>
+            <div class="fd-cmeta"><small>${c.at ? when(c.at) : ''}</small><button type="button" onclick="CV.feedReply('${f.id}','${c.id}')">Répondre</button></div></div>`; }).join('')}
+        ${open && cm.length > 2 ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${f.id}')">Réduire</button>` : ''}
+        <div class="cv-row fd-cin"><input class="v-in" id="cm-${f.id}" placeholder="Écrire un commentaire…" maxlength="600" enterkeyhint="send" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();CV.feedComment('${f.id}')}"><button type="button" class="fd-send" onclick="CV.feedComment('${f.id}')">Envoyer</button></div></div></article>`;
   }
+  // signature des ❤️ et commentaires d’une publication : on ne redessine que si elle change
+  function feedSocSig(fid){ return likesOf(fid).length + '.' + commentsOf(fid).map(c=>c.id.slice(-4)).join(''); }
+  // « Aimé par toi, Claire et 3 autres »
+  function feedLikeLine(lk){
+    const me = devId(), names = [];
+    lk.slice().sort((a, b)=>(b.id.endsWith(':' + me) ? 1 : 0) - (a.id.endsWith(':' + me) ? 1 : 0)).forEach(l=>{ const n = l.id.endsWith(':' + me) ? MSGT('toi') : String(l.who || '?'); if(!names.includes(n)) names.push(n); });
+    const sh = names.slice(0, 2), rest = names.length - sh.length;
+    return `❤️ <span>Aimé par</span> <b data-notr>${esc(sh.join(', '))}</b>${rest ? ` <span>${rest === 1 ? 'et 1 autre' : `et ${rest} autres`}</span>` : ''}`;
+  }
+  function feedLikers(fid){
+    const f = R[fid]; if(!f) return; const lk = likesOf(fid), me = devId();
+    openSheet(`<h2>❤️ ${lk.length} ${lk.length > 1 ? 'personnes aiment' : 'personne aime'}</h2>
+      <div class="fd-lklist">${lk.map(l=>`<div><span>❤️</span><b data-notr>${esc(l.id.endsWith(':' + me) ? MSGT('toi') : (l.who || '?'))}</b></div>`).join('')}</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  function feedCmFocus(fid, pre){
+    const i = document.getElementById('cm-' + fid); if(!i) return;
+    if(pre != null){ i.value = pre; }
+    i.focus(); try { const n = i.value.length; i.setSelectionRange(n, n); } catch(e){}
+    try { i.scrollIntoView({block:'center', behavior:'smooth'}); } catch(e){}
+  }
+  function feedReply(fid, cid){ const c = R[cid]; if(!c) return; feedCmFocus(fid, '@' + String(c.who || '').trim() + ' '); }
+  // voyage ouvert : les nouveaux ❤️ et commentaires des autres arrivent seuls (toutes les 30 s, écran allumé)
+  async function feedSocTick(){
+    const ov = document.getElementById('cv-feed'); if(!ov || !M.feedOpen || document.visibilityState !== 'visible' || feedSocBusy) return;
+    feedSocBusy = true;
+    try { await syncNow(); } catch(e){} finally { feedSocBusy = false; }
+    ov.querySelectorAll('.fd-post[id^="fp-"]').forEach(el=>{
+      const fid = el.id.slice(3); if(!R[fid] || el.dataset.sg === feedSocSig(fid)) return;
+      const i = document.getElementById('cm-' + fid); if(i && (document.activeElement === i || i.value)) return;   // on n’efface jamais un message en cours
+      feedPaint(fid);
+    });
+  }
+  let feedSocBusy = false;
   // « +N Voir la suite » : on ajoute les photos suivantes à la grille SANS redessiner la publication, et on garde la même hauteur à l’écran
   function feedMorePh(fid){
     const f = R[fid], el = document.getElementById('fp-' + fid), box = el && el.querySelector('.fd-ph'), btn = box && box.querySelector('.fd-more-ph'); if(!f) return;
@@ -15262,6 +15317,7 @@ ${pm.join('\n')}</Document></kml>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; M.feedLast = ftid; feedMapHydrate();
     ov._h = posts.map(feedPostHTML).join('') + '|' + !!feedTrkRec(ftid);
     // photos pas encore arrivées chez l’abonné (le voyageur les envoie encore) : on réessaie chaque minute
+    if(!window._fdSoc) window._fdSoc = setInterval(feedSocTick, 30000);
     if(!window._fdRetry) window._fdRetry = setInterval(()=>{ if(!document.getElementById('cv-feed') || document.visibilityState !== 'visible') return;
       const m = document.querySelectorAll('#cv-feed img.miss'); if(!m.length) return; m.forEach(i=>{ i.classList.remove('miss'); delete i.dataset.ok; delete i.dataset.ld; }); hydrate(); }, 61000);
     if(webFollowing()) ov.insertAdjacentHTML('beforeend', webCta().replace('class="fd-cta"', 'class="fd-cta" style="position:relative;margin:0"'));
@@ -15325,7 +15381,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18x';
+  const BUILD = '2026-10-19a';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15335,7 +15391,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
