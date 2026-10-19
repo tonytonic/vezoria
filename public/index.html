@@ -15071,31 +15071,26 @@ ${pm.join('\n')}</Document></kml>`;
   const fwDevOf = x => String(x.id).split(':').pop();
   const fwGeneric = n => !n || /^(un proche|someone|\?)$/i.test(String(n).trim());
   let fwmC = null, fwmT = 0;
+  // un abonné est mon compagnon seulement si SON téléphone l’a dit (fiche abonné portant son identifiant de compagnon) ;
+  // toutes les fiches de ce même appareil le sont aussi. Jamais deviné d’après le prénom.
   function fwMatePid(x){
     if(!x) return '';
     if(x.pid && prof(x.pid)) return x.pid;
     if(!fwmC || Date.now() - fwmT > 1500){
       fwmC = {}; fwmT = Date.now();
-      const byName = {}; profiles().forEach(p=>{ const k = String(p.nom || '').trim().toLowerCase(); if(k && p.id !== M.me) byName[k] = p.id; });
-      const claimed = new Set(), devPid = {};
-      list('follower', f=>!f.deleted && f.pid && prof(f.pid)).forEach(f=>{ claimed.add(f.pid); devPid[fwDevOf(f)] = f.pid; });   // un appareil reconnu : toutes ses fiches le sont
-      list('follower', f=>!f.deleted && !(f.pid && prof(f.pid))).sort((a, b)=>(a.createdAt || 0) - (b.createdAt || 0)).forEach(f=>{
-        const d = fwDevOf(f); if(devPid[d] !== undefined){ fwmC[f.id] = devPid[d]; return; }
-        const k = String(f.who || '').trim().toLowerCase().replace(/\s+\d+$/, ''), pid = byName[k];
-        if(pid && !claimed.has(pid)){ claimed.add(pid); devPid[d] = pid; fwmC[f.id] = pid; } else devPid[d] = '';
-      });
+      list('follower', f=>!f.deleted && f.pid && prof(f.pid)).forEach(f=>{ fwmC[fwDevOf(f)] = f.pid; });
     }
-    return fwmC[x.id] || '';
+    return fwmC[fwDevOf(x)] || '';
   }
   const fwMate = x => !!fwMatePid(x);
   const fwLabel = x => ((M.fwNick || {})[fwDevOf(x)]) || (fwMate(x) ? pname(fwMatePid(x)) : '') || (fwGeneric(x.who) ? '' : x.who);
   const fwRoot = d => { const seen = new Set(); while(d && !seen.has(d)){ seen.add(d); const f = list('follower', x=>fwDevOf(x) === d && x.same)[0]; if(!f || f.same === d) break; d = f.same; } return d; };
-  const fwKey = x => { const n = ((M.fwNick || {})[fwDevOf(x)] || '').trim().toLowerCase(); return n ? 'n:' + n : fwMate(x) ? 'p:' + fwMatePid(x) : 'd:' + fwDevOf(x); };
+  const fwKey = x => { const n = ((M.fwNick || {})[fwDevOf(x)] || '').trim().toLowerCase(); return fwMate(x) ? 'p:' + fwMatePid(x) : n ? 'n:' + n : 'd:' + fwDevOf(x); };
   function fwUniq(arr){ const by = {}; arr.forEach(x=>{ const k = fwKey(x), c = by[k]; if(!c || (x.updatedAt || 0) > (c.updatedAt || 0)) by[k] = x; }); return Object.values(by); }
   // deux personnes différentes avec le même prénom : « Claire », « Claire (2) »
   function fwNames(arr){ const n = {}, out = {};
     profiles().forEach(p=>{ const k = String(p.nom || '').trim().toLowerCase(); if(k) n[k] = 1; });   // un abonné ne porte jamais le nom d’un compagnon
-    arr.slice().sort((a, b)=>(a.createdAt || 0) - (b.createdAt || 0)).forEach(x=>{ if(fwMate(x) && !((M.fwNick || {})[fwDevOf(x)])){ out[x.id] = '🧳 ' + pname(fwMatePid(x)); return; } const l = fwLabel(x); if(!l) return; const k = l.trim().toLowerCase(); n[k] = (n[k] || 0) + 1; out[x.id] = n[k] > 1 ? l + ' ' + n[k] : l; });
+    arr.slice().sort((a, b)=>(a.createdAt || 0) - (b.createdAt || 0)).forEach(x=>{ if(fwMate(x)){ out[x.id] = '🧳 ' + pname(fwMatePid(x)); return; } const l = fwLabel(x); if(!l) return; const k = l.trim().toLowerCase(); n[k] = (n[k] || 0) + 1; out[x.id] = n[k] > 1 ? l + ' ' + n[k] : l; });
     return out; }
   // tous les appareils d’une même personne parmi mes abonnés (même prénom ou même nom donné)
   function fwTwins(d){ const mine = new Set(Object.keys(FT()).map(ftId)), all = list('follower', f=>mine.has(f.trip)), me = all.find(f=>fwDevOf(f) === d);
@@ -15428,7 +15423,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-19e';
+  const BUILD = '2026-10-19g';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
