@@ -2,7 +2,7 @@
 // Pages et fichiers de l'appli : réseau s'il répond vite (dernière version), sinon copie locale tout de suite
 // (réseau lent ou absent) ; la copie se met à jour en arrière-plan.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-18w';
+const CACHE = 'vezoria-2026-10-18x';
 const CORE = ['./', './splash.webp', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
@@ -94,7 +94,7 @@ const TPL0 = {soc_iv:'📩 {0} t’invite dans le voyage « {1} »', soc_ivf:'�
   notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
   depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
   soir:'Comment s’est passée ta journée ? Ajoute tes photos et quelques mots à ton carnet 📸', anniv1:'Il y a un an, tu partais : « {0} » ✨', annivN:'Il y a {1} ans, tu partais : « {0} » ✨', 
-  test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés', fb_depense:'Nouvelle dépense dans ton voyage', fb_resa:'Le programme du voyage a changé', fb_souv:'Nouveau souvenir dans ton voyage', fb_sondage:'Nouveau sondage dans ton voyage', fb_notes:'Nouveautés dans les courses et les notes', fb_rappel:'Rappel pour ton voyage'};
+  test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés', fb_depense:'Nouvelle dépense dans ton voyage', fb_resa:'Le programme du voyage a changé', fb_souv:'Nouveau souvenir dans ton voyage', fb_sondage:'Nouveau sondage dans ton voyage', fb_notes:'Nouveautés dans les courses et les notes', fb_rappel:'Rappel pour ton voyage', fol1:'📸 {0} a publié une nouvelle étape : {1}', folN:'📸 {0} a publié {1} nouvelles étapes'};
 const pdb = () => new Promise((res, rej) => { const q = indexedDB.open('vz-push', 1); q.onupgradeneeded = () => q.result.createObjectStore('kv'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
 const kvGet = async k => { try { const db = await pdb(); return await new Promise(res => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(undefined); }); } catch (_) { return undefined; } };
 const kvPut = async (k, v) => { try { const db = await pdb(); await new Promise(res => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = res; tx.onerror = res; }); } catch (_) {} };
@@ -106,6 +106,7 @@ function compose(p, tt) {
   if (p.k === 'rappel') b = fill(tt(p.r), p.a || []) + (p.sub ? '\n' + p.sub : '');
   else if (p.k === 'depense') b = x0.rb && n === 1 ? fill(tt('remb'), [who, x0.x + (x0.w ? ' → ' + x0.w : '')]) : n > 1 ? fill(tt('depenseN'), [who, n]) + '\n' + names : fill(tt('depense1'), [who, x0.x + (x0.v ? ' (' + x0.v + ')' : '')]);
   else if (p.k === 'resa') b = x0.ch ? fill(tt('resaCh'), [who, x0.x + (x0.h ? ' · ' + x0.h : '')]) : n > 1 ? fill(tt('resaN'), [who, n]) + '\n' + names : fill(tt('resa1'), [who, x0.x]);
+  else if (p.k === 'souv' && p.f) b = n > 1 ? fill(tt('folN'), [who, n]) + '\n' + names : fill(tt('fol1'), [who, x0.x || p.tt || '']);
   else if (p.k === 'souv') b = n > 1 ? fill(tt('souvN'), [who, n]) + '\n' + names : fill(tt('souv1'), [who, x0.x]);
   else if (p.k === 'sondage') b = fill(tt('sondage'), [who, x0.x]);
   else if (p.k === 'social') b = /^iv[far]?$/.test(x0.s || '') ? fill(tt('soc_' + x0.s), [who, x0.x]) : x0.s === 'comment' ? fill(tt('soc_cm'), [who, x0.x]) : x0.s === 'like' ? fill(tt('soc_lk'), [who, x0.x]) : fill(tt('soc_fw'), [who]);

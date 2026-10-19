@@ -2079,6 +2079,7 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 .fol-c .cv-badge{position:absolute;top:8px;left:8px}
 .fol-tx{display:flex;flex-direction:column;gap:2px;padding:8px 10px 10px}.fol-tx b{font:600 .98rem/1.2 var(--ui);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.fol-tx small{font-size:.74rem;color:var(--gray)}
 .fol-x{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(20,14,38,.55);color:#fff;font-size:.72rem;cursor:pointer}
+.fd-bell{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;text-align:left;width:calc(100% - 24px);margin:8px 12px 4px;padding:14px 16px;border:2px solid #E4B44A;border-radius:16px;background:#FFF7E0;color:#2A1238;cursor:pointer}.fd-bell span{grid-row:span 2;font-size:1.6rem}.fd-bell b{font:700 1.02rem/1.2 var(--ui)}.fd-bell small{font:500 .85rem/1.3 var(--ui);opacity:.75}
 .fd-back{display:flex;align-items:center;justify-content:center;gap:12px;width:calc(100% - 24px);margin:10px 12px 4px;padding:16px 18px;border:0;border-radius:16px;background:#2A1238;color:#fff;font:700 1.08rem/1.2 var(--ui);cursor:pointer;box-shadow:0 4px 12px rgba(42,18,56,.25)}
 .fd-back span{font-size:1.4rem;line-height:1}
 .fd-home .fd-list{overflow-y:auto}
@@ -2662,15 +2663,15 @@ const CV = (function(){
      dans SA langue. Les rappels (départ, enregistrement en ligne, échéances) sont programmés par ce
      téléphone pour lui seul, chiffrés avec sa propre clé. */
   const PUSH_KINDS = [['depense','💶','Dépenses et remboursements'], ['resa','🗓️','Réservations et programme'], ['souv','📸','Souvenirs et photos'],
-    ['sondage','🗳️','Sondages'], ['notes','🛒','Courses et notes'], ['social','💬','Abonnés : commentaires, ❤️ et nouveaux abonnés'], ['rappel','⏰','Rappels : départ, enregistrement en ligne, échéances'], ['soir','🌙','Le soir en voyage : « raconte ta journée » et souvenirs « il y a un an »']];
+    ['sondage','🗳️','Sondages'], ['notes','🛒','Courses et notes'], ['social','💬','Abonnés : commentaires, ❤️ et nouveaux abonnés'], ['suivi','👀','Voyages que je suis : nouvelles étapes et photos'], ['rappel','⏰','Rappels : départ, enregistrement en ligne, échéances'], ['soir','🌙','Le soir en voyage : « raconte ta journée » et souvenirs « il y a un an »']];
   const PUSH_TPL = {soc_iv:'📩 {0} t’invite dans le voyage « {1} »', soc_ivf:'📩 {0} te propose de suivre « {1} »', soc_iva:'✅ {0} a rejoint « {1} »', soc_ivr:'✕ {0} a refusé l’invitation : « {1} »', soc_cm:'💬 {0} a commenté : « {1} »', soc_lk:'❤️ {0} aime ta publication : {1}', soc_fw:'👀 {0} suit maintenant ton voyage', fb_social:'Du nouveau chez tes abonnés', depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
     resa1:'{0} a ajouté au programme : {1}', resaN:'{0} a ajouté {1} éléments au programme', resaCh:'{0} a changé l’horaire : {1}',
     souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
     notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
     depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
     soir:'Comment s’est passée ta journée ? Ajoute tes photos et quelques mots à ton carnet 📸', anniv1:'Il y a un an, tu partais : « {0} » ✨', annivN:'Il y a {1} ans, tu partais : « {0} » ✨', 
-    test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés', fb_depense:'Nouvelle dépense dans ton voyage', fb_resa:'Le programme du voyage a changé', fb_souv:'Nouveau souvenir dans ton voyage', fb_sondage:'Nouveau sondage dans ton voyage', fb_notes:'Nouveautés dans les courses et les notes', fb_rappel:'Rappel pour ton voyage'};
-  const PU = () => { const p = M.push || (M.push = {on:false, quiet:true}); p.kinds = Object.assign({depense:1, resa:1, souv:1, sondage:1, notes:1, rappel:1, soir:1, social:1}, p.kinds || {}); return p; };
+    test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés', fb_depense:'Nouvelle dépense dans ton voyage', fb_resa:'Le programme du voyage a changé', fb_souv:'Nouveau souvenir dans ton voyage', fb_sondage:'Nouveau sondage dans ton voyage', fb_notes:'Nouveautés dans les courses et les notes', fb_rappel:'Rappel pour ton voyage', fol1:'📸 {0} a publié une nouvelle étape : {1}', folN:'📸 {0} a publié {1} nouvelles étapes'};
+  const PU = () => { const p = M.push || (M.push = {on:false, quiet:true}); p.kinds = Object.assign({depense:1, resa:1, souv:1, sondage:1, notes:1, rappel:1, soir:1, social:1, suivi:1}, p.kinds || {}); return p; };
   const pushApi = () => { const u = apiUrl(); return u ? u.replace(/\/api\/sync$/, '/api/push') : ''; };
   const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && !!pushApi();
   const isIOSDev = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -2684,12 +2685,15 @@ const CV = (function(){
     const q = v === undefined ? st.get(k) : v === null ? st.delete(k) : st.put(v, k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
   // espaces partagés de CE téléphone : le carnet principal et les voyages partagés avec leur propre code (pas les abonnés)
   function pushSpaces(){
-    const P = PU(), want = PUSH_KINDS.map(k=>k[0]).filter(k=>k !== 'rappel' && P.kinds[k]), codes = new Set();
+    const P = PU(), want = PUSH_KINDS.map(k=>k[0]).filter(k=>k !== 'rappel' && k !== 'suivi' && P.kinds[k]), codes = new Set();
     if(M.sync.on && M.sync.code) codes.add(M.sync.code);
     Object.entries(TS()).forEach(([tid, c])=>{ if(c && spaceObj(c) && R[tid] && R[tid].type === 'trip') codes.add(c); });
     const feeds = P.kinds.social ? Object.values(FT()).filter(Boolean) : [];
+    // 👀 voyages que je suis (pas les miens) : prévenu quand le voyageur publie une étape (envoyé en « souv » sur le lien abonnés)
+    const mineF = new Set(Object.values(FT()).filter(Boolean)), fol = new Set();
+    if(P.kinds.suivi) list('feedtrip', f=>!f.deleted && TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !(M.unfol||{})[f.id]).forEach(f=>{ const c = TS()[f.id]; if(c && !mineF.has(c) && !codes.has(c) && spaceObj(c)) fol.add(c); });
     const ib = M.ib && spaceObj(M.ib) ? [{code:M.ib, kinds:['social']}] : [];   // ma boîte aux lettres : invitations et réponses, toujours
-    return [...codes].map(code=>({code, kinds:want.filter(k=>k !== 'social')})).concat(feeds.map(code=>({code, kinds:['social']}))).concat(ib).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
+    return [...codes].map(code=>({code, kinds:want.filter(k=>k !== 'social')})).concat(feeds.map(code=>({code, kinds:['social']}))).concat([...fol].map(code=>({code, kinds:['souv']}))).concat(ib).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
   }
   // 🔔 l’auteur est prévenu quand un abonné commente, aime ou commence à suivre (même un abonné sans l’appli)
   async function socialPush(ftid, s, x){
@@ -2887,6 +2891,7 @@ const CV = (function(){
     let u; try { u = new URL(href, location.href); } catch(e){ return; }
     const tid = u.searchParams.get('vzt'), k = u.searchParams.get('vzk'), rr = u.searchParams.get('vzr') || ''; if(tid === null) return;
     if(/[?&]vzt=/.test(location.search)) history.replaceState(null, '', location.pathname);
+    if(/^ft:/.test(tid)){ if(R[tid] && !R[tid].deleted) setTimeout(()=>{ try { feedView(tid); } catch(e){} }, 200); setTimeout(()=>syncNow('pull'), 400); return; }   // 👀 voyage suivi : son fil
     if(tid && R[tid] && !R[tid].deleted){ M.trip = tid; M.who = 'all'; }
     const tb = /^(soir|anniv)/.test(rr) ? 'souv' : {depense:'budget', resa:'prog', souv:'souv', sondage:'envies', notes:'prog', rappel:'prog'}[k] || 'prog';
     M.mode = 'prep'; M.tab = tb; persist(); applyMode(); window.scrollTo({top:0});
@@ -14622,10 +14627,10 @@ ${pm.join('\n')}</Document></kml>`;
     const cov = t.cover || (t.coverWk ? '' : ((list('souv', x=>x.trip===tid && !x.priv && (x.photos||[]).length).sort((a,b)=>(a.date||'').localeCompare(b.date||''))[0] || {}).photos || [])[0] || '');
     const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
     if(!R[head.id] || stripStamp(R[head.id]) !== stripStamp(head)) out.push(head);
-    const keep = new Set();
+    const keep = new Set(), first = !R[head.id] || R[head.id].deleted, fresh = [];
     list('souv', s=>s.trip===tid && !s.priv && ((s.photos||[]).length || (s.texte||'').trim())).forEach(s=>{
       const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 2000), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''};
-      keep.add(f.id); if(!R[f.id] || R[f.id].deleted || stripStamp(R[f.id]) !== stripStamp(f)) out.push(f);
+      keep.add(f.id); if(!R[f.id] || R[f.id].deleted || stripStamp(R[f.id]) !== stripStamp(f)){ if(!R[f.id] || R[f.id].deleted) fresh.push(f); out.push(f); }
       f.photos.forEach(p=>feedPhotoQ(c, p));
     });
     if(cov) feedPhotoQ(c, cov);
@@ -14633,7 +14638,31 @@ ${pm.join('\n')}</Document></kml>`;
     const people = feedTrk(tid), fkId = 'fk:' + tid;
     if(people.length){ const fk = {id:fkId, type:'feedtrk', trip:ftId(tid), people}; if(!R[fkId] || R[fkId].deleted || stripStamp(R[fkId]) !== stripStamp(fk)) out.push(fk); }
     else if(R[fkId] && !R[fkId].deleted) out.push(Object.assign(clone(R[fkId]), {deleted:true, people:[]}));
-    putQuiet(out); return out.length;
+    putQuiet(out);
+    // 🔔 nouvelles étapes → les abonnés qui ont l’appli sont prévenus (pas à la 1re publication : tout le voyage arriverait d’un coup)
+    if(!first && fresh.length) feedNotify(tid, fresh);
+    return out.length;
+  }
+  // regroupé : on attend 3 min après la dernière étape (le temps d’ajouter les photos), une seule notification
+  let fnT = null;
+  function feedNotify(tid, posts){
+    const q = M.fnq || (M.fnq = {}), a = q[tid] || (q[tid] = []);
+    posts.forEach(f=>{ if(!a.includes(f.id)) a.push(f.id); }); persist();
+    clearTimeout(fnT); fnT = setTimeout(feedNotifyGo, 180000);
+  }
+  async function feedNotifyGo(){
+    fnT = null; const q = M.fnq || {}; if(!Object.keys(q).length || !pushApi() || !navigator.onLine) return;
+    for(const tid of Object.keys(q)){
+      const code = feedCode(tid), t = R[tid], ids = q[tid].filter(id=>R[id] && !R[id].deleted);
+      delete q[tid]; persist();
+      if(!code || !t || t.deleted || !ids.length) continue;
+      try {
+        const kk = await keys(code), kid = kk.token.slice(0, 16);
+        const it = ids.slice(0, 5).map(id=>{ const f = R[id]; return {x:String(f.titre || f.lieu || '').slice(0, 80)}; });
+        const p = {k:'souv', f:1, who: myName() || '', trip: ftId(tid), tt: t.titre || '', it, n: ids.length};
+        await pushPost(code, {a:'send', kind:'souv', kid, msg: b64(await seal(te.encode(JSON.stringify(p)), code)), tag:'fol-' + tid});
+      } catch(e){}
+    }
   }
   function feedPhotoQ(code, id){ M.fup = M.fup || {}; const done = M.fup[code] || (M.fup[code] = {}); if(done[id]) return; M.fq = M.fq || []; if(!M.fq.some(x=>x[0]===code && x[1]===id)) M.fq.push([code, id]); }
   let feedUp = false;
@@ -14707,7 +14736,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(out.length){ putQuiet(out); M.fdel = (M.fdel||[]).concat(dels); persist(); try { await syncNow(); } catch(e){} feedPurge(); }
     return n;
   }
-  function feedAll(){ if(!M.fkey) fKey().catch(()=>{}); feedGrantAll().catch(()=>{}); feedPurge(); Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); feedUpload(); feedReconcile().then(n=>{ if(n) refresh(); }).catch(()=>{}); }
+  function feedAll(){ if(!M.fkey) fKey().catch(()=>{}); feedGrantAll().catch(()=>{}); feedPurge(); Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); if(!fnT && Object.keys(M.fnq||{}).length) fnT = setTimeout(feedNotifyGo, 180000); feedUpload(); feedReconcile().then(n=>{ if(n) refresh(); }).catch(()=>{}); }
   setInterval(()=>{ if(document.visibilityState === 'visible' && Object.keys(FT()).length) feedAll(); }, 60000);
   setTimeout(feedAll, 5000);
   async function feedPublish(tid){
@@ -15228,6 +15257,7 @@ ${pm.join('\n')}</Document></kml>`;
         const nAll = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted).length;
         return !FT()[String(ftid).replace(/^ft:/,'')] && (sib.length > 1 || nAll > 1) ? `<button type="button" class="fd-back" onclick="CV.feedBack()"><span>←</span><b>Tous les voyages que je suis</b></button>` : ''; })()}
       ${!myName() && !FT()[String(ftid).replace(/^ft:/,'')] ? `<form class="fd-name" onsubmit="event.preventDefault();CV.fwNameSave(this)"><span>👋 Ton prénom ? <small>Pour que ${esc(ft.owner || '?')} sache qui suit son voyage.</small></span><div class="cv-row"><input class="v-in" name="n" maxlength="40" placeholder="Prénom" autocomplete="given-name"><button type="submit" class="fd-send">OK</button></div></form>` : ''}
+      ${feedBellHTML(ftid)}
       <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}${FT()[String(ftid).replace(/^ft:/,'')] || webFollowing() ? '' : `<div class="fd-unf"><button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}')">🚫 Ne plus suivre ce voyage</button>${list('feedtrip', f=>TS()[f.id] && f.id !== ftid && String(f.owner||'').trim().toLocaleLowerCase() === String(ft.owner||'').trim().toLocaleLowerCase()).length ? `<button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}',1)">🚫 Ne plus suivre <span data-notr>${esc(ft.owner || '?')}</span> (tous ses voyages)</button>` : ''}</div>`}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; M.feedLast = ftid; feedMapHydrate();
     ov._h = posts.map(feedPostHTML).join('') + '|' + !!feedTrkRec(ftid);
@@ -15237,6 +15267,19 @@ ${pm.join('\n')}</Document></kml>`;
     if(webFollowing()) ov.insertAdjacentHTML('beforeend', webCta().replace('class="fd-cta"', 'class="fd-cta" style="position:relative;margin:0"'));
     syncNow().then(()=>{ if(M.feedOpen === ftid && document.getElementById('cv-feed')){ const y = ov.querySelector('.fd-list').scrollTop; const p2 = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
       const h2 = p2.map(feedPostHTML).join('') + '|' + !!feedTrkRec(ftid); if(h2 === ov._h){ hydrate(); return; } ov._h = h2; ov.querySelector('.fd-list').innerHTML = feedMapHTML(ftid) + (p2.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'); setTimeout(feedMapHydrate, 30); ov.querySelector('.fd-list').scrollTop = y; hydrate(); } });
+  }
+  // 🔔 abonné avec l’appli : un bouton pour être prévenu des nouvelles étapes (sans aller dans les réglages)
+  function feedBellHTML(ftid){
+    if(FT()[String(ftid).replace(/^ft:/,'')] || !pushOk() || cloudMode() === 'none') return '';
+    const P = PU(); if(P.on && P.kinds.suivi && Notification.permission === 'granted') return '';
+    if(Notification.permission === 'denied') return '';
+    return `<button type="button" class="fd-bell" onclick="CV.feedBell()"><span>🔔</span><b>Me prévenir des nouvelles étapes</b><small>Une notification à chaque nouvelle publication</small></button>`;
+  }
+  async function feedBell(){
+    const P = PU(); P.kinds.suivi = 1; persist();
+    if(P.on && Notification.permission === 'granted'){ try { await pushRegister(true); } catch(e){} toast('🔔 Notifications activées'); }
+    else await pushTog(true);
+    document.querySelectorAll('#cv-feed .fd-bell').forEach(b=>{ if(PU().on && Notification.permission === 'granted') b.remove(); });
   }
   const feedTrkRec = ftid => { const r = R['fk:' + String(ftid).replace(/^ft:/,'')]; return r && !r.deleted && (r.people||[]).length ? r : null; };
   function feedMapHTML(ftid){
@@ -15282,7 +15325,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-18w';
+  const BUILD = '2026-10-18x';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15376,7 +15419,7 @@ ${pm.join('\n')}</Document></kml>`;
   setTimeout(vzPaint, 0);
   var VZAPI = {vzGo, vzHide, vzNews, vzAvis, vzStar, vzSend, vzRestore, vzPaint};
 
-  const api = {tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
+  const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
