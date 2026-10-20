@@ -1662,6 +1662,116 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .pc-pick.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;overflow:visible;max-height:none}
 .pc-pick.grid button{flex:none;width:auto;height:auto;aspect-ratio:1}
 .pc-more{margin:4px 0 10px}.pc-more summary{cursor:pointer;font-weight:700;font-size:.84rem;padding:6px 0}
+/* 🎬 export vidéo */
+.vx{position:absolute;inset:0;z-index:20;background:rgba(5,5,15,.88);display:flex;align-items:center;justify-content:center;touch-action:auto}
+.vx-in{width:min(86%,360px);display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.vx-pv{width:52%;aspect-ratio:9/16;border-radius:16px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.6);background:#000}.vx-cv{width:100%;height:100%;display:block}
+.vx-bar{width:100%;height:8px;border-radius:99px;background:rgba(255,255,255,.2);overflow:hidden}.vx-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f43f5e,#a855f7)}
+.vx-in small{opacity:.85}.vx-in button{border:0;border-radius:99px;padding:9px 18px;font:inherit;font-weight:800;background:rgba(255,255,255,.14);color:#fff}
+/* 🗺️ carte à gratter */
+.bb-scr{display:flex;align-items:center;gap:12px;border:0;border-radius:20px;padding:12px 14px;font:inherit;text-align:left;color:#4a3300;background:linear-gradient(120deg,#b8892e,#f6dc9a 40%,#c9993b 70%,#f9e7b4);box-shadow:0 12px 26px -14px rgba(160,110,20,.9);position:relative;overflow:hidden}
+.bb-scr>span:first-child{font-size:1.8rem}.bb-scr>span:nth-child(2){flex:1;display:flex;flex-direction:column}.bb-scr small{opacity:.8;font-size:.78rem}.bb-scr i{font-style:normal;font-size:1.3rem;animation:lvPulse 2s infinite}
+.scr{position:fixed;inset:0;z-index:9300;background:radial-gradient(120% 70% at 50% 0%,#1e2a5a,#070b1c);color:#fff;overflow-y:auto;opacity:0;transition:opacity .3s;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 24px)}
+.scr.on{opacity:1}
+.scr-top{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 8px}.scr-top>div{display:flex;flex-direction:column}.scr-top small{opacity:.75;font-size:.8rem}
+.scr-top button{width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff}
+.scr-map{margin:4px 10px;border-radius:18px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.5)}.scr-map canvas{width:100%;display:block}
+.scr-st{display:flex;gap:6px;overflow-x:auto;padding:10px 10px 4px;scrollbar-width:none}
+.scr-st span{flex:1 0 auto;min-width:66px;background:rgba(255,255,255,.1);border-radius:14px;padding:8px 6px;text-align:center;display:flex;flex-direction:column;font-size:.68rem;opacity:.95}.scr-st b{font-size:1.15rem}
+.scr-h{padding:10px 14px 6px;font-weight:700;font-size:.9rem}
+.scr-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0 10px}
+.scr-cd{position:relative;height:104px;border-radius:16px;overflow:hidden;background:linear-gradient(150deg,#fff,#f1f5f9);color:#1f2937;box-shadow:0 8px 20px rgba(0,0,0,.35)}
+.scr-cd canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;transition:opacity .8s}
+.scr-u{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6px}
+.scr-u i{font-style:normal;font-size:2rem;line-height:1}.scr-u b{font-size:.9rem}.scr-u small{font-size:.66rem;color:#6b7280;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scr-cd.ok .scr-u{animation:wlcPop .6s cubic-bezier(.2,1.4,.4,1) both}
+/* ⭐ notes */
+.rt-c{display:flex;flex-direction:column;gap:4px;border:0;border-radius:20px;padding:12px 14px;font:inherit;text-align:left;background:linear-gradient(135deg,#fffbeb,#fef3c7);color:#78350f;box-shadow:0 10px 22px -14px rgba(180,120,0,.6)}
+.rt-c>div{display:flex;flex-direction:column;gap:2px}.rt-c small{font-size:.78rem;opacity:.85}.rt-best{color:#be123c;font-weight:700}
+.rt-s i{font-style:normal;color:#e5e7eb;font-size:1rem}.rt-s i.on{color:#f59e0b}.rt-s.big i{font-size:1.25rem}
+.rt-r{border:1px solid #f1f5f9;border-radius:16px;padding:10px 12px;margin:0 0 8px;background:#fff}
+.rt-h{display:flex;align-items:center;justify-content:space-between;gap:8px}.rt-h>span:first-child{display:flex;flex-direction:column;min-width:0}.rt-h small{color:#6b7280;font-size:.74rem}
+.rt-in{display:flex;flex:0 0 auto}.rt-in button{border:0;background:none;font-size:1.55rem;color:#e5e7eb;padding:0 1px;line-height:1;transition:transform .15s}.rt-in button.on{color:#f59e0b}.rt-in button:active{transform:scale(1.3)}
+.rt-tx{margin-top:6px!important;font-size:.85rem!important}
+.rt-o{display:flex;flex-direction:column;gap:2px;margin-top:6px;font-size:.78rem;color:#6b7280}.rt-o b{color:#374151}
+.rt-sec{font-weight:800;font-size:.84rem;margin:12px 2px 6px}
+.rt-l{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 2px;border-bottom:1px solid #f1f5f9}.rt-l>span:first-child{display:flex;flex-direction:column;min-width:0}.rt-l small{color:#6b7280;font-size:.74rem}
+/* 🎯 défis */
+.df{background:linear-gradient(150deg,#fff7ed,#fef3c7);border-radius:22px;padding:12px;margin:0 0 12px;box-shadow:0 10px 24px -16px rgba(180,100,0,.5)}
+.df-h{display:flex;justify-content:space-between;align-items:center;padding:0 4px 8px}.df-h small{color:#b45309;font-weight:800}
+.df-l{display:flex;flex-direction:column;gap:6px}
+.df-c{display:flex;align-items:center;gap:10px;border:0;border-radius:16px;background:#fff;padding:10px 12px;font:inherit;text-align:left;color:#1f2937;position:relative;box-shadow:0 3px 10px rgba(180,100,0,.12);transition:transform .2s}
+.df-c:active{transform:scale(.98)}
+.df-c>i{font-style:normal;font-size:1.4rem}.df-c>span{flex:1;font-size:.88rem;font-weight:600}.df-c>small{font-size:.62rem;color:#b45309;font-weight:800}
+.df-c em{display:flex;gap:2px}.df-c u{text-decoration:none;width:20px;height:20px;border-radius:50%;background:var(--c);color:#fff;font-size:.6rem;font-weight:800;display:grid;place-items:center}
+.df-c>b{position:absolute;right:-4px;top:-6px;width:22px;height:22px;border-radius:50%;background:#16a34a;color:#fff;display:grid;place-items:center;font-size:.7rem;animation:wlcPop .5s cubic-bezier(.2,1.4,.4,1) both}
+.df-c.ok{background:linear-gradient(135deg,#dcfce7,#fff)}.df-c.ok>span{text-decoration:line-through;text-decoration-color:#16a34a;opacity:.75}
+.df-sc{padding:8px 4px 0;font-size:.8rem;color:#92400e}
+/* 🎙️ journal vocal */
+.vj-b{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:20px;padding:12px 14px;margin:0 0 12px;font:inherit;text-align:left;color:#fff;background:linear-gradient(120deg,#0f766e,#0891b2);box-shadow:0 12px 26px -14px rgba(8,145,178,.8)}
+.vj-b>span:last-child{display:flex;flex-direction:column}.vj-b small{opacity:.85;font-size:.76rem}
+.vj-mic{width:44px;height:44px;flex:0 0 44px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:1.3rem}
+.vj{position:fixed;inset:0;z-index:9400;background:radial-gradient(120% 80% at 50% 20%,#155e75,#0b1324);color:#fff;display:flex;flex-direction:column;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);opacity:0;transition:opacity .3s}
+.vj.on{opacity:1}
+.vj-top{display:flex;justify-content:space-between;align-items:center;width:100%}.vj-top button{border:0;background:rgba(255,255,255,.14);color:#fff;width:38px;height:38px;border-radius:50%}
+.vj-orb{position:relative;width:150px;height:150px;margin:30px 0 14px;display:grid;place-items:center;cursor:pointer}
+.vj-orb i{position:relative;z-index:2;width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,#22d3ee,#0ea5e9);display:grid;place-items:center;font-style:normal;font-size:2.6rem;box-shadow:0 14px 40px rgba(34,211,238,.5)}
+.vj-orb span{position:absolute;inset:20px;border-radius:50%;border:2px solid rgba(34,211,238,.6);opacity:0}
+.vj-orb.on span{animation:vjWave 1.8s ease-out infinite}.vj-orb.on span:nth-child(2){animation-delay:.6s}.vj-orb.on span:nth-child(3){animation-delay:1.2s}
+.vj-orb.on i{background:linear-gradient(135deg,#f43f5e,#fb7185);box-shadow:0 14px 40px rgba(244,63,94,.6)}
+@keyframes vjWave{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+.vj-st{font-weight:700;opacity:.9;margin-bottom:12px;text-align:center}
+.vj-tx{flex:1;width:100%;border:0;border-radius:18px;padding:14px;font:inherit;font-size:1.05rem;line-height:1.4;background:rgba(255,255,255,.95);color:#1f2937;resize:none}
+.vj-b2{display:flex;gap:8px;width:100%;margin-top:12px}.vj-b2 button{flex:1;border:0;border-radius:16px;padding:13px;font:inherit;font-weight:800;background:rgba(255,255,255,.14);color:#fff}.vj-b2 .pri{background:#fff;color:#0f766e}
+/* 📴 hors ligne */
+.off-b{display:block;width:100%;border:0;border-radius:14px;padding:9px 12px;margin:0 0 10px;font:inherit;font-size:.8rem;font-weight:700;text-align:left;background:#eef2ff;color:#3730a3}
+.off-b.ok{background:#ecfdf5;color:#047857}
+.off-b.on{background:linear-gradient(135deg,#1f2937,#374151);color:#fff;display:flex;flex-direction:column;gap:4px}.off-b.on small{opacity:.8;font-weight:500}
+.off-b.on div{display:flex;gap:6px;margin-top:4px}.off-b.on div button{border:0;border-radius:99px;padding:6px 11px;font:inherit;font-weight:800;font-size:.78rem;background:#fff;color:#1f2937}
+/* 🗣️ langue et monnaie */
+.lg{display:grid;gap:8px;margin:0 0 12px}
+.lg-p,.lg-fx{background:#fff;border-radius:20px;padding:12px 14px;box-shadow:0 8px 20px -14px rgba(0,0,0,.35)}
+.lg-p{background:linear-gradient(150deg,#eef2ff,#fff)}
+.lg-k{font-size:.72rem;font-weight:800;color:#4f46e5;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.lg-w{display:flex;align-items:center;gap:8px}.lg-w b{flex:1;font-size:1.3rem;line-height:1.2}.lg-w button{border:0;border-radius:50%;width:40px;height:40px;background:#4f46e5;color:#fff;font-size:1.05rem}
+.lg-p>small{color:#6b7280}
+.lg-all{display:block;margin-top:8px;border:0;background:none;color:#4f46e5;font:inherit;font-weight:800;font-size:.8rem;padding:0}
+.lg-r{font-size:.86rem;margin-bottom:8px}
+.lg-cv{display:flex;align-items:center;gap:8px}.lg-cv input{flex:0 0 110px;margin:0}.lg-cv span{font-weight:800;color:#6b7280}.lg-cv b{flex:1;text-align:right;font-size:1.1rem}
+.lg-tab{display:flex;flex-direction:column;gap:6px}
+.lg-tab button{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:10px;border:0;border-radius:14px;background:#f8fafc;padding:10px 12px;font:inherit;text-align:left}
+.lg-tab small{grid-column:1;color:#6b7280;font-size:.74rem}.lg-tab b{grid-column:1;font-size:1rem}.lg-tab i{grid-column:2;grid-row:1/3;align-self:center;font-style:normal;font-size:1.2rem}
+/* ⏳ compte à rebours */
+.cd{position:relative;border-radius:26px;overflow:hidden;margin:0 0 12px;color:#fff;background:linear-gradient(140deg,#1e3a8a,#7c3aed 55%,#db2777);box-shadow:0 18px 40px -18px rgba(60,20,120,.7);isolation:isolate}
+.cd-bg{position:absolute;inset:-4%;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s;z-index:0}.cd-bg.ok{opacity:1;animation:wlcZoom 18s ease-out forwards}
+.cd-sh{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(10,10,40,.35),rgba(10,10,40,.15) 35%,rgba(10,10,40,.85))}
+.cd>*:not(.cd-bg):not(.cd-sh){position:relative;z-index:2}
+.cd-top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 0;font-weight:800;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase}
+.cd-wx{background:rgba(0,0,0,.3);border-radius:99px;padding:4px 10px;text-transform:none;letter-spacing:0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.cd-wx:empty{display:none}
+.cd-j{padding:4px 16px 0;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.cd-j b{font-family:var(--serif,Georgia,serif);font-size:4.2rem;line-height:1;letter-spacing:-.03em;text-shadow:0 4px 20px rgba(0,0,0,.4);animation:wlcPop .8s cubic-bezier(.2,1.4,.4,1) both}
+.cd-dest{font-size:1.3rem;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.cd-clock{display:flex;gap:8px;padding:10px 16px 0}
+.cd-clock span{flex:1;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:6px 4px;text-align:center;display:flex;flex-direction:column;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.cd-clock b{font-size:1.35rem;font-variant-numeric:tabular-nums;line-height:1.1}.cd-clock small{font-size:.6rem;opacity:.85}
+.cd-todo{margin:12px 10px 10px;background:rgba(255,255,255,.95);color:#1f2937;border-radius:18px;padding:10px 10px 8px}
+.cd-th{display:flex;align-items:center;justify-content:space-between;padding:0 4px 6px}.cd-th b{font-size:.9rem}
+.cd-th button{border:0;border-radius:99px;background:#f1f5f9;font:inherit;font-size:.74rem;font-weight:800;padding:5px 10px;color:#334155}
+.cd-t{display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;font:inherit;text-align:left;padding:7px 4px;border-top:1px solid #f1f5f9;color:inherit}
+.cd-t i{font-style:normal;width:22px;text-align:center}.cd-t span{flex:1;font-size:.84rem;line-height:1.25}.cd-t.ok span{text-decoration:line-through;opacity:.55}.cd-t.bad span{color:#b45309;font-weight:700}
+.cd-todo small{display:block;text-align:center;color:#94a3b8;font-size:.72rem;padding-top:4px}
+/* 🗳️ votes */
+.cv-poll.kind{border:2px solid #c4b5fd;background:linear-gradient(160deg,#faf5ff,#fff)}
+.po-k{font-size:.72rem;font-weight:800;color:#7c3aed;margin-bottom:4px}
+.po-add{width:100%;margin-top:8px;border:0;border-radius:14px;padding:10px;font:inherit;font-weight:800;color:#fff;background:linear-gradient(135deg,#7c3aed,#db2777)}
+.po-win{margin-top:8px;font-weight:800;color:#15803d;font-size:.86rem}
+.po-fx{position:fixed;z-index:9500}
+/* 🧳 valise de chacun */
+.ck-me{background:linear-gradient(135deg,#ecfeff,#f0fdf4);border-radius:14px;padding:9px 12px;margin:0 0 8px;font-size:.88rem}
+.ck-who{display:flex;gap:3px;margin-top:3px}.ck-who i{width:20px;height:20px;border-radius:50%;font-style:normal;font-size:.62rem;font-weight:800;display:grid;place-items:center;background:#e5e7eb;color:#6b7280}
+.ck-who i.on{background:var(--c);color:#fff}
+.ck-each{border:0;background:#f1f5f9;border-radius:10px;width:32px;height:30px;font-size:.85rem;opacity:.45;margin-left:4px}.ck-each.on{opacity:1;background:#ede9fe}
+.v-cl.each .t{display:flex;flex-direction:column}
 /* 🏁 voyage fini */
 .st-home{font-size:3.4rem;animation:wlcPop .7s cubic-bezier(.2,1.4,.4,1) both}
 .st-fl{font-size:1.6rem;letter-spacing:.1em;animation:wlcUp .6s .6s both}
@@ -4727,7 +4837,7 @@ const CV = (function(){
     try { const c = getComputedStyle(document.body).getPropertyValue('--navy').trim(), m = document.querySelector('meta[name="theme-color"]'); if(c && m && m.content !== c) m.content = c; } catch(e){} }
   function render(){
     phaseTheme();
-    setTimeout(moments, 900); setTimeout(liveMapHydrate, 80); setTimeout(bbMapHydrate, 90); setTimeout(lnHydrate, 60); setTimeout(poem, 0); setTimeout(progMapHydrate, 120); setTimeout(()=>{ if(document.querySelector('.cv-anniv img[data-ph]:not([data-ok])')) hydrate(); }, 60);
+    setTimeout(moments, 900); setTimeout(liveMapHydrate, 80); setTimeout(lgHydrate, 120); setTimeout(cdHydrate, 70); setTimeout(bbMapHydrate, 90); setTimeout(lnHydrate, 60); setTimeout(poem, 0); setTimeout(progMapHydrate, 120); setTimeout(()=>{ if(document.querySelector('.cv-anniv img[data-ph]:not([data-ok])')) hydrate(); }, 60);
     const body = document.getElementById('cv-body');
     const fab = document.getElementById('cv-fab');
     const t = trip();
@@ -5105,7 +5215,7 @@ const CV = (function(){
   function pinToggle(){ M.pinOpen = M.pinOpen === false; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function renderProg(){
     const ds = dayList();
-    let h = pinBar() + actBand() + annivCard() + nextHero() + eveCard() + prepGauge() + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + pinnedPolls();
+    let h = pinBar() + cdHTML() + actBand() + annivCard() + nextHero() + eveCard() + prepGauge() + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + pinnedPolls();
     const tt = trip();
     if(tt && tt.demo) h = `<div class="cv-demo-bar">👀 <b>Voyage de démo</b> : touche à tout, modifie, supprime. Il reste sur ce téléphone et n’est jamais partagé.
         <span class="cv-demo-btns"><button type="button" onclick="CV.demoReset()">↺ Recommencer</button><button type="button" onclick="CV.demoDel()">Supprimer la démo</button></span></div>` + h;
@@ -5322,15 +5432,15 @@ const CV = (function(){
   function renderCheck(){
     const cl = list('check', c=>c.trip===M.trip).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0) || a.id.localeCompare(b.id));
     const cats = [...new Set(cl.map(i=>i.cat))];
-    const done = cl.filter(i=>i.done).length;
-    let h = `<button type="button" class="sp-card" onclick="CV.smartPack()"><i>🧳</i><span><b>Valise intelligente</b><small>Selon la météo de tes étapes et tes activités : les idées à ne pas oublier.</small></span></button><div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">${done} / ${cl.length}</div><div class="v-sum-small">éléments cochés</div></div>
+    const done = cl.filter(i=>chkDone(i)).length, multi = tvOf(M.trip).length > 1, mine = cl.filter(i=>i.each && !(i.doneBy || {})[M.me]).length;
+    let h = `${multi && cl.some(i=>i.each) ? `<div class="ck-me">🧳 ${mine ? MSGT('Ta valise') + ' : <b>' + mine + '</b> ' + MSGT('à cocher') : '✅ ' + MSGT('Ta valise est prête')}</div>` : ''}<button type="button" class="sp-card" onclick="CV.smartPack()"><i>🧳</i><span><b>Valise intelligente</b><small>Selon la météo de tes étapes et tes activités : les idées à ne pas oublier.</small></span></button><div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">${done} / ${cl.length}</div><div class="v-sum-small">éléments cochés</div></div>
       <div class="v-bar"><span class="b-paid" style="width:${cl.length?done/cl.length*100:0}%"></span></div></div>`;
     cats.forEach(c=>{
       h += `<div class="v-cl-cat">${esc(c)}</div>`;
-      h += cl.filter(i=>i.cat===c).map(i=>`<div class="v-cl${i.done?' done':''}" onclick="CV.check('${i.id}')">
-        <div class="c">${i.done?'✓':''}</div><div class="t">${esc(i.label)}</div>${!i.done && !hidden('blk:book') && checkBook(i.label) ? `<button type="button" class="bk-ck" onclick="event.stopPropagation();CV.bookSheet('${i.id}',1)">🛒</button>` : ''}
+      h += cl.filter(i=>i.cat===c).map(i=>{ const me = i.each ? !!(i.doneBy || {})[M.me] : i.done; return `<div class="v-cl${chkDone(i)?' done':''}${i.each ? ' each' : ''}" onclick="CV.check('${i.id}')">
+        <div class="c">${me?'✓':''}</div><div class="t">${esc(i.label)}${i.each ? `<span class="ck-who">${tvOf(M.trip).map(p=>`<i class="${(i.doneBy || {})[p] ? 'on' : ''}" style="--c:${pcol(p)}" title="${esc(pname(p))}">${esc(((pname(p)||'?')[0]||'?').toUpperCase())}</i>`).join('')}</span>` : ''}</div>${multi ? `<button type="button" class="ck-each${i.each ? ' on' : ''}" onclick="event.stopPropagation();CV.chkEach('${i.id}')" title="Chacun le sien">👥</button>` : ''}${!i.done && !hidden('blk:book') && checkBook(i.label) ? `<button type="button" class="bk-ck" onclick="event.stopPropagation();CV.bookSheet('${i.id}',1)">🛒</button>` : ''}
         ${i.done && i.updatedBy && i.updatedAt>1000 ? `<span title="Coché par ${esc(pname(i.updatedBy))}">${ini(i.updatedBy)}</span>` : ''}
-        <button class="del" onclick="event.stopPropagation();CV.delCheck('${i.id}')">✕</button></div>`).join('');
+        <button class="del" onclick="event.stopPropagation();CV.delCheck('${i.id}')">✕</button></div>`; }).join('');
     });
     h += `<div class="v-cl-add"><select class="v-in" id="v-cl-cat" style="flex:0 0 40%">${cats.map(c=>`<option>${esc(c)}</option>`).join('')}<option value="__new">＋ Nouvelle catégorie…</option></select>
       <input class="v-in" id="v-cl-new" placeholder="Ajouter un élément" onkeydown="if(event.key==='Enter')CV.addCheck()">
@@ -5439,10 +5549,13 @@ const CV = (function(){
   function packCc(v){ const t = trip(); if(!t) return; M.packCc = Object.assign({}, M.packCc || {}, {[t.id]: String(v || '').trim()}); persist(); smartPack(true); }
   function smartPackAdd(){
     const sel = [...document.querySelectorAll('[data-sp]:checked')].map(i=>spSug[+i.dataset.sp]).filter(x=>x && !x.has);
-    sel.forEach((x, k)=>put({id:'c' + uid() + k, type:'check', trip:M.trip, cat:x.cat, label:x.l, done:false}));
+    const each = tvOf(M.trip).length > 1;
+    sel.forEach((x, k)=>put({id:'c' + uid() + k, type:'check', trip:M.trip, cat:x.cat, label:x.l, done:false, each: each && /Vêtements|Santé|Documents|Activités/.test(x.cat) ? true : undefined, doneBy: {}}));
     closeSheet(); const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x); toast('🧳 ' + MSG(sel.length > 1 ? `${sel.length} éléments ajoutés` : `${sel.length} élément ajouté`)); if(M.tab === 'check') renderCheck(); else render();
   }
-  function check(id){ const i = R[id]; if(!i) return; i.done = !i.done; put(i, i.done ? '✓ Coché' : 'Décoché'); renderCheck(); }
+  function check(id){ const i = R[id]; if(!i) return;
+    if(i.each && M.me){ i.doneBy = Object.assign({}, i.doneBy); if(i.doneBy[M.me]) delete i.doneBy[M.me]; else i.doneBy[M.me] = 1; i.done = chkDone(i); put(i, i.doneBy[M.me] ? '✓ ' + MSGT('Coché pour toi') : 'Décoché'); renderCheck(); return; }
+    i.done = !i.done; put(i, i.done ? '✓ Coché' : 'Décoché'); renderCheck(); }
   async function delCheck(id){ const i = R[id]; if(i && (await uiConfirm('Retirer « ' + i.label + ' » ?'))){ drop(id); renderCheck(); } }
   async function addCheck(){
     const label = document.getElementById('v-cl-new').value.trim(); if(!label) return;
@@ -9101,9 +9214,9 @@ const CV = (function(){
       <div id="om-prog" class="v-sum-small" style="margin-top:8px"></div>
       <div class="v-actions">${pts.length ? `<button type="button" class="v-btn" id="om-go" onclick="CV.omapGo()">📥 ${have ? 'Mettre à jour' : 'Télécharger'} les cartes</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.omapOpen()">🗺️ Ouvrir la carte</button>${have ? `<button type="button" class="v-btn sec" onclick="CV.omapDel()">🗑 Effacer les cartes</button>` : ''}<button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`;
   }
-  async function omapGo(){
+  async function omapGo(quiet){
     const t = trip(); if(!t) return; const btn = document.getElementById('om-go'), prog = document.getElementById('om-prog');
-    const say = m => { const e = document.getElementById('om-prog'); if(e) e.textContent = m; };
+    const say = m => { const e = document.getElementById('om-prog'); if(e && !quiet) e.textContent = m; };
     if(btn) btn.disabled = true;
     try {
       try { if(navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch(e){}
@@ -9126,8 +9239,8 @@ const CV = (function(){
       await Promise.all([1, 2, 3, 4, 5, 6].map(worker));
       OM()[t.id] = {at:Date.now(), n:list.length - fail, tpl, style:OFM}; persist();
       say(fail ? `⚠️ ${fail} morceaux non téléchargés (réseau ?). Réessaie en Wi-Fi.` : '✅ Cartes prêtes : elles marchent maintenant sans réseau.');
-      setTimeout(omapSheet, fail ? 2500 : 1200);
-    } catch(e){ say('⚠️ ' + (e.message || e)); if(btn) btn.disabled = false; }
+      if(quiet) return !fail; setTimeout(omapSheet, fail ? 2500 : 1200);
+    } catch(e){ say('⚠️ ' + (e.message || e)); if(btn) btn.disabled = false; if(quiet) return false; }
   }
   async function omapDel(){
     if(!(await uiConfirm('Effacer les cartes hors ligne de ce téléphone ?'))) return;
@@ -10176,9 +10289,11 @@ const CV = (function(){
   function pollCard(p, onHome){
     const votes = p.votes || {}, n = Object.keys(votes).length, mine = votes[M.me];
     const cnt = p.options.map((_,i)=>Object.values(votes).filter(v=>v===i).length), best = Math.max(0, ...cnt);
-    return `<div class="cv-poll${p.closed?' closed':''}"><div class="pq"><b>${esc(p.question)}</b> <span class="v-sum-small">· ${n} vote${n>1?'s':''}${p.closed?' · clos':''}</span></div>
+    const kk = {activite:'🎟️ Activité', resto:'🍽️ Restaurant', hotel:'🏨 Hébergement'}[p.kind] || '', nV = (R[p.trip] && (R[p.trip].voyageurs || []).length) || 0, wi = pollBest(p);
+    return `<div class="cv-poll${p.closed?' closed':''}${p.kind ? ' kind' : ''}">${kk ? `<div class="po-k">${kk}${p.date ? ' · ' + fdate(p.date) : ''}${nV ? ` · ${n}/${nV} ${MSGT('ont voté')}` : ''}</div>` : ''}<div class="pq"><b>${esc(p.question)}</b> <span class="v-sum-small">· ${n} vote${n>1?'s':''}${p.closed?' · clos':''}</span></div>
       ${p.options.map((o,i)=>`<button type="button" class="po${mine===i?' me':''}${p.closed && cnt[i]===best && best ? ' win' : ''}" ${p.closed?'disabled':''} onclick="CV.pollVote('${p.id}',${i})"><span class="pb" style="width:${n ? cnt[i]/n*100 : 0}%"></span><span class="pl">${esc(o)}</span><span class="pc">${cnt[i]}${n ? ' · ' + Math.round(cnt[i]/n*100) + ' %' : ''}</span></button>`).join('')}
       <div class="v-sum-small">${Object.entries(votes).map(([pid,v])=>esc(pname(pid)) + ' → ' + esc(p.options[v]||'?')).join(' · ')}</div>
+      ${p.kind ? (p.added ? `<div class="po-win">🏆 « ${esc(p.added)} » ${MSGT('est au programme')}</div>` : wi >= 0 ? `<button type="button" class="po-add" onclick="CV.pollWin('${p.id}')">🏆 ${MSGT('Valider')} « ${esc(p.options[wi])} » → ${MSGT('programme')}</button>` : '') : ''}
       <div class="cv-row"><button type="button" class="v-day-edit" onclick="CV.pollPin('${p.id}')">${p.pin ? '📌 Désépingler' : '📌 Épingler sur l’accueil'}</button>${!onHome && p.createdBy === M.me ? `<button type="button" class="v-day-edit" onclick="CV.pollClose('${p.id}')">${p.closed ? '↺ Rouvrir' : '🔒 Clore'}</button><button type="button" class="v-day-edit" onclick="CV.pollDel('${p.id}')">🗑</button>` : ''}</div></div>`;
   }
   function pollsHTML(){
@@ -10195,17 +10310,31 @@ const CV = (function(){
   function pollPin(id){ const p = clone(R[id]); p.pin = !p.pin; put(p, p.pin ? '📌 Sondage épinglé sur l’accueil' : '📌 Sondage désépinglé'); toast(p.pin ? '📌 Épinglé sur l’accueil' : '📌 Désépinglé'); refresh(); }
   function pollNew(){
     openSheet(`<h2>🗳️ Nouveau sondage</h2><form id="v-form" onsubmit="event.preventDefault();CV.pollSave()">
+      <div class="v-f"><label>Pour</label><select class="v-in" name="kind" onchange="this.form.querySelector('.pl-dt').style.display=this.value?'':'none'"><option value="">❓ Une question libre</option>${trip() ? `<option value="activite">🎟️ Une activité ou une visite</option><option value="resto">🍽️ Un restaurant</option><option value="hotel">🏨 Un hébergement</option>` : ''}</select></div>
       ${field('Question','q','','text','placeholder="Ex. Où partir en mai ?" required')}
+      <div class="v-f pl-dt" style="display:none"><label>Le jour (facultatif)</label><input class="v-in" type="date" name="date"></div>
       <div class="v-f"><label>Choix (un par ligne, 2 à 8)</label><textarea class="v-in" name="opts" rows="4" placeholder="Rome&#10;Lisbonne&#10;Séville"></textarea></div>
       ${actions('')}</form>`);
   }
   function pollSave(){
     const f = document.getElementById('v-form'), q = f.q.value.trim(), o = f.opts.value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,8);
     if(!q || o.length < 2){ alert('Une question et au moins 2 choix.'); return; }
-    put({id:'po'+uid(), type:'poll', question:q, options:o, votes:{}, closed:false}, '🗳️ Sondage créé'); closeSheet(true); refresh();
+    const kind = f.kind ? f.kind.value : '', t = trip();
+    put(Object.assign({id:'po'+uid(), type:'poll', question:q, options:o, votes:{}, closed:false}, kind && t ? {kind, trip:t.id, date:(f.date && f.date.value) || '', pin:true} : {}), '🗳️ ' + (kind ? MSGT('Vote lancé : chacun choisit') : 'Sondage créé')); closeSheet(true); refresh();
   }
   function pollVote(id, i){ if(!M.me) return; const p = clone(R[id]); p.votes = Object.assign({}, p.votes); if(p.votes[M.me] === i) delete p.votes[M.me]; else p.votes[M.me] = i; put(p); refresh(); }
-  function pollClose(id){ const p = clone(R[id]); p.closed = !p.closed; put(p); refresh(); }
+  function pollClose(id){ const p = clone(R[id]); p.closed = !p.closed; put(p); refresh(); if(p.closed && p.kind && !p.added) setTimeout(()=>pollWin(id, true), 200); }
+  function pollBest(p){ const votes = p.votes || {}, cnt = p.options.map((_, i)=>Object.values(votes).filter(v=>v === i).length), mx = Math.max(0, ...cnt); return mx ? cnt.indexOf(mx) : -1; }
+  async function pollWin(id, ask){
+    const p = clone(R[id]); if(!p || !p.kind || p.added) return; const w = pollBest(p); if(w < 0) return;
+    const nm = p.options[w];
+    if(ask && !(await uiConfirm('🏆 « ' + nm + ' » gagne le vote !\n\n' + MSGT('Ajouter au programme du voyage ?')))) return;
+    const t = R[p.trip]; if(!t) return;
+    const cat = p.kind === 'hotel' ? 'hotel' : 'activite';
+    put({id:'i' + uid(), type:'item', trip:t.id, cat, titre:(p.kind === 'resto' ? '🍽️ ' : '') + nm, date:p.date || '', statut:'todo', notes:'🗳️ ' + MSGT('Choisi par le groupe') + ' : ' + p.question}, '🏆 « ' + nm + ' » ' + MSGT('ajouté au programme'));
+    p.added = nm; p.closed = true; put(p); pollFx(); refresh();
+  }
+  function pollFx(){ const b = document.createElement('div'); b.className = 'wlc-conf po-fx'; b.innerHTML = Array.from({length:30}, (_, i)=>`<i style="left:${Math.random() * 100}%;animation-delay:${(Math.random() * .8).toFixed(2)}s;animation-duration:${(2.2 + Math.random() * 1.6).toFixed(2)}s;background:${['#fbbf24','#f472b6','#60a5fa','#34d399','#a78bfa'][i % 5]}"></i>`).join(''); document.body.appendChild(b); setTimeout(()=>b.remove(), 4200); }
   async function pollDel(id){ if(!(await uiConfirm('Supprimer ce sondage ?'))) return; const p = clone(R[id]); p.deleted = true; put(p, '🗑 Sondage supprimé'); refresh(); }
 
   /* ══════════════════════════════════════════════════════════════════════════
@@ -11100,7 +11229,7 @@ ${pm.join('\n')}</Document></kml>`;
         ${lv && lv.id !== (t||{}).id ? `<button class="v-btn" onclick="CV.go('${lv.id}')">📍 Ouvrir le voyage en cours : ${esc(lv.titre)}</button>` : ''}</div>`; }
     const k = dayList().indexOf(isoToday()), info = dayInfo(isoToday()), {own, night} = itemsForDay(isoToday());
     const tile = (ic, l, fn) => `<button type="button" class="cv-tile" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
-    return `${lnHTML(t)}${storyTodayHTML(t)}${actBand()}${annivCard()}${eveCard()}${nextHero()}${trkHTML()}${liveMapCard()}${liveCard()}
+    return `${offBand(t)}${lnHTML(t)}${storyTodayHTML(t)}${dfHTML(t)}${vjBtn(t)}${lgHTML(t)}${actBand()}${annivCard()}${eveCard()}${nextHero()}${trkHTML()}${liveMapCard()}${liveCard()}
       <div class="cv-tiles">${tile('📍','Step ici','CV.hereNow()')}${tile('🧾','Dépense','CV.tlReceipt()')}${tile('📴','Fiche du jour','CV.tlDay()')}${tile('🛒','Courses','CV.shopSheet()')}${tile('🌤️','Météo','CV.tlMeteo()')}${tile('🌍','Carte','CV.worldMap()')}${tile('📄','Importer','CV.impSheet()')}${tile('🛂','Papiers','CV.tlDocs()')}</div>
       <div class="v-box"><h3>Aujourd’hui · J${k+1}${info.titre ? ' · ' + esc(info.titre) : ''}</h3>${info.plan ? `<p>${esc(info.plan)}</p>` : ''}
         ${[...own, ...night].map(it=>`<button type="button" class="cv-prow" onclick="CV.edit('${it.id}')"><span>${icon(it)} <b>${esc(it.titre)}</b></span><span>${esc(it.heureDep||it.heure||'')}</span></button>`).join('') || '<div class="v-sum-small">Rien de réservé aujourd’hui.</div>'}
@@ -11113,7 +11242,7 @@ ${pm.join('\n')}</Document></kml>`;
       return `<div class="cv-past"><div class="cov">${ph ? `<img data-ph="${esc(ph[0])}.t" alt="">` : '<span>🧳</span>'}</div><div class="bd"><b>${esc(t.titre)}</b><small>${tripDatesLong(t)}</small><small>${sv.length} souvenir${sv.length>1?'s':''} · ${n} photo${n>1?'s':''}</small>
         <div class="bt"><button type="button" onclick="CV.go('${t.id}');CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.go('${t.id}');CV.albumSheet()">📕 Album</button><button type="button" onclick="CV.go('${t.id}');CV.modeGo('bilan');CV.innerGo('souv')">📸</button></div></div></div>`; };
     return `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">🗺️ ${ps.length} voyage${ps.length>1?'s':''} passé${ps.length>1?'s':''}</div></div>
-      <div class="cv-row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><button class="v-day-edit" onclick="CV.worldMap()">🌍 Carte du monde</button><button class="v-day-edit" onclick="CV.tlStats()">📊 Mes stats</button><button class="v-day-edit" onclick="CV.zipSheet()">💾 Sauvegarde ZIP</button></div></div>
+      <div class="cv-row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><button class="v-day-edit" onclick="CV.worldMap()">🌍 Carte du monde</button><button class="v-day-edit" onclick="CV.scrOpen()">✨ Carte à gratter</button><button class="v-day-edit" onclick="CV.rtAll()">⭐ Mes adresses notées</button><button class="v-day-edit" onclick="CV.tlStats()">📊 Mes stats</button><button class="v-day-edit" onclick="CV.zipSheet()">💾 Sauvegarde ZIP</button></div></div>
       ${ps.map(card).join('') || '<div class="v-box"><p>Tes voyages terminés apparaîtront ici, avec leurs photos, leur bilan et leur album.</p></div>'}`;
   }
   function bilanHTML(){
@@ -14583,6 +14712,368 @@ ${pm.join('\n')}</Document></kml>`;
 
 
 
+
+
+
+  /* ══════════ 🎬 Vidéo de la story · 🗺️ carte à gratter · ⭐ notes et avis ══════════ */
+  // la story rejouée image par image dans une vidéo verticale (1080×1920) avec sa musique
+  async function stExport(){
+    if(!ST) return; stPause(true);
+    const c0 = document.createElement('canvas'); if(!c0.captureStream || typeof MediaRecorder === 'undefined'){ alert(MSGT('Ce téléphone ne sait pas créer la vidéo ici. Fais plutôt une capture d’écran vidéo pendant la story.')); return; }
+    const slides = ST.slides.map(x=>Object.assign({}, x, {d: x.d || 3500})), title = ST.title || '', sub = ST.sub || '', key = ST.opt && ST.opt.key, cfg = key ? stCfg(key) : {};
+    const W = 1080, H = 1920, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+    const ov = document.createElement('div'); ov.className = 'vx'; ov.innerHTML = `<div class="vx-in"><b>🎬 ${MSGT('Création de la vidéo')}</b><div class="vx-pv"></div><div class="vx-bar"><i id="vx-i"></i></div><small id="vx-t">${MSGT('Préparation des photos…')}</small><button type="button" id="vx-x">${MSGT('Annuler')}</button></div>`;
+    ST.ov.appendChild(ov); const pv = ov.querySelector('.vx-pv'); cv.className = 'vx-cv'; pv.appendChild(cv);
+    let stop = false; ov.querySelector('#vx-x').onclick = e => { e.stopPropagation(); stop = true; };
+    // images (grandes photos), cartes
+    const img = async u => new Promise(r=>{ if(!u) return r(null); const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = u; });
+    for(const sl of slides){ if(stop) break;
+      if(sl.p) sl.im = await img(await phURL(sl.p)); if(sl.ph) sl.im = await img(await phURL(sl.ph));
+      if(sl.k === 'top') sl.ims = await Promise.all(sl.top.map(async x=>img(await phURL(x.p))));
+      if(sl.k === 'map'){ try { sl.im = await drawMap({w:900, h:1100, lines:sl.lines, markers:sl.mk, maxZoom:15}); } catch(e){} } }
+    if(stop){ ov.remove(); return; }
+    try { await document.fonts.load('80px Caveat'); } catch(e){}
+    // musique → dans la vidéo
+    let aud = null, ac = null, dest = null;
+    if(cfg.mus !== 'off'){ try { const k = (cfg.mus != null ? +cfg.mus : (M.filmTrack || 0)) % TRACKS.length; aud = new Audio(TRACKS[k]); aud.loop = true; aud.crossOrigin = 'anonymous';
+      const AC = window.AudioContext || window.webkitAudioContext; ac = new AC(); const src = ac.createMediaElementSource(aud), g = ac.createGain(); g.gain.value = .9; src.connect(g); g.connect(ac.destination); dest = ac.createMediaStreamDestination(); g.connect(dest); } catch(e){ aud = null; } }
+    const stream = cv.captureStream(30); if(dest) dest.stream.getAudioTracks().forEach(tr=>stream.addTrack(tr));
+    const types = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'], mime = types.find(t=>MediaRecorder.isTypeSupported(t)) || '';
+    let rec; try { rec = new MediaRecorder(stream, mime ? {mimeType:mime, videoBitsPerSecond:6000000} : {}); } catch(e){ alert('⚠️ ' + e.message); ov.remove(); return; }
+    const chunks = []; rec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+    const total = slides.reduce((a, x)=>a + x.d, 0), fs = (n, w) => c.font = `${w === 'serif' ? 800 : (w || 700)} ${n}px ${w === 'serif' ? 'Georgia, serif' : 'system-ui, -apple-system, sans-serif'}`;
+    const cover = (im, z, ox, oy) => { if(!im) return; const sc = Math.max(W / im.width, H / im.height) * z, w = im.width * sc, h = im.height * sc; c.drawImage(im, (W - w) / 2 + ox, (H - h) / 2 + oy, w, h); };
+    const contain = (im) => { if(!im) return; const sc = Math.min(W / im.width, H / im.height), w = im.width * sc, h = im.height * sc; c.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); };
+    const grad = (a, b) => { const g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, a); g.addColorStop(1, b); c.fillStyle = g; c.fillRect(0, 0, W, H); };
+    const shade = () => { const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, 'rgba(0,0,0,.45)'); g.addColorStop(.25, 'rgba(0,0,0,0)'); g.addColorStop(.6, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.75)'); c.fillStyle = g; c.fillRect(0, 0, W, H); };
+    const txt = (t, x, y, n, w, al, mw) => { fs(n, w); c.textAlign = al || 'center'; c.fillStyle = '#fff'; c.shadowColor = 'rgba(0,0,0,.45)'; c.shadowBlur = 16; let s2 = String(t || ''); if(mw) while(c.measureText(s2).width > mw && s2.length > 3) s2 = s2.slice(0, -2) + '…'; c.fillText(s2, x, y); c.shadowBlur = 0; };
+    const wrap = (t, x, y, n, w, mw, lh, max) => { fs(n, w); const L = []; let l = ''; String(t || '').split(/\s+/).forEach(wd=>{ const tt = l ? l + ' ' + wd : wd; if(c.measureText(tt).width > mw){ L.push(l); l = wd; } else l = tt; }); if(l) L.push(l); L.slice(0, max || 6).forEach((ln, i)=>txt(ln, x, y + i * lh, n, w, 'left')); };
+    function frame(t){
+      let acc = 0, i = 0; while(i < slides.length - 1 && t > acc + slides[i].d){ acc += slides[i].d; i++; }
+      const sl = slides[i], p = Math.min(1, (t - acc) / sl.d), e = 1 - Math.pow(1 - Math.min(1, p * 2.2), 3);
+      c.globalAlpha = 1; c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
+      const kz = 1.02 + .12 * (i % 2 ? p : 1 - p), kx = (i % 3 - 1) * 30 * p;
+      if(sl.k === 'ph' || sl.k === 'intro' || sl.k === 'home' || sl.k === 'tintro'){
+        if(sl.im){ c.save(); c.filter = 'blur(40px) brightness(.55)'; cover(sl.im, 1.2, 0, 0); c.restore(); if(sl.k === 'ph'){ c.save(); c.translate(W / 2, H / 2); c.scale(kz, kz); c.translate(-W / 2 + kx, -H / 2); contain(sl.im); c.restore(); } else cover(sl.im, kz, kx, 0); }
+        else grad('#7c3aed', '#0f172a');
+        shade();
+        if(sl.k === 'ph'){ const x = sl.s || {}; c.globalAlpha = e; if(sl.first !== false){ wrap(x.titre || x.lieu || '', 70, H - 330, 72, 'serif', W - 140, 82, 2); if(x.lieu && x.lieu !== x.titre) txt('📍 ' + x.lieu, 70, H - 150, 40, 500, 'left', W - 140); if(sl.who) txt('📸 ' + sl.who, 70, H - 95, 36, 500, 'left'); } }
+        else { c.globalAlpha = e; if(sl.k === 'home') txt('🏡', 90, H - 560, 120, 400, 'left'); txt(String(sl.k === 'home' ? TT('Bon retour !') : sl.k === 'tintro' ? TT('Le film du voyage') : (sl.j > 0 ? TT('Jour') + ' ' + sl.j : '')).toUpperCase(), 80, H - 420, 40, 800, 'left');
+          wrap(sl.k === 'intro' ? fdate(sl.date) : sl.title, 80, H - 330, 100, 'serif', W - 160, 108, 2); txt(sl.k === 'intro' ? (sl.place ? '📍 ' + sl.place : '') : sl.dates || '', 80, H - 110, 44, 500, 'left', W - 160); }
+      } else if(sl.k === 'chap'){ grad(['#0ea5e9','#14b8a6','#f59e0b','#fb7185','#a855f7'][(sl.j || 0) % 5], '#0f172a'); c.globalAlpha = e;
+        txt((TT('Jour') + ' ' + sl.j).toUpperCase(), W / 2, H / 2 - 160, 48, 800); txt(fdate(sl.date), W / 2, H / 2, 120, 'serif'); if(sl.place) txt('📍 ' + sl.place, W / 2, H / 2 + 110, 48, 500, 'center', W - 120);
+      } else if(sl.k === 'stats' || sl.k === 'tstats'){ grad('#0ea5e9', '#312e81'); c.globalAlpha = 1;
+        const r = sl.r, it = sl.k === 'tstats' ? [['🗓️', r.days, TT('jours')], [r.km ? '🛣️' : '📍', r.km || r.nsv, r.km ? 'km' : TT('souvenirs')], ['📸', r.nph, TT('photos')], [r.ccs.length ? '🌍' : '❤️', r.ccs.length || sl.lk || 0, r.ccs.length ? TT('pays') : TT('j’aime')]]
+          : [['🚶', +(sl.km || 0).toFixed(1), TT('km parcourus')], ['📸', sl.nph, TT('photos')], ['📍', sl.ns, TT('souvenirs')], ['💶', Math.round(sl.dep || 0), TT('dépensés')]];
+        txt(String(sl.k === 'tstats' ? TT('Le voyage en chiffres') : TT('Ta journée en chiffres')).toUpperCase(), W / 2, 420, 44, 800);
+        it.forEach(([ic, v, l], k)=>{ const x = k % 2 ? W * .73 : W * .27, y = 700 + Math.floor(k / 2) * 420, q = Math.max(0, Math.min(1, (p * 1.6 - k * .12))), n = v * (1 - Math.pow(1 - q, 3));
+          c.fillStyle = 'rgba(255,255,255,.14)'; c.beginPath(); c.roundRect ? c.roundRect(x - 220, y - 150, 440, 360, 40) : c.rect(x - 220, y - 150, 440, 360); c.fill();
+          txt(ic, x, y - 30, 80, 400); txt(Number.isInteger(v) ? Math.round(n).toLocaleString(NL()) : n.toFixed(1).replace('.', ','), x, y + 100, 110, 800); txt(l, x, y + 170, 38, 500); });
+      } else if(sl.k === 'map'){ grad('#14b8a6', '#0b1220'); c.globalAlpha = 1; txt(String(sl.ttl ? TT(sl.ttl) : TT('La route du jour')).toUpperCase(), W / 2, 330, 44, 800);
+        if(sl.im){ const w = 900, h = sl.im.height / sl.im.width * 900, rv = Math.min(1, p * 1.5); c.save(); c.beginPath(); c.rect(90, 420, w * rv, h); c.clip(); c.drawImage(sl.im, 90, 420, w, h); c.restore(); }
+      } else if(sl.k === 'txt'){ grad('#f59e0b', '#1e1b4b'); c.globalAlpha = e; const x = sl.s || {}; wrap(x.titre || '', 90, 640, 80, 'serif', W - 180, 90, 2); fs(64, 500); c.font = '500 70px Caveat, cursive'; wrap('« ' + String(x.texte || '').slice(0, 300) + ' »', 90, 900, 70, 500, W - 180, 84, 8);
+      } else if(sl.k === 'rx'){ grad('#fb7185', '#1e1b4b'); c.globalAlpha = 1; txt(String(TT('Tes proches ont suivi')).toUpperCase(), W / 2, 520, 44, 800);
+        for(let k = 0; k < 10; k++){ const q = (p * 1.4 + k * .1) % 1; c.globalAlpha = 1 - q; txt('❤️', 160 + k * 85, 900 - q * 300, 70, 400); } c.globalAlpha = 1;
+        txt(sl.lk.length + ' ❤️ · ' + sl.cm.length + ' 💬', W / 2, 1050, 96, 800); sl.cm.slice(0, 3).forEach((m, k)=>{ c.globalAlpha = Math.max(0, Math.min(1, p * 3 - k * .5)); txt('« ' + String(m.text || '').slice(0, 50) + ' »', W / 2, 1220 + k * 110, 44, 500, 'center', W - 120); txt(m.who || '', W / 2, 1270 + k * 110, 32, 700); });
+      } else if(sl.k === 'top'){ grad('#fb7185', '#831843'); c.globalAlpha = 1; txt(String(TT('Les plus aimées')).toUpperCase(), W / 2, 420, 44, 800);
+        (sl.ims || []).forEach((im, k)=>{ const pos = [[W / 2, 1000, 420], [W * .2, 1080, 300], [W * .8, 1080, 300]][k]; if(!pos || !im) return; const q = Math.max(0, Math.min(1, p * 2 - k * .25)), w = pos[2], h = w * 4 / 3; c.globalAlpha = q;
+          c.save(); c.translate(pos[0], pos[1]); c.fillStyle = '#fff'; c.fillRect(-w / 2 - 10, -h / 2 - 10, w + 20, h + 20); const sc = Math.max(w / im.width, h / im.height); c.beginPath(); c.rect(-w / 2, -h / 2, w, h); c.clip(); c.drawImage(im, -im.width * sc / 2, -im.height * sc / 2, im.width * sc, im.height * sc); c.restore();
+          txt(['🥇','🥈','🥉'][k] + ' ' + sl.top[k].n + ' ❤️', pos[0], pos[1] + h / 2 + 80, 48, 800); });
+      } else if(sl.k === 'trophy'){ grad('#f59e0b', '#7c3aed'); c.globalAlpha = 1; txt(String(TT('Ton trophée')).toUpperCase(), W / 2, 560, 44, 800); const q = Math.min(1, p * 2.5); c.save(); c.translate(W / 2, 860); c.scale(q, q); txt(sl.tr[0].i, 0, 80, 260, 400); c.restore(); c.globalAlpha = e; txt(TT(sl.tr[0].t), W / 2, 1180, 96, 'serif'); txt(TT(sl.tr[0].d), W / 2, 1270, 48, 500);
+      } else { grad('#7c3aed', '#0f172a'); c.globalAlpha = e; txt('🧳', W / 2, H / 2 - 220, 160, 400); wrap(TT('Merci pour ce voyage'), 120, H / 2, 90, 'serif', W - 240, 100, 2); txt(title, W / 2, H / 2 + 260, 48, 600, 'center', W - 120); }
+      c.globalAlpha = 1; fs(34, 700); c.textAlign = 'center'; c.fillStyle = 'rgba(255,255,255,.75)'; c.fillText('Vezoria', W / 2, H - 40);
+      // barres de progression façon story
+      const n = slides.length, gw = (W - 80 - (n - 1) * 8) / n; for(let k = 0; k < n; k++){ c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(40 + k * (gw + 8), 40, gw, 7); c.fillStyle = '#fff'; c.fillRect(40 + k * (gw + 8), 40, gw * (k < i ? 1 : k === i ? p : 0), 7); }
+      txt(title, 50, 120, 40, 800, 'left', W - 100); txt(sub, 50, 170, 32, 500, 'left', W - 100);
+    }
+    if(ac && ac.state === 'suspended') try { await ac.resume(); } catch(e){}
+    if(aud) try { aud.currentTime = 0; await aud.play(); } catch(e){}
+    rec.start(500); const t0 = performance.now(), bar = document.getElementById('vx-i'), lab = document.getElementById('vx-t');
+    await new Promise(res=>{ const loop = () => { if(stop){ res(); return; } const t = performance.now() - t0; frame(Math.min(t, total)); if(bar) bar.style.width = Math.min(100, t / total * 100) + '%'; if(lab) lab.textContent = '🔴 ' + MSGT('Enregistrement') + ' · ' + Math.max(0, Math.ceil((total - t) / 1000)) + ' s'; if(t >= total + 400) res(); else requestAnimationFrame(loop); }; requestAnimationFrame(loop); });
+    try { if(aud) aud.pause(); } catch(e){}
+    await new Promise(r=>{ rec.onstop = r; try { rec.stop(); } catch(e){ r(); } });
+    try { if(ac) ac.close(); } catch(e){}
+    ov.remove(); if(stop) return;
+    const type = rec.mimeType || mime || 'video/webm', ext = /mp4/.test(type) ? 'mp4' : 'webm', blob = new Blob(chunks, {type});
+    const name = 'story-' + String(title || 'vezoria').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.' + ext, file = new File([blob], name, {type});
+    try { if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:name}); return; } } catch(e){ if(e && e.name === 'AbortError') return; }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(()=>{ a.remove(); URL.revokeObjectURL(a.href); }, 5000);
+    toast('🎬 ' + MSGT('Vidéo enregistrée'));
+  }
+
+  // 🗺️ carte du monde à gratter
+  let NE = null;
+  async function neLoad(){ if(NE) return NE; if(wm && wm.ne) return (NE = wm.ne); NE = await (await fetch('https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@v5.1.2/geojson/ne_110m_admin_0_countries.geojson')).json(); return NE; }
+  const neCc = f => { const p = f.properties || {}; return p.ISO_A2_EH && p.ISO_A2_EH !== '-99' ? p.ISO_A2_EH : p.ISO_A2; };
+  function visited(){
+    const out = {}, td = isoToday(), add = (cc, t) => { if(!cc || cc.length !== 2) return; cc = cc.toUpperCase(); const o = out[cc] = out[cc] || {trips:[], d:'9'}; if(t && !o.trips.includes(t.titre)) o.trips.push(t.titre); if(t && t.debut && t.debut < o.d) o.d = t.debut; };
+    trips().filter(t=>!t.demo && !t.deleted && t.debut && t.debut <= td).forEach(t=>{
+      list('souv', x=>x.trip === t.id).forEach(x=>add(x.cc || (x.pays ? ccOf(x.pays) : ''), t));
+      list('item', i=>i.trip === t.id && i.cat === 'hotel').forEach(i=>{ const k = (M.ctry || {})[normQ(cityOf(i.titre || ''))]; if(k) add(k.cc, t); }); });
+    return out;
+  }
+  const SCR_COL = ['#f43f5e','#f97316','#eab308','#22c55e','#14b8a6','#0ea5e9','#6366f1','#a855f7','#ec4899','#84cc16'];
+  async function scrOpen(){
+    const ov = document.createElement('div'); ov.id = 'cv-scr'; ov.className = 'scr';
+    ov.innerHTML = `<div class="scr-top"><button type="button" onclick="CV.scrClose()">✕</button><div><b>🗺️ ${MSGT('Ma carte à gratter')}</b><small id="scr-sub">…</small></div></div>
+      <div class="scr-map"><canvas id="scr-c"></canvas></div><div class="scr-st" id="scr-st"></div><div class="scr-h" id="scr-h"></div><div class="scr-cards" id="scr-cards"><div class="v-sum-small" style="color:#fff">🌍 ${MSGT('Chargement de la carte…')}</div></div>`;
+    document.body.appendChild(ov); document.body.style.overflow = 'hidden'; requestAnimationFrame(()=>ov.classList.add('on'));
+    try { await neLoad(); } catch(e){ document.getElementById('scr-cards').innerHTML = '<div class="v-sum-small" style="color:#fff">⚠️ ' + MSGT('Carte indisponible (connexion ?)') + '</div>'; return; }
+    scrPaint();
+  }
+  function scrClose(){ const o = document.getElementById('cv-scr'); if(o) o.remove(); document.body.style.overflow = ''; }
+  function scrPaint(){
+    const V = visited(), done = M.scr || (M.scr = {}), cv = document.getElementById('scr-c'); if(!cv || !NE) return;
+    const box = cv.parentNode, W = box.clientWidth, H = Math.round(W * .52), dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr; cv.style.height = H + 'px';
+    const c = cv.getContext('2d'); c.scale(dpr, dpr);
+    const X = lon => (lon + 180) / 360 * W, Y = lat => (84 - lat) / 142 * H;
+    c.fillStyle = '#0b1530'; c.fillRect(0, 0, W, H);
+    const foil = c.createLinearGradient(0, 0, W, H); foil.addColorStop(0, '#b8892e'); foil.addColorStop(.35, '#f4d58d'); foil.addColorStop(.55, '#c99a3c'); foil.addColorStop(.8, '#f7e0a3'); foil.addColorStop(1, '#a87b26');
+    const cont = new Set(); let ci = 0;
+    NE.features.forEach(f=>{ const cc = neCc(f), v = V[cc], rev = v && done[cc]; if(v && f.properties && f.properties.CONTINENT) cont.add(f.properties.CONTINENT);
+      const g = f.geometry; if(!g) return; const polys = g.type === 'Polygon' ? [g.coordinates] : g.type === 'MultiPolygon' ? g.coordinates : [];
+      c.beginPath(); polys.forEach(pl=>pl.forEach(ring=>{ ring.forEach(([lo, la], k)=>{ const x = X(lo), y = Y(la); if(k) c.lineTo(x, y); else c.moveTo(x, y); }); c.closePath(); }));
+      c.fillStyle = rev ? SCR_COL[(ci++) % SCR_COL.length] : foil; c.fill(); c.strokeStyle = rev ? 'rgba(255,255,255,.9)' : 'rgba(90,60,10,.45)'; c.lineWidth = rev ? 1 : .5; c.stroke();
+      if(v && !rev){ c.save(); c.shadowColor = '#fff7cc'; c.shadowBlur = 10; c.strokeStyle = '#fffbe6'; c.lineWidth = 1.4; c.stroke(); c.restore(); } });
+    const ks = Object.keys(V), nRev = ks.filter(k=>done[k]).length, todo = ks.filter(k=>!done[k]);
+    document.getElementById('scr-sub').textContent = nRev + ' ' + MSGT('pays grattés') + ' · ' + Math.round(nRev / 195 * 100) + ' % ' + MSGT('du monde');
+    const life = trips().filter(t=>!t.demo && !t.deleted && t.debut && t.debut <= isoToday()), km = life.reduce((a, t)=>a + (tripRecap(t).km || 0), 0), days = life.reduce((a, t)=>a + (tripRecap(t).days || 0), 0);
+    document.getElementById('scr-st').innerHTML = `<span><b>${ks.length}</b>${MSGT('pays')}</span><span><b>${cont.size}</b>${MSGT('continents')}</span><span><b>${life.length}</b>${MSGT('voyages')}</span><span><b>${days}</b>${MSGT('jours')}</span><span><b>${km.toLocaleString(NL())}</b>km</span>`;
+    document.getElementById('scr-h').innerHTML = todo.length ? `✨ ${todo.length} ${MSGT('pays à gratter : frotte les cartes dorées avec ton doigt')}` : ks.length ? `🎉 ${MSGT('Tous tes pays sont grattés !')} ${ks.map(k=>flag(k)).join(' ')}` : MSGT('Tes pays visités apparaîtront ici après tes voyages.');
+    const cards = document.getElementById('scr-cards');
+    cards.innerHTML = todo.map(k=>`<div class="scr-cd" data-cc="${k}"><div class="scr-u"><i>${flag(k)}</i><b data-notr>${esc(ccName(k))}</b><small data-notr>${esc(V[k].trips.slice(0, 2).join(' · '))}</small></div><canvas></canvas></div>`).join('')
+      + ks.filter(k=>done[k]).sort((a, b)=>(V[a].d || '').localeCompare(V[b].d || '')).map(k=>`<div class="scr-cd ok"><div class="scr-u"><i>${flag(k)}</i><b data-notr>${esc(ccName(k))}</b><small data-notr>${esc(V[k].trips.slice(0, 2).join(' · '))}</small></div></div>`).join('');
+    cards.querySelectorAll('.scr-cd:not(.ok)').forEach(scrCard);
+  }
+  function scrCard(el){
+    const cv = el.querySelector('canvas'), W = el.clientWidth, H = el.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr; const c = cv.getContext('2d'); c.scale(dpr, dpr);
+    const g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#b8892e'); g.addColorStop(.3, '#f6dc9a'); g.addColorStop(.5, '#c9993b'); g.addColorStop(.75, '#f9e7b4'); g.addColorStop(1, '#a37722'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+    for(let k = 0; k < 60; k++){ c.fillStyle = 'rgba(255,255,255,' + (Math.random() * .25) + ')'; c.fillRect(Math.random() * W, Math.random() * H, 2, 2); }
+    c.fillStyle = 'rgba(90,60,10,.7)'; c.font = '800 15px system-ui, sans-serif'; c.textAlign = 'center'; c.fillText('✨ ' + MSGT('Gratte-moi'), W / 2, H / 2 + 5);
+    c.globalCompositeOperation = 'destination-out';
+    let down = false, n = 0;
+    const at = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    const scratch = e => { if(!down) return; e.preventDefault(); const [x, y] = at(e); c.beginPath(); c.arc(x, y, 22, 0, Math.PI * 2); c.fill(); if(++n % 6 === 0) check(); };
+    const check = () => { const d = c.getImageData(0, 0, cv.width, cv.height).data; let clr = 0, tot = 0; for(let i = 3; i < d.length; i += 64){ tot++; if(d[i] < 40) clr++; } if(clr / tot > .5) win(); };
+    const win = () => { if(el.classList.contains('ok')) return; el.classList.add('ok'); cv.style.opacity = 0; M.scr = M.scr || {}; M.scr[el.dataset.cc] = Date.now(); persist(); try { pollFx(); navigator.vibrate && navigator.vibrate(40); } catch(e){} toast('✨ ' + flag(el.dataset.cc) + ' ' + ccName(el.dataset.cc) + ' ' + MSGT('gratté !')); setTimeout(scrPaint, 900); };
+    cv.addEventListener('pointerdown', e=>{ down = true; cv.setPointerCapture && cv.setPointerCapture(e.pointerId); scratch(e); });
+    cv.addEventListener('pointermove', scratch); ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev=>cv.addEventListener(ev, ()=>{ down = false; }));
+  }
+
+  // ⭐ notes et avis : chacun note le voyage, les hébergements et les activités (mémo pour la prochaine fois)
+  const rtId = (k) => 'rt:' + k + ':' + (M.me || 'moi');
+  const rtOf = k => list('rate', r=>r.key === k);
+  const rtAvg = k => { const L = rtOf(k).filter(r=>r.stars); return L.length ? L.reduce((a, r)=>a + r.stars, 0) / L.length : 0; };
+  const stars = (n, big) => `<span class="rt-s${big ? ' big' : ''}">${[1,2,3,4,5].map(i=>`<i class="${i <= Math.round(n) ? 'on' : ''}">★</i>`).join('')}</span>`;
+  function rtCard(t){
+    if(!t || tripPhase(t) === 'prep') return '';
+    const mine = R[rtId(t.id)], avg = rtAvg(t.id), n = rtOf(t.id).length, its = list('item', i=>i.trip === t.id && (i.cat === 'hotel' || i.cat === 'activite')), nr = its.filter(i=>R[rtId(i.id)]).length;
+    const best = its.map(i=>({i, a:rtAvg(i.id)})).filter(x=>x.a).sort((a, b)=>b.a - a.a)[0];
+    return `<button type="button" class="rt-c" onclick="CV.rtSheet('${t.id}')"><div><b>⭐ ${mine ? MSGT('Ta note du voyage') : MSGT('Note ce voyage')}</b>${n ? `<span>${stars(avg, 1)} <small>${avg.toFixed(1).replace('.', ',')} · ${n} ${MSGT('avis')}</small></span>` : `<small>${MSGT('Le voyage, les hôtels, les visites : ce que tu as adoré (ou pas)')}</small>`}</div>
+      ${best ? `<small class="rt-best">💖 ${MSGT('Coup de cœur')} : <span data-notr>${esc(best.i.titre || '')}</span> ${best.a.toFixed(1).replace('.', ',')}★</small>` : its.length ? `<small class="rt-best">${nr}/${its.length} ${MSGT('adresses notées')}</small>` : ''}</button>`;
+  }
+  function rtSheet(tid){
+    const t = R[tid]; if(!t) return; const its = list('item', i=>i.trip === tid && (i.cat === 'hotel' || i.cat === 'activite')).sort((a, b)=>(a.date || '').localeCompare(b.date || ''));
+    const row = (k, ic, lab, sub) => { const r = R[rtId(k)] || {}, others = rtOf(k).filter(x=>x.who !== (M.me || 'moi') && (x.stars || x.txt));
+      return `<div class="rt-r" data-k="${k}"><div class="rt-h"><span>${ic} <b data-notr>${esc(lab)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</span><span class="rt-in">${[1,2,3,4,5].map(i=>`<button type="button" class="${i <= (r.stars || 0) ? 'on' : ''}" onclick="CV.rtSet('${k}',${i},'${tid}')">★</button>`).join('')}</span></div>
+        <input class="v-in rt-tx" placeholder="${esc(MSGT('Un mot, un conseil (facultatif)'))}" value="${esc(r.txt || '')}" onchange="CV.rtTxt('${k}',this.value,'${tid}')">
+        ${others.length ? `<div class="rt-o">${others.map(x=>`<span><b data-notr>${esc(pname(x.who) || '')}</b> ${'★'.repeat(x.stars || 0)}${x.txt ? ' · <i data-notr>' + esc(x.txt) + '</i>' : ''}</span>`).join('')}</div>` : ''}</div>`; };
+    openSheet(`<h2>⭐ ${MSGT('Notes et avis')}</h2><div class="v-sum-small" style="margin-bottom:8px">${MSGT('Chacun note de son côté. Tes notes te serviront de conseils pour un prochain voyage.')}</div>
+      ${row(tid, '🧳', t.titre || '', MSGT('Le voyage dans son ensemble'))}
+      ${its.length ? `<div class="rt-sec">🏨 ${MSGT('Hébergements')} & 🎟️ ${MSGT('visites')}</div>` + its.map(i=>row(i.id, i.cat === 'hotel' ? '🏨' : '🎟️', i.titre || '', [i.date ? fdate(i.date) : '', i.cat === 'hotel' ? cityOf(i.titre || '') : ''].filter(Boolean).join(' · '))).join('') : ''}
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.close();CV.refreshNow()">✓ ${MSGT('Terminé')}</button><button type="button" class="v-btn sec" onclick="CV.rtAll()">📒 ${MSGT('Mes adresses notées')}</button></div>`);
+  }
+  function rtSave(k, patch, tid){ const id = rtId(k), r = R[id] && !R[id].deleted ? clone(R[id]) : {id, type:'rate', trip:tid, key:k, who:M.me || 'moi'}; Object.assign(r, patch); put(r); }
+  function rtSet(k, n, tid){ const cur = (R[rtId(k)] || {}).stars; rtSave(k, {stars: cur === n ? 0 : n}, tid); document.querySelectorAll(`.rt-r[data-k="${k}"] .rt-in button`).forEach((b, i)=>b.classList.toggle('on', i < (cur === n ? 0 : n))); if(n === 5 && cur !== 5) toast('💖 ' + MSGT('Coup de cœur noté')); }
+  function rtTxt(k, v, tid){ rtSave(k, {txt:String(v || '').slice(0, 200)}, tid); toast('✓ ' + MSGT('Avis enregistré')); }
+  function rtAll(){
+    const L = list('rate', r=>r.who === (M.me || 'moi') && r.stars && R[r.key] && R[r.key].type === 'item').map(r=>({r, i:R[r.key], t:R[r.trip]})).sort((a, b)=>b.r.stars - a.r.stars);
+    const G = {}; L.forEach(x=>{ const c = cityOf(x.i.titre || '') || (x.t && x.t.titre) || '—'; (G[c] = G[c] || []).push(x); });
+    openSheet(`<h2>📒 ${MSGT('Mes adresses notées')}</h2><div class="v-sum-small" style="margin-bottom:8px">${MSGT('Tes hôtels et visites, des mieux notés aux moins bien : à garder pour la prochaine fois.')}</div>
+      ${L.length ? Object.entries(G).map(([c, xs])=>`<div class="rt-sec">📍 <span data-notr>${esc(c)}</span></div>${xs.map(x=>`<div class="rt-l"><span>${x.i.cat === 'hotel' ? '🏨' : '🎟️'} <b data-notr>${esc(x.i.titre || '')}</b><small data-notr>${esc(x.t ? x.t.titre : '')}${x.r.txt ? ' · ' + esc(x.r.txt) : ''}</small></span>${stars(x.r.stars)}</div>`).join('')}`).join('') : `<div class="v-sum-small">${MSGT('Note les hôtels et visites de tes voyages finis : ils apparaîtront ici.')}</div>`}
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${MSGT('Fermer')}</button></div>`);
+  }
+  /* ══════════ 🎯 Défis du jour · 🎙️ journal vocal · 📴 hors ligne malin · 🗣️ phrases et devises ══════════ */
+  const DEFIS = [
+    ['🍜','Goûte une spécialité locale'], ['🌅','Photo au coucher (ou au lever) du soleil'], ['🗣️','Dis « merci » dans la langue du pays'], ['🏞️','Trouve le plus beau point de vue'],
+    ['🤳','Selfie de groupe devant un monument'], ['🎨','Photographie un street art'], ['🧃','Goûte une boisson locale'], ['💬','Discute avec un habitant'],
+    ['🧺','Flâne dans un marché'], ['🐾','Photographie un animal'], ['🚪','Trouve une porte ou une façade colorée'], ['🍽️','Mange là où mangent les gens du coin'],
+    ['💧','Une photo avec un reflet dans l’eau'], ['🗺️','Visite un lieu qui n’est pas dans les guides'], ['🚋','Prends un transport que tu n’as jamais pris'], ['🎁','Trouve un petit souvenir à moins de 5 €'],
+    ['🍰','Goûte un dessert typique'], ['🎶','Écoute de la musique jouée en vrai'], ['📸','Une photo de chaque compagnon'], ['🌳','Fais une pause dans un parc ou un jardin'],
+    ['auto:km','🚶','Marche 10 km dans la journée'], ['auto:sv','📍','Ajoute 5 souvenirs dans la journée'], ['auto:ph','🖼️','Prends 20 photos dans la journée']];
+  function dfToday(t, d){
+    let h = 0; const k = t.id + d; for(let i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) >>> 0;
+    const idx = [], n = DEFIS.length; while(idx.length < 3){ h = (h * 1103515245 + 12345) >>> 0; const j = h % n; if(!idx.includes(j)) idx.push(j); }
+    return idx.map(i=>{ const x = DEFIS[i]; return x.length === 3 ? {k:i, auto:x[0].slice(5), ic:x[1], l:x[2]} : {k:i, ic:x[0], l:x[1]}; });
+  }
+  const dfId = (tid, d, k) => 'df:' + tid + ':' + d + ':' + k;
+  function dfDoneBy(t, d, x){
+    const r = R[dfId(t.id, d, x.k)], by = Object.assign({}, (r && !r.deleted && r.by) || {});
+    if(x.auto){ (t.voyageurs || []).forEach(p=>{ const sv = list('souv', s=>s.trip === t.id && s.date === d && s.createdBy === p);
+      if(x.auto === 'km' && liveKmDay((trkByWho(t.id, false)[p]) || []) >= 10) by[p] = by[p] || 1;
+      if(x.auto === 'sv' && sv.length >= 5) by[p] = by[p] || 1;
+      if(x.auto === 'ph' && sv.reduce((a, s)=>a + (s.photos||[]).length, 0) >= 20) by[p] = by[p] || 1; }); }
+    return by;
+  }
+  function dfScore(t){ const sc = {}; list('defi', r=>r.trip === t.id).forEach(r=>Object.keys(r.by || {}).forEach(p=>sc[p] = (sc[p] || 0) + 1)); return sc; }
+  function dfHTML(t){
+    if(!t || hidden('blk:defi')) return ''; const d = isoToday(), L = dfToday(t, d), V = (t.voyageurs || []).filter(p=>prof(p)), sc = dfScore(t);
+    const mine = L.filter(x=>dfDoneBy(t, d, x)[M.me]).length;
+    return `<div class="df"><div class="df-h"><b>🎯 Défis du jour</b><small>${mine}/3 ${MSGT('réussis')}</small></div>
+      <div class="df-l">${L.map(x=>{ const by = dfDoneBy(t, d, x), me = !!by[M.me]; return `<button type="button" class="df-c${me ? ' ok' : ''}" onclick="CV.dfGo(${x.k})"><i>${x.ic}</i><span>${esc(x.l)}</span>${x.auto ? '<small>⚡ auto</small>' : ''}<em>${V.filter(p=>by[p]).map(p=>`<u style="--c:${pcol(p)}">${esc(((pname(p)||'?')[0]||'?').toUpperCase())}</u>`).join('')}</em>${me ? '<b>✓</b>' : ''}</button>`; }).join('')}</div>
+      ${V.length > 1 && Object.keys(sc).length ? `<div class="df-sc">🏅 ${V.filter(p=>sc[p]).sort((a, b)=>sc[b] - sc[a]).map((p, i)=>`<span>${i === 0 ? '👑 ' : ''}<span data-notr>${esc(pname(p))}</span> ${sc[p]}</span>`).join(' · ')}</div>` : ''}</div>`;
+  }
+  async function dfGo(k){
+    const t = trip(); if(!t) return; const d = isoToday(), x = dfToday(t, d).find(y=>y.k === k); if(!x) return;
+    const id = dfId(t.id, d, k), r = R[id] && !R[id].deleted ? clone(R[id]) : {id, type:'defi', trip:t.id, date:d, k, by:{}};
+    if(x.auto && !r.by[M.me] && !dfDoneBy(t, d, x)[M.me]){ toast('⚡ ' + MSGT('Ce défi se valide tout seul')); return; }
+    if(r.by[M.me]){ if(!(await uiConfirm(MSGT('Annuler ce défi ?')))) return; delete r.by[M.me]; put(r); refresh(); return; }
+    openSheet(`<h2>${x.ic} ${esc(x.l)}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Défi réussi ? Ajoute une photo pour le garder en souvenir (et le montrer aux abonnés).')}</div>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.dfOk(${k},1)">📸 ${MSGT('Réussi, avec une photo')}</button><button type="button" class="v-btn sec" onclick="CV.dfOk(${k},0)">✓ ${MSGT('Réussi')}</button></div>`);
+  }
+  function dfOk(k, photo){
+    const t = trip(); if(!t) return; const d = isoToday(), x = dfToday(t, d).find(y=>y.k === k), id = dfId(t.id, d, k);
+    const r = R[id] && !R[id].deleted ? clone(R[id]) : {id, type:'defi', trip:t.id, date:d, k, by:{}}; r.by = Object.assign({}, r.by, {[M.me]:Date.now()});
+    put(r, '🎯 ' + MSGT('Défi réussi !')); closeSheet(true); try { pollFx(); } catch(e){}
+    if(photo){ setTimeout(()=>{ editSouv(null); setTimeout(()=>{ const f = document.getElementById('v-form'); if(f && f.titre) f.titre.value = '🎯 ' + TT(x.l); }, 120); }, 300); } else refresh();
+  }
+
+  // 🎙️ journal vocal : on parle, c’est écrit, ça devient un souvenir
+  let VJ = null;
+  function vjBtn(t){ if(!t || hidden('blk:vj')) return ''; return `<button type="button" class="vj-b" onclick="CV.vjOpen()"><span class="vj-mic">🎙️</span><span><b>${MSGT('Raconte ta journée')}</b><small>${MSGT('Parle, c’est écrit tout seul et rangé dans tes souvenirs')}</small></span></button>`; }
+  function vjOpen(){
+    vjStop(true); const t = trip(); if(!t) return;
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const ov = document.createElement('div'); ov.id = 'cv-vj'; ov.className = 'vj';
+    ov.innerHTML = `<div class="vj-top"><b>🎙️ ${MSGT('Journal du jour')}</b><button type="button" onclick="CV.vjStop()">✕</button></div>
+      <div class="vj-orb" id="vj-orb" onclick="CV.vjTog()"><span></span><span></span><span></span><i>🎙️</i></div><div class="vj-st" id="vj-st">${SR ? MSGT('Touche le micro et raconte') : MSGT('Dictée vocale : utilise le micro de ton clavier')}</div>
+      <textarea class="vj-tx" id="vj-tx" placeholder="${esc(MSGT('Ce matin, on a…'))}"></textarea>
+      <div class="vj-b2"><button type="button" class="pri" onclick="CV.vjSave()">📍 ${MSGT('Garder en souvenir')}</button><button type="button" onclick="CV.vjStop()">${MSGT('Annuler')}</button></div>`;
+    document.body.appendChild(ov); requestAnimationFrame(()=>ov.classList.add('on'));
+    VJ = {SR, rec:null, on:false, base:''};
+    if(!SR) setTimeout(()=>{ const x = document.getElementById('vj-tx'); if(x) x.focus(); }, 300);
+  }
+  function vjTog(){
+    if(!VJ) return; if(!VJ.SR){ const x = document.getElementById('vj-tx'); if(x) x.focus(); return; }
+    if(VJ.on){ try { VJ.rec.stop(); } catch(e){} return; }
+    const rec = new VJ.SR(); VJ.rec = rec; rec.lang = (window.I18N && I18N.locale) || 'fr-FR'; rec.continuous = true; rec.interimResults = true;
+    const tx = document.getElementById('vj-tx'); VJ.base = tx.value ? tx.value.trim() + ' ' : '';
+    rec.onresult = e => { let fin = '', tmp = ''; for(let i = 0; i < e.results.length; i++){ const r = e.results[i]; if(r.isFinal) fin += r[0].transcript; else tmp += r[0].transcript; } tx.value = (VJ.base + fin + tmp).replace(/\s+/g, ' '); tx.scrollTop = tx.scrollHeight; };
+    rec.onend = () => { if(!VJ) return; VJ.on = false; VJ.base = tx.value ? tx.value.trim() + ' ' : ''; const o = document.getElementById('vj-orb'); if(o) o.classList.remove('on'); const st = document.getElementById('vj-st'); if(st) st.textContent = MSGT('Touche pour continuer'); };
+    rec.onerror = e => { const st = document.getElementById('vj-st'); if(st) st.textContent = e.error === 'not-allowed' ? MSGT('Autorise le micro pour l’appli') : MSGT('Dictée vocale : utilise le micro de ton clavier'); };
+    try { rec.start(); VJ.on = true; const o = document.getElementById('vj-orb'); if(o) o.classList.add('on'); const st = document.getElementById('vj-st'); if(st) st.textContent = MSGT('Je t’écoute…'); } catch(e){}
+  }
+  function vjStop(quiet){ if(VJ && VJ.rec) try { VJ.rec.abort(); } catch(e){} VJ = null; const o = document.getElementById('cv-vj'); if(o) o.remove(); }
+  function vjSave(){
+    const t = trip(), tx = (document.getElementById('vj-tx') || {}).value || ''; if(!t) return; if(!tx.trim()){ alert(MSGT('Raconte d’abord quelque chose 🙂')); return; }
+    const k = dayList().indexOf(isoToday()), l = lnLast(t.id), g = l ? LN.geo[lnGK(l)] : null;
+    put({id:'s' + uid(), type:'souv', trip:t.id, date:isoToday(), titre:'🎙️ ' + MSGT('Journal') + (k >= 0 ? ' · J' + (k + 1) : ''), lieu: g ? [g.city, g.country].filter(Boolean).join(', ') : '', lat: l ? l[0] : null, lng: l ? l[1] : null, cc: g ? g.cc : '', texte: tx.trim(), photos:[]}, '🎙️ ' + MSGT('Journal enregistré'));
+    vjStop(); refresh();
+  }
+
+  // 📴 hors ligne malin : les cartes du voyage se téléchargent toutes seules en Wi-Fi, et un bandeau quand le réseau tombe
+  async function omapAuto(){
+    try {
+      const t = trip(); if(!t || t.demo || !t.debut || M.omAuto === false) return; const ph = tripPhase(t), soon = ph === 'prep' && nights(isoToday(), t.debut) <= 3;
+      if(!(ph === 'live' || soon) || !navigator.onLine) return;
+      const c = navigator.connection; if(c && (c.saveData || (c.type && c.type !== 'wifi' && c.type !== 'ethernet' && c.type !== 'unknown'))) return;
+      const have = OM()[t.id]; if(have && Date.now() - have.at < 3 * 864e5) return;
+      if(M.omTry && Date.now() - M.omTry < 6 * 3600e3) return; M.omTry = Date.now(); persist();
+      const ok = await omapGo(true); if(ok) toast('📴 ' + MSGT('Cartes du voyage prêtes hors ligne'));
+    } catch(e){}
+  }
+  setTimeout(omapAuto, 15000); document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible') setTimeout(omapAuto, 8000); });
+  window.addEventListener('offline', ()=>{ try { refresh(); } catch(e){} }); window.addEventListener('online', ()=>{ try { refresh(); } catch(e){} });
+  function offBand(t){
+    if(!t) return ''; const have = OM()[t.id];
+    if(!navigator.onLine) return `<div class="off-b on"><b>📴 ${MSGT('Pas de réseau')}</b><small>${MSGT('Tout ton voyage reste là')}</small><div><button type="button" onclick="CV.tlDay()">📄 ${MSGT('Fiche du jour')}</button>${have ? `<button type="button" onclick="CV.omapOpen()">🗺️ ${MSGT('Carte hors ligne')}</button>` : ''}</div></div>`;
+    return have ? `<button type="button" class="off-b ok" onclick="CV.omapSheet()">📴 ${MSGT('Prêt hors ligne')} · ${MSGT('cartes, billets, fiche du jour')} ✓</button>`
+      : `<button type="button" class="off-b" onclick="CV.omapSheet()">📥 ${MSGT('Télécharge les cartes pour le hors ligne')}</button>`;
+  }
+
+  // 🗣️ phrase du jour et 💱 monnaie du pays où l’on est
+  const SAY2 = {   // combien ?, l’addition, toilettes, excusez-moi, délicieux
+    pt:['Quanto custa?','A conta, por favor','Onde fica a casa de banho?','Com licença','Está delicioso!'], ptbr:['Quanto custa?','A conta, por favor','Onde fica o banheiro?','Com licença','Está delicioso!'],
+    es:['¿Cuánto cuesta?','La cuenta, por favor','¿Dónde está el baño?','Disculpe','¡Está delicioso!'], it:['Quanto costa?','Il conto, per favore','Dov’è il bagno?','Mi scusi','È buonissimo!'],
+    de:['Wie viel kostet das?','Die Rechnung, bitte','Wo ist die Toilette?','Entschuldigung','Das ist lecker!'], nl:['Hoeveel kost het?','De rekening, alstublieft','Waar is het toilet?','Pardon','Heerlijk!'],
+    en:['How much is it?','The bill, please','Where is the toilet?','Excuse me','It’s delicious!'], enus:['How much is it?','The check, please','Where is the restroom?','Excuse me','It’s delicious!'],
+    el:['Póso kánei? (Πόσο κάνει;)','To logariasmó, parakaló (Τον λογαριασμό, παρακαλώ)','Poú eínai i toualéta? (Πού είναι η τουαλέτα;)','Signómi (Συγγνώμη)','Eínai nóstimo! (Είναι νόστιμο!)'],
+    tr:['Ne kadar?','Hesap, lütfen','Tuvalet nerede?','Affedersiniz','Çok lezzetli!'], hr:['Koliko košta?','Račun, molim','Gdje je WC?','Oprostite','Ukusno je!'],
+    cs:['Kolik to stojí?','Zaplatím, prosím','Kde je toaleta?','Promiňte','Je to výborné!'], pl:['Ile to kosztuje?','Poproszę rachunek','Gdzie jest toaleta?','Przepraszam','Pyszne!'],
+    hu:['Mennyibe kerül?','A számlát, kérem','Hol van a mosdó?','Elnézést','Nagyon finom!'], sv:['Vad kostar det?','Notan, tack','Var är toaletten?','Ursäkta','Det är jättegott!'],
+    no:['Hva koster det?','Regningen, takk','Hvor er toalettet?','Unnskyld','Det smaker godt!'], da:['Hvad koster det?','Regningen, tak','Hvor er toilettet?','Undskyld','Det smager godt!'],
+    ja:['Ikura desu ka? (いくらですか)','Okaikei onegaishimasu (お会計お願いします)','Toire wa doko desu ka? (トイレはどこですか)','Sumimasen (すみません)','Oishii! (おいしい)'],
+    zh:['Duōshǎo qián? (多少钱？)','Mǎidān (买单)','Xǐshǒujiān zài nǎr? (洗手间在哪儿？)','Duìbuqǐ (对不起)','Hǎo chī! (好吃！)'],
+    ko:['Eolmayeyo? (얼마예요?)','Gyesanseo juseyo (계산서 주세요)','Hwajangsiri eodiyeyo? (화장실이 어디예요?)','Sillyehamnida (실례합니다)','Masisseoyo! (맛있어요!)'],
+    th:['Tao rai? (เท่าไร)','Check bin (เช็คบิล)','Hong nam yoo tee nai? (ห้องน้ำอยู่ที่ไหน)','Kho thot (ขอโทษ)','Aroi! (อร่อย)'],
+    vi:['Bao nhiêu tiền?','Tính tiền','Nhà vệ sinh ở đâu?','Xin lỗi','Ngon quá!'], id:['Berapa harganya?','Minta bon','Di mana toilet?','Permisi','Enak sekali!']};
+  const LG_CC = {PT:'pt',BR:'ptbr',ES:'es',MX:'es',AR:'es',IT:'it',DE:'de',AT:'de',NL:'nl',GB:'en',IE:'en',AU:'en',NZ:'en',US:'enus',CA:'enus',GR:'el',TR:'tr',HR:'hr',CZ:'cs',PL:'pl',HU:'hu',SE:'sv',NO:'no',DK:'da',JP:'ja',CN:'zh',KR:'ko',TH:'th',VN:'vi',ID:'id'};
+  const TTS_LG = {pt:'pt-PT',ptbr:'pt-BR',es:'es-ES',it:'it-IT',de:'de-DE',nl:'nl-NL',en:'en-GB',enus:'en-US',el:'el-GR',tr:'tr-TR',hr:'hr-HR',cs:'cs-CZ',pl:'pl-PL',hu:'hu-HU',sv:'sv-SE',no:'nb-NO',da:'da-DK',ja:'ja-JP',zh:'zh-CN',ko:'ko-KR',th:'th-TH',vi:'vi-VN',id:'id-ID'};
+  const LG_LAB = ['Bonjour','Merci','S’il te plaît','Au revoir','Santé !','Combien ça coûte ?','L’addition, s’il te plaît','Où sont les toilettes ?','Excuse-moi','C’est délicieux !'];
+  function lgCC(t){
+    try { const l = lnLast(t.id), g = l ? LN.geo[lnGK(l)] : null; if(g && g.cc) return g.cc; } catch(e){}
+    try { const h = itemsForDay(isoToday()).night[0], c = h ? (M.ctry || {})[normQ(cityOf(h.titre || ''))] : null; if(c && c.cc) return c.cc; } catch(e){}
+    try { const st = tlStages().find(x=>x.debut <= isoToday() && x.fin >= isoToday()), c = st ? (M.ctry || {})[normQ(st.city)] : null; if(c && c.cc) return c.cc; } catch(e){}
+    return '';
+  }
+  function lgList(cc){ const a = SAY[cc] || [], b = SAY2[LG_CC[cc]] || []; return a.concat(b).map((p, i)=>({p, l:LG_LAB[i]})).filter(x=>x.p); }
+  const lgNative = p => { const m = /\(([^)]+)\)/.exec(p); return (m ? m[1] : p.split(' / ')[0]).trim(); };
+  function lgHTML(t){
+    if(!t || hidden('blk:lang')) return ''; const cc = lgCC(t); if(!cc) return '';
+    const mine = (window.I18N && I18N.lang) || 'fr', L = lgList(cc), cur = EURO.includes(cc) ? 'EUR' : REGION_CUR[cc] || '', h = curCode();
+    const sameLang = (SAY_LANG[cc] || '') === mine, sameCur = !cur || cur === h; if((sameLang || !L.length) && sameCur) return '';
+    const di = dayList().indexOf(isoToday()), x = L.length ? L[Math.max(0, di) % L.length] : null;
+    return `<div class="lg" data-cc="${cc}" data-cur="${cur}">
+      ${!sameLang && x ? `<div class="lg-p"><div class="lg-k">🗣️ ${MSGT('Phrase du jour')} · ${flag(cc)}</div><div class="lg-w"><b data-notr>${esc(x.p)}</b><button type="button" onclick="CV.lgSay('${cc}',${L.indexOf(x)})" aria-label="Écouter">🔊</button></div><small>${esc(x.l)}</small>
+        <button type="button" class="lg-all" onclick="CV.lgAll('${cc}')">📖 ${MSGT('Toutes les phrases utiles')}</button></div>` : ''}
+      ${!sameCur ? `<div class="lg-fx"><div class="lg-k">💱 ${MSGT('Monnaie')} : ${cur} ${CURS[cur] && CURS[cur] !== cur ? '(' + CURS[cur] + ')' : ''}</div><div class="lg-r" id="lg-r">…</div>
+        <div class="lg-cv"><input class="v-in" id="lg-a" inputmode="decimal" placeholder="1000" oninput="CV.lgFx()"><span>${cur}</span><b id="lg-o">=</b></div></div>` : ''}</div>`;
+  }
+  async function lgHydrate(){ const e = document.querySelector('.lg[data-cur]'); if(!e || !e.dataset.cur || e.dataset.cur === curCode()) return; try { const one = await fxToEur(1, e.dataset.cur), r = document.getElementById('lg-r'); if(r) r.innerHTML = `1 ${esc(curCode())} = <b>${(1 / one).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'), {maximumFractionDigits:2})} ${esc(e.dataset.cur)}</b> · 100 ${esc(e.dataset.cur)} = <b>${eur(100 * one)}</b>`; } catch(x){ const r = document.getElementById('lg-r'); if(r) r.textContent = '⚠️ ' + MSGT('Taux indisponible hors ligne'); } }
+  async function lgFx(){ const e = document.querySelector('.lg[data-cur]'), a = num((document.getElementById('lg-a') || {}).value), o = document.getElementById('lg-o'); if(!e || !o) return; if(!a){ o.textContent = '='; return; } try { o.textContent = '= ' + eur(await fxToEur(a, e.dataset.cur)); } catch(x){ o.textContent = '⚠️'; } }
+  function lgSay(cc, i){ const x = lgList(cc)[i]; if(!x) return; try { const u = new SpeechSynthesisUtterance(lgNative(x.p)); u.lang = TTS_LG[LG_CC[cc]] || ''; u.rate = .85; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch(e){ toast('🔇 ' + MSGT('Lecture vocale indisponible')); } }
+  function lgAll(cc){ const L = lgList(cc);
+    openSheet(`<h2>🗣️ ${flag(cc)} ${MSGT('Phrases utiles')}</h2><div class="lg-tab">${L.map((x, i)=>`<button type="button" onclick="CV.lgSay('${cc}',${i})"><small>${esc(x.l)}</small><b data-notr>${esc(x.p)}</b><i>🔊</i></button>`).join('')}</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${MSGT('Fermer')}</button></div>`); }
+  /* ══════════ ⏳ Compte à rebours vivant · 🗳️ votes de groupe · 🧳 valise de chacun ══════════ */
+  function cdLeft(t){ return new Date(t.debut + 'T' + ((items(i=>i.cat === 'transport' && i.date === t.debut).sort((a, b)=>String(a.heureDep||'').localeCompare(String(b.heureDep||'')))[0] || {}).heureDep || '08:00') + ':00').getTime() - Date.now(); }
+  function cdDest(t){ const st = (()=>{ try { return tlStages(); } catch(e){ return []; } })(); return st[0] ? st[0].city : cityOf(t.titre || '') || t.titre || ''; }
+  function cdTodo(t){
+    const out = [];
+    try { prepSteps().filter(x=>!x.ok && !x.opt).forEach(x=>out.push({ic:'⬜', l:x.l + (x.n ? ' (' + x.n + ')' : ''), fn:x.fn})); } catch(e){}
+    try { docIssues().forEach(x=>out.push({ic:'⚠️', l:x, fn:'CV.tlDocs()', bad:1})); } catch(e){}
+    try { const from = bagFromDefault(), dest = [...new Set([...tlStages().map(x=>((M.ctry || {})[normQ(x.city)] || {}).cc).filter(Boolean), ...bagCcs()])], dn = (M.fmDone || {})[t.id] || {};
+      dest.forEach(cc=>entryRules(cc, from).x.filter(x=>!/CEAM/.test(x)).forEach(x=>out.push({ic: dn[x] ? '✅' : '🛂', l:x, done:!!dn[x], fm:x}))); } catch(e){}
+    return out;
+  }
+  function cdHTML(){
+    const t = trip(); if(!t || !t.debut || t.archived || t.demo || tripPhase(t) !== 'prep' || hidden('blk:cd')) return '';
+    const ms = cdLeft(t); if(ms > 400 * 864e5) return '';
+    const dj = Math.max(0, Math.ceil((new Date(t.debut + 'T00:00:00') - new Date(isoToday() + 'T00:00:00')) / 864e5)), dest = cdDest(t), co = (M.ctry || {})[normQ(dest)];
+    const todo = cdTodo(t), left = todo.filter(x=>!x.done), ck = list('check', c=>c.trip === t.id), ckd = ck.filter(c=>chkDone(c)).length;
+    return `<div class="cd" id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"><div class="cd-bg" id="cd-bg"></div><div class="cd-sh"></div>
+      <div class="cd-top"><span>${dj === 0 ? '🧳 C’est aujourd’hui !' : dj === 1 ? '✈️ Départ demain' : '⏳ Départ dans'}</span><span class="cd-wx" id="cd-wx"></span></div>
+      <div class="cd-j"><b>${dj === 0 ? 'Jour J' : 'J-' + dj}</b><span class="cd-dest">${co && co.cc ? flag(co.cc) + ' ' : '📍 '}<span data-notr>${esc(dest)}</span></span></div>
+      <div class="cd-clock" id="cd-clock">${cdClock(ms)}</div>
+      <div class="cd-todo"><div class="cd-th"><b>${left.length ? 'Avant de partir' : '✨ Tout est prêt !'}</b>${ck.length ? `<button type="button" onclick="CV.tab('check')">🧳 Valise ${ckd}/${ck.length}</button>` : ''}</div>
+        ${todo.slice(0, 6).map(x=>`<button type="button" class="cd-t${x.done ? ' ok' : ''}${x.bad ? ' bad' : ''}" onclick="${x.fm ? `CV.cdFm(this)` : x.fn}" ${x.fm ? `data-fm="${esc(x.fm)}"` : ''}><i>${x.ic}</i><span>${esc(x.l)}</span></button>`).join('')}
+        ${todo.length > 6 ? `<small>+ ${todo.length - 6} autre${todo.length - 6 > 1 ? 's' : ''}</small>` : ''}</div></div>`;
+  }
+  function cdClock(ms){ const s = Math.max(0, Math.floor(ms / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), x = s % 60, two = n => String(n).padStart(2, '0');
+    return `<span><b>${d}</b><small>jours</small></span><span><b>${two(h)}</b><small>heures</small></span><span><b>${two(m)}</b><small>min</small></span><span><b>${two(x)}</b><small>s</small></span>`; }
+  setInterval(()=>{ const c = document.getElementById('cd'); if(!c || document.visibilityState !== 'visible') return; const k = document.getElementById('cd-clock'); if(k) k.innerHTML = cdClock(+c.dataset.at - Date.now()); }, 1000);
+  async function cdHydrate(){
+    const c = document.getElementById('cd'); if(!c || c.dataset.ok) return; c.dataset.ok = '1'; const t = trip(); if(!t) return;
+    try { const d = await expLoad(c.dataset.city); const bg = document.getElementById('cd-bg'); if(bg && d && d.hero){ const im = new Image(); im.referrerPolicy = 'no-referrer'; im.onload = () => { bg.style.backgroundImage = `url("${d.hero}")`; bg.classList.add('ok'); }; im.src = d.hero; } } catch(e){}
+    try { const st = tlStages()[0]; if(st && nights(isoToday(), st.debut) <= 14){ const v = await meteoFor(st), w = document.getElementById('cd-wx'); if(w && v) w.textContent = meteoIcon(v) + ' ' + v.min + '° → ' + v.max + '°'; } } catch(e){}
+  }
+  function cdFm(b){ const t = trip(); if(!t) return; const k = b.dataset.fm; M.fmDone = M.fmDone || {}; const d = M.fmDone[t.id] = M.fmDone[t.id] || {}; if(d[k]) delete d[k]; else d[k] = 1; persist();
+    b.classList.toggle('ok', !!d[k]); const i = b.querySelector('i'); if(i) i.textContent = d[k] ? '✅' : '🛂'; if(d[k]) toast('✅ ' + MSGT('Noté comme fait')); }
+
+  // 🧳 valise de chacun : une ligne « pour chacun », chaque voyageur coche la sienne
+  const chkDone = c => c.each ? tvOf(c.trip).every(p=>(c.doneBy || {})[p]) : !!c.done;
+  function tvOf(tid){ const t = R[tid]; return ((t && t.voyageurs) || []).filter(p=>prof(p)); }
+  function chkEach(id){ const i = clone(R[id]); if(!i) return; i.each = !i.each; if(i.each){ i.doneBy = i.doneBy || {}; if(i.done && M.me) i.doneBy[M.me] = 1; } i.done = chkDone(i); put(i, i.each ? '👥 ' + MSGT('Chacun coche le sien') : '👤 ' + MSGT('Une seule fois pour le groupe')); renderCheck(); }
   /* ══════════ 🏁 Voyage fini : story du voyage entier, trophées, bilan en grand, « il y a un an » ══════════ */
   function tripLikes(tid){ const by = {}; list('like', l=>l.trip === 'ft:' + tid && l.on).forEach(l=>{ by[l.feed] = (by[l.feed] || 0) + 1; }); return by; }
   function tripTop(tid, n){
@@ -14647,10 +15138,12 @@ ${pm.join('\n')}</Document></kml>`;
     const best = Object.entries(score).sort((a, b)=>b[1] - a[1])[0], bd = best && best[0], bS = bd ? all.filter(x=>x.date === bd) : [], bph = bS.flatMap(x=>x.photos || []), k = bd ? dayList().indexOf(bd) : -1;
     const tl = tripLines(t.id);
     return `<div class="bb">
+      ${rtCard(t)}
       <button type="button" class="bb-story" onclick="CV.storyTrip('${t.id}')"><span class="bb-pl">▶</span><span><b>La story du voyage</b><small>${nph} photos · en musique · un chapitre par jour</small></span></button>
       <div class="bb-tro">${tr.slice(0, 4).map((x, i)=>`<div class="bb-t" style="--i:${i}"><i>${x.i}</i><b>${esc(x.t)}</b><small>${esc(x.d)}</small></div>`).join('')}</div>
       ${tl.lines.length || tl.mk.length > 1 ? `<div class="bb-map"><div class="bb-mh"><b>🗺️ Tout le voyage</b><button type="button" onclick="CV.flyover('${t.id}')">🎥 Survol 3D</button></div><div class="bb-mm" data-bmap="${t.id}"><div class="v-sum-small">🗺️ Carte en cours…</div></div></div>` : ''}
       ${top.length ? `<div class="bb-sec"><b>❤️ ${top.some(x=>x.n) ? 'Les plus aimées' : 'Quelques pépites'}</b></div><div class="bb-top">${top.map((x, i)=>`<button type="button" class="bb-ph${i === 0 ? ' big' : ''}" style="--i:${i}" onclick="CV.view('${x.s.id}',${(x.s.photos||[]).indexOf(x.p)})"><img data-ph="${esc(x.p)}.t" alt="">${x.n ? `<b>${x.n} ❤️</b>` : ''}</button>`).join('')}</div>` : ''}
+      <button type="button" class="bb-scr" onclick="CV.scrOpen()"><span>🗺️</span><span><b>${MSGT('Ma carte du monde à gratter')}</b><small>${MSGT('Gratte les pays que tu as visités')}</small></span><i>✨</i></button>
       ${bd ? `<div class="bb-best"><div class="bb-bi">${bph.slice(0, 3).map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><div class="bb-bt"><small>⭐ Le meilleur jour</small><b>${k >= 0 ? 'J' + (k + 1) + ' · ' : ''}${esc(fdate(bd))}</b><span>${esc(dayInfo(bd).titre || [...new Set(bS.map(x=>String(x.lieu || '').split(',')[0].trim()).filter(Boolean))].join(' · '))}</span><button type="button" onclick="CV.storyOpen('${bd}')">▶ Revivre ce jour</button></div></div>` : ''}
     </div>`;
   }
@@ -14727,11 +15220,11 @@ ${pm.join('\n')}</Document></kml>`;
     stClose(true); opt = opt || {}; const cfg = opt.key ? stCfg(opt.key) : {};
     const ov = document.createElement('div'); ov.id = 'cv-story'; ov.className = 'st';
     ov.innerHTML = `<div class="st-bars">${slides.map(()=>'<i><b></b></i>').join('')}</div>
-      <div class="st-top"><div><b data-notr>${esc(title)}</b><small>${esc(sub)}</small></div>${opt.key ? '<button type="button" class="st-ed" id="st-ed" aria-label="Personnaliser">✏️</button>' : ''}<button type="button" class="st-snd" id="st-snd" aria-label="Son">${M.filmMute || cfg.mus === 'off' ? '🔇' : '🔊'}</button><button type="button" class="st-x" aria-label="Fermer">✕</button></div>
+      <div class="st-top"><div><b data-notr>${esc(title)}</b><small>${esc(sub)}</small></div>${opt.key ? '<button type="button" class="st-ed" id="st-ed" aria-label="Personnaliser">✏️</button><button type="button" class="st-ed" id="st-vid" aria-label="Vidéo">🎬</button>' : ''}<button type="button" class="st-snd" id="st-snd" aria-label="Son">${M.filmMute || cfg.mus === 'off' ? '🔇' : '🔊'}</button><button type="button" class="st-x" aria-label="Fermer">✕</button></div>
       <div class="st-stage" id="st-stage"></div><div class="st-tap l"></div><div class="st-tap r"></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden';
     ST = {slides, i:-1, t:0, left:0, paused:false, ov, aud:null, opt, title, sub};
-    if(opt.key) ov.querySelector('#st-ed').onclick = e => { e.stopPropagation(); stEdit(); };
+    if(opt.key){ ov.querySelector('#st-ed').onclick = e => { e.stopPropagation(); stEdit(); }; ov.querySelector('#st-vid').onclick = e => { e.stopPropagation(); stExport(); }; }
     ov.querySelector('.st-x').onclick = e => { e.stopPropagation(); stClose(); };
     ov.querySelector('#st-snd').onclick = e => { e.stopPropagation(); if(ST && ST.aud && ST.aud.paused && !M.filmMute){ ST.aud.volume = .7; ST.aud.play().catch(()=>{}); return; } M.filmMute = !M.filmMute; persist(); e.currentTarget.textContent = M.filmMute ? '🔇' : '🔊'; if(ST && ST.aud){ if(M.filmMute) ST.aud.pause(); else ST.aud.play().catch(()=>{}); } };
     let down = 0, held = false;
@@ -14797,11 +15290,11 @@ ${pm.join('\n')}</Document></kml>`;
       return `<div class="st-bg st-grad g5"></div><div class="st-c st-top3"><small>Les plus aimées</small><div class="st-pod">${sl.top.map((x, i)=>`<div class="st-pd p${i}" style="--i:${i}"><img src="${U[i]}" alt=""><b>${i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'} ${x.n} ❤️</b></div>`).join('')}</div></div>`; }
     if(sl.k === 'trophy') return `<div class="st-bg st-grad g6"></div><div class="st-c st-trophy"><small>Ton trophée</small><div class="st-cup">${sl.tr[0].i}</div><h2>${esc(sl.tr[0].t)}</h2><p>${esc(sl.tr[0].d)}</p>${sl.tr.length > 1 ? `<div class="st-mini">${sl.tr.slice(1, 4).map(x=>`<span>${x.i} ${esc(x.t)}</span>`).join('')}</div>` : ''}</div>`;
     if(sl.k === 'tend') return `<div class="st-bg st-grad g6"></div><div class="st-c st-end"><small>Fin</small><h2>Merci pour ce voyage</h2><p data-notr>${esc(sl.title)}</p>
-        <div class="st-eb"><button type="button" onclick="CV.stRestart()">↺ Revoir</button>${sl.pub ? `<button type="button" onclick="CV.stClose();CV.tripFinal('${sl.tid}')">💌 Envoyer l’épisode final aux abonnés</button>` : ''}<button type="button" onclick="CV.stClose();CV.go('${sl.tid}');CV.modeGo('bilan')">🏁 Le bilan</button><button type="button" onclick="CV.stClose()">Fermer</button></div></div>`;
+        <div class="st-eb"><button type="button" onclick="CV.stRestart()">↺ Revoir</button><button type="button" onclick="CV.stExport()">🎬 Exporter en vidéo</button>${sl.pub ? `<button type="button" onclick="CV.stClose();CV.tripFinal('${sl.tid}')">💌 Envoyer l’épisode final aux abonnés</button>` : ''}<button type="button" onclick="CV.stClose();CV.go('${sl.tid}');CV.modeGo('bilan')">🏁 Le bilan</button><button type="button" onclick="CV.stClose()">Fermer</button></div></div>`;
     if(sl.k === 'end'){
       if(sl.show) return `<div class="st-bg st-grad g6"></div><div class="st-c st-end"><h2>Fin du diaporama</h2><div class="st-eb"><button type="button" onclick="CV.stRestart()">↺ Revoir</button><button type="button" onclick="CV.stClose()">Fermer</button></div></div>`;
       return `<div class="st-bg st-grad g6"></div><div class="st-c st-end"><small>${sl.nx ? 'Demain' : 'Et voilà'}</small><h2>${sl.nx ? esc(fdate(sl.nx)) : 'Quelle journée !'}</h2>${sl.nxt ? `<p>${esc(sl.nxt)}</p>` : ''}
-        <div class="st-eb"><button type="button" onclick="CV.stRestart()">↺ Revoir</button><button type="button" onclick="CV.stClose();CV.pcOpen()">💌 Carte postale</button><button type="button" onclick="CV.stClose();CV.wrapped()">✨ Récap à partager</button><button type="button" onclick="CV.stClose()">Fermer</button></div></div>`; }
+        <div class="st-eb"><button type="button" onclick="CV.stRestart()">↺ Revoir</button><button type="button" onclick="CV.stExport()">🎬 Exporter en vidéo</button><button type="button" onclick="CV.stClose();CV.pcOpen()">💌 Carte postale</button><button type="button" onclick="CV.stClose();CV.wrapped()">✨ Récap à partager</button><button type="button" onclick="CV.stClose()">Fermer</button></div></div>`; }
     return '';
   }
   function stAfter(sl, el){
@@ -14867,7 +15360,7 @@ ${pm.join('\n')}</Document></kml>`;
     const pick = sid ? L.find(x=>x.s.id === sid) || L[L.length - 1] : L[L.length - 1];
     setTimeout(()=>{ const d = document.querySelector('.pc-more'); if(d) d.addEventListener('toggle', ()=>hydrate()); }, 50);
     PC = {p:pick.p, s:pick.s};
-    openSheet(`<h2>💌 Carte postale</h2><div class="v-sum-small" style="margin-bottom:8px">Choisis une photo, écris un mot : elle part chez tes abonnés ou en image sur WhatsApp, Messages…</div>
+    openSheet(`<h2>💌 Carte postale</h2><div class="v-sum-small" style="margin-bottom:8px">Choisis une photo, écris un mot : ta carte part en image sur WhatsApp, Messages, e-mail…</div>
       ${(()=>{ const btn = x => `<button type="button" class="${x.p === PC.p ? 'on' : ''}" data-p="${esc(x.p)}" data-s="${x.s.id}" onclick="CV.pcPick(this)"><img data-ph="${esc(x.p)}.t" alt="" loading="lazy"></button>`;
         const mine = sid ? L.filter(x=>x.s.id === sid) : [], rest = L.filter(x=>!sid || x.s.id !== sid).reverse();
         return (mine.length ? `<div class="pc-lbl">📍 <span data-notr>${esc(mine[0].s.titre || mine[0].s.lieu || '')}</span> · ${mine.length} photo${mine.length > 1 ? 's' : ''}</div><div class="pc-pick">${mine.map(btn).join('')}</div>` : '')
@@ -14890,7 +15383,7 @@ ${pm.join('\n')}</Document></kml>`;
         <div class="pc-f"><img src="${u}" alt=""><div class="pc-big"><small>Bons baisers de</small><b data-notr>${esc(city)}</b></div></div>
         <div class="pc-b"><div class="pc-msg" data-notr>${esc(PC.msg || '…')}<em>${esc(PC.sig)}</em></div><div class="pc-r"><div class="pc-stamp"><span>${flag(cc)}</span><small>VEZORIA</small></div><div class="pc-post"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54"/><circle cx="60" cy="60" r="44"/><path d="M0 52h120M0 60h120M0 68h120" /></svg><span data-notr>${esc(pm)}</span></div><div class="pc-to">À vous tous ❤️</div></div></div>
       </div></div>
-      <div class="pc-btns"><button type="button" onclick="CV.pcFlip()">🔄 Retourner</button><button type="button" onclick="CV.pcShare()">📤 Partager l’image</button><button type="button" class="pri" onclick="CV.pcSend()">💌 Envoyer aux abonnés</button><button type="button" onclick="CV.pcClose()">✕</button></div>`;
+      <div class="pc-btns"><button type="button" onclick="CV.pcFlip()">🔄 Retourner</button><button type="button" class="pri" onclick="CV.pcShare()">📤 Partager l’image</button><button type="button" onclick="CV.pcClose()">✕</button></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden';
     requestAnimationFrame(()=>ov.classList.add('on'));
     setTimeout(()=>{ const c = document.getElementById('pc-card'); if(c) c.classList.add('flip'); }, 2200);
@@ -16647,7 +17140,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20n';
+  const BUILD = '2026-10-20q';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -16657,7 +17150,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
