@@ -1641,6 +1641,27 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .sh-card{background:#fff;border:1px solid var(--light);border-radius:18px;padding:14px;margin-bottom:10px}.sh-k{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:600;font-size:1.2rem}.sh-card p{font-size:.86rem;color:var(--gray);margin:4px 0 10px}
 .sh-st{display:flex;gap:14px;margin:0 0 10px;font-size:.92rem}.sh-more summary{cursor:pointer;color:var(--gray);font-weight:600;margin:6px 0 10px}
 .sv-so{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--light);background:#fff;border-radius:999px;padding:5px 12px;margin:8px 0 2px;font:inherit;font-size:.82rem;color:var(--ink);cursor:pointer}.sv-so small{color:var(--gray)}
+.st-top .st-ed{font-size:.95rem}
+.st-edp{position:absolute;z-index:10;left:0;right:0;bottom:0;max-height:82%;background:#16121f;border-radius:24px 24px 0 0;padding:14px 14px calc(env(safe-area-inset-bottom,0px) + 14px);display:flex;flex-direction:column;gap:8px;transform:translateY(100%);transition:transform .35s cubic-bezier(.2,.9,.3,1);touch-action:auto;box-shadow:0 -20px 40px rgba(0,0,0,.5)}
+.st-edp.on{transform:none}
+.st-edh{display:flex;align-items:center;justify-content:space-between}.st-edh button{border:0;background:rgba(255,255,255,.12);color:#fff;width:34px;height:34px;border-radius:50%}
+.st-eds{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.86rem;margin-top:4px}.st-eds small{opacity:.6;font-weight:600}.st-eds span{margin-left:auto;display:flex;gap:4px}
+.st-eds span button{border:0;border-radius:99px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:.72rem;padding:4px 9px}
+.st-mus{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.st-mus button{flex:0 0 auto;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:.78rem;border-radius:99px;padding:7px 11px}
+.st-mus button.on{background:linear-gradient(135deg,#f43f5e,#a855f7);border-color:transparent}
+.st-edg{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:calc((min(100vw,600px) - 43px) / 4);gap:5px;overflow-y:auto;flex:1 1 auto;min-height:120px;-webkit-overflow-scrolling:touch}
+.st-edg button{position:relative;border:0;padding:0;height:100%;border-radius:10px;overflow:hidden;background:#2a2335;opacity:.4;transition:opacity .2s}
+.st-edg button.on{opacity:1;box-shadow:0 0 0 3px #a855f7 inset}
+.st-edg button>img{width:100%;height:100%;object-fit:cover;display:block}
+.st-edg button>i{position:absolute;right:5px;top:5px;width:20px;height:20px;border-radius:50%;background:#a855f7;color:#fff;font-style:normal;font-size:.7rem;display:none;place-items:center}
+.st-edg button.on>i{display:grid}
+.st-edgo{border:0;border-radius:16px;padding:13px;font:inherit;font-weight:800;color:#fff;background:linear-gradient(135deg,#f43f5e,#a855f7)}
+.cv-pcb{margin-right:4px}
+.pc-lbl{font-weight:800;font-size:.82rem;margin:2px 0 6px}
+.pc-pick.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;overflow:visible;max-height:none}
+.pc-pick.grid button{flex:none;width:auto;height:auto;aspect-ratio:1}
+.pc-more{margin:4px 0 10px}.pc-more summary{cursor:pointer;font-weight:700;font-size:.84rem;padding:6px 0}
 /* 🏁 voyage fini */
 .st-home{font-size:3.4rem;animation:wlcPop .7s cubic-bezier(.2,1.4,.4,1) both}
 .st-fl{font-size:1.6rem;letter-spacing:.1em;animation:wlcUp .6s .6s both}
@@ -7050,7 +7071,7 @@ const CV = (function(){
       return gh + `<div class="cv-souv">
         <div class="cv-souv-h"><span class="v-day-d">${s.date ? fdate(s.date) : '—'}</span><div><div class="cv-souv-t">${esc(s.titre||s.lieu||'Souvenir')}</div>
           ${s.lieu || s.pays ? `<div class="v-sum-small">📍 ${esc([s.lieu, s.pays].filter(Boolean).join(', '))}</div>` : ''}</div>
-          <button class="cv-x" onclick="CV.editSouv('${s.id}')" aria-label="Modifier">✏️</button></div>
+          ${(s.photos||[]).length ? `<button class="cv-x cv-pcb" onclick="CV.pcOpen('${s.id}')" aria-label="Carte postale" title="Carte postale">💌</button>` : ''}<button class="cv-x" onclick="CV.editSouv('${s.id}')" aria-label="Modifier">✏️</button></div>
         ${s.texte ? `<div class="cv-souv-txt" onclick="this.classList.toggle('open')">${esc(s.texte)}</div>` : ''}${souvSocial(s)}
         ${ph.length ? `<div class="cv-grid">${ph.slice(0,9).map((p,i)=>`<button class="cv-th" onclick="CV.view('${s.id}',${i})"><img data-ph="${esc(p)}.t" alt="">${i===8 && more>0 ? `<span>+${more}</span>` : ''}</button>`).join('')}</div>` : ''}
         ${byline(s)}
@@ -14600,15 +14621,15 @@ ${pm.join('\n')}</Document></kml>`;
     const slides = [{k: mode === 'home' ? 'home' : 'tintro', d:4600, ph:cov, title:t.titre || '', dates:tripDatesLong(t), flags:r.ccs.slice(0, 8).map(flag).join(' ')},
       {k:'tstats', d:5400, r, lk}];
     const tl = tripLines(tid); if(tl.lines.length || tl.mk.length > 1) slides.push({k:'map', d:5400, lines:tl.lines, mk:tl.mk, ttl:'Le voyage'});
-    const per = days.length > 12 ? 1 : days.length > 6 ? 2 : 3;
+    const per = days.length > 12 ? 1 : days.length > 6 ? 2 : 3, key = 't:' + tid, cfg = stCfg(key), cands = all.flatMap(x=>(x.photos||[]).map(p=>({p, s:x})));
     days.forEach(d=>{ const S = all.filter(x=>x.date === d), k = ds.indexOf(d), pl = [...new Set(S.map(x=>String(x.lieu || '').split(',')[0].trim()).filter(Boolean))];
       slides.push({k:'chap', d:2600, date:d, j:k >= 0 ? k + 1 : '', place:pl.slice(0, 2).join(' · '), title:dayInfo(d).titre || ''});
       const P = S.flatMap(x=>(x.photos||[]).map(p=>({p, s:x}))); const st = Math.max(1, Math.ceil(P.length / per));
-      P.filter((x, i)=>i % st === 0).slice(0, per).forEach((x, i)=>slides.push({k:'ph', d:3800, p:x.p, s:x.s, first:i === 0, who:(t.voyageurs||[]).length > 1 && x.s.createdBy ? pname(x.s.createdBy) : ''})); });
+      (cfg.ph ? P.filter(x=>cfg.ph.includes(x.p)) : P.filter((x, i)=>i % st === 0).slice(0, per)).forEach((x, i)=>slides.push({k:'ph', d:3800, p:x.p, s:x.s, first:i === 0, who:(t.voyageurs||[]).length > 1 && x.s.createdBy ? pname(x.s.createdBy) : ''})); });
     const top = tripTop(tid, 3).filter(x=>x.n > 0); if(top.length >= 2) slides.push({k:'top', d:5200, top});
     slides.push({k:'trophy', d:5200, tr:tripTrophies(t)});
     slides.push({k:'tend', d:0, tid, title:t.titre || '', pub: !!socCode(tid)});
-    stPlay(slides, t.titre || '', tripDatesLong(t));
+    stPlay(slides, t.titre || '', tripDatesLong(t), {key, cands, re:()=>storyTrip(tid)});
   }
   // 💌 l’épisode final : un dernier souvenir pour les abonnés (résumé + les plus belles photos)
   function tripFinal(tid){
@@ -14673,6 +14694,7 @@ ${pm.join('\n')}</Document></kml>`;
     const S = all.filter(x=>x.date === date).sort((a, b)=>(a.ordre||0) - (b.ordre||0) || (a.createdAt||0) - (b.createdAt||0));
     if(!S.length){ alert('Pas encore de souvenir ce jour-là.'); return; }
     const ds = dayList(), k = ds.indexOf(date), slides = [], multi = (t.voyageurs||[]).length > 1;
+    const key = 'd:' + t.id + ':' + date, cfg = stCfg(key), cands = S.flatMap(x=>(x.photos||[]).map(p=>({p, s:x})));
     const phs = S.flatMap(x=>(x.photos||[]).slice(0, 4).map(p=>({s:x, p})));
     const step = Math.max(1, Math.ceil(phs.length / 14));
     // les chiffres de la journée
@@ -14686,28 +14708,30 @@ ${pm.join('\n')}</Document></kml>`;
     slides.push({k:'intro', d:4200, ph: phs[0] && phs[0].p, date, j:k + 1, place: places[0] || '', title: dayInfo(date).titre || ''});
     slides.push({k:'stats', d:5200, km:kmT, nph, ns:S.length, dep, np:places.length, places});
     if(lines.length || geo.length > 1) slides.push({k:'map', d:5200, lines, mk: geo.map((x, i)=>({lat:+x.lat, lng:+x.lng, label:String(i + 1), color:'#f43f5e'}))});
-    S.forEach(x=>{ const P = (x.photos||[]).slice(0, 4).filter((p, i)=>phs.findIndex(q=>q.p === p) % step === 0);
+    S.forEach(x=>{ const P = cfg.ph ? (x.photos||[]).filter(p=>cfg.ph.includes(p)) : (x.photos||[]).slice(0, 4).filter((p, i)=>phs.findIndex(q=>q.p === p) % step === 0);
       if(P.length) P.forEach((p, i)=>slides.push({k:'ph', d:4600, p, s:x, first:i === 0, who: multi && x.createdBy ? pname(x.createdBy) : ''}));
-      else if((x.texte||'').trim() || x.titre) slides.push({k:'txt', d:6000, s:x, who: multi && x.createdBy ? pname(x.createdBy) : ''}); });
+      else if(!(x.photos||[]).length && ((x.texte||'').trim() || x.titre)) slides.push({k:'txt', d:6000, s:x, who: multi && x.createdBy ? pname(x.createdBy) : ''}); });
     const fids = S.map(x=>'fd:' + x.id), lk = list('like', l=>fids.includes(l.feed) && l.on), cm = list('comment', c=>fids.includes(c.feed)).sort((a, b)=>(b.at||0) - (a.at||0));
     if(lk.length || cm.length) slides.push({k:'rx', d:5600, lk, cm});
     const nx = ds[k + 1];
     slides.push({k:'end', d:0, nx, nxt: nx ? dayInfo(nx).titre || '' : '', date});
-    stPlay(slides, (t.titre || ''), (k >= 0 ? 'J' + (k + 1) + ' · ' : '') + fdate(date));
+    stPlay(slides, (t.titre || ''), (k >= 0 ? 'J' + (k + 1) + ' · ' : '') + fdate(date), {key, cands, re:()=>storyOpen(date)});
   }
   async function wallShow(){   // diaporama de tout le voyage (depuis le mur)
     const t = trip(); if(!t) return; const L = wallList(); if(!L.length) return;
-    const st = Math.max(1, Math.ceil(L.length / 60));
-    stPlay(L.filter((x, i)=>i % st === 0).map(x=>({k:'ph', d:4200, p:x.p, s:x.s, first:true, who:''})).concat([{k:'end', d:0, show:1}]), t.titre || '', '🧱 ' + L.length + ' photos');
+    const key = 'w:' + t.id, cfg = stCfg(key), st = Math.max(1, Math.ceil(L.length / 60)), use = cfg.ph ? L.filter(x=>cfg.ph.includes(x.p)) : L.filter((x, i)=>i % st === 0);
+    stPlay(use.map(x=>({k:'ph', d:4200, p:x.p, s:x.s, first:true, who:''})).concat([{k:'end', d:0, show:1}]), t.titre || '', '🧱 ' + use.length + ' photos', {key, cands:L, re:wallShow});
   }
-  function stPlay(slides, title, sub){
-    stClose(true);
+  function stCfg(k){ return Object.assign({}, (M.stCfg || {})[k] || {}); }
+  function stPlay(slides, title, sub, opt){
+    stClose(true); opt = opt || {}; const cfg = opt.key ? stCfg(opt.key) : {};
     const ov = document.createElement('div'); ov.id = 'cv-story'; ov.className = 'st';
     ov.innerHTML = `<div class="st-bars">${slides.map(()=>'<i><b></b></i>').join('')}</div>
-      <div class="st-top"><div><b data-notr>${esc(title)}</b><small>${esc(sub)}</small></div><button type="button" class="st-snd" id="st-snd" aria-label="Son">${M.filmMute ? '🔇' : '🔊'}</button><button type="button" class="st-x" aria-label="Fermer">✕</button></div>
+      <div class="st-top"><div><b data-notr>${esc(title)}</b><small>${esc(sub)}</small></div>${opt.key ? '<button type="button" class="st-ed" id="st-ed" aria-label="Personnaliser">✏️</button>' : ''}<button type="button" class="st-snd" id="st-snd" aria-label="Son">${M.filmMute || cfg.mus === 'off' ? '🔇' : '🔊'}</button><button type="button" class="st-x" aria-label="Fermer">✕</button></div>
       <div class="st-stage" id="st-stage"></div><div class="st-tap l"></div><div class="st-tap r"></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden';
-    ST = {slides, i:-1, t:0, left:0, paused:false, ov, aud:null};
+    ST = {slides, i:-1, t:0, left:0, paused:false, ov, aud:null, opt, title, sub};
+    if(opt.key) ov.querySelector('#st-ed').onclick = e => { e.stopPropagation(); stEdit(); };
     ov.querySelector('.st-x').onclick = e => { e.stopPropagation(); stClose(); };
     ov.querySelector('#st-snd').onclick = e => { e.stopPropagation(); if(ST && ST.aud && ST.aud.paused && !M.filmMute){ ST.aud.volume = .7; ST.aud.play().catch(()=>{}); return; } M.filmMute = !M.filmMute; persist(); e.currentTarget.textContent = M.filmMute ? '🔇' : '🔊'; if(ST && ST.aud){ if(M.filmMute) ST.aud.pause(); else ST.aud.play().catch(()=>{}); } };
     let down = 0, held = false;
@@ -14715,7 +14739,7 @@ ${pm.join('\n')}</Document></kml>`;
     [L, Rr].forEach(el=>{ el.addEventListener('pointerdown', ()=>{ down = Date.now(); held = false; setTimeout(()=>{ if(down && Date.now() - down >= 280){ held = true; stPause(true); } }, 300); });
       el.addEventListener('pointerup', ()=>{ const was = held; down = 0; if(was){ stPause(false); return; } if(el === L) stGo(ST.i - 1); else stGo(ST.i + 1); }); });
     // musique (même morceaux libres de droits que le film)
-    try { const k = (M.filmTrack || 0) % TRACKS.length, a = new Audio(TRACKS[k]); a.loop = true; a.volume = 0; a.setAttribute('playsinline', ''); ST.aud = a;
+    if(cfg.mus !== 'off') try { const k = (cfg.mus != null ? +cfg.mus : (M.filmTrack || 0)) % TRACKS.length, a = new Audio(TRACKS[k]); a.loop = true; a.volume = 0; a.setAttribute('playsinline', ''); ST.aud = a;
       if(!M.filmMute){ a.play().then(()=>{ let v = 0; const f = setInterval(()=>{ v = Math.min(.7, v + .05); a.volume = v; if(v >= .7) clearInterval(f); }, 120); }).catch(()=>{}); } } catch(e){}
     slides.forEach(x=>{ if(x.p) phURL(x.p); }); stGo(0);
   }
@@ -14784,6 +14808,36 @@ ${pm.join('\n')}</Document></kml>`;
     el.querySelectorAll('[data-cnt]').forEach((b, k)=>{ const to = +b.dataset.cnt, d = +b.dataset.d || 0, t0 = performance.now() + k * 180; const f = now => { const q = Math.max(0, Math.min(1, (now - t0) / 1300)), e = 1 - Math.pow(1 - q, 3); b.textContent = (to * e).toFixed(d).replace('.', ','); if(q < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); });
   }
   function stRestart(){ if(ST) stGo(0); }
+  // ✏️ choisir les photos et la musique de CETTE story (gardé pour la prochaine fois)
+  function stEdit(){
+    if(!ST || !ST.opt.key) return; stPause(true);
+    const o = ST.opt, cfg = stCfg(o.key), sel = new Set(cfg.ph || ST.slides.filter(x=>x.k === 'ph').map(x=>x.p)), cur = cfg.mus != null ? String(cfg.mus) : String((M.filmTrack || 0) % TRACKS.length);
+    ST.ed = {sel, mus:cur};
+    const box = document.createElement('div'); box.className = 'st-edp'; box.id = 'st-edp';
+    box.innerHTML = `<div class="st-edh"><b>✏️ Personnaliser la story</b><button type="button" onclick="CV.stEdClose()">✕</button></div>
+      <div class="st-eds">🎵 Musique</div><div class="st-mus">${['off', ...TRACKS.map((_, i)=>String(i))].map(k=>`<button type="button" data-m="${k}" class="${k === cur ? 'on' : ''}" onclick="CV.stEdMus('${k}')">${k === 'off' ? '🔇 Sans musique' : '🎵 ' + esc(TRACK_N[+k] || 'Musique ' + (+k + 1))}</button>`).join('')}</div>
+      <div class="st-eds">📸 Photos <small id="st-edn">${sel.size} / ${o.cands.length}</small><span><button type="button" onclick="CV.stEdAll(1)">Tout</button><button type="button" onclick="CV.stEdAll(0)">Rien</button><button type="button" onclick="CV.stEdAll(2)">Auto</button></span></div>
+      <div class="st-edg">${o.cands.map(x=>`<button type="button" class="${sel.has(x.p) ? 'on' : ''}" data-p="${esc(x.p)}" onclick="CV.stEdPh(this)"><img data-ph="${esc(x.p)}.t" alt="" loading="lazy"><i>✓</i></button>`).join('')}</div>
+      <button type="button" class="st-edgo" onclick="CV.stEdGo()">▶ Relancer la story</button>`;
+    ST.ov.appendChild(box); hydrate(); requestAnimationFrame(()=>box.classList.add('on'));
+  }
+  function stEdMus(k){
+    if(!ST || !ST.ed) return; ST.ed.mus = k; document.querySelectorAll('#st-edp .st-mus button').forEach(b=>b.classList.toggle('on', b.dataset.m === k));
+    try { if(ST.aud){ ST.aud.pause(); } if(k === 'off'){ return; } const a = ST.aud || new Audio(); a.src = TRACKS[+k]; a.loop = true; a.volume = .6; ST.aud = a; a.play().catch(()=>{}); } catch(e){}
+  }
+  function stEdPh(b){ if(!ST || !ST.ed) return; const p = b.dataset.p; if(ST.ed.sel.has(p)) ST.ed.sel.delete(p); else ST.ed.sel.add(p); b.classList.toggle('on', ST.ed.sel.has(p)); const n = document.getElementById('st-edn'); if(n) n.textContent = ST.ed.sel.size + ' / ' + ST.opt.cands.length; }
+  function stEdAll(m){
+    if(!ST || !ST.ed) return; if(m === 2){ ST.ed.auto = true; ST.ed.sel = new Set(); } else { ST.ed.auto = false; ST.ed.sel = new Set(m ? ST.opt.cands.map(x=>x.p) : []); }
+    document.querySelectorAll('#st-edp .st-edg button').forEach(b=>b.classList.toggle('on', ST.ed.sel.has(b.dataset.p))); const n = document.getElementById('st-edn'); if(n) n.textContent = (m === 2 ? 'auto' : ST.ed.sel.size + ' / ' + ST.opt.cands.length);
+  }
+  function stEdClose(){ const b = document.getElementById('st-edp'); if(b) b.remove(); if(ST){ if(ST.aud && ST.aud.src && ST.ed && ST.ed.mus !== 'off' && !M.filmMute) ST.aud.play().catch(()=>{}); stPause(false); } }
+  function stEdGo(){
+    if(!ST || !ST.ed) return; const o = ST.opt, ed = ST.ed;
+    if(!ed.auto && !ed.sel.size){ alert(MSGT('Choisis au moins une photo.')); return; }
+    M.stCfg = M.stCfg || {}; M.stCfg[o.key] = {mus: ed.mus === 'off' ? 'off' : +ed.mus, ph: ed.auto ? undefined : o.cands.map(x=>x.p).filter(p=>ed.sel.has(p))};
+    if(ed.mus !== 'off'){ M.filmMute = false; }
+    persist(); const re = o.re; stClose(true); setTimeout(re, 50);
+  }
 
   // ---------- 🧱 Mur de photos ----------
   function wallList(){ return souvs().flatMap(x=>(x.photos||[]).map((p, i)=>({p, i, s:x}))); }
@@ -14811,9 +14865,13 @@ ${pm.join('\n')}</Document></kml>`;
   function pcOpen(sid){
     const t = trip(); if(!t) return; const L = wallList(); if(!L.length){ alert('Ajoute d’abord une photo dans tes souvenirs.'); return; }
     const pick = sid ? L.find(x=>x.s.id === sid) || L[L.length - 1] : L[L.length - 1];
+    setTimeout(()=>{ const d = document.querySelector('.pc-more'); if(d) d.addEventListener('toggle', ()=>hydrate()); }, 50);
     PC = {p:pick.p, s:pick.s};
     openSheet(`<h2>💌 Carte postale</h2><div class="v-sum-small" style="margin-bottom:8px">Choisis une photo, écris un mot : elle part chez tes abonnés ou en image sur WhatsApp, Messages…</div>
-      <div class="pc-pick">${L.slice().reverse().slice(0, 60).map(x=>`<button type="button" class="${x.p === PC.p ? 'on' : ''}" data-p="${esc(x.p)}" data-s="${x.s.id}" onclick="CV.pcPick(this)"><img data-ph="${esc(x.p)}.t" alt=""></button>`).join('')}</div>
+      ${(()=>{ const btn = x => `<button type="button" class="${x.p === PC.p ? 'on' : ''}" data-p="${esc(x.p)}" data-s="${x.s.id}" onclick="CV.pcPick(this)"><img data-ph="${esc(x.p)}.t" alt="" loading="lazy"></button>`;
+        const mine = sid ? L.filter(x=>x.s.id === sid) : [], rest = L.filter(x=>!sid || x.s.id !== sid).reverse();
+        return (mine.length ? `<div class="pc-lbl">📍 <span data-notr>${esc(mine[0].s.titre || mine[0].s.lieu || '')}</span> · ${mine.length} photo${mine.length > 1 ? 's' : ''}</div><div class="pc-pick">${mine.map(btn).join('')}</div>` : '')
+          + (rest.length ? (mine.length ? `<details class="pc-more"><summary>🖼️ Toutes les autres photos du voyage (${rest.length})</summary><div class="pc-pick grid">${rest.map(btn).join('')}</div></details>` : `<div class="pc-pick grid">${rest.map(btn).join('')}</div>`) : ''); })()}
       <div class="v-f"><label>Ton mot</label><textarea class="v-in" id="pc-msg" rows="4" maxlength="400" placeholder="Il fait beau, on a marché toute la journée, on pense à vous…"></textarea></div>
       <div class="v-f"><label>Signé</label><input class="v-in" id="pc-sig" maxlength="40" value="${esc(myName() || '')}"></div>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.pcShow()">💌 Voir ma carte</button><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
@@ -16589,7 +16647,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20m';
+  const BUILD = '2026-10-20n';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -16599,7 +16657,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
