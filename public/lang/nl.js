@@ -1285,4 +1285,11 @@ I18N.load({
 "Partagé aux abonnés":"Gedeeld met volgers",
 "Masqué aux abonnés":"Verborgen voor volgers",
 "Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Deel al je reizen in één keer: met een reisgenoot (die alles aanvult) of met volgers die alleen kunnen lezen (foto’s en verhalen).",
-"Replier":"Inklappen"});
+"Replier":"Inklappen",
+"Apparence":"Weergave",
+"Effet verre : fond aux couleurs du voyage et cartes translucides.":"Glaseffect: achtergrond in de kleuren van de reis en doorschijnende kaarten.",
+"Activé ✓":"Aan ✓",
+"Effet verre activé":"Glaseffect aan",
+"Effet verre désactivé":"Glaseffect uit",
+"Publié par":"Gepubliceerd door",
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Deze reis wordt al gepubliceerd door {0}: de volgers zien hem al. Eén reisgenoot publiceert hem, om dubbels te voorkomen."});

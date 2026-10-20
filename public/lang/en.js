@@ -1285,4 +1285,11 @@ I18N.load({
 "Partagé aux abonnés":"Shared with followers",
 "Masqué aux abonnés":"Hidden from followers",
 "Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Share all your trips at once: with a companion (they fill in everything), or with read-only followers (photos and stories).",
-"Replier":"Collapse"});
+"Replier":"Collapse",
+"Apparence":"Appearance",
+"Effet verre : fond aux couleurs du voyage et cartes translucides.":"Glass effect: background in the trip’s colours and see-through cards.",
+"Activé ✓":"On ✓",
+"Effet verre activé":"Glass effect on",
+"Effet verre désactivé":"Glass effect off",
+"Publié par":"Published by",
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"This trip is already published by {0}: their followers already see it. Only one companion publishes it, to avoid duplicates."});

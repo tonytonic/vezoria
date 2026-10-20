@@ -4209,4 +4209,11 @@ I18N.load({
 "Partagé aux abonnés":"팔로워에게 공개",
 "Masqué aux abonnés":"팔로워에게 숨김",
 "Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"모든 여행을 한 번에 공유하세요: 여행 동료와(모두 채워요) 또는 읽기 전용 팔로워와(사진과 이야기).",
-"Replier":"접기"});
+"Replier":"접기",
+"Apparence":"모양",
+"Effet verre : fond aux couleurs du voyage et cartes translucides.":"유리 효과: 여행 색상의 배경과 반투명 카드.",
+"Activé ✓":"켜짐 ✓",
+"Effet verre activé":"유리 효과 켜짐",
+"Effet verre désactivé":"유리 효과 꺼짐",
+"Publié par":"공개한 사람",
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"이 여행은 이미 {0}님이 공개하고 있어요: 팔로워가 이미 보고 있어요. 중복을 막기 위해 한 명만 공개해요."});

@@ -4209,4 +4209,11 @@ I18N.load({
 "Partagé aux abonnés":"Открыто подписчикам",
 "Masqué aux abonnés":"Скрыто от подписчиков",
 "Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Поделись всеми поездками сразу: с попутчиком (он дополняет всё) или с подписчиками в режиме чтения (фото и рассказы).",
-"Replier":"Свернуть"});
+"Replier":"Свернуть",
+"Apparence":"Оформление",
+"Effet verre : fond aux couleurs du voyage et cartes translucides.":"Эффект стекла: фон в цветах поездки и полупрозрачные карточки.",
+"Activé ✓":"Вкл. ✓",
+"Effet verre activé":"Эффект стекла включён",
+"Effet verre désactivé":"Эффект стекла выключен",
+"Publié par":"Публикует",
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Эту поездку уже публикует {0}: подписчики её видят. Публикует только один спутник, чтобы не было дублей."});

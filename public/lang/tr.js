@@ -4209,4 +4209,11 @@ I18N.load({
 "Partagé aux abonnés":"Takipçilerle paylaşıldı",
 "Masqué aux abonnés":"Takipçilerden gizli",
 "Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Tüm seyahatlerini tek seferde paylaş: bir yol arkadaşıyla (her şeyi tamamlar) ya da salt okunur takipçilerle (fotoğraflar ve hikâyeler).",
-"Replier":"Daralt"});
+"Replier":"Daralt",
+"Apparence":"Görünüm",
+"Effet verre : fond aux couleurs du voyage et cartes translucides.":"Cam efekti: seyahatin renklerinde arka plan ve yarı saydam kartlar.",
+"Activé ✓":"Açık ✓",
+"Effet verre activé":"Cam efekti açık",
+"Effet verre désactivé":"Cam efekti kapalı",
+"Publié par":"Yayınlayan",
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Bu seyahati zaten {0} yayınlıyor: takipçileri görüyor. Çift olmasın diye yalnızca bir yol arkadaşı yayınlar."});

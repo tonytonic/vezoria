@@ -4209,4 +4209,11 @@ I18N.load({
 "Partagé aux abonnés":"已分享给关注者",
 "Masqué aux abonnés":"对关注者隐藏",
 "Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"一次分享你所有的旅行：和旅伴（他能补充一切），或给只读的关注者（照片和游记）。",
-"Replier":"收起"});
+"Replier":"收起",
+"Apparence":"外观",
+"Effet verre : fond aux couleurs du voyage et cartes translucides.":"玻璃效果：旅行配色的背景和半透明卡片。",
+"Activé ✓":"已开启 ✓",
+"Effet verre activé":"玻璃效果已开启",
+"Effet verre désactivé":"玻璃效果已关闭",
+"Publié par":"发布者",
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"这次旅行已由 {0} 发布：其关注者已能看到。为避免重复，只由一位同伴发布。"});

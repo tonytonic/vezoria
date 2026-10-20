@@ -1285,4 +1285,11 @@ I18N.load({
 "Partagé aux abonnés":"Condiviso con i follower",
 "Masqué aux abonnés":"Nascosto ai follower",
 "Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Condividi tutti i tuoi viaggi in una volta: con un compagno (completa tutto) o con follower in sola lettura (foto e racconti).",
-"Replier":"Chiudi"});
+"Replier":"Chiudi",
+"Apparence":"Aspetto",
+"Effet verre : fond aux couleurs du voyage et cartes translucides.":"Effetto vetro: sfondo con i colori del viaggio e schede traslucide.",
+"Activé ✓":"Attivo ✓",
+"Effet verre activé":"Effetto vetro attivo",
+"Effet verre désactivé":"Effetto vetro disattivato",
+"Publié par":"Pubblicato da",
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Questo viaggio è già pubblicato da {0}: i suoi follower lo vedono già. Lo pubblica un solo compagno, per evitare doppioni."});

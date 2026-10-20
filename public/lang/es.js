@@ -1285,4 +1285,11 @@ I18N.load({
 "Partagé aux abonnés":"Compartido con seguidores",
 "Masqué aux abonnés":"Oculto a seguidores",
 "Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"Comparte todos tus viajes de una vez: con un compañero (lo completa todo) o con seguidores en solo lectura (fotos y relatos).",
-"Replier":"Plegar"});
+"Replier":"Plegar",
+"Apparence":"Apariencia",
+"Effet verre : fond aux couleurs du voyage et cartes translucides.":"Efecto cristal: fondo con los colores del viaje y tarjetas translúcidas.",
+"Activé ✓":"Activado ✓",
+"Effet verre activé":"Efecto cristal activado",
+"Effet verre désactivé":"Efecto cristal desactivado",
+"Publié par":"Publicado por",
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Este viaje ya lo publica {0}: sus seguidores ya lo ven. Solo un compañero lo publica, para evitar duplicados."});

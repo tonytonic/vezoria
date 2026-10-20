@@ -4209,4 +4209,11 @@ I18N.load({
 "Partagé aux abonnés":"フォロワーに公開中",
 "Masqué aux abonnés":"フォロワーに非表示",
 "Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"旅行をまとめて共有：旅の仲間と（すべて書き足せる）、または閲覧のみのフォロワーと（写真と旅日記）。",
-"Replier":"たたむ"});
+"Replier":"たたむ",
+"Apparence":"見た目",
+"Effet verre : fond aux couleurs du voyage et cartes translucides.":"ガラス効果：旅の色の背景と半透明のカード。",
+"Activé ✓":"オン ✓",
+"Effet verre activé":"ガラス効果オン",
+"Effet verre désactivé":"ガラス効果オフ",
+"Publié par":"公開者",
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"この旅はすでに {0} が公開しています：フォロワーはもう見られます。重複を避けるため、公開は仲間のひとりだけです。"});

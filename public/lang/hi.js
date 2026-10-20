@@ -4209,4 +4209,11 @@ I18N.load({
 "Partagé aux abonnés":"फ़ॉलोअर्स के साथ साझा",
 "Masqué aux abonnés":"फ़ॉलोअर्स से छिपी",
 "Partager tous tes voyages d’un coup : avec un compagnon (il complète tout), ou avec des abonnés en lecture seule (photos et récits).":"अपनी सारी यात्राएँ एक साथ शेयर करें: किसी सहयात्री के साथ (वह सब कुछ भरता है) या सिर्फ़ पढ़ने वाले फ़ॉलोअर्स के साथ (फ़ोटो और कहानियाँ)।",
-"Replier":"समेटें"});
+"Replier":"समेटें",
+"Apparence":"रूप",
+"Effet verre : fond aux couleurs du voyage et cartes translucides.":"ग्लास इफ़ेक्ट: यात्रा के रंगों वाली पृष्ठभूमि और पारदर्शी कार्ड।",
+"Activé ✓":"चालू ✓",
+"Effet verre activé":"ग्लास इफ़ेक्ट चालू",
+"Effet verre désactivé":"ग्लास इफ़ेक्ट बंद",
+"Publié par":"प्रकाशित करने वाले",
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"यह यात्रा पहले से {0} प्रकाशित कर रहे हैं: उनके फ़ॉलोअर्स इसे देख रहे हैं। दोहराव से बचने के लिए सिर्फ़ एक साथी इसे प्रकाशित करता है।"});
