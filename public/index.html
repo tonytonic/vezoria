@@ -130,6 +130,26 @@ if(window.VZ_HOST){ try {
 .sh-nb{background:#EC4D6E;color:#fff;border-radius:9px;min-width:18px;padding:0 6px;font:800 .7rem/18px system-ui;text-align:center}
 .sh-news .sh-close{display:none}.sh-news[open] .sh-open{display:none}.sh-news[open] .sh-close{display:inline}
 </style>
+<style>
+/* ✨ Effet verre */
+body.vz-glass{background:transparent!important}
+body.vz-glass::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background:var(--cream,#FFF4F1)}
+body.vz-glass::after{content:'';position:fixed;inset:-10%;z-index:-1;pointer-events:none;
+  background:radial-gradient(46% 26% at 8% 34%,var(--sun1,#f9a8d4),transparent 72%),radial-gradient(48% 36% at 95% 30%,var(--sun2,#c084fc),transparent 72%),radial-gradient(55% 40% at 18% 72%,var(--sun3,#fdba74),transparent 72%),radial-gradient(45% 34% at 88% 96%,var(--sun1,#f9a8d4),transparent 70%);opacity:.46}
+body.vz-glass .v-box,body.vz-glass .v-card,body.vz-glass .v-day,body.vz-glass .v-tile,body.vz-glass .v-sum,body.vz-glass .bstat,body.vz-glass .cl-prog,body.vz-glass .cl-item,body.vz-glass .v-cl,body.vz-glass .cv-prow,body.vz-glass .cv-souv,body.vz-glass .cv-wish,body.vz-glass .cv-echm,body.vz-glass .cv-note,body.vz-glass .cv-paybox,body.vz-glass .cv-trk,body.vz-glass .cv-tile,body.vz-glass .cv-past,body.vz-glass .cv-stats div,body.vz-glass .cv-dayc,body.vz-glass .cv-lmap,body.vz-glass .cv-dup,body.vz-glass .cv-psrow,body.vz-glass .cv-poi,body.vz-glass .cv-choice,body.vz-glass .cv-idea,body.vz-glass .cv-rc,body.vz-glass .cv-tripcard,body.vz-glass .sh-card,body.vz-glass .fd-post,body.vz-glass .cv-hstats,body.vz-glass .cv-route,body.vz-glass .cv-place,body.vz-glass .cv-disc-card,body.vz-glass .cv-db-dates{background:rgba(255,255,255,.58)!important;border-color:rgba(255,255,255,.75)!important;box-shadow:0 8px 24px -8px rgba(42,18,56,.14),inset 0 1px 0 rgba(255,255,255,.85)!important}
+body.vz-glass .cv-nav{background:rgba(42,18,56,.7)!important;-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);border:1px solid rgba(255,255,255,.14)}
+body.vz-glass .v-sheet{background:rgba(255,255,255,.9)!important;-webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%);border-top:1px solid rgba(255,255,255,.8)}
+body.vz-glass .ui-box{background:rgba(255,255,255,.82)!important;-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);border:1px solid rgba(255,255,255,.8)}
+@supports (background:color-mix(in srgb,red 50%,transparent)){
+  body.vz-glass .cv-nav{background:color-mix(in srgb,var(--navy,#2A1238) 72%,transparent)!important}
+  body.vz-glass .v-sheet{background:color-mix(in srgb,var(--cream,#FFF4F1) 90%,transparent)!important}
+  body.vz-glass .cv-sub{background:color-mix(in srgb,var(--cream,#FFF4F1) 78%,transparent)!important}
+  body.vz-glass .sh-tabs,body.vz-glass .v-sheet .v-actions{background:color-mix(in srgb,var(--cream,#FFF4F1) 86%,transparent)!important}
+}
+@media (prefers-reduced-transparency:reduce){body.vz-glass::after{opacity:.14}body.vz-glass .v-sheet,body.vz-glass .ui-box{background:var(--cream,#fff)!important}}
+.vz-glass-sw{display:flex;align-items:center;justify-content:space-between;gap:10px}
+</style>
+<style>.ab-by{display:inline-flex;align-items:center;gap:3px;cursor:default;background:#eef2ff;border-color:#c7d2fe;color:#3730a3;white-space:nowrap}</style>
 </head>
 <body class="is-public">
 <div id="vz-splash" aria-hidden="true" translate="no"><div class="sp-f"><div class="sp-t" id="vz-sp-t">carnet de voyage</div><div class="sp-r"></div><div class="sp-b"><i></i></div><div class="sp-l" id="vz-sp-l">Chargement de vos souvenirs…</div></div></div>
@@ -5451,7 +5471,7 @@ const CV = (function(){
     h += `<div class="v-box"><h3>👥 Partager</h3><p>Compagnons, abonnés, voyages que tu suis, codes reçus et QR code de l’appli : tout est au même endroit.</p><button class="v-btn" onclick="CV.shareHub()">👥 Ouvrir Partager</button></div>`;
     h += `<div class="v-box"><h3>🎬 Tutos</h3><p>Les 4 espaces du carnet (Préparation, En cours, Passés, Bilan), et l’essentiel pour bien commencer.</p>${tutoBtn()}${ESCALE ? `<button type="button" class="v-btn sec" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button><button type="button" class="v-btn sec" onclick="CV.radarTuto()">✦ Tuto Radar des prix (3 min)</button>` : ''}</div>`;
     h += `<div class="v-box"><h3>🕘 Activité récente</h3>${activity()}</div>
-      ${coffeeBox()}<div class="v-box"><h3>🔄 Mise à jour de l’appli</h3><p>Version installée : ${BUILD}. Si une nouveauté n’apparaît pas, touche le bouton : tes voyages et tes photos ne sont pas touchés.</p><button class="v-btn sec" onclick="CV.forceUpdate()">🔄 Mettre à jour maintenant</button></div><div class="v-box"><h3>📤 Voyage ou photos non arrivés ?</h3><p>Renvoie vers le serveur toutes les fiches et toutes les photos de ce téléphone, par exemple après une suppression sur le serveur. Rien n’est dupliqué.</p><button class="v-btn" onclick="CV.photoResend()">📤 Tout renvoyer</button></div>${window.VZ_HOST ? '' : `<div class="v-box"><h3>🗑 Mes données sur le serveur</h3><p>Tu peux effacer à tout moment ton carnet du serveur (fiches et photos), pour toi et tes compagnons.</p><button class="v-btn danger" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>`}
+      ${coffeeBox()}<div class="v-box"><h3>✨ Apparence</h3><div class="vz-glass-sw"><p style="margin:0">Effet verre : fond aux couleurs du voyage et cartes translucides.</p><button type="button" class="v-btn${M.glass === false ? ' sec' : ''}" style="width:auto;margin:0;flex:none" onclick="CV.glassToggle()">${M.glass === false ? 'Activer' : 'Activé ✓'}</button></div></div><div class="v-box"><h3>🔄 Mise à jour de l’appli</h3><p>Version installée : ${BUILD}. Si une nouveauté n’apparaît pas, touche le bouton : tes voyages et tes photos ne sont pas touchés.</p><button class="v-btn sec" onclick="CV.forceUpdate()">🔄 Mettre à jour maintenant</button></div><div class="v-box"><h3>📤 Voyage ou photos non arrivés ?</h3><p>Renvoie vers le serveur toutes les fiches et toutes les photos de ce téléphone, par exemple après une suppression sur le serveur. Rien n’est dupliqué.</p><button class="v-btn" onclick="CV.photoResend()">📤 Tout renvoyer</button></div>${window.VZ_HOST ? '' : `<div class="v-box"><h3>🗑 Mes données sur le serveur</h3><p>Tu peux effacer à tout moment ton carnet du serveur (fiches et photos), pour toi et tes compagnons.</p><button class="v-btn danger" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>`}
       <div class="v-box"><h3>💾 Sauvegarde</h3>
         <p>Tout est enregistré sur ce téléphone (${Math.round(size/1024)} Ko)${s.on?' et sur le serveur':''}. L’export reste ta copie de secours, et il contient aussi l’archive 2026.</p>
         <button class="v-btn" onclick="CV.zipSheet()">💾 Sauvegarde complète ZIP (avec photos)</button>
@@ -12574,9 +12594,11 @@ ${pm.join('\n')}</Document></kml>`;
   /* ══════════ 🔒 Mode lecture / modification (propre à ce téléphone) ══════════ */
   function applyLock(){
     document.body.classList.toggle('locked', !!M.lock);
+    document.body.classList.toggle('vz-glass', M.glass !== false);
     const b = document.getElementById('cv-lock');
     if(b){ b.textContent = M.lock ? '🔒' : '✏️'; b.setAttribute('aria-label', M.lock ? 'Mode lecture : toucher pour modifier' : 'Mode modification : toucher pour verrouiller'); b.classList.toggle('on', !!M.lock); }
   }
+  function glassToggle(){ M.glass = M.glass === false; persist(); applyLock(); toast(M.glass ? '✨ ' + MSGT('Effet verre activé') : MSGT('Effet verre désactivé')); try { render(); } catch(e){ refresh(); } }
   function toggleLock(){
     M.lock = !M.lock; persist(); applyLock();
     toast(M.lock ? '🔒 Mode lecture : rien ne peut être modifié' : '✏️ Mode modification');
@@ -14651,7 +14673,8 @@ ${pm.join('\n')}</Document></kml>`;
     const ac = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '', nOn = ts.filter(t=>FT()[t.id]).length;
     return `<div class="sh-card sh-tb ab-tab" data-t="ab"><div class="sh-k">📋 Mes voyages pour les abonnés</div>
       <div class="v-sum-small" style="margin-bottom:6px">${nOn} partagé${nOn>1?'s':''} sur ${ts.length}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.</div>
-      ${ts.map(t=>{ const on = !!FT()[t.id], solo = on && ac && grpCodeOf(t.id) !== ac;
+      ${ts.map(t=>{ const on = !!FT()[t.id], solo = on && ac && grpCodeOf(t.id) !== ac, by = !on && t.pubBy && t.pubBy !== M.me && prof(t.pubBy) ? pname(t.pubBy) : '';
+        if(by) return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}</small></span><span class="ab-sw ab-by">👀 <span>Publié par</span> <b data-notr>${esc(by)}</b></span></div>`;
         return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}${solo ? ' · lien à part' : ''}</small></span>
           ${on && !solo ? `<button type="button" class="ab-1" title="Lien pour ce voyage seulement" aria-label="Lien pour ce voyage seulement" onclick="CV.feedShareOne('${t.id}')">🔗</button>` : ''}
           <button type="button" class="ab-sw${on ? ' on' : ''}" onclick="CV.carnetToggle('${t.id}')">${on ? '👀 Partagé' : '🔒 Masqué'}</button></div>`; }).join('')}
@@ -14661,6 +14684,7 @@ ${pm.join('\n')}</Document></kml>`;
   function evToggle(o){ M.evOpen = !!o; persist(); }
   async function carnetToggle(tid){
     const t = R[tid]; if(!t || t.demo) return;
+    if(!FT()[tid] && t.pubBy && t.pubBy !== M.me && prof(t.pubBy)){ alert(MSGT('Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.').replace('{0}', pname(t.pubBy))); return; }
     if(FT()[tid]){
       if(!(await uiConfirm(MSGT('Masquer « {0} » à tous tes abonnés ?').replace('{0}', t.titre) + '\n\n' + MSGT('Ses photos et récits disparaissent chez eux. Tu pourras le repartager quand tu veux.')))) return;
       await feedStop(tid, true); toast('🔒 ' + MSGT('Masqué pour tous tes abonnés')); refresh(); try { if(document.querySelector('.ab-tab')) shareHub(); } catch(e){}
@@ -14737,6 +14761,7 @@ ${pm.join('\n')}</Document></kml>`;
   // côté auteur : les souvenirs (non privés) deviennent des publications
   function feedBuild(tid){
     const c = feedCode(tid), t = R[tid]; if(!c || !t) return 0;
+    if(M.me && prof(M.me) && t.pubBy !== M.me && (!t.pubBy || !prof(t.pubBy))) putQuiet([Object.assign(clone(t), {pubBy:M.me})]);   // les compagnons savent que je le publie
     TS()[ftId(tid)] = c; const out = [];
     // couverture pour les abonnés : ma photo › photo Wikipédia choisie › 1re photo d’un souvenir publié (jamais d’un souvenir privé)
     const cov = t.cover || (t.coverWk ? '' : ((list('souv', x=>x.trip===tid && !x.priv && (x.photos||[]).length).sort((a,b)=>(a.date||'').localeCompare(b.date||''))[0] || {}).photos || [])[0] || '');
@@ -14888,6 +14913,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   async function feedStop(tid, silent){
     const c = FT()[tid]; if(!c) return;
+    if(R[tid] && M.me && R[tid].pubBy === M.me) putQuiet([Object.assign(clone(R[tid]), {pubBy:''})]);
     if(FRX()[tid]){ const gr = list('feedgrant', x=>x.tid === tid); if(gr.length) putQuiet(gr.map(x=>Object.assign(clone(x), {deleted:true}))); delete FRX()[tid]; persist(); }
     if(!silent && !(await uiConfirm('Arrêter la publication ? Tes abonnés ne verront plus ce voyage.'))) return;
     const out = list('feed', f=>f.trip===ftId(tid)).map(f=>Object.assign(clone(f), {deleted:true})); if(R[ftId(tid)]) out.push(Object.assign(clone(R[ftId(tid)]), {deleted:true}));
@@ -15510,7 +15536,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-19m';
+  const BUILD = '2026-10-20a';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15520,7 +15546,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
