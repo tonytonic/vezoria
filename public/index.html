@@ -2753,9 +2753,9 @@ const CV = (function(){
     return [...codes].map(code=>({code, kinds:want.filter(k=>k !== 'social')})).concat(feeds.map(code=>({code, kinds:['social']}))).concat([...fol].map(code=>({code, kinds:['souv']}))).concat(ib).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
   }
   // 🔔 l’auteur est prévenu quand un abonné commente, aime ou commence à suivre (même un abonné sans l’appli)
-  async function socialPush(ftid, s, x){
+  async function socialPush(ftid, s, x, to){
     try {
-      const code = TS()[ftid] || mateCode(String(ftid).replace(/^ft:/, '')); if(!code || !pushApi()) return;
+      const code = to || TS()[ftid] || mateCode(String(ftid).replace(/^ft:/, '')); if(!code || !pushApi()) return;
       const ft = R[ftid] || {}, tid = String(ftid).replace(/^ft:/, ''), kk = await keys(code), kid = kk.token.slice(0, 16);
       const p = {k:'social', who: myName() || 'Un proche', trip: tid, tt: ft.titre || '', it:[{s, x: String(x || '').slice(0, 120)}], n:1};
       const msg = b64(await seal(te.encode(JSON.stringify(p)), code));
@@ -15397,10 +15397,18 @@ ${pm.join('\n')}</Document></kml>`;
     putQuiet([{id, type:'like', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), on: !(cur && cur.on)}]); syncNow(); feedPaint(fid);
     if(!(cur && cur.on)){ fxPlay && fxHeart(); socialPush(f.trip, 'like', f.titre || f.lieu || ''); }
   }
+  // les autres personnes qui ont commenté cette publication (abonnés) : prévenues sur leur propre téléphone
+  function replyPush(f, txt){
+    try {
+      const me = devId(), devs = new Set(commentsOf(f.id).map(c=>c.dev).filter(d=>d && d !== me)), ibs = new Set();
+      devs.forEach(d=>{ const fw = list('follower', x=>!x.deleted && String(x.id).endsWith(':' + d) && x.ib).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0))[0]; if(fw && fw.ib && fw.ib !== M.ib) ibs.add(fw.ib); });
+      [...ibs].slice(0, 8).forEach(ib=>socialPush(f.trip, 'comment', txt, ib));
+    } catch(e){}
+  }
   async function feedComment(fid){
     const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
     if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
-    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socialPush(f.trip, 'comment', txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
+    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socialPush(f.trip, 'comment', txt); replyPush(f, txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
   }
   function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="' + (window.VZ_B || '') + 'anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
   function feedPostHTML(f){
@@ -15549,7 +15557,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20b';
+  const BUILD = '2026-10-20c';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
