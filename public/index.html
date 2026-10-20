@@ -1641,6 +1641,55 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .sh-card{background:#fff;border:1px solid var(--light);border-radius:18px;padding:14px;margin-bottom:10px}.sh-k{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:600;font-size:1.2rem}.sh-card p{font-size:.86rem;color:var(--gray);margin:4px 0 10px}
 .sh-st{display:flex;gap:14px;margin:0 0 10px;font-size:.92rem}.sh-more summary{cursor:pointer;color:var(--gray);font-weight:600;margin:6px 0 10px}
 .sv-so{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--light);background:#fff;border-radius:999px;padding:5px 12px;margin:8px 0 2px;font:inherit;font-size:.82rem;color:var(--ink);cursor:pointer}.sv-so small{color:var(--gray)}
+/* 🛰️ carte 3D en direct */
+.lv-go{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;border-radius:18px;padding:12px 14px;margin:0 0 10px;font:inherit;color:#fff;background:linear-gradient(120deg,#0f2a5c,#1d4ed8 55%,#0ea5e9);box-shadow:0 8px 22px rgba(29,78,216,.28);cursor:pointer;position:relative;overflow:hidden}
+.lv-go::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);transform:translateX(-100%);animation:lvShine 3.6s ease-in-out infinite}
+.lv-go .tx{flex:1;min-width:0;display:flex;flex-direction:column}.lv-go b{font-size:.98rem}.lv-go small{opacity:.88;font-size:.76rem;margin-top:2px}.lv-go .lv-ar{font-size:1.6rem;opacity:.8}
+.lv-dot{position:relative;width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center}
+.lv-dot i{width:12px;height:12px;border-radius:50%;background:#7dd3fc;box-shadow:0 0 0 0 rgba(125,211,252,.8)}
+.lv-go.on .lv-dot i{background:#4ade80;animation:lvPulse 1.6s ease-out infinite}
+@keyframes lvPulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.75)}100%{box-shadow:0 0 0 16px rgba(74,222,128,0)}}
+@keyframes lvShine{0%,55%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.lm-l span.on small{color:#16a34a;font-weight:700}.lm-l span.on i{animation:lvPulse 1.6s ease-out infinite}
+.fd-mm,.lm-map{cursor:pointer}
+#cv-live{position:fixed;inset:0;z-index:9100;background:#0b1a3a;overflow:hidden;overscroll-behavior:none}
+#lv-map{position:absolute;inset:0}
+.lv-top{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;right:64px;display:flex;gap:10px;align-items:flex-start;z-index:3;pointer-events:none}
+.lv-top>*{pointer-events:auto}
+.lv-x{width:40px;height:40px;flex:0 0 40px;border-radius:50%;border:0;background:rgba(10,20,45,.72);color:#fff;font-size:1.05rem;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.lv-t{background:rgba(10,20,45,.72);color:#fff;border-radius:16px;padding:8px 12px;display:flex;flex-direction:column;min-width:0;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.lv-t b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv-t small{opacity:.8;font-size:.74rem}
+.lv-badge{display:inline-flex;align-items:center;gap:6px;font-size:.64rem;font-weight:800;letter-spacing:.08em;color:#4ade80}
+.lv-badge i{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:lvPulse 1.6s ease-out infinite}
+.lv-tools{position:absolute;right:10px;top:calc(env(safe-area-inset-top,0px) + 10px);display:flex;flex-direction:column;gap:8px;z-index:3}
+.lv-tools button{width:44px;height:44px;border-radius:14px;border:0;background:rgba(10,20,45,.72);color:#fff;font-size:1.15rem;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.lv-tools button.on{background:#1d4ed8;box-shadow:0 0 0 2px rgba(255,255,255,.5)}
+.lv-msg{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);background:rgba(10,20,45,.8);color:#fff;padding:14px 18px;border-radius:16px;text-align:center;max-width:80%;z-index:2;font-weight:700}
+.lv-msg small{font-weight:400;opacity:.85}.lv-msg[hidden]{display:none}
+.lv-people{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 40px);display:flex;gap:8px;overflow-x:auto;padding:4px 12px;z-index:3;scrollbar-width:none}
+.lv-people::-webkit-scrollbar{display:none}
+.lv-p{flex:0 0 auto;display:flex;align-items:center;gap:8px;border:0;border-radius:18px;padding:8px 12px 8px 8px;background:rgba(255,255,255,.92);color:#1f2937;font:inherit;text-align:left;box-shadow:0 6px 18px rgba(0,0,0,.25);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.lv-p.on{box-shadow:0 0 0 3px var(--c),0 6px 18px rgba(0,0,0,.25)}
+.lv-p .tx{display:flex;flex-direction:column;line-height:1.2}.lv-p b{font-size:.86rem}.lv-p small{font-size:.7rem;color:#6b7280}
+.lv-p small[data-at]{color:#16a34a;font-weight:700}
+.lv-p .lv-av,.lv-pin .lv-av{width:32px;height:32px;border-radius:50%;background:var(--c,#0ea5e9);color:#fff;display:grid;place-items:center;font-weight:800;flex:0 0 32px}
+.lv-pc .lv-av{background:#fde68a}
+.lv-pin{position:relative;display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.lv-pin .lv-av{width:38px;height:38px;border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.45);position:relative;z-index:2;font-size:1rem}
+.lv-pin::after{content:'';width:0;height:0;border:7px solid transparent;border-top:9px solid #fff;margin-top:-2px}
+.lv-ring{position:absolute;top:-4px;left:50%;width:46px;height:46px;margin-left:-23px;border-radius:50%;background:var(--c);opacity:0;z-index:1}
+.lv-pin.on .lv-ring{animation:lvRing 1.8s ease-out infinite}
+@keyframes lvRing{0%{transform:scale(.8);opacity:.7}100%{transform:scale(2.4);opacity:0}}
+.lv-nm{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:rgba(10,20,45,.82);color:#fff;border-radius:10px;padding:3px 8px;white-space:nowrap;display:flex;flex-direction:column;align-items:center;line-height:1.15}
+.lv-nm b{font-size:.78rem}.lv-nm small{font-size:.64rem;opacity:.85}
+.lv-ph{border:0;padding:0;background:none;display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.lv-ph img,.lv-ph i{width:40px;height:40px;border-radius:10px;border:2px solid #fff;object-fit:cover;box-shadow:0 3px 10px rgba(0,0,0,.4);background:#fff;display:grid;place-items:center;font-style:normal;transition:width .3s,height .3s}
+.lv-ph span{display:none}
+.lv-ph.big{z-index:5}.lv-ph.big img{width:180px;height:135px;border-radius:14px}
+.lv-ph.big span{display:flex;flex-direction:column;background:#fff;color:#1f2937;border-radius:10px;padding:4px 8px;margin-top:4px;max-width:200px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.3)}
+.lv-ph.big span b{font-size:.8rem}.lv-ph.big span small{font-size:.68rem;color:#6b7280}
+#cv-live .maplibregl-ctrl-attrib{font-size:9px}
+@media (prefers-reduced-motion:reduce){.lv-go::after,.lv-ring,.lv-dot i,.lv-badge i{animation:none!important}}
 #cv-feed{position:fixed;inset:0;z-index:2500;background:var(--cream);display:flex;flex-direction:column}
 .fd-top{display:flex;gap:12px;align-items:center;padding:calc(12px + var(--sat,env(safe-area-inset-top,0px))) 16px 12px;background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff}.fd-top div{display:flex;flex-direction:column}.fd-top b{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-size:1.4rem}.fd-top small{opacity:.8;font-size:.75rem}
 .fd-x{width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:1rem;flex:none}
@@ -2670,6 +2719,7 @@ const CV = (function(){
     const pull = manual === 'pull'; if(pull) manual = false;   // « pull » : aller chercher les nouveautés tout de suite (notification touchée), sans message
     if(manual === true){ M.pqPause = 0; M.pqFull = {}; }   // « Synchroniser » à la main : on réessaie d’envoyer les photos tout de suite
     try { mateFeedSync(); } catch(e){}   // codes abonnés des voyages communs publiés par un compagnon
+    fkLive();
     const mainOn = !!(M.sync.on && M.sync.code);
     if(!mainOn && !(M.spaces||[]).length) return;
     if(manual !== true && !pull && M.syncPause && Date.now() < M.syncPause) return;   // pause demandée par le serveur (trop de synchros)
@@ -10637,7 +10687,7 @@ ${pm.join('\n')}</Document></kml>`;
   function geoToggle(){
     const t = trip(); if(!t) return; const on = !geoOn(t.id);
     put({id:gpId(t.id), type:'geopref', trip:t.id, who:M.me || '', on}, on ? '📍 ' + MSGT('Le lieu de tes souvenirs apparaît sur la carte') : '🔒 ' + MSGT('Le lieu de tes souvenirs n’apparaît plus sur la carte'));
-    if(feedCode(t.id)) feedBuild(t.id); syncNow(); refresh();
+    if(feedCode(t.id)) feedBuild(t.id); fkMine(t.id); syncNow(); refresh();
   }
   const trkRec = (tid, d, who) => (who && R['trk:' + tid + ':' + d + ':' + who]) || R['trk:' + tid + ':' + d];
   // 👀 Chaque voyageur choisit s’il montre sa route aux abonnés (désactivé par défaut)
@@ -10647,22 +10697,38 @@ ${pm.join('\n')}</Document></kml>`;
     const t = trip(); if(!t) return; const on = !trkPubOn(t.id);
     if(on && !(await uiConfirm('Montrer ta position aux abonnés de ce voyage ?\n\nIls verront sur une carte, à ton nom : le trajet enregistré par le suivi s’il est actif, sinon le lieu de tes souvenirs (précision ≈ 100 m), avec l’heure.\nTu peux arrêter quand tu veux : la carte disparaît chez eux à la synchro suivante.\nTes compagnons choisissent chacun pour eux.'))) return;
     put({id:tpId(t.id), type:'trkpub', trip:t.id, who:M.me || '', on}, on ? '👀 Route visible des abonnés' : '🔒 Route masquée aux abonnés');
-    feedBuild(t.id); syncNow(); refresh();
+    if(feedCode(t.id)) feedBuild(t.id); fkMine(t.id); syncNow(); refresh();
   }
   function feedTrk(tid){   // la route des voyageurs qui l’ont accepté, allégée (≤ 300 points, ≈ 100 m)
     const by = trkByWho(tid, true), people = [];
     Object.entries(by).forEach(([w, pts])=>{ if(!trkPubOn(tid, w) || !pts.length) return;
       const step = Math.max(1, Math.ceil(pts.length / 300)), P = pts.filter((_, i)=>i % step === 0 || i === pts.length - 1).map(p=>[+(+p[0]).toFixed(3), +(+p[1]).toFixed(3), p[2] || 0]);
-      people.push({n: w ? pname(w) : '', c: w ? pcol(w) : '#0ea5e9', pts:P}); });
+      people.push({n: w ? pname(w) : '', c: w ? pcol(w) : '#0ea5e9', pts:P, gps: trkHas(tid, w) ? 1 : 0}); });
     return people;
   }
+  const trkHas = (tid, w) => list('trk', r=>r.trip===tid && (r.pts||[]).length && (r.who || r.id.split(':')[3] || '') === (w || '')).length > 0;
+  // 🛰️ ma route en direct chez les abonnés : écrite par MON téléphone (je publie le voyage ou je suis compagnon),
+  // dès qu’un point GPS est enregistré, sans attendre que celui qui a publié le voyage ouvre son appli
+  function fkMine(tid){
+    try {
+      const t = R[tid]; if(!t || t.deleted || t.type !== 'trip' || !socCode(tid)) return;
+      const me = M.me || '', id = 'fk:' + tid + ':' + (me || 'moi'), cur = R[id];
+      if(!trkPubOn(tid, me)){ if(cur && !cur.deleted) putQuiet([{id, type:'feedtrk', trip:ftId(tid), who:me, n: me ? pname(me) : '', people:[], deleted:true}]); return; }
+      const pts = trkByWho(tid, true)[me] || []; if(!pts.length) return;
+      const step = Math.max(1, Math.ceil(pts.length / 400)), P = pts.filter((_, i)=>i % step === 0 || i === pts.length - 1).map(p=>[+(+p[0]).toFixed(3), +(+p[1]).toFixed(3), p[2] || 0]);
+      const rec = {id, type:'feedtrk', trip:ftId(tid), who:me, people:[{n: me ? pname(me) : (myName() || ''), c: me ? pcol(me) : '#0ea5e9', pts:P, gps: trkHas(tid, me) ? 1 : 0}]};
+      if(cur && !cur.deleted && stripStamp(cur) === stripStamp(rec)) return;
+      putQuiet([rec]);
+    } catch(e){}
+  }
+  function fkLive(){ try { trips().forEach(t=>{ if(t && !t.deleted && tripPhase(t) === 'live' && socCode(t.id)) fkMine(t.id); }); } catch(e){} }
   function trkHTML(){
     const t = trip(); if(!t) return '';
     { const w = trkWin(t); if(w !== 'ok') return w === 'after' ? '' : `<div class="cv-trk"><span class="dot"></span><span class="tx"><b>Suivi GPS</b><small>${w === 'nodate' ? 'Ajoute les dates du voyage : le suivi est proposé seulement pendant le voyage.' : 'Proposé du ' + fdate(t.debut) + ' au ' + fdate(t.fin) + ', puis coupé automatiquement.'}</small></span></div>`; }
     const on = trkOn() && M.trk.trip === t.id, today = trkRec(t.id, isoToday(), M.me), n = today ? today.pts.length : 0;
     let km_ = 0; if(today) for(let i=1;i<today.pts.length;i++) km_ += km({lat:today.pts[i-1][0], lng:today.pts[i-1][1]}, {lat:today.pts[i][0], lng:today.pts[i][1]});
     return `<div class="cv-trk${on?' on':''}"><span class="dot"></span><span class="tx"><b>${on ? 'Voyage suivi' : 'Suivi arrêté'}</b><small>${on ? `${n} point${n>1?'s':''} aujourd’hui · ${km_ < 10 ? km_.toFixed(1) : Math.round(km_)} km · enregistre ta route quand l’appli est ouverte · coupé seul après le ${fdate(t.fin)}` : 'Chacun l’active ou le coupe quand il veut. Coupé seul après le ' + fdate(t.fin) + '.'}</small></span>
-      <button type="button" onclick="CV.trkToggle()">${on ? 'Arrêter' : 'Activer'}</button></div>${on ? `<button type="button" class="cv-tjbtn" onclick="CV.tjOpen()"><span>🚗</span><span><b>Mode trajet</b><small>Écran allumé, GPS précis : pour une route, un train, une rando</small></span></button>` : ''}${feedCode(t.id) ? `<button type="button" class="cv-trkpub${trkPubOn(t.id) ? ' on' : ''}" onclick="CV.trkPub()"><span>${trkPubOn(t.id) ? '👀' : '🔒'}</span><span><b>${trkPubOn(t.id) ? 'Ta position est visible des abonnés' : 'Ta position est cachée aux abonnés'}</b><small>${trkPubOn(t.id) ? 'Touche pour la cacher' : 'Ta route si le suivi est actif, sinon le lieu de tes souvenirs'}</small></span></button>` : ''}<button type="button" class="cv-trkpub${geoOn(t.id) ? ' on' : ''}" onclick="CV.geoToggle()"><span>${geoOn(t.id) ? '📍' : '🔒'}</span><span><b>${geoOn(t.id) ? 'Le lieu de tes souvenirs est sur la carte' : 'Le lieu de tes souvenirs est caché'}</b><small>${geoOn(t.id) ? 'Un point à ton nom quand tu partages un souvenir · touche pour le cacher' : 'Touche pour le montrer à tes compagnons'}</small></span></button>`;
+      <button type="button" onclick="CV.trkToggle()">${on ? 'Arrêter' : 'Activer'}</button></div>${on ? `<button type="button" class="cv-tjbtn" onclick="CV.tjOpen()"><span>🚗</span><span><b>Mode trajet</b><small>Écran allumé, GPS précis : pour une route, un train, une rando</small></span></button>` : ''}${socCode(t.id) ? `<button type="button" class="cv-trkpub${trkPubOn(t.id) ? ' on' : ''}" onclick="CV.trkPub()"><span>${trkPubOn(t.id) ? '👀' : '🔒'}</span><span><b>${trkPubOn(t.id) ? 'Ta position est visible des abonnés' : 'Ta position est cachée aux abonnés'}</b><small>${trkPubOn(t.id) ? 'Touche pour la cacher' : 'Ta route si le suivi est actif, sinon le lieu de tes souvenirs'}</small></span></button>` : ''}<button type="button" class="cv-trkpub${geoOn(t.id) ? ' on' : ''}" onclick="CV.geoToggle()"><span>${geoOn(t.id) ? '📍' : '🔒'}</span><span><b>${geoOn(t.id) ? 'Le lieu de tes souvenirs est sur la carte' : 'Le lieu de tes souvenirs est caché'}</b><small>${geoOn(t.id) ? 'Un point à ton nom quand tu partages un souvenir · touche pour le cacher' : 'Touche pour le montrer à tes compagnons'}</small></span></button>`;
   }
   async function trkToggle(){
     const t = trip(); if(!t) return;
@@ -10671,6 +10737,7 @@ ${pm.join('\n')}</Document></kml>`;
     { const w = trkWin(t); if(w !== 'ok'){ alert(w === 'nodate' ? 'Ajoute d’abord les dates du voyage : le suivi GPS ne fonctionne que pendant le voyage.' : w === 'before' ? 'Le suivi GPS sera proposé à partir du premier jour du voyage.' : 'Ce voyage est terminé : le suivi GPS n’est plus proposé.'); return; } }
     if(!M.trkSeen && !(await uiConfirm('Activer le suivi du voyage ?\n\n• Ta position est enregistrée environ tous les 300 m, seulement quand l’appli est ouverte (une appli web ne peut pas suivre en arrière-plan, téléphone en poche).\n• Un point est aussi ajouté à chaque ouverture de l’appli.\n• La route est partagée uniquement avec les personnes de CE voyage.\n• Tu peux l’arrêter à tout moment.'))) return;
     M.trkSeen = 1; M.trk = {on:true, trip:t.id, since:Date.now()}; persist(); trkStart(); toast('🛰️ Suivi activé'); refresh();
+    if(socCode(t.id) && !trkPubOn(t.id)) setTimeout(()=>{ try { trkPub(); } catch(e){} }, 500);
   }
   function trkAdd(pos){
     if(!trkOn() || trkAutoOff()) return; const t = R[M.trk.trip]; if(!t || t.deleted) return;
@@ -10687,7 +10754,8 @@ ${pm.join('\n')}</Document></kml>`;
       if(TJ){ TJ.km += dk; if(c.speed == null) TJ.sp = dk / dh; }
     }
     r.pts.push(p); trkBuf = r;
-    if(Date.now() - trkLastSave > (drive ? 60000 : 5 * 60000) || r.pts.length === 1){ trkLastSave = Date.now(); put(r, false); trkBuf = null; }
+    if(Date.now() - trkLastSave > (drive ? 60000 : 5 * 60000) || r.pts.length === 1){ trkLastSave = Date.now(); put(r, false); trkBuf = null; fkMine(t.id); }
+    if(LV && LV.key === t.id) liveSoon();
     const el = document.querySelector('.cv-trk small'); if(el && M.tab==='prog') el.textContent = r.pts.length + ' point(s) aujourd’hui';
   }
   /* 🚗 Mode trajet : écran maintenu allumé (Wake Lock), GPS précis, un point tous les 50 m environ.
@@ -10723,7 +10791,7 @@ ${pm.join('\n')}</Document></kml>`;
     toast('🚗 ' + fmtKm(k)); refresh();
   }
   setInterval(trkAutoOff, 3600e3);
-  function trkFlush(){ if(trkBuf){ put(trkBuf, false); trkBuf = null; trkLastSave = Date.now(); } }
+  function trkFlush(){ if(trkBuf){ const tid = trkBuf.trip; put(trkBuf, false); trkBuf = null; trkLastSave = Date.now(); fkMine(tid); } }
   function trkStart(){
     if(!trkOn() || trkAutoOff() || trkWatch !== null || !navigator.geolocation) return;
     trkWatch = navigator.geolocation.watchPosition(trkAdd, ()=>{}, TJ ? {enableHighAccuracy:true, maximumAge:5000, timeout:30000} : {enableHighAccuracy:false, maximumAge:120000, timeout:60000});
@@ -14246,9 +14314,191 @@ ${pm.join('\n')}</Document></kml>`;
   function liveMapCard(){
     const t = trip(); if(!t || tripPhase(t) !== 'live' || hidden('blk:lmap')) return '';
     const by = trkByWho(t.id, true), ws = Object.keys(by); if(!ws.length) return '';
-    return `<div class="cv-lmap"><div class="lm-h">🛰️ Où on en est</div><div class="lm-map" data-lmap="${t.id}"><div class="v-sum-small">🗺️ Carte en cours…</div></div>
-      <div class="lm-l">${ws.map(w=>{ const l = by[w][by[w].length-1]; return `<span><i style="background:${w ? pcol(w) : '#0ea5e9'}"></i>${trkRec(t.id, isoToday(), w) && (trkRec(t.id, isoToday(), w).who || '') === w ? '🛰️' : '📸'} ${esc(w ? pname(w) : '—')} <small>${l[2] ? when(l[2]) : ''}</small></span>`; }).join('')}</div>
+    const live = ws.filter(w=>{ const l = by[w][by[w].length-1]; return l[2] && Date.now() - l[2] < LIVE_MS; }).map(w=>w ? pname(w) : '—');
+    return `<div class="cv-lmap">${liveBtnHTML(t.id, live, ws.length)}<div class="lm-h">🛰️ Où on en est</div><div class="lm-map" data-lmap="${t.id}" onclick="CV.liveOpen('${t.id}')"><div class="v-sum-small">🗺️ Carte en cours…</div></div>
+      <div class="lm-l">${ws.map(w=>{ const l = by[w][by[w].length-1], on = l[2] && Date.now() - l[2] < LIVE_MS, kmd = liveKmDay(by[w]); return `<span${on ? ' class="on"' : ''}><i style="background:${w ? pcol(w) : '#0ea5e9'}"></i>${trkRec(t.id, isoToday(), w) && (trkRec(t.id, isoToday(), w).who || '') === w ? '🛰️' : '📸'} <b data-notr>${esc(w ? pname(w) : '—')}</b> <small>${on ? '<span>en direct</span> · ' : ''}<span>${l[2] ? when(l[2]) : ''}</span>${kmd >= 0.1 ? ' · <span>' + fmtKm(kmd) + ' aujourd’hui</span>' : ''}</small></span>`; }).join('')}</div>
       <button type="button" class="v-btn sec" onclick="CV.worldTrip('${t.id}')">🌍 Voir sur la carte du monde</button></div>`;
+  }
+
+  /* ══════════ 🛰️ Carte 3D en direct : où est chacun, sa route qui se dessine, ses photos — mise à jour toute seule ══════════
+     key = id du voyage (compagnon : les traces du voyage) ou « ft:… » (abonné : ce que chaque voyageur a accepté de montrer) */
+  let LV = null, lvSoonT = 0;
+  function liveKmDay(pts){ const d0 = new Date(); d0.setHours(0,0,0,0); let k = 0, a = null; (pts||[]).forEach(p=>{ if((p[2]||0) < +d0) return; if(a) k += km({lat:a[0], lng:a[1]}, {lat:p[0], lng:p[1]}); a = p; }); return k; }
+  function liveBtnHTML(key, live, n){
+    return `<button type="button" class="lv-go${live.length ? ' on' : ''}" onclick="CV.liveOpen('${esc(key)}')"><span class="lv-dot"><i></i></span><span class="tx"><b>${live.length ? 'Suivre en direct sur la carte 3D' : 'La carte 3D du voyage'}</b><small>${live.length ? '<span data-notr>' + esc(live.slice(0, 4).join(', ')) + '</span>' + (live.length > 4 ? ' +' + (live.length - 4) : '') + ' · position mise à jour toute seule' : n ? 'La route de chacun, ses photos, sa dernière position' : 'Les photos du voyage sur la carte'}</small></span><span class="lv-ar">›</span></button>`;
+  }
+  function liveData(key){
+    if(/^ft:/.test(key)){ const r = feedTrkRec(key), ft = R[key] || {};
+      return {title: ft.titre || '', sub: 'Voyage de ' + ftTeamTxt(ft), people: r ? r.people.map(p=>({n:p.n || '—', c:p.c || '#0ea5e9', pts:p.pts || [], gps:!!p.gps})) : [],
+        ph: list('feed', f=>f.trip===key && f.lat != null && f.lng != null).map(f=>({id:f.id, lat:+f.lat, lng:+f.lng, ph:(f.photos||[])[0] || '', t:f.titre || f.lieu || '', by:f.by || '', d:f.date || ''}))}; }
+    const t = R[key] || {}, by = trkByWho(key, true);
+    return {title: t.titre || '', sub: (t.voyageurs||[]).length > 1 ? (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').join(' · ') : '',
+      people: Object.entries(by).filter(([, p])=>p.length).map(([w, pts])=>({n: w ? pname(w) : '—', c: w ? pcol(w) : '#0ea5e9', pts, gps: trkHas(key, w), me: w === (M.me || '')})),
+      ph: list('souv', x=>x.trip===key && x.lat != null && x.lng != null && geoOn(key, x.createdBy || '')).map(x=>({id:x.id, lat:+x.lat, lng:+x.lng, ph:(x.photos||[])[0] || '', t:x.titre || x.lieu || '', by: x.createdBy && (t.voyageurs||[]).length > 1 ? pname(x.createdBy) : '', d:x.date || ''}))};
+  }
+  const lvSig = D => JSON.stringify([D.people.map(p=>[p.n, p.c, p.pts.length, p.pts[p.pts.length-1]]), D.ph.map(p=>p.id + p.ph)]);
+  async function liveOpen(key){
+    if(!key) return; liveClose(true); closeSheet(true);
+    const ov = document.createElement('div'); ov.id = 'cv-live'; document.body.appendChild(ov); document.body.style.overflow = 'hidden';
+    const D = liveData(key);
+    ov.innerHTML = `<div id="lv-map"></div>
+      <div class="lv-top"><button type="button" class="lv-x" onclick="CV.liveClose()" aria-label="Fermer">✕</button>
+        <div class="lv-t"><span class="lv-badge"><i></i>EN DIRECT</span><b data-notr>${esc(D.title)}</b><small><span>${esc(D.sub)}</span><span id="lv-up"></span></small></div></div>
+      <div class="lv-tools"><button type="button" data-b="sat" class="on" onclick="CV.liveBase('sat')" aria-label="Satellite">🛰️</button><button type="button" data-b="plan" onclick="CV.liveBase('plan')" aria-label="Plan">🗺️</button><button type="button" onclick="CV.liveFit()" aria-label="Tout le monde">🎯</button><button type="button" id="lv-orb" class="on" onclick="CV.liveOrbit()" aria-label="Tourner">🎥</button></div>
+      <div class="lv-msg" id="lv-msg">🌍 Chargement de la carte 3D…</div>
+      <div class="lv-people" id="lv-people"></div>`;
+    LV = {key, map:null, mk:{}, phm:{}, sig:'', orbit:true, focus:null, prog:0, t0:Date.now(), seen:Date.now(), n:0, sweep:0};
+    const me = LV;
+    try {
+      await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
+      if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
+      if(LV !== me) return;
+      const style = {version:8,
+        sources:{
+          sat:{type:'raster', tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'], tileSize:256, maxzoom:18, attribution:'Esri, Maxar'},
+          plan:{type:'raster', tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize:256, maxzoom:19, attribution:'© contributeurs OpenStreetMap'},
+          dem:{type:'raster-dem', tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], tileSize:256, maxzoom:14, encoding:'terrarium', attribution:'Mapzen terrain'}},
+        layers:[{id:'bg', type:'background', paint:{'background-color':'#0b1a3a'}},
+          {id:'sat', type:'raster', source:'sat'}, {id:'plan', type:'raster', source:'plan', layout:{visibility:'none'}}],
+        sky:{'sky-color':'#7fb3ff', 'horizon-color':'#e8f1ff', 'fog-color':'#ffffff', 'sky-horizon-blend':0.5, 'horizon-fog-blend':0.6, 'fog-ground-blend':0.6, 'atmosphere-blend':0}};
+      try {   // noms des villes et bâtiments en relief (OpenFreeMap, libre et sans clé)
+        const lib = await withTimeout(fetch('https://tiles.openfreemap.org/styles/liberty').then(r=>r.json()), 5000);
+        const vs = Object.entries(lib.sources||{}).find(([,v])=>v.type==='vector');
+        if(lib.glyphs && vs){ style.glyphs = lib.glyphs; style.sources.ofm = vs[1];
+          const lang = (l => /^(ar|hi)$/.test(l) ? 'en' : l)((window.I18N && I18N.lang) || 'fr');
+          style.layers.push({id:'b3d', type:'fill-extrusion', source:'ofm', 'source-layer':'building', minzoom:14.5,
+            paint:{'fill-extrusion-color':'#f4efe6', 'fill-extrusion-height':['coalesce',['get','render_height'],8], 'fill-extrusion-base':['coalesce',['get','render_min_height'],0], 'fill-extrusion-opacity':['interpolate',['linear'],['zoom'],14.5,0,15.5,.8]}});
+          (lib.layers||[]).filter(l=>l.source===vs[0] && l.type==='symbol' && l['source-layer']==='place' && /country|city|town|village|suburb|state|capital/.test(l.id)).forEach(l=>{ const x = JSON.parse(JSON.stringify(l)); x.source = 'ofm';
+            x.layout = Object.assign({}, x.layout, {'text-field':['coalesce',['get','name:' + lang],['get','name:latin'],['get','name']]});
+            x.paint = Object.assign({}, x.paint, {'text-color':'#ffffff', 'text-halo-color':'rgba(10,20,50,.85)', 'text-halo-width':1.4}); style.layers.push(x); });
+        }
+      } catch(e){}
+      if(LV !== me) return;
+      const map = new maplibregl.Map({container:'lv-map', style, center:[2.35, 46.6], zoom:4, pitch:55, bearing:-20, maxPitch:75, maxZoom:18,
+        pixelRatio:Math.min(2, window.devicePixelRatio || 1), maxTileCacheSize:80, fadeDuration:0, attributionControl:{compact:true}});
+      LV.map = map;
+      const off = () => { if(LV){ LV.orbit = false; const b = document.getElementById('lv-orb'); if(b) b.classList.remove('on'); } };
+      ['pointerdown','touchstart','wheel'].forEach(ev=>map.getContainer().addEventListener(ev, off, {passive:true}));
+      let ok = false; const go = ()=>{   // dès que le style est prêt (sans attendre toutes les images : réseau lent en voyage)
+        if(LV !== me || ok) return; ok = true;
+        try { map.setTerrain({source:'dem', exaggeration:1.4}); } catch(e){}
+        { const m = document.getElementById('lv-msg'); if(m) m.hidden = true; }
+        liveDraw(true); liveFit(true);
+        LV.iv = setInterval(liveTick, 25000); LV.up = setInterval(liveUp, 5000); liveUp();
+        LV.raf = requestAnimationFrame(liveAnim);
+      };
+      map.on('style.load', go); map.on('load', go); map.on('error', ()=>{});
+    } catch(e){ const m = document.getElementById('lv-msg'); if(m) m.textContent = '⚠️ ' + (e.message || 'Carte indisponible'); }
+  }
+  function liveClose(quiet){
+    if(!LV) { const o = document.getElementById('cv-live'); if(o) o.remove(); return; }
+    clearInterval(LV.iv); clearInterval(LV.up); cancelAnimationFrame(LV.raf); clearTimeout(lvSoonT);
+    try { if(LV.map) LV.map.remove(); } catch(e){}
+    LV = null; const o = document.getElementById('cv-live'); if(o) o.remove();
+    if(!quiet && !document.getElementById('cv-feed') && !document.getElementById('cv-tj')) document.body.style.overflow = '';
+  }
+  function liveSoon(){ clearTimeout(lvSoonT); lvSoonT = setTimeout(()=>{ if(LV) liveDraw(false); }, 600); }
+  async function liveTick(){
+    if(!LV || document.visibilityState !== 'visible' || LV.busy) return; LV.busy = true;
+    try { await syncNow(); } catch(e){} finally { if(LV) LV.busy = false; }
+    if(LV){ LV.seen = Date.now(); liveDraw(false); liveUp(); }
+  }
+  function liveUp(){
+    const e = document.getElementById('lv-up'); if(!e || !LV) return; const s = Math.round((Date.now() - LV.seen) / 1000);
+    e.textContent = (e.previousSibling && e.previousSibling.textContent ? ' · ' : '') + (s < 8 ? 'à jour' : 'actualisé il y a ' + s + ' s');
+    document.querySelectorAll('#lv-people [data-at]').forEach(x=>{ const at = +x.dataset.at; x.style.color = at && Date.now() - at < LIVE_MS ? '' : '#6b7280'; x.innerHTML = at ? (Date.now() - at < LIVE_MS ? '● <span>en direct</span> · ' : '') + '<span>' + when(at) + '</span>' : ''; });
+  }
+  function liveBase(b){
+    if(!LV || !LV.map) return; ['sat','plan'].forEach(x=>{ try { LV.map.setLayoutProperty(x, 'visibility', x === b ? 'visible' : 'none'); } catch(e){} });
+    document.querySelectorAll('#cv-live .lv-tools [data-b]').forEach(x=>x.classList.toggle('on', x.dataset.b === b));
+  }
+  function liveOrbit(){ if(!LV) return; LV.orbit = !LV.orbit; const b = document.getElementById('lv-orb'); if(b) b.classList.toggle('on', LV.orbit); }
+  function liveFit(first){
+    if(!LV || !LV.map) return; const D = LV.D || liveData(LV.key); LV.focus = null;
+    const pts = [].concat(...D.people.map(p=>p.pts.map(x=>[x[1], x[0]])), D.ph.map(p=>[p.lng, p.lat]));
+    const m = document.getElementById('lv-msg');
+    if(!pts.length){ if(m){ m.hidden = false; m.innerHTML = '🛰️ Personne ne partage encore sa position.<br><small>Dès qu’un voyageur active le suivi GPS (ou partage un souvenir avec son lieu), il apparaît ici.</small>'; } return; }
+    if(m) m.hidden = true;
+    // on cadre surtout les dernières positions : c’est « où ils sont maintenant » qui compte
+    const last = D.people.map(p=>p.pts[p.pts.length-1]).filter(Boolean).map(x=>[x[1], x[0]]);
+    const use = last.length ? last.concat(D.people.flatMap(p=>p.pts.slice(-12).map(x=>[x[1], x[0]]))) : pts;
+    const b = new maplibregl.LngLatBounds(); use.forEach(p=>b.extend(p));
+    try { LV.map.fitBounds(b, {padding:{top:120, bottom:170, left:50, right:60}, maxZoom:15.5, pitch:58, bearing:LV.map.getBearing(), duration:first ? 2800 : 1400, essential:true}); } catch(e){}
+  }
+  function liveFocus(i){
+    if(!LV || !LV.map || !LV.D) return; const p = LV.D.people[+i]; if(!p) return; const l = p.pts[p.pts.length-1];
+    LV.focus = p.n; LV.map.flyTo({center:[l[1], l[0]], zoom:16, pitch:65, bearing:(LV.map.getBearing() + 40) % 360, duration:2200, essential:true});
+    document.querySelectorAll('#lv-people .lv-p').forEach((x, k)=>x.classList.toggle('on', k === +i));
+  }
+  function liveDraw(first){
+    if(!LV || !LV.map || !LV.map.isStyleLoaded || !LV.map.getStyle()) return;
+    const map = LV.map, D = liveData(LV.key), sig = lvSig(D); if(!first && sig === LV.sig) return;
+    const grew = !first && LV.D && D.people.some(p=>{ const o = LV.D.people.find(q=>q.n === p.n); return !o || p.pts.length > o.pts.length; });
+    LV.sig = sig; LV.D = D;
+    // routes : un calque par voyageur, à sa couleur (le trait se dessine à l’ouverture, puis une lueur le parcourt)
+    D.people.forEach((p, i)=>{ const src = 'lv-r' + i, gj = {type:'Feature', properties:{}, geometry: p.pts.length > 1 ? {type:'LineString', coordinates:p.pts.map(x=>[x[1], x[0]])} : {type:'Point', coordinates:[p.pts[0][1], p.pts[0][0]]}};
+      if(map.getSource(src)) map.getSource(src).setData(gj);
+      else { map.addSource(src, {type:'geojson', data:gj, lineMetrics:true});
+        map.addLayer({id:src + 'g', type:'line', source:src, layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':p.c, 'line-width':12, 'line-blur':8, 'line-opacity':.45}});
+        map.addLayer({id:src + 'l', type:'line', source:src, layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-width':4.5, 'line-gradient':lvGrad(p.c, first ? 0.001 : 1, -1)}}); } });
+    for(let i = D.people.length; map.getSource('lv-r' + i); i++){ ['g','l'].forEach(s=>{ if(map.getLayer('lv-r' + i + s)) map.removeLayer('lv-r' + i + s); }); map.removeSource('lv-r' + i); }
+    if(first) LV.prog = 0;
+    // chacun : un médaillon à sa couleur qui pulse s’il est en direct
+    const keep = new Set();
+    D.people.forEach((p, i)=>{ const l = p.pts[p.pts.length-1], on = l[2] && Date.now() - l[2] < LIVE_MS, k = p.n; keep.add(k);
+      let m = LV.mk[k];
+      if(!m){ const el = document.createElement('div'); el.className = 'lv-pin'; el.onclick = ev => { ev.stopPropagation(); liveFocus(LV.D.people.findIndex(q=>q.n === k)); };
+        m = LV.mk[k] = {el, mk:new maplibregl.Marker({element:el, anchor:'bottom'}).setLngLat([l[1], l[0]]).addTo(map), at:[l[1], l[0]]}; }
+      m.el.style.setProperty('--c', p.c); m.el.classList.toggle('on', !!on);
+      m.el.innerHTML = `<span class="lv-ring"></span><span class="lv-av">${esc(((p.n || '?')[0] || '?').toUpperCase())}</span><span class="lv-nm"><b data-notr>${esc(p.n)}</b><small>${p.gps ? '🛰️' : '📸'} ${l[2] ? when(l[2]) : ''}</small></span>`;
+      liveMove(m, [l[1], l[0]]); });
+    Object.keys(LV.mk).forEach(k=>{ if(!keep.has(k)){ LV.mk[k].mk.remove(); delete LV.mk[k]; } });
+    // photos : vignettes posées sur la carte, touchées → elles s’agrandissent
+    const pk = new Set();
+    D.ph.forEach(x=>{ pk.add(x.id); if(LV.phm[x.id]) return; const el = document.createElement('button'); el.type = 'button'; el.className = 'lv-ph';
+      el.innerHTML = `${x.ph ? `<img data-ph="${esc(x.ph)}.t" alt="">` : '<i>📍</i>'}<span><b data-notr>${esc(x.t)}</b><small>${x.by ? '📸 <span data-notr>' + esc(x.by) + '</span> · ' : ''}${x.d ? fdate(x.d) : ''}</small></span>`;
+      el.onclick = ev => { ev.stopPropagation(); const was = el.classList.contains('big'); document.querySelectorAll('#cv-live .lv-ph.big').forEach(b=>b.classList.remove('big')); if(!was){ el.classList.add('big'); LV.orbit = false; LV.map.easeTo({center:[x.lng, x.lat], duration:900}); } };
+      LV.phm[x.id] = new maplibregl.Marker({element:el, anchor:'bottom'}).setLngLat([x.lng, x.lat]).addTo(map); });
+    Object.keys(LV.phm).forEach(k=>{ if(!pk.has(k)){ LV.phm[k].remove(); delete LV.phm[k]; } });
+    hydrate();
+    // bandeau du bas : chacun, sa dernière position, ses km du jour
+    const pe = document.getElementById('lv-people');
+    if(pe) pe.innerHTML = D.people.map((p, i)=>{ const l = p.pts[p.pts.length-1], kd = liveKmDay(p.pts);
+      return `<button type="button" class="lv-p${LV.focus === p.n ? ' on' : ''}" style="--c:${esc(p.c)}" onclick="CV.liveFocus(${i})"><span class="lv-av">${esc(((p.n || '?')[0] || '?').toUpperCase())}</span><span class="tx"><b data-notr>${esc(p.n)}${p.me ? ' (moi)' : ''}</b><small data-at="${l[2] || 0}"></small>${kd >= 0.1 ? `<small>${p.gps ? '🛰️' : '📸'} ${fmtKm(kd)} aujourd’hui</small>` : `<small>${p.gps ? '🛰️ Suivi GPS' : '📸 Lieu des souvenirs'}</small>`}</span></button>`; }).join('')
+      + (D.ph.length ? `<span class="lv-p lv-pc"><span class="lv-av">📸</span><span class="tx"><b>${D.ph.length}</b><small>souvenir${D.ph.length > 1 ? 's' : ''} sur la carte</small></span></span>` : '');
+    liveUp();
+    if(first) return;
+    if(LV.focus){ const i = D.people.findIndex(p=>p.n === LV.focus); if(i >= 0){ const l = D.people[i].pts[D.people[i].pts.length-1]; map.easeTo({center:[l[1], l[0]], duration:1500}); } }
+    else if(grew && LV.orbit) liveFit();
+    if(grew) LV.sweep = 0;
+  }
+  // glissement du médaillon vers sa nouvelle position (au lieu d’un saut)
+  function liveMove(m, to){
+    const fr = m.at || to; m.at = to; if(Math.abs(fr[0] - to[0]) + Math.abs(fr[1] - to[1]) < 1e-7){ m.mk.setLngLat(to); return; }
+    const t0 = performance.now(), d = 1600; const st = now => { const k = Math.min(1, (now - t0) / d), e = k < .5 ? 2*k*k : 1 - Math.pow(-2*k + 2, 2) / 2;
+      try { m.mk.setLngLat([fr[0] + (to[0] - fr[0]) * e, fr[1] + (to[1] - fr[1]) * e]); } catch(x){} if(k < 1) requestAnimationFrame(st); }; requestAnimationFrame(st);
+  }
+  // trait : couleur jusqu’à « p », transparent après ; « s » = position de la lueur blanche qui parcourt la route
+  function lvGrad(c, p, s){
+    p = Math.max(0.001, Math.min(1, p));
+    const st = [0, c];
+    if(s > 0.03 && s < p - 0.01){ const a = Math.max(0.0005, s - 0.06); if(a > 0.0005) st.push(a, c); st.push(s, '#ffffff', Math.min(p - 0.0004, s + 0.01), c); }
+    if(p < 1){ st.push(p, c, Math.min(1, p + 0.0003), 'rgba(0,0,0,0)'); if(p + 0.0003 < 1) st.push(1, 'rgba(0,0,0,0)'); }
+    else st.push(1, c);
+    const out = ['interpolate', ['linear'], ['line-progress']]; for(let i = 0; i < st.length; i += 2) if(i === 0 || st[i] > out[out.length - 2]) out.push(st[i], st[i+1]);
+    return out;
+  }
+  function liveAnim(now){
+    if(!LV || !LV.map) return; const map = LV.map, D = LV.D;
+    LV.raf = requestAnimationFrame(liveAnim);
+    if(document.visibilityState !== 'visible' || !D) return;
+    if(LV.last && now - LV.last < 50) return; const dt = LV.last ? now - LV.last : 16; LV.last = now;
+    try {
+      if(LV.prog < 1){ LV.prog = Math.min(1, LV.prog + dt / 3000); D.people.forEach((p, i)=>{ if(map.getLayer('lv-r' + i + 'l')) map.setPaintProperty('lv-r' + i + 'l', 'line-gradient', lvGrad(p.c, LV.prog, -1)); }); }
+      else { LV.sweep = (LV.sweep + dt / 4200) % 1.6; const s = LV.sweep <= 1 ? LV.sweep : -1;
+        if(s > 0 || LV.swOn){ LV.swOn = s > 0; D.people.forEach((p, i)=>{ if(map.getLayer('lv-r' + i + 'l')) map.setPaintProperty('lv-r' + i + 'l', 'line-gradient', lvGrad(p.c, 1, s)); }); } }
+      if(LV.orbit && !map.isMoving() && LV.prog >= 1) map.setBearing((map.getBearing() + dt * 0.0025) % 360);
+    } catch(e){}
   }
   const LMAP = {};
   async function liveMapHydrate(){
@@ -15476,6 +15726,8 @@ ${pm.join('\n')}</Document></kml>`;
     const ov = document.getElementById('cv-feed'); if(!ov || !M.feedOpen || document.visibilityState !== 'visible' || feedSocBusy) return;
     feedSocBusy = true;
     try { await syncNow(); } catch(e){} finally { feedSocBusy = false; }
+    { const m = ov.querySelector('.fd-map'), sg = fkSig(M.feedOpen); if((m && m.dataset.fks !== sg) || (!m && sg)){ const h = feedMapHTML(M.feedOpen);
+        if(m) m.outerHTML = h || ''; else { const l = ov.querySelector('.fd-list'); if(l) l.insertAdjacentHTML('afterbegin', h); } setTimeout(feedMapHydrate, 30); } }
     ov.querySelectorAll('.fd-post[id^="fp-"]').forEach(el=>{
       const fid = el.id.slice(3); if(!R[fid] || el.dataset.sg === feedSocSig(fid)) return;
       const i = document.getElementById('cm-' + fid); if(i && (document.activeElement === i || i.value)) return;   // on n’efface jamais un message en cours
@@ -15512,14 +15764,14 @@ ${pm.join('\n')}</Document></kml>`;
       ${feedBellHTML(ftid)}
       <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}${FT()[String(ftid).replace(/^ft:/,'')] || webFollowing() ? '' : `<div class="fd-unf"><button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}')">🚫 Ne plus suivre ce voyage</button>${list('feedtrip', f=>TS()[f.id] && f.id !== ftid && String(f.owner||'').trim().toLocaleLowerCase() === String(ft.owner||'').trim().toLocaleLowerCase()).length ? `<button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}',1)">🚫 Ne plus suivre <span data-notr>${esc(ft.owner || '?')}</span> (tous ses voyages)</button>` : ''}</div>`}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; M.feedLast = ftid; feedMapHydrate();
-    ov._h = posts.map(feedPostHTML).join('') + '|' + !!feedTrkRec(ftid);
+    ov._h = posts.map(feedPostHTML).join('') + '|' + fkSig(ftid);
     // photos pas encore arrivées chez l’abonné (le voyageur les envoie encore) : on réessaie chaque minute
     if(!window._fdSoc) window._fdSoc = setInterval(feedSocTick, 30000);
     if(!window._fdRetry) window._fdRetry = setInterval(()=>{ if(!document.getElementById('cv-feed') || document.visibilityState !== 'visible') return;
       const m = document.querySelectorAll('#cv-feed img.miss'); if(!m.length) return; m.forEach(i=>{ i.classList.remove('miss'); delete i.dataset.ok; delete i.dataset.ld; }); hydrate(); }, 61000);
     if(webFollowing()) ov.insertAdjacentHTML('beforeend', webCta().replace('class="fd-cta"', 'class="fd-cta" style="position:relative;margin:0"'));
     syncNow().then(()=>{ if(M.feedOpen === ftid && document.getElementById('cv-feed')){ const y = ov.querySelector('.fd-list').scrollTop; const p2 = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-      const h2 = p2.map(feedPostHTML).join('') + '|' + !!feedTrkRec(ftid); if(h2 === ov._h){ hydrate(); return; } ov._h = h2; ov.querySelector('.fd-list').innerHTML = feedMapHTML(ftid) + (p2.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'); setTimeout(feedMapHydrate, 30); ov.querySelector('.fd-list').scrollTop = y; hydrate(); } });
+      const h2 = p2.map(feedPostHTML).join('') + '|' + fkSig(ftid); if(h2 === ov._h){ hydrate(); return; } ov._h = h2; ov.querySelector('.fd-list').innerHTML = feedMapHTML(ftid) + (p2.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'); setTimeout(feedMapHydrate, 30); ov.querySelector('.fd-list').scrollTop = y; hydrate(); } });
   }
   // 🔔 abonné avec l’appli : un bouton pour être prévenu des nouvelles étapes (sans aller dans les réglages)
   function feedBellHTML(ftid){
@@ -15534,15 +15786,29 @@ ${pm.join('\n')}</Document></kml>`;
     else await pushTog(true);
     document.querySelectorAll('#cv-feed .fd-bell').forEach(b=>{ if(PU().on && Notification.permission === 'granted') b.remove(); });
   }
-  const feedTrkRec = ftid => { const r = R['fk:' + String(ftid).replace(/^ft:/,'')]; return r && !r.deleted && (r.people||[]).length ? r : null; };
+  const fkLast = p => { const l = (p.pts||[])[(p.pts||[]).length - 1]; return (l && l[2]) || 0; };
+  function feedTrkRec(ftid){
+    const tid = String(ftid).replace(/^ft:/,''), fid = 'ft:' + tid, by = {}, off = {}, base = R['fk:' + tid];
+    const k = n => String(n || '?').trim().toLocaleLowerCase();
+    Object.values(R).forEach(r=>{ if(!r || r.type !== 'feedtrk' || r.trip !== fid || r.id === 'fk:' + tid) return;
+      if(r.deleted){ if(r.n) off[k(r.n)] = r.updatedAt || r.createdAt || ''; return; }
+      (r.people||[]).forEach(p=>{ if((p.pts||[]).length && (!by[k(p.n)] || fkLast(p) >= fkLast(by[k(p.n)]))) by[k(p.n)] = Object.assign({}, p, {own:1}); }); });
+    if(base && !base.deleted) (base.people||[]).forEach(p=>{ const n = k(p.n); if(!(p.pts||[]).length) return;
+      if(off[n] && String(off[n]) >= String(base.updatedAt || base.createdAt || '')) return;   // il a arrêté de partager depuis
+      if(!by[n] || fkLast(p) > fkLast(by[n])) by[n] = p; });
+    const people = Object.values(by); return people.length ? {people} : null;
+  }
+  const fkSig = ftid => { const r = feedTrkRec(ftid); return r ? r.people.map(p=>p.n + fkLast(p) + (p.pts||[]).length).join('|') : ''; };
+  const LIVE_MS = 20 * 60000;   // « en direct » : un point il y a moins de 20 min
   function feedMapHTML(ftid){
-    const r = feedTrkRec(ftid); if(!r) return '';
-    return `<div class="fd-map"><div class="fd-mh">🛰️ La route du voyage</div><div class="fd-mm" data-fmap="${esc(ftid)}"><div class="v-sum-small">🗺️ Carte en cours…</div></div>
-      <div class="lm-l">${r.people.map(p=>{ const l = p.pts[p.pts.length-1]; return `<span><i style="background:${esc(p.c||'#0ea5e9')}"></i>${esc(p.n || '—')} <small>${l && l[2] ? when(l[2]) : ''}</small></span>`; }).join('')}</div></div>`;
+    const r = feedTrkRec(ftid), geo = list('feed', f=>f.trip===ftid && f.lat != null && f.lng != null).length; if(!r && !geo) return '';
+    const live = r ? r.people.filter(p=>Date.now() - fkLast(p) < LIVE_MS) : [];
+    return `<div class="fd-map" data-fks="${esc(fkSig(ftid))}">${liveBtnHTML(ftid, live.map(p=>p.n), r ? r.people.length : 0)}${r ? `<div class="fd-mh">🛰️ La route du voyage</div><div class="fd-mm" data-fmap="${esc(ftid)}" onclick="CV.liveOpen('${esc(ftid)}')"><div class="v-sum-small">🗺️ Carte en cours…</div></div>
+      <div class="lm-l">${r.people.map(p=>{ const l = p.pts[p.pts.length-1], on = Date.now() - fkLast(p) < LIVE_MS; return `<span${on ? ' class="on"' : ''}><i style="background:${esc(p.c||'#0ea5e9')}"></i>${p.gps ? '🛰️' : '📸'} <b data-notr>${esc(p.n || '—')}</b> <small>${on ? '<span>en direct</span> · ' : ''}<span>${l && l[2] ? when(l[2]) : ''}</span></small></span>`; }).join('')}</div>` : ''}</div>`;
   }
   async function feedMapHydrate(){
     const el = document.querySelector('[data-fmap]:not([data-ok])'); if(!el) return; el.dataset.ok = '1';
-    const r = feedTrkRec(el.dataset.fmap); if(!r){ el.parentNode.remove(); return; }
+    const r = feedTrkRec(el.dataset.fmap); if(!r){ el.remove(); return; }
     const lines = r.people.map(p=>({pts:p.pts.map(x=>[x[0], x[1]]), color:p.c || '#0ea5e9'}));
     const markers = r.people.map(p=>{ const l = p.pts[p.pts.length-1]; return {lat:l[0], lng:l[1], label:((p.n || '?')[0] || '?').toUpperCase(), color:p.c || '#0ea5e9'}; });
     try { const c = await drawMap({w:640, h:360, lines, markers, maxZoom:13}); if(el.isConnected) el.innerHTML = `<img src="${c.toDataURL('image/jpeg', .86)}" alt="" style="width:100%;display:block;border-radius:14px">`; } catch(e){ el.innerHTML = ''; }
@@ -15578,7 +15844,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20f';
+  const BUILD = '2026-10-20g';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15588,7 +15854,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
