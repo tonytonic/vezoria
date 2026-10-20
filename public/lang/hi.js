@@ -4241,4 +4241,5 @@ I18N.load({
 "Carte live":"लाइव मानचित्र",
 "Le film":"फ़िल्म",
 "Carte 3D":"3D मानचित्र",
-"En ce moment":"अभी"});
+"En ce moment":"अभी",
+"Budget du voyage":"यात्रा का बजट"});

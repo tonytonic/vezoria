@@ -1317,4 +1317,5 @@ I18N.load({
 "Carte live":"Live kaart",
 "Le film":"De film",
 "Carte 3D":"3D-kaart",
-"En ce moment":"Op dit moment"});
+"En ce moment":"Op dit moment",
+"Budget du voyage":"Reisbudget"});

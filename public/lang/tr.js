@@ -4241,4 +4241,5 @@ I18N.load({
 "Carte live":"Canlı harita",
 "Le film":"Film",
 "Carte 3D":"3D harita",
-"En ce moment":"Şu anda"});
+"En ce moment":"Şu anda",
+"Budget du voyage":"Seyahat bütçesi"});

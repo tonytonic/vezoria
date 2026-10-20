@@ -4241,4 +4241,5 @@ I18N.load({
 "Carte live":"실시간 지도",
 "Le film":"영상",
 "Carte 3D":"3D 지도",
-"En ce moment":"지금"});
+"En ce moment":"지금",
+"Budget du voyage":"여행 예산"});

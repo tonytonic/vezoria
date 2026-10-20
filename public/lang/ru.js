@@ -4241,4 +4241,5 @@ I18N.load({
 "Carte live":"Карта онлайн",
 "Le film":"Фильм",
 "Carte 3D":"3D-карта",
-"En ce moment":"Прямо сейчас"});
+"En ce moment":"Прямо сейчас",
+"Budget du voyage":"Бюджет поездки"});

@@ -4241,4 +4241,5 @@ I18N.load({
 "Carte live":"خريطة مباشرة",
 "Le film":"الفيلم",
 "Carte 3D":"خريطة ثلاثية الأبعاد",
-"En ce moment":"الآن"});
+"En ce moment":"الآن",
+"Budget du voyage":"ميزانية الرحلة"});
