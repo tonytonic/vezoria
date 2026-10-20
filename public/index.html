@@ -150,6 +150,11 @@ body.vz-glass .ui-box{background:rgba(255,255,255,.82)!important;-webkit-backdro
 .vz-glass-sw{display:flex;align-items:center;justify-content:space-between;gap:10px}
 </style>
 <style>.ab-by{display:inline-flex;align-items:center;gap:3px;cursor:default;background:#eef2ff;border-color:#c7d2fe;color:#3730a3;white-space:nowrap}</style>
+<style>
+/* 🌍 cartes : position des repères garantie, même si la feuille de style de la carte arrive en retard ou pas du tout */
+.maplibregl-marker,.maplibregl-popup{position:absolute!important;top:0!important;left:0!important;will-change:transform}
+.maplibregl-map{position:relative;overflow:hidden}.maplibregl-canvas-container,.maplibregl-canvas{position:absolute;left:0;top:0}
+</style>
 </head>
 <body class="is-public">
 <div id="vz-splash" aria-hidden="true" translate="no"><div class="sp-f"><div class="sp-t" id="vz-sp-t">carnet de voyage</div><div class="sp-r"></div><div class="sp-b"><i></i></div><div class="sp-l" id="vz-sp-l">Chargement de vos souvenirs…</div></div></div>
@@ -15557,7 +15562,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20c';
+  const BUILD = '2026-10-20d';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
