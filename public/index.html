@@ -155,6 +155,7 @@ body.vz-glass .ui-box{background:rgba(255,255,255,.82)!important;-webkit-backdro
 .maplibregl-marker,.maplibregl-popup{position:absolute!important;top:0!important;left:0!important;will-change:transform}
 .maplibregl-map{position:relative;overflow:hidden}.maplibregl-canvas-container,.maplibregl-canvas{position:absolute;left:0;top:0}
 </style>
+<style>#cv-feed ~ .v-sheet-bg{z-index:2600}</style>
 </head>
 <body class="is-public">
 <div id="vz-splash" aria-hidden="true" translate="no"><div class="sp-f"><div class="sp-t" id="vz-sp-t">carnet de voyage</div><div class="sp-r"></div><div class="sp-b"><i></i></div><div class="sp-l" id="vz-sp-l">Chargement de vos souvenirs…</div></div></div>
@@ -15099,12 +15100,16 @@ ${pm.join('\n')}</Document></kml>`;
   function cmMenu(cid){
     const c = R[cid]; if(!c) return; const mine = c.dev === devId(), author = isAuthorOf(c.trip), w = esc(c.who || '?');
     openSheet(`<h2>💬 ${w}</h2><div class="v-sum-small" style="margin-bottom:10px">« ${esc(String(c.text||'').slice(0, 200))} »</div>
+      ${mine ? `<button type="button" class="v-btn sec" onclick="CV.cmEdit('${cid}')">✏️ Modifier mon commentaire</button>` : ''}
       ${mine || author ? `<button type="button" class="v-btn sec" onclick="CV.cmDel('${cid}')">🗑 Supprimer ce commentaire</button>` : ''}
       ${!mine ? `<button type="button" class="v-btn sec" onclick="CV.ugcReport('comment','${cid}')">🚩 Signaler ce commentaire</button>` : ''}
       ${!mine && author ? `<button type="button" class="v-btn sec" onclick="CV.userBlock('${cid}')">🚫 Bloquer ${w} (pour tous tes abonnés)</button>` : ''}
       ${!mine && !author ? `<button type="button" class="v-btn sec" onclick="CV.userHide('${cid}')">🙈 Masquer ce que publie ${w}</button>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
+  async function cmEdit(cid){ const c = R[cid]; if(!c || c.dev !== devId()) return; closeSheet(true);
+    const t = await uiPrompt('Modifier ton commentaire :', c.text || ''); if(t === null) return; const v = String(t).trim().slice(0, 600); if(!v){ cmDel(cid); return; }
+    if(v === c.text) return; putQuiet([Object.assign(clone(c), {text:v, edited:Date.now()})]); syncNow(); if(c.feed) feedPaint(c.feed); toast('✏️ Commentaire modifié'); }
   async function cmDel(cid){ const c = R[cid]; if(!c || !(await uiConfirm('Supprimer ce commentaire ?'))) return; putQuiet([Object.assign(clone(c), {deleted:true})]); syncNow(); closeSheet(true); if(c.feed) feedPaint(c.feed); toast('🗑 Commentaire supprimé'); }
   async function userHide(id){ const d = devOfRec(R[id]); if(!d) return; if(!(await uiConfirm('Masquer les commentaires et ❤️ de cette personne sur ce téléphone ?'))) return; (M.blkDev = M.blkDev || {})[d] = 1; persist(); closeSheet(true); feedRepaintAll(); toast('🙈 Masqué'); }
   async function userBlock(id){
@@ -15429,7 +15434,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="fd-c">${hid ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${f.id}')">${cm.length === 3 ? 'Voir les 3 commentaires' : `Voir les ${cm.length} commentaires`}</button>` : ''}
         ${shown.map(c=>{ const au = ftTeam(ft).some(n=>String(c.who||'').trim().toLowerCase() === n.toLowerCase());
           return `<div class="fd-cm"><button type="button" class="fd-cmore" aria-label="Options" onclick="CV.cmMenu('${c.id}')">⋯</button><b data-notr>${esc(c.who||'?')}</b>${au ? ' <span class="fd-au">auteur</span>' : ''} <span class="fd-ctx" data-notr>${esc(c.text)}</span>
-            <div class="fd-cmeta"><small>${c.at ? when(c.at) : ''}</small><button type="button" onclick="CV.feedReply('${f.id}','${c.id}')">Répondre</button></div></div>`; }).join('')}
+            <div class="fd-cmeta"><small>${c.at ? when(c.at) : ''}${c.edited ? ' · <span>modifié</span>' : ''}</small><button type="button" onclick="CV.feedReply('${f.id}','${c.id}')">Répondre</button></div></div>`; }).join('')}
         ${open && cm.length > 2 ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${f.id}')">Réduire</button>` : ''}
         <div class="cv-row fd-cin"><input class="v-in" id="cm-${f.id}" placeholder="Écrire un commentaire…" maxlength="600" enterkeyhint="send" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();CV.feedComment('${f.id}')}"><button type="button" class="fd-send" onclick="CV.feedComment('${f.id}')">Envoyer</button></div></div></article>`;
   }
@@ -15562,7 +15567,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20d';
+  const BUILD = '2026-10-20e';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15572,7 +15577,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
