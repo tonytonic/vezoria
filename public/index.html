@@ -1641,6 +1641,65 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .sh-card{background:#fff;border:1px solid var(--light);border-radius:18px;padding:14px;margin-bottom:10px}.sh-k{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:600;font-size:1.2rem}.sh-card p{font-size:.86rem;color:var(--gray);margin:4px 0 10px}
 .sh-st{display:flex;gap:14px;margin:0 0 10px;font-size:.92rem}.sh-more summary{cursor:pointer;color:var(--gray);font-weight:600;margin:6px 0 10px}
 .sv-so{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--light);background:#fff;border-radius:999px;padding:5px 12px;margin:8px 0 2px;font:inherit;font-size:.82rem;color:var(--ink);cursor:pointer}.sv-so small{color:var(--gray)}
+/* 📍 Aujourd’hui vivant */
+.ln{position:relative;border-radius:24px;overflow:hidden;margin:0 0 12px;min-height:390px;background:linear-gradient(150deg,#0b3a44,#123b6b 60%,#3b1d5c);color:#fff;box-shadow:0 18px 40px -18px rgba(7,40,60,.7);isolation:isolate}
+.ln.nomap{min-height:250px}
+.ln-map{position:absolute;inset:0;z-index:0;cursor:pointer}.ln-box{position:absolute;inset:0}
+.ln-shade{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,15,30,.55) 0%,rgba(5,15,30,0) 28%,rgba(5,15,30,0) 45%,rgba(5,15,30,.82) 78%,rgba(5,15,30,.92) 100%)}
+.ln-top{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:12px 14px 0;pointer-events:none}
+.ln-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:5px 10px;border-radius:99px;font-size:.66rem;font-weight:800;letter-spacing:.08em;color:#4ade80}
+.ln-badge i{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:lvPulse 1.6s ease-out infinite}
+.ln-wx{background:rgba(0,0,0,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:5px 10px;border-radius:99px;font-weight:800;font-size:.9rem}.ln-wx:empty{display:none}
+.ln-place{position:relative;z-index:2;padding:8px 16px 0;pointer-events:none;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+.ln-place b{display:block;font-family:var(--serif,Georgia,serif);font-size:2.1rem;line-height:1.05;letter-spacing:-.01em}
+.ln-place small{opacity:.9;font-size:.82rem}
+.ln-go{position:absolute;z-index:2;right:12px;top:12px;margin-top:44px;border:0;border-radius:99px;padding:7px 12px;background:rgba(255,255,255,.92);color:#0b3a44;font:inherit;font-weight:800;font-size:.8rem;box-shadow:0 6px 16px rgba(0,0,0,.3)}
+.ln.nomap .ln-go{top:12px;right:auto;left:auto;position:relative;margin:10px 16px 0;display:inline-block}
+.ln-stats{position:absolute;z-index:2;left:10px;right:10px;bottom:62px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ln.nomap .ln-stats{position:relative;left:auto;right:auto;bottom:auto;margin:16px 10px 0}
+.ln-s{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:16px;padding:7px 4px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;transition:transform .3s}
+.ln-s i{font-style:normal;font-size:1rem;line-height:1}.ln-s b{font-size:1.25rem;font-variant-numeric:tabular-nums;line-height:1.2}.ln-s small{font-size:.6rem;opacity:.8;line-height:1.1}
+.ln-s.bump{animation:lnBump .7s ease}
+@keyframes lnBump{0%{transform:scale(1)}35%{transform:scale(1.14);background:rgba(74,222,128,.3)}100%{transform:scale(1)}}
+.ln-tick{position:absolute;z-index:2;left:10px;right:10px;bottom:10px;height:44px;overflow:hidden}
+.ln.nomap .ln-tick{position:relative;left:auto;right:auto;bottom:auto;margin:8px 10px 10px}
+.ln-e{position:absolute;inset:0;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.94);color:#1f2937;border-radius:14px;padding:6px 10px;border-left:4px solid var(--c,#4ade80);opacity:0;transform:translateY(110%);transition:transform .5s cubic-bezier(.2,.9,.3,1.2),opacity .4s}
+.ln-e.on{opacity:1;transform:none}
+.ln-e i{font-style:normal;font-size:1.1rem}.ln-e span{flex:1;min-width:0;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ln-e small{font-size:.66rem;color:#6b7280;white-space:nowrap}
+.ln-e.calm button{border:0;border-radius:99px;background:#0b3a44;color:#fff;font:inherit;font-size:.72rem;font-weight:800;padding:5px 9px;white-space:nowrap}
+.ln-pin{position:relative;width:30px;height:30px;border-radius:50%;background:var(--c,#0ea5e9);border:2.5px solid #fff;color:#fff;display:grid;place-items:center;font-weight:800;font-size:.8rem;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+.ln-pin span:last-child{position:relative;z-index:2}.ln-pin .lv-ring{top:-4px;left:50%;width:38px;height:38px;margin-left:-19px}.ln-pin.on .lv-ring{animation:lvRing 1.8s ease-out infinite}
+.ln .maplibregl-marker{opacity:1!important}
+/* 🎉 Bienvenue à */
+.wlc{position:fixed;inset:0;z-index:9200;background:#0b1530;color:#fff;display:flex;align-items:flex-end;opacity:0;transition:opacity .45s;overflow:hidden}
+.wlc.on{opacity:1}
+.wlc-bg{position:absolute;inset:-4%;background:radial-gradient(120% 80% at 30% 20%,#2563eb,#7c3aed 55%,#0b1530);background-size:cover;background-position:center;transform:scale(1.12);transition:opacity 1s}
+.wlc-bg.ok{animation:wlcZoom 14s ease-out forwards}
+@keyframes wlcZoom{from{transform:scale(1.18)}to{transform:scale(1.02)}}
+.wlc-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,10,30,.2),rgba(5,10,30,.35) 40%,rgba(5,10,30,.92))}
+.wlc-conf{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.wlc-conf i{position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;opacity:.9;animation:wlcFall linear forwards}
+@keyframes wlcFall{to{transform:translateY(110vh) rotate(720deg);opacity:.6}}
+.wlc-in{position:relative;padding:0 22px calc(env(safe-area-inset-bottom,0px) + 28px);width:100%}
+.wlc-flag{font-size:3.6rem;line-height:1;animation:wlcPop .7s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes wlcPop{from{transform:scale(0) rotate(-20deg)}to{transform:none}}
+.wlc-k{display:block;text-transform:uppercase;letter-spacing:.18em;font-weight:800;font-size:.78rem;color:#fde68a;margin-top:10px;animation:wlcUp .6s .2s both}
+.wlc h1{font-family:var(--serif,Georgia,serif);font-size:clamp(2.6rem,13vw,4.6rem);line-height:1;margin:6px 0 8px;letter-spacing:-.02em;word-break:break-word}
+.wlc h1 span{display:inline-block;animation:wlcUp .55s cubic-bezier(.2,1.2,.4,1) both}
+@keyframes wlcUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.wlc p{margin:0 0 4px;font-size:1rem;opacity:.92;animation:wlcUp .6s .6s both}.wlc-m{min-height:1.2em}
+.wlc-b{display:flex;flex-direction:column;gap:8px;margin-top:18px;animation:wlcUp .6s .9s both}
+.wlc-b button{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;font:inherit;font-weight:800;border-radius:16px;padding:13px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.wlc-b button.pri{background:#fff;color:#1e1b4b;border:0}
+/* ❤️ réactions en direct */
+.rx-fly{position:fixed;inset:0;z-index:9300;pointer-events:none;overflow:hidden}
+.rx-fly i{position:absolute;bottom:90px;font-style:normal;animation:rxUp 2.6s ease-out forwards;opacity:0}
+@keyframes rxUp{0%{opacity:0;transform:translate(0,0) scale(.5)}15%{opacity:1;transform:translate(calc(var(--dx)*.2),-40px) scale(1.1)}100%{opacity:0;transform:translate(var(--dx),-62vh) scale(.9) rotate(18deg)}}
+.rx-pill{position:fixed;z-index:9301;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 10px);display:flex;align-items:center;gap:10px;border:0;border-radius:18px;background:rgba(255,255,255,.97);color:#1f2937;font:inherit;text-align:left;padding:8px 12px 8px 8px;box-shadow:0 14px 34px rgba(0,0,0,.28);transform:translateY(-140%);transition:transform .5s cubic-bezier(.2,1.2,.4,1)}
+.rx-pill.on{transform:none}
+.rx-pill img,.rx-pill>i{width:44px;height:44px;flex:0 0 44px;border-radius:12px;object-fit:cover;display:grid;place-items:center;font-style:normal;font-size:1.4rem;background:#ffe4ec}
+.rx-pill span{font-size:.86rem;line-height:1.25}.rx-pill q{font-weight:700}.rx-pill small{display:block;color:#6b7280;font-size:.78rem;margin-top:2px}
+@media (prefers-reduced-motion:reduce){.wlc-conf,.rx-fly{display:none}.ln-e{transition:none}}
 /* 🛰️ carte 3D en direct */
 .lv-go{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;border-radius:18px;padding:12px 14px;margin:0 0 10px;font:inherit;color:#fff;background:linear-gradient(120deg,#0f2a5c,#1d4ed8 55%,#0ea5e9);box-shadow:0 8px 22px rgba(29,78,216,.28);cursor:pointer;position:relative;overflow:hidden}
 .lv-go::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);transform:translateX(-100%);animation:lvShine 3.6s ease-in-out infinite}
@@ -4504,7 +4563,7 @@ const CV = (function(){
     try { const c = getComputedStyle(document.body).getPropertyValue('--navy').trim(), m = document.querySelector('meta[name="theme-color"]'); if(c && m && m.content !== c) m.content = c; } catch(e){} }
   function render(){
     phaseTheme();
-    setTimeout(moments, 900); setTimeout(liveMapHydrate, 80); setTimeout(poem, 0); setTimeout(progMapHydrate, 120); setTimeout(()=>{ if(document.querySelector('.cv-anniv img[data-ph]:not([data-ok])')) hydrate(); }, 60);
+    setTimeout(moments, 900); setTimeout(liveMapHydrate, 80); setTimeout(lnHydrate, 60); setTimeout(poem, 0); setTimeout(progMapHydrate, 120); setTimeout(()=>{ if(document.querySelector('.cv-anniv img[data-ph]:not([data-ok])')) hydrate(); }, 60);
     const body = document.getElementById('cv-body');
     const fab = document.getElementById('cv-fab');
     const t = trip();
@@ -10774,7 +10833,7 @@ ${pm.join('\n')}</Document></kml>`;
       if(dk / dh > 950 && dh < 0.5) return;                                                     // saut impossible (> 950 km/h) : erreur de localisation
       if(TJ){ TJ.km += dk; if(c.speed == null) TJ.sp = dk / dh; }
     }
-    r.pts.push(p); trkBuf = r;
+    r.pts.push(p); trkBuf = r; wlcCheck(p[0], p[1]);
     if(Date.now() - trkLastSave > (drive ? 60000 : 5 * 60000) || r.pts.length === 1){ trkLastSave = Date.now(); put(r, false); trkBuf = null; fkMine(t.id); }
     if(LV && LV.key === t.id) liveSoon();
     const el = document.querySelector('.cv-trk small'); if(el && M.tab==='prog') el.textContent = r.pts.length + ' point(s) aujourd’hui';
@@ -10812,6 +10871,9 @@ ${pm.join('\n')}</Document></kml>`;
     toast('🚗 ' + fmtKm(k)); refresh();
   }
   setInterval(trkAutoOff, 3600e3);
+  function wlcOpen(){ try { const t = trip(); if(!t || tripPhase(t) !== 'live' || trkOn() || !navigator.geolocation || !navigator.permissions) return;
+    navigator.permissions.query({name:'geolocation'}).then(st=>{ if(st.state === 'granted') navigator.geolocation.getCurrentPosition(p=>wlcCheck(+p.coords.latitude.toFixed(5), +p.coords.longitude.toFixed(5)), ()=>{}, {maximumAge:600000, timeout:20000}); }).catch(()=>{}); } catch(e){} }
+  setTimeout(wlcOpen, 6000); document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible') setTimeout(wlcOpen, 2500); });
   function trkFlush(){ if(trkBuf){ const tid = trkBuf.trip; put(trkBuf, false); trkBuf = null; trkLastSave = Date.now(); fkMine(tid); } }
   function trkStart(){
     if(!trkOn() || trkAutoOff() || trkWatch !== null || !navigator.geolocation) return;
@@ -10872,7 +10934,7 @@ ${pm.join('\n')}</Document></kml>`;
         ${lv && lv.id !== (t||{}).id ? `<button class="v-btn" onclick="CV.go('${lv.id}')">📍 Ouvrir le voyage en cours : ${esc(lv.titre)}</button>` : ''}</div>`; }
     const k = dayList().indexOf(isoToday()), info = dayInfo(isoToday()), {own, night} = itemsForDay(isoToday());
     const tile = (ic, l, fn) => `<button type="button" class="cv-tile" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
-    return `${actBand()}${annivCard()}${eveCard()}${nextHero()}${trkHTML()}${liveMapCard()}${liveCard()}
+    return `${lnHTML(t)}${actBand()}${annivCard()}${eveCard()}${nextHero()}${trkHTML()}${liveMapCard()}${liveCard()}
       <div class="cv-tiles">${tile('📍','Step ici','CV.hereNow()')}${tile('🧾','Dépense','CV.tlReceipt()')}${tile('📴','Fiche du jour','CV.tlDay()')}${tile('🛒','Courses','CV.shopSheet()')}${tile('🌤️','Météo','CV.tlMeteo()')}${tile('🌍','Carte','CV.worldMap()')}${tile('📄','Importer','CV.impSheet()')}${tile('🛂','Papiers','CV.tlDocs()')}</div>
       <div class="v-box"><h3>Aujourd’hui · J${k+1}${info.titre ? ' · ' + esc(info.titre) : ''}</h3>${info.plan ? `<p>${esc(info.plan)}</p>` : ''}
         ${[...own, ...night].map(it=>`<button type="button" class="cv-prow" onclick="CV.edit('${it.id}')"><span>${icon(it)} <b>${esc(it.titre)}</b></span><span>${esc(it.heureDep||it.heure||'')}</span></button>`).join('') || '<div class="v-sum-small">Rien de réservé aujourd’hui.</div>'}
@@ -14341,6 +14403,176 @@ ${pm.join('\n')}</Document></kml>`;
       <button type="button" class="v-btn sec" onclick="CV.worldTrip('${t.id}')">🌍 Voir sur la carte du monde</button></div>`;
   }
 
+
+  /* ══════════ 📍 « Aujourd’hui » vivant : la carte qui tourne, la ville, la météo, les compteurs du jour, ce que font les autres ══════════ */
+  const LN = {box:null, map:null, key:'', mk:{}, geo:{}, wx:{}, prev:{}, tk:0, tkI:0, raf:0};
+  const wxIcon = (c, day) => c == null ? '' : c === 0 ? (day === 0 ? '🌙' : '☀️') : c <= 2 ? (day === 0 ? '🌙' : '🌤️') : c === 3 ? '☁️' : c <= 48 ? '🌫️' : c <= 57 ? '🌦️' : c <= 67 ? '🌧️' : c <= 77 ? '❄️' : c <= 82 ? '🌧️' : c <= 86 ? '🌨️' : '⛈️';
+  function lnLast(tid){   // la dernière position connue : la mienne d’abord, sinon celle d’un compagnon
+    const by = trkByWho(tid, true), mine = by[M.me || ''] || [], all = Object.values(by).map(p=>p[p.length-1]).filter(Boolean).sort((a, b)=>(b[2]||0) - (a[2]||0));
+    return mine.length ? mine[mine.length-1] : all[0] || null;
+  }
+  function lnStats(t){
+    const td = isoToday(), by = trkByWho(t.id, true), kmMe = liveKmDay(by[M.me || ''] || []);
+    const sv = list('souv', x=>x.trip === t.id && x.date === td), ph = sv.reduce((a, x)=>a + (x.photos||[]).length, 0);
+    const dep = items(i=>i.cat === 'divers' && i.date === td).reduce((a, i)=>a + totalOf(i), 0);
+    const ft = 'ft:' + t.id, d0 = new Date(); d0.setHours(0,0,0,0);
+    const rx = list('like', l=>l.trip === ft && l.on && (l.updatedAt||0) >= +d0).length + list('comment', c=>c.trip === ft && (c.at||0) >= +d0).length;
+    return {km:kmMe, ph, dep, rx, sv:sv.length};
+  }
+  function lnEvents(t){
+    const me = M.me || '', d0 = new Date(); d0.setHours(0,0,0,0); const ft = 'ft:' + t.id, ev = [], td = isoToday();
+    list('souv', x=>x.trip === t.id && (x.createdAt||0) >= +d0 && x.createdBy && x.createdBy !== me).forEach(x=>ev.push({at:x.createdAt, c:pcol(x.createdBy), ic:(x.photos||[]).length ? '📸' : '📍', w:pname(x.createdBy), tx:'a ajouté « ' + (x.titre || x.lieu || '…') + ' »' + ((x.photos||[]).length > 1 ? ' · ' + x.photos.length + ' photos' : '')}));
+    items(i=>i.cat === 'divers' && i.date === td && i.createdBy && i.createdBy !== me && (i.createdAt||0) >= +d0).forEach(i=>ev.push({at:i.createdAt, c:pcol(i.createdBy), ic:'💶', w:pname(i.createdBy), tx:(i.titre || 'dépense') + ' · ' + eur(totalOf(i))}));
+    list('like', l=>l.trip === ft && l.on && (l.updatedAt||0) >= +d0 && !String(l.id).endsWith(':' + devId())).forEach(l=>{ const f = R[l.feed] || {}; ev.push({at:l.updatedAt, c:'#e11d48', ic:'❤️', w:l.who || 'Un abonné', tx:'aime « ' + (f.titre || f.lieu || 'ta photo') + ' »'}); });
+    list('comment', c=>c.trip === ft && (c.at||0) >= +d0 && c.dev !== devId()).forEach(c=>ev.push({at:c.at, c:'#7c3aed', ic:'💬', w:c.who || 'Un abonné', tx:'« ' + String(c.text || '').slice(0, 70) + ' »'}));
+    Object.entries(trkByWho(t.id, false)).forEach(([w, p])=>{ if(!w || w === me || !p.length) return; const l = p[p.length-1]; if(l[2] && Date.now() - l[2] < LIVE_MS) ev.push({at:l[2], c:pcol(w), ic:'🛰️', w:pname(w), tx:'est en route', x:fmtKm(liveKmDay(p)) + ' aujourd’hui'}); });
+    return ev.sort((a, b)=>(b.at||0) - (a.at||0)).slice(0, 10);
+  }
+  function lnHTML(t){
+    if(!t || hidden('blk:lnow')) return '';
+    const k = dayList().indexOf(isoToday()), n = dayList().length, st = lnStats(t), ev = lnEvents(t), l = lnLast(t.id), g = l ? LN.geo[lnGK(l)] : null, w = l ? LN.wx[lnGK(l)] : null;
+    const stat = (ic, v, u, key, dec) => `<div class="ln-s"><i>${ic}</i><b data-ln="${key}" data-v="${v}" data-d="${dec||0}">${(LN.prev[key] != null ? LN.prev[key] : v).toFixed(dec||0).replace('.', ',')}</b><small>${u}</small></div>`;
+    return `<div class="ln${l ? '' : ' nomap'}" id="ln">
+      <div class="ln-map" id="ln-slot" onclick="CV.liveOpen('${t.id}')"></div><div class="ln-shade"></div>
+      <div class="ln-top"><span class="ln-badge"><i></i>EN DIRECT · J${k + 1}/${n}</span><span class="ln-wx" id="ln-wx">${w ? wxIcon(w.c, w.d) + ' ' + w.t + '°' : ''}</span></div>
+      <div class="ln-place"><b id="ln-city" data-notr>${esc(g ? g.city : (t.titre || ''))}</b><small><span id="ln-clock">${lnClock(w)}</span>${g && g.cc ? ' · ' + flag(g.cc) + ' <span data-notr>' + esc(g.country || '') + '</span>' : ''}</small></div>
+      <button type="button" class="ln-go" onclick="CV.liveOpen('${t.id}')">🛰️ Carte live</button>
+      <div class="ln-stats">${stat('🚶', +st.km.toFixed(1), 'km aujourd’hui', 'km', 1)}${stat('📸', st.ph, st.ph > 1 ? 'photos' : 'photo', 'ph')}${stat('💶', Math.round(st.dep), ((t.devise || M.cur || 'EUR') === 'EUR' ? '€ ' : (t.devise || M.cur) + ' ') + 'dépensés', 'dep')}${stat('❤️', st.rx, st.rx > 1 ? 'réactions' : 'réaction', 'rx')}</div>
+      <div class="ln-tick" id="ln-tick">${ev.length ? ev.map((e, i)=>`<div class="ln-e${i === 0 ? ' on' : ''}" style="--c:${esc(e.c)}"><i>${e.ic}</i><span><b data-notr>${esc(e.w)}</b> <span>${esc(e.tx)}</span>${e.x ? ' · <span>' + esc(e.x) + '</span>' : ''}</span><small>${when(e.at)}</small></div>`).join('') : `<div class="ln-e on calm"><i>✨</i><span>Tout est calme… un souvenir pour réveiller tes abonnés ?</span><button type="button" onclick="CV.hereNow()">📍 Step ici</button></div>`}</div>
+    </div>`;
+  }
+  const lnGK = p => (+p[0]).toFixed(2) + ',' + (+p[1]).toFixed(2);
+  function lnClock(w){ try { return new Date().toLocaleTimeString((window.I18N ? I18N.locale : 'fr-FR'), Object.assign({hour:'2-digit', minute:'2-digit'}, w && w.tz ? {timeZone:w.tz} : {})) + (w && w.tz && w.tz !== Intl.DateTimeFormat().resolvedOptions().timeZone ? ' heure locale' : ''); } catch(e){ return ''; } }
+  async function lnHydrate(){
+    const el = document.getElementById('ln'); if(!el) return; const t = trip(); if(!t) return;
+    // chiffres qui défilent jusqu’à leur nouvelle valeur
+    el.querySelectorAll('[data-ln]').forEach(b=>{ const k = b.dataset.ln, to = +b.dataset.v, d = +b.dataset.d || 0, fr = LN.prev[k] != null ? LN.prev[k] : 0; LN.prev[k] = to; if(fr === to){ b.textContent = to.toFixed(d).replace('.', ','); return; }
+      const t0 = performance.now(), dur = 1100; const st = now => { const q = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - q, 3); b.textContent = (fr + (to - fr) * e).toFixed(d).replace('.', ','); if(q < 1) requestAnimationFrame(st); else if(fr !== 0) { b.parentNode.classList.add('bump'); setTimeout(()=>b.parentNode.classList.remove('bump'), 700); } }; requestAnimationFrame(st); });
+    // fil de ce que font les autres : un évènement à la fois
+    clearInterval(LN.tk); const E = el.querySelectorAll('.ln-e'); if(E.length > 1){ LN.tkI = 0; LN.tk = setInterval(()=>{ const L = document.querySelectorAll('#ln-tick .ln-e'); if(!L.length){ clearInterval(LN.tk); return; } L[LN.tkI % L.length].classList.remove('on'); LN.tkI++; L[LN.tkI % L.length].classList.add('on'); }, 4200); }
+    const l = lnLast(t.id); if(!l) return;
+    lnMap(t.id);
+    // ville et météo de l’endroit où on est
+    const gk = lnGK(l);
+    if(!LN.geo[gk]){ try { const j = await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${l[0]}&lon=${l[1]}`)).json(); const a = (j && j.address) || {};
+        LN.geo[gk] = {city:a.city || a.town || a.village || a.municipality || a.county || '', country:a.country || '', cc:(a.country_code || '').toUpperCase()}; } catch(e){} }
+    if(!LN.wx[gk] || Date.now() - LN.wx[gk].at > 15 * 60000){ try { const j = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${l[0]}&longitude=${l[1]}&current=temperature_2m,weather_code,is_day&timezone=auto`)).json();
+        if(j && j.current) LN.wx[gk] = {t:Math.round(j.current.temperature_2m), c:j.current.weather_code, d:j.current.is_day, tz:j.timezone || '', at:Date.now()}; } catch(e){} }
+    const g = LN.geo[gk], w = LN.wx[gk], c = document.getElementById('ln-city'), x = document.getElementById('ln-wx');
+    if(c && g && g.city && c.textContent !== g.city){ c.textContent = g.city; const sm = c.nextElementSibling; if(sm) sm.innerHTML = `<span id="ln-clock">${lnClock(w)}</span>${g.cc ? ' · ' + flag(g.cc) + ' <span data-notr>' + esc(g.country) + '</span>' : ''}`; }
+    if(x && w) x.textContent = wxIcon(w.c, w.d) + ' ' + w.t + '°';
+    const ck = document.getElementById('ln-clock'); if(ck) ck.textContent = lnClock(w);
+  }
+  setInterval(()=>{ const ck = document.getElementById('ln-clock'), l = trip() && lnLast(M.trip); if(ck && l) ck.textContent = lnClock(LN.wx[lnGK(l)]); }, 30000);
+  // la petite carte : créée une seule fois, déplacée d’un écran à l’autre (pas de rechargement à chaque affichage)
+  async function lnMap(tid){
+    const slot = document.getElementById('ln-slot'); if(!slot) return;
+    try {
+      if(!LN.box){ LN.box = document.createElement('div'); LN.box.className = 'ln-box'; }
+      slot.appendChild(LN.box);
+      if(!window.maplibregl){ await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css'); await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js'); }
+      const D = liveData(tid), pts = D.people.map(p=>p.pts[p.pts.length-1]).filter(Boolean); if(!pts.length) return;
+      const ctr = [pts.reduce((a, p)=>a + p[1], 0) / pts.length, pts.reduce((a, p)=>a + p[0], 0) / pts.length];
+      if(!LN.map || LN.key !== tid){
+        try { if(LN.map) LN.map.remove(); } catch(e){} LN.mk = {}; LN.key = tid;
+        LN.map = new maplibregl.Map({container:LN.box, interactive:false, attributionControl:false, center:ctr, zoom:14.2, pitch:58, bearing:-20, fadeDuration:0, pixelRatio:Math.min(2, window.devicePixelRatio || 1),
+          style:{version:8, sources:{sat:{type:'raster', tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'], tileSize:256, maxzoom:18}}, layers:[{id:'bg', type:'background', paint:{'background-color':'#12324a'}}, {id:'sat', type:'raster', source:'sat'}]}});
+        const go = () => { if(!LN.map) return; lnLines(D); lnFit(pts, true); };
+        LN.map.on('style.load', go); LN.map.on('load', go); lnFit(pts, true);
+        const spin = () => { LN.raf = requestAnimationFrame(spin); if(!LN.map || !LN.box.isConnected || document.visibilityState !== 'visible') return; try { LN.map.setBearing((LN.map.getBearing() + 0.06) % 360); } catch(e){} };
+        cancelAnimationFrame(LN.raf); LN.raf = requestAnimationFrame(spin);
+      } else { try { LN.map.resize(); lnFit(pts, false); if(LN.map.isStyleLoaded()) lnLines(D); } catch(e){} }
+      const keep = new Set();
+      D.people.forEach(p=>{ const l = p.pts[p.pts.length-1]; if(!l) return; keep.add(p.n); const on = l[2] && Date.now() - l[2] < LIVE_MS;
+        let m = LN.mk[p.n]; if(!m){ const e = document.createElement('div'); e.className = 'ln-pin'; m = LN.mk[p.n] = new maplibregl.Marker({element:e, anchor:'center', opacity:'1', opacityWhenCovered:'1'}).setLngLat([l[1], l[0]]).addTo(LN.map); }
+        const e = m.getElement(); e.style.setProperty('--c', p.c); e.classList.toggle('on', !!on); e.innerHTML = `<span class="lv-ring"></span><span>${esc(((p.n||'?')[0]||'?').toUpperCase())}</span>`; m.setLngLat([l[1], l[0]]); });
+      Object.keys(LN.mk).forEach(k=>{ if(!keep.has(k)){ LN.mk[k].remove(); delete LN.mk[k]; } });
+    } catch(e){}
+  }
+  function lnFit(pts, now){   // tout le monde dans le cadre, vu de biais
+    if(!LN.map) return; try {
+      if(pts.length < 2){ LN.map.easeTo({center:[pts[0][1], pts[0][0]], zoom:14.5, pitch:58, duration: now ? 0 : 1200}); return; }
+      const b = new maplibregl.LngLatBounds(); pts.forEach(p=>b.extend([p[1], p[0]]));
+      LN.map.fitBounds(b, {padding:{top:110, bottom:150, left:60, right:60}, maxZoom:15.5, pitch:58, bearing:LN.map.getBearing(), duration: now ? 0 : 1200});
+    } catch(e){} }
+  function lnLines(D){
+    const map = LN.map; if(!map) return;
+    D.people.forEach((p, i)=>{ const id = 'ln' + i, gj = {type:'Feature', properties:{}, geometry: p.pts.length > 1 ? {type:'LineString', coordinates:p.pts.slice(-300).map(x=>[x[1], x[0]])} : {type:'Point', coordinates:[p.pts[0][1], p.pts[0][0]]}};
+      if(map.getSource(id)) map.getSource(id).setData(gj); else { map.addSource(id, {type:'geojson', data:gj}); map.addLayer({id:id + 'g', type:'line', source:id, paint:{'line-color':p.c, 'line-width':9, 'line-blur':6, 'line-opacity':.5}}); map.addLayer({id, type:'line', source:id, layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':p.c, 'line-width':3.5}}); } });
+  }
+
+  /* ══════════ 🎉 « Bienvenue à … » : le GPS voit qu’on arrive dans une nouvelle ville (ou un nouveau pays) ══════════ */
+  let wlcBusy = false;
+  async function wlcCheck(lat, lng){
+    try {
+      const t = trip(); if(!t || tripPhase(t) !== 'live' || wlcBusy || hidden('blk:wlc')) return;
+      M.wlc = M.wlc || {}; const W = M.wlc[t.id] = M.wlc[t.id] || {cities:[], ccs:[], lat:null, lng:null, at:0};
+      if(W.lat != null && km({lat:W.lat, lng:W.lng}, {lat, lng}) < 3 && Date.now() - W.at < 6 * 3600e3) return;
+      if(Date.now() - W.at < 8 * 60000) return;
+      wlcBusy = true; W.lat = lat; W.lng = lng; W.at = Date.now(); persist();
+      const j = await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${lat}&lon=${lng}`)).json();
+      const a = (j && j.address) || {}, city = a.city || a.town || a.village || a.municipality || '', cc = (a.country_code || '').toUpperCase(), country = a.country || '';
+      if(!city){ wlcBusy = false; return; }
+      const k = normQ(city), first = !W.cities.length, newC = !!cc && !W.ccs.includes(cc);
+      if(W.cities.includes(k)){ wlcBusy = false; return; }
+      W.cities.push(k); if(cc && newC) W.ccs.push(cc); persist();
+      // 1re ville vue : on fête seulement si c’est une étape prévue (sinon c’est souvent la ville de départ)
+      const planned = (()=>{ try { return tlStages().some(x=>normQ(x.city || '').includes(k) || k.includes(normQ(x.city || '') || '§')); } catch(e){ return false; } })();
+      if(first && !planned){ wlcBusy = false; return; }
+      wlcShow({city, cc, country, newC: newC && W.ccs.length > 1, nC: W.ccs.length, nV: W.cities.length, lat, lng});
+    } catch(e){} wlcBusy = false;
+  }
+  async function wlcShow(o){
+    if(document.getElementById('cv-wlc')) return;
+    const ov = document.createElement('div'); ov.id = 'cv-wlc'; ov.className = 'wlc';
+    const conf = Array.from({length:26}, (_, i)=>`<i style="left:${Math.random() * 100}%;animation-delay:${(Math.random() * 1.6).toFixed(2)}s;animation-duration:${(2.6 + Math.random() * 2).toFixed(2)}s;background:${['#fbbf24','#f472b6','#60a5fa','#34d399','#f87171','#ffffff'][i % 6]};transform:rotate(${Math.round(Math.random() * 360)}deg)"></i>`).join('');
+    const ord = n => n === 1 ? '1er' : n + 'e';
+    ov.innerHTML = `<div class="wlc-bg" id="wlc-bg"></div><div class="wlc-shade"></div><div class="wlc-conf">${conf}</div>
+      <div class="wlc-in"><div class="wlc-flag">${flag(o.cc)}</div><small class="wlc-k">${o.newC ? 'Nouveau pays !' : 'Bienvenue à'}</small>
+        <h1 data-notr>${[...o.city].map((c, i)=>`<span style="animation-delay:${(0.35 + i * 0.05).toFixed(2)}s">${c === ' ' ? '&nbsp;' : esc(c)}</span>`).join('')}</h1>
+        <p><span data-notr>${esc(o.country)}</span>${o.newC ? ' · <b>' + ord(o.nC) + ' pays du voyage</b>' : ''}</p><p class="wlc-m" id="wlc-m"></p>
+        <div class="wlc-b"><button type="button" class="pri" onclick="CV.wlcPost()">💌 Prévenir tout le monde</button><button type="button" onclick="CV.wlcClose();CV.hereNow()">📸 Souvenir ici</button><button type="button" onclick="CV.wlcClose()">Plus tard</button></div></div>`;
+    ov._o = o; document.body.appendChild(ov); requestAnimationFrame(()=>ov.classList.add('on'));
+    try { navigator.vibrate && navigator.vibrate([60, 40, 120]); } catch(e){}
+    try { const d = await expLoad(o.city); const bg = document.getElementById('wlc-bg'); if(bg && d && d.hero){ const im = new Image(); im.referrerPolicy = 'no-referrer'; im.onload = () => { bg.style.backgroundImage = `url("${d.hero}")`; bg.classList.add('ok'); }; im.src = d.hero; }
+      const m = document.getElementById('wlc-m'); if(m && d) m.textContent = [d.temp != null ? wxIcon(d.code, 1) + ' ' + d.temp + '°' : '', d.tz ? new Date().toLocaleTimeString((window.I18N ? I18N.locale : 'fr-FR'), {hour:'2-digit', minute:'2-digit', timeZone:d.tz}) : ''].filter(Boolean).join(' · '); } catch(e){}
+  }
+  function wlcClose(){ const o = document.getElementById('cv-wlc'); if(o){ o.classList.remove('on'); setTimeout(()=>o.remove(), 400); } }
+  function wlcPost(){
+    const ov = document.getElementById('cv-wlc'), o = ov && ov._o, t = trip(); if(!o || !t) return;
+    put({id:'s' + uid(), type:'souv', trip:t.id, date:isoToday(), titre:(o.newC ? flag(o.cc) + ' ' : '📍 ') + MSGT('Arrivée à') + ' ' + o.city, lieu:[o.city, o.country].filter(Boolean).join(', '), lat:o.lat, lng:o.lng, cc:o.cc, pays:o.country, texte:'', photos:[]}, '💌 ' + MSGT('Tes compagnons et tes abonnés sont prévenus'));
+    try { if(feedCode(t.id)) feedBuild(t.id); } catch(e){}
+    wlcClose(); refresh();
+  }
+
+  /* ══════════ ❤️ Réactions en direct : un ❤️ ou un 💬 d’un abonné s’envole sur l’écran du voyageur ══════════ */
+  function rxMine(){ const ids = new Set(); myTrips().forEach(t=>{ if(socCode(t.id) || FT()[t.id]) ids.add('ft:' + t.id); }); return ids; }
+  function rxTick(){
+    try {
+      if(document.visibilityState !== 'visible' || document.getElementById('cv-wlc')) return;
+      const mine = rxMine(); if(!mine.size) return; const dv = devId(), lim = Date.now() - 6 * 3600e3;
+      const L = list('like', l=>mine.has(l.trip) && l.on && !String(l.id).endsWith(':' + dv)).map(l=>({id:l.id + ':' + (l.updatedAt||0), at:l.updatedAt || 0, k:'lk', w:l.who, f:l.feed}))
+        .concat(list('comment', c=>mine.has(c.trip) && c.dev !== dv).map(c=>({id:c.id, at:c.at || 0, k:'cm', w:c.who, f:c.feed, tx:c.text})));
+      if(!M.rxSeen){ M.rxSeen = {}; L.forEach(x=>M.rxSeen[x.id] = 1); persist(); return; }
+      const nw = L.filter(x=>!M.rxSeen[x.id]); if(!nw.length) return;
+      nw.forEach(x=>M.rxSeen[x.id] = 1); const ks = Object.keys(M.rxSeen); if(ks.length > 600) ks.slice(0, ks.length - 600).forEach(k=>delete M.rxSeen[k]); persist();
+      nw.filter(x=>x.at > lim).sort((a, b)=>a.at - b.at).slice(-3).forEach((x, i)=>setTimeout(()=>rxShow(x), i * 1800));
+    } catch(e){}
+  }
+  setInterval(rxTick, 4000);
+  function rxShow(x){
+    const f = R[x.f] || {}, ph = (f.photos||[])[0];
+    // une pluie de cœurs (ou de bulles)
+    const box = document.createElement('div'); box.className = 'rx-fly';
+    box.innerHTML = Array.from({length: x.k === 'lk' ? 12 : 6}, ()=>`<i style="left:${(55 + Math.random() * 38).toFixed(1)}%;--dx:${Math.round(Math.random() * 120 - 60)}px;animation-delay:${(Math.random() * .7).toFixed(2)}s;font-size:${(18 + Math.random() * 18).toFixed(0)}px">${x.k === 'lk' ? ['❤️','💖','💕','❤️'][Math.floor(Math.random() * 4)] : '💬'}</i>`).join('');
+    document.body.appendChild(box); setTimeout(()=>box.remove(), 3600);
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'rx-pill';
+    b.innerHTML = `${ph ? `<img data-ph="${esc(ph)}.t" alt="">` : `<i>${x.k === 'lk' ? '❤️' : '💬'}</i>`}<span><b data-notr>${esc(x.w || 'Un abonné')}</b> <span>${x.k === 'lk' ? 'aime' : 'a commenté'}</span> <q data-notr>${esc(f.titre || f.lieu || '')}</q>${x.tx ? `<small data-notr>« ${esc(String(x.tx).slice(0, 90))} »</small>` : ''}</span>`;
+    b.onclick = () => { b.remove(); try { feedView(f.trip || x.f); } catch(e){} };
+    document.body.appendChild(b); hydrate(); requestAnimationFrame(()=>b.classList.add('on'));
+    try { navigator.vibrate && navigator.vibrate(30); } catch(e){}
+    setTimeout(()=>{ b.classList.remove('on'); setTimeout(()=>b.remove(), 500); }, 5200);
+  }
   /* ══════════ 🛰️ Carte 3D en direct : où est chacun, sa route qui se dessine, ses photos — mise à jour toute seule ══════════
      key = id du voyage (compagnon : les traces du voyage) ou « ft:… » (abonné : ce que chaque voyageur a accepté de montrer) */
   let LV = null, lvSoonT = 0;
@@ -15883,7 +16115,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20i';
+  const BUILD = '2026-10-20j';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -15893,7 +16125,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {wlcPost, wlcClose, wlcShow, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
