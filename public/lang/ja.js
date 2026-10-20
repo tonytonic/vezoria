@@ -4325,4 +4325,11 @@ I18N.load({
 "Merci de nous avoir suivis !":"見守ってくれてありがとう！",
 "Fin du voyage":"旅の終わり",
 "Épisode final envoyé":"最終回を送りました",
-"Ajoute des souvenirs pour créer la story du voyage.":"思い出を追加して旅のストーリーを作りましょう。"});
+"Ajoute des souvenirs pour créer la story du voyage.":"思い出を追加して旅のストーリーを作りましょう。",
+"Sans musique":"音楽なし",
+"Rien":"なし",
+"Auto":"自動",
+"Personnaliser la story":"ストーリーをカスタマイズ",
+"Relancer la story":"ストーリーを再生し直す",
+"Choisis au moins une photo.":"写真を1枚以上選んでください。",
+"Toutes les autres photos du voyage ({0})":"旅のほかの写真すべて ({0})"});

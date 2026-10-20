@@ -4325,4 +4325,11 @@ I18N.load({
 "Merci de nous avoir suivis !":"Спасибо, что были с нами!",
 "Fin du voyage":"Конец поездки",
 "Épisode final envoyé":"Финальный выпуск отправлен",
-"Ajoute des souvenirs pour créer la story du voyage.":"Добавь воспоминания, чтобы создать историю поездки."});
+"Ajoute des souvenirs pour créer la story du voyage.":"Добавь воспоминания, чтобы создать историю поездки.",
+"Sans musique":"Без музыки",
+"Rien":"Ничего",
+"Auto":"Авто",
+"Personnaliser la story":"Настроить историю",
+"Relancer la story":"Перезапустить историю",
+"Choisis au moins une photo.":"Выбери хотя бы одно фото.",
+"Toutes les autres photos du voyage ({0})":"Все остальные фото поездки ({0})"});

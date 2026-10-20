@@ -4325,4 +4325,11 @@ I18N.load({
 "Merci de nous avoir suivis !":"谢谢你们的关注！",
 "Fin du voyage":"旅行结束",
 "Épisode final envoyé":"最终集已发送",
-"Ajoute des souvenirs pour créer la story du voyage.":"添加回忆来创建旅行故事。"});
+"Ajoute des souvenirs pour créer la story du voyage.":"添加回忆来创建旅行故事。",
+"Sans musique":"无音乐",
+"Rien":"不选",
+"Auto":"自动",
+"Personnaliser la story":"自定义故事",
+"Relancer la story":"重新播放故事",
+"Choisis au moins une photo.":"请至少选择一张照片。",
+"Toutes les autres photos du voyage ({0})":"旅行中的其他所有照片 ({0})"});

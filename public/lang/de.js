@@ -1401,4 +1401,11 @@ I18N.load({
 "Merci de nous avoir suivis !":"Danke, dass ihr uns gefolgt seid!",
 "Fin du voyage":"Ende der Reise",
 "Épisode final envoyé":"Letzte Folge verschickt",
-"Ajoute des souvenirs pour créer la story du voyage.":"Füge Erinnerungen hinzu, um die Reise-Story zu erstellen."});
+"Ajoute des souvenirs pour créer la story du voyage.":"Füge Erinnerungen hinzu, um die Reise-Story zu erstellen.",
+"Sans musique":"Ohne Musik",
+"Rien":"Keine",
+"Auto":"Auto",
+"Personnaliser la story":"Story anpassen",
+"Relancer la story":"Story neu starten",
+"Choisis au moins une photo.":"Wähle mindestens ein Foto.",
+"Toutes les autres photos du voyage ({0})":"Alle anderen Fotos der Reise ({0})"});

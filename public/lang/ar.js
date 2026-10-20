@@ -4325,4 +4325,11 @@ I18N.load({
 "Merci de nous avoir suivis !":"شكرًا لمتابعتكم!",
 "Fin du voyage":"نهاية الرحلة",
 "Épisode final envoyé":"أُرسلت الحلقة الأخيرة",
-"Ajoute des souvenirs pour créer la story du voyage.":"أضف ذكريات لإنشاء قصة الرحلة."});
+"Ajoute des souvenirs pour créer la story du voyage.":"أضف ذكريات لإنشاء قصة الرحلة.",
+"Sans musique":"بدون موسيقى",
+"Rien":"لا شيء",
+"Auto":"تلقائي",
+"Personnaliser la story":"تخصيص القصة",
+"Relancer la story":"إعادة تشغيل القصة",
+"Choisis au moins une photo.":"اختر صورة واحدة على الأقل.",
+"Toutes les autres photos du voyage ({0})":"كل صور الرحلة الأخرى ({0})"});

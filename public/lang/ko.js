@@ -4325,4 +4325,11 @@ I18N.load({
 "Merci de nous avoir suivis !":"함께해 줘서 고마워요!",
 "Fin du voyage":"여행의 끝",
 "Épisode final envoyé":"마지막 에피소드를 보냈어요",
-"Ajoute des souvenirs pour créer la story du voyage.":"추억을 추가해 여행 스토리를 만들어요."});
+"Ajoute des souvenirs pour créer la story du voyage.":"추억을 추가해 여행 스토리를 만들어요.",
+"Sans musique":"음악 없음",
+"Rien":"없음",
+"Auto":"자동",
+"Personnaliser la story":"스토리 꾸미기",
+"Relancer la story":"스토리 다시 재생",
+"Choisis au moins une photo.":"사진을 한 장 이상 골라 주세요.",
+"Toutes les autres photos du voyage ({0})":"여행의 다른 모든 사진 ({0})"});

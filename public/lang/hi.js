@@ -4325,4 +4325,11 @@ I18N.load({
 "Merci de nous avoir suivis !":"हमें फ़ॉलो करने के लिए धन्यवाद!",
 "Fin du voyage":"यात्रा का अंत",
 "Épisode final envoyé":"अंतिम एपिसोड भेजा गया",
-"Ajoute des souvenirs pour créer la story du voyage.":"यात्रा की स्टोरी बनाने के लिए यादें जोड़ें।"});
+"Ajoute des souvenirs pour créer la story du voyage.":"यात्रा की स्टोरी बनाने के लिए यादें जोड़ें।",
+"Sans musique":"बिना संगीत",
+"Rien":"कोई नहीं",
+"Auto":"ऑटो",
+"Personnaliser la story":"स्टोरी अपने हिसाब से बनाएँ",
+"Relancer la story":"स्टोरी फिर से चलाएँ",
+"Choisis au moins une photo.":"कम से कम एक फ़ोटो चुनें।",
+"Toutes les autres photos du voyage ({0})":"यात्रा की बाकी सभी फ़ोटो ({0})"});

@@ -1401,4 +1401,11 @@ I18N.load({
 "Merci de nous avoir suivis !":"Bedankt voor het volgen!",
 "Fin du voyage":"Einde van de reis",
 "Épisode final envoyé":"Laatste aflevering verstuurd",
-"Ajoute des souvenirs pour créer la story du voyage.":"Voeg herinneringen toe om het reisverhaal te maken."});
+"Ajoute des souvenirs pour créer la story du voyage.":"Voeg herinneringen toe om het reisverhaal te maken.",
+"Sans musique":"Zonder muziek",
+"Rien":"Geen",
+"Auto":"Auto",
+"Personnaliser la story":"Story aanpassen",
+"Relancer la story":"Story opnieuw starten",
+"Choisis au moins une photo.":"Kies minstens één foto.",
+"Toutes les autres photos du voyage ({0})":"Alle andere foto's van de reis ({0})"});

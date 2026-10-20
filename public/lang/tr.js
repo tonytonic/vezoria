@@ -4325,4 +4325,11 @@ I18N.load({
 "Merci de nous avoir suivis !":"Bizi takip ettiğiniz için teşekkürler!",
 "Fin du voyage":"Seyahatin sonu",
 "Épisode final envoyé":"Final bölümü gönderildi",
-"Ajoute des souvenirs pour créer la story du voyage.":"Seyahat hikâyesi için anı ekle."});
+"Ajoute des souvenirs pour créer la story du voyage.":"Seyahat hikâyesi için anı ekle.",
+"Sans musique":"Müziksiz",
+"Rien":"Hiçbiri",
+"Auto":"Otomatik",
+"Personnaliser la story":"Hikâyeyi özelleştir",
+"Relancer la story":"Hikâyeyi yeniden başlat",
+"Choisis au moins une photo.":"En az bir fotoğraf seç.",
+"Toutes les autres photos du voyage ({0})":"Seyahatin diğer tüm fotoğrafları ({0})"});

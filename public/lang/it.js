@@ -1401,4 +1401,11 @@ I18N.load({
 "Merci de nous avoir suivis !":"Grazie per averci seguito!",
 "Fin du voyage":"Fine del viaggio",
 "Épisode final envoyé":"Episodio finale inviato",
-"Ajoute des souvenirs pour créer la story du voyage.":"Aggiungi ricordi per creare la story del viaggio."});
+"Ajoute des souvenirs pour créer la story du voyage.":"Aggiungi ricordi per creare la story del viaggio.",
+"Sans musique":"Senza musica",
+"Rien":"Nessuna",
+"Auto":"Auto",
+"Personnaliser la story":"Personalizza la story",
+"Relancer la story":"Rilancia la story",
+"Choisis au moins une photo.":"Scegli almeno una foto.",
+"Toutes les autres photos du voyage ({0})":"Tutte le altre foto del viaggio ({0})"});
