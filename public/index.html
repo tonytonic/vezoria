@@ -1641,6 +1641,43 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .sh-card{background:#fff;border:1px solid var(--light);border-radius:18px;padding:14px;margin-bottom:10px}.sh-k{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:600;font-size:1.2rem}.sh-card p{font-size:.86rem;color:var(--gray);margin:4px 0 10px}
 .sh-st{display:flex;gap:14px;margin:0 0 10px;font-size:.92rem}.sh-more summary{cursor:pointer;color:var(--gray);font-weight:600;margin:6px 0 10px}
 .sv-so{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--light);background:#fff;border-radius:999px;padding:5px 12px;margin:8px 0 2px;font:inherit;font-size:.82rem;color:var(--ink);cursor:pointer}.sv-so small{color:var(--gray)}
+/* 🏁 voyage fini */
+.st-home{font-size:3.4rem;animation:wlcPop .7s cubic-bezier(.2,1.4,.4,1) both}
+.st-fl{font-size:1.6rem;letter-spacing:.1em;animation:wlcUp .6s .6s both}
+.st-chap h2{font-family:var(--serif,Georgia,serif);font-size:clamp(2.4rem,12vw,3.8rem);margin:8px 0;animation:wlcUp .6s .1s both}.st-chap p{animation:wlcUp .6s .3s both}
+.st-pod{display:flex;align-items:flex-end;justify-content:center;gap:8px;margin-top:20px;width:100%}
+.st-pd{display:flex;flex-direction:column;align-items:center;gap:6px;animation:wlcPop .7s cubic-bezier(.2,1.4,.4,1) calc(.2s + var(--i) * .25s) both}
+.st-pd>img{width:23vw;max-width:140px;aspect-ratio:3/4;object-fit:cover;border-radius:14px;border:3px solid #fff;box-shadow:0 14px 30px rgba(0,0,0,.45)}
+.st-pd.p0{order:2}.st-pd.p0>img{width:30vw;max-width:180px}.st-pd.p1{order:1}.st-pd.p2{order:3}
+.st-pd b{background:rgba(255,255,255,.95);color:#be123c;border-radius:99px;padding:3px 10px;font-size:.85rem}
+.st-cup{font-size:5rem;line-height:1;margin:14px 0 4px;animation:stCup 1.2s cubic-bezier(.2,1.4,.4,1) both;filter:drop-shadow(0 10px 24px rgba(250,204,21,.6))}
+@keyframes stCup{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.2) rotate(8deg)}100%{transform:none}}
+.st-trophy h2{font-family:var(--serif,Georgia,serif);font-size:2.3rem;margin:4px 0;animation:wlcUp .6s .5s both}.st-trophy p{opacity:.9;animation:wlcUp .6s .7s both}
+.st-mini{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:16px;animation:wlcUp .6s .9s both}.st-mini span{background:rgba(255,255,255,.14);border-radius:99px;padding:5px 11px;font-size:.82rem}
+.bb{margin:0 0 12px;display:flex;flex-direction:column;gap:10px}
+.bb-story{display:flex;align-items:center;gap:14px;border:0;border-radius:22px;padding:14px 16px;font:inherit;text-align:left;color:#fff;background:linear-gradient(120deg,#1e1b4b,#7c3aed 55%,#db2777);box-shadow:0 14px 30px -14px rgba(124,58,237,.8);position:relative;overflow:hidden}
+.bb-story::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);transform:translateX(-100%);animation:lvShine 4s ease-in-out infinite}
+.bb-pl{width:46px;height:46px;flex:0 0 46px;border-radius:50%;background:#fff;color:#7c3aed;display:grid;place-items:center;font-size:1.2rem;padding-left:3px;animation:lvPulse 2s ease-out infinite}
+.bb-story span{display:flex;flex-direction:column}.bb-story small{opacity:.85;font-size:.78rem}
+.bb-tro{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px}
+.bb-t{flex:0 0 auto;min-width:118px;background:linear-gradient(160deg,#fff7d6,#fde68a);border-radius:18px;padding:10px 12px;display:flex;flex-direction:column;align-items:flex-start;box-shadow:0 8px 18px -10px rgba(180,120,0,.6);animation:wlcPop .6s cubic-bezier(.2,1.4,.4,1) calc(var(--i) * .12s) both;color:#4a3300}
+.bb-t i{font-style:normal;font-size:1.7rem}.bb-t b{font-size:.9rem}.bb-t small{font-size:.72rem;opacity:.8}
+.bb-map{background:#0f172a;border-radius:20px;overflow:hidden;color:#fff}
+.bb-mh{display:flex;align-items:center;justify-content:space-between;padding:10px 12px}.bb-mh button{border:0;border-radius:99px;padding:6px 11px;font:inherit;font-weight:800;font-size:.78rem;background:#fff;color:#0f172a}
+.bb-mm img{width:100%;display:block;animation:stReveal 2.4s cubic-bezier(.4,0,.2,1) both}
+.bb-sec{padding:2px 4px}
+.bb-top{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:84px;gap:6px}
+.bb-ph{position:relative;border:0;padding:0;border-radius:14px;overflow:hidden;background:#eee;animation:wlcPop .6s cubic-bezier(.2,1.4,.4,1) calc(var(--i) * .1s) both}
+.bb-ph.big{grid-column:span 2;grid-row:span 2}.bb-ph>img{width:100%;height:100%;object-fit:cover;display:block}
+.bb-ph b{position:absolute;left:6px;bottom:6px;background:rgba(255,255,255,.94);color:#be123c;border-radius:99px;font-size:.7rem;padding:2px 7px}
+.bb-best{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#fff1f2,#ffe4e6);border-radius:20px;padding:12px}
+.bb-bi{position:relative;width:86px;height:96px;flex:0 0 86px}.bb-bi img{position:absolute;width:62px;height:80px;object-fit:cover;border-radius:10px;border:3px solid #fff;box-shadow:0 6px 14px rgba(0,0,0,.25);left:calc(var(--i) * 11px);top:calc(var(--i) * 6px);transform:rotate(calc((var(--i) - 1) * 7deg))}
+.bb-bt{display:flex;flex-direction:column;gap:2px;min-width:0}.bb-bt small{color:#be123c;font-weight:800;font-size:.72rem}.bb-bt b{font-size:1.05rem}.bb-bt span{font-size:.8rem;color:#6b7280}
+.bb-bt button{align-self:flex-start;margin-top:6px;border:0;border-radius:99px;padding:6px 12px;font:inherit;font-weight:800;font-size:.8rem;color:#fff;background:linear-gradient(135deg,#f43f5e,#a855f7)}
+.bb-grow .cv-bbar i{animation:bbGrow 1.2s cubic-bezier(.2,.9,.3,1) both;transform-origin:left}
+@keyframes bbGrow{from{transform:scaleX(0)}to{transform:none}}
+.wlc.an1 .an-ph{position:relative;height:150px;margin-bottom:14px}
+.wlc.an1 .an-ph img{position:absolute;width:110px;height:140px;object-fit:cover;border-radius:12px;border:4px solid #fff;box-shadow:0 12px 26px rgba(0,0,0,.45);left:calc(var(--i) * 52px);transform:rotate(calc((var(--i) - 1.5) * 8deg));animation:wlcPop .7s cubic-bezier(.2,1.4,.4,1) calc(var(--i) * .15s) both}
 /* 🎞️ studio souvenirs */
 .sto{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}
 .sto-b{border:0;border-radius:18px;padding:12px 8px;color:#fff;font:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 10px 22px -10px rgba(0,0,0,.45);position:relative;overflow:hidden}
@@ -1652,7 +1689,7 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .st-today{display:flex;align-items:center;gap:14px;width:100%;border:0;border-radius:20px;padding:12px 14px;margin:0 0 12px;font:inherit;text-align:left;color:#fff;background:linear-gradient(120deg,#be185d,#7c3aed);box-shadow:0 12px 26px -12px rgba(124,58,237,.7)}
 .st-today .tx{display:flex;flex-direction:column}.st-today small{opacity:.85;font-size:.76rem}
 .st-stack{position:relative;width:64px;height:52px;flex:0 0 64px}
-.st-stack img,.st-stack>i{position:absolute;width:42px;height:52px;border-radius:9px;border:2px solid #fff;object-fit:cover;left:calc(var(--i,0) * 7px);transform:rotate(calc((var(--i,0) - 1.5) * 6deg));box-shadow:0 4px 10px rgba(0,0,0,.3);font-style:normal;display:grid;place-items:center;background:#fff}
+.st-stack>img,.st-stack>i{position:absolute;width:42px;height:52px;border-radius:9px;border:2px solid #fff;object-fit:cover;left:calc(var(--i,0) * 7px);transform:rotate(calc((var(--i,0) - 1.5) * 6deg));box-shadow:0 4px 10px rgba(0,0,0,.3);font-style:normal;display:grid;place-items:center;background:#fff}
 /* lecteur story */
 .st{position:fixed;inset:0;z-index:9400;background:#000;color:#fff;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none}
 .st-bars{position:absolute;z-index:5;top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;right:8px;display:flex;gap:4px}
@@ -1801,7 +1838,7 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 @keyframes rxUp{0%{opacity:0;transform:translate(0,0) scale(.5)}15%{opacity:1;transform:translate(calc(var(--dx)*.2),-40px) scale(1.1)}100%{opacity:0;transform:translate(var(--dx),-62vh) scale(.9) rotate(18deg)}}
 .rx-pill{position:fixed;z-index:9301;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 10px);display:flex;align-items:center;gap:10px;border:0;border-radius:18px;background:rgba(255,255,255,.97);color:#1f2937;font:inherit;text-align:left;padding:8px 12px 8px 8px;box-shadow:0 14px 34px rgba(0,0,0,.28);transform:translateY(-140%);transition:transform .5s cubic-bezier(.2,1.2,.4,1)}
 .rx-pill.on{transform:none}
-.rx-pill img,.rx-pill>i{width:44px;height:44px;flex:0 0 44px;border-radius:12px;object-fit:cover;display:grid;place-items:center;font-style:normal;font-size:1.4rem;background:#ffe4ec}
+.rx-pill>img,.rx-pill>i{width:44px;height:44px;flex:0 0 44px;border-radius:12px;object-fit:cover;display:grid;place-items:center;font-style:normal;font-size:1.4rem;background:#ffe4ec}
 .rx-pill span{font-size:.86rem;line-height:1.25}.rx-pill q{font-weight:700}.rx-pill small{display:block;color:#6b7280;font-size:.78rem;margin-top:2px}
 @media (prefers-reduced-motion:reduce){.wlc-conf,.rx-fly{display:none}.ln-e{transition:none}}
 /* 🛰️ carte 3D en direct */
@@ -1849,9 +1886,9 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .lv-nm{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:rgba(10,20,45,.82);color:#fff;border-radius:10px;padding:3px 8px;white-space:nowrap;display:flex;flex-direction:column;align-items:center;line-height:1.15}
 .lv-nm b{font-size:.78rem}.lv-nm small{font-size:.64rem;opacity:.85}
 .lv-ph{border:0;padding:0;background:none;display:flex;flex-direction:column;align-items:center;cursor:pointer}
-.lv-ph img,.lv-ph i{width:40px;height:40px;border-radius:10px;border:2px solid #fff;object-fit:cover;box-shadow:0 3px 10px rgba(0,0,0,.4);background:#fff;display:grid;place-items:center;font-style:normal;transition:width .3s,height .3s}
+.lv-ph>img,.lv-ph>i{width:40px;height:40px;border-radius:10px;border:2px solid #fff;object-fit:cover;box-shadow:0 3px 10px rgba(0,0,0,.4);background:#fff;display:grid;place-items:center;font-style:normal;transition:width .3s,height .3s}
 .lv-ph span{display:none}
-.lv-ph.big{z-index:5}.lv-ph.big img{width:180px;height:135px;border-radius:14px}
+.lv-ph.big{z-index:5}.lv-ph.big>img{width:180px;height:135px;border-radius:14px}
 .lv-ph.big span{display:flex;flex-direction:column;background:#fff;color:#1f2937;border-radius:10px;padding:4px 8px;margin-top:4px;max-width:200px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.3)}
 .lv-ph.big span b{font-size:.8rem}.lv-ph.big span small{font-size:.68rem;color:#6b7280}
 #cv-live .maplibregl-ctrl-attrib{font-size:9px}
@@ -4669,7 +4706,7 @@ const CV = (function(){
     try { const c = getComputedStyle(document.body).getPropertyValue('--navy').trim(), m = document.querySelector('meta[name="theme-color"]'); if(c && m && m.content !== c) m.content = c; } catch(e){} }
   function render(){
     phaseTheme();
-    setTimeout(moments, 900); setTimeout(liveMapHydrate, 80); setTimeout(lnHydrate, 60); setTimeout(poem, 0); setTimeout(progMapHydrate, 120); setTimeout(()=>{ if(document.querySelector('.cv-anniv img[data-ph]:not([data-ok])')) hydrate(); }, 60);
+    setTimeout(moments, 900); setTimeout(liveMapHydrate, 80); setTimeout(bbMapHydrate, 90); setTimeout(lnHydrate, 60); setTimeout(poem, 0); setTimeout(progMapHydrate, 120); setTimeout(()=>{ if(document.querySelector('.cv-anniv img[data-ph]:not([data-ok])')) hydrate(); }, 60);
     const body = document.getElementById('cv-body');
     const fab = document.getElementById('cv-fab');
     const t = trip();
@@ -11068,7 +11105,7 @@ ${pm.join('\n')}</Document></kml>`;
     const pick = trips().filter(x=>tripPhase(x)!=='prep');
     return `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">🏁 Bilan · ${esc(t.titre)}</div></div>
         ${pick.length > 1 ? `<select class="v-in" style="margin-top:6px" onchange="CV.go(this.value);CV.modeGo('bilan')">${pick.map(x=>`<option value="${x.id}"${x.id===t.id?' selected':''}>${esc(x.titre)}</option>`).join('')}</select>` : ''}</div>
-      ${actBand()}${bilanHero(t, tot, sv, nph)}
+      ${actBand()}${bilanHero(t, tot, sv, nph)}${bilanBig(t)}
       <div class="v-box"><h3>🧾 Pour boucler le voyage</h3>
         ${chk(!tr.length, tr.length ? `${tr.length} remboursement${tr.length>1?'s':''} à faire` : 'Comptes soldés entre vous', tr.map(x=>`${esc(pname(x.de))} → ${esc(pname(x.a))} : ${eur(x.v)}`).join('<br>'))}
         ${chk(!unpaid.length, unpaid.length ? `${unpaid.length} échéance(s) non cochée(s)` : 'Échéancier à jour')}
@@ -11076,7 +11113,7 @@ ${pm.join('\n')}</Document></kml>`;
         ${chk(!daysNo.length, daysNo.length ? `${daysNo.length} jour(s) sans souvenir` : 'Chaque jour a son souvenir', daysNo.slice(0,6).map(fshort).join(' · '))}
         ${chk(!!t.archived, t.archived ? 'Rangé dans tes souvenirs' : 'Pas encore rangé dans tes souvenirs')}
         <div class="cv-row" style="gap:6px;flex-wrap:wrap;margin-top:8px">${tr.length ? `<button class="v-day-edit" onclick="CV.innerGo('budget')">💸 Régler / demander</button>` : ''}${daysNo.length ? `<button class="v-day-edit" onclick="CV.editSouv(null)">📸 Ajouter un souvenir</button>` : ''}${!t.archived ? `<button class="v-day-edit" onclick="CV.bilanClose()">📦 Ranger dans mes souvenirs</button>` : ''}</div></div>
-      ${bilanSplit()}<div class="v-box"><h3>💶 Dépenses</h3><p><b>${eur(tot)}</b> au total${v.length > 1 ? ` · ${eur(tot/v.length)} par personne` : ''}${t.objectif ? ` · budget visé ${eur(t.objectif)} / pers.` : ''}</p>
+      ${bilanSplit()}<div class="v-box bb-grow"><h3>💶 Dépenses</h3><p><b>${eur(tot)}</b> au total${v.length > 1 ? ` · ${eur(tot/v.length)} par personne` : ''}${t.objectif ? ` · budget visé ${eur(t.objectif)} / pers.` : ''}</p>
         ${Object.entries(byCat).filter(([,x])=>x>0).sort((a,b)=>b[1]-a[1]).map(([c,x])=>`<div class="cv-bbar"><span>${CATS[c] ? CATS[c].icon + ' ' + CATS[c].lbl : c}</span><i style="width:${x/mx*100}%"></i><b>${eur(x)}</b></div>`).join('')}</div>
       <div class="v-box"><h3>📸 Souvenirs</h3><p>${sv.length} souvenir${sv.length>1?'s':''} · ${nph} photo${nph>1?'s':''}</p>
         <button class="v-btn" onclick="CV.filmOpen()">🎬 Film du voyage</button><button class="v-btn sec" onclick="CV.albumSheet()">📕 Créer l’album photo (PDF)</button><button class="v-btn sec" onclick="CV.jrSheet()">📖 Journal simple (PDF)</button><button class="v-btn sec" onclick="CV.worldMap()">🌍 Revoir sur la carte du monde</button></div>${coffeeBilan(t)}`;
@@ -14257,6 +14294,10 @@ ${pm.join('\n')}</Document></kml>`;
   let momentDone = false;
   async function moments(){
     if(momentDone || document.getElementById('cv-moment') || document.getElementById('v-sheet-bg')) return;
+    { const td = isoToday(); M.seen = M.seen || {};
+      if(!M.seen['annivM:' + td] && !hidden('blk:anniv')){ const md = td.slice(5), y = +td.slice(0, 4);
+        const a = list('souv', x=>x.date && x.date.slice(5) === md && +x.date.slice(0, 4) < y && (x.photos||[]).length && R[x.trip] && !R[x.trip].deleted && !R[x.trip].demo).sort((p, q)=>q.date.localeCompare(p.date))[0];
+        if(a){ momentDone = true; M.seen['annivM:' + td] = 1; persist(); annivShow(a); return; } } }
     const t = trip(); if(!t || !t.debut || t.demo) return;
     const td = isoToday(), tm = new Date(Date.now() + 864e5).toISOString().slice(0,10); M.seen = M.seen || {};
     // la veille (ou le matin du départ) : « Demain, tu pars »
@@ -14268,7 +14309,7 @@ ${pm.join('\n')}</Document></kml>`;
     // pendant le voyage : « Bienvenue à … » quand la ville de la nuit change
     if(tripPhase(t) !== 'live') return;
     const {night} = itemsForDay(td), h = night[0], city = h ? cityOf(h.titre) : '';
-    if(!city || M.seen['hi:' + t.id + ':' + normQ(city)]) return;
+    if(!city || M.seen['hi:' + t.id + ':' + normQ(city)] || (M.wlc && M.wlc[t.id] && M.wlc[t.id].cities.includes(normQ(city)))) return;
     momentDone = true; M.seen['hi:' + t.id + ':' + normQ(city)] = 1; persist();
     const c = await countryOf(city).catch(()=>null);
     momentHello(t, h, city, c);
@@ -14495,6 +14536,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="bh-b"><button type="button" class="pri" onclick="CV.filmOpen()">🎬 Revivre en film</button><button type="button" onclick="CV.albumSheet()">📕 Album</button><button type="button" onclick="CV.worldTrip('${t.id}')">🌍 Sur le globe</button></div></div>`;
   }
   function momentHome(t){
+    if(souvs().length || list('trk', x=>x.trip === t.id).length){ storyTrip(t.id, 'home'); return; }
     const r = tripRecap(t);
     momentShow(`<div class="mo-k">Bon retour !</div><div class="mo-big">🏡</div><h2>${esc(t.titre)}</h2><div class="mo-sub">${tripDatesLong(t)}</div>
       <div class="mo-w">${r.days ? `<div><small>Jours</small><b>${r.days}</b></div>` : ''}${r.km ? `<div><small>km</small><b>${r.km.toLocaleString(NL())}</b></div>` : ''}${r.ccs.length ? `<div><small>Pays</small><b>${r.ccs.map(flag).join(' ')}</b></div>` : ''}${r.nph ? `<div><small>Photos</small><b>${r.nph}</b></div>` : ''}</div>
@@ -14519,6 +14561,94 @@ ${pm.join('\n')}</Document></kml>`;
 
 
 
+
+  /* ══════════ 🏁 Voyage fini : story du voyage entier, trophées, bilan en grand, « il y a un an » ══════════ */
+  function tripLikes(tid){ const by = {}; list('like', l=>l.trip === 'ft:' + tid && l.on).forEach(l=>{ by[l.feed] = (by[l.feed] || 0) + 1; }); return by; }
+  function tripTop(tid, n){
+    const lk = tripLikes(tid), S = list('souv', x=>x.trip === tid && (x.photos||[]).length);
+    const L = S.map(x=>({p:x.photos[0], s:x, n:lk['fd:' + x.id] || 0})).filter(x=>x.n > 0).sort((a, b)=>b.n - a.n);
+    if(L.length >= n) return L.slice(0, n);
+    const used = new Set(L.map(x=>x.p)), rest = S.flatMap(x=>(x.photos||[]).map(p=>({p, s:x, n:0}))).filter(x=>!used.has(x.p));
+    const st = Math.max(1, Math.floor(rest.length / Math.max(1, n - L.length)));
+    return L.concat(rest.filter((x, i)=>i % st === 0)).slice(0, n);
+  }
+  function tripTrophies(t){
+    const r = tripRecap(t), nv = (t.voyageurs||[]).length, lk = Object.values(tripLikes(t.id)).reduce((a, b)=>a + b, 0), T = [];
+    if(r.km >= 5000) T.push({i:'✈️', t:'Globe-trotter', d:r.km.toLocaleString(NL()) + ' km parcourus'});
+    if(r.ccs.length >= 3) T.push({i:'🌍', t:'Explorateur', d:r.ccs.length + ' pays traversés'});
+    if(r.nph >= 200) T.push({i:'📸', t:'Paparazzi', d:r.nph + ' photos'});
+    if(lk >= 20) T.push({i:'❤️', t:'Star des abonnés', d:lk + ' j’aime'});
+    if(r.days >= 14) T.push({i:'🧭', t:'Grand voyage', d:r.days + ' jours sur la route'});
+    if(nv >= 3) T.push({i:'👨‍👩‍👧', t:'Tribu en vadrouille', d:nv + ' voyageurs'});
+    if(r.km >= 500 && r.km < 5000) T.push({i:'🛣️', t:'Bourlingueur', d:r.km.toLocaleString(NL()) + ' km'});
+    if(!T.length) T.push({i:'🧳', t:'Beau voyage', d:r.days + ' jour' + (r.days > 1 ? 's' : '') + ' de souvenirs'});
+    return T;
+  }
+  function tripLines(tid){
+    const by = trkByWho(tid, false), lines = Object.entries(by).filter(([, p])=>p.length > 1).map(([w, p])=>({pts:p.filter((x, i)=>i % Math.max(1, Math.ceil(p.length / 600)) === 0).map(x=>[x[0], x[1]]), color: w ? pcol(w) : '#0ea5e9'}));
+    const geo = list('souv', x=>x.trip === tid && x.lat != null && x.lng != null).sort((a, b)=>(a.date||'').localeCompare(b.date||''));
+    if(!lines.length && geo.length > 1) lines.push({pts:geo.map(x=>[+x.lat, +x.lng]), color:'#f43f5e'});
+    return {lines, mk: geo.filter((x, i)=>i % Math.max(1, Math.ceil(geo.length / 25)) === 0).map((x, i)=>({lat:+x.lat, lng:+x.lng, label:'•', color:'#f43f5e'}))};
+  }
+  function storyTrip(tid, mode){
+    tid = tid || M.trip; const t = R[tid]; if(!t) return;
+    if(M.trip !== tid){ try { go(tid); } catch(e){} }
+    const r = tripRecap(t), all = list('souv', x=>x.trip === tid).sort((a, b)=>(a.date||'').localeCompare(b.date||'') || (a.ordre||0) - (b.ordre||0));
+    if(!all.length){ alert('Ajoute des souvenirs pour créer la story du voyage.'); return; }
+    const ds = dayList(), days = [...new Set(all.filter(x=>x.date).map(x=>x.date))].sort(), lk = Object.values(tripLikes(tid)).reduce((a, b)=>a + b, 0);
+    const cov = (coverId && coverId(t)) || (all.find(x=>(x.photos||[]).length) || {photos:[]}).photos[0];
+    const slides = [{k: mode === 'home' ? 'home' : 'tintro', d:4600, ph:cov, title:t.titre || '', dates:tripDatesLong(t), flags:r.ccs.slice(0, 8).map(flag).join(' ')},
+      {k:'tstats', d:5400, r, lk}];
+    const tl = tripLines(tid); if(tl.lines.length || tl.mk.length > 1) slides.push({k:'map', d:5400, lines:tl.lines, mk:tl.mk, ttl:'Le voyage'});
+    const per = days.length > 12 ? 1 : days.length > 6 ? 2 : 3;
+    days.forEach(d=>{ const S = all.filter(x=>x.date === d), k = ds.indexOf(d), pl = [...new Set(S.map(x=>String(x.lieu || '').split(',')[0].trim()).filter(Boolean))];
+      slides.push({k:'chap', d:2600, date:d, j:k >= 0 ? k + 1 : '', place:pl.slice(0, 2).join(' · '), title:dayInfo(d).titre || ''});
+      const P = S.flatMap(x=>(x.photos||[]).map(p=>({p, s:x}))); const st = Math.max(1, Math.ceil(P.length / per));
+      P.filter((x, i)=>i % st === 0).slice(0, per).forEach((x, i)=>slides.push({k:'ph', d:3800, p:x.p, s:x.s, first:i === 0, who:(t.voyageurs||[]).length > 1 && x.s.createdBy ? pname(x.s.createdBy) : ''})); });
+    const top = tripTop(tid, 3).filter(x=>x.n > 0); if(top.length >= 2) slides.push({k:'top', d:5200, top});
+    slides.push({k:'trophy', d:5200, tr:tripTrophies(t)});
+    slides.push({k:'tend', d:0, tid, title:t.titre || '', pub: !!socCode(tid)});
+    stPlay(slides, t.titre || '', tripDatesLong(t));
+  }
+  // 💌 l’épisode final : un dernier souvenir pour les abonnés (résumé + les plus belles photos)
+  function tripFinal(tid){
+    const t = R[tid]; if(!t) return; const r = tripRecap(t), top = tripTop(tid, 6);
+    const txt = [r.days + ' ' + (r.days > 1 ? MSGT('jours') : MSGT('jour')), r.km ? r.km.toLocaleString(NL()) + ' km' : '', r.ccs.length ? r.ccs.map(flag).join(' ') : '', r.nph + ' photos'].filter(Boolean).join(' · ') + '\n\n' + MSGT('Merci de nous avoir suivis !') + ' ❤️';
+    put({id:'s' + uid(), type:'souv', trip:tid, date:t.fin || isoToday(), titre:'🏁 ' + MSGT('Fin du voyage'), lieu:'', texte:txt, photos:top.map(x=>x.p)}, '💌 ' + MSGT('Épisode final envoyé'));
+    try { if(feedCode(tid)) feedBuild(tid); } catch(e){}
+    refresh();
+  }
+  function bilanBig(t){
+    if(!t || tripPhase(t) === 'prep') return '';
+    const all = list('souv', x=>x.trip === t.id), nph = all.reduce((a, x)=>a + (x.photos||[]).length, 0); if(!all.length) return '';
+    const top = tripTop(t.id, 5), lk = tripLikes(t.id), tr = tripTrophies(t);
+    const score = {}; all.forEach(x=>{ if(!x.date) return; score[x.date] = (score[x.date] || 0) + (x.photos||[]).length + 3 * (lk['fd:' + x.id] || 0); });
+    const best = Object.entries(score).sort((a, b)=>b[1] - a[1])[0], bd = best && best[0], bS = bd ? all.filter(x=>x.date === bd) : [], bph = bS.flatMap(x=>x.photos || []), k = bd ? dayList().indexOf(bd) : -1;
+    const tl = tripLines(t.id);
+    return `<div class="bb">
+      <button type="button" class="bb-story" onclick="CV.storyTrip('${t.id}')"><span class="bb-pl">▶</span><span><b>La story du voyage</b><small>${nph} photos · en musique · un chapitre par jour</small></span></button>
+      <div class="bb-tro">${tr.slice(0, 4).map((x, i)=>`<div class="bb-t" style="--i:${i}"><i>${x.i}</i><b>${esc(x.t)}</b><small>${esc(x.d)}</small></div>`).join('')}</div>
+      ${tl.lines.length || tl.mk.length > 1 ? `<div class="bb-map"><div class="bb-mh"><b>🗺️ Tout le voyage</b><button type="button" onclick="CV.flyover('${t.id}')">🎥 Survol 3D</button></div><div class="bb-mm" data-bmap="${t.id}"><div class="v-sum-small">🗺️ Carte en cours…</div></div></div>` : ''}
+      ${top.length ? `<div class="bb-sec"><b>❤️ ${top.some(x=>x.n) ? 'Les plus aimées' : 'Quelques pépites'}</b></div><div class="bb-top">${top.map((x, i)=>`<button type="button" class="bb-ph${i === 0 ? ' big' : ''}" style="--i:${i}" onclick="CV.view('${x.s.id}',${(x.s.photos||[]).indexOf(x.p)})"><img data-ph="${esc(x.p)}.t" alt="">${x.n ? `<b>${x.n} ❤️</b>` : ''}</button>`).join('')}</div>` : ''}
+      ${bd ? `<div class="bb-best"><div class="bb-bi">${bph.slice(0, 3).map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><div class="bb-bt"><small>⭐ Le meilleur jour</small><b>${k >= 0 ? 'J' + (k + 1) + ' · ' : ''}${esc(fdate(bd))}</b><span>${esc(dayInfo(bd).titre || [...new Set(bS.map(x=>String(x.lieu || '').split(',')[0].trim()).filter(Boolean))].join(' · '))}</span><button type="button" onclick="CV.storyOpen('${bd}')">▶ Revivre ce jour</button></div></div>` : ''}
+    </div>`;
+  }
+  async function bbMapHydrate(){
+    const el = document.querySelector('[data-bmap]:not([data-ok])'); if(!el) return; el.dataset.ok = '1';
+    const tl = tripLines(el.dataset.bmap);
+    try { const c = await drawMap({w:720, h:460, lines:tl.lines, markers:tl.mk, maxZoom:12}); if(el.isConnected) el.innerHTML = `<img src="${c.toDataURL('image/jpeg', .86)}" alt="">`; } catch(e){ el.closest('.bb-map') && el.closest('.bb-map').remove(); }
+  }
+  // 📅 « Il y a un an » en plein écran
+  async function annivShow(a){
+    const t = R[a.trip], n = +isoToday().slice(0, 4) - +a.date.slice(0, 4), S = list('souv', x=>x.trip === a.trip && x.date === a.date), P = S.flatMap(x=>x.photos || []).slice(0, 4);
+    const ov = document.createElement('div'); ov.id = 'cv-wlc'; ov.className = 'wlc an1';
+    ov.innerHTML = `<div class="wlc-bg" id="wlc-bg"></div><div class="wlc-shade"></div>
+      <div class="wlc-in"><div class="an-ph">${P.map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><small class="wlc-k">${n > 1 ? 'Il y a ' + n + ' ans aujourd’hui' : 'Il y a un an aujourd’hui'}</small>
+        <h1 data-notr>${esc(a.titre || a.lieu || (t && t.titre) || '')}</h1><p><span data-notr>${esc(t ? t.titre : '')}</span>${a.lieu ? ' · <span data-notr>' + esc(String(a.lieu).split(',')[0]) + '</span>' : ''}</p>
+        <div class="wlc-b"><button type="button" class="pri" onclick="CV.wlcClose();CV.go('${a.trip}');CV.storyOpen('${a.date}')">▶ Revivre cette journée</button><button type="button" onclick="CV.wlcClose();CV.storyTrip('${a.trip}')">🎞️ Tout le voyage</button><button type="button" onclick="CV.wlcClose()">Plus tard</button></div></div>`;
+    document.body.appendChild(ov); hydrate(); requestAnimationFrame(()=>ov.classList.add('on'));
+    try { const u = await phURL(P[0]); const bg = document.getElementById('wlc-bg'); if(bg && u){ bg.style.backgroundImage = `url("${u}")`; bg.classList.add('ok'); } } catch(e){}
+  }
   /* ══════════ 🎞️ Story du jour · 🧱 Mur de photos · 💌 Carte postale ══════════ */
   const PHU = {};
   async function phURL(id){ if(PHU[id]) return PHU[id]; try { const b = await photoBlob(id); if(b){ PHU[id] = URL.createObjectURL(b); return PHU[id]; } } catch(e){} return ''; }
@@ -14579,7 +14709,7 @@ ${pm.join('\n')}</Document></kml>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden';
     ST = {slides, i:-1, t:0, left:0, paused:false, ov, aud:null};
     ov.querySelector('.st-x').onclick = e => { e.stopPropagation(); stClose(); };
-    ov.querySelector('#st-snd').onclick = e => { e.stopPropagation(); M.filmMute = !M.filmMute; persist(); e.currentTarget.textContent = M.filmMute ? '🔇' : '🔊'; if(ST && ST.aud){ if(M.filmMute) ST.aud.pause(); else ST.aud.play().catch(()=>{}); } };
+    ov.querySelector('#st-snd').onclick = e => { e.stopPropagation(); if(ST && ST.aud && ST.aud.paused && !M.filmMute){ ST.aud.volume = .7; ST.aud.play().catch(()=>{}); return; } M.filmMute = !M.filmMute; persist(); e.currentTarget.textContent = M.filmMute ? '🔇' : '🔊'; if(ST && ST.aud){ if(M.filmMute) ST.aud.pause(); else ST.aud.play().catch(()=>{}); } };
     let down = 0, held = false;
     const L = ov.querySelector('.st-tap.l'), Rr = ov.querySelector('.st-tap.r');
     [L, Rr].forEach(el=>{ el.addEventListener('pointerdown', ()=>{ down = Date.now(); held = false; setTimeout(()=>{ if(down && Date.now() - down >= 280){ held = true; stPause(true); } }, 300); });
@@ -14623,7 +14753,7 @@ ${pm.join('\n')}</Document></kml>`;
       return `<div class="st-bg st-grad g2"></div><div class="st-c st-stats"><small>Ta journée en chiffres</small><div class="st-ns">${sl.km >= 0.1 ? box('🚶', +sl.km.toFixed(1), 'km parcourus', 1) : ''}${box('📸', sl.nph, sl.nph > 1 ? 'photos' : 'photo')}${box('📍', sl.ns, sl.ns > 1 ? 'souvenirs' : 'souvenir')}${sl.dep ? box('💶', Math.round(sl.dep), 'dépensés') : ''}</div>
         ${sl.places.length ? `<p class="st-pl">${sl.places.slice(0, 5).map(p=>`<span data-notr>${esc(p)}</span>`).join(' → ')}</p>` : ''}</div>`; }
     if(sl.k === 'map'){ let img = ''; try { const c = await drawMap({w:720, h:900, lines:sl.lines, markers:sl.mk, maxZoom:15}); img = c.toDataURL('image/jpeg', .85); } catch(e){}
-      return `<div class="st-bg st-grad g3"></div><div class="st-c st-map"><small>La route du jour</small>${img ? `<div class="st-mimg"><img src="${img}" alt=""></div>` : '<p>🗺️</p>'}</div>`; }
+      return `<div class="st-bg st-grad g3"></div><div class="st-c st-map"><small>${sl.ttl ? esc(sl.ttl) : 'La route du jour'}</small>${img ? `<div class="st-mimg"><img src="${img}" alt=""></div>` : '<p>🗺️</p>'}</div>`; }
     if(sl.k === 'ph'){ const u = await phURL(sl.p), x = sl.s || {};
       return `<div class="st-bg ${kb}" style="background-image:url('${u}')"></div><div class="st-blur" style="background-image:url('${u}')"></div><img class="st-img ${kb}" src="${u}" alt=""><div class="st-shade b"></div>
         ${sl.first !== false ? `<div class="st-cap"><b data-notr>${esc(x.titre || x.lieu || '')}</b>${x.lieu && x.lieu !== x.titre ? `<small>📍 <span data-notr>${esc(x.lieu)}</span></small>` : ''}${sl.who ? `<small>📸 <span data-notr>${esc(sl.who)}</span></small>` : ''}${x.texte && sl.first ? `<p data-notr>${esc(String(x.texte).slice(0, 160))}</p>` : ''}</div>` : ''}`; }
@@ -14633,6 +14763,17 @@ ${pm.join('\n')}</Document></kml>`;
       return `<div class="st-bg st-grad g5"></div><div class="st-c st-rx"><small>Tes proches ont suivi</small><div class="st-hearts">${Array.from({length:Math.min(12, Math.max(4, sl.lk.length))}, (_, i)=>`<i style="--i:${i}">❤️</i>`).join('')}</div>
         <h3>${sl.lk.length} ❤️ · ${sl.cm.length} 💬</h3>${who.length ? `<p data-notr>${esc(who.slice(0, 5).join(', '))}${who.length > 5 ? '…' : ''}</p>` : ''}
         ${sl.cm.slice(0, 3).map((c, i)=>`<div class="st-cm" style="--i:${i}"><b data-notr>${esc(c.who || '')}</b><span data-notr>${esc(String(c.text || '').slice(0, 110))}</span></div>`).join('')}</div>`; }
+    if(sl.k === 'home' || sl.k === 'tintro'){ const u = sl.ph ? await phURL(sl.ph) : '';
+      return `${u ? `<div class="st-bg ${kb}" style="background-image:url('${u}')"></div>` : '<div class="st-bg st-grad g6"></div>'}<div class="st-shade"></div>
+        <div class="st-c st-intro">${sl.k === 'home' ? '<div class="st-home">🏡</div><small>Bon retour !</small>' : '<small>Le film du voyage</small>'}<h2 data-notr>${esc(sl.title)}</h2><p>${esc(sl.dates)}</p>${sl.flags ? `<p class="st-fl">${sl.flags}</p>` : ''}</div>`; }
+    if(sl.k === 'tstats'){ const box = (ic, v, l, dec) => `<div class="st-n"><i>${ic}</i><b data-cnt="${v}" data-d="${dec||0}">0</b><small>${l}</small></div>`;
+      return `<div class="st-bg st-grad g2"></div><div class="st-c st-stats"><small>Le voyage en chiffres</small><div class="st-ns">${box('🗓️', sl.r.days, sl.r.days > 1 ? 'jours' : 'jour')}${sl.r.km ? box('🛣️', sl.r.km, 'km') : box('📍', sl.r.nsv, 'souvenirs')}${box('📸', sl.r.nph, 'photos')}${sl.r.ccs.length ? box('🌍', sl.r.ccs.length, 'pays') : box('❤️', sl.lk, 'j’aime')}</div>${sl.r.ccs.length ? `<p class="st-fl">${sl.r.ccs.map(flag).join(' ')}</p>` : ''}</div>`; }
+    if(sl.k === 'chap') return `<div class="st-bg st-grad g${2 + (sl.j % 5)}"></div><div class="st-c st-chap"><small>Jour ${sl.j}</small><h2>${esc(fdate(sl.date))}</h2>${sl.place ? `<p>📍 <span data-notr>${esc(sl.place)}</span></p>` : ''}${sl.title ? `<p class="st-tt">${esc(sl.title)}</p>` : ''}</div>`;
+    if(sl.k === 'top'){ const U = await Promise.all(sl.top.map(x=>phURL(x.p)));
+      return `<div class="st-bg st-grad g5"></div><div class="st-c st-top3"><small>Les plus aimées</small><div class="st-pod">${sl.top.map((x, i)=>`<div class="st-pd p${i}" style="--i:${i}"><img src="${U[i]}" alt=""><b>${i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'} ${x.n} ❤️</b></div>`).join('')}</div></div>`; }
+    if(sl.k === 'trophy') return `<div class="st-bg st-grad g6"></div><div class="st-c st-trophy"><small>Ton trophée</small><div class="st-cup">${sl.tr[0].i}</div><h2>${esc(sl.tr[0].t)}</h2><p>${esc(sl.tr[0].d)}</p>${sl.tr.length > 1 ? `<div class="st-mini">${sl.tr.slice(1, 4).map(x=>`<span>${x.i} ${esc(x.t)}</span>`).join('')}</div>` : ''}</div>`;
+    if(sl.k === 'tend') return `<div class="st-bg st-grad g6"></div><div class="st-c st-end"><small>Fin</small><h2>Merci pour ce voyage</h2><p data-notr>${esc(sl.title)}</p>
+        <div class="st-eb"><button type="button" onclick="CV.stRestart()">↺ Revoir</button>${sl.pub ? `<button type="button" onclick="CV.stClose();CV.tripFinal('${sl.tid}')">💌 Envoyer l’épisode final aux abonnés</button>` : ''}<button type="button" onclick="CV.stClose();CV.go('${sl.tid}');CV.modeGo('bilan')">🏁 Le bilan</button><button type="button" onclick="CV.stClose()">Fermer</button></div></div>`;
     if(sl.k === 'end'){
       if(sl.show) return `<div class="st-bg st-grad g6"></div><div class="st-c st-end"><h2>Fin du diaporama</h2><div class="st-eb"><button type="button" onclick="CV.stRestart()">↺ Revoir</button><button type="button" onclick="CV.stClose()">Fermer</button></div></div>`;
       return `<div class="st-bg st-grad g6"></div><div class="st-c st-end"><small>${sl.nx ? 'Demain' : 'Et voilà'}</small><h2>${sl.nx ? esc(fdate(sl.nx)) : 'Quelle journée !'}</h2>${sl.nxt ? `<p>${esc(sl.nxt)}</p>` : ''}
@@ -14848,7 +14989,7 @@ ${pm.join('\n')}</Document></kml>`;
       if(!city){ wlcBusy = false; return; }
       const k = normQ(city), first = !W.cities.length, newC = !!cc && !W.ccs.includes(cc);
       if(W.cities.includes(k)){ wlcBusy = false; return; }
-      W.cities.push(k); if(cc && newC) W.ccs.push(cc); persist();
+      W.cities.push(k); if(cc && newC) W.ccs.push(cc); M.seen = M.seen || {}; if(M.seen['hi:' + t.id + ':' + k]){ persist(); wlcBusy = false; return; } M.seen['hi:' + t.id + ':' + k] = 1; persist();
       // 1re ville vue : on fête seulement si c’est une étape prévue (sinon c’est souvent la ville de départ)
       const planned = (()=>{ try { return tlStages().some(x=>normQ(x.city || '').includes(k) || k.includes(normQ(x.city || '') || '§')); } catch(e){ return false; } })();
       if(first && !planned){ wlcBusy = false; return; }
@@ -16448,7 +16589,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20l';
+  const BUILD = '2026-10-20m';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -16458,7 +16599,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
