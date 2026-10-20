@@ -2,7 +2,7 @@
 // Pages et fichiers de l'appli : réseau s'il répond vite (dernière version), sinon copie locale tout de suite
 // (réseau lent ou absent) ; la copie se met à jour en arrière-plan.
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-20g';
+const CACHE = 'vezoria-2026-10-20h';
 const CORE = ['./', './splash.webp', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
@@ -136,6 +136,8 @@ self.addEventListener('push', e => {
     const trip = (/[?&]vzt=([^&]*)/.exec(url) || [])[1] || '';
     const box = ((await kvGet('inbox')) || []).filter(x => now - x.at < 7 * 864e5);
     const soc = d.k === 'social';
+    // même message reçu deux fois (prévenu par deux liens différents) : une seule notification
+    if (!isTest && box.some(x => now - x.at < 180e3 && x.title === title && x.body === body)) return;
     if (!isTest) { box.push({ at: now, title, body, url, trip, soc }); while (box.length > 60) box.shift(); await kvPut('inbox', box); }
     // regroupement : une seule notification par voyage, qui se complète ; pas de nouvelle sonnerie avant 5 min
     let tag = d.t || 'vezoria', nTitle = title, nBody = body, silent = false;
