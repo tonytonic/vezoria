@@ -4216,4 +4216,8 @@ I18N.load({
 "Effet verre activé":"유리 효과 켜짐",
 "Effet verre désactivé":"유리 효과 꺼짐",
 "Publié par":"공개한 사람",
-"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"이 여행은 이미 {0}님이 공개하고 있어요: 팔로워가 이미 보고 있어요. 중복을 막기 위해 한 명만 공개해요."});
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"이 여행은 이미 {0}님이 공개하고 있어요: 팔로워가 이미 보고 있어요. 중복을 막기 위해 한 명만 공개해요.",
+"✏️ Modifier mon commentaire":"✏️ 내 댓글 수정",
+"Modifier ton commentaire :":"댓글을 수정하세요:",
+"Commentaire modifié":"댓글을 수정했어요",
+"modifié":"수정됨"});

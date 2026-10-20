@@ -4216,4 +4216,8 @@ I18N.load({
 "Effet verre activé":"Эффект стекла включён",
 "Effet verre désactivé":"Эффект стекла выключен",
 "Publié par":"Публикует",
-"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Эту поездку уже публикует {0}: подписчики её видят. Публикует только один спутник, чтобы не было дублей."});
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Эту поездку уже публикует {0}: подписчики её видят. Публикует только один спутник, чтобы не было дублей.",
+"✏️ Modifier mon commentaire":"✏️ Изменить мой комментарий",
+"Modifier ton commentaire :":"Измените комментарий:",
+"Commentaire modifié":"Комментарий изменён",
+"modifié":"изменено"});

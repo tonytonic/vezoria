@@ -1292,4 +1292,8 @@ I18N.load({
 "Effet verre activé":"Efecto cristal activado",
 "Effet verre désactivé":"Efecto cristal desactivado",
 "Publié par":"Publicado por",
-"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Este viaje ya lo publica {0}: sus seguidores ya lo ven. Solo un compañero lo publica, para evitar duplicados."});
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Este viaje ya lo publica {0}: sus seguidores ya lo ven. Solo un compañero lo publica, para evitar duplicados.",
+"✏️ Modifier mon commentaire":"✏️ Editar mi comentario",
+"Modifier ton commentaire :":"Edita tu comentario:",
+"Commentaire modifié":"Comentario editado",
+"modifié":"editado"});

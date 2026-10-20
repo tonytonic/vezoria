@@ -4216,4 +4216,8 @@ I18N.load({
 "Effet verre activé":"تم تفعيل تأثير الزجاج",
 "Effet verre désactivé":"تم إيقاف تأثير الزجاج",
 "Publié par":"ينشرها",
-"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"هذه الرحلة ينشرها {0} بالفعل: يراها متابعوه. ينشرها رفيق واحد فقط لتجنب التكرار."});
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"هذه الرحلة ينشرها {0} بالفعل: يراها متابعوه. ينشرها رفيق واحد فقط لتجنب التكرار.",
+"✏️ Modifier mon commentaire":"✏️ تعديل تعليقي",
+"Modifier ton commentaire :":"عدّل تعليقك:",
+"Commentaire modifié":"تم تعديل التعليق",
+"modifié":"معدّل"});

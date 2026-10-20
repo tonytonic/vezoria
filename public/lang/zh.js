@@ -4216,4 +4216,8 @@ I18N.load({
 "Effet verre activé":"玻璃效果已开启",
 "Effet verre désactivé":"玻璃效果已关闭",
 "Publié par":"发布者",
-"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"这次旅行已由 {0} 发布：其关注者已能看到。为避免重复，只由一位同伴发布。"});
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"这次旅行已由 {0} 发布：其关注者已能看到。为避免重复，只由一位同伴发布。",
+"✏️ Modifier mon commentaire":"✏️ 编辑我的评论",
+"Modifier ton commentaire :":"编辑你的评论：",
+"Commentaire modifié":"评论已编辑",
+"modifié":"已编辑"});

@@ -4216,4 +4216,8 @@ I18N.load({
 "Effet verre activé":"ग्लास इफ़ेक्ट चालू",
 "Effet verre désactivé":"ग्लास इफ़ेक्ट बंद",
 "Publié par":"प्रकाशित करने वाले",
-"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"यह यात्रा पहले से {0} प्रकाशित कर रहे हैं: उनके फ़ॉलोअर्स इसे देख रहे हैं। दोहराव से बचने के लिए सिर्फ़ एक साथी इसे प्रकाशित करता है।"});
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"यह यात्रा पहले से {0} प्रकाशित कर रहे हैं: उनके फ़ॉलोअर्स इसे देख रहे हैं। दोहराव से बचने के लिए सिर्फ़ एक साथी इसे प्रकाशित करता है।",
+"✏️ Modifier mon commentaire":"✏️ मेरी टिप्पणी बदलें",
+"Modifier ton commentaire :":"अपनी टिप्पणी बदलें:",
+"Commentaire modifié":"टिप्पणी बदली गई",
+"modifié":"बदला गया"});

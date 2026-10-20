@@ -4216,4 +4216,8 @@ I18N.load({
 "Effet verre activé":"ガラス効果オン",
 "Effet verre désactivé":"ガラス効果オフ",
 "Publié par":"公開者",
-"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"この旅はすでに {0} が公開しています：フォロワーはもう見られます。重複を避けるため、公開は仲間のひとりだけです。"});
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"この旅はすでに {0} が公開しています：フォロワーはもう見られます。重複を避けるため、公開は仲間のひとりだけです。",
+"✏️ Modifier mon commentaire":"✏️ コメントを編集",
+"Modifier ton commentaire :":"コメントを編集：",
+"Commentaire modifié":"コメントを編集しました",
+"modifié":"編集済み"});

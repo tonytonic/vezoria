@@ -1292,4 +1292,8 @@ I18N.load({
 "Effet verre activé":"Glaseffekt an",
 "Effet verre désactivé":"Glaseffekt aus",
 "Publié par":"Veröffentlicht von",
-"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Diese Reise wird schon von {0} veröffentlicht: die Follower sehen sie bereits. Nur ein Mitreisender veröffentlicht sie, um Doppelte zu vermeiden."});
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Diese Reise wird schon von {0} veröffentlicht: die Follower sehen sie bereits. Nur ein Mitreisender veröffentlicht sie, um Doppelte zu vermeiden.",
+"✏️ Modifier mon commentaire":"✏️ Meinen Kommentar bearbeiten",
+"Modifier ton commentaire :":"Kommentar bearbeiten:",
+"Commentaire modifié":"Kommentar bearbeitet",
+"modifié":"bearbeitet"});

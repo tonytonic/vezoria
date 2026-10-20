@@ -4216,4 +4216,8 @@ I18N.load({
 "Effet verre activé":"Cam efekti açık",
 "Effet verre désactivé":"Cam efekti kapalı",
 "Publié par":"Yayınlayan",
-"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Bu seyahati zaten {0} yayınlıyor: takipçileri görüyor. Çift olmasın diye yalnızca bir yol arkadaşı yayınlar."});
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"Bu seyahati zaten {0} yayınlıyor: takipçileri görüyor. Çift olmasın diye yalnızca bir yol arkadaşı yayınlar.",
+"✏️ Modifier mon commentaire":"✏️ Yorumumu düzenle",
+"Modifier ton commentaire :":"Yorumunu düzenle:",
+"Commentaire modifié":"Yorum düzenlendi",
+"modifié":"düzenlendi"});

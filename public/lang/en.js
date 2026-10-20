@@ -1292,4 +1292,8 @@ I18N.load({
 "Effet verre activé":"Glass effect on",
 "Effet verre désactivé":"Glass effect off",
 "Publié par":"Published by",
-"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"This trip is already published by {0}: their followers already see it. Only one companion publishes it, to avoid duplicates."});
+"Ce voyage est déjà publié par {0} : ses abonnés le voient déjà. Un seul compagnon le publie, pour éviter les doublons.":"This trip is already published by {0}: their followers already see it. Only one companion publishes it, to avoid duplicates.",
+"✏️ Modifier mon commentaire":"✏️ Edit my comment",
+"Modifier ton commentaire :":"Edit your comment:",
+"Commentaire modifié":"Comment edited",
+"modifié":"edited"});
