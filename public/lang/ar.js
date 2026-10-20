@@ -4236,4 +4236,9 @@ I18N.load({
 "souvenirs sur la carte":"ذكريات على الخريطة",
 "Personne ne partage encore sa position.":"لا أحد يشارك موقعه بعد.",
 "Dès qu’un voyageur active le suivi GPS (ou partage un souvenir avec son lieu), il apparaît ici.":"بمجرد أن يفعّل مسافر تتبّع GPS (أو يشارك ذكرى مع مكانها) يظهر هنا.",
-"Carte indisponible":"الخريطة غير متاحة"});
+"Carte indisponible":"الخريطة غير متاحة",
+"Dépenses":"المصاريف",
+"Carte live":"خريطة مباشرة",
+"Le film":"الفيلم",
+"Carte 3D":"خريطة ثلاثية الأبعاد",
+"En ce moment":"الآن"});

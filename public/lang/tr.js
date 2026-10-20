@@ -4236,4 +4236,9 @@ I18N.load({
 "souvenirs sur la carte":"anı haritada",
 "Personne ne partage encore sa position.":"Henüz kimse konumunu paylaşmıyor.",
 "Dès qu’un voyageur active le suivi GPS (ou partage un souvenir avec son lieu), il apparaît ici.":"Bir gezgin GPS takibini açtığında (ya da konumlu bir anı paylaştığında) burada görünür.",
-"Carte indisponible":"Harita kullanılamıyor"});
+"Carte indisponible":"Harita kullanılamıyor",
+"Dépenses":"Harcamalar",
+"Carte live":"Canlı harita",
+"Le film":"Film",
+"Carte 3D":"3D harita",
+"En ce moment":"Şu anda"});

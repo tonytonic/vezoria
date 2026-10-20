@@ -1312,4 +1312,9 @@ I18N.load({
 "souvenirs sur la carte":"recuerdos en el mapa",
 "Personne ne partage encore sa position.":"Nadie comparte todavía su posición.",
 "Dès qu’un voyageur active le suivi GPS (ou partage un souvenir avec son lieu), il apparaît ici.":"En cuanto un viajero activa el seguimiento GPS (o comparte un recuerdo con su lugar), aparece aquí.",
-"Carte indisponible":"Mapa no disponible"});
+"Carte indisponible":"Mapa no disponible",
+"Dépenses":"Gastos",
+"Carte live":"Mapa en vivo",
+"Le film":"La película",
+"Carte 3D":"Mapa 3D",
+"En ce moment":"Ahora mismo"});

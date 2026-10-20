@@ -4236,4 +4236,9 @@ I18N.load({
 "souvenirs sur la carte":"件の思い出が地図に",
 "Personne ne partage encore sa position.":"まだ誰も位置を共有していません。",
 "Dès qu’un voyageur active le suivi GPS (ou partage un souvenir avec son lieu), il apparaît ici.":"旅行者がGPS追跡をオンにする（または場所付きの思い出を共有する）と、ここに表示されます。",
-"Carte indisponible":"地図を表示できません"});
+"Carte indisponible":"地図を表示できません",
+"Dépenses":"出費",
+"Carte live":"ライブ地図",
+"Le film":"ムービー",
+"Carte 3D":"3Dマップ",
+"En ce moment":"いま"});

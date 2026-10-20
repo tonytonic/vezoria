@@ -4236,4 +4236,9 @@ I18N.load({
 "souvenirs sur la carte":"개의 추억이 지도에",
 "Personne ne partage encore sa position.":"아직 위치를 공유하는 사람이 없어요.",
 "Dès qu’un voyageur active le suivi GPS (ou partage un souvenir avec son lieu), il apparaît ici.":"여행자가 GPS 추적을 켜면(또는 장소가 있는 추억을 공유하면) 여기에 나타나요.",
-"Carte indisponible":"지도를 사용할 수 없어요"});
+"Carte indisponible":"지도를 사용할 수 없어요",
+"Dépenses":"지출",
+"Carte live":"실시간 지도",
+"Le film":"영상",
+"Carte 3D":"3D 지도",
+"En ce moment":"지금"});

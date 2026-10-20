@@ -4236,4 +4236,9 @@ I18N.load({
 "souvenirs sur la carte":"मानचित्र पर यादें",
 "Personne ne partage encore sa position.":"अभी कोई अपनी स्थिति साझा नहीं कर रहा।",
 "Dès qu’un voyageur active le suivi GPS (ou partage un souvenir avec son lieu), il apparaît ici.":"जैसे ही कोई यात्री GPS ट्रैकिंग चालू करता है (या जगह के साथ कोई याद साझा करता है), वह यहाँ दिखेगा।",
-"Carte indisponible":"मानचित्र उपलब्ध नहीं"});
+"Carte indisponible":"मानचित्र उपलब्ध नहीं",
+"Dépenses":"ख़र्च",
+"Carte live":"लाइव मानचित्र",
+"Le film":"फ़िल्म",
+"Carte 3D":"3D मानचित्र",
+"En ce moment":"अभी"});

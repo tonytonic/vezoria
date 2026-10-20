@@ -4236,4 +4236,9 @@ I18N.load({
 "souvenirs sur la carte":"个回忆在地图上",
 "Personne ne partage encore sa position.":"还没有人分享位置。",
 "Dès qu’un voyageur active le suivi GPS (ou partage un souvenir avec son lieu), il apparaît ici.":"一旦有旅行者开启GPS追踪（或分享带地点的回忆），就会出现在这里。",
-"Carte indisponible":"地图不可用"});
+"Carte indisponible":"地图不可用",
+"Dépenses":"花费",
+"Carte live":"实时地图",
+"Le film":"影片",
+"Carte 3D":"3D地图",
+"En ce moment":"此刻"});

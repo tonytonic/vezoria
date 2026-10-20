@@ -4236,4 +4236,9 @@ I18N.load({
 "souvenirs sur la carte":"воспоминаний на карте",
 "Personne ne partage encore sa position.":"Пока никто не делится своей позицией.",
 "Dès qu’un voyageur active le suivi GPS (ou partage un souvenir avec son lieu), il apparaît ici.":"Как только путешественник включит GPS-трекинг (или поделится воспоминанием с местом), он появится здесь.",
-"Carte indisponible":"Карта недоступна"});
+"Carte indisponible":"Карта недоступна",
+"Dépenses":"Расходы",
+"Carte live":"Карта онлайн",
+"Le film":"Фильм",
+"Carte 3D":"3D-карта",
+"En ce moment":"Прямо сейчас"});
