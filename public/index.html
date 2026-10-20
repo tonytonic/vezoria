@@ -4333,8 +4333,11 @@ const CV = (function(){
   }
   function expClose(){ const ov = document.getElementById('cv-exp'), back = exp && exp.day; if(ov) ov.remove(); document.body.style.overflow = ''; exp = null; refresh(); if(back) setTimeout(()=>planDay(back), 60); }
   function plusSheet(){
-    const p = bar(), ent = DEST.filter(d=>!p.includes(d[0]) && !destHidden(d[0]) && d[0] !== 'prog')
-      .map(d=>[`CV.plusGo('${d[0]}')`, d[1], d[2]]);
+    const ph = navPhase(), p = bar();
+    // voyage en cours / fini : la barre du bas a pris d’autres boutons → la préparation (Programme, Résas, Budget) passe dans « Plus », sans doublon
+    const ent = ph ? DEST.filter(d=>!destHidden(d[0]) && !['souv', 'live', 'bilan'].includes(d[0]))
+        .map(d=>[`CV.plusGo('${ph === 'past' && d[0] === 'sous' ? 'i:bilan:budget' : d[0]}')`, d[1], ph === 'past' && d[0] === 'sous' ? 'Budget du voyage' : d[2]])
+      : DEST.filter(d=>!p.includes(d[0]) && !destHidden(d[0]) && d[0] !== 'prog').map(d=>[`CV.plusGo('${d[0]}')`, d[1], d[2]]);
     ent.push([`CV.plusGo('prefs')`, '⚙️', 'Réglages']);
     if(coffeeOn()) ent.push([`CV.coffeeGo()`, '☕', 'Offrir un café']);
     openSheet(`<h2>Plus</h2><div class="cv-plus">${ent.map(([fn,ic,l])=>`<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`).join('')}</div>
@@ -12432,7 +12435,7 @@ ${pm.join('\n')}</Document></kml>`;
   /* ══════════ 🧭 Chaque espace garde SON voyage + onglets internes (En cours / Bilan) ══════════ */
   const INNER = {live:[['live','📍 Aujourd’hui'],['souv','📸 Souvenirs'],['budget','💶 Dépenses']], bilan:[['bilan','🏁 Bilan'],['budget','💶 Budget'],['ech','📅 Échéancier'],['souv','📸 Souvenirs']]};
   function innerGo(k){ M.inner = M.inner || {}; M.inner[M.mode] = k; persist(); render(); window.scrollTo({top:0}); }
-  function innerBar(){ const L = INNER[M.mode]; if(!L) return ''; const cur = (M.inner||{})[M.mode] || L[0][0];
+  function innerBar(){ const L = INNER[M.mode]; if(!L) return ''; if(navPhase() && navPhase() === (M.mode === 'bilan' ? 'past' : M.mode)) return '';   /* déjà dans la barre du bas */ const cur = (M.inner||{})[M.mode] || L[0][0];
     return `<div class="tabs cv-sub cv-inner">${L.map(([k,l])=>`<button type="button" class="${cur===k?'on':''}" onclick="CV.innerGo('${k}')">${l}</button>`).join('')}</div>`; }
   function innerRender(){
     const L = INNER[M.mode]; if(!L) return false; const cur = (M.inner||{})[M.mode] || L[0][0];
@@ -15294,12 +15297,12 @@ ${pm.join('\n')}</Document></kml>`;
   // 🛰️ en haut des voyages suivis : ceux où quelqu’un partage sa position en ce moment (ou voyage en cours avec une route)
   function folLiveHTML(fol){
     try {
-      const L = (fol || list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted)).map(f=>{ const r = feedTrkRec(f.id); if(!r) return null;
-        const live = r.people.filter(p=>Date.now() - fkLast(p) < LIVE_MS), cur = f.debut && tripPhase(f) === 'live'; if(!live.length && !cur) return null;
-        return {f, r, live, at: Math.max(...r.people.map(fkLast))}; }).filter(Boolean).sort((a, b)=>b.live.length - a.live.length || b.at - a.at);
+      const L = (fol || list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted)).map(f=>{ const r = feedTrkRec(f.id);
+        const live = r ? r.people.filter(p=>Date.now() - fkLast(p) < LIVE_MS) : [], cur = f.debut && tripPhase(f) === 'live'; if(!live.length && !cur) return null;
+        return {f, r, live, at: r ? Math.max(...r.people.map(fkLast)) : 0}; }).filter(Boolean).sort((a, b)=>b.live.length - a.live.length || b.at - a.at);
       const sig = L.map(x=>x.f.id + x.live.map(p=>p.n + fkLast(p)).join()).join('|');
       if(!L.length) return `<div class="cv-follive" data-sg=""></div>`;
-      return `<div class="cv-follive" data-sg="${esc(sig)}"><div class="sh-sec">🛰️ En ce moment</div>${L.slice(0, 6).map(x=>liveBtnHTML(x.f.id, x.live.map(p=>p.n), x.r.people.length, x.f.titre)).join('')}</div>`;
+      return `<div class="cv-follive" data-sg="${esc(sig)}"><div class="sh-sec">🛰️ En ce moment</div>${L.slice(0, 6).map(x=>liveBtnHTML(x.f.id, x.live.map(p=>p.n), x.r ? x.r.people.length : 0, x.f.titre)).join('')}</div>`;
     } catch(e){ return ''; }
   }
   // la page des voyages suivis reste à jour toute seule (toutes les 30 s)
@@ -15880,7 +15883,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20h';
+  const BUILD = '2026-10-20i';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
