@@ -4006,11 +4006,11 @@ const CV = (function(){
   const DEST = [
     ['prog','🗓️','Programme'], ['resas','🎫','Résas'], ['sous','💸','Budget'], ['live','📍','En cours'],
     ['souv','📸','Souvenirs & bilan'], ['notes','📌','Notes'], ['outils','🧰','Outils'], ['envies','✨','Envies'],
-    ['check','✅','Checklist'], ['ech','📆','Échéancier'], ['past','🗺️','Passés'], ['reglages','👥','Partage & profils'], ['livret','📖','Livret'], ['badges','🏅','Badges']];
+    ['check','✅','Checklist'], ['ech','📆','Échéancier'], ['past','🗺️','Passés'], ['reglages','👥','Partage & profils'], ['livret','📖','Livret'], ['omap','📴','Cartes hors ligne'], ['badges','🏅','Badges']];
   const DEST_DEF = ['prog','resas','sous','live'];
   // 📍 voyage en cours / 🏁 voyage fini : la barre du bas montre ce qui sert à ce moment-là (la préparation ne change pas)
   const NAV_PH = {
-    live:[['i:live:live','📍','Aujourd’hui'], ['i:live:souv','📸','Souvenirs'], ['a:map','🛰️','Carte live'], ['i:live:budget','💶','Dépenses']],
+    live:[['i:live:live','📍','Aujourd’hui'], ['i:live:souv','📸','Souvenirs'], ['a:plan','🗺️','Itinéraire'], ['i:live:budget','💶','Dépenses']],
     past:[['i:bilan:bilan','🏁','Bilan'], ['i:bilan:souv','📸','Souvenirs'], ['a:film','🎬','Le film'], ['a:globe','🌍','Carte 3D']]};
   function navPhase(){ const t = M.trip !== LEGACY && trip(); if(!t) return ''; const ph = tripPhase(t);
     if(ph === 'live' && !hidden('mode:live')) return 'live'; if(ph === 'past' && !hidden('mode:bilan')) return 'past'; return ''; }
@@ -4064,6 +4064,8 @@ const CV = (function(){
     if(/^i:/.test(k)){ const [, m, x] = k.split(':'), same = M.mode === m && ((M.inner||{})[m] || INNER[m][0][0]) === x;
       M.inner = M.inner || {}; M.inner[m] = x; if(same){ window.scrollTo({top:0, behavior:'smooth'}); return; } modeGo(m); return; }
     if(k === 'a:map'){ liveOpen(M.trip); return; }
+    if(k === 'a:plan'){ planDay(isoToday()); return; }
+    if(k === 'omap'){ omapSheet(); return; }
     if(k === 'a:film'){ filmOpen(); return; }
     if(k === 'a:globe'){ worldTrip(M.trip); return; }
     if(k === 'live' || k === 'past' || k === 'bilan'){ if(M.mode === k) window.scrollTo({top:0, behavior:'smooth'}); else modeGo(k); return; }
@@ -9949,8 +9951,10 @@ const CV = (function(){
     const now = Date.now();
     return items(i=>i.date && (i.cat==='transport' || i.cat==='activite' || i.cat==='hotel')).map(it=>{
       const tm = it.cat==='transport' ? it.heureDep : it.heure;
-      return {it, at: new Date(it.date + 'T' + (tm || (it.cat==='hotel' ? '15:00' : '09:00')) + ':00').getTime(), timed: !!tm};
-    }).filter(x=>x.at >= now - 30*60000).sort((a,b)=>a.at-b.at);
+      const at = new Date(it.date + 'T' + (tm || (it.cat==='hotel' ? '15:00' : '09:00')) + ':00').getTime();
+      let end = 0; if(it.cat==='transport' && it.heureArr){ end = new Date(it.date + 'T' + it.heureArr + ':00').getTime(); if(end < at) end += 864e5; }
+      return {it, at, end, timed: !!tm, on: !!end && at <= now && now < end};
+    }).filter(x=>x.on || x.at >= now - 2*60000).sort((a,b)=>(b.on - a.on) || a.at - b.at);
   }
   const spentOn = d => items(i=>i.date===d && i.cat==='divers').reduce((s,i)=>s+totalOf(i),0);
   function liveCard(){
@@ -9971,7 +9975,7 @@ const CV = (function(){
     const k = ds.indexOf(td), info = dayInfo(td), spent = spentOn(td), cap = num(t.plafond);
     const bar = cap ? `<div class="lcap${spent > cap ? ' over' : ''}"><span style="width:${Math.min(100, spent/cap*100)}%"></span></div>` : '';
     return `<div class="cv-live"><div class="lk">📍 Jour ${k+1} du voyage${info.titre ? ' · ' + esc(info.titre) : ''}</div>
-      <div class="lt">${nx ? `Prochain : ${icon(nx.it)} <b>${esc(nx.it.titre)}</b>${nx.timed ? ` à ${esc(nx.it.cat==='transport' ? nx.it.heureDep : nx.it.heure)}` : ''}${nx.it.date !== td ? ' (' + fshort(nx.it.date) + ')' : ''} · dans <b>${hhmm(nx.at - Date.now())}</b>` : 'Plus rien de prévu : profite !'}</div>
+      <div class="lt">${nx && nx.on ? `En route : ${icon(nx.it)} <b>${esc(nx.it.titre)}</b> · arrivée à ${esc(nx.it.heureArr)}, dans <b>${hhmm(nx.end - Date.now())}</b>` : nx ? `Prochain : ${icon(nx.it)} <b>${esc(nx.it.titre)}</b>${nx.timed ? ` à ${esc(nx.it.cat==='transport' ? nx.it.heureDep : nx.it.heure)}` : ''}${nx.it.date !== td ? ' (' + fshort(nx.it.date) + ')' : ''} · dans <b>${hhmm(nx.at - Date.now())}</b>` : 'Plus rien de prévu : profite !'}</div>
       <div class="lsp">💶 Dépenses du jour : <b>${eur(spent)}</b>${cap ? ` / ${eur(cap)}${spent > cap ? ' · <b class="red">plafond dépassé de ' + eur(spent - cap) + '</b>' : ' · reste ' + eur(cap - spent)}` : ''} <button type="button" class="lmini" onclick="CV.capSet()">${cap ? 'modifier' : 'fixer un plafond'}</button></div>${bar}
       <div class="lb"><button type="button" onclick="CV.tlDay()">📴 Fiche du jour</button><button type="button" onclick="CV.tlReceipt()">🧾 Dépense</button><button type="button" onclick="CV.shopSheet()">🛒 Courses</button></div></div>`;
   }
@@ -13517,10 +13521,12 @@ ${pm.join('\n')}</Document></kml>`;
       : it.cat==='hotel' ? [it.nom, it.adresse].filter(Boolean).join(' · ') : [it.adresse, it.lieu].filter(Boolean).join(' · ');
     const pj = (it.pj||[])[0], more = L.slice(1, 3);
     const b = (ic, l, fn) => `<button type="button" onclick="${fn}"><i>${ic}</i>${l}</button>`;
-    return `<div class="cv-hero" id="cv-hero" data-at="${nx.at}">
-      <div class="hk">Prochaine étape</div>
+    const enr = nx.on, pc = enr ? Math.round(100 * (Date.now() - nx.at) / Math.max(1, nx.end - nx.at)) : 0;
+    return `<div class="cv-hero${enr ? ' enr' : ''}" id="cv-hero" data-at="${enr ? nx.end : nx.at}" data-on="${enr ? 1 : 0}">
+      <div class="hk">${enr ? '🚀 En route' : 'Prochaine étape'}</div>
       <div class="ht"><span class="hi">${icon(it)}</span><div><b>${esc(it.titre)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div></div>
-      <div class="hc"><span id="cv-hero-cd">${hhmm(nx.at - Date.now())}</span><small>${day}${nx.timed ? ' · ' + esc(tm) : it.cat==='hotel' ? ' · arrivée à l’hôtel' : ''}</small></div>
+      ${enr ? `<div class="hc"><span id="cv-hero-cd">${hhmm(nx.end - Date.now())}</span><small>avant l’arrivée · ${esc(it.heureArr)}</small></div><div class="hpr"><i style="width:${pc}%"></i><b style="left:${pc}%">${icon(it)}</b></div>`
+        : `<div class="hc"><span id="cv-hero-cd">${hhmm(nx.at - Date.now())}</span><small>${day}${nx.timed ? ' · ' + esc(tm) : it.cat==='hotel' ? ' · arrivée à l’hôtel' : ''}</small></div>`}
       ${it.ref ? `<button type="button" class="href" onclick="CV.nhCopy('${esc(it.ref)}')">Réf. <b>${esc(it.ref)}</b> <i>⧉</i></button>` : ''}
       <div class="hb">${it.cat==='transport' && it.mode==='Avion' && nx.at - Date.now() < 36*3600e3 ? b('🛫','Embarquement',`CV.boardShow('${it.id}')`) : ''}${b('🧭','Y aller',`CV.nhGo('${it.id}')`)}${pj ? b('🎫','Billet',`CV.pjOpen('${esc(pj.id)}','${esc(pj.t||'img')}')`) : ''}${it.tel ? b('📞','Appeler',`location.href='tel:${esc(String(it.tel).replace(/[^+\d]/g,''))}'`) : ''}${b('✏️','Fiche',`CV.edit('${it.id}')`)}</div>
       ${more.length ? `<div class="hn">Ensuite : ${more.map(m=>`${icon(m.it)} ${esc(m.it.titre)} <small>${m.it.date === td ? '' : fshort(m.it.date) + ' '}${esc((m.it.cat==='transport' ? m.it.heureDep : m.it.heure) || '')}</small>`).join(' &nbsp;·&nbsp; ')}</div>` : ''}</div>`;
@@ -13534,7 +13540,11 @@ ${pm.join('\n')}</Document></kml>`;
     window.open(u, '_blank', 'noopener');
   }
   async function nhCopy(txt){ try { await navigator.clipboard.writeText(txt); toast('📋 Référence copiée'); } catch(e){ (await uiPrompt('Référence :', txt)); } }
-  setInterval(() => { const h = document.getElementById('cv-hero'); if(!h) return; const at = +h.dataset.at, e = document.getElementById('cv-hero-cd'); if(e) e.textContent = hhmm(at - Date.now()); }, 20000);
+  setInterval(() => { const h = document.getElementById('cv-hero'); if(!h) return; const at = +h.dataset.at, e = document.getElementById('cv-hero-cd');
+    if(Date.now() >= at || (h.dataset.on !== '1' && (nextMoves()[0] || {}).on)){ const nh = nextHero(), d = document.createElement('div'); d.innerHTML = nh; if(d.firstElementChild) h.replaceWith(d.firstElementChild); else h.remove(); hydrate(); return; }   // l’heure est passée : l’étape suivante prend la place
+    if(e) e.textContent = hhmm(at - Date.now());
+    const pr = h.querySelector('.hpr'); if(pr){ const nx = nextMoves()[0]; if(nx && nx.on){ const pc = Math.round(100 * (Date.now() - nx.at) / Math.max(1, nx.end - nx.at)); pr.querySelector('i').style.width = pc + '%'; pr.querySelector('b').style.left = pc + '%'; } } }, 15000);
+  const heroCss = document.createElement('style'); heroCss.textContent = `.cv-hero .hpr{position:relative;height:8px;border-radius:99px;background:rgba(255,255,255,.22);margin:10px 4px 18px}.cv-hero .hpr i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#fde68a,#fff);transition:width 1s}.cv-hero .hpr b{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:1.3rem;transition:left 1s;filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))}.cv-hero.enr .hk{color:#fde68a}`; document.head.appendChild(heroCss);
 
   /* ---------- 2) Ranger mes photos automatiquement (EXIF → souvenirs) ---------- */
   async function exifOf(file){
@@ -16115,7 +16125,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20j';
+  const BUILD = '2026-10-20k';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
