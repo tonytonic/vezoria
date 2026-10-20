@@ -5559,7 +5559,18 @@ const CV = (function(){
   }
   async function importData(data){
     let recs = [];
-    if(data && data.format===2 && data.records) recs = Object.values(data.records);
+    if(data && data.format === 'vezoria-modele' && Array.isArray(data.records)){
+      if(!M.me){ throw new Error('Indique d’abord ton prénom.'); }
+      const day0 = addDays(isoToday(), parseInt(data.debut || 0, 10) || 0), tid = 't' + uid(), ids = {}, now = Date.now();
+      const mapId = v => v === '__T__' ? tid : v === '__ME__' ? M.me : (v[0] === '~' ? (ids[v] = ids[v] || 'i' + uid() + v.slice(1)) : v);
+      const conv = v => typeof v === 'string' ? (/^@-?\d+$/.test(v) ? addDays(day0, parseInt(v.slice(1), 10)) : /^(__|~)/.test(v) ? mapId(v) : v)
+        : Array.isArray(v) ? v.map(conv) : (v && typeof v === 'object') ? Object.fromEntries(Object.entries(v).map(([k, x])=>[k, conv(x)])) : v;
+      data.records.forEach((t, k)=>{ if(!t || t.type === 'profile') return; const r = conv(JSON.parse(JSON.stringify(t)));
+        if(r.type === 'day') r.id = 'day:' + tid + ':' + r.date; if(!r.id) r.id = 'i' + uid() + k;
+        r.createdBy = r.createdBy || M.me; r.updatedBy = r.updatedBy || r.createdBy; r.createdAt = now + k; r.updatedAt = now + k; delete r.demo; recs.push(r); });
+      M.trip = tid;
+    }
+    else if(data && data.format===2 && data.records) recs = Object.values(data.records);
     else {
       const v1 = data && (data.voyage2027 || (Array.isArray(data.items) ? data : null));
       if(!v1 || !Array.isArray(v1.items)) throw new Error('Ce fichier ne contient pas de carnet de voyage.');
@@ -15567,7 +15578,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20e';
+  const BUILD = '2026-10-20f';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
