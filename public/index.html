@@ -2337,7 +2337,7 @@ const CV = (function(){
   const spaceObj = code => (M.spaces || (M.spaces = [])).find(x=>x.code===code);
   function targets(r){
     if(!r) return ['main'];
-    const sp = id => { const c = TS()[id]; return c && spaceObj(c) ? c : null; };
+    const sp = id => { const c = TS()[id] || (/^ft:/.test(id) ? mateCode(id.slice(3)) : null); return c && spaceObj(c) ? c : null; };
     if(r.type==='feedtrip') return sp(r.id) ? [sp(r.id)] : [];
     if(/^ft:/.test(r.trip || '')) return sp(r.trip) ? [sp(r.trip)] : [];
     if(r.type==='trip') return [sp(r.id) || 'main'];
@@ -2663,6 +2663,7 @@ const CV = (function(){
     if(storeLoading || storeBroken) return;   // carnet pas encore lu depuis la base
     const pull = manual === 'pull'; if(pull) manual = false;   // « pull » : aller chercher les nouveautés tout de suite (notification touchée), sans message
     if(manual === true){ M.pqPause = 0; M.pqFull = {}; }   // « Synchroniser » à la main : on réessaie d’envoyer les photos tout de suite
+    try { mateFeedSync(); } catch(e){}   // codes abonnés des voyages communs publiés par un compagnon
     const mainOn = !!(M.sync.on && M.sync.code);
     if(!mainOn && !(M.spaces||[]).length) return;
     if(manual !== true && !pull && M.syncPause && Date.now() < M.syncPause) return;   // pause demandée par le serveur (trop de synchros)
@@ -2695,6 +2696,7 @@ const CV = (function(){
         changed += await syncSpace(sp); }
       try { if(movedApply()) changed++; } catch(e){}
       feedMoveCheck().catch(()=>{}); feedGrantCheck().catch(()=>{}); feedOldWipe().catch(()=>{});
+      try { mateFeedSync(); } catch(e){}
       try { if(await packApply()) { changed++; setTimeout(()=>{ try { syncNow(); } catch(e){} }, 800); } await tripMoveCheck(); linksScan(); inviteCheck().catch(()=>{}); } catch(e){}
       setTimeout(()=>{ tripExtract().catch(()=>{}); }, 20000);
       if(showC) cryptHide('🔒 Données chiffrées et synchronisées');
@@ -2743,7 +2745,7 @@ const CV = (function(){
     const P = PU(), want = PUSH_KINDS.map(k=>k[0]).filter(k=>k !== 'rappel' && k !== 'suivi' && P.kinds[k]), codes = new Set();
     if(M.sync.on && M.sync.code) codes.add(M.sync.code);
     Object.entries(TS()).forEach(([tid, c])=>{ if(c && spaceObj(c) && R[tid] && R[tid].type === 'trip') codes.add(c); });
-    const feeds = P.kinds.social ? Object.values(FT()).filter(Boolean) : [];
+    const feeds = P.kinds.social ? [...new Set([...Object.values(FT()).filter(Boolean), ...trips().map(t=>mateCode(t.id)).filter(Boolean)])] : [];
     // 👀 voyages que je suis (pas les miens) : prévenu quand le voyageur publie une étape (envoyé en « souv » sur le lien abonnés)
     const mineF = new Set(Object.values(FT()).filter(Boolean)), fol = new Set();
     if(P.kinds.suivi) list('feedtrip', f=>!f.deleted && TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !(M.unfol||{})[f.id]).forEach(f=>{ const c = TS()[f.id]; if(c && !mineF.has(c) && !codes.has(c) && spaceObj(c)) fol.add(c); });
@@ -2753,7 +2755,7 @@ const CV = (function(){
   // 🔔 l’auteur est prévenu quand un abonné commente, aime ou commence à suivre (même un abonné sans l’appli)
   async function socialPush(ftid, s, x){
     try {
-      const code = TS()[ftid]; if(!code || !pushApi()) return;
+      const code = TS()[ftid] || mateCode(String(ftid).replace(/^ft:/, '')); if(!code || !pushApi()) return;
       const ft = R[ftid] || {}, tid = String(ftid).replace(/^ft:/, ''), kk = await keys(code), kid = kk.token.slice(0, 16);
       const p = {k:'social', who: myName() || 'Un proche', trip: tid, tt: ft.titre || '', it:[{s, x: String(x || '').slice(0, 120)}], n:1};
       const msg = b64(await seal(te.encode(JSON.stringify(p)), code));
@@ -14754,6 +14756,17 @@ ${pm.join('\n')}</Document></kml>`;
   const FT = () => M.feedPub || (M.feedPub = {});            // voyage → code abonnés (chez l'auteur)
   const ftId = tid => 'ft:' + tid;
   const feedCode = tid => { const c = FT()[tid]; return c && spaceObj(c) ? c : null; };
+  const mateCode = tid => { const t = R[tid]; if(!t || t.deleted || !t.pubCode || !t.pubBy || t.pubBy === M.me || FT()[tid]) return null; return spaceObj(t.pubCode) ? t.pubCode : null; };
+  const socCode = tid => feedCode(tid) || mateCode(tid);
+  // suivre en silence le code abonnés des voyages communs publiés par un compagnon (et l’oublier quand il n’est plus publié)
+  function mateFeedSync(){
+    const want = new Set(); let ch = 0;
+    trips().forEach(t=>{ if(t && !t.deleted && t.pubCode && t.pubBy && t.pubBy !== M.me && !FT()[t.id] && (t.voyageurs||[]).includes(M.me)) want.add(t.pubCode); });
+    want.forEach(c=>{ if(!spaceObj(c)){ (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:'', mate:1}); ch++; } });
+    const used = new Set([...Object.values(FT()), ...Object.values(TS())]);
+    const keep = (M.spaces||[]).filter(sp=>!sp.mate || want.has(sp.code) || used.has(sp.code)); if(keep.length !== (M.spaces||[]).length){ M.spaces = keep; ch++; }
+    if(ch) persist(); return ch;
+  }
   const devId = () => M.devId || (M.devId = 'd' + uid());
   const myName = () => (M.me && prof(M.me) ? pname(M.me) : '') || M.followName || '';
   const stripStamp = r => { const o = Object.assign({}, r); ['createdAt','createdBy','updatedAt','updatedBy'].forEach(k=>delete o[k]); return JSON.stringify(o); };
@@ -14761,7 +14774,7 @@ ${pm.join('\n')}</Document></kml>`;
   // côté auteur : les souvenirs (non privés) deviennent des publications
   function feedBuild(tid){
     const c = feedCode(tid), t = R[tid]; if(!c || !t) return 0;
-    if(M.me && prof(M.me) && t.pubBy !== M.me && (!t.pubBy || !prof(t.pubBy))) putQuiet([Object.assign(clone(t), {pubBy:M.me})]);   // les compagnons savent que je le publie
+    if(M.me && prof(M.me) && (t.pubBy === M.me || !t.pubBy || !prof(t.pubBy)) && (t.pubBy !== M.me || t.pubCode !== c)) putQuiet([Object.assign(clone(t), {pubBy:M.me, pubCode:c})]);   // les compagnons savent que je le publie
     TS()[ftId(tid)] = c; const out = [];
     // couverture pour les abonnés : ma photo › photo Wikipédia choisie › 1re photo d’un souvenir publié (jamais d’un souvenir privé)
     const cov = t.cover || (t.coverWk ? '' : ((list('souv', x=>x.trip===tid && !x.priv && (x.photos||[]).length).sort((a,b)=>(a.date||'').localeCompare(b.date||''))[0] || {}).photos || [])[0] || '');
@@ -14913,7 +14926,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   async function feedStop(tid, silent){
     const c = FT()[tid]; if(!c) return;
-    if(R[tid] && M.me && R[tid].pubBy === M.me) putQuiet([Object.assign(clone(R[tid]), {pubBy:''})]);
+    if(R[tid] && M.me && R[tid].pubBy === M.me) putQuiet([Object.assign(clone(R[tid]), {pubBy:'', pubCode:''})]);
     if(FRX()[tid]){ const gr = list('feedgrant', x=>x.tid === tid); if(gr.length) putQuiet(gr.map(x=>Object.assign(clone(x), {deleted:true}))); delete FRX()[tid]; persist(); }
     if(!silent && !(await uiConfirm('Arrêter la publication ? Tes abonnés ne verront plus ce voyage.'))) return;
     const out = list('feed', f=>f.trip===ftId(tid)).map(f=>Object.assign(clone(f), {deleted:true})); if(R[ftId(tid)]) out.push(Object.assign(clone(R[ftId(tid)]), {deleted:true}));
@@ -15077,7 +15090,7 @@ ${pm.join('\n')}</Document></kml>`;
   // « Anthony & Claire » : celui qui publie d’abord, puis ses compagnons (sans doublon)
   function ftTeam(ft){ const out = [], seen = new Set(); [ft && ft.owner, ...((ft && ft.team) || [])].forEach(n=>{ n = String(n || '').trim(); const k = n.toLowerCase(); if(n && !seen.has(k)){ seen.add(k); out.push(n); } }); return out; }
   const ftTeamTxt = ft => { const a = ftTeam(ft); return a.length ? (a.length > 4 ? a.slice(0, 4).join(', ') + ' +' + (a.length - 4) : a.length === 1 ? a[0] : a.slice(0, -1).join(', ') + ' & ' + a[a.length - 1]) : '?'; };
-  const isAuthorOf = ftid => !!FT()[String(ftid).replace(/^ft:/,'')];
+  const isAuthorOf = ftid => !!FT()[String(ftid).replace(/^ft:/,'')] || !!mateCode(String(ftid).replace(/^ft:/,''));
   function cmMenu(cid){
     const c = R[cid]; if(!c) return; const mine = c.dev === devId(), author = isAuthorOf(c.trip), w = esc(c.who || '?');
     openSheet(`<h2>💬 ${w}</h2><div class="v-sum-small" style="margin-bottom:10px">« ${esc(String(c.text||'').slice(0, 200))} »</div>
@@ -15401,7 +15414,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="fd-a"><button type="button" class="${mine ? 'on' : ''}" onclick="CV.feedLike('${f.id}')">${mine ? '❤️' : '🤍'} <b>${lk.length || ''}</b></button><button type="button" onclick="CV.feedCmFocus('${f.id}')">💬 <b>${cm.length || ''}</b></button>${isAuthorOf(f.trip) ? '' : `<button type="button" class="fd-more" aria-label="Signaler ou ne plus suivre" onclick="CV.postMenu('${f.id}')">⋯</button>`}</div>
       ${lk.length ? `<button type="button" class="fd-lk" onclick="CV.feedLikers('${f.id}')">${feedLikeLine(lk)}</button>` : ''}
       <div class="fd-c">${hid ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${f.id}')">${cm.length === 3 ? 'Voir les 3 commentaires' : `Voir les ${cm.length} commentaires`}</button>` : ''}
-        ${shown.map(c=>{ const au = ft.owner && String(c.who||'').trim().toLowerCase() === String(ft.owner).trim().toLowerCase();
+        ${shown.map(c=>{ const au = ftTeam(ft).some(n=>String(c.who||'').trim().toLowerCase() === n.toLowerCase());
           return `<div class="fd-cm"><button type="button" class="fd-cmore" aria-label="Options" onclick="CV.cmMenu('${c.id}')">⋯</button><b data-notr>${esc(c.who||'?')}</b>${au ? ' <span class="fd-au">auteur</span>' : ''} <span class="fd-ctx" data-notr>${esc(c.text)}</span>
             <div class="fd-cmeta"><small>${c.at ? when(c.at) : ''}</small><button type="button" onclick="CV.feedReply('${f.id}','${c.id}')">Répondre</button></div></div>`; }).join('')}
         ${open && cm.length > 2 ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${f.id}')">Réduire</button>` : ''}
@@ -15525,18 +15538,18 @@ ${pm.join('\n')}</Document></kml>`;
     return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>${nfw} abonné${nfw>1?'s':''} · ❤️ ${nlk} · 💬 ${ncm}</b><small>Tes souvenirs sont publiés. Touche ❤️ / 💬 sous un souvenir pour lire et répondre.</small></span><button type="button" onclick="CV.feedPublish('${t.id}')">Inviter</button></div>`;
   }
   function souvSocial(s){
-    if(!feedCode(s.trip)) return ''; if(s.priv) return `<div class="sv-so"><small>🔒 Privé : pas visible des abonnés</small></div>`;
+    if(!socCode(s.trip)) return ''; if(s.priv) return `<div class="sv-so"><small>🔒 Privé : pas visible des abonnés</small></div>`;
     const fid = 'fd:' + s.id, lk = likesOf(fid), cm = commentsOf(fid);
     return `<button type="button" class="sv-so" onclick="CV.souvComments('${s.id}')">❤️ <b>${lk.length}</b> · 💬 <b>${cm.length}</b>${lk.length ? ` <small>${lk.slice(0,3).map(l=>esc(l.who||'')).join(', ')}</small>` : ''}</button>`;
   }
   function souvComments(sid){
-    const s = R[sid]; if(!s) return; const fid = 'fd:' + sid; if(!R[fid]){ toast('Publication en cours…'); feedBuild(s.trip); }
+    const s = R[sid]; if(!s) return; const fid = 'fd:' + sid; if(!R[fid]){ toast('Publication en cours…'); if(feedCode(s.trip)) feedBuild(s.trip); else { syncNow(); return; } }
     const f = R[fid]; if(!f) return;
     openSheet(`<h2>💬 ${esc(s.titre || 'Souvenir')}</h2><div id="sc-box">${feedPostHTML(f)}</div><div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20a';
+  const BUILD = '2026-10-20b';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
