@@ -1336,4 +1336,5 @@ I18N.load({
 "Tes compagnons et tes abonnés sont prévenus":"Os teus companheiros e seguidores foram avisados",
 "aime":"gosta",
 "a commenté":"comentou",
-"Un abonné":"Um seguidor"});
+"Un abonné":"Um seguidor",
+"avant l’arrivée":"até à chegada"});

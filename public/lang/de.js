@@ -1336,4 +1336,5 @@ I18N.load({
 "Tes compagnons et tes abonnés sont prévenus":"Deine Mitreisenden und Follower wissen Bescheid",
 "aime":"gefällt",
 "a commenté":"hat kommentiert",
-"Un abonné":"Ein Follower"});
+"Un abonné":"Ein Follower",
+"avant l’arrivée":"bis zur Ankunft"});

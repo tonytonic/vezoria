@@ -4260,4 +4260,5 @@ I18N.load({
 "Tes compagnons et tes abonnés sont prévenus":"Yol arkadaşların ve takipçilerin haberdar",
 "aime":"beğendi",
 "a commenté":"yorum yaptı",
-"Un abonné":"Bir takipçi"});
+"Un abonné":"Bir takipçi",
+"avant l’arrivée":"varışa kadar"});

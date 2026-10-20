@@ -4260,4 +4260,5 @@ I18N.load({
 "Tes compagnons et tes abonnés sont prévenus":"تم إخبار رفاقك ومتابعيك",
 "aime":"أعجبه",
 "a commenté":"علّق على",
-"Un abonné":"متابع"});
+"Un abonné":"متابع",
+"avant l’arrivée":"قبل الوصول"});

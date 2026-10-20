@@ -1336,4 +1336,5 @@ I18N.load({
 "Tes compagnons et tes abonnés sont prévenus":"Je reisgenoten en volgers zijn op de hoogte",
 "aime":"vindt leuk",
 "a commenté":"reageerde op",
-"Un abonné":"Een volger"});
+"Un abonné":"Een volger",
+"avant l’arrivée":"tot aankomst"});

@@ -4260,4 +4260,5 @@ I18N.load({
 "Tes compagnons et tes abonnés sont prévenus":"आपके साथियों और फ़ॉलोअर्स को बता दिया गया",
 "aime":"को पसंद है",
 "a commenté":"ने टिप्पणी की",
-"Un abonné":"एक फ़ॉलोअर"});
+"Un abonné":"एक फ़ॉलोअर",
+"avant l’arrivée":"पहुँचने से पहले"});

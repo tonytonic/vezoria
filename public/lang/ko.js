@@ -4260,4 +4260,5 @@ I18N.load({
 "Tes compagnons et tes abonnés sont prévenus":"동행자와 팔로워에게 알렸어요",
 "aime":"좋아요",
 "a commenté":"댓글을 남김",
-"Un abonné":"팔로워"});
+"Un abonné":"팔로워",
+"avant l’arrivée":"도착까지"});

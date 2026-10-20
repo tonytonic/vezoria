@@ -4260,4 +4260,5 @@ I18N.load({
 "Tes compagnons et tes abonnés sont prévenus":"已通知你的旅伴和关注者",
 "aime":"赞了",
 "a commenté":"评论了",
-"Un abonné":"一位关注者"});
+"Un abonné":"一位关注者",
+"avant l’arrivée":"距离到达"});

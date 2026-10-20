@@ -4260,4 +4260,5 @@ I18N.load({
 "Tes compagnons et tes abonnés sont prévenus":"旅の仲間とフォロワーに知らせました",
 "aime":"いいね",
 "a commenté":"コメントしました",
-"Un abonné":"フォロワー"});
+"Un abonné":"フォロワー",
+"avant l’arrivée":"到着まで"});

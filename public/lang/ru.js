@@ -4260,4 +4260,5 @@ I18N.load({
 "Tes compagnons et tes abonnés sont prévenus":"Попутчики и подписчики уже знают",
 "aime":"нравится",
 "a commenté":"прокомментировал(а)",
-"Un abonné":"Подписчик"});
+"Un abonné":"Подписчик",
+"avant l’arrivée":"до прибытия"});
