@@ -1729,7 +1729,7 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .off-b.on{background:linear-gradient(135deg,#1f2937,#374151);color:#fff;display:flex;flex-direction:column;gap:4px}.off-b.on small{opacity:.8;font-weight:500}
 .off-b.on div{display:flex;gap:6px;margin-top:4px}.off-b.on div button{border:0;border-radius:99px;padding:6px 11px;font:inherit;font-weight:800;font-size:.78rem;background:#fff;color:#1f2937}
 /* 🗣️ langue et monnaie */
-.lg{display:grid;gap:8px;margin:0 0 12px}
+.lg{display:grid;gap:8px;margin:0 0 12px}.lv-more{margin-top:14px}
 .lg-p,.lg-fx{background:#fff;border-radius:20px;padding:12px 14px;box-shadow:0 8px 20px -14px rgba(0,0,0,.35)}
 .lg-p{background:linear-gradient(150deg,#eef2ff,#fff)}
 .lg-k{font-size:.72rem;font-weight:800;color:#4f46e5;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
@@ -3482,7 +3482,7 @@ const CV = (function(){
   function countdown(t){
     if(!t || !t.debut) return '';
     const today = new Date().toISOString().slice(0,10);
-    if(today < t.debut){ const n = nights(today, t.debut); return `<b>J-${n}</b><span>${n>1?'avant le départ':'demain on part !'}</span>`; }
+    if(today < t.debut){ if(!t.demo && !t.archived && !hidden('blk:cd') && t.id === M.trip) return ''; const n = nights(today, t.debut); return `<b>J-${n}</b><span>${n>1?'avant le départ':'demain on part !'}</span>`; }
     if(!t.fin || today <= t.fin){ const k = nights(t.debut, today) + 1, tot = nights(t.debut, t.fin||t.debut) + 1; return `<b>Jour ${k}</b><span>sur ${tot}, profitez</span>`; }
     return `<b>✓</b><span>souvenirs</span>`;
   }
@@ -3520,7 +3520,7 @@ const CV = (function(){
           const chip = (ic, n, one, many) => n ? `<span>${ic} <b>${n.toLocaleString()}</b> <i>${n > 1 ? many : one}</i></span>` : '';
           hc.innerHTML = chip('🗓️', nd, 'jour', 'jours') + chip('📍', sv.length, 'étape', 'étapes') + chip('📸', nph, 'photo', 'photos') + chip('🌍', ncc, 'pays', 'pays'); } }
       pill.textContent = trips().length > 1 ? trips().length + ' voyages' : 'Mes voyages';
-      cd.innerHTML = countdown(t);
+      cd.innerHTML = countdown(t); cd.style.display = cd.innerHTML ? '' : 'none';
       const vv = tv(), shown = vv.slice(0, 8);
       av.innerHTML = shown.map(id=>`<span class="cv-av" style="background:${pcol(id)}" title="${esc(pname(id))}">${esc((pname(id)[0]||'?').toUpperCase())}</span>`).join('')
         + (vv.length > 8 ? `<span class="cv-av" style="background:#444" title="${vv.length - 8} autres">+${vv.length - 8}</span>` : '')
@@ -11229,12 +11229,13 @@ ${pm.join('\n')}</Document></kml>`;
         ${lv && lv.id !== (t||{}).id ? `<button class="v-btn" onclick="CV.go('${lv.id}')">📍 Ouvrir le voyage en cours : ${esc(lv.titre)}</button>` : ''}</div>`; }
     const k = dayList().indexOf(isoToday()), info = dayInfo(isoToday()), {own, night} = itemsForDay(isoToday());
     const tile = (ic, l, fn) => `<button type="button" class="cv-tile" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
-    return `${offBand(t)}${lnHTML(t)}${storyTodayHTML(t)}${dfHTML(t)}${vjBtn(t)}${lgHTML(t)}${actBand()}${annivCard()}${eveCard()}${nextHero()}${trkHTML()}${liveMapCard()}${liveCard()}
+    return `${offBand(t)}${lnHTML(t)}${actBand()}${annivCard()}${nextHero()}${trkHTML()}${liveMapCard()}${liveCard()}
       <div class="cv-tiles">${tile('📍','Step ici','CV.hereNow()')}${tile('🧾','Dépense','CV.tlReceipt()')}${tile('📴','Fiche du jour','CV.tlDay()')}${tile('🛒','Courses','CV.shopSheet()')}${tile('🌤️','Météo','CV.tlMeteo()')}${tile('🌍','Carte','CV.worldMap()')}${tile('📄','Importer','CV.impSheet()')}${tile('🛂','Papiers','CV.tlDocs()')}</div>
       <div class="v-box"><h3>Aujourd’hui · J${k+1}${info.titre ? ' · ' + esc(info.titre) : ''}</h3>${info.plan ? `<p>${esc(info.plan)}</p>` : ''}
         ${[...own, ...night].map(it=>`<button type="button" class="cv-prow" onclick="CV.edit('${it.id}')"><span>${icon(it)} <b>${esc(it.titre)}</b></span><span>${esc(it.heureDep||it.heure||'')}</span></button>`).join('') || '<div class="v-sum-small">Rien de réservé aujourd’hui.</div>'}
         ${placesOf(isoToday()).length ? `<button class="v-btn sec" onclick="CV.planDay('${isoToday()}')">🗺️ Itinéraire du jour (${placesOf(isoToday()).length} lieux)</button>` : ''}</div>
-      <button class="v-btn sec" onclick="CV.innerGo('souv')">📸 Voir les souvenirs</button>`;
+      <button class="v-btn sec" onclick="CV.innerGo('souv')">📸 Voir les souvenirs</button>
+      <div class="lv-more">${storyTodayHTML(t)}${eveCard()}${dfHTML(t)}${vjBtn(t)}${lgHTML(t)}</div>`;
   }
   function pastHTML(){
     const ps = trips().filter(t=>tripPhase(t)==='past').sort((a,b)=>(b.debut||'').localeCompare(a.debut||''));
@@ -15049,7 +15050,7 @@ ${pm.join('\n')}</Document></kml>`;
   function cdHTML(){
     const t = trip(); if(!t || !t.debut || t.archived || t.demo || tripPhase(t) !== 'prep' || hidden('blk:cd')) return '';
     const ms = cdLeft(t); if(ms > 400 * 864e5) return '';
-    const dj = Math.max(0, Math.ceil((new Date(t.debut + 'T00:00:00') - new Date(isoToday() + 'T00:00:00')) / 864e5)), dest = cdDest(t), co = (M.ctry || {})[normQ(dest)];
+    const dj = Math.max(0, nights(isoToday(), t.debut)), dest = cdDest(t), co = (M.ctry || {})[normQ(dest)];
     const todo = cdTodo(t), left = todo.filter(x=>!x.done), ck = list('check', c=>c.trip === t.id), ckd = ck.filter(c=>chkDone(c)).length;
     return `<div class="cd" id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"><div class="cd-bg" id="cd-bg"></div><div class="cd-sh"></div>
       <div class="cd-top"><span>${dj === 0 ? '🧳 C’est aujourd’hui !' : dj === 1 ? '✈️ Départ demain' : '⏳ Départ dans'}</span><span class="cd-wx" id="cd-wx"></span></div>
@@ -17140,7 +17141,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-20q';
+  const BUILD = '2026-10-20r';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
