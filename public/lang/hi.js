@@ -4787,4 +4787,14 @@ I18N.load({
 "C’est aujourd’hui !":"आज ही है!",
 "Départ demain":"कल रवानगी",
 "Départ dans":"रवानगी में",
-"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"कार्यक्रम को हर शहर की ज़रूरी जगहों (रोज़ 4) और न छोड़ने वाली यात्राओं से भरें"});
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"कार्यक्रम को हर शहर की ज़रूरी जगहों (रोज़ 4) और न छोड़ने वाली यात्राओं से भरें",
+"lieux ajoutés au programme":"जगहें कार्यक्रम में जोड़ी गईं",
+"Ajouté au programme":"कार्यक्रम में जोड़ा गया",
+"Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.":"हर शहर की सबसे मशहूर जगहें, दिन-ब-दिन सुझाई गईं। कार्यक्रम में जोड़ने के लिए ✓, हटाने के लिए ✕। आपकी मंज़ूरी के बिना कुछ नहीं जुड़ता।",
+"Tout ajouter":"सब जोड़ें",
+"suggestions à choisir":"सुझाव चुनने के लिए",
+"Ajoute celles qui te plaisent à ton programme":"जो पसंद हों उन्हें कार्यक्रम में जोड़ें",
+"Choisir mes visites":"मेरी जगहें चुनें",
+"Me proposer les incontournables (4 par jour)":"ज़रूरी जगहें सुझाएँ (रोज़ 4)",
+"Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"हर शहर की ज़रूरी जगहें (रोज़ 4) और न छोड़ने वाली यात्राएँ सुझाएँ: क्या जोड़ना है, मैं चुनूँगा",
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 मैं हर शहर की ज़रूरी जगहें ढूँढ रहा हूँ (रोज़ 4): «क्या करें» में आप चुन सकेंगे कि कार्यक्रम में क्या जोड़ना है।"});

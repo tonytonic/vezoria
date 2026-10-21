@@ -4788,4 +4788,14 @@ I18N.load({
 "C’est aujourd’hui !":"Это сегодня!",
 "Départ demain":"Отъезд завтра",
 "Départ dans":"До отъезда",
-"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Заполнить программу главными местами каждого города (4 в день) и обязательными экскурсиями"});
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Заполнить программу главными местами каждого города (4 в день) и обязательными экскурсиями",
+"lieux ajoutés au programme":"мест добавлено в программу",
+"Ajouté au programme":"Добавлено в программу",
+"Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.":"Самые известные места каждого города, по дням. ✓ — добавить в программу, ✕ — отложить. Без твоего согласия ничего не добавляется.",
+"Tout ajouter":"Добавить все",
+"suggestions à choisir":"предложений на выбор",
+"Ajoute celles qui te plaisent à ton programme":"Добавь понравившиеся в программу",
+"Choisir mes visites":"Выбрать места",
+"Me proposer les incontournables (4 par jour)":"Предложить главные места (4 в день)",
+"Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Предложить главные места каждого города (4 в день) и экскурсии: я сам выберу, что добавить",
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Ищу главные места каждого города (4 в день): они будут в «Что делать», там выберешь, что добавить в программу."});

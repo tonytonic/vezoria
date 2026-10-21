@@ -1843,4 +1843,14 @@ I18N.load({
 "C’est aujourd’hui !":"Heute ist es so weit!",
 "Départ demain":"Abreise morgen",
 "Départ dans":"Abreise in",
-"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Das Programm mit den Highlights jeder Stadt (4 pro Tag) und den Ausflügen füllen, die man nicht verpassen sollte"});
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Das Programm mit den Highlights jeder Stadt (4 pro Tag) und den Ausflügen füllen, die man nicht verpassen sollte",
+"lieux ajoutés au programme":"Orte zum Programm hinzugefügt",
+"Ajouté au programme":"Zum Programm hinzugefügt",
+"Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.":"Die bekanntesten Orte jeder Stadt, Tag für Tag vorgeschlagen. ✓ fügt sie deinem Programm hinzu, ✕ legt sie beiseite. Nichts wird ohne dein Okay hinzugefügt.",
+"Tout ajouter":"Alle hinzufügen",
+"suggestions à choisir":"Vorschläge zur Auswahl",
+"Ajoute celles qui te plaisent à ton programme":"Füge die hinzu, die dir gefallen",
+"Choisir mes visites":"Meine Besuche wählen",
+"Me proposer les incontournables (4 par jour)":"Highlights vorschlagen (4 pro Tag)",
+"Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Mir die Highlights jeder Stadt (4 pro Tag) und die Ausflüge vorschlagen: ich wähle selbst aus",
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Ich suche die Highlights jeder Stadt (4 pro Tag): Du findest sie unter „Was unternehmen“ und wählst aus, was ins Programm kommt."});

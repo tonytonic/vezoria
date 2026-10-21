@@ -1833,4 +1833,14 @@ I18N.load({
 "C’est aujourd’hui !":"It’s today!",
 "Départ demain":"Leaving tomorrow",
 "Départ dans":"Leaving in",
-"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Fill the schedule with each city’s must-sees (4 a day) and the day trips not to miss"});
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Fill the schedule with each city’s must-sees (4 a day) and the day trips not to miss",
+"lieux ajoutés au programme":"places added to the schedule",
+"Ajouté au programme":"Added to the schedule",
+"Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.":"Each city’s best-known places, suggested day by day. ✓ to add them to your schedule, ✕ to set them aside. Nothing is added without your OK.",
+"Tout ajouter":"Add all",
+"suggestions à choisir":"suggestions to choose from",
+"Ajoute celles qui te plaisent à ton programme":"Add the ones you like to your schedule",
+"Choisir mes visites":"Choose my visits",
+"Me proposer les incontournables (4 par jour)":"Suggest the must-sees (4 a day)",
+"Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Suggest each city’s must-sees (4 a day) and the day trips not to miss: I’ll choose which to add",
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 I’m looking for each city’s must-sees (4 a day): you’ll find them in “What to do” to choose which to add to your schedule."});

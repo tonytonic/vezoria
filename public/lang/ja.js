@@ -4787,4 +4787,14 @@ I18N.load({
 "C’est aujourd’hui !":"今日です！",
 "Départ demain":"明日出発",
 "Départ dans":"出発まで",
-"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"各都市の必見スポット（1日4か所）と見逃せない日帰り旅行で旅程を埋める"});
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"各都市の必見スポット（1日4か所）と見逃せない日帰り旅行で旅程を埋める",
+"lieux ajoutés au programme":"か所を旅程に追加しました",
+"Ajouté au programme":"旅程に追加しました",
+"Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.":"各都市の有名スポットを日ごとに提案します。✓で旅程に追加、✕で見送り。同意なしに追加されることはありません。",
+"Tout ajouter":"すべて追加",
+"suggestions à choisir":"件のおすすめから選べます",
+"Ajoute celles qui te plaisent à ton programme":"気に入ったものを旅程に追加",
+"Choisir mes visites":"見学先を選ぶ",
+"Me proposer les incontournables (4 par jour)":"必見スポットを提案（1日4か所）",
+"Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"各都市の必見スポット（1日4か所）と日帰り旅行を提案：追加するものは自分で選ぶ",
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 各都市の必見スポット（1日4か所）を探しています。「何をする」で旅程に追加するものを選べます。"});

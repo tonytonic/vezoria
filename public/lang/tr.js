@@ -4775,4 +4775,14 @@ I18N.load({
 "C’est aujourd’hui !":"Bugün!",
 "Départ demain":"Yarın yola çıkış",
 "Départ dans":"Yola çıkışa",
-"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Programı her şehrin görülmesi gereken yerleri (günde 4) ve kaçırılmayacak gezilerle doldur"});
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Programı her şehrin görülmesi gereken yerleri (günde 4) ve kaçırılmayacak gezilerle doldur",
+"lieux ajoutés au programme":"yer programa eklendi",
+"Ajouté au programme":"Programa eklendi",
+"Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.":"Her şehrin en bilinen yerleri, gün gün önerilir. Programa eklemek için ✓, bir kenara koymak için ✕. Onayın olmadan hiçbir şey eklenmez.",
+"Tout ajouter":"Hepsini ekle",
+"suggestions à choisir":"öneri seçmeni bekliyor",
+"Ajoute celles qui te plaisent à ton programme":"Beğendiklerini programına ekle",
+"Choisir mes visites":"Gezilerimi seç",
+"Me proposer les incontournables (4 par jour)":"Görülecek yerleri öner (günde 4)",
+"Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Her şehrin görülecek yerlerini (günde 4) ve kaçırılmayacak gezileri öner: hangilerini ekleyeceğimi ben seçerim",
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Her şehrin görülecek yerlerini arıyorum (günde 4): programına eklemek istediklerini « Ne yapılır » bölümünde seçeceksin."});

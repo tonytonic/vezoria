@@ -1852,4 +1852,14 @@ I18N.load({
 "C’est aujourd’hui !":"É hoje!",
 "Départ demain":"Partida amanhã",
 "Départ dans":"Partida em",
-"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Preencher o programa com os imperdíveis de cada cidade (4 por dia) e as excursões a não perder"});
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Preencher o programa com os imperdíveis de cada cidade (4 por dia) e as excursões a não perder",
+"lieux ajoutés au programme":"lugares adicionados ao programa",
+"Ajouté au programme":"Adicionado ao programa",
+"Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.":"Os lugares mais conhecidos de cada cidade, propostos dia a dia. ✓ para os adicionar ao programa, ✕ para os pôr de lado. Nada é adicionado sem o teu acordo.",
+"Tout ajouter":"Adicionar tudo",
+"suggestions à choisir":"sugestões para escolher",
+"Ajoute celles qui te plaisent à ton programme":"Adiciona ao programa as que gostares",
+"Choisir mes visites":"Escolher as minhas visitas",
+"Me proposer les incontournables (4 par jour)":"Propor-me os imperdíveis (4 por dia)",
+"Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Propor-me os imperdíveis de cada cidade (4 por dia) e as excursões a não perder: eu escolho o que adicionar",
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Procuro os imperdíveis de cada cidade (4 por dia): vais encontrá-los em «O que fazer» para escolher o que adicionar ao programa."});

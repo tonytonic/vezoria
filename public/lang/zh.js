@@ -4787,4 +4787,14 @@ I18N.load({
 "C’est aujourd’hui !":"就是今天！",
 "Départ demain":"明天出发",
 "Départ dans":"距离出发",
-"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"用每座城市的必看景点（每天4个）和不容错过的一日游填满行程"});
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"用每座城市的必看景点（每天4个）和不容错过的一日游填满行程",
+"lieux ajoutés au programme":"个地点已加入行程",
+"Ajouté au programme":"已加入行程",
+"Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.":"每座城市最有名的地方，按天推荐。✓ 加入行程，✕ 放一边。未经你同意不会添加任何内容。",
+"Tout ajouter":"全部加入",
+"suggestions à choisir":"条推荐可选",
+"Ajoute celles qui te plaisent à ton programme":"把喜欢的加入行程",
+"Choisir mes visites":"选择我的景点",
+"Me proposer les incontournables (4 par jour)":"推荐必看景点（每天4个）",
+"Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"推荐每座城市的必看景点（每天4个）和不容错过的一日游：由我选择要添加的",
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 正在查找每座城市的必看景点（每天4个）：你可以在“做什么”里选择要加入行程的。"});

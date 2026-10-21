@@ -1848,4 +1848,14 @@ I18N.load({
 "C’est aujourd’hui !":"È oggi!",
 "Départ demain":"Partenza domani",
 "Départ dans":"Partenza tra",
-"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Riempi il programma con le tappe imperdibili di ogni città (4 al giorno) e le escursioni da non perdere"});
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Riempi il programma con le tappe imperdibili di ogni città (4 al giorno) e le escursioni da non perdere",
+"lieux ajoutés au programme":"luoghi aggiunti al programma",
+"Ajouté au programme":"Aggiunto al programma",
+"Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.":"I luoghi più famosi di ogni città, proposti giorno per giorno. ✓ per aggiungerli al programma, ✕ per scartarli. Niente viene aggiunto senza il tuo consenso.",
+"Tout ajouter":"Aggiungi tutto",
+"suggestions à choisir":"suggerimenti da scegliere",
+"Ajoute celles qui te plaisent à ton programme":"Aggiungi al programma quelli che ti piacciono",
+"Choisir mes visites":"Scegli le mie visite",
+"Me proposer les incontournables (4 par jour)":"Proponimi le tappe imperdibili (4 al giorno)",
+"Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Proponimi le tappe imperdibili di ogni città (4 al giorno) e le escursioni da non perdere: sceglierò io cosa aggiungere",
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Cerco le tappe imperdibili di ogni città (4 al giorno): le troverai in «Cosa fare» per scegliere cosa aggiungere al programma."});

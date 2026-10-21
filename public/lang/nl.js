@@ -1839,4 +1839,14 @@ I18N.load({
 "C’est aujourd’hui !":"Het is vandaag!",
 "Départ demain":"Vertrek morgen",
 "Départ dans":"Vertrek over",
-"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Het programma vullen met de toppers van elke stad (4 per dag) en de dagtochten die je niet mag missen"});
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Het programma vullen met de toppers van elke stad (4 per dag) en de dagtochten die je niet mag missen",
+"lieux ajoutés au programme":"plekken toegevoegd aan het programma",
+"Ajouté au programme":"Toegevoegd aan het programma",
+"Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.":"De bekendste plekken van elke stad, per dag voorgesteld. ✓ om ze aan je programma toe te voegen, ✕ om ze over te slaan. Er wordt niets toegevoegd zonder jouw akkoord.",
+"Tout ajouter":"Alles toevoegen",
+"suggestions à choisir":"suggesties om uit te kiezen",
+"Ajoute celles qui te plaisent à ton programme":"Voeg toe wat je leuk vindt",
+"Choisir mes visites":"Mijn bezoeken kiezen",
+"Me proposer les incontournables (4 par jour)":"Stel de toppers voor (4 per dag)",
+"Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Stel de toppers van elke stad (4 per dag) en de dagtochten voor: ik kies zelf wat ik toevoeg",
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Ik zoek de toppers van elke stad (4 per dag): je vindt ze bij ‘Wat te doen’ om te kiezen wat je toevoegt."});

@@ -4787,4 +4787,14 @@ I18N.load({
 "C’est aujourd’hui !":"오늘이에요!",
 "Départ demain":"내일 출발",
 "Départ dans":"출발까지",
-"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"도시별 필수 명소(하루 4곳)와 놓치면 안 될 당일 여행으로 일정 채우기"});
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"도시별 필수 명소(하루 4곳)와 놓치면 안 될 당일 여행으로 일정 채우기",
+"lieux ajoutés au programme":"곳을 일정에 추가했어요",
+"Ajouté au programme":"일정에 추가했어요",
+"Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.":"도시마다 가장 유명한 곳을 하루씩 제안해요. ✓ 일정에 추가, ✕ 제외. 동의 없이 추가되지 않아요.",
+"Tout ajouter":"모두 추가",
+"suggestions à choisir":"개의 추천 중 고르기",
+"Ajoute celles qui te plaisent à ton programme":"마음에 드는 곳을 일정에 추가하세요",
+"Choisir mes visites":"방문지 고르기",
+"Me proposer les incontournables (4 par jour)":"필수 명소 추천받기(하루 4곳)",
+"Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"도시별 필수 명소(하루 4곳)와 당일 여행 추천받기: 추가할 곳은 내가 고를게요",
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 도시별 필수 명소(하루 4곳)를 찾는 중이에요. ‘무엇을 할까’에서 일정에 추가할 곳을 고르세요."});
