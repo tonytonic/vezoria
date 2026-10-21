@@ -245,6 +245,9 @@ body.cv-ph-past .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(194,
 .ar-b{padding:0 12px 12px;display:grid;gap:8px;font-size:.84rem}
 .ar-p{opacity:.92;line-height:1.4}.ar-st{margin-top:4px;line-height:1.6}.ar-st small{opacity:.75}
 .ar-go{all:unset;box-sizing:border-box;display:block;text-align:center;padding:11px 14px;border-radius:14px;background:#fff;color:#4c1d95;font-weight:800;cursor:pointer}
+.ar-more{all:unset;box-sizing:border-box;display:block;text-align:center;padding:9px 12px;border-radius:14px;border:1.5px dashed rgba(255,255,255,.55);color:#fff;font-weight:800;font-size:.82rem;cursor:pointer}
+.ar-run{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.14);font-weight:700;display:block}.ar-run small,.sg-pr{display:block;margin-top:3px;font-weight:600;font-size:.74rem;animation:sgB 1.4s ease-in-out infinite}
+@keyframes sgB{0%,100%{opacity:.9}50%{opacity:.45}}
 .ar-sk{all:unset;cursor:pointer;font-size:.76rem;opacity:.75;text-decoration:underline;justify-self:center}
 .ar-rs{display:grid;gap:6px}
 .ar-r{display:grid;grid-template-columns:22px minmax(0,1fr);align-items:center;column-gap:10px;row-gap:8px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.12);cursor:pointer}
@@ -10661,7 +10664,7 @@ ${pm.join('\n')}</Document></kml>`;
     const key = normQ(city); M.poiCache = M.poiCache || {};
     const hit = M.poiCache[key]; if(hit && Date.now() - hit.t < DISC_TTL && hit.list.length && (hit.wd || Date.now() - hit.t < 864e5)) return hit.list;
     const c = await withTimeout(geocode(city, null), 10000).catch(()=>null); if(!c) return [];
-    const res = await Promise.allSettled([seeWiki(c), seeApi(c), seeOverpass(c), seeWD(c)].map(p=>withTimeout(p, 20000)));
+    const res = await Promise.allSettled([seeWiki(c), seeApi(c), seeOverpass(c), seeWD(c)].map(p=>withTimeout(p, 10000)));
     const seen = new Set(), all = res.filter(r=>r.status==='fulfilled').flatMap(r=>r.value||[]);
     const list_ = all.filter(p=>p.nom && p.lat != null && !/^\d+$/.test(p.nom)).sort((x,y)=>y.score-x.score).filter(p=>{ const k = normQ(p.nom); if(seen.has(k)) return false; seen.add(k); return true; }).slice(0,150);
     if(list_.length){ M.poiCache[key] = {t:Date.now(), list:list_, wd: all.some(p=>p.sl)}; persist(); }
@@ -10669,47 +10672,70 @@ ${pm.join('\n')}</Document></kml>`;
   }
   /* ---------- 💡 Suggestions : 4 incontournables par jour, à trier quand on veut ---------- */
   const SUGG_N = 4;
-  async function suggFill(tid){
-    const hs = list('item', i=>i.trip === tid && i.cat === 'hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date)); if(!hs.length) return;
-    const busy = d => list('place', p=>p.trip === tid && p.date === d).length > 0;
-    const out = []; let miss = 0; M.suggRun = tid; refresh();
-    // 🚌 les grands sites du pays (UNESCO) à plus de 20 km d’une étape mais à moins de 300 km : une journée d’excursion depuis l’étape la plus proche
+  // recherche en cours (en mémoire seulement : si l’appli est fermée pendant la recherche, rien ne reste bloqué)
+  let SG = null;
+  const sgName = (tid, nom) => { const L = ((M.suggNo || {})[tid] || []).concat(list('place', p=>p.trip === tid).map(p=>p.nom)); return new Set(L.map(normQ)).has(normQ(nom)); };
+  async function suggFill(tid, more){
+    if(SG && SG.tid === tid) return;
+    const hs = list('item', i=>i.trip === tid && i.cat === 'hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date));
+    if(!hs.length){ toast('🏨 ' + MSGT('Ajoute d’abord une étape (une ville où dormir).')); return; }
+    if(M.suggRun) delete M.suggRun;
+    const nOf = d => list('place', p=>p.trip === tid && p.date === d).length;
+    SG = {tid, i:0, n:hs.length, city:'', got:0, more:!!more};
+    if(M.trip === tid){ M.tab = 'prog'; M.ariOpen = M.ariOpen || {}; M.ariOpen[tid] = 'faire'; }
+    toast('💡 ' + MSGT(more ? 'Je cherche de nouvelles suggestions…' : 'Je cherche les incontournables…')); refresh();
     const exDay = {}, t0 = R[tid] || {};
-    try {
-      const geo = {}; for(const h of hs){ const c = cityOf(h.titre || '') || h.titre; geo[h.id] = await geocode(c, null).catch(()=>null); }
-      const ccs = new Set((t0.ccs || []).filter(Boolean));
-      for(const h of hs){ const c = cityOf(h.titre || '') || h.titre; const k = (M.ctry || {})[normQ(c)]; if(k && k.cc) ccs.add(k.cc); else if(!ccs.size){ const o = await countryOf(c).catch(()=>null); if(o && o.cc) ccs.add(o.cc); } }
-      const sites = []; for(const cc of ccs){ const cd = await ctryData(cc).catch(()=>null); if(cd) sites.push(...cd.sites); }
-      sites.sort((a, b)=>b.sl - a.sl);
-      const used = {};
-      for(const st of sites){
-        let best = null, bd = 1e9; hs.forEach(h=>{ const g = geo[h.id]; if(!g) return; const d = km(g, st); if(d < bd){ bd = d; best = h; } });
-        if(!best || bd < 25 || bd > 330) continue;
-        const days = (best.dateFin ? range(best.date, best.dateFin).slice(0, -1) : []).filter(d=>!busy(d)); if(days.length < 2) continue;
-        const n = used[best.id] || 0, d = days[1 + n * 2]; if(!d || n >= Math.floor(days.length / 2)) continue;
-        used[best.id] = n + 1; exDay[d] = 1;
-        out.push({id:'pl' + uid() + 'x' + n, type:'place', trip:tid, stay:best.id, date:d, nom:st.nom, adresse:'', lat:st.lat, lng:st.lng, cat:'monu', lock:false, sugg:true, exc:Math.round(bd)});
-        const di = R['day:' + tid + ':' + d]; if(di && !di.deleted) out.push(Object.assign(clone(di), {titre:(di.titre ? di.titre + ' · ' : '') + '🚌 ' + st.nom}));
-      }
-    } catch(e){}
+    // 🚌 1ʳᵉ recherche : les grands sites du pays (UNESCO) à plus de 25 km d’une étape mais à moins de 330 km = une journée d’excursion
+    if(!more){ SG.city = MSGT('les grands sites du pays'); refresh();
+      try { await withTimeout((async()=>{
+        const geo = {}; for(const h of hs){ const c = cityOf(h.titre || '') || h.titre; geo[h.id] = await geocode(c, null).catch(()=>null); }
+        const ccs = new Set((t0.ccs || []).filter(Boolean));
+        for(const h of hs){ const c = cityOf(h.titre || '') || h.titre; const k = (M.ctry || {})[normQ(c)]; if(k && k.cc) ccs.add(k.cc); else if(!ccs.size){ const o = await countryOf(c).catch(()=>null); if(o && o.cc) ccs.add(o.cc); } }
+        const sites = []; for(const cc of ccs){ const cd = await ctryData(cc).catch(()=>null); if(cd) sites.push(...cd.sites); }
+        sites.sort((a, b)=>b.sl - a.sl);
+        const used = {}, out = [];
+        for(const st of sites){
+          if(sgName(tid, st.nom)) continue;
+          let best = null, bd = 1e9; hs.forEach(h=>{ const g = geo[h.id]; if(!g) return; const d = km(g, st); if(d < bd){ bd = d; best = h; } });
+          if(!best || bd < 25 || bd > 330) continue;
+          const days = (best.dateFin ? range(best.date, best.dateFin).slice(0, -1) : []).filter(d=>!nOf(d)); if(days.length < 2) continue;
+          const n = used[best.id] || 0, d = days[1 + n * 2]; if(!d || n >= Math.floor(days.length / 2)) continue;
+          used[best.id] = n + 1; exDay[d] = 1;
+          out.push({id:'pl' + uid() + 'x' + n, type:'place', trip:tid, stay:best.id, date:d, nom:st.nom, adresse:'', lat:st.lat, lng:st.lng, cat:'monu', lock:false, sugg:true, exc:Math.round(bd)});
+          const di = R['day:' + tid + ':' + d]; if(di && !di.deleted) out.push(Object.assign(clone(di), {titre:(di.titre ? di.titre + ' · ' : '') + '🚌 ' + st.nom}));
+        }
+        if(out.length){ putQuiet(out); SG.got += out.filter(r=>r.type === 'place').length; }
+      })(), 25000); } catch(e){}
+    }
+    // 🏛️ puis ville par ville : les résultats s’affichent dès qu’une ville est prête
+    let miss = 0;
     for(const h of hs){
       const city = cityOf(h.titre || '') || h.titre; if(!city) continue;
-      const days = (h.dateFin ? range(h.date, h.dateFin).slice(0, -1) : [h.date]).filter(d=>!busy(d) && !exDay[d]); if(!days.length) continue;
+      SG.i++; SG.city = city; refresh();
+      const days = (h.dateFin ? range(h.date, h.dateFin).slice(0, -1) : [h.date]).filter(d=>!exDay[d] && !list('place', p=>p.trip === tid && p.date === d && p.exc).length); if(!days.length) continue;
       let cand = []; try { cand = await placesFor(city); } catch(e){}
-      cand = cand.filter(p=>normQ(p.nom) !== normQ(city)); if(!cand.length){ miss++; continue; }
-      let k = 0; days.forEach(d=>{ for(let j = 0; j < SUGG_N && k < cand.length; j++, k++){ const p = cand[k];
-        out.push({id:'pl' + uid() + k + j, type:'place', trip:tid, stay:h.id, date:d, nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false, sugg:true}); } });
+      cand = cand.filter(p=>normQ(p.nom) !== normQ(city) && !sgName(tid, p.nom)); if(!cand.length){ miss++; continue; }
+      const out = []; let k = 0;
+      if(!more){ days.filter(d=>!nOf(d)).forEach(d=>{ for(let j = 0; j < SUGG_N && k < cand.length; j++, k++){ const p = cand[k];
+          out.push({id:'pl' + uid() + k + j, type:'place', trip:tid, stay:h.id, date:d, nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false, sugg:true}); } }); }
+      else {   // ➕ nouvelles idées : 2 de plus par jour, d’abord sur les journées les moins remplies
+        const ds = days.slice().sort((a, b)=>nOf(a) - nOf(b)), cnt = {};
+        for(let r = 0; r < 2; r++) ds.forEach(d=>{ if(k >= cand.length) return; const p = cand[k++]; cnt[d] = (cnt[d] || 0) + 1;
+          out.push({id:'pl' + uid() + k + r, type:'place', trip:tid, stay:h.id, date:d, nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false, sugg:true}); });
+      }
+      if(out.length){ putQuiet(out); SG.got += out.length; }
+      refresh();
     }
-    M.suggRun = null;
-    const np = out.filter(r=>r.type === 'place').length;
-    if(np){ M.suggDone = M.suggDone || {}; M.suggDone[tid] = 1; }
-    if(np) putMany(out, '💡 ' + np + ' ' + MSGT('incontournables ajoutés au programme'));
-    else if(miss) toast('📡 ' + MSGT('Pas de réseau pour trouver les incontournables : réessaie avec 🪄 « Remplir mes journées ».'));
+    const got = SG.got; SG = null;
+    if(got){ M.suggDone = M.suggDone || {}; M.suggDone[tid] = 1; persist(); toast('💡 ' + got + ' ' + MSGT(more ? 'nouvelles suggestions' : 'incontournables ajoutés au programme')); }
+    else toast(miss ? '📡 ' + MSGT('Pas de réseau pour trouver les incontournables : réessaie dans un instant.') : '✓ ' + MSGT('Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.'));
     if(M.trip === tid) refresh();
   }
+  function suggMore(){ const t = trip(); if(t){ closeSheet(true); suggFill(t.id, true); } }
+  const sgRun = t => SG && SG.tid === t.id ? `💡 ${MSGT(SG.more ? 'Je cherche de nouvelles suggestions…' : 'Je cherche les incontournables…')}<small class="sg-pr">${esc(SG.city)}${SG.n ? ` · ${Math.min(SG.i, SG.n)}/${SG.n}` : ''}${SG.got ? ` · ${SG.got} ${MSGT('trouvées')}` : ''}</small>` : '';
   function suggCard(){
     const t = trip(); if(!t || t.archived || t.demo || M.lock || tripPhase(t) === 'past') return '';
-    if(M.suggRun === t.id) return `<div class="sg-c run"><i>💡</i><div><b>${MSGT('Je cherche les incontournables…')}</b><small>${MSGT('Wikipédia et OpenStreetMap, ville par ville')}</small></div></div>`;
+    if(SG && SG.tid === t.id) return `<div class="sg-c run"><i>💡</i><div><b>${sgRun(t)}</b></div></div>`;
     const L = list('place', p=>p.trip === t.id && p.sugg);
     if(!L.length){
       const hs = list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date && cityOf(i.titre || ''));
@@ -10727,6 +10753,7 @@ ${pm.join('\n')}</Document></kml>`;
       ${Object.keys(by).sort().map(d=>`<div class="sg-d"><div class="sg-dh">J${ds.indexOf(d) + 1} · ${fdate(d)}${dayInfo(d).titre ? ' · <span data-notr>' + esc(dayInfo(d).titre) + '</span>' : ''}</div>
         ${by[d].map(p=>`<div class="sg-r"><span class="sg-i">${(POI_CATS[p.cat] || {icon:'📍'}).icon}</span><span class="sg-n" role="button" onclick="CV.plInfo('${p.id}')"><span data-notr>${esc(p.nom)}</span>${p.exc ? `<small class="sg-x">🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</small>` : ''}</span>
           <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.suggKeep('${p.id}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.suggDrop('${p.id}')">✕</button></div>`).join('')}</div>`).join('')}
+      <button type="button" class="v-btn sec" style="margin:4px 0 8px" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.suggKeep('*')">✓ ${MSGT('Tout garder')}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
     const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y;
   }
@@ -10738,7 +10765,7 @@ ${pm.join('\n')}</Document></kml>`;
     suggOpen(); refresh();
   }
   function suggGo(){ const t = trip(); if(t) suggFill(t.id); }
-  function suggDrop(id){ const p = R[id]; if(!p) return; p.deleted = true; putQuiet([p]); suggOpen(); refresh(); }
+  function suggDrop(id){ const p = R[id]; if(!p) return; M.suggNo = M.suggNo || {}; const nl = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!nl.includes(p.nom)) nl.push(p.nom); if(nl.length > 300) nl.shift(); p.deleted = true; putQuiet([p]); suggOpen(); refresh(); }
   function tlFill(){
     const st = items(i=>i.cat==='hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date));
     if(!st.length){ alert('Ajoute d’abord les hébergements (une ville par étape).'); return; }
@@ -15050,7 +15077,7 @@ ${pm.join('\n')}</Document></kml>`;
   function ariHTML(){
     const t = trip(); if(!t || t.archived || tripPhase(t) !== 'prep' || hidden('blk:prep')) return '';
     const D = ariData(t), S = D.S, done = S.filter(x=>x.ok).length, pct = Math.round(S.reduce((a, x)=>a + (x.ok ? 1 : x.f) * (x.w || 1), 0) / S.reduce((a, x)=>a + (x.w || 1), 0) * 100);   // réserver compte double
-    const cur = S.find(x=>!x.ok), op = ((M.ariOpen || {})[t.id]) || (cur && cur.k);
+    const cur = S.find(x=>!x.ok), op = SG && SG.tid === t.id ? 'faire' : ((M.ariOpen || {})[t.id]) || (cur && cur.k);
     const lv = pct >= 100 ? ['✅','Prêt à partir'] : pct >= 75 ? ['🎒','Presque prêt'] : pct >= 45 ? ['🧩','En préparation'] : pct >= 15 ? ['✏️','Esquisse'] : ['💭','Rêve'];
     const A = [26, 92], B = [180, -4], C = [334, 92], path = `M${A} Q${B} ${C}`, tp = Math.max(.02, pct / 100);
     const q = u => [(1-u)*(1-u)*A[0] + 2*(1-u)*u*B[0] + u*u*C[0], (1-u)*(1-u)*A[1] + 2*(1-u)*u*B[1] + u*u*C[1]];
@@ -15061,10 +15088,11 @@ ${pm.join('\n')}</Document></kml>`;
           ${D.hs.length ? `<div class="ar-st">${D.hs.map(h=>`<span data-notr>${esc(cityOf(h.titre) || h.titre)}</span> <small>${nights(h.date, h.dateFin || h.date)} n.</small>`).join(' · ')}</div>` : `<button type="button" class="ar-go" onclick="CV.edit(null,'hotel')">🏨 ${MSGT('Ajouter une étape (une ville où dormir)')}</button>`}</div>`;
       }
       if(k === 'faire'){
-        if(M.suggRun === t.id) return `<div class="ar-p">💡 ${MSGT('Je cherche les incontournables…')}</div>`;
-        if(D.sg.length) return `<div class="ar-p">${D.pl.length - D.sg.length} ${MSGT('lieux gardés')} · <b>${D.sg.length} ${MSGT('suggestions à trier')}</b></div><button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Trier les suggestions')}</button>`;
+        const more = `<button type="button" class="ar-more" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>`;
+        if(SG && SG.tid === t.id) return `<div class="ar-run">${sgRun(t)}</div>${D.sg.length ? `<button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Trier les suggestions')} (${D.sg.length})</button>` : ''}`;
+        if(D.sg.length) return `<div class="ar-p">${D.pl.length - D.sg.length} ${MSGT('lieux gardés')} · <b>${D.sg.length} ${MSGT('suggestions à trier')}</b></div><button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Trier les suggestions')}</button>${more}`;
         if(!D.pl.length) return `<div class="ar-p">${MSGT('Les lieux à voir et les excursions, jour par jour.')}</div>${D.hs.length ? `<button type="button" class="ar-go" onclick="CV.suggGo()">💡 ${MSGT('Remplir avec les incontournables (4 par jour)')}</button>` : ''}<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('Passer cette étape')}</button>`;
-        return `<div class="ar-p">✓ ${D.pl.length} ${MSGT('lieux au programme')}</div>`;
+        return `<div class="ar-p">✓ ${D.pl.length} ${MSGT('lieux au programme')}</div>${more}`;
       }
       if(k === 'resa'){
         if(!D.rs.length) return `<div class="ar-p">${MSGT('Ajoute d’abord tes étapes : les nuits et les trajets apparaîtront ici.')}</div>`;
@@ -17584,7 +17612,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-21g';
+  const BUILD = '2026-10-21h';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -17594,7 +17622,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, suggOpen, suggKeep, suggDrop, suggGo, wzCountry, ariTog, ariSkip, ariBook, ariFm, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, suggOpen, suggKeep, suggDrop, suggGo, suggMore, wzCountry, ariTog, ariSkip, ariBook, ariFm, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
