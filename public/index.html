@@ -2278,8 +2278,10 @@ body.is-legacy .hero-top{position:relative!important;height:auto;padding:0;backg
 .hero-foot.hs-stack{flex-wrap:wrap;row-gap:12px}
 .hero-foot.hs-stack .cv-hstats{order:-1;flex:1 1 100%;margin:0;justify-content:space-around}
 @media (max-width:420px){.hero-foot.hs-on .hs-c{min-width:36px;padding:0 2px}.hero-foot.hs-on .hs-c b{font-size:.95rem}.hero-foot.hs-on .hs-c small{font-size:.56rem}.hero-foot.hs-on .cv-hstats{padding:5px 3px;margin-right:6px}}
-.hero-foot.hs-on .hero-count{flex:0 0 auto}
-.hero-foot.hs-on .hero-count b{font-size:1.65rem;white-space:nowrap}
+.hero-foot.hs-on .hero-count{flex:0 1 auto;min-width:0;max-width:46%}
+.hero-foot.hs-on .hero-count b{font-size:clamp(1.15rem,5.4vw,1.65rem);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero-foot .hero-count{flex:0 0 auto;max-width:50%}.hero-foot .hero-count b{font-size:clamp(1.2rem,6.4vw,2.1rem);white-space:nowrap}.hero-foot .hero-count span{display:block;white-space:normal;overflow-wrap:anywhere}
+.hero-foot .cv-avs{flex:1 1 auto;min-width:0;overflow:hidden}
 .hero-foot.hs-on .cv-hero-qr svg{width:40px;height:40px}
 @media (max-width:360px){.hs-c{min-width:38px;padding:0 2px}.hs-c small{font-size:.54rem}}
 @media (prefers-reduced-motion:reduce){.hs-c.up b,.hs-plus{animation:none}}
@@ -17736,7 +17738,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-21l';
+  const BUILD = '2026-10-21m';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
