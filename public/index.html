@@ -5539,7 +5539,7 @@ const CV = (function(){
     const st = tlStages(); let mn = 99, mx = -99, rain = 0, rainTxt = '', meteoOk = 0;
     for(const s of st.slice(0, 8)){ try { const v = await meteoFor(s); meteoOk++; mn = Math.min(mn, v.min); mx = Math.max(mx, v.max);
       const r = v.kind === 'prev' ? (v.pluie >= 50) : (v.jp >= Math.max(2, v.n / 4)); if(r){ rain++; rainTxt = rainTxt || s.city; } } catch(e){} }
-    const txt = nzTxt(items().map(i=>(i.titre || '') + ' ' + (i.notes || '') + ' ' + (i.mode || '')).join(' ') + ' ' + list('place', p=>p.trip===M.trip).map(p=>p.titre || p.nom || '').join(' ') + ' ' + (t.titre || '') + ' ' + (t.sous || ''));
+    const txt = nzTxt(items().map(i=>(i.titre || '') + ' ' + (i.notes || '') + ' ' + (i.mode || '')).join(' ') + ' ' + list('place', p=>p.trip===M.trip && !p.sugg).map(p=>p.titre || p.nom || '').join(' ') + ' ' + (t.titre || '') + ' ' + (t.sous || ''));
     const ccs = new Set(st.map(s=>((M.ctry || {})[normQ(s.city)] || {}).cc).filter(Boolean));
     const EU = /^(FR|BE|DE|ES|IT|PT|NL|LU|AT|GR|PL|CZ|SK|HU|SI|HR|RO|BG|DK|SE|FI|NO|EE|LV|LT|IS|MC|AD)$/;
     const nn = Math.max(1, dayList().length - 1), S = [];
@@ -6556,7 +6556,7 @@ const CV = (function(){
   /* ══════════ 🗺️ Lieux du jour & itinéraire optimisé ══════════ */
   function placesOf(d){
     const r = dayInfo(d).route, idx = id => r && r.ids ? r.ids.indexOf(id) : -1;
-    return list('place', p=>p.trip===M.trip && p.date===d).sort((a,b)=>{ const ia = idx(a.id), ib = idx(b.id); if(ia>=0 && ib>=0) return ia-ib; if(ia>=0) return -1; if(ib>=0) return 1; return (a.createdAt||0)-(b.createdAt||0); });
+    return list('place', p=>p.trip===M.trip && p.date===d && !p.sugg).sort((a,b)=>{ const ia = idx(a.id), ib = idx(b.id); if(ia>=0 && ib>=0) return ia-ib; if(ia>=0) return -1; if(ib>=0) return 1; return (a.createdAt||0)-(b.createdAt||0); });
   }
   function hotelsAround(d){
     const H = items(i=>i.cat==='hotel' && i.date);
@@ -6875,7 +6875,7 @@ const CV = (function(){
         <ol>${st.map(e=>`<li>${MODE_ICON[e.mode]||''} <b>${esc(e.ville)}</b> · ${e.nuits} nuit${e.nuits>1?'s':''} <span class="v-sum-small">${fshort(e.debut)} → ${fshort(e.fin)}</span></li>`).join('')}</ol></div>
         <div class="v-f"><label>Reprendre la configuration d’un voyage (vierge)</label><select class="v-in" id="wz-tpl" onchange="CV.wzTpl()"><option value="">— Checklist de base —</option>${trips().map(t=>`<option value="${t.id}"${wz.tpl===t.id?' selected':''}>${esc(t.titre)}</option>`).join('')}</select></div>
         <div id="wz-tplx">${wzTplOpts()}</div>
-        <label class="cv-checkline wz-sg"><input type="checkbox" id="wz-sg" ${wz.sugg === false ? '' : 'checked'}> 💡 ${MSGT('Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer')}</label>
+        <label class="cv-checkline wz-sg"><input type="checkbox" id="wz-sg" ${wz.sugg === false ? '' : 'checked'}> 💡 ${MSGT('Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter')}</label>
         <div id="wz-cov">${covBlock()}</div>
         <div class="v-hint">Seront créés : le programme jour par jour, un hébergement par étape, les trajets entre étapes et les allers-retours de chacun, sans prix (à remplir).</div>`;
     }
@@ -7445,9 +7445,9 @@ const CV = (function(){
   const stayDays = h => h && h.date ? range(h.date, h.dateFin || h.date) : (h && h.type==='city' && trip() ? dayList() : []);
   const stays = () => items(i=>i.cat==='hotel' && i.date).sort(sortItems);
   function placesOfStay(hid){
-    if(R[hid] && R[hid].type==='city') return list('place', p=>p.trip===M.trip && p.stay===hid);
+    if(R[hid] && R[hid].type==='city') return list('place', p=>p.trip===M.trip && p.stay===hid && !p.sugg);
     const h = R[hid], ds = stayDays(h).slice(0, -1).concat(h && !h.dateFin ? [h.date] : []);
-    return list('place', p=>p.trip===M.trip && (p.stay===hid || (!p.stay && ds.includes(p.date))));
+    return list('place', p=>p.trip===M.trip && !p.sugg && (p.stay===hid || (!p.stay && ds.includes(p.date))));
   }
   const poiCat = t => {
     if(/^(museum|gallery)$/.test(t.tourism||'')) return 'musee';
@@ -9427,7 +9427,7 @@ const CV = (function(){
       map.addControl(new maplibregl.GeolocateControl({positionOptions:{enableHighAccuracy:true}, trackUserLocation:true, showUserLocation:true}), 'top-right');
       const mk = (lng, lat, html, cls) => { const el = document.createElement('div'); el.className = 'om-mk ' + (cls || ''); el.innerHTML = html; new maplibregl.Marker({element:el}).setLngLat([lng, lat]).addTo(map); return el; };
       pts.forEach(p=>[{h:p.h, hotel:p.hotel}].concat(p.more || []).forEach(x=>{ if(x.h) mk(x.h.lng, x.h.lat, '🏨', 'h').title = x.hotel; }));
-      list('place', p=>p.trip === t.id && !p.deleted && p.lat != null).forEach(p=>{ const el = mk(p.lng, p.lat, '📍', 'p'); el.title = p.nom; el.onclick = ev => { ev.stopPropagation(); omapClose(); plInfo(p.id); }; });
+      list('place', p=>p.trip === t.id && !p.deleted && !p.sugg && p.lat != null).forEach(p=>{ const el = mk(p.lng, p.lat, '📍', 'p'); el.title = p.nom; el.onclick = ev => { ev.stopPropagation(); omapClose(); plInfo(p.id); }; });
       const info = document.getElementById('om-info');
       if(info) info.innerHTML = pts.length > 1 ? pts.map((p, i)=>`<button type="button" onclick="CV.omapFly(${i})">${esc(p.city)}</button>`).join('') : `<span>${navigator.onLine === false ? (OM()[t.id] ? '📴 Carte hors ligne' : '📴 Pas de réseau : télécharge les cartes avant le départ (Outils).') : ''}</span>`;
       OMV.pts = pts;
@@ -10708,7 +10708,6 @@ ${pm.join('\n')}</Document></kml>`;
           const n = used[best.id] || 0, d = days[1 + n * 2]; if(!d || n >= Math.floor(days.length / 2)) continue;
           used[best.id] = n + 1; exDay[d] = 1;
           out.push({id:'pl' + uid() + 'x' + n, type:'place', trip:tid, stay:best.id, date:d, nom:st.nom, adresse:'', lat:st.lat, lng:st.lng, cat:'monu', lock:false, sugg:true, exc:Math.round(bd)});
-          const di = R['day:' + tid + ':' + d]; if(di && !di.deleted) out.push(Object.assign(clone(di), {titre:(di.titre ? di.titre + ' · ' : '') + '🚌 ' + st.nom}));
         }
         if(out.length){ putQuiet(out); SG.got += out.filter(r=>r.type === 'place').length; }
       })(), 25000); } catch(e){}
@@ -10733,7 +10732,7 @@ ${pm.join('\n')}</Document></kml>`;
       refresh();
     }
     const got = SG.got; SG = null;
-    if(got){ M.suggDone = M.suggDone || {}; M.suggDone[tid] = 1; persist(); toast('💡 ' + got + ' ' + MSGT(more ? 'nouvelles suggestions' : 'incontournables ajoutés au programme')); }
+    if(got){ M.suggDone = M.suggDone || {}; M.suggDone[tid] = 1; persist(); toast('💡 ' + got + ' ' + MSGT(more ? 'nouvelles suggestions' : 'suggestions à choisir')); }
     else toast(miss ? '📡 ' + MSGT('Pas de réseau pour trouver les incontournables : réessaie dans un instant.') : '✓ ' + MSGT('Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.'));
     if(M.trip === tid) refresh();
   }
@@ -10748,26 +10747,28 @@ ${pm.join('\n')}</Document></kml>`;
       if(!hs.length || (M.suggDone || {})[t.id] || list('place', p=>p.trip === t.id).length) return '';
       return `<button type="button" class="sg-c" onclick="CV.suggGo()"><i>💡</i><div><b>${MSGT('Remplir mon programme avec les incontournables')}</b><small>${MSGT('4 lieux par jour dans chaque ville, et les excursions à ne pas manquer. Tu gardes ce que tu veux.')}</small></div><span class="sg-go">${MSGT('Go')} ›</span></button>`;
     }
-    return `<button type="button" class="sg-c" onclick="CV.suggOpen()"><i>💡</i><div><b>${L.length} ${MSGT('suggestions dans ton programme')}</b><small>${MSGT('Garde celles qui te plaisent, retire les autres')}</small></div><span class="sg-go">${MSGT('Trier')} ›</span></button>`;
+    return `<button type="button" class="sg-c" onclick="CV.suggOpen()"><i>💡</i><div><b>${L.length} ${MSGT('suggestions à choisir')}</b><small>${MSGT('Ajoute celles qui te plaisent à ton programme')}</small></div><span class="sg-go">${MSGT('Trier')} ›</span></button>`;
   }
   function suggOpen(){
     const t = trip(); if(!t) return; const L = list('place', p=>p.trip === t.id && p.sugg);
     if(!L.length){ closeSheet(true); refresh(); return; }
     const by = {}; L.forEach(p=>(by[p.date] = by[p.date] || []).push(p)); const ds = dayList();
     const y = (document.querySelector('#v-sheet-bg .v-sheet') || {}).scrollTop || 0;
-    openSheet(`<h2>💡 ${MSGT('Suggestions')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Les lieux les plus connus de chaque ville, déjà placés dans tes journées. ✓ pour les garder, ✕ pour les retirer. Tu peux revenir ici quand tu veux.')}</div>
+    openSheet(`<h2>💡 ${MSGT('Suggestions')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.')}</div>
       ${Object.keys(by).sort().map(d=>`<div class="sg-d"><div class="sg-dh">J${ds.indexOf(d) + 1} · ${fdate(d)}${dayInfo(d).titre ? ' · <span data-notr>' + esc(dayInfo(d).titre) + '</span>' : ''}</div>
         ${by[d].map(p=>`<div class="sg-r"><span class="sg-i">${(POI_CATS[p.cat] || {icon:'📍'}).icon}</span><span class="sg-n" role="button" onclick="CV.plInfo('${p.id}')"><span data-notr>${esc(p.nom)}</span>${p.exc ? `<small class="sg-x">🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</small>` : ''}</span>
           <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.suggKeep('${p.id}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.suggDrop('${p.id}')">✕</button></div>`).join('')}</div>`).join('')}
       <button type="button" class="v-btn sec" style="margin:4px 0 8px" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>
-      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.suggKeep('*')">✓ ${MSGT('Tout garder')}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.suggKeep('*')">✓ ${MSGT('Tout ajouter')}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
     const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y;
   }
   function suggKeep(id){
     const t = trip(); if(!t) return;
     const L = id === '*' ? list('place', p=>p.trip === t.id && p.sugg) : [R[id]].filter(Boolean);
-    L.forEach(p=>{ const c = clone(p); delete c.sugg; putQuiet([c]); });
-    if(id === '*'){ toast('✓ ' + MSGT('Suggestions gardées')); closeSheet(true); refresh(); return; }
+    L.forEach(p=>{ const c = clone(p); delete c.sugg; putQuiet([c]);
+      const di = p.exc && R['day:' + p.trip + ':' + p.date]; if(di && !di.deleted && !String(di.titre || '').includes(p.nom)) putQuiet([Object.assign(clone(di), {titre:(di.titre ? di.titre + ' · ' : '') + '🚌 ' + p.nom})]); });
+    if(id === '*'){ toast('✓ ' + L.length + ' ' + MSGT('lieux ajoutés au programme')); closeSheet(true); refresh(); return; }
+    toast('✓ ' + MSGT('Ajouté au programme'));
     suggOpen(); refresh();
   }
   function suggGo(){ const t = trip(); if(t) suggFill(t.id); }
@@ -12843,7 +12844,7 @@ ${pm.join('\n')}</Document></kml>`;
     closeSheet(true); M.mode = 'prep'; M.tab = 'prog'; go(tid);
     const auto = !custom || !Object.values(custom.sel || {}).some(a=>a && a.length);
     if(auto) setTimeout(()=>suggFill(tid), 150);
-    setTimeout(()=>alert(`🧳 « ${x.nom} » est prêt, du ${fdate(debut)} au ${fdate(fin)} :\n${stops.map(s=>'• ' + s.c + ' (' + s.n + ' nuit' + (s.n>1?'s':'') + ')').join('\n')}\n\n` + (auto ? MSGT('💡 J’ajoute les incontournables de chaque ville au programme (4 par jour). Tu les retrouveras dans la carte « Suggestions » pour garder ceux qui te plaisent.') : MSGT('Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».'))), 300);
+    setTimeout(()=>alert(`🧳 « ${x.nom} » est prêt, du ${fdate(debut)} au ${fdate(fin)} :\n${stops.map(s=>'• ' + s.c + ' (' + s.n + ' nuit' + (s.n>1?'s':'') + ')').join('\n')}\n\n` + (auto ? MSGT('💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.') : MSGT('Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».'))), 300);
   }
 
 
@@ -13613,7 +13614,7 @@ ${pm.join('\n')}</Document></kml>`;
   function dayContent(d){
     const N = addD(d, 1);
     const its = items(i=>i.date===d && (i.cat!=='hotel' || !i.dateFin || i.dateFin <= N));
-    const pl = list('place', p=>p.trip===M.trip && p.date===d);
+    const pl = list('place', p=>p.trip===M.trip && p.date===d && !p.sugg);
     const info = R[dayId(d)] && !R[dayId(d)].deleted && (R[dayId(d)].titre || R[dayId(d)].plan) ? R[dayId(d)] : null;
     return {its, pl, info};
   }
@@ -15095,9 +15096,9 @@ ${pm.join('\n')}</Document></kml>`;
       }
       if(k === 'faire'){
         const more = `<button type="button" class="ar-more" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>`;
-        if(SG && SG.tid === t.id) return `<div class="ar-run">${sgRun(t)}</div>${D.sg.length ? `<button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Trier les suggestions')} (${D.sg.length})</button>` : ''}`;
-        if(D.sg.length) return `<div class="ar-p">${D.pl.length - D.sg.length} ${MSGT('lieux gardés')} · <b>${D.sg.length} ${MSGT('suggestions à trier')}</b></div><button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Trier les suggestions')}</button>${more}`;
-        if(!D.pl.length) return `<div class="ar-p">${MSGT('Les lieux à voir et les excursions, jour par jour.')}</div>${D.hs.length ? `<button type="button" class="ar-go" onclick="CV.suggGo()">💡 ${MSGT('Remplir avec les incontournables (4 par jour)')}</button>` : ''}<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('Passer cette étape')}</button>`;
+        if(SG && SG.tid === t.id) return `<div class="ar-run">${sgRun(t)}</div>${D.sg.length ? `<button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Choisir mes visites')} (${D.sg.length})</button>` : ''}`;
+        if(D.sg.length) return `<div class="ar-p">${D.pl.length - D.sg.length} ${MSGT('lieux au programme')} · <b>${D.sg.length} ${MSGT('suggestions à choisir')}</b></div><button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Choisir mes visites')}</button>${more}`;
+        if(!D.pl.length) return `<div class="ar-p">${MSGT('Les lieux à voir et les excursions, jour par jour.')}</div>${D.hs.length ? `<button type="button" class="ar-go" onclick="CV.suggGo()">💡 ${MSGT('Me proposer les incontournables (4 par jour)')}</button>` : ''}<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('Passer cette étape')}</button>`;
         return `<div class="ar-p">✓ ${D.pl.length} ${MSGT('lieux au programme')}</div>${more}`;
       }
       if(k === 'resa'){
@@ -17623,7 +17624,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-21i';
+  const BUILD = '2026-10-21j';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
