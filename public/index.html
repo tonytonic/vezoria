@@ -1988,7 +1988,7 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .fol-live i{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:lvPulse 1.6s ease-out infinite}
 .lm-l span.on small{color:#16a34a;font-weight:700}.lm-l span.on i{animation:lvPulse 1.6s ease-out infinite}
 .fd-mm,.lm-map{cursor:pointer}
-#cv-live{position:fixed;inset:0;z-index:9100;background:#0b1a3a;overflow:hidden;overscroll-behavior:none}
+#cv-lmap{position:fixed;inset:0;z-index:9100;background:#0b1a3a;overflow:hidden;overscroll-behavior:none}
 #lv-map{position:absolute;inset:0}
 .lv-top{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;right:64px;display:flex;gap:10px;align-items:flex-start;z-index:3;pointer-events:none}
 .lv-top>*{pointer-events:auto}
@@ -2024,8 +2024,8 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .lv-ph.big{z-index:5}.lv-ph.big>img{width:180px;height:135px;border-radius:14px}
 .lv-ph.big span{display:flex;flex-direction:column;background:#fff;color:#1f2937;border-radius:10px;padding:4px 8px;margin-top:4px;max-width:200px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.3)}
 .lv-ph.big span b{font-size:.8rem}.lv-ph.big span small{font-size:.68rem;color:#6b7280}
-#cv-live .maplibregl-ctrl-attrib{font-size:9px}
-#cv-live .maplibregl-marker{opacity:1!important}#cv-live .lv-pin{z-index:4}
+#cv-lmap .maplibregl-ctrl-attrib{font-size:9px}
+#cv-lmap .maplibregl-marker{opacity:1!important}#cv-lmap .lv-pin{z-index:4}
 @media (prefers-reduced-motion:reduce){.lv-go::after,.lv-ring,.lv-dot i,.lv-badge i{animation:none!important}}
 #cv-feed{position:fixed;inset:0;z-index:2500;background:var(--cream);display:flex;flex-direction:column}
 .fd-top{display:flex;gap:12px;align-items:center;padding:calc(12px + var(--sat,env(safe-area-inset-top,0px))) 16px 12px;background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff}.fd-top div{display:flex;flex-direction:column}.fd-top b{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-size:1.4rem}.fd-top small{opacity:.8;font-size:.75rem}
@@ -15634,7 +15634,7 @@ ${pm.join('\n')}</Document></kml>`;
   const lvSig = D => JSON.stringify([D.people.map(p=>[p.n, p.c, p.pts.length, p.pts[p.pts.length-1]]), D.ph.map(p=>p.id + p.ph)]);
   async function liveOpen(key){
     if(!key) return; liveClose(true); closeSheet(true);
-    const ov = document.createElement('div'); ov.id = 'cv-live'; document.body.appendChild(ov); document.body.style.overflow = 'hidden';
+    const ov = document.createElement('div'); ov.id = 'cv-lmap'; document.body.appendChild(ov); document.body.style.overflow = 'hidden';
     const D = liveData(key);
     ov.innerHTML = `<div id="lv-map"></div>
       <div class="lv-top"><button type="button" class="lv-x" onclick="CV.liveClose()" aria-label="Fermer">✕</button>
@@ -15686,10 +15686,10 @@ ${pm.join('\n')}</Document></kml>`;
     } catch(e){ const m = document.getElementById('lv-msg'); if(m) m.textContent = '⚠️ ' + (e.message || 'Carte indisponible'); }
   }
   function liveClose(quiet){
-    if(!LV) { const o = document.getElementById('cv-live'); if(o) o.remove(); return; }
+    if(!LV) { const o = document.getElementById('cv-lmap'); if(o) o.remove(); return; }
     clearInterval(LV.iv); clearInterval(LV.up); cancelAnimationFrame(LV.raf); clearTimeout(lvSoonT);
     try { if(LV.map) LV.map.remove(); } catch(e){}
-    LV = null; const o = document.getElementById('cv-live'); if(o) o.remove();
+    LV = null; const o = document.getElementById('cv-lmap'); if(o) o.remove();
     if(!quiet && !document.getElementById('cv-feed') && !document.getElementById('cv-tj')) document.body.style.overflow = '';
   }
   function liveSoon(){ clearTimeout(lvSoonT); lvSoonT = setTimeout(()=>{ if(LV) liveDraw(false); }, 600); }
@@ -15705,7 +15705,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function liveBase(b){
     if(!LV || !LV.map) return; ['sat','plan'].forEach(x=>{ try { LV.map.setLayoutProperty(x, 'visibility', x === b ? 'visible' : 'none'); } catch(e){} });
-    document.querySelectorAll('#cv-live .lv-tools [data-b]').forEach(x=>x.classList.toggle('on', x.dataset.b === b));
+    document.querySelectorAll('#cv-lmap .lv-tools [data-b]').forEach(x=>x.classList.toggle('on', x.dataset.b === b));
   }
   function liveOrbit(){ if(!LV) return; LV.orbit = !LV.orbit; const b = document.getElementById('lv-orb'); if(b) b.classList.toggle('on', LV.orbit); }
   function liveFit(first){
@@ -15752,7 +15752,7 @@ ${pm.join('\n')}</Document></kml>`;
     const pk = new Set();
     D.ph.forEach(x=>{ pk.add(x.id); if(LV.phm[x.id]) return; const el = document.createElement('button'); el.type = 'button'; el.className = 'lv-ph';
       el.innerHTML = `${x.ph ? `<img data-ph="${esc(x.ph)}.t" alt="">` : '<i>📍</i>'}<span><b data-notr>${esc(x.t)}</b><small>${x.by ? '📸 <span data-notr>' + esc(x.by) + '</span> · ' : ''}${x.d ? fdate(x.d) : ''}</small></span>`;
-      el.onclick = ev => { ev.stopPropagation(); const was = el.classList.contains('big'); document.querySelectorAll('#cv-live .lv-ph.big').forEach(b=>b.classList.remove('big')); if(!was){ el.classList.add('big'); LV.orbit = false; LV.map.easeTo({center:[x.lng, x.lat], duration:900}); } };
+      el.onclick = ev => { ev.stopPropagation(); const was = el.classList.contains('big'); document.querySelectorAll('#cv-lmap .lv-ph.big').forEach(b=>b.classList.remove('big')); if(!was){ el.classList.add('big'); LV.orbit = false; LV.map.easeTo({center:[x.lng, x.lat], duration:900}); } };
       LV.phm[x.id] = new maplibregl.Marker({element:el, anchor:'bottom', opacity:'1', opacityWhenCovered:'1'}).setLngLat([x.lng, x.lat]).addTo(map); });
     Object.keys(LV.phm).forEach(k=>{ if(!pk.has(k)){ LV.phm[k].remove(); delete LV.phm[k]; } });
     hydrate();
@@ -17157,7 +17157,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-21b';
+  const BUILD = '2026-10-21c';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
