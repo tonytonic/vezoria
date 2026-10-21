@@ -4798,4 +4798,6 @@ I18N.load({
 "Choisir mes visites":"Выбрать места",
 "Me proposer les incontournables (4 par jour)":"Предложить главные места (4 в день)",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Предложить главные места каждого города (4 в день) и экскурсии: я сам выберу, что добавить",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Ищу главные места каждого города (4 в день): они будут в «Что делать», там выберешь, что добавить в программу."});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Ищу главные места каждого города (4 в день): они будут в «Что делать», там выберешь, что добавить в программу.",
+"Ajouter au programme":"Добавить в программу",
+"Écarter":"Отложить"});

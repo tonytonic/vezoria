@@ -4798,4 +4798,6 @@ I18N.load({
 "Choisir mes visites":"اختر زياراتي",
 "Me proposer les incontournables (4 par jour)":"اقترح عليّ أهم المعالم (4 يومياً)",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"اقترح عليّ أهم معالم كل مدينة (4 يومياً) والرحلات التي لا تفوَّت: سأختار ما أضيفه",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 أبحث عن أهم معالم كل مدينة (4 يومياً): ستجدها في «ماذا تفعل» لتختار ما تضيفه إلى برنامجك."});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 أبحث عن أهم معالم كل مدينة (4 يومياً): ستجدها في «ماذا تفعل» لتختار ما تضيفه إلى برنامجك.",
+"Ajouter au programme":"أضف إلى البرنامج",
+"Écarter":"استبعد"});

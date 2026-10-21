@@ -1843,4 +1843,6 @@ I18N.load({
 "Choisir mes visites":"Choose my visits",
 "Me proposer les incontournables (4 par jour)":"Suggest the must-sees (4 a day)",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Suggest each city’s must-sees (4 a day) and the day trips not to miss: I’ll choose which to add",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 I’m looking for each city’s must-sees (4 a day): you’ll find them in “What to do” to choose which to add to your schedule."});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 I’m looking for each city’s must-sees (4 a day): you’ll find them in “What to do” to choose which to add to your schedule.",
+"Ajouter au programme":"Add to schedule",
+"Écarter":"Set aside"});

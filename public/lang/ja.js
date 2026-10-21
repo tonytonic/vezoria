@@ -4797,4 +4797,6 @@ I18N.load({
 "Choisir mes visites":"見学先を選ぶ",
 "Me proposer les incontournables (4 par jour)":"必見スポットを提案（1日4か所）",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"各都市の必見スポット（1日4か所）と日帰り旅行を提案：追加するものは自分で選ぶ",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 各都市の必見スポット（1日4か所）を探しています。「何をする」で旅程に追加するものを選べます。"});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 各都市の必見スポット（1日4か所）を探しています。「何をする」で旅程に追加するものを選べます。",
+"Ajouter au programme":"旅程に追加",
+"Écarter":"見送る"});

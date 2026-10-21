@@ -4797,4 +4797,6 @@ I18N.load({
 "Choisir mes visites":"방문지 고르기",
 "Me proposer les incontournables (4 par jour)":"필수 명소 추천받기(하루 4곳)",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"도시별 필수 명소(하루 4곳)와 당일 여행 추천받기: 추가할 곳은 내가 고를게요",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 도시별 필수 명소(하루 4곳)를 찾는 중이에요. ‘무엇을 할까’에서 일정에 추가할 곳을 고르세요."});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 도시별 필수 명소(하루 4곳)를 찾는 중이에요. ‘무엇을 할까’에서 일정에 추가할 곳을 고르세요.",
+"Ajouter au programme":"일정에 추가",
+"Écarter":"제외"});

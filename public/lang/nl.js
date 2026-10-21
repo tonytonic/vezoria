@@ -1849,4 +1849,6 @@ I18N.load({
 "Choisir mes visites":"Mijn bezoeken kiezen",
 "Me proposer les incontournables (4 par jour)":"Stel de toppers voor (4 per dag)",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Stel de toppers van elke stad (4 per dag) en de dagtochten voor: ik kies zelf wat ik toevoeg",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Ik zoek de toppers van elke stad (4 per dag): je vindt ze bij ‘Wat te doen’ om te kiezen wat je toevoegt."});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Ik zoek de toppers van elke stad (4 per dag): je vindt ze bij ‘Wat te doen’ om te kiezen wat je toevoegt.",
+"Ajouter au programme":"Aan programma toevoegen",
+"Écarter":"Overslaan"});

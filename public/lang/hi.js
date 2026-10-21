@@ -4797,4 +4797,6 @@ I18N.load({
 "Choisir mes visites":"मेरी जगहें चुनें",
 "Me proposer les incontournables (4 par jour)":"ज़रूरी जगहें सुझाएँ (रोज़ 4)",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"हर शहर की ज़रूरी जगहें (रोज़ 4) और न छोड़ने वाली यात्राएँ सुझाएँ: क्या जोड़ना है, मैं चुनूँगा",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 मैं हर शहर की ज़रूरी जगहें ढूँढ रहा हूँ (रोज़ 4): «क्या करें» में आप चुन सकेंगे कि कार्यक्रम में क्या जोड़ना है।"});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 मैं हर शहर की ज़रूरी जगहें ढूँढ रहा हूँ (रोज़ 4): «क्या करें» में आप चुन सकेंगे कि कार्यक्रम में क्या जोड़ना है।",
+"Ajouter au programme":"कार्यक्रम में जोड़ें",
+"Écarter":"हटाएँ"});

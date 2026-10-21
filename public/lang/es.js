@@ -1859,4 +1859,6 @@ I18N.load({
 "Choisir mes visites":"Elegir mis visitas",
 "Me proposer les incontournables (4 par jour)":"Proponerme los imprescindibles (4 al día)",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Proponerme los imprescindibles de cada ciudad (4 al día) y las excursiones que no hay que perderse: yo elegiré cuáles añadir",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Busco los imprescindibles de cada ciudad (4 al día): los encontrarás en «Qué hacer» para elegir cuáles añadir a tu programa."});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Busco los imprescindibles de cada ciudad (4 al día): los encontrarás en «Qué hacer» para elegir cuáles añadir a tu programa.",
+"Ajouter au programme":"Añadir al programa",
+"Écarter":"Descartar"});

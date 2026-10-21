@@ -1858,4 +1858,6 @@ I18N.load({
 "Choisir mes visites":"Scegli le mie visite",
 "Me proposer les incontournables (4 par jour)":"Proponimi le tappe imperdibili (4 al giorno)",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Proponimi le tappe imperdibili di ogni città (4 al giorno) e le escursioni da non perdere: sceglierò io cosa aggiungere",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Cerco le tappe imperdibili di ogni città (4 al giorno): le troverai in «Cosa fare» per scegliere cosa aggiungere al programma."});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Cerco le tappe imperdibili di ogni città (4 al giorno): le troverai in «Cosa fare» per scegliere cosa aggiungere al programma.",
+"Ajouter au programme":"Aggiungi al programma",
+"Écarter":"Scarta"});

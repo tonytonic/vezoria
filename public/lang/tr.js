@@ -4785,4 +4785,6 @@ I18N.load({
 "Choisir mes visites":"Gezilerimi seç",
 "Me proposer les incontournables (4 par jour)":"Görülecek yerleri öner (günde 4)",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Her şehrin görülecek yerlerini (günde 4) ve kaçırılmayacak gezileri öner: hangilerini ekleyeceğimi ben seçerim",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Her şehrin görülecek yerlerini arıyorum (günde 4): programına eklemek istediklerini « Ne yapılır » bölümünde seçeceksin."});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Her şehrin görülecek yerlerini arıyorum (günde 4): programına eklemek istediklerini « Ne yapılır » bölümünde seçeceksin.",
+"Ajouter au programme":"Programa ekle",
+"Écarter":"Vazgeç"});

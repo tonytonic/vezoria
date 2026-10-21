@@ -4797,4 +4797,6 @@ I18N.load({
 "Choisir mes visites":"选择我的景点",
 "Me proposer les incontournables (4 par jour)":"推荐必看景点（每天4个）",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"推荐每座城市的必看景点（每天4个）和不容错过的一日游：由我选择要添加的",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 正在查找每座城市的必看景点（每天4个）：你可以在“做什么”里选择要加入行程的。"});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 正在查找每座城市的必看景点（每天4个）：你可以在“做什么”里选择要加入行程的。",
+"Ajouter au programme":"加入行程",
+"Écarter":"不要"});

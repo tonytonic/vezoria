@@ -1853,4 +1853,6 @@ I18N.load({
 "Choisir mes visites":"Meine Besuche wählen",
 "Me proposer les incontournables (4 par jour)":"Highlights vorschlagen (4 pro Tag)",
 "Me proposer les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer : je choisirai ceux à ajouter":"Mir die Highlights jeder Stadt (4 pro Tag) und die Ausflüge vorschlagen: ich wähle selbst aus",
-"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Ich suche die Highlights jeder Stadt (4 pro Tag): Du findest sie unter „Was unternehmen“ und wählst aus, was ins Programm kommt."});
+"💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.":"💡 Ich suche die Highlights jeder Stadt (4 pro Tag): Du findest sie unter „Was unternehmen“ und wählst aus, was ins Programm kommt.",
+"Ajouter au programme":"Zum Programm hinzufügen",
+"Écarter":"Verwerfen"});
