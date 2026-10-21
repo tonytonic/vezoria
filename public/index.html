@@ -234,6 +234,10 @@ body.cv-ph-live{--navy:#073B40;--navy2:#0B5D63;--sun1:#2DD4BF;--sun2:#0D9488;--s
 body.cv-ph-live .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(13,148,136,1) 0%, rgba(3,105,161,.7) 38%, transparent 70%),linear-gradient(180deg,#03262A 0%,#06474D 60%,#0B6B6E 100%)}
 body.cv-ph-past{--navy:#3A2119;--navy2:#5A3324;--sun1:#E8A47C;--sun2:#C2653F;--sun3:#8E3B2E;--light:#F3E2D7;--cream:#FAF2EC;--sunset:linear-gradient(120deg,#E8A47C,#C2653F 55%,#8E3B2E)}
 body.cv-ph-past .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(194,101,63,.85) 0%, rgba(142,59,46,.5) 38%, transparent 70%),linear-gradient(180deg,#24140F 0%,#3A2119 60%,#6B3526 100%)}
+.ar>*:not(.cd-bg):not(.cd-sh){position:relative;z-index:2}.ar.ar-cd{isolation:isolate}
+.ar-top{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase}
+.ar-j{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:2px 0 0}.ar-j b{font-family:var(--serif,Georgia,serif);font-size:3.6rem;line-height:1;letter-spacing:-.03em;text-shadow:0 4px 20px rgba(0,0,0,.4)}
+.ar-clock{padding:10px 0 4px!important}.ar-lv{margin-top:10px}
 .ar .ar-steps{position:relative;display:grid;gap:8px;margin-top:4px}
 .ar-s{border-radius:16px;background:rgba(255,255,255,.1);overflow:hidden}
 .ar-s.cur{background:rgba(255,255,255,.18);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.45)}
@@ -1767,7 +1771,8 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .sg-ok{background:#dcfce7;color:#166534}.sg-no{background:#fee2e2;color:#991b1b}
 .cv-plk.sg{color:#b45309}
 .sg-r .sg-n{display:flex;flex-direction:column}.sg-x{font-weight:600;font-size:.72rem;color:#0f766e}
-#wz-ctry .sg-c{margin:0 0 10px}.wz-sea{margin:-4px 0 10px;padding:8px 10px;border-radius:12px;background:#eff6ff;color:#1e3a8a;font-weight:600;font-size:.8rem}.wz-sea.bad{background:#fff7ed;color:#9a3412}.wz-sea small{font-weight:500;opacity:.7}
+#wz-ctry .sg-c{margin:0 0 10px}.wz-sg{margin:12px 0;padding:12px;border-radius:14px;background:#fffbeb;border:1.5px dashed #f5c26b;font-weight:700;color:#78350f}
+.wz-sea{margin:-4px 0 10px;padding:8px 10px;border-radius:12px;background:#eff6ff;color:#1e3a8a;font-weight:600;font-size:.8rem}.wz-sea.bad{background:#fff7ed;color:#9a3412}.wz-sea small{font-weight:500;opacity:.7}
 .wz-ok{margin:0 0 10px;padding:8px 10px;border-radius:12px;background:#ecfdf5;color:#065f46;font-weight:600}
 .lg-lk,.cd-lk,.wlc-lk{display:block;margin-top:10px;font-size:.8rem;font-weight:700;text-decoration:none;color:#4f46e5}
 .cd-lk{color:#0f766e;padding:8px 4px 2px;border-top:1px solid #f1f5f9}.wlc-lk{color:#fde68a;margin:6px 0 0;animation:wlcUp .6s .8s both}.lv-more{margin-top:14px}
@@ -5257,7 +5262,7 @@ const CV = (function(){
   function renderProg(){
     const ds = dayList();
     const arT = trip(), arOn = !!(arT && !arT.archived && tripPhase(arT) === 'prep' && !hidden('blk:prep'));
-    let h = pinBar() + cdHTML() + (arOn ? ariHTML() : suggCard()) + actBand() + annivCard() + nextHero() + eveCard() + (arOn ? '' : prepGauge()) + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + pinnedPolls();
+    let h = pinBar() + (arOn ? ariHTML() : cdHTML() + suggCard() + actBand()) + annivCard() + nextHero() + eveCard() + (arOn ? '' : prepGauge()) + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + pinnedPolls();
     const tt = trip();
     if(tt && tt.demo) h = `<div class="cv-demo-bar">👀 <b>Voyage de démo</b> : touche à tout, modifie, supprime. Il reste sur ce téléphone et n’est jamais partagé.
         <span class="cv-demo-btns"><button type="button" onclick="CV.demoReset()">↺ Recommencer</button><button type="button" onclick="CV.demoDel()">Supprimer la démo</button></span></div>` + h;
@@ -6764,7 +6769,7 @@ const CV = (function(){
       nuits:Math.max(0, parseInt(r.querySelector('[data-k=nuits]').value)||0), mode:r.querySelector('[data-k=mode]').value}));
     if(wz.step===4){ const gg = {}; document.querySelectorAll('[data-wdep]').forEach(i=>{ const pid = i.dataset.wdep, q = a => document.querySelector(`[${a}="${pid}"]`);
       gg[pid] = {dep:i.value.trim(), ret:q('data-wret').value.trim(), mDep:q('data-wmdep').value, mRet:q('data-wmret').value}; }); wz.gens = gg; }
-    if(wz.step===5){ wz.tpl = g('wz-tpl'); const cc = document.getElementById('wz-cc'), cd = document.getElementById('wz-cd'); wz.copyCheck = cc ? cc.checked : true; wz.copyDivers = cd ? cd.checked : false; }
+    if(wz.step===5){ const sgc = document.getElementById('wz-sg'); if(sgc) wz.sugg = sgc.checked; wz.tpl = g('wz-tpl'); const cc = document.getElementById('wz-cc'), cd = document.getElementById('wz-cd'); wz.copyCheck = cc ? cc.checked : true; wz.copyDivers = cd ? cd.checked : false; }
   }
   function wzGo(n){
     wzRead();
@@ -6870,6 +6875,7 @@ const CV = (function(){
         <ol>${st.map(e=>`<li>${MODE_ICON[e.mode]||''} <b>${esc(e.ville)}</b> · ${e.nuits} nuit${e.nuits>1?'s':''} <span class="v-sum-small">${fshort(e.debut)} → ${fshort(e.fin)}</span></li>`).join('')}</ol></div>
         <div class="v-f"><label>Reprendre la configuration d’un voyage (vierge)</label><select class="v-in" id="wz-tpl" onchange="CV.wzTpl()"><option value="">— Checklist de base —</option>${trips().map(t=>`<option value="${t.id}"${wz.tpl===t.id?' selected':''}>${esc(t.titre)}</option>`).join('')}</select></div>
         <div id="wz-tplx">${wzTplOpts()}</div>
+        <label class="cv-checkline wz-sg"><input type="checkbox" id="wz-sg" ${wz.sugg === false ? '' : 'checked'}> 💡 ${MSGT('Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer')}</label>
         <div id="wz-cov">${covBlock()}</div>
         <div class="v-hint">Seront créés : le programme jour par jour, un hébergement par étape, les trajets entre étapes et les allers-retours de chacun, sans prix (à remplir).</div>`;
     }
@@ -6916,7 +6922,7 @@ const CV = (function(){
     else BASIC_CHECK.forEach(([cat,label],i)=>out.push({id:'c'+uid()+i, type:'check', trip:tid, cat, label, done:false}));
     if(tpl && wz.copyDivers) list('item', i=>i.trip===tpl.id && i.cat==='divers').forEach((x,i)=>out.push({id:'i'+uid()+'d'+i, type:'item', trip:tid, cat:'divers', titre:x.titre, hint:x.hint||'', partage:x.partage, statut:'todo', qui:[]}));
     putMany(out, '🚀 Voyage créé'); closeSheet(true); M.mode = 'prep'; M.tab = 'prog'; go(tid); setTimeout(()=>fxPlay('trip', 'Le rêve commence !'), 300);
-    setTimeout(()=>suggFill(tid), 200);   // 💡 4 incontournables par jour + excursions, à trier dans la carte « Suggestions »
+    if(wz.sugg !== false) setTimeout(()=>suggFill(tid), 200);   // 💡 4 incontournables par jour + excursions, à trier dans l’étape « Que faire »
   }
 
   function seedUSA2025(){}
@@ -15107,8 +15113,13 @@ ${pm.join('\n')}</Document></kml>`;
         (t.voyageurs || []).length < 2 ? `<button type="button" class="ar-f" onclick="CV.tripInviteNow('${t.id}')"><i>👥</i><span>${MSGT('Inviter tes compagnons de voyage')}</span></button>` : ''];
       return `<div class="ar-fs">${rows.join('')}</div>${cdIns(t)}`;
     };
-    return `<div class="cv-prep2 ar">
-      <div class="p2-top"><div><div class="p2-k">${MSGT('Ta préparation')}</div><div class="p2-l">${lv[0]} ${MSGT(lv[1])}</div></div><div class="p2-pct"><b>${pct}</b><small>%</small></div></div>
+    const ms = t.debut ? cdLeft(t) : 0, cdOn = !!t.debut && !t.demo && ms > -864e5 && ms <= 400 * 864e5 && !hidden('blk:cd');
+    const dj = t.debut ? Math.max(0, nights(isoToday(), t.debut)) : 0, dest = cdDest(t), dco = (M.ctry || {})[normQ(dest)] || co;
+    return `<div class="cv-prep2 ar${cdOn ? ' ar-cd' : ''}"${cdOn ? ` id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"` : ''}>${cdOn ? `<div class="cd-bg" id="cd-bg"></div><div class="cd-sh"></div>` : ''}
+      ${cdOn ? `<div class="ar-top"><span>${dj === 0 ? '🧳 ' + MSGT('C’est aujourd’hui !') : dj === 1 ? '✈️ ' + MSGT('Départ demain') : '⏳ ' + MSGT('Départ dans')}</span><span class="cd-wx" id="cd-wx"></span></div>
+      <div class="ar-j"><b>${dj === 0 ? MSGT('Jour J') : 'J-' + dj}</b><span class="cd-dest">${dco && dco.cc ? flag(dco.cc) + ' ' : '📍 '}<span data-notr>${esc(dest)}</span></span></div>
+      <div class="cd-clock ar-clock" id="cd-clock">${cdClock(ms)}</div>` : ''}
+      <div class="p2-top ar-lv"><div><div class="p2-k">${MSGT('Ta préparation')}</div><div class="p2-l">${lv[0]} ${MSGT(lv[1])}</div></div><div class="p2-pct"><b>${pct}</b><small>%</small></div></div>
       <svg class="p2-svg" viewBox="0 0 360 112" aria-hidden="true">
         <path d="${path}" class="p2-base"/><path d="${path}" class="p2-prog" pathLength="100" style="--p:${pct}"/>
         ${S.map((x, i)=>{ const [cx, cy] = q((i + 1) / (S.length + 1)); return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${x.ok ? 6 : 4.5}" class="${x.ok ? 'on' : ''}" style="animation-delay:${(i * .12).toFixed(2)}s"/>`; }).join('')}
@@ -17612,7 +17623,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-21h';
+  const BUILD = '2026-10-21i';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
