@@ -1821,4 +1821,12 @@ I18N.load({
 "C’est réservé":"It’s booked",
 "Valise et checklist":"Suitcase and checklist",
 "Inviter tes compagnons de voyage":"Invite your travel companions",
-"Noté comme réservé":"Marked as booked"});
+"Noté comme réservé":"Marked as booked",
+"Ajoute d’abord une étape (une ville où dormir).":"Add a stop first (a city to sleep in).",
+"Je cherche de nouvelles suggestions…":"Looking for new suggestions…",
+"les grands sites du pays":"the country’s great sites",
+"nouvelles suggestions":"new suggestions",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"No network to find the must-sees: try again in a moment.",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"No other ideas for now: you already have the best-known places.",
+"trouvées":"found",
+"Nouvelles suggestions":"New suggestions"});

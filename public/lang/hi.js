@@ -4775,4 +4775,12 @@ I18N.load({
 "C’est réservé":"बुक हो गया",
 "Valise et checklist":"सूटकेस और चेकलिस्ट",
 "Inviter tes compagnons de voyage":"अपने सहयात्रियों को बुलाएँ",
-"Noté comme réservé":"बुक के रूप में चिह्नित"});
+"Noté comme réservé":"बुक के रूप में चिह्नित",
+"Ajoute d’abord une étape (une ville où dormir).":"पहले एक पड़ाव जोड़ें (रुकने का शहर)।",
+"Je cherche de nouvelles suggestions…":"नए सुझाव ढूँढ रहा हूँ…",
+"les grands sites du pays":"देश के बड़े स्थल",
+"nouvelles suggestions":"नए सुझाव",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"ज़रूरी जगहें ढूँढने के लिए नेटवर्क नहीं: थोड़ी देर में फिर कोशिश करें।",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"अभी और कोई सुझाव नहीं: सबसे मशहूर जगहें पहले से हैं।",
+"trouvées":"मिलीं",
+"Nouvelles suggestions":"नए सुझाव"});

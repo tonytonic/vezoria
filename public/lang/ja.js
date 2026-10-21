@@ -4775,4 +4775,12 @@ I18N.load({
 "C’est réservé":"予約済み",
 "Valise et checklist":"スーツケースとチェックリスト",
 "Inviter tes compagnons de voyage":"旅の仲間を招待",
-"Noté comme réservé":"予約済みにしました"});
+"Noté comme réservé":"予約済みにしました",
+"Ajoute d’abord une étape (une ville où dormir).":"まず行程（泊まる都市）を追加してください。",
+"Je cherche de nouvelles suggestions…":"新しいおすすめを探しています…",
+"les grands sites du pays":"国の主要な名所",
+"nouvelles suggestions":"件の新しいおすすめ",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"必見スポットを探すネットワークがありません。少し後で再試行してください。",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"今はほかの候補がありません。有名な場所はすでに入っています。",
+"trouvées":"件見つかりました",
+"Nouvelles suggestions":"新しいおすすめ"});

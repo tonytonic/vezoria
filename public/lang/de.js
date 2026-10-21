@@ -1831,4 +1831,12 @@ I18N.load({
 "C’est réservé":"Ist gebucht",
 "Valise et checklist":"Koffer und Checkliste",
 "Inviter tes compagnons de voyage":"Lade deine Mitreisenden ein",
-"Noté comme réservé":"Als gebucht markiert"});
+"Noté comme réservé":"Als gebucht markiert",
+"Ajoute d’abord une étape (une ville où dormir).":"Füge zuerst eine Etappe hinzu (eine Stadt zum Übernachten).",
+"Je cherche de nouvelles suggestions…":"Ich suche neue Vorschläge…",
+"les grands sites du pays":"die großen Sehenswürdigkeiten des Landes",
+"nouvelles suggestions":"neue Vorschläge",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"Kein Netz für die Highlights: versuch es gleich noch einmal.",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"Gerade keine weiteren Ideen: du hast schon die bekanntesten Orte.",
+"trouvées":"gefunden",
+"Nouvelles suggestions":"Neue Vorschläge"});

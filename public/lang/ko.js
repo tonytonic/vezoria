@@ -4775,4 +4775,12 @@ I18N.load({
 "C’est réservé":"예약 완료",
 "Valise et checklist":"캐리어와 체크리스트",
 "Inviter tes compagnons de voyage":"여행 동료 초대하기",
-"Noté comme réservé":"예약됨으로 표시했어요"});
+"Noté comme réservé":"예약됨으로 표시했어요",
+"Ajoute d’abord une étape (une ville où dormir).":"먼저 경유지(묵을 도시)를 추가하세요.",
+"Je cherche de nouvelles suggestions…":"새 추천을 찾는 중…",
+"les grands sites du pays":"나라의 대표 명소",
+"nouvelles suggestions":"개의 새 추천",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"필수 명소를 찾을 네트워크가 없어요. 잠시 후 다시 시도하세요.",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"지금은 다른 추천이 없어요. 유명한 곳은 이미 있어요.",
+"trouvées":"개 찾음",
+"Nouvelles suggestions":"새 추천"});

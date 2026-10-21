@@ -4776,4 +4776,12 @@ I18N.load({
 "C’est réservé":"Забронировано",
 "Valise et checklist":"Чемодан и чек-лист",
 "Inviter tes compagnons de voyage":"Пригласи попутчиков",
-"Noté comme réservé":"Отмечено как забронированное"});
+"Noté comme réservé":"Отмечено как забронированное",
+"Ajoute d’abord une étape (une ville où dormir).":"Сначала добавь этап (город для ночёвки).",
+"Je cherche de nouvelles suggestions…":"Ищу новые предложения…",
+"les grands sites du pays":"главные места страны",
+"nouvelles suggestions":"новых предложений",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"Нет сети, чтобы найти главные места: попробуй чуть позже.",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"Пока других идей нет: самые известные места уже у тебя.",
+"trouvées":"найдено",
+"Nouvelles suggestions":"Новые предложения"});

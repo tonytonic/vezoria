@@ -1837,4 +1837,12 @@ I18N.load({
 "C’est réservé":"Ya está reservado",
 "Valise et checklist":"Maleta y lista",
 "Inviter tes compagnons de voyage":"Invita a tus compañeros de viaje",
-"Noté comme réservé":"Marcado como reservado"});
+"Noté comme réservé":"Marcado como reservado",
+"Ajoute d’abord une étape (une ville où dormir).":"Añade primero una etapa (una ciudad donde dormir).",
+"Je cherche de nouvelles suggestions…":"Busco nuevas sugerencias…",
+"les grands sites du pays":"los grandes sitios del país",
+"nouvelles suggestions":"nuevas sugerencias",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"Sin red para buscar los imprescindibles: inténtalo de nuevo en un momento.",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"No hay más ideas por ahora: ya tienes los lugares más conocidos.",
+"trouvées":"encontradas",
+"Nouvelles suggestions":"Nuevas sugerencias"});

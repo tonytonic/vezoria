@@ -1836,4 +1836,12 @@ I18N.load({
 "C’est réservé":"È prenotato",
 "Valise et checklist":"Valigia e checklist",
 "Inviter tes compagnons de voyage":"Invita i tuoi compagni di viaggio",
-"Noté comme réservé":"Segnato come prenotato"});
+"Noté comme réservé":"Segnato come prenotato",
+"Ajoute d’abord une étape (une ville où dormir).":"Aggiungi prima una tappa (una città dove dormire).",
+"Je cherche de nouvelles suggestions…":"Cerco nuovi suggerimenti…",
+"les grands sites du pays":"i grandi siti del paese",
+"nouvelles suggestions":"nuovi suggerimenti",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"Nessuna rete per trovare le tappe imperdibili: riprova tra poco.",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"Nessun’altra idea per ora: hai già i luoghi più famosi.",
+"trouvées":"trovati",
+"Nouvelles suggestions":"Nuovi suggerimenti"});

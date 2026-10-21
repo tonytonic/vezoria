@@ -1827,4 +1827,12 @@ I18N.load({
 "C’est réservé":"Is geboekt",
 "Valise et checklist":"Koffer en checklist",
 "Inviter tes compagnons de voyage":"Nodig je reisgenoten uit",
-"Noté comme réservé":"Gemarkeerd als geboekt"});
+"Noté comme réservé":"Gemarkeerd als geboekt",
+"Ajoute d’abord une étape (une ville où dormir).":"Voeg eerst een etappe toe (een stad om te slapen).",
+"Je cherche de nouvelles suggestions…":"Ik zoek nieuwe suggesties…",
+"les grands sites du pays":"de grote bezienswaardigheden van het land",
+"nouvelles suggestions":"nieuwe suggesties",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"Geen netwerk om de toppers te vinden: probeer het zo opnieuw.",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"Even geen andere ideeën: je hebt de bekendste plekken al.",
+"trouvées":"gevonden",
+"Nouvelles suggestions":"Nieuwe suggesties"});

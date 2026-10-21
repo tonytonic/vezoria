@@ -4775,4 +4775,12 @@ I18N.load({
 "C’est réservé":"已预订",
 "Valise et checklist":"行李和清单",
 "Inviter tes compagnons de voyage":"邀请你的旅伴",
-"Noté comme réservé":"已标记为已预订"});
+"Noté comme réservé":"已标记为已预订",
+"Ajoute d’abord une étape (une ville où dormir).":"请先添加一站（过夜的城市）。",
+"Je cherche de nouvelles suggestions…":"正在查找新的推荐…",
+"les grands sites du pays":"全国的著名景点",
+"nouvelles suggestions":"条新推荐",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"没有网络，无法查找必看景点：请稍后重试。",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"暂时没有其他建议：最有名的地方你都有了。",
+"trouvées":"个已找到",
+"Nouvelles suggestions":"新的推荐"});

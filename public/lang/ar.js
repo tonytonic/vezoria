@@ -4776,4 +4776,12 @@ I18N.load({
 "C’est réservé":"تم الحجز",
 "Valise et checklist":"الحقيبة وقائمة التحقق",
 "Inviter tes compagnons de voyage":"ادعُ رفاق سفرك",
-"Noté comme réservé":"تم وضع علامة محجوز"});
+"Noté comme réservé":"تم وضع علامة محجوز",
+"Ajoute d’abord une étape (une ville où dormir).":"أضف محطة أولاً (مدينة للمبيت).",
+"Je cherche de nouvelles suggestions…":"أبحث عن اقتراحات جديدة…",
+"les grands sites du pays":"أهم مواقع البلد",
+"nouvelles suggestions":"اقتراحات جديدة",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"لا توجد شبكة للعثور على المعالم: أعد المحاولة بعد قليل.",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"لا أفكار أخرى حالياً: لديك أشهر الأماكن بالفعل.",
+"trouvées":"تم العثور عليها",
+"Nouvelles suggestions":"اقتراحات جديدة"});

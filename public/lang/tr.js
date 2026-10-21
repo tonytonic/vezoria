@@ -4763,4 +4763,12 @@ I18N.load({
 "C’est réservé":"Rezerve edildi",
 "Valise et checklist":"Bavul ve kontrol listesi",
 "Inviter tes compagnons de voyage":"Yol arkadaşlarını davet et",
-"Noté comme réservé":"Rezerve olarak işaretlendi"});
+"Noté comme réservé":"Rezerve olarak işaretlendi",
+"Ajoute d’abord une étape (une ville où dormir).":"Önce bir durak ekle (geceleyeceğin şehir).",
+"Je cherche de nouvelles suggestions…":"Yeni öneriler arıyorum…",
+"les grands sites du pays":"ülkenin büyük yerleri",
+"nouvelles suggestions":"yeni öneri",
+"Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"Görülecek yerleri bulmak için ağ yok: birazdan tekrar dene.",
+"Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"Şimdilik başka fikir yok: en bilinen yerler zaten sende.",
+"trouvées":"bulundu",
+"Nouvelles suggestions":"Yeni öneriler"});
