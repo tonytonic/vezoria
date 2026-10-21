@@ -4783,4 +4783,8 @@ I18N.load({
 "Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"필수 명소를 찾을 네트워크가 없어요. 잠시 후 다시 시도하세요.",
 "Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"지금은 다른 추천이 없어요. 유명한 곳은 이미 있어요.",
 "trouvées":"개 찾음",
-"Nouvelles suggestions":"새 추천"});
+"Nouvelles suggestions":"새 추천",
+"C’est aujourd’hui !":"오늘이에요!",
+"Départ demain":"내일 출발",
+"Départ dans":"출발까지",
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"도시별 필수 명소(하루 4곳)와 놓치면 안 될 당일 여행으로 일정 채우기"});

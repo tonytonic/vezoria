@@ -1844,4 +1844,8 @@ I18N.load({
 "Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"Nessuna rete per trovare le tappe imperdibili: riprova tra poco.",
 "Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"Nessun’altra idea per ora: hai già i luoghi più famosi.",
 "trouvées":"trovati",
-"Nouvelles suggestions":"Nuovi suggerimenti"});
+"Nouvelles suggestions":"Nuovi suggerimenti",
+"C’est aujourd’hui !":"È oggi!",
+"Départ demain":"Partenza domani",
+"Départ dans":"Partenza tra",
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Riempi il programma con le tappe imperdibili di ogni città (4 al giorno) e le escursioni da non perdere"});

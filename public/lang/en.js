@@ -1829,4 +1829,8 @@ I18N.load({
 "Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"No network to find the must-sees: try again in a moment.",
 "Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"No other ideas for now: you already have the best-known places.",
 "trouvées":"found",
-"Nouvelles suggestions":"New suggestions"});
+"Nouvelles suggestions":"New suggestions",
+"C’est aujourd’hui !":"It’s today!",
+"Départ demain":"Leaving tomorrow",
+"Départ dans":"Leaving in",
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Fill the schedule with each city’s must-sees (4 a day) and the day trips not to miss"});

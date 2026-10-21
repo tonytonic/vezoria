@@ -4771,4 +4771,8 @@ I18N.load({
 "Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"Görülecek yerleri bulmak için ağ yok: birazdan tekrar dene.",
 "Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"Şimdilik başka fikir yok: en bilinen yerler zaten sende.",
 "trouvées":"bulundu",
-"Nouvelles suggestions":"Yeni öneriler"});
+"Nouvelles suggestions":"Yeni öneriler",
+"C’est aujourd’hui !":"Bugün!",
+"Départ demain":"Yarın yola çıkış",
+"Départ dans":"Yola çıkışa",
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Programı her şehrin görülmesi gereken yerleri (günde 4) ve kaçırılmayacak gezilerle doldur"});

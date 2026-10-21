@@ -4784,4 +4784,8 @@ I18N.load({
 "Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"لا توجد شبكة للعثور على المعالم: أعد المحاولة بعد قليل.",
 "Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"لا أفكار أخرى حالياً: لديك أشهر الأماكن بالفعل.",
 "trouvées":"تم العثور عليها",
-"Nouvelles suggestions":"اقتراحات جديدة"});
+"Nouvelles suggestions":"اقتراحات جديدة",
+"C’est aujourd’hui !":"إنه اليوم!",
+"Départ demain":"المغادرة غداً",
+"Départ dans":"المغادرة بعد",
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"املأ البرنامج بأهم معالم كل مدينة (4 يومياً) والرحلات التي لا تفوَّت"});

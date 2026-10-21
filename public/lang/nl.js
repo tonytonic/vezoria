@@ -1835,4 +1835,8 @@ I18N.load({
 "Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"Geen netwerk om de toppers te vinden: probeer het zo opnieuw.",
 "Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"Even geen andere ideeën: je hebt de bekendste plekken al.",
 "trouvées":"gevonden",
-"Nouvelles suggestions":"Nieuwe suggesties"});
+"Nouvelles suggestions":"Nieuwe suggesties",
+"C’est aujourd’hui !":"Het is vandaag!",
+"Départ demain":"Vertrek morgen",
+"Départ dans":"Vertrek over",
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Het programma vullen met de toppers van elke stad (4 per dag) en de dagtochten die je niet mag missen"});

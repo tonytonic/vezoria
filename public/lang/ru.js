@@ -4784,4 +4784,8 @@ I18N.load({
 "Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"Нет сети, чтобы найти главные места: попробуй чуть позже.",
 "Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"Пока других идей нет: самые известные места уже у тебя.",
 "trouvées":"найдено",
-"Nouvelles suggestions":"Новые предложения"});
+"Nouvelles suggestions":"Новые предложения",
+"C’est aujourd’hui !":"Это сегодня!",
+"Départ demain":"Отъезд завтра",
+"Départ dans":"До отъезда",
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Заполнить программу главными местами каждого города (4 в день) и обязательными экскурсиями"});

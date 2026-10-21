@@ -1845,4 +1845,8 @@ I18N.load({
 "Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"Sin red para buscar los imprescindibles: inténtalo de nuevo en un momento.",
 "Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"No hay más ideas por ahora: ya tienes los lugares más conocidos.",
 "trouvées":"encontradas",
-"Nouvelles suggestions":"Nuevas sugerencias"});
+"Nouvelles suggestions":"Nuevas sugerencias",
+"C’est aujourd’hui !":"¡Es hoy!",
+"Départ demain":"Salida mañana",
+"Départ dans":"Salida en",
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"Rellenar el programa con los imprescindibles de cada ciudad (4 al día) y las excursiones que no hay que perderse"});

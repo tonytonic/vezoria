@@ -4783,4 +4783,8 @@ I18N.load({
 "Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"必見スポットを探すネットワークがありません。少し後で再試行してください。",
 "Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"今はほかの候補がありません。有名な場所はすでに入っています。",
 "trouvées":"件見つかりました",
-"Nouvelles suggestions":"新しいおすすめ"});
+"Nouvelles suggestions":"新しいおすすめ",
+"C’est aujourd’hui !":"今日です！",
+"Départ demain":"明日出発",
+"Départ dans":"出発まで",
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"各都市の必見スポット（1日4か所）と見逃せない日帰り旅行で旅程を埋める"});

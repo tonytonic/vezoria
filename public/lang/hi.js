@@ -4783,4 +4783,8 @@ I18N.load({
 "Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"ज़रूरी जगहें ढूँढने के लिए नेटवर्क नहीं: थोड़ी देर में फिर कोशिश करें।",
 "Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"अभी और कोई सुझाव नहीं: सबसे मशहूर जगहें पहले से हैं।",
 "trouvées":"मिलीं",
-"Nouvelles suggestions":"नए सुझाव"});
+"Nouvelles suggestions":"नए सुझाव",
+"C’est aujourd’hui !":"आज ही है!",
+"Départ demain":"कल रवानगी",
+"Départ dans":"रवानगी में",
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"कार्यक्रम को हर शहर की ज़रूरी जगहों (रोज़ 4) और न छोड़ने वाली यात्राओं से भरें"});

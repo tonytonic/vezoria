@@ -4783,4 +4783,8 @@ I18N.load({
 "Pas de réseau pour trouver les incontournables : réessaie dans un instant.":"没有网络，无法查找必看景点：请稍后重试。",
 "Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.":"暂时没有其他建议：最有名的地方你都有了。",
 "trouvées":"个已找到",
-"Nouvelles suggestions":"新的推荐"});
+"Nouvelles suggestions":"新的推荐",
+"C’est aujourd’hui !":"就是今天！",
+"Départ demain":"明天出发",
+"Départ dans":"距离出发",
+"Remplir le programme avec les incontournables de chaque ville (4 par jour) et les excursions à ne pas manquer":"用每座城市的必看景点（每天4个）和不容错过的一日游填满行程"});
