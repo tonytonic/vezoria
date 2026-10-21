@@ -234,6 +234,29 @@ body.cv-ph-live{--navy:#073B40;--navy2:#0B5D63;--sun1:#2DD4BF;--sun2:#0D9488;--s
 body.cv-ph-live .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(13,148,136,1) 0%, rgba(3,105,161,.7) 38%, transparent 70%),linear-gradient(180deg,#03262A 0%,#06474D 60%,#0B6B6E 100%)}
 body.cv-ph-past{--navy:#3A2119;--navy2:#5A3324;--sun1:#E8A47C;--sun2:#C2653F;--sun3:#8E3B2E;--light:#F3E2D7;--cream:#FAF2EC;--sunset:linear-gradient(120deg,#E8A47C,#C2653F 55%,#8E3B2E)}
 body.cv-ph-past .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(194,101,63,.85) 0%, rgba(142,59,46,.5) 38%, transparent 70%),linear-gradient(180deg,#24140F 0%,#3A2119 60%,#6B3526 100%)}
+.ar .ar-steps{position:relative;display:grid;gap:8px;margin-top:4px}
+.ar-s{border-radius:16px;background:rgba(255,255,255,.1);overflow:hidden}
+.ar-s.cur{background:rgba(255,255,255,.18);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.45)}
+.ar-s.next{opacity:.7}
+.ar-h{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;cursor:pointer;color:#fff}
+.ar-h>i{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:.8rem;background:rgba(255,255,255,.2)}
+.ar-s.ok .ar-h>i{background:#22c55e}.ar-s.cur .ar-h>i{background:#fff;color:#4c1d95}
+.ar-h>span{flex:1;min-width:0;font-weight:800;font-size:.92rem}.ar-h>small{font-size:.72rem;opacity:.8}.ar-h>em{font-style:normal;opacity:.7}
+.ar-b{padding:0 12px 12px;display:grid;gap:8px;font-size:.84rem}
+.ar-p{opacity:.92;line-height:1.4}.ar-st{margin-top:4px;line-height:1.6}.ar-st small{opacity:.75}
+.ar-go{all:unset;box-sizing:border-box;display:block;text-align:center;padding:11px 14px;border-radius:14px;background:#fff;color:#4c1d95;font-weight:800;cursor:pointer}
+.ar-sk{all:unset;cursor:pointer;font-size:.76rem;opacity:.75;text-decoration:underline;justify-self:center}
+.ar-rs{display:grid;gap:6px}
+.ar-r{display:grid;grid-template-columns:22px minmax(0,1fr);align-items:center;column-gap:10px;row-gap:8px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.12);cursor:pointer}
+.ar-r>i{flex:none;font-style:normal;width:22px;text-align:center}.ar-r>span{flex:1;min-width:0;display:flex;flex-direction:column}.ar-r b{font-size:.86rem;overflow-wrap:anywhere}.ar-r small{opacity:.78;font-size:.72rem}
+.ar-r.ok{opacity:.7}.ar-r.ok>i{color:#86efac;font-weight:800}
+.ar-ra{grid-column:2;display:flex;gap:6px;flex-wrap:wrap}
+.ar-ra a,.ar-ra button{all:unset;display:inline-block!important;width:auto!important;flex:none;cursor:pointer;font-size:.74rem;font-weight:800;padding:6px 10px;border-radius:99px;background:#fff;color:#4c1d95}
+.ar-ra button{background:rgba(255,255,255,.2);color:#fff}
+.ar-fs{display:grid;gap:6px}
+.ar-f{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.12);cursor:pointer;color:#fff}
+.ar-f>i{font-style:normal}.ar-f>span{flex:1;min-width:0;font-size:.84rem}.ar-f>small{font-size:.72rem;opacity:.8}.ar-f.ok{opacity:.65}.ar-f.bad{background:rgba(248,113,113,.25)}
+.ar .cd-lk{color:#a7f3d0;border-top-color:rgba(255,255,255,.15)}
 .cv-prep2{position:relative;overflow:hidden;border-radius:24px;margin:0 0 12px;padding:16px 16px 14px;color:#fff;background:radial-gradient(110% 80% at 100% 0%, rgba(255,160,107,.55), transparent 60%),linear-gradient(150deg,#2A1238 0%,#5B1F5F 55%,#9D4EDD 100%);box-shadow:0 12px 30px rgba(91,31,95,.35)}
 .cv-prep2::before{content:"";position:absolute;inset:0;background:radial-gradient(1.5px 1.5px at 20% 30%,#fff8,transparent),radial-gradient(1.5px 1.5px at 70% 20%,#fff6,transparent),radial-gradient(1px 1px at 45% 60%,#fff7,transparent),radial-gradient(1px 1px at 85% 55%,#fff5,transparent);pointer-events:none}
 .p2-top{display:flex;justify-content:space-between;align-items:flex-start;position:relative}.p2-k{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;opacity:.8;font-weight:700}.p2-l{font-size:1.35rem;font-weight:800;margin-top:2px}
@@ -5230,7 +5253,8 @@ const CV = (function(){
   function pinToggle(){ M.pinOpen = M.pinOpen === false; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function renderProg(){
     const ds = dayList();
-    let h = pinBar() + cdHTML() + suggCard() + actBand() + annivCard() + nextHero() + eveCard() + prepGauge() + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + pinnedPolls();
+    const arT = trip(), arOn = !!(arT && !arT.archived && tripPhase(arT) === 'prep' && !hidden('blk:prep'));
+    let h = pinBar() + cdHTML() + (arOn ? ariHTML() : suggCard()) + actBand() + annivCard() + nextHero() + eveCard() + (arOn ? '' : prepGauge()) + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + pinnedPolls();
     const tt = trip();
     if(tt && tt.demo) h = `<div class="cv-demo-bar">👀 <b>Voyage de démo</b> : touche à tout, modifie, supprime. Il reste sur ce téléphone et n’est jamais partagé.
         <span class="cv-demo-btns"><button type="button" onclick="CV.demoReset()">↺ Recommencer</button><button type="button" onclick="CV.demoDel()">Supprimer la démo</button></span></div>` + h;
@@ -14994,6 +15018,86 @@ ${pm.join('\n')}</Document></kml>`;
       ${open ? `<div class="p2-list">${SA.map(s=>`<button type="button" class="${s.ok ? 'ok' : ''}" onclick="${s.fn}"><i>${s.ok ? '✓' : '○'}</i><span>${s.l}</span>${s.n ? `<small>${s.n}</small>` : s.opt && !s.ok ? `<small>facultatif</small>` : ''}</button>`).join('')}</div>` : ''}</div>`;
   }
 
+  /* ══════════ 🧵 Fil d’Ariane de la préparation : Où et quand → Que faire → Réserver → Finaliser ══════════ */
+  const okB = i => i.statut === 'booked' || i.statut === 'paid';
+  function ariData(t){
+    const hs = items(i=>i.cat === 'hotel' && i.date).sort((a, b)=>a.date.localeCompare(b.date));
+    const trs = items(i=>i.cat === 'transport').sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'));
+    const pl = list('place', p=>p.trip === t.id), sg = pl.filter(p=>p.sugg), sk = (M.ariSkip || {})[t.id] || {};
+    const rs = [...hs, ...trs].sort((a, b)=>(a.date || '9').localeCompare(b.date || '9') || (a.cat === 'transport' ? -1 : 1));
+    const di = (()=>{ try { return docIssues(); } catch(e){ return []; } })();
+    let fm = []; try { const from = bagFromDefault(), dest = [...new Set([...tlStages().map(x=>((M.ctry || {})[normQ(x.city)] || {}).cc).filter(Boolean), ...bagCcs()])], dn = (M.fmDone || {})[t.id] || {};
+      dest.forEach(cc=>entryRules(cc, from).x.filter(x=>!/CEAM/.test(x)).forEach(x=>fm.push({l:x, done:!!dn[x]}))); } catch(e){}
+    const ck = list('check', c=>c.trip === t.id), ckd = ck.filter(c=>chkDone(c)).length;
+    const S = [
+      {k:'ou', ic:'📍', l:'Où et quand', ok: !!t.debut && hs.length > 0, f: (t.debut ? .5 : 0) + (hs.length ? .5 : 0)},
+      {k:'faire', ic:'🎟️', l:'Que faire', ok: (pl.length > 0 && !sg.length) || !!sk.faire, f: sk.faire ? 1 : pl.length ? (pl.length - sg.length) / pl.length : 0},
+      {k:'resa', ic:'🛏️', l:'Réserver', ok: rs.length > 0 && rs.every(okB), f: rs.length ? rs.filter(okB).length / rs.length : 0, w:2},
+      {k:'fin', ic:'✅', l:'Finaliser', ok: !di.length && fm.every(x=>x.done) && (!ck.length || ckd === ck.length), f: (()=>{ const p = []; if(ck.length) p.push(ckd / ck.length); if(fm.length) p.push(fm.filter(x=>x.done).length / fm.length); if(di.length) p.push(0); return p.length ? p.reduce((a, b)=>a + b, 0) / p.length : 1; })(), w:1}
+    ];
+    return {hs, trs, pl, sg, rs, di, fm, ck, ckd, S};
+  }
+  function ariLink(it, t){
+    if(hidden('blk:book')) return '';
+    const n = Math.max(1, (t.voyageurs || []).length), c = cityOf(it.titre || '') || it.titre || '';
+    let k = null, ctx = {};
+    if(it.cat === 'hotel'){ k = 'booking'; ctx = {what:c, date:it.date, end:it.dateFin, n}; }
+    else if(/Avion/i.test(it.mode || '')){ k = 'gflights'; ctx = {from:it.from || '', to:it.to || '', date:it.date || ''}; }
+    else if(/Ferry|Bateau/i.test(it.mode || '')) k = 'directferries';
+    else if(!/Voiture|Moto|Vélo|Pied/i.test(it.mode || '')){ k = 'rome2rio'; ctx = {from:it.from || '', to:it.to || ''}; }
+    return k && BK[k] ? `<a class="ar-bk" href="${esc(bookUrl(k, ctx))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${MSGT('Réserver')} · ${BK[k][1]}</a>` : '';
+  }
+  function ariHTML(){
+    const t = trip(); if(!t || t.archived || tripPhase(t) !== 'prep' || hidden('blk:prep')) return '';
+    const D = ariData(t), S = D.S, done = S.filter(x=>x.ok).length, pct = Math.round(S.reduce((a, x)=>a + (x.ok ? 1 : x.f) * (x.w || 1), 0) / S.reduce((a, x)=>a + (x.w || 1), 0) * 100);   // réserver compte double
+    const cur = S.find(x=>!x.ok), op = ((M.ariOpen || {})[t.id]) || (cur && cur.k);
+    const lv = pct >= 100 ? ['✅','Prêt à partir'] : pct >= 75 ? ['🎒','Presque prêt'] : pct >= 45 ? ['🧩','En préparation'] : pct >= 15 ? ['✏️','Esquisse'] : ['💭','Rêve'];
+    const A = [26, 92], B = [180, -4], C = [334, 92], path = `M${A} Q${B} ${C}`, tp = Math.max(.02, pct / 100);
+    const q = u => [(1-u)*(1-u)*A[0] + 2*(1-u)*u*B[0] + u*u*C[0], (1-u)*(1-u)*A[1] + 2*(1-u)*u*B[1] + u*u*C[1]];
+    const co = D.hs[0] ? (M.ctry || {})[normQ(cityOf(D.hs[0].titre))] : null, fd = d => d ? fshort(d) : '';
+    const body = k => {
+      if(k === 'ou'){
+        return `<div class="ar-ou">${t.debut ? `<b>${fdate(t.debut)} → ${fdate(t.fin || t.debut)}</b>` : `<button type="button" class="ar-go" onclick="CV.datesSheet()">📅 ${MSGT('Choisir les dates')}</button>`}
+          ${D.hs.length ? `<div class="ar-st">${D.hs.map(h=>`<span data-notr>${esc(cityOf(h.titre) || h.titre)}</span> <small>${nights(h.date, h.dateFin || h.date)} n.</small>`).join(' · ')}</div>` : `<button type="button" class="ar-go" onclick="CV.edit(null,'hotel')">🏨 ${MSGT('Ajouter une étape (une ville où dormir)')}</button>`}</div>`;
+      }
+      if(k === 'faire'){
+        if(M.suggRun === t.id) return `<div class="ar-p">💡 ${MSGT('Je cherche les incontournables…')}</div>`;
+        if(D.sg.length) return `<div class="ar-p">${D.pl.length - D.sg.length} ${MSGT('lieux gardés')} · <b>${D.sg.length} ${MSGT('suggestions à trier')}</b></div><button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Trier les suggestions')}</button>`;
+        if(!D.pl.length) return `<div class="ar-p">${MSGT('Les lieux à voir et les excursions, jour par jour.')}</div>${D.hs.length ? `<button type="button" class="ar-go" onclick="CV.suggGo()">💡 ${MSGT('Remplir avec les incontournables (4 par jour)')}</button>` : ''}<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('Passer cette étape')}</button>`;
+        return `<div class="ar-p">✓ ${D.pl.length} ${MSGT('lieux au programme')}</div>`;
+      }
+      if(k === 'resa'){
+        if(!D.rs.length) return `<div class="ar-p">${MSGT('Ajoute d’abord tes étapes : les nuits et les trajets apparaîtront ici.')}</div>`;
+        return `<div class="ar-rs">${D.rs.map(it=>`<div class="ar-r${okB(it) ? ' ok' : ''}" role="button" onclick="CV.edit('${it.id}')"><i>${okB(it) ? '✓' : it.cat === 'hotel' ? '🛏️' : icon(it)}</i>
+          <span><b data-notr>${esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre)}</b><small>${it.cat === 'hotel' ? `${fd(it.date)} → ${fd(it.dateFin)} · ${nights(it.date, it.dateFin || it.date)} ${MSGT('nuits')}` : fd(it.date)}</small></span>
+          ${okB(it) ? '' : `<div class="ar-ra">${ariLink(it, t)}<button type="button" onclick="event.stopPropagation();CV.ariBook('${it.id}')">${MSGT('C’est réservé')}</button></div>`}</div>`).join('')}</div>`;
+      }
+      const rows = [
+        ...D.di.map(x=>`<button type="button" class="ar-f bad" onclick="CV.tlDocs()"><i>⚠️</i><span>${esc(x)}</span></button>`),
+        ...D.fm.map(x=>`<button type="button" class="ar-f${x.done ? ' ok' : ''}" data-fm="${esc(x.l)}" onclick="CV.ariFm(this)"><i>${x.done ? '✅' : '🛂'}</i><span>${esc(x.l)}</span></button>`),
+        `<button type="button" class="ar-f${D.ck.length && D.ckd === D.ck.length ? ' ok' : ''}" onclick="CV.tab('check')"><i>🧳</i><span>${MSGT('Valise et checklist')}</span><small>${D.ck.length ? D.ckd + '/' + D.ck.length : ''}</small></button>`,
+        (t.voyageurs || []).length < 2 ? `<button type="button" class="ar-f" onclick="CV.tripInviteNow('${t.id}')"><i>👥</i><span>${MSGT('Inviter tes compagnons de voyage')}</span></button>` : ''];
+      return `<div class="ar-fs">${rows.join('')}</div>${cdIns(t)}`;
+    };
+    return `<div class="cv-prep2 ar">
+      <div class="p2-top"><div><div class="p2-k">${MSGT('Ta préparation')}</div><div class="p2-l">${lv[0]} ${MSGT(lv[1])}</div></div><div class="p2-pct"><b>${pct}</b><small>%</small></div></div>
+      <svg class="p2-svg" viewBox="0 0 360 112" aria-hidden="true">
+        <path d="${path}" class="p2-base"/><path d="${path}" class="p2-prog" pathLength="100" style="--p:${pct}"/>
+        ${S.map((x, i)=>{ const [cx, cy] = q((i + 1) / (S.length + 1)); return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${x.ok ? 6 : 4.5}" class="${x.ok ? 'on' : ''}" style="animation-delay:${(i * .12).toFixed(2)}s"/>`; }).join('')}
+        <text x="${A[0]}" y="${A[1] + 18}" text-anchor="middle" class="p2-end">🏠</text><text x="${C[0]}" y="${C[1] + 18}" text-anchor="middle" class="p2-end">${co && co.cc ? flag(co.cc) : '📍'}</text>
+        <g class="p2-plane"><text x="-12" y="8" font-size="24" transform="rotate(45)">✈️</text>
+          <animateMotion dur="1.8s" fill="freeze" keyPoints="0;${tp.toFixed(3)}" keyTimes="0;1" calcMode="spline" keySplines=".2 .7 .2 1" rotate="auto" path="${path}"/></g>
+      </svg>
+      <div class="ar-steps">${S.map((x, i)=>{ const o = op === x.k, st = x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : 'next';
+        return `<div class="ar-s ${st}${o ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.ariTog('${x.k}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${MSGT(x.l)}</span><small>${x.ok ? '' : Math.round(x.f * 100) + ' %'}</small><em>${o ? '▾' : '▸'}</em></button>
+          ${o ? `<div class="ar-b">${body(x.k)}</div>` : ''}</div>`; }).join('')}</div>
+      ${cur ? '' : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}</div>`;
+  }
+  function ariTog(k){ const t = trip(); if(!t) return; M.ariOpen = M.ariOpen || {}; M.ariOpen[t.id] = M.ariOpen[t.id] === k ? '-' : k; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  function ariSkip(k){ const t = trip(); if(!t) return; M.ariSkip = M.ariSkip || {}; (M.ariSkip[t.id] = M.ariSkip[t.id] || {})[k] = 1; if(M.ariOpen) delete M.ariOpen[t.id]; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  function ariBook(id){ const it = R[id]; if(!it) return; const c = clone(it); c.statut = 'booked'; put(c, '✓ ' + MSGT('Noté comme réservé')); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  function ariFm(b){ cdFm(b); const y = window.scrollY; setTimeout(()=>{ render(); window.scrollTo(0, y); }, 250); }
+
   /* ---------- Fin du voyage : « Quel voyage ! » ---------- */
   function tripRecap(t){
     const geo = [...geoSouvs(t.id).map(s=>({lat:+s.lat, lng:+s.lng, d:s.date||'', cc:s.cc||''}))].sort((a,b)=>a.d.localeCompare(b.d));
@@ -15380,10 +15484,10 @@ ${pm.join('\n')}</Document></kml>`;
     return `<div class="cd" id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"><div class="cd-bg" id="cd-bg"></div><div class="cd-sh"></div>
       <div class="cd-top"><span>${dj === 0 ? '🧳 C’est aujourd’hui !' : dj === 1 ? '✈️ Départ demain' : '⏳ Départ dans'}</span><span class="cd-wx" id="cd-wx"></span></div>
       <div class="cd-j"><b>${dj === 0 ? 'Jour J' : 'J-' + dj}</b><span class="cd-dest">${co && co.cc ? flag(co.cc) + ' ' : '📍 '}<span data-notr>${esc(dest)}</span></span></div>
-      <div class="cd-clock" id="cd-clock">${cdClock(ms)}</div>
+      <div class="cd-clock" id="cd-clock">${cdClock(ms)}</div>${hidden('blk:prep') ? `
       <div class="cd-todo"><div class="cd-th"><b>${left.length ? 'Avant de partir' : '✨ Tout est prêt !'}</b>${ck.length ? `<button type="button" onclick="CV.tab('check')">🧳 Valise ${ckd}/${ck.length}</button>` : ''}</div>
         ${todo.slice(0, 6).map(x=>`<button type="button" class="cd-t${x.done ? ' ok' : ''}${x.bad ? ' bad' : ''}" onclick="${x.fm ? `CV.cdFm(this)` : x.fn}" ${x.fm ? `data-fm="${esc(x.fm)}"` : ''}><i>${x.ic}</i><span>${esc(x.l)}</span></button>`).join('')}
-        ${todo.length > 6 ? `<small>+ ${todo.length - 6} autre${todo.length - 6 > 1 ? 's' : ''}</small>` : ''}${cdIns(t)}</div></div>`;
+        ${todo.length > 6 ? `<small>+ ${todo.length - 6} autre${todo.length - 6 > 1 ? 's' : ''}</small>` : ''}${cdIns(t)}</div>` : ''}</div>`;
   }
   function bkOnce(key){   // le lien s’affiche le premier jour où il est utile, puis plus jamais pour ce voyage
     const o = M.bkOnce || (M.bkOnce = {}), d = isoToday();
@@ -17480,7 +17584,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-21f';
+  const BUILD = '2026-10-21g';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -17490,7 +17594,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, suggOpen, suggKeep, suggDrop, suggGo, wzCountry, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, suggOpen, suggKeep, suggDrop, suggGo, wzCountry, ariTog, ariSkip, ariBook, ariFm, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
