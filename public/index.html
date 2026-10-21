@@ -249,6 +249,7 @@ body.cv-ph-past .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(194,
 .ar-b{padding:0 12px 12px;display:grid;gap:8px;font-size:.84rem}
 .ar-p{opacity:.92;line-height:1.4}.ar-st{margin-top:4px;line-height:1.6}.ar-st small{opacity:.75}
 .ar-go{all:unset;box-sizing:border-box;display:block;text-align:center;padding:11px 14px;border-radius:14px;background:#fff;color:#4c1d95;font-weight:800;cursor:pointer}
+.pi-sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 4px}
 .ar-more{all:unset;box-sizing:border-box;display:block;text-align:center;padding:9px 12px;border-radius:14px;border:1.5px dashed rgba(255,255,255,.55);color:#fff;font-weight:800;font-size:.82rem;cursor:pointer}
 .ar-run{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.14);font-weight:700;display:block}.ar-run small,.sg-pr{display:block;margin-top:3px;font-weight:600;font-size:.74rem;animation:sgB 1.4s ease-in-out infinite}
 @keyframes sgB{0%,100%{opacity:.9}50%{opacity:.45}}
@@ -9487,12 +9488,15 @@ const CV = (function(){
     } catch(e){}
     return info;
   }
-  async function plInfo(id, refresh){
+  async function plInfo(id, refresh, from){
     const p = R[id]; if(!p) return;
     const d = p.date || '', city = (d && dayCity(d)) || cityOf((trip() || {}).titre || '');
-    const back = planD ? `<button type="button" class="v-btn sec" onclick="CV.planDay('${planD}')">← ${esc(fdate(planD))}</button>` : '';
-    openSheet(`<h2>📍 ${esc(p.nom)}</h2><div id="pi-box" class="cv-route-load">📖 Recherche des informations…</div>
-      <div class="v-actions">${back}<button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+    // venu de la liste des suggestions : on y revient, et on peut ajouter ou écarter le lieu d’ici
+    const sg = from === 'sugg' || (p.sugg && !planD);
+    const back = sg ? `<button type="button" class="v-btn sec" onclick="CV.suggOpen()">← ${MSGT('Suggestions')}</button>` : planD ? `<button type="button" class="v-btn sec" onclick="CV.planDay('${planD}')">← ${esc(fdate(planD))}</button>` : '';
+    const act = sg && p.sugg ? `<div class="pi-sg"><button type="button" class="v-btn" onclick="CV.suggKeep('${id}')">✓ ${MSGT('Ajouter au programme')}</button><button type="button" class="v-btn sec" onclick="CV.suggDrop('${id}')">✕ ${MSGT('Écarter')}</button></div>` : '';
+    openSheet(`<h2>📍 ${esc(p.nom)}</h2>${p.exc ? `<div class="v-sum-small">🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</div>` : ''}<div id="pi-box" class="cv-route-load">📖 Recherche des informations…</div>${act}
+      <div class="v-actions">${back}<button type="button" class="v-btn sec cv-sq" onclick="${sg ? 'CV.suggOpen()' : 'CV.close()'}">✕</button></div>`);
     let info = p.info;
     if(!info || refresh || Date.now() - (info.ts || 0) > 30 * 864e5){
       if(navigator.onLine !== false){ const got = await placeLookup(p, city);
@@ -10756,7 +10760,7 @@ ${pm.join('\n')}</Document></kml>`;
     const y = (document.querySelector('#v-sheet-bg .v-sheet') || {}).scrollTop || 0;
     openSheet(`<h2>💡 ${MSGT('Suggestions')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.')}</div>
       ${Object.keys(by).sort().map(d=>`<div class="sg-d"><div class="sg-dh">J${ds.indexOf(d) + 1} · ${fdate(d)}${dayInfo(d).titre ? ' · <span data-notr>' + esc(dayInfo(d).titre) + '</span>' : ''}</div>
-        ${by[d].map(p=>`<div class="sg-r"><span class="sg-i">${(POI_CATS[p.cat] || {icon:'📍'}).icon}</span><span class="sg-n" role="button" onclick="CV.plInfo('${p.id}')"><span data-notr>${esc(p.nom)}</span>${p.exc ? `<small class="sg-x">🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</small>` : ''}</span>
+        ${by[d].map(p=>`<div class="sg-r"><span class="sg-i">${(POI_CATS[p.cat] || {icon:'📍'}).icon}</span><span class="sg-n" role="button" onclick="CV.plInfo('${p.id}',false,'sugg')"><span data-notr>${esc(p.nom)}</span>${p.exc ? `<small class="sg-x">🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</small>` : ''}</span>
           <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.suggKeep('${p.id}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.suggDrop('${p.id}')">✕</button></div>`).join('')}</div>`).join('')}
       <button type="button" class="v-btn sec" style="margin:4px 0 8px" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.suggKeep('*')">✓ ${MSGT('Tout ajouter')}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
@@ -17624,7 +17628,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-21j';
+  const BUILD = '2026-10-21k';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
