@@ -1730,6 +1730,16 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .off-b.on div{display:flex;gap:6px;margin-top:4px}.off-b.on div button{border:0;border-radius:99px;padding:6px 11px;font:inherit;font-weight:800;font-size:.78rem;background:#fff;color:#1f2937}
 /* 🗣️ langue et monnaie */
 .lg{display:grid;gap:8px;margin:0 0 12px}
+.sg-c{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin:0 0 12px;padding:12px 14px;border-radius:16px;border:1.5px dashed #f5c26b;background:#fffbeb;color:#78350f;font:inherit;cursor:pointer}
+.sg-c>i{font-style:normal;font-size:1.5rem;flex:none}.sg-c>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.sg-c b{font-size:.92rem}.sg-c small{font-size:.76rem;opacity:.85}
+.sg-c .sg-go{flex:none;font-weight:800;font-size:.8rem;color:#b45309}.sg-c.run{cursor:default}.sg-c.run>i{animation:sgP 1.2s ease-in-out infinite}
+@keyframes sgP{50%{transform:scale(1.15);opacity:.6}}
+.sg-d{margin:0 0 12px}.sg-dh{font-weight:800;font-size:.78rem;color:#6b7280;margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em}
+.sg-r{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:#f8fafc;margin:0 0 6px}
+.sg-r .sg-i{flex:none}.sg-r .sg-n{flex:1;min-width:0;font-weight:600;font-size:.88rem;overflow-wrap:anywhere;cursor:pointer}
+.sg-r button{flex:none;width:34px;height:34px;border-radius:50%;border:0;font:inherit;font-weight:800;cursor:pointer}
+.sg-ok{background:#dcfce7;color:#166534}.sg-no{background:#fee2e2;color:#991b1b}
+.cv-plk.sg{color:#b45309}
 .lg-lk,.cd-lk,.wlc-lk{display:block;margin-top:10px;font-size:.8rem;font-weight:700;text-decoration:none;color:#4f46e5}
 .cd-lk{color:#0f766e;padding:8px 4px 2px;border-top:1px solid #f1f5f9}.wlc-lk{color:#fde68a;margin:6px 0 0;animation:wlcUp .6s .8s both}.lv-more{margin-top:14px}
 .lg-p,.lg-fx{background:#fff;border-radius:20px;padding:12px 14px;box-shadow:0 8px 20px -14px rgba(0,0,0,.35)}
@@ -5217,7 +5227,7 @@ const CV = (function(){
   function pinToggle(){ M.pinOpen = M.pinOpen === false; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function renderProg(){
     const ds = dayList();
-    let h = pinBar() + cdHTML() + actBand() + annivCard() + nextHero() + eveCard() + prepGauge() + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + pinnedPolls();
+    let h = pinBar() + cdHTML() + suggCard() + actBand() + annivCard() + nextHero() + eveCard() + prepGauge() + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + pinnedPolls();
     const tt = trip();
     if(tt && tt.demo) h = `<div class="cv-demo-bar">👀 <b>Voyage de démo</b> : touche à tout, modifie, supprime. Il reste sur ce téléphone et n’est jamais partagé.
         <span class="cv-demo-btns"><button type="button" onclick="CV.demoReset()">↺ Recommencer</button><button type="button" onclick="CV.demoDel()">Supprimer la démo</button></span></div>` + h;
@@ -6593,7 +6603,7 @@ const CV = (function(){
     if(!pl.length) return '';
     const byId = Object.fromEntries(pl.map(p=>[p.id,p]));
     const fresh = r && r.ids && r.ids.every(id=>byId[id]) && pl.every(p=>r.ids.includes(p.id) || (r.miss||[]).includes(p.id));
-    if(!fresh) return compact ? `<div class="cv-route-mini">📍 ${pl.map(p=>`<span class="cv-plk" onclick="event.stopPropagation();CV.plInfo('${p.id}')">${esc(p.nom)}</span>`).join(' · ')}<div class="v-sum-small">⚡ ordre pas encore optimisé</div></div>` : '';
+    if(!fresh) return compact ? `<div class="cv-route-mini">📍 ${pl.map(p=>`<span class="cv-plk${p.sugg ? ' sg' : ''}" onclick="event.stopPropagation();CV.plInfo('${p.id}')">${p.sugg ? '💡 ' : ''}${esc(p.nom)}</span>`).join(' · ')}<div class="v-sum-small">⚡ ordre pas encore optimisé</div></div>` : '';
     const stops = [r.start, ...r.ids.map(id=>Object.assign({}, r.pts[id], {nom:byId[id].nom})), ...(r.fin ? [] : [r.end])];
     let tot = 0, walk = 0, mins = 0; const legs = [];
     for(let i=1;i<stops.length;i++){ const dk = km(stops[i-1], stops[i]), a = legAdvice(dk, r.walk||2.5, (r.tr||[]).includes(i-1)); tot += dk; if(a.mode==='walking') walk += dk; mins += a.min; legs.push({dk, a, from:stops[i-1], to:stops[i]}); }
@@ -10517,6 +10527,51 @@ ${pm.join('\n')}</Document></kml>`;
     if(list_.length){ M.poiCache[key] = {t:Date.now(), list:list_}; persist(); }
     return list_;
   }
+  /* ---------- 💡 Suggestions : 4 incontournables par jour, à trier quand on veut ---------- */
+  const SUGG_N = 4;
+  async function suggFill(tid){
+    const hs = list('item', i=>i.trip === tid && i.cat === 'hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date)); if(!hs.length) return;
+    const busy = d => list('place', p=>p.trip === tid && p.date === d).length > 0;
+    const out = []; let miss = 0; M.suggRun = tid; refresh();
+    for(const h of hs){
+      const city = cityOf(h.titre || '') || h.titre; if(!city) continue;
+      const days = (h.dateFin ? range(h.date, h.dateFin).slice(0, -1) : [h.date]).filter(d=>!busy(d)); if(!days.length) continue;
+      let cand = []; try { cand = await placesFor(city); } catch(e){}
+      cand = cand.filter(p=>normQ(p.nom) !== normQ(city)); if(!cand.length){ miss++; continue; }
+      let k = 0; days.forEach(d=>{ for(let j = 0; j < SUGG_N && k < cand.length; j++, k++){ const p = cand[k];
+        out.push({id:'pl' + uid() + k + j, type:'place', trip:tid, stay:h.id, date:d, nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false, sugg:true}); } });
+    }
+    M.suggRun = null;
+    if(out.length) putMany(out, '💡 ' + out.length + ' ' + MSGT('incontournables ajoutés au programme'));
+    else if(miss) toast('📡 ' + MSGT('Pas de réseau pour trouver les incontournables : réessaie avec 🪄 « Remplir mes journées ».'));
+    if(M.trip === tid) refresh();
+  }
+  function suggCard(){
+    const t = trip(); if(!t || t.archived || t.demo || M.lock || tripPhase(t) === 'past') return '';
+    if(M.suggRun === t.id) return `<div class="sg-c run"><i>💡</i><div><b>${MSGT('Je cherche les incontournables…')}</b><small>${MSGT('Wikipédia et OpenStreetMap, ville par ville')}</small></div></div>`;
+    const L = list('place', p=>p.trip === t.id && p.sugg); if(!L.length) return '';
+    return `<button type="button" class="sg-c" onclick="CV.suggOpen()"><i>💡</i><div><b>${L.length} ${MSGT('suggestions dans ton programme')}</b><small>${MSGT('Garde celles qui te plaisent, retire les autres')}</small></div><span class="sg-go">${MSGT('Trier')} ›</span></button>`;
+  }
+  function suggOpen(){
+    const t = trip(); if(!t) return; const L = list('place', p=>p.trip === t.id && p.sugg);
+    if(!L.length){ closeSheet(true); refresh(); return; }
+    const by = {}; L.forEach(p=>(by[p.date] = by[p.date] || []).push(p)); const ds = dayList();
+    const y = (document.querySelector('#v-sheet-bg .v-sheet') || {}).scrollTop || 0;
+    openSheet(`<h2>💡 ${MSGT('Suggestions')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Les lieux les plus connus de chaque ville, déjà placés dans tes journées. ✓ pour les garder, ✕ pour les retirer. Tu peux revenir ici quand tu veux.')}</div>
+      ${Object.keys(by).sort().map(d=>`<div class="sg-d"><div class="sg-dh">J${ds.indexOf(d) + 1} · ${fdate(d)}${dayInfo(d).titre ? ' · <span data-notr>' + esc(dayInfo(d).titre) + '</span>' : ''}</div>
+        ${by[d].map(p=>`<div class="sg-r"><span class="sg-i">${(POI_CATS[p.cat] || {icon:'📍'}).icon}</span><span class="sg-n" role="button" onclick="CV.plInfo('${p.id}')" data-notr>${esc(p.nom)}</span>
+          <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.suggKeep('${p.id}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.suggDrop('${p.id}')">✕</button></div>`).join('')}</div>`).join('')}
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.suggKeep('*')">✓ ${MSGT('Tout garder')}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
+    const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y;
+  }
+  function suggKeep(id){
+    const t = trip(); if(!t) return;
+    const L = id === '*' ? list('place', p=>p.trip === t.id && p.sugg) : [R[id]].filter(Boolean);
+    L.forEach(p=>{ const c = clone(p); delete c.sugg; putQuiet([c]); });
+    if(id === '*'){ toast('✓ ' + MSGT('Suggestions gardées')); closeSheet(true); refresh(); return; }
+    suggOpen(); refresh();
+  }
+  function suggDrop(id){ const p = R[id]; if(!p) return; p.deleted = true; putQuiet([p]); suggOpen(); refresh(); }
   function tlFill(){
     const st = items(i=>i.cat==='hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date));
     if(!st.length){ alert('Ajoute d’abord les hébergements (une ville par étape).'); return; }
@@ -12465,7 +12520,9 @@ ${pm.join('\n')}</Document></kml>`;
     out.push({id:'day:'+tid+':'+fin, type:'day', trip:tid, date:fin, titre:stops[stops.length-1].c + ' → retour', plan:''});
     putMany(out, '🧳 Voyage créé : ' + x.nom); setTimeout(()=>fxPlay('trip', 'Le rêve commence !'), 600);
     closeSheet(true); M.mode = 'prep'; M.tab = 'prog'; go(tid);
-    setTimeout(()=>alert(`🧳 « ${x.nom} » est prêt, du ${fdate(debut)} au ${fdate(fin)} :\n${stops.map(s=>'• ' + s.c + ' (' + s.n + ' nuit' + (s.n>1?'s':'') + ')').join('\n')}\n\nTout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».`), 300);
+    const auto = !custom || !Object.values(custom.sel || {}).some(a=>a && a.length);
+    if(auto) setTimeout(()=>suggFill(tid), 150);
+    setTimeout(()=>alert(`🧳 « ${x.nom} » est prêt, du ${fdate(debut)} au ${fdate(fin)} :\n${stops.map(s=>'• ' + s.c + ' (' + s.n + ' nuit' + (s.n>1?'s':'') + ')').join('\n')}\n\n` + (auto ? MSGT('💡 J’ajoute les incontournables de chaque ville au programme (4 par jour). Tu les retrouveras dans la carte « Suggestions » pour garder ceux qui te plaisent.') : MSGT('Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».'))), 300);
   }
 
 
@@ -17157,7 +17214,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-21c';
+  const BUILD = '2026-10-21d';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -17167,7 +17224,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, suggOpen, suggKeep, suggDrop, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════

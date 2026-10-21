@@ -118,7 +118,9 @@
   function msg(s){
     if(s == null || !I.ready) return s; s = String(s);
     var n = rawN(s); if(RAW.has(n)) return RAW.get(n);
-    var r = look(flat(s)); if(r != null) return r;
+    if(s.indexOf('\n') >= 0){   // message sur plusieurs lignes : texte connu tel quel, sinon ligne par ligne (un modèle appliqué au bloc entier le tronquait)
+      var f = flat(s); if(EXACT.has(f)) return EXACT.get(f);
+    } else { var r = look(flat(s)); if(r != null) return r; }
     return s.split('\n').map(function(l){ return tr(l); }).join('\n');
   }
   I.tr = tr; I.msg = msg;
