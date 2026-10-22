@@ -4939,4 +4939,11 @@ I18N.load({
 "Nuit polaire":"極夜",
 "Jour férié":"祝日",
 "musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"美術館・銀行・役所は休みのことが多く、観光地や交通機関は混雑します。",
-"jour(s) férié(s) pendant ton voyage":"旅行中の祝日"});
+"jour(s) férié(s) pendant ton voyage":"旅行中の祝日",
+"Quartier conseillé pour dormir":"おすすめの宿泊エリア",
+"en moyenne de tes visites":"（訪問先までの平均）",
+"Ton hébergement actuel est à":"今の宿は",
+"visites autour de":"件の訪問先：",
+"pense au train ou à une nuit sur place.":"電車か現地泊を検討しよう。",
+"Aéroport le plus pratique":"一番便利な空港",
+"de tes visites":"（訪問先から）"});

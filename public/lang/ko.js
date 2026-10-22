@@ -4939,4 +4939,11 @@ I18N.load({
 "Nuit polaire":"극야",
 "Jour férié":"공휴일",
 "musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"박물관·은행·관공서는 쉬는 경우가 많고, 관광지와 교통은 매우 붐벼요.",
-"jour(s) férié(s) pendant ton voyage":"여행 중 공휴일"});
+"jour(s) férié(s) pendant ton voyage":"여행 중 공휴일",
+"Quartier conseillé pour dormir":"추천 숙소 지역",
+"en moyenne de tes visites":"(방문지까지 평균)",
+"Ton hébergement actuel est à":"현재 숙소는",
+"visites autour de":"곳 방문:",
+"pense au train ou à une nuit sur place.":"기차나 현지 1박을 고려해 보세요.",
+"Aéroport le plus pratique":"가장 편리한 공항",
+"de tes visites":"(방문지에서)"});

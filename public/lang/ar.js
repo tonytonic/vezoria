@@ -4940,4 +4940,11 @@ I18N.load({
 "Nuit polaire":"الليل القطبي",
 "Jour férié":"عطلة رسمية",
 "musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"المتاحف والبنوك والإدارات غالباً مغلقة؛ المواقع والمواصلات مزدحمة جداً.",
-"jour(s) férié(s) pendant ton voyage":"عطلة رسمية أثناء رحلتك"});
+"jour(s) férié(s) pendant ton voyage":"عطلة رسمية أثناء رحلتك",
+"Quartier conseillé pour dormir":"أفضل حي للإقامة",
+"en moyenne de tes visites":"في المتوسط عن زياراتك",
+"Ton hébergement actuel est à":"مكان إقامتك الحالي على بعد",
+"visites autour de":"زيارات حول",
+"pense au train ou à une nuit sur place.":"فكّر في القطار أو ليلة هناك.",
+"Aéroport le plus pratique":"أنسب مطار",
+"de tes visites":"عن زياراتك"});

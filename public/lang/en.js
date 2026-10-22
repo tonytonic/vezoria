@@ -1985,4 +1985,11 @@ I18N.load({
 "Nuit polaire":"Polar night",
 "Jour férié":"Public holiday",
 "musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"museums, banks and offices often closed; sights and transport very busy.",
-"jour(s) férié(s) pendant ton voyage":"public holiday(s) during your trip"});
+"jour(s) férié(s) pendant ton voyage":"public holiday(s) during your trip",
+"Quartier conseillé pour dormir":"Best area to stay",
+"en moyenne de tes visites":"on average from your visits",
+"Ton hébergement actuel est à":"Your current accommodation is",
+"visites autour de":"visits around",
+"pense au train ou à une nuit sur place.":"consider the train or a night there.",
+"Aéroport le plus pratique":"Most convenient airport",
+"de tes visites":"from your visits"});

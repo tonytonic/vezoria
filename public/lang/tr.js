@@ -4927,4 +4927,11 @@ I18N.load({
 "Nuit polaire":"Kutup gecesi",
 "Jour férié":"Resmî tatil",
 "musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"müzeler, bankalar ve resmî daireler çoğu zaman kapalı; turistik yerler ve ulaşım çok kalabalık.",
-"jour(s) férié(s) pendant ton voyage":"seyahatin sırasında resmî tatil"});
+"jour(s) férié(s) pendant ton voyage":"seyahatin sırasında resmî tatil",
+"Quartier conseillé pour dormir":"Kalmak için önerilen semt",
+"en moyenne de tes visites":"ortalama gezilerine uzaklık",
+"Ton hébergement actuel est à":"Şu anki konaklaman",
+"visites autour de":"ziyaret yeri:",
+"pense au train ou à une nuit sur place.":"treni ya da orada bir geceyi düşün.",
+"Aéroport le plus pratique":"En uygun havalimanı",
+"de tes visites":"gezilerine"});

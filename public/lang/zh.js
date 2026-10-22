@@ -4939,4 +4939,11 @@ I18N.load({
 "Nuit polaire":"极夜",
 "Jour férié":"公共假日",
 "musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"博物馆、银行和政府机构常关闭；景点和交通非常拥挤。",
-"jour(s) férié(s) pendant ton voyage":"旅行期间的公共假日"});
+"jour(s) férié(s) pendant ton voyage":"旅行期间的公共假日",
+"Quartier conseillé pour dormir":"推荐住宿区域",
+"en moyenne de tes visites":"（到各景点的平均距离）",
+"Ton hébergement actuel est à":"你目前的住处距离",
+"visites autour de":"个景点在",
+"pense au train ou à une nuit sur place.":"可考虑坐火车或在当地住一晚。",
+"Aéroport le plus pratique":"最方便的机场",
+"de tes visites":"（距你的景点）"});

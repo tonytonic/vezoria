@@ -4939,4 +4939,11 @@ I18N.load({
 "Nuit polaire":"ध्रुवीय रात",
 "Jour férié":"सार्वजनिक अवकाश",
 "musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"संग्रहालय, बैंक और दफ़्तर अक्सर बंद; पर्यटन स्थल और परिवहन में भारी भीड़।",
-"jour(s) férié(s) pendant ton voyage":"यात्रा के दौरान अवकाश"});
+"jour(s) férié(s) pendant ton voyage":"यात्रा के दौरान अवकाश",
+"Quartier conseillé pour dormir":"ठहरने के लिए सुझाया इलाका",
+"en moyenne de tes visites":"औसतन तुम्हारी जगहों से",
+"Ton hébergement actuel est à":"तुम्हारा मौजूदा ठिकाना",
+"visites autour de":"जगहें आसपास",
+"pense au train ou à une nuit sur place.":"ट्रेन या वहीं एक रात के बारे में सोचें।",
+"Aéroport le plus pratique":"सबसे सुविधाजनक हवाई अड्डा",
+"de tes visites":"तुम्हारी जगहों से"});

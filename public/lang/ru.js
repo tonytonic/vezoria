@@ -4940,4 +4940,11 @@ I18N.load({
 "Nuit polaire":"Полярная ночь",
 "Jour férié":"Праздничный день",
 "musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"музеи, банки и учреждения часто закрыты; достопримечательности и транспорт переполнены.",
-"jour(s) férié(s) pendant ton voyage":"праздничных дней во время поездки"});
+"jour(s) férié(s) pendant ton voyage":"праздничных дней во время поездки",
+"Quartier conseillé pour dormir":"Лучший район для ночлега",
+"en moyenne de tes visites":"в среднем до твоих мест",
+"Ton hébergement actuel est à":"Твоё текущее жильё в",
+"visites autour de":"мест около",
+"pense au train ou à une nuit sur place.":"подумай о поезде или ночёвке там.",
+"Aéroport le plus pratique":"Самый удобный аэропорт",
+"de tes visites":"от твоих мест"});

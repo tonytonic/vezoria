@@ -1991,4 +1991,11 @@ I18N.load({
 "Nuit polaire":"Poolnacht",
 "Jour férié":"Feestdag",
 "musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"musea, banken en kantoren vaak dicht; bezienswaardigheden en vervoer erg druk.",
-"jour(s) férié(s) pendant ton voyage":"feestdag(en) tijdens je reis"});
+"jour(s) férié(s) pendant ton voyage":"feestdag(en) tijdens je reis",
+"Quartier conseillé pour dormir":"Aanbevolen wijk om te overnachten",
+"en moyenne de tes visites":"gemiddeld van je bezienswaardigheden",
+"Ton hébergement actuel est à":"Je huidige verblijf ligt op",
+"visites autour de":"bezoeken rond",
+"pense au train ou à une nuit sur place.":"denk aan de trein of een nacht ter plaatse.",
+"Aéroport le plus pratique":"Handigste luchthaven",
+"de tes visites":"van je bezienswaardigheden"});

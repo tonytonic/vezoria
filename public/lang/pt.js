@@ -2004,4 +2004,11 @@ I18N.load({
 "Nuit polaire":"Noite polar",
 "Jour férié":"Feriado",
 "musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"museus, bancos e serviços muitas vezes fechados; locais e transportes muito cheios.",
-"jour(s) férié(s) pendant ton voyage":"feriado(s) durante a tua viagem"});
+"jour(s) férié(s) pendant ton voyage":"feriado(s) durante a tua viagem",
+"Quartier conseillé pour dormir":"Melhor zona para ficar",
+"en moyenne de tes visites":"em média das tuas visitas",
+"Ton hébergement actuel est à":"O teu alojamento atual está a",
+"visites autour de":"visitas perto de",
+"pense au train ou à une nuit sur place.":"pensa no comboio ou numa noite lá.",
+"Aéroport le plus pratique":"Aeroporto mais prático",
+"de tes visites":"das tuas visitas"});
