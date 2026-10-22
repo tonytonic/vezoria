@@ -6656,7 +6656,8 @@ const CV = (function(){
       else if(/Taxi/.test(m)) G.push({t:'Transferts', k:['welcome','kiwitaxi'], c:at});
       else G.push({t:'Comparer les trajets', k:['rome2rio','omio','trainline','gflights'], c});
     } else if(it.cat==='hotel'){
-      G.push({t:'Hébergements', k:['booking','airbnb','hotelscom','hostelworld','agoda'], c:{city, what:it.nom ? it.nom + ' ' + city : city, date:it.date, end:it.dateFin, n}});
+      const sc = stayCity(it) || city, hd = (M.hood || {})[it.id], hw = hd && hd.name && normQ(hd.name) !== normQ(sc) ? hd.name + ', ' + sc : sc;
+      G.push({t:hd && hd.name ? `🏘️ ${MSGT('Quartier conseillé pour dormir')} : <b>${esc(hd.name)}</b> · ${String(hd.km).replace('.', ',')} km ${MSGT('en moyenne de tes visites')} (${hd.n})` : 'Hébergements', k:['booking','airbnb','hotelscom','hostelworld','agoda'], c:{city:hw, what:it.nom ? it.nom + ' ' + city : hw, date:it.date, end:it.dateFin, n}});
     } else if(it.cat==='activite'){
       if(BK_SHOW.test(nzTxt(it.titre))) G.push(BK_SHOWG);
       G.push({t:'Visites et billets', k:['gyg','viator','tiqets','bkattr','civitatis','klook'], c:{city, what:it.q || [it.titre, it.adresse ? cityOf(it.adresse.split(',').pop()) : ''].filter(Boolean).join(' ')}});
@@ -15394,7 +15395,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(hidden('blk:book')) return '';
     const n = Math.max(1, (t.voyageurs || []).length), c = cityOf(it.titre || '') || it.titre || '';
     let k = null, ctx = {};
-    if(it.cat === 'hotel'){ k = 'booking'; ctx = {what:c, date:it.date, end:it.dateFin, n}; }
+    if(it.cat === 'hotel'){ k = 'booking'; const sc = stayCity(it) || c, hd = (M.hood || {})[it.id]; ctx = {what:hd && hd.name && normQ(hd.name) !== normQ(sc) ? hd.name + ', ' + sc : sc, date:it.date, end:it.dateFin, n}; }
     else if(it.cat === 'activite'){ k = 'gyg'; ctx = {what:it.q || it.titre}; }
     else if(/Avion/i.test(it.mode || '')){ k = 'gflights'; ctx = {from:it.from || '', to:it.to || '', date:it.date || ''}; }
     else if(/Ferry|Bateau/i.test(it.mode || '')) k = 'directferries';
@@ -18049,7 +18050,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-22d';
+  const BUILD = '2026-10-22e';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
