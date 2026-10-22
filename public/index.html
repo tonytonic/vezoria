@@ -1775,6 +1775,7 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .sg-ok{background:#dcfce7;color:#166534}
 .ex-r .sg-n{display:flex;flex-direction:column;align-items:flex-start}.ex-t{font-size:.72rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
 .ex-ln{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.ex-ln a{font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:999px;background:#eef2ff;color:#3730a3;text-decoration:none}
+.v-day-x{display:flex;flex-direction:column;gap:4px;margin:0 0 8px;font-size:.8rem}.v-hol{background:#fef3c7;color:#92400e;border-radius:10px;padding:6px 9px}.v-sun{color:#6b7280;font-weight:600}.ar-hol{margin-top:6px;font-size:.8rem;opacity:.9}
 .ar-go.ex-go{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff}.sg-no{background:#fee2e2;color:#991b1b}
 .cv-plk.sg{color:#b45309}
 .sg-r .sg-n{display:flex;flex-direction:column}.sg-x{font-weight:600;font-size:.72rem;color:#0f766e}
@@ -5271,9 +5272,60 @@ const CV = (function(){
     return `<div class="cv-pinboard${open?'':' closed'}"><button type="button" class="cv-pinboard-h cv-pin-tog" onclick="CV.pinToggle()" aria-expanded="${open}">📌 Épinglé <span class="n">${pins.length}</span><span class="ch">${open?'▴ replier':'▾ déplier'}</span></button>${open ? pins.map(n=>noteCard(n,true)).join('') : ''}</div>`;
   }
   function pinToggle(){ M.pinOpen = M.pinOpen === false; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
+
+  /* 🎌 jours fériés (Nager.Date, gratuit) et 🌅 lever / coucher du soleil (calculé ici, à l’heure locale de l’étape) */
+  function sunUtc(d, lat, lng){   // équation du lever de soleil (précision ~1 min)
+    const r = Math.PI / 180, J = Date.parse(d + 'T12:00:00Z') / 864e5 + 2440587.5, n = Math.round(J - 2451545 + .0008), Js = n - lng / 360;
+    const Mm = (357.5291 + .98560028 * Js) % 360, C = 1.9148 * Math.sin(Mm * r) + .02 * Math.sin(2 * Mm * r) + .0003 * Math.sin(3 * Mm * r);
+    const L = (Mm + C + 282.9372) % 360, Jt = 2451545 + Js + .0053 * Math.sin(Mm * r) - .0069 * Math.sin(2 * L * r), dec = Math.asin(Math.sin(L * r) * Math.sin(23.4397 * r));
+    const cw = (Math.sin(-.833 * r) - Math.sin(lat * r) * Math.sin(dec)) / (Math.cos(lat * r) * Math.cos(dec));
+    if(cw < -1) return {polar:'day'}; if(cw > 1) return {polar:'night'};
+    const w = Math.acos(cw) / r / 360, toD = j => new Date((j - 2440587.5) * 864e5);
+    return {rise:toD(Jt - w), set:toD(Jt + w)};
+  }
+  const stayOn = d => list('item', i=>i.trip === M.trip && i.cat === 'hotel' && i.date && i.date <= d && (i.dateFin ? d < i.dateFin : d === i.date)).sort((a, b)=>b.date.localeCompare(a.date))[0]
+    || list('item', i=>i.trip === M.trip && i.cat === 'hotel' && i.dateFin === d)[0];
+  function daySun(d){
+    const h = stayOn(d); if(!h) return null; const k = normQ(cityOf(h.titre || '') || h.titre || ''), g = R['geo:' + k], tz = (M.tz || {})[k];
+    if(!g || g.lat == null || !tz) return null;
+    const s = sunUtc(d, +g.lat, +g.lng); if(s.polar) return s;
+    try { const f = new Intl.DateTimeFormat((window.I18N && I18N.lang) || 'fr', {timeZone:tz, hour:'2-digit', minute:'2-digit'}); return {rise:f.format(s.rise), set:f.format(s.set)}; } catch(e){ return null; }
+  }
+  const sunTxt = s => !s ? '' : s.polar === 'day' ? '☀️ ' + MSGT('Soleil de minuit') : s.polar === 'night' ? '🌑 ' + MSGT('Nuit polaire') : `🌅 ${s.rise} · 🌇 ${s.set}`;
+  const HOL_FR = ['FR', 'BE', 'CH', 'LU', 'MC', 'CA'];
+  function dayHol(d){
+    const h = stayOn(d); if(!h) return null; const c = (M.ctry || {})[normQ(cityOf(h.titre || '') || h.titre || '')]; if(!c || !c.cc) return null;
+    const L = (M.hol || {})[c.cc + d.slice(0, 4)]; const x = L && L.find(y=>y.d === d); return x ? {cc:c.cc, n:x.n} : null;
+  }
+  const DX = {};
+  async function dayExtras(t){
+    if(!t || !t.debut) return;
+    const hs = list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date), seen = new Set(), sig = hs.map(h=>h.titre + h.date + h.dateFin).join('|');
+    if(DX[t.id] === sig) return; DX[t.id] = sig; let ch = 0;
+    for(const h of hs){
+      const city = cityOf(h.titre || '') || h.titre; if(!city) continue; const k = normQ(city); if(seen.has(k)) continue; seen.add(k);
+      let c = (M.ctry || {})[k], g = R['geo:' + k];
+      if(!c || !c.cc || !g || g.lat == null){ const o = await cityInfo(city).catch(()=>null); if(!o) continue; ch = 1; g = R['geo:' + k]; c = (M.ctry || {})[k]; }
+      M.tz = M.tz || {};
+      if(!M.tz[k] && g && g.lat != null){ try { const j = await expJ(`https://api.open-meteo.com/v1/forecast?latitude=${(+g.lat).toFixed(3)}&longitude=${(+g.lng).toFixed(3)}&timezone=auto&forecast_days=1&daily=sunrise`, 9000); if(j && j.timezone){ M.tz[k] = j.timezone; ch = 1; } } catch(e){} }
+      M.hol = M.hol || {};
+      if(c && c.cc) for(const y of new Set([h.date.slice(0, 4), (h.dateFin || h.date).slice(0, 4)])){
+        const hk = c.cc + y; if(M.hol[hk]) continue;
+        try { const j = await expJ(`https://date.nager.at/api/v3/PublicHolidays/${y}/${c.cc}`, 9000);
+          M.hol[hk] = (Array.isArray(j) ? j : []).filter(x=>x.global !== false || !x.counties).map(x=>({d:x.date, n:HOL_FR.includes(c.cc) ? x.localName : x.name})); ch = 1;
+        } catch(e){ M.hol[hk] = []; }
+      }
+    }
+    if(ch){ const ks = Object.keys(M.hol || {}); if(ks.length > 40) delete M.hol[ks[0]]; persist(); refresh(); }
+  }
+  function tripHols(t){
+    if(!t || !t.debut) return []; const out = [];
+    range(t.debut, t.fin || t.debut).forEach(d=>{ const x = dayHol(d); if(x) out.push(Object.assign({d}, x)); }); return out;
+  }
   function renderProg(){
     const ds = dayList();
     const arT = trip(), arOn = !!(arT && !arT.archived && tripPhase(arT) === 'prep' && !hidden('blk:prep'));
+    if(arT && !arT.archived && !arT.demo && tripPhase(arT) !== 'past') setTimeout(()=>dayExtras(arT), 400);
     let h = startFil() + pinBar() + (arOn ? ariHTML() : cdHTML() + suggCard() + actBand()) + annivCard() + nextHero() + eveCard() + (arOn ? '' : prepGauge()) + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + pinnedPolls();
     const tt = trip();
     if(tt && tt.demo) h = `<div class="cv-demo-bar">👀 <b>Voyage de démo</b> : touche à tout, modifie, supprime. Il reste sur ce téléphone et n’est jamais partagé.
@@ -5290,19 +5342,21 @@ const CV = (function(){
       const all = [...own, ...night];
       const dn = notesFor('day:'+d);
       const open = openD[d] !== undefined ? openD[d] : true;
+      const su0 = daySun(d);
       const row = i => `<div class="v-day-item" onclick="CV.edit('${i.id}')">
           <span>${icon(i)}</span>
-          <span class="x">${i.cat==='hotel' ? 'Nuit : ' : ''}${esc(i.titre)}${i.cat==='hotel'&&i.nom ? ' — '+esc(i.nom) : ''}${i.heureDep ? ' · '+esc(i.heureDep) : (i.heure && i.cat!=='hotel' ? ' · '+esc(i.heure) : '')}
+          <span class="x">${i.cat==='hotel' ? 'Nuit : ' : ''}${esc(i.titre)}${i.exp && su0 && su0.rise && /^(mon|vol|hel)\|/.test(i.exp) ? ` <small class="v-sun">🌅 ${su0.rise}</small>` : i.exp && su0 && su0.set && /^(sun|cat|cru)\|/.test(i.exp) ? ` <small class="v-sun">🌇 ${su0.set}</small>` : ''}${i.cat==='hotel'&&i.nom ? ' — '+esc(i.nom) : ''}${i.heureDep ? ' · '+esc(i.heureDep) : (i.heure && i.cat!=='hotel' ? ' · '+esc(i.heure) : '')}
           ${subset(i) ? `<span class="cv-qui-in">${parts(i).map(ini).join('')}</span>` : ''}${notesFor('item:'+i.id).length?' <span class="cv-nbadge">📌</span>':''}</span>
           <span class="dot ${i.statut}"></span>
         </div>`;
       return `<div class="v-day" id="d-${d}">
         <div class="v-day-h" onclick="CV.toggleDay('${d}')">
-          <span class="v-day-d">J${idx+1} · ${fdate(d)}</span>
+          <span class="v-day-d">J${idx+1} · ${fdate(d)}${dayHol(d) ? ' · 🎌' : ''}</span>
           <span class="v-day-t">${esc(info.titre) || '—'}</span>
           <span class="v-day-dots">${dn.length?'<span class="cv-nbadge">📌'+dn.length+'</span>':''}${all.map(i=>`<i class="${i.statut}"></i>`).join('')}</span>
         </div>
         ${open ? `<div class="v-day-b">
+          ${(()=>{ const ho = dayHol(d), su = daySun(d); return ho || su ? `<div class="v-day-x">${ho ? `<span class="v-hol">🎌 ${MSGT('Jour férié')} ${flag(ho.cc)} <b data-notr>${esc(ho.n)}</b> · ${MSGT('musées, banques et administrations souvent fermés ; sites et transports très fréquentés.')}</span>` : ''}${su ? `<span class="v-sun">${sunTxt(su)}</span>` : ''}</div>` : ''; })()}
           ${info.plan ? `<div class="v-day-plan">${esc(info.plan)}</div>` : ''}
           ${own.map(row).join('')}${night.map(row).join('')}
           ${dn.map(n=>noteCard(n,true)).join('')}
@@ -10782,12 +10836,56 @@ ${pm.join('\n')}</Document></kml>`;
     return EXPM;
   }
   const EXP_GEN = ['gui', 'foo', 'cui', 'exc'];
+  /* 🔎 villes sans liste : la rubrique « Faire » de Wikivoyage + ce que recense OpenStreetMap autour (clubs de plongée, écoles de surf, loueurs de kayak…) */
+  EXT.act = ['🎯', 'À faire', 'things to do'];
+  const EXP_KW = [[/plong|diving|scuba|tauch|buceo|immersion/i,'plo'],[/snorkel|palme|masque et tuba/i,'sno'],[/kite|surf/i,'sur'],[/kayak|canoë|canoe|paddle|pirogue/i,'kay'],[/raft/i,'raf'],
+    [/parachut|skydiv/i,'par'],[/parapente|paraglid|deltaplane/i,'pp'],[/montgolf|balloon/i,'mon'],[/hélicopt|helicopt/i,'hel'],[/baleine|whale/i,'bal'],[/dauphin|dolphin/i,'dau'],[/tortue|turtle/i,'tor'],
+    [/croisi|cruise|bateau|boat|voilier|catamaran|sail|excursion en mer/i,'bat'],[/safari|wildlife|faune|réserve naturelle|parc national|national park/i,'saf'],[/randonn|hike|hiking|trek|sentier|trail/i,'ran'],
+    [/cheval|horse|équitation|equitation/i,'che'],[/chameau|dromadaire|camel/i,'cha'],[/quad|buggy|atv/i,'qua'],[/4x4|jeep/i,'jee'],[/vélo|velo|bike|bicycl|cycl/i,'vel'],[/cours de cuisine|cooking/i,'cui'],
+    [/dégustation|wine|vignoble|winery|domaine viticole|vin /i,'vin'],[/brasserie|brewery|beer|bière/i,'bie'],[/rhum|rum /i,'rhu'],[/hammam/i,'ham'],[/thermal|thermes|onsen|sources chaudes|hot spring|spa/i,'thm'],
+    [/grotte|caverne|gouffre|cave /i,'gro'],[/volcan|volcano/i,'vol'],[/tyrolienne|zip.?line|accrobranche/i,'tyr'],[/canyon/i,'can'],[/ski|snowboard/i,'ski'],[/aurore|aurora/i,'aur'],
+    [/spectacle|show|concert|théâtre|theatre|opéra|opera|danse|dance|cabaret|flamenco|tango/i,'spe'],[/marché|market|souk|bazar/i,'foo'],[/visite guidée|guided tour|walking tour/i,'gui']];
+  const expKw = txt => { const x = EXP_KW.find(([re])=>re.test(txt)); return x ? x[1] : ''; };
+  const EXP_OSM = [['plo','nwr["shop"="scuba_diving"]',30000],['plo','nwr["amenity"="dive_centre"]',30000],['sur','nwr["sport"~"surfing|kitesurfing"]',20000],['kay','nwr["rental"~"kayak|canoe"]',20000],
+    ['bat','nwr["leisure"="marina"]',10000],['che','nwr["leisure"="horse_riding"]',20000],['pp','nwr["sport"~"free_flying|paragliding"]',30000],['tyr','nwr["aerialway"="zip_line"]',30000],
+    ['gro','nwr["natural"="cave_entrance"]["tourism"]',40000],['vol','nwr["natural"="volcano"]["name"]',60000],['thm','nwr["natural"="hot_spring"]',40000],['ham','nwr["amenity"="public_bath"]',8000],
+    ['vin','nwr["craft"="winery"]',25000],['ran','nwr["natural"="peak"]["name"]',25000,6]];
+  const EXPA = {};   // recherches en cours
+  async function expAuto(city){
+    const k = normQ(city); M.expAuto = M.expAuto || {}; const old = M.expAuto[k];
+    if((old && Date.now() - old.t < 30 * 864e5) || EXPA[k]) return; EXPA[k] = 1;
+    const o = {t:Date.now(), wv:[], osm:[]};
+    try {
+      const g = await cityInfo(city).catch(()=>null);
+      const lang = (window.I18N && I18N.lang) || 'fr', lg = EXP_WV.includes(lang) ? lang : 'en';
+      const wvp = (async()=>{ let x = await withTimeout(wvFetch(lg, city), 20000).catch(()=>null); if((!x || x.items.filter(i=>i.cat === 'do').length < 2) && lg !== 'en') x = (await withTimeout(wvFetch('en', city), 20000).catch(()=>null)) || x; return x; })();
+      const osmp = g ? (async()=>{ const q = '[out:json][timeout:20];' + EXP_OSM.map(([, f, r])=>`${f}(around:${r},${g.lat},${g.lng});out count;`).join('');
+        const one = ep => fetch(ep, {method:'POST', body:'data=' + encodeURIComponent(q), headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then(r=>{ if(!r.ok) throw new Error('osm'); return r.json(); });
+        const j = await withTimeout(Promise.any(['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'].map(one)), 25000);
+        return (j.elements || []).map(e=>+((e.tags || {}).total || 0)); })().catch(()=>null) : null;
+      const [wv, cnt] = await Promise.all([wvp, osmp]);
+      if(wv) o.wv = wv.items.filter(i=>i.cat === 'do' && i.n && normQ(i.n) !== k).map(i=>({n:i.n, t:expKw(i.n + ' ' + (i.d || ''))}))
+        .sort((a, b)=>(b.t ? 1 : 0) - (a.t ? 1 : 0)).slice(0, 5);
+      if(cnt) EXP_OSM.forEach(([t, , , min], i)=>{ if((cnt[i] || 0) >= (min || 1) && !o.osm.includes(t)) o.osm.push(t); });
+      if(!wv && !cnt) o.t = Date.now() - 29 * 864e5;   // pas de réseau : on réessaiera bientôt
+    } finally {
+      delete EXPA[k]; M.expAuto[k] = o; const ks = Object.keys(M.expAuto); if(ks.length > 80) delete M.expAuto[ks[0]]; persist();
+      if(document.querySelector('#v-sheet-bg .ex-r')) expOpen(); refresh();
+    }
+  }
+  function expGen(city){
+    const a = (M.expAuto || {})[normQ(city)], out = [], seen = new Set();
+    const add = (t, p, q, src) => { const key = t + '|' + normQ(p); if(seen.has(key) || out.length >= 7) return; seen.add(key); out.push({t, p, q, src}); };
+    if(a){ a.wv.forEach(w=>add(w.t || 'act', w.n, w.n + ' ' + city, 'wv')); a.osm.forEach(t=>{ if(!out.some(e=>e.t === t)) add(t, city, city + ' ' + EXT[t][2], 'osm'); }); }
+    EXP_GEN.forEach(t=>{ if(out.length < 4 || !a) add(t, city, city + ' ' + EXT[t][2]); });
+    return out;
+  }
   function expFor(city, cc){
     const m = expMap(), k = normQ(city);
     let L = (cc && m[k + '@' + cc]) || m[k];
     if(!L){ const alt = Object.keys(m).find(x=>x.startsWith(k + '@')); if(alt) L = m[alt]; }
     const gen = !L;
-    if(gen) L = EXP_GEN.map(t=>({t, p:city, q:city + ' ' + EXT[t][2]}));
+    if(gen){ L = expGen(city); if(!(M.expAuto || {})[normQ(city)]) setTimeout(()=>expAuto(city), 0); }
     return L.map(e=>Object.assign({key:e.t + '|' + normQ(e.p), gen, ic:EXT[e.t][0], l:EXT[e.t][1]}, e));
   }
   const expLabel = e => MSGT(e.l) + ' · ' + e.p;
@@ -10808,9 +10906,10 @@ ${pm.join('\n')}</Document></kml>`;
     if(!G.length){ closeSheet(true); refresh(); return; }
     const y = (document.querySelector('#v-sheet-bg .v-sheet') || {}).scrollTop || 0;
     openSheet(`<h2>🎟️ ${MSGT('Expériences à vivre')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.')}</div>
-      ${G.map(g=>`<div class="sg-d"><div class="sg-dh">📍 <span data-notr>${esc(g.city)}</span>${g.L[0].gen ? ` · <small>${MSGT('idées de la ville')}</small>` : ''}</div>
+      ${G.map(g=>`<div class="sg-d"><div class="sg-dh">📍 <span data-notr>${esc(g.city)}</span>${g.L[0].gen ? ` · <small>${EXPA[normQ(g.city)] ? '📡 ' + MSGT('Je cherche les activités de la ville…') : MSGT('idées de la ville')}</small>` : ''}</div>
         ${g.L.map(e=>`<div class="sg-r ex-r"><span class="sg-i">${e.ic}</span><span class="sg-n"><b class="ex-t">${esc(MSGT(e.l))}</b><span data-notr>${esc(e.p)}</span>${expLinks(e)}</span>
           <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.expKeep('${g.h.id}','${esc(e.key)}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.expDrop('${esc(e.key)}')">✕</button></div>`).join('')}</div>`).join('')}
+      ${G.some(g=>g.L.some(e=>e.src)) ? `<div class="v-sum-small" style="margin:4px 0 8px">${MSGT('Sources : Wikivoyage (CC BY-SA), OpenStreetMap')}</div>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div>`);
     const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y;
   }
@@ -15240,6 +15339,7 @@ ${pm.join('\n')}</Document></kml>`;
     const body = k => {
       if(k === 'ou'){
         return `<div class="ar-ou">${t.debut ? `<b>${fdate(t.debut)} → ${fdate(t.fin || t.debut)}</b>` : `<button type="button" class="ar-go" onclick="CV.datesSheet()">📅 ${MSGT('Choisir les dates')}</button>`}
+          ${(()=>{ const H = tripHols(t); return H.length ? `<div class="ar-hol">🎌 ${H.length} ${MSGT('jour(s) férié(s) pendant ton voyage')} : ${H.slice(0, 3).map(x=>`${fshort(x.d)} ${flag(x.cc)} <span data-notr>${esc(x.n)}</span>`).join(' · ')}${H.length > 3 ? ' …' : ''}</div>` : ''; })()}
           ${D.hs.length ? `<div class="ar-st">${D.hs.map(h=>`<span data-notr>${esc(cityOf(h.titre) || h.titre)}</span> <small>${nights(h.date, h.dateFin || h.date)} n.</small>`).join(' · ')}</div>` : `<button type="button" class="ar-go" onclick="CV.edit(null,'hotel')">🏨 ${MSGT('Ajouter une étape (une ville où dormir)')}</button>`}</div>`;
       }
       if(k === 'faire'){
@@ -17876,7 +17976,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-22b';
+  const BUILD = '2026-10-22c';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
