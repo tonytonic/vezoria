@@ -1776,6 +1776,9 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .cv-plk.sg{color:#b45309}
 .sg-r .sg-n{display:flex;flex-direction:column}.sg-x{font-weight:600;font-size:.72rem;color:#0f766e}
 #wz-ctry .sg-c{margin:0 0 10px}.wz-sg{margin:12px 0;padding:12px;border-radius:14px;background:#fffbeb;border:1.5px dashed #f5c26b;font-weight:700;color:#78350f}
+.wz-w{margin:8px 0 0;padding:9px 11px;border-radius:12px;background:#fff7ed;color:#9a3412;font-weight:700;font-size:.8rem;line-height:1.35}
+.wz-seas{display:grid;gap:6px;margin-top:10px}.wz-sl b{display:block;font-size:.78rem;margin:0 0 2px}.wz-sl .wz-sea{margin:0}
+.wz-run{margin-top:8px;background:#eef2ff!important;color:#3730a3}
 .wz-sea{margin:-4px 0 10px;padding:8px 10px;border-radius:12px;background:#eff6ff;color:#1e3a8a;font-weight:600;font-size:.8rem}.wz-sea.bad{background:#fff7ed;color:#9a3412}.wz-sea small{font-weight:500;opacity:.7}
 .wz-ok{margin:0 0 10px;padding:8px 10px;border-radius:12px;background:#ecfdf5;color:#065f46;font-weight:600}
 .lg-lk,.cd-lk,.wlc-lk{display:block;margin-top:10px;font-size:.8rem;font-weight:700;text-decoration:none;color:#4f46e5}
@@ -6771,8 +6774,8 @@ const CV = (function(){
     if(!document.getElementById('wz')) return;
     if(wz.step===1){ wz.titre = g('wz-titre'); wz.voyageurs = peopleVal('wz-tv'); wz.objectif = g('wz-obj'); }
     if(wz.step===2){ wz.debut = g('wz-debut'); wz.nuits = Math.max(1, parseInt(g('wz-nuits'))||1); }
-    if(wz.step===3) wz.etapes = [...document.querySelectorAll('.wz-et')].map(r=>({ville:r.querySelector('[data-k=ville]').value.trim(),
-      nuits:Math.max(0, parseInt(r.querySelector('[data-k=nuits]').value)||0), mode:r.querySelector('[data-k=mode]').value}));
+    if(wz.step===3) wz.etapes = [...document.querySelectorAll('.wz-et')].map((r, i)=>{ const o = wz.etapes[i] || {}, ville = r.querySelector('[data-k=ville]').value.trim(), mode = r.querySelector('[data-k=mode]').value;
+      return {ville, nuits:Math.max(0, parseInt(r.querySelector('[data-k=nuits]').value)||0), mode, mm: !!o.mm || (o.ville === ville && o.mode && mode !== o.mode)}; });
     if(wz.step===4){ const gg = {}; document.querySelectorAll('[data-wdep]').forEach(i=>{ const pid = i.dataset.wdep, q = a => document.querySelector(`[${a}="${pid}"]`);
       gg[pid] = {dep:i.value.trim(), ret:q('data-wret').value.trim(), mDep:q('data-wmdep').value, mRet:q('data-wmret').value}; }); wz.gens = gg; }
     if(wz.step===5){ const sgc = document.getElementById('wz-sg'); if(sgc) wz.sugg = sgc.checked; wz.tpl = g('wz-tpl'); const cc = document.getElementById('wz-cc'), cd = document.getElementById('wz-cd'); wz.copyCheck = cc ? cc.checked : true; wz.copyDivers = cd ? cd.checked : false; }
@@ -6785,6 +6788,7 @@ const CV = (function(){
       if(wz.step===2 && !wz.debut){ alert('Choisis la date de départ.'); return; }
       if(wz.step===2 && wz.etapes.length===1) wz.etapes[0].nuits = wz.nuits;
       if(wz.step===3 && !wz.etapes.some(e=>e.ville)){ alert('Ajoute au moins une étape (une ville).'); return; }
+      if(wz.step===3){ wz.etapes = wz.etapes.filter(e=>e.ville); if(wz.etapes.some(e=>!e.nuits) && wz.etapes.length <= wz.nuits) wzNights(); wzModes(); }
     }
     wz.step = n; wzRender();
   }
@@ -6800,9 +6804,78 @@ const CV = (function(){
     if(action==='add') wz.etapes.push({ville:'', nuits:Math.max(0, wz.nuits - wz.etapes.reduce((s,e)=>s+e.nuits,0)), mode:'Train'});
     if(action==='del') wz.etapes.splice(i,1);
     if(action==='up' && i > 0) [wz.etapes[i-1], wz.etapes[i]] = [wz.etapes[i], wz.etapes[i-1]];
-    if(action==='even'){ const k = wz.etapes.length, b = Math.floor(wz.nuits/k); wz.etapes.forEach((e,j)=>e.nuits = b + (j < wz.nuits - b*k ? 1 : 0)); }
+    if(action==='even') wzNights();
     if(!wz.etapes.length) wz.etapes.push({ville:'', nuits:wz.nuits, mode:'Avion'});
     wzRender();
+  }
+  /* 🧭 itinéraire à plusieurs villes (un ou plusieurs pays) : situer, ordonner, répartir, choisir le transport */
+  const rawKm = (a, b) => { const r = x => x * Math.PI / 180, dLa = r(b.lat - a.lat), dLo = r(b.lng - a.lng), h = Math.sin(dLa / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dLo / 2) ** 2; return 2 * 6371 * Math.asin(Math.sqrt(h)); };
+  async function cityInfo(city){   // coordonnées + pays d’une ville, en une seule question à OpenStreetMap (gardé en mémoire)
+    const k = normQ(city); M.ctry = M.ctry || {}; const g = R['geo:' + k];
+    if(g && !g.deleted && g.lat != null && M.ctry[k] && M.ctry[k].cc) return {lat:g.lat, lng:g.lng, cc:M.ctry[k].cc};
+    const wait = 1100 - (Date.now() - geoLast); if(wait > 0) await new Promise(r=>setTimeout(r, wait)); geoLast = Date.now();
+    try { const j = await (await withTimeout(fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(city)), 10000)).json();
+      const x = j && j[0]; if(!x) return null; const o = {lat:+x.lat, lng:+x.lon, cc:((x.address || {}).country_code || '').toUpperCase()};
+      const geo = {id:'geo:' + k, type:'geo', q:city, lat:o.lat, lng:o.lng}; stamp(geo); R[geo.id] = geo; markDirty(geo.id);
+      if(o.cc) M.ctry[k] = {pays:(x.address || {}).country || '', cc:o.cc}; persist(); return o; } catch(e){ return null; }
+  }
+  async function wzLocate(){
+    if(!wz) return; wz.geo = wz.geo || {}; const L = wz.etapes.filter(e=>e.ville && !wz.geo[normQ(e.ville)]); if(!L.length) return true;
+    const box = () => document.getElementById('wz-loc'); let i = 0;
+    for(const e of L){ i++; const b = box(); if(b) b.innerHTML = `<div class="ar-run wz-run">📍 ${MSGT('Je situe les villes…')} <small class="sg-pr">${esc(e.ville)} · ${i}/${L.length}</small></div>`;
+      const o = await cityInfo(e.ville); if(!wz) return; wz.geo[normQ(e.ville)] = o || {miss:1}; }
+    const b = box(); if(b) b.innerHTML = ''; return true;
+  }
+  const wzPt = e => { const g = wz && wz.geo && wz.geo[normQ(e.ville || '')]; return g && !g.miss ? g : null; };
+  function wzModes(){   // le moyen de transport selon la distance (sauf si tu l’as choisi toi-même)
+    const E = wz.etapes;
+    for(let i = 1; i < E.length; i++){ const a = wzPt(E[i - 1]), b = wzPt(E[i]); if(!a || !b || E[i].mm) continue;
+      const d = rawKm(a, b); E[i].km = Math.round(d); E[i].mode = d < 650 ? (a.cc && b.cc && a.cc !== b.cc && d > 450 ? 'Avion' : 'Train') : 'Avion'; }
+    const cc = [...new Set(E.map(e=>(wzPt(e) || {}).cc).filter(Boolean))]; if(cc.length) wz.ccs = cc;
+  }
+  function wzNights(){   // au moins 1 nuit partout, 2 si le voyage le permet ; le reste aux villes où l’on dort déjà le plus longtemps (grandes villes en tête)
+    const E = wz.etapes.filter(e=>e.ville), n = E.length; if(!n) return; const tot = wz.nuits;
+    const base = tot >= n * 2 ? 2 : 1; E.forEach(e=>e.nuits = base); let left = tot - base * n, j = 0;
+    while(left > 0 && j < 500){ E[j % n].nuits++; left--; j++; }
+    while(left < 0 && j < 500){ const k = E.reduce((a, e, i)=>e.nuits > E[a].nuits ? i : a, 0); if(E[k].nuits <= 1) break; E[k].nuits--; left++; j++; }
+  }
+  async function wzOrder(){
+    wzRead(); const btn = document.getElementById('wz-ord'); if(btn) btn.disabled = true;
+    await wzLocate(); if(!wz) return;
+    const E = wz.etapes.filter(e=>e.ville), K = E.filter(wzPt), rest = E.filter(e=>!wzPt(e)); if(K.length < 3){ wzModes(); wzRender(); return; }
+    // le plus proche à chaque fois depuis la 1ʳᵉ ville, puis on décroise les trajets (2-opt)
+    const ord = [K[0]], todo = K.slice(1); while(todo.length){ const l = wzPt(ord[ord.length - 1]); todo.sort((a, b)=>rawKm(l, wzPt(a)) - rawKm(l, wzPt(b))); ord.push(todo.shift()); }
+    const len = A => A.reduce((s, e, i)=>i ? s + rawKm(wzPt(A[i - 1]), wzPt(e)) : 0, 0); let best = len(ord), imp = true, g = 0;
+    while(imp && g < 60){ imp = false; g++; for(let i = 1; i < ord.length - 1; i++) for(let k = i + 1; k < ord.length; k++){ const c = ord.slice(0, i).concat(ord.slice(i, k + 1).reverse(), ord.slice(k + 1)), l2 = len(c); if(l2 < best - 1){ ord.splice(0, ord.length, ...c); best = l2; imp = true; } } }
+    const before = len(K); wz.etapes = ord.concat(rest); wzModes(); wzRender();
+    toast('🧭 ' + MSGT('Itinéraire ordonné') + (before - best > 20 ? ' · −' + Math.round(before - best).toLocaleString() + ' km' : ''));
+  }
+  async function wzCheck(){   // après un changement de villes : on situe, on choisit les transports, on affiche la saison de chaque pays
+    if(!wz || wz.step !== 3 || wz.chk) return; wz.chk = 1;
+    try { await wzLocate(); if(!wz) return; wzModes();
+      const mo = wz.debut ? +wz.debut.slice(5, 7) : 0, seen = {}, out = [];
+      for(const e of wz.etapes){ const p = wzPt(e); if(!p || !p.cc || seen[p.cc]) continue; seen[p.cc] = 1;
+        const se = await ctrySeason(p.cc, e.ville).catch(()=>null); if(se) out.push({cc:p.cc, se}); if(out.length >= 10) break; }
+      wz.seas = out;
+    } finally { if(wz){ wz.chk = 0; if(wz.step === 3) wzSoft(); } }
+  }
+  function wzInfo(){
+    const se = (wz.seas || []).length > 1 ? `<div class="wz-seas">${wz.seas.map(x=>`<div class="wz-sl"><b>${flag(x.cc)} ${esc(frCountry(x.cc))}</b>${seasonLine(x.se, wz.debut ? +wz.debut.slice(5, 7) : 0)}</div>`).join('')}</div>` : '';
+    const km = wz.etapes.some((e, i)=>i && e.km) ? `<div class="v-sum-small" style="margin-top:6px">${wz.etapes.map((e, i)=>i && e.km ? `${MODE_ICON[e.mode] || ''} ${e.km.toLocaleString()} km` : '').filter(Boolean).join(' · ')}</div>` : '';
+    return se + km;
+  }
+  function wzSoft(){   // mise à jour sans tout redessiner (on ne vole pas le clavier pendant la saisie)
+    document.querySelectorAll('.wz-et').forEach((r, i)=>{ const e = wz.etapes[i], sel = r.querySelector('[data-k=mode]'); if(e && sel && sel.value !== e.mode) sel.value = e.mode; });
+    const w = document.getElementById('wz-warn'); if(w) w.innerHTML = wzWarn(); const f = document.getElementById('wz-info'); if(f) f.innerHTML = wzInfo();
+  }
+  function wzCk(){ wzRead(); wzCheck(); }
+  function wzWarn(){
+    const E = wz.etapes.filter(e=>e.ville), n = E.length, tot = wz.nuits, z = E.filter(e=>!e.nuits).length;
+    const w = [];
+    if(n >= 4 && n > tot / 1.6) w.push(`⚠️ ${n} ${MSGT('villes en')} ${tot} ${MSGT('nuits')} : ${MSGT('un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.')}`);
+    if(z) w.push(`⚠️ ${z} ${MSGT('étape(s) à 0 nuit')} : ${MSGT('touche « Répartir les nuits ».')}`);
+    const fly = E.filter((e, i)=>i && e.mode === 'Avion').length; if(n > 1 && fly) w.push(`✈️ ${fly} ${MSGT('vol(s) entre les étapes, choisis selon la distance')}`);
+    return w.map(x=>`<div class="wz-w">${x}</div>`).join('');
   }
   function wzCtryGuess(){
     const cands = [...wz.etapes.map(e=>e.ville), wz.titre].filter(Boolean);
@@ -6814,7 +6887,7 @@ const CV = (function(){
   }
   function wzCtryBox(){
     const el = document.getElementById('wz-ctry'); if(!el || !wz) return;
-    const g = wzCtryGuess(); if(!g || wz.ctryOk === g.cc){ el.innerHTML = ''; return; }
+    const g = wzCtryGuess(); if(!g || wz.ctryOk === g.cc || wz.etapes.filter(e=>e.ville && normQ(e.ville) !== normQ(g.from)).length > 0){ el.innerHTML = ''; return; }
     el.innerHTML = `<button type="button" class="sg-c" onclick="CV.wzCountry('${g.cc}')"><i>${flag(g.cc)}</i><div><b>${esc(frCountry(g.cc))} : ${MSGT('je te propose les étapes')}</b><small>${MSGT('Les villes à voir et les nuits dans chacune, pour')} ${wz.nuits} ${MSGT('nuits')}. ${MSGT('Tu pourras tout modifier.')}</small></div><span class="sg-go">${MSGT('Proposer')} ›</span></button>`;
   }
   async function wzCountry(cc){
@@ -6824,12 +6897,14 @@ const CV = (function(){
     if(!it || !it.stops.length){ if(el) el.innerHTML = `<div class="v-sum-small">⚠️ ${MSGT('Pas d’itinéraire trouvé pour ce pays (réseau ?) : écris les villes toi-même.')}</div>`; return; }
     const m0 = (wz.etapes[0] || {}).mode || 'Avion';
     wz.etapes = it.stops.map((e, i)=>({ville:e[0], nuits:e[1], mode: i === 0 ? m0 : 'Train'}));
+    setTimeout(wzCheck, 50);
     wz.ctryOk = cc; wz.ccs = [...new Set([...(wz.ccs || []), cc])]; wz.far = it.far || [];
     wz.sea = await ctrySeason(cc, it.stops[0] && it.stops[0][0]).catch(()=>null);
     if(wz && wz.step === 3) wzRender();
   }
   function wzSum(){
-    wzRead(); wzCtryBox(); const s = wz.etapes.reduce((a,e)=>a+e.nuits,0), el = document.getElementById('wz-sum');
+    wzRead(); wzCtryBox(); const ww = document.getElementById('wz-warn'); if(ww) ww.innerHTML = wzWarn();
+ const s = wz.etapes.reduce((a,e)=>a+e.nuits,0), el = document.getElementById('wz-sum');
     if(el){ el.textContent = `${s} / ${wz.nuits} nuits réparties` + (s!==wz.nuits ? (s < wz.nuits ? ` · il en reste ${wz.nuits-s}` : ` · ${s-wz.nuits} de trop (le retour sera décalé)`) : ' ✓'); el.style.color = s===wz.nuits ? 'var(--green)' : '#a06d00'; }
   }
   function wzPlan(){
@@ -6859,12 +6934,13 @@ const CV = (function(){
       h += `<div id="wz-ctry"></div>${wz.ctryOk ? `<div class="v-sum-small wz-ok">✓ ${MSGT('Itinéraire proposé pour')} ${esc(frCountry(wz.ctryOk))}${(wz.far || []).length ? ' · ' + MSGT('À ne pas manquer aussi (ajoute une étape si tu veux) :') + ' <span data-notr>' + wz.far.map(esc).join(', ') + '</span>' : ''}</div>${seasonLine(wz.sea, wz.debut ? +wz.debut.slice(5, 7) : 0)}` : ''}
         <div class="v-sum-small" style="margin-bottom:8px">Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).</div>
         <div oninput="CV.wzSum()">${wz.etapes.map((e,i)=>`<div class="wz-et"><span class="n">${i+1}</span>
-          <input class="v-in" data-k="ville" value="${esc(e.ville)}" placeholder="Ville">
+          <input class="v-in" data-k="ville" value="${esc(e.ville)}" placeholder="Ville" onchange="CV.wzCk()">
           <input class="v-in cv-num" data-k="nuits" type="number" min="0" value="${e.nuits}"><span class="v-sum-small">nuit${e.nuits>1?'s':''}</span>
           <select class="v-in" data-k="mode">${modes(e.mode)}</select>
           <span class="wz-btns">${i>0?`<button type="button" class="cv-x" onclick="CV.wzEt('up',${i})" title="Monter">↑</button>`:''}<button type="button" class="cv-x" onclick="CV.wzEt('del',${i})">✕</button></span></div>`).join('')}</div>
         <div id="wz-sum" class="v-sum-small" style="margin:6px 0;font-weight:700"></div>
-        <div class="cv-row"><button type="button" class="v-day-edit" onclick="CV.wzEt('add')">＋ Étape</button><button type="button" class="v-day-edit" onclick="CV.wzEt('even')">⚖️ Répartir les nuits</button></div>`;
+        <div class="cv-row" style="flex-wrap:wrap;gap:6px"><button type="button" class="v-day-edit" onclick="CV.wzEt('add')">＋ Étape</button><button type="button" class="v-day-edit" onclick="CV.wzEt('even')">⚖️ Répartir les nuits</button>${wz.etapes.filter(e=>e.ville).length >= 3 ? `<button type="button" class="v-day-edit" id="wz-ord" onclick="CV.wzOrder()">🧭 ${MSGT('Ordonner mon itinéraire')}</button>` : ''}</div>
+        <div id="wz-loc"></div><div id="wz-warn">${wzWarn()}</div><div id="wz-info">${wzInfo()}</div>`;
     }
     if(s===4){
       const plan = wzPlan(), first = plan.st[0] ? plan.st[0].ville : '…', last = plan.st.length ? plan.st[plan.st.length-1].ville : '…';
@@ -6890,7 +6966,7 @@ const CV = (function(){
       <button type="button" class="v-btn sec cv-sq" onclick="CV.close()">✕</button></div></div>`;
     openSheet(h);
     if(s===2) wzDates(wz.debut ? 'n' : 'd');
-    if(s===3) wzSum();
+    if(s===3){ wzSum(); if(wz.etapes.some(e=>e.ville && !(wz.geo || {})[normQ(e.ville)])) setTimeout(wzCheck, 300); }
     if(s===5) covPrev();
   }
   function wzTplOpts(){
@@ -10705,7 +10781,7 @@ ${pm.join('\n')}</Document></kml>`;
       try { await withTimeout((async()=>{
         const geo = {}; for(const h of hs){ const c = cityOf(h.titre || '') || h.titre; geo[h.id] = await geocode(c, null).catch(()=>null); }
         const ccs = new Set((t0.ccs || []).filter(Boolean));
-        for(const h of hs){ const c = cityOf(h.titre || '') || h.titre; const k = (M.ctry || {})[normQ(c)]; if(k && k.cc) ccs.add(k.cc); else if(!ccs.size){ const o = await countryOf(c).catch(()=>null); if(o && o.cc) ccs.add(o.cc); } }
+        for(const h of hs){ const c = cityOf(h.titre || '') || h.titre; const k = (M.ctry || {})[normQ(c)]; if(k && k.cc) ccs.add(k.cc); else { const o = await cityInfo(c).catch(()=>null); if(o && o.cc) ccs.add(o.cc); } }
         const sites = []; for(const cc of ccs){ const cd = await ctryData(cc).catch(()=>null); if(cd) sites.push(...cd.sites); }
         sites.sort((a, b)=>b.sl - a.sl);
         const used = {}, out = [];
@@ -10730,7 +10806,8 @@ ${pm.join('\n')}</Document></kml>`;
       let cand = []; try { cand = await placesFor(city); } catch(e){}
       cand = cand.filter(p=>normQ(p.nom) !== normQ(city) && !sgName(tid, p.nom)); if(!cand.length){ miss++; continue; }
       const out = []; let k = 0;
-      if(!more){ days.filter(d=>!nOf(d)).forEach(d=>{ for(let j = 0; j < SUGG_N && k < cand.length; j++, k++){ const p = cand[k];
+      const nDay = d => d === h.date ? 2 : SUGG_N;   // jour d’arrivée (trajet) : 2 idées, sinon 4
+      if(!more){ days.filter(d=>!nOf(d)).forEach(d=>{ for(let j = 0; j < nDay(d) && k < cand.length; j++, k++){ const p = cand[k];
           out.push({id:'pl' + uid() + k + j, type:'place', trip:tid, stay:h.id, date:d, nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false, sugg:true}); } }); }
       else {   // ➕ nouvelles idées : 2 de plus par jour, d’abord sur les journées les moins remplies
         const ds = days.slice().sort((a, b)=>nOf(a) - nOf(b)), cnt = {};
@@ -17738,7 +17815,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-21m';
+  const BUILD = '2026-10-22a';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -17748,7 +17825,7 @@ ${pm.join('\n')}</Document></kml>`;
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, suggOpen, suggKeep, suggDrop, suggGo, suggMore, filTog, filSkip, finMark, startHide, bilanClose, storyTrip, feedPublish, feedShareLink, installSheet, cloudSheet, wzCountry, ariTog, ariSkip, ariBook, ariFm, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, wzOrder, wzCk, suggOpen, suggKeep, suggDrop, suggGo, suggMore, filTog, filSkip, finMark, startHide, bilanClose, storyTrip, feedPublish, feedShareLink, installSheet, cloudSheet, wzCountry, ariTog, ariSkip, ariBook, ariFm, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
