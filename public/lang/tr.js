@@ -4855,4 +4855,12 @@ I18N.load({
 "remboursement(s)":"geri ödeme",
 "souvenir(s) aujourd’hui":"anı bugün",
 "voyageur(s)":"yolcu",
-"à réserver":"rezerve edilecek"});
+"à réserver":"rezerve edilecek",
+"Je situe les villes…":"Şehirleri buluyorum…",
+"Itinéraire ordonné":"Rota sıralandı",
+"villes en":"şehir,",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"neredeyse her gün yolculuk. Birkaç şehri çıkar ya da gece ekle.",
+"étape(s) à 0 nuit":"0 geceli durak",
+"touche « Répartir les nuits ».":"« Geceleri dağıt »a dokun.",
+"vol(s) entre les étapes, choisis selon la distance":"duraklar arası uçuş, mesafeye göre seçildi",
+"Ordonner mon itinéraire":"Rotamı sırala"});

@@ -1929,4 +1929,12 @@ I18N.load({
 "remboursement(s)":"reembolso(s)",
 "souvenir(s) aujourd’hui":"recuerdo(s) hoy",
 "voyageur(s)":"viajero(s)",
-"à réserver":"por reservar"});
+"à réserver":"por reservar",
+"Je situe les villes…":"Ubico las ciudades…",
+"Itinéraire ordonné":"Itinerario ordenado",
+"villes en":"ciudades en",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"un trayecto casi cada día. Quita algunas ciudades o añade noches para disfrutar.",
+"étape(s) à 0 nuit":"etapa(s) con 0 noches",
+"touche « Répartir les nuits ».":"toca «Repartir las noches».",
+"vol(s) entre les étapes, choisis selon la distance":"vuelo(s) entre etapas, elegidos según la distancia",
+"Ordonner mon itinéraire":"Ordenar mi itinerario"});

@@ -4867,4 +4867,12 @@ I18N.load({
 "remboursement(s)":"笔还款",
 "souvenir(s) aujourd’hui":"条今日回忆",
 "voyageur(s)":"位旅行者",
-"à réserver":"待预订"});
+"à réserver":"待预订",
+"Je situe les villes…":"正在定位城市…",
+"Itinéraire ordonné":"路线已排序",
+"villes en":"个城市用",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"几乎每天都在赶路。删掉几个城市或增加几晚吧。",
+"étape(s) à 0 nuit":"0晚的站点",
+"touche « Répartir les nuits ».":"点击“分配晚数”。",
+"vol(s) entre les étapes, choisis selon la distance":"段站间航班（按距离选择）",
+"Ordonner mon itinéraire":"整理我的路线"});

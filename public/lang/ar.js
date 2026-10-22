@@ -4868,4 +4868,12 @@ I18N.load({
 "remboursement(s)":"تسديد",
 "souvenir(s) aujourd’hui":"ذكرى اليوم",
 "voyageur(s)":"مسافر",
-"à réserver":"للحجز"});
+"à réserver":"للحجز",
+"Je situe les villes…":"أحدد مواقع المدن…",
+"Itinéraire ordonné":"تم ترتيب المسار",
+"villes en":"مدن في",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"تنقّل كل يوم تقريباً. احذف بعض المدن أو أضف ليالي للاستمتاع.",
+"étape(s) à 0 nuit":"محطة بلا ليالٍ",
+"touche « Répartir les nuits ».":"اضغط «وزّع الليالي».",
+"vol(s) entre les étapes, choisis selon la distance":"رحلة جوية بين المحطات حسب المسافة",
+"Ordonner mon itinéraire":"رتّب مساري"});

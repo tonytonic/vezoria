@@ -4867,4 +4867,12 @@ I18N.load({
 "remboursement(s)":"भुगतान",
 "souvenir(s) aujourd’hui":"याद आज",
 "voyageur(s)":"यात्री",
-"à réserver":"बुक करना है"});
+"à réserver":"बुक करना है",
+"Je situe les villes…":"शहरों की जगह देख रहा हूँ…",
+"Itinéraire ordonné":"यात्रा-क्रम व्यवस्थित",
+"villes en":"शहर,",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"लगभग हर दिन सफ़र। कुछ शहर हटाएँ या रातें बढ़ाएँ।",
+"étape(s) à 0 nuit":"0 रात वाले पड़ाव",
+"touche « Répartir les nuits ».":"«रातें बाँटें» दबाएँ।",
+"vol(s) entre les étapes, choisis selon la distance":"पड़ावों के बीच उड़ान, दूरी के हिसाब से",
+"Ordonner mon itinéraire":"मेरा यात्रा-क्रम व्यवस्थित करें"});

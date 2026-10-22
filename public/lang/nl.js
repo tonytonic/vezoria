@@ -1919,4 +1919,12 @@ I18N.load({
 "remboursement(s)":"terugbetaling(en)",
 "souvenir(s) aujourd’hui":"herinnering(en) vandaag",
 "voyageur(s)":"reiziger(s)",
-"à réserver":"te boeken"});
+"à réserver":"te boeken",
+"Je situe les villes…":"Ik zoek de steden op…",
+"Itinéraire ordonné":"Route geordend",
+"villes en":"steden in",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"bijna elke dag een reis. Schrap een paar steden of voeg nachten toe.",
+"étape(s) à 0 nuit":"etappe(s) met 0 nachten",
+"touche « Répartir les nuits ».":"tik op ‘Nachten verdelen’.",
+"vol(s) entre les étapes, choisis selon la distance":"vlucht(en) tussen etappes, gekozen op afstand",
+"Ordonner mon itinéraire":"Mijn route ordenen"});

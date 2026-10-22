@@ -1932,4 +1932,12 @@ I18N.load({
 "remboursement(s)":"reembolso(s)",
 "souvenir(s) aujourd’hui":"recordação(ões) hoje",
 "voyageur(s)":"viajante(s)",
-"à réserver":"por reservar"});
+"à réserver":"por reservar",
+"Je situe les villes…":"A localizar as cidades…",
+"Itinéraire ordonné":"Itinerário ordenado",
+"villes en":"cidades em",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"um trajeto quase todos os dias. Retira algumas cidades ou acrescenta noites para aproveitar.",
+"étape(s) à 0 nuit":"etapa(s) com 0 noites",
+"touche « Répartir les nuits ».":"toca «Distribuir as noites».",
+"vol(s) entre les étapes, choisis selon la distance":"voo(s) entre etapas, escolhidos pela distância",
+"Ordonner mon itinéraire":"Ordenar o meu itinerário"});

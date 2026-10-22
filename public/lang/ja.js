@@ -4867,4 +4867,12 @@ I18N.load({
 "remboursement(s)":"件の精算",
 "souvenir(s) aujourd’hui":"件の思い出（今日）",
 "voyageur(s)":"人の旅行者",
-"à réserver":"件 未予約"});
+"à réserver":"件 未予約",
+"Je situe les villes…":"都市の位置を確認中…",
+"Itinéraire ordonné":"ルートを並べ替えました",
+"villes en":"都市を",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"ほぼ毎日移動になります。都市を減らすか泊数を増やしましょう。",
+"étape(s) à 0 nuit":"泊数0の行程",
+"touche « Répartir les nuits ».":"「泊数を振り分ける」をタップ。",
+"vol(s) entre les étapes, choisis selon la distance":"区間の飛行機（距離で選択）",
+"Ordonner mon itinéraire":"ルートを並べ替える"});

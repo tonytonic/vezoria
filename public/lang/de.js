@@ -1923,4 +1923,12 @@ I18N.load({
 "remboursement(s)":"Rückzahlung(en)",
 "souvenir(s) aujourd’hui":"Erinnerung(en) heute",
 "voyageur(s)":"Reisende(r)",
-"à réserver":"zu buchen"});
+"à réserver":"zu buchen",
+"Je situe les villes…":"Ich verorte die Städte…",
+"Itinéraire ordonné":"Route sortiert",
+"villes en":"Städte in",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"fast jeden Tag eine Fahrt. Streiche ein paar Städte oder füge Nächte hinzu.",
+"étape(s) à 0 nuit":"Etappe(n) mit 0 Nächten",
+"touche « Répartir les nuits ».":"tippe auf „Nächte verteilen“.",
+"vol(s) entre les étapes, choisis selon la distance":"Flug/Flüge zwischen den Etappen, nach Entfernung gewählt",
+"Ordonner mon itinéraire":"Route sortieren"});

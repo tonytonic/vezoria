@@ -4868,4 +4868,12 @@ I18N.load({
 "remboursement(s)":"возврат(ов)",
 "souvenir(s) aujourd’hui":"воспоминаний сегодня",
 "voyageur(s)":"путешественник(ов)",
-"à réserver":"забронировать"});
+"à réserver":"забронировать",
+"Je situe les villes…":"Определяю города…",
+"Itinéraire ordonné":"Маршрут упорядочен",
+"villes en":"городов за",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"переезд почти каждый день. Убери несколько городов или добавь ночей.",
+"étape(s) à 0 nuit":"этап(ов) с 0 ночей",
+"touche « Répartir les nuits ».":"нажми «Распределить ночи».",
+"vol(s) entre les étapes, choisis selon la distance":"перелёт(ов) между этапами, по расстоянию",
+"Ordonner mon itinéraire":"Упорядочить маршрут"});

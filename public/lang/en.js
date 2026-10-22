@@ -1913,4 +1913,12 @@ I18N.load({
 "remboursement(s)":"repayment(s)",
 "souvenir(s) aujourd’hui":"memory/memories today",
 "voyageur(s)":"traveller(s)",
-"à réserver":"to book"});
+"à réserver":"to book",
+"Je situe les villes…":"Locating the cities…",
+"Itinéraire ordonné":"Route put in order",
+"villes en":"cities in",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"a journey almost every day. Remove a few cities or add nights to enjoy it.",
+"étape(s) à 0 nuit":"stop(s) with 0 nights",
+"touche « Répartir les nuits ».":"tap “Spread the nights”.",
+"vol(s) entre les étapes, choisis selon la distance":"flight(s) between stops, chosen by distance",
+"Ordonner mon itinéraire":"Put my route in order"});

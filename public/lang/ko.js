@@ -4867,4 +4867,12 @@ I18N.load({
 "remboursement(s)":"건의 정산",
 "souvenir(s) aujourd’hui":"개의 추억(오늘)",
 "voyageur(s)":"명의 여행자",
-"à réserver":"건 예약 필요"});
+"à réserver":"건 예약 필요",
+"Je situe les villes…":"도시 위치 확인 중…",
+"Itinéraire ordonné":"동선을 정리했어요",
+"villes en":"개 도시를",
+"un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.":"거의 매일 이동해요. 도시를 줄이거나 숙박을 늘리세요.",
+"étape(s) à 0 nuit":"0박 경유지",
+"touche « Répartir les nuits ».":"‘숙박 나누기’를 누르세요.",
+"vol(s) entre les étapes, choisis selon la distance":"구간 항공편(거리 기준)",
+"Ordonner mon itinéraire":"동선 정리하기"});
