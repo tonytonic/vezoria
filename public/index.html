@@ -1776,6 +1776,7 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .ex-r .sg-n{display:flex;flex-direction:column;align-items:flex-start}.ex-t{font-size:.72rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
 .ex-ln{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.ex-ln a{font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:999px;background:#eef2ff;color:#3730a3;text-decoration:none}
 .v-day-x{display:flex;flex-direction:column;gap:4px;margin:0 0 8px;font-size:.8rem}.v-hol{background:#fef3c7;color:#92400e;border-radius:10px;padding:6px 9px}.v-sun{color:#6b7280;font-weight:600}.ar-hol{margin-top:6px;font-size:.8rem;opacity:.9}
+.ar-hood{margin:-2px 0 10px 12px;padding:8px 10px;border-left:3px solid rgba(255,255,255,.35);font-size:.8rem;line-height:1.45;display:flex;flex-direction:column;gap:4px}.ar-hood .ex-ln a{background:rgba(255,255,255,.16);color:#fff}
 .ar-go.ex-go{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff}.sg-no{background:#fee2e2;color:#991b1b}
 .cv-plk.sg{color:#b45309}
 .sg-r .sg-n{display:flex;flex-direction:column}.sg-x{font-weight:600;font-size:.72rem;color:#0f766e}
@@ -3335,7 +3336,7 @@ const CV = (function(){
     else if(r.type === 'poll'){ if(isNew && !seen) o = {k:'sondage', x:r.question || ''}; }
     else if(r.type === 'check' && r.trip && /courses/i.test(r.cat || '')){ if(isNew && !seen) o = {k:'notes', x:r.label || ''}; }
     else if(r.type === 'note' && r.trip){ if(isNew && !seen) o = {k:'notes', note:1, x:String(r.texte || '').slice(0, 80)}; }
-    else if(r.type === 'place' && r.trip){ if(isNew && !seen) o = {k:'resa', x:r.nom || ''}; }
+    else if(r.type === 'place' && r.trip){ if(r.sugg) return null; if(!seen && (isNew || (r.kept && Date.now() - r.kept < 6e4))) o = {k:'resa', x:r.nom || ''}; }
     else if(r.type === 'trip' && !r.demo && (r.voyageurs || []).length > 1 && !seen && r.createdBy === M.me && Date.now() - (r.createdAt || 0) < 3 * 864e5){ seenAll[r.id] = 1; return {k:'resa', x:'🧳 ' + (r.titre || ''), trip:r.id}; }   // voyage partagé avec moi : « Nouveau voyage »
     if(o){ seenAll[r.id] = 1; o.trip = r.trip || ''; }
     return o;
@@ -4657,7 +4658,7 @@ const CV = (function(){
   const expFlag = cc => cc && cc.length === 2 ? String.fromCodePoint(...cc.toUpperCase().split('').map(c=>127397 + c.charCodeAt(0))) : '🌍';
   const expWx = (c, day) => c == null ? '' : c === 0 ? (day ? '☀️' : '🌙') : c <= 2 ? (day ? '🌤️' : '🌙') : c === 3 ? '☁️' : c <= 48 ? '🌫️' : c <= 67 ? '🌧️' : c <= 77 ? '❄️' : c <= 82 ? '🌦️' : c <= 86 ? '🌨️' : '⛈️';
   let exp = null;
-  function explore(hid){ const h = R[hid]; if(!h) return; exploreCity(cityOf(h.titre), hid); }
+  function explore(hid){ const h = R[hid]; if(!h) return; exploreCity(stayCity(h), hid); }
   async function exploreCity(city, hid, day){
     city = String(city || '').trim(); if(!city) return;
     if(day) closeSheet(true);
@@ -4832,7 +4833,7 @@ const CV = (function(){
     const live = mk(addDays(today, -6), 'Japon · voyage en cours (démo)');
     const past = mk(addDays(today, -80), 'Japon · souvenirs (démo)');
     all.forEach(r=>{ R[r.id] = r; });
-    const cityOn = (v, d) => { const h = v.recs.find(r=>r.type==='item' && r.cat==='hotel' && r.date <= d && (!r.dateFin || r.dateFin > d)); return h ? cityOf(h.titre) : 'Tokyo'; };
+    const cityOn = (v, d) => { const h = v.recs.find(r=>r.type==='item' && r.cat==='hotel' && r.date <= d && (!r.dateFin || r.dateFin > d)); return h ? stayCity(h) : 'Tokyo'; };
     const coords = c => DEMO_CITY[normQ(c)] || DEMO_CITY.tokyo;
     let n = 0, photos = 0;
     const addSouv = async (v, d, i, withPh, txt) => {
@@ -5008,7 +5009,7 @@ const CV = (function(){
     if(!st.length && !cs.length && t.archived) return '';
     return `<div class="cv-disc-card${compact?' compact':''}"><div class="dt">🧭 Explorer les étapes du voyage</div>
       ${compact ? '' : '<div class="dd">Les plus beaux endroits, quoi faire, où manger… Touche une ville pour partir à la découverte.</div>'}
-      <div class="dc">${st.map(h=>`<button type="button" onclick="CV.explore('${h.id}')">🧭 ${esc(cityOf(h.titre))}</button>`).join('')}${cs.map(c=>`<button type="button" class="cy" onclick="CV.explore('${c.id}')">🧭 ${esc(c.titre)}</button>`).join('')}<button type="button" class="add" onclick="CV.voirAdd()">＋ Lieu</button></div>
+      <div class="dc">${st.map(h=>`<button type="button" onclick="CV.explore('${h.id}')">🧭 ${esc(stayCity(h))}</button>`).join('')}${cs.map(c=>`<button type="button" class="cy" onclick="CV.explore('${c.id}')">🧭 ${esc(c.titre)}</button>`).join('')}<button type="button" class="add" onclick="CV.voirAdd()">＋ Lieu</button></div>
       ${!st.length && !cs.length ? '<div class="de">Ajoute une ville, une excursion ou un quartier (les étapes de tes hôtels apparaissent aussi ici).</div>' : ''}</div>`;
   }
   function renderList(cat){
@@ -5286,7 +5287,7 @@ const CV = (function(){
   const stayOn = d => list('item', i=>i.trip === M.trip && i.cat === 'hotel' && i.date && i.date <= d && (i.dateFin ? d < i.dateFin : d === i.date)).sort((a, b)=>b.date.localeCompare(a.date))[0]
     || list('item', i=>i.trip === M.trip && i.cat === 'hotel' && i.dateFin === d)[0];
   function daySun(d){
-    const h = stayOn(d); if(!h) return null; const k = normQ(cityOf(h.titre || '') || h.titre || ''), g = R['geo:' + k], tz = (M.tz || {})[k];
+    const h = stayOn(d); if(!h) return null; const k = normQ(stayCity(h)), g = R['geo:' + k], tz = (M.tz || {})[k];
     if(!g || g.lat == null || !tz) return null;
     const s = sunUtc(d, +g.lat, +g.lng); if(s.polar) return s;
     try { const f = new Intl.DateTimeFormat((window.I18N && I18N.lang) || 'fr', {timeZone:tz, hour:'2-digit', minute:'2-digit'}); return {rise:f.format(s.rise), set:f.format(s.set)}; } catch(e){ return null; }
@@ -5294,16 +5295,18 @@ const CV = (function(){
   const sunTxt = s => !s ? '' : s.polar === 'day' ? '☀️ ' + MSGT('Soleil de minuit') : s.polar === 'night' ? '🌑 ' + MSGT('Nuit polaire') : `🌅 ${s.rise} · 🌇 ${s.set}`;
   const HOL_FR = ['FR', 'BE', 'CH', 'LU', 'MC', 'CA'];
   function dayHol(d){
-    const h = stayOn(d); if(!h) return null; const c = (M.ctry || {})[normQ(cityOf(h.titre || '') || h.titre || '')]; if(!c || !c.cc) return null;
+    const h = stayOn(d); if(!h) return null; const c = (M.ctry || {})[normQ(stayCity(h))]; if(!c || !c.cc) return null;
     const L = (M.hol || {})[c.cc + d.slice(0, 4)]; const x = L && L.find(y=>y.d === d); return x ? {cc:c.cc, n:x.n} : null;
   }
   const DX = {};
   async function dayExtras(t){
     if(!t || !t.debut) return;
     const hs = list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date), seen = new Set(), sig = hs.map(h=>h.titre + h.date + h.dateFin).join('|');
-    if(DX[t.id] === sig) return; DX[t.id] = sig; let ch = 0;
+    if(DX[t.id] === sig){ hoodEnsure(t); return; } DX[t.id] = sig; let ch = 0;
+    for(const x of [...new Set([...hs.map(h=>cityOf(h.titre || '')), ...hs.map(h=>h.base), ...titleCities(t)].filter(Boolean))].slice(0, 12)){
+      const k = normQ(x); if(R['geo:' + k] && R['geo:' + k].lat != null && (M.ctry || {})[k]) continue; if(await cityInfo(x).catch(()=>null)) ch = 1; }
     for(const h of hs){
-      const city = cityOf(h.titre || '') || h.titre; if(!city) continue; const k = normQ(city); if(seen.has(k)) continue; seen.add(k);
+      const city = stayCity(h); if(!city) continue; const k = normQ(city); if(seen.has(k)) continue; seen.add(k);
       let c = (M.ctry || {})[k], g = R['geo:' + k];
       if(!c || !c.cc || !g || g.lat == null){ const o = await cityInfo(city).catch(()=>null); if(!o) continue; ch = 1; g = R['geo:' + k]; c = (M.ctry || {})[k]; }
       M.tz = M.tz || {};
@@ -5317,6 +5320,66 @@ const CV = (function(){
       }
     }
     if(ch){ const ks = Object.keys(M.hol || {}); if(ks.length > 40) delete M.hol[ks[0]]; persist(); refresh(); }
+    hoodEnsure(t);
+  }
+  /* 🏘️ croisement visites × hébergement : le quartier le plus central par rapport à ce que tu as choisi, les visites éloignées, l’aéroport le plus pratique */
+  async function revName(lat, lng, zoom){
+    const wait = 1100 - (Date.now() - geoLast); if(wait > 0) await new Promise(r=>setTimeout(r, wait)); geoLast = Date.now();
+    const j = await expJ(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=${zoom}&addressdetails=1&accept-language=${(window.I18N && I18N.lang) || 'fr'}&lat=${lat.toFixed(5)}&lon=${lng.toFixed(5)}`, 10000);
+    const a = (j && j.address) || {};
+    return zoom >= 14 ? (a.suburb || a.quarter || a.neighbourhood || a.city_district || a.borough || a.village || a.town || a.city || '') : (a.city || a.town || a.village || a.municipality || '');
+  }
+  const stayPlaces = (t, h) => list('place', p=>p.trip === t.id && !p.sugg && p.lat != null && p.lng != null && (p.stay === h.id || (!p.stay && p.date >= h.date && p.date < (h.dateFin || h.date))));
+  const mid = a => { const b = a.slice().sort((x, y)=>x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; };
+  const HX = {};
+  async function hoodEnsure(t){
+    if(!t || HX[t.id]) return; HX[t.id] = 1; let ch = 0; M.hood = M.hood || {}; M.apt = M.apt || {};
+    try {
+      const hs = list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date).sort((a, b)=>a.date.localeCompare(b.date)); let first = null;
+      for(const h of hs){
+        const P = stayPlaces(t, h), sig = P.map(p=>p.id).sort().join(',') + '|' + h.titre;
+        if(P.length < 2){ if(M.hood[h.id]){ delete M.hood[h.id]; ch = 1; } continue; }
+        const c0 = {lat:mid(P.map(p=>+p.lat)), lng:mid(P.map(p=>+p.lng))}, main = P.filter(p=>rawKm(c0, p) <= 25), far = P.filter(p=>rawKm(c0, p) > 25);
+        if(main.length < 2) continue;
+        const c = {lat:main.reduce((s, p)=>s + +p.lat, 0) / main.length, lng:main.reduce((s, p)=>s + +p.lng, 0) / main.length};
+        if(!first) first = c;
+        const old = M.hood[h.id]; if(old && old.sig === sig) continue;
+        const o = {sig, n:main.length, lat:c.lat, lng:c.lng, km:Math.round(main.reduce((s, p)=>s + rawKm(c, p), 0) / main.length * 10) / 10};
+        o.name = await revName(c.lat, c.lng, 15).catch(()=>'') || '';
+        const hg = R['geo:' + normQ(cityOf(h.titre || ''))]; if(hg && hg.lat != null){ const hk = main.reduce((s, p)=>s + rawKm(hg, p), 0) / main.length; if(hk > o.km + 3) o.hk = Math.round(hk); }
+        if(far.length >= 2){ const fc = {lat:far.reduce((s, p)=>s + +p.lat, 0) / far.length, lng:far.reduce((s, p)=>s + +p.lng, 0) / far.length};
+          o.far = {n:far.length, km:Math.round(rawKm(c, fc)), name:await revName(fc.lat, fc.lng, 10).catch(()=>'') || ''}; }
+        M.hood[h.id] = o; ch = 1;
+      }
+      // ✈️ aéroport : autour des visites de la 1ʳᵉ étape (sinon de sa ville)
+      if(!first && hs[0]){ const g = R['geo:' + normQ(stayCity(hs[0]))]; if(g && g.lat != null) first = {lat:+g.lat, lng:+g.lng}; }
+      const fly = list('item', i=>i.trip === t.id && i.cat === 'transport' && /Avion/i.test(i.mode || '')).length;
+      if(first && fly){ const ak = first.lat.toFixed(1) + ',' + first.lng.toFixed(1), oa = M.apt[t.id];
+        if(!oa || oa.k !== ak || (!oa.iata && Date.now() - (oa.at || 0) > 36e5)){
+          const q = `[out:json][timeout:20];nwr["aeroway"="aerodrome"]["iata"](around:150000,${first.lat},${first.lng});out center tags 40;`;
+          const one = ep => fetch(ep, {method:'POST', body:'data=' + encodeURIComponent(q), headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then(r=>{ if(!r.ok) throw new Error('osm'); return r.json(); });
+          const j = await withTimeout(Promise.any(['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'].map(one)), 25000).catch(()=>null);
+          const L = ((j && j.elements) || []).map(e=>{ const tg = e.tags || {}, p = {lat:e.lat ?? (e.center || {}).lat, lng:e.lon ?? (e.center || {}).lon};
+              if(p.lat == null || /military/.test(tg['aerodrome:type'] || tg.military || '')) return null; const d = rawKm(first, p), big = /international|intl|internacional|internazionale|internationaal|flughafen/i.test(tg.name || '') || tg['aerodrome:type'] === 'international' || tg.aerodrome === 'international';
+              return {name:tg['name:' + ((window.I18N && I18N.lang) || 'fr')] || tg.name || '', iata:tg.iata, km:Math.round(d), sc:d - (big ? 70 : 0)}; }).filter(Boolean).sort((a, b)=>a.sc - b.sc);
+          if(L[0]){ M.apt[t.id] = {k:ak, name:L[0].name, iata:L[0].iata, km:L[0].km}; ch = 1; } else M.apt[t.id] = {k:ak, at:Date.now()};
+        }
+      }
+    } finally { HX[t.id] = 0; if(ch){ persist(); refresh(); } }
+  }
+  function hoodHTML(h, t){
+    const o = (M.hood || {})[h.id]; if(!o) return ''; const city = stayCity(h), n = Math.max(1, (t.voyageurs || []).length);
+    const where = o.name && normQ(o.name) !== normQ(city) ? o.name + ', ' + city : city;
+    return `<div class="ar-hood">${o.name ? `<div>🏘️ ${MSGT('Quartier conseillé pour dormir')} : <b data-notr>${esc(o.name)}</b> · ${String(o.km).replace('.', ',')} km ${MSGT('en moyenne de tes visites')} (${o.n})</div>` : ''}
+      ${o.hk ? `<div>🏨 ${MSGT('Ton hébergement actuel est à')} ${o.hk} km ${MSGT('en moyenne de tes visites')}</div>` : ''}
+      ${o.far ? `<div>🚆 ${o.far.n} ${MSGT('visites autour de')} <b data-notr>${esc(o.far.name || '…')}</b> (${o.far.km} km) : ${MSGT('pense au train ou à une nuit sur place.')}</div>` : ''}
+      ${hidden('blk:book') ? '' : `<div class="ex-ln">${bookA('booking', {what:where, date:h.date, end:h.dateFin, n})}${bookA('airbnb', {city:where, date:h.date, end:h.dateFin, n})}</div>`}</div>`;
+  }
+  function aptHTML(it, t){
+    const a = (M.apt || {})[t.id]; if(!a || !a.iata) return '';
+    const f = list('item', i=>i.trip === t.id && i.cat === 'transport' && /Avion/i.test(i.mode || '')).sort((x, y)=>(x.date || '9').localeCompare(y.date || '9'))[0];
+    if(!f || f.id !== it.id) return '';
+    return `<div class="ar-hood"><div>✈️ ${MSGT('Aéroport le plus pratique')} : <b data-notr>${esc(a.name)} (${esc(a.iata)})</b> · ${a.km} km ${MSGT('de tes visites')}</div></div>`;
   }
   function tripHols(t){
     if(!t || !t.debut) return []; const out = [];
@@ -5962,7 +6025,7 @@ const CV = (function(){
     return [...r].map(x=>a[x % a.length]).join('').replace(/(.{4})(?=.)/g,'$1-');
   }
   function activity(){
-    return Object.values(R).filter(r=>r.updatedBy && (r.updatedAt||0) > 1000 && r.type!=='geo')
+    return Object.values(R).filter(r=>r.updatedBy && (r.updatedAt||0) > 1000 && r.type!=='geo' && !(r.type === 'place' && r.sugg))
       .sort((a,b)=>b.updatedAt-a.updatedAt).slice(0,30).map(r=>{
         const verb = r.deleted ? 'a supprimé' : (r.createdAt && Math.abs(r.updatedAt-r.createdAt) < 2000) ? 'a ajouté' : 'a modifié';
         const what = r.type==='item' ? icon(r)+' '+esc(r.titre) : r.type==='note' ? '📌 note « '+esc((r.texte||'').slice(0,40))+' »'
@@ -6494,6 +6557,16 @@ const CV = (function(){
 
   /* ══════════ 🔗 Liens Maps / Booking / vols ══════════ */
   const cityOf = t => String(t||'').replace(/\(.*?\)/g,'').trim();
+  /* 📍 la ville de l’ÉTAPE (ce qu’on visite) peut différer de celle de l’hôtel (dormir à Prévessin pour visiter Genève) :
+     on garde la ville prévue à la création ou citée dans le titre du voyage si l’hôtel est à moins de 35 km */
+  const titleCities = t => String((t && t.titre) || '').split(/\s*(?:,|&|\+|\/|·|→| et | and | - | – )\s*/i).map(x=>x.trim()).filter(x=>x.length > 2 && x.length < 40).slice(0, 4);
+  function stayCity(h){
+    if(!h) return ''; const c = cityOf(h.titre || '') || h.titre || ''; const t = R[h.trip];
+    const g = R['geo:' + normQ(c)]; if(!g || g.deleted || g.lat == null) return c;
+    for(const x of [h.base, ...titleCities(t)].filter(Boolean)){ if(normQ(x) === normQ(c)) return c; const g2 = R['geo:' + normQ(x)];
+      if(g2 && !g2.deleted && g2.lat != null && rawKm(g, g2) < 35) return x; }
+    return c;
+  }
   function links(it){   // liens pratiques (itinéraire, carte, suivi du vol, ma résa) : toujours là
     const L = [], q = encodeURIComponent;
     if(it.cat==='transport'){
@@ -6596,7 +6669,7 @@ const CV = (function(){
   const BK_SHOW = /concert|spectacle|festival|theatre|opera|comedie musicale|\bshow\b|match|stade|cabaret|ballet/;
   const BK_SHOWG = {t:'Concerts et spectacles', k:['ticketmaster','fnac','fever'], c:{}};
   // ville du voyage pour la liste : la première étape encore sans hébergement, sinon la première étape
-  function tripCity(){ const H = items(i=>i.cat==='hotel').sort((a,b)=>(a.date||'').localeCompare(b.date||'')); const h = H.find(i=>i.statut==='todo') || H[0]; return h ? cityOf(h.titre) : ''; }
+  function tripCity(){ const H = items(i=>i.cat==='hotel').sort((a,b)=>(a.date||'').localeCompare(b.date||'')); const h = H.find(i=>i.statut==='todo') || H[0]; return h ? stayCity(h) : ''; }
   function checkBook(label){
     const s = nzTxt(label), city = tripCity(), c = {city, what:city};
     if(/esim|\bsim\b|forfait|wi ?fi|internet|roaming|itinerance/.test(s)) return {t:'eSIM et internet', k:['airalo','holafly','yesim'], c};
@@ -7041,7 +7114,7 @@ const CV = (function(){
     const T = (o, k) => out.push(Object.assign({id:'i'+uid()+k, type:'item', trip:tid, cat:'transport', statut:'todo', partage:'pp', qui:[]}, o));
     out.push({id:tid, type:'trip', titre:wz.titre, sous:st.map(e=>e.ville).join(' → '), debut:wz.debut, fin, voyageurs:v, objectif: wz.objectif==='' ? '' : num(wz.objectif), cover:wz.cover || '', coverWk:wz.coverWk || '', ccs: wz.ccs || undefined});
     st.forEach((e,i)=>{
-      if(e.nuits > 0) out.push({id:'i'+uid()+'h'+i, type:'item', trip:tid, cat:'hotel', titre:e.ville, date:e.debut, dateFin:e.fin, statut:'todo', partage:'grp', qui:[]});
+      if(e.nuits > 0) out.push({id:'i'+uid()+'h'+i, type:'item', trip:tid, cat:'hotel', titre:e.ville, base:e.ville, date:e.debut, dateFin:e.fin, statut:'todo', partage:'grp', qui:[]});
       const arrive = i===0 ? 'Arrivée à ' + e.ville : st[i-1].ville + ' → ' + e.ville;
       day(e.debut, arrive);
       range(addDays(e.debut,1), addDays(e.fin,-1)).forEach(dd=>day(dd, e.ville));
@@ -7723,7 +7796,7 @@ const CV = (function(){
   }
   async function discover(hid){
     const h = R[hid]; if(!h) return;
-    const city = cityOf(h.titre), key = normQ(city);
+    const city = stayCity(h), key = normQ(city);
     disc = {hid, city, list:[], f: M.poiF || {musee:false}, q:''};
     M.poiCache = M.poiCache || {};
     const hit = M.poiCache[key];
@@ -7798,7 +7871,7 @@ const CV = (function(){
         <select class="v-in cv-daysel" onchange="CV.cityMove('${p.id}', this.value)"><option value="">à placer</option>${ds.map(d=>`<option value="${d}"${p.date===d?' selected':''}>${fdate(d)}</option>`).join('')}</select>
         <button class="cv-x cv-lk${p.lock?' on':''}" title="Verrouiller ce jour" onclick="CV.cityLock('${p.id}')">${p.lock?'🔒':'🔓'}</button>
         <button class="cv-x" onclick="CV.cityDel('${p.id}')">✕</button></div>`;
-    openSheet(`<h2>🏙️ ${esc(cityOf(h.titre))}</h2>
+    openSheet(`<h2>🏙️ ${esc(stayCity(h))}</h2>
       <div class="v-sum-small" style="margin-bottom:10px">${h.date ? fdate(h.date) + ' → ' + fdate(h.dateFin||h.date) + ' · ' : ''}${pl.length} lieu(x). Place les lieux toi-même ou laisse l’optimisation répartir. 🔒 = ce lieu reste sur ce jour.</div>
       <button class="v-btn sec" onclick="CV.discover('${hid}')">🔎 Découvrir les lieux à visiter</button>
       ${unplaced.length ? `<div class="cv-cday"><b>À placer</b>${unplaced.map(row).join('')}</div>` : ''}
@@ -7868,7 +7941,7 @@ const CV = (function(){
     const say = m => { if(res) res.innerHTML = `<div class="cv-route-load">${m}</div>`; };
     btn.disabled = true;
     try {
-      const city = cityOf(h.titre);
+      const city = stayCity(h);
       say('📡 Je localise l’hôtel…');
       const home = await geocode(hotelQ(h), null) || await geocode(city, null);
       if(!home) throw new Error('Hôtel introuvable : ajoute son adresse dans la fiche.');
@@ -9802,7 +9875,7 @@ const CV = (function(){
   /* ---------- 🌤️ Météo ---------- */
   function tlStages(){
     const seen = []; items(i=>i.cat==='hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date)).forEach(h=>{
-      const c = cityOf(h.titre||''); if(!c) return;
+      const c = stayCity(h); if(!c) return;
       const last = seen[seen.length-1];
       if(last && normQ(last.city) === normQ(c)) last.fin = h.dateFin || last.fin; else seen.push({city:c, debut:h.date, fin:h.dateFin || h.date, h});
     });
@@ -9991,7 +10064,7 @@ const CV = (function(){
   // pays du voyage : hébergements, souvenirs, trajets, titre (le nom du pays est cherché une fois puis gardé)
   function bagCities(){
     const t = trip(), cs = new Set();
-    items(i=>i.cat==='hotel').forEach(h=>{ const c = cityOf(h.titre||''); if(c) cs.add(c); });
+    items(i=>i.cat==='hotel').forEach(h=>{ const c = stayCity(h); if(c) cs.add(c); });
     // la ville de départ (premier trajet) n’est pas une destination : le retour y ramène
     const tr = items(i=>i.cat==='transport').sort((a, b)=>(a.date||'').localeCompare(b.date||'')), home = tr[0] && tr[0].from ? normQ(cityOf(tr[0].from)) : '';
     tr.forEach(i=>{ const c = i.to && cityOf(i.to); if(c && normQ(c) !== home) cs.add(c); });
@@ -10774,7 +10847,7 @@ const CV = (function(){
       if(t.debut) nights += Math.max(0, nights_(t.debut, t.fin || t.debut));
       const hs = list('item', i=>i.trip===t.id && i.cat==='hotel' && i.date && !i.deleted).sort((a,b)=>a.date.localeCompare(b.date));
       let prev = null;
-      for(const h of hs){ const c = cityOf(h.titre); if(!c) continue; cities.add(normQ(c));
+      for(const h of hs){ const c = stayCity(h); if(!c) continue; cities.add(normQ(c));
         const g = geoCached(c) || await geocode(c, null).catch(()=>null); if(g && prev) kmTot += km(prev, g); if(g) prev = g;
         if(t.debut && t.debut <= now){ const co = await countryOf(c); const cc = co && (co.cc || ccOf(co.pays)); if(cc) countries[cc] = {cc, pays:frCountry(cc, co.pays)}; } }
       geoSouvs(t.id).forEach(s=>{ nSteps++; const cc = s.cc || ccOf(s.pays); if(cc) countries[cc] = {cc, pays:frCountry(cc, s.pays)}; });
@@ -10893,7 +10966,7 @@ ${pm.join('\n')}</Document></kml>`;
   function expTrip(t){
     if(!t) return []; const no = new Set(((M.expNo || {})[t.id]) || []), kept = expKept(t.id), seen = new Set(), out = [];
     list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date).sort((a, b)=>a.date.localeCompare(b.date)).forEach(h=>{
-      const city = cityOf(h.titre || '') || h.titre; if(!city || seen.has(normQ(city))) return; seen.add(normQ(city));
+      const city = stayCity(h); if(!city || seen.has(normQ(city))) return; seen.add(normQ(city));
       const cc = ((M.ctry || {})[normQ(city)] || {}).cc;
       const L = expFor(city, cc).filter(e=>!no.has(e.key) && !kept.has(e.key)); if(L.length) out.push({h, city, L});
     });
@@ -10915,7 +10988,7 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function expKeep(hid, key){
     const t = trip(), h = R[hid]; if(!t || !h) return;
-    const city = cityOf(h.titre || '') || h.titre, cc = ((M.ctry || {})[normQ(city)] || {}).cc, e = expFor(city, cc).find(x=>x.key === key); if(!e) return;
+    const city = stayCity(h), cc = ((M.ctry || {})[normQ(city)] || {}).cc, e = expFor(city, cc).find(x=>x.key === key); if(!e) return;
     const days = h.dateFin ? range(h.date, h.dateFin).slice(0, -1) : [h.date];
     const busy = d => list('item', i=>i.trip === t.id && i.cat === 'activite' && i.date === d).length;
     const d = days.slice(days.length > 1 ? 1 : 0).find(x=>!busy(x)) || days.find(x=>!busy(x)) || days[days.length > 1 ? 1 : 0];
@@ -10936,9 +11009,9 @@ ${pm.join('\n')}</Document></kml>`;
     // 🚌 1ʳᵉ recherche : les grands sites du pays (UNESCO) à plus de 25 km d’une étape mais à moins de 330 km = une journée d’excursion
     if(!more){ SG.city = MSGT('les grands sites du pays'); refresh();
       try { await withTimeout((async()=>{
-        const geo = {}; for(const h of hs){ const c = cityOf(h.titre || '') || h.titre; geo[h.id] = await geocode(c, null).catch(()=>null); }
+        const geo = {}; for(const h of hs){ const c = stayCity(h); geo[h.id] = await geocode(c, null).catch(()=>null); }
         const ccs = new Set((t0.ccs || []).filter(Boolean));
-        for(const h of hs){ const c = cityOf(h.titre || '') || h.titre; const k = (M.ctry || {})[normQ(c)]; if(k && k.cc) ccs.add(k.cc); else { const o = await cityInfo(c).catch(()=>null); if(o && o.cc) ccs.add(o.cc); } }
+        for(const h of hs){ const c = stayCity(h); const k = (M.ctry || {})[normQ(c)]; if(k && k.cc) ccs.add(k.cc); else { const o = await cityInfo(c).catch(()=>null); if(o && o.cc) ccs.add(o.cc); } }
         const sites = []; for(const cc of ccs){ const cd = await ctryData(cc).catch(()=>null); if(cd) sites.push(...cd.sites); }
         sites.sort((a, b)=>b.sl - a.sl);
         const used = {}, out = [];
@@ -10957,7 +11030,7 @@ ${pm.join('\n')}</Document></kml>`;
     // 🏛️ puis ville par ville : les résultats s’affichent dès qu’une ville est prête
     let miss = 0;
     for(const h of hs){
-      const city = cityOf(h.titre || '') || h.titre; if(!city) continue;
+      const city = stayCity(h); if(!city) continue;
       SG.i++; SG.city = city; refresh();
       const days = (h.dateFin ? range(h.date, h.dateFin).slice(0, -1) : [h.date]).filter(d=>!exDay[d] && !list('place', p=>p.trip === tid && p.date === d && p.exc).length); if(!days.length) continue;
       let cand = []; try { cand = await placesFor(city); } catch(e){}
@@ -10987,7 +11060,7 @@ ${pm.join('\n')}</Document></kml>`;
     const L = list('place', p=>p.trip === t.id && p.sugg), xn = expCount(t);
     if(!L.length){
       if(xn && ((M.suggDone || {})[t.id] || list('place', p=>p.trip === t.id).length)) return `<button type="button" class="sg-c" onclick="CV.expOpen()"><i>🎟️</i><div><b>${xn} ${MSGT('expériences à vivre')}</b><small>${MSGT('Croisières, excursions, plongée… à réserver chez nos partenaires')}</small></div><span class="sg-go">${MSGT('Voir')} ›</span></button>`;
-      const hs = list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date && cityOf(i.titre || ''));
+      const hs = list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date && stayCity(i));
       if(!hs.length || (M.suggDone || {})[t.id] || list('place', p=>p.trip === t.id).length) return '';
       return `<button type="button" class="sg-c" onclick="CV.suggGo()"><i>💡</i><div><b>${MSGT('Remplir mon programme avec les incontournables')}</b><small>${MSGT('4 lieux par jour dans chaque ville, et les excursions à ne pas manquer. Tu gardes ce que tu veux.')}</small></div><span class="sg-go">${MSGT('Go')} ›</span></button>`;
     }
@@ -11009,7 +11082,7 @@ ${pm.join('\n')}</Document></kml>`;
   function suggKeep(id){
     const t = trip(); if(!t) return;
     const L = id === '*' ? list('place', p=>p.trip === t.id && p.sugg) : [R[id]].filter(Boolean);
-    L.forEach(p=>{ const c = clone(p); delete c.sugg; putQuiet([c]);
+    L.forEach(p=>{ const c = clone(p); delete c.sugg; c.kept = Date.now(); putQuiet([c]);
       const di = p.exc && R['day:' + p.trip + ':' + p.date]; if(di && !di.deleted && !String(di.titre || '').includes(p.nom)) putQuiet([Object.assign(clone(di), {titre:(di.titre ? di.titre + ' · ' : '') + '🚌 ' + p.nom})]); });
     if(id === '*'){ toast('✓ ' + L.length + ' ' + MSGT('lieux ajoutés au programme')); closeSheet(true); refresh(); return; }
     toast('✓ ' + MSGT('Ajouté au programme'));
@@ -11031,7 +11104,7 @@ ${pm.join('\n')}</Document></kml>`;
     const st = items(i=>i.cat==='hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date));
     let added = 0; const out = [];
     for(const h of st){
-      const city = cityOf(h.titre); if(!city) continue; msg('📡 ' + city + '…');
+      const city = stayCity(h); if(!city) continue; msg('📡 ' + city + '…');
       const days = stayDays(h).slice(0, h.dateFin ? -1 : undefined);
       const have = placesOfStay(h.id), names = new Set(have.map(p=>normQ(p.nom)));
       const free = days.filter(d=>placesOf(d).length === 0 && !(dayInfo(d).plan||'').trim()).slice(0, 12);
@@ -12462,7 +12535,7 @@ ${pm.join('\n')}</Document></kml>`;
     for(const t of ts){
       await yieldUI();
       const b = byTrip[t.id] || {h:[], s:[], trk:[]}, pts = [];
-      b.h.sort((x,y)=>x.date.localeCompare(y.date)).forEach(h=>{ const c = cityOf(h.titre); if(!c) return;
+      b.h.sort((x,y)=>x.date.localeCompare(y.date)).forEach(h=>{ const c = stayCity(h); if(!c) return;
         const g = h.lat != null ? {lat:h.lat, lng:h.lng} : geoCached(c); if(!g){ missing.add(c); return; }
         pts.push({lat:g.lat, lng:g.lng, city:c}); const co = (M.ctry||{})[normQ(c)]; if(co && t.debut && t.debut <= isoToday()) addPays(co.cc, co.pays, g.lat, g.lng); });
       const steps = [];
@@ -13076,7 +13149,7 @@ ${pm.join('\n')}</Document></kml>`;
     const mode = x.ground ? 'Voiture' : 'Avion';
     out.push({id:'i'+uid()+'a', type:'item', trip:tid, cat:'transport', mode, titre:((S.dep === 'autre' ? S.depTxt : S.dep)||'Départ') + ' → ' + stops[0].c, from:(S.dep === 'autre' ? S.depTxt : S.dep)||'', to:stops[0].c, date:debut, statut:'todo', partage:'pp', qui:[], estime:String(Math.round((x.trans + (x.escale ? 80 : 0))/2))});
     stops.forEach((s,k)=>{
-      const hid = 'i'+uid()+'h'+k; out.push({id:hid, type:'item', trip:tid, cat:'hotel', titre:s.c, date:s.d, dateFin:s.f, statut:'todo', partage:'grp', qui:[]});
+      const hid = 'i'+uid()+'h'+k; out.push({id:hid, type:'item', trip:tid, cat:'hotel', titre:s.c, base:s.c, date:s.d, dateFin:s.f, statut:'todo', partage:'grp', qui:[]});
       const pls = custom && custom.sel && custom.sel[s.c] || [], dd = range(s.d, s.f).slice(0, Math.max(1, s.n)), per = Math.max(1, Math.ceil(pls.length / dd.length));
       pls.forEach((p,j)=>out.push({id:'pl'+uid()+k+'_'+j, type:'place', trip:tid, stay:hid, date:dd[Math.min(dd.length-1, Math.floor(j/per))], nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false}));
       out.push({id:'day:'+tid+':'+s.d, type:'day', trip:tid, date:s.d, titre: k === 0 ? 'Arrivée à ' + s.c : stops[k-1].c + ' → ' + s.c, plan:''});
@@ -14162,7 +14235,7 @@ ${pm.join('\n')}</Document></kml>`;
   function tripCard(t, p, on){
     const loc = (window.I18N && I18N.locale) || 'fr-FR', d0 = t.debut ? new Date(t.debut + 'T12:00') : null;
     const nd = t.debut ? nights(t.debut, t.fin || t.debut) + 1 : 0;
-    const st = new Set(list('item', i=>i.trip===t.id && i.cat==='hotel').map(h=>normQ(cityOf(h.titre))).filter(Boolean)).size;
+    const st = new Set(list('item', i=>i.trip===t.id && i.cat==='hotel').map(h=>normQ(stayCity(h))).filter(Boolean)).size;
     const ini3 = (t.voyageurs||[]).filter(prof);
     return `<button class="cv-tripcard tc tc-${p}${on ? ' on' : ''}" data-ph="${p}" data-tid="${t.id}" style="--tg:${TC_GRAD[p]}" onclick="CV.close();CV.go('${t.id}')">
         <span class="tc-pic"><span class="tc-img"></span></span>
@@ -15084,7 +15157,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(tripPhase(t) === 'past' && t.fin && nights(t.fin, td) <= 21 && !M.seen['home:' + t.id]){ momentDone = true; M.seen['home:' + t.id] = 1; persist(); momentHome(t); return; }
     // pendant le voyage : « Bienvenue à … » quand la ville de la nuit change
     if(tripPhase(t) !== 'live') return;
-    const {night} = itemsForDay(td), h = night[0], city = h ? cityOf(h.titre) : '';
+    const {night} = itemsForDay(td), h = night[0], city = h ? stayCity(h) : '';
     if(!city || M.seen['hi:' + t.id + ':' + normQ(city)] || (M.wlc && M.wlc[t.id] && M.wlc[t.id].cities.includes(normQ(city)))) return;
     momentDone = true; M.seen['hi:' + t.id + ':' + normQ(city)] = 1; persist();
     const c = await countryOf(city).catch(()=>null);
@@ -15335,12 +15408,12 @@ ${pm.join('\n')}</Document></kml>`;
     const lv = pct >= 100 ? ['✅','Prêt à partir'] : pct >= 75 ? ['🎒','Presque prêt'] : pct >= 45 ? ['🧩','En préparation'] : pct >= 15 ? ['✏️','Esquisse'] : ['💭','Rêve'];
     const A = [26, 92], B = [180, -4], C = [334, 92], path = `M${A} Q${B} ${C}`, tp = Math.max(.02, pct / 100);
     const q = u => [(1-u)*(1-u)*A[0] + 2*(1-u)*u*B[0] + u*u*C[0], (1-u)*(1-u)*A[1] + 2*(1-u)*u*B[1] + u*u*C[1]];
-    const co = D.hs[0] ? (M.ctry || {})[normQ(cityOf(D.hs[0].titre))] : null, fd = d => d ? fshort(d) : '';
+    const co = D.hs[0] ? (M.ctry || {})[normQ(stayCity(D.hs[0]))] : null, fd = d => d ? fshort(d) : '';
     const body = k => {
       if(k === 'ou'){
         return `<div class="ar-ou">${t.debut ? `<b>${fdate(t.debut)} → ${fdate(t.fin || t.debut)}</b>` : `<button type="button" class="ar-go" onclick="CV.datesSheet()">📅 ${MSGT('Choisir les dates')}</button>`}
           ${(()=>{ const H = tripHols(t); return H.length ? `<div class="ar-hol">🎌 ${H.length} ${MSGT('jour(s) férié(s) pendant ton voyage')} : ${H.slice(0, 3).map(x=>`${fshort(x.d)} ${flag(x.cc)} <span data-notr>${esc(x.n)}</span>`).join(' · ')}${H.length > 3 ? ' …' : ''}</div>` : ''; })()}
-          ${D.hs.length ? `<div class="ar-st">${D.hs.map(h=>`<span data-notr>${esc(cityOf(h.titre) || h.titre)}</span> <small>${nights(h.date, h.dateFin || h.date)} n.</small>`).join(' · ')}</div>` : `<button type="button" class="ar-go" onclick="CV.edit(null,'hotel')">🏨 ${MSGT('Ajouter une étape (une ville où dormir)')}</button>`}</div>`;
+          ${D.hs.length ? `<div class="ar-st">${D.hs.map(h=>`<span data-notr>${esc(stayCity(h) || h.titre)}</span> <small>${nights(h.date, h.dateFin || h.date)} n.${normQ(stayCity(h)) !== normQ(cityOf(h.titre || '')) ? ` · 🏨 <span data-notr>${esc(cityOf(h.titre || ''))}</span>` : ''}</small>`).join(' · ')}</div>` : `<button type="button" class="ar-go" onclick="CV.edit(null,'hotel')">🏨 ${MSGT('Ajouter une étape (une ville où dormir)')}</button>`}</div>`;
       }
       if(k === 'faire'){
         const xn = expCount(t), more = `<button type="button" class="ar-more" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>` + (xn ? `<button type="button" class="ar-go ex-go" onclick="CV.expOpen()">🎟️ ${MSGT('Expériences à vivre')} (${xn})</button>` : '');
@@ -15353,7 +15426,7 @@ ${pm.join('\n')}</Document></kml>`;
         if(!D.rs.length) return `<div class="ar-p">${MSGT('Ajoute d’abord tes étapes : les nuits et les trajets apparaîtront ici.')}</div>`;
         return `<div class="ar-rs">${D.rs.map(it=>`<div class="ar-r${okB(it) ? ' ok' : ''}" role="button" onclick="CV.edit('${it.id}')"><i>${okB(it) ? '✓' : it.cat === 'hotel' ? '🛏️' : icon(it)}</i>
           <span><b data-notr>${esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre)}</b><small>${it.cat === 'hotel' ? `${fd(it.date)} → ${fd(it.dateFin)} · ${nights(it.date, it.dateFin || it.date)} ${MSGT('nuits')}` : fd(it.date)}</small></span>
-          ${okB(it) ? '' : `<div class="ar-ra">${ariLink(it, t)}<button type="button" onclick="event.stopPropagation();CV.ariBook('${it.id}')">${MSGT('C’est réservé')}</button></div>`}</div>`).join('')}</div>`;
+          ${okB(it) ? '' : `<div class="ar-ra">${ariLink(it, t)}<button type="button" onclick="event.stopPropagation();CV.ariBook('${it.id}')">${MSGT('C’est réservé')}</button></div>`}</div>` + (okB(it) ? '' : it.cat === 'hotel' ? hoodHTML(it, t) : it.cat === 'transport' ? aptHTML(it, t) : '')).join('')}</div>`;
       }
       const rows = [
         ...D.di.map(x=>`<button type="button" class="ar-f bad" onclick="CV.tlDocs()"><i>⚠️</i><span>${esc(x)}</span></button>`),
@@ -15630,7 +15703,7 @@ ${pm.join('\n')}</Document></kml>`;
     const out = {}, td = isoToday(), add = (cc, t) => { if(!cc || cc.length !== 2) return; cc = cc.toUpperCase(); const o = out[cc] = out[cc] || {trips:[], d:'9'}; if(t && !o.trips.includes(t.titre)) o.trips.push(t.titre); if(t && t.debut && t.debut < o.d) o.d = t.debut; };
     trips().filter(t=>!t.demo && !t.deleted && t.debut && t.debut <= td).forEach(t=>{
       list('souv', x=>x.trip === t.id).forEach(x=>add(x.cc || (x.pays ? ccOf(x.pays) : ''), t));
-      list('item', i=>i.trip === t.id && i.cat === 'hotel').forEach(i=>{ const k = (M.ctry || {})[normQ(cityOf(i.titre || ''))]; if(k) add(k.cc, t); }); });
+      list('item', i=>i.trip === t.id && i.cat === 'hotel').forEach(i=>{ const k = (M.ctry || {})[normQ(stayCity(i))]; if(k) add(k.cc, t); }); });
     return out;
   }
   const SCR_COL = ['#f43f5e','#f97316','#eab308','#22c55e','#14b8a6','#0ea5e9','#6366f1','#a855f7','#ec4899','#84cc16'];
@@ -15701,7 +15774,7 @@ ${pm.join('\n')}</Document></kml>`;
         ${others.length ? `<div class="rt-o">${others.map(x=>`<span><b data-notr>${esc(pname(x.who) || '')}</b> ${'★'.repeat(x.stars || 0)}${x.txt ? ' · <i data-notr>' + esc(x.txt) + '</i>' : ''}</span>`).join('')}</div>` : ''}</div>`; };
     openSheet(`<h2>⭐ ${MSGT('Notes et avis')}</h2><div class="v-sum-small" style="margin-bottom:8px">${MSGT('Chacun note de son côté. Tes notes te serviront de conseils pour un prochain voyage.')}</div>
       ${row(tid, '🧳', t.titre || '', MSGT('Le voyage dans son ensemble'))}
-      ${its.length ? `<div class="rt-sec">🏨 ${MSGT('Hébergements')} & 🎟️ ${MSGT('visites')}</div>` + its.map(i=>row(i.id, i.cat === 'hotel' ? '🏨' : '🎟️', i.titre || '', [i.date ? fdate(i.date) : '', i.cat === 'hotel' ? cityOf(i.titre || '') : ''].filter(Boolean).join(' · '))).join('') : ''}
+      ${its.length ? `<div class="rt-sec">🏨 ${MSGT('Hébergements')} & 🎟️ ${MSGT('visites')}</div>` + its.map(i=>row(i.id, i.cat === 'hotel' ? '🏨' : '🎟️', i.titre || '', [i.date ? fdate(i.date) : '', i.cat === 'hotel' ? stayCity(i) : ''].filter(Boolean).join(' · '))).join('') : ''}
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.close();CV.refreshNow()">✓ ${MSGT('Terminé')}</button><button type="button" class="v-btn sec" onclick="CV.rtAll()">📒 ${MSGT('Mes adresses notées')}</button></div>`);
   }
   function rtSave(k, patch, tid){ const id = rtId(k), r = R[id] && !R[id].deleted ? clone(R[id]) : {id, type:'rate', trip:tid, key:k, who:M.me || 'moi'}; Object.assign(r, patch); put(r); }
@@ -15833,7 +15906,7 @@ ${pm.join('\n')}</Document></kml>`;
   const LG_LAB = ['Bonjour','Merci','S’il te plaît','Au revoir','Santé !','Combien ça coûte ?','L’addition, s’il te plaît','Où sont les toilettes ?','Excuse-moi','C’est délicieux !'];
   function lgCC(t){
     try { const l = lnLast(t.id), g = l ? LN.geo[lnGK(l)] : null; if(g && g.cc) return g.cc; } catch(e){}
-    try { const h = itemsForDay(isoToday()).night[0], c = h ? (M.ctry || {})[normQ(cityOf(h.titre || ''))] : null; if(c && c.cc) return c.cc; } catch(e){}
+    try { const h = itemsForDay(isoToday()).night[0], c = h ? (M.ctry || {})[normQ(stayCity(h))] : null; if(c && c.cc) return c.cc; } catch(e){}
     try { const st = tlStages().find(x=>x.debut <= isoToday() && x.fin >= isoToday()), c = st ? (M.ctry || {})[normQ(st.city)] : null; if(c && c.cc) return c.cc; } catch(e){}
     return '';
   }
@@ -17976,7 +18049,7 @@ ${pm.join('\n')}</Document></kml>`;
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-22c';
+  const BUILD = '2026-10-22d';
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
