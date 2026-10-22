@@ -1978,4 +1978,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"The activities each stop is famous for. ✓ to add them to your plan (to book), ✕ to dismiss.",
 "idées de la ville":"ideas for the city",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"Cruises, day trips, diving… to book with our partners",
-"Au programme, à réserver":"Added to your plan, to book"});
+"Au programme, à réserver":"Added to your plan, to book",
+"Je cherche les activités de la ville…":"Looking for things to do in the city…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"Sources: Wikivoyage (CC BY-SA), OpenStreetMap",
+"Soleil de minuit":"Midnight sun",
+"Nuit polaire":"Polar night",
+"Jour férié":"Public holiday",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"museums, banks and offices often closed; sights and transport very busy.",
+"jour(s) férié(s) pendant ton voyage":"public holiday(s) during your trip"});

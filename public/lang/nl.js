@@ -1984,4 +1984,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"De activiteiten waar elke etappe om bekend staat. ✓ om ze in je programma te zetten (te boeken), ✕ om ze weg te laten.",
 "idées de la ville":"ideeën voor de stad",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"Cruises, uitstapjes, duiken… te boeken bij onze partners",
-"Au programme, à réserver":"In je programma, nog te boeken"});
+"Au programme, à réserver":"In je programma, nog te boeken",
+"Je cherche les activités de la ville…":"Ik zoek activiteiten in de stad…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"Bronnen: Wikivoyage (CC BY-SA), OpenStreetMap",
+"Soleil de minuit":"Middernachtszon",
+"Nuit polaire":"Poolnacht",
+"Jour férié":"Feestdag",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"musea, banken en kantoren vaak dicht; bezienswaardigheden en vervoer erg druk.",
+"jour(s) férié(s) pendant ton voyage":"feestdag(en) tijdens je reis"});

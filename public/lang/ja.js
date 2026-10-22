@@ -4932,4 +4932,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"各地で人気のアクティビティ。✓でプランに追加（要予約）、✕で除外。",
 "idées de la ville":"この街のアイデア",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"クルーズ、日帰り旅行、ダイビング…提携先で予約",
-"Au programme, à réserver":"プランに追加、要予約"});
+"Au programme, à réserver":"プランに追加、要予約",
+"Je cherche les activités de la ville…":"街のアクティビティを検索中…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"出典：Wikivoyage (CC BY-SA)、OpenStreetMap",
+"Soleil de minuit":"白夜",
+"Nuit polaire":"極夜",
+"Jour férié":"祝日",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"美術館・銀行・役所は休みのことが多く、観光地や交通機関は混雑します。",
+"jour(s) férié(s) pendant ton voyage":"旅行中の祝日"});

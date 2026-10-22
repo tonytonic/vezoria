@@ -4933,4 +4933,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"الأنشطة التي تشتهر بها كل محطة. ✓ لإضافتها إلى البرنامج (للحجز)، ✕ لاستبعادها.",
 "idées de la ville":"أفكار للمدينة",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"رحلات بحرية، جولات، غوص… للحجز لدى شركائنا",
-"Au programme, à réserver":"في البرنامج، بانتظار الحجز"});
+"Au programme, à réserver":"في البرنامج، بانتظار الحجز",
+"Je cherche les activités de la ville…":"أبحث عن أنشطة في المدينة…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"المصادر: Wikivoyage (CC BY-SA)، OpenStreetMap",
+"Soleil de minuit":"شمس منتصف الليل",
+"Nuit polaire":"الليل القطبي",
+"Jour férié":"عطلة رسمية",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"المتاحف والبنوك والإدارات غالباً مغلقة؛ المواقع والمواصلات مزدحمة جداً.",
+"jour(s) férié(s) pendant ton voyage":"عطلة رسمية أثناء رحلتك"});

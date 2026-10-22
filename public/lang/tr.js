@@ -4920,4 +4920,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"Her durağın ünlü olduğu aktiviteler. Programa eklemek için ✓ (rezervasyon yapılacak), çıkarmak için ✕.",
 "idées de la ville":"şehir için fikirler",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"Tekne turları, geziler, dalış… partnerlerimizden rezervasyon",
-"Au programme, à réserver":"Programda, rezervasyon yapılacak"});
+"Au programme, à réserver":"Programda, rezervasyon yapılacak",
+"Je cherche les activités de la ville…":"Şehirdeki aktiviteleri arıyorum…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"Kaynaklar: Wikivoyage (CC BY-SA), OpenStreetMap",
+"Soleil de minuit":"Gece yarısı güneşi",
+"Nuit polaire":"Kutup gecesi",
+"Jour férié":"Resmî tatil",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"müzeler, bankalar ve resmî daireler çoğu zaman kapalı; turistik yerler ve ulaşım çok kalabalık.",
+"jour(s) férié(s) pendant ton voyage":"seyahatin sırasında resmî tatil"});

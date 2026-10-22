@@ -4932,4 +4932,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"हर पड़ाव की मशहूर गतिविधियाँ। ✓ से कार्यक्रम में जोड़ें (बुक करनी है), ✕ से हटाएँ।",
 "idées de la ville":"शहर के लिए सुझाव",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"क्रूज़, सैर, डाइविंग… हमारे पार्टनर्स के साथ बुक करें",
-"Au programme, à réserver":"कार्यक्रम में जोड़ा, बुक करना बाकी"});
+"Au programme, à réserver":"कार्यक्रम में जोड़ा, बुक करना बाकी",
+"Je cherche les activités de la ville…":"शहर की गतिविधियाँ खोज रहा हूँ…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"स्रोत: Wikivoyage (CC BY-SA), OpenStreetMap",
+"Soleil de minuit":"आधी रात का सूरज",
+"Nuit polaire":"ध्रुवीय रात",
+"Jour férié":"सार्वजनिक अवकाश",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"संग्रहालय, बैंक और दफ़्तर अक्सर बंद; पर्यटन स्थल और परिवहन में भारी भीड़।",
+"jour(s) férié(s) pendant ton voyage":"यात्रा के दौरान अवकाश"});

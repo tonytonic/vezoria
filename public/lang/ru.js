@@ -4933,4 +4933,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"То, чем славится каждый этап. ✓ — добавить в программу (забронировать), ✕ — убрать.",
 "idées de la ville":"идеи для города",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"Круизы, экскурсии, дайвинг… бронирование у партнёров",
-"Au programme, à réserver":"В программе, нужно забронировать"});
+"Au programme, à réserver":"В программе, нужно забронировать",
+"Je cherche les activités de la ville…":"Ищу, чем заняться в городе…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"Источники: Wikivoyage (CC BY-SA), OpenStreetMap",
+"Soleil de minuit":"Полярный день",
+"Nuit polaire":"Полярная ночь",
+"Jour férié":"Праздничный день",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"музеи, банки и учреждения часто закрыты; достопримечательности и транспорт переполнены.",
+"jour(s) férié(s) pendant ton voyage":"праздничных дней во время поездки"});

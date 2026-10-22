@@ -1988,4 +1988,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"Die Aktivitäten, für die jede Etappe bekannt ist. ✓ für dein Programm (zu buchen), ✕ zum Verwerfen.",
 "idées de la ville":"Ideen für die Stadt",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"Kreuzfahrten, Ausflüge, Tauchen… bei unseren Partnern buchbar",
-"Au programme, à réserver":"Im Programm, noch zu buchen"});
+"Au programme, à réserver":"Im Programm, noch zu buchen",
+"Je cherche les activités de la ville…":"Ich suche Aktivitäten in der Stadt…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"Quellen: Wikivoyage (CC BY-SA), OpenStreetMap",
+"Soleil de minuit":"Mitternachtssonne",
+"Nuit polaire":"Polarnacht",
+"Jour férié":"Feiertag",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"Museen, Banken und Ämter oft geschlossen; Sehenswürdigkeiten und Verkehrsmittel sehr voll.",
+"jour(s) férié(s) pendant ton voyage":"Feiertag(e) während deiner Reise"});

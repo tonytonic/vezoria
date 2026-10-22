@@ -1993,4 +1993,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"Le attività per cui ogni tappa è famosa. ✓ per aggiungerle al programma (da prenotare), ✕ per scartarle.",
 "idées de la ville":"idee per la città",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"Crociere, escursioni, immersioni… da prenotare con i nostri partner",
-"Au programme, à réserver":"Nel programma, da prenotare"});
+"Au programme, à réserver":"Nel programma, da prenotare",
+"Je cherche les activités de la ville…":"Cerco attività in città…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"Fonti: Wikivoyage (CC BY-SA), OpenStreetMap",
+"Soleil de minuit":"Sole di mezzanotte",
+"Nuit polaire":"Notte polare",
+"Jour férié":"Giorno festivo",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"musei, banche e uffici spesso chiusi; siti e trasporti molto affollati.",
+"jour(s) férié(s) pendant ton voyage":"festivo/i durante il viaggio"});

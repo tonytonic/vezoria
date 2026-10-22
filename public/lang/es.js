@@ -1994,4 +1994,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"Las actividades que hacen famosa cada etapa. ✓ para añadirlas al programa (por reservar), ✕ para descartarlas.",
 "idées de la ville":"ideas para la ciudad",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"Cruceros, excursiones, buceo… para reservar con nuestros socios",
-"Au programme, à réserver":"En el programa, por reservar"});
+"Au programme, à réserver":"En el programa, por reservar",
+"Je cherche les activités de la ville…":"Busco actividades en la ciudad…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"Fuentes: Wikivoyage (CC BY-SA), OpenStreetMap",
+"Soleil de minuit":"Sol de medianoche",
+"Nuit polaire":"Noche polar",
+"Jour férié":"Día festivo",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"museos, bancos y oficinas suelen cerrar; lugares y transportes muy concurridos.",
+"jour(s) férié(s) pendant ton voyage":"festivo(s) durante tu viaje"});

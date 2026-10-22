@@ -4932,4 +4932,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"每一站最有名的活动。✓ 加入行程（待预订），✕ 排除。",
 "idées de la ville":"城市推荐",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"游船、一日游、潜水……可在合作伙伴处预订",
-"Au programme, à réserver":"已加入行程，待预订"});
+"Au programme, à réserver":"已加入行程，待预订",
+"Je cherche les activités de la ville…":"正在查找城市活动…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"来源：Wikivoyage (CC BY-SA)、OpenStreetMap",
+"Soleil de minuit":"极昼",
+"Nuit polaire":"极夜",
+"Jour férié":"公共假日",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"博物馆、银行和政府机构常关闭；景点和交通非常拥挤。",
+"jour(s) férié(s) pendant ton voyage":"旅行期间的公共假日"});

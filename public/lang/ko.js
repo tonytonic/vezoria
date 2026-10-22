@@ -4932,4 +4932,11 @@ I18N.load({
 "Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.":"각 여행지에서 유명한 액티비티예요. ✓ 일정에 추가(예약 필요), ✕ 제외.",
 "idées de la ville":"도시 추천",
 "Croisières, excursions, plongée… à réserver chez nos partenaires":"크루즈, 투어, 다이빙… 파트너사에서 예약",
-"Au programme, à réserver":"일정에 추가, 예약 필요"});
+"Au programme, à réserver":"일정에 추가, 예약 필요",
+"Je cherche les activités de la ville…":"도시의 즐길 거리를 찾는 중…",
+"Sources : Wikivoyage (CC BY-SA), OpenStreetMap":"출처: Wikivoyage (CC BY-SA), OpenStreetMap",
+"Soleil de minuit":"백야",
+"Nuit polaire":"극야",
+"Jour férié":"공휴일",
+"musées, banques et administrations souvent fermés ; sites et transports très fréquentés.":"박물관·은행·관공서는 쉬는 경우가 많고, 관광지와 교통은 매우 붐벼요.",
+"jour(s) férié(s) pendant ton voyage":"여행 중 공휴일"});
