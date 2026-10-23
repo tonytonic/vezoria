@@ -41,10 +41,14 @@
     const q = u => [(1-u)*(1-u)*A[0] + 2*(1-u)*u*B[0] + u*u*C[0], (1-u)*(1-u)*A[1] + 2*(1-u)*u*B[1] + u*u*C[1]];
     const co = D.hs[0] ? (M.ctry || {})[normQ(stayCity(D.hs[0]))] : null, fd = d => d ? fshort(d) : '';
     const body = k => {
-      if(k === 'ou'){
-        return `<div class="ar-ou">${t.debut ? `<b>${fdate(t.debut)} → ${fdate(t.fin || t.debut)}</b>` : `<button type="button" class="ar-go" onclick="CV.datesSheet()">📅 ${MSGT('Choisir les dates')}</button>`}
+      if(k === 'ou'){   // ① les pays, les villes et les dates (pas les hôtels : ils se réservent à l’étape ③)
+        const st = tlStages(), ccs = [...new Set(st.map(x=>((M.ctry || {})[normQ(x.city)] || {}).cc).filter(Boolean))];
+        if(st.some(x=>!(M.ctry || {})[normQ(x.city)])) setTimeout(ariCtry, 300);
+        return `<div class="ar-ou">${t.debut ? `<b>${fdate(t.debut)} → ${fdate(t.fin || t.debut)}</b> <button type="button" class="ar-more" onclick="CV.datesSheet()">📅 ${MSGT('Modifier')}</button>` : `<button type="button" class="ar-go" onclick="CV.datesSheet()">📅 ${MSGT('Choisir les dates')}</button>`}
           ${(()=>{ const H = tripHols(t); return H.length ? `<div class="ar-hol">🎌 ${H.length} ${MSGT('jour(s) férié(s) pendant ton voyage')} : ${H.slice(0, 3).map(x=>`${fshort(x.d)} ${flag(x.cc)} <span data-notr>${esc(x.n)}</span>`).join(' · ')}${H.length > 3 ? ' …' : ''}</div>` : ''; })()}
-          ${D.hs.length ? `<div class="ar-st">${D.hs.map(h=>`<span data-notr>${esc(stayCity(h) || h.titre)}</span> <small>${nights(h.date, h.dateFin || h.date)} n.${normQ(stayCity(h)) !== normQ(cityOf(h.titre || '')) ? ` · 🏨 <span data-notr>${esc(cityOf(h.titre || ''))}</span>` : ''}</small>`).join(' · ')}</div>` : `<button type="button" class="ar-go" onclick="CV.edit(null,'hotel')">🏨 ${MSGT('Ajouter une étape (une ville où dormir)')}</button>`}</div>`;
+          ${ccs.length ? `<div class="ar-st">🌍 ${ccs.map(cc=>`${flag(cc)} <span data-notr>${esc(ccName(cc))}</span>`).join(' · ')}</div>` : ''}
+          ${st.length ? `<div class="ar-st">${st.map(x=>`📍 <span data-notr>${esc(x.city)}</span> <small>${fd(x.debut)} → ${fd(x.fin)} · ${nights(x.debut, x.fin || x.debut)} ${MSGT('nuits')}</small>`).join('<br>')}</div>` : ''}
+          <button type="button" class="ar-go" onclick="CV.ariCity()">📍 ${MSGT(st.length ? 'Ajouter une ville' : 'Ajouter les villes du voyage')}</button></div>`;
       }
       if(k === 'faire'){
         const xn = expCount(t), more = `<button type="button" class="ar-more" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>` + (xn ? `<button type="button" class="ar-go ex-go" onclick="CV.expOpen()">🎟️ ${MSGT('Expériences à vivre')} (${xn})</button>` : '');
@@ -84,6 +88,33 @@
         return `<div class="ar-s ${st}${o ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.ariTog('${x.k}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${MSGT(x.l)}</span><small>${x.ok ? '' : Math.round(x.f * 100) + ' %'}</small><em>${o ? '▾' : '▸'}</em></button>
           ${o ? `<div class="ar-b">${body(x.k)}</div>` : ''}</div>`; }).join('')}</div>
       ${cur ? '' : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}</div>`;
+  }
+  // ① ajouter une ville : le nom, l’arrivée et le nombre de nuits (l’hébergement « à réserver » est créé, il se réserve à l’étape ③)
+  function ariCity(){
+    const t = trip(); if(!t) return; const st = tlStages(), last = st[st.length - 1];
+    const d0 = last ? (last.fin || last.debut) : (t.debut || isoToday());
+    openSheet(`<h2>📍 ${esc(MSGT('Ajouter une ville'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».'))}</div>
+      <form id="ac-f" onsubmit="event.preventDefault();CV.ariCitySave()">
+        <div class="v-f"><label>${esc(MSGT('Ville'))}</label><input class="v-in" id="ac-v" required placeholder="${esc(MSGT('Ex. Rome, Lisbonne, Tokyo'))}"></div>
+        <div class="cv-row" style="gap:8px"><div class="v-f" style="flex:1;min-width:0"><label>${esc(MSGT('Arrivée'))}</label><input class="v-in" type="date" id="ac-d" value="${esc(d0)}" required></div>
+          <div class="v-f" style="flex:1;min-width:0"><label>${esc(MSGT('Nuits'))}</label><input class="v-in" type="number" id="ac-n" min="1" max="90" value="2" inputmode="numeric" required></div></div>
+        <div class="v-actions"><button type="submit" class="v-btn">＋ ${esc(MSGT('Ajouter'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>
+      </form>`);
+    setTimeout(()=>{ const i = document.getElementById('ac-v'); if(i) i.focus(); }, 60);
+  }
+  function ariCitySave(){
+    const t = trip(); if(!t) return;
+    const v = (document.getElementById('ac-v').value || '').trim(), d = document.getElementById('ac-d').value, n = Math.max(1, Math.min(90, Math.round(num(document.getElementById('ac-n').value)) || 1));
+    if(!v || !d) return; const f = addDays(d, n), out = [];
+    out.push({id:'i' + uid(), type:'item', trip:t.id, cat:'hotel', titre:v, base:v, date:d, dateFin:f, statut:'todo', partage:'grp', qui:[]});
+    const nt = clone(t); let ch = false; if(!nt.debut || d < nt.debut){ nt.debut = d; ch = true; } if(!nt.fin || f > nt.fin){ nt.fin = f; ch = true; } if(ch) out.push(nt);
+    putMany(out, '📍 ' + v); closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(ariCtry, 300);
+  }
+  let acBusy = false;
+  async function ariCtry(){   // le pays de chaque ville (une seule fois, gardé en mémoire), pour afficher les pays du voyage
+    if(acBusy) return; acBusy = true; let n = 0;
+    try { for(const x of tlStages()){ if(!(M.ctry || {})[normQ(x.city)]){ const c = await countryOf(x.city); if(c) n++; } } } catch(e){}
+    acBusy = false; if(n){ const y = window.scrollY; render(); window.scrollTo(0, y); }
   }
   function ariTog(k){ const t = trip(); if(!t) return; M.ariOpen = M.ariOpen || {}; M.ariOpen[t.id] = M.ariOpen[t.id] === k ? '-' : k; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function ariSkip(k){ const t = trip(); if(!t) return; M.ariSkip = M.ariSkip || {}; (M.ariSkip[t.id] = M.ariSkip[t.id] || {})[k] = 1; if(M.ariOpen) delete M.ariOpen[t.id]; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }

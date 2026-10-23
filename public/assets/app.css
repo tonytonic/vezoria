@@ -4,7 +4,7 @@
 html,body{background:#2A1238}
 #vz-splash{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483000;background:#2A1238;background:linear-gradient(#3a1750,#2A1238);overflow:hidden;transition:opacity .45s ease;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans",sans-serif;-webkit-user-select:none;user-select:none}
 #vz-splash.out{opacity:0;pointer-events:none}
-#vz-splash .sp-f{position:absolute;top:0;left:50%;height:100vh;height:100dvh;width:55.814vh;width:55.814dvh;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:url(splash.webp) center/100% 100% no-repeat}
+#vz-splash .sp-f{position:absolute;top:0;left:50%;height:100vh;height:100dvh;width:55.814vh;width:55.814dvh;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:url(../splash.webp) center/100% 100% no-repeat}
 #vz-splash .sp-t{position:absolute;left:4%;right:4%;top:25.4%;text-align:center;color:#fff;font-weight:300;font-size:3.2vh;font-size:3.2dvh;letter-spacing:.02em;text-shadow:0 1px 8px rgba(40,10,60,.55);white-space:nowrap}
 #vz-splash .sp-r{position:absolute;left:50%;top:84.6%;width:7.4%;aspect-ratio:1;margin-left:-3.7%;border-radius:50%;border:3px solid rgba(233,196,106,.95);border-top-color:transparent;animation:vzsp-r 1.1s linear infinite}
 #vz-splash .sp-b{position:absolute;left:17%;right:17%;top:92.3%;height:.55%;min-height:3px;border-radius:9px;background:rgba(255,255,255,.28);overflow:hidden}
