@@ -7,6 +7,10 @@
  *   {action:'restore', token|space, note} → rétablir un carnet suspendu (signalement infondé)
  *   {action:'delete',  token|space, note} → effacer définitivement fiches + photos (le carnet reste bloqué)
  *   {action:'list'}                        → carnets suspendus/effacés + journal des 100 dernières actions
+ *   {action:'geo', mode}                   → recherche d'adresses : 'on' (Nominatim + Photon), 'photon' (Photon seul), 'off' (coupée)
+ *                                            sans « mode » : renvoie le mode actuel et la taille du cache
+ *   {action:'errors'}                      → les 200 dernières erreurs reçues des téléphones (/api/err), regroupées
+ *   {action:'errors', clear:true}          → vider la liste des erreurs
  *
  * Le CODE du carnet n'est jamais envoyé ici : la page d'administration calcule elle-même son empreinte
  * (« token », la même que celle de l'appli), et le serveur en déduit le dossier du carnet.
@@ -91,6 +95,22 @@ export async function onRequestPost({ request, env }) {
     const bl = await env.DB.prepare('SELECT space, status, at, note FROM blocked ORDER BY at DESC LIMIT 200').all();
     const lg = await env.DB.prepare('SELECT at, action, space, note FROM admin_log ORDER BY at DESC LIMIT 100').all();
     return json({ blocked: (bl.results || []).map(r => ({ ...r, short: short(r.space) })), log: (lg.results || []).map(r => ({ ...r, short: short(r.space) })) });
+  }
+  if (a === 'geo') {
+    await env.DB.prepare('CREATE TABLE IF NOT EXISTS cfg (k TEXT PRIMARY KEY, v TEXT NOT NULL)').run();
+    if (['on', 'photon', 'off'].includes(b.mode)) {
+      await env.DB.prepare("INSERT INTO cfg (k, v) VALUES ('geo', ?1) ON CONFLICT(k) DO UPDATE SET v = ?1").bind(b.mode).run();
+      await log(env, 'geo:' + b.mode, '-', b.note);
+    }
+    const r = await env.DB.prepare("SELECT v FROM cfg WHERE k = 'geo'").first();
+    let n = 0; try { n = (await env.DB.prepare('SELECT COUNT(*) AS n FROM geo_cache').first()).n; } catch (e) {}
+    return json({ mode: env.GEO_MODE || (r ? r.v : 'on'), forcedByEnv: !!env.GEO_MODE, cached: n, note: 'le changement prend effet en 1 minute au plus' });
+  }
+  if (a === 'errors') {
+    await env.DB.prepare('CREATE TABLE IF NOT EXISTS errors (k TEXT PRIMARY KEY, msg TEXT, src TEXT, ver TEXT, ua TEXT, n INTEGER NOT NULL, first INTEGER NOT NULL, last INTEGER NOT NULL)').run();
+    if (b.clear) { await env.DB.prepare('DELETE FROM errors').run(); await log(env, 'errors:clear', '-', ''); return json({ ok: true }); }
+    const e = await env.DB.prepare('SELECT msg, src, ver, ua, n, first, last FROM errors ORDER BY last DESC LIMIT 200').all();
+    return json({ errors: e.results || [] });
   }
   let space = '';
   if (b.token && /^[0-9a-f]{64}$/.test(b.token)) space = await sha256('carnet-voyage:' + b.token);
