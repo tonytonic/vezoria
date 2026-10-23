@@ -5074,4 +5074,8 @@ I18N.load({
 "{0} photo(s) rangées dans le pot commun.":"{0} fotoğraf ortak havuza taşındı.",
 "{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.":"Yol arkadaşlarının {0} fotoğrafı: onların telefonundan taşınmalı.",
 "{0} non rangée(s), réessaie plus tard.":"{0} taşınamadı, daha sonra tekrar dene.",
-"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"Bu defterdeki {0} fotoğrafı yol arkadaşların veya takipçilerin de görüyor: onlar için de kaybolacak."});
+"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"Bu defterdeki {0} fotoğrafı yol arkadaşların veya takipçilerin de görüyor: onlar için de kaybolacak.",
+"Dans le pot":"Havuzda",
+"Anciennes copies à effacer : {0} (contrôlées : {1})":"Silinecek eski kopyalar: {0} (kontrol edilen: {1})",
+"Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.":"Taşıma sırasında uygulamayı açık tut. Kapanırsa tekrar dokun: kaldığı yerden devam eder.",
+"Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.":"Bağlantı kesildi: taşıma duraklatıldı. Bağlantı gelince tekrar dokun, kaldığı yerden devam eder."});

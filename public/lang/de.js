@@ -2142,4 +2142,8 @@ I18N.load({
 "{0} photo(s) rangées dans le pot commun.":"{0} Foto(s) in den gemeinsamen Pool verschoben.",
 "{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.":"{0} Foto(s) deiner Mitreisenden: werden von deren Handy verschoben.",
 "{0} non rangée(s), réessaie plus tard.":"{0} nicht verschoben, versuche es später erneut.",
-"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"{0} Foto(s) in diesem Reisebuch sehen auch deine Mitreisenden oder Follower: Sie verschwinden auch für sie."});
+"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"{0} Foto(s) in diesem Reisebuch sehen auch deine Mitreisenden oder Follower: Sie verschwinden auch für sie.",
+"Dans le pot":"Im Pool",
+"Anciennes copies à effacer : {0} (contrôlées : {1})":"Alte Kopien zum Löschen: {0} (geprüft: {1})",
+"Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.":"Lass die App während des Verschiebens offen. Wenn sie sich schließt, tippe erneut: Es geht dort weiter, wo es aufgehört hat.",
+"Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.":"Keine Verbindung: Verschieben pausiert. Tippe erneut, wenn das Netz wieder da ist – es geht dort weiter, wo es aufgehört hat."});

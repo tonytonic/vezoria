@@ -5086,4 +5086,8 @@ I18N.load({
 "{0} photo(s) rangées dans le pot commun.":"사진 {0}장을 공유 보관함으로 옮겼어요.",
 "{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.":"동행의 사진 {0}장: 동행의 휴대폰에서 옮겨야 해요.",
 "{0} non rangée(s), réessaie plus tard.":"{0}장은 옮기지 못했어요. 나중에 다시 해 보세요.",
-"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"이 기록에 저장된 사진 {0}장은 동행이나 팔로워도 보고 있어요. 그들에게서도 사라져요."});
+"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"이 기록에 저장된 사진 {0}장은 동행이나 팔로워도 보고 있어요. 그들에게서도 사라져요.",
+"Dans le pot":"보관함에",
+"Anciennes copies à effacer : {0} (contrôlées : {1})":"삭제할 예전 사본: {0} (확인됨: {1})",
+"Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.":"사진을 옮기는 동안 앱을 열어 두세요. 앱이 닫히면 다시 누르세요. 멈춘 곳부터 이어서 해요.",
+"Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.":"네트워크가 끊겨 옮기기를 멈췄어요. 다시 연결되면 눌러 주세요. 멈춘 곳부터 이어서 해요."});

@@ -2132,4 +2132,8 @@ I18N.load({
 "{0} photo(s) rangées dans le pot commun.":"{0} photo(s) moved into the shared pot.",
 "{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.":"{0} photo(s) from your companions: to be moved from their phone.",
 "{0} non rangée(s), réessaie plus tard.":"{0} not moved, try again later.",
-"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"{0} photo(s) stored in this journal are also seen by your companions or followers: they will disappear for them too."});
+"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"{0} photo(s) stored in this journal are also seen by your companions or followers: they will disappear for them too.",
+"Dans le pot":"In the pot",
+"Anciennes copies à effacer : {0} (contrôlées : {1})":"Old copies to delete: {0} (checked: {1})",
+"Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.":"Keep the app open while photos are being moved. If it closes, tap again: it picks up where it left off.",
+"Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.":"Network lost: moving paused. Tap again when you’re back online, it will pick up where it left off."});

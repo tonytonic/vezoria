@@ -5086,4 +5086,8 @@ I18N.load({
 "{0} photo(s) rangées dans le pot commun.":"{0} फ़ोटो साझा भंडार में रखी गईं।",
 "{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.":"तुम्हारे साथियों की {0} फ़ोटो: उनके फ़ोन से रखी जाएँगी।",
 "{0} non rangée(s), réessaie plus tard.":"{0} नहीं रखी गईं, बाद में फिर कोशिश करो।",
-"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"इस डायरी में रखी {0} फ़ोटो तुम्हारे साथी या फ़ॉलोअर भी देखते हैं: उनके यहाँ से भी हट जाएँगी।"});
+"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"इस डायरी में रखी {0} फ़ोटो तुम्हारे साथी या फ़ॉलोअर भी देखते हैं: उनके यहाँ से भी हट जाएँगी।",
+"Dans le pot":"भंडार में",
+"Anciennes copies à effacer : {0} (contrôlées : {1})":"हटाने वाली पुरानी कॉपियाँ: {0} (जाँची गईं: {1})",
+"Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.":"फ़ोटो रखते समय ऐप खुला रखो। अगर बंद हो जाए, फिर से दबाओ: जहाँ रुका था वहीं से शुरू होगा।",
+"Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.":"नेटवर्क चला गया: रखना रुका है। नेटवर्क लौटने पर फिर दबाओ, जहाँ रुका था वहीं से शुरू होगा।"});

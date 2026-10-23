@@ -5086,4 +5086,8 @@ I18N.load({
 "{0} photo(s) rangées dans le pot commun.":"{0} 枚の写真を共有ポットへ移しました。",
 "{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.":"仲間の写真 {0} 枚：仲間のスマホから移します。",
 "{0} non rangée(s), réessaie plus tard.":"{0} 枚は移せませんでした。あとで再試行してください。",
-"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"この旅帳の写真 {0} 枚は仲間やフォロワーも見ています。その人たちからも消えます。"});
+"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"この旅帳の写真 {0} 枚は仲間やフォロワーも見ています。その人たちからも消えます。",
+"Dans le pot":"ポット内",
+"Anciennes copies à effacer : {0} (contrôlées : {1})":"削除予定の古いコピー：{0}（確認済み：{1}）",
+"Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.":"移している間はアプリを開いたままにしてください。閉じてしまったら、もう一度タップすれば続きから再開します。",
+"Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.":"ネットワークが切れたため一時停止しました。つながったらもう一度タップしてください。続きから再開します。"});

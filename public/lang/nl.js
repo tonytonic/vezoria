@@ -2138,4 +2138,8 @@ I18N.load({
 "{0} photo(s) rangées dans le pot commun.":"{0} foto(’s) naar de gedeelde pot verplaatst.",
 "{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.":"{0} foto(’s) van je reisgenoten: te verplaatsen vanaf hun telefoon.",
 "{0} non rangée(s), réessaie plus tard.":"{0} niet verplaatst, probeer het later opnieuw.",
-"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"{0} foto(’s) in dit dagboek worden ook gezien door reisgenoten of volgers: ze verdwijnen ook voor hen."});
+"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"{0} foto(’s) in dit dagboek worden ook gezien door reisgenoten of volgers: ze verdwijnen ook voor hen.",
+"Dans le pot":"In de pot",
+"Anciennes copies à effacer : {0} (contrôlées : {1})":"Oude kopieën te verwijderen: {0} (gecontroleerd: {1})",
+"Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.":"Houd de app open tijdens het verplaatsen. Sluit hij, tik dan opnieuw: hij gaat verder waar hij was gebleven.",
+"Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.":"Geen netwerk: verplaatsen gepauzeerd. Tik opnieuw zodra je weer online bent, hij gaat verder waar hij was gebleven."});

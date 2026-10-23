@@ -2147,4 +2147,8 @@ I18N.load({
 "{0} photo(s) rangées dans le pot commun.":"{0} foto spostata/e nella cassa comune.",
 "{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.":"{0} foto dei tuoi compagni: da spostare dal loro telefono.",
 "{0} non rangée(s), réessaie plus tard.":"{0} non spostata/e, riprova più tardi.",
-"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"{0} foto salvata/e in questo diario sono viste anche da compagni o follower: spariranno anche per loro."});
+"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"{0} foto salvata/e in questo diario sono viste anche da compagni o follower: spariranno anche per loro.",
+"Dans le pot":"Nella cassa",
+"Anciennes copies à effacer : {0} (contrôlées : {1})":"Vecchie copie da eliminare: {0} (controllate: {1})",
+"Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.":"Tieni l’app aperta durante lo spostamento. Se si chiude, premi di nuovo: riprende da dove si era fermato.",
+"Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.":"Rete assente: spostamento in pausa. Premi di nuovo quando torna la rete, riprenderà da dove si era fermato."});

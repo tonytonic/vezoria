@@ -5087,4 +5087,8 @@ I18N.load({
 "{0} photo(s) rangées dans le pot commun.":"Перенесено в общий фотобанк фото: {0}.",
 "{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.":"Фото попутчиков ({0}) переносятся с их телефонов.",
 "{0} non rangée(s), réessaie plus tard.":"Не перенесено: {0}, попробуй позже.",
-"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"Фото из этого дневника ({0}) видят и попутчики или подписчики: у них они тоже исчезнут."});
+"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"Фото из этого дневника ({0}) видят и попутчики или подписчики: у них они тоже исчезнут.",
+"Dans le pot":"В фотобанке",
+"Anciennes copies à effacer : {0} (contrôlées : {1})":"Старые копии к удалению: {0} (проверено: {1})",
+"Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.":"Не закрывай приложение во время переноса. Если оно закроется, нажми снова: перенос продолжится с того же места.",
+"Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.":"Сеть пропала: перенос приостановлен. Нажми снова, когда сеть вернётся, — он продолжится с того же места."});

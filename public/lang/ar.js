@@ -5087,4 +5087,8 @@ I18N.load({
 "{0} photo(s) rangées dans le pot commun.":"تم نقل {0} صورة إلى المخزن المشترك.",
 "{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.":"{0} صورة لرفاقك: تُنقل من هواتفهم.",
 "{0} non rangée(s), réessaie plus tard.":"لم تُنقل {0}، حاول لاحقًا.",
-"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"{0} صورة محفوظة في هذا الدفتر يراها رفاقك أو متابعوك أيضًا: ستختفي لديهم كذلك."});
+"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"{0} صورة محفوظة في هذا الدفتر يراها رفاقك أو متابعوك أيضًا: ستختفي لديهم كذلك.",
+"Dans le pot":"في المخزن",
+"Anciennes copies à effacer : {0} (contrôlées : {1})":"نسخ قديمة للحذف: {0} (تم فحص: {1})",
+"Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.":"أبقِ التطبيق مفتوحًا أثناء النقل. إذا أُغلق، اضغط مجددًا: سيكمل من حيث توقف.",
+"Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.":"انقطعت الشبكة: توقف النقل مؤقتًا. اضغط مجددًا عند عودة الشبكة وسيكمل من حيث توقف."});

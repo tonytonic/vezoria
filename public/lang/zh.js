@@ -5086,4 +5086,8 @@ I18N.load({
 "{0} photo(s) rangées dans le pot commun.":"已将 {0} 张照片移入共享池。",
 "{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.":"同伴的 {0} 张照片：需在他们的手机上移入。",
 "{0} non rangée(s), réessaie plus tard.":"{0} 张未移入，请稍后再试。",
-"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"此手帐中有 {0} 张照片也被同伴或关注者查看：它们也会从他们那里消失。"});
+"{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.":"此手帐中有 {0} 张照片也被同伴或关注者查看：它们也会从他们那里消失。",
+"Dans le pot":"池中",
+"Anciennes copies à effacer : {0} (contrôlées : {1})":"待删除的旧副本：{0}（已检查：{1}）",
+"Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.":"移入照片时请保持应用打开。如果应用关闭，再点一次：会从中断处继续。",
+"Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.":"网络中断：移入已暂停。网络恢复后再点一次，会从中断处继续。"});
