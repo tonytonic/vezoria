@@ -1,9 +1,13 @@
 // Carnet de voyage — fonctionnement hors ligne
-// Pages et fichiers de l'appli : réseau s'il répond vite (dernière version), sinon copie locale tout de suite
-// (réseau lent ou absent) ; la copie se met à jour en arrière-plan.
+// Pages et fichiers de l'appli : copie locale tout de suite (ouverture instantanée), mise à jour en arrière-plan.
+// Une nouvelle version de l'appli = un nouveau sw.js : il s'installe en arrière-plan, puis l'appli propose
+// « Nouvelle version · toucher pour recharger » (ou recharge seule si elle vient juste de s'ouvrir).
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-22e';
-const CORE = ['./', './splash.webp', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
+const CACHE = 'vezoria-2026-10-23d';
+// le code et les styles sont dans assets/ (depuis la 2026-10-23d) : copiés dès l'installation pour marcher hors ligne tout de suite
+const CORE = ['./', './splash.webp', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './i18n.js',
+  './assets/app.css', ...[1, 2, 3, 4, 5, 6, 7, 8].map(n => './assets/app-' + n + '.js'),
+  './assets/fonts/0cb4a757b2.woff2', './assets/fonts/25bd274cc1.woff2', './assets/fonts/55b958c2e4.woff2', './assets/fonts/5825d57791.woff2', './assets/fonts/692b8f6440.woff2', './assets/fonts/6ea773f758.woff2', './assets/fonts/9130a9f8f9.woff2', './assets/fonts/94ed9918ff.woff2'];
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
 self.addEventListener('install', e => {
@@ -59,12 +63,15 @@ self.addEventListener('fetch', e => {
       const home = req.mode === 'navigate' && /\/(index\.html)?$/.test(url.pathname);
       let cached = (await caches.match(req, {ignoreSearch: true})) || (home ? await caches.match('./') : null);
       if (cached && cached.redirected) cached = new Response(await cached.blob(), {status: 200, headers: cached.headers});   // ancienne copie « redirigée » : on la nettoie
-      if (!cached) return timeout(net, 15000).catch(() => home ? caches.match('./') : Response.error());
-      // redirection (ex. « page.html » → « page ») ou page absente : la réponse du serveur est rendue telle quelle
-      try { const r = await timeout(net, 1500);
-        if (r && r.redirected && req.mode === 'navigate') return Response.redirect(r.url, 302);   // jamais de réponse « redirigée » pour une page (Safari)
-        return r && (r.ok || r.type === 'opaqueredirect' || (r.status >= 300 && r.status < 500)) ? r : cached; }
-      catch (_) { e.waitUntil(net.catch(() => null)); return cached; }   // réseau lent : on ouvre la copie locale tout de suite
+      if (!cached) {
+        try { const r = await timeout(net, 15000);
+          if (r && r.redirected && req.mode === 'navigate') return Response.redirect(r.url, 302);   // jamais de réponse « redirigée » pour une page (Safari)
+          return r; }
+        catch (_) { return home ? caches.match('./') : Response.error(); }
+      }
+      // ⚡ copie locale tout de suite, sans attendre le réseau ; la copie se met à jour en arrière-plan
+      e.waitUntil(net.catch(() => null));
+      return cached;
     })());
     return;
   }
