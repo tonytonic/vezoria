@@ -46,9 +46,9 @@ html.vz-big{font-size:18px}
 @media (max-width:400px){
   .hero #hdr-title{font-size:clamp(1.45rem,7.6vw,1.9rem)!important;line-height:1.08!important;margin:2px 0 4px!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .hero #hdr-sub{margin-top:4px!important;font-size:.8rem!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%!important}
-  .hero .hdr-chips{flex-wrap:nowrap!important;overflow-x:auto;margin-top:8px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 88%,transparent)}
-  .hero .hdr-chips::-webkit-scrollbar{display:none}
-  .hero .hdr-chips>*{flex:0 0 auto}
+  .hero .hdr-chips{flex-wrap:wrap!important;gap:5px!important;margin-top:8px!important}
+  .hero .hdr-chips span{padding:3px 8px!important;font-size:.75rem!important;white-space:nowrap}
+  .hero .hdr-chips span img.vi{width:14px!important;height:14px!important}
   .hero .hero-foot{margin-top:10px!important}
   .hero .hero-foot .cv-hero-qr{display:none!important}
   .hero .hero-foot .cv-bell{margin-left:auto!important;margin-right:12px!important}
