@@ -2108,7 +2108,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     $('ex-chips').innerHTML = [time ? `<span>🕒 ${time}</span>` : '', d.temp != null ? `<span>${expWx(d.code, d.day)} ${d.temp}°</span>` : ''].join('');
     const added = new Set(exp.day ? placesOf(exp.day).map(p=>normQ(p.nom)) : exp.hid ? placesOfStay(exp.hid).map(p=>normQ(p.nom)) : []);
     const secs = EXP_CATS.filter(([k])=>(d.cats[k] || []).length).map(([k, ic, lbl])=>`<section class="ex-sec"><h2><span>${ic}</span> <span>${lbl}</span> <small>${d.cats[k].length}</small></h2>
-      <div class="ex-row">${d.cats[k].map((it, i)=>`<button type="button" class="ex-card" onclick="CV.expOpen('${k}',${i})">
+      <div class="ex-row">${d.cats[k].map((it, i)=>`<button type="button" class="ex-card" onclick="CV.exCard('${k}',${i})">
         <div class="ex-ph" style="background-image:${EXP_GRAD[k]}"><span class="ex-ic">${ic}</span>${it.ph ? `<img class="ex-pic" src="${esc(it.ph)}" alt="" loading="lazy" decoding="async" onload="this.classList.add('ok')" onerror="this.remove()">` : ''}${added.has(normQ(it.n)) ? '<i class="ex-ok">✓</i>' : ''}</div>
         <b data-notr>${esc(it.n)}</b><small data-notr>${esc(it.d || it.a || '')}</small>${it.pr || it.h ? `<em data-notr>${esc(it.pr ? '💶 ' + it.pr : '🕒 ' + it.h)}</em>` : ''}</button>`).join('')}</div></section>`).join('');
     $('ex-body').innerHTML = (d.intro ? `<p class="ex-intro" data-notr>${esc(d.intro)}</p>` : '')
@@ -2120,7 +2120,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     try { const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), {root:$('ex-scroll'), threshold:.12});
       document.querySelectorAll('#cv-exp .ex-sec').forEach(s=>io.observe(s)); } catch(e){ document.querySelectorAll('#cv-exp .ex-sec').forEach(s=>s.classList.add('in')); }
   }
-  function expOpen(k, i){
+  function exCard(k, i){   // (avant « expOpen » : même nom que la liste des expériences à vivre, qui le remplaçait → la fiche ne s’ouvrait pas)
     const it = exp && exp.d && exp.d.cats[k] && exp.d.cats[k][i]; if(!it) return;
     const det = document.getElementById('ex-det'), ic = (EXP_CATS.find(x=>x[0] === k) || [])[1] || '📍';
     const has = exp.day ? placesOf(exp.day).some(p=>normQ(p.nom) === normQ(it.n)) : exp.hid && placesOfStay(exp.hid).some(p=>normQ(p.nom) === normQ(it.n));
@@ -2141,22 +2141,22 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const ex = (exp.day ? placesOf(exp.day) : placesOfStay(exp.hid)).find(x=>normQ(x.nom) === normQ(it.n));
     if(ex) drop(ex.id, '↩️ Retiré');
     else put({id:'pl' + uid(), type:'place', trip:M.trip, stay:exp.hid || '', date:exp.day || (R[exp.hid] && R[exp.hid].type === 'city' && R[exp.hid].date) || '', nom:it.n, adresse:it.a || '', lat:it.lat, lng:it.lng, cat:k === 'see' ? wikiCat(it.n + ' ') : 'loisir', lock:false}, '📍 ' + it.n);
-    expOpen(k, i);
+    exCard(k, i);
     const sc = document.getElementById('ex-scroll'), y = sc ? sc.scrollTop : 0; expFill(); if(sc) sc.scrollTop = y;
   }
   function expClose(){ const ov = document.getElementById('cv-exp'), back = exp && exp.day; if(ov) ov.remove(); document.body.style.overflow = ''; exp = null; refresh(); if(back) setTimeout(()=>planDay(back), 60); }
   // une ligne d’explication sous chaque tuile du menu « Plus » (« Livret », « Outils »… ne disent pas tout)
   const PLUS_DESC = {souv:'Photos, récits, bilan', live:'Le voyage en direct', prog:'Jour par jour', resas:'Billets, hôtels, activités', sous:'Prévu et dépensé', notes:'Courses, mémos, documents', outils:'Change, météo, valise…',
     envies:'Idées et sondages', check:'À ne pas oublier', ech:'Paiements à venir', past:'Tes anciens voyages', reglages:'Compagnons et code',
-    livret:'L’appli en images', omap:'Plans sans réseau', badges:'Tes récompenses', prefs:'Langue, devise, affichage', coffee:'Soutenir l’appli'};
+    livret:'L’appli en images', omap:'Plans sans réseau', badges:'Tes récompenses', prefs:'Profils, partage, langue, cartes…', coffee:'Soutenir l’appli'};
   function plusSheet(){
     const ph = navPhase(), p = bar();
     // voyage en cours / fini : la barre du bas a pris d’autres boutons → la préparation (Programme, Résas, Budget) passe dans « Plus », sans doublon
-    const ent = ph ? DEST.filter(d=>!destHidden(d[0]) && !['souv', 'live', 'bilan'].includes(d[0]))
+    const inPrefs = k => ['reglages', 'livret', 'omap'].includes(k);   // ceux-là sont dans ⚙️ Réglages (moins de tuiles dans « Plus »)
+    const ent = ph ? DEST.filter(d=>!destHidden(d[0]) && !inPrefs(d[0]) && !['souv', 'live', 'bilan'].includes(d[0]))
         .map(d=>[`CV.plusGo('${ph === 'past' && d[0] === 'sous' ? 'i:bilan:budget' : d[0]}')`, d[1], ph === 'past' && d[0] === 'sous' ? 'Budget du voyage' : d[2]])
-      : DEST.filter(d=>!p.includes(d[0]) && !destHidden(d[0]) && d[0] !== 'prog').map(d=>[`CV.plusGo('${d[0]}')`, d[1], d[2]]);
+      : DEST.filter(d=>!p.includes(d[0]) && !destHidden(d[0]) && !inPrefs(d[0]) && d[0] !== 'prog').map(d=>[`CV.plusGo('${d[0]}')`, d[1], d[2]]);
     ent.push([`CV.plusGo('prefs')`, '⚙️', 'Réglages']);
-    if(coffeeOn()) ent.push([`CV.coffeeGo()`, '☕', 'Offrir un café']);
     const dsc = fn => { const k = (fn.match(/plusGo\('(?:i:bilan:)?([a-z]+)/) || [])[1] || (/coffee/.test(fn) ? 'coffee' : ''); return PLUS_DESC[k === 'budget' ? 'sous' : k] || ''; };
     openSheet(`<h2>Plus</h2><div class="cv-plus">${ent.map(([fn,ic,l])=>`<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span>${dsc(fn) ? `<small>${dsc(fn)}</small>` : ''}</button>`).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">✕ Fermer</button></div>`);

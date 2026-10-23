@@ -2549,3 +2549,34 @@ body .cv-live.done{background:linear-gradient(135deg,#0E1838,#2B3C7E)}
 .cv-rcp.nw{border-color:#ff3b6b;box-shadow:inset 3px 0 0 #ff3b6b}
 body.vz-webf .cv-bell{display:none}
 .cv-prow.sc-new{font-weight:800;background:#fff6f9;box-shadow:inset 3px 0 0 #ff3b6b}
+/* 💡 Choisir mes visites : une carte à la fois, glisser à droite / à gauche */
+#cv-sw{position:fixed;inset:0;z-index:9400;background:radial-gradient(120% 80% at 50% 0%,#2a1450,#0b0718 70%);color:#fff;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px calc(env(safe-area-inset-bottom,0px) + 14px);box-sizing:border-box;animation:exIn .35s ease;touch-action:none}
+#cv-sw .sw-head{display:flex;align-items:center;gap:10px}
+#cv-sw .sw-x,#cv-sw .sw-list{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:1.1rem;cursor:pointer}
+#cv-sw .sw-ttl{flex:1;min-width:0;text-align:center}#cv-sw .sw-ttl b{display:block;font-size:1rem}#cv-sw .sw-ttl small{font-size:.8rem;opacity:.75}
+#cv-sw .sw-bar{height:4px;border-radius:4px;background:rgba(255,255,255,.14);margin:10px 0 12px;overflow:hidden}#cv-sw .sw-bar span{display:block;height:100%;background:linear-gradient(90deg,#f472b6,#fbbf24);transition:width .3s}
+#cv-sw .sw-stack{position:relative;flex:1;min-height:0}
+.sw-card{position:absolute;inset:0;border-radius:26px;overflow:hidden;background:linear-gradient(135deg,#6b2fa0,#ec4899);box-shadow:0 18px 40px -12px rgba(0,0,0,.6);transition:transform .25s ease;user-select:none;-webkit-user-select:none;--yes:0;--no:0}
+.sw-card:not(.top){transform:scale(.95) translateY(10px);filter:brightness(.75)}
+.sw-card.top{cursor:grab;touch-action:none}
+.sw-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}.sw-ic{font-size:5rem;opacity:.55}
+.sw-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;pointer-events:none}.sw-img.ok{opacity:1}
+.sw-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(10,5,20,.92) 88%)}
+.sw-tx{position:absolute;left:0;right:0;bottom:0;padding:18px 20px 20px}
+.sw-tx small{display:block;font-size:.8rem;opacity:.85;font-weight:600}.sw-tx b{display:block;font-family:var(--display,serif);font-style:italic;font-size:1.7rem;line-height:1.1;margin:4px 0 6px}
+.sw-tx em{display:inline-block;font-style:normal;font-size:.8rem;background:rgba(255,255,255,.18);border-radius:10px;padding:3px 9px;margin-bottom:6px}
+.sw-ex{margin:0;font-size:.88rem;line-height:1.4;opacity:.9;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.sw-wk{display:inline-block;margin-top:8px;color:#fbcfe8;font-size:.8rem;font-weight:700;text-decoration:none}
+.sw-tag{position:absolute;top:26px;font-style:normal;font-weight:900;font-size:1.3rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border:4px solid;border-radius:12px;pointer-events:none}
+.sw-tag.yes{left:20px;color:#4ade80;transform:rotate(-14deg);opacity:var(--yes)}.sw-tag.no{right:20px;color:#f87171;transform:rotate(14deg);opacity:var(--no)}
+#cv-sw .sw-acts{display:flex;justify-content:center;align-items:center;gap:18px;padding:16px 0 4px}
+.sw-b{border:0;border-radius:50%;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 20px -8px rgba(0,0,0,.6);font-weight:800;color:#fff}
+.sw-b.no,.sw-b.yes{width:66px;height:66px;font-size:1.7rem}.sw-b.no{background:#fff;color:#ef4444}.sw-b.yes{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.sw-b.undo,.sw-b.all{width:48px;height:48px;font-size:1.15rem;background:rgba(255,255,255,.14)}.sw-b:disabled{opacity:.35}
+#cv-sw .sw-hint{text-align:center;font-size:.78rem;opacity:.6}
+#cv-sw .sw-end{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;text-align:center;max-width:420px;margin:0 auto;width:100%}
+#cv-sw .sw-end-i{font-size:3.4rem}#cv-sw .sw-end h2{margin:0;font-family:var(--display,serif);font-style:italic;font-size:1.8rem}#cv-sw .sw-end p{margin:0 0 8px;opacity:.85}
+#cv-sw .sw-end .v-btn.sec{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)}
+@media (prefers-reduced-motion:reduce){#cv-sw{animation:none}.sw-card{transition:none}}
+/* Échéancier / budget : la 1re tuile (« Déjà payé ») reste foncée en mode verre, sinon le doré est illisible sur fond clair */
+body.vz-glass .v-tiles .v-tile:first-child{background:var(--navy)!important;border-color:transparent!important}
