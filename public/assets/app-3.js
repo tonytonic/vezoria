@@ -276,9 +276,50 @@
     const t = targets(r)[0];
     return t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t;
   }
+  /* ══════════ 🫙 POT COMMUN : chaque photo rangée UNE fois, lue par tous ceux qui y ont droit ══════════
+     Une photo « v2 » est chiffrée avec SA propre clé, puis envoyée une seule fois dans le carnet où elle vit.
+     La fiche « pk:<photo> » (chiffrée avec le reste du carnet) garde : où elle est (s), ses noms sur le serveur (i, it),
+     sa clé (k) et son droit de lecture (r). Les compagnons reçoivent « pk: » avec le voyage ; les abonnés reçoivent
+     une copie « fp:<photo> » avec la publication → ils voient la VRAIE photo, en grand, sans aucune copie sur le serveur.
+     Le serveur ne garde que l'empreinte du droit de lecture : il ne voit ni la photo ni le carnet. */
+  const potOn = () => M.pot === true;
+  const b64u = u8 => b64(u8).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const shk = {};
+  async function spaceHash(code){ if(!code) return ''; if(shk[code]) return shk[code]; return shk[code] = hex(await crypto.subtle.digest('SHA-256', te.encode('carnet-voyage:' + await authCode(code)))); }
+  const pkOf = id => { const r = R['pk:' + String(id).replace(/\.t$/, '')]; return r && !r.deleted && r.s && r.k ? r : null; };
+  const phRef = id => { const b = String(id).replace(/\.t$/, ''); return pkOf(b) || (()=>{ const f = R['fp:' + b]; return f && !f.deleted && f.s && f.k ? f : null; })(); };
+  const capOf = async rk => hex(await crypto.subtle.digest('SHA-256', te.encode('vz-cap:' + rk)));
+  async function v2Seal(bytes, kb){ const key = await crypto.subtle.importKey('raw', unb64(kb), 'AES-GCM', false, ['encrypt']), iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, bytes)), out = new Uint8Array(12 + ct.length); out.set(iv); out.set(ct, 12); return out; }
+  async function v2Open(u8, kb){ const key = await crypto.subtle.importKey('raw', unb64(kb), 'AES-GCM', false, ['decrypt']); return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:u8.slice(0, 12)}, key, u8.slice(12))); }
+  async function v2Fetch(ref, thumb){
+    const id = thumb ? (ref.it || ref.i) : ref.i; if(!id || !photoApi()) return null;
+    const r = await fetch(photoApi() + '?s=' + ref.s + '&id=' + encodeURIComponent(id) + '&rk=' + encodeURIComponent(ref.r)); if(!r.ok) return null;
+    return new Blob([await v2Open(new Uint8Array(await r.arrayBuffer()), ref.k)], {type:'image/jpeg'});
+  }
+  async function v2Put(code, id, blob, kb, rh){
+    const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':id, 'X-Photo-Cap':rh, 'Content-Type':'image/jpeg'}, body:new Blob([await v2Seal(new Uint8Array(await blob.arrayBuffer()), kb)], {type:'image/jpeg'})});
+    if(!r.ok){ let j = {}; try { j = (await r.json()) || {}; } catch(e){} const er = new Error((j.error ? j.error + ' ' : '') + '(' + r.status + ')'); er.st = r.status; er.j = j; er.code = code; throw er; }
+  }
+  // envoi d'une photo dans le pot commun (une fois) + sa fiche « pk: » ; ref : la remettre au même endroit (serveur vidé, « Tout renvoyer »)
+  async function v2Upload(pid, full, thumb, code, trip, ref){
+    const k = ref ? ref.k : b64(crypto.getRandomValues(new Uint8Array(32))), rk = ref ? ref.r : b64u(crypto.getRandomValues(new Uint8Array(18))), rh = await capOf(rk);
+    const base = ref ? ref.i : 'p' + hex(crypto.getRandomValues(new Uint8Array(16)));
+    await v2Put(code, base, full, k, rh);
+    if(thumb) await v2Put(code, base + '-t', thumb, k, rh);
+    if(ref) return ref;
+    const pk = {id:'pk:' + pid, type:'phk', trip:trip || '', s:await spaceHash(code), i:base, it:thumb ? base + '-t' : '', k, r:rk, by:M.me || ''};
+    putQuiet([pk]); return R[pk.id];
+  }
+  // codes que ce téléphone connaît, par empreinte (pour effacer une photo du pot commun rangée dans un de MES carnets)
+  async function codeOfHash(h){ const cs = [M.sync.on && M.sync.code, ...(M.spaces || []).map(x=>x.code)].filter(Boolean); for(const c of cs) if(await spaceHash(c) === h) return c; return ''; }
+  async function v2Del(ref){ const c = await codeOfHash(ref.s); if(!c || !photoApi()) return false;
+    for(const id of [ref.i, ref.it].filter(Boolean)){ const r = await fetch(photoApi() + '?id=' + encodeURIComponent(id), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(c)}}); if(!r.ok && r.status !== 404) return false; }
+    return true; }
   async function photoBlob(id){
     if(/\.t$/.test(id)){
       try { const o = await IDB.get(id); if(o && o.blob){ try { await o.blob.slice(0, 1).arrayBuffer(); return o.blob; } catch(e){} } } catch(e){}
+      { const ref = phRef(id); if(ref) try { const b = await v2Fetch(ref, true); if(b){ try { await IDB.put({id, blob:b, up:1}); } catch(e){} return b; } } catch(e){} }   // 🫙 pot commun
       const tc = photoCode(id);   // vignette déjà sur le serveur (≈ 30 Ko) : on la prend, sans télécharger la grande photo
       if(tc && photoApi()){
         try {
@@ -291,6 +332,7 @@
       try { const th = await shrink(full, 480, 0.74); try { await IDB.put({id, blob:th, up:1}); } catch(e){} return th; } catch(e){ return full; }
     }
     try { const o = await IDB.get(id); if(o && o.blob){ try { await o.blob.slice(0, 1).arrayBuffer(); return o.blob; } catch(e){ /* fichier perdu par Safari : on le reprend sur le serveur */ } } } catch(e){}
+    { const ref = phRef(id); if(ref) try { const b = await v2Fetch(ref, false); if(b){ try { await IDB.put({id, blob:b, up:1}); } catch(e){} return b; } } catch(e){} }   // 🫙 pot commun : la vraie photo, en grand
     const code = photoCode(id);
     const thumbOnly = async () => {   // photo reçue sans grand format (paquet « vignettes ») : on se contente de la vignette
       try { const o = await IDB.get(id + '.t'); if(o && o.blob) return o.blob; } catch(e){}
@@ -522,6 +564,12 @@
     const one = async id => {
       const code = codeOf(id); if(!code) return;          // voyage repassé hors ligne entre-temps : la photo reste sur le téléphone
       let o = null; try { o = await IDB.get(id); } catch(e){}
+      const pk = pkOf(id);
+      // 🫙 déjà dans le pot commun : rien à recopier (voyage partagé, publié…) ; seulement remise en place si son carnet a été vidé
+      if(pk && !/\.t$/.test(id)){
+        if(o && o.blob && pk.s === await spaceHash(code)){ let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){} await v2Upload(id, o.blob, tb, code, pk.trip, pk); }
+        M.pq = M.pq.filter(x=>x!==id); syncDot(); left--; return;
+      }
       if(/\.t$/.test(id)){   // vignette seule (paquet sans grand format) : envoyée telle quelle ; sinon elle part avec sa grande photo
         let big = null; try { big = await IDB.get(id.slice(0, -2)); } catch(e){}
         if(o && o.blob && !(big && big.blob)) await send(o.blob, id, code);
@@ -530,12 +578,19 @@
         { const ow = owner[id]; if(ow && (ow.photos||[]).includes(id)) ub = await cloudCopy(ub); }   // photos de souvenirs : copie légère façon Instagram (tickets et pièces jointes : intacts)
         // encore plus lourde que la limite du serveur (1,9 Mo) : on la réduit
         if(ub.size > 1700000){ for(const [mx, q] of [[2048,0.8],[1800,0.7],[1500,0.62],[1200,0.55]]){ try { ub = await shrink(o.blob, mx, q); } catch(e){ break; } if(ub.size <= 1700000) break; } }
+        if(potOn()){   // 🫙 pot commun : photo + vignette chiffrées avec leur propre clé, rangées une seule fois
+          let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
+          if(!tb) try { tb = await shrink(ub, 480, 0.74); } catch(e){}
+          const ow = owner[id]; await v2Upload(id, ub, tb, code, ow ? (ow.type === 'trip' ? ow.id : ow.trip || '') : '');
+          if(o.up) (M.v1gc = M.v1gc || []).push([code, id, Date.now()]);   // déjà envoyée à l'ancienne dans ce carnet : l'ancienne copie partira dans 24 h
+        } else {
         await send(ub, id, code);
         try {   // + vignette légère (≈ 30 Ko) pour que l’autre téléphone affiche vite la grille
           let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
           if(!tb) tb = await shrink(ub, 480, 0.74);
           await send(tb, id + '.t', code);
         } catch(e){}
+        }
         try { await IDB.put({id, blob:new Blob([await o.blob.arrayBuffer()], {type:o.blob.type || 'image/jpeg'}), up:1}); } catch(e){}   // copie : Safari perd le fichier si on réenregistre le même objet
       }
       M.pq = M.pq.filter(x=>x!==id); syncDot();

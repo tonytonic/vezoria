@@ -458,7 +458,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     return n;
   }
   // 🔄 Synchro d’un voyage partagé : ce que ce téléphone a, ce que le dossier partagé contient, et les deux réparations
-  function tripCount(id){ const all = Object.values(R).filter(r=>r && r.trip === id && !['member','invite','tripmove'].includes(r.type)); const live = all.filter(r=>!r.deleted); return {live:live.length, dead:all.length - live.length, items:live.filter(r=>r.type==='item').length, days:live.filter(r=>r.type==='day').length}; }
+  function tripCount(id){ const all = Object.values(R).filter(r=>r && r.trip === id && !['member','invite','tripmove','phk'].includes(r.type)); const live = all.filter(r=>!r.deleted); return {live:live.length, dead:all.length - live.length, items:live.filter(r=>r.type==='item').length, days:live.filter(r=>r.type==='day').length}; }
   function tripSyncSheet(id){
     const t = R[id], c = TS()[id], sp = c && spaceObj(c); if(!t || !sp) return;
     const n = tripCount(id), mine = !t.createdBy || t.createdBy === M.me;
@@ -568,7 +568,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       setTimeout(()=>{ tripExtract().catch(()=>{}); }, 20000);
       if(showC) cryptHide('🔒 Données chiffrées et synchronisées');
       else if(manual) toast('☁️ Synchronisé');
-      setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500);
+      setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500); setTimeout(()=>{ potGc().catch(()=>{}); }, 4000);
     } catch(e){
       M.sync.err = e.message || String(e);
       if(showC) cryptHide();
@@ -1097,6 +1097,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         const inTrip = await listAll(c); if(!inTrip) continue;
         const del = []; let keep = 0;
         for(const id of ids){ const keepMain = mainUse.has(id);   // aussi utilisée hors du voyage : recopiée dans le voyage, mais gardée dans le carnet principal
+          if(pkOf(id)){   // 🫙 dans le pot commun : le voyage la lit déjà par son lien → l'ancienne copie du carnet principal part, sans recopie
+            if(!keepMain) for(const v of [id, id + '.t']){ const sm = await sid(v, main); if(inMain.has(sm)) del.push(sm); }
+            continue; }
           for(const v of [id, id + '.t']){
             const sm = await sid(v, main); if(!inMain.has(sm)) continue;
             const st = await sid(v, c);
@@ -1131,9 +1134,25 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(main){ inMain = new Set(); let cur = '';
       try { do { const r = await fetch(photoApi() + '?list=1' + (cur ? '&cursor=' + encodeURIComponent(cur) : ''), {headers:{'X-Carnet-Code':await authCode(main)}}); if(!r.ok){ inMain = null; break; }
         const j = await r.json(); (j.ids||[]).forEach(o=>inMain.add(o.i)); cur = j.cursor || ''; } while(cur); } catch(e){ inMain = null; } }
-    let n = 0, fail = 0, k = 0; const tot = ids.size;
+    let n = 0, fail = 0, k = 0; const tot = ids.size, v2old = [], th = await spaceHash(code);
     cryptShow('📥 Je récupère les photos du voyage… (' + tot + ')');
     for(const id of ids){ k++; if(k % 10 === 0) cryptShow('📥 Photos du voyage : ' + k + ' / ' + tot);
+      const pk = pkOf(id);
+      if(pk){   // 🫙 pot commun : rangée ailleurs (mon carnet, celui d'un compagnon) → rien à faire ; rangée dans le voyage → remise chez moi
+        if(pk.s !== th){ n++; continue; }
+        try {
+          let full = null, tb = null;
+          try { const o = await IDB.get(id); if(o && o.blob){ await o.blob.slice(0, 1).arrayBuffer(); full = o.blob; } } catch(e){ full = null; }
+          try { const o = await IDB.get(id + '.t'); if(o && o.blob) tb = o.blob; } catch(e){}
+          if(!full) full = await v2Fetch(pk, false); if(!tb) tb = await v2Fetch(pk, true);
+          if(!full){ fail++; continue; }
+          v2old.push({id, ref:clone(pk)});
+          if(main) await v2Upload(id, full, tb, main, pk.trip);
+          else { await IDB.put({id, blob:full, up:1}); if(tb) await IDB.put({id:id + '.t', blob:tb, up:1}); }
+          n++;
+        } catch(e){ fail++; }
+        continue;
+      }
       for(const v of [id, id + '.t']){
         try {
           if(main && inMain && inMain.has(await sid(v, main))) continue;                       // déjà dans le carnet principal
@@ -1153,7 +1172,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         } catch(e){ if(v === id) fail++; }
       } }
     cryptHide(fail ? '⚠️ ' + fail + ' photo(s) non récupérée(s)' : '📥 Photos du voyage récupérées');
-    return {n, fail};
+    return {n, fail, v2old};
   }
   // 👥 présence : chaque téléphone membre d’un voyage partagé y dépose « je suis là » (1 fois par semaine au plus)
   function mbTouch(){
@@ -1494,6 +1513,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
           const mine = Object.values(R).filter(r=>r && !r.deleted && r.trip === id && r.type !== 'member' && photoRefs(r).length && r.createdBy && r.createdBy === M.me);
           mine.forEach(r=>push.push(Object.assign(clone(r), {deleted:true})));
           gone = mine.flatMap(photoRefs);
+          // 🫙 pot commun : mes compagnons perdent le droit de lecture de mes photos, et les copies rangées dans le voyage partent
+          gone.forEach(p=>{ const pk = R['pk:' + p]; if(pk) push.push(Object.assign(clone(pk), {deleted:true})); });
+          for(const o of (res.v2old || [])) if(gone.includes(o.id)) for(const v of [o.ref.i, o.ref.it].filter(Boolean)){ try { await fetch(photoApi() + '?id=' + encodeURIComponent(v), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); } catch(e){} }
         }
         // 3) ma présence passe à « parti »
         const mb = 'mb:' + id + ':' + devId(); push.push({id:mb, type:'member', trip:id, dev:devId(), who:(R[mb] && R[mb].who) || myName() || '', at:Date.now(), on:false, pid:M.me || ''});
@@ -1516,6 +1538,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     Object.values(R).filter(r=>r && r.type === 'member' && r.trip === id).forEach(r=>{ delete R[r.id]; });   // la présence ne part pas dans mon carnet
     if(drop){   // « supprimer » un voyage créé par un autre : retiré de ce téléphone seulement (plus relié au dossier partagé)
       (M.left = M.left || {})[id] = 1;   // un paquet de voyages ne le fait pas revenir tout seul
+      Object.values(R).forEach(r=>{ if(r && r.type === 'phk' && r.trip === id) delete R[r.id]; });   // 🫙 liens des photos : oubliés ici seulement (les photos restent pour les autres)
       const t = R[id], out = Object.values(R).filter(r=>r && r.trip === id && !r.deleted); out.forEach(r=>r.deleted = true);
       if(t){ t.deleted = true; out.push(t); }
       putMany(out, '🗑 ' + MSGT('Voyage retiré de ton téléphone')); M.trip = null; applyMode(); return true;

@@ -1112,10 +1112,16 @@
     gone.forEach(id=>{ if(!M.pgone.some(x=>x.id===id)) M.pgone.push({id, code}); });
   }
   async function photoPurge(){
-    if(!(M.pgone||[]).length || !photoApi()) return;
-    const live = new Set(Object.values(R).filter(r=>r && !r.deleted).flatMap(photoRefs));
+    if(!(M.pgone||[]).length || !photoApi()){ try { await potGc(); } catch(e){} return; }
+    const live = new Set(Object.values(R).filter(r=>r && !r.deleted && r.type !== 'feed').flatMap(photoRefs));   // (une publication pour abonnés n'est qu'une copie : elle ne garde pas la photo en vie)
     for(const g of [...M.pgone]){
       if(live.has(g.id)){ M.pgone = M.pgone.filter(x=>x!==g); continue; }
+      const pk = R['pk:' + g.id];
+      if(pk && !pk.deleted && pk.s){   // 🫙 photo du pot commun : effacée là où elle est rangée (si c'est un de mes carnets), et son droit de lecture retiré
+        try { await v2Del(pk); } catch(e){ break; }
+        putQuiet([Object.assign(clone(pk), {deleted:true})]);
+        M.pgone = M.pgone.filter(x=>x!==g); persist(); continue;
+      }
       try {
         let ok = true;
         for(const id of [g.id, g.id + '.t']){
@@ -1126,9 +1132,11 @@
       } catch(e){ break; }
       M.pgone = M.pgone.filter(x=>x!==g); persist();
     }
+    try { await potGc(); } catch(e){}   // 🫙 anciennes copies des photos rangées dans le pot commun
   }
   // Fiche supprimée : on n'envoie au serveur que le strict nécessaire (le reste reste sur le téléphone)
-  function slim(r){ return r && r.deleted ? {id:r.id, type:r.type, trip:r.trip, deleted:true, createdAt:r.createdAt, createdBy:r.createdBy, updatedAt:r.updatedAt, updatedBy:r.updatedBy} : r; }
+  function slim(r){ return r && r.deleted ? Object.assign({id:r.id, type:r.type, trip:r.trip, deleted:true, createdAt:r.createdAt, createdBy:r.createdBy, updatedAt:r.updatedAt, updatedBy:r.updatedBy},
+    r.type === 'phk' && r.s ? {s:r.s, i:r.i, it:r.it} : {}) : r; }   // 🫙 photo retirée du pot commun : son emplacement reste connu, pour que le téléphone qui l'a rangée l'efface (jamais la clé)
   // Photos : WebP si le téléphone sait le faire (≈ 30 % plus léger), sinon JPEG
   async function jpgBytes(b){
     const u8 = new Uint8Array(await b.arrayBuffer());
@@ -1193,7 +1201,9 @@
   }
   async function serverWipe(code){
     const main = !code; code = code || M.sync.code; if(!code) return;
-    if(!(await uiConfirm('Supprimer définitivement ce carnet du serveur, pour tout le monde ?\nCette action ne peut pas être annulée.'))) return;
+    // 🫙 photos du pot commun rangées dans ce carnet et vues par des compagnons ou des abonnés : elles disparaîtront pour eux aussi
+    let shared = 0; try { const h = await spaceHash(code); shared = list('phk', r=>/^pk:/.test(r.id) && r.s === h && r.trip && ((TS()[r.trip] && TS()[r.trip] !== code) || FT()[r.trip])).length; } catch(e){}
+    if(!(await uiConfirm('Supprimer définitivement ce carnet du serveur, pour tout le monde ?\nCette action ne peut pas être annulée.' + (shared ? '\n\n🫙 ' + MSGT('{0} photo(s) rangées dans ce carnet sont aussi vues par tes compagnons ou tes abonnés : elles disparaîtront pour eux aussi.').replace('{0}', shared) : '')))) return;
     // d’abord on arrête les envois en cours (sinon des photos arriveraient encore après la suppression)
     upHalt = true; for(let k = 0; k < 150 && (uploading || feedUp); k++) await new Promise(r=>setTimeout(r, 200));
     // la file d’attente des autres voyages est gardée ; seules les photos de ce carnet en sortent

@@ -253,13 +253,21 @@
     const cov = t.cover || (t.coverWk ? '' : ((list('souv', x=>x.trip===tid && !x.priv && (x.photos||[]).length).sort((a,b)=>(a.date||'').localeCompare(b.date||''))[0] || {}).photos || [])[0] || '');
     const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', team: (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').slice(0, 30), tids: (t.voyageurs||[]).slice(0, 30), opid: (M.me && prof(M.me)) ? M.me : undefined, pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
     if(!R[head.id] || stripStamp(R[head.id]) !== stripStamp(head)) out.push(head);
-    const keep = new Set(), first = !R[head.id] || R[head.id].deleted, fresh = [];
+    const keep = new Set(), first = !R[head.id] || R[head.id].deleted, fresh = [], fpWant = new Set();
+    // 🫙 photo dans le pot commun : les abonnés reçoivent son droit de lecture (« fp: »), pas une copie ; sinon, l'ancienne vignette
+    const feedPh = p => { const pk = pkOf(p);
+      if(!pk){ feedPhotoQ(c, p); return; }
+      fpWant.add(p); const fp = {id:'fp:' + p, type:'phk', trip:ftId(tid), s:pk.s, i:pk.i, it:pk.it, k:pk.k, r:pk.r};
+      if(!R[fp.id] || R[fp.id].deleted || stripStamp(R[fp.id]) !== stripStamp(fp)) out.push(fp);
+      const d = (M.fup || {})[c]; if(d && d[p]){ delete d[p]; (M.fdel = M.fdel || []).push([c, p]); }   // l'ancienne vignette d'abonné ne sert plus
+      M.fq = (M.fq || []).filter(x=>!(x[0] === c && x[1] === p)); };
     list('souv', s=>s.trip===tid && !s.priv && ((s.photos||[]).length || (s.texte||'').trim())).forEach(s=>{
       const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, by: (t.voyageurs||[]).length > 1 && s.createdBy ? pname(s.createdBy) : '', date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 2000), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''};
       keep.add(f.id); if(!R[f.id] || R[f.id].deleted || stripStamp(R[f.id]) !== stripStamp(f)){ if(!R[f.id] || R[f.id].deleted) fresh.push(f); out.push(f); }
-      f.photos.forEach(p=>feedPhotoQ(c, p));
+      f.photos.forEach(feedPh);
     });
-    if(cov) feedPhotoQ(c, cov);
+    if(cov) feedPh(cov);
+    list('phk', x=>x.trip === ftId(tid) && /^fp:/.test(x.id) && !fpWant.has(x.id.slice(3))).forEach(x=>out.push(Object.assign(clone(x), {deleted:true})));   // photo plus publiée : plus de droit de lecture
     list('feed', f=>f.trip===ftId(tid) && !keep.has(f.id)).forEach(f=>out.push(Object.assign(clone(f), {deleted:true})));
     const people = feedTrk(tid), fkId = 'fk:' + tid;
     if(people.length){ const fk = {id:fkId, type:'feedtrk', trip:ftId(tid), people}; if(!R[fkId] || R[fkId].deleted || stripStamp(R[fkId]) !== stripStamp(fk)) out.push(fk); }
@@ -912,7 +920,7 @@
     return `<article class="fd-post" id="fp-${f.id}" data-sg="${feedSocSig(f.id)}"><div class="fd-d">${f.by ? `<span class="fd-by">📸 <b data-notr>${esc(f.by)}</b></span> · ` : ''}${f.date ? fdate(f.date) : ''}${f.lieu ? ' · 📍 ' + esc(f.lieu) : ''}${f.cc ? ' ' + flag(f.cc) : ''}</div>
       ${f.titre ? `<h3>${esc(f.titre)}</h3>` : ''}
       ${(f.photos||[]).length ? (()=>{ const au = FT()[String(f.trip).replace(/^ft:/,'')], all = f.photos, nShow = (M.fdMore||{})[f.id] || 12, sh = all.length > nShow + 3 ? all.slice(0, nShow) : all, rest = all.length - sh.length;
-        return `<div class="fd-ph${au ? '' : ' grid'}">${sh.map((p,i)=> au ? `<button type="button" onclick="CV.view('${f.id}',${i})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join('')}${rest ? `<button type="button" class="fd-more-ph" onclick="CV.feedMorePh('${f.id}')"><b>+${rest}</b><small>Voir la suite</small></button>` : ''}</div>`; })() : ''}
+        return `<div class="fd-ph${au ? '' : ' grid'}">${sh.map((p,i)=> au || phRef(p) ? `<button type="button" onclick="CV.view('${f.id}',${i})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join('')}${rest ? `<button type="button" class="fd-more-ph" onclick="CV.feedMorePh('${f.id}')"><b>+${rest}</b><small>Voir la suite</small></button>` : ''}</div>`; })() : ''}
       ${f.texte ? `<p class="fd-t">${esc(f.texte)}</p>` : ''}
       <div class="fd-a"><button type="button" class="${mine ? 'on' : ''}" onclick="CV.feedLike('${f.id}')">${mine ? '❤️' : '🤍'} <b>${lk.length || ''}</b></button><button type="button" onclick="CV.feedCmFocus('${f.id}')">💬 <b>${cm.length || ''}</b></button>${isAuthorOf(f.trip) ? '' : `<button type="button" class="fd-more" aria-label="Signaler ou ne plus suivre" onclick="CV.postMenu('${f.id}')">⋯</button>`}</div>
       ${lk.length ? `<button type="button" class="fd-lk" onclick="CV.feedLikers('${f.id}')">${feedLikeLine(lk)}</button>` : ''}
@@ -966,7 +974,7 @@
     if(!box || !btn){ feedPaint(fid); return; }
     const sc = el.closest('.fd-list') || document.scrollingElement, y = sc.scrollTop;
     const au = FT()[String(f.trip).replace(/^ft:/,'')], all = f.photos || [], sh = all.length > now + 3 ? all.slice(was, now) : all.slice(was), rest = all.length - was - sh.length;
-    btn.insertAdjacentHTML('beforebegin', sh.map((p, k)=> au ? `<button type="button" onclick="CV.view('${f.id}',${was + k})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join(''));
+    btn.insertAdjacentHTML('beforebegin', sh.map((p, k)=> au || phRef(p) ? `<button type="button" onclick="CV.view('${f.id}',${was + k})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join(''));
     if(rest > 0) btn.querySelector('b').textContent = '+' + rest; else btn.remove();
     try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch(e){}
     let user = false; const stop = () => { user = true; }; sc.addEventListener('touchstart', stop, {once:true, passive:true}); sc.addEventListener('wheel', stop, {once:true, passive:true});
@@ -1068,7 +1076,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-23v'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-23w'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1261,6 +1269,72 @@
     persist(); closeSheet(true); toast('↩️ …');
     try { await syncNow(true); } catch(e){} refresh();
   }
+  /* ══════════ 🫙 POT COMMUN : réglage, rangement des anciennes photos, ménage des anciennes copies ══════════ */
+  function potStats(){
+    const own = {}; Object.values(R).forEach(x=>{ if(!x || x.deleted || x.demo || x.type === 'feed' || x.type === 'phk') return; [...photoRefs(x), x.cover].forEach(p=>{ if(p && !own[p]) own[p] = x; }); });
+    let inPot = 0, old = 0; const pend = new Set(M.pq || []);
+    Object.keys(own).forEach(p=>{ if(pkOf(p)) inPot++; else if(!pend.has(p) && photoCode(p)) old++; });
+    return {own, inPot, old};
+  }
+  function potBox(){
+    const st = potStats();
+    return `<div class="v-box" id="pot-box"><h3>🫙 ${esc(MSGT('Pot commun des photos (bêta)'))}</h3>
+      <p>${esc(MSGT('Chaque photo est rangée une seule fois sur le serveur et partagée par un lien secret : tes compagnons et tes abonnés voient la vraie photo, en grand, sans copie en plus.'))}</p>
+      <div class="vz-glass-sw"><p style="margin:0">${esc(MSGT('Nouvelles photos dans le pot commun'))}</p><button type="button" class="v-btn${potOn() ? '' : ' sec'}" style="width:auto;margin:0;flex:none" onclick="CV.potToggle()">${potOn() ? esc(MSGT('Activé')) + ' ✓' : esc(MSGT('Activer'))}</button></div>
+      <div class="v-sum-small" style="margin-top:8px" data-notr>🫙 ${st.inPot} · ${esc(MSGT('à l’ancienne'))} : ${st.old}</div>
+      ${potOn() && st.old ? `<button type="button" class="v-btn sec" style="margin-top:8px" id="pot-go" onclick="CV.potMigrate()">🫙 ${esc(RF('Ranger mes {0} anciennes photos dans le pot commun', st.old))}</button>` : ''}
+      <div id="pot-msg" class="v-sum-small" style="margin-top:6px" data-notr></div>
+      <div class="v-sum-small" style="margin-top:6px">${esc(MSGT('Tes compagnons doivent avoir la dernière version de l’appli pour voir ces photos.'))}</div></div>`;
+  }
+  function potToggle(){ M.pot = !potOn(); persist(); toast(M.pot ? '🫙 ' + MSGT('Pot commun activé') : MSGT('Pot commun désactivé')); const b = document.getElementById('pot-box'); if(b) b.outerHTML = potBox(); }
+  let potBusy = false;
+  async function potMigrate(){
+    if(potBusy || !photoApi()) return; potBusy = true;
+    const say = t => { const e = document.getElementById('pot-msg'); if(e) e.textContent = t; }, btn = document.getElementById('pot-go'); if(btn) btn.disabled = true;
+    const {own} = potStats(), pend = new Set(M.pq || []);
+    const todo = Object.keys(own).filter(p=>!pkOf(p) && !pend.has(p) && photoCode(p));
+    let done = 0, fail = 0, skip = 0;
+    try {
+      for(let i = 0; i < todo.length; i++){
+        const pid = todo[i], code = photoCode(pid), ow = own[pid]; if(!code) continue;
+        if(!(i % 3)) say('🫙 ' + RF('Photos rangées : {0}/{1}', i, todo.length));
+        let full = null, tb = null;
+        try { const o = await IDB.get(pid); if(o && o.blob){ await o.blob.slice(0, 1).arrayBuffer(); full = o.blob; } } catch(e){ full = null; }
+        try { const o = await IDB.get(pid + '.t'); if(o && o.blob) tb = o.blob; } catch(e){}
+        if(!full){ if(ow.createdBy && M.me && ow.createdBy !== M.me){ skip++; continue; }   // la photo d'un compagnon : c'est son téléphone qui la range
+          try { full = await photoBlob(pid); } catch(e){} }
+        if(!full){ fail++; continue; }
+        if(!tb) try { tb = await shrink(full, 480, 0.74); } catch(e){}
+        try { await v2Upload(pid, full, tb, code, ow.type === 'trip' ? ow.id : ow.trip || ''); (M.v1gc = M.v1gc || []).push([code, pid, Date.now()]); done++; }
+        catch(e){ fail++; if(e && (e.st === 429 || e.st === 507)){ say('⚠️ ' + e.message); break; } }
+        if(!(done % 10)) persist();
+      }
+      persist(); say('✅ ' + RF('{0} photo(s) rangées dans le pot commun.', done) + (skip ? ' ' + RF('{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.', skip) : '') + (fail ? ' ⚠️ ' + RF('{0} non rangée(s), réessaie plus tard.', fail) : ''));
+      try { await syncNow(true); } catch(e){}
+    } finally { potBusy = false; if(btn) btn.disabled = false; }
+  }
+  // anciennes copies (avant le pot commun) : effacées 24 h après le rangement, quand tous les téléphones ont reçu le lien
+  let gcBusy = false;
+  async function potGc(){
+    if(gcBusy || !photoApi()) return; gcBusy = true;
+    try {
+      // photo retirée par quelqu'un d'autre (compagnon) : si elle est rangée dans un de MES carnets, je l'efface du serveur
+      const live = new Set(Object.values(R).filter(r=>r && !r.deleted && r.type !== 'feed').flatMap(photoRefs));
+      for(const r of Object.values(R).filter(x=>x && x.type === 'phk' && x.deleted && x.s && !x.gc && /^pk:/.test(x.id))){
+        const pid = r.id.slice(3); if(live.has(pid) || pkOf(pid)) continue;
+        if(!(await codeOfHash(r.s))){ r.gc = 1; continue; }
+        try { if(await v2Del(r)) r.gc = 1; } catch(e){ break; }
+      }
+      for(const g of [...(M.v1gc || [])]){
+        const [code, pid, at] = g; if(Date.now() - at < 864e5) continue;
+        const pk = pkOf(pid); if(!pk || isDirty(pk.id)) continue;
+        let ok = true;
+        for(const v of [pid, pid + '.t']){ try { const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(v, code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); if(!r.ok && r.status !== 404 && r.status !== 405) ok = false; } catch(e){ ok = false; } }
+        if(!ok) break;
+        M.v1gc = M.v1gc.filter(x=>x !== g); persist();
+      }
+    } finally { gcBusy = false; }
+  }
   /* ══════════ 🧳 QUI PART DANS QUELS VOYAGES ══════════
      Une personne, tous les voyages : on coche ceux où elle part vraiment (budget, dépenses, « qui doit quoi »). */
   function travSheet(pid){
@@ -1333,7 +1407,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
+  var RECAPI = {potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
