@@ -1068,7 +1068,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-23f'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-23h'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1226,7 +1226,110 @@
       setTimeout(()=>{ closeSheet(true); whoSheet(); setTimeout(()=>uiAlert(MSGT('Tes voyages sont revenus. Choisis ton ancien profil, puis crée un nouveau code principal (☁️ Cloud) et NOTE-LE : tout repartira sur le serveur.')), 400); }, 2500);
     } catch(e){ say('⚠️ ' + (e.message || e)); if(btn) btn.disabled = false; }
   }
-  var RECAPI = {recupSheet, recupGo};
+  /* ══════════ 🔀 SÉPARER MES VOYAGES PRIVÉS D’UN CARNET PARTAGÉ ══════════
+     Cas : le carnet principal de ce téléphone est aussi chez quelqu’un d’autre (même code), qui voit donc TOUT.
+     On coche les voyages à garder partagés : ils restent sur ce code (comme un voyage partagé).
+     Les autres deviennent privés : copiés (nouveaux identifiants) dans un NOUVEAU carnet principal rien qu’à moi,
+     leurs photos d’abord ramenées sur ce téléphone puis renvoyées, et les originaux effacés du carnet partagé
+     (ils disparaissent chez les autres, pas chez moi : j’ai les copies). */
+  async function sepSheet(){
+    const main = M.sync.on && M.sync.code; if(!main){ uiAlert(MSGT('Ton carnet n’est pas dans le cloud : rien à séparer.')); return; }
+    const L = trips().filter(t=>!t.demo && !TS()[t.id]);
+    openSheet(`<h2>🔀 ${esc(MSGT('Séparer mes voyages privés'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(RF('Ton carnet principal (code {0}) est aussi chez les personnes qui ont ce code : elles voient tous ces voyages. Coche ceux à garder partagés avec elles. Les autres deviendront privés : ils partent dans un nouveau carnet rien qu’à toi, avec un nouveau code, et disparaissent chez les autres.', main))}</div>
+      <div id="sep-l">${L.map(t=>`<label class="cv-checkline"><input type="checkbox" class="sep-k" value="${esc(t.id)}"> <span data-notr>${esc(t.titre || '')}</span> <small>${esc(fdate(t.debut || '') || '')}</small></label>`).join('')}</div>
+      <div id="sep-msg" class="v-sum-small" style="margin:8px 0" data-notr></div>
+      <div class="v-actions"><button type="button" class="v-btn" id="sep-go" onclick="CV.sepGo()">🔀 ${esc(MSGT('Séparer'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
+  }
+  async function sepGo(){
+    const old = M.sync.on && M.sync.code; if(!old) return;
+    const keep = new Set([...document.querySelectorAll('.sep-k:checked')].map(x=>x.value)), msg = document.getElementById('sep-msg'), btn = document.getElementById('sep-go');
+    const say = t => { if(msg) msg.textContent = t; };
+    const shared = r => keep.has(r.id) || keep.has(r.trip) || [...keep].some(t=>String(r.id).includes(t));
+    const priv = Object.values(R).filter(r=>r && r.id && !r.demo && !r.deleted && r.type !== 'profile' && r.type !== 'geo' && r.type !== 'feed' && targets(r)[0] === 'main' && !shared(r));
+    const privTrips = priv.filter(r=>r.type === 'trip');
+    if(!(await uiConfirm(RF('{0} voyage(s) restent partagés, {1} voyage(s) deviennent privés ({2} fiches). Un nouveau code principal va être créé : il faudra le noter. Continuer ?', keep.size, privTrips.length, priv.length)))) return;
+    if(btn) btn.disabled = true;
+    try {
+      // 1) les photos des fiches privées reviennent sur ce téléphone (avant de les retirer du carnet partagé)
+      const phs = [...new Set(priv.flatMap(photoRefs))]; let fail = 0;
+      for(let k = 0; k < phs.length; k++){ say('📸 ' + RF('Photos ramenées sur ce téléphone : {0}/{1}', k + 1, phs.length));
+        const b = await photoBlob(phs[k]).catch(()=>null); if(!b) fail++; await photoBlob(phs[k] + '.t').catch(()=>null); }
+      if(fail && !(await uiConfirm(RF('{0} photo(s) n’ont pas pu être ramenées (réseau ?). Continuer quand même ?', fail)))){ if(btn) btn.disabled = false; say(''); return; }
+      // 2) copies avec de nouveaux identifiants (les liens entre fiches suivent)
+      const map = {}; privTrips.forEach(t=>{ map[t.id] = 't' + uid(); });
+      priv.forEach(r=>{ if(map[r.id]) return; let n = String(r.id); for(const [o, v] of Object.entries(map)) if(n.includes(o)) n = n.split(o).join(v); map[r.id] = n === r.id ? r.id + '-' + uid() : n; });
+      const swap = v => typeof v === 'string' && map[v] ? map[v] : Array.isArray(v) ? v.map(swap) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x])=>[k, swap(x)])) : v;
+      const copies = priv.map(r=>{ const c = swap(clone(r)); c.id = map[r.id]; stamp(c); return c; });
+      // 3) les originaux sont effacés du carnet partagé (ils disparaissent chez les autres)
+      const tomb = priv.map(r=>Object.assign(clone(r), {deleted:true}));
+      tomb.forEach(stamp);
+      for(let i = 0; i < tomb.length; i += 300){ say('🧹 ' + RF('Retrait du carnet partagé : {0}/{1}', Math.min(i + 300, tomb.length), tomb.length)); await call(Date.now(), tomb.slice(i, i + 300), old); }
+      // 4) sur ce téléphone : les copies remplacent les originaux ; les voyages cochés restent sur l’ancien code
+      priv.forEach(r=>{ delete R[r.id]; }); copies.forEach(c=>{ R[c.id] = c; });
+      keep.forEach(t=>{ TS()[t] = old; }); if(!spaceObj(old)) (M.spaces = M.spaces || []).push({code:old, since:M.sync.since || 0, dirty:[], last:0, err:''});
+      if(M.trip && map[M.trip]) M.trip = map[M.trip];
+      // 5) nouveau carnet principal, rien qu’à moi : tout ce qui n’est pas partagé y part, photos comprises
+      const nc = genCode(); M.sync.code = nc; M.sync.since = 0; M.sync.on = true; M.sync.last = 0;
+      M.dirty = Object.values(R).filter(r=>r && r.id && !r.demo && targets(r)[0] === 'main').map(r=>r.id);
+      M.pq = []; await photoQueueAll(); persist();
+      say('✅ ' + MSGT('Séparé. Note bien ton nouveau code principal.'));
+      setTimeout(async ()=>{ closeSheet(true); refresh(); try { await syncNow(true); } catch(e){} codeSheet(); }, 800);
+    } catch(e){ say('⚠️ ' + (e.message || e)); if(btn) btn.disabled = false; }
+  }
+  /* ══════════ 🔗 RÉPARER LES LIENS DES VOYAGES ══════════
+     Un voyage partagé vit sous SON code (fiches + photos). S’il a été rattaché à un autre code (carnet entier rejoint,
+     code principal collé…), ses photos ne sont plus trouvées. On reprend tous les codes connus de ce téléphone
+     (codes rejoints, « voyage déménagé », paquets), on regarde sous lesquels chaque voyage existe vraiment et où sont
+     ses photos, puis on le rattache au bon. Rien n’est effacé, nulle part. */
+  async function linkSheet(){
+    openSheet(`<h2>🔗 ${esc(MSGT('Réparer les liens des voyages'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Pour des voyages partagés dont les photos ou les mises à jour n’arrivent plus. L’appli retrouve le bon code de chaque voyage. Rien n’est effacé.'))}</div>
+      <div id="lk-msg" class="v-sum-small" style="margin:6px 0" data-notr></div><div id="lk-res" data-notr></div>
+      <div class="v-actions"><button type="button" class="v-btn" id="lk-go" onclick="CV.linkGo()">🔗 ${esc(MSGT('Réparer'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
+  }
+  async function linkGo(){
+    const msg = document.getElementById('lk-msg'), res = document.getElementById('lk-res'), btn = document.getElementById('lk-go');
+    const say = t => { if(msg) msg.textContent = t; };
+    if(btn) btn.disabled = true;
+    try {
+      const main = M.sync.on && M.sync.code ? M.sync.code : '';
+      const feeds = new Set([...Object.values(FT()), ...list('feedtrip').map(f=>TS()[f.id])].filter(Boolean));
+      const cand = new Set([main, ...(M.spaces || []).map(x=>x.code), ...list('moved', m=>m.code).map(m=>m.code), ...list('packtrip', m=>m.code).map(m=>m.code)].filter(c=>c && !feeds.has(c)));
+      // 1) sous quels codes chaque voyage existe-t-il vraiment ?
+      const where = {}, size = {}; let k = 0;
+      for(const c of cand){ k++; say('📡 ' + RF('Lecture des codes : {0}/{1}', k, cand.size));
+        let recs = []; try { recs = (await call(0, [], c)).records || []; } catch(e){ continue; }
+        const ts = recs.filter(r=>r && r.type === 'trip' && !r.deleted).map(r=>r.id); size[c] = ts.length;
+        ts.forEach(t=>{ (where[t] = where[t] || []).push(c); }); }
+      // 2) pour chaque voyage présent sous plusieurs codes : celui où ses photos sont vraiment
+      const probe = async (pid, c) => { try { const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(pid + '.t', c)), {headers:{'X-Carnet-Code':await authCode(c)}}); return r.ok; } catch(e){ return false; } };
+      const out = []; let n = 0;
+      const myT = trips().filter(t=>!t.demo);
+      for(const t of myT){
+        n++; say('🔎 ' + RF('Voyage {0}/{1} : {2}', n, myT.length, t.titre || ''));
+        const cs = where[t.id] || []; if(!cs.length) continue;
+        const cur = TS()[t.id] || main;
+        const pids = [...new Set(Object.values(R).filter(r=>r && !r.deleted && (r.trip === t.id || r.id === t.id)).flatMap(photoRefs))].slice(0, 3);
+        let best = null;
+        if(cs.length === 1) best = cs[0];
+        else {
+          const score = {}; for(const c of cs){ score[c] = 0; for(const p of pids) if(await probe(p, c)) score[c]++; }
+          best = cs.slice().sort((a, b)=>(score[b] - score[a]) || ((size[a] || 0) - (size[b] || 0)))[0];   // le plus de photos trouvées, sinon le code le plus « petit » (propre au voyage)
+        }
+        if(best && best !== cur){ out.push([t, cur, best]); }
+      }
+      // 3) rattacher et relire (sans rien effacer)
+      out.forEach(([t, , c])=>{ if(c === main) delete TS()[t.id]; else { TS()[t.id] = c; if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); } });
+      const touched = new Set(out.map(x=>x[2])); for(const c of touched){ const sp = spaceObj(c); if(sp){ sp.since = 0; try { await syncSpace(sp); } catch(e){} } }
+      persist(); refresh();
+      if(res) res.innerHTML = out.length ? out.map(([t, a, b])=>`<div class="v-sum-small">✅ <b>${esc(t.titre || '')}</b> : ${esc(a || '—')} → ${esc(b)}</div>`).join('') : '';
+      say(out.length ? '✅ ' + RF('{0} voyage(s) rattaché(s) à leur bon code. Les photos reviennent au fur et à mesure.', out.length) : '✅ ' + MSGT('Tous les voyages sont déjà sur leur bon code.'));
+      try { syncNow(true); } catch(e){}
+    } catch(e){ say('⚠️ ' + (e.message || e)); }
+    if(btn) btn.disabled = false;
+  }
+  var RECAPI = {recupSheet, recupGo, sepSheet, sepGo, linkSheet, linkGo};
 
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
