@@ -1068,7 +1068,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-23n'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-23o'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1226,6 +1226,11 @@
     if(!keep.size){ uiAlert(MSGT('Coche au moins un voyage à garder.')); return; }
     if(!drop.length){ closeSheet(true); return; }
     if(!(await uiConfirm(RF('{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?', keep.size, drop.length)))) return;
+    // je ne pars pas dans ces voyages : je suis retiré(e) de leurs voyageurs, chez tout le monde (avant de les retirer d’ici)
+    const Q = M.hideQ || (M.hideQ = []);
+    drop.forEach(t=>{ if(!M.me || !(t.voyageurs || []).includes(M.me)) return;
+      const code = TS()[t.id] && spaceObj(TS()[t.id]) ? TS()[t.id] : (M.sync.on && M.sync.code ? M.sync.code : null); if(!code) return;
+      const n = Object.assign(clone(t), {voyageurs:(t.voyageurs || []).filter(p=>p !== M.me)}); stamp(n); Q.push([code, n]); });
     const H = M.hide || (M.hide = {}), Lf = M.left || (M.left = {}), S = M.mvSkip || (M.mvSkip = {}), ids = new Set(drop.map(t=>t.id));
     ids.forEach(t=>{ H[t] = TS()[t] || 1; Lf[t] = 1; S[t] = 1; delete TS()[t]; });
     Object.keys(R).forEach(id=>{ const r = R[id]; if(r && (ids.has(r.id) || ids.has(r.trip) || (r.type === 'moved' && ids.has(r.tid)))) delete R[id]; });
@@ -1236,6 +1241,16 @@
     if(M.trip && ids.has(M.trip)) M.trip = null;
     persist(); closeSheet(true); applyMode(); refresh();
     toast('🧹 ' + RF('{0} voyage(s) retirés de ce téléphone', ids.size));
+    hideFlush();
+  }
+  // envoi des « je ne pars pas » (réessayé à chaque synchro tant que le réseau manque)
+  let hfBusy = false;
+  async function hideFlush(){
+    if(hfBusy || !(M.hideQ || []).length) return; hfBusy = true;
+    try {
+      const by = {}; M.hideQ.forEach(([c, r])=>{ (by[c] = by[c] || []).push(r); });
+      for(const [c, recs] of Object.entries(by)){ try { await call(Date.now(), recs, c); M.hideQ = M.hideQ.filter(x=>x[0] !== c); persist(); } catch(e){} }
+    } finally { hfBusy = false; }
   }
   async function hideUndo(){
     const H = M.hide || {}, n = Object.keys(H).length; if(!n) return;
@@ -1318,7 +1333,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
+  var RECAPI = {hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,

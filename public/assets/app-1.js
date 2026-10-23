@@ -541,7 +541,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     let changed = 0; const hadDirty = M.dirty.length;
     try {
       const now0 = Date.now(), auto = manual !== true && !pull;
-      try { rejoinFix(); mvMark(); mbTouch(); fwKeyTouch().catch(()=>{}); } catch(e){}
+      try { rejoinFix(); mvMark(); mbTouch(); fwKeyTouch().catch(()=>{}); if((M.hideQ || []).length) hideFlush(); } catch(e){}
       if(mainOn && !(auto && !M.dirty.length && now0 - (M.sync.last || 0) < 120000)){   // rien à envoyer et vu il y a moins de 2 min : on passe
       const ids = [...M.dirty];
       let first = true;
