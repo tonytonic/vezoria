@@ -5038,4 +5038,16 @@ I18N.load({
 "Ajouter une ville":"Şehir ekle",
 "Ajouter les villes du voyage":"Seyahatin şehirlerini ekle",
 "Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"Konakladığın bir şehir ve tarihlerin. Otel daha sonra, «Rezervasyon» adımında ayarlanır.",
-"Ex. Rome, Lisbonne, Tokyo":"Örn. Roma, Lizbon, Tokyo"});
+"Ex. Rome, Lisbonne, Tokyo":"Örn. Roma, Lizbon, Tokyo",
+"Plus d’expériences":"Daha fazla deneyim",
+"Tout est trié pour l’instant.":"Şimdilik her şey ayıklandı.",
+"{0} nouvelles expériences":"{0} yeni deneyim",
+"Pas d’autre idée pour l’instant.":"Şimdilik başka fikir yok.",
+"Je garde":"Tutuyorum",
+"Voir en liste":"Liste olarak gör",
+"Tout est trié !":"Hepsi ayıklandı!",
+"{0} lieu(x) ajouté(s) à ton programme.":"Programına {0} yer eklendi.",
+"Annuler le dernier choix":"Son seçimi geri al",
+"Glisse à droite pour garder, à gauche pour écarter":"Tutmak için sağa, geçmek için sola kaydır",
+"Ajouter les {0} lieux restants à ton programme ?":"Kalan {0} yer programına eklensin mi?",
+"Profils, partage, langue, cartes…":"Profiller, paylaşım, dil, haritalar…"});

@@ -5050,4 +5050,16 @@ I18N.load({
 "Ajouter une ville":"도시 추가",
 "Ajouter les villes du voyage":"여행 도시 추가",
 "Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"묵을 도시와 날짜예요. 호텔은 나중에 ‘예약’ 단계에서 예약해요.",
-"Ex. Rome, Lisbonne, Tokyo":"예: 로마, 리스본, 도쿄"});
+"Ex. Rome, Lisbonne, Tokyo":"예: 로마, 리스본, 도쿄",
+"Plus d’expériences":"체험 더 보기",
+"Tout est trié pour l’instant.":"지금은 모두 정리했어요.",
+"{0} nouvelles expériences":"새 체험 {0}개",
+"Pas d’autre idée pour l’instant.":"지금은 다른 아이디어가 없어요.",
+"Je garde":"담기",
+"Voir en liste":"목록으로 보기",
+"Tout est trié !":"모두 정리했어요!",
+"{0} lieu(x) ajouté(s) à ton programme.":"일정에 장소 {0}곳을 추가했어요.",
+"Annuler le dernier choix":"마지막 선택 취소",
+"Glisse à droite pour garder, à gauche pour écarter":"오른쪽으로 밀면 담기, 왼쪽은 넘기기",
+"Ajouter les {0} lieux restants à ton programme ?":"남은 장소 {0}곳을 일정에 추가할까요?",
+"Profils, partage, langue, cartes…":"프로필, 공유, 언어, 지도…"});

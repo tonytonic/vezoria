@@ -2112,4 +2112,16 @@ I18N.load({
 "Ajouter une ville":"Añadir una ciudad",
 "Ajouter les villes du voyage":"Añadir las ciudades del viaje",
 "Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"Una ciudad donde duermes, con tus fechas. El hotel se reserva más tarde, en el paso «Reservar».",
-"Ex. Rome, Lisbonne, Tokyo":"P. ej. Roma, Lisboa, Tokio"});
+"Ex. Rome, Lisbonne, Tokyo":"P. ej. Roma, Lisboa, Tokio",
+"Plus d’expériences":"Más experiencias",
+"Tout est trié pour l’instant.":"Todo está ordenado por ahora.",
+"{0} nouvelles expériences":"{0} experiencias nuevas",
+"Pas d’autre idée pour l’instant.":"No hay más ideas por ahora.",
+"Je garde":"Me lo quedo",
+"Voir en liste":"Ver en lista",
+"Tout est trié !":"¡Todo ordenado!",
+"{0} lieu(x) ajouté(s) à ton programme.":"{0} lugar(es) añadido(s) a tu programa.",
+"Annuler le dernier choix":"Deshacer la última elección",
+"Glisse à droite pour garder, à gauche pour écarter":"Desliza a la derecha para quedártelo, a la izquierda para descartarlo",
+"Ajouter les {0} lieux restants à ton programme ?":"¿Añadir los {0} lugares restantes a tu programa?",
+"Profils, partage, langue, cartes…":"Perfiles, compartir, idioma, mapas…"});

@@ -2096,4 +2096,16 @@ I18N.load({
 "Ajouter une ville":"Add a city",
 "Ajouter les villes du voyage":"Add the trip’s cities",
 "Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"A city where you sleep, with your dates. The hotel is booked later, in the “Book” step.",
-"Ex. Rome, Lisbonne, Tokyo":"E.g. Rome, Lisbon, Tokyo"});
+"Ex. Rome, Lisbonne, Tokyo":"E.g. Rome, Lisbon, Tokyo",
+"Plus d’expériences":"More experiences",
+"Tout est trié pour l’instant.":"Everything is sorted for now.",
+"{0} nouvelles expériences":"{0} new experiences",
+"Pas d’autre idée pour l’instant.":"No other ideas for now.",
+"Je garde":"Keep",
+"Voir en liste":"Show as a list",
+"Tout est trié !":"All sorted!",
+"{0} lieu(x) ajouté(s) à ton programme.":"{0} place(s) added to your plan.",
+"Annuler le dernier choix":"Undo last choice",
+"Glisse à droite pour garder, à gauche pour écarter":"Swipe right to keep, left to skip",
+"Ajouter les {0} lieux restants à ton programme ?":"Add the remaining {0} places to your plan?",
+"Profils, partage, langue, cartes…":"Profiles, sharing, language, maps…"});

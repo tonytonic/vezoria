@@ -5050,4 +5050,16 @@ I18N.load({
 "Ajouter une ville":"都市を追加",
 "Ajouter les villes du voyage":"旅の都市を追加",
 "Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"泊まる都市と日付。ホテルはあとで「予約」のステップで予約します。",
-"Ex. Rome, Lisbonne, Tokyo":"例：ローマ、リスボン、東京"});
+"Ex. Rome, Lisbonne, Tokyo":"例：ローマ、リスボン、東京",
+"Plus d’expériences":"もっと体験",
+"Tout est trié pour l’instant.":"今のところすべて整理済みです。",
+"{0} nouvelles expériences":"新しい体験 {0} 件",
+"Pas d’autre idée pour l’instant.":"今のところほかの案はありません。",
+"Je garde":"残す",
+"Voir en liste":"リストで見る",
+"Tout est trié !":"すべて整理しました！",
+"{0} lieu(x) ajouté(s) à ton programme.":"{0} か所を予定に追加しました。",
+"Annuler le dernier choix":"最後の選択を取り消す",
+"Glisse à droite pour garder, à gauche pour écarter":"右にスワイプで残す、左で外す",
+"Ajouter les {0} lieux restants à ton programme ?":"残りの {0} か所を予定に追加しますか？",
+"Profils, partage, langue, cartes…":"プロフィール、共有、言語、地図…"});

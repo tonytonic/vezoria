@@ -5051,4 +5051,16 @@ I18N.load({
 "Ajouter une ville":"Добавить город",
 "Ajouter les villes du voyage":"Добавить города поездки",
 "Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"Город, где ты ночуешь, и даты. Отель бронируется позже, на шаге «Забронировать».",
-"Ex. Rome, Lisbonne, Tokyo":"Например, Рим, Лиссабон, Токио"});
+"Ex. Rome, Lisbonne, Tokyo":"Например, Рим, Лиссабон, Токио",
+"Plus d’expériences":"Больше впечатлений",
+"Tout est trié pour l’instant.":"Пока всё разобрано.",
+"{0} nouvelles expériences":"Новых впечатлений: {0}",
+"Pas d’autre idée pour l’instant.":"Пока других идей нет.",
+"Je garde":"Беру",
+"Voir en liste":"Показать списком",
+"Tout est trié !":"Всё разобрано!",
+"{0} lieu(x) ajouté(s) à ton programme.":"Добавлено в программу мест: {0}.",
+"Annuler le dernier choix":"Отменить последний выбор",
+"Glisse à droite pour garder, à gauche pour écarter":"Смахни вправо, чтобы оставить, влево — чтобы пропустить",
+"Ajouter les {0} lieux restants à ton programme ?":"Добавить оставшиеся места ({0}) в программу?",
+"Profils, partage, langue, cartes…":"Профили, доступ, язык, карты…"});

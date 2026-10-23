@@ -2102,4 +2102,16 @@ I18N.load({
 "Ajouter une ville":"Stad toevoegen",
 "Ajouter les villes du voyage":"Steden van de reis toevoegen",
 "Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"Een stad waar je slaapt, met je data. Het hotel boek je later, bij de stap ‘Boeken’.",
-"Ex. Rome, Lisbonne, Tokyo":"Bijv. Rome, Lissabon, Tokio"});
+"Ex. Rome, Lisbonne, Tokyo":"Bijv. Rome, Lissabon, Tokio",
+"Plus d’expériences":"Meer belevenissen",
+"Tout est trié pour l’instant.":"Alles is voorlopig gesorteerd.",
+"{0} nouvelles expériences":"{0} nieuwe belevenissen",
+"Pas d’autre idée pour l’instant.":"Voorlopig geen andere ideeën.",
+"Je garde":"Houden",
+"Voir en liste":"Als lijst tonen",
+"Tout est trié !":"Alles gesorteerd!",
+"{0} lieu(x) ajouté(s) à ton programme.":"{0} plek(ken) aan je programma toegevoegd.",
+"Annuler le dernier choix":"Laatste keuze ongedaan maken",
+"Glisse à droite pour garder, à gauche pour écarter":"Veeg naar rechts om te houden, naar links om over te slaan",
+"Ajouter les {0} lieux restants à ton programme ?":"De overige {0} plekken aan je programma toevoegen?",
+"Profils, partage, langue, cartes…":"Profielen, delen, taal, kaarten…"});

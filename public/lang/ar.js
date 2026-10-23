@@ -5051,4 +5051,16 @@ I18N.load({
 "Ajouter une ville":"إضافة مدينة",
 "Ajouter les villes du voyage":"إضافة مدن الرحلة",
 "Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"مدينة تبيت فيها مع تواريخك. يُحجز الفندق لاحقًا في خطوة «احجز».",
-"Ex. Rome, Lisbonne, Tokyo":"مثل روما، لشبونة، طوكيو"});
+"Ex. Rome, Lisbonne, Tokyo":"مثل روما، لشبونة، طوكيو",
+"Plus d’expériences":"المزيد من التجارب",
+"Tout est trié pour l’instant.":"تم فرز كل شيء حاليًا.",
+"{0} nouvelles expériences":"{0} تجارب جديدة",
+"Pas d’autre idée pour l’instant.":"لا توجد أفكار أخرى حاليًا.",
+"Je garde":"أحتفظ به",
+"Voir en liste":"عرض كقائمة",
+"Tout est trié !":"تم فرز كل شيء!",
+"{0} lieu(x) ajouté(s) à ton programme.":"تمت إضافة {0} مكان إلى برنامجك.",
+"Annuler le dernier choix":"التراجع عن آخر اختيار",
+"Glisse à droite pour garder, à gauche pour écarter":"اسحب لليمين للاحتفاظ ولليسار للاستبعاد",
+"Ajouter les {0} lieux restants à ton programme ?":"إضافة الأماكن المتبقية ({0}) إلى برنامجك؟",
+"Profils, partage, langue, cartes…":"الملفات، المشاركة، اللغة، الخرائط…"});

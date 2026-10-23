@@ -5050,4 +5050,16 @@ I18N.load({
 "Ajouter une ville":"शहर जोड़ो",
 "Ajouter les villes du voyage":"यात्रा के शहर जोड़ो",
 "Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"वह शहर जहाँ तुम रुकोगे, तारीख़ों के साथ। होटल बाद में «बुक करो» वाले चरण में बुक होगा।",
-"Ex. Rome, Lisbonne, Tokyo":"जैसे रोम, लिस्बन, टोक्यो"});
+"Ex. Rome, Lisbonne, Tokyo":"जैसे रोम, लिस्बन, टोक्यो",
+"Plus d’expériences":"और अनुभव",
+"Tout est trié pour l’instant.":"फ़िलहाल सब छँट गया है।",
+"{0} nouvelles expériences":"{0} नए अनुभव",
+"Pas d’autre idée pour l’instant.":"फ़िलहाल कोई और विचार नहीं।",
+"Je garde":"रखूँगा",
+"Voir en liste":"सूची में देखो",
+"Tout est trié !":"सब छँट गया!",
+"{0} lieu(x) ajouté(s) à ton programme.":"तुम्हारे कार्यक्रम में {0} जगहें जोड़ी गईं।",
+"Annuler le dernier choix":"आख़िरी चुनाव रद्द करो",
+"Glisse à droite pour garder, à gauche pour écarter":"रखने के लिए दाएँ, हटाने के लिए बाएँ खिसकाओ",
+"Ajouter les {0} lieux restants à ton programme ?":"बाकी {0} जगहें कार्यक्रम में जोड़ें?",
+"Profils, partage, langue, cartes…":"प्रोफ़ाइल, साझा करना, भाषा, नक्शे…"});

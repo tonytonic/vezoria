@@ -5050,4 +5050,16 @@ I18N.load({
 "Ajouter une ville":"添加城市",
 "Ajouter les villes du voyage":"添加旅行的城市",
 "Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"你住宿的城市和日期。酒店稍后在“预订”步骤中预订。",
-"Ex. Rome, Lisbonne, Tokyo":"例如：罗马、里斯本、东京"});
+"Ex. Rome, Lisbonne, Tokyo":"例如：罗马、里斯本、东京",
+"Plus d’expériences":"更多体验",
+"Tout est trié pour l’instant.":"目前都已整理好。",
+"{0} nouvelles expériences":"{0} 个新体验",
+"Pas d’autre idée pour l’instant.":"暂时没有其他建议。",
+"Je garde":"保留",
+"Voir en liste":"以列表查看",
+"Tout est trié !":"全部整理好了！",
+"{0} lieu(x) ajouté(s) à ton programme.":"已将 {0} 个地点加入你的行程。",
+"Annuler le dernier choix":"撤销上一个选择",
+"Glisse à droite pour garder, à gauche pour écarter":"右滑保留，左滑跳过",
+"Ajouter les {0} lieux restants à ton programme ?":"把剩下的 {0} 个地点加入行程吗？",
+"Profils, partage, langue, cartes…":"个人资料、共享、语言、地图…"});
