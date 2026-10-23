@@ -1801,7 +1801,7 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .bb-ph b{position:absolute;left:6px;bottom:6px;background:rgba(255,255,255,.94);color:#be123c;border-radius:99px;font-size:.75rem;padding:2px 7px}
 .bb-best{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#fff1f2,#ffe4e6);border-radius:20px;padding:12px}
 .bb-bi{position:relative;width:86px;height:96px;flex:0 0 86px}.bb-bi img{position:absolute;width:62px;height:80px;object-fit:cover;border-radius:10px;border:3px solid #fff;box-shadow:0 6px 14px rgba(0,0,0,.25);left:calc(var(--i) * 11px);top:calc(var(--i) * 6px);transform:rotate(calc((var(--i) - 1) * 7deg))}
-.bb-bt{display:flex;flex-direction:column;gap:2px;min-width:0}.bb-bt small{color:#be123c;font-weight:800;font-size:.72rem}.bb-bt b{font-size:1.05rem}.bb-bt span{font-size:.8rem;color:#6b7280}
+.bb-bt{display:flex;flex-direction:column;gap:2px;min-width:0}.bb-best .bb-bt{flex:1 1 auto;min-width:0}.bb-best .bb-bt span{overflow-wrap:anywhere}.bb-bt small{color:#be123c;font-weight:800;font-size:.72rem}.bb-bt b{font-size:1.05rem}.bb-bt span{font-size:.8rem;color:#6b7280}
 .bb-bt button{align-self:flex-start;margin-top:6px;border:0;border-radius:99px;padding:6px 12px;font:inherit;font-weight:800;font-size:.8rem;color:#fff;background:linear-gradient(135deg,#f43f5e,#a855f7)}
 .bb-grow .cv-bbar i{animation:bbGrow 1.2s cubic-bezier(.2,.9,.3,1) both;transform-origin:left}
 @keyframes bbGrow{from{transform:scaleX(0)}to{transform:none}}
