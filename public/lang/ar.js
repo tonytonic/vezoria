@@ -5047,4 +5047,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"حدّد الرحلات التي يذهب فيها {0} فعلًا. لا يتغير شيء آخر في الرحلات، فقط قائمة المسافرين.",
 "Tout cocher":"تحديد الكل",
 "Tout décocher":"إلغاء تحديد الكل",
-"{0} voyage(s) modifié(s)":"تم تعديل {0} رحلة"});
+"{0} voyage(s) modifié(s)":"تم تعديل {0} رحلة",
+"Ajouter une ville":"إضافة مدينة",
+"Ajouter les villes du voyage":"إضافة مدن الرحلة",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"مدينة تبيت فيها مع تواريخك. يُحجز الفندق لاحقًا في خطوة «احجز».",
+"Ex. Rome, Lisbonne, Tokyo":"مثل روما، لشبونة، طوكيو"});

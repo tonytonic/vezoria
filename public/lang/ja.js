@@ -5046,4 +5046,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"{0} が実際に行く旅にチェックを入れてください。旅の内容はそのままで、旅行者の一覧だけが変わります。",
 "Tout cocher":"すべてチェック",
 "Tout décocher":"すべて外す",
-"{0} voyage(s) modifié(s)":"{0} 件の旅を変更しました"});
+"{0} voyage(s) modifié(s)":"{0} 件の旅を変更しました",
+"Ajouter une ville":"都市を追加",
+"Ajouter les villes du voyage":"旅の都市を追加",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"泊まる都市と日付。ホテルはあとで「予約」のステップで予約します。",
+"Ex. Rome, Lisbonne, Tokyo":"例：ローマ、リスボン、東京"});

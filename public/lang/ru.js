@@ -5047,4 +5047,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Отметь поездки, в которые {0} действительно едет. В поездках ничего не меняется, кроме списка путешественников.",
 "Tout cocher":"Отметить все",
 "Tout décocher":"Снять все",
-"{0} voyage(s) modifié(s)":"Изменено поездок: {0}"});
+"{0} voyage(s) modifié(s)":"Изменено поездок: {0}",
+"Ajouter une ville":"Добавить город",
+"Ajouter les villes du voyage":"Добавить города поездки",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"Город, где ты ночуешь, и даты. Отель бронируется позже, на шаге «Забронировать».",
+"Ex. Rome, Lisbonne, Tokyo":"Например, Рим, Лиссабон, Токио"});

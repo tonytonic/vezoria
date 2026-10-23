@@ -2107,4 +2107,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Spunta i viaggi in cui {0} parte davvero. Nient’altro cambia nei viaggi, solo l’elenco dei viaggiatori.",
 "Tout cocher":"Spunta tutto",
 "Tout décocher":"Togli tutte le spunte",
-"{0} voyage(s) modifié(s)":"{0} viaggio/i modificato/i"});
+"{0} voyage(s) modifié(s)":"{0} viaggio/i modificato/i",
+"Ajouter une ville":"Aggiungi una città",
+"Ajouter les villes du voyage":"Aggiungi le città del viaggio",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"Una città dove dormi, con le tue date. L’hotel si prenota più tardi, al passo «Prenota».",
+"Ex. Rome, Lisbonne, Tokyo":"Es. Roma, Lisbona, Tokyo"});

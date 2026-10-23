@@ -2098,4 +2098,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Vink de reizen aan waar {0} echt meegaat. Verder verandert er niets aan de reizen, alleen de lijst met reizigers.",
 "Tout cocher":"Alles aanvinken",
 "Tout décocher":"Alles uitvinken",
-"{0} voyage(s) modifié(s)":"{0} reis/reizen gewijzigd"});
+"{0} voyage(s) modifié(s)":"{0} reis/reizen gewijzigd",
+"Ajouter une ville":"Stad toevoegen",
+"Ajouter les villes du voyage":"Steden van de reis toevoegen",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"Een stad waar je slaapt, met je data. Het hotel boek je later, bij de stap ‘Boeken’.",
+"Ex. Rome, Lisbonne, Tokyo":"Bijv. Rome, Lissabon, Tokio"});

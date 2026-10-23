@@ -2102,4 +2102,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Hake die Reisen an, bei denen {0} wirklich mitfährt. Sonst ändert sich nichts an den Reisen, nur die Liste der Reisenden.",
 "Tout cocher":"Alle anhaken",
 "Tout décocher":"Alle abhaken",
-"{0} voyage(s) modifié(s)":"{0} Reise(n) geändert"});
+"{0} voyage(s) modifié(s)":"{0} Reise(n) geändert",
+"Ajouter une ville":"Stadt hinzufügen",
+"Ajouter les villes du voyage":"Städte der Reise hinzufügen",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"Eine Stadt, in der du übernachtest, mit deinen Daten. Das Hotel buchst du später im Schritt „Buchen“.",
+"Ex. Rome, Lisbonne, Tokyo":"Z. B. Rom, Lissabon, Tokio"});

@@ -2108,4 +2108,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Marca los viajes a los que {0} va de verdad. Nada más cambia en los viajes, solo la lista de viajeros.",
 "Tout cocher":"Marcar todo",
 "Tout décocher":"Desmarcar todo",
-"{0} voyage(s) modifié(s)":"{0} viaje(s) modificado(s)"});
+"{0} voyage(s) modifié(s)":"{0} viaje(s) modificado(s)",
+"Ajouter une ville":"Añadir una ciudad",
+"Ajouter les villes du voyage":"Añadir las ciudades del viaje",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"Una ciudad donde duermes, con tus fechas. El hotel se reserva más tarde, en el paso «Reservar».",
+"Ex. Rome, Lisbonne, Tokyo":"P. ej. Roma, Lisboa, Tokio"});

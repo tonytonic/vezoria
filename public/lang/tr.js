@@ -5034,4 +5034,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"{0} kişisinin gerçekten katıldığı seyahatleri işaretle. Seyahatlerde başka hiçbir şey değişmez, yalnızca yolcu listesi.",
 "Tout cocher":"Tümünü işaretle",
 "Tout décocher":"Tümünün işaretini kaldır",
-"{0} voyage(s) modifié(s)":"{0} seyahat güncellendi"});
+"{0} voyage(s) modifié(s)":"{0} seyahat güncellendi",
+"Ajouter une ville":"Şehir ekle",
+"Ajouter les villes du voyage":"Seyahatin şehirlerini ekle",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"Konakladığın bir şehir ve tarihlerin. Otel daha sonra, «Rezervasyon» adımında ayarlanır.",
+"Ex. Rome, Lisbonne, Tokyo":"Örn. Roma, Lizbon, Tokyo"});

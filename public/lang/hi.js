@@ -5046,4 +5046,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"उन यात्राओं पर निशान लगाओ जिनमें {0} सच में जा रहा है। यात्राओं में और कुछ नहीं बदलता, सिर्फ़ यात्रियों की सूची।",
 "Tout cocher":"सब चुनो",
 "Tout décocher":"सबका निशान हटाओ",
-"{0} voyage(s) modifié(s)":"{0} यात्राएँ बदली गईं"});
+"{0} voyage(s) modifié(s)":"{0} यात्राएँ बदली गईं",
+"Ajouter une ville":"शहर जोड़ो",
+"Ajouter les villes du voyage":"यात्रा के शहर जोड़ो",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"वह शहर जहाँ तुम रुकोगे, तारीख़ों के साथ। होटल बाद में «बुक करो» वाले चरण में बुक होगा।",
+"Ex. Rome, Lisbonne, Tokyo":"जैसे रोम, लिस्बन, टोक्यो"});

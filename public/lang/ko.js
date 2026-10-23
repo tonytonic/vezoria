@@ -5046,4 +5046,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"{0}님이 실제로 가는 여행을 체크하세요. 여행의 다른 내용은 그대로이고 여행자 목록만 바뀌어요.",
 "Tout cocher":"모두 체크",
 "Tout décocher":"모두 해제",
-"{0} voyage(s) modifié(s)":"여행 {0}개를 수정했어요"});
+"{0} voyage(s) modifié(s)":"여행 {0}개를 수정했어요",
+"Ajouter une ville":"도시 추가",
+"Ajouter les villes du voyage":"여행 도시 추가",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"묵을 도시와 날짜예요. 호텔은 나중에 ‘예약’ 단계에서 예약해요.",
+"Ex. Rome, Lisbonne, Tokyo":"예: 로마, 리스본, 도쿄"});

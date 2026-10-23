@@ -2092,4 +2092,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Tick the trips {0} really goes on. Nothing else in the trips changes, only the list of travelers.",
 "Tout cocher":"Tick all",
 "Tout décocher":"Untick all",
-"{0} voyage(s) modifié(s)":"{0} trip(s) updated"});
+"{0} voyage(s) modifié(s)":"{0} trip(s) updated",
+"Ajouter une ville":"Add a city",
+"Ajouter les villes du voyage":"Add the trip’s cities",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"A city where you sleep, with your dates. The hotel is booked later, in the “Book” step.",
+"Ex. Rome, Lisbonne, Tokyo":"E.g. Rome, Lisbon, Tokyo"});

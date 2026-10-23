@@ -5046,4 +5046,8 @@ I18N.load({
 "Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"勾选 {0} 真正参加的旅行。旅行的其他内容不变，只修改旅行者名单。",
 "Tout cocher":"全选",
 "Tout décocher":"全部取消",
-"{0} voyage(s) modifié(s)":"已修改 {0} 个旅行"});
+"{0} voyage(s) modifié(s)":"已修改 {0} 个旅行",
+"Ajouter une ville":"添加城市",
+"Ajouter les villes du voyage":"添加旅行的城市",
+"Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».":"你住宿的城市和日期。酒店稍后在“预订”步骤中预订。",
+"Ex. Rome, Lisbonne, Tokyo":"例如：罗马、里斯本、东京"});
