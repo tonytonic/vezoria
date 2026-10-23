@@ -4986,4 +4986,5 @@ I18N.load({
 "Crée d’abord un voyage":"まず旅を作成してください",
 "📥 L’import de tes voyages Polarsteps (le fichier de données qu’ils t’envoient).":"📥 Polarsteps の旅のインポート（送られてくるデータファイル）。",
 "Photos, récits, bilan":"写真・旅日記・まとめ",
-"Le voyage en direct":"旅をライブで"});
+"Le voyage en direct":"旅をライブで",
+"🔔 Des notifications quand tes compagnons ajoutent une dépense, un souvenir ou un sondage, et des rappels avant le départ.":"🔔 旅の仲間が支出・思い出・投票を追加したときの通知と、出発前のリマインダー。"});

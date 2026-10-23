@@ -4986,4 +4986,5 @@ I18N.load({
 "Crée d’abord un voyage":"먼저 여행을 만드세요",
 "📥 L’import de tes voyages Polarsteps (le fichier de données qu’ils t’envoient).":"📥 Polarsteps 여행 가져오기 (보내 주는 데이터 파일).",
 "Photos, récits, bilan":"사진, 이야기, 결산",
-"Le voyage en direct":"실시간 여행"});
+"Le voyage en direct":"실시간 여행",
+"🔔 Des notifications quand tes compagnons ajoutent une dépense, un souvenir ou un sondage, et des rappels avant le départ.":"🔔 동행이 지출, 추억, 투표를 추가하면 알림을 받고, 출발 전에는 리마인더도 받아요."});

@@ -2047,4 +2047,5 @@ I18N.load({
 "Crée d’abord un voyage":"Crea prima un viaggio",
 "📥 L’import de tes voyages Polarsteps (le fichier de données qu’ils t’envoient).":"📥 L’importazione dei tuoi viaggi Polarsteps (il file di dati che ti inviano).",
 "Photos, récits, bilan":"Foto, racconti, bilancio",
-"Le voyage en direct":"Il viaggio in diretta"});
+"Le voyage en direct":"Il viaggio in diretta",
+"🔔 Des notifications quand tes compagnons ajoutent une dépense, un souvenir ou un sondage, et des rappels avant le départ.":"🔔 Notifiche quando i tuoi compagni aggiungono una spesa, un ricordo o un sondaggio, e promemoria prima della partenza."});

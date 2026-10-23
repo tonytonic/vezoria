@@ -4986,4 +4986,5 @@ I18N.load({
 "Crée d’abord un voyage":"पहले एक यात्रा बनाओ",
 "📥 L’import de tes voyages Polarsteps (le fichier de données qu’ils t’envoient).":"📥 तुम्हारी Polarsteps यात्राओं का इम्पोर्ट (वे जो डेटा फ़ाइल भेजते हैं)।",
 "Photos, récits, bilan":"फ़ोटो, कहानियाँ, सार",
-"Le voyage en direct":"यात्रा, लाइव"});
+"Le voyage en direct":"यात्रा, लाइव",
+"🔔 Des notifications quand tes compagnons ajoutent une dépense, un souvenir ou un sondage, et des rappels avant le départ.":"🔔 जब साथी कोई ख़र्च, याद या पोल जोड़ें तो सूचनाएँ, और रवानगी से पहले रिमाइंडर।"});

@@ -4974,4 +4974,5 @@ I18N.load({
 "Crée d’abord un voyage":"Önce bir seyahat oluştur",
 "📥 L’import de tes voyages Polarsteps (le fichier de données qu’ils t’envoient).":"📥 Polarsteps seyahatlerini içe aktarma (sana gönderdikleri veri dosyası).",
 "Photos, récits, bilan":"Fotoğraflar, hikâyeler, özet",
-"Le voyage en direct":"Seyahat canlı"});
+"Le voyage en direct":"Seyahat canlı",
+"🔔 Des notifications quand tes compagnons ajoutent une dépense, un souvenir ou un sondage, et des rappels avant le départ.":"🔔 Yol arkadaşların bir harcama, anı ya da anket eklediğinde bildirimler ve yola çıkmadan önce hatırlatmalar."});

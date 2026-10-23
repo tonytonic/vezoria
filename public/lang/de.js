@@ -2042,4 +2042,5 @@ I18N.load({
 "Crée d’abord un voyage":"Leg zuerst eine Reise an",
 "📥 L’import de tes voyages Polarsteps (le fichier de données qu’ils t’envoient).":"📥 Der Import deiner Polarsteps-Reisen (die Datendatei, die sie dir schicken).",
 "Photos, récits, bilan":"Fotos, Berichte, Bilanz",
-"Le voyage en direct":"Die Reise live"});
+"Le voyage en direct":"Die Reise live",
+"🔔 Des notifications quand tes compagnons ajoutent une dépense, un souvenir ou un sondage, et des rappels avant le départ.":"🔔 Benachrichtigungen, wenn deine Mitreisenden eine Ausgabe, eine Erinnerung oder eine Umfrage hinzufügen, und Erinnerungen vor der Abreise."});

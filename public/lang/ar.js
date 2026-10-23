@@ -4987,4 +4987,5 @@ I18N.load({
 "Crée d’abord un voyage":"أنشئ رحلة أولًا",
 "📥 L’import de tes voyages Polarsteps (le fichier de données qu’ils t’envoient).":"📥 استيراد رحلاتك من Polarsteps (ملف البيانات الذي يرسلونه إليك).",
 "Photos, récits, bilan":"صور، حكايات، حصيلة",
-"Le voyage en direct":"الرحلة مباشرة"});
+"Le voyage en direct":"الرحلة مباشرة",
+"🔔 Des notifications quand tes compagnons ajoutent une dépense, un souvenir ou un sondage, et des rappels avant le départ.":"🔔 إشعارات عندما يضيف رفاقك مصروفًا أو ذكرى أو استطلاعًا، وتذكيرات قبل السفر."});
