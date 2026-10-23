@@ -818,12 +818,15 @@
   const wdRows = L => { const seen = new Set(); return L.map(b=>{ const p = wdPt(b), nom = (b.l || {}).value || '', sl = +((b.sl || {}).value || 0), id = ((b.it || {}).value || '').split('/').pop();
       return p && nom && !/^Q\d+$/.test(nom) ? {id, nom, lat:p.lat, lng:p.lng, sl} : null; }).filter(x=>x && !seen.has(x.id) && seen.add(x.id)); };
   // musées, sites archéologiques, monuments, lieux de culte, palais, châteaux, parcs, places, marchés, pyramides… ou tout lieu classé (patrimoine)
+  const WD_ART = 'wd:Q3305213 wd:Q860861 wd:Q179700 wd:Q838948 wd:Q93184 wd:Q11060274 wd:Q125191 wd:Q87167 wd:Q134194 wd:Q133067 wd:Q144860 wd:Q184296 wd:Q2342494 wd:Q1278452 wd:Q15727816';   // tableau, sculpture, statue, œuvre, dessin, estampe, photo, manuscrit, fresque, mosaïque, retable, tapisserie, objet de collection, polyptyque, peinture murale
   const WD_KINDS = 'wd:Q570116 wd:Q33506 wd:Q839954 wd:Q4989906 wd:Q24398318 wd:Q16560 wd:Q23413 wd:Q22698 wd:Q174782 wd:Q37654 wd:Q12516 wd:Q2319498 wd:Q1081138 wd:Q44539 wd:Q57821 wd:Q1107656 wd:Q12280 wd:Q35509 wd:Q8502 wd:Q34038 wd:Q40080';
   async function seeWD(c){
     const q = `SELECT DISTINCT ?it ?l ?co ?sl WHERE {
       SERVICE wikibase:around { ?it wdt:P625 ?co. bd:serviceParam wikibase:center "Point(${(+c.lng).toFixed(5)} ${(+c.lat).toFixed(5)})"^^geo:wktLiteral. bd:serviceParam wikibase:radius "20". }
       ?it wikibase:sitelinks ?sl. FILTER(?sl >= 8)
       { ?it wdt:P1435 ?h. } UNION { ?it wdt:P31/wdt:P279* ?k. VALUES ?k { ${WD_KINDS} } }
+      FILTER NOT EXISTS { ?it wdt:P195 ?col. }   # 🖼️ pas les œuvres d’un musée (tableaux, statues… classés monuments historiques)
+      MINUS { ?it wdt:P31 ?art. VALUES ?art { ${WD_ART} } }
       SERVICE wikibase:label { bd:serviceParam wikibase:language "${wdLang()}". ?it rdfs:label ?l. }
     } ORDER BY DESC(?sl) LIMIT 60`;
     return wdRows(await wdq(q)).map(x=>({nom:x.nom, cat:wikiCat(x.nom + ' '), score:14 + Math.log2(x.sl), lat:x.lat, lng:x.lng, wiki:'', sl:x.sl}));

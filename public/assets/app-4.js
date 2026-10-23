@@ -1010,12 +1010,12 @@ ${pm.join('\n')}</Document></kml>`;
   /* ---------- 🪄 Remplir mes journées (lieux les plus connus, répartis sur les jours libres) ---------- */
   async function placesFor(city){
     const key = normQ(city); M.poiCache = M.poiCache || {};
-    const hit = M.poiCache[key]; if(hit && Date.now() - hit.t < DISC_TTL && hit.list.length && (hit.wd || Date.now() - hit.t < 864e5)) return hit.list;
+    const hit = M.poiCache[key]; if(hit && hit.v === 2 && Date.now() - hit.t < DISC_TTL && hit.list.length && (hit.wd || Date.now() - hit.t < 864e5)) return hit.list;
     const c = await withTimeout(geocode(city, null), 10000).catch(()=>null); if(!c) return [];
     const res = await Promise.allSettled([seeWiki(c), seeApi(c), seeOverpass(c), seeWD(c)].map(p=>withTimeout(p, 10000)));
     const seen = new Set(), all = res.filter(r=>r.status==='fulfilled').flatMap(r=>r.value||[]);
     const list_ = all.filter(p=>p.nom && p.lat != null && !/^\d+$/.test(p.nom)).sort((x,y)=>y.score-x.score).filter(p=>{ const k = normQ(p.nom); if(seen.has(k)) return false; seen.add(k); return true; }).slice(0,150);
-    if(list_.length){ M.poiCache[key] = {t:Date.now(), list:list_, wd: all.some(p=>p.sl)}; persist(); }
+    if(list_.length){ M.poiCache[key] = {t:Date.now(), list:list_, wd: all.some(p=>p.sl), v:2}; persist(); }
     return list_;
   }
   /* ---------- 💡 Suggestions : 4 incontournables par jour, à trier quand on veut ---------- */
@@ -1181,11 +1181,11 @@ ${pm.join('\n')}</Document></kml>`;
       const out = []; let k = 0;
       const nDay = d => d === h.date ? 2 : SUGG_N;   // jour d’arrivée (trajet) : 2 idées, sinon 4
       if(!more){ days.filter(d=>!nOf(d)).forEach(d=>{ for(let j = 0; j < nDay(d) && k < cand.length; j++, k++){ const p = cand[k];
-          out.push({id:'pl' + uid() + k + j, type:'place', trip:tid, stay:h.id, date:d, nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false, sugg:true}); } }); }
+          out.push({id:'pl' + uid() + k + j, type:'place', trip:tid, stay:h.id, date:d, nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false, sugg:true, wiki:p.wiki || ''}); } }); }
       else {   // ➕ nouvelles idées : 2 de plus par jour, d’abord sur les journées les moins remplies
         const ds = days.slice().sort((a, b)=>nOf(a) - nOf(b)), cnt = {};
         for(let r = 0; r < 2; r++) ds.forEach(d=>{ if(k >= cand.length) return; const p = cand[k++]; cnt[d] = (cnt[d] || 0) + 1;
-          out.push({id:'pl' + uid() + k + r, type:'place', trip:tid, stay:h.id, date:d, nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false, sugg:true}); });
+          out.push({id:'pl' + uid() + k + r, type:'place', trip:tid, stay:h.id, date:d, nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false, sugg:true, wiki:p.wiki || ''}); });
       }
       if(out.length){ putQuiet(out); SG.got += out.length; }
       refresh();
@@ -1219,6 +1219,7 @@ ${pm.join('\n')}</Document></kml>`;
         ${by[d].map(p=>`<div class="sg-r"><span class="sg-i">${(POI_CATS[p.cat] || {icon:'📍'}).icon}</span><span class="sg-n" role="button" onclick="CV.plInfo('${p.id}',false,'sugg')"><span data-notr>${esc(p.nom)}</span>${p.exc ? `<small class="sg-x">🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</small>` : ''}</span>
           <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.suggKeep('${p.id}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.suggDrop('${p.id}')">✕</button></div>`).join('')}</div>`).join('')}
       <button type="button" class="v-btn sec" style="margin:4px 0 8px" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>
+      <button type="button" class="v-btn sec" style="margin:0 0 8px" onclick="CV.suggRedo()">🔄 ${MSGT('Refaire les suggestions')}</button>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.suggKeep('*')">✓ ${MSGT('Tout ajouter')}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
     const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y;
   }
@@ -1242,18 +1243,30 @@ ${pm.join('\n')}</Document></kml>`;
     closeSheet(true); SW = {tid:t.id, ids:L.map(p=>p.id), i:0, hist:[], kept:0}; swRender();
   }
   const swCity = p => { const h = p.stay && R[p.stay]; return (h && (h.type === 'city' ? h.titre : stayCity(h))) || (p.date && dayCity(p.date)) || ''; };
+  const swSim = (a, b) => { a = normQ(a); b = normQ(b); if(!a || !b) return 0; if(a === b) return 1; if(a.includes(b) || b.includes(a)) return .85;
+    const A = new Set(a.split(/[^a-z0-9]+/).filter(w=>w.length > 2)), B = b.split(/[^a-z0-9]+/).filter(w=>w.length > 2); if(!A.size || !B.length) return 0;
+    return B.filter(w=>A.has(w)).length / Math.max(A.size, B.length); };
   async function swInfo(p){
     const key = normQ(p.nom + '|' + swCity(p)); if(SWC[key]) return SWC[key];
     const lg0 = (window.I18N && I18N.lang) || 'fr', out = {img:'', ex:'', url:''};
-    for(const lg of [...new Set([lg0, 'fr', 'en'])]){
-      try {
-        const q = p.nom + ' ' + swCity(p);
-        const j = await withTimeout(fetch(`https://${lg}.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(q)}&gsrlimit=1&prop=pageimages|extracts&piprop=thumbnail&pithumbsize=900&exintro=1&explaintext=1&exsentences=3&redirects=1&format=json&origin=*`).then(r=>r.json()), 9000);
-        const pg = Object.values((j.query || {}).pages || {})[0];
-        if(pg){ out.img = (pg.thumbnail || {}).source || ''; out.ex = (pg.extract || '').trim(); out.url = `https://${lg}.wikipedia.org/wiki/${encodeURIComponent(String(pg.title).replace(/ /g, '_'))}`; if(out.img || out.ex) break; }
-      } catch(e){}
-    }
-    SWC[key] = out; return out;
+    const W = (lg, qs) => withTimeout(fetch(`https://${lg}.wikipedia.org/w/api.php?${qs}&format=json&formatversion=2&origin=*`).then(r=>r.json()), 9000);
+    const page = async (lg, title) => { const j = await W(lg, `action=query&titles=${encodeURIComponent(title)}&prop=pageimages|extracts|description&piprop=thumbnail&pithumbsize=900&exintro=1&explaintext=1&exsentences=3&redirects=1`);
+      const pg = ((j.query || {}).pages || [])[0]; if(!pg || pg.missing) return false;
+      if(/peinture|tableau|painting|gemälde|dipinto|pintura|sculpture|statue/i.test(pg.description || '')) return false;   // une œuvre, pas un lieu
+      out.img = (pg.thumbnail || {}).source || ''; out.ex = (pg.extract || '').trim(); out.url = `https://${lg}.wikipedia.org/wiki/${encodeURIComponent(String(pg.title).replace(/ /g, '_'))}`; return !!(out.img || out.ex); };
+    try {
+      const w = p.wiki && wkParse(p.wiki); if(w && await page(w.lang, w.title)) return (SWC[key] = out);
+      for(const lg of [...new Set([lg0, 'fr', 'en'])]){
+        if(p.lat != null){   // l'article dont le sujet est À CET ENDROIT et porte ce nom (pas un tableau qui le représente)
+          const j = await W(lg, `action=query&list=geosearch&gscoord=${(+p.lat).toFixed(5)}|${(+p.lng).toFixed(5)}&gsradius=600&gslimit=20`);
+          const best = ((j.query || {}).geosearch || []).map(g=>[g, swSim(g.title, p.nom)]).sort((a, b)=>b[1] - a[1])[0];
+          if(best && best[1] >= .5 && await page(lg, best[0].title)) return (SWC[key] = out);
+        }
+        const j = await W(lg, `action=query&list=search&srsearch=${encodeURIComponent(p.nom + ' ' + swCity(p))}&srlimit=3`);
+        for(const r of ((j.query || {}).search || [])) if(swSim(r.title, p.nom) >= .5 && await page(lg, r.title)) return (SWC[key] = out);
+      }
+    } catch(e){}
+    return (SWC[key] = out);
   }
   function swCard(p, top){
     const ds = dayList(), k = ds.indexOf(p.date), ic = (POI_CATS[p.cat] || {icon:'📍'}).icon, c = swCity(p);
@@ -1276,13 +1289,14 @@ ${pm.join('\n')}</Document></kml>`;
     if(!ov){ ov = document.createElement('div'); ov.id = 'cv-sw'; document.body.appendChild(ov); document.body.style.overflow = 'hidden'; }
     const left = SW.ids.slice(SW.i).filter(id=>R[id] && R[id].sugg && !R[id].deleted), total = SW.ids.length, done = total - left.length;
     const head = `<div class="sw-head"><button type="button" class="sw-x" onclick="CV.swClose()" aria-label="${esc(MSGT('Fermer'))}">✕</button>
-      <div class="sw-ttl"><b>💡 ${esc(MSGT('Choisir mes visites'))}</b><small>${Math.min(done + 1, total)}/${total}</small></div>
+      <div class="sw-ttl"><b>💡 ${esc(MSGT('Choisir mes visites'))}</b><small>${Math.min(done + 1, total)}/${total}</small> <small class="sw-kept">· ✓ ${SW.kept}</small></div>
       <button type="button" class="sw-list" onclick="CV.suggList()" aria-label="${esc(MSGT('Voir en liste'))}">☰</button></div>
       <div class="sw-bar"><span style="width:${total ? done / total * 100 : 100}%"></span></div>`;
     if(!left.length){
       const xn = expCount(t);
       ov.innerHTML = head + `<div class="sw-end"><div class="sw-end-i">✨</div><h2>${esc(MSGT('Tout est trié !'))}</h2><p>${esc(RF('{0} lieu(x) ajouté(s) à ton programme.', SW.kept))}</p>
         <button type="button" class="v-btn" onclick="CV.swClose();CV.suggMore()">＋ ${esc(MSGT('Nouvelles suggestions'))}</button>
+        <button type="button" class="v-btn sec" onclick="CV.suggRedo()">🔄 ${esc(MSGT('Refaire les suggestions'))}</button>
         <button type="button" class="v-btn sec" onclick="CV.swClose();CV.expOpen()">🎟️ ${esc(MSGT('Expériences à vivre'))}${xn ? ' (' + xn + ')' : ''}</button>
         ${SW.hist.length ? `<button type="button" class="v-btn sec" onclick="CV.swUndo()">↩️ ${esc(MSGT('Annuler le dernier choix'))}</button>` : ''}
         <button type="button" class="v-btn sec" onclick="CV.swClose()">${esc(MSGT('Fermer'))}</button></div>`;
@@ -1296,31 +1310,50 @@ ${pm.join('\n')}</Document></kml>`;
         <button type="button" class="sw-b all" onclick="CV.swAll()" aria-label="${esc(MSGT('Tout ajouter'))}">⏩</button></div>
       <div class="sw-hint">${esc(MSGT('Glisse à droite pour garder, à gauche pour écarter'))}</div>`;
     ov.querySelectorAll('.sw-card').forEach(el=>swFill(el, R[el.dataset.id]));
-    left.slice(2, 4).forEach(id=>{ if(R[id]) swInfo(R[id]).then(x=>{ if(x.img) (new Image()).src = x.img; }); });   // les suivantes se préparent
-    swDrag(ov.querySelector('.sw-card.top'));
+    swPre(left); swDrag(ov.querySelector('.sw-card.top'));
+  }
+  const swLeft = () => SW ? SW.ids.slice(SW.i).filter(id=>R[id] && R[id].sugg && !R[id].deleted) : [];
+  function swPre(left){ left.slice(2, 5).forEach(id=>{ if(R[id]) swInfo(R[id]).then(x=>{ if(x.img) (new Image()).src = x.img; }); }); }   // les suivantes se préparent
+  // carte suivante sans tout redessiner : celle de derrière passe devant (déjà chargée), une nouvelle se glisse derrière
+  function swNext(){
+    const ov = document.getElementById('cv-sw'), st = ov && ov.querySelector('.sw-stack'); if(!st) return swRender();
+    const left = swLeft(); if(!left.length) return swRender();
+    st.querySelectorAll('.sw-card.top').forEach(x=>x.remove());
+    let topEl = st.querySelector('.sw-card'); if(!topEl || topEl.dataset.id !== left[0]) return swRender();
+    topEl.classList.add('top'); swDrag(topEl);
+    if(left[1] && R[left[1]]){ st.insertAdjacentHTML('afterbegin', swCard(R[left[1]], false)); swFill(st.firstElementChild, R[left[1]]); }
+    const total = SW.ids.length, done = total - left.length;
+    const sm = ov.querySelector('.sw-ttl small'); if(sm) sm.textContent = Math.min(done + 1, total) + '/' + total;
+    const bar = ov.querySelector('.sw-bar span'); if(bar) bar.style.width = (total ? done / total * 100 : 100) + '%';
+    const ub = ov.querySelector('.sw-b.undo'); if(ub) ub.disabled = !SW.hist.length;
+    const kp = ov.querySelector('.sw-kept'); if(kp) kp.textContent = '· ✓ ' + SW.kept;
+    swPre(left);
   }
   function swDrag(el){
     if(!el) return; let x0 = 0, y0 = 0, dx = 0, on = false;
     el.addEventListener('pointerdown', e=>{ if(e.target.closest('a')) return; on = true; x0 = e.clientX; y0 = e.clientY; dx = 0; el.style.transition = 'none'; try { el.setPointerCapture(e.pointerId); } catch(_){} });
-    el.addEventListener('pointermove', e=>{ if(!on) return; dx = e.clientX - x0; const dy = e.clientY - y0;
-      el.style.transform = `translate(${dx}px,${dy * .15}px) rotate(${dx / 18}deg)`; el.style.setProperty('--yes', Math.max(0, Math.min(1, dx / 90))); el.style.setProperty('--no', Math.max(0, Math.min(1, -dx / 90))); });
+    el.addEventListener('pointermove', e=>{ if(!on) return; dx = e.clientX - x0; const dy = e.clientY - y0; if(Math.abs(dx) < 6){ dx = 0; return; }
+      el.style.transform = `translate(${dx}px,${dy * .1}px) rotate(${dx / 22}deg)`; el.style.setProperty('--yes', Math.max(0, Math.min(1, dx / 90))); el.style.setProperty('--no', Math.max(0, Math.min(1, -dx / 90))); });
     const end = () => { if(!on) return; on = false; el.style.transition = '';
       if(Math.abs(dx) > 90) swGo(dx > 0 ? 1 : 0); else { el.style.transform = ''; el.style.setProperty('--yes', 0); el.style.setProperty('--no', 0); } };
     el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
   }
+  let swBusy = false;
   function swGo(keep){
-    if(!SW) return; const el = document.querySelector('#cv-sw .sw-card.top'); if(!el) return; const p = R[el.dataset.id]; if(!p) return;
+    if(!SW || swBusy) return; swBusy = true; setTimeout(()=>{ swBusy = false; }, 340); const el = document.querySelector('#cv-sw .sw-card.top'); if(!el) return; const p = R[el.dataset.id]; if(!p) return;
     const before = clone(p), di = R['day:' + p.trip + ':' + p.date], dayBefore = di ? clone(di) : null;
     if(keep){ const c = clone(p); delete c.sugg; c.kept = Date.now(); putQuiet([c]); SW.kept++;
       if(p.exc && di && !di.deleted && !String(di.titre || '').includes(p.nom)) putQuiet([Object.assign(clone(di), {titre:(di.titre ? di.titre + ' · ' : '') + '🚌 ' + p.nom})]); }
     else { M.suggNo = M.suggNo || {}; const nl = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!nl.includes(p.nom)) nl.push(p.nom); if(nl.length > 300) nl.shift(); const c = clone(p); c.deleted = true; putQuiet([c]); }
     SW.hist.push({id:p.id, keep, before, dayBefore});
+    try { persistNow(); } catch(e){}   // enregistré tout de suite : on peut s’arrêter à tout moment, rien n’est perdu
+    if(keep) toast('✓ ' + p.nom + ' · ' + MSGT('Ajouté au programme'));
     el.style.transition = 'transform .32s ease, opacity .32s ease'; el.style.transform = `translate(${keep ? 140 : -140}%, -4%) rotate(${keep ? 22 : -22}deg)`; el.style.opacity = '0';
     el.style.setProperty(keep ? '--yes' : '--no', 1);
-    setTimeout(swRender, 260);
+    setTimeout(swNext, 300);
   }
   function swUndo(){
-    if(!SW || !SW.hist.length) return; const h = SW.hist.pop();
+    if(!SW || !SW.hist.length || swBusy) return; const h = SW.hist.pop();
     const r = Object.assign(clone(h.before), {sugg:true}); delete r.deleted; delete r.kept; putQuiet([r]);
     if(h.keep){ SW.kept = Math.max(0, SW.kept - 1); if(h.dayBefore && R[h.dayBefore.id] && R[h.dayBefore.id].titre !== h.dayBefore.titre) putQuiet([Object.assign(clone(R[h.dayBefore.id]), {titre:h.dayBefore.titre || ''})]); }
     else { const nl = ((M.suggNo || {})[h.before.trip]) || []; const i = nl.indexOf(h.before.nom); if(i >= 0) nl.splice(i, 1); persist(); }
@@ -1331,6 +1364,13 @@ ${pm.join('\n')}</Document></kml>`;
     if(!SW) return; const n = SW.ids.filter(id=>R[id] && R[id].sugg && !R[id].deleted).length; if(!n) return;
     if(!(await uiConfirm(RF('Ajouter les {0} lieux restants à ton programme ?', n)))) return;
     SW.kept += n; suggKeep('*'); swRender();
+  }
+  async function suggRedo(){
+    const t = trip(); if(!t) return; const L = list('place', p=>p.trip === t.id && p.sugg);
+    if(!(await uiConfirm(RF('Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.', L.length)))) return;
+    const out = L.map(p=>Object.assign(clone(p), {deleted:true})); if(out.length) putQuiet(out);
+    list('item', i=>i.trip === t.id && i.cat === 'hotel').forEach(h=>{ const c = stayCity(h); if(c && M.poiCache) delete M.poiCache[normQ(c)]; });
+    if(M.suggDone) delete M.suggDone[t.id]; persist(); swClose(true); closeSheet(true); suggFill(t.id);
   }
   function swClose(quiet){ const ov = document.getElementById('cv-sw'); if(ov) ov.remove(); if(ov || !quiet) document.body.style.overflow = ''; SW = null; if(!quiet) refresh(); }
   function suggDrop(id){ const p = R[id]; if(!p) return; M.suggNo = M.suggNo || {}; const nl = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!nl.includes(p.nom)) nl.push(p.nom); if(nl.length > 300) nl.shift(); p.deleted = true; putQuiet([p]); if(document.getElementById('cv-sw')) swRender(); else suggList(); refresh(); }

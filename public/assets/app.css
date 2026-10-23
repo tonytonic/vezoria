@@ -2580,3 +2580,4 @@ body.vz-webf .cv-bell{display:none}
 @media (prefers-reduced-motion:reduce){#cv-sw{animation:none}.sw-card{transition:none}}
 /* Échéancier / budget : la 1re tuile (« Déjà payé ») reste foncée en mode verre, sinon le doré est illisible sur fond clair */
 body.vz-glass .v-tiles .v-tile:first-child{background:var(--navy)!important;border-color:transparent!important}
+.v-toast{z-index:9600}   /* visible aussi par-dessus « Choisir mes visites » et « Explorer » */
