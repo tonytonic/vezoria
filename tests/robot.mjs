@@ -33,7 +33,9 @@ for (const lang of LANGS) {
   await pg.goto(BASE + '/?web=1'); await pg.waitForTimeout(2500);
   for (let i = 0; i < 3 && !(await pg.$('#cv-pnom')); i++) { await pg.evaluate(() => { if (document.getElementById('su-l')) CV.setupGo(); else if (CV.infoOk) CV.infoOk(true); }); await pg.waitForTimeout(800); }
   await pg.fill('#cv-pnom', 'Robot');
-  await pg.evaluate(() => { void CV.obCreate('demo'); }); await pg.waitForTimeout(5000);
+  await pg.evaluate(() => { void CV.obCreate('demo'); });
+  for (let i = 0; i < 40 && !(await pg.evaluate(() => { try { return !!CV._M().trip; } catch (e) { return false; } })); i++) await pg.waitForTimeout(500);   // démo prête (jusqu’à 20 s sur une machine lente)
+  await pg.waitForTimeout(1500);
   const tidy = async () => pg.evaluate(() => {
     document.querySelectorAll('.ui-dlg .ui-act button:last-child').forEach(b => b.click());
     try { CV.close(); } catch (e) {} document.querySelectorAll('#v-sheet-bg').forEach(x => x.remove());
