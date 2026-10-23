@@ -35,7 +35,8 @@
   }
   window.__vzBootFail = show;
   document.addEventListener('DOMContentLoaded', function(){ if (!window.__vzES2020) { old = true; show(); } });
-  setTimeout(show, 8000);
+  // 8 s sans démarrer → écran d’aide ; mais tant que le code de l’appli est encore en train d’arriver (réseau lent, 1re ouverture), on patiente jusqu’à 30 s
+  (function chk(n){ setTimeout(function(){ if (window.__vzReady) return; if (window.__vzLoad === 1 && n < 6) return chk(n + 1); show(); }, n ? 4000 : 8000); })(0);
 })();
 </script>
 <script>window.__vzES2020 = (null ?? ({a:1})?.a) === 1;   /* erreur de syntaxe sur un navigateur trop ancien → reste indéfini */</script>
@@ -148,11 +149,11 @@ window.__vzSplashOff = function(){ var s = document.getElementById('vz-splash');
    exactement comme quand tout était dans index.html. Exécutées une par une, une minuterie ou un événement pouvait
    se glisser entre deux parties et appeler l’appli avant son démarrage (iPhone : « M.sync.url »). */
 (function(){
-  var N = 8, parts = [];
+  var N = 8, parts = []; window.__vzLoad = 1;
   for (var i = 1; i <= N; i++) parts.push(fetch('assets/app-' + i + '.js').then(function(r){ if (!r.ok) throw new Error('assets ' + r.status); return r.text(); }));
   Promise.all(parts).then(function(t){
     var s = document.createElement('script');
-    s.textContent = t.join('\n;\n') + '\n//# sourceURL=vezoria-app.js';
+    window.__vzLoad = 2; s.textContent = t.join('\n;\n') + '\n//# sourceURL=vezoria-app.js';
     document.body.appendChild(s);
   }).catch(function(e){ try { console.error(e); } catch (x) {} if (window.__vzBootFail) window.__vzBootFail(); });
 })();

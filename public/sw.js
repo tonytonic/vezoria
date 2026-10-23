@@ -3,16 +3,17 @@
 // Une nouvelle version de l'appli = un nouveau sw.js : il s'installe en arrière-plan, puis l'appli propose
 // « Nouvelle version · toucher pour recharger » (ou recharge seule si elle vient juste de s'ouvrir).
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-23m';
+const CACHE = 'vezoria-2026-10-23p';
 // le code et les styles sont dans assets/ (depuis la 2026-10-23d) : copiés dès l'installation pour marcher hors ligne tout de suite
 const CORE = ['./', './splash.webp', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './i18n.js',
   './assets/app.css', ...[1, 2, 3, 4, 5, 6, 7, 8].map(n => './assets/app-' + n + '.js'),
   './assets/fonts/0cb4a757b2.woff2', './assets/fonts/25bd274cc1.woff2', './assets/fonts/55b958c2e4.woff2', './assets/fonts/5825d57791.woff2', './assets/fonts/692b8f6440.woff2', './assets/fonts/6ea773f758.woff2', './assets/fonts/9130a9f8f9.woff2', './assets/fonts/94ed9918ff.woff2'];
+const CORE_SET = new Set(CORE.filter(u => u !== './').map(u => new URL(u, self.location.href).pathname));
 // (les bibliothèques de vendor/ et les fichiers de langue lang/*.json sont mis en cache au premier usage)
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)
-    .then(c => Promise.all(CORE.map(u => c.add(u).catch(() => null))))
+    .then(c => Promise.all(CORE.map(u => c.add(new Request(u, {cache: 'reload'})).catch(() => null))))   // « reload » : jamais une vieille copie du navigateur
     .then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
@@ -57,6 +58,23 @@ self.addEventListener('fetch', e => {
       e.respondWith(caches.match(req).then(m => m || fetch(req).then(r => { if (r && r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; })));
       return;
     }   // vidéo du tuto, musiques du film : lues en direct (lecture par morceaux)
+    // 🧩 le cœur de l'appli (accueil, assets/app-1…8.js, styles, polices) vient TOUJOURS de la copie de CETTE version,
+    //    faite d'un bloc à l'installation : jamais un mélange de deux versions (une partie neuve avec une ancienne).
+    //    La nouvelle version arrive avec le nouveau sw.js (CACHE change à chaque version).
+    const home0 = req.mode === 'navigate' && /\/(index\.html)?$/.test(url.pathname);
+    if (home0 || CORE_SET.has(url.pathname)) {
+      e.respondWith((async () => {
+        const c = await caches.open(CACHE), key = home0 ? './' : req;
+        let m = await c.match(key, {ignoreSearch: true});
+        if (m && m.redirected) m = new Response(await m.blob(), {status: 200, headers: m.headers});
+        if (m) return m;
+        try { const r = await timeout(fetch(home0 ? './' : req), 15000); if (r && r.ok && !r.redirected) c.put(key, r.clone());
+          if (r && r.redirected && req.mode === 'navigate') return Response.redirect(r.url, 302);
+          return r; }
+        catch (_) { return (await caches.match(key, {ignoreSearch: true})) || Response.error(); }
+      })());
+      return;
+    }
     e.respondWith((async () => {
       const net = fetch(req).then(r => { if (r && r.ok && !r.redirected) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; });
       // l’accueil de l’appli ne sert de secours QUE pour l’accueil (pas pour les pages légales ou autres)
