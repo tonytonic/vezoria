@@ -131,7 +131,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       put: async (k, v) => { const d = await db(); return new Promise((res, rej) => { const tx = d.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error); }); },
     };
   })();
-  let storeIdb = false, storeLoading = false, storeBroken = false;
+  let storeIdb = false, storeLoading = false, storeBroken = false, storeReady = false;   // storeReady : carnet relu → seulement là on a le droit d’écrire
   async function loadStoreIdb(){
     try { const r = await RDB.get('R'); if(r && typeof r === 'object') R = r; }
     catch(e){   // jamais d’écriture d’un carnet vide par-dessus le vrai : on bloque et on prévient
@@ -143,6 +143,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     M = Object.assign(baseMeta(), M);
     M.sync = Object.assign(baseMeta().sync, M.sync || {});
     if(!Array.isArray(M.dirty)) M.dirty = [];
+    storeReady = true;
   }
   // Enregistrement regroupé : plusieurs modifications d’affilée = une seule écriture (300 ms après la dernière).
   // Rien ne se perd : écrit tout de suite quand l’appli passe en arrière-plan, se ferme ou se recharge.
@@ -152,7 +153,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     catch(e){ alert('Sauvegarde impossible (stockage plein ou bloqué). Exporte tes données.'); return false; }
   }
   function persistNow(){
-    clearTimeout(persistT); persistT = 0; if(persistOff || storeLoading) return Promise.resolve();
+    clearTimeout(persistT); persistT = 0; if(persistOff || storeLoading || !storeReady) return Promise.resolve();   // 🛡️ jamais d’écriture avant d’avoir relu le carnet (sinon un carnet vide écraserait le vrai)
     if(!STORE_IDB){ persistLegacy(); return Promise.resolve(); }
     if(storeIdb){ try { localStorage.setItem(KEY, JSON.stringify({idb:1, meta:M})); } catch(e){} }   // réglages : tout de suite
     return RDB.put('R', R).then(()=>{   // le carnet : dans la base ; le petit stockage ne garde plus que les réglages
@@ -160,7 +161,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       try { localStorage.setItem(KEY, JSON.stringify({idb:1, meta:M})); storeIdb = true; } catch(e){}
     }).catch(e=>{ console.warn('carnet : base indisponible, ancien rangement', e); persistLegacy(); });
   }
-  function persist(){ if(persistOff || persistT) return; persistT = setTimeout(persistNow, 300); }
+  function persist(){ if(persistOff || persistT || !storeReady) return; persistT = setTimeout(persistNow, 300); }
   ['pagehide', 'beforeunload'].forEach(ev=>addEventListener(ev, ()=>{ if(persistT) persistNow(); }));
   document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'hidden' && persistT) persistNow(); });
   let toastT;

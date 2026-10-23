@@ -1068,7 +1068,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-23d'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-23f'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1162,6 +1162,72 @@
   setTimeout(vzPaint, 0);
   var VZAPI = {vzGo, vzHide, vzNews, vzAvis, vzStar, vzSend, vzRestore, vzPaint};
 
+  /* ══════════ 🛟 RÉCUPÉRER UN CARNET SANS SON CODE ══════════
+     Si les notifications étaient activées, ce téléphone garde à part la clé de chiffrement de chaque carnet (base « vz-push »,
+     clés « r:… » sur iPhone, « k:… » partout). Avec la clé d’administration du serveur, on demande les fiches CHIFFRÉES de
+     chaque carnet, on essaie nos clés ICI (le serveur ne voit jamais rien en clair), puis on remet les fiches retrouvées dans
+     l’appli. Les photos restées sur le téléphone se raccrochent toutes seules à leurs souvenirs. */
+  async function recupKeys(){
+    const db = await pushDb();
+    const all = await new Promise((res, rej)=>{ const out = []; const tx = db.transaction('kv'), st = tx.objectStore('kv'), q = st.openCursor();
+      q.onsuccess = () => { const c = q.result; if(!c) return res(out); out.push([String(c.key), c.value]); c.continue(); }; q.onerror = () => rej(q.error); });
+    const keysOut = [], seen = new Set();
+    for(const [k, v] of all){
+      if(!/^[rk]:/.test(k)) continue; const kid = k.slice(2);
+      try {
+        const key = k[0] === 'r' ? await crypto.subtle.importKey('raw', v, 'AES-GCM', false, ['decrypt']) : v;
+        if(key && key.type === 'secret' && !seen.has(kid + k[0])){ seen.add(kid + k[0]); keysOut.push({kid, key}); }
+      } catch(e){}
+    }
+    return keysOut;
+  }
+  async function recupTry(key, data){
+    try { const x = typeof data === 'string' ? JSON.parse(data) : data; if(!x || !x.enc) return null; const u8 = unb64(x.enc);
+      return JSON.parse(td.decode(new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:u8.slice(0, 12)}, key, u8.slice(12))))); } catch(e){ return null; }
+  }
+  const RF = (t, ...a) => MSGT(t).replace(/\{(\d)\}/g, (m, k)=>a[+k] == null ? '' : a[+k]);   // phrase traduite d’un bloc, valeurs insérées
+  async function recupSheet(){
+    let ks = []; try { ks = await recupKeys(); } catch(e){}
+    openSheet(`<h2>🛟 ${esc(MSGT('Récupérer un carnet perdu'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px" data-notr>${esc(RF('Pour un carnet qui était dans le cloud, quand son code est perdu. Ce téléphone a gardé {0} clé(s) de chiffrement de carnets (celles des notifications).', ks.length))}</div>
+      ${ks.length ? `<div class="v-f"><label>Clé d’administration du serveur (ADMIN_KEY)</label><input class="v-in" id="rc-ak" type="password" autocomplete="off"></div>
+      <div id="rc-msg" class="v-sum-small" style="margin:6px 0" data-notr></div>
+      <div class="v-actions"><button type="button" class="v-btn" id="rc-go" onclick="CV.recupGo()">🛟 Chercher mes voyages</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`
+      : `<p class="cv-warn">Aucune clé sur ce téléphone : la récupération sans code n’est pas possible ici. Demande à un compagnon le code d’un voyage partagé (👥 Partager → 🔗 Rejoindre avec un code).</p><div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`}`);
+  }
+  async function recupGo(){
+    const ak = ((document.getElementById('rc-ak') || {}).value || '').trim(), msg = document.getElementById('rc-msg'), btn = document.getElementById('rc-go');
+    const say = t => { if(msg) msg.textContent = t; };
+    if(!ak){ say(MSGT('Colle la clé d’administration.')); return; }
+    if(btn) btn.disabled = true;
+    try {
+      const adm = async body => { const r = await fetch(location.origin + '/api/admin', {method:'POST', headers:{'Content-Type':'application/json', 'X-Admin-Key':ak}, body:JSON.stringify(body)}); const j = await r.json().catch(()=>({})); if(!r.ok) throw new Error(j.error || ('erreur ' + r.status)); return j; };
+      say('🔐 ' + MSGT('Lecture des clés de ce téléphone…')); const ks = await recupKeys();
+      say('📡 ' + MSGT('Liste des carnets du serveur…')); const {spaces} = await adm({action:'recupSpaces'});
+      const found = [];
+      for(const sp of spaces || []){ for(const k of ks){ let ok = false; for(const d of sp.s || []) if(await recupTry(k.key, d)){ ok = true; break; } if(ok){ found.push({sp, k}); break; } } }
+      if(!found.length){ say(MSGT('Aucun carnet du serveur ne s’ouvre avec les clés de ce téléphone.')); if(btn) btn.disabled = false; return; }
+      let got = 0, add = 0, phOk = 0, phAll = 0; const back = [];
+      for(const f of found){
+        let after = '', page = 0;
+        do { say('📥 ' + RF('Carnet {0}/{1} : {2} fiches retrouvées…', found.indexOf(f) + 1, found.length, got));
+          const j = await adm({action:'recupRecords', space:f.sp.space, after}); after = j.next || '';
+          for(const d of j.rows || []){ const r = await recupTry(f.k.key, d); if(!r || !r.id) continue; got++;
+            const cur = R[r.id]; if(cur && (cur.updatedAt || 0) >= (r.updatedAt || 0)) continue; back.push(r); }
+        } while(after && ++page < 200);
+      }
+      back.forEach(r=>{ delete r.demo; R[r.id] = r; add++; });
+      // tout repartira vers le serveur dès qu’un nouveau code principal sera créé
+      Object.values(R).forEach(r=>{ if(r && !r.demo && !M.dirty.includes(r.id)) M.dirty.push(r.id); });
+      const ids = new Set(); Object.values(R).forEach(r=>{ (r.photos || []).forEach(p=>ids.add(p)); if(r.recu) ids.add(r.recu); });
+      const have = new Set((await IDB.keys().catch(()=>[])).map(String)); phAll = ids.size; ids.forEach(p=>{ if(have.has(p) || have.has(p + '.t')) phOk++; });
+      persistNow(); refresh();
+      say('✅ ' + RF('{0} fiches remises ({1} trouvées) · photos sur ce téléphone : {2}/{3}.', add, got, phOk, phAll));
+      setTimeout(()=>{ closeSheet(true); whoSheet(); setTimeout(()=>uiAlert(MSGT('Tes voyages sont revenus. Choisis ton ancien profil, puis crée un nouveau code principal (☁️ Cloud) et NOTE-LE : tout repartira sur le serveur.')), 400); }, 2500);
+    } catch(e){ say('⚠️ ' + (e.message || e)); if(btn) btn.disabled = false; }
+  }
+  var RECAPI = {recupSheet, recupGo};
+
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
@@ -1172,7 +1238,7 @@
     pickColor, newProfile, editProfile, saveProfile, delProfile, whoSheet, setMe,
     bellSheet, bellGo, bellClear, rateGo, packFrom, packCc, inviteSheet, inviteSend, inviteCopy, carnetShareSheet, carnetPublishSheet, carnetPublish, joinPick, joinPickSave, withWhom, withWhomUpd, withWhomGo, joinAny, joinPaste, joinAnyGo, dupSheet, dupTripsGo, photoSweep, spaceSheet, spaceFree, bagEntryUpd, impPickShot, impPickPass, impPass,
     genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin,
-    _R:()=>R, _M:()=>M, ...VZAPI, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
+    _R:()=>R, _M:()=>M, ...VZAPI, ...RECAPI, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
   // En mode lecture, toutes les actions qui modifient sont bloquées
   const MUT = ['seedUSA2025','convert2026','saveSouv','delSouv','souvAddPhotos','souvDelPhoto','rembAdd','rembDel',
     'cycle','saveForm','noteFromItem','del','add','saveDay','saveNote','delNote','pin','setObj','addCompanion','addToTrip','removeCompanion',
