@@ -494,6 +494,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     let changed = 0;
     for(const r of records){
       if(!r || !r.id) continue;
+      if(M.hide && (M.hide[r.id] || (r.trip && M.hide[r.trip]) || (r.type === 'moved' && M.hide[r.tid]))) continue;   // 🧹 voyage retiré de ce téléphone (arrivé par erreur) : il ne revient pas
       // depuis MON carnet principal : une suppression d’une fiche d’un voyage partagé ne compte pas (le dossier partagé fait foi)
       if(fromMain && r.deleted && r.trip && TS()[r.trip] && spaceObj(TS()[r.trip]) && R[r.id] && !R[r.id].deleted) continue;
       const l = R[r.id];
@@ -512,7 +513,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id]));
-        j.records.forEach(r=>{ if(r && (r.type==='trip' || r.type==='feedtrip') && (force || !TS()[r.id]) && !(r.type==='feedtrip' && (M.unfol||{})[r.id] && !force)){ if(r.type==='trip' && !TS()[r.id]) tombClear(r.id); TS()[r.id] = sp.code; }
+        j.records.forEach(r=>{ if(r && force && r.type==='trip' && M.hide && M.hide[r.id]){ delete M.hide[r.id]; if(M.left) delete M.left[r.id]; if(M.mvSkip) delete M.mvSkip[r.id]; }   // rejoint exprès : un voyage retiré revient
+          if(r && (r.type==='trip' || r.type==='feedtrip') && !(M.hide && M.hide[r.id]) && (force || !TS()[r.id]) && !(r.type==='feedtrip' && (M.unfol||{})[r.id] && !force)){ if(r.type==='trip' && !TS()[r.id]) tombClear(r.id); TS()[r.id] = sp.code; }
           if(r && (r.type==='feedgrant' || r.type==='packtrip') && r.trip && !TS()[r.trip]) TS()[r.trip] = sp.code; });
         changed += mergeRemote(j.records); sp.since = j.now;
       }

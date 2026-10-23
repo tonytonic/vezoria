@@ -1068,7 +1068,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-23k'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-23l'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1162,120 +1162,89 @@
   setTimeout(vzPaint, 0);
   var VZAPI = {vzGo, vzHide, vzNews, vzAvis, vzStar, vzSend, vzRestore, vzPaint};
 
-  /* ══════════ 🛟 RÉCUPÉRER UN CARNET SANS SON CODE ══════════
-     Si les notifications étaient activées, ce téléphone garde à part la clé de chiffrement de chaque carnet (base « vz-push »,
-     clés « r:… » sur iPhone, « k:… » partout). Avec la clé d’administration du serveur, on demande les fiches CHIFFRÉES de
-     chaque carnet, on essaie nos clés ICI (le serveur ne voit jamais rien en clair), puis on remet les fiches retrouvées dans
-     l’appli. Les photos restées sur le téléphone se raccrochent toutes seules à leurs souvenirs. */
-  async function recupKeys(){
-    const db = await pushDb();
-    const all = await new Promise((res, rej)=>{ const out = []; const tx = db.transaction('kv'), st = tx.objectStore('kv'), q = st.openCursor();
-      q.onsuccess = () => { const c = q.result; if(!c) return res(out); out.push([String(c.key), c.value]); c.continue(); }; q.onerror = () => rej(q.error); });
-    const keysOut = [], seen = new Set();
-    for(const [k, v] of all){
-      if(!/^[rk]:/.test(k)) continue; const kid = k.slice(2);
-      try {
-        const key = k[0] === 'r' ? await crypto.subtle.importKey('raw', v, 'AES-GCM', false, ['decrypt']) : v;
-        if(key && key.type === 'secret' && !seen.has(kid + k[0])){ seen.add(kid + k[0]); keysOut.push({kid, key}); }
-      } catch(e){}
-    }
-    return keysOut;
-  }
-  async function recupTry(key, data){
-    try { const x = typeof data === 'string' ? JSON.parse(data) : data; if(!x || !x.enc) return null; const u8 = unb64(x.enc);
-      return JSON.parse(td.decode(new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:u8.slice(0, 12)}, key, u8.slice(12))))); } catch(e){ return null; }
-  }
   const RF = (t, ...a) => MSGT(t).replace(/\{(\d)\}/g, (m, k)=>a[+k] == null ? '' : a[+k]);   // phrase traduite d’un bloc, valeurs insérées
-  async function recupSheet(){
-    let ks = []; try { ks = await recupKeys(); } catch(e){}
-    openSheet(`<h2>🛟 ${esc(MSGT('Récupérer un carnet perdu'))}</h2>
-      <div class="v-sum-small" style="margin-bottom:10px" data-notr>${esc(RF('Pour un carnet qui était dans le cloud, quand son code est perdu. Ce téléphone a gardé {0} clé(s) de chiffrement de carnets (celles des notifications).', ks.length))}</div>
-      ${ks.length ? `<div class="v-f"><label>Clé d’administration du serveur (ADMIN_KEY)</label><input class="v-in" id="rc-ak" type="password" autocomplete="off"></div>
-      <div id="rc-msg" class="v-sum-small" style="margin:6px 0" data-notr></div>
-      <div class="v-actions"><button type="button" class="v-btn" id="rc-go" onclick="CV.recupGo()">🛟 Chercher mes voyages</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`
-      : `<p class="cv-warn">Aucune clé sur ce téléphone : la récupération sans code n’est pas possible ici. Demande à un compagnon le code d’un voyage partagé (👥 Partager → 🔗 Rejoindre avec un code).</p><div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`}`);
+  /* ══════════ 👥 PROFILS EN DOUBLE ══════════
+     Deux profils au même prénom (ex. un profil recréé par erreur) : on en garde un, toutes les fiches de l’autre
+     (voyageurs, auteur, payeur, cases cochées…) passent sur celui gardé, puis le profil en trop est supprimé partout. */
+  const nomKey = p => String((p && p.nom) || '').trim().toLocaleLowerCase();
+  function dupGroups(){ const g = {}; profiles().forEach(p=>{ const k = nomKey(p); if(k) (g[k] = g[k] || []).push(p); }); return Object.values(g).filter(a=>a.length > 1); }
+  function refCount(id){ const q = '"' + id + '"'; let n = 0; Object.values(R).forEach(r=>{ if(r && !r.deleted && r.id !== id) n += JSON.stringify(r).split(q).length - 1; }); return n; }
+  function mergeSheet(){
+    const G = dupGroups();
+    if(!G.length){ uiAlert(MSGT('Aucun profil en double.')); return; }
+    openSheet(`<h2>👥 ${esc(MSGT('Profils en double'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Choisis le profil à garder : tout ce qui est au nom de l’autre passe sur lui, puis le profil en trop est supprimé, chez tout le monde.'))}</div>
+      ${G.map((g, i)=>{ const c = g.map(p=>[p, refCount(p.id)]).sort((a, b)=>(b[1] - a[1]) || ((a[0].createdAt || 0) - (b[0].createdAt || 0)));
+        return `<div class="v-box" style="margin:0 0 10px">${c.map(([p, n], j)=>`<label class="cv-checkline"><input type="radio" name="mg-${i}" class="mg-k" data-g="${i}" value="${esc(p.id)}"${j === 0 ? ' checked' : ''}> ${pchip(p.id)} <small data-notr>${n} · ${esc(fdate(new Date(p.createdAt || 0).toISOString().slice(0, 10)) || '')}${p.id === M.me ? ' · ✓' : ''}</small></label>`).join('')}</div>`; }).join('')}
+      <div id="mg-msg" class="v-sum-small" style="margin:6px 0" data-notr></div>
+      <div class="v-actions"><button type="button" class="v-btn" id="mg-go" onclick="CV.mergeGo()">👥 ${esc(MSGT('Fusionner'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
-  async function recupGo(){
-    const ak = ((document.getElementById('rc-ak') || {}).value || '').trim(), msg = document.getElementById('rc-msg'), btn = document.getElementById('rc-go');
-    const say = t => { if(msg) msg.textContent = t; };
-    if(!ak){ say(MSGT('Colle la clé d’administration.')); return; }
-    if(btn) btn.disabled = true;
+  async function mergeGo(){
+    const G = dupGroups(), map = {};
+    G.forEach((g, i)=>{ const k = (document.querySelector('.mg-k[data-g="' + i + '"]:checked') || {}).value; if(!k) return; g.forEach(p=>{ if(p.id !== k) map[p.id] = k; }); });
+    const drops = Object.keys(map); if(!drops.length) return;
+    if(!(await uiConfirm(RF('{0} profil(s) en trop vont être fusionnés puis supprimés. Continuer ?', drops.length)))) return;
+    const btn = document.getElementById('mg-go'); if(btn) btn.disabled = true;
     try {
-      const adm = async body => { const r = await fetch(location.origin + '/api/admin', {method:'POST', headers:{'Content-Type':'application/json', 'X-Admin-Key':ak}, body:JSON.stringify(body)}); const j = await r.json().catch(()=>({})); if(!r.ok) throw new Error(j.error || ('erreur ' + r.status)); return j; };
-      say('🔐 ' + MSGT('Lecture des clés de ce téléphone…')); const ks = await recupKeys();
-      say('📡 ' + MSGT('Liste des carnets du serveur…')); const {spaces} = await adm({action:'recupSpaces'});
-      const found = [];
-      for(const sp of spaces || []){ for(const k of ks){ let ok = false; for(const d of sp.s || []) if(await recupTry(k.key, d)){ ok = true; break; } if(ok){ found.push({sp, k}); break; } } }
-      if(!found.length){ say(MSGT('Aucun carnet du serveur ne s’ouvre avec les clés de ce téléphone.')); if(btn) btn.disabled = false; return; }
-      let got = 0, add = 0, phOk = 0, phAll = 0; const back = [];
-      for(const f of found){
-        let after = '', page = 0;
-        do { say('📥 ' + RF('Carnet {0}/{1} : {2} fiches retrouvées…', found.indexOf(f) + 1, found.length, got));
-          const j = await adm({action:'recupRecords', space:f.sp.space, after}); after = j.next || '';
-          for(const d of j.rows || []){ const r = await recupTry(f.k.key, d); if(!r || !r.id) continue; got++;
-            const cur = R[r.id]; if(cur && (cur.updatedAt || 0) >= (r.updatedAt || 0)) continue; back.push(r); }
-        } while(after && ++page < 200);
-      }
-      back.forEach(r=>{ delete r.demo; R[r.id] = r; add++; });
-      // tout repartira vers le serveur dès qu’un nouveau code principal sera créé
-      Object.values(R).forEach(r=>{ if(r && !r.demo && !M.dirty.includes(r.id)) M.dirty.push(r.id); });
-      const ids = new Set(); Object.values(R).forEach(r=>{ (r.photos || []).forEach(p=>ids.add(p)); if(r.recu) ids.add(r.recu); });
-      const have = new Set((await IDB.keys().catch(()=>[])).map(String)); phAll = ids.size; ids.forEach(p=>{ if(have.has(p) || have.has(p + '.t')) phOk++; });
-      persistNow(); refresh();
-      say('✅ ' + RF('{0} fiches remises ({1} trouvées) · photos sur ce téléphone : {2}/{3}.', add, got, phOk, phAll));
-      setTimeout(()=>{ closeSheet(true); whoSheet(); setTimeout(()=>uiAlert(MSGT('Tes voyages sont revenus. Choisis ton ancien profil, puis crée un nouveau code principal (☁️ Cloud) et NOTE-LE : tout repartira sur le serveur.')), 400); }, 2500);
-    } catch(e){ say('⚠️ ' + (e.message || e)); if(btn) btn.disabled = false; }
+      if(map[M.me]) M.me = map[M.me];
+      if(map[M.who]) M.who = map[M.who];
+      const flat = a => a.every(x=>x === null || typeof x !== 'object') ? [...new Set(a)] : a;
+      const sw = v => typeof v === 'string' ? (map[v] || v) : Array.isArray(v) ? flat(v.map(sw)) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x])=>[map[k] || k, sw(x)])) : v;
+      const out = [];
+      Object.values(R).forEach(r=>{
+        if(!r || !r.id || r.demo || map[r.id] || /^ft:/.test(r.trip || '') || r.type === 'feedtrip' || !targets(r).length) return;
+        const before = JSON.stringify(r), c = sw(clone(r)); if(JSON.stringify(c) !== before) out.push(c); });
+      if(R[M.me] && R[M.me].dev !== devId()) out.push(Object.assign(clone(R[M.me]), {dev:devId()}));
+      for(let i = 0; i < out.length; i += 400){ const m = document.getElementById('mg-msg'); if(m) m.textContent = '👥 ' + RF('Fiches mises à jour : {0}/{1}', Math.min(i + 400, out.length), out.length); putQuiet(out.slice(i, i + 400)); await new Promise(r=>setTimeout(r, 0)); }
+      // le profil en trop est effacé partout où il était (carnet principal + chaque voyage partagé)
+      const feeds = new Set(Object.values(FT()));
+      drops.forEach(d=>{ const t = Object.assign(clone(R[d]), {deleted:true}); stamp(t); R[d] = t;
+        if(M.sync.on && M.sync.code && !M.dirty.includes(d)) M.dirty.push(d);
+        (M.spaces || []).forEach(sp=>{ if(sp.mate || feeds.has(sp.code)) return; sp.dirty = sp.dirty || []; if(!sp.dirty.includes(d)) sp.dirty.push(d); }); });
+      persist(); closeSheet(true); refresh();
+      toast('✅ ' + RF('{0} fiche(s) mises à jour, profil en trop supprimé.', out.length));
+      try { await syncNow(true); } catch(e){}
+    } catch(e){ const m = document.getElementById('mg-msg'); if(m) m.textContent = '⚠️ ' + (e.message || e); if(btn) btn.disabled = false; }
   }
-  /* ══════════ 🔀 SÉPARER MES VOYAGES PRIVÉS D’UN CARNET PARTAGÉ ══════════
-     Cas : le carnet principal de ce téléphone est aussi chez quelqu’un d’autre (même code), qui voit donc TOUT.
-     On coche les voyages à garder partagés : ils restent sur ce code (comme un voyage partagé).
-     Les autres deviennent privés : copiés (nouveaux identifiants) dans un NOUVEAU carnet principal rien qu’à moi,
-     leurs photos d’abord ramenées sur ce téléphone puis renvoyées, et les originaux effacés du carnet partagé
-     (ils disparaissent chez les autres, pas chez moi : j’ai les copies). */
-  async function sepSheet(){
-    const main = M.sync.on && M.sync.code; if(!main){ uiAlert(MSGT('Ton carnet n’est pas dans le cloud : rien à séparer.')); return; }
-    const L = trips().filter(t=>!t.demo && !TS()[t.id]);
-    openSheet(`<h2>🔀 ${esc(MSGT('Séparer mes voyages privés'))}</h2>
-      <div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(RF('Ton carnet principal (code {0}) est aussi chez les personnes qui ont ce code : elles voient tous ces voyages. Coche ceux à garder partagés avec elles. Les autres deviendront privés : ils partent dans un nouveau carnet rien qu’à toi, avec un nouveau code, et disparaissent chez les autres.', main))}</div>
-      <div id="sep-l">${L.map(t=>`<label class="cv-checkline"><input type="checkbox" class="sep-k" value="${esc(t.id)}"> <span data-notr>${esc(t.titre || '')}</span> <small>${esc(fdate(t.debut || '') || '')}</small></label>`).join('')}</div>
-      <div id="sep-msg" class="v-sum-small" style="margin:8px 0" data-notr></div>
-      <div class="v-actions"><button type="button" class="v-btn" id="sep-go" onclick="CV.sepGo()">🔀 ${esc(MSGT('Séparer'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
+  /* ══════════ 🧹 VOYAGES ARRIVÉS PAR ERREUR ══════════
+     Ce téléphone a reçu des voyages qui ne sont pas pour lui (carnet entier rejoint au lieu d’un voyage).
+     On coche ceux à garder ; les autres sont retirés de CE téléphone seulement : rien n’est envoyé au serveur,
+     rien ne disparaît chez les autres, et ils ne reviennent pas à la synchro suivante. Réversible. */
+  function hideSheet(){
+    const L = trips().filter(t=>!t.demo && !t.deleted).sort((a, b)=>(b.debut || '').localeCompare(a.debut || ''));
+    const nH = Object.keys(M.hide || {}).length;
+    openSheet(`<h2>🧹 ${esc(MSGT('Voyages arrivés par erreur'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:8px">${esc(MSGT('Coche les voyages à GARDER sur ce téléphone. Les autres sont retirés d’ici seulement : rien n’est effacé chez les autres ni sur le serveur.'))}</div>
+      <div id="hd-l">${L.map(t=>`<label class="cv-checkline"><input type="checkbox" class="hd-k" value="${esc(t.id)}"> <span data-notr>${esc(t.titre || '')}</span> <small>${esc(fdate(t.debut || '') || '')}</small></label>`).join('')}</div>
+      <div id="hd-msg" class="v-sum-small" style="margin:8px 0" data-notr></div>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.hideGo()">🧹 ${esc(MSGT('Retirer les autres'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>
+      ${nH ? `<button type="button" class="v-btn sec" style="margin-top:10px" onclick="CV.hideUndo()">↩️ ${esc(RF('Faire revenir les {0} voyage(s) retirés', nH))}</button>` : ''}`);
   }
-  async function sepGo(){
-    const old = M.sync.on && M.sync.code; if(!old) return;
-    const keep = new Set([...document.querySelectorAll('.sep-k:checked')].map(x=>x.value)), msg = document.getElementById('sep-msg'), btn = document.getElementById('sep-go');
-    const say = t => { if(msg) msg.textContent = t; };
-    const shared = r => keep.has(r.id) || keep.has(r.trip) || [...keep].some(t=>String(r.id).includes(t));
-    const priv = Object.values(R).filter(r=>r && r.id && !r.demo && !r.deleted && r.type !== 'profile' && r.type !== 'geo' && r.type !== 'feed' && targets(r)[0] === 'main' && !shared(r));
-    const privTrips = priv.filter(r=>r.type === 'trip');
-    if(!(await uiConfirm(RF('{0} voyage(s) restent partagés, {1} voyage(s) deviennent privés ({2} fiches). Un nouveau code principal va être créé : il faudra le noter. Continuer ?', keep.size, privTrips.length, priv.length)))) return;
-    if(btn) btn.disabled = true;
-    try {
-      // 1) les photos des fiches privées reviennent sur ce téléphone (avant de les retirer du carnet partagé)
-      const phs = [...new Set(priv.flatMap(photoRefs))]; let fail = 0;
-      for(let k = 0; k < phs.length; k++){ say('📸 ' + RF('Photos ramenées sur ce téléphone : {0}/{1}', k + 1, phs.length));
-        const b = await photoBlob(phs[k]).catch(()=>null); if(!b) fail++; await photoBlob(phs[k] + '.t').catch(()=>null); }
-      if(fail && !(await uiConfirm(RF('{0} photo(s) n’ont pas pu être ramenées (réseau ?). Continuer quand même ?', fail)))){ if(btn) btn.disabled = false; say(''); return; }
-      // 2) copies avec de nouveaux identifiants (les liens entre fiches suivent)
-      const map = {}; privTrips.forEach(t=>{ map[t.id] = 't' + uid(); });
-      priv.forEach(r=>{ if(map[r.id]) return; let n = String(r.id); for(const [o, v] of Object.entries(map)) if(n.includes(o)) n = n.split(o).join(v); map[r.id] = n === r.id ? r.id + '-' + uid() : n; });
-      const swap = v => typeof v === 'string' && map[v] ? map[v] : Array.isArray(v) ? v.map(swap) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x])=>[k, swap(x)])) : v;
-      const copies = priv.map(r=>{ const c = swap(clone(r)); c.id = map[r.id]; stamp(c); return c; });
-      // 3) les originaux sont effacés du carnet partagé (ils disparaissent chez les autres)
-      const tomb = priv.map(r=>Object.assign(clone(r), {deleted:true}));
-      tomb.forEach(stamp);
-      for(let i = 0; i < tomb.length; i += 300){ say('🧹 ' + RF('Retrait du carnet partagé : {0}/{1}', Math.min(i + 300, tomb.length), tomb.length)); await call(Date.now(), tomb.slice(i, i + 300), old); }
-      // 4) sur ce téléphone : les copies remplacent les originaux ; les voyages cochés restent sur l’ancien code
-      priv.forEach(r=>{ delete R[r.id]; }); copies.forEach(c=>{ R[c.id] = c; });
-      keep.forEach(t=>{ TS()[t] = old; }); if(!spaceObj(old)) (M.spaces = M.spaces || []).push({code:old, since:M.sync.since || 0, dirty:[], last:0, err:''});
-      if(M.trip && map[M.trip]) M.trip = map[M.trip];
-      // 5) nouveau carnet principal, rien qu’à moi : tout ce qui n’est pas partagé y part, photos comprises
-      const nc = genCode(); M.sync.code = nc; M.sync.since = 0; M.sync.on = true; M.sync.last = 0;
-      M.dirty = Object.values(R).filter(r=>r && r.id && !r.demo && targets(r)[0] === 'main').map(r=>r.id);
-      M.pq = []; await photoQueueAll(); persist();
-      say('✅ ' + MSGT('Séparé. Note bien ton nouveau code principal.'));
-      setTimeout(async ()=>{ closeSheet(true); refresh(); try { await syncNow(true); } catch(e){} codeSheet(); }, 800);
-    } catch(e){ say('⚠️ ' + (e.message || e)); if(btn) btn.disabled = false; }
+  async function hideGo(){
+    const keep = new Set([...document.querySelectorAll('.hd-k:checked')].map(x=>x.value));
+    const drop = trips().filter(t=>!t.demo && !t.deleted && !keep.has(t.id));
+    if(!keep.size){ uiAlert(MSGT('Coche au moins un voyage à garder.')); return; }
+    if(!drop.length){ closeSheet(true); return; }
+    if(!(await uiConfirm(RF('{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?', keep.size, drop.length)))) return;
+    const H = M.hide || (M.hide = {}), Lf = M.left || (M.left = {}), S = M.mvSkip || (M.mvSkip = {}), ids = new Set(drop.map(t=>t.id));
+    ids.forEach(t=>{ H[t] = TS()[t] || 1; Lf[t] = 1; S[t] = 1; delete TS()[t]; });
+    Object.keys(R).forEach(id=>{ const r = R[id]; if(r && (ids.has(r.id) || ids.has(r.trip) || (r.type === 'moved' && ids.has(r.tid)))) delete R[id]; });
+    M.dirty = M.dirty.filter(id=>R[id]); (M.spaces || []).forEach(sp=>{ sp.dirty = (sp.dirty || []).filter(id=>R[id]); });
+    const used = new Set([...Object.values(TS()), ...Object.values(FT())]);
+    M.spaces = (M.spaces || []).filter(sp=>sp.mate || used.has(sp.code));
+    if((M.pq || []).length){ const refs = new Set(); Object.values(R).forEach(r=>{ if(r) photoRefs(r).forEach(p=>refs.add(String(p))); }); M.pq = M.pq.filter(x=>refs.has(String(x).replace(/\.t$/, ''))); }
+    if(M.trip && ids.has(M.trip)) M.trip = null;
+    persist(); closeSheet(true); applyMode(); refresh();
+    toast('🧹 ' + RF('{0} voyage(s) retirés de ce téléphone', ids.size));
+  }
+  async function hideUndo(){
+    const H = M.hide || {}, n = Object.keys(H).length; if(!n) return;
+    if(!(await uiConfirm(RF('Faire revenir les {0} voyage(s) retirés ?', n)))) return;
+    Object.entries(H).forEach(([t, c])=>{ if(M.left) delete M.left[t]; if(M.mvSkip) delete M.mvSkip[t];
+      if(typeof c === 'string'){ TS()[t] = c; if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); } });
+    M.hide = {}; M.sync.since = 0; (M.spaces || []).forEach(sp=>{ sp.since = 0; });
+    persist(); closeSheet(true); toast('↩️ …');
+    try { await syncNow(true); } catch(e){} refresh();
   }
   /* ══════════ 🔗 RÉPARER LES LIENS DES VOYAGES ══════════
      Un voyage partagé vit sous SON code (fiches + photos). S’il a été rattaché à un autre code (carnet entier rejoint,
@@ -1329,7 +1298,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {recupSheet, recupGo, sepSheet, sepGo, linkSheet, linkGo};
+  var RECAPI = {mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
