@@ -53,7 +53,7 @@ html.vz-big{font-size:18px}
   .hero .hero-foot .cv-hero-qr{display:none!important}
   .hero .hero-foot .cv-bell{margin-left:auto!important;margin-right:12px!important}
   .hero .hero-foot .cv-av-names{display:none}
-  .hero .hero-foot .cv-avs{flex:0 0 auto!important}
+  .hero .hero-foot .cv-avs{flex:0 0 auto!important;padding-right:10px;overflow:visible!important}   /* prénoms cachés : le dernier rond (qui chevauche de 8 px) n’est plus coupé */
   .hero-btns{gap:6px!important}
 }
 @media (max-width:360px){
