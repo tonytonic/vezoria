@@ -51,7 +51,7 @@ html.vz-big{font-size:18px}
   .hero .hdr-chips>*{flex:0 0 auto}
   .hero .hero-foot{margin-top:10px!important}
   .hero .hero-foot .cv-hero-qr{display:none!important}
-  .hero .hero-foot .cv-bell{margin-left:14px!important;margin-right:auto!important}
+  .hero .hero-foot .cv-bell{margin-left:auto!important;margin-right:12px!important}
   .hero .hero-foot .cv-av-names{display:none}
   .hero .hero-foot .cv-avs{flex:0 0 auto!important}
   .hero-btns{gap:6px!important}
