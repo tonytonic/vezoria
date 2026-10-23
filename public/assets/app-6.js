@@ -573,6 +573,7 @@
     h += `<div class="v-box"><h3>🗂️ Onglets</h3>${GROUPS.map(g=>{ const tl = g.tabs.filter(([id])=>!DEST.some(d=>d[0]===id) && id!=='prog' && id!=='prefs' && id!=='reglages'); return tl.length ? `<div class="cv-prefg"><b>${g.icon} ${g.lbl}</b>${tl.map(([id,l])=>tg('tab:' + id, l, ALWAYS[id])).join('')}</div>` : ''; }).join('')}
         <div class="v-sum-small">Ce sont les petits filtres sous l’en-tête de Résas et de Budget.</div></div>`;
     h += `<div class="v-box"><h3>🧩 Encarts et boutons</h3>${PREF_BLOCKS.map(([k,l])=>tg(k, l)).join('')}</div>`;
+    h += appPrefsHTML();   // apparence, tutos, mise à jour, sauvegarde… (avant dans « Partage & profils »)
     document.getElementById('cv-body').innerHTML = h;
   }
   function prefFix(){
