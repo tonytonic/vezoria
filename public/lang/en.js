@@ -2108,4 +2108,6 @@ I18N.load({
 "Annuler le dernier choix":"Undo last choice",
 "Glisse à droite pour garder, à gauche pour écarter":"Swipe right to keep, left to skip",
 "Ajouter les {0} lieux restants à ton programme ?":"Add the remaining {0} places to your plan?",
-"Profils, partage, langue, cartes…":"Profiles, sharing, language, maps…"});
+"Profils, partage, langue, cartes…":"Profiles, sharing, language, maps…",
+"Refaire les suggestions":"Redo the suggestions",
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Redo the suggestions? The {0} places not yet chosen are replaced by a new search. The ones you kept stay."});

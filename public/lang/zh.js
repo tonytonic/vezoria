@@ -5062,4 +5062,6 @@ I18N.load({
 "Annuler le dernier choix":"撤销上一个选择",
 "Glisse à droite pour garder, à gauche pour écarter":"右滑保留，左滑跳过",
 "Ajouter les {0} lieux restants à ton programme ?":"把剩下的 {0} 个地点加入行程吗？",
-"Profils, partage, langue, cartes…":"个人资料、共享、语言、地图…"});
+"Profils, partage, langue, cartes…":"个人资料、共享、语言、地图…",
+"Refaire les suggestions":"重新生成建议",
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"重新生成建议？尚未选择的 {0} 个地点会被新的搜索替换，你保留的地点不变。"});

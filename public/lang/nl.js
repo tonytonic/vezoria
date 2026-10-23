@@ -2114,4 +2114,6 @@ I18N.load({
 "Annuler le dernier choix":"Laatste keuze ongedaan maken",
 "Glisse à droite pour garder, à gauche pour écarter":"Veeg naar rechts om te houden, naar links om over te slaan",
 "Ajouter les {0} lieux restants à ton programme ?":"De overige {0} plekken aan je programma toevoegen?",
-"Profils, partage, langue, cartes…":"Profielen, delen, taal, kaarten…"});
+"Profils, partage, langue, cartes…":"Profielen, delen, taal, kaarten…",
+"Refaire les suggestions":"Suggesties opnieuw maken",
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Suggesties opnieuw maken? De {0} nog niet gekozen plekken worden vervangen door een nieuwe zoekopdracht. Wat je hebt gehouden, blijft."});

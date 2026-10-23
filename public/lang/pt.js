@@ -2127,4 +2127,6 @@ I18N.load({
 "Annuler le dernier choix":"Desfazer a última escolha",
 "Glisse à droite pour garder, à gauche pour écarter":"Deslize para a direita para manter, para a esquerda para descartar",
 "Ajouter les {0} lieux restants à ton programme ?":"Adicionar os {0} lugares restantes ao seu programa?",
-"Profils, partage, langue, cartes…":"Perfis, partilha, idioma, mapas…"});
+"Profils, partage, langue, cartes…":"Perfis, partilha, idioma, mapas…",
+"Refaire les suggestions":"Refazer as sugestões",
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Refazer as sugestões? Os {0} lugares ainda não escolhidos são substituídos por uma nova pesquisa. Os que guardaste ficam."});

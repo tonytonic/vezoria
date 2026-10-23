@@ -5050,4 +5050,6 @@ I18N.load({
 "Annuler le dernier choix":"Son seçimi geri al",
 "Glisse à droite pour garder, à gauche pour écarter":"Tutmak için sağa, geçmek için sola kaydır",
 "Ajouter les {0} lieux restants à ton programme ?":"Kalan {0} yer programına eklensin mi?",
-"Profils, partage, langue, cartes…":"Profiller, paylaşım, dil, haritalar…"});
+"Profils, partage, langue, cartes…":"Profiller, paylaşım, dil, haritalar…",
+"Refaire les suggestions":"Önerileri yeniden yap",
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Öneriler yeniden yapılsın mı? Henüz seçilmeyen {0} yer yeni bir aramayla değiştirilir. Tuttukların kalır."});

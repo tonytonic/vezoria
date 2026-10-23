@@ -5062,4 +5062,6 @@ I18N.load({
 "Annuler le dernier choix":"आख़िरी चुनाव रद्द करो",
 "Glisse à droite pour garder, à gauche pour écarter":"रखने के लिए दाएँ, हटाने के लिए बाएँ खिसकाओ",
 "Ajouter les {0} lieux restants à ton programme ?":"बाकी {0} जगहें कार्यक्रम में जोड़ें?",
-"Profils, partage, langue, cartes…":"प्रोफ़ाइल, साझा करना, भाषा, नक्शे…"});
+"Profils, partage, langue, cartes…":"प्रोफ़ाइल, साझा करना, भाषा, नक्शे…",
+"Refaire les suggestions":"सुझाव फिर से बनाओ",
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"सुझाव फिर से बनाएँ? अभी तक न चुनी गई {0} जगहें नई खोज से बदल जाएँगी। जो तुमने रखीं, वे रहेंगी।"});

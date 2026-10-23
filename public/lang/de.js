@@ -2118,4 +2118,6 @@ I18N.load({
 "Annuler le dernier choix":"Letzte Wahl rückgängig machen",
 "Glisse à droite pour garder, à gauche pour écarter":"Nach rechts wischen zum Behalten, nach links zum Verwerfen",
 "Ajouter les {0} lieux restants à ton programme ?":"Die restlichen {0} Orte zu deinem Programm hinzufügen?",
-"Profils, partage, langue, cartes…":"Profile, Teilen, Sprache, Karten…"});
+"Profils, partage, langue, cartes…":"Profile, Teilen, Sprache, Karten…",
+"Refaire les suggestions":"Vorschläge neu erstellen",
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Vorschläge neu erstellen? Die {0} noch nicht gewählten Orte werden durch eine neue Suche ersetzt. Die behaltenen bleiben."});

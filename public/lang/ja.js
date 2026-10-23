@@ -5062,4 +5062,6 @@ I18N.load({
 "Annuler le dernier choix":"最後の選択を取り消す",
 "Glisse à droite pour garder, à gauche pour écarter":"右にスワイプで残す、左で外す",
 "Ajouter les {0} lieux restants à ton programme ?":"残りの {0} か所を予定に追加しますか？",
-"Profils, partage, langue, cartes…":"プロフィール、共有、言語、地図…"});
+"Profils, partage, langue, cartes…":"プロフィール、共有、言語、地図…",
+"Refaire les suggestions":"おすすめをやり直す",
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"おすすめをやり直しますか？まだ選んでいない {0} か所が新しい検索に置き換わります。残したものはそのままです。"});

@@ -5062,4 +5062,6 @@ I18N.load({
 "Annuler le dernier choix":"마지막 선택 취소",
 "Glisse à droite pour garder, à gauche pour écarter":"오른쪽으로 밀면 담기, 왼쪽은 넘기기",
 "Ajouter les {0} lieux restants à ton programme ?":"남은 장소 {0}곳을 일정에 추가할까요?",
-"Profils, partage, langue, cartes…":"프로필, 공유, 언어, 지도…"});
+"Profils, partage, langue, cartes…":"프로필, 공유, 언어, 지도…",
+"Refaire les suggestions":"추천 다시 받기",
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"추천을 다시 받을까요? 아직 고르지 않은 장소 {0}곳이 새 검색으로 바뀌어요. 담아 둔 곳은 그대로예요."});

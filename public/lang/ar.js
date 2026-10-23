@@ -5063,4 +5063,6 @@ I18N.load({
 "Annuler le dernier choix":"التراجع عن آخر اختيار",
 "Glisse à droite pour garder, à gauche pour écarter":"اسحب لليمين للاحتفاظ ولليسار للاستبعاد",
 "Ajouter les {0} lieux restants à ton programme ?":"إضافة الأماكن المتبقية ({0}) إلى برنامجك؟",
-"Profils, partage, langue, cartes…":"الملفات، المشاركة، اللغة، الخرائط…"});
+"Profils, partage, langue, cartes…":"الملفات، المشاركة، اللغة، الخرائط…",
+"Refaire les suggestions":"إعادة الاقتراحات",
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"إعادة الاقتراحات؟ تُستبدل الأماكن الـ{0} غير المختارة ببحث جديد. ما احتفظت به يبقى."});
