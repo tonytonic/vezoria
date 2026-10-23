@@ -5052,4 +5052,12 @@ I18N.load({
 "Ajouter les {0} lieux restants à ton programme ?":"Kalan {0} yer programına eklensin mi?",
 "Profils, partage, langue, cartes…":"Profiller, paylaşım, dil, haritalar…",
 "Refaire les suggestions":"Önerileri yeniden yap",
-"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Öneriler yeniden yapılsın mı? Henüz seçilmeyen {0} yer yeni bir aramayla değiştirilir. Tuttukların kalır."});
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Öneriler yeniden yapılsın mı? Henüz seçilmeyen {0} yer yeni bir aramayla değiştirilir. Tuttukların kalır.",
+"Imprimer ou exporter (PDF)":"Yazdır veya dışa aktar (PDF)",
+"Réservations":"Rezervasyonlar",
+"Budget et répartition":"Bütçe ve paylaşım",
+"Récap des étapes":"Durakların özeti",
+"C’est bon, j’ai assez de visites":"Tamam, yeterince gezi yerim var",
+"Étape":"Durak",
+"Poste":"Kalem",
+"Tout le monde est à jour.":"Herkes ödeşti."});

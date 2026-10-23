@@ -2129,4 +2129,12 @@ I18N.load({
 "Ajouter les {0} lieux restants à ton programme ?":"Adicionar os {0} lugares restantes ao seu programa?",
 "Profils, partage, langue, cartes…":"Perfis, partilha, idioma, mapas…",
 "Refaire les suggestions":"Refazer as sugestões",
-"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Refazer as sugestões? Os {0} lugares ainda não escolhidos são substituídos por uma nova pesquisa. Os que guardaste ficam."});
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Refazer as sugestões? Os {0} lugares ainda não escolhidos são substituídos por uma nova pesquisa. Os que guardaste ficam.",
+"Imprimer ou exporter (PDF)":"Imprimir ou exportar (PDF)",
+"Réservations":"Reservas",
+"Budget et répartition":"Orçamento e divisão",
+"Récap des étapes":"Resumo das etapas",
+"C’est bon, j’ai assez de visites":"Tudo bem, já tenho visitas suficientes",
+"Étape":"Etapa",
+"Poste":"Rubrica",
+"Tout le monde est à jour.":"Todos estão em dia."});

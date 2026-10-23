@@ -5065,4 +5065,12 @@ I18N.load({
 "Ajouter les {0} lieux restants à ton programme ?":"إضافة الأماكن المتبقية ({0}) إلى برنامجك؟",
 "Profils, partage, langue, cartes…":"الملفات، المشاركة، اللغة، الخرائط…",
 "Refaire les suggestions":"إعادة الاقتراحات",
-"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"إعادة الاقتراحات؟ تُستبدل الأماكن الـ{0} غير المختارة ببحث جديد. ما احتفظت به يبقى."});
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"إعادة الاقتراحات؟ تُستبدل الأماكن الـ{0} غير المختارة ببحث جديد. ما احتفظت به يبقى.",
+"Imprimer ou exporter (PDF)":"طباعة أو تصدير (PDF)",
+"Réservations":"الحجوزات",
+"Budget et répartition":"الميزانية والتوزيع",
+"Récap des étapes":"ملخص المحطات",
+"C’est bon, j’ai assez de visites":"حسنًا، لدي ما يكفي من الزيارات",
+"Étape":"المحطة",
+"Poste":"البند",
+"Tout le monde est à jour.":"الجميع متعادلون."});

@@ -2110,4 +2110,12 @@ I18N.load({
 "Ajouter les {0} lieux restants à ton programme ?":"Add the remaining {0} places to your plan?",
 "Profils, partage, langue, cartes…":"Profiles, sharing, language, maps…",
 "Refaire les suggestions":"Redo the suggestions",
-"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Redo the suggestions? The {0} places not yet chosen are replaced by a new search. The ones you kept stay."});
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Redo the suggestions? The {0} places not yet chosen are replaced by a new search. The ones you kept stay.",
+"Imprimer ou exporter (PDF)":"Print or export (PDF)",
+"Réservations":"Bookings",
+"Budget et répartition":"Budget and split",
+"Récap des étapes":"Stages at a glance",
+"C’est bon, j’ai assez de visites":"That’s fine, I have enough visits",
+"Étape":"Stage",
+"Poste":"Category",
+"Tout le monde est à jour.":"Everyone is settled up."});

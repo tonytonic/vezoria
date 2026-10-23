@@ -5064,4 +5064,12 @@ I18N.load({
 "Ajouter les {0} lieux restants à ton programme ?":"残りの {0} か所を予定に追加しますか？",
 "Profils, partage, langue, cartes…":"プロフィール、共有、言語、地図…",
 "Refaire les suggestions":"おすすめをやり直す",
-"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"おすすめをやり直しますか？まだ選んでいない {0} か所が新しい検索に置き換わります。残したものはそのままです。"});
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"おすすめをやり直しますか？まだ選んでいない {0} か所が新しい検索に置き換わります。残したものはそのままです。",
+"Imprimer ou exporter (PDF)":"印刷・書き出し（PDF）",
+"Réservations":"予約",
+"Budget et répartition":"予算と割り勘",
+"Récap des étapes":"立ち寄り先まとめ",
+"C’est bon, j’ai assez de visites":"もう十分、見どころは足りています",
+"Étape":"立ち寄り先",
+"Poste":"項目",
+"Tout le monde est à jour.":"全員精算済みです。"});

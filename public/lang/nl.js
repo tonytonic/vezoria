@@ -2116,4 +2116,12 @@ I18N.load({
 "Ajouter les {0} lieux restants à ton programme ?":"De overige {0} plekken aan je programma toevoegen?",
 "Profils, partage, langue, cartes…":"Profielen, delen, taal, kaarten…",
 "Refaire les suggestions":"Suggesties opnieuw maken",
-"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Suggesties opnieuw maken? De {0} nog niet gekozen plekken worden vervangen door een nieuwe zoekopdracht. Wat je hebt gehouden, blijft."});
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Suggesties opnieuw maken? De {0} nog niet gekozen plekken worden vervangen door een nieuwe zoekopdracht. Wat je hebt gehouden, blijft.",
+"Imprimer ou exporter (PDF)":"Afdrukken of exporteren (PDF)",
+"Réservations":"Boekingen",
+"Budget et répartition":"Budget en verdeling",
+"Récap des étapes":"Overzicht van de etappes",
+"C’est bon, j’ai assez de visites":"Prima, ik heb genoeg bezienswaardigheden",
+"Étape":"Etappe",
+"Poste":"Post",
+"Tout le monde est à jour.":"Iedereen staat quitte."});

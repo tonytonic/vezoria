@@ -5065,4 +5065,12 @@ I18N.load({
 "Ajouter les {0} lieux restants à ton programme ?":"Добавить оставшиеся места ({0}) в программу?",
 "Profils, partage, langue, cartes…":"Профили, доступ, язык, карты…",
 "Refaire les suggestions":"Подобрать заново",
-"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Подобрать заново? Ещё не выбранные места ({0}) заменятся новым поиском. Оставленные тобой останутся."});
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"Подобрать заново? Ещё не выбранные места ({0}) заменятся новым поиском. Оставленные тобой останутся.",
+"Imprimer ou exporter (PDF)":"Печать или экспорт (PDF)",
+"Réservations":"Бронирования",
+"Budget et répartition":"Бюджет и распределение",
+"Récap des étapes":"Сводка этапов",
+"C’est bon, j’ai assez de visites":"Хватит, мне достаточно мест",
+"Étape":"Этап",
+"Poste":"Статья",
+"Tout le monde est à jour.":"Все в расчёте."});

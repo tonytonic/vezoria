@@ -5064,4 +5064,12 @@ I18N.load({
 "Ajouter les {0} lieux restants à ton programme ?":"남은 장소 {0}곳을 일정에 추가할까요?",
 "Profils, partage, langue, cartes…":"프로필, 공유, 언어, 지도…",
 "Refaire les suggestions":"추천 다시 받기",
-"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"추천을 다시 받을까요? 아직 고르지 않은 장소 {0}곳이 새 검색으로 바뀌어요. 담아 둔 곳은 그대로예요."});
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"추천을 다시 받을까요? 아직 고르지 않은 장소 {0}곳이 새 검색으로 바뀌어요. 담아 둔 곳은 그대로예요.",
+"Imprimer ou exporter (PDF)":"인쇄 또는 내보내기 (PDF)",
+"Réservations":"예약",
+"Budget et répartition":"예산과 분담",
+"Récap des étapes":"여정 요약",
+"C’est bon, j’ai assez de visites":"이 정도면 충분해요",
+"Étape":"여정",
+"Poste":"항목",
+"Tout le monde est à jour.":"모두 정산했어요."});

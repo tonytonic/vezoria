@@ -5064,4 +5064,12 @@ I18N.load({
 "Ajouter les {0} lieux restants à ton programme ?":"बाकी {0} जगहें कार्यक्रम में जोड़ें?",
 "Profils, partage, langue, cartes…":"प्रोफ़ाइल, साझा करना, भाषा, नक्शे…",
 "Refaire les suggestions":"सुझाव फिर से बनाओ",
-"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"सुझाव फिर से बनाएँ? अभी तक न चुनी गई {0} जगहें नई खोज से बदल जाएँगी। जो तुमने रखीं, वे रहेंगी।"});
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"सुझाव फिर से बनाएँ? अभी तक न चुनी गई {0} जगहें नई खोज से बदल जाएँगी। जो तुमने रखीं, वे रहेंगी।",
+"Imprimer ou exporter (PDF)":"प्रिंट या एक्सपोर्ट (PDF)",
+"Réservations":"बुकिंग",
+"Budget et répartition":"बजट और बँटवारा",
+"Récap des étapes":"पड़ावों का सार",
+"C’est bon, j’ai assez de visites":"ठीक है, मेरे पास काफ़ी जगहें हैं",
+"Étape":"पड़ाव",
+"Poste":"मद",
+"Tout le monde est à jour.":"सबका हिसाब बराबर है।"});

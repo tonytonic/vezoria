@@ -5064,4 +5064,12 @@ I18N.load({
 "Ajouter les {0} lieux restants à ton programme ?":"把剩下的 {0} 个地点加入行程吗？",
 "Profils, partage, langue, cartes…":"个人资料、共享、语言、地图…",
 "Refaire les suggestions":"重新生成建议",
-"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"重新生成建议？尚未选择的 {0} 个地点会被新的搜索替换，你保留的地点不变。"});
+"Refaire les suggestions ? Les {0} lieux pas encore choisis sont remplacés par une nouvelle recherche. Ceux que tu as gardés restent.":"重新生成建议？尚未选择的 {0} 个地点会被新的搜索替换，你保留的地点不变。",
+"Imprimer ou exporter (PDF)":"打印或导出（PDF）",
+"Réservations":"预订",
+"Budget et répartition":"预算与分摊",
+"Récap des étapes":"行程站点一览",
+"C’est bon, j’ai assez de visites":"够了，我的景点已经足够",
+"Étape":"站点",
+"Poste":"类别",
+"Tout le monde est à jour.":"大家已结清。"});
