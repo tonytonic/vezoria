@@ -1,4 +1,9 @@
 // Photos du carnet : POST = envoyer une photo, GET ?id= = la récupérer.
+// 🫙 Pot commun (photos « v2 ») : chaque photo est rangée UNE fois, chiffrée avec sa propre clé (sur le téléphone).
+//   À l'envoi, l'en-tête X-Photo-Cap porte l'empreinte d'un « droit de lecture » (jamais le droit lui-même).
+//   Lecture sans le code du carnet : GET ?s=<empreinte du carnet>&id=<photo>&rk=<droit de lecture>
+//   → la photo n'est rendue que si l'empreinte du droit correspond. Compagnons et abonnés lisent ainsi la même photo,
+//   sans copie : le serveur ne voit ni la photo (chiffrée) ni le reste du carnet.
 // Stockage : Cloudflare R2 (binding « PHOTOS ») si relié, sinon la base D1 (binding « DB »).
 // Les anciennes photos restées dans D1 sont toujours lues : rien n'est perdu au passage sur R2.
 const MAX_PHOTO = 1_900_000;
@@ -12,7 +17,7 @@ const spaceMax = env => (Number(env.SPACE_MAX_MB) || 6000) * 1_000_000;
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Photo-Id',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Photo-Id, X-Photo-Cap',
   'Access-Control-Max-Age': '86400',
 };
 const json = (obj, status = 200) =>
@@ -60,6 +65,10 @@ async function rateIp(env, request, bucket, limit, cost = 1) {
 const TOO_MANY = 'Trop d’envois depuis cette connexion : réessaie dans une heure. — Too many uploads from this connection: try again in an hour.';
 const validId = id => typeof id === 'string' && /^[\w.\-]{1,120}$/.test(id);
 const r2Key = (space, id) => space + '/' + id;
+const validCap = h => typeof h === 'string' && /^[0-9a-f]{64}$/.test(h);
+// table des droits de lecture (seulement si R2 n'est pas relié ; avec R2, l'empreinte est rangée avec la photo)
+let capReady = false;
+async function capTable(env) { if (capReady) return; await env.DB.prepare('CREATE TABLE IF NOT EXISTS photo_caps (space TEXT NOT NULL, id TEXT NOT NULL, rh TEXT NOT NULL, PRIMARY KEY (space, id))').run(); capReady = true; }
 
 // Compteur de taille totale, rangé dans D1 (clé 'total' pour D1, 'r2' pour R2)
 async function getTotal(env, k) {
@@ -88,6 +97,8 @@ export async function onRequestPost({ request, env }) {
   if (!buf.byteLength) return json({ error: 'Photo vide' }, 400);
   if (buf.byteLength > MAX_PHOTO) return json({ error: 'Photo trop lourde' }, 413);
   if (!(await rateIp(env, request, 'ph', 30000, Math.ceil(buf.byteLength / 100_000)))) return json({ error: TOO_MANY, retry: 3600 }, 429);
+  const cap = (request.headers.get('X-Photo-Cap') || '').trim().toLowerCase();
+  if (cap && !validCap(cap)) return json({ error: 'Droit de lecture invalide' }, 400);
 
   // ── R2 ──
   if (env.PHOTOS) {
@@ -98,23 +109,24 @@ export async function onRequestPost({ request, env }) {
     if (total + delta > R2_MAX(env)) return json({ error: 'Stockage des photos plein', total }, 507);
     const sk = 's:' + space, mine = await getTotal(env, sk);
     if (mine + delta > spaceMax(env)) return json({ error: 'Ce carnet a atteint sa place maximale pour les photos', total: mine, max: spaceMax(env) }, 507);
-    await env.PHOTOS.put(key, buf, { httpMetadata: { contentType: mime } });
+    await env.PHOTOS.put(key, buf, cap ? { httpMetadata: { contentType: mime }, customMetadata: { rh: cap } } : { httpMetadata: { contentType: mime } });
     await env.DB.batch([
       env.DB.prepare("UPDATE photo_stats SET v = v + ?1 WHERE k = 'r2'").bind(delta),
       env.DB.prepare('UPDATE photo_stats SET v = v + ?1 WHERE k = ?2').bind(delta, sk),
     ]);
-    return json({ ok: true, id, size: buf.byteLength, store: 'r2' });
+    return json({ ok: true, id, size: buf.byteLength, store: 'r2', cap: !!cap });
   }
 
   // ── D1 (si R2 n'est pas relié) ──
   const total = await getTotal(env, 'total');
   if (total + buf.byteLength > MAX_TOTAL_D1) return json({ error: 'Stockage des photos plein', total }, 507);
+  if (cap) await capTable(env);
   await env.DB.batch([
     env.DB.prepare('INSERT OR REPLACE INTO photos (space, id, mime, data, size, created) VALUES (?1, ?2, ?3, ?4, ?5, ?6)')
       .bind(space, id, mime, buf, buf.byteLength, Date.now()),
     env.DB.prepare("UPDATE photo_stats SET v = v + ?1 WHERE k = 'total'").bind(buf.byteLength),
-  ]);
-  return json({ ok: true, id, size: buf.byteLength, store: 'd1' });
+  ].concat(cap ? [env.DB.prepare('INSERT OR REPLACE INTO photo_caps (space, id, rh) VALUES (?1, ?2, ?3)').bind(space, id, cap)] : []));
+  return json({ ok: true, id, size: buf.byteLength, store: 'd1', cap: !!cap });
 }
 
 // Supprimer une photo (sortie d'un souvenir, souvenir ou voyage supprimé)
@@ -145,6 +157,7 @@ export async function onRequestDelete({ request, env }) {
       env.DB.prepare("UPDATE photo_stats SET v = MAX(0, v - ?1) WHERE k = 'r2'").bind(freed),
       env.DB.prepare('DELETE FROM photo_stats WHERE k = ?1').bind('s:' + space),
     ]); } catch (e) {}
+    try { await env.DB.prepare('DELETE FROM photo_caps WHERE space = ?1').bind(space).run(); } catch (e) {}
     return json({ ok: true, deleted: n, freed });
   }
   // ?bulk=1 : efface une liste de photos devenues inutiles (doublons, photos de fiches supprimées).
@@ -184,6 +197,7 @@ export async function onRequestDelete({ request, env }) {
   }
   try {
     const row = await env.DB.prepare('SELECT size FROM photos WHERE space = ?1 AND id = ?2').bind(space, id).first();
+    try { await env.DB.prepare('DELETE FROM photo_caps WHERE space = ?1 AND id = ?2').bind(space, id).run(); } catch (e) {}
     if (row) {
       await env.DB.batch([
         env.DB.prepare('DELETE FROM photos WHERE space = ?1 AND id = ?2').bind(space, id),
@@ -195,7 +209,28 @@ export async function onRequestDelete({ request, env }) {
   return freed ? json({ ok: true, id, freed }) : json({ error: 'Photo introuvable' }, 404);
 }
 
+// 🫙 lecture d'une photo du pot commun avec son droit de lecture (compagnon ou abonné), sans le code du carnet
+async function capGet(request, env, q) {
+  if (!env.DB) return json({ error: 'Base D1 non liée (binding « DB » manquant)' }, 500);
+  const space = String(q.get('s') || ''), id = q.get('id') || '', rk = String(q.get('rk') || '');
+  if (!/^[0-9a-f]{64}$/.test(space) || !validId(id) || !/^[\w\-]{16,64}$/.test(rk)) return json({ error: 'Lien de photo invalide' }, 400);
+  if (!(await rateIp(env, request, 'pg', 20000))) return json({ error: TOO_MANY, retry: 3600 }, 429);
+  try { const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first(); if (b) return json({ error: 'suspendu', suspended: true }, 423); } catch (e) {}
+  const rh = await sha256('vz-cap:' + rk), cache = 'private, max-age=31536000, immutable';
+  if (env.PHOTOS) {
+    const obj = await env.PHOTOS.get(r2Key(space, id));
+    if (obj && obj.customMetadata && obj.customMetadata.rh === rh) return new Response(obj.body, { headers: { 'Content-Type': (obj.httpMetadata && obj.httpMetadata.contentType) || 'image/jpeg', 'Cache-Control': cache, ...CORS } });
+    if (obj) return json({ error: 'Photo introuvable' }, 404);   // mauvais droit : même réponse qu'une photo absente
+  }
+  let row = null;
+  try { await capTable(env); row = await env.DB.prepare('SELECT p.mime AS mime, p.data AS data FROM photos p JOIN photo_caps c ON c.space = p.space AND c.id = p.id WHERE p.space = ?1 AND p.id = ?2 AND c.rh = ?3').bind(space, id, rh).first(); } catch (e) {}
+  if (!row) return json({ error: 'Photo introuvable' }, 404);
+  const d = row.data, body = d instanceof ArrayBuffer ? d : ArrayBuffer.isView(d) ? d : new Uint8Array(d);
+  return new Response(body, { headers: { 'Content-Type': row.mime || 'image/jpeg', 'Cache-Control': cache, ...CORS } });
+}
+
 export async function onRequestGet({ request, env }) {
+  { const q0 = new URL(request.url).searchParams; if (q0.get('rk')) return capGet(request, env, q0); }
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
   const q = new URL(request.url).searchParams;
