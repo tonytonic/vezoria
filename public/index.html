@@ -144,13 +144,18 @@ window.__vzSplashOff = function(){ var s = document.getElementById('vz-splash');
 <div class="v-toast" id="cv-toast">💾 Enregistré</div>
 <div class="cv-crypt" id="cv-crypt" role="status" aria-live="polite">🔐 Chiffrement en cours…</div>
 <!-- code de l’appli : découpé en parties chargées dans l’ordre (même portée globale), voir assets/ -->
-<script src="assets/app-1.js"></script>
-<script src="assets/app-2.js"></script>
-<script src="assets/app-3.js"></script>
-<script src="assets/app-4.js"></script>
-<script src="assets/app-5.js"></script>
-<script src="assets/app-6.js"></script>
-<script src="assets/app-7.js"></script>
-<script src="assets/app-8.js"></script>
+<script>/* Code de l’appli : 8 parties (assets/app-1…8.js) téléchargées en parallèle, puis exécutées D’UN SEUL BLOC,
+   exactement comme quand tout était dans index.html. Exécutées une par une, une minuterie ou un événement pouvait
+   se glisser entre deux parties et appeler l’appli avant son démarrage (iPhone : « M.sync.url »). */
+(function(){
+  var N = 8, parts = [];
+  for (var i = 1; i <= N; i++) parts.push(fetch('assets/app-' + i + '.js').then(function(r){ if (!r.ok) throw new Error('assets ' + r.status); return r.text(); }));
+  Promise.all(parts).then(function(t){
+    var s = document.createElement('script');
+    s.textContent = t.join('\n;\n') + '\n//# sourceURL=vezoria-app.js';
+    document.body.appendChild(s);
+  }).catch(function(e){ try { console.error(e); } catch (x) {} if (window.__vzBootFail) window.__vzBootFail(); });
+})();
+</script>
 </body>
 </html>
