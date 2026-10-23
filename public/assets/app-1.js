@@ -1699,7 +1699,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         ${me && !meIn ? `<label class="jp-p"><input type="radio" name="jp-me" value="${me}" checked> ${pchip(me)} <small>(ton profil)</small></label>` : ''}
         <label class="jp-p"><input type="radio" name="jp-me" value="new"${!me ? ' checked' : ''}> ✏️ Je ne suis pas dans la liste : <input class="v-in" id="jp-nom" placeholder="Ton prénom" style="flex:1;min-width:0"></label></div></div>
       <div class="v-f"><label>Dans quels voyages pars-tu vraiment ?</label><div class="v-sum-small" style="margin-bottom:4px">Tu comptes alors dans le budget, les dépenses et « qui doit quoi ». Tu vois quand même tous les voyages.</div>
-        ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="jp-t" value="${t.id}"${(M.notTrav||{})[t.id] && me && !(t.voyageurs||[]).includes(me) ? '' : ' checked'}> <span data-notr>${esc(t.titre)}</span>${t.debut ? ' <small>' + esc(tripDatesLong(t)) + '</small>' : ''}</label>`).join('')}</div>
+        ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="jp-t" value="${t.id}"${(me && (t.voyageurs||[]).includes(me)) || (ts.length === 1 && !(M.notTrav||{})[t.id]) ? ' checked' : ''}> <span data-notr>${esc(t.titre)}</span>${t.debut ? ' <small>' + esc(tripDatesLong(t)) + '</small>' : ''}</label>`).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.joinPickSave('${esc(code)}')">✅ C’est bon</button></div>`, true);
   }
   function joinPickSave(code){

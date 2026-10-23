@@ -1286,6 +1286,7 @@
         <p>Chacun son prénom et sa couleur. Toutes les fiches indiquent qui les a ajoutées ou modifiées.</p>
         <div class="cv-plist">${profiles().map(p=>`<button class="cv-prow${p.id===M.me?' me':''}" onclick="CV.editProfile('${p.id}')">${pchip(p.id)}<span>${p.id===M.me?'moi sur ce téléphone · modifier':profLocked(p.id)?'🔒':'modifier'}</span></button>`).join('')}</div>
         <button class="v-btn sec" style="margin-top:8px" onclick="CV.editProfile(null)">＋ Ajouter un profil</button>
+        ${profiles().length > 1 ? `<button class="v-btn sec" style="margin-top:8px" onclick="CV.travSheet()">🧳 Qui part dans quels voyages ?</button>` : ''}
         </div>`;
     if(!isInstalled()) h += `<div class="v-box">${installHTML(false)}</div>`;
     if(PUBLIC) h += `<div class="v-box"><h3>🔐 Confidentialité</h3><p>Ton carnet est chiffré avec son code : personne d’autre que vous ne peut le lire.</p><button class="v-btn sec" onclick="CV.infoSheet()">Comment ça marche ?</button>${s.on ? `<button class="v-btn sec" onclick="CV.codeSheet()">📝 Revoir mon code</button>` : ''}</div>`;

@@ -1068,7 +1068,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-23m'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-23n'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1246,6 +1246,26 @@
     persist(); closeSheet(true); toast('↩️ …');
     try { await syncNow(true); } catch(e){} refresh();
   }
+  /* ══════════ 🧳 QUI PART DANS QUELS VOYAGES ══════════
+     Une personne, tous les voyages : on coche ceux où elle part vraiment (budget, dépenses, « qui doit quoi »). */
+  function travSheet(pid){
+    const P = profiles(); pid = pid && prof(pid) ? pid : (P.find(p=>p.id !== M.me) || P[0] || {}).id; if(!pid) return;
+    const L = trips().filter(t=>!t.demo && !t.deleted).sort((a, b)=>(b.debut || '').localeCompare(a.debut || ''));
+    openSheet(`<h2>🧳 ${esc(MSGT('Qui part dans quels voyages ?'))}</h2>
+      <div class="cv-plist" style="margin-bottom:10px">${P.map(p=>`<button type="button" class="cv-prow${p.id === pid ? ' me' : ''}" onclick="CV.travSheet('${p.id}')">${pchip(p.id)}<span>${p.id === pid ? '✓' : ''}</span></button>`).join('')}</div>
+      <div class="v-sum-small" style="margin-bottom:8px">${esc(RF('Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.', pname(pid)))}</div>
+      <div style="margin-bottom:6px"><button type="button" class="v-btn sec" style="width:auto;display:inline-block;margin:0 6px 0 0" onclick="document.querySelectorAll('.tv-k').forEach(x=>x.checked=true)">${esc(MSGT('Tout cocher'))}</button><button type="button" class="v-btn sec" style="width:auto;display:inline-block;margin:0" onclick="document.querySelectorAll('.tv-k').forEach(x=>x.checked=false)">${esc(MSGT('Tout décocher'))}</button></div>
+      <div>${L.map(t=>`<label class="cv-checkline"><input type="checkbox" class="tv-k" value="${esc(t.id)}"${(t.voyageurs || []).includes(pid) ? ' checked' : ''}> <span data-notr>${esc(t.titre || '')}</span> <small>${esc(fdate(t.debut || '') || '')}</small></label>`).join('')}</div>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.travSave('${pid}')">✅ ${esc(MSGT('Enregistrer'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
+  }
+  function travSave(pid){
+    const on = new Set([...document.querySelectorAll('.tv-k:checked')].map(x=>x.value)), out = [];
+    trips().filter(t=>!t.demo && !t.deleted).forEach(t=>{ const v = new Set(t.voyageurs || []), had = v.has(pid);
+      if(on.has(t.id)) v.add(pid); else v.delete(pid);
+      if(had !== v.has(pid)) out.push(Object.assign(clone(t), {voyageurs:[...v]})); });
+    if(out.length) putMany(out, false);
+    closeSheet(true); refresh(); toast('✅ ' + RF('{0} voyage(s) modifié(s)', out.length));
+  }
   /* ══════════ 🔗 RÉPARER LES LIENS DES VOYAGES ══════════
      Un voyage partagé vit sous SON code (fiches + photos). S’il a été rattaché à un autre code (carnet entier rejoint,
      code principal collé…), ses photos ne sont plus trouvées. On reprend tous les codes connus de ce téléphone
@@ -1298,7 +1318,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
+  var RECAPI = {travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
