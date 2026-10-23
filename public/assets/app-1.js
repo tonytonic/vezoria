@@ -936,7 +936,10 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   function syncDot(){
     const el = document.getElementById('cv-sd'); if(!el) return;
-    el.className = 'sd ' + (!M.sync.on ? 'off' : M.sync.err ? 'err' : (M.dirty.length || syncing || (M.pq||[]).length) ? 'wait' : 'ok');
+    // carnet principal dans le cloud : son état · « voyage par voyage » : l’état de l’ensemble des voyages dans le cloud
+    const feeds = new Set(Object.values(M.feedPub || {})), sps = (M.spaces || []).filter(sp=>!sp.mate && !feeds.has(sp.code) && Object.values(TS()).includes(sp.code));
+    el.className = 'sd ' + (M.sync.on ? (M.sync.err ? 'err' : (M.dirty.length || syncing || (M.pq||[]).length) ? 'wait' : 'ok')
+      : !sps.length ? 'off' : sps.some(sp=>sp.err) ? 'err' : (syncing || (M.pq||[]).length || sps.some(sp=>(sp.dirty||[]).length)) ? 'wait' : 'ok');
   }
 
   /* ══════════ En-tête, voyages, navigation ══════════ */
