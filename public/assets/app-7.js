@@ -13,9 +13,10 @@
     let fm = []; try { const from = bagFromDefault(), dest = [...new Set([...tlStages().map(x=>((M.ctry || {})[normQ(x.city)] || {}).cc).filter(Boolean), ...bagCcs()])], dn = (M.fmDone || {})[t.id] || {};
       dest.forEach(cc=>entryRules(cc, from).x.filter(x=>!/CEAM/.test(x)).forEach(x=>fm.push({l:x, done:!!dn[x]}))); } catch(e){}
     const ck = list('check', c=>c.trip === t.id), ckd = ck.filter(c=>chkDone(c)).length;
+    const nd = t.debut ? Math.max(1, nights(t.debut, t.fin || t.debut)) : 0;
     const S = [
       {k:'ou', ic:'📍', l:'Où et quand', ok: !!t.debut && hs.length > 0, f: (t.debut ? .5 : 0) + (hs.length ? .5 : 0)},
-      {k:'faire', ic:'🎟️', l:'Que faire', ok: (pl.length > 0 && !sg.length) || !!sk.faire, f: sk.faire ? 1 : pl.length ? (pl.length - sg.length) / pl.length : 0},
+      {k:'faire', ic:'🎟️', l:'Que faire', ok: (pl.length > 0 && !sg.length) || !!sk.faire || (nd > 0 && pl.length - sg.length >= nd), f: sk.faire ? 1 : nd ? Math.min(1, (pl.length - sg.length) / nd) : pl.length ? (pl.length - sg.length) / pl.length : 0},   // 1 lieu gardé par jour suffit : les suggestions pas triées ne comptent pas contre toi
       {k:'resa', ic:'🛏️', l:'Réserver', ok: rs.length > 0 && rs.every(okB), f: rs.length ? rs.filter(okB).length / rs.length : 0, w:2},
       {k:'fin', ic:'✅', l:'Finaliser', ok: !di.length && fm.every(x=>x.done) && (!ck.length || ckd === ck.length), f: (()=>{ const p = []; if(ck.length) p.push(ckd / ck.length); if(fm.length) p.push(fm.filter(x=>x.done).length / fm.length); if(di.length) p.push(0); return p.length ? p.reduce((a, b)=>a + b, 0) / p.length : 1; })(), w:1}
     ];
@@ -53,7 +54,7 @@
       if(k === 'faire'){
         const xn = expCount(t), more = `<button type="button" class="ar-more" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>` + (xn ? `<button type="button" class="ar-go ex-go" onclick="CV.expOpen()">🎟️ ${MSGT('Expériences à vivre')} (${xn})</button>` : '');
         if(SG && SG.tid === t.id) return `<div class="ar-run">${sgRun(t)}</div>${D.sg.length ? `<button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Choisir mes visites')} (${D.sg.length})</button>` : ''}`;
-        if(D.sg.length) return `<div class="ar-p">${D.pl.length - D.sg.length} ${MSGT('lieux au programme')} · <b>${D.sg.length} ${MSGT('suggestions à choisir')}</b></div><button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Choisir mes visites')}</button>${more}`;
+        if(D.sg.length) return `<div class="ar-p">${D.pl.length - D.sg.length} ${MSGT('lieux au programme')} · <b>${D.sg.length} ${MSGT('suggestions à choisir')}</b></div><button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Choisir mes visites')}</button>${more}${(M.ariSkip || {})[t.id] && M.ariSkip[t.id].faire ? '' : `<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('C’est bon, j’ai assez de visites')}</button>`}`;
         if(!D.pl.length) return `<div class="ar-p">${MSGT('Les lieux à voir et les excursions, jour par jour.')}</div>${D.hs.length ? `<button type="button" class="ar-go" onclick="CV.suggGo()">💡 ${MSGT('Me proposer les incontournables (4 par jour)')}</button>` : ''}${expCount(t) ? `<button type="button" class="ar-go ex-go" onclick="CV.expOpen()">🎟️ ${MSGT('Expériences à vivre')} (${expCount(t)})</button>` : ''}<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('Passer cette étape')}</button>`;
         return `<div class="ar-p">✓ ${D.pl.length} ${MSGT('lieux au programme')}</div>${more}`;
       }
@@ -67,7 +68,8 @@
         ...D.di.map(x=>`<button type="button" class="ar-f bad" onclick="CV.tlDocs()"><i>⚠️</i><span>${esc(x)}</span></button>`),
         ...D.fm.map(x=>`<button type="button" class="ar-f${x.done ? ' ok' : ''}" data-fm="${esc(x.l)}" onclick="CV.ariFm(this)"><i>${x.done ? '✅' : '🛂'}</i><span>${esc(x.l)}</span></button>`),
         `<button type="button" class="ar-f${D.ck.length && D.ckd === D.ck.length ? ' ok' : ''}" onclick="CV.tab('check')"><i>🧳</i><span>${MSGT('Valise et checklist')}</span><small>${D.ck.length ? D.ckd + '/' + D.ck.length : ''}</small></button>`,
-        `<button type="button" class="ar-f" onclick="CV.socialHub()"><i>👥</i><span>${MSGT('Compagnons et abonnés')}</span><small>${(t.voyageurs || []).filter(prof).length}</small></button>`];
+        `<button type="button" class="ar-f" onclick="CV.socialHub()"><i>👥</i><span>${MSGT('Compagnons et abonnés')}</span><small>${(t.voyageurs || []).filter(prof).length}</small></button>`,
+        `<div class="ar-pr"><b>🖨️ ${MSGT('Imprimer ou exporter (PDF)')}</b><div>${[['iti','🗺️','Itinéraire'], ['resa','🎫','Réservations'], ['budget','💶','Budget et répartition'], ['recap','📋','Récap des étapes']].map(([k, ic, l], i)=>`<button type="button" onclick="CV.pdfPart('${k}')"><small>${i + 1}</small>${ic} ${MSGT(l)}</button>`).join('')}</div></div>`];
       return `<div class="ar-fs">${rows.join('')}</div>${cdIns(t)}`;
     };
     const ms = t.debut ? cdLeft(t) : 0, cdOn = !!t.debut && !t.demo && ms > -864e5 && ms <= 400 * 864e5 && !hidden('blk:cd');

@@ -645,17 +645,28 @@
   const pdfSay = m => { const e = document.getElementById('pdf-msg'); if(e) e.textContent = m; };
   const pdfName = (kind, t) => kind + '-' + (t.titre||'voyage').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '.pdf';
 
-  async function pdfRoute(){
+  // 🖨️ une seule partie du voyage, depuis « Finaliser » : 1 itinéraire · 2 réservations · 3 budget et répartition · 4 récap des étapes
+  const PR_PARTS = {iti:{prog:1, maps:1, lines:0, t:'Itinéraire'}, resa:{hotel:1, transport:1, activite:1, t:'Réservations'}, budget:{budget:1, budgetX:1, t:'Budget et répartition'}, recap:{recap:1, t:'Récap des étapes'}};
+  function pdfPart(k){ const P = PR_PARTS[k]; if(P) pdfRoute(P); }
+  async function pdfRoute(opt){
     const t = trip(); if(!t) return;
-    const on = k => { const e = document.getElementById('pr-'+k); return e ? e.checked : false; };
-    const whoSel = (document.getElementById('pr-who') || {}).value || 'all', lines = on('lines'), maps = on('maps');
-    const sec = Object.fromEntries(PR_SECTIONS.map(([k])=>[k, on(k)]));
+    const on = k => { if(opt) return !!opt[k]; const e = document.getElementById('pr-'+k); return e ? e.checked : false; };
+    const whoSel = (!opt && (document.getElementById('pr-who') || {}).value) || 'all', lines = on('lines'), maps = on('maps');
+    const sec = Object.fromEntries([...PR_SECTIONS.map(([k])=>k), 'recap', 'budgetX'].map(k=>[k, on(k)]));
     pdfBusy('Préparation du carnet de route…');
     try {
       const keepWho = M.who; M.who = whoSel; const its = items(forWho);
-      const D = await newPdf('Carnet de route · ' + t.titre);
-      D.cover('Carnet de route', t.titre, [tripDatesLong(t), t.sous||''].filter(Boolean).join(' · '), whoSel==='all' ? tv().map(pname).join(' · ') : pname(whoSel));
+      const D = await newPdf((opt ? PT(opt.t) : 'Carnet de route') + ' · ' + t.titre);
+      D.cover(opt ? PT(opt.t) : 'Carnet de route', t.titre, [tripDatesLong(t), t.sous||''].filter(Boolean).join(' · '), whoSel==='all' ? tv().map(pname).join(' · ') : pname(whoSel));
       if(maps){ pdfSay('Carte du voyage…'); D.text('Le voyage en un coup d’œil', {font:D.F.b, size:12, gap:4}); await D.img(await tripMapCanvas(700, 470), 360); }
+      if(sec.recap){   // ④ en une page : où l’on dort, combien de nuits, comment on arrive
+        D.add(); D.h1(PT('Récap des étapes'));
+        const st = tlStages(), trs = its.filter(i=>i.cat === 'transport');
+        D.table([.22,.26,.1,.24,.18], [PT('Étape'), PT('Dates'), PT('Nuits'), PT('Hébergement'), PT('Arrivée')], st.map(x=>{
+          const h = x.h || {}, tr = trs.find(r=>r.date === x.debut && normQ(r.to || '').includes(normQ(x.city).slice(0, 5)));
+          return [x.city, fdate(x.debut) + ' -> ' + fdate(x.fin), String(nights(x.debut, x.fin || x.debut)), [h.nom, stTxt(h)].filter(Boolean).join(' · '), tr ? (tr.mode || '') + (tr.heureArr ? ' ' + tr.heureArr : '') : '']; }));
+        D.text(PT('Total') + ' : ' + st.length + ' ' + PT('étapes') + ' · ' + nights(t.debut || (st[0] || {}).debut, t.fin || (st[st.length - 1] || {}).fin) + ' ' + PT('nuits'), {size:9.5, color:D.C.mut});
+      }
       if(sec.prog){
         D.add(); D.h1('Programme jour par jour');
         const ds = dayList();
@@ -683,11 +694,19 @@
       if(sec.notes){ const ns = list('note', n=>n.trip===M.trip).sort(noteSort); if(ns.length){ D.need(80); D.h1('Notes'); ns.forEach(n=>{ D.text(refLabel(n.ref).replace(/<[^>]+>/g,''), {font:D.F.b, size:9.5}); D.text(n.texte, {size:9.5, gap:5}); }); } }
       if(sec.budget){ const all = items(), v = whoSel==='all' ? tv() : [whoSel]; D.need(80); D.h1('Budget');
         D.table([.4,.2,.2,.2], ['Voyageur','Sa part','Déjà réglé','Reste'], v.map(pid=>{ const pr = all.reduce((s,i)=>s+shareOf(i,pid),0), pa = all.reduce((s,i)=>s+shareOfPaid(i,pid),0); return [pname(pid), eur(pr), eur(pa), eur(pr-pa)]; }));
-        if(whoSel==='all') D.text('Total du voyage : ' + eur(all.reduce((s,i)=>s+totalOf(i),0)) + '. Montants réels quand ils sont saisis, sinon estimations.', {size:9, color:D.C.mut}); }
+        if(whoSel==='all') D.text('Total du voyage : ' + eur(all.reduce((s,i)=>s+totalOf(i),0)) + '. Montants réels quand ils sont saisis, sinon estimations.', {size:9, color:D.C.mut});
+        if(sec.budgetX){   // ③ la répartition : par poste, puis qui doit quoi
+          const tot = all.reduce((s,i)=>s+totalOf(i),0) || 1, cats = [['transport','Trajets'], ['hotel','Hébergements'], ['activite','Visites & résas'], ['divers','Divers']];
+          D.y -= 6; D.h2(PT('Par poste'));
+          D.table([.4,.3,.3], [PT('Poste'), PT('Montant'), '%'], cats.map(([c, l])=>{ const v = all.filter(i=>i.cat === c).reduce((s,i)=>s+totalOf(i),0); return [PT(l), eur(v), Math.round(v / tot * 100) + ' %']; }).filter(r=>r[1] !== eur(0)));
+          const tr = settle(balances());
+          D.y -= 6; D.h2(PT('Qui doit quoi'));
+          if(tr.length) tr.forEach(x=>D.text(`${pname(x.de)} -> ${pname(x.a)} : ${eur(x.v)}`, {size:10, indent:6})); else D.text(PT('Tout le monde est à jour.'), {size:10, indent:6});
+        } }
       if(sec.check){ const cl = list('check', c=>c.trip===M.trip).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)); if(cl.length){ D.need(80); D.h1('Checklist');
         [...new Set(cl.map(c=>c.cat))].forEach(cat=>{ D.text(cat, {font:D.F.b, size:10}); cl.filter(x=>x.cat===cat).forEach(x=>D.text((x.done ? '[x] ' : '[  ] ') + PT(x.label), {size:9.5, indent:8})); D.y -= 4; }); } }
       M.who = keepWho;
-      pdfReady(await D.save(pdfName('carnet-de-route', t)));
+      pdfReady(await D.save(pdfName(opt ? ({iti:'itineraire', resa:'reservations', budget:'budget', recap:'recap-etapes'})[Object.keys(PR_PARTS).find(k=>PR_PARTS[k] === opt)] || 'carnet' : 'carnet-de-route', t)));
     } catch(e){ pdfSay('⚠️ ' + e.message); }
   }
   async function pdfJournal(){

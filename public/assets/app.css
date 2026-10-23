@@ -2581,3 +2581,8 @@ body.vz-webf .cv-bell{display:none}
 /* Échéancier / budget : la 1re tuile (« Déjà payé ») reste foncée en mode verre, sinon le doré est illisible sur fond clair */
 body.vz-glass .v-tiles .v-tile:first-child{background:var(--navy)!important;border-color:transparent!important}
 .v-toast{z-index:9600}   /* visible aussi par-dessus « Choisir mes visites » et « Explorer » */
+/* 🖨️ Finaliser : imprimer ou exporter une partie du voyage */
+.ar-pr{margin-top:4px;padding:10px;border-radius:12px;background:rgba(255,255,255,.08)}.ar-pr>b{display:block;font-size:.85rem;margin-bottom:8px;color:#fff}
+.ar-pr>div{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ar-pr button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:6px;padding:9px 8px;border-radius:10px;background:rgba(255,255,255,.14);color:#fff;font-size:.8rem;font-weight:700;cursor:pointer;min-height:44px}
+.ar-pr button small{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#fff;color:#2a1238;font-size:.7rem;flex:0 0 auto}

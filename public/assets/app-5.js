@@ -385,9 +385,8 @@
     const byCat = {}; all.forEach(i=>{ byCat[i.cat] = (byCat[i.cat]||0) + totalOf(i); }); const mx = Math.max(1, ...Object.values(byCat));
     const chk = (ok, l, extra) => `<div class="cv-bchk${ok?' ok':''}"><i>${ok ? '✓' : '!'}</i><span>${l}${extra ? '<small>' + extra + '</small>' : ''}</span></div>`;
     const pick = trips().filter(x=>tripPhase(x)!=='prep');
-    return `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">🏁 Bilan · ${esc(t.titre)}</div></div>
-        ${pick.length > 1 ? `<select class="v-in" style="margin-top:6px" onchange="CV.go(this.value);CV.modeGo('bilan')">${pick.map(x=>`<option value="${x.id}"${x.id===t.id?' selected':''}>${esc(x.titre)}</option>`).join('')}</select>` : ''}</div>
-      ${hidden('blk:prep') ? actBand() : finFil(t)}${bilanHero(t, tot, sv, nph)}${bilanBig(t)}
+    // (plus de case « Bilan · voyage » avec sa liste déroulante : le choix du voyage se fait en haut à gauche, comme partout)
+    return `${hidden('blk:prep') ? actBand() : finFil(t)}${bilanHero(t, tot, sv, nph)}${bilanBig(t)}
       ${hidden('blk:prep') ? '' : '<div hidden>'}<div class="v-box"><h3>🧾 Pour boucler le voyage</h3>
         ${chk(!tr.length, tr.length ? `${tr.length} remboursement${tr.length>1?'s':''} à faire` : 'Comptes soldés entre vous', tr.map(x=>`${esc(pname(x.de))} → ${esc(pname(x.a))} : ${eur(x.v)}`).join('<br>'))}
         ${chk(!unpaid.length, unpaid.length ? `${unpaid.length} échéance(s) non cochée(s)` : 'Échéancier à jour')}
