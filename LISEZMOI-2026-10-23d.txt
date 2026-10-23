@@ -1,0 +1,125 @@
+VEZORIA — MISE À JOUR 2026-10-23d (cumule 23a, 23b, 23c et 23d)
+Version de départ : 2026-10-22e (celle de l'audit). Ce ZIP contient TOUS les fichiers modifiés ou nouveaux depuis.
+Rien n'est à supprimer dans le dépôt.
+
+══════════════════════════════════════════════════════════════════
+1. CE QUE TU AS À FAIRE
+══════════════════════════════════════════════════════════════════
+ 1. Envoie tout le contenu du ZIP sur GitHub en gardant les dossiers (public/, functions/, tests/, .github/).
+    - Le fichier .github/workflows/robot.yml est dans un dossier caché : si l'iPhone ne le montre pas,
+      sur GitHub « Add file → Create new file », tape le nom .github/workflows/robot.yml et colle le contenu
+      de robot.yml.txt (copie lisible à la racine du ZIP).
+    - Les plus gros fichiers : public/vendor/tesseract/*.wasm.js (3,9 Mo chacun), tous sous la limite GitHub de 25 Mo.
+ 2. Rien à régler sur Cloudflare : la base D1 « DB » déjà liée suffit, les nouvelles tables se créent seules
+    (geo_cache, geo_slot, cfg, errors). La variable CONTACT, si elle existe, sert à identifier l'appli auprès d'OpenStreetMap.
+ 3. Après le déploiement : onglet « Actions » de GitHub → le robot doit être vert (✅). Rouge (❌) = une erreur à me montrer.
+ 4. Teste sur ton iPhone : premier lancement, ajout d'un ticket photo (lecture du ticket), carte en direct, globe.
+ 5. Plus tard (facultatif) : crée un compte gratuit « ArcGIS Location Platform » chez Esri, une clé restreinte à ton domaine,
+    puis colle-la dans public/assets/app-1.js, ligne « const ESRI_KEY = ''; ». Sans clé, les anciens fonds Esri continuent.
+ 6. Si ton carnet de test sert Vezoria sous /vezoria/ : copie aussi le dossier public/assets/ et public/vendor/ là-bas
+    (le code n'est plus dans index.html).
+ 7. Appli Play Store : les raccourcis de l'icône (appui long) demandent sans doute de régénérer l'appli (Bubblewrap/PWABuilder).
+ 8. Une question en attente : la feuille « Du carnet à Vezoria » dit « 🔕 Aucune notification : Vezoria ne t'envoie rien »,
+    alors que l'appli a des notifications. Dis-moi si je la retire.
+
+À SAVOIR POUR LES PROCHAINES MISES À JOUR
+ - Le code est maintenant dans public/assets/app-1.js … app-8.js (environ 200 Ko chacun) au lieu d'un index.html de 2 Mo.
+   Une correction ne touche souvent qu'un ou deux de ces fichiers : tu n'envoies que ceux-là.
+ - À chaque version, deux numéros changent : BUILD (dans assets/app-8.js) et CACHE (dans sw.js).
+ - Pour couper la recherche d'adresses sans redéployer : POST /api/admin {action:'geo', mode:'off'} (ou 'photon', 'on').
+ - Pour lire les erreurs des téléphones : POST /api/admin {action:'errors'} (clé ADMIN_KEY).
+
+══════════════════════════════════════════════════════════════════
+2. CE QUI A CHANGÉ — AVANT / APRÈS
+══════════════════════════════════════════════════════════════════
+
+SÉCURITÉ
+ • Liens piégés
+   Avant : un compagnon pouvait mettre un lien « javascript:… » dans une réservation ou une envie ; le toucher exécutait du code.
+   Après : seuls les liens http(s) sont affichés ; « www.booking.com » devient « https://www.booking.com » ; le reste est ignoré.
+ • Bibliothèques externes
+   Avant : Tesseract (lecture des tickets) venait de jsDelivr sans version exacte ; la carte des pays aussi.
+   Après : Tesseract 5.1.1 (moteur + français + anglais) et la carte des pays sont dans public/vendor/ : version figée,
+           rien ne part chez jsDelivr, la lecture des tickets marche hors ligne une fois les fichiers téléchargés.
+
+OPENSTREETMAP ET CARTES
+ • Recherche d'adresses
+   Avant : 12 endroits interrogeaient directement Nominatim depuis chaque téléphone (risque de blocage pour toute l'appli).
+   Après : tout passe par /api/geo (ton serveur) : réponses gardées 60 jours, 1 requête/s au plus vers Nominatim pour toute
+           l'appli, repli automatique sur Photon, coupure à distance. Les coordonnées sont arrondies (~1 km pour une ville).
+ • Fonds de carte
+   Avant : tile.openstreetmap.org pour le globe, la carte en direct, le PDF, les récaps et le film (usage non autorisé).
+   Après : globe et carte en direct en « Plan » OpenFreeMap (autorisé, hors ligne permis) ; PDF, récaps et film en fonds Esri.
+           Esri passe au nouveau service officiel dès que tu colles une clé (ESRI_KEY), sinon anciennes adresses.
+
+TRADUCTIONS (13 langues)
+ • Avant : 5 phrases restaient en français (abonnés et j'aime, partage de l'appli, plafond de dépenses, « a avancé … pour
+   les autres », « Toutes les autres photos ») ; « J11 » partout ; « Genève, Suisse, Suisse » sous les souvenirs.
+ • Après : les 5 phrases sont traduites ; « Day 11 », « Tag 11 », « 第 11 天 »… aux 17 endroits concernés (le français garde J11) ;
+   le pays n'est ajouté que s'il manque. Tous les nouveaux textes de ces mises à jour sont traduits dans les 13 langues.
+
+ACCESSIBILITÉ ET LISIBILITÉ
+ • Textes : avant, jusqu'à 36 textes de moins de 12 px par écran ; après, 12 px minimum (barre du bas, compteurs…).
+ • Boutons : avant, croix et icônes sans nom pour VoiceOver ; après, près de 90 boutons nommés (« Fermer », « Retirer »…).
+   Zones de toucher agrandies (« Masquer ce guide », « Retirer », « Story », croix des photos).
+ • Couleurs : gris et prénoms colorés plus foncés (contraste 4,5:1 minimum ; Inès passait de 2,4:1 à plus de 4,5:1).
+ • Nouveau réglage « Texte plus grand » (Réglages → Apparence).
+
+PREMIER LANCEMENT
+ • Avant : 3 écrans (langue/devise → « Avant de commencer » → « Bienvenue à bord »), consignes iPhone ET Android affichées.
+ • Après : un seul écran « Bienvenue à bord » : langue, devise, prénom, couleur, conditions. Les consignes d'installation
+   ne montrent que celles du téléphone utilisé. (L'écran qui impose l'installation reste comme tu l'avais décidé.)
+
+ÉCRAN ET NAVIGATION
+ • Haut de l'écran : avant 379 px sur un petit téléphone (60 % de l'écran) ; après 257 px (titre plus compact, trajet sur
+   une ligne, pastilles qui défilent, QR code masqué sur petit écran, prénoms sous les avatars masqués). Le bouton profil
+   n'est plus coupé à droite ; « 3 voyages » ne passe plus sur deux lignes.
+ • Compteurs « 0 abonnés · 0 j'aime · 0 suivis » : masqués tant que rien n'est publié ni suivi.
+ • Pendant le voyage, « Dépenses » est en 3e position, comme « Budget » en préparation.
+ • Menu « Plus » : une ligne d'explication sous chaque tuile.
+ • Bouton « + Note » : une marge en bas évite qu'il recouvre la dernière carte.
+ • Onglet Budget en russe : « Régler » et « Demander » passent sous la phrase au lieu de déborder de l'écran.
+ • Raccourcis par appui long sur l'icône : « Ajouter une dépense », « Je suis ici », « Nouveau souvenir ».
+ • Feuille « Du carnet à Vezoria » : l'import Polarsteps est maintenant listé dans les nouveautés.
+
+VITESSE ET MISES À JOUR
+ • Ouverture : avant, l'appli attendait jusqu'à 1,5 s le réseau à chaque ouverture ; après, la copie locale s'affiche tout de
+   suite et se met à jour en arrière-plan. Nouvelle version pendant l'utilisation → bandeau « Nouvelle version · toucher pour recharger ».
+ • index.html : avant 2,1 Mo (code + styles + polices) ; après 53 Ko. Le code est en 8 parties (assets/app-1…8.js), les styles
+   dans assets/app.css, les 8 polices en vrais fichiers (assets/fonts/). Tout est copié sur le téléphone dès l'installation
+   (testé : l'appli redémarre sans réseau).
+
+FIABILITÉ
+ • Erreurs : avant, aucune nouvelle des plantages chez les vrais utilisateurs ; après, envoi anonyme vers /api/err
+   (message, version, système et navigateur ; jamais de données de voyage ; 5 au plus par ouverture).
+ • Robot de tests : à chaque envoi sur GitHub, vérifie la syntaxe et touche les boutons de chaque écran (fr et en).
+ • Bugs corrigés trouvés par le robot : globe refermé trop vite (plantage), double toucher sur « voyage de démo »,
+   écran Budget sans voyage ouvert.
+
+CONFIDENTIALITÉ
+ • Politiques FR et EN mises à jour : recherche d'adresses par le serveur, fonds de carte, rapports d'erreurs anonymes,
+   Tesseract et carte des pays inclus dans l'appli.
+
+══════════════════════════════════════════════════════════════════
+3. LISTE DES FICHIERS
+══════════════════════════════════════════════════════════════════
+MODIFIÉS
+  public/index.html            (le code et les styles en sont sortis)
+  public/sw.js                 (ouverture instantanée, copie hors ligne de assets/, version 2026-10-23d)
+  public/manifest.json         (raccourcis de l'icône)
+  public/privacy.html, public/privacy-en.html
+  public/lang/*.js             (13 langues : nouvelles traductions)
+  functions/api/admin.js       (actions « geo » et « errors »)
+NOUVEAUX
+  public/assets/app-1.js … app-8.js, public/assets/app.css, public/assets/fonts/*.woff2
+  public/vendor/tesseract/     (lecture des tickets, 7 fichiers)
+  public/vendor/ne-countries.json
+  functions/api/geo/[op].js    (recherche d'adresses)
+  functions/api/err.js         (erreurs anonymes)
+  tests/robot.mjs, .github/workflows/robot.yml (+ robot.yml.txt, copie lisible)
+SUPPRIMÉS : aucun.
+
+PAS FAIT (décidé ou à plus tard)
+  Mode sombre, publication sur vezoria.fr, statistiques d'usage, suivi des vols en direct, partenaire d'impression (écartés).
+  Import des réservations par e-mail (à faire si tu veux).
+  Chargement à la demande des modules rares (film, globe, PDF…) et remplacement des 863 onclick : prochaine étape du découpage.
