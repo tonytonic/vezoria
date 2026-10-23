@@ -5041,4 +5041,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"रखने के लिए कम से कम एक यात्रा चुनो।",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"{0} यात्राएँ रखी जाएँगी, {1} सिर्फ़ इस फ़ोन से हटेंगी। दूसरों के यहाँ कुछ नहीं मिटता। जारी रखें?",
 "{0} voyage(s) retirés de ce téléphone":"{0} यात्राएँ इस फ़ोन से हटाई गईं",
-"Faire revenir les {0} voyage(s) retirés ?":"हटाई गई {0} यात्राएँ वापस लाएँ?"});
+"Faire revenir les {0} voyage(s) retirés ?":"हटाई गई {0} यात्राएँ वापस लाएँ?",
+"Qui part dans quels voyages ?":"कौन किन यात्राओं में जा रहा है?",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"उन यात्राओं पर निशान लगाओ जिनमें {0} सच में जा रहा है। यात्राओं में और कुछ नहीं बदलता, सिर्फ़ यात्रियों की सूची।",
+"Tout cocher":"सब चुनो",
+"Tout décocher":"सबका निशान हटाओ",
+"{0} voyage(s) modifié(s)":"{0} यात्राएँ बदली गईं"});

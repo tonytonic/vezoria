@@ -2106,4 +2106,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"Marque pelo menos uma viagem a manter.",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"{0} viagem(ns) mantida(s), {1} retirada(s) só deste telefone. Nada é apagado para os outros. Continuar?",
 "{0} voyage(s) retirés de ce téléphone":"{0} viagem(ns) retirada(s) deste telefone",
-"Faire revenir les {0} voyage(s) retirés ?":"Trazer de volta as {0} viagem(ns) retirada(s)?"});
+"Faire revenir les {0} voyage(s) retirés ?":"Trazer de volta as {0} viagem(ns) retirada(s)?",
+"Qui part dans quels voyages ?":"Quem vai em quais viagens?",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Marque as viagens em que {0} vai de verdade. Nada mais muda nas viagens, só a lista de viajantes.",
+"Tout cocher":"Marcar tudo",
+"Tout décocher":"Desmarcar tudo",
+"{0} voyage(s) modifié(s)":"{0} viagem(ns) alterada(s)"});

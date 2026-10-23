@@ -2102,4 +2102,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"Spunta almeno un viaggio da tenere.",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"{0} viaggio/i tenuti, {1} tolti solo da questo telefono. Niente viene cancellato per gli altri. Continuare?",
 "{0} voyage(s) retirés de ce téléphone":"{0} viaggio/i tolti da questo telefono",
-"Faire revenir les {0} voyage(s) retirés ?":"Riportare i {0} viaggio/i tolti?"});
+"Faire revenir les {0} voyage(s) retirés ?":"Riportare i {0} viaggio/i tolti?",
+"Qui part dans quels voyages ?":"Chi parte per quali viaggi?",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Spunta i viaggi in cui {0} parte davvero. Nient’altro cambia nei viaggi, solo l’elenco dei viaggiatori.",
+"Tout cocher":"Spunta tutto",
+"Tout décocher":"Togli tutte le spunte",
+"{0} voyage(s) modifié(s)":"{0} viaggio/i modificato/i"});

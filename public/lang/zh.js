@@ -5041,4 +5041,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"请至少勾选一个要保留的旅行。",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"保留 {0} 个旅行，{1} 个只从这部手机移除。其他人那里不会删除任何内容。继续吗？",
 "{0} voyage(s) retirés de ce téléphone":"已从这部手机移除 {0} 个旅行",
-"Faire revenir les {0} voyage(s) retirés ?":"要恢复已移除的 {0} 个旅行吗？"});
+"Faire revenir les {0} voyage(s) retirés ?":"要恢复已移除的 {0} 个旅行吗？",
+"Qui part dans quels voyages ?":"谁参加哪些旅行？",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"勾选 {0} 真正参加的旅行。旅行的其他内容不变，只修改旅行者名单。",
+"Tout cocher":"全选",
+"Tout décocher":"全部取消",
+"{0} voyage(s) modifié(s)":"已修改 {0} 个旅行"});

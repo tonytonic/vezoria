@@ -5042,4 +5042,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"Отметь хотя бы одну поездку, которую оставить.",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"Остаётся поездок: {0}, убирается только с этого телефона: {1}. У других ничего не удаляется. Продолжить?",
 "{0} voyage(s) retirés de ce téléphone":"Убрано с этого телефона поездок: {0}",
-"Faire revenir les {0} voyage(s) retirés ?":"Вернуть убранные поездки ({0})?"});
+"Faire revenir les {0} voyage(s) retirés ?":"Вернуть убранные поездки ({0})?",
+"Qui part dans quels voyages ?":"Кто едет в какие поездки?",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Отметь поездки, в которые {0} действительно едет. В поездках ничего не меняется, кроме списка путешественников.",
+"Tout cocher":"Отметить все",
+"Tout décocher":"Снять все",
+"{0} voyage(s) modifié(s)":"Изменено поездок: {0}"});

@@ -5041,4 +5041,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"남길 여행을 하나 이상 체크하세요.",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"여행 {0}개는 남기고 {1}개는 이 휴대폰에서만 빼요. 다른 사람에게서는 아무것도 지워지지 않아요. 계속할까요?",
 "{0} voyage(s) retirés de ce téléphone":"이 휴대폰에서 여행 {0}개를 뺐어요",
-"Faire revenir les {0} voyage(s) retirés ?":"뺀 여행 {0}개를 되돌릴까요?"});
+"Faire revenir les {0} voyage(s) retirés ?":"뺀 여행 {0}개를 되돌릴까요?",
+"Qui part dans quels voyages ?":"누가 어떤 여행에 가나요?",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"{0}님이 실제로 가는 여행을 체크하세요. 여행의 다른 내용은 그대로이고 여행자 목록만 바뀌어요.",
+"Tout cocher":"모두 체크",
+"Tout décocher":"모두 해제",
+"{0} voyage(s) modifié(s)":"여행 {0}개를 수정했어요"});

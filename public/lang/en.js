@@ -2087,4 +2087,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"Tick at least one trip to keep.",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"{0} trip(s) kept, {1} removed from this phone only. Nothing is deleted for others. Continue?",
 "{0} voyage(s) retirés de ce téléphone":"{0} trip(s) removed from this phone",
-"Faire revenir les {0} voyage(s) retirés ?":"Bring back the {0} removed trip(s)?"});
+"Faire revenir les {0} voyage(s) retirés ?":"Bring back the {0} removed trip(s)?",
+"Qui part dans quels voyages ?":"Who goes on which trips?",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Tick the trips {0} really goes on. Nothing else in the trips changes, only the list of travelers.",
+"Tout cocher":"Tick all",
+"Tout décocher":"Untick all",
+"{0} voyage(s) modifié(s)":"{0} trip(s) updated"});

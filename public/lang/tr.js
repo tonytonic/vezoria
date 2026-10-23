@@ -5029,4 +5029,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"Tutmak için en az bir seyahat işaretle.",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"{0} seyahat tutuluyor, {1} yalnızca bu telefondan kaldırılıyor. Başkalarında hiçbir şey silinmez. Devam edilsin mi?",
 "{0} voyage(s) retirés de ce téléphone":"{0} seyahat bu telefondan kaldırıldı",
-"Faire revenir les {0} voyage(s) retirés ?":"Kaldırılan {0} seyahat geri getirilsin mi?"});
+"Faire revenir les {0} voyage(s) retirés ?":"Kaldırılan {0} seyahat geri getirilsin mi?",
+"Qui part dans quels voyages ?":"Kim hangi seyahatlere katılıyor?",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"{0} kişisinin gerçekten katıldığı seyahatleri işaretle. Seyahatlerde başka hiçbir şey değişmez, yalnızca yolcu listesi.",
+"Tout cocher":"Tümünü işaretle",
+"Tout décocher":"Tümünün işaretini kaldır",
+"{0} voyage(s) modifié(s)":"{0} seyahat güncellendi"});

@@ -5041,4 +5041,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"残す旅を少なくとも1つ選んでください。",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"{0} 件の旅を残し、{1} 件をこのスマホからだけ外します。ほかの人のところでは何も削除されません。続けますか？",
 "{0} voyage(s) retirés de ce téléphone":"{0} 件の旅をこのスマホから外しました",
-"Faire revenir les {0} voyage(s) retirés ?":"外した旅 {0} 件を戻しますか？"});
+"Faire revenir les {0} voyage(s) retirés ?":"外した旅 {0} 件を戻しますか？",
+"Qui part dans quels voyages ?":"誰がどの旅に行く？",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"{0} が実際に行く旅にチェックを入れてください。旅の内容はそのままで、旅行者の一覧だけが変わります。",
+"Tout cocher":"すべてチェック",
+"Tout décocher":"すべて外す",
+"{0} voyage(s) modifié(s)":"{0} 件の旅を変更しました"});

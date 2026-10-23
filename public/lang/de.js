@@ -2097,4 +2097,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"Hake mindestens eine Reise zum Behalten an.",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"{0} Reise(n) bleiben, {1} werden nur von diesem Handy entfernt. Bei den anderen wird nichts gelöscht. Fortfahren?",
 "{0} voyage(s) retirés de ce téléphone":"{0} Reise(n) von diesem Handy entfernt",
-"Faire revenir les {0} voyage(s) retirés ?":"Die {0} entfernte(n) Reise(n) zurückholen?"});
+"Faire revenir les {0} voyage(s) retirés ?":"Die {0} entfernte(n) Reise(n) zurückholen?",
+"Qui part dans quels voyages ?":"Wer fährt bei welchen Reisen mit?",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Hake die Reisen an, bei denen {0} wirklich mitfährt. Sonst ändert sich nichts an den Reisen, nur die Liste der Reisenden.",
+"Tout cocher":"Alle anhaken",
+"Tout décocher":"Alle abhaken",
+"{0} voyage(s) modifié(s)":"{0} Reise(n) geändert"});

@@ -2093,4 +2093,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"Vink minstens één reis aan om te houden.",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"{0} reis/reizen gehouden, {1} alleen van deze telefoon weggehaald. Bij anderen wordt niets gewist. Doorgaan?",
 "{0} voyage(s) retirés de ce téléphone":"{0} reis/reizen van deze telefoon gehaald",
-"Faire revenir les {0} voyage(s) retirés ?":"De {0} weggehaalde reis/reizen terughalen?"});
+"Faire revenir les {0} voyage(s) retirés ?":"De {0} weggehaalde reis/reizen terughalen?",
+"Qui part dans quels voyages ?":"Wie gaat mee op welke reizen?",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"Vink de reizen aan waar {0} echt meegaat. Verder verandert er niets aan de reizen, alleen de lijst met reizigers.",
+"Tout cocher":"Alles aanvinken",
+"Tout décocher":"Alles uitvinken",
+"{0} voyage(s) modifié(s)":"{0} reis/reizen gewijzigd"});

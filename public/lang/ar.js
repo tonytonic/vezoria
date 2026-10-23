@@ -5042,4 +5042,9 @@ I18N.load({
 "Coche au moins un voyage à garder.":"حدّد رحلة واحدة على الأقل للاحتفاظ بها.",
 "{0} voyage(s) gardés, {1} retirés de ce téléphone seulement. Rien n’est effacé chez les autres. Continuer ?":"سيتم الاحتفاظ بـ {0} رحلة وإزالة {1} من هذا الهاتف فقط. لا يُحذف شيء لدى الآخرين. متابعة؟",
 "{0} voyage(s) retirés de ce téléphone":"تمت إزالة {0} رحلة من هذا الهاتف",
-"Faire revenir les {0} voyage(s) retirés ?":"إعادة الرحلات المُزالة ({0})؟"});
+"Faire revenir les {0} voyage(s) retirés ?":"إعادة الرحلات المُزالة ({0})؟",
+"Qui part dans quels voyages ?":"من يذهب في أي رحلات؟",
+"Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.":"حدّد الرحلات التي يذهب فيها {0} فعلًا. لا يتغير شيء آخر في الرحلات، فقط قائمة المسافرين.",
+"Tout cocher":"تحديد الكل",
+"Tout décocher":"إلغاء تحديد الكل",
+"{0} voyage(s) modifié(s)":"تم تعديل {0} رحلة"});
