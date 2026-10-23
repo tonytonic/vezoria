@@ -311,11 +311,39 @@
     const pk = {id:'pk:' + pid, type:'phk', trip:trip || '', s:await spaceHash(code), i:base, it:thumb ? base + '-t' : '', k, r:rk, by:M.me || ''};
     putQuiet([pk]); return R[pk.id];
   }
+  // anciennes copies à effacer (24 h après, une fois contrôlées) : celle du carnet de la photo, et celle du carnet principal
+  // (l'ancien partage recopiait la photo dans chaque voyage partagé : la copie d'origine restait dans le carnet principal)
+  function potGcAdd(code, pid){ const t = Date.now(), L = M.v1gc = M.v1gc || [], main = M.sync.on && M.sync.code;
+    L.push([code, pid, t]); if(main && main !== code) L.push([main, pid, t]); }
   // codes que ce téléphone connaît, par empreinte (pour effacer une photo du pot commun rangée dans un de MES carnets)
   async function codeOfHash(h){ const cs = [M.sync.on && M.sync.code, ...(M.spaces || []).map(x=>x.code)].filter(Boolean); for(const c of cs) if(await spaceHash(c) === h) return c; return ''; }
   async function v2Del(ref){ const c = await codeOfHash(ref.s); if(!c || !photoApi()) return false;
     for(const id of [ref.i, ref.it].filter(Boolean)){ const r = await fetch(photoApi() + '?id=' + encodeURIComponent(id), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(c)}}); if(!r.ok && r.status !== 404) return false; }
     return true; }
+  // copie « à l'ancienne » telle qu'elle est sur le serveur, SANS repli sur la vignette ni copie sur le téléphone :
+  // {blob} trouvée · {miss:1} absente du serveur (404) · erreur levée si le réseau ou le serveur flanche (on réessaiera)
+  async function v1Get(id, code){
+    const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(id, code)), {headers:{'X-Carnet-Code':await authCode(code)}});
+    if(r.status === 404) return {miss:1};
+    if(!r.ok){ const er = new Error('(' + r.status + ')'); er.st = r.status; throw er; }
+    let b = await r.blob(); if(E2E) b = new Blob([await unseal(new Uint8Array(await b.arrayBuffer()), code)], {type:'image/jpeg'});
+    return {blob:b};
+  }
+  // version envoyée sur le serveur : photos de souvenirs allégées (1080 px), et jamais plus de 1,7 Mo
+  async function cloudBlob(blob, ow, id){
+    let ub = blob;
+    if(ow && (ow.photos || []).includes(id)) ub = await cloudCopy(ub);
+    if(ub.size > 1700000){ for(const [mx, q] of [[2048,0.8],[1800,0.7],[1500,0.62],[1200,0.55]]){ try { ub = await shrink(blob, mx, q); } catch(e){ break; } if(ub.size <= 1700000) break; } }
+    return ub;
+  }
+  // 🫙 la grande photo à ranger dans le pot : l'original du téléphone (même allègement qu'à l'envoi), sinon la copie du serveur.
+  // Vignette seulement si le serveur n'a jamais eu la grande photo. null = rien trouvé ; erreur = réseau (à réessayer).
+  async function potFull(pid, code, ow){
+    let o = null; try { o = await IDB.get(pid); } catch(e){}
+    if(o && o.blob){ try { await o.blob.slice(0, 1).arrayBuffer(); return await cloudBlob(o.blob, ow, pid); } catch(e){} }
+    const a = await v1Get(pid, code); if(a.blob) return a.blob;
+    const t = await v1Get(pid + '.t', code); return t.blob || null;
+  }
   async function photoBlob(id){
     if(/\.t$/.test(id)){
       try { const o = await IDB.get(id); if(o && o.blob){ try { await o.blob.slice(0, 1).arrayBuffer(); return o.blob; } catch(e){} } } catch(e){}
@@ -567,22 +595,20 @@
       const pk = pkOf(id);
       // 🫙 déjà dans le pot commun : rien à recopier (voyage partagé, publié…) ; seulement remise en place si son carnet a été vidé
       if(pk && !/\.t$/.test(id)){
-        if(o && o.blob && pk.s === await spaceHash(code)){ let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){} await v2Upload(id, o.blob, tb, code, pk.trip, pk); }
+        if(o && o.blob && pk.s === await spaceHash(code)){ let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){} await v2Upload(id, await cloudBlob(o.blob, owner[id], id), tb, code, pk.trip, pk); }
         M.pq = M.pq.filter(x=>x!==id); syncDot(); left--; return;
       }
       if(/\.t$/.test(id)){   // vignette seule (paquet sans grand format) : envoyée telle quelle ; sinon elle part avec sa grande photo
         let big = null; try { big = await IDB.get(id.slice(0, -2)); } catch(e){}
         if(o && o.blob && !(big && big.blob)) await send(o.blob, id, code);
       } else if(o && o.blob){
-        let ub = o.blob;
-        { const ow = owner[id]; if(ow && (ow.photos||[]).includes(id)) ub = await cloudCopy(ub); }   // photos de souvenirs : copie légère façon Instagram (tickets et pièces jointes : intacts)
-        // encore plus lourde que la limite du serveur (1,9 Mo) : on la réduit
-        if(ub.size > 1700000){ for(const [mx, q] of [[2048,0.8],[1800,0.7],[1500,0.62],[1200,0.55]]){ try { ub = await shrink(o.blob, mx, q); } catch(e){ break; } if(ub.size <= 1700000) break; } }
+        // photos de souvenirs : copie légère façon Instagram (tickets et pièces jointes : intacts) ; plus lourde que la limite du serveur (1,9 Mo) : réduite
+        const ub = await cloudBlob(o.blob, owner[id], id);
         if(potOn()){   // 🫙 pot commun : photo + vignette chiffrées avec leur propre clé, rangées une seule fois
           let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
           if(!tb) try { tb = await shrink(ub, 480, 0.74); } catch(e){}
           const ow = owner[id]; await v2Upload(id, ub, tb, code, ow ? (ow.type === 'trip' ? ow.id : ow.trip || '') : '');
-          if(o.up) (M.v1gc = M.v1gc || []).push([code, id, Date.now()]);   // déjà envoyée à l'ancienne dans ce carnet : l'ancienne copie partira dans 24 h
+          if(o.up) potGcAdd(code, id);   // déjà envoyée à l'ancienne : l'ancienne copie partira dans 24 h, une fois contrôlée
         } else {
         await send(ub, id, code);
         try {   // + vignette légère (≈ 30 Ko) pour que l’autre téléphone affiche vite la grille

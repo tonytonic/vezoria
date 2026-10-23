@@ -1076,7 +1076,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-23w'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-23x'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1272,48 +1272,102 @@
   /* ══════════ 🫙 POT COMMUN : réglage, rangement des anciennes photos, ménage des anciennes copies ══════════ */
   function potStats(){
     const own = {}; Object.values(R).forEach(x=>{ if(!x || x.deleted || x.demo || x.type === 'feed' || x.type === 'phk') return; [...photoRefs(x), x.cover].forEach(p=>{ if(p && !own[p]) own[p] = x; }); });
-    let inPot = 0, old = 0; const pend = new Set(M.pq || []);
-    Object.keys(own).forEach(p=>{ if(pkOf(p)) inPot++; else if(!pend.has(p) && photoCode(p)) old++; });
-    return {own, inPot, old};
+    let inPot = 0, old = 0, mate = 0; const pend = new Set(M.pq || []);
+    Object.keys(own).forEach(p=>{ if(pkOf(p)) inPot++; else if(!pend.has(p) && photoCode(p)){ if(potMate(own[p])) mate++; else old++; } });
+    return {own, inPot, old, mate};
   }
+  // photo d'une fiche créée par un compagnon : c'est SON téléphone qui la range (une seule fois, jamais en double)
+  const potMate = x => !!(x && x.createdBy && M.me && x.createdBy !== M.me);
+  const potLine = st => `🫙 ${MSGT('Dans le pot')} : ${st.inPot} · ${MSGT('à l’ancienne')} : ${st.old}` + (st.mate ? ' · ' + RF('{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.', st.mate) : '');
+  const gcLine = () => { const L = M.v1gc || []; return L.length ? '🧹 ' + RF('Anciennes copies à effacer : {0} (contrôlées : {1})', L.length, L.filter(g=>g[3] === 1).length) : ''; };
   function potBox(){
     const st = potStats();
     return `<div class="v-box" id="pot-box"><h3>🫙 ${esc(MSGT('Pot commun des photos (bêta)'))}</h3>
       <p>${esc(MSGT('Chaque photo est rangée une seule fois sur le serveur et partagée par un lien secret : tes compagnons et tes abonnés voient la vraie photo, en grand, sans copie en plus.'))}</p>
       <div class="vz-glass-sw"><p style="margin:0">${esc(MSGT('Nouvelles photos dans le pot commun'))}</p><button type="button" class="v-btn${potOn() ? '' : ' sec'}" style="width:auto;margin:0;flex:none" onclick="CV.potToggle()">${potOn() ? esc(MSGT('Activé')) + ' ✓' : esc(MSGT('Activer'))}</button></div>
-      <div class="v-sum-small" style="margin-top:8px" data-notr>🫙 ${st.inPot} · ${esc(MSGT('à l’ancienne'))} : ${st.old}</div>
-      ${potOn() && st.old ? `<button type="button" class="v-btn sec" style="margin-top:8px" id="pot-go" onclick="CV.potMigrate()">🫙 ${esc(RF('Ranger mes {0} anciennes photos dans le pot commun', st.old))}</button>` : ''}
-      <div id="pot-msg" class="v-sum-small" style="margin-top:6px" data-notr></div>
+      <div class="v-sum-small" style="margin-top:8px" id="pot-st" data-notr>${esc(potLine(st))}</div>
+      <div class="v-sum-small" style="margin-top:4px" id="pot-gc" data-notr>${esc(gcLine())}</div>
+      ${potOn() && st.old ? `<button type="button" class="v-btn sec" style="margin-top:8px" id="pot-go" onclick="CV.potMigrate()"${potBusy ? ' disabled' : ''}>🫙 ${esc(RF('Ranger mes {0} anciennes photos dans le pot commun', st.old))}</button>
+      <div class="v-sum-small" style="margin-top:6px">${esc(MSGT('Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.'))}</div>` : ''}
+      <div id="pot-msg" class="v-sum-small" style="margin-top:6px" data-notr>${esc(potSaid)}</div>
       <div class="v-sum-small" style="margin-top:6px">${esc(MSGT('Tes compagnons doivent avoir la dernière version de l’appli pour voir ces photos.'))}</div></div>`;
   }
-  function potToggle(){ M.pot = !potOn(); persist(); toast(M.pot ? '🫙 ' + MSGT('Pot commun activé') : MSGT('Pot commun désactivé')); const b = document.getElementById('pot-box'); if(b) b.outerHTML = potBox(); }
-  let potBusy = false;
+  function potToggle(){ M.pot = !potOn(); persist(); toast(M.pot ? '🫙 ' + MSGT('Pot commun activé') : MSGT('Pot commun désactivé')); potRedraw(); }
+  const potRedraw = () => { const b = document.getElementById('pot-box'); if(b) b.outerHTML = potBox(); };
+  let potBusy = false, potSaid = '', potWl = null;
+  // écran gardé allumé pendant le rangement (sinon l'iPhone se verrouille et met l'appli en pause)
+  async function potWake(on){
+    try {
+      if(!on){ const w = potWl; potWl = null; if(w) await w.release(); return; }
+      if(!potWl && navigator.wakeLock && document.visibilityState === 'visible'){ potWl = await navigator.wakeLock.request('screen'); potWl.addEventListener('release', ()=>{ potWl = null; }); }
+    } catch(e){ potWl = null; }
+  }
+  document.addEventListener('visibilitychange', ()=>{ if(potBusy && document.visibilityState === 'visible') potWake(true); });
   async function potMigrate(){
     if(potBusy || !photoApi()) return; potBusy = true;
-    const say = t => { const e = document.getElementById('pot-msg'); if(e) e.textContent = t; }, btn = document.getElementById('pot-go'); if(btn) btn.disabled = true;
+    const say = t => { potSaid = t; const e = document.getElementById('pot-msg'); if(e) e.textContent = t; };
+    const stats = () => { const e = document.getElementById('pot-st'); if(e) e.textContent = potLine(potStats()); };
+    { const b = document.getElementById('pot-go'); if(b) b.disabled = true; }
     const {own} = potStats(), pend = new Set(M.pq || []);
-    const todo = Object.keys(own).filter(p=>!pkOf(p) && !pend.has(p) && photoCode(p));
-    let done = 0, fail = 0, skip = 0;
+    const todo = Object.keys(own).filter(p=>!pkOf(p) && !pend.has(p) && photoCode(p) && !potMate(own[p]));
+    const OFF = MSGT('Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.');
+    let done = 0, fail = 0, net = 0, stop = '';
+    await potWake(true);
     try {
       for(let i = 0; i < todo.length; i++){
-        const pid = todo[i], code = photoCode(pid), ow = own[pid]; if(!code) continue;
+        const pid = todo[i], code = photoCode(pid), ow = own[pid]; if(!code || pkOf(pid)) continue;
         if(!(i % 3)) say('🫙 ' + RF('Photos rangées : {0}/{1}', i, todo.length));
-        let full = null, tb = null;
-        try { const o = await IDB.get(pid); if(o && o.blob){ await o.blob.slice(0, 1).arrayBuffer(); full = o.blob; } } catch(e){ full = null; }
-        try { const o = await IDB.get(pid + '.t'); if(o && o.blob) tb = o.blob; } catch(e){}
-        if(!full){ if(ow.createdBy && M.me && ow.createdBy !== M.me){ skip++; continue; }   // la photo d'un compagnon : c'est son téléphone qui la range
-          try { full = await photoBlob(pid); } catch(e){} }
-        if(!full){ fail++; continue; }
-        if(!tb) try { tb = await shrink(full, 480, 0.74); } catch(e){}
-        try { await v2Upload(pid, full, tb, code, ow.type === 'trip' ? ow.id : ow.trip || ''); (M.v1gc = M.v1gc || []).push([code, pid, Date.now()]); done++; }
-        catch(e){ fail++; if(e && (e.st === 429 || e.st === 507)){ say('⚠️ ' + e.message); break; } }
-        if(!(done % 10)) persist();
+        if(navigator.onLine === false){ stop = OFF; break; }
+        try {
+          const full = await potFull(pid, code, ow);   // jamais la vignette à la place d'une grande photo
+          if(!full){ fail++; continue; }
+          let tb = null; try { const o = await IDB.get(pid + '.t'); if(o && o.blob) tb = o.blob; } catch(e){}
+          if(!tb) try { tb = await shrink(full, 480, 0.74); } catch(e){}
+          await v2Upload(pid, full, tb, code, ow.type === 'trip' ? ow.id : ow.trip || '');
+          potGcAdd(code, pid); done++; net = 0;
+          if(!(done % 10)){ persist(); stats(); }
+        } catch(e){
+          fail++;
+          if(e && (e.st === 429 || e.st === 507)){ stop = '⚠️ ' + e.message; break; }
+          if(++net >= 4){ stop = OFF; break; }   // plusieurs échecs de suite : réseau coupé ou appli mise en pause
+        }
       }
-      persist(); say('✅ ' + RF('{0} photo(s) rangées dans le pot commun.', done) + (skip ? ' ' + RF('{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.', skip) : '') + (fail ? ' ⚠️ ' + RF('{0} non rangée(s), réessaie plus tard.', fail) : ''));
+      persist();
+      say((stop ? stop + ' ' : '✅ ') + RF('{0} photo(s) rangées dans le pot commun.', done) + (fail && !stop ? ' ⚠️ ' + RF('{0} non rangée(s), réessaie plus tard.', fail) : ''));
       try { await syncNow(true); } catch(e){}
-    } finally { potBusy = false; if(btn) btn.disabled = false; }
+    } finally { potBusy = false; await potWake(false); potRedraw(); }
   }
-  // anciennes copies (avant le pot commun) : effacées 24 h après le rangement, quand tous les téléphones ont reçu le lien
+  // 🔍 contrôle avant ménage : la photo du pot doit peser comme l'ancienne copie du serveur.
+  // Trop légère (vignette prise faute de réseau) ou trop lourde (original du téléphone) : on la remplace par l'ancienne copie, à l'identique.
+  async function potCheck(){
+    { const main = M.sync.on && M.sync.code;   // rangées avec la 23w : on ajoute la copie du carnet principal (une fois)
+      if(main && !M.v1gcM){ const L = M.v1gc || [], has = new Set(L.filter(g=>g[0] === main).map(g=>g[1]));
+        L.filter(g=>g[0] !== main && !has.has(g[1])).forEach(g=>{ L.push([main, g[1], g[2]]); has.add(g[1]); }); M.v1gcM = 1; persist(); } }
+    const L = (M.v1gc || []).filter(g=>!g[3]); if(!L.length) return;
+    for(let i = 0; i < L.length; i += 40){
+      const part = L.slice(i, i + 40), want = {}, info = new Map(), ask = (c, id)=>{ (want[c] = want[c] || new Set()).add(id); };
+      for(const g of part){ const pk = pkOf(g[1]); if(!pk || isDirty(pk.id)) continue;
+        const c2 = pk.s === await spaceHash(g[0]) ? g[0] : await codeOfHash(pk.s);
+        if(!c2){ M.v1gc = M.v1gc.filter(x=>x !== g); continue; }   // rangée dans un carnet que ce téléphone ne connaît pas : l'ancienne copie est gardée
+        const v1 = await sid(g[1], g[0]); ask(g[0], v1); ask(c2, pk.i); info.set(g, [v1, pk.i, c2]); }
+      const sz = {};
+      for(const [c, set] of Object.entries(want)){
+        const r = await fetch(photoApi() + '?sizes=' + [...set].map(encodeURIComponent).join(','), {headers:{'X-Carnet-Code':await authCode(c)}});
+        if(!r.ok) return;   // serveur pas encore à jour, réseau… : rien n'est effacé, on réessaiera
+        sz[c] = ((await r.json()) || {}).sizes || {};
+      }
+      for(const [g, [v1, v2, c2]] of info){
+        const a = (sz[g[0]] || {})[v1] || 0, b = (sz[c2] || {})[v2] || 0;
+        if(a && !(b && b >= a * 0.8 && b <= a * 1.3)){
+          const o = await v1Get(g[1], g[0]);   // réseau coupé : erreur → on s'arrête, on réessaiera
+          if(o.blob){ const pk = pkOf(g[1]); await v2Upload(g[1], o.blob, null, c2, pk.trip, pk); }
+        }
+        g[3] = 1;
+      }
+      persist(); { const e = document.getElementById('pot-gc'); if(e) e.textContent = gcLine(); }
+    }
+  }
+  // anciennes copies (avant le pot commun) : effacées 24 h après le rangement, une fois contrôlées
   let gcBusy = false;
   async function potGc(){
     if(gcBusy || !photoApi()) return; gcBusy = true;
@@ -1325,14 +1379,17 @@
         if(!(await codeOfHash(r.s))){ r.gc = 1; continue; }
         try { if(await v2Del(r)) r.gc = 1; } catch(e){ break; }
       }
+      try { await potCheck(); } catch(e){}
+      let n = 0;
       for(const g of [...(M.v1gc || [])]){
-        const [code, pid, at] = g; if(Date.now() - at < 864e5) continue;
+        const [code, pid, at, ok1] = g; if(ok1 !== 1 || Date.now() - at < 864e5) continue;
         const pk = pkOf(pid); if(!pk || isDirty(pk.id)) continue;
         let ok = true;
         for(const v of [pid, pid + '.t']){ try { const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(v, code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); if(!r.ok && r.status !== 404 && r.status !== 405) ok = false; } catch(e){ ok = false; } }
         if(!ok) break;
-        M.v1gc = M.v1gc.filter(x=>x !== g); persist();
+        M.v1gc = M.v1gc.filter(x=>x !== g); if(!(++n % 20)){ persist(); const e = document.getElementById('pot-gc'); if(e) e.textContent = gcLine(); }
       }
+      if(n){ persist(); const e = document.getElementById('pot-gc'); if(e) e.textContent = gcLine(); }
     } finally { gcBusy = false; }
   }
   /* ══════════ 🧳 QUI PART DANS QUELS VOYAGES ══════════
