@@ -11,6 +11,9 @@
  *                                            sans « mode » : renvoie le mode actuel et la taille du cache
  *   {action:'errors'}                      → les 200 dernières erreurs reçues des téléphones (/api/err), regroupées
  *   {action:'errors', clear:true}          → vider la liste des erreurs
+ *   {action:'recupSpaces'}                 → 🛟 récupération : chaque carnet du serveur (empreinte, nombre de fiches) + 2 fiches CHIFFRÉES
+ *                                            pour que le téléphone teste ses propres clés (le serveur ne peut rien lire)
+ *   {action:'recupRecords', space, after}  → 🛟 les fiches CHIFFRÉES d'un carnet, par paquets de 400
  *
  * Le CODE du carnet n'est jamais envoyé ici : la page d'administration calcule elle-même son empreinte
  * (« token », la même que celle de l'appli), et le serveur en déduit le dossier du carnet.
@@ -105,6 +108,24 @@ export async function onRequestPost({ request, env }) {
     const r = await env.DB.prepare("SELECT v FROM cfg WHERE k = 'geo'").first();
     let n = 0; try { n = (await env.DB.prepare('SELECT COUNT(*) AS n FROM geo_cache').first()).n; } catch (e) {}
     return json({ mode: env.GEO_MODE || (r ? r.v : 'on'), forcedByEnv: !!env.GEO_MODE, cached: n, note: 'le changement prend effet en 1 minute au plus' });
+  }
+  if (a === 'recupSpaces') {
+    const L = await env.DB.prepare('SELECT space, COUNT(*) AS n, MAX(rev) AS last FROM records GROUP BY space ORDER BY last DESC LIMIT 2000').all();
+    const out = [];
+    for (const r of (L.results || [])) {
+      const smp = await env.DB.prepare('SELECT data FROM records WHERE space = ?1 ORDER BY rev DESC LIMIT 2').bind(r.space).all();
+      out.push({ space: r.space, n: r.n, last: r.last, s: (smp.results || []).map(x => x.data) });
+    }
+    await log(env, 'recup:liste', '-', out.length + ' carnets');
+    return json({ spaces: out });
+  }
+  if (a === 'recupRecords') {
+    const sp = String(b.space || ''); if (!/^[0-9a-f]{64}$/.test(sp)) return json({ error: 'empreinte' }, 400);
+    const after = String(b.after || '');
+    const L = await env.DB.prepare('SELECT id, data FROM records WHERE space = ?1 AND id > ?2 ORDER BY id LIMIT 400').bind(sp, after).all();
+    const rows = L.results || [];
+    if (!after) await log(env, 'recup:export', sp, '');
+    return json({ rows: rows.map(x => x.data), next: rows.length === 400 ? rows[rows.length - 1].id : '' });
   }
   if (a === 'errors') {
     await env.DB.prepare('CREATE TABLE IF NOT EXISTS errors (k TEXT PRIMARY KEY, msg TEXT, src TEXT, ver TEXT, ua TEXT, n INTEGER NOT NULL, first INTEGER NOT NULL, last INTEGER NOT NULL)').run();
