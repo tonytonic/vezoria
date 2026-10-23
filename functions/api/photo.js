@@ -240,6 +240,24 @@ export async function onRequestGet({ request, env }) {
     const l = await env.PHOTOS.list({ prefix: space + '/', cursor: q.get('cursor') || undefined, limit: 1000 });
     return json({ ids: l.objects.map(o => ({ i: o.key.slice(space.length + 1), s: o.size, u: new Date(o.uploaded).getTime() })), cursor: l.truncated ? l.cursor : '' });
   }
+  // ?sizes=id1,id2,… (100 max) : taille des photos de CE carnet — le téléphone vérifie que la photo rangée dans le pot commun
+  // est bien la grande photo (et pas une vignette) avant d'effacer l'ancienne copie
+  if (q.get('sizes')) {
+    const ids = String(q.get('sizes')).split(',').filter(Boolean).slice(0, 100);
+    if (!ids.length || !ids.every(validId)) return json({ error: 'Identifiant de photo invalide' }, 400);
+    if (!(await rateIp(env, request, 'pg', 20000))) return json({ error: TOO_MANY, retry: 3600 }, 429);
+    const sizes = {};
+    if (env.PHOTOS) for (let i = 0; i < ids.length; i += 25) {
+      const hs = await Promise.all(ids.slice(i, i + 25).map(x => env.PHOTOS.head(r2Key(space, x))));
+      hs.forEach((h, j) => { if (h) sizes[ids[i + j]] = h.size; });
+    }
+    const rest = ids.filter(x => !(x in sizes));
+    if (rest.length) try {
+      const r = await env.DB.prepare('SELECT id, size FROM photos WHERE space = ?1 AND id IN (' + rest.map((_, i) => '?' + (i + 2)).join(',') + ')').bind(space, ...rest).all();
+      (r.results || []).forEach(x => { sizes[x.id] = x.size; });
+    } catch (e) {}
+    return json({ sizes });
+  }
   const id = q.get('id') || '';
   if (!validId(id)) return json({ error: 'Identifiant de photo invalide' }, 400);
   const cache = 'private, max-age=31536000, immutable';
