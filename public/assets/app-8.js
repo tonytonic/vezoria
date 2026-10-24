@@ -270,7 +270,7 @@
     TS()[ftId(tid)] = c; const out = [];
     // couverture pour les abonnés : ma photo › photo Wikipédia choisie › 1re photo d’un souvenir publié (jamais d’un souvenir privé)
     const cov = t.cover || (t.coverWk ? '' : ((list('souv', x=>x.trip===tid && !x.priv && (x.photos||[]).length).sort((a,b)=>(a.date||'').localeCompare(b.date||''))[0] || {}).photos || [])[0] || '');
-    const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', team: (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').slice(0, 30), tids: (t.voyageurs||[]).slice(0, 30), opid: (M.me && prof(M.me)) ? M.me : undefined, pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
+    const head = {id:ftId(tid), type:'feedtrip', titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', team: (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').slice(0, 30), tids: (t.voyageurs||[]).slice(0, 30), opid: (M.me && prof(M.me)) ? M.me : undefined, pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', link: c, blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
     if(!R[head.id] || stripStamp(R[head.id]) !== stripStamp(head)) out.push(head);
     const keep = new Set(), first = !R[head.id] || R[head.id].deleted, fresh = [], fpWant = new Set();
     // 🫙 photo dans le pot commun : les abonnés reçoivent son droit de lecture (« fp: »), pas une copie ; sinon, l'ancienne vignette
@@ -292,6 +292,9 @@
     if(people.length){ const fk = {id:fkId, type:'feedtrk', trip:ftId(tid), people}; if(!R[fkId] || R[fkId].deleted || stripStamp(R[fkId]) !== stripStamp(fk)) out.push(fk); }
     else if(R[fkId] && !R[fkId].deleted) out.push(Object.assign(clone(R[fkId]), {deleted:true, people:[]}));
     putQuiet(out);
+    // 🔗 voyage passé sur un autre lien (republié après une réinstallation, nouveau code…) : tout ce qui n’a pas changé y part aussi,
+    // sinon le nouveau lien resterait vide (fiche du voyage, étapes, ❤️ et commentaires déjà là)
+    { const B = M.fbC || (M.fbC = {}); if(B[tid] !== c){ B[tid] = c; const fid = ftId(tid); Object.values(R).forEach(r=>{ if(r && !r.deleted && (r.trip === fid || r.id === fid || r.id === fkId)) markDirty(r.id); }); persist(); } }
     // 🔔 nouvelles étapes → les abonnés qui ont l’appli sont prévenus (pas à la 1re publication : tout le voyage arriverait d’un coup)
     if(!first && fresh.length) feedNotify(tid, fresh);
     return out.length;
@@ -300,11 +303,11 @@
   let fnT = null;
   function feedNotify(tid, posts){
     const q = M.fnq || (M.fnq = {}), a = q[tid] || (q[tid] = []);
-    posts.forEach(f=>{ if(!a.includes(f.id)) a.push(f.id); }); persist();
+    posts.forEach(f=>{ if(!a.includes(f.id)) a.push(f.id); }); if(!M.fnqAt) M.fnqAt = Date.now(); persist();
     clearTimeout(fnT); fnT = setTimeout(feedNotifyGo, 180000);
   }
   async function feedNotifyGo(){
-    fnT = null; const q = M.fnq || {}; if(!Object.keys(q).length || !pushApi() || !navigator.onLine) return;
+    clearTimeout(fnT); fnT = null; const q = M.fnq || {}; if(!Object.keys(q).length || !pushApi() || !navigator.onLine) return; delete M.fnqAt;
     for(const tid of Object.keys(q)){
       const code = feedCode(tid), t = R[tid], ids = q[tid].filter(id=>R[id] && !R[id].deleted);
       delete q[tid]; persist();
@@ -389,9 +392,11 @@
     if(out.length){ putQuiet(out); M.fdel = (M.fdel||[]).concat(dels); persist(); try { await syncNow(); } catch(e){} feedPurge(); }
     return n;
   }
-  function feedAll(){ if(!M.fkey) fKey().catch(()=>{}); feedGrantAll().catch(()=>{}); feedPurge(); Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); if(!fnT && Object.keys(M.fnq||{}).length) fnT = setTimeout(feedNotifyGo, 180000); feedUpload(); feedReconcile().then(n=>{ if(n) refresh(); }).catch(()=>{}); }
+  function feedAll(){ if(!M.fkey) fKey().catch(()=>{}); feedGrantAll().catch(()=>{}); feedPurge(); Object.keys(FT()).forEach(tid=>{ if(R[tid] && !R[tid].deleted) feedBuild(tid); }); if(Object.keys(M.fnq||{}).length){ if(Date.now() - (M.fnqAt || 0) > 180000) feedNotifyGo(); else if(!fnT) fnT = setTimeout(feedNotifyGo, 180000); } feedUpload(); feedReconcile().then(n=>{ if(n) refresh(); }).catch(()=>{}); oldLinkAdopt().catch(()=>{}); }
   setInterval(()=>{ if(document.visibilityState === 'visible' && Object.keys(FT()).length) feedAll(); }, 60000);
   setTimeout(feedAll, 5000);
+  // 📣 iPhone : l’appli fermée ou mise en arrière-plan avant les 3 min, la notification « nouvelle étape » partait jamais → envoyée en quittant l’appli
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'hidden' && Object.keys(M.fnq||{}).length) feedNotifyGo(); });
   async function feedPublish(tid){
     const t = R[tid || M.trip]; if(!t || t.demo) return;
     try { await fKey(); } catch(e){}
@@ -453,6 +458,37 @@
       list('follower', f=>f.trip === k && String(f.id).endsWith(':' + devId())).forEach(f=>putQuiet([Object.assign(clone(f), {deleted:true})])); });   // je ne me suis pas moi-même
     if(n && M.unfol) Object.keys(M.unfol).forEach(k=>{ if(TS()[k] === code) delete M.unfol[k]; });
     return n;
+  }
+  // 🔗 ancien lien abonnés encore en ligne (signalé par un abonné qui suit les deux) : je récupère ce qui y a été écrit (commentaires, ❤️, abonnés),
+  // je fais passer les abonnés restés dessus sur mon lien actuel (nouveau lien chiffré pour chacun), puis l’ancien lien est vidé
+  let olBusy = false;
+  async function oldLinkAdopt(){
+    if(olBusy || !apiUrl()) return; const done = M.olDone || (M.olDone = {}), mineC = new Set(Object.values(FT()).filter(Boolean)), me = devId();
+    const L = list('oldlink', x=>!x.deleted && x.code && !done[x.code] && !mineC.has(x.code) && FT()[String(x.trip).replace(/^ft:/, '')]); if(!L.length) return;
+    olBusy = true;
+    try { for(const code of [...new Set(L.map(x=>x.code))]){
+      let j; try { j = await call(0, [], code); } catch(e){ continue; }
+      done[code] = Date.now(); persist();
+      const recs = (j.records || []).filter(r=>r && r.id && !r.deleted);
+      const tids = [...new Set(recs.filter(r=>r.type === 'feedtrip' && FT()[String(r.id).slice(3)]).map(r=>String(r.id).slice(3)))]; if(!tids.length) continue;
+      const ids = new Set(tids.map(ftId)); tids.forEach(t=>{ TS()[ftId(t)] = FT()[t]; });
+      const keep = recs.filter(r=>ids.has(r.trip) && (r.type === 'comment' || r.type === 'like' || r.type === 'follower'));
+      mergeRemote(keep); keep.forEach(r=>{ if(R[r.id]) markDirty(r.id); });
+      const cnt = {}; tids.forEach(t=>{ cnt[FT()[t]] = (cnt[FT()[t]] || 0) + 1; }); const nc = Object.keys(cnt).sort((a, b)=>cnt[b] - cnt[a])[0];
+      const byDev = {}; keep.filter(r=>r.type === 'follower').forEach(f=>{ const d = String(f.id).split(':').pop(); if(d !== me && !(M.blkDev||{})[d]) byDev[d] = (byDev[d] && byDev[d].pk) ? byDev[d] : f; });
+      const withKey = Object.values(byDev).filter(f=>f.pk), noKey = Object.values(byDev).filter(f=>!f.pk), k = await fKey(), env = [], now = Date.now();
+      for(const f of withKey){ const d = String(f.id).split(':').pop();
+        try { const key = await fShared(k.priv, f.pk), iv = crypto.getRandomValues(new Uint8Array(12));
+          const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(nc)));
+          env.push({id:'fx:' + d, type:'feedmove', trip:ftId(tids[0]), dev:d, opk:k.pub, iv:b64(iv), ct:b64(ct), at:now, updatedAt:now}); } catch(e){} }
+      // pas de fiches « supprimées » sur l’ancien lien (elles effaceraient aussi les mêmes souvenirs du lien actuel chez l’abonné) :
+      // il est effacé d’un coup du serveur dans 2 mois, le temps que chacun soit passé
+      try { if(env.length) await call(now, env, code); } catch(e){}
+      if(!noKey.length && !(M.fold || []).some(x=>x.code === code)) (M.fold = M.fold || []).push({code, at:now});
+      persist(); try { await syncNow(); } catch(e){}
+      toast('🔗 ' + RF('Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).', keep.filter(r=>r.type === 'comment').length) + (noKey.length ? ' ' + RF('{0} abonné(s) doivent recevoir ton lien actuel.', noKey.length) : ''));
+      refresh();
+    } } finally { olBusy = false; }
   }
   // 📱📱 mes publications, partagées entre MES téléphones (fiche chiffrée dans le carnet principal) :
   // si un téléphone a oublié ses liens d'abonnés (réinstallation, plantage…), il les reprend chez l'autre
@@ -1179,7 +1215,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-24p'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-24r'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

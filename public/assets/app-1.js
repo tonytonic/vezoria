@@ -414,6 +414,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(!res.ok) throw new Error(j.error || ('Erreur serveur ' + res.status));
     if(!Array.isArray(j.records)) throw new Error('Réponse inattendue du serveur');
     if(E2E) j.records = (await Promise.all(j.records.map(x=>openRec(x, code)))).filter(Boolean);
+    if(code) try { j.records.forEach(r=>{ if(!r || r.type !== 'feedtrip') return; const k = r.id + '|' + code;   // 🔗 même voyage suivi par 2 liens : l’âge de chacun (voir ftPick)
+      if(r.deleted){ if(M.ftAt) delete M.ftAt[k]; } else if(!FT()[String(r.id).slice(3)]) (M.ftAt || (M.ftAt = {}))[k] = (r.updatedAt || 0) + (r.link === code ? 1e12 : 0); }); } catch(e){}   // link : le lien où l’auteur publie aujourd’hui
     try { if(orig.length) pushNote(orig, code || M.sync.code); } catch(e){}
     try { if(j.wiped) wipeCheck(code, j.wiped, since); } catch(e){}
     return j;
@@ -525,12 +527,32 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         changed += mergeRemote(j.records); sp.since = j.now;
       }
       sp.last = Date.now(); sp.err = '';
-      mateFeedTidy();
+      mateFeedTidy(); ftPick();
     } catch(e){ sp.err = e.message || String(e); }
     return changed;
   }
   // 👀 voyages suivis en abonné que je fais AUSSI en compagnon : retirés de « Je suis » (je les ai déjà en entier), et je ne compte plus
   // comme abonné de ce voyage chez l'auteur. Quel que soit le chemin par lequel ils sont arrivés (lien, autorisation, ancienne version…).
+  // 🔗 un voyage suivi par DEUX liens (ancien lien resté en ligne + lien actuel de l’auteur) : on garde celui où l’auteur publie encore
+  // (fiche du voyage la plus récente). Les commentaires et ❤️ partent alors chez lui, les notifications aussi. L’auteur est prévenu de
+  // l’ancien lien (fiche « oldlink » sur le lien actuel) : son téléphone y récupère les commentaires et fait passer les abonnés restés dessus.
+  function ftPick(){
+    const at = M.ftAt; if(!at) return 0; const best = {}, sent = M.olSent || (M.olSent = {}); let n = 0;
+    const parts = k => { const i = k.lastIndexOf('|'); return [k.slice(0, i), k.slice(i + 1)]; };
+    Object.entries(at).forEach(([k, v])=>{ const [id, c] = parts(k); if(Date.now() - (v % 1e12) > 400 * 864e5 && !spaceObj(c)){ delete at[k]; return; }
+      if(spaceObj(c) && (!best[id] || v > best[id][1])) best[id] = [c, v]; });
+    Object.entries(best).forEach(([id, [c, v]])=>{ const cur = TS()[id], tid = id.slice(3); if(!cur || cur === c || FT()[tid] || (M.unfol || {})[id]) return;
+      const v0 = at[id + '|' + cur]; if(v0 == null || v - v0 < 1000) return;
+      TS()[id] = c; n++;
+      // mes ❤️ et commentaires restés sur l’ancien lien : renvoyés sur le bon
+      Object.values(R).filter(x=>x && !x.deleted && x.trip === id && (x.type === 'comment' || x.type === 'like' || x.type === 'follower') && (x.dev === devId() || String(x.id).endsWith(':' + devId()))).forEach(x=>markDirty(x.id)); });
+    // l’auteur est prévenu des anciens liens encore en ligne (une fois par lien), même si ce téléphone les a quittés
+    Object.entries(at).forEach(([k, v])=>{ const [id, c] = parts(k), tid = id.slice(3), cur = TS()[id], vc = at[id + '|' + cur];
+      if(!cur || c === cur || vc == null || vc - v < 1000 || sent[k] || FT()[tid] || !spaceObj(cur)) return; sent[k] = 1; n++;
+      try { putQuiet([{id:'ol:' + tid + ':' + c, type:'oldlink', trip:id, code:c, dev:devId()}]); } catch(e){} });
+    if(n){ persist(); try { pushRegister(true); } catch(e){} }
+    return n;
+  }
   function mateFeedTidy(){
     let n = 0; const un = M.unfol || (M.unfol = {}), me = devId();
     Object.keys(TS()).filter(k=>/^ft:/.test(k)).forEach(k=>{ const tid = k.slice(3), t = R[tid], ft = R[k];
@@ -546,6 +568,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(storeLoading || storeBroken) return;   // carnet pas encore lu depuis la base
     const pull = manual === 'pull'; if(pull) manual = false;   // « pull » : aller chercher les nouveautés tout de suite (notification touchée), sans message
     if(manual === true){ M.pqPause = 0; M.pqFull = {}; }   // « Synchroniser » à la main : on réessaie d’envoyer les photos tout de suite
+    if(!M.ftScan1 && (M.spaces||[]).length){ M.ftScan1 = 1; const own = new Set(Object.values(FT())), tsp = new Set(Object.entries(TS()).filter(([k])=>R[k] && R[k].type === 'trip').map(([, c])=>c));   // une fois : relire les liens abonnés en entier (voir ftPick)
+      (M.spaces||[]).forEach(sp=>{ if(!own.has(sp.code) && !tsp.has(sp.code) && sp.code !== M.ib) sp.since = 0; }); }
     try { mateFeedSync(); } catch(e){}   // codes abonnés des voyages communs publiés par un compagnon
     fkLive();
     const mainOn = !!(M.sync.on && M.sync.code);
