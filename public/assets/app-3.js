@@ -2837,7 +2837,7 @@
   const OMZ = [[0, 9, 40], [10, 11, 25], [12, 13, 10], [14, 14, 6]];   // [zoom min, zoom max, rayon en km]
   async function omapPoints(){
     const t = trip(); if(!t) return [];
-    const st = tlStages(), out = [];
+    const st = tlStages(), out = []; try { await stagesGeoFix(st.map(s=>s.city)); } catch(e){}
     for(const s of st){
       const c = await geocode(s.city, null).catch(()=>null); if(!c) continue;
       const h = s.h && (s.h.adresse || s.h.nom) ? await geocode(s.h.adresse || s.h.nom, s.city).catch(()=>null) : null;

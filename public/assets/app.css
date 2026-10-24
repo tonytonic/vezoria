@@ -2663,3 +2663,15 @@ body.vz-glass .v-tiles .v-tile:first-child{background:var(--navy)!important;bord
 .ar-subs .ar-sub.ok{background:rgba(255,255,255,.16);color:#fff;opacity:1}.ar-subs .ar-sub.ok small{color:#fff;opacity:.8}.ar-subs .ar-sub.ok i{background:#22c55e;color:#fff}
 .rg-hood .ex-ln a{display:inline-block;margin:6px 6px 0 0;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.14);color:#fff;text-decoration:none;font-size:.78rem;font-weight:700}
 .pot-miss{margin-top:8px;font-size:.82rem}.pot-miss summary{cursor:pointer;font-weight:700}.pot-miss div{padding:3px 0 3px 8px;border-left:2px solid #e5e0ee}
+/* préparation avec la photo de la destination en fond : boutons et étapes opaques (lisibles quelle que soit la photo) */
+.ar-cd .ar-s{background:rgba(26,14,44,.84);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.ar-cd .ar-s.cur{background:rgba(26,14,44,.9)}
+.ar-cd .ar-s.next{opacity:1}
+.ar-cd .ar-more{background:rgba(26,14,44,.85);border-style:solid;border-color:rgba(255,255,255,.4)}
+.ar-cd .ar-f,.ar-cd .ar-r,.ar-cd .ar-run,.ar-cd .ar-subs .ar-sub.ok{background:rgba(255,255,255,.16)}
+.ar-cd .ar-pr button{background:#fff;color:#4c1d95}
+.ar-cd .ar-clock span{background:rgba(26,14,44,.72)}
+/* photos une par une : pas de zoom du téléphone quand on touche vite plusieurs fois ◀ ▶ */
+#cv-ps,#cv-ps button{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#cv-ps .ps-card{touch-action:none}
+.ar-cd .ar-pr button small{background:#4c1d95;color:#fff}

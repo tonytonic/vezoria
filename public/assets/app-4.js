@@ -506,6 +506,7 @@
   }
   async function tripMapCanvas(w, h, pretty){
     const st = tlStages(); if(!st.length) return null;
+    try { await stagesGeoFix(st.map(s=>s.city)); } catch(e){}
     const pts = []; for(const s of st){ const c = geoCached(s.city) || await geocode(s.city, null).catch(()=>null); if(c) pts.push({lat:c.lat, lng:c.lng, name:s.city}); }
     if(!pts.length) return null;
     const steps = geoSouvs(M.trip).map(s=>({lat:s.lat, lng:s.lng, label:'•', color:'#16a34a'}));
@@ -1011,7 +1012,7 @@
   async function tlKml(){
     const t = trip(); if(!t) return;
     toast('🗺️ Préparation de l’export…');
-    const pm = [], st = tlStages(), line = [];
+    const pm = [], st = tlStages(), line = []; try { await stagesGeoFix(st.map(s=>s.city)); } catch(e){}
     for(const s of st){ const g = geoCached(s.city) || await geocode(s.city, null).catch(()=>null); if(g){ line.push(g); pm.push(`<Placemark><name>${kmlEsc('🏨 ' + s.city)}</name><description>${kmlEsc(fshort(s.debut) + ' → ' + fshort(s.fin) + (s.h && s.h.nom ? ' · ' + s.h.nom : ''))}</description><styleUrl>#etape</styleUrl><Point><coordinates>${g.lng},${g.lat}</coordinates></Point></Placemark>`); } }
     if(line.length > 1) pm.push(`<Placemark><name>Itinéraire du voyage</name><styleUrl>#trace</styleUrl><LineString><tessellate>1</tessellate><coordinates>${line.map(g=>g.lng+','+g.lat).join(' ')}</coordinates></LineString></Placemark>`);
     dayList().forEach((d,i)=>{ const pl = placesOf(d).filter(p=>p.lat != null), r = dayInfo(d).route;
@@ -1174,6 +1175,7 @@ ${pm.join('\n')}</Document></kml>`;
     // 🚌 1ʳᵉ recherche : les grands sites du pays (UNESCO) à plus de 25 km d’une étape mais à moins de 330 km = une journée d’excursion
     if(!more){ SG.city = MSGT('les grands sites du pays'); refresh();
       try { await withTimeout((async()=>{
+        try { await stagesGeoFix(hs.map(stayCity)); } catch(e){}
         const geo = {}; for(const h of hs){ const c = stayCity(h); geo[h.id] = await geocode(c, null).catch(()=>null); }
         const ccs = new Set((t0.ccs || []).filter(Boolean));
         for(const h of hs){ const c = stayCity(h); const k = (M.ctry || {})[normQ(c)]; if(k && k.cc) ccs.add(k.cc); else { const o = await cityInfo(c).catch(()=>null); if(o && o.cc) ccs.add(o.cc); } }

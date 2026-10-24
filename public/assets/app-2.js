@@ -2017,6 +2017,29 @@
     if(res){ const g = {id:key, type:'geo', q:full, lat:res.lat, lng:res.lng}; stamp(g); R[key] = g; markDirty(key); persist(); }
     return res;
   }
+  // 📍 villes des étapes : une ville peut exister ailleurs sous le même nom (Sorrente en Italie… et aux États-Unis).
+  // Une étape à plus de 1 500 km du milieu des autres est vérifiée : parmi les villes de ce nom, on prend celle qui est près des autres étapes
+  // (si elle est assez connue). Le bon point est gardé (v:2) et le pays de la ville est recalculé.
+  async function stagesGeoFix(cities){
+    cities = [...new Set((cities || []).filter(Boolean))]; if(cities.length < 2) return;
+    const P = []; for(const c of cities){ const g = await geocode(c, null).catch(()=>null); if(g) P.push({c, g}); }
+    const md = a => { const b = a.slice().sort((x, y)=>x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; };
+    const far = x => P.filter(y=>y !== x).every(y=>km(x.g, y.g) / 1.25 > 1500);   // aucune autre étape à moins de 1 500 km : à vérifier
+    const bad = P.filter(x=>far(x) && !((R['geo:' + normQ(x.c)] || {}).v >= 2)), ok = P.filter(x=>!bad.includes(x));
+    const near = ok.length ? {lat:md(ok.map(x=>x.g.lat)), lng:md(ok.map(x=>x.g.lng))} : null;
+    for(const {c} of bad){
+      const key = 'geo:' + normQ(c), cur = R[key];
+      const wait = 1100 - (Date.now() - geoLast); if(wait > 0) await new Promise(r=>setTimeout(r, wait)); geoLast = Date.now();
+      let L = null; try { L = await (await fetch(GEO + 'search?format=jsonv2&limit=8&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(c))).json(); } catch(e){}
+      if(!Array.isArray(L)) continue;   // pas de réponse : on réessaiera
+      L = L.map(x=>({lat:+x.lat, lng:+x.lon, imp:+x.importance || 0})).filter(x=>isFinite(x.lat) && isFinite(x.lng)); if(!L.length) continue;
+      // la ville la plus connue de ce nom… sauf si une presque aussi connue est près des autres étapes
+      const top = L.slice().sort((x, y)=>y.imp - x.imp)[0], alt = near ? L.filter(x=>x.imp >= top.imp * .75).sort((x, y)=>km(x, near) - km(y, near))[0] : null, best = alt || top;
+      const nx = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:c}, {lat:best.lat, lng:best.lng, v:2}); stamp(nx); R[key] = nx; markDirty(key);
+      if(!cur || cur.lat == null || km(cur, best) > 50){ if(M.ctry) delete M.ctry[normQ(c)]; }   // le pays sera recalculé avec le bon point
+      persist();
+    }
+  }
   function km(a,b){
     const rad = x => x*Math.PI/180, dLa = rad(b.lat-a.lat), dLo = rad(b.lng-a.lng);
     const h = Math.sin(dLa/2)**2 + Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLo/2)**2;
