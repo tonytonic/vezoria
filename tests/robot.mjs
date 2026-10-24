@@ -39,7 +39,7 @@ for (const lang of LANGS) {
   const tidy = async () => pg.evaluate(() => {
     document.querySelectorAll('.ui-dlg .ui-act button:last-child').forEach(b => b.click());
     try { CV.close(); } catch (e) {} document.querySelectorAll('#v-sheet-bg').forEach(x => x.remove());
-    ['worldClose', 'liveClose', 'filmClose', 'wallClose', 'scrClose', 'pcClose', 'stEdClose', 'vjStop'].forEach(f => { try { if (CV[f]) CV[f](); } catch (e) {} });
+    ['worldClose', 'liveClose', 'filmClose', 'wallClose', 'scrClose', 'pcClose', 'stEdClose', 'vjStop', 'psClose', 'rgClose', 'swClose'].forEach(f => { try { if (CV[f]) CV[f](); } catch (e) {} });
     document.body.style.overflow = '';
   });
   await tidy();
