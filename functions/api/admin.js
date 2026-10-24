@@ -95,7 +95,7 @@ export async function onRequestPost({ request, env }) {
   if (a === 'usage') {   // 🧮 forfait du mois : appels /api, opérations photos (R2), comptés par _middleware.js
     const m = new Date().toISOString().slice(0, 7), u = { m };
     try { const { results } = await env.DB.prepare('SELECT k, n FROM usage_m WHERE m = ?1').bind(m).all(); (results || []).forEach(r => { u[r.k] = r.n; }); } catch (e) {}
-    return json({ ...u, reqMax: Number(env.MAX_REQ_M) || 10_000_000, r2aMax: Number(env.MAX_R2A_M) || 1_000_000, r2bMax: Number(env.MAX_R2B_M) || 10_000_000, r2MaxGb: Number(env.R2_MAX_GB) || 10 });
+    return json({ ...u, reqMax: Number(env.MAX_REQ_M) || 10_000_000, r2aMax: Number(env.MAX_R2A_M) || 1_000_000, r2bMax: Number(env.MAX_R2B_M) || 10_000_000, r2MaxGb: Number(env.R2_MAX_GB) || 999 });
   }
   if (a === 'list') {
     const bl = await env.DB.prepare('SELECT space, status, at, note FROM blocked ORDER BY at DESC LIMIT 200').all();

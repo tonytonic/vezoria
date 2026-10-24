@@ -6,7 +6,7 @@
  * Sans STATS_KEY configurée, la page est désactivée (404). Aucune donnée d'utilisateur n'est
  * renvoyée : seulement des tailles et des nombres (les carnets sont chiffrés de toute façon).
  */
-const R2_MAX = env => (Number(env.R2_MAX_GB) || 10) * 1_000_000_000;   // même garde-fou que /api/photo : 10 Go par défaut (part gratuite)
+const R2_MAX = env => (Number(env.R2_MAX_GB) || 999) * 1_000_000_000;   // même garde-fou que /api/photo : 999 Go par défaut
 const FREE_R2 = 10_000_000_000;
 const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });

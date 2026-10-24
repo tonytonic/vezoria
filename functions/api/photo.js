@@ -8,10 +8,10 @@
 // Les anciennes photos restées dans D1 sont toujours lues : rien n'est perdu au passage sur R2.
 const MAX_PHOTO = 1_900_000;
 // Garde-fous : D1 gratuit = 500 Mo par base → arrêt à 400 Mo.
-// R2 : arrêt à 10 Go par défaut = la part gratuite (aucun frais). Pour aller plus loin : variable R2_MAX_GB (ex. 100 ≈ 1,35 $/mois).
+// R2 : arrêt à 999 Go (10 Go gratuits + ~989 Go à 0,015 $ ≈ 14,85 $/mois au maximum). Réglable : variable R2_MAX_GB.
 // Pour changer le budget sans toucher au code : variable R2_MAX_GB dans les réglages Cloudflare (ex. 2000 pour ~30 €/mois).
 const MAX_TOTAL_D1 = 400_000_000;
-const R2_MAX = env => (Number(env.R2_MAX_GB) || 10) * 1_000_000_000;
+const R2_MAX = env => (Number(env.R2_MAX_GB) || 999) * 1_000_000_000;
 // Plafond par carnet (6 Go par défaut ; variable facultative SPACE_MAX_MB dans Cloudflare pour le changer sans toucher au code) : évite qu'un seul carnet remplisse tout
 const spaceMax = env => (Number(env.SPACE_MAX_MB) || 6000) * 1_000_000;
 const CORS = {
