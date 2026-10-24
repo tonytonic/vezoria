@@ -1429,6 +1429,21 @@ ${pm.join('\n')}</Document></kml>`;
   /* ② RANGER MES VISITES DANS LES JOURS : seulement les visites et activités choisies, dans l'ordre du trajet
      (de proche en proche depuis l'hôtel, pour voir le plus de choses chaque jour sans allers-retours).
      Chaque carte propose le jour conseillé (jours de trajet allégés) : on la fait glisser sur un jour, ou on touche le jour. */
+  /* 🔒 JOURS DE FERMETURE (horaires OpenStreetMap « opening_hours », lus par ohDay) : un musée fermé le lundi n'est pas conseillé un lundi. */
+  const ohDayName = d => { try { return new Date(2024, 0, 7 + d).toLocaleDateString((window.I18N && I18N.locale) || 'fr-FR', {weekday:'long'}); } catch(e){ return OH_D[d]; } };
+  const ohWd = d => new Date(d + 'T12:00:00').getDay();
+  const ohOf = x => (x && x.info && x.info.oh) || ((M.oh || {})[x && x.id] || {}).oh || '';
+  const ohShut = (x, d) => { const oh = ohOf(x); if(!oh || !d) return false; const r = ohDay(oh, d); return Array.isArray(r) && !r.length; };
+  async function ohFetch(items){
+    M.oh = M.oh || {}; const need = items.filter(x=>x && x.lat != null && !(x.info && x.info.oh) && !(M.oh[x.id] && Date.now() - M.oh[x.id].t < 30 * 864e5)).slice(0, 60); if(!need.length) return false;
+    const q = '[out:json][timeout:25];(' + need.map(x=>`nwr["opening_hours"]["name"](around:250,${(+x.lat).toFixed(5)},${(+x.lng).toFixed(5)});`).join('') + ');out center tags 400;';
+    const one = ep => fetch(ep, {method:'POST', body:'data=' + encodeURIComponent(q), headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then(r=>{ if(!r.ok) throw new Error('osm'); return r.json(); });
+    const j = await withTimeout(Promise.any(['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'].map(one)), 30000).catch(()=>null); if(!j) return false;
+    const E = (j.elements || []).map(e=>({n:(e.tags || {}).name || '', oh:(e.tags || {}).opening_hours || '', lat:e.lat ?? (e.center || {}).lat, lng:e.lon ?? (e.center || {}).lon})).filter(e=>e.lat != null);
+    need.forEach(x=>{ const c = E.map(e=>[e, swSim(e.n, x.nom || '')]).filter(z=>z[1] >= .5 && rawKm(z[0], x) < .4).sort((a, b)=>b[1] - a[1])[0];
+      M.oh[x.id] = {t:Date.now(), oh:c ? c[0].oh : ''}; });
+    persist(); return true;
+  }
   let RG = null;
   function rgItems(t){ return t ? [...list('place', p=>p.trip === t.id && p.pick && !p.sugg), ...list('item', i=>i.trip === t.id && i.cat === 'activite' && i.pick)] : []; }
   const rgH = s => { const m = String(s || '').match(/(\d{1,2})[:h](\d{2})?/); return m ? +m[1] + (+(m[2] || 0)) / 60 : null; };
@@ -1476,7 +1491,7 @@ ${pm.join('\n')}</Document></kml>`;
       const exc = mine.filter(x=>rgW(x) >= 4), pts = geo.filter(x=>rgW(x) < 4), nop = rest.filter(x=>rgW(x) < 4);
       // excursion à la journée : un jour entier libre, plutôt au milieu de l'étape
       exc.forEach(x=>{ const mid = days.slice().sort((a, b)=>Math.abs(days.indexOf(a) - days.length / 2) - Math.abs(days.indexOf(b) - days.length / 2));
-        const d = mid.find(d=>D[d].cap >= 4 && !used[d]) || mid.find(d=>!used[d]) || mid[0]; used[d] = (used[d] || 0) + 4; out.push({x, d}); });
+        const d = mid.find(d=>D[d].cap >= 4 && !used[d] && !ohShut(x, d)) || mid.find(d=>!used[d] && !ohShut(x, d)) || mid.find(d=>!ohShut(x, d)) || mid[0]; used[d] = (used[d] || 0) + 4; out.push({x, d}); });
       // 🧭 un quartier par jour : les visites sont regroupées par proximité (comme des grappes), une grappe = une journée,
       // en tenant compte de la place libre de chaque jour et des visites déjà prévues ce jour-là (elles attirent les visites voisines).
       // Les jours de trajet gardent les visites proches de l'hôtel.
@@ -1492,14 +1507,15 @@ ${pm.join('\n')}</Document></kml>`;
         const rem = {}; act.forEach(d=>{ rem[d] = free(d); }); Object.keys(got).forEach(k=>delete got[k]);
         const dist = (d, x) => km(C[d], x) + (D[d].cap < 4 ? 2 : 0);   // les vraies journées d'abord : un jour de trajet ne prend que ce qui est tout près
         const order = pts.map(x=>{ const ds = act.map(d=>dist(d, x)).sort((a, b)=>a - b); return [x, (ds[1] == null ? 0 : ds[1]) - ds[0]]; }).sort((a, b)=>b[1] - a[1]).map(z=>z[0]);
-        order.forEach(x=>{ const w = rgW(x), ok = act.filter(d=>rem[d] >= w || (rem[d] > 0 && w > 1 && D[d].cap >= 4)).sort((a, b)=>dist(a, x) - dist(b, x)); if(!ok.length) return;
+        order.forEach(x=>{ const w = rgW(x), ok = act.filter(d=>!ohShut(x, d)).filter(d=>rem[d] >= w || (rem[d] > 0 && w > 1 && D[d].cap >= 4)).sort((a, b)=>dist(a, x) - dist(b, x)); if(!ok.length) return;
           got[x.id] = ok[0]; rem[ok[0]] -= w; });
         act.forEach(d=>{ if(D[d].cap < 4 && !(fixed[d] || []).length) return;   // jour de trajet : reste centré sur l'hôtel
           const M2 = [...(fixed[d] || []), ...pts.filter(x=>got[x.id] === d)]; if(M2.length) C[d] = {lat:M2.reduce((a, p)=>a + +p.lat, 0) / M2.length, lng:M2.reduce((a, p)=>a + +p.lng, 0) / M2.length}; });
       }
       const least = () => days.slice().sort((a, b)=>(used[a] - D[a].cap) - (used[b] - D[b].cap) || D[b].cap - D[a].cap)[0];   // tout est plein : le jour le moins chargé (plutôt une vraie journée qu'un jour de trajet)
       const byDay = {};
-      pts.forEach(x=>{ const d = got[x.id] || least(); used[d] = (used[d] || 0) + rgW(x); (byDay[d] = byDay[d] || []).push(x); });
+      const leastFor = x => days.filter(d=>!ohShut(x, d)).sort((a, b)=>(used[a] - D[a].cap) - (used[b] - D[b].cap) || D[b].cap - D[a].cap)[0] || least();
+      pts.forEach(x=>{ const d = got[x.id] || leastFor(x); used[d] = (used[d] || 0) + rgW(x); (byDay[d] = byDay[d] || []).push(x); });
       // activités sans adresse précise : sur les jours qui ont encore le plus de place
       nop.forEach(x=>{ const d = days.slice().sort((a, b)=>(free(b) - free(a)) || (D[b].cap - D[a].cap))[0]; used[d] = (used[d] || 0) + rgW(x); (byDay[d] = byDay[d] || []).push(x); });
       // dans chaque journée : de proche en proche depuis l'hôtel
@@ -1521,6 +1537,8 @@ ${pm.join('\n')}</Document></kml>`;
     else if(x.type === 'item' && RG_EVE.test(rgT(x))) T.push('🌙 ' + MSGT('En soirée : après les visites de la journée'));
     if(x.lat != null){ const nb = list('place', p=>p.trip === t.id && p.date === d && !p.sugg && !p.pick && p.lat != null && p.id !== x.id).map(p=>[p, km(p, x)]).sort((a, b)=>a[1] - b[1])[0];
       if(nb && nb[1] < 4) T.push('📍 ' + RF('À {0} de {1}, prévu ce jour-là', nb[1] < 1 ? Math.round(nb[1] * 1000 / 50) * 50 + ' m' : nb[1].toFixed(1) + ' km', nb[0].nom)); }
+    if(ohOf(x)){ const wk = [...Array(7)].map((_, i)=>{ const dt = new Date(d + 'T12:00:00'); dt.setDate(dt.getDate() + i); return dt.toISOString().slice(0, 10); }).filter(z=>ohShut(x, z));
+      if(wk.length && wk.length < 7) T.push('🔒 ' + RF('Fermé : {0}', wk.map(z=>ohDayName(ohWd(z))).join(', '))); }
     if(x.type === 'item') T.push('🎟️ ' + MSGT('Activité payante : vérifie les horaires avant de réserver'));
     if(rgLoad(t, d, x.id) >= (o.cap || 4)) T.push('⚠️ ' + MSGT('Journée déjà bien remplie'));
     return T;
@@ -1528,6 +1546,7 @@ ${pm.join('\n')}</Document></kml>`;
   function rgOpen(){
     const t = trip(); if(!t) return; if(!t.debut){ toast('📅 ' + MSGT('Choisis d’abord les dates du voyage.')); return; } closeSheet(true);
     RG = {tid:t.id, hist:[], later:new Map(), lc:0, all:false, n0:rgItems(t).length, done:0}; rgRender();
+    ohFetch(rgItems(t).filter(x=>x.type === 'place')).then(ch=>{ if(ch && RG && RG.tid === t.id) rgRender(); }).catch(()=>{});   // jours de fermeture : arrivent en arrière-plan
   }
   function rgClose(){ const ov = document.getElementById('cv-rg'); if(ov) ov.remove(); document.body.style.overflow = ''; RG = null; refresh(); }
   function rgRender(){
@@ -1550,7 +1569,7 @@ ${pm.join('\n')}</Document></kml>`;
     const cur = P.out[0], x = cur.x, sug = cur.d, D = P.D, st = (D[sug] || {}).st, city = x.type === 'place' ? swCity(x) : (x.adresse || '');
     const info = x.type === 'place' ? x : {nom:rgNom(x).replace(/^.*?·\s*/, ''), ex:1, city, id:x.id};
     const dayB = d => { const o = D[d] || {}, k = ds.indexOf(d), l = rgLoad(t, d, x.id), dots = '●'.repeat(Math.min(4, Math.ceil(l))) + '○'.repeat(Math.max(0, Math.min(4, o.cap || 0) - Math.min(4, Math.ceil(l))));
-      return `<button type="button" class="rg-day${d === sug ? ' sug' : ''}${l >= (o.cap || 4) ? ' full' : ''}" data-d="${d}" onclick="CV.rgSet('${d}')"><b>${k >= 0 ? PJ(k + 1) : ''}</b><small>${esc(fshort(d))}</small>${o.tr && o.tr.length ? `<i>${icon(o.tr[0])}</i>` : ''}<em>${dots || '·'}</em>${d === sug ? `<u>${esc(MSGT('conseillé'))}</u>` : ''}</button>`; };
+      return `<button type="button" class="rg-day${d === sug ? ' sug' : ''}${l >= (o.cap || 4) ? ' full' : ''}${ohShut(x, d) ? ' shut' : ''}" data-d="${d}" onclick="CV.rgSet('${d}')"><b>${k >= 0 ? PJ(k + 1) : ''}</b><small>${ohShut(x, d) ? '🔒 ' : ''}${esc(fshort(d))}</small>${o.tr && o.tr.length ? `<i>${icon(o.tr[0])}</i>` : ''}<em>${dots || '·'}</em>${d === sug ? `<u>${esc(MSGT('conseillé'))}</u>` : ''}</button>`; };
     const near = Object.values(D).filter(o=>o.k === (D[sug] || {}).k).map(o=>o.d), days = RG.all ? Object.keys(D).sort() : near;
     ov.innerHTML = head + `<div class="rg-city">📍 <span data-notr>${esc(city || (st && st.city) || '')}</span></div>
       <div class="sw-stack rg-stack"><div class="sw-card top rg-card" data-id="${esc(x.id)}">
@@ -1595,7 +1614,7 @@ ${pm.join('\n')}</Document></kml>`;
     try { persistNow(); } catch(e){}
     const ds = dayList(), k = ds.indexOf(d), city = x.type === 'place' ? swCity(x) : (x.adresse || '');
     const away = o.st && city && normQ(o.st.city) !== normQ(city);
-    toast((away ? '⚠️ ' + RF('Ce jour-là tu es à {0}', o.st.city) : '✓ ' + rgNom(x) + ' → ' + (k >= 0 ? PJ(k + 1) + ' · ' : '') + fshort(d)));
+    toast(ohShut(x, d) ? '🔒 ' + RF('Attention : fermé le {0}', ohDayName(ohWd(d))) : (away ? '⚠️ ' + RF('Ce jour-là tu es à {0}', o.st.city) : '✓ ' + rgNom(x) + ' → ' + (k >= 0 ? PJ(k + 1) + ' · ' : '') + fshort(d)));
     rgRender();
   }
   function rgLater(){ if(!RG) return; const t = R[RG.tid], cur = rgPlan(t).out[0]; if(!cur) return; RG.later.set(cur.x.id, ++RG.lc); rgRender(); }

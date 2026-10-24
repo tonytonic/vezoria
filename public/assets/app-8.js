@@ -154,8 +154,9 @@
         if(by) return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}</small></span><span class="ab-sw ab-by">👀 <span>Publié par</span> <b data-notr>${esc(by)}</b></span></div>`;
         return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}${solo ? ' · lien à part' : ''}</small></span>
           ${on && !solo ? `<button type="button" class="ab-1" title="Lien pour ce voyage seulement" aria-label="Lien pour ce voyage seulement" onclick="CV.feedShareOne('${t.id}')">🔗</button>` : ''}
+          ${on ? `<button type="button" class="ab-1" title="${esc(MSGT('Cacher à quelqu’un'))}" aria-label="${esc(MSGT('Cacher à quelqu’un'))}" onclick="CV.preHideSheet('${t.id}')">🙈${((M.preHide || {})[t.id] || []).length ? '<sup>' + M.preHide[t.id].length + '</sup>' : ''}</button>` : ''}
           <button type="button" class="ab-sw${on ? ' on' : ''}" onclick="CV.carnetToggle('${t.id}')">${on ? '👀 Partagé' : '🔒 Masqué'}</button></div>`; }).join('')}
-      <div class="v-sum-small" style="margin-top:6px">🔗 = un lien pour ce voyage seulement · 👁️ à côté d’un abonné = cacher un voyage à cette personne seulement</div></div>`;
+      <div class="v-sum-small" style="margin-top:6px">🔗 = un lien pour ce voyage seulement · 🙈 = cacher ce voyage à quelqu’un (même pas encore abonné) · 👁️ à côté d’un abonné = choisir ce qu’il voit</div></div>`;
   }
   // partager ↔ masquer un voyage pour TOUS les abonnés (il entre dans le carnet ou en sort)
   function evToggle(o){ M.evOpen = !!o; persist(); }
@@ -616,7 +617,7 @@
     return `
       ${ev.length ? (()=>{ const nw = ev.filter(e=>e.nw).length, open = M.evOpen !== false && (M.evOpen === true || ev.length <= 3); return `<details class="sh-card sh-tb sh-news" data-t="ab suis"${open ? ' open' : ''}><summary onclick="CV.evToggle(!this.parentNode.open)"><span class="sh-k" style="margin:0">✨ Nouveautés · 24 h</span><span class="sh-nn">${nw ? `<b class="sh-nb">${nw}</b> ` : ''}<small>${ev.length} · <span class="sh-open">Voir</span><span class="sh-close">Replier</span></small></span></summary>${ev.slice(0, 40).map(evRow).join('')}</details>`; })() : '<div class="v-sum-small sh-tb" data-t="ab suis" style="margin-bottom:10px">Rien de nouveau ces dernières 24 heures.</div>'}
       <div class="sh-st sh-tb" data-t="ab" style="margin:4px 0 12px"><span>👀 <b>${nFw}</b> abonné${nFw>1?'s':''}</span><span>➡️ <b>${fol.length}</b> voyage${fol.length>1?'s':''} suivi${fol.length>1?'s':''}</span></div>
-      ${abTableHTML()}${(setTimeout(()=>soloTidy().catch(()=>{}), 400), '')}${Object.values(byCode).some(g=>g.length > 1 || g[0] !== cur) ? `<h3 class="sh-tb" data-t="ab">📣 Mes voyages publiés</h3>${(()=>{ const E = Object.entries(byCode), grp = E.filter(([c, t])=>t.length > 1), solo = E.filter(([c, t])=>t.length === 1 && t[0] !== cur).map(([c, t])=>t[0]);
+      ${abTableHTML()}${blkHTML()}${(setTimeout(()=>soloTidy().catch(()=>{}), 400), '')}${Object.values(byCode).some(g=>g.length > 1 || g[0] !== cur) ? `<h3 class="sh-tb" data-t="ab">📣 Mes voyages publiés</h3>${(()=>{ const E = Object.entries(byCode), grp = E.filter(([c, t])=>t.length > 1), solo = E.filter(([c, t])=>t.length === 1 && t[0] !== cur).map(([c, t])=>t[0]);
         if(!grp.length || !solo.length) return E.map(([c, tids])=>tids.length > 1 ? grpRow(c, tids) : tids[0] !== cur ? pubRow(tids[0]) : '').join('');
         const empty = solo.filter(t=>!soloFw(t)).length;
         return grp.map(([c, tids])=>grpRow(c, tids)).join('') + `<details class="sh-card sh-tb sh-solo" data-t="ab"><summary><b>📣 Publiés à part, avec leur propre lien (${solo.length})</b><small class="v-sum-small" style="display:block">En dehors du carnet : chacun a son code abonné.</small></summary>
@@ -658,6 +659,15 @@
     const t = await uiPrompt('Modifier ton commentaire :', c.text || ''); if(t === null) return; const v = String(t).trim().slice(0, 600); if(!v){ cmDel(cid); return; }
     if(v === c.text) return; putQuiet([Object.assign(clone(c), {text:v, edited:Date.now()})]); syncNow(); if(c.feed) feedPaint(c.feed); toast('✏️ Commentaire modifié'); }
   async function cmDel(cid){ const c = R[cid]; if(!c || !(await uiConfirm('Supprimer ce commentaire ?'))) return; putQuiet([Object.assign(clone(c), {deleted:true})]); syncNow(); closeSheet(true); if(c.feed) feedPaint(c.feed); toast('🗑 Commentaire supprimé'); }
+  // 🙈 personnes masquées sur ce téléphone (leurs ❤️ et commentaires n'apparaissent plus ici) : la liste, pour pouvoir les réafficher
+  function blkHTML(){
+    const D = Object.keys(M.blkDev || {}); if(!D.length) return '';
+    const who = d => { const r = Object.values(R).filter(x=>x && devOfRec(x) === d && x.who).sort((a, b)=>(b.updatedAt || 0) - (a.updatedAt || 0))[0]; return r ? r.who : '?'; };
+    return `<div class="sh-card sh-tb" data-t="ab"><div class="sh-k">🙈 ${esc(MSGT('Masqués sur ce téléphone'))}</div>
+      <div class="v-sum-small" style="margin-bottom:6px">${esc(MSGT('Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.'))}</div>
+      ${D.map(d=>`<div class="cv-prow" style="cursor:default"><span data-notr>${esc(who(d))}</span><button type="button" class="v-btn sec" style="width:auto;margin:0;padding:4px 10px" onclick="CV.userUnhide('${esc(d)}')">${esc(MSGT('Réafficher'))}</button></div>`).join('')}</div>`;
+  }
+  function userUnhide(d){ if(M.blkDev) delete M.blkDev[d]; persist(); feedRepaintAll(); toast('👀 ' + MSGT('Réaffiché')); try { shareHub(); } catch(e){} }
   async function userHide(id){ const d = devOfRec(R[id]); if(!d) return; if(!(await uiConfirm('Masquer les commentaires et ❤️ de cette personne sur ce téléphone ?'))) return; (M.blkDev = M.blkDev || {})[d] = 1; persist(); closeSheet(true); feedRepaintAll(); toast('🙈 Masqué'); }
   async function userBlock(id){
     const r = R[id], d = devOfRec(r); if(!r || !d) return; const tid = String(r.trip).replace(/^ft:/,'');
@@ -827,10 +837,39 @@
       persist(); feedBuild(t);
     } finally { cryptHide(dev ? '👁️ Voyage caché à cette personne' : '🔗 Ce voyage a son propre lien'); }
   }
+  // 🙈 cacher un voyage à quelqu'un AVANT même qu'il s'abonne, par son prénom : le voyage passe « à part » (son code est donné à chaque abonné),
+  // et toute personne abonnée sous ce prénom ne reçoit jamais ce code (comme 👁️ « choisir ce qu'il voit »).
+  function preHideSheet(tid){
+    const t = R[tid]; if(!t) return; const L = ((M.preHide || {})[tid]) || [];
+    openSheet(`<h2>🙈 ${esc(RF('Cacher « {0} » à quelqu’un', t.titre || ''))}</h2>
+      <div class="v-sum-small" style="margin-bottom:8px">${esc(MSGT('Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.'))}</div>
+      ${L.map(n=>`<div class="cv-prow" style="cursor:default"><span data-notr>🙈 ${esc(n)}</span><button type="button" class="v-btn sec" style="width:auto;margin:0;padding:4px 10px" onclick="CV.preHideDel('${tid}','${esc(n)}')" aria-label="${esc(MSGT('Retirer'))}">✕</button></div>`).join('')}
+      <div class="cv-row" style="margin-top:8px;gap:6px"><input class="v-in" id="ph-n" placeholder="${esc(MSGT('Prénom'))}" maxlength="40" autocomplete="off"><button type="button" class="v-btn" style="width:auto;margin:0" onclick="CV.preHideAdd('${tid}')">＋ ${esc(MSGT('Cacher'))}</button></div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`);
+  }
+  const phName = s => normQ(String(s || '').replace(/\s*\d+$/, '')).trim();
+  async function preHideAdd(tid){
+    const e = document.getElementById('ph-n'), n = (e && e.value || '').trim(); if(!n) return;
+    const P = M.preHide || (M.preHide = {}), L = P[tid] || (P[tid] = []); if(!L.some(x=>phName(x) === phName(n))) L.push(n); persist();
+    try {
+      if(!FRX()[tid]) await feedRestrict(tid, '');   // le voyage passe « à part » : chaque abonné reçoit son code, sauf les prénoms cachés
+      const r = FRX()[tid], nx = preHideApply(tid);
+      for(const d of nx) if(r && r.sent && r.sent[d]) await feedRestrict(tid, d);   // déjà abonnée et déjà servie : nouveau code, sans elle
+      await feedGrantSync(tid); await syncNow();
+    } catch(err){}
+    toast('🙈 ' + RF('Caché à {0}', n)); preHideSheet(tid);
+  }
+  function preHideDel(tid, n){ const P = M.preHide || {}; P[tid] = (P[tid] || []).filter(x=>phName(x) !== phName(n)); persist(); preHideSheet(tid); }
+  function preHideApply(tid){
+    const L = ((M.preHide || {})[tid] || []).map(phName).filter(Boolean), r = FRX()[tid], out = []; if(!L.length || !r) return out;
+    Object.entries(grpFollowers(r.g)).forEach(([d, f])=>{ const w = phName(f.who), w1 = w.split(' ')[0]; if((L.includes(w) || L.includes(w1)) && !r.ex.includes(d)){ r.ex.push(d); out.push(d); } });
+    if(out.length) persist(); return out;
+  }
   // donne le code d’un voyage « à part » à chaque abonné du carnet qui a le droit de le voir (chiffré pour lui seul)
   async function feedGrantSync(t){
     const r = FRX()[t]; if(!r || !FT()[t]) return 0;
     const g = r.g; if(!spaceObj(g)) return 0;
+    { const nx = preHideApply(t); const late = nx.filter(d=>r.sent && r.sent[d] === r.c); if(late.length) setTimeout(()=>{ late.reduce((p, d)=>p.then(()=>feedRestrict(t, d)), Promise.resolve()).catch(()=>{}); }, 500); }
     TS()['fa:' + g] = g; r.sent = r.sent || {};
     const k = await fKey(), fws = grpFollowers(g), out = []; let n = 0;
     for(const [d, f] of Object.entries(fws)){
@@ -1140,7 +1179,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-24n'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-24p'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1397,16 +1436,25 @@
     }
     return out;
   }
-  async function potMigrate(){
+  // rangement automatique, en arrière-plan : par petits paquets (au plus 1 fois toutes les 10 min), sans rien demander
+  async function potAuto(){
+    if(potBusy || !potOn() || !photoApi() || !(M.sync && M.sync.on) || document.visibilityState !== 'visible') return;
+    if(Date.now() - (M.potAutoAt || 0) < 6e5) return; M.potAutoAt = Date.now();
+    const st = potStats(); if(!st.old && !st.lo) return;
+    try { await potMigrate({auto:true, max:120}); } catch(e){}
+  }
+  async function potMigrate(opt){
+    opt = opt && typeof opt === 'object' ? opt : {};
     if(potBusy || !photoApi()) return; potBusy = true;
     const say = t => { potSaid = t; const e = document.getElementById('pot-msg'); if(e) e.textContent = t; };
     const stats = () => { const e = document.getElementById('pot-st'); if(e) e.textContent = potLine(potStats()); };
     { const b = document.getElementById('pot-go'); if(b) b.disabled = true; }
     const {own, code: cs} = potStats(), pend = new Set(M.pq || []);
-    const todo = Object.keys(own).filter(p=>!pkOf(p) && !pend.has(p) && cs[p] && !potMate(own[p]));
+    let todo = Object.keys(own).filter(p=>!pkOf(p) && !pend.has(p) && cs[p] && !potMate(own[p]));
+    if(opt.max) todo = todo.slice(0, opt.max);
     const OFF = MSGT('Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.');
     let done = 0, fail = 0, net = 0, stop = '', small = 0, miss = 0, up = 0; const missBy = {};
-    await potWake(true);
+    if(!opt.auto) await potWake(true);
     try {
       // photos pas sur ce téléphone : on repère d'abord où le serveur les garde
       const away = []; for(const p of todo){ let o = null; try { o = await IDB.get(p); } catch(e){} if(!(o && o.blob)) away.push(p); }
@@ -1578,7 +1626,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
+  var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,

@@ -282,7 +282,7 @@
      sa clé (k) et son droit de lecture (r). Les compagnons reçoivent « pk: » avec le voyage ; les abonnés reçoivent
      une copie « fp:<photo> » avec la publication → ils voient la VRAIE photo, en grand, sans aucune copie sur le serveur.
      Le serveur ne garde que l'empreinte du droit de lecture : il ne voit ni la photo ni le carnet. */
-  const potOn = () => M.pot === true;
+  const potOn = () => M.pot !== false;   // 🫙 pot commun : pour tout le monde par défaut (rangement automatique des anciennes photos)
   const b64u = u8 => b64(u8).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const shk = {};
   async function spaceHash(code){ if(!code) return ''; if(shk[code]) return shk[code]; return shk[code] = hex(await crypto.subtle.digest('SHA-256', te.encode('carnet-voyage:' + await authCode(code)))); }

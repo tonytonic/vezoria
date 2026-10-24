@@ -175,6 +175,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   /* ── Lecture ── */
   function list(type, f){ return Object.values(R).filter(r => r.type===type && !r.deleted && (!f || f(r))); }
   const prof = id => (R[id] && R[id].type==='profile' && !R[id].deleted) ? R[id] : null;
+  try { if(/Android/i.test(navigator.userAgent || '')) document.documentElement.classList.add('vz-and'); } catch(e){}
   const pname = id => { const p = prof(id); return p ? p.nom : (R[id] ? R[id].nom || '?' : '?'); };
   const pcol = id => { const p = prof(id) || R[id]; return p && p.couleur ? p.couleur : '#999'; };
   const profiles = () => list('profile').sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
@@ -584,7 +585,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       setTimeout(()=>{ tripExtract().catch(()=>{}); }, 20000);
       if(showC) cryptHide('🔒 Données chiffrées et synchronisées');
       else if(manual) toast('☁️ Synchronisé');
-      setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500); setTimeout(()=>{ potGc().catch(()=>{}); }, 4000); setTimeout(()=>{ pubMapSync().catch(()=>{}); }, 6000);
+      setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500); setTimeout(()=>{ potGc().catch(()=>{}); }, 4000); setTimeout(()=>{ pubMapSync().catch(()=>{}); }, 6000); setTimeout(()=>{ potAuto().catch(()=>{}); }, 20000);
     } catch(e){
       M.sync.err = e.message || String(e);
       if(showC) cryptHide();

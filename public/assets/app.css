@@ -2675,3 +2675,9 @@ body.vz-glass .v-tiles .v-tile:first-child{background:var(--navy)!important;bord
 #cv-ps,#cv-ps button{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #cv-ps .ps-card{touch-action:none}
 .ar-cd .ar-pr button small{background:#4c1d95;color:#fff}
+/* fenêtres sans saut ni flash : pas de flou imbriqué dans une fenêtre déjà floutée (Android repeignait tout à chaque changement),
+   pas d'« ancrage » automatique du défilement (il se battait avec le nôtre au changement d'onglet) */
+.v-sheet{overflow-anchor:none}
+body.vz-glass .v-sheet *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.vz-and body.vz-glass .v-sheet{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:var(--cream,#FFF4F1)!important}
+.rg-day.shut{opacity:.45;border-style:dashed}
