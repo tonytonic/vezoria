@@ -2188,4 +2188,6 @@ I18N.load({
 "Remettre en grand les {0} photos en petite taille":"Restore the {0} small photos to full size",
 "Hôtels autour":"Hotels nearby",
 "hôtels":"hotels",
-"près de":"near"});
+"près de":"near",
+"Autre quartier possible":"Another possible area",
+"{0} visites à deux pas":"{0} visits a short walk away"});

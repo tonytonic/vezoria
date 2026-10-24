@@ -2204,4 +2204,6 @@ I18N.load({
 "Remettre en grand les {0} photos en petite taille":"Recuperar en grande las {0} fotos pequeñas",
 "Hôtels autour":"Hoteles cerca",
 "hôtels":"hoteles",
-"près de":"cerca de"});
+"près de":"cerca de",
+"Autre quartier possible":"Otro barrio posible",
+"{0} visites à deux pas":"{0} visitas a dos pasos"});

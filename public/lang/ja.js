@@ -5142,4 +5142,6 @@ I18N.load({
 "Remettre en grand les {0} photos en petite taille":"小さい写真 {0} 枚を大きく戻す",
 "Hôtels autour":"近くのホテル",
 "hôtels":"ホテル",
-"près de":"近く："});
+"près de":"近く：",
+"Autre quartier possible":"ほかの候補エリア",
+"{0} visites à deux pas":"徒歩圏内に {0} か所"});

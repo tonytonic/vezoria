@@ -5142,4 +5142,6 @@ I18N.load({
 "Remettre en grand les {0} photos en petite taille":"把 {0} 张小图恢复为大图",
 "Hôtels autour":"附近的酒店",
 "hôtels":"酒店",
-"près de":"靠近"});
+"près de":"靠近",
+"Autre quartier possible":"另一个可选街区",
+"{0} visites à deux pas":"{0} 个景点就在附近"});

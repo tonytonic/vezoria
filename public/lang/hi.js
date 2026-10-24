@@ -5142,4 +5142,6 @@ I18N.load({
 "Remettre en grand les {0} photos en petite taille":"{0} छोटी फ़ोटो फिर से बड़ी करो",
 "Hôtels autour":"आस-पास के होटल",
 "hôtels":"होटल",
-"près de":"के पास"});
+"près de":"के पास",
+"Autre quartier possible":"दूसरा संभव इलाका",
+"{0} visites à deux pas":"{0} जगहें पास में"});

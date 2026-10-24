@@ -2194,4 +2194,6 @@ I18N.load({
 "Remettre en grand les {0} photos en petite taille":"De {0} kleine foto’s weer groot maken",
 "Hôtels autour":"Hotels in de buurt",
 "hôtels":"hotels",
-"près de":"bij"});
+"près de":"bij",
+"Autre quartier possible":"Andere mogelijke wijk",
+"{0} visites à deux pas":"{0} bezoeken op loopafstand"});

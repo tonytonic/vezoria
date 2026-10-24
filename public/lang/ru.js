@@ -5143,4 +5143,6 @@ I18N.load({
 "Remettre en grand les {0} photos en petite taille":"Вернуть в большом размере {0} маленьких фото",
 "Hôtels autour":"Отели рядом",
 "hôtels":"отели",
-"près de":"рядом с"});
+"près de":"рядом с",
+"Autre quartier possible":"Другой возможный район",
+"{0} visites à deux pas":"{0} мест в двух шагах"});

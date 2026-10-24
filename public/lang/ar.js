@@ -5143,4 +5143,6 @@ I18N.load({
 "Remettre en grand les {0} photos en petite taille":"إعادة الصور الصغيرة ({0}) إلى الحجم الكبير",
 "Hôtels autour":"فنادق قريبة",
 "hôtels":"فنادق",
-"près de":"قرب"});
+"près de":"قرب",
+"Autre quartier possible":"حي آخر ممكن",
+"{0} visites à deux pas":"{0} زيارات على بُعد خطوات"});

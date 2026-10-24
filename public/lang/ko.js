@@ -5142,4 +5142,6 @@ I18N.load({
 "Remettre en grand les {0} photos en petite taille":"작은 사진 {0}장을 큰 크기로 되돌리기",
 "Hôtels autour":"근처 호텔",
 "hôtels":"호텔",
-"près de":"근처:"});
+"près de":"근처:",
+"Autre quartier possible":"다른 추천 동네",
+"{0} visites à deux pas":"걸어서 갈 수 있는 방문지 {0}곳"});

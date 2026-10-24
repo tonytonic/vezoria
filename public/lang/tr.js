@@ -5130,4 +5130,6 @@ I18N.load({
 "Remettre en grand les {0} photos en petite taille":"{0} küçük fotoğrafı yeniden büyüt",
 "Hôtels autour":"Yakındaki oteller",
 "hôtels":"oteller",
-"près de":"yakınında"});
+"près de":"yakınında",
+"Autre quartier possible":"Başka olası semt",
+"{0} visites à deux pas":"{0} ziyaret birkaç adım ötede"});
