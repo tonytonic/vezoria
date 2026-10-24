@@ -5145,4 +5145,8 @@ I18N.load({
 "hôtels":"отели",
 "près de":"рядом с",
 "Autre quartier possible":"Другой возможный район",
-"{0} visites à deux pas":"{0} мест в двух шагах"});
+"{0} visites à deux pas":"{0} мест в двух шагах",
+"Tes abonnés sont retrouvés : {0} voyage(s).":"Подписчики найдены: поездок — {0}.",
+"Introuvables, par voyage":"Не найдено, по поездкам",
+"voyage supprimé":"поездка удалена",
+"voyage retiré de ce téléphone":"поездка убрана с этого телефона"});

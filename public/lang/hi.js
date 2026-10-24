@@ -5144,4 +5144,8 @@ I18N.load({
 "hôtels":"होटल",
 "près de":"के पास",
 "Autre quartier possible":"दूसरा संभव इलाका",
-"{0} visites à deux pas":"{0} जगहें पास में"});
+"{0} visites à deux pas":"{0} जगहें पास में",
+"Tes abonnés sont retrouvés : {0} voyage(s).":"तुम्हारे फ़ॉलोअर वापस मिल गए: {0} यात्रा।",
+"Introuvables, par voyage":"नहीं मिलीं, यात्रा के हिसाब से",
+"voyage supprimé":"हटाई गई यात्रा",
+"voyage retiré de ce téléphone":"यात्रा इस फ़ोन से हटाई गई"});

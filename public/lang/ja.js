@@ -5144,4 +5144,8 @@ I18N.load({
 "hôtels":"ホテル",
 "près de":"近く：",
 "Autre quartier possible":"ほかの候補エリア",
-"{0} visites à deux pas":"徒歩圏内に {0} か所"});
+"{0} visites à deux pas":"徒歩圏内に {0} か所",
+"Tes abonnés sont retrouvés : {0} voyage(s).":"フォロワーが戻りました：旅行 {0} 件。",
+"Introuvables, par voyage":"見つからない写真（旅行別）",
+"voyage supprimé":"削除された旅行",
+"voyage retiré de ce téléphone":"このスマホから外した旅行"});

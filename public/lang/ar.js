@@ -5145,4 +5145,8 @@ I18N.load({
 "hôtels":"فنادق",
 "près de":"قرب",
 "Autre quartier possible":"حي آخر ممكن",
-"{0} visites à deux pas":"{0} زيارات على بُعد خطوات"});
+"{0} visites à deux pas":"{0} زيارات على بُعد خطوات",
+"Tes abonnés sont retrouvés : {0} voyage(s).":"عاد متابعوك: {0} رحلة.",
+"Introuvables, par voyage":"غير موجودة، حسب الرحلة",
+"voyage supprimé":"رحلة محذوفة",
+"voyage retiré de ce téléphone":"رحلة أزيلت من هذا الهاتف"});

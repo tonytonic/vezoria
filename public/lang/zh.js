@@ -5144,4 +5144,8 @@ I18N.load({
 "hôtels":"酒店",
 "près de":"靠近",
 "Autre quartier possible":"另一个可选街区",
-"{0} visites à deux pas":"{0} 个景点就在附近"});
+"{0} visites à deux pas":"{0} 个景点就在附近",
+"Tes abonnés sont retrouvés : {0} voyage(s).":"已找回你的关注者：{0} 次旅行。",
+"Introuvables, par voyage":"找不到的照片（按旅行）",
+"voyage supprimé":"已删除的旅行",
+"voyage retiré de ce téléphone":"已从此手机移除的旅行"});

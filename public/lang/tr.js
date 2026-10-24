@@ -5132,4 +5132,8 @@ I18N.load({
 "hôtels":"oteller",
 "près de":"yakınında",
 "Autre quartier possible":"Başka olası semt",
-"{0} visites à deux pas":"{0} ziyaret birkaç adım ötede"});
+"{0} visites à deux pas":"{0} ziyaret birkaç adım ötede",
+"Tes abonnés sont retrouvés : {0} voyage(s).":"Takipçilerin geri geldi: {0} seyahat.",
+"Introuvables, par voyage":"Bulunamayanlar, seyahate göre",
+"voyage supprimé":"silinmiş seyahat",
+"voyage retiré de ce téléphone":"seyahat bu telefondan kaldırıldı"});

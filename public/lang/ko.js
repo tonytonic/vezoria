@@ -5144,4 +5144,8 @@ I18N.load({
 "hôtels":"호텔",
 "près de":"근처:",
 "Autre quartier possible":"다른 추천 동네",
-"{0} visites à deux pas":"걸어서 갈 수 있는 방문지 {0}곳"});
+"{0} visites à deux pas":"걸어서 갈 수 있는 방문지 {0}곳",
+"Tes abonnés sont retrouvés : {0} voyage(s).":"팔로워를 되찾았어요: 여행 {0}개.",
+"Introuvables, par voyage":"찾지 못한 사진 (여행별)",
+"voyage supprimé":"삭제된 여행",
+"voyage retiré de ce téléphone":"이 휴대폰에서 뺀 여행"});

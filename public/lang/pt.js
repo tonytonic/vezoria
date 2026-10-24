@@ -2209,4 +2209,8 @@ I18N.load({
 "hôtels":"hotéis",
 "près de":"perto de",
 "Autre quartier possible":"Outro bairro possível",
-"{0} visites à deux pas":"{0} visitas a dois passos"});
+"{0} visites à deux pas":"{0} visitas a dois passos",
+"Tes abonnés sont retrouvés : {0} voyage(s).":"Os teus seguidores voltaram: {0} viagem(ns).",
+"Introuvables, par voyage":"Não encontradas, por viagem",
+"voyage supprimé":"viagem apagada",
+"voyage retiré de ce téléphone":"viagem retirada deste telefone"});

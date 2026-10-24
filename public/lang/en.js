@@ -2190,4 +2190,8 @@ I18N.load({
 "hôtels":"hotels",
 "près de":"near",
 "Autre quartier possible":"Another possible area",
-"{0} visites à deux pas":"{0} visits a short walk away"});
+"{0} visites à deux pas":"{0} visits a short walk away",
+"Tes abonnés sont retrouvés : {0} voyage(s).":"Your followers are back: {0} trip(s).",
+"Introuvables, par voyage":"Not found, by trip",
+"voyage supprimé":"deleted trip",
+"voyage retiré de ce téléphone":"trip removed from this phone"});

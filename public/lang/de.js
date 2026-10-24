@@ -2200,4 +2200,8 @@ I18N.load({
 "hôtels":"Hotels",
 "près de":"nahe",
 "Autre quartier possible":"Anderes mögliches Viertel",
-"{0} visites à deux pas":"{0} Besuche ganz in der Nähe"});
+"{0} visites à deux pas":"{0} Besuche ganz in der Nähe",
+"Tes abonnés sont retrouvés : {0} voyage(s).":"Deine Follower sind wieder da: {0} Reise(n).",
+"Introuvables, par voyage":"Nicht gefunden, nach Reise",
+"voyage supprimé":"gelöschte Reise",
+"voyage retiré de ce téléphone":"Reise von diesem Handy entfernt"});

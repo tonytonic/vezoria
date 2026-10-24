@@ -2196,4 +2196,8 @@ I18N.load({
 "hôtels":"hotels",
 "près de":"bij",
 "Autre quartier possible":"Andere mogelijke wijk",
-"{0} visites à deux pas":"{0} bezoeken op loopafstand"});
+"{0} visites à deux pas":"{0} bezoeken op loopafstand",
+"Tes abonnés sont retrouvés : {0} voyage(s).":"Je volgers zijn terug: {0} reis/reizen.",
+"Introuvables, par voyage":"Niet gevonden, per reis",
+"voyage supprimé":"verwijderde reis",
+"voyage retiré de ce téléphone":"reis van deze telefoon gehaald"});
