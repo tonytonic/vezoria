@@ -5175,4 +5175,6 @@ I18N.load({
 "Cacher":"숨기기",
 "Cacher « {0} » à quelqu’un":"‘{0}’을(를) 누군가에게 숨기기",
 "Fermé : {0}":"휴무: {0}",
-"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"아직 팔로우하지 않았더라도 이름을 적어 두세요. 이 이름으로 팔로우하면 이 여행은 절대 보이지 않아요. 이미 팔로우 중이면 앱에서 사라져요."});
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"아직 팔로우하지 않았더라도 이름을 적어 두세요. 이 이름으로 팔로우하면 이 여행은 절대 보이지 않아요. 이미 팔로우 중이면 앱에서 사라져요.",
+"Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"예전 팔로워 링크를 찾았어요: 댓글 {0}개를 되찾았어요.",
+"{0} abonné(s) doivent recevoir ton lien actuel.":"팔로워 {0}명에게 현재 링크를 보내야 해요."});

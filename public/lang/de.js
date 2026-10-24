@@ -2231,4 +2231,6 @@ I18N.load({
 "Cacher":"Verbergen",
 "Cacher « {0} » à quelqu’un":"„{0}“ vor jemandem verbergen",
 "Fermé : {0}":"Geschlossen: {0}",
-"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Gib den Vornamen der Person ein, auch wenn sie dir noch nicht folgt: Folgt sie unter diesem Namen, wird ihr diese Reise nie gezeigt. Folgt sie schon, verschwindet die Reise aus ihrer App."});
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Gib den Vornamen der Person ein, auch wenn sie dir noch nicht folgt: Folgt sie unter diesem Namen, wird ihr diese Reise nie gezeigt. Folgt sie schon, verschwindet die Reise aus ihrer App.",
+"Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"Alter Follower-Link gefunden: {0} Kommentar(e) wiederhergestellt.",
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} Follower müssen deinen aktuellen Link erhalten."});

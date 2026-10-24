@@ -5175,4 +5175,6 @@ I18N.load({
 "Cacher":"隠す",
 "Cacher « {0} » à quelqu’un":"「{0}」を特定の人に隠す",
 "Fermé : {0}":"休み：{0}",
-"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"まだフォローしていなくても、相手の名前を入力してください。この名前でフォローすると、この旅行は表示されません。すでにフォロー中なら、相手のアプリから消えます。"});
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"まだフォローしていなくても、相手の名前を入力してください。この名前でフォローすると、この旅行は表示されません。すでにフォロー中なら、相手のアプリから消えます。",
+"Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"古いフォロワー用リンクが見つかりました：コメント{0}件を復元しました。",
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0}人のフォロワーに現在のリンクを送る必要があります。"});

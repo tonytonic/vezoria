@@ -5163,4 +5163,6 @@ I18N.load({
 "Cacher":"Gizle",
 "Cacher « {0} » à quelqu’un":"“{0}” seyahatini birinden gizle",
 "Fermé : {0}":"Kapalı: {0}",
-"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Kişinin adını yaz, henüz takip etmese bile: bu adla takip ederse bu seyahati hiç görmez. Zaten takip ediyorsa uygulamasından kaybolur."});
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Kişinin adını yaz, henüz takip etmese bile: bu adla takip ederse bu seyahati hiç görmez. Zaten takip ediyorsa uygulamasından kaybolur.",
+"Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"Eski takipçi bağlantısı bulundu: {0} yorum kurtarıldı.",
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} takipçinin güncel bağlantını alması gerekiyor."});

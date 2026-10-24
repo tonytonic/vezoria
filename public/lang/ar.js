@@ -5176,4 +5176,6 @@ I18N.load({
 "Cacher":"إخفاء",
 "Cacher « {0} » à quelqu’un":"إخفاء «{0}» عن شخص",
 "Fermé : {0}":"مغلق: {0}",
-"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"اكتب اسم الشخص حتى لو لم يتابعك بعد: إذا تابعك بهذا الاسم فلن تظهر له هذه الرحلة أبدًا. إن كان يتابعك بالفعل فستختفي من تطبيقه."});
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"اكتب اسم الشخص حتى لو لم يتابعك بعد: إذا تابعك بهذا الاسم فلن تظهر له هذه الرحلة أبدًا. إن كان يتابعك بالفعل فستختفي من تطبيقه.",
+"Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"تم العثور على رابط متابعين قديم: استُرجع {0} تعليق.",
+"{0} abonné(s) doivent recevoir ton lien actuel.":"يجب أن يتلقى {0} متابع رابطك الحالي."});

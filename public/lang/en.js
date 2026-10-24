@@ -2221,4 +2221,6 @@ I18N.load({
 "Cacher":"Hide",
 "Cacher « {0} » à quelqu’un":"Hide “{0}” from someone",
 "Fermé : {0}":"Closed: {0}",
-"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Type the person’s first name, even if they haven’t followed yet: if they follow under this name, this trip is never shown to them. Already following: it disappears from their app."});
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Type the person’s first name, even if they haven’t followed yet: if they follow under this name, this trip is never shown to them. Already following: it disappears from their app.",
+"Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"Old follower link found: {0} comment(s) recovered.",
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} follower(s) need to receive your current link."});

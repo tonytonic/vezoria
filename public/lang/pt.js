@@ -2240,4 +2240,6 @@ I18N.load({
 "Cacher":"Esconder",
 "Cacher « {0} » à quelqu’un":"Esconder «{0}» de alguém",
 "Fermé : {0}":"Fechado: {0}",
-"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Escreve o nome da pessoa, mesmo que ainda não te siga: se seguir com esse nome, nunca verá esta viagem. Se já segue, desaparece da app dela."});
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Escreve o nome da pessoa, mesmo que ainda não te siga: se seguir com esse nome, nunca verá esta viagem. Se já segue, desaparece da app dela.",
+"Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"Link antigo de seguidores encontrado: {0} comentário(s) recuperado(s).",
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} seguidor(es) precisam receber seu link atual."});

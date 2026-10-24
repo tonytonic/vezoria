@@ -5175,4 +5175,6 @@ I18N.load({
 "Cacher":"隐藏",
 "Cacher « {0} » à quelqu’un":"对某人隐藏“{0}”",
 "Fermé : {0}":"闭馆：{0}",
-"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"输入对方的名字，即使对方还没关注：如果对方用这个名字关注，就永远看不到这次旅行；已经关注的话，它会从对方的应用中消失。"});
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"输入对方的名字，即使对方还没关注：如果对方用这个名字关注，就永远看不到这次旅行；已经关注的话，它会从对方的应用中消失。",
+"Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"找到旧的关注者链接：已找回 {0} 条评论。",
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} 位关注者需要收到你当前的链接。"});

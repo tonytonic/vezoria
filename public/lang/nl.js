@@ -2227,4 +2227,6 @@ I18N.load({
 "Cacher":"Verbergen",
 "Cacher « {0} » à quelqu’un":"‘{0}’ verbergen voor iemand",
 "Fermé : {0}":"Gesloten: {0}",
-"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Typ de voornaam van de persoon, ook als die je nog niet volgt: volgt die onder deze naam, dan krijgt die deze reis nooit te zien. Volgt die al, dan verdwijnt de reis uit de app."});
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Typ de voornaam van de persoon, ook als die je nog niet volgt: volgt die onder deze naam, dan krijgt die deze reis nooit te zien. Volgt die al, dan verdwijnt de reis uit de app.",
+"Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"Oude volgerslink gevonden: {0} reactie(s) teruggehaald.",
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} volger(s) moeten je huidige link krijgen."});

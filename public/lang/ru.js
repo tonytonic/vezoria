@@ -5176,4 +5176,6 @@ I18N.load({
 "Cacher":"Скрыть",
 "Cacher « {0} » à quelqu’un":"Скрыть «{0}» от кого-то",
 "Fermé : {0}":"Закрыто: {0}",
-"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Напиши имя человека, даже если он ещё не подписан: если он подпишется под этим именем, эта поездка ему не покажется. Уже подписан — она исчезнет из его приложения."});
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Напиши имя человека, даже если он ещё не подписан: если он подпишется под этим именем, эта поездка ему не покажется. Уже подписан — она исчезнет из его приложения.",
+"Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"Найдена старая ссылка для подписчиков: восстановлено комментариев: {0}.",
+"{0} abonné(s) doivent recevoir ton lien actuel.":"Подписчикам ({0}) нужно отправить твою текущую ссылку."});

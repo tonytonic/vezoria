@@ -2236,4 +2236,6 @@ I18N.load({
 "Cacher":"Nascondi",
 "Cacher « {0} » à quelqu’un":"Nascondi «{0}» a qualcuno",
 "Fermé : {0}":"Chiuso: {0}",
-"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Scrivi il nome della persona, anche se non ti segue ancora: se si iscrive con questo nome, non vedrà mai questo viaggio. Se ti segue già, sparisce dalla sua app."});
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Scrivi il nome della persona, anche se non ti segue ancora: se si iscrive con questo nome, non vedrà mai questo viaggio. Se ti segue già, sparisce dalla sua app.",
+"Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"Vecchio link follower trovato: {0} commento/i recuperato/i.",
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} follower devono ricevere il tuo link attuale."});
