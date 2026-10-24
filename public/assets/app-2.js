@@ -126,7 +126,12 @@
       ? `<button class="v-btn sec" onclick="CV.demoReset()">↺ Relancer le voyage de démo (remis à neuf)</button>
          <button class="v-btn sec" onclick="CV.demoDel()">🗑 Supprimer le voyage de démo</button>`
       : `<button class="v-btn sec" onclick="CV.demoLoad()">👀 Voir les voyages de démo (préparation, en cours, souvenirs)</button>`) : '';
-  function go(id){ M.trip = id; M.who = 'all';
+  function go(id){ const was = M.trip; M.trip = id; M.who = 'all';
+    // autre voyage : on arrive sur son 1er onglet selon sa période (en cours → « En cours », fini → « Bilan », à venir → « Programme »),
+    // pas sur l'onglet laissé ouvert dans le voyage précédent (Plus, Réglages…)
+    if(was !== id){ const t = R[id], ph = t && t.type === 'trip' ? tripPhase(t) : 'prep';
+      M.mode = ph === 'live' && !hidden('mode:live') ? 'live' : ph === 'past' && !hidden('mode:bilan') ? 'bilan' : 'prep';
+      M.tab = 'prog'; }
     persist(); applyMode(); window.scrollTo({top:0}); }
   function tab(id){
     M.tab = id; persist(); buildTabs(); render();
