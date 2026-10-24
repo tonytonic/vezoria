@@ -5154,4 +5154,5 @@ I18N.load({
 "Voici le lien de ton voyage":"네 여행 링크야",
 "Lien copié":"링크를 복사했어요",
 "Lien de ce voyage":"이 여행 링크",
-"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"이 링크가 더 이상 맞지 않을 수 있어요(새 링크로 다시 공개됨). 팔로워에게 현재 링크를 보내 달라고 하세요: 게시물의 ⋯ → ‘링크 다시 보내기’."});
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"이 링크가 더 이상 맞지 않을 수 있어요(새 링크로 다시 공개됨). 팔로워에게 현재 링크를 보내 달라고 하세요: 게시물의 ⋯ → ‘링크 다시 보내기’.",
+"Choisir plusieurs voyages d’un coup":"여러 여행을 한 번에 고르기"});

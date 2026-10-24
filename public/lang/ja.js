@@ -5154,4 +5154,5 @@ I18N.load({
 "Voici le lien de ton voyage":"あなたの旅行のリンクです",
 "Lien copié":"リンクをコピーしました",
 "Lien de ce voyage":"この旅行のリンク",
-"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"このリンクは古いかもしれません（新しいリンクで再公開）。フォロワーに今のリンクを送ってもらってください：投稿の ⋯ →「リンクを送り返す」。"});
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"このリンクは古いかもしれません（新しいリンクで再公開）。フォロワーに今のリンクを送ってもらってください：投稿の ⋯ →「リンクを送り返す」。",
+"Choisir plusieurs voyages d’un coup":"複数の旅行をまとめて選ぶ"});

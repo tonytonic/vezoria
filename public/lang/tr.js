@@ -5142,4 +5142,5 @@ I18N.load({
 "Voici le lien de ton voyage":"İşte seyahatinin bağlantısı",
 "Lien copié":"Bağlantı kopyalandı",
 "Lien de ce voyage":"Bu seyahatin bağlantısı",
-"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Bu bağlantı artık geçerli olmayabilir (seyahat yeni bir bağlantıyla yeniden yayınlandı). Bir takipçiden güncel bağlantıyı istemen yeterli: bir gönderide ⋯ → “Bağlantıyı geri gönder”."});
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Bu bağlantı artık geçerli olmayabilir (seyahat yeni bir bağlantıyla yeniden yayınlandı). Bir takipçiden güncel bağlantıyı istemen yeterli: bir gönderide ⋯ → “Bağlantıyı geri gönder”.",
+"Choisir plusieurs voyages d’un coup":"Birden fazla seyahati bir kerede seç"});

@@ -2206,4 +2206,5 @@ I18N.load({
 "Voici le lien de ton voyage":"Hier is de link van je reis",
 "Lien copié":"Link gekopieerd",
 "Lien de ce voyage":"Link van deze reis",
-"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Deze link is misschien verouderd (reis opnieuw gepubliceerd met een nieuwe link). Vraag een volger je de huidige link te sturen: ⋯ bij een bericht → ‘Link terugsturen’."});
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Deze link is misschien verouderd (reis opnieuw gepubliceerd met een nieuwe link). Vraag een volger je de huidige link te sturen: ⋯ bij een bericht → ‘Link terugsturen’.",
+"Choisir plusieurs voyages d’un coup":"Meerdere reizen tegelijk kiezen"});

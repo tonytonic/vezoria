@@ -5155,4 +5155,5 @@ I18N.load({
 "Voici le lien de ton voyage":"Вот ссылка на твою поездку",
 "Lien copié":"Ссылка скопирована",
 "Lien de ce voyage":"Ссылка на поездку",
-"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Возможно, ссылка устарела (поездка опубликована по новой ссылке). Попроси подписчика прислать актуальную: ⋯ у публикации → «Отправить ссылку»."});
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Возможно, ссылка устарела (поездка опубликована по новой ссылке). Попроси подписчика прислать актуальную: ⋯ у публикации → «Отправить ссылку».",
+"Choisir plusieurs voyages d’un coup":"Выбрать несколько поездок сразу"});

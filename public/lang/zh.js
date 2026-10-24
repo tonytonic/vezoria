@@ -5154,4 +5154,5 @@ I18N.load({
 "Voici le lien de ton voyage":"这是你旅行的链接",
 "Lien copié":"链接已复制",
 "Lien de ce voyage":"这次旅行的链接",
-"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"这个链接可能已失效（旅行用新链接重新发布）。请关注者把当前链接发给你：在某条动态点 ⋯ →“发回链接”。"});
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"这个链接可能已失效（旅行用新链接重新发布）。请关注者把当前链接发给你：在某条动态点 ⋯ →“发回链接”。",
+"Choisir plusieurs voyages d’un coup":"一次选择多个旅行"});

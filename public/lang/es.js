@@ -2216,4 +2216,5 @@ I18N.load({
 "Voici le lien de ton voyage":"Aquí está el enlace de tu viaje",
 "Lien copié":"Enlace copiado",
 "Lien de ce voyage":"Enlace de este viaje",
-"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Puede que este enlace ya no sea el bueno (viaje publicado de nuevo con otro enlace). Pide a un seguidor que te reenvíe el enlace actual: ⋯ en una publicación → «Reenviar el enlace»."});
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Puede que este enlace ya no sea el bueno (viaje publicado de nuevo con otro enlace). Pide a un seguidor que te reenvíe el enlace actual: ⋯ en una publicación → «Reenviar el enlace».",
+"Choisir plusieurs voyages d’un coup":"Elegir varios viajes a la vez"});

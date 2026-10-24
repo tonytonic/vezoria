@@ -5155,4 +5155,5 @@ I18N.load({
 "Voici le lien de ton voyage":"إليك رابط رحلتك",
 "Lien copié":"تم نسخ الرابط",
 "Lien de ce voyage":"رابط هذه الرحلة",
-"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"ربما لم يعد هذا الرابط صحيحًا (أعيد نشر الرحلة برابط جديد). اطلب من أحد المتابعين أن يرسل لك الرابط الحالي: ⋯ على منشور ← «إعادة إرسال الرابط»."});
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"ربما لم يعد هذا الرابط صحيحًا (أعيد نشر الرحلة برابط جديد). اطلب من أحد المتابعين أن يرسل لك الرابط الحالي: ⋯ على منشور ← «إعادة إرسال الرابط».",
+"Choisir plusieurs voyages d’un coup":"اختر عدة رحلات دفعة واحدة"});

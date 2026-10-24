@@ -2200,4 +2200,5 @@ I18N.load({
 "Voici le lien de ton voyage":"Here is your trip’s link",
 "Lien copié":"Link copied",
 "Lien de ce voyage":"Link to this trip",
-"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"This link may be outdated (trip republished on a new link). Ask a follower to send you the current link: ⋯ on a post → “Send the link back”."});
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"This link may be outdated (trip republished on a new link). Ask a follower to send you the current link: ⋯ on a post → “Send the link back”.",
+"Choisir plusieurs voyages d’un coup":"Choose several trips at once"});

@@ -5154,4 +5154,5 @@ I18N.load({
 "Voici le lien de ton voyage":"यह रहा तुम्हारी यात्रा का लिंक",
 "Lien copié":"लिंक कॉपी हो गया",
 "Lien de ce voyage":"इस यात्रा का लिंक",
-"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"शायद यह लिंक अब सही नहीं है (यात्रा नए लिंक पर फिर से प्रकाशित हुई)। किसी फ़ॉलोअर से मौजूदा लिंक भेजने को कहो: किसी पोस्ट पर ⋯ → “लिंक वापस भेजो”।"});
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"शायद यह लिंक अब सही नहीं है (यात्रा नए लिंक पर फिर से प्रकाशित हुई)। किसी फ़ॉलोअर से मौजूदा लिंक भेजने को कहो: किसी पोस्ट पर ⋯ → “लिंक वापस भेजो”।",
+"Choisir plusieurs voyages d’un coup":"एक साथ कई यात्राएँ चुनो"});
