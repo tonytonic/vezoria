@@ -6,7 +6,7 @@
  * Sans STATS_KEY configurée, la page est désactivée (404). Aucune donnée d'utilisateur n'est
  * renvoyée : seulement des tailles et des nombres (les carnets sont chiffrés de toute façon).
  */
-const R2_MAX = env => (Number(env.R2_MAX_GB) || 1000) * 1_000_000_000;   // même garde-fou que /api/photo : arrêt à 1 000 Go (≈ 15 €/mois)
+const R2_MAX = env => (Number(env.R2_MAX_GB) || 10) * 1_000_000_000;   // même garde-fou que /api/photo : 10 Go par défaut (part gratuite)
 const FREE_R2 = 10_000_000_000;
 const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
@@ -41,7 +41,13 @@ export async function onRequestGet({ request, env }) {
   try { const r = await env.DB.prepare("SELECT v FROM photo_stats WHERE k = 'total'").first(); d1Photos = r ? r.v : 0; } catch (e) {}
   try { const { results } = await env.DB.prepare("SELECT v FROM photo_stats WHERE k LIKE 's:%' ORDER BY v DESC LIMIT 5").all(); big = (results || []).map(x => ({ mb: Math.round(x.v / 1e6) })); } catch (e) {}
   try { const r = await env.DB.prepare('SELECT COUNT(*) AS n, COUNT(DISTINCT space) AS s FROM records').first(); records = r ? r.n : 0; spaces = r ? r.s : 0; } catch (e) {}
+  // 🧮 forfait du mois (compté par functions/api/_middleware.js)
+  const usage = { m: new Date().toISOString().slice(0, 7) };
+  try { const { results } = await env.DB.prepare('SELECT k, n FROM usage_m WHERE m = ?1').bind(usage.m).all(); (results || []).forEach(r => { usage[r.k] = r.n; }); } catch (e) {}
+  usage.reqMax = Number(env.MAX_REQ_M) || 10_000_000; usage.r2aMax = Number(env.MAX_R2A_M) || 1_000_000; usage.r2bMax = Number(env.MAX_R2B_M) || 10_000_000;
+  usage.reqPct = Math.round((usage.req || 0) / usage.reqMax * 1000) / 10;
   return json({
+    usage,
     r2: { used, max: R2_MAX(env), pct: Math.round(used / R2_MAX(env) * 1000) / 10, usedGb: Math.round(used / 1e7) / 100 },
     freeR2: FREE_R2, records, spaces, bigSpaces: big, d1PhotosMb: Math.round(d1Photos / 1e6), at: new Date().toISOString(),
   });

@@ -6,6 +6,7 @@
  *   {action:'suspend', token|space, note} → SUSPENDRE (réversible) : plus de lecture ni d'écriture, rien n'est effacé
  *   {action:'restore', token|space, note} → rétablir un carnet suspendu (signalement infondé)
  *   {action:'delete',  token|space, note} → effacer définitivement fiches + photos (le carnet reste bloqué)
+ *   {action:'usage'}                       → forfait du mois : appels, opérations photos, plafonds
  *   {action:'list'}                        → carnets suspendus/effacés + journal des 100 dernières actions
  *   {action:'geo', mode}                   → recherche d'adresses : 'on' (Nominatim + Photon), 'photon' (Photon seul), 'off' (coupée)
  *                                            sans « mode » : renvoie le mode actuel et la taille du cache
@@ -91,6 +92,11 @@ export async function onRequestPost({ request, env }) {
   await tables(env.DB);
   let b = {}; try { b = await request.json(); } catch (e) { return json({ error: 'requête illisible' }, 400); }
   const a = b.action;
+  if (a === 'usage') {   // 🧮 forfait du mois : appels /api, opérations photos (R2), comptés par _middleware.js
+    const m = new Date().toISOString().slice(0, 7), u = { m };
+    try { const { results } = await env.DB.prepare('SELECT k, n FROM usage_m WHERE m = ?1').bind(m).all(); (results || []).forEach(r => { u[r.k] = r.n; }); } catch (e) {}
+    return json({ ...u, reqMax: Number(env.MAX_REQ_M) || 10_000_000, r2aMax: Number(env.MAX_R2A_M) || 1_000_000, r2bMax: Number(env.MAX_R2B_M) || 10_000_000, r2MaxGb: Number(env.R2_MAX_GB) || 10 });
+  }
   if (a === 'list') {
     const bl = await env.DB.prepare('SELECT space, status, at, note FROM blocked ORDER BY at DESC LIMIT 200').all();
     const lg = await env.DB.prepare('SELECT at, action, space, note FROM admin_log ORDER BY at DESC LIMIT 100').all();
