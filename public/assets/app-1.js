@@ -520,12 +520,23 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
             if(own){ un[r.id] = 2; if(TS()[r.id] === sp.code) delete TS()[r.id]; M._mateSkip = (M._mateSkip || 0) + 1; return; }
             if(un[r.id] === 2) delete un[r.id]; }
           if(r && (r.type==='trip' || r.type==='feedtrip') && !(M.hide && M.hide[r.id]) && (force || !TS()[r.id]) && !(r.type==='feedtrip' && (M.unfol||{})[r.id] && !force)){ if(r.type==='trip' && !TS()[r.id]) tombClear(r.id); TS()[r.id] = sp.code; }
-          if(r && (r.type==='feedgrant' || r.type==='packtrip') && r.trip && !TS()[r.trip]) TS()[r.trip] = sp.code; });
+          if(r && (r.type==='feedgrant' || r.type==='packtrip') && r.trip && !TS()[r.trip] && (M.unfol || {})[r.trip] !== 2) TS()[r.trip] = sp.code; });
         changed += mergeRemote(j.records); sp.since = j.now;
       }
       sp.last = Date.now(); sp.err = '';
+      mateFeedTidy();
     } catch(e){ sp.err = e.message || String(e); }
     return changed;
+  }
+  // 👀 voyages suivis en abonné que je fais AUSSI en compagnon : retirés de « Je suis » (je les ai déjà en entier), et je ne compte plus
+  // comme abonné de ce voyage chez l'auteur. Quel que soit le chemin par lequel ils sont arrivés (lien, autorisation, ancienne version…).
+  function mateFeedTidy(){
+    let n = 0; const un = M.unfol || (M.unfol = {}), me = devId();
+    Object.keys(TS()).filter(k=>/^ft:/.test(k)).forEach(k=>{ const tid = k.slice(3), t = R[tid], ft = R[k];
+      if(!(t && t.type === 'trip' && !t.deleted && !t.demo) || FT()[tid] || (ft && typeof ownFt === 'function' && ownFt(ft))) return;
+      delete TS()[k]; un[k] = 2; n++;
+      const fw = R['fw:' + k + ':' + me]; if(fw && !fw.deleted) putQuiet([Object.assign(clone(fw), {deleted:true})]); });
+    if(n) persist(); return n;
   }
   /* Synchro automatique : une fois par heure (+ à l'ouverture, + juste après chaque modification). Pour plus vite : bouton « Synchroniser maintenant ». */
   const liveShared = () => { try { return trips().some(t=>tripPhase(t)==='live' && !t.demo && (TS()[t.id] || (M.sync && M.sync.on))) || list('feedtrip', f=>TS()[f.id] && tripPhase(f)==='live').length > 0; } catch(e){ return false; } };
