@@ -1471,19 +1471,41 @@ ${pm.join('\n')}</Document></kml>`;
       const hh = list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.lat != null && normQ(stayCity(i)) === normQ(st.city))[0];
       const g = hh || R['geo:' + normQ(st.city)], geo = mine.filter(x=>x.lat != null), rest = mine.filter(x=>x.lat == null);
       let cur = g && g.lat != null ? {lat:+g.lat, lng:+g.lng} : geo.length ? {lat:geo.reduce((a, x)=>a + +x.lat, 0) / geo.length, lng:geo.reduce((a, x)=>a + +x.lng, 0) / geo.length} : null;
-      const chain = [], pool = geo.slice();
-      while(pool.length){ let bi = 0, bd = 1e9; pool.forEach((x, i)=>{ const dd = km(cur, x); if(dd < bd){ bd = dd; bi = i; } }); cur = pool[bi]; chain.push(pool.splice(bi, 1)[0]); }
-      const exc = [...chain, ...rest].filter(x=>rgW(x) >= 4), seq = [...chain, ...rest].filter(x=>rgW(x) < 4);
+      const exc = mine.filter(x=>rgW(x) >= 4), pts = geo.filter(x=>rgW(x) < 4), nop = rest.filter(x=>rgW(x) < 4);
       // excursion à la journée : un jour entier libre, plutôt au milieu de l'étape
       exc.forEach(x=>{ const mid = days.slice().sort((a, b)=>Math.abs(days.indexOf(a) - days.length / 2) - Math.abs(days.indexOf(b) - days.length / 2));
         const d = mid.find(d=>D[d].cap >= 4 && !used[d]) || mid.find(d=>!used[d]) || mid[0]; used[d] = (used[d] || 0) + 4; out.push({x, d}); });
-      let di = 0;
-      seq.forEach(x=>{ const w = rgW(x);
-        while(di < days.length && D[days[di]].cap - used[days[di]] < w && !(D[days[di]].cap - used[days[di]] > 0 && w > 1 && D[days[di]].cap >= 4)) di++;
-        let d = days[di];
-        if(!d) d = days.slice().sort((a, b)=>(used[a] - D[a].cap) - (used[b] - D[b].cap) || D[b].cap - D[a].cap)[0];   // tout est plein : le jour le moins chargé (plutôt une vraie journée qu'un jour de trajet)
-        used[d] = (used[d] || 0) + w; out.push({x, d}); });
+      // 🧭 un quartier par jour : les visites sont regroupées par proximité (comme des grappes), une grappe = une journée,
+      // en tenant compte de la place libre de chaque jour et des visites déjà prévues ce jour-là (elles attirent les visites voisines).
+      // Les jours de trajet gardent les visites proches de l'hôtel.
+      const slots = days.filter(d=>D[d].cap - used[d] > 0), free = d => D[d].cap - used[d], C = {}, fixed = {}, got = {};
+      slots.forEach(d=>{ const A = list('place', p=>p.trip === t.id && p.date === d && !p.sugg && !p.pick && p.lat != null);
+        if(A.length){ C[d] = {lat:A.reduce((a, p)=>a + +p.lat, 0) / A.length, lng:A.reduce((a, p)=>a + +p.lng, 0) / A.length}; fixed[d] = A; }
+        else if(D[d].cap < 4 && cur){ C[d] = cur; fixed[d] = []; } });
+      // les autres jours : graines les plus éloignées les unes des autres (une par quartier)
+      slots.filter(d=>!C[d]).forEach(d=>{ let best = null, bd = -1; pts.forEach(x=>{ const ds = Object.values(C), m = ds.length ? Math.min(...ds.map(c=>km(c, x))) : (cur ? km(cur, x) : 0); if(m > bd){ bd = m; best = x; } });
+        if(best) C[d] = {lat:+best.lat, lng:+best.lng}; });
+      const act = slots.filter(d=>C[d]);
+      for(let it = 0; it < 6 && act.length; it++){
+        const rem = {}; act.forEach(d=>{ rem[d] = free(d); }); Object.keys(got).forEach(k=>delete got[k]);
+        const dist = (d, x) => km(C[d], x) + (D[d].cap < 4 ? 2 : 0);   // les vraies journées d'abord : un jour de trajet ne prend que ce qui est tout près
+        const order = pts.map(x=>{ const ds = act.map(d=>dist(d, x)).sort((a, b)=>a - b); return [x, (ds[1] == null ? 0 : ds[1]) - ds[0]]; }).sort((a, b)=>b[1] - a[1]).map(z=>z[0]);
+        order.forEach(x=>{ const w = rgW(x), ok = act.filter(d=>rem[d] >= w || (rem[d] > 0 && w > 1 && D[d].cap >= 4)).sort((a, b)=>dist(a, x) - dist(b, x)); if(!ok.length) return;
+          got[x.id] = ok[0]; rem[ok[0]] -= w; });
+        act.forEach(d=>{ if(D[d].cap < 4 && !(fixed[d] || []).length) return;   // jour de trajet : reste centré sur l'hôtel
+          const M2 = [...(fixed[d] || []), ...pts.filter(x=>got[x.id] === d)]; if(M2.length) C[d] = {lat:M2.reduce((a, p)=>a + +p.lat, 0) / M2.length, lng:M2.reduce((a, p)=>a + +p.lng, 0) / M2.length}; });
+      }
+      const least = () => days.slice().sort((a, b)=>(used[a] - D[a].cap) - (used[b] - D[b].cap) || D[b].cap - D[a].cap)[0];   // tout est plein : le jour le moins chargé (plutôt une vraie journée qu'un jour de trajet)
+      const byDay = {};
+      pts.forEach(x=>{ const d = got[x.id] || least(); used[d] = (used[d] || 0) + rgW(x); (byDay[d] = byDay[d] || []).push(x); });
+      // activités sans adresse précise : sur les jours qui ont encore le plus de place
+      nop.forEach(x=>{ const d = days.slice().sort((a, b)=>(free(b) - free(a)) || (D[b].cap - D[a].cap))[0]; used[d] = (used[d] || 0) + rgW(x); (byDay[d] = byDay[d] || []).push(x); });
+      // dans chaque journée : de proche en proche depuis l'hôtel
+      days.forEach(d=>{ const L = byDay[d]; if(!L) return; let c = cur; const pool = L.filter(x=>x.lat != null), seq = [];
+        while(pool.length){ let bi = 0, bd = 1e9; pool.forEach((x, i)=>{ const dd = c ? km(c, x) : 0; if(dd < bd){ bd = dd; bi = i; } }); c = pool[bi]; seq.push(pool.splice(bi, 1)[0]); }
+        [...seq, ...L.filter(x=>x.lat == null)].forEach(x=>out.push({x, d})); });
     });
+    out.sort((a, b)=>a.d.localeCompare(b.d));   // jour après jour (l'ordre dans la journée est gardé)
     later.forEach(x=>{ const c = Object.values(D); const d = x.date && D[x.date] ? x.date : (c[0] || {}).d; out.push({x, d, later:1}); });
     return {D, S, out};
   }
@@ -1604,26 +1626,40 @@ ${pm.join('\n')}</Document></kml>`;
     if(!(await uiConfirm(RF('Réorganiser tes {0} visites à partir de ton hôtel ? Tu valides chaque journée, rien n’est changé sans toi.', L.length)))) return;
     putQuiet(L.map(x=>Object.assign(clone(x), {pick:1}))); rgOpen();
   }
-  // 🏨 où dormir : on « triangule » les visites de chaque ville (le centre des visites, sans celles trop loin ni les excursions)
-  // et on propose le quartier qui s'y trouve, avec la carte des hôtels autour et les liens de réservation
+  // 🏨 où dormir : on « triangule » les visites. Ville par ville (grappes de visites à moins de 25 km : un voyage dans 10 pays = 10 conseils),
+  // le quartier au centre des visites, plus 1 ou 2 autres quartiers quand les visites forment plusieurs groupes dans la ville.
   const RGN = {};
+  const rgLink = (P, r) => { const G = P.map(p=>[p]); let ch = true;   // grappes : deux visites à moins de r km sont dans la même
+    while(ch){ ch = false; for(let i = 0; i < G.length && !ch; i++) for(let j = i + 1; j < G.length && !ch; j++) if(G[i].some(a=>G[j].some(b=>rawKm(a, b) <= r))){ G[i] = G[i].concat(G[j]); G.splice(j, 1); ch = true; } }
+    return G.sort((a, b)=>b.length - a.length); };
+  const rgMid = P => ({lat:P.reduce((a, p)=>a + +p.lat, 0) / P.length, lng:P.reduce((a, p)=>a + +p.lng, 0) / P.length});
+  function rgName(c, z, t){ const key = z + ':' + c.lat.toFixed(3) + ',' + c.lng.toFixed(3);
+    if(RGN[key] === undefined){ RGN[key] = ''; revName(c.lat, c.lng, z).then(x=>{ RGN[key] = x || ''; const e = document.getElementById('rg-hood'); if(e && x) e.innerHTML = rgHoods(t); }).catch(()=>{}); }
+    return RGN[key]; }
   function rgHoods(t){
-    const D = rgDays(t), n = Math.max(1, (t.voyageurs || []).length);
-    return rgStages(t).map((st, k)=>{
-      const days = new Set(Object.values(D).filter(o=>o.k === k).map(o=>o.d));
-      const P = list('place', p=>p.trip === t.id && !p.sugg && !p.pick && !p.exc && p.lat != null && p.lng != null && days.has(p.date)); if(P.length < 2) return '';
-      const c0 = {lat:mid(P.map(p=>+p.lat)), lng:mid(P.map(p=>+p.lng))}, main = P.filter(p=>rawKm(c0, p) <= 25); if(main.length < 2) return '';
-      const c = {lat:main.reduce((a, p)=>a + +p.lat, 0) / main.length, lng:main.reduce((a, p)=>a + +p.lng, 0) / main.length};
-      const avg = Math.round(main.reduce((a, p)=>a + rawKm(c, p), 0) / main.length * 10) / 10, key = c.lat.toFixed(3) + ',' + c.lng.toFixed(3);
-      if(RGN[key] === undefined){ RGN[key] = ''; revName(c.lat, c.lng, 15).then(x=>{ RGN[key] = x || ''; const e = document.getElementById('rg-hood'); if(e && x) e.innerHTML = rgHoods(t); }).catch(()=>{}); }
-      const nr = main.slice().sort((a, b)=>rawKm(c, a) - rawKm(c, b))[0];   // tant que le nom du quartier n'est pas arrivé : « près de » la visite la plus centrale
-      const nm = RGN[key] || '', city = st.city || '', where = nm && normQ(nm) !== normQ(city) ? nm + ', ' + city : city, h = st.h || {};
-      const map = `https://www.google.com/maps/search/${encodeURIComponent(MSGT('hôtels'))}/@${c.lat.toFixed(5)},${c.lng.toFixed(5)},15z`;
-      return `<div class="rg-h1"><b>📍 <span data-notr>${esc(city)}</span></b>
-        <div>🏘️ ${MSGT('Quartier conseillé pour dormir')} : <b data-notr>${esc(nm || MSGT('près de') + ' ' + nr.nom)}</b> · ${String(avg).replace('.', ',')} km ${MSGT('en moyenne de tes visites')} (${main.length})</div>
-        <div class="ex-ln"><a href="${esc(map)}" target="_blank" rel="noopener">🗺️ ${MSGT('Hôtels autour')}</a>${hidden('blk:book') ? '' : bookA('booking', {what:where, date:h.date, end:st.fin || h.dateFin, n}) + bookA('airbnb', {city:where, date:h.date, end:st.fin || h.dateFin, n})}</div></div>`;
-    }).join('');
+    const D = rgDays(t), S = rgStages(t), n = Math.max(1, (t.voyageurs || []).length), out = [];
+    const all = list('place', p=>p.trip === t.id && !p.sugg && !p.pick && !p.exc && p.lat != null && p.lng != null);
+    S.forEach((st, k)=>{
+      const days = new Set(Object.values(D).filter(o=>o.k === k).map(o=>o.d)), h = st.h || {};
+      const towns = rgLink(all.filter(p=>days.has(p.date)), 25).filter(g=>g.length >= 2);
+      towns.forEach((g, gi)=>{
+        const c = rgMid(g), avg = Math.round(g.reduce((a, p)=>a + rawKm(c, p), 0) / g.length * 10) / 10;
+        const city = towns.length === 1 && st.city ? st.city : (rgName(c, 10, t) || st.city || '');
+        const opt = [{c, n:g.length, avg, main:1}];
+        // autres quartiers possibles : le centre des visites d'une même journée (une journée = un quartier)
+        const byD = {}; g.forEach(p=>{ (byD[p.date] = byD[p.date] || []).push(p); });
+        Object.values(byD).filter(q=>q.length >= 2).sort((a, b)=>b.length - a.length).forEach(q=>{ const cq = rgMid(q); if(opt.length < 3 && opt.every(o=>rawKm(o.c, cq) > 1.2)) opt.push({c:cq, n:q.length}); });
+        const line = o => { const nr = g.slice().sort((a, b)=>rawKm(o.c, a) - rawKm(o.c, b))[0], nm = rgName(o.c, 15, t), where = nm && normQ(nm) !== normQ(city) ? nm + ', ' + city : city;
+          const map = `https://www.google.com/maps/search/${encodeURIComponent(MSGT('hôtels'))}/@${o.c.lat.toFixed(5)},${o.c.lng.toFixed(5)},15z`;
+          return `<div class="rg-o${o.main ? ' main' : ''}">🏘️ ${o.main ? MSGT('Quartier conseillé pour dormir') : MSGT('Autre quartier possible')} : <b data-notr>${esc(nm || MSGT('près de') + ' ' + nr.nom)}</b>
+            · ${o.main ? `${String(o.avg).replace('.', ',')} km ${MSGT('en moyenne de tes visites')} (${o.n})` : RF('{0} visites à deux pas', o.n)}
+            <div class="ex-ln"><a href="${esc(map)}" target="_blank" rel="noopener">🗺️ ${MSGT('Hôtels autour')}</a>${hidden('blk:book') ? '' : bookA('booking', {what:where, date:h.date, end:st.fin || h.dateFin, n}) + (o.main ? bookA('airbnb', {city:where, date:h.date, end:st.fin || h.dateFin, n}) : '')}</div></div>`; };
+        out.push(`<div class="rg-h1"><b>📍 <span data-notr>${esc(city || '…')}</span></b>${opt.map(line).join('')}</div>`);
+      });
+    });
+    return out.join('');
   }
+
   function suggDrop(id){ const p = R[id]; if(!p) return; M.suggNo = M.suggNo || {}; const nl = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!nl.includes(p.nom)) nl.push(p.nom); if(nl.length > 300) nl.shift(); p.deleted = true; putQuiet([p]); if(document.getElementById('cv-sw')) swRender(); else suggList(); refresh(); }
   function tlFill(){
     const st = items(i=>i.cat==='hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date));
