@@ -766,8 +766,11 @@
   }
   function shTab(k){
     M.shTab = k; persist(); const hub = document.querySelector('.sh-hub'); if(!hub) return;
+    // sans flash : la fenêtre garde sa hauteur (elle ne se replie pas puis se redéplie) et les onglets restent à leur place à l'écran
+    const sh = document.querySelector('#v-sheet-bg .v-sheet'), bar = hub.querySelector('.sh-tabs'), y0 = bar ? bar.getBoundingClientRect().top : 0;
+    if(sh) sh.style.minHeight = Math.max(parseFloat(sh.style.minHeight) || 0, sh.offsetHeight) + 'px';
     hub.dataset.on = k; hub.querySelectorAll('.sh-tab').forEach(x=>{ const o = x.dataset.k === k; x.classList.toggle('on', o); x.setAttribute('aria-selected', o); });
-    const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = 0;
+    if(sh && bar){ const dy = bar.getBoundingClientRect().top - y0; if(dy) sh.scrollTop += dy; }
   }
   function shareHub(){
     const t0 = trip(), t = t0 && !t0.demo ? t0 : null;
