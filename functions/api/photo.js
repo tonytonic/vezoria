@@ -46,8 +46,20 @@ async function spaceOf(request, env) {
 
 // ── Limite d'envois par connexion (protection contre les robots) ──
 // On ne garde qu'une empreinte de l'adresse IP (jamais l'adresse), par heure, effacée après 2 h.
+// Compteurs EN MÉMOIRE (aucune écriture dans D1) pour les appels fréquents et légers (afficher une photo, synchro sans changement) :
+// la base D1 gratuite n'accepte que 100 000 écritures par jour. Approximatif (un compteur par serveur Cloudflare), mais suffisant contre un robot ou une boucle.
+const MEM = new Map();
+function memRate(key, limit, cost = 1) {
+  const hour = Math.floor(Date.now() / 3600e3), r = MEM.get(key);
+  if (MEM.size > 20000) MEM.clear();
+  const n = r && r.hour === hour ? r.n : 0;
+  if (cost ? n + cost > limit : n >= limit) return false;
+  if (cost) MEM.set(key, { hour, n: n + cost });
+  return true;
+}
 let rateReady = false;
 async function rateIp(env, request, bucket, limit, cost = 1) {
+  return memRate(bucket + ':' + (request.headers.get('CF-Connecting-IP') || ''), limit, cost);   // tout en mémoire : plus aucune écriture D1 pour compter les appels   // lecture de photo : en mémoire seulement
   try {
     const ip = request.headers.get('CF-Connecting-IP') || ''; if (!ip || !env.DB) return true;
     const enc = new TextEncoder().encode('vz-ip:' + ip + ':' + bucket);
