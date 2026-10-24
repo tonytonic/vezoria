@@ -50,7 +50,7 @@ html.vz-big{font-size:18px}
   .hero .hdr-chips span{padding:3px 8px!important;font-size:.75rem!important;white-space:nowrap}
   .hero .hdr-chips span img.vi{width:14px!important;height:14px!important}
   .hero .hero-foot{margin-top:10px!important}
-  .hero .hero-foot .cv-hero-qr{display:none!important}
+  .hero .hero-foot .cv-hero-qr{padding:4px 4px 3px!important;margin-left:8px!important;margin-right:10px!important}.hero .hero-foot .cv-hero-qr svg{width:34px!important;height:34px!important}.hero .hero-foot .cv-hero-qr span{font-size:.6rem!important}   /* petit téléphone : le QR reste, en plus petit */
   .hero .hero-foot .cv-bell{margin-left:auto!important;margin-right:12px!important}
   .hero .hero-foot .cv-av-names{display:none}
   .hero .hero-foot .cv-avs{flex:0 0 auto!important;padding-right:10px;overflow:visible!important}   /* prénoms cachés : le dernier rond (qui chevauche de 8 px) n’est plus coupé */
