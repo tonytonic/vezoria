@@ -480,10 +480,11 @@
     code = String(code || '').trim().toUpperCase(); if(code.length < 8){ alert('Code trop court.'); return; }
     if(!myName() && !web){ const n = (await uiPrompt('Ton prénom (pour signer tes ❤️ et commentaires) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
     if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
-    toast('📡 Connexion…'); const sp = spaceObj(code); sp.since = 0; await syncSpace(sp, true);
+    toast('📡 Connexion…'); const sp = spaceObj(code); sp.since = 0; M._mateSkip = 0; await syncSpace(sp, true);
     if(M.unfol) Object.keys(TS()).forEach(k=>{ if(TS()[k] === code) delete M.unfol[k]; });   // je suis à nouveau ce lien : ses voyages reviennent
     if(sp.err){ alert('⚠️ ' + sp.err); return; }
     const ft = Object.entries(TS()).filter(([k,c])=>c===code && R[k] && R[k].type==='feedtrip' && !R[k].deleted).map(([k])=>R[k])[0];
+    if(!ft && M._mateSkip){ persist(); alert(MSGT('Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.')); return; }
     if(!ft){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); alert(MSGT('Aucun voyage publié avec ce code.') + '\n\n' + MSGT('Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».')); if(web) webGone(); return; }
     // 🔁 c'est MON lien (j'en suis l'auteur, ce téléphone l'avait oublié) : je reprends la main au lieu de m'abonner à moi-même
     { const n = pubAdopt(code); if(n){ persist(); closeSheet(true); toast('🔁 ' + RF('Tes abonnés sont retrouvés : {0} voyage(s).', n)); syncNow(); try { shareHub(); } catch(e){} return; } }
@@ -1139,7 +1140,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-24k'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-24l'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

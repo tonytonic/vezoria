@@ -514,6 +514,11 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id]));
         j.records.forEach(r=>{ if(r && force && r.type==='trip' && M.hide && M.hide[r.id]){ delete M.hide[r.id]; if(M.left) delete M.left[r.id]; if(M.mvSkip) delete M.mvSkip[r.id]; }   // rejoint exprès : un voyage retiré revient
+          // 👀 voyage publié que je fais AUSSI en compagnon : je l'ai déjà en entier, pas besoin de le suivre en abonné (ex. Claire suit le carnet de Tony
+          // sans revoir les voyages faits ensemble). S'il quitte un jour mes voyages, il redevient suivable.
+          if(r && r.type==='feedtrip' && !r.deleted){ const tid = String(r.id).slice(3), own = R[tid] && R[tid].type === 'trip' && !R[tid].deleted && !R[tid].demo && !FT()[tid] && !(typeof ownFt === 'function' && ownFt(r)), un = M.unfol || (M.unfol = {});
+            if(own){ un[r.id] = 2; if(TS()[r.id] === sp.code) delete TS()[r.id]; M._mateSkip = (M._mateSkip || 0) + 1; return; }
+            if(un[r.id] === 2) delete un[r.id]; }
           if(r && (r.type==='trip' || r.type==='feedtrip') && !(M.hide && M.hide[r.id]) && (force || !TS()[r.id]) && !(r.type==='feedtrip' && (M.unfol||{})[r.id] && !force)){ if(r.type==='trip' && !TS()[r.id]) tombClear(r.id); TS()[r.id] = sp.code; }
           if(r && (r.type==='feedgrant' || r.type==='packtrip') && r.trip && !TS()[r.trip]) TS()[r.trip] = sp.code; });
         changed += mergeRemote(j.records); sp.since = j.now;
