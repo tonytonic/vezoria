@@ -2657,3 +2657,8 @@ body.vz-glass .v-tiles .v-tile:first-child{background:var(--navy)!important;bord
 @media (prefers-reduced-motion:reduce){.ps-card,.rg-day{transition:none;animation:none}}
 .wl-acts{display:flex;flex-direction:column;gap:5px;flex:0 0 auto}.wl-acts .wl-play{padding:6px 11px;font-size:.8rem}
 .sw-wk[hidden]{display:none}
+.ar-subs .ar-sub{background:#fff;color:#4c1d95;border:0;box-shadow:0 6px 16px -10px rgba(0,0,0,.5)}
+.ar-subs .ar-sub small{color:#6b5b8c;opacity:1}.ar-subs .ar-sub i{background:#ede9fe;color:#6d28d9}
+.ar-subs .ar-sub.cur{outline:3px solid #a78bfa}.ar-subs .ar-sub.cur i{background:#7c3aed;color:#fff}
+.ar-subs .ar-sub.ok{background:rgba(255,255,255,.16);color:#fff;opacity:1}.ar-subs .ar-sub.ok small{color:#fff;opacity:.8}.ar-subs .ar-sub.ok i{background:#22c55e;color:#fff}
+.rg-hood .ex-ln a{display:inline-block;margin:6px 6px 0 0;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.14);color:#fff;text-decoration:none;font-size:.78rem;font-weight:700}

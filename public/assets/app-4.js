@@ -1516,12 +1516,11 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="sw-bar"><span style="width:${total ? RG.done / total * 100 : 100}%"></span></div>`;
     if(!left){
       ov.innerHTML = head + `<div class="sw-end rg-end"><div class="sw-end-i">🗓️</div><h2>${esc(MSGT('Tout est rangé !'))}</h2><p>${esc(MSGT('Chaque journée suit l’ordre du trajet, de proche en proche. Tu peux encore tout déplacer dans le programme.'))}</p>
-        <div class="rg-hood"><b>🏨 ${esc(MSGT('Où dormir ? Le quartier au centre de tes visites'))}</b><div id="rg-hood">${rgHoods(t) || '⏳'}</div>
+        <div class="rg-hood"><b>🏨 ${esc(MSGT('Où dormir ? Le quartier au centre de tes visites'))}</b><div id="rg-hood">${rgHoods(t) || esc(MSGT('Ajoute au moins 2 visites par ville pour avoir un conseil.'))}</div>
           <small>${esc(MSGT('Rien n’est figé : si tu choisis un hôtel ailleurs, mets son adresse dans l’hébergement puis « Réorganiser depuis mon hôtel ». Les journées repartiront de là.'))}</small></div>
         <button type="button" class="v-btn" onclick="CV.rgClose();CV.tab('prog')">📅 ${esc(MSGT('Voir mon programme'))}</button>
         ${RG.hist.length ? `<button type="button" class="v-btn sec" onclick="CV.rgUndo()">↩️ ${esc(MSGT('Annuler le dernier choix'))}</button>` : ''}
         <button type="button" class="v-btn sec" onclick="CV.rgClose()">${esc(MSGT('Fermer'))}</button></div>`;
-      if(typeof hoodEnsure === 'function') hoodEnsure(t).then(()=>{ const e = document.getElementById('rg-hood'); if(e) e.innerHTML = rgHoods(t) || esc(MSGT('Ajoute au moins 2 visites par ville pour avoir un conseil.')); });
       return;
     }
     const cur = P.out[0], x = cur.x, sug = cur.d, D = P.D, st = (D[sug] || {}).st, city = x.type === 'place' ? swCity(x) : (x.adresse || '');
@@ -1605,7 +1604,26 @@ ${pm.join('\n')}</Document></kml>`;
     if(!(await uiConfirm(RF('Réorganiser tes {0} visites à partir de ton hôtel ? Tu valides chaque journée, rien n’est changé sans toi.', L.length)))) return;
     putQuiet(L.map(x=>Object.assign(clone(x), {pick:1}))); rgOpen();
   }
-  function rgHoods(t){ return typeof hoodHTML === 'function' ? tlStages().map(st=>st.h && (M.hood || {})[st.h.id] ? `<div class="rg-h1"><b data-notr>📍 ${esc(st.city)}</b>${hoodHTML(st.h, t)}</div>` : '').join('') : ''; }
+  // 🏨 où dormir : on « triangule » les visites de chaque ville (le centre des visites, sans celles trop loin ni les excursions)
+  // et on propose le quartier qui s'y trouve, avec la carte des hôtels autour et les liens de réservation
+  const RGN = {};
+  function rgHoods(t){
+    const D = rgDays(t), n = Math.max(1, (t.voyageurs || []).length);
+    return rgStages(t).map((st, k)=>{
+      const days = new Set(Object.values(D).filter(o=>o.k === k).map(o=>o.d));
+      const P = list('place', p=>p.trip === t.id && !p.sugg && !p.pick && !p.exc && p.lat != null && p.lng != null && days.has(p.date)); if(P.length < 2) return '';
+      const c0 = {lat:mid(P.map(p=>+p.lat)), lng:mid(P.map(p=>+p.lng))}, main = P.filter(p=>rawKm(c0, p) <= 25); if(main.length < 2) return '';
+      const c = {lat:main.reduce((a, p)=>a + +p.lat, 0) / main.length, lng:main.reduce((a, p)=>a + +p.lng, 0) / main.length};
+      const avg = Math.round(main.reduce((a, p)=>a + rawKm(c, p), 0) / main.length * 10) / 10, key = c.lat.toFixed(3) + ',' + c.lng.toFixed(3);
+      if(RGN[key] === undefined){ RGN[key] = ''; revName(c.lat, c.lng, 15).then(x=>{ RGN[key] = x || ''; const e = document.getElementById('rg-hood'); if(e && x) e.innerHTML = rgHoods(t); }).catch(()=>{}); }
+      const nr = main.slice().sort((a, b)=>rawKm(c, a) - rawKm(c, b))[0];   // tant que le nom du quartier n'est pas arrivé : « près de » la visite la plus centrale
+      const nm = RGN[key] || '', city = st.city || '', where = nm && normQ(nm) !== normQ(city) ? nm + ', ' + city : city, h = st.h || {};
+      const map = `https://www.google.com/maps/search/${encodeURIComponent(MSGT('hôtels'))}/@${c.lat.toFixed(5)},${c.lng.toFixed(5)},15z`;
+      return `<div class="rg-h1"><b>📍 <span data-notr>${esc(city)}</span></b>
+        <div>🏘️ ${MSGT('Quartier conseillé pour dormir')} : <b data-notr>${esc(nm || MSGT('près de') + ' ' + nr.nom)}</b> · ${String(avg).replace('.', ',')} km ${MSGT('en moyenne de tes visites')} (${main.length})</div>
+        <div class="ex-ln"><a href="${esc(map)}" target="_blank" rel="noopener">🗺️ ${MSGT('Hôtels autour')}</a>${hidden('blk:book') ? '' : bookA('booking', {what:where, date:h.date, end:st.fin || h.dateFin, n}) + bookA('airbnb', {city:where, date:h.date, end:st.fin || h.dateFin, n})}</div></div>`;
+    }).join('');
+  }
   function suggDrop(id){ const p = R[id]; if(!p) return; M.suggNo = M.suggNo || {}; const nl = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!nl.includes(p.nom)) nl.push(p.nom); if(nl.length > 300) nl.shift(); p.deleted = true; putQuiet([p]); if(document.getElementById('cv-sw')) swRender(); else suggList(); refresh(); }
   function tlFill(){
     const st = items(i=>i.cat==='hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date));
