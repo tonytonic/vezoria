@@ -38,7 +38,12 @@ async function mode(env) {
   cfgAt = Date.now(); return cfg;
 }
 // ── limite par connexion (empreinte de l'IP, jamais l'adresse) ──
+// compteur en mémoire (plus d'écriture D1 à chaque recherche : la base gratuite n'accepte que 100 000 écritures par jour)
+const MEM = new Map();
 async function rateIp(env, request, limit) {
+  const ip = request.headers.get('CF-Connecting-IP') || '', hour = Math.floor(Date.now() / 3600e3), k = ip, r = MEM.get(k);
+  if (MEM.size > 20000) MEM.clear();
+  const n = (r && r.hour === hour ? r.n : 0) + 1; MEM.set(k, { hour, n }); return n <= limit;
   try {
     const ip = request.headers.get('CF-Connecting-IP') || ''; if (!ip) return true;
     const hour = Math.floor(Date.now() / 3600e3);
