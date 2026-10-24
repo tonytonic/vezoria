@@ -1268,7 +1268,7 @@
     return [...r].map(x=>a[x % a.length]).join('').replace(/(.{4})(?=.)/g,'$1-');
   }
   function activity(){
-    return Object.values(R).filter(r=>r.updatedBy && (r.updatedAt||0) > 1000 && r.type!=='geo' && r.type!=='phk' && !(r.type === 'place' && r.sugg))
+    return Object.values(R).filter(r=>r.updatedBy && (r.updatedAt||0) > 1000 && r.type!=='geo' && r.type!=='phk' && r.type!=='pubmap' && !(r.type === 'place' && r.sugg))
       .sort((a,b)=>b.updatedAt-a.updatedAt).slice(0,30).map(r=>{
         const verb = r.deleted ? 'a supprimé' : (r.createdAt && Math.abs(r.updatedAt-r.createdAt) < 2000) ? 'a ajouté' : 'a modifié';
         const what = r.type==='item' ? icon(r)+' '+esc(r.titre) : r.type==='note' ? '📌 note « '+esc((r.texte||'').slice(0,40))+' »'

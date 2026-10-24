@@ -568,7 +568,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       setTimeout(()=>{ tripExtract().catch(()=>{}); }, 20000);
       if(showC) cryptHide('🔒 Données chiffrées et synchronisées');
       else if(manual) toast('☁️ Synchronisé');
-      setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500); setTimeout(()=>{ potGc().catch(()=>{}); }, 4000);
+      setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500); setTimeout(()=>{ potGc().catch(()=>{}); }, 4000); setTimeout(()=>{ pubMapSync().catch(()=>{}); }, 6000);
     } catch(e){
       M.sync.err = e.message || String(e);
       if(showC) cryptHide();

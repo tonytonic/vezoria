@@ -424,6 +424,41 @@
       persist(); refresh(); feedPurge(); });
     toast('👀 Publication arrêtée');
   }
+  // 🔁 publications retrouvées : un voyage suivi via ce code est en fait le mien (même voyage, publié à mon nom) → il redevient « publié par moi »
+  const ownFt = ft => { const tid = String(ft.id).replace(/^ft:/, ''), t = R[tid]; if(!(t && t.type === 'trip' && !t.deleted && !t.demo && M.me)) return false;
+    const me0 = String(myName() || '').trim().toLowerCase();
+    if(ft.opid){ if(ft.opid === M.me) return true; const o = R[ft.opid];   // publié par mon profil, ou par mon ancien profil fusionné depuis (même prénom)
+      return !!(o && o.type === 'profile' && o.deleted && me0 && String(o.nom || '').trim().toLowerCase() === me0); }
+    return !!me0 && String(ft.owner || '').trim().toLowerCase() === me0; };
+  function pubAdopt(code){
+    let n = 0; Object.entries(TS()).forEach(([k, c])=>{ if(c !== code || !/^ft:/.test(k)) return; const ft = R[k]; if(!ft || ft.deleted || ft.type !== 'feedtrip' || !ownFt(ft)) return;
+      const tid = k.slice(3); if(FT()[tid] === code) return; FT()[tid] = code; n++;
+      list('follower', f=>f.trip === k && String(f.id).endsWith(':' + devId())).forEach(f=>putQuiet([Object.assign(clone(f), {deleted:true})])); });   // je ne me suis pas moi-même
+    if(n && M.unfol) Object.keys(M.unfol).forEach(k=>{ if(TS()[k] === code) delete M.unfol[k]; });
+    return n;
+  }
+  // 📱📱 mes publications, partagées entre MES téléphones (fiche chiffrée dans le carnet principal) :
+  // si un téléphone a oublié ses liens d'abonnés (réinstallation, plantage…), il les reprend chez l'autre
+  let pmBusy = false;
+  async function pubMapSync(){
+    if(pmBusy || !(M.sync.on && M.sync.code) || !M.me) return; pmBusy = true;
+    try {
+      const id = 'pm:' + devId(), cur = R[id], map = Object.assign({}, FT());
+      if(Object.keys(map).length && (!cur || cur.deleted || JSON.stringify(cur.map || {}) !== JSON.stringify(map))) putQuiet([{id, type:'pubmap', map, by:M.me}]);
+      const want = {}; list('pubmap', r=>r.id !== id && r.by === M.me && r.map).forEach(r=>Object.entries(r.map).forEach(([tid, c])=>{ const t = R[tid]; if(t && t.type === 'trip' && !t.deleted && !FT()[tid] && c) want[tid] = c; }));
+      let n = 0;
+      for(const [tid, c] of Object.entries(want)){
+        let sp = spaceObj(c), added = false; if(!sp){ (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); sp = spaceObj(c); added = true; }
+        try { sp.since = 0; await syncSpace(sp, true); } catch(e){}
+        const ft = R[ftId(tid)];
+        if(ft && !ft.deleted){ FT()[tid] = c; TS()[ftId(tid)] = c; n++; }
+        else if(added){ M.spaces = M.spaces.filter(x=>x.code !== c); }   // publication arrêtée depuis : on n'y touche pas
+      }
+      // liens encore connus sur CE téléphone (voyages suivis qui sont en fait les miens)
+      [...new Set(Object.entries(TS()).filter(([k])=>/^ft:/.test(k)).map(([, c])=>c))].forEach(c=>{ n += pubAdopt(c); });
+      if(n){ persist(); toast('🔁 ' + RF('Tes abonnés sont retrouvés : {0} voyage(s).', n)); refresh(); }
+    } finally { pmBusy = false; }
+  }
   // côté abonné
   async function followGo(code, web){
     code = String(code || '').trim().toUpperCase(); if(code.length < 8){ alert('Code trop court.'); return; }
@@ -434,6 +469,8 @@
     if(sp.err){ alert('⚠️ ' + sp.err); return; }
     const ft = Object.entries(TS()).filter(([k,c])=>c===code && R[k] && R[k].type==='feedtrip' && !R[k].deleted).map(([k])=>R[k])[0];
     if(!ft){ M.spaces = M.spaces.filter(x=>x.code!==code); persist(); alert('Aucun voyage publié avec ce code.'); if(web) webGone(); return; }
+    // 🔁 c'est MON lien (j'en suis l'auteur, ce téléphone l'avait oublié) : je reprends la main au lieu de m'abonner à moi-même
+    { const n = pubAdopt(code); if(n){ persist(); closeSheet(true); toast('🔁 ' + RF('Tes abonnés sont retrouvés : {0} voyage(s).', n)); syncNow(); try { shareHub(); } catch(e){} return; } }
     if(web) M.webCode = code;
     let pk; try { pk = (await fKey()).pub; } catch(e){}
     if(myName() && !(M.fwChk = M.fwChk || {})[code]){ M.fwChk[code] = 1; const r = await fwNameResolve(myName()); if(r && r.n !== myName()) (M.fwAs = M.fwAs || {})[code] = r.n; }
@@ -1077,7 +1114,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-24d'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-24e'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1296,6 +1333,9 @@
       ${potOn() && (st.old || st.lo) ? `<button type="button" class="v-btn sec" style="margin-top:8px" id="pot-go" onclick="CV.potMigrate()"${potBusy ? ' disabled' : ''}>🫙 ${esc(st.old ? RF('Ranger mes {0} anciennes photos dans le pot commun', st.old) : RF('Remettre en grand les {0} photos en petite taille', st.lo))}</button>
       <div class="v-sum-small" style="margin-top:6px">${esc(MSGT('Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.'))}</div>` : ''}
       <div id="pot-msg" class="v-sum-small" style="margin-top:6px" data-notr>${esc(potSaid)}</div>
+      ${(()=>{ const E = Object.entries(M.potMiss || {}).sort((a, b)=>b[1] - a[1]); if(!E.length) return '';
+        return `<details class="pot-miss"><summary>🔎 ${esc(MSGT('Introuvables, par voyage'))} (${E.reduce((a, x)=>a + x[1], 0)})</summary>${E.map(([k, n])=>{ const t = R[k];
+          return `<div><span data-notr>${esc(t && !t.deleted ? (t.titre || '?') : '?')}</span> · ${n}${!t || t.deleted ? ' · ' + esc(MSGT('voyage supprimé')) : (M.hide || {})[k] ? ' · ' + esc(MSGT('voyage retiré de ce téléphone')) : ''}</div>`; }).join('')}</details>`; })()}
       <div class="v-sum-small" style="margin-top:6px">${esc(MSGT('Tes compagnons doivent avoir la dernière version de l’appli pour voir ces photos.'))}</div></div>`;
   }
   function potToggle(){ M.pot = !potOn(); persist(); toast(M.pot ? '🫙 ' + MSGT('Pot commun activé') : MSGT('Pot commun désactivé')); potRedraw(); }
@@ -1336,7 +1376,7 @@
     const {own, code: cs} = potStats(), pend = new Set(M.pq || []);
     const todo = Object.keys(own).filter(p=>!pkOf(p) && !pend.has(p) && cs[p] && !potMate(own[p]));
     const OFF = MSGT('Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.');
-    let done = 0, fail = 0, net = 0, stop = '', small = 0, miss = 0, up = 0;
+    let done = 0, fail = 0, net = 0, stop = '', small = 0, miss = 0, up = 0; const missBy = {};
     await potWake(true);
     try {
       // photos pas sur ce téléphone : on repère d'abord où le serveur les garde
@@ -1351,7 +1391,7 @@
           let full = await potFull(pid, from, ow), lo = false;   // jamais la vignette s'il existe une grande photo
           if(full && !L.full && from === (L.thumb || '')) lo = true;
           if(!full){ let o = null; try { o = await IDB.get(pid + '.t'); } catch(e){} if(o && o.blob){ full = o.blob; lo = true; } }
-          if(!full){ miss++; continue; }
+          if(!full){ miss++; const k = ow.type === 'trip' ? ow.id : (ow.trip || '?'); missBy[k] = (missBy[k] || 0) + 1; continue; }
           let tb = null; try { const o = await IDB.get(pid + '.t'); if(o && o.blob) tb = o.blob; } catch(e){}
           if(!tb) try { tb = await shrink(full, 480, 0.74); } catch(e){}
           const pk = await v2Upload(pid, full, tb, code, ow.type === 'trip' ? ow.id : ow.trip || '');
@@ -1371,7 +1411,7 @@
         const c = await codeOfHash(r.s); if(!c) continue;
         try { await v2Upload(pid, await cloudBlob(o.blob, own[pid], pid), null, c, r.trip, r); const n = clone(R[r.id]); delete n.lo; putQuiet([n]); up++; } catch(e){ break; }
       }
-      persist();
+      if(!stop) M.potMiss = missBy; persist();
       say((stop ? stop + ' ' : '✅ ') + RF('{0} photo(s) rangées dans le pot commun.', done)
         + (small ? ' ' + RF('{0} en petite taille seulement : la grande photo n’est plus sur le serveur (un téléphone qui l’a encore la remettra).', small) : '')
         + (up ? ' ⬆️ ' + RF('{0} remise(s) en grand.', up) : '')
@@ -1507,7 +1547,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {psGo, psClose, psFeed, wallStep, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
+  var RECAPI = {pubMapSync, psGo, psClose, psFeed, wallStep, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,

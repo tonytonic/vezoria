@@ -2662,3 +2662,4 @@ body.vz-glass .v-tiles .v-tile:first-child{background:var(--navy)!important;bord
 .ar-subs .ar-sub.cur{outline:3px solid #a78bfa}.ar-subs .ar-sub.cur i{background:#7c3aed;color:#fff}
 .ar-subs .ar-sub.ok{background:rgba(255,255,255,.16);color:#fff;opacity:1}.ar-subs .ar-sub.ok small{color:#fff;opacity:.8}.ar-subs .ar-sub.ok i{background:#22c55e;color:#fff}
 .rg-hood .ex-ln a{display:inline-block;margin:6px 6px 0 0;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.14);color:#fff;text-decoration:none;font-size:.78rem;font-weight:700}
+.pot-miss{margin-top:8px;font-size:.82rem}.pot-miss summary{cursor:pointer;font-weight:700}.pot-miss div{padding:3px 0 3px 8px;border-left:2px solid #e5e0ee}
