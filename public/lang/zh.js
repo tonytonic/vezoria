@@ -5162,4 +5162,5 @@ I18N.load({
 "Envoie-lui le message : il contient le lien et le code abonné.":"把消息发给对方：里面有链接和关注者代码。",
 "Envoyer l’invitation":"发送邀请",
 "Copier le lien":"复制链接",
-"Lien abonné copié":"已复制关注者链接"});
+"Lien abonné copié":"已复制关注者链接",
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"这些旅行你都已经有了：你是同行者。之后发布的、你没参加的旅行会显示在这里。"});

@@ -5162,4 +5162,5 @@ I18N.load({
 "Envoie-lui le message : il contient le lien et le code abonné.":"メッセージを送ろう：リンクとフォロワーコードが入っています。",
 "Envoyer l’invitation":"招待を送る",
 "Copier le lien":"リンクをコピー",
-"Lien abonné copié":"フォロワー用リンクをコピーしました"});
+"Lien abonné copié":"フォロワー用リンクをコピーしました",
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"これらの旅行はすでにあなたのもの（同行者）です。今後公開される、あなたが参加しない旅行がここに表示されます。"});

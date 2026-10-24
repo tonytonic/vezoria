@@ -2214,4 +2214,5 @@ I18N.load({
 "Envoie-lui le message : il contient le lien et le code abonné.":"Stuur haar het bericht: het bevat de link en de volgerscode.",
 "Envoyer l’invitation":"Uitnodiging versturen",
 "Copier le lien":"Link kopiëren",
-"Lien abonné copié":"Volgerslink gekopieerd"});
+"Lien abonné copié":"Volgerslink gekopieerd",
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Je hebt al deze reizen al: je reist mee. Hier zie je de volgende gepubliceerde reizen waar je niet bij bent."});

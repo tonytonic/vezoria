@@ -2227,4 +2227,5 @@ I18N.load({
 "Envoie-lui le message : il contient le lien et le code abonné.":"Envia-lhe a mensagem: tem o link e o código de seguidor.",
 "Envoyer l’invitation":"Enviar o convite",
 "Copier le lien":"Copiar o link",
-"Lien abonné copié":"Link de seguidor copiado"});
+"Lien abonné copié":"Link de seguidor copiado",
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Já tens todas estas viagens: vais como companheiro. Aqui vais ver as próximas viagens publicadas em que não vais."});

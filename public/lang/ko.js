@@ -5162,4 +5162,5 @@ I18N.load({
 "Envoie-lui le message : il contient le lien et le code abonné.":"메시지를 보내세요: 링크와 팔로워 코드가 들어 있어요.",
 "Envoyer l’invitation":"초대 보내기",
 "Copier le lien":"링크 복사",
-"Lien abonné copié":"팔로워 링크를 복사했어요"});
+"Lien abonné copié":"팔로워 링크를 복사했어요",
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"이 여행들은 이미 동행으로 갖고 있어요. 앞으로 공개되는, 함께하지 않는 여행이 여기에 보여요."});

@@ -5163,4 +5163,5 @@ I18N.load({
 "Envoie-lui le message : il contient le lien et le code abonné.":"Отправь сообщение: в нём ссылка и код подписчика.",
 "Envoyer l’invitation":"Отправить приглашение",
 "Copier le lien":"Скопировать ссылку",
-"Lien abonné copié":"Ссылка для подписчиков скопирована"});
+"Lien abonné copié":"Ссылка для подписчиков скопирована",
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Все эти поездки у тебя уже есть: ты в них попутчик. Здесь появятся следующие опубликованные поездки без тебя."});

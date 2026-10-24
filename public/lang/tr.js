@@ -5150,4 +5150,5 @@ I18N.load({
 "Envoie-lui le message : il contient le lien et le code abonné.":"Mesajı gönder: bağlantıyı ve takipçi kodunu içerir.",
 "Envoyer l’invitation":"Daveti gönder",
 "Copier le lien":"Bağlantıyı kopyala",
-"Lien abonné copié":"Takipçi bağlantısı kopyalandı"});
+"Lien abonné copié":"Takipçi bağlantısı kopyalandı",
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Bu seyahatlerin hepsi zaten sende: yol arkadaşı olarak katılıyorsun. Katılmadığın sonraki yayınlanan seyahatleri burada göreceksin."});

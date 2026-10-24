@@ -5163,4 +5163,5 @@ I18N.load({
 "Envoie-lui le message : il contient le lien et le code abonné.":"أرسل له الرسالة: تحتوي على الرابط ورمز المتابع.",
 "Envoyer l’invitation":"إرسال الدعوة",
 "Copier le lien":"نسخ الرابط",
-"Lien abonné copié":"تم نسخ رابط المتابعين"});
+"Lien abonné copié":"تم نسخ رابط المتابعين",
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"لديك كل هذه الرحلات بالفعل: أنت رفيق فيها. سترى هنا الرحلات المنشورة القادمة التي لا تشارك فيها."});

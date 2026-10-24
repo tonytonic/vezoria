@@ -5162,4 +5162,5 @@ I18N.load({
 "Envoie-lui le message : il contient le lien et le code abonné.":"उसे संदेश भेजो: इसमें लिंक और फ़ॉलोअर कोड है।",
 "Envoyer l’invitation":"न्योता भेजो",
 "Copier le lien":"लिंक कॉपी करो",
-"Lien abonné copié":"फ़ॉलोअर लिंक कॉपी हो गया"});
+"Lien abonné copié":"फ़ॉलोअर लिंक कॉपी हो गया",
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"ये सारी यात्राएँ तुम्हारे पास पहले से हैं: तुम इनमें साथी हो। जिन अगली प्रकाशित यात्राओं में तुम नहीं हो, वे यहाँ दिखेंगी।"});

@@ -2218,4 +2218,5 @@ I18N.load({
 "Envoie-lui le message : il contient le lien et le code abonné.":"Schick ihr die Nachricht: Sie enthält den Link und den Follower-Code.",
 "Envoyer l’invitation":"Einladung senden",
 "Copier le lien":"Link kopieren",
-"Lien abonné copié":"Follower-Link kopiert"});
+"Lien abonné copié":"Follower-Link kopiert",
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Du hast alle diese Reisen schon: Du bist als Mitreisende dabei. Hier siehst du die nächsten veröffentlichten Reisen, bei denen du nicht dabei bist."});
