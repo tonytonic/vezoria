@@ -2219,4 +2219,16 @@ I18N.load({
 "Envoyer l’invitation":"Einladung senden",
 "Copier le lien":"Link kopieren",
 "Lien abonné copié":"Follower-Link kopiert",
-"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Du hast alle diese Reisen schon: Du bist als Mitreisende dabei. Hier siehst du die nächsten veröffentlichten Reisen, bei denen du nicht dabei bist."});
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Du hast alle diese Reisen schon: Du bist als Mitreisende dabei. Hier siehst du die nächsten veröffentlichten Reisen, bei denen du nicht dabei bist.",
+"Cacher à quelqu’un":"Vor jemandem verbergen",
+"Réafficher":"Wieder anzeigen",
+"Réaffiché":"Wieder angezeigt",
+"Attention : fermé le {0}":"Achtung: am {0} geschlossen",
+"Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.":"Ihre ❤️ und Kommentare werden hier nicht angezeigt und nicht gemeldet.",
+"Caché à {0}":"Vor {0} verborgen",
+"Inviter des abonnés":"Follower einladen",
+"Masqués sur ce téléphone":"Auf diesem Handy ausgeblendet",
+"Cacher":"Verbergen",
+"Cacher « {0} » à quelqu’un":"„{0}“ vor jemandem verbergen",
+"Fermé : {0}":"Geschlossen: {0}",
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Gib den Vornamen der Person ein, auch wenn sie dir noch nicht folgt: Folgt sie unter diesem Namen, wird ihr diese Reise nie gezeigt. Folgt sie schon, verschwindet die Reise aus ihrer App."});

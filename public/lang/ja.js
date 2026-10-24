@@ -5163,4 +5163,16 @@ I18N.load({
 "Envoyer l’invitation":"招待を送る",
 "Copier le lien":"リンクをコピー",
 "Lien abonné copié":"フォロワー用リンクをコピーしました",
-"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"これらの旅行はすでにあなたのもの（同行者）です。今後公開される、あなたが参加しない旅行がここに表示されます。"});
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"これらの旅行はすでにあなたのもの（同行者）です。今後公開される、あなたが参加しない旅行がここに表示されます。",
+"Cacher à quelqu’un":"特定の人に隠す",
+"Réafficher":"再表示",
+"Réaffiché":"再表示しました",
+"Attention : fermé le {0}":"注意：{0}は休み",
+"Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.":"この人の ❤️ とコメントはここに表示されず、通知も届きません。",
+"Caché à {0}":"{0}に非表示",
+"Inviter des abonnés":"フォロワーを招待",
+"Masqués sur ce téléphone":"このスマホで非表示",
+"Cacher":"隠す",
+"Cacher « {0} » à quelqu’un":"「{0}」を特定の人に隠す",
+"Fermé : {0}":"休み：{0}",
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"まだフォローしていなくても、相手の名前を入力してください。この名前でフォローすると、この旅行は表示されません。すでにフォロー中なら、相手のアプリから消えます。"});

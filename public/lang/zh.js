@@ -5163,4 +5163,16 @@ I18N.load({
 "Envoyer l’invitation":"发送邀请",
 "Copier le lien":"复制链接",
 "Lien abonné copié":"已复制关注者链接",
-"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"这些旅行你都已经有了：你是同行者。之后发布的、你没参加的旅行会显示在这里。"});
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"这些旅行你都已经有了：你是同行者。之后发布的、你没参加的旅行会显示在这里。",
+"Cacher à quelqu’un":"对某人隐藏",
+"Réafficher":"重新显示",
+"Réaffiché":"已重新显示",
+"Attention : fermé le {0}":"注意：{0}闭馆",
+"Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.":"他们的 ❤️ 和评论不会在这里显示，也不会通知你。",
+"Caché à {0}":"已对{0}隐藏",
+"Inviter des abonnés":"邀请关注者",
+"Masqués sur ce téléphone":"在此手机上隐藏",
+"Cacher":"隐藏",
+"Cacher « {0} » à quelqu’un":"对某人隐藏“{0}”",
+"Fermé : {0}":"闭馆：{0}",
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"输入对方的名字，即使对方还没关注：如果对方用这个名字关注，就永远看不到这次旅行；已经关注的话，它会从对方的应用中消失。"});

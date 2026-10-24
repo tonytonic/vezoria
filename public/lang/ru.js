@@ -5164,4 +5164,16 @@ I18N.load({
 "Envoyer l’invitation":"Отправить приглашение",
 "Copier le lien":"Скопировать ссылку",
 "Lien abonné copié":"Ссылка для подписчиков скопирована",
-"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Все эти поездки у тебя уже есть: ты в них попутчик. Здесь появятся следующие опубликованные поездки без тебя."});
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Все эти поездки у тебя уже есть: ты в них попутчик. Здесь появятся следующие опубликованные поездки без тебя.",
+"Cacher à quelqu’un":"Скрыть от кого-то",
+"Réafficher":"Показать снова",
+"Réaffiché":"Снова видно",
+"Attention : fermé le {0}":"Внимание: закрыто в {0}",
+"Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.":"Их ❤️ и комментарии здесь не показываются, и уведомлений о них нет.",
+"Caché à {0}":"Скрыто от {0}",
+"Inviter des abonnés":"Пригласить подписчиков",
+"Masqués sur ce téléphone":"Скрыты на этом телефоне",
+"Cacher":"Скрыть",
+"Cacher « {0} » à quelqu’un":"Скрыть «{0}» от кого-то",
+"Fermé : {0}":"Закрыто: {0}",
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Напиши имя человека, даже если он ещё не подписан: если он подпишется под этим именем, эта поездка ему не покажется. Уже подписан — она исчезнет из его приложения."});

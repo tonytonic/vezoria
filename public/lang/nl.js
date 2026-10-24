@@ -2215,4 +2215,16 @@ I18N.load({
 "Envoyer l’invitation":"Uitnodiging versturen",
 "Copier le lien":"Link kopiëren",
 "Lien abonné copié":"Volgerslink gekopieerd",
-"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Je hebt al deze reizen al: je reist mee. Hier zie je de volgende gepubliceerde reizen waar je niet bij bent."});
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Je hebt al deze reizen al: je reist mee. Hier zie je de volgende gepubliceerde reizen waar je niet bij bent.",
+"Cacher à quelqu’un":"Verbergen voor iemand",
+"Réafficher":"Weer tonen",
+"Réaffiché":"Weer zichtbaar",
+"Attention : fermé le {0}":"Let op: gesloten op {0}",
+"Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.":"Hun ❤️ en reacties worden hier niet getoond en je krijgt er geen melding van.",
+"Caché à {0}":"Verborgen voor {0}",
+"Inviter des abonnés":"Volgers uitnodigen",
+"Masqués sur ce téléphone":"Verborgen op deze telefoon",
+"Cacher":"Verbergen",
+"Cacher « {0} » à quelqu’un":"‘{0}’ verbergen voor iemand",
+"Fermé : {0}":"Gesloten: {0}",
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Typ de voornaam van de persoon, ook als die je nog niet volgt: volgt die onder deze naam, dan krijgt die deze reis nooit te zien. Volgt die al, dan verdwijnt de reis uit de app."});

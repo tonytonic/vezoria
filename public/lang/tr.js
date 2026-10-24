@@ -5151,4 +5151,16 @@ I18N.load({
 "Envoyer l’invitation":"Daveti gönder",
 "Copier le lien":"Bağlantıyı kopyala",
 "Lien abonné copié":"Takipçi bağlantısı kopyalandı",
-"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Bu seyahatlerin hepsi zaten sende: yol arkadaşı olarak katılıyorsun. Katılmadığın sonraki yayınlanan seyahatleri burada göreceksin."});
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Bu seyahatlerin hepsi zaten sende: yol arkadaşı olarak katılıyorsun. Katılmadığın sonraki yayınlanan seyahatleri burada göreceksin.",
+"Cacher à quelqu’un":"Birinden gizle",
+"Réafficher":"Yeniden göster",
+"Réaffiché":"Yeniden gösteriliyor",
+"Attention : fermé le {0}":"Dikkat: {0} kapalı",
+"Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.":"❤️ ve yorumları burada görünmez ve bildirim almazsın.",
+"Caché à {0}":"{0} için gizlendi",
+"Inviter des abonnés":"Takipçi davet et",
+"Masqués sur ce téléphone":"Bu telefonda gizlenenler",
+"Cacher":"Gizle",
+"Cacher « {0} » à quelqu’un":"“{0}” seyahatini birinden gizle",
+"Fermé : {0}":"Kapalı: {0}",
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Kişinin adını yaz, henüz takip etmese bile: bu adla takip ederse bu seyahati hiç görmez. Zaten takip ediyorsa uygulamasından kaybolur."});

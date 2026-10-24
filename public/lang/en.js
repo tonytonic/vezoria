@@ -2209,4 +2209,16 @@ I18N.load({
 "Envoyer l’invitation":"Send the invitation",
 "Copier le lien":"Copy the link",
 "Lien abonné copié":"Follower link copied",
-"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"You already have all these trips: you’re on them as a companion. You’ll see here the next published trips you’re not on."});
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"You already have all these trips: you’re on them as a companion. You’ll see here the next published trips you’re not on.",
+"Cacher à quelqu’un":"Hide from someone",
+"Réafficher":"Show again",
+"Réaffiché":"Shown again",
+"Attention : fermé le {0}":"Careful: closed on {0}",
+"Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.":"Their ❤️ and comments aren’t shown here and you’re not notified about them.",
+"Caché à {0}":"Hidden from {0}",
+"Inviter des abonnés":"Invite followers",
+"Masqués sur ce téléphone":"Hidden on this phone",
+"Cacher":"Hide",
+"Cacher « {0} » à quelqu’un":"Hide “{0}” from someone",
+"Fermé : {0}":"Closed: {0}",
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Type the person’s first name, even if they haven’t followed yet: if they follow under this name, this trip is never shown to them. Already following: it disappears from their app."});

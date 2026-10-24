@@ -5163,4 +5163,16 @@ I18N.load({
 "Envoyer l’invitation":"न्योता भेजो",
 "Copier le lien":"लिंक कॉपी करो",
 "Lien abonné copié":"फ़ॉलोअर लिंक कॉपी हो गया",
-"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"ये सारी यात्राएँ तुम्हारे पास पहले से हैं: तुम इनमें साथी हो। जिन अगली प्रकाशित यात्राओं में तुम नहीं हो, वे यहाँ दिखेंगी।"});
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"ये सारी यात्राएँ तुम्हारे पास पहले से हैं: तुम इनमें साथी हो। जिन अगली प्रकाशित यात्राओं में तुम नहीं हो, वे यहाँ दिखेंगी।",
+"Cacher à quelqu’un":"किसी से छिपाओ",
+"Réafficher":"फिर से दिखाओ",
+"Réaffiché":"फिर से दिख रहा है",
+"Attention : fermé le {0}":"ध्यान दो: {0} को बंद",
+"Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.":"इनके ❤️ और कमेंट यहाँ नहीं दिखते और इनकी सूचना नहीं आती।",
+"Caché à {0}":"{0} से छिपाया",
+"Inviter des abonnés":"फ़ॉलोअर को न्योता दो",
+"Masqués sur ce téléphone":"इस फ़ोन पर छिपे",
+"Cacher":"छिपाओ",
+"Cacher « {0} » à quelqu’un":"“{0}” किसी से छिपाओ",
+"Fermé : {0}":"बंद: {0}",
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"उस व्यक्ति का पहला नाम लिखो, भले वह अभी फ़ॉलो न करता हो: इस नाम से फ़ॉलो करेगा तो यह यात्रा उसे कभी नहीं दिखेगी। पहले से फ़ॉलो करता है तो उसके ऐप से हट जाएगी।"});

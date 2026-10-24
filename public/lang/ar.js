@@ -5164,4 +5164,16 @@ I18N.load({
 "Envoyer l’invitation":"إرسال الدعوة",
 "Copier le lien":"نسخ الرابط",
 "Lien abonné copié":"تم نسخ رابط المتابعين",
-"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"لديك كل هذه الرحلات بالفعل: أنت رفيق فيها. سترى هنا الرحلات المنشورة القادمة التي لا تشارك فيها."});
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"لديك كل هذه الرحلات بالفعل: أنت رفيق فيها. سترى هنا الرحلات المنشورة القادمة التي لا تشارك فيها.",
+"Cacher à quelqu’un":"إخفاء عن شخص",
+"Réafficher":"إظهار مجددًا",
+"Réaffiché":"ظاهر مجددًا",
+"Attention : fermé le {0}":"تنبيه: مغلق يوم {0}",
+"Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.":"لا تظهر ❤️ وتعليقاتهم هنا ولا تصلك إشعارات بها.",
+"Caché à {0}":"مخفي عن {0}",
+"Inviter des abonnés":"دعوة متابعين",
+"Masqués sur ce téléphone":"مخفيون على هذا الهاتف",
+"Cacher":"إخفاء",
+"Cacher « {0} » à quelqu’un":"إخفاء «{0}» عن شخص",
+"Fermé : {0}":"مغلق: {0}",
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"اكتب اسم الشخص حتى لو لم يتابعك بعد: إذا تابعك بهذا الاسم فلن تظهر له هذه الرحلة أبدًا. إن كان يتابعك بالفعل فستختفي من تطبيقه."});

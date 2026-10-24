@@ -2224,4 +2224,16 @@ I18N.load({
 "Envoyer l’invitation":"Invia l’invito",
 "Copier le lien":"Copia il link",
 "Lien abonné copié":"Link follower copiato",
-"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Hai già tutti questi viaggi: li fai come compagno. Qui vedrai i prossimi viaggi pubblicati a cui non partecipi."});
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"Hai già tutti questi viaggi: li fai come compagno. Qui vedrai i prossimi viaggi pubblicati a cui non partecipi.",
+"Cacher à quelqu’un":"Nascondi a qualcuno",
+"Réafficher":"Mostra di nuovo",
+"Réaffiché":"Di nuovo visibile",
+"Attention : fermé le {0}":"Attenzione: chiuso di {0}",
+"Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.":"I loro ❤️ e commenti non compaiono qui e non ricevi notifiche.",
+"Caché à {0}":"Nascosto a {0}",
+"Inviter des abonnés":"Invita follower",
+"Masqués sur ce téléphone":"Nascosti su questo telefono",
+"Cacher":"Nascondi",
+"Cacher « {0} » à quelqu’un":"Nascondi «{0}» a qualcuno",
+"Fermé : {0}":"Chiuso: {0}",
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Scrivi il nome della persona, anche se non ti segue ancora: se si iscrive con questo nome, non vedrà mai questo viaggio. Se ti segue già, sparisce dalla sua app."});

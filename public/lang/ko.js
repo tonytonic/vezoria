@@ -5163,4 +5163,16 @@ I18N.load({
 "Envoyer l’invitation":"초대 보내기",
 "Copier le lien":"링크 복사",
 "Lien abonné copié":"팔로워 링크를 복사했어요",
-"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"이 여행들은 이미 동행으로 갖고 있어요. 앞으로 공개되는, 함께하지 않는 여행이 여기에 보여요."});
+"Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.":"이 여행들은 이미 동행으로 갖고 있어요. 앞으로 공개되는, 함께하지 않는 여행이 여기에 보여요.",
+"Cacher à quelqu’un":"누군가에게 숨기기",
+"Réafficher":"다시 보이기",
+"Réaffiché":"다시 보여요",
+"Attention : fermé le {0}":"주의: {0} 휴무",
+"Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.":"이 사람의 ❤️와 댓글은 여기 보이지 않고 알림도 오지 않아요.",
+"Caché à {0}":"{0}에게 숨겼어요",
+"Inviter des abonnés":"팔로워 초대",
+"Masqués sur ce téléphone":"이 휴대폰에서 숨김",
+"Cacher":"숨기기",
+"Cacher « {0} » à quelqu’un":"‘{0}’을(를) 누군가에게 숨기기",
+"Fermé : {0}":"휴무: {0}",
+"Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"아직 팔로우하지 않았더라도 이름을 적어 두세요. 이 이름으로 팔로우하면 이 여행은 절대 보이지 않아요. 이미 팔로우 중이면 앱에서 사라져요."});
