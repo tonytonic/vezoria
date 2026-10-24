@@ -1148,14 +1148,17 @@ ${pm.join('\n')}</Document></kml>`;
     const n = expCount(t) - before; toast(n > 0 ? '🎟️ ' + RF('{0} nouvelles expériences', n) : '✓ ' + MSGT('Pas d’autre idée pour l’instant.'));
     expOpen(); refresh();
   }
+  // une activité payante au programme : jour provisoire (le 1er jour libre de l'étape), rangée ensuite à l'étape ② « Ranger dans les jours »
+  function expPut(t, h, e){
+    const city = stayCity(h), days = h.dateFin ? range(h.date, h.dateFin).slice(0, -1) : [h.date];
+    const busy = d => list('item', i=>i.trip === t.id && i.cat === 'activite' && i.date === d).length;
+    const d = days.slice(days.length > 1 ? 1 : 0).find(x=>!busy(x)) || days.find(x=>!busy(x)) || days[days.length > 1 ? 1 : 0];
+    const id = 'i' + uid(); putQuiet([{id, type:'item', trip:t.id, cat:'activite', titre:expLabel(e), date:d || '', heure:'', adresse:city, statut:'todo', partage:'grp', qui:[], exp:e.key, q:e.q, pick:1}]); return id;
+  }
   function expKeep(hid, key){
     const t = trip(), h = R[hid]; if(!t || !h) return;
     const city = stayCity(h), cc = ((M.ctry || {})[normQ(city)] || {}).cc, e = expFor(city, cc).find(x=>x.key === key); if(!e) return;
-    const days = h.dateFin ? range(h.date, h.dateFin).slice(0, -1) : [h.date];
-    const busy = d => list('item', i=>i.trip === t.id && i.cat === 'activite' && i.date === d).length;
-    const d = days.slice(days.length > 1 ? 1 : 0).find(x=>!busy(x)) || days.find(x=>!busy(x)) || days[days.length > 1 ? 1 : 0];
-    put({id:'i' + uid(), type:'item', trip:t.id, cat:'activite', titre:expLabel(e), date:d || '', heure:'', adresse:city, statut:'todo', partage:'grp', qui:[], exp:key, q:e.q});
-    toast('🎟️ ' + MSGT('Au programme, à réserver')); expOpen(); refresh();
+    expPut(t, h, e); toast('🎟️ ' + MSGT('Au programme, à réserver')); expOpen(); refresh();
   }
   function expDrop(key){ const t = trip(); if(!t) return; M.expNo = M.expNo || {}; const nl = M.expNo[t.id] = M.expNo[t.id] || []; if(!nl.includes(key)) nl.push(key); persist(); expOpen(); refresh(); }
   async function suggFill(tid, more){
@@ -1245,7 +1248,7 @@ ${pm.join('\n')}</Document></kml>`;
   function suggKeep(id){
     const t = trip(); if(!t) return;
     const L = id === '*' ? list('place', p=>p.trip === t.id && p.sugg) : [R[id]].filter(Boolean);
-    L.forEach(p=>{ const c = clone(p); delete c.sugg; c.kept = Date.now(); putQuiet([c]);
+    L.forEach(p=>{ const c = clone(p); delete c.sugg; c.kept = Date.now(); c.pick = 1; putQuiet([c]);
       const di = p.exc && R['day:' + p.trip + ':' + p.date]; if(di && !di.deleted && !String(di.titre || '').includes(p.nom)) putQuiet([Object.assign(clone(di), {titre:(di.titre ? di.titre + ' · ' : '') + '🚌 ' + p.nom})]); });
     if(id === '*'){ toast('✓ ' + L.length + ' ' + MSGT('lieux ajoutés au programme')); closeSheet(true); refresh(); return; }
     toast('✓ ' + MSGT('Ajouté au programme'));
@@ -1255,18 +1258,25 @@ ${pm.join('\n')}</Document></kml>`;
   /* 💡 CHOISIR MES VISITES, une carte à la fois (comme Tinder) : grande photo, quelques lignes de Wikipédia,
      glisser à droite = au programme, à gauche = écarté (ou les boutons ✕ ✓). ↩️ annule le dernier choix. */
   let SW = null; const SWC = {};
+  // ① choisir, VILLE PAR VILLE : les visites suggérées puis les activités payantes de la ville (pas de jour à choisir ici : c'est l'étape ②)
   function suggOpen(){
     const t = trip(); if(!t) return;
-    const L = list('place', p=>p.trip === t.id && p.sugg).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'));
-    if(!L.length){ if(expCount(t)) return expOpen(); closeSheet(true); refresh(); return; }
-    closeSheet(true); SW = {tid:t.id, ids:L.map(p=>p.id), i:0, hist:[], kept:0}; swRender();
+    const st = tlStages(), si = c => { const k = st.findIndex(x=>normQ(x.city) === normQ(c)); return k < 0 ? 99 : k; };
+    const L = list('place', p=>p.trip === t.id && p.sugg).map(p=>({id:p.id, c:swCity(p), d:p.date || '9', x:p.exc ? 1 : 0}));
+    const EX = {}; expTrip(t).forEach(g=>g.L.forEach(e=>{ const id = 'ex|' + g.h.id + '|' + e.key; EX[id] = {h:g.h, e, city:g.city}; L.push({id, c:g.city, d:'~', x:2}); }));
+    if(!L.length){ closeSheet(true); refresh(); return; }
+    L.sort((a, b)=>si(a.c) - si(b.c) || a.x - b.x || a.d.localeCompare(b.d));
+    closeSheet(true); SW = {tid:t.id, ids:L.map(x=>x.id), i:0, hist:[], kept:0, EX, exDone:new Set()}; swRender();
   }
+  const swPend = id => /^ex\|/.test(id) ? !!(SW && SW.EX && SW.EX[id] && !SW.exDone.has(id)) : !!(R[id] && R[id].sugg && !R[id].deleted);
+  const swRec = id => /^ex\|/.test(id) ? Object.assign({id, ex:1, nom:SW.EX[id].e.p, city:SW.EX[id].city}, SW.EX[id]) : R[id];
+  const swCityOf = r => r && r.ex ? r.city : swCity(r);
   const swCity = p => { const h = p.stay && R[p.stay]; return (h && (h.type === 'city' ? h.titre : stayCity(h))) || (p.date && dayCity(p.date)) || ''; };
   const swSim = (a, b) => { a = normQ(a); b = normQ(b); if(!a || !b) return 0; if(a === b) return 1; if(a.includes(b) || b.includes(a)) return .85;
     const A = new Set(a.split(/[^a-z0-9]+/).filter(w=>w.length > 2)), B = b.split(/[^a-z0-9]+/).filter(w=>w.length > 2); if(!A.size || !B.length) return 0;
     return B.filter(w=>A.has(w)).length / Math.max(A.size, B.length); };
   async function swInfo(p){
-    const key = normQ(p.nom + '|' + swCity(p)); if(SWC[key]) return SWC[key];
+    const key = normQ(p.nom + '|' + (p.ex ? p.city : swCity(p))); if(SWC[key]) return SWC[key];
     const lg0 = (window.I18N && I18N.lang) || 'fr', out = {img:'', ex:'', url:''};
     const W = (lg, qs) => withTimeout(fetch(`https://${lg}.wikipedia.org/w/api.php?${qs}&format=json&formatversion=2&origin=*`).then(r=>r.json()), 9000);
     const page = async (lg, title) => { const j = await W(lg, `action=query&titles=${encodeURIComponent(title)}&prop=pageimages|extracts|description&piprop=thumbnail&pithumbsize=900&exintro=1&explaintext=1&exsentences=3&redirects=1`);
@@ -1281,18 +1291,19 @@ ${pm.join('\n')}</Document></kml>`;
           const best = ((j.query || {}).geosearch || []).map(g=>[g, swSim(g.title, p.nom)]).sort((a, b)=>b[1] - a[1])[0];
           if(best && best[1] >= .5 && await page(lg, best[0].title)) return (SWC[key] = out);
         }
-        const j = await W(lg, `action=query&list=search&srsearch=${encodeURIComponent(p.nom + ' ' + swCity(p))}&srlimit=3`);
+        const j = await W(lg, `action=query&list=search&srsearch=${encodeURIComponent(p.nom + ' ' + (p.ex ? p.city : swCity(p)))}&srlimit=3`);
         for(const r of ((j.query || {}).search || [])) if(swSim(r.title, p.nom) >= .5 && await page(lg, r.title)) return (SWC[key] = out);
       }
     } catch(e){}
     return (SWC[key] = out);
   }
   function swCard(p, top){
-    const ds = dayList(), k = ds.indexOf(p.date), ic = (POI_CATS[p.cat] || {icon:'📍'}).icon, c = swCity(p);
+    const ic = p.ex ? p.e.ic : (POI_CATS[p.cat] || {icon:'📍'}).icon, c = swCityOf(p);
     return `<div class="sw-card${top ? ' top' : ''}" data-id="${esc(p.id)}">
       <div class="sw-ph"><span class="sw-ic">${ic}</span><img class="sw-img" alt="" decoding="async"></div><div class="sw-shade"></div>
       <i class="sw-tag yes">${esc(MSGT('Je garde'))}</i><i class="sw-tag no">${esc(MSGT('Non merci'))}</i>
-      <div class="sw-tx"><small>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${p.date ? esc(fdate(p.date)) : ''}${c ? ' · <span data-notr>' + esc(c) + '</span>' : ''}</small>
+      <div class="sw-tx"><small>${c ? '📍 <span data-notr>' + esc(c) + '</span>' : ''}</small>
+        ${p.ex ? `<em class="sw-pay">🎟️ ${esc(MSGT(p.e.l))} · ${esc(MSGT('activité à réserver'))}</em>` : ''}
         <b data-notr>${esc(p.nom)}</b>${p.exc ? `<em>🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</em>` : ''}<p class="sw-ex" data-notr></p><a class="sw-wk" target="_blank" rel="noopener" hidden>📖 Wikipédia</a></div></div>`;
   }
   function swFill(el, p){
@@ -1303,36 +1314,38 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function swRender(){
     if(!SW) return; const t = R[SW.tid]; if(!t){ swClose(); return; }
-    while(SW.i < SW.ids.length && !(R[SW.ids[SW.i]] && R[SW.ids[SW.i]].sugg && !R[SW.ids[SW.i]].deleted)) SW.i++;
+    while(SW.i < SW.ids.length && !swPend(SW.ids[SW.i])) SW.i++;
     let ov = document.getElementById('cv-sw');
     if(!ov){ ov = document.createElement('div'); ov.id = 'cv-sw'; document.body.appendChild(ov); document.body.style.overflow = 'hidden'; }
-    const left = SW.ids.slice(SW.i).filter(id=>R[id] && R[id].sugg && !R[id].deleted), total = SW.ids.length, done = total - left.length;
+    const left = SW.ids.slice(SW.i).filter(swPend), total = SW.ids.length, done = total - left.length, c0 = left.length ? swCityOf(swRec(left[0])) : '';
     const head = `<div class="sw-head"><button type="button" class="sw-x" onclick="CV.swClose()" aria-label="${esc(MSGT('Fermer'))}">✕</button>
-      <div class="sw-ttl"><b>💡 ${esc(MSGT('Choisir mes visites'))}</b><small>${Math.min(done + 1, total)}/${total}</small> <small class="sw-kept">· ✓ ${SW.kept}</small></div>
+      <div class="sw-ttl"><b>① ${esc(MSGT('Choisir mes visites'))}</b><small>${Math.min(done + 1, total)}/${total}</small> <small class="sw-kept">· ✓ ${SW.kept}</small><small class="sw-city">${c0 ? '📍 <span data-notr>' + esc(c0) + '</span>' : ''}</small></div>
       <button type="button" class="sw-list" onclick="CV.suggList()" aria-label="${esc(MSGT('Voir en liste'))}">☰</button></div>
       <div class="sw-bar"><span style="width:${total ? done / total * 100 : 100}%"></span></div>`;
     if(!left.length){
       const xn = expCount(t);
+      const pk = rgItems(t).length;
       ov.innerHTML = head + `<div class="sw-end"><div class="sw-end-i">✨</div><h2>${esc(MSGT('Tout est trié !'))}</h2><p>${esc(RF('{0} lieu(x) ajouté(s) à ton programme.', SW.kept))}</p>
-        <button type="button" class="v-btn" onclick="CV.swClose();CV.suggMore()">＋ ${esc(MSGT('Nouvelles suggestions'))}</button>
+        ${pk ? `<button type="button" class="v-btn" onclick="CV.swClose(1);CV.rgOpen()">② ${esc(MSGT('Ranger mes visites dans les jours'))} (${pk})</button>` : ''}
+        <button type="button" class="v-btn${pk ? ' sec' : ''}" onclick="CV.swClose();CV.suggMore()">＋ ${esc(MSGT('Nouvelles suggestions'))}</button>
         <button type="button" class="v-btn sec" onclick="CV.suggRedo()">🔄 ${esc(MSGT('Refaire les suggestions'))}</button>
         <button type="button" class="v-btn sec" onclick="CV.swClose();CV.expOpen()">🎟️ ${esc(MSGT('Expériences à vivre'))}${xn ? ' (' + xn + ')' : ''}</button>
         ${SW.hist.length ? `<button type="button" class="v-btn sec" onclick="CV.swUndo()">↩️ ${esc(MSGT('Annuler le dernier choix'))}</button>` : ''}
         <button type="button" class="v-btn sec" onclick="CV.swClose()">${esc(MSGT('Fermer'))}</button></div>`;
       return;
     }
-    const top = R[left[0]], nx = left[1] && R[left[1]];
+    const top = swRec(left[0]), nx = left[1] && swRec(left[1]);
     ov.innerHTML = head + `<div class="sw-stack">${nx ? swCard(nx, false) : ''}${swCard(top, true)}</div>
       <div class="sw-acts"><button type="button" class="sw-b undo" onclick="CV.swUndo()" ${SW.hist.length ? '' : 'disabled'} aria-label="${esc(MSGT('Annuler le dernier choix'))}">↩️</button>
         <button type="button" class="sw-b no" onclick="CV.swGo(0)" aria-label="${esc(MSGT('Écarter'))}">✕</button>
         <button type="button" class="sw-b yes" onclick="CV.swGo(1)" aria-label="${esc(MSGT('Ajouter au programme'))}">✓</button>
         <button type="button" class="sw-b all" onclick="CV.swAll()" aria-label="${esc(MSGT('Tout ajouter'))}">⏩</button></div>
       <div class="sw-hint">${esc(MSGT('Glisse à droite pour garder, à gauche pour écarter'))}</div>`;
-    ov.querySelectorAll('.sw-card').forEach(el=>swFill(el, R[el.dataset.id]));
+    ov.querySelectorAll('.sw-card').forEach(el=>swFill(el, swRec(el.dataset.id)));
     swPre(left); swDrag(ov.querySelector('.sw-card.top'));
   }
-  const swLeft = () => SW ? SW.ids.slice(SW.i).filter(id=>R[id] && R[id].sugg && !R[id].deleted) : [];
-  function swPre(left){ left.slice(2, 5).forEach(id=>{ if(R[id]) swInfo(R[id]).then(x=>{ if(x.img) (new Image()).src = x.img; }); }); }   // les suivantes se préparent
+  const swLeft = () => SW ? SW.ids.slice(SW.i).filter(swPend) : [];
+  function swPre(left){ left.slice(2, 5).forEach(id=>{ const r = swRec(id); if(r) swInfo(r).then(x=>{ if(x.img) (new Image()).src = x.img; }); }); }   // les suivantes se préparent
   // carte suivante sans tout redessiner : celle de derrière passe devant (déjà chargée), une nouvelle se glisse derrière
   function swNext(){
     const ov = document.getElementById('cv-sw'), st = ov && ov.querySelector('.sw-stack'); if(!st) return swRender();
@@ -1340,12 +1353,13 @@ ${pm.join('\n')}</Document></kml>`;
     st.querySelectorAll('.sw-card.top').forEach(x=>x.remove());
     let topEl = st.querySelector('.sw-card'); if(!topEl || topEl.dataset.id !== left[0]) return swRender();
     topEl.classList.add('top'); swDrag(topEl);
-    if(left[1] && R[left[1]]){ st.insertAdjacentHTML('afterbegin', swCard(R[left[1]], false)); swFill(st.firstElementChild, R[left[1]]); }
+    if(left[1] && swRec(left[1])){ const r = swRec(left[1]); st.insertAdjacentHTML('afterbegin', swCard(r, false)); swFill(st.firstElementChild, r); }
     const total = SW.ids.length, done = total - left.length;
     const sm = ov.querySelector('.sw-ttl small'); if(sm) sm.textContent = Math.min(done + 1, total) + '/' + total;
     const bar = ov.querySelector('.sw-bar span'); if(bar) bar.style.width = (total ? done / total * 100 : 100) + '%';
     const ub = ov.querySelector('.sw-b.undo'); if(ub) ub.disabled = !SW.hist.length;
     const kp = ov.querySelector('.sw-kept'); if(kp) kp.textContent = '· ✓ ' + SW.kept;
+    const sc = ov.querySelector('.sw-city'), c0 = swCityOf(swRec(left[0])); if(sc && sc.textContent.replace(/^📍\s*/, '') !== c0){ sc.innerHTML = c0 ? '📍 <span data-notr>' + esc(c0) + '</span>' : ''; sc.classList.remove('pop'); void sc.offsetWidth; sc.classList.add('pop'); }
     swPre(left);
   }
   function swDrag(el){
@@ -1359,9 +1373,11 @@ ${pm.join('\n')}</Document></kml>`;
   }
   let swBusy = false;
   function swGo(keep){
-    if(!SW || swBusy) return; swBusy = true; setTimeout(()=>{ swBusy = false; }, 340); const el = document.querySelector('#cv-sw .sw-card.top'); if(!el) return; const p = R[el.dataset.id]; if(!p) return;
+    if(!SW || swBusy) return; swBusy = true; setTimeout(()=>{ swBusy = false; }, 340); const el = document.querySelector('#cv-sw .sw-card.top'); if(!el) return;
+    if(/^ex\|/.test(el.dataset.id)) return swGoEx(el, keep);
+    const p = R[el.dataset.id]; if(!p) return;
     const before = clone(p), di = R['day:' + p.trip + ':' + p.date], dayBefore = di ? clone(di) : null;
-    if(keep){ const c = clone(p); delete c.sugg; c.kept = Date.now(); putQuiet([c]); SW.kept++;
+    if(keep){ const c = clone(p); delete c.sugg; c.kept = Date.now(); c.pick = 1; putQuiet([c]); SW.kept++;
       if(p.exc && di && !di.deleted && !String(di.titre || '').includes(p.nom)) putQuiet([Object.assign(clone(di), {titre:(di.titre ? di.titre + ' · ' : '') + '🚌 ' + p.nom})]); }
     else { M.suggNo = M.suggNo || {}; const nl = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!nl.includes(p.nom)) nl.push(p.nom); if(nl.length > 300) nl.shift(); const c = clone(p); c.deleted = true; putQuiet([c]); }
     SW.hist.push({id:p.id, keep, before, dayBefore});
@@ -1371,8 +1387,24 @@ ${pm.join('\n')}</Document></kml>`;
     el.style.setProperty(keep ? '--yes' : '--no', 1);
     setTimeout(swNext, 300);
   }
+  // activité payante : gardée = au programme (jour provisoire, rangée à l'étape ②) ; écartée = plus proposée
+  function swGoEx(el, keep){
+    const id = el.dataset.id, x = SW.EX[id]; if(!x) return; const t = R[SW.tid];
+    let made = null;
+    if(keep){ made = expPut(t, x.h, x.e); SW.kept++; toast('🎟️ ' + x.e.p + ' · ' + MSGT('Ajouté au programme')); }
+    else { M.expNo = M.expNo || {}; const nl = M.expNo[t.id] = M.expNo[t.id] || []; if(!nl.includes(x.e.key)) nl.push(x.e.key); }
+    SW.exDone.add(id); SW.hist.push({id, ex:1, keep, made, key:x.e.key, tid:t.id});
+    try { persistNow(); } catch(e){}
+    el.style.transition = 'transform .32s ease, opacity .32s ease'; el.style.transform = `translate(${keep ? 140 : -140}%, -4%) rotate(${keep ? 22 : -22}deg)`; el.style.opacity = '0';
+    el.style.setProperty(keep ? '--yes' : '--no', 1);
+    setTimeout(swNext, 300);
+  }
   function swUndo(){
     if(!SW || !SW.hist.length || swBusy) return; const h = SW.hist.pop();
+    if(h.ex){ SW.exDone.delete(h.id);
+      if(h.keep){ SW.kept = Math.max(0, SW.kept - 1); if(h.made && R[h.made]) putQuiet([Object.assign(clone(R[h.made]), {deleted:true})]); }
+      else { const nl = ((M.expNo || {})[h.tid]) || []; const i = nl.indexOf(h.key); if(i >= 0) nl.splice(i, 1); persist(); }
+      const at = SW.ids.indexOf(h.id); if(at >= 0) SW.i = Math.min(SW.i, at); swRender(); return; }
     const r = Object.assign(clone(h.before), {sugg:true}); delete r.deleted; delete r.kept; putQuiet([r]);
     if(h.keep){ SW.kept = Math.max(0, SW.kept - 1); if(h.dayBefore && R[h.dayBefore.id] && R[h.dayBefore.id].titre !== h.dayBefore.titre) putQuiet([Object.assign(clone(R[h.dayBefore.id]), {titre:h.dayBefore.titre || ''})]); }
     else { const nl = ((M.suggNo || {})[h.before.trip]) || []; const i = nl.indexOf(h.before.nom); if(i >= 0) nl.splice(i, 1); persist(); }
@@ -1380,7 +1412,7 @@ ${pm.join('\n')}</Document></kml>`;
     swRender();
   }
   async function swAll(){
-    if(!SW) return; const n = SW.ids.filter(id=>R[id] && R[id].sugg && !R[id].deleted).length; if(!n) return;
+    if(!SW) return; const n = SW.ids.filter(id=>!/^ex\|/.test(id) && R[id] && R[id].sugg && !R[id].deleted).length; if(!n) return;
     if(!(await uiConfirm(RF('Ajouter les {0} lieux restants à ton programme ?', n)))) return;
     SW.kept += n; suggKeep('*'); swRender();
   }
@@ -1392,6 +1424,188 @@ ${pm.join('\n')}</Document></kml>`;
     if(M.suggDone) delete M.suggDone[t.id]; persist(); swClose(true); closeSheet(true); suggFill(t.id);
   }
   function swClose(quiet){ const ov = document.getElementById('cv-sw'); if(ov) ov.remove(); if(ov || !quiet) document.body.style.overflow = ''; SW = null; if(!quiet) refresh(); }
+  /* ② RANGER MES VISITES DANS LES JOURS : seulement les visites et activités choisies, dans l'ordre du trajet
+     (de proche en proche depuis l'hôtel, pour voir le plus de choses chaque jour sans allers-retours).
+     Chaque carte propose le jour conseillé (jours de trajet allégés) : on la fait glisser sur un jour, ou on touche le jour. */
+  let RG = null;
+  function rgItems(t){ return t ? [...list('place', p=>p.trip === t.id && p.pick && !p.sugg), ...list('item', i=>i.trip === t.id && i.cat === 'activite' && i.pick)] : []; }
+  const rgH = s => { const m = String(s || '').match(/(\d{1,2})[:h](\d{2})?/); return m ? +m[1] + (+(m[2] || 0)) / 60 : null; };
+  const rgNom = x => x.type === 'place' ? x.nom : (x.titre || '');
+  // poids dans la journée (4 = journée pleine) : excursions et îles = la journée, spectacle / coucher de soleil = le soir, le reste ≈ une demi-journée
+  const RG_FULL = /^(exc|ile|saf|gla|vol|jun|cru|tra|ski)$/, RG_EVE = /^(nui|spe|sun|aur)$/;
+  const rgT = x => String(x.exp || '').split('|')[0];
+  const rgW = x => x.type === 'place' ? (x.exc ? 4 : 1) : RG_FULL.test(rgT(x)) ? 4 : RG_EVE.test(rgT(x)) ? .5 : 1.5;
+  const rgStages = t => { const S = tlStages(); return S.length ? S : [{city:'', debut:t.debut, fin:t.fin || t.debut, h:null}]; };
+  function rgDays(t){
+    const S = rgStages(t), ds = range(t.debut, t.fin || t.debut), out = {};
+    ds.forEach(d=>{
+      let k = S.findIndex(s=>s.debut <= d && d < s.fin); if(k < 0) k = d < (S[0] || {}).debut ? 0 : S.length - 1;
+      const st = S[k] || null, tr = list('item', i=>i.trip === t.id && i.cat === 'transport' && i.date === d);
+      let cap = 4;
+      if(tr.length){   // trajet ce jour-là : on garde le temps libre avant le départ et après l'arrivée (9 h – 20 h)
+        let busy = []; tr.forEach(x=>{ const a = rgH(x.heureDep || x.heure), b = rgH(x.heureArr); const pre = /Avion/i.test(x.mode || '') ? 2 : 1;
+          if(a != null || b != null) busy.push([a != null ? a - pre : 9, b != null ? (b < (a || 0) ? 24 : b) + 1 : 20]); });
+        if(busy.length){ let free = 0; for(let h = 9; h < 20; h += .5) if(!busy.some(([u, v])=>h >= u && h < v)) free += .5; cap = Math.max(0, Math.min(4, Math.floor(free / 2.5))); }
+        else cap = 2;
+      } else if(d === t.debut || (st && d === st.debut && k > 0)) cap = 2;
+      else if(d === (t.fin || t.debut) && ds.length > 1) cap = 1;
+      out[d] = {d, k, st, tr, cap, first:d === t.debut, last:d === (t.fin || t.debut) && ds.length > 1};
+    });
+    return out;
+  }
+  const rgLoad = (t, d, skip) => list('place', p=>p.trip === t.id && p.date === d && !p.sugg && !p.pick && p.id !== skip).reduce((a, p)=>a + rgW(p), 0)
+    + list('item', i=>i.trip === t.id && i.cat === 'activite' && i.date === d && !i.pick && i.id !== skip).length * 1.5;
+  function rgStage(x, D, S){
+    const c = x.type === 'place' ? swCity(x) : (x.adresse || ''); let k = S.findIndex(s=>normQ(s.city) === normQ(c));
+    if(k < 0 && x.date && D[x.date]) k = D[x.date].k; return Math.max(0, k);
+  }
+  // l'ordre du trajet : de proche en proche depuis l'hôtel de l'étape, puis rangé jour après jour selon la place libre
+  function rgPlan(t){
+    const D = rgDays(t), S = rgStages(t), all = rgItems(t).filter(x=>!(RG && RG.later.has(x.id))), later = rgItems(t).filter(x=>RG && RG.later.has(x.id)).sort((a, b)=>RG.later.get(a.id) - RG.later.get(b.id));
+    const used = {}; Object.keys(D).forEach(d=>{ used[d] = rgLoad(t, d); });
+    const out = [];
+    S.forEach((st, k)=>{
+      const days = Object.values(D).filter(x=>x.k === k).map(x=>x.d); if(!days.length) return;
+      const mine = all.filter(x=>rgStage(x, D, S) === k); if(!mine.length) return;
+      // départ du trajet : l'hôtel (s'il a une adresse), sinon le centre de la ville
+      const hh = list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.lat != null && normQ(stayCity(i)) === normQ(st.city))[0];
+      const g = hh || R['geo:' + normQ(st.city)], geo = mine.filter(x=>x.lat != null), rest = mine.filter(x=>x.lat == null);
+      let cur = g && g.lat != null ? {lat:+g.lat, lng:+g.lng} : geo.length ? {lat:geo.reduce((a, x)=>a + +x.lat, 0) / geo.length, lng:geo.reduce((a, x)=>a + +x.lng, 0) / geo.length} : null;
+      const chain = [], pool = geo.slice();
+      while(pool.length){ let bi = 0, bd = 1e9; pool.forEach((x, i)=>{ const dd = km(cur, x); if(dd < bd){ bd = dd; bi = i; } }); cur = pool[bi]; chain.push(pool.splice(bi, 1)[0]); }
+      const exc = [...chain, ...rest].filter(x=>rgW(x) >= 4), seq = [...chain, ...rest].filter(x=>rgW(x) < 4);
+      // excursion à la journée : un jour entier libre, plutôt au milieu de l'étape
+      exc.forEach(x=>{ const mid = days.slice().sort((a, b)=>Math.abs(days.indexOf(a) - days.length / 2) - Math.abs(days.indexOf(b) - days.length / 2));
+        const d = mid.find(d=>D[d].cap >= 4 && !used[d]) || mid.find(d=>!used[d]) || mid[0]; used[d] = (used[d] || 0) + 4; out.push({x, d}); });
+      let di = 0;
+      seq.forEach(x=>{ const w = rgW(x);
+        while(di < days.length && D[days[di]].cap - used[days[di]] < w && !(D[days[di]].cap - used[days[di]] > 0 && w > 1 && D[days[di]].cap >= 4)) di++;
+        let d = days[di];
+        if(!d) d = days.slice().sort((a, b)=>(used[a] - D[a].cap) - (used[b] - D[b].cap) || D[b].cap - D[a].cap)[0];   // tout est plein : le jour le moins chargé (plutôt une vraie journée qu'un jour de trajet)
+        used[d] = (used[d] || 0) + w; out.push({x, d}); });
+    });
+    later.forEach(x=>{ const c = Object.values(D); const d = x.date && D[x.date] ? x.date : (c[0] || {}).d; out.push({x, d, later:1}); });
+    return {D, S, out};
+  }
+  function rgTips(t, x, d, D){
+    const o = D[d] || {}, T = [];
+    if(o.tr && o.tr.length){ const r = o.tr[0]; T.push(`${icon(r)} ${MSGT('Jour de trajet')}${r.heureDep || r.heureArr ? ' (' + [r.heureDep || r.heure, r.heureArr].filter(Boolean).join(' → ') + ')' : ''} : ${MSGT('journée allégée')}`); }
+    else if(o.first) T.push('🛬 ' + MSGT('Premier jour : journée allégée'));
+    else if(o.last) T.push('🧳 ' + MSGT('Dernier jour : garde du temps pour le retour'));
+    else if(o.st && d === o.st.debut) T.push('🚆 ' + MSGT('Jour d’arrivée dans la ville : journée allégée'));
+    if(rgW(x) >= 4) T.push('🚌 ' + MSGT('Excursion : prévois la journée entière'));
+    else if(x.type === 'item' && RG_EVE.test(rgT(x))) T.push('🌙 ' + MSGT('En soirée : après les visites de la journée'));
+    if(x.lat != null){ const nb = list('place', p=>p.trip === t.id && p.date === d && !p.sugg && !p.pick && p.lat != null && p.id !== x.id).map(p=>[p, km(p, x)]).sort((a, b)=>a[1] - b[1])[0];
+      if(nb && nb[1] < 4) T.push('📍 ' + RF('À {0} de {1}, prévu ce jour-là', nb[1] < 1 ? Math.round(nb[1] * 1000 / 50) * 50 + ' m' : nb[1].toFixed(1) + ' km', nb[0].nom)); }
+    if(x.type === 'item') T.push('🎟️ ' + MSGT('Activité payante : vérifie les horaires avant de réserver'));
+    if(rgLoad(t, d, x.id) >= (o.cap || 4)) T.push('⚠️ ' + MSGT('Journée déjà bien remplie'));
+    return T;
+  }
+  function rgOpen(){
+    const t = trip(); if(!t) return; if(!t.debut){ toast('📅 ' + MSGT('Choisis d’abord les dates du voyage.')); return; } closeSheet(true);
+    RG = {tid:t.id, hist:[], later:new Map(), lc:0, all:false, n0:rgItems(t).length, done:0}; rgRender();
+  }
+  function rgClose(){ const ov = document.getElementById('cv-rg'); if(ov) ov.remove(); document.body.style.overflow = ''; RG = null; refresh(); }
+  function rgRender(){
+    if(!RG) return; const t = R[RG.tid]; if(!t){ rgClose(); return; }
+    let ov = document.getElementById('cv-rg');
+    if(!ov){ ov = document.createElement('div'); ov.id = 'cv-rg'; ov.className = 'cv-sw-like'; document.body.appendChild(ov); document.body.style.overflow = 'hidden'; }
+    const P = rgPlan(t), ds = dayList(), left = P.out.length, total = Math.max(RG.n0, RG.done + left);
+    const head = `<div class="sw-head"><button type="button" class="sw-x" onclick="CV.rgClose()" aria-label="${esc(MSGT('Fermer'))}">✕</button>
+      <div class="sw-ttl"><b>② ${esc(MSGT('Ranger mes visites dans les jours'))}</b><small>${Math.min(RG.done + 1, total)}/${total}</small></div><span></span></div>
+      <div class="sw-bar"><span style="width:${total ? RG.done / total * 100 : 100}%"></span></div>`;
+    if(!left){
+      ov.innerHTML = head + `<div class="sw-end rg-end"><div class="sw-end-i">🗓️</div><h2>${esc(MSGT('Tout est rangé !'))}</h2><p>${esc(MSGT('Chaque journée suit l’ordre du trajet, de proche en proche. Tu peux encore tout déplacer dans le programme.'))}</p>
+        <div class="rg-hood"><b>🏨 ${esc(MSGT('Où dormir ? Le quartier au centre de tes visites'))}</b><div id="rg-hood">${rgHoods(t) || '⏳'}</div>
+          <small>${esc(MSGT('Rien n’est figé : si tu choisis un hôtel ailleurs, mets son adresse dans l’hébergement puis « Réorganiser depuis mon hôtel ». Les journées repartiront de là.'))}</small></div>
+        <button type="button" class="v-btn" onclick="CV.rgClose();CV.tab('prog')">📅 ${esc(MSGT('Voir mon programme'))}</button>
+        ${RG.hist.length ? `<button type="button" class="v-btn sec" onclick="CV.rgUndo()">↩️ ${esc(MSGT('Annuler le dernier choix'))}</button>` : ''}
+        <button type="button" class="v-btn sec" onclick="CV.rgClose()">${esc(MSGT('Fermer'))}</button></div>`;
+      if(typeof hoodEnsure === 'function') hoodEnsure(t).then(()=>{ const e = document.getElementById('rg-hood'); if(e) e.innerHTML = rgHoods(t) || esc(MSGT('Ajoute au moins 2 visites par ville pour avoir un conseil.')); });
+      return;
+    }
+    const cur = P.out[0], x = cur.x, sug = cur.d, D = P.D, st = (D[sug] || {}).st, city = x.type === 'place' ? swCity(x) : (x.adresse || '');
+    const info = x.type === 'place' ? x : {nom:rgNom(x).replace(/^.*?·\s*/, ''), ex:1, city, id:x.id};
+    const dayB = d => { const o = D[d] || {}, k = ds.indexOf(d), l = rgLoad(t, d, x.id), dots = '●'.repeat(Math.min(4, Math.ceil(l))) + '○'.repeat(Math.max(0, Math.min(4, o.cap || 0) - Math.min(4, Math.ceil(l))));
+      return `<button type="button" class="rg-day${d === sug ? ' sug' : ''}${l >= (o.cap || 4) ? ' full' : ''}" data-d="${d}" onclick="CV.rgSet('${d}')"><b>${k >= 0 ? PJ(k + 1) : ''}</b><small>${esc(fshort(d))}</small>${o.tr && o.tr.length ? `<i>${icon(o.tr[0])}</i>` : ''}<em>${dots || '·'}</em>${d === sug ? `<u>${esc(MSGT('conseillé'))}</u>` : ''}</button>`; };
+    const near = Object.values(D).filter(o=>o.k === (D[sug] || {}).k).map(o=>o.d), days = RG.all ? Object.keys(D).sort() : near;
+    ov.innerHTML = head + `<div class="rg-city">📍 <span data-notr>${esc(city || (st && st.city) || '')}</span></div>
+      <div class="sw-stack rg-stack"><div class="sw-card top rg-card" data-id="${esc(x.id)}">
+        <div class="sw-ph"><span class="sw-ic">${x.type === 'place' ? (POI_CATS[x.cat] || {icon:'📍'}).icon : '🎟️'}</span><img class="sw-img" alt="" decoding="async"></div><div class="sw-shade"></div>
+        <i class="sw-tag no">${esc(MSGT('Plus tard'))}</i>
+        <div class="sw-tx"><small>${esc(MSGT('Conseillé'))} : ${ds.indexOf(sug) >= 0 ? PJ(ds.indexOf(sug) + 1) + ' · ' : ''}${esc(fdate(sug))}</small><b data-notr>${esc(rgNom(x))}</b>
+          <div class="rg-tips">${rgTips(t, x, sug, D).map(s=>`<span>${esc(s)}</span>`).join('')}</div></div></div></div>
+      <div class="rg-hint">👆 ${esc(MSGT('Fais glisser la carte sur un jour'))}</div>
+      <div class="rg-days">${days.map(dayB).join('')}<button type="button" class="rg-day rg-more" onclick="CV.rgAll()"><b>📅</b><small>${esc(MSGT(RG.all ? 'Moins de jours' : 'Autre jour'))}</small></button></div>
+      <div class="sw-acts rg-acts"><button type="button" class="sw-b undo" onclick="CV.rgUndo()" ${RG.hist.length ? '' : 'disabled'} aria-label="${esc(MSGT('Annuler le dernier choix'))}">↩️</button>
+        <button type="button" class="sw-b no" onclick="CV.rgDrop()" aria-label="${esc(MSGT('Retirer du programme'))}">🗑️</button>
+        <button type="button" class="rg-ok" onclick="CV.rgSet('${sug}')">✓ ${esc(MSGT('Jour conseillé'))}</button>
+        <button type="button" class="sw-b all" onclick="CV.rgLater()" aria-label="${esc(MSGT('Plus tard'))}">⏭️</button></div>
+      ${left > 1 ? `<button type="button" class="rg-auto" onclick="CV.rgAuto()">⚡ ${esc(RF('Tout ranger comme conseillé ({0})', left))}</button>` : ''}`;
+    const el = ov.querySelector('.rg-card'); swFill(el, info); rgDrag(el);
+    const sg = ov.querySelector('.rg-day.sug'); if(sg) try { sg.scrollIntoView({inline:'center', block:'nearest'}); } catch(e){}
+    P.out.slice(1, 4).forEach(o=>{ const r = o.x.type === 'place' ? o.x : {nom:rgNom(o.x).replace(/^.*?·\s*/, ''), ex:1, city:o.x.adresse || ''}; swInfo(r).then(z=>{ if(z.img) (new Image()).src = z.img; }); });
+  }
+  function rgDrag(el){
+    let x0 = 0, y0 = 0, dx = 0, dy = 0, on = false, over = null;
+    const hit = (x, y) => { const b = document.elementsFromPoint(x, y).find(e=>e.classList && e.classList.contains('rg-day') && !e.classList.contains('rg-more')); return b || null; };
+    el.addEventListener('pointerdown', e=>{ if(e.target.closest('a')) return; on = true; x0 = e.clientX; y0 = e.clientY; dx = dy = 0; el.style.transition = 'none'; try { el.setPointerCapture(e.pointerId); } catch(_){} });
+    el.addEventListener('pointermove', e=>{ if(!on) return; dx = e.clientX - x0; dy = e.clientY - y0; if(Math.abs(dx) + Math.abs(dy) < 8) return;
+      const sc = dy > 60 ? Math.max(.42, 1 - (dy - 60) / 400) : 1;
+      el.style.transform = `translate(${dx}px,${dy}px) rotate(${dx / 30}deg) scale(${sc})`; el.style.setProperty('--no', dy < 40 ? Math.max(0, Math.min(1, -dx / 110)) : 0);
+      const b = hit(e.clientX, e.clientY); if(b !== over){ if(over) over.classList.remove('hov'); over = b; if(b){ b.classList.add('hov'); try { navigator.vibrate && navigator.vibrate(8); } catch(_){} } } });
+    const end = () => { if(!on) return; on = false; el.style.transition = '';
+      if(over){ const d = over.dataset.d; over.classList.remove('hov'); over = null; el.style.transition = 'transform .25s ease, opacity .25s ease'; el.style.opacity = '0'; el.style.transform += ' scale(.2)'; setTimeout(()=>rgSet(d), 200); return; }
+      if(dx < -110 && Math.abs(dy) < 80){ el.style.transition = 'transform .3s ease, opacity .3s ease'; el.style.transform = 'translate(-140%,-4%) rotate(-22deg)'; el.style.opacity = '0'; setTimeout(rgLater, 260); return; }
+      el.style.transform = ''; el.style.setProperty('--no', 0); };
+    el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+  }
+  let rgBusy = false;
+  function rgSet(d){
+    if(!RG || rgBusy) return; const t = R[RG.tid]; const P = rgPlan(t), cur = P.out[0]; if(!cur || !d) return;
+    rgBusy = true; setTimeout(()=>{ rgBusy = false; }, 250);
+    const x = cur.x, before = clone(x), c = clone(x), o = P.D[d] || {}; c.date = d; delete c.pick;
+    if(x.type === 'place' && o.st && o.st.h) c.stay = o.st.h.id;
+    const di = x.exc && R['day:' + x.trip + ':' + d], dayBefore = di ? clone(di) : null;
+    putQuiet([c]); if(di && !di.deleted && !String(di.titre || '').includes(x.nom)) putQuiet([Object.assign(clone(di), {titre:(di.titre ? di.titre + ' · ' : '') + '🚌 ' + x.nom})]);
+    RG.later.delete(x.id); RG.hist.push({before, dayBefore}); RG.done++;
+    try { persistNow(); } catch(e){}
+    const ds = dayList(), k = ds.indexOf(d), city = x.type === 'place' ? swCity(x) : (x.adresse || '');
+    const away = o.st && city && normQ(o.st.city) !== normQ(city);
+    toast((away ? '⚠️ ' + RF('Ce jour-là tu es à {0}', o.st.city) : '✓ ' + rgNom(x) + ' → ' + (k >= 0 ? PJ(k + 1) + ' · ' : '') + fshort(d)));
+    rgRender();
+  }
+  function rgLater(){ if(!RG) return; const t = R[RG.tid], cur = rgPlan(t).out[0]; if(!cur) return; RG.later.set(cur.x.id, ++RG.lc); rgRender(); }
+  async function rgDrop(){
+    if(!RG) return; const t = R[RG.tid], cur = rgPlan(t).out[0]; if(!cur) return; const x = cur.x;
+    if(!(await uiConfirm(RF('Retirer « {0} » du programme ?', rgNom(x))))) return;
+    RG.hist.push({before:clone(x)}); putQuiet([Object.assign(clone(x), {deleted:true})]); RG.done++;
+    if(x.type === 'place'){ M.suggNo = M.suggNo || {}; const nl = M.suggNo[x.trip] = M.suggNo[x.trip] || []; if(!nl.includes(x.nom)) nl.push(x.nom); }
+    else if(x.exp){ M.expNo = M.expNo || {}; const nl = M.expNo[x.trip] = M.expNo[x.trip] || []; if(!nl.includes(x.exp)) nl.push(x.exp); }
+    try { persistNow(); } catch(e){} rgRender();
+  }
+  function rgUndo(){
+    if(!RG || !RG.hist.length) return; const h = RG.hist.pop(); const r = clone(h.before); delete r.deleted; r.pick = 1; putQuiet([r]);
+    if(h.dayBefore && R[h.dayBefore.id]) putQuiet([Object.assign(clone(R[h.dayBefore.id]), {titre:h.dayBefore.titre || ''})]);
+    RG.done = Math.max(0, RG.done - 1); rgRender();
+  }
+  function rgAll(){ if(!RG) return; RG.all = !RG.all; rgRender(); }
+  // ⚡ tout le reste au jour conseillé, d'un coup (on peut encore tout déplacer ensuite)
+  async function rgAuto(){
+    if(!RG) return; const t = R[RG.tid], P = rgPlan(t); if(!P.out.length) return;
+    if(!(await uiConfirm(RF('Ranger les {0} visites restantes au jour conseillé ?', P.out.length)))) return;
+    const out = []; P.out.forEach(({x, d})=>{ const c = clone(x), o = P.D[d] || {}; c.date = d; delete c.pick; if(x.type === 'place' && o.st && o.st.h) c.stay = o.st.h.id; out.push(c); RG.hist.push({before:clone(x)}); });
+    putQuiet(out); RG.done += out.length; RG.later.clear(); try { persistNow(); } catch(e){} rgRender();
+  }
+  // 🏨 hôtel choisi (ou changé) : toutes les visites de l'étape repartent de lui — les lieux verrouillés 🔒 ne bougent pas
+  async function rgRedo(){
+    const t = trip(); if(!t) return;
+    const L = [...list('place', p=>p.trip === t.id && !p.sugg && !p.pick && !p.lock && p.date), ...list('item', i=>i.trip === t.id && i.cat === 'activite' && i.exp && !i.pick && !okB(i))];
+    if(!L.length){ toast(MSGT('Rien à réorganiser pour l’instant.')); return; }
+    if(!(await uiConfirm(RF('Réorganiser tes {0} visites à partir de ton hôtel ? Tu valides chaque journée, rien n’est changé sans toi.', L.length)))) return;
+    putQuiet(L.map(x=>Object.assign(clone(x), {pick:1}))); rgOpen();
+  }
+  function rgHoods(t){ return typeof hoodHTML === 'function' ? tlStages().map(st=>st.h && (M.hood || {})[st.h.id] ? `<div class="rg-h1"><b data-notr>📍 ${esc(st.city)}</b>${hoodHTML(st.h, t)}</div>` : '').join('') : ''; }
   function suggDrop(id){ const p = R[id]; if(!p) return; M.suggNo = M.suggNo || {}; const nl = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!nl.includes(p.nom)) nl.push(p.nom); if(nl.length > 300) nl.shift(); p.deleted = true; putQuiet([p]); if(document.getElementById('cv-sw')) swRender(); else suggList(); refresh(); }
   function tlFill(){
     const st = items(i=>i.cat==='hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date));

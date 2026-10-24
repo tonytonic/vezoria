@@ -51,12 +51,15 @@
           ${st.length ? `<div class="ar-st">${st.map(x=>`📍 <span data-notr>${esc(x.city)}</span> <small>${fd(x.debut)} → ${fd(x.fin)} · ${nights(x.debut, x.fin || x.debut)} ${MSGT('nuits')}</small>`).join('<br>')}</div>` : ''}
           <button type="button" class="ar-go" onclick="CV.ariCity()">📍 ${MSGT(st.length ? 'Ajouter une ville' : 'Ajouter les villes du voyage')}</button></div>`;
       }
-      if(k === 'faire'){
-        const xn = expCount(t), more = `<button type="button" class="ar-more" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>` + (xn ? `<button type="button" class="ar-go ex-go" onclick="CV.expOpen()">🎟️ ${MSGT('Expériences à vivre')} (${xn})</button>` : '');
-        if(SG && SG.tid === t.id) return `<div class="ar-run">${sgRun(t)}</div>${D.sg.length ? `<button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Choisir mes visites')} (${D.sg.length})</button>` : ''}`;
-        if(D.sg.length) return `<div class="ar-p">${D.pl.length - D.sg.length} ${MSGT('lieux au programme')} · <b>${D.sg.length} ${MSGT('suggestions à choisir')}</b></div><button type="button" class="ar-go" onclick="CV.suggOpen()">💡 ${MSGT('Choisir mes visites')}</button>${more}${(M.ariSkip || {})[t.id] && M.ariSkip[t.id].faire ? '' : `<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('C’est bon, j’ai assez de visites')}</button>`}`;
-        if(!D.pl.length) return `<div class="ar-p">${MSGT('Les lieux à voir et les excursions, jour par jour.')}</div>${D.hs.length ? `<button type="button" class="ar-go" onclick="CV.suggGo()">💡 ${MSGT('Me proposer les incontournables (4 par jour)')}</button>` : ''}${expCount(t) ? `<button type="button" class="ar-go ex-go" onclick="CV.expOpen()">🎟️ ${MSGT('Expériences à vivre')} (${expCount(t)})</button>` : ''}<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('Passer cette étape')}</button>`;
-        return `<div class="ar-p">✓ ${D.pl.length} ${MSGT('lieux au programme')}</div>${more}`;
+      if(k === 'faire'){   // ① choisir (swipe ville par ville, visites + activités payantes) → ② ranger dans les jours (ordre du trajet)
+        const xn = expCount(t), pk = rgItems(t).length, nA = D.sg.length + xn;
+        const more = `<button type="button" class="ar-more" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>`;
+        const subA = `<button type="button" class="ar-sub${nA ? ' cur' : ' ok'}" onclick="CV.suggOpen()"${nA ? '' : ' disabled'}><i>${nA ? '①' : '✓'}</i><span><b>${MSGT('Choisir mes visites')}</b><small>${nA ? RF('{0} idées à trier, ville par ville', nA) : MSGT('Tout est trié')}</small></span></button>`;
+        const subB = `<button type="button" class="ar-sub${pk ? (nA ? '' : ' cur') : ' ok'}" onclick="CV.rgOpen()"${pk ? '' : ' disabled'}><i>${pk ? '②' : '✓'}</i><span><b>${MSGT('Ranger mes visites dans les jours')}</b><small>${pk ? RF('{0} à placer, dans l’ordre du trajet', pk) : MSGT('Rien à ranger pour l’instant')}</small></span></button>`;
+        if(SG && SG.tid === t.id) return `<div class="ar-run">${sgRun(t)}</div>${D.sg.length ? subA : ''}`;
+        if(!D.pl.length && !nA && !pk) return `<div class="ar-p">${MSGT('Les lieux à voir et les excursions, jour par jour.')}</div>${D.hs.length ? `<button type="button" class="ar-go" onclick="CV.suggGo()">💡 ${MSGT('Me proposer les incontournables (4 par jour)')}</button>` : ''}<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('Passer cette étape')}</button>`;
+        const redo = !pk && D.pl.length - D.sg.length > 1 ? `<button type="button" class="ar-more" onclick="CV.rgRedo()">🏨 ${MSGT('Réorganiser depuis mon hôtel')}</button>` : '';
+        return `<div class="ar-p">✓ ${D.pl.length - D.sg.length} ${MSGT('lieux au programme')}</div><div class="ar-subs">${subA}${subB}</div>${more}${redo}${D.sg.length && !((M.ariSkip || {})[t.id] || {}).faire ? `<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('C’est bon, j’ai assez de visites')}</button>` : ''}`;
       }
       if(k === 'resa'){
         if(!D.rs.length) return `<div class="ar-p">${MSGT('Ajoute d’abord tes étapes : les nuits et les trajets apparaîtront ici.')}</div>`;
@@ -639,9 +642,26 @@
   function cdClock(ms){ const s = Math.max(0, Math.floor(ms / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), x = s % 60, two = n => String(n).padStart(2, '0');
     return `<span><b>${d}</b><small>jours</small></span><span><b>${two(h)}</b><small>heures</small></span><span><b>${two(m)}</b><small>min</small></span><span><b>${two(x)}</b><small>s</small></span>`; }
   setInterval(()=>{ const c = document.getElementById('cd'); if(!c || document.visibilityState !== 'visible') return; const k = document.getElementById('cd-clock'); if(k) k.innerHTML = cdClock(+c.dataset.at - Date.now()); }, 1000);
+  // 📸 photo du compte à rebours : la ville, sinon le pays, sinon le titre du voyage, sinon la couverture du voyage.
+  // Chaque photo candidate est essayée tour à tour (une image Wikimedia peut refuser de s'afficher) ; celle qui marche est gardée pour ce voyage.
+  async function cdPhoto(t, city){
+    const bg = document.getElementById('cd-bg'); if(!bg) return;
+    const show = u => new Promise(res=>{ const im = new Image(); im.referrerPolicy = 'no-referrer'; im.onload = () => { if(!im.naturalWidth) return res(false); bg.style.backgroundImage = `url("${u}")`; bg.classList.add('ok'); res(true); }; im.onerror = () => res(false); im.src = u; });
+    M.cdImg = M.cdImg || {}; const keep = M.cdImg[t.id];
+    if(keep && keep.c === city && await show(keep.u)) return;
+    const co = (M.ctry || {})[normQ(city)], cc = (co && co.cc) || (t.ccs || [])[0] || '';
+    const names = [...new Set([city, cc && typeof ccName === 'function' ? ccName(cc) : '', String(t.titre || '').replace(/[^\p{L}\s'’-]/gu, ' ').replace(/\s+/g, ' ').trim()].filter(Boolean).map(x=>x.trim()))];
+    const tried = new Set();
+    for(const n of names){
+      const d = await expLoad(n).catch(()=>null); if(!d) continue;
+      for(const u of [d.hero, ...(d.heroes || [])].filter(Boolean)){ if(tried.has(u)) continue; tried.add(u); if(!document.getElementById('cd-bg')) return;
+        if(await show(u)){ M.cdImg[t.id] = {c:city, u}; persist(); return; } }
+    }
+    if(t.cover) try { const u = await photoURL(t.cover); if(u) await show(u); } catch(e){}
+  }
   async function cdHydrate(){
     const c = document.getElementById('cd'); if(!c || c.dataset.ok) return; c.dataset.ok = '1'; const t = trip(); if(!t) return;
-    try { const d = await expLoad(c.dataset.city); const bg = document.getElementById('cd-bg'); if(bg && d && d.hero){ const im = new Image(); im.referrerPolicy = 'no-referrer'; im.onload = () => { bg.style.backgroundImage = `url("${d.hero}")`; bg.classList.add('ok'); }; im.src = d.hero; } } catch(e){}
+    try { await cdPhoto(t, c.dataset.city); } catch(e){}
     try { const st = tlStages()[0]; if(st && nights(isoToday(), st.debut) <= 14){ const v = await meteoFor(st), w = document.getElementById('cd-wx'); if(w && v) w.textContent = meteoIcon(v) + ' ' + v.min + '° → ' + v.max + '°'; } } catch(e){}
   }
   function cdFm(b){ const t = trip(); if(!t) return; const k = b.dataset.fm; M.fmDone = M.fmDone || {}; const d = M.fmDone[t.id] = M.fmDone[t.id] || {}; if(d[k]) delete d[k]; else d[k] = 1; persist();
@@ -911,14 +931,22 @@
 
   // ---------- 🧱 Mur de photos ----------
   function wallList(){ return souvs().flatMap(x=>(x.photos||[]).map((p, i)=>({p, i, s:x}))); }
+  let wlWho = null;
+  // 👆 les photos du mur, dans le même ordre (jour par jour), pour les voir une par une
+  function wallFlat(useWho){
+    const L = wallList().filter(x=>!useWho || !wlWho || x.s.createdBy === wlWho), G = {}; L.forEach(x=>{ const k = x.s.date || '—'; (G[k] = G[k] || []).push(x); });
+    return Object.keys(G).sort().flatMap(d=>G[d].map(x=>({p:x.p, sid:x.s.id, i:x.i, d:x.s.date || '', lieu:x.s.lieu || '', t:x.s.titre || '', by:x.s.createdBy && people1() ? pname(x.s.createdBy) : ''})));
+  }
+  const people1 = () => new Set(wallList().map(x=>x.s.createdBy).filter(Boolean)).size > 1;
+  function wallStep(){ const L = wallFlat(true); if(L.length) psOpen(L, 0); }
   function wallOpen(who){
-    const t = trip(); if(!t) return; const L0 = wallList(); if(!L0.length){ alert('Pas encore de photo dans ce voyage.'); return; }
+    const t = trip(); if(!t) return; const L0 = wallList(); if(!L0.length){ alert('Pas encore de photo dans ce voyage.'); return; } wlWho = who || null;
     let ov = document.getElementById('cv-wall'); if(ov) ov.remove();
     ov = document.createElement('div'); ov.id = 'cv-wall'; document.body.appendChild(ov); document.body.style.overflow = 'hidden';
     const people = [...new Set(L0.map(x=>x.s.createdBy).filter(Boolean))], L = who ? L0.filter(x=>x.s.createdBy === who) : L0, ds = dayList();
     const G = {}; L.forEach(x=>{ const k = x.s.date || '—'; (G[k] = G[k] || []).push(x); });
     let n = 0;
-    ov.innerHTML = `<div class="wl-top"><button type="button" class="wl-x" onclick="CV.wallClose()" aria-label="Fermer">✕</button><div><b data-notr>${esc(t.titre || '')}</b><small>🧱 ${L.length} photo${L.length > 1 ? 's' : ''}</small></div><button type="button" class="wl-play" onclick="CV.wallShow()">▶ Diaporama</button></div>
+    ov.innerHTML = `<div class="wl-top"><button type="button" class="wl-x" onclick="CV.wallClose()" aria-label="Fermer">✕</button><div><b data-notr>${esc(t.titre || '')}</b><small>🧱 ${L.length} photo${L.length > 1 ? 's' : ''}</small></div><div class="wl-acts"><button type="button" class="wl-play wl-step" onclick="CV.wallStep()">👆 ${esc(MSGT('Une par une'))}</button><button type="button" class="wl-play" onclick="CV.wallShow()">▶ Diaporama</button></div></div>
       ${people.length > 1 ? `<div class="wl-chips"><button type="button" class="${who ? '' : 'on'}" onclick="CV.wallOpen()">Tout le monde</button>${people.map(p=>`<button type="button" class="${who === p ? 'on' : ''}" style="--c:${pcol(p)}" onclick="CV.wallOpen('${p}')"><i></i><span data-notr>${esc(pname(p))}</span></button>`).join('')}</div>` : ''}
       <div class="wl-body">${Object.keys(G).sort().map(d=>{ const k = ds.indexOf(d), pl = [...new Set(G[d].map(x=>String(x.s.lieu || '').split(',')[0].trim()).filter(Boolean))];
         return `<section><h3>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${d !== '—' ? esc(fdate(d)) : 'Sans date'}${pl.length ? ` <small data-notr>${esc(pl.slice(0, 3).join(' · '))}</small>` : ''}${d !== '—' ? `<button type="button" onclick="CV.storyOpen('${d}')" aria-label="Lecture">▶</button>` : ''}</h3>

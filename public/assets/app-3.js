@@ -739,6 +739,7 @@
   let vw = null;
   async function view(sid, i){
     const s = R[sid]; if(!s || !(s.photos||[]).length) return;
+    if(psFrom(sid, i)) return;   // 👆 souvenirs et voyages suivis : toutes les photos du voyage, une par une
     vw = {ph:s.photos, i, sid};
     let el = document.getElementById('cv-viewer');
     if(!el){
@@ -766,6 +767,80 @@
   }
   function viewGo(d){ if(!vw) return; vw.i = (vw.i + d + vw.ph.length) % vw.ph.length; viewShow(); }
   function viewClose(){ const el = document.getElementById('cv-viewer'); if(el) el.style.display = 'none'; document.body.style.overflow = ''; vw = null; }
+
+  /* 👆 PHOTOS UNE PAR UNE (comme Tinder) : toutes les photos du voyage, une grande carte à la fois.
+     Glisser à gauche = la suivante, à droite = la précédente ; toucher à droite / à gauche fait pareil ;
+     gros boutons ◀ ▶ en bas (pensé aussi pour les grands-parents). Sert au voyageur ET aux abonnés. */
+  let PS = null;
+  // toutes les photos du voyage dans l'ordre du mur (jour par jour) — ou d'un voyage suivi (abonné), dans l'ordre des étapes
+  function psList(sid){
+    const s = R[sid]; if(!s) return null;
+    if(s.type === 'feed'){
+      const posts = list('feed', f=>f.trip === s.trip && !f.deleted).sort((a, b)=>(a.date || '').localeCompare(b.date || '') || (a.createdAt || 0) - (b.createdAt || 0));
+      return posts.flatMap(f=>(f.photos || []).map((p, i)=>({p, sid:f.id, i, d:f.date || '', lieu:f.lieu || '', t:f.titre || '', by:f.by || ''})));
+    }
+    if(s.type === 'souv' && s.trip === M.trip && typeof wallFlat === 'function') return wallFlat(!!document.getElementById('cv-wall'));
+    return null;
+  }
+  function psFrom(sid, i){ const L = psList(sid); if(!L || !L.length) return false; const k = L.findIndex(x=>x.sid === sid && x.i === i); psOpen(L, Math.max(0, k)); return true; }
+  function psFeed(ftid){ const f = list('feed', x=>x.trip === ftid && !x.deleted && (x.photos || []).length)[0]; if(f) psFrom(f.id, 0); }
+  function psOpen(L, i){
+    PS = {L, i, end:false}; let ov = document.getElementById('cv-ps');
+    if(!ov){ ov = document.createElement('div'); ov.id = 'cv-ps'; document.body.appendChild(ov); }
+    document.body.style.overflow = 'hidden';
+    ov.innerHTML = `<div class="ps-top"><button type="button" class="ps-x" onclick="CV.psClose()" aria-label="${esc(MSGT('Fermer'))}">✕</button><div class="ps-h"><b id="ps-d"></b><small id="ps-n"></small></div></div>
+      <div class="ps-bar"><span id="ps-bar"></span></div>
+      <div class="ps-stack" id="ps-stack"></div>
+      <div class="ps-cap" id="ps-cap"></div>
+      <div class="ps-acts"><button type="button" class="ps-b" onclick="CV.psGo(-1)"><i>◀</i><small>${esc(MSGT('Précédente'))}</small></button><button type="button" class="ps-b nx" onclick="CV.psGo(1)"><small>${esc(MSGT('Suivante'))}</small><i>▶</i></button></div>`;
+    psShow(0);
+  }
+  function psCard(){
+    const el = document.createElement('div'); el.className = 'ps-card';
+    if(PS.end){ el.classList.add('ps-endc'); el.innerHTML = `<div class="ps-end"><div>✨</div><h2>${esc(MSGT('Fin des photos'))}</h2><p>${esc(RF('{0} photo(s)', PS.L.length))}</p>
+      <button type="button" class="v-btn" onclick="CV.psGo(0, true)">↺ ${esc(MSGT('Revoir depuis le début'))}</button><button type="button" class="v-btn sec" onclick="CV.psClose()">${esc(MSGT('Fermer'))}</button></div>`; return el; }
+    const x = PS.L[PS.i]; el.innerHTML = `<img alt="" decoding="async">`; const img = el.firstChild;
+    img.src = urls[x.p] || urls[x.p + '.t'] || '';
+    (async()=>{ if(!img.src){ const u = await photoURL(x.p + '.t'); if(u && !urls[x.p] && img.isConnected) img.src = u; }
+      const u = await photoURL(x.p); if(u && img.isConnected) img.src = u; })();
+    return el;
+  }
+  function psShow(dir){
+    if(!PS) return; const st = document.getElementById('ps-stack'); if(!st) return;
+    const old = st.querySelector('.ps-card.top');
+    if(old){ old.classList.remove('top'); old.style.transition = 'transform .32s ease, opacity .32s ease'; old.style.transform = `translate(${dir > 0 ? -130 : 130}%, -3%) rotate(${dir > 0 ? -16 : 16}deg)`; old.style.opacity = '0'; setTimeout(()=>old.remove(), 330); }
+    const el = psCard(); el.classList.add('top', dir < 0 ? 'in-l' : dir > 0 ? 'in-b' : 'in-0'); st.appendChild(el); requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.remove('in-l', 'in-b', 'in-0')));
+    if(!PS.end) psDrag(el);
+    const x = PS.L[PS.i], ds = typeof dayList === 'function' && x && !/^ft:/.test((R[x.sid] || {}).trip || '') ? dayList() : [], k = x ? ds.indexOf(x.d) : -1;
+    document.getElementById('ps-d').textContent = PS.end ? '' : (k >= 0 ? PJ(k + 1) + ' · ' : '') + (x.d ? fdate(x.d) : '');
+    document.getElementById('ps-n').textContent = PS.end ? '' : (PS.i + 1) + ' / ' + PS.L.length;
+    document.getElementById('ps-bar').style.width = (PS.end ? 100 : (PS.i + 1) / PS.L.length * 100) + '%';
+    const cap = document.getElementById('ps-cap');
+    cap.innerHTML = PS.end || !x ? '' : `${x.t ? `<b data-notr>${esc(x.t)}</b>` : ''}${x.lieu ? `<span data-notr>📍 ${esc(String(x.lieu).split(',')[0])}</span>` : ''}${x.by ? `<span data-notr>📸 ${esc(x.by)}</span>` : ''}`;
+    if(!PS.end) [1, -1, 2].forEach(d=>{ const n = PS.L[PS.i + d]; if(n) photoURL(n.p); });
+  }
+  let psBusy = false;
+  function psGo(d, restart){
+    if(!PS || psBusy) return; psBusy = true; setTimeout(()=>{ psBusy = false; }, 260);
+    if(restart){ PS.end = false; PS.i = 0; psShow(1); return; }
+    if(PS.end){ if(d < 0){ PS.end = false; psShow(-1); } return; }
+    if(d > 0 && PS.i >= PS.L.length - 1){ PS.end = true; psShow(1); return; }
+    if(d < 0 && PS.i <= 0){ const t = document.querySelector('#ps-stack .ps-card.top'); if(t){ t.classList.add('nudge'); setTimeout(()=>t.classList.remove('nudge'), 300); } return; }
+    PS.i += d > 0 ? 1 : -1; psShow(d);
+  }
+  function psDrag(el){
+    let x0 = 0, y0 = 0, dx = 0, on = false, moved = false;
+    el.addEventListener('pointerdown', e=>{ on = true; moved = false; x0 = e.clientX; y0 = e.clientY; dx = 0; el.style.transition = 'none'; try { el.setPointerCapture(e.pointerId); } catch(_){} });
+    el.addEventListener('pointermove', e=>{ if(!on) return; dx = e.clientX - x0; const dy = e.clientY - y0; if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return; moved = true;
+      el.style.transform = `translate(${dx}px,${dy * .15}px) rotate(${dx / 24}deg)`; });
+    const end = e => { if(!on) return; on = false; el.style.transition = '';
+      if(!moved){ const r = el.getBoundingClientRect(); psGo(e && e.clientX < r.left + r.width * .35 ? -1 : 1); return; }   // toucher : à droite la suivante, à gauche la précédente
+      if(Math.abs(dx) > 70){ psGo(dx < 0 ? 1 : -1); if(el.classList.contains('top')) el.style.transform = ''; return; }
+      el.style.transform = ''; };
+    el.addEventListener('pointerup', end); el.addEventListener('pointercancel', ()=>{ on = false; el.style.transition = ''; el.style.transform = ''; });
+  }
+  function psClose(){ const ov = document.getElementById('cv-ps'); if(ov) ov.remove(); PS = null; if(!document.getElementById('cv-feed') && !document.getElementById('cv-wall')) document.body.style.overflow = ''; }
+  document.addEventListener('keydown', e=>{ if(!PS) return; if(e.key === 'ArrowRight') psGo(1); else if(e.key === 'ArrowLeft') psGo(-1); else if(e.key === 'Escape') psClose(); });
 
   /* ── Lecteur de ZIP (sauvegarde complète) ── */
   let zipLib = null;

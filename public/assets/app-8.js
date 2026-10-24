@@ -994,6 +994,7 @@
         return !FT()[String(ftid).replace(/^ft:/,'')] && (sib.length > 1 || nAll > 1) ? `<button type="button" class="fd-back" onclick="CV.feedBack()"><span>←</span><b>Tous les voyages que je suis</b></button>` : ''; })()}
       ${!myName() && !FT()[String(ftid).replace(/^ft:/,'')] ? `<form class="fd-name" onsubmit="event.preventDefault();CV.fwNameSave(this)"><span>👋 Ton prénom ? <small>${ftTeam(ft).length > 1 ? `Pour que ${esc(ftTeamTxt(ft))} sachent qui suit leur voyage.` : `Pour que ${esc(ft.owner || '?')} sache qui suit son voyage.`}</small></span><div class="cv-row"><input class="v-in" name="n" maxlength="40" placeholder="Prénom" autocomplete="given-name"><button type="submit" class="fd-send">OK</button></div></form>` : ''}
       ${feedBellHTML(ftid)}
+      ${(()=>{ const n = posts.reduce((a, f)=>a + (f.photos || []).length, 0); return n ? `<button type="button" class="fd-step" onclick="CV.psFeed('${esc(ftid)}')"><i>👆</i><span><b>${esc(MSGT('Voir les photos une par une'))}</b><small>${esc(RF('{0} photo(s) · glisse ou touche ▶', n))}</small></span></button>` : ''; })()}
       <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}${FT()[String(ftid).replace(/^ft:/,'')] || webFollowing() ? '' : `<div class="fd-unf"><button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}')">🚫 Ne plus suivre ce voyage</button>${list('feedtrip', f=>TS()[f.id] && f.id !== ftid && String(f.owner||'').trim().toLocaleLowerCase() === String(ft.owner||'').trim().toLocaleLowerCase()).length ? `<button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}',1)">🚫 Ne plus suivre <span data-notr>${esc(ft.owner || '?')}</span> (tous ses voyages)</button>` : ''}</div>`}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; M.feedLast = ftid; feedMapHydrate();
     ov._h = posts.map(feedPostHTML).join('') + '|' + fkSig(ftid);
@@ -1076,7 +1077,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-23x'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-24b'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1270,15 +1271,20 @@
     try { await syncNow(true); } catch(e){} refresh();
   }
   /* ══════════ 🫙 POT COMMUN : réglage, rangement des anciennes photos, ménage des anciennes copies ══════════ */
+  // carnet où est rangée l'ancienne copie d'une photo (comme photoCode, mais d'après sa fiche : sans reparcourir tout le carnet pour chaque photo)
+  const potCode = x => { if(!x || x.demo) return null; const t = targets(x)[0]; return t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t; };
   function potStats(){
-    const own = {}; Object.values(R).forEach(x=>{ if(!x || x.deleted || x.demo || x.type === 'feed' || x.type === 'phk') return; [...photoRefs(x), x.cover].forEach(p=>{ if(p && !own[p]) own[p] = x; }); });
-    let inPot = 0, old = 0, mate = 0; const pend = new Set(M.pq || []);
-    Object.keys(own).forEach(p=>{ if(pkOf(p)) inPot++; else if(!pend.has(p) && photoCode(p)){ if(potMate(own[p])) mate++; else old++; } });
-    return {own, inPot, old, mate};
+    const own = {}, ref = {};
+    Object.values(R).forEach(x=>{ if(!x || x.deleted || x.demo || x.type === 'feed' || x.type === 'phk') return; const rs = photoRefs(x);
+      rs.forEach(p=>{ if(!ref[p]) ref[p] = x; }); [...rs, x.cover].forEach(p=>{ if(p && !own[p]) own[p] = x; }); });
+    let inPot = 0, old = 0, mate = 0, lo = 0; const pend = new Set(M.pq || []), code = {};
+    Object.keys(own).forEach(p=>{ const k = pkOf(p); if(k){ inPot++; if(k.lo) lo++; return; } if(pend.has(p)) return;
+      const c = code[p] = ref[p] ? potCode(ref[p]) : photoCode(p); if(c){ if(potMate(own[p])) mate++; else old++; } });
+    return {own, inPot, old, mate, code, lo};
   }
   // photo d'une fiche créée par un compagnon : c'est SON téléphone qui la range (une seule fois, jamais en double)
   const potMate = x => !!(x && x.createdBy && M.me && x.createdBy !== M.me);
-  const potLine = st => `🫙 ${MSGT('Dans le pot')} : ${st.inPot} · ${MSGT('à l’ancienne')} : ${st.old}` + (st.mate ? ' · ' + RF('{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.', st.mate) : '');
+  const potLine = st => `🫙 ${MSGT('Dans le pot')} : ${st.inPot} · ${MSGT('à l’ancienne')} : ${st.old}` + (st.lo ? ' · ' + RF('{0} en petite taille', st.lo) : '') + (st.mate ? ' · ' + RF('{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.', st.mate) : '');
   const gcLine = () => { const L = M.v1gc || []; return L.length ? '🧹 ' + RF('Anciennes copies à effacer : {0} (contrôlées : {1})', L.length, L.filter(g=>g[3] === 1).length) : ''; };
   function potBox(){
     const st = potStats();
@@ -1287,7 +1293,7 @@
       <div class="vz-glass-sw"><p style="margin:0">${esc(MSGT('Nouvelles photos dans le pot commun'))}</p><button type="button" class="v-btn${potOn() ? '' : ' sec'}" style="width:auto;margin:0;flex:none" onclick="CV.potToggle()">${potOn() ? esc(MSGT('Activé')) + ' ✓' : esc(MSGT('Activer'))}</button></div>
       <div class="v-sum-small" style="margin-top:8px" id="pot-st" data-notr>${esc(potLine(st))}</div>
       <div class="v-sum-small" style="margin-top:4px" id="pot-gc" data-notr>${esc(gcLine())}</div>
-      ${potOn() && st.old ? `<button type="button" class="v-btn sec" style="margin-top:8px" id="pot-go" onclick="CV.potMigrate()"${potBusy ? ' disabled' : ''}>🫙 ${esc(RF('Ranger mes {0} anciennes photos dans le pot commun', st.old))}</button>
+      ${potOn() && (st.old || st.lo) ? `<button type="button" class="v-btn sec" style="margin-top:8px" id="pot-go" onclick="CV.potMigrate()"${potBusy ? ' disabled' : ''}>🫙 ${esc(st.old ? RF('Ranger mes {0} anciennes photos dans le pot commun', st.old) : RF('Remettre en grand les {0} photos en petite taille', st.lo))}</button>
       <div class="v-sum-small" style="margin-top:6px">${esc(MSGT('Garde l’appli ouverte pendant le rangement. Si elle se ferme, réappuie : il reprend où il s’était arrêté.'))}</div>` : ''}
       <div id="pot-msg" class="v-sum-small" style="margin-top:6px" data-notr>${esc(potSaid)}</div>
       <div class="v-sum-small" style="margin-top:6px">${esc(MSGT('Tes compagnons doivent avoir la dernière version de l’appli pour voir ces photos.'))}</div></div>`;
@@ -1303,28 +1309,55 @@
     } catch(e){ potWl = null; }
   }
   document.addEventListener('visibilitychange', ()=>{ if(potBusy && document.visibilityState === 'visible') potWake(true); });
+  // 🔎 où est l'ancienne copie d'une photo ? Elle peut être restée dans un autre carnet (carnet principal, ancien voyage partagé…).
+  // On demande au serveur, carnet par carnet, la taille de la photo (40 photos par demande). Les carnets d'abonnés sont exclus (vignettes).
+  async function potLocate(pids, say){
+    const feeds = new Set(Object.values(FT())), codes = [...new Set([M.sync.on && M.sync.code, ...(M.spaces || []).filter(sp=>!feeds.has(sp.code)).map(sp=>sp.code),
+      ...Object.entries(TS()).filter(([k, c])=>!/^ft:/.test(k) && !feeds.has(c)).map(([, c])=>c)].filter(Boolean))];
+    const out = {};
+    for(let i = 0; i < pids.length; i += 40){
+      if(say) say('🔎 ' + RF('Je cherche les photos sur le serveur… {0}/{1}', Math.min(i + 40, pids.length), pids.length));
+      const part = pids.slice(i, i + 40);
+      for(const c of codes){
+        const need = part.filter(p=>!(out[p] && out[p].full)); if(!need.length) break;
+        const ids = [], m = {}; for(const p of need){ m[p] = [await sid(p, c), await sid(p + '.t', c)]; ids.push(...m[p]); }
+        let sz = null; try { const r = await fetch(photoApi() + '?sizes=' + ids.map(encodeURIComponent).join(','), {headers:{'X-Carnet-Code':await authCode(c)}}); if(r.ok) sz = ((await r.json()) || {}).sizes || {}; } catch(e){}
+        if(!sz) continue;
+        need.forEach(p=>{ const [a, b] = m[p]; if(sz[a]) out[p] = {full:c}; else if(sz[b] && !out[p]) out[p] = {thumb:c}; });
+      }
+    }
+    return out;
+  }
   async function potMigrate(){
     if(potBusy || !photoApi()) return; potBusy = true;
     const say = t => { potSaid = t; const e = document.getElementById('pot-msg'); if(e) e.textContent = t; };
     const stats = () => { const e = document.getElementById('pot-st'); if(e) e.textContent = potLine(potStats()); };
     { const b = document.getElementById('pot-go'); if(b) b.disabled = true; }
-    const {own} = potStats(), pend = new Set(M.pq || []);
-    const todo = Object.keys(own).filter(p=>!pkOf(p) && !pend.has(p) && photoCode(p) && !potMate(own[p]));
+    const {own, code: cs} = potStats(), pend = new Set(M.pq || []);
+    const todo = Object.keys(own).filter(p=>!pkOf(p) && !pend.has(p) && cs[p] && !potMate(own[p]));
     const OFF = MSGT('Réseau coupé : rangement en pause. Réappuie quand le réseau revient, il reprendra où il s’était arrêté.');
-    let done = 0, fail = 0, net = 0, stop = '';
+    let done = 0, fail = 0, net = 0, stop = '', small = 0, miss = 0, up = 0;
     await potWake(true);
     try {
+      // photos pas sur ce téléphone : on repère d'abord où le serveur les garde
+      const away = []; for(const p of todo){ let o = null; try { o = await IDB.get(p); } catch(e){} if(!(o && o.blob)) away.push(p); }
+      const loc = away.length ? await potLocate(away, say) : {};
       for(let i = 0; i < todo.length; i++){
-        const pid = todo[i], code = photoCode(pid), ow = own[pid]; if(!code || pkOf(pid)) continue;
+        const pid = todo[i], code = cs[pid], ow = own[pid]; if(!code || pkOf(pid)) continue;
         if(!(i % 3)) say('🫙 ' + RF('Photos rangées : {0}/{1}', i, todo.length));
         if(navigator.onLine === false){ stop = OFF; break; }
         try {
-          const full = await potFull(pid, code, ow);   // jamais la vignette à la place d'une grande photo
-          if(!full){ fail++; continue; }
+          const L = loc[pid] || {}, from = L.full || L.thumb || code;
+          let full = await potFull(pid, from, ow), lo = false;   // jamais la vignette s'il existe une grande photo
+          if(full && !L.full && from === (L.thumb || '')) lo = true;
+          if(!full){ let o = null; try { o = await IDB.get(pid + '.t'); } catch(e){} if(o && o.blob){ full = o.blob; lo = true; } }
+          if(!full){ miss++; continue; }
           let tb = null; try { const o = await IDB.get(pid + '.t'); if(o && o.blob) tb = o.blob; } catch(e){}
           if(!tb) try { tb = await shrink(full, 480, 0.74); } catch(e){}
-          await v2Upload(pid, full, tb, code, ow.type === 'trip' ? ow.id : ow.trip || '');
-          potGcAdd(code, pid); done++; net = 0;
+          const pk = await v2Upload(pid, full, tb, code, ow.type === 'trip' ? ow.id : ow.trip || '');
+          if(lo && pk){ putQuiet([Object.assign(clone(pk), {lo:1})]); small++; }   // petite taille seulement : un téléphone qui a la grande photo la remettra
+          if(L.full || L.thumb) potGcAdd(L.full || L.thumb, pid); else potGcAdd(code, pid);
+          done++; net = 0;
           if(!(done % 10)){ persist(); stats(); }
         } catch(e){
           fail++;
@@ -1332,8 +1365,18 @@
           if(++net >= 4){ stop = OFF; break; }   // plusieurs échecs de suite : réseau coupé ou appli mise en pause
         }
       }
+      // ⬆️ rangées en petite taille, mais CE téléphone a la grande photo : on la remet à la place (mêmes liens, rien ne change pour les autres)
+      if(!stop) for(const r of Object.values(R).filter(x=>x && x.type === 'phk' && x.lo && !x.deleted)){
+        const pid = r.id.slice(3); let o = null; try { o = await IDB.get(pid); } catch(e){} if(!(o && o.blob)) continue;
+        const c = await codeOfHash(r.s); if(!c) continue;
+        try { await v2Upload(pid, await cloudBlob(o.blob, own[pid], pid), null, c, r.trip, r); const n = clone(R[r.id]); delete n.lo; putQuiet([n]); up++; } catch(e){ break; }
+      }
       persist();
-      say((stop ? stop + ' ' : '✅ ') + RF('{0} photo(s) rangées dans le pot commun.', done) + (fail && !stop ? ' ⚠️ ' + RF('{0} non rangée(s), réessaie plus tard.', fail) : ''));
+      say((stop ? stop + ' ' : '✅ ') + RF('{0} photo(s) rangées dans le pot commun.', done)
+        + (small ? ' ' + RF('{0} en petite taille seulement : la grande photo n’est plus sur le serveur (un téléphone qui l’a encore la remettra).', small) : '')
+        + (up ? ' ⬆️ ' + RF('{0} remise(s) en grand.', up) : '')
+        + (miss ? ' ' + RF('{0} introuvable(s) : ni sur ce téléphone ni sur le serveur. Essaie depuis ton autre téléphone.', miss) : '')
+        + (fail && !stop ? ' ⚠️ ' + RF('{0} non rangée(s), réessaie plus tard.', fail) : ''));
       try { await syncNow(true); } catch(e){}
     } finally { potBusy = false; await potWake(false); potRedraw(); }
   }
@@ -1464,7 +1507,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
+  var RECAPI = {psGo, psClose, psFeed, wallStep, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
