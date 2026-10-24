@@ -1123,7 +1123,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-24f'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-24g'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1329,7 +1329,10 @@
     return {own, inPot, old, mate, code, lo};
   }
   // photo d'une fiche créée par un compagnon : c'est SON téléphone qui la range (une seule fois, jamais en double)
-  const potMate = x => !!(x && x.createdBy && M.me && x.createdBy !== M.me);
+  // (même prénom = moi : un ancien profil fusionné, ou ce téléphone resté sur l'ancien profil)
+  const potMate = x => { if(!(x && x.createdBy && M.me && x.createdBy !== M.me)) return false;
+    const nm = id => String((R[id] || {}).nom || '').trim().toLowerCase(), a = nm(x.createdBy), b = nm(M.me);
+    return !(a && b && a === b); };
   const potLine = st => `🫙 ${MSGT('Dans le pot')} : ${st.inPot} · ${MSGT('à l’ancienne')} : ${st.old}` + (st.lo ? ' · ' + RF('{0} en petite taille', st.lo) : '') + (st.mate ? ' · ' + RF('{0} photo(s) de tes compagnons : à ranger depuis leur téléphone.', st.mate) : '');
   const gcLine = () => { const L = M.v1gc || []; return L.length ? '🧹 ' + RF('Anciennes copies à effacer : {0} (contrôlées : {1})', L.length, L.filter(g=>g[3] === 1).length) : ''; };
   function potBox(){
