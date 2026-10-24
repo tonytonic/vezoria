@@ -5165,4 +5165,10 @@ I18N.load({
 "Fermé : {0}":"Kapalı: {0}",
 "Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Kişinin adını yaz, henüz takip etmese bile: bu adla takip ederse bu seyahati hiç görmez. Zaten takip ediyorsa uygulamasından kaybolur.",
 "Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"Eski takipçi bağlantısı bulundu: {0} yorum kurtarıldı.",
-"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} takipçinin güncel bağlantını alması gerekiyor."});
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} takipçinin güncel bağlantını alması gerekiyor.",
+"👀 Je suis un proche":"👀 Bir yakınıyım",
+"Un ami ou un proche t’a envoyé son lien abonné (ou te montre son QR code) : tu suis ses voyages, ses photos, et tu peux mettre des ❤️ et des commentaires. Pas besoin de créer de voyage.":"Bir arkadaşın ya da yakının takipçi bağlantısını gönderdi (ya da QR kodunu gösteriyor): seyahatlerini ve fotoğraflarını takip eder, ❤️ ve yorum bırakabilirsin. Seyahat oluşturmana gerek yok.",
+"Lien ou code abonné reçu":"Alınan takipçi bağlantısı veya kodu",
+"👀 Suivre ses voyages":"👀 Seyahatlerini takip et",
+"C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"Bu bir takipçi bağlantısı: seyahatleri takip etmek için adını yaz.",
+"Scanner le QR code":"QR kodu tara"});

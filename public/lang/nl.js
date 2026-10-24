@@ -2229,4 +2229,10 @@ I18N.load({
 "Fermé : {0}":"Gesloten: {0}",
 "Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Typ de voornaam van de persoon, ook als die je nog niet volgt: volgt die onder deze naam, dan krijgt die deze reis nooit te zien. Volgt die al, dan verdwijnt de reis uit de app.",
 "Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"Oude volgerslink gevonden: {0} reactie(s) teruggehaald.",
-"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} volger(s) moeten je huidige link krijgen."});
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} volger(s) moeten je huidige link krijgen.",
+"👀 Je suis un proche":"👀 Ik ben een naaste",
+"Un ami ou un proche t’a envoyé son lien abonné (ou te montre son QR code) : tu suis ses voyages, ses photos, et tu peux mettre des ❤️ et des commentaires. Pas besoin de créer de voyage.":"Een vriend of familielid heeft je zijn volgerslink gestuurd (of laat zijn QR-code zien): je volgt zijn reizen en foto’s en kunt ❤️ en reacties achterlaten. Je hoeft geen reis aan te maken.",
+"Lien ou code abonné reçu":"Ontvangen volgerslink of -code",
+"👀 Suivre ses voyages":"👀 Zijn reizen volgen",
+"C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"Dit is een volgerslink: vul je voornaam in om de reizen te volgen.",
+"Scanner le QR code":"QR-code scannen"});

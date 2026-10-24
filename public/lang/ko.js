@@ -5177,4 +5177,10 @@ I18N.load({
 "Fermé : {0}":"휴무: {0}",
 "Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"아직 팔로우하지 않았더라도 이름을 적어 두세요. 이 이름으로 팔로우하면 이 여행은 절대 보이지 않아요. 이미 팔로우 중이면 앱에서 사라져요.",
 "Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"예전 팔로워 링크를 찾았어요: 댓글 {0}개를 되찾았어요.",
-"{0} abonné(s) doivent recevoir ton lien actuel.":"팔로워 {0}명에게 현재 링크를 보내야 해요."});
+"{0} abonné(s) doivent recevoir ton lien actuel.":"팔로워 {0}명에게 현재 링크를 보내야 해요.",
+"👀 Je suis un proche":"👀 지인이에요",
+"Un ami ou un proche t’a envoyé son lien abonné (ou te montre son QR code) : tu suis ses voyages, ses photos, et tu peux mettre des ❤️ et des commentaires. Pas besoin de créer de voyage.":"지인이 팔로워 링크를 보냈다면(또는 QR 코드를 보여 준다면): 그 사람의 여행과 사진을 팔로우하고 ❤️와 댓글을 남길 수 있어요. 여행을 만들 필요는 없어요.",
+"Lien ou code abonné reçu":"받은 팔로워 링크 또는 코드",
+"👀 Suivre ses voyages":"👀 여행 팔로우하기",
+"C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"팔로워 링크예요: 이름을 입력하면 여행을 팔로우할 수 있어요.",
+"Scanner le QR code":"QR 코드 스캔"});

@@ -5178,4 +5178,10 @@ I18N.load({
 "Fermé : {0}":"مغلق: {0}",
 "Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"اكتب اسم الشخص حتى لو لم يتابعك بعد: إذا تابعك بهذا الاسم فلن تظهر له هذه الرحلة أبدًا. إن كان يتابعك بالفعل فستختفي من تطبيقه.",
 "Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"تم العثور على رابط متابعين قديم: استُرجع {0} تعليق.",
-"{0} abonné(s) doivent recevoir ton lien actuel.":"يجب أن يتلقى {0} متابع رابطك الحالي."});
+"{0} abonné(s) doivent recevoir ton lien actuel.":"يجب أن يتلقى {0} متابع رابطك الحالي.",
+"👀 Je suis un proche":"👀 أنا من المقرّبين",
+"Un ami ou un proche t’a envoyé son lien abonné (ou te montre son QR code) : tu suis ses voyages, ses photos, et tu peux mettre des ❤️ et des commentaires. Pas besoin de créer de voyage.":"أرسل لك صديق أو قريب رابط المتابعة (أو يريك رمز QR): تتابع رحلاته وصوره ويمكنك وضع ❤️ وتعليقات. لا حاجة لإنشاء رحلة.",
+"Lien ou code abonné reçu":"رابط أو رمز المتابعة المستلم",
+"👀 Suivre ses voyages":"👀 متابعة رحلاته",
+"C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"هذا رابط متابعة: اكتب اسمك لمتابعة رحلاته.",
+"Scanner le QR code":"مسح رمز QR"});

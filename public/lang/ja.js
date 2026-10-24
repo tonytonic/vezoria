@@ -5177,4 +5177,10 @@ I18N.load({
 "Fermé : {0}":"休み：{0}",
 "Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"まだフォローしていなくても、相手の名前を入力してください。この名前でフォローすると、この旅行は表示されません。すでにフォロー中なら、相手のアプリから消えます。",
 "Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"古いフォロワー用リンクが見つかりました：コメント{0}件を復元しました。",
-"{0} abonné(s) doivent recevoir ton lien actuel.":"{0}人のフォロワーに現在のリンクを送る必要があります。"});
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0}人のフォロワーに現在のリンクを送る必要があります。",
+"👀 Je suis un proche":"👀 友人・家族です",
+"Un ami ou un proche t’a envoyé son lien abonné (ou te montre son QR code) : tu suis ses voyages, ses photos, et tu peux mettre des ❤️ et des commentaires. Pas besoin de créer de voyage.":"友人や家族からフォロワー用リンクが届いた（またはQRコードを見せてもらった）ら：旅や写真をフォローし、❤️やコメントを残せます。旅を作る必要はありません。",
+"Lien ou code abonné reçu":"受け取ったフォロワー用リンクまたはコード",
+"👀 Suivre ses voyages":"👀 旅をフォローする",
+"C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"これはフォロワー用リンクです：名前を入力して旅をフォローしてください。",
+"Scanner le QR code":"QRコードを読み取る"});

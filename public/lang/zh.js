@@ -5177,4 +5177,10 @@ I18N.load({
 "Fermé : {0}":"闭馆：{0}",
 "Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"输入对方的名字，即使对方还没关注：如果对方用这个名字关注，就永远看不到这次旅行；已经关注的话，它会从对方的应用中消失。",
 "Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"找到旧的关注者链接：已找回 {0} 条评论。",
-"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} 位关注者需要收到你当前的链接。"});
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} 位关注者需要收到你当前的链接。",
+"👀 Je suis un proche":"👀 我是亲友",
+"Un ami ou un proche t’a envoyé son lien abonné (ou te montre son QR code) : tu suis ses voyages, ses photos, et tu peux mettre des ❤️ et des commentaires. Pas besoin de créer de voyage.":"朋友或家人给你发了关注链接（或给你看二维码）：你可以关注他的旅行和照片，点 ❤️ 和评论。无需创建旅行。",
+"Lien ou code abonné reçu":"收到的关注链接或代码",
+"👀 Suivre ses voyages":"👀 关注他的旅行",
+"C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"这是关注链接：填写你的名字即可关注他的旅行。",
+"Scanner le QR code":"扫描二维码"});

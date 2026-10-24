@@ -5177,4 +5177,10 @@ I18N.load({
 "Fermé : {0}":"बंद: {0}",
 "Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"उस व्यक्ति का पहला नाम लिखो, भले वह अभी फ़ॉलो न करता हो: इस नाम से फ़ॉलो करेगा तो यह यात्रा उसे कभी नहीं दिखेगी। पहले से फ़ॉलो करता है तो उसके ऐप से हट जाएगी।",
 "Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"पुराना फ़ॉलोअर लिंक मिला: {0} कमेंट वापस मिले।",
-"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} फ़ॉलोअर को तुम्हारा मौजूदा लिंक भेजना होगा।"});
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} फ़ॉलोअर को तुम्हारा मौजूदा लिंक भेजना होगा।",
+"👀 Je suis un proche":"👀 मैं दोस्त या परिवार से हूँ",
+"Un ami ou un proche t’a envoyé son lien abonné (ou te montre son QR code) : tu suis ses voyages, ses photos, et tu peux mettre des ❤️ et des commentaires. Pas besoin de créer de voyage.":"किसी दोस्त या रिश्तेदार ने अपना फ़ॉलोअर लिंक भेजा है (या QR कोड दिखा रहा है): तुम उसकी यात्राएँ और फ़ोटो देखते हो, ❤️ और कमेंट कर सकते हो। यात्रा बनाने की ज़रूरत नहीं।",
+"Lien ou code abonné reçu":"मिला हुआ फ़ॉलोअर लिंक या कोड",
+"👀 Suivre ses voyages":"👀 उसकी यात्राएँ फ़ॉलो करो",
+"C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"यह फ़ॉलोअर लिंक है: यात्राएँ फ़ॉलो करने के लिए अपना नाम लिखो।",
+"Scanner le QR code":"QR कोड स्कैन करो"});

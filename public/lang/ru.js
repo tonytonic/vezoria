@@ -5178,4 +5178,10 @@ I18N.load({
 "Fermé : {0}":"Закрыто: {0}",
 "Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Напиши имя человека, даже если он ещё не подписан: если он подпишется под этим именем, эта поездка ему не покажется. Уже подписан — она исчезнет из его приложения.",
 "Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"Найдена старая ссылка для подписчиков: восстановлено комментариев: {0}.",
-"{0} abonné(s) doivent recevoir ton lien actuel.":"Подписчикам ({0}) нужно отправить твою текущую ссылку."});
+"{0} abonné(s) doivent recevoir ton lien actuel.":"Подписчикам ({0}) нужно отправить твою текущую ссылку.",
+"👀 Je suis un proche":"👀 Я близкий человек",
+"Un ami ou un proche t’a envoyé son lien abonné (ou te montre son QR code) : tu suis ses voyages, ses photos, et tu peux mettre des ❤️ et des commentaires. Pas besoin de créer de voyage.":"Друг или близкий прислал тебе ссылку для подписчиков (или показывает QR-код): ты следишь за его поездками и фото, можешь ставить ❤️ и комментировать. Создавать поездку не нужно.",
+"Lien ou code abonné reçu":"Полученная ссылка или код подписчика",
+"👀 Suivre ses voyages":"👀 Следить за поездками",
+"C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"Это ссылка для подписчиков: укажи своё имя, чтобы следить за поездками.",
+"Scanner le QR code":"Сканировать QR-код"});

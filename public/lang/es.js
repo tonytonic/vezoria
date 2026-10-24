@@ -2239,4 +2239,10 @@ I18N.load({
 "Fermé : {0}":"Cerrado: {0}",
 "Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.":"Escribe el nombre de la persona, aunque aún no te siga: si se suscribe con ese nombre, nunca verá este viaje. Si ya te sigue, desaparece de su app.",
 "Ancien lien abonnés retrouvé : {0} commentaire(s) récupéré(s).":"Enlace antiguo de seguidores encontrado: {0} comentario(s) recuperado(s).",
-"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} seguidor(es) deben recibir tu enlace actual."});
+"{0} abonné(s) doivent recevoir ton lien actuel.":"{0} seguidor(es) deben recibir tu enlace actual.",
+"👀 Je suis un proche":"👀 Soy un allegado",
+"Un ami ou un proche t’a envoyé son lien abonné (ou te montre son QR code) : tu suis ses voyages, ses photos, et tu peux mettre des ❤️ et des commentaires. Pas besoin de créer de voyage.":"Un amigo o familiar te envió su enlace de seguidor (o te muestra su código QR): sigues sus viajes y fotos, y puedes dejar ❤️ y comentarios. No hace falta crear un viaje.",
+"Lien ou code abonné reçu":"Enlace o código de seguidor recibido",
+"👀 Suivre ses voyages":"👀 Seguir sus viajes",
+"C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"Es un enlace de seguidor: indica tu nombre para seguir sus viajes.",
+"Scanner le QR code":"Escanear el código QR"});
