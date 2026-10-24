@@ -5155,4 +5155,11 @@ I18N.load({
 "Lien copié":"链接已复制",
 "Lien de ce voyage":"这次旅行的链接",
 "Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"这个链接可能已失效（旅行用新链接重新发布）。请关注者把当前链接发给你：在某条动态点 ⋯ →“发回链接”。",
-"Choisir plusieurs voyages d’un coup":"一次选择多个旅行"});
+"Choisir plusieurs voyages d’un coup":"一次选择多个旅行",
+"Elle est à côté de toi":"对方就在你身边",
+"Elle scanne ce QR code avec l’appareil photo de son téléphone : le voyage s’ouvre directement, sans rien installer.":"用手机相机扫描这个二维码：旅行会直接打开，无需安装。",
+"Elle est loin":"对方在远处",
+"Envoie-lui le message : il contient le lien et le code abonné.":"把消息发给对方：里面有链接和关注者代码。",
+"Envoyer l’invitation":"发送邀请",
+"Copier le lien":"复制链接",
+"Lien abonné copié":"已复制关注者链接"});

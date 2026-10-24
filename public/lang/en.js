@@ -2201,4 +2201,11 @@ I18N.load({
 "Lien copié":"Link copied",
 "Lien de ce voyage":"Link to this trip",
 "Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"This link may be outdated (trip republished on a new link). Ask a follower to send you the current link: ⋯ on a post → “Send the link back”.",
-"Choisir plusieurs voyages d’un coup":"Choose several trips at once"});
+"Choisir plusieurs voyages d’un coup":"Choose several trips at once",
+"Elle est à côté de toi":"They’re next to you",
+"Elle scanne ce QR code avec l’appareil photo de son téléphone : le voyage s’ouvre directement, sans rien installer.":"They scan this QR code with their phone camera: the trip opens right away, nothing to install.",
+"Elle est loin":"They’re far away",
+"Envoie-lui le message : il contient le lien et le code abonné.":"Send them the message: it contains the link and the follower code.",
+"Envoyer l’invitation":"Send the invitation",
+"Copier le lien":"Copy the link",
+"Lien abonné copié":"Follower link copied"});

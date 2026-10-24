@@ -5155,4 +5155,11 @@ I18N.load({
 "Lien copié":"リンクをコピーしました",
 "Lien de ce voyage":"この旅行のリンク",
 "Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"このリンクは古いかもしれません（新しいリンクで再公開）。フォロワーに今のリンクを送ってもらってください：投稿の ⋯ →「リンクを送り返す」。",
-"Choisir plusieurs voyages d’un coup":"複数の旅行をまとめて選ぶ"});
+"Choisir plusieurs voyages d’un coup":"複数の旅行をまとめて選ぶ",
+"Elle est à côté de toi":"すぐそばにいる",
+"Elle scanne ce QR code avec l’appareil photo de son téléphone : le voyage s’ouvre directement, sans rien installer.":"スマホのカメラでこのQRコードを読み取るだけ。インストール不要で旅行が開きます。",
+"Elle est loin":"離れている",
+"Envoie-lui le message : il contient le lien et le code abonné.":"メッセージを送ろう：リンクとフォロワーコードが入っています。",
+"Envoyer l’invitation":"招待を送る",
+"Copier le lien":"リンクをコピー",
+"Lien abonné copié":"フォロワー用リンクをコピーしました"});

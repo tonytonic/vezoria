@@ -5156,4 +5156,11 @@ I18N.load({
 "Lien copié":"Ссылка скопирована",
 "Lien de ce voyage":"Ссылка на поездку",
 "Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Возможно, ссылка устарела (поездка опубликована по новой ссылке). Попроси подписчика прислать актуальную: ⋯ у публикации → «Отправить ссылку».",
-"Choisir plusieurs voyages d’un coup":"Выбрать несколько поездок сразу"});
+"Choisir plusieurs voyages d’un coup":"Выбрать несколько поездок сразу",
+"Elle est à côté de toi":"Человек рядом с тобой",
+"Elle scanne ce QR code avec l’appareil photo de son téléphone : le voyage s’ouvre directement, sans rien installer.":"Пусть отсканирует QR-код камерой телефона: поездка откроется сразу, ничего устанавливать не нужно.",
+"Elle est loin":"Человек далеко",
+"Envoie-lui le message : il contient le lien et le code abonné.":"Отправь сообщение: в нём ссылка и код подписчика.",
+"Envoyer l’invitation":"Отправить приглашение",
+"Copier le lien":"Скопировать ссылку",
+"Lien abonné copié":"Ссылка для подписчиков скопирована"});

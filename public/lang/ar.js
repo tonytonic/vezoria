@@ -5156,4 +5156,11 @@ I18N.load({
 "Lien copié":"تم نسخ الرابط",
 "Lien de ce voyage":"رابط هذه الرحلة",
 "Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"ربما لم يعد هذا الرابط صحيحًا (أعيد نشر الرحلة برابط جديد). اطلب من أحد المتابعين أن يرسل لك الرابط الحالي: ⋯ على منشور ← «إعادة إرسال الرابط».",
-"Choisir plusieurs voyages d’un coup":"اختر عدة رحلات دفعة واحدة"});
+"Choisir plusieurs voyages d’un coup":"اختر عدة رحلات دفعة واحدة",
+"Elle est à côté de toi":"الشخص بجانبك",
+"Elle scanne ce QR code avec l’appareil photo de son téléphone : le voyage s’ouvre directement, sans rien installer.":"يمسح رمز QR هذا بكاميرا هاتفه: تُفتح الرحلة مباشرة دون تثبيت أي شيء.",
+"Elle est loin":"الشخص بعيد",
+"Envoie-lui le message : il contient le lien et le code abonné.":"أرسل له الرسالة: تحتوي على الرابط ورمز المتابع.",
+"Envoyer l’invitation":"إرسال الدعوة",
+"Copier le lien":"نسخ الرابط",
+"Lien abonné copié":"تم نسخ رابط المتابعين"});

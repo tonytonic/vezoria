@@ -2216,4 +2216,11 @@ I18N.load({
 "Lien copié":"Link copiato",
 "Lien de ce voyage":"Link di questo viaggio",
 "Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Forse questo link non è più valido (viaggio ripubblicato con un nuovo link). Chiedi a un follower di rimandarti il link attuale: ⋯ su un post → «Rimanda il link».",
-"Choisir plusieurs voyages d’un coup":"Scegli più viaggi in una volta"});
+"Choisir plusieurs voyages d’un coup":"Scegli più viaggi in una volta",
+"Elle est à côté de toi":"È accanto a te",
+"Elle scanne ce QR code avec l’appareil photo de son téléphone : le voyage s’ouvre directement, sans rien installer.":"Scansiona questo QR code con la fotocamera del telefono: il viaggio si apre subito, senza installare nulla.",
+"Elle est loin":"È lontano",
+"Envoie-lui le message : il contient le lien et le code abonné.":"Mandale il messaggio: contiene il link e il codice follower.",
+"Envoyer l’invitation":"Invia l’invito",
+"Copier le lien":"Copia il link",
+"Lien abonné copié":"Link follower copiato"});

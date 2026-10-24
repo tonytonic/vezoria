@@ -5155,4 +5155,11 @@ I18N.load({
 "Lien copié":"लिंक कॉपी हो गया",
 "Lien de ce voyage":"इस यात्रा का लिंक",
 "Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"शायद यह लिंक अब सही नहीं है (यात्रा नए लिंक पर फिर से प्रकाशित हुई)। किसी फ़ॉलोअर से मौजूदा लिंक भेजने को कहो: किसी पोस्ट पर ⋯ → “लिंक वापस भेजो”।",
-"Choisir plusieurs voyages d’un coup":"एक साथ कई यात्राएँ चुनो"});
+"Choisir plusieurs voyages d’un coup":"एक साथ कई यात्राएँ चुनो",
+"Elle est à côté de toi":"वह तुम्हारे पास है",
+"Elle scanne ce QR code avec l’appareil photo de son téléphone : le voyage s’ouvre directement, sans rien installer.":"वह अपने फ़ोन के कैमरे से यह QR कोड स्कैन करे: यात्रा सीधे खुल जाएगी, कुछ इंस्टॉल नहीं करना।",
+"Elle est loin":"वह दूर है",
+"Envoie-lui le message : il contient le lien et le code abonné.":"उसे संदेश भेजो: इसमें लिंक और फ़ॉलोअर कोड है।",
+"Envoyer l’invitation":"न्योता भेजो",
+"Copier le lien":"लिंक कॉपी करो",
+"Lien abonné copié":"फ़ॉलोअर लिंक कॉपी हो गया"});

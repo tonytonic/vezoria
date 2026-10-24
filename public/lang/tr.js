@@ -5143,4 +5143,11 @@ I18N.load({
 "Lien copié":"Bağlantı kopyalandı",
 "Lien de ce voyage":"Bu seyahatin bağlantısı",
 "Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Bu bağlantı artık geçerli olmayabilir (seyahat yeni bir bağlantıyla yeniden yayınlandı). Bir takipçiden güncel bağlantıyı istemen yeterli: bir gönderide ⋯ → “Bağlantıyı geri gönder”.",
-"Choisir plusieurs voyages d’un coup":"Birden fazla seyahati bir kerede seç"});
+"Choisir plusieurs voyages d’un coup":"Birden fazla seyahati bir kerede seç",
+"Elle est à côté de toi":"Yanında",
+"Elle scanne ce QR code avec l’appareil photo de son téléphone : le voyage s’ouvre directement, sans rien installer.":"Bu QR kodunu telefon kamerasıyla tarasın: seyahat hemen açılır, hiçbir şey yüklemeye gerek yok.",
+"Elle est loin":"Uzakta",
+"Envoie-lui le message : il contient le lien et le code abonné.":"Mesajı gönder: bağlantıyı ve takipçi kodunu içerir.",
+"Envoyer l’invitation":"Daveti gönder",
+"Copier le lien":"Bağlantıyı kopyala",
+"Lien abonné copié":"Takipçi bağlantısı kopyalandı"});

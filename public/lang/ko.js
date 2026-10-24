@@ -5155,4 +5155,11 @@ I18N.load({
 "Lien copié":"링크를 복사했어요",
 "Lien de ce voyage":"이 여행 링크",
 "Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"이 링크가 더 이상 맞지 않을 수 있어요(새 링크로 다시 공개됨). 팔로워에게 현재 링크를 보내 달라고 하세요: 게시물의 ⋯ → ‘링크 다시 보내기’.",
-"Choisir plusieurs voyages d’un coup":"여러 여행을 한 번에 고르기"});
+"Choisir plusieurs voyages d’un coup":"여러 여행을 한 번에 고르기",
+"Elle est à côté de toi":"옆에 있어요",
+"Elle scanne ce QR code avec l’appareil photo de son téléphone : le voyage s’ouvre directement, sans rien installer.":"휴대폰 카메라로 이 QR 코드를 스캔하면 설치 없이 바로 여행이 열려요.",
+"Elle est loin":"멀리 있어요",
+"Envoie-lui le message : il contient le lien et le code abonné.":"메시지를 보내세요: 링크와 팔로워 코드가 들어 있어요.",
+"Envoyer l’invitation":"초대 보내기",
+"Copier le lien":"링크 복사",
+"Lien abonné copié":"팔로워 링크를 복사했어요"});
