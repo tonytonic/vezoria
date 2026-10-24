@@ -125,6 +125,7 @@
     const ac = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '', ts = myTrips();
     if(!ts.length){ alert('Crée d’abord un voyage.'); return; }
     openSheet(`<h2>👀 Mon carnet pour des abonnés</h2><div class="v-sum-small" style="margin-bottom:8px">Coche les voyages à montrer. Tes abonnés passent de l’un à l’autre avec un seul lien.</div>
+      <div style="margin-bottom:6px"><button type="button" class="v-btn sec" style="width:auto;display:inline-block;margin:0 6px 0 0" onclick="document.querySelectorAll('.cpub:not(:disabled)').forEach(x=>x.checked=true)">${esc(MSGT('Tout cocher'))}</button><button type="button" class="v-btn sec" style="width:auto;display:inline-block;margin:0" onclick="document.querySelectorAll('.cpub:not(:disabled)').forEach(x=>x.checked=false)">${esc(MSGT('Tout décocher'))}</button></div>
       ${ts.map(t=>{ const own = FT()[t.id] && grpCodeOf(t.id) !== ac, nf = own ? soloFw(t.id) : 0; return `<label class="cv-checkline"><input type="checkbox" class="cpub" value="${t.id}"${(ac && grpCodeOf(t.id) === ac) || (!ac && !own) ? ' checked' : ''}${own && nf ? ' disabled' : ''}> <span data-notr>${esc(t.titre)}</span>${own ? (nf ? ` <small>(publié à part : ${nf} abonné${nf > 1 ? 's' : ''} sur son propre lien)</small>` : ' <small>(publié à part, sans abonné : coche-le pour le mettre dans le carnet)</small>') : ''}</label>`; }).join('')}
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.carnetPublish()">👀 Publier et inviter</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
@@ -148,6 +149,7 @@
     const ac = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '', nOn = ts.filter(t=>FT()[t.id]).length;
     return `<div class="sh-card sh-tb ab-tab" data-t="ab"><div class="sh-k">📋 Mes voyages pour les abonnés</div>
       <div class="v-sum-small" style="margin-bottom:6px">${nOn} partagé${nOn>1?'s':''} sur ${ts.length}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.</div>
+      <button type="button" class="v-btn" style="margin:0 0 10px" onclick="CV.carnetPublishSheet()">📚 ${esc(MSGT('Choisir plusieurs voyages d’un coup'))}</button>
       ${ts.map(t=>{ const on = !!FT()[t.id], solo = on && ac && grpCodeOf(t.id) !== ac, by = !on && t.pubBy && t.pubBy !== M.me && prof(t.pubBy) ? pname(t.pubBy) : '';
         if(by) return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}</small></span><span class="ab-sw ab-by">👀 <span>Publié par</span> <b data-notr>${esc(by)}</b></span></div>`;
         return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}${solo ? ' · lien à part' : ''}</small></span>
@@ -1123,7 +1125,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-24i'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-24j'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
