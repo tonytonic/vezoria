@@ -5149,4 +5149,10 @@ I18N.load({
 "Tes abonnés sont retrouvés : {0} voyage(s).":"Подписчики найдены: поездок — {0}.",
 "Introuvables, par voyage":"Не найдено, по поездкам",
 "voyage supprimé":"поездка удалена",
-"voyage retiré de ce téléphone":"поездка убрана с этого телефона"});
+"voyage retiré de ce téléphone":"поездка убрана с этого телефона",
+"Renvoyer le lien de ce voyage à son auteur":"Отправить ссылку на поездку её автору",
+"Si l’auteur a perdu son lien (changement de téléphone…), il l’ouvre : l’appli lui rend ses abonnés.":"Если автор потерял ссылку (новый телефон…), он открывает её — и приложение возвращает ему подписчиков.",
+"Voici le lien de ton voyage":"Вот ссылка на твою поездку",
+"Lien copié":"Ссылка скопирована",
+"Lien de ce voyage":"Ссылка на поездку",
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Возможно, ссылка устарела (поездка опубликована по новой ссылке). Попроси подписчика прислать актуальную: ⋯ у публикации → «Отправить ссылку»."});

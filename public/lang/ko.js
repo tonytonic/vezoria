@@ -5148,4 +5148,10 @@ I18N.load({
 "Tes abonnés sont retrouvés : {0} voyage(s).":"팔로워를 되찾았어요: 여행 {0}개.",
 "Introuvables, par voyage":"찾지 못한 사진 (여행별)",
 "voyage supprimé":"삭제된 여행",
-"voyage retiré de ce téléphone":"이 휴대폰에서 뺀 여행"});
+"voyage retiré de ce téléphone":"이 휴대폰에서 뺀 여행",
+"Renvoyer le lien de ce voyage à son auteur":"이 여행 링크를 작성자에게 다시 보내기",
+"Si l’auteur a perdu son lien (changement de téléphone…), il l’ouvre : l’appli lui rend ses abonnés.":"작성자가 링크를 잃어버렸다면(휴대폰 변경 등) 열기만 하면 앱이 팔로워를 되돌려 줘요.",
+"Voici le lien de ton voyage":"네 여행 링크야",
+"Lien copié":"링크를 복사했어요",
+"Lien de ce voyage":"이 여행 링크",
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"이 링크가 더 이상 맞지 않을 수 있어요(새 링크로 다시 공개됨). 팔로워에게 현재 링크를 보내 달라고 하세요: 게시물의 ⋯ → ‘링크 다시 보내기’."});

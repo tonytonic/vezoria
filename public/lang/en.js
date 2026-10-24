@@ -2194,4 +2194,10 @@ I18N.load({
 "Tes abonnés sont retrouvés : {0} voyage(s).":"Your followers are back: {0} trip(s).",
 "Introuvables, par voyage":"Not found, by trip",
 "voyage supprimé":"deleted trip",
-"voyage retiré de ce téléphone":"trip removed from this phone"});
+"voyage retiré de ce téléphone":"trip removed from this phone",
+"Renvoyer le lien de ce voyage à son auteur":"Send this trip’s link back to its author",
+"Si l’auteur a perdu son lien (changement de téléphone…), il l’ouvre : l’appli lui rend ses abonnés.":"If the author lost their link (new phone…), they open it: the app gives them back their followers.",
+"Voici le lien de ton voyage":"Here is your trip’s link",
+"Lien copié":"Link copied",
+"Lien de ce voyage":"Link to this trip",
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"This link may be outdated (trip republished on a new link). Ask a follower to send you the current link: ⋯ on a post → “Send the link back”."});

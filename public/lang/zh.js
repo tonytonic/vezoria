@@ -5148,4 +5148,10 @@ I18N.load({
 "Tes abonnés sont retrouvés : {0} voyage(s).":"已找回你的关注者：{0} 次旅行。",
 "Introuvables, par voyage":"找不到的照片（按旅行）",
 "voyage supprimé":"已删除的旅行",
-"voyage retiré de ce téléphone":"已从此手机移除的旅行"});
+"voyage retiré de ce téléphone":"已从此手机移除的旅行",
+"Renvoyer le lien de ce voyage à son auteur":"把这次旅行的链接发回给作者",
+"Si l’auteur a perdu son lien (changement de téléphone…), il l’ouvre : l’appli lui rend ses abonnés.":"如果作者丢了链接（换手机等），打开它即可：应用会把关注者还给他。",
+"Voici le lien de ton voyage":"这是你旅行的链接",
+"Lien copié":"链接已复制",
+"Lien de ce voyage":"这次旅行的链接",
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"这个链接可能已失效（旅行用新链接重新发布）。请关注者把当前链接发给你：在某条动态点 ⋯ →“发回链接”。"});

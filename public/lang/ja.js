@@ -5148,4 +5148,10 @@ I18N.load({
 "Tes abonnés sont retrouvés : {0} voyage(s).":"フォロワーが戻りました：旅行 {0} 件。",
 "Introuvables, par voyage":"見つからない写真（旅行別）",
 "voyage supprimé":"削除された旅行",
-"voyage retiré de ce téléphone":"このスマホから外した旅行"});
+"voyage retiré de ce téléphone":"このスマホから外した旅行",
+"Renvoyer le lien de ce voyage à son auteur":"この旅行のリンクを作者に送り返す",
+"Si l’auteur a perdu son lien (changement de téléphone…), il l’ouvre : l’appli lui rend ses abonnés.":"作者がリンクをなくした場合（機種変更など）、開くだけでフォロワーが戻ります。",
+"Voici le lien de ton voyage":"あなたの旅行のリンクです",
+"Lien copié":"リンクをコピーしました",
+"Lien de ce voyage":"この旅行のリンク",
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"このリンクは古いかもしれません（新しいリンクで再公開）。フォロワーに今のリンクを送ってもらってください：投稿の ⋯ →「リンクを送り返す」。"});

@@ -5136,4 +5136,10 @@ I18N.load({
 "Tes abonnés sont retrouvés : {0} voyage(s).":"Takipçilerin geri geldi: {0} seyahat.",
 "Introuvables, par voyage":"Bulunamayanlar, seyahate göre",
 "voyage supprimé":"silinmiş seyahat",
-"voyage retiré de ce téléphone":"seyahat bu telefondan kaldırıldı"});
+"voyage retiré de ce téléphone":"seyahat bu telefondan kaldırıldı",
+"Renvoyer le lien de ce voyage à son auteur":"Bu seyahatin bağlantısını sahibine geri gönder",
+"Si l’auteur a perdu son lien (changement de téléphone…), il l’ouvre : l’appli lui rend ses abonnés.":"Sahibi bağlantısını kaybettiyse (telefon değişikliği…), açması yeterli: uygulama takipçilerini geri verir.",
+"Voici le lien de ton voyage":"İşte seyahatinin bağlantısı",
+"Lien copié":"Bağlantı kopyalandı",
+"Lien de ce voyage":"Bu seyahatin bağlantısı",
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Bu bağlantı artık geçerli olmayabilir (seyahat yeni bir bağlantıyla yeniden yayınlandı). Bir takipçiden güncel bağlantıyı istemen yeterli: bir gönderide ⋯ → “Bağlantıyı geri gönder”."});

@@ -2210,4 +2210,10 @@ I18N.load({
 "Tes abonnés sont retrouvés : {0} voyage(s).":"Tus seguidores han vuelto: {0} viaje(s).",
 "Introuvables, par voyage":"No encontradas, por viaje",
 "voyage supprimé":"viaje eliminado",
-"voyage retiré de ce téléphone":"viaje quitado de este teléfono"});
+"voyage retiré de ce téléphone":"viaje quitado de este teléfono",
+"Renvoyer le lien de ce voyage à son auteur":"Reenviar el enlace de este viaje a su autor",
+"Si l’auteur a perdu son lien (changement de téléphone…), il l’ouvre : l’appli lui rend ses abonnés.":"Si el autor perdió su enlace (cambio de teléfono…), lo abre y la app le devuelve sus seguidores.",
+"Voici le lien de ton voyage":"Aquí está el enlace de tu viaje",
+"Lien copié":"Enlace copiado",
+"Lien de ce voyage":"Enlace de este viaje",
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Puede que este enlace ya no sea el bueno (viaje publicado de nuevo con otro enlace). Pide a un seguidor que te reenvíe el enlace actual: ⋯ en una publicación → «Reenviar el enlace»."});

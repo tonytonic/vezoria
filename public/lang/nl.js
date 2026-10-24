@@ -2200,4 +2200,10 @@ I18N.load({
 "Tes abonnés sont retrouvés : {0} voyage(s).":"Je volgers zijn terug: {0} reis/reizen.",
 "Introuvables, par voyage":"Niet gevonden, per reis",
 "voyage supprimé":"verwijderde reis",
-"voyage retiré de ce téléphone":"reis van deze telefoon gehaald"});
+"voyage retiré de ce téléphone":"reis van deze telefoon gehaald",
+"Renvoyer le lien de ce voyage à son auteur":"De link van deze reis terugsturen naar de maker",
+"Si l’auteur a perdu son lien (changement de téléphone…), il l’ouvre : l’appli lui rend ses abonnés.":"Is de maker zijn link kwijt (nieuwe telefoon…), dan opent hij hem: de app geeft zijn volgers terug.",
+"Voici le lien de ton voyage":"Hier is de link van je reis",
+"Lien copié":"Link gekopieerd",
+"Lien de ce voyage":"Link van deze reis",
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"Deze link is misschien verouderd (reis opnieuw gepubliceerd met een nieuwe link). Vraag een volger je de huidige link te sturen: ⋯ bij een bericht → ‘Link terugsturen’."});

@@ -5149,4 +5149,10 @@ I18N.load({
 "Tes abonnés sont retrouvés : {0} voyage(s).":"عاد متابعوك: {0} رحلة.",
 "Introuvables, par voyage":"غير موجودة، حسب الرحلة",
 "voyage supprimé":"رحلة محذوفة",
-"voyage retiré de ce téléphone":"رحلة أزيلت من هذا الهاتف"});
+"voyage retiré de ce téléphone":"رحلة أزيلت من هذا الهاتف",
+"Renvoyer le lien de ce voyage à son auteur":"أعد إرسال رابط هذه الرحلة إلى صاحبها",
+"Si l’auteur a perdu son lien (changement de téléphone…), il l’ouvre : l’appli lui rend ses abonnés.":"إذا فقد صاحب الرحلة رابطه (تغيير الهاتف…) يفتحه فيعيد له التطبيق متابعيه.",
+"Voici le lien de ton voyage":"إليك رابط رحلتك",
+"Lien copié":"تم نسخ الرابط",
+"Lien de ce voyage":"رابط هذه الرحلة",
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"ربما لم يعد هذا الرابط صحيحًا (أعيد نشر الرحلة برابط جديد). اطلب من أحد المتابعين أن يرسل لك الرابط الحالي: ⋯ على منشور ← «إعادة إرسال الرابط»."});

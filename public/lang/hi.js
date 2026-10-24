@@ -5148,4 +5148,10 @@ I18N.load({
 "Tes abonnés sont retrouvés : {0} voyage(s).":"तुम्हारे फ़ॉलोअर वापस मिल गए: {0} यात्रा।",
 "Introuvables, par voyage":"नहीं मिलीं, यात्रा के हिसाब से",
 "voyage supprimé":"हटाई गई यात्रा",
-"voyage retiré de ce téléphone":"यात्रा इस फ़ोन से हटाई गई"});
+"voyage retiré de ce téléphone":"यात्रा इस फ़ोन से हटाई गई",
+"Renvoyer le lien de ce voyage à son auteur":"इस यात्रा का लिंक उसके लेखक को वापस भेजो",
+"Si l’auteur a perdu son lien (changement de téléphone…), il l’ouvre : l’appli lui rend ses abonnés.":"अगर लेखक का लिंक खो गया (फ़ोन बदला…), वह इसे खोले: ऐप उसके फ़ॉलोअर लौटा देगा।",
+"Voici le lien de ton voyage":"यह रहा तुम्हारी यात्रा का लिंक",
+"Lien copié":"लिंक कॉपी हो गया",
+"Lien de ce voyage":"इस यात्रा का लिंक",
+"Ce lien n’est peut-être plus le bon (voyage republié sur un nouveau lien). Demande à un abonné de te renvoyer le lien actuel : ⋯ sur une publication → « Renvoyer le lien ».":"शायद यह लिंक अब सही नहीं है (यात्रा नए लिंक पर फिर से प्रकाशित हुई)। किसी फ़ॉलोअर से मौजूदा लिंक भेजने को कहो: किसी पोस्ट पर ⋯ → “लिंक वापस भेजो”।"});
