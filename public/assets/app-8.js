@@ -1215,7 +1215,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-24r'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-24s'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1673,7 +1673,7 @@
     planDay, plCfg, plAdd, plDel, plOpt, wizard, radarTuto, rcOpen, rbSheet, rbPhoto, rbSave, zipSavePart, zipCancel, innerGo, inspDeal, inspOpen, compN, compDel, compAdd, compTog, compCreate, inspBack, inspMore, inspFav, inspSurprise, inspVote, gateInstall, partsSheet, partsSave, discInfo, discBack, newTrip, blankTrip, psImport, psFile, inspire, inspireDemo, inspireGo, inspireCreate, zipSheet, zipExport, zipImport, worldFly, worldStep, worldStory, cfSegGo, trkToggle, modeGo, bilanClose, albumSheet, albCover, albumGo, tripShare, tripShareSheet, tripInvite, tripNewCode, tripUnshare, tripJoin, tripJoinGo, tripWho, tripWhoSet, impSheet, impPick, jrSheet, jrTog, jrAll, worldMap, worldMode, worldOpen, worldClose, pjAdd, pjDel, pjOpen, cfSheet, cfGo, tlCo2, hereNow, tlStats, tlKml, tlFill, tlFillGo, rcView, rcAttach, tlIcsGo, capSet, shopSheet, shopAdd, shopTick, shopClear, rembAsk, pollNew, pollSave, pollVote, pollClose, pollDel, pdfRoute, pdfJournal, pdfShare, pdfOpen, pkgPick, pkgApply, hydrateMaps, renderOutils, tlDay, tlIcs, fxTool, fxFill, tlMeteo, tlReceipt, tlRcPhoto, tlRcOcr, tlRcSave, rcFx, socialHub, trkPub, tlReceipts, tlMap, tlBags, tlBagsGo, tlDocs, tlDocEdit, tlDocSave, tlDocDel, tlJournal, pkgSheet, pkgExport, pkgImport, pinToggle, shareSheet, shareLink, askErase, tutoSheet, escaleTuto, demoLoad, demoDel, demoReset, wzGo, wzDates, wzEt, wzSum, wzTpl, wzCreate,
     pickColor, newProfile, editProfile, saveProfile, delProfile, whoSheet, setMe,
     bellSheet, bellGo, bellClear, rateGo, packFrom, packCc, inviteSheet, inviteSend, inviteCopy, carnetShareSheet, carnetPublishSheet, carnetPublish, joinPick, joinPickSave, withWhom, withWhomUpd, withWhomGo, joinAny, joinPaste, joinAnyGo, dupSheet, dupTripsGo, photoSweep, spaceSheet, spaceFree, bagEntryUpd, impPickShot, impPickPass, impPass,
-    genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin,
+    genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin, obFollow,
     _R:()=>R, _M:()=>M, ...VZAPI, ...RECAPI, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
   // En mode lecture, toutes les actions qui modifient sont bloquées
   const MUT = ['seedUSA2025','convert2026','saveSouv','delSouv','souvAddPhotos','souvDelPhoto','rembAdd','rembDel',

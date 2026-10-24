@@ -1666,7 +1666,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
      Lecture : BarcodeDetector quand le téléphone l’a (Android/Chrome), sinon jsQR (vendor/jsqr.min.js, chargé au premier scan).
      Si la caméra est refusée ou indisponible : photo du QR code à la place. Le texte lu remplit le champ puis lance l’action. */
   let qrSt = null; window.addEventListener('pagehide', ()=>qrStop());
-  const QR_GO = {'ja-code':()=>joinAnyGo(), 'tj-code':()=>tripJoinGo(), 'cv-scode':()=>obJoin(), 'fw-code':()=>followGo(document.getElementById('fw-code').value)};
+  const QR_GO = {'ja-code':()=>joinAnyGo(), 'tj-code':()=>tripJoinGo(), 'cv-scode':()=>obJoin(), 'cv-fcode':()=>{ const n = document.getElementById('cv-fnom'); if(n && n.value.trim()) obFollow(); else if(n) n.focus(); }, 'fw-code':()=>followGo(document.getElementById('fw-code').value)};
   async function qrDecoder(){
     try { if('BarcodeDetector' in window && (await BarcodeDetector.getSupportedFormats()).includes('qr_code')){ const d = new BarcodeDetector({formats:['qr_code']}); return async src => { const r = await d.detect(src); return r[0] ? r[0].rawValue : ''; }; } } catch(e){}
     if(!window.jsQR) await new Promise((res, rej)=>{ const sc = document.createElement('script'); sc.src = (window.VZ_B || '') + 'vendor/jsqr.min.js'; sc.onload = res; sc.onerror = ()=>rej(new Error(MSGT('Lecteur de QR code indisponible (pas de réseau ?)'))); document.head.appendChild(sc); });

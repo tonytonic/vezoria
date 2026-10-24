@@ -1486,7 +1486,7 @@
     openSheet(`<h2>Bienvenue à bord ✈️</h2>
       <div class="v-sum-small" style="margin-bottom:12px">Ici on prépare les voyages à plusieurs. Chacun a sa couleur, et tout ce que tu ajoutes est signé de ton prénom.</div>
       ${obSetupHTML()}
-      <div class="cv-seg-big">${segBtns('cv-ob', [['new','🆕 Je crée mon carnet'],['join','🔗 Je rejoins un carnet']], 'new')}</div>
+      <div class="cv-seg-big">${segBtns('cv-ob', [['new','🆕 Je crée mon carnet'],['join','🔗 Je rejoins un carnet'],['fol','👀 Je suis un proche']], 'new')}</div>
       <div id="cv-ob-new">
         <div class="v-f"><label>Ton prénom</label><input class="v-in" id="cv-pnom" placeholder="Ex. Camille"></div>
         <div class="v-f"><label>Ta couleur</label>${colorPick(COLORS[0])}</div>
@@ -1502,12 +1502,18 @@
         <div class="v-sum-small" style="margin:-4px 0 10px">Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.</div>
         <button class="v-btn" onclick="CV.obJoin()">Rejoindre</button>
       </div>
+      <div id="cv-ob-fol" style="display:none">
+        <div class="v-sum-small" style="margin-bottom:10px">Un ami ou un proche t’a envoyé son lien abonné (ou te montre son QR code) : tu suis ses voyages, ses photos, et tu peux mettre des ❤️ et des commentaires. Pas besoin de créer de voyage.</div>
+        <div class="v-f"><label>Ton prénom</label><input class="v-in" id="cv-fnom" placeholder="Ex. Camille"></div>
+        <div class="v-f"><label>Lien ou code abonné reçu</label><input class="v-in" id="cv-fcode" placeholder="https://… ou XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"></div>
+        ${qrBtn('cv-fcode')}
+        <button class="v-btn" onclick="CV.obFollow()">👀 Suivre ses voyages</button>
+      </div>
       ${PUBLIC && !M.cguOk ? `<div class="v-sum-small cv-cgu-line" style="margin-top:12px;text-align:center" data-notr>${esc(MSGT('En continuant, tu acceptes les {0} et la {1}.')).replace('{0}', `<a href="${I18N_LEGAL()}" target="_blank" rel="noopener">${esc(MSGT('mentions légales'))}</a>`).replace('{1}', `<a href="${I18N_PRIV()}" target="_blank" rel="noopener">${esc(MSGT('politique de confidentialité'))}</a>`)}</div>` : ''}`, true);
     obSetupWire();
     document.querySelectorAll('#cv-ob button').forEach(b=>b.addEventListener('click', ()=>{
-      const j = b.dataset.v==='join';
-      document.getElementById('cv-ob-new').style.display = j ? 'none' : 'block';
-      document.getElementById('cv-ob-join').style.display = j ? 'block' : 'none';
+      const v = b.dataset.v; if(!v) return;
+      ['new', 'join', 'fol'].forEach(k=>{ const e = document.getElementById('cv-ob-' + k); if(e) e.style.display = k === v ? 'block' : 'none'; });
     }));
     if(M.joinCode) obJoinPrefill();
   }
@@ -1550,6 +1556,17 @@
     if(M.trip !== LEGACY) M.trip = 't2027';
     persist(); closeSheet(true); applyMode(); toast('Bonjour ' + nom + ' 👋');
   }
+  // 👀 premier lancement d'un proche : prénom + lien abonné, et on suit directement (pas de voyage créé)
+  const folCode = s => { s = String(s || ''); const m = s.match(/(?:suivre|rejoindre)=([A-Za-z0-9-]{8,})/i) || s.match(/\b([A-Z0-9]{4}(?:-[A-Z0-9]{4}){2,})\b/i); return (m ? m[1] : s.trim()).toUpperCase(); };
+  async function obFollow(){
+    const nom = (document.getElementById('cv-fnom') || {}).value, code = folCode((document.getElementById('cv-fcode') || {}).value);
+    if(!nom || !nom.trim()){ alert(MSGT('Indique ton prénom.')); return; }
+    if(code.length < 8){ alert(MSGT('Colle le code reçu (au moins 8 caractères).')); return; }
+    obAccept();
+    if(!M.me){ const me = {id:'p'+uid(), type:'profile', nom:nom.trim(), couleur:COLORS[0]}; M.me = me.id; put(me, false); }
+    M.followName = nom.trim(); M.trip = null; persist(); closeSheet(true); applyMode();
+    await followGo(code);
+  }
   async function obJoin(){
     const urlEl = document.getElementById('cv-surl');
     const code = invCode(document.getElementById('cv-scode').value);
@@ -1563,7 +1580,11 @@
       { const xf = !sp.err && list('xfer', r=>r.trip === 'xf:' + code)[0]; if(xf){ delete M.joinCode; persist(); await xferApply(xf, code); return; } }
       const got = sp.err ? [] : Object.entries(TS()).filter(([, c])=>c === code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip');
       if(got.length){ delete M.joinCode; persist(); closeSheet(true); go(got[0].id); refresh(); joinPick(code); return; }
+      const isFol = !sp.err && Object.entries(TS()).some(([k, c])=>c === code && /^ft:/.test(k));
       M.spaces = (M.spaces || []).filter(x=>x.code !== code);
+      if(isFol){ Object.keys(TS()).forEach(k=>{ if(TS()[k] === code) delete TS()[k]; }); persist();   // c'est un lien abonné, pas un carnet : on passe à « Je suis un proche »
+        const fb = document.querySelector('#cv-ob button[data-v="fol"]'), fi = document.getElementById('cv-fcode'); if(fb) fb.click(); if(fi) fi.value = code;
+        toast('👀 ' + MSGT('C’est un lien abonné : indique ton prénom pour suivre ses voyages.')); const n = document.getElementById('cv-fnom'); if(n) n.focus(); return; }
     } catch(e){ M.spaces = (M.spaces || []).filter(x=>x.code !== code); }
     // 2) sinon : code du carnet complet (mes voyages sur un autre appareil)
     M.sync.code = code;
