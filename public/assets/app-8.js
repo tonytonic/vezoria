@@ -210,9 +210,25 @@
   async function carnetInvite(c){
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(c) : '';
     const text = MSG(`Suis mes voyages sur Vezoria ✈️ : photos et récits au fil des étapes`) + '\n' + link + '\n' + MSG(`(code abonné : ${c})`);
-    if(navigator.share){ try { await navigator.share({title:'Vezoria', text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
-    try { await navigator.clipboard.writeText(text); toast('📋 Lien abonné copié'); } catch(e){ await uiPrompt('Copie ce texte :', text); }
-    refresh();
+    fwInviteSheet(c, link, text, MSGT('Inviter des abonnés'));
+  }
+  // 👀 inviter un abonné : QR code (la personne est à côté de toi) + message (elle est loin)
+  let FWI = null;
+  function fwInviteSheet(c, link, text, title){
+    FWI = {text, c}; refresh();
+    openSheet(`<h2>👀 ${esc(title)}</h2>
+      <div class="iv-step"><b>📱 ${esc(MSGT('Elle est à côté de toi'))}</b><span>${esc(MSGT('Elle scanne ce QR code avec l’appareil photo de son téléphone : le voyage s’ouvre directement, sans rien installer.'))}</span></div>
+      <div class="iv-qr">${qrSVG(link || c)}</div>
+      <div class="cv-bigcode" data-notr>${esc(c)}</div>
+      <div class="iv-step"><b>💬 ${esc(MSGT('Elle est loin'))}</b><span>${esc(MSGT('Envoie-lui le message : il contient le lien et le code abonné.'))}</span></div>
+      <button type="button" class="v-btn" onclick="CV.fwInviteSend()">💬 ${esc(MSGT('Envoyer l’invitation'))}</button>
+      <button type="button" class="v-btn sec" onclick="CV.fwInviteSend(1)">📋 ${esc(MSGT('Copier le lien'))}</button>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`);
+  }
+  async function fwInviteSend(copy){
+    if(!FWI) return; const text = FWI.text;
+    if(!copy && navigator.share){ try { await navigator.share({title:'Vezoria', text}); return; } catch(e){ if(e && e.name === 'AbortError') return; } }
+    try { await navigator.clipboard.writeText(text); toast('📋 ' + MSGT('Lien abonné copié')); } catch(e){ await uiPrompt('Copie ce texte :', text); }
   }
   // lien reçu : #rejoindre=CODE (voyage partagé) ou #suivre=CODE (abonné)
   async function hashJoin(){
@@ -403,9 +419,7 @@
     const link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(FT()[t.id]) : '';
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
     const text = MSG(`Suis mon voyage « ${t.titre} » sur Vezoria ✈️ : photos et récits au fil des étapes`) + '\n' + MSG('Le lien s’ouvre directement, sans rien installer :') + '\n' + link + '\n' + MSG(`(code abonné : ${FT()[t.id]})`);
-    if(navigator.share){ try { await navigator.share({title:t.titre, text}); refresh(); return; } catch(e){ if(e && e.name === 'AbortError'){ refresh(); return; } } }
-    try { await navigator.clipboard.writeText(text); toast('📋 Lien abonné copié'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
-    refresh();
+    fwInviteSheet(FT()[t.id], link, text, t.titre || MSGT('Inviter des abonnés'));
   }
   async function feedStop(tid, silent){
     const c = FT()[tid]; if(!c) return;
@@ -1125,7 +1139,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-24j'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-24k'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1563,7 +1577,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
+  var RECAPI = {fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
