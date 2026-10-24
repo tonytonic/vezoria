@@ -5139,4 +5139,7 @@ I18N.load({
 "{0} remise(s) en grand.":"{0} फिर से बड़े आकार में।",
 "{0} introuvable(s) : ni sur ce téléphone ni sur le serveur. Essaie depuis ton autre téléphone.":"{0} नहीं मिलीं: न इस फ़ोन पर, न सर्वर पर। अपने दूसरे फ़ोन से कोशिश करो।",
 "{0} en petite taille":"{0} छोटे आकार में",
-"Remettre en grand les {0} photos en petite taille":"{0} छोटी फ़ोटो फिर से बड़ी करो"});
+"Remettre en grand les {0} photos en petite taille":"{0} छोटी फ़ोटो फिर से बड़ी करो",
+"Hôtels autour":"आस-पास के होटल",
+"hôtels":"होटल",
+"près de":"के पास"});

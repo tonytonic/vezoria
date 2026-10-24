@@ -5139,4 +5139,7 @@ I18N.load({
 "{0} remise(s) en grand.":"{0}장을 큰 크기로 되돌렸어요.",
 "{0} introuvable(s) : ni sur ce téléphone ni sur le serveur. Essaie depuis ton autre téléphone.":"{0}장을 찾을 수 없어요: 이 휴대폰에도 서버에도 없어요. 다른 휴대폰에서 해 보세요.",
 "{0} en petite taille":"{0}장 작은 크기",
-"Remettre en grand les {0} photos en petite taille":"작은 사진 {0}장을 큰 크기로 되돌리기"});
+"Remettre en grand les {0} photos en petite taille":"작은 사진 {0}장을 큰 크기로 되돌리기",
+"Hôtels autour":"근처 호텔",
+"hôtels":"호텔",
+"près de":"근처:"});

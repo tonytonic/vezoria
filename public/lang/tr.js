@@ -5127,4 +5127,7 @@ I18N.load({
 "{0} remise(s) en grand.":"{0} tanesi yeniden büyük boyutta.",
 "{0} introuvable(s) : ni sur ce téléphone ni sur le serveur. Essaie depuis ton autre téléphone.":"{0} bulunamadı: ne bu telefonda ne sunucuda. Diğer telefonundan dene.",
 "{0} en petite taille":"{0} küçük boyutta",
-"Remettre en grand les {0} photos en petite taille":"{0} küçük fotoğrafı yeniden büyüt"});
+"Remettre en grand les {0} photos en petite taille":"{0} küçük fotoğrafı yeniden büyüt",
+"Hôtels autour":"Yakındaki oteller",
+"hôtels":"oteller",
+"près de":"yakınında"});

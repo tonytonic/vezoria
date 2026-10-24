@@ -5140,4 +5140,7 @@ I18N.load({
 "{0} remise(s) en grand.":"Возвращено в большом размере: {0}.",
 "{0} introuvable(s) : ni sur ce téléphone ni sur le serveur. Essaie depuis ton autre téléphone.":"Не найдено: {0} — ни на этом телефоне, ни на сервере. Попробуй с другого телефона.",
 "{0} en petite taille":"{0} в малом размере",
-"Remettre en grand les {0} photos en petite taille":"Вернуть в большом размере {0} маленьких фото"});
+"Remettre en grand les {0} photos en petite taille":"Вернуть в большом размере {0} маленьких фото",
+"Hôtels autour":"Отели рядом",
+"hôtels":"отели",
+"près de":"рядом с"});

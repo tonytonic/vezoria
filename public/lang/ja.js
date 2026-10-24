@@ -5139,4 +5139,7 @@ I18N.load({
 "{0} remise(s) en grand.":"{0} 枚を大きいサイズに戻しました。",
 "{0} introuvable(s) : ni sur ce téléphone ni sur le serveur. Essaie depuis ton autre téléphone.":"{0} 枚が見つかりません：このスマホにもサーバーにもありません。もう一台のスマホから試してください。",
 "{0} en petite taille":"{0} 枚が小さいサイズ",
-"Remettre en grand les {0} photos en petite taille":"小さい写真 {0} 枚を大きく戻す"});
+"Remettre en grand les {0} photos en petite taille":"小さい写真 {0} 枚を大きく戻す",
+"Hôtels autour":"近くのホテル",
+"hôtels":"ホテル",
+"près de":"近く："});

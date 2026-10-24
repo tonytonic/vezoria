@@ -2204,4 +2204,7 @@ I18N.load({
 "{0} remise(s) en grand.":"{0} reposta(s) em grande.",
 "{0} introuvable(s) : ni sur ce téléphone ni sur le serveur. Essaie depuis ton autre téléphone.":"{0} não encontrada(s): nem neste telefone nem no servidor. Tenta a partir do teu outro telefone.",
 "{0} en petite taille":"{0} em tamanho pequeno",
-"Remettre en grand les {0} photos en petite taille":"Repor em grande as {0} fotos pequenas"});
+"Remettre en grand les {0} photos en petite taille":"Repor em grande as {0} fotos pequenas",
+"Hôtels autour":"Hotéis perto",
+"hôtels":"hotéis",
+"près de":"perto de"});

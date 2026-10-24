@@ -5140,4 +5140,7 @@ I18N.load({
 "{0} remise(s) en grand.":"تمت إعادة {0} بالحجم الكبير.",
 "{0} introuvable(s) : ni sur ce téléphone ni sur le serveur. Essaie depuis ton autre téléphone.":"لم يُعثر على {0}: لا على هذا الهاتف ولا على الخادم. جرّب من هاتفك الآخر.",
 "{0} en petite taille":"{0} بحجم صغير",
-"Remettre en grand les {0} photos en petite taille":"إعادة الصور الصغيرة ({0}) إلى الحجم الكبير"});
+"Remettre en grand les {0} photos en petite taille":"إعادة الصور الصغيرة ({0}) إلى الحجم الكبير",
+"Hôtels autour":"فنادق قريبة",
+"hôtels":"فنادق",
+"près de":"قرب"});

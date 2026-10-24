@@ -5139,4 +5139,7 @@ I18N.load({
 "{0} remise(s) en grand.":"{0} 张已恢复为大图。",
 "{0} introuvable(s) : ni sur ce téléphone ni sur le serveur. Essaie depuis ton autre téléphone.":"{0} 张找不到：既不在这部手机上也不在服务器上。试试你的另一部手机。",
 "{0} en petite taille":"{0} 张小图",
-"Remettre en grand les {0} photos en petite taille":"把 {0} 张小图恢复为大图"});
+"Remettre en grand les {0} photos en petite taille":"把 {0} 张小图恢复为大图",
+"Hôtels autour":"附近的酒店",
+"hôtels":"酒店",
+"près de":"靠近"});

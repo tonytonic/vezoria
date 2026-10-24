@@ -2191,4 +2191,7 @@ I18N.load({
 "{0} remise(s) en grand.":"{0} weer in groot formaat.",
 "{0} introuvable(s) : ni sur ce téléphone ni sur le serveur. Essaie depuis ton autre téléphone.":"{0} niet gevonden: niet op deze telefoon en niet op de server. Probeer het vanaf je andere telefoon.",
 "{0} en petite taille":"{0} klein",
-"Remettre en grand les {0} photos en petite taille":"De {0} kleine foto’s weer groot maken"});
+"Remettre en grand les {0} photos en petite taille":"De {0} kleine foto’s weer groot maken",
+"Hôtels autour":"Hotels in de buurt",
+"hôtels":"hotels",
+"près de":"bij"});
