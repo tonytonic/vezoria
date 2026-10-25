@@ -2309,4 +2309,10 @@ I18N.load({
 "Courses, carte, importer, papiers":"Einkauf, Karte, Import, Papiere",
 "Prévu ou sur place ?":"Geplant oder vor Ort?",
 "Position et confidentialité":"Standort und Privatsphäre",
-"Souvenirs du voyage":"Reiseerinnerungen"});
+"Souvenirs du voyage":"Reiseerinnerungen",
+"Où dans l’itinéraire ?":"Wo in der Route?",
+"Au début":"Am Anfang",
+"avant":"vor",
+"Après":"Nach",
+"Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"Die folgenden Etappen ({0}…) verschieben sich um ebenso viele Nächte, mit ihren Fahrten und Besuchen.",
+"la suite est décalée de {0} nuit(s)":"der Rest verschiebt sich um {0} Nacht/Nächte"});

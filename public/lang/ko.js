@@ -5253,4 +5253,10 @@ I18N.load({
 "Courses, carte, importer, papiers":"장보기, 지도, 가져오기, 서류",
 "Prévu ou sur place ?":"미리 낸 돈? 현지에서 쓴 돈?",
 "Position et confidentialité":"위치와 개인정보",
-"Souvenirs du voyage":"여행 추억"});
+"Souvenirs du voyage":"여행 추억",
+"Où dans l’itinéraire ?":"일정의 어디에?",
+"Au début":"처음에",
+"avant":"앞:",
+"Après":"다음:",
+"Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"이후 일정({0}…)이 이동과 방문지와 함께 같은 박수만큼 밀려요.",
+"la suite est décalée de {0} nuit(s)":"이후 일정이 {0}박 밀렸어요"});

@@ -5253,4 +5253,10 @@ I18N.load({
 "Courses, carte, importer, papiers":"购物、地图、导入、证件",
 "Prévu ou sur place ?":"提前计划还是当地花费？",
 "Position et confidentialité":"位置与隐私",
-"Souvenirs du voyage":"旅行回忆"});
+"Souvenirs du voyage":"旅行回忆",
+"Où dans l’itinéraire ?":"放在行程的哪里？",
+"Au début":"在开头",
+"avant":"之前：",
+"Après":"之后：",
+"Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"后面的站点（{0}…）连同交通和参观顺延相同晚数。",
+"la suite est décalée de {0} nuit(s)":"后续顺延 {0} 晚"});

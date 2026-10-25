@@ -5254,4 +5254,10 @@ I18N.load({
 "Courses, carte, importer, papiers":"Покупки, карта, импорт, документы",
 "Prévu ou sur place ?":"Заранее или на месте?",
 "Position et confidentialité":"Местоположение и приватность",
-"Souvenirs du voyage":"Воспоминания о поездке"});
+"Souvenirs du voyage":"Воспоминания о поездке",
+"Où dans l’itinéraire ?":"Где в маршруте?",
+"Au début":"В начале",
+"avant":"перед",
+"Après":"После",
+"Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"Следующие этапы ({0}…) сдвигаются на столько же ночей вместе с переездами и визитами.",
+"la suite est décalée de {0} nuit(s)":"остальное сдвинуто на {0} ноч."});

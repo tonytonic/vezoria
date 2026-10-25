@@ -5253,4 +5253,10 @@ I18N.load({
 "Courses, carte, importer, papiers":"買い物・地図・取り込み・書類",
 "Prévu ou sur place ?":"事前？それとも現地？",
 "Position et confidentialité":"位置情報とプライバシー",
-"Souvenirs du voyage":"旅の思い出"});
+"Souvenirs du voyage":"旅の思い出",
+"Où dans l’itinéraire ?":"旅程のどこに？",
+"Au début":"最初に",
+"avant":"前：",
+"Après":"後：",
+"Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"以降の滞在地（{0}…）は移動や観光ごと同じ泊数だけずれます。",
+"la suite est décalée de {0} nuit(s)":"以降を{0}泊ずらしました"});

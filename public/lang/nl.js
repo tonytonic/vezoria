@@ -2305,4 +2305,10 @@ I18N.load({
 "Courses, carte, importer, papiers":"Boodschappen, kaart, importeren, papieren",
 "Prévu ou sur place ?":"Gepland of ter plaatse?",
 "Position et confidentialité":"Locatie en privacy",
-"Souvenirs du voyage":"Reisherinneringen"});
+"Souvenirs du voyage":"Reisherinneringen",
+"Où dans l’itinéraire ?":"Waar in de route?",
+"Au début":"Aan het begin",
+"avant":"vóór",
+"Après":"Na",
+"Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"De volgende etappes ({0}…) schuiven evenveel nachten op, met hun reizen en bezoeken.",
+"la suite est décalée de {0} nuit(s)":"de rest schuift {0} nacht(en) op"});

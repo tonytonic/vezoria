@@ -2299,4 +2299,10 @@ I18N.load({
 "Courses, carte, importer, papiers":"Shopping, map, import, documents",
 "Prévu ou sur place ?":"Planned or on the spot?",
 "Position et confidentialité":"Location and privacy",
-"Souvenirs du voyage":"Trip memories"});
+"Souvenirs du voyage":"Trip memories",
+"Où dans l’itinéraire ?":"Where in the itinerary?",
+"Au début":"At the start",
+"avant":"before",
+"Après":"After",
+"Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"The following stops ({0}…) move by the same number of nights, with their journeys and visits.",
+"la suite est décalée de {0} nuit(s)":"the rest moves by {0} night(s)"});

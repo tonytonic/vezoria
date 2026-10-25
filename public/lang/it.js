@@ -2314,4 +2314,10 @@ I18N.load({
 "Courses, carte, importer, papiers":"Spesa, mappa, importa, documenti",
 "Prévu ou sur place ?":"Previsto o sul posto?",
 "Position et confidentialité":"Posizione e privacy",
-"Souvenirs du voyage":"Ricordi del viaggio"});
+"Souvenirs du voyage":"Ricordi del viaggio",
+"Où dans l’itinéraire ?":"Dove nell’itinerario?",
+"Au début":"All’inizio",
+"avant":"prima di",
+"Après":"Dopo",
+"Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"Le tappe successive ({0}…) si spostano dello stesso numero di notti, con trasferimenti e visite.",
+"la suite est décalée de {0} nuit(s)":"il resto slitta di {0} notte/i"});

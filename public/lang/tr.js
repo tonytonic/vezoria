@@ -5241,4 +5241,10 @@ I18N.load({
 "Courses, carte, importer, papiers":"Alışveriş, harita, içe aktar, belgeler",
 "Prévu ou sur place ?":"Önceden mi, yerinde mi?",
 "Position et confidentialité":"Konum ve gizlilik",
-"Souvenirs du voyage":"Seyahat anıları"});
+"Souvenirs du voyage":"Seyahat anıları",
+"Où dans l’itinéraire ?":"Rotanın neresinde?",
+"Au début":"Başta",
+"avant":"önce:",
+"Après":"Sonra:",
+"Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"Sonraki duraklar ({0}…) yolculuk ve ziyaretleriyle aynı gece sayısı kadar kayar.",
+"la suite est décalée de {0} nuit(s)":"devamı {0} gece kaydırıldı"});

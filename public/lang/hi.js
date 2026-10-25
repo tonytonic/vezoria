@@ -5253,4 +5253,10 @@ I18N.load({
 "Courses, carte, importer, papiers":"ख़रीदारी, नक़्शा, इम्पोर्ट, काग़ज़",
 "Prévu ou sur place ?":"पहले से या वहीं?",
 "Position et confidentialité":"लोकेशन और गोपनीयता",
-"Souvenirs du voyage":"यात्रा की यादें"});
+"Souvenirs du voyage":"यात्रा की यादें",
+"Où dans l’itinéraire ?":"यात्रा क्रम में कहाँ?",
+"Au début":"शुरू में",
+"avant":"से पहले",
+"Après":"के बाद",
+"Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"अगले पड़ाव ({0}…) अपनी यात्राओं और घूमने की जगहों के साथ उतनी ही रातें आगे खिसकेंगे।",
+"la suite est décalée de {0} nuit(s)":"बाक़ी {0} रात आगे खिसका"});

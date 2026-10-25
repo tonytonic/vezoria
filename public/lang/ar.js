@@ -5254,4 +5254,10 @@ I18N.load({
 "Courses, carte, importer, papiers":"التسوق، الخريطة، الاستيراد، الوثائق",
 "Prévu ou sur place ?":"مخطط أم في الوجهة؟",
 "Position et confidentialité":"الموقع والخصوصية",
-"Souvenirs du voyage":"ذكريات الرحلة"});
+"Souvenirs du voyage":"ذكريات الرحلة",
+"Où dans l’itinéraire ?":"أين في خط الرحلة؟",
+"Au début":"في البداية",
+"avant":"قبل",
+"Après":"بعد",
+"Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"تتأخر المحطات التالية ({0}…) بعدد الليالي نفسه مع تنقلاتها وزياراتها.",
+"la suite est décalée de {0} nuit(s)":"تأخر الباقي {0} ليلة"});
