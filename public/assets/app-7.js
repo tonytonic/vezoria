@@ -152,14 +152,30 @@
     const v = inp.value.trim(), st = tlStages(), my = ++acgN; if(v.length < 3 || !st.length){ g.textContent = ''; return; }
     try {
       const co = (M.ctry || {})[normQ(st[0].city)], ctx = co && co.cc && typeof ccName === 'function' ? ccName(co.cc) : '';
-      const p = await geocode(v, ctx); if(!p || my !== acgN) return;
       const P = []; for(const x of st){ const c = geoCached(x.city) || await geocode(x.city, ctx); if(!c) return; P.push(c); } if(my !== acgN) return;
+      const p = await acgPoint(v, P); if(!p || my !== acgN) return;
+      // très loin de toutes les étapes (Paris pour un voyage en Roumanie) : sans doute la ville de départ ou de retour, pas une étape « sur le chemin »
+      const near = Math.min(...P.map(x=>km(x, p)));
+      if(near > 1000){ g.innerHTML = `📍 ${esc(RF('{0} est loin de tes autres étapes (≈ {1} km).', v, Math.round(near / 100) * 100))} ${esc(MSGT('Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.'))}`;
+        if(!sel.dataset.touched){ sel.value = String(st.length); ariCityPos(sel); } return; }
       let best = st.length, bc = Infinity;
       for(let k = 0; k <= st.length; k++){ const a = P[k - 1], b = P[k]; const c = (a ? km(a, p) : 0) + (b ? km(p, b) : 0) - (a && b ? km(a, b) : 0); if(c < bc - 1){ bc = c; best = k; } }
       const lbl = best === 0 ? RF('avant {0}', st[0].city) : best === st.length ? RF('après {0}, à la fin', st[st.length - 1].city) : RF('entre {0} et {1}', st[best - 1].city, st[best].city);
       g.innerHTML = `💡 ${esc(MSGT('Sur ton chemin'))} : <b>${esc(lbl)}</b>${sel.dataset.touched && +sel.value !== best ? ` <button type="button" class="ac-guess-b" onclick="(s=>{s.value='${best}';delete s.dataset.touched;CV.ariCityPos(s)})(document.getElementById('ac-pos'))">${esc(MSGT('Placer ici'))}</button>` : ''}`;
       if(!sel.dataset.touched){ sel.value = String(best); ariCityPos(sel); }
     } catch(e){}
+  }
+  // la ville tapée : la plus connue de ce nom (Paris = Paris, France), sauf si une ville presque aussi connue est près du voyage (Sorrente en Italie, pas aux États-Unis)
+  async function acgPoint(q, P){
+    try {
+      const j = await (await fetch(GEO + 'search?format=jsonv2&limit=6&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(q))).json();
+      const C = (Array.isArray(j) ? j : []).filter(x=>x && x.lat && !/^(highway|railway|shop|amenity|building|tourism)$/.test(x.class || x.category || '')).map(x=>({lat:+x.lat, lng:+x.lon, imp:+x.importance || 0}));
+      if(C.length){ const top = C.reduce((a, b)=>b.imp > a.imp ? b : a), near = x => Math.min(...P.map(y=>km(x, y)));
+        if(near(top) <= 1500) return top;
+        const alt = C.filter(x=>x !== top && near(x) <= 1500 && x.imp >= top.imp * .6).sort((a, b)=>b.imp - a.imp)[0];
+        return alt || top; }
+    } catch(e){}
+    return geocode(q, null);
   }
   function ariCityPos(sel){ const o = sel.options[sel.selectedIndex], d = o && o.dataset.d, e = document.getElementById('ac-d'); if(d && e) e.value = d; ariShiftHint(); }
   function ariShiftHint(){ const ps = document.getElementById('ac-pos'), h = document.getElementById('ac-shift'); if(!ps || !h) return; const st = tlStages(), mid = +ps.value < st.length;
