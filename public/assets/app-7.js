@@ -122,11 +122,11 @@
     const d0 = last ? (last.fin || last.debut) : (t.debut || isoToday());
     openSheet(`<h2>📍 ${esc(MSGT('Ajouter une ville'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».'))}</div>
       <form id="ac-f" onsubmit="event.preventDefault();CV.ariCitySave()">
-        <div class="v-f"><label>${esc(MSGT('Ville'))}</label><input class="v-in" id="ac-v" required placeholder="${esc(MSGT('Ex. Rome, Lisbonne, Tokyo'))}"></div>
-        ${st.length ? `<div class="v-f"><label>${esc(MSGT('Où dans l’itinéraire ?'))}</label><select class="v-in" id="ac-pos" onchange="CV.ariCityPos(this)">
+        <div class="v-f"><label>${esc(MSGT('Ville'))}</label><input class="v-in" id="ac-v" required placeholder="${esc(MSGT('Ex. Rome, Lisbonne, Tokyo'))}" oninput="CV.ariCityGuess()"></div>
+        ${st.length ? `<div class="v-f"><label>${esc(MSGT('Où dans l’itinéraire ?'))}</label><select class="v-in" id="ac-pos" onchange="this.dataset.touched=1;CV.ariCityPos(this)">
           <option value="0" data-d="${esc(st[0].debut)}">${esc(MSGT('Au début'))} · ${esc(MSGT('avant'))} ${esc(st[0].city)}</option>
           ${st.map((x, i)=>`<option value="${i + 1}" data-d="${esc(x.fin)}"${i === st.length - 1 ? ' selected' : ''}>${esc(MSGT('Après'))} ${esc(x.city)} (${fshort(x.debut)} → ${fshort(x.fin)})</option>`).join('')}</select>
-          <div class="v-sum-small" id="ac-shift" style="margin-top:4px"></div></div>` : ''}
+          <div class="ac-guess" id="ac-guess"></div><div class="v-sum-small" id="ac-shift" style="margin-top:4px"></div></div>` : ''}
         <div class="cv-row" style="gap:8px"><div class="v-f" style="flex:1;min-width:0"><label>${esc(MSGT('Arrivée'))}</label><input class="v-in" type="date" id="ac-d" value="${esc(d0)}" required></div>
           <div class="v-f" style="flex:1;min-width:0"><label>${esc(MSGT('Nuits'))}</label><input class="v-in" type="number" id="ac-n" min="1" max="90" value="2" inputmode="numeric" required oninput="CV.ariShiftHint()"></div></div>
         <div class="v-actions"><button type="submit" class="v-btn">＋ ${esc(MSGT('Ajouter'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>
@@ -143,6 +143,23 @@
     out.push({id:'i' + uid(), type:'item', trip:t.id, cat:'hotel', titre:v, base:v, date:d, dateFin:f, statut:'todo', partage:'grp', qui:[]});
     const nt = clone(t); let ch = false; if(mid && nt.fin){ nt.fin = addD(nt.fin, n); ch = true; } if(!nt.debut || d < nt.debut){ nt.debut = d; ch = true; } if(!nt.fin || f > nt.fin){ nt.fin = f; ch = true; } if(ch) out.push(nt);
     putMany(out, '📍 ' + v + (mid ? ' · ' + RF('la suite est décalée de {0} nuit(s)', n) : '')); closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(ariCtry, 300);
+  }
+  // 🧭 la nouvelle ville est placée là où elle allonge le moins le trajet (Bologne : entre Milan et Venise), tant qu’on n’a pas choisi soi-même
+  let acgT = 0, acgN = 0;
+  function ariCityGuess(){ clearTimeout(acgT); acgT = setTimeout(ariCityGuessGo, 700); }
+  async function ariCityGuessGo(){
+    const inp = document.getElementById('ac-v'), sel = document.getElementById('ac-pos'), g = document.getElementById('ac-guess'); if(!inp || !sel || !g) return;
+    const v = inp.value.trim(), st = tlStages(), my = ++acgN; if(v.length < 3 || !st.length){ g.textContent = ''; return; }
+    try {
+      const co = (M.ctry || {})[normQ(st[0].city)], ctx = co && co.cc && typeof ccName === 'function' ? ccName(co.cc) : '';
+      const p = await geocode(v, ctx); if(!p || my !== acgN) return;
+      const P = []; for(const x of st){ const c = geoCached(x.city) || await geocode(x.city, ctx); if(!c) return; P.push(c); } if(my !== acgN) return;
+      let best = st.length, bc = Infinity;
+      for(let k = 0; k <= st.length; k++){ const a = P[k - 1], b = P[k]; const c = (a ? km(a, p) : 0) + (b ? km(p, b) : 0) - (a && b ? km(a, b) : 0); if(c < bc - 1){ bc = c; best = k; } }
+      const lbl = best === 0 ? RF('avant {0}', st[0].city) : best === st.length ? RF('après {0}, à la fin', st[st.length - 1].city) : RF('entre {0} et {1}', st[best - 1].city, st[best].city);
+      g.innerHTML = `💡 ${esc(MSGT('Sur ton chemin'))} : <b>${esc(lbl)}</b>${sel.dataset.touched && +sel.value !== best ? ` <button type="button" class="ac-guess-b" onclick="(s=>{s.value='${best}';delete s.dataset.touched;CV.ariCityPos(s)})(document.getElementById('ac-pos'))">${esc(MSGT('Placer ici'))}</button>` : ''}`;
+      if(!sel.dataset.touched){ sel.value = String(best); ariCityPos(sel); }
+    } catch(e){}
   }
   function ariCityPos(sel){ const o = sel.options[sel.selectedIndex], d = o && o.dataset.d, e = document.getElementById('ac-d'); if(d && e) e.value = d; ariShiftHint(); }
   function ariShiftHint(){ const ps = document.getElementById('ac-pos'), h = document.getElementById('ac-shift'); if(!ps || !h) return; const st = tlStages(), mid = +ps.value < st.length;

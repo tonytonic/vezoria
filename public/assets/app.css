@@ -2772,3 +2772,5 @@ html.vz-and body.vz-glass .v-sheet{-webkit-backdrop-filter:none!important;backdr
 /* carte redessinée (synchro…) : pas de nouvelle animation ni de fondu */
 .cd-bg.still{transition:none;animation:none;transform:scale(1.02)}
 .cv-prep2.still .p2-prog,.cv-prep2.still .p2-svg circle,.cv-prep2.still .p2-svg circle.on{animation:none}
+.ac-guess{margin-top:6px;font-size:.85rem;line-height:1.4}.ac-guess:empty{display:none}
+.ac-guess-b{margin-left:6px;border:0;border-radius:999px;padding:4px 10px;background:#7c3aed;color:#fff;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
