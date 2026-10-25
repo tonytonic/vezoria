@@ -12,6 +12,8 @@
  *                                            sans « mode » : renvoie le mode actuel et la taille du cache
  *   {action:'errors'}                      → les 200 dernières erreurs reçues des téléphones (/api/err), regroupées
  *   {action:'errors', clear:true}          → vider la liste des erreurs
+ *   {action:'folders'}                     → 🧹 dossiers photos (R2) : taille, fiches, dernière activité, photos du pot commun
+ *   {action:'folderWipe', space, note, force} → effacer un dossier inactif ou sans fiche (refusé s'il a servi depuis 30 jours, sauf force)
  *
  * Le CODE du carnet n'est jamais envoyé ici : la page d'administration calcule elle-même son empreinte
  * (« token », la même que celle de l'appli), et le serveur en déduit le dossier du carnet.
@@ -117,6 +119,42 @@ export async function onRequestPost({ request, env }) {
     if (b.clear) { await env.DB.prepare('DELETE FROM errors').run(); await log(env, 'errors:clear', '-', ''); return json({ ok: true }); }
     const e = await env.DB.prepare('SELECT msg, src, ver, ua, n, first, last FROM errors ORDER BY last DESC LIMIT 200').all();
     return json({ errors: e.results || [] });
+  }
+  if (a === 'folders') {   // 🧹 inventaire des dossiers photos : aucun contenu, seulement des nombres
+    if (!env.PHOTOS) return json({ error: 'Stockage R2 non lié (binding PHOTOS)' }, 500);
+    const pf = []; let cursor;
+    do { const l = await env.PHOTOS.list({ delimiter: '/', cursor, limit: 1000 }); (l.delimitedPrefixes || []).forEach(p => pf.push(p.replace(/\/$/, ''))); cursor = l.truncated ? l.cursor : undefined; } while (cursor);
+    const map = (rows, f) => { const o = {}; (rows || []).forEach(r => { o[r.space] = f(r); }); return o; };
+    const q = async (sql, f) => { try { return map((await env.DB.prepare(sql).all()).results, f); } catch (e) { return {}; } };
+    const rec = await q('SELECT space, COUNT(*) AS n, MAX(rev) AS m FROM records GROUP BY space', r => ({ n: r.n, m: r.m || 0 }));
+    const seen = await q('SELECT space, at FROM space_seen', r => r.at);
+    const caps = await q('SELECT space, COUNT(*) AS n FROM photo_caps GROUP BY space', r => r.n);
+    const blk = await q('SELECT space, status FROM blocked', r => r.status);
+    let st = {}; try { (await env.DB.prepare("SELECT k, v FROM photo_stats WHERE k LIKE 's:%'").all()).results.forEach(r => { st[r.k.slice(2)] = r.v; }); } catch (e) {}
+    const out = []; let listed = 0;
+    for (const sp of pf) {
+      let bytes = st[sp], n = null;
+      if (bytes == null && listed < 25) {   // dossier pas encore recompté par le ménage quotidien : on le mesure ici (25 au plus par appel)
+        listed++; bytes = 0; n = 0; let c;
+        do { const l = await env.PHOTOS.list({ prefix: sp + '/', cursor: c, limit: 1000 }); (l.objects || []).forEach(o => { bytes += o.size; n++; }); c = l.truncated && n < 20000 ? l.cursor : undefined; } while (c);
+      }
+      const r = rec[sp] || { n: 0, m: 0 }, last = Math.max(r.m || 0, seen[sp] || 0);
+      out.push({ space: sp, short: short(sp), mb: bytes == null ? null : Math.round(bytes / 1e5) / 10, n, records: r.n, last, caps: caps[sp] || 0, blocked: blk[sp] || null });
+    }
+    out.sort((x, y) => (x.last || 0) - (y.last || 0));
+    return json({ folders: out, now: Date.now() });
+  }
+  if (a === 'folderWipe') {
+    const sp = String(b.space || ''); if (!/^[0-9a-f]{64}$/.test(sp)) return json({ error: 'dossier invalide' }, 400);
+    let last = 0;
+    try { const r = await env.DB.prepare('SELECT MAX(rev) AS m FROM records WHERE space = ?1').bind(sp).first(); last = (r && r.m) || 0; } catch (e) {}
+    try { const r = await env.DB.prepare('SELECT at FROM space_seen WHERE space = ?1').bind(sp).first(); last = Math.max(last, (r && r.at) || 0); } catch (e) {}
+    if (!b.force && Date.now() - last < 30 * 864e5) return json({ error: 'Ce dossier a servi il y a moins de 30 jours : il est encore utilisé.' }, 409);
+    const w = await wipe(env, sp);
+    try { await env.DB.prepare('DELETE FROM photo_caps WHERE space = ?1').bind(sp).run(); } catch (e) {}
+    try { await env.DB.prepare('DELETE FROM space_seen WHERE space = ?1').bind(sp).run(); } catch (e) {}
+    await log(env, 'ménage', sp, (b.note || '') + ` (${w.records} fiches, ${w.photos} photos)`);
+    return json({ ok: true, wiped: w });
   }
   let space = '';
   if (b.token && /^[0-9a-f]{64}$/.test(b.token)) space = await sha256('carnet-voyage:' + b.token);
