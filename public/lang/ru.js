@@ -5347,4 +5347,5 @@ I18N.load({
 "Déjà remboursé":"Уже возвращено",
 "{0} modification(s) à envoyer":"Изменений к отправке: {0}",
 "Tes modifications sont envoyées":"Твои изменения отправлены",
-"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} фото в пути: отправляются в фоне, пока приложение открыто."});
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} фото в пути: отправляются в фоне, пока приложение открыто.",
+"fiche introuvable":"карточка не найдена"});

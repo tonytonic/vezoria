@@ -2411,4 +2411,5 @@ I18N.load({
 "Déjà remboursé":"Já reembolsado",
 "{0} modification(s) à envoyer":"{0} alteração(ões) a enviar",
 "Tes modifications sont envoyées":"Suas alterações foram enviadas",
-"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} foto(s) a caminho: são enviadas em segundo plano com o app aberto."});
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} foto(s) a caminho: são enviadas em segundo plano com o app aberto.",
+"fiche introuvable":"ficha não encontrada"});

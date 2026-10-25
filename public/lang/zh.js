@@ -5346,4 +5346,5 @@ I18N.load({
 "Déjà remboursé":"已还款",
 "{0} modification(s) à envoyer":"{0} 项修改待发送",
 "Tes modifications sont envoyées":"你的修改已发送",
-"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} 张照片正在上传：应用打开时会在后台发送。"});
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} 张照片正在上传：应用打开时会在后台发送。",
+"fiche introuvable":"找不到该项目"});

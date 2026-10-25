@@ -5346,4 +5346,5 @@ I18N.load({
 "Déjà remboursé":"이미 갚음",
 "{0} modification(s) à envoyer":"보낼 변경 {0}개",
 "Tes modifications sont envoyées":"변경 사항이 전송됐어요",
-"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"사진 {0}장 전송 중: 앱이 열려 있으면 백그라운드로 보내져요."});
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"사진 {0}장 전송 중: 앱이 열려 있으면 백그라운드로 보내져요.",
+"fiche introuvable":"항목을 찾을 수 없음"});

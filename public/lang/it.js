@@ -2407,4 +2407,5 @@ I18N.load({
 "Déjà remboursé":"Già rimborsato",
 "{0} modification(s) à envoyer":"{0} modifica/he da inviare",
 "Tes modifications sont envoyées":"Le tue modifiche sono state inviate",
-"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} foto in viaggio: partono in background con l’app aperta."});
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} foto in viaggio: partono in background con l’app aperta.",
+"fiche introuvable":"scheda non trovata"});

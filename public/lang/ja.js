@@ -5346,4 +5346,5 @@ I18N.load({
 "Déjà remboursé":"返済済み",
 "{0} modification(s) à envoyer":"送信待ちの変更 {0} 件",
 "Tes modifications sont envoyées":"変更は送信済みです",
-"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} 枚の写真を送信中：アプリを開いている間にバックグラウンドで送られます。"});
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} 枚の写真を送信中：アプリを開いている間にバックグラウンドで送られます。",
+"fiche introuvable":"項目が見つかりません"});

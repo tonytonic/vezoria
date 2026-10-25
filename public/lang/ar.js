@@ -5347,4 +5347,5 @@ I18N.load({
 "Déjà remboursé":"تم سداده",
 "{0} modification(s) à envoyer":"{0} تعديل(ات) للإرسال",
 "Tes modifications sont envoyées":"تم إرسال تعديلاتك",
-"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} صورة في الطريق: تُرسل في الخلفية والتطبيق مفتوح."});
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} صورة في الطريق: تُرسل في الخلفية والتطبيق مفتوح.",
+"fiche introuvable":"البطاقة غير موجودة"});

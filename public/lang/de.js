@@ -2402,4 +2402,5 @@ I18N.load({
 "Déjà remboursé":"Schon zurückgezahlt",
 "{0} modification(s) à envoyer":"{0} Änderung(en) zu senden",
 "Tes modifications sont envoyées":"Deine Änderungen sind gesendet",
-"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} Foto(s) unterwegs: sie werden im Hintergrund gesendet, solange die App offen ist."});
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} Foto(s) unterwegs: sie werden im Hintergrund gesendet, solange die App offen ist.",
+"fiche introuvable":"Eintrag nicht gefunden"});

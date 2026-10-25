@@ -2392,4 +2392,5 @@ I18N.load({
 "Déjà remboursé":"Already paid back",
 "{0} modification(s) à envoyer":"{0} change(s) to send",
 "Tes modifications sont envoyées":"Your changes have been sent",
-"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} photo(s) on the way: they upload in the background while the app is open."});
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} photo(s) on the way: they upload in the background while the app is open.",
+"fiche introuvable":"item not found"});

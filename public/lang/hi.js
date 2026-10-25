@@ -5346,4 +5346,5 @@ I18N.load({
 "Déjà remboursé":"पहले ही लौटाया",
 "{0} modification(s) à envoyer":"{0} बदलाव भेजने बाकी",
 "Tes modifications sont envoyées":"तुम्हारे बदलाव भेज दिए गए",
-"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} फ़ोटो रास्ते में: ऐप खुला रहने पर पीछे से जाती हैं।"});
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} फ़ोटो रास्ते में: ऐप खुला रहने पर पीछे से जाती हैं।",
+"fiche introuvable":"कार्ड नहीं मिला"});
