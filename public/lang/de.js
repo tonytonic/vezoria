@@ -2399,4 +2399,7 @@ I18N.load({
 "quitte":"quitt",
 "on lui doit {0}":"bekommt {0}",
 "doit {0}":"schuldet {0}",
-"Déjà remboursé":"Schon zurückgezahlt"});
+"Déjà remboursé":"Schon zurückgezahlt",
+"{0} modification(s) à envoyer":"{0} Änderung(en) zu senden",
+"Tes modifications sont envoyées":"Deine Änderungen sind gesendet",
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} Foto(s) unterwegs: sie werden im Hintergrund gesendet, solange die App offen ist."});

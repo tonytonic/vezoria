@@ -5343,4 +5343,7 @@ I18N.load({
 "quitte":"정산됨",
 "on lui doit {0}":"받을 돈 {0}",
 "doit {0}":"줄 돈 {0}",
-"Déjà remboursé":"이미 갚음"});
+"Déjà remboursé":"이미 갚음",
+"{0} modification(s) à envoyer":"보낼 변경 {0}개",
+"Tes modifications sont envoyées":"변경 사항이 전송됐어요",
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"사진 {0}장 전송 중: 앱이 열려 있으면 백그라운드로 보내져요."});

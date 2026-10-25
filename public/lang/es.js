@@ -2405,4 +2405,7 @@ I18N.load({
 "quitte":"en paz",
 "on lui doit {0}":"se le debe {0}",
 "doit {0}":"debe {0}",
-"Déjà remboursé":"Ya devuelto"});
+"Déjà remboursé":"Ya devuelto",
+"{0} modification(s) à envoyer":"{0} cambio(s) por enviar",
+"Tes modifications sont envoyées":"Tus cambios se han enviado",
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} foto(s) en camino: se envían en segundo plano con la app abierta."});

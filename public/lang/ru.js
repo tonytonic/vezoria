@@ -5344,4 +5344,7 @@ I18N.load({
 "quitte":"в расчёте",
 "on lui doit {0}":"ему должны {0}",
 "doit {0}":"должен {0}",
-"Déjà remboursé":"Уже возвращено"});
+"Déjà remboursé":"Уже возвращено",
+"{0} modification(s) à envoyer":"Изменений к отправке: {0}",
+"Tes modifications sont envoyées":"Твои изменения отправлены",
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} фото в пути: отправляются в фоне, пока приложение открыто."});

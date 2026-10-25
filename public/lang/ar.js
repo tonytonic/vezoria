@@ -5344,4 +5344,7 @@ I18N.load({
 "quitte":"متعادل",
 "on lui doit {0}":"له {0}",
 "doit {0}":"عليه {0}",
-"Déjà remboursé":"تم سداده"});
+"Déjà remboursé":"تم سداده",
+"{0} modification(s) à envoyer":"{0} تعديل(ات) للإرسال",
+"Tes modifications sont envoyées":"تم إرسال تعديلاتك",
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} صورة في الطريق: تُرسل في الخلفية والتطبيق مفتوح."});

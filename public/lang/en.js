@@ -2389,4 +2389,7 @@ I18N.load({
 "quitte":"even",
 "on lui doit {0}":"is owed {0}",
 "doit {0}":"owes {0}",
-"Déjà remboursé":"Already paid back"});
+"Déjà remboursé":"Already paid back",
+"{0} modification(s) à envoyer":"{0} change(s) to send",
+"Tes modifications sont envoyées":"Your changes have been sent",
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} photo(s) on the way: they upload in the background while the app is open."});

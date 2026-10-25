@@ -5343,4 +5343,7 @@ I18N.load({
 "quitte":"精算済み",
 "on lui doit {0}":"受け取り {0}",
 "doit {0}":"支払い {0}",
-"Déjà remboursé":"返済済み"});
+"Déjà remboursé":"返済済み",
+"{0} modification(s) à envoyer":"送信待ちの変更 {0} 件",
+"Tes modifications sont envoyées":"変更は送信済みです",
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} 枚の写真を送信中：アプリを開いている間にバックグラウンドで送られます。"});

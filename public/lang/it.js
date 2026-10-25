@@ -2404,4 +2404,7 @@ I18N.load({
 "quitte":"pari",
 "on lui doit {0}":"gli si deve {0}",
 "doit {0}":"deve {0}",
-"Déjà remboursé":"Già rimborsato"});
+"Déjà remboursé":"Già rimborsato",
+"{0} modification(s) à envoyer":"{0} modifica/he da inviare",
+"Tes modifications sont envoyées":"Le tue modifiche sono state inviate",
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} foto in viaggio: partono in background con l’app aperta."});

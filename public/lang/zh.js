@@ -5343,4 +5343,7 @@ I18N.load({
 "quitte":"已结清",
 "on lui doit {0}":"应收 {0}",
 "doit {0}":"应付 {0}",
-"Déjà remboursé":"已还款"});
+"Déjà remboursé":"已还款",
+"{0} modification(s) à envoyer":"{0} 项修改待发送",
+"Tes modifications sont envoyées":"你的修改已发送",
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} 张照片正在上传：应用打开时会在后台发送。"});

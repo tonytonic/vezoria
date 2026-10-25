@@ -2395,4 +2395,7 @@ I18N.load({
 "quitte":"quitte",
 "on lui doit {0}":"krijgt {0}",
 "doit {0}":"moet {0}",
-"Déjà remboursé":"Al terugbetaald"});
+"Déjà remboursé":"Al terugbetaald",
+"{0} modification(s) à envoyer":"{0} wijziging(en) te versturen",
+"Tes modifications sont envoyées":"Je wijzigingen zijn verstuurd",
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} foto(’s) onderweg: ze worden op de achtergrond verstuurd zolang de app open is."});

@@ -5331,4 +5331,7 @@ I18N.load({
 "quitte":"ödeşti",
 "on lui doit {0}":"alacağı {0}",
 "doit {0}":"borcu {0}",
-"Déjà remboursé":"Zaten geri ödendi"});
+"Déjà remboursé":"Zaten geri ödendi",
+"{0} modification(s) à envoyer":"Gönderilecek {0} değişiklik",
+"Tes modifications sont envoyées":"Değişikliklerin gönderildi",
+"{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} fotoğraf yolda: uygulama açıkken arka planda gönderiliyor."});
