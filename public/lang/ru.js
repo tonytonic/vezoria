@@ -5248,4 +5248,9 @@ I18N.load({
 "Ouverture des ventes":"Начало продаж",
 "Heure (chez toi)":"Время (твоё)",
 "Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"Музеи, шоу, поезда… билеты часто раскупают за часы: приложение напомнит за 15 минут (уведомления «Напоминания» включены).",
-"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Скоро откроется бронирование: {0}"});
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Скоро откроется бронирование: {0}",
+"Voir les {0} étapes":"Все шаги ({0})",
+"Plus d’outils":"Другие инструменты",
+"Courses, carte, importer, papiers":"Покупки, карта, импорт, документы",
+"Prévu ou sur place ?":"Заранее или на месте?",
+"Position et confidentialité":"Местоположение и приватность"});

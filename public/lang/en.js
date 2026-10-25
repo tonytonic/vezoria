@@ -2293,4 +2293,9 @@ I18N.load({
 "Ouverture des ventes":"Sales open",
 "Heure (chez toi)":"Time (your time)",
 "Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"Museums, shows, trains… often sold out within hours: the app reminds you 15 min before (with “Reminders” notifications on).",
-"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Bookings open soon: {0}"});
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Bookings open soon: {0}",
+"Voir les {0} étapes":"See all {0} steps",
+"Plus d’outils":"More tools",
+"Courses, carte, importer, papiers":"Shopping, map, import, documents",
+"Prévu ou sur place ?":"Planned or on the spot?",
+"Position et confidentialité":"Location and privacy"});

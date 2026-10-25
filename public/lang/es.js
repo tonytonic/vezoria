@@ -2309,4 +2309,9 @@ I18N.load({
 "Ouverture des ventes":"Apertura de ventas",
 "Heure (chez toi)":"Hora (la tuya)",
 "Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"Museos, espectáculos, trenes… a menudo se agotan en horas: la app te avisa 15 min antes (con las notificaciones «Recordatorios» activadas).",
-"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Las reservas abren pronto: {0}"});
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Las reservas abren pronto: {0}",
+"Voir les {0} étapes":"Ver los {0} pasos",
+"Plus d’outils":"Más herramientas",
+"Courses, carte, importer, papiers":"Compras, mapa, importar, documentos",
+"Prévu ou sur place ?":"¿Previsto o sobre la marcha?",
+"Position et confidentialité":"Ubicación y privacidad"});

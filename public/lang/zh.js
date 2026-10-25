@@ -5247,4 +5247,9 @@ I18N.load({
 "Ouverture des ventes":"开售日期",
 "Heure (chez toi)":"时间（你的时区）",
 "Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"博物馆、演出、火车……常常几小时内售罄：应用会提前 15 分钟提醒你（需开启“提醒”通知）。",
-"⏰ Les réservations ouvrent bientôt : {0}":"⏰ 即将开放预订：{0}"});
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ 即将开放预订：{0}",
+"Voir les {0} étapes":"查看全部 {0} 个步骤",
+"Plus d’outils":"更多工具",
+"Courses, carte, importer, papiers":"购物、地图、导入、证件",
+"Prévu ou sur place ?":"提前计划还是当地花费？",
+"Position et confidentialité":"位置与隐私"});

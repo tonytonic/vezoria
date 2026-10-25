@@ -5235,4 +5235,9 @@ I18N.load({
 "Ouverture des ventes":"Satış açılışı",
 "Heure (chez toi)":"Saat (senin saatin)",
 "Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"Müzeler, gösteriler, trenler… çoğu zaman birkaç saatte tükenir: uygulama 15 dk önce hatırlatır (“Hatırlatmalar” bildirimleri açık).",
-"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Rezervasyonlar birazdan açılıyor: {0}"});
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Rezervasyonlar birazdan açılıyor: {0}",
+"Voir les {0} étapes":"{0} adımın hepsini gör",
+"Plus d’outils":"Daha fazla araç",
+"Courses, carte, importer, papiers":"Alışveriş, harita, içe aktar, belgeler",
+"Prévu ou sur place ?":"Önceden mi, yerinde mi?",
+"Position et confidentialité":"Konum ve gizlilik"});

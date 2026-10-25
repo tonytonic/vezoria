@@ -5248,4 +5248,9 @@ I18N.load({
 "Ouverture des ventes":"فتح المبيعات",
 "Heure (chez toi)":"الوقت (توقيتك)",
 "Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"المتاحف والعروض والقطارات… تنفد غالبًا خلال ساعات: يذكّرك التطبيق قبل 15 دقيقة (مع تفعيل إشعارات «التذكيرات»).",
-"⏰ Les réservations ouvrent bientôt : {0}":"⏰ يُفتح الحجز قريبًا: {0}"});
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ يُفتح الحجز قريبًا: {0}",
+"Voir les {0} étapes":"عرض الخطوات الـ{0}",
+"Plus d’outils":"أدوات أخرى",
+"Courses, carte, importer, papiers":"التسوق، الخريطة، الاستيراد، الوثائق",
+"Prévu ou sur place ?":"مخطط أم في الوجهة؟",
+"Position et confidentialité":"الموقع والخصوصية"});

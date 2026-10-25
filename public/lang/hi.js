@@ -5247,4 +5247,9 @@ I18N.load({
 "Ouverture des ventes":"बिक्री शुरू",
 "Heure (chez toi)":"समय (तुम्हारा)",
 "Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"संग्रहालय, शो, ट्रेनें… अक्सर कुछ घंटों में भर जाते हैं: ऐप 15 मिनट पहले याद दिलाएगा (“रिमाइंडर” सूचनाएँ चालू हों)।",
-"⏰ Les réservations ouvrent bientôt : {0}":"⏰ बुकिंग जल्द खुलेगी: {0}"});
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ बुकिंग जल्द खुलेगी: {0}",
+"Voir les {0} étapes":"सभी {0} कदम देखो",
+"Plus d’outils":"और टूल",
+"Courses, carte, importer, papiers":"ख़रीदारी, नक़्शा, इम्पोर्ट, काग़ज़",
+"Prévu ou sur place ?":"पहले से या वहीं?",
+"Position et confidentialité":"लोकेशन और गोपनीयता"});

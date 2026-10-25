@@ -5247,4 +5247,9 @@ I18N.load({
 "Ouverture des ventes":"판매 시작",
 "Heure (chez toi)":"시간 (내 시간)",
 "Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"박물관, 공연, 기차… 몇 시간 만에 매진되기도 해요. 15분 전에 알려 드려요 (‘알림’ 켜기).",
-"⏰ Les réservations ouvrent bientôt : {0}":"⏰ 곧 예약이 열려요: {0}"});
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ 곧 예약이 열려요: {0}",
+"Voir les {0} étapes":"{0}단계 모두 보기",
+"Plus d’outils":"도구 더 보기",
+"Courses, carte, importer, papiers":"장보기, 지도, 가져오기, 서류",
+"Prévu ou sur place ?":"미리 낸 돈? 현지에서 쓴 돈?",
+"Position et confidentialité":"위치와 개인정보"});

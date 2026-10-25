@@ -2299,4 +2299,9 @@ I18N.load({
 "Ouverture des ventes":"Verkoop opent",
 "Heure (chez toi)":"Tijd (bij jou)",
 "Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"Musea, shows, treinen… vaak binnen enkele uren uitverkocht: de app waarschuwt je 15 min vooraf (meldingen ‘Herinneringen’ aan).",
-"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Boekingen gaan zo open: {0}"});
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Boekingen gaan zo open: {0}",
+"Voir les {0} étapes":"Alle {0} stappen bekijken",
+"Plus d’outils":"Meer hulpmiddelen",
+"Courses, carte, importer, papiers":"Boodschappen, kaart, importeren, papieren",
+"Prévu ou sur place ?":"Gepland of ter plaatse?",
+"Position et confidentialité":"Locatie en privacy"});

@@ -5247,4 +5247,9 @@ I18N.load({
 "Ouverture des ventes":"販売開始",
 "Heure (chez toi)":"時刻（あなたの時間）",
 "Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"美術館・公演・列車などは数時間で売り切れることも。15分前にお知らせします（「リマインダー」通知をオンに）。",
-"⏰ Les réservations ouvrent bientôt : {0}":"⏰ まもなく予約開始：{0}"});
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ まもなく予約開始：{0}",
+"Voir les {0} étapes":"{0}つのステップをすべて見る",
+"Plus d’outils":"その他のツール",
+"Courses, carte, importer, papiers":"買い物・地図・取り込み・書類",
+"Prévu ou sur place ?":"事前？それとも現地？",
+"Position et confidentialité":"位置情報とプライバシー"});
