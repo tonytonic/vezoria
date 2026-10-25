@@ -266,8 +266,10 @@
     const all = items(i=>['transport','hotel','activite'].includes(i.cat)).filter(forWho), todo = all.filter(i=>(i.statut || 'todo') === 'todo');
     if(!all.length) return '';
     const done = all.length - todo.length, today = isoToday();
-    const next = todo.slice().sort((a, b)=>(a.date || '9999').localeCompare(b.date || '9999')).slice(0, 3);
-    const when = i => { if(!i.date) return ''; const n = nights(today, i.date); return n <= 0 ? MSGT('aujourd’hui') : n < 31 ? RF('dans {0} j', n) : fshort(i.date); };
+    const key = i => i.resaOpen && i.resaOpen >= today ? '0' + i.resaOpen : '1' + (i.date || '9999');   // ⏰ ventes à date fixe d’abord
+    const next = todo.slice().sort((a, b)=>key(a).localeCompare(key(b))).slice(0, 3);
+    const when = i => { if(i.resaOpen && i.resaOpen >= today) return '⏰ ' + (i.resaOpen === today ? MSGT('aujourd’hui') : fshort(i.resaOpen)) + (i.resaOpenH ? ' ' + i.resaOpenH : '');
+      if(!i.date) return ''; const n = nights(today, i.date); return n <= 0 ? MSGT('aujourd’hui') : n < 31 ? RF('dans {0} j', n) : fshort(i.date); };
     return `<div class="cv-rtop"><div class="cv-rtop-h"><b>${MSGT('Réservations')}</b><span><b>${done}</b> / ${all.length} ${MSGT('réservées')}</span></div>
       <div class="v-bar"><span class="b-booked" style="width:${all.length ? done / all.length * 100 : 0}%"></span></div>
       ${next.length ? `<div class="cv-rtop-k">${MSGT('À réserver en premier')}</div>${next.map(i=>`<button type="button" class="cv-rtop-i" onclick="CV.edit('${i.id}')"><span>${icon(i)}</span><span class="x"><b data-notr>${esc(i.cat === 'hotel' ? (cityOf(i.titre) || i.titre) : i.titre)}</b><small>${i.cat === 'hotel' && i.dateFin ? fshort(i.date) + ' → ' + fshort(i.dateFin) : i.date ? fshort(i.date) : ''}</small></span><em>${when(i)}</em></button>`).join('')}` : `<div class="cv-rtop-ok">✓ ${MSGT('Tout est réservé')}</div>`}</div>`;
@@ -447,6 +449,9 @@
       h += `<div class="v-f2">${field('Date','date',it.date,'date')}${field('Heure / créneau','heure',it.heure,'time')}</div>`;
       h += field('Lieu / prestataire','adresse',it.adresse);
     }
+    if(['transport','hotel','activite'].includes(c)) h += `<details class="cv-ro"${it.resaOpen ? ' open' : ''}><summary>⏰ ${MSGT('Les réservations ouvrent à une date précise ?')}</summary>
+      <div class="v-f2">${field(MSGT('Ouverture des ventes'),'resaOpen',it.resaOpen,'date')}${field(MSGT('Heure (chez toi)'),'resaOpenH',it.resaOpenH,'time')}</div>
+      <div class="v-sum-small">${MSGT('Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).')}</div></details>`;
     h += `<div class="v-f2">${field('Prix réel (' + CS() + ')','prix',it.prix,'text','inputmode="decimal" placeholder="à saisir"')}${field('Estimation (' + CS() + ')','estime',it.estime,'text','inputmode="decimal"')}</div>`;
     h += fxFormRow();
     h += pjBlock(it);

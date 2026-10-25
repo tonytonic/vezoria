@@ -1373,7 +1373,8 @@ ${pm.join('\n')}</Document></kml>`;
     if(!ov){ ov = document.createElement('div'); ov.id = 'cv-sw'; document.body.appendChild(ov); document.body.style.overflow = 'hidden'; }
     const left = SW.ids.slice(SW.i).filter(swPend), total = SW.ids.length, done = total - left.length, c0 = left.length ? swCityOf(swRec(left[0])) : '';
     const head = `<div class="sw-head"><button type="button" class="sw-x" onclick="CV.swClose()" aria-label="${esc(MSGT('Fermer'))}">✕</button>
-      <div class="sw-ttl"><b>① ${esc(MSGT('Choisir mes visites'))}</b><small>${Math.min(done + 1, total)}/${total}</small> <small class="sw-kept">· ✓ ${SW.kept}</small><small class="sw-city">${c0 ? '📍 <span data-notr>' + esc(c0) + '</span>' : ''}</small></div>
+      <div class="sw-ttl"><b>① ${esc(MSGT('Choisir mes visites'))}</b><small>${Math.min(done + 1, total)}/${total}</small> <small class="sw-kept">· ✓ ${SW.kept}</small>${(()=>{ const cs = {}; left.forEach(id=>{ const c = swCityOf(swRec(id)) || '—'; cs[c] = (cs[c] || 0) + 1; }); const K = Object.keys(cs);
+        return K.length > 1 ? `<label class="sw-csel">📍 <select aria-label="${esc(MSGT('Ville'))}" onchange="CV.swCityGo(this.value)">${K.map(c=>`<option value="${esc(c)}"${c === (c0 || '—') ? ' selected' : ''}>${esc(c)} (${cs[c]})</option>`).join('')}</select></label>` : `<small class="sw-city">${c0 ? '📍 <span data-notr>' + esc(c0) + '</span>' : ''}</small>`; })()}</div>
       <button type="button" class="sw-list" onclick="CV.suggList()" aria-label="${esc(MSGT('Voir en liste'))}">☰</button></div>
       <div class="sw-bar"><span style="width:${total ? done / total * 100 : 100}%"></span></div>`;
     if(!left.length){
@@ -1399,6 +1400,9 @@ ${pm.join('\n')}</Document></kml>`;
     swPre(left); swDrag(ov.querySelector('.sw-card.top'));
   }
   const swLeft = () => SW ? SW.ids.slice(SW.i).filter(swPend) : [];
+  // 📍 aller directement à une ville : ses idées passent devant, les autres restent à trier après
+  function swCityGo(c){ if(!SW) return; const left = swLeft(), of = id => (swCityOf(swRec(id)) || '—') === c;
+    SW.ids = SW.ids.slice(0, SW.i).concat(left.filter(of), left.filter(id=>!of(id))); swRender(); }
   function swPre(left){ left.slice(2, 5).forEach(id=>{ const r = swRec(id); if(r) swInfo(r).then(x=>{ if(x.img) (new Image()).src = x.img; }); }); }   // les suivantes se préparent
   // carte suivante sans tout redessiner : celle de derrière passe devant (déjà chargée), une nouvelle se glisse derrière
   function swNext(){
@@ -1413,6 +1417,7 @@ ${pm.join('\n')}</Document></kml>`;
     const bar = ov.querySelector('.sw-bar span'); if(bar) bar.style.width = (total ? done / total * 100 : 100) + '%';
     const ub = ov.querySelector('.sw-b.undo'); if(ub) ub.disabled = !SW.hist.length;
     const kp = ov.querySelector('.sw-kept'); if(kp) kp.textContent = '· ✓ ' + SW.kept;
+    { const cs = ov.querySelector('.sw-csel select'); if(cs && cs.value !== (swCityOf(swRec(left[0])) || '—')) return swRender(); }   // ville suivante : la liste des villes se met à jour
     const sc = ov.querySelector('.sw-city'), c0 = swCityOf(swRec(left[0])); if(sc && sc.textContent.replace(/^📍\s*/, '') !== c0){ sc.innerHTML = c0 ? '📍 <span data-notr>' + esc(c0) + '</span>' : ''; sc.classList.remove('pop'); void sc.offsetWidth; sc.classList.add('pop'); }
     swPre(left);
   }

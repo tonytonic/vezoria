@@ -2739,3 +2739,9 @@ html.vz-and body.vz-glass .v-sheet{-webkit-backdrop-filter:none!important;backdr
 .cv-pg .cv-plus{padding:0 10px 12px}
 .cv-pg1{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;min-height:52px;border-radius:18px;background:var(--card,#fff);border:1px solid var(--light);cursor:pointer}
 .cv-pg1 i{font-style:normal;font-size:1.2rem;width:28px;text-align:center}.cv-pg1 span{flex:1;display:flex;flex-direction:column;font-weight:700}.cv-pg1 small{font-weight:500;font-size:.78rem;color:var(--gray)}.cv-pg1 b{opacity:.5}
+.cv-ro{margin:6px 0 10px;border:1px dashed var(--light);border-radius:14px;padding:8px 12px}
+.cv-ro summary{cursor:pointer;font-weight:700;font-size:.9rem;min-height:32px;display:flex;align-items:center}
+.cv-ro[open] summary{margin-bottom:6px}
+.sw-csel{display:inline-flex;align-items:center;gap:4px;margin-left:6px}
+.sw-csel select{font:inherit;font-size:.8rem;font-weight:700;color:inherit;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:4px 8px;max-width:170px}
+.sw-csel option{color:#241a2b}

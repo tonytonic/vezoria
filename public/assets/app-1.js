@@ -638,7 +638,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     resa1:'{0} a ajouté au programme : {1}', resaN:'{0} a ajouté {1} éléments au programme', resaCh:'{0} a changé l’horaire : {1}',
     souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
     notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
-    depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
+    depart:'Demain : départ pour {0}', checkin:'Enregistrement en ligne ouvert : {0}', resaopen:'⏰ Les réservations ouvrent bientôt : {0}', echeance:'Échéance de paiement aujourd’hui : {0}',
     soir:'Comment s’est passée ta journée ? Ajoute tes photos et quelques mots à ton carnet 📸', anniv1:'Il y a un an, tu partais : « {0} » ✨', annivN:'Il y a {1} ans, tu partais : « {0} » ✨', 
     test:'Les notifications fonctionnent sur ce téléphone.', fb:'Du nouveau dans ton voyage', someone:'Quelqu’un', grp:'{0} nouveautés', fb_depense:'Nouvelle dépense dans ton voyage', fb_resa:'Le programme du voyage a changé', fb_souv:'Nouveau souvenir dans ton voyage', fb_sondage:'Nouveau sondage dans ton voyage', fb_notes:'Nouveautés dans les courses et les notes', fb_rappel:'Rappel pour ton voyage', fol1:'📸 {0} a publié une nouvelle étape : {1}', folN:'📸 {0} a publié {1} nouvelles étapes'};
   const PU = () => { const p = M.push || (M.push = {on:false, quiet:true}); p.kinds = Object.assign({depense:1, resa:1, souv:1, sondage:1, notes:1, rappel:1, soir:1, social:1, suivi:1}, p.kinds || {}); return p; };
@@ -838,6 +838,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       its.filter(i=>i.cat === 'transport' && /avion|vol\b|flight|plane/i.test((i.mode || '') + ' ' + (i.titre || '')) && i.date && i.heureDep).forEach(i=>{
         const d = new Date(at(i.date, i.heureDep) - 24 * 3600e3); if(d.getHours() >= 22) d.setHours(21, 30, 0, 0); else if(d.getHours() < 8) d.setHours(8, 0, 0, 0);
         items.push({id:'ck-' + i.id, at:d.getTime(), p:{k:'rappel', r:'checkin', a:[[i.titre, i.compagnie].filter(Boolean).join(' · ')], trip:t.id, tt:t.titre}}); });
+      its.filter(i=>i.resaOpen && (i.statut || 'todo') === 'todo').forEach(i=>{ const w = i.resaOpenH ? at(i.resaOpen, i.resaOpenH) - 15 * 60e3 : at(i.resaOpen, '09:00');   // ⏰ ouverture des ventes
+        items.push({id:'ro-' + i.id, at:w, p:{k:'rappel', r:'resaopen', a:[(i.titre || '') + (i.resaOpenH ? ' · ' + i.resaOpenH : '')], trip:t.id, tt:t.titre}}); });
       its.forEach(i=>(i.echeances || []).forEach((e, k)=>{ if(!e.fait && e.date) items.push({id:'ec-' + i.id + '-' + k, at:at(e.date, '09:00'), p:{k:'rappel', r:'echeance', a:[(i.titre || '') + (num(e.montant) ? ' (' + money(num(e.montant), t) + ')' : '')], trip:t.id, tt:t.titre}}); }));
     });
     // 🌙 le soir pendant le voyage, et 📅 l’anniversaire du départ des voyages passés
