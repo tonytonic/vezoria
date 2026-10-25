@@ -2824,7 +2824,8 @@ button.etp-chip.tip{border:0;font:inherit;font-size:.78rem;font-weight:700;backg
 .bu-tiers em{font-style:normal;font-weight:800;text-align:right;display:flex;flex-direction:column;white-space:nowrap}
 .bu-own{display:flex;align-items:center;gap:8px;margin:4px 0 2px}.bu-own span{flex:1;font-size:.85rem;opacity:.8}.bu-own .v-in{width:110px;margin:0;text-align:right;color:#241a2b}.bu-own .ar-go{width:auto;margin:0;padding:0 14px}
 .bu-np{display:flex;align-items:center;gap:10px;background:#faf6fb;color:#241a2b;border-radius:12px;padding:8px 10px;margin:6px 0}
-.bu-np i{font-style:normal}.bu-np span{flex:1;min-width:0;display:flex;flex-direction:column}.bu-np b{font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bu-np small{font-size:.74rem;opacity:.7}
+.bu-np i{font-style:normal;flex:none}.bu-np span{flex:1 1 0;min-width:0;display:flex;flex-direction:column}.bu-np b{font-size:.9rem;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+.cv-prep2 .ar-b,.cv-prep2 .ar-nx,.cv-prep2 .ar-s{min-width:0;max-width:100%}.bu-np,.bu-sp,.bu-own,.bu-tiers button{box-sizing:border-box;max-width:100%}.bu-np .v-in{flex:none}.bu-np small{font-size:.74rem;opacity:.7}
 .bu-np .v-in{width:84px;margin:0;text-align:right;color:#241a2b}
 .bu-sp{display:flex;align-items:center;gap:10px;margin:6px 0;font-weight:600}.bu-sp>span:first-child{flex:1}
 .bu-sp .so-st{display:flex;align-items:center;border:1px solid #e6dcea;border-radius:999px;background:#fff}
