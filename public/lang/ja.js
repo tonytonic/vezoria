@@ -5183,4 +5183,8 @@ I18N.load({
 "Lien ou code abonné reçu":"受け取ったフォロワー用リンクまたはコード",
 "👀 Suivre ses voyages":"👀 旅をフォローする",
 "C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"これはフォロワー用リンクです：名前を入力して旅をフォローしてください。",
-"Scanner le QR code":"QRコードを読み取る"});
+"Scanner le QR code":"QRコードを読み取る",
+"Copier tous mes codes":"すべてのコードをコピー",
+"Mon carnet":"自分の手帳",
+"Aucun code":"コードはありません",
+"{0} codes copiés":"{0}個のコードをコピーしました"});

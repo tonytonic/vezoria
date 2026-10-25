@@ -5183,4 +5183,8 @@ I18N.load({
 "Lien ou code abonné reçu":"मिला हुआ फ़ॉलोअर लिंक या कोड",
 "👀 Suivre ses voyages":"👀 उसकी यात्राएँ फ़ॉलो करो",
 "C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"यह फ़ॉलोअर लिंक है: यात्राएँ फ़ॉलो करने के लिए अपना नाम लिखो।",
-"Scanner le QR code":"QR कोड स्कैन करो"});
+"Scanner le QR code":"QR कोड स्कैन करो",
+"Copier tous mes codes":"मेरे सारे कोड कॉपी करो",
+"Mon carnet":"मेरी डायरी",
+"Aucun code":"कोई कोड नहीं",
+"{0} codes copiés":"{0} कोड कॉपी हुए"});

@@ -5184,4 +5184,8 @@ I18N.load({
 "Lien ou code abonné reçu":"Полученная ссылка или код подписчика",
 "👀 Suivre ses voyages":"👀 Следить за поездками",
 "C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"Это ссылка для подписчиков: укажи своё имя, чтобы следить за поездками.",
-"Scanner le QR code":"Сканировать QR-код"});
+"Scanner le QR code":"Сканировать QR-код",
+"Copier tous mes codes":"Скопировать все мои коды",
+"Mon carnet":"Мой дневник",
+"Aucun code":"Нет кодов",
+"{0} codes copiés":"Скопировано кодов: {0}"});

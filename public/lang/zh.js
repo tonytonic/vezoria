@@ -5183,4 +5183,8 @@ I18N.load({
 "Lien ou code abonné reçu":"收到的关注链接或代码",
 "👀 Suivre ses voyages":"👀 关注他的旅行",
 "C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"这是关注链接：填写你的名字即可关注他的旅行。",
-"Scanner le QR code":"扫描二维码"});
+"Scanner le QR code":"扫描二维码",
+"Copier tous mes codes":"复制我的所有代码",
+"Mon carnet":"我的手账",
+"Aucun code":"没有代码",
+"{0} codes copiés":"已复制 {0} 个代码"});

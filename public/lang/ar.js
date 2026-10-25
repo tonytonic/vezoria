@@ -5184,4 +5184,8 @@ I18N.load({
 "Lien ou code abonné reçu":"رابط أو رمز المتابعة المستلم",
 "👀 Suivre ses voyages":"👀 متابعة رحلاته",
 "C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"هذا رابط متابعة: اكتب اسمك لمتابعة رحلاته.",
-"Scanner le QR code":"مسح رمز QR"});
+"Scanner le QR code":"مسح رمز QR",
+"Copier tous mes codes":"نسخ كل رموزي",
+"Mon carnet":"دفتري",
+"Aucun code":"لا يوجد رمز",
+"{0} codes copiés":"تم نسخ {0} رمز"});

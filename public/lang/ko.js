@@ -5183,4 +5183,8 @@ I18N.load({
 "Lien ou code abonné reçu":"받은 팔로워 링크 또는 코드",
 "👀 Suivre ses voyages":"👀 여행 팔로우하기",
 "C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"팔로워 링크예요: 이름을 입력하면 여행을 팔로우할 수 있어요.",
-"Scanner le QR code":"QR 코드 스캔"});
+"Scanner le QR code":"QR 코드 스캔",
+"Copier tous mes codes":"내 코드 모두 복사",
+"Mon carnet":"내 수첩",
+"Aucun code":"코드 없음",
+"{0} codes copiés":"코드 {0}개를 복사했어요"});

@@ -2245,4 +2245,8 @@ I18N.load({
 "Lien ou code abonné reçu":"Enlace o código de seguidor recibido",
 "👀 Suivre ses voyages":"👀 Seguir sus viajes",
 "C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"Es un enlace de seguidor: indica tu nombre para seguir sus viajes.",
-"Scanner le QR code":"Escanear el código QR"});
+"Scanner le QR code":"Escanear el código QR",
+"Copier tous mes codes":"Copiar todos mis códigos",
+"Mon carnet":"Mi cuaderno",
+"Aucun code":"Ningún código",
+"{0} codes copiés":"{0} códigos copiados"});

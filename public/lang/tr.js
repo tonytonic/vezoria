@@ -5171,4 +5171,8 @@ I18N.load({
 "Lien ou code abonné reçu":"Alınan takipçi bağlantısı veya kodu",
 "👀 Suivre ses voyages":"👀 Seyahatlerini takip et",
 "C’est un lien abonné : indique ton prénom pour suivre ses voyages.":"Bu bir takipçi bağlantısı: seyahatleri takip etmek için adını yaz.",
-"Scanner le QR code":"QR kodu tara"});
+"Scanner le QR code":"QR kodu tara",
+"Copier tous mes codes":"Tüm kodlarımı kopyala",
+"Mon carnet":"Defterim",
+"Aucun code":"Kod yok",
+"{0} codes copiés":"{0} kod kopyalandı"});
