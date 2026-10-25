@@ -5230,4 +5230,9 @@ I18N.load({
 "Ouvrir ma checklist":"Kontrol listemi aç",
 "Préparer ma liste de bagages":"Bavul listemi hazırla",
 "Ajoute les villes du voyage pour personnaliser cette liste.":"Bu listeyi kişiselleştirmek için seyahat şehirlerini ekle.",
-"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"Kısa turistik konaklama için genel kurallar: yola çıkmadan önce mutlaka resmi seyahat uyarılarını veya ülkenin resmi sitesini kontrol et."});
+"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"Kısa turistik konaklama için genel kurallar: yola çıkmadan önce mutlaka resmi seyahat uyarılarını veya ülkenin resmi sitesini kontrol et.",
+"Les réservations ouvrent à une date précise ?":"Rezervasyonlar belirli bir tarihte mi açılıyor?",
+"Ouverture des ventes":"Satış açılışı",
+"Heure (chez toi)":"Saat (senin saatin)",
+"Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"Müzeler, gösteriler, trenler… çoğu zaman birkaç saatte tükenir: uygulama 15 dk önce hatırlatır (“Hatırlatmalar” bildirimleri açık).",
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Rezervasyonlar birazdan açılıyor: {0}"});

@@ -2307,4 +2307,9 @@ I18N.load({
 "Ouvrir ma checklist":"Abrir minha checklist",
 "Préparer ma liste de bagages":"Preparar minha lista de bagagem",
 "Ajoute les villes du voyage pour personnaliser cette liste.":"Adicione as cidades da viagem para personalizar esta lista.",
-"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"Regras gerais para uma estadia turística curta: confira sempre antes de partir nos avisos oficiais de viagem ou no site oficial do país."});
+"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"Regras gerais para uma estadia turística curta: confira sempre antes de partir nos avisos oficiais de viagem ou no site oficial do país.",
+"Les réservations ouvrent à une date précise ?":"As reservas abrem numa data específica?",
+"Ouverture des ventes":"Abertura das vendas",
+"Heure (chez toi)":"Hora (a sua)",
+"Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"Museus, espetáculos, trens… muitas vezes esgotam em horas: o app avisa 15 min antes (notificações “Lembretes” ativadas).",
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ As reservas abrem em breve: {0}"});

@@ -5242,4 +5242,9 @@ I18N.load({
 "Ouvrir ma checklist":"打开我的清单",
 "Préparer ma liste de bagages":"准备行李清单",
 "Ajoute les villes du voyage pour personnaliser cette liste.":"添加旅行城市以个性化此清单。",
-"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"短期旅游的一般规则：出发前务必查看官方旅行建议或该国官网。"});
+"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"短期旅游的一般规则：出发前务必查看官方旅行建议或该国官网。",
+"Les réservations ouvrent à une date précise ?":"预订会在特定日期开放吗？",
+"Ouverture des ventes":"开售日期",
+"Heure (chez toi)":"时间（你的时区）",
+"Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"博物馆、演出、火车……常常几小时内售罄：应用会提前 15 分钟提醒你（需开启“提醒”通知）。",
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ 即将开放预订：{0}"});

@@ -5243,4 +5243,9 @@ I18N.load({
 "Ouvrir ma checklist":"فتح قائمتي",
 "Préparer ma liste de bagages":"إعداد قائمة أمتعتي",
 "Ajoute les villes du voyage pour personnaliser cette liste.":"أضف مدن الرحلة لتخصيص هذه القائمة.",
-"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"قواعد عامة لإقامة سياحية قصيرة: تحقق دائمًا قبل السفر من إرشادات السفر الرسمية أو الموقع الرسمي للبلد."});
+"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"قواعد عامة لإقامة سياحية قصيرة: تحقق دائمًا قبل السفر من إرشادات السفر الرسمية أو الموقع الرسمي للبلد.",
+"Les réservations ouvrent à une date précise ?":"هل يُفتح الحجز في تاريخ محدد؟",
+"Ouverture des ventes":"فتح المبيعات",
+"Heure (chez toi)":"الوقت (توقيتك)",
+"Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"المتاحف والعروض والقطارات… تنفد غالبًا خلال ساعات: يذكّرك التطبيق قبل 15 دقيقة (مع تفعيل إشعارات «التذكيرات»).",
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ يُفتح الحجز قريبًا: {0}"});

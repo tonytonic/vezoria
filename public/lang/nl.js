@@ -2294,4 +2294,9 @@ I18N.load({
 "Ouvrir ma checklist":"Mijn checklist openen",
 "Préparer ma liste de bagages":"Mijn paklijst maken",
 "Ajoute les villes du voyage pour personnaliser cette liste.":"Voeg de steden van de reis toe om deze lijst te personaliseren.",
-"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"Algemene regels voor een kort toeristisch verblijf: check vóór vertrek altijd het officiële reisadvies of de officiële site van het land."});
+"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"Algemene regels voor een kort toeristisch verblijf: check vóór vertrek altijd het officiële reisadvies of de officiële site van het land.",
+"Les réservations ouvrent à une date précise ?":"Gaan de boekingen op een vaste datum open?",
+"Ouverture des ventes":"Verkoop opent",
+"Heure (chez toi)":"Tijd (bij jou)",
+"Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"Musea, shows, treinen… vaak binnen enkele uren uitverkocht: de app waarschuwt je 15 min vooraf (meldingen ‘Herinneringen’ aan).",
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Boekingen gaan zo open: {0}"});

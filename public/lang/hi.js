@@ -5242,4 +5242,9 @@ I18N.load({
 "Ouvrir ma checklist":"मेरी चेकलिस्ट खोलो",
 "Préparer ma liste de bagages":"सामान की सूची बनाओ",
 "Ajoute les villes du voyage pour personnaliser cette liste.":"इस सूची को अपने हिसाब से बनाने के लिए यात्रा के शहर जोड़ो।",
-"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"छोटी पर्यटन यात्रा के सामान्य नियम: जाने से पहले हमेशा आधिकारिक यात्रा सलाह या देश की आधिकारिक साइट देखो।"});
+"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"छोटी पर्यटन यात्रा के सामान्य नियम: जाने से पहले हमेशा आधिकारिक यात्रा सलाह या देश की आधिकारिक साइट देखो।",
+"Les réservations ouvrent à une date précise ?":"क्या बुकिंग किसी तय तारीख़ को खुलती है?",
+"Ouverture des ventes":"बिक्री शुरू",
+"Heure (chez toi)":"समय (तुम्हारा)",
+"Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"संग्रहालय, शो, ट्रेनें… अक्सर कुछ घंटों में भर जाते हैं: ऐप 15 मिनट पहले याद दिलाएगा (“रिमाइंडर” सूचनाएँ चालू हों)।",
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ बुकिंग जल्द खुलेगी: {0}"});

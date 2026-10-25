@@ -5242,4 +5242,9 @@ I18N.load({
 "Ouvrir ma checklist":"체크리스트 열기",
 "Préparer ma liste de bagages":"짐 목록 만들기",
 "Ajoute les villes du voyage pour personnaliser cette liste.":"여행 도시를 추가하면 이 목록이 맞춤으로 바뀌어요.",
-"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"짧은 관광 체류에 대한 일반 규칙이에요. 출발 전 반드시 공식 여행 안내나 해당 나라 공식 사이트에서 확인하세요."});
+"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"짧은 관광 체류에 대한 일반 규칙이에요. 출발 전 반드시 공식 여행 안내나 해당 나라 공식 사이트에서 확인하세요.",
+"Les réservations ouvrent à une date précise ?":"예약이 특정 날짜에 열리나요?",
+"Ouverture des ventes":"판매 시작",
+"Heure (chez toi)":"시간 (내 시간)",
+"Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"박물관, 공연, 기차… 몇 시간 만에 매진되기도 해요. 15분 전에 알려 드려요 (‘알림’ 켜기).",
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ 곧 예약이 열려요: {0}"});

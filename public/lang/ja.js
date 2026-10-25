@@ -5242,4 +5242,9 @@ I18N.load({
 "Ouvrir ma checklist":"チェックリストを開く",
 "Préparer ma liste de bagages":"荷物リストを作る",
 "Ajoute les villes du voyage pour personnaliser cette liste.":"旅の都市を追加すると、このリストがあなた向けになります。",
-"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"短期観光の一般的なルールです。出発前に必ず公式の渡航情報や相手国の公式サイトで確認を。"});
+"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"短期観光の一般的なルールです。出発前に必ず公式の渡航情報や相手国の公式サイトで確認を。",
+"Les réservations ouvrent à une date précise ?":"予約開始日が決まっていますか？",
+"Ouverture des ventes":"販売開始",
+"Heure (chez toi)":"時刻（あなたの時間）",
+"Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"美術館・公演・列車などは数時間で売り切れることも。15分前にお知らせします（「リマインダー」通知をオンに）。",
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ まもなく予約開始：{0}"});

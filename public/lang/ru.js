@@ -5243,4 +5243,9 @@ I18N.load({
 "Ouvrir ma checklist":"Открыть мой чек-лист",
 "Préparer ma liste de bagages":"Составить список вещей",
 "Ajoute les villes du voyage pour personnaliser cette liste.":"Добавь города поездки, чтобы настроить этот список.",
-"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"Общие правила для короткой туристической поездки: перед отъездом всегда проверяй официальные рекомендации или сайт страны."});
+"Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.":"Общие правила для короткой туристической поездки: перед отъездом всегда проверяй официальные рекомендации или сайт страны.",
+"Les réservations ouvrent à une date précise ?":"Бронирование открывается в определённый день?",
+"Ouverture des ventes":"Начало продаж",
+"Heure (chez toi)":"Время (твоё)",
+"Musées, spectacles, trains… souvent complets en quelques heures : l’appli te prévient 15 min avant (notifications « Rappels » activées).":"Музеи, шоу, поезда… билеты часто раскупают за часы: приложение напомнит за 15 минут (уведомления «Напоминания» включены).",
+"⏰ Les réservations ouvrent bientôt : {0}":"⏰ Скоро откроется бронирование: {0}"});
