@@ -1977,7 +1977,9 @@
   // le sur-place prévu, moins ce qui a déjà été dépensé sur place (pas de double compte pendant le voyage)
   function buSpLeft(t){ if(!t || !t.surplace) return 0; const all = buSp(t) * (dayList().length || buNights(t)) * Math.max(1, tv().length);
     const spent = items(i=>i.cat === 'divers').reduce((s, i)=>s + totalOf(i), 0); return Math.max(0, all - spent); }
-  const buNoPrice = () => items(i=>['hotel', 'transport', 'activite'].includes(i.cat) && !hasPrix(i) && !num(i.estime));
+  const buHas = i => hasPrix(i) || num(i.estime) > 0;
+  const buPlanned = () => items(i=>['hotel', 'transport', 'activite'].includes(i.cat)).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9') || ({transport:0, hotel:1, activite:2}[a.cat] - {transport:0, hotel:1, activite:2}[b.cat]));
+  const buNoPrice = () => items(i=>['hotel', 'transport', 'activite'].includes(i.cat) && !hasPrix(i) && !num(i.estime)).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9') || ({transport:0, hotel:1, activite:2}[a.cat] - {transport:0, hotel:1, activite:2}[b.cat]));   // dans l’ordre du voyage : trajet d’arrivée, puis hôtel, puis visites
   const buToPay = () => items(i=>i.statut === 'booked' && totalOf(i) > paidAmount(i) + .5).sort((a, b)=>(buNextEch(a) || {date:a.date || '9'}).date.localeCompare((buNextEch(b) || {date:b.date || '9'}).date));
   const buNextEch = it => (it.echeances || []).filter(e=>!e.fait).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'))[0];
   function buFil(t){
@@ -1991,11 +1993,14 @@
           <div class="bu-tiers">${BU_TIER.map(([k, ic, l, d, per])=>{ const v = buNice(per * idx * nN * rate); return `<button type="button" onclick="CV.buTier(${v})"><i>${ic}</i><span><b>${MSGT(l)}</b><small>${MSGT(d)}</small></span><em>≈ ${eur(v)}<small>/ ${MSGT('pers.')}</small></em></button>`; }).join('')}</div>
           <div class="bu-own"><span>${MSGT('ou mon montant')}</span><input class="v-in" id="bu-obj" inputmode="decimal" placeholder="—" value="${esc(t.objectif || '')}"><button type="button" class="ar-go" onclick="CV.buTier(document.getElementById('bu-obj').value)">OK</button></div>`},
       {k:'prix', ic:'🧾', l:MSGT('Mets un prix sur ce qui est prévu'), ok: !np.length || filSk(key, 'prix'), skip:true, f: (()=>{ const a = items(i=>['hotel', 'transport', 'activite'].includes(i.cat)).length; return a ? 1 - np.length / a : 0; })(), n: np.length ? RF('{0} sans prix', np.length) : '',
-        body: ()=>{ const L = (M.buAll ? np : np.slice(0, 4));
-          return `<div class="ar-p">${np.length ? RF('{0} fiches n’ont pas encore de prix. Un ordre d’idée suffit, tu corrigeras plus tard.', np.length) : MSGT('Tout ce qui est prévu a un prix.')}</div>
-          ${L.map(it=>`<div class="bu-np"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(it.cat === 'hotel' ? MSGT('Hôtel') + ' · ' + (cityOf(it.titre) || it.titre) : it.titre)}</b><small>${it.cat === 'hotel' ? RF('{0} nuits · prix total du séjour', nights(it.date, it.dateFin || it.date)) : MSGT(partage(it) === 'pp' ? 'par personne' : 'pour le groupe')}${it.date ? ' · ' + fshort(it.date) : ''}</small></span><input class="v-in" inputmode="decimal" data-bu="${it.id}" placeholder="${esc(CS())}"></div>`).join('')}
-          ${np.length > L.length ? `<button type="button" class="ar-more" onclick="CV.buAll()">＋ ${RF('{0} autre(s)', np.length - L.length)}</button>` : ''}
-          ${np.length ? `<button type="button" class="ar-go" onclick="CV.buPrices()">✓ ${MSGT('Enregistrer ces prix')}</button>` : ''}`; }},
+        body: ()=>{   // toutes les résas prévues, dans l’ordre du voyage : le prix déjà saisi dans la fiche s’affiche, il se modifie ici ou là-bas
+          const all = buPlanned(), tot = all.reduce((x, i)=>x + totalOf(i), 0), L = M.buAll || all.length <= 10 ? all : [...all.filter(i=>!buHas(i)), ...all.filter(buHas)].slice(0, 8);
+          return `<div class="ar-p">${np.length ? RF('{0} fiches n’ont pas encore de prix. Un ordre d’idée suffit, tu corrigeras plus tard.', np.length) : MSGT('Tout ce qui est prévu a un prix.')} ${RF('{0} chiffrées sur {1} · {2} au total.', all.length - np.length, all.length, eur(tot))}</div>
+          ${L.map(it=>{ const v = hasPrix(it) ? it.prix : it.estime || '', st = it.statut === 'paid' ? '✓ ' + MSGT('Payé') : okB(it) ? MSGT('Réservé') : '';
+            return `<div class="bu-np${buHas(it) ? ' ok' : ''}"><i role="button" onclick="CV.edit('${it.id}')">${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span role="button" onclick="CV.edit('${it.id}')"><b data-notr>${esc(it.cat === 'hotel' ? MSGT('Hôtel') + ' · ' + (cityOf(it.titre) || it.titre) : it.titre)}</b><small>${it.cat === 'hotel' ? RF('{0} nuits · prix total du séjour', nights(it.date, it.dateFin || it.date)) : MSGT(partage(it) === 'pp' ? 'par personne' : 'pour le groupe')}${it.date ? ' · ' + fshort(it.date) : ''}${st ? ' · ' + st : ''}${buHas(it) && !hasPrix(it) ? ' · ' + MSGT('estimé') : ''}</small></span><input class="v-in" inputmode="decimal" data-bu="${it.id}" data-k="${hasPrix(it) ? 'prix' : 'estime'}" data-v0="${esc(v)}" value="${esc(String(v).replace('.', ','))}" placeholder="${esc(CS())}"></div>`; }).join('')}
+          ${all.length > L.length ? `<button type="button" class="ar-more" onclick="CV.buAll()">＋ ${RF('{0} autre(s)', all.length - L.length)}</button>` : ''}
+          <button type="button" class="ar-go" onclick="CV.buPrices()">✓ ${MSGT('Enregistrer ces prix')}</button>
+          ${fbtn(`CV.navTo('resas')`, `🎫 ${MSGT('Voir les réservations')}`, 1)}`; }},
       {k:'sp', ic:'🍝', l:MSGT('Prévois le sur-place'), ok: !!t.surplace || filSk(key, 'sp'), skip:true, n: t.surplace ? eur(spD) + ' / ' + MSGT('jour') : '',
         body: ()=>{ const d = BU_SP.reduce((a, [k])=>a + spV(k), 0), days = dayList().length || nN;
           return `<div class="ar-p">${MSGT('Repas, cafés, bus, petits achats : ce qu’on oublie toujours. Par personne et par jour.')}</div>
@@ -2005,15 +2010,18 @@
       {k:'pay', ic:'💳', l:MSGT('Payer à temps'), ok: !pay.length && !todo, n: pay.length ? RF('{0} à régler', pay.length) : todo ? RF('{0} à réserver', todo) : '',
         body: ()=>`${pay.length ? pay.slice(0, 5).map(it=>{ const e = buNextEch(it); return `<div class="ar-r" role="button" onclick="CV.edit('${it.id}')"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(it.cat === 'hotel' ? (it.nom || cityOf(it.titre) || it.titre) : it.titre)}</b><small>${e ? `${MSGT('Prochaine échéance')} : ${eur(num(e.montant))}${e.date ? ' · ' + fshort(e.date) : ''}` : `${MSGT('Reste à payer')} : ${eur(totalOf(it) - paidAmount(it))}`}</small></span><div class="ar-ra"><button type="button" onclick="event.stopPropagation();CV.buPaid('${it.id}')">${MSGT('C’est payé')}</button></div></div>`; }).join('')
             : `<div class="ar-p">${todo ? RF('Rien à payer pour l’instant : {0} réservation(s) à faire d’abord.', todo) : '✓ ' + MSGT('Tout est payé.')}</div>`}
-          ${pay.length ? `<div class="ar-p">${MSGT('Ajoute les acomptes dans chaque fiche (💶 Paiement → Échéancier) : l’appli te rappelle la veille.')}</div>` : ''}${todo ? fbtn(`CV.tab('resas')`, `🎫 ${MSGT('Voir les réservations')}`, 1) : ''}`}
+          ${pay.length ? `<div class="ar-p">${MSGT('Ajoute les acomptes dans chaque fiche (💶 Paiement → Échéancier) : l’appli te rappelle la veille.')}</div>` : ''}${todo ? fbtn(`CV.navTo('resas')`, `🎫 ${MSGT('Voir les réservations')}`, 1) : ''}`}
     ];
     return filCard({key, kick:MSGT('Ton budget pas à pas'), title:num(t.objectif) ? `🎯 ${eur(num(t.objectif))} / ${MSGT('pers.')}` : `💶 ${MSGT('Budget du voyage')}`, steps, doneMsg:'✨ ' + MSGT('Budget bouclé : tout est prévu et payé.')});
   }
   function buRe(){ const y = window.scrollY; renderBudget(); window.scrollTo(0, y); }
   function buTier(v){ const t = trip(); if(!t) return; const n = num(v); if(!(n > 0)) return; const c = clone(t); c.objectif = String(Math.round(n)); put(c, '🎯 ' + MSGT('Objectif enregistré')); buRe(); }
   function buAll(){ M.buAll = 1; buRe(); }
-  function buPrices(){ const out = []; document.querySelectorAll('[data-bu]').forEach(i=>{ const v = num(i.value), it = R[i.dataset.bu]; if(it && v > 0){ const c = clone(it); c.estime = String(v); out.push(c); } });
-    if(!out.length){ toast(MSGT('Tape au moins un prix')); return; } putMany(out, '🧾 ' + RF('{0} prix enregistré(s)', out.length)); M.buAll = 0; buRe(); }
+  function buPrices(){ const out = [];
+    document.querySelectorAll('[data-bu]').forEach(i=>{ const it = R[i.dataset.bu], k = i.dataset.k || 'estime', raw = i.value.trim(), v = num(raw); if(!it || raw === String(i.dataset.v0 || '').replace('.', ',') || raw === String(i.dataset.v0 || '')) return;
+      if(raw === '' ? !(it[k] != null && String(it[k]).trim() !== '') : !(v > 0) || v === num(it[k])) return;
+      const c = clone(it); c[k] = raw === '' ? '' : String(v); out.push(c); });
+    if(!out.length){ toast(MSGT('Rien n’a changé')); return; } putMany(out, '🧾 ' + RF('{0} prix enregistré(s)', out.length)); M.buAll = 0; buRe(); }
   function buSpN(k, d){ const t = trip(); if(!t) return; M.buSp = M.buSp || {}; const o = M.buSp[t.id] = M.buSp[t.id] || {};
     const cur = o[k] != null ? o[k] : t.surplace && t.surplace[k] != null ? num(t.surplace[k]) : Math.round(BU_SP.find(x=>x[0] === k)[3] * Math.max(.4, buIdx()));
     const st = cur >= 50 ? 10 : 5; o[k] = Math.max(0, Math.round((cur + d * st) / st) * st); buRe(); }
