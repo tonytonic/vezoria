@@ -2248,4 +2248,10 @@ I18N.load({
 "Copier tous mes codes":"Copia tutti i miei codici",
 "Mon carnet":"Il mio diario",
 "Aucun code":"Nessun codice",
-"{0} codes copiés":"{0} codici copiati"});
+"{0} codes copiés":"{0} codici copiati",
+"Ta prochaine étape":"Il tuo prossimo passo",
+"Voir les 4 étapes en détail":"Vedi i 4 passi nel dettaglio",
+"Le départ et le retour":"Partenza e ritorno",
+"Où tu dors, et combien de nuits":"Dove dormi e per quante notti",
+"{0} à réserver":"{0} da prenotare",
+"Papiers, valise et derniers détails":"Documenti, valigia e ultimi dettagli"});

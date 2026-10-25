@@ -5187,4 +5187,10 @@ I18N.load({
 "Copier tous mes codes":"내 코드 모두 복사",
 "Mon carnet":"내 수첩",
 "Aucun code":"코드 없음",
-"{0} codes copiés":"코드 {0}개를 복사했어요"});
+"{0} codes copiés":"코드 {0}개를 복사했어요",
+"Ta prochaine étape":"다음 단계",
+"Voir les 4 étapes en détail":"4단계 자세히 보기",
+"Le départ et le retour":"출발과 귀국",
+"Où tu dors, et combien de nuits":"어디서 몇 박 할지",
+"{0} à réserver":"예약할 것 {0}개",
+"Papiers, valise et derniers détails":"서류, 짐, 마지막 준비"});

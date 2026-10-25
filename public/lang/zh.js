@@ -5187,4 +5187,10 @@ I18N.load({
 "Copier tous mes codes":"复制我的所有代码",
 "Mon carnet":"我的手账",
 "Aucun code":"没有代码",
-"{0} codes copiés":"已复制 {0} 个代码"});
+"{0} codes copiés":"已复制 {0} 个代码",
+"Ta prochaine étape":"你的下一步",
+"Voir les 4 étapes en détail":"查看全部 4 个步骤",
+"Le départ et le retour":"出发和返回",
+"Où tu dors, et combien de nuits":"住在哪里、住几晚",
+"{0} à réserver":"{0} 项待预订",
+"Papiers, valise et derniers détails":"证件、行李和最后的细节"});

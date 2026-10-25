@@ -5175,4 +5175,10 @@ I18N.load({
 "Copier tous mes codes":"Tüm kodlarımı kopyala",
 "Mon carnet":"Defterim",
 "Aucun code":"Kod yok",
-"{0} codes copiés":"{0} kod kopyalandı"});
+"{0} codes copiés":"{0} kod kopyalandı",
+"Ta prochaine étape":"Sıradaki adımın",
+"Voir les 4 étapes en détail":"4 adımı ayrıntılı gör",
+"Le départ et le retour":"Gidiş ve dönüş",
+"Où tu dors, et combien de nuits":"Nerede ve kaç gece kalacağın",
+"{0} à réserver":"{0} rezervasyon bekliyor",
+"Papiers, valise et derniers détails":"Belgeler, bavul ve son ayrıntılar"});

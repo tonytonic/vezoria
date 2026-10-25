@@ -2243,4 +2243,10 @@ I18N.load({
 "Copier tous mes codes":"Alle meine Codes kopieren",
 "Mon carnet":"Mein Tagebuch",
 "Aucun code":"Kein Code",
-"{0} codes copiés":"{0} Codes kopiert"});
+"{0} codes copiés":"{0} Codes kopiert",
+"Ta prochaine étape":"Dein nächster Schritt",
+"Voir les 4 étapes en détail":"Alle 4 Schritte im Detail",
+"Le départ et le retour":"Hin- und Rückreise",
+"Où tu dors, et combien de nuits":"Wo du schläfst und wie viele Nächte",
+"{0} à réserver":"{0} zu buchen",
+"Papiers, valise et derniers détails":"Papiere, Koffer und letzte Details"});

@@ -2249,4 +2249,10 @@ I18N.load({
 "Copier tous mes codes":"Copiar todos mis códigos",
 "Mon carnet":"Mi cuaderno",
 "Aucun code":"Ningún código",
-"{0} codes copiés":"{0} códigos copiados"});
+"{0} codes copiés":"{0} códigos copiados",
+"Ta prochaine étape":"Tu próximo paso",
+"Voir les 4 étapes en détail":"Ver los 4 pasos en detalle",
+"Le départ et le retour":"La ida y la vuelta",
+"Où tu dors, et combien de nuits":"Dónde duermes y cuántas noches",
+"{0} à réserver":"{0} por reservar",
+"Papiers, valise et derniers détails":"Documentos, maleta y últimos detalles"});

@@ -2233,4 +2233,10 @@ I18N.load({
 "Copier tous mes codes":"Copy all my codes",
 "Mon carnet":"My journal",
 "Aucun code":"No code",
-"{0} codes copiés":"{0} codes copied"});
+"{0} codes copiés":"{0} codes copied",
+"Ta prochaine étape":"Your next step",
+"Voir les 4 étapes en détail":"See all 4 steps in detail",
+"Le départ et le retour":"Departure and return",
+"Où tu dors, et combien de nuits":"Where you sleep, and for how many nights",
+"{0} à réserver":"{0} to book",
+"Papiers, valise et derniers détails":"Documents, luggage and final details"});

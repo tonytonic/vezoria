@@ -5187,4 +5187,10 @@ I18N.load({
 "Copier tous mes codes":"मेरे सारे कोड कॉपी करो",
 "Mon carnet":"मेरी डायरी",
 "Aucun code":"कोई कोड नहीं",
-"{0} codes copiés":"{0} कोड कॉपी हुए"});
+"{0} codes copiés":"{0} कोड कॉपी हुए",
+"Ta prochaine étape":"तुम्हारा अगला कदम",
+"Voir les 4 étapes en détail":"चारों कदम विस्तार से देखो",
+"Le départ et le retour":"जाना और लौटना",
+"Où tu dors, et combien de nuits":"कहाँ सोओगे और कितनी रातें",
+"{0} à réserver":"{0} बुक करना बाकी",
+"Papiers, valise et derniers détails":"काग़ज़, सामान और आख़िरी बातें"});

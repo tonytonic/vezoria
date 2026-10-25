@@ -5187,4 +5187,10 @@ I18N.load({
 "Copier tous mes codes":"すべてのコードをコピー",
 "Mon carnet":"自分の手帳",
 "Aucun code":"コードはありません",
-"{0} codes copiés":"{0}個のコードをコピーしました"});
+"{0} codes copiés":"{0}個のコードをコピーしました",
+"Ta prochaine étape":"次のステップ",
+"Voir les 4 étapes en détail":"4つのステップを詳しく見る",
+"Le départ et le retour":"出発と帰り",
+"Où tu dors, et combien de nuits":"どこに何泊するか",
+"{0} à réserver":"予約待ち {0}件",
+"Papiers, valise et derniers détails":"書類、荷物、最後の準備"});

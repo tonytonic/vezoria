@@ -5188,4 +5188,10 @@ I18N.load({
 "Copier tous mes codes":"نسخ كل رموزي",
 "Mon carnet":"دفتري",
 "Aucun code":"لا يوجد رمز",
-"{0} codes copiés":"تم نسخ {0} رمز"});
+"{0} codes copiés":"تم نسخ {0} رمز",
+"Ta prochaine étape":"خطوتك التالية",
+"Voir les 4 étapes en détail":"عرض الخطوات الأربع بالتفصيل",
+"Le départ et le retour":"الذهاب والعودة",
+"Où tu dors, et combien de nuits":"أين تنام وكم ليلة",
+"{0} à réserver":"{0} للحجز",
+"Papiers, valise et derniers détails":"الوثائق والحقيبة واللمسات الأخيرة"});

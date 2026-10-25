@@ -5188,4 +5188,10 @@ I18N.load({
 "Copier tous mes codes":"Скопировать все мои коды",
 "Mon carnet":"Мой дневник",
 "Aucun code":"Нет кодов",
-"{0} codes copiés":"Скопировано кодов: {0}"});
+"{0} codes copiés":"Скопировано кодов: {0}",
+"Ta prochaine étape":"Твой следующий шаг",
+"Voir les 4 étapes en détail":"Все 4 шага подробно",
+"Le départ et le retour":"Отъезд и возвращение",
+"Où tu dors, et combien de nuits":"Где ночуешь и сколько ночей",
+"{0} à réserver":"Забронировать: {0}",
+"Papiers, valise et derniers détails":"Документы, чемодан и последние детали"});

@@ -2239,4 +2239,10 @@ I18N.load({
 "Copier tous mes codes":"Al mijn codes kopiëren",
 "Mon carnet":"Mijn dagboek",
 "Aucun code":"Geen code",
-"{0} codes copiés":"{0} codes gekopieerd"});
+"{0} codes copiés":"{0} codes gekopieerd",
+"Ta prochaine étape":"Je volgende stap",
+"Voir les 4 étapes en détail":"Alle 4 stappen in detail",
+"Le départ et le retour":"Vertrek en terugkeer",
+"Où tu dors, et combien de nuits":"Waar je slaapt en hoeveel nachten",
+"{0} à réserver":"{0} te boeken",
+"Papiers, valise et derniers détails":"Papieren, koffer en laatste details"});
