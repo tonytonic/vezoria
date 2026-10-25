@@ -1830,7 +1830,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     ['prog','🗓️','Programme'], ['resas','🎫','Résas'], ['sous','💸','Budget'], ['live','📍','En cours'],
     ['souv','📸','Souvenirs & bilan'], ['notes','📌','Notes'], ['outils','🧰','Outils'], ['envies','✨','Envies'],
     ['check','✅','Checklist'], ['ech','📆','Échéancier'], ['past','🗺️','Passés'], ['reglages','👥','Partage & profils'], ['livret','📖','Livret'], ['omap','📴','Cartes hors ligne'], ['badges','🏅','Badges']];
-  const DEST_DEF = ['prog','resas','sous','souv'];   // 📸 Souvenirs dans la barre ; « En cours » passe dans Plus tant que le voyage n’a pas commencé
+  const DEST_DEF = ['prog','resas','sous','past'];   // 🗺️ voyages passés dans la barre (pas encore de souvenirs en préparation) ; « En cours » et « Souvenirs » sont dans Plus
   const NAV_LBL = {souv:'Souvenirs'};
   // 📍 voyage en cours / 🏁 voyage fini : la barre du bas montre ce qui sert à ce moment-là (la préparation ne change pas)
   const NAV_PH = {
