@@ -2793,9 +2793,11 @@
   /* ---------- Onglet « 🧰 Outils » ---------- */
   function renderOutils(){
     const t = trip(), di = docIssues(), nRec = items(i=>i.recu).length;
-    const box = (ic, ti, p, btn) => `<div class="v-box cv-tool"><h3>${ic} ${ti}</h3><p>${p}</p>${btn}</div>`;
+    // 🧹 une grille de tuiles : chaque outil s’ouvre seul (description + boutons) au lieu d’une longue page
+    TOOLS = []; const box = (ic, ti, p, btn) => { const i = TOOLS.push({ic, ti, p, btn}) - 1, warn = /cv-warnline/.test(p);
+      return `<button type="button" class="cv-tile cv-tooltile${warn ? ' warn' : ''}" onclick="CV.toolOpen(${i})"><i>${ic}</i><span>${ti}</span>${warn ? '<b>!</b>' : ''}</button>`; };
     let h = `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">🧰 Outils du voyage</div></div>
-      <div class="v-sum-small">Tout fonctionne sur ton téléphone. Rien n’est envoyé à l’éditeur de l’appli.</div></div>`;
+      <div class="v-sum-small">Tout fonctionne sur ton téléphone. Rien n’est envoyé à l’éditeur de l’appli.</div></div><div class="cv-tiles cv-tools">`;
     h += box('📄','Importer une réservation','Le PDF de la réservation (Booking, compagnie, SNCF…) : la fiche se crée toute seule, avec le PDF joint comme billet.', `<button class="v-btn" onclick="CV.impSheet()">📄 Importer une réservation</button>`);
     h += box('🌍','Carte du monde 3D','Ton globe à toi : tous tes voyages, tes steps 📍 et les pays visités. Zoome et fais tourner la Terre du bout des doigts.', `<button class="v-btn sec" onclick="CV.worldMap()">🌍 Ouvrir la carte du monde</button>`);
     h += box('📶','Cartes hors ligne','Rues, lieux à voir, hôtels et ta position sur une carte zoomable, même sans réseau ni données à l’étranger. À télécharger en Wi-Fi avant de partir.', `<button class="v-btn sec" onclick="CV.omapSheet()">🗺️ Cartes hors ligne</button>`);
@@ -2825,8 +2827,12 @@
       `<button class="v-btn sec" onclick="CV.jrSheet()">📖 Créer le journal (PDF)</button>`);
     h += box('📦','Partager sans serveur','Pour ceux qui ne veulent pas de la synchro en ligne : un fichier chiffré à s’envoyer (WhatsApp, Messages, AirDrop…). Voir Partage &amp; profils.',
       `<button class="v-btn sec" onclick="CV.pkgSheet()">📤 Envoyer un paquet</button><button class="v-btn sec" onclick="CV.pkgImport()">📥 Recevoir un paquet</button>`);
+    h += `</div>`;
     document.getElementById('cv-body').innerHTML = h;
   }
+  let TOOLS = [];
+  function toolOpen(i){ const x = TOOLS[i]; if(!x) return;
+    openSheet(`<h2>${x.ic} ${x.ti}</h2><p class="v-sum-small" style="font-size:.92rem;line-height:1.5;margin:0 0 12px">${x.p}</p><div class="cv-toolb">${x.btn}</div><div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`); }
 
   /* ══════════ 🗺️ Cartes hors ligne ══════════
      Carte zoomable des villes du voyage (fond OpenFreeMap, libre et sans clé), téléchargée à l’avance

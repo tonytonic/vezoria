@@ -575,6 +575,18 @@
     h += `<div class="v-box"><h3>🧩 Encarts et boutons</h3>${PREF_BLOCKS.map(([k,l])=>tg(k, l)).join('')}</div>`;
     h += appPrefsHTML();   // apparence, tutos, mise à jour, sauvegarde… (avant dans « Partage & profils »)
     document.getElementById('cv-body').innerHTML = h;
+    foldBoxes(document.getElementById('cv-body'), 'prefs');
+  }
+  // 🧹 chaque encart « titre + contenu » devient une rubrique repliable (une ouverte à la fois, la dernière est retenue)
+  function foldBoxes(root, key){
+    if(!root) return; const op = (M.foldOpen || {})[key];
+    [...root.children].filter(b=>b.classList && b.classList.contains('v-box') && b.firstElementChild && /^H[23]$/.test(b.firstElementChild.tagName)).forEach((b, i)=>{
+      const h = b.firstElementChild, t = h.textContent.trim(), d = document.createElement('details'); d.className = 'cv-fold cv-pfold';
+      const sm = document.createElement('summary'); sm.innerHTML = h.innerHTML; d.appendChild(sm); h.remove();
+      const inner = document.createElement('div'); inner.className = 'fold-in'; while(b.firstChild) inner.appendChild(b.firstChild); d.appendChild(inner);
+      if(op === t) d.open = true;
+      d.addEventListener('toggle', ()=>{ if(!d.open) return; (M.foldOpen = M.foldOpen || {})[key] = t; persist(); root.querySelectorAll('details.cv-pfold').forEach(x=>{ if(x !== d) x.open = false; }); });
+      b.replaceWith(d); });
   }
   function prefFix(){
     if(M.mode && M.mode !== 'prep' && hidden('mode:' + M.mode)) M.mode = 'prep';

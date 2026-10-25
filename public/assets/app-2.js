@@ -884,18 +884,23 @@
     const done = cl.filter(i=>chkDone(i)).length, multi = tvOf(M.trip).length > 1, mine = cl.filter(i=>i.each && !(i.doneBy || {})[M.me]).length;
     let h = `${multi && cl.some(i=>i.each) ? `<div class="ck-me">🧳 ${mine ? MSGT('Ta valise') + ' : <b>' + mine + '</b> ' + MSGT('à cocher') : '✅ ' + MSGT('Ta valise est prête')}</div>` : ''}<button type="button" class="sp-card" onclick="CV.smartPack()"><i>🧳</i><span><b>Valise intelligente</b><small>Selon la météo de tes étapes et tes activités : les idées à ne pas oublier.</small></span></button><div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">${done} / ${cl.length}</div><div class="v-sum-small">éléments cochés</div></div>
       <div class="v-bar"><span class="b-paid" style="width:${cl.length?done/cl.length*100:0}%"></span></div></div>`;
+    // 🧹 chaque catégorie repliée avec son compteur ; la 1re pas finie est ouverte (ton choix est retenu)
+    const CO = ((M.ckOpen = M.ckOpen || {})[M.trip] = M.ckOpen[M.trip] || {}), firstTodo = cats.find(c=>cl.some(i=>i.cat === c && !chkDone(i)));
     cats.forEach(c=>{
-      h += `<div class="v-cl-cat">${esc(c)}</div>`;
+      const L = cl.filter(i=>i.cat===c), dn = L.filter(i=>chkDone(i)).length, op = CO[c] !== undefined ? CO[c] : c === firstTodo;
+      h += `<details class="cv-fold ck-fold"${op ? ' open' : ''} ontoggle="CV.ckTog(${esc(JSON.stringify(c))}, this.open)"><summary><span class="v-cl-cat" style="margin:0">${esc(c)}</span><small>${dn === L.length ? '✓ ' : ''}${dn} / ${L.length}</small></summary><div class="fold-in">`;
       h += cl.filter(i=>i.cat===c).map(i=>{ const me = i.each ? !!(i.doneBy || {})[M.me] : i.done; return `<div class="v-cl${chkDone(i)?' done':''}${i.each ? ' each' : ''}" onclick="CV.check('${i.id}')">
         <div class="c">${me?'✓':''}</div><div class="t">${esc(i.label)}${i.each ? `<span class="ck-who">${tvOf(M.trip).map(p=>`<i class="${(i.doneBy || {})[p] ? 'on' : ''}" style="--c:${pcol(p)}" title="${esc(pname(p))}">${esc(((pname(p)||'?')[0]||'?').toUpperCase())}</i>`).join('')}</span>` : ''}</div>${multi ? `<button type="button" class="ck-each${i.each ? ' on' : ''}" onclick="event.stopPropagation();CV.chkEach('${i.id}')" title="Chacun le sien" aria-label="Chacun le sien">👥</button>` : ''}${!i.done && !hidden('blk:book') && checkBook(i.label) ? `<button type="button" class="bk-ck" onclick="event.stopPropagation();CV.bookSheet('${i.id}',1)" aria-label="Réserver">🛒</button>` : ''}
         ${i.done && i.updatedBy && i.updatedAt>1000 ? `<span title="Coché par ${esc(pname(i.updatedBy))}">${ini(i.updatedBy)}</span>` : ''}
         <button class="del" onclick="event.stopPropagation();CV.delCheck('${i.id}')" aria-label="Retirer">✕</button></div>`; }).join('');
+      h += `</div></details>`;
     });
     h += `<div class="v-cl-add"><select class="v-in" id="v-cl-cat" style="flex:0 0 40%">${cats.map(c=>`<option>${esc(c)}</option>`).join('')}<option value="__new">＋ Nouvelle catégorie…</option></select>
       <input class="v-in" id="v-cl-new" placeholder="Ajouter un élément" onkeydown="if(event.key==='Enter')CV.addCheck()">
       <button class="v-btn" style="width:auto;margin:0;padding:0 14px" onclick="CV.addCheck()" aria-label="Ajouter">＋</button></div>`;
     document.getElementById('cv-body').innerHTML = h;
   }
+  function ckTog(c, o){ const CO = ((M.ckOpen = M.ckOpen || {})[M.trip] = M.ckOpen[M.trip] || {}); if(CO[c] === o) return; CO[c] = o; persist(); }
   /* ══════════ 📊 Analyse des dépenses ══════════ */
   const ANA = [['transport','✈️','Trajets','#6366f1'], ['hotel','🏨','Hébergements','#a855f7'], ['activite','🎟️','Visites & résas','#ec4899'],
     ['repas','🍽️','Repas','#f97316'], ['courses','🛒','Courses','#eab308'], ['local','🚕','Transports sur place','#14b8a6'], ['shop','🛍️','Shopping','#06b6d4'], ['autre','🧾','Autres','#94a3b8']];
