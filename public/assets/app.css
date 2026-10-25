@@ -2851,3 +2851,5 @@ button.etp-chip.tip{border:0;font:inherit;font-size:.78rem;font-weight:700;backg
 .eq-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f1eaf3;font-size:.82rem}
 .eq-row>span{flex:1;min-width:0;color:#5f566a}
 .eq-row b{white-space:nowrap;font-size:.82rem;color:var(--gray)}.eq-row b.pos{color:var(--green)}.eq-row b.neg{color:var(--red)}
+.cv-syncpill.ph{background:rgba(255,255,255,.16)}
+.cv-cl-st{background:#faf6fb;border-radius:14px;padding:10px 12px;margin:0 0 12px;font-size:.84rem;display:flex;flex-direction:column;gap:4px}.cv-cl-st .err{color:var(--red)}.cv-cl-st .v-btn{margin:6px 0 0}

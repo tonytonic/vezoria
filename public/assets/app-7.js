@@ -1610,7 +1610,8 @@
     if(!any) return 'off';
     if(M.sync.err || sps.some(x=>x.err)) return navigator.onLine === false ? 'offline' : 'err';
     const mainOn = !!(M.sync.on && M.sync.code), pqLive = Math.max(0, (M.pq||[]).length - (M.pqWait||0));   // en attente d’un carnet en ligne ≠ en cours d’envoi
-    if(syncing || (mainOn && M.dirty.length) || sps.some(x=>(x.dirty||[]).length) || pqLive || (M.fq||[]).length) return 'wait';
+    if(syncing || (mainOn && M.dirty.length) || sps.some(x=>(x.dirty||[]).length)) return 'wait';
+    if(pqLive || (M.fq||[]).length) return 'ph';   // tes modifications sont parties ; seules des photos sont encore en route
     return 'ok';
   }
   function syncPill(){
@@ -1619,7 +1620,7 @@
     if(window.VZ_HOST){ if(b) b.remove(); return; }
     const btns = document.querySelector('.hero-btns'); if(!btns) return;
     if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'cv-syncpill'; b.className = 'cv-syncpill'; b.onclick = () => CV.cloudSheet(); btns.prepend(b); }
-    const st = syncState(), L = {ok:['☁️','À jour'], wait:['⏳','Envoi…'], err:['⚠️','Souci'], offline:['📴','Hors ligne'], off:['☁️','Local']};
+    const st = syncState(), L = {ok:['☁️','À jour'], wait:['⏳','Envoi…'], ph:['📷', RF('{0} photos', pqN() + (M.fq||[]).length)], err:['⚠️','Souci'], offline:['📴','Hors ligne'], off:['☁️','Local']};
     const md = cloudMode(); if(st === 'off') L.off = md === 'none' ? ['📱','Sans cloud'] : ['☁️','Cloud']; if(md === 'none' && st === 'ok') L.ok = ['📱','Sans cloud'];
     b.className = 'cv-syncpill ' + st + (md ? '' : ' new'); b.innerHTML = `<span>${L[st][0]}</span><small>${L[st][1]}</small>`; b.setAttribute('aria-label', 'Cloud Vezoria : ' + L[st][1]);
   }
@@ -1657,7 +1658,10 @@
     }
     const [ic, lab] = CLOUD_L[mode], s = M.sync, ph = pqN() + (M.fq||[]).length;
     let h = `<h2>☁️ Cloud Vezoria</h2>
-      <div class="cv-cl-mode"><span>${ic}</span><b>${lab}</b><button type="button" class="cv-cl-ch" onclick="CV.cloudSheet('choose')">Changer</button></div>`;
+      <div class="cv-cl-mode"><span>${ic}</span><b>${lab}</b><button type="button" class="cv-cl-ch" onclick="CV.cloudSheet('choose')">Changer</button></div>
+      ${(()=>{ const dn = (s.on && s.code ? M.dirty.length : 0) + (M.spaces||[]).reduce((n, x)=>n + (x.dirty||[]).length, 0), last = Math.max(s.last || 0, ...(M.spaces||[]).map(x=>x.last || 0));
+        return `<div class="cv-cl-st"><div>📝 ${dn ? RF('{0} modification(s) à envoyer', dn) : MSGT('Tes modifications sont envoyées')}${last ? ' · ' + vzWhen(last) : ''}</div>${ph ? `<div>📷 ${RF('{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.', ph)}</div>` : ''}${M.pqErr ? `<div class="err">${esc(M.pqErr)}</div>` : ''}
+          <button type="button" class="v-btn sec" onclick="CV.syncNow(true)">🔄 ${MSGT('Synchroniser maintenant')}</button></div>`; })()}`;
     if(mode === 'all'){
       h += `<div class="sy-r"><b>🔑 Mon code principal</b><small>${s.on && s.code ? cloudState(s) : ''}</small>
           <div class="cv-row" style="margin-top:6px"><b class="cv-code">${esc(s.code || '')}</b><button type="button" class="v-btn sec" style="width:auto;margin:0 0 0 auto;padding:6px 12px" onclick="CV.copyCode()">📋 Copier</button></div>

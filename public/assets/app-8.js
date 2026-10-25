@@ -335,12 +335,12 @@
     }
   }
   function feedPhotoQ(code, id){ M.fup = M.fup || {}; const done = M.fup[code] || (M.fup[code] = {}); if(done[id]) return; M.fq = M.fq || []; if(!M.fq.some(x=>x[0]===code && x[1]===id)) M.fq.push([code, id]); }
-  let feedUp = false;
+  let feedUp = false, feedAt = 0;
   async function feedUpload(){
-    if(feedUp || !photoApi()) return;
+    if((feedUp && Date.now() - feedAt < 240000) || !photoApi()) return;
     // ménage : les grandes photos envoyées aux abonnés par les anciennes versions sont retirées (ils n’ont plus que les vignettes)
     const olds = []; Object.entries(M.fup||{}).forEach(([code, d])=>Object.entries(d).forEach(([id, v])=>{ if(v === 1) olds.push([code, id]); }));
-    if(!(M.fq||[]).length && !olds.length) return; feedUp = true;
+    if(!(M.fq||[]).length && !olds.length) return; feedUp = true; feedAt = Date.now();
     try {
       for(const [code, id] of olds.slice(0, 40)){
         try { const r = await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(id, code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); if(r.ok || r.status === 404 || r.status === 405) M.fup[code][id] = 2; } catch(e){ break; }
@@ -354,15 +354,15 @@
         if(upHalt){ stop = true; return; }   // suppression du serveur en cours : on s’arrête tout de suite
         if(!Object.values(FT()).includes(code)){ M.fq = (M.fq||[]).filter(x=>x[0] !== code); return; }
         // abonnés : uniquement la vignette (≈ 30 à 50 Ko), jamais la grande photo → 2 à 3 fois moins de place sur le serveur
-        let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
-        if(!tb){ let o = null; try { o = await IDB.get(id); } catch(e){} if(o && o.blob) try { tb = await shrink(o.blob, 480, .74); } catch(e){} }
+        let tb = null; try { const to = await idbT(id + '.t'); tb = to && to.blob; } catch(e){}
+        if(!tb){ let o = null; try { o = await idbT(id); } catch(e){} if(o && o.blob) try { tb = await shrink(o.blob, 480, .74); } catch(e){} }
         if(!tb){ try { tb = await photoBlob(id + '.t'); } catch(e){} }   // photo plus sur ce téléphone : sa vignette du serveur
         if(tb){
           const body = E2E ? new Blob([await seal(new Uint8Array(await tb.arrayBuffer()), code)], {type:'image/jpeg'}) : tb;
           const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(id + '.t', code), 'Content-Type':'image/jpeg'}, body});
           if(!r.ok && r.status !== 413){ stop = true; return; }   // réessayé à la prochaine synchro (toutes les minutes, appli ouverte)
         }
-        (M.fup[code] = M.fup[code] || {})[id] = 2; M.fq = M.fq.filter(x=>!(x[0]===code && x[1]===id)); left--;
+        (M.fup[code] = M.fup[code] || {})[id] = 2; M.fq = M.fq.filter(x=>!(x[0]===code && x[1]===id)); left--; feedAt = Date.now();
         if(!(left % 6)){ persist(); if(shown && left) cryptShow('📤 Photos pour tes abonnés… (' + left + ' restante' + (left > 1 ? 's' : '') + ')'); }
       };
       const worker = async () => { while(!stop && todo.length){ try { await one(todo.shift()); } catch(e){ stop = true; } } };
@@ -1229,7 +1229,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-25x'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-25y'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

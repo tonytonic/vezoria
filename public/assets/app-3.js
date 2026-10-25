@@ -580,12 +580,14 @@
     M.pq = M.pq || []; M.pq.push(id);   // seule la grande photo part sur le serveur : la vignette est refaite sur chaque téléphone
   }
   const pqN = () => (M.pq||[]).length;
-  let uploading = false, upHalt = false;   // upHalt : on arrête les envois (suppression du serveur en cours)
+  let uploading = false, upHalt = false, upAt = 0, upGen = 0;   // upAt : dernier progrès ; upGen : un envoi bloqué est remplacé par le suivant   // upHalt : on arrête les envois (suppression du serveur en cours)
+  const idbT = id => withTimeout(IDB.get(id), 20000);   // Safari : une lecture de la base peut ne jamais répondre
   async function uploadQueue(){
-    if(uploading || !(M.pq||[]).length || !photoApi()) return;
+    if(uploading && Date.now() - upAt < 240000) return;
+    if(!(M.pq||[]).length || !photoApi()) return;
     if(M.pqPause && Date.now() < M.pqPause) return;   // pause de sécurité ou serveur plein : on réessaie plus tard
     if(!(M.sync.on && M.sync.code) && !(M.spaces||[]).length){ M.pqWait = (M.pq||[]).length; return; }
-    uploading = true; let upErr = '', waiting = 0, stop = false;
+    uploading = true; upAt = Date.now(); const gen = ++upGen; let upErr = '', waiting = 0, stop = false;
     if((M.fq||[]).length){ try { await feedUpload(); } catch(e){} }   // les vignettes des abonnés passent avant les grandes photos
     // photo → code du carnet, calculé une seule fois (rapide même avec des milliers de photos)
     const owner = {}, dead = new Set(); Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, x.cover, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(!p) return; if(x.deleted) dead.add(p); else if(!owner[p]) owner[p] = x; }); });
@@ -596,7 +598,7 @@
     M.pqFull = M.pqFull || {}; Object.keys(M.pqFull).forEach(c=>{ if(Date.now() > M.pqFull[c]) delete M.pqFull[c]; });
     const isFull = id => { const c = codeOf(id); return !!(c && M.pqFull[c]); };
     const todo = M.pq.filter(id=>codeOf(id) && !isFull(id)); waiting = M.pq.length - todo.length; let left = todo.length;
-    if(!left){ M.pqWait = waiting; uploading = false; syncDot(); return; }
+    if(!left){ M.pqWait = waiting; if(gen === upGen) uploading = false; syncDot(); return; }
     cryptShow('🔐 Chiffrement des photos… (' + left + ')');
     const send = async (blob, pid, code) => { const body = E2E ? new Blob([await seal(new Uint8Array(await blob.arrayBuffer()), code)], {type:'image/jpeg'}) : blob;
       const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(pid, code), 'Content-Type':'image/jpeg'}, body});
@@ -604,28 +606,28 @@
         const er = new Error((j.error ? j.error + ' ' : '') + '(' + r.status + ')'); er.st = r.status; er.j = j; er.code = code; throw er; } };
     const one = async id => {
       const code = codeOf(id); if(!code) return;          // voyage repassé hors ligne entre-temps : la photo reste sur le téléphone
-      let o = null; try { o = await IDB.get(id); } catch(e){}
+      let o = null; try { o = await idbT(id); } catch(e){ if(/délai/.test(e && e.message || '')) throw e; }   // base qui ne répond pas : on réessaiera, la photo ne quitte pas la file
       const pk = pkOf(id);
       // 🫙 déjà dans le pot commun : rien à recopier (voyage partagé, publié…) ; seulement remise en place si son carnet a été vidé
       if(pk && !/\.t$/.test(id)){
-        if(o && o.blob && pk.s === await spaceHash(code)){ let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){} await v2Upload(id, await cloudBlob(o.blob, owner[id], id), tb, code, pk.trip, pk); }
+        if(o && o.blob && pk.s === await spaceHash(code)){ let tb = null; try { const to = await idbT(id + '.t'); tb = to && to.blob; } catch(e){} await v2Upload(id, await cloudBlob(o.blob, owner[id], id), tb, code, pk.trip, pk); }
         M.pq = M.pq.filter(x=>x!==id); syncDot(); left--; return;
       }
       if(/\.t$/.test(id)){   // vignette seule (paquet sans grand format) : envoyée telle quelle ; sinon elle part avec sa grande photo
-        let big = null; try { big = await IDB.get(id.slice(0, -2)); } catch(e){}
+        let big = null; try { big = await idbT(id.slice(0, -2)); } catch(e){}
         if(o && o.blob && !(big && big.blob)) await send(o.blob, id, code);
       } else if(o && o.blob){
         // photos de souvenirs : copie légère façon Instagram (tickets et pièces jointes : intacts) ; plus lourde que la limite du serveur (1,9 Mo) : réduite
         const ub = await cloudBlob(o.blob, owner[id], id);
         if(potOn()){   // 🫙 pot commun : photo + vignette chiffrées avec leur propre clé, rangées une seule fois
-          let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
+          let tb = null; try { const to = await idbT(id + '.t'); tb = to && to.blob; } catch(e){}
           if(!tb) try { tb = await shrink(ub, 480, 0.74); } catch(e){}
           const ow = owner[id]; await v2Upload(id, ub, tb, code, ow ? (ow.type === 'trip' ? ow.id : ow.trip || '') : '');
           if(o.up) potGcAdd(code, id);   // déjà envoyée à l'ancienne : l'ancienne copie partira dans 24 h, une fois contrôlée
         } else {
         await send(ub, id, code);
         try {   // + vignette légère (≈ 30 Ko) pour que l’autre téléphone affiche vite la grille
-          let tb = null; try { const to = await IDB.get(id + '.t'); tb = to && to.blob; } catch(e){}
+          let tb = null; try { const to = await idbT(id + '.t'); tb = to && to.blob; } catch(e){}
           if(!tb) tb = await shrink(ub, 480, 0.74);
           await send(tb, id + '.t', code);
         } catch(e){}
@@ -636,8 +638,8 @@
       left--; if(left && !(left % 3)){ persist(); cryptShow('🔐 Chiffrement des photos… (' + left + ' restante' + (left > 1 ? 's' : '') + ')'); }
     };
     let upSt = 0, upJ = null;
-    const worker = async () => { while(!stop && !upHalt && todo.length){ const id = todo.shift(); if(isFull(id)){ waiting++; continue; }
-      try { await one(id); } catch(e){
+    const worker = async () => { while(!stop && !upHalt && gen === upGen && todo.length){ const id = todo.shift(); if(isFull(id)){ waiting++; continue; }
+      try { await one(id); upAt = Date.now(); } catch(e){
         // place de CE carnet pleine : ses photos restent sur le téléphone, celles des autres voyages continuent de partir
         if(e && e.st === 507 && e.code && /carnet/i.test(e.j && e.j.error || '')){ M.pqFull[e.code] = Date.now() + 3600000; waiting++; if(!upErr || upSt !== 507){ upErr = e.message; upSt = 507; upJ = e.j; } continue; }
         if(!upErr || upSt === 507){ upErr = (e && e.message) || String(e); upSt = e && e.st || 0; upJ = e && e.j; } stop = true; } } };
@@ -653,7 +655,7 @@
       if(!/carnet/i.test(upJ && upJ.error || '')) M.pqPause = Date.now() + 3600000; }
     M.pqWait = waiting; M.pqErr = upErr || ''; persist();
     cryptHide(upErr ? (upSt === 429 || upSt === 507 ? upErr : '⚠️ Photos non envoyées : ' + upErr) : left ? '' : '🔒 Photos chiffrées et envoyées');
-    uploading = false; syncDot();
+    if(gen === upGen) uploading = false; syncDot();
     photoPurge();
   }
 

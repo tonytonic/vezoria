@@ -1,5 +1,17 @@
 /* Vezoria — code de l’appli, partie 1/8 (chargées dans l’ordre par index.html, même portée globale) */
 
+/* ⏱️ Nos appels au serveur (/api/…) ont un délai maximum : sur iPhone, une requête restée sans réponse
+   (appli mise en arrière-plan, réseau qui change) bloquait la synchro et les envois jusqu’à la fermeture de l’appli. */
+(function(){ try {
+  const F = window.fetch.bind(window);
+  window.fetch = function(u, o){
+    try { const s = typeof u === 'string' ? u : (u && u.url) || ''; o = o || {};
+      if(/\/api\//.test(s) && !o.signal && typeof AbortController === 'function'){
+        const ac = new AbortController(), ms = /\/api\/photo/.test(s) && o.method === 'POST' ? 120000 : 45000, t = setTimeout(()=>ac.abort(), ms);
+        return F(u, Object.assign({}, o, {signal:ac.signal})).finally(()=>clearTimeout(t)); } } catch(e){}
+    return F(u, o); };
+} catch(e){} })();
+
 /* ══════════════════════════════════════════════════════════
    CARNET PARTAGÉ — voyages, profils, notes, envies, synchro
    Stockage local : carnet_v2  ·  Synchro : /api/sync (Cloudflare D1)
@@ -354,7 +366,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
 
   /* ══════════ Synchronisation ══════════ */
-  let syncing = false, again = false, syncT = null;
+  let syncing = false, again = false, syncT = null, syncAt = 0;   // syncAt : début de la synchro en cours (garde-fou si elle reste bloquée)
   function apiUrl(){
     let u = (M.sync.url || '').trim();
     if(!u && /^https?:/.test(location.protocol)) u = location.origin;
@@ -580,8 +592,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const mainOn = !!(M.sync.on && M.sync.code);
     if(!mainOn && !(M.spaces||[]).length) return;
     if(manual !== true && !pull && M.syncPause && Date.now() < M.syncPause) return;   // pause demandée par le serveur (trop de synchros)
-    if(syncing){ again = true; return; }
-    syncing = true; syncDot();
+    if(syncing && Date.now() - syncAt < 150000){ again = true; return; }   // une synchro bloquée depuis plus de 2 min 30 : on repart
+    syncing = true; syncAt = Date.now(); syncDot();
     const showC = E2E && !!manual;
     if(showC) cryptShow('🔐 Chiffrement de tes données en cours…');
     let changed = 0; const hadDirty = M.dirty.length;
