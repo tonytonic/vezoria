@@ -2400,4 +2400,7 @@ I18N.load({
 "Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"You still return on {0}. {1} night(s) are taken from: {2}.",
 "Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"The trip gets {0} night(s) longer: return on {1}.",
 "Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Not enough nights elsewhere to keep your dates: the trip gets {0} night(s) longer, return on {1}.",
-"mêmes dates de voyage":"same trip dates"});
+"mêmes dates de voyage":"same trip dates",
+"{0} trajet(s) remis dans l’ordre des étapes":"{0} journey(s) put back in stop order",
+"Les trajets sont déjà dans l’ordre":"Journeys are already in order",
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} journey(s) out of stop order: fix them"});

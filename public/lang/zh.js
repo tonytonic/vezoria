@@ -5354,4 +5354,7 @@ I18N.load({
 "Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"返程仍为 {0}。从以下站点减少 {1} 晚：{2}。",
 "Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"旅行延长 {0} 晚：{1} 返程。",
 "Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"其他站点的晚数不够，无法保持日期：旅行延长 {0} 晚，{1} 返程。",
-"mêmes dates de voyage":"旅行日期不变"});
+"mêmes dates de voyage":"旅行日期不变",
+"{0} trajet(s) remis dans l’ordre des étapes":"已按站点顺序调整 {0} 段交通",
+"Les trajets sont déjà dans l’ordre":"交通已按顺序排列",
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} 段交通与站点顺序不符：一键调整"});

@@ -2410,4 +2410,7 @@ I18N.load({
 "Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"Deine Rückreise bleibt am {0}. {1} Nacht/Nächte werden genommen bei: {2}.",
 "Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"Die Reise wird {0} Nacht/Nächte länger: Rückreise am {1}.",
 "Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Nicht genug Nächte an anderen Etappen, um die Daten zu halten: die Reise wird {0} Nacht/Nächte länger, Rückreise am {1}.",
-"mêmes dates de voyage":"gleiche Reisedaten"});
+"mêmes dates de voyage":"gleiche Reisedaten",
+"{0} trajet(s) remis dans l’ordre des étapes":"{0} Fahrt(en) in Etappenreihenfolge gebracht",
+"Les trajets sont déjà dans l’ordre":"Die Fahrten sind schon in der richtigen Reihenfolge",
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} Fahrt(en) nicht in Etappenreihenfolge: korrigieren"});

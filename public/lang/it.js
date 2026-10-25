@@ -2415,4 +2415,7 @@ I18N.load({
 "Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"Il ritorno resta il {0}. Si tolgono {1} notte/i a: {2}.",
 "Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"Il viaggio si allunga di {0} notte/i: ritorno il {1}.",
 "Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Non ci sono abbastanza notti altrove per mantenere le date: il viaggio si allunga di {0} notte/i, ritorno il {1}.",
-"mêmes dates de voyage":"stesse date di viaggio"});
+"mêmes dates de voyage":"stesse date di viaggio",
+"{0} trajet(s) remis dans l’ordre des étapes":"{0} spostamento/i rimesso/i nell’ordine delle tappe",
+"Les trajets sont déjà dans l’ordre":"Gli spostamenti sono già in ordine",
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} spostamento/i fuori ordine rispetto alle tappe: sistemare"});

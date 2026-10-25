@@ -5355,4 +5355,7 @@ I18N.load({
 "Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"Возвращение остаётся {0}. Берём {1} ноч. у: {2}.",
 "Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"Поездка удлинится на {0} ноч.: возвращение {1}.",
 "Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Недостаточно ночей в других местах, чтобы сохранить даты: поездка удлинится на {0} ноч., возвращение {1}.",
-"mêmes dates de voyage":"те же даты поездки"});
+"mêmes dates de voyage":"те же даты поездки",
+"{0} trajet(s) remis dans l’ordre des étapes":"{0} переезд(ов) расставлено по порядку этапов",
+"Les trajets sont déjà dans l’ordre":"Переезды уже по порядку",
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} переезд(ов) не по порядку этапов: исправить"});

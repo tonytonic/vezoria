@@ -5355,4 +5355,7 @@ I18N.load({
 "Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"تبقى عودتك في {0}. نأخذ {1} ليلة من: {2}.",
 "Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"تطول الرحلة {0} ليلة: العودة في {1}.",
 "Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"لا توجد ليالٍ كافية في محطات أخرى للإبقاء على التواريخ: تطول الرحلة {0} ليلة، العودة في {1}.",
-"mêmes dates de voyage":"نفس تواريخ الرحلة"});
+"mêmes dates de voyage":"نفس تواريخ الرحلة",
+"{0} trajet(s) remis dans l’ordre des étapes":"تمت إعادة {0} تنقّل إلى ترتيب المحطات",
+"Les trajets sont déjà dans l’ordre":"التنقلات مرتبة بالفعل",
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} تنقّل خارج ترتيب المحطات: إصلاح"});

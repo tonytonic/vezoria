@@ -5354,4 +5354,7 @@ I18N.load({
 "Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"帰りは {0} のまま。次から {1} 泊減らします：{2}。",
 "Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"旅が {0} 泊長くなります：帰りは {1}。",
 "Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"日程を保つには他の滞在地の泊数が足りません：旅が {0} 泊長くなり、帰りは {1}。",
-"mêmes dates de voyage":"旅行日程はそのまま"});
+"mêmes dates de voyage":"旅行日程はそのまま",
+"{0} trajet(s) remis dans l’ordre des étapes":"{0} 件の移動を滞在地の順に戻しました",
+"Les trajets sont déjà dans l’ordre":"移動はすでに順番どおりです",
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} 件の移動が滞在地の順とずれています：直す"});

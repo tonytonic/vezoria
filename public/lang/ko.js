@@ -5354,4 +5354,7 @@ I18N.load({
 "Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"귀국은 {0} 그대로예요. 다음에서 {1}박을 줄여요: {2}.",
 "Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"여행이 {0}박 늘어나요: 귀국 {1}.",
 "Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"날짜를 유지할 만큼 다른 곳의 박수가 부족해요: 여행이 {0}박 늘어나고 귀국은 {1}.",
-"mêmes dates de voyage":"여행 날짜 그대로"});
+"mêmes dates de voyage":"여행 날짜 그대로",
+"{0} trajet(s) remis dans l’ordre des étapes":"이동 {0}개를 일정 순서로 정리했어요",
+"Les trajets sont déjà dans l’ordre":"이동이 이미 순서대로예요",
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"이동 {0}개가 일정 순서와 달라요: 정리하기"});

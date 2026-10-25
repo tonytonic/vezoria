@@ -5342,4 +5342,7 @@ I18N.load({
 "Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"Dönüşün {0} olarak kalıyor. {1} gece şuradan alınıyor: {2}.",
 "Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"Seyahat {0} gece uzuyor: dönüş {1}.",
 "Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Tarihleri korumak için başka yerde yeterli gece yok: seyahat {0} gece uzuyor, dönüş {1}.",
-"mêmes dates de voyage":"aynı seyahat tarihleri"});
+"mêmes dates de voyage":"aynı seyahat tarihleri",
+"{0} trajet(s) remis dans l’ordre des étapes":"{0} yolculuk durak sırasına göre düzenlendi",
+"Les trajets sont déjà dans l’ordre":"Yolculuklar zaten sırada",
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} yolculuk durak sırasında değil: düzelt"});

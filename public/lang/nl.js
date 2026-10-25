@@ -2406,4 +2406,7 @@ I18N.load({
 "Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"Je terugreis blijft {0}. Er gaan {1} nacht(en) af bij: {2}.",
 "Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"De reis wordt {0} nacht(en) langer: terug op {1}.",
 "Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Niet genoeg nachten elders om je data te houden: de reis wordt {0} nacht(en) langer, terug op {1}.",
-"mêmes dates de voyage":"zelfde reisdata"});
+"mêmes dates de voyage":"zelfde reisdata",
+"{0} trajet(s) remis dans l’ordre des étapes":"{0} reis(en) in de volgorde van de etappes gezet",
+"Les trajets sont déjà dans l’ordre":"De reizen staan al in volgorde",
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} reis(en) niet in etappevolgorde: herstellen"});

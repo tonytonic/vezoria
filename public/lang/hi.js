@@ -5354,4 +5354,7 @@ I18N.load({
 "Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"वापसी {0} ही रहेगी। {1} रात यहाँ से ली जाएँगी: {2}।",
 "Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"यात्रा {0} रात बढ़ेगी: वापसी {1} को।",
 "Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"तारीख़ें रखने के लिए बाक़ी जगह पर्याप्त रातें नहीं: यात्रा {0} रात बढ़ेगी, वापसी {1} को।",
-"mêmes dates de voyage":"यात्रा की वही तारीख़ें"});
+"mêmes dates de voyage":"यात्रा की वही तारीख़ें",
+"{0} trajet(s) remis dans l’ordre des étapes":"{0} सफ़र पड़ावों के क्रम में लगाए गए",
+"Les trajets sont déjà dans l’ordre":"सफ़र पहले से क्रम में हैं",
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} सफ़र पड़ावों के क्रम में नहीं: ठीक करो"});
