@@ -2769,3 +2769,6 @@ html.vz-and body.vz-glass .v-sheet{-webkit-backdrop-filter:none!important;backdr
 .cv-toolb{display:grid;gap:8px}.cv-toolb .v-btn{margin:0}
 .cv-pfold .fold-in{padding:2px 4px 6px}
 .cv-pfold>summary::after{margin-left:auto}
+/* carte redessinée (synchro…) : pas de nouvelle animation ni de fondu */
+.cd-bg.still{transition:none;animation:none;transform:scale(1.02)}
+.cv-prep2.still .p2-prog,.cv-prep2.still .p2-svg circle,.cv-prep2.still .p2-svg circle.on{animation:none}

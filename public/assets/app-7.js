@@ -33,13 +33,14 @@
     else if(!/Voiture|Moto|Vélo|Pied/i.test(it.mode || '')){ k = 'rome2rio'; ctx = {from:it.from || '', to:it.to || ''}; }
     return k && BK[k] ? `<a class="ar-bk" href="${esc(bookUrl(k, ctx))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${MSGT('Réserver')} · ${BK[k][1]}</a>` : '';
   }
+  const ARI_ANIM = {};
   function ariHTML(){
     const t = trip(); if(!t || t.archived || tripPhase(t) !== 'prep' || hidden('blk:prep')) return '';
     const D = ariData(t), S = D.S, done = S.filter(x=>x.ok).length, pct = Math.round(S.reduce((a, x)=>a + (x.ok ? 1 : x.f) * (x.w || 1), 0) / S.reduce((a, x)=>a + (x.w || 1), 0) * 100);   // réserver compte double
     const cur = S.find(x=>!x.ok), op = SG && SG.tid === t.id ? 'faire' : ((M.ariOpen || {})[t.id]) || (cur && cur.k);
     const compact = !(SG && SG.tid === t.id) && !(M.ariFull || {})[t.id] && !((M.ariOpen || {})[t.id] && (M.ariOpen || {})[t.id] !== '-'), nx = compact ? ariNext(t, D, cur) : null;
     const lv = pct >= 100 ? ['✅','Prêt à partir'] : pct >= 75 ? ['🎒','Presque prêt'] : pct >= 45 ? ['🧩','En préparation'] : pct >= 15 ? ['✏️','Esquisse'] : ['💭','Rêve'];
-    const A = [26, 92], B = [180, -4], C = [334, 92], path = `M${A} Q${B} ${C}`, tp = Math.max(.02, pct / 100);
+    const A = [26, 92], B = [180, -4], C = [334, 92], path = `M${A} Q${B} ${C}`, tp = Math.max(.02, pct / 100), anim = ARI_ANIM[t.id] !== pct; ARI_ANIM[t.id] = pct;   // ✈️ l’avion ne repart que si l’avancement change
     const q = u => [(1-u)*(1-u)*A[0] + 2*(1-u)*u*B[0] + u*u*C[0], (1-u)*(1-u)*A[1] + 2*(1-u)*u*B[1] + u*u*C[1]];
     const co = D.hs[0] ? (M.ctry || {})[normQ(stayCity(D.hs[0]))] : null, fd = d => d ? fshort(d) : '';
     const body = k => {
@@ -79,7 +80,7 @@
     };
     const ms = t.debut ? cdLeft(t) : 0, cdOn = !!t.debut && !t.demo && ms > -864e5 && ms <= 400 * 864e5 && !hidden('blk:cd');
     const dj = t.debut ? Math.max(0, nights(isoToday(), t.debut)) : 0, dest = cdDest(t), dco = (M.ctry || {})[normQ(dest)] || co;
-    return `<div class="cv-prep2 ar${cdOn ? ' ar-cd' : ''}"${cdOn ? ` id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"` : ''}>${cdOn ? `<div class="cd-bg" id="cd-bg"></div><div class="cd-sh"></div>` : ''}
+    return `<div class="cv-prep2 ar${cdOn ? ' ar-cd' : ''}${anim ? '' : ' still'}"${cdOn ? ` id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"` : ''}>${cdOn ? `${cdBgTag()}<div class="cd-sh"></div>` : ''}
       ${cdOn ? `<div class="ar-top"><span>${dj === 0 ? '🧳 ' + MSGT('C’est aujourd’hui !') : dj === 1 ? '✈️ ' + MSGT('Départ demain') : '⏳ ' + MSGT('Départ dans')}</span><span class="cd-wx" id="cd-wx"></span></div>
       <div class="ar-j"><b>${dj === 0 ? MSGT('Jour J') : 'J-' + dj}</b><span class="cd-dest">${dco && dco.cc ? flag(dco.cc) + ' ' : '📍 '}<span data-notr>${esc(dest)}</span></span></div>
       <div class="cd-clock ar-clock" id="cd-clock">${cdClock(ms)}</div>` : ''}
@@ -92,7 +93,7 @@
         ${S.map((x, i)=>{ const [cx, cy] = q((i + 1) / (S.length + 1)); return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${x.ok ? 6 : 4.5}" class="${x.ok ? 'on' : ''}" style="animation-delay:${(i * .12).toFixed(2)}s"/>`; }).join('')}
         <text x="${A[0]}" y="${A[1] + 18}" text-anchor="middle" class="p2-end">🏠</text><text x="${C[0]}" y="${C[1] + 18}" text-anchor="middle" class="p2-end">${co && co.cc ? flag(co.cc) : '📍'}</text>
         <g class="p2-plane"><text x="-12" y="8" font-size="24" transform="rotate(45)">✈️</text>
-          <animateMotion dur="1.8s" fill="freeze" keyPoints="0;${tp.toFixed(3)}" keyTimes="0;1" calcMode="spline" keySplines=".2 .7 .2 1" rotate="auto" path="${path}"/></g>
+          <animateMotion dur="${anim ? '1.8s' : '0.001s'}" fill="freeze" keyPoints="${anim ? 0 : tp.toFixed(3)};${tp.toFixed(3)}" keyTimes="0;1" calcMode="spline" keySplines=".2 .7 .2 1" rotate="auto" path="${path}"/></g>
       </svg>
       <div class="ar-steps">${S.map((x, i)=>{ const o = op === x.k, st = x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : 'next';
         return `<div class="ar-s ${st}${o ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.ariTog('${x.k}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${MSGT(x.l)}</span><small>${x.ok ? '' : Math.round(x.f * 100) + ' %'}</small><em>${o ? '▾' : '▸'}</em></button>
@@ -122,8 +123,12 @@
     openSheet(`<h2>📍 ${esc(MSGT('Ajouter une ville'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».'))}</div>
       <form id="ac-f" onsubmit="event.preventDefault();CV.ariCitySave()">
         <div class="v-f"><label>${esc(MSGT('Ville'))}</label><input class="v-in" id="ac-v" required placeholder="${esc(MSGT('Ex. Rome, Lisbonne, Tokyo'))}"></div>
+        ${st.length ? `<div class="v-f"><label>${esc(MSGT('Où dans l’itinéraire ?'))}</label><select class="v-in" id="ac-pos" onchange="CV.ariCityPos(this)">
+          <option value="0" data-d="${esc(st[0].debut)}">${esc(MSGT('Au début'))} · ${esc(MSGT('avant'))} ${esc(st[0].city)}</option>
+          ${st.map((x, i)=>`<option value="${i + 1}" data-d="${esc(x.fin)}"${i === st.length - 1 ? ' selected' : ''}>${esc(MSGT('Après'))} ${esc(x.city)} (${fshort(x.debut)} → ${fshort(x.fin)})</option>`).join('')}</select>
+          <div class="v-sum-small" id="ac-shift" style="margin-top:4px"></div></div>` : ''}
         <div class="cv-row" style="gap:8px"><div class="v-f" style="flex:1;min-width:0"><label>${esc(MSGT('Arrivée'))}</label><input class="v-in" type="date" id="ac-d" value="${esc(d0)}" required></div>
-          <div class="v-f" style="flex:1;min-width:0"><label>${esc(MSGT('Nuits'))}</label><input class="v-in" type="number" id="ac-n" min="1" max="90" value="2" inputmode="numeric" required></div></div>
+          <div class="v-f" style="flex:1;min-width:0"><label>${esc(MSGT('Nuits'))}</label><input class="v-in" type="number" id="ac-n" min="1" max="90" value="2" inputmode="numeric" required oninput="CV.ariShiftHint()"></div></div>
         <div class="v-actions"><button type="submit" class="v-btn">＋ ${esc(MSGT('Ajouter'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>
       </form>`);
     setTimeout(()=>{ const i = document.getElementById('ac-v'); if(i) i.focus(); }, 60);
@@ -132,9 +137,27 @@
     const t = trip(); if(!t) return;
     const v = (document.getElementById('ac-v').value || '').trim(), d = document.getElementById('ac-d').value, n = Math.max(1, Math.min(90, Math.round(num(document.getElementById('ac-n').value)) || 1));
     if(!v || !d) return; const f = addDays(d, n), out = [];
+    // 📍 ville insérée au milieu : tout ce qui vient après (étapes, trajets, visites, journées) se décale de n nuits
+    const ps = document.getElementById('ac-pos'), st = tlStages(), mid = ps && +ps.value < st.length;
+    if(mid){ shiftFrom(d, n, out); }
     out.push({id:'i' + uid(), type:'item', trip:t.id, cat:'hotel', titre:v, base:v, date:d, dateFin:f, statut:'todo', partage:'grp', qui:[]});
-    const nt = clone(t); let ch = false; if(!nt.debut || d < nt.debut){ nt.debut = d; ch = true; } if(!nt.fin || f > nt.fin){ nt.fin = f; ch = true; } if(ch) out.push(nt);
-    putMany(out, '📍 ' + v); closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(ariCtry, 300);
+    const nt = clone(t); let ch = false; if(mid && nt.fin){ nt.fin = addD(nt.fin, n); ch = true; } if(!nt.debut || d < nt.debut){ nt.debut = d; ch = true; } if(!nt.fin || f > nt.fin){ nt.fin = f; ch = true; } if(ch) out.push(nt);
+    putMany(out, '📍 ' + v + (mid ? ' · ' + RF('la suite est décalée de {0} nuit(s)', n) : '')); closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(ariCtry, 300);
+  }
+  function ariCityPos(sel){ const o = sel.options[sel.selectedIndex], d = o && o.dataset.d, e = document.getElementById('ac-d'); if(d && e) e.value = d; ariShiftHint(); }
+  function ariShiftHint(){ const ps = document.getElementById('ac-pos'), h = document.getElementById('ac-shift'); if(!ps || !h) return; const st = tlStages(), mid = +ps.value < st.length;
+    h.textContent = mid ? RF('Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.', st[+ps.value].city) : ''; }
+  // décale de « n » jours tout ce qui commence à partir du jour « d » (une étape qui finit ce jour-là ne bouge pas)
+  function shiftFrom(d, n, out){
+    const t = trip(); if(!t) return out; const sh = x => addD(x, n);
+    Object.values(R).filter(r=>r && !r.deleted && r.trip === t.id).forEach(r=>{
+      if((r.type === 'item' || r.type === 'place' || r.type === 'city') && r.date && r.date >= d){ if(r.type === 'item' && r.cat === 'divers' && r.recu) return; const c = clone(r); c.date = sh(r.date); if(r.dateFin) c.dateFin = sh(r.dateFin); out.push(c); }
+      else if(r.type === 'note' && r.ref && r.ref.startsWith('day:') && r.ref.slice(4) >= d){ const c = clone(r); c.ref = 'day:' + sh(r.ref.slice(4)); out.push(c); }
+    });
+    const days = Object.values(R).filter(r=>r && !r.deleted && r.trip === t.id && r.type === 'day' && r.date >= d);
+    const tg = days.map(r=>{ const c = clone(r); delete c.deleted; c.date = sh(r.date); c.id = dayId(c.date); return c; }), ids = new Set(tg.map(x=>x.id));
+    days.forEach(r=>{ if(!ids.has(r.id)){ const c = clone(r); c.deleted = true; out.push(c); } }); out.push(...tg);
+    return out;
   }
   let acBusy = false;
   async function ariCtry(){   // le pays de chaque ville (une seule fois, gardé en mémoire), pour afficher les pays du voyage
@@ -649,7 +672,7 @@
     const ms = cdLeft(t); if(ms > 400 * 864e5) return '';
     const dj = Math.max(0, nights(isoToday(), t.debut)), dest = cdDest(t), co = (M.ctry || {})[normQ(dest)];
     const todo = cdTodo(t), left = todo.filter(x=>!x.done), ck = list('check', c=>c.trip === t.id), ckd = ck.filter(c=>chkDone(c)).length;
-    return `<div class="cd" id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"><div class="cd-bg" id="cd-bg"></div><div class="cd-sh"></div>
+    return `<div class="cd" id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}">${cdBgTag()}<div class="cd-sh"></div>
       <div class="cd-top"><span>${dj === 0 ? '🧳 C’est aujourd’hui !' : dj === 1 ? '✈️ Départ demain' : '⏳ Départ dans'}</span><span class="cd-wx" id="cd-wx"></span></div>
       <div class="cd-j"><b>${dj === 0 ? 'Jour J' : 'J-' + dj}</b><span class="cd-dest">${co && co.cc ? flag(co.cc) + ' ' : '📍 '}<span data-notr>${esc(dest)}</span></span></div>
       <div class="cd-clock" id="cd-clock">${cdClock(ms)}</div>${hidden('blk:prep') ? `
@@ -675,9 +698,13 @@
   setInterval(()=>{ const c = document.getElementById('cd'); if(!c || document.visibilityState !== 'visible') return; const k = document.getElementById('cd-clock'); if(k) k.innerHTML = cdClock(+c.dataset.at - Date.now()); }, 1000);
   // 📸 photo du compte à rebours : la ville, sinon le pays, sinon le titre du voyage, sinon la couverture du voyage.
   // Chaque photo candidate est essayée tour à tour (une image Wikimedia peut refuser de s'afficher) ; celle qui marche est gardée pour ce voyage.
+  // 🖼️ photo déjà chargée sur cet écran : remise tout de suite (pas de nouveau chargement ni de fondu) quand la carte est redessinée
+  let CDBG = null;
+  function cdBgTag(){ const t = trip(); return CDBG && t && CDBG.tid === t.id ? `<div class="cd-bg ok still" id="cd-bg" style="background-image:url(&quot;${esc(CDBG.u)}&quot;)"></div>` : '<div class="cd-bg" id="cd-bg"></div>'; }
   async function cdPhoto(t, city){
     const bg = document.getElementById('cd-bg'); if(!bg) return;
-    const show = u => new Promise(res=>{ const im = new Image(); im.referrerPolicy = 'no-referrer'; im.onload = () => { if(!im.naturalWidth) return res(false); bg.style.backgroundImage = `url("${u}")`; bg.classList.add('ok'); res(true); }; im.onerror = () => res(false); im.src = u; });
+    if(bg.classList.contains('still') && CDBG && CDBG.tid === t.id) return;
+    const show = u => new Promise(res=>{ const im = new Image(); im.referrerPolicy = 'no-referrer'; im.onload = () => { if(!im.naturalWidth) return res(false); bg.style.backgroundImage = `url("${u}")`; bg.classList.add('ok'); CDBG = {tid:t.id, u}; res(true); }; im.onerror = () => res(false); im.src = u; });
     M.cdImg = M.cdImg || {}; const keep = M.cdImg[t.id];
     if(keep && keep.c === city && await show(keep.u)) return;
     const co = (M.ctry || {})[normQ(city)], cc = (co && co.cc) || (t.ccs || [])[0] || '';
