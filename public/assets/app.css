@@ -2682,3 +2682,16 @@ body.vz-glass .v-tiles .v-tile:first-child{background:var(--navy)!important;bord
 body.vz-glass .v-sheet *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 html.vz-and body.vz-glass .v-sheet{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:var(--cream,#FFF4F1)!important}
 .rg-day.shut{opacity:.45;border-style:dashed}
+/* 🧹 carte de préparation repliée : 4 étapes en barre + « ta prochaine étape » */
+.ar-seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0 4px;position:relative}
+.ar-seg button{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:6px;cursor:pointer;min-height:44px;padding-top:4px}
+.ar-seg i{display:block;height:6px;border-radius:3px;background:linear-gradient(90deg,#FFD9A0 var(--f),rgba(255,255,255,.25) var(--f))}
+.ar-seg .ok i{background:#6ee7b7}
+.ar-seg span{font-size:.72rem;font-weight:600;line-height:1.2;opacity:.8}
+.ar-seg .cur span{font-weight:800;opacity:1}.ar-seg .ok span{opacity:.9}
+.ar-nx{margin-top:10px;position:relative}
+.ar-nk{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:800;opacity:.85;margin-bottom:6px}
+.ar-nx .ar-sub{width:100%;box-sizing:border-box;background:#fff;color:#4c1d95;border:0;outline:3px solid #a78bfa;min-height:64px}
+.ar-nx .ar-sub small{color:#6b5b8c;opacity:1}.ar-nx .ar-sub i{background:#7c3aed;color:#fff;font-size:1.05rem}
+.ar-all{all:unset;box-sizing:border-box;display:block;width:100%;text-align:center;margin-top:10px;padding:10px;min-height:44px;border-radius:14px;font-size:.85rem;font-weight:700;color:#fff;opacity:.85;cursor:pointer;position:relative}
+.ar-cd .ar-nx .ar-sub{box-shadow:0 8px 22px -10px rgba(0,0,0,.6)}

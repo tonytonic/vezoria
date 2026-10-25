@@ -37,6 +37,7 @@
     const t = trip(); if(!t || t.archived || tripPhase(t) !== 'prep' || hidden('blk:prep')) return '';
     const D = ariData(t), S = D.S, done = S.filter(x=>x.ok).length, pct = Math.round(S.reduce((a, x)=>a + (x.ok ? 1 : x.f) * (x.w || 1), 0) / S.reduce((a, x)=>a + (x.w || 1), 0) * 100);   // réserver compte double
     const cur = S.find(x=>!x.ok), op = SG && SG.tid === t.id ? 'faire' : ((M.ariOpen || {})[t.id]) || (cur && cur.k);
+    const compact = !(SG && SG.tid === t.id) && !(M.ariFull || {})[t.id] && !((M.ariOpen || {})[t.id] && (M.ariOpen || {})[t.id] !== '-'), nx = compact ? ariNext(t, D, cur) : null;
     const lv = pct >= 100 ? ['✅','Prêt à partir'] : pct >= 75 ? ['🎒','Presque prêt'] : pct >= 45 ? ['🧩','En préparation'] : pct >= 15 ? ['✏️','Esquisse'] : ['💭','Rêve'];
     const A = [26, 92], B = [180, -4], C = [334, 92], path = `M${A} Q${B} ${C}`, tp = Math.max(.02, pct / 100);
     const q = u => [(1-u)*(1-u)*A[0] + 2*(1-u)*u*B[0] + u*u*C[0], (1-u)*(1-u)*A[1] + 2*(1-u)*u*B[1] + u*u*C[1]];
@@ -82,6 +83,9 @@
       <div class="ar-j"><b>${dj === 0 ? MSGT('Jour J') : 'J-' + dj}</b><span class="cd-dest">${dco && dco.cc ? flag(dco.cc) + ' ' : '📍 '}<span data-notr>${esc(dest)}</span></span></div>
       <div class="cd-clock ar-clock" id="cd-clock">${cdClock(ms)}</div>` : ''}
       <div class="p2-top ar-lv"><div><div class="p2-k">${MSGT('Ta préparation')}</div><div class="p2-l">${lv[0]} ${MSGT(lv[1])}</div></div><div class="p2-pct"><b>${pct}</b><small>%</small></div></div>
+      ${compact ? `<div class="ar-seg">${S.map(x=>`<button type="button" class="${x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : ''}" onclick="CV.ariTog('${x.k}')"><i style="--f:${x.ok ? 100 : Math.round(x.f * 100)}%"></i><span>${MSGT(x.l)}${x.ok ? ' ✓' : ''}</span></button>`).join('')}</div>
+      ${nx ? `<div class="ar-nx"><div class="ar-nk">${MSGT('Ta prochaine étape')}</div><button type="button" class="ar-sub cur" onclick="${nx.fn}"><i>${nx.ic}</i><span><b>${nx.b}</b><small>${nx.s}</small></span></button></div>` : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}
+      <button type="button" class="ar-all" onclick="CV.ariFull(1)">${MSGT('Voir les 4 étapes en détail')} ▾</button></div>` : `
       <svg class="p2-svg" viewBox="0 0 360 112" aria-hidden="true">
         <path d="${path}" class="p2-base"/><path d="${path}" class="p2-prog" pathLength="100" style="--p:${pct}"/>
         ${S.map((x, i)=>{ const [cx, cy] = q((i + 1) / (S.length + 1)); return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${x.ok ? 6 : 4.5}" class="${x.ok ? 'on' : ''}" style="animation-delay:${(i * .12).toFixed(2)}s"/>`; }).join('')}
@@ -92,8 +96,24 @@
       <div class="ar-steps">${S.map((x, i)=>{ const o = op === x.k, st = x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : 'next';
         return `<div class="ar-s ${st}${o ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.ariTog('${x.k}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${MSGT(x.l)}</span><small>${x.ok ? '' : Math.round(x.f * 100) + ' %'}</small><em>${o ? '▾' : '▸'}</em></button>
           ${o ? `<div class="ar-b">${body(x.k)}</div>` : ''}</div>`; }).join('')}</div>
-      ${cur ? '' : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}</div>`;
+      ${cur ? '' : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}
+      <button type="button" class="ar-all" onclick="CV.ariFull(0)">${MSGT('Réduire')} ▴</button></div>`}`;
   }
+  // 🧹 la carte de préparation : repliée sur « ta prochaine étape » (une seule action) ; le détail des 4 étapes à la demande
+  function ariNext(t, D, cur){
+    if(!cur) return null; const n = (D.sg || []).length + expCount(t), pk = rgItems(t).length;
+    if(cur.k === 'ou'){ if(!t.debut) return {ic:'📅', b:MSGT('Choisir les dates'), s:MSGT('Le départ et le retour'), fn:'CV.datesSheet()'};
+      return {ic:'📍', b:MSGT('Ajouter les villes du voyage'), s:MSGT('Où tu dors, et combien de nuits'), fn:'CV.ariCity()'}; }
+    if(cur.k === 'faire'){ if(n) return {ic:'💡', b:MSGT('Choisir mes visites'), s:RF('{0} idées à trier, ville par ville', n), fn:'CV.suggOpen()'};
+      if(pk) return {ic:'🗓️', b:MSGT('Ranger mes visites dans les jours'), s:RF('{0} à placer, dans l’ordre du trajet', pk), fn:'CV.rgOpen()'};
+      if(D.hs.length) return {ic:'💡', b:MSGT('Me proposer les incontournables (4 par jour)'), s:MSGT('Les lieux à voir et les excursions, jour par jour.'), fn:'CV.suggGo()'};
+      return {ic:'🧩', b:MSGT('Que faire'), s:MSGT('Les lieux à voir et les excursions, jour par jour.'), fn:"CV.ariTog('faire')"}; }
+    if(cur.k === 'resa'){ const it = (D.rs || []).find(x=>!okB(x)), left = (D.rs || []).filter(x=>!okB(x)).length;
+      if(it) return {ic:it.cat === 'hotel' ? '🛏️' : icon(it), b:MSGT('Réserver') + ' : ' + esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre), s:(it.date ? fshort(it.date) + ' · ' : '') + RF('{0} à réserver', left), fn:"CV.ariTog('resa')"}; }
+    if(cur.k === 'fin') return {ic:'✅', b:MSGT('Finaliser'), s:MSGT('Papiers, valise et derniers détails'), fn:"CV.ariTog('fin')"};
+    return {ic:cur.ic, b:MSGT(cur.l), s:Math.round(cur.f * 100) + ' %', fn:`CV.ariTog('${cur.k}')`};
+  }
+  function ariFull(on){ const t = trip(); if(!t) return; M.ariFull = M.ariFull || {}; if(on) M.ariFull[t.id] = 1; else { delete M.ariFull[t.id]; if(M.ariOpen) delete M.ariOpen[t.id]; } persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   // ① ajouter une ville : le nom, l’arrivée et le nombre de nuits (l’hébergement « à réserver » est créé, il se réserve à l’étape ③)
   function ariCity(){
     const t = trip(); if(!t) return; const st = tlStages(), last = st[st.length - 1];
@@ -121,7 +141,7 @@
     try { for(const x of tlStages()){ if(!(M.ctry || {})[normQ(x.city)]){ const c = await countryOf(x.city); if(c) n++; } } } catch(e){}
     acBusy = false; if(n){ const y = window.scrollY; render(); window.scrollTo(0, y); }
   }
-  function ariTog(k){ const t = trip(); if(!t) return; M.ariOpen = M.ariOpen || {}; M.ariOpen[t.id] = M.ariOpen[t.id] === k ? '-' : k; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  function ariTog(k){ const t = trip(); if(!t) return; M.ariOpen = M.ariOpen || {}; M.ariOpen[t.id] = M.ariOpen[t.id] === k ? '-' : k; (M.ariFull = M.ariFull || {})[t.id] = 1; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function ariSkip(k){ const t = trip(); if(!t) return; M.ariSkip = M.ariSkip || {}; (M.ariSkip[t.id] = M.ariSkip[t.id] || {})[k] = 1; if(M.ariOpen) delete M.ariOpen[t.id]; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function ariBook(id){ const it = R[id]; if(!it) return; const c = clone(it); c.statut = 'booked'; put(c, '✓ ' + MSGT('Noté comme réservé')); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function ariFm(b){ cdFm(b); const y = window.scrollY; setTimeout(()=>{ render(); window.scrollTo(0, y); }, 250); }
