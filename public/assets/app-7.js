@@ -149,7 +149,7 @@
     if(mid){ shiftFrom(d, n, out); }
     out.push({id:'i' + uid(), type:'item', trip:t.id, cat:'hotel', titre:v, base:v, date:d, dateFin:f, statut:'todo', partage:'grp', qui:[]});
     const nt = clone(t); let ch = false; if(mid && nt.fin){ nt.fin = addD(nt.fin, n); ch = true; } if(!nt.debut || d < nt.debut){ nt.debut = d; ch = true; } if(!nt.fin || f > nt.fin){ nt.fin = f; ch = true; } if(ch) out.push(nt);
-    putMany(out, '📍 ' + v + (mid ? ' · ' + RF('la suite est décalée de {0} nuit(s)', n) : '')); closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(ariCtry, 300);
+    putMany(out, '📍 ' + v + (mid ? ' · ' + RF('la suite est décalée de {0} nuit(s)', n) : '')); try { trChain(); } catch(e){} closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(ariCtry, 300);
   }
   // 🧭 la nouvelle ville est placée là où elle allonge le moins le trajet (Bologne : entre Milan et Venise), tant qu’on n’a pas choisi soi-même
   let acgT = 0, acgN = 0;
@@ -1847,11 +1847,38 @@
       }
     });
     h += loose(ds.filter(d=>!inSt(d) && d >= S[0].debut));
+    let trBad = 0; try { trBad = canE ? trChain(true).length : 0; } catch(e){}
+    if(trBad) h += `<button type="button" class="etp-fix" onclick="CV.trFix()">🔧 ${RF('{0} trajet(s) pas dans l’ordre des étapes : les remettre', trBad)}</button>`;
     if(canE) h += `<div class="etp-foot">${S.length > 1 ? `<button type="button" class="etp-reorg" onclick="CV.soOpen()">⇅ ${MSGT('Réorganiser les étapes')}</button>` : ''}<button type="button" class="etp-add" onclick="CV.ariCity()">＋ ${MSGT('Ajouter une ville')}</button></div>`;
     return h;
   }
   function stTog(id){ const t = trip(); if(!t) return; STO[t.id] = STO[t.id] === id ? '' : id; renderProg();
     setTimeout(()=>{ const e = document.getElementById('etp-' + id); if(e){ const r = e.getBoundingClientRect(); if(r.top < 70 || r.top > innerHeight * .6) window.scrollTo({top: window.scrollY + r.top - 80, behavior:'smooth'}); } }, 30); }
+
+  /* 🚆 Les trajets suivent l’ordre des étapes : aller (maison → 1ʳᵉ ville), un trajet entre chaque étape, retour (dernière ville → maison).
+     Un trajet réservé n’est jamais modifié ; un trajet devenu inutile (pas réservé, sans prix) est retiré. */
+  function trChain(dry){
+    const t = trip(); if(!t) return []; const S = stRanges(); if(!S.length) return [];
+    const K = x => normQ(cityOf(String(x || '').replace(/\(.*?\)/g, '')).trim()), cities = new Set(S.map(x=>K(x.city))), isC = x => cities.has(K(x));
+    const T = items(i=>i.cat === 'transport'), out = [], used = new Set(), end = S[S.length - 1].end;
+    const set = (it, o) => { if(okB(it)) { used.add(it.id); return; } const c = Object.assign(clone(it), o); if(['date', 'from', 'to', 'titre'].some(k=>(c[k] || '') !== (it[k] || ''))) out.push(c); used.add(it.id); };
+    // l’aller : le 1ᵉʳ trajet qui arrive d’ailleurs (pas « Naples → Malte » au milieu du voyage)
+    const cand = T.filter(i=>i.from && !isC(i.from) && isC(i.to)), d0 = cand.reduce((m, i)=>!m || (i.date || '9') < m ? (i.date || '9') : m, ''), outs = cand.filter(i=>(i.date || '9') === d0), homes = new Set(outs.map(i=>K(i.from)));
+    const rets = T.filter(i=>!outs.includes(i) && isC(i.from) && i.to && !isC(i.to) && homes.has(K(i.to)));
+    outs.forEach(i=>set(i, {to:S[0].city, titre:i.from + ' → ' + S[0].city, date:S[0].debut}));
+    rets.forEach(i=>set(i, {from:S[S.length - 1].city, titre:S[S.length - 1].city + ' → ' + i.to, date:end}));
+    const mid = T.filter(i=>!used.has(i.id) && isC(i.from) && isC(i.to) && K(i.from) !== K(i.to)), todo = [];
+    for(let k = 0; k + 1 < S.length; k++){ const a = S[k], b = S[k + 1], it = mid.find(i=>!used.has(i.id) && K(i.from) === K(a.city) && K(i.to) === K(b.city));
+      if(it) set(it, {date:b.debut}); else todo.push([a, b, k]); }
+    todo.forEach(([a, b, k])=>{   // étapes déplacées : on reprend un trajet devenu orphelin (pas réservé), sinon on en crée un, sauf si un autre chemin y mène déjà
+      const orph = mid.filter(i=>!used.has(i.id) && !okB(i)), it = orph.find(i=>K(i.to) === K(b.city)) || orph.find(i=>K(i.from) === K(a.city)) || orph[0];
+      if(it) set(it, {from:a.city, to:b.city, titre:a.city + ' → ' + b.city, date:b.debut});
+      else if(!T.some(i=>!mid.includes(i) && !outs.includes(i) && !rets.includes(i) && K(i.to) === K(b.city))) out.push({id:'i' + uid() + 'tc' + k, type:'item', trip:t.id, cat:'transport', mode:'Train', titre:a.city + ' → ' + b.city, from:a.city, to:b.city, date:b.debut, statut:'todo', partage:'pp', qui:[]}); });
+    mid.filter(i=>!used.has(i.id) && !okB(i) && !num(i.prix) && !num(i.estime)).forEach(i=>{ const c = clone(i); c.deleted = true; out.push(c); });
+    if(!dry && out.length) putQuiet(out);
+    return out;
+  }
+  function trFix(){ const n = trChain().length; toast(n ? '🚆 ' + RF('{0} trajet(s) remis dans l’ordre des étapes', n) : '✓ ' + MSGT('Les trajets sont déjà dans l’ordre')); const y = window.scrollY; render(); window.scrollTo(0, y); }
 
   /* ⇅ Réorganiser : on glisse les villes, on change les nuits ; à l’enregistrement, tout suit (hôtels, trajets, visites, journées, notes) */
   let SO = null;
@@ -1934,7 +1961,7 @@
     const chg = days.some(r=>map(r.date) !== r.date);
     if(chg){ days.forEach(r=>{ if(!NW[r.id]){ const c = clone(r); c.deleted = true; out.push(c); } }); out.push(...Object.values(NW)); }
     const nt = clone(t); let tc = false; if(nt.fin && nt.fin >= SO.oldEnd && dl){ nt.fin = addD(nt.fin, dl); tc = true; } if(tc) out.push(nt);
-    SO = null; putMany(out, msg || '⇅ ' + MSGT('Étapes réorganisées') + (dl ? ' · ' + RF('retour le {0}', fdate(nt.fin)) : '')); closeSheet(true); Object.keys(openD).forEach(k=>delete openD[k]); const y = window.scrollY; render(); window.scrollTo(0, y);
+    SO = null; putMany(out, msg || '⇅ ' + MSGT('Étapes réorganisées') + (dl ? ' · ' + RF('retour le {0}', fdate(nt.fin)) : '')); closeSheet(true); try { trChain(); } catch(e){} Object.keys(openD).forEach(k=>delete openD[k]); const y = window.scrollY; render(); window.scrollTo(0, y);
   }
 
   /* ══════════ 💶 Budget pas à pas : ① objectif ② chiffrer ③ sur place ④ payer à temps ══════════ */

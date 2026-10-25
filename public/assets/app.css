@@ -2854,3 +2854,4 @@ button.etp-chip.tip{border:0;font:inherit;font-size:.78rem;font-weight:700;backg
 .cv-syncpill.ph{background:rgba(255,255,255,.16)}
 .cv-cl-st{background:#faf6fb;border-radius:14px;padding:10px 12px;margin:0 0 12px;font-size:.84rem;display:flex;flex-direction:column;gap:4px}.cv-cl-st .err{color:var(--red)}.cv-cl-st .v-btn{margin:6px 0 0}
 .cv-cl-st summary{cursor:pointer}.cv-cl-pd{font-size:.76rem;color:#5f566a;padding:6px 0 0 4px;display:flex;flex-direction:column;gap:2px;word-break:break-all}
+.etp-fix{width:100%;margin:12px 0 0;min-height:44px;border:0;border-radius:14px;background:#fff3e0;color:#8a4b00;font:inherit;font-size:.86rem;font-weight:800;cursor:pointer}
