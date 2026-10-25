@@ -2755,3 +2755,10 @@ html.vz-and body.vz-glass .v-sheet{-webkit-backdrop-filter:none!important;backdr
 .cv-fold>*:not(summary){margin:10px}
 .cv-fold>.cv-tiles{margin:10px}
 .fil-nh{cursor:default}
+/* 🧹 bilan : les temps forts en carrousel (on fait glisser) */
+.bb-car{display:flex;align-items:stretch;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 2px 10px;margin:4px -2px 6px;scrollbar-width:none}
+.bb-car::-webkit-scrollbar{display:none}
+.bb-sl{flex:0 0 86%;scroll-snap-align:center;display:flex;flex-direction:column;justify-content:center;height:236px;overflow:hidden;border-radius:20px}
+.bb-sl>*{margin-top:0!important;margin-bottom:0!important}
+.bb-slp{justify-content:flex-start}
+.bb-sl .bb-map{height:100%;display:flex;flex-direction:column}.bb-sl .bb-mm{flex:1;min-height:0;overflow:hidden}.bb-sl .bb-mm img{width:100%;height:100%;object-fit:cover;display:block}.bb-sl .bb-top{flex:1;min-height:0;overflow:hidden}.bb-sl .bb-best{height:100%;box-sizing:border-box}

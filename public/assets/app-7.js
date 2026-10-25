@@ -767,12 +767,14 @@
     const tl = tripLines(t.id);
     return `<div class="bb">
       ${rtCard(t)}
-      <button type="button" class="bb-story" onclick="CV.storyTrip('${t.id}')"><span class="bb-pl">▶</span><span><b>La story du voyage</b><small>${nph} photos · en musique · un chapitre par jour</small></span></button>
       <div class="bb-tro">${tr.slice(0, 4).map((x, i)=>`<div class="bb-t" style="--i:${i}"><i>${x.i}</i><b>${esc(x.t)}</b><small>${esc(x.d)}</small></div>`).join('')}</div>
-      ${tl.lines.length || tl.mk.length > 1 ? `<div class="bb-map"><div class="bb-mh"><b>🗺️ Tout le voyage</b><button type="button" onclick="CV.flyover('${t.id}')">🎥 Survol 3D</button></div><div class="bb-mm" data-bmap="${t.id}"><div class="v-sum-small">🗺️ Carte en cours…</div></div></div>` : ''}
-      ${top.length ? `<div class="bb-sec"><b>❤️ ${top.some(x=>x.n) ? 'Les plus aimées' : 'Quelques pépites'}</b></div><div class="bb-top">${top.map((x, i)=>`<button type="button" class="bb-ph${i === 0 ? ' big' : ''}" style="--i:${i}" onclick="CV.view('${x.s.id}',${(x.s.photos||[]).indexOf(x.p)})"><img data-ph="${esc(x.p)}.t" alt="">${x.n ? `<b>${x.n} ❤️</b>` : ''}</button>`).join('')}</div>` : ''}
+      <button type="button" class="bb-story" onclick="CV.storyTrip('${t.id}')"><span class="bb-pl">▶</span><span><b>La story du voyage</b><small>${nph} photos · en musique · un chapitre par jour</small></span></button>
+      <div class="bb-car" aria-label="${esc(MSGT('Souvenirs du voyage'))}">
+        ${bd ? `<div class="bb-sl"><div class="bb-best"><div class="bb-bi">${bph.slice(0, 3).map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><div class="bb-bt"><small>⭐ Le meilleur jour</small><b>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${esc(fdate(bd))}</b><span>${esc(dayInfo(bd).titre || [...new Set(bS.map(x=>String(x.lieu || '').split(',')[0].trim()).filter(Boolean))].join(' · '))}</span><button type="button" onclick="CV.storyOpen('${bd}')">▶ Revivre ce jour</button></div></div></div>` : ''}
+        ${top.length ? `<div class="bb-sl bb-slp"><div class="bb-sec"><b>❤️ ${top.some(x=>x.n) ? 'Les plus aimées' : 'Quelques pépites'}</b></div><div class="bb-top">${top.map((x, i)=>`<button type="button" class="bb-ph${i === 0 ? ' big' : ''}" style="--i:${i}" onclick="CV.view('${x.s.id}',${(x.s.photos||[]).indexOf(x.p)})"><img data-ph="${esc(x.p)}.t" alt="">${x.n ? `<b>${x.n} ❤️</b>` : ''}</button>`).join('')}</div></div>` : ''}
+        ${tl.lines.length || tl.mk.length > 1 ? `<div class="bb-sl"><div class="bb-map"><div class="bb-mh"><b>🗺️ Tout le voyage</b><button type="button" onclick="CV.flyover('${t.id}')">🎥 Survol 3D</button></div><div class="bb-mm" data-bmap="${t.id}"><div class="v-sum-small">🗺️ Carte en cours…</div></div></div></div>` : ''}
+      </div>
       <button type="button" class="bb-scr" onclick="CV.scrOpen()"><span>🗺️</span><span><b>${MSGT('Ma carte du monde à gratter')}</b><small>${MSGT('Gratte les pays que tu as visités')}</small></span><i>✨</i></button>
-      ${bd ? `<div class="bb-best"><div class="bb-bi">${bph.slice(0, 3).map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><div class="bb-bt"><small>⭐ Le meilleur jour</small><b>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${esc(fdate(bd))}</b><span>${esc(dayInfo(bd).titre || [...new Set(bS.map(x=>String(x.lieu || '').split(',')[0].trim()).filter(Boolean))].join(' · '))}</span><button type="button" onclick="CV.storyOpen('${bd}')">▶ Revivre ce jour</button></div></div>` : ''}
     </div>`;
   }
   async function bbMapHydrate(){
