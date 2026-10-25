@@ -150,13 +150,27 @@
     return `<div class="sh-card sh-tb ab-tab" data-t="ab"><div class="sh-k">📋 Mes voyages pour les abonnés</div>
       <div class="v-sum-small" style="margin-bottom:6px">${nOn} partagé${nOn>1?'s':''} sur ${ts.length}. Touche pour partager ou masquer un voyage, pour tous tes abonnés à la fois.</div>
       <button type="button" class="v-btn" style="margin:0 0 10px" onclick="CV.carnetPublishSheet()">📚 ${esc(MSGT('Choisir plusieurs voyages d’un coup'))}</button>
-      ${ts.map(t=>{ const on = !!FT()[t.id], solo = on && ac && grpCodeOf(t.id) !== ac, by = !on && t.pubBy && t.pubBy !== M.me && prof(t.pubBy) ? pname(t.pubBy) : '';
+      <button type="button" class="v-btn sec" style="margin:0 0 10px" onclick="CV.codesCopy()">📋 ${esc(MSGT('Copier tous mes codes'))}</button>
+      ${ts.map(t=>{ const on = !!FT()[t.id], solo = on && ac && grpCodeOf(t.id) !== ac, by = !on && t.pubBy && t.pubBy !== M.me && prof(t.pubBy) ? pname(t.pubBy) : '', tc = tripCodeOf(t.id), fc = on && FT()[t.id] !== ac ? FT()[t.id] : '';
+        const cl = (tc ? `<span class="ab-code" data-notr>🧳 ${esc(tc)}</span>` : '') + (fc ? `<span class="ab-code" data-notr>👀 ${esc(fc)}</span>` : '');
         if(by) return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}</small></span><span class="ab-sw ab-by">👀 <span>Publié par</span> <b data-notr>${esc(by)}</b></span></div>`;
-        return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}${solo ? ' · lien à part' : ''}</small></span>
+        return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}${solo ? ' · lien à part' : ''}</small>${cl ? `<small class="ab-codes">${cl}</small>` : ''}</span>
           ${on && !solo ? `<button type="button" class="ab-1" title="Lien pour ce voyage seulement" aria-label="Lien pour ce voyage seulement" onclick="CV.feedShareOne('${t.id}')">🔗</button>` : ''}
           ${on ? `<button type="button" class="ab-1" title="${esc(MSGT('Cacher à quelqu’un'))}" aria-label="${esc(MSGT('Cacher à quelqu’un'))}" onclick="CV.preHideSheet('${t.id}')">🙈${((M.preHide || {})[t.id] || []).length ? '<sup>' + M.preHide[t.id].length + '</sup>' : ''}</button>` : ''}
           <button type="button" class="ab-sw${on ? ' on' : ''}" onclick="CV.carnetToggle('${t.id}')">${on ? '👀 Partagé' : '🔒 Masqué'}</button></div>`; }).join('')}
       <div class="v-sum-small" style="margin-top:6px">🔗 = un lien pour ce voyage seulement · 🙈 = cacher ce voyage à quelqu’un (même pas encore abonné) · 👁️ à côté d’un abonné = choisir ce qu’il voit</div></div>`;
+  }
+  // 🔑 code propre d’un voyage partagé avec des compagnons (sinon il vit dans le carnet principal)
+  const tripCodeOf = tid => { const c = TS()[tid]; return c && spaceObj(c) && c !== M.sync.code ? c : ''; };
+  // 📋 tous mes codes, « Nom : CODE » par ligne (à coller dans le tableau de bord pour reconnaître les dossiers)
+  async function codesCopy(){
+    const L = [], seen = new Set(), add = (n, c)=>{ if(c && !seen.has(c)){ seen.add(c); L.push(n + ' : ' + c); } };
+    if(M.sync.on && M.sync.code) add(MSGT('Mon carnet'), M.sync.code);
+    if(M.feedAll && spaceObj(M.feedAll)) add(MSGT('Abonnés'), M.feedAll);
+    myTrips().sort((a,b)=>(b.debut||'').localeCompare(a.debut||'')).forEach(t=>{ const n = (t.titre || '?') + (t.debut ? ' ' + t.debut.slice(0, 4) : '');
+      add(n, tripCodeOf(t.id)); if(FT()[t.id]) add(n + ' (' + MSGT('abonnés') + ')', FT()[t.id]); });
+    const txt = L.join('\n'); if(!txt){ toast(MSGT('Aucun code')); return; }
+    try { await navigator.clipboard.writeText(txt); toast('📋 ' + RF('{0} codes copiés', L.length)); } catch(e){ await uiPrompt(MSGT('Copie ce texte :'), txt); }
   }
   // partager ↔ masquer un voyage pour TOUS les abonnés (il entre dans le carnet ou en sort)
   function evToggle(o){ M.evOpen = !!o; persist(); }
@@ -1215,7 +1229,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-25a'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-25b'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1673,7 +1687,7 @@
     planDay, plCfg, plAdd, plDel, plOpt, wizard, radarTuto, rcOpen, rbSheet, rbPhoto, rbSave, zipSavePart, zipCancel, innerGo, inspDeal, inspOpen, compN, compDel, compAdd, compTog, compCreate, inspBack, inspMore, inspFav, inspSurprise, inspVote, gateInstall, partsSheet, partsSave, discInfo, discBack, newTrip, blankTrip, psImport, psFile, inspire, inspireDemo, inspireGo, inspireCreate, zipSheet, zipExport, zipImport, worldFly, worldStep, worldStory, cfSegGo, trkToggle, modeGo, bilanClose, albumSheet, albCover, albumGo, tripShare, tripShareSheet, tripInvite, tripNewCode, tripUnshare, tripJoin, tripJoinGo, tripWho, tripWhoSet, impSheet, impPick, jrSheet, jrTog, jrAll, worldMap, worldMode, worldOpen, worldClose, pjAdd, pjDel, pjOpen, cfSheet, cfGo, tlCo2, hereNow, tlStats, tlKml, tlFill, tlFillGo, rcView, rcAttach, tlIcsGo, capSet, shopSheet, shopAdd, shopTick, shopClear, rembAsk, pollNew, pollSave, pollVote, pollClose, pollDel, pdfRoute, pdfJournal, pdfShare, pdfOpen, pkgPick, pkgApply, hydrateMaps, renderOutils, tlDay, tlIcs, fxTool, fxFill, tlMeteo, tlReceipt, tlRcPhoto, tlRcOcr, tlRcSave, rcFx, socialHub, trkPub, tlReceipts, tlMap, tlBags, tlBagsGo, tlDocs, tlDocEdit, tlDocSave, tlDocDel, tlJournal, pkgSheet, pkgExport, pkgImport, pinToggle, shareSheet, shareLink, askErase, tutoSheet, escaleTuto, demoLoad, demoDel, demoReset, wzGo, wzDates, wzEt, wzSum, wzTpl, wzCreate,
     pickColor, newProfile, editProfile, saveProfile, delProfile, whoSheet, setMe,
     bellSheet, bellGo, bellClear, rateGo, packFrom, packCc, inviteSheet, inviteSend, inviteCopy, carnetShareSheet, carnetPublishSheet, carnetPublish, joinPick, joinPickSave, withWhom, withWhomUpd, withWhomGo, joinAny, joinPaste, joinAnyGo, dupSheet, dupTripsGo, photoSweep, spaceSheet, spaceFree, bagEntryUpd, impPickShot, impPickPass, impPass,
-    genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin, obFollow,
+    genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin, obFollow, codesCopy,
     _R:()=>R, _M:()=>M, ...VZAPI, ...RECAPI, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
   // En mode lecture, toutes les actions qui modifient sont bloquées
   const MUT = ['seedUSA2025','convert2026','saveSouv','delSouv','souvAddPhotos','souvDelPhoto','rembAdd','rembDel',
