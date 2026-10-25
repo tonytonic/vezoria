@@ -1835,7 +1835,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   // 📍 voyage en cours / 🏁 voyage fini : la barre du bas montre ce qui sert à ce moment-là (la préparation ne change pas)
   const NAV_PH = {
     live:[['i:live:live','📍','Aujourd’hui'], ['i:live:souv','📸','Souvenirs'], ['i:live:budget','💶','Dépenses'], ['a:plan','🗺️','Itinéraire']],   // l’argent reste en 3e position, comme « Budget » en préparation
-    past:[['i:bilan:bilan','🏁','Bilan'], ['i:bilan:souv','📸','Souvenirs'], ['a:film','🎬','Le film']]};   // 🌍 Carte 3D : déjà dans le bilan
+    past:[['i:bilan:bilan','🏁','Bilan'], ['i:bilan:souv','📸','Souvenirs']]};   // 🌍 Carte 3D et 🎬 film : déjà dans le bilan
   function navPhase(){ const t = M.trip !== LEGACY && trip(); if(!t) return ''; const ph = tripPhase(t);
     if(ph === 'live' && !hidden('mode:live')) return 'live'; if(ph === 'past' && !hidden('mode:bilan')) return 'past'; return ''; }
   const DEST_HIDE = k => (k==='live'||k==='past'||k==='bilan') ? 'mode:' + k : ['souv','notes','outils','envies','check','ech'].includes(k) ? 'tab:' + k : '';
