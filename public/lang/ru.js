@@ -5358,4 +5358,6 @@ I18N.load({
 "mêmes dates de voyage":"те же даты поездки",
 "{0} trajet(s) remis dans l’ordre des étapes":"{0} переезд(ов) расставлено по порядку этапов",
 "Les trajets sont déjà dans l’ordre":"Переезды уже по порядку",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} переезд(ов) не по порядку этапов: исправить"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} переезд(ов) не по порядку этапов: исправить",
+"{0} chiffrées sur {1} · {2} au total.":"С ценой: {0} из {1} · всего {2}.",
+"estimé":"оценка"});

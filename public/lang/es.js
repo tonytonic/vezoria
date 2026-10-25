@@ -2419,4 +2419,6 @@ I18N.load({
 "mêmes dates de voyage":"mismas fechas de viaje",
 "{0} trajet(s) remis dans l’ordre des étapes":"{0} trayecto(s) reordenado(s) según las etapas",
 "Les trajets sont déjà dans l’ordre":"Los trayectos ya están en orden",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} trayecto(s) fuera del orden de las etapas: reordenar"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} trayecto(s) fuera del orden de las etapas: reordenar",
+"{0} chiffrées sur {1} · {2} au total.":"{0} de {1} con precio · {2} en total.",
+"estimé":"estimado"});

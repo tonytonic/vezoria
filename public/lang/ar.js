@@ -5358,4 +5358,6 @@ I18N.load({
 "mêmes dates de voyage":"نفس تواريخ الرحلة",
 "{0} trajet(s) remis dans l’ordre des étapes":"تمت إعادة {0} تنقّل إلى ترتيب المحطات",
 "Les trajets sont déjà dans l’ordre":"التنقلات مرتبة بالفعل",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} تنقّل خارج ترتيب المحطات: إصلاح"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} تنقّل خارج ترتيب المحطات: إصلاح",
+"{0} chiffrées sur {1} · {2} au total.":"{0} من {1} بسعر · المجموع {2}.",
+"estimé":"تقديري"});

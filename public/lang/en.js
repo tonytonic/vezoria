@@ -2403,4 +2403,6 @@ I18N.load({
 "mêmes dates de voyage":"same trip dates",
 "{0} trajet(s) remis dans l’ordre des étapes":"{0} journey(s) put back in stop order",
 "Les trajets sont déjà dans l’ordre":"Journeys are already in order",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} journey(s) out of stop order: fix them"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} journey(s) out of stop order: fix them",
+"{0} chiffrées sur {1} · {2} au total.":"{0} of {1} priced · {2} in total.",
+"estimé":"estimated"});

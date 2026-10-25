@@ -2409,4 +2409,6 @@ I18N.load({
 "mêmes dates de voyage":"zelfde reisdata",
 "{0} trajet(s) remis dans l’ordre des étapes":"{0} reis(en) in de volgorde van de etappes gezet",
 "Les trajets sont déjà dans l’ordre":"De reizen staan al in volgorde",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} reis(en) niet in etappevolgorde: herstellen"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} reis(en) niet in etappevolgorde: herstellen",
+"{0} chiffrées sur {1} · {2} au total.":"{0} van {1} met prijs · {2} in totaal.",
+"estimé":"geschat"});

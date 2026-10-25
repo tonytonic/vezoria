@@ -5357,4 +5357,6 @@ I18N.load({
 "mêmes dates de voyage":"旅行日程はそのまま",
 "{0} trajet(s) remis dans l’ordre des étapes":"{0} 件の移動を滞在地の順に戻しました",
 "Les trajets sont déjà dans l’ordre":"移動はすでに順番どおりです",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} 件の移動が滞在地の順とずれています：直す"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} 件の移動が滞在地の順とずれています：直す",
+"{0} chiffrées sur {1} · {2} au total.":"{1} 件中 {0} 件に金額あり · 合計 {2}。",
+"estimé":"見積もり"});

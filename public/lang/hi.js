@@ -5357,4 +5357,6 @@ I18N.load({
 "mêmes dates de voyage":"यात्रा की वही तारीख़ें",
 "{0} trajet(s) remis dans l’ordre des étapes":"{0} सफ़र पड़ावों के क्रम में लगाए गए",
 "Les trajets sont déjà dans l’ordre":"सफ़र पहले से क्रम में हैं",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} सफ़र पड़ावों के क्रम में नहीं: ठीक करो"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} सफ़र पड़ावों के क्रम में नहीं: ठीक करो",
+"{0} chiffrées sur {1} · {2} au total.":"{1} में से {0} की क़ीमत तय · कुल {2}।",
+"estimé":"अनुमानित"});

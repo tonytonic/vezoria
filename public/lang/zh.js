@@ -5357,4 +5357,6 @@ I18N.load({
 "mêmes dates de voyage":"旅行日期不变",
 "{0} trajet(s) remis dans l’ordre des étapes":"已按站点顺序调整 {0} 段交通",
 "Les trajets sont déjà dans l’ordre":"交通已按顺序排列",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} 段交通与站点顺序不符：一键调整"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} 段交通与站点顺序不符：一键调整",
+"{0} chiffrées sur {1} · {2} au total.":"{1} 项中已标价 {0} 项 · 共 {2}。",
+"estimé":"预估"});

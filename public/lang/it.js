@@ -2418,4 +2418,6 @@ I18N.load({
 "mêmes dates de voyage":"stesse date di viaggio",
 "{0} trajet(s) remis dans l’ordre des étapes":"{0} spostamento/i rimesso/i nell’ordine delle tappe",
 "Les trajets sont déjà dans l’ordre":"Gli spostamenti sono già in ordine",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} spostamento/i fuori ordine rispetto alle tappe: sistemare"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} spostamento/i fuori ordine rispetto alle tappe: sistemare",
+"{0} chiffrées sur {1} · {2} au total.":"{0} su {1} con prezzo · {2} in totale.",
+"estimé":"stimato"});

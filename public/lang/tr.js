@@ -5345,4 +5345,6 @@ I18N.load({
 "mêmes dates de voyage":"aynı seyahat tarihleri",
 "{0} trajet(s) remis dans l’ordre des étapes":"{0} yolculuk durak sırasına göre düzenlendi",
 "Les trajets sont déjà dans l’ordre":"Yolculuklar zaten sırada",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} yolculuk durak sırasında değil: düzelt"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} yolculuk durak sırasında değil: düzelt",
+"{0} chiffrées sur {1} · {2} au total.":"{1} kartın {0} tanesi fiyatlı · toplam {2}.",
+"estimé":"tahmini"});

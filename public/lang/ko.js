@@ -5357,4 +5357,6 @@ I18N.load({
 "mêmes dates de voyage":"여행 날짜 그대로",
 "{0} trajet(s) remis dans l’ordre des étapes":"이동 {0}개를 일정 순서로 정리했어요",
 "Les trajets sont déjà dans l’ordre":"이동이 이미 순서대로예요",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"이동 {0}개가 일정 순서와 달라요: 정리하기"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"이동 {0}개가 일정 순서와 달라요: 정리하기",
+"{0} chiffrées sur {1} · {2} au total.":"{1}개 중 {0}개 가격 입력 · 합계 {2}.",
+"estimé":"예상"});

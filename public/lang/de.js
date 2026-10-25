@@ -2413,4 +2413,6 @@ I18N.load({
 "mêmes dates de voyage":"gleiche Reisedaten",
 "{0} trajet(s) remis dans l’ordre des étapes":"{0} Fahrt(en) in Etappenreihenfolge gebracht",
 "Les trajets sont déjà dans l’ordre":"Die Fahrten sind schon in der richtigen Reihenfolge",
-"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} Fahrt(en) nicht in Etappenreihenfolge: korrigieren"});
+"{0} trajet(s) pas dans l’ordre des étapes : les remettre":"{0} Fahrt(en) nicht in Etappenreihenfolge: korrigieren",
+"{0} chiffrées sur {1} · {2} au total.":"{0} von {1} mit Preis · insgesamt {2}.",
+"estimé":"geschätzt"});
