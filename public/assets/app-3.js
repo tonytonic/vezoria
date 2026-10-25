@@ -16,7 +16,7 @@
     if(wz.step===1){ wz.titre = g('wz-titre'); wz.voyageurs = peopleVal('wz-tv'); wz.objectif = g('wz-obj'); }
     if(wz.step===2){ wz.debut = g('wz-debut'); wz.nuits = Math.max(1, parseInt(g('wz-nuits'))||1); }
     if(wz.step===3) wz.etapes = [...document.querySelectorAll('.wz-et')].map((r, i)=>{ const o = wz.etapes[i] || {}, ville = r.querySelector('[data-k=ville]').value.trim(), mode = r.querySelector('[data-k=mode]').value;
-      return {ville, nuits:Math.max(0, parseInt(r.querySelector('[data-k=nuits]').value)||0), mode, mm: !!o.mm || (o.ville === ville && o.mode && mode !== o.mode)}; });
+      return {ville, nuits:Math.max(0, parseInt(r.querySelector('[data-k=nuits]').value)||0), mode, mm: !!o.mm || (o.ville === ville && o.mode && mode !== o.mode), ...(o.nw ? {nw:1} : {})}; });
     if(wz.step===4){ const gg = {}; document.querySelectorAll('[data-wdep]').forEach(i=>{ const pid = i.dataset.wdep, q = a => document.querySelector(`[${a}="${pid}"]`);
       gg[pid] = {dep:i.value.trim(), ret:q('data-wret').value.trim(), mDep:q('data-wmdep').value, mRet:q('data-wmret').value}; }); wz.gens = gg; }
     if(wz.step===5){ const sgc = document.getElementById('wz-sg'); if(sgc) wz.sugg = sgc.checked; wz.tpl = g('wz-tpl'); const cc = document.getElementById('wz-cc'), cd = document.getElementById('wz-cd'); wz.copyCheck = cc ? cc.checked : true; wz.copyDivers = cd ? cd.checked : false; }
@@ -42,9 +42,9 @@
   }
   function wzEt(action, i){
     wzRead();
-    if(action==='add') wz.etapes.push({ville:'', nuits:Math.max(0, wz.nuits - wz.etapes.reduce((s,e)=>s+e.nuits,0)), mode:'Train'});
+    if(action==='add') wz.etapes.push({ville:'', nuits:Math.max(0, wz.nuits - wz.etapes.reduce((s,e)=>s+e.nuits,0)), mode:'Train', nw:1});   // nw : placée sur le chemin dès qu’elle est située
     if(action==='del') wz.etapes.splice(i,1);
-    if(action==='up' && i > 0) [wz.etapes[i-1], wz.etapes[i]] = [wz.etapes[i], wz.etapes[i-1]];
+    if(action==='up' && i > 0){ [wz.etapes[i-1], wz.etapes[i]] = [wz.etapes[i], wz.etapes[i-1]]; delete wz.etapes[i-1].nw; delete wz.etapes[i].nw; }
     if(action==='even') wzNights();
     if(!wz.etapes.length) wz.etapes.push({ville:'', nuits:wz.nuits, mode:'Avion'});
     wzRender();
@@ -66,6 +66,19 @@
     for(const e of L){ i++; const b = box(); if(b) b.innerHTML = `<div class="ar-run wz-run">📍 ${MSGT('Je situe les villes…')} <small class="sg-pr">${esc(e.ville)} · ${i}/${L.length}</small></div>`;
       const o = await cityInfo(e.ville); if(!wz) return; wz.geo[normQ(e.ville)] = o || {miss:1}; }
     const b = box(); if(b) b.innerHTML = ''; return true;
+  }
+  // 🧭 une ville ajoutée avec « ＋ Étape » va là où elle allonge le moins le trajet (Bologne entre Milan et Venise) ; les autres gardent leur ordre
+  function wzPlace(){
+    const E = wz.etapes; let moved = '';
+    E.filter(e=>e.nw && e.ville && wzPt(e)).forEach(e=>{ delete e.nw;
+      const O = E.filter(x=>x !== e), K = O.map((x, i)=>[i, wzPt(x)]).filter(x=>x[1]); if(K.length < 2) return;
+      const p = wzPt(e); let best = O.length, bc = Infinity;
+      for(let j = 0; j <= K.length; j++){ const a = K[j - 1], b = K[j], c = (a ? rawKm(a[1], p) : 0) + (b ? rawKm(p, b[1]) : 0) - (a && b ? rawKm(a[1], b[1]) : 0);
+        if(c < bc - 1){ bc = c; best = b ? b[0] : O.length; } }
+      if(best === O.length && E.indexOf(e) === E.length - 1) return;
+      O.splice(best, 0, e); wz.etapes = O; moved = e.ville + ' : ' + (best === 0 ? RF('avant {0}', O[1].ville) : best === O.length - 1 ? RF('après {0}, à la fin', O[best - 1].ville) : RF('entre {0} et {1}', O[best - 1].ville, O[best + 1].ville)); });
+    if(moved) toast('🧭 ' + moved);
+    return !!moved;
   }
   const wzPt = e => { const g = wz && wz.geo && wz.geo[normQ(e.ville || '')]; return g && !g.miss ? g : null; };
   function wzModes(){   // le moyen de transport selon la distance (sauf si tu l’as choisi toi-même)
@@ -92,13 +105,13 @@
     toast('🧭 ' + MSGT('Itinéraire ordonné') + (before - best > 20 ? ' · −' + Math.round(before - best).toLocaleString() + ' km' : ''));
   }
   async function wzCheck(){   // après un changement de villes : on situe, on choisit les transports, on affiche la saison de chaque pays
-    if(!wz || wz.step !== 3 || wz.chk) return; wz.chk = 1;
-    try { await wzLocate(); if(!wz) return; wzModes();
+    if(!wz || wz.step !== 3 || wz.chk) return; wz.chk = 1; let mv = false;
+    try { await wzLocate(); if(!wz) return; mv = wzPlace(); wzModes();
       const mo = wz.debut ? +wz.debut.slice(5, 7) : 0, seen = {}, out = [];
       for(const e of wz.etapes){ const p = wzPt(e); if(!p || !p.cc || seen[p.cc]) continue; seen[p.cc] = 1;
         const se = await ctrySeason(p.cc, e.ville).catch(()=>null); if(se) out.push({cc:p.cc, se}); if(out.length >= 10) break; }
       wz.seas = out;
-    } finally { if(wz){ wz.chk = 0; if(wz.step === 3) wzSoft(); } }
+    } finally { if(wz){ wz.chk = 0; if(wz.step === 3){ if(mv) wzRender(); else wzSoft(); } } }
   }
   function wzInfo(){
     const se = (wz.seas || []).length > 1 ? `<div class="wz-seas">${wz.seas.map(x=>`<div class="wz-sl"><b>${flag(x.cc)} ${esc(frCountry(x.cc))}</b>${seasonLine(x.se, wz.debut ? +wz.debut.slice(5, 7) : 0)}</div>`).join('')}</div>` : '';
