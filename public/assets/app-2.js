@@ -517,7 +517,7 @@
   }
 
   /* ══════════ Jours ══════════ */
-  const openD = {};
+  const openD = {}; let DAY_NOCITY = false;   // dans une carte d’étape, la ville est déjà en titre : pas de « Sibiu, Sibiu… »
   const dayId = d => 'day:' + M.trip + ':' + d;
   function dayInfo(d){ const r = R[dayId(d)]; return r && !r.deleted ? r : {titre:'', plan:''}; }
   function dayList(){
@@ -663,9 +663,15 @@
     // (encart Escale retiré du programme : accès par le bouton 🛫 Escale de l'en-tête)
     if(!ds.length) h += '<div class="v-empty">Aucun jour pour l’instant.<br><button type="button" class="v-btn" style="margin-top:10px" onclick="CV.datesSheet()">📅 Fixer les dates du voyage</button></div>';
     const canDays = ds.length && tt && !tt.archived && !M.lock;
-    if(ds.length > 1) h += `<div class="cv-dayall"><button type="button" onclick="CV.dayAll(${M.dayAll ? 0 : 1})">${M.dayAll ? '▴ ' + MSGT('Replier les jours') : '▾ ' + MSGT('Déplier tous les jours')}</button></div>`;
-    if(canDays) h += `<button type="button" class="cv-addday" onclick="CV.dayAdd('before')">＋ Ajouter un jour avant le J1</button>`;
-    h += ds.map((d,idx)=>{
+    h += progViewBar(ds);
+    if(ds.length > 1 && !progStOn(ds)) h += `<div class="cv-dayall"><button type="button" onclick="CV.dayAll(${M.dayAll ? 0 : 1})">${M.dayAll ? '▴ ' + MSGT('Replier les jours') : '▾ ' + MSGT('Déplier tous les jours')}</button></div>`;
+    if(canDays && !progStOn(ds)) h += `<button type="button" class="cv-addday" onclick="CV.dayAdd('before')">＋ Ajouter un jour avant le J1</button>`;
+    const stV = progStages(ds);
+    if(stV) h += stV; else h += ds.map((d, idx)=>dayHTML(d, idx)).join('');
+    if(canDays && !progStOn(ds)) h += `<button type="button" class="cv-addday" onclick="CV.dayAdd('after')">＋ Ajouter un jour à la fin</button>`;
+    document.getElementById('cv-body').innerHTML = h;
+  }
+  function dayHTML(d, idx){
       const info = dayInfo(d);
       const {own, night} = itemsForDay(d);
       const all = [...own, ...night];
@@ -681,7 +687,7 @@
       return `<div class="v-day" id="d-${d}">
         <div class="v-day-h" onclick="CV.toggleDay('${d}')">
           <span class="v-day-d">${PJ(idx+1)} · ${fdate(d)}${dayHol(d) ? ' · 🎌' : ''}</span>
-          <span class="v-day-t">${esc(info.titre || dayFallback(info, own, night)) || '—'}</span>${open ? '' : `<em class="v-day-chev" aria-hidden="true">▾</em>`}
+          <span class="v-day-t">${esc(info.titre || dayFallback(info, own, DAY_NOCITY ? [] : night)) || (DAY_NOCITY ? MSGT('Journée libre') : '—')}</span>${open ? '' : `<em class="v-day-chev" aria-hidden="true">▾</em>`}
           <span class="v-day-dots">${dn.length?'<span class="cv-nbadge">📌'+dn.length+'</span>':''}${all.map(i=>`<i class="${i.statut}"></i>`).join('')}</span>
         </div>
         ${open ? `<div class="v-day-b">
@@ -694,9 +700,6 @@
           ${info.updatedBy ? byline(info) : ''}
         </div>` : ''}
       </div>`;
-    }).join('');
-    if(canDays) h += `<button type="button" class="cv-addday" onclick="CV.dayAdd('after')">＋ Ajouter un jour à la fin</button>`;
-    document.getElementById('cv-body').innerHTML = h;
   }
   // 🧹 les jours sont repliés sur une ligne ; on en ouvre un à la fois (aujourd’hui ouvert pendant le voyage). « Déplier tous les jours » au besoin.
   function dayOpenDef(d){ if(M.dayAll) return true; const t = trip(); return !!(t && tripPhase(t) === 'live' && d === isoToday()); }

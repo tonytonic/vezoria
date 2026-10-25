@@ -1774,3 +1774,135 @@
     closeSheet(true); await syncOn(v);
     if(M.sync.on && M.sync.code){ M.cloud = 'all'; persist(); refresh(); }
   }
+
+  /* ══════════ 🧳 Programme par étapes : une carte par ville, les trajets entre deux, et « Réorganiser » (glisser + nuits) ══════════ */
+  const STO = {};   // étape ouverte, par voyage
+  function progStOn(ds){ const t = trip(); return !!(t && M.progV !== 'jours' && (ds || dayList()).length > 1 && tlStages().length >= 1); }
+  function progV(v){ M.progV = v; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  function progViewBar(ds){
+    const t = trip(); if(!t || !tlStages().length || (ds || []).length < 2) return ''; const on = progStOn(ds);
+    return `<div class="etp-vbar" role="tablist"><button type="button" role="tab" aria-selected="${on}" class="${on ? 'on' : ''}" onclick="CV.progV('etapes')">🧳 ${MSGT('Étapes')}</button><button type="button" role="tab" aria-selected="${!on}" class="${on ? '' : 'on'}" onclick="CV.progV('jours')">📅 ${MSGT('Jours')}</button><button type="button" onclick="CV.tlMap()">🗺️ ${MSGT('Carte')}</button></div>`;
+  }
+  function stRanges(){ const st = tlStages(); return st.map((x, i)=>({city:x.city, h:x.h, debut:x.debut, fin:x.fin, end:st[i + 1] ? st[i + 1].debut : x.fin})); }
+  function stChipTxt(d){
+    const info = dayInfo(d); if(info.titre) return info.titre; const p = String(info.plan || '').split('\n')[0].trim(); if(p) return p.slice(0, 40);
+    const {own} = itemsForDay(d), a = own.find(i=>i.cat !== 'hotel' && i.cat !== 'divers'); if(a) return a.titre || '';
+    const pl = placesOf(d)[0]; return pl ? pl.nom || '' : '';
+  }
+  function progStages(ds){
+    if(!progStOn(ds)) return ''; const t = trip(), S = stRanges(), live = tripPhase(t) === 'live', td = isoToday();
+    const canE = !t.archived && !M.lock, idxOf = d => ds.indexOf(d) + 1;
+    let op = STO[t.id]; if(op === undefined && live){ const c = S.find(x=>td >= x.debut && td < x.end); op = c ? c.h.id : ''; }
+    const inSt = d => S.some(x=>d >= x.debut && d < x.end);
+    const loose = L => L.map(d=>dayHTML(d, ds.indexOf(d))).join('');
+    let h = loose(ds.filter(d=>d < S[0].debut));
+    S.forEach((x, i)=>{
+      const days = ds.filter(d=>d >= x.debut && d < x.end), n = nights(x.debut, x.end), open = op === x.h.id;
+      const hs = items(it=>it.cat === 'hotel' && it.date && it.date >= x.debut && it.date < x.end), bk = hs.length && hs.every(okB);
+      const hl = bk ? (hs.map(it=>it.nom).filter(Boolean).join(' · ') || MSGT('Hébergement réservé')) : MSGT('Hébergement à réserver');
+      let chips = ''; if(!open){
+        const C = []; let free = [];
+        const flush = () => { if(!free.length) return; C.push(`<span class="etp-chip free">${free.length === days.length && days.length > 1 ? RF('{0} jours libres', free.length) : free.length > 1 ? `${PJ(idxOf(free[0]))}–${idxOf(free[free.length - 1])} ${MSGT('libres')}` : `${PJ(idxOf(free[0]))} ${MSGT('libre')}`}</span>`); free = []; };
+        days.forEach(d=>{ const c = stChipTxt(d); if(c){ flush(); C.push(`<span class="etp-chip">${PJ(idxOf(d))} <span data-notr>${esc(c)}</span></span>`); } else free.push(d); }); flush();
+        const nFree = days.filter(d=>!stChipTxt(d)).length;
+        chips = `<div class="etp-chips">${C.slice(0, 5).join('')}${C.length > 5 ? `<span class="etp-chip free">+${C.length - 5}</span>` : ''}${canE && n >= 5 && nFree >= 4 ? `<button type="button" class="etp-chip tip" onclick="event.stopPropagation();CV.ariCity()">💡 ${MSGT('C’est long : ajouter une ville ?')}</button>` : ''}</div>`;
+      }
+      h += `<div class="etp-card${open ? ' open' : ''}" id="etp-${x.h.id}">
+        <button type="button" class="etp-h" onclick="CV.stTog('${x.h.id}')" aria-expanded="${open}"><span class="etp-c" data-notr>${esc(x.city)}</span><span class="etp-n">${n} ${MSGT(n > 1 ? 'nuits' : 'nuit')}</span>
+          <span class="etp-d">${fshort(x.debut)} → ${fshort(x.end)} · <i class="etp-dot${bk ? ' ok' : ''}"></i><span data-notr>${esc(hl)}</span></span><em aria-hidden="true">${open ? '▴' : '▾'}</em></button>
+        ${open ? `<div class="etp-b">${hs.map(it=>`<button type="button" class="etp-hotel" onclick="CV.edit('${it.id}')"><i>🛏️</i><span><b data-notr>${esc(it.nom || cityOf(it.titre) || it.titre)}</b><small>${okB(it) ? MSGT('Réservé') : MSGT('À réserver')} · ${fshort(it.date)} → ${fshort(it.dateFin || it.date)}</small></span><em>›</em></button>`).join('')}${(()=>{ DAY_NOCITY = true; try { return loose(days); } finally { DAY_NOCITY = false; } })()}</div>` : chips}</div>`;
+      const nx = S[i + 1]; if(nx){
+        const tr = items(it=>it.cat === 'transport' && it.date && it.date >= x.fin && it.date <= nx.debut).sort((a, b)=>(a.date + (a.heureDep || '')).localeCompare(b.date + (b.heureDep || '')));
+        h += `<div class="etp-link">${tr.length ? tr.map(it=>`<button type="button" onclick="CV.edit('${it.id}')">${icon(it)} <span data-notr>${esc(it.from && it.to ? cityOf(it.from) + ' → ' + cityOf(it.to) : it.titre)}</span> · ${fshort(it.date)}${it.heureDep ? ' ' + esc(it.heureDep) : ''}<b class="${okB(it) ? 'ok' : ''}">${MSGT(okB(it) ? 'réservé' : 'à réserver')}</b></button>`).join('')
+          : `<span>↓ <span data-notr>${esc(x.city)} → ${esc(nx.city)}</span> · ${fshort(nx.debut)}</span>`}</div>`;
+      }
+    });
+    h += loose(ds.filter(d=>!inSt(d) && d >= S[0].debut));
+    if(canE) h += `<div class="etp-foot">${S.length > 1 ? `<button type="button" class="etp-reorg" onclick="CV.soOpen()">⇅ ${MSGT('Réorganiser les étapes')}</button>` : ''}<button type="button" class="etp-add" onclick="CV.ariCity()">＋ ${MSGT('Ajouter une ville')}</button></div>`;
+    return h;
+  }
+  function stTog(id){ const t = trip(); if(!t) return; STO[t.id] = STO[t.id] === id ? '' : id; renderProg();
+    setTimeout(()=>{ const e = document.getElementById('etp-' + id); if(e){ const r = e.getBoundingClientRect(); if(r.top < 70 || r.top > innerHeight * .6) window.scrollTo({top: window.scrollY + r.top - 80, behavior:'smooth'}); } }, 30); }
+
+  /* ⇅ Réorganiser : on glisse les villes, on change les nuits ; à l’enregistrement, tout suit (hôtels, trajets, visites, journées, notes) */
+  let SO = null;
+  function soOpen(){
+    const t = trip(); if(!t || t.archived || M.lock) return; const S = stRanges(); if(!S.length) return;
+    SO = {tid:t.id, start:S[0].debut, oldEnd:S[S.length - 1].end, L:S.map((x, i)=>{ const span = Math.max(1, nights(x.debut, x.end));
+      const hs = items(it=>it.cat === 'hotel' && it.date && it.date >= x.debut && it.date < x.end).sort((a, b)=>a.date.localeCompare(b.date));
+      return {k:i, city:x.city, d0:x.debut, e0:x.end, span0:span, span, g:Math.max(0, span - nights(x.debut, x.fin)), hids:hs.map(h=>h.id), bk:hs.some(okB)}; })};
+    soDraw();
+  }
+  function soPlan(){ let c = SO.start; return SO.L.map(x=>{ const d = c; c = addD(c, x.span); return {x, d, e:c}; }); }
+  function soDraw(){
+    if(!SO) return; const P = soPlan(), tot0 = SO.L.reduce((a, x)=>a + x.span0, 0), tot = SO.L.reduce((a, x)=>a + x.span, 0), moved = SO.L.some((x, i)=>x.k !== i);
+    const warn = P.filter(p=>p.x.bk && (p.d !== p.x.d0 || p.x.span !== p.x.span0)).map(p=>p.x.city);
+    const html = `<h2>⇅ ${esc(MSGT('Réorganiser les étapes'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Glisse une ville par ⋮⋮ pour changer l’ordre. Les dates, les trajets et les jours suivent tout seuls.'))}</div>
+      <div class="so-list" id="so-list">${P.map((p, i)=>`<div class="so-row" data-i="${i}"><span class="so-hd" aria-label="${esc(MSGT('Déplacer'))}" data-i="${i}">⋮⋮</span>
+        <span class="so-c"><b data-notr>${esc(p.x.city)}</b><small>${fshort(p.d)} → ${fshort(p.e)}${p.d !== p.x.d0 ? ' ·' + ' <i>' + esc(MSGT('nouvelles dates')) + '</i>' : ''}</small></span>
+        <span class="so-ud"><button type="button" aria-label="${esc(MSGT('Monter'))}" onclick="CV.soMove(${i},-1)"${i ? '' : ' disabled'}>▲</button><button type="button" aria-label="${esc(MSGT('Descendre'))}" onclick="CV.soMove(${i},1)"${i < P.length - 1 ? '' : ' disabled'}>▼</button></span>
+        <span class="so-st"><button type="button" aria-label="${esc(MSGT('Une nuit de moins'))}" onclick="CV.soN(${i},-1)"${p.x.span > 1 ? '' : ' disabled'}>−</button><b>${p.x.span}&nbsp;${esc(MSGT(p.x.span > 1 ? 'nuits' : 'nuit'))}</b><button type="button" aria-label="${esc(MSGT('Une nuit de plus'))}" onclick="CV.soN(${i},1)">＋</button></span></div>`).join('')}</div>
+      <div class="so-note${tot !== tot0 ? ' ch' : ''}">${tot === tot0 ? esc(RF('Total : {0} nuits, comme avant.', tot)) : esc(RF('Total : {0} nuits ({1}). Le retour passe au {2}.', tot, (tot > tot0 ? '+' : '') + (tot - tot0), fdate(addD(SO.oldEnd, tot - tot0))))}</div>
+      ${moved ? `<div class="so-warn">🚆 ${esc(MSGT('L’ordre change : vérifie ensuite les trajets entre les villes.'))}</div>` : ''}
+      ${warn.length ? `<div class="so-warn">🛏️ ${esc(RF('Déjà réservé à {0} : pense à modifier ta réservation.', warn.join(', ')))}</div>` : ''}
+      <button type="button" class="so-auto" onclick="CV.soAuto()" id="so-auto"${SO.L.length > 2 ? '' : ' disabled'}>🧭 ${esc(MSGT('Ordre le plus court automatiquement'))}</button>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.soSave()">✓ ${esc(MSGT('Enregistrer'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`;
+    openSheet(html); soDrag();
+  }
+  function soMove(i, d){ if(!SO) return; const j = i + d; if(j < 0 || j >= SO.L.length) return; const L = SO.L; [L[i], L[j]] = [L[j], L[i]]; soDraw(); }
+  function soN(i, d){ if(!SO) return; const x = SO.L[i]; x.span = Math.max(1, Math.min(90, x.span + d)); if(x.span - x.g < 1) x.span = x.g + 1; soDraw(); }
+  function soDrag(){
+    const box = document.getElementById('so-list'); if(!box) return;
+    box.querySelectorAll('.so-hd').forEach(hd=>{
+      hd.addEventListener('pointerdown', e=>{
+        e.preventDefault(); e.stopPropagation(); const row = hd.closest('.so-row'), rows = [...box.querySelectorAll('.so-row')], from = +hd.dataset.i;
+        const y0 = e.clientY, mids = rows.map(r=>{ const b = r.getBoundingClientRect(); return b.top + b.height / 2; }), hgt = row.getBoundingClientRect().height + 8; let to = from;
+        row.classList.add('drag'); try { hd.setPointerCapture(e.pointerId); } catch(x){}
+        const mv = ev=>{ const dy = ev.clientY - y0; row.style.transform = `translateY(${dy}px) rotate(-1deg)`; const y = mids[from] + dy;
+          to = mids.filter((m, k)=>k !== from && m < y).length; rows.forEach((r, k)=>{ if(k === from) return; const sh = from < to ? (k > from && k <= to ? -hgt : 0) : (k >= to && k < from ? hgt : 0); r.style.transform = sh ? `translateY(${sh}px)` : ''; }); };
+        const up = ()=>{ hd.removeEventListener('pointermove', mv); hd.removeEventListener('pointerup', up); hd.removeEventListener('pointercancel', up);
+          if(to !== from){ const [x] = SO.L.splice(from, 1); SO.L.splice(to, 0, x); } soDraw(); };
+        hd.addEventListener('pointermove', mv); hd.addEventListener('pointerup', up); hd.addEventListener('pointercancel', up);
+      });
+      hd.addEventListener('touchstart', e=>e.stopPropagation(), {passive:true});
+    });
+  }
+  // 🧭 l’ordre qui fait le moins de kilomètres (la première ville ne bouge pas : c’est souvent là qu’on arrive)
+  async function soAuto(){
+    if(!SO || SO.L.length < 3) return; const b = document.getElementById('so-auto'); if(b){ b.disabled = true; b.textContent = '🧭 …'; }
+    try {
+      const co = (M.ctry || {})[normQ(SO.L[0].city)], ctx = co && co.cc && typeof ccName === 'function' ? ccName(co.cc) : '';
+      const P = []; for(const x of SO.L){ const c = geoCached(x.city) || await geocode(x.city, ctx); if(!c){ toast('📍 ' + RF('{0} introuvable sur la carte', x.city)); soDraw(); return; } P.push(c); }
+      const n = P.length, D = P.map(a=>P.map(c=>km(a, c))), len = o => o.reduce((s, k, i)=>i ? s + D[o[i - 1]][k] : 0, 0);
+      let best = [...Array(n).keys()];
+      if(n <= 8){ const rest = best.slice(1), perm = (a, l = 0)=>{ if(l === a.length){ const o = [0, ...a]; if(len(o) < len(best) - .5) best = o; return; } for(let i = l; i < a.length; i++){ [a[l], a[i]] = [a[i], a[l]]; perm(a, l + 1); [a[l], a[i]] = [a[i], a[l]]; } }; perm(rest); }
+      else { let ok = true; while(ok){ ok = false; for(let i = 1; i < n - 1; i++) for(let j = i + 1; j < n; j++){ const o = [...best.slice(0, i), ...best.slice(i, j + 1).reverse(), ...best.slice(j + 1)]; if(len(o) < len(best) - .5){ best = o; ok = true; } } } }
+      const before = Math.round(len([...Array(n).keys()])), after = Math.round(len(best));
+      SO.L = best.map(k=>SO.L[k]); toast(after < before ? '🧭 ' + RF('{0} km de moins sur la route', before - after) : '🧭 ' + MSGT('Ton ordre est déjà le plus court'));
+    } catch(e){ toast('📍 ' + MSGT('Carte indisponible pour l’instant')); }
+    soDraw();
+  }
+  function soSave(){
+    const t = R[(SO || {}).tid]; if(!SO || !t) return; const P = soPlan(), tot0 = SO.L.reduce((a, x)=>a + x.span0, 0), tot = SO.L.reduce((a, x)=>a + x.span, 0), dl = tot - tot0;
+    if(P.every((p, i)=>p.x.k === i && p.x.span === p.x.span0)){ closeSheet(); SO = null; return; }
+    const map = x => { if(!x || x < SO.start) return x; const p = P.find(q=>x >= q.x.d0 && x < q.x.e0); if(p) return addD(p.d, Math.min(dDiff(p.x.d0, x), p.x.span - 1)); return x >= SO.oldEnd ? addD(x, dl) : x; };
+    const out = [], hset = new Set(SO.L.flatMap(x=>x.hids));
+    P.forEach(p=>{ const he = addD(p.d, p.x.span - p.x.g);   // fin des nuits d’hôtel de l’étape
+      p.x.hids.forEach((id, j)=>{ const h0 = R[id]; if(!h0) return; const h = clone(h0); h.date = map(h0.date); h.dateFin = h0.dateFin ? addD(map(addD(h0.dateFin, -1)), 1) : h.date;
+        if(j === p.x.hids.length - 1 && p.x.span !== p.x.span0) h.dateFin = he;
+        if(h.date >= he){ if(!okB(h0)){ h.deleted = true; out.push(h); return; } h.date = addD(he, -1); }
+        if(h.dateFin > he) h.dateFin = he; out.push(h); }); });
+    Object.values(R).filter(r=>r && !r.deleted && r.trip === t.id).forEach(r=>{
+      if((r.type === 'item' || r.type === 'place' || r.type === 'city') && r.date && !hset.has(r.id)){ if(r.type === 'item' && r.cat === 'divers' && r.recu) return;
+        if(r.type === 'item' && r.cat === 'transport' && r.date === SO.start) return;   // le vol aller reste le premier jour
+        const nd = map(r.date), nf = r.dateFin ? map(r.dateFin) : null; if(nd === r.date && nf === (r.dateFin || null)) return; const c = clone(r); c.date = nd; if(nf) c.dateFin = nf; out.push(c); }
+      else if(r.type === 'note' && r.ref && r.ref.startsWith('day:')){ const od = r.ref.slice(4), nd = map(od); if(nd !== od){ const c = clone(r); c.ref = 'day:' + nd; out.push(c); } }
+    });
+    const days = Object.values(R).filter(r=>r && !r.deleted && r.trip === t.id && r.type === 'day'), NW = {};
+    days.forEach(r=>{ const nd = map(r.date), id = dayId(nd); const c = NW[id] ? NW[id] : Object.assign(clone(r), {date:nd, id});
+      if(NW[id]){ if(!c.titre) c.titre = r.titre; if(r.plan) c.plan = [c.plan, r.plan].filter(Boolean).join('\n'); } delete c.deleted; NW[id] = c; });
+    const chg = days.some(r=>map(r.date) !== r.date);
+    if(chg){ days.forEach(r=>{ if(!NW[r.id]){ const c = clone(r); c.deleted = true; out.push(c); } }); out.push(...Object.values(NW)); }
+    const nt = clone(t); let tc = false; if(nt.fin && nt.fin >= SO.oldEnd && dl){ nt.fin = addD(nt.fin, dl); tc = true; } if(tc) out.push(nt);
+    SO = null; putMany(out, '⇅ ' + MSGT('Étapes réorganisées') + (dl ? ' · ' + RF('retour le {0}', fdate(nt.fin)) : '')); closeSheet(true); Object.keys(openD).forEach(k=>delete openD[k]); const y = window.scrollY; render(); window.scrollTo(0, y);
+  }
