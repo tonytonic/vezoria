@@ -5265,4 +5265,6 @@ I18N.load({
 "après {0}, à la fin":"после {0}, в конце",
 "entre {0} et {1}":"между {0} и {1}",
 "Sur ton chemin":"По пути",
-"Placer ici":"Поставить сюда"});
+"Placer ici":"Поставить сюда",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0} далеко от остальных этапов (≈ {1} км).",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"Если это город отъезда или возвращения, его не нужно добавлять сюда: укажи его в поездке туда или обратно."});

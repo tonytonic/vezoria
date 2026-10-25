@@ -5264,4 +5264,6 @@ I18N.load({
 "après {0}, à la fin":"{0}の後、最後に",
 "entre {0} et {1}":"{0}と{1}の間",
 "Sur ton chemin":"道中に",
-"Placer ici":"ここに入れる"});
+"Placer ici":"ここに入れる",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0}は他の滞在地から遠いです（約{1} km）。",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"出発地や帰着地なら、ここに追加する必要はありません。往路・復路の移動に入れてください。"});

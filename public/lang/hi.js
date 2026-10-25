@@ -5264,4 +5264,6 @@ I18N.load({
 "après {0}, à la fin":"{0} के बाद, आख़िर में",
 "entre {0} et {1}":"{0} और {1} के बीच",
 "Sur ton chemin":"तुम्हारे रास्ते में",
-"Placer ici":"यहाँ रखो"});
+"Placer ici":"यहाँ रखो",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0} तुम्हारे बाक़ी पड़ावों से दूर है (≈ {1} किमी)।",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"अगर यह तुम्हारा जाने या लौटने का शहर है तो यहाँ जोड़ने की ज़रूरत नहीं: इसे आने-जाने की यात्रा में डालो।"});

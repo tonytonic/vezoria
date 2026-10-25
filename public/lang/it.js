@@ -2325,4 +2325,6 @@ I18N.load({
 "après {0}, à la fin":"dopo {0}, alla fine",
 "entre {0} et {1}":"tra {0} e {1}",
 "Sur ton chemin":"Sul tuo percorso",
-"Placer ici":"Mettila qui"});
+"Placer ici":"Mettila qui",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0} è lontana dalle altre tappe (≈ {1} km).",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"Se è la città di partenza o di ritorno, non serve aggiungerla qui: mettila nel viaggio di andata o di ritorno."});

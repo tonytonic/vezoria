@@ -5264,4 +5264,6 @@ I18N.load({
 "après {0}, à la fin":"{0} 다음, 마지막에",
 "entre {0} et {1}":"{0}와 {1} 사이",
 "Sur ton chemin":"가는 길에",
-"Placer ici":"여기에 넣기"});
+"Placer ici":"여기에 넣기",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0}은(는) 다른 일정과 멀어요 (약 {1} km).",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"출발하거나 돌아오는 도시라면 여기 추가할 필요 없어요. 가는 길이나 돌아오는 이동에 넣으세요."});

@@ -2316,4 +2316,6 @@ I18N.load({
 "après {0}, à la fin":"na {0}, aan het eind",
 "entre {0} et {1}":"tussen {0} en {1}",
 "Sur ton chemin":"Op je route",
-"Placer ici":"Hier plaatsen"});
+"Placer ici":"Hier plaatsen",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0} ligt ver van je andere etappes (≈ {1} km).",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"Is dit je vertrek- of terugkeerplaats, voeg hem dan niet hier toe: zet hem bij de heen- of terugreis."});

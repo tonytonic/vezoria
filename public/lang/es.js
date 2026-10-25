@@ -2326,4 +2326,6 @@ I18N.load({
 "après {0}, à la fin":"después de {0}, al final",
 "entre {0} et {1}":"entre {0} y {1}",
 "Sur ton chemin":"En tu camino",
-"Placer ici":"Ponerla aquí"});
+"Placer ici":"Ponerla aquí",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0} está lejos de tus otras etapas (≈ {1} km).",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"Si es tu ciudad de salida o de regreso, no hace falta añadirla aquí: ponla en el trayecto de ida o de vuelta."});

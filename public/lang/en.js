@@ -2310,4 +2310,6 @@ I18N.load({
 "après {0}, à la fin":"after {0}, at the end",
 "entre {0} et {1}":"between {0} and {1}",
 "Sur ton chemin":"On your way",
-"Placer ici":"Put it here"});
+"Placer ici":"Put it here",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0} is far from your other stops (≈ {1} km).",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"If it's where you leave from or return to, no need to add it here: put it in the outbound or return journey."});

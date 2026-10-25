@@ -5265,4 +5265,6 @@ I18N.load({
 "après {0}, à la fin":"بعد {0}، في النهاية",
 "entre {0} et {1}":"بين {0} و{1}",
 "Sur ton chemin":"على طريقك",
-"Placer ici":"ضعها هنا"});
+"Placer ici":"ضعها هنا",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0} بعيدة عن محطاتك الأخرى (≈ {1} كم).",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"إن كانت مدينة انطلاقك أو عودتك فلا داعي لإضافتها هنا: ضعها في رحلة الذهاب أو العودة."});

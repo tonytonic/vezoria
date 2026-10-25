@@ -2320,4 +2320,6 @@ I18N.load({
 "après {0}, à la fin":"nach {0}, am Ende",
 "entre {0} et {1}":"zwischen {0} und {1}",
 "Sur ton chemin":"Auf deinem Weg",
-"Placer ici":"Hier einfügen"});
+"Placer ici":"Hier einfügen",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0} ist weit von deinen anderen Etappen entfernt (≈ {1} km).",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"Wenn das dein Abreise- oder Rückreiseort ist, musst du ihn hier nicht hinzufügen: trag ihn bei Hin- oder Rückfahrt ein."});

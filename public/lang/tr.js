@@ -5252,4 +5252,6 @@ I18N.load({
 "après {0}, à la fin":"{0} sonrası, en sonda",
 "entre {0} et {1}":"{0} ile {1} arasında",
 "Sur ton chemin":"Yolunun üstünde",
-"Placer ici":"Buraya koy"});
+"Placer ici":"Buraya koy",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0} diğer duraklarından uzak (≈ {1} km).",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"Burası çıkış ya da dönüş şehrinse buraya eklemene gerek yok: gidiş veya dönüş yolculuğuna yaz."});

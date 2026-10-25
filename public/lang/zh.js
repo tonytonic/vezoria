@@ -5264,4 +5264,6 @@ I18N.load({
 "après {0}, à la fin":"{0} 之后，放在最后",
 "entre {0} et {1}":"{0} 和 {1} 之间",
 "Sur ton chemin":"顺路",
-"Placer ici":"放在这里"});
+"Placer ici":"放在这里",
+"{0} est loin de tes autres étapes (≈ {1} km).":"{0} 离你的其他站点很远（约 {1} 公里）。",
+"Si c’est ta ville de départ ou de retour, pas besoin de l’ajouter ici : mets-la dans le trajet aller ou retour.":"如果这是你的出发或返回城市，就不用加在这里：把它填在去程或回程交通里。"});
