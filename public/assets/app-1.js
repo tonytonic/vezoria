@@ -2227,7 +2227,15 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       : DEST.filter(d=>!p.includes(d[0]) && !destHidden(d[0]) && !inPrefs(d[0]) && d[0] !== 'prog').map(d=>[`CV.plusGo('${d[0]}')`, d[1], d[2]]);
     ent.push([`CV.plusGo('prefs')`, '⚙️', 'Réglages']);
     const dsc = fn => { const k = (fn.match(/plusGo\('(?:i:bilan:)?([a-z]+)/) || [])[1] || (/coffee/.test(fn) ? 'coffee' : ''); return PLUS_DESC[k === 'budget' ? 'sous' : k] || ''; };
-    openSheet(`<h2>Plus</h2><div class="cv-plus">${ent.map(([fn,ic,l])=>`<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span>${dsc(fn) ? `<small>${dsc(fn)}</small>` : ''}</button>`).join('')}</div>
+    // 🧹 rangé en familles repliables (une ouverte à la fois) au lieu d’une longue liste de tuiles
+    { const t0 = M.trip !== LEGACY && trip(); if(t0 && tripPhase(t0) !== 'past') ent.unshift([`CV.close();CV.avantSheet()`, '🧭', MSGT('Avant de partir')]); }
+    const keyOf = fn => (fn.match(/plusGo\('(?:i:bilan:)?([a-z]+)/) || [])[1] || (/avantSheet/.test(fn) ? 'avant' : '');
+    const FAM = [['prep', '🧳', MSGT('Préparer'), ['avant', 'prog', 'resas', 'sous', 'budget', 'check', 'envies', 'notes', 'ech']], ['souv', '📸', MSGT('Souvenirs'), ['souv', 'past', 'badges']], ['outils', '🧰', MSGT('Outils'), ['outils', 'livret', 'omap', 'reglages']], ['prefs', '⚙️', MSGT('Réglages'), ['prefs']]];
+    const tile = ([fn,ic,l]) => `<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span>${dsc(fn) ? `<small>${dsc(fn)}</small>` : ''}</button>`;
+    const used = new Set(), op = M.plusOpen || 'prep';
+    const fams = FAM.map(([id, ic, l, ks])=>{ const L = ent.filter(e=>ks.includes(keyOf(e[0]))); L.forEach(e=>used.add(e)); return {id, ic, l, L}; }).filter(f=>f.L.length);
+    const rest = ent.filter(e=>!used.has(e)); if(rest.length){ const f = fams.find(x=>x.id === 'outils'); if(f) f.L.push(...rest); else fams.push({id:'outils', ic:'🧰', l:MSGT('Outils'), L:rest}); }
+    openSheet(`<h2>Plus</h2><div class="cv-plusg">${fams.map(f=>f.L.length === 1 ? `<button type="button" class="cv-pg1" onclick="${f.L[0][0]}"><i>${f.L[0][1]}</i><span>${f.L[0][2]}${dsc(f.L[0][0]) ? `<small>${dsc(f.L[0][0])}</small>` : ''}</span><b>›</b></button>` : `<details class="cv-pg"${f.id === op ? ' open' : ''} ontoggle="if(this.open){ M.plusOpen='${f.id}'; this.parentNode.querySelectorAll('details').forEach(d=>{ if(d!==this) d.open=false; }); }"><summary><i>${f.ic}</i><span>${esc(f.l)}</span><small>${f.L.length}</small></summary><div class="cv-plus">${f.L.map(tile).join('')}</div></details>`).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">✕ Fermer</button></div>`);
   }
   function coffeeGo(){ closeSheet(true); try { window.open(COFFEE_URL, '_blank', 'noopener'); } catch(e){ location.href = COFFEE_URL; } }

@@ -187,9 +187,9 @@
   /* ── Filtre « pour qui » (départs / retours séparés) ── */
   function whoBar(){
     const v = tv(); if(v.length < 2 || hidden('blk:who')) return '';
-    return `<div class="v-filters cv-whobar"><span class="cv-lbl">Voir pour</span>
-      <button class="v-chip${M.who==='all'?' on':''}" onclick="CV.who('all')">Tout le monde</button>
-      ${v.map(id=>`<button class="v-chip cv-pc${M.who===id?' on':''}" style="--pc:${pcol(id)}" onclick="CV.who('${id}')">${esc(pname(id))}</button>`).join('')}</div>`;
+    return `<div class="v-filters cv-whobar"><label class="cv-whosel"><span class="cv-lbl">Voir pour</span>
+      <select class="v-in" onchange="CV.who(this.value)"><option value="all"${M.who==='all'?' selected':''}>Tout le monde</option>
+      ${v.map(id=>`<option value="${id}"${M.who===id?' selected':''}>${esc(pname(id))}</option>`).join('')}</select></label></div>`;
   }
   function setWho(id){ M.who = id; persist(); render(); }
 
@@ -260,6 +260,18 @@
       <div class="dc">${st.map(h=>`<button type="button" onclick="CV.explore('${h.id}')">🧭 ${esc(stayCity(h))}</button>`).join('')}${cs.map(c=>`<button type="button" class="cy" onclick="CV.explore('${c.id}')">🧭 ${esc(c.titre)}</button>`).join('')}<button type="button" class="add" onclick="CV.voirAdd()">＋ Lieu</button></div>
       ${!st.length && !cs.length ? '<div class="de">Ajoute une ville, une excursion ou un quartier (les étapes de tes hôtels apparaissent aussi ici).</div>' : ''}</div>`;
   }
+  // 🧹 Résas : en haut, ce qu’il reste à réserver en premier (toutes catégories, par date) + l’avancement global
+  function resaTop(){
+    const t = trip(); if(!t || t.archived || tripPhase(t) === 'past') return '';
+    const all = items(i=>['transport','hotel','activite'].includes(i.cat)).filter(forWho), todo = all.filter(i=>(i.statut || 'todo') === 'todo');
+    if(!all.length) return '';
+    const done = all.length - todo.length, today = isoToday();
+    const next = todo.slice().sort((a, b)=>(a.date || '9999').localeCompare(b.date || '9999')).slice(0, 3);
+    const when = i => { if(!i.date) return ''; const n = nights(today, i.date); return n <= 0 ? MSGT('aujourd’hui') : n < 31 ? RF('dans {0} j', n) : fshort(i.date); };
+    return `<div class="cv-rtop"><div class="cv-rtop-h"><b>${MSGT('Réservations')}</b><span><b>${done}</b> / ${all.length} ${MSGT('réservées')}</span></div>
+      <div class="v-bar"><span class="b-booked" style="width:${all.length ? done / all.length * 100 : 0}%"></span></div>
+      ${next.length ? `<div class="cv-rtop-k">${MSGT('À réserver en premier')}</div>${next.map(i=>`<button type="button" class="cv-rtop-i" onclick="CV.edit('${i.id}')"><span>${icon(i)}</span><span class="x"><b data-notr>${esc(i.cat === 'hotel' ? (cityOf(i.titre) || i.titre) : i.titre)}</b><small>${i.cat === 'hotel' && i.dateFin ? fshort(i.date) + ' → ' + fshort(i.dateFin) : i.date ? fshort(i.date) : ''}</small></span><em>${when(i)}</em></button>`).join('')}` : `<div class="cv-rtop-ok">✓ ${MSGT('Tout est réservé')}</div>`}</div>`;
+  }
   function renderList(cat){
     const all = items(i => i.cat===cat).sort(sortItems);
     const mine = all.filter(forWho);
@@ -269,7 +281,7 @@
     const proj = M.who==='all' ? mine.reduce((s,i)=>s+totalOf(i),0) : mine.reduce((s,i)=>s+shareOf(i,M.who),0);
     const reel = M.who==='all' ? mine.reduce((s,i)=>s+totalOf(i,'reel'),0) : mine.reduce((s,i)=>s+shareOf(i,M.who,'reel'),0);
     const nv = tv().length;
-    let h = whoBar() + (cat==='activite' ? discoverCard() : '') + `<div class="v-sum">
+    let h = resaTop() + whoBar() + (cat==='activite' ? discoverCard() : '') + `<div class="v-sum">
       <div class="v-sum-row"><div class="v-sum-big">${eur(proj)}</div><div class="v-sum-small">${paid+booked}/${n} réservés · ${paid} payés</div></div>
       <div class="v-sum-small">${M.who!=='all' ? 'Part de '+esc(pname(M.who)) : nv>1 ? 'Total pour '+nv+' · soit ≈ '+eur(proj/nv)+' par personne' : 'Projection'} · réel saisi : ${eur(reel)}</div>
       <div class="v-bar"><span class="b-paid" style="width:${n?paid/n*100:0}%"></span><span class="b-booked" style="width:${n?booked/n*100:0}%"></span></div>
@@ -646,13 +658,14 @@
     // (encart Escale retiré du programme : accès par le bouton 🛫 Escale de l'en-tête)
     if(!ds.length) h += '<div class="v-empty">Aucun jour pour l’instant.<br><button type="button" class="v-btn" style="margin-top:10px" onclick="CV.datesSheet()">📅 Fixer les dates du voyage</button></div>';
     const canDays = ds.length && tt && !tt.archived && !M.lock;
+    if(ds.length > 1) h += `<div class="cv-dayall"><button type="button" onclick="CV.dayAll(${M.dayAll ? 0 : 1})">${M.dayAll ? '▴ ' + MSGT('Replier les jours') : '▾ ' + MSGT('Déplier tous les jours')}</button></div>`;
     if(canDays) h += `<button type="button" class="cv-addday" onclick="CV.dayAdd('before')">＋ Ajouter un jour avant le J1</button>`;
     h += ds.map((d,idx)=>{
       const info = dayInfo(d);
       const {own, night} = itemsForDay(d);
       const all = [...own, ...night];
       const dn = notesFor('day:'+d);
-      const open = openD[d] !== undefined ? openD[d] : true;
+      const open = openD[d] !== undefined ? openD[d] : dayOpenDef(d);
       const su0 = daySun(d);
       const row = i => `<div class="v-day-item" onclick="CV.edit('${i.id}')">
           <span>${icon(i)}</span>
@@ -663,7 +676,7 @@
       return `<div class="v-day" id="d-${d}">
         <div class="v-day-h" onclick="CV.toggleDay('${d}')">
           <span class="v-day-d">${PJ(idx+1)} · ${fdate(d)}${dayHol(d) ? ' · 🎌' : ''}</span>
-          <span class="v-day-t">${esc(info.titre) || '—'}</span>
+          <span class="v-day-t">${esc(info.titre || dayFallback(info, own, night)) || '—'}</span>${open ? '' : `<em class="v-day-chev" aria-hidden="true">▾</em>`}
           <span class="v-day-dots">${dn.length?'<span class="cv-nbadge">📌'+dn.length+'</span>':''}${all.map(i=>`<i class="${i.statut}"></i>`).join('')}</span>
         </div>
         ${open ? `<div class="v-day-b">
@@ -672,8 +685,7 @@
           ${own.map(row).join('')}${night.map(row).join('')}
           ${dn.map(n=>noteCard(n,true)).join('')}
           ${routeHTML(d, true)}
-          <div class="cv-row"><button class="v-day-edit" onclick="CV.planDay('${d}')">🗺️ Itinéraire</button><button class="v-day-edit" onclick="CV.editDay('${d}')">✏️ Programme</button>
-          <button class="v-day-edit" onclick="CV.editNote(null,'day:${d}')">📌 Note</button>${canDays ? `<button class="v-day-edit cv-dmore" aria-label="Ajouter ou retirer un jour" onclick="CV.dayMenu('${d}')">⋯</button>` : ''}</div>
+          <div class="cv-row"><button class="v-day-edit" onclick="CV.planDay('${d}')">🗺️ Itinéraire</button><button class="v-day-edit cv-dmore" aria-label="${esc(MSGT('Actions du jour'))}" onclick="CV.dayMenu('${d}')">⋯</button></div>
           ${info.updatedBy ? byline(info) : ''}
         </div>` : ''}
       </div>`;
@@ -681,7 +693,14 @@
     if(canDays) h += `<button type="button" class="cv-addday" onclick="CV.dayAdd('after')">＋ Ajouter un jour à la fin</button>`;
     document.getElementById('cv-body').innerHTML = h;
   }
-  function toggleDay(d){ openD[d] = !(openD[d] !== undefined ? openD[d] : true); renderProg(); }
+  // 🧹 les jours sont repliés sur une ligne ; on en ouvre un à la fois (aujourd’hui ouvert pendant le voyage). « Déplier tous les jours » au besoin.
+  function dayOpenDef(d){ if(M.dayAll) return true; const t = trip(); return !!(t && tripPhase(t) === 'live' && d === isoToday()); }
+  function dayFallback(info, own, night){ const p = String(info.plan || '').split('\n')[0].trim(); if(p) return p.slice(0, 60); const a = own.find(i=>i.cat !== 'hotel'); if(a) return a.titre || ''; const h = night[0]; return h ? (cityOf(h.titre) || h.titre || '') : ''; }
+  function toggleDay(d){ const was = openD[d] !== undefined ? openD[d] : dayOpenDef(d);
+    if(!M.dayAll) dayList().forEach(x=>{ if(x !== d) openD[x] = false; });
+    openD[d] = !was; renderProg();
+    if(!was) setTimeout(()=>{ const e = document.getElementById('d-' + d); if(e){ const r = e.getBoundingClientRect(); if(r.top < 70 || r.top > innerHeight * .6) window.scrollTo({top: window.scrollY + r.top - 80, behavior:'smooth'}); } }, 30); }
+  function dayAll(on){ M.dayAll = !!on; Object.keys(openD).forEach(k=>delete openD[k]); persist(); renderProg(); }
   function editDay(d){
     const info = dayInfo(d);
     openSheet(`<h2>📅 ${fdate(d)}</h2>${byline(info)}
@@ -795,8 +814,9 @@
         <div class="bu-bar"><span style="width:${pctPaid.toFixed(1)}%"></span></div>
         <div class="bu-pay"><span>✅ Payé ${eur(tot.paye)}</span><span>⏳ Reste ${eur(tot.proj - tot.paye)}</span></div>
         <div class="bu-obj">${objLine || 'Pas encore d’objectif par personne.'} <button type="button" onclick="CV.objAsk()">${obj ? 'modifier' : 'fixer un objectif'}</button></div></div>
-      <div class="cv-quick2">${r('🧾','Dépense',"CV.tlReceipt()")}${r('📷','Tickets',"CV.tlReceipts()")}${v.length > 1 ? r('💸','Rembourser',"document.getElementById('bu-eq')&&document.getElementById('bu-eq').scrollIntoView({behavior:'smooth'})") : ''}${r('⚖️','Parts',"CV.partsSheet()")}${r('💱','Convertir',"CV.fxTool()")}</div>
-      ${v.length > 1 ? `<div id="bu-eq">${equilibreHTML()}</div>` : ''}
+      <div class="bu-main"><button type="button" class="v-btn" onclick="CV.tlReceipt()">＋ ${MSGT('Ajouter une dépense')}</button>
+        <details class="bu-tools"><summary>${MSGT('Outils')} ▾</summary><div class="cv-quick2">${r('📷','Tickets',"CV.tlReceipts()")}${r('⚖️','Parts',"CV.partsSheet()")}${r('💱','Convertir',"CV.fxTool()")}</div></details></div>
+      ${v.length > 1 ? (()=>{ const eh = equilibreHTML(), nd = (eh.match(/ doit /g) || []).length; return `<div id="bu-eq">${acc('eq', `💸 ${MSGT('Qui doit quoi')} <small>${nd ? RF('{0} remboursement(s) à faire', nd) : MSGT('tout est réglé')}</small>`, eh)}</div>`; })() : ''}
       <div class="bu-cats"><div class="bu-h">Par poste</div>${rows.filter(x=>x.proj > 0 || x.paye > 0).map(x=>`<button type="button" class="bu-cat" onclick="CV.tab('${x.c}')"><span>${CATS[x.c].icon} ${CATS[x.c].lbl}</span><b>${eur(x.proj)}</b><i><em style="width:${(x.proj / mx * 100).toFixed(1)}%"></em><u style="width:${(x.paye / mx * 100).toFixed(1)}%"></u></i></button>`).join('') || '<div class="v-sum-small">Ajoute des trajets, hébergements, visites ou dépenses : le budget se remplit tout seul.</div>'}</div>
       ${acc('ana', `📊 Analyse des dépenses <small>par poste et par jour</small>`, anaHTML())}
       ${acc('pers', `👥 Par personne <small>${v.length} voyageur${v.length>1?'s':''}</small>`, `

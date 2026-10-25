@@ -274,6 +274,58 @@
     }));
     return out;
   }
+  /* ══════════ 🧭 Avant de partir : tout ce qui dépend des pays visités, rangé par thème (une rubrique ouverte à la fois) ══════════
+     Règles générales et ordres de grandeur : chaque rubrique renvoie vers la source officielle à vérifier. */
+  const EURO_CC = 'AT BE CY DE EE ES FI FR GR HR IE IT LT LU LV MT NL PT SI SK MC SM VA AD ME XK GP MQ RE GF YT PM BL MF'.split(' ');
+  const CUR2 = {VN:'VND', ID:'IDR', SG:'SGD', MY:'MYR', PH:'PHP', EG:'EGP', IS:'ISK', HK:'HKD', TW:'TWD', AR:'ARS', PE:'PEN', CO:'COP', CL:'CLP', IL:'ILS', JO:'JOD', LK:'LKR', NP:'NPR', MV:'MVR', MU:'MUR', DO:'DOP', KE:'KES', TZ:'TZS', PF:'XPF', NC:'XPF', SN:'XOF', CR:'CRC', QA:'QAR', KH:'KHR', LA:'LAK'};
+  const SOS = {US:'911', CA:'911', MX:'911', AR:'911', GB:'999 · 112', HK:'999', JP:'110 police · 119 ambulance et pompiers', KR:'112 police · 119 ambulance et pompiers', CN:'110 police · 120 ambulance · 119 pompiers', TW:'110 police · 119 ambulance et pompiers',
+    SG:'999 police · 995 ambulance', AU:'000', NZ:'111', IN:'112', TH:'191 police · 1669 ambulance · 1155 police touristique', TR:'112', EG:'122 police · 123 ambulance', ZA:'10111 police · 10177 ambulance', BR:'190 police · 192 ambulance · 193 pompiers', MA:'19 police · 15 ambulance'};
+  const TIP = {US:'15 à 20 % au restaurant, c’est l’usage', CA:'15 à 20 % au restaurant, c’est l’usage', JP:'Pas de pourboire : ça peut même gêner', KR:'Pas d’usage de pourboire', CN:'Pas d’usage de pourboire', GB:'Souvent 10 à 12,5 % déjà inclus (« service charge ») : vérifie l’addition'};
+  const TZ = {JP:'Asia/Tokyo', CN:'Asia/Shanghai', KR:'Asia/Seoul', TW:'Asia/Taipei', HK:'Asia/Hong_Kong', TH:'Asia/Bangkok', VN:'Asia/Ho_Chi_Minh', KH:'Asia/Phnom_Penh', LA:'Asia/Vientiane', SG:'Asia/Singapore', MY:'Asia/Kuala_Lumpur', PH:'Asia/Manila', ID:'Asia/Jakarta', IN:'Asia/Kolkata', LK:'Asia/Colombo', NP:'Asia/Kathmandu', MV:'Indian/Maldives', AE:'Asia/Dubai', QA:'Asia/Qatar', JO:'Asia/Amman', IL:'Asia/Jerusalem', TR:'Europe/Istanbul', EG:'Africa/Cairo', MA:'Africa/Casablanca', TN:'Africa/Tunis', SN:'Africa/Dakar', KE:'Africa/Nairobi', TZ:'Africa/Dar_es_Salaam', ZA:'Africa/Johannesburg', MU:'Indian/Mauritius', RE:'Indian/Reunion',
+    GB:'Europe/London', IE:'Europe/Dublin', PT:'Europe/Lisbon', IS:'Atlantic/Reykjavik', GR:'Europe/Athens', FI:'Europe/Helsinki', US:'America/New_York', CA:'America/Toronto', MX:'America/Mexico_City', CU:'America/Havana', DO:'America/Santo_Domingo', CR:'America/Costa_Rica', CO:'America/Bogota', PE:'America/Lima', CL:'America/Santiago', AR:'America/Argentina/Buenos_Aires', BR:'America/Sao_Paulo', GP:'America/Guadeloupe', MQ:'America/Martinique', PF:'Pacific/Tahiti', NC:'Pacific/Noumea', AU:'Australia/Sydney', NZ:'Pacific/Auckland'};
+  const TZ_MULTI = {US:'New York', CA:'Toronto', AU:'Sydney', BR:'São Paulo', MX:'Mexico', ID:'Jakarta'};
+  function tzOff(tz, d){ try { const p = new Intl.DateTimeFormat('en-US', {timeZone:tz, timeZoneName:'shortOffset'}).formatToParts(d).find(x=>x.type === 'timeZoneName'); const m = /GMT([+-]\d+)(?::(\d+))?/.exec(p ? p.value : ''); return m ? +m[1] + (m[2] ? Math.sign(+m[1] || 1) * +m[2] / 60 : 0) : (p && p.value === 'GMT' ? 0 : null); } catch(e){ return null; } }
+  function avantData(){
+    const t = trip(), from = bagFromDefault(), ccs = bagCcs(), d0 = t && t.debut ? new Date(t.debut + 'T12:00:00') : new Date(), here = -d0.getTimezoneOffset() / 60;
+    const nm = cc => `${flag(cc)} ${esc(ccName(cc))}`, li = (ic, h) => `<div class="av-li"><i>${ic}</i><span>${h}</span></div>`;
+    const S = [];
+    // 🛂 papiers
+    { const di = docIssues(); const rows = ccs.map(cc=>{ const r = entryRules(cc, from); return li('🪪', `<b>${nm(cc)}</b> · ${esc(r.doc)}`) + r.x.filter(x=>!/CEAM/.test(x)).map(x=>li('📝', esc(x))).join(''); }).join('');
+      S.push({k:'pap', ic:'🛂', t:MSGT('Papiers et entrée'), warn:di.length, h:(di.length ? di.map(x=>li('⚠️', `<b>${esc(x)}</b>`)).join('') : '') + (rows || li('📍', esc(MSGT('Ajoute les villes du voyage pour voir les papiers de chaque pays.')))) + `<button type="button" class="ar-more" onclick="CV.tlDocs()">🪪 ${MSGT('Mes documents (dates d’expiration)')}</button>`}); }
+    // ❤️ santé
+    { const eu = ccs.length && ccs.every(cc=>EU_CEAM.includes(cc)), out = ccs.some(cc=>!EU_CEAM.includes(cc));
+      S.push({k:'san', ic:'❤️', t:MSGT('Santé et assurance'), h:(eu && from === 'eu' ? li('💳', esc(MSGT('Carte européenne d’assurance maladie (CEAM), une par personne'))) : '') + (out ? li('🛡️', esc(MSGT('Assurance voyage qui couvre les frais médicaux et le rapatriement (vérifie celle de ta carte bancaire)'))) : '')
+        + li('💉', esc(MSGT('Vaccins : vérifie ceux conseillés pour ce pays 4 à 6 semaines avant le départ (médecin ou centre de vaccinations internationales)'))) + li('🩹', esc(MSGT('Trousse : tes médicaments et ordonnances, de quoi soigner les petits bobos')))}); }
+    // 💶 argent
+    { const rows = ccs.map(cc=>{ const c = EURO_CC.includes(cc) ? 'EUR' : REGION_CUR[cc] || CUR2[cc]; let n = c; try { n = c ? new Intl.DisplayNames([(window.I18N && I18N.lang) || 'fr'], {type:'currency'}).of(c) + ' (' + c + ')' : ''; } catch(e){}
+        return li('💱', `<b>${nm(cc)}</b> · ${c ? esc(n) : esc(MSGT('monnaie à vérifier'))}`) + (TIP[cc] ? li('🍽️', esc(MSGT(TIP[cc]))) : ''); }).join('');
+      S.push({k:'arg', ic:'💶', t:MSGT('Argent sur place'), h:rows + li('💳', esc(MSGT('Préviens ta banque si besoin, garde une 2e carte rangée à part et un peu d’espèces')))}); }
+    // 📱 téléphone et prises
+    { const pl = [...new Set(ccs.map(cc=>PLUG[cc]).filter(Boolean))], eu = ccs.length && ccs.every(cc=>EU_CEAM.includes(cc));
+      S.push({k:'tel', ic:'📱', t:MSGT('Téléphone et prises'), h:(pl.length && from === 'eu' ? li('🔌', esc(MSGT('Adaptateur de prise')) + ' : type ' + esc(pl.join(', '))) : '') + li('📶', esc(MSGT(eu ? 'Itinérance en Europe au prix de ton forfait : vérifie auprès de ton opérateur' : 'Hors Europe, l’itinérance coûte cher : eSIM locale ou forfait international')))
+        + li('🗺️', esc(MSGT('Télécharge les cartes hors ligne de tes villes et garde tes billets dans l’appli')))}); }
+    // 🌙 décalage horaire
+    { const rows = []; let mx = 0; ccs.forEach(cc=>{ const tz = TZ[cc]; if(!tz) return; const o = tzOff(tz, d0); if(o == null) return; const df = Math.round((o - here) * 2) / 2; mx = Math.max(mx, Math.abs(df));
+        rows.push(li('🕐', `<b>${nm(cc)}</b>${TZ_MULTI[cc] ? ' (' + esc(TZ_MULTI[cc]) + ')' : ''} · ${df === 0 ? esc(MSGT('même heure que chez toi')) : (df > 0 ? '+' : '') + String(df).replace('.5', ' h 30').replace(/^([+-]?\d+)$/, '$1 h')}`)); });
+      if(rows.length) S.push({k:'tz', ic:'🌙', t:MSGT('Décalage horaire'), h:rows.join('') + (mx >= 3 ? li('😴', esc(MSGT('3 jours avant, décale ton coucher d’une heure par jour dans le sens du voyage ; sur place, vis tout de suite à l’heure locale et prends la lumière du matin'))) : '')}); }
+    // 🚨 urgences
+    { const rows = ccs.map(cc=>li('🚨', `<b>${nm(cc)}</b> · ${esc(SOS[cc] || (EU_CEAM.includes(cc) || EURO_CC.includes(cc) ? '112' : MSGT('112 marche depuis un mobile dans beaucoup de pays : vérifie le numéro local')))}`)).join('');
+      S.push({k:'sos', ic:'🚨', t:MSGT('Urgences'), h:rows + (from === 'eu' && ((window.I18N && I18N.lang) || 'fr') === 'fr' ? li('🏛️', esc(MSGT('Inscris ton voyage sur Ariane (diplomatie.gouv.fr) : tu reçois les alertes et on peut te joindre en cas de crise'))) : '') + li('📴', esc(MSGT('Note ces numéros et l’adresse de ton hôtel quelque part hors ligne')))}); }
+    // 🧳 valise
+    { const ck = list('check', c=>c.trip === M.trip), d = ck.filter(c=>c.done).length;
+      S.push({k:'val', ic:'🧳', t:MSGT('Valise'), n: ck.length ? d + ' / ' + ck.length : '', h:ck.length ? `<button type="button" class="ar-go" onclick="CV.close();CV.tab('check')">🧳 ${MSGT('Ouvrir ma checklist')} (${d}/${ck.length})</button>` : `<button type="button" class="ar-go" onclick="CV.tlBags()">🧳 ${MSGT('Préparer ma liste de bagages')}</button>`}); }
+    return {S, ccs};
+  }
+  function avantSheet(open){
+    const t = trip(); if(!t) return; const {S, ccs} = avantData(), op = open || (M.avOpen || {})[t.id] || S[0].k;
+    openSheet(`<h2>🧭 ${esc(MSGT('Avant de partir'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${ccs.length ? ccs.map(cc=>flag(cc) + ' <span data-notr>' + esc(ccName(cc)) + '</span>').join(' · ') : esc(MSGT('Ajoute les villes du voyage pour personnaliser cette liste.'))}</div>
+      <div class="av-list">${S.map(x=>`<div class="av-s${x.k === op ? ' open' : ''}"><button type="button" class="av-h" onclick="CV.avantSheet('${x.k === op ? '-' : x.k}')"><i>${x.ic}</i><span>${esc(x.t)}</span>${x.warn ? `<em class="bad">${x.warn}</em>` : x.n ? `<em>${esc(x.n)}</em>` : ''}<b>${x.k === op ? '▴' : '▾'}</b></button>${x.k === op ? `<div class="av-b">${x.h}</div>` : ''}</div>`).join('')}</div>
+      <div class="v-sum-small" style="margin-top:10px">${esc(MSGT('Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.'))}</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`);
+    if(open){ (M.avOpen = M.avOpen || {})[t.id] = open; persist(); }
+    // pays pas encore connus : on les cherche, puis on rafraîchit
+    if(!ccs.length && bagCities().length) (async ()=>{ for(const c of bagCities()){ if(!(M.ctry || {})[normQ(c)] && !ccOf(c)) { try { await countryOf(c); } catch(e){} } } if(bagCcs().length && document.querySelector('.av-list')) avantSheet(open); })();
+  }
   function tlDocs(){
     const v = tv(), di = docIssues();
     openSheet(`<h2>🛂 Documents de voyage</h2>

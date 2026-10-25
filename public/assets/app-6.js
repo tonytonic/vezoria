@@ -668,12 +668,16 @@
   }
   function dayMenu(d){
     const ds = dayList(), k = ds.indexOf(d);
-    openSheet(`<h2>📅 ${PJ(k+1)} · ${fdate(d)}</h2><div class="v-sum-small" style="margin-bottom:10px">Les journées suivantes se décalent avec leurs fiches, leur programme et leurs lieux.</div>
+    const t = trip(), ed = !!(t && !t.archived && !M.lock);
+    openSheet(`<h2>📅 ${PJ(k+1)} · ${fdate(d)}</h2>
+      <button type="button" class="v-btn sec" onclick="CV.close();CV.planDay('${d}')">🗺️ Itinéraire de la journée</button>
+      <button type="button" class="v-btn sec" onclick="CV.editDay('${d}')">✏️ Titre et programme du jour</button>
+      <button type="button" class="v-btn sec" onclick="CV.close();CV.editNote(null,'day:${d}')">📌 Note épinglée</button>
+      ${ed ? `<div class="v-sum-small" style="margin:12px 0 8px">Ajouter ou retirer un jour : les journées suivantes se décalent avec leurs fiches, leur programme et leurs lieux.</div>
       <button type="button" class="v-btn sec" onclick="CV.dayIns('${d}',0)">＋ Insérer un jour avant</button>
       <button type="button" class="v-btn sec" onclick="CV.dayIns('${d}',1)">＋ Insérer un jour après</button>
-      <button type="button" class="v-btn sec" onclick="CV.editDay('${d}')">✏️ Titre et programme du jour</button>
       <button type="button" class="v-btn sec" onclick="CV.datesSheet()">📅 Changer les dates du voyage</button>
-      <button type="button" class="v-btn danger" onclick="CV.dayDelAsk('${d}')">🗑 Retirer ce jour</button>
+      <button type="button" class="v-btn danger" onclick="CV.dayDelAsk('${d}')">🗑 Retirer ce jour</button>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   function dayIns(d, after){

@@ -69,6 +69,7 @@
           ${okB(it) ? '' : `<div class="ar-ra">${ariLink(it, t)}<button type="button" onclick="event.stopPropagation();CV.ariBook('${it.id}')">${MSGT('C’est réservé')}</button></div>`}</div>` + (okB(it) ? '' : it.cat === 'hotel' ? hoodHTML(it, t) : it.cat === 'transport' ? aptHTML(it, t) : '')).join('')}</div>`;
       }
       const rows = [
+        `<button type="button" class="ar-f" onclick="CV.avantSheet()"><i>🧭</i><span>${MSGT('Avant de partir')}</span><small>${MSGT('papiers, santé, argent, urgences')}</small></button>`,
         ...D.di.map(x=>`<button type="button" class="ar-f bad" onclick="CV.tlDocs()"><i>⚠️</i><span>${esc(x)}</span></button>`),
         ...D.fm.map(x=>`<button type="button" class="ar-f${x.done ? ' ok' : ''}" data-fm="${esc(x.l)}" onclick="CV.ariFm(this)"><i>${x.done ? '✅' : '🛂'}</i><span>${esc(x.l)}</span></button>`),
         `<button type="button" class="ar-f${D.ck.length && D.ckd === D.ck.length ? ' ok' : ''}" onclick="CV.tab('check')"><i>🧳</i><span>${MSGT('Valise et checklist')}</span><small>${D.ck.length ? D.ckd + '/' + D.ck.length : ''}</small></button>`,
@@ -110,7 +111,7 @@
       return {ic:'🧩', b:MSGT('Que faire'), s:MSGT('Les lieux à voir et les excursions, jour par jour.'), fn:"CV.ariTog('faire')"}; }
     if(cur.k === 'resa'){ const it = (D.rs || []).find(x=>!okB(x)), left = (D.rs || []).filter(x=>!okB(x)).length;
       if(it) return {ic:it.cat === 'hotel' ? '🛏️' : icon(it), b:MSGT('Réserver') + ' : ' + esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre), s:(it.date ? fshort(it.date) + ' · ' : '') + RF('{0} à réserver', left), fn:"CV.ariTog('resa')"}; }
-    if(cur.k === 'fin') return {ic:'✅', b:MSGT('Finaliser'), s:MSGT('Papiers, valise et derniers détails'), fn:"CV.ariTog('fin')"};
+    if(cur.k === 'fin') return {ic:'🧭', b:MSGT('Avant de partir'), s:MSGT('Papiers, valise et derniers détails'), fn:'CV.avantSheet()'};
     return {ic:cur.ic, b:MSGT(cur.l), s:Math.round(cur.f * 100) + ' %', fn:`CV.ariTog('${cur.k}')`};
   }
   function ariFull(on){ const t = trip(); if(!t) return; M.ariFull = M.ariFull || {}; if(on) M.ariFull[t.id] = 1; else { delete M.ariFull[t.id]; if(M.ariOpen) delete M.ariOpen[t.id]; } persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
