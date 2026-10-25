@@ -14,6 +14,8 @@
  *   {action:'errors', clear:true}          → vider la liste des erreurs
  *   {action:'folders'}                     → 🧹 dossiers photos (R2) : taille, fiches, dernière activité, photos du pot commun
  *   {action:'folderWipe', space, note, force} → effacer un dossier inactif ou sans fiche (refusé s'il a servi depuis 30 jours, sauf force)
+ *   {action:'vaultGet', k}                 → 🔐 coffre du tableau de bord (micro-entreprise) : un bloc chiffré sur le téléphone, illisible ici
+ *   {action:'vaultPut', k, v, base}        → l'enregistrer ; refusé (409, avec la version actuelle) si un autre appareil l'a changé depuis « base »
  *
  * Le CODE du carnet n'est jamais envoyé ici : la page d'administration calcule elle-même son empreinte
  * (« token », la même que celle de l'appli), et le serveur en déduit le dossier du carnet.
@@ -155,6 +157,17 @@ export async function onRequestPost({ request, env }) {
     try { await env.DB.prepare('DELETE FROM space_seen WHERE space = ?1').bind(sp).run(); } catch (e) {}
     await log(env, 'ménage', sp, (b.note || '') + ` (${w.records} fiches, ${w.photos} photos)`);
     return json({ ok: true, wiped: w });
+  }
+  if (a === 'vaultGet' || a === 'vaultPut') {   // 🔐 le serveur ne garde qu'un bloc chiffré avec une clé tirée de ADMIN_KEY, sur le téléphone
+    const k = String(b.k || ''); if (!/^[a-z0-9_-]{1,40}$/.test(k)) return json({ error: 'nom de coffre invalide' }, 400);
+    await env.DB.prepare('CREATE TABLE IF NOT EXISTS admin_vault (k TEXT PRIMARY KEY, v TEXT NOT NULL, at INTEGER NOT NULL)').run();
+    const cur = await env.DB.prepare('SELECT v, at FROM admin_vault WHERE k = ?1').bind(k).first();
+    if (a === 'vaultGet') return json(cur ? { v: cur.v, at: cur.at } : { v: null, at: 0 });
+    const v = String(b.v || ''); if (!v || v.length > 1_500_000) return json({ error: 'bloc invalide ou trop gros' }, 400);
+    if (cur && b.base != null && Number(b.base) !== cur.at) return json({ error: 'conflit', v: cur.v, at: cur.at }, 409);
+    const at = Math.max(Date.now(), cur ? cur.at + 1 : 0);
+    await env.DB.prepare('INSERT INTO admin_vault (k, v, at) VALUES (?1, ?2, ?3) ON CONFLICT(k) DO UPDATE SET v = ?2, at = ?3').bind(k, v, at).run();
+    return json({ ok: true, at });
   }
   let space = '';
   if (b.token && /^[0-9a-f]{64}$/.test(b.token)) space = await sha256('carnet-voyage:' + b.token);
