@@ -1716,6 +1716,8 @@ ${pm.join('\n')}</Document></kml>`;
   function quickBar(){
     const t = trip(); if(!t || t.archived) return '';
     if(hidden('blk:quick')) return tripPhase(t)==='live' ? trkHTML() : '';
+    // 🧹 en préparation : pas de raccourcis en doublon (Hôtels, Trajets, Visites et Importer sont dans « Résas », « Je suis ici » sert pendant le voyage)
+    if(tripPhase(t)==='prep') return '';
     const r = (ic, l, fn) => `<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
     return (tripPhase(t)==='live' ? trkHTML() : '') + `<div class="cv-quick2">${r('🏨','Hôtels',"CV.tab('hotel')")}${r('✈️','Trajets',"CV.tab('transport')")}${r('🎟️','Activités',"CV.tab('activite')")}${r('📄','Importer',"CV.impSheet()")}${r('📍','Je suis ici',"CV.hereNow()")}</div>`;
   }
