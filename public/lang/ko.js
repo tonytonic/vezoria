@@ -5259,4 +5259,9 @@ I18N.load({
 "avant":"앞:",
 "Après":"다음:",
 "Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"이후 일정({0}…)이 이동과 방문지와 함께 같은 박수만큼 밀려요.",
-"la suite est décalée de {0} nuit(s)":"이후 일정이 {0}박 밀렸어요"});
+"la suite est décalée de {0} nuit(s)":"이후 일정이 {0}박 밀렸어요",
+"avant {0}":"{0} 앞",
+"après {0}, à la fin":"{0} 다음, 마지막에",
+"entre {0} et {1}":"{0}와 {1} 사이",
+"Sur ton chemin":"가는 길에",
+"Placer ici":"여기에 넣기"});

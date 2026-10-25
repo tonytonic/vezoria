@@ -2311,4 +2311,9 @@ I18N.load({
 "avant":"vóór",
 "Après":"Na",
 "Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"De volgende etappes ({0}…) schuiven evenveel nachten op, met hun reizen en bezoeken.",
-"la suite est décalée de {0} nuit(s)":"de rest schuift {0} nacht(en) op"});
+"la suite est décalée de {0} nuit(s)":"de rest schuift {0} nacht(en) op",
+"avant {0}":"vóór {0}",
+"après {0}, à la fin":"na {0}, aan het eind",
+"entre {0} et {1}":"tussen {0} en {1}",
+"Sur ton chemin":"Op je route",
+"Placer ici":"Hier plaatsen"});

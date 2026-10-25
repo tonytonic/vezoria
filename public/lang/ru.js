@@ -5260,4 +5260,9 @@ I18N.load({
 "avant":"перед",
 "Après":"После",
 "Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"Следующие этапы ({0}…) сдвигаются на столько же ночей вместе с переездами и визитами.",
-"la suite est décalée de {0} nuit(s)":"остальное сдвинуто на {0} ноч."});
+"la suite est décalée de {0} nuit(s)":"остальное сдвинуто на {0} ноч.",
+"avant {0}":"перед {0}",
+"après {0}, à la fin":"после {0}, в конце",
+"entre {0} et {1}":"между {0} и {1}",
+"Sur ton chemin":"По пути",
+"Placer ici":"Поставить сюда"});

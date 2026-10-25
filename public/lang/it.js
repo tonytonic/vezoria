@@ -2320,4 +2320,9 @@ I18N.load({
 "avant":"prima di",
 "Après":"Dopo",
 "Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"Le tappe successive ({0}…) si spostano dello stesso numero di notti, con trasferimenti e visite.",
-"la suite est décalée de {0} nuit(s)":"il resto slitta di {0} notte/i"});
+"la suite est décalée de {0} nuit(s)":"il resto slitta di {0} notte/i",
+"avant {0}":"prima di {0}",
+"après {0}, à la fin":"dopo {0}, alla fine",
+"entre {0} et {1}":"tra {0} e {1}",
+"Sur ton chemin":"Sul tuo percorso",
+"Placer ici":"Mettila qui"});

@@ -5259,4 +5259,9 @@ I18N.load({
 "avant":"之前：",
 "Après":"之后：",
 "Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"后面的站点（{0}…）连同交通和参观顺延相同晚数。",
-"la suite est décalée de {0} nuit(s)":"后续顺延 {0} 晚"});
+"la suite est décalée de {0} nuit(s)":"后续顺延 {0} 晚",
+"avant {0}":"{0} 之前",
+"après {0}, à la fin":"{0} 之后，放在最后",
+"entre {0} et {1}":"{0} 和 {1} 之间",
+"Sur ton chemin":"顺路",
+"Placer ici":"放在这里"});

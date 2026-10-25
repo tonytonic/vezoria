@@ -5259,4 +5259,9 @@ I18N.load({
 "avant":"前：",
 "Après":"後：",
 "Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"以降の滞在地（{0}…）は移動や観光ごと同じ泊数だけずれます。",
-"la suite est décalée de {0} nuit(s)":"以降を{0}泊ずらしました"});
+"la suite est décalée de {0} nuit(s)":"以降を{0}泊ずらしました",
+"avant {0}":"{0}の前",
+"après {0}, à la fin":"{0}の後、最後に",
+"entre {0} et {1}":"{0}と{1}の間",
+"Sur ton chemin":"道中に",
+"Placer ici":"ここに入れる"});

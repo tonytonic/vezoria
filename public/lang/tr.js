@@ -5247,4 +5247,9 @@ I18N.load({
 "avant":"önce:",
 "Après":"Sonra:",
 "Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"Sonraki duraklar ({0}…) yolculuk ve ziyaretleriyle aynı gece sayısı kadar kayar.",
-"la suite est décalée de {0} nuit(s)":"devamı {0} gece kaydırıldı"});
+"la suite est décalée de {0} nuit(s)":"devamı {0} gece kaydırıldı",
+"avant {0}":"{0} öncesi",
+"après {0}, à la fin":"{0} sonrası, en sonda",
+"entre {0} et {1}":"{0} ile {1} arasında",
+"Sur ton chemin":"Yolunun üstünde",
+"Placer ici":"Buraya koy"});

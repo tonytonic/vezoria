@@ -5259,4 +5259,9 @@ I18N.load({
 "avant":"से पहले",
 "Après":"के बाद",
 "Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"अगले पड़ाव ({0}…) अपनी यात्राओं और घूमने की जगहों के साथ उतनी ही रातें आगे खिसकेंगे।",
-"la suite est décalée de {0} nuit(s)":"बाक़ी {0} रात आगे खिसका"});
+"la suite est décalée de {0} nuit(s)":"बाक़ी {0} रात आगे खिसका",
+"avant {0}":"{0} से पहले",
+"après {0}, à la fin":"{0} के बाद, आख़िर में",
+"entre {0} et {1}":"{0} और {1} के बीच",
+"Sur ton chemin":"तुम्हारे रास्ते में",
+"Placer ici":"यहाँ रखो"});

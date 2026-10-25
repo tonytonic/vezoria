@@ -5260,4 +5260,9 @@ I18N.load({
 "avant":"قبل",
 "Après":"بعد",
 "Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"تتأخر المحطات التالية ({0}…) بعدد الليالي نفسه مع تنقلاتها وزياراتها.",
-"la suite est décalée de {0} nuit(s)":"تأخر الباقي {0} ليلة"});
+"la suite est décalée de {0} nuit(s)":"تأخر الباقي {0} ليلة",
+"avant {0}":"قبل {0}",
+"après {0}, à la fin":"بعد {0}، في النهاية",
+"entre {0} et {1}":"بين {0} و{1}",
+"Sur ton chemin":"على طريقك",
+"Placer ici":"ضعها هنا"});

@@ -2315,4 +2315,9 @@ I18N.load({
 "avant":"vor",
 "Après":"Nach",
 "Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.":"Die folgenden Etappen ({0}…) verschieben sich um ebenso viele Nächte, mit ihren Fahrten und Besuchen.",
-"la suite est décalée de {0} nuit(s)":"der Rest verschiebt sich um {0} Nacht/Nächte"});
+"la suite est décalée de {0} nuit(s)":"der Rest verschiebt sich um {0} Nacht/Nächte",
+"avant {0}":"vor {0}",
+"après {0}, à la fin":"nach {0}, am Ende",
+"entre {0} et {1}":"zwischen {0} und {1}",
+"Sur ton chemin":"Auf deinem Weg",
+"Placer ici":"Hier einfügen"});
