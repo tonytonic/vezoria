@@ -406,6 +406,10 @@
     return `<div class="v-seg v-seg2" id="${id}">${opts.map(([k,l])=>`<button type="button" class="${k===cur?'on':''}" data-v="${k}" onclick="CV.seg(this)">${l}</button>`).join('')}</div>`;
   }
   function seg(btn){ btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); if(document.getElementById('cv-live')) live(); }
+  // 🎫 le statut d’une fiche existante s’enregistre dès qu’on le touche (plus besoin d’« Enregistrer » ; fermer la fiche ne le perd plus)
+  function segStat(btn){ seg(btn); const it = editing, v = btn.dataset.v; if(!it || !it.id || !R[it.id] || M.lock) return;
+    const c = clone(R[it.id]); if(c.statut === v) return; c.statut = v; if(v === 'paid' && Array.isArray(c.echeances)) c.echeances = c.echeances.map(e=>Object.assign({}, e, {fait:true}));
+    it.statut = v; if(c.echeances) it.echeances = c.echeances; put(c, '✓ ' + MSGT(STATUTS[v] || v)); try { render(); } catch(e){} }
   const segVal = id => { const b = document.querySelector('#'+id+' button.on'); return b ? b.dataset.v : null; };
   function peopleSel(id, pool, selected){
     return `<div class="cv-qsel" id="${id}">${pool.map(pid=>`<button type="button" class="${selected.includes(pid)?'on':''}" data-p="${pid}" style="--pc:${pcol(pid)}" onclick="this.classList.toggle('on');CV.live()">${esc(pname(pid))}</button>`).join('')}</div>`;
@@ -427,7 +431,7 @@
     h += `<div id="cv-fbook">${bookHTML(it)}</div>`;
     h += `<form id="v-form" onsubmit="event.preventDefault();CV.saveForm()" oninput="CV.live()">`;
     h += `<div class="v-f"><label>Statut</label><div class="v-seg" id="v-seg">${Object.entries(STATUTS).map(([k,l])=>
-      `<button type="button" class="${k}${it.statut===k?' on':''}" data-v="${k}" onclick="CV.seg(this)">${l}</button>`).join('')}</div></div>`;
+      `<button type="button" class="${k}${it.statut===k?' on':''}" data-v="${k}" onclick="CV.segStat(this)">${l}</button>`).join('')}</div></div>`;
     h += field(c==='hotel'?'Étape / ville':'Intitulé', 'titre', it.titre, 'text', 'required');
     const v = tv();
     if(v.length > 1){
@@ -477,13 +481,14 @@
     const it = editing; if(!it) return null;
     const fd = new FormData(document.getElementById('v-form'));
     for(const [k,v] of fd.entries()) it[k] = String(v).trim();
-    it.statut = segVal('v-seg') || 'todo';
+    const st0 = segVal('v-seg'); it.statut = st0 || 'todo';
     it.partage = segVal('cv-part') || partage(it);
     if(document.getElementById('cv-qui')){
       const q = peopleVal('cv-qui');
       it.qui = (!q.length || q.length === tv().length) ? [] : q;
     }
     readPay(it);
+    if(st0 === 'paid' && it.statut !== 'paid'){ it.statut = 'paid'; if(Array.isArray(it.echeances)) it.echeances = it.echeances.map(e=>Object.assign({}, e, {fait:true})); }   // « Payé » choisi à la main : on le garde
     return it;
   }
   function saveForm(keepOpen){
