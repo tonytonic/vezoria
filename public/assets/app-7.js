@@ -1907,3 +1907,62 @@
     const nt = clone(t); let tc = false; if(nt.fin && nt.fin >= SO.oldEnd && dl){ nt.fin = addD(nt.fin, dl); tc = true; } if(tc) out.push(nt);
     SO = null; putMany(out, '⇅ ' + MSGT('Étapes réorganisées') + (dl ? ' · ' + RF('retour le {0}', fdate(nt.fin)) : '')); closeSheet(true); Object.keys(openD).forEach(k=>delete openD[k]); const y = window.scrollY; render(); window.scrollTo(0, y);
   }
+
+  /* ══════════ 💶 Budget pas à pas : ① objectif ② chiffrer ③ sur place ④ payer à temps ══════════ */
+  // coût de la vie, par rapport à la France (ordre de grandeur, pour proposer un objectif — tout reste modifiable)
+  const BU_IDX = {RO:.5, BG:.5, AL:.5, MK:.5, RS:.55, BA:.5, ME:.6, MD:.45, UA:.45, GE:.5, AM:.5, TR:.55, MA:.5, TN:.5, EG:.45, IN:.35, NP:.35, LK:.4, VN:.4, TH:.5, KH:.4, LA:.4, ID:.45, PH:.5, MY:.5, MX:.6, GT:.55, CO:.5, PE:.5, BO:.4, EC:.55, AR:.55, BR:.6, CU:.6, KE:.6, TZ:.65, ZA:.6, MG:.45, SN:.6, JO:.75, CN:.65, LV:.7, LT:.7, EE:.8, PL:.65, CZ:.75, SK:.7, HU:.7, HR:.85, SI:.85, PT:.8, GR:.8, ES:.85, CY:.85, MT:.85, IT:.95, FR:1, BE:1.05, DE:1, AT:1.05, NL:1.1, LU:1.15, IE:1.15, GB:1.15, SE:1.1, FI:1.1, DK:1.25, NO:1.35, IS:1.45, CH:1.45, US:1.25, CA:1.1, AU:1.1, NZ:1.1, JP:.95, KR:.85, TW:.75, HK:1.1, SG:1.15, AE:1.1, IL:1.2, QA:1.1, MV:1.3, PF:1.4, CR:.85};
+  const BU_TIER = [['malin','🎒','Malin','auberges, trains, cuisine locale', 75], ['confort','🏨','Confort','hôtels 3★, quelques visites guidées', 140], ['plaisir','✨','Plaisir','beaux hôtels, bonnes tables', 240]];
+  const BU_SP = [['repas','🍽️','Repas', 30], ['transp','🚌','Transports locaux', 5], ['extra','☕','Extras, souvenirs', 10]];
+  function buNights(t){ return t.debut ? Math.max(1, nights(t.debut, t.fin || t.debut)) : Math.max(1, dayList().length - 1); }
+  function buIdx(){ const S = tlStages(); let w = 0, s = 0; S.forEach(x=>{ const c = ((M.ctry || {})[normQ(x.city)] || {}).cc, n = Math.max(1, nights(x.debut, x.fin)); if(c){ s += (BU_IDX[c] || 1) * n; w += n; } }); return w ? s / w : 1; }
+  const buRate = t => (typeof DEMO_FX === 'object' && DEMO_FX[(t && t.devise) || M.cur || 'EUR']) || 1;
+  const buNice = x => { if(!x) return 0; const p = Math.pow(10, Math.max(0, Math.floor(Math.log10(Math.abs(x))) - 1)); return Math.round(x / p) * p; };
+  function buSp(t){ const o = t.surplace || {}; return BU_SP.reduce((a, [k, , , d])=>a + (o[k] != null ? num(o[k]) : 0), 0); }
+  // le sur-place prévu, moins ce qui a déjà été dépensé sur place (pas de double compte pendant le voyage)
+  function buSpLeft(t){ if(!t || !t.surplace) return 0; const all = buSp(t) * (dayList().length || buNights(t)) * Math.max(1, tv().length);
+    const spent = items(i=>i.cat === 'divers').reduce((s, i)=>s + totalOf(i), 0); return Math.max(0, all - spent); }
+  const buNoPrice = () => items(i=>['hotel', 'transport', 'activite'].includes(i.cat) && !hasPrix(i) && !num(i.estime));
+  const buToPay = () => items(i=>i.statut === 'booked' && totalOf(i) > paidAmount(i) + .5).sort((a, b)=>(buNextEch(a) || {date:a.date || '9'}).date.localeCompare((buNextEch(b) || {date:b.date || '9'}).date));
+  const buNextEch = it => (it.echeances || []).filter(e=>!e.fait).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'))[0];
+  function buFil(t){
+    if(!t || t.archived || tripPhase(t) !== 'prep' || M.lock) return '';
+    const key = 'bu:' + t.id, nN = buNights(t), idx = buIdx(), rate = buRate(t), np = buNoPrice(), pay = buToPay(), todo = items(i=>i.statut === 'todo' && ['hotel', 'transport', 'activite'].includes(i.cat)).length;
+    const ppl = Math.max(1, tv().length), spD = t.surplace ? buSp(t) : 0, sp0 = t.surplace || {}, spDraft = M.buSp && M.buSp[t.id] || {};
+    const spV = k => spDraft[k] != null ? spDraft[k] : sp0[k] != null ? num(sp0[k]) : Math.round(BU_SP.find(x=>x[0] === k)[3] * Math.max(.4, idx));
+    const steps = [
+      {k:'obj', ic:'🎯', l:MSGT('Combien veux-tu dépenser ?'), ok: num(t.objectif) > 0 || filSk(key, 'obj'), skip:true, n: num(t.objectif) ? eur(num(t.objectif)) + ' / ' + MSGT('pers.') : '',
+        body: ()=>`<div class="ar-p">${RF('Choisis un style de voyage : on calcule pour {0} nuits, par personne, hors vols. Tout reste modifiable.', nN)}</div>
+          <div class="bu-tiers">${BU_TIER.map(([k, ic, l, d, per])=>{ const v = buNice(per * idx * nN * rate); return `<button type="button" onclick="CV.buTier(${v})"><i>${ic}</i><span><b>${MSGT(l)}</b><small>${MSGT(d)}</small></span><em>≈ ${eur(v)}<small>/ ${MSGT('pers.')}</small></em></button>`; }).join('')}</div>
+          <div class="bu-own"><span>${MSGT('ou mon montant')}</span><input class="v-in" id="bu-obj" inputmode="decimal" placeholder="—" value="${esc(t.objectif || '')}"><button type="button" class="ar-go" onclick="CV.buTier(document.getElementById('bu-obj').value)">OK</button></div>`},
+      {k:'prix', ic:'🧾', l:MSGT('Mets un prix sur ce qui est prévu'), ok: !np.length || filSk(key, 'prix'), skip:true, f: (()=>{ const a = items(i=>['hotel', 'transport', 'activite'].includes(i.cat)).length; return a ? 1 - np.length / a : 0; })(), n: np.length ? RF('{0} sans prix', np.length) : '',
+        body: ()=>{ const L = (M.buAll ? np : np.slice(0, 4));
+          return `<div class="ar-p">${np.length ? RF('{0} fiches n’ont pas encore de prix. Un ordre d’idée suffit, tu corrigeras plus tard.', np.length) : MSGT('Tout ce qui est prévu a un prix.')}</div>
+          ${L.map(it=>`<div class="bu-np"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(it.cat === 'hotel' ? MSGT('Hôtel') + ' · ' + (cityOf(it.titre) || it.titre) : it.titre)}</b><small>${it.cat === 'hotel' ? RF('{0} nuits · prix total du séjour', nights(it.date, it.dateFin || it.date)) : MSGT(partage(it) === 'pp' ? 'par personne' : 'pour le groupe')}${it.date ? ' · ' + fshort(it.date) : ''}</small></span><input class="v-in" inputmode="decimal" data-bu="${it.id}" placeholder="${esc(CS())}"></div>`).join('')}
+          ${np.length > L.length ? `<button type="button" class="ar-more" onclick="CV.buAll()">＋ ${RF('{0} autre(s)', np.length - L.length)}</button>` : ''}
+          ${np.length ? `<button type="button" class="ar-go" onclick="CV.buPrices()">✓ ${MSGT('Enregistrer ces prix')}</button>` : ''}`; }},
+      {k:'sp', ic:'🍝', l:MSGT('Prévois le sur-place'), ok: !!t.surplace || filSk(key, 'sp'), skip:true, n: t.surplace ? eur(spD) + ' / ' + MSGT('jour') : '',
+        body: ()=>{ const d = BU_SP.reduce((a, [k])=>a + spV(k), 0), days = dayList().length || nN;
+          return `<div class="ar-p">${MSGT('Repas, cafés, bus, petits achats : ce qu’on oublie toujours. Par personne et par jour.')}</div>
+          ${BU_SP.map(([k, ic, l])=>`<div class="bu-sp"><span>${ic} ${MSGT(l)}</span><span class="so-st"><button type="button" onclick="CV.buSpN('${k}',-1)" aria-label="${esc(MSGT('Moins'))}">−</button><b>${eur(spV(k))}</b><button type="button" onclick="CV.buSpN('${k}',1)" aria-label="${esc(MSGT('Plus'))}">＋</button></span></div>`).join('')}
+          <div class="bu-sum"><b>${eur(d)} / ${MSGT('jour')} / ${MSGT('pers.')}</b> × ${days} ${MSGT('jours')}${ppl > 1 ? ' × ' + ppl : ''} = <b>${eur(d * days * ppl)}</b><small>${MSGT('Pendant le voyage, ce montant devient ton plafond du jour.')}</small></div>
+          <button type="button" class="ar-go" onclick="CV.buSpSave()">✓ ${MSGT(t.surplace ? 'Mettre à jour' : 'Ajouter au budget')}</button>`; }},
+      {k:'pay', ic:'💳', l:MSGT('Payer à temps'), ok: !pay.length && !todo, n: pay.length ? RF('{0} à régler', pay.length) : todo ? RF('{0} à réserver', todo) : '',
+        body: ()=>`${pay.length ? pay.slice(0, 5).map(it=>{ const e = buNextEch(it); return `<div class="ar-r" role="button" onclick="CV.edit('${it.id}')"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(it.cat === 'hotel' ? (it.nom || cityOf(it.titre) || it.titre) : it.titre)}</b><small>${e ? `${MSGT('Prochaine échéance')} : ${eur(num(e.montant))}${e.date ? ' · ' + fshort(e.date) : ''}` : `${MSGT('Reste à payer')} : ${eur(totalOf(it) - paidAmount(it))}`}</small></span><div class="ar-ra"><button type="button" onclick="event.stopPropagation();CV.buPaid('${it.id}')">${MSGT('C’est payé')}</button></div></div>`; }).join('')
+            : `<div class="ar-p">${todo ? RF('Rien à payer pour l’instant : {0} réservation(s) à faire d’abord.', todo) : '✓ ' + MSGT('Tout est payé.')}</div>`}
+          ${pay.length ? `<div class="ar-p">${MSGT('Ajoute les acomptes dans chaque fiche (💶 Paiement → Échéancier) : l’appli te rappelle la veille.')}</div>` : ''}${todo ? fbtn(`CV.tab('resas')`, `🎫 ${MSGT('Voir les réservations')}`, 1) : ''}`}
+    ];
+    return filCard({key, kick:MSGT('Ton budget pas à pas'), title:num(t.objectif) ? `🎯 ${eur(num(t.objectif))} / ${MSGT('pers.')}` : `💶 ${MSGT('Budget du voyage')}`, steps, doneMsg:'✨ ' + MSGT('Budget bouclé : tout est prévu et payé.')});
+  }
+  function buRe(){ const y = window.scrollY; renderBudget(); window.scrollTo(0, y); }
+  function buTier(v){ const t = trip(); if(!t) return; const n = num(v); if(!(n > 0)) return; const c = clone(t); c.objectif = String(Math.round(n)); put(c, '🎯 ' + MSGT('Objectif enregistré')); buRe(); }
+  function buAll(){ M.buAll = 1; buRe(); }
+  function buPrices(){ const out = []; document.querySelectorAll('[data-bu]').forEach(i=>{ const v = num(i.value), it = R[i.dataset.bu]; if(it && v > 0){ const c = clone(it); c.estime = String(v); out.push(c); } });
+    if(!out.length){ toast(MSGT('Tape au moins un prix')); return; } putMany(out, '🧾 ' + RF('{0} prix enregistré(s)', out.length)); M.buAll = 0; buRe(); }
+  function buSpN(k, d){ const t = trip(); if(!t) return; M.buSp = M.buSp || {}; const o = M.buSp[t.id] = M.buSp[t.id] || {};
+    const cur = o[k] != null ? o[k] : t.surplace && t.surplace[k] != null ? num(t.surplace[k]) : Math.round(BU_SP.find(x=>x[0] === k)[3] * Math.max(.4, buIdx()));
+    const st = cur >= 50 ? 10 : 5; o[k] = Math.max(0, Math.round((cur + d * st) / st) * st); buRe(); }
+  function buSpSave(){ const t = trip(); if(!t) return; const o = (M.buSp || {})[t.id] || {}, c = clone(t), idx = buIdx();
+    c.surplace = Object.fromEntries(BU_SP.map(([k, , , d])=>[k, String(o[k] != null ? o[k] : t.surplace && t.surplace[k] != null ? num(t.surplace[k]) : Math.round(d * Math.max(.4, idx)))]));
+    const day = BU_SP.reduce((a, [k])=>a + num(c.surplace[k]), 0); if(!num(c.plafond)) c.plafond = String(day * Math.max(1, tv().length));   // le plafond du jour, pour tout le groupe
+    if(M.buSp) delete M.buSp[t.id]; put(c, '🍝 ' + MSGT('Sur-place ajouté au budget')); buRe(); }
+  function buPaid(id){ const it = R[id]; if(!it) return; const c = clone(it); c.statut = 'paid'; if(Array.isArray(c.echeances)) c.echeances = c.echeances.map(e=>Object.assign({}, e, {fait:true})); put(c, '✓ ' + MSGT('Payé')); buRe(); }

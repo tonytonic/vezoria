@@ -2815,3 +2815,18 @@ button.etp-chip.tip{border:0;font:inherit;font-size:.78rem;font-weight:700;backg
 .so-note{margin:10px 0 0;font-size:.84rem;color:#5f566a}.so-note.ch{background:#fff3e0;color:#8a4b00;border-radius:12px;padding:8px 10px}
 .so-warn{margin-top:8px;font-size:.84rem;background:#f2ebf5;color:#5a1f80;border-radius:12px;padding:8px 10px}
 .so-auto{width:100%;margin-top:12px;min-height:46px;border-radius:14px;border:1.5px solid #c9a6dc;background:#fff;color:#5a1f80;font:inherit;font-weight:800;cursor:pointer}.so-auto:disabled{opacity:.4}
+
+/* 💶 Budget pas à pas (25v) */
+.bu-tiers{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.bu-tiers button{display:flex;align-items:center;gap:10px;border:1.5px solid #e6dcea;background:#fff;border-radius:14px;padding:10px 12px;font:inherit;text-align:left;cursor:pointer;color:#241a2b}
+.bu-tiers button:active{border-color:#7b2fa8;background:#f7f0fb}
+.bu-tiers i{font-style:normal;font-size:1.4rem}.bu-tiers span{flex:1;min-width:0;display:flex;flex-direction:column}.bu-tiers small{font-size:.76rem;opacity:.75}
+.bu-tiers em{font-style:normal;font-weight:800;text-align:right;display:flex;flex-direction:column;white-space:nowrap}
+.bu-own{display:flex;align-items:center;gap:8px;margin:4px 0 2px}.bu-own span{flex:1;font-size:.85rem;opacity:.8}.bu-own .v-in{width:110px;margin:0;text-align:right;color:#241a2b}.bu-own .ar-go{width:auto;margin:0;padding:0 14px}
+.bu-np{display:flex;align-items:center;gap:10px;background:#faf6fb;color:#241a2b;border-radius:12px;padding:8px 10px;margin:6px 0}
+.bu-np i{font-style:normal}.bu-np span{flex:1;min-width:0;display:flex;flex-direction:column}.bu-np b{font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bu-np small{font-size:.74rem;opacity:.7}
+.bu-np .v-in{width:84px;margin:0;text-align:right;color:#241a2b}
+.bu-sp{display:flex;align-items:center;gap:10px;margin:6px 0;font-weight:600}.bu-sp>span:first-child{flex:1}
+.bu-sp .so-st{display:flex;align-items:center;border:1px solid #e6dcea;border-radius:999px;background:#fff}
+.bu-sp .so-st button{width:34px;height:34px;border:0;background:none;font-size:1.05rem;cursor:pointer;color:#241a2b}.bu-sp .so-st b{min-width:58px;text-align:center;font-size:.85rem;color:#241a2b}
+.bu-sum{background:#faf6fb;color:#241a2b;border-radius:12px;padding:10px 12px;font-size:.88rem;margin:8px 0;line-height:1.45}.bu-sum small{display:block;opacity:.7;font-size:.76rem}

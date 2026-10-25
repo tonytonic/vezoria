@@ -819,6 +819,7 @@
         proj:l.reduce((s,i)=>s+totalOf(i),0), paye:l.reduce((s,i)=>s+paidAmount(i),0)};
     });
     const tot = rows.reduce((a,r)=>({est:a.est+r.est, reel:a.reel+r.reel, proj:a.proj+r.proj, paye:a.paye+r.paye}), {est:0,reel:0,proj:0,paye:0});
+    const spL = tripPhase(t) === 'past' ? 0 : buSpLeft(t), npN = buNoPrice().length; tot.proj += spL; if(spL) per.forEach(p=>{ p.proj += spL / Math.max(1, v.length); });   // 🍝 le sur-place prévu compte dans le budget
     const others = profiles().filter(p=>!v.includes(p.id));
     // Écran simplifié : l'essentiel en haut, les actions en un geste, le détail dans des volets (rien n'est retiré)
     const BO = M.budOpen || (M.budOpen = {}), acc = (k, title, body) => `<details class="bu-acc" ${BO[k] ? 'open' : ''} ontoggle="CV.budTog('${k}', this.open)"><summary>${title}</summary><div class="bu-in">${body}</div></details>`;
@@ -827,14 +828,15 @@
     const r = (ic, l, fn) => `<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
     const mx = Math.max(1, ...rows.map(x=>x.proj));
     let h = `<div class="bu-hero"><div class="bu-k">💶 Budget du voyage</div>
-        <div class="bu-tot">${eur(tot.proj)}</div><div class="bu-pp">${v.length > 1 ? `soit ${eur(pp)} par personne · ${v.length} voyageurs` : 'pour tout le voyage'}</div>
+        <div class="bu-tot">${eur(tot.proj)}</div><div class="bu-pp">${v.length > 1 ? `soit ${eur(pp)} par personne · ${v.length} voyageurs` : 'pour tout le voyage'}</div>${spL || npN ? `<div class="bu-pp">${spL ? `🍝 ${MSGT('dont sur place prévu')} ${eur(spL)}` : ''}${spL && npN ? ' · ' : ''}${npN ? `🧾 ${RF('{0} sans prix', npN)}` : ''}</div>` : ''}
         <div class="bu-bar"><span style="width:${pctPaid.toFixed(1)}%"></span></div>
         <div class="bu-pay"><span>✅ Payé ${eur(tot.paye)}</span><span>⏳ Reste ${eur(tot.proj - tot.paye)}</span></div>
-        <div class="bu-obj">${objLine || 'Pas encore d’objectif par personne.'} <button type="button" onclick="CV.objAsk()">${obj ? 'modifier' : 'fixer un objectif'}</button></div></div>
+        <div class="bu-obj">${objLine || 'Pas encore d’objectif par personne.'} <button type="button" onclick="CV.objAsk()">${obj ? 'modifier' : 'fixer un objectif'}</button></div></div>${buFil(t)}
       <div class="bu-main"><button type="button" class="v-btn" onclick="CV.tlReceipt()">＋ ${MSGT('Ajouter une dépense')}</button>
         <details class="bu-tools"><summary>${MSGT('Outils')} ▾</summary><div class="cv-quick2">${r('📷','Tickets',"CV.tlReceipts()")}${r('⚖️','Parts',"CV.partsSheet()")}${r('💱','Convertir',"CV.fxTool()")}</div></details></div>
       ${v.length > 1 ? (()=>{ const eh = equilibreHTML(), nd = (eh.match(/ doit /g) || []).length; return `<div id="bu-eq">${acc('eq', `💸 ${MSGT('Qui doit quoi')} <small>${nd ? RF('{0} remboursement(s) à faire', nd) : MSGT('tout est réglé')}</small>`, eh)}</div>`; })() : ''}
-      <div class="bu-cats"><div class="bu-h">Par poste</div>${rows.filter(x=>x.proj > 0 || x.paye > 0).map(x=>`<button type="button" class="bu-cat" onclick="CV.tab('${x.c}')"><span>${CATS[x.c].icon} ${CATS[x.c].lbl}</span><b>${eur(x.proj)}</b><i><em style="width:${(x.proj / mx * 100).toFixed(1)}%"></em><u style="width:${(x.paye / mx * 100).toFixed(1)}%"></u></i></button>`).join('') || '<div class="v-sum-small">Ajoute des trajets, hébergements, visites ou dépenses : le budget se remplit tout seul.</div>'}</div>
+      ${(()=>{ const cats = `${rows.filter(x=>x.proj > 0 || x.paye > 0).map(x=>`<button type="button" class="bu-cat" onclick="CV.tab('${x.c}')"><span>${CATS[x.c].icon} ${CATS[x.c].lbl}</span><b>${eur(x.proj)}</b><i><em style="width:${(x.proj / mx * 100).toFixed(1)}%"></em><u style="width:${(x.paye / mx * 100).toFixed(1)}%"></u></i></button>`).join('') || '<div class="v-sum-small">Ajoute des trajets, hébergements, visites ou dépenses : le budget se remplit tout seul.</div>'}`;
+        return tripPhase(t) === 'prep' ? acc('cats', `🗂️ ${MSGT('Par poste')} <small>${rows.filter(x=>x.proj > 0).map(x=>CATS[x.c].icon + ' ' + eur(x.proj)).slice(0, 3).join(' · ')}</small>`, `<div class="bu-cats">${cats}</div>`) : `<div class="bu-cats"><div class="bu-h">Par poste</div>${cats}</div>`; })()}
       ${acc('ana', `📊 Analyse des dépenses <small>par poste et par jour</small>`, anaHTML())}
       ${acc('pers', `👥 Par personne <small>${v.length} voyageur${v.length>1?'s':''}</small>`, `
         <div class="v-perslist">${v.map(pid=>pchip(pid, v.length>1 ? `<button onclick="CV.removeCompanion('${pid}')" aria-label="Retirer">✕</button>` : '')).join('')}</div>
