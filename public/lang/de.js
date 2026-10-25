@@ -2308,4 +2308,5 @@ I18N.load({
 "Plus d’outils":"Mehr Werkzeuge",
 "Courses, carte, importer, papiers":"Einkauf, Karte, Import, Papiere",
 "Prévu ou sur place ?":"Geplant oder vor Ort?",
-"Position et confidentialité":"Standort und Privatsphäre"});
+"Position et confidentialité":"Standort und Privatsphäre",
+"Souvenirs du voyage":"Reiseerinnerungen"});

@@ -2304,4 +2304,5 @@ I18N.load({
 "Plus d’outils":"Meer hulpmiddelen",
 "Courses, carte, importer, papiers":"Boodschappen, kaart, importeren, papieren",
 "Prévu ou sur place ?":"Gepland of ter plaatse?",
-"Position et confidentialité":"Locatie en privacy"});
+"Position et confidentialité":"Locatie en privacy",
+"Souvenirs du voyage":"Reisherinneringen"});

@@ -5252,4 +5252,5 @@ I18N.load({
 "Plus d’outils":"और टूल",
 "Courses, carte, importer, papiers":"ख़रीदारी, नक़्शा, इम्पोर्ट, काग़ज़",
 "Prévu ou sur place ?":"पहले से या वहीं?",
-"Position et confidentialité":"लोकेशन और गोपनीयता"});
+"Position et confidentialité":"लोकेशन और गोपनीयता",
+"Souvenirs du voyage":"यात्रा की यादें"});

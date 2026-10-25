@@ -2313,4 +2313,5 @@ I18N.load({
 "Plus d’outils":"Altri strumenti",
 "Courses, carte, importer, papiers":"Spesa, mappa, importa, documenti",
 "Prévu ou sur place ?":"Previsto o sul posto?",
-"Position et confidentialité":"Posizione e privacy"});
+"Position et confidentialité":"Posizione e privacy",
+"Souvenirs du voyage":"Ricordi del viaggio"});

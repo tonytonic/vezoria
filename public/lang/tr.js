@@ -5240,4 +5240,5 @@ I18N.load({
 "Plus d’outils":"Daha fazla araç",
 "Courses, carte, importer, papiers":"Alışveriş, harita, içe aktar, belgeler",
 "Prévu ou sur place ?":"Önceden mi, yerinde mi?",
-"Position et confidentialité":"Konum ve gizlilik"});
+"Position et confidentialité":"Konum ve gizlilik",
+"Souvenirs du voyage":"Seyahat anıları"});

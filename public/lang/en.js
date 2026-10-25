@@ -2298,4 +2298,5 @@ I18N.load({
 "Plus d’outils":"More tools",
 "Courses, carte, importer, papiers":"Shopping, map, import, documents",
 "Prévu ou sur place ?":"Planned or on the spot?",
-"Position et confidentialité":"Location and privacy"});
+"Position et confidentialité":"Location and privacy",
+"Souvenirs du voyage":"Trip memories"});

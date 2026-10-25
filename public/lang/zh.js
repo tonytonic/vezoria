@@ -5252,4 +5252,5 @@ I18N.load({
 "Plus d’outils":"更多工具",
 "Courses, carte, importer, papiers":"购物、地图、导入、证件",
 "Prévu ou sur place ?":"提前计划还是当地花费？",
-"Position et confidentialité":"位置与隐私"});
+"Position et confidentialité":"位置与隐私",
+"Souvenirs du voyage":"旅行回忆"});

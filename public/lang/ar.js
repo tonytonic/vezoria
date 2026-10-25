@@ -5253,4 +5253,5 @@ I18N.load({
 "Plus d’outils":"أدوات أخرى",
 "Courses, carte, importer, papiers":"التسوق، الخريطة، الاستيراد، الوثائق",
 "Prévu ou sur place ?":"مخطط أم في الوجهة؟",
-"Position et confidentialité":"الموقع والخصوصية"});
+"Position et confidentialité":"الموقع والخصوصية",
+"Souvenirs du voyage":"ذكريات الرحلة"});

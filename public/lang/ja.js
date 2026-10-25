@@ -5252,4 +5252,5 @@ I18N.load({
 "Plus d’outils":"その他のツール",
 "Courses, carte, importer, papiers":"買い物・地図・取り込み・書類",
 "Prévu ou sur place ?":"事前？それとも現地？",
-"Position et confidentialité":"位置情報とプライバシー"});
+"Position et confidentialité":"位置情報とプライバシー",
+"Souvenirs du voyage":"旅の思い出"});

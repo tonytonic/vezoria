@@ -5252,4 +5252,5 @@ I18N.load({
 "Plus d’outils":"도구 더 보기",
 "Courses, carte, importer, papiers":"장보기, 지도, 가져오기, 서류",
 "Prévu ou sur place ?":"미리 낸 돈? 현지에서 쓴 돈?",
-"Position et confidentialité":"위치와 개인정보"});
+"Position et confidentialité":"위치와 개인정보",
+"Souvenirs du voyage":"여행 추억"});

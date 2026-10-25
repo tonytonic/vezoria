@@ -2317,4 +2317,5 @@ I18N.load({
 "Plus d’outils":"Mais ferramentas",
 "Courses, carte, importer, papiers":"Compras, mapa, importar, documentos",
 "Prévu ou sur place ?":"Previsto ou no local?",
-"Position et confidentialité":"Localização e privacidade"});
+"Position et confidentialité":"Localização e privacidade",
+"Souvenirs du voyage":"Lembranças da viagem"});

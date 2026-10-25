@@ -5253,4 +5253,5 @@ I18N.load({
 "Plus d’outils":"Другие инструменты",
 "Courses, carte, importer, papiers":"Покупки, карта, импорт, документы",
 "Prévu ou sur place ?":"Заранее или на месте?",
-"Position et confidentialité":"Местоположение и приватность"});
+"Position et confidentialité":"Местоположение и приватность",
+"Souvenirs du voyage":"Воспоминания о поездке"});
