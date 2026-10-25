@@ -1795,7 +1795,7 @@
     let op = STO[t.id]; if(op === undefined && live){ const c = S.find(x=>td >= x.debut && td < x.end); op = c ? c.h.id : ''; }
     const inSt = d => S.some(x=>d >= x.debut && d < x.end);
     const loose = L => L.map(d=>dayHTML(d, ds.indexOf(d))).join('');
-    let h = loose(ds.filter(d=>d < S[0].debut));
+    let h = loose(ds.filter(d=>d < S[0].debut)); const trSeen = new Set();
     S.forEach((x, i)=>{
       const days = ds.filter(d=>d >= x.debut && d < x.end), n = nights(x.debut, x.end), open = op === x.h.id;
       const hs = items(it=>it.cat === 'hotel' && it.date && it.date >= x.debut && it.date < x.end), bk = hs.length && hs.every(okB);
@@ -1812,7 +1812,8 @@
           <span class="etp-d">${fshort(x.debut)} → ${fshort(x.end)} · <i class="etp-dot${bk ? ' ok' : ''}"></i><span data-notr>${esc(hl)}</span></span><em aria-hidden="true">${open ? '▴' : '▾'}</em></button>
         ${open ? `<div class="etp-b">${hs.map(it=>`<button type="button" class="etp-hotel" onclick="CV.edit('${it.id}')"><i>🛏️</i><span><b data-notr>${esc(it.nom || cityOf(it.titre) || it.titre)}</b><small>${okB(it) ? MSGT('Réservé') : MSGT('À réserver')} · ${fshort(it.date)} → ${fshort(it.dateFin || it.date)}</small></span><em>›</em></button>`).join('')}${(()=>{ DAY_NOCITY = x.city; try { return loose(days); } finally { DAY_NOCITY = false; } })()}</div>` : chips}</div>`;
       const nx = S[i + 1]; if(nx){
-        const tr = items(it=>it.cat === 'transport' && it.date && it.date >= x.fin && it.date <= nx.debut).sort((a, b)=>(a.date + (a.heureDep || '')).localeCompare(b.date + (b.heureDep || '')));
+        const lo = x.fin > x.debut ? x.fin : addD(x.debut, 1);   // hôtel sans date de fin (ou fin avant l’arrivée) : on ne remonte pas à tout le voyage
+        const tr = items(it=>it.cat === 'transport' && it.date && it.date >= lo && it.date <= nx.debut && !trSeen.has(it.id)).sort((a, b)=>(a.date + (a.heureDep || '')).localeCompare(b.date + (b.heureDep || ''))); tr.forEach(it=>trSeen.add(it.id));
         h += `<div class="etp-link">${tr.length ? tr.map(it=>`<button type="button" onclick="CV.edit('${it.id}')">${icon(it)} <span data-notr>${esc(it.from && it.to ? cityOf(it.from) + ' → ' + cityOf(it.to) : it.titre)}</span> · ${fshort(it.date)}${it.heureDep ? ' ' + esc(it.heureDep) : ''}<b class="${okB(it) ? 'ok' : ''}">${MSGT(okB(it) ? 'réservé' : 'à réserver')}</b></button>`).join('')
           : `<span>↓ <span data-notr>${esc(x.city)} → ${esc(nx.city)}</span> · ${fshort(nx.debut)}</span>`}</div>`;
       }
@@ -1830,7 +1831,7 @@
     const t = trip(); if(!t || t.archived || M.lock) return; const S = stRanges(); if(!S.length) return;
     SO = {tid:t.id, start:S[0].debut, oldEnd:S[S.length - 1].end, L:S.map((x, i)=>{ const span = Math.max(1, nights(x.debut, x.end));
       const hs = items(it=>it.cat === 'hotel' && it.date && it.date >= x.debut && it.date < x.end).sort((a, b)=>a.date.localeCompare(b.date));
-      return {k:i, city:x.city, d0:x.debut, e0:x.end, span0:span, span, g:Math.max(0, span - nights(x.debut, x.fin)), hids:hs.map(h=>h.id), bk:hs.some(okB)}; })};
+      return {k:i, city:x.city, d0:x.debut, e0:x.end, span0:span, span, g:Math.max(0, span - (x.fin > x.debut ? nights(x.debut, x.fin) : span)), hids:hs.map(h=>h.id), bk:hs.some(okB)}; })};
     soDraw();
   }
   function soPlan(){ let c = SO.start; return SO.L.map(x=>{ const d = c; c = addD(c, x.span); return {x, d, e:c}; }); }
