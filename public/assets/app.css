@@ -2745,3 +2745,13 @@ html.vz-and body.vz-glass .v-sheet{-webkit-backdrop-filter:none!important;backdr
 .sw-csel{display:inline-flex;align-items:center;gap:4px;margin-left:6px}
 .sw-csel select{font:inherit;font-size:.8rem;font-weight:700;color:inherit;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:4px 8px;max-width:170px}
 .sw-csel option{color:#241a2b}
+/* 🧹 en cours / terminé : volets repliés */
+.cv-fold{border-radius:18px;background:var(--card,#fff);border:1px solid var(--light);margin:10px 0;overflow:hidden}
+.cv-fold>summary{list-style:none;display:flex;align-items:center;gap:8px;padding:13px 14px;min-height:50px;cursor:pointer;font-weight:700;color:var(--ink,#241a2b)}
+.cv-fold>summary::-webkit-details-marker{display:none}
+.cv-fold>summary small{font-weight:600;color:var(--gray);font-size:.8rem;margin-left:auto;text-align:right}
+.cv-fold>summary::after{content:'▾';opacity:.5;font-size:.8rem;margin-left:6px}.cv-fold[open]>summary::after{content:'▴'}
+.cv-fold[open]>summary{border-bottom:1px solid var(--light)}
+.cv-fold>*:not(summary){margin:10px}
+.cv-fold>.cv-tiles{margin:10px}
+.fil-nh{cursor:default}

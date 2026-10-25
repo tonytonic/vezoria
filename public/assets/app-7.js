@@ -152,6 +152,14 @@
     const S = o.steps.filter(Boolean), done = S.filter(x=>x.ok).length, w = x => x.w || 1;
     const pct = o.pct != null ? o.pct : Math.round(S.reduce((a, x)=>a + (x.ok ? 1 : (x.f || 0)) * w(x), 0) / Math.max(1, S.reduce((a, x)=>a + w(x), 0)) * 100);
     const cur = S.find(x=>!x.ok), st = (M.filOpen || {})[o.key], op = st === '-' ? '' : st || (o.defClosed ? '' : cur && cur.k);
+    // 🧹 replié par défaut : la barre d’avancement + la prochaine étape (avec ses boutons) ; toutes les étapes à la demande
+    if(st === undefined && !((M.filFull || {})[o.key])) return `<div class="cv-prep2 ar fil ${o.cls || ''}">
+      ${o.top || ''}
+      <div class="p2-top ar-lv"><div><div class="p2-k">${o.kick}</div><div class="p2-l">${o.title}</div></div><div class="p2-pct"><b>${o.pctTxt || pct}</b><small>${o.pctTxt ? '' : '%'}</small></div></div>
+      <div class="fil-bar"><i style="width:${Math.max(3, pct)}%"></i></div>
+      ${cur && !o.defClosed ? `<div class="ar-nx"><div class="ar-nk">${MSGT('Ta prochaine étape')} · ${done + 1}/${S.length}</div><div class="ar-s cur open"><div class="ar-h fil-nh"><i>${S.indexOf(cur) + 1}</i><span>${cur.ic} ${cur.l}</span><small>${cur.n || ''}</small></div><div class="ar-b">${cur.body()}${cur.skip ? `<button type="button" class="ar-sk" onclick="CV.filSkip('${o.key}','${cur.k}')">${MSGT('Passer cette étape')}</button>` : ''}</div></div></div>`
+        : cur ? '' : `<div class="p2-msg">${o.doneMsg || ''}</div>`}
+      <button type="button" class="ar-all" onclick="CV.filFull('${o.key}',1)">${RF('Voir les {0} étapes', S.length)} ▾</button>${o.foot || ''}</div>`;
     return `<div class="cv-prep2 ar fil ${o.cls || ''}">
       ${o.top || ''}
       <div class="p2-top ar-lv"><div><div class="p2-k">${o.kick}</div><div class="p2-l">${o.title}</div></div><div class="p2-pct"><b>${o.pctTxt || pct}</b><small>${o.pctTxt ? '' : '%'}</small></div></div>
@@ -159,8 +167,10 @@
       <div class="ar-steps">${S.map((x, i)=>{ const isO = op === x.k, sc = x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : 'next';
         return `<div class="ar-s ${sc}${isO ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.filTog('${o.key}','${x.k}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${x.l}</span><small>${x.ok ? '' : x.n || ''}</small><em>${isO ? '▾' : '▸'}</em></button>
           ${isO ? `<div class="ar-b">${x.body()}${!x.ok && x.skip ? `<button type="button" class="ar-sk" onclick="CV.filSkip('${o.key}','${x.k}')">${MSGT('Passer cette étape')}</button>` : ''}</div>` : ''}</div>`; }).join('')}</div>
-      ${cur ? '' : `<div class="p2-msg">${o.doneMsg || ''}</div>`}${o.foot || ''}</div>`;
+      ${cur ? '' : `<div class="p2-msg">${o.doneMsg || ''}</div>`}
+      <button type="button" class="ar-all" onclick="CV.filFull('${o.key}',0)">${MSGT('Réduire')} ▴</button>${o.foot || ''}</div>`;
   }
+  function filFull(key, on){ M.filFull = M.filFull || {}; if(on) M.filFull[key] = 1; else { delete M.filFull[key]; if(M.filOpen) delete M.filOpen[key]; } persist(); const y = window.scrollY; render(); window.scrollTo(0, y); if(key.startsWith('soc:') && document.getElementById('v-sheet-bg')) shareHub(); }
   const filSk = (key, k) => !!(((M.filSk || {})[key] || {})[k]);
   function filTog(key, k){ M.filOpen = M.filOpen || {}; M.filOpen[key] = M.filOpen[key] === k ? '-' : k; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); const sh = document.getElementById('v-sheet-bg'); if(sh && key.startsWith('soc:')) shareHub(); }
   function filSkip(key, k){ M.filSk = M.filSk || {}; (M.filSk[key] = M.filSk[key] || {})[k] = 1; if(M.filOpen) delete M.filOpen[key]; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); if(key.startsWith('soc:') && document.getElementById('v-sheet-bg')) shareHub(); }
