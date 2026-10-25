@@ -127,18 +127,25 @@
           <option value="0" data-d="${esc(st[0].debut)}">${esc(MSGT('Au début'))} · ${esc(MSGT('avant'))} ${esc(st[0].city)}</option>
           ${st.map((x, i)=>`<option value="${i + 1}" data-d="${esc(x.fin)}"${i === st.length - 1 ? ' selected' : ''}>${esc(MSGT('Après'))} ${esc(x.city)} (${fshort(x.debut)} → ${fshort(x.fin)})</option>`).join('')}</select>
           <div class="ac-guess" id="ac-guess"></div><div class="v-sum-small" id="ac-shift" style="margin-top:4px"></div></div>` : ''}
-        <div class="cv-row" style="gap:8px"><div class="v-f" style="flex:1;min-width:0"><label>${esc(MSGT('Arrivée'))}</label><input class="v-in" type="date" id="ac-d" value="${esc(d0)}" required></div>
+        ${st.length && t.fin ? `<div class="v-f"><label>${esc(MSGT('Les dates du voyage'))}</label><div class="v-seg v-seg2" id="ac-mode">
+          <button type="button" data-v="keep" class="on" onclick="CV.seg(this);CV.ariShiftHint()">🔁 ${esc(MSGT('Garder mes dates'))}</button><button type="button" data-v="add" onclick="CV.seg(this);CV.ariShiftHint()">📅 ${esc(MSGT('Rallonger le voyage'))}</button></div>
+          <div class="v-sum-small" id="ac-mode-h" style="margin-top:6px"></div></div>` : ''}
+        <div class="cv-row" style="gap:8px"><div class="v-f" id="ac-d-w" style="flex:1;min-width:0"><label>${esc(MSGT('Arrivée'))}</label><input class="v-in" type="date" id="ac-d" value="${esc(d0)}" required></div>
           <div class="v-f" style="flex:1;min-width:0"><label>${esc(MSGT('Nuits'))}</label><input class="v-in" type="number" id="ac-n" min="1" max="90" value="2" inputmode="numeric" required oninput="CV.ariShiftHint()"></div></div>
         <div class="v-actions"><button type="submit" class="v-btn">＋ ${esc(MSGT('Ajouter'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>
       </form>`);
-    setTimeout(()=>{ const i = document.getElementById('ac-v'); if(i) i.focus(); }, 60);
+    setTimeout(()=>{ const i = document.getElementById('ac-v'); if(i) i.focus(); ariShiftHint(); }, 60);
   }
   function ariCitySave(){
     const t = trip(); if(!t) return;
     const v = (document.getElementById('ac-v').value || '').trim(), d = document.getElementById('ac-d').value, n = Math.max(1, Math.min(90, Math.round(num(document.getElementById('ac-n').value)) || 1));
     if(!v || !d) return; const f = addDays(d, n), out = [];
+    const ps = document.getElementById('ac-pos'), st = tlStages(), mid = ps && +ps.value < st.length, md = document.getElementById('ac-mode');
+    if(md && (md.querySelector('button.on') || {}).dataset.v === 'keep'){   // 🔁 mêmes dates : la ville s’insère, les autres étapes rétrécissent
+      const kp = acKeep(ps ? +ps.value : st.length, n); if(kp){
+        const L = kp.L; L.splice(ps ? +ps.value : L.length, 0, {k:'new', city:v, span:n, span0:0, g:0, hids:[], nw:1});
+        SO = Object.assign(kp.B, {L}); closeSheet(true); soSave('📍 ' + v + ' · ' + MSGT('mêmes dates de voyage')); setTimeout(ariCtry, 300); return; } }
     // 📍 ville insérée au milieu : tout ce qui vient après (étapes, trajets, visites, journées) se décale de n nuits
-    const ps = document.getElementById('ac-pos'), st = tlStages(), mid = ps && +ps.value < st.length;
     if(mid){ shiftFrom(d, n, out); }
     out.push({id:'i' + uid(), type:'item', trip:t.id, cat:'hotel', titre:v, base:v, date:d, dateFin:f, statut:'todo', partage:'grp', qui:[]});
     const nt = clone(t); let ch = false; if(mid && nt.fin){ nt.fin = addD(nt.fin, n); ch = true; } if(!nt.debut || d < nt.debut){ nt.debut = d; ch = true; } if(!nt.fin || f > nt.fin){ nt.fin = f; ch = true; } if(ch) out.push(nt);
@@ -178,8 +185,25 @@
     return geocode(q, null);
   }
   function ariCityPos(sel){ const o = sel.options[sel.selectedIndex], d = o && o.dataset.d, e = document.getElementById('ac-d'); if(d && e) e.value = d; ariShiftHint(); }
-  function ariShiftHint(){ const ps = document.getElementById('ac-pos'), h = document.getElementById('ac-shift'); if(!ps || !h) return; const st = tlStages(), mid = +ps.value < st.length;
-    h.textContent = mid ? RF('Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.', st[+ps.value].city) : ''; }
+  function ariShiftHint(){
+    const ps = document.getElementById('ac-pos'), h = document.getElementById('ac-shift'), mh = document.getElementById('ac-mode-h'), md = document.getElementById('ac-mode');
+    const st = tlStages(), n = Math.max(1, Math.min(90, Math.round(num((document.getElementById('ac-n') || {}).value)) || 1)), pos = ps ? +ps.value : st.length, mid = pos < st.length;
+    if(md){   // 🔁 garder les dates : la nouvelle ville prend des nuits aux étapes les plus longues
+      const kp = acKeep(pos, n), kb = md.querySelector('[data-v=keep]');
+      if(!kp){ kb.disabled = true; if(kb.classList.contains('on')){ kb.classList.remove('on'); md.querySelector('[data-v=add]').classList.add('on'); } } else kb.disabled = false;
+      const keep = !!(kp && kb.classList.contains('on')), dw = document.getElementById('ac-d-w'); if(dw) dw.style.display = keep ? 'none' : '';
+      const t = trip();
+      if(mh) mh.textContent = keep ? RF('Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.', fdate(t.fin), n, kp.cuts.map(c=>c.city + ' (' + c.from + ' → ' + c.to + ')').join(', '))
+        : kp ? RF('Le voyage s’allonge de {0} nuit(s) : retour le {1}.', n, fdate(addD(t.fin, n))) : RF('Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.', n, fdate(addD(t.fin, n)));
+      if(keep){ if(h) h.textContent = ''; return; }
+    }
+    if(h) h.textContent = mid ? RF('Les étapes suivantes ({0}…) sont décalées d’autant de nuits, avec leurs trajets et leurs visites.', st[pos].city) : ''; }
+  // les nuits retirées pour garder les dates : une à une, à l’étape qui en a le plus (jamais moins d’une nuit d’hôtel)
+  function acKeep(pos, n){
+    const t = trip(), B = t && soBuild(t); if(!B) return null; const L = B.L.map(x=>Object.assign({}, x)), cuts = {};
+    for(let i = 0; i < n; i++){ const x = L.filter(x=>x.span - x.g > 1).sort((a, b)=>b.span - a.span)[0]; if(!x) return null; x.span--; cuts[x.k] = x; }
+    return {B, L, cuts:Object.values(cuts).map(x=>({k:x.k, city:x.city, from:x.span0, to:x.span}))};
+  }
   // décale de « n » jours tout ce qui commence à partir du jour « d » (une étape qui finit ce jour-là ne bouge pas)
   function shiftFrom(d, n, out){
     const t = trip(); if(!t) return out; const sh = x => addD(x, n);
@@ -1831,12 +1855,12 @@
 
   /* ⇅ Réorganiser : on glisse les villes, on change les nuits ; à l’enregistrement, tout suit (hôtels, trajets, visites, journées, notes) */
   let SO = null;
-  function soOpen(){
-    const t = trip(); if(!t || t.archived || M.lock) return; const S = stRanges(); if(!S.length) return;
-    SO = {tid:t.id, start:S[0].debut, oldEnd:S[S.length - 1].end, L:S.map((x, i)=>{ const span = Math.max(1, nights(x.debut, x.end));
+  function soOpen(){ const t = trip(); if(!t || t.archived || M.lock) return; const B = soBuild(t); if(!B) return; SO = B; soDraw(); }
+  function soBuild(t){
+    const S = stRanges(); if(!S.length) return null;
+    return {tid:t.id, start:S[0].debut, oldEnd:S[S.length - 1].end, L:S.map((x, i)=>{ const span = Math.max(1, nights(x.debut, x.end));
       const hs = items(it=>it.cat === 'hotel' && it.date && it.date >= x.debut && it.date < x.end).sort((a, b)=>a.date.localeCompare(b.date));
       return {k:i, city:x.city, d0:x.debut, e0:x.end, span0:span, span, g:Math.max(0, span - (x.fin > x.debut ? nights(x.debut, x.fin) : span)), hids:hs.map(h=>h.id), bk:hs.some(okB)}; })};
-    soDraw();
   }
   function soPlan(){ let c = SO.start; return SO.L.map(x=>{ const d = c; c = addD(c, x.span); return {x, d, e:c}; }); }
   function soDraw(){
@@ -1887,11 +1911,12 @@
     } catch(e){ toast('📍 ' + MSGT('Carte indisponible pour l’instant')); }
     soDraw();
   }
-  function soSave(){
+  function soSave(msg){
     const t = R[(SO || {}).tid]; if(!SO || !t) return; const P = soPlan(), tot0 = SO.L.reduce((a, x)=>a + x.span0, 0), tot = SO.L.reduce((a, x)=>a + x.span, 0), dl = tot - tot0;
     if(P.every((p, i)=>p.x.k === i && p.x.span === p.x.span0)){ closeSheet(); SO = null; return; }
     const map = x => { if(!x || x < SO.start) return x; const p = P.find(q=>x >= q.x.d0 && x < q.x.e0); if(p) return addD(p.d, Math.min(dDiff(p.x.d0, x), p.x.span - 1)); return x >= SO.oldEnd ? addD(x, dl) : x; };
     const out = [], hset = new Set(SO.L.flatMap(x=>x.hids));
+    P.filter(p=>p.x.nw).forEach(p=>out.push({id:'i' + uid(), type:'item', trip:t.id, cat:'hotel', titre:p.x.city, base:p.x.city, date:p.d, dateFin:addD(p.d, p.x.span), statut:'todo', partage:'grp', qui:[]}));   // 📍 la ville ajoutée
     P.forEach(p=>{ const he = addD(p.d, p.x.span - p.x.g);   // fin des nuits d’hôtel de l’étape
       p.x.hids.forEach((id, j)=>{ const h0 = R[id]; if(!h0) return; const h = clone(h0); h.date = map(h0.date); h.dateFin = h0.dateFin ? addD(map(addD(h0.dateFin, -1)), 1) : h.date;
         if(j === p.x.hids.length - 1 && p.x.span !== p.x.span0) h.dateFin = he;
@@ -1909,7 +1934,7 @@
     const chg = days.some(r=>map(r.date) !== r.date);
     if(chg){ days.forEach(r=>{ if(!NW[r.id]){ const c = clone(r); c.deleted = true; out.push(c); } }); out.push(...Object.values(NW)); }
     const nt = clone(t); let tc = false; if(nt.fin && nt.fin >= SO.oldEnd && dl){ nt.fin = addD(nt.fin, dl); tc = true; } if(tc) out.push(nt);
-    SO = null; putMany(out, '⇅ ' + MSGT('Étapes réorganisées') + (dl ? ' · ' + RF('retour le {0}', fdate(nt.fin)) : '')); closeSheet(true); Object.keys(openD).forEach(k=>delete openD[k]); const y = window.scrollY; render(); window.scrollTo(0, y);
+    SO = null; putMany(out, msg || '⇅ ' + MSGT('Étapes réorganisées') + (dl ? ' · ' + RF('retour le {0}', fdate(nt.fin)) : '')); closeSheet(true); Object.keys(openD).forEach(k=>delete openD[k]); const y = window.scrollY; render(); window.scrollTo(0, y);
   }
 
   /* ══════════ 💶 Budget pas à pas : ① objectif ② chiffrer ③ sur place ④ payer à temps ══════════ */
