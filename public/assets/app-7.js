@@ -1659,8 +1659,8 @@
     const [ic, lab] = CLOUD_L[mode], s = M.sync, ph = pqN() + (M.fq||[]).length;
     let h = `<h2>☁️ Cloud Vezoria</h2>
       <div class="cv-cl-mode"><span>${ic}</span><b>${lab}</b><button type="button" class="cv-cl-ch" onclick="CV.cloudSheet('choose')">Changer</button></div>
-      ${(()=>{ const dn = (s.on && s.code ? M.dirty.length : 0) + (M.spaces||[]).reduce((n, x)=>n + (x.dirty||[]).length, 0), last = Math.max(s.last || 0, ...(M.spaces||[]).map(x=>x.last || 0));
-        return `<div class="cv-cl-st"><div>📝 ${dn ? RF('{0} modification(s) à envoyer', dn) : MSGT('Tes modifications sont envoyées')}${last ? ' · ' + vzWhen(last) : ''}</div>${ph ? `<div>📷 ${RF('{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.', ph)}</div>` : ''}${M.pqErr ? `<div class="err">${esc(M.pqErr)}</div>` : ''}
+      ${(()=>{ const pend = [...(s.on && s.code ? M.dirty.map(id=>[id, '']) : []), ...(M.spaces||[]).flatMap(x=>(x.dirty||[]).map(id=>[id, x.code]))], dn = pend.length, last = Math.max(s.last || 0, ...(M.spaces||[]).map(x=>x.last || 0));
+        return `<div class="cv-cl-st">${dn ? `<details><summary>📝 ${RF('{0} modification(s) à envoyer', dn)}${last ? ' · ' + vzWhen(last) : ''}</summary><div class="cv-cl-pd">${pend.slice(0, 25).map(([id, c])=>{ const r = R[id]; return `<div>${r ? esc(r.type) + ' · <span data-notr>' + esc(String(r.titre || r.nom || r.texte || r.id).slice(0, 40)) + '</span>' : '<i>' + esc(MSGT('fiche introuvable')) + '</i> ' + esc(String(id).slice(0, 24))}${c ? ' <small>' + esc(c.slice(0, 4)) + '…</small>' : ''}</div>`; }).join('')}</div></details>` : `<div>📝 ${MSGT('Tes modifications sont envoyées')}${last ? ' · ' + vzWhen(last) : ''}</div>`}${ph ? `<div>📷 ${RF('{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.', ph)}</div>` : ''}${M.pqErr ? `<div class="err">${esc(M.pqErr)}</div>` : ''}
           <button type="button" class="v-btn sec" onclick="CV.syncNow(true)">🔄 ${MSGT('Synchroniser maintenant')}</button></div>`; })()}`;
     if(mode === 'all'){
       h += `<div class="sy-r"><b>🔑 Mon code principal</b><small>${s.on && s.code ? cloudState(s) : ''}</small>

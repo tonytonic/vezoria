@@ -524,7 +524,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     return changed;
   }
   async function syncSpace(sp, force){
-    sp.dirty = sp.dirty || []; let changed = 0;
+    sp.dirty = (sp.dirty || []).filter(id=>R[id]); let changed = 0;   // une fiche qui n’existe plus ici ne reste pas « à envoyer » pour toujours
     try {
       const ids = [...sp.dirty]; let first = true;
       for(let i = 0; first || i < ids.length; i += 500){
@@ -601,6 +601,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       const now0 = Date.now(), auto = manual !== true && !pull;
       try { rejoinFix(); mvMark(); mbTouch(); fwKeyTouch().catch(()=>{}); if((M.hideQ || []).length) hideFlush(); } catch(e){}
       if(mainOn && !(auto && !M.dirty.length && now0 - (M.sync.last || 0) < 120000)){   // rien à envoyer et vu il y a moins de 2 min : on passe
+      M.dirty = M.dirty.filter(id=>R[id]);   // idem pour le carnet principal
       const ids = [...M.dirty];
       let first = true;
       for(let i = 0; first || i < ids.length; i += 500){
