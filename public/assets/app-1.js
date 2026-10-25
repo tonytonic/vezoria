@@ -1830,11 +1830,12 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     ['prog','🗓️','Programme'], ['resas','🎫','Résas'], ['sous','💸','Budget'], ['live','📍','En cours'],
     ['souv','📸','Souvenirs & bilan'], ['notes','📌','Notes'], ['outils','🧰','Outils'], ['envies','✨','Envies'],
     ['check','✅','Checklist'], ['ech','📆','Échéancier'], ['past','🗺️','Passés'], ['reglages','👥','Partage & profils'], ['livret','📖','Livret'], ['omap','📴','Cartes hors ligne'], ['badges','🏅','Badges']];
-  const DEST_DEF = ['prog','resas','sous','live'];
+  const DEST_DEF = ['prog','resas','sous','souv'];   // 📸 Souvenirs dans la barre ; « En cours » passe dans Plus tant que le voyage n’a pas commencé
+  const NAV_LBL = {souv:'Souvenirs'};
   // 📍 voyage en cours / 🏁 voyage fini : la barre du bas montre ce qui sert à ce moment-là (la préparation ne change pas)
   const NAV_PH = {
     live:[['i:live:live','📍','Aujourd’hui'], ['i:live:souv','📸','Souvenirs'], ['i:live:budget','💶','Dépenses'], ['a:plan','🗺️','Itinéraire']],   // l’argent reste en 3e position, comme « Budget » en préparation
-    past:[['i:bilan:bilan','🏁','Bilan'], ['i:bilan:souv','📸','Souvenirs'], ['a:film','🎬','Le film'], ['a:globe','🌍','Carte 3D']]};
+    past:[['i:bilan:bilan','🏁','Bilan'], ['i:bilan:souv','📸','Souvenirs'], ['a:film','🎬','Le film']]};   // 🌍 Carte 3D : déjà dans le bilan
   function navPhase(){ const t = M.trip !== LEGACY && trip(); if(!t) return ''; const ph = tripPhase(t);
     if(ph === 'live' && !hidden('mode:live')) return 'live'; if(ph === 'past' && !hidden('mode:bilan')) return 'past'; return ''; }
   const DEST_HIDE = k => (k==='live'||k==='past'||k==='bilan') ? 'mode:' + k : ['souv','notes','outils','envies','check','ech'].includes(k) ? 'tab:' + k : '';
@@ -1877,7 +1878,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   })();
   function buildNav(){
     const live = trips().some(t=>tripPhase(t)==='live');
-    const ph = navPhase(), items = ph ? NAV_PH[ph].map(([k, ic, l])=>[k, ic, l, destOn(k)]) : bar().map(k=>{ const d = DEST.find(x=>x[0]===k); return [k, d[1], d[2], destOn(k)]; });
+    const ph = navPhase(), items = ph ? NAV_PH[ph].map(([k, ic, l])=>[k, ic, l, destOn(k)]) : bar().map(k=>{ const d = DEST.find(x=>x[0]===k); return [k, d[1], NAV_LBL[k] || d[2], destOn(k)]; });
     items.push(['plus','☰','Plus', !items.some(x=>x[3])]);
     const navH = items.map(([k,ic,l,on])=>`<button class="${on?'on':''}" onclick="CV.navTo('${k}')"><i>${ic}</i><span>${l}</span>${(k==='live' || k==='i:live:live') && live ? '<b class="dotlive"></b>' : ''}</button>`).join(''), navEl = document.getElementById('cv-nav');
     if(navEl.__h !== navH){ navEl.innerHTML = navH; navEl.__h = navH; }
@@ -2232,7 +2233,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     // 🧹 rangé en familles repliables (une ouverte à la fois) au lieu d’une longue liste de tuiles
     { const t0 = M.trip !== LEGACY && trip(); if(t0 && tripPhase(t0) !== 'past') ent.unshift([`CV.close();CV.avantSheet()`, '🧭', MSGT('Avant de partir')]); }
     const keyOf = fn => (fn.match(/plusGo\('(?:i:bilan:)?([a-z]+)/) || [])[1] || (/avantSheet/.test(fn) ? 'avant' : '');
-    const FAM = [['prep', '🧳', MSGT('Préparer'), ['avant', 'prog', 'resas', 'sous', 'budget', 'check', 'envies', 'notes', 'ech']], ['souv', '📸', MSGT('Souvenirs'), ['souv', 'past', 'badges']], ['outils', '🧰', MSGT('Outils'), ['outils', 'livret', 'omap', 'reglages']], ['prefs', '⚙️', MSGT('Réglages'), ['prefs']]];
+    const FAM = [['prep', '🧳', MSGT('Préparer'), ['avant', 'live', 'prog', 'resas', 'sous', 'budget', 'check', 'envies', 'notes', 'ech']], ['souv', '📸', MSGT('Souvenirs'), ['souv', 'past', 'badges']], ['outils', '🧰', MSGT('Outils'), ['outils', 'livret', 'omap', 'reglages']], ['prefs', '⚙️', MSGT('Réglages'), ['prefs']]];
     const tile = ([fn,ic,l]) => `<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span>${dsc(fn) ? `<small>${dsc(fn)}</small>` : ''}</button>`;
     const used = new Set(), op = M.plusOpen || 'prep';
     const fams = FAM.map(([id, ic, l, ks])=>{ const L = ent.filter(e=>ks.includes(keyOf(e[0]))); L.forEach(e=>used.add(e)); return {id, ic, l, L}; }).filter(f=>f.L.length);

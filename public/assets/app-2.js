@@ -687,7 +687,7 @@
       return `<div class="v-day" id="d-${d}">
         <div class="v-day-h" onclick="CV.toggleDay('${d}')">
           <span class="v-day-d">${PJ(idx+1)} · ${fdate(d)}${dayHol(d) ? ' · 🎌' : ''}</span>
-          <span class="v-day-t">${esc(info.titre || dayFallback(info, own, DAY_NOCITY ? [] : night)) || (DAY_NOCITY ? MSGT('Journée libre') : '—')}</span>${open ? '' : `<em class="v-day-chev" aria-hidden="true">▾</em>`}
+          <span class="v-day-t">${esc(dayTitle(info, own, night)) || (DAY_NOCITY ? MSGT('Journée libre') : '—')}</span>${open ? '' : `<em class="v-day-chev" aria-hidden="true">▾</em>`}
           <span class="v-day-dots">${dn.length?'<span class="cv-nbadge">📌'+dn.length+'</span>':''}${all.map(i=>`<i class="${i.statut}"></i>`).join('')}</span>
         </div>
         ${open ? `<div class="v-day-b">
@@ -703,6 +703,9 @@
   }
   // 🧹 les jours sont repliés sur une ligne ; on en ouvre un à la fois (aujourd’hui ouvert pendant le voyage). « Déplier tous les jours » au besoin.
   function dayOpenDef(d){ if(M.dayAll) return true; const t = trip(); return !!(t && tripPhase(t) === 'live' && d === isoToday()); }
+  // dans une carte d’étape : un titre égal à la ville de l’étape ne dit rien (« Sibiu, Sibiu… »)
+  function dayTitle(info, own, night){ if(!DAY_NOCITY) return info.titre || dayFallback(info, own, night); const same = x => normQ(cityOf(String(x || ''))) === normQ(DAY_NOCITY);
+    if(info.titre && !same(info.titre)) return info.titre; const f = dayFallback(info, own, []); return same(f) ? '' : f; }
   function dayFallback(info, own, night){ const p = String(info.plan || '').split('\n')[0].trim(); if(p) return p.slice(0, 60); const a = own.find(i=>i.cat !== 'hotel'); if(a) return a.titre || ''; const h = night[0]; return h ? (cityOf(h.titre) || h.titre || '') : ''; }
   function toggleDay(d){ const was = openD[d] !== undefined ? openD[d] : dayOpenDef(d);
     if(!M.dayAll) dayList().forEach(x=>{ if(x !== d) openD[x] = false; });

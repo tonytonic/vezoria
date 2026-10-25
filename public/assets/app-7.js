@@ -1784,10 +1784,10 @@
     return `<div class="etp-vbar" role="tablist"><button type="button" role="tab" aria-selected="${on}" class="${on ? 'on' : ''}" onclick="CV.progV('etapes')">🧳 ${MSGT('Étapes')}</button><button type="button" role="tab" aria-selected="${!on}" class="${on ? '' : 'on'}" onclick="CV.progV('jours')">📅 ${MSGT('Jours')}</button><button type="button" onclick="CV.tlMap()">🗺️ ${MSGT('Carte')}</button></div>`;
   }
   function stRanges(){ const st = tlStages(); return st.map((x, i)=>({city:x.city, h:x.h, debut:x.debut, fin:x.fin, end:st[i + 1] ? st[i + 1].debut : x.fin})); }
-  function stChipTxt(d){
-    const info = dayInfo(d); if(info.titre) return info.titre; const p = String(info.plan || '').split('\n')[0].trim(); if(p) return p.slice(0, 40);
-    const {own} = itemsForDay(d), a = own.find(i=>i.cat !== 'hotel' && i.cat !== 'divers'); if(a) return a.titre || '';
-    const pl = placesOf(d)[0]; return pl ? pl.nom || '' : '';
+  function stChipTxt(d, city){
+    const info = dayInfo(d), same = x => city && normQ(String(x || '').replace(/\(.*?\)/g, '').trim()) === normQ(city); if(info.titre && !same(info.titre)) return info.titre; const p = String(info.plan || '').split('\n')[0].trim(); if(p && !same(p)) return p.slice(0, 40);
+    const {own} = itemsForDay(d), a = own.find(i=>i.cat !== 'hotel' && i.cat !== 'divers'); if(a && !same(a.titre)) return a.titre || '';
+    const pl = placesOf(d)[0]; return pl && !same(pl.nom) ? pl.nom || '' : '';
   }
   function progStages(ds){
     if(!progStOn(ds)) return ''; const t = trip(), S = stRanges(), live = tripPhase(t) === 'live', td = isoToday();
@@ -1803,14 +1803,14 @@
       let chips = ''; if(!open){
         const C = []; let free = [];
         const flush = () => { if(!free.length) return; C.push(`<span class="etp-chip free">${free.length === days.length && days.length > 1 ? RF('{0} jours libres', free.length) : free.length > 1 ? `${PJ(idxOf(free[0]))}–${idxOf(free[free.length - 1])} ${MSGT('libres')}` : `${PJ(idxOf(free[0]))} ${MSGT('libre')}`}</span>`); free = []; };
-        days.forEach(d=>{ const c = stChipTxt(d); if(c){ flush(); C.push(`<span class="etp-chip">${PJ(idxOf(d))} <span data-notr>${esc(c)}</span></span>`); } else free.push(d); }); flush();
-        const nFree = days.filter(d=>!stChipTxt(d)).length;
+        days.forEach(d=>{ const c = stChipTxt(d, x.city); if(c){ flush(); C.push(`<span class="etp-chip">${PJ(idxOf(d))} <span data-notr>${esc(c)}</span></span>`); } else free.push(d); }); flush();
+        const nFree = days.filter(d=>!stChipTxt(d, x.city)).length;
         chips = `<div class="etp-chips">${C.slice(0, 5).join('')}${C.length > 5 ? `<span class="etp-chip free">+${C.length - 5}</span>` : ''}${canE && n >= 5 && nFree >= 4 ? `<button type="button" class="etp-chip tip" onclick="event.stopPropagation();CV.ariCity()">💡 ${MSGT('C’est long : ajouter une ville ?')}</button>` : ''}</div>`;
       }
       h += `<div class="etp-card${open ? ' open' : ''}" id="etp-${x.h.id}">
         <button type="button" class="etp-h" onclick="CV.stTog('${x.h.id}')" aria-expanded="${open}"><span class="etp-c" data-notr>${esc(x.city)}</span><span class="etp-n">${n} ${MSGT(n > 1 ? 'nuits' : 'nuit')}</span>
           <span class="etp-d">${fshort(x.debut)} → ${fshort(x.end)} · <i class="etp-dot${bk ? ' ok' : ''}"></i><span data-notr>${esc(hl)}</span></span><em aria-hidden="true">${open ? '▴' : '▾'}</em></button>
-        ${open ? `<div class="etp-b">${hs.map(it=>`<button type="button" class="etp-hotel" onclick="CV.edit('${it.id}')"><i>🛏️</i><span><b data-notr>${esc(it.nom || cityOf(it.titre) || it.titre)}</b><small>${okB(it) ? MSGT('Réservé') : MSGT('À réserver')} · ${fshort(it.date)} → ${fshort(it.dateFin || it.date)}</small></span><em>›</em></button>`).join('')}${(()=>{ DAY_NOCITY = true; try { return loose(days); } finally { DAY_NOCITY = false; } })()}</div>` : chips}</div>`;
+        ${open ? `<div class="etp-b">${hs.map(it=>`<button type="button" class="etp-hotel" onclick="CV.edit('${it.id}')"><i>🛏️</i><span><b data-notr>${esc(it.nom || cityOf(it.titre) || it.titre)}</b><small>${okB(it) ? MSGT('Réservé') : MSGT('À réserver')} · ${fshort(it.date)} → ${fshort(it.dateFin || it.date)}</small></span><em>›</em></button>`).join('')}${(()=>{ DAY_NOCITY = x.city; try { return loose(days); } finally { DAY_NOCITY = false; } })()}</div>` : chips}</div>`;
       const nx = S[i + 1]; if(nx){
         const tr = items(it=>it.cat === 'transport' && it.date && it.date >= x.fin && it.date <= nx.debut).sort((a, b)=>(a.date + (a.heureDep || '')).localeCompare(b.date + (b.heureDep || '')));
         h += `<div class="etp-link">${tr.length ? tr.map(it=>`<button type="button" onclick="CV.edit('${it.id}')">${icon(it)} <span data-notr>${esc(it.from && it.to ? cityOf(it.from) + ' → ' + cityOf(it.to) : it.titre)}</span> · ${fshort(it.date)}${it.heureDep ? ' ' + esc(it.heureDep) : ''}<b class="${okB(it) ? 'ok' : ''}">${MSGT(okB(it) ? 'réservé' : 'à réserver')}</b></button>`).join('')

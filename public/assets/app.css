@@ -2802,7 +2802,7 @@ button.etp-chip.tip{border:0;font:inherit;font-size:.78rem;font-weight:700;backg
 .etp-card+.v-day,.v-day+.etp-card{margin-top:10px}
 .etp-foot{display:flex;flex-direction:column;gap:8px;margin:14px 0 6px}
 .etp-reorg,.etp-add{min-height:46px;border-radius:14px;font:inherit;font-size:.9rem;font-weight:800;cursor:pointer}
-.etp-reorg{border:0;background:#fff;color:#2A1238;box-shadow:var(--shadow)}.etp-add{border:1.5px dashed rgba(255,255,255,.45);background:transparent;color:#f1e4fb}
+.etp-reorg{border:0;background:#fff;color:#2A1238;box-shadow:var(--shadow)}.etp-add{border:1.5px dashed #c9a6dc;background:rgba(255,255,255,.88);color:#7b2fa8}
 .so-list{display:flex;flex-direction:column;gap:8px}
 .so-row{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #ece3ef;border-radius:14px;padding:8px 8px 8px 4px;transition:transform .15s}
 .so-row.drag{transition:none;z-index:2;position:relative;box-shadow:0 14px 30px -10px rgba(42,16,51,.45);outline:2px solid #a78bfa}
