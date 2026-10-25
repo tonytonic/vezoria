@@ -147,10 +147,10 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   // Enregistrement regroupé : plusieurs modifications d’affilée = une seule écriture (300 ms après la dernière).
   // Rien ne se perd : écrit tout de suite quand l’appli passe en arrière-plan, se ferme ou se recharge.
-  let persistT = 0, persistOff = false;
+  let persistT = 0, persistOff = false, idbFail = 0;
   function persistLegacy(){
     try { localStorage.setItem(KEY, JSON.stringify({records:R, meta:M})); storeIdb = false; return true; }
-    catch(e){ alert('Sauvegarde impossible (stockage plein ou bloqué). Exporte tes données.'); return false; }
+    catch(e){ if(document.visibilityState !== 'hidden') alert('Sauvegarde impossible (stockage plein ou bloqué). Exporte tes données.'); return false; }
   }
   function persistNow(){
     clearTimeout(persistT); persistT = 0; if(persistOff || storeLoading || !storeReady) return Promise.resolve();   // 🛡️ jamais d’écriture avant d’avoir relu le carnet (sinon un carnet vide écraserait le vrai)
@@ -159,7 +159,12 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     return RDB.put('R', R).then(()=>{   // le carnet : dans la base ; le petit stockage ne garde plus que les réglages
       if(persistOff) return;
       try { localStorage.setItem(KEY, JSON.stringify({idb:1, meta:M})); storeIdb = true; } catch(e){}
-    }).catch(e=>{ console.warn('carnet : base indisponible, ancien rangement', e); persistLegacy(); });
+      idbFail = 0;
+    }).catch(e=>{ console.warn('carnet : écriture dans la base interrompue', e);
+      // 📱 appli fermée ou mise en arrière-plan pendant l’écriture (iPhone coupe la base) : ce n’est pas un stockage plein.
+      // La version précédente reste intacte dans la base ; on réessaie au retour, sans message. Ancien rangement seulement si la base échoue vraiment.
+      if(document.visibilityState === 'hidden' || ++idbFail < 3){ if(!persistT) persistT = setTimeout(persistNow, 2000); return; }
+      idbFail = 0; persistLegacy(); });
   }
   function persist(){ if(persistOff || persistT || !storeReady) return; persistT = setTimeout(persistNow, 300); }
   ['pagehide', 'beforeunload'].forEach(ev=>addEventListener(ev, ()=>{ if(persistT) persistNow(); }));
