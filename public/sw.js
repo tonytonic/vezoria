@@ -3,7 +3,7 @@
 // Une nouvelle version de l'appli = un nouveau sw.js : il s'installe en arrière-plan, puis l'appli propose
 // « Nouvelle version · toucher pour recharger » (ou recharge seule si elle vient juste de s'ouvrir).
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-25h';
+const CACHE = 'vezoria-2026-10-25i';
 // le code et les styles sont dans assets/ (depuis la 2026-10-23d) : copiés dès l'installation pour marcher hors ligne tout de suite
 const CORE = ['./', './splash.webp', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './i18n.js',
   './assets/app.css', ...[1, 2, 3, 4, 5, 6, 7, 8].map(n => './assets/app-' + n + '.js'),
