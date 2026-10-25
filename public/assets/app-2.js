@@ -406,8 +406,9 @@
     return `<div class="v-seg v-seg2" id="${id}">${opts.map(([k,l])=>`<button type="button" class="${k===cur?'on':''}" data-v="${k}" onclick="CV.seg(this)">${l}</button>`).join('')}</div>`;
   }
   function seg(btn){ btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); if(document.getElementById('cv-live')) live(); }
+  let STT = false;   // le statut a été choisi à la main dans cette fiche : il l’emporte sur le calcul par les échéances
   // 🎫 le statut d’une fiche existante s’enregistre dès qu’on le touche (plus besoin d’« Enregistrer » ; fermer la fiche ne le perd plus)
-  function segStat(btn){ seg(btn); const it = editing, v = btn.dataset.v; if(!it || !it.id || !R[it.id] || M.lock) return;
+  function segStat(btn){ seg(btn); const it = editing, v = btn.dataset.v; if(it) STT = true; if(!it || !it.id || !R[it.id] || M.lock) return;
     const c = clone(R[it.id]); if(c.statut === v) return; c.statut = v; if(v === 'paid' && Array.isArray(c.echeances)) c.echeances = c.echeances.map(e=>Object.assign({}, e, {fait:true}));
     it.statut = v; if(c.echeances) it.echeances = c.echeances; put(c, '✓ ' + MSGT(STATUTS[v] || v)); try { render(); } catch(e){} }
   const segVal = id => { const b = document.querySelector('#'+id+' button.on'); return b ? b.dataset.v : null; };
@@ -421,7 +422,7 @@
     let draft = null; if(id && typeof id === 'object'){ draft = id; id = null; newCat = draft.cat; }
     const src = draft ? Object.assign({id:null, type:'item', trip:M.trip, titre:'', statut:'todo', date:'', mode:'Avion', qui:[]}, draft) : id ? R[id] : {id:null, type:'item', trip:M.trip, cat:newCat, titre:'', statut:'todo', date:'', mode:'Avion', qui: M.who!=='all' ? [M.who] : []};
     if(!src) return;
-    const it = clone(src); editing = it;
+    const it = clone(src); editing = it; STT = false;
     const c = it.cat;
     let h = `<h2>${icon(it)} ${id ? esc(it.titre) : 'Nouveau ' + CATS[c].one}</h2>`;
     if(draft && impCtx) h += impTypeBar(c);
@@ -488,7 +489,7 @@
       it.qui = (!q.length || q.length === tv().length) ? [] : q;
     }
     readPay(it);
-    if(st0 === 'paid' && it.statut !== 'paid'){ it.statut = 'paid'; if(Array.isArray(it.echeances)) it.echeances = it.echeances.map(e=>Object.assign({}, e, {fait:true})); }   // « Payé » choisi à la main : on le garde
+    if(STT && st0){ it.statut = st0; if(st0 === 'paid' && Array.isArray(it.echeances)) it.echeances = it.echeances.map(e=>Object.assign({}, e, {fait:true})); }   // statut choisi à la main (même revenir de « Payé ») : on le garde
     return it;
   }
   function saveForm(keepOpen){
