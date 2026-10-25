@@ -5347,4 +5347,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"{0} 项修改待发送",
 "Tes modifications sont envoyées":"你的修改已发送",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} 张照片正在上传：应用打开时会在后台发送。",
-"fiche introuvable":"找不到该项目"});
+"fiche introuvable":"找不到该项目",
+"Les dates du voyage":"旅行日期",
+"Garder mes dates":"保持日期不变",
+"Rallonger le voyage":"延长旅行",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"返程仍为 {0}。从以下站点减少 {1} 晚：{2}。",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"旅行延长 {0} 晚：{1} 返程。",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"其他站点的晚数不够，无法保持日期：旅行延长 {0} 晚，{1} 返程。",
+"mêmes dates de voyage":"旅行日期不变"});

@@ -2408,4 +2408,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"{0} modifica/he da inviare",
 "Tes modifications sont envoyées":"Le tue modifiche sono state inviate",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} foto in viaggio: partono in background con l’app aperta.",
-"fiche introuvable":"scheda non trovata"});
+"fiche introuvable":"scheda non trovata",
+"Les dates du voyage":"Le date del viaggio",
+"Garder mes dates":"Mantieni le date",
+"Rallonger le voyage":"Allunga il viaggio",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"Il ritorno resta il {0}. Si tolgono {1} notte/i a: {2}.",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"Il viaggio si allunga di {0} notte/i: ritorno il {1}.",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Non ci sono abbastanza notti altrove per mantenere le date: il viaggio si allunga di {0} notte/i, ritorno il {1}.",
+"mêmes dates de voyage":"stesse date di viaggio"});

@@ -2393,4 +2393,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"{0} change(s) to send",
 "Tes modifications sont envoyées":"Your changes have been sent",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} photo(s) on the way: they upload in the background while the app is open.",
-"fiche introuvable":"item not found"});
+"fiche introuvable":"item not found",
+"Les dates du voyage":"Trip dates",
+"Garder mes dates":"Keep my dates",
+"Rallonger le voyage":"Extend the trip",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"You still return on {0}. {1} night(s) are taken from: {2}.",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"The trip gets {0} night(s) longer: return on {1}.",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Not enough nights elsewhere to keep your dates: the trip gets {0} night(s) longer, return on {1}.",
+"mêmes dates de voyage":"same trip dates"});

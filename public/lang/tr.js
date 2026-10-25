@@ -5335,4 +5335,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"Gönderilecek {0} değişiklik",
 "Tes modifications sont envoyées":"Değişikliklerin gönderildi",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} fotoğraf yolda: uygulama açıkken arka planda gönderiliyor.",
-"fiche introuvable":"kart bulunamadı"});
+"fiche introuvable":"kart bulunamadı",
+"Les dates du voyage":"Seyahat tarihleri",
+"Garder mes dates":"Tarihlerimi koru",
+"Rallonger le voyage":"Seyahati uzat",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"Dönüşün {0} olarak kalıyor. {1} gece şuradan alınıyor: {2}.",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"Seyahat {0} gece uzuyor: dönüş {1}.",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Tarihleri korumak için başka yerde yeterli gece yok: seyahat {0} gece uzuyor, dönüş {1}.",
+"mêmes dates de voyage":"aynı seyahat tarihleri"});

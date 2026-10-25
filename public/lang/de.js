@@ -2403,4 +2403,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"{0} Änderung(en) zu senden",
 "Tes modifications sont envoyées":"Deine Änderungen sind gesendet",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} Foto(s) unterwegs: sie werden im Hintergrund gesendet, solange die App offen ist.",
-"fiche introuvable":"Eintrag nicht gefunden"});
+"fiche introuvable":"Eintrag nicht gefunden",
+"Les dates du voyage":"Reisedaten",
+"Garder mes dates":"Daten beibehalten",
+"Rallonger le voyage":"Reise verlängern",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"Deine Rückreise bleibt am {0}. {1} Nacht/Nächte werden genommen bei: {2}.",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"Die Reise wird {0} Nacht/Nächte länger: Rückreise am {1}.",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Nicht genug Nächte an anderen Etappen, um die Daten zu halten: die Reise wird {0} Nacht/Nächte länger, Rückreise am {1}.",
+"mêmes dates de voyage":"gleiche Reisedaten"});

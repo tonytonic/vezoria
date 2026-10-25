@@ -5348,4 +5348,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"Изменений к отправке: {0}",
 "Tes modifications sont envoyées":"Твои изменения отправлены",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} фото в пути: отправляются в фоне, пока приложение открыто.",
-"fiche introuvable":"карточка не найдена"});
+"fiche introuvable":"карточка не найдена",
+"Les dates du voyage":"Даты поездки",
+"Garder mes dates":"Сохранить даты",
+"Rallonger le voyage":"Продлить поездку",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"Возвращение остаётся {0}. Берём {1} ноч. у: {2}.",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"Поездка удлинится на {0} ноч.: возвращение {1}.",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Недостаточно ночей в других местах, чтобы сохранить даты: поездка удлинится на {0} ноч., возвращение {1}.",
+"mêmes dates de voyage":"те же даты поездки"});

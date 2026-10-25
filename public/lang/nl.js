@@ -2399,4 +2399,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"{0} wijziging(en) te versturen",
 "Tes modifications sont envoyées":"Je wijzigingen zijn verstuurd",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} foto(’s) onderweg: ze worden op de achtergrond verstuurd zolang de app open is.",
-"fiche introuvable":"item niet gevonden"});
+"fiche introuvable":"item niet gevonden",
+"Les dates du voyage":"De reisdata",
+"Garder mes dates":"Mijn data houden",
+"Rallonger le voyage":"Reis verlengen",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"Je terugreis blijft {0}. Er gaan {1} nacht(en) af bij: {2}.",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"De reis wordt {0} nacht(en) langer: terug op {1}.",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Niet genoeg nachten elders om je data te houden: de reis wordt {0} nacht(en) langer, terug op {1}.",
+"mêmes dates de voyage":"zelfde reisdata"});

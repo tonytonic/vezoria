@@ -2412,4 +2412,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"{0} alteração(ões) a enviar",
 "Tes modifications sont envoyées":"Suas alterações foram enviadas",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} foto(s) a caminho: são enviadas em segundo plano com o app aberto.",
-"fiche introuvable":"ficha não encontrada"});
+"fiche introuvable":"ficha não encontrada",
+"Les dates du voyage":"As datas da viagem",
+"Garder mes dates":"Manter minhas datas",
+"Rallonger le voyage":"Prolongar a viagem",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"Sua volta continua em {0}. Tiramos {1} noite(s) de: {2}.",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"A viagem fica {0} noite(s) mais longa: volta em {1}.",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"Não há noites suficientes em outras etapas para manter as datas: a viagem fica {0} noite(s) mais longa, volta em {1}.",
+"mêmes dates de voyage":"mesmas datas de viagem"});

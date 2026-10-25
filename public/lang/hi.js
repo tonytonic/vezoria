@@ -5347,4 +5347,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"{0} बदलाव भेजने बाकी",
 "Tes modifications sont envoyées":"तुम्हारे बदलाव भेज दिए गए",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} फ़ोटो रास्ते में: ऐप खुला रहने पर पीछे से जाती हैं।",
-"fiche introuvable":"कार्ड नहीं मिला"});
+"fiche introuvable":"कार्ड नहीं मिला",
+"Les dates du voyage":"यात्रा की तारीख़ें",
+"Garder mes dates":"मेरी तारीख़ें रखो",
+"Rallonger le voyage":"यात्रा बढ़ाओ",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"वापसी {0} ही रहेगी। {1} रात यहाँ से ली जाएँगी: {2}।",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"यात्रा {0} रात बढ़ेगी: वापसी {1} को।",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"तारीख़ें रखने के लिए बाक़ी जगह पर्याप्त रातें नहीं: यात्रा {0} रात बढ़ेगी, वापसी {1} को।",
+"mêmes dates de voyage":"यात्रा की वही तारीख़ें"});

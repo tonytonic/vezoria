@@ -5348,4 +5348,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"{0} تعديل(ات) للإرسال",
 "Tes modifications sont envoyées":"تم إرسال تعديلاتك",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} صورة في الطريق: تُرسل في الخلفية والتطبيق مفتوح.",
-"fiche introuvable":"البطاقة غير موجودة"});
+"fiche introuvable":"البطاقة غير موجودة",
+"Les dates du voyage":"تواريخ الرحلة",
+"Garder mes dates":"الإبقاء على تواريخي",
+"Rallonger le voyage":"تمديد الرحلة",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"تبقى عودتك في {0}. نأخذ {1} ليلة من: {2}.",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"تطول الرحلة {0} ليلة: العودة في {1}.",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"لا توجد ليالٍ كافية في محطات أخرى للإبقاء على التواريخ: تطول الرحلة {0} ليلة، العودة في {1}.",
+"mêmes dates de voyage":"نفس تواريخ الرحلة"});

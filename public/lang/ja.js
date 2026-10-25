@@ -5347,4 +5347,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"送信待ちの変更 {0} 件",
 "Tes modifications sont envoyées":"変更は送信済みです",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"{0} 枚の写真を送信中：アプリを開いている間にバックグラウンドで送られます。",
-"fiche introuvable":"項目が見つかりません"});
+"fiche introuvable":"項目が見つかりません",
+"Les dates du voyage":"旅行の日程",
+"Garder mes dates":"日程を変えない",
+"Rallonger le voyage":"旅を延ばす",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"帰りは {0} のまま。次から {1} 泊減らします：{2}。",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"旅が {0} 泊長くなります：帰りは {1}。",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"日程を保つには他の滞在地の泊数が足りません：旅が {0} 泊長くなり、帰りは {1}。",
+"mêmes dates de voyage":"旅行日程はそのまま"});

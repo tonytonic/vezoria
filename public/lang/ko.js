@@ -5347,4 +5347,11 @@ I18N.load({
 "{0} modification(s) à envoyer":"보낼 변경 {0}개",
 "Tes modifications sont envoyées":"변경 사항이 전송됐어요",
 "{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.":"사진 {0}장 전송 중: 앱이 열려 있으면 백그라운드로 보내져요.",
-"fiche introuvable":"항목을 찾을 수 없음"});
+"fiche introuvable":"항목을 찾을 수 없음",
+"Les dates du voyage":"여행 날짜",
+"Garder mes dates":"날짜 유지",
+"Rallonger le voyage":"여행 늘리기",
+"Ton retour reste le {0}. On prend {1} nuit(s) à : {2}.":"귀국은 {0} 그대로예요. 다음에서 {1}박을 줄여요: {2}.",
+"Le voyage s’allonge de {0} nuit(s) : retour le {1}.":"여행이 {0}박 늘어나요: 귀국 {1}.",
+"Pas assez de nuits ailleurs pour garder tes dates : le voyage s’allonge de {0} nuit(s), retour le {1}.":"날짜를 유지할 만큼 다른 곳의 박수가 부족해요: 여행이 {0}박 늘어나고 귀국은 {1}.",
+"mêmes dates de voyage":"여행 날짜 그대로"});
