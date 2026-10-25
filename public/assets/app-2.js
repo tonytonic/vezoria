@@ -834,7 +834,7 @@
         <div class="bu-obj">${objLine || 'Pas encore d’objectif par personne.'} <button type="button" onclick="CV.objAsk()">${obj ? 'modifier' : 'fixer un objectif'}</button></div></div>${buFil(t)}
       <div class="bu-main"><button type="button" class="v-btn" onclick="CV.tlReceipt()">＋ ${MSGT('Ajouter une dépense')}</button>
         <details class="bu-tools"><summary>${MSGT('Outils')} ▾</summary><div class="cv-quick2">${r('📷','Tickets',"CV.tlReceipts()")}${r('⚖️','Parts',"CV.partsSheet()")}${r('💱','Convertir',"CV.fxTool()")}</div></details></div>
-      ${v.length > 1 ? (()=>{ const eh = equilibreHTML(), nd = (eh.match(/ doit /g) || []).length; return `<div id="bu-eq">${acc('eq', `💸 ${MSGT('Qui doit quoi')} <small>${nd ? RF('{0} remboursement(s) à faire', nd) : MSGT('tout est réglé')}</small>`, eh)}</div>`; })() : ''}
+      ${v.length > 1 ? (()=>{ const eh = equilibreHTML(), nd = eqTransfers().tr.length; if(BO.eq === undefined && nd) BO.eq = true; return `<div id="bu-eq">${acc('eq', `💸 ${MSGT('Qui doit quoi')} <small>${nd ? RF('{0} remboursement(s) à faire', nd) : MSGT('tout est réglé')}</small>`, eh)}</div>`; })() : ''}
       ${(()=>{ const cats = `${rows.filter(x=>x.proj > 0 || x.paye > 0).map(x=>`<button type="button" class="bu-cat" onclick="CV.tab('${x.c}')"><span>${CATS[x.c].icon} ${CATS[x.c].lbl}</span><b>${eur(x.proj)}</b><i><em style="width:${(x.proj / mx * 100).toFixed(1)}%"></em><u style="width:${(x.paye / mx * 100).toFixed(1)}%"></u></i></button>`).join('') || '<div class="v-sum-small">Ajoute des trajets, hébergements, visites ou dépenses : le budget se remplit tout seul.</div>'}`;
         return tripPhase(t) === 'prep' ? acc('cats', `🗂️ ${MSGT('Par poste')} <small>${rows.filter(x=>x.proj > 0).map(x=>CATS[x.c].icon + ' ' + eur(x.proj)).slice(0, 3).join(' · ')}</small>`, `<div class="bu-cats">${cats}</div>`) : `<div class="bu-cats"><div class="bu-h">Par poste</div>${cats}</div>`; })()}
       ${acc('ana', `📊 Analyse des dépenses <small>par poste et par jour</small>`, anaHTML())}
@@ -1752,13 +1752,20 @@
     const fb = document.getElementById('cv-fbook'); if(fb){ const x = bookHTML(tmp); if(fb.dataset.h !== x){ fb.dataset.h = x; fb.innerHTML = x; } }
   }
   function one(btn){ btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); live(); }
+  // 💸 Qui doit quoi : la réponse d’abord (« Claire → Anthony 1 137 € »), le calcul replié dessous
+  function eqTransfers(){ const bal = balances(), hasF = tv().some(p=>tFoyer(p)), SF = hasF ? settleFoyers(bal) : null; return {bal, hasF, tr: hasF ? SF.tr : settle(bal), nm: hasF ? SF.lbl : pname_c}; }
   function equilibreHTML(){
-    const bal = balances(), hasF = tv().some(p=>tFoyer(p)), SF = hasF ? settleFoyers(bal) : null, tr = hasF ? SF.tr : settle(bal), nm = hasF ? SF.lbl : pname_c;
-    return `<div class="v-sum">
-      <div class="v-sum-row"><div class="v-sum-big" style="font-size:1rem">⚖️ Qui doit quoi</div><div class="v-sum-small">sur ce qui est déjà réglé</div></div>
-      ${bal.map(b=>`<div class="cv-bal">${pchip(b.pid)}<span>a payé ${eur(b.avance)} · sa part ${eur(b.part)}${b.verse>0.5?' · a remboursé '+eur(b.verse):''}${b.recu>0.5?' · a reçu '+eur(b.recu):''}</span><b style="color:${b.solde>0.5?'var(--green)':b.solde<-0.5?'var(--red)':'var(--gray)'}">${Math.abs(b.solde)<0.5 ? '0 ' + CS() : (b.solde>0?'+':'') + eur(b.solde)}</b></div>`).join('')}
-      <div class="cv-settle">${tr.length ? tr.map(x=>`<div class="cv-settle-r"><span>➡️ ${nm(x.de)} doit <b>${eur(x.v)}</b> à ${nm(x.a)}</span><button class="v-chip on" onclick="CV.rembAdd('${x.de}','${x.a}',${x.v.toFixed(2)})">💸 Régler</button><button class="v-chip" onclick="CV.rembAsk('${x.de}','${x.a}',${x.v.toFixed(2)})">📤 Demander</button></div>`).join('') : '✓ Personne ne doit rien à personne.'}</div>
-      ${rembs().length ? `<div class="cv-rbs">${rembs().map(x=>`<div class="cv-rb">💸 ${pname_c(x.de)} a remboursé <b>${eur(num(x.montant))}</b> à ${pname_c(x.a)} <span class="v-sum-small">le ${fdate(x.date)}</span><button class="cv-x" onclick="CV.rembDel('${x.id}')" aria-label="Retirer">✕</button></div>`).join('')}</div>` : ''}
+    const {bal, hasF, tr, nm} = eqTransfers(), paid = bal.reduce((s, b)=>s + b.avance, 0), rb = rembs();
+    const who = id => `<span class="eq-who">${hasF ? '' : ini(id)}<span data-notr>${nm(id)}</span></span>`;
+    return `<div class="eq">
+      ${tr.length ? `<div class="eq-k">${MSGT('Pour être quittes')}</div>` + tr.map(x=>`<div class="eq-tr">
+          <div class="eq-line">${who(x.de)}<span class="eq-arr"><b>${eur(x.v)}</b><i>→</i></span>${who(x.a)}</div>
+          <div class="eq-btns"><button type="button" class="eq-go" onclick="CV.rembAdd('${x.de}','${x.a}',${x.v.toFixed(2)})">💸 ${MSGT('C’est remboursé')}</button><button type="button" onclick="CV.rembAsk('${x.de}','${x.a}',${x.v.toFixed(2)})">📤 ${MSGT('Demander')}</button></div></div>`).join('')
+        : `<div class="eq-ok">✓ ${MSGT(paid > .5 ? 'Vous êtes quittes : chacun a payé sa part.' : 'Rien n’est encore payé : les comptes se feront tout seuls.')}</div>`}
+      ${paid > .5 ? `<div class="eq-note">${RF('Calculé sur ce qui est déjà payé ({0}), pas sur les prévisions.', eur(paid))}</div>` : ''}
+      ${paid > .5 ? `<details class="eq-det"><summary>${MSGT('Voir le calcul')}</summary>
+        ${bal.map(b=>{ const s = b.solde; return `<div class="eq-row">${pchip(b.pid)}<span>${RF('a payé {0} · sa part {1}', eur(b.avance), eur(b.part))}${b.verse > .5 ? ' · ' + RF('a remboursé {0}', eur(b.verse)) : ''}${b.recu > .5 ? ' · ' + RF('a reçu {0}', eur(b.recu)) : ''}</span><b class="${s > .5 ? 'pos' : s < -.5 ? 'neg' : ''}">${Math.abs(s) < .5 ? MSGT('quitte') : s > 0 ? RF('on lui doit {0}', eur(s)) : RF('doit {0}', eur(-s))}</b></div>`; }).join('')}
+        ${rb.length ? `<div class="eq-k" style="margin-top:8px">${MSGT('Déjà remboursé')}</div>` + rb.map(x=>`<div class="cv-rb">💸 ${pname_c(x.de)} → ${pname_c(x.a)} <b>${eur(num(x.montant))}</b> <span class="v-sum-small">${fdate(x.date)}</span><button class="cv-x" onclick="CV.rembDel('${x.id}')" aria-label="Retirer">✕</button></div>`).join('') : ''}</details>` : ''}
     </div>`;
   }
 
