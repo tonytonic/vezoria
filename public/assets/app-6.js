@@ -496,7 +496,7 @@
   function bootOffline(){
     if(!window.VZ_HOST && 'serviceWorker' in navigator && /^https?:/.test(location.protocol)){
       const had = !!navigator.serviceWorker.controller;
-      navigator.serviceWorker.register('sw.js').then(reg => { try { reg.update(); document.addEventListener('visibilitychange', () => { if(!document.hidden) reg.update().catch(()=>{}); }); } catch(e){} }).catch(()=>{});
+      navigator.serviceWorker.register('sw.js').then(reg => { try { reg.update().catch(()=>{}); document.addEventListener('visibilitychange', () => { if(!document.hidden) reg.update().catch(()=>{}); }); } catch(e){} }).catch(()=>{});
       // une nouvelle version vient de prendre la main : juste à l’ouverture, on recharge sans rien dire ;
       // ensuite, on le propose (« Nouvelle version · toucher pour recharger ») pour ne jamais couper ce qu’on fait
       const t0 = Date.now();

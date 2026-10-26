@@ -1927,6 +1927,8 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .ln-place small{opacity:.9;font-size:.82rem}
 .ln-go{position:absolute;z-index:2;right:12px;top:12px;margin-top:44px;border:0;border-radius:99px;padding:7px 12px;background:rgba(255,255,255,.92);color:#0b3a44;font:inherit;font-weight:800;font-size:.8rem;box-shadow:0 6px 16px rgba(0,0,0,.3)}
 .ln.nomap .ln-go{top:12px;right:auto;left:auto;position:relative;margin:10px 16px 0;display:inline-block}
+.ln:not(.nomap) .ln-place{padding-right:136px}
+.ln:not(.nomap) .ln-place b{font-size:1.65rem;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .ln-stats{position:absolute;z-index:2;left:10px;right:10px;bottom:62px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .ln.nomap .ln-stats{position:relative;left:auto;right:auto;bottom:auto;margin:16px 10px 0}
 .ln-s{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:16px;padding:7px 4px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;transition:transform .3s}
