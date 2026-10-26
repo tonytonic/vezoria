@@ -2115,19 +2115,37 @@
     return s ? s.photos[0] : '';
   }
   let coverCur = '';
-  const PHASE_IMG = {prep: (window.VZ_B || '') + 'img/entete-preparation.jpg', live: (window.VZ_B || '') + 'img/entete-en-cours.jpg'};   // passés : à venir
+  const PHASE_IMG = {prep: (window.VZ_B || '') + 'img/entete-preparation.jpg', live: (window.VZ_B || '') + 'img/entete-en-cours.jpg', past: (window.VZ_B || '') + 'img/entete-passes.jpg'};
+  // 🎯 cadrage : le groupe d’amis reste visible quelle que soit la hauteur de l’en-tête (iPhone plus haut, Android plus bas, titre sur 1 ou 2 lignes)
+  //   w×h : taille de l’image · fx, fy : point du groupe à garder (fraction de l’image) · tx, ty : où le placer dans l’en-tête
+  const PHASE_FOCUS = {prep:{w:1312, h:1199, fx:.64, top:.53, fy:.92, tx:.62, ty:.93}, live:{w:1280, h:853, fx:.84, top:.40, fy:.80, tx:.80, ty:.92}, past:{w:1400, h:782, fx:.55, top:.12, fy:.88, tx:.60, ty:.96}};   // top : haut des têtes
+  let phFocusK = '';
+  function phFocus(){
+    const f = PHASE_FOCUS[phFocusK], hero = document.querySelector('.header .hero'), el = document.getElementById('cv-cover');
+    if(!f || !hero || !el || !hero.classList.contains('ph-cover')) return;
+    const hr = hero.getBoundingClientRect(), r = el.getBoundingClientRect(); if(!r.width || !r.height) return;
+    const s = Math.max(r.width / f.w, r.height / f.h), sw = f.w * s, sh = f.h * s;
+    const cl = (v, lo) => Math.max(lo, Math.min(0, v));
+    const oy = hr.top - r.top; let yy = oy + f.ty * hr.height - f.fy * sh;
+    if(yy + f.top * sh - oy < .1 * hr.height) yy = oy + .12 * hr.height - f.top * sh;   // en-tête très large (tablette) : le groupe ne tient pas en entier → on garde les têtes
+    const x = cl((hr.left - r.left) + f.tx * hr.width - f.fx * sw, r.width - sw), y = cl(yy, r.height - sh);
+    el.style.backgroundPosition = Math.round(x) + 'px ' + Math.round(y) + 'px';
+  }
+  window.addEventListener('resize', ()=>requestAnimationFrame(phFocus));
   async function coverPaint(t){
     const hero = document.querySelector('.header .hero'); if(!hero) return;
     let el = document.getElementById('cv-cover');
     // 🌅 voyage en préparation : la photo d’ambiance de Vezoria (amis au coucher de soleil), sauf si l’utilisateur a choisi SA photo
-    // préparation et voyage en cours : photo d’ambiance de la période (la photo choisie par l’utilisateur passe en premier) ; passés : rien pour l’instant
+    // préparation, voyage en cours, voyages passés : photo d’ambiance de la période (la photo choisie par l’utilisateur passe en premier)
     const ph = t ? tripPhase(t) : '', has = !!PHASE_IMG[ph], phImg = has && !t.cover ? PHASE_IMG[ph] : '';
     const id = !has ? '' : t.cover ? t.cover : 'ph:' + phImg;
-    hero.classList.toggle('ph-cover', !!phImg); hero.classList.toggle('ph-live', !!phImg && ph === 'live');
+    hero.classList.toggle('ph-cover', !!phImg); hero.classList.toggle('ph-live', !!phImg && ph === 'live'); hero.classList.toggle('ph-past', !!phImg && ph === 'past');
+    phFocusK = phImg ? ph : ''; if(phImg) requestAnimationFrame(()=>requestAnimationFrame(phFocus));   // recalculé à chaque dessin de l’en-tête (sa hauteur change avec le titre)
     if(!id){ if(el) el.remove(); hero.classList.remove('has-cover'); coverCur = ''; return; }
     if(id === coverCur && el) return; coverCur = id;
     if(!el){ el = document.createElement('div'); el.id = 'cv-cover'; hero.prepend(el); }
-    if(id.startsWith('ph:')){ const i = new Image(); i.onload = () => { if(coverCur === id){ el.style.backgroundImage = `url("${phImg}")`; hero.classList.add('has-cover'); } }; i.src = phImg; return; }
+    el.style.backgroundPosition = '';   // (photo de l’utilisateur : centrée ; photo d’ambiance : cadrage calculé par phFocus)
+    if(id.startsWith('ph:')){ const i = new Image(); i.onload = () => { if(coverCur === id){ el.style.backgroundImage = `url("${phImg}")`; hero.classList.add('has-cover'); requestAnimationFrame(phFocus); } }; i.src = phImg; return; }
     if(id.startsWith('wk:')){ const i = new Image(); i.onload = () => { if(coverCur === id){ el.style.backgroundImage = `url("${t.coverWk}")`; hero.classList.add('has-cover'); } }; i.src = t.coverWk; return; }
     const u = urls[id] || urls[id + '.t'] || await photoURL(id + '.t');
     if(coverCur !== id) return;
