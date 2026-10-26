@@ -17,6 +17,10 @@
  */
 const MAX_CHANGES = 1000;
 const MAX_RECORD = 100_000;
+// 🔁 recouvrement : on renvoie aussi les fiches reçues dans les 15 s précédant « since ». Deux téléphones qui synchronisent
+// au même instant (deux serveurs Cloudflare) pouvaient sinon se croiser et l'un ne recevait jamais la fiche de l'autre.
+// Sans risque : à la réception, la fiche la plus récente gagne (updatedAt), un doublon ne change rien.
+const OVERLAP = 15_000;
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -246,7 +250,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
   const { results } = await env.DB
     .prepare('SELECT data FROM records WHERE space = ?1 AND rev >= ?2')
-    .bind(space, since)
+    .bind(space, since > 0 ? Math.max(0, since - OVERLAP) : 0)
     .all();
   if (Math.random() < 0.002 && waitUntil) waitUntil(sweepInactive(env).catch(() => {}));
   if (Math.random() < 0.1 && waitUntil) waitUntil(sweepOrphans(env).catch(() => {}));   // vérifie au plus 1 fois / 24 h

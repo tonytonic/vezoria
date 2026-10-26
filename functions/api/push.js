@@ -24,7 +24,10 @@ const CORS = {
 };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
 const KINDS = ['depense', 'resa', 'souv', 'sondage', 'notes', 'rappel', 'social'];
-const MAX_PER_HOUR = 60;        // par espace : un garde-fou contre les envois en boucle
+const MAX_PER_HOUR = 60;
+// 🛡️ adresses d'abonnement acceptées : services de notification d'Apple, Google, Mozilla et Microsoft (le serveur n'envoie rien ailleurs)
+const PUSH_HOSTS = /^(fcm\.googleapis\.com|android\.googleapis\.com|updates\.push\.services\.mozilla\.com|push\.services\.mozilla\.com|web\.push\.apple\.com|[a-z0-9.-]+\.push\.apple\.com|[a-z0-9.-]+\.notify\.windows\.com|[a-z0-9.-]+\.push\.services\.mozilla\.com)$/i;
+const pushOk = u => { try { const x = new URL(u); return x.protocol === 'https:' && PUSH_HOSTS.test(x.hostname); } catch (e) { return false; } };        // par espace : un garde-fou contre les envois en boucle
 const te = new TextEncoder();
 
 // ── petits outils ──
@@ -40,7 +43,9 @@ async function sha256(text) {
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+let tablesReady = false;
 async function tables(db) {
+  if (tablesReady) return;
   await db.batch([
     db.prepare('CREATE TABLE IF NOT EXISTS push_keys (id INTEGER PRIMARY KEY, pub TEXT NOT NULL, jwk TEXT NOT NULL)'),
     db.prepare('CREATE TABLE IF NOT EXISTS push_subs (space TEXT NOT NULL, dev TEXT NOT NULL, endpoint TEXT NOT NULL, p256dh TEXT NOT NULL, auth TEXT NOT NULL, kinds TEXT NOT NULL, tz TEXT, quiet INTEGER, updated INTEGER, PRIMARY KEY (space, dev))'),
@@ -48,6 +53,7 @@ async function tables(db) {
     db.prepare('CREATE INDEX IF NOT EXISTS idx_push_due_at ON push_due (at)'),
     db.prepare('CREATE TABLE IF NOT EXISTS push_rate (space TEXT PRIMARY KEY, hour INTEGER NOT NULL, n INTEGER NOT NULL)'),
   ]);
+  tablesReady = true;
 }
 
 // Clé VAPID du serveur : créée une seule fois, gardée dans D1 (aucun réglage à faire)
@@ -185,7 +191,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
   if (b.a === 'sub') {
     const s = b.sub || {}, k = s.keys || {};
-    if (!/^https:\/\//.test(s.endpoint || '') || !k.p256dh || !k.auth) return json({ error: 'Abonnement invalide' }, 400);
+    if (!pushOk(s.endpoint || '') || !k.p256dh || !k.auth) return json({ error: 'Abonnement invalide' }, 400);
     const kinds = (Array.isArray(b.kinds) ? b.kinds : []).filter(x => KINDS.includes(x));
     if (!kinds.length) { await dropSub(db, space, dev); return json({ ok: true, off: true }); }
     await db.prepare(`INSERT INTO push_subs (space, dev, endpoint, p256dh, auth, kinds, tz, quiet, updated) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)

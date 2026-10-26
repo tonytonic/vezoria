@@ -76,6 +76,11 @@ async function rateIp(env, request, bucket, limit, cost = 1) {
 }
 const TOO_MANY = 'Trop d’envois depuis cette connexion : réessaie dans une heure. — Too many uploads from this connection: try again in an hour.';
 const validId = id => typeof id === 'string' && /^[\w.\-]{1,120}$/.test(id);
+// 🛡️ seuls ces formats sont acceptés et renvoyés tels quels (jamais d'image SVG, qui peut contenir du code) ;
+// toute photo renvoyée porte des en-têtes qui empêchent le navigateur de l'interpréter comme une page
+const IMG_OK = /^image\/(jpeg|png|webp|gif|heic|heif|avif)$/;
+const safeType = t => IMG_OK.test(String(t || '').toLowerCase()) ? String(t).toLowerCase() : 'application/octet-stream';
+const IMG_SAFE = { 'X-Content-Type-Options': 'nosniff', 'Content-Security-Policy': "default-src 'none'; sandbox" };
 const r2Key = (space, id) => space + '/' + id;
 const validCap = h => typeof h === 'string' && /^[0-9a-f]{64}$/.test(h);
 // table des droits de lecture (seulement si R2 n'est pas relié ; avec R2, l'empreinte est rangée avec la photo)
@@ -103,8 +108,8 @@ export async function onRequestPost({ request, env }) {
   if (space instanceof Response) return space;
   const id = request.headers.get('X-Photo-Id') || '';
   if (!validId(id)) return json({ error: 'Identifiant de photo invalide' }, 400);
-  const mime = (request.headers.get('Content-Type') || 'image/jpeg').split(';')[0];
-  if (!/^image\//.test(mime)) return json({ error: 'Ce n’est pas une image' }, 415);
+  const mime = (request.headers.get('Content-Type') || 'image/jpeg').split(';')[0].trim().toLowerCase();
+  if (!IMG_OK.test(mime)) return json({ error: 'Ce n’est pas une image' }, 415);
   const buf = await request.arrayBuffer();
   if (!buf.byteLength) return json({ error: 'Photo vide' }, 400);
   if (buf.byteLength > MAX_PHOTO) return json({ error: 'Photo trop lourde' }, 413);
@@ -231,14 +236,14 @@ async function capGet(request, env, q) {
   const rh = await sha256('vz-cap:' + rk), cache = 'private, max-age=31536000, immutable';
   if (env.PHOTOS) {
     const obj = await env.PHOTOS.get(r2Key(space, id));
-    if (obj && obj.customMetadata && obj.customMetadata.rh === rh) return new Response(obj.body, { headers: { 'Content-Type': (obj.httpMetadata && obj.httpMetadata.contentType) || 'image/jpeg', 'Cache-Control': cache, ...CORS } });
+    if (obj && obj.customMetadata && obj.customMetadata.rh === rh) return new Response(obj.body, { headers: { 'Content-Type': safeType(obj.httpMetadata && obj.httpMetadata.contentType || 'image/jpeg'), 'Cache-Control': cache, ...IMG_SAFE, ...CORS } });
     if (obj) return json({ error: 'Photo introuvable' }, 404);   // mauvais droit : même réponse qu'une photo absente
   }
   let row = null;
   try { await capTable(env); row = await env.DB.prepare('SELECT p.mime AS mime, p.data AS data FROM photos p JOIN photo_caps c ON c.space = p.space AND c.id = p.id WHERE p.space = ?1 AND p.id = ?2 AND c.rh = ?3').bind(space, id, rh).first(); } catch (e) {}
   if (!row) return json({ error: 'Photo introuvable' }, 404);
   const d = row.data, body = d instanceof ArrayBuffer ? d : ArrayBuffer.isView(d) ? d : new Uint8Array(d);
-  return new Response(body, { headers: { 'Content-Type': row.mime || 'image/jpeg', 'Cache-Control': cache, ...CORS } });
+  return new Response(body, { headers: { 'Content-Type': safeType(row.mime || 'image/jpeg'), 'Cache-Control': cache, ...IMG_SAFE, ...CORS } });
 }
 
 export async function onRequestGet({ request, env }) {
@@ -276,7 +281,7 @@ export async function onRequestGet({ request, env }) {
 
   if (env.PHOTOS) {
     const obj = await env.PHOTOS.get(r2Key(space, id));
-    if (obj) return new Response(obj.body, { headers: { 'Content-Type': (obj.httpMetadata && obj.httpMetadata.contentType) || 'image/jpeg', 'Cache-Control': cache, ...CORS } });
+    if (obj) return new Response(obj.body, { headers: { 'Content-Type': safeType(obj.httpMetadata && obj.httpMetadata.contentType || 'image/jpeg'), 'Cache-Control': cache, ...IMG_SAFE, ...CORS } });
   }
   // Anciennes photos (ou R2 non relié) : lecture dans D1
   let row = null;
@@ -284,5 +289,5 @@ export async function onRequestGet({ request, env }) {
   if (!row) return json({ error: 'Photo introuvable' }, 404);
   const d = row.data;
   const body = d instanceof ArrayBuffer ? d : ArrayBuffer.isView(d) ? d : new Uint8Array(d);
-  return new Response(body, { headers: { 'Content-Type': row.mime || 'image/jpeg', 'Cache-Control': cache, ...CORS } });
+  return new Response(body, { headers: { 'Content-Type': safeType(row.mime || 'image/jpeg'), 'Cache-Control': cache, ...IMG_SAFE, ...CORS } });
 }
