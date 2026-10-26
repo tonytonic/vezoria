@@ -162,6 +162,14 @@ const TOO_MANY = 'Trop d’envois depuis cette connexion : réessaie dans une he
 async function spaceOf(request, env) {
   const code = (request.headers.get('X-Carnet-Code') || '').trim();
   if (code.length < 8) return json({ error: 'Code trop court' }, 400);
+  // 👥 code compagnon (« mb: » + empreinte) : il ouvre le carnet de son propriétaire, avec des droits réduits
+  if (code.startsWith('mb:')) {
+    let row = null;
+    if (/^[0-9a-f]{64}$/.test(code.slice(3))) try { row = await env.DB.prepare('SELECT space FROM space_members WHERE mh = ?1').bind(await sha256('vz-member:' + code.slice(3))).first(); } catch (e) {}
+    if (!row) return json({ error: 'Accès compagnon retiré par le propriétaire du carnet. — Companion access was removed by the notebook owner.', revoked: true }, 403);
+    try { const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(row.space).first(); if (b) return json({ error: 'suspendu', suspended: true }, 423); } catch (e) {}
+    return row.space;
+  }
   const space = await sha256('carnet-voyage:' + code);
   try { const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first(); if (b) return json({ error: 'suspendu', suspended: true }, 423); } catch (e) {}
   return space;

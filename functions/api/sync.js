@@ -87,6 +87,14 @@ async function spaceOf(request, env) {
   if (!env.DB) return json({ error: 'Base D1 non liée (binding « DB » manquant)' }, 500);
   const code = (request.headers.get('X-Carnet-Code') || '').trim();
   if (code.length < 8) return json({ error: 'Code du carnet trop court (8 caractères minimum)' }, 400);
+  // 👥 code compagnon (« mb: » + empreinte) : il ouvre le carnet de son propriétaire, avec des droits réduits
+  if (code.startsWith('mb:')) {
+    let row = null;
+    if (/^[0-9a-f]{64}$/.test(code.slice(3))) try { row = await env.DB.prepare('SELECT space FROM space_members WHERE mh = ?1').bind(await sha256('vz-member:' + code.slice(3))).first(); } catch (e) {}
+    if (!row) return json({ error: 'Accès compagnon retiré par le propriétaire du carnet. — Companion access was removed by the notebook owner.', revoked: true }, 403);
+    try { const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(row.space).first(); if (b) return json({ error: 'suspendu', suspended: true }, 423); } catch (e) {}
+    return row.space;
+  }
   if (env.SPACE_CODES) {
     const allowed = String(env.SPACE_CODES).split(',').map(s => s.trim()).filter(Boolean);
     if (!allowed.includes(code)) return json({ error: 'Code de carnet non autorisé sur ce serveur' }, 403);
@@ -118,6 +126,7 @@ async function wipeSpace(env, space) {
   let d1p = { meta: { changes: 0 } };
   try { d1p = await env.DB.prepare('DELETE FROM photos WHERE space = ?1').bind(space).run(); } catch (e) {}
   try { await env.DB.prepare('DELETE FROM photo_caps WHERE space = ?1').bind(space).run(); } catch (e) {}   // droits de lecture du pot commun
+  try { await env.DB.prepare('DELETE FROM space_members WHERE space = ?1').bind(space).run(); } catch (e) {}   // codes compagnon
   try { await env.DB.batch([env.DB.prepare('DELETE FROM push_subs WHERE space = ?1').bind(space), env.DB.prepare('DELETE FROM push_due WHERE space = ?1').bind(space)]); } catch (e) {}   // notifications
   try {
     await env.DB.prepare("UPDATE photo_stats SET v = MAX(0, v - ?1) WHERE k = 'r2'").bind(freed).run();
@@ -210,7 +219,9 @@ async function wipeMark(env, space, at) {
   } catch (e) {}
 }
 
+const isMb = request => (request.headers.get('X-Carnet-Code') || '').trim().startsWith('mb:');
 export async function onRequestDelete({ request, env }) {
+  if (isMb(request)) return json({ error: 'Un compagnon ne peut pas effacer le carnet : seul son propriétaire le peut. — A companion cannot erase the notebook.' }, 403);
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
   const out = await wipeSpace(env, space);

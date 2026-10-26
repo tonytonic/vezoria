@@ -58,6 +58,7 @@ async function wipe(env, space) {
   }
   const rec = await env.DB.prepare('DELETE FROM records WHERE space = ?1').bind(space).run();
   try { await env.DB.prepare('DELETE FROM photos WHERE space = ?1').bind(space).run(); } catch (e) {}
+  try { await env.DB.prepare('DELETE FROM space_members WHERE space = ?1').bind(space).run(); } catch (e) {}   // codes compagnon
   try { await env.DB.batch([env.DB.prepare('DELETE FROM push_subs WHERE space = ?1').bind(space), env.DB.prepare('DELETE FROM push_due WHERE space = ?1').bind(space)]); } catch (e) {}   // notifications
   try {
     await env.DB.prepare("UPDATE photo_stats SET v = MAX(0, v - ?1) WHERE k = 'r2'").bind(freed).run();

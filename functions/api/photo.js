@@ -31,6 +31,14 @@ async function spaceOf(request, env) {
   if (!env.DB) return json({ error: 'Base D1 non liée (binding « DB » manquant)' }, 500);
   const code = (request.headers.get('X-Carnet-Code') || '').trim();
   if (code.length < 8) return json({ error: 'Code du carnet manquant' }, 400);
+  // 👥 code compagnon (« mb: » + empreinte) : il ouvre le carnet de son propriétaire, avec des droits réduits
+  if (code.startsWith('mb:')) {
+    let row = null;
+    if (/^[0-9a-f]{64}$/.test(code.slice(3))) try { row = await env.DB.prepare('SELECT space FROM space_members WHERE mh = ?1').bind(await sha256('vz-member:' + code.slice(3))).first(); } catch (e) {}
+    if (!row) return json({ error: 'Accès compagnon retiré par le propriétaire du carnet. — Companion access was removed by the notebook owner.', revoked: true }, 403);
+    try { const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(row.space).first(); if (b) return json({ error: 'suspendu', suspended: true }, 423); } catch (e) {}
+    return row.space;
+  }
   if (env.SPACE_CODES) {
     const allowed = String(env.SPACE_CODES).split(',').map(s => s.trim()).filter(Boolean);
     if (!allowed.includes(code)) return json({ error: 'Code de carnet non autorisé sur ce serveur' }, 403);
@@ -151,6 +159,8 @@ export async function onRequestDelete({ request, env }) {
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
   const u = new URL(request.url);
+  const mb = (request.headers.get('X-Carnet-Code') || '').trim().startsWith('mb:');
+  if (mb && (u.searchParams.get('all') === '1' || u.searchParams.get('bulk') === '1')) return json({ error: 'Réservé au propriétaire du carnet — Owner only' }, 403);   // un compagnon retire une photo à la fois, jamais tout
   // ?all=1 : efface TOUTES les photos de ce carnet (ex. arrêt de la publication pour les abonnés), les fiches restent
   if (u.searchParams.get('all') === '1') {
     let freed = 0, n = 0;
