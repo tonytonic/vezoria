@@ -826,7 +826,7 @@
     if(old){ old.classList.remove('top'); old.style.transition = 'transform .32s ease, opacity .32s ease'; old.style.transform = `translate(${dir > 0 ? -130 : 130}%, -3%) rotate(${dir > 0 ? -16 : 16}deg)`; old.style.opacity = '0'; setTimeout(()=>old.remove(), 330); }
     const el = psCard(); el.classList.add('top', dir < 0 ? 'in-l' : dir > 0 ? 'in-b' : 'in-0'); st.appendChild(el); requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.remove('in-l', 'in-b', 'in-0')));
     if(!PS.end) psDrag(el);
-    const x = PS.L[PS.i], ds = typeof dayList === 'function' && x && !/^ft:/.test((R[x.sid] || {}).trip || '') ? dayList() : [], k = x ? ds.indexOf(x.d) : -1;
+    const x = PS.L[PS.i], ds = typeof dayList === 'function' && x && (R[x.sid] || {}).trip === M.trip ? dayList() : [], k = x ? ds.indexOf(x.d) : -1;
     document.getElementById('ps-d').textContent = PS.end ? '' : (k >= 0 ? PJ(k + 1) + ' · ' : '') + (x.d ? fdate(x.d) : '');
     document.getElementById('ps-n').textContent = PS.end ? '' : (PS.i + 1) + ' / ' + PS.L.length;
     document.getElementById('ps-bar').style.width = (PS.end ? 100 : (PS.i + 1) / PS.L.length * 100) + '%';

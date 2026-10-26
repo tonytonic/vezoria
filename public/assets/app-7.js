@@ -1056,6 +1056,13 @@
   }
   const people1 = () => new Set(wallList().map(x=>x.s.createdBy).filter(Boolean)).size > 1;
   function wallStep(){ const L = wallFlat(true); if(L.length) psOpen(L, 0); }
+  // 👆 toutes les photos d’un voyage en plein écran (glisser) : depuis « Passés » ou le haut du bilan, sans quitter la page
+  function psTrip(tid){
+    const sv = list('souv', s=>s.trip === tid && (s.photos||[]).length).sort((a, b)=>(a.date||'').localeCompare(b.date||'') || (a.ordre||0)-(b.ordre||0));
+    if(!sv.length){ alert('Pas encore de photo dans ce voyage.'); return; }
+    const many = new Set(sv.map(s=>s.createdBy).filter(Boolean)).size > 1;
+    psOpen(sv.flatMap(s=>s.photos.map((p, i)=>({p, sid:s.id, i, d:s.date || '', lieu:s.lieu || '', t:s.titre || '', by:many && s.createdBy ? pname(s.createdBy) : ''}))), 0);
+  }
   function wallOpen(who){
     const t = trip(); if(!t) return; const L0 = wallList(); if(!L0.length){ alert('Pas encore de photo dans ce voyage.'); return; } wlWho = who || null;
     let ov = document.getElementById('cv-wall'); if(ov) ov.remove();

@@ -373,7 +373,7 @@
     const ps = trips().filter(t=>tripPhase(t)==='past').sort((a,b)=>(b.debut||'').localeCompare(a.debut||''));
     const card = t => { const sv = list('souv', s=>s.trip===t.id), ph = (sv.find(s=>(s.photos||[]).length) || {}).photos, n = sv.reduce((a,s)=>a+(s.photos||[]).length,0);
       return `<div class="cv-past"><div class="cov">${ph ? `<img data-ph="${esc(ph[0])}.t" alt="">` : '<span>🧳</span>'}</div><div class="bd"><b>${esc(t.titre)}</b><small>${tripDatesLong(t)}</small><small>${sv.length} souvenir${sv.length>1?'s':''} · ${n} photo${n>1?'s':''}</small>
-        <div class="bt"><button type="button" onclick="CV.go('${t.id}');CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.go('${t.id}');CV.albumSheet()">📕 Album</button><button type="button" onclick="CV.go('${t.id}');CV.modeGo('bilan');CV.innerGo('souv')" aria-label="Photo">📸</button></div></div></div>`; };
+        <div class="bt" style="flex-wrap:wrap">${n ? `<button type="button" onclick="CV.psTrip('${t.id}')">👆 Photos</button>` : ''}<button type="button" onclick="CV.go('${t.id}');CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.go('${t.id}');CV.albumSheet()">📕 Album</button>${n ? '' : `<button type="button" onclick="CV.go('${t.id}');CV.modeGo('bilan');CV.innerGo('souv')" aria-label="Photo">📸</button>`}</div></div></div>`; };
     return `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">🗺️ ${ps.length} voyage${ps.length>1?'s':''} passé${ps.length>1?'s':''}</div></div>
       <div class="cv-row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><button class="v-day-edit" onclick="CV.worldMap()">🌍 Carte du monde</button><button class="v-day-edit" onclick="CV.scrOpen()">✨ Carte à gratter</button><button class="v-day-edit" onclick="CV.rtAll()">⭐ Mes adresses notées</button><button class="v-day-edit" onclick="CV.tlStats()">📊 Mes stats</button><button class="v-day-edit" onclick="CV.yearFilm()">🎬 Mon année</button><button class="v-day-edit" onclick="CV.zipSheet()">💾 Sauvegarde ZIP</button></div></div>
       ${ps.map(card).join('') || '<div class="v-box"><p>Tes voyages terminés apparaîtront ici, avec leurs photos, leur bilan et leur album.</p></div>'}`;
@@ -387,7 +387,8 @@
     const chk = (ok, l, extra) => `<div class="cv-bchk${ok?' ok':''}"><i>${ok ? '✓' : '!'}</i><span>${l}${extra ? '<small>' + extra + '</small>' : ''}</span></div>`;
     const pick = trips().filter(x=>tripPhase(x)!=='prep');
     // (plus de case « Bilan · voyage » avec sa liste déroulante : le choix du voyage se fait en haut à gauche, comme partout)
-    return `${hidden('blk:prep') ? actBand() : finFil(t)}${bilanHero(t, tot, sv, nph)}${bilanBig(t)}
+    const top = nph ? `<div class="cv-soin"><button type="button" class="on" onclick="CV.psTrip('${t.id}')">👆 Toutes les photos</button><button type="button" onclick="CV.innerGo('souv')">📸 Souvenirs</button><button type="button" onclick="CV.filmOpen()">🎬 Film</button><button type="button" onclick="CV.albumSheet()">📕 Album</button></div>` : '';
+    return `${top}${hidden('blk:prep') ? actBand() : finFil(t)}${bilanHero(t, tot, sv, nph)}${bilanBig(t)}
       ${hidden('blk:prep') ? '' : '<div hidden>'}<div class="v-box"><h3>🧾 Pour boucler le voyage</h3>
         ${chk(!tr.length, tr.length ? `${tr.length} remboursement${tr.length>1?'s':''} à faire` : 'Comptes soldés entre vous', tr.map(x=>`${esc(pname(x.de))} → ${esc(pname(x.a))} : ${eur(x.v)}`).join('<br>'))}
         ${chk(!unpaid.length, unpaid.length ? `${unpaid.length} échéance(s) non cochée(s)` : 'Échéancier à jour')}

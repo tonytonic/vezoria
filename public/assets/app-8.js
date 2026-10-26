@@ -1210,7 +1210,7 @@
   // côté auteur : ❤️ et 💬 sur ses souvenirs
   function souvTop(){
     const t = trip(); if(!t) return '';
-    const seg = `<div class="cv-soin"><button type="button" class="on">📸 Souvenirs</button><button type="button" onclick="CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.filmOpen()">🎬 Film</button><button type="button" onclick="CV.flyover()">🌍 Survol 3D</button><button type="button" onclick="CV.wrapped()">✨ Récap</button><button type="button" onclick="CV.albumSheet()">📕 Album</button></div>`;
+    const seg = `<div class="cv-soin"><button type="button" class="on">📸 Souvenirs</button>${souvs().some(s=>(s.photos||[]).length) ? `<button type="button" onclick="CV.psTrip('${t.id}')">👆 Photos</button>` : ''}<button type="button" onclick="CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.filmOpen()">🎬 Film</button><button type="button" onclick="CV.flyover()">🌍 Survol 3D</button><button type="button" onclick="CV.wrapped()">✨ Récap</button><button type="button" onclick="CV.albumSheet()">📕 Album</button></div>`;
     if(t.demo || hidden('blk:fban')) return seg;
     const fc = feedCode(t.id);
     if(!fc) return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>Partage tes souvenirs avec tes proches</b><small>Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.</small></span><button type="button" onclick="CV.feedPublish('${t.id}')">Publier</button></div>`;
@@ -1229,7 +1229,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-26f'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-26g'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1676,7 +1676,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
+  var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
