@@ -1711,6 +1711,10 @@
     D.scenes.push({k:'stats', d:5});
     if(D.imgs.length) D.scenes.push({k:'photos', d:D.imgs.length * 1.5});
     D.scenes.push({k:'end', d:3.5});
+    filmShow(D);
+  }
+  // lecteur commun : film d’un voyage et film de l’année
+  function filmShow(D){
     let acc = 0; D.scenes.forEach(s => { s.t0 = acc; acc += s.d; }); D.total = acc;
     FM = {D, t0:0, pos:0, playing:true, raf:0, rec:null};
     let el = document.getElementById('cv-film'); if(el) el.remove();
@@ -1864,6 +1868,243 @@
   }
   function filmStopRec(){ if(FM && FM.rec){ filmAudioStop(); const r = FM.rec; setTimeout(() => { try { r.stop(); } catch(e){} }, 400); FM.playing = false; } }
 
+  /* ══════════ 🎬 Mon année en film : tous les voyages d’une année dans le même lecteur que le film du voyage ══════════
+     titre (mosaïque) · carte de tous les trajets · chaque voyage en photos · chiffres · mois par mois · palmarès · fin */
+  const YF_COL = ['#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#60a5fa', '#fb923c', '#f87171', '#2dd4bf', '#c084fc', '#facc15'];
+  Object.assign(FILM_U.ru, {voyages:{one:'поездка', few:'поездки', many:'поездок'}});
+  Object.assign(FILM_U.ar, {voyages:{one:'رحلة', two:'رحلتان', few:'رحلات', many:'رحلة', other:'رحلة'}});
+  Object.assign(FILM_U.hi, {voyages:{one:'यात्रा', other:'यात्राएँ'}});
+  Object.assign(FILM_U.tr, {voyages:{other:'seyahat'}}); Object.assign(FILM_U.zh, {voyages:{other:'次旅行'}});
+  Object.assign(FILM_U.ja, {voyages:{other:'回の旅'}}); Object.assign(FILM_U.ko, {voyages:{other:'번의 여행'}});
+  const YF_ONE = {jours:'un jour', nuits:'une nuit', pays:'un pays', photos:'une photo', voyages:'un voyage'};
+  const yfU = (k, n) => filmUnit(k, n) || (n === 1 && YF_ONE[k] ? TT(YF_ONE[k]).replace(/^\S+\s+/, '') : TT(k));
+  // voyages commencés (pas ceux en préparation) ; la démo ne compte que s’il n’y a rien d’autre
+  function yfTrips(){
+    const td = isoToday(), all = trips().filter(t=>t.debut && t.debut <= td), real = all.filter(t=>!t.demo);
+    return real.length ? real : all;
+  }
+  function yfYears(){ const by = {}; yfTrips().forEach(t=>{ const y = t.debut.slice(0, 4); by[y] = (by[y] || 0) + 1; }); return Object.entries(by).sort((a, b)=>b[0].localeCompare(a[0])); }
+  function yearFilm(){
+    const ys = yfYears();
+    if(!ys.length){ alert('Il n’y a encore aucun voyage commencé à raconter.'); return; }
+    if(ys.length === 1){ yearFilmGo(ys[0][0]); return; }
+    openSheet(`<h2>🎬 Mon année en film</h2><div class="v-sum-small" style="margin-bottom:10px">Tous tes voyages de l’année, leur carte, leurs chiffres et leurs plus belles photos, en musique. À enregistrer en vidéo pour la partager.</div>
+      ${ys.map(([y, n])=>`<button type="button" class="cv-choice" onclick="CV.close();CV.yearFilmGo('${y}')"><i>🎬</i><span><b data-notr>${y}</b><small>${n > 1 ? n + ' voyages' : '1 voyage'}</small></span></button>`).join('')}
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+  }
+  async function yfData(y){
+    const ts = yfTrips().filter(t=>t.debut.slice(0, 4) === y).sort((a, b)=>a.debut.localeCompare(b.debut)), out = [];
+    for(const t of ts){
+      await yieldUI();
+      const sv = list('souv', s=>s.trip===t.id).sort((a, b)=>(a.date||'').localeCompare(b.date||'') || (a.ordre||0)-(b.ordre||0));
+      const hs = list('item', i=>i.trip===t.id && i.cat==='hotel' && i.date);
+      const geo = [...geoSouvs(t.id).map(s=>({lat:+s.lat, lng:+s.lng, date:s.date||'', name:String(s.lieu || s.titre || '').split(',')[0].trim(), cc:s.cc || ccOf(s.pays) || ''})),
+        ...hs.map(h=>{ const c = stayCity(h), g = h.lat != null ? {lat:h.lat, lng:h.lng} : (c ? geoCached(c) : null); if(!g) return null;
+          const co = c ? (M.ctry||{})[normQ(c)] : null; return {lat:+g.lat, lng:+g.lng, date:h.date, name:String(c || h.titre || '').split(',')[0].trim(), cc:(co && co.cc) || ''}; }).filter(Boolean)]
+        .filter(p=>isFinite(p.lat) && isFinite(p.lng)).sort((a, b)=>a.date.localeCompare(b.date));
+      const pts = []; geo.forEach(p=>{ const l = pts[pts.length-1]; if(!l || hav(l, p) > 8) pts.push(Object.assign({}, p, {name: l && l.name === p.name ? '' : p.name})); });
+      let dist = 0; for(let i=1;i<pts.length;i++) dist += hav(pts[i-1], pts[i]);
+      const days = t.fin && t.fin >= t.debut ? nights(t.debut, t.fin) + 1 : 1;
+      const nn = hs.reduce((s, i)=>s + nights(i.date, i.dateFin), 0) || Math.max(0, days - 1);
+      const ph = sv.flatMap(s=>(s.photos||[]).map(p=>({id:p, cap:s.titre || s.lieu || '', date:s.date})));
+      out.push({t, pts, dist, days, nights:nn, ccs:[...new Set(geo.map(p=>p.cc).filter(Boolean))], ph, nph:ph.length});
+    }
+    return out;
+  }
+  // la couverture du voyage d’abord, puis des photos réparties sur tout le voyage
+  function yfPick(x, per){
+    const cov = coverId(x.t), out = [], c0 = x.ph.find(p=>p.id === cov) || (cov ? {id:cov, cap:'', date:''} : null);
+    if(c0) out.push(c0);
+    const rest = x.ph.filter(p=>p.id !== cov), need = per - out.length;
+    for(let i=0;i<need && rest.length;i++){ const p = rest[Math.floor((i + .5) * rest.length / need)]; if(p && !out.includes(p)) out.push(p); }
+    return out;
+  }
+  // photo réduite à 1 280 px : une vingtaine de photos en pleine taille saturerait la mémoire d’un téléphone
+  async function yfImg(id){
+    for(const k of [id, id + '.t']){
+      try { const b = await photoBlob(k); if(!b) continue; const im = await decodeImg(b), s = Math.min(1, 1280 / Math.max(im.width, im.height));
+        if(s >= 1) return im;
+        const cv = document.createElement('canvas'); cv.width = Math.round(im.width * s); cv.height = Math.round(im.height * s);
+        cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height); try { im.close && im.close(); } catch(e){} return cv; } catch(e){}
+    }
+    return null;
+  }
+  let yfBusy = false;
+  async function yearFilmGo(y){
+    if(yfBusy) return; y = String(y); filmAudioInit();   // dans le geste (toucher) : sinon l’iPhone refuse le son
+    yfBusy = true;
+    try {
+      toast(TT('🎬 Préparation de ton année…'));
+      const all = await yfData(y);
+      if(!all.length){ alert('Il n’y a encore aucun voyage commencé à raconter.'); return; }
+      const T = all.length > 10 ? all.slice().sort((a, b)=>b.nph - a.nph).slice(0, 10).sort((a, b)=>a.t.debut.localeCompare(b.t.debut)) : all;
+      const per = T.length <= 3 ? 4 : T.length <= 6 ? 3 : 2;
+      T.forEach(x=>{ x.pick = yfPick(x, per); x.imgs = []; });
+      const q = T.flatMap(x=>x.pick.map(p=>[x, p])), tot = q.length; let done = 0;
+      await Promise.all([0, 1, 2].map(async ()=>{ while(q.length){ const [x, p] = q.shift(), bmp = await yfImg(p.id); done++;
+        if(bmp) x.imgs.push({bmp, cap:p.cap, date:p.date, o:x.pick.indexOf(p)}); if(tot > 6 && done % 3 === 0) toast(TT('🎬 Préparation de ton année…') + ' ' + done + '/' + tot); } }));
+      T.forEach(x=>x.imgs.sort((a, b)=>a.o - b.o));
+      const sum = k => all.reduce((s, x)=>s + (x[k] || 0), 0);
+      const D = {t:{titre:'mon-annee-' + y}, y, trips:T, all, imgs:T.flatMap(x=>x.imgs), pts:all.flatMap(x=>x.pts),
+        dist:sum('dist'), days:sum('days'), nights:sum('nights'), nph:sum('nph'), ccs:[...new Set(all.flatMap(x=>x.ccs))]};
+      if(!D.imgs.length && D.pts.length < 2 && all.every(x=>!x.days)){ alert('Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.'); return; }
+      D.map = D.pts.length >= 2 ? await filmTileMap(D.pts).catch(()=>null) : null;
+      // jours de voyage par mois (bornés à l’année)
+      D.months = Array(12).fill(0);
+      all.forEach(x=>{ const a = x.t.debut, b = x.t.fin && x.t.fin >= a ? x.t.fin : a, d = new Date(a + 'T12:00:00');
+        for(let k=0;k<400;k++){ const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); if(iso > b) break;
+          if(iso.slice(0, 4) === y) D.months[+iso.slice(5, 7) - 1]++; d.setDate(d.getDate() + 1); } });
+      // palmarès (à partir de 2 voyages)
+      const best = k => all.reduce((m, x)=>(x[k] || 0) > ((m && m[k]) || 0) ? x : m, null);
+      D.top = all.length < 2 ? [] : [
+        ['🗓️', 'Le plus long', best('days'), x=>x.days + ' ' + yfU('jours', x.days)],
+        ['🛣️', 'Le plus de route', best('dist'), x=>Math.round(x.dist).toLocaleString(NL()) + ' km'],
+        ['📸', 'Le plus photographié', best('nph'), x=>x.nph.toLocaleString(NL()) + ' ' + yfU('photos', x.nph)]].filter(r=>r[2] && (r[1] !== 'Le plus de route' || r[2].dist >= 1));
+      D.scenes = [{k:'ytitle', d:4.2}];
+      if(D.pts.length >= 2) D.scenes.push({k:'ymap', d:Math.min(9, 3 + all.length * .9)});
+      T.forEach((x, i)=>{ const n = Math.max(1, x.imgs.length); D.scenes.push({k:'ytrip', d:3.2 + (n - 1) * 1.6, x, i, n:T.length}); });
+      D.scenes.push({k:'ystats', d:5.5});
+      if(D.months.some(Boolean)) D.scenes.push({k:'ymonths', d:4.5});
+      if(D.top.length) D.scenes.push({k:'ytop', d:5});
+      D.scenes.push({k:'yend', d:4});
+      if(FM) filmClose();
+      filmShow(D);
+    } finally { yfBusy = false; }
+  }
+  // projection des points : sur le fond de carte s’il existe, sinon cadrage simple (Mercator)
+  function yfProj(D, zz){
+    if(D.map) return [lng => FW/2 + (D.map.X(lng) - FW/2) * zz, lat => 700 + (D.map.Y(lat) - 700) * zz];
+    const P = D.pts, my = v => Math.log(Math.tan(Math.PI/4 + Math.max(-80, Math.min(80, v)) * Math.PI/360));
+    const x0 = Math.min(...P.map(p=>p.lng)), x1 = Math.max(...P.map(p=>p.lng)), y0 = my(Math.min(...P.map(p=>p.lat))), y1 = my(Math.max(...P.map(p=>p.lat)));
+    const dx = (x1 - x0) * Math.PI/180 || 1e-3, dy = (y1 - y0) || 1e-3, s = Math.min((FW - 160) / dx, 600 / dy);
+    const ox = (FW - dx * s) / 2, oy = 400 + (600 - dy * s) / 2;
+    return [lng => ox + (lng - x0) * Math.PI/180 * s, lat => oy + (y1 - my(lat)) * s];
+  }
+  const yfBar = (c, n, i, lp) => { const g = 8, w = (FW - 112 - g * (n - 1)) / n;   // barres « story » en haut
+    for(let k=0;k<n;k++){ c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(56 + k * (w + g), 56, w, 4); c.fillStyle = '#fff'; c.fillRect(56 + k * (w + g), 56, w * (k < i ? 1 : k === i ? lp : 0), 4); } };
+  const yfCut = (c, s, maxW) => { const l = fLines(c, s, maxW); return l.length > 1 ? l[0].replace(/[\s,.;:–-]+$/, '') + '…' : (l[0] || ''); };
+  Object.assign(FS, {
+    ytitle(c, p, D){
+      fBg(c, '#1a0b3d', '#6b2fa0');
+      const cov = D.trips.map(x=>x.imgs[0]).filter(Boolean).slice(0, 6);
+      if(cov.length === 1) fCover(c, cov[0].bmp, 0, 0, FW, FH, 1.08 + p * .12, p * .3 - .15, 0);
+      else if(cov.length){ const cols = 2, rows = Math.ceil(cov.length / cols), w = FW / cols, h = FH / rows;
+        cov.forEach((im, k)=>{ const cx = (k % cols) * w, cy = Math.floor(k / cols) * h, last = k === cov.length - 1 && cov.length % 2;
+          fCover(c, im.bmp, cx, cy, last ? FW : w, h, 1.06 + p * .1, (k % 2 ? -1 : 1) * (p - .5) * .4, 0); }); }
+      const g = c.createLinearGradient(0, 0, 0, FH); g.addColorStop(0, 'rgba(10,6,40,.72)'); g.addColorStop(.5, 'rgba(10,6,40,.55)'); g.addColorStop(1, 'rgba(10,6,40,.9)'); c.fillStyle = g; c.fillRect(0, 0, FW, FH);
+      const a = filmEase(Math.min(1, p * 2.2)); c.globalAlpha = a; c.fillStyle = '#fff';
+      fz(c, 30, 700); { const k = TT('✈  MON ANNÉE EN VOYAGE'), w = c.measureText(k).width; if(w > FW - 60) fz(c, Math.floor(30 * (FW - 60) / w), 700); c.fillText(k, FW/2, 470 - (1-a) * 30); }
+      c.save(); c.translate(FW/2, 680); const sc = .7 + .3 * filmEase(Math.min(1, p * 1.8)); c.scale(sc, sc); fz(c, 230, 800); c.shadowColor = 'rgba(167,139,250,.9)'; c.shadowBlur = 40; c.fillText(D.y, 0, 0); c.restore();
+      c.globalAlpha = a * .92; fz(c, 38, 600);
+      const n = D.all.length, sub = n + ' ' + yfU('voyages', n) + (D.ccs.length ? '  ·  ' + D.ccs.length + ' ' + yfU('pays', D.ccs.length) : '');
+      c.fillText(sub, FW/2, 790); if(D.ccs.length){ fz(c, 46, 400); c.fillText(D.ccs.slice(0, 8).map(flag).join(' '), FW/2, 870); }
+      c.globalAlpha = 1;
+    },
+    ymap(c, p, D){
+      fBg(c, '#07123a', '#1d1b5e'); const zz = 1.06 - p * .06;
+      if(D.map){ c.save(); c.translate(FW/2, 700); c.scale(zz, zz); c.translate(-FW/2, -700); c.drawImage(D.map.img, 0, 0); c.restore();
+        c.fillStyle = 'rgba(255,255,255,.55)'; fz(c, 16, 500); c.textAlign = 'right'; c.fillText(D.map.attr, FW - 16, FH - 16); c.textAlign = 'center'; }
+      const [X, Y] = yfProj(D, zz);
+      c.fillStyle = '#fff'; fz(c, 46, 800); { const tt = TT(`Mes voyages de ${D.y}`); if(c.measureText(tt).width > FW - 70) fz(c, 34, 800); c.fillText(tt, FW/2, 170); }
+      c.fillStyle = 'rgba(255,255,255,.7)'; fz(c, 28, 500); c.fillText(D.dist >= 1 ? TT('≈ ' + Math.round(D.dist).toLocaleString(NL()) + ' km parcourus') : '', FW/2, 218);
+      const L = D.all, q = filmEase(Math.min(1, p / .8)) * L.length;
+      c.lineCap = 'round'; c.lineJoin = 'round';
+      L.forEach((x, i)=>{ const f = Math.max(0, Math.min(1, q - i)), P = x.pts, col = YF_COL[i % YF_COL.length]; if(f <= 0 || !P.length) return;
+        if(P.length >= 2){ const seg = P.length - 1, qq = f * seg, full = Math.floor(qq);
+          c.strokeStyle = col; c.shadowColor = col; c.shadowBlur = 16; c.lineWidth = 6; c.beginPath(); c.moveTo(X(P[0].lng), Y(P[0].lat));
+          for(let k=1;k<=Math.min(full, seg);k++) c.lineTo(X(P[k].lng), Y(P[k].lat));
+          if(full < seg){ const a = P[full], b = P[full+1], r = qq - full; c.lineTo(X(a.lng) + (X(b.lng) - X(a.lng)) * r, Y(a.lat) + (Y(b.lat) - Y(a.lat)) * r); }
+          c.stroke(); c.shadowBlur = 0; }
+        c.fillStyle = col; c.beginPath(); c.arc(X(P[0].lng), Y(P[0].lat), 11 * filmEase(Math.min(1, f * 3)), 0, 7); c.fill(); c.strokeStyle = '#fff'; c.lineWidth = 3; c.stroke(); });
+      // légende : un voyage = une couleur
+      const two = L.length > 5, rows = two ? Math.ceil(Math.min(10, L.length) / 2) : L.length, rh = 42, y0 = 1080 + (5 - rows) * rh / 2, cw = two ? FW / 2 - 70 : FW - 160;
+      c.textAlign = 'left'; L.slice(0, 10).forEach((x, i)=>{ const f = Math.max(0, Math.min(1, (q - i) * 2)); if(f <= 0) return;
+        const cx = two ? (i < rows ? 50 : FW / 2 + 20) : 90, cy = y0 + (two ? i % rows : i) * rh; c.globalAlpha = f;
+        c.fillStyle = YF_COL[i % YF_COL.length]; c.beginPath(); c.arc(cx + 10, cy - 9, 10, 0, 7); c.fill();
+        c.fillStyle = '#fff'; fz(c, two ? 24 : 28, 700); c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 8; c.fillText(yfCut(c, TT(String(x.t.titre || '')), cw - 34), cx + 32, cy); c.shadowBlur = 0; c.globalAlpha = 1; });
+      c.textAlign = 'center';
+    },
+    ytrip(c, p, D, sc){
+      const x = sc.x, n = Math.max(1, x.imgs.length), T = p * sc.d, F1 = 3.2, F2 = 1.6;
+      const i = T < F1 ? 0 : Math.min(n - 1, 1 + Math.floor((T - F1) / F2)), dur = i ? F2 : F1, lp = Math.min(1, (i ? T - F1 - (i - 1) * F2 : T) / dur), im = x.imgs[i];
+      fBg(c, '#0f0a2e', '#3b1a7a');
+      if(im) fCover(c, im.bmp, 0, 0, FW, FH, 1.05 + lp * .1, (i % 2 ? -1 : 1) * (lp - .5) * .5, 0);
+      else { fz(c, 200, 400); c.fillStyle = '#fff'; c.fillText('🧳', FW/2, 560); }
+      const rtl = window.I18N && I18N.rtl, lx = rtl ? FW - 56 : 56;
+      if(i === 0){
+        const g = c.createLinearGradient(0, FH - 760, 0, FH); g.addColorStop(0, 'rgba(10,6,40,0)'); g.addColorStop(.45, 'rgba(10,6,40,.6)'); g.addColorStop(1, 'rgba(10,6,40,.92)'); c.fillStyle = g; c.fillRect(0, FH - 760, FW, 760);
+        const a = filmEase(Math.min(1, lp * 3)), dy = (1 - a) * 40; c.globalAlpha = a; c.textAlign = rtl ? 'right' : 'left';
+        const stat = [x.days ? '🗓️ ' + x.days + ' ' + yfU('jours', x.days) : '', x.dist >= 1 ? '🛣️ ' + Math.round(x.dist).toLocaleString(NL()) + ' km' : '', x.nph ? '📸 ' + x.nph.toLocaleString(NL()) + ' ' + yfU('photos', x.nph) : ''].filter(Boolean).join('   ');
+        let y = FH - 90; fz(c, 28, 600); c.fillStyle = 'rgba(255,255,255,.9)'; if(stat) c.fillText(stat, lx, y + dy);
+        if(x.ccs.length){ y -= 62; fz(c, 44, 400); c.fillStyle = '#fff'; c.fillText(x.ccs.slice(0, 8).map(flag).join(' '), lx, y + dy); }
+        y -= 58; fz(c, 30, 500); c.fillStyle = 'rgba(255,255,255,.85)'; c.fillText(x.t.debut ? tripDatesLong(x.t) : '', lx, y + dy);
+        fz(c, 66, 800); c.fillStyle = '#fff'; const tl = fLines(c, TT(String(x.t.titre || '')), FW - 112).slice(0, 3);
+        y -= 66; tl.slice().reverse().forEach((l, k)=>c.fillText(l, lx, y - k * 76 + dy)); y -= (tl.length - 1) * 76 + 74;
+        fz(c, 26, 800); c.fillStyle = '#c4b5fd'; c.fillText(TT(`VOYAGE ${sc.i + 1} / ${sc.n}`), lx, y + dy);
+        c.globalAlpha = 1; c.textAlign = 'center';
+      } else {
+        const g = c.createLinearGradient(0, 0, 0, 260); g.addColorStop(0, 'rgba(0,0,0,.6)'); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.fillRect(0, 0, FW, 260);
+        const g2 = c.createLinearGradient(0, FH - 380, 0, FH); g2.addColorStop(0, 'rgba(0,0,0,0)'); g2.addColorStop(1, 'rgba(0,0,0,.8)'); c.fillStyle = g2; c.fillRect(0, FH - 380, FW, 380);
+        c.textAlign = rtl ? 'right' : 'left'; fz(c, 30, 800); c.fillStyle = '#fff'; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 8; c.fillText(yfCut(c, TT(String(x.t.titre || '')), FW - 112), lx, 118); c.shadowBlur = 0;
+        const a = Math.max(0, Math.min(1, lp * 4, (1 - lp) * 6 + .0001)); c.globalAlpha = a;
+        fz(c, 44, 800); const cl = fLines(c, TT(im && im.cap || ''), FW - 112).slice(0, 2); cl.forEach((l, k)=>c.fillText(l, lx, FH - 130 - (cl.length - 1 - k) * 52));
+        fz(c, 28, 500); c.fillStyle = 'rgba(255,255,255,.8)'; c.fillText(im && im.date ? fdate(im.date) : '', lx, FH - 64); c.globalAlpha = 1; c.textAlign = 'center';
+      }
+      yfBar(c, n, i, lp);
+      // petit fondu entre deux photos d’un même voyage
+      const fd = Math.min((i ? lp * dur : 1) / .22, i < n - 1 ? (1 - lp) * dur / .22 : 1); if(fd < 1){ c.fillStyle = `rgba(0,0,0,${(1 - Math.max(0, fd)) * .85})`; c.fillRect(0, 0, FW, FH); }
+    },
+    ystats(c, p, D){
+      fBg(c, '#1a0b3d', '#5b21b6'); c.fillStyle = '#fff'; fz(c, 46, 800); c.fillText(TT(`${D.y} en chiffres`), FW/2, 190);
+      const T = [['✈️', D.all.length, 'voyages'], ['🗓️', D.days, 'jours'], ['🛏️', D.nights, 'nuits'], ['🛣️', Math.round(D.dist), 'km'], ['🌍', D.ccs.length, 'pays'], ['📸', D.nph, 'photos']]
+        .filter(x=>x[1] > 0).map(x=>[x[0], x[1], x[2] === 'km' ? 'km' : yfU(x[2], x[1])]);
+      const gap = T.length > 5 ? 138 : 160;
+      T.forEach((x, i)=>{ const st = .06 + i * .11, a = filmEase(Math.max(0, Math.min(1, (p - st) / .2))), cy = 320 + i * gap;
+        c.globalAlpha = a; c.fillStyle = 'rgba(255,255,255,.1)'; c.beginPath(); c.roundRect ? c.roundRect(70 + (1-a) * 120, cy - 66, FW - 140, 120, 28) : c.rect(70, cy - 66, FW - 140, 120); c.fill();
+        fz(c, 54, 800); c.fillStyle = '#fff'; c.textAlign = 'left'; c.fillText(x[0], 110 + (1-a) * 120, cy + 16);
+        const v = Math.round(x[1] * a).toLocaleString(NL()); fz(c, 70, 800); c.fillText(v, 200 + (1-a) * 120, cy + 24); const w = c.measureText(v).width;
+        fz(c, 32, 500); c.fillStyle = 'rgba(255,255,255,.75)'; c.fillText(x[2], 215 + w + (1-a) * 120, cy + 24); c.textAlign = 'center'; c.globalAlpha = 1; });
+      if(D.ccs.length){ c.globalAlpha = filmEase(Math.max(0, Math.min(1, (p - .72) / .2))); fz(c, 50, 400); c.fillStyle = '#fff';
+        const f = D.ccs.slice(0, 16).map(flag); c.fillText(f.slice(0, 8).join(' '), FW/2, 1170); if(f.length > 8) c.fillText(f.slice(8).join(' '), FW/2, 1235); c.globalAlpha = 1; }
+    },
+    ymonths(c, p, D){
+      fBg(c, '#0b1d3a', '#1e40af'); c.fillStyle = '#fff'; fz(c, 46, 800); c.fillText(TT('Mois par mois'), FW/2, 190);
+      const M12 = D.months, mx = Math.max(1, ...M12), top = M12.indexOf(Math.max(...M12)), bw = (FW - 120) / 12, base = 900, hMax = 520;
+      let nar = []; try { const f = new Intl.DateTimeFormat(NL(), {month:'narrow'}); nar = M12.map((_, k)=>f.format(new Date(2026, k, 15))); } catch(e){ nar = 'JFMAMJJASOND'.split(''); }
+      M12.forEach((v, k)=>{ const a = filmEase(Math.max(0, Math.min(1, (p - .05 - k * .03) / .35))), h = v ? Math.max(8, hMax * v / mx * a) : 4, x = 60 + k * bw + 6, w = bw - 12;
+        c.fillStyle = k === top && v ? '#fbbf24' : v ? '#a78bfa' : 'rgba(255,255,255,.18)'; c.beginPath(); c.roundRect ? c.roundRect(x, base - h, w, h, 10) : c.rect(x, base - h, w, h); c.fill();
+        if(v && a > .6){ c.globalAlpha = (a - .6) / .4; fz(c, 24, 800); c.fillStyle = '#fff'; c.fillText(String(v), x + w/2, base - h - 14); c.globalAlpha = 1; }
+        fz(c, 26, 700); c.fillStyle = k === top && v ? '#fbbf24' : 'rgba(255,255,255,.75)'; c.fillText(nar[k], x + w/2, base + 44); });
+      const a2 = filmEase(Math.max(0, Math.min(1, (p - .55) / .25))); c.globalAlpha = a2;
+      fz(c, 30, 500); c.fillStyle = 'rgba(255,255,255,.8)'; c.fillText(TT('Ton mois le plus voyageur'), FW/2, 1060);
+      let ml = ''; try { ml = new Intl.DateTimeFormat(NL(), {month:'long'}).format(new Date(2026, top, 15)); } catch(e){ ml = MOIS[top] || ''; }
+      fz(c, 72, 800); c.fillStyle = '#fbbf24'; c.fillText(ml.charAt(0).toUpperCase() + ml.slice(1), FW/2, 1150);
+      fz(c, 30, 600); c.fillStyle = '#fff'; c.fillText(M12[top] + ' ' + yfU('jours', M12[top]), FW/2, 1200); c.globalAlpha = 1;
+    },
+    ytop(c, p, D){
+      fBg(c, '#3a0b2b', '#9d174d'); c.fillStyle = '#fff'; fz(c, 46, 800); c.fillText(TT('Palmarès'), FW/2, 190);
+      D.top.forEach(([em, lbl, x, val], i)=>{ const a = filmEase(Math.max(0, Math.min(1, (p - .08 - i * .18) / .22))), cy = 280 + i * 250, ox = (1 - a) * 140;
+        c.globalAlpha = a; c.fillStyle = 'rgba(255,255,255,.1)'; c.beginPath(); c.roundRect ? c.roundRect(60 + ox, cy, FW - 120, 210, 30) : c.rect(60, cy, FW - 120, 210); c.fill();
+        c.textAlign = 'left'; fz(c, 64, 400); c.fillStyle = '#fff'; c.fillText(em, 96 + ox, cy + 126);
+        fz(c, 26, 700); c.fillStyle = '#f9a8d4'; c.fillText(TT(lbl).toUpperCase(), 196 + ox, cy + 62);
+        fz(c, 40, 800); c.fillStyle = '#fff'; c.fillText(yfCut(c, TT(String(x.t.titre || '')), FW - 300), 196 + ox, cy + 118);
+        fz(c, 32, 600); c.fillStyle = 'rgba(255,255,255,.8)'; c.fillText(val(x), 196 + ox, cy + 166); c.textAlign = 'center'; c.globalAlpha = 1; });
+    },
+    yend(c, p, D){
+      fBg(c); const a = filmEase(Math.min(1, p * 2)); c.globalAlpha = a; c.fillStyle = '#fff'; fz(c, 120, 800); c.fillText('🌍', FW/2, 540 - (1-a) * 30);
+      fz(c, 68, 800); { const t = TT('Quelle année !'), w = c.measureText(t).width; if(w > FW - 60) fz(c, Math.floor(68 * (FW - 60) / w), 800); c.fillText(t, FW/2, 690); }
+      fz(c, 34, 500); c.fillStyle = 'rgba(255,255,255,.78)'; c.fillText(D.y + '  ·  ' + D.all.length + ' ' + yfU('voyages', D.all.length), FW/2, 760);
+      if(+D.y >= new Date().getFullYear()){ fz(c, 36, 700); c.fillStyle = '#fbbf24'; c.fillText(TT(`Rendez-vous en ${+D.y + 1} !`), FW/2, 850); }
+      fz(c, 30, 700); c.fillStyle = '#c4b5fd'; c.fillText(TT('Fait avec Vezoria'), FW/2, 1160); c.globalAlpha = 1;
+    }
+  });
+  // 🎬 en fin d’année (à partir du 15 décembre, et en janvier pour l’année écoulée) : une fois, une carte « ton film est prêt »
+  function momentYear(y){
+    const n = yfTrips().filter(t=>t.debut.slice(0, 4) === y).length;
+    momentShow(`<div class="mo-k">Ton année en voyage</div><div class="mo-big">🎬</div><h2 data-notr>${y}</h2><div class="mo-sub">${n > 1 ? n + ' voyages' : '1 voyage'} · ton film est prêt</div>
+      <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.yearFilmGo('${y}')">🎬 Voir le film</button><button type="button" onclick="CV.momentClose()">Plus tard</button></div>`, 'eve');
+  }
+
   /* ======================================================================
      ✨ VOYAGE EN 5 ACTES : couverture · préparation · jour J · bienvenue · soir · anniversaire · globe
      ====================================================================== */
@@ -1937,7 +2178,10 @@
     { const td = isoToday(); M.seen = M.seen || {};
       if(!M.seen['annivM:' + td] && !hidden('blk:anniv')){ const md = td.slice(5), y = +td.slice(0, 4);
         const a = list('souv', x=>x.date && x.date.slice(5) === md && +x.date.slice(0, 4) < y && (x.photos||[]).length && R[x.trip] && !R[x.trip].deleted && !R[x.trip].demo).sort((p, q)=>q.date.localeCompare(p.date))[0];
-        if(a){ momentDone = true; M.seen['annivM:' + td] = 1; persist(); annivShow(a); return; } } }
+        if(a){ momentDone = true; M.seen['annivM:' + td] = 1; persist(); annivShow(a); return; } }
+      // 🎬 « Ton année en voyage » : du 15 décembre à fin janvier, une seule fois par année
+      const mo = +td.slice(5, 7), yy = mo === 12 && +td.slice(8, 10) >= 15 ? td.slice(0, 4) : mo === 1 ? String(+td.slice(0, 4) - 1) : '';
+      if(yy && !M.seen['yearM:' + yy] && trips().some(t=>!t.demo && t.debut && t.debut <= td && t.debut.slice(0, 4) === yy)){ momentDone = true; M.seen['yearM:' + yy] = 1; persist(); momentYear(yy); return; } }
     const t = trip(); if(!t || !t.debut || t.demo) return;
     const td = isoToday(), tm = new Date(Date.now() + 864e5).toISOString().slice(0,10); M.seen = M.seen || {};
     // la veille (ou le matin du départ) : « Demain, tu pars »

@@ -1040,7 +1040,7 @@
   const flag = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc].map(c=>127397 + c.charCodeAt(0))) : '🌍';
   const frCountry = (cc, fb) => { try { return new Intl.DisplayNames([window.I18N ? I18N.lang : 'fr'], {type:'region'}).of(cc) || fb || cc; } catch(e){ return fb || cc; } };
   async function tlStats(){
-    openSheet(`<h2>📊 Mes stats de voyage</h2><div id="stt" class="cv-route-load">📡 Je compte…</div><div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+    openSheet(`<h2>📊 Mes stats de voyage</h2><div id="stt" class="cv-route-load">📡 Je compte…</div><div class="v-actions"><button type="button" class="v-btn" onclick="CV.close();CV.yearFilm()">🎬 Mon année en film</button><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
     const ts = trips(), now = isoToday(); let nights = 0, kmTot = 0, nSteps = 0; const countries = {}, cities = new Set();
     for(const t of ts){
       if(t.debut) nights += Math.max(0, nights_(t.debut, t.fin || t.debut));
