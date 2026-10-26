@@ -1,4 +1,6 @@
 I18N.load({
+"Voir les souvenirs":"यादें देखें",
+"Voir toutes les photos":"सभी फ़ोटो देखें",
 "La place photos du carnet de l’organisateur du voyage est pleine : tes photos restent sur ce téléphone, rien n’est perdu.":"यात्रा के आयोजक की नोटबुक में फ़ोटो की जगह भर गई है: आपकी फ़ोटो इसी फ़ोन पर रहेंगी, कुछ नहीं खोएगा।",
 "Sondage":"पोल",
 "Une question pour le groupe ? « Resto japonais ou italien ce soir ? », « Quelle visite samedi ? »… Chacun vote, et le choix gagnant peut aller directement au programme.":"ग्रुप से एक सवाल? “आज रात जापानी या इतालवी?”, “शनिवार को कौन-सी जगह?”… सब वोट करते हैं, और जीतने वाला विकल्प सीधे कार्यक्रम में जा सकता है।",

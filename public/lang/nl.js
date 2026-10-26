@@ -1,4 +1,6 @@
 I18N.load({
+"Voir les souvenirs":"Herinneringen bekijken",
+"Voir toutes les photos":"Alle foto's bekijken",
 "La place photos du carnet de l’organisateur du voyage est pleine : tes photos restent sur ce téléphone, rien n’est perdu.":"De fotoruimte in het reisdagboek van de organisator van de reis is vol: je foto's blijven op deze telefoon, er gaat niets verloren.",
 "Sondage":"Peiling",
 "Une question pour le groupe ? « Resto japonais ou italien ce soir ? », « Quelle visite samedi ? »… Chacun vote, et le choix gagnant peut aller directement au programme.":"Een vraag voor de groep? ‘Japans of Italiaans vanavond?’, ‘Welk uitje zaterdag?’… Iedereen stemt en de winnende keuze kan meteen in het programma.",

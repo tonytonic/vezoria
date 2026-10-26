@@ -1,4 +1,6 @@
 I18N.load({
+"Voir les souvenirs":"추억 보기",
+"Voir toutes les photos":"모든 사진 보기",
 "La place photos du carnet de l’organisateur du voyage est pleine : tes photos restent sur ce téléphone, rien n’est perdu.":"여행 주최자의 여행 노트 사진 공간이 가득 찼어요. 사진은 이 휴대폰에 남아 있어 사라지지 않아요.",
 "Sondage":"투표",
 "Une question pour le groupe ? « Resto japonais ou italien ce soir ? », « Quelle visite samedi ? »… Chacun vote, et le choix gagnant peut aller directement au programme.":"그룹에 질문이 있나요? “오늘 저녁 일식? 이탈리안?”, “토요일엔 어디 갈까?”… 모두 투표하고, 이긴 선택지는 바로 일정에 넣을 수 있어요.",

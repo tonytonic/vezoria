@@ -1,4 +1,6 @@
 I18N.load({
+"Voir les souvenirs":"عرض الذكريات",
+"Voir toutes les photos":"عرض كل الصور",
 "La place photos du carnet de l’organisateur du voyage est pleine : tes photos restent sur ce téléphone, rien n’est perdu.":"مساحة الصور في دفتر منظّم الرحلة ممتلئة: تبقى صورك على هذا الهاتف، ولا يضيع شيء.",
 "Sondage":"استطلاع",
 "Une question pour le groupe ? « Resto japonais ou italien ce soir ? », « Quelle visite samedi ? »… Chacun vote, et le choix gagnant peut aller directement au programme.":"سؤال للمجموعة؟ «ياباني أم إيطالي الليلة؟»، «أي زيارة يوم السبت؟»… يصوّت الجميع، ويمكن إضافة الخيار الفائز مباشرة إلى البرنامج.",

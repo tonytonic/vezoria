@@ -1,4 +1,6 @@
 I18N.load({
+"Voir les souvenirs":"Anıları gör",
+"Voir toutes les photos":"Tüm fotoğrafları gör",
 "La place photos du carnet de l’organisateur du voyage est pleine : tes photos restent sur ce téléphone, rien n’est perdu.":"Seyahat organizatörünün defterindeki fotoğraf alanı dolu: fotoğrafların bu telefonda kalıyor, hiçbir şey kaybolmaz.",
 "Sondage":"Anket",
 "Une question pour le groupe ? « Resto japonais ou italien ce soir ? », « Quelle visite samedi ? »… Chacun vote, et le choix gagnant peut aller directement au programme.":"Gruba bir soru mu? “Bu akşam Japon mu İtalyan mı?”, “Cumartesi hangi gezi?”… Herkes oy verir, kazanan seçenek doğrudan programa eklenebilir.",

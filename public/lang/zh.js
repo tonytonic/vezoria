@@ -1,4 +1,6 @@
 I18N.load({
+"Voir les souvenirs":"查看回忆",
+"Voir toutes les photos":"查看全部照片",
 "La place photos du carnet de l’organisateur du voyage est pleine : tes photos restent sur ce téléphone, rien n’est perdu.":"旅行组织者手账的照片空间已满：你的照片留在这部手机上，不会丢失。",
 "Sondage":"投票",
 "Une question pour le groupe ? « Resto japonais ou italien ce soir ? », « Quelle visite samedi ? »… Chacun vote, et le choix gagnant peut aller directement au programme.":"想问问大家？“今晚吃日料还是意大利菜？”“周六去哪儿玩？”……大家投票，胜出的选项可以直接加入行程。",

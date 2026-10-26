@@ -1,4 +1,6 @@
 I18N.load({
+"Voir les souvenirs":"Vedi i ricordi",
+"Voir toutes les photos":"Vedi tutte le foto",
 "La place photos du carnet de l’organisateur du voyage est pleine : tes photos restent sur ce téléphone, rien n’est perdu.":"Lo spazio foto del diario dell’organizzatore del viaggio è pieno: le tue foto restano su questo telefono, non si perde nulla.",
 "Sondage":"Sondaggio",
 "Une question pour le groupe ? « Resto japonais ou italien ce soir ? », « Quelle visite samedi ? »… Chacun vote, et le choix gagnant peut aller directement au programme.":"Una domanda per il gruppo? «Giapponese o italiano stasera?», «Quale visita sabato?»… Tutti votano e la scelta vincente può andare direttamente nel programma.",

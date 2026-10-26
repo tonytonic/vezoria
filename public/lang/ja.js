@@ -1,4 +1,6 @@
 I18N.load({
+"Voir les souvenirs":"思い出を見る",
+"Voir toutes les photos":"すべての写真を見る",
 "La place photos du carnet de l’organisateur du voyage est pleine : tes photos restent sur ce téléphone, rien n’est perdu.":"旅の企画者の旅ノートの写真容量がいっぱいです。写真はこのスマホに残り、失われません。",
 "Sondage":"投票",
 "Une question pour le groupe ? « Resto japonais ou italien ce soir ? », « Quelle visite samedi ? »… Chacun vote, et le choix gagnant peut aller directement au programme.":"グループに質問？「今夜は和食？イタリアン？」「土曜はどこを観光する？」…みんなで投票して、選ばれた案はそのまま予定に追加できます。",
