@@ -2865,3 +2865,23 @@ button.etp-chip.tip{border:0;font:inherit;font-size:.78rem;font-weight:700;backg
 .cv-cl-st summary{cursor:pointer}.cv-cl-pd{font-size:.76rem;color:#5f566a;padding:6px 0 0 4px;display:flex;flex-direction:column;gap:2px;word-break:break-all}
 .etp-fix{width:100%;margin:12px 0 0;min-height:44px;border:0;border-radius:14px;background:#fff3e0;color:#8a4b00;font:inherit;font-size:.86rem;font-weight:800;cursor:pointer}
 .bu-np.ok{background:#eefaf3}.bu-np.ok .v-in{border-color:#9fdcbc}
+
+/* ══ 2026-10-26m · les cartes « Ta journée » (voyage en cours) et « Boucler ton voyage » (voyage terminé) prennent les couleurs de la période ══ */
+body.cv-ph-live .cv-prep2{background:radial-gradient(110% 80% at 100% 0%, rgba(45,212,191,.42), transparent 60%),linear-gradient(150deg,#073B40 0%,#0B5D63 55%,#0D9488 100%);box-shadow:0 12px 30px rgba(13,148,136,.32)}
+body.cv-ph-live .fil-bar i{background:linear-gradient(90deg,#a7f3d0,#5eead4)}
+body.cv-ph-live .ar-subs .ar-sub{color:#0B5D63}
+body.cv-ph-live .ar-subs .ar-sub small{color:#3d7a77}
+body.cv-ph-live .ar-subs .ar-sub i{background:#ccfbf1;color:#0f766e}
+body.cv-ph-live .ar-subs .ar-sub.cur{outline-color:#5eead4}
+body.cv-ph-live .ar-subs .ar-sub.cur i,body.cv-ph-live .ar-sub.cur i{background:#0d9488;color:#fff}
+body.cv-ph-live .ar-sub.cur{border-color:#0d9488;box-shadow:0 6px 18px -10px rgba(13,148,136,.7)}
+body.cv-ph-past .cv-prep2{background:radial-gradient(110% 80% at 100% 0%, rgba(243,213,138,.32), transparent 60%),linear-gradient(150deg,#0E1838 0%,#1E2C5C 55%,#3A4B8E 100%);box-shadow:0 12px 30px rgba(38,52,110,.35)}
+body.cv-ph-past .fil-bar i{background:linear-gradient(90deg,#fde68a,#a7b8f2)}
+body.cv-ph-past .ar-subs .ar-sub{color:#1E2C5C}
+body.cv-ph-past .ar-subs .ar-sub small{color:#4b5a86}
+body.cv-ph-past .ar-subs .ar-sub i{background:#e1e7f7;color:#3a4b8e}
+body.cv-ph-past .ar-subs .ar-sub.cur{outline-color:#a7b8f2}
+body.cv-ph-past .ar-subs .ar-sub.cur i,body.cv-ph-past .ar-sub.cur i{background:#3a4b8e;color:#fff}
+body.cv-ph-past .ar-sub.cur{border-color:#3a4b8e;box-shadow:0 6px 18px -10px rgba(38,52,110,.7)}
+body.cv-ph-live .cv-prep2 .ar-go:not(.ex-go){color:#0B5D63}
+body.cv-ph-past .cv-prep2 .ar-go:not(.ex-go){color:#1E2C5C}
