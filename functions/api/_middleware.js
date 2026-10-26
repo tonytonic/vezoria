@@ -42,7 +42,7 @@ export async function onRequest(ctx) {
   if (request.method === 'OPTIONS' || !env.DB) return next();
   const u = new URL(request.url), p = u.pathname, meth = request.method;
   const isSync = p === '/api/sync', isAdmin = p === '/api/admin', isPhoto = p === '/api/photo';
-  const essential = isSync || isAdmin || isPhoto || p === '/api/push' || p === '/api/member';
+  const essential = isSync || isAdmin || isPhoto || p === '/api/push' || p === '/api/member' || p === '/api/plan';
   let t;
   try { await table(env); t = await totals(env); } catch (e) { return next(); }   // en cas de souci, on ne bloque jamais
   const seen = k => (t[k] || 0) + C[k];

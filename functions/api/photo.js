@@ -1,3 +1,4 @@
+import { uploadCheck } from './plan.js';   // 🫙 place du carnet
 // Photos du carnet : POST = envoyer une photo, GET ?id= = la récupérer.
 // 🫙 Pot commun (photos « v2 ») : chaque photo est rangée UNE fois, chiffrée avec sa propre clé (sur le téléphone).
 //   À l'envoi, l'en-tête X-Photo-Cap porte l'empreinte d'un « droit de lecture » (jamais le droit lui-même).
@@ -12,8 +13,7 @@ const MAX_PHOTO = 1_900_000;
 // Pour changer le budget sans toucher au code : variable R2_MAX_GB dans les réglages Cloudflare (ex. 2000 pour ~30 €/mois).
 const MAX_TOTAL_D1 = 400_000_000;
 const R2_MAX = env => (Number(env.R2_MAX_GB) || 999) * 1_000_000_000;
-// Plafond par carnet (6 Go par défaut ; variable facultative SPACE_MAX_MB dans Cloudflare pour le changer sans toucher au code) : évite qu'un seul carnet remplisse tout
-const spaceMax = env => (Number(env.SPACE_MAX_MB) || 6000) * 1_000_000;
+// Place par carnet : voir plan.js (FREE_MB, formules, codes cadeaux, voyages branchés sur le carnet de leur créateur)
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
@@ -132,8 +132,9 @@ export async function onRequestPost({ request, env }) {
     const old = await env.PHOTOS.head(key);          // photo renvoyée une 2e fois : on ne compte que la différence
     const delta = buf.byteLength - (old ? old.size : 0);
     if (total + delta > R2_MAX(env)) return json({ error: 'Stockage des photos plein', total }, 507);
-    const sk = 's:' + space, mine = await getTotal(env, sk);
-    if (mine + delta > spaceMax(env)) return json({ error: 'Ce carnet a atteint sa place maximale pour les photos', total: mine, max: spaceMax(env) }, 507);
+    const sk = 's:' + space; await getTotal(env, sk);
+    // 🫙 place du carnet (voyages branchés compris) : formule, cadeau ou place offerte — voir plan.js
+    const full = await uploadCheck(env, space, delta); if (full) return full;
     await env.PHOTOS.put(key, buf, cap ? { httpMetadata: { contentType: mime }, customMetadata: { rh: cap } } : { httpMetadata: { contentType: mime } });
     await env.DB.batch([
       env.DB.prepare("UPDATE photo_stats SET v = v + ?1 WHERE k = 'r2'").bind(delta),

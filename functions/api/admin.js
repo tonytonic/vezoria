@@ -16,6 +16,11 @@
  *   {action:'folderWipe', space, note, force} → effacer un dossier inactif ou sans fiche (refusé s'il a servi depuis 30 jours, sauf force)
  *   {action:'vaultGet', k}                 → 🔐 coffre du tableau de bord (micro-entreprise) : un bloc chiffré sur le téléphone, illisible ici
  *   {action:'vaultPut', k, v, base}        → l'enregistrer ; refusé (409, avec la version actuelle) si un autre appareil l'a changé depuis « base »
+ *   {action:'giftCreate', plan, days, uses, note} → 🎁 code cadeau (plan : 'plus' | 'max' | 'unlimited' ; days 0 = pour toujours ; uses 0 = sans limite)
+ *   {action:'giftList'}                    → les codes cadeaux (jamais le code lui-même : seulement son début, ses utilisations)
+ *   {action:'giftRevoke', id}              → retirer un code cadeau (les carnets qui l'ont déjà utilisé gardent leur formule)
+ *   {action:'planSet', token|space, plan, days} → donner une formule à un carnet ('free' = la retirer)
+ *   {action:'planLook', token|space}       → place utilisée, place permise, formule
  *
  * Le CODE du carnet n'est jamais envoyé ici : la page d'administration calcule elle-même son empreinte
  * (« token », la même que celle de l'appli), et le serveur en déduit le dossier du carnet.
@@ -31,6 +36,7 @@ const CORS = {
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
 async function sha256(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
 const short = s => s ? s.slice(0, 12) : '';
+import { planTables, PLAN_MB, quotaOf, billOf } from './plan.js';   // 🎁 codes cadeaux et formules
 
 async function tables(db) {
   await db.batch([
@@ -59,6 +65,7 @@ async function wipe(env, space) {
   const rec = await env.DB.prepare('DELETE FROM records WHERE space = ?1').bind(space).run();
   try { await env.DB.prepare('DELETE FROM photos WHERE space = ?1').bind(space).run(); } catch (e) {}
   try { await env.DB.prepare('DELETE FROM space_members WHERE space = ?1').bind(space).run(); } catch (e) {}   // codes compagnon
+  try { await env.DB.prepare('DELETE FROM space_links WHERE child = ?1 OR owner = ?1').bind(space).run(); } catch (e) {}   // 🌿 branches (la formule payée reste : table plans)
   try { await env.DB.batch([env.DB.prepare('DELETE FROM push_subs WHERE space = ?1').bind(space), env.DB.prepare('DELETE FROM push_due WHERE space = ?1').bind(space)]); } catch (e) {}   // notifications
   try {
     await env.DB.prepare("UPDATE photo_stats SET v = MAX(0, v - ?1) WHERE k = 'r2'").bind(freed).run();
@@ -170,10 +177,43 @@ export async function onRequestPost({ request, env }) {
     await env.DB.prepare('INSERT INTO admin_vault (k, v, at) VALUES (?1, ?2, ?3) ON CONFLICT(k) DO UPDATE SET v = ?2, at = ?3').bind(k, v, at).run();
     return json({ ok: true, at });
   }
+  if (a === 'giftCreate' || a === 'giftList' || a === 'giftRevoke') {
+    await planTables(env.DB);
+    if (a === 'giftList') {
+      const r = await env.DB.prepare('SELECT gh, plan, mb, days, uses, used, note, created, revoked FROM gifts ORDER BY created DESC LIMIT 300').all();
+      return json({ gifts: (r.results || []).map(g => ({ id: g.gh.slice(0, 12), plan: g.plan, days: g.days, uses: g.uses, used: g.used, note: g.note, created: g.created, revoked: !!g.revoked })) });
+    }
+    if (a === 'giftRevoke') {
+      const id = String(b.id || ''); if (!/^[0-9a-f]{12}$/.test(id)) return json({ error: 'id' }, 400);
+      await env.DB.prepare('UPDATE gifts SET revoked = 1 WHERE substr(gh, 1, 12) = ?1').bind(id).run(); await log(env, 'cadeau:retiré', id, b.note); return json({ ok: true });
+    }
+    const plan = ['plus', 'max', 'unlimited'].includes(b.plan) ? b.plan : 'plus', days = Math.max(0, Math.min(3650, Math.round(Number(b.days) || 0))), uses = Math.max(0, Math.min(10000, Math.round(Number(b.uses) || 1)));
+    const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rnd = crypto.getRandomValues(new Uint8Array(12));
+    const raw = [...rnd].map(x => A[x % A.length]).join(''), code = 'VZ-' + raw.slice(0, 4) + '-' + raw.slice(4, 8) + '-' + raw.slice(8, 12);
+    const gh = await sha256('vz-gift:' + code.replace(/[^A-Z0-9]/g, ''));
+    await env.DB.prepare('INSERT INTO gifts (gh, plan, mb, days, uses, used, note, created, revoked) VALUES (?1, ?2, ?3, ?4, ?5, 0, ?6, ?7, 0)').bind(gh, plan, PLAN_MB(env, plan), days, uses, String(b.note || '').slice(0, 200), Date.now()).run();
+    await log(env, 'cadeau:créé', gh.slice(0, 12), plan + ' · ' + (days ? days + ' j' : 'toujours') + ' · ' + (uses || '∞') + ' · ' + (b.note || ''));
+    return json({ ok: true, code, plan, days, uses });
+  }
   let space = '';
   if (b.token && /^[0-9a-f]{64}$/.test(b.token)) space = await sha256('carnet-voyage:' + b.token);
   else if (b.space && /^[0-9a-f]{64}$/.test(b.space)) space = b.space;
   if (!space) return json({ error: 'empreinte manquante' }, 400);
+  if (a === 'planLook' || a === 'planSet') {
+    await planTables(env.DB);
+    const owner = await billOf(env, space);
+    if (a === 'planSet') {
+      if (b.plan === 'free') await env.DB.prepare('DELETE FROM plans WHERE space = ?1').bind(owner).run();
+      else {
+        const plan = ['plus', 'max', 'unlimited'].includes(b.plan) ? b.plan : 'plus', days = Math.max(0, Math.min(3650, Math.round(Number(b.days) || 0)));
+        await env.DB.prepare("INSERT INTO plans (space, plan, mb, until, src, ref, cust, at) VALUES (?1, ?2, ?3, ?4, 'admin', '', '', ?5) ON CONFLICT (space) DO UPDATE SET plan = ?2, mb = ?3, until = ?4, src = 'admin', at = ?5")
+          .bind(owner, plan, PLAN_MB(env, plan), days ? Date.now() + days * 864e5 : 0, Date.now()).run();
+      }
+      await log(env, 'formule:' + (b.plan || ''), owner, b.note);
+    }
+    const q = await quotaOf(env, owner), kids = await env.DB.prepare('SELECT COUNT(*) AS n FROM space_links WHERE owner = ?1').bind(owner).first();
+    return json({ owner: short(owner), branch: owner !== space, kids: (kids && kids.n) || 0, usedMb: Math.round(q.used / 1e5) / 10, quotaMb: Math.round(q.quota / 1e5) / 10, plan: q.plan, active: q.active, until: q.until, src: q.src, graceEnd: q.graceEnd });
+  }
   if (a === 'look') return json(await info(env, space));
   if (a === 'suspend') {
     await env.DB.prepare("INSERT INTO blocked (space, status, at, note) VALUES (?1, 'suspendu', ?2, ?3) ON CONFLICT(space) DO UPDATE SET status = 'suspendu', at = ?2, note = ?3").bind(space, Date.now(), String(b.note || '').slice(0, 500)).run();
