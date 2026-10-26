@@ -1923,6 +1923,7 @@ img.vi{display:inline-block;width:1.3em;height:1.3em;vertical-align:-.28em;objec
 .ln{position:relative;border-radius:24px;overflow:hidden;margin:0 0 12px;min-height:390px;background:linear-gradient(150deg,#0b3a44,#123b6b 60%,#3b1d5c);color:#fff;box-shadow:0 18px 40px -18px rgba(7,40,60,.7);isolation:isolate}
 .ln.nomap{min-height:250px}
 .ln-map{position:absolute;inset:0;z-index:0;cursor:pointer}.ln-box{position:absolute;inset:0}
+.ln-map .ln-box,.ln-map .ln-box.maplibregl-map{position:absolute;inset:0}
 .ln-shade{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,15,30,.55) 0%,rgba(5,15,30,0) 28%,rgba(5,15,30,0) 45%,rgba(5,15,30,.82) 78%,rgba(5,15,30,.92) 100%)}
 .ln-top{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:12px 14px 0;pointer-events:none}
 .ln-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:5px 10px;border-radius:99px;font-size:.75rem;font-weight:800;letter-spacing:.08em;color:#4ade80}
