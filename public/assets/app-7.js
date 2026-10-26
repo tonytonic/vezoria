@@ -80,7 +80,7 @@
     };
     const ms = t.debut ? cdLeft(t) : 0, cdOn = !!t.debut && !t.demo && ms > -864e5 && ms <= 400 * 864e5 && !hidden('blk:cd');
     const dj = t.debut ? Math.max(0, nights(isoToday(), t.debut)) : 0, dest = cdDest(t), dco = (M.ctry || {})[normQ(dest)] || co;
-    return `<div class="cv-prep2 ar${cdOn ? ' ar-cd' : ''}${anim ? '' : ' still'}"${cdOn ? ` id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"` : ''}>${cdOn ? `${cdBgTag()}<div class="cd-sh"></div>` : ''}
+    return `<div class="cv-prep2 ar${cdOn ? ' ar-cd' : ''}${anim ? '' : ' still'}"${cdOn ? ` id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"` : ''}>
       ${cdOn ? `<div class="ar-top"><span>${dj === 0 ? '🧳 ' + MSGT('C’est aujourd’hui !') : dj === 1 ? '✈️ ' + MSGT('Départ demain') : '⏳ ' + MSGT('Départ dans')}</span><span class="cd-wx" id="cd-wx"></span></div>
       <div class="ar-j"><b>${dj === 0 ? MSGT('Jour J') : 'J-' + dj}</b><span class="cd-dest">${dco && dco.cc ? flag(dco.cc) + ' ' : '📍 '}<span data-notr>${esc(dest)}</span></span></div>
       <div class="cd-clock ar-clock" id="cd-clock">${cdClock(ms)}</div>` : ''}
@@ -729,7 +729,7 @@
     const ms = cdLeft(t); if(ms > 400 * 864e5) return '';
     const dj = Math.max(0, nights(isoToday(), t.debut)), dest = cdDest(t), co = (M.ctry || {})[normQ(dest)];
     const todo = cdTodo(t), left = todo.filter(x=>!x.done), ck = list('check', c=>c.trip === t.id), ckd = ck.filter(c=>chkDone(c)).length;
-    return `<div class="cd" id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}">${cdBgTag()}<div class="cd-sh"></div>
+    return `<div class="cd" id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}">
       <div class="cd-top"><span>${dj === 0 ? '🧳 C’est aujourd’hui !' : dj === 1 ? '✈️ Départ demain' : '⏳ Départ dans'}</span><span class="cd-wx" id="cd-wx"></span></div>
       <div class="cd-j"><b>${dj === 0 ? 'Jour J' : 'J-' + dj}</b><span class="cd-dest">${co && co.cc ? flag(co.cc) + ' ' : '📍 '}<span data-notr>${esc(dest)}</span></span></div>
       <div class="cd-clock" id="cd-clock">${cdClock(ms)}</div>${hidden('blk:prep') ? `
@@ -759,7 +759,7 @@
   let CDBG = null;
   function cdBgTag(){ const t = trip(); return CDBG && t && CDBG.tid === t.id ? `<div class="cd-bg ok still" id="cd-bg" style="background-image:url(&quot;${esc(CDBG.u)}&quot;)"></div>` : '<div class="cd-bg" id="cd-bg"></div>'; }
   async function cdPhoto(t, city){
-    const bg = document.getElementById('cd-bg'); if(!bg) return;
+    const bg = document.getElementById('cd-bg'); if(!bg) return;   // (plus de photo de la ville dans la carte : l’en-tête porte la photo d’ambiance)
     if(bg.classList.contains('still') && CDBG && CDBG.tid === t.id) return;
     const show = u => new Promise(res=>{ const im = new Image(); im.referrerPolicy = 'no-referrer'; im.onload = () => { if(!im.naturalWidth) return res(false); bg.style.backgroundImage = `url("${u}")`; bg.classList.add('ok'); CDBG = {tid:t.id, u}; res(true); }; im.onerror = () => res(false); im.src = u; });
     M.cdImg = M.cdImg || {}; const keep = M.cdImg[t.id];

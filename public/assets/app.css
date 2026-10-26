@@ -134,6 +134,9 @@ html,body{background:#2A1238}
 .hero #cv-cover{position:absolute;inset:-8%;background-size:cover;background-position:center;animation:cvKB 38s ease-in-out infinite alternate;z-index:0}
 .hero.has-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,8,32,.55) 0%,rgba(20,8,32,.25) 45%,rgba(20,8,32,.8) 100%);z-index:0}
 .hero.has-cover>*:not(#cv-cover):not(.hero-sun){position:relative;z-index:1}.hero.has-cover .hero-sun{opacity:.25}
+.ph-cover.has-cover::after{background:linear-gradient(180deg,rgba(20,8,32,.38) 0%,rgba(20,8,32,.08) 45%,rgba(20,8,32,.6) 100%)}
+.ph-cover #cv-cover{background-position:62% 30%}
+.ph-cover.has-cover .hero-sun{opacity:0}
 @keyframes cvKB{from{transform:scale(1) translate(0,0)}to{transform:scale(1.12) translate(-2%,-2%)}}
 body.cv-jourj .hero{box-shadow:inset 0 -6px 0 #fbbf24}body.cv-jourj #hdr-title::after{content:" ✈︎";color:#fbbf24}
 #cv-viewer .vcov{bottom:calc(18px + env(safe-area-inset-bottom));left:18px;font-size:1.1rem}

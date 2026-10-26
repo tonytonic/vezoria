@@ -1071,6 +1071,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     try { heroStats(!legacy && !!t); } catch(e){}
     try { badgeCheck(); } catch(e){}
     phaseTheme();
+    try { coverPaint(legacy ? null : t); } catch(e){}   // 🌅 photo d’ambiance de l’en-tête (préparation)
     document.body.classList.toggle('cv-jourj', !!(t && t.debut && t.debut === isoToday()));
     const me = document.getElementById('cv-me');
     me.style.background = M.me ? pcol(M.me) : '#777';
