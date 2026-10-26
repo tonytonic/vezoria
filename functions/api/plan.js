@@ -20,6 +20,7 @@
  *   {a:'status'}              en-tête X-Carnet-Code (administrateur, compagnon « mb: » ou code d'un voyage branché)
  *                             → {used, quota, free, plan, until, overSince, graceEnd, branch, pay, purge}
  *   {a:'link', kids:[token]}  administrateur : brancher ses voyages / paquets / publications sur son carnet
+ *   {a:'unlink', kids:[token]} administrateur : débrancher un voyage passé à un compagnon (il se branche alors sur le carnet du nouvel admin)
  *   {a:'redeem', gift}        administrateur : utiliser un code cadeau
  *   {a:'checkout', plan, period} administrateur : lien de paiement Stripe (seulement si PAY_ON = 1)
  *   {a:'portal'}              administrateur : gérer / résilier son abonnement Stripe
@@ -205,15 +206,23 @@ export async function onRequestPost({ request, env }) {
     let linked = 0, taken = 0, room = 1000 - ((n0 && n0.n) || 0); const out = {};
     for (const t of kids) {
       const child = await sha256('carnet-voyage:' + t);
-      if (child === w.space) { out[t.slice(0, 8)] = 'self'; continue; }
+      const k = t.slice(0, 12);
+      if (child === w.space) { out[k] = 'self'; continue; }
       const cur = await env.DB.prepare('SELECT owner FROM space_links WHERE child = ?1').bind(child).first();
-      if (cur) { if (cur.owner === w.space) linked++; else taken++; continue; }
+      if (cur) { if (cur.owner === w.space) { linked++; out[k] = 'ok'; } else { taken++; out[k] = 'taken'; } continue; }
       const sub = await env.DB.prepare('SELECT 1 AS x FROM space_links WHERE owner = ?1 LIMIT 1').bind(child).first();
-      if (sub || room <= 0) { taken++; continue; }   // un autre carnet complet (il a ses propres branches) ne se branche pas
+      if (sub || room <= 0) { taken++; out[k] = 'taken'; continue; }   // un autre carnet complet (il a ses propres branches) ne se branche pas
       await env.DB.prepare('INSERT INTO space_links (child, owner, at) VALUES (?1, ?2, ?3) ON CONFLICT (child) DO NOTHING').bind(child, w.space, Date.now()).run();
-      linked++; room--;
+      linked++; room--; out[k] = 'ok';
     }
-    return json({ ok: true, linked, taken });
+    return json({ ok: true, linked, taken, res: out });
+  }
+  if (a === 'unlink') {   // 👑 je passe un de mes voyages à un compagnon : il ne compte plus chez moi (le nouvel admin le branche sur son carnet)
+    if (!rate(request, 'pl', 120)) return json({ error: 'Trop de demandes' }, 429);
+    const kids = (Array.isArray(b.kids) ? b.kids : []).filter(t => typeof t === 'string' && t.length >= 16 && t.length <= 128).slice(0, 50);
+    let n = 0;
+    for (const t of kids) { const r = await env.DB.prepare('DELETE FROM space_links WHERE child = ?1 AND owner = ?2').bind(await sha256('carnet-voyage:' + t), w.space).run(); n += (r.meta && r.meta.changes) || 0; }
+    return json({ ok: true, unlinked: n });
   }
   if (a === 'redeem') {
     if (!rate(request, 'pg', 20)) return json({ error: 'Trop d’essais : réessaie dans une heure.' }, 429);
