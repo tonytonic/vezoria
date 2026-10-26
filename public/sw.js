@@ -3,9 +3,9 @@
 // Une nouvelle version de l'appli = un nouveau sw.js : il s'installe en arrière-plan, puis l'appli propose
 // « Nouvelle version · toucher pour recharger » (ou recharge seule si elle vient juste de s'ouvrir).
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-26j';
+const CACHE = 'vezoria-2026-10-26k';
 // le code et les styles sont dans assets/ (depuis la 2026-10-23d) : copiés dès l'installation pour marcher hors ligne tout de suite
-const CORE = ['./', './splash.webp', './img/entete-preparation.jpg', './img/entete-en-cours.jpg', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './i18n.js',
+const CORE = ['./', './splash.webp', './img/entete-preparation.jpg', './img/entete-en-cours.jpg', './img/entete-passes.jpg', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './i18n.js',
   './assets/app.css', ...[1, 2, 3, 4, 5, 6, 7, 8].map(n => './assets/app-' + n + '.js'),
   './assets/fonts/0cb4a757b2.woff2', './assets/fonts/25bd274cc1.woff2', './assets/fonts/55b958c2e4.woff2', './assets/fonts/5825d57791.woff2', './assets/fonts/692b8f6440.woff2', './assets/fonts/6ea773f758.woff2', './assets/fonts/9130a9f8f9.woff2', './assets/fonts/94ed9918ff.woff2'];
 const CORE_SET = new Set(CORE.filter(u => u !== './').map(u => new URL(u, self.location.href).pathname));
