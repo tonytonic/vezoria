@@ -239,7 +239,8 @@ export async function onRequestPost({ request, env }) {
   }
   if (a === 'checkout' || a === 'portal') {
     if (!pay || !env.STRIPE_SECRET) return json({ error: 'Les abonnements ne sont pas encore ouverts — Subscriptions are not open yet', closed: true }, 503);
-    const base = String(b.back || '').startsWith('https://') ? String(b.back).split('#')[0] : (env.APP_URL || 'https://vezoria.fr/');
+    const origin = new URL(request.url).origin, back = String(b.back || '').split('#')[0];   // retour toujours vers l’appli elle-même (vezoria.pages.dev), jamais ailleurs
+    const base = back.startsWith(origin + '/') ? back : (env.APP_URL || origin + '/');
     if (a === 'portal') {
       const p = await env.DB.prepare('SELECT cust FROM plans WHERE space = ?1').bind(w.space).first();
       if (!p || !p.cust) return json({ error: 'Aucun abonnement Stripe sur ce carnet' }, 404);
