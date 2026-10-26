@@ -489,7 +489,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   function tripSyncSheet(id){
     const t = R[id], c = TS()[id], sp = c && spaceObj(c); if(!t || !sp) return;
     const n = tripCount(id), mine = !t.createdBy || t.createdBy === M.me;
-    openSheet(`<h2>🔄 Synchro du voyage</h2><div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(t.titre)}</div>
+    const adm = tripAdmin(t);
+    openSheet(`<h2>🔄 Synchro du voyage</h2><div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(t.titre)}</div>${adm && prof(adm) ? `<div class="v-sum-small" style="margin:-4px 0 8px">👑 ${MSGT('Admin du voyage (ses photos comptent dans sa place) :')} <b data-notr>${esc(adm === M.me ? myName() || pname(adm) : pname(adm))}</b></div>` : ''}
       <div class="sy-diag"><div><span>Sur ce téléphone</span><b>${n.live}</b><small><span>fiches</span> · <span data-notr>${n.items}</span> <span>résas</span> · <span data-notr>${n.days}</span> <span>jours</span></small></div>
         <div><span>État</span><b>${sp.err ? '🔴' : (sp.dirty||[]).length ? '🟠' : '🟢'}</b><small>${sp.err ? `<span data-notr>${esc(sp.err)}</span>` : (sp.dirty||[]).length ? `<span data-notr>${sp.dirty.length}</span> <span>en attente d’envoi</span>` : sp.last ? `<span>à jour</span> · <span data-notr>${vzWhen(sp.last)}</span>` : '<span>jamais synchronisé</span>'}</small></div></div>
       <div id="sy-res" class="v-sum-small" style="margin:8px 0"></div>
@@ -625,12 +626,12 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       M.sync.last = Date.now(); M.sync.err = '';
       }
       try { if(await codesAdopt()) changed++; } catch(e){}   // codes de voyages ajoutés ou quittés sur un autre de mes appareils
-      try { await branchSync(); quotaLoad(); } catch(e){}   // 🌿 mes voyages partagés comptent dans la place de mon carnet · 🫙 place photos
       for(const sp of (M.spaces||[])){
         // carnets sans modif à envoyer : 5 min mini entre deux passages (15 min pour les voyages suivis en abonné)
         const fol = list('feedtrip', f=>TS()[f.id] === sp.code).length && !Object.values(FT()).includes(sp.code);
         if(auto && !(sp.dirty || []).length && sp.last && now0 - sp.last < (fol ? 900000 : 300000)) continue;
         changed += await syncSpace(sp); }
+      try { await branchSync(); quotaLoad(); } catch(e){}   // 🌿 mes voyages partagés comptent dans la place de mon carnet (après la synchro des voyages : un voyage qu’on vient de me passer) · 🫙 place photos
       try { if(movedApply()) changed++; } catch(e){}
       feedMoveCheck().catch(()=>{}); feedGrantCheck().catch(()=>{}); feedOldWipe().catch(()=>{});
       try { mateFeedSync(); } catch(e){}
@@ -1563,9 +1564,12 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const code = TS()[id], on = code && spaceObj(code);
     const mine = on ? Object.values(R).filter(r=>r && !r.deleted && r.trip === id && r.type !== 'member' && photoRefs(r).length && r.createdBy && r.createdBy === M.me) : [];
     const nPh = mine.reduce((s, r)=>s + photoRefs(r).length, 0), others = on ? mbOthers(id) : [];
+    const amAdmin = on && tripAdmin(t) === M.me, nxt = amAdmin ? adminNext(id) : [];   // 👑 je suis l’admin : je le passe à un compagnon
+    const admH = (amAdmin && nxt.length ? `<div class="sh-note" style="margin-bottom:10px">👑 ${MSGT('Tu es l’admin de ce voyage : ses photos, celles de tes compagnons aussi, comptent dans ta place. En partant, tu le passes à :')}<select class="v-in" id="adm-next" style="margin-top:6px">${nxt.map(p=>`<option value="${esc(p)}" data-notr>${esc(pname(p))}</option>`).join('')}</select><small>${MSGT('Ses photos compteront alors dans sa place à lui.')}</small></div>` : '')
+      + (on && !drop && M.quota && M.quota.owner && !(M.quota.active && M.quota.plan === 'unlimited') ? `<div class="v-sum-small" style="margin-bottom:8px">📦 ${RF('Ta copie du voyage compte dans ta place photos ({0} libres).', fmtB(Math.max(0, M.quota.quota - M.quota.used)))}</div>` : '');
     openSheet(`<h2>${drop ? '🗑 Supprimer' : '🚪 Quitter'} « <span data-notr>${esc(t.titre)}</span> »</h2>
       <div class="v-sum-small" style="margin-bottom:10px">${drop ? (mineT && !(M.viaP || {})[id] ? 'Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.' : `<span data-notr>${esc(owner)}</span> · <span>a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.</span>`) : `Ton voyage reste sur ce téléphone avec toutes ses photos${M.sync.on && M.sync.code ? ' (et dans ton carnet en ligne)' : ''}. Tu ne recevras plus les modifications des autres.`}</div>
-      ${nPh ? `<div class="sh-k" style="font-size:1.05rem;margin-bottom:6px">📸 Tes photos dans ce voyage : <b data-notr>${nPh}</b></div>
+      ${admH}${nPh ? `<div class="sh-k" style="font-size:1.05rem;margin-bottom:6px">📸 Tes photos dans ce voyage : <b data-notr>${nPh}</b></div>
         <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${id}','keep',0,${drop})"><i>🤝</i><span><b>Les laisser aux autres</b><small>Tes compagnons gardent les souvenirs et photos que tu as ajoutés.</small></span></button>
         <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${id}','take',0,${drop})"><i>🎒</i><span><b>Partir avec mes photos</b><small>Les souvenirs et photos que tu as ajoutés sont retirés du voyage partagé (et du serveur). Tu les gardes chez toi.</small></span></button>`
       : `<button type="button" class="v-btn" onclick="CV.tripLeaveGo('${id}','keep',0,${drop})">${drop ? '🗑 Quitter et retirer de mon téléphone' : '🚪 Quitter le voyage partagé'}</button>`}
@@ -1573,7 +1577,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
   }
   async function tripLeaveGo(id, mode, silent, drop){
-    const code = TS()[id], sp = code && spaceObj(code); if(!silent) closeSheet(true);
+    const code = TS()[id], sp = code && spaceObj(code), nx = (document.getElementById('adm-next') || {}).value || '', amAdmin = !!(sp && tripAdmin(R[id]) === M.me); if(!silent) closeSheet(true);
     if(sp && photoApi()){
       // 1) toutes les photos du voyage reviennent (dans le carnet principal s’il est synchronisé, sinon sur ce téléphone)
       const res = await tripPhotosHome(id, code);
@@ -1593,8 +1597,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         // 3) ma présence passe à « parti »
         const mb = 'mb:' + id + ':' + devId(); push.push({id:mb, type:'member', trip:id, dev:devId(), who:(R[mb] && R[mb].who) || myName() || '', at:Date.now(), on:false, pid:M.me || ''});
         // je ne suis plus dans les voyageurs chez les autres (ma copie à moi me garde)
-        const t0 = R[id]; if(t0 && M.me && (t0.voyageurs || []).includes(M.me)) push.push(Object.assign(clone(t0), {voyageurs:(t0.voyageurs || []).filter(p=>p !== M.me)}));
+        const t0 = R[id]; if(t0 && M.me && ((t0.voyageurs || []).includes(M.me) || (amAdmin && nx))) push.push(Object.assign(clone(t0), {voyageurs:(t0.voyageurs || []).filter(p=>p !== M.me)}, amAdmin && nx ? {adminBy:nx} : {}));   // 👑 le voyage passe au compagnon choisi
         await spacePushOnly(sp, push);
+        if(amAdmin) await adminRelease(code);   // ses photos ne comptent plus dans ma place (le nouvel admin le branche sur son carnet)
         if(gone.length){ cryptShow('🎒 Je retire tes photos du voyage partagé…');
           for(const p of gone) for(const v of [p, p + '.t']){ try { await fetch(photoApi() + '?id=' + encodeURIComponent(await sid(v, code)), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}}); } catch(e){} }
           cryptHide('🎒 Tes photos sont retirées du voyage partagé'); }

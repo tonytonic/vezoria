@@ -2001,19 +2001,33 @@
   function myBranchCodes(){
     const main = M.sync.code, my = M.myCodes || {}, out = new Set();
     (M.spaces || []).forEach(x=>{ if(my[x.code]) out.add(x.code); });
-    Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(t && t.type === 'trip' && !t.demo && t.createdBy && t.createdBy === M.me) out.add(c); });
+    Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(t && t.type === 'trip' && !t.demo && tripAdmin(t) === M.me) out.add(c); });
     Object.values(FT()).forEach(c=>out.add(c)); Object.keys(PACKS()).forEach(c=>out.add(c)); if(M.feedAll) out.add(M.feedAll);
     return [...out].filter(c=>c && c !== main && !/^M:/.test(c) && spaceObj(c));
   }
+  /* 👑 l’admin d’un voyage partagé = son créateur, ou le compagnon à qui il l’a passé en partant (adminBy) : ses photos comptent chez lui */
+  const tripAdmin = t => t ? (t.adminBy || t.createdBy || '') : '';
+  function adminNext(tid){
+    const t = R[tid]; if(!t) return []; const act = new Set(mbOthers(tid).map(m=>m.pid).filter(Boolean));
+    const v = (t.voyageurs || []).filter(p=>p && p !== M.me && prof(p)); return [...v.filter(p=>act.has(p)), ...v.filter(p=>!act.has(p))];
+  }
+  async function adminRelease(code){
+    try { if(ownerOn() && planApi()) await planCall({a:'unlink', kids:[await authCode(code)]}, M.sync.code); } catch(e){}
+    if(M.linked) delete M.linked[code]; if(M.quota) M.quota.at = 0; persist();
+  }
   let brBusy = false;
   async function branchSync(){
+    try { const N = M.admNote || (M.admNote = {});   // on vient de me passer un voyage : je le dis une fois
+      Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(!t || t.type !== 'trip' || N[tid] || t.adminBy !== M.me || t.createdBy === M.me || !spaceObj(c)) return;
+        N[tid] = 1; persist(); toast('👑 ' + RF(ownerOn() ? 'Tu es maintenant l’admin du voyage « {0} » : ses photos comptent dans ta place.' : 'Tu es maintenant l’admin du voyage « {0} ». Mets ton carnet dans le cloud pour que ses photos comptent chez toi.', t.titre || '')); }); } catch(e){}
     if(brBusy || !ownerOn() || !planApi()) return 0;
-    const L = M.linked || (M.linked = {}), todo = myBranchCodes().filter(c=>!L[c]).slice(0, 40); if(!todo.length) return 0;
+    const L = M.linked || (M.linked = {}), T = M.linkTry || (M.linkTry = {}), now = Date.now();
+    const todo = myBranchCodes().filter(c=>!L[c] && !(T[c] && now - T[c] < 6 * 3600e3)).slice(0, 40); if(!todo.length) return 0;   // déjà branché ailleurs : on réessaie dans 6 h (voyage qu’on vient de me passer)
     brBusy = true;
     try {
       const kids = []; for(const c of todo) kids.push(await authCode(c));
       const r = await planCall({a:'link', kids}, M.sync.code);
-      if(r.ok){ todo.forEach(c=>{ L[c] = Date.now(); }); if(M.quota) M.quota.at = 0; persist(); return todo.length; }
+      if(r.ok){ const res = r.j.res || {}; todo.forEach((c, i)=>{ const v = res[kids[i].slice(0, 12)]; if(v === 'ok' || v === 'self' || !r.j.res){ L[c] = now; delete T[c]; } else T[c] = now; }); if(M.quota) M.quota.at = 0; persist(); return todo.length; }
     } catch(e){} finally { brBusy = false; }
     return 0;
   }

@@ -1206,10 +1206,18 @@
     const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, x.cover, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
     return (M.pq||[]).filter(id=>{ const r = owner[String(id).replace(/\.t$/,'')]; if(!r) return false; const t = targets(r)[0], c = t === 'main' ? M.sync.code : t; return !codes.has(c); });
   }
-  async function serverWipeTrip(tid){
+  async function serverWipeTrip(tid, sure){
     const t = R[tid]; if(!t) return;
     const tc = TS()[tid] && spaceObj(TS()[tid]) ? TS()[tid] : '', fc = FT()[tid] || '', codes = new Set([tc, fc].filter(Boolean));
     if(!codes.size){ serverWipeSheet(); return; }
+    // 👑 des compagnons s’en servent encore : plutôt que tout effacer pour eux, on propose de leur passer le voyage
+    if(!sure && tc && tripAdmin(t) === M.me && adminNext(tid).length && mbOthers(tid).length){
+      openSheet(`<h2>🗑 « <span data-notr>${esc(t.titre)}</span> »</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Tes compagnons utilisent encore ce voyage. Plutôt que de tout effacer pour eux, tu peux le leur passer.')}</div>
+        <button type="button" class="cv-choice" onclick="CV.close();CV.tripUnshare('${tid}')"><i>👑</i><span><b>${MSGT('Le passer à un compagnon et partir')}</b><small>${MSGT('Le voyage continue pour eux, avec toutes leurs photos. Ses photos ne comptent plus dans ta place.')}</small></span></button>
+        <button type="button" class="cv-choice" onclick="CV.close();CV.serverWipeTrip('${tid}',1)"><i>🗑</i><span><b>${MSGT('L’effacer pour tout le monde')}</b><small>${MSGT('Fiches et photos supprimées du serveur. Tes compagnons ne gardent que ce que leur téléphone a déjà.')}</small></span></button>
+        <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${MSGT('Annuler')}</button></div>`);
+      return;
+    }
     if(!(await uiConfirm('Supprimer « ' + t.titre + ' » du serveur, pour tout le monde ?\nCompagnons et abonnés n’y auront plus accès. Ce qui est sur ce téléphone reste ici.\nCette action ne peut pas être annulée.'))) return;
     // d’abord on arrête les envois en cours (sinon des photos arriveraient encore après la suppression)
     upHalt = true; for(let k = 0; k < 150 && (uploading || feedUp); k++) await new Promise(r=>setTimeout(r, 200));
