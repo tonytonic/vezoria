@@ -1681,8 +1681,8 @@
         <button type="button" class="cv-choice${mode === 'all' ? ' on' : ''}" onclick="CV.cloudPick('all')"><i>☁️</i><span><b>Tout mon carnet dans le cloud</b><small>Tous tes voyages sont sauvegardés et arrivent sur ton autre téléphone avec ton code.</small></span></button>
         <button type="button" class="cv-choice${mode === 'trips' ? ' on' : ''}" onclick="CV.cloudPick('trips')"><i>🧳</i><span><b>Voyage par voyage</b><small>Tu choisis les voyages à mettre dans le cloud. Jamais la totalité du carnet.</small></span></button>
         <button type="button" class="cv-choice${mode === 'none' ? ' on' : ''}" onclick="CV.cloudPick('none')"><i>📱</i><span><b>Sans cloud</b><small>Tout reste sur ce téléphone. Pour ton cercle, l’appli crée des paquets chiffrés que tu envoies toi-même. Les notifications entre amis ne marchent pas dans ce mode.</small></span></button>
-        <div class="sy-r" style="margin-top:6px"><b>🔑 Tu as déjà un code principal ?</b><small>Celui de ton autre téléphone : tout ton carnet arrive ici.</small>
-          <div class="cv-row" style="margin-top:6px"><input class="v-in" id="sy-join" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.cloudJoinMain()">Utiliser</button></div></div>
+        <div class="sy-r" style="margin-top:6px"><b>🔑 Tu as déjà un code ?</b><small>Ton code administrateur (celui de ton autre appareil : tout ton carnet arrive ici) ou un code compagnon reçu d’un proche.</small>
+          <div class="cv-row" style="margin-top:6px"><input class="v-in" id="sy-join" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.cloudJoinMain()">Utiliser</button></div>${qrBtn('sy-join')}</div>
         <button type="button" class="v-btn sec" onclick="CV.close();CV.joinAny()">🤝 J’ai reçu une invitation dans un voyage</button>
         <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${mode ? 'Annuler' : 'Plus tard'}</button></div>`);
       return;
@@ -1694,10 +1694,15 @@
         return `<div class="cv-cl-st">${dn ? `<details><summary>📝 ${RF('{0} modification(s) à envoyer', dn)}${last ? ' · ' + vzWhen(last) : ''}</summary><div class="cv-cl-pd">${pend.slice(0, 25).map(([id, c])=>{ const r = R[id]; return `<div>${r ? esc(r.type) + ' · <span data-notr>' + esc(String(r.titre || r.nom || r.texte || r.id).slice(0, 40)) + '</span>' : '<i>' + esc(MSGT('fiche introuvable')) + '</i> ' + esc(String(id).slice(0, 24))}${c ? ' <small>' + esc(c.slice(0, 4)) + '…</small>' : ''}</div>`; }).join('')}</div></details>` : `<div>📝 ${MSGT('Tes modifications sont envoyées')}${last ? ' · ' + vzWhen(last) : ''}</div>`}${ph ? `<div>📷 ${RF('{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.', ph)}</div>` : ''}${M.pqErr ? `<div class="err">${esc(M.pqErr)}</div>` : ''}
           <button type="button" class="v-btn sec" onclick="CV.syncNow(true)">🔄 ${MSGT('Synchroniser maintenant')}</button></div>`; })()}`;
     if(mode === 'all'){
-      h += `<div class="sy-r"><b>🔑 Mon code principal</b><small>${s.on && s.code ? cloudState(s) : ''}</small>
+      h += `<div class="sy-r"><b>🔑 Mon code administrateur</b><small>${s.on && s.code ? cloudState(s) : ''}</small>
           <div class="cv-row" style="margin-top:6px"><b class="cv-code">${esc(s.code || '')}</b><button type="button" class="v-btn sec" style="width:auto;margin:0 0 0 auto;padding:6px 12px" onclick="CV.copyCode()">📋 Copier</button></div>
-          <small>Garde-le bien : c’est lui qui ouvre ton carnet sur un autre appareil.</small></div>`;
+          <small>Garde-le bien et ne le donne à personne : c’est lui qui ouvre TON compte sur un autre appareil (carnet, voyages partagés et suivis).</small>
+          ${ownerOn() ? `<button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.deviceAdd()">📱 Ajouter un de mes appareils (QR code)</button>` : ''}</div>`;
+      if(ownerOn()) h += `<div class="cv-cl-h">👥 Compagnons de tout mon carnet</div><div class="v-sum-small" style="margin-bottom:6px">Un code compagnon ouvre ton carnet (voir, ajouter, modifier) sans tes droits d’administrateur : pas d’effacement, pas de gestion des accès.</div>
+        <div id="cv-mem"><div class="v-sum-small">…</div></div><button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.memberInvite()">➕ Créer un code compagnon</button>`;
     }
+    if(memberSpaces().length) h += `<div class="cv-cl-h">👥 Carnets où je suis compagnon</div>` + memberSpaces().map(x=>{ const g = (M.memberGrant || {})[x.code] || {};
+      return `<div class="cv-cl-t"><span><b data-notr>${esc(g.by || '👤')}</b><small>${x.err ? '⚠️ ' + esc(x.err) : '☁️ ' + cloudState(x)}</small></span><button type="button" class="v-btn sec" onclick="CV.memberLeave('${esc(x.code)}')">Quitter</button></div>`; }).join('');
     if(mode === 'trips'){
       const ts = myTrips();
       h += `<div class="cv-cl-h">Mes voyages dans le cloud</div>`
@@ -1718,7 +1723,7 @@
     }
     if(ph && mode !== 'none') h += `<div class="v-sum-small" style="margin-top:6px">📸 ${ph} photo(s) en attente d’envoi</div>`;   // modèle traduit « 📸 {0} photo(s) en attente d’envoi »
     h += `<div class="v-actions">${mode !== 'none' ? `<button type="button" class="v-btn" onclick="CV.syncNow(true);CV.close()">🔄 Synchroniser maintenant</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.close()">OK</button></div>`;
-    openSheet(h);
+    openSheet(h); if(mode === 'all' && ownerOn()) setTimeout(memberListLoad, 50);
   }
   async function cloudPick(m){
     const s = M.sync, mainOn = !!(s.on && s.code), anyTrip = myTrips().some(t=>tripInCloud(t.id));
@@ -1796,7 +1801,7 @@
     const s = M.sync;
     try {
       const j = await call(0, [], s.code);
-      mergeRemote(j.records);
+      mergeRemote(j.records, true);
       M.dirty = []; Object.values(R).filter(r=>!r.demo).forEach(r=>markDirty(r.id));
       s.on = true; s.since = j.now; s.err = ''; M.cloud = 'all';
       if(!j.records.filter(r=>!r.deleted).length) await photoQueueAll();
@@ -1805,9 +1810,169 @@
   }
   async function cloudJoinMain(){
     const v = ((document.getElementById('sy-join') || {}).value || '').trim().toUpperCase();
-    if(v.length < 8){ alert('Colle le code principal de ton autre appareil.'); return; }
+    if(v.length < 8){ alert('Colle ton code administrateur ou ton code compagnon.'); return; }
+    try { if(await memberTry(v)) { closeSheet(true); return; } } catch(e){}   // 👥 c’était un code compagnon
     closeSheet(true); await syncOn(v);
     if(M.sync.on && M.sync.code){ M.cloud = 'all'; persist(); refresh(); }
+  }
+
+  /* ══════════ 🔑 Code administrateur · 👥 code compagnon · 📱 mon compte sur tous mes appareils ══════════
+     • Code administrateur (= code principal) : TON compte. Il ne se partage plus. Sur un autre appareil, il ramène TOUT :
+       le carnet, et aussi les codes des voyages partagés à part, suivis, publiés (fiche « vz:codes », chiffrée avec une clé
+       tirée du seul code administrateur : un compagnon la reçoit mais ne peut pas la lire).
+     • Code compagnon : pour une personne. Il ouvre ton carnet (voir, ajouter, modifier) sans tes droits : il ne peut ni
+       effacer le carnet du serveur, ni créer ou retirer d’autres compagnons, ni lire tes autres codes. Tu peux lui retirer
+       l’accès à tout moment (le serveur refuse alors ses synchros). Chez lui, ton carnet est un dossier partagé de plus :
+       son propre carnet reste à lui. */
+  const memberApi = () => { const u = apiUrl(); return u ? u.replace(/\/sync$/, '/member') : ''; };
+  const memberSpaces = () => (M.spaces || []).filter(x=>/^M:/.test(x.code));
+  const memberOk = () => E2E && !window.VZ_HOST;
+  async function pbkBits(code, salt){ const base = await crypto.subtle.importKey('raw', te.encode(code), 'PBKDF2', false, ['deriveBits']); return new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2', salt:te.encode(salt), iterations:200000, hash:'SHA-256'}, base, 256)); }
+  async function aesRaw(bits){ return crypto.subtle.importKey('raw', bits, 'AES-GCM', false, ['encrypt','decrypt']); }
+  async function boxSeal(key, obj){ const iv = crypto.getRandomValues(new Uint8Array(12)), ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, te.encode(JSON.stringify(obj)))), o = new Uint8Array(12 + ct.length); o.set(iv); o.set(ct, 12); return b64(o); }
+  async function boxOpen(key, s){ const u8 = unb64(s); return JSON.parse(td.decode(new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:u8.slice(0, 12)}, key, u8.slice(12))))); }
+  const normCode = c => String(c || '').trim().toUpperCase().replace(/^M:/, '');
+  async function memberApiCall(body, code){
+    const h = {'Content-Type':'application/json'}; if(code) h['X-Carnet-Code'] = await authCode(code);
+    const r = await fetch(memberApi(), {method:'POST', headers:h, body:JSON.stringify(body)});
+    let j = {}; try { j = await r.json(); } catch(e){}
+    return {ok:r.ok, status:r.status, j};
+  }
+  // ── 🔑 la liste de mes codes, chiffrée avec mon code administrateur ──
+  let OWK = {c:'', k:null};
+  async function ownerKey(){ const c = M.sync.code; if(OWK.c !== c){ OWK = {c, k: await aesRaw(await pbkBits(c, 'carnet-voyage/owner/v1'))}; } return OWK.k; }
+  const ownerOn = () => memberOk() && !!(M.sync.on && M.sync.code) && !/^M:/.test(M.sync.code);
+  function codesSnap(){
+    return {ts:TS(), sp:(M.spaces || []).map(x=>x.code), fp:FT(), pk:PACKS(), ib:M.ib || '', mg:M.memberGrant || {}, ml:M.memLocal || {}, hide:M.hide || {}};
+  }
+  const codesOf = s => [...new Set([...Object.values(s.ts || {}), ...(s.sp || []), ...Object.values(s.fp || {}), ...Object.keys(s.pk || {}), s.ib].filter(Boolean))];
+  let codesBusy = false;
+  async function codesPublish(){
+    if(codesBusy || !ownerOn()) return;
+    codesBusy = true;
+    try {
+      await codesAdopt();   // d’abord ce que mes autres appareils ont publié (sinon on écraserait leurs codes)
+      const snap = codesSnap(), now = codesOf(snap), h = hex(await crypto.subtle.digest('SHA-256', te.encode(JSON.stringify(snap)))).slice(0, 24);
+      const cur = R['vz:codes']; let cOk = !!(cur && cur.box && !cur.deleted);
+      if(cOk && h === M.codesHash) return;
+      const gone = new Set(M.codesGone || []); (M.codesList || []).forEach(c=>{ if(!now.includes(c)) gone.add(c); }); now.forEach(c=>gone.delete(c));
+      M.codesGone = [...gone].slice(-300); M.codesList = now;
+      const r = {id:'vz:codes', type:'ownercodes', box: await boxSeal(await ownerKey(), Object.assign({}, snap, {gone:M.codesGone})), updatedAt:Date.now()};
+      R[r.id] = r; markDirty(r.id); M.codesHash = h; M.codesSeen = r.updatedAt; persist();
+    } finally { codesBusy = false; }
+  }
+  async function codesAdopt(){
+    const r = R['vz:codes']; if(!ownerOn() || !r || !r.box || r.deleted || (r.updatedAt || 0) <= (M.codesSeen || 0)) return 0;
+    let d; try { d = await boxOpen(await ownerKey(), r.box); } catch(e){ M.codesHash = ''; return 0; }   // illisible (abîmée) : ce téléphone republiera la sienne
+    M.codesSeen = r.updatedAt; let n = 0;
+    const gone = new Set(d.gone || []);
+    // quittés sur un autre de mes appareils : retirés ici aussi
+    Object.keys(TS()).forEach(k=>{ if(gone.has(TS()[k])){ delete TS()[k]; n++; } });
+    M.spaces = (M.spaces || []).filter(x=>!gone.has(x.code));
+    Object.keys(FT()).forEach(k=>{ if(gone.has(FT()[k])) delete FT()[k]; });
+    Object.keys(PACKS()).forEach(k=>{ if(gone.has(k)) delete PACKS()[k]; });
+    // connus sur un autre de mes appareils : ajoutés ici
+    Object.entries(d.mg || {}).forEach(([c, g])=>{ if(!gone.has(c) && !(M.memberGrant || {})[c]) (M.memberGrant || (M.memberGrant = {}))[c] = g; });
+    Object.entries(d.ml || {}).forEach(([k, v])=>{ if(!(M.memLocal || {})[k]) (M.memLocal || (M.memLocal = {}))[k] = v; });
+    (d.sp || []).forEach(c=>{ if(!gone.has(c) && !spaceObj(c) && (!/^M:/.test(c) || (M.memberGrant || {})[c])){ M.spaces.push({code:c, since:0, dirty:[], last:0, err:''}); n++; } });
+    Object.entries(d.ts || {}).forEach(([k, c])=>{ if(!gone.has(c) && !TS()[k] && spaceObj(c)){ TS()[k] = c; n++; } });
+    Object.entries(d.fp || {}).forEach(([k, c])=>{ if(!gone.has(c) && !FT()[k]) FT()[k] = c; });
+    Object.entries(d.pk || {}).forEach(([k, v])=>{ if(!gone.has(k) && !PACKS()[k]) PACKS()[k] = v; });
+    if(d.ib && !M.ib) M.ib = d.ib;
+    Object.entries(d.hide || {}).forEach(([k, v])=>{ if(!(M.hide || {})[k]) (M.hide || (M.hide = {}))[k] = v; });
+    M.codesGone = [...new Set([...(M.codesGone || []), ...gone])].slice(-300);
+    M.codesHash = ''; persist();   // la liste réunie repart au prochain passage
+    return n;
+  }
+  // ── 👥 côté compagnon : un code reçu est-il un code compagnon ? (sinon on continue comme avant) ──
+  async function memberTry(raw){
+    const code = normCode(raw); if(!memberOk() || !/^[A-Z0-9]{4}(-[A-Z0-9]{4}){2,}$/.test(code) || !memberApi()) return false;
+    const mc = 'M:' + code;
+    if(spaceObj(mc)){ toast('👥 ' + MSGT('Tu es déjà compagnon de ce carnet.')); return true; }
+    const mt = hex(await pbkBits(code, 'carnet-voyage/member/v1'));
+    const r = await memberApiCall({a:'grant', mt}); if(!r.ok || !r.j.grant) return false;
+    let g; try { g = await boxOpen(await aesRaw(await pbkBits(code, 'carnet-voyage/member-key/v1')), r.j.grant); } catch(e){ return false; }
+    return memberJoin(mc, Object.assign({mt}, g));
+  }
+  async function memberJoin(mc, g){
+    const who = g.by || MSGT('quelqu’un');
+    if(!(await uiConfirm(RF('Rejoindre le carnet de {0} en compagnon ?\n\nTu verras ses voyages et pourras les compléter. Ton propre carnet reste à toi, séparé.', who)))) return true;
+    (M.memberGrant || (M.memberGrant = {}))[mc] = {k:g.k, h:g.h, mt:g.mt, by:g.by || '', n:g.n || '', at:Date.now()};
+    if(!spaceObj(mc)) (M.spaces = M.spaces || []).push({code:mc, since:0, dirty:[], last:0, err:''});
+    persist(); toast('👥 ' + RF('Carnet de {0} : synchronisation…', who));
+    try { await syncSpace(spaceObj(mc), true); } catch(e){}
+    persist(); refresh();
+    const sp = spaceObj(mc); if(sp && sp.err) alert(sp.err); else toast('✅ ' + RF('Tu es compagnon du carnet de {0}', who));
+    return true;
+  }
+  async function memberLeave(mc){
+    const g = (M.memberGrant || {})[mc] || {}, who = g.by || MSGT('ce carnet');
+    if(!(await uiConfirm(RF('Quitter le carnet de {0} ?\n\nSes voyages disparaissent de ce téléphone. Rien n’est effacé chez lui.', who)))) return;
+    try { await memberApiCall({a:'leave'}, mc); } catch(e){}
+    Object.keys(TS()).forEach(tid=>{ if(TS()[tid] === mc){ delete TS()[tid]; (M.hide || (M.hide = {}))[tid] = 1;
+      Object.keys(R).forEach(id=>{ const x = R[id]; if(x && (x.id === tid || x.trip === tid)) delete R[id]; }); } });
+    M.spaces = (M.spaces || []).filter(x=>x.code !== mc); delete (M.memberGrant || {})[mc]; delete ck[mc];
+    if(trip() == null){ const t0 = trips()[0]; if(t0) M.trip = t0.id; }
+    persist(); refresh(); toast('👋 ' + MSGT('Carnet quitté')); cloudSheet();
+  }
+  // nouveau voyage créé par un compagnon : dans quel carnet le ranger ?
+  async function memberPlaceAsk(){
+    const ms = memberSpaces().filter(x=>!x.err); if(!ms.length) return '';
+    const g = (M.memberGrant || {})[ms[0].code] || {};
+    return (await uiConfirm(RF('Ranger ce nouveau voyage dans le carnet partagé de {0} ?\n\nOK = carnet partagé (vous le voyez tous les deux).\nAnnuler = seulement dans ton carnet.', g.by || MSGT('ton compagnon')))) ? ms[0].code : '';
+  }
+  // ── 👥 côté propriétaire : créer, lister, retirer les codes compagnon ──
+  async function memberInvite(){
+    if(!ownerOn() || !memberApi()){ alert(MSGT('Il faut d’abord mettre tout ton carnet dans le cloud (☁️ Cloud → « Tout mon carnet »).')); return; }
+    const raw = await uiPrompt(MSGT('Pour qui est ce code compagnon ? (prénom)'), ''); if(raw === null) return;
+    const label = String(raw || '').trim().slice(0, 40);
+    toast('🔐 ' + MSGT('Création du code compagnon…'));
+    try {
+      const C = genCode(), mt = hex(await pbkBits(C, 'carnet-voyage/member/v1')), kc = await aesRaw(await pbkBits(C, 'carnet-voyage/member-key/v1'));
+      const [k, h] = await Promise.all([pbkBits(M.sync.code, 'carnet-voyage/e2e/v1'), pbkBits(M.sync.code, 'carnet-voyage/ids/v1')]);   // la clé du carnet, pas le code
+      const grant = await boxSeal(kc, {k:b64(k), h:b64(h), by:myName(), n:label});
+      const r = await memberApiCall({a:'add', mt, grant, label}, M.sync.code);
+      if(!r.ok) throw new Error(r.j.error || ('erreur ' + r.status));
+      (M.memLocal || (M.memLocal = {}))[r.j.id] = C; persist(); try { await codesPublish(); } catch(e){}
+      memberShow(C, label);
+    } catch(e){ alert(RF('Code compagnon impossible à créer : {0}', e.message)); }
+  }
+  function memberShow(C, label){
+    openSheet(`<h2>👥 ${MSGT('Code compagnon')}</h2><div class="v-sum-small" style="margin-bottom:8px">${label ? `<b data-notr>${esc(label)}</b> · ` : ''}${MSGT('Il ouvre ton carnet : voir, ajouter, modifier. Pas d’effacement, pas de gestion des accès. Tu peux le retirer quand tu veux.')}</div>
+      <div class="cv-qrcode" style="display:flex;justify-content:center;margin:8px 0">${qrSVG(C)}</div>
+      <div class="cv-row" style="justify-content:center"><b class="cv-code" data-notr>${esc(C)}</b></div>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.memberSend('${esc(C)}')">📤 ${MSGT('Envoyer l’invitation')}</button><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${MSGT('Fermer')}</button></div>`);
+  }
+  async function memberSend(C){
+    const url = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
+    const text = RF('Rejoins mon carnet Vezoria en compagnon 🧳\n{0}\nCode compagnon : {1}\n(☁️ Cloud → « Tu as déjà un code ? » → colle le code)', url, C);
+    if(navigator.share){ try { await navigator.share({title:'Vezoria', text}); return; } catch(e){ return; } }
+    try { await navigator.clipboard.writeText(text); toast('📋 ' + MSGT('Invitation copiée')); } catch(e){ await uiPrompt(MSGT('Copie ce texte :'), text); }
+  }
+  async function memberListLoad(){
+    const el = document.getElementById('cv-mem'); if(!el || !ownerOn()) return;
+    try {
+      const r = await memberApiCall({a:'list'}, M.sync.code); if(!r.ok) throw new Error(r.j.error || r.status);
+      const L = r.j.members || [];
+      el.innerHTML = L.length ? L.map(m=>`<div class="cv-cl-t"><span><b data-notr>${esc(m.label || '👤')}</b><small>${m.last ? MSGT('vu') + ' ' + vzWhen(m.last) : MSGT('pas encore utilisé')}</small></span>`
+        + `${(M.memLocal || {})[m.id] ? `<button type="button" class="v-btn sec" onclick="CV.memberShowId('${m.id}','${esc(m.label || '')}')">${MSGT('Code')}</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.memberRevoke('${m.id}','${esc(m.label || '')}')">${MSGT('Retirer l’accès')}</button></div>`).join('')
+        : `<div class="v-sum-small">${MSGT('Aucun compagnon pour l’instant.')}</div>`;
+    } catch(e){ el.innerHTML = `<div class="v-sum-small">⚠️ ${esc(e.message || String(e))}</div>`; }
+  }
+  function memberShowId(id, label){ const C = (M.memLocal || {})[id]; if(C) memberShow(C, label); }
+  async function memberRevoke(id, label){
+    if(!(await uiConfirm(RF('Retirer l’accès de {0} ?\n\nSon appli ne pourra plus synchroniser ton carnet. Ce qu’il a déjà vu reste sur son téléphone.', label || MSGT('ce compagnon'))))) return;
+    try { const r = await memberApiCall({a:'revoke', id}, M.sync.code); if(!r.ok) throw new Error(r.j.error || r.status);
+      if(M.memLocal) delete M.memLocal[id]; persist(); toast('🚫 ' + MSGT('Accès retiré')); memberListLoad(); } catch(e){ alert(e.message); }
+  }
+  // ── 📱 ajouter un de MES appareils : le code administrateur en QR code (jamais à donner à quelqu’un d’autre) ──
+  function deviceAdd(){
+    if(!ownerOn()) return;
+    openSheet(`<h2>📱 ${MSGT('Ajouter un de mes appareils')}</h2><div class="v-sum-small" style="margin-bottom:8px">${MSGT('Sur ton autre téléphone ou ton ordinateur (appli installée) : ☁️ Cloud → « Tu as déjà un code ? » → 📷 Scanner. Tout ton carnet arrive, avec tes voyages partagés et suivis.')}</div>
+      <div style="display:flex;justify-content:center;margin:8px 0">${qrSVG(M.sync.code)}</div>
+      <div class="cv-row" style="justify-content:center"><b class="cv-code" data-notr>${esc(M.sync.code)}</b></div>
+      <div class="v-sum-small" style="margin-top:8px">⚠️ ${MSGT('C’est ton code administrateur : il donne tous les droits. Ne le donne à personne. Pour un compagnon, crée plutôt un code compagnon.')}</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${MSGT('Fermer')}</button></div>`);
   }
 
   /* ══════════ 🧳 Programme par étapes : une carte par ville, les trajets entre deux, et « Réorganiser » (glisser + nuits) ══════════ */

@@ -1406,7 +1406,7 @@
         if(replace) Object.keys(R).forEach(id=>{ if(R[id].type!=='profile') delete R[id]; });
       }
       M.dirty = [];
-      mergeRemote(j.records);
+      mergeRemote(j.records, true);
       Object.values(R).forEach(r=>{ if(!j.records.some(x=>x.id===r.id)) markDirty(r.id); });
       M.sync.on = true; M.sync.since = j.now; M.sync.err = '';
       if(!remote.length) await photoQueueAll();   // serveur vide (neuf ou effacé) : les photos de ce téléphone repartent aussi

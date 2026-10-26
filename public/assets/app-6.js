@@ -311,13 +311,28 @@
     return pkgMerge(data, photos);
   }
 
-  function backupNag(){
-    const real = Object.values(R).filter(r=>!r.demo && r.type!=='profile').length; if(real < 10) return;
-    const last = Math.max(M.zipLast || 0, M.zipAsk || 0); if(Date.now() - last < 30*864e5) return;
-    if(document.getElementById('v-sheet-bg')) return;   // pas par-dessus une autre fenêtre
-    M.zipAsk = Date.now(); persist();
-    openSheet(`<h2>💾 Petite sauvegarde ?</h2><div class="v-sum-small" style="margin-bottom:10px">${M.zipLast ? 'Ta dernière sauvegarde complète date du ' + new Date(M.zipLast).toLocaleDateString((window.I18N ? I18N.locale : 'fr-FR')) : 'Tu n’as encore jamais fait de sauvegarde complète'}. Une fois par mois, garde une copie de tout ton carnet (photos comprises) dans Fichiers, iCloud ou Drive : si tu perds ou changes de téléphone, tu retrouves tout.</div>
-      <button type="button" class="v-btn" onclick="CV.zipSheet()">💾 Faire ma sauvegarde</button><div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Plus tard (dans un mois)</button></div>`);
+  /* 🛟 Protéger son carnet : un rappel doux, à l’ouverture, pour ne jamais tout perdre en perdant ou en changeant de téléphone
+     • sans code administrateur (pas de « tout mon carnet dans le cloud ») et sans sauvegarde ZIP récente : tous les 14 jours
+     • avec code administrateur : tous les 4 mois, « garde bien ton code » (c’est lui qui ramène tout sur un autre appareil) */
+  function protectNag(){
+    const real = Object.values(R).filter(r=>r && !r.demo && !r.deleted && (r.type === 'trip' || r.type === 'item' || r.type === 'souv') && !(TS()[r.trip || r.id] && /^M:/.test(TS()[r.trip || r.id]))).length;
+    if(real < 5 || document.getElementById('v-sheet-bg') || document.getElementById('cv-moment')) return false;
+    const now = Date.now(), owner = !!(M.sync.on && M.sync.code && !/^M:/.test(M.sync.code));
+    if(owner){
+      if(now - (M.protAsk || M.sync.last || now) < 120 * 864e5) { if(!M.protAsk){ M.protAsk = now; persist(); } return false; }
+      M.protAsk = now; persist();
+      momentShow(`<div class="mo-k">${MSGT('Ton compte Vezoria')}</div><div class="mo-big">🔑</div><h2>${MSGT('Garde bien ton code administrateur')}</h2>
+        <div class="mo-sub">${MSGT('C’est lui qui ramène tout ton carnet sur un nouveau téléphone ou ton ordinateur. Note-le dans un endroit sûr.')}</div>
+        <div class="mo-l"><b class="cv-code" data-notr>${esc(M.sync.code)}</b></div>
+        <div class="mo-b"><button type="button" onclick="CV.copyCode()">📋 ${MSGT('Copier')}</button><button type="button" onclick="CV.momentClose();CV.deviceAdd()">📱 ${MSGT('Ajouter un appareil')}</button><button type="button" class="pri" onclick="CV.momentClose()">${MSGT('C’est noté')}</button></div>`, 'eve');
+      return true;
+    }
+    if(now - (M.zipLast || 0) < 30 * 864e5 || now - (M.protAsk || 0) < 14 * 864e5) return false;
+    M.protAsk = now; persist();
+    momentShow(`<div class="mo-k">${MSGT('Protège tes voyages')}</div><div class="mo-big">🛟</div><h2>${MSGT('Et si tu perdais ce téléphone ?')}</h2>
+      <div class="mo-sub">${MSGT('Tes voyages ne sont que sur ce téléphone : en le perdant ou en changeant de téléphone, tout serait perdu (même nous ne pouvons rien récupérer, tout est chiffré).')}</div>
+      <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.cloudSheet('choose')">☁️ ${MSGT('Sauvegarder dans le cloud')}</button><button type="button" onclick="CV.momentClose();CV.zipSheet()">💾 ${MSGT('Sauvegarde ZIP')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
+    return true;
   }
   /* ══════════ 🏁 Bilan › Budget : qui rembourse qui, quand, comment, avec les justificatifs ══════════ */
   const MOYENS = ['Lydia','Wero','Virement','Espèces','PayPal','Paylib','Revolut','Chèque','Autre'];
@@ -2206,6 +2221,7 @@
       // 🎬 « Ton année en voyage » : du 15 décembre à fin janvier, une seule fois par année
       const mo = +td.slice(5, 7), yy = mo === 12 && +td.slice(8, 10) >= 15 ? td.slice(0, 4) : mo === 1 ? String(+td.slice(0, 4) - 1) : '';
       if(yy && !M.seen['yearM:' + yy] && trips().some(t=>!t.demo && t.debut && t.debut <= td && t.debut.slice(0, 4) === yy)){ momentDone = true; M.seen['yearM:' + yy] = 1; persist(); momentYear(yy); return; } }
+    try { if(protectNag()){ momentDone = true; return; } } catch(e){}   // 🛟 ne jamais tout perdre en changeant de téléphone
     const t = trip(); if(!t || !t.debut || t.demo) return;
     const td = isoToday(), tm = new Date(Date.now() + 864e5).toISOString().slice(0,10); M.seen = M.seen || {};
     // la veille (ou le matin du départ) : « Demain, tu pars »

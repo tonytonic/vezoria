@@ -387,6 +387,13 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   async function keys(code){
     code = code || M.sync.code;
     if(ck[code]) return ck[code];
+    // 👥 code compagnon (« M:… ») : la clé du carnet vient du droit d’accès reçu (voir memberJoin), jamais du code administrateur
+    if(/^M:/.test(code)){
+      const g = (M.memberGrant || {})[code]; if(!g) throw new Error(MSGT('Accès compagnon introuvable sur ce téléphone : retape ton code compagnon.'));
+      const key = await crypto.subtle.importKey('raw', unb64(g.k), 'AES-GCM', false, ['encrypt','decrypt']);
+      const hkey = await crypto.subtle.importKey('raw', unb64(g.h), {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
+      return ck[code] = {code, key, hkey, token:'mb:' + g.mt};
+    }
     const base = await crypto.subtle.importKey('raw', te.encode(code), 'PBKDF2', false, ['deriveKey','deriveBits']);
     const key = await crypto.subtle.deriveKey({name:'PBKDF2', salt:te.encode('carnet-voyage/e2e/v1'), iterations:200000, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
     const hb = await crypto.subtle.deriveBits({name:'PBKDF2', salt:te.encode('carnet-voyage/ids/v1'), iterations:200000, hash:'SHA-256'}, base, 256);
@@ -514,6 +521,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     let changed = 0;
     for(const r of records){
       if(!r || !r.id) continue;
+      if(r.id === 'vz:codes' && fromMain !== true) continue;   // 🔑 la liste de codes d’un AUTRE carnet (celui dont je suis compagnon) ne remplace jamais la mienne
       if(M.hide && (M.hide[r.id] || (r.trip && M.hide[r.trip]) || (r.type === 'moved' && M.hide[r.tid]))) continue;   // 🧹 voyage retiré de ce téléphone (arrivé par erreur) : il ne revient pas
       // depuis MON carnet principal : une suppression d’une fiche d’un voyage partagé ne compte pas (le dossier partagé fait foi)
       if(fromMain && r.deleted && r.trip && TS()[r.trip] && spaceObj(TS()[r.trip]) && R[r.id] && !R[r.id].deleted) continue;
@@ -600,6 +608,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     try {
       const now0 = Date.now(), auto = manual !== true && !pull;
       try { rejoinFix(); mvMark(); mbTouch(); fwKeyTouch().catch(()=>{}); if((M.hideQ || []).length) hideFlush(); } catch(e){}
+      try { await codesPublish(); } catch(e){}   // 🔑 mes codes de voyages, chiffrés avec mon code administrateur : ils suivent mon compte sur un autre appareil
       if(mainOn && !(auto && !M.dirty.length && now0 - (M.sync.last || 0) < 120000)){   // rien à envoyer et vu il y a moins de 2 min : on passe
       M.dirty = M.dirty.filter(id=>R[id]);   // idem pour le carnet principal
       const ids = [...M.dirty];
@@ -615,6 +624,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       }
       M.sync.last = Date.now(); M.sync.err = '';
       }
+      try { if(await codesAdopt()) changed++; } catch(e){}   // codes de voyages ajoutés ou quittés sur un autre de mes appareils
       for(const sp of (M.spaces||[])){
         // carnets sans modif à envoyer : 5 min mini entre deux passages (15 min pour les voyages suivis en abonné)
         const fol = list('feedtrip', f=>TS()[f.id] === sp.code).length && !Object.values(FT()).includes(sp.code);
@@ -1757,6 +1767,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   async function joinCodeGo(code, say){
     const msg = {set textContent(t){ say(t); }};
     msg.textContent = '📡 Connexion…';
+    try { if(await memberTry(code)) { closeSheet(true); return; } } catch(e){}   // 👥 code compagnon d’un carnet complet
     if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
     const sp = spaceObj(code); try { await syncSpace(sp, true); } catch(e){}
     if(sp.err){ msg.textContent = '⚠️ ' + sp.err; return; }

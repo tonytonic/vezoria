@@ -257,6 +257,8 @@
     if(tpl && wz.copyCheck) list('check', c=>c.trip===tpl.id).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)).forEach((c,i)=>out.push({id:'c'+uid()+i, type:'check', trip:tid, cat:c.cat, label:c.label, done:false}));
     else BASIC_CHECK.forEach(([cat,label],i)=>out.push({id:'c'+uid()+i, type:'check', trip:tid, cat, label, done:false}));
     if(tpl && wz.copyDivers) list('item', i=>i.trip===tpl.id && i.cat==='divers').forEach((x,i)=>out.push({id:'i'+uid()+'d'+i, type:'item', trip:tid, cat:'divers', titre:x.titre, hint:x.hint||'', partage:x.partage, statut:'todo', qui:[]}));
+    if(wzCreate.place === undefined && memberSpaces().some(x=>!x.err)){ memberPlaceAsk().then(c=>{ wzCreate.place = c || ''; try { wzCreate(); } finally { wzCreate.place = undefined; } }); return; }   // 👥 compagnon : carnet partagé ou le sien
+    if(wzCreate.place && spaceObj(wzCreate.place)) TS()[tid] = wzCreate.place;
     putMany(out, '🚀 Voyage créé'); closeSheet(true); M.mode = 'prep'; M.tab = 'prog'; go(tid); setTimeout(()=>fxPlay('trip', 'Le rêve commence !'), 300);
     if(wz.sugg !== false) setTimeout(()=>suggFill(tid), 200);   // 💡 4 incontournables par jour + excursions, à trier dans l’étape « Que faire »
   }
@@ -930,7 +932,7 @@
     if(webFollowBoot()) return;
     if(installGate()) return;
     applyMode(); applyLock(); countInstall();
-    setTimeout(backupNag, 4000);
+    // (rappel de sauvegarde : voir protectNag, lancé avec les « moments » de l’ouverture)
     const boot2 = () => {
       if(!M.me || !prof(M.me)){ if(M.sync.on && profiles().length) whoSheet(); else onboarding(); }
       else setTimeout(resumeLoad, 300);
