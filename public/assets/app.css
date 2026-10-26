@@ -2892,3 +2892,12 @@ body.cv-ph-past .cv-prep2 .ar-go:not(.ex-go){color:#1E2C5C}
 .cv-quota.near .cv-qbar i{background:linear-gradient(90deg,#f59e0b,#f97316)}
 .cv-quota.over .cv-qbar i{background:#dc2626}
 .cv-qwarn{margin-top:6px;padding:8px 10px;border-radius:10px;background:#fff1f0;color:#9b1c1c;font-size:.8rem;line-height:1.35}
+/* 📱 hors ligne mis en avant · ⚖️ comparaison cloud / hors ligne */
+.cv-choice.cv-off,body.vz-glass .cv-choice.cv-off{border-color:#c4b5fd!important;background:linear-gradient(135deg,rgba(237,233,254,.9),rgba(255,255,255,.75))!important}
+.cv-choice .cv-offb{display:inline-block;position:static;font-style:normal;font-size:.68rem;font-weight:800;letter-spacing:.02em;color:#6d28d9;background:#ede9fe;border-radius:99px;padding:3px 8px;margin-bottom:4px}
+.cv-cmp{margin:6px 0 10px;border:1px solid #eadff5;border-radius:14px;background:#fff;padding:8px 10px}
+.cv-cmp summary{cursor:pointer;font-weight:700;font-size:.86rem;color:#4c1d95}
+.cv-cmp table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.78rem}
+.cv-cmp th{text-align:left;font-weight:800;padding:4px;color:#4c1d95}
+.cv-cmp td{padding:6px 4px;border-top:1px solid #f1eaf8;vertical-align:top}
+.cv-cmp td:first-child{color:var(--gray,#6b6475)}

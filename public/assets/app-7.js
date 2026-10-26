@@ -331,8 +331,8 @@
       {k:'comp', ic:'👥', l:MSGT('Tes compagnons'), ok: real.some(x=>(x.voyageurs || []).filter(prof).length > 1) || filSk(key, 'comp'), skip:true,
         body: ()=>real.length ? fbtn(`CV.tripInviteNow('${(trip() && !trip().demo ? trip() : real[0]).id}')`, `📤 ${MSGT('Inviter un compagnon')}`) : `<div class="ar-p">${MSGT('Crée d’abord ton voyage.')}</div>`},
       {k:'inst', ic:'📲', l:MSGT('L’appli sur ton écran d’accueil'), ok: isInstalled() || filSk(key, 'inst'), skip:true, body: ()=>fbtn('CV.installSheet()', `📲 ${MSGT('Comment installer')}`)},
-      {k:'cloud', ic:'☁️', l:MSGT('Sauvegarde en ligne'), ok: !!(M.sync && M.sync.on) || Object.keys(TS()).length > 0 || filSk(key, 'cloud'), skip:true,
-        body: ()=>`<div class="ar-p">${MSGT('Tes voyages sont chiffrés et retrouvés sur un autre téléphone si tu perds le tien.')}</div>${fbtn('CV.cloudSheet()', `☁️ ${MSGT('Activer la sauvegarde')}`)}`}
+      {k:'cloud', ic:'☁️', l:MSGT('Cloud ou hors ligne : à toi de choisir'), ok: !!(M.sync && M.sync.on) || M.cloud === 'none' || Object.keys(TS()).length > 0 || filSk(key, 'cloud'), skip:true,
+        body: ()=>`<div class="ar-p">${MSGT('☁️ Cloud : tes voyages sont sauvegardés (chiffrés) et te suivent sur tous tes appareils, partage et notifications compris. 📱 Hors ligne : rien sur nos serveurs et aucune limite de photos, tu partages par paquets.')}</div>${fbtn('CV.cloudPick(\'all\')', `☁️ ${MSGT('Tout mon carnet dans le cloud')}`)}${fbtn('CV.cloudPick(\'none\')', `📱 ${MSGT('Hors ligne, sans limite')}`, 1)}`}
     ];
     if(steps.every(x=>x.ok)) return '';
     const nOk = steps.filter(x=>x.ok).length;
@@ -1679,7 +1679,8 @@
       openSheet(`<h2>☁️ Cloud Vezoria</h2>
         <div class="v-sum-small" style="margin-bottom:12px">Où gardes-tu tes voyages ?<br><b>À cette étape, rien n’est partagé avec tes compagnons.</b><br>C’est ton cloud perso, chiffré sur ce téléphone : personne d’autre ne peut le lire, pas même nous.</div>
         <button type="button" class="cv-choice${mode === 'all' ? ' on' : ''}" onclick="CV.cloudPick('all')"><i>☁️</i><span><b>Tout mon carnet dans le cloud</b><small>Tes voyages sont sauvegardés et te suivent sur tous tes appareils. Partage avec tes compagnons et tes abonnés, notifications. <span>${esc(RF('{0} de photos offerts, voyages partagés compris.', fmtB(((M.quota && M.quota.free) || 2e9))))}</span></small></span></button>
-        <button type="button" class="cv-choice${mode === 'none' ? ' on' : ''}" onclick="CV.cloudPick('none')"><i>📱</i><span><b>Sans cloud</b><small>Rien sur nos serveurs et aucune limite de photos : tout reste sur ton téléphone ou ton ordinateur. Tu partages par paquets chiffrés que tu envoies toi-même. Pas d’abonnés ni de notifications entre amis, et pense à ta sauvegarde ZIP.</small></span></button>
+        <button type="button" class="cv-choice cv-off${mode === 'none' ? ' on' : ''}" onclick="CV.cloudPick('none')"><i>📱</i><span><em class="cv-offb">∞ ${MSGT('Sans limite · 100 % privé')}</em><b>Sans cloud</b><small>Rien sur nos serveurs et aucune limite de photos : tout reste sur ton téléphone ou ton ordinateur. Tu partages par paquets chiffrés que tu envoies toi-même. Pas d’abonnés ni de notifications entre amis, et pense à ta sauvegarde ZIP.</small></span></button>
+        ${cloudCompare()}
         <div class="sy-r" style="margin-top:6px"><b>🔑 Tu as déjà un code ?</b><small>Ton code administrateur (celui de ton autre appareil : tout ton carnet arrive ici) ou un code compagnon reçu d’un proche.</small>
           <div class="cv-row" style="margin-top:6px"><input class="v-in" id="sy-join" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.cloudJoinMain()">Utiliser</button></div>${qrBtn('sy-join')}</div>
         <button type="button" class="v-btn sec" onclick="CV.close();CV.joinAny()">🤝 J’ai reçu une invitation dans un voyage</button>
@@ -1991,6 +1992,13 @@
     let j = {}; try { j = await r.json(); } catch(e){}
     return {ok:r.ok, status:r.status, j};
   }
+  // ☁️ / 📱 les deux choix côte à côte : ce que chacun apporte, d’un coup d’œil
+  function cloudCompare(){
+    const free = fmtB((M.quota && M.quota.free) || 2e9), Y = '✅', N = '—';
+    const rows = [[MSGT('Photos'), RF('{0} offerts', free), '∞ ' + MSGT('sans limite')], [MSGT('Sur nos serveurs'), MSGT('chiffré'), N + ' ' + MSGT('rien')],
+      [MSGT('Tous tes appareils'), Y, N], [MSGT('Compagnons'), Y + ' ' + MSGT('en direct'), '📦 ' + MSGT('par paquets')], [MSGT('Abonnés'), Y, N], [MSGT('Notifications entre amis'), Y, N], [MSGT('Sauvegarde'), MSGT('automatique'), '💾 ZIP']];
+    return `<details class="cv-cmp"><summary>⚖️ ${MSGT('Comparer cloud et hors ligne')}</summary><table><thead><tr><th></th><th>☁️ ${MSGT('Cloud')}</th><th>📱 ${MSGT('Hors ligne')}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}</tbody></table></details>`;
+  }
   const PH_B = 285000;   // ≈ une photo (1080 px) + sa vignette
   const fmtB = b => b >= 1e9 ? String(Math.round(b / 1e8) / 10).replace('.', ',') + ' Go' : Math.max(0, Math.round(b / 1e6)) + ' Mo';
   const phN = b => { const n = Math.max(0, Math.floor(b / PH_B)); return (n >= 1000 ? Math.floor(n / 100) * 100 : n).toLocaleString((window.I18N && I18N.locale) || 'fr-FR'); };
@@ -2053,6 +2061,7 @@
       + (pay ? `<button type="button" class="v-btn" style="flex:1;margin:0" onclick="CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : '')
       + (pay && q.src === 'stripe' ? `<button type="button" class="v-btn sec" style="flex:1;margin:0" onclick="CV.planPortal()">${MSGT('Gérer mon abonnement')}</button>` : '') + `</div>`;
     if(over && q.owner) h += `<button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.close();CV.zipSheet()">💾 ${MSGT('Sauvegarde ZIP')}</button>`;
+    if((over || pct >= 90) && q.owner) h += `<button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.cloudPick('none')">📱 ${MSGT('Passer en hors ligne : aucune limite de photos')}</button>`;
     return h + `</div>`;
   }
   function quotaPaint(){ const el = document.getElementById('cv-quota'); if(el) el.outerHTML = quotaBox(); }
@@ -2094,14 +2103,14 @@
       N.s = q.overSince; N.st = st; persist();
       momentShow(`<div class="mo-k">${MSGT('Place photos')}</div><div class="mo-big">📦</div><h2>${st === 1 ? MSGT('Ta place photos est dépassée') : RF('Plus que {0} jours pour enregistrer tes photos', Math.max(1, Math.ceil(left / 864e5)))}</h2>
         <div class="mo-sub">${RF('Tes photos restent toutes visibles jusqu’au {0}, mais tu ne peux plus en envoyer de nouvelles. Après cette date, on garde les photos les plus récentes dans ta place ({1}) et les plus anciennes sont effacées du serveur.', dLong(q.graceEnd), fmtB(q.quota))}<br><br>${MSGT('Enregistre-les dès maintenant sur ton téléphone ou ton ordinateur (Sauvegarde ZIP).')}</div>
-        <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.zipSheet()">💾 ${MSGT('Sauvegarde ZIP')}</button>${q.pay && !inPlay() ? `<button type="button" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
+        <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.zipSheet()">💾 ${MSGT('Sauvegarde ZIP')}</button>${q.pay && !inPlay() ? `<button type="button" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet('choose')">📱 ${MSGT('Hors ligne, sans limite')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
       return true;
     }
     if(!(q.active && q.plan === 'unlimited') && q.used >= q.quota * 0.9 && q.used <= q.quota && now - (N.near || 0) > 30 * 864e5){
       N.near = now; persist();
       momentShow(`<div class="mo-k">${MSGT('Place photos')}</div><div class="mo-big">📦</div><h2>${MSGT('Ton carnet est presque plein')}</h2>
         <div class="mo-sub">${RF('{0} utilisés sur {1}.', fmtB(q.used), fmtB(q.quota))} ${MSGT('Une fois plein, tes nouvelles photos restent sur ton téléphone sans partir dans le cloud.')}</div>
-        <div class="mo-b">${q.pay && !inPlay() ? `<button type="button" class="pri" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet()">☁️ ${MSGT('Voir ma place')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
+        <div class="mo-b">${q.pay && !inPlay() ? `<button type="button" class="pri" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet()">☁️ ${MSGT('Voir ma place')}</button><button type="button" onclick="CV.momentClose();CV.cloudSheet('choose')">📱 ${MSGT('Hors ligne, sans limite')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
       return true;
     }
     return false;
