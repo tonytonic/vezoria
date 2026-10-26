@@ -625,6 +625,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       M.sync.last = Date.now(); M.sync.err = '';
       }
       try { if(await codesAdopt()) changed++; } catch(e){}   // codes de voyages ajoutés ou quittés sur un autre de mes appareils
+      try { await branchSync(); quotaLoad(); } catch(e){}   // 🌿 mes voyages partagés comptent dans la place de mon carnet · 🫙 place photos
       for(const sp of (M.spaces||[])){
         // carnets sans modif à envoyer : 5 min mini entre deux passages (15 min pour les voyages suivis en abonné)
         const fol = list('feedtrip', f=>TS()[f.id] === sp.code).length && !Object.values(FT()).includes(sp.code);
@@ -1445,8 +1446,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   async function tripOnline(tid){
     const t = R[tid]; if(!t || t.demo) return false;
     if(TS()[t.id] && spaceObj(TS()[t.id])) return true;
+    if(!(await cloudNeedAll())) return false;   // ☁️ le carnet d’abord : le voyage s’y branche
     if(!(await uiConfirm(MSGT('Envoyer « {0} » sur le serveur ?').replace('{0}', t.titre) + '\n' + MSGT('Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.')))) return false;
-    if(cloudMode() === 'none'){ M.cloud = 'trips'; }
     const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t.id] = c;
     Object.values(R).filter(r=>!r.demo && (r.id === t.id || r.trip === t.id)).forEach(r=>markDirty(r.id)); persist();
     try { await photoQueueAll(t.id); } catch(e){}

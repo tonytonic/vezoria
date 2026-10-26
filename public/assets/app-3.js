@@ -652,7 +652,8 @@
     if(upSt === 429){ const min = Math.max(1, Math.round(((upJ && upJ.retry) || 600) / 60)); M.pqPause = Date.now() + min * 60000;
       upErr = '⏸️ Pause de sécurité : beaucoup de photos envoyées d’un coup. L’envoi reprend tout seul dans ' + min + ' min.'; }
     else if(upSt === 507){ const go = upJ && upJ.max ? Math.round(upJ.max / 1e8) / 10 : 0;
-      upErr = /carnet/i.test(upJ && upJ.error || '') ? (go ? '📦 Place photos de ce carnet pleine sur le serveur (' + String(go).replace('.', ',') + ' Go) : les photos restantes restent sur ce téléphone, rien n’est perdu.' : '📦 Place photos de ce carnet pleine sur le serveur : les photos restantes restent sur ce téléphone, rien n’est perdu.')
+      upErr = upJ && upJ.branch ? '📦 ' + MSGT('La place photos du carnet de l’organisateur du voyage est pleine : tes photos restent sur ce téléphone, rien n’est perdu.')
+        : /carnet/i.test(upJ && upJ.error || '') ? (go ? '📦 Place photos de ce carnet pleine sur le serveur (' + String(go).replace('.', ',') + ' Go) : les photos restantes restent sur ce téléphone, rien n’est perdu.' : '📦 Place photos de ce carnet pleine sur le serveur : les photos restantes restent sur ce téléphone, rien n’est perdu.')
         : '📦 Le serveur photos est plein pour le moment : les photos restantes restent sur ce téléphone, rien n’est perdu.';
       if(!/carnet/i.test(upJ && upJ.error || '')) M.pqPause = Date.now() + 3600000; }
     M.pqWait = waiting; M.pqErr = upErr || ''; persist();
@@ -678,7 +679,7 @@
       return gh + `<div class="cv-souv">
         <div class="cv-souv-h"><span class="v-day-d">${s.date ? fdate(s.date) : '—'}</span><div><div class="cv-souv-t">${esc(s.titre||s.lieu||'Souvenir')}</div>
           ${s.lieu || s.pays ? `<div class="v-sum-small">📍 ${esc(lieuPays(s.lieu, s.pays))}</div>` : ''}</div>
-          ${(s.photos||[]).length ? `<button class="cv-x cv-pcb" onclick="CV.pcOpen('${s.id}')" aria-label="Carte postale" title="Carte postale">💌</button>` : ''}<button class="cv-x" onclick="CV.editSouv('${s.id}')" aria-label="Modifier">✏️</button></div>
+          ${(s.photos||[]).length ? `<button class="cv-x cv-pcb" onclick="CV.pcOpen('${s.id}')" aria-label="Carte postale" title="Carte postale">💌</button>` : ''}<button class="cv-x" onclick="CV.editSouv('${s.id}')" aria-label="Modifier">✏️</button>${/^💌/.test(s.titre || '') ? `<button class="cv-x" onclick="CV.delSouv('${s.id}')" aria-label="Supprimer la carte postale" title="Supprimer">🗑</button>` : ''}</div>
         ${s.texte ? `<div class="cv-souv-txt" onclick="this.classList.toggle('open')">${esc(s.texte)}</div>` : ''}${souvSocial(s)}
         ${ph.length ? `<div class="cv-grid">${ph.slice(0,9).map((p,i)=>`<button class="cv-th" onclick="CV.view('${s.id}',${i})" aria-label="Photo"><img data-ph="${esc(p)}.t" alt="">${i===8 && more>0 ? `<span>+${more}</span>` : ''}</button>`).join('')}</div>` : ''}
         ${byline(s)}
@@ -750,7 +751,7 @@
     if(!s.id) s.id = 'sv' + uid();
     const svNew = !R[s.id]; put(s, '📸 Souvenir enregistré'); if(feedCode(s.trip)) setTimeout(feedAll, 400); closeSheet(); render(); uploadQueue(); if(svNew) setTimeout(()=>fxPlay('souvenir', 'Souvenir gardé !'), 250);
   }
-  async function delSouv(id){ if(!(await uiConfirm('Supprimer ce souvenir ?'))) return; drop(id); closeSheet(); render(); }
+  async function delSouv(id){ if(!(await uiConfirm('Supprimer ce souvenir ?'))) return; const tid = R[id] && R[id].trip; drop(id); try { if(tid && feedCode(tid)) feedBuild(tid); } catch(e){} closeSheet(); render(); }   // retiré aussi tout de suite de la publication abonnés (carte postale comprise)
 
   // Visionneuse plein écran
   let vw = null;

@@ -1678,9 +1678,8 @@
     if(choose){
       openSheet(`<h2>☁️ Cloud Vezoria</h2>
         <div class="v-sum-small" style="margin-bottom:12px">Où gardes-tu tes voyages ?<br><b>À cette étape, rien n’est partagé avec tes compagnons.</b><br>C’est ton cloud perso, chiffré sur ce téléphone : personne d’autre ne peut le lire, pas même nous.</div>
-        <button type="button" class="cv-choice${mode === 'all' ? ' on' : ''}" onclick="CV.cloudPick('all')"><i>☁️</i><span><b>Tout mon carnet dans le cloud</b><small>Tous tes voyages sont sauvegardés et arrivent sur ton autre téléphone avec ton code.</small></span></button>
-        <button type="button" class="cv-choice${mode === 'trips' ? ' on' : ''}" onclick="CV.cloudPick('trips')"><i>🧳</i><span><b>Voyage par voyage</b><small>Tu choisis les voyages à mettre dans le cloud. Jamais la totalité du carnet.</small></span></button>
-        <button type="button" class="cv-choice${mode === 'none' ? ' on' : ''}" onclick="CV.cloudPick('none')"><i>📱</i><span><b>Sans cloud</b><small>Tout reste sur ce téléphone. Pour ton cercle, l’appli crée des paquets chiffrés que tu envoies toi-même. Les notifications entre amis ne marchent pas dans ce mode.</small></span></button>
+        <button type="button" class="cv-choice${mode === 'all' ? ' on' : ''}" onclick="CV.cloudPick('all')"><i>☁️</i><span><b>Tout mon carnet dans le cloud</b><small>Tes voyages sont sauvegardés et te suivent sur tous tes appareils. Partage avec tes compagnons et tes abonnés, notifications. <span>${esc(RF('{0} de photos offerts, voyages partagés compris.', fmtB(((M.quota && M.quota.free) || 2e9))))}</span></small></span></button>
+        <button type="button" class="cv-choice${mode === 'none' ? ' on' : ''}" onclick="CV.cloudPick('none')"><i>📱</i><span><b>Sans cloud</b><small>Rien sur nos serveurs et aucune limite de photos : tout reste sur ton téléphone ou ton ordinateur. Tu partages par paquets chiffrés que tu envoies toi-même. Pas d’abonnés ni de notifications entre amis, et pense à ta sauvegarde ZIP.</small></span></button>
         <div class="sy-r" style="margin-top:6px"><b>🔑 Tu as déjà un code ?</b><small>Ton code administrateur (celui de ton autre appareil : tout ton carnet arrive ici) ou un code compagnon reçu d’un proche.</small>
           <div class="cv-row" style="margin-top:6px"><input class="v-in" id="sy-join" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.cloudJoinMain()">Utiliser</button></div>${qrBtn('sy-join')}</div>
         <button type="button" class="v-btn sec" onclick="CV.close();CV.joinAny()">🤝 J’ai reçu une invitation dans un voyage</button>
@@ -1698,6 +1697,7 @@
           <div class="cv-row" style="margin-top:6px"><b class="cv-code">${esc(s.code || '')}</b><button type="button" class="v-btn sec" style="width:auto;margin:0 0 0 auto;padding:6px 12px" onclick="CV.copyCode()">📋 Copier</button></div>
           <small>Garde-le bien et ne le donne à personne : c’est lui qui ouvre TON compte sur un autre appareil (carnet, voyages partagés et suivis).</small>
           ${ownerOn() ? `<button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.deviceAdd()">📱 Ajouter un de mes appareils (QR code)</button>` : ''}</div>`;
+      h += quotaBox();
       if(ownerOn()) h += `<div class="cv-cl-h">👥 Compagnons de tout mon carnet</div><div class="v-sum-small" style="margin-bottom:6px">Un code compagnon ouvre ton carnet (voir, ajouter, modifier) sans tes droits d’administrateur : pas d’effacement, pas de gestion des accès.</div>
         <div id="cv-mem"><div class="v-sum-small">…</div></div><button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.memberInvite()">➕ Créer un code compagnon</button>`;
     }
@@ -1705,6 +1705,7 @@
       return `<div class="cv-cl-t"><span><b data-notr>${esc(g.by || '👤')}</b><small>${x.err ? '⚠️ ' + esc(x.err) : '☁️ ' + cloudState(x)}</small></span><button type="button" class="v-btn sec" onclick="CV.memberLeave('${esc(x.code)}')">Quitter</button></div>`; }).join('');
     if(mode === 'trips'){
       const ts = myTrips();
+      h += `<div class="sh-note">🔁 ${MSGT('Le cloud « voyage par voyage » s’arrête : passe à tout ton carnet, tes voyages en ligne s’y rattachent.')}<button type="button" class="v-btn" style="margin-top:8px" onclick="CV.cloudPick('all')">☁️ ${MSGT('Mettre tout mon carnet dans le cloud')}</button></div>`;
       h += `<div class="cv-cl-h">Mes voyages dans le cloud</div>`
         + (ts.map(t=>{ const c = TS()[t.id], sp = c && spaceObj(c);
             return `<div class="cv-cl-t"><span><b>${esc(t.titre || '')}</b><small>${sp ? '☁️ ' + cloudState(sp) : 'Seulement sur ce téléphone'}</small></span>`
@@ -1724,6 +1725,7 @@
     if(ph && mode !== 'none') h += `<div class="v-sum-small" style="margin-top:6px">📸 ${ph} photo(s) en attente d’envoi</div>`;   // modèle traduit « 📸 {0} photo(s) en attente d’envoi »
     h += `<div class="v-actions">${mode !== 'none' ? `<button type="button" class="v-btn" onclick="CV.syncNow(true);CV.close()">🔄 Synchroniser maintenant</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.close()">OK</button></div>`;
     openSheet(h); if(mode === 'all' && ownerOn()) setTimeout(memberListLoad, 50);
+    if(mode === 'all' && M.sync.on && M.sync.code) setTimeout(()=>{ quotaLoad(!M.quota || Date.now() - (M.quota.at || 0) > 60000); }, 80);
   }
   async function cloudPick(m){
     const s = M.sync, mainOn = !!(s.on && s.code), anyTrip = myTrips().some(t=>tripInCloud(t.id));
@@ -1741,7 +1743,7 @@
     }
     // quitter « tout mon carnet » : on demande ce que devient la copie dans le cloud
     if((m === 'trips' || m === 'none') && mainOn){ cloudLeaveSheet(m); return; }
-    if(m === 'trips'){ M.cloud = 'trips'; persist(); cloudSheet(); refresh(); return; }
+    if(m === 'trips'){ cloudPick('all'); return; }   // 🔁 plus de « voyage par voyage »
     if(m === 'none'){
       if(anyTrip && !(await uiConfirm('Passer en « sans cloud » ?\n\nLes voyages déjà partagés continuent pour tes compagnons ; pour les retirer du serveur : Réglages → Supprimer mes données du serveur.'))) return;
       M.cloud = 'none'; persist(); if(!cloudFeedAsk()) cloudSheet(); refresh(); return;
@@ -1843,7 +1845,7 @@
   async function ownerKey(){ const c = M.sync.code; if(OWK.c !== c){ OWK = {c, k: await aesRaw(await pbkBits(c, 'carnet-voyage/owner/v1'))}; } return OWK.k; }
   const ownerOn = () => memberOk() && !!(M.sync.on && M.sync.code) && !/^M:/.test(M.sync.code);
   function codesSnap(){
-    return {ts:TS(), sp:(M.spaces || []).map(x=>x.code), fp:FT(), pk:PACKS(), ib:M.ib || '', mg:M.memberGrant || {}, ml:M.memLocal || {}, hide:M.hide || {}};
+    return {ts:TS(), sp:(M.spaces || []).map(x=>x.code), fp:FT(), pk:PACKS(), ib:M.ib || '', mg:M.memberGrant || {}, ml:M.memLocal || {}, hide:M.hide || {}, my:Object.keys(M.myCodes || {}).filter(c=>spaceObj(c)).sort()};
   }
   const codesOf = s => [...new Set([...Object.values(s.ts || {}), ...(s.sp || []), ...Object.values(s.fp || {}), ...Object.keys(s.pk || {}), s.ib].filter(Boolean))];
   let codesBusy = false;
@@ -1874,6 +1876,7 @@
     // connus sur un autre de mes appareils : ajoutés ici
     Object.entries(d.mg || {}).forEach(([c, g])=>{ if(!gone.has(c) && !(M.memberGrant || {})[c]) (M.memberGrant || (M.memberGrant = {}))[c] = g; });
     Object.entries(d.ml || {}).forEach(([k, v])=>{ if(!(M.memLocal || {})[k]) (M.memLocal || (M.memLocal = {}))[k] = v; });
+    (d.my || []).forEach(c=>{ if(!gone.has(c)) (M.myCodes || (M.myCodes = {}))[c] = 1; });   // 🌿 codes créés sur un autre de mes appareils (voyages à brancher sur mon carnet)
     (d.sp || []).forEach(c=>{ if(!gone.has(c) && !spaceObj(c) && (!/^M:/.test(c) || (M.memberGrant || {})[c])){ M.spaces.push({code:c, since:0, dirty:[], last:0, err:''}); n++; } });
     Object.entries(d.ts || {}).forEach(([k, c])=>{ if(!gone.has(c) && !TS()[k] && spaceObj(c)){ TS()[k] = c; n++; } });
     Object.entries(d.fp || {}).forEach(([k, c])=>{ if(!gone.has(c) && !FT()[k]) FT()[k] = c; });
@@ -1973,6 +1976,140 @@
       <div class="cv-row" style="justify-content:center"><b class="cv-code" data-notr>${esc(M.sync.code)}</b></div>
       <div class="v-sum-small" style="margin-top:8px">⚠️ ${MSGT('C’est ton code administrateur : il donne tous les droits. Ne le donne à personne. Pour un compagnon, crée plutôt un code compagnon.')}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${MSGT('Fermer')}</button></div>`);
+  }
+
+  /* ══════════ 🫙 Place photos du carnet · 🌿 voyages branchés · 🎁 code cadeau · 💳 formules ══════════
+     • Un carnet (code administrateur) = un seul pot de photos. Les voyages partagés, paquets et publications créés
+       depuis ce carnet ont leur propre code, mais sont « branchés » dessus : leurs photos (celles des compagnons aussi)
+       comptent dans la place de MON carnet. Le serveur n’additionne que des tailles de fichiers chiffrés.
+     • Place dépassée (fin d’abonnement…) : plus de nouvel envoi, tout reste visible 6 mois ; ensuite le serveur garde
+       les photos les plus récentes dans la place permise. L’appli prévient à temps (Sauvegarde ZIP).
+     • Abonnements : prêts mais fermés tant que le serveur ne les ouvre pas (PAY_ON). Jamais de paiement web dans l’appli Android. */
+  const planApi = () => { const u = apiUrl(); return u ? u.replace(/\/sync$/, '/plan') : ''; };
+  async function planCall(body, code){
+    const r = await fetch(planApi(), {method:'POST', headers:{'Content-Type':'application/json', 'X-Carnet-Code':await authCode(code)}, body:JSON.stringify(body)});
+    let j = {}; try { j = await r.json(); } catch(e){}
+    return {ok:r.ok, status:r.status, j};
+  }
+  const PH_B = 285000;   // ≈ une photo (1080 px) + sa vignette
+  const fmtB = b => b >= 1e9 ? String(Math.round(b / 1e8) / 10).replace('.', ',') + ' Go' : Math.max(0, Math.round(b / 1e6)) + ' Mo';
+  const phN = b => { const n = Math.max(0, Math.floor(b / PH_B)); return (n >= 1000 ? Math.floor(n / 100) * 100 : n).toLocaleString((window.I18N && I18N.locale) || 'fr-FR'); };
+  const dLong = ms => new Date(ms).toLocaleDateString((window.I18N && I18N.locale) || 'fr-FR', {day:'numeric', month:'long', year:'numeric'});
+  const inPlay = () => { try { return localStorage.getItem('cv-play') === '1'; } catch(e){ return false; } };   // appli Android (Google Play) : pas de paiement web
+  const PRICE = {plus:{year:'7,99 €', month:'0,99 €'}, max:{year:'14,99 €', month:'1,99 €'}};
+  // codes que j’ai créés : mes voyages partagés, paquets et publications (jamais un voyage rejoint chez quelqu’un d’autre)
+  function myBranchCodes(){
+    const main = M.sync.code, my = M.myCodes || {}, out = new Set();
+    (M.spaces || []).forEach(x=>{ if(my[x.code]) out.add(x.code); });
+    Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(t && t.type === 'trip' && !t.demo && t.createdBy && t.createdBy === M.me) out.add(c); });
+    Object.values(FT()).forEach(c=>out.add(c)); Object.keys(PACKS()).forEach(c=>out.add(c)); if(M.feedAll) out.add(M.feedAll);
+    return [...out].filter(c=>c && c !== main && !/^M:/.test(c) && spaceObj(c));
+  }
+  let brBusy = false;
+  async function branchSync(){
+    if(brBusy || !ownerOn() || !planApi()) return 0;
+    const L = M.linked || (M.linked = {}), todo = myBranchCodes().filter(c=>!L[c]).slice(0, 40); if(!todo.length) return 0;
+    brBusy = true;
+    try {
+      const kids = []; for(const c of todo) kids.push(await authCode(c));
+      const r = await planCall({a:'link', kids}, M.sync.code);
+      if(r.ok){ todo.forEach(c=>{ L[c] = Date.now(); }); if(M.quota) M.quota.at = 0; persist(); return todo.length; }
+    } catch(e){} finally { brBusy = false; }
+    return 0;
+  }
+  async function quotaLoad(force){
+    const code = M.sync.on && M.sync.code ? M.sync.code : ''; if(!code || !planApi() || !memberOk()) return null;
+    if(!force && M.quota && Date.now() - (M.quota.at || 0) < 6 * 3600e3) return M.quota;
+    try { const r = await planCall({a:'status'}, code); if(r.ok){ M.quota = Object.assign({}, r.j, {at:Date.now()}); persist(); quotaPaint(); } } catch(e){}
+    return M.quota;
+  }
+  const planName = q => q && q.active ? ({plus:'Plus', max:'Max', unlimited:MSGT('Illimité')}[q.plan] || q.plan) : MSGT('Gratuit');
+  function quotaBox(){
+    const q = M.quota;
+    if(!q) return `<div class="sy-r" id="cv-quota"><b>📦 ${MSGT('Place photos')}</b><small>…</small></div>`;
+    const unl = q.active && q.plan === 'unlimited', pct = unl ? 4 : Math.min(100, Math.round(q.used / Math.max(1, q.quota) * 100)), over = q.used > q.quota;
+    const pay = q.pay && !inPlay() && q.owner;
+    let h = `<div class="sy-r cv-quota${over ? ' over' : pct >= 90 ? ' near' : ''}" id="cv-quota"><b>📦 ${MSGT('Place photos')} · ${esc(planName(q))}</b>
+      <div class="cv-qbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${Math.max(2, pct)}%"></i></div>
+      <small>${unl ? RF('{0} utilisés · sans limite', fmtB(q.used)) : RF('{0} utilisés sur {1}', fmtB(q.used), fmtB(q.quota)) + (over ? '' : ' · ' + RF('≈ {0} photos encore possibles', phN(q.quota - q.used)))}${q.active && q.until ? ' · ' + RF('jusqu’au {0}', dLong(q.until)) : ''}</small>`;
+    if(q.branch) h += `<small>${MSGT('Ce carnet est branché sur celui de son créateur : ses photos comptent chez lui.')}</small>`;
+    if(over) h += `<div class="cv-qwarn">⚠️ ${q.graceEnd ? RF('Place dépassée : plus de nouvel envoi de photos. Tout reste visible jusqu’au {0}. Ensuite, on garde les photos les plus récentes dans ta place : enregistre les autres chez toi (Sauvegarde ZIP).', dLong(q.graceEnd)) : MSGT('Place dépassée : plus de nouvel envoi de photos.')}</div>`;
+    else h += `<small>${MSGT('Tes voyages partagés comptent ici, photos de tes compagnons comprises. Les vignettes comptent à peine. En mode sans cloud, aucune limite : tout reste sur ton téléphone.')}</small>`;
+    if(q.owner) h += `<div class="cv-row" style="margin-top:8px;flex-wrap:wrap;gap:6px"><button type="button" class="v-btn sec" style="flex:1;margin:0" onclick="CV.giftAsk()">🎁 ${MSGT('J’ai un code cadeau')}</button>`
+      + (pay ? `<button type="button" class="v-btn" style="flex:1;margin:0" onclick="CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : '')
+      + (pay && q.src === 'stripe' ? `<button type="button" class="v-btn sec" style="flex:1;margin:0" onclick="CV.planPortal()">${MSGT('Gérer mon abonnement')}</button>` : '') + `</div>`;
+    if(over && q.owner) h += `<button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.close();CV.zipSheet()">💾 ${MSGT('Sauvegarde ZIP')}</button>`;
+    return h + `</div>`;
+  }
+  function quotaPaint(){ const el = document.getElementById('cv-quota'); if(el) el.outerHTML = quotaBox(); }
+  async function giftAsk(){
+    if(!ownerOn()){ alert(MSGT('Il faut d’abord mettre tout ton carnet dans le cloud (☁️ Cloud → « Tout mon carnet »).')); return; }
+    const v = await uiPrompt(MSGT('Ton code cadeau'), ''); if(v === null || !String(v).trim()) return;
+    try {
+      const r = await planCall({a:'redeem', gift:String(v).trim()}, M.sync.code);
+      if(!r.ok) throw new Error(r.j.error || ('erreur ' + r.status));
+      M.quotaNag = {}; M.pqFull = {}; M.pqErr = ''; toast('🎁 ' + MSGT('Cadeau activé : ta place photos est agrandie')); setTimeout(()=>{ try { uploadQueue(); } catch(e){} }, 500); await quotaLoad(true); cloudSheet();
+    } catch(e){ alert(e.message); }
+  }
+  function planSheet(){
+    const q = M.quota || {}, P = q.plans || {};
+    const row = (p, per) => `<button type="button" class="cv-choice" onclick="CV.planBuy('${p}','${per}')"><i>${p === 'max' ? '🚀' : '➕'}</i><span><b>${p === 'max' ? 'Max' : 'Plus'} · ${fmtB(P[p] || 0)} · ${PRICE[p][per]} ${per === 'year' ? MSGT('par an') : MSGT('par mois')}</b><small>${RF('≈ {0} photos', phN(P[p] || 0))}</small></span></button>`;
+    openSheet(`<h2>⬆️ ${MSGT('Agrandir ma place photos')}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">${MSGT('Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tout reste visible 6 mois.')}</div>
+      ${row('plus', 'year')}${row('max', 'year')}${row('plus', 'month')}${row('max', 'month')}
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${MSGT('Fermer')}</button></div>`);
+  }
+  async function planBuy(plan, period){
+    try { const r = await planCall({a:'checkout', plan, period, back:location.href}, M.sync.code); if(!r.ok || !r.j.url) throw new Error(r.j.error || ('erreur ' + r.status)); location.href = r.j.url; }
+    catch(e){ alert(e.message); }
+  }
+  async function planPortal(){
+    try { const r = await planCall({a:'portal', back:location.href}, M.sync.code); if(!r.ok || !r.j.url) throw new Error(r.j.error || ('erreur ' + r.status)); location.href = r.j.url; }
+    catch(e){ alert(e.message); }
+  }
+  // retour du paiement : #abonnement=ok
+  setTimeout(()=>{ try { const m = /abonnement=(ok|annule)/.exec(location.hash); if(!m) return; history.replaceState(null, '', location.pathname + location.search);
+    if(m[1] === 'ok'){ toast('✅ ' + MSGT('Merci ! Ta place photos est agrandie.')); setTimeout(()=>{ quotaLoad(true).then(()=>{ try { cloudSheet(); } catch(e){} }); }, 2500); } } catch(e){} }, 1500);
+  /* ⚠️ prévenir : carnet presque plein (une fois par mois), place dépassée (au début, 30 jours et 7 jours avant l’effacement) */
+  function quotaNag(){
+    const q = M.quota; if(!q || !q.owner || document.getElementById('v-sheet-bg') || document.getElementById('cv-moment')) return false;
+    const now = Date.now(), N = M.quotaNag || (M.quotaNag = {});
+    if(q.used > q.quota && q.graceEnd){
+      const left = q.graceEnd - now, st = left <= 7 * 864e5 ? 3 : left <= 30 * 864e5 ? 2 : 1;
+      if(N.s === q.overSince && (N.st || 0) >= st) return false;
+      N.s = q.overSince; N.st = st; persist();
+      momentShow(`<div class="mo-k">${MSGT('Place photos')}</div><div class="mo-big">📦</div><h2>${st === 1 ? MSGT('Ta place photos est dépassée') : RF('Plus que {0} jours pour enregistrer tes photos', Math.max(1, Math.ceil(left / 864e5)))}</h2>
+        <div class="mo-sub">${RF('Tes photos restent toutes visibles jusqu’au {0}, mais tu ne peux plus en envoyer de nouvelles. Après cette date, on garde les photos les plus récentes dans ta place ({1}) et les plus anciennes sont effacées du serveur.', dLong(q.graceEnd), fmtB(q.quota))}<br><br>${MSGT('Enregistre-les dès maintenant sur ton téléphone ou ton ordinateur (Sauvegarde ZIP).')}</div>
+        <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.zipSheet()">💾 ${MSGT('Sauvegarde ZIP')}</button>${q.pay && !inPlay() ? `<button type="button" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
+      return true;
+    }
+    if(!(q.active && q.plan === 'unlimited') && q.used >= q.quota * 0.9 && q.used <= q.quota && now - (N.near || 0) > 30 * 864e5){
+      N.near = now; persist();
+      momentShow(`<div class="mo-k">${MSGT('Place photos')}</div><div class="mo-big">📦</div><h2>${MSGT('Ton carnet est presque plein')}</h2>
+        <div class="mo-sub">${RF('{0} utilisés sur {1}.', fmtB(q.used), fmtB(q.quota))} ${MSGT('Une fois plein, tes nouvelles photos restent sur ton téléphone sans partir dans le cloud.')}</div>
+        <div class="mo-b">${q.pay && !inPlay() ? `<button type="button" class="pri" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet()">☁️ ${MSGT('Voir ma place')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
+      return true;
+    }
+    return false;
+  }
+  /* 🔁 le cloud « voyage par voyage » n’existe plus : une fois, on propose de passer à « tout mon carnet » (ses voyages en ligne s’y branchent) */
+  async function cloudTripsMigrate(){
+    if(M.cloud !== 'trips' || M.migTrips || (M.sync.on && M.sync.code) || !memberOk()) return false;
+    if(document.getElementById('v-sheet-bg') || document.getElementById('cv-moment') || document.querySelector('.ui-dlg')) return false;
+    M.migTrips = Date.now(); persist();
+    if(!(await uiConfirm(MSGT('☁️ Le cloud change : c’est maintenant tout ton carnet ou rien.\n\nTes voyages déjà en ligne restent en ligne. En mettant tout ton carnet dans le cloud, ils s’y rattachent et tu reçois ton code administrateur pour retrouver tout ton compte sur un autre appareil.\n\nOK = mettre tout mon carnet dans le cloud (chiffré).\nAnnuler = garder comme maintenant.')))) return true;
+    await syncOn(genCode()); if(M.sync.on && M.sync.code){ M.cloud = 'all'; persist(); refresh(); }
+    return true;
+  }
+  // inviter dans un voyage demande que le carnet soit dans le cloud (le voyage s’y branche, ses photos y comptent)
+  async function cloudNeedAll(){
+    if(M.sync.on && M.sync.code) return true;
+    if(!memberOk()) return true;   // version test ouverte depuis un carnet : comme avant
+    if(!(await uiConfirm(MSGT('Pour inviter quelqu’un, ton carnet doit être dans le cloud (chiffré : personne d’autre ne peut le lire).\n\nLe voyage partagé s’y rattache et ses photos, celles de tes compagnons aussi, comptent dans ta place.\n\nOK = mettre mon carnet dans le cloud.\nAnnuler = envoyer plutôt un paquet chiffré.')))){ pkgSheet(); return false; }
+    syncOn.quiet = true; try { await syncOn(genCode()); } finally { syncOn.quiet = false; }
+    if(!(M.sync.on && M.sync.code)) return false;
+    M.cloud = 'all'; persist(); toast('☁️ ' + MSGT('Ton carnet est dans le cloud. Ton code administrateur est dans ☁️ Cloud.'));
+    return true;
   }
 
   /* ══════════ 🧳 Programme par étapes : une carte par ville, les trajets entre deux, et « Réorganiser » (glisser + nuits) ══════════ */

@@ -133,7 +133,7 @@ html,body{background:#2A1238}
 
 .hero #cv-cover{position:absolute;inset:-8%;background-size:cover;background-position:center;animation:cvKB 38s ease-in-out infinite alternate;z-index:0}
 .hero.has-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,8,32,.55) 0%,rgba(20,8,32,.25) 45%,rgba(20,8,32,.8) 100%);z-index:0}
-.hero.has-cover>*:not(#cv-cover):not(.hero-sun){position:relative;z-index:1}.hero.has-cover .hero-sun{opacity:.25}
+.hero.has-cover>*:not(#cv-cover):not(.hero-sun):not(.hero-top){position:relative;z-index:1}   /* la barre du haut reste fixe, AU-DESSUS du titre quand on fait défiler */.hero.has-cover .hero-sun{opacity:.25}
 .ph-cover.has-cover::after{background:linear-gradient(180deg,rgba(20,8,32,.38) 0%,rgba(20,8,32,.08) 45%,rgba(20,8,32,.6) 100%)}
 .ph-cover #cv-cover{background-position:62% 30%}
 .ph-cover.has-cover .hero-sun{display:none}
@@ -1489,7 +1489,7 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .cv-poll .pq{margin-bottom:6px}
 .cv-poll .po{position:relative;display:flex;justify-content:space-between;width:100%;text-align:left;border:1.5px solid #e9e2f5;background:#fff;border-radius:12px;padding:9px 12px;margin:5px 0;font:inherit;font-size:.86rem;overflow:hidden;color:var(--ink,#2a1238)}
 .cv-poll .po .pb{position:absolute;left:0;top:0;bottom:0;background:#f1eafe;z-index:0}
-.cv-poll .po .pl,.cv-poll .po .pc{position:relative;z-index:1}
+.cv-poll .po .pl,.cv-poll .po .pcn{position:relative;z-index:1}.cv-poll .po .pcn{color:var(--gray,#6b6475);font-variant-numeric:tabular-nums;margin-left:8px;flex:none}
 .cv-poll .po.me{border-color:#7c3aed;font-weight:700}
 .cv-poll .po.win{border-color:#16a34a}
 .cv-poll.closed .po{cursor:default}
@@ -2078,7 +2078,7 @@ body.cv-ph-live .cv-actb .ac-path .on,body.cv-ph-live .cv-actb .ac-n{box-shadow:
 /* ══ Barre du haut FIXE (voyages, synchro, abonnés, verrou, profil) : opaque et collée sous l'heure.
    iOS 26 ne pose plus son flou quand un élément fixe et plein occupe le haut de l'écran. ══ */
 :root{--tb:58px}
-.hero-top{position:fixed!important;top:0;left:0;right:0;z-index:900;margin:0!important;box-sizing:border-box;
+.hero-top{position:fixed!important;top:0;left:0;right:0;z-index:900!important;margin:0!important;box-sizing:border-box;
   height:calc(var(--sat,env(safe-area-inset-top,0px)) + var(--tb));padding:calc(var(--sat,env(safe-area-inset-top,0px)) + 8px) 16px 8px;
   background:var(--navy);box-shadow:0 8px 18px -12px rgba(0,0,0,.55);transition:background .3s}
 .hero{padding-top:calc(var(--sat,env(safe-area-inset-top,0px)) + var(--tb) + 14px)!important}
@@ -2885,3 +2885,9 @@ body.cv-ph-past .ar-subs .ar-sub.cur i,body.cv-ph-past .ar-sub.cur i{background:
 body.cv-ph-past .ar-sub.cur{border-color:#3a4b8e;box-shadow:0 6px 18px -10px rgba(38,52,110,.7)}
 body.cv-ph-live .cv-prep2 .ar-go:not(.ex-go){color:#0B5D63}
 body.cv-ph-past .cv-prep2 .ar-go:not(.ex-go){color:#1E2C5C}
+/* 📦 place photos du carnet */
+.cv-qbar{height:8px;border-radius:99px;background:#efe8f8;overflow:hidden;margin:6px 0 4px}
+.cv-qbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#8b5cf6,#ec4899)}
+.cv-quota.near .cv-qbar i{background:linear-gradient(90deg,#f59e0b,#f97316)}
+.cv-quota.over .cv-qbar i{background:#dc2626}
+.cv-qwarn{margin-top:6px;padding:8px 10px;border-radius:10px;background:#fff1f0;color:#9b1c1c;font-size:.8rem;line-height:1.35}

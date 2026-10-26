@@ -865,7 +865,7 @@
     const cnt = p.options.map((_,i)=>Object.values(votes).filter(v=>v===i).length), best = Math.max(0, ...cnt);
     const kk = {activite:'🎟️ Activité', resto:'🍽️ Restaurant', hotel:'🏨 Hébergement'}[p.kind] || '', nV = (R[p.trip] && (R[p.trip].voyageurs || []).length) || 0, wi = pollBest(p);
     return `<div class="cv-poll${p.closed?' closed':''}${p.kind ? ' kind' : ''}">${kk ? `<div class="po-k">${kk}${p.date ? ' · ' + fdate(p.date) : ''}${nV ? ` · ${n}/${nV} ${MSGT('ont voté')}` : ''}</div>` : ''}<div class="pq"><b>${esc(p.question)}</b> <span class="v-sum-small">· ${n} vote${n>1?'s':''}${p.closed?' · clos':''}</span></div>
-      ${p.options.map((o,i)=>`<button type="button" class="po${mine===i?' me':''}${p.closed && cnt[i]===best && best ? ' win' : ''}" ${p.closed?'disabled':''} onclick="CV.pollVote('${p.id}',${i})"><span class="pb" style="width:${n ? cnt[i]/n*100 : 0}%"></span><span class="pl">${esc(o)}</span><span class="pc">${cnt[i]}${n ? ' · ' + Math.round(cnt[i]/n*100) + ' %' : ''}</span></button>`).join('')}
+      ${p.options.map((o,i)=>`<button type="button" class="po${mine===i?' me':''}${p.closed && cnt[i]===best && best ? ' win' : ''}" ${p.closed?'disabled':''} onclick="CV.pollVote('${p.id}',${i})"><span class="pb" style="width:${n ? cnt[i]/n*100 : 0}%"></span><span class="pl">${esc(o)}</span><span class="pcn">${cnt[i]}${n ? ' · ' + Math.round(cnt[i]/n*100) + ' %' : ''}</span></button>`).join('')}
       <div class="v-sum-small">${Object.entries(votes).map(([pid,v])=>esc(pname(pid)) + ' → ' + esc(p.options[v]||'?')).join(' · ')}</div>
       ${p.kind ? (p.added ? `<div class="po-win">🏆 « ${esc(p.added)} » ${MSGT('est au programme')}</div>` : wi >= 0 ? `<button type="button" class="po-add" onclick="CV.pollWin('${p.id}')">🏆 ${MSGT('Valider')} « ${esc(p.options[wi])} » → ${MSGT('programme')}</button>` : '') : ''}
       <div class="cv-row"><button type="button" class="v-day-edit" onclick="CV.pollPin('${p.id}')">${p.pin ? '📌 Désépingler' : '📌 Épingler sur l’accueil'}</button>${!onHome && p.createdBy === M.me ? `<button type="button" class="v-day-edit" onclick="CV.pollClose('${p.id}')">${p.closed ? '↺ Rouvrir' : '🔒 Clore'}</button><button type="button" class="v-day-edit" onclick="CV.pollDel('${p.id}')" aria-label="Supprimer">🗑</button>` : ''}</div></div>`;
@@ -880,6 +880,14 @@
   function pinnedPolls(){
     const ps = polls().filter(p=>p.pin); if(!ps.length) return '';
     return `<div class="v-box cv-polls cv-polls-home"><h3 style="margin:0 0 6px">🗳️ Sondage du groupe</h3>${ps.map(p=>pollCard(p, true)).join('')}</div>`;
+  }
+  /* 🗳️ Sondages dans le programme : ceux du voyage en cours (et ceux épinglés), votables sur place, avec « ＋ Sondage » */
+  function progPolls(){
+    const t = trip(); if(!t || t.archived || hidden('blk:polls')) return pinnedPolls();
+    const ps = polls().filter(p=>p.pin || (p.trip === t.id && !p.closed)), all = polls().length;
+    return `<div class="v-box cv-polls cv-polls-home"><div class="cv-row" style="justify-content:space-between;align-items:center;margin-bottom:6px"><h3 style="margin:0">🗳️ ${MSGT('Sondages')}</h3><button type="button" class="v-day-edit" onclick="CV.pollNew()">＋ ${MSGT('Sondage')}</button></div>
+      ${ps.length ? ps.map(p=>pollCard(p, true)).join('') : `<div class="v-sum-small">${MSGT('Une question pour le groupe ? « Resto japonais ou italien ce soir ? », « Quelle visite samedi ? »… Chacun vote, et le choix gagnant peut aller directement au programme.')}</div>`}
+      ${all > ps.length ? `<button type="button" class="v-day-edit" style="margin-top:6px" onclick="CV.tab('envies')">${RF('Voir tous les sondages ({0})', all)}</button>` : ''}</div>`;
   }
   function pollPin(id){ const p = clone(R[id]); p.pin = !p.pin; put(p, p.pin ? '📌 Sondage épinglé sur l’accueil' : '📌 Sondage désépinglé'); toast(p.pin ? '📌 Épinglé sur l’accueil' : '📌 Désépinglé'); refresh(); }
   function pollNew(){

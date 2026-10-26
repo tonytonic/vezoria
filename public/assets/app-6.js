@@ -562,6 +562,7 @@
     ['blk:quick', '⚡ Raccourcis « Je suis ici · Importer · Carte »'],
     ['blk:disc', '🔎 Encart « Que voir pendant le voyage ? »'],
     ['blk:pins', '📌 Notes épinglées en haut du programme'],
+    ['blk:polls', '🗳️ Sondages du groupe dans le programme'],
     ['blk:docs', '🛂 Alerte « documents de voyage à vérifier »'],
     ['blk:who', '👥 Filtre « Voir pour » (une seule personne)'],
     ['blk:imp', '📄 Bouton « Importer une résa » dans Trajets, Hôtels, Visites'],
@@ -2221,7 +2222,9 @@
       // 🎬 « Ton année en voyage » : du 15 décembre à fin janvier, une seule fois par année
       const mo = +td.slice(5, 7), yy = mo === 12 && +td.slice(8, 10) >= 15 ? td.slice(0, 4) : mo === 1 ? String(+td.slice(0, 4) - 1) : '';
       if(yy && !M.seen['yearM:' + yy] && trips().some(t=>!t.demo && t.debut && t.debut <= td && t.debut.slice(0, 4) === yy)){ momentDone = true; M.seen['yearM:' + yy] = 1; persist(); momentYear(yy); return; } }
+    try { if(quotaNag()){ momentDone = true; return; } } catch(e){}   // 📦 place photos dépassée ou presque pleine
     try { if(protectNag()){ momentDone = true; return; } } catch(e){}   // 🛟 ne jamais tout perdre en changeant de téléphone
+    try { if(M.cloud === 'trips' && !M.migTrips){ momentDone = true; cloudTripsMigrate(); return; } } catch(e){}   // 🔁 fin du cloud « voyage par voyage »
     const t = trip(); if(!t || !t.debut || t.demo) return;
     const td = isoToday(), tm = new Date(Date.now() + 864e5).toISOString().slice(0,10); M.seen = M.seen || {};
     // la veille (ou le matin du départ) : « Demain, tu pars »

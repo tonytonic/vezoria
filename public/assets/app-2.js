@@ -661,7 +661,7 @@
     const ds = dayList();
     const arT = trip(), arOn = !!(arT && !arT.archived && tripPhase(arT) === 'prep' && !hidden('blk:prep'));
     if(arT && !arT.archived && !arT.demo && tripPhase(arT) !== 'past') setTimeout(()=>dayExtras(arT), 400);
-    let h = startFil() + pinBar() + (arOn ? ariHTML() : cdHTML() + suggCard() + actBand()) + annivCard() + nextHero() + eveCard() + (arOn ? '' : prepGauge()) + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + pinnedPolls();
+    let h = startFil() + pinBar() + (arOn ? ariHTML() : cdHTML() + suggCard() + actBand()) + annivCard() + nextHero() + eveCard() + (arOn ? '' : prepGauge()) + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + progPolls();
     const tt = trip();
     if(tt && tt.demo) h = `<div class="cv-demo-bar">👀 <b>Voyage de démo</b> : touche à tout, modifie, supprime. Il reste sur ce téléphone et n’est jamais partagé.
         <span class="cv-demo-btns"><button type="button" onclick="CV.demoReset()">↺ Recommencer</button><button type="button" onclick="CV.demoDel()">Supprimer la démo</button></span></div>` + h;
@@ -1315,7 +1315,9 @@
   /* ══════════ Partage & réglages ══════════ */
   function genCode(){
     const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', r = new Uint8Array(12); crypto.getRandomValues(r);
-    return [...r].map(x=>a[x % a.length]).join('').replace(/(.{4})(?=.)/g,'$1-');
+    const c = [...r].map(x=>a[x % a.length]).join('').replace(/(.{4})(?=.)/g,'$1-');
+    try { (M.myCodes || (M.myCodes = {}))[c] = 1; } catch(e){}   // 🌿 code créé ici : s’il devient un voyage partagé, un paquet ou une publication, il se branche sur mon carnet
+    return c;
   }
   function activity(){
     return Object.values(R).filter(r=>r.updatedBy && (r.updatedAt||0) > 1000 && r.type!=='geo' && r.type!=='phk' && r.type!=='pubmap' && !(r.type === 'place' && r.sugg))
@@ -1414,7 +1416,7 @@
       await syncNow();
       if(!prof(M.me)) whoSheet();
       refresh(); toast('☁️ Synchro activée');
-      if(PUBLIC && prof(M.me)) setTimeout(codeSheet, 300);
+      if(PUBLIC && prof(M.me) && !syncOn.quiet) setTimeout(codeSheet, 300);
     } catch(e){ M.sync = prev; persist(); alert('Connexion impossible : ' + e.message); }
   }
   async function syncOff(){ if(!(await uiConfirm('Désactiver la synchro sur ce téléphone ? Les données restent ici.'))) return; M.sync.on = false; persist(); refresh(); }
