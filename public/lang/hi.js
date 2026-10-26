@@ -5384,4 +5384,8 @@ I18N.load({
 "Ton année en voyage":"तुम्हारा यात्रा वर्ष",
 "ton film est prêt":"तुम्हारी फ़िल्म तैयार है",
 "🎬 Voir le film":"🎬 फ़िल्म देखो",
-"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"इस साल के लिए अभी कुछ बताने को नहीं है: तस्वीरों और जगहों के साथ यादें जोड़ो।"});
+"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"इस साल के लिए अभी कुछ बताने को नहीं है: तस्वीरों और जगहों के साथ यादें जोड़ो।",
+/* 👆 Toutes les photos (2026-10-26g) */
+"👆 Photos":"👆 तस्वीरें",
+"👆 Toutes les photos":"👆 सभी तस्वीरें",
+"Pas encore de photo dans ce voyage.":"इस यात्रा में अभी कोई तस्वीर नहीं है।"});

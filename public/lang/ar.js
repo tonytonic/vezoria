@@ -5385,4 +5385,8 @@ I18N.load({
 "Ton année en voyage":"سنتك في السفر",
 "ton film est prêt":"فيلمك جاهز",
 "🎬 Voir le film":"🎬 شاهد الفيلم",
-"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"لا شيء يُروى لهذه السنة بعد: أضف ذكريات مع صور وأماكن."});
+"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"لا شيء يُروى لهذه السنة بعد: أضف ذكريات مع صور وأماكن.",
+/* 👆 Toutes les photos (2026-10-26g) */
+"👆 Photos":"👆 الصور",
+"👆 Toutes les photos":"👆 كل الصور",
+"Pas encore de photo dans ce voyage.":"لا توجد صور في هذه الرحلة بعد."});

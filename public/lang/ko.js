@@ -5384,4 +5384,8 @@ I18N.load({
 "Ton année en voyage":"나의 여행 한 해",
 "ton film est prêt":"영상이 준비됐어요",
 "🎬 Voir le film":"🎬 영상 보기",
-"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"올해는 아직 이야기할 것이 없어요: 사진과 장소가 있는 추억을 추가하세요."});
+"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"올해는 아직 이야기할 것이 없어요: 사진과 장소가 있는 추억을 추가하세요.",
+/* 👆 Toutes les photos (2026-10-26g) */
+"👆 Photos":"👆 사진",
+"👆 Toutes les photos":"👆 모든 사진",
+"Pas encore de photo dans ce voyage.":"이 여행에는 아직 사진이 없어요."});

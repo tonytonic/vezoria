@@ -5384,4 +5384,8 @@ I18N.load({
 "Ton année en voyage":"あなたの旅の一年",
 "ton film est prêt":"ムービーができました",
 "🎬 Voir le film":"🎬 ムービーを見る",
-"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"この年はまだ語ることがありません：写真と場所つきの思い出を追加してください。"});
+"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"この年はまだ語ることがありません：写真と場所つきの思い出を追加してください。",
+/* 👆 Toutes les photos (2026-10-26g) */
+"👆 Photos":"👆 写真",
+"👆 Toutes les photos":"👆 すべての写真",
+"Pas encore de photo dans ce voyage.":"この旅にはまだ写真がありません。"});

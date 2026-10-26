@@ -5385,4 +5385,8 @@ I18N.load({
 "Ton année en voyage":"Твой год в путешествиях",
 "ton film est prêt":"твой фильм готов",
 "🎬 Voir le film":"🎬 Смотреть фильм",
-"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"За этот год пока нечего рассказать: добавь воспоминания с фото и местами."});
+"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"За этот год пока нечего рассказать: добавь воспоминания с фото и местами.",
+/* 👆 Toutes les photos (2026-10-26g) */
+"👆 Photos":"👆 Фото",
+"👆 Toutes les photos":"👆 Все фото",
+"Pas encore de photo dans ce voyage.":"В этой поездке пока нет фото."});

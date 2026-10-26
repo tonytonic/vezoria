@@ -5384,4 +5384,8 @@ I18N.load({
 "Ton année en voyage":"你的旅行年",
 "ton film est prêt":"你的影片已准备好",
 "🎬 Voir le film":"🎬 观看影片",
-"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"今年还没有可讲述的内容：添加带照片和地点的回忆吧。"});
+"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"今年还没有可讲述的内容：添加带照片和地点的回忆吧。",
+/* 👆 Toutes les photos (2026-10-26g) */
+"👆 Photos":"👆 照片",
+"👆 Toutes les photos":"👆 全部照片",
+"Pas encore de photo dans ce voyage.":"这次旅行还没有照片。"});

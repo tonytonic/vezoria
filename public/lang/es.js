@@ -2446,4 +2446,8 @@ I18N.load({
 "Ton année en voyage":"Tu año de viajes",
 "ton film est prêt":"tu película está lista",
 "🎬 Voir le film":"🎬 Ver la película",
-"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"No hay nada que contar de este año: añade recuerdos con fotos y lugares."});
+"Il n’y a rien à raconter pour cette année : ajoute des souvenirs avec des photos et des lieux.":"No hay nada que contar de este año: añade recuerdos con fotos y lugares.",
+/* 👆 Toutes les photos (2026-10-26g) */
+"👆 Photos":"👆 Fotos",
+"👆 Toutes les photos":"👆 Todas las fotos",
+"Pas encore de photo dans ce voyage.":"Todavía no hay fotos en este viaje."});
