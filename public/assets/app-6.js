@@ -2115,15 +2115,15 @@
     return s ? s.photos[0] : '';
   }
   let coverCur = '';
-  const PHASE_IMG = {prep: (window.VZ_B || '') + 'img/entete-preparation.jpg'};   // en cours et passés : à venir
+  const PHASE_IMG = {prep: (window.VZ_B || '') + 'img/entete-preparation.jpg', live: (window.VZ_B || '') + 'img/entete-en-cours.jpg'};   // passés : à venir
   async function coverPaint(t){
     const hero = document.querySelector('.header .hero'); if(!hero) return;
     let el = document.getElementById('cv-cover');
     // 🌅 voyage en préparation : la photo d’ambiance de Vezoria (amis au coucher de soleil), sauf si l’utilisateur a choisi SA photo
-    // (en cours et passés : pas d’image pour l’instant, comme avant ; en préparation, la photo choisie par l’utilisateur passe en premier)
-    const prep = !!t && tripPhase(t) === 'prep', phImg = prep && !t.cover ? PHASE_IMG.prep : '';
-    const id = !prep ? '' : t.cover ? t.cover : 'ph:' + phImg;
-    hero.classList.toggle('ph-cover', !!phImg);
+    // préparation et voyage en cours : photo d’ambiance de la période (la photo choisie par l’utilisateur passe en premier) ; passés : rien pour l’instant
+    const ph = t ? tripPhase(t) : '', has = !!PHASE_IMG[ph], phImg = has && !t.cover ? PHASE_IMG[ph] : '';
+    const id = !has ? '' : t.cover ? t.cover : 'ph:' + phImg;
+    hero.classList.toggle('ph-cover', !!phImg); hero.classList.toggle('ph-live', !!phImg && ph === 'live');
     if(!id){ if(el) el.remove(); hero.classList.remove('has-cover'); coverCur = ''; return; }
     if(id === coverCur && el) return; coverCur = id;
     if(!el){ el = document.createElement('div'); el.id = 'cv-cover'; hero.prepend(el); }
