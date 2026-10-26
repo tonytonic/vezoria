@@ -1359,6 +1359,7 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .cv-past{display:flex;gap:12px;background:#fff;border:1px solid #eadfe6;border-radius:16px;padding:10px;margin:8px 0}
 .cv-past .cov{flex:0 0 92px;height:92px;border-radius:12px;overflow:hidden;background:#f1eafe;display:flex;align-items:center;justify-content:center;font-size:2rem}
 .cv-past .cov img{width:100%;height:100%;object-fit:cover}
+.cv-past button.cov{position:relative;border:0;padding:0;cursor:pointer}.cv-past .cov-n{position:absolute;right:5px;bottom:5px;background:rgba(20,8,32,.72);color:#fff;font:700 .68rem/1 'Outfit',system-ui,sans-serif;font-style:normal;padding:4px 6px;border-radius:99px}
 .cv-past .bd{flex:1;min-width:0}
 .cv-past b{display:block}
 .cv-past small{display:block;font-size:.76rem;color:#6b5670}
