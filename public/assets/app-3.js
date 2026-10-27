@@ -868,7 +868,7 @@
     zipLib = new Promise((res, rej) => {
       const tryOne = i => {
         if(i >= srcs.length){ zipLib = null; rej(new Error('Impossible de charger le lecteur de ZIP (connexion internet nécessaire).')); return; }
-        const sc = document.createElement('script'); sc.src = srcs[i];
+        const sc = document.createElement('script'); sc.src = srcs[i]; if(i > 0){ sc.integrity = 'sha384-/Gsui5/9uiFs7nM9vaRn0nVfC+t4B3CsVTunUoxwxoeIxvQz4jiE7DQV8b8YVLYm'; sc.crossOrigin = 'anonymous'; }   // 🛡️ copie de secours : refusée si elle a été modifiée
         sc.onload = () => { try { window.zip.configure({useWebWorkers:false}); } catch(e){} res(window.zip); };
         sc.onerror = () => { sc.remove(); tryOne(i+1); };
         document.head.appendChild(sc);
