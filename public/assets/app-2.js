@@ -2317,11 +2317,20 @@
     const tr = items(i=>i.cat === 'transport' && i.date === d && !/Taxi/.test(i.mode || ''));
     if(fresh && !tr.length) return dayMapCanvas(d, w, h);
     const {night, prev} = hotelsAround(d), markers = [], lines = []; let line = null;
-    const gc = async (...qs) => { for(const q of qs){ if(!q) continue; const c = await geocode(q, null).catch(()=>null); if(c) return c; } return null; };
     const hotelPt = async hh => hh ? (await geocode(tfHotel(hh), city).catch(()=>null)) || (await geocode(hotelQ(hh), city).catch(()=>null)) : null;
+    // 📍 gare / aéroport : d’abord la VILLE (position vérifiée des étapes : Rome en Italie, pas un hameau homonyme),
+    //    puis la gare ou l’aéroport, gardé seulement s’il est près de cette ville
+    if(tr.length){ try { await stagesGeoFix(tlStages().map(s=>s.city)); } catch(e){} }
+    const endPt = async (name, mode) => {
+      const ct = cityOf(name) || name, ctx = ((M.ctry || {})[normQ(ct)] || {}).pays || '';
+      const cp = geoCached(name) || geoCached(ct) || await geocode(ct, null).catch(()=>null);
+      const sp = await geocode(tfPt(name, mode), ctx || null).catch(()=>null);
+      if(sp && cp) return km(sp, cp) / 1.25 <= (mode === 'Avion' ? 60 : 25) ? sp : cp;
+      return cp || sp;
+    };
     for(const t of tr){
-      const a = t.from ? await gc(tfPt(t.from, t.mode), t.from) : null, b = t.to ? await gc(tfPt(t.to, t.mode), t.to) : null;
-      if(a && b){ lines.push({pts:[[a.lat, a.lng], [b.lat, b.lng]], color:'#94a3b8'}); markers.push({lat:a.lat, lng:a.lng, label:'D', color:'#0ea5e9', name:cityOf(t.from)}, {lat:b.lat, lng:b.lng, label:'A', color:'#0ea5e9', name:cityOf(t.to)}); }
+      const a = t.from ? await endPt(t.from, t.mode) : null, b = t.to ? await endPt(t.to, t.mode) : null;
+      if(a && b){ lines.push({pts:[[a.lat, a.lng], [b.lat, b.lng]], color:'#94a3b8'}); markers.push({lat:a.lat, lng:a.lng, label:'D', color:'#0ea5e9', name:cityOf(t.from)}, {lat:b.lat, lng:b.lng, label:'A', color:'#16a34a', name:cityOf(t.to)}); }
       const hFrom = prev && prev.id !== (night && night.id) ? prev : (night && night.date < d ? night : null);
       if(a && hFrom){ const hp = await hotelPt(hFrom); if(hp){ lines.push({pts:[[hp.lat, hp.lng], [a.lat, a.lng]], color:'#7c3aed'}); markers.push({lat:hp.lat, lng:hp.lng, label:'H', color:'#7c3aed', name:hFrom.nom || cityOf(hFrom.titre)}); } }
       if(b && night && night.date === d){ const hp = await hotelPt(night); if(hp){ lines.push({pts:[[b.lat, b.lng], [hp.lat, hp.lng]], color:'#7c3aed'}); markers.push({lat:hp.lat, lng:hp.lng, label:'H', color:'#7c3aed', name:night.nom || cityOf(night.titre)}); } }
@@ -2337,7 +2346,7 @@
       let k = 0; stops.forEach(s=>{ if(s.name) markers.push({lat:s.lat, lng:s.lng, label:++k, color:'#dc2626', name:s.name}); else if(!markers.some(m=>m.label === 'H')) markers.push({lat:s.lat, lng:s.lng, label:'H', color:'#7c3aed'}); });
     }
     if(!markers.length) return null;
-    return drawMap({w, h, round:true, line, lines, markers, maxZoom:16});
+    const cv = await drawMap({w, h, round:true, line, lines, markers, maxZoom:16}); cv._mk = markers; return cv;
   }
   const val = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
   function plCfg(){
