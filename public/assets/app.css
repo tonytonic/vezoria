@@ -2929,3 +2929,10 @@ body.cv-ph-past .cv-prep2 .ar-go:not(.ex-go){color:#1E2C5C}
 .cv-tf-go{flex:0 0 auto;font-size:.8rem;font-weight:700;text-decoration:none;color:#fff;background:#7c3aed;border-radius:999px;padding:7px 11px;white-space:nowrap}
 
 .pl-trace{margin:6px 0 14px;min-height:60px}
+
+/* 🧭 boutons Google Maps sous le tracé */
+.pl-gm{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.pl-gm-a{display:flex;align-items:center;gap:10px;text-decoration:none;background:#fff;border:1px solid #e5e0ee;border-radius:12px;padding:9px 12px;color:#1a1a2e}
+.pl-gm-a span{font-size:18px}
+.pl-gm-a b{flex:1;min-width:0;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-gm-a i{font-style:normal;font-size:.75rem;font-weight:700;color:#fff;background:#1a73e8;border-radius:999px;padding:5px 9px;white-space:nowrap}

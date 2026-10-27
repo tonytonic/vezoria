@@ -2305,7 +2305,8 @@
     if(showMap) (async ()=>{   // 🗺️ « Itinéraire » : le tracé tout de suite, en haut
       let c = null; try { c = await dayTrace(d, 640, 400); } catch(e){}
       const el = document.getElementById('pl-trace'); if(!el || planD !== d) return;
-      if(c){ c.style.cssText = 'width:100%;height:auto;border-radius:14px;display:block'; el.innerHTML = ''; el.appendChild(c); }
+      if(c){ c.style.cssText = 'width:100%;height:auto;border-radius:14px;display:block'; el.innerHTML = ''; el.appendChild(c);
+        if((c._links || []).length){ const g = document.createElement('div'); g.className = 'pl-gm'; g.innerHTML = c._links.map(x=>`<a class="pl-gm-a" href="${esc(x.href)}" target="_blank" rel="noopener"><span>${x.ic}</span><b data-notr>${esc(x.lbl)}</b><i>Google Maps ↗</i></a>`).join(''); el.appendChild(g); } }
       else el.innerHTML = `<div class="v-sum-small">${MSGT('Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.')}</div>`;
     })();
   }
@@ -2315,8 +2316,7 @@
     const r = dayInfo(d).route, pl = placesOf(d), city = dayCity(d) || '';
     const fresh = r && r.ids && r.ids.length && pl.length && r.ids.every(id=>pl.some(p=>p.id === id)) && pl.every(p=>r.ids.includes(p.id) || (r.miss || []).includes(p.id));
     const tr = items(i=>i.cat === 'transport' && i.date === d && !/Taxi/.test(i.mode || ''));
-    if(fresh && !tr.length) return dayMapCanvas(d, w, h);
-    const {night, prev} = hotelsAround(d), markers = [], lines = []; let line = null;
+    const {night, prev} = hotelsAround(d), markers = [], lines = [], links = []; let line = null;
     const hotelPt = async hh => hh ? (await geocode(tfHotel(hh), city).catch(()=>null)) || (await geocode(hotelQ(hh), city).catch(()=>null)) : null;
     // 📍 gare / aéroport : d’abord la VILLE (position vérifiée des étapes : Rome en Italie, pas un hameau homonyme),
     //    puis la gare ou l’aéroport, gardé seulement s’il est près de cette ville
@@ -2330,9 +2330,12 @@
     };
     for(const t of tr){
       const a = t.from ? await endPt(t.from, t.mode) : null, b = t.to ? await endPt(t.to, t.mode) : null;
+      if(t.from && t.to && t.mode !== 'Avion') links.push({ic:MODE_ICON[t.mode] || '🧭', lbl:cityOf(t.from) + ' → ' + cityOf(t.to), href:tfLink(tfPt(t.from, t.mode), tfPt(t.to, t.mode), t.mode)});
       if(a && b){ lines.push({pts:[[a.lat, a.lng], [b.lat, b.lng]], color:'#94a3b8'}); markers.push({lat:a.lat, lng:a.lng, label:'D', color:'#0ea5e9', name:cityOf(t.from)}, {lat:b.lat, lng:b.lng, label:'A', color:'#16a34a', name:cityOf(t.to)}); }
       const hFrom = prev && prev.id !== (night && night.id) ? prev : (night && night.date < d ? night : null);
+      if(t.from && hFrom) links.push({ic:'🏨', lbl:RF('Ton hôtel → {0}', t.from), href:tfLink(tfHotel(hFrom), tfPt(t.from, t.mode), t.mode)});
       if(a && hFrom){ const hp = await hotelPt(hFrom); if(hp){ lines.push({pts:[[hp.lat, hp.lng], [a.lat, a.lng]], color:'#7c3aed'}); markers.push({lat:hp.lat, lng:hp.lng, label:'H', color:'#7c3aed', name:hFrom.nom || cityOf(hFrom.titre)}); } }
+      if(t.to && night && night.date === d) links.push({ic:MODE_ICON[t.mode] || '🧭', lbl:RF('{0} → ton hôtel', t.to), href:tfLink(tfPt(t.to, t.mode), tfHotel(night), t.mode)});
       if(b && night && night.date === d){ const hp = await hotelPt(night); if(hp){ lines.push({pts:[[b.lat, b.lng], [hp.lat, hp.lng]], color:'#7c3aed'}); markers.push({lat:hp.lat, lng:hp.lng, label:'H', color:'#7c3aed', name:night.nom || cityOf(night.titre)}); } }
     }
     if(pl.length){
@@ -2343,10 +2346,17 @@
         for(const p of pl){ const c = p.lat != null && p.lng != null ? {lat:+p.lat, lng:+p.lng} : await geocode(p.adresse || p.nom, city).catch(()=>null); if(c) stops.push(Object.assign({}, c, {name:p.nom})); }
       }
       if(stops.length > 1) line = await walkLine(stops);
+      { // 🚶 les visites dans Google Maps, dans le même ordre que la carte (9 étapes au plus entre départ et arrivée)
+        const hb = night || prev, named = fresh ? r.ids.map(id=>pl.find(p=>p.id === id)).filter(Boolean) : pl;
+        const q = p => coordsIn(p.adresse || '') ? ll(coordsIn(p.adresse)) : [p.adresse || p.nom, city].filter(Boolean).join(', ');
+        const o = hb ? tfHotel(hb) : q(named[0]), rest = hb ? named : named.slice(1), loop = fresh ? r.loop : !!hb;
+        const dst = loop && hb ? o : q(rest[rest.length - 1] || named[0]), way = (loop && hb ? rest : rest.slice(0, -1)).slice(0, 9).map(q);
+        if(named.length) links.unshift({ic:'🚶', lbl:MSGT('Les visites du jour'), href:`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(o)}&destination=${encodeURIComponent(dst)}${way.length ? '&waypoints=' + way.map(encodeURIComponent).join('%7C') : ''}&travelmode=walking`});
+      }
       let k = 0; stops.forEach(s=>{ if(s.name) markers.push({lat:s.lat, lng:s.lng, label:++k, color:'#dc2626', name:s.name}); else if(!markers.some(m=>m.label === 'H')) markers.push({lat:s.lat, lng:s.lng, label:'H', color:'#7c3aed'}); });
     }
     if(!markers.length) return null;
-    const cv = await drawMap({w, h, round:true, line, lines, markers, maxZoom:16}); cv._mk = markers; return cv;
+    const cv = await drawMap({w, h, round:true, line, lines, markers, maxZoom:16}); cv._mk = markers; cv._links = links; return cv;
   }
   const val = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
   function plCfg(){
