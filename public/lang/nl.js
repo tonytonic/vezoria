@@ -1,4 +1,5 @@
 I18N.load({
+"Les visites du jour":"De bezoeken van de dag",
 "Je dessine le trajet…":"Ik teken de route…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Voeg plekken toe (of een reis die dag) om de route te zien.",
 "aéroport":"luchthaven",

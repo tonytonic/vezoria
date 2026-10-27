@@ -1,4 +1,5 @@
 I18N.load({
+"Les visites du jour":"Günün ziyaretleri",
 "Je dessine le trajet…":"Rotayı çiziyorum…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Rotayı görmek için yer ekle (ya da o gün bir yolculuk).",
 "aéroport":"havalimanı",

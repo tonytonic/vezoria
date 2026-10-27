@@ -1,4 +1,5 @@
 I18N.load({
+"Les visites du jour":"दिन की जगहें",
 "Je dessine le trajet…":"रास्ता बना रहा हूँ…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"रास्ता देखने के लिए जगहें (या उस दिन की यात्रा) जोड़ें।",
 "aéroport":"हवाई अड्डा",

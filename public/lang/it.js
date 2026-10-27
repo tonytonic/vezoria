@@ -1,4 +1,5 @@
 I18N.load({
+"Les visites du jour":"Le visite del giorno",
 "Je dessine le trajet…":"Disegno il percorso…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Aggiungi luoghi da vedere (o un viaggio quel giorno) per vedere il percorso.",
 "aéroport":"aeroporto",

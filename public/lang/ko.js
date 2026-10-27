@@ -1,4 +1,5 @@
 I18N.load({
+"Les visites du jour":"오늘의 방문지",
 "Je dessine le trajet…":"경로를 그리는 중…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"경로를 보려면 볼 곳(또는 그날의 이동)을 추가하세요.",
 "aéroport":"공항",

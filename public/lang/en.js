@@ -1,4 +1,5 @@
 I18N.load({
+"Les visites du jour":"The day’s visits",
 "Je dessine le trajet…":"Drawing the route…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Add places to see (or a trip that day) to see the route.",
 "aéroport":"airport",
