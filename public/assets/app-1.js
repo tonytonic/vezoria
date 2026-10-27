@@ -858,13 +858,13 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   async function pushOut(){
     const buf = pushBuf; pushBuf = {};
     for(const [code, list] of Object.entries(buf)){
-      const by = {}; list.forEach(o=>{ const k = o.k + '|' + (o.ch ? 'ch|' : '') + o.trip; (by[k] = by[k] || []).push(o); });
+      const by = {}; list.forEach(o=>{ const k = o.k + '|' + (o.ch ? 'ch|' : '') + (o.note ? 'note|' : '') + o.trip; (by[k] = by[k] || []).push(o); });
       for(const arr of Object.values(by)){
         try {
           const o0 = arr[0], t = R[o0.trip], kk = await keys(code), kid = kk.token.slice(0, 16);
-          const p = {k:o0.k, who:myName(), trip:o0.trip, tt:t ? t.titre : '', it:arr.slice(0, 5).map(o=>{ const c = Object.assign({}, o); delete c.k; delete c.trip; return c; }), n:arr.length};
+          const p = {k:o0.k, who:myName(), trip:o0.trip, tt:t ? t.titre : '', it:arr.slice(0, 5).map(o=>{ const c = Object.assign({}, o); delete c.k; delete c.trip; return c; }), n:arr.length}; if(o0.k === 'notes' && o0.note) p.r = 'note';   // 📌 note (et pas courses) : la notification ouvre les notes
           const msg = b64(await seal(te.encode(JSON.stringify(p)), code));
-          await pushPost(code, {a:'send', kind:o0.k, kid, msg, tag:o0.k + '-' + (o0.trip || '')});
+          await pushPost(code, {a:'send', kind:o0.k, kid, msg, tag:o0.k + (o0.note ? '-note' : '') + '-' + (o0.trip || '')});
         } catch(e){}
       }
     }
@@ -910,9 +910,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(/[?&]vzt=/.test(location.search)) history.replaceState(null, '', location.pathname);
     if(/^ft:/.test(tid)){ if(R[tid] && !R[tid].deleted) setTimeout(()=>{ try { feedView(tid); } catch(e){} }, 200); setTimeout(()=>syncNow('pull'), 400); return; }   // 👀 voyage suivi : son fil
     if(tid && R[tid] && !R[tid].deleted){ M.trip = tid; M.who = 'all'; }
-    const tb = /^(soir|anniv)/.test(rr) ? 'souv' : {depense:'budget', resa:'prog', souv:'souv', sondage:'envies', notes:'prog', rappel:'prog'}[k] || 'prog';
+    const tb = k === 'notes' && rr === 'note' ? 'notes' : /^(soir|anniv)/.test(rr) ? 'souv' : {depense:'budget', resa:'prog', souv:'souv', sondage:'envies', notes:'prog', rappel:'prog'}[k] || 'prog';
     M.mode = 'prep'; M.tab = tb; persist(); applyMode(); window.scrollTo({top:0});
-    if(k === 'notes') setTimeout(()=>{ try { shopSheet(); } catch(e){} }, 300);
+    if(k === 'notes' && rr !== 'note') setTimeout(()=>{ try { shopSheet(); } catch(e){} }, 300);
     if(k && k !== 'rappel') setTimeout(()=>syncNow('pull'), 400);   // la nouveauté annoncée arrive tout de suite
   }
   /* ── 📅 Ce jour-là : un souvenir pris le même jour, une année précédente ── */
