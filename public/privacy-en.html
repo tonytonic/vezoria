@@ -32,7 +32,7 @@
     <p style="font-size:.85em"><a href="privacy" lang="fr">Version française</a></p>
 
     <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: 23 October 2026 (address search through the app’s server, new base maps, anonymous error reports)</p>
+    <p class="updated">Last updated: 27 October 2026 (companion codes, photo storage per notebook and gift codes, end of the “trip by trip” cloud)</p>
 
     <p>This Privacy Policy describes how the <strong>Vezoria</strong> app (“Vezoria”) handles your information. The App is free, ad-free, account-free and non-profit. It is available on the web and on Google Play.</p>
 
@@ -41,22 +41,24 @@
             <li>Your trips, notes, expenses and photos are <strong>encrypted on your phone</strong> before anything is sent. Neither the publisher nor the hosting provider can read them.</li>
             <li>No advertising, no cookies, no advertising trackers, no third-party analytics tool (Google Analytics, Firebase…). Only <strong>anonymous</strong> counters (number of installs, space used on the server, technical errors of the app) are used to run the service.</li>
             <li>Permissions (location, photos) are only requested when you use the feature concerned, and you can refuse them.</li>
-            <li>You choose where your trips go (☁️ Cloud button): <strong>your whole notebook</strong> in the cloud, <strong>trip by trip</strong>, or <strong>no cloud</strong> (everything stays on your phone; to share, you send encrypted packages yourself).</li>
+            <li>You choose where your trips go (☁️ Cloud button): <strong>your whole notebook</strong> in the cloud, or <strong>no cloud</strong> (everything stays on your phone; to share, you send encrypted packages yourself).</li>
             <li>You can erase everything: on your phone in one tap, on the server from the app or on simple request.</li>
         </ul>
     </div>
 
     <h2>1. Data controller</h2>
     <div class="box">
-        <p>Anthony Chauvel, non-professional publisher of the App — <a href="mailto:appareils.treves6g@icloud.com">appareils.treves6g@icloud.com</a>.</p>
+        <p>Anthony Chauvel, non-professional publisher of the App — <a href="mailto:contact.vezoria@icloud.com">contact.vezoria@icloud.com</a>.</p>
     </div>
 
     <h2>2. Data processed</h2>
     <div class="box">
         <table>
             <tr><th>Data</th><th>Where</th><th>Why</th></tr>
-            <tr><td>First name and profile colour, trips, stops, bookings, expenses, notes, checklist, memories and photos</td><td>On your device. If you choose the cloud (whole notebook, or only the trips you put there): also on the server, <strong>encrypted</strong></td><td>To run the notebook and share it with the members of the group</td></tr>
+            <tr><td>First name and profile colour, trips, stops, bookings, expenses, notes, checklist, memories and photos</td><td>On your device. If you choose the cloud (whole notebook): also on the server, <strong>encrypted</strong></td><td>To run the notebook and share it with the members of the group</td></tr>
             <tr><td>Fingerprint (hash) of the notebook code (the code itself is never sent)</td><td>Server</td><td>To store each notebook’s data separately</td></tr>
+            <tr><td><strong>Companion codes</strong> (only if you create some): a fingerprint of the companion code, an encrypted access right (readable only with that code), the first name you enter, encrypted on your phone, and the creation and last-use dates. The codes of your shared trips are also stored in your notebook, encrypted with your admin code</td><td>Server</td><td>To let a companion open your notebook without your admin rights, let you remove their access, and find all your codes on another device</td></tr>
+            <tr><td><strong>Photo storage</strong>: for each notebook (fingerprint), the total space used by its encrypted photos, the plan (free, gift or subscription) and its dates, and the link between your notebook and the shared trips, packages and publications you created (fingerprints). For a gift code: its fingerprint and the notebook that used it</td><td>Server</td><td>To apply the free storage or the chosen plan, and warn you before it is full</td></tr>
             <tr><td>Date of the last erasure of a notebook or shared trip, stored with its anonymous fingerprint</td><td>Server</td><td>To tell the other members that the trip was emptied from the server and offer to put it back online with what their phone kept</td></tr>
             <tr><td>Travel documents (type, expiry date; optional number and note) and photographed receipts, reimbursement method entered in a profile (optional), poll votes, shopping lists, tickets and documents attached to records, positions saved with “I’m here” (only when you tap the button)</td><td>Like the other records: on your device, and on the server if sync is enabled</td><td>Expiry alerts before departure, expense sharing</td></tr>
             <tr><td><strong>Trip tracking</strong> (off by default): positions recorded roughly every 300 m (every 50 m in “journey mode”, which you start yourself), <strong>only while the app is open</strong> and only during an ongoing trip. Positions already stored in your memory photos may complete the route shown on your device</td><td>On your device, and for the members of the shared trip (encrypted)</td><td>Draw your route on the map and in the trip film</td></tr>
@@ -137,6 +139,8 @@
             <li><strong>On the server</strong>: as long as the notebook is in use. A notebook with no activity for 24 months is automatically deleted from the server (its data remains on your devices). A photo removed from a memory, or a deleted memory or trip, is erased from the server.</li>
             <li><strong>Notifications</strong>: a device’s subscription is erased from the server as soon as you turn notifications off, when the phone no longer accepts it, or when the notebook is erased. A scheduled reminder is erased as soon as it is sent (at the latest 2 days after its scheduled time).</li>
             <li><strong>Erasure date</strong> of a notebook or shared trip: at most 24 months.</li>
+            <li><strong>Photo storage exceeded</strong> (for example when a subscription ends): no new photo uploads, but everything stays visible for 6 months. The app warns you at the start, then 30 days and 7 days before. After that, the server keeps the most recent photos within your notebook’s storage and erases the oldest (keep them yourself with the ZIP backup).</li>
+            <li><strong>Companion codes</strong>: until you remove the access, the companion leaves the notebook, or the notebook is erased.</li>
             <li><strong>Reports</strong>: when a report is made, the publisher keeps a log (date, anonymous fingerprint of the notebook, action taken, reason given by the reporter) for as long as needed to handle it and for any legal follow-up, at most 3 years.</li>
             <li><strong>Abuse protection</strong>: to limit automated uploads, the server counts uploads per connection. It does not keep the IP address, only a fingerprint that cannot be read back, erased after 2 hours.</li>
             <li><strong>Hosting provider’s technical logs</strong>: according to Cloudflare’s policy, generally a few days.</li>
@@ -167,7 +171,7 @@
 
     <h2>11. Contact</h2>
     <div class="contact">
-        <p>For any question about this policy: <a href="mailto:appareils.treves6g@icloud.com">appareils.treves6g@icloud.com</a></p>
+        <p>For any question about this policy: <a href="mailto:contact.vezoria@icloud.com">contact.vezoria@icloud.com</a></p>
         <p style="font-size:0.9em;color:#666;">If you write to us, we receive your email address and your message, solely in order to reply to you. These exchanges are kept for as long as needed to handle your request and for no more than 12 months, then deleted.</p>
     </div>
 
