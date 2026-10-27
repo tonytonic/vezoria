@@ -93,13 +93,18 @@ async function rateIp(env, request, bucket, limit, cost = 1) {
     return true;
   } catch (e) { return true; }   // en cas de souci, on ne bloque jamais un vrai voyageur
 }
+// 🛡️ comparaison en temps constant (on compare des empreintes : la durée ne trahit rien de la clé)
+async function sameKey(a, b) {
+  const h = async t => new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('vz-key:' + t)));
+  const [x, y] = await Promise.all([h(a), h(String(b))]); let d = 0; for (let i = 0; i < 32; i++) d |= x[i] ^ y[i]; return d === 0;
+}
 const TOO_MANY = 'Trop d’envois depuis cette connexion : réessaie dans une heure. — Too many uploads from this connection: try again in an hour.';
 
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 export async function onRequestPost({ request, env }) {
   if (!env.ADMIN_KEY) return json({ error: 'désactivé' }, 404);
   if (!(await rateIp(env, request, 'ak-check', 10, 0))) return json({ error: 'trop d’essais, réessaie dans une heure' }, 429);
-  if ((request.headers.get('X-Admin-Key') || '') !== env.ADMIN_KEY) { await rateIp(env, request, 'ak-check', 10, 1); await new Promise(r => setTimeout(r, 800)); return json({ error: 'clé invalide' }, 403); }
+  if (!(await sameKey(request.headers.get('X-Admin-Key') || '', env.ADMIN_KEY))) { await rateIp(env, request, 'ak-check', 10, 1); await new Promise(r => setTimeout(r, 800)); return json({ error: 'clé invalide' }, 403); }
   if (!env.DB) return json({ error: 'Base D1 non liée' }, 500);
   await tables(env.DB);
   let b = {}; try { b = await request.json(); } catch (e) { return json({ error: 'requête illisible' }, 400); }

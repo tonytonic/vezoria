@@ -50,10 +50,19 @@ function hav(a, b) {
   return 2 * R * Math.asin(Math.sqrt(s));
 }
 
+// limite par connexion, en mémoire (l'adresse IP n'est jamais gardée ailleurs)
+const MEM = new Map();
+function rateOk(request, limit) {
+  const hour = Math.floor(Date.now() / 3600e3), k = request.headers.get("CF-Connecting-IP") || "", r = MEM.get(k);
+  if (MEM.size > 20000) MEM.clear();
+  const n = (r && r.hour === hour ? r.n : 0) + 1; MEM.set(k, { hour, n }); return n <= limit;
+}
+
 export async function onRequest(context) {
   const { request } = context;
   const p = new URL(request.url).searchParams;
   if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
+  if (!rateOk(request, 300)) return json({ error: "trop de demandes, réessaie dans une heure" }, 429);
 
   let lat = num(p.get("lat")), lng = num(p.get("lng"));
   const q = (p.get("q") || "").trim();

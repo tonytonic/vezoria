@@ -29,12 +29,17 @@ async function rateIp(env, request, bucket, limit, cost = 1) {
     return true;
   } catch (e) { return true; }   // en cas de souci, on ne bloque jamais un vrai voyageur
 }
+// 🛡️ comparaison en temps constant (on compare des empreintes : la durée ne trahit rien de la clé)
+async function sameKey(a, b) {
+  const h = async t => new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('vz-key:' + t)));
+  const [x, y] = await Promise.all([h(a), h(String(b))]); let d = 0; for (let i = 0; i < 32; i++) d |= x[i] ^ y[i]; return d === 0;
+}
 const TOO_MANY = 'Trop d’envois depuis cette connexion : réessaie dans une heure. — Too many uploads from this connection: try again in an hour.';
 
 export async function onRequestGet({ request, env }) {
   if (!env.STATS_KEY) return json({ error: 'désactivé' }, 404);
   if (!(await rateIp(env, request, 'sk-check', 10, 0))) return json({ error: 'trop d’essais, réessaie dans une heure' }, 429);
-  if ((request.headers.get('X-Stats-Key') || '') !== env.STATS_KEY) { await rateIp(env, request, 'sk-check', 10, 1); await new Promise(r => setTimeout(r, 800)); return json({ error: 'clé invalide' }, 403); }
+  if (!(await sameKey(request.headers.get('X-Stats-Key') || '', env.STATS_KEY))) { await rateIp(env, request, 'sk-check', 10, 1); await new Promise(r => setTimeout(r, 800)); return json({ error: 'clé invalide' }, 403); }
   if (!env.DB) return json({ error: 'Base D1 non liée' }, 500);
   let used = 0, d1Photos = 0, big = [], records = 0, spaces = 0;
   try { const r = await env.DB.prepare("SELECT v FROM photo_stats WHERE k = 'r2'").first(); used = r ? r.v : 0; } catch (e) {}
