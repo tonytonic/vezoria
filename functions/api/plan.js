@@ -7,9 +7,9 @@
  * ce que contient un carnet : il additionne seulement des tailles de fichiers chiffrés.
  *
  * Réglages Cloudflare (facultatifs, sans toucher au code) :
- *   FREE_MB      place offerte par carnet, en Mo            (défaut 2000 = 2 Go)
- *   PLUS_MB      place de la formule Plus, en Mo            (défaut 7000)
- *   MAX_MB       place de la formule Max, en Mo             (défaut 14000)
+ *   FREE_MB      place offerte par carnet, en Mo            (défaut 700 ≈ 1 500 photos avec de la marge)
+ *   PLUS_MB      place de la formule Plus, en Mo            (défaut 2400 ≈ 5 000 photos)
+ *   MAX_MB       place de la formule Max, en Mo             (défaut 4800 ≈ 10 000 photos)
  *   HARD_MAX_MB  plafond de sécurité, même « illimité »     (défaut 50000 = 50 Go)
  *   GRACE_DAYS   délai avant effacement au-delà de la place (défaut 180 jours = 6 mois)
  *   PURGE        '1' = effacer vraiment après le délai (sinon : on bloque les envois, on n'efface jamais)
@@ -35,10 +35,10 @@ const CORS = {
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
 async function sha256(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
 const MB = 1_000_000, DAY = 864e5;
-export const FREE_MB = env => Number(env.FREE_MB) || 2000;
+export const FREE_MB = env => Number(env.FREE_MB) || 700;   // ≈ 1 500 photos, avec de la marge
 const HARD_MB = env => Number(env.HARD_MAX_MB) || 50000;
 const GRACE = env => (Number(env.GRACE_DAYS) || 180) * DAY;
-export const PLAN_MB = (env, p) => p === 'plus' ? (Number(env.PLUS_MB) || 7000) : p === 'max' ? (Number(env.MAX_MB) || 14000) : p === 'unlimited' ? -1 : 0;
+export const PLAN_MB = (env, p) => p === 'plus' ? (Number(env.PLUS_MB) || 2400) : p === 'max' ? (Number(env.MAX_MB) || 4800) : p === 'unlimited' ? -1 : 0;
 
 let ready = false;
 export async function planTables(db) {
