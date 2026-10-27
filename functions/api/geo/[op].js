@@ -101,11 +101,12 @@ function phToNom(f, op) {
   return { lat: String(lat), lon: String(lon), name, addresstype: P.type || place || '', display_name: [...new Set([name, city, P.state, P.country].filter(Boolean))].join(', '),
     category: P.osm_key || '', type: P.osm_value || '', address: a, extratags: {}, source: 'photon' };
 }
-async function photon(op, p, ac, onlyC) {
+async function photon(op, p, ac, onlyC, near) {
   const lg = (p.get('accept-language') || 'en').slice(0, 2), lang = PH_LANG.includes(lg) ? lg : 'en';
   const qs = new URLSearchParams({ q: p.get('q'), limit: p.get('limit') || '1', lang });
   // 🔎 saisie en cours : seulement des villes, régions et pays (pas de rues), mots incomplets acceptés
   if (ac) (onlyC ? ['country'] : ['city', 'locality', 'district', 'county', 'state', 'country']).forEach(l => qs.append('layer', l));
+  if (ac && near) { qs.set('lat', near.lat); qs.set('lon', near.lon); qs.set('zoom', '7'); qs.set('location_bias_scale', '0.1'); }   // 🎯 priorité aux lieux du pays tapé
   const u = op === 'search' ? 'https://photon.komoot.io/api/?' + qs
     : 'https://photon.komoot.io/reverse?' + new URLSearchParams({ lat: p.get('lat'), lon: p.get('lon'), lang });
   let r = await fetch(u, { headers: { 'User-Agent': UA }, cf: { cacheTtl: 86400 } });
@@ -137,7 +138,9 @@ export async function onRequest({ request, env, params, waitUntil }) {
 
   const ac = op === 'search' && new URL(request.url).searchParams.get('ac') === '1';   // propositions pendant la saisie : Photon (fait pour ça)
   const onlyC = ac && new URL(request.url).searchParams.get('pl') === 'country';   // pays seulement
-  const key = op + '?' + [...p.entries()].sort().map(([a, b]) => a + '=' + b).join('&') + (ac ? '&ac=1' : '') + (onlyC ? '&pl=country' : '');
+  const su = new URL(request.url).searchParams, nla = +su.get('lat'), nlo = +su.get('lon');
+  const near = ac && su.get('lat') && Number.isFinite(nla) && Number.isFinite(nlo) && Math.abs(nla) <= 90 && Math.abs(nlo) <= 180 ? { lat: nla.toFixed(2), lon: nlo.toFixed(2) } : null;
+  const key = op + '?' + [...p.entries()].sort().map(([a, b]) => a + '=' + b).join('&') + (ac ? '&ac=1' : '') + (onlyC ? '&pl=country' : '') + (near ? '&near=' + near.lat + ',' + near.lon : '');
   const edge = caches.default, ck = new Request('https://vz-geo.cache/' + encodeURIComponent(key));
   const hit = await edge.match(ck).catch(() => null); if (hit) return json(await hit.text(), 200, 86400);
   try {
@@ -152,7 +155,7 @@ export async function onRequest({ request, env, params, waitUntil }) {
     if (!ok) { await new Promise(r => setTimeout(r, 1100)); ok = await slot(env); }
     if (ok) { try { out = await nominatim(op, p, env); } catch (e) { out = null; } }
   }
-  if (out === null) { try { out = await photon(op, p, ac, onlyC); viaPhoton = true; } catch (e) { return json({ error: 'indisponible' }, 502); } }
+  if (out === null) { try { out = await photon(op, p, ac, onlyC, near); viaPhoton = true; } catch (e) { return json({ error: 'indisponible' }, 502); } }
 
   const v = JSON.stringify(out);
   const empty = Array.isArray(out) ? !out.length : !!out.error;
