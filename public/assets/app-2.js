@@ -434,7 +434,7 @@
     h += `<form id="v-form" onsubmit="event.preventDefault();CV.saveForm()" oninput="CV.live()">`;
     h += `<div class="v-f"><label>Statut</label><div class="v-seg" id="v-seg">${Object.entries(STATUTS).map(([k,l])=>
       `<button type="button" class="${k}${it.statut===k?' on':''}" data-v="${k}" onclick="CV.segStat(this)">${l}</button>`).join('')}</div></div>`;
-    h += field(c==='hotel'?'Étape / ville':'Intitulé', 'titre', it.titre, 'text', 'required');
+    h += field(c==='hotel'?'Étape / ville':'Intitulé', 'titre', it.titre, 'text', c==='hotel' ? 'required data-place autocomplete="off"' : 'required');
     const v = tv();
     if(v.length > 1){
       const sel = (it.qui && it.qui.length) ? it.qui : v;
@@ -443,7 +443,7 @@
     }
     if(c==='transport'){
       h += `<div class="v-f"><label>Mode</label><select class="v-in" name="mode">${Object.keys(MODE_ICON).map(m=>`<option${it.mode===m?' selected':''}>${m}</option>`).join('')}</select></div>`;
-      h += `<div class="v-f2">${field('Départ','from',it.from)}${field('Arrivée','to',it.to)}</div>`;
+      h += `<div class="v-f2">${field('Départ','from',it.from,'text','data-place autocomplete="off"')}${field('Arrivée','to',it.to,'text','data-place autocomplete="off"')}</div>`;
       h += `<div class="v-f2">${field('Date','date',it.date,'date')}${field('Compagnie / n° vol','compagnie',it.compagnie)}</div>`;
       h += `<div class="v-f2">${field('Heure départ','heureDep',it.heureDep,'time')}${field('Heure arrivée','heureArr',it.heureArr,'time')}</div>`;
     } else if(c==='hotel'){
@@ -1096,15 +1096,15 @@
     openSheet(`<h2>✨ ${id ? esc(w.titre) : 'Nouvelle envie'}</h2>${byline(w)}
       <form id="v-form" onsubmit="event.preventDefault();CV.saveWish()">
         <div class="v-f"><label>Type</label>${segBtns('cv-wk', [['weekend','🏖️ Week-end'],['voyage','🌍 Voyage'],['etape','📍 Étape'],['idee','💡 Idée']], w.kind)}</div>
-        ${field('Destination / idée','titre',w.titre,'text','required placeholder="Ex. Palma de Majorque"')}
+        ${field('Destination / idée','titre',w.titre,'text','required data-place autocomplete="off" placeholder="Ex. Palma de Majorque"')}
         <div class="v-f2">${field('Du','debut',w.debut,'date')}${field('Au','fin',w.fin,'date')}</div>
         ${field('Ou bien quand (libre)','quand',w.quand,'text','placeholder="Ex. printemps 2028, un pont de mai…"')}
         <div class="v-f"><label>Pour le voyage (si c’est une étape à ajouter)</label><select class="v-in" name="trip"><option value="">—</option>${tripOpts}</select></div>
         ${field('Hébergement envisagé','hotel',w.hotel,'text','placeholder="Nom, quartier, lien Booking…"')}
         <div class="v-f"><label>Qui part, d’où, et retour vers où ?</label>
           ${profiles().map(p=>`<div class="cv-deprow">${pchip(p.id)}
-            <input class="v-in" data-dep="${p.id}" value="${esc((g[p.id]||{}).dep)}" placeholder="départ de…">
-            <input class="v-in" data-ret="${p.id}" value="${esc((g[p.id]||{}).ret)}" placeholder="retour vers…"></div>`).join('')}
+            <input class="v-in" data-dep="${p.id}" data-place autocomplete="off" value="${esc((g[p.id]||{}).dep)}" placeholder="départ de…">
+            <input class="v-in" data-ret="${p.id}" data-place autocomplete="off" value="${esc((g[p.id]||{}).ret)}" placeholder="retour vers…"></div>`).join('')}
           <div class="v-sum-small">Laisse vide pour quelqu’un qui ne vient pas. Ex. : Camille Lyon → Lyon, Sam Bruxelles → Bruxelles.</div></div>
         ${field('Budget estimé par personne (' + CS() + ')','budget',w.budget,'text','inputmode="decimal"')}
         ${field('Lien','lien',w.lien,'url','placeholder="https://"')}
@@ -2101,9 +2101,9 @@
      « la vale… » → La Valette 🇲🇹 Malte, Valence 🇪🇸 Espagne… Le choix garde la position exacte : Explorer, suggestions et carte
      utilisent ensuite le bon endroit (et pas une autre ville du même nom). */
   const PAC = {}; let pacT = 0, pacN = 0;
-  async function pacFetch(q){
-    const k = normQ(q); if(PAC[k]) return PAC[k];
-    let L = []; try { const j = await (await fetch(GEO + 'search?ac=1&format=jsonv2&limit=5&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(q))).json(); if(Array.isArray(j)) L = j; } catch(e){}
+  async function pacFetch(q, onlyC){
+    const k = (onlyC ? 'c|' : '') + normQ(q); if(PAC[k]) return PAC[k];
+    let L = []; try { const j = await (await fetch(GEO + 'search?ac=1' + (onlyC ? '&pl=country' : '') + '&format=jsonv2&limit=5&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(q))).json(); if(Array.isArray(j)) L = j; } catch(e){}
     const seen = new Set(), out = [];
     for(const x of L){
       const a = x.address || {}, lat = +x.lat, lng = +x.lon; if(!isFinite(lat) || !isFinite(lng)) continue;
@@ -2112,6 +2112,7 @@
       const name = String(x.name || (x.display_name || '').split(',')[0] || '').trim(); if(!name) continue;
       const k2 = normQ(name) + '|' + cc; if(seen.has(k2)) continue; seen.add(k2);
       const sub = isC ? MSGT('Pays') : [a.state && normQ(a.state) !== normQ(name) ? a.state : '', ctry].filter(Boolean).join(', ');
+      if(onlyC && !isC) continue;
       out.push({name, sub, cc, ctry: isC ? name : ctry, lat, lng});
     }
     if(Object.keys(PAC).length > 200) Object.keys(PAC).slice(0, 100).forEach(x=>delete PAC[x]);
@@ -2123,7 +2124,9 @@
     const g = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:it.name}, {lat:it.lat, lng:it.lng, v:2}); stamp(g); R[key] = g; markDirty(key);
     if(it.cc){ M.ctry = M.ctry || {}; M.ctry[normQ(it.name)] = {pays:it.ctry || '', cc:it.cc}; }
     persist(); pacClose(i);
-    i.value = it.name; i._pacSkip = 1;
+    if(/multi/.test(i.dataset.place || '')){ const parts = i.value.split(','); parts[parts.length - 1] = ' ' + it.name; i.value = parts.map(x=>x.trim()).filter(Boolean).join(', ') + ', '; }   // liste de pays : on remplace le dernier
+    else i.value = it.name;
+    i._pacSkip = 1;
     i.dispatchEvent(new Event('input', {bubbles:true})); i.dispatchEvent(new Event('change', {bubbles:true}));
   }
   function pacShow(i, L){
@@ -2152,9 +2155,10 @@
   document.addEventListener('input', e=>{
     const i = e.target; if(!i || !i.matches || !i.matches('input[data-place]')) return;
     if(i._pacSkip){ i._pacSkip = 0; return; }
-    clearTimeout(pacT); const q = i.value.trim(), my = ++pacN;
+    const md = i.dataset.place || '', multi = /multi/.test(md), onlyC = /country/.test(md), cur = i.value;
+    clearTimeout(pacT); const q = (multi ? cur.split(',').pop() : cur).trim(), my = ++pacN;
     if(q.length < 2){ pacClose(i); return; }
-    pacT = setTimeout(async ()=>{ const L = await pacFetch(q); if(my === pacN && i.value.trim() === q) pacShow(i, L); }, 300);
+    pacT = setTimeout(async ()=>{ const L = await pacFetch(q, onlyC); if(my === pacN && i.value === cur) pacShow(i, L); }, 300);
   });
   document.addEventListener('focusout', e=>{ const i = e.target; if(i && i._pac) setTimeout(()=>{ if(document.activeElement !== i) pacClose(i); }, 150); });
   document.addEventListener('keydown', e=>{ const i = e.target; if(e.key === 'Escape' && i && i._pac) pacClose(i); });

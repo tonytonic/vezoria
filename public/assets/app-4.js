@@ -230,7 +230,7 @@
     openSheet(`<h2>🧳 Liste de bagages</h2><div class="v-sum-small" style="margin-bottom:8px">${n} nuit${n>1?'s':''}. La liste s’ajoute à la ✅ Checklist, cochable par chacun.</div>
       <div class="v-f"><label>Pour qui ?</label><select class="v-in" id="bg-who"><option value="">Tout le monde (une liste commune)</option>${v.map(p=>`<option value="${p}">${esc(pname(p))}</option>`).join('')}<option value="each">Une liste par voyageur</option></select></div>
       <div class="v-f"><label>🛂 Ton passeport ou ta carte d’identité vient de…</label><select class="v-in" id="bg-from" onchange="CV.bagEntryUpd()">${BAG_FROM.map(([k,l])=>`<option value="${k}"${k===from?' selected':''}>${l}</option>`).join('')}</select></div>
-      <div class="v-f"><label>Pays visités</label><input class="v-in" id="bg-cc" placeholder="Ex. Italie, Malte" oninput="this.dataset.edited=1;CV.bagEntryUpd()"></div>
+      <div class="v-f"><label>Pays visités</label><input class="v-in" id="bg-cc" data-place="country multi" autocomplete="off" placeholder="Ex. Italie, Malte" oninput="this.dataset.edited=1;CV.bagEntryUpd()"></div>
       <div id="bg-ent" class="bg-ents"></div>
       <div class="v-f"><label>Climat</label><select class="v-in" id="bg-cl"><option value="auto">Automatique (météo des étapes)</option><option value="chaud">Chaud</option><option value="doux">Tempéré</option><option value="froid">Froid</option></select></div>
       <div class="v-f"><label>Activités</label>${[['plage','🏖️ Plage / piscine'],['rando','🥾 Randonnée'],['ville','🏙️ Ville & soirées'],['sport','⛷️ Sport / ski'],['pro','💼 Travail'],['enfant','👶 Avec enfants']].map(([k,l])=>`<label class="cv-checkline"><input type="checkbox" id="bg-${k}"${k==='ville'?' checked':''}> ${l}</label>`).join('')}</div>

@@ -704,7 +704,7 @@
       <form id="v-form" onsubmit="event.preventDefault();CV.saveSouv()">
         ${souvDaySel(s)}
         ${field('Titre','titre',s.titre,'text','placeholder="Ex. Coucher de soleil sur le Golden Gate"')}
-        <div class="v-f2">${field('Date','date',s.date,'date')}${field('Lieu','lieu',s.lieu,'text','placeholder="Ville, endroit"')}</div>
+        <div class="v-f2">${field('Date','date',s.date,'date')}${field('Lieu','lieu',s.lieu,'text','data-place autocomplete="off" placeholder="Ville, endroit"')}</div>
         <div class="v-f"><label>Récit</label><textarea class="v-in" name="texte" style="min-height:120px">${esc(s.texte)}</textarea></div>
         <div class="v-f"><label>Photos (${(s.photos||[]).length})</label>
           <div class="cv-grid" id="sv-grid">${(s.photos||[]).map((p,i)=>`<div class="cv-th"><img data-ph="${esc(p)}.t" alt=""><button type="button" class="cv-thx" onclick="CV.souvDelPhoto(${i})" aria-label="Retirer">✕</button></div>`).join('')}</div>
