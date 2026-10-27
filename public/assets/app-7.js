@@ -1678,7 +1678,7 @@
     if(choose){
       openSheet(`<h2>☁️ Cloud Vezoria</h2>
         <div class="v-sum-small" style="margin-bottom:12px">Où gardes-tu tes voyages ?<br><b>À cette étape, rien n’est partagé avec tes compagnons.</b><br>C’est ton cloud perso, chiffré sur ce téléphone : personne d’autre ne peut le lire, pas même nous.</div>
-        <button type="button" class="cv-choice${mode === 'all' ? ' on' : ''}" onclick="CV.cloudPick('all')"><i>☁️</i><span><b>Tout mon carnet dans le cloud</b><small>Tes voyages sont sauvegardés et te suivent sur tous tes appareils. Partage avec tes compagnons et tes abonnés, notifications. <span>${esc(RF('{0} de photos offerts, voyages partagés compris.', fmtB(((M.quota && M.quota.free) || 2e9))))}</span></small></span></button>
+        <button type="button" class="cv-choice${mode === 'all' ? ' on' : ''}" onclick="CV.cloudPick('all')"><i>☁️</i><span><b>Tout mon carnet dans le cloud</b><small>Tes voyages sont sauvegardés et te suivent sur tous tes appareils. Partage avec tes compagnons et tes abonnés, notifications. <span>${esc(RF('{0} de photos offerts, voyages partagés compris.', fmtB(((M.quota && M.quota.free) || 7e8))))}</span></small></span></button>
         <button type="button" class="cv-choice cv-off${mode === 'none' ? ' on' : ''}" onclick="CV.cloudPick('none')"><i>📱</i><span><em class="cv-offb">∞ ${MSGT('Sans limite · 100 % privé')}</em><b>Sans cloud</b><small>Rien sur nos serveurs et aucune limite de photos : tout reste sur ton téléphone ou ton ordinateur. Tu partages par paquets chiffrés que tu envoies toi-même. Pas d’abonnés ni de notifications entre amis, et pense à ta sauvegarde ZIP.</small></span></button>
         ${cloudCompare()}
         <div class="sy-r" style="margin-top:6px"><b>🔑 Tu as déjà un code ?</b><small>Ton code administrateur (celui de ton autre appareil : tout ton carnet arrive ici) ou un code compagnon reçu d’un proche.</small>
@@ -1994,12 +1994,12 @@
   }
   // ☁️ / 📱 les deux choix côte à côte : ce que chacun apporte, d’un coup d’œil
   function cloudCompare(){
-    const free = fmtB((M.quota && M.quota.free) || 2e9), Y = '✅', N = '—';
+    const free = fmtB((M.quota && M.quota.free) || 7e8), Y = '✅', N = '—';
     const rows = [[MSGT('Photos'), RF('{0} offerts', free), '∞ ' + MSGT('sans limite')], [MSGT('Sur nos serveurs'), MSGT('chiffré'), N + ' ' + MSGT('rien')],
       [MSGT('Tous tes appareils'), Y, N], [MSGT('Compagnons'), Y + ' ' + MSGT('en direct'), '📦 ' + MSGT('par paquets')], [MSGT('Abonnés'), Y, N], [MSGT('Notifications entre amis'), Y, N], [MSGT('Sauvegarde'), MSGT('automatique'), '💾 ZIP']];
     return `<details class="cv-cmp"><summary>⚖️ ${MSGT('Comparer cloud et hors ligne')}</summary><table><thead><tr><th></th><th>☁️ ${MSGT('Cloud')}</th><th>📱 ${MSGT('Hors ligne')}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}</tbody></table></details>`;
   }
-  const PH_B = 285000;   // ≈ une photo (1080 px) + sa vignette
+  const PH_B = 466000;   // repère d’affichage : 700 Mo ≈ 1 500 photos (une photo ≈ 285 Ko + sa vignette, avec de la marge)
   const fmtB = b => b >= 1e9 ? String(Math.round(b / 1e8) / 10).replace('.', ',') + ' Go' : Math.max(0, Math.round(b / 1e6)) + ' Mo';
   const phN = b => { const n = Math.max(0, Math.floor(b / PH_B)); return (n >= 1000 ? Math.floor(n / 100) * 100 : n).toLocaleString((window.I18N && I18N.locale) || 'fr-FR'); };
   const dLong = ms => new Date(ms).toLocaleDateString((window.I18N && I18N.locale) || 'fr-FR', {day:'numeric', month:'long', year:'numeric'});
