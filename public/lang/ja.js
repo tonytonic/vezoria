@@ -1,4 +1,10 @@
 I18N.load({
+"aéroport":"空港",
+"gare":"駅",
+"Ton hôtel → {0}":"ホテル → {0}",
+"Départ {0} : sois sur place vers {1}":"{0} 発：{1} ごろまでに到着を",
+"{0} → ton hôtel":"{0} → ホテル",
+"Arrivée {0}":"{0} 着",
 "🔀 Remettre mes visites dans le meilleur ordre":"🔀 訪問先をいちばん良い順番に並べる",
 "Change seulement l’ordre de ta liste, pour marcher le moins possible.":"リストの順番だけを変えて、歩く距離をできるだけ短くします。",
 "🗺️ Voir le trajet de la journée":"🗺️ 1日のルートを見る",

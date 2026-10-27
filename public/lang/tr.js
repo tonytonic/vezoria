@@ -1,4 +1,10 @@
 I18N.load({
+"aéroport":"havalimanı",
+"gare":"istasyon",
+"Ton hôtel → {0}":"Otelin → {0}",
+"Départ {0} : sois sur place vers {1}":"Kalkış {0}: {1} civarında orada ol",
+"{0} → ton hôtel":"{0} → otelin",
+"Arrivée {0}":"Varış {0}",
 "🔀 Remettre mes visites dans le meilleur ordre":"🔀 Ziyaretlerimi en iyi sıraya koy",
 "Change seulement l’ordre de ta liste, pour marcher le moins possible.":"Sadece listenin sırasını değiştirir, en az yürüyüş için.",
 "🗺️ Voir le trajet de la journée":"🗺️ Günün rotasını gör",

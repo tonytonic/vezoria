@@ -1,4 +1,10 @@
 I18N.load({
+"aéroport":"مطار",
+"gare":"محطة",
+"Ton hôtel → {0}":"فندقك ← {0}",
+"Départ {0} : sois sur place vers {1}":"المغادرة {0}: كن هناك قرابة {1}",
+"{0} → ton hôtel":"{0} ← فندقك",
+"Arrivée {0}":"الوصول {0}",
 "🔀 Remettre mes visites dans le meilleur ordre":"🔀 رتّب زياراتي بأفضل ترتيب",
 "Change seulement l’ordre de ta liste, pour marcher le moins possible.":"يغيّر ترتيب قائمتك فقط، لتمشي أقل ما يمكن.",
 "🗺️ Voir le trajet de la journée":"🗺️ عرض مسار اليوم",

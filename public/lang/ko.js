@@ -1,4 +1,10 @@
 I18N.load({
+"aéroport":"공항",
+"gare":"역",
+"Ton hôtel → {0}":"내 호텔 → {0}",
+"Départ {0} : sois sur place vers {1}":"{0} 출발: {1}까지 도착하세요",
+"{0} → ton hôtel":"{0} → 내 호텔",
+"Arrivée {0}":"{0} 도착",
 "🔀 Remettre mes visites dans le meilleur ordre":"🔀 방문지를 가장 좋은 순서로 정리",
 "Change seulement l’ordre de ta liste, pour marcher le moins possible.":"목록의 순서만 바꿔서 최대한 적게 걷도록 해요.",
 "🗺️ Voir le trajet de la journée":"🗺️ 하루 경로 보기",

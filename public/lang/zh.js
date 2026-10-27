@@ -1,4 +1,10 @@
 I18N.load({
+"aéroport":"机场",
+"gare":"车站",
+"Ton hôtel → {0}":"你的酒店 → {0}",
+"Départ {0} : sois sur place vers {1}":"{0} 出发：请在 {1} 前到达",
+"{0} → ton hôtel":"{0} → 你的酒店",
+"Arrivée {0}":"{0} 到达",
 "🔀 Remettre mes visites dans le meilleur ordre":"🔀 把我的景点排成最佳顺序",
 "Change seulement l’ordre de ta liste, pour marcher le moins possible.":"只改变列表顺序，让你尽量少走路。",
 "🗺️ Voir le trajet de la journée":"🗺️ 查看当天路线",

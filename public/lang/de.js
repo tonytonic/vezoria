@@ -1,4 +1,10 @@
 I18N.load({
+"aéroport":"Flughafen",
+"gare":"Bahnhof",
+"Ton hôtel → {0}":"Dein Hotel → {0}",
+"Départ {0} : sois sur place vers {1}":"Abfahrt {0}: sei gegen {1} dort",
+"{0} → ton hôtel":"{0} → dein Hotel",
+"Arrivée {0}":"Ankunft {0}",
 "🔀 Remettre mes visites dans le meilleur ordre":"🔀 Meine Besuche in die beste Reihenfolge bringen",
 "Change seulement l’ordre de ta liste, pour marcher le moins possible.":"Ändert nur die Reihenfolge deiner Liste, damit du möglichst wenig läufst.",
 "🗺️ Voir le trajet de la journée":"🗺️ Route des Tages ansehen",

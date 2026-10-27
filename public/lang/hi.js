@@ -1,4 +1,10 @@
 I18N.load({
+"aéroport":"हवाई अड्डा",
+"gare":"स्टेशन",
+"Ton hôtel → {0}":"आपका होटल → {0}",
+"Départ {0} : sois sur place vers {1}":"प्रस्थान {0}: {1} तक वहाँ पहुँचें",
+"{0} → ton hôtel":"{0} → आपका होटल",
+"Arrivée {0}":"आगमन {0}",
 "🔀 Remettre mes visites dans le meilleur ordre":"🔀 मेरी जगहों को सबसे अच्छे क्रम में रखें",
 "Change seulement l’ordre de ta liste, pour marcher le moins possible.":"सिर्फ़ आपकी सूची का क्रम बदलता है, ताकि कम से कम चलना पड़े।",
 "🗺️ Voir le trajet de la journée":"🗺️ दिन का रास्ता देखें",
