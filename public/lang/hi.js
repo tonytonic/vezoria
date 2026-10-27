@@ -1,4 +1,6 @@
 I18N.load({
+"Je dessine le trajet…":"रास्ता बना रहा हूँ…",
+"Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"रास्ता देखने के लिए जगहें (या उस दिन की यात्रा) जोड़ें।",
 "aéroport":"हवाई अड्डा",
 "gare":"स्टेशन",
 "Ton hôtel → {0}":"आपका होटल → {0}",

@@ -1,4 +1,6 @@
 I18N.load({
+"Je dessine le trajet…":"أرسم المسار…",
+"Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"أضف أماكن للزيارة (أو رحلة في ذلك اليوم) لرؤية المسار.",
 "aéroport":"مطار",
 "gare":"محطة",
 "Ton hôtel → {0}":"فندقك ← {0}",

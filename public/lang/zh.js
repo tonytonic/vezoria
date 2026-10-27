@@ -1,4 +1,6 @@
 I18N.load({
+"Je dessine le trajet…":"正在绘制路线…",
+"Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"添加要看的地点（或当天的行程）即可查看路线。",
 "aéroport":"机场",
 "gare":"车站",
 "Ton hôtel → {0}":"你的酒店 → {0}",

@@ -1,4 +1,6 @@
 I18N.load({
+"Je dessine le trajet…":"ルートを描いています…",
+"Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"ルートを見るには、見たい場所（またはその日の移動）を追加してください。",
 "aéroport":"空港",
 "gare":"駅",
 "Ton hôtel → {0}":"ホテル → {0}",

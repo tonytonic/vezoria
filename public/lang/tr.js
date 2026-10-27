@@ -1,4 +1,6 @@
 I18N.load({
+"Je dessine le trajet…":"Rotayı çiziyorum…",
+"Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Rotayı görmek için yer ekle (ya da o gün bir yolculuk).",
 "aéroport":"havalimanı",
 "gare":"istasyon",
 "Ton hôtel → {0}":"Otelin → {0}",

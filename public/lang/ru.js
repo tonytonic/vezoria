@@ -1,4 +1,6 @@
 I18N.load({
+"Je dessine le trajet…":"Рисую маршрут…",
+"Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Добавь места (или поездку в этот день), чтобы увидеть маршрут.",
 "aéroport":"аэропорт",
 "gare":"вокзал",
 "Ton hôtel → {0}":"Твой отель → {0}",

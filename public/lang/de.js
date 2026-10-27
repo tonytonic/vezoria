@@ -1,4 +1,6 @@
 I18N.load({
+"Je dessine le trajet…":"Ich zeichne die Route…",
+"Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Füge Orte hinzu (oder eine Fahrt an diesem Tag), um die Route zu sehen.",
 "aéroport":"Flughafen",
 "gare":"Bahnhof",
 "Ton hôtel → {0}":"Dein Hotel → {0}",
