@@ -1,4 +1,7 @@
 I18N.load({
+"Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"दोहराई गई प्रविष्टियाँ हटाएँ? रखी गई प्रविष्टि में जो कमी है (कीमत, भुगतानकर्ता, संदर्भ, टिकट…) वह उसमें कॉपी हो जाएगा।",
+"Doublon retiré":"दोहराव हटाया गया",
+"{0} fiches pour le même trajet {1} : retirer le doublon":"एक ही यात्रा {1} के लिए {0} प्रविष्टियाँ: दोहराव हटाएँ",
 "Les visites du jour":"दिन की जगहें",
 "Je dessine le trajet…":"रास्ता बना रहा हूँ…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"रास्ता देखने के लिए जगहें (या उस दिन की यात्रा) जोड़ें।",

@@ -1,4 +1,7 @@
 I18N.load({
+"Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"删除重复的条目？保留的条目中缺少的内容（价格、付款人、参考号、票据…）会被复制过去。",
+"Doublon retiré":"已删除重复项",
+"{0} fiches pour le même trajet {1} : retirer le doublon":"同一行程 {1} 有 {0} 个条目：删除重复项",
 "Les visites du jour":"当天的景点",
 "Je dessine le trajet…":"正在绘制路线…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"添加要看的地点（或当天的行程）即可查看路线。",

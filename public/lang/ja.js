@@ -1,4 +1,7 @@
 I18N.load({
+"Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"重複した項目を削除しますか？残す項目に足りないもの（料金、支払者、予約番号、チケット…）はコピーされます。",
+"Doublon retiré":"重複を削除しました",
+"{0} fiches pour le même trajet {1} : retirer le doublon":"同じ移動 {1} の項目が {0} 件：重複を削除",
 "Les visites du jour":"今日の訪問先",
 "Je dessine le trajet…":"ルートを描いています…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"ルートを見るには、見たい場所（またはその日の移動）を追加してください。",

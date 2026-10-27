@@ -1,4 +1,7 @@
 I18N.load({
+"Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"Dubbele items verwijderen? Wat ontbreekt in het behouden item (prijs, betaler, referentie, tickets…) wordt overgenomen.",
+"Doublon retiré":"Dubbel item verwijderd",
+"{0} fiches pour le même trajet {1} : retirer le doublon":"{0} items voor dezelfde reis {1}: dubbel item verwijderen",
 "Les visites du jour":"De bezoeken van de dag",
 "Je dessine le trajet…":"Ik teken de route…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Voeg plekken toe (of een reis die dag) om de route te zien.",

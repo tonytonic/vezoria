@@ -1,4 +1,7 @@
 I18N.load({
+"Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"Doppelte Einträge entfernen? Was im behaltenen Eintrag fehlt (Preis, Zahler, Referenz, Tickets…), wird übernommen.",
+"Doublon retiré":"Duplikat entfernt",
+"{0} fiches pour le même trajet {1} : retirer le doublon":"{0} Einträge für dieselbe Fahrt {1}: Duplikat entfernen",
 "Les visites du jour":"Die Besuche des Tages",
 "Je dessine le trajet…":"Ich zeichne die Route…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Füge Orte hinzu (oder eine Fahrt an diesem Tag), um die Route zu sehen.",

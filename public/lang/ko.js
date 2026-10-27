@@ -1,4 +1,7 @@
 I18N.load({
+"Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"중복 항목을 삭제할까요? 남기는 항목에 없는 내용(가격, 결제자, 예약 번호, 티켓…)은 복사돼요.",
+"Doublon retiré":"중복을 삭제했어요",
+"{0} fiches pour le même trajet {1} : retirer le doublon":"같은 이동 {1}에 항목 {0}개: 중복 삭제",
 "Les visites du jour":"오늘의 방문지",
 "Je dessine le trajet…":"경로를 그리는 중…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"경로를 보려면 볼 곳(또는 그날의 이동)을 추가하세요.",

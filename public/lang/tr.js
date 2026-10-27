@@ -1,4 +1,7 @@
 I18N.load({
+"Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"Yinelenen kayıtlar silinsin mi? Tutulan kayıtta eksik olanlar (fiyat, ödeyen, referans, biletler…) ona kopyalanır.",
+"Doublon retiré":"Yinelenen kayıt silindi",
+"{0} fiches pour le même trajet {1} : retirer le doublon":"Aynı yolculuk için {0} kayıt {1}: yineleneni sil",
 "Les visites du jour":"Günün ziyaretleri",
 "Je dessine le trajet…":"Rotayı çiziyorum…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Rotayı görmek için yer ekle (ya da o gün bir yolculuk).",

@@ -1,4 +1,7 @@
 I18N.load({
+"Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"Удалить дубликаты? Чего не хватает в оставленной записи (цена, плательщик, номер, билеты…), будет скопировано.",
+"Doublon retiré":"Дубликат удалён",
+"{0} fiches pour le même trajet {1} : retirer le doublon":"{0} записи для одной поездки {1}: удалить дубликат",
 "Les visites du jour":"Места дня",
 "Je dessine le trajet…":"Рисую маршрут…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Добавь места (или поездку в этот день), чтобы увидеть маршрут.",

@@ -1,4 +1,7 @@
 I18N.load({
+"Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"¿Quitar las fichas duplicadas? Lo que falte en la ficha que se conserva (precio, pagador, referencia, billetes…) se copia en ella.",
+"Doublon retiré":"Duplicado eliminado",
+"{0} fiches pour le même trajet {1} : retirer le doublon":"{0} fichas para el mismo trayecto {1}: quitar el duplicado",
 "Les visites du jour":"Las visitas del día",
 "Je dessine le trajet…":"Dibujo el recorrido…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Añade lugares para ver (o un trayecto ese día) para ver el recorrido.",

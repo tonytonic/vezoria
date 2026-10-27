@@ -1,4 +1,7 @@
 I18N.load({
+"Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"Rimuovere le schede doppie? Ciò che manca nella scheda tenuta (prezzo, pagatore, riferimento, biglietti…) viene copiato.",
+"Doublon retiré":"Doppione rimosso",
+"{0} fiches pour le même trajet {1} : retirer le doublon":"{0} schede per lo stesso viaggio {1}: rimuovi il doppione",
 "Les visites du jour":"Le visite del giorno",
 "Je dessine le trajet…":"Disegno il percorso…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"Aggiungi luoghi da vedere (o un viaggio quel giorno) per vedere il percorso.",

@@ -1,4 +1,7 @@
 I18N.load({
+"Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"إزالة البطاقات المكررة؟ ما ينقص البطاقة المحتفظ بها (السعر، الدافع، المرجع، التذاكر…) يُنسخ إليها.",
+"Doublon retiré":"تمت إزالة المكرر",
+"{0} fiches pour le même trajet {1} : retirer le doublon":"{0} بطاقات للرحلة نفسها {1}: إزالة المكرر",
 "Les visites du jour":"زيارات اليوم",
 "Je dessine le trajet…":"أرسم المسار…",
 "Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.":"أضف أماكن للزيارة (أو رحلة في ذلك اليوم) لرؤية المسار.",
