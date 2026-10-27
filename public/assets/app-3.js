@@ -1186,7 +1186,7 @@
         <label class="cv-checkline"><input type="checkbox" id="cy-tr" ${h.planTr===false?'':'checked'}> Jour d’arrivée ou de départ : partir de la gare / l’aéroport, ou y finir</label>
         <div class="v-f2"><div class="v-f"><label>À pied par trajet (km)</label><input class="v-in" id="cy-walk" inputmode="decimal" value="${esc(t.marche||2.5)}"></div>
           <div class="v-f"><label>À pied par jour (km)</label><input class="v-in" id="cy-day" inputmode="decimal" value="${esc(t.marcheJour||25)}"></div></div>
-        <button class="v-btn" id="cy-go" onclick="CV.cityOpt()">⚡ Optimiser l’étape</button>
+        <button class="v-btn" id="cy-go" onclick="CV.cityOpt()">🔀 Répartir les visites dans les jours, dans le meilleur ordre</button>
         <div id="cy-res">${cityResHTML(hid)}</div>
       </div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);

@@ -2101,9 +2101,10 @@
      « la vale… » → La Valette 🇲🇹 Malte, Valence 🇪🇸 Espagne… Le choix garde la position exacte : Explorer, suggestions et carte
      utilisent ensuite le bon endroit (et pas une autre ville du même nom). */
   const PAC = {}; let pacT = 0, pacN = 0;
-  async function pacFetch(q, onlyC){
-    const k = (onlyC ? 'c|' : '') + normQ(q); if(PAC[k]) return PAC[k];
-    let L = []; try { const j = await (await fetch(GEO + 'search?ac=1' + (onlyC ? '&pl=country' : '') + '&format=jsonv2&limit=5&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(q))).json(); if(Array.isArray(j)) L = j; } catch(e){}
+  async function pacFetch(q, onlyC, near){
+    const bias = near ? '&lat=' + (+near.lat).toFixed(2) + '&lon=' + (+near.lng).toFixed(2) : '';   // 🎯 priorité aux lieux proches (le pays tapé)
+    const k = (onlyC ? 'c|' : '') + bias + normQ(q); if(PAC[k]) return PAC[k];
+    let L = []; try { const j = await (await fetch(GEO + 'search?ac=1' + (onlyC ? '&pl=country' : '') + bias + '&format=jsonv2&limit=5&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(q))).json(); if(Array.isArray(j)) L = j; } catch(e){}
     const seen = new Set(), out = [];
     for(const x of L){
       const a = x.address || {}, lat = +x.lat, lng = +x.lon; if(!isFinite(lat) || !isFinite(lng)) continue;
@@ -2117,6 +2118,31 @@
     }
     if(Object.keys(PAC).length > 200) Object.keys(PAC).slice(0, 100).forEach(x=>delete PAC[x]);
     return (PAC[k] = out);
+  }
+  // « la vilette malte » : le pays tapé avec la ville → on cherche la ville DANS ce pays (Malte d’abord), et le pays est proposé aussi
+  let ISO_N = null;
+  function pacCountry(q){
+    if(!ISO_N){ ISO_N = []; try { (Array.isArray(ISO) ? ISO : String(ISO).split(/[\s,]+/)).forEach(c=>{ const n = normQ(ccName(c) || ''); if(n.length >= 4 && n !== normQ(c)) ISO_N.push([c, n]); }); } catch(e){} }
+    const nq = ' ' + normQ(q) + ' '; let best = null;
+    for(const [c, n] of ISO_N) if(nq.includes(' ' + n + ' ') && (!best || n.length > best[1].length)) best = [c, n];
+    return best;
+  }
+  async function pacSmart(q, onlyC){
+    if(onlyC) return pacFetch(q, true);
+    const hit = pacCountry(q); if(!hit) return pacFetch(q);
+    const [cc, cn] = hit, rest = (' ' + normQ(q) + ' ').replace(' ' + cn + ' ', ' ').trim();
+    const C = (await pacFetch(ccName(cc), true))[0] || null;
+    const late = (p, ms) => Promise.race([p, new Promise(r=>setTimeout(()=>r(null), ms))]);
+    const [A, B, D] = await Promise.all([pacFetch(q), rest.length >= 2 ? pacFetch(rest, false, C) : Promise.resolve([]), late(ctryData(cc).catch(()=>null), 3500)]);
+    // les grandes villes du pays, comparées en tolérant les fautes (« vilette » ≈ « Valette »)
+    const lev = (a, b) => { const m = a.length, n = b.length; if(!m || !n) return m + n; let p = Array.from({length:n + 1}, (_, j)=>j);
+      for(let i = 1; i <= m; i++){ const c = [i]; for(let j = 1; j <= n; j++) c[j] = Math.min(p[j] + 1, c[j - 1] + 1, p[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); p = c; } return p[n]; };
+    const W = ((D && D.cities) || []).map(x=>{ const n = normQ(x.nom), d = !rest ? 0 : n.startsWith(rest) ? 0 : Math.min(lev(rest, n), lev(rest, n.slice(0, rest.length + 1))); return {x, d}; })
+      .filter(o=>!rest || o.d <= Math.max(1, Math.floor(rest.length / 4))).sort((a, b)=>a.d - b.d || b.x.sl - a.x.sl).slice(0, rest ? 3 : 4)
+      .map(({x})=>({name:x.nom, sub:ccName(cc), cc, ctry:ccName(cc), lat:x.lat, lng:x.lng}));
+    const inC = x=>x.cc === cc, seen = new Set(), out = [];
+    [...W, ...B.filter(inC), ...A.filter(inC), ...(C ? [C] : []), ...B, ...A].forEach(x=>{ const k = normQ(x.name) + '|' + x.cc; if(!seen.has(k)){ seen.add(k); out.push(x); } });
+    return out.slice(0, 6);
   }
   function pacClose(i){ const b = i && i._pac; if(b){ b.remove(); i._pac = null; } }
   function pacPick(i, it){
@@ -2141,24 +2167,16 @@
       o.addEventListener('click', ()=>pacPick(i, it));
       b.appendChild(o);
     });
-    document.body.appendChild(b); i._pac = b; pacPlace(i);
+    const at = i.closest('.wz-et, .v-f2, .cv-row') || i; at.insertAdjacentElement('afterend', b); i._pac = b;
+    setTimeout(()=>{ try { b.scrollIntoView({block:'nearest', behavior:'smooth'}); } catch(e){} }, 50);
   }
-  // en surimpression juste sous le champ (une ligne « ville + nuits » ne se déforme pas)
-  function pacPlace(i){
-    const b = i && i._pac; if(!b) return; const r = i.getBoundingClientRect(), vw = window.innerWidth, w = Math.min(vw - 16, Math.max(r.width, 280));
-    b.style.left = Math.max(8, Math.min(r.left, vw - w - 8)) + 'px'; b.style.width = w + 'px';
-    const below = window.innerHeight - r.bottom, up = below < 220 && r.top > below;
-    b.style.top = up ? 'auto' : (r.bottom + 4) + 'px'; b.style.bottom = up ? (window.innerHeight - r.top + 4) + 'px' : 'auto';
-  }
-  window.addEventListener('scroll', ()=>{ const i = document.activeElement; if(i && i._pac) pacPlace(i); }, true);
-  window.addEventListener('resize', ()=>{ const i = document.activeElement; if(i && i._pac) pacPlace(i); });
   document.addEventListener('input', e=>{
     const i = e.target; if(!i || !i.matches || !i.matches('input[data-place]')) return;
     if(i._pacSkip){ i._pacSkip = 0; return; }
     const md = i.dataset.place || '', multi = /multi/.test(md), onlyC = /country/.test(md), cur = i.value;
     clearTimeout(pacT); const q = (multi ? cur.split(',').pop() : cur).trim(), my = ++pacN;
     if(q.length < 2){ pacClose(i); return; }
-    pacT = setTimeout(async ()=>{ const L = await pacFetch(q, onlyC); if(my === pacN && i.value === cur) pacShow(i, L); }, 300);
+    pacT = setTimeout(async ()=>{ const L = await pacSmart(q, onlyC); if(my === pacN && i.value === cur) pacShow(i, L); }, 300);
   });
   document.addEventListener('focusout', e=>{ const i = e.target; if(i && i._pac) setTimeout(()=>{ if(document.activeElement !== i) pacClose(i); }, 150); });
   document.addEventListener('keydown', e=>{ const i = e.target; if(e.key === 'Escape' && i && i._pac) pacClose(i); });
@@ -2240,8 +2258,8 @@
     </div>`;
   }
   let planD = null;
-  function planDay(d){
-    planD = d;
+  function planDay(d, map){
+    planD = d; const rh = routeHTML(d, false), showMap = map !== false;   // 🗺️ venu de « Itinéraire » : trajet ouvert · après « remettre dans l’ordre » : on reste sur la liste
     const cfg = dayCfg(d), opts = pointOptions(d), pl = placesOf(d), t = trip(), city = dayCity(d);
     const sel = (id, cur, loop) => `<select class="v-in" id="${id}" onchange="CV.plCfg()">${loop ? `<option value="boucle"${cur==='boucle'?' selected':''}>↩️ Retour au point de départ (boucle)</option><option value="fin"${cur==='fin'?' selected':''}>🏁 Fin au dernier lieu visité</option>` : ''}${opts.map(o=>`<option value="${o.k}"${o.k===cur?' selected':''}>${esc(o.lbl)}</option>`).join('')}</select>`;
     openSheet(`<h2>🗺️ ${fdate(d)}${dayInfo(d).titre ? ' · ' + esc(dayInfo(d).titre) : ''}</h2>
@@ -2260,8 +2278,10 @@
       ${hotelsAround(d).night ? `<div class="cv-row" style="margin-bottom:10px"><button type="button" class="v-day-edit" onclick="CV.planCity('${ja(hotelsAround(d).night.id)}')">🏙️ Organiser toute l’étape</button></div>` : ''}
       <div class="v-f"><label>Je marche jusqu’à</label><div class="cv-row"><input class="v-in cv-num" id="pl-walk" inputmode="decimal" value="${esc(t.marche||2.5)}" onchange="CV.plCfg()">
         <span class="v-sum-small">km par trajet ; au-delà : métro / bus, puis taxi</span></div></div>
-      <button type="button" class="v-btn" id="pl-go" onclick="CV.plOpt()">⚡ Optimiser l’itinéraire</button>
-      <div id="pl-res">${routeHTML(d, false)}</div>
+      <button type="button" class="v-btn" id="pl-go" onclick="CV.plOpt()">🔀 Remettre mes visites dans le meilleur ordre</button>
+      <div class="v-sum-small" style="margin-top:4px">Change seulement l’ordre de ta liste, pour marcher le moins possible.</div>
+      <div id="pl-res"></div>
+      ${rh ? `<details class="pl-map"${showMap ? ' open' : ''}><summary>🗺️ Voir le trajet de la journée</summary>${rh}</details>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   const val = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
@@ -2325,9 +2345,9 @@
       if(!end) end = lastP ? Object.assign({}, pts[lastP.id]) : start, endLbl = lastP ? lastP.nom : endLbl;
       info.route = {start:Object.assign({}, start, {lbl: o1 ? o1.lbl.replace(/^\S+\s/,'') : cfg.depTxt}), end:Object.assign({}, end, {lbl:endLbl}),
         loop: cfg.arr==='boucle', fin: cfg.arr==='fin', ids: order.map(i=>ok[i].id), pts, miss, walk: num(val('pl-walk')) || 2.5};
-      put(info, '⚡ Itinéraire optimisé');
-      planDay(d);
-      const r2 = document.getElementById('pl-res'); if(r2) r2.scrollIntoView({block:'start', behavior:'smooth'});
+      put(info, '🔀 ' + MSGT('Visites remises dans le meilleur ordre'));
+      planDay(d, false);
+      const r2 = document.querySelector('.cv-place'); if(r2) r2.scrollIntoView({block:'center', behavior:'smooth'});
     } catch(e){
       say(''); alert(e.message);
     }
