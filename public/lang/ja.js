@@ -1,4 +1,9 @@
 I18N.load({
+"🔀 Remettre mes visites dans le meilleur ordre":"🔀 訪問先をいちばん良い順番に並べる",
+"Change seulement l’ordre de ta liste, pour marcher le moins possible.":"リストの順番だけを変えて、歩く距離をできるだけ短くします。",
+"🗺️ Voir le trajet de la journée":"🗺️ 1日のルートを見る",
+"Visites remises dans le meilleur ordre":"訪問先をいちばん良い順番に並べました",
+"🔀 Répartir les visites dans les jours, dans le meilleur ordre":"🔀 訪問先を日ごとに、いちばん良い順番で振り分ける",
 "Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».":"すべて変更できます。次は各スポットの 🔎「見どころ」、🪄「日程を埋める」へ。",
 "réussis":"達成",
 "Signalement depuis Vezoria":"Vezoria からの報告",

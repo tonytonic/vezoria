@@ -1,4 +1,9 @@
 I18N.load({
+"🔀 Remettre mes visites dans le meilleur ordre":"🔀 把我的景点排成最佳顺序",
+"Change seulement l’ordre de ta liste, pour marcher le moins possible.":"只改变列表顺序，让你尽量少走路。",
+"🗺️ Voir le trajet de la journée":"🗺️ 查看当天路线",
+"Visites remises dans le meilleur ordre":"景点已排成最佳顺序",
+"🔀 Répartir les visites dans les jours, dans le meilleur ordre":"🔀 按最佳顺序把景点分配到各天",
 "Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».":"一切都可以修改。接下来：每一站的 🔎“看什么”，🪄“填满我的日程”。",
 "réussis":"已完成",
 "Signalement depuis Vezoria":"来自 Vezoria 的举报",

@@ -1,4 +1,9 @@
 I18N.load({
+"🔀 Remettre mes visites dans le meilleur ordre":"🔀 Ziyaretlerimi en iyi sıraya koy",
+"Change seulement l’ordre de ta liste, pour marcher le moins possible.":"Sadece listenin sırasını değiştirir, en az yürüyüş için.",
+"🗺️ Voir le trajet de la journée":"🗺️ Günün rotasını gör",
+"Visites remises dans le meilleur ordre":"Ziyaretler en iyi sıraya kondu",
+"🔀 Répartir les visites dans les jours, dans le meilleur ordre":"🔀 Ziyaretleri günlere en iyi sırayla dağıt",
 "Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».":"Her şey değiştirilebilir. Sonra: her durakta 🔎 “Ne görülür”, 🪄 “Günlerimi doldur”.",
 "réussis":"başarıldı",
 "Signalement depuis Vezoria":"Vezoria’dan şikâyet",

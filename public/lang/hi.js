@@ -1,4 +1,9 @@
 I18N.load({
+"🔀 Remettre mes visites dans le meilleur ordre":"🔀 मेरी जगहों को सबसे अच्छे क्रम में रखें",
+"Change seulement l’ordre de ta liste, pour marcher le moins possible.":"सिर्फ़ आपकी सूची का क्रम बदलता है, ताकि कम से कम चलना पड़े।",
+"🗺️ Voir le trajet de la journée":"🗺️ दिन का रास्ता देखें",
+"Visites remises dans le meilleur ordre":"जगहें सबसे अच्छे क्रम में रख दी गईं",
+"🔀 Répartir les visites dans les jours, dans le meilleur ordre":"🔀 जगहों को दिनों में सबसे अच्छे क्रम में बाँटें",
 "Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».":"सब कुछ बदला जा सकता है। फिर: हर पड़ाव पर 🔎 “क्या देखें”, 🪄 “मेरे दिन भरें”।",
 "réussis":"पूरे",
 "Signalement depuis Vezoria":"Vezoria से शिकायत",

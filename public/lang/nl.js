@@ -1,4 +1,9 @@
 I18N.load({
+"🔀 Remettre mes visites dans le meilleur ordre":"🔀 Mijn bezoeken in de beste volgorde zetten",
+"Change seulement l’ordre de ta liste, pour marcher le moins possible.":"Verandert alleen de volgorde van je lijst, zodat je zo weinig mogelijk loopt.",
+"🗺️ Voir le trajet de la journée":"🗺️ Route van de dag bekijken",
+"Visites remises dans le meilleur ordre":"Bezoeken in de beste volgorde gezet",
+"🔀 Répartir les visites dans les jours, dans le meilleur ordre":"🔀 Bezoeken over de dagen verdelen, in de beste volgorde",
 "Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».":"Alles is aan te passen. Daarna: 🔎 ‘Wat te zien’ bij elke etappe, 🪄 ‘Mijn dagen vullen’.",
 "réussis":"gehaald",
 "Signalement depuis Vezoria":"Melding vanuit Vezoria",

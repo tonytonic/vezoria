@@ -1,4 +1,9 @@
 I18N.load({
+"🔀 Remettre mes visites dans le meilleur ordre":"🔀 Colocar minhas visitas na melhor ordem",
+"Change seulement l’ordre de ta liste, pour marcher le moins possible.":"Só muda a ordem da sua lista, para andar o mínimo possível.",
+"🗺️ Voir le trajet de la journée":"🗺️ Ver o trajeto do dia",
+"Visites remises dans le meilleur ordre":"Visitas colocadas na melhor ordem",
+"🔀 Répartir les visites dans les jours, dans le meilleur ordre":"🔀 Distribuir as visitas pelos dias, na melhor ordem",
 "Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».":"Tudo pode ser alterado. Depois: 🔎 “O que ver” em cada etapa, 🪄 “Preencher meus dias”.",
 "réussis":"concluídos",
 "Signalement depuis Vezoria":"Denúncia pelo Vezoria",

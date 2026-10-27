@@ -1,4 +1,9 @@
 I18N.load({
+"🔀 Remettre mes visites dans le meilleur ordre":"🔀 Put my visits in the best order",
+"Change seulement l’ordre de ta liste, pour marcher le moins possible.":"Only changes the order of your list, so you walk as little as possible.",
+"🗺️ Voir le trajet de la journée":"🗺️ See the day’s route",
+"Visites remises dans le meilleur ordre":"Visits put in the best order",
+"🔀 Répartir les visites dans les jours, dans le meilleur ordre":"🔀 Spread the visits over the days, in the best order",
 "Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».":"Everything can be edited. Next: 🔎 “What to see” at each stop, 🪄 “Fill my days”.",
 "réussis":"done",
 "Signalement depuis Vezoria":"Report from Vezoria",

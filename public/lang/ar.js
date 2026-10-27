@@ -1,4 +1,9 @@
 I18N.load({
+"🔀 Remettre mes visites dans le meilleur ordre":"🔀 رتّب زياراتي بأفضل ترتيب",
+"Change seulement l’ordre de ta liste, pour marcher le moins possible.":"يغيّر ترتيب قائمتك فقط، لتمشي أقل ما يمكن.",
+"🗺️ Voir le trajet de la journée":"🗺️ عرض مسار اليوم",
+"Visites remises dans le meilleur ordre":"تم ترتيب الزيارات بأفضل ترتيب",
+"🔀 Répartir les visites dans les jours, dans le meilleur ordre":"🔀 وزّع الزيارات على الأيام بأفضل ترتيب",
 "Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».":"كل شيء قابل للتعديل. بعد ذلك: 🔎 «ماذا ترى» في كل محطة، 🪄 «املأ أيامي».",
 "réussis":"منجَزة",
 "Signalement depuis Vezoria":"بلاغ من Vezoria",

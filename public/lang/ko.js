@@ -1,4 +1,9 @@
 I18N.load({
+"🔀 Remettre mes visites dans le meilleur ordre":"🔀 방문지를 가장 좋은 순서로 정리",
+"Change seulement l’ordre de ta liste, pour marcher le moins possible.":"목록의 순서만 바꿔서 최대한 적게 걷도록 해요.",
+"🗺️ Voir le trajet de la journée":"🗺️ 하루 경로 보기",
+"Visites remises dans le meilleur ordre":"방문지를 가장 좋은 순서로 정리했어요",
+"🔀 Répartir les visites dans les jours, dans le meilleur ordre":"🔀 방문지를 날짜별로 가장 좋은 순서로 나누기",
 "Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».":"모두 수정할 수 있어요. 다음: 각 일정의 🔎 ‘볼거리’, 🪄 ‘하루 채우기’.",
 "réussis":"달성",
 "Signalement depuis Vezoria":"Vezoria 신고",

@@ -1,4 +1,9 @@
 I18N.load({
+"🔀 Remettre mes visites dans le meilleur ordre":"🔀 Расставить мои места в лучшем порядке",
+"Change seulement l’ordre de ta liste, pour marcher le moins possible.":"Меняет только порядок списка, чтобы идти как можно меньше.",
+"🗺️ Voir le trajet de la journée":"🗺️ Посмотреть маршрут дня",
+"Visites remises dans le meilleur ordre":"Места расставлены в лучшем порядке",
+"🔀 Répartir les visites dans les jours, dans le meilleur ordre":"🔀 Распределить места по дням в лучшем порядке",
 "Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».":"Всё можно изменить. Дальше: 🔎 «Что посмотреть» на каждом этапе, 🪄 «Заполнить мои дни».",
 "réussis":"выполнено",
 "Signalement depuis Vezoria":"Жалоба из Vezoria",

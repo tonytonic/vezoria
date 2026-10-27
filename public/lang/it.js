@@ -1,4 +1,9 @@
 I18N.load({
+"🔀 Remettre mes visites dans le meilleur ordre":"🔀 Metti le mie visite nell’ordine migliore",
+"Change seulement l’ordre de ta liste, pour marcher le moins possible.":"Cambia solo l’ordine della tua lista, per camminare il meno possibile.",
+"🗺️ Voir le trajet de la journée":"🗺️ Vedi il percorso della giornata",
+"Visites remises dans le meilleur ordre":"Visite messe nell’ordine migliore",
+"🔀 Répartir les visites dans les jours, dans le meilleur ordre":"🔀 Distribuisci le visite nei giorni, nell’ordine migliore",
 "Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».":"Tutto è modificabile. Poi: 🔎 «Cosa vedere» a ogni tappa, 🪄 «Riempi le mie giornate».",
 "réussis":"riusciti",
 "Signalement depuis Vezoria":"Segnalazione da Vezoria",
