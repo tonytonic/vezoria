@@ -90,7 +90,7 @@ export async function onRequestPost({ request, env }) {
     if (n && n.n >= MAX_MEMBERS) return json({ error: 'Trop de compagnons sur ce carnet (' + MAX_MEMBERS + ' au plus) : retire d’abord un accès.' }, 409);
     const mh = await sha256('vz-member:' + b.mt);
     await env.DB.prepare('INSERT INTO space_members (mh, space, label, gk, created, last) VALUES (?1, ?2, ?3, ?4, ?5, 0) ON CONFLICT (mh) DO UPDATE SET space = ?2, label = ?3, gk = ?4')
-      .bind(mh, space, String(b.label || '').slice(0, 40), grant, Date.now()).run();
+      .bind(mh, space, String(b.label || '').slice(0, 400), grant, Date.now()).run();   // prénom chiffré sur le téléphone (« e1:… ») : le serveur ne le lit pas
     return json({ ok: true, id: mh.slice(0, 12) });
   }
   if (a === 'list') {

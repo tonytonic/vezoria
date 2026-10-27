@@ -91,7 +91,7 @@ async function encrypt(sub, plain) {
   return cat(head, asPub, ct);
 }
 async function vapidAuth(env, endpoint, v) {
-  const aud = new URL(endpoint).origin, contact = String(env.CONTACT || 'appareils.treves6g@icloud.com');
+  const aud = new URL(endpoint).origin, contact = String(env.CONTACT || 'contact.vezoria@icloud.com');
   const h = b64u(te.encode(JSON.stringify({ typ: 'JWT', alg: 'ES256' })));
   const p = b64u(te.encode(JSON.stringify({ aud, exp: Math.floor(Date.now() / 1000) + 12 * 3600, sub: /^(mailto:|https:)/.test(contact) ? contact : 'mailto:' + contact })));
   const sig = new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, v.priv, te.encode(h + '.' + p)));
