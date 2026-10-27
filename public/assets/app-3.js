@@ -142,7 +142,7 @@
   function wzCtryBox(){
     const el = document.getElementById('wz-ctry'); if(!el || !wz) return;
     const g = wzCtryGuess(); if(!g || wz.ctryOk === g.cc || wz.etapes.filter(e=>e.ville && normQ(e.ville) !== normQ(g.from)).length > 0){ el.innerHTML = ''; return; }
-    el.innerHTML = `<button type="button" class="sg-c" onclick="CV.wzCountry('${g.cc}')"><i>${flag(g.cc)}</i><div><b>${esc(frCountry(g.cc))} : ${MSGT('je te propose les étapes')}</b><small>${MSGT('Les villes à voir et les nuits dans chacune, pour')} ${wz.nuits} ${MSGT('nuits')}. ${MSGT('Tu pourras tout modifier.')}</small></div><span class="sg-go">${MSGT('Proposer')} ›</span></button>`;
+    el.innerHTML = `<button type="button" class="sg-c" onclick="CV.wzCountry('${ja(g.cc)}')"><i>${flag(g.cc)}</i><div><b>${esc(frCountry(g.cc))} : ${MSGT('je te propose les étapes')}</b><small>${MSGT('Les villes à voir et les nuits dans chacune, pour')} ${wz.nuits} ${MSGT('nuits')}. ${MSGT('Tu pourras tout modifier.')}</small></div><span class="sg-go">${MSGT('Proposer')} ›</span></button>`;
   }
   async function wzCountry(cc){
     wzRead(); const el = document.getElementById('wz-ctry'); if(el) el.innerHTML = `<div class="sg-c run"><i>${flag(cc)}</i><div><b>${MSGT('Je prépare l’itinéraire…')}</b><small>${MSGT('Wikidata et les destinations de l’appli')}</small></div></div>`;
@@ -643,7 +643,7 @@
     const worker = async () => { while(!stop && !upHalt && gen === upGen && todo.length){ const id = todo.shift(); if(isFull(id)){ waiting++; continue; }
       try { await one(id); upAt = Date.now(); } catch(e){
         // place de CE carnet pleine : ses photos restent sur le téléphone, celles des autres voyages continuent de partir
-        if(e && e.st === 507 && e.code && /carnet/i.test(e.j && e.j.error || '')){ M.pqFull[e.code] = Date.now() + 3600000; waiting++; if(!upErr || upSt !== 507){ upErr = e.message; upSt = 507; upJ = e.j; } continue; }
+        if(e && e.st === 507 && e.code && /carnet/i.test(e.j && e.j.error || '')){ M.pqFull[e.code] = Date.now() + (e.j && e.j.full ? 600000 : 3600000); if(M.quota) M.quota.at = 0; waiting++; if(!upErr || upSt !== 507){ upErr = e.message; upSt = 507; upJ = e.j; } continue; }
         if(!upErr || upSt === 507){ upErr = (e && e.message) || String(e); upSt = e && e.st || 0; upJ = e && e.j; } stop = true; } } };
     try { await Promise.all([worker(), worker(), worker()]); }   // 3 envois en même temps : bien plus rapide sur mobile
     catch(e){ upErr = 'réseau : ' + (e && e.message || e); }
@@ -674,14 +674,14 @@
     const dsl = dayList(); let lastG = null;
     const grpOf = s => { const i = dsl.indexOf(s.date); return i >= 0 ? `${PJ(i+1)} · ${fdate(s.date)}|${dayInfo(s.date).titre||''}` : s.date ? `${fdate(s.date)}|hors programme` : 'Sans date|'; };
     h += all.map(s=>{
-      const g = grpOf(s), gh = g !== lastG ? (lastG = g, `<div class="cv-souv-grp">📅 ${esc(g.split('|')[0])}${g.split('|')[1] ? ` <small>${esc(g.split('|')[1])}</small>` : ''}${s.date ? `<button type="button" class="st-dbtn" onclick="CV.storyOpen('${s.date}')">▶ Story</button>` : ''}</div>`) : '';
+      const g = grpOf(s), gh = g !== lastG ? (lastG = g, `<div class="cv-souv-grp">📅 ${esc(g.split('|')[0])}${g.split('|')[1] ? ` <small>${esc(g.split('|')[1])}</small>` : ''}${s.date ? `<button type="button" class="st-dbtn" onclick="CV.storyOpen('${ja(s.date)}')">▶ Story</button>` : ''}</div>`) : '';
       const ph = s.photos || [], more = ph.length - 9;
       return gh + `<div class="cv-souv">
         <div class="cv-souv-h"><span class="v-day-d">${s.date ? fdate(s.date) : '—'}</span><div><div class="cv-souv-t">${esc(s.titre||s.lieu||'Souvenir')}</div>
           ${s.lieu || s.pays ? `<div class="v-sum-small">📍 ${esc(lieuPays(s.lieu, s.pays))}</div>` : ''}</div>
-          ${(s.photos||[]).length ? `<button class="cv-x cv-pcb" onclick="CV.pcOpen('${s.id}')" aria-label="Carte postale" title="Carte postale">💌</button>` : ''}<button class="cv-x" onclick="CV.editSouv('${s.id}')" aria-label="Modifier">✏️</button>${/^💌/.test(s.titre || '') ? `<button class="cv-x" onclick="CV.delSouv('${s.id}')" aria-label="Supprimer la carte postale" title="Supprimer">🗑</button>` : ''}</div>
+          ${(s.photos||[]).length ? `<button class="cv-x cv-pcb" onclick="CV.pcOpen('${ja(s.id)}')" aria-label="Carte postale" title="Carte postale">💌</button>` : ''}<button class="cv-x" onclick="CV.editSouv('${ja(s.id)}')" aria-label="Modifier">✏️</button>${/^💌/.test(s.titre || '') ? `<button class="cv-x" onclick="CV.delSouv('${ja(s.id)}')" aria-label="Supprimer la carte postale" title="Supprimer">🗑</button>` : ''}</div>
         ${s.texte ? `<div class="cv-souv-txt" onclick="this.classList.toggle('open')">${esc(s.texte)}</div>` : ''}${souvSocial(s)}
-        ${ph.length ? `<div class="cv-grid">${ph.slice(0,9).map((p,i)=>`<button class="cv-th" onclick="CV.view('${s.id}',${i})" aria-label="Photo"><img data-ph="${esc(p)}.t" alt="">${i===8 && more>0 ? `<span>+${more}</span>` : ''}</button>`).join('')}</div>` : ''}
+        ${ph.length ? `<div class="cv-grid">${ph.slice(0,9).map((p,i)=>`<button class="cv-th" onclick="CV.view('${ja(s.id)}',${i})" aria-label="Photo"><img data-ph="${esc(p)}.t" alt="">${i===8 && more>0 ? `<span>+${more}</span>` : ''}</button>`).join('')}</div>` : ''}
         ${byline(s)}
       </div>`;
     }).join('');
@@ -1132,13 +1132,13 @@
     const shown = d.list.filter(p => d.f[p.cat] !== false && (!d.q || normQ(p.nom).includes(normQ(d.q))));
     openSheet(`<h2>🔎 À voir à ${esc(d.city)}</h2>
       <div class="v-sum-small" style="margin-bottom:8px">${d.list.length} lieux trouvés (Wikipédia, OpenStreetMap), les plus connus en premier. Touche une photo ou un nom pour voir le lieu, ＋ pour l’ajouter à l’étape.</div>
-      <div class="v-filters" style="flex-wrap:wrap">${Object.entries(POI_CATS).map(([k,c])=>`<button class="v-chip${d.f[k]!==false?' on':''}" onclick="CV.discF('${k}')">${c.icon} ${c.lbl}</button>`).join('')}</div>
+      <div class="v-filters" style="flex-wrap:wrap">${Object.entries(POI_CATS).map(([k,c])=>`<button class="v-chip${d.f[k]!==false?' on':''}" onclick="CV.discF('${ja(k)}')">${c.icon} ${c.lbl}</button>`).join('')}</div>
       <input class="v-in" id="ds-q" placeholder="Rechercher un lieu…" value="${esc(d.q)}" oninput="CV.discQ(this.value)">
       <div id="ds-list" style="margin-top:8px">${shown.map(p=>{ const i = d.list.indexOf(p), has = mine.has(normQ(p.nom));
         return `<div class="cv-poi"><button type="button" class="cv-pth" onclick="CV.discInfo(${i})">${p.wiki ? `<img data-wk="${esc(p.wiki)}" alt="">` : ''}<span class="ic">${POI_CATS[p.cat].icon}</span></button><span class="x" onclick="CV.discInfo(${i})"><b>${esc(p.nom)}</b>${p.score>=5?' <span class="star">★</span>':''}<small>${POI_CATS[p.cat].lbl}</small></span>
           <a href="https://www.google.com/maps/search/?api=1&query=${p.lat.toFixed(6)},${p.lng.toFixed(6)}" target="_blank" rel="noopener">📍</a>
           <button class="cv-x${has?' ok':''}" onclick="CV.discAdd(${i})">${has?'✓':'＋'}</button></div>`; }).join('') || '<div class="v-empty">Aucun lieu avec ces filtres.</div>'}</div>
-      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.planCity('${d.hid}')">🏙️ Organiser l’étape</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.planCity('${ja(d.hid)}')">🏙️ Organiser l’étape</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
     const q = document.getElementById('ds-q'); if(q && d.q){ q.focus(); q.setSelectionRange(d.q.length, d.q.length); }
     { const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh && keepY) sh.scrollTop = keepY; }
     setTimeout(discThumbs, 30);
@@ -1166,12 +1166,12 @@
     const byDay = d => pl.filter(p=>p.date===d).sort((a,b)=>(a.ordre||0)-(b.ordre||0));
     const unplaced = pl.filter(p=>!p.date || !ds.includes(p.date));
     const row = p => `<div class="cv-place"><span class="x">${POI_CATS[p.cat] ? POI_CATS[p.cat].icon + ' ' : ''}${esc(p.nom)}</span>
-        <select class="v-in cv-daysel" onchange="CV.cityMove('${p.id}', this.value)"><option value="">à placer</option>${ds.map(d=>`<option value="${d}"${p.date===d?' selected':''}>${fdate(d)}</option>`).join('')}</select>
-        <button class="cv-x cv-lk${p.lock?' on':''}" title="Verrouiller ce jour" onclick="CV.cityLock('${p.id}')">${p.lock?'🔒':'🔓'}</button>
-        <button class="cv-x" onclick="CV.cityDel('${p.id}')" aria-label="Retirer">✕</button></div>`;
+        <select class="v-in cv-daysel" onchange="CV.cityMove('${ja(p.id)}', this.value)"><option value="">à placer</option>${ds.map(d=>`<option value="${d}"${p.date===d?' selected':''}>${fdate(d)}</option>`).join('')}</select>
+        <button class="cv-x cv-lk${p.lock?' on':''}" title="Verrouiller ce jour" onclick="CV.cityLock('${ja(p.id)}')">${p.lock?'🔒':'🔓'}</button>
+        <button class="cv-x" onclick="CV.cityDel('${ja(p.id)}')" aria-label="Retirer">✕</button></div>`;
     openSheet(`<h2>🏙️ ${esc(stayCity(h))}</h2>
       <div class="v-sum-small" style="margin-bottom:10px">${h.date ? fdate(h.date) + ' → ' + fdate(h.dateFin||h.date) + ' · ' : ''}${pl.length} lieu(x). Place les lieux toi-même ou laisse l’optimisation répartir. 🔒 = ce lieu reste sur ce jour.</div>
-      <button class="v-btn sec" onclick="CV.discover('${hid}')">🔎 Découvrir les lieux à visiter</button>
+      <button class="v-btn sec" onclick="CV.discover('${ja(hid)}')">🔎 Découvrir les lieux à visiter</button>
       ${unplaced.length ? `<div class="cv-cday"><b>À placer</b>${unplaced.map(row).join('')}</div>` : ''}
       ${ds.map(d=>`<div class="cv-cday"><b>${fdate(d)}${dayInfo(d).titre ? ' · ' + esc(dayInfo(d).titre) : ''}</b>${byDay(d).map(row).join('') || '<div class="v-sum-small">—</div>'}</div>`).join('')}
       <div class="cv-paybox" style="margin-top:12px"><div class="cv-paybox-h">⚡ Optimisation</div>
@@ -1442,7 +1442,7 @@
     openSheet(`<h2>👤 Mon profil</h2>
       <div style="margin-bottom:12px">${pchip(M.me)}</div>
       <div class="v-sum-small" style="margin-bottom:12px">Ce téléphone est le tien : tout ce que tu ajoutes est signé ${esc(pname(M.me))}.</div>
-      <button class="v-btn sec" onclick="CV.editProfile('${M.me}')">🎨 Changer mon nom / ma couleur</button>
+      <button class="v-btn sec" onclick="CV.editProfile('${ja(M.me)}')">🎨 Changer mon nom / ma couleur</button>
       <button class="v-btn sec" style="margin-top:10px" onclick="CV.cloudSheet()">☁️ Cloud Vezoria</button>
       <div class="v-sum-small" style="margin-top:10px">Synchro : ${!M.sync.on ? 'désactivée' : M.sync.err ? '🔴 ' + esc(M.sync.err) : (M.dirty.length || (M.pq||[]).length) ? '🟠 envoi en cours' : '🟢 à jour'}${M.sync.on ? ' · automatique toutes les heures' : ''}</div>`);
   }
@@ -3008,8 +3008,8 @@
     const d = p.date || '', city = (d && dayCity(d)) || cityOf((trip() || {}).titre || '');
     // venu de la liste des suggestions : on y revient, et on peut ajouter ou écarter le lieu d’ici
     const sg = from === 'sugg' || (p.sugg && !planD);
-    const back = sg ? `<button type="button" class="v-btn sec" onclick="CV.suggOpen()">← ${MSGT('Suggestions')}</button>` : planD ? `<button type="button" class="v-btn sec" onclick="CV.planDay('${planD}')">← ${esc(fdate(planD))}</button>` : '';
-    const act = sg && p.sugg ? `<div class="pi-sg"><button type="button" class="v-btn" onclick="CV.suggKeep('${id}')">✓ ${MSGT('Ajouter au programme')}</button><button type="button" class="v-btn sec" onclick="CV.suggDrop('${id}')">✕ ${MSGT('Écarter')}</button></div>` : '';
+    const back = sg ? `<button type="button" class="v-btn sec" onclick="CV.suggOpen()">← ${MSGT('Suggestions')}</button>` : planD ? `<button type="button" class="v-btn sec" onclick="CV.planDay('${ja(planD)}')">← ${esc(fdate(planD))}</button>` : '';
+    const act = sg && p.sugg ? `<div class="pi-sg"><button type="button" class="v-btn" onclick="CV.suggKeep('${ja(id)}')">✓ ${MSGT('Ajouter au programme')}</button><button type="button" class="v-btn sec" onclick="CV.suggDrop('${ja(id)}')">✕ ${MSGT('Écarter')}</button></div>` : '';
     openSheet(`<h2>📍 ${esc(p.nom)}</h2>${p.exc ? `<div class="v-sum-small">🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</div>` : ''}<div id="pi-box" class="cv-route-load">📖 Recherche des informations…</div>${act}
       <div class="v-actions">${back}<button type="button" class="v-btn sec cv-sq" onclick="${sg ? 'CV.suggOpen()' : 'CV.close()'}" aria-label="Fermer">✕</button></div>`);
     let info = p.info;
@@ -3048,7 +3048,7 @@
           ${safeUrl(I.web) ? `<a class="v-day-edit" href="${esc(safeUrl(I.web))}" target="_blank" rel="noopener">🌐 Site officiel</a>` : ''}
           ${I.tel ? `<a class="v-day-edit" href="tel:${esc(I.tel.split(';')[0].replace(/[^\d+]/g, ''))}">📞 Appeler</a>` : ''}
           ${wurl ? `<a class="v-day-edit" href="${wurl}" target="_blank" rel="noopener">📖 Wikipédia</a>` : ''}
-          <button type="button" class="v-day-edit" onclick="CV.plInfo('${id}', true)">🔄 Actualiser</button></div>`
+          <button type="button" class="v-day-edit" onclick="CV.plInfo('${ja(id)}', true)">🔄 Actualiser</button></div>`
       + `<div class="v-sum-small" style="margin-top:8px">Infos : OpenStreetMap${I.txt ? ' et Wikipédia (CC BY-SA)' : ''}. Horaires à confirmer sur place ou sur le site du lieu. ${I.ts ? 'Mises à jour le ' + new Date(I.ts).toLocaleDateString(L) + ', disponibles hors ligne.' : ''}</div>`;
   }
 

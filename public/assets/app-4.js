@@ -113,7 +113,7 @@
   function tlReceipts(){
     const l = items(i=>i.recu).sort((a,b)=>(b.date||'').localeCompare(a.date||'') || (b.createdAt||0)-(a.createdAt||0));
     openSheet(`<h2>🗂️ Mes tickets</h2><div class="v-sum-small" style="margin-bottom:8px">${l.length} ticket${l.length>1?'s':''} · touche une photo pour l’agrandir.</div>
-      <div class="cv-rcl">${l.map(it=>`<button type="button" class="cv-rc" onclick="CV.rcView('${it.id}')"><img data-ph="${esc(it.recu)}.t" alt=""><span><b>${esc(it.titre)}</b><small>${it.date ? fshort(it.date) + ' · ' : ''}${eur(num(it.prix))}${it.note ? ' · ' + esc(it.note) : ''}${it.payeur && it.payeur !== 'chacun' ? ' · payé par ' + esc(pname(it.payeur)) : ''}</small></span></button>`).join('') || '<div class="v-sum-small">Aucun ticket.</div>'}</div>
+      <div class="cv-rcl">${l.map(it=>`<button type="button" class="cv-rc" onclick="CV.rcView('${ja(it.id)}')"><img data-ph="${esc(it.recu)}.t" alt=""><span><b>${esc(it.titre)}</b><small>${it.date ? fshort(it.date) + ' · ' : ''}${eur(num(it.prix))}${it.note ? ' · ' + esc(it.note) : ''}${it.payeur && it.payeur !== 'chacun' ? ' · payé par ' + esc(pname(it.payeur)) : ''}</small></span></button>`).join('') || '<div class="v-sum-small">Aucun ticket.</div>'}</div>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.tlReceipt()">🧾 Ajouter un ticket</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
     hydrate();
   }
@@ -121,7 +121,7 @@
     const it = R[id]; if(!it || !it.recu) return;
     openSheet(`<h2>🧾 ${esc(it.titre)}</h2><div class="v-sum-small" style="margin-bottom:8px">${it.date ? fdate(it.date) + ' · ' : ''}<b>${eur(num(it.prix))}</b>${it.note ? ' (' + esc(it.note) + ')' : ''}</div>
       <img data-ph="${esc(it.recu)}" alt="Ticket" style="width:100%;border-radius:12px;display:block;background:#eee;min-height:120px">
-      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.tlReceipts()">← Mes tickets</button><button type="button" class="v-btn sec" onclick="CV.edit('${id}')">✏️ Dépense</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.tlReceipts()">← Mes tickets</button><button type="button" class="v-btn sec" onclick="CV.edit('${ja(id)}')">✏️ Dépense</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
     hydrate();
   }
   async function rcAttach(id){
@@ -319,7 +319,7 @@
   function avantSheet(open){
     const t = trip(); if(!t) return; const {S, ccs} = avantData(), op = open || (M.avOpen || {})[t.id] || S[0].k;
     openSheet(`<h2>🧭 ${esc(MSGT('Avant de partir'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${ccs.length ? ccs.map(cc=>flag(cc) + ' <span data-notr>' + esc(ccName(cc)) + '</span>').join(' · ') : esc(MSGT('Ajoute les villes du voyage pour personnaliser cette liste.'))}</div>
-      <div class="av-list">${S.map(x=>`<div class="av-s${x.k === op ? ' open' : ''}"><button type="button" class="av-h" onclick="CV.avantSheet('${x.k === op ? '-' : x.k}')"><i>${x.ic}</i><span>${esc(x.t)}</span>${x.warn ? `<em class="bad">${x.warn}</em>` : x.n ? `<em>${esc(x.n)}</em>` : ''}<b>${x.k === op ? '▴' : '▾'}</b></button>${x.k === op ? `<div class="av-b">${x.h}</div>` : ''}</div>`).join('')}</div>
+      <div class="av-list">${S.map(x=>`<div class="av-s${x.k === op ? ' open' : ''}"><button type="button" class="av-h" onclick="CV.avantSheet('${ja(x.k === op ? '-' : x.k)}')"><i>${x.ic}</i><span>${esc(x.t)}</span>${x.warn ? `<em class="bad">${x.warn}</em>` : x.n ? `<em>${esc(x.n)}</em>` : ''}<b>${x.k === op ? '▴' : '▾'}</b></button>${x.k === op ? `<div class="av-b">${x.h}</div>` : ''}</div>`).join('')}</div>
       <div class="v-sum-small" style="margin-top:10px">${esc(MSGT('Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.'))}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`);
     if(open){ (M.avOpen = M.avOpen || {})[t.id] = open; persist(); }
@@ -331,19 +331,19 @@
     openSheet(`<h2>🛂 Documents de voyage</h2>
       ${di.length ? `<div class="cv-warnline" style="margin-bottom:8px">⚠️ ${di.map(esc).join('<br>⚠️ ')}</div>` : ''}
       ${v.map(pid=>`<div class="cv-dayc"><h3>${esc(pname(pid))}</h3>${docsOf(pid).map(d=>`<div class="cv-dayi"><b>${esc(d.kind)}</b>${d.expire ? ' · expire le ' + fdate(d.expire) : ''}${d.num ? ' · n° ' + esc(d.num) : ''}${d.note ? '<div class="v-sum-small">' + esc(d.note) + '</div>' : ''}
-        <button type="button" class="v-day-edit" onclick="CV.tlDocEdit('${pid}','${d.id}')">modifier</button></div>`).join('') || '<div class="v-sum-small">Aucun document.</div>'}
-        <button type="button" class="v-day-edit" onclick="CV.tlDocEdit('${pid}','')">＋ Ajouter un document</button></div>`).join('')}
+        <button type="button" class="v-day-edit" onclick="CV.tlDocEdit('${ja(pid)}','${ja(d.id)}')">modifier</button></div>`).join('') || '<div class="v-sum-small">Aucun document.</div>'}
+        <button type="button" class="v-day-edit" onclick="CV.tlDocEdit('${ja(pid)}','')">＋ Ajouter un document</button></div>`).join('')}
       <div class="v-sum-small" style="margin-top:8px">Règle courante : passeport valable au moins 6 mois après le retour pour de nombreux pays hors UE. Vérifie toujours sur diplomatie.gouv.fr (fiches Conseils aux voyageurs).${E2E ? '' : ' <b>Version perso</b> : le numéro est facultatif et, si tu l’indiques, il est stocké en clair sur le serveur de synchro.'}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   function tlDocEdit(pid, id){
     const d = id ? R[id] : {kind:'Passeport', expire:'', num:'', note:''};
-    openSheet(`<h2>🛂 ${esc(pname(pid))}</h2><form id="v-form" onsubmit="event.preventDefault();CV.tlDocSave('${pid}','${id}')">
+    openSheet(`<h2>🛂 ${esc(pname(pid))}</h2><form id="v-form" onsubmit="event.preventDefault();CV.tlDocSave('${ja(pid)}','${ja(id)}')">
       <div class="v-f"><label>Document</label><select class="v-in" name="kind">${DOC_KINDS.map(k=>`<option${k===d.kind?' selected':''}>${k}</option>`).join('')}</select></div>
       ${field('Date d’expiration','expire',d.expire,'date')}
       ${field('Numéro (facultatif)','num',d.num,'text','autocomplete="off"')}
       ${field('Note','note',d.note,'text','placeholder="Ex. ESTA validé, n° de contrat d’assurance…"')}
-      <div class="v-actions"><button class="v-btn" type="submit">Enregistrer</button>${id ? `<button type="button" class="v-btn sec cv-sq" onclick="CV.tlDocDel('${id}','${pid}')" aria-label="Supprimer">🗑</button>` : ''}<button type="button" class="v-btn sec cv-sq" onclick="CV.tlDocs()" aria-label="Fermer">✕</button></div></form>`);
+      <div class="v-actions"><button class="v-btn" type="submit">Enregistrer</button>${id ? `<button type="button" class="v-btn sec cv-sq" onclick="CV.tlDocDel('${ja(id)}','${ja(pid)}')" aria-label="Supprimer">🗑</button>` : ''}<button type="button" class="v-btn sec cv-sq" onclick="CV.tlDocs()" aria-label="Fermer">✕</button></div></form>`);
   }
   function tlDocSave(pid, id){
     const f = document.getElementById('v-form');
@@ -426,7 +426,7 @@
     M.pkgBase = M.pkgBase || {};
     const add = [], upd = [], keep = [], conf = [];
     (data.records||[]).forEach(r=>{
-      if(!r || !r.id || r.demo) return;
+      if(!r || !r.id || r.demo || !safeRec(r)) return;   // 🛡️ fiche piégée dans un paquet : ignorée / nettoyée
       const cur = R[r.id], base = M.pkgBase[r.id] || 0;
       if(!cur) return add.push(r);
       if(cur.deleted && !r.deleted){ add.push(Object.assign({}, r, {updatedAt: Date.now()})); return; }
@@ -840,7 +840,7 @@
     const l = list('check', c=>c.trip===M.trip && c.cat===SHOP).sort((a,b)=>(a.done-b.done) || (a.createdAt||0)-(b.createdAt||0));
     openSheet(`<h2>🛒 Liste de courses</h2><div class="v-sum-small" style="margin-bottom:8px">Partagée avec le groupe : chacun ajoute et coche (pique-nique, apéro, pharmacie…).</div>
       <form onsubmit="event.preventDefault();CV.shopAdd()"><div class="cv-fx"><input class="v-in" id="sh-new" placeholder="Ex. pain, fromage, eau ×6" autocomplete="off"><button class="v-btn" type="submit" aria-label="Ajouter">＋</button></div></form>
-      <div id="sh-list">${l.map(c=>`<label class="cv-checkline cv-shop${c.done?' done':''}"><input type="checkbox"${c.done?' checked':''} onchange="CV.shopTick('${c.id}')"> ${esc(c.label)}${c.createdBy ? ` <span class="v-sum-small">· ${esc(pname(c.createdBy))}</span>` : ''}</label>`).join('') || '<div class="v-sum-small">Liste vide.</div>'}</div>
+      <div id="sh-list">${l.map(c=>`<label class="cv-checkline cv-shop${c.done?' done':''}"><input type="checkbox"${c.done?' checked':''} onchange="CV.shopTick('${ja(c.id)}')"> ${esc(c.label)}${c.createdBy ? ` <span class="v-sum-small">· ${esc(pname(c.createdBy))}</span>` : ''}</label>`).join('') || '<div class="v-sum-small">Liste vide.</div>'}</div>
       <div class="v-actions">${l.some(c=>c.done) ? `<button type="button" class="v-btn sec" onclick="CV.shopClear()">🧹 Retirer les cochés</button>` : ''}<button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
   function shopAdd(){ const i = document.getElementById('sh-new'); const v = (i.value||'').trim(); if(!v) return; v.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean).forEach((x,k)=>put({id:'c'+uid()+k, type:'check', trip:M.trip, cat:SHOP, label:x, done:false})); shopSheet(); }
@@ -865,10 +865,10 @@
     const cnt = p.options.map((_,i)=>Object.values(votes).filter(v=>v===i).length), best = Math.max(0, ...cnt);
     const kk = {activite:'🎟️ Activité', resto:'🍽️ Restaurant', hotel:'🏨 Hébergement'}[p.kind] || '', nV = (R[p.trip] && (R[p.trip].voyageurs || []).length) || 0, wi = pollBest(p);
     return `<div class="cv-poll${p.closed?' closed':''}${p.kind ? ' kind' : ''}">${kk ? `<div class="po-k">${kk}${p.date ? ' · ' + fdate(p.date) : ''}${nV ? ` · ${n}/${nV} ${MSGT('ont voté')}` : ''}</div>` : ''}<div class="pq"><b>${esc(p.question)}</b> <span class="v-sum-small">· ${n} vote${n>1?'s':''}${p.closed?' · clos':''}</span></div>
-      ${p.options.map((o,i)=>`<button type="button" class="po${mine===i?' me':''}${p.closed && cnt[i]===best && best ? ' win' : ''}" ${p.closed?'disabled':''} onclick="CV.pollVote('${p.id}',${i})"><span class="pb" style="width:${n ? cnt[i]/n*100 : 0}%"></span><span class="pl">${esc(o)}</span><span class="pcn">${cnt[i]}${n ? ' · ' + Math.round(cnt[i]/n*100) + ' %' : ''}</span></button>`).join('')}
+      ${p.options.map((o,i)=>`<button type="button" class="po${mine===i?' me':''}${p.closed && cnt[i]===best && best ? ' win' : ''}" ${p.closed?'disabled':''} onclick="CV.pollVote('${ja(p.id)}',${i})"><span class="pb" style="width:${n ? cnt[i]/n*100 : 0}%"></span><span class="pl">${esc(o)}</span><span class="pcn">${cnt[i]}${n ? ' · ' + Math.round(cnt[i]/n*100) + ' %' : ''}</span></button>`).join('')}
       <div class="v-sum-small">${Object.entries(votes).map(([pid,v])=>esc(pname(pid)) + ' → ' + esc(p.options[v]||'?')).join(' · ')}</div>
-      ${p.kind ? (p.added ? `<div class="po-win">🏆 « ${esc(p.added)} » ${MSGT('est au programme')}</div>` : wi >= 0 ? `<button type="button" class="po-add" onclick="CV.pollWin('${p.id}')">🏆 ${MSGT('Valider')} « ${esc(p.options[wi])} » → ${MSGT('programme')}</button>` : '') : ''}
-      <div class="cv-row"><button type="button" class="v-day-edit" onclick="CV.pollPin('${p.id}')">${p.pin ? '📌 Désépingler' : '📌 Épingler sur l’accueil'}</button>${!onHome && p.createdBy === M.me ? `<button type="button" class="v-day-edit" onclick="CV.pollClose('${p.id}')">${p.closed ? '↺ Rouvrir' : '🔒 Clore'}</button><button type="button" class="v-day-edit" onclick="CV.pollDel('${p.id}')" aria-label="Supprimer">🗑</button>` : ''}</div></div>`;
+      ${p.kind ? (p.added ? `<div class="po-win">🏆 « ${esc(p.added)} » ${MSGT('est au programme')}</div>` : wi >= 0 ? `<button type="button" class="po-add" onclick="CV.pollWin('${ja(p.id)}')">🏆 ${MSGT('Valider')} « ${esc(p.options[wi])} » → ${MSGT('programme')}</button>` : '') : ''}
+      <div class="cv-row"><button type="button" class="v-day-edit" onclick="CV.pollPin('${ja(p.id)}')">${p.pin ? '📌 Désépingler' : '📌 Épingler sur l’accueil'}</button>${!onHome && p.createdBy === M.me ? `<button type="button" class="v-day-edit" onclick="CV.pollClose('${ja(p.id)}')">${p.closed ? '↺ Rouvrir' : '🔒 Clore'}</button><button type="button" class="v-day-edit" onclick="CV.pollDel('${ja(p.id)}')" aria-label="Supprimer">🗑</button>` : ''}</div></div>`;
   }
   function pollsHTML(){
     const ps = polls();
@@ -927,7 +927,7 @@
   const pjOf = it => (it && it.pj) || [];
   function pjListHTML(it){
     const l = pjOf(it);
-    return l.length ? `<div class="cv-pjl">${l.map((p,i)=>`<span class="cv-pj"><button type="button" onclick="CV.pjOpen('${esc(p.id)}','${p.t}')">${p.t==='img' ? `<img data-ph="${esc(p.id)}.t" alt="">` : '<span class="pdf">PDF</span>'}<small>${esc(p.n||'billet')}</small></button><button type="button" class="x" onclick="CV.pjDel(${i})" aria-label="Retirer">✕</button></span>`).join('')}</div>` : '<div class="v-sum-small">Aucun billet joint.</div>';
+    return l.length ? `<div class="cv-pjl">${l.map((p,i)=>`<span class="cv-pj"><button type="button" onclick="CV.pjOpen('${ja(p.id)}','${ja(p.t)}')">${p.t==='img' ? `<img data-ph="${esc(p.id)}.t" alt="">` : '<span class="pdf">PDF</span>'}<small>${esc(p.n||'billet')}</small></button><button type="button" class="x" onclick="CV.pjDel(${i})" aria-label="Retirer">✕</button></span>`).join('')}</div>` : '<div class="v-sum-small">Aucun billet joint.</div>';
   }
   const pjBlock = it => `<div class="v-f"><label>🎫 Billets, cartes d’embarquement, PDF</label><div id="pj-box">${pjListHTML(it)}</div>
     <button type="button" class="v-day-edit" onclick="CV.pjAdd(true)">📸 Photographier le billet ou le QR code</button><button type="button" class="v-day-edit" onclick="CV.pjAdd()">📎 Joindre (capture d’écran ou PDF)</button>
@@ -952,7 +952,7 @@
     let ov = document.getElementById('cv-pjv'); if(!ov){ ov = document.createElement('div'); ov.id = 'cv-pjv'; document.body.appendChild(ov); }
     ov.innerHTML = `<button type="button" onclick="this.parentNode.remove()">✕ Fermer</button><img data-ph="${esc(id)}" alt="Billet">`; hydrate();
   }
-  const pjChips = it => pjOf(it).length ? `<div class="cv-dayl">${pjOf(it).map(p=>`<a href="javascript:void 0" onclick="CV.pjOpen('${esc(p.id)}','${p.t}')">🎫 ${esc(p.n||'billet')}</a>`).join(' ')}</div>` : '';
+  const pjChips = it => pjOf(it).length ? `<div class="cv-dayl">${pjOf(it).map(p=>`<a href="javascript:void 0" onclick="CV.pjOpen('${ja(p.id)}','${ja(p.t)}')">🎫 ${esc(p.n||'billet')}</a>`).join(' ')}</div>` : '';
 
   /* ---------- 📋 Coller une confirmation de réservation ---------- */
   const MOIS_FR = {janv:1,jan:1,janvier:1,fevr:2,fev:2,feb:2,fevrier:2,mars:3,mar:3,march:3,avr:4,avril:4,apr:4,april:4,mai:5,may:5,juin:6,jun:6,june:6,juil:7,juillet:7,jul:7,july:7,aout:8,aug:8,august:8,sept:9,sep:9,septembre:9,september:9,oct:10,octobre:10,october:10,nov:11,novembre:11,november:11,dec:12,decembre:12,december:12};
@@ -1193,7 +1193,7 @@ ${pm.join('\n')}</Document></kml>`;
     openSheet(`<h2>🎟️ ${MSGT('Expériences à vivre')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.')}</div>
       ${G.map(g=>`<div class="sg-d"><div class="sg-dh">📍 <span data-notr>${esc(g.city)}</span>${g.L[0].gen ? ` · <small>${EXPA[normQ(g.city)] ? '📡 ' + MSGT('Je cherche les activités de la ville…') : MSGT('idées de la ville')}</small>` : ''}</div>
         ${g.L.map(e=>`<div class="sg-r ex-r"><span class="sg-i">${e.ic}</span><span class="sg-n"><b class="ex-t">${esc(MSGT(e.l))}</b><span data-notr>${esc(e.p)}</span>${expLinks(e)}</span>
-          <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.expKeep('${g.h.id}','${esc(e.key)}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.expDrop('${esc(e.key)}')">✕</button></div>`).join('')}</div>`).join('')}
+          <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.expKeep('${ja(g.h.id)}','${ja(e.key)}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.expDrop('${ja(e.key)}')">✕</button></div>`).join('')}</div>`).join('')}
       ${G.some(g=>g.L.some(e=>e.src)) ? `<div class="v-sum-small" style="margin:4px 0 8px">${MSGT('Sources : Wikivoyage (CC BY-SA), OpenStreetMap')}</div>` : ''}
       <button type="button" class="v-btn sec" style="margin:4px 0 8px" onclick="CV.expMore()">＋ ${MSGT('Plus d’expériences')}</button>
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
@@ -1300,8 +1300,8 @@ ${pm.join('\n')}</Document></kml>`;
     const y = (document.querySelector('#v-sheet-bg .v-sheet') || {}).scrollTop || 0;
     openSheet(`<h2>💡 ${MSGT('Suggestions')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Les lieux les plus connus de chaque ville, proposés jour par jour. ✓ pour les ajouter à ton programme, ✕ pour les écarter. Rien n’est ajouté sans ton accord.')}</div>${xn ? `<button type="button" class="ar-go" style="margin:0 0 10px" onclick="CV.expOpen()">🎟️ ${MSGT('Expériences à vivre')} (${xn})</button>` : ''}
       ${Object.keys(by).sort().map(d=>`<div class="sg-d"><div class="sg-dh">${PJ(ds.indexOf(d) + 1)} · ${fdate(d)}${dayInfo(d).titre ? ' · <span data-notr>' + esc(dayInfo(d).titre) + '</span>' : ''}</div>
-        ${by[d].map(p=>`<div class="sg-r"><span class="sg-i">${(POI_CATS[p.cat] || {icon:'📍'}).icon}</span><span class="sg-n" role="button" onclick="CV.plInfo('${p.id}',false,'sugg')"><span data-notr>${esc(p.nom)}</span>${p.exc ? `<small class="sg-x">🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</small>` : ''}</span>
-          <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.suggKeep('${p.id}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.suggDrop('${p.id}')">✕</button></div>`).join('')}</div>`).join('')}
+        ${by[d].map(p=>`<div class="sg-r"><span class="sg-i">${(POI_CATS[p.cat] || {icon:'📍'}).icon}</span><span class="sg-n" role="button" onclick="CV.plInfo('${ja(p.id)}',false,'sugg')"><span data-notr>${esc(p.nom)}</span>${p.exc ? `<small class="sg-x">🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</small>` : ''}</span>
+          <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.suggKeep('${ja(p.id)}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.suggDrop('${ja(p.id)}')">✕</button></div>`).join('')}</div>`).join('')}
       <button type="button" class="v-btn sec" style="margin:4px 0 8px" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>
       <button type="button" class="v-btn sec" style="margin:0 0 8px" onclick="CV.suggRedo()">🔄 ${MSGT('Refaire les suggestions')}</button>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.suggKeep('*')">✓ ${MSGT('Tout ajouter')}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
@@ -1634,7 +1634,7 @@ ${pm.join('\n')}</Document></kml>`;
     const cur = P.out[0], x = cur.x, sug = cur.d, D = P.D, st = (D[sug] || {}).st, city = x.type === 'place' ? swCity(x) : (x.adresse || '');
     const info = x.type === 'place' ? x : {nom:rgNom(x).replace(/^.*?·\s*/, ''), ex:1, city, id:x.id};
     const dayB = d => { const o = D[d] || {}, k = ds.indexOf(d), l = rgLoad(t, d, x.id), dots = '●'.repeat(Math.min(4, Math.ceil(l))) + '○'.repeat(Math.max(0, Math.min(4, o.cap || 0) - Math.min(4, Math.ceil(l))));
-      return `<button type="button" class="rg-day${d === sug ? ' sug' : ''}${l >= (o.cap || 4) ? ' full' : ''}${ohShut(x, d) ? ' shut' : ''}" data-d="${d}" onclick="CV.rgSet('${d}')"><b>${k >= 0 ? PJ(k + 1) : ''}</b><small>${ohShut(x, d) ? '🔒 ' : ''}${esc(fshort(d))}</small>${o.tr && o.tr.length ? `<i>${icon(o.tr[0])}</i>` : ''}<em>${dots || '·'}</em>${d === sug ? `<u>${esc(MSGT('conseillé'))}</u>` : ''}</button>`; };
+      return `<button type="button" class="rg-day${d === sug ? ' sug' : ''}${l >= (o.cap || 4) ? ' full' : ''}${ohShut(x, d) ? ' shut' : ''}" data-d="${d}" onclick="CV.rgSet('${ja(d)}')"><b>${k >= 0 ? PJ(k + 1) : ''}</b><small>${ohShut(x, d) ? '🔒 ' : ''}${esc(fshort(d))}</small>${o.tr && o.tr.length ? `<i>${icon(o.tr[0])}</i>` : ''}<em>${dots || '·'}</em>${d === sug ? `<u>${esc(MSGT('conseillé'))}</u>` : ''}</button>`; };
     const near = Object.values(D).filter(o=>o.k === (D[sug] || {}).k).map(o=>o.d), days = RG.all ? Object.keys(D).sort() : near;
     ov.innerHTML = head + `<div class="rg-city">📍 <span data-notr>${esc(city || (st && st.city) || '')}</span></div>
       <div class="sw-stack rg-stack"><div class="sw-card top rg-card" data-id="${esc(x.id)}">
@@ -1646,7 +1646,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="rg-days">${days.map(dayB).join('')}<button type="button" class="rg-day rg-more" onclick="CV.rgAll()"><b>📅</b><small>${esc(MSGT(RG.all ? 'Moins de jours' : 'Autre jour'))}</small></button></div>
       <div class="sw-acts rg-acts"><button type="button" class="sw-b undo" onclick="CV.rgUndo()" ${RG.hist.length ? '' : 'disabled'} aria-label="${esc(MSGT('Annuler le dernier choix'))}">↩️</button>
         <button type="button" class="sw-b no" onclick="CV.rgDrop()" aria-label="${esc(MSGT('Retirer du programme'))}">🗑️</button>
-        <button type="button" class="rg-ok" onclick="CV.rgSet('${sug}')">✓ ${esc(MSGT('Jour conseillé'))}</button>
+        <button type="button" class="rg-ok" onclick="CV.rgSet('${ja(sug)}')">✓ ${esc(MSGT('Jour conseillé'))}</button>
         <button type="button" class="sw-b all" onclick="CV.rgLater()" aria-label="${esc(MSGT('Plus tard'))}">⏭️</button></div>
       ${left > 1 ? `<button type="button" class="rg-auto" onclick="CV.rgAuto()">⚡ ${esc(RF('Tout ranger comme conseillé ({0})', left))}</button>` : ''}`;
     const el = ov.querySelector('.rg-card'); swFill(el, info); rgDrag(el);

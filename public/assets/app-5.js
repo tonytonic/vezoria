@@ -329,7 +329,7 @@
     if(!el){ el = document.createElement('div'); el.id = 'cv-modes'; el.className = 'cv-modes'; const tc = document.getElementById('tabsC'); tc.parentNode.insertBefore(el, tc); }
     const live = trips().some(t=>tripPhase(t)==='live');
     el.style.display = MODES.some(([k])=>k!=='prep' && !hidden('mode:' + k)) ? '' : 'none';
-    el.innerHTML = MODES.filter(([k])=>k==='prep' || !hidden('mode:' + k)).map(([k,ic,l])=>`<button type="button" class="${(M.mode||'prep')===k?'on':''}" onclick="CV.modeGo('${k}')"><i>${ic}</i><span>${l}</span>${k==='live' && live ? '<b class="dotlive"></b>' : ''}</button>`).join('');
+    el.innerHTML = MODES.filter(([k])=>k==='prep' || !hidden('mode:' + k)).map(([k,ic,l])=>`<button type="button" class="${(M.mode||'prep')===k?'on':''}" onclick="CV.modeGo('${ja(k)}')"><i>${ic}</i><span>${l}</span>${k==='live' && live ? '<b class="dotlive"></b>' : ''}</button>`).join('');
   }
   function modeGo(k){
     // les 4 onglets montrent tous LE MÊME voyage (celui choisi dans « Mes voyages ») ; seul l'angle de vue change
@@ -356,7 +356,7 @@
     const t = trip(), live = t && tripPhase(t) === 'live';
     if(!live){ const ph = t ? tripPhase(t) : 'prep', lv = trips().find(x=>tripPhase(x)==='live');
       return `<div class="v-box"><h3>📍 ${t ? esc(t.titre) : 'Aucun voyage'}</h3><p>${!t ? 'Crée un voyage pour commencer.' : ph === 'prep' ? (t.debut ? `Ce voyage commence le <b>${fdate(t.debut)}</b> : cet espace s’allumera le jour J (fiche du jour, steps, traceur, dépenses).` : 'Ajoute des dates à ce voyage : cet espace s’allumera le jour J.') : `Ce voyage est terminé depuis le ${fdate(t.fin || t.debut)} : retrouve-le dans 🏁 Bilan.`}</p>
-        ${lv && lv.id !== (t||{}).id ? `<button class="v-btn" onclick="CV.go('${lv.id}')">📍 Ouvrir le voyage en cours : ${esc(lv.titre)}</button>` : ''}</div>`; }
+        ${lv && lv.id !== (t||{}).id ? `<button class="v-btn" onclick="CV.go('${ja(lv.id)}')">📍 Ouvrir le voyage en cours : ${esc(lv.titre)}</button>` : ''}</div>`; }
     const k = dayList().indexOf(isoToday()), info = dayInfo(isoToday()), {own, night} = itemsForDay(isoToday());
     const tile = (ic, l, fn) => `<button type="button" class="cv-tile" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
     const lvF = !hidden('blk:prep');
@@ -364,16 +364,16 @@
       <div class="cv-tiles">${tile('📍','Step ici','CV.hereNow()')}${tile('🧾','Dépense','CV.tlReceipt()')}${tile('📴','Fiche du jour','CV.tlDay()')}${tile('🌤️','Météo','CV.tlMeteo()')}</div>
       <details class="cv-fold cv-tmore"><summary>${MSGT('Plus d’outils')} <small>${MSGT('Courses, carte, importer, papiers')}</small></summary><div class="cv-tiles">${tile('🛒','Courses','CV.shopSheet()')}${tile('🌍','Carte','CV.worldMap()')}${tile('📄','Importer','CV.impSheet()')}${tile('🛂','Papiers','CV.tlDocs()')}</div></details>
       ${lvF ? '<div hidden>' : ''}<div class="v-box"><h3>Aujourd’hui · J${k+1}${info.titre ? ' · ' + esc(info.titre) : ''}</h3>${info.plan ? `<p>${esc(info.plan)}</p>` : ''}
-        ${[...own, ...night].map(it=>`<button type="button" class="cv-prow" onclick="CV.edit('${it.id}')"><span>${icon(it)} <b>${esc(it.titre)}</b></span><span>${esc(it.heureDep||it.heure||'')}</span></button>`).join('') || '<div class="v-sum-small">Rien de réservé aujourd’hui.</div>'}
-        ${placesOf(isoToday()).length ? `<button class="v-btn sec" onclick="CV.planDay('${isoToday()}')">🗺️ Itinéraire du jour (${placesOf(isoToday()).length} lieux)</button>` : ''}</div>${lvF ? '</div>' : ''}
+        ${[...own, ...night].map(it=>`<button type="button" class="cv-prow" onclick="CV.edit('${ja(it.id)}')"><span>${icon(it)} <b>${esc(it.titre)}</b></span><span>${esc(it.heureDep||it.heure||'')}</span></button>`).join('') || '<div class="v-sum-small">Rien de réservé aujourd’hui.</div>'}
+        ${placesOf(isoToday()).length ? `<button class="v-btn sec" onclick="CV.planDay('${ja(isoToday())}')">🗺️ Itinéraire du jour (${placesOf(isoToday()).length} lieux)</button>` : ''}</div>${lvF ? '</div>' : ''}
       <button class="v-btn sec" onclick="CV.innerGo('souv')">📸 Voir les souvenirs</button>
       <div class="lv-more">${storyTodayHTML(t)}${eveCard()}${(()=>{ const d = dfHTML(t); return d ? `<details class="cv-fold"><summary>🎯 ${MSGT('Défis du jour')}${(()=>{ const m = /(\d+)\s*\/\s*(\d+)/.exec(d.replace(/<[^>]+>/g, ' ')); return m ? ` <small>${m[1]}/${m[2]}</small>` : ''; })()}</summary>${d}</details>` : ''; })()}${vjBtn(t)}${lgHTML(t)}</div>`;
   }
   function pastHTML(){
     const ps = trips().filter(t=>tripPhase(t)==='past').sort((a,b)=>(b.debut||'').localeCompare(a.debut||''));
     const card = t => { const sv = list('souv', s=>s.trip===t.id), ph = (sv.find(s=>(s.photos||[]).length) || {}).photos, n = sv.reduce((a,s)=>a+(s.photos||[]).length,0);
-      return `<div class="cv-past"><button type="button" class="cov" onclick="CV.go('${t.id}');CV.modeGo('bilan');CV.innerGo('souv')" aria-label="${esc(MSGT('Voir les souvenirs'))}">${ph ? `<img data-ph="${esc(ph[0])}.t" alt="">${n > 1 ? `<i class="cov-n">📸 ${n}</i>` : ''}` : '<span>🧳</span>'}</button><div class="bd"><b>${esc(t.titre)}</b><small>${tripDatesLong(t)}</small><small>${sv.length} souvenir${sv.length>1?'s':''} · ${n} photo${n>1?'s':''}</small>
-        <div class="bt" style="flex-wrap:wrap">${n ? `<button type="button" onclick="CV.psTrip('${t.id}')">👆 Photos</button>` : ''}<button type="button" onclick="CV.go('${t.id}');CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.go('${t.id}');CV.albumSheet()">📕 Album</button>${n ? '' : `<button type="button" onclick="CV.go('${t.id}');CV.modeGo('bilan');CV.innerGo('souv')" aria-label="Photo">📸</button>`}</div></div></div>`; };
+      return `<div class="cv-past"><button type="button" class="cov" onclick="CV.go('${ja(t.id)}');CV.modeGo('bilan');CV.innerGo('souv')" aria-label="${esc(MSGT('Voir les souvenirs'))}">${ph ? `<img data-ph="${esc(ph[0])}.t" alt="">${n > 1 ? `<i class="cov-n">📸 ${n}</i>` : ''}` : '<span>🧳</span>'}</button><div class="bd"><b>${esc(t.titre)}</b><small>${tripDatesLong(t)}</small><small>${sv.length} souvenir${sv.length>1?'s':''} · ${n} photo${n>1?'s':''}</small>
+        <div class="bt" style="flex-wrap:wrap">${n ? `<button type="button" onclick="CV.psTrip('${ja(t.id)}')">👆 Photos</button>` : ''}<button type="button" onclick="CV.go('${ja(t.id)}');CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.go('${ja(t.id)}');CV.albumSheet()">📕 Album</button>${n ? '' : `<button type="button" onclick="CV.go('${ja(t.id)}');CV.modeGo('bilan');CV.innerGo('souv')" aria-label="Photo">📸</button>`}</div></div></div>`; };
     return `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">🗺️ ${ps.length} voyage${ps.length>1?'s':''} passé${ps.length>1?'s':''}</div></div>
       <div class="cv-row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><button class="v-day-edit" onclick="CV.worldMap()">🌍 Carte du monde</button><button class="v-day-edit" onclick="CV.scrOpen()">✨ Carte à gratter</button><button class="v-day-edit" onclick="CV.rtAll()">⭐ Mes adresses notées</button><button class="v-day-edit" onclick="CV.tlStats()">📊 Mes stats</button><button class="v-day-edit" onclick="CV.yearFilm()">🎬 Mon année</button><button class="v-day-edit" onclick="CV.zipSheet()">💾 Sauvegarde ZIP</button></div></div>
       ${ps.map(card).join('') || '<div class="v-box"><p>Tes voyages terminés apparaîtront ici, avec leurs photos, leur bilan et leur album.</p></div>'}`;
@@ -387,7 +387,7 @@
     const chk = (ok, l, extra) => `<div class="cv-bchk${ok?' ok':''}"><i>${ok ? '✓' : '!'}</i><span>${l}${extra ? '<small>' + extra + '</small>' : ''}</span></div>`;
     const pick = trips().filter(x=>tripPhase(x)!=='prep');
     // (plus de case « Bilan · voyage » avec sa liste déroulante : le choix du voyage se fait en haut à gauche, comme partout)
-    const top = nph ? `<div class="cv-soin"><button type="button" class="on" onclick="CV.psTrip('${t.id}')">👆 Toutes les photos</button><button type="button" onclick="CV.innerGo('souv')">📸 Souvenirs</button><button type="button" onclick="CV.filmOpen()">🎬 Film</button><button type="button" onclick="CV.albumSheet()">📕 Album</button></div>` : '';
+    const top = nph ? `<div class="cv-soin"><button type="button" class="on" onclick="CV.psTrip('${ja(t.id)}')">👆 Toutes les photos</button><button type="button" onclick="CV.innerGo('souv')">📸 Souvenirs</button><button type="button" onclick="CV.filmOpen()">🎬 Film</button><button type="button" onclick="CV.albumSheet()">📕 Album</button></div>` : '';
     return `${top}${hidden('blk:prep') ? actBand() : finFil(t)}${bilanHero(t, tot, sv, nph)}${bilanBig(t)}
       ${hidden('blk:prep') ? '' : '<div hidden>'}<div class="v-box"><h3>🧾 Pour boucler le voyage</h3>
         ${chk(!tr.length, tr.length ? `${tr.length} remboursement${tr.length>1?'s':''} à faire` : 'Comptes soldés entre vous', tr.map(x=>`${esc(pname(x.de))} → ${esc(pname(x.a))} : ${eur(x.v)}`).join('<br>'))}
@@ -612,7 +612,7 @@
       const data = JSON.parse(new TextDecoder().decode(main)); if(data.app !== 'carnet-voyage') throw new Error('ce ZIP n’est pas une sauvegarde du carnet');
       const replace = Object.values(R).some(r=>!r.demo && r.type!=='profile') && (await uiConfirm(`Sauvegarde du ${new Date(data.exportedAt).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'))} : ${data.records.length} fiches.\n\nOK = REMPLACER tout le carnet de ce téléphone par la sauvegarde.\nAnnuler = FUSIONNER (garder les deux ; la version la plus récente de chaque fiche gagne).`));
       if(replace) Object.keys(R).forEach(id=>{ if(!R[id].demo) delete R[id]; });
-      let n = 0; data.records.forEach(r=>{ if(!r || !r.id) return; const cur = R[r.id]; if(cur && cur.deleted && !r.deleted){ r = Object.assign({}, r, {updatedAt: Date.now()}); R[r.id] = r; markDirty(r.id); n++; return; } if(!cur || (r.updatedAt||0) >= (cur.updatedAt||0)){ R[r.id] = r; markDirty(r.id); n++; } });
+      let n = 0; data.records.forEach(r=>{ if(!r || !r.id || !safeRec(r)) return; const cur = R[r.id]; if(cur && cur.deleted && !r.deleted){ r = Object.assign({}, r, {updatedAt: Date.now()}); R[r.id] = r; markDirty(r.id); n++; return; } if(!cur || (r.updatedAt||0) >= (cur.updatedAt||0)){ R[r.id] = r; markDirty(r.id); n++; } });
       let nf = 0, nh = 0; const names = Object.keys(z).filter(k=>/^(photos|docs)\//.test(k));
       for(const k of names){ const id = k.replace(/^(photos|docs)\//,'').replace(/\.(jpg|pdf)$/,''); const ex = await IDB.get(id).catch(()=>null); if(ex && ex.blob){ nh++; continue; }
         const u8 = await get(k); if(!u8) continue; await IDB.put({id, blob:new Blob([u8], {type: k.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg'}), up:0}); nf++;
@@ -703,7 +703,7 @@
   }
   function worldCarousel(){
     const c = document.getElementById('wm-car'); if(!c || !wm) return;
-    c.innerHTML = wm.data.trips.map(t=>`<button type="button" class="wm-card${wm.sel===t.id?' on':''}" data-id="${t.id}" onclick="CV.worldFly('${t.id}')"><span class="im">${t.photo ? `<img data-ph="${esc(t.photo)}.t" alt="">` : '<i>🧳</i>'}</span><span class="tx"><b>${esc(t.titre)}</b><small>${esc(t.dates)}</small><small>${t.steps.length} step${t.steps.length>1?'s':''} · ${Math.round(t.km).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'))} km${t.phase==='live' ? ' · <em>en cours</em>' : ''}</small></span></button>`).join('') || '<div class="wm-empty">Ajoute des hébergements ou des steps 📍 pour voir tes voyages ici.</div>';
+    c.innerHTML = wm.data.trips.map(t=>`<button type="button" class="wm-card${wm.sel===t.id?' on':''}" data-id="${t.id}" onclick="CV.worldFly('${ja(t.id)}')"><span class="im">${t.photo ? `<img data-ph="${esc(t.photo)}.t" alt="">` : '<i>🧳</i>'}</span><span class="tx"><b>${esc(t.titre)}</b><small>${esc(t.dates)}</small><small>${t.steps.length} step${t.steps.length>1?'s':''} · ${Math.round(t.km).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'))} km${t.phase==='live' ? ' · <em>en cours</em>' : ''}</small></span></button>`).join('') || '<div class="wm-empty">Ajoute des hébergements ou des steps 📍 pour voir tes voyages ici.</div>';
     hydrate();
   }
   function bounds(pts){ const b = new maplibregl.LngLatBounds(); pts.forEach(p=>b.extend([p.lng, p.lat])); return b; }
@@ -719,12 +719,12 @@
     const b = bounds(t.pts), single = t.pts.length < 2;
     if(single) wm.map.flyTo({center:[t.pts[0].lng, t.pts[0].lat], zoom:8, pitch:35, bearing:-15, duration:2600, essential:true});
     else wm.map.fitBounds(b, {padding:{top:110, bottom:230, left:40, right:40}, pitch:30, bearing:-10, duration:2600, maxZoom:9});
-    wmInfo(`<b>${esc(t.titre)}</b> · ${esc(t.dates)}${t.steps.length ? `<div class="wm-tl"><button type="button" class="wm-play" onclick="CV.worldStory('${id}')">▶ Revivre le voyage</button><button type="button" class="wm-play" onclick="CV.flyover('${id}')">🎥 Survol 3D</button><input type="range" min="0" max="${t.steps.length-1}" value="0" oninput="CV.worldStep('${id}', this.value)" aria-label="Frise des steps"></div>` : '<br><small>Ajoute des steps 📍 pour la frise et « Revivre le voyage ».</small>'}<button type="button" class="wm-open" onclick="CV.worldOpen('${id}')">Ouvrir ce voyage</button>`);
+    wmInfo(`<b>${esc(t.titre)}</b> · ${esc(t.dates)}${t.steps.length ? `<div class="wm-tl"><button type="button" class="wm-play" onclick="CV.worldStory('${ja(id)}')">▶ Revivre le voyage</button><button type="button" class="wm-play" onclick="CV.flyover('${ja(id)}')">🎥 Survol 3D</button><input type="range" min="0" max="${t.steps.length-1}" value="0" oninput="CV.worldStep('${ja(id)}', this.value)" aria-label="Frise des steps"></div>` : '<br><small>Ajoute des steps 📍 pour la frise et « Revivre le voyage ».</small>'}<button type="button" class="wm-open" onclick="CV.worldOpen('${ja(id)}')">Ouvrir ce voyage</button>`);
   }
   function stepCard(s){
     const box = document.getElementById('wm-story'); if(!box) return;
     box.hidden = false;
-    box.innerHTML = `<button type="button" class="wm-sx" onclick="this.parentNode.hidden=true" aria-label="Fermer">✕</button>${s.ph ? `<button type="button" class="wm-sph" onclick="CV.view('${s.id}',0)"><img data-ph="${esc(s.ph)}" alt="">${s.n > 1 ? `<span>+${s.n-1}</span>` : ''}</button>` : ''}
+    box.innerHTML = `<button type="button" class="wm-sx" onclick="this.parentNode.hidden=true" aria-label="Fermer">✕</button>${s.ph ? `<button type="button" class="wm-sph" onclick="CV.view('${ja(s.id)}',0)"><img data-ph="${esc(s.ph)}" alt="">${s.n > 1 ? `<span>+${s.n-1}</span>` : ''}</button>` : ''}
       <div class="wm-stx"><b>${flag(s.cc)} ${esc(s.titre)}</b><small>${s.date ? fdate(s.date) : ''}${s.lieu && s.lieu !== s.titre ? ' · ' + esc(s.lieu) : ''}</small>${s.texte ? `<p>${esc(s.texte.slice(0,180))}${s.texte.length > 180 ? '…' : ''}</p>` : ''}</div>`;
     hydrate();
   }
@@ -853,7 +853,7 @@
       const row = `<div class="cp-st${on ? ' on' : ''}"><button type="button" class="cp-tk" data-i="${i}" onclick="CV.cineStep(this)" aria-label="✓"><span class="cp-ck">${on ? '✓' : ''}</span></button>`
         + (s.ph ? `<button type="button" class="cp-th${CP.phOpen === i ? ' open' : ''}" onclick="CV.cinePhs(${i})"><img data-ph="${esc(s.ph)}.t" alt="">${L.length > 1 ? `<em>${L.length}</em>` : ''}</button>` : '<i>📍</i>')
         + `<button type="button" class="cp-tk cp-nm" data-i="${i}" onclick="CV.cineStep(this)"><b data-notr>${s.cc ? flag(s.cc) + ' ' : ''}${esc(nm)}</b>${s.date ? `<small data-notr>${esc(fdate(s.date))}</small>` : ''}</button></div>`;
-      const strip = CP.phOpen === i && L.length ? `<div class="cp-phs"><small>Photo de cette étape dans le survol</small><div>${L.slice(0, 80).map(id=>`<button type="button" class="${id === s.ph ? 'on' : ''}" onclick="CV.cinePh(${i},'${esc(id)}')"><img data-ph="${esc(id)}.t" alt=""></button>`).join('')}</div></div>` : '';
+      const strip = CP.phOpen === i && L.length ? `<div class="cp-phs"><small>Photo de cette étape dans le survol</small><div>${L.slice(0, 80).map(id=>`<button type="button" class="${id === s.ph ? 'on' : ''}" onclick="CV.cinePh(${i},'${ja(id)}')"><img data-ph="${esc(id)}.t" alt=""></button>`).join('')}</div></div>` : '';
       return row + strip; }).join('');
     el.innerHTML = `<div class="cp-card">
       <button type="button" class="ci-x cp-x" onclick="CV.cinePreX()" aria-label="Fermer">✕</button>
@@ -1018,7 +1018,7 @@
     if(CI){ CI.end = o.end ? {t:t.titre, s:parts.map(MSG).join(' · ')} : null; CI.fin = true; }
     const e = document.getElementById('ci-end');
     if(e){ e.hidden = false; e.innerHTML = `${o.end ? `<b data-notr>${esc(t.titre)}</b><span>${stats}</span>` : ''}
-      <div class="ci-btns"><button type="button" onclick="CV.flyover('${t.id}',0,1)">↺ Revoir</button>${cineCanRec() ? `<button type="button" onclick="CV.flyoverRec('${t.id}')">⏺ Enregistrer la vidéo</button>` : ''}<button type="button" onclick="CV.flyover('${t.id}')">⚙️ Personnaliser</button><button type="button" onclick="CV.cineStop()">🌍 Rester sur le globe</button></div><small class="ci-cred" data-notr>${esc(ciCred(o))}</small>`; }
+      <div class="ci-btns"><button type="button" onclick="CV.flyover('${ja(t.id)}',0,1)">↺ Revoir</button>${cineCanRec() ? `<button type="button" onclick="CV.flyoverRec('${ja(t.id)}')">⏺ Enregistrer la vidéo</button>` : ''}<button type="button" onclick="CV.flyover('${ja(t.id)}')">⚙️ Personnaliser</button><button type="button" onclick="CV.cineStop()">🌍 Rester sur le globe</button></div><small class="ci-cred" data-notr>${esc(ciCred(o))}</small>`; }
     if(rec) setTimeout(cineRecEnd, 3500);
     setTimeout(()=>{ if(CI && CI.fin) ciMusicOff(); }, rec ? 3300 : 5000);
   }

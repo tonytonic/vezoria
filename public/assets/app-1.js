@@ -21,6 +21,26 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const KEY = 'carnet_v2', OLD = 'voyage2027_v1', ARCHIVE_KEY = 'roadtrip2026_v3', LEGACY = 'legacy2026';
 
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  // 🛡️ valeur placée dans une chaîne JavaScript d’un attribut onclick="…('…')" : esc() ne suffit pas (le navigateur
+  // redécode &#39; en ' AVANT d’exécuter). Ici chaque caractère sensible devient \u00XX : la valeur reste identique, sans jamais sortir de sa chaîne.
+  const ja = s => String(s ?? '').replace(/[\\'"<>&`\n\r\u2028\u2029]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'));
+  // 🛡️ fiche venue d’ailleurs (compagnon, abonné, paquet, fichier) : un identifiant douteux = fiche ignorée ; dans les champs
+  // « techniques » (dates, statuts, couleurs, références…), les caractères " < > sont retirés (ils n’y sont jamais légitimes).
+  // Les textes libres (titres, récits, noms…) restent intacts : ils sont échappés à l’affichage.
+  const FREE_TXT = new Set(['titre','texte','nom','lieu','label','question','options','note','notes','adresse','desc','description','plan','recit','text','who','msg','bio','comment','commentaire','lieuTxt','depTxt','q','n','city','ville','pays','from','to','mode','owner','titreAuto','info','extract','tips','conseil','sub','sous','body','why','raison','motif','legende','caption','alt','address','name','pseudo','resume','souvenir','story','quote']);
+  const BAD_ID = /['"<>&\\`\s\u0000-\u001f\u2028\u2029]/;
+  function safeVal(v, free, depth){
+    if(typeof v === 'string') return free ? v : (/["<>]/.test(v) ? v.replace(/["<>]/g, '') : v);
+    if(!v || typeof v !== 'object' || depth > 4) return v;
+    if(Array.isArray(v)) { for(let i = 0; i < v.length; i++) v[i] = safeVal(v[i], free, depth + 1); return v; }
+    for(const k of Object.keys(v)){ if(BAD_ID.test(k) && k.length < 200 && !free){ delete v[k]; continue; } v[k] = safeVal(v[k], free || FREE_TXT.has(k), depth + 1); }
+    return v;
+  }
+  function safeRec(r){
+    if(!r || typeof r !== 'object' || typeof r.id !== 'string' || !r.id || r.id.length > 200 || BAD_ID.test(r.id)) return null;
+    for(const k of Object.keys(r)){ if(k === 'id') continue; r[k] = safeVal(r[k], FREE_TXT.has(k), 0); }
+    return r;
+  }
   // 🌍 recherche d’adresses : toujours par notre serveur (cache, 1 requête/s pour toute l’appli, repli Photon, coupure à distance)
   const GEO = (/^https?:/.test(location.protocol) ? location.origin : 'https://vezoria.pages.dev') + '/api/geo/';
   // 🛰️ fonds de carte Esri. ESRI_KEY vide : anciennes adresses publiques (gelées par Esri, sans compte).
@@ -194,7 +214,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const prof = id => (R[id] && R[id].type==='profile' && !R[id].deleted) ? R[id] : null;
   try { if(/Android/i.test(navigator.userAgent || '')) document.documentElement.classList.add('vz-and'); } catch(e){}
   const pname = id => { const p = prof(id); return p ? p.nom : (R[id] ? R[id].nom || '?' : '?'); };
-  const pcol = id => { const p = prof(id) || R[id]; return p && p.couleur ? p.couleur : '#999'; };
+  const pcol = id => { const p = prof(id) || R[id]; return p && p.couleur && /^#[0-9a-f]{3,8}$/i.test(p.couleur) ? p.couleur : '#999'; };   // 🛡️ seulement une vraie couleur (jamais du CSS venu d’ailleurs)
   const profiles = () => list('profile').sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
   const trips = () => list('trip').sort((a,b)=>(a.debut||'9999').localeCompare(b.debut||'9999'));
   function trip(){ const t = R[M.trip]; return t && t.type==='trip' && !t.deleted ? t : null; }
@@ -494,9 +514,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       <div class="sy-diag"><div><span>Sur ce téléphone</span><b>${n.live}</b><small><span>fiches</span> · <span data-notr>${n.items}</span> <span>résas</span> · <span data-notr>${n.days}</span> <span>jours</span></small></div>
         <div><span>État</span><b>${sp.err ? '🔴' : (sp.dirty||[]).length ? '🟠' : '🟢'}</b><small>${sp.err ? `<span data-notr>${esc(sp.err)}</span>` : (sp.dirty||[]).length ? `<span data-notr>${sp.dirty.length}</span> <span>en attente d’envoi</span>` : sp.last ? `<span>à jour</span> · <span data-notr>${vzWhen(sp.last)}</span>` : '<span>jamais synchronisé</span>'}</small></div></div>
       <div id="sy-res" class="v-sum-small" style="margin:8px 0"></div>
-      <button type="button" class="v-btn" onclick="CV.tripPullAll('${id}')">📥 Tout récupérer depuis le voyage partagé</button>
+      <button type="button" class="v-btn" onclick="CV.tripPullAll('${ja(id)}')">📥 Tout récupérer depuis le voyage partagé</button>
       <div class="v-sum-small" style="margin:4px 0 10px">Recharge tout le voyage tel qu’il est chez les autres. Rien n’est effacé chez eux.</div>
-      <button type="button" class="v-btn sec" onclick="CV.tripPushAll('${id}')">📤 Tout renvoyer depuis ce téléphone</button>
+      <button type="button" class="v-btn sec" onclick="CV.tripPushAll('${ja(id)}')">📤 Tout renvoyer depuis ce téléphone</button>
       <div class="v-sum-small" style="margin:4px 0 10px">${mine ? 'À faire sur le téléphone de celui qui a rempli le voyage : toutes ses fiches et photos repartent vers les compagnons.' : 'Renvoie tes fiches et tes photos vers le voyage partagé.'}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
@@ -521,7 +541,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   function mergeRemote(records, fromMain){
     let changed = 0;
     for(const r of records){
-      if(!r || !r.id) continue;
+      if(!r || !r.id || !safeRec(r)) continue;   // 🛡️ fiche piégée (identifiant ou champ technique avec " < > ' &) : ignorée / nettoyée
       if(r.id === 'vz:codes' && fromMain !== true) continue;   // 🔑 la liste de codes d’un AUTRE carnet (celui dont je suis compagnon) ne remplace jamais la mienne
       if(M.hide && (M.hide[r.id] || (r.trip && M.hide[r.trip]) || (r.type === 'moved' && M.hide[r.tid]))) continue;   // 🧹 voyage retiré de ce téléphone (arrivé par erreur) : il ne revient pas
       // depuis MON carnet principal : une suppression d’une fiche d’un voyage partagé ne compte pas (le dossier partagé fait foi)
@@ -795,7 +815,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(P.on && Notification.permission !== 'granted') h += `<div class="v-sum-small" style="margin-bottom:8px">Ce téléphone n’a pas encore autorisé les notifications pour Vezoria.</div><button type="button" class="v-btn" style="margin-bottom:10px" onclick="CV.pushTog(true)">🔔 Autoriser sur ce téléphone</button>`;
     h += `<label class="cv-checkline"><input type="checkbox" ${P.on ? 'checked' : ''} onchange="CV.pushTog(this.checked)"> <span><b>Recevoir des notifications</b></span></label>`;
     if(P.on) h += `<div class="v-sum-small" style="margin:8px 0 4px">Choisis ce qui t’intéresse :</div>`
-      + PUSH_KINDS.map(([k, ic, l])=>`<label class="cv-checkline cv-pref"><input type="checkbox" ${P.kinds[k] ? 'checked' : ''} onchange="CV.pushKind('${k}', this.checked)"> <span>${ic} ${l}</span></label>`).join('')
+      + PUSH_KINDS.map(([k, ic, l])=>`<label class="cv-checkline cv-pref"><input type="checkbox" ${P.kinds[k] ? 'checked' : ''} onchange="CV.pushKind('${ja(k)}', this.checked)"> <span>${ic} ${l}</span></label>`).join('')
       + `<label class="cv-checkline cv-pref"><input type="checkbox" ${P.quiet ? 'checked' : ''} onchange="CV.pushQuiet(this.checked)"> <span>🌙 Ne pas déranger la nuit (22 h – 8 h)</span></label>`
       + `<button type="button" class="v-day-edit" style="margin-top:8px" onclick="CV.pushTest()">📨 M’envoyer une notification d’essai</button>`
       + (/Android/i.test(navigator.userAgent) ? `<div class="v-sum-small" style="margin-top:6px">Pas de bandeau en haut de l’écran ? Réglages du téléphone → Applications → Vezoria → Notifications → touche la catégorie et active « Afficher en pop-up » (ou « Alerte »).</div>` : '');
@@ -906,9 +926,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     M.otdSeen = today; M.seen = M.seen || {}; M.seen['anniv:' + today] = 1; persist();
     openSheet(`<h2>📅 Ce jour-là</h2>
       <div class="otd-k">${n === 1 ? 'Il y a un an' : `Il y a ${n} ans`}</div>
-      ${ph ? `<button type="button" class="otd-ph" onclick="CV.view('${s.id}',0)"><img data-ph="${esc(ph)}" alt=""></button>` : ''}
+      ${ph ? `<button type="button" class="otd-ph" onclick="CV.view('${ja(s.id)}',0)"><img data-ph="${esc(ph)}" alt=""></button>` : ''}
       <div class="otd-t"><b data-notr>${esc(s.titre || s.lieu || t.titre)}</b><small data-notr>${esc(t.titre)}${s.lieu ? ' · ' + esc(s.lieu) : ''}</small>${s.texte ? `<p data-notr>${esc(String(s.texte).slice(0, 220))}</p>` : ''}</div>
-      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.close();CV.go('${t.id}');CV.modeGo('bilan')">📸 Revoir ce voyage</button><button type="button" class="v-btn sec" onclick="CV.flyover('${t.id}')">🌍 Survol 3D</button></div>`);
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.close();CV.go('${ja(t.id)}');CV.modeGo('bilan')">📸 Revoir ce voyage</button><button type="button" class="v-btn sec" onclick="CV.flyover('${ja(t.id)}')">🌍 Survol 3D</button></div>`);
   }
   function pushBadgeClear(){ try { pushKv('badge', 0).catch(()=>{}); if(navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{});
     if('serviceWorker' in navigator) navigator.serviceWorker.ready.then(reg=>{
@@ -1108,11 +1128,11 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     openSheet(`<h2>🔗 ${esc(t.titre)}</h2><div class="v-sum-small" style="margin-bottom:8px">Ce voyage a son propre code : seuls ceux qui l’ont le voient. Tes autres voyages restent privés.</div>
       <div class="cv-bigcode">${esc(code)}</div>
       <div class="v-sum-small" style="margin:6px 0 10px">État : ${sp.err ? '🔴 ' + esc(sp.err) : (sp.dirty||[]).length ? '🟠 ' + sp.dirty.length + ' modif(s) en attente' : sp.last ? '🟢 À jour (' + vzWhen(sp.last) + ')' : '⏳ première synchro…'}</div>
-      <button class="v-btn" onclick="CV.tripInvite('${id}')">📤 Envoyer l’invitation (adresse + code)</button>
+      <button class="v-btn" onclick="CV.tripInvite('${ja(id)}')">📤 Envoyer l’invitation (adresse + code)</button>
       <button class="v-btn sec" onclick="CV.syncNow(true)">🔄 Synchroniser maintenant</button>
-      <button class="v-btn sec" onclick="CV.photoResend('${id}')">📤 Tout renvoyer (voyage + photos)</button>
-      <button class="v-btn sec" onclick="CV.tripNewCode('${id}')">🔑 Nouveau code (repartir à neuf)</button>
-      <button class="v-btn danger" onclick="CV.tripUnshare('${id}')">Arrêter le partage de ce voyage sur ce téléphone</button>
+      <button class="v-btn sec" onclick="CV.photoResend('${ja(id)}')">📤 Tout renvoyer (voyage + photos)</button>
+      <button class="v-btn sec" onclick="CV.tripNewCode('${ja(id)}')">🔑 Nouveau code (repartir à neuf)</button>
+      <button class="v-btn danger" onclick="CV.tripUnshare('${ja(id)}')">Arrêter le partage de ce voyage sur ce téléphone</button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   async function tripNewCode(id){
@@ -1293,7 +1313,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       <div class="v-sum-small" style="margin-bottom:8px">Coche les voyages que cette personne voit et complète avec toi. Tu pourras en retirer un à tout moment, pour elle seulement.</div>
       ${pk ? '' : `<div class="v-f"><label>Pour qui ?</label><input class="v-in" id="pk-who" placeholder="Prénom (pour t’y retrouver)" maxlength="40"></div>`}
       ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="pkt" value="${t.id}"${pk ? (pk.trips.includes(t.id) ? ' checked' : '') : ''}> <span data-notr>${esc(t.titre)}</span>${t.debut ? ' <small>' + esc(tripDatesLong(t)) + '</small>' : ''}</label>`).join('')}
-      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.packSave('${P || ''}')">${pk ? '✅ Enregistrer' : '📤 Créer l’invitation'}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.packSave('${ja(P || '')}')">${pk ? '✅ Enregistrer' : '📤 Créer l’invitation'}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
   async function packSave(P){
     const sel = [...document.querySelectorAll('.pkt:checked')].map(i=>i.value), who = ((document.getElementById('pk-who')||{}).value || '').trim();
@@ -1488,8 +1508,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       <div class="v-sum-small" style="margin-bottom:8px">Ils reçoivent « ${esc(t.titre || '')} » directement dans leur appli et choisissent de le suivre.</div>
       <label class="cv-checkline"><input type="checkbox" id="fi-all" checked onchange="document.querySelectorAll('.fi-d').forEach(x=>x.checked=this.checked)"> <b>Tout le monde</b></label>
       ${ds.map(d=>`<label class="cv-checkline"><input type="checkbox" class="fi-d" value="${esc(d)}" checked> <span data-notr>${esc(F[d].who || '?')}</span></label>`).join('')}
-      <div class="v-actions" style="flex-direction:column"><button type="button" class="v-btn" onclick="CV.followInviteGo('${tid}')">📩 Envoyer dans l’appli</button>
-        <button type="button" class="v-btn sec" onclick="CV.close();CV.feedShareLink('${tid}')">🔗 Partager le lien à d’autres</button>
+      <div class="v-actions" style="flex-direction:column"><button type="button" class="v-btn" onclick="CV.followInviteGo('${ja(tid)}')">📩 Envoyer dans l’appli</button>
+        <button type="button" class="v-btn sec" onclick="CV.close();CV.feedShareLink('${ja(tid)}')">🔗 Partager le lien à d’autres</button>
         <button type="button" class="v-btn sec" onclick="CV.close()">Plus tard</button></div>`);
     return true;
   }
@@ -1519,9 +1539,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     openSheet(`<h2>📩 Invitation</h2>
       <div class="sh-k" style="font-size:1.05rem;margin:4px 0 12px"><b data-notr>${who}</b> · <span>${m.k === 'follow' ? 'te propose de suivre un voyage' : 't’invite dans un voyage'}</span><div style="margin-top:6px">🧳 <b data-notr>${ttl}</b></div></div>
       <div class="v-sum-small" style="margin-bottom:10px">${m.k === 'follow' ? 'Tu verras ses photos et récits au fil des étapes.' : 'Tu le verras et le compléteras avec tes compagnons. Tes autres voyages restent privés.'}</div>
-      <div class="v-actions" style="flex-direction:column"><button type="button" class="v-btn" onclick="CV.inviteAnswer('${esc(key)}',1)">${m.k === 'follow' ? '👀 Suivre' : '✅ Rejoindre'}</button>
-        <button type="button" class="v-btn sec" onclick="CV.inviteAnswer('${esc(key)}',0)">Plus tard</button>
-        <button type="button" class="v-btn sec" onclick="CV.inviteAnswer('${esc(key)}',-1)">✕ Refuser</button></div>`, true);
+      <div class="v-actions" style="flex-direction:column"><button type="button" class="v-btn" onclick="CV.inviteAnswer('${ja(key)}',1)">${m.k === 'follow' ? '👀 Suivre' : '✅ Rejoindre'}</button>
+        <button type="button" class="v-btn sec" onclick="CV.inviteAnswer('${ja(key)}',0)">Plus tard</button>
+        <button type="button" class="v-btn sec" onclick="CV.inviteAnswer('${ja(key)}',-1)">✕ Refuser</button></div>`, true);
     inviteCheck.cur = {r, key, m};
   }
   // réponse à MON invitation : oui → elle arrive dans le voyage ; non → je le vois
@@ -1542,7 +1562,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     Object.keys(pend).forEach(p=>{ if(v.includes(p) || inTrip(tid, p) || !prof(p)) delete pend[p]; });
     const ks = Object.keys(pend); if(!ks.length){ delete M.ivPend[tid]; return ''; }
     return `<div class="v-sum cv-pend">${ks.map(p=>`<div class="cv-pend-r"><span>${pend[p].st === 'no' ? '✕' : '⏳'} ${pchip(p)} <small>${pend[p].st === 'no' ? 'a refusé l’invitation' : 'en attente de réponse'}</small></span>
-      <span>${pend[p].st === 'no' ? '' : `<button type="button" class="v-day-edit" onclick="CV.pendAgain('${tid}','${p}')">🔁 Relancer</button>`}<button type="button" class="v-day-edit" onclick="CV.pendDrop('${tid}','${p}')" title="Retirer" aria-label="Retirer">✕</button></span></div>`).join('')}</div>`;
+      <span>${pend[p].st === 'no' ? '' : `<button type="button" class="v-day-edit" onclick="CV.pendAgain('${ja(tid)}','${ja(p)}')">🔁 Relancer</button>`}<button type="button" class="v-day-edit" onclick="CV.pendDrop('${ja(tid)}','${ja(p)}')" title="Retirer" aria-label="Retirer">✕</button></span></div>`).join('')}</div>`;
   }
   async function pendAgain(tid, p){ const t = R[tid], lk = (M.links || {})[p]; if(!t || !lk) return;
     const ok = await ivSend(lk, {k:'trip', id:tid, c:TS()[tid], t:t.titre || ''}).catch(()=>false);
@@ -1570,9 +1590,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     openSheet(`<h2>${drop ? '🗑 Supprimer' : '🚪 Quitter'} « <span data-notr>${esc(t.titre)}</span> »</h2>
       <div class="v-sum-small" style="margin-bottom:10px">${drop ? (mineT && !(M.viaP || {})[id] ? 'Tes compagnons le gardent : le voyage continue pour eux. Il est retiré de ton téléphone seulement.' : `<span data-notr>${esc(owner)}</span> · <span>a créé ce voyage : il reste chez tes compagnons. Il est retiré de ton téléphone seulement.</span>`) : `Ton voyage reste sur ce téléphone avec toutes ses photos${M.sync.on && M.sync.code ? ' (et dans ton carnet en ligne)' : ''}. Tu ne recevras plus les modifications des autres.`}</div>
       ${admH}${nPh ? `<div class="sh-k" style="font-size:1.05rem;margin-bottom:6px">📸 Tes photos dans ce voyage : <b data-notr>${nPh}</b></div>
-        <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${id}','keep',0,${drop})"><i>🤝</i><span><b>Les laisser aux autres</b><small>Tes compagnons gardent les souvenirs et photos que tu as ajoutés.</small></span></button>
-        <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${id}','take',0,${drop})"><i>🎒</i><span><b>Partir avec mes photos</b><small>Les souvenirs et photos que tu as ajoutés sont retirés du voyage partagé (et du serveur). Tu les gardes chez toi.</small></span></button>`
-      : `<button type="button" class="v-btn" onclick="CV.tripLeaveGo('${id}','keep',0,${drop})">${drop ? '🗑 Quitter et retirer de mon téléphone' : '🚪 Quitter le voyage partagé'}</button>`}
+        <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${ja(id)}','keep',0,${drop})"><i>🤝</i><span><b>Les laisser aux autres</b><small>Tes compagnons gardent les souvenirs et photos que tu as ajoutés.</small></span></button>
+        <button type="button" class="cv-choice" onclick="CV.tripLeaveGo('${ja(id)}','take',0,${drop})"><i>🎒</i><span><b>Partir avec mes photos</b><small>Les souvenirs et photos que tu as ajoutés sont retirés du voyage partagé (et du serveur). Tu les gardes chez toi.</small></span></button>`
+      : `<button type="button" class="v-btn" onclick="CV.tripLeaveGo('${ja(id)}','keep',0,${drop})">${drop ? '🗑 Quitter et retirer de mon téléphone' : '🚪 Quitter le voyage partagé'}</button>`}
       ${on && !others.length ? `<div class="v-sum-small" style="margin-top:8px">ℹ️ Personne d’autre n’a ouvert ce voyage depuis 2 mois : tu pourras effacer son dossier du serveur.</div>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
   }
@@ -1666,10 +1686,10 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     M.wwSeen = Object.assign({}, M.wwSeen || {}, {[tid]:1}); persist();
     const me = M.me, ppl = profiles().filter(p=>p.id !== me).map(p=>p.id), v = new Set(t.voyageurs || []);
     openSheet(`<h2>👥 Avec qui pars-tu ?</h2><div class="v-sum-small" style="margin-bottom:8px">« ${esc(t.titre)} » arrive chez tes compagnons, qui reçoivent une notification. Ils pourront le compléter avec toi.</div>
-      ${ppl.length ? `<div class="jp-who">${ppl.map(pid=>`<label class="jp-p"><input type="checkbox" class="ww-p" value="${pid}"${v.has(pid) ? ' checked' : ''} onchange="CV.withWhomUpd('${tid}')"> ${pchip(pid)}</label>`).join('')}</div>` : `<div class="v-sum-small">Tu n’as pas encore de compagnon dans Vezoria.</div>`}
+      ${ppl.length ? `<div class="jp-who">${ppl.map(pid=>`<label class="jp-p"><input type="checkbox" class="ww-p" value="${pid}"${v.has(pid) ? ' checked' : ''} onchange="CV.withWhomUpd('${ja(tid)}')"> ${pchip(pid)}</label>`).join('')}</div>` : `<div class="v-sum-small">Tu n’as pas encore de compagnon dans Vezoria.</div>`}
       <div id="ww-msg" class="v-sum-small" style="margin:8px 0"></div>
-      <div class="v-actions" style="flex-direction:column">${ppl.length ? `<button type="button" class="v-btn" onclick="CV.withWhomGo('${tid}')">✅ Partager avec eux</button>` : ''}
-        <button type="button" class="v-btn sec" onclick="CV.close();CV.tripInviteNow('${tid}')">📤 Inviter quelqu’un de nouveau</button>
+      <div class="v-actions" style="flex-direction:column">${ppl.length ? `<button type="button" class="v-btn" onclick="CV.withWhomGo('${ja(tid)}')">✅ Partager avec eux</button>` : ''}
+        <button type="button" class="v-btn sec" onclick="CV.close();CV.tripInviteNow('${ja(tid)}')">📤 Inviter quelqu’un de nouveau</button>
         <button type="button" class="v-btn sec" onclick="CV.close()">🧍 Je pars seul(e) / plus tard</button></div>`);
     withWhomUpd(tid);
   }
@@ -1729,7 +1749,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     o.innerHTML = `<video playsinline muted autoplay></video><div class="qr-frame"></div>
       <div class="qr-top"><span>${esc(MSGT('Vise le QR code de l’invitation'))}</span><button type="button" class="qr-x" onclick="CV.qrStop()" title="${esc(MSGT('Fermer'))}" aria-label="${esc(MSGT('Fermer'))}">✕</button></div>
       <div class="qr-msg" id="qr-msg" data-notr></div>
-      <label class="v-btn sec qr-ph">🖼️ ${esc(MSGT('Lire le QR code sur une photo'))}<input type="file" accept="image/*" hidden onchange="CV.qrPhoto(this,'${id}')"></label>`;
+      <label class="v-btn sec qr-ph">🖼️ ${esc(MSGT('Lire le QR code sur une photo'))}<input type="file" accept="image/*" hidden onchange="CV.qrPhoto(this,'${ja(id)}')"></label>`;
     document.body.appendChild(o);
     const st = qrSt = {id}, msg = t => { const m = document.getElementById('qr-msg'); if(m) m.textContent = t; };
     let dec; try { dec = await qrDecoder(); } catch(e){ msg(e.message); return; }
@@ -1750,7 +1770,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       if(txt) qrFound(id, txt); else if(m) m.textContent = MSGT('Aucun QR code trouvé sur cette photo.'); }
     catch(e){ if(m) m.textContent = MSGT('Aucun QR code trouvé sur cette photo.'); }
   }
-  const qrBtn = id => `<button type="button" class="v-btn sec qr-btn" onclick="CV.qrScan('${id}')">📷 Scanner le QR code</button>`;
+  const qrBtn = id => `<button type="button" class="v-btn sec qr-btn" onclick="CV.qrScan('${ja(id)}')">📷 Scanner le QR code</button>`;
   // un seul champ pour tout : lien ou code de voyage, de carnet ou d’abonné
   function joinAny(){
     openSheet(`<h2>🔗 Rejoindre avec un code</h2>${qrBtn('ja-code')}<div class="v-sum-small" style="margin-bottom:8px">Ou colle le message, le lien ou le code reçu.</div>
@@ -1802,7 +1822,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         <label class="jp-p"><input type="radio" name="jp-me" value="new"${!me ? ' checked' : ''}> ✏️ Je ne suis pas dans la liste : <input class="v-in" id="jp-nom" placeholder="Ton prénom" style="flex:1;min-width:0"></label></div></div>
       <div class="v-f"><label>Dans quels voyages pars-tu vraiment ?</label><div class="v-sum-small" style="margin-bottom:4px">Tu comptes alors dans le budget, les dépenses et « qui doit quoi ». Tu vois quand même tous les voyages.</div>
         ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="jp-t" value="${t.id}"${(me && (t.voyageurs||[]).includes(me)) || (ts.length === 1 && !(M.notTrav||{})[t.id]) ? ' checked' : ''}> <span data-notr>${esc(t.titre)}</span>${t.debut ? ' <small>' + esc(tripDatesLong(t)) + '</small>' : ''}</label>`).join('')}</div>
-      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.joinPickSave('${esc(code)}')">✅ C’est bon</button></div>`, true);
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.joinPickSave('${ja(code)}')">✅ C’est bon</button></div>`, true);
   }
   function joinPickSave(code){
     const r = document.querySelector('input[name=jp-me]:checked'); let me = r ? r.value : '';
@@ -1820,8 +1840,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   function tripWho(id){
     const t = R[id];
     openSheet(`<h2>👤 Qui es-tu dans « ${esc(t.titre)} » ?</h2><div class="v-sum-small" style="margin-bottom:8px">Pour signer tes ajouts et compter ta part du budget.</div>
-      <div class="cv-plist">${(t.voyageurs||[]).filter(prof).map(pid=>`<button class="cv-prow" onclick="CV.tripWhoSet('${id}','${pid}')">${pchip(pid)}<span>C’est moi</span></button>`).join('')}</div>
-      <button class="v-btn sec" style="margin-top:10px" onclick="CV.tripWhoSet('${id}','')">＋ Je n’y suis pas : m’ajouter${M.me && prof(M.me) ? ' (' + esc(pname(M.me)) + ')' : ''}</button>`, true);
+      <div class="cv-plist">${(t.voyageurs||[]).filter(prof).map(pid=>`<button class="cv-prow" onclick="CV.tripWhoSet('${ja(id)}','${ja(pid)}')">${pchip(pid)}<span>C’est moi</span></button>`).join('')}</div>
+      <button class="v-btn sec" style="margin-top:10px" onclick="CV.tripWhoSet('${ja(id)}','')">＋ Je n’y suis pas : m’ajouter${M.me && prof(M.me) ? ' (' + esc(pname(M.me)) + ')' : ''}</button>`, true);
   }
   function tripWhoSet(id, pid){
     if(!pid && !(M.me && prof(M.me))){ M.joinAdd = id; persist(); editProfile(null); return; }
@@ -1840,7 +1860,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       <button class="v-btn sec" onclick="CV.close();CV.shareHub()">👥 Partager, inviter, suivre</button>
       ${!PUBLIC && !(R.t2025 && !R.t2025.deleted) ? `<button class="v-btn sec" onclick="CV.seedUSA2025()">📦 Ajouter l’archive USA 2025</button>` : ''}
       ${ESCALE ? `<a class="v-btn sec cv-escale" href="${ESCALE}">✈️ Chercher des vols avec Escale</a><button class="v-btn sec" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button><button class="v-btn sec" onclick="CV.radarTuto()">✦ Tuto Radar des prix</button>` : ''}
-      ${trip() ? `<button class="v-btn sec" onclick="CV.editTrip('${M.trip}')">✏️ Modifier « ${esc(trip().titre)} »</button>` : ''}
+      ${trip() ? `<button class="v-btn sec" onclick="CV.editTrip('${ja(M.trip)}')">✏️ Modifier « ${esc(trip().titre)} »</button>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">✕ Fermer</button></div>`);
     requestAnimationFrame(tripSheetScroll); setTimeout(tripCardsPaint, 30);
   }
@@ -1849,7 +1869,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const sub = document.getElementById('tabsC');
     const vt = g.tabs.filter(t=>t[0]===M.tab || ALWAYS[t[0]] || !hidden('tab:' + t[0]));
     if(!NAV_G[g.id]) vt.length = 0;
-    const subH = vt.length > 1 ? vt.map(([id,l]) => `<button class="t27${id===M.tab?' active':''}" onclick="CV.tab('${id}')">${l}</button>`).join('') : '';
+    const subH = vt.length > 1 ? vt.map(([id,l]) => `<button class="t27${id===M.tab?' active':''}" onclick="CV.tab('${ja(id)}')">${l}</button>`).join('') : '';
     if(sub.__h !== subH){ sub.innerHTML = subH; sub.__h = subH; }
     sub.style.display = vt.length > 1 ? 'flex' : 'none';
     buildNav();
@@ -1875,7 +1895,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const pins = () => (Array.isArray(UI().pin) ? UI().pin : []).filter(k=>DEST.some(d=>d[0]===k) && !DEST_DEF.includes(k) && !destHidden(k));   // raccourcis en haut de l'écran principal
   function pinBar(){
     if(M.mode && M.mode !== 'prep') return ''; const L = pins(); if(!L.length) return '';
-    return `<div class="cv-pinbar">${L.map(k=>{ const d = DEST.find(x=>x[0]===k); return `<button type="button" onclick="CV.navTo('${k}')">${d[1]} ${d[2]}</button>`; }).join('')}</div>`;
+    return `<div class="cv-pinbar">${L.map(k=>{ const d = DEST.find(x=>x[0]===k); return `<button type="button" onclick="CV.navTo('${ja(k)}')">${d[1]} ${d[2]}</button>`; }).join('')}</div>`;
   }
   function destOn(k){
     const mode = M.mode || 'prep', grp = groupOf(M.tab).id;
@@ -1911,7 +1931,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const live = trips().some(t=>tripPhase(t)==='live');
     const ph = navPhase(), items = ph ? NAV_PH[ph].map(([k, ic, l])=>[k, ic, l, destOn(k)]) : bar().map(k=>{ const d = DEST.find(x=>x[0]===k); return [k, d[1], NAV_LBL[k] || d[2], destOn(k)]; });
     items.push(['plus','☰','Plus', !items.some(x=>x[3])]);
-    const navH = items.map(([k,ic,l,on])=>`<button class="${on?'on':''}" onclick="CV.navTo('${k}')"><i>${ic}</i><span>${l}</span>${(k==='live' || k==='i:live:live') && live ? '<b class="dotlive"></b>' : ''}</button>`).join(''), navEl = document.getElementById('cv-nav');
+    const navH = items.map(([k,ic,l,on])=>`<button class="${on?'on':''}" onclick="CV.navTo('${ja(k)}')"><i>${ic}</i><span>${l}</span>${(k==='live' || k==='i:live:live') && live ? '<b class="dotlive"></b>' : ''}</button>`).join(''), navEl = document.getElementById('cv-nav');
     if(navEl.__h !== navH){ navEl.innerHTML = navH; navEl.__h = navH; }
   }
   function navTo(k){
@@ -2014,12 +2034,12 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   function renderLivret(){
     const body = document.getElementById('cv-body');
     body.innerHTML = `<div class="lv"><div class="lv-head"><h2>📖 Le livret Vezoria</h2><p>L’histoire d’un voyage entre amis, et tout ce que ton carnet sait faire.</p>
-      <div class="lv-idx">${LIVRET.map(c=>`<button type="button" aria-label="${esc(c.title)}" onclick="CV.livretJump('${c.k}')">${c.em[0]}</button>`).join('')}</div></div>`
+      <div class="lv-idx">${LIVRET.map(c=>`<button type="button" aria-label="${esc(c.title)}" onclick="CV.livretJump('${ja(c.k)}')">${c.em[0]}</button>`).join('')}</div></div>`
       + LIVRET.map((c, n)=>`<section class="lv-ch" id="lv-${c.k}">
         <div class="lv-scene" style="background:${c.bg}">${c.em.map((e, j)=>`<span class="lv-e lv-e${j}">${e}</span>`).join('')}<span class="lv-n">${n ? n : '✦'}</span></div>
         <div class="lv-kick">${esc(c.kick)}</div><h3>${esc(c.title)}</h3><p class="lv-story">${esc(c.story)}</p>
         ${c.pts.length ? `<ul class="lv-pts">${c.pts.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>` : ''}
-        <div class="lv-btns">${c.btn.map(([l, a], j)=>`<button type="button" class="v-btn${j ? ' sec' : ''}" onclick="CV.livretTry('${a}')">${esc(l)}</button>`).join('')}</div></section>`).join('')
+        <div class="lv-btns">${c.btn.map(([l, a], j)=>`<button type="button" class="v-btn${j ? ' sec' : ''}" onclick="CV.livretTry('${ja(a)}')">${esc(l)}</button>`).join('')}</div></section>`).join('')
       + `</div>`;
   }
   function livretJump(k){ const el = document.getElementById('lv-' + k); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); }
@@ -2211,12 +2231,12 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     $('ex-chips').innerHTML = [time ? `<span>🕒 ${time}</span>` : '', d.temp != null ? `<span>${expWx(d.code, d.day)} ${d.temp}°</span>` : ''].join('');
     const added = new Set(exp.day ? placesOf(exp.day).map(p=>normQ(p.nom)) : exp.hid ? placesOfStay(exp.hid).map(p=>normQ(p.nom)) : []);
     const secs = EXP_CATS.filter(([k])=>(d.cats[k] || []).length).map(([k, ic, lbl])=>`<section class="ex-sec"><h2><span>${ic}</span> <span>${lbl}</span> <small>${d.cats[k].length}</small></h2>
-      <div class="ex-row">${d.cats[k].map((it, i)=>`<button type="button" class="ex-card" onclick="CV.exCard('${k}',${i})">
+      <div class="ex-row">${d.cats[k].map((it, i)=>`<button type="button" class="ex-card" onclick="CV.exCard('${ja(k)}',${i})">
         <div class="ex-ph" style="background-image:${EXP_GRAD[k]}"><span class="ex-ic">${ic}</span>${it.ph ? `<img class="ex-pic" src="${esc(it.ph)}" alt="" loading="lazy" decoding="async" onload="this.classList.add('ok')" onerror="this.remove()">` : ''}${added.has(normQ(it.n)) ? '<i class="ex-ok">✓</i>' : ''}</div>
         <b data-notr>${esc(it.n)}</b><small data-notr>${esc(it.d || it.a || '')}</small>${it.pr || it.h ? `<em data-notr>${esc(it.pr ? '💶 ' + it.pr : '🕒 ' + it.h)}</em>` : ''}</button>`).join('')}</div></section>`).join('');
     $('ex-body').innerHTML = (d.intro ? `<p class="ex-intro" data-notr>${esc(d.intro)}</p>` : '')
       + (secs || '<div class="ex-empty">Rien trouvé pour cette ville pour l’instant.</div>')
-      + (exp.hid && !exp.day ? `<button type="button" class="v-btn sec ex-more" onclick="CV.expClose();CV.discover('${exp.hid}')">🔎 Tous les lieux autour, sur la carte</button>` : '')
+      + (exp.hid && !exp.day ? `<button type="button" class="v-btn sec ex-more" onclick="CV.expClose();CV.discover('${ja(exp.hid)}')">🔎 Tous les lieux autour, sur la carte</button>` : '')
       + (hidden('blk:book') ? '' : `<div class="ex-bk" style="margin:14px 22px 0;justify-content:center"><span>🧳 Pour ton séjour :</span>${['booking','airbnb','gyg','viator'].map(b=>bookA(b, {city:exp.city, what:exp.city})).join('')}</div>`)
       + `<div class="ex-src">Textes : Wikivoyage et Wikipédia (CC BY-SA) · Photos : Wikimedia Commons · Météo : Open-Meteo</div>`;
     // les rubriques apparaissent en glissant
@@ -2232,7 +2252,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       <div class="ex-dph" style="background-image:${EXP_GRAD[k]}"><span class="ex-ic">${ic}</span>${it.ph ? `<img class="ex-pic" src="${esc(it.ph.replace(/width=\d+/, 'width=960'))}" alt="" decoding="async" onload="this.classList.add('ok')" onerror="this.remove()">` : ''}<button type="button" class="ex-dx" onclick="CV.expShut()" aria-label="Retirer">✕</button></div>
       <div class="ex-dt"><h3 data-notr>${esc(it.n)}</h3>${it.d ? `<p data-notr>${esc(it.d)}</p>` : ''}
         ${it.a ? `<div class="ex-ln"><span>📍</span><span data-notr>${esc(it.a)}</span></div>` : ''}${it.h ? `<div class="ex-ln"><span>🕒</span><span data-notr>${esc(it.h)}</span></div>` : ''}${it.pr ? `<div class="ex-ln"><span>💶</span><span data-notr>${esc(it.pr)}</span></div>` : ''}
-        <div class="ex-acts">${exp.hid || exp.day ? `<button type="button" class="v-btn${has ? ' sec' : ''}" onclick="CV.expAdd('${k}',${i})">${has ? '✓ Dans ton programme' : exp.day ? '＋ Ajouter à ma journée' : '＋ Ajouter à l’étape'}</button>` : ''}
+        <div class="ex-acts">${exp.hid || exp.day ? `<button type="button" class="v-btn${has ? ' sec' : ''}" onclick="CV.expAdd('${ja(k)}',${i})">${has ? '✓ Dans ton programme' : exp.day ? '＋ Ajouter à ma journée' : '＋ Ajouter à l’étape'}</button>` : ''}
           <a class="v-btn sec" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(go)}" target="_blank" rel="noopener">🧭 Y aller</a>
           ${safeUrl(it.u) ? `<a class="v-btn sec" href="${esc(safeUrl(it.u))}" target="_blank" rel="noopener">🌐 Site</a>` : ''}</div>
         ${(k==='see' || k==='do') && !hidden('blk:book') ? `<div class="ex-bk"><span>🎟️ Billets :</span>${['gyg','viator','tiqets'].map(b=>bookA(b, {what:it.n + ' ' + exp.city})).join('')}</div>` : ''}</div></div>`;
@@ -2269,7 +2289,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const used = new Set(), op = M.plusOpen || 'prep';
     const fams = FAM.map(([id, ic, l, ks])=>{ const L = ent.filter(e=>ks.includes(keyOf(e[0]))); L.forEach(e=>used.add(e)); return {id, ic, l, L}; }).filter(f=>f.L.length);
     const rest = ent.filter(e=>!used.has(e)); if(rest.length){ const f = fams.find(x=>x.id === 'outils'); if(f) f.L.push(...rest); else fams.push({id:'outils', ic:'🧰', l:MSGT('Outils'), L:rest}); }
-    openSheet(`<h2>Plus</h2><div class="cv-plusg">${fams.map(f=>f.L.length === 1 ? `<button type="button" class="cv-pg1" onclick="${f.L[0][0]}"><i>${f.L[0][1]}</i><span>${f.L[0][2]}${dsc(f.L[0][0]) ? `<small>${dsc(f.L[0][0])}</small>` : ''}</span><b>›</b></button>` : `<details class="cv-pg"${f.id === op ? ' open' : ''} ontoggle="if(this.open){ M.plusOpen='${f.id}'; this.parentNode.querySelectorAll('details').forEach(d=>{ if(d!==this) d.open=false; }); }"><summary><i>${f.ic}</i><span>${esc(f.l)}</span><small>${f.L.length}</small></summary><div class="cv-plus">${f.L.map(tile).join('')}</div></details>`).join('')}</div>
+    openSheet(`<h2>Plus</h2><div class="cv-plusg">${fams.map(f=>f.L.length === 1 ? `<button type="button" class="cv-pg1" onclick="${f.L[0][0]}"><i>${f.L[0][1]}</i><span>${f.L[0][2]}${dsc(f.L[0][0]) ? `<small>${dsc(f.L[0][0])}</small>` : ''}</span><b>›</b></button>` : `<details class="cv-pg"${f.id === op ? ' open' : ''} ontoggle="if(this.open){ M.plusOpen='${ja(f.id)}'; this.parentNode.querySelectorAll('details').forEach(d=>{ if(d!==this) d.open=false; }); }"><summary><i>${f.ic}</i><span>${esc(f.l)}</span><small>${f.L.length}</small></summary><div class="cv-plus">${f.L.map(tile).join('')}</div></details>`).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">✕ Fermer</button></div>`);
   }
   function coffeeGo(){ closeSheet(true); try { window.open(COFFEE_URL, '_blank', 'noopener'); } catch(e){ location.href = COFFEE_URL; } }

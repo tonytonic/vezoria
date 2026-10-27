@@ -229,7 +229,7 @@
     const ns = notesFor('item:'+it.id);
     const pinned = ns.filter(n=>n.pin);
     const showHint = it.hint && it.statut==='todo' && !hidden('blk:hints');
-    return `<div class="v-card ${it.statut}" onclick="CV.edit('${it.id}')">
+    return `<div class="v-card ${it.statut}" onclick="CV.edit('${ja(it.id)}')">
       <div class="v-card-ico">${icon(it)}</div>
       <div class="v-card-main">
         <div class="v-card-title">${esc(it.titre)}${ns.length?` <span class="cv-nbadge">📌${ns.length}</span>`:''}</div>
@@ -243,7 +243,7 @@
       </div>
       <div class="v-card-side">
         ${priceHTML(it)}
-        <button class="v-status ${it.statut}" onclick="event.stopPropagation();CV.cycle('${it.id}')">${STATUTS[it.statut]||'À réserver'}</button>
+        <button class="v-status ${it.statut}" onclick="event.stopPropagation();CV.cycle('${ja(it.id)}')">${STATUTS[it.statut]||'À réserver'}</button>
       </div>
     </div>`;
   }
@@ -257,7 +257,7 @@
     if(!st.length && !cs.length && t.archived) return '';
     return `<div class="cv-disc-card${compact?' compact':''}"><div class="dt">🧭 Explorer les étapes du voyage</div>
       ${compact ? '' : '<div class="dd">Les plus beaux endroits, quoi faire, où manger… Touche une ville pour partir à la découverte.</div>'}
-      <div class="dc">${st.map(h=>`<button type="button" onclick="CV.explore('${h.id}')">🧭 ${esc(stayCity(h))}</button>`).join('')}${cs.map(c=>`<button type="button" class="cy" onclick="CV.explore('${c.id}')">🧭 ${esc(c.titre)}</button>`).join('')}<button type="button" class="add" onclick="CV.voirAdd()">＋ Lieu</button></div>
+      <div class="dc">${st.map(h=>`<button type="button" onclick="CV.explore('${ja(h.id)}')">🧭 ${esc(stayCity(h))}</button>`).join('')}${cs.map(c=>`<button type="button" class="cy" onclick="CV.explore('${ja(c.id)}')">🧭 ${esc(c.titre)}</button>`).join('')}<button type="button" class="add" onclick="CV.voirAdd()">＋ Lieu</button></div>
       ${!st.length && !cs.length ? '<div class="de">Ajoute une ville, une excursion ou un quartier (les étapes de tes hôtels apparaissent aussi ici).</div>' : ''}</div>`;
   }
   // 🧹 Résas : en haut, ce qu’il reste à réserver en premier (toutes catégories, par date) + l’avancement global
@@ -272,7 +272,7 @@
       if(!i.date) return ''; const n = nights(today, i.date); return n <= 0 ? MSGT('aujourd’hui') : n < 31 ? RF('dans {0} j', n) : fshort(i.date); };
     return `<div class="cv-rtop"><div class="cv-rtop-h"><b>${MSGT('Réservations')}</b><span><b>${done}</b> / ${all.length} ${MSGT('réservées')}</span></div>
       <div class="v-bar"><span class="b-booked" style="width:${all.length ? done / all.length * 100 : 0}%"></span></div>
-      ${next.length ? `<div class="cv-rtop-k">${MSGT('À réserver en premier')}</div>${next.map(i=>`<button type="button" class="cv-rtop-i" onclick="CV.edit('${i.id}')"><span>${icon(i)}</span><span class="x"><b data-notr>${esc(i.cat === 'hotel' ? (cityOf(i.titre) || i.titre) : i.titre)}</b><small>${i.cat === 'hotel' && i.dateFin ? fshort(i.date) + ' → ' + fshort(i.dateFin) : i.date ? fshort(i.date) : ''}</small></span><em>${when(i)}</em></button>`).join('')}` : `<div class="cv-rtop-ok">✓ ${MSGT('Tout est réservé')}</div>`}</div>`;
+      ${next.length ? `<div class="cv-rtop-k">${MSGT('À réserver en premier')}</div>${next.map(i=>`<button type="button" class="cv-rtop-i" onclick="CV.edit('${ja(i.id)}')"><span>${icon(i)}</span><span class="x"><b data-notr>${esc(i.cat === 'hotel' ? (cityOf(i.titre) || i.titre) : i.titre)}</b><small>${i.cat === 'hotel' && i.dateFin ? fshort(i.date) + ' → ' + fshort(i.dateFin) : i.date ? fshort(i.date) : ''}</small></span><em>${when(i)}</em></button>`).join('')}` : `<div class="cv-rtop-ok">✓ ${MSGT('Tout est réservé')}</div>`}</div>`;
   }
   function renderList(cat){
     const all = items(i => i.cat===cat).sort(sortItems);
@@ -291,9 +291,9 @@
       ${cat==='transport' && ESCALE && !hidden('blk:escale') ? `<button type="button" class="cv-escale-tuto" style="margin:10px 0 0" onclick="CV.escaleTuto()">🎓 Tuto Escale premium</button>` : ''}
       ${cat==='transport' && ESCALE && !hidden('blk:escale') ? `<a class="cv-escale-mini" href="${ESCALE}">🛫 Chercher les meilleurs prix de vols avec <b>Escale</b> ↗${PUBLIC ? '<small>Mode soft : prix indicatifs en cache (Travelpayouts). Tarifs en direct, Booking, voitures et attractions : mode premium sur code d’accès.</small>' : ''}</a>` : ''}
     </div>
-    ${['transport','hotel','activite'].includes(cat) && !hidden('blk:imp') && trip() && !trip().archived ? `<button type="button" class="cv-impbtn" onclick="CV.impSheet('${cat}')">📄 Importer une résa <small>PDF ou mail de confirmation</small></button>` : ''}
+    ${['transport','hotel','activite'].includes(cat) && !hidden('blk:imp') && trip() && !trip().archived ? `<button type="button" class="cv-impbtn" onclick="CV.impSheet('${ja(cat)}')">📄 Importer une résa <small>PDF ou mail de confirmation</small></button>` : ''}
     <div class="v-filters">${[['all','Tous'],['todo','À réserver'],['booked','Réservé'],['paid','Payé']].map(([k,l])=>
-      `<button class="v-chip${f===k?' on':''}" onclick="CV.filter('${cat}','${k}')">${l}</button>`).join('')}</div>`;
+      `<button class="v-chip${f===k?' on':''}" onclick="CV.filter('${ja(cat)}','${ja(k)}')">${l}</button>`).join('')}</div>`;
     if(!shown.length) h += `<div class="v-empty">Encore rien par ici.<br>Le bouton ＋ est fait pour ça.</div>`;
     h += shown.map(card).join('');
     document.getElementById('cv-body').innerHTML = h;
@@ -427,7 +427,7 @@
     const c = it.cat;
     let h = `<h2>${icon(it)} ${id ? esc(it.titre) : 'Nouveau ' + CATS[c].one}</h2>`;
     if(draft && impCtx) h += impTypeBar(c);
-    if(!id && !draft && ['transport','hotel','activite'].includes(c)) h += `<button type="button" class="cv-tjbtn ed-imp" onclick="CV.impSheet('${c}')"><span>📄</span><span><b>Importer une réservation</b><small>PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule</small></span></button>`;
+    if(!id && !draft && ['transport','hotel','activite'].includes(c)) h += `<button type="button" class="cv-tjbtn ed-imp" onclick="CV.impSheet('${ja(c)}')"><span>📄</span><span><b>Importer une réservation</b><small>PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule</small></span></button>`;
     if(id) h += byline(it);
     if(it.hint) h += `<div class="v-hint">💡 ${esc(it.hint)}</div>`;
     h += `<div id="cv-fbook">${bookHTML(it)}</div>`;
@@ -461,8 +461,8 @@
     h += `<div class="v-f2">${field('Prix réel (' + CS() + ')','prix',it.prix,'text','inputmode="decimal" placeholder="à saisir"')}${field('Estimation (' + CS() + ')','estime',it.estime,'text','inputmode="decimal"')}</div>`;
     h += fxFormRow();
     h += pjBlock(it);
-    if(id && it.cat==='divers') h += it.recu ? `<div class="v-f"><label>🧾 Ticket</label><button type="button" class="cv-rc" onclick="CV.rcView('${id}')"><img data-ph="${esc(it.recu)}.t" alt=""><span><b>Voir le ticket</b><small>touche pour l’agrandir</small></span></button></div>`
-      : `<div class="v-f"><button type="button" class="v-day-edit" onclick="CV.rcAttach('${id}')">📷 Joindre la photo du ticket</button></div>`;
+    if(id && it.cat==='divers') h += it.recu ? `<div class="v-f"><label>🧾 Ticket</label><button type="button" class="cv-rc" onclick="CV.rcView('${ja(id)}')"><img data-ph="${esc(it.recu)}.t" alt=""><span><b>Voir le ticket</b><small>touche pour l’agrandir</small></span></button></div>`
+      : `<div class="v-f"><button type="button" class="v-day-edit" onclick="CV.rcAttach('${ja(id)}')">📷 Joindre la photo du ticket</button></div>`;
     h += `<div class="v-f"><label>Le prix saisi est</label>${segBtns('cv-part', [['pp','Par personne'],['grp','Global, partagé']], partage(it))}
       <div class="v-sum-small" style="margin-top:4px">Par personne : compté pour chaque voyageur concerné (vol, billet). Global : divisé entre eux (chambre, guide privé).</div></div>`;
     h += payForm(it);
@@ -685,14 +685,14 @@
       const dn = notesFor('day:'+d);
       const open = openD[d] !== undefined ? openD[d] : dayOpenDef(d);
       const su0 = daySun(d);
-      const row = i => `<div class="v-day-item" onclick="CV.edit('${i.id}')">
+      const row = i => `<div class="v-day-item" onclick="CV.edit('${ja(i.id)}')">
           <span>${icon(i)}</span>
           <span class="x">${i.cat==='hotel' ? 'Nuit : ' : ''}${esc(i.titre)}${i.exp && su0 && su0.rise && /^(mon|vol|hel)\|/.test(i.exp) ? ` <small class="v-sun">🌅 ${su0.rise}</small>` : i.exp && su0 && su0.set && /^(sun|cat|cru)\|/.test(i.exp) ? ` <small class="v-sun">🌇 ${su0.set}</small>` : ''}${i.cat==='hotel'&&i.nom ? ' — '+esc(i.nom) : ''}${i.heureDep ? ' · '+esc(i.heureDep) : (i.heure && i.cat!=='hotel' ? ' · '+esc(i.heure) : '')}
           ${subset(i) ? `<span class="cv-qui-in">${parts(i).map(ini).join('')}</span>` : ''}${notesFor('item:'+i.id).length?' <span class="cv-nbadge">📌</span>':''}</span>
           <span class="dot ${i.statut}"></span>
         </div>`;
       return `<div class="v-day" id="d-${d}">
-        <div class="v-day-h" onclick="CV.toggleDay('${d}')">
+        <div class="v-day-h" onclick="CV.toggleDay('${ja(d)}')">
           <span class="v-day-d">${PJ(idx+1)} · ${fdate(d)}${dayHol(d) ? ' · 🎌' : ''}</span>
           <span class="v-day-t">${esc(dayTitle(info, own, night)) || (DAY_NOCITY ? MSGT('Journée libre') : '—')}</span>${open ? '' : `<em class="v-day-chev" aria-hidden="true">▾</em>`}
           <span class="v-day-dots">${dn.length?'<span class="cv-nbadge">📌'+dn.length+'</span>':''}${all.map(i=>`<i class="${i.statut}"></i>`).join('')}</span>
@@ -703,7 +703,7 @@
           ${own.map(row).join('')}${night.map(row).join('')}
           ${dn.map(n=>noteCard(n,true)).join('')}
           ${routeHTML(d, true)}
-          <div class="cv-row"><button class="v-day-edit" onclick="CV.planDay('${d}')">🗺️ Itinéraire</button><button class="v-day-edit cv-dmore" aria-label="${esc(MSGT('Actions du jour'))}" onclick="CV.dayMenu('${d}')">⋯</button></div>
+          <div class="cv-row"><button class="v-day-edit" onclick="CV.planDay('${ja(d)}')">🗺️ Itinéraire</button><button class="v-day-edit cv-dmore" aria-label="${esc(MSGT('Actions du jour'))}" onclick="CV.dayMenu('${ja(d)}')">⋯</button></div>
           ${info.updatedBy ? byline(info) : ''}
         </div>` : ''}
       </div>`;
@@ -722,7 +722,7 @@
   function editDay(d){
     const info = dayInfo(d);
     openSheet(`<h2>📅 ${fdate(d)}</h2>${byline(info)}
-      <form onsubmit="event.preventDefault();CV.saveDay('${d}')">
+      <form onsubmit="event.preventDefault();CV.saveDay('${ja(d)}')">
         <div class="v-f"><label>Titre du jour</label><input class="v-in" id="v-day-titre" value="${esc(info.titre)}"></div>
         <div class="v-f"><label>Programme</label><textarea class="v-in" id="v-day-plan" style="min-height:140px">${esc(info.plan)}</textarea></div>
         ${actions('')}
@@ -747,10 +747,10 @@
   function noteCard(n, compact){
     return `<div class="cv-note${n.pin?' pin':''}${compact?' compact':''}" style="--pc:${pcol(n.createdBy)}">
       <div class="cv-note-h">
-        ${compact ? '' : `<span class="cv-note-ref" onclick="CV.openRef('${n.ref||''}')">${refLabel(n.ref)}</span>`}
-        <button class="cv-pinbtn${n.pin?' on':''}" title="Épingler" onclick="event.stopPropagation();CV.pin('${n.id}')" aria-label="Épingler">📌</button>
+        ${compact ? '' : `<span class="cv-note-ref" onclick="CV.openRef('${ja(n.ref||'')}')">${refLabel(n.ref)}</span>`}
+        <button class="cv-pinbtn${n.pin?' on':''}" title="Épingler" onclick="event.stopPropagation();CV.pin('${ja(n.id)}')" aria-label="Épingler">📌</button>
       </div>
-      <div class="cv-note-t" onclick="CV.editNote('${n.id}')">${esc(n.texte)}</div>
+      <div class="cv-note-t" onclick="CV.editNote('${ja(n.id)}')">${esc(n.texte)}</div>
       ${compact && n.ref && M.tab==='prog' && n.ref.startsWith('item:') ? `<div class="cv-note-ref s">${refLabel(n.ref)}</div>` : ''}
       ${byline(n)}
     </div>`;
@@ -762,7 +762,7 @@
     let h = `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">${all.length} note${all.length>1?'s':''}</div><div class="v-sum-small">${all.filter(n=>n.pin).length} épinglée(s)</div></div>
       <div class="v-sum-small">Notes générales ou rattachées à un jour, un hôtel, un trajet… Les épinglées remontent en haut des 📅 Jours et sur les fiches.</div></div>
       <div class="v-filters">${[['all','Toutes'],['pin','📌 Épinglées'],['gen','Générales'],['att','Sur une étape']].map(([k,l])=>
-        `<button class="v-chip${f===k?' on':''}" onclick="CV.filter('notes','${k}')">${l}</button>`).join('')}</div>`;
+        `<button class="v-chip${f===k?' on':''}" onclick="CV.filter('notes','${ja(k)}')">${l}</button>`).join('')}</div>`;
     h += shown.map(n=>noteCard(n)).join('') || '<div class="v-empty">Aucune note. Ajoute avec ＋ en bas.</div>';
     document.getElementById('cv-body').innerHTML = h;
   }
@@ -823,7 +823,7 @@
     const spL = tripPhase(t) === 'past' ? 0 : buSpLeft(t), npN = buNoPrice().length; tot.proj += spL; if(spL) per.forEach(p=>{ p.proj += spL / Math.max(1, v.length); });   // 🍝 le sur-place prévu compte dans le budget
     const others = profiles().filter(p=>!v.includes(p.id));
     // Écran simplifié : l'essentiel en haut, les actions en un geste, le détail dans des volets (rien n'est retiré)
-    const BO = M.budOpen || (M.budOpen = {}), acc = (k, title, body) => `<details class="bu-acc" ${BO[k] ? 'open' : ''} ontoggle="CV.budTog('${k}', this.open)"><summary>${title}</summary><div class="bu-in">${body}</div></details>`;
+    const BO = M.budOpen || (M.budOpen = {}), acc = (k, title, body) => `<details class="bu-acc" ${BO[k] ? 'open' : ''} ontoggle="CV.budTog('${ja(k)}', this.open)"><summary>${title}</summary><div class="bu-in">${body}</div></details>`;
     const pp = v.length ? tot.proj / v.length : 0, pctPaid = tot.proj ? Math.min(100, tot.paye / tot.proj * 100) : 0;
     const objLine = obj ? (pp <= obj ? `<span>🎯 Objectif ${eur(obj)} / pers. · marge ${eur(obj - pp)}</span>` : `<span class="bu-over">🎯 Objectif ${eur(obj)} / pers. · dépasse de ${eur(pp - obj)}</span>`) : '';
     const r = (ic, l, fn) => `<button type="button" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
@@ -836,11 +836,11 @@
       <div class="bu-main"><button type="button" class="v-btn" onclick="CV.tlReceipt()">＋ ${MSGT('Ajouter une dépense')}</button>
         <details class="bu-tools"><summary>${MSGT('Outils')} ▾</summary><div class="cv-quick2">${r('📷','Tickets',"CV.tlReceipts()")}${r('⚖️','Parts',"CV.partsSheet()")}${r('💱','Convertir',"CV.fxTool()")}</div></details></div>
       ${v.length > 1 ? (()=>{ const eh = equilibreHTML(), nd = eqTransfers().tr.length; if(BO.eq === undefined && nd) BO.eq = true; return `<div id="bu-eq">${acc('eq', `💸 ${MSGT('Qui doit quoi')} <small>${nd ? RF('{0} remboursement(s) à faire', nd) : MSGT('tout est réglé')}</small>`, eh)}</div>`; })() : ''}
-      ${(()=>{ const cats = `${rows.filter(x=>x.proj > 0 || x.paye > 0).map(x=>`<button type="button" class="bu-cat" onclick="CV.tab('${x.c}')"><span>${CATS[x.c].icon} ${CATS[x.c].lbl}</span><b>${eur(x.proj)}</b><i><em style="width:${(x.proj / mx * 100).toFixed(1)}%"></em><u style="width:${(x.paye / mx * 100).toFixed(1)}%"></u></i></button>`).join('') || '<div class="v-sum-small">Ajoute des trajets, hébergements, visites ou dépenses : le budget se remplit tout seul.</div>'}`;
+      ${(()=>{ const cats = `${rows.filter(x=>x.proj > 0 || x.paye > 0).map(x=>`<button type="button" class="bu-cat" onclick="CV.tab('${ja(x.c)}')"><span>${CATS[x.c].icon} ${CATS[x.c].lbl}</span><b>${eur(x.proj)}</b><i><em style="width:${(x.proj / mx * 100).toFixed(1)}%"></em><u style="width:${(x.paye / mx * 100).toFixed(1)}%"></u></i></button>`).join('') || '<div class="v-sum-small">Ajoute des trajets, hébergements, visites ou dépenses : le budget se remplit tout seul.</div>'}`;
         return tripPhase(t) === 'prep' ? acc('cats', `🗂️ ${MSGT('Par poste')} <small>${rows.filter(x=>x.proj > 0).map(x=>CATS[x.c].icon + ' ' + eur(x.proj)).slice(0, 3).join(' · ')}</small>`, `<div class="bu-cats">${cats}</div>`) : `<div class="bu-cats"><div class="bu-h">Par poste</div>${cats}</div>`; })()}
       ${acc('ana', `📊 Analyse des dépenses <small>par poste et par jour</small>`, anaHTML())}
       ${acc('pers', `👥 Par personne <small>${v.length} voyageur${v.length>1?'s':''}</small>`, `
-        <div class="v-perslist">${v.map(pid=>pchip(pid, v.length>1 ? `<button onclick="CV.removeCompanion('${pid}')" aria-label="Retirer">✕</button>` : '')).join('')}</div>
+        <div class="v-perslist">${v.map(pid=>pchip(pid, v.length>1 ? `<button onclick="CV.removeCompanion('${ja(pid)}')" aria-label="Retirer">✕</button>` : '')).join('')}</div>
         <div class="cv-row" style="gap:6px;margin:8px 0;flex-wrap:wrap"><button class="v-chip" onclick="CV.partsSheet()">⚖️ Parts & foyers</button><button class="v-chip" onclick="CV.addCompanion()">＋ Compagnon</button></div>
         <div class="v-obj"><span>Objectif par personne</span><input class="v-in" inputmode="decimal" value="${esc(t.objectif||'')}" placeholder="—" onchange="CV.setObj(this.value)"> ${CS()}</div>
         ${per.map(p=>{
@@ -853,7 +853,7 @@
       ${acc('table', '📊 Estimé, réel et payé par poste', `<table class="v-btable">
         <thead><tr><th>Poste (total)</th><th>Estimé</th><th>Réel</th><th>Payé</th></tr></thead>
         <tbody>
-          ${rows.map(r=>`<tr onclick="CV.tab('${r.c}')" style="cursor:pointer"><td>${CATS[r.c].icon} ${CATS[r.c].lbl}</td><td>${eur(r.est)}</td><td>${eur(r.reel)}</td><td>${eur(r.paye)}</td></tr>`).join('')}
+          ${rows.map(r=>`<tr onclick="CV.tab('${ja(r.c)}')" style="cursor:pointer"><td>${CATS[r.c].icon} ${CATS[r.c].lbl}</td><td>${eur(r.est)}</td><td>${eur(r.reel)}</td><td>${eur(r.paye)}</td></tr>`).join('')}
           <tr class="tot"><td>Total</td><td>${eur(tot.est)}</td><td>${eur(tot.reel)}</td><td>${eur(tot.paye)}</td></tr>
         </tbody>
       </table>`)}
@@ -868,7 +868,7 @@
   function addCompanion(){
     const v = tv(), others = profiles().filter(p=>!v.includes(p.id));
     openSheet(`<h2>👥 Ajouter un compagnon</h2>
-      ${others.length ? `<div class="v-f"><label>Profils existants</label><div class="cv-plist">${others.map(p=>`<button class="cv-prow" onclick="CV.addToTrip('${p.id}')">${pchip(p.id)}<span>Ajouter →</span></button>`).join('')}</div></div>` : ''}
+      ${others.length ? `<div class="v-f"><label>Profils existants</label><div class="cv-plist">${others.map(p=>`<button class="cv-prow" onclick="CV.addToTrip('${ja(p.id)}')">${pchip(p.id)}<span>Ajouter →</span></button>`).join('')}</div></div>` : ''}
       <form onsubmit="event.preventDefault();CV.newProfile(true)">
         <div class="v-f"><label>Nouveau profil</label><input class="v-in" id="cv-pnom" placeholder="Prénom (ex. Camille)" required></div>
         <div class="v-f"><label>Couleur</label>${colorPick(nextColor())}</div>
@@ -904,10 +904,10 @@
     cats.forEach(c=>{
       const L = cl.filter(i=>i.cat===c), dn = L.filter(i=>chkDone(i)).length, op = CO[c] !== undefined ? CO[c] : c === firstTodo;
       h += `<details class="cv-fold ck-fold"${op ? ' open' : ''} ontoggle="CV.ckTog(${esc(JSON.stringify(c))}, this.open)"><summary><span class="v-cl-cat" style="margin:0">${esc(c)}</span><small>${dn === L.length ? '✓ ' : ''}${dn} / ${L.length}</small></summary><div class="fold-in">`;
-      h += cl.filter(i=>i.cat===c).map(i=>{ const me = i.each ? !!(i.doneBy || {})[M.me] : i.done; return `<div class="v-cl${chkDone(i)?' done':''}${i.each ? ' each' : ''}" onclick="CV.check('${i.id}')">
-        <div class="c">${me?'✓':''}</div><div class="t">${esc(i.label)}${i.each ? `<span class="ck-who">${tvOf(M.trip).map(p=>`<i class="${(i.doneBy || {})[p] ? 'on' : ''}" style="--c:${pcol(p)}" title="${esc(pname(p))}">${esc(((pname(p)||'?')[0]||'?').toUpperCase())}</i>`).join('')}</span>` : ''}</div>${multi ? `<button type="button" class="ck-each${i.each ? ' on' : ''}" onclick="event.stopPropagation();CV.chkEach('${i.id}')" title="Chacun le sien" aria-label="Chacun le sien">👥</button>` : ''}${!i.done && !hidden('blk:book') && checkBook(i.label) ? `<button type="button" class="bk-ck" onclick="event.stopPropagation();CV.bookSheet('${i.id}',1)" aria-label="Réserver">🛒</button>` : ''}
+      h += cl.filter(i=>i.cat===c).map(i=>{ const me = i.each ? !!(i.doneBy || {})[M.me] : i.done; return `<div class="v-cl${chkDone(i)?' done':''}${i.each ? ' each' : ''}" onclick="CV.check('${ja(i.id)}')">
+        <div class="c">${me?'✓':''}</div><div class="t">${esc(i.label)}${i.each ? `<span class="ck-who">${tvOf(M.trip).map(p=>`<i class="${(i.doneBy || {})[p] ? 'on' : ''}" style="--c:${pcol(p)}" title="${esc(pname(p))}">${esc(((pname(p)||'?')[0]||'?').toUpperCase())}</i>`).join('')}</span>` : ''}</div>${multi ? `<button type="button" class="ck-each${i.each ? ' on' : ''}" onclick="event.stopPropagation();CV.chkEach('${ja(i.id)}')" title="Chacun le sien" aria-label="Chacun le sien">👥</button>` : ''}${!i.done && !hidden('blk:book') && checkBook(i.label) ? `<button type="button" class="bk-ck" onclick="event.stopPropagation();CV.bookSheet('${ja(i.id)}',1)" aria-label="Réserver">🛒</button>` : ''}
         ${i.done && i.updatedBy && i.updatedAt>1000 ? `<span title="Coché par ${esc(pname(i.updatedBy))}">${ini(i.updatedBy)}</span>` : ''}
-        <button class="del" onclick="event.stopPropagation();CV.delCheck('${i.id}')" aria-label="Retirer">✕</button></div>`; }).join('');
+        <button class="del" onclick="event.stopPropagation();CV.delCheck('${ja(i.id)}')" aria-label="Retirer">✕</button></div>`; }).join('');
       h += `</div></details>`;
     });
     h += `<div class="v-cl-add"><select class="v-in" id="v-cl-cat" style="flex:0 0 40%">${cats.map(c=>`<option>${esc(c)}</option>`).join('')}<option value="__new">＋ Nouvelle catégorie…</option></select>
@@ -1003,7 +1003,7 @@
     const cats = [...new Set(spSug.map(x=>x.cat))];
     const head = `<div class="sp-ent"><label>🛂 Ton passeport ou ta carte d’identité vient de…</label><select class="v-in" onchange="CV.packFrom(this.value)">${BAG_FROM.map(([k, l])=>`<option value="${k}"${k === from ? ' selected' : ''}>${l}</option>`).join('')}</select>
       <label>🌍 Pays visités${dest.length > 1 ? ` <small>(${dest.length})</small>` : ''}</label>
-      <div class="sp-ccs">${dest.map(cc=>`<span class="sp-cc">${flag(cc)} ${esc(ccName(cc))}<button type="button" onclick="CV.packCcDel('${cc}')" aria-label="Retirer">✕</button></span>`).join('') || '<small>Aucun pays pour l’instant.</small>'}</div>
+      <div class="sp-ccs">${dest.map(cc=>`<span class="sp-cc">${flag(cc)} ${esc(ccName(cc))}<button type="button" onclick="CV.packCcDel('${ja(cc)}')" aria-label="Retirer">✕</button></span>`).join('') || '<small>Aucun pays pour l’instant.</small>'}</div>
       <select class="v-in" onchange="CV.packCcAdd(this.value)"><option value="">＋ Ajouter un pays…</option>${ISO.filter(c=>!dest.includes(c)).map(c=>[c, ccName(c)]).sort((a, b)=>a[1].localeCompare(b[1])).map(([c, n])=>`<option value="${c}">${flag(c)} ${esc(n)}</option>`).join('')}</select>
       <small>Règles générales pour un court séjour touristique. Vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.</small></div>`;
     // pays pas encore connus (ville d’hébergement jamais cherchée) : on les cherche, puis on met la liste à jour une fois
@@ -1048,8 +1048,8 @@
     let h = `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">✨ ${all.length} envie${all.length>1?'s':''}</div><div class="v-sum-small">partagées entre vous</div></div>
       <div class="v-sum-small">Le fourre-tout de chacun : une étape à ajouter, un week-end à caler, un prochain voyage. Un week-end peut devenir un voyage en un clic.</div></div>
       <div class="v-filters">${[['all','Tout'],['weekend','🏖️ Week-ends ('+counts('weekend')+')'],['voyage','🌍 Voyages ('+counts('voyage')+')'],...(t?[['here','📍 Pour « '+esc((t.titre||'').slice(0,14))+' »']]:[]),['etape','📍 Étapes'],['idee','💡 Idées']].map(([k,l])=>
-        `<button class="v-chip${f===k?' on':''}" onclick="CV.envF('${k}')">${l}</button>`).join('')}</div>
-      <div class="v-filters"><span class="cv-lbl">De</span><button class="v-chip${fp==='all'?' on':''}" onclick="CV.envP('all')">Tous</button>${profiles().map(p=>`<button class="v-chip cv-pc${fp===p.id?' on':''}" style="--pc:${p.couleur}" onclick="CV.envP('${p.id}')">${esc(p.nom)}</button>`).join('')}</div>`;
+        `<button class="v-chip${f===k?' on':''}" onclick="CV.envF('${ja(k)}')">${l}</button>`).join('')}</div>
+      <div class="v-filters"><span class="cv-lbl">De</span><button class="v-chip${fp==='all'?' on':''}" onclick="CV.envP('all')">Tous</button>${profiles().map(p=>`<button class="v-chip cv-pc${fp===p.id?' on':''}" style="--pc:${p.couleur}" onclick="CV.envP('${ja(p.id)}')">${esc(p.nom)}</button>`).join('')}</div>`;
     h += shown.map(wishCard).join('') || '<div class="v-empty">Aucune envie ici. Ajoute avec ＋ en bas.</div>';
     h = pollsHTML() + h;
     document.getElementById('cv-body').innerHTML = h;
@@ -1062,7 +1062,7 @@
     const deps = wishPeople(w).filter(pid => g[pid] && (g[pid].dep || g[pid].ret)).map(pid =>
       `<div class="cv-dep">${ini(pid)} ${esc(pname(pid))} : ${esc(g[pid].dep||'?')} → ${esc(w.titre)}${(g[pid].ret||g[pid].dep) ? ' → ' + esc(g[pid].ret||g[pid].dep) : ''}</div>`).join('');
     return `<div class="cv-wish${w.statut==='fait'?' done':''}" style="--pc:${pcol(w.createdBy)}">
-      <div onclick="CV.editWish('${w.id}')" style="cursor:pointer">
+      <div onclick="CV.editWish('${ja(w.id)}')" style="cursor:pointer">
         <div class="cv-wish-k">${k.icon} ${k.lbl}${w.statut==='prevu'?' · <b>prévu</b>':w.statut==='fait'?' · ✓ fait':''}</div>
         <div class="cv-wish-t">${esc(w.titre)}</div>
         <div class="v-card-sub">${[w.debut ? (w.fin && w.fin!==w.debut ? 'du '+fdate(w.debut)+' au '+fdate(w.fin) : fdate(w.debut)) : '', w.quand||'', tr ? 'pour « '+esc(tr.titre)+' »' : '', w.hotel ? '🏨 '+esc(w.hotel) : '', num(w.budget) ? '≈ '+eur(num(w.budget))+'/pers' : ''].filter(Boolean).join(' · ')}</div>
@@ -1071,12 +1071,12 @@
         ${byline(w)}
       </div>
       <div class="cv-wish-a">
-        <button class="cv-like${liked?' on':''}" onclick="CV.like('${w.id}')">${liked?'❤️':'🤍'} Moi aussi</button>
+        <button class="cv-like${liked?' on':''}" onclick="CV.like('${ja(w.id)}')">${liked?'❤️':'🤍'} Moi aussi</button>
         <span class="ins">${likes.map(ini).join('')}</span>
         <span style="flex:1"></span>
         ${safeUrl(w.lien) ? `<a class="v-link" href="${esc(safeUrl(w.lien))}" target="_blank" rel="noopener">↗</a>` : ''}
-        ${created ? `<button class="v-chip" onclick="CV.go('${created.id}')">→ Ouvrir le voyage</button>`
-          : (w.kind==='weekend'||w.kind==='voyage') ? `<button class="v-chip on" onclick="CV.wishToTrip('${w.id}')">🚀 En faire un voyage</button>` : ''}
+        ${created ? `<button class="v-chip" onclick="CV.go('${ja(created.id)}')">→ Ouvrir le voyage</button>`
+          : (w.kind==='weekend'||w.kind==='voyage') ? `<button class="v-chip on" onclick="CV.wishToTrip('${ja(w.id)}')">🚀 En faire un voyage</button>` : ''}
       </div>
     </div>`;
   }
@@ -1155,7 +1155,7 @@
     const pool = profiles().map(p=>p.id);
     openSheet(`<h2>🧳 ${id ? 'Modifier le voyage' : 'Nouveau voyage'}</h2>${byline(t)}
       <form id="v-form" onsubmit="event.preventDefault();CV.saveTrip()">
-        ${id && TS()[id] && spaceObj(TS()[id]) ? `<button type="button" class="v-btn sec" style="margin:0 0 10px" onclick="CV.tripSyncSheet('${id}')">🔄 Synchro de ce voyage partagé</button>` : ''}
+        ${id && TS()[id] && spaceObj(TS()[id]) ? `<button type="button" class="v-btn sec" style="margin:0 0 10px" onclick="CV.tripSyncSheet('${ja(id)}')">🔄 Synchro de ce voyage partagé</button>` : ''}
         ${field('Nom du voyage','titre',t.titre,'text','required placeholder="Ex. Week-end Palma, Été 2028…"')}
         ${field('Itinéraire / sous-titre','sous',t.sous,'text','placeholder="Ex. Rome → Malte → Athènes"')}
         <div class="v-f2">${field('Début','debut',t.debut,'date')}${field('Fin','fin',t.fin,'date')}</div>
@@ -1303,9 +1303,9 @@
   function whoSheet(){
     openSheet(`<h2>👤 Qui utilise ce téléphone ?</h2>
       <div class="v-sum-small" style="margin-bottom:10px">Tes ajouts et modifications seront signés de ce nom, dans sa couleur.</div>
-      <div class="cv-plist">${profiles().map(p=>`<button class="cv-prow${p.id===M.me?' me':''}" onclick="CV.setMe('${p.id}')">${pchip(p.id)}<span>${p.id===M.me?'✓ c’est moi':'C’est moi'}</span></button>`).join('')}</div>
+      <div class="cv-plist">${profiles().map(p=>`<button class="cv-prow${p.id===M.me?' me':''}" onclick="CV.setMe('${ja(p.id)}')">${pchip(p.id)}<span>${p.id===M.me?'✓ c’est moi':'C’est moi'}</span></button>`).join('')}</div>
       <button class="v-btn sec" style="margin-top:10px" onclick="CV.editProfile(null)">＋ Nouveau profil</button>
-      ${prof(M.me) ? `<button class="v-btn sec" onclick="CV.editProfile('${M.me}')">🎨 Changer mon nom / ma couleur</button>` : ''}`, !prof(M.me));
+      ${prof(M.me) ? `<button class="v-btn sec" onclick="CV.editProfile('${ja(M.me)}')">🎨 Changer mon nom / ma couleur</button>` : ''}`, !prof(M.me));
   }
   async function setMe(id){
     if(profLocked(id) && !(await uiConfirm(MSGT('Ce profil est déjà utilisé sur un autre téléphone. C’est bien toi (nouveau téléphone) ?')))) return;
@@ -1336,7 +1336,7 @@
     const state = !s.on ? '⚪ Désactivée' : s.err ? '🔴 ' + esc(s.err) : M.dirty.length ? '🟠 ' + M.dirty.length + ' modif(s) en attente' : '🟢 À jour' + (E2E ? ' · 🔐 chiffré' : '');
     let h = `<div class="v-box"><h3>👤 Profils</h3>
         <p>Chacun son prénom et sa couleur. Toutes les fiches indiquent qui les a ajoutées ou modifiées.</p>
-        <div class="cv-plist">${profiles().map(p=>`<button class="cv-prow${p.id===M.me?' me':''}" onclick="CV.editProfile('${p.id}')">${pchip(p.id)}<span>${p.id===M.me?'moi sur ce téléphone · modifier':profLocked(p.id)?'🔒':'modifier'}</span></button>`).join('')}</div>
+        <div class="cv-plist">${profiles().map(p=>`<button class="cv-prow${p.id===M.me?' me':''}" onclick="CV.editProfile('${ja(p.id)}')">${pchip(p.id)}<span>${p.id===M.me?'moi sur ce téléphone · modifier':profLocked(p.id)?'🔒':'modifier'}</span></button>`).join('')}</div>
         <button class="v-btn sec" style="margin-top:8px" onclick="CV.editProfile(null)">＋ Ajouter un profil</button>
         ${profiles().length > 1 ? `<button class="v-btn sec" style="margin-top:8px" onclick="CV.travSheet()">🧳 Qui part dans quels voyages ?</button>` : ''}
         </div>`;
@@ -1347,7 +1347,7 @@
         <button class="v-btn sec" onclick="CV.serverWipeSheet()">🗑 Supprimer mes données du serveur</button></div>`; }
     if(t){
       h += `<div class="v-box"><h3>🧳 Ce voyage</h3><p><b>${esc(t.titre)}</b>${t.debut?' · '+tripDates(t):''}${t.archived?' · ✓ clôturé':''}</p>
-        <button class="v-btn sec" onclick="CV.editTrip('${t.id}')">✏️ Modifier (nom, dates, voyageurs)</button>
+        <button class="v-btn sec" onclick="CV.editTrip('${ja(t.id)}')">✏️ Modifier (nom, dates, voyageurs)</button>
         ${t.archived ? `<button class="v-btn sec" onclick="CV.reopenTrip()">↺ Rouvrir le voyage</button>` : `<button class="v-btn sec" onclick="CV.closeTrip()">✓ Clôturer (tout payé et coché, garder la trace)</button>`}
         ${t.demo ? '' : `<button class="v-btn" onclick="CV.shareHub()">👥 Partager ce voyage</button>`}
         <button class="v-btn sec" onclick="CV.pdfSheet()">🖨️ Carnet de route à imprimer (PDF)</button>
@@ -1467,7 +1467,7 @@
       recs.forEach(r=>{ stamp(r); r.imported = true; });
     }
     let n = 0;
-    recs.forEach(r=>{ if(r && r.id && (!R[r.id] || (r.updatedAt||0) >= (R[r.id].updatedAt||0))){ R[r.id] = r; markDirty(r.id); n++; } });
+    recs.forEach(r=>{ if(r && r.id && safeRec(r) && (!R[r.id] || (r.updatedAt||0) >= (R[r.id].updatedAt||0))){ R[r.id] = r; markDirty(r.id); n++; } });
     return n;
   }
   function importPick(){
@@ -1493,7 +1493,7 @@
     };
     inp.click();
   }
-  const CONTACT = 'appareils.treves6g@icloud.com';   // contact de l'éditeur (aussi dans mentions-legales.html et privacy.html)
+  const CONTACT = 'contact.vezoria@icloud.com';   // contact de l'éditeur (aussi dans mentions-legales.html et privacy.html)
   async function askErase(){
     if(!M.sync.on){ alert('Ce carnet n’est pas synchronisé : rien n’est stocké sur le serveur.'); return; }
     if(!(await uiConfirm('Demander l’effacement de ce carnet sur le serveur ?\n\nToutes ses données en ligne seront supprimées, pour TOUS ses membres. Un e-mail va être préparé : il contient seulement l’identifiant chiffré du carnet, jamais son code.'))) return;
@@ -1763,12 +1763,12 @@
     return `<div class="eq">
       ${tr.length ? `<div class="eq-k">${MSGT('Pour être quittes')}</div>` + tr.map(x=>`<div class="eq-tr">
           <div class="eq-line">${who(x.de)}<span class="eq-arr"><b>${eur(x.v)}</b><i>→</i></span>${who(x.a)}</div>
-          <div class="eq-btns"><button type="button" class="eq-go" onclick="CV.rembAdd('${x.de}','${x.a}',${x.v.toFixed(2)})">💸 ${MSGT('C’est remboursé')}</button><button type="button" onclick="CV.rembAsk('${x.de}','${x.a}',${x.v.toFixed(2)})">📤 ${MSGT('Demander')}</button></div></div>`).join('')
+          <div class="eq-btns"><button type="button" class="eq-go" onclick="CV.rembAdd('${ja(x.de)}','${ja(x.a)}',${x.v.toFixed(2)})">💸 ${MSGT('C’est remboursé')}</button><button type="button" onclick="CV.rembAsk('${ja(x.de)}','${ja(x.a)}',${x.v.toFixed(2)})">📤 ${MSGT('Demander')}</button></div></div>`).join('')
         : `<div class="eq-ok">✓ ${MSGT(paid > .5 ? 'Vous êtes quittes : chacun a payé sa part.' : 'Rien n’est encore payé : les comptes se feront tout seuls.')}</div>`}
       ${paid > .5 ? `<div class="eq-note">${RF('Calculé sur ce qui est déjà payé ({0}), pas sur les prévisions.', eur(paid))}</div>` : ''}
       ${paid > .5 ? `<details class="eq-det"><summary>${MSGT('Voir le calcul')}</summary>
         ${bal.map(b=>{ const s = b.solde; return `<div class="eq-row">${pchip(b.pid)}<span>${RF('a payé {0} · sa part {1}', eur(b.avance), eur(b.part))}${b.verse > .5 ? ' · ' + RF('a remboursé {0}', eur(b.verse)) : ''}${b.recu > .5 ? ' · ' + RF('a reçu {0}', eur(b.recu)) : ''}</span><b class="${s > .5 ? 'pos' : s < -.5 ? 'neg' : ''}">${Math.abs(s) < .5 ? MSGT('quitte') : s > 0 ? RF('on lui doit {0}', eur(s)) : RF('doit {0}', eur(-s))}</b></div>`; }).join('')}
-        ${rb.length ? `<div class="eq-k" style="margin-top:8px">${MSGT('Déjà remboursé')}</div>` + rb.map(x=>`<div class="cv-rb">💸 ${pname_c(x.de)} → ${pname_c(x.a)} <b>${eur(num(x.montant))}</b> <span class="v-sum-small">${fdate(x.date)}</span><button class="cv-x" onclick="CV.rembDel('${x.id}')" aria-label="Retirer">✕</button></div>`).join('') : ''}</details>` : ''}
+        ${rb.length ? `<div class="eq-k" style="margin-top:8px">${MSGT('Déjà remboursé')}</div>` + rb.map(x=>`<div class="cv-rb">💸 ${pname_c(x.de)} → ${pname_c(x.a)} <b>${eur(num(x.montant))}</b> <span class="v-sum-small">${fdate(x.date)}</span><button class="cv-x" onclick="CV.rembDel('${ja(x.id)}')" aria-label="Retirer">✕</button></div>`).join('') : ''}</details>` : ''}
     </div>`;
   }
 
@@ -1802,7 +1802,7 @@
         <input class="v-in" type="date" data-e="date" value="${esc(e.date)}">
         <input class="v-in" data-e="montant" inputmode="decimal" value="${esc(e.montant)}" placeholder="${CS()}">
         <label class="cv-echok"><input type="checkbox" data-e="fait" ${e.fait?'checked':''}> payé</label>
-        <button type="button" class="cv-x" onclick="CV.echDel('${e.id}')" aria-label="Retirer">✕</button></div>`).join('')
+        <button type="button" class="cv-x" onclick="CV.echDel('${ja(e.id)}')" aria-label="Retirer">✕</button></div>`).join('')
       || '<div class="v-sum-small">Aucune échéance : se paie en une fois.</div>';
   }
   function readEch(){
@@ -1865,13 +1865,13 @@
         <div class="cv-echm-h"><span>${monthLbl(k)}${k===now?' · ce mois-ci':''}${late?' · ⚠️ en retard':''}</span><b>${eur(tot)}</b></div>
         ${v.length>1 ? `<div class="cv-live-r">${v.map(pid=>`<span>${pchip(pid)} ${eur(rows.reduce((s,x)=>s+part(x.it,pid,num(x.e.montant)),0))}</span>`).join('')}</div>` : ''}
         ${rows.map(x=>`<div class="cv-echi${x.e.fait?' done':''}">
-          <input type="checkbox" ${x.e.fait?'checked':''} onchange="CV.echToggle('${x.it.id}','${x.e.id}')">
-          <span class="x" onclick="CV.edit('${x.it.id}')">${icon(x.it)} ${esc(x.it.titre)}<small>${x.e.date ? fshort(x.e.date) : ''}</small></span>
+          <input type="checkbox" ${x.e.fait?'checked':''} onchange="CV.echToggle('${ja(x.it.id)}','${ja(x.e.id)}')">
+          <span class="x" onclick="CV.edit('${ja(x.it.id)}')">${icon(x.it)} ${esc(x.it.titre)}<small>${x.e.date ? fshort(x.e.date) : ''}</small></span>
           <b>${eur(num(x.e.montant))}</b></div>`).join('')}
       </div>`;
     });
     if(unpl.length) h += `<div class="cv-echm"><div class="cv-echm-h"><span>🕓 Pas encore planifié</span><b>${eur(unplT)}</b></div>
-      ${unpl.sort((a,b)=>b.rest-a.rest).map(u=>`<div class="cv-echi"><span class="x" onclick="CV.edit('${u.it.id}')">${icon(u.it)} ${esc(u.it.titre)}<small>${STATUTS[u.it.statut]||''}</small></span><b>${eur(u.rest)}</b></div>`).join('')}</div>`;
+      ${unpl.sort((a,b)=>b.rest-a.rest).map(u=>`<div class="cv-echi"><span class="x" onclick="CV.edit('${ja(u.it.id)}')">${icon(u.it)} ${esc(u.it.titre)}<small>${STATUTS[u.it.statut]||''}</small></span><b>${eur(u.rest)}</b></div>`).join('')}</div>`;
     if(!keys.length && !unpl.length) h += '<div class="v-empty">Rien à payer pour l’instant.</div>';
     h += `<div class="v-sum-small" style="padding:0 4px;line-height:1.5">Chaque fiche peut être payée en plusieurs fois (💶 Paiement → 📆 Échéancier). Cocher une échéance la marque payée ; quand tout est coché, la fiche passe en « Payé ».</div>`;
     document.getElementById('cv-body').innerHTML = h;
@@ -1943,7 +1943,7 @@
     const L = links(it), bk = !big && bookOn(it) ? bookGroups(it) : [];
     if(!L.length && !bk.length) return '';
     const a = ([i,l,u]) => `<a href="${esc(safeUrl(u))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${i} ${l}</a>`;
-    if(!big) return `<div class="cv-links">${L.map(a).join('')}${bk.length ? `<button type="button" class="bk-chip" onclick="event.stopPropagation();CV.bookSheet('${esc(it.id||'')}')">🛒 Réserver…</button>` : ''}</div>`;
+    if(!big) return `<div class="cv-links">${L.map(a).join('')}${bk.length ? `<button type="button" class="bk-chip" onclick="event.stopPropagation();CV.bookSheet('${ja(it.id||'')}')">🛒 Réserver…</button>` : ''}</div>`;
     return `<div class="cv-links big">${L.map(a).join('')}</div>`;
   }
   // en tête de la fiche : comparer et réserver (seulement tant que c’est « à réserver »)
@@ -2156,7 +2156,7 @@
     if(!pl.length) return '';
     const byId = Object.fromEntries(pl.map(p=>[p.id,p]));
     const fresh = r && r.ids && r.ids.every(id=>byId[id]) && pl.every(p=>r.ids.includes(p.id) || (r.miss||[]).includes(p.id));
-    if(!fresh) return compact ? `<div class="cv-route-mini">📍 ${pl.map(p=>`<span class="cv-plk${p.sugg ? ' sg' : ''}" onclick="event.stopPropagation();CV.plInfo('${p.id}')">${p.sugg ? '💡 ' : ''}${esc(p.nom)}</span>`).join(' · ')}<div class="v-sum-small">⚡ ordre pas encore optimisé</div></div>` : '';
+    if(!fresh) return compact ? `<div class="cv-route-mini">📍 ${pl.map(p=>`<span class="cv-plk${p.sugg ? ' sg' : ''}" onclick="event.stopPropagation();CV.plInfo('${ja(p.id)}')">${p.sugg ? '💡 ' : ''}${esc(p.nom)}</span>`).join(' · ')}<div class="v-sum-small">⚡ ordre pas encore optimisé</div></div>` : '';
     const stops = [r.start, ...r.ids.map(id=>Object.assign({}, r.pts[id], {nom:byId[id].nom})), ...(r.fin ? [] : [r.end])];
     let tot = 0, walk = 0, mins = 0; const legs = [];
     for(let i=1;i<stops.length;i++){ const dk = km(stops[i-1], stops[i]), a = legAdvice(dk, r.walk||2.5, (r.tr||[]).includes(i-1)); tot += dk; if(a.mode==='walking') walk += dk; mins += a.min; legs.push({dk, a, from:stops[i-1], to:stops[i]}); }
@@ -2164,11 +2164,11 @@
     const full = way.length <= 9 ? [dirUrl(r.start, r.end, 'walking', way)] : [dirUrl(r.start, way[8], 'walking', way.slice(0,8)), dirUrl(way[8], r.end, 'walking', way.slice(9))];
     const gm = full.map((u,i)=>`<a class="cv-gm" href="${u}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🗺️ Ouvrir dans Google Maps${full.length>1?' ('+(i+1)+'/'+full.length+')':''}</a>`).join('');
     const sum = `≈ ${fmtKm(tot)} dont ${fmtKm(walk)} à pied · ${fmtMin(mins)} de trajets`;
-    if(compact) return `<div class="cv-route-mini">🗺️ ${r.ids.map((id,i)=>`<b>${i+1}</b> <span class="cv-plk" onclick="event.stopPropagation();CV.plInfo('${id}')">${esc(byId[id].nom)}</span>`).join(' → ')}${r.loop?' ↩️':''}<div class="v-sum-small">${sum}</div>${gm}</div>`;
+    if(compact) return `<div class="cv-route-mini">🗺️ ${r.ids.map((id,i)=>`<b>${i+1}</b> <span class="cv-plk" onclick="event.stopPropagation();CV.plInfo('${ja(id)}')">${esc(byId[id].nom)}</span>`).join(' → ')}${r.loop?' ↩️':''}<div class="v-sum-small">${sum}</div>${gm}</div>`;
     return `<div class="cv-route">
       <div class="cv-stop s">🏁 ${esc(r.start.lbl||'Départ')}</div>
       ${legs.map((L,i)=>`<a class="cv-leg" href="${dirUrl(L.from, L.to, L.a.mode)}" target="_blank" rel="noopener">${L.a.icon} ${L.a.txt} · ${fmtKm(L.dk)} · ~${fmtMin(L.a.min)}${L.a.alt ? ' <span>('+L.a.alt+')</span>' : ''} ↗</a>
-        <div class="cv-stop${i===legs.length-1?' s':''}">${i===legs.length-1 && !r.fin ? (r.loop ? '↩️ Retour · ' : '🏁 ') + esc(r.end.lbl||'Arrivée') : i===legs.length-1 ? '🏁 <b>'+(i+1)+'</b> <span class="cv-plk" onclick="event.stopPropagation();CV.plInfo(\''+r.ids[i]+'\')">'+esc(L.to.nom)+'</span>' : '<b>'+(i+1)+'</b> <span class="cv-plk" onclick="event.stopPropagation();CV.plInfo(\''+r.ids[i]+'\')">'+esc(L.to.nom)+'</span>'}</div>`).join('')}
+        <div class="cv-stop${i===legs.length-1?' s':''}">${i===legs.length-1 && !r.fin ? (r.loop ? '↩️ Retour · ' : '🏁 ') + esc(r.end.lbl||'Arrivée') : i===legs.length-1 ? '🏁 <b>'+(i+1)+'</b> <span class="cv-plk" onclick="event.stopPropagation();CV.plInfo(\''+ja(r.ids[i])+'\')">'+esc(L.to.nom)+'</span>' : '<b>'+(i+1)+'</b> <span class="cv-plk" onclick="event.stopPropagation();CV.plInfo(\''+ja(r.ids[i])+'\')">'+esc(L.to.nom)+'</span>'}</div>`).join('')}
       <div class="cv-route-sum">${sum}</div>${gm}
       <div class="cv-rmap" data-rmap="${d}"></div>
       ${(r.miss||[]).length ? `<div class="v-sum-small" style="color:var(--red)">Introuvable(s) : ${r.miss.map(id=>byId[id] ? esc(byId[id].nom) : '').filter(Boolean).join(', ')} — ajoute une adresse précise ou un lien Google Maps.</div>` : ''}
@@ -2184,15 +2184,15 @@
         <input class="v-in" id="pl-dept" style="margin-top:6px;${cfg.dep==='libre'?'':'display:none'}" value="${esc(cfg.depTxt)}" placeholder="Adresse, lieu ou lien Google Maps" onchange="CV.plCfg()"></div>
       <div class="v-f"><label>Arrivée</label>${sel('pl-arr', cfg.arr, true)}
         <input class="v-in" id="pl-arrt" style="margin-top:6px;${cfg.arr==='libre'?'':'display:none'}" value="${esc(cfg.arrTxt)}" placeholder="Adresse, lieu ou lien Google Maps" onchange="CV.plCfg()"></div>
-      <button type="button" class="cv-tjbtn pl-exp" onclick="CV.planExplore('${d}')"><span>🧭</span><span><b>Explorer ${city ? esc(city) : 'la ville'}</b><small>Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée</small></span></button>
+      <button type="button" class="cv-tjbtn pl-exp" onclick="CV.planExplore('${ja(d)}')"><span>🧭</span><span><b>Explorer ${city ? esc(city) : 'la ville'}</b><small>Monuments, quartiers, musées, où manger : touche pour ajouter à ta journée</small></span></button>
       <div class="v-f"><label>Ce que tu veux voir (${pl.length})</label>
-        <div>${pl.map((p,i)=>`<div class="cv-place"><span class="n">${i+1}</span><span class="x" role="button" onclick="CV.plInfo('${p.id}')"><u>${esc(p.nom)}</u> ⓘ${p.adresse && p.adresse!==p.nom ? `<small>${esc(p.adresse.slice(0,60))}</small>` : ''}${byline(p).replace('cv-by','cv-by s')}</span>
+        <div>${pl.map((p,i)=>`<div class="cv-place"><span class="n">${i+1}</span><span class="x" role="button" onclick="CV.plInfo('${ja(p.id)}')"><u>${esc(p.nom)}</u> ⓘ${p.adresse && p.adresse!==p.nom ? `<small>${esc(p.adresse.slice(0,60))}</small>` : ''}${byline(p).replace('cv-by','cv-by s')}</span>
           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(coordsIn(p.adresse||'') ? ll(coordsIn(p.adresse)) : (p.adresse||p.nom) + (city ? ', ' + city : ''))}" target="_blank" rel="noopener">📍</a>
-          <button type="button" class="cv-x" onclick="CV.plDel('${p.id}')" aria-label="Retirer">✕</button></div>`).join('') || '<div class="v-sum-small">Ajoute les lieux de la journée, dans n’importe quel ordre.</div>'}</div>
+          <button type="button" class="cv-x" onclick="CV.plDel('${ja(p.id)}')" aria-label="Retirer">✕</button></div>`).join('') || '<div class="v-sum-small">Ajoute les lieux de la journée, dans n’importe quel ordre.</div>'}</div>
         <div class="cv-row" style="margin-top:6px"><input class="v-in" id="pl-new" placeholder="Ex. Colisée ; Trastevere ; Bocca della Verità" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.plAdd()}">
           <button type="button" class="v-btn sec cv-sq" onclick="CV.plAdd()" aria-label="Ajouter">＋</button></div>
         <div class="v-sum-small" style="margin-top:4px">Un nom suffit${city ? ' (« ' + esc(city) + ' » est ajouté pour la recherche)' : ''}, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».</div></div>
-      ${hotelsAround(d).night ? `<div class="cv-row" style="margin-bottom:10px"><button type="button" class="v-day-edit" onclick="CV.planCity('${hotelsAround(d).night.id}')">🏙️ Organiser toute l’étape</button></div>` : ''}
+      ${hotelsAround(d).night ? `<div class="cv-row" style="margin-bottom:10px"><button type="button" class="v-day-edit" onclick="CV.planCity('${ja(hotelsAround(d).night.id)}')">🏙️ Organiser toute l’étape</button></div>` : ''}
       <div class="v-f"><label>Je marche jusqu’à</label><div class="cv-row"><input class="v-in cv-num" id="pl-walk" inputmode="decimal" value="${esc(t.marche||2.5)}" onchange="CV.plCfg()">
         <span class="v-sum-small">km par trajet ; au-delà : métro / bus, puis taxi</span></div></div>
       <button type="button" class="v-btn" id="pl-go" onclick="CV.plOpt()">⚡ Optimiser l’itinéraire</button>

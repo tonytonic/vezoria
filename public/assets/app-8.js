@@ -47,8 +47,8 @@
           <button type="button" class="v-btn" style="margin-top:8px" onclick="CV.syncMainNew()">☁️ Créer mon code principal</button>
           <div class="cv-row" style="margin-top:8px"><input class="v-in" id="sy-join" placeholder="J’ai déjà un code" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.syncMainJoin()">Utiliser</button></div></div>`;
     const tripBox = t && !t.demo
-      ? (tc ? `<div class="sy-r"><b>🔗 Code du voyage « ${esc(t.titre)} »</b><small>À donner à tes compagnons : ils rejoignent seulement ce voyage.</small><div class="cv-row" style="margin-top:6px"><b class="cv-code">${esc(tc)}</b><button type="button" class="v-btn sec" style="width:auto;margin:0 0 0 auto;padding:6px 12px" onclick="CV.close();CV.tripInviteNow('${t.id}')">📤 Inviter</button></div></div>`
-            : `<div class="sy-r"><b>🔗 Partager « ${esc(t.titre)} »</b><small>Crée le code de ce voyage et invite tes compagnons : ils ne voient que ce voyage, le reste reste privé.</small><button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.close();CV.tripInviteNow('${t.id}')">🔗 Créer le code et inviter</button></div>`)
+      ? (tc ? `<div class="sy-r"><b>🔗 Code du voyage « ${esc(t.titre)} »</b><small>À donner à tes compagnons : ils rejoignent seulement ce voyage.</small><div class="cv-row" style="margin-top:6px"><b class="cv-code">${esc(tc)}</b><button type="button" class="v-btn sec" style="width:auto;margin:0 0 0 auto;padding:6px 12px" onclick="CV.close();CV.tripInviteNow('${ja(t.id)}')">📤 Inviter</button></div></div>`
+            : `<div class="sy-r"><b>🔗 Partager « ${esc(t.titre)} »</b><small>Crée le code de ce voyage et invite tes compagnons : ils ne voient que ce voyage, le reste reste privé.</small><button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.close();CV.tripInviteNow('${ja(t.id)}')">🔗 Créer le code et inviter</button></div>`)
       : '';
     openSheet(`<h2>☁️ Synchronisation</h2>
       <div class="v-sum-small" style="margin-bottom:10px">Tout part tout seul : à l’ouverture, après chaque modification, puis régulièrement. Hors connexion, rien n’est perdu : ça part dès que le réseau revient.</div>
@@ -84,6 +84,7 @@
     return (kind === 'pack' ? MSG('Rejoins nos voyages sur Vezoria 🧳 : à compléter ensemble') : kind === 'carnet' ? MSG('Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble') : MSG(`Rejoins notre voyage « ${titre} » sur Vezoria 🧳`))
       + '\n' + (link || url) + '\n' + MSG('Code :') + ' ' + code + '\n' + MSG('(Vezoria déjà installée ? Ouvre-la → 👥 Partager → « Rejoindre avec un code » et colle le code.)'); };
   function inviteSheet(tid, kind, code0){
+    if(kind === 'carnet'){ closeSheet(true); memberInvite(); return; }   // 🔑 le code administrateur ne se donne plus : code compagnon
     kind = kind || 'trip'; const t = tid ? R[tid] : null, code = kind === 'pack' ? code0 : kind === 'carnet' ? M.sync.code : TS()[tid]; if(!code) return;
     const pk = kind === 'pack' ? PACKS()[code] : null;
     const url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : code;
@@ -94,13 +95,14 @@
       <div class="iv-qr">${qrSVG(link)}</div>
       <div class="cv-bigcode" data-notr>${esc(code)}</div>
       <div class="iv-step"><b>💬 Elle est loin</b><span>Envoie-lui le message : il contient le lien et le code (utile si elle a déjà l’appli).</span></div>
-      <button type="button" class="v-btn" onclick="CV.inviteSend('${tid || ''}','${kind}','${pk ? esc(code) : ''}')">💬 Envoyer l’invitation</button>
-      <button type="button" class="v-btn sec" onclick="CV.inviteCopy('${esc(code)}')">📋 Copier le code</button>
+      <button type="button" class="v-btn" onclick="CV.inviteSend('${ja(tid || '')}','${ja(kind)}','${ja(pk ? code : '')}')">💬 Envoyer l’invitation</button>
+      <button type="button" class="v-btn sec" onclick="CV.inviteCopy('${ja(code)}')">📋 Copier le code</button>
       <div class="v-sum-small" style="margin-top:8px">${kind === 'carnet' ? '🔐 Tout est chiffré : seules les personnes qui ont ce code peuvent lire ton carnet.' : '🔐 Tout est chiffré : seules les personnes qui ont ce code peuvent lire ce voyage.'}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   async function inviteSend(tid, kind, code0){
-    const t = tid ? R[tid] : null, code = kind === 'pack' ? code0 : kind === 'carnet' ? M.sync.code : TS()[tid]; if(!code) return;
+    if(kind === 'carnet'){ memberInvite(); return; }   // 🔑 jamais le code administrateur
+    const t = tid ? R[tid] : null, code = kind === 'pack' ? code0 : TS()[tid]; if(!code) return;
     const text = inviteText(kind, t ? t.titre : '', code);
     if(navigator.share){ try { await navigator.share({title: t ? t.titre : 'Vezoria', text}); return; } catch(e){ if(e && e.name === 'AbortError') return; } }
     try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée : colle-la dans un message'); } catch(e){ await uiPrompt('Copie ce texte :', text); }
@@ -113,7 +115,7 @@
     openSheet(`<h2>📚 Partager tout mon carnet</h2>
       <div class="sh-card"><div class="sh-k">👥 Avec un compagnon de voyage</div><p>Il voit et complète les voyages que tu choisis (programme, résas, budget, souvenirs). Tu pourras en retirer un à tout moment, pour lui seulement.</p>
         <button type="button" class="v-btn" onclick="CV.packSheet('')">📤 Inviter un compagnon (je choisis les voyages)</button>
-        ${mainOn ? `<button type="button" class="v-btn sec" onclick="CV.inviteSheet('', 'carnet')">💞 Tout partager, tout ou rien (couple : mon code principal)</button>` : `<div class="v-sum-small" style="margin-bottom:6px">Ton carnet n’est pas encore dans le cloud : active-le d’abord (chiffré), puis reviens ici.</div><button type="button" class="v-btn" onclick="CV.close();CV.cloudSheet()">☁️ Mettre mon carnet dans le cloud</button>`}</div>
+        ${mainOn ? `<button type="button" class="v-btn sec" onclick="CV.close();CV.memberInvite()">💞 Tout partager avec un code compagnon (tous mes voyages)</button>` : `<div class="v-sum-small" style="margin-bottom:6px">Ton carnet n’est pas encore dans le cloud : active-le d’abord (chiffré), puis reviens ici.</div><button type="button" class="v-btn" onclick="CV.close();CV.cloudSheet()">☁️ Mettre mon carnet dans le cloud</button>`}</div>
       <div class="sh-card"><div class="sh-k">👀 Avec des abonnés (lecture seule)</div><p>Comme Polarsteps : ta famille et tes amis voient uniquement les photos, les étapes, les lieux et les récits de tes voyages, avec un seul lien. Le budget, les résas, les documents et les notes ne sortent jamais. Les souvenirs « 🔒 privés » restent cachés.</p>
         ${ac ? `<div class="v-sum-small" style="margin-bottom:6px">✓ ${pub.length} voyage(s) publié(s) avec le lien du carnet.</div>` : ''}
         <button type="button" class="v-btn" onclick="CV.carnetPublishSheet()">${ac ? '👀 Choisir les voyages publiés et inviter' : '👀 Publier mon carnet pour des abonnés'}</button></div>
@@ -153,9 +155,9 @@
         const cl = (tc ? `<span class="ab-code" data-notr>🧳 ${esc(tc)}</span>` : '') + (fc ? `<span class="ab-code" data-notr>👀 ${esc(fc)}</span>` : '');
         if(by) return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}</small></span><span class="ab-sw ab-by">👀 <span>Publié par</span> <b data-notr>${esc(by)}</b></span></div>`;
         return `<div class="ab-row"><span class="ab-t"><b data-notr>${esc(t.titre)}</b><small class="v-sum-small">${t.debut ? tripDates(t) : ''}${solo ? ' · lien à part' : ''}</small>${cl ? `<small class="ab-codes">${cl}</small>` : ''}</span>
-          ${on && !solo ? `<button type="button" class="ab-1" title="Lien pour ce voyage seulement" aria-label="Lien pour ce voyage seulement" onclick="CV.feedShareOne('${t.id}')">🔗</button>` : ''}
-          ${on ? `<button type="button" class="ab-1" title="${esc(MSGT('Cacher à quelqu’un'))}" aria-label="${esc(MSGT('Cacher à quelqu’un'))}" onclick="CV.preHideSheet('${t.id}')">🙈${((M.preHide || {})[t.id] || []).length ? '<sup>' + M.preHide[t.id].length + '</sup>' : ''}</button>` : ''}
-          <button type="button" class="ab-sw${on ? ' on' : ''}" onclick="CV.carnetToggle('${t.id}')">${on ? '👀 Partagé' : '🔒 Masqué'}</button></div>`; }).join('')}
+          ${on && !solo ? `<button type="button" class="ab-1" title="Lien pour ce voyage seulement" aria-label="Lien pour ce voyage seulement" onclick="CV.feedShareOne('${ja(t.id)}')">🔗</button>` : ''}
+          ${on ? `<button type="button" class="ab-1" title="${esc(MSGT('Cacher à quelqu’un'))}" aria-label="${esc(MSGT('Cacher à quelqu’un'))}" onclick="CV.preHideSheet('${ja(t.id)}')">🙈${((M.preHide || {})[t.id] || []).length ? '<sup>' + M.preHide[t.id].length + '</sup>' : ''}</button>` : ''}
+          <button type="button" class="ab-sw${on ? ' on' : ''}" onclick="CV.carnetToggle('${ja(t.id)}')">${on ? '👀 Partagé' : '🔒 Masqué'}</button></div>`; }).join('')}
       <div class="v-sum-small" style="margin-top:6px">🔗 = un lien pour ce voyage seulement · 🙈 = cacher ce voyage à quelqu’un (même pas encore abonné) · 👁️ à côté d’un abonné = choisir ce qu’il voit</div></div>`;
   }
   // 🔑 code propre d’un voyage partagé avec des compagnons (sinon il vit dans le carnet principal)
@@ -546,7 +548,7 @@
   function followSheet(){
     const fl = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')]);
     openSheet(`<h2>👀 Voyages que je suis</h2>
-      ${fl.map(f=>{ const n = list('feed', x=>x.trip===f.id).length; return `<button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b>${esc(f.titre)}</b><small style="display:block" class="v-sum-small">par ${esc(ftTeamTxt(f))} · ${n} étape${n>1?'s':''}</small></span><span>›</span></button>`; }).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Tu ne suis aucun voyage pour l’instant.</div>'}
+      ${fl.map(f=>{ const n = list('feed', x=>x.trip===f.id).length; return `<button type="button" class="cv-prow" onclick="CV.feedView('${ja(f.id)}')"><span><b>${esc(f.titre)}</b><small style="display:block" class="v-sum-small">par ${esc(ftTeamTxt(f))} · ${n} étape${n>1?'s':''}</small></span><span>›</span></button>`; }).join('') || '<div class="v-sum-small" style="margin-bottom:8px">Tu ne suis aucun voyage pour l’instant.</div>'}
       <div class="v-f" style="margin-top:10px"><label>Suivre un voyage avec un code abonné</label>${qrBtn('fw-code')}<div class="cv-row"><input class="v-in" id="fw-code" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.followGo(document.getElementById('fw-code').value)">Suivre</button></div></div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
@@ -582,12 +584,12 @@
     const G = {}; fol.forEach(f=>{ const n = String(f.owner||'').trim() || '?', k = n.toLocaleLowerCase(); (G[k] = G[k] || {n, t:[]}).t.push(f); });
     const gs = Object.values(G).sort((a,b)=>a.n.localeCompare(b.n, undefined, {sensitivity:'base', numeric:true})), many = gs.length > 3;
     const row = f => folTile(f, nw[f.id] || 0), row0 = f => { const n = list('feed', x=>x.trip===f.id && !x.deleted).length, k = nw[f.id] || 0;
-      return `<div class="cv-folr"><button type="button" class="cv-prow" onclick="CV.feedView('${f.id}')"><span><b data-notr>${esc(f.titre)}</b><small class="v-sum-small" style="display:block">${f.debut ? `<span>${esc(tripDates(f))}</span> · ` : ''}<span>${n} étape${n>1?'s':''}</span></small></span>${k ? `<b class="cv-badge">${k}</b>` : ''}<span>›</span></button><button type="button" class="cv-x" title="Ne plus suivre" onclick="CV.feedUnfollow('${f.id}')" aria-label="Ne plus suivre">✕</button></div>`; };
+      return `<div class="cv-folr"><button type="button" class="cv-prow" onclick="CV.feedView('${ja(f.id)}')"><span><b data-notr>${esc(f.titre)}</b><small class="v-sum-small" style="display:block">${f.debut ? `<span>${esc(tripDates(f))}</span> · ` : ''}<span>${n} étape${n>1?'s':''}</span></small></span>${k ? `<b class="cv-badge">${k}</b>` : ''}<span>›</span></button><button type="button" class="cv-x" title="Ne plus suivre" onclick="CV.feedUnfollow('${ja(f.id)}')" aria-label="Ne plus suivre">✕</button></div>`; };
     return folLiveHTML(fol) + `<div class="sh-sec">➡️ Les voyages que je suis</div><div class="sh-card cv-folw">
       ${gs.length > 6 ? `<input type="search" class="v-in" style="margin-bottom:8px" placeholder="🔎 Chercher une personne ou un voyage" oninput="CV.folFilter(this)">` : ''}
       <div class="sh-st" style="margin-bottom:6px"><span>👥 ${gs.length} personne${gs.length>1?'s':''}</span><span>🧳 ${fol.length} voyage${fol.length>1?'s':''}</span></div>
       ${gs.map(g=>{ g.t.sort((a,b)=>(b.debut||'').localeCompare(a.debut||'')); const k = g.t.reduce((s, f)=>s + (nw[f.id]||0), 0);
-        return `<details class="cv-folg" data-q="${esc((g.n + ' ' + g.t.map(f=>f.titre).join(' ')).toLocaleLowerCase())}"${many && !k ? '' : ' open'}><summary><i data-notr>${esc((g.n.match(/\p{L}|\d/u)||['?'])[0].toUpperCase())}</i><b data-notr>${esc(g.n)}</b><small>${g.t.length} voyage${g.t.length>1?'s':''}</small>${k ? `<b class="cv-badge">${k}</b>` : ''}</summary><div class="fol-grid">${g.t.map(row).join('')}</div>${g.t.length > 1 ? `<button type="button" class="v-day-edit cv-folall" onclick="CV.feedUnfollow('${g.t[0].id}',1)">🚫 Ne plus suivre <span data-notr>${esc(g.n)}</span></button>` : ''}</details>`; }).join('')}
+        return `<details class="cv-folg" data-q="${esc((g.n + ' ' + g.t.map(f=>f.titre).join(' ')).toLocaleLowerCase())}"${many && !k ? '' : ' open'}><summary><i data-notr>${esc((g.n.match(/\p{L}|\d/u)||['?'])[0].toUpperCase())}</i><b data-notr>${esc(g.n)}</b><small>${g.t.length} voyage${g.t.length>1?'s':''}</small>${k ? `<b class="cv-badge">${k}</b>` : ''}</summary><div class="fol-grid">${g.t.map(row).join('')}</div>${g.t.length > 1 ? `<button type="button" class="v-day-edit cv-folall" onclick="CV.feedUnfollow('${ja(g.t[0].id)}',1)">🚫 Ne plus suivre <span data-notr>${esc(g.n)}</span></button>` : ''}</details>`; }).join('')}
       <div class="v-sum-small cv-folnone" style="display:none">Personne ne correspond.</div></div>`;
   }
   // 🛰️ en haut des voyages suivis : ceux où quelqu’un partage sa position en ce moment (ou voyage en cours avec une route)
@@ -612,9 +614,9 @@
   function folTile(f, k){
     const n = list('feed', x=>x.trip===f.id && !x.deleted).length, p = !f.debut ? 'prep' : tripPhase(f);
     const img = f.cover ? `<img data-ph="${esc(f.cover)}.t" alt="">` : f.coverWk ? `<img src="${esc(f.coverWk)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : '';
-    return `<div class="fol-t"><button type="button" class="fol-c" style="--tg:${TC_GRAD[p]}" data-fid="${esc(f.id)}" onclick="CV.feedView('${esc(f.id)}')"><span class="fol-im">${img}</span>
+    return `<div class="fol-t"><button type="button" class="fol-c" style="--tg:${TC_GRAD[p]}" data-fid="${esc(f.id)}" onclick="CV.feedView('${ja(f.id)}')"><span class="fol-im">${img}</span>
         ${k ? `<b class="cv-badge">${k}</b>` : ''}${(()=>{ const r = feedTrkRec(f.id); return r && r.people.some(p=>Date.now() - fkLast(p) < LIVE_MS) ? '<span class="fol-live"><i></i>EN DIRECT</span>' : ''; })()}<span class="fol-tx"><b data-notr>${esc(f.titre)}</b><small>${f.debut ? `<span data-notr>${esc(tripDates(f))}</span> · ` : ''}<span>${n} étape${n>1?'s':''}</span></small></span></button>
-      <button type="button" class="fol-x" title="Ne plus suivre" aria-label="Ne plus suivre" onclick="CV.feedUnfollow('${esc(f.id)}')">✕</button></div>`;
+      <button type="button" class="fol-x" title="Ne plus suivre" aria-label="Ne plus suivre" onclick="CV.feedUnfollow('${ja(f.id)}')">✕</button></div>`;
   }
   // couvertures automatiques des voyages suivis (photo Wikipédia de la destination, gardée en mémoire)
   function folPaint(root){
@@ -636,7 +638,7 @@
     const ttl = ftid => { const ft = R[ftid]; return ft ? ft.titre : ''; };
     const evRow = e => { const r = e.r, w = esc(r.who || 'Quelqu’un');
       const txt = e.k === 'like' ? `❤️ ${w} aime ta publication` : e.k === 'comment' ? `💬 ${w} : « ${esc(String(r.text||'').slice(0, 80))} »` : e.k === 'follower' ? `👀 ${w} suit ton voyage` : `📸 Nouvelle étape : ${esc(r.titre || r.lieu || '')}`;
-      return `<button type="button" class="cv-prow${e.nw ? ' sc-new' : ''}" onclick="CV.feedView('${esc(r.trip)}')"><span>${txt}<small class="v-sum-small" style="display:block">${esc(ttl(r.trip))} · ${vzWhen(e.t)}</small></span><span>›</span></button>`; };
+      return `<button type="button" class="cv-prow${e.nw ? ' sc-new' : ''}" onclick="CV.feedView('${ja(r.trip)}')"><span>${txt}<small class="v-sum-small" style="display:block">${esc(ttl(r.trip))} · ${vzWhen(e.t)}</small></span><span>›</span></button>`; };
     const fwDev = x => String(x.id).split(':').pop();   // un abonné = un appareil, même s’il a ouvert plusieurs voyages du carnet
     const nFw = new Set(mineT.flatMap(tid=>list('follower', x=>x.trip===ftId(tid) && !isBlk(x)).map(fwKey))).size;
     const byCode = {}; mineT.forEach(tid=>{ const g = grpCodeOf(tid); (byCode[g] = byCode[g] || []).push(tid); });
@@ -646,22 +648,22 @@
       return `<div class="sh-card sh-tb" data-t="ab"><div class="sh-k">📚 Mon carnet publié</div><div class="v-sum-small">${tids.length} voyages avec un seul lien : tes abonnés voient tous ces voyages et passent de l’un à l’autre.</div>
         <div class="sh-st" style="margin-top:6px"><span>👀 <b>${fw.length}</b> abonné${fw.length>1?'s':''}</span><span>❤️ <b>${lk}</b></span><span>💬 <b>${cm}</b></span></div>
         <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>{ const d = fwDev(x), nh = tids.filter(t=>((FRX()[t]||{}).ex||[]).includes(d)).length;
-          return d === devId() ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><button type="button" class="sh-fwn${fwLabel(x) ? '' : ' unk'}" onclick="CV.fwNickAsk('${esc(d)}')" data-notr>${esc(fwN[x.id] || '❓ ' + MSGT('Qui est-ce ?'))}</button>${nh ? `<small>🙈${nh}</small>` : ''}<button type="button" aria-label="Ce qu’elle voit" onclick="CV.fwTripsSheet('${esc(c)}','${esc(d)}')">👁️</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`; }).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
+          return d === devId() ? `<span data-notr>${esc(x.who || '?')}</span>` : `<span class="sh-fw"><button type="button" class="sh-fwn${fwLabel(x) ? '' : ' unk'}" onclick="CV.fwNickAsk('${ja(d)}')" data-notr>${esc(fwN[x.id] || '❓ ' + MSGT('Qui est-ce ?'))}</button>${nh ? `<small>🙈${nh}</small>` : ''}<button type="button" aria-label="Ce qu’elle voit" onclick="CV.fwTripsSheet('${ja(c)}','${ja(d)}')">👁️</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${ja(x.id)}')">🚫</button></span>`; }).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
         ${fw.length ? `<div class="v-sum-small" style="margin-bottom:4px">👁️ = choisir les voyages que voit cette personne · 🚫 = la bloquer</div>` : ''}
         <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(c)}</b></div>
-        <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.feedShareLink('${tids[0]}')">🔗 Partager le lien (sans installer l’appli)</button>
-        <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tids[0])}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.carnetPublishSheet()">📤 Inviter · choisir</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tids[0]}')">🔁 Nouveau lien abonné</button></div></div>`; };
+        <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.feedShareLink('${ja(tids[0])}')">🔗 Partager le lien (sans installer l’appli)</button>
+        <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ja(ftId(tids[0]))}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.carnetPublishSheet()">📤 Inviter · choisir</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${ja(tids[0])}')">🔁 Nouveau lien abonné</button></div></div>`; };
     const pubRow = tid => { const t = R[tid], fw = fwUniq(list('follower', x=>x.trip===ftId(tid) && !isBlk(x))), fwN = fwNames(fw), lk = list('like', l=>l.trip===ftId(tid) && l.on && !isBlk(l)).length, cm = list('comment', c=>c.trip===ftId(tid) && !isBlk(c)).length;
       return `<div class="sh-card sh-tb" data-t="ab"><div class="sh-k">📣 ${esc(t.titre)}</div>
         <div class="sh-st"><span>👀 <b>${fw.length}</b> abonné${fw.length>1?'s':''}</span><span>❤️ <b>${lk}</b></span><span>💬 <b>${cm}</b></span></div>
-        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>x.id.endsWith(':' + devId()) ? `<span data-notr>${esc(x.who || '?')}</span>` :  `<span class="sh-fw"><button type="button" class="sh-fwn${fwLabel(x) ? '' : ' unk'}" onclick="CV.fwNickAsk('${esc(fwDevOf(x))}')" data-notr>${esc(fwN[x.id] || '❓ ' + MSGT('Qui est-ce ?'))}</button><button type="button" aria-label="Ne plus lui montrer" onclick="CV.fwHideOne('${tid}','${esc(x.id)}')">🙈</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${esc(x.id)}')">🚫</button></span>`).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
+        <div class="v-sum-small" style="margin:6px 0">${fw.length ? fw.map(x=>x.id.endsWith(':' + devId()) ? `<span data-notr>${esc(x.who || '?')}</span>` :  `<span class="sh-fw"><button type="button" class="sh-fwn${fwLabel(x) ? '' : ' unk'}" onclick="CV.fwNickAsk('${ja(fwDevOf(x))}')" data-notr>${esc(fwN[x.id] || '❓ ' + MSGT('Qui est-ce ?'))}</button><button type="button" aria-label="Ne plus lui montrer" onclick="CV.fwHideOne('${ja(tid)}','${ja(x.id)}')">🙈</button><button type="button" aria-label="Bloquer" onclick="CV.fwBlock('${ja(x.id)}')">🚫</button></span>`).join(' ') : 'Personne pour l’instant : envoie le lien abonné.'}</div>
         <div class="v-sum-small">Code abonné : <b class="cv-code">${esc(FT()[tid])}</b></div>
-        <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.feedShareLink('${tid}')">🔗 Partager le lien (sans installer l’appli)</button>
-        <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ftId(tid)}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.feedPublish('${tid}')">📤 Inviter</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${tid}')">🔁 Nouveau lien abonné</button></div></div>`; };
+        <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.feedShareLink('${ja(tid)}')">🔗 Partager le lien (sans installer l’appli)</button>
+        <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.feedView('${ja(ftId(tid))}')">Voir</button><button type="button" class="v-btn sec" onclick="CV.feedPublish('${ja(tid)}')">📤 Inviter</button><button type="button" class="v-btn sec" onclick="CV.feedReset('${ja(tid)}')">🔁 Nouveau lien abonné</button></div></div>`; };
     const tripsAll = trips().filter(t=>!t.demo).sort((a,b)=>(b.debut||'').localeCompare(a.debut||''));
     const codeRow = t => { const c = TS()[t.id] && spaceObj(TS()[t.id]) ? TS()[t.id] : '', who = (t.voyageurs||[]).filter(prof).map(p=>esc(pname(p))).join(', ');
       return `<div class="cv-prow" style="cursor:default"><span><b>${esc(t.titre)}</b><small class="v-sum-small" style="display:block">${who || 'seul(e)'}${t.debut ? ' · ' + tripDates(t) : ''}</small></span>
-        ${c ? `<button type="button" class="cv-code" style="border:0;background:none;font:inherit;font-weight:700" onclick="CV.tripShareSheet('${t.id}')">${esc(c)}</button>` : `<button type="button" class="v-btn sec" style="width:auto;padding:6px 10px;margin:0" onclick="CV.go('${t.id}');CV.shareHub()">🔗 Partager</button>`}</div>`; };
+        ${c ? `<button type="button" class="cv-code" style="border:0;background:none;font:inherit;font-weight:700" onclick="CV.tripShareSheet('${ja(t.id)}')">${esc(c)}</button>` : `<button type="button" class="v-btn sec" style="width:auto;padding:6px 10px;margin:0" onclick="CV.go('${ja(t.id)}');CV.shareHub()">🔗 Partager</button>`}</div>`; };
     return `
       ${ev.length ? (()=>{ const nw = ev.filter(e=>e.nw).length, open = M.evOpen !== false && (M.evOpen === true || ev.length <= 3); return `<details class="sh-card sh-tb sh-news" data-t="ab suis"${open ? ' open' : ''}><summary onclick="CV.evToggle(!this.parentNode.open)"><span class="sh-k" style="margin:0">✨ Nouveautés · 24 h</span><span class="sh-nn">${nw ? `<b class="sh-nb">${nw}</b> ` : ''}<small>${ev.length} · <span class="sh-open">Voir</span><span class="sh-close">Replier</span></small></span></summary>${ev.slice(0, 40).map(evRow).join('')}</details>`; })() : '<div class="v-sum-small sh-tb" data-t="ab suis" style="margin-bottom:10px">Rien de nouveau ces dernières 24 heures.</div>'}
       <div class="sh-st sh-tb" data-t="ab" style="margin:4px 0 12px"><span>👀 <b>${nFw}</b> abonné${nFw>1?'s':''}</span><span>➡️ <b>${fol.length}</b> voyage${fol.length>1?'s':''} suivi${fol.length>1?'s':''}</span></div>
@@ -672,8 +674,8 @@
           ${empty ? `<button type="button" class="v-btn" style="margin:8px 0" onclick="CV.carnetPublishSheet()">📚 Mettre ${empty > 1 ? 'les ' + empty + ' voyages sans abonné' : 'le voyage sans abonné'} dans mon carnet</button>` : ''}${solo.map(pubRow).join('')}</details>`; })()}` : (cur ? '' : '<h3>📣 Mes voyages publiés</h3><div class="v-sum-small" style="margin-bottom:8px">Aucun voyage publié pour l’instant : dans un voyage, touche Partager puis Publier pour des abonnés.</div>')}
       ${fol.length ? '' : '<div class="sh-tb" data-t="suis"><h3>➡️ Les voyages que je suis</h3><div class="v-sum-small" style="margin-bottom:8px">Aucun pour l’instant.</div></div>'}
       ${Object.keys(PACKS()).length ? `<h3 class="sh-tb" data-t="comp">👥 Mes compagnons</h3>${Object.entries(PACKS()).map(([P, pk])=>`<div class="sh-card sh-tb" data-t="comp"><div class="sh-k">👤 <span data-notr>${esc(pk.who || '?')}</span></div>
-        ${pk.trips.filter(t=>R[t] && !R[t].deleted).map(t=>`<div class="cv-prow" style="cursor:default"><span data-notr>🧳 ${esc(R[t].titre)}</span><button type="button" class="v-btn sec" style="width:auto;padding:4px 10px;margin:0" onclick="CV.packRemoveTrip('${esc(P)}','${t}')">✕ Retirer</button></div>`).join('') || '<div class="v-sum-small">Aucun voyage partagé.</div>'}
-        <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.packSheet('${esc(P)}')">✏️ Choisir les voyages</button><button type="button" class="v-btn sec" onclick="CV.inviteSheet('', 'pack', '${esc(P)}')">📤 Invitation</button><button type="button" class="v-btn sec" onclick="CV.packDel('${esc(P)}')">🚫 Tout arrêter</button></div></div>`).join('')}` : ''}
+        ${pk.trips.filter(t=>R[t] && !R[t].deleted).map(t=>`<div class="cv-prow" style="cursor:default"><span data-notr>🧳 ${esc(R[t].titre)}</span><button type="button" class="v-btn sec" style="width:auto;padding:4px 10px;margin:0" onclick="CV.packRemoveTrip('${ja(P)}','${ja(t)}')">✕ Retirer</button></div>`).join('') || '<div class="v-sum-small">Aucun voyage partagé.</div>'}
+        <div class="cv-row" style="gap:6px;margin-top:8px"><button type="button" class="v-btn sec" onclick="CV.packSheet('${ja(P)}')">✏️ Choisir les voyages</button><button type="button" class="v-btn sec" onclick="CV.inviteSheet('', 'pack', '${ja(P)}')">📤 Invitation</button><button type="button" class="v-btn sec" onclick="CV.packDel('${ja(P)}')">🚫 Tout arrêter</button></div></div>`).join('')}` : ''}
       <div class="sh-card sh-tb" data-t="suis"><div class="sh-k">🔑 J’ai reçu un code</div>
         <button type="button" class="v-btn sec" onclick="CV.joinAny()">🔗 J’ai reçu un code : rejoindre un voyage</button>
         <button type="button" class="v-btn sec" onclick="CV.followSheet()">➕ Suivre un voyage avec un code</button></div>
@@ -696,11 +698,11 @@
   function cmMenu(cid){
     const c = R[cid]; if(!c) return; const mine = c.dev === devId(), author = isAuthorOf(c.trip), w = esc(c.who || '?');
     openSheet(`<h2>💬 ${w}</h2><div class="v-sum-small" style="margin-bottom:10px">« ${esc(String(c.text||'').slice(0, 200))} »</div>
-      ${mine ? `<button type="button" class="v-btn sec" onclick="CV.cmEdit('${cid}')">✏️ Modifier mon commentaire</button>` : ''}
-      ${mine || author ? `<button type="button" class="v-btn sec" onclick="CV.cmDel('${cid}')">🗑 Supprimer ce commentaire</button>` : ''}
-      ${!mine ? `<button type="button" class="v-btn sec" onclick="CV.ugcReport('comment','${cid}')">🚩 Signaler ce commentaire</button>` : ''}
-      ${!mine && author ? `<button type="button" class="v-btn sec" onclick="CV.userBlock('${cid}')">🚫 Bloquer ${w} (pour tous tes abonnés)</button>` : ''}
-      ${!mine && !author ? `<button type="button" class="v-btn sec" onclick="CV.userHide('${cid}')">🙈 Masquer ce que publie ${w}</button>` : ''}
+      ${mine ? `<button type="button" class="v-btn sec" onclick="CV.cmEdit('${ja(cid)}')">✏️ Modifier mon commentaire</button>` : ''}
+      ${mine || author ? `<button type="button" class="v-btn sec" onclick="CV.cmDel('${ja(cid)}')">🗑 Supprimer ce commentaire</button>` : ''}
+      ${!mine ? `<button type="button" class="v-btn sec" onclick="CV.ugcReport('comment','${ja(cid)}')">🚩 Signaler ce commentaire</button>` : ''}
+      ${!mine && author ? `<button type="button" class="v-btn sec" onclick="CV.userBlock('${ja(cid)}')">🚫 Bloquer ${w} (pour tous tes abonnés)</button>` : ''}
+      ${!mine && !author ? `<button type="button" class="v-btn sec" onclick="CV.userHide('${ja(cid)}')">🙈 Masquer ce que publie ${w}</button>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   async function cmEdit(cid){ const c = R[cid]; if(!c || c.dev !== devId()) return; closeSheet(true);
@@ -713,7 +715,7 @@
     const who = d => { const r = Object.values(R).filter(x=>x && devOfRec(x) === d && x.who).sort((a, b)=>(b.updatedAt || 0) - (a.updatedAt || 0))[0]; return r ? r.who : '?'; };
     return `<div class="sh-card sh-tb" data-t="ab"><div class="sh-k">🙈 ${esc(MSGT('Masqués sur ce téléphone'))}</div>
       <div class="v-sum-small" style="margin-bottom:6px">${esc(MSGT('Leurs ❤️ et commentaires ne s’affichent pas ici et ne te sont pas notifiés.'))}</div>
-      ${D.map(d=>`<div class="cv-prow" style="cursor:default"><span data-notr>${esc(who(d))}</span><button type="button" class="v-btn sec" style="width:auto;margin:0;padding:4px 10px" onclick="CV.userUnhide('${esc(d)}')">${esc(MSGT('Réafficher'))}</button></div>`).join('')}</div>`;
+      ${D.map(d=>`<div class="cv-prow" style="cursor:default"><span data-notr>${esc(who(d))}</span><button type="button" class="v-btn sec" style="width:auto;margin:0;padding:4px 10px" onclick="CV.userUnhide('${ja(d)}')">${esc(MSGT('Réafficher'))}</button></div>`).join('')}</div>`;
   }
   function userUnhide(d){ if(M.blkDev) delete M.blkDev[d]; persist(); feedRepaintAll(); toast('👀 ' + MSGT('Réaffiché')); try { shareHub(); } catch(e){} }
   async function userHide(id){ const d = devOfRec(R[id]); if(!d) return; if(!(await uiConfirm('Masquer les commentaires et ❤️ de cette personne sur ce téléphone ?'))) return; (M.blkDev = M.blkDev || {})[d] = 1; persist(); closeSheet(true); feedRepaintAll(); toast('🙈 Masqué'); }
@@ -853,7 +855,7 @@
           + solo.map(t=>{ const sees = list('follower', x=>x.trip === ftId(t) && !x.deleted && twins.has(fwDevOf(x))).length;
             return `<div class="cv-checkline" style="cursor:default"><span>${sees ? '✅' : '➖'}</span> <span><span data-notr>${esc(R[t].titre)}</span> <small class="v-sum-small">${sees ? 'le suit' : 'ne le suit pas'}</small></span></div>`; }).join(''); })()}
       ${f.pk ? '' : `<div class="v-sum-small" style="margin-top:6px">⚠️ Cette personne a une ancienne version de l’appli : un voyage caché ne lui sera plus montré, mais un voyage remis ne lui reviendra qu’après sa mise à jour.</div>`}
-      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.fwTripsSave('${esc(g)}','${esc(dev)}')">✅ Enregistrer</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.fwTripsSave('${ja(g)}','${ja(dev)}')">✅ Enregistrer</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
   async function fwTripsSave(g, dev){
     const on = new Set([...document.querySelectorAll('.fwt:checked')].map(i=>i.value)), ts = grpTrips(g); closeSheet(true);
@@ -891,8 +893,8 @@
     const t = R[tid]; if(!t) return; const L = ((M.preHide || {})[tid]) || [];
     openSheet(`<h2>🙈 ${esc(RF('Cacher « {0} » à quelqu’un', t.titre || ''))}</h2>
       <div class="v-sum-small" style="margin-bottom:8px">${esc(MSGT('Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.'))}</div>
-      ${L.map(n=>`<div class="cv-prow" style="cursor:default"><span data-notr>🙈 ${esc(n)}</span><button type="button" class="v-btn sec" style="width:auto;margin:0;padding:4px 10px" onclick="CV.preHideDel('${tid}','${esc(n)}')" aria-label="${esc(MSGT('Retirer'))}">✕</button></div>`).join('')}
-      <div class="cv-row" style="margin-top:8px;gap:6px"><input class="v-in" id="ph-n" placeholder="${esc(MSGT('Prénom'))}" maxlength="40" autocomplete="off"><button type="button" class="v-btn" style="width:auto;margin:0" onclick="CV.preHideAdd('${tid}')">＋ ${esc(MSGT('Cacher'))}</button></div>
+      ${L.map(n=>`<div class="cv-prow" style="cursor:default"><span data-notr>🙈 ${esc(n)}</span><button type="button" class="v-btn sec" style="width:auto;margin:0;padding:4px 10px" onclick="CV.preHideDel('${ja(tid)}','${ja(n)}')" aria-label="${esc(MSGT('Retirer'))}">✕</button></div>`).join('')}
+      <div class="cv-row" style="margin-top:8px;gap:6px"><input class="v-in" id="ph-n" placeholder="${esc(MSGT('Prénom'))}" maxlength="40" autocomplete="off"><button type="button" class="v-btn" style="width:auto;margin:0" onclick="CV.preHideAdd('${ja(tid)}')">＋ ${esc(MSGT('Cacher'))}</button></div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`);
   }
   const phName = s => normQ(String(s || '').replace(/\s*\d+$/, '')).trim();
@@ -992,9 +994,9 @@
   function postMenu(fid){
     const f = R[fid]; if(!f) return; const ft = R[f.trip] || {};
     openSheet(`<h2>⋯ ${esc(f.titre || f.lieu || 'Publication')}</h2>
-      <button type="button" class="v-btn sec" onclick="CV.ugcReport('post','${fid}')">🚩 Signaler cette publication</button>
-      <button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(f.trip)}')">🚫 Ne plus suivre « ${esc(ft.titre || '')} »</button>
-      ${TS()[f.trip] ? `<button type="button" class="v-btn sec" onclick="CV.fwLinkBack('${esc(f.trip)}')">🔗 ${esc(MSGT('Renvoyer le lien de ce voyage à son auteur'))}</button>
+      <button type="button" class="v-btn sec" onclick="CV.ugcReport('post','${ja(fid)}')">🚩 Signaler cette publication</button>
+      <button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${ja(f.trip)}')">🚫 Ne plus suivre « ${esc(ft.titre || '')} »</button>
+      ${TS()[f.trip] ? `<button type="button" class="v-btn sec" onclick="CV.fwLinkBack('${ja(f.trip)}')">🔗 ${esc(MSGT('Renvoyer le lien de ce voyage à son auteur'))}</button>
       <div class="v-sum-small">${esc(MSGT('Si l’auteur a perdu son lien (changement de téléphone…), il l’ouvre : l’appli lui rend ses abonnés.'))}</div>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
@@ -1070,16 +1072,16 @@
     return `<article class="fd-post" id="fp-${f.id}" data-sg="${feedSocSig(f.id)}"><div class="fd-d">${f.by ? `<span class="fd-by">📸 <b data-notr>${esc(f.by)}</b></span> · ` : ''}${f.date ? fdate(f.date) : ''}${f.lieu ? ' · 📍 ' + esc(f.lieu) : ''}${f.cc ? ' ' + flag(f.cc) : ''}</div>
       ${f.titre ? `<h3>${esc(f.titre)}</h3>` : ''}
       ${(f.photos||[]).length ? (()=>{ const au = FT()[String(f.trip).replace(/^ft:/,'')], all = f.photos, nShow = (M.fdMore||{})[f.id] || 12, sh = all.length > nShow + 3 ? all.slice(0, nShow) : all, rest = all.length - sh.length;
-        return `<div class="fd-ph${au ? '' : ' grid'}">${sh.map((p,i)=> au || phRef(p) ? `<button type="button" onclick="CV.view('${f.id}',${i})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join('')}${rest ? `<button type="button" class="fd-more-ph" onclick="CV.feedMorePh('${f.id}')"><b>+${rest}</b><small>Voir la suite</small></button>` : ''}</div>`; })() : ''}
+        return `<div class="fd-ph${au ? '' : ' grid'}">${sh.map((p,i)=> au || phRef(p) ? `<button type="button" onclick="CV.view('${ja(f.id)}',${i})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join('')}${rest ? `<button type="button" class="fd-more-ph" onclick="CV.feedMorePh('${ja(f.id)}')"><b>+${rest}</b><small>Voir la suite</small></button>` : ''}</div>`; })() : ''}
       ${f.texte ? `<p class="fd-t">${esc(f.texte)}</p>` : ''}
-      <div class="fd-a"><button type="button" class="${mine ? 'on' : ''}" onclick="CV.feedLike('${f.id}')">${mine ? '❤️' : '🤍'} <b>${lk.length || ''}</b></button><button type="button" onclick="CV.feedCmFocus('${f.id}')">💬 <b>${cm.length || ''}</b></button>${isAuthorOf(f.trip) ? '' : `<button type="button" class="fd-more" aria-label="Signaler ou ne plus suivre" onclick="CV.postMenu('${f.id}')">⋯</button>`}</div>
-      ${lk.length ? `<button type="button" class="fd-lk" onclick="CV.feedLikers('${f.id}')">${feedLikeLine(lk)}</button>` : ''}
-      <div class="fd-c">${hid ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${f.id}')">${cm.length === 3 ? 'Voir les 3 commentaires' : `Voir les ${cm.length} commentaires`}</button>` : ''}
+      <div class="fd-a"><button type="button" class="${mine ? 'on' : ''}" onclick="CV.feedLike('${ja(f.id)}')">${mine ? '❤️' : '🤍'} <b>${lk.length || ''}</b></button><button type="button" onclick="CV.feedCmFocus('${ja(f.id)}')">💬 <b>${cm.length || ''}</b></button>${isAuthorOf(f.trip) ? '' : `<button type="button" class="fd-more" aria-label="Signaler ou ne plus suivre" onclick="CV.postMenu('${ja(f.id)}')">⋯</button>`}</div>
+      ${lk.length ? `<button type="button" class="fd-lk" onclick="CV.feedLikers('${ja(f.id)}')">${feedLikeLine(lk)}</button>` : ''}
+      <div class="fd-c">${hid ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${ja(f.id)}')">${cm.length === 3 ? 'Voir les 3 commentaires' : `Voir les ${cm.length} commentaires`}</button>` : ''}
         ${shown.map(c=>{ const au = ftTeam(ft).some(n=>String(c.who||'').trim().toLowerCase() === n.toLowerCase());
-          return `<div class="fd-cm"><button type="button" class="fd-cmore" aria-label="Options" onclick="CV.cmMenu('${c.id}')">⋯</button><b data-notr>${esc(c.who||'?')}</b>${au ? ' <span class="fd-au">auteur</span>' : ''} <span class="fd-ctx" data-notr>${esc(c.text)}</span>
-            <div class="fd-cmeta"><small>${c.at ? vzWhen(c.at) : ''}${c.edited ? ' · <span>modifié</span>' : ''}</small><button type="button" onclick="CV.feedReply('${f.id}','${c.id}')">Répondre</button></div></div>`; }).join('')}
-        ${open && cm.length > 2 ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${f.id}')">Réduire</button>` : ''}
-        <div class="cv-row fd-cin"><input class="v-in" id="cm-${f.id}" placeholder="Écrire un commentaire…" maxlength="600" enterkeyhint="send" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();CV.feedComment('${f.id}')}"><button type="button" class="fd-send" onclick="CV.feedComment('${f.id}')">Envoyer</button></div></div></article>`;
+          return `<div class="fd-cm"><button type="button" class="fd-cmore" aria-label="Options" onclick="CV.cmMenu('${ja(c.id)}')">⋯</button><b data-notr>${esc(c.who||'?')}</b>${au ? ' <span class="fd-au">auteur</span>' : ''} <span class="fd-ctx" data-notr>${esc(c.text)}</span>
+            <div class="fd-cmeta"><small>${c.at ? vzWhen(c.at) : ''}${c.edited ? ' · <span>modifié</span>' : ''}</small><button type="button" onclick="CV.feedReply('${ja(f.id)}','${ja(c.id)}')">Répondre</button></div></div>`; }).join('')}
+        ${open && cm.length > 2 ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${ja(f.id)}')">Réduire</button>` : ''}
+        <div class="cv-row fd-cin"><input class="v-in" id="cm-${f.id}" placeholder="Écrire un commentaire…" maxlength="600" enterkeyhint="send" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();CV.feedComment('${ja(f.id)}')}"><button type="button" class="fd-send" onclick="CV.feedComment('${ja(f.id)}')">Envoyer</button></div></div></article>`;
   }
   // signature des ❤️ et commentaires d’une publication : on ne redessine que si elle change
   function feedSocSig(fid){ return likesOf(fid).length + '.' + commentsOf(fid).map(c=>c.id.slice(-4)).join(''); }
@@ -1124,7 +1126,7 @@
     if(!box || !btn){ feedPaint(fid); return; }
     const sc = el.closest('.fd-list') || document.scrollingElement, y = sc.scrollTop;
     const au = FT()[String(f.trip).replace(/^ft:/,'')], all = f.photos || [], sh = all.length > now + 3 ? all.slice(was, now) : all.slice(was), rest = all.length - was - sh.length;
-    btn.insertAdjacentHTML('beforebegin', sh.map((p, k)=> au || phRef(p) ? `<button type="button" onclick="CV.view('${f.id}',${was + k})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join(''));
+    btn.insertAdjacentHTML('beforebegin', sh.map((p, k)=> au || phRef(p) ? `<button type="button" onclick="CV.view('${ja(f.id)}',${was + k})"><img data-ph="${esc(p)}.t" alt="" loading="lazy"></button>` : `<span><img data-ph="${esc(p)}.t" alt="" loading="lazy"></span>`).join(''));
     if(rest > 0) btn.querySelector('b').textContent = '+' + rest; else btn.remove();
     try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch(e){}
     let user = false; const stop = () => { user = true; }; sc.addEventListener('touchstart', stop, {once:true, passive:true}); sc.addEventListener('wheel', stop, {once:true, passive:true});
@@ -1144,8 +1146,8 @@
         return !FT()[String(ftid).replace(/^ft:/,'')] && (sib.length > 1 || nAll > 1) ? `<button type="button" class="fd-back" onclick="CV.feedBack()"><span>←</span><b>Tous les voyages que je suis</b></button>` : ''; })()}
       ${!myName() && !FT()[String(ftid).replace(/^ft:/,'')] ? `<form class="fd-name" onsubmit="event.preventDefault();CV.fwNameSave(this)"><span>👋 Ton prénom ? <small>${ftTeam(ft).length > 1 ? `Pour que ${esc(ftTeamTxt(ft))} sachent qui suit leur voyage.` : `Pour que ${esc(ft.owner || '?')} sache qui suit son voyage.`}</small></span><div class="cv-row"><input class="v-in" name="n" maxlength="40" placeholder="Prénom" autocomplete="given-name"><button type="submit" class="fd-send">OK</button></div></form>` : ''}
       ${feedBellHTML(ftid)}
-      ${(()=>{ const n = posts.reduce((a, f)=>a + (f.photos || []).length, 0); return n ? `<button type="button" class="fd-step" onclick="CV.psFeed('${esc(ftid)}')"><i>👆</i><span><b>${esc(MSGT('Voir les photos une par une'))}</b><small>${esc(RF('{0} photo(s) · glisse ou touche ▶', n))}</small></span></button>` : ''; })()}
-      <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}${FT()[String(ftid).replace(/^ft:/,'')] || webFollowing() ? '' : `<div class="fd-unf"><button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}')">🚫 Ne plus suivre ce voyage</button>${list('feedtrip', f=>TS()[f.id] && f.id !== ftid && String(f.owner||'').trim().toLocaleLowerCase() === String(ft.owner||'').trim().toLocaleLowerCase()).length ? `<button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${esc(ftid)}',1)">🚫 Ne plus suivre <span data-notr>${esc(ft.owner || '?')}</span> (tous ses voyages)</button>` : ''}</div>`}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
+      ${(()=>{ const n = posts.reduce((a, f)=>a + (f.photos || []).length, 0); return n ? `<button type="button" class="fd-step" onclick="CV.psFeed('${ja(ftid)}')"><i>👆</i><span><b>${esc(MSGT('Voir les photos une par une'))}</b><small>${esc(RF('{0} photo(s) · glisse ou touche ▶', n))}</small></span></button>` : ''; })()}
+      <div class="fd-list">${feedMapHTML(ftid)}${posts.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'}${FT()[String(ftid).replace(/^ft:/,'')] || webFollowing() ? '' : `<div class="fd-unf"><button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${ja(ftid)}')">🚫 Ne plus suivre ce voyage</button>${list('feedtrip', f=>TS()[f.id] && f.id !== ftid && String(f.owner||'').trim().toLocaleLowerCase() === String(ft.owner||'').trim().toLocaleLowerCase()).length ? `<button type="button" class="v-btn sec" onclick="CV.feedUnfollow('${ja(ftid)}',1)">🚫 Ne plus suivre <span data-notr>${esc(ft.owner || '?')}</span> (tous ses voyages)</button>` : ''}</div>`}<div class="cv-poem"><span>${esc(TT('Des souvenirs à chaque étape.'))}</span></div></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden'; hydrate(); M.feedOpen = ftid; M.feedLast = ftid; feedMapHydrate();
     ov._h = posts.map(feedPostHTML).join('') + '|' + fkSig(ftid);
     // photos pas encore arrivées chez l’abonné (le voyageur les envoie encore) : on réessaie chaque minute
@@ -1186,7 +1188,7 @@
   function feedMapHTML(ftid){
     const r = feedTrkRec(ftid), geo = list('feed', f=>f.trip===ftid && f.lat != null && f.lng != null).length; if(!r && !geo) return '';
     const live = r ? r.people.filter(p=>Date.now() - fkLast(p) < LIVE_MS) : [];
-    return `<div class="fd-map" data-fks="${esc(fkSig(ftid))}">${liveBtnHTML(ftid, live.map(p=>p.n), r ? r.people.length : 0)}${r ? `<div class="fd-mh">🛰️ La route du voyage</div><div class="fd-mm" data-fmap="${esc(ftid)}" onclick="CV.liveOpen('${esc(ftid)}')"><div class="v-sum-small">🗺️ Carte en cours…</div></div>
+    return `<div class="fd-map" data-fks="${esc(fkSig(ftid))}">${liveBtnHTML(ftid, live.map(p=>p.n), r ? r.people.length : 0)}${r ? `<div class="fd-mh">🛰️ La route du voyage</div><div class="fd-mm" data-fmap="${esc(ftid)}" onclick="CV.liveOpen('${ja(ftid)}')"><div class="v-sum-small">🗺️ Carte en cours…</div></div>
       <div class="lm-l">${r.people.map(p=>{ const l = p.pts[p.pts.length-1], on = Date.now() - fkLast(p) < LIVE_MS; return `<span${on ? ' class="on"' : ''}><i style="background:${esc(p.c||'#0ea5e9')}"></i>${p.gps ? '🛰️' : '📸'} <b data-notr>${esc(p.n || '—')}</b> <small>${on ? '<span>en direct</span> · ' : ''}<span>${l && l[2] ? vzWhen(l[2]) : ''}</span></small></span>`; }).join('')}</div>` : ''}</div>`;
   }
   async function feedMapHydrate(){
@@ -1208,17 +1210,17 @@
   // côté auteur : ❤️ et 💬 sur ses souvenirs
   function souvTop(){
     const t = trip(); if(!t) return '';
-    const seg = `<div class="cv-soin"><button type="button" class="on">📸 Souvenirs</button>${souvs().some(s=>(s.photos||[]).length) ? `<button type="button" onclick="CV.psTrip('${t.id}')">👆 Photos</button>` : ''}<button type="button" onclick="CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.filmOpen()">🎬 Film</button><button type="button" onclick="CV.flyover()">🌍 Survol 3D</button><button type="button" onclick="CV.wrapped()">✨ Récap</button><button type="button" onclick="CV.albumSheet()">📕 Album</button></div>`;
+    const seg = `<div class="cv-soin"><button type="button" class="on">📸 Souvenirs</button>${souvs().some(s=>(s.photos||[]).length) ? `<button type="button" onclick="CV.psTrip('${ja(t.id)}')">👆 Photos</button>` : ''}<button type="button" onclick="CV.modeGo('bilan')">🏁 Bilan</button><button type="button" onclick="CV.filmOpen()">🎬 Film</button><button type="button" onclick="CV.flyover()">🌍 Survol 3D</button><button type="button" onclick="CV.wrapped()">✨ Récap</button><button type="button" onclick="CV.albumSheet()">📕 Album</button></div>`;
     if(t.demo || hidden('blk:fban')) return seg;
     const fc = feedCode(t.id);
-    if(!fc) return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>Partage tes souvenirs avec tes proches</b><small>Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.</small></span><button type="button" onclick="CV.feedPublish('${t.id}')">Publier</button></div>`;
+    if(!fc) return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>Partage tes souvenirs avec tes proches</b><small>Tes proches suivent le voyage (photos, lieux, récits), mettent des ❤️ et des commentaires. Le reste reste privé.</small></span><button type="button" onclick="CV.feedPublish('${ja(t.id)}')">Publier</button></div>`;
     const nfw = list('follower', x=>x.trip===ftId(t.id) && !isBlk(x)).length, nlk = list('like', l=>l.trip===ftId(t.id) && l.on && !isBlk(l)).length, ncm = list('comment', c=>c.trip===ftId(t.id) && !isBlk(c)).length;
-    return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>${nfw} abonné${nfw>1?'s':''} · ❤️ ${nlk} · 💬 ${ncm}</b><small>Tes souvenirs sont publiés. Touche ❤️ / 💬 sous un souvenir pour lire et répondre.</small></span><button type="button" onclick="CV.feedPublish('${t.id}')">Inviter</button></div>`;
+    return seg + `<div class="cv-fban"><span class="fb-i">👀</span><span><b>${nfw} abonné${nfw>1?'s':''} · ❤️ ${nlk} · 💬 ${ncm}</b><small>Tes souvenirs sont publiés. Touche ❤️ / 💬 sous un souvenir pour lire et répondre.</small></span><button type="button" onclick="CV.feedPublish('${ja(t.id)}')">Inviter</button></div>`;
   }
   function souvSocial(s){
     if(!socCode(s.trip)) return ''; if(s.priv) return `<div class="sv-so"><small>🔒 Privé : pas visible des abonnés</small></div>`;
     const fid = 'fd:' + s.id, lk = likesOf(fid), cm = commentsOf(fid);
-    return `<button type="button" class="sv-so" onclick="CV.souvComments('${s.id}')">❤️ <b>${lk.length}</b> · 💬 <b>${cm.length}</b>${lk.length ? ` <small>${lk.slice(0,3).map(l=>esc(l.who||'')).join(', ')}</small>` : ''}</button>`;
+    return `<button type="button" class="sv-so" onclick="CV.souvComments('${ja(s.id)}')">❤️ <b>${lk.length}</b> · 💬 <b>${cm.length}</b>${lk.length ? ` <small>${lk.slice(0,3).map(l=>esc(l.who||'')).join(', ')}</small>` : ''}</button>`;
   }
   function souvComments(sid){
     const s = R[sid]; if(!s) return; const fid = 'fd:' + sid; if(!R[fid]){ toast('Publication en cours…'); if(feedCode(s.trip)) feedBuild(s.trip); else { syncNow(); return; } }
@@ -1227,7 +1229,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-27a'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-27b'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1243,7 +1245,7 @@
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
      Le carnet et Vezoria partagent la même adresse : Vezoria est servie sous /vezoria/ et lit les mêmes voyages
      (stockage carnet_v2 + photos carnet-photos) et le même serveur (D1 + R2 du carnet, mêmes codes). */
-  const VZ_SIDE = 'vezoria', VZ_MAIL = 'appareils.treves6g@icloud.com';
+  const VZ_SIDE = 'vezoria', VZ_MAIL = 'contact.vezoria@icloud.com';
   const VZ_ON = VZ_SIDE === 'carnet' ? /^https?:/.test(location.protocol) : !!window.VZ_HOST;
   const VZ_T = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
   const VZ_NEW = ['🔔 Des notifications quand tes compagnons ajoutent une dépense, un souvenir ou un sondage, et des rappels avant le départ.','📥 L’import de tes voyages Polarsteps (le fichier de données qu’ils t’envoient).','🌍 14 langues (français, anglais, espagnol, allemand, italien, portugais, néerlandais, russe, turc, arabe, hindi, chinois, japonais, coréen) et la devise de ton choix.','👀 Des abonnés : tes proches suivent le voyage (photos en vignettes et récits), mettent des ❤️ et des commentaires.','👥 Une fenêtre « Abonnés & partages », avec une pastille dès qu’il y a du nouveau.','🛰️ Ta route sur la carte pour tes abonnés, seulement si tu l’actives.','🚩 Signaler, bloquer ou masquer quelqu’un, et créer un nouveau lien abonné.','🎬 Le film du voyage en musique (11 musiques), avec la carte zoomée région par région.','📷 « Ranger mes photos » : les photos se placent toutes seules au bon jour et au bon endroit.','🗺️ Le programme et le voyage en cours sur la carte.','💱 La conversion des devises dans les dépenses et les tickets.','🎨 Des couleurs pour chaque moment : préparation, voyage en cours, souvenirs.','☁️ Une synchro plus économe, voyage par voyage, avec l’état de l’envoi en un coup d’œil.','🔐 Un chiffrement renforcé dans la version finale.','🎓 Un nouveau tuto vidéo de 3 minutes.'], VZ_OUT = ['🛫 Escale (recherche de vols, Radar des prix) : pour respecter les règles de Google Play, Escale ne sera pas dans la version finale de Vezoria. Le module fait appel à trop de services extérieurs pour être publié.'], VZ_DATA = ['Cette version test garde le stockage du carnet : même serveur, mêmes codes. Tes compagnons restés sur le carnet voient ce que tu fais dans Vezoria, et inversement.','Avant la première ouverture de Vezoria, une copie de sauvegarde de ton carnet est gardée sur ce téléphone.','📱 Vezoria sera sur Google Play (Android) et en appli web sur iPhone.'];
@@ -1283,7 +1285,7 @@
         <button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   const VZS = {c:0, v:0};
-  const vzStars = k => `<div class="vz-st" id="vzs-${k}">${[1,2,3,4,5].map(n=>`<button type="button" class="${VZS[k] >= n ? 'on' : ''}" onclick="CV.vzStar('${k}',${n})" aria-label="${n} / 5">★</button>`).join('')}</div>`;
+  const vzStars = k => `<div class="vz-st" id="vzs-${k}">${[1,2,3,4,5].map(n=>`<button type="button" class="${VZS[k] >= n ? 'on' : ''}" onclick="CV.vzStar('${ja(k)}',${n})" aria-label="${n} / 5">★</button>`).join('')}</div>`;
   function vzStar(k, n){ VZS[k] = n; const el = document.getElementById('vzs-' + k); if(el) el.outerHTML = vzStars(k); }
   function vzAvis(){
     openSheet(`<h2>⭐ Ton avis</h2><p class="v-sum-small">Compare le carnet et Vezoria : tes critiques aident à construire la version finale.</p>
@@ -1608,11 +1610,11 @@
     const P = profiles(); pid = pid && prof(pid) ? pid : (P.find(p=>p.id !== M.me) || P[0] || {}).id; if(!pid) return;
     const L = trips().filter(t=>!t.demo && !t.deleted).sort((a, b)=>(b.debut || '').localeCompare(a.debut || ''));
     openSheet(`<h2>🧳 ${esc(MSGT('Qui part dans quels voyages ?'))}</h2>
-      <div class="cv-plist" style="margin-bottom:10px">${P.map(p=>`<button type="button" class="cv-prow${p.id === pid ? ' me' : ''}" onclick="CV.travSheet('${p.id}')">${pchip(p.id)}<span>${p.id === pid ? '✓' : ''}</span></button>`).join('')}</div>
+      <div class="cv-plist" style="margin-bottom:10px">${P.map(p=>`<button type="button" class="cv-prow${p.id === pid ? ' me' : ''}" onclick="CV.travSheet('${ja(p.id)}')">${pchip(p.id)}<span>${p.id === pid ? '✓' : ''}</span></button>`).join('')}</div>
       <div class="v-sum-small" style="margin-bottom:8px">${esc(RF('Coche les voyages où {0} part vraiment. Les autres voyages ne changent pas, seule la liste des voyageurs est modifiée.', pname(pid)))}</div>
       <div style="margin-bottom:6px"><button type="button" class="v-btn sec" style="width:auto;display:inline-block;margin:0 6px 0 0" onclick="document.querySelectorAll('.tv-k').forEach(x=>x.checked=true)">${esc(MSGT('Tout cocher'))}</button><button type="button" class="v-btn sec" style="width:auto;display:inline-block;margin:0" onclick="document.querySelectorAll('.tv-k').forEach(x=>x.checked=false)">${esc(MSGT('Tout décocher'))}</button></div>
       <div>${L.map(t=>`<label class="cv-checkline"><input type="checkbox" class="tv-k" value="${esc(t.id)}"${(t.voyageurs || []).includes(pid) ? ' checked' : ''}> <span data-notr>${esc(t.titre || '')}</span> <small>${esc(fdate(t.debut || '') || '')}</small></label>`).join('')}</div>
-      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.travSave('${pid}')">✅ ${esc(MSGT('Enregistrer'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.travSave('${ja(pid)}')">✅ ${esc(MSGT('Enregistrer'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
   function travSave(pid){
     const on = new Set([...document.querySelectorAll('.tv-k:checked')].map(x=>x.value)), out = [];

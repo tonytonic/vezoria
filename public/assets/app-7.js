@@ -65,9 +65,9 @@
       }
       if(k === 'resa'){
         if(!D.rs.length) return `<div class="ar-p">${MSGT('Ajoute d’abord tes étapes : les nuits et les trajets apparaîtront ici.')}</div>`;
-        return `<div class="ar-rs">${D.rs.map(it=>`<div class="ar-r${okB(it) ? ' ok' : ''}" role="button" onclick="CV.edit('${it.id}')"><i>${okB(it) ? '✓' : it.cat === 'hotel' ? '🛏️' : icon(it)}</i>
+        return `<div class="ar-rs">${D.rs.map(it=>`<div class="ar-r${okB(it) ? ' ok' : ''}" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${okB(it) ? '✓' : it.cat === 'hotel' ? '🛏️' : icon(it)}</i>
           <span><b data-notr>${esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre)}</b><small>${it.cat === 'hotel' ? `${fd(it.date)} → ${fd(it.dateFin)} · ${nights(it.date, it.dateFin || it.date)} ${MSGT('nuits')}` : fd(it.date)}</small></span>
-          ${okB(it) ? '' : `<div class="ar-ra">${ariLink(it, t)}<button type="button" onclick="event.stopPropagation();CV.ariBook('${it.id}')">${MSGT('C’est réservé')}</button></div>`}</div>` + (okB(it) ? '' : it.cat === 'hotel' ? hoodHTML(it, t) : it.cat === 'transport' ? aptHTML(it, t) : '')).join('')}</div>`;
+          ${okB(it) ? '' : `<div class="ar-ra">${ariLink(it, t)}<button type="button" onclick="event.stopPropagation();CV.ariBook('${ja(it.id)}')">${MSGT('C’est réservé')}</button></div>`}</div>` + (okB(it) ? '' : it.cat === 'hotel' ? hoodHTML(it, t) : it.cat === 'transport' ? aptHTML(it, t) : '')).join('')}</div>`;
       }
       const rows = [
         `<button type="button" class="ar-f" onclick="CV.avantSheet()"><i>🧭</i><span>${MSGT('Avant de partir')}</span><small>${MSGT('papiers, santé, argent, urgences')}</small></button>`,
@@ -75,7 +75,7 @@
         ...D.fm.map(x=>`<button type="button" class="ar-f${x.done ? ' ok' : ''}" data-fm="${esc(x.l)}" onclick="CV.ariFm(this)"><i>${x.done ? '✅' : '🛂'}</i><span>${esc(x.l)}</span></button>`),
         `<button type="button" class="ar-f${D.ck.length && D.ckd === D.ck.length ? ' ok' : ''}" onclick="CV.tab('check')"><i>🧳</i><span>${MSGT('Valise et checklist')}</span><small>${D.ck.length ? D.ckd + '/' + D.ck.length : ''}</small></button>`,
         `<button type="button" class="ar-f" onclick="CV.socialHub()"><i>👥</i><span>${MSGT('Compagnons et abonnés')}</span><small>${(t.voyageurs || []).filter(prof).length}</small></button>`,
-        `<div class="ar-pr"><b>🖨️ ${MSGT('Imprimer ou exporter (PDF)')}</b><div>${[['iti','🗺️','Itinéraire'], ['resa','🎫','Réservations'], ['budget','💶','Budget et répartition'], ['recap','📋','Récap des étapes']].map(([k, ic, l], i)=>`<button type="button" onclick="CV.pdfPart('${k}')"><small>${i + 1}</small>${ic} ${MSGT(l)}</button>`).join('')}</div></div>`];
+        `<div class="ar-pr"><b>🖨️ ${MSGT('Imprimer ou exporter (PDF)')}</b><div>${[['iti','🗺️','Itinéraire'], ['resa','🎫','Réservations'], ['budget','💶','Budget et répartition'], ['recap','📋','Récap des étapes']].map(([k, ic, l], i)=>`<button type="button" onclick="CV.pdfPart('${ja(k)}')"><small>${i + 1}</small>${ic} ${MSGT(l)}</button>`).join('')}</div></div>`];
       return `<div class="ar-fs">${rows.join('')}</div>${cdIns(t)}`;
     };
     const ms = t.debut ? cdLeft(t) : 0, cdOn = !!t.debut && !t.demo && ms > -864e5 && ms <= 400 * 864e5 && !hidden('blk:cd');
@@ -85,7 +85,7 @@
       <div class="ar-j"><b>${dj === 0 ? MSGT('Jour J') : 'J-' + dj}</b><span class="cd-dest">${dco && dco.cc ? flag(dco.cc) + ' ' : '📍 '}<span data-notr>${esc(dest)}</span></span></div>
       <div class="cd-clock ar-clock" id="cd-clock">${cdClock(ms)}</div>` : ''}
       <div class="p2-top ar-lv"><div><div class="p2-k">${MSGT('Ta préparation')}</div><div class="p2-l">${lv[0]} ${MSGT(lv[1])}</div></div><div class="p2-pct"><b>${pct}</b><small>%</small></div></div>
-      ${compact ? `<div class="ar-seg">${S.map(x=>`<button type="button" class="${x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : ''}" onclick="CV.ariTog('${x.k}')"><i style="--f:${x.ok ? 100 : Math.round(x.f * 100)}%"></i><span>${MSGT(x.l)}${x.ok ? ' ✓' : ''}</span></button>`).join('')}</div>
+      ${compact ? `<div class="ar-seg">${S.map(x=>`<button type="button" class="${x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : ''}" onclick="CV.ariTog('${ja(x.k)}')"><i style="--f:${x.ok ? 100 : Math.round(x.f * 100)}%"></i><span>${MSGT(x.l)}${x.ok ? ' ✓' : ''}</span></button>`).join('')}</div>
       ${nx ? `<div class="ar-nx"><div class="ar-nk">${MSGT('Ta prochaine étape')}</div><button type="button" class="ar-sub cur" onclick="${nx.fn}"><i>${nx.ic}</i><span><b>${nx.b}</b><small>${nx.s}</small></span></button></div>` : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}
       <button type="button" class="ar-all" onclick="CV.ariFull(1)">${MSGT('Voir les 4 étapes en détail')} ▾</button></div>` : `
       <svg class="p2-svg" viewBox="0 0 360 112" aria-hidden="true">
@@ -96,7 +96,7 @@
           <animateMotion dur="${anim ? '1.8s' : '0.001s'}" fill="freeze" keyPoints="${anim ? 0 : tp.toFixed(3)};${tp.toFixed(3)}" keyTimes="0;1" calcMode="spline" keySplines=".2 .7 .2 1" rotate="auto" path="${path}"/></g>
       </svg>
       <div class="ar-steps">${S.map((x, i)=>{ const o = op === x.k, st = x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : 'next';
-        return `<div class="ar-s ${st}${o ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.ariTog('${x.k}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${MSGT(x.l)}</span><small>${x.ok ? '' : Math.round(x.f * 100) + ' %'}</small><em>${o ? '▾' : '▸'}</em></button>
+        return `<div class="ar-s ${st}${o ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.ariTog('${ja(x.k)}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${MSGT(x.l)}</span><small>${x.ok ? '' : Math.round(x.f * 100) + ' %'}</small><em>${o ? '▾' : '▸'}</em></button>
           ${o ? `<div class="ar-b">${body(x.k)}</div>` : ''}</div>`; }).join('')}</div>
       ${cur ? '' : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}
       <button type="button" class="ar-all" onclick="CV.ariFull(0)">${MSGT('Réduire')} ▴</button></div>`}`;
@@ -168,7 +168,7 @@
       let best = st.length, bc = Infinity;
       for(let k = 0; k <= st.length; k++){ const a = P[k - 1], b = P[k]; const c = (a ? km(a, p) : 0) + (b ? km(p, b) : 0) - (a && b ? km(a, b) : 0); if(c < bc - 1){ bc = c; best = k; } }
       const lbl = best === 0 ? RF('avant {0}', st[0].city) : best === st.length ? RF('après {0}, à la fin', st[st.length - 1].city) : RF('entre {0} et {1}', st[best - 1].city, st[best].city);
-      g.innerHTML = `💡 ${esc(MSGT('Sur ton chemin'))} : <b>${esc(lbl)}</b>${sel.dataset.touched && +sel.value !== best ? ` <button type="button" class="ac-guess-b" onclick="(s=>{s.value='${best}';delete s.dataset.touched;CV.ariCityPos(s)})(document.getElementById('ac-pos'))">${esc(MSGT('Placer ici'))}</button>` : ''}`;
+      g.innerHTML = `💡 ${esc(MSGT('Sur ton chemin'))} : <b>${esc(lbl)}</b>${sel.dataset.touched && +sel.value !== best ? ` <button type="button" class="ac-guess-b" onclick="(s=>{s.value='${ja(best)}';delete s.dataset.touched;CV.ariCityPos(s)})(document.getElementById('ac-pos'))">${esc(MSGT('Placer ici'))}</button>` : ''}`;
       if(!sel.dataset.touched){ sel.value = String(best); ariCityPos(sel); }
     } catch(e){}
   }
@@ -237,18 +237,18 @@
       ${o.top || ''}
       <div class="p2-top ar-lv"><div><div class="p2-k">${o.kick}</div><div class="p2-l">${o.title}</div></div><div class="p2-pct"><b>${o.pctTxt || pct}</b><small>${o.pctTxt ? '' : '%'}</small></div></div>
       <div class="fil-bar"><i style="width:${Math.max(3, pct)}%"></i></div>
-      ${cur && !o.defClosed ? `<div class="ar-nx"><div class="ar-nk">${MSGT('Ta prochaine étape')} · ${done + 1}/${S.length}</div><div class="ar-s cur open"><div class="ar-h fil-nh"><i>${S.indexOf(cur) + 1}</i><span>${cur.ic} ${cur.l}</span><small>${cur.n || ''}</small></div><div class="ar-b">${cur.body()}${cur.skip ? `<button type="button" class="ar-sk" onclick="CV.filSkip('${o.key}','${cur.k}')">${MSGT('Passer cette étape')}</button>` : ''}</div></div></div>`
+      ${cur && !o.defClosed ? `<div class="ar-nx"><div class="ar-nk">${MSGT('Ta prochaine étape')} · ${done + 1}/${S.length}</div><div class="ar-s cur open"><div class="ar-h fil-nh"><i>${S.indexOf(cur) + 1}</i><span>${cur.ic} ${cur.l}</span><small>${cur.n || ''}</small></div><div class="ar-b">${cur.body()}${cur.skip ? `<button type="button" class="ar-sk" onclick="CV.filSkip('${ja(o.key)}','${ja(cur.k)}')">${MSGT('Passer cette étape')}</button>` : ''}</div></div></div>`
         : cur ? '' : `<div class="p2-msg">${o.doneMsg || ''}</div>`}
-      <button type="button" class="ar-all" onclick="CV.filFull('${o.key}',1)">${RF('Voir les {0} étapes', S.length)} ▾</button>${o.foot || ''}</div>`;
+      <button type="button" class="ar-all" onclick="CV.filFull('${ja(o.key)}',1)">${RF('Voir les {0} étapes', S.length)} ▾</button>${o.foot || ''}</div>`;
     return `<div class="cv-prep2 ar fil ${o.cls || ''}">
       ${o.top || ''}
       <div class="p2-top ar-lv"><div><div class="p2-k">${o.kick}</div><div class="p2-l">${o.title}</div></div><div class="p2-pct"><b>${o.pctTxt || pct}</b><small>${o.pctTxt ? '' : '%'}</small></div></div>
       <div class="fil-bar"><i style="width:${Math.max(3, pct)}%"></i></div>
       <div class="ar-steps">${S.map((x, i)=>{ const isO = op === x.k, sc = x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : 'next';
-        return `<div class="ar-s ${sc}${isO ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.filTog('${o.key}','${x.k}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${x.l}</span><small>${x.ok ? '' : x.n || ''}</small><em>${isO ? '▾' : '▸'}</em></button>
-          ${isO ? `<div class="ar-b">${x.body()}${!x.ok && x.skip ? `<button type="button" class="ar-sk" onclick="CV.filSkip('${o.key}','${x.k}')">${MSGT('Passer cette étape')}</button>` : ''}</div>` : ''}</div>`; }).join('')}</div>
+        return `<div class="ar-s ${sc}${isO ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.filTog('${ja(o.key)}','${ja(x.k)}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${x.l}</span><small>${x.ok ? '' : x.n || ''}</small><em>${isO ? '▾' : '▸'}</em></button>
+          ${isO ? `<div class="ar-b">${x.body()}${!x.ok && x.skip ? `<button type="button" class="ar-sk" onclick="CV.filSkip('${ja(o.key)}','${ja(x.k)}')">${MSGT('Passer cette étape')}</button>` : ''}</div>` : ''}</div>`; }).join('')}</div>
       ${cur ? '' : `<div class="p2-msg">${o.doneMsg || ''}</div>`}
-      <button type="button" class="ar-all" onclick="CV.filFull('${o.key}',0)">${MSGT('Réduire')} ▴</button>${o.foot || ''}</div>`;
+      <button type="button" class="ar-all" onclick="CV.filFull('${ja(o.key)}',0)">${MSGT('Réduire')} ▴</button>${o.foot || ''}</div>`;
   }
   function filFull(key, on){ M.filFull = M.filFull || {}; if(on) M.filFull[key] = 1; else { delete M.filFull[key]; if(M.filOpen) delete M.filOpen[key]; } persist(); const y = window.scrollY; render(); window.scrollTo(0, y); if(key.startsWith('soc:') && document.getElementById('v-sheet-bg')) shareHub(); }
   const filSk = (key, k) => !!(((M.filSk || {})[key] || {})[k]);
@@ -265,7 +265,7 @@
     const city = dayCity(td) || cityOf(t.titre || '') || '';
     const steps = [
       {k:'jour', ic:'📍', l:MSGT('Ta journée'), ok: pl.length > 0 || own.length > 0 || filSk(key, 'jour'), f: pl.length || own.length ? 1 : 0, skip:true, n: pl.length ? pl.length + ' ' + MSGT('lieux') : '',
-        body: ()=>`${[...own, ...night].map(it=>`<div class="ar-r" role="button" onclick="CV.edit('${it.id}')"><i>${icon(it)}</i><span><b data-notr>${esc(it.titre)}</b><small>${esc(it.heureDep || it.heure || '')}</small></span></div>`).join('')}
+        body: ()=>`${[...own, ...night].map(it=>`<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${icon(it)}</i><span><b data-notr>${esc(it.titre)}</b><small>${esc(it.heureDep || it.heure || '')}</small></span></div>`).join('')}
           ${pl.length ? fbtn(`CV.planDay('${td}')`, `🗺️ ${MSGT('Itinéraire du jour')} (${pl.length} ${MSGT('lieux')})`) : ''}
           ${sgT.length ? fbtn('CV.suggOpen()', `💡 ${MSGT('Choisir mes visites')} (${sgT.length})`, pl.length) : !pl.length ? fbtn('CV.suggMore()', `💡 ${MSGT('Que voir aujourd’hui ?')}`) : ''}`},
       {k:'souv', ic:'📸', l:MSGT('Raconter ta journée'), ok: sv.length > 0 || filSk(key, 'souv'), skip:true, n: sv.length ? '' : MSGT('pas encore de souvenir'),
@@ -274,7 +274,7 @@
         body: ()=>`<div class="ar-p">${dep.length ? `${dep.length} ${MSGT('dépense(s)')} · <b>${eur(depT)}</b>` : MSGT('Note les dépenses au fur et à mesure : les comptes entre vous se font tout seuls.')}</div>${fbtn('CV.tlReceipt()', `🧾 ${MSGT('Ajouter une dépense')}`)}`},
       tm ? {k:'dem', ic:'🌙', l:MSGT('Préparer demain'), ok: !tmTodo.length, n: tmTodo.length ? tmTodo.length + ' ' + MSGT('à réserver') : '',
         body: ()=>`<div class="ar-p"><b>${fdate(tm)}</b>${dayInfo(tm).titre ? ' · <span data-notr>' + esc(dayInfo(tm).titre) + '</span>' : ''}</div>
-          ${tmTodo.map(it=>`<div class="ar-r" role="button" onclick="CV.edit('${it.id}')"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre)}</b></span><div class="ar-ra">${ariLink(it, t)}<button type="button" onclick="event.stopPropagation();CV.ariBook('${it.id}')">${MSGT('C’est réservé')}</button></div></div>`).join('')}
+          ${tmTodo.map(it=>`<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre)}</b></span><div class="ar-ra">${ariLink(it, t)}<button type="button" onclick="event.stopPropagation();CV.ariBook('${ja(it.id)}')">${MSGT('C’est réservé')}</button></div></div>`).join('')}
           ${!tmTodo.length ? `<div class="ar-p">✓ ${MSGT('Tout est réservé pour demain')}</div>` : ''}${fbtn(`CV.planDay('${tm}')`, `🗺️ ${MSGT('Itinéraire de demain')}`, 1)}`} : null
     ];
     return filCard({key, kick:MSGT('Ta journée'), title:`${MSGT('Jour')} ${k + 1}/${ds.length}${city ? ' · <span data-notr>' + esc(city) + '</span>' : ''}`, steps, doneMsg:'✨ ' + MSGT('Belle journée ! Tout est noté.')});
@@ -355,7 +355,7 @@
     return `<div class="cv-bhero"><div class="bh-k">🏡 Quel voyage !</div><h2>${esc(t.titre)}</h2><div class="bh-d">${tripDatesLong(t)}</div>
       <div class="bh-c">${chip('🗓️', r.days, r.days > 1 ? 'jours' : 'jour')}${chip('🛣️', r.km, 'km')}${chip('🌍', r.ccs.length, r.ccs.length > 1 ? 'pays' : 'pays')}${chip('📸', r.nph, r.nph > 1 ? 'photos' : 'photo')}</div>
       ${r.ccs.length ? `<div class="bh-f">${r.ccs.slice(0, 10).map(flag).join(' ')}</div>` : ''}
-      <div class="bh-b"><button type="button" class="pri" onclick="CV.filmOpen()">🎬 Revivre en film</button><button type="button" onclick="CV.albumSheet()">📕 Album</button><button type="button" onclick="CV.worldTrip('${t.id}')">🌍 Sur le globe</button></div></div>`;
+      <div class="bh-b"><button type="button" class="pri" onclick="CV.filmOpen()">🎬 Revivre en film</button><button type="button" onclick="CV.albumSheet()">📕 Album</button><button type="button" onclick="CV.worldTrip('${ja(t.id)}')">🌍 Sur le globe</button></div></div>`;
   }
   function momentHome(t){
     if(souvs().length || list('trk', x=>x.trip === t.id).length){ storyTrip(t.id, 'home'); return; }
@@ -376,9 +376,9 @@
     const t = trip(); if(!t || tripPhase(t) !== 'live' || hidden('blk:lmap')) return '';
     const by = trkByWho(t.id, true), ws = Object.keys(by); if(!ws.length) return '';
     const live = ws.filter(w=>{ const l = by[w][by[w].length-1]; return l[2] && Date.now() - l[2] < LIVE_MS; }).map(w=>w ? pname(w) : '—');
-    return `<div class="cv-lmap">${liveBtnHTML(t.id, live, ws.length)}<div class="lm-h">🛰️ Où on en est</div><div class="lm-map" data-lmap="${t.id}" onclick="CV.liveOpen('${t.id}')"><div class="v-sum-small">🗺️ Carte en cours…</div></div>
+    return `<div class="cv-lmap">${liveBtnHTML(t.id, live, ws.length)}<div class="lm-h">🛰️ Où on en est</div><div class="lm-map" data-lmap="${t.id}" onclick="CV.liveOpen('${ja(t.id)}')"><div class="v-sum-small">🗺️ Carte en cours…</div></div>
       <div class="lm-l">${ws.map(w=>{ const l = by[w][by[w].length-1], on = l[2] && Date.now() - l[2] < LIVE_MS, kmd = liveKmDay(by[w]); return `<span${on ? ' class="on"' : ''}><i style="background:${w ? pcol(w) : '#0ea5e9'}"></i>${trkRec(t.id, isoToday(), w) && (trkRec(t.id, isoToday(), w).who || '') === w ? '🛰️' : '📸'} <b data-notr>${esc(w ? pname(w) : '—')}</b> <small>${on ? '<span>en direct</span> · ' : ''}<span>${l[2] ? vzWhen(l[2]) : ''}</span>${kmd >= 0.1 ? ' · <span>' + fmtKm(kmd) + ' aujourd’hui</span>' : ''}</small></span>`; }).join('')}</div>
-      <button type="button" class="v-btn sec" onclick="CV.worldTrip('${t.id}')">🌍 Voir sur la carte du monde</button></div>`;
+      <button type="button" class="v-btn sec" onclick="CV.worldTrip('${ja(t.id)}')">🌍 Voir sur la carte du monde</button></div>`;
   }
 
 
@@ -546,14 +546,14 @@
     if(!t || tripPhase(t) === 'prep') return '';
     const mine = R[rtId(t.id)], avg = rtAvg(t.id), n = rtOf(t.id).length, its = list('item', i=>i.trip === t.id && (i.cat === 'hotel' || i.cat === 'activite')), nr = its.filter(i=>R[rtId(i.id)]).length;
     const best = its.map(i=>({i, a:rtAvg(i.id)})).filter(x=>x.a).sort((a, b)=>b.a - a.a)[0];
-    return `<button type="button" class="rt-c" onclick="CV.rtSheet('${t.id}')"><div><b>⭐ ${mine ? MSGT('Ta note du voyage') : MSGT('Note ce voyage')}</b>${n ? `<span>${stars(avg, 1)} <small>${avg.toFixed(1).replace('.', ',')} · ${n} ${MSGT('avis')}</small></span>` : `<small>${MSGT('Le voyage, les hôtels, les visites : ce que tu as adoré (ou pas)')}</small>`}</div>
+    return `<button type="button" class="rt-c" onclick="CV.rtSheet('${ja(t.id)}')"><div><b>⭐ ${mine ? MSGT('Ta note du voyage') : MSGT('Note ce voyage')}</b>${n ? `<span>${stars(avg, 1)} <small>${avg.toFixed(1).replace('.', ',')} · ${n} ${MSGT('avis')}</small></span>` : `<small>${MSGT('Le voyage, les hôtels, les visites : ce que tu as adoré (ou pas)')}</small>`}</div>
       ${best ? `<small class="rt-best">💖 ${MSGT('Coup de cœur')} : <span data-notr>${esc(best.i.titre || '')}</span> ${best.a.toFixed(1).replace('.', ',')}★</small>` : its.length ? `<small class="rt-best">${nr}/${its.length} ${MSGT('adresses notées')}</small>` : ''}</button>`;
   }
   function rtSheet(tid){
     const t = R[tid]; if(!t) return; const its = list('item', i=>i.trip === tid && (i.cat === 'hotel' || i.cat === 'activite')).sort((a, b)=>(a.date || '').localeCompare(b.date || ''));
     const row = (k, ic, lab, sub) => { const r = R[rtId(k)] || {}, others = rtOf(k).filter(x=>x.who !== (M.me || 'moi') && (x.stars || x.txt));
-      return `<div class="rt-r" data-k="${k}"><div class="rt-h"><span>${ic} <b data-notr>${esc(lab)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</span><span class="rt-in">${[1,2,3,4,5].map(i=>`<button type="button" class="${i <= (r.stars || 0) ? 'on' : ''}" onclick="CV.rtSet('${k}',${i},'${tid}')" aria-label="Étoile">★</button>`).join('')}</span></div>
-        <input class="v-in rt-tx" placeholder="${esc(MSGT('Un mot, un conseil (facultatif)'))}" value="${esc(r.txt || '')}" onchange="CV.rtTxt('${k}',this.value,'${tid}')">
+      return `<div class="rt-r" data-k="${k}"><div class="rt-h"><span>${ic} <b data-notr>${esc(lab)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</span><span class="rt-in">${[1,2,3,4,5].map(i=>`<button type="button" class="${i <= (r.stars || 0) ? 'on' : ''}" onclick="CV.rtSet('${ja(k)}',${i},'${ja(tid)}')" aria-label="Étoile">★</button>`).join('')}</span></div>
+        <input class="v-in rt-tx" placeholder="${esc(MSGT('Un mot, un conseil (facultatif)'))}" value="${esc(r.txt || '')}" onchange="CV.rtTxt('${ja(k)}',this.value,'${ja(tid)}')">
         ${others.length ? `<div class="rt-o">${others.map(x=>`<span><b data-notr>${esc(pname(x.who) || '')}</b> ${'★'.repeat(x.stars || 0)}${x.txt ? ' · <i data-notr>' + esc(x.txt) + '</i>' : ''}</span>`).join('')}</div>` : ''}</div>`; };
     openSheet(`<h2>⭐ ${MSGT('Notes et avis')}</h2><div class="v-sum-small" style="margin-bottom:8px">${MSGT('Chacun note de son côté. Tes notes te serviront de conseils pour un prochain voyage.')}</div>
       ${row(tid, '🧳', t.titre || '', MSGT('Le voyage dans son ensemble'))}
@@ -701,8 +701,8 @@
     const sameLang = (SAY_LANG[cc] || '') === mine, sameCur = !cur || cur === h; if((sameLang || !L.length) && sameCur) return '';
     const di = dayList().indexOf(isoToday()), x = L.length ? L[Math.max(0, di) % L.length] : null;
     return `<div class="lg" data-cc="${cc}" data-cur="${cur}">
-      ${!sameLang && x ? `<div class="lg-p"><div class="lg-k">🗣️ ${MSGT('Phrase du jour')} · ${flag(cc)}</div><div class="lg-w"><b data-notr>${esc(x.p)}</b><button type="button" onclick="CV.lgSay('${cc}',${L.indexOf(x)})" aria-label="Écouter">🔊</button></div><small>${esc(x.l)}</small>
-        <button type="button" class="lg-all" onclick="CV.lgAll('${cc}')">📖 ${MSGT('Toutes les phrases utiles')}</button></div>` : ''}
+      ${!sameLang && x ? `<div class="lg-p"><div class="lg-k">🗣️ ${MSGT('Phrase du jour')} · ${flag(cc)}</div><div class="lg-w"><b data-notr>${esc(x.p)}</b><button type="button" onclick="CV.lgSay('${ja(cc)}',${L.indexOf(x)})" aria-label="Écouter">🔊</button></div><small>${esc(x.l)}</small>
+        <button type="button" class="lg-all" onclick="CV.lgAll('${ja(cc)}')">📖 ${MSGT('Toutes les phrases utiles')}</button></div>` : ''}
       ${!sameCur ? `<div class="lg-fx"><div class="lg-k">💱 ${MSGT('Monnaie')} : ${cur} ${CURS[cur] && CURS[cur] !== cur ? '(' + CURS[cur] + ')' : ''}</div><div class="lg-r" id="lg-r">…</div>
         <div class="lg-cv"><input class="v-in" id="lg-a" inputmode="decimal" placeholder="1000" oninput="CV.lgFx()"><span>${cur}</span><b id="lg-o">=</b></div>
         ${hidden('blk:book') || !bkOnce('fx:' + t.id + ':' + cur) ? '' : `<a class="lg-lk" href="${esc(bookUrl('wise'))}" target="_blank" rel="noopener">💳 ${MSGT('Payer sur place sans frais de change')} · Wise</a>`}</div>` : ''}</div>`;
@@ -711,7 +711,7 @@
   async function lgFx(){ const e = document.querySelector('.lg[data-cur]'), a = num((document.getElementById('lg-a') || {}).value), o = document.getElementById('lg-o'); if(!e || !o) return; if(!a){ o.textContent = '='; return; } try { o.textContent = '= ' + eur(await fxToEur(a, e.dataset.cur)); } catch(x){ o.textContent = '⚠️'; } }
   function lgSay(cc, i){ const x = lgList(cc)[i]; if(!x) return; try { const u = new SpeechSynthesisUtterance(lgNative(x.p)); u.lang = TTS_LG[LG_CC[cc]] || ''; u.rate = .85; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch(e){ toast('🔇 ' + MSGT('Lecture vocale indisponible')); } }
   function lgAll(cc){ const L = lgList(cc);
-    openSheet(`<h2>🗣️ ${flag(cc)} ${MSGT('Phrases utiles')}</h2><div class="lg-tab">${L.map((x, i)=>`<button type="button" onclick="CV.lgSay('${cc}',${i})"><small>${esc(x.l)}</small><b data-notr>${esc(x.p)}</b><i>🔊</i></button>`).join('')}</div>
+    openSheet(`<h2>🗣️ ${flag(cc)} ${MSGT('Phrases utiles')}</h2><div class="lg-tab">${L.map((x, i)=>`<button type="button" onclick="CV.lgSay('${ja(cc)}',${i})"><small>${esc(x.l)}</small><b data-notr>${esc(x.p)}</b><i>🔊</i></button>`).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${MSGT('Fermer')}</button></div>`); }
   /* ══════════ ⏳ Compte à rebours vivant · 🗳️ votes de groupe · 🧳 valise de chacun ══════════ */
   function cdLeft(t){ return new Date(t.debut + 'T' + ((items(i=>i.cat === 'transport' && i.date === t.debut).sort((a, b)=>String(a.heureDep||'').localeCompare(String(b.heureDep||'')))[0] || {}).heureDep || '08:00') + ':00').getTime() - Date.now(); }
@@ -852,11 +852,11 @@
     return `<div class="bb">
       ${rtCard(t)}
       <div class="bb-tro">${tr.slice(0, 4).map((x, i)=>`<div class="bb-t" style="--i:${i}"><i>${x.i}</i><b>${esc(x.t)}</b><small>${esc(x.d)}</small></div>`).join('')}</div>
-      <button type="button" class="bb-story" onclick="CV.storyTrip('${t.id}')"><span class="bb-pl">▶</span><span><b>La story du voyage</b><small>${nph} photos · en musique · un chapitre par jour</small></span></button>
+      <button type="button" class="bb-story" onclick="CV.storyTrip('${ja(t.id)}')"><span class="bb-pl">▶</span><span><b>La story du voyage</b><small>${nph} photos · en musique · un chapitre par jour</small></span></button>
       <div class="bb-car" aria-label="${esc(MSGT('Souvenirs du voyage'))}">
-        ${bd ? `<div class="bb-sl"><div class="bb-best"><div class="bb-bi">${bph.slice(0, 3).map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><div class="bb-bt"><small>⭐ Le meilleur jour</small><b>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${esc(fdate(bd))}</b><span>${esc(dayInfo(bd).titre || [...new Set(bS.map(x=>String(x.lieu || '').split(',')[0].trim()).filter(Boolean))].join(' · '))}</span><button type="button" onclick="CV.storyOpen('${bd}')">▶ Revivre ce jour</button></div></div></div>` : ''}
-        ${top.length ? `<div class="bb-sl bb-slp"><div class="bb-sec"><b>❤️ ${top.some(x=>x.n) ? 'Les plus aimées' : 'Quelques pépites'}</b></div><div class="bb-top">${top.map((x, i)=>`<button type="button" class="bb-ph${i === 0 ? ' big' : ''}" style="--i:${i}" onclick="CV.view('${x.s.id}',${(x.s.photos||[]).indexOf(x.p)})"><img data-ph="${esc(x.p)}.t" alt="">${x.n ? `<b>${x.n} ❤️</b>` : ''}</button>`).join('')}</div></div>` : ''}
-        ${tl.lines.length || tl.mk.length > 1 ? `<div class="bb-sl"><div class="bb-map"><div class="bb-mh"><b>🗺️ Tout le voyage</b><button type="button" onclick="CV.flyover('${t.id}')">🎥 Survol 3D</button></div><div class="bb-mm" data-bmap="${t.id}"><div class="v-sum-small">🗺️ Carte en cours…</div></div></div></div>` : ''}
+        ${bd ? `<div class="bb-sl"><div class="bb-best"><div class="bb-bi">${bph.slice(0, 3).map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><div class="bb-bt"><small>⭐ Le meilleur jour</small><b>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${esc(fdate(bd))}</b><span>${esc(dayInfo(bd).titre || [...new Set(bS.map(x=>String(x.lieu || '').split(',')[0].trim()).filter(Boolean))].join(' · '))}</span><button type="button" onclick="CV.storyOpen('${ja(bd)}')">▶ Revivre ce jour</button></div></div></div>` : ''}
+        ${top.length ? `<div class="bb-sl bb-slp"><div class="bb-sec"><b>❤️ ${top.some(x=>x.n) ? 'Les plus aimées' : 'Quelques pépites'}</b></div><div class="bb-top">${top.map((x, i)=>`<button type="button" class="bb-ph${i === 0 ? ' big' : ''}" style="--i:${i}" onclick="CV.view('${ja(x.s.id)}',${(x.s.photos||[]).indexOf(x.p)})"><img data-ph="${esc(x.p)}.t" alt="">${x.n ? `<b>${x.n} ❤️</b>` : ''}</button>`).join('')}</div></div>` : ''}
+        ${tl.lines.length || tl.mk.length > 1 ? `<div class="bb-sl"><div class="bb-map"><div class="bb-mh"><b>🗺️ Tout le voyage</b><button type="button" onclick="CV.flyover('${ja(t.id)}')">🎥 Survol 3D</button></div><div class="bb-mm" data-bmap="${t.id}"><div class="v-sum-small">🗺️ Carte en cours…</div></div></div></div>` : ''}
       </div>
       <button type="button" class="bb-scr" onclick="CV.scrOpen()"><span>🗺️</span><span><b>${MSGT('Ma carte du monde à gratter')}</b><small>${MSGT('Gratte les pays que tu as visités')}</small></span><i>✨</i></button>
     </div>`;
@@ -873,7 +873,7 @@
     ov.innerHTML = `<div class="wlc-bg" id="wlc-bg"></div><div class="wlc-shade"></div>
       <div class="wlc-in"><div class="an-ph">${P.map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><small class="wlc-k">${n > 1 ? 'Il y a ' + n + ' ans aujourd’hui' : 'Il y a un an aujourd’hui'}</small>
         <h1 data-notr>${esc(a.titre || a.lieu || (t && t.titre) || '')}</h1><p><span data-notr>${esc(t ? t.titre : '')}</span>${a.lieu ? ' · <span data-notr>' + esc(String(a.lieu).split(',')[0]) + '</span>' : ''}</p>
-        <div class="wlc-b"><button type="button" class="pri" onclick="CV.wlcClose();CV.go('${a.trip}');CV.storyOpen('${a.date}')">▶ Revivre cette journée</button><button type="button" onclick="CV.wlcClose();CV.storyTrip('${a.trip}')">🎞️ Tout le voyage</button><button type="button" onclick="CV.wlcClose()">Plus tard</button></div></div>`;
+        <div class="wlc-b"><button type="button" class="pri" onclick="CV.wlcClose();CV.go('${ja(a.trip)}');CV.storyOpen('${ja(a.date)}')">▶ Revivre cette journée</button><button type="button" onclick="CV.wlcClose();CV.storyTrip('${ja(a.trip)}')">🎞️ Tout le voyage</button><button type="button" onclick="CV.wlcClose()">Plus tard</button></div></div>`;
     document.body.appendChild(ov); hydrate(); requestAnimationFrame(()=>ov.classList.add('on'));
     try { const u = await phURL(P[0]); const bg = document.getElementById('wlc-bg'); if(bg && u){ bg.style.backgroundImage = `url("${u}")`; bg.classList.add('ok'); } } catch(e){}
   }
@@ -883,14 +883,14 @@
   function studioHTML(all, nph){
     const t = trip(); if(!t || !all.length) return '';
     const days = [...new Set(all.filter(x=>x.date).map(x=>x.date))].sort(), last = days[days.length - 1], td = isoToday(), d = days.includes(td) ? td : last;
-    return `<div class="sto"><button type="button" class="sto-b s1" onclick="CV.storyOpen('${d || ''}')"><i>▶</i><b>Story${d === td ? ' du jour' : ''}</b><small>${d ? fdate(d) : ''}</small></button>
+    return `<div class="sto"><button type="button" class="sto-b s1" onclick="CV.storyOpen('${ja(d || '')}')"><i>▶</i><b>Story${d === td ? ' du jour' : ''}</b><small>${d ? fdate(d) : ''}</small></button>
       <button type="button" class="sto-b s2" onclick="CV.wallOpen()"><i>🧱</i><b>Mur de photos</b><small>${nph} photo${nph > 1 ? 's' : ''}</small></button>
       <button type="button" class="sto-b s3" onclick="CV.pcOpen()"><i>💌</i><b>Carte postale</b><small>à envoyer</small></button></div>`;
   }
   function storyTodayHTML(t){
     const td = isoToday(), sv = list('souv', x=>x.trip === t.id && x.date === td); if(!sv.length) return '';
     const ph = sv.flatMap(x=>x.photos || []).slice(0, 4);
-    return `<button type="button" class="st-today" onclick="CV.storyOpen('${td}')"><span class="st-stack">${ph.map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('') || '<i>📍</i>'}</span><span class="tx"><b>▶ Ta journée en story</b><small>${sv.length} souvenir${sv.length > 1 ? 's' : ''} · ${sv.reduce((a, x)=>a + (x.photos||[]).length, 0)} photos · en musique</small></span></button>`;
+    return `<button type="button" class="st-today" onclick="CV.storyOpen('${ja(td)}')"><span class="st-stack">${ph.map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('') || '<i>📍</i>'}</span><span class="tx"><b>▶ Ta journée en story</b><small>${sv.length} souvenir${sv.length > 1 ? 's' : ''} · ${sv.reduce((a, x)=>a + (x.photos||[]).length, 0)} photos · en musique</small></span></button>`;
   }
   // ---------- lecteur façon Instagram (sert aussi au diaporama) ----------
   let ST = null;
@@ -1004,7 +1004,7 @@
       return `<div class="st-bg st-grad g5"></div><div class="st-c st-top3"><small>Les plus aimées</small><div class="st-pod">${sl.top.map((x, i)=>`<div class="st-pd p${i}" style="--i:${i}"><img src="${U[i]}" alt=""><b>${i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'} ${x.n} ❤️</b></div>`).join('')}</div></div>`; }
     if(sl.k === 'trophy') return `<div class="st-bg st-grad g6"></div><div class="st-c st-trophy"><small>Ton trophée</small><div class="st-cup">${sl.tr[0].i}</div><h2>${esc(sl.tr[0].t)}</h2><p>${esc(sl.tr[0].d)}</p>${sl.tr.length > 1 ? `<div class="st-mini">${sl.tr.slice(1, 4).map(x=>`<span>${x.i} ${esc(x.t)}</span>`).join('')}</div>` : ''}</div>`;
     if(sl.k === 'tend') return `<div class="st-bg st-grad g6"></div><div class="st-c st-end"><small>Fin</small><h2>Merci pour ce voyage</h2><p data-notr>${esc(sl.title)}</p>
-        <div class="st-eb"><button type="button" onclick="CV.stRestart()">↺ Revoir</button><button type="button" onclick="CV.stExport()">🎬 Exporter en vidéo</button>${sl.pub ? `<button type="button" onclick="CV.stClose();CV.tripFinal('${sl.tid}')">💌 Envoyer l’épisode final aux abonnés</button>` : ''}<button type="button" onclick="CV.stClose();CV.go('${sl.tid}');CV.modeGo('bilan')">🏁 Le bilan</button><button type="button" onclick="CV.stClose()">Fermer</button></div></div>`;
+        <div class="st-eb"><button type="button" onclick="CV.stRestart()">↺ Revoir</button><button type="button" onclick="CV.stExport()">🎬 Exporter en vidéo</button>${sl.pub ? `<button type="button" onclick="CV.stClose();CV.tripFinal('${ja(sl.tid)}')">💌 Envoyer l’épisode final aux abonnés</button>` : ''}<button type="button" onclick="CV.stClose();CV.go('${ja(sl.tid)}');CV.modeGo('bilan')">🏁 Le bilan</button><button type="button" onclick="CV.stClose()">Fermer</button></div></div>`;
     if(sl.k === 'end'){
       if(sl.show) return `<div class="st-bg st-grad g6"></div><div class="st-c st-end"><h2>Fin du diaporama</h2><div class="st-eb"><button type="button" onclick="CV.stRestart()">↺ Revoir</button><button type="button" onclick="CV.stClose()">Fermer</button></div></div>`;
       return `<div class="st-bg st-grad g6"></div><div class="st-c st-end"><small>${sl.nx ? 'Demain' : 'Et voilà'}</small><h2>${sl.nx ? esc(fdate(sl.nx)) : 'Quelle journée !'}</h2>${sl.nxt ? `<p>${esc(sl.nxt)}</p>` : ''}
@@ -1022,7 +1022,7 @@
     ST.ed = {sel, mus:cur};
     const box = document.createElement('div'); box.className = 'st-edp'; box.id = 'st-edp';
     box.innerHTML = `<div class="st-edh"><b>✏️ Personnaliser la story</b><button type="button" onclick="CV.stEdClose()" aria-label="Fermer">✕</button></div>
-      <div class="st-eds">🎵 Musique</div><div class="st-mus">${['off', ...TRACKS.map((_, i)=>String(i))].map(k=>`<button type="button" data-m="${k}" class="${k === cur ? 'on' : ''}" onclick="CV.stEdMus('${k}')">${k === 'off' ? '🔇 Sans musique' : '🎵 ' + esc(TRACK_N[+k] || 'Musique ' + (+k + 1))}</button>`).join('')}</div>
+      <div class="st-eds">🎵 Musique</div><div class="st-mus">${['off', ...TRACKS.map((_, i)=>String(i))].map(k=>`<button type="button" data-m="${k}" class="${k === cur ? 'on' : ''}" onclick="CV.stEdMus('${ja(k)}')">${k === 'off' ? '🔇 Sans musique' : '🎵 ' + esc(TRACK_N[+k] || 'Musique ' + (+k + 1))}</button>`).join('')}</div>
       <div class="st-eds">📸 Photos <small id="st-edn">${sel.size} / ${o.cands.length}</small><span><button type="button" onclick="CV.stEdAll(1)">Tout</button><button type="button" onclick="CV.stEdAll(0)">Rien</button><button type="button" onclick="CV.stEdAll(2)">Auto</button></span></div>
       <div class="st-edg">${o.cands.map(x=>`<button type="button" class="${sel.has(x.p) ? 'on' : ''}" data-p="${esc(x.p)}" onclick="CV.stEdPh(this)"><img data-ph="${esc(x.p)}.t" alt="" loading="lazy"><i>✓</i></button>`).join('')}</div>
       <button type="button" class="st-edgo" onclick="CV.stEdGo()">▶ Relancer la story</button>`;
@@ -1071,10 +1071,10 @@
     const G = {}; L.forEach(x=>{ const k = x.s.date || '—'; (G[k] = G[k] || []).push(x); });
     let n = 0;
     ov.innerHTML = `<div class="wl-top"><button type="button" class="wl-x" onclick="CV.wallClose()" aria-label="Fermer">✕</button><div><b data-notr>${esc(t.titre || '')}</b><small>🧱 ${L.length} photo${L.length > 1 ? 's' : ''}</small></div><div class="wl-acts"><button type="button" class="wl-play wl-step" onclick="CV.wallStep()">👆 ${esc(MSGT('Une par une'))}</button><button type="button" class="wl-play" onclick="CV.wallShow()">▶ Diaporama</button></div></div>
-      ${people.length > 1 ? `<div class="wl-chips"><button type="button" class="${who ? '' : 'on'}" onclick="CV.wallOpen()">Tout le monde</button>${people.map(p=>`<button type="button" class="${who === p ? 'on' : ''}" style="--c:${pcol(p)}" onclick="CV.wallOpen('${p}')"><i></i><span data-notr>${esc(pname(p))}</span></button>`).join('')}</div>` : ''}
+      ${people.length > 1 ? `<div class="wl-chips"><button type="button" class="${who ? '' : 'on'}" onclick="CV.wallOpen()">Tout le monde</button>${people.map(p=>`<button type="button" class="${who === p ? 'on' : ''}" style="--c:${pcol(p)}" onclick="CV.wallOpen('${ja(p)}')"><i></i><span data-notr>${esc(pname(p))}</span></button>`).join('')}</div>` : ''}
       <div class="wl-body">${Object.keys(G).sort().map(d=>{ const k = ds.indexOf(d), pl = [...new Set(G[d].map(x=>String(x.s.lieu || '').split(',')[0].trim()).filter(Boolean))];
-        return `<section><h3>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${d !== '—' ? esc(fdate(d)) : 'Sans date'}${pl.length ? ` <small data-notr>${esc(pl.slice(0, 3).join(' · '))}</small>` : ''}${d !== '—' ? `<button type="button" onclick="CV.storyOpen('${d}')" aria-label="Lecture">▶</button>` : ''}</h3>
-          <div class="wl-grid">${G[d].map((x, j)=>{ n++; const nG = G[d].length, big = nG === 1 ? ' w3' : nG === 2 ? ' t2' : j % 7 === 0 ? ' w2' : j % 5 === 3 ? ' t2' : ''; return `<button type="button" class="wl-i${big}" style="--r:${(Math.random() * 6 - 3).toFixed(1)}deg" onclick="CV.view('${x.s.id}',${x.i})"><img data-ph="${esc(x.p)}.t" alt="" loading="lazy"></button>`; }).join('')}</div></section>`; }).join('')}</div>`;
+        return `<section><h3>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${d !== '—' ? esc(fdate(d)) : 'Sans date'}${pl.length ? ` <small data-notr>${esc(pl.slice(0, 3).join(' · '))}</small>` : ''}${d !== '—' ? `<button type="button" onclick="CV.storyOpen('${ja(d)}')" aria-label="Lecture">▶</button>` : ''}</h3>
+          <div class="wl-grid">${G[d].map((x, j)=>{ n++; const nG = G[d].length, big = nG === 1 ? ' w3' : nG === 2 ? ' t2' : j % 7 === 0 ? ' w2' : j % 5 === 3 ? ' t2' : ''; return `<button type="button" class="wl-i${big}" style="--r:${(Math.random() * 6 - 3).toFixed(1)}deg" onclick="CV.view('${ja(x.s.id)}',${x.i})"><img data-ph="${esc(x.p)}.t" alt="" loading="lazy"></button>`; }).join('')}</div></section>`; }).join('')}</div>`;
     hydrate();
     const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), {root:ov.querySelector('.wl-body'), rootMargin:'60px'});
     ov.querySelectorAll('.wl-i').forEach((b, k)=>{ b.style.transitionDelay = (k % 6) * 60 + 'ms'; io.observe(b); });
@@ -1187,11 +1187,11 @@
     const k = dayList().indexOf(isoToday()), n = dayList().length, st = lnStats(t), ev = lnEvents(t), l = lnLast(t.id), g = l ? LN.geo[lnGK(l)] : null, w = l ? LN.wx[lnGK(l)] : null;
     const stat = (ic, v, u, key, dec) => `<div class="ln-s"><i>${ic}</i><b data-ln="${key}" data-v="${v}" data-d="${dec||0}">${(LN.prev[key] != null ? LN.prev[key] : v).toFixed(dec||0).replace('.', ',')}</b><small>${u}</small></div>`;
     return `<div class="ln${l ? '' : ' nomap'}" id="ln">
-      <div class="ln-map" id="ln-slot" onclick="CV.liveOpen('${t.id}')"></div><div class="ln-shade"></div>
+      <div class="ln-map" id="ln-slot" onclick="CV.liveOpen('${ja(t.id)}')"></div><div class="ln-shade"></div>
       <div class="ln-top"><span class="ln-badge"><i></i>EN DIRECT · ${PJ(k + 1)}/${n}</span><span class="ln-wx" id="ln-wx">${w ? wxIcon(w.c, w.d) + ' ' + w.t + '°' : ''}</span></div>
       <div class="ln-place"><b id="ln-city" data-notr>${esc(g ? g.city : (t.titre || ''))}</b><small><span id="ln-clock">${lnClock(w)}</span>${g && g.cc ? ' · ' + flag(g.cc) + ' <span data-notr>' + esc(g.country || '') + '</span>' : ''}</small></div>
-      <button type="button" class="ln-go" onclick="CV.liveOpen('${t.id}')">🛰️ Carte live</button>
-      <div class="ln-stats">${stat('🚶', +st.km.toFixed(1), 'km aujourd’hui', 'km', 1)}${stat('📸', st.ph, st.ph > 1 ? 'photos' : 'photo', 'ph')}${stat('💶', Math.round(st.dep), ((t.devise || M.cur || 'EUR') === 'EUR' ? '€ ' : (t.devise || M.cur) + ' ') + 'dépensés', 'dep')}${stat('❤️', st.rx, st.rx > 1 ? 'réactions' : 'réaction', 'rx')}</div>
+      <button type="button" class="ln-go" onclick="CV.liveOpen('${ja(t.id)}')">🛰️ Carte live</button>
+      <div class="ln-stats">${stat('🚶', +st.km.toFixed(1), 'km aujourd’hui', 'km', 1)}${stat('📸', st.ph, st.ph > 1 ? 'photos' : 'photo', 'ph')}${stat('💶', Math.round(st.dep), ((t.devise || M.cur || 'EUR') === 'EUR' ? '€ ' : (t.devise || M.cur) + ' ') + MSGT('dépensés'), 'dep')}${stat('❤️', st.rx, st.rx > 1 ? 'réactions' : 'réaction', 'rx')}</div>
       <div class="ln-tick" id="ln-tick">${ev.length ? ev.map((e, i)=>`<div class="ln-e${i === 0 ? ' on' : ''}" style="--c:${esc(e.c)}"><i>${e.ic}</i><span><b data-notr>${esc(e.w)}</b> <span>${esc(e.tx)}</span>${e.x ? ' · <span>' + esc(e.x) + '</span>' : ''}</span><small>${vzWhen(e.at)}</small></div>`).join('') : `<div class="ln-e on calm"><i>✨</i><span>Tout est calme… un souvenir pour réveiller tes abonnés ?</span><button type="button" onclick="CV.hereNow()">📍 Step ici</button></div>`}</div>
     </div>`;
   }
@@ -1333,7 +1333,7 @@
   let LV = null, lvSoonT = 0;
   function liveKmDay(pts){ const d0 = new Date(); d0.setHours(0,0,0,0); let k = 0, a = null; (pts||[]).forEach(p=>{ if((p[2]||0) < +d0) return; if(a) k += km({lat:a[0], lng:a[1]}, {lat:p[0], lng:p[1]}); a = p; }); return k; }
   function liveBtnHTML(key, live, n, title){
-    return `<button type="button" class="lv-go${live.length ? ' on' : ''}" onclick="CV.liveOpen('${esc(key)}')"><span class="lv-dot"><i></i></span><span class="tx"><b>${live.length ? 'Suivre en direct sur la carte 3D' : 'La carte 3D du voyage'}</b>${title ? `<small class="lv-tt" data-notr>${esc(title)}</small>` : ''}<small>${live.length ? '<span data-notr>' + esc(live.slice(0, 4).join(', ')) + '</span>' + (live.length > 4 ? ' +' + (live.length - 4) : '') + ' · position mise à jour toute seule' : n ? 'La route de chacun, ses photos, sa dernière position' : 'Les photos du voyage sur la carte'}</small></span><span class="lv-ar">›</span></button>`;
+    return `<button type="button" class="lv-go${live.length ? ' on' : ''}" onclick="CV.liveOpen('${ja(key)}')"><span class="lv-dot"><i></i></span><span class="tx"><b>${live.length ? 'Suivre en direct sur la carte 3D' : 'La carte 3D du voyage'}</b>${title ? `<small class="lv-tt" data-notr>${esc(title)}</small>` : ''}<small>${live.length ? '<span data-notr>' + esc(live.slice(0, 4).join(', ')) + '</span>' + (live.length > 4 ? ' +' + (live.length - 4) : '') + ' · position mise à jour toute seule' : n ? 'La route de chacun, ses photos, sa dernière position' : 'Les photos du voyage sur la carte'}</small></span><span class="lv-ar">›</span></button>`;
   }
   function liveData(key){
     if(/^ft:/.test(key)){ const r = feedTrkRec(key), ft = R[key] || {};
@@ -1703,14 +1703,14 @@
         <div id="cv-mem"><div class="v-sum-small">…</div></div><button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.memberInvite()">➕ Créer un code compagnon</button>`;
     }
     if(memberSpaces().length) h += `<div class="cv-cl-h">👥 Carnets où je suis compagnon</div>` + memberSpaces().map(x=>{ const g = (M.memberGrant || {})[x.code] || {};
-      return `<div class="cv-cl-t"><span><b data-notr>${esc(g.by || '👤')}</b><small>${x.err ? '⚠️ ' + esc(x.err) : '☁️ ' + cloudState(x)}</small></span><button type="button" class="v-btn sec" onclick="CV.memberLeave('${esc(x.code)}')">Quitter</button></div>`; }).join('');
+      return `<div class="cv-cl-t"><span><b data-notr>${esc(g.by || '👤')}</b><small>${x.err ? '⚠️ ' + esc(x.err) : '☁️ ' + cloudState(x)}</small></span><button type="button" class="v-btn sec" onclick="CV.memberLeave('${ja(x.code)}')">Quitter</button></div>`; }).join('');
     if(mode === 'trips'){
       const ts = myTrips();
       h += `<div class="sh-note">🔁 ${MSGT('Le cloud « voyage par voyage » s’arrête : passe à tout ton carnet, tes voyages en ligne s’y rattachent.')}<button type="button" class="v-btn" style="margin-top:8px" onclick="CV.cloudPick('all')">☁️ ${MSGT('Mettre tout mon carnet dans le cloud')}</button></div>`;
       h += `<div class="cv-cl-h">Mes voyages dans le cloud</div>`
         + (ts.map(t=>{ const c = TS()[t.id], sp = c && spaceObj(c);
             return `<div class="cv-cl-t"><span><b>${esc(t.titre || '')}</b><small>${sp ? '☁️ ' + cloudState(sp) : 'Seulement sur ce téléphone'}</small></span>`
-              + (sp ? `<button type="button" class="v-btn sec" onclick="CV.cloudTripOff('${t.id}')">Retirer du cloud</button>` : `<button type="button" class="v-btn sec" onclick="CV.cloudTrip('${t.id}')">☁️ Mettre dans le cloud</button>`) + `</div>`; }).join('')
+              + (sp ? `<button type="button" class="v-btn sec" onclick="CV.cloudTripOff('${ja(t.id)}')">Retirer du cloud</button>` : `<button type="button" class="v-btn sec" onclick="CV.cloudTrip('${ja(t.id)}')">☁️ Mettre dans le cloud</button>`) + `</div>`; }).join('')
           || '<div class="v-sum-small">Aucun voyage pour l’instant : crée-en un, puis reviens ici.</div>');
     }
     if(mode === 'none'){
@@ -1753,9 +1753,9 @@
   function cloudLeaveSheet(m){
     openSheet(`<h2>☁️ Et ton carnet dans le cloud ?</h2>
       <div class="v-sum-small" style="margin-bottom:12px">Ce téléphone n’enverra plus tout le carnet. Que fait-on de la copie déjà dans le cloud ?</div>
-      <button type="button" class="cv-choice" onclick="CV.cloudLeave('${m}','wipe')"><i>🗑</i><span><b>L’effacer du cloud</b><small>Fiches et photos supprimées du serveur, pour de bon. Ce qui est sur ce téléphone reste ici.</small></span></button>
-      <button type="button" class="cv-choice" onclick="CV.cloudLeave('${m}','keep')"><i>🗄️</i><span><b>La garder dans le cloud</b><small>Elle reste en sécurité (chiffrée), sans mise à jour. Tu pourras l’effacer plus tard dans Réglages.</small></span></button>
-      <div class="v-sum-small" style="margin-top:6px">⚠️ Si tu as donné ton code principal à quelqu’un (« Je partage tout »), l’effacer le supprime aussi pour lui.</div>
+      <button type="button" class="cv-choice" onclick="CV.cloudLeave('${ja(m)}','wipe')"><i>🗑</i><span><b>L’effacer du cloud</b><small>Fiches et photos supprimées du serveur, pour de bon. Ce qui est sur ce téléphone reste ici.</small></span></button>
+      <button type="button" class="cv-choice" onclick="CV.cloudLeave('${ja(m)}','keep')"><i>🗄️</i><span><b>La garder dans le cloud</b><small>Elle reste en sécurité (chiffrée), sans mise à jour. Tu pourras l’effacer plus tard dans Réglages.</small></span></button>
+      <div class="v-sum-small" style="margin-top:6px">⚠️ Si tu l’effaces, tes compagnons (codes compagnon) perdent aussi l’accès au carnet.</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet('choose')">Annuler</button></div>`);
   }
   async function cloudLeave(m, how){
@@ -1935,7 +1935,8 @@
       const C = genCode(), mt = hex(await pbkBits(C, 'carnet-voyage/member/v1')), kc = await aesRaw(await pbkBits(C, 'carnet-voyage/member-key/v1'));
       const [k, h] = await Promise.all([pbkBits(M.sync.code, 'carnet-voyage/e2e/v1'), pbkBits(M.sync.code, 'carnet-voyage/ids/v1')]);   // la clé du carnet, pas le code
       const grant = await boxSeal(kc, {k:b64(k), h:b64(h), by:myName(), n:label});
-      const r = await memberApiCall({a:'add', mt, grant, label}, M.sync.code);
+      const lbl = label ? 'e1:' + await boxSeal(await ownerKey(), label) : '';   // 🔒 le prénom part chiffré : seul le propriétaire le relit
+      const r = await memberApiCall({a:'add', mt, grant, label:lbl}, M.sync.code);
       if(!r.ok) throw new Error(r.j.error || ('erreur ' + r.status));
       (M.memLocal || (M.memLocal = {}))[r.j.id] = C; persist(); try { await codesPublish(); } catch(e){}
       memberShow(C, label);
@@ -1945,7 +1946,7 @@
     openSheet(`<h2>👥 ${MSGT('Code compagnon')}</h2><div class="v-sum-small" style="margin-bottom:8px">${label ? `<b data-notr>${esc(label)}</b> · ` : ''}${MSGT('Il ouvre ton carnet : voir, ajouter, modifier. Pas d’effacement, pas de gestion des accès. Tu peux le retirer quand tu veux.')}</div>
       <div class="cv-qrcode" style="display:flex;justify-content:center;margin:8px 0">${qrSVG(C)}</div>
       <div class="cv-row" style="justify-content:center"><b class="cv-code" data-notr>${esc(C)}</b></div>
-      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.memberSend('${esc(C)}')">📤 ${MSGT('Envoyer l’invitation')}</button><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${MSGT('Fermer')}</button></div>`);
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.memberSend('${ja(C)}')">📤 ${MSGT('Envoyer l’invitation')}</button><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${MSGT('Fermer')}</button></div>`);
   }
   async function memberSend(C){
     const url = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
@@ -1958,8 +1959,9 @@
     try {
       const r = await memberApiCall({a:'list'}, M.sync.code); if(!r.ok) throw new Error(r.j.error || r.status);
       const L = r.j.members || [];
+      for(const m of L) if(/^e1:/.test(m.label || '')) { try { m.label = String(await boxOpen(await ownerKey(), m.label.slice(3))); } catch(e){ m.label = '👤'; } }
       el.innerHTML = L.length ? L.map(m=>`<div class="cv-cl-t"><span><b data-notr>${esc(m.label || '👤')}</b><small>${m.last ? MSGT('vu') + ' ' + vzWhen(m.last) : MSGT('pas encore utilisé')}</small></span>`
-        + `${(M.memLocal || {})[m.id] ? `<button type="button" class="v-btn sec" onclick="CV.memberShowId('${m.id}','${esc(m.label || '')}')">${MSGT('Code')}</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.memberRevoke('${m.id}','${esc(m.label || '')}')">${MSGT('Retirer l’accès')}</button></div>`).join('')
+        + `${(M.memLocal || {})[m.id] ? `<button type="button" class="v-btn sec" onclick="CV.memberShowId('${ja(m.id)}','${ja(m.label || '')}')">${MSGT('Code')}</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.memberRevoke('${ja(m.id)}','${ja(m.label || '')}')">${MSGT('Retirer l’accès')}</button></div>`).join('')
         : `<div class="v-sum-small">${MSGT('Aucun compagnon pour l’instant.')}</div>`;
     } catch(e){ el.innerHTML = `<div class="v-sum-small">⚠️ ${esc(e.message || String(e))}</div>`; }
   }
@@ -2003,7 +2005,7 @@
   const fmtB = b => b >= 1e9 ? String(Math.round(b / 1e8) / 10).replace('.', ',') + ' Go' : Math.max(0, Math.round(b / 1e6)) + ' Mo';
   const phN = b => { const n = Math.max(0, Math.floor(b / PH_B)); return (n >= 1000 ? Math.floor(n / 100) * 100 : n).toLocaleString((window.I18N && I18N.locale) || 'fr-FR'); };
   const dLong = ms => new Date(ms).toLocaleDateString((window.I18N && I18N.locale) || 'fr-FR', {day:'numeric', month:'long', year:'numeric'});
-  const inPlay = () => { try { return localStorage.getItem('cv-play') === '1'; } catch(e){ return false; } };   // appli Android (Google Play) : pas de paiement web
+  const inPlay = () => { try { return isPlay(); } catch(e){ return false; } };   // appli Android (Google Play) : jamais de paiement web (règle Google)
   const PRICE = {plus:{year:'7,99 €', month:'0,99 €'}, max:{year:'14,99 €', month:'1,99 €'}};
   // codes que j’ai créés : mes voyages partagés, paquets et publications (jamais un voyage rejoint chez quelqu’un d’autre)
   function myBranchCodes(){
@@ -2041,7 +2043,8 @@
   }
   async function quotaLoad(force){
     const code = M.sync.on && M.sync.code ? M.sync.code : ''; if(!code || !planApi() || !memberOk()) return null;
-    if(!force && M.quota && Date.now() - (M.quota.at || 0) < 6 * 3600e3) return M.quota;
+    const ttl = M.quota && M.quota.used >= M.quota.quota * 0.9 ? 120000 : 6 * 3600e3;   // presque plein : relu toutes les 2 min (un cadeau ou un paiement compte tout de suite)
+    if(!force && M.quota && Date.now() - (M.quota.at || 0) < ttl) return M.quota;
     try { const r = await planCall({a:'status'}, code); if(r.ok){ M.quota = Object.assign({}, r.j, {at:Date.now()}); persist(); quotaPaint(); } } catch(e){}
     return M.quota;
   }
@@ -2076,7 +2079,7 @@
   }
   function planSheet(){
     const q = M.quota || {}, P = q.plans || {};
-    const row = (p, per) => `<button type="button" class="cv-choice" onclick="CV.planBuy('${p}','${per}')"><i>${p === 'max' ? '🚀' : '➕'}</i><span><b>${p === 'max' ? 'Max' : 'Plus'} · ${fmtB(P[p] || 0)} · ${PRICE[p][per]} ${per === 'year' ? MSGT('par an') : MSGT('par mois')}</b><small>${RF('≈ {0} photos', phN(P[p] || 0))}</small></span></button>`;
+    const row = (p, per) => `<button type="button" class="cv-choice" onclick="CV.planBuy('${ja(p)}','${ja(per)}')"><i>${p === 'max' ? '🚀' : '➕'}</i><span><b>${p === 'max' ? 'Max' : 'Plus'} · ${fmtB(P[p] || 0)} · ${PRICE[p][per]} ${per === 'year' ? MSGT('par an') : MSGT('par mois')}</b><small>${RF('≈ {0} photos', phN(P[p] || 0))}</small></span></button>`;
     openSheet(`<h2>⬆️ ${MSGT('Agrandir ma place photos')}</h2>
       <div class="v-sum-small" style="margin-bottom:10px">${MSGT('Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tout reste visible 6 mois.')}</div>
       ${row('plus', 'year')}${row('max', 'year')}${row('plus', 'month')}${row('max', 'month')}
@@ -2168,13 +2171,13 @@
         chips = `<div class="etp-chips">${C.slice(0, 5).join('')}${C.length > 5 ? `<span class="etp-chip free">+${C.length - 5}</span>` : ''}${canE && n >= 5 && nFree >= 4 ? `<button type="button" class="etp-chip tip" onclick="event.stopPropagation();CV.ariCity()">💡 ${MSGT('C’est long : ajouter une ville ?')}</button>` : ''}</div>`;
       }
       h += `<div class="etp-card${open ? ' open' : ''}" id="etp-${x.h.id}">
-        <button type="button" class="etp-h" onclick="CV.stTog('${x.h.id}')" aria-expanded="${open}"><span class="etp-c" data-notr>${esc(x.city)}</span><span class="etp-n">${n} ${MSGT(n > 1 ? 'nuits' : 'nuit')}</span>
+        <button type="button" class="etp-h" onclick="CV.stTog('${ja(x.h.id)}')" aria-expanded="${open}"><span class="etp-c" data-notr>${esc(x.city)}</span><span class="etp-n">${n} ${MSGT(n > 1 ? 'nuits' : 'nuit')}</span>
           <span class="etp-d">${fshort(x.debut)} → ${fshort(x.end)} · <i class="etp-dot${pd ? ' ok' : bk ? ' bk' : ''}" title="${esc(MSGT(pd ? 'Payé' : bk ? 'Réservé' : 'À réserver'))}"></i><span data-notr>${esc(hl)}</span></span><em aria-hidden="true">${open ? '▴' : '▾'}</em></button>
-        ${open ? `<div class="etp-b">${hs.map(it=>`<button type="button" class="etp-hotel" onclick="CV.edit('${it.id}')"><i>🛏️</i><span><b data-notr>${esc(it.nom || cityOf(it.titre) || it.titre)}</b><small>${MSGT(it.statut === 'paid' ? 'Payé' : okB(it) ? 'Réservé' : 'À réserver')} · ${fshort(it.date)} → ${fshort(it.dateFin || it.date)}</small></span><em>›</em></button>`).join('')}${(()=>{ DAY_NOCITY = x.city; try { return loose(days); } finally { DAY_NOCITY = false; } })()}</div>` : chips}</div>`;
+        ${open ? `<div class="etp-b">${hs.map(it=>`<button type="button" class="etp-hotel" onclick="CV.edit('${ja(it.id)}')"><i>🛏️</i><span><b data-notr>${esc(it.nom || cityOf(it.titre) || it.titre)}</b><small>${MSGT(it.statut === 'paid' ? 'Payé' : okB(it) ? 'Réservé' : 'À réserver')} · ${fshort(it.date)} → ${fshort(it.dateFin || it.date)}</small></span><em>›</em></button>`).join('')}${(()=>{ DAY_NOCITY = x.city; try { return loose(days); } finally { DAY_NOCITY = false; } })()}</div>` : chips}</div>`;
       const nx = S[i + 1]; if(nx){
         const lo = x.fin > x.debut ? x.fin : addD(x.debut, 1);   // hôtel sans date de fin (ou fin avant l’arrivée) : on ne remonte pas à tout le voyage
         const tr = items(it=>it.cat === 'transport' && it.date && it.date >= lo && it.date <= nx.debut && !trSeen.has(it.id)).sort((a, b)=>(a.date + (a.heureDep || '')).localeCompare(b.date + (b.heureDep || ''))); tr.forEach(it=>trSeen.add(it.id));
-        h += `<div class="etp-link">${tr.length ? tr.map(it=>`<button type="button" onclick="CV.edit('${it.id}')">${icon(it)} <span data-notr>${esc(it.from && it.to ? cityOf(it.from) + ' → ' + cityOf(it.to) : it.titre)}</span> · ${fshort(it.date)}${it.heureDep ? ' ' + esc(it.heureDep) : ''}<b class="${it.statut === 'paid' ? 'ok' : okB(it) ? 'bk' : ''}">${MSGT(it.statut === 'paid' ? 'payé' : okB(it) ? 'réservé' : 'à réserver')}</b></button>`).join('')
+        h += `<div class="etp-link">${tr.length ? tr.map(it=>`<button type="button" onclick="CV.edit('${ja(it.id)}')">${icon(it)} <span data-notr>${esc(it.from && it.to ? cityOf(it.from) + ' → ' + cityOf(it.to) : it.titre)}</span> · ${fshort(it.date)}${it.heureDep ? ' ' + esc(it.heureDep) : ''}<b class="${it.statut === 'paid' ? 'ok' : okB(it) ? 'bk' : ''}">${MSGT(it.statut === 'paid' ? 'payé' : okB(it) ? 'réservé' : 'à réserver')}</b></button>`).join('')
           : `<span>↓ <span data-notr>${esc(x.city)} → ${esc(nx.city)}</span> · ${fshort(nx.debut)}</span>`}</div>`;
       }
     });
@@ -2329,18 +2332,18 @@
           const all = buPlanned(), tot = all.reduce((x, i)=>x + totalOf(i), 0), L = M.buAll || all.length <= 10 ? all : [...all.filter(i=>!buHas(i)), ...all.filter(buHas)].slice(0, 8);
           return `<div class="ar-p">${np.length ? RF('{0} fiches n’ont pas encore de prix. Un ordre d’idée suffit, tu corrigeras plus tard.', np.length) : MSGT('Tout ce qui est prévu a un prix.')} ${RF('{0} chiffrées sur {1} · {2} au total.', all.length - np.length, all.length, eur(tot))}</div>
           ${L.map(it=>{ const v = hasPrix(it) ? it.prix : it.estime || '', st = it.statut === 'paid' ? '✓ ' + MSGT('Payé') : okB(it) ? MSGT('Réservé') : '';
-            return `<div class="bu-np${buHas(it) ? ' ok' : ''}"><i role="button" onclick="CV.edit('${it.id}')">${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span role="button" onclick="CV.edit('${it.id}')"><b data-notr>${esc(it.cat === 'hotel' ? MSGT('Hôtel') + ' · ' + (cityOf(it.titre) || it.titre) : it.titre)}</b><small>${it.cat === 'hotel' ? RF('{0} nuits · prix total du séjour', nights(it.date, it.dateFin || it.date)) : MSGT(partage(it) === 'pp' ? 'par personne' : 'pour le groupe')}${it.date ? ' · ' + fshort(it.date) : ''}${st ? ' · ' + st : ''}${buHas(it) && !hasPrix(it) ? ' · ' + MSGT('estimé') : ''}</small></span><input class="v-in" inputmode="decimal" data-bu="${it.id}" data-k="${hasPrix(it) ? 'prix' : 'estime'}" data-v0="${esc(v)}" value="${esc(String(v).replace('.', ','))}" placeholder="${esc(CS())}"></div>`; }).join('')}
+            return `<div class="bu-np${buHas(it) ? ' ok' : ''}"><i role="button" onclick="CV.edit('${ja(it.id)}')">${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span role="button" onclick="CV.edit('${ja(it.id)}')"><b data-notr>${esc(it.cat === 'hotel' ? MSGT('Hôtel') + ' · ' + (cityOf(it.titre) || it.titre) : it.titre)}</b><small>${it.cat === 'hotel' ? RF('{0} nuits · prix total du séjour', nights(it.date, it.dateFin || it.date)) : MSGT(partage(it) === 'pp' ? 'par personne' : 'pour le groupe')}${it.date ? ' · ' + fshort(it.date) : ''}${st ? ' · ' + st : ''}${buHas(it) && !hasPrix(it) ? ' · ' + MSGT('estimé') : ''}</small></span><input class="v-in" inputmode="decimal" data-bu="${it.id}" data-k="${hasPrix(it) ? 'prix' : 'estime'}" data-v0="${esc(v)}" value="${esc(String(v).replace('.', ','))}" placeholder="${esc(CS())}"></div>`; }).join('')}
           ${all.length > L.length ? `<button type="button" class="ar-more" onclick="CV.buAll()">＋ ${RF('{0} autre(s)', all.length - L.length)}</button>` : ''}
           <button type="button" class="ar-go" onclick="CV.buPrices()">✓ ${MSGT('Enregistrer ces prix')}</button>
           ${fbtn(`CV.navTo('resas')`, `🎫 ${MSGT('Voir les réservations')}`, 1)}`; }},
       {k:'sp', ic:'🍝', l:MSGT('Prévois le sur-place'), ok: !!t.surplace || filSk(key, 'sp'), skip:true, n: t.surplace ? eur(spD) + ' / ' + MSGT('jour') : '',
         body: ()=>{ const d = BU_SP.reduce((a, [k])=>a + spV(k), 0), days = dayList().length || nN;
           return `<div class="ar-p">${MSGT('Repas, cafés, bus, petits achats : ce qu’on oublie toujours. Par personne et par jour.')}</div>
-          ${BU_SP.map(([k, ic, l])=>`<div class="bu-sp"><span>${ic} ${MSGT(l)}</span><span class="so-st"><button type="button" onclick="CV.buSpN('${k}',-1)" aria-label="${esc(MSGT('Moins'))}">−</button><b>${eur(spV(k))}</b><button type="button" onclick="CV.buSpN('${k}',1)" aria-label="${esc(MSGT('Plus'))}">＋</button></span></div>`).join('')}
+          ${BU_SP.map(([k, ic, l])=>`<div class="bu-sp"><span>${ic} ${MSGT(l)}</span><span class="so-st"><button type="button" onclick="CV.buSpN('${ja(k)}',-1)" aria-label="${esc(MSGT('Moins'))}">−</button><b>${eur(spV(k))}</b><button type="button" onclick="CV.buSpN('${ja(k)}',1)" aria-label="${esc(MSGT('Plus'))}">＋</button></span></div>`).join('')}
           <div class="bu-sum"><b>${eur(d)} / ${MSGT('jour')} / ${MSGT('pers.')}</b> × ${days} ${MSGT('jours')}${ppl > 1 ? ' × ' + ppl : ''} = <b>${eur(d * days * ppl)}</b><small>${MSGT('Pendant le voyage, ce montant devient ton plafond du jour.')}</small></div>
           <button type="button" class="ar-go" onclick="CV.buSpSave()">✓ ${MSGT(t.surplace ? 'Mettre à jour' : 'Ajouter au budget')}</button>`; }},
       {k:'pay', ic:'💳', l:MSGT('Payer à temps'), ok: !pay.length && !todo, n: pay.length ? RF('{0} à régler', pay.length) : todo ? RF('{0} à réserver', todo) : '',
-        body: ()=>`${pay.length ? pay.slice(0, 5).map(it=>{ const e = buNextEch(it); return `<div class="ar-r" role="button" onclick="CV.edit('${it.id}')"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(it.cat === 'hotel' ? (it.nom || cityOf(it.titre) || it.titre) : it.titre)}</b><small>${e ? `${MSGT('Prochaine échéance')} : ${eur(num(e.montant))}${e.date ? ' · ' + fshort(e.date) : ''}` : `${MSGT('Reste à payer')} : ${eur(totalOf(it) - paidAmount(it))}`}</small></span><div class="ar-ra"><button type="button" onclick="event.stopPropagation();CV.buPaid('${it.id}')">${MSGT('C’est payé')}</button></div></div>`; }).join('')
+        body: ()=>`${pay.length ? pay.slice(0, 5).map(it=>{ const e = buNextEch(it); return `<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(it.cat === 'hotel' ? (it.nom || cityOf(it.titre) || it.titre) : it.titre)}</b><small>${e ? `${MSGT('Prochaine échéance')} : ${eur(num(e.montant))}${e.date ? ' · ' + fshort(e.date) : ''}` : `${MSGT('Reste à payer')} : ${eur(totalOf(it) - paidAmount(it))}`}</small></span><div class="ar-ra"><button type="button" onclick="event.stopPropagation();CV.buPaid('${ja(it.id)}')">${MSGT('C’est payé')}</button></div></div>`; }).join('')
             : `<div class="ar-p">${todo ? RF('Rien à payer pour l’instant : {0} réservation(s) à faire d’abord.', todo) : '✓ ' + MSGT('Tout est payé.')}</div>`}
           ${pay.length ? `<div class="ar-p">${MSGT('Ajoute les acomptes dans chaque fiche (💶 Paiement → Échéancier) : l’appli te rappelle la veille.')}</div>` : ''}${todo ? fbtn(`CV.navTo('resas')`, `🎫 ${MSGT('Voir les réservations')}`, 1) : ''}`}
     ];
