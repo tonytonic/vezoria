@@ -2240,9 +2240,33 @@
   const tfHotel = h => [h.nom, h.adresse || cityOf(h.titre)].filter(Boolean).join(', ');   // nom + adresse : Google Maps trouve le bon hôtel
   const tfLink = (a, b, m) => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(a)}&destination=${encodeURIComponent(b)}&travelmode=${tfMode(m)}`;
   function tfEarly(hm, m){ const x = /^(\d{1,2}):(\d{2})/.exec(hm || ''); if(!x) return ''; const bf = m === 'Avion' ? 120 : m === 'Bateau' ? 45 : 20; let t = (+x[1]) * 60 + (+x[2]) - bf; if(t < 0) t += 1440; return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
+  // 🚆 trajets du jour SANS doublon : deux fiches pour le même trajet (même mode ; même intitulé, ou mêmes villes :
+  //    « Rome → Naples » et « Roma Termini → Napoli Centrale ») → on garde la plus complète (heure, réservé, réf.)
+  function dayTr(d){
+    const L = items(i=>i.cat === 'transport' && i.date === d && !/Taxi/.test(i.mode || ''));
+    const k3 = s => normQ(cityOf(s || '') || s || '').split(' ')[0].slice(0, 3);
+    const same = (a, b) => (a.mode || '') === (b.mode || '') && ((normQ(a.titre) && normQ(a.titre) === normQ(b.titre)) || (a.from && a.to && b.from && b.to && k3(a.from) === k3(b.from) && k3(a.to) === k3(b.to)));
+    const score = t => (t.heureDep ? 4 : 0) + (/booked|paid/.test(t.statut || '') ? 2 : 0) + (t.ref ? 1 : 0) + ((t.from || '').length + (t.to || '').length) / 100;
+    const groups = [];
+    L.forEach(t=>{ const g = groups.find(g=>same(g[0], t)); if(g) g.push(t); else groups.push([t]); });
+    const list = groups.map(g=>g.slice().sort((a, b)=>score(b) - score(a))[0]).sort((a, b)=>(a.heureDep || '').localeCompare(b.heureDep || ''));
+    return {list, dups: groups.filter(g=>g.length > 1)};
+  }
+  // fusionner les doublons : la fiche la plus complète reçoit ce qui manque (prix, payeur, réf., billets…), l'autre est retirée
+  async function trDupFix(d){
+    const {dups} = dayTr(d); if(!dups.length) return;
+    if(!(await uiConfirm(MSGT('Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.')))) return;
+    const score = t => (t.heureDep ? 4 : 0) + (/booked|paid/.test(t.statut || '') ? 2 : 0) + (t.ref ? 1 : 0) + ((t.from || '').length + (t.to || '').length) / 100;
+    dups.forEach(g=>{ const s = g.slice().sort((a, b)=>score(b) - score(a)), keep = clone(s[0]); let ch = false;
+      s.slice(1).forEach(x=>{ Object.keys(x).forEach(k=>{ if(/^(id|type|trip|deleted|createdAt|createdBy|updatedAt|updatedBy)$/.test(k)) return; const v = x[k], cur = keep[k];
+        if((cur == null || cur === '' || (Array.isArray(cur) && !cur.length)) && v != null && v !== '' && !(Array.isArray(v) && !v.length)){ keep[k] = clone(v); ch = true; } }); drop(x.id, false); });
+      if(ch) put(keep, false); });
+    toast('🧹 ' + MSGT('Doublon retiré')); refresh();
+  }
   function transferHTML(d){
     const {night, prev} = hotelsAround(d), out = [];
-    const tr = items(i=>i.cat === 'transport' && i.date === d && !/Taxi/.test(i.mode || '')).sort((a, b)=>(a.heureDep || '').localeCompare(b.heureDep || ''));
+    const {list:tr, dups} = dayTr(d);
+    if(dups.length) out.push(`<button type="button" class="etp-fix" onclick="CV.trDupFix('${ja(d)}')">⚠️ ${esc(RF('{0} fiches pour le même trajet {1} : retirer le doublon', dups[0].length, dups[0][0].titre || (cityOf(dups[0][0].from) + ' → ' + cityOf(dups[0][0].to))))}</button>`);
     const row = (ic, title, sub, href) => `<div class="cv-tf"><span class="cv-tf-i">${ic}</span><div class="cv-tf-t"><b data-notr>${esc(title)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div><a class="cv-tf-go" href="${esc(href)}" target="_blank" rel="noopener">🧭 ${esc(MSGT('Itinéraire'))}</a></div>`;
     tr.forEach(t=>{
       const ic = MODE_ICON[t.mode] || '🧭';
@@ -2315,7 +2339,7 @@
   async function dayTrace(d, w, h){
     const r = dayInfo(d).route, pl = placesOf(d), city = dayCity(d) || '';
     const fresh = r && r.ids && r.ids.length && pl.length && r.ids.every(id=>pl.some(p=>p.id === id)) && pl.every(p=>r.ids.includes(p.id) || (r.miss || []).includes(p.id));
-    const tr = items(i=>i.cat === 'transport' && i.date === d && !/Taxi/.test(i.mode || ''));
+    const tr = dayTr(d).list;
     const {night, prev} = hotelsAround(d), markers = [], lines = [], links = []; let line = null;
     const hotelPt = async hh => hh ? (await geocode(tfHotel(hh), city).catch(()=>null)) || (await geocode(hotelQ(hh), city).catch(()=>null)) : null;
     // 📍 gare / aéroport : d’abord la VILLE (position vérifiée des étapes : Rome en Italie, pas un hameau homonyme),
@@ -2330,10 +2354,10 @@
     };
     for(const t of tr){
       const a = t.from ? await endPt(t.from, t.mode) : null, b = t.to ? await endPt(t.to, t.mode) : null;
-      if(t.from && t.to && t.mode !== 'Avion') links.push({ic:MODE_ICON[t.mode] || '🧭', lbl:cityOf(t.from) + ' → ' + cityOf(t.to), href:tfLink(tfPt(t.from, t.mode), tfPt(t.to, t.mode), t.mode)});
       if(a && b){ lines.push({pts:[[a.lat, a.lng], [b.lat, b.lng]], color:'#94a3b8'}); markers.push({lat:a.lat, lng:a.lng, label:'D', color:'#0ea5e9', name:cityOf(t.from)}, {lat:b.lat, lng:b.lng, label:'A', color:'#16a34a', name:cityOf(t.to)}); }
       const hFrom = prev && prev.id !== (night && night.id) ? prev : (night && night.date < d ? night : null);
       if(t.from && hFrom) links.push({ic:'🏨', lbl:RF('Ton hôtel → {0}', t.from), href:tfLink(tfHotel(hFrom), tfPt(t.from, t.mode), t.mode)});
+      if(t.from && t.to && t.mode !== 'Avion') links.push({ic:MODE_ICON[t.mode] || '🧭', lbl:t.from + ' → ' + t.to, href:tfLink(tfPt(t.from, t.mode), tfPt(t.to, t.mode), t.mode)});
       if(a && hFrom){ const hp = await hotelPt(hFrom); if(hp){ lines.push({pts:[[hp.lat, hp.lng], [a.lat, a.lng]], color:'#7c3aed'}); markers.push({lat:hp.lat, lng:hp.lng, label:'H', color:'#7c3aed', name:hFrom.nom || cityOf(hFrom.titre)}); } }
       if(t.to && night && night.date === d) links.push({ic:MODE_ICON[t.mode] || '🧭', lbl:RF('{0} → ton hôtel', t.to), href:tfLink(tfPt(t.to, t.mode), tfHotel(night), t.mode)});
       if(b && night && night.date === d){ const hp = await hotelPt(night); if(hp){ lines.push({pts:[[b.lat, b.lng], [hp.lat, hp.lng]], color:'#7c3aed'}); markers.push({lat:hp.lat, lng:hp.lng, label:'H', color:'#7c3aed', name:night.nom || cityOf(night.titre)}); } }
@@ -2351,7 +2375,7 @@
         const q = p => coordsIn(p.adresse || '') ? ll(coordsIn(p.adresse)) : [p.adresse || p.nom, city].filter(Boolean).join(', ');
         const o = hb ? tfHotel(hb) : q(named[0]), rest = hb ? named : named.slice(1), loop = fresh ? r.loop : !!hb;
         const dst = loop && hb ? o : q(rest[rest.length - 1] || named[0]), way = (loop && hb ? rest : rest.slice(0, -1)).slice(0, 9).map(q);
-        if(named.length) links.unshift({ic:'🚶', lbl:MSGT('Les visites du jour'), href:`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(o)}&destination=${encodeURIComponent(dst)}${way.length ? '&waypoints=' + way.map(encodeURIComponent).join('%7C') : ''}&travelmode=walking`});
+        if(named.length) links.push({ic:'🚶', lbl:MSGT('Les visites du jour'), href:`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(o)}&destination=${encodeURIComponent(dst)}${way.length ? '&waypoints=' + way.map(encodeURIComponent).join('%7C') : ''}&travelmode=walking`});
       }
       let k = 0; stops.forEach(s=>{ if(s.name) markers.push({lat:s.lat, lng:s.lng, label:++k, color:'#dc2626', name:s.name}); else if(!markers.some(m=>m.label === 'H')) markers.push({lat:s.lat, lng:s.lng, label:'H', color:'#7c3aed'}); });
     }
