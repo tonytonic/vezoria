@@ -2097,6 +2097,67 @@
     if(res){ const g = {id:key, type:'geo', q:full, lat:res.lat, lng:res.lng}; stamp(g); R[key] = g; markDirty(key); persist(); }
     return res;
   }
+  /* 🔎 Propositions de villes et de pays pendant la saisie (tout champ <input data-place>) :
+     « la vale… » → La Valette 🇲🇹 Malte, Valence 🇪🇸 Espagne… Le choix garde la position exacte : Explorer, suggestions et carte
+     utilisent ensuite le bon endroit (et pas une autre ville du même nom). */
+  const PAC = {}; let pacT = 0, pacN = 0;
+  async function pacFetch(q){
+    const k = normQ(q); if(PAC[k]) return PAC[k];
+    let L = []; try { const j = await (await fetch(GEO + 'search?ac=1&format=jsonv2&limit=5&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(q))).json(); if(Array.isArray(j)) L = j; } catch(e){}
+    const seen = new Set(), out = [];
+    for(const x of L){
+      const a = x.address || {}, lat = +x.lat, lng = +x.lon; if(!isFinite(lat) || !isFinite(lng)) continue;
+      const cc = String(a.country_code || '').toUpperCase().slice(0, 2), ctry = a.country || '';
+      const isC = x.addresstype === 'country' || x.type === 'country';
+      const name = String(x.name || (x.display_name || '').split(',')[0] || '').trim(); if(!name) continue;
+      const k2 = normQ(name) + '|' + cc; if(seen.has(k2)) continue; seen.add(k2);
+      const sub = isC ? MSGT('Pays') : [a.state && normQ(a.state) !== normQ(name) ? a.state : '', ctry].filter(Boolean).join(', ');
+      out.push({name, sub, cc, ctry: isC ? name : ctry, lat, lng});
+    }
+    if(Object.keys(PAC).length > 200) Object.keys(PAC).slice(0, 100).forEach(x=>delete PAC[x]);
+    return (PAC[k] = out);
+  }
+  function pacClose(i){ const b = i && i._pac; if(b){ b.remove(); i._pac = null; } }
+  function pacPick(i, it){
+    const key = 'geo:' + normQ(it.name), cur = R[key];
+    const g = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:it.name}, {lat:it.lat, lng:it.lng, v:2}); stamp(g); R[key] = g; markDirty(key);
+    if(it.cc){ M.ctry = M.ctry || {}; M.ctry[normQ(it.name)] = {pays:it.ctry || '', cc:it.cc}; }
+    persist(); pacClose(i);
+    i.value = it.name; i._pacSkip = 1;
+    i.dispatchEvent(new Event('input', {bubbles:true})); i.dispatchEvent(new Event('change', {bubbles:true}));
+  }
+  function pacShow(i, L){
+    pacClose(i); if(!L.length || document.activeElement !== i) return;
+    const b = document.createElement('div'); b.className = 'pac'; b.setAttribute('role', 'listbox');
+    L.forEach(it=>{
+      const o = document.createElement('button'); o.type = 'button'; o.className = 'pac-i'; o.setAttribute('data-notr', '');
+      const f = document.createElement('i'); f.textContent = it.cc ? flag(it.cc) : '📍';
+      const t = document.createElement('span'), n = document.createElement('b'), sm = document.createElement('small');
+      n.textContent = it.name; sm.textContent = it.sub; t.append(n, sm); o.append(f, t);
+      o.addEventListener('pointerdown', e=>e.preventDefault());   // garder le clavier ouvert jusqu’au choix
+      o.addEventListener('click', ()=>pacPick(i, it));
+      b.appendChild(o);
+    });
+    document.body.appendChild(b); i._pac = b; pacPlace(i);
+  }
+  // en surimpression juste sous le champ (une ligne « ville + nuits » ne se déforme pas)
+  function pacPlace(i){
+    const b = i && i._pac; if(!b) return; const r = i.getBoundingClientRect(), vw = window.innerWidth, w = Math.min(vw - 16, Math.max(r.width, 280));
+    b.style.left = Math.max(8, Math.min(r.left, vw - w - 8)) + 'px'; b.style.width = w + 'px';
+    const below = window.innerHeight - r.bottom, up = below < 220 && r.top > below;
+    b.style.top = up ? 'auto' : (r.bottom + 4) + 'px'; b.style.bottom = up ? (window.innerHeight - r.top + 4) + 'px' : 'auto';
+  }
+  window.addEventListener('scroll', ()=>{ const i = document.activeElement; if(i && i._pac) pacPlace(i); }, true);
+  window.addEventListener('resize', ()=>{ const i = document.activeElement; if(i && i._pac) pacPlace(i); });
+  document.addEventListener('input', e=>{
+    const i = e.target; if(!i || !i.matches || !i.matches('input[data-place]')) return;
+    if(i._pacSkip){ i._pacSkip = 0; return; }
+    clearTimeout(pacT); const q = i.value.trim(), my = ++pacN;
+    if(q.length < 2){ pacClose(i); return; }
+    pacT = setTimeout(async ()=>{ const L = await pacFetch(q); if(my === pacN && i.value.trim() === q) pacShow(i, L); }, 300);
+  });
+  document.addEventListener('focusout', e=>{ const i = e.target; if(i && i._pac) setTimeout(()=>{ if(document.activeElement !== i) pacClose(i); }, 150); });
+  document.addEventListener('keydown', e=>{ const i = e.target; if(e.key === 'Escape' && i && i._pac) pacClose(i); });
   // 📍 villes des étapes : une ville peut exister ailleurs sous le même nom (Sorrente en Italie… et aux États-Unis).
   // Une étape à plus de 1 500 km du milieu des autres est vérifiée : parmi les villes de ce nom, on prend celle qui est près des autres étapes
   // (si elle est assez connue). Le bon point est gardé (v:2) et le pays de la ville est recalculé.

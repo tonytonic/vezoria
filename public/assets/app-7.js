@@ -58,7 +58,7 @@
         const more = `<button type="button" class="ar-more" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>`;
         const subA = `<button type="button" class="ar-sub${nA ? ' cur' : ' ok'}" onclick="CV.suggOpen()"${nA ? '' : ' disabled'}><i>${nA ? '①' : '✓'}</i><span><b>${MSGT('Choisir mes visites')}</b><small>${nA ? RF('{0} idées à trier, ville par ville', nA) : MSGT('Tout est trié')}</small></span></button>`;
         const subB = `<button type="button" class="ar-sub${pk ? (nA ? '' : ' cur') : ' ok'}" onclick="CV.rgOpen()"${pk ? '' : ' disabled'}><i>${pk ? '②' : '✓'}</i><span><b>${MSGT('Ranger mes visites dans les jours')}</b><small>${pk ? RF('{0} à placer, dans l’ordre du trajet', pk) : MSGT('Rien à ranger pour l’instant')}</small></span></button>`;
-        if(SG && SG.tid === t.id) return `<div class="ar-run">${sgRun(t)}</div>${D.sg.length ? subA : ''}`;
+        if(SG && SG.tid === t.id) return `<div class="ar-run">${sgRun(t)}</div>${D.sg.length ? `<div class="ar-subs">${subA}</div>` : ''}`;   // dans son cadre (sinon texte blanc sur fond blanc)
         if(!D.pl.length && !nA && !pk) return `<div class="ar-p">${MSGT('Les lieux à voir et les excursions, jour par jour.')}</div>${D.hs.length ? `<button type="button" class="ar-go" onclick="CV.suggGo()">💡 ${MSGT('Me proposer les incontournables (4 par jour)')}</button>` : ''}<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('Passer cette étape')}</button>`;
         const redo = !pk && D.pl.length - D.sg.length > 1 ? `<button type="button" class="ar-more" onclick="CV.rgRedo()">🏨 ${MSGT('Réorganiser depuis mon hôtel')}</button>` : '';
         return `<div class="ar-p">✓ ${D.pl.length - D.sg.length} ${MSGT('lieux au programme')}</div><div class="ar-subs">${subA}${subB}</div>${more}${redo}${D.sg.length && !((M.ariSkip || {})[t.id] || {}).faire ? `<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('C’est bon, j’ai assez de visites')}</button>` : ''}`;
@@ -122,7 +122,7 @@
     const d0 = last ? (last.fin || last.debut) : (t.debut || isoToday());
     openSheet(`<h2>📍 ${esc(MSGT('Ajouter une ville'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».'))}</div>
       <form id="ac-f" onsubmit="event.preventDefault();CV.ariCitySave()">
-        <div class="v-f"><label>${esc(MSGT('Ville'))}</label><input class="v-in" id="ac-v" required placeholder="${esc(MSGT('Ex. Rome, Lisbonne, Tokyo'))}" oninput="CV.ariCityGuess()"></div>
+        <div class="v-f"><label>${esc(MSGT('Ville'))}</label><input class="v-in" id="ac-v" data-place autocomplete="off" required placeholder="${esc(MSGT('Ex. Rome, Lisbonne, Tokyo'))}" oninput="CV.ariCityGuess()"></div>
         ${st.length ? `<div class="v-f"><label>${esc(MSGT('Où dans l’itinéraire ?'))}</label><select class="v-in" id="ac-pos" onchange="this.dataset.touched=1;CV.ariCityPos(this)">
           <option value="0" data-d="${esc(st[0].debut)}">${esc(MSGT('Au début'))} · ${esc(MSGT('avant'))} ${esc(st[0].city)}</option>
           ${st.map((x, i)=>`<option value="${i + 1}" data-d="${esc(x.fin)}"${i === st.length - 1 ? ' selected' : ''}>${esc(MSGT('Après'))} ${esc(x.city)} (${fshort(x.debut)} → ${fshort(x.fin)})</option>`).join('')}</select>

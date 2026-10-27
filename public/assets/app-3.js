@@ -188,7 +188,7 @@
       h += `<div id="wz-ctry"></div>${wz.ctryOk ? `<div class="v-sum-small wz-ok">✓ ${MSGT('Itinéraire proposé pour')} ${esc(frCountry(wz.ctryOk))}${(wz.far || []).length ? ' · ' + MSGT('À ne pas manquer aussi (ajoute une étape si tu veux) :') + ' <span data-notr>' + wz.far.map(esc).join(', ') + '</span>' : ''}</div>${seasonLine(wz.sea, wz.debut ? +wz.debut.slice(5, 7) : 0)}` : ''}
         <div class="v-sum-small" style="margin-bottom:8px">Une ligne par ville où vous dormez. Le mode, c’est comment vous y arrivez depuis l’étape d’avant (pour la 1ʳᵉ, chacun choisit le sien à l’étape suivante).</div>
         <div oninput="CV.wzSum()">${wz.etapes.map((e,i)=>`<div class="wz-et"><span class="n">${i+1}</span>
-          <input class="v-in" data-k="ville" value="${esc(e.ville)}" placeholder="Ville" onchange="CV.wzCk()">
+          <input class="v-in" data-k="ville" data-place autocomplete="off" value="${esc(e.ville)}" placeholder="Ville" onchange="CV.wzCk()">
           <input class="v-in cv-num" data-k="nuits" type="number" min="0" value="${e.nuits}"><span class="v-sum-small">nuit${e.nuits>1?'s':''}</span>
           <select class="v-in" data-k="mode">${modes(e.mode)}</select>
           <span class="wz-btns">${i>0?`<button type="button" class="cv-x" onclick="CV.wzEt('up',${i})" title="Monter" aria-label="Monter">↑</button>`:''}<button type="button" class="cv-x" onclick="CV.wzEt('del',${i})" aria-label="Retirer">✕</button></span></div>`).join('')}</div>
@@ -201,8 +201,8 @@
       const m0 = (plan.st[0] || {}).mode || 'Avion';
       h += `<div class="v-sum-small" style="margin-bottom:8px">D’où part chacun vers ${esc(first)}, comment, et où rentre-t-il après ${esc(last)} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.</div>
         ${wz.voyageurs.map(pid=>{ const g = wz.gens[pid] || {}; return `<div class="wz-pp">${pchip(pid)}
-          <div class="wz-pl"><span>🛫 Aller</span><input class="v-in" data-wdep="${pid}" value="${esc(g.dep)}" placeholder="départ de…"><select class="v-in" data-wmdep="${pid}">${modes(g.mDep || m0)}</select></div>
-          <div class="wz-pl"><span>🏠 Retour</span><input class="v-in" data-wret="${pid}" value="${esc(g.ret)}" placeholder="retour vers…"><select class="v-in" data-wmret="${pid}">${modes(g.mRet || g.mDep || wz.modeRetour || m0)}</select></div></div>`; }).join('')}`;
+          <div class="wz-pl"><span>🛫 Aller</span><input class="v-in" data-wdep="${pid}" data-place autocomplete="off" value="${esc(g.dep)}" placeholder="départ de…"><select class="v-in" data-wmdep="${pid}">${modes(g.mDep || m0)}</select></div>
+          <div class="wz-pl"><span>🏠 Retour</span><input class="v-in" data-wret="${pid}" data-place autocomplete="off" value="${esc(g.ret)}" placeholder="retour vers…"><select class="v-in" data-wmret="${pid}">${modes(g.mRet || g.mDep || wz.modeRetour || m0)}</select></div></div>`; }).join('')}`;
     }
     if(s===5){
       const {st, fin} = wzPlan(), nt = nights(wz.debut, fin);

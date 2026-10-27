@@ -2901,3 +2901,13 @@ body.cv-ph-past .cv-prep2 .ar-go:not(.ex-go){color:#1E2C5C}
 .cv-cmp th{text-align:left;font-weight:800;padding:4px;color:#4c1d95}
 .cv-cmp td{padding:6px 4px;border-top:1px solid #f1eaf8;vertical-align:top}
 .cv-cmp td:first-child{color:var(--gray,#6b6475)}
+
+/* 🔎 propositions de villes et de pays pendant la saisie */
+.pac{position:fixed;z-index:100000;max-height:260px;overflow-y:auto;border:1px solid #e5e0ee;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 10px 24px -14px rgba(40,20,80,.45)}
+.pac-i{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;background:#fff;border:0;border-top:1px solid #f0ecf6;color:#1a1a2e;font:inherit;cursor:pointer}
+.pac-i:first-child{border-top:0}
+.pac-i:active{background:#f3eefc}
+.pac-i i{font-style:normal;font-size:20px;flex:0 0 26px;text-align:center}
+.pac-i span{display:flex;flex-direction:column;min-width:0}
+.pac-i b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pac-i small{font-size:12px;color:#6b5b8c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
