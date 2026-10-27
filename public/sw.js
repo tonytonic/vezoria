@@ -3,7 +3,7 @@
 // Une nouvelle version de l'appli = un nouveau sw.js : il s'installe en arrière-plan, puis l'appli propose
 // « Nouvelle version · toucher pour recharger » (ou recharge seule si elle vient juste de s'ouvrir).
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-10-27d';
+const CACHE = 'vezoria-2026-10-27e';
 // le code et les styles sont dans assets/ (depuis la 2026-10-23d) : copiés dès l'installation pour marcher hors ligne tout de suite
 const CORE = ['./', './splash.webp', './img/entete-preparation.jpg', './img/entete-en-cours.jpg', './img/entete-passes.jpg', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './i18n.js',
   './assets/app.css', ...[1, 2, 3, 4, 5, 6, 7, 8].map(n => './assets/app-' + n + '.js'),
@@ -151,7 +151,7 @@ self.addEventListener('push', e => {
       let p = null;
       try { p = await tryKey(await kvGet('k:' + d.i)); } catch (_) {}
       if (!p) { try { const rk = await kvGet('r:' + d.i); if (rk) p = await tryKey(await crypto.subtle.importKey('raw', rk, 'AES-GCM', false, ['decrypt'])); } catch (_) {} }
-      if (p) { try { ({ title, body } = compose(p, tt)); url = './?vzt=' + encodeURIComponent(p.trip || '') + '&vzk=' + encodeURIComponent(p.k || '') + (p.r ? '&vzr=' + encodeURIComponent(p.r) : ''); } catch (_) {} }
+      if (p) { try { ({ title, body } = compose(p, tt)); url = './?vzt=' + encodeURIComponent(p.trip || '') + '&vzk=' + encodeURIComponent(p.k || '') + ((p.r || (p.k === 'notes' && p.it && p.it[0] && p.it[0].note ? 'note' : '')) ? '&vzr=' + encodeURIComponent(p.r || 'note') : ''); } catch (_) {} }
       else await kvPut('nokey', 1);
     }
     const n = ((await kvGet('badge')) || 0) + 1; await kvPut('badge', n);
