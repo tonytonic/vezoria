@@ -702,7 +702,7 @@
           ${info.plan ? `<div class="v-day-plan">${esc(info.plan)}</div>` : ''}
           ${own.map(row).join('')}${night.map(row).join('')}
           ${dn.map(n=>noteCard(n,true)).join('')}
-          ${routeHTML(d, true)}
+          ${transferHTML(d)}${routeHTML(d, true)}
           <div class="cv-row"><button class="v-day-edit" onclick="CV.planDay('${ja(d)}')">🗺️ Itinéraire</button><button class="v-day-edit cv-dmore" aria-label="${esc(MSGT('Actions du jour'))}" onclick="CV.dayMenu('${ja(d)}')">⋯</button></div>
           ${info.updatedBy ? byline(info) : ''}
         </div>` : ''}
@@ -2234,6 +2234,24 @@
   const fmtKm = k => k < 1 ? Math.round(k*1000/10)*10 + ' m' : k.toFixed(1).replace('.',',') + ' km';
   const ll = p => (+p.lat).toFixed(6) + ',' + (+p.lng).toFixed(6);
   const dirUrl = (a, b, mode, way) => `https://www.google.com/maps/dir/?api=1&origin=${ll(a)}&destination=${ll(b)}${way && way.length ? '&waypoints=' + way.map(ll).join('%7C') : ''}&travelmode=${mode}`;
+  /* 🚕 Trajets d'arrivée et de départ : gare / aéroport ↔ hôtel (le jour où on arrive dans une ville, le jour où on la quitte) */
+  const tfPt = (n, m) => { n = String(n || '').trim(); if(!n) return ''; if(m === 'Avion' && !/a[ée]roport|airport|aeropuerto|aeroporto|flughafen/i.test(n)) return n + ' ' + MSGT('aéroport'); if(/Train/i.test(m || '') && !/gare|station|bahnhof|stazione|estaci/i.test(n)) return n + ' ' + MSGT('gare'); return n; };
+  const tfMode = m => m === 'Voiture' ? 'driving' : 'transit';
+  const tfHotel = h => [h.nom, h.adresse || cityOf(h.titre)].filter(Boolean).join(', ');   // nom + adresse : Google Maps trouve le bon hôtel
+  const tfLink = (a, b, m) => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(a)}&destination=${encodeURIComponent(b)}&travelmode=${tfMode(m)}`;
+  function tfEarly(hm, m){ const x = /^(\d{1,2}):(\d{2})/.exec(hm || ''); if(!x) return ''; const bf = m === 'Avion' ? 120 : m === 'Bateau' ? 45 : 20; let t = (+x[1]) * 60 + (+x[2]) - bf; if(t < 0) t += 1440; return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
+  function transferHTML(d){
+    const {night, prev} = hotelsAround(d), out = [];
+    const tr = items(i=>i.cat === 'transport' && i.date === d && !/Taxi/.test(i.mode || '')).sort((a, b)=>(a.heureDep || '').localeCompare(b.heureDep || ''));
+    const row = (ic, title, sub, href) => `<div class="cv-tf"><span class="cv-tf-i">${ic}</span><div class="cv-tf-t"><b data-notr>${esc(title)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div><a class="cv-tf-go" href="${esc(href)}" target="_blank" rel="noopener">🧭 ${esc(MSGT('Itinéraire'))}</a></div>`;
+    tr.forEach(t=>{
+      const ic = MODE_ICON[t.mode] || '🧭';
+      const hFrom = prev && prev.id !== (night && night.id) ? prev : (night && night.date < d ? night : null);   // l’hôtel qu’on quitte ce jour-là
+      if(t.from && hFrom) out.push(row('🏨', RF('Ton hôtel → {0}', ic + ' ' + t.from), [hFrom.nom || cityOf(hFrom.titre), t.heureDep ? RF('Départ {0} : sois sur place vers {1}', t.heureDep, tfEarly(t.heureDep, t.mode)) : ''].filter(Boolean).join(' · '), tfLink(tfHotel(hFrom), tfPt(t.from, t.mode), t.mode)));
+      if(t.to && night && night.date === d) out.push(row(ic, RF('{0} → ton hôtel', t.to), [t.heureArr ? RF('Arrivée {0}', t.heureArr) : '', night.nom || cityOf(night.titre)].filter(Boolean).join(' · '), tfLink(tfPt(t.to, t.mode), tfHotel(night), t.mode)));
+    });
+    return out.length ? `<div class="cv-tfs">${out.join('')}</div>` : '';
+  }
   function routeHTML(d, compact){
     const r = dayInfo(d).route, pl = placesOf(d);
     if(!pl.length) return '';

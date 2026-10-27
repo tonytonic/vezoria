@@ -360,7 +360,7 @@
     const k = dayList().indexOf(isoToday()), info = dayInfo(isoToday()), {own, night} = itemsForDay(isoToday());
     const tile = (ic, l, fn) => `<button type="button" class="cv-tile" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
     const lvF = !hidden('blk:prep');
-    return `${offBand(t)}${lnHTML(t)}${lvF ? liveFil(t) : actBand()}${annivCard()}${nextHero()}${trkHTML()}${liveMapCard()}${lvF ? '' : liveCard()}
+    return `${offBand(t)}${lnHTML(t)}${lvF ? liveFil(t) : actBand()}${annivCard()}${nextHero()}${transferHTML(isoToday())}${trkHTML()}${liveMapCard()}${lvF ? '' : liveCard()}
       <div class="cv-tiles">${tile('📍','Step ici','CV.hereNow()')}${tile('🧾','Dépense','CV.tlReceipt()')}${tile('📴','Fiche du jour','CV.tlDay()')}${tile('🌤️','Météo','CV.tlMeteo()')}</div>
       <details class="cv-fold cv-tmore"><summary>${MSGT('Plus d’outils')} <small>${MSGT('Courses, carte, importer, papiers')}</small></summary><div class="cv-tiles">${tile('🛒','Courses','CV.shopSheet()')}${tile('🌍','Carte','CV.worldMap()')}${tile('📄','Importer','CV.impSheet()')}${tile('🛂','Papiers','CV.tlDocs()')}</div></details>
       ${lvF ? '<div hidden>' : ''}<div class="v-box"><h3>Aujourd’hui · J${k+1}${info.titre ? ' · ' + esc(info.titre) : ''}</h3>${info.plan ? `<p>${esc(info.plan)}</p>` : ''}
