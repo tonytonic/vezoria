@@ -711,7 +711,7 @@
           <div class="cv-row cv-phrow"><label class="v-btn cv-addph">📸 Prendre une photo<input type="file" accept="image/*" capture="environment" onchange="CV.souvAddPhotos(this)"></label><label class="v-btn sec cv-addph">🖼️ Mes photos<input type="file" accept="image/*" multiple onchange="CV.souvAddPhotos(this)"></label></div>
           <div class="v-sum-small" id="sv-prog"></div></div>
         ${feedCode(s.trip) ? `<label class="cv-checkline" style="margin:4px 0 10px"><input type="checkbox" name="priv"${s.priv ? ' checked' : ''}> 🔒 Privé : ne pas montrer à mes abonnés</label>` : ''}
-        ${actions(id ? `CV.delSouv('${id}')` : '')}
+        ${actions(id ? `CV.delSouv('${ja(id)}')` : '')}
       </form>`);
     hydrate();
   }

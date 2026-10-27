@@ -213,7 +213,7 @@
   function compNear(){
     const el = document.getElementById('cp-near'); if(!el || !comp) return; const have = new Set(comp.stops.map(s=>normQ(s.c)));
     const l = (comp.near||[]).filter(n=>!have.has(normQ(n.c))).slice(0, 12);
-    el.innerHTML = l.length ? l.map(n=>`<button type="button" class="cp-city" onclick="CV.compAdd('${esc(n.c).replace(/'/g,'&#39;')}',${n.lat},${n.lng})">${n.img ? `<img src="${esc(n.img)}" alt="" loading="lazy">` : '<i>🏙️</i>'}<span>${esc(n.c)}</span><small>＋ ajouter</small></button>`).join('') : '<div class="v-sum-small">Pas d’autre ville proposée.</div>';
+    el.innerHTML = l.length ? l.map(n=>`<button type="button" class="cp-city" onclick="CV.compAdd('${ja(n.c)}',${+n.lat||0},${+n.lng||0})">${n.img ? `<img src="${esc(n.img)}" alt="" loading="lazy">` : '<i>🏙️</i>'}<span>${esc(n.c)}</span><small>＋ ajouter</small></button>`).join('') : '<div class="v-sum-small">Pas d’autre ville proposée.</div>';
   }
   async function compPlaces(s){
     if(!comp) return; try { const l = await seeWiki({lat:s.lat, lng:s.lng}); comp.places[s.c] = l.filter(p=>normQ(p.nom) !== normQ(s.c)).slice(0, 9); } catch(e){ comp.places[s.c] = []; }
@@ -1335,7 +1335,7 @@
       ${enr ? `<div class="hc"><span id="cv-hero-cd">${hhmm(nx.end - Date.now())}</span><small>avant l’arrivée · ${esc(it.heureArr)}</small></div><div class="hpr"><i style="width:${pc}%"></i><b style="left:${pc}%">${icon(it)}</b></div>`
         : `<div class="hc"><span id="cv-hero-cd">${hhmm(nx.at - Date.now())}</span><small>${day}${nx.timed ? ' · ' + esc(tm) : it.cat==='hotel' ? ' · arrivée à l’hôtel' : ''}</small></div>`}
       ${it.ref ? `<button type="button" class="href" onclick="CV.nhCopy('${ja(it.ref)}')">Réf. <b>${esc(it.ref)}</b> <i>⧉</i></button>` : ''}
-      <div class="hb">${it.cat==='transport' && it.mode==='Avion' && nx.at - Date.now() < 36*3600e3 ? b('🛫','Embarquement',`CV.boardShow('${it.id}')`) : ''}${b('🧭','Y aller',`CV.nhGo('${it.id}')`)}${pj ? b('🎫','Billet',`CV.pjOpen('${esc(pj.id)}','${esc(pj.t||'img')}')`) : ''}${it.tel ? b('📞','Appeler',`location.href='tel:${esc(String(it.tel).replace(/[^+\d]/g,''))}'`) : ''}${b('✏️','Fiche',`CV.edit('${it.id}')`)}</div>
+      <div class="hb">${it.cat==='transport' && it.mode==='Avion' && nx.at - Date.now() < 36*3600e3 ? b('🛫','Embarquement',`CV.boardShow('${ja(it.id)}')`) : ''}${b('🧭','Y aller',`CV.nhGo('${ja(it.id)}')`)}${pj ? b('🎫','Billet',`CV.pjOpen('${ja(pj.id)}','${esc(pj.t||'img')}')`) : ''}${it.tel ? b('📞','Appeler',`location.href='tel:${esc(String(it.tel).replace(/[^+\d]/g,''))}'`) : ''}${b('✏️','Fiche',`CV.edit('${ja(it.id)}')`)}</div>
       ${more.length ? `<div class="hn">Ensuite : ${more.map(m=>`${icon(m.it)} ${esc(m.it.titre)} <small>${m.it.date === td ? '' : fshort(m.it.date) + ' '}${esc((m.it.cat==='transport' ? m.it.heureDep : m.it.heure) || '')}</small>`).join(' &nbsp;·&nbsp; ')}</div>` : ''}</div>`;
   }
   function nhGo(id){
@@ -2195,7 +2195,7 @@
       {k:'aller', l:'Trajet aller réservé', ok:tr.some(i=>ok(i) && (!t.debut || i.date === t.debut || i.date < t.debut)) || tr.some(ok), fn:`CV.tab('transport')`},
       {k:'nuits', l: ns.length ? 'Nuits réservées' : 'Hébergement', ok: ns.length ? covered === ns.length && ho.every(h=>ok(h) || !h.date) : ho.some(ok), n: ns.length ? covered + '/' + ns.length : '', fn:`CV.tab('hotel')`},
       {k:'retour', l:'Trajet retour réservé', ok: !t.fin || tr.some(i=>ok(i) && i.date && i.date >= t.fin), fn:`CV.tab('transport')`},
-      {k:'budget', l:'Budget fixé', ok:!!num(t.objectif), opt:true, fn:`CV.editTrip('${t.id}')`},   // facultatif : ne compte que s’il est fixé
+      {k:'budget', l:'Budget fixé', ok:!!num(t.objectif), opt:true, fn:`CV.editTrip('${ja(t.id)}')`},   // facultatif : ne compte que s’il est fixé
       {k:'docs', l:'Documents vérifiés', ok:!di.length, fn:'CV.tlDocs()'},
       {k:'check', l:'Checklist', ok: ck.length > 0 && ckd === ck.length, n: ck.length ? ckd + '/' + ck.length : '', fn:`CV.tab('check')`}
     ];

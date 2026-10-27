@@ -475,7 +475,7 @@
         ${ns.map(n=>noteCard(n,true)).join('') || '<div class="v-sum-small">Aucune note.</div>'}
         <button type="button" class="v-day-edit" onclick="CV.noteFromItem()">＋ Ajouter une note</button></div>`;
     }
-    h += actions(id ? `CV.del('${id}')` : '') + `</form>`;
+    h += actions(id ? `CV.del('${ja(id)}')` : '') + `</form>`;
     openSheet(h);
     liveInit();
   }
@@ -785,7 +785,7 @@
         <div class="v-f"><label>Note</label><textarea class="v-in" id="cv-ntext" style="min-height:120px" placeholder="Ex. : code de la porte, rappel, adresse du resto…" required>${esc(n.texte)}</textarea></div>
         <div class="v-f"><label>Rattachée à</label><select class="v-in" id="cv-nref">${refOptions(n.ref||'')}</select></div>
         <div class="v-f"><label>Épinglée</label>${segBtns('cv-npin', [['1','📌 Oui, en haut'],['0','Non']], n.pin?'1':'0')}</div>
-        ${actions(id ? `CV.delNote('${id}')` : '')}
+        ${actions(id ? `CV.delNote('${ja(id)}')` : '')}
       </form>`);
   }
   function saveNote(){
@@ -1110,7 +1110,7 @@
         ${field('Lien','lien',w.lien,'url','placeholder="https://"')}
         <div class="v-f"><label>Notes</label><textarea class="v-in" name="notes">${esc(w.notes)}</textarea></div>
         <div class="v-f"><label>État</label>${segBtns('cv-ws', [['idee','💭 Idée'],['prevu','📆 Prévu'],['fait','✓ Fait']], w.statut||'idee')}</div>
-        ${actions(id ? `CV.delWish('${id}')` : '')}
+        ${actions(id ? `CV.delWish('${ja(id)}')` : '')}
       </form>`);
   }
   function saveWish(){
@@ -1164,7 +1164,7 @@
         <div class="v-f"><label>Devise du voyage</label><select class="v-in" name="devise">${Object.keys(CURS).map(c=>`<option value="${c}"${c===(t.devise || (id ? 'EUR' : (M.cur || 'EUR'))) ? ' selected' : ''}>${c} · ${CURS[c]}</option>`).join('')}</select></div>
         ${field('Objectif de budget par personne (' + CS() + ')','objectif',t.objectif,'text','inputmode="decimal"')}
         ${id ? '' : `<label class="cv-checkline"><input type="checkbox" id="cv-basic" checked> Ajouter une checklist de base</label>`}
-        ${actions(id ? `CV.delTrip('${id}')` : '')}
+        ${actions(id ? `CV.delTrip('${ja(id)}')` : '')}
       </form>`);
     covPrev();
   }
@@ -1286,7 +1286,7 @@
         <div class="v-f"><label>Prénom</label><input class="v-in" id="cv-pnom" value="${esc(p.nom)}" required></div>
         <div class="v-f"><label>Couleur</label>${colorPick(p.couleur)}</div>
         <div class="v-f"><label>Pour me rembourser (facultatif)</label><input class="v-in" id="cv-prb" value="${esc(p.rembours||'')}" placeholder="Ex. Lydia ou Wero au 06…, ou IBAN FR76…"></div>
-        ${actions(id && id!==M.me ? `CV.delProfile('${id}')` : '')}
+        ${actions(id && id!==M.me ? `CV.delProfile('${ja(id)}')` : '')}
       </form>`);
   }
   function saveProfile(){

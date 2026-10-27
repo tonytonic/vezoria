@@ -113,7 +113,7 @@
     if(cur.k === 'resa'){ const it = (D.rs || []).find(x=>!okB(x)), left = (D.rs || []).filter(x=>!okB(x)).length;
       if(it) return {ic:it.cat === 'hotel' ? '🛏️' : icon(it), b:MSGT('Réserver') + ' : ' + esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre), s:(it.date ? fshort(it.date) + ' · ' : '') + RF('{0} à réserver', left), fn:"CV.ariTog('resa')"}; }
     if(cur.k === 'fin') return {ic:'🧭', b:MSGT('Avant de partir'), s:MSGT('Papiers, valise et derniers détails'), fn:'CV.avantSheet()'};
-    return {ic:cur.ic, b:MSGT(cur.l), s:Math.round(cur.f * 100) + ' %', fn:`CV.ariTog('${cur.k}')`};
+    return {ic:cur.ic, b:MSGT(cur.l), s:Math.round(cur.f * 100) + ' %', fn:`CV.ariTog('${ja(cur.k)}')`};
   }
   function ariFull(on){ const t = trip(); if(!t) return; M.ariFull = M.ariFull || {}; if(on) M.ariFull[t.id] = 1; else { delete M.ariFull[t.id]; if(M.ariOpen) delete M.ariOpen[t.id]; } persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   // ① ajouter une ville : le nom, l’arrivée et le nombre de nuits (l’hébergement « à réserver » est créé, il se réserve à l’étape ③)
@@ -266,7 +266,7 @@
     const steps = [
       {k:'jour', ic:'📍', l:MSGT('Ta journée'), ok: pl.length > 0 || own.length > 0 || filSk(key, 'jour'), f: pl.length || own.length ? 1 : 0, skip:true, n: pl.length ? pl.length + ' ' + MSGT('lieux') : '',
         body: ()=>`${[...own, ...night].map(it=>`<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${icon(it)}</i><span><b data-notr>${esc(it.titre)}</b><small>${esc(it.heureDep || it.heure || '')}</small></span></div>`).join('')}
-          ${pl.length ? fbtn(`CV.planDay('${td}')`, `🗺️ ${MSGT('Itinéraire du jour')} (${pl.length} ${MSGT('lieux')})`) : ''}
+          ${pl.length ? fbtn(`CV.planDay('${ja(td)}')`, `🗺️ ${MSGT('Itinéraire du jour')} (${pl.length} ${MSGT('lieux')})`) : ''}
           ${sgT.length ? fbtn('CV.suggOpen()', `💡 ${MSGT('Choisir mes visites')} (${sgT.length})`, pl.length) : !pl.length ? fbtn('CV.suggMore()', `💡 ${MSGT('Que voir aujourd’hui ?')}`) : ''}`},
       {k:'souv', ic:'📸', l:MSGT('Raconter ta journée'), ok: sv.length > 0 || filSk(key, 'souv'), skip:true, n: sv.length ? '' : MSGT('pas encore de souvenir'),
         body: ()=>`<div class="ar-p">${sv.length ? `✓ ${sv.length} ${MSGT('souvenir(s) aujourd’hui')}` : MSGT('Une photo et deux lignes : ta famille suit le voyage, et le film se construit tout seul.')}</div>${fbtn('CV.editSouv(null)', `📸 ${MSGT('Ajouter un souvenir')}`)}${fbtn('CV.hereNow()', `📍 ${MSGT('Step ici')}`, 1)}`},
@@ -275,7 +275,7 @@
       tm ? {k:'dem', ic:'🌙', l:MSGT('Préparer demain'), ok: !tmTodo.length, n: tmTodo.length ? tmTodo.length + ' ' + MSGT('à réserver') : '',
         body: ()=>`<div class="ar-p"><b>${fdate(tm)}</b>${dayInfo(tm).titre ? ' · <span data-notr>' + esc(dayInfo(tm).titre) + '</span>' : ''}</div>
           ${tmTodo.map(it=>`<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre)}</b></span><div class="ar-ra">${ariLink(it, t)}<button type="button" onclick="event.stopPropagation();CV.ariBook('${ja(it.id)}')">${MSGT('C’est réservé')}</button></div></div>`).join('')}
-          ${!tmTodo.length ? `<div class="ar-p">✓ ${MSGT('Tout est réservé pour demain')}</div>` : ''}${fbtn(`CV.planDay('${tm}')`, `🗺️ ${MSGT('Itinéraire de demain')}`, 1)}`} : null
+          ${!tmTodo.length ? `<div class="ar-p">✓ ${MSGT('Tout est réservé pour demain')}</div>` : ''}${fbtn(`CV.planDay('${ja(tm)}')`, `🗺️ ${MSGT('Itinéraire de demain')}`, 1)}`} : null
     ];
     return filCard({key, kick:MSGT('Ta journée'), title:`${MSGT('Jour')} ${k + 1}/${ds.length}${city ? ' · <span data-notr>' + esc(city) + '</span>' : ''}`, steps, doneMsg:'✨ ' + MSGT('Belle journée ! Tout est noté.')});
   }
@@ -291,9 +291,9 @@
       {k:'souv', ic:'📸', l:MSGT('Les souvenirs'), ok: !daysNo.length || filSk(key, 'souv'), skip:true, f: dayList().length ? 1 - daysNo.length / dayList().length : 1, n: daysNo.length ? daysNo.length + ' ' + MSGT('jour(s) sans souvenir') : '',
         body: ()=>`<div class="ar-p">${daysNo.length ? `${MSGT('Jours sans souvenir')} : ${daysNo.slice(0, 8).map(fshort).join(' · ')}` : ''}</div>${fbtn('CV.editSouv(null)', `📸 ${MSGT('Ajouter un souvenir')}`)}`},
       {k:'notes', ic:'⭐', l:MSGT('Noter tes adresses'), ok: (rated && (!its.length || nr === its.length)) || filSk(key, 'notes'), skip:true, f: (rated ? .5 : 0) + (its.length ? nr / its.length * .5 : .5), n: its.length ? nr + '/' + its.length : '',
-        body: ()=>`<div class="ar-p">${MSGT('Note le voyage, les hôtels et les visites : tu retrouveras tes meilleures adresses pour la prochaine fois.')}</div>${fbtn(`CV.rtSheet('${t.id}')`, `⭐ ${MSGT('Noter')}`)}`},
+        body: ()=>`<div class="ar-p">${MSGT('Note le voyage, les hôtels et les visites : tu retrouveras tes meilleures adresses pour la prochaine fois.')}</div>${fbtn(`CV.rtSheet('${ja(t.id)}')`, `⭐ ${MSGT('Noter')}`)}`},
       {k:'part', ic:'🎬', l:MSGT('Revivre et partager'), ok: shared || filSk(key, 'part'), skip:true,
-        body: ()=>`${fbtn(`CV.finMark('${t.id}');CV.storyTrip('${t.id}','home')`, `✨ ${MSGT('La story du voyage')}`)}${fbtn(`CV.finMark('${t.id}');CV.filmOpen()`, `🎬 ${MSGT('Le film du voyage')}`, 1)}${fbtn(`CV.finMark('${t.id}');CV.albumSheet()`, `📕 ${MSGT('L’album photo (PDF)')}`, 1)}`},
+        body: ()=>`${fbtn(`CV.finMark('${ja(t.id)}');CV.storyTrip('${ja(t.id)}','home')`, `✨ ${MSGT('La story du voyage')}`)}${fbtn(`CV.finMark('${ja(t.id)}');CV.filmOpen()`, `🎬 ${MSGT('Le film du voyage')}`, 1)}${fbtn(`CV.finMark('${ja(t.id)}');CV.albumSheet()`, `📕 ${MSGT('L’album photo (PDF)')}`, 1)}`},
       {k:'ranger', ic:'📦', l:MSGT('Ranger dans tes souvenirs'), ok: !!t.archived,
         body: ()=>`<div class="ar-p">${MSGT('Le voyage rejoint tes voyages passés, avec sa carte et ses statistiques. Tu peux toujours le rouvrir.')}</div>${fbtn('CV.bilanClose()', `📦 ${MSGT('Ranger le voyage')}`)}`}
     ];
@@ -309,13 +309,13 @@
     const nfw = fc ? new Set(list('follower', x=>gIds.has(x.trip) && !isBlk(x)).map(fwKey)).size : 0;
     const steps = [
       {k:'comp', ic:'👥', l:MSGT('Tes compagnons de voyage'), ok: v.length > 1 || filSk(key, 'comp'), skip:true, n: v.length + ' ' + MSGT('voyageur(s)'),
-        body: ()=>`<div class="ar-p">${MSGT('Ils voient tout le voyage et le complètent avec toi : programme, résas, budget, souvenirs.')}</div><div class="fil-chips">${v.map(pid=>pchip(pid)).join('')}</div>${fbtn(`CV.close();CV.tripInviteNow('${t.id}')`, `📤 ${MSGT('Inviter un compagnon')}`)}`},
+        body: ()=>`<div class="ar-p">${MSGT('Ils voient tout le voyage et le complètent avec toi : programme, résas, budget, souvenirs.')}</div><div class="fil-chips">${v.map(pid=>pchip(pid)).join('')}</div>${fbtn(`CV.close();CV.tripInviteNow('${ja(t.id)}')`, `📤 ${MSGT('Inviter un compagnon')}`)}`},
       {k:'cloud', ic:'☁️', l:MSGT('Voyage en ligne et à jour'), ok: !!(sp && !sp.err && !(sp.dirty || []).length && sp.last), n: sp && sp.err ? '⚠️' : '',
-        body: ()=>`<div class="ar-p">${sp ? (sp.err ? '⚠️ ' + esc(sp.err) : (sp.dirty || []).length ? '⏳ ' + MSGT('envoi en cours') : '✓ ' + MSGT('En ligne et chiffré')) : MSGT('Le voyage est mis en ligne (chiffré) dès que tu invites quelqu’un.')}</div>${sp ? fbtn('CV.syncNow(true)', `🔄 ${MSGT('Synchroniser maintenant')}`, 1) : fbtn(`CV.close();CV.tripInviteNow('${t.id}')`, `📤 ${MSGT('Inviter un compagnon')}`)}`},
+        body: ()=>`<div class="ar-p">${sp ? (sp.err ? '⚠️ ' + esc(sp.err) : (sp.dirty || []).length ? '⏳ ' + MSGT('envoi en cours') : '✓ ' + MSGT('En ligne et chiffré')) : MSGT('Le voyage est mis en ligne (chiffré) dès que tu invites quelqu’un.')}</div>${sp ? fbtn('CV.syncNow(true)', `🔄 ${MSGT('Synchroniser maintenant')}`, 1) : fbtn(`CV.close();CV.tripInviteNow('${ja(t.id)}')`, `📤 ${MSGT('Inviter un compagnon')}`)}`},
       {k:'pub', ic:'👀', l:MSGT('Ouvrir le voyage à ta famille'), ok: !!fc || filSk(key, 'pub'), skip:true,
-        body: ()=>`<div class="ar-p">${MSGT('Tes proches suivent le voyage comme un carnet de bord : seulement les photos, les lieux et les récits. Le reste reste privé.')}</div>${fbtn(`CV.feedPublish('${t.id}')`, `👀 ${MSGT('Publier pour mes abonnés')}`)}`},
+        body: ()=>`<div class="ar-p">${MSGT('Tes proches suivent le voyage comme un carnet de bord : seulement les photos, les lieux et les récits. Le reste reste privé.')}</div>${fbtn(`CV.feedPublish('${ja(t.id)}')`, `👀 ${MSGT('Publier pour mes abonnés')}`)}`},
       {k:'ab', ic:'💌', l:MSGT('Inviter tes abonnés'), ok: nfw > 0 || filSk(key, 'ab'), skip:true, n: fc ? nfw + ' ' + MSGT('abonné(s)') : '',
-        body: ()=>`<div class="ar-p">${MSGT('Un simple lien : il s’ouvre sans rien installer.')}</div>${fc ? fbtn(`CV.feedShareLink('${t.id}')`, `💌 ${MSGT('Envoyer le lien abonné')}`) : `<div class="ar-p">${MSGT('Publie d’abord le voyage (étape précédente).')}</div>`}`}
+        body: ()=>`<div class="ar-p">${MSGT('Un simple lien : il s’ouvre sans rien installer.')}</div>${fc ? fbtn(`CV.feedShareLink('${ja(t.id)}')`, `💌 ${MSGT('Envoyer le lien abonné')}`) : `<div class="ar-p">${MSGT('Publie d’abord le voyage (étape précédente).')}</div>`}`}
     ];
     return filCard({key, kick:MSGT('Ton équipe de voyage'), title:`👥 <span data-notr>${esc(t.titre)}</span>`, steps, cls:'fil-soc', doneMsg:'✨ ' + MSGT('Tout le monde est à bord !')});
   }
@@ -325,11 +325,11 @@
     if(M.startHide) return '';
     const key = 'start', real = trips().filter(x=>!x.demo && !x.deleted), me = M.me && prof(M.me);
     const steps = [
-      {k:'prof', ic:'👤', l:MSGT('Ton profil'), ok: !!me, body: ()=>fbtn(`CV.editProfile('${M.me || ''}')`, `👤 ${MSGT('Mon prénom et ma couleur')}`)},
+      {k:'prof', ic:'👤', l:MSGT('Ton profil'), ok: !!me, body: ()=>fbtn(`CV.editProfile('${ja(M.me || '')}')`, `👤 ${MSGT('Mon prénom et ma couleur')}`)},
       {k:'trip', ic:'🧳', l:MSGT('Ton premier voyage'), ok: real.length > 0,
         body: ()=>`<div class="ar-p">${MSGT('Tu sais où tu vas, ou tu cherches une idée : l’appli te guide dans les deux cas.')}</div>${fbtn('CV.newTrip()', `🧳 ${MSGT('Créer un voyage')}`)}`},
       {k:'comp', ic:'👥', l:MSGT('Tes compagnons'), ok: real.some(x=>(x.voyageurs || []).filter(prof).length > 1) || filSk(key, 'comp'), skip:true,
-        body: ()=>real.length ? fbtn(`CV.tripInviteNow('${(trip() && !trip().demo ? trip() : real[0]).id}')`, `📤 ${MSGT('Inviter un compagnon')}`) : `<div class="ar-p">${MSGT('Crée d’abord ton voyage.')}</div>`},
+        body: ()=>real.length ? fbtn(`CV.tripInviteNow('${ja((trip() && !trip().demo ? trip() : real[0]).id)}')`, `📤 ${MSGT('Inviter un compagnon')}`) : `<div class="ar-p">${MSGT('Crée d’abord ton voyage.')}</div>`},
       {k:'inst', ic:'📲', l:MSGT('L’appli sur ton écran d’accueil'), ok: isInstalled() || filSk(key, 'inst'), skip:true, body: ()=>fbtn('CV.installSheet()', `📲 ${MSGT('Comment installer')}`)},
       {k:'cloud', ic:'☁️', l:MSGT('Cloud ou hors ligne : à toi de choisir'), ok: !!(M.sync && M.sync.on) || M.cloud === 'none' || Object.keys(TS()).length > 0 || filSk(key, 'cloud'), skip:true,
         body: ()=>`<div class="ar-p">${MSGT('☁️ Cloud : tes voyages sont sauvegardés (chiffrés) et te suivent sur tous tes appareils, partage et notifications compris. 📱 Hors ligne : rien sur nos serveurs et aucune limite de photos, tu partages par paquets.')}</div>${fbtn('CV.cloudPick(\'all\')', `☁️ ${MSGT('Tout mon carnet dans le cloud')}`)}${fbtn('CV.cloudPick(\'none\')', `📱 ${MSGT('Hors ligne, sans limite')}`, 1)}`}
