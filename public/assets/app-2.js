@@ -2281,6 +2281,7 @@
     const cfg = dayCfg(d), opts = pointOptions(d), pl = placesOf(d), t = trip(), city = dayCity(d);
     const sel = (id, cur, loop) => `<select class="v-in" id="${id}" onchange="CV.plCfg()">${loop ? `<option value="boucle"${cur==='boucle'?' selected':''}>↩️ Retour au point de départ (boucle)</option><option value="fin"${cur==='fin'?' selected':''}>🏁 Fin au dernier lieu visité</option>` : ''}${opts.map(o=>`<option value="${o.k}"${o.k===cur?' selected':''}>${esc(o.lbl)}</option>`).join('')}</select>`;
     openSheet(`<h2>🗺️ ${fdate(d)}${dayInfo(d).titre ? ' · ' + esc(dayInfo(d).titre) : ''}</h2>
+      ${showMap ? `<div class="pl-trace" id="pl-trace"><div class="cv-route-load">🗺️ ${MSGT('Je dessine le trajet…')}</div></div>` : ''}
       <div class="v-f"><label>Point de départ</label>${sel('pl-dep', cfg.dep)}
         <input class="v-in" id="pl-dept" style="margin-top:6px;${cfg.dep==='libre'?'':'display:none'}" value="${esc(cfg.depTxt)}" placeholder="Adresse, lieu ou lien Google Maps" onchange="CV.plCfg()"></div>
       <div class="v-f"><label>Arrivée</label>${sel('pl-arr', cfg.arr, true)}
@@ -2301,6 +2302,42 @@
       <div id="pl-res"></div>
       ${rh ? `<details class="pl-map"${showMap ? ' open' : ''}><summary>🗺️ Voir le trajet de la journée</summary>${rh}</details>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
+    if(showMap) (async ()=>{   // 🗺️ « Itinéraire » : le tracé tout de suite, en haut
+      let c = null; try { c = await dayTrace(d, 640, 400); } catch(e){}
+      const el = document.getElementById('pl-trace'); if(!el || planD !== d) return;
+      if(c){ c.style.cssText = 'width:100%;height:auto;border-radius:14px;display:block'; el.innerHTML = ''; el.appendChild(c); }
+      else el.innerHTML = `<div class="v-sum-small">${MSGT('Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.')}</div>`;
+    })();
+  }
+  /* 🗺️ Tracé d'une journée : les visites (trajet calculé, sinon l'ordre de la liste, à pied par les rues)
+     + les trajets du jour (train, avion…) et gare / aéroport ↔ hôtel */
+  async function dayTrace(d, w, h){
+    const r = dayInfo(d).route, pl = placesOf(d), city = dayCity(d) || '';
+    const fresh = r && r.ids && r.ids.length && pl.length && r.ids.every(id=>pl.some(p=>p.id === id)) && pl.every(p=>r.ids.includes(p.id) || (r.miss || []).includes(p.id));
+    const tr = items(i=>i.cat === 'transport' && i.date === d && !/Taxi/.test(i.mode || ''));
+    if(fresh && !tr.length) return dayMapCanvas(d, w, h);
+    const {night, prev} = hotelsAround(d), markers = [], lines = []; let line = null;
+    const gc = async (...qs) => { for(const q of qs){ if(!q) continue; const c = await geocode(q, null).catch(()=>null); if(c) return c; } return null; };
+    const hotelPt = async hh => hh ? (await geocode(tfHotel(hh), city).catch(()=>null)) || (await geocode(hotelQ(hh), city).catch(()=>null)) : null;
+    for(const t of tr){
+      const a = t.from ? await gc(tfPt(t.from, t.mode), t.from) : null, b = t.to ? await gc(tfPt(t.to, t.mode), t.to) : null;
+      if(a && b){ lines.push({pts:[[a.lat, a.lng], [b.lat, b.lng]], color:'#94a3b8'}); markers.push({lat:a.lat, lng:a.lng, label:'D', color:'#0ea5e9', name:cityOf(t.from)}, {lat:b.lat, lng:b.lng, label:'A', color:'#0ea5e9', name:cityOf(t.to)}); }
+      const hFrom = prev && prev.id !== (night && night.id) ? prev : (night && night.date < d ? night : null);
+      if(a && hFrom){ const hp = await hotelPt(hFrom); if(hp){ lines.push({pts:[[hp.lat, hp.lng], [a.lat, a.lng]], color:'#7c3aed'}); markers.push({lat:hp.lat, lng:hp.lng, label:'H', color:'#7c3aed', name:hFrom.nom || cityOf(hFrom.titre)}); } }
+      if(b && night && night.date === d){ const hp = await hotelPt(night); if(hp){ lines.push({pts:[[b.lat, b.lng], [hp.lat, hp.lng]], color:'#7c3aed'}); markers.push({lat:hp.lat, lng:hp.lng, label:'H', color:'#7c3aed', name:night.nom || cityOf(night.titre)}); } }
+    }
+    if(pl.length){
+      let stops = [];
+      if(fresh){ stops = [r.start, ...r.ids.map(id=>Object.assign({}, r.pts[id], {name:(pl.find(p=>p.id === id) || {}).nom})), r.loop ? r.start : r.end].filter(p=>p && p.lat != null); }
+      else {
+        const base = await hotelPt(night || prev); if(base) stops.push(base);
+        for(const p of pl){ const c = p.lat != null && p.lng != null ? {lat:+p.lat, lng:+p.lng} : await geocode(p.adresse || p.nom, city).catch(()=>null); if(c) stops.push(Object.assign({}, c, {name:p.nom})); }
+      }
+      if(stops.length > 1) line = await walkLine(stops);
+      let k = 0; stops.forEach(s=>{ if(s.name) markers.push({lat:s.lat, lng:s.lng, label:++k, color:'#dc2626', name:s.name}); else if(!markers.some(m=>m.label === 'H')) markers.push({lat:s.lat, lng:s.lng, label:'H', color:'#7c3aed'}); });
+    }
+    if(!markers.length) return null;
+    return drawMap({w, h, round:true, line, lines, markers, maxZoom:16});
   }
   const val = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
   function plCfg(){
