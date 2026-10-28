@@ -1,4 +1,10 @@
 I18N.load({
+"Deux-roues":"二輪車",
+"Consigne à bagages":"荷物預かり",
+/* 🔗 liens partenaires (2026-10-28d) */
+"partenaire":"提携",
+"Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.":"「提携」と表示されたリンクから、追加料金なしでVezoriaに少額の手数料が入ることがあります。",
+"Vol retardé ou annulé":"フライトの遅延・欠航",
 /* 🧳 confirmation avant création (2026-10-28a) */
 "Vérifie ton voyage avant de le créer":"作成する前に旅行を確認しましょう",
 "{0} nuit":"{0}泊",

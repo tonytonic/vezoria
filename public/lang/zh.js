@@ -1,4 +1,10 @@
 I18N.load({
+"Deux-roues":"两轮车",
+"Consigne à bagages":"行李寄存",
+/* 🔗 liens partenaires (2026-10-28d) */
+"partenaire":"合作",
+"Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.":"标有“合作”的链接可能为 Vezoria 带来少量佣金，你无需额外付费。",
+"Vol retardé ou annulé":"航班延误或取消",
 /* 🧳 confirmation avant création (2026-10-28a) */
 "Vérifie ton voyage avant de le créer":"创建前先检查你的旅行",
 "{0} nuit":"{0} 晚",

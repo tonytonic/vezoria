@@ -1,4 +1,10 @@
 I18N.load({
+"Deux-roues":"دراجات",
+"Consigne à bagages":"أمانات الأمتعة",
+/* 🔗 liens partenaires (2026-10-28d) */
+"partenaire":"شريك",
+"Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.":"الروابط المميزة بكلمة «شريك» قد تمنح Vezoria عمولة صغيرة، دون أي تكلفة إضافية عليك.",
+"Vol retardé ou annulé":"رحلة متأخرة أو ملغاة",
 /* 🧳 confirmation avant création (2026-10-28a) */
 "Vérifie ton voyage avant de le créer":"تحقّق من رحلتك قبل إنشائها",
 "{0} nuit":"ليلة واحدة",

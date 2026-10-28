@@ -1,4 +1,10 @@
 I18N.load({
+"Deux-roues":"İki teker",
+"Consigne à bagages":"Emanet bagaj",
+/* 🔗 liens partenaires (2026-10-28d) */
+"partenaire":"iş ortağı",
+"Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.":"“İş ortağı” işaretli bağlantılar, sana ek maliyet olmadan Vezoria’ya küçük bir komisyon kazandırabilir.",
+"Vol retardé ou annulé":"Uçuş gecikti veya iptal edildi",
 /* 🧳 confirmation avant création (2026-10-28a) */
 "Vérifie ton voyage avant de le créer":"Oluşturmadan önce seyahatini kontrol et",
 "{0} nuit":"{0} gece",

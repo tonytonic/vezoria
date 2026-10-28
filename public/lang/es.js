@@ -1,4 +1,10 @@
 I18N.load({
+"Deux-roues":"Motos y bicis",
+"Consigne à bagages":"Consigna de equipaje",
+/* 🔗 liens partenaires (2026-10-28d) */
+"partenaire":"socio",
+"Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.":"Los enlaces marcados «socio» pueden reportar una pequeña comisión a Vezoria, sin coste adicional para ti.",
+"Vol retardé ou annulé":"Vuelo retrasado o cancelado",
 /* 🧳 confirmation avant création (2026-10-28a) */
 "Vérifie ton voyage avant de le créer":"Revisa tu viaje antes de crearlo",
 "{0} nuit":"{0} noche",

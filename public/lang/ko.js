@@ -1,4 +1,10 @@
 I18N.load({
+"Deux-roues":"이륜차",
+"Consigne à bagages":"짐 보관",
+/* 🔗 liens partenaires (2026-10-28d) */
+"partenaire":"제휴",
+"Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.":"“제휴” 표시 링크는 추가 비용 없이 Vezoria에 소액의 수수료를 줄 수 있어요.",
+"Vol retardé ou annulé":"항공편 지연 또는 결항",
 /* 🧳 confirmation avant création (2026-10-28a) */
 "Vérifie ton voyage avant de le créer":"만들기 전에 여행을 확인하세요",
 "{0} nuit":"{0}박",

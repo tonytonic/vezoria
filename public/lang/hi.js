@@ -1,4 +1,10 @@
 I18N.load({
+"Deux-roues":"दोपहिया",
+"Consigne à bagages":"सामान भंडारण",
+/* 🔗 liens partenaires (2026-10-28d) */
+"partenaire":"पार्टनर",
+"Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.":"“पार्टनर” वाले लिंक से Vezoria को छोटा कमीशन मिल सकता है, आपको कोई अतिरिक्त खर्च नहीं।",
+"Vol retardé ou annulé":"उड़ान में देरी या रद्द",
 /* 🧳 confirmation avant création (2026-10-28a) */
 "Vérifie ton voyage avant de le créer":"बनाने से पहले अपनी यात्रा जाँच लें",
 "{0} nuit":"{0} रात",
