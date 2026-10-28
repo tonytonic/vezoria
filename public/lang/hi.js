@@ -1,4 +1,11 @@
 I18N.load({
+/* 🧳 confirmation avant création (2026-10-28a) */
+"Vérifie ton voyage avant de le créer":"बनाने से पहले अपनी यात्रा जाँच लें",
+"{0} nuit":"{0} रात",
+"{0} nuits":"{0} रातें",
+"départ de {0}":"{0} से रवाना",
+"Tu pourras tout modifier ensuite : dates, étapes, nuits.":"बाद में सब कुछ बदल सकते हैं: तारीखें, पड़ाव, रातें।",
+"Créer le voyage":"यात्रा बनाएँ",
 /* 🧭 ordre le plus court à la création (2026-10-28a) */
 "Je cherche l’ordre des villes le plus court…":"शहरों का सबसे छोटा क्रम ढूँढ रहा हूँ…",
 "Ton itinéraire est déjà dans l’ordre le plus court.":"आपका रूट पहले से सबसे छोटे क्रम में है।",

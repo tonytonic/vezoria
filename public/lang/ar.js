@@ -1,4 +1,11 @@
 I18N.load({
+/* 🧳 confirmation avant création (2026-10-28a) */
+"Vérifie ton voyage avant de le créer":"تحقّق من رحلتك قبل إنشائها",
+"{0} nuit":"ليلة واحدة",
+"{0} nuits":"{0} ليالٍ",
+"départ de {0}":"الانطلاق من {0}",
+"Tu pourras tout modifier ensuite : dates, étapes, nuits.":"يمكنك تعديل كل شيء لاحقًا: التواريخ والمحطات والليالي.",
+"Créer le voyage":"إنشاء الرحلة",
 /* 🧭 ordre le plus court à la création (2026-10-28a) */
 "Je cherche l’ordre des villes le plus court…":"أبحث عن أقصر ترتيب للمدن…",
 "Ton itinéraire est déjà dans l’ordre le plus court.":"مسارك بالفعل بأقصر ترتيب.",

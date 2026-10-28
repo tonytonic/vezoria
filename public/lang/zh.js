@@ -1,4 +1,11 @@
 I18N.load({
+/* 🧳 confirmation avant création (2026-10-28a) */
+"Vérifie ton voyage avant de le créer":"创建前先检查你的旅行",
+"{0} nuit":"{0} 晚",
+"{0} nuits":"{0} 晚",
+"départ de {0}":"从{0}出发",
+"Tu pourras tout modifier ensuite : dates, étapes, nuits.":"之后可以随时修改：日期、站点、晚数。",
+"Créer le voyage":"创建旅行",
 /* 🧭 ordre le plus court à la création (2026-10-28a) */
 "Je cherche l’ordre des villes le plus court…":"正在寻找最短的城市顺序…",
 "Ton itinéraire est déjà dans l’ordre le plus court.":"你的行程已经是最短的顺序。",

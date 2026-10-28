@@ -1,4 +1,11 @@
 I18N.load({
+/* 🧳 confirmation avant création (2026-10-28a) */
+"Vérifie ton voyage avant de le créer":"Проверьте поездку перед созданием",
+"{0} nuit":"{0} ночь",
+"{0} nuits":"ночей: {0}",
+"départ de {0}":"отправление из {0}",
+"Tu pourras tout modifier ensuite : dates, étapes, nuits.":"Потом можно всё изменить: даты, остановки, ночи.",
+"Créer le voyage":"Создать поездку",
 /* 🧭 ordre le plus court à la création (2026-10-28a) */
 "Je cherche l’ordre des villes le plus court…":"Ищу самый короткий порядок городов…",
 "Ton itinéraire est déjà dans l’ordre le plus court.":"Ваш маршрут уже в самом коротком порядке.",

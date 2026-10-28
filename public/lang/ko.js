@@ -1,4 +1,11 @@
 I18N.load({
+/* 🧳 confirmation avant création (2026-10-28a) */
+"Vérifie ton voyage avant de le créer":"만들기 전에 여행을 확인하세요",
+"{0} nuit":"{0}박",
+"{0} nuits":"{0}박",
+"départ de {0}":"{0} 출발",
+"Tu pourras tout modifier ensuite : dates, étapes, nuits.":"날짜, 경유지, 숙박 일수는 나중에 모두 바꿀 수 있어요.",
+"Créer le voyage":"여행 만들기",
 /* 🧭 ordre le plus court à la création (2026-10-28a) */
 "Je cherche l’ordre des villes le plus court…":"도시를 도는 가장 짧은 순서를 찾는 중…",
 "Ton itinéraire est déjà dans l’ordre le plus court.":"일정이 이미 가장 짧은 순서예요.",

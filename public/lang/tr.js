@@ -1,4 +1,11 @@
 I18N.load({
+/* 🧳 confirmation avant création (2026-10-28a) */
+"Vérifie ton voyage avant de le créer":"Oluşturmadan önce seyahatini kontrol et",
+"{0} nuit":"{0} gece",
+"{0} nuits":"{0} gece",
+"départ de {0}":"{0} çıkışlı",
+"Tu pourras tout modifier ensuite : dates, étapes, nuits.":"Sonra her şeyi değiştirebilirsin: tarihler, duraklar, geceler.",
+"Créer le voyage":"Seyahati oluştur",
 /* 🧭 ordre le plus court à la création (2026-10-28a) */
 "Je cherche l’ordre des villes le plus court…":"Şehirlerin en kısa sırasını arıyorum…",
 "Ton itinéraire est déjà dans l’ordre le plus court.":"Rotan zaten en kısa sırada.",

@@ -1,4 +1,11 @@
 I18N.load({
+/* 🧳 confirmation avant création (2026-10-28a) */
+"Vérifie ton voyage avant de le créer":"Check your trip before creating it",
+"{0} nuit":"{0} night",
+"{0} nuits":"{0} nights",
+"départ de {0}":"leaving from {0}",
+"Tu pourras tout modifier ensuite : dates, étapes, nuits.":"You can change everything afterwards: dates, stops, nights.",
+"Créer le voyage":"Create the trip",
 /* 🧭 ordre le plus court à la création (2026-10-28a) */
 "Je cherche l’ordre des villes le plus court…":"Looking for the shortest order of cities…",
 "Ton itinéraire est déjà dans l’ordre le plus court.":"Your route is already in the shortest order.",

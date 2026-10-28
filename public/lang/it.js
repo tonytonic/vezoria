@@ -1,4 +1,11 @@
 I18N.load({
+/* 🧳 confirmation avant création (2026-10-28a) */
+"Vérifie ton voyage avant de le créer":"Controlla il tuo viaggio prima di crearlo",
+"{0} nuit":"{0} notte",
+"{0} nuits":"{0} notti",
+"départ de {0}":"partenza da {0}",
+"Tu pourras tout modifier ensuite : dates, étapes, nuits.":"Potrai modificare tutto dopo: date, tappe, notti.",
+"Créer le voyage":"Crea il viaggio",
 /* 🧭 ordre le plus court à la création (2026-10-28a) */
 "Je cherche l’ordre des villes le plus court…":"Cerco l’ordine più breve delle città…",
 "Ton itinéraire est déjà dans l’ordre le plus court.":"Il tuo itinerario è già nell’ordine più breve.",

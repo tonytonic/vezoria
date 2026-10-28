@@ -1,4 +1,11 @@
 I18N.load({
+/* 🧳 confirmation avant création (2026-10-28a) */
+"Vérifie ton voyage avant de le créer":"作成する前に旅行を確認しましょう",
+"{0} nuit":"{0}泊",
+"{0} nuits":"{0}泊",
+"départ de {0}":"{0}発",
+"Tu pourras tout modifier ensuite : dates, étapes, nuits.":"日付・滞在地・泊数はあとで自由に変更できます。",
+"Créer le voyage":"旅行を作成",
 /* 🧭 ordre le plus court à la création (2026-10-28a) */
 "Je cherche l’ordre des villes le plus court…":"都市を回る最短の順番を探しています…",
 "Ton itinéraire est déjà dans l’ordre le plus court.":"この旅程はすでに最短の順番です。",

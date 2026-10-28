@@ -1,4 +1,11 @@
 I18N.load({
+/* 🧳 confirmation avant création (2026-10-28a) */
+"Vérifie ton voyage avant de le créer":"Controleer je reis voordat je hem maakt",
+"{0} nuit":"{0} nacht",
+"{0} nuits":"{0} nachten",
+"départ de {0}":"vertrek vanuit {0}",
+"Tu pourras tout modifier ensuite : dates, étapes, nuits.":"Je kunt daarna alles aanpassen: data, etappes, nachten.",
+"Créer le voyage":"Reis maken",
 /* 🧭 ordre le plus court à la création (2026-10-28a) */
 "Je cherche l’ordre des villes le plus court…":"Ik zoek de kortste volgorde van de steden…",
 "Ton itinéraire est déjà dans l’ordre le plus court.":"Je route staat al in de kortste volgorde.",
