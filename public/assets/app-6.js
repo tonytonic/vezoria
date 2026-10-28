@@ -234,7 +234,8 @@
     comp.stops.push(s); const y = (document.querySelector('#v-sheet-bg .v-sheet')||{}).scrollTop; compRender(); const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y; compPlaces(s); toast('➕ ' + c);
   }
   function inspBack(){ comp = null; inspShow(inspN); }
-  function compCreate(){ if(!comp) return; const c = comp; inspireCreate(c.i, {stops:c.stops.map(s=>[s.c, s.n]), sel:c.sel}); comp = null; }
+  function compCreate(){ if(!comp) return; const c = comp, pts = {}; c.stops.forEach(s=>{ if(s.lat != null) pts[normQ(s.c)] = {lat:s.lat, lng:s.lng}; });
+    inspireCreate(c.i, {stops:c.stops.map(s=>[s.c, s.n]), sel:c.sel, pts}); }   // → écran de confirmation ; « ← » revient ici
 
   /* ══════════ 🧭 Chaque espace garde SON voyage + onglets internes (En cours / Bilan) ══════════ */
   const INNER = {live:[['live','📍 Aujourd’hui'],['souv','📸 Souvenirs'],['budget','💶 Dépenses']], bilan:[['bilan','🏁 Bilan'],['budget','💶 Budget'],['ech','📅 Échéancier'],['souv','📸 Souvenirs']]};

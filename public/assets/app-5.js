@@ -1698,11 +1698,51 @@
     put({id:'po'+uid(), type:'poll', question:'Où partir ' + (M.insp && M.insp.mois ? 'en ' + MOIS_L[M.insp.mois-1] : 'pour le prochain voyage') + ' ?', options:f, votes:{}, closed:false}, '🗳️ Sondage créé dans les Envies');
     M.inspFav = []; persist(); closeSheet(true); M.mode = 'prep'; tab('envies');
   }
-  function inspireCreate(i, custom){
+  function inspDebut(x){   // le premier samedi du mois conseillé (l’an prochain s’il est passé)
+    const now = new Date(); let y = now.getFullYear(); const mo = x.mo; if(mo < now.getMonth() + 1 || (mo === now.getMonth() + 1 && now.getDate() > 10)) y++;
+    const d = `${y}-${String(mo).padStart(2,'0')}-01`, dow = new Date(d + 'T12:00:00').getDay(); return addDays(d, (6 - dow + 7) % 7);
+  }
+  /* 🧳 Écran de confirmation avant de créer un voyage proposé (« Créer tel quel », « Explorer & composer », globe) :
+     le récapitulatif, et l’ordre des villes le plus court si on peut gagner de la route. */
+  let tcf = null;
+  function tripConfirm(i, custom){
     const x = inspRes.find(r=>r.i === i) || inspCalc(M.insp || {}).find(r=>r.i === i); if(!x) return;
-    const S = M.insp || {}, days = +(S.duree || 7), st = custom ? custom.stops : inspItin(x, days, S.rythme), now = new Date();
-    let y = now.getFullYear(); const mo = x.mo; if(mo < now.getMonth() + 1 || (mo === now.getMonth() + 1 && now.getDate() > 10)) y++;
-    let debut = `${y}-${String(mo).padStart(2,'0')}-01`; const dow = new Date(debut + 'T12:00:00').getDay(); debut = addDays(debut, (6 - dow + 7) % 7);   // premier samedi
+    const S = M.insp || {}, days = +(S.duree || 7);
+    tcf = {i, x, stops:(custom ? custom.stops : inspItin(x, days, S.rythme)).map(a=>[a[0], a[1]]), sel:custom && custom.sel, pts:custom && custom.pts || {}, back:custom ? 'comp' : 'list'};
+    tcfRender();
+  }
+  const tcfSig = () => tcf.stops.map(a=>normQ(a[0])).join('|');
+  function tcfRender(){
+    const c = tcf, S = M.insp || {}, debut = inspDebut(c.x), dep = S.dep === 'autre' ? S.depTxt : S.dep; let cur = debut;
+    const rows = c.stops.map(([v, n])=>{ const d = cur; cur = addDays(cur, n); return `<li><b>${esc(v)}</b> · ${RF(n > 1 ? '{0} nuits' : '{0} nuit', n)} <span class="v-sum-small">${fshort(d)} → ${fshort(cur)}</span></li>`; }).join('');
+    openSheet(`<h2>🧳 ${MSGT('Vérifie ton voyage avant de le créer')}</h2><div id="tcf-ord"></div>
+      <div class="wz-recap"><b>${flag(c.x.cc)} ${esc(c.x.nom)}</b><div class="v-sum-small">${fdate(debut)} → ${fdate(cur)} · ${RF(nights(debut, cur) > 1 ? '{0} nuits' : '{0} nuit', nights(debut, cur))}${dep ? ' · ' + RF('départ de {0}', esc(dep)) : ''}</div><ol>${rows}</ol></div>
+      <div class="v-hint">${MSGT('Tu pourras tout modifier ensuite : dates, étapes, nuits.')}</div>
+      <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.tcfBack()" aria-label="←">←</button><button type="button" class="v-btn" onclick="CV.tcfGo()">🚀 ${MSGT('Créer le voyage')}</button></div>`);
+    tcfAsk();
+  }
+  async function tcfAsk(){
+    const box = () => document.getElementById('tcf-ord'), c = tcf; if(!box() || !c) return;
+    const sig = tcfSig(); if(c.keep === sig || c.stops.length < 2) return;
+    box().innerHTML = `<div class="ar-run wz-run">🧭 ${MSGT('Je cherche l’ordre des villes le plus court…')}</div>`;
+    const S = M.insp || {}, h = DEPS[S.dep] || (S.depLL ? [S.depLL[0], S.depLL[1]] : null), H = h ? {lat:h[0], lng:h[1]} : null;
+    const P = [];
+    for(const [v] of c.stops){ let p = c.pts[normQ(v)]; if(!p){ const g = await cityInfo(v + (c.x.pays ? ', ' + c.x.pays : '')).catch(()=>null); p = g && g.lat != null ? {lat:g.lat, lng:g.lng} : null; if(p) c.pts[normQ(v)] = p; }
+      if(tcf !== c || tcfSig() !== sig || !box()) return; if(!p){ box().innerHTML = ''; return; } P.push(p); }
+    if(c.stops.length < (H ? 2 : 3)){ box().innerHTML = ''; return; }
+    const r = wzShortest(P, H, H);
+    if(!ordWorth(r)){ box().innerHTML = `<div class="v-sum-small wz-ok">✓ ${MSGT('Ton itinéraire est déjà dans l’ordre le plus court.')}</div>`; return; }
+    c.prop = r.o.map(k=>c.stops[k]);
+    const dep = S.dep === 'autre' ? S.depTxt : S.dep, line = A => esc([H ? dep : '', ...A.map(a=>a[0]), H ? dep : ''].filter(Boolean).join(' → '));
+    box().innerHTML = ordHTML(line(c.stops), line(c.prop), r, 'tcfOrd');
+  }
+  function tcfOrd(yes){ if(!tcf) return; if(yes && tcf.prop){ tcf.stops = tcf.prop; toast('🧭 ' + MSGT('Itinéraire réorganisé')); } tcf.prop = null; tcf.keep = tcfSig(); tcfRender(); }
+  function tcfBack(){ const b = tcf && tcf.back; tcf = null; if(b === 'comp' && typeof comp !== 'undefined' && comp) compRender(); else inspShow(inspN); }
+  function tcfGo(){ if(!tcf) return; const c = tcf; tcf = null; inspireCreate(c.i, {stops:c.stops, sel:c.sel, ok:1, auto:c.back === 'list'}); try { comp = null; } catch(e){} }
+  function inspireCreate(i, custom){
+    if(!custom || !custom.ok) return tripConfirm(i, custom);   // toujours l’écran de confirmation d’abord
+    const x = inspRes.find(r=>r.i === i) || inspCalc(M.insp || {}).find(r=>r.i === i); if(!x) return;
+    const S = M.insp || {}, days = +(S.duree || 7), st = custom.stops, debut = inspDebut(x);
     const tid = 't' + uid(), out = [], v = M.me ? [M.me] : [];
     let cur = debut; const stops = st.map(([c,n])=>{ const s = {c, n, d:cur, f:addDays(cur, n)}; cur = s.f; return s; }), fin = cur;
     out.push({id:tid, type:'trip', ccs:[x.d[2]].filter(Boolean), titre:x.nom + ' · ' + (days >= 7 ? Math.round(days/7) + ' semaine' + (days >= 14 ? 's' : '') : days + ' jours'), sous:stops.map(s=>s.c).join(' → '), debut, fin, voyageurs:v, objectif:num(S.budget)||''});
@@ -1720,7 +1760,7 @@
     out.push({id:'day:'+tid+':'+fin, type:'day', trip:tid, date:fin, titre:stops[stops.length-1].c + ' → retour', plan:''});
     putMany(out, '🧳 Voyage créé : ' + x.nom); setTimeout(()=>fxPlay('trip', 'Le rêve commence !'), 600);
     closeSheet(true); M.mode = 'prep'; M.tab = 'prog'; go(tid);
-    const auto = !custom || !Object.values(custom.sel || {}).some(a=>a && a.length);
+    const auto = custom.auto || !Object.values(custom.sel || {}).some(a=>a && a.length);
     if(auto) setTimeout(()=>suggFill(tid), 150);
     setTimeout(()=>alert(`🧳 « ${x.nom} » est prêt, du ${fdate(debut)} au ${fdate(fin)} :\n${stops.map(s=>'• ' + s.c + ' (' + s.n + ' nuit' + (s.n>1?'s':'') + ')').join('\n')}\n\n` + (auto ? MSGT('💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.') : MSGT('Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».'))), 300);
   }

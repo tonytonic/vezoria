@@ -122,7 +122,18 @@
       while(imp && g < 40){ imp = false; g++; for(let i = 0; i < n - 1; i++) for(let k = i + 1; k < n; k++){ const t = o.slice(0, i).concat(o.slice(i, k + 1).reverse(), o.slice(k + 1)), tc = cost(t); if(tc < c - 0.5){ o.splice(0, n, ...t); c = tc; imp = true; } } }
       if(c < bc - 0.5){ bc = c; best = o; }
     }
-    return {o:best, c:bc, c0:cost(cur)};
+    const inner = cur.reduce((t, k, i)=>i ? t + km(P[cur[i - 1]], P[k]) : 0, 0);
+    return {o:best, c:bc, c0:cost(cur), inner};
+  }
+  // seuil : un vrai gain, même quand l’aller-retour depuis la maison est très long (Namibie depuis Nantes)
+  const ordWorth = r => r.c0 - r.c >= Math.max(60, r.inner * 0.08);
+  function ordHTML(l0, l1, r, fn){
+    const gain = r.c0 - r.c, f = x => Math.round(x).toLocaleString(NL());
+    return `<div class="wz-ordq"><b>🧭 ${MSGT('Réorganiser l’itinéraire pour faire moins de route ?')}</b>
+      <div class="wz-ol"><span>${MSGT('Ton ordre')}</span>${l0} · <b>${f(r.c0)} km</b></div>
+      <div class="wz-ol on"><span>${MSGT('Plus court')}</span>${l1} · <b>${f(r.c)} km</b> <i>−${f(gain)} km</i></div>
+      <div class="cv-row" style="gap:8px;margin-top:8px"><button type="button" class="v-btn" onclick="CV.${fn}(1)">🧭 ${MSGT('Réorganiser')}</button><button type="button" class="v-btn sec" onclick="CV.${fn}(0)">${MSGT('Garder mon ordre')}</button></div>
+      <div class="v-sum-small" style="margin-top:6px">${MSGT('Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.')} ${MSGT('Distances à vol d’oiseau.')}</div></div>`;
   }
   async function wzOrdAsk(){
     const box = () => document.getElementById('wz-ord5'); if(!box() || !wz) return;
@@ -137,15 +148,11 @@
     if(!wz || wz.step !== 5 || wzSig() !== sig || !box()) return;
     const K = E.filter(wzPt);
     if(K.length !== E.length || K.length < (H ? 2 : 3)){ box().innerHTML = ''; return; }   // une ville pas située, ou rien à réordonner
-    const r = wzShortest(K.map(wzPt), H, Bk), gain = r.c0 - r.c;
-    if(gain < Math.max(60, r.c0 * 0.08)){ box().innerHTML = `<div class="v-sum-small wz-ok">✓ ${MSGT('Ton itinéraire est déjà dans l’ordre le plus court.')}</div>`; return; }
+    const r = wzShortest(K.map(wzPt), H, Bk);
+    if(!ordWorth(r)){ box().innerHTML = `<div class="v-sum-small wz-ok">✓ ${MSGT('Ton itinéraire est déjà dans l’ordre le plus court.')}</div>`; return; }
     wz.ordProp = r.o.map(i=>K[i]);
     const line = A => esc([dep, ...A.map(e=>e.ville), H ? ret : ''].filter(Boolean).join(' → '));
-    box().innerHTML = `<div class="wz-ordq"><b>🧭 ${MSGT('Réorganiser l’itinéraire pour faire moins de route ?')}</b>
-      <div class="wz-ol"><span>${MSGT('Ton ordre')}</span>${line(K)} · <b>${Math.round(r.c0).toLocaleString(NL())} km</b></div>
-      <div class="wz-ol on"><span>${MSGT('Plus court')}</span>${line(wz.ordProp)} · <b>${Math.round(r.c).toLocaleString(NL())} km</b> <i>−${Math.round(gain).toLocaleString(NL())} km</i></div>
-      <div class="cv-row" style="gap:8px;margin-top:8px"><button type="button" class="v-btn" onclick="CV.wzOrdApply(1)">🧭 ${MSGT('Réorganiser')}</button><button type="button" class="v-btn sec" onclick="CV.wzOrdApply(0)">${MSGT('Garder mon ordre')}</button></div>
-      <div class="v-sum-small" style="margin-top:6px">${MSGT('Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.')} ${MSGT('Distances à vol d’oiseau.')}</div></div>`;
+    box().innerHTML = ordHTML(line(K), line(wz.ordProp), r, 'wzOrdApply');
   }
   function wzOrdApply(yes){
     wzRead();
