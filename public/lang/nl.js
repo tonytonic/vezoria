@@ -1,4 +1,15 @@
 I18N.load({
+/* 🧭 ordre le plus court à la création (2026-10-28a) */
+"Je cherche l’ordre des villes le plus court…":"Ik zoek de kortste volgorde van de steden…",
+"Ton itinéraire est déjà dans l’ordre le plus court.":"Je route staat al in de kortste volgorde.",
+"Réorganiser l’itinéraire pour faire moins de route ?":"De route herschikken om minder te reizen?",
+"Ton ordre":"Jouw volgorde",
+"Plus court":"Korter",
+"Réorganiser":"Herschikken",
+"Garder mon ordre":"Mijn volgorde houden",
+"Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.":"De nachten blijven bij elke stad; data en vervoer worden opnieuw berekend.",
+"Distances à vol d’oiseau.":"Afstanden in vogelvlucht.",
+"Itinéraire réorganisé":"Route herschikt",
 "Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"Dubbele items verwijderen? Wat ontbreekt in het behouden item (prijs, betaler, referentie, tickets…) wordt overgenomen.",
 "Doublon retiré":"Dubbel item verwijderd",
 "{0} fiches pour le même trajet {1} : retirer le doublon":"{0} items voor dezelfde reis {1}: dubbel item verwijderen",

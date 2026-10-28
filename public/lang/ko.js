@@ -1,4 +1,15 @@
 I18N.load({
+/* 🧭 ordre le plus court à la création (2026-10-28a) */
+"Je cherche l’ordre des villes le plus court…":"도시를 도는 가장 짧은 순서를 찾는 중…",
+"Ton itinéraire est déjà dans l’ordre le plus court.":"일정이 이미 가장 짧은 순서예요.",
+"Réorganiser l’itinéraire pour faire moins de route ?":"이동을 줄이도록 일정 순서를 바꿀까요?",
+"Ton ordre":"내 순서",
+"Plus court":"더 짧음",
+"Réorganiser":"순서 바꾸기",
+"Garder mon ordre":"내 순서 유지",
+"Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.":"숙박 일수는 도시별로 그대로이고 날짜와 교통편은 다시 계산돼요.",
+"Distances à vol d’oiseau.":"직선 거리 기준.",
+"Itinéraire réorganisé":"일정 순서를 바꿨어요",
 "Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"중복 항목을 삭제할까요? 남기는 항목에 없는 내용(가격, 결제자, 예약 번호, 티켓…)은 복사돼요.",
 "Doublon retiré":"중복을 삭제했어요",
 "{0} fiches pour le même trajet {1} : retirer le doublon":"같은 이동 {1}에 항목 {0}개: 중복 삭제",

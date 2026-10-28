@@ -1,4 +1,15 @@
 I18N.load({
+/* 🧭 ordre le plus court à la création (2026-10-28a) */
+"Je cherche l’ordre des villes le plus court…":"शहरों का सबसे छोटा क्रम ढूँढ रहा हूँ…",
+"Ton itinéraire est déjà dans l’ordre le plus court.":"आपका रूट पहले से सबसे छोटे क्रम में है।",
+"Réorganiser l’itinéraire pour faire moins de route ?":"कम सफ़र के लिए रूट का क्रम बदलें?",
+"Ton ordre":"आपका क्रम",
+"Plus court":"छोटा",
+"Réorganiser":"क्रम बदलें",
+"Garder mon ordre":"मेरा क्रम रखें",
+"Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.":"रातें हर शहर के साथ रहती हैं; तारीखें और परिवहन फिर से गिने जाते हैं।",
+"Distances à vol d’oiseau.":"सीधी रेखा की दूरी।",
+"Itinéraire réorganisé":"रूट का क्रम बदला गया",
 "Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"दोहराई गई प्रविष्टियाँ हटाएँ? रखी गई प्रविष्टि में जो कमी है (कीमत, भुगतानकर्ता, संदर्भ, टिकट…) वह उसमें कॉपी हो जाएगा।",
 "Doublon retiré":"दोहराव हटाया गया",
 "{0} fiches pour le même trajet {1} : retirer le doublon":"एक ही यात्रा {1} के लिए {0} प्रविष्टियाँ: दोहराव हटाएँ",

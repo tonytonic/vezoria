@@ -1,4 +1,15 @@
 I18N.load({
+/* 🧭 ordre le plus court à la création (2026-10-28a) */
+"Je cherche l’ordre des villes le plus court…":"Ищу самый короткий порядок городов…",
+"Ton itinéraire est déjà dans l’ordre le plus court.":"Ваш маршрут уже в самом коротком порядке.",
+"Réorganiser l’itinéraire pour faire moins de route ?":"Изменить порядок маршрута, чтобы меньше ехать?",
+"Ton ordre":"Ваш порядок",
+"Plus court":"Короче",
+"Réorganiser":"Изменить порядок",
+"Garder mon ordre":"Оставить мой порядок",
+"Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.":"Ночи остаются за каждым городом; даты и транспорт пересчитываются.",
+"Distances à vol d’oiseau.":"Расстояния по прямой.",
+"Itinéraire réorganisé":"Порядок маршрута изменён",
 "Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"Удалить дубликаты? Чего не хватает в оставленной записи (цена, плательщик, номер, билеты…), будет скопировано.",
 "Doublon retiré":"Дубликат удалён",
 "{0} fiches pour le même trajet {1} : retirer le doublon":"{0} записи для одной поездки {1}: удалить дубликат",

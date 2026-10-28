@@ -1,4 +1,15 @@
 I18N.load({
+/* 🧭 ordre le plus court à la création (2026-10-28a) */
+"Je cherche l’ordre des villes le plus court…":"正在寻找最短的城市顺序…",
+"Ton itinéraire est déjà dans l’ordre le plus court.":"你的行程已经是最短的顺序。",
+"Réorganiser l’itinéraire pour faire moins de route ?":"重新排列行程以减少路程？",
+"Ton ordre":"你的顺序",
+"Plus court":"更短",
+"Réorganiser":"重新排列",
+"Garder mon ordre":"保持我的顺序",
+"Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.":"每个城市的晚数保持不变；日期和交通方式会重新计算。",
+"Distances à vol d’oiseau.":"直线距离。",
+"Itinéraire réorganisé":"行程已重新排列",
 "Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"删除重复的条目？保留的条目中缺少的内容（价格、付款人、参考号、票据…）会被复制过去。",
 "Doublon retiré":"已删除重复项",
 "{0} fiches pour le même trajet {1} : retirer le doublon":"同一行程 {1} 有 {0} 个条目：删除重复项",

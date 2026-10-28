@@ -1,4 +1,15 @@
 I18N.load({
+/* 🧭 ordre le plus court à la création (2026-10-28a) */
+"Je cherche l’ordre des villes le plus court…":"Şehirlerin en kısa sırasını arıyorum…",
+"Ton itinéraire est déjà dans l’ordre le plus court.":"Rotan zaten en kısa sırada.",
+"Réorganiser l’itinéraire pour faire moins de route ?":"Daha az yol için rotayı yeniden sıralayalım mı?",
+"Ton ordre":"Senin sıran",
+"Plus court":"Daha kısa",
+"Réorganiser":"Yeniden sırala",
+"Garder mon ordre":"Sıramı koru",
+"Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.":"Geceler her şehirde kalır; tarihler ve ulaşım yeniden hesaplanır.",
+"Distances à vol d’oiseau.":"Kuş uçuşu mesafeler.",
+"Itinéraire réorganisé":"Rota yeniden sıralandı",
 "Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"Yinelenen kayıtlar silinsin mi? Tutulan kayıtta eksik olanlar (fiyat, ödeyen, referans, biletler…) ona kopyalanır.",
 "Doublon retiré":"Yinelenen kayıt silindi",
 "{0} fiches pour le même trajet {1} : retirer le doublon":"Aynı yolculuk için {0} kayıt {1}: yineleneni sil",

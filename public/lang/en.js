@@ -1,4 +1,15 @@
 I18N.load({
+/* 🧭 ordre le plus court à la création (2026-10-28a) */
+"Je cherche l’ordre des villes le plus court…":"Looking for the shortest order of cities…",
+"Ton itinéraire est déjà dans l’ordre le plus court.":"Your route is already in the shortest order.",
+"Réorganiser l’itinéraire pour faire moins de route ?":"Reorder the route to travel less?",
+"Ton ordre":"Your order",
+"Plus court":"Shorter",
+"Réorganiser":"Reorder",
+"Garder mon ordre":"Keep my order",
+"Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.":"Nights stay with each city; dates and transport are recalculated.",
+"Distances à vol d’oiseau.":"Straight-line distances.",
+"Itinéraire réorganisé":"Route reordered",
 "Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"Remove the duplicate entries? Anything missing from the kept entry (price, payer, reference, tickets…) is copied into it.",
 "Doublon retiré":"Duplicate removed",
 "{0} fiches pour le même trajet {1} : retirer le doublon":"{0} entries for the same trip {1}: remove the duplicate",

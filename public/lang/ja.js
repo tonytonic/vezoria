@@ -1,4 +1,15 @@
 I18N.load({
+/* 🧭 ordre le plus court à la création (2026-10-28a) */
+"Je cherche l’ordre des villes le plus court…":"都市を回る最短の順番を探しています…",
+"Ton itinéraire est déjà dans l’ordre le plus court.":"この旅程はすでに最短の順番です。",
+"Réorganiser l’itinéraire pour faire moins de route ?":"移動を減らすため旅程を並べ替えますか？",
+"Ton ordre":"今の順番",
+"Plus court":"より短い",
+"Réorganiser":"並べ替える",
+"Garder mon ordre":"今の順番のまま",
+"Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.":"泊数は各都市にそのまま残り、日付と交通手段は再計算されます。",
+"Distances à vol d’oiseau.":"直線距離です。",
+"Itinéraire réorganisé":"旅程を並べ替えました",
 "Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"重複した項目を削除しますか？残す項目に足りないもの（料金、支払者、予約番号、チケット…）はコピーされます。",
 "Doublon retiré":"重複を削除しました",
 "{0} fiches pour le même trajet {1} : retirer le doublon":"同じ移動 {1} の項目が {0} 件：重複を削除",

@@ -1,4 +1,15 @@
 I18N.load({
+/* 🧭 ordre le plus court à la création (2026-10-28a) */
+"Je cherche l’ordre des villes le plus court…":"Cerco l’ordine più breve delle città…",
+"Ton itinéraire est déjà dans l’ordre le plus court.":"Il tuo itinerario è già nell’ordine più breve.",
+"Réorganiser l’itinéraire pour faire moins de route ?":"Riordinare l’itinerario per fare meno strada?",
+"Ton ordre":"Il tuo ordine",
+"Plus court":"Più breve",
+"Réorganiser":"Riordina",
+"Garder mon ordre":"Tieni il mio ordine",
+"Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.":"Le notti restano con ogni città; date e trasporti vengono ricalcolati.",
+"Distances à vol d’oiseau.":"Distanze in linea d’aria.",
+"Itinéraire réorganisé":"Itinerario riordinato",
 "Retirer les fiches en double ? Ce qui manque dans la fiche gardée (prix, payeur, référence, billets…) y est recopié.":"Rimuovere le schede doppie? Ciò che manca nella scheda tenuta (prezzo, pagatore, riferimento, biglietti…) viene copiato.",
 "Doublon retiré":"Doppione rimosso",
 "{0} fiches pour le même trajet {1} : retirer le doublon":"{0} schede per lo stesso viaggio {1}: rimuovi il doppione",
