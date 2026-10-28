@@ -1957,6 +1957,7 @@
     skyscanner:['✈️','Skyscanner', ()=>'https://www.skyscanner.fr/'],
     kayak:['✈️','Kayak', ()=>'https://www.kayak.fr/flights'],
     kiwi:['✈️','Kiwi.com', ()=>'https://www.kiwi.com/fr/'],
+    aviasales:['✈️','Aviasales', ()=>'https://www.aviasales.com/'],
     rome2rio:['🔎','Rome2rio', c=>c.from && c.to ? `https://www.rome2rio.com/fr/map/${encodeURIComponent(c.from)}/${encodeURIComponent(c.to)}` : 'https://www.rome2rio.com/fr/'],
     trainline:['🚆','Trainline', ()=>'https://www.thetrainline.com/fr'],
     omio:['🧭','Omio', ()=>'https://www.omio.fr/'],
@@ -1975,27 +1976,60 @@
     getaround:['🔑','Getaround', ()=>'https://fr.getaround.com/'],
     welcome:['🚐','Welcome Pickups', ()=>'https://www.welcomepickups.com/'],
     kiwitaxi:['🚕','Kiwitaxi', ()=>'https://kiwitaxi.com/'],
+    gettransfer:['🚖','GetTransfer', ()=>'https://gettransfer.com/'],
+    economy:['🚙','Economybookings', ()=>'https://www.economybookings.com/'],
+    localrent:['🚗','Localrent', ()=>'https://localrent.com/en/'],
+    getrentacar:['🚗','GetRentacar', ()=>'https://getrentacar.com/'],
+    qeeq:['🚗','QEEQ', ()=>'https://www.qeeq.com/'],
+    autoeurope:['🚗','Auto Europe', ()=>'https://www.autoeurope.eu/'],
+    bikesbooking:['🛵','BikesBooking', ()=>'https://bikesbooking.com/'],
+    intui:['🚐','Intui', ()=>'https://intui.travel/'],
+    radical:['🧳','Radical Storage', ()=>'https://radicalstorage.com/'],
+    compensair:['🧾','Compensair', ()=>'https://www.compensair.com/'],
+    airhelp:['🧾','AirHelp', ()=>{ const l = BLANG(); return 'https://www.airhelp.com/' + (['fr','de','es','it','nl'].includes(l) ? l + '/' : ''); }],
     gyg:['🎟️','GetYourGuide', c=>`https://www.getyourguide.fr/s/?q=${encodeURIComponent(c.what || c.city || '')}`],
     viator:['🎟️','Viator', c=>`https://www.viator.com/fr-FR/searchResults/all?text=${encodeURIComponent(c.what || c.city || '')}`],
-    tiqets:['🎫','Tiqets', ()=>'https://www.tiqets.com/fr/'],
+    tiqets:['🎫','Tiqets', ()=>{ const l = BLANG(); return 'https://www.tiqets.com/' + (['fr','de','es','it','nl','pt'].includes(l) ? l : 'en') + '/'; }],
     civitatis:['🗺️','Civitatis', ()=>'https://www.civitatis.com/fr/'],
     klook:['🎡','Klook', ()=>'https://www.klook.com/fr/'],
+    kkday:['🎡','KKday', ()=>'https://www.kkday.com/'],
+    wegotrip:['🎧','WeGoTrip', ()=>'https://wegotrip.com/'],
     bkattr:['🎡','Booking.com', ()=>'https://www.booking.com/attractions/index.fr.html'],
     ticketmaster:['🎤','Ticketmaster', ()=>'https://www.ticketmaster.fr/'],
     fnac:['🎭','Fnac Spectacles', ()=>'https://www.fnacspectacles.com/'],
     fever:['✨','Fever', ()=>'https://feverup.com/fr'],
-    airalo:['📶','Airalo', ()=>'https://www.airalo.com/fr'],
+    airalo:['📶','Airalo', c=>{ const s = esimSlug(c.cc || ((R[M.trip] || {}).ccs || [])[0]); return 'https://www.airalo.com/' + (s ? s + '-esim' : ''); }],
     holafly:['📶','Holafly', ()=>'https://esim.holafly.com/fr/'],
-    yesim:['📶','Yesim', ()=>'https://yesim.app/fr/'],
+    yesim:['📶','Yesim', ()=>'https://yesim.tech/'],
+    saily:['📶','Saily', ()=>'https://saily.com/'],
     chapka:['🛡️','Chapka', ()=>'https://www.chapkadirect.fr/'],
     heymondo:['🛡️','Heymondo', ()=>'https://heymondo.fr/'],
     safetywing:['🛡️','SafetyWing', ()=>'https://safetywing.com/'],
     wise:['💳','Wise', ()=>'https://wise.com/fr/'],
     revolut:['💳','Revolut', ()=>'https://www.revolut.com/fr-FR/'],
   };
-  const bookUrl = (k, c) => BK[k] ? BK[k][2](c || {}) : '';
-  const bookA = (k, c) => `<a href="${esc(bookUrl(k, c))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${BK[k][0]} ${BK[k][1]}</a>`;
-  const bookRows = G => G.map(g=>`<div class="bk-g"><small>${g.t}</small><div class="cv-links">${g.k.map(k=>bookA(k, g.c)).join('')}</div></div>`).join('');
+  /* 🔗 LIENS PARTENAIRES (Travelpayouts, projet « Vezoria app » 591336) — actifs tout seuls à partir du 1er novembre 2026
+     (début de la micro-entreprise CELMAR APPS). Avant cette date, ou si AFF_OFF = true : liens directs, comme avant.
+     Le lien passe par tp.media (qui compte le clic) puis arrive EXACTEMENT sur la page prévue (ville, dates, langue).
+     sub_id : « play » dans l’appli Google Play, « web » ailleurs (pour séparer les commissions). */
+  const AFF_OFF = false, AFF_FROM = '2026-11-01', AFF_MARKER = '767584', AFF_TRS = '591336';
+  const AFF = {tiqets:[89, 2074], airalo:[541, 8310], yesim:[224, 5998], welcome:[627, 8919], kiwitaxi:[1, 647], gettransfer:[147, 4439], economy:[10, 2018], localrent:[87, 2043], getrentacar:[222, 5996], airhelp:[120, 9139],
+    aviasales:[100, 4114], saily:[629, 8979], kkday:[633, 9074], wegotrip:[150, 4487], qeeq:[172, 4845], autoeurope:[143, 4354], bikesbooking:[57, 1767], intui:[22, 657], radical:[209, 5867], compensair:[86, 4129]};   // [campaign_id, p]
+  const affOn = k => !AFF_OFF && !!AFF[k] && isoToday() >= AFF_FROM;
+  const BLANG = () => (window.I18N && I18N.lang) || 'fr';
+  const ESIM_FIX = {US:'united-states', GB:'united-kingdom', KR:'south-korea', CZ:'czech-republic', TR:'turkey', AE:'united-arab-emirates', VN:'vietnam', RU:'russia', HK:'hong-kong', MO:'macau', TW:'taiwan', LA:'laos', BO:'bolivia', VE:'venezuela', TZ:'tanzania', IR:'iran', SY:'syria', MD:'moldova', MK:'north-macedonia', CI:'ivory-coast', CD:'democratic-republic-of-the-congo', BA:'bosnia-and-herzegovina'};
+  function esimSlug(cc){   // page eSIM du pays chez Airalo (ex. Italie → italy-esim)
+    cc = String(cc || '').toUpperCase(); if(!/^[A-Z]{2}$/.test(cc)) return '';
+    if(ESIM_FIX[cc]) return ESIM_FIX[cc];
+    try { return new Intl.DisplayNames(['en'], {type:'region'}).of(cc).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z]+/g, '-').replace(/^-|-$/g, ''); } catch(e){ return ''; }
+  }
+  const bookUrl = (k, c) => { if(!BK[k]) return ''; const u = BK[k][2](c || {}); if(!affOn(k) || !u) return u;
+    const a = AFF[k]; return `https://tp.media/r?campaign_id=${a[0]}&marker=${AFF_MARKER}&p=${a[1]}&trs=${AFF_TRS}&sub_id=${(typeof inPlay === 'function' && inPlay()) ? 'play' : 'web'}&u=${encodeURIComponent(u)}`; };
+  // attributs d’un lien : « sponsored » + petite mention « partenaire » quand c’est un lien rémunéré (obligation d’identifier la publicité)
+  const bookRel = k => affOn(k) ? ` rel="sponsored noopener" data-aff="${esc(MSGT('partenaire'))}"` : ' rel="noopener"';
+  const bookA = (k, c) => `<a href="${esc(bookUrl(k, c))}" target="_blank"${bookRel(k)} onclick="event.stopPropagation()">${BK[k][0]} ${BK[k][1]}</a>`;
+  const bookRows = G => G.map(g=>`<div class="bk-g"><small>${g.t}</small><div class="cv-links">${g.k.map(k=>bookA(k, g.c)).join('')}</div></div>`).join('')
+    + (G.some(g=>g.k.some(affOn)) ? `<div class="v-sum-small bk-aff">🔗 ${MSGT('Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.')}</div>` : '');
   // à réserver seulement (une fiche réservée ou payée ne propose plus rien)
   const bookOn = it => !hidden('blk:book') && it && it.type==='item' && (it.statut || 'todo')==='todo';
   function bookGroups(it){
@@ -2003,19 +2037,19 @@
     if(it.cat==='transport'){
       const c = {from:it.from, to:it.to, date:it.date, n}, at = {city:cityOf(it.to||''), what:cityOf(it.to||''), date:it.date, n};
       const m = it.mode || '';
-      if(m==='Avion'){ G.push({t:'Comparer les vols', k:['gflights','skyscanner','kayak','kiwi'], c}); if(it.to) G.push({t:'À l’arrivée', k:['welcome','kiwitaxi','discovercars','rentalcars'], c:at}); }
+      if(m==='Avion'){ G.push({t:'Comparer les vols', k:['gflights','aviasales','skyscanner','kiwi'], c}); if(it.to) G.push({t:'À l’arrivée', k:['welcome','kiwitaxi','gettransfer','economy','localrent'], c:at}); }
       else if(m==='Train') G.push({t:'Trains', k:['trainline','omio','sncf','rome2rio'], c});
       else if(m==='Bus') G.push({t:'Bus et covoiturage', k:['flixbus','blablacar','omio','rome2rio'], c});
       else if(m==='Bateau') G.push({t:'Ferries', k:['ferryhopper','directferries','rome2rio'], c});
-      else if(m==='Voiture') G.push({t:'Voiture', k:['blablacar','discovercars','rentalcars','getaround'], c});
-      else if(/Taxi/.test(m)) G.push({t:'Transferts', k:['welcome','kiwitaxi'], c:at});
+      else if(m==='Voiture') G.push({t:'Voiture', k:['blablacar','economy','autoeurope','qeeq','localrent'], c});
+      else if(/Taxi/.test(m)) G.push({t:'Transferts', k:['welcome','kiwitaxi','gettransfer','intui'], c:at});
       else G.push({t:'Comparer les trajets', k:['rome2rio','omio','trainline','gflights'], c});
     } else if(it.cat==='hotel'){
       const sc = stayCity(it) || city, hd = (M.hood || {})[it.id], hw = hd && hd.name && normQ(hd.name) !== normQ(sc) ? hd.name + ', ' + sc : sc;
       G.push({t:hd && hd.name ? `🏘️ ${MSGT('Quartier conseillé pour dormir')} : <b>${esc(hd.name)}</b> · ${String(hd.km).replace('.', ',')} km ${MSGT('en moyenne de tes visites')} (${hd.n})` : 'Hébergements', k:['booking','airbnb','hotelscom','hostelworld','agoda'], c:{city:hw, what:it.nom ? it.nom + ' ' + city : hw, date:it.date, end:it.dateFin, n}});
     } else if(it.cat==='activite'){
       if(BK_SHOW.test(nzTxt(it.titre))) G.push(BK_SHOWG);
-      G.push({t:'Visites et billets', k:['gyg','viator','tiqets','bkattr','civitatis','klook'], c:{city, what:it.q || [it.titre, it.adresse ? cityOf(it.adresse.split(',').pop()) : ''].filter(Boolean).join(' ')}});
+      G.push({t:'Visites et billets', k:['tiqets','gyg','viator','wegotrip','kkday','civitatis'], c:{city, what:it.q || [it.titre, it.adresse ? cityOf(it.adresse.split(',').pop()) : ''].filter(Boolean).join(' ')}});
     } else {
       const g = checkBook(it.titre || ''); if(g) G.push(g);
       else if(it.cat==='divers') G.push(BK_SHOWG);   // une dépense « divers » à réserver : souvent un concert, un spectacle, un match
@@ -2028,14 +2062,17 @@
   function tripCity(){ const H = items(i=>i.cat==='hotel').sort((a,b)=>(a.date||'').localeCompare(b.date||'')); const h = H.find(i=>i.statut==='todo') || H[0]; return h ? stayCity(h) : ''; }
   function checkBook(label){
     const s = nzTxt(label), city = tripCity(), c = {city, what:city};
-    if(/esim|\bsim\b|forfait|wi ?fi|internet|roaming|itinerance/.test(s)) return {t:'eSIM et internet', k:['airalo','holafly','yesim'], c};
+    if(/esim|\bsim\b|forfait|wi ?fi|internet|roaming|itinerance/.test(s)) return {t:'eSIM et internet', k:['airalo','saily','yesim'], c};
     if(/assurance|rapatriement/.test(s) && !/maladie|ceam/.test(s)) return {t:'Assurance voyage', k:['chapka','heymondo','safetywing'], c};
     if(/carte bancaire|sans frais|devise|change /.test(s)) return {t:'Carte sans frais à l’étranger', k:['wise','revolut'], c};
     if(/hebergement|hotel|logement/.test(s)) return {t:'Hébergements', k:['booking','airbnb','hotelscom','hostelworld'], c};
     if(/trajet|billet d avion|vols? |train/.test(s)) return {t:'Trajets', k:['gflights','skyscanner','trainline','omio'], c:{}};
     if(BK_SHOW.test(s)) return BK_SHOWG;
-    if(/visite|creneau|musee|activite|excursion/.test(s)) return {t:'Visites et billets', k:['gyg','viator','tiqets','bkattr','civitatis'], c};
-    if(/location|voiture|permis/.test(s)) return {t:'Voiture', k:['discovercars','rentalcars','getaround'], c};
+    if(/visite|creneau|musee|activite|excursion/.test(s)) return {t:'Visites et billets', k:['tiqets','gyg','viator','wegotrip','kkday'], c};
+    if(/location|voiture|permis/.test(s)) return {t:'Voiture', k:['economy','autoeurope','qeeq','localrent','getrentacar'], c};
+    if(/scooter|moto|velo|deux.roues/.test(s)) return {t:'Deux-roues', k:['bikesbooking'], c};
+    if(/bagage|consigne|valise/.test(s) && /garder|consigne|deposer|stock/.test(s)) return {t:'Consigne à bagages', k:['radical'], c};
+    if(/retard|annul|indemnis|compensation/.test(s)) return {t:'Vol retardé ou annulé', k:['airhelp','compensair'], c:{}};
     return null;
   }
   function bookSheet(id, ck){

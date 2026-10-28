@@ -31,7 +31,7 @@
     else if(/Avion/i.test(it.mode || '')){ k = 'gflights'; ctx = {from:it.from || '', to:it.to || '', date:it.date || ''}; }
     else if(/Ferry|Bateau/i.test(it.mode || '')) k = 'directferries';
     else if(!/Voiture|Moto|Vélo|Pied/i.test(it.mode || '')){ k = 'rome2rio'; ctx = {from:it.from || '', to:it.to || ''}; }
-    return k && BK[k] ? `<a class="ar-bk" href="${esc(bookUrl(k, ctx))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${MSGT('Réserver')} · ${BK[k][1]}</a>` : '';
+    return k && BK[k] ? `<a class="ar-bk" href="${esc(bookUrl(k, ctx))}" target="_blank"${bookRel(k)} onclick="event.stopPropagation()">${MSGT('Réserver')} · ${BK[k][1]}</a>` : '';
   }
   const ARI_ANIM = {};
   function ariHTML(){
@@ -705,7 +705,7 @@
         <button type="button" class="lg-all" onclick="CV.lgAll('${ja(cc)}')">📖 ${MSGT('Toutes les phrases utiles')}</button></div>` : ''}
       ${!sameCur ? `<div class="lg-fx"><div class="lg-k">💱 ${MSGT('Monnaie')} : ${cur} ${CURS[cur] && CURS[cur] !== cur ? '(' + CURS[cur] + ')' : ''}</div><div class="lg-r" id="lg-r">…</div>
         <div class="lg-cv"><input class="v-in" id="lg-a" inputmode="decimal" placeholder="1000" oninput="CV.lgFx()"><span>${cur}</span><b id="lg-o">=</b></div>
-        ${hidden('blk:book') || !bkOnce('fx:' + t.id + ':' + cur) ? '' : `<a class="lg-lk" href="${esc(bookUrl('wise'))}" target="_blank" rel="noopener">💳 ${MSGT('Payer sur place sans frais de change')} · Wise</a>`}</div>` : ''}</div>`;
+        ${hidden('blk:book') || !bkOnce('fx:' + t.id + ':' + cur) ? '' : `<a class="lg-lk" href="${esc(bookUrl('wise'))}" target="_blank"${bookRel('wise')}>💳 ${MSGT('Payer sur place sans frais de change')} · Wise</a>`}</div>` : ''}</div>`;
   }
   async function lgHydrate(){ const e = document.querySelector('.lg[data-cur]'); if(!e || !e.dataset.cur || e.dataset.cur === curCode()) return; try { const one = await fxToEur(1, e.dataset.cur), r = document.getElementById('lg-r'); if(r) r.innerHTML = `1 ${esc(curCode())} = <b>${(1 / one).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'), {maximumFractionDigits:2})} ${esc(e.dataset.cur)}</b> · 100 ${esc(e.dataset.cur)} = <b>${eur(100 * one)}</b>`; } catch(x){ const r = document.getElementById('lg-r'); if(r) r.textContent = '⚠️ ' + MSGT('Taux indisponible hors ligne'); } }
   async function lgFx(){ const e = document.querySelector('.lg[data-cur]'), a = num((document.getElementById('lg-a') || {}).value), o = document.getElementById('lg-o'); if(!e || !o) return; if(!a){ o.textContent = '='; return; } try { o.textContent = '= ' + eur(await fxToEur(a, e.dataset.cur)); } catch(x){ o.textContent = '⚠️'; } }
@@ -748,7 +748,7 @@
     let far = false; try { const tc = ccOf(String(t.titre || '').split(/[·,(–-]/)[0].trim()); far = [...packDest(), tc].filter(Boolean).some(cc=>!roamFree(cc)); } catch(e){}
     if(!far) return ''; const ok0 = list('check', c=>c.trip === t.id && /assurance/i.test(c.label || '') && chkDone(c)).length; if(ok0 || !bkOnce('ins:' + t.id)) return '';
     const k = ((window.I18N && I18N.lang) || 'fr') === 'fr' ? 'chapka' : 'safetywing';   // assureur français pour les francophones
-    return `<a class="cd-lk" href="${esc(bookUrl(k))}" target="_blank" rel="noopener">🛡️ ${MSGT('Assurance voyage hors Europe')} · ${BK[k][1]}</a>`;
+    return `<a class="cd-lk" href="${esc(bookUrl(k))}" target="_blank"${bookRel(k)}>🛡️ ${MSGT('Assurance voyage hors Europe')} · ${BK[k][1]}</a>`;
   }
   function cdClock(ms){ const s = Math.max(0, Math.floor(ms / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), x = s % 60, two = n => String(n).padStart(2, '0');
     return `<span><b>${d}</b><small>jours</small></span><span><b>${two(h)}</b><small>heures</small></span><span><b>${two(m)}</b><small>min</small></span><span><b>${two(x)}</b><small>s</small></span>`; }
@@ -1285,7 +1285,7 @@
       <div class="wlc-in"><div class="wlc-flag">${flag(o.cc)}</div><small class="wlc-k">${o.newC ? 'Nouveau pays !' : 'Bienvenue à'}</small>
         <h1 data-notr>${[...o.city].map((c, i)=>`<span style="animation-delay:${(0.35 + i * 0.05).toFixed(2)}s">${c === ' ' ? '&nbsp;' : esc(c)}</span>`).join('')}</h1>
         <p><span data-notr>${esc(o.country)}</span>${o.newC ? ' · <b>' + ord(o.nC) + ' pays du voyage</b>' : ''}</p><p class="wlc-m" id="wlc-m"></p>
-        ${o.newC && o.cc && !roamFree(o.cc) && !hidden('blk:book') && bkOnce('esim:' + M.trip) ? `<a class="wlc-lk" href="${esc(bookUrl('airalo'))}" target="_blank" rel="noopener">📶 ${MSGT('Internet sur place sans frais d’itinérance')} · Airalo</a>` : ''}
+        ${o.newC && o.cc && !roamFree(o.cc) && !hidden('blk:book') && bkOnce('esim:' + M.trip) ? `<a class="wlc-lk" href="${esc(bookUrl('airalo', {cc:o.cc}))}" target="_blank"${bookRel('airalo')}>📶 ${MSGT('Internet sur place sans frais d’itinérance')} · Airalo</a>` : ''}
         <div class="wlc-b"><button type="button" class="pri" onclick="CV.wlcPost()">💌 Prévenir tout le monde</button><button type="button" onclick="CV.wlcClose();CV.hereNow()">📸 Souvenir ici</button><button type="button" onclick="CV.wlcClose()">Plus tard</button></div></div>`;
     ov._o = o; document.body.appendChild(ov); requestAnimationFrame(()=>ov.classList.add('on'));
     try { navigator.vibrate && navigator.vibrate([60, 40, 120]); } catch(e){}

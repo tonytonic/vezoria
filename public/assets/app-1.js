@@ -2255,7 +2255,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         <div class="ex-acts">${exp.hid || exp.day ? `<button type="button" class="v-btn${has ? ' sec' : ''}" onclick="CV.expAdd('${ja(k)}',${i})">${has ? '✓ Dans ton programme' : exp.day ? '＋ Ajouter à ma journée' : '＋ Ajouter à l’étape'}</button>` : ''}
           <a class="v-btn sec" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(go)}" target="_blank" rel="noopener">🧭 Y aller</a>
           ${safeUrl(it.u) ? `<a class="v-btn sec" href="${esc(safeUrl(it.u))}" target="_blank" rel="noopener">🌐 Site</a>` : ''}</div>
-        ${(k==='see' || k==='do') && !hidden('blk:book') ? `<div class="ex-bk"><span>🎟️ Billets :</span>${['gyg','viator','tiqets'].map(b=>bookA(b, {what:it.n + ' ' + exp.city})).join('')}</div>` : ''}</div></div>`;
+        ${(k==='see' || k==='do') && !hidden('blk:book') ? `<div class="ex-bk"><span>🎟️ Billets :</span>${['tiqets','gyg','viator'].map(b=>bookA(b, {what:it.n + ' ' + exp.city})).join('')}</div>` : ''}</div></div>`;
     det.hidden = false; requestAnimationFrame(()=>det.classList.add('on'));
   }
   function expShut(){ const det = document.getElementById('ex-det'); if(!det) return; det.classList.remove('on'); setTimeout(()=>{ det.hidden = true; }, 260); }

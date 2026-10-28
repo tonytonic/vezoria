@@ -2940,3 +2940,6 @@ body.cv-ph-past .cv-prep2 .ar-go:not(.ex-go){color:#1E2C5C}
 .wz-ordq{margin:0 0 12px;padding:11px 12px;border-radius:14px;background:#eef2ff;color:#1e1b4b;font-size:.84rem;line-height:1.45}
 .wz-ol{margin-top:6px;padding:7px 9px;border-radius:10px;background:#fff}.wz-ol span{display:block;font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.03em}
 .wz-ol.on{outline:2px solid #6366f1}.wz-ol i{font-style:normal;font-weight:800;color:#047857}
+/* 🔗 liens partenaires (2026-10-28d) : petite mention visible à côté du nom */
+a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600;opacity:.6;white-space:nowrap}
+.bk-aff{margin:8px 2px 0;opacity:.8}
