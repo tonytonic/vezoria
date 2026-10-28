@@ -102,7 +102,59 @@
     const len = A => A.reduce((s, e, i)=>i ? s + rawKm(wzPt(A[i - 1]), wzPt(e)) : 0, 0); let best = len(ord), imp = true, g = 0;
     while(imp && g < 60){ imp = false; g++; for(let i = 1; i < ord.length - 1; i++) for(let k = i + 1; k < ord.length; k++){ const c = ord.slice(0, i).concat(ord.slice(i, k + 1).reverse(), ord.slice(k + 1)), l2 = len(c); if(l2 < best - 1){ ord.splice(0, ord.length, ...c); best = l2; imp = true; } } }
     const before = len(K); wz.etapes = ord.concat(rest); wzModes(); wzRender();
-    toast('🧭 ' + MSGT('Itinéraire ordonné') + (before - best > 20 ? ' · −' + Math.round(before - best).toLocaleString() + ' km' : ''));
+    toast('🧭 ' + MSGT('Itinéraire ordonné') + (before - best > 20 ? ' · −' + Math.round(before - best).toLocaleString(NL()) + ' km' : ''));
+  }
+  /* 🧭 Avant de créer le voyage : l’ordre des villes qui fait le moins de route, départ et retour de la maison compris.
+     Proposé une fois sur l’écran récapitulatif ; « Garder mon ordre » ne redemande plus tant que les villes ne changent pas. */
+  const wzSig = () => wz.etapes.filter(e=>e.ville).map(e=>normQ(e.ville)).join('|');
+  function wzShortest(P, H, Bk){   // P : points des villes ; H / Bk : départ et retour (facultatifs) → {o:ordre, c:km}
+    const km = rawKm, n = P.length;
+    const cost = o => o.reduce((t, k, i)=>t + (i ? km(P[o[i - 1]], P[k]) : H ? km(H, P[k]) : 0), 0) + (Bk ? km(P[o[n - 1]], Bk) : 0);
+    const cur = P.map((_, i)=>i); let best = cur, bc = cost(cur);
+    if(n <= 7){   // jusqu’à 7 villes : on essaie tous les ordres (5 040 au plus)
+      const perm = (a, l) => { if(l === n){ const c = cost(a); if(c < bc - 0.5){ bc = c; best = a.slice(); } return; }
+        for(let i = l; i < n; i++){ [a[l], a[i]] = [a[i], a[l]]; perm(a, l + 1); [a[l], a[i]] = [a[i], a[l]]; } };
+      perm(cur.slice(), 0);
+    } else for(let st = 0; st < n; st++){   // au-delà : la plus proche à chaque fois depuis chaque ville, puis on décroise (2-opt)
+      const o = [st], todo = cur.filter(i=>i !== st);
+      while(todo.length){ const l = P[o[o.length - 1]]; todo.sort((a, b)=>km(l, P[a]) - km(l, P[b])); o.push(todo.shift()); }
+      let c = cost(o), imp = true, g = 0;
+      while(imp && g < 40){ imp = false; g++; for(let i = 0; i < n - 1; i++) for(let k = i + 1; k < n; k++){ const t = o.slice(0, i).concat(o.slice(i, k + 1).reverse(), o.slice(k + 1)), tc = cost(t); if(tc < c - 0.5){ o.splice(0, n, ...t); c = tc; imp = true; } } }
+      if(c < bc - 0.5){ bc = c; best = o; }
+    }
+    return {o:best, c:bc, c0:cost(cur)};
+  }
+  async function wzOrdAsk(){
+    const box = () => document.getElementById('wz-ord5'); if(!box() || !wz) return;
+    const sig = wzSig(); if(wz.ordKeep === sig) return;
+    const E = wz.etapes.filter(e=>e.ville); if(E.length < 2) return;
+    box().innerHTML = `<div class="ar-run wz-run">🧭 ${MSGT('Je cherche l’ordre des villes le plus court…')}</div>`;
+    await wzLocate(); if(!wz || wz.step !== 5 || wzSig() !== sig) return;
+    // la maison : la ville de départ la plus fréquente du groupe, et son retour
+    const cnt = {}; wz.voyageurs.forEach(pid=>{ const g = wz.gens[pid] || {}; if(g.dep) cnt[g.dep] = (cnt[g.dep] || 0) + 1; });
+    const dep = Object.keys(cnt).sort((a, b)=>cnt[b] - cnt[a])[0] || '', who = dep && wz.voyageurs.find(p=>(wz.gens[p] || {}).dep === dep), ret = (who && wz.gens[who].ret) || dep;
+    const H = dep ? await cityInfo(dep).catch(()=>null) : null, Bk = ret && normQ(ret) !== normQ(dep) ? await cityInfo(ret).catch(()=>null) : H;
+    if(!wz || wz.step !== 5 || wzSig() !== sig || !box()) return;
+    const K = E.filter(wzPt);
+    if(K.length !== E.length || K.length < (H ? 2 : 3)){ box().innerHTML = ''; return; }   // une ville pas située, ou rien à réordonner
+    const r = wzShortest(K.map(wzPt), H, Bk), gain = r.c0 - r.c;
+    if(gain < Math.max(60, r.c0 * 0.08)){ box().innerHTML = `<div class="v-sum-small wz-ok">✓ ${MSGT('Ton itinéraire est déjà dans l’ordre le plus court.')}</div>`; return; }
+    wz.ordProp = r.o.map(i=>K[i]);
+    const line = A => esc([dep, ...A.map(e=>e.ville), H ? ret : ''].filter(Boolean).join(' → '));
+    box().innerHTML = `<div class="wz-ordq"><b>🧭 ${MSGT('Réorganiser l’itinéraire pour faire moins de route ?')}</b>
+      <div class="wz-ol"><span>${MSGT('Ton ordre')}</span>${line(K)} · <b>${Math.round(r.c0).toLocaleString(NL())} km</b></div>
+      <div class="wz-ol on"><span>${MSGT('Plus court')}</span>${line(wz.ordProp)} · <b>${Math.round(r.c).toLocaleString(NL())} km</b> <i>−${Math.round(gain).toLocaleString(NL())} km</i></div>
+      <div class="cv-row" style="gap:8px;margin-top:8px"><button type="button" class="v-btn" onclick="CV.wzOrdApply(1)">🧭 ${MSGT('Réorganiser')}</button><button type="button" class="v-btn sec" onclick="CV.wzOrdApply(0)">${MSGT('Garder mon ordre')}</button></div>
+      <div class="v-sum-small" style="margin-top:6px">${MSGT('Les nuits restent avec chaque ville ; les dates et les transports sont recalculés.')} ${MSGT('Distances à vol d’oiseau.')}</div></div>`;
+  }
+  function wzOrdApply(yes){
+    wzRead();
+    if(yes && wz.ordProp){
+      const m0 = (wz.etapes[0] || {}).mode || 'Avion', ord = wz.ordProp; ord.forEach(e=>{ delete e.mm; delete e.km; });
+      wz.etapes = ord.concat(wz.etapes.filter(e=>!ord.includes(e))); wz.etapes[0].mode = m0; wzModes();
+      toast('🧭 ' + MSGT('Itinéraire réorganisé'));
+    }
+    wz.ordKeep = wzSig(); wz.ordProp = null; wzRender();
   }
   async function wzCheck(){   // après un changement de villes : on situe, on choisit les transports, on affiche la saison de chaque pays
     if(!wz || wz.step !== 3 || wz.chk) return; wz.chk = 1; let mv = false;
@@ -115,7 +167,7 @@
   }
   function wzInfo(){
     const se = (wz.seas || []).length > 1 ? `<div class="wz-seas">${wz.seas.map(x=>`<div class="wz-sl"><b>${flag(x.cc)} ${esc(frCountry(x.cc))}</b>${seasonLine(x.se, wz.debut ? +wz.debut.slice(5, 7) : 0)}</div>`).join('')}</div>` : '';
-    const km = wz.etapes.some((e, i)=>i && e.km) ? `<div class="v-sum-small" style="margin-top:6px">${wz.etapes.map((e, i)=>i && e.km ? `${MODE_ICON[e.mode] || ''} ${e.km.toLocaleString()} km` : '').filter(Boolean).join(' · ')}</div>` : '';
+    const km = wz.etapes.some((e, i)=>i && e.km) ? `<div class="v-sum-small" style="margin-top:6px">${wz.etapes.map((e, i)=>i && e.km ? `${MODE_ICON[e.mode] || ''} ${e.km.toLocaleString(NL())} km` : '').filter(Boolean).join(' · ')}</div>` : '';
     return se + km;
   }
   function wzSoft(){   // mise à jour sans tout redessiner (on ne vole pas le clavier pendant la saisie)
@@ -206,7 +258,7 @@
     }
     if(s===5){
       const {st, fin} = wzPlan(), nt = nights(wz.debut, fin);
-      h += `<div class="wz-recap"><b>${esc(wz.titre)}</b> · ${wz.voyageurs.map(pid=>pchip(pid)).join(' ')}
+      h += `<div id="wz-ord5"></div><div class="wz-recap"><b>${esc(wz.titre)}</b> · ${wz.voyageurs.map(pid=>pchip(pid)).join(' ')}
         <div class="v-sum-small">${fdate(wz.debut)} → ${fdate(fin)} · ${nt} nuits${nt!==wz.nuits ? ' (au lieu de '+wz.nuits+' prévues : les étapes font foi)' : ''}</div>
         <ol>${st.map(e=>`<li>${MODE_ICON[e.mode]||''} <b>${esc(e.ville)}</b> · ${e.nuits} nuit${e.nuits>1?'s':''} <span class="v-sum-small">${fshort(e.debut)} → ${fshort(e.fin)}</span></li>`).join('')}</ol></div>
         <div class="v-f"><label>Reprendre la configuration d’un voyage (vierge)</label><select class="v-in" id="wz-tpl" onchange="CV.wzTpl()"><option value="">— Checklist de base —</option>${trips().map(t=>`<option value="${t.id}"${wz.tpl===t.id?' selected':''}>${esc(t.titre)}</option>`).join('')}</select></div>
@@ -221,7 +273,7 @@
     openSheet(h);
     if(s===2) wzDates(wz.debut ? 'n' : 'd');
     if(s===3){ wzSum(); if(wz.etapes.some(e=>e.ville && !(wz.geo || {})[normQ(e.ville)])) setTimeout(wzCheck, 300); }
-    if(s===5) covPrev();
+    if(s===5){ covPrev(); wzOrdAsk(); }
   }
   function wzTplOpts(){
     const id = wz.tpl; if(!id || !R[id]) return '';

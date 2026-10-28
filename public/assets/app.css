@@ -2936,3 +2936,7 @@ body.cv-ph-past .cv-prep2 .ar-go:not(.ex-go){color:#1E2C5C}
 .pl-gm-a span{font-size:18px}
 .pl-gm-a b{flex:1;min-width:0;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pl-gm-a i{font-style:normal;font-size:.75rem;font-weight:700;color:#fff;background:#1a73e8;border-radius:999px;padding:5px 9px;white-space:nowrap}
+/* 🧭 proposition d’ordre plus court avant la création du voyage (2026-10-28a) */
+.wz-ordq{margin:0 0 12px;padding:11px 12px;border-radius:14px;background:#eef2ff;color:#1e1b4b;font-size:.84rem;line-height:1.45}
+.wz-ol{margin-top:6px;padding:7px 9px;border-radius:10px;background:#fff}.wz-ol span{display:block;font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.03em}
+.wz-ol.on{outline:2px solid #6366f1}.wz-ol i{font-style:normal;font-weight:800;color:#047857}
