@@ -1,7 +1,9 @@
 // Cloudflare Pages Function — ✈️ PRIX DES VOLS (Aviasales Data API, via Travelpayouts)
 // Emplacement : functions/api/tp.js  →  /api/tp
 //
-// Appel : /api/tp?op=flight&olat=47.22&olng=-1.55&dlat=41.9&dlng=12.48&date=2026-12-12[&ret=2026-12-19]
+// Appels :
+//   /api/tp?op=tours&city=Rome&lang=fr   → visites audio WeGoTrip de la ville (API publique, sans clé), avec prix et note
+//   /api/tp?op=flight&olat=47.22&olng=-1.55&dlat=41.9&dlng=12.48&date=2026-12-12[&ret=2026-12-19]
 //   → { ok, o:'NTE', d:'ROM', on:'Nantes', dn:'Rome', price:89, currency:'EUR', at:'2026-12-12T07:05:00+01:00',
 //       transfers:0, airline:'FR', exact:true, link:'https://www.aviasales.com/search/…', search:'https://www.aviasales.com/search/NTE1212ROM1' }
 //
@@ -57,9 +59,47 @@ async function prices(env, o, d, dep, ret) {
 }
 const ddmm = s => s.slice(8, 10) + s.slice(5, 7);
 
+/* ── 🎧 WeGoTrip : visites audio d'une ville (doc partenaire : app.wegotrip.com/api/v2) ── */
+const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+async function wgt(path, lang) {
+  const r = await fetch('https://app.wegotrip.com/api/v2' + path, { headers: { 'Accept': 'application/json', 'Accept-Language': lang }, cf: { cacheTtl: 86400, cacheEverything: true } });
+  if (!r.ok) return null; return r.json().catch(() => null);
+}
+const listOf = j => { const d = j && (j.data !== undefined ? j.data : j); return Array.isArray(d) ? d : d && Array.isArray(d.results) ? d.results : []; };
+// toutes les villes repérées dans une réponse de recherche (villes, produits, attractions), quelle que soit sa forme
+function citiesIn(j) {
+  const out = new Map(), add = c => { if (c && c.id != null && c.name && c.slug) out.set(String(c.id), { id: c.id, name: c.name, slug: c.slug }); };
+  const walk = (x, key, depth) => { if (!x || depth > 4) return;
+    if (Array.isArray(x)) { x.forEach(y => walk(y, key, depth + 1)); return; }
+    if (typeof x !== 'object') return;
+    if (/cit/i.test(key || '') || x.type === 'city') add(x);
+    if (x.city && typeof x.city === 'object') add(x.city);
+    for (const k of Object.keys(x)) if (typeof x[k] === 'object') walk(x[k], k, depth + 1); };
+  walk(j, '', 0); return [...out.values()];
+}
+async function tours(city, lang) {
+  const q = norm(city); if (q.length < 3) return { ok: true, tours: [] };
+  const s = await wgt(`/search/?query=${encodeURIComponent(city)}&currency=EUR`, lang);
+  const C = citiesIn(s), c = C.find(x => norm(x.name) === q) || C.find(x => norm(x.name).startsWith(q) || q.startsWith(norm(x.name)));
+  if (!c) return { ok: true, tours: [] };
+  const P = listOf(await wgt(`/products/popular/?city=${c.id}&lang=${lang}&currency=EUR&page=1`, lang));
+  const T = P.filter(p => p && p.id && p.slug && p.title).slice(0, 6).map(p => {
+    const ci = p.city && p.city.slug ? p.city : c;
+    return { id: p.id, title: String(p.title).slice(0, 140), price: +p.price || null, was: +p.exprice || null, currency: p.currencyCode || 'EUR',
+      rating: +p.rating || null, reviews: +p.reviewsCount || 0, duration: p.duration || '', img: p.preview || p.cover || '',
+      url: `https://wegotrip.com/${ci.slug}-d${ci.id}/${p.slug}-p${p.id}/` };
+  });
+  return { ok: true, city: { id: c.id, name: c.name }, tours: T };
+}
+
 export async function onRequest({ request, env }) {
   if (request.method === 'OPTIONS') return new Response(null, { headers: H });
   const p = new URL(request.url).searchParams;
+  if (p.get('op') === 'tours') {
+    if (!rateOk(request, 300)) return json({ ok: false, error: 'trop de demandes, réessaie dans une heure' }, 429);
+    const city = String(p.get('city') || '').slice(0, 80), lang = /^[a-z]{2}$/.test(p.get('lang') || '') ? p.get('lang') : 'en';
+    try { return json(await tours(city, lang)); } catch (e) { return json({ ok: false, error: 'service indisponible' }, 502); }
+  }
   if (p.get('op') !== 'flight') return json({ ok: false, error: 'op inconnue' }, 400);
   if (!env.TP_TOKEN) return json({ ok: false, error: 'TP_TOKEN manquant' }, 503);
   if (!rateOk(request, 150)) return json({ ok: false, error: 'trop de demandes, réessaie dans une heure' }, 429);
