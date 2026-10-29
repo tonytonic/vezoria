@@ -1,4 +1,14 @@
 I18N.load({
+/* ✈️ prix des vols (2026-10-29a) */
+"Je cherche le prix des vols…":"航空券の価格を検索中…",
+"Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"{0} → {1} の最近の価格はありません：Aviasalesでその日の便をご覧ください。",
+"direct":"直行",
+"1 escale":"乗継1回",
+"{0} escales":"乗継{0}回",
+"dès {0}":"{0}〜",
+"le {0}, même mois":"{0}（同じ月）",
+"Voir ce vol":"この便を見る",
+"Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.":"ここ数日にAviasalesで見つかった参考価格です。変わっている場合があります。",
 "Deux-roues":"二輪車",
 "Consigne à bagages":"荷物預かり",
 /* 🔗 liens partenaires (2026-10-28d) */

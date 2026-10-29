@@ -1,4 +1,14 @@
 I18N.load({
+/* ✈️ prix des vols (2026-10-29a) */
+"Je cherche le prix des vols…":"Uçuş fiyatlarını arıyorum…",
+"Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"{0} → {1} için yakın tarihli fiyat yok: o günün uçuşlarına Aviasales’ta bak.",
+"direct":"direkt",
+"1 escale":"1 aktarma",
+"{0} escales":"{0} aktarma",
+"dès {0}":"{0} başlayan",
+"le {0}, même mois":"{0}, aynı ay",
+"Voir ce vol":"Bu uçuşu gör",
+"Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.":"Aviasales’ta son günlerde bulunan tahmini fiyat; değişmiş olabilir.",
 "Deux-roues":"İki teker",
 "Consigne à bagages":"Emanet bagaj",
 /* 🔗 liens partenaires (2026-10-28d) */

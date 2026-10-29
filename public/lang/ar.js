@@ -1,4 +1,14 @@
 I18N.load({
+/* ✈️ prix des vols (2026-10-29a) */
+"Je cherche le prix des vols…":"أبحث عن أسعار الرحلات…",
+"Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"لا يوجد سعر حديث لـ {0} → {1}: اطّلع على رحلات ذلك اليوم في Aviasales.",
+"direct":"مباشر",
+"1 escale":"توقف واحد",
+"{0} escales":"{0} توقفات",
+"dès {0}":"ابتداءً من {0}",
+"le {0}, même mois":"في {0}، الشهر نفسه",
+"Voir ce vol":"عرض هذه الرحلة",
+"Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.":"سعر تقريبي وُجد في الأيام الأخيرة على Aviasales؛ قد يكون تغيّر.",
 "Deux-roues":"دراجات",
 "Consigne à bagages":"أمانات الأمتعة",
 /* 🔗 liens partenaires (2026-10-28d) */

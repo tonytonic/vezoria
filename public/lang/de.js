@@ -1,4 +1,14 @@
 I18N.load({
+/* ✈️ prix des vols (2026-10-29a) */
+"Je cherche le prix des vols…":"Ich suche Flugpreise…",
+"Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"Kein aktueller Preis für {0} → {1}: sieh dir die Flüge des Tages bei Aviasales an.",
+"direct":"direkt",
+"1 escale":"1 Stopp",
+"{0} escales":"{0} Stopps",
+"dès {0}":"ab {0}",
+"le {0}, même mois":"am {0}, gleicher Monat",
+"Voir ce vol":"Diesen Flug ansehen",
+"Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.":"Richtpreis aus den letzten Tagen bei Aviasales; er kann sich geändert haben.",
 "Deux-roues":"Zweiräder",
 "Consigne à bagages":"Gepäckaufbewahrung",
 /* 🔗 liens partenaires (2026-10-28d) */

@@ -1,4 +1,14 @@
 I18N.load({
+/* ✈️ prix des vols (2026-10-29a) */
+"Je cherche le prix des vols…":"항공권 가격을 찾는 중…",
+"Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"{0} → {1}의 최근 가격이 없어요: Aviasales에서 그날 항공편을 보세요.",
+"direct":"직항",
+"1 escale":"경유 1회",
+"{0} escales":"경유 {0}회",
+"dès {0}":"{0}부터",
+"le {0}, même mois":"{0}, 같은 달",
+"Voir ce vol":"이 항공편 보기",
+"Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.":"최근 며칠간 Aviasales에서 찾은 참고 가격이에요. 바뀌었을 수 있어요.",
 "Deux-roues":"이륜차",
 "Consigne à bagages":"짐 보관",
 /* 🔗 liens partenaires (2026-10-28d) */

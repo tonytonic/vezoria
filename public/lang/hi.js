@@ -1,4 +1,14 @@
 I18N.load({
+/* ✈️ prix des vols (2026-10-29a) */
+"Je cherche le prix des vols…":"उड़ानों के दाम खोज रहा हूँ…",
+"Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"{0} → {1} के लिए हाल का दाम नहीं: उस दिन की उड़ानें Aviasales पर देखें।",
+"direct":"सीधी",
+"1 escale":"1 स्टॉप",
+"{0} escales":"{0} स्टॉप",
+"dès {0}":"{0} से",
+"le {0}, même mois":"{0} को, उसी महीने",
+"Voir ce vol":"यह उड़ान देखें",
+"Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.":"Aviasales पर पिछले कुछ दिनों में मिला अनुमानित दाम; बदल सकता है।",
 "Deux-roues":"दोपहिया",
 "Consigne à bagages":"सामान भंडारण",
 /* 🔗 liens partenaires (2026-10-28d) */

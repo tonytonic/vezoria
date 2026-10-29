@@ -1,4 +1,14 @@
 I18N.load({
+/* ✈️ prix des vols (2026-10-29a) */
+"Je cherche le prix des vols…":"Ищу цены на перелёты…",
+"Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"Нет свежей цены для {0} → {1}: посмотрите рейсы на эту дату на Aviasales.",
+"direct":"прямой",
+"1 escale":"1 пересадка",
+"{0} escales":"пересадок: {0}",
+"dès {0}":"от {0}",
+"le {0}, même mois":"{0}, тот же месяц",
+"Voir ce vol":"Смотреть рейс",
+"Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.":"Ориентировочная цена за последние дни на Aviasales; она могла измениться.",
 "Deux-roues":"Мото и велосипеды",
 "Consigne à bagages":"Камера хранения",
 /* 🔗 liens partenaires (2026-10-28d) */

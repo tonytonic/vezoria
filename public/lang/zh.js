@@ -1,4 +1,14 @@
 I18N.load({
+/* ✈️ prix des vols (2026-10-29a) */
+"Je cherche le prix des vols…":"正在查询机票价格…",
+"Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"{0} → {1} 暂无近期价格：在 Aviasales 查看当天的航班。",
+"direct":"直飞",
+"1 escale":"经停1次",
+"{0} escales":"经停{0}次",
+"dès {0}":"{0}起",
+"le {0}, même mois":"{0}（同月）",
+"Voir ce vol":"查看此航班",
+"Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.":"最近几天在 Aviasales 找到的参考价格，可能已变动。",
 "Deux-roues":"两轮车",
 "Consigne à bagages":"行李寄存",
 /* 🔗 liens partenaires (2026-10-28d) */

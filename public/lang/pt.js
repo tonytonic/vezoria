@@ -1,4 +1,14 @@
 I18N.load({
+/* ✈️ prix des vols (2026-10-29a) */
+"Je cherche le prix des vols…":"A procurar preços de voos…",
+"Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"Sem preço recente para {0} → {1}: vê os voos do dia na Aviasales.",
+"direct":"direto",
+"1 escale":"1 escala",
+"{0} escales":"{0} escalas",
+"dès {0}":"desde {0}",
+"le {0}, même mois":"a {0}, mesmo mês",
+"Voir ce vol":"Ver este voo",
+"Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.":"Preço indicativo encontrado nos últimos dias na Aviasales; pode ter mudado.",
 "Deux-roues":"Duas rodas",
 "Consigne à bagages":"Guarda-bagagem",
 /* 🔗 liens partenaires (2026-10-28d) */
