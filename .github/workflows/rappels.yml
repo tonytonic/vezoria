@@ -1,7 +1,7 @@
 # Vezoria — envoie les rappels programmés à l'heure, même si personne n'ouvre l'appli.
 # Sans ce fichier, les rappels ne partent qu'à l'occasion d'une synchro (un appel sur 12 environ).
-# Toutes les 30 minutes (≈ 1 500 minutes GitHub par mois, sous les 2 000 gratuites d'un dépôt privé ;
-# dépôt public : illimité, tu peux passer à '*/10 * * * *').
+# Toutes les 30 minutes (dépôt public : minutes GitHub illimitées).
+# Une erreur passagère (Cloudflare, réseau) est réessayée 4 fois avant de compter comme un échec.
 name: Rappels
 on:
   schedule:
@@ -10,7 +10,10 @@ on:
 jobs:
   flush:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 5
     steps:
       - name: Envoyer les rappels arrivés à l'heure
-        run: curl -fsS --max-time 30 "https://vezoria.pages.dev/api/push?a=flush"
+        run: |
+          curl -sS --fail-with-body --max-time 30 --retry 4 --retry-delay 15 --retry-all-errors \
+            "https://vezoria.pages.dev/api/push?a=flush"
+          echo
