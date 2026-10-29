@@ -1,4 +1,5 @@
 I18N.load({
+"Payant : pense à réserver":"सशुल्क: बुक करना न भूलें",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"मिटाएँ",
 "Touche le jour : {0}":"दिन चुनें: {0}",

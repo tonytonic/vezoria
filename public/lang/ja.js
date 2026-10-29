@@ -1,4 +1,5 @@
 I18N.load({
+"Payant : pense à réserver":"有料：予約をお忘れなく",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"クリア",
 "Touche le jour : {0}":"日付をタップ：{0}",

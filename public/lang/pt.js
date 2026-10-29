@@ -1,4 +1,5 @@
 I18N.load({
+"Payant : pense à réserver":"Pago: lembre-se de reservar",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"Limpar",
 "Touche le jour : {0}":"Toque no dia: {0}",

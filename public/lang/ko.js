@@ -1,4 +1,5 @@
 I18N.load({
+"Payant : pense à réserver":"유료: 예약을 잊지 마세요",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"지우기",
 "Touche le jour : {0}":"날짜를 누르세요: {0}",

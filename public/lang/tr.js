@@ -1,4 +1,5 @@
 I18N.load({
+"Payant : pense à réserver":"Ücretli: rezervasyon yapmayı unutma",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"Temizle",
 "Touche le jour : {0}":"Günü seç: {0}",

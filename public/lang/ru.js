@@ -1,4 +1,5 @@
 I18N.load({
+"Payant : pense à réserver":"Платно: не забудьте забронировать",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"Очистить",
 "Touche le jour : {0}":"Выберите день: {0}",

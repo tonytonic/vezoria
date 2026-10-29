@@ -1,4 +1,5 @@
 I18N.load({
+"Payant : pense à réserver":"收费：记得预订",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"清除",
 "Touche le jour : {0}":"点选日期：{0}",
