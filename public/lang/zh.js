@@ -1,4 +1,8 @@
 I18N.load({
+/* 📅 calendrier unique (2026-10-29d) */
+"Effacer":"清除",
+"Touche le jour : {0}":"点选日期：{0}",
+"touche le jour : {0}":"点选日期：{0}",
 /* 🎧 visites audio dans le tri (2026-10-29c) */
 "Visite audio":"语音导览",
 "{0} avis":"{0} 条评价",

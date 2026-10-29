@@ -1,4 +1,8 @@
 I18N.load({
+/* 📅 calendrier unique (2026-10-29d) */
+"Effacer":"मिटाएँ",
+"Touche le jour : {0}":"दिन चुनें: {0}",
+"touche le jour : {0}":"दिन चुनें: {0}",
 /* 🎧 visites audio dans le tri (2026-10-29c) */
 "Visite audio":"ऑडियो टूर",
 "{0} avis":"{0} समीक्षाएँ",

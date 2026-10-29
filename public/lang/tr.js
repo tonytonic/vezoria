@@ -1,4 +1,8 @@
 I18N.load({
+/* 📅 calendrier unique (2026-10-29d) */
+"Effacer":"Temizle",
+"Touche le jour : {0}":"Günü seç: {0}",
+"touche le jour : {0}":"günü seç: {0}",
 /* 🎧 visites audio dans le tri (2026-10-29c) */
 "Visite audio":"Sesli tur",
 "{0} avis":"{0} yorum",

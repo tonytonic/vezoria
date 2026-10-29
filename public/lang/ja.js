@@ -1,4 +1,8 @@
 I18N.load({
+/* 📅 calendrier unique (2026-10-29d) */
+"Effacer":"クリア",
+"Touche le jour : {0}":"日付をタップ：{0}",
+"touche le jour : {0}":"日付をタップ：{0}",
 /* 🎧 visites audio dans le tri (2026-10-29c) */
 "Visite audio":"オーディオツアー",
 "{0} avis":"レビュー{0}件",

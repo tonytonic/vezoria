@@ -1,4 +1,8 @@
 I18N.load({
+/* 📅 calendrier unique (2026-10-29d) */
+"Effacer":"Wissen",
+"Touche le jour : {0}":"Tik op de dag: {0}",
+"touche le jour : {0}":"tik op de dag: {0}",
 /* 🎧 visites audio dans le tri (2026-10-29c) */
 "Visite audio":"Audiotour",
 "{0} avis":"{0} beoordelingen",

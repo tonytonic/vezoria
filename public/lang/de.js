@@ -1,4 +1,8 @@
 I18N.load({
+/* 📅 calendrier unique (2026-10-29d) */
+"Effacer":"Löschen",
+"Touche le jour : {0}":"Tippe auf den Tag: {0}",
+"touche le jour : {0}":"tippe auf den Tag: {0}",
 /* 🎧 visites audio dans le tri (2026-10-29c) */
 "Visite audio":"Audioguide-Tour",
 "{0} avis":"{0} Bewertungen",

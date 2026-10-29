@@ -1,4 +1,8 @@
 I18N.load({
+/* 📅 calendrier unique (2026-10-29d) */
+"Effacer":"지우기",
+"Touche le jour : {0}":"날짜를 누르세요: {0}",
+"touche le jour : {0}":"날짜를 누르세요: {0}",
 /* 🎧 visites audio dans le tri (2026-10-29c) */
 "Visite audio":"오디오 투어",
 "{0} avis":"후기 {0}개",
