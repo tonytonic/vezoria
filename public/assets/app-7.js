@@ -2231,6 +2231,21 @@
     const w = a.split(' '); for(let n = Math.min(3, w.length); n > 0; n--){ const h = w.slice(0, n).join(' '); if(TR_AL[h]) return [TR_AL[h], ...w.slice(n)].join(' '); }
     const b = a.replace(TR_STOP, ' ').replace(/\s+/g, ' ').trim(); return TR_AL[b] || b || a;
   }
+  /* 🚗 Parti et revenu en voiture, mais des trains entre les étapes : la voiture resterait garée à la 1ʳᵉ étape.
+     On propose de faire les trajets entre étapes en voiture (seulement ceux pas encore réservés). */
+  function carMix(){
+    const t = trip(); if(!t || ((M.carOk || {})[t.id])) return [];
+    const T = items(i=>i.cat === 'transport' && i.date).sort((a, b)=>(a.date + (a.heureDep || '')).localeCompare(b.date + (b.heureDep || '')));
+    if(T.length < 3 || T[0].mode !== 'Voiture' || T[T.length - 1].mode !== 'Voiture') return [];
+    const home = normQ(cityOf(T[0].from || '')); if(!home || normQ(cityOf(T[T.length - 1].to || '')) !== home) return [];
+    return T.slice(1, -1).filter(i=>/^(Train|Bus)$/.test(i.mode || '') && !okB(i));
+  }
+  function carFix(no){
+    const t = trip(); if(!t) return;
+    if(no){ M.carOk = M.carOk || {}; M.carOk[t.id] = 1; persist(); }
+    else { const L = carMix(); if(L.length) putQuiet(L.map(i=>Object.assign(clone(i), {mode:'Voiture'}))); toast('🚗 ' + RF('{0} trajet(s) passés en voiture', L.length)); }
+    const y = window.scrollY; render(); window.scrollTo(0, y);
+  }
   function trFix(){ const n = trChain().length; toast(n ? '🚆 ' + RF('{0} trajet(s) remis dans l’ordre des étapes', n) : '✓ ' + MSGT('Les trajets sont déjà dans l’ordre')); const y = window.scrollY; render(); window.scrollTo(0, y); }
 
   /* ⇅ Réorganiser : on glisse les villes, on change les nuits ; à l’enregistrement, tout suit (hôtels, trajets, visites, journées, notes) */

@@ -1754,7 +1754,7 @@
       pls.forEach((p,j)=>out.push({id:'pl'+uid()+k+'_'+j, type:'place', trip:tid, stay:hid, date:dd[Math.min(dd.length-1, Math.floor(j/per))], nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false}));
       out.push({id:'day:'+tid+':'+s.d, type:'day', trip:tid, date:s.d, titre: k === 0 ? 'Arrivée à ' + s.c : stops[k-1].c + ' → ' + s.c, plan:''});
       range(addDays(s.d,1), addDays(s.f,-1)).forEach(dd=>out.push({id:'day:'+tid+':'+dd, type:'day', trip:tid, date:dd, titre:s.c, plan:''}));
-      if(k > 0) out.push({id:'i'+uid()+'t'+k, type:'item', trip:tid, cat:'transport', mode:'Train', titre:stops[k-1].c + ' → ' + s.c, from:stops[k-1].c, to:s.c, date:s.d, statut:'todo', partage:'pp', qui:[]});
+      if(k > 0) out.push({id:'i'+uid()+'t'+k, type:'item', trip:tid, cat:'transport', mode:mode === 'Voiture' ? 'Voiture' : 'Train', titre:stops[k-1].c + ' → ' + s.c, from:stops[k-1].c, to:s.c, date:s.d, statut:'todo', partage:'pp', qui:[]});
     });
     out.push({id:'i'+uid()+'r', type:'item', trip:tid, cat:'transport', mode, titre:stops[stops.length-1].c + ' → ' + ((S.dep === 'autre' ? S.depTxt : S.dep)||'retour'), from:stops[stops.length-1].c, to:(S.dep === 'autre' ? S.depTxt : S.dep)||'', date:fin, statut:'todo', partage:'pp', qui:[], estime:String(Math.round((x.trans + (x.escale ? 80 : 0))/2))});
     out.push({id:'day:'+tid+':'+fin, type:'day', trip:tid, date:fin, titre:stops[stops.length-1].c + ' → retour', plan:''});

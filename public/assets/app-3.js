@@ -42,7 +42,7 @@
   }
   function wzEt(action, i){
     wzRead();
-    if(action==='add') wz.etapes.push({ville:'', nuits:Math.max(0, wz.nuits - wz.etapes.reduce((s,e)=>s+e.nuits,0)), mode:'Train', nw:1});   // nw : placée sur le chemin dès qu’elle est située
+    if(action==='add') wz.etapes.push({ville:'', nuits:Math.max(0, wz.nuits - wz.etapes.reduce((s,e)=>s+e.nuits,0)), mode:(wz.etapes[0] || {}).mode === 'Voiture' ? 'Voiture' : 'Train', nw:1});   // nw : placée sur le chemin dès qu’elle est située
     if(action==='del') wz.etapes.splice(i,1);
     if(action==='up' && i > 0){ [wz.etapes[i-1], wz.etapes[i]] = [wz.etapes[i], wz.etapes[i-1]]; delete wz.etapes[i-1].nw; delete wz.etapes[i].nw; }
     if(action==='even') wzNights();
@@ -84,7 +84,7 @@
   function wzModes(){   // le moyen de transport selon la distance (sauf si tu l’as choisi toi-même)
     const E = wz.etapes;
     for(let i = 1; i < E.length; i++){ const a = wzPt(E[i - 1]), b = wzPt(E[i]); if(!a || !b || E[i].mm) continue;
-      const d = rawKm(a, b); E[i].km = Math.round(d); E[i].mode = d < 650 ? (a.cc && b.cc && a.cc !== b.cc && d > 450 ? 'Avion' : 'Train') : 'Avion'; }
+      const d = rawKm(a, b); E[i].km = Math.round(d); E[i].mode = E[0].mode === 'Voiture' ? 'Voiture' : d < 650 ? (a.cc && b.cc && a.cc !== b.cc && d > 450 ? 'Avion' : 'Train') : 'Avion'; }
     const cc = [...new Set(E.map(e=>(wzPt(e) || {}).cc).filter(Boolean))]; if(cc.length) wz.ccs = cc;
   }
   function wzNights(){   // au moins 1 nuit partout, 2 si le voyage le permet ; le reste aux villes où l’on dort déjà le plus longtemps (grandes villes en tête)
@@ -209,7 +209,7 @@
     if(!wz || wz.step !== 3) return;
     if(!it || !it.stops.length){ if(el) el.innerHTML = `<div class="v-sum-small">⚠️ ${MSGT('Pas d’itinéraire trouvé pour ce pays (réseau ?) : écris les villes toi-même.')}</div>`; return; }
     const m0 = (wz.etapes[0] || {}).mode || 'Avion';
-    wz.etapes = it.stops.map((e, i)=>({ville:e[0], nuits:e[1], mode: i === 0 ? m0 : 'Train'}));
+    wz.etapes = it.stops.map((e, i)=>({ville:e[0], nuits:e[1], mode: i === 0 || m0 === 'Voiture' ? m0 : 'Train'}));
     setTimeout(wzCheck, 50);
     wz.ctryOk = cc; wz.ccs = [...new Set([...(wz.ccs || []), cc])]; wz.far = it.far || [];
     wz.sea = await ctrySeason(cc, it.stops[0] && it.stops[0][0]).catch(()=>null);

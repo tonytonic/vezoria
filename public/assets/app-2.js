@@ -284,7 +284,9 @@
     const reel = M.who==='all' ? mine.reduce((s,i)=>s+totalOf(i,'reel'),0) : mine.reduce((s,i)=>s+shareOf(i,M.who,'reel'),0);
     const nv = tv().length;
     let trBad = 0; try { const tt = trip(); trBad = cat === 'transport' && tt && !tt.archived && !M.lock ? trChain(true).length : 0; } catch(e){}
-    let h = resaTop() + whoBar() + (cat==='activite' ? discoverCard() : '') + (trBad ? `<button type="button" class="etp-fix" style="margin:0 0 10px" onclick="CV.trFix()">🔧 ${RF('{0} trajet(s) pas dans l’ordre des étapes : les remettre', trBad)}</button>` : '') + `<div class="v-sum">
+    let carN = 0; try { const tt = trip(); carN = cat === 'transport' && tt && !tt.archived && !M.lock ? carMix().length : 0; } catch(e){}
+    let h = resaTop() + whoBar() + (cat==='activite' ? discoverCard() : '') + (carN ? `<div class="etp-fix car-fix" style="margin:0 0 10px">🚗 ${esc(RF('Tu pars et reviens en voiture, mais {0} trajet(s) entre les étapes sont en train : ta voiture resterait à la 1ʳᵉ étape.', carN))}
+      <span><button type="button" class="v-btn" onclick="CV.carFix()">${esc(MSGT('Tout faire en voiture'))}</button><button type="button" class="v-btn sec" onclick="CV.carFix(1)">${esc(MSGT('Garder les trains'))}</button></span></div>` : '') + (trBad ? `<button type="button" class="etp-fix" style="margin:0 0 10px" onclick="CV.trFix()">🔧 ${RF('{0} trajet(s) pas dans l’ordre des étapes : les remettre', trBad)}</button>` : '') + `<div class="v-sum">
       <div class="v-sum-row"><div class="v-sum-big">${eur(proj)}</div><div class="v-sum-small">${paid+booked}/${n} réservés · ${paid} payés</div></div>
       <div class="v-sum-small">${M.who!=='all' ? 'Part de '+esc(pname(M.who)) : nv>1 ? 'Total pour '+nv+' · soit ≈ '+eur(proj/nv)+' par personne' : 'Projection'} · réel saisi : ${eur(reel)}</div>
       <div class="v-bar"><span class="b-paid" style="width:${n?paid/n*100:0}%"></span><span class="b-booked" style="width:${n?booked/n*100:0}%"></span></div>
