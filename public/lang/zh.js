@@ -1,4 +1,6 @@
 I18N.load({
+"Visites audio à {0}":"{0}的语音导览",
+"Prix et notes fournis par WeGoTrip.":"价格和评分来自 WeGoTrip。",
 /* ✈️ prix des vols (2026-10-29a) */
 "Je cherche le prix des vols…":"正在查询机票价格…",
 "Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"{0} → {1} 暂无近期价格：在 Aviasales 查看当天的航班。",

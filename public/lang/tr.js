@@ -1,4 +1,6 @@
 I18N.load({
+"Visites audio à {0}":"{0} sesli turları",
+"Prix et notes fournis par WeGoTrip.":"Fiyatlar ve puanlar WeGoTrip’ten.",
 /* ✈️ prix des vols (2026-10-29a) */
 "Je cherche le prix des vols…":"Uçuş fiyatlarını arıyorum…",
 "Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"{0} → {1} için yakın tarihli fiyat yok: o günün uçuşlarına Aviasales’ta bak.",

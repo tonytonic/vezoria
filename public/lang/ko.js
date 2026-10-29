@@ -1,4 +1,6 @@
 I18N.load({
+"Visites audio à {0}":"{0} 오디오 투어",
+"Prix et notes fournis par WeGoTrip.":"가격과 평점은 WeGoTrip 제공.",
 /* ✈️ prix des vols (2026-10-29a) */
 "Je cherche le prix des vols…":"항공권 가격을 찾는 중…",
 "Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"{0} → {1}의 최근 가격이 없어요: Aviasales에서 그날 항공편을 보세요.",

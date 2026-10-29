@@ -1,4 +1,6 @@
 I18N.load({
+"Visites audio à {0}":"Audioguías en {0}",
+"Prix et notes fournis par WeGoTrip.":"Precios y valoraciones de WeGoTrip.",
 /* ✈️ prix des vols (2026-10-29a) */
 "Je cherche le prix des vols…":"Busco precios de vuelos…",
 "Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"No hay precio reciente para {0} → {1}: mira los vuelos del día en Aviasales.",

@@ -1,4 +1,6 @@
 I18N.load({
+"Visites audio à {0}":"{0}の音声ツアー",
+"Prix et notes fournis par WeGoTrip.":"料金と評価はWeGoTrip提供。",
 /* ✈️ prix des vols (2026-10-29a) */
 "Je cherche le prix des vols…":"航空券の価格を検索中…",
 "Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"{0} → {1} の最近の価格はありません：Aviasalesでその日の便をご覧ください。",

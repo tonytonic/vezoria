@@ -1,4 +1,6 @@
 I18N.load({
+"Visites audio à {0}":"جولات صوتية في {0}",
+"Prix et notes fournis par WeGoTrip.":"الأسعار والتقييمات من WeGoTrip.",
 /* ✈️ prix des vols (2026-10-29a) */
 "Je cherche le prix des vols…":"أبحث عن أسعار الرحلات…",
 "Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"لا يوجد سعر حديث لـ {0} → {1}: اطّلع على رحلات ذلك اليوم في Aviasales.",

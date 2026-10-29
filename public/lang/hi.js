@@ -1,4 +1,6 @@
 I18N.load({
+"Visites audio à {0}":"{0} में ऑडियो टूर",
+"Prix et notes fournis par WeGoTrip.":"दाम और रेटिंग WeGoTrip से।",
 /* ✈️ prix des vols (2026-10-29a) */
 "Je cherche le prix des vols…":"उड़ानों के दाम खोज रहा हूँ…",
 "Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.":"{0} → {1} के लिए हाल का दाम नहीं: उस दिन की उड़ानें Aviasales पर देखें।",
