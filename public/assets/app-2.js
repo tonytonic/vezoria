@@ -1936,7 +1936,7 @@
       const where = [it.nom, it.adresse || cityOf(it.titre)].filter(Boolean).join(', ');
       if(where) L.push(['📍','Maps',`https://www.google.com/maps/search/?api=1&query=${q(where)}`]);
     }
-    if(safeUrl(it.lien)) L.push(['🔗','Ma réservation',safeUrl(it.lien)]);
+    if(safeUrl(it.lien)) L.push(/^wg\|/.test(it.exp || '') ? ['🎧','WeGoTrip',affWrap('wegotrip', safeUrl(it.lien))] : ['🔗','Ma réservation',safeUrl(it.lien)]);
     return L;
   }
   function linksHTML(it, big){
@@ -2068,6 +2068,16 @@
   /* 🎧 Visites audio WeGoTrip de la ville (via /api/tp?op=tours, API publique) : 3 visites avec prix et note,
      chacune ouvre SA page (lien partenaire à partir du 1er novembre). */
   const WG = {};
+  // visites WeGoTrip d'une ville (mémoire de la session + 24 h dans le téléphone) : partagé par « Réserver » et le tri des visites
+  async function wgFetch(city){
+    const key = normQ(city) + '|' + BLANG(); if(WG[key]) return WG[key];
+    M.wgt = M.wgt || {}; const c = M.wgt[key]; if(c && Date.now() - c.at < 864e5){ WG[key] = c.r; return c.r; }
+    if(!city || city.length < 3) return null;
+    const r = await (await withTimeout(fetch(`/api/tp?op=tours&city=${encodeURIComponent(city)}&lang=${BLANG()}`), 12000)).json().catch(()=>null);
+    if(r && r.ok){ WG[key] = r; M.wgt[key] = {at:Date.now(), r}; const ks = Object.keys(M.wgt); if(ks.length > 40) delete M.wgt[ks[0]]; persist(); }
+    return r;
+  }
+  const wgHave = city => { const k = normQ(city) + '|' + BLANG(); if(WG[k]) return WG[k]; const c = (M.wgt || {})[k]; return c && Date.now() - c.at < 864e5 ? (WG[k] = c.r) : null; };
   function wgSlot(g){
     const c = g.c || {}, city = c.city || '';
     if(!g.k.includes('wegotrip') || !city || city.length < 3) return '';
@@ -2084,10 +2094,9 @@
   }
   async function wgFill(){
     for(const el of document.querySelectorAll('.bk-wg:not([data-go])')){
-      el.dataset.go = 1; const city = el.dataset.c, key = normQ(city) + '|' + BLANG();
-      if(WG[key]){ wgShow(el, WG[key]); continue; }
-      try { const r = await (await withTimeout(fetch(`/api/tp?op=tours&city=${encodeURIComponent(city)}&lang=${BLANG()}`), 12000)).json();
-        if(r && r.ok) WG[key] = r;
+      el.dataset.go = 1; const city = el.dataset.c, h = wgHave(city);
+      if(h){ wgShow(el, h); continue; }
+      try { const r = await wgFetch(city);
         document.querySelectorAll('.bk-wg').forEach(x=>{ if(x.dataset.c === city) wgShow(x, r); });
       } catch(e){ el.remove(); }
     }

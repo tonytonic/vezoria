@@ -2196,22 +2196,40 @@
     const t = trip(); if(!t) return []; const S = stRanges(); if(!S.length) return [];
     const K = x => normQ(cityOf(String(x || '').replace(/\(.*?\)/g, '')).trim()), cities = new Set(S.map(x=>K(x.city))), isC = x => cities.has(K(x));
     const T = items(i=>i.cat === 'transport'), out = [], used = new Set(), end = S[S.length - 1].end;
-    const set = (it, o) => { if(okB(it)) { used.add(it.id); return; } const c = Object.assign(clone(it), o); if(['date', 'from', 'to', 'titre'].some(k=>(c[k] || '') !== (it[k] || ''))) out.push(c); used.add(it.id); };
+    // « Roma Termini », « Napoli Centrale », « Rome Fiumicino » ou le titre « Rome → Naples » : c’est bien l’étape Rome / Naples
+    const stOf = (...xs) => { for(const x of xs){ const a = trCanon(x); if(!a) continue; const s = S.find(s=>{ const b = trCanon(s.city); return b && (a === b || a.startsWith(b + ' ') || b.startsWith(a + ' ')); }); if(s) return K(s.city); } return ''; };
+    const tp = i => String(i.titre || '').split(/\s*(?:→|->|–| - |>)\s*/);
+    const fK = i => stOf(i.from, tp(i)[0]), tK = i => stOf(i.to, tp(i).length > 1 ? tp(i)[tp(i).length - 1] : '');
+    const set = (it, o) => { if(okB(it)) { used.add(it.id); return; } o = Object.assign({}, o);
+      if(o.to && stOf(it.to) && stOf(it.to) === stOf(o.to)){ delete o.to; delete o.titre; }      // déjà la bonne ville (gare, aéroport, nom local) : on ne touche pas
+      if(o.from && stOf(it.from) && stOf(it.from) === stOf(o.from)){ delete o.from; delete o.titre; }
+      if(o.titre && !o.to && !o.from) delete o.titre;
+      const c = Object.assign(clone(it), o); if(['date', 'from', 'to', 'titre'].some(k=>(c[k] || '') !== (it[k] || ''))) out.push(c); used.add(it.id); };
     // l’aller : le 1ᵉʳ trajet qui arrive d’ailleurs (pas « Naples → Malte » au milieu du voyage)
     const cand = T.filter(i=>i.from && !isC(i.from) && isC(i.to)), d0 = cand.reduce((m, i)=>!m || (i.date || '9') < m ? (i.date || '9') : m, ''), outs = cand.filter(i=>(i.date || '9') === d0), homes = new Set(outs.map(i=>K(i.from)));
     const rets = T.filter(i=>!outs.includes(i) && isC(i.from) && i.to && !isC(i.to) && homes.has(K(i.to)));
     outs.forEach(i=>set(i, {to:S[0].city, titre:i.from + ' → ' + S[0].city, date:S[0].debut}));
     rets.forEach(i=>set(i, {from:S[S.length - 1].city, titre:S[S.length - 1].city + ' → ' + i.to, date:end}));
-    const mid = T.filter(i=>!used.has(i.id) && isC(i.from) && isC(i.to) && K(i.from) !== K(i.to)), todo = [];
-    for(let k = 0; k + 1 < S.length; k++){ const a = S[k], b = S[k + 1], it = mid.find(i=>!used.has(i.id) && K(i.from) === K(a.city) && K(i.to) === K(b.city));
+    const mid = T.filter(i=>!used.has(i.id) && fK(i) && tK(i) && fK(i) !== tK(i)), todo = [];
+    for(let k = 0; k + 1 < S.length; k++){ const a = S[k], b = S[k + 1], it = mid.find(i=>!used.has(i.id) && fK(i) === K(a.city) && tK(i) === K(b.city));
       if(it) set(it, {date:b.debut}); else todo.push([a, b, k]); }
     todo.forEach(([a, b, k])=>{   // étapes déplacées : on reprend un trajet devenu orphelin (pas réservé), sinon on en crée un, sauf si un autre chemin y mène déjà
-      const orph = mid.filter(i=>!used.has(i.id) && !okB(i)), it = orph.find(i=>K(i.to) === K(b.city)) || orph.find(i=>K(i.from) === K(a.city)) || orph[0];
+      const orph = mid.filter(i=>!used.has(i.id) && !okB(i)), it = orph.find(i=>tK(i) === K(b.city)) || orph.find(i=>fK(i) === K(a.city)) || orph[0];
       if(it) set(it, {from:a.city, to:b.city, titre:a.city + ' → ' + b.city, date:b.debut});
-      else if(!T.some(i=>!mid.includes(i) && !outs.includes(i) && !rets.includes(i) && K(i.to) === K(b.city))) out.push({id:'i' + uid() + 'tc' + k, type:'item', trip:t.id, cat:'transport', mode:'Train', titre:a.city + ' → ' + b.city, from:a.city, to:b.city, date:b.debut, statut:'todo', partage:'pp', qui:[]}); });
+      else if(!T.some(i=>!mid.includes(i) && !outs.includes(i) && !rets.includes(i) && tK(i) === K(b.city))) out.push({id:'i' + uid() + 'tc' + k, type:'item', trip:t.id, cat:'transport', mode:'Train', titre:a.city + ' → ' + b.city, from:a.city, to:b.city, date:b.debut, statut:'todo', partage:'pp', qui:[]}); });
     mid.filter(i=>!used.has(i.id) && !okB(i) && !num(i.prix) && !num(i.estime)).forEach(i=>{ const c = clone(i); c.deleted = true; out.push(c); });
     if(!dry && out.length) putQuiet(out);
     return out;
+  }
+  // nom de ville comparable : sans gare ni aéroport, et les noms locaux courants ramenés à un seul (Roma = Rome, Napoli = Naples…)
+  const TR_ALIAS = [['rome','roma','rom'],['naples','napoli','neapel'],['florence','firenze','florenz'],['venise','venezia','venice','venedig'],['milan','milano','mailand'],['turin','torino'],['genes','genova','genoa','genua'],['bruxelles','brussels','brussel','brussel zuid'],['anvers','antwerpen','antwerp'],['lisbonne','lisboa','lisbon','lissabon'],['seville','sevilla'],['prague','praha','prag'],['vienne','wien','vienna'],['munich','munchen','muenchen'],['cologne','koln','koeln'],['copenhague','kobenhavn','copenhagen','kopenhagen'],['varsovie','warszawa','warsaw','warschau'],['cracovie','krakow','cracow','krakau'],['athenes','athina','athens','athen'],['londres','london'],['edimbourg','edinburgh'],['moscou','moskva','moscow'],['geneve','geneva','genf','ginevra'],['bale','basel','basle'],['le caire','cairo','caire'],['pekin','beijing'],['marrakech','marrakesh'],['la haye','den haag','the hague']];
+  const TR_AL = {}; TR_ALIAS.forEach(g=>g.forEach(n=>{ TR_AL[n] = g[0]; }));
+  const TR_STOP = /\b(gare|station|stazione|estacion|estacao|bahnhof|hbf|hauptbahnhof|centrale|central|centraal|centro|termini|airport|aeroport|aeroporto|aeropuerto|flughafen|intl|international|ville|city|sncf|port|porto|terminal|santa lucia|st|ste|saint|sainte|de|du|des|la|le|les|di|del)\b/g;
+  function trCanon(x){
+    let a = normQ(String(x || '').replace(/\(.*?\)/g, '')); if(!a) return '';
+    if(TR_AL[a]) return TR_AL[a];
+    const w = a.split(' '); for(let n = Math.min(3, w.length); n > 0; n--){ const h = w.slice(0, n).join(' '); if(TR_AL[h]) return [TR_AL[h], ...w.slice(n)].join(' '); }
+    const b = a.replace(TR_STOP, ' ').replace(/\s+/g, ' ').trim(); return TR_AL[b] || b || a;
   }
   function trFix(){ const n = trChain().length; toast(n ? '🚆 ' + RF('{0} trajet(s) remis dans l’ordre des étapes', n) : '✓ ' + MSGT('Les trajets sont déjà dans l’ordre')); const y = window.scrollY; render(); window.scrollTo(0, y); }
 

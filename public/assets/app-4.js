@@ -1214,7 +1214,7 @@ ${pm.join('\n')}</Document></kml>`;
     const city = stayCity(h), days = h.dateFin ? range(h.date, h.dateFin).slice(0, -1) : [h.date];
     const busy = d => list('item', i=>i.trip === t.id && i.cat === 'activite' && i.date === d).length;
     const d = days.slice(days.length > 1 ? 1 : 0).find(x=>!busy(x)) || days.find(x=>!busy(x)) || days[days.length > 1 ? 1 : 0];
-    const id = 'i' + uid(); putQuiet([{id, type:'item', trip:t.id, cat:'activite', titre:expLabel(e), date:d || '', heure:'', adresse:city, statut:'todo', partage:'grp', qui:[], exp:e.key, q:e.q, pick:1}]); return id;
+    const id = 'i' + uid(); putQuiet([{id, type:'item', trip:t.id, cat:'activite', titre:expLabel(e), date:d || '', heure:'', adresse:city, statut:'todo', partage:'grp', qui:[], exp:e.key, q:e.q, pick:1, ...(e.wg ? {lien:e.wg.url} : {})}]); return id;
   }
   function expKeep(hid, key){
     const t = trip(), h = R[hid]; if(!t || !h) return;
@@ -1326,9 +1326,27 @@ ${pm.join('\n')}</Document></kml>`;
     const st = tlStages(), si = c => { const k = st.findIndex(x=>normQ(x.city) === normQ(c)); return k < 0 ? 99 : k; };
     const L = list('place', p=>p.trip === t.id && p.sugg).map(p=>({id:p.id, c:swCity(p), d:p.date || '9', x:p.exc ? 1 : 0}));
     const EX = {}; expTrip(t).forEach(g=>g.L.forEach(e=>{ const id = 'ex|' + g.h.id + '|' + e.key; EX[id] = {h:g.h, e, city:g.city}; L.push({id, c:g.city, d:'~', x:2}); }));
-    if(!L.length){ closeSheet(true); refresh(); return; }
+    // 🎧 visites audio WeGoTrip de chaque ville (déjà connues : tout de suite ; sinon elles arrivent pendant le tri)
+    const wgPend = []; wgStays(t).forEach(([h, city])=>{ const r = wgHave(city); if(r) wgCards(t, h, city, r).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.5}); }); else wgPend.push([h, city]); });
+    if(!L.length && !wgPend.length){ closeSheet(true); refresh(); return; }
     L.sort((a, b)=>si(a.c) - si(b.c) || a.x - b.x || a.d.localeCompare(b.d));
     closeSheet(true); SW = {tid:t.id, ids:L.map(x=>x.id), i:0, hist:[], kept:0, EX, exDone:new Set()}; swRender();
+    wgPend.forEach(([h, city])=>wgFetch(city).then(r=>swAddWg(t, h, city, r)).catch(()=>{}));
+  }
+  // 🎧 WeGoTrip dans le tri : 3 visites par ville, comme des « activités à réserver » (garder = au programme, avec le lien de la visite)
+  const wgStays = t => { const seen = new Set(), out = []; list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date).sort((a, b)=>a.date.localeCompare(b.date)).forEach(h=>{ const c = stayCity(h); if(c && !seen.has(normQ(c))){ seen.add(normQ(c)); out.push([h, c]); } }); return out; };
+  function wgCards(t, h, city, r){
+    if(hidden('blk:book') || !r || !r.ok) return [];
+    const no = new Set(((M.expNo || {})[t.id]) || []), kept = expKept(t.id);
+    return (r.tours || []).filter(x=>x && x.id && !no.has('wg|' + x.id) && !kept.has('wg|' + x.id)).slice(0, 3)
+      .map(x=>({id:'ex|' + h.id + '|wg|' + x.id, v:{h, city, e:{key:'wg|' + x.id, ic:'🎧', l:'Visite audio', p:x.title, q:x.title, wg:x}}}));
+  }
+  function swAddWg(t, h, city, r){
+    if(!SW || SW.tid !== t.id) return; const C = wgCards(t, h, city, r).filter(x=>!SW.EX[x.id]); if(!C.length) return;
+    C.forEach(x=>{ SW.EX[x.id] = x.v; });
+    const last = SW.ids.reduce((a, id, i)=>normQ(swCityOf(swRec(id)) || '') === normQ(city) ? i : a, -1);   // après les idées de cette ville
+    const at = Math.max(SW.i + 1, last + 1); SW.ids.splice(at, 0, ...C.map(x=>x.id));
+    if(SW.ids.slice(SW.i).filter(swPend).length === C.length) swRender(); else { const sm = document.querySelector('#cv-sw .sw-ttl small'), T = SW.ids.length; if(sm) sm.textContent = Math.min(T - SW.ids.slice(SW.i).filter(swPend).length + 1, T) + '/' + T; }
   }
   const swPend = id => /^ex\|/.test(id) ? !!(SW && SW.EX && SW.EX[id] && !SW.exDone.has(id)) : !!(R[id] && R[id].sugg && !R[id].deleted);
   const swRec = id => /^ex\|/.test(id) ? Object.assign({id, ex:1, nom:SW.EX[id].e.p, city:SW.EX[id].city}, SW.EX[id]) : R[id];
@@ -1365,10 +1383,15 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="sw-ph"><span class="sw-ic">${ic}</span><img class="sw-img" alt="" decoding="async"></div><div class="sw-shade"></div>
       <i class="sw-tag yes">${esc(MSGT('Je garde'))}</i><i class="sw-tag no">${esc(MSGT('Non merci'))}</i>
       <div class="sw-tx"><small>${c ? '📍 <span data-notr>' + esc(c) + '</span>' : ''}</small>
-        ${p.ex ? `<em class="sw-pay">🎟️ ${esc(MSGT(p.e.l))} · ${esc(MSGT('activité à réserver'))}</em>` : ''}
+        ${p.ex && p.e.wg ? `<em class="sw-pay">🎧 ${esc(MSGT('Visite audio'))}${p.e.wg.price ? ' · ' + esc(RF('dès {0}', (+p.e.wg.price).toLocaleString(NL(), {style:'currency', currency:p.e.wg.currency || 'EUR', maximumFractionDigits:p.e.wg.price % 1 ? 2 : 0}))) : ''}${p.e.wg.rating ? ' · ⭐ ' + (+p.e.wg.rating).toFixed(1).replace('.', ',') : ''} · ${esc(MSGT('partenaire'))}</em>`
+        : p.ex ? `<em class="sw-pay">🎟️ ${esc(MSGT(p.e.l))} · ${esc(MSGT('activité à réserver'))}</em>` : ''}
         <b data-notr>${esc(p.nom)}</b>${p.exc ? `<em>🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</em>` : ''}<p class="sw-ex" data-notr></p><a class="sw-wk" target="_blank" rel="noopener" hidden>📖 Wikipédia</a></div></div>`;
   }
   function swFill(el, p){
+    if(p && p.ex && p.e && p.e.wg){ const w = p.e.wg, im = el.querySelector('.sw-img');   // visite WeGoTrip : sa photo, sa durée, son lien
+      if(w.img){ im.onload = () => im.classList.add('ok'); im.src = w.img; }
+      el.querySelector('.sw-ex').textContent = [w.duration, w.reviews ? RF('{0} avis', w.reviews) : ''].filter(Boolean).join(' · ');
+      const a = el.querySelector('.sw-wk'); a.href = affWrap('wegotrip', w.url); a.textContent = '🎧 WeGoTrip ›'; if(affOn('wegotrip')) a.rel = 'sponsored noopener'; a.hidden = false; return; }
     swInfo(p).then(x=>{ if(!el.isConnected) return; const im = el.querySelector('.sw-img');
       if(x.img){ im.onload = () => im.classList.add('ok'); im.src = x.img; }
       if(x.ex) el.querySelector('.sw-ex').textContent = x.ex;
