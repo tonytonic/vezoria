@@ -1342,10 +1342,12 @@
     msg('📦 Lecture du fichier…'); toast('📥 Import lancé : tu peux continuer à utiliser l’appli');
     try {
       const list_ = [];
-      if(/\.json$/i.test(f.name) || f.type === 'application/json') list_.push({j:JSON.parse(await f.text()), base:'', ents:null, z:null});
+      // fichier venu d'ailleurs : on borne les tailles (un faux ZIP ne doit pas bloquer le téléphone) et on ne garde que des objets
+      const PS_JMAX = 60e6, PS_PMAX = 40e6, isObj = j => j && typeof j === 'object' && !Array.isArray(j);
+      if(/\.json$/i.test(f.name) || f.type === 'application/json'){ if(f.size > PS_JMAX) throw new Error('fichier trip.json trop lourd.'); const j = JSON.parse(await f.text()); if(isObj(j)) list_.push({j, base:'', ents:null, z:null, pmax:PS_PMAX}); }
       else {
         msg('📦 Lecture du fichier…'); const z = await loadZip(); rd = new z.ZipReader(new z.BlobReader(f)); const ents = await rd.getEntries();
-        for(const e of ents.filter(e=>!e.directory && /(^|\/)trip\.json$/i.test(e.filename))){ try { list_.push({j:JSON.parse(await e.getData(new z.TextWriter())), base:e.filename.replace(/trip\.json$/i, ''), ents, z}); } catch(err){} }
+        for(const e of ents.filter(e=>!e.directory && /(^|\/)trip\.json$/i.test(e.filename) && (e.uncompressedSize || 0) <= PS_JMAX).slice(0, 500)){ try { const j = JSON.parse(await e.getData(new z.TextWriter())); if(isObj(j)) list_.push({j, base:e.filename.replace(/trip\.json$/i, ''), ents, z, pmax:PS_PMAX}); } catch(err){} }
       }
       if(!list_.length) throw new Error('aucun voyage Polarsteps trouvé dans ce fichier (il faut le ZIP de Polarsteps ou un fichier trip.json).');
       let nS = 0, nP = 0, last = '';
@@ -1369,7 +1371,8 @@
     finally { try { rd && rd.close(); } catch(e){} await psLock(false); PSRUN = null; }
   }
   async function psOne(tr, all, msg, old){
-    const j = tr.j || {}, steps = (j.all_steps || j.steps || []).slice().sort((a, b)=>(+a.start_time || 0) - (+b.start_time || 0));
+    const j = tr.j || {}, st0 = Array.isArray(j.all_steps) ? j.all_steps : Array.isArray(j.steps) ? j.steps : [];
+    const steps = st0.filter(x=>x && typeof x === 'object').slice(0, 3000).sort((a, b)=>(+a.start_time || 0) - (+b.start_time || 0));
     const tid = old ? old.id : 't' + uid(), debut = psIso(j.start_date) || psIso((steps[0] || {}).start_time), fin = psIso(j.end_date) || psIso((steps[steps.length - 1] || {}).start_time) || debut;
     const head = {id:tid, type:'trip', titre:String(j.name || j.title || 'Voyage Polarsteps').slice(0, 120), sous:String(j.summary || '').slice(0, 160), debut, fin, voyageurs:M.me ? [M.me] : [], objectif:'', src:'polarsteps', psId:String(j.id || '')};
     // remplacer : même voyage (compagnons, abonnés, budget… gardés), seuls ses souvenirs importés repartent de zéro
@@ -1377,13 +1380,14 @@
     // identifiants stables : réimporter le même ZIP ne crée ni nouveau souvenir ni nouvelle photo (pas de doublon sur le téléphone ni sur le serveur)
     const psH = async x => 'ps' + hex(await crypto.subtle.digest('SHA-256', te.encode(x))).slice(0, 20);
     const keep = new Set(); let p = 0;
-    const photos = tr.ents ? tr.ents.filter(e=>!e.directory && e.filename.startsWith(tr.base) && /\.(jpe?g|png|webp)$/i.test(e.filename) && /\/photos?\//i.test(e.filename)) : [];
+    const photos = tr.ents ? tr.ents.filter(e=>!e.directory && e.filename.startsWith(tr.base) && /\.(jpe?g|png|webp)$/i.test(e.filename) && /\/photos?\//i.test(e.filename) && (e.uncompressedSize || 0) <= (tr.pmax || 40e6)) : [];
     for(let i = 0; i < steps.length; i++){
-      const s = steps[i] || {}, L = s.location || {}, key = String(s.id || ''), slug = String(s.slug || '');
-      const lat = L.lat != null ? +L.lat : s.lat != null ? +s.lat : null, lng = L.lon != null ? +L.lon : L.lng != null ? +L.lng : s.lon != null ? +s.lon : null;
+      const s = steps[i] || {}, L = s.location && typeof s.location === 'object' ? s.location : {}, key = String(s.id || ''), slug = String(s.slug || '');
+      let lat = L.lat != null ? +L.lat : s.lat != null ? +s.lat : null, lng = L.lon != null ? +L.lon : L.lng != null ? +L.lng : s.lon != null ? +s.lon : null;
+      if(!(Math.abs(lat) <= 90 && Math.abs(lng) <= 180)){ lat = null; lng = null; }
       const svId = await psH('sv|' + tid + '|' + (key || slug || i) + '|' + (s.start_time || '')); keep.add(svId);
       const sv = {id:svId, type:'souv', trip:tid, date:psIso(s.start_time) || debut, titre:String(s.display_name || s.name || L.name || ('Étape ' + (i + 1))).slice(0, 120),
-        lieu:[L.name, L.detail].filter(Boolean).join(', ').slice(0, 160), texte:String(s.description || '').slice(0, 20000), photos:[], cc:String(L.country_code || '').toUpperCase().slice(0, 2), pays:L.country || '', src:'polarsteps'};
+        lieu:[L.name, L.detail].filter(x=>typeof x === 'string' && x).join(', ').slice(0, 160), texte:String(s.description || '').slice(0, 20000), photos:[], cc:/^[a-z]{2}$/i.test(L.country_code || '') ? L.country_code.toUpperCase() : '', pays:typeof L.country === 'string' ? L.country.slice(0, 60) : '', src:'polarsteps'};
       if(lat != null && isFinite(lat) && lng != null && isFinite(lng)){ sv.lat = lat; sv.lng = lng; }
       let ph = photos.filter(e=>e.filename.split('/').some(g=>(key && (g === key || g.endsWith('_' + key))) || (!key && slug && g.startsWith(slug + '_'))));
       if(!all) ph = ph.slice(0, 3);
