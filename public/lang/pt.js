@@ -1,4 +1,9 @@
 I18N.load({
+/* 🚗 voiture (2026-10-29f) */
+"Tu pars et reviens en voiture, mais {0} trajet(s) entre les étapes sont en train : ta voiture resterait à la 1ʳᵉ étape.":"Vais e voltas de carro, mas {0} trajeto(s) entre etapas são de comboio: o carro ficaria na primeira etapa.",
+"Tout faire en voiture":"Tudo de carro",
+"Garder les trains":"Manter os comboios",
+"{0} trajet(s) passés en voiture":"{0} trajeto(s) mudados para carro",
 "Payant : pense à réserver":"Pago: lembre-se de reservar",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"Limpar",

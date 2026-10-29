@@ -1,4 +1,9 @@
 I18N.load({
+/* 🚗 voiture (2026-10-29f) */
+"Tu pars et reviens en voiture, mais {0} trajet(s) entre les étapes sont en train : ta voiture resterait à la 1ʳᵉ étape.":"आप कार से जाते और लौटते हैं, पर पड़ावों के बीच {0} यात्रा ट्रेन से है: आपकी कार पहले पड़ाव पर रह जाएगी।",
+"Tout faire en voiture":"सब कार से",
+"Garder les trains":"ट्रेन रखें",
+"{0} trajet(s) passés en voiture":"{0} यात्रा कार में बदली",
 "Payant : pense à réserver":"सशुल्क: बुक करना न भूलें",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"मिटाएँ",

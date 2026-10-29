@@ -1,4 +1,9 @@
 I18N.load({
+/* 🚗 voiture (2026-10-29f) */
+"Tu pars et reviens en voiture, mais {0} trajet(s) entre les étapes sont en train : ta voiture resterait à la 1ʳᵉ étape.":"往復とも車ですが、区間のうち{0}件が電車です：車が最初の滞在地に残ってしまいます。",
+"Tout faire en voiture":"すべて車にする",
+"Garder les trains":"電車のままにする",
+"{0} trajet(s) passés en voiture":"{0}件を車に変更しました",
 "Payant : pense à réserver":"有料：予約をお忘れなく",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"クリア",

@@ -1,4 +1,9 @@
 I18N.load({
+/* 🚗 voiture (2026-10-29f) */
+"Tu pars et reviens en voiture, mais {0} trajet(s) entre les étapes sont en train : ta voiture resterait à la 1ʳᵉ étape.":"Вы едете туда и обратно на машине, но {0} переезд(а) между остановками — на поезде: машина останется в первом пункте.",
+"Tout faire en voiture":"Всё на машине",
+"Garder les trains":"Оставить поезда",
+"{0} trajet(s) passés en voiture":"{0} переезд(а) переведено на машину",
 "Payant : pense à réserver":"Платно: не забудьте забронировать",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"Очистить",

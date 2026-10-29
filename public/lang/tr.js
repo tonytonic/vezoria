@@ -1,4 +1,9 @@
 I18N.load({
+/* 🚗 voiture (2026-10-29f) */
+"Tu pars et reviens en voiture, mais {0} trajet(s) entre les étapes sont en train : ta voiture resterait à la 1ʳᵉ étape.":"Arabayla gidip dönüyorsun ama duraklar arası {0} yolculuk trenle: araban ilk durakta kalır.",
+"Tout faire en voiture":"Hepsi arabayla",
+"Garder les trains":"Trenleri koru",
+"{0} trajet(s) passés en voiture":"{0} yolculuk arabaya çevrildi",
 "Payant : pense à réserver":"Ücretli: rezervasyon yapmayı unutma",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"Temizle",

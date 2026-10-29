@@ -1,4 +1,9 @@
 I18N.load({
+/* 🚗 voiture (2026-10-29f) */
+"Tu pars et reviens en voiture, mais {0} trajet(s) entre les étapes sont en train : ta voiture resterait à la 1ʳᵉ étape.":"你开车往返，但途中有 {0} 段是火车：车会留在第一站。",
+"Tout faire en voiture":"全部改为自驾",
+"Garder les trains":"保留火车",
+"{0} trajet(s) passés en voiture":"已将 {0} 段改为自驾",
 "Payant : pense à réserver":"收费：记得预订",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"清除",

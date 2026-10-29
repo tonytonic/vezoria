@@ -1,4 +1,9 @@
 I18N.load({
+/* 🚗 voiture (2026-10-29f) */
+"Tu pars et reviens en voiture, mais {0} trajet(s) entre les étapes sont en train : ta voiture resterait à la 1ʳᵉ étape.":"Je gaat heen en terug met de auto, maar {0} rit(ten) tussen de etappes zijn per trein: je auto zou bij de eerste etappe blijven.",
+"Tout faire en voiture":"Alles met de auto",
+"Garder les trains":"Treinen houden",
+"{0} trajet(s) passés en voiture":"{0} rit(ten) omgezet naar auto",
 "Payant : pense à réserver":"Betaald: vergeet niet te boeken",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"Wissen",

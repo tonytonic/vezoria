@@ -1,4 +1,9 @@
 I18N.load({
+/* 🚗 voiture (2026-10-29f) */
+"Tu pars et reviens en voiture, mais {0} trajet(s) entre les étapes sont en train : ta voiture resterait à la 1ʳᵉ étape.":"Parti e torni in auto, ma {0} tratta/e tra le tappe sono in treno: l’auto resterebbe alla prima tappa.",
+"Tout faire en voiture":"Tutto in auto",
+"Garder les trains":"Tieni i treni",
+"{0} trajet(s) passés en voiture":"{0} tratta/e passate in auto",
 "Payant : pense à réserver":"A pagamento: ricordati di prenotare",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"Cancella",

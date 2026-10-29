@@ -1,4 +1,9 @@
 I18N.load({
+/* 🚗 voiture (2026-10-29f) */
+"Tu pars et reviens en voiture, mais {0} trajet(s) entre les étapes sont en train : ta voiture resterait à la 1ʳᵉ étape.":"자동차로 출발하고 돌아오지만 구간 중 {0}개가 기차입니다: 차가 첫 도시에 남게 됩니다.",
+"Tout faire en voiture":"모두 자동차로",
+"Garder les trains":"기차 유지",
+"{0} trajet(s) passés en voiture":"{0}개 구간을 자동차로 변경",
 "Payant : pense à réserver":"유료: 예약을 잊지 마세요",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"지우기",

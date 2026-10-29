@@ -1,4 +1,9 @@
 I18N.load({
+/* 🚗 voiture (2026-10-29f) */
+"Tu pars et reviens en voiture, mais {0} trajet(s) entre les étapes sont en train : ta voiture resterait à la 1ʳᵉ étape.":"تذهب وتعود بالسيارة، لكن {0} رحلة بين المحطات بالقطار: ستبقى سيارتك في المحطة الأولى.",
+"Tout faire en voiture":"الكل بالسيارة",
+"Garder les trains":"الإبقاء على القطارات",
+"{0} trajet(s) passés en voiture":"تم تحويل {0} رحلة إلى السيارة",
 "Payant : pense à réserver":"مدفوع: لا تنسَ الحجز",
 /* 📅 calendrier unique (2026-10-29d) */
 "Effacer":"مسح",
