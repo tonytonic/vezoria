@@ -311,6 +311,75 @@
   function field(lbl, name, val, type, extra){
     return `<div class="v-f"><label>${lbl}</label><input class="v-in" name="${name}" type="${type||'text'}" value="${esc(val)}" ${extra||''}></div>`;
   }
+  /* 📅 UN SEUL CALENDRIER POUR DEUX DATES (arrivée → départ, début → fin) : on touche le 1ᵉʳ jour puis le dernier.
+     Tout formulaire qui a deux cases date côte à côte (.v-f2) en profite tout seul. Les deux cases restent (cachées) :
+     l'enregistrement et les réactions des formulaires (oninput) ne changent pas. */
+  const drD = s => new Date(s + 'T12:00:00'), drIso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const drN = (a, b) => Math.round((drD(b) - drD(a)) / 864e5);
+  const drF = s => drD(s).toLocaleDateString(NL(), {weekday:'short', day:'numeric', month:'short'});
+  const drNights = n => n === 1 ? '1 ' + MSGT('nuit') : RF('{0} nuits', n);
+  function drTxt(a, b){
+    if(!a) return `<span class="dr-ph">📅 ${esc(MSGT('Choisir les dates'))}</span>`;
+    const ok = b && b > a;
+    return `<span>📅 <b>${esc(drF(a))}</b>${ok ? ` → <b>${esc(drF(b))}</b>` : ' → …'}</span>${ok ? `<em>${esc(drNights(drN(a, b)))}</em>` : ''}`;
+  }
+  function drEnhance(){
+    document.querySelectorAll('.v-f2:not([data-dr])').forEach(box=>{
+      const I = box.querySelectorAll('input'); box.dataset.dr = 1;
+      if(I.length !== 2 || I[0].type !== 'date' || I[1].type !== 'date') return;
+      const [a, b] = I, lab = x => ((x.closest('.v-f') || {}).querySelector ? (x.closest('.v-f').querySelector('label') || {}).textContent || '' : '').trim();
+      const la = lab(a), lb = lab(b), w = document.createElement('div'); w.className = 'v-f dr-w';
+      w.innerHTML = `<label>${esc(la)} → ${esc(lb)}</label><button type="button" class="v-in dr-btn"></button>`;
+      const btn = w.querySelector('button'); let last = '';
+      const upd = () => { const k = a.value + '|' + b.value; if(k !== last){ last = k; btn.innerHTML = drTxt(a.value, b.value); } };
+      box.style.display = 'none'; box.parentNode.insertBefore(w, box); upd();
+      btn.onclick = () => drOpen(a, b, la, lb, upd);
+      [a, b].forEach(x=>{ x.addEventListener('input', upd); x.addEventListener('change', upd); });
+      const tk = setInterval(()=>{ if(!w.isConnected) clearInterval(tk); else upd(); }, 700);   // une case remplie par le code (sans évènement)
+    });
+  }
+  function drOpen(A, B, la, lb, upd){
+    let s = A.value || '', e = B.value && B.value > (A.value || '') ? B.value : '';
+    const today = isoToday(), base = drD(s || today); base.setDate(1);
+    const bg = document.createElement('div'); bg.className = 'dr-bg';
+    const wk = [...Array(7)].map((_, i)=>new Date(2024, 0, 1 + i).toLocaleDateString(NL(), {weekday:'narrow'}));
+    let months = '';
+    for(let m = -3; m <= 18; m++){
+      const d0 = new Date(base.getFullYear(), base.getMonth() + m, 1), pad = (d0.getDay() + 6) % 7, nd = new Date(d0.getFullYear(), d0.getMonth() + 1, 0).getDate();
+      let cells = '<i></i>'.repeat(pad);
+      for(let d = 1; d <= nd; d++){ const iso = drIso(new Date(d0.getFullYear(), d0.getMonth(), d)); cells += `<button type="button" data-d="${iso}"${iso === today ? ' class="td"' : ''}>${d}</button>`; }
+      months += `<section${m === 0 ? ' class="dr-cur"' : ''}><h4>${esc(d0.toLocaleDateString(NL(), {month:'long', year:'numeric'}))}</h4><div class="dr-g">${cells}</div></section>`;
+    }
+    bg.innerHTML = `<div class="dr-p" role="dialog" aria-modal="true"><div class="dr-h"><b>${esc(la)} → ${esc(lb)}</b><button type="button" class="dr-x" aria-label="${esc(MSGT('Fermer'))}">✕</button></div>
+      <div class="dr-s"></div><div class="dr-wk">${wk.map(x=>`<span>${esc(x)}</span>`).join('')}</div><div class="dr-sc">${months}</div>
+      <div class="dr-f"><button type="button" class="v-btn sec dr-c">${esc(MSGT('Effacer'))}</button><button type="button" class="v-btn dr-ok">✓ ${esc(MSGT('Valider'))}</button></div></div>`;
+    document.body.appendChild(bg);
+    const st = bg.querySelector('.dr-s'), okB = bg.querySelector('.dr-ok');
+    const paint = () => {
+      bg.querySelectorAll('.dr-g button').forEach(x=>{ const d = x.dataset.d; x.classList.toggle('a', d === s); x.classList.toggle('one', d === s && !e); x.classList.toggle('b', !!e && d === e); x.classList.toggle('in', !!e && d > s && d < e); });
+      st.innerHTML = !s ? esc(RF('Touche le jour : {0}', la)) : !e ? `<b>${esc(drF(s))}</b> → ${esc(RF('touche le jour : {0}', lb))}` : `<b>${esc(drF(s))}</b> → <b>${esc(drF(e))}</b> · ${esc(drNights(drN(s, e)))}`;
+      okB.disabled = !s;
+    };
+    const close = () => { bg.remove(); };
+    const save = () => {
+      const fire = x => { x.dispatchEvent(new Event('input', {bubbles:true})); x.dispatchEvent(new Event('change', {bubbles:true})); };
+      A.value = s; fire(A); B.value = e; fire(B); upd(); close();
+    };
+    let tm = 0;
+    bg.querySelector('.dr-sc').addEventListener('click', ev=>{
+      const x = ev.target.closest('button[data-d]'); if(!x) return; const d = x.dataset.d; clearTimeout(tm);
+      if(!s || e || d < s){ s = d; e = ''; } else if(d === s){ e = ''; } else { e = d; tm = setTimeout(save, 450); }   // 2ᵉ jour touché : c'est enregistré
+      paint();
+    });
+    bg.querySelector('.dr-c').onclick = () => { clearTimeout(tm); s = ''; e = ''; paint(); };
+    okB.onclick = () => { clearTimeout(tm); save(); };
+    bg.querySelector('.dr-x').onclick = () => { clearTimeout(tm); close(); };
+    bg.addEventListener('click', ev=>{ if(ev.target === bg){ clearTimeout(tm); close(); } });
+    paint();
+    const cur = bg.querySelector('.dr-cur'), sc = bg.querySelector('.dr-sc'); if(cur) sc.scrollTop = cur.offsetTop - sc.offsetTop;
+  }
+  let drQ = 0;
+  if(typeof MutationObserver !== 'undefined') new MutationObserver(()=>{ if(!drQ) drQ = requestAnimationFrame(()=>{ drQ = 0; try { drEnhance(); } catch(e){} }); }).observe(document.documentElement, {childList:true, subtree:true});
     /* ── Fenêtres : croix ✕ toujours visible, flèche ← vers l’écran d’avant, glisser vers le bas pour fermer ── */
   let shStack = [], shCur = '', shPend = null, shBack = false;
   const shTitle = h => ((String(h).match(/<h2[^>]*>([\s\S]*?)<\/h2>/) || [])[1] || '').replace(/<[^>]+>/g, '').trim();
