@@ -1100,7 +1100,7 @@
      ══════════════════════════════════════════════════════════════════════════ */
   // Lien « Buy me a coffee » (ou autre) : affiché seulement sur le site, jamais dans l'appli Google Play
   // ☕ Ton lien de soutien (Buy Me a Coffee). Vide = aucun bouton. Jamais affiché dans l'appli Google Play.
-  var COFFEE_URL = 'https://buymeacoffee.com/tonytonic';
+  var COFFEE_URL = '';   // retiré le 29/10/2026 : l'appli est éditée par une micro-entreprise (plus de dons)
   function isPlay(){
     // Seulement sur Android : un iPhone (ou un ordinateur) n'est jamais « l'appli Google Play », même s'il a ouvert un lien ?src=play
     try {
