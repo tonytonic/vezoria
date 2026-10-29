@@ -2029,15 +2029,15 @@
   // attributs d’un lien : « sponsored » + petite mention « partenaire » quand c’est un lien rémunéré (obligation d’identifier la publicité)
   const bookRel = k => affOn(k) ? ` rel="sponsored noopener" data-aff="${esc(MSGT('partenaire'))}"` : ' rel="noopener"';
   const bookA = (k, c) => `<a href="${esc(bookUrl(k, c))}" target="_blank"${bookRel(k)} onclick="event.stopPropagation()">${BK[k][0]} ${BK[k][1]}</a>`;
-  const bookRows = G => G.map(g=>`<div class="bk-g"><small>${g.t}</small><div class="cv-links">${g.k.map(k=>bookA(k, g.c)).join('')}</div>${fpSlot(g)}</div>`).join('')
+  const bookRows = G => G.map(g=>`<div class="bk-g"><small>${g.t}</small><div class="cv-links">${g.k.map(k=>bookA(k, g.c)).join('')}</div>${fpSlot(g)}${wgSlot(g)}</div>`).join('')
     + (G.some(g=>g.k.some(affOn)) ? `<div class="v-sum-small bk-aff">🔗 ${MSGT('Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.')}</div>` : '');
   /* ✈️ Prix des vols (Aviasales, via /api/tp) : sous « Comparer les vols », le prix « dès » le jour du vol (sinon dans le mois),
      et le bouton Aviasales ouvre directement ce trajet à cette date. Rien n’est envoyé sur l’utilisateur : seulement
      la position des deux villes et la date. Les prix viennent des recherches récentes : indicatifs. */
   const FP = {};   // réponses déjà reçues (le temps de la session)
   function fpSlot(g){
-    const c = g.c || {}; if(!g.k.includes('aviasales') || !c.from || !c.to || !c.date || c.date < isoToday()) return '';
-    setTimeout(fpFill, 40);
+    const c = g.c || {}; if(!g.k.includes('aviasales') || String(c.from || '').trim().length < 3 || String(c.to || '').trim().length < 3 || !/^\d{4}-\d{2}-\d{2}$/.test(c.date || '') || c.date < isoToday()) return '';
+    clearTimeout(fpSlot.t); fpSlot.t = setTimeout(fpFill, 1200);   // on attend la fin de la saisie (pas une recherche par lettre tapée)
     return `<div class="bk-fp" data-f="${esc(c.from)}" data-t="${esc(c.to)}" data-d="${esc(c.date)}">✈️ ${MSGT('Je cherche le prix des vols…')}</div>`;
   }
   function fpShow(el, r){
@@ -2054,7 +2054,7 @@
   }
   async function fpFill(){
     for(const el of document.querySelectorAll('.bk-fp:not([data-go])')){
-      el.dataset.go = 1; const f = el.dataset.f, t = el.dataset.t, d = el.dataset.d, key = normQ(f) + '|' + normQ(t) + '|' + d;
+      if(!el.isConnected) continue; el.dataset.go = 1; const f = el.dataset.f, t = el.dataset.t, d = el.dataset.d, key = normQ(f) + '|' + normQ(t) + '|' + d;
       if(FP[key]){ fpShow(el, FP[key]); continue; }
       try {
         const [a, b] = await Promise.all([cityInfo(f), cityInfo(t)]);
@@ -2062,6 +2062,33 @@
         const r = await (await withTimeout(fetch(`/api/tp?op=flight&olat=${a.lat}&olng=${a.lng}&dlat=${b.lat}&dlng=${b.lng}&date=${d}`), 12000)).json();
         if(r && r.ok) FP[key] = r;
         document.querySelectorAll('.bk-fp').forEach(x=>{ if(x.dataset.f === f && x.dataset.t === t && x.dataset.d === d) fpShow(x, r); });
+      } catch(e){ el.remove(); }
+    }
+  }
+  /* 🎧 Visites audio WeGoTrip de la ville (via /api/tp?op=tours, API publique) : 3 visites avec prix et note,
+     chacune ouvre SA page (lien partenaire à partir du 1er novembre). */
+  const WG = {};
+  function wgSlot(g){
+    const c = g.c || {}, city = c.city || '';
+    if(!g.k.includes('wegotrip') || !city || city.length < 3) return '';
+    clearTimeout(wgSlot.t); wgSlot.t = setTimeout(wgFill, 900);
+    return `<div class="bk-wg" data-c="${esc(city)}"></div>`;
+  }
+  function wgShow(el, r){
+    const L = r && r.ok ? (r.tours || []).slice(0, 3) : [];
+    if(!L.length){ el.remove(); return; }
+    const money = (v, cur) => (+v).toLocaleString(NL(), {style:'currency', currency:cur || 'EUR', maximumFractionDigits:v % 1 ? 2 : 0});
+    el.innerHTML = `<small>🎧 ${RF('Visites audio à {0}', esc(r.city.name))}</small>` + L.map(t=>`<a class="wg-t" href="${esc(affWrap('wegotrip', t.url))}" target="_blank"${bookRel('wegotrip')} onclick="event.stopPropagation()">
+        ${t.img ? `<img src="${esc(t.img)}" alt="" loading="lazy">` : '<i>🎧</i>'}<span><b>${esc(t.title)}</b><em>${t.price ? RF('dès {0}', money(t.price, t.currency)) : ''}${t.rating ? ` · ⭐ ${(+t.rating).toFixed(1).replace('.', ',')}${t.reviews ? ' (' + t.reviews + ')' : ''}` : ''}${t.duration ? ' · ' + esc(t.duration) : ''}</em></span></a>`).join('')
+      + `<small class="wg-n">${MSGT('Prix et notes fournis par WeGoTrip.')}</small>`;
+  }
+  async function wgFill(){
+    for(const el of document.querySelectorAll('.bk-wg:not([data-go])')){
+      el.dataset.go = 1; const city = el.dataset.c, key = normQ(city) + '|' + BLANG();
+      if(WG[key]){ wgShow(el, WG[key]); continue; }
+      try { const r = await (await withTimeout(fetch(`/api/tp?op=tours&city=${encodeURIComponent(city)}&lang=${BLANG()}`), 12000)).json();
+        if(r && r.ok) WG[key] = r;
+        document.querySelectorAll('.bk-wg').forEach(x=>{ if(x.dataset.c === city) wgShow(x, r); });
       } catch(e){ el.remove(); }
     }
   }
