@@ -182,7 +182,9 @@ export async function onRequestGet({ request, env }) {
   if (!env.DB) return json({ error: 'Base D1 non liée (DB)' }, 500);
   await tables(env.DB);
   const a = new URL(request.url).searchParams.get('a');
-  if (a === 'flush') return json({ ok: true, sent: await flush(env) });
+  if (a === 'flush') {   // appelé toutes les 30 min par le robot GitHub « Rappels » : une erreur passagère (base, réseau) répond 503 et le robot réessaie
+    try { return json({ ok: true, sent: await flush(env) }); } catch (e) { return json({ ok: false, error: String(e && e.message || e).slice(0, 200) }, 503); }
+  }
   return json({ pub: (await vapid(env.DB)).pub });
 }
 
