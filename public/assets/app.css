@@ -2943,3 +2943,5 @@ body.cv-ph-past .cv-prep2 .ar-go:not(.ex-go){color:#1E2C5C}
 /* 🔗 liens partenaires (2026-10-28d) : petite mention visible à côté du nom */
 a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600;opacity:.6;white-space:nowrap}
 .bk-aff{margin:8px 2px 0;opacity:.8}
+/* ✈️ prix des vols Aviasales (2026-10-29a) */
+.bk-fp{margin:6px 0 2px;padding:8px 10px;border-radius:10px;background:#eef6ff;font-size:.84rem;line-height:1.4}.bk-fp a{font-weight:700;margin-left:4px;white-space:nowrap}.bk-fp small{display:block;opacity:.7;font-size:.72rem;margin-top:2px}

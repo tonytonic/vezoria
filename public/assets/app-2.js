@@ -2023,13 +2023,48 @@
     if(ESIM_FIX[cc]) return ESIM_FIX[cc];
     try { return new Intl.DisplayNames(['en'], {type:'region'}).of(cc).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z]+/g, '-').replace(/^-|-$/g, ''); } catch(e){ return ''; }
   }
-  const bookUrl = (k, c) => { if(!BK[k]) return ''; const u = BK[k][2](c || {}); if(!affOn(k) || !u) return u;
-    const a = AFF[k]; return `https://tp.media/r?campaign_id=${a[0]}&marker=${AFF_MARKER}&p=${a[1]}&trs=${AFF_TRS}&sub_id=${(typeof inPlay === 'function' && inPlay()) ? 'play' : 'web'}&u=${encodeURIComponent(u)}`; };
+  const affWrap = (k, u) => { if(!affOn(k) || !u) return u; const a = AFF[k];
+    return `https://tp.media/r?campaign_id=${a[0]}&marker=${AFF_MARKER}&p=${a[1]}&trs=${AFF_TRS}&sub_id=${(typeof inPlay === 'function' && inPlay()) ? 'play' : 'web'}&u=${encodeURIComponent(u)}`; };
+  const bookUrl = (k, c) => BK[k] ? affWrap(k, BK[k][2](c || {})) : '';
   // attributs d’un lien : « sponsored » + petite mention « partenaire » quand c’est un lien rémunéré (obligation d’identifier la publicité)
   const bookRel = k => affOn(k) ? ` rel="sponsored noopener" data-aff="${esc(MSGT('partenaire'))}"` : ' rel="noopener"';
   const bookA = (k, c) => `<a href="${esc(bookUrl(k, c))}" target="_blank"${bookRel(k)} onclick="event.stopPropagation()">${BK[k][0]} ${BK[k][1]}</a>`;
-  const bookRows = G => G.map(g=>`<div class="bk-g"><small>${g.t}</small><div class="cv-links">${g.k.map(k=>bookA(k, g.c)).join('')}</div></div>`).join('')
+  const bookRows = G => G.map(g=>`<div class="bk-g"><small>${g.t}</small><div class="cv-links">${g.k.map(k=>bookA(k, g.c)).join('')}</div>${fpSlot(g)}</div>`).join('')
     + (G.some(g=>g.k.some(affOn)) ? `<div class="v-sum-small bk-aff">🔗 ${MSGT('Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.')}</div>` : '');
+  /* ✈️ Prix des vols (Aviasales, via /api/tp) : sous « Comparer les vols », le prix « dès » le jour du vol (sinon dans le mois),
+     et le bouton Aviasales ouvre directement ce trajet à cette date. Rien n’est envoyé sur l’utilisateur : seulement
+     la position des deux villes et la date. Les prix viennent des recherches récentes : indicatifs. */
+  const FP = {};   // réponses déjà reçues (le temps de la session)
+  function fpSlot(g){
+    const c = g.c || {}; if(!g.k.includes('aviasales') || !c.from || !c.to || !c.date || c.date < isoToday()) return '';
+    setTimeout(fpFill, 40);
+    return `<div class="bk-fp" data-f="${esc(c.from)}" data-t="${esc(c.to)}" data-d="${esc(c.date)}">✈️ ${MSGT('Je cherche le prix des vols…')}</div>`;
+  }
+  function fpShow(el, r){
+    const g = el.closest('.bk-g'), a = g && g.querySelector('a[href*="aviasales"]');
+    if(!r || !r.ok){ el.remove(); return; }
+    const url = affWrap('aviasales', r.found ? r.link : r.search); if(a) a.href = url;
+    if(!r.found){ el.innerHTML = `✈️ ${RF('Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.', esc(r.on), esc(r.dn))}`; return; }
+    const dd = r.at ? new Date(r.at) : null, day = dd && !isNaN(dd) ? dd.toLocaleDateString(NL(), {day:'numeric', month:'short'}) : '';
+    const esc2 = r.transfers === 0 ? MSGT('direct') : r.transfers === 1 ? MSGT('1 escale') : r.transfers > 1 ? RF('{0} escales', r.transfers) : '';
+    const pr = (+r.price).toLocaleString(NL(), {style:'currency', currency:r.currency || 'EUR', maximumFractionDigits:0});
+    el.innerHTML = `✈️ <b>${RF('dès {0}', pr)}</b> · ${esc(r.on)} → ${esc(r.dn)}${day ? ' · ' + (r.exact ? day : RF('le {0}, même mois', day)) : ''}${esc2 ? ' · ' + esc2 : ''}
+      <a href="${esc(url)}" target="_blank"${bookRel('aviasales')} onclick="event.stopPropagation()">${MSGT('Voir ce vol')} ›</a>
+      <small>${MSGT('Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.')}</small>`;
+  }
+  async function fpFill(){
+    for(const el of document.querySelectorAll('.bk-fp:not([data-go])')){
+      el.dataset.go = 1; const f = el.dataset.f, t = el.dataset.t, d = el.dataset.d, key = normQ(f) + '|' + normQ(t) + '|' + d;
+      if(FP[key]){ fpShow(el, FP[key]); continue; }
+      try {
+        const [a, b] = await Promise.all([cityInfo(f), cityInfo(t)]);
+        if(!a || !b){ el.remove(); continue; }
+        const r = await (await withTimeout(fetch(`/api/tp?op=flight&olat=${a.lat}&olng=${a.lng}&dlat=${b.lat}&dlng=${b.lng}&date=${d}`), 12000)).json();
+        if(r && r.ok) FP[key] = r;
+        document.querySelectorAll('.bk-fp').forEach(x=>{ if(x.dataset.f === f && x.dataset.t === t && x.dataset.d === d) fpShow(x, r); });
+      } catch(e){ el.remove(); }
+    }
+  }
   // à réserver seulement (une fiche réservée ou payée ne propose plus rien)
   const bookOn = it => !hidden('blk:book') && it && it.type==='item' && (it.statut || 'todo')==='todo';
   function bookGroups(it){
