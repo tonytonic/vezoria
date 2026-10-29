@@ -1,4 +1,7 @@
 I18N.load({
+/* 🎧 visites audio dans le tri (2026-10-29c) */
+"Visite audio":"오디오 투어",
+"{0} avis":"후기 {0}개",
 "Visites audio à {0}":"{0} 오디오 투어",
 "Prix et notes fournis par WeGoTrip.":"가격과 평점은 WeGoTrip 제공.",
 /* ✈️ prix des vols (2026-10-29a) */

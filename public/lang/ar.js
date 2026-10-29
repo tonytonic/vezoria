@@ -1,4 +1,7 @@
 I18N.load({
+/* 🎧 visites audio dans le tri (2026-10-29c) */
+"Visite audio":"جولة صوتية",
+"{0} avis":"{0} تقييم",
 "Visites audio à {0}":"جولات صوتية في {0}",
 "Prix et notes fournis par WeGoTrip.":"الأسعار والتقييمات من WeGoTrip.",
 /* ✈️ prix des vols (2026-10-29a) */

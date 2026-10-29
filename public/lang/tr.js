@@ -1,4 +1,7 @@
 I18N.load({
+/* 🎧 visites audio dans le tri (2026-10-29c) */
+"Visite audio":"Sesli tur",
+"{0} avis":"{0} yorum",
 "Visites audio à {0}":"{0} sesli turları",
 "Prix et notes fournis par WeGoTrip.":"Fiyatlar ve puanlar WeGoTrip’ten.",
 /* ✈️ prix des vols (2026-10-29a) */

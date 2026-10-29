@@ -1,4 +1,7 @@
 I18N.load({
+/* 🎧 visites audio dans le tri (2026-10-29c) */
+"Visite audio":"Аудиоэкскурсия",
+"{0} avis":"{0} отзывов",
 "Visites audio à {0}":"Аудиоэкскурсии: {0}",
 "Prix et notes fournis par WeGoTrip.":"Цены и оценки — WeGoTrip.",
 /* ✈️ prix des vols (2026-10-29a) */

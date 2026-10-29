@@ -1,4 +1,7 @@
 I18N.load({
+/* 🎧 visites audio dans le tri (2026-10-29c) */
+"Visite audio":"ऑडियो टूर",
+"{0} avis":"{0} समीक्षाएँ",
 "Visites audio à {0}":"{0} में ऑडियो टूर",
 "Prix et notes fournis par WeGoTrip.":"दाम और रेटिंग WeGoTrip से।",
 /* ✈️ prix des vols (2026-10-29a) */

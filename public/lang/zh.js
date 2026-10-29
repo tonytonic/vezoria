@@ -1,4 +1,7 @@
 I18N.load({
+/* 🎧 visites audio dans le tri (2026-10-29c) */
+"Visite audio":"语音导览",
+"{0} avis":"{0} 条评价",
 "Visites audio à {0}":"{0}的语音导览",
 "Prix et notes fournis par WeGoTrip.":"价格和评分来自 WeGoTrip。",
 /* ✈️ prix des vols (2026-10-29a) */
