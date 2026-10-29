@@ -1325,12 +1325,17 @@ ${pm.join('\n')}</Document></kml>`;
     const t = trip(); if(!t) return;
     const st = tlStages(), si = c => { const k = st.findIndex(x=>normQ(x.city) === normQ(c)); return k < 0 ? 99 : k; };
     const L = list('place', p=>p.trip === t.id && p.sugg).map(p=>({id:p.id, c:swCity(p), d:p.date || '9', x:p.exc ? 1 : 0}));
-    const EX = {}; expTrip(t).forEach(g=>g.L.forEach(e=>{ const id = 'ex|' + g.h.id + '|' + e.key; EX[id] = {h:g.h, e, city:g.city}; L.push({id, c:g.city, d:'~', x:2}); }));
+    // une activité payante qui est déjà un lieu proposé ou gardé (Machu Picchu « à réserver » + Machu Picchu à visiter) : une seule carte, le lieu, marqué 🎟️
+    const PL = list('place', p=>p.trip === t.id && !p.deleted && p.nom), PAY = {};
+    const twin = (e, city) => { if(e.wg) return null; const n = normQ(e.p); if(n.length < 5) return null;
+      return PL.find(p=>{ const m = normQ(p.nom); if(m.length < 5) return false; const c = swCity(p); return (!c || normQ(c) === normQ(city)) && swSim(p.nom, e.p) >= .6; }) || null; };
+    const EX = {}; expTrip(t).forEach(g=>g.L.forEach(e=>{ const tw = twin(e, g.city); if(tw){ if(tw.sugg && !PAY[tw.id]) PAY[tw.id] = e; return; }
+      const id = 'ex|' + g.h.id + '|' + e.key; EX[id] = {h:g.h, e, city:g.city}; L.push({id, c:g.city, d:'~', x:2}); }));
     // 🎧 visites audio WeGoTrip de chaque ville (déjà connues : tout de suite ; sinon elles arrivent pendant le tri)
     const wgPend = []; wgStays(t).forEach(([h, city])=>{ const r = wgHave(city); if(r) wgCards(t, h, city, r).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.5}); }); else wgPend.push([h, city]); });
     if(!L.length && !wgPend.length){ closeSheet(true); refresh(); return; }
     L.sort((a, b)=>si(a.c) - si(b.c) || a.x - b.x || a.d.localeCompare(b.d));
-    closeSheet(true); SW = {tid:t.id, ids:L.map(x=>x.id), i:0, hist:[], kept:0, EX, exDone:new Set()}; swRender();
+    closeSheet(true); SW = {tid:t.id, ids:L.map(x=>x.id), i:0, hist:[], kept:0, EX, PAY, exDone:new Set()}; swRender();
     wgPend.forEach(([h, city])=>wgFetch(city).then(r=>swAddWg(t, h, city, r)).catch(()=>{}));
   }
   // 🎧 WeGoTrip dans le tri : 3 visites par ville, comme des « activités à réserver » (garder = au programme, avec le lien de la visite)
@@ -1384,7 +1389,8 @@ ${pm.join('\n')}</Document></kml>`;
       <i class="sw-tag yes">${esc(MSGT('Je garde'))}</i><i class="sw-tag no">${esc(MSGT('Non merci'))}</i>
       <div class="sw-tx"><small>${c ? '📍 <span data-notr>' + esc(c) + '</span>' : ''}</small>
         ${p.ex && p.e.wg ? `<em class="sw-pay">🎧 ${esc(MSGT('Visite audio'))}${p.e.wg.price ? ' · ' + esc(RF('dès {0}', (+p.e.wg.price).toLocaleString(NL(), {style:'currency', currency:p.e.wg.currency || 'EUR', maximumFractionDigits:p.e.wg.price % 1 ? 2 : 0}))) : ''}${p.e.wg.rating ? ' · ⭐ ' + (+p.e.wg.rating).toFixed(1).replace('.', ',') : ''} · ${esc(MSGT('partenaire'))}</em>`
-        : p.ex ? `<em class="sw-pay">🎟️ ${esc(MSGT(p.e.l))} · ${esc(MSGT('activité à réserver'))}</em>` : ''}
+        : p.ex ? `<em class="sw-pay">🎟️ ${esc(MSGT(p.e.l))} · ${esc(MSGT('activité à réserver'))}</em>`
+        : SW && SW.PAY && SW.PAY[p.id] ? `<em class="sw-pay">🎟️ ${esc(MSGT('Payant : pense à réserver'))}</em>` : ''}
         <b data-notr>${esc(p.nom)}</b>${p.exc ? `<em>🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</em>` : ''}<p class="sw-ex" data-notr></p><a class="sw-wk" target="_blank" rel="noopener" hidden>📖 Wikipédia</a></div></div>`;
   }
   function swFill(el, p){
