@@ -771,9 +771,9 @@
         ${open ? `<div class="v-day-b">
           ${(()=>{ const ho = dayHol(d), su = daySun(d); return ho || su ? `<div class="v-day-x">${ho ? `<span class="v-hol">🎌 ${MSGT('Jour férié')} ${flag(ho.cc)} <b data-notr>${esc(ho.n)}</b> · ${MSGT('musées, banques et administrations souvent fermés ; sites et transports très fréquentés.')}</span>` : ''}${su ? `<span class="v-sun">${sunTxt(su)}</span>` : ''}</div>` : ''; })()}
           ${info.plan ? `<div class="v-day-plan">${esc(info.plan)}</div>` : ''}
-          ${own.map(row).join('')}${night.map(row).join('')}
+          ${dayFlow(d, own, night, row)}
           ${dn.map(n=>noteCard(n,true)).join('')}
-          ${transferHTML(d)}${routeHTML(d, true)}
+          ${routeHTML(d, true)}
           <div class="cv-row"><button class="v-day-edit" onclick="CV.planDay('${ja(d)}')">🗺️ Itinéraire</button><button class="v-day-edit cv-dmore" aria-label="${esc(MSGT('Actions du jour'))}" onclick="CV.dayMenu('${ja(d)}')">⋯</button></div>
           ${info.updatedBy ? byline(info) : ''}
         </div>` : ''}
@@ -2442,18 +2442,37 @@
       if(ch) put(keep, false); });
     toast('🧹 ' + MSGT('Doublon retiré')); refresh();
   }
+  // 🧭 autour d’un trajet : rejoindre le départ depuis l’hôtel qu’on quitte, puis l’hôtel du soir depuis l’arrivée.
+  // En voiture (ou taxi), on part de l’hôtel et on arrive à l’hôtel : une seule ligne, d’hôtel à hôtel.
+  const tfRow = (ic, title, sub, href) => `<div class="cv-tf"><span class="cv-tf-i">${ic}</span><div class="cv-tf-t"><b data-notr>${esc(title)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div><a class="cv-tf-go" href="${esc(href)}" target="_blank" rel="noopener">🧭 ${esc(MSGT('Itinéraire'))}</a></div>`;
+  function tfLegs(d, t){
+    const {night, prev} = hotelsAround(d), ic = MODE_ICON[t.mode] || '🧭';
+    const hFrom = prev && prev.id !== (night && night.id) ? prev : (night && night.date < d ? night : null);   // l’hôtel qu’on quitte ce jour-là
+    const hTo = night && night.date === d ? night : null, hn = h => h.nom || cityOf(h.titre);
+    if(/Voiture|Taxi|Moto|Vélo/i.test(t.mode || '')){
+      if(!hFrom && !hTo) return {before:'', after:''};
+      const a = hFrom ? tfHotel(hFrom) : t.from, b = hTo ? tfHotel(hTo) : t.to;
+      return {before:'', after:'', drive:tfRow(ic, `${hFrom ? '🏨 ' + hn(hFrom) : t.from || ''} → ${hTo ? '🏨 ' + hn(hTo) : t.to || ''}`, [t.heureDep ? RF('Départ {0}', t.heureDep) : '', MSGT('d’hôtel à hôtel')].filter(Boolean).join(' · '), tfLink(a, b, t.mode))};
+    }
+    return {
+      before: t.from && hFrom ? tfRow('🏨', RF('Ton hôtel → {0}', ic + ' ' + t.from), [hn(hFrom), t.heureDep ? RF('Départ {0} : sois sur place vers {1}', t.heureDep, tfEarly(t.heureDep, t.mode)) : ''].filter(Boolean).join(' · '), tfLink(tfHotel(hFrom), tfPt(t.from, t.mode), t.mode)) : '',
+      after: t.to && hTo ? tfRow(ic, RF('{0} → ton hôtel', t.to), [t.heureArr ? RF('Arrivée {0}', t.heureArr) : '', hn(hTo)].filter(Boolean).join(' · '), tfLink(tfPt(t.to, t.mode), tfHotel(hTo), t.mode)) : ''};
+  }
   function transferHTML(d){
-    const {night, prev} = hotelsAround(d), out = [];
-    const {list:tr, dups} = dayTr(d);
+    const out = [], {list:tr, dups} = dayTr(d);
     if(dups.length) out.push(`<button type="button" class="etp-fix" onclick="CV.trDupFix('${ja(d)}')">⚠️ ${esc(RF('{0} fiches pour le même trajet {1} : retirer le doublon', dups[0].length, dups[0][0].titre || (cityOf(dups[0][0].from) + ' → ' + cityOf(dups[0][0].to))))}</button>`);
-    const row = (ic, title, sub, href) => `<div class="cv-tf"><span class="cv-tf-i">${ic}</span><div class="cv-tf-t"><b data-notr>${esc(title)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div><a class="cv-tf-go" href="${esc(href)}" target="_blank" rel="noopener">🧭 ${esc(MSGT('Itinéraire'))}</a></div>`;
-    tr.forEach(t=>{
-      const ic = MODE_ICON[t.mode] || '🧭';
-      const hFrom = prev && prev.id !== (night && night.id) ? prev : (night && night.date < d ? night : null);   // l’hôtel qu’on quitte ce jour-là
-      if(t.from && hFrom) out.push(row('🏨', RF('Ton hôtel → {0}', ic + ' ' + t.from), [hFrom.nom || cityOf(hFrom.titre), t.heureDep ? RF('Départ {0} : sois sur place vers {1}', t.heureDep, tfEarly(t.heureDep, t.mode)) : ''].filter(Boolean).join(' · '), tfLink(tfHotel(hFrom), tfPt(t.from, t.mode), t.mode)));
-      if(t.to && night && night.date === d) out.push(row(ic, RF('{0} → ton hôtel', t.to), [t.heureArr ? RF('Arrivée {0}', t.heureArr) : '', night.nom || cityOf(night.titre)].filter(Boolean).join(' · '), tfLink(tfPt(t.to, t.mode), tfHotel(night), t.mode)));
-    });
-    return out.length ? `<div class="cv-tfs">${out.join('')}</div>` : '';
+    tr.forEach(t=>{ const L = tfLegs(d, t); out.push(L.before, L.drive || '', L.after); });
+    const h = out.filter(Boolean); return h.length ? `<div class="cv-tfs">${h.join('')}</div>` : '';
+  }
+  // 📅 la journée dans l’ordre : quitter l’hôtel → le trajet → rejoindre l’hôtel du soir → la suite, puis la nuit
+  function dayFlow(d, own, night, row){
+    const {list:tr, dups} = dayTr(d), legs = Object.fromEntries(tr.map(t=>[t.id, tfLegs(d, t)])), out = [];
+    if(dups.length) out.push(`<button type="button" class="etp-fix" onclick="CV.trDupFix('${ja(d)}')">⚠️ ${esc(RF('{0} fiches pour le même trajet {1} : retirer le doublon', dups[0].length, dups[0][0].titre || (cityOf(dups[0][0].from) + ' → ' + cityOf(dups[0][0].to))))}</button>`);
+    const hm = i => i.heureDep || i.heure || (i.cat === 'transport' ? '00:00' : '99:99');   // un trajet sans heure passe en premier (on arrive, puis on visite)
+    own.slice().sort((a, b)=>hm(a).localeCompare(hm(b))).forEach(i=>{ const L = legs[i.id]; if(!L){ out.push(row(i)); return; }
+      out.push(L.before ? `<div class="cv-tfs">${L.before}</div>` : '', row(i), L.drive || L.after ? `<div class="cv-tfs">${L.drive || L.after}</div>` : ''); });
+    night.forEach(i=>out.push(row(i)));
+    return out.filter(Boolean).join('');
   }
   function routeHTML(d, compact){
     const r = dayInfo(d).route, pl = placesOf(d);
