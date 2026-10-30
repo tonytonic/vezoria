@@ -2997,3 +2997,7 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 .gd .ar-r{background:rgba(124,58,237,.07)}
 .gd .ar-ra a{background:#7c3aed;color:#fff}.gd .ar-ra button{background:#ede9fe;color:#4c1d95}
 .gd .ar-hood{margin:6px 0 10px;border-left-color:#c4b5fd}.gd .ar-hood .ex-ln a{background:#7c3aed;color:#fff}
+.gd-x{margin:6px 0 8px;font-size:.85rem;line-height:1.4}
+.gd-ed{width:100%;margin:2px 0 6px}
+.ar-ra .ar-ed{background:rgba(255,255,255,.92);color:#4c1d95}
+.gd .ar-ra .ar-ed{background:#fff;color:#4c1d95;outline:1.5px solid #c4b5fd}

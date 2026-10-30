@@ -573,7 +573,7 @@
     if(isNew || !sameItem(was, it)) put(it);
     if(!keepOpen && (isNew || (booked(it) && !booked(was)))) setTimeout(()=>fxFor(it), 250);   // nouveau ou tout juste réservé
     if(keepOpen) return it.id;
-    closeSheet(); render(); return it.id;
+    closeSheet(); render(); try { gdAfterSave(it.id); } catch(e){} return it.id;
   }
   function sameItem(a, b){
     if(!a || !b) return false;

@@ -1088,15 +1088,41 @@ ${pm.join('\n')}</Document></kml>`;
   }
 
   /* ---------- 🪄 Remplir mes journées (lieux les plus connus, répartis sur les jours libres) ---------- */
+  /* 🧹 DOUBLONS : Wikipédia, OpenStreetMap, Wikidata… donnent souvent le même lieu sous deux noms (« Tour Eiffel » / « Eiffel Tower »,
+     « Musée du Louvre » / « Louvre »). Même endroit (à quelques centaines de mètres) + même nom propre = un seul lieu. */
+  const DUP_STOP = new Set('de du des la le les et the of and an di del della dei degli das der die den von van het een el los las do da dos em en au aux st ste saint sainte san santa sao'.split(' '));
+  const DUP_GEN = new Set('tour tower torre turm musee museum museo museu muzeum eglise church iglesia chiesa kirche igreja kerk cathedrale cathedral catedral cattedrale duomo dom kathedrale basilique basilica basilika palais palace palacio palazzo palast paleis chateau castle castillo castello schloss burg castelo kasteel fort fortress forteresse fortaleza fortezza festung citadelle citadel ciudadela parc park parque parco jardin jardins garden gardens giardino garten tuin place square plaza piazza platz praca plein pont bridge puente ponte brucke brug marche market mercado mercato markt halles monastere monastery monasterio monastero kloster mosquee mosque mezquita moschea moschee temple tempio templo tempel synagogue gare station estacion stazione bahnhof porte gate puerta porta tor plage beach playa spiaggia strand lac lake lago see meer mont mount monte berg ile island isla isola insel vieux old ville city town centre center historic historique quartier district'.split(' '));
+  const DUP_CLS = {}; ['tour tower torre turm', 'musee museum museo museu muzeum', 'eglise church iglesia chiesa kirche igreja kerk', 'cathedrale cathedral catedral cattedrale duomo dom kathedrale', 'basilique basilica basilika', 'palais palace palacio palazzo palast paleis', 'chateau castle castillo castello schloss burg castelo kasteel', 'fort fortress forteresse fortaleza fortezza festung citadelle citadel ciudadela', 'parc park parque parco', 'jardin jardins garden gardens giardino garten tuin', 'place square plaza piazza platz praca plein', 'pont bridge puente ponte brucke brug', 'marche market mercado mercato markt halles', 'monastere monastery monasterio monastero kloster', 'mosquee mosque mezquita moschea moschee', 'gare station estacion stazione bahnhof', 'porte gate puerta porta tor', 'plage beach playa spiaggia strand'].forEach((g, i)=>g.split(' ').forEach(w=>{ DUP_CLS[w] = i; }));
+  const dupTok = n => normQ(n).split(' ').filter(w=>w.length > 1 && !DUP_STOP.has(w));
+  function dupSame(a, b){
+    const na = normQ(a.nom), nb = normQ(b.nom); if(!na || !nb) return false;
+    if(a.lat == null || b.lat == null || b.lng == null || a.lng == null) return na === nb;
+    const d = rawKm(a, b); if(na === nb) return d < 5; if(d > 1.5) return false;
+    if(Math.min(na.length, nb.length) >= 4 && (na.includes(nb) || nb.includes(na))) return true;
+    const A = dupTok(a.nom), B = dupTok(b.nom), Ap = A.filter(w=>!DUP_GEN.has(w)), Bp = B.filter(w=>!DUP_GEN.has(w));
+    const cls = W => new Set(W.filter(w=>DUP_GEN.has(w)).map(w=>DUP_CLS[w] || w)), ca = cls(A), sameCls = [...cls(B)].some(c=>ca.has(c));
+    if(!Ap.length || !Bp.length) return d < .15 && sameCls;   // que des mots génériques (« Cathédrale ») : seulement s'ils sont au même endroit
+    const eq = (x, y) => x === y, near = (x, y) => x.length >= 5 && y.length >= 5 && x.slice(0, 4) === y.slice(0, 4);   // Clercs / Clérigos, Coliseo / Colisée
+    const com = Ap.filter(w=>Bp.some(v=>eq(w, v))).length, cn = Ap.filter(w=>Bp.some(v=>eq(w, v) || near(w, v))).length, mn = Math.min(Ap.length, Bp.length);
+    if(com && com / mn >= .6 && d < .8) return true;
+    return cn / mn >= .6 && d < .3;
+  }
+  const dupClean = L => { const out = []; for(const p of L) if(!out.some(q=>dupSame(p, q))) out.push(p); return out; };
+  // les suggestions déjà dans un voyage : celles qui doublonnent un lieu gardé (ou une suggestion plus ancienne) sont retirées
+  function sgDedupe(tid){
+    const pl = list('place', p=>p.trip === tid && !p.deleted && p.nom), keep = pl.filter(p=>!p.sugg), out = [];
+    pl.filter(p=>p.sugg).forEach(p=>{ if(keep.some(q=>dupSame(p, q))){ const c = clone(p); c.deleted = true; out.push(c); } else keep.push(p); });
+    if(out.length) putQuiet(out); return out.length;
+  }
   async function placesFor(city){
     const key = normQ(city); M.poiCache = M.poiCache || {};
-    const hit = M.poiCache[key]; if(hit && hit.v === 2 && Date.now() - hit.t < DISC_TTL && hit.list.length && (hit.wd || Date.now() - hit.t < 864e5)) return hit.list;
+    const hit = M.poiCache[key]; if(hit && hit.v === 2 && Date.now() - hit.t < DISC_TTL && hit.list.length && (hit.wd || Date.now() - hit.t < 864e5)) return dupClean(hit.list);
     const c = await withTimeout(geocode(city, null), 10000).catch(()=>null); if(!c) return [];
     const res = await Promise.allSettled([seeWiki(c), seeApi(c), seeOverpass(c), seeWD(c)].map(p=>withTimeout(p, 10000)));
     const seen = new Set(), all = res.filter(r=>r.status==='fulfilled').flatMap(r=>r.value||[]);
     const list_ = all.filter(p=>p.nom && p.lat != null && !/^\d+$/.test(p.nom)).sort((x,y)=>y.score-x.score).filter(p=>{ const k = normQ(p.nom); if(seen.has(k)) return false; seen.add(k); return true; }).slice(0,150);
     if(list_.length){ M.poiCache[key] = {t:Date.now(), list:list_, wd: all.some(p=>p.sl), v:2}; persist(); }
-    return list_;
+    return dupClean(list_);
   }
   /* ---------- 💡 Suggestions : 4 incontournables par jour, à trier quand on veut ---------- */
   const SUGG_N = 4;
@@ -1261,7 +1287,8 @@ ${pm.join('\n')}</Document></kml>`;
       SG.i++; SG.city = city; refresh();
       const days = (h.dateFin ? range(h.date, h.dateFin).slice(0, -1) : [h.date]).filter(d=>!exDay[d] && !list('place', p=>p.trip === tid && p.date === d && p.exc).length); if(!days.length) continue;
       let cand = []; try { cand = await placesFor(city); } catch(e){}
-      cand = cand.filter(p=>normQ(p.nom) !== normQ(city) && !sgName(tid, p.nom)); if(!cand.length){ miss++; continue; }
+      const have = list('place', p=>p.trip === tid && !p.deleted && p.nom);
+      cand = cand.filter(p=>normQ(p.nom) !== normQ(city) && !sgName(tid, p.nom) && !have.some(q=>dupSame(p, q))); if(!cand.length){ miss++; continue; }
       const out = []; let k = 0;
       const nDay = d => d === h.date ? 2 : SUGG_N;   // jour d’arrivée (trajet) : 2 idées, sinon 4
       if(!more){ days.filter(d=>!nOf(d)).forEach(d=>{ for(let j = 0; j < nDay(d) && k < cand.length; j++, k++){ const p = cand[k];
@@ -1274,6 +1301,7 @@ ${pm.join('\n')}</Document></kml>`;
       if(out.length){ putQuiet(out); SG.got += out.length; }
       refresh();
     }
+    try { SG.got -= sgDedupe(tid); } catch(e){}
     const got = SG.got; SG = null;
     if(got){ M.suggDone = M.suggDone || {}; M.suggDone[tid] = 1; persist(); toast('💡 ' + got + ' ' + MSGT(more ? 'nouvelles suggestions' : 'suggestions à choisir')); }
     else toast(miss ? '📡 ' + MSGT('Pas de réseau pour trouver les incontournables : réessaie dans un instant.') : '✓ ' + MSGT('Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.'));
@@ -1322,7 +1350,7 @@ ${pm.join('\n')}</Document></kml>`;
   let SW = null; const SWC = {};
   // ① choisir, VILLE PAR VILLE : les visites suggérées puis les activités payantes de la ville (pas de jour à choisir ici : c'est l'étape ②)
   function suggOpen(){
-    const t = trip(); if(!t) return;
+    const t = trip(); if(!t) return; try { sgDedupe(t.id); } catch(er){}
     const st = tlStages(), si = c => { const k = st.findIndex(x=>normQ(x.city) === normQ(c)); return k < 0 ? 99 : k; };
     const L = list('place', p=>p.trip === t.id && p.sugg).map(p=>({id:p.id, c:swCity(p), d:p.date || '9', x:p.exc ? 1 : 0}));
     // une activité payante qui est déjà un lieu proposé ou gardé (Machu Picchu « à réserver » + Machu Picchu à visiter) : une seule carte, le lieu, marqué 🎟️
@@ -1418,7 +1446,7 @@ ${pm.join('\n')}</Document></kml>`;
       const xn = expCount(t);
       const pk = rgItems(t).length;
       ov.innerHTML = head + `<div class="sw-end"><div class="sw-end-i">✨</div><h2>${esc(MSGT('Tout est trié !'))}</h2><p>${esc(RF('{0} lieu(x) ajouté(s) à ton programme.', SW.kept))}</p>
-        ${guideOn(t) ? `<button type="button" class="v-btn" onclick="CV.guideNext('sw')">🧭 ${pk ? '② ' + esc(MSGT('Ranger mes visites dans les jours')) + ' (' + pk + ')' : esc(MSGT('Continuer mon parcours guidé'))}</button>`
+        ${guideOn(t) ? `<button type="button" class="v-btn" onclick="CV.guideNext('sw')">🧭 ${SG && SG.tid === t.id ? esc(MSGT('Continuer : les villes suivantes')) : pk ? '② ' + esc(MSGT('Ranger mes visites dans les jours')) + ' (' + pk + ')' : esc(MSGT('Continuer mon parcours guidé'))}</button>`
           : pk ? `<button type="button" class="v-btn" onclick="CV.swClose(1);CV.rgOpen()">② ${esc(MSGT('Ranger mes visites dans les jours'))} (${pk})</button>` : ''}
         <button type="button" class="v-btn${pk || guideOn(t) ? ' sec' : ''}" onclick="CV.swClose();CV.suggMore()">＋ ${esc(MSGT('Nouvelles suggestions'))}</button>
         <button type="button" class="v-btn sec" onclick="CV.suggRedo()">🔄 ${esc(MSGT('Refaire les suggestions'))}</button>
