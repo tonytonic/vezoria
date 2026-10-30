@@ -5591,4 +5591,10 @@ I18N.load({
 "👆 Photos":"👆 写真",
 "👆 Toutes les photos":"👆 すべての写真",
 "Pas encore de photo dans ce voyage.":"この旅にはまだ写真がありません。",
-"d’hôtel à hôtel":"ホテルからホテルへ"});
+"d’hôtel à hôtel":"ホテルからホテルへ",
+"villes autour de tes étapes":"滞在地周辺の都市",
+"Les visites se choisissent après la création, ville par ville.":"見どころは作成後に都市ごとに選びます。",
+"Créer mon voyage ({0} étapes)":"旅を作成（{0} か所）",
+"Retour à":"帰着地",
+"Ta ville":"あなたの街",
+"Même ville":"同じ街"});

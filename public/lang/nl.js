@@ -2643,4 +2643,10 @@ I18N.load({
 "👆 Photos":"👆 Foto's",
 "👆 Toutes les photos":"👆 Alle foto's",
 "Pas encore de photo dans ce voyage.":"Nog geen foto's in deze reis.",
-"d’hôtel à hôtel":"van hotel naar hotel"});
+"d’hôtel à hôtel":"van hotel naar hotel",
+"villes autour de tes étapes":"steden rond je etappes",
+"Les visites se choisissent après la création, ville par ville.":"Bezienswaardigheden kies je na het aanmaken, stad per stad.",
+"Créer mon voyage ({0} étapes)":"Mijn reis maken ({0} etappes)",
+"Retour à":"Terug naar",
+"Ta ville":"Jouw stad",
+"Même ville":"Zelfde stad"});

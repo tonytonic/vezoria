@@ -5579,4 +5579,10 @@ I18N.load({
 "👆 Photos":"👆 Fotoğraflar",
 "👆 Toutes les photos":"👆 Tüm fotoğraflar",
 "Pas encore de photo dans ce voyage.":"Bu seyahatte henüz fotoğraf yok.",
-"d’hôtel à hôtel":"otelden otele"});
+"d’hôtel à hôtel":"otelden otele",
+"villes autour de tes étapes":"duraklarının çevresindeki şehirler",
+"Les visites se choisissent après la création, ville par ville.":"Gezilecek yerler oluşturduktan sonra şehir şehir seçilir.",
+"Créer mon voyage ({0} étapes)":"Seyahatimi oluştur ({0} durak)",
+"Retour à":"Dönüş",
+"Ta ville":"Şehrin",
+"Même ville":"Aynı şehir"});

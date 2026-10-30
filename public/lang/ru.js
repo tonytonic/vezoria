@@ -5592,4 +5592,10 @@ I18N.load({
 "👆 Photos":"👆 Фото",
 "👆 Toutes les photos":"👆 Все фото",
 "Pas encore de photo dans ce voyage.":"В этой поездке пока нет фото.",
-"d’hôtel à hôtel":"от отеля до отеля"});
+"d’hôtel à hôtel":"от отеля до отеля",
+"villes autour de tes étapes":"города рядом с твоими этапами",
+"Les visites se choisissent après la création, ville par ville.":"Достопримечательности выбираются после создания, город за городом.",
+"Créer mon voyage ({0} étapes)":"Создать поездку ({0} этапов)",
+"Retour à":"Возвращение в",
+"Ta ville":"Твой город",
+"Même ville":"Тот же город"});

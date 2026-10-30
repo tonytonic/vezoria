@@ -2637,4 +2637,10 @@ I18N.load({
 "👆 Photos":"👆 Photos",
 "👆 Toutes les photos":"👆 All the photos",
 "Pas encore de photo dans ce voyage.":"No photos in this trip yet.",
-"d’hôtel à hôtel":"hotel to hotel"});
+"d’hôtel à hôtel":"hotel to hotel",
+"villes autour de tes étapes":"cities around your stops",
+"Les visites se choisissent après la création, ville par ville.":"You'll pick the sights after creating the trip, city by city.",
+"Créer mon voyage ({0} étapes)":"Create my trip ({0} stops)",
+"Retour à":"Returning to",
+"Ta ville":"Your city",
+"Même ville":"Same city"});

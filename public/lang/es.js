@@ -2653,4 +2653,10 @@ I18N.load({
 "👆 Photos":"👆 Fotos",
 "👆 Toutes les photos":"👆 Todas las fotos",
 "Pas encore de photo dans ce voyage.":"Todavía no hay fotos en este viaje.",
-"d’hôtel à hôtel":"de hotel a hotel"});
+"d’hôtel à hôtel":"de hotel a hotel",
+"villes autour de tes étapes":"ciudades cerca de tus etapas",
+"Les visites se choisissent après la création, ville par ville.":"Las visitas se eligen después de crear el viaje, ciudad por ciudad.",
+"Créer mon voyage ({0} étapes)":"Crear mi viaje ({0} etapas)",
+"Retour à":"Regreso a",
+"Ta ville":"Tu ciudad",
+"Même ville":"Misma ciudad"});

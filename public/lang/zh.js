@@ -5591,4 +5591,10 @@ I18N.load({
 "👆 Photos":"👆 照片",
 "👆 Toutes les photos":"👆 全部照片",
 "Pas encore de photo dans ce voyage.":"这次旅行还没有照片。",
-"d’hôtel à hôtel":"酒店到酒店"});
+"d’hôtel à hôtel":"酒店到酒店",
+"villes autour de tes étapes":"你站点附近的城市",
+"Les visites se choisissent après la création, ville par ville.":"景点在创建后逐个城市挑选。",
+"Créer mon voyage ({0} étapes)":"创建我的旅行（{0} 站）",
+"Retour à":"返回地",
+"Ta ville":"你的城市",
+"Même ville":"同一城市"});

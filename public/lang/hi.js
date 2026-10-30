@@ -5591,4 +5591,10 @@ I18N.load({
 "👆 Photos":"👆 तस्वीरें",
 "👆 Toutes les photos":"👆 सभी तस्वीरें",
 "Pas encore de photo dans ce voyage.":"इस यात्रा में अभी कोई तस्वीर नहीं है।",
-"d’hôtel à hôtel":"होटल से होटल तक"});
+"d’hôtel à hôtel":"होटल से होटल तक",
+"villes autour de tes étapes":"तुम्हारे पड़ावों के आसपास के शहर",
+"Les visites se choisissent après la création, ville par ville.":"घूमने की जगहें यात्रा बनाने के बाद, शहर-दर-शहर चुनोगे।",
+"Créer mon voyage ({0} étapes)":"मेरी यात्रा बनाओ ({0} पड़ाव)",
+"Retour à":"वापसी",
+"Ta ville":"तुम्हारा शहर",
+"Même ville":"वही शहर"});

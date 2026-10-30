@@ -5591,4 +5591,10 @@ I18N.load({
 "👆 Photos":"👆 사진",
 "👆 Toutes les photos":"👆 모든 사진",
 "Pas encore de photo dans ce voyage.":"이 여행에는 아직 사진이 없어요.",
-"d’hôtel à hôtel":"호텔에서 호텔로"});
+"d’hôtel à hôtel":"호텔에서 호텔로",
+"villes autour de tes étapes":"일정 주변 도시",
+"Les visites se choisissent après la création, ville par ville.":"볼거리는 여행을 만든 뒤 도시별로 고르면 돼요.",
+"Créer mon voyage ({0} étapes)":"내 여행 만들기 ({0}곳)",
+"Retour à":"도착지",
+"Ta ville":"내 도시",
+"Même ville":"같은 도시"});

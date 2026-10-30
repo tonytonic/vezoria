@@ -5592,4 +5592,10 @@ I18N.load({
 "👆 Photos":"👆 الصور",
 "👆 Toutes les photos":"👆 كل الصور",
 "Pas encore de photo dans ce voyage.":"لا توجد صور في هذه الرحلة بعد.",
-"d’hôtel à hôtel":"من فندق إلى فندق"});
+"d’hôtel à hôtel":"من فندق إلى فندق",
+"villes autour de tes étapes":"مدن حول محطاتك",
+"Les visites se choisissent après la création, ville par ville.":"تُختار الزيارات بعد إنشاء الرحلة، مدينة تلو الأخرى.",
+"Créer mon voyage ({0} étapes)":"إنشاء رحلتي ({0} محطات)",
+"Retour à":"العودة إلى",
+"Ta ville":"مدينتك",
+"Même ville":"المدينة نفسها"});
