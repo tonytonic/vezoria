@@ -3001,3 +3001,10 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 .gd-ed{width:100%;margin:2px 0 6px}
 .ar-ra .ar-ed{background:rgba(255,255,255,.92);color:#4c1d95}
 .gd .ar-ra .ar-ed{background:#fff;color:#4c1d95;outline:1.5px solid #c4b5fd}
+/* 🎟️ carte « Que faire à … ? » : les activités de la ville en une seule carte, à cocher */
+.sw-grp .sw-shade{background:linear-gradient(180deg,rgba(20,8,40,.15) 0%,rgba(20,8,40,.55) 35%,rgba(20,8,40,.92) 70%)}
+.sw-gh{margin:0 0 8px;font-size:.85rem;opacity:.85}
+.sw-chips{display:flex;flex-wrap:wrap;gap:8px}
+.sw-chip{all:unset;box-sizing:border-box;cursor:pointer;padding:9px 13px;min-height:40px;border-radius:99px;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.35);color:#fff;font-size:.88rem;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.sw-chip.on{background:#fff;color:#4c1d95;border-color:#fff}
+.sw-chip.on::after{content:'✓';font-weight:800;color:#16a34a}

@@ -1357,8 +1357,13 @@ ${pm.join('\n')}</Document></kml>`;
     const PL = list('place', p=>p.trip === t.id && !p.deleted && p.nom), PAY = {};
     const twin = (e, city) => { if(e.wg) return null; const n = normQ(e.p); if(n.length < 5) return null;
       return PL.find(p=>{ const m = normQ(p.nom); if(m.length < 5) return false; const c = swCity(p); return (!c || normQ(c) === normQ(city)) && swSim(p.nom, e.p) >= .6; }) || null; };
-    const EX = {}; expTrip(t).forEach(g=>g.L.forEach(e=>{ const tw = twin(e, g.city); if(tw){ if(tw.sugg && !PAY[tw.id]) PAY[tw.id] = e; return; }
+    const EX = {}, GR = {};
+    expTrip(t).forEach(g=>g.L.forEach(e=>{
+      // 🎟️ les idées « génériques » de la ville (visite guidée, gastronomie, cuisine, excursion…) : UNE carte par ville, on coche celles qui tentent
+      if(normQ(e.p) === normQ(g.city)){ (GR[g.h.id] = GR[g.h.id] || {h:g.h, city:g.city, grp:[]}).grp.push(e); return; }
+      const tw = twin(e, g.city); if(tw){ if(tw.sugg && !PAY[tw.id]) PAY[tw.id] = e; return; }
       const id = 'ex|' + g.h.id + '|' + e.key; EX[id] = {h:g.h, e, city:g.city}; L.push({id, c:g.city, d:'~', x:2}); }));
+    Object.values(GR).forEach(g=>{ const id = 'ex|g|' + g.h.id; EX[id] = {h:g.h, city:g.city, grp:g.grp, sel:new Set(), e:{key:'grp|' + g.h.id, ic:'🎟️', l:'Activités à réserver', p:g.city}}; L.push({id, c:g.city, d:'~', x:2.5}); });
     // 🎧 visites audio WeGoTrip de chaque ville (déjà connues : tout de suite ; sinon elles arrivent pendant le tri)
     const wgPend = []; wgStays(t).forEach(([h, city])=>{ const r = wgHave(city); if(r) wgCards(t, h, city, r).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.5}); }); else wgPend.push([h, city]); });
     if(!L.length && !wgPend.length){ closeSheet(true); refresh(); return; }
@@ -1382,7 +1387,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(SW.ids.slice(SW.i).filter(swPend).length === C.length) swRender(); else { const sm = document.querySelector('#cv-sw .sw-ttl small'), T = SW.ids.length; if(sm) sm.textContent = Math.min(T - SW.ids.slice(SW.i).filter(swPend).length + 1, T) + '/' + T; }
   }
   const swPend = id => /^ex\|/.test(id) ? !!(SW && SW.EX && SW.EX[id] && !SW.exDone.has(id)) : !!(R[id] && R[id].sugg && !R[id].deleted);
-  const swRec = id => /^ex\|/.test(id) ? Object.assign({id, ex:1, nom:SW.EX[id].e.p, city:SW.EX[id].city}, SW.EX[id]) : R[id];
+  const swRec = id => /^ex\|/.test(id) ? Object.assign({id, ex:1, nom:SW.EX[id].e.p, city:SW.EX[id].city}, SW.EX[id]) : R[id];   // (groupe d’une ville : nom = la ville, pour sa photo)
   const swCityOf = r => r && r.ex ? r.city : swCity(r);
   const swCity = p => { const h = p.stay && R[p.stay]; return (h && (h.type === 'city' ? h.titre : stayCity(h))) || (p.date && dayCity(p.date)) || ''; };
   const swSim = (a, b) => { a = normQ(a); b = normQ(b); if(!a || !b) return 0; if(a === b) return 1; if(a.includes(b) || b.includes(a)) return .85;
@@ -1412,6 +1417,13 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function swCard(p, top){
     const ic = p.ex ? p.e.ic : (POI_CATS[p.cat] || {icon:'📍'}).icon, c = swCityOf(p);
+    if(p.ex && p.grp) return `<div class="sw-card sw-grp${top ? ' top' : ''}" data-id="${esc(p.id)}">
+      <div class="sw-ph"><span class="sw-ic">🎟️</span><img class="sw-img" alt="" decoding="async"></div><div class="sw-shade"></div>
+      <i class="sw-tag yes">${esc(MSGT('Je garde'))}</i><i class="sw-tag no">${esc(MSGT('Non merci'))}</i>
+      <div class="sw-tx"><small>📍 <span data-notr>${esc(c)}</span></small><em class="sw-pay">🎟️ ${esc(MSGT('Activités à réserver'))}</em>
+        <b>${RF('Que faire à {0} ?', `<span data-notr>${esc(c)}</span>`)}</b><p class="sw-gh">${esc(MSGT('Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.'))}</p>
+        <div class="sw-chips">${p.grp.map((e, k)=>`<button type="button" class="sw-chip${p.sel && p.sel.has(k) ? ' on' : ''}" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();CV.swChip('${ja(p.id)}',${k},this)">${e.ic} ${esc(MSGT(e.l))}</button>`).join('')}</div>
+        <p class="sw-ex" data-notr hidden></p><a class="sw-wk" target="_blank" rel="noopener" hidden>📖 Wikipédia</a></div></div>`;
     return `<div class="sw-card${top ? ' top' : ''}" data-id="${esc(p.id)}">
       <div class="sw-ph"><span class="sw-ic">${ic}</span><img class="sw-img" alt="" decoding="async"></div><div class="sw-shade"></div>
       <i class="sw-tag yes">${esc(MSGT('Je garde'))}</i><i class="sw-tag no">${esc(MSGT('Non merci'))}</i>
@@ -1428,6 +1440,7 @@ ${pm.join('\n')}</Document></kml>`;
       const a = el.querySelector('.sw-wk'); a.href = affWrap('wegotrip', w.url); a.textContent = '🎧 WeGoTrip ›'; if(affOn('wegotrip')) a.rel = 'sponsored noopener'; a.hidden = false; return; }
     swInfo(p).then(x=>{ if(!el.isConnected) return; const im = el.querySelector('.sw-img');
       if(x.img){ im.onload = () => im.classList.add('ok'); im.src = x.img; }
+      if(p.grp) return;   // carte « que faire à… » : la photo de la ville seulement
       if(x.ex) el.querySelector('.sw-ex').textContent = x.ex;
       if(x.url){ const a = el.querySelector('.sw-wk'); a.href = x.url; a.hidden = false; } });
   }
@@ -1513,8 +1526,22 @@ ${pm.join('\n')}</Document></kml>`;
     setTimeout(swNext, 300);
   }
   // activité payante : gardée = au programme (jour provisoire, rangée à l'étape ②) ; écartée = plus proposée
+  function swChip(id, k, b){ const x = SW && SW.EX[id]; if(!x || !x.sel) return; if(x.sel.has(k)) x.sel.delete(k); else x.sel.add(k); if(b) b.classList.toggle('on', x.sel.has(k)); }
+  function swGoGrp(el, keep, id, x, t){
+    const pick = keep ? [...x.sel].sort((a, b)=>a - b).map(k=>x.grp[k]).filter(Boolean) : [];
+    if(keep && !pick.length){ swBusy = false; toast('👆 ' + MSGT('Touche les activités qui te tentent, ou ✕ pour passer')); el.style.transition = 'transform .25s ease'; el.style.transform = ''; return; }
+    const made = pick.map(e=>expPut(t, x.h, e)), keys = x.grp.filter(e=>!pick.includes(e)).map(e=>e.key);
+    M.expNo = M.expNo || {}; const nl = M.expNo[t.id] = M.expNo[t.id] || []; keys.forEach(k=>{ if(!nl.includes(k)) nl.push(k); });   // pas cochées : plus proposées
+    if(made.length){ SW.kept += made.length; toast('🎟️ ' + RF('{0} activité(s) au programme', made.length)); }
+    SW.exDone.add(id); SW.hist.push({id, ex:1, keep:!!made.length, made, keys, tid:t.id, n:made.length});
+    try { persistNow(); } catch(e){}
+    el.style.transition = 'transform .32s ease, opacity .32s ease'; el.style.transform = `translate(${keep ? 140 : -140}%, -4%) rotate(${keep ? 22 : -22}deg)`; el.style.opacity = '0';
+    el.style.setProperty(keep ? '--yes' : '--no', 1);
+    setTimeout(swNext, 300);
+  }
   function swGoEx(el, keep){
     const id = el.dataset.id, x = SW.EX[id]; if(!x) return; const t = R[SW.tid];
+    if(x.grp) return swGoGrp(el, keep, id, x, t);
     let made = null;
     if(keep){ made = expPut(t, x.h, x.e); SW.kept++; toast('🎟️ ' + x.e.p + ' · ' + MSGT('Ajouté au programme')); }
     else { M.expNo = M.expNo || {}; const nl = M.expNo[t.id] = M.expNo[t.id] || []; if(!nl.includes(x.e.key)) nl.push(x.e.key); }
@@ -1526,6 +1553,10 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function swUndo(){
     if(!SW || !SW.hist.length || swBusy) return; const h = SW.hist.pop();
+    if(h.ex && Array.isArray(h.made)){ SW.exDone.delete(h.id); SW.kept = Math.max(0, SW.kept - (h.n || 0));
+      h.made.forEach(m=>{ if(R[m]) putQuiet([Object.assign(clone(R[m]), {deleted:true})]); });
+      const nl = ((M.expNo || {})[h.tid]) || []; (h.keys || []).forEach(k=>{ const i = nl.indexOf(k); if(i >= 0) nl.splice(i, 1); }); persist();
+      const at = SW.ids.indexOf(h.id); if(at >= 0) SW.i = Math.min(SW.i, at); swRender(); return; }
     if(h.ex){ SW.exDone.delete(h.id);
       if(h.keep){ SW.kept = Math.max(0, SW.kept - 1); if(h.made && R[h.made]) putQuiet([Object.assign(clone(R[h.made]), {deleted:true})]); }
       else { const nl = ((M.expNo || {})[h.tid]) || []; const i = nl.indexOf(h.key); if(i >= 0) nl.splice(i, 1); persist(); }
