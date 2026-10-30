@@ -492,7 +492,8 @@
   /* ── Fiche trajet / hôtel / visite / dépense ── */
   function edit(id, newCat){
     let draft = null; if(id && typeof id === 'object'){ draft = id; id = null; newCat = draft.cat; }
-    const src = draft ? Object.assign({id:null, type:'item', trip:M.trip, titre:'', statut:'todo', date:'', mode:'Avion', qui:[]}, draft) : id ? R[id] : {id:null, type:'item', trip:M.trip, cat:newCat, titre:'', statut:'todo', date:'', mode:'Avion', qui: M.who!=='all' ? [M.who] : []};
+    const mg = draft && typeof bkMerge === 'function' ? bkMerge(draft) : null; if(mg){ draft = null; id = mg.id; }   // 🛎️ import qui complète la fiche réservée chez le partenaire
+    const src = mg ? mg : draft ? Object.assign({id:null, type:'item', trip:M.trip, titre:'', statut:'todo', date:'', mode:'Avion', qui:[]}, draft) : id ? R[id] : {id:null, type:'item', trip:M.trip, cat:newCat, titre:'', statut:'todo', date:'', mode:'Avion', qui: M.who!=='all' ? [M.who] : []};
     if(!src) return;
     const it = clone(src); editing = it; STT = false;
     const c = it.cat;

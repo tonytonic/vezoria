@@ -69,7 +69,7 @@
         if(!D.rs.length) return `<div class="ar-p">${MSGT('Ajoute d’abord tes étapes : les nuits et les trajets apparaîtront ici.')}</div>`;
         return `<div class="ar-rs">${D.rs.map(it=>`<div class="ar-r${okB(it) ? ' ok' : ''}" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${okB(it) ? '✓' : it.cat === 'hotel' ? '🛏️' : icon(it)}</i>
           <span><b data-notr>${esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre)}</b><small>${it.cat === 'hotel' ? `${fd(it.date)} → ${fd(it.dateFin)} · ${nights(it.date, it.dateFin || it.date)} ${MSGT('nuits')}` : fd(it.date)}</small></span>
-          <div class="ar-ra">${okB(it) ? '' : ariLink(it, t)}<button type="button" class="ar-ed" onclick="event.stopPropagation();CV.edit('${ja(it.id)}')">✏️ ${MSGT(okB(it) ? 'Ma résa' : 'Saisir ma résa')}</button>${okB(it) ? '' : `<button type="button" onclick="event.stopPropagation();CV.ariBook('${ja(it.id)}')">${MSGT('C’est réservé')}</button>`}</div></div>` + (okB(it) ? '' : it.cat === 'hotel' ? hoodHTML(it, t) : it.cat === 'transport' ? aptHTML(it, t) : '')).join('')}</div>`;
+          ${bkBtn(it)}<div class="ar-ra" data-bkid="${esc(it.id)}">${okB(it) ? '' : ariLink(it, t)}<button type="button" class="ar-ed" onclick="event.stopPropagation();CV.edit('${ja(it.id)}')">✏️ ${MSGT(okB(it) ? 'Ma résa' : 'Saisir ma résa')}</button>${okB(it) ? '' : `<button type="button" onclick="event.stopPropagation();CV.ariBook('${ja(it.id)}')">${MSGT('C’est réservé')}</button>`}</div></div>` + (okB(it) ? '' : it.cat === 'hotel' ? hoodHTML(it, t) : it.cat === 'transport' ? aptHTML(it, t) : '')).join('')}</div>`;
       }
       const rows = [
         `<button type="button" class="ar-f" onclick="CV.avantSheet()"><i>🧭</i><span>${MSGT('Avant de partir')}</span><small>${MSGT('papiers, santé, argent, urgences')}</small></button>`,
@@ -108,6 +108,7 @@
   // 🧹 la carte de préparation : repliée sur « ta prochaine étape » (une seule action) ; le détail des 4 étapes à la demande
   function ariNext(t, D, cur){
     if(!cur) return null; const n = (D.sg || []).length + expCount(t), pk = rgItems(t).length;
+    { const pb = (D.rs || []).find(x=>bkP(x)); if(pb){ return {ic:'🛎️', b:MSGT('Remplir ma fiche') + ' : ' + esc(pb.cat === 'hotel' ? (cityOf(pb.titre) || pb.titre) : pb.titre), s:MSGT('Déjà réservé ?'), fn:`CV.bkFill('${ja(pb.id)}')`}; } }
     if(cur.k === 'ou'){ if(!t.debut) return {ic:'📅', b:MSGT('Choisir les dates'), s:MSGT('Le départ et le retour'), fn:'CV.datesSheet()'};
       return {ic:'📍', b:MSGT('Ajouter les villes du voyage'), s:MSGT('Où tu dors, et combien de nuits'), fn:'CV.ariCity()'}; }
     if(cur.k === 'faire'){ if(n) return {ic:'💡', b:MSGT('Choisir mes visites'), s:RF('{0} idées à trier, ville par ville', n), fn:'CV.suggOpen()'};
@@ -297,7 +298,7 @@
       ${xn ? `<button type="button" class="v-btn" style="margin:0 0 10px" onclick="CV.expOpen()">🎟️ ${RF('Choisir parmi {0} expériences', xn)}</button>` : ''}
       <div class="ar-rs">${L.map(it=>`<div class="ar-r" role="button" onclick="CV.guideEdit('${ja(it.id)}','${kind}')"><i>${icon(it)}</i>
         <span><b data-notr>${esc(it.titre)}</b><small>${fd(it.date)}${it.mode ? ' · ' + esc(MSGT(it.mode)) : ''}</small></span>
-        <div class="ar-ra">${ariLink(it, t)}<button type="button" class="ar-ed" onclick="event.stopPropagation();CV.guideEdit('${ja(it.id)}','${kind}')">✏️ ${MSGT('Saisir ma résa')}</button><button type="button" onclick="event.stopPropagation();CV.guideBook('${ja(it.id)}','${kind}')">${MSGT('C’est réservé')}</button></div></div>` + (kind === 'tr' ? aptHTML(it, t) : '')).join('')}</div>
+        ${bkBtn(it)}<div class="ar-ra" data-bkid="${esc(it.id)}">${ariLink(it, t)}<button type="button" class="ar-ed" onclick="event.stopPropagation();CV.guideEdit('${ja(it.id)}','${kind}')">✏️ ${MSGT('Saisir ma résa')}</button><button type="button" onclick="event.stopPropagation();CV.guideBook('${ja(it.id)}','${kind}')">${MSGT('C’est réservé')}</button></div></div>` + (kind === 'tr' ? aptHTML(it, t) : '')).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.guideSheet()" aria-label="←">←</button><button type="button" class="v-btn" onclick="CV.guideSheet()">🧭 ${MSGT('Continuer')}</button></div></div>`);
   }
   const guideTr = () => guideList('tr'), guideExp = () => guideList('x');
@@ -347,7 +348,7 @@
       ${P.length < 2 ? `<div class="v-sum-small" style="margin:6px 0">${MSGT(P.length ? 'Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.' : 'Pas encore de visites ici : choisis-en au moins 2 pour avoir un quartier conseillé.')}</div>` : ''}
       ${X.length ? `<div class="gd-x">🎟️ <b>${MSGT('Activités prévues ici')}</b> : <span data-notr>${X.map(x=>esc(x.titre)).join(' · ')}</span></div>` : ''}
       <div class="gd-warn">⚠️ ${MSGT('L’application ne connaît pas le quartier : elle le propose seulement parce qu’il est au centre de tes visites. Renseigne-toi avant de réserver (sécurité, bruit, avis).')}</div>
-      <div class="gd-links"><a class="gd-gm" href="${esc(gmap(MSGT('hôtels')))}" target="_blank" rel="noopener">📍 ${MSGT('Voir le quartier dans Google Maps')}</a>
+      ${bkBtn(h, 'big')}<div class="gd-links" data-bkid="${esc(h.id)}"><a class="gd-gm" href="${esc(gmap(MSGT('hôtels')))}" target="_blank" rel="noopener">📍 ${MSGT('Voir le quartier dans Google Maps')}</a>
         ${hidden('blk:book') ? '' : bookA('booking', {what:where(), date:h.date, end:h.dateFin, n}) + bookA('airbnb', {city:where(), date:h.date, end:h.dateFin, n})}</div>
       <button type="button" class="v-btn sec gd-ed" onclick="CV.guideEdit('${ja(h.id)}','h',${k})">✏️ ${MSGT('Saisir mon hébergement (adresse, prix…)')}</button>
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.guideSheet()" aria-label="←">←</button>
@@ -369,6 +370,68 @@
     catch(e){ box.remove(); }
   }
   function guideFin(){ const t = trip(); if(t && M.guide){ delete M.guide[t.id]; persist(); } closeSheet(true); avantSheet(); }
+
+
+  /* ══════════ 🛎️ RETOUR DE CHEZ LE PARTENAIRE : tu touches « Booking », « Rome2rio »… depuis une fiche à réserver,
+     tu reviens dans l’appli → « Alors, c’est réservé ? » → on t’aide à remplir LA fiche correspondante
+     (import de la confirmation qui complète cette fiche, ou les 4 infos essentielles à la main). ══════════ */
+  let BKT = null;
+  // pas d’alerte au retour : la fiche concernée affiche juste « 🛎️ Déjà réservé ? Remplir ma fiche » (et l’étape suivante de la carte de préparation)
+  document.addEventListener('click', e=>{
+    const a = e.target && e.target.closest && e.target.closest('a[href]'); if(!a || a.target !== '_blank') return;
+    const host = a.closest('[data-bkid]'), it = host && R[host.dataset.bkid]; if(!it || it.type !== 'item' || okB(it)) return;
+    M.bkPend = M.bkPend || {}; M.bkPend[it.id] = {p:String(a.textContent || '').replace(/^[^A-Za-zÀ-ÿ0-9]+/, '').replace(/^(Réserver|Book)\s*·\s*/i, '').trim().slice(0, 40), at:Date.now()}; persist();
+  }, true);
+  const bkP = it => { const o = it && (M.bkPend || {})[it.id]; return o && !okB(it) && !it.deleted && Date.now() - o.at < 7 * 864e5 ? o : null; };
+  const bkBtn = (it, cls) => { const o = bkP(it); return o ? `<button type="button" class="ar-bkp ${cls || ''}" onclick="event.stopPropagation();CV.bkFill('${ja(it.id)}')">🛎️ ${MSGT('Déjà réservé ?')} <b>${MSGT('Remplir ma fiche')} ›</b></button>` : ''; };
+  function bkNo(id){ if(M.bkPend) delete M.bkPend[id]; persist(); closeSheet(true); render(); }
+  const bkName = it => it.cat === 'hotel' ? RF('l’hébergement à {0}', stayCity(it) || it.titre || '') : it.titre || '';
+  function bkLater(){ closeSheet(true); }
+  function bkFill(id){
+    const it = R[id]; if(!it) return;
+    openSheet(`<div class="gd"><h2>📝 ${MSGT('Remplis ta fiche')}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px"><span data-notr>${esc(bkName(it))}</span>${it.date ? ' · ' + fshort(it.date) : ''}</div>
+      <div class="ar-subs gd-ch">
+        <button type="button" class="ar-sub cur" onclick="CV.bkImp('${ja(id)}')"><i>📄</i><span><b>${MSGT('Importer la confirmation')}</b><small>${MSGT('PDF, capture d’écran ou texte du mail : l’appli remplit la fiche pour toi')}</small></span></button>
+        <button type="button" class="ar-sub" onclick="CV.bkMan('${ja(id)}')"><i>✍️</i><span><b>${MSGT('Saisir l’essentiel')}</b><small>${MSGT(it.cat === 'hotel' ? 'Nom, adresse, n° de réservation, prix' : it.cat === 'transport' ? 'Compagnie, horaires, n° de réservation, prix' : 'Heure, lieu, n° de réservation, prix')}</small></span></button>
+      </div>
+      <div class="v-hint">💡 ${MSGT('Ouvre le mail de confirmation : tout y est (n° de réservation, adresse, prix).')}</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${MSGT('Plus tard')}</button><button type="button" class="v-btn sec" onclick="CV.bkNo('${ja(id)}')">${MSGT('Je n’ai pas réservé')}</button></div></div>`);
+  }
+  // 📄 l’import qui suit COMPLÈTE cette fiche (au lieu d’en créer une 2e)
+  function bkImp(id){ const it = R[id]; if(!it) return; BKT = {id, at:Date.now()}; impSheet(it.cat); }
+  function bkMerge(draft){
+    const b = BKT; if(!b || !draft || Date.now() - b.at > 20 * 60e3) return null; const o = R[b.id];
+    if(!o || o.deleted || o.cat !== draft.cat) return null; BKT = null;
+    const m = clone(o); Object.keys(draft).forEach(k=>{ const v = draft[k]; if(['id', 'type', 'trip'].includes(k) || v == null || v === '' || (Array.isArray(v) && !v.length)) return;
+      if(k === 'titre' && o.cat === 'hotel') return;   // le titre d’un hébergement = la ville de l’étape
+      m[k] = v; });
+    if(!okB(m)) m.statut = 'booked'; return m;
+  }
+  // ✍️ les 4 infos essentielles (le reste dans la fiche complète)
+  function bkMan(id){
+    const it = R[id]; if(!it) return; const c = it.cat;
+    const f = (l, n, v, ty, ex) => `<div class="v-f"><label>${esc(MSGT(l))}</label><input class="v-in" name="${n}" type="${ty || 'text'}" value="${esc(v || '')}" ${ex || ''}></div>`;
+    const two = (a, b) => `<div class="v-f2">${a}${b}</div>`;
+    const F = c === 'hotel' ? f('Nom de l’hôtel', 'nom', it.nom) + f('Adresse', 'adresse', it.adresse, 'text', 'autocomplete="off"')
+      : c === 'transport' ? f('Compagnie / n° de vol ou de train', 'compagnie', it.compagnie) + two(f('Heure de départ', 'heureDep', it.heureDep, 'time'), f('Heure d’arrivée', 'heureArr', it.heureArr, 'time'))
+      : two(f('Heure', 'heure', it.heure, 'time'), f('Lieu / prestataire', 'adresse', it.adresse));
+    openSheet(`<div class="gd"><h2>✍️ ${MSGT('Saisir l’essentiel')}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px"><span data-notr>${esc(bkName(it))}</span>${it.date ? ' · ' + fshort(it.date) : ''}</div>
+      <form id="bk-f" onsubmit="event.preventDefault();CV.bkSave('${ja(id)}')">
+        ${F}${two(f('N° de réservation', 'ref', it.ref), f('Prix total', 'prix', it.prix, 'text', 'inputmode="decimal" placeholder="' + esc(CS()) + '"'))}
+        <div class="v-f"><label>${MSGT('Statut')}</label><div class="v-seg v-seg2" id="bk-st"><button type="button" data-v="booked" class="booked on" onclick="CV.seg(this)">${MSGT('Réservé')}</button><button type="button" data-v="paid" class="paid" onclick="CV.seg(this)">${MSGT('Payé')}</button></div></div>
+        <div class="v-actions"><button type="submit" class="v-btn">✓ ${MSGT('Enregistrer')}</button><button type="button" class="v-btn sec" onclick="CV.edit('${ja(id)}')">${MSGT('Fiche complète')}</button></div>
+      </form></div>`);
+  }
+  function bkSave(id){
+    const it = R[id], fm = document.getElementById('bk-f'); if(!it || !fm) return; const c = clone(it);
+    fm.querySelectorAll('input[name]').forEach(i=>{ const v = i.value.trim(); if(v) c[i.name] = v; });
+    const st = (document.querySelector('#bk-st .on') || {}).dataset; c.statut = st && st.v === 'paid' ? 'paid' : 'booked';
+    if(c.statut === 'paid' && Array.isArray(c.echeances)) c.echeances = c.echeances.map(e=>Object.assign({}, e, {fait:true}));
+    put(c, '✓ ' + MSGT('Fiche remplie')); closeSheet(true); setTimeout(()=>fxFor(c), 250);
+    const t = trip(); if(t && guideOn(t)) setTimeout(()=>{ if(c.cat === 'hotel') guideHotel(0); else guideList(c.cat === 'transport' ? 'tr' : 'x'); }, 400); else render();
+  }
 
   /* ══════════ 🧵 Fils d’Ariane : même carte pour chaque moment (en cours, voyage fini, compagnons, premiers pas) ══════════ */
   function filCard(o){
