@@ -314,18 +314,22 @@
     const sc = q => A.reduce((s, p)=>s + rawKm(q, p), 0) * (q.ctr ? .9 : 1), best = A.slice().sort((a, b)=>sc(a) - sc(b))[0];
     return {lat:best.lat, lng:best.lng, r:.8};
   }
+  // les points à rejoindre depuis l’hébergement : tes visites + le centre-ville (visites guidées, gastronomie… s’y passent ; et il compte si tu as peu de visites)
+  function gdAnchors(t, h){
+    const city = stayCity(h) || h.titre || '', P = stayPlaces(t, h).sort((a, b)=>(a.date || '').localeCompare(b.date || ''));
+    const X = list('item', i=>i.trip === t.id && i.cat === 'activite' && i.date && i.date >= h.date && i.date < (h.dateFin || addDays(h.date, 1)));   // 🎟️ activités prévues pendant l’étape
+    const g0 = R['geo:' + normQ(city)], C0 = g0 && g0.lat != null ? {lat:+g0.lat, lng:+g0.lng, nom:RF('Centre de {0}', city), ctr:1} : null;
+    const near = C0 ? P.filter(p=>rawKm(C0, p) <= 40) : P, A = near.map(p=>({lat:+p.lat, lng:+p.lng, nom:p.nom, id:p.id}));
+    if(C0 && (A.length < 2 || X.some(x=>x.lat == null))) A.push(C0);
+    return {city, P, X, A, C0, hub:gdHub(A)};
+  }
   async function guideHotel(k){
     const t = trip(); if(!t) return; const hs = ariData(t).hs.filter(x=>!okB(x));
     if(!hs.length){ toast('✓ ' + MSGT('Tous les hébergements sont réservés')); return guideSheet(); }
     k = Math.max(0, Math.min(+k || 0, hs.length - 1)); const h = hs[k], city = stayCity(h) || h.titre || '', my = ++GH;
-    const P = stayPlaces(t, h).sort((a, b)=>(a.date || '').localeCompare(b.date || ''));
-    const X = items(i=>i.cat === 'activite' && i.date && i.date >= h.date && i.date < (h.dateFin || addDays(h.date, 1)));   // 🎟️ activités prévues pendant l’étape
+    const {P, X, A, hub} = gdAnchors(t, h);
     const n = Math.max(1, (t.voyageurs || []).length), nn = nights(h.date, h.dateFin || h.date);
-    // les points à rejoindre : tes visites + le centre-ville (visites guidées, gastronomie… s’y passent ; et il compte si tu as peu de visites)
-    const g0 = R['geo:' + normQ(city)], C0 = g0 && g0.lat != null ? {lat:+g0.lat, lng:+g0.lng, nom:RF('Centre de {0}', city), ctr:1} : null;
-    const near = C0 ? P.filter(p=>rawKm(C0, p) <= 40) : P, A = near.map(p=>({lat:+p.lat, lng:+p.lng, nom:p.nom}));
-    if(C0 && (A.length < 2 || X.some(x=>x.lat == null))) A.push(C0);
-    const hub = gdHub(A), hk = hub ? 'hn:' + hub.lat.toFixed(3) + ',' + hub.lng.toFixed(3) : '';
+    const hk = hub ? 'hn:' + hub.lat.toFixed(3) + ',' + hub.lng.toFixed(3) : '';
     M.hoodN = M.hoodN || {}; const hn = () => hk && M.hoodN[hk] != null ? M.hoodN[hk] : null;
     const km1 = v => v < 10 ? String(Math.round(v * 10) / 10).replace('.', ',') : String(Math.round(v));
     const where = () => { const nm = hn(); return nm && normQ(nm) !== normQ(city) ? nm + ', ' + city : city; };
@@ -1753,7 +1757,8 @@
   function progMap(){
     const t = trip(); if(!t || hidden('blk:pmap')) return ''; const st = tlStages(); if(!st.length) return '';
     const key = M.trip + '|' + st.map(s=>s.city).join('>');
-    return `<div class="cv-pmap"><div class="pm-h"><b>Mon itinéraire</b><small>${st.map(s=>esc(s.city)).join(' → ')}</small></div>
+    return `<div class="cv-pmap"><div class="pm-h pm-h2"><div><b>Mon itinéraire</b><small>${st.map(s=>esc(s.city)).join(' → ')}</small></div>
+      <div class="pm-sw" role="group"><button type="button" class="on">2D</button><button type="button" onclick="CV.prep3d()">🛰️ 3D</button></div></div>
       <button type="button" class="pm-m" data-pmap="${esc(key)}" onclick="CV.tlMap()" aria-label="Agrandir la carte">${PMAP[key] ? `<img src="${PMAP[key]}" alt="">` : '<span class="v-sum-small">🗺️ Carte en cours…</span>'}</button></div>`;
   }
   const PMAP_BUSY = {};
@@ -1765,6 +1770,151 @@
       if(c){ PMAP[key] = c.toDataURL('image/jpeg', .88); paint(`<img src="${PMAP[key]}" alt="">`); } else paint('<span class="v-sum-small">🗺️ Villes introuvables sur la carte</span>'); }
     catch(e){ paint('<span class="v-sum-small">🗺️ Carte indisponible pour l’instant (connexion ?)</span>'); }
     finally { delete PMAP_BUSY[key]; }
+  }
+
+  /* ══════════ 🛰️ MA PRÉPARATION EN 3D : le voyage seul sur le globe satellite.
+     De loin : les villes et les trajets (couleur = à réserver / réservé / payé). En zoomant : les hébergements,
+     les visites gratuites, les activités payantes et le quartier conseillé (cercle + traits vers les visites). ══════════ */
+  let P3 = null;
+  const P3C = {todo:'#f97316', booked:'#facc15', paid:'#22c55e'};
+  const p3St = i => i.statut === 'paid' ? 'paid' : i.statut === 'booked' ? 'booked' : 'todo';
+  const p3Circle = (c, km) => { const out = []; for(let i = 0; i <= 64; i++){ const a = i / 64 * 2 * Math.PI; out.push([c.lng + km / (111.32 * Math.cos(c.lat * Math.PI / 180)) * Math.cos(a), c.lat + km / 110.57 * Math.sin(a)]); } return out; };
+  function p3Stats(t){
+    const D = ariData(t), L = [...D.hs, ...D.trs, ...items(i=>i.cat === 'activite' && i.exp)], n = L.length || 1, c = k => L.filter(i=>p3St(i) === k).length;
+    const S = D.S, pct = Math.round(S.reduce((a, x)=>a + (x.ok ? 1 : x.f) * (x.w || 1), 0) / S.reduce((a, x)=>a + (x.w || 1), 0) * 100), fin = S.find(x=>x.k === 'fin');
+    return {n:L.length, todo:c('todo'), booked:c('booked'), paid:c('paid'), p:k => Math.round(c(k) / n * 100), pct, fin:fin ? Math.round((fin.ok ? 1 : fin.f) * 100) : 0};
+  }
+  function p3Legend(){
+    const t = trip(), box = document.getElementById('p3-leg'); if(!t || !box) return; const s = p3Stats(t), open = !box.classList.contains('min');
+    box.innerHTML = `<button type="button" class="p3-lh" onclick="this.parentNode.classList.toggle('min')"><b>${MSGT('Ta préparation')} · ${s.pct} %</b><em>▾</em></button>
+      <div class="p3-bar">${['paid', 'booked', 'todo'].map(k=>`<i style="width:${s.n ? s.p(k) : 0}%;background:${P3C[k]}"></i>`).join('')}</div>
+      <div class="p3-rows">
+        <span><i style="background:${P3C.todo}"></i>${MSGT('À réserver')} <b>${s.todo}</b> · ${s.p('todo')} %</span>
+        <span><i style="background:${P3C.booked}"></i>${MSGT('Réservé')} <b>${s.booked}</b> · ${s.p('booked')} %</span>
+        <span><i style="background:${P3C.paid}"></i>${MSGT('Payé')} <b>${s.paid}</b> · ${s.p('paid')} %</span>
+        <span><i class="ok">✓</i>${MSGT('Finalisé')} <b>${s.fin} %</b></span>
+        <span><i style="background:#a78bfa"></i>${MSGT('Visites gratuites')}</span>
+        <span><i class="ring"></i>${MSGT('Quartier conseillé')}</span>
+      </div>
+      <small class="p3-z">🔍 ${MSGT('Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.')}</small>`;
+  }
+  async function p3Data(t){
+    const g = async q => { q = (q || '').trim(); if(!q) return null; const r = await geocode(q, null).catch(()=>null); return r && r.lat != null ? {lat:+r.lat, lng:+r.lng} : null; };
+    const F = {legs:[], cities:[], hood:[], rays:[], visits:[], acts:[], hotels:[]};
+    const st = tlStages(); let k = 0;
+    for(const s of st){ const c = await g(s.city); if(c) F.cities.push({c, name:s.city, n:++k}); }
+    for(const i of items(x=>x.cat === 'transport').sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'))){
+      const a = await g(i.from), b = await g(i.to); if(!a || !b || rawKm(a, b) < .3) continue;
+      F.legs.push({type:'Feature', properties:{col:P3C[p3St(i)], fly:/Avion/i.test(i.mode || '') ? 1 : 0, id:i.id}, geometry:{type:'LineString', coordinates:p3Arc(a, b)}});
+      [[a, i.from], [b, i.to]].forEach(([p, nm])=>{ if(!F.cities.some(x=>rawKm(x.c, p) < 3)) F.cities.push({c:p, name:nm, home:1}); });
+    }
+    for(const h of items(x=>x.cat === 'hotel' && x.date)){
+      const A0 = gdAnchors(t, h), hub = A0.hub;
+      let p = h.lat != null && h.lng != null ? {lat:+h.lat, lng:+h.lng} : null;
+      if(!p && h.adresse && okB(h)) p = await g(h.adresse + ', ' + A0.city);
+      if(!p) p = hub || A0.C0 || await g(A0.city); if(!p) continue;
+      F.hotels.push({p, h, city:A0.city, st:p3St(h), exact:!!(h.lat != null || (h.adresse && okB(h)))});
+      if(hub && !okB(h)){ F.hood.push({type:'Feature', properties:{}, geometry:{type:'Polygon', coordinates:[p3Circle(hub, hub.r)]}});
+        A0.A.forEach(q=>F.rays.push({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:[[hub.lng, hub.lat], [q.lng, q.lat]]}})); }
+      A0.P.forEach(v=>F.visits.push({type:'Feature', properties:{name:v.nom}, geometry:{type:'Point', coordinates:[+v.lng, +v.lat]}}));
+      const C = A0.C0 || p; A0.X.forEach((x, j)=>{ const q = x.lat != null && x.lng != null ? {lat:+x.lat, lng:+x.lng} : {lat:C.lat + .006 * Math.sin(j * 1.9 + 1), lng:C.lng + .009 * Math.cos(j * 1.9 + 1)};   // sans adresse : autour du centre
+        F.acts.push({type:'Feature', properties:{name:String(x.titre || '').replace(/ · .*$/, ''), col:P3C[p3St(x)]}, geometry:{type:'Point', coordinates:[q.lng, q.lat]}}); });
+    }
+    return F;
+  }
+  function p3Arc(a, b){   // vol : légère courbe ; route ou train : ligne droite
+    const d = rawKm(a, b); if(d < 150) return [[a.lng, a.lat], [b.lng, b.lat]];
+    const out = [], n = 24, mx = (a.lng + b.lng) / 2, my = (a.lat + b.lat) / 2, h = .12;
+    const ox = -(b.lat - a.lat) * h, oy = (b.lng - a.lng) * h;
+    for(let i = 0; i <= n; i++){ const u = i / n, w = 4 * u * (1 - u); out.push([a.lng + (b.lng - a.lng) * u + ox * w, a.lat + (b.lat - a.lat) * u + oy * w]); }
+    return out;
+  }
+  async function prep3d(){
+    const t = trip(); if(!t) return; prep3dClose(true); closeSheet(true);
+    const ov = document.createElement('div'); ov.id = 'cv-p3'; ov.className = 'p3-far'; document.body.appendChild(ov); document.body.style.overflow = 'hidden';
+    ov.innerHTML = `<div id="p3-map"></div>
+      <div class="lv-top"><button type="button" class="lv-x" onclick="CV.prep3dClose()" aria-label="${esc(MSGT('Fermer'))}">✕</button>
+        <div class="lv-t"><span class="lv-badge p3-badge">🛰️ 3D</span><b data-notr>${esc(t.titre || '')}</b><small><span>${esc(MSGT('Ta préparation sur la carte'))}</span></small></div></div>
+      <div class="lv-tools"><button type="button" data-b="sat" class="on" onclick="CV.p3Base('sat')" aria-label="Satellite">🛰️</button><button type="button" data-b="plan" onclick="CV.p3Base('plan')" aria-label="Plan">🗺️</button><button type="button" onclick="CV.p3Fit()" aria-label="${esc(MSGT('Tout le voyage'))}">🎯</button></div>
+      <div class="lv-msg" id="p3-msg">🌍 ${esc(MSGT('Chargement de la carte 3D…'))}</div>
+      <div class="p3-leg" id="p3-leg"></div>`;
+    p3Legend();
+    P3 = {map:null, mk:[], t:t.id}; const me = P3;
+    try {
+      await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
+      if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
+      if(P3 !== me) return;
+      const style = {version:8, projection:{type:'globe'},
+        sources:{sat:Object.assign(esriML('sat'), {maxzoom:18, attribution:'Esri, Maxar'}),
+          dem:{type:'raster-dem', tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], tileSize:256, maxzoom:14, encoding:'terrarium', attribution:'Mapzen terrain'}},
+        layers:[{id:'bg', type:'background', paint:{'background-color':'#0b1a3a'}}, {id:'sat', type:'raster', source:'sat'}],
+        sky:{'sky-color':'#0b1a3a', 'horizon-color':'#5fa8ff', 'fog-color':'#0b1a3a', 'sky-horizon-blend':0.6, 'horizon-fog-blend':0.4, 'fog-ground-blend':0.2, 'atmosphere-blend':['interpolate',['linear'],['zoom'],0,1,5,1,7,0]}};
+      try {
+        const lib = await withTimeout(fetch('https://tiles.openfreemap.org/styles/liberty').then(r=>r.json()), 5000);
+        const vs = Object.entries(lib.sources || {}).find(([,v])=>v.type === 'vector');
+        if(lib.glyphs && vs){ style.glyphs = lib.glyphs; style.sources.ofm = vs[1]; P3.font = null;
+          style.layers.push({id:'ofm-b-bg', type:'background', layout:{visibility:'none'}, paint:{'background-color':'#f8f4f0'}}, ...ofmBase(lib, vs[0], 0, true));
+          const lang = (l => /^(ar|hi)$/.test(l) ? 'en' : l)((window.I18N && I18N.lang) || 'fr');
+          (lib.layers || []).filter(l=>l.source === vs[0] && l.type === 'symbol' && l['source-layer'] === 'place' && /country|city|town|village|suburb|state|capital/.test(l.id)).forEach(l=>{ const x = JSON.parse(JSON.stringify(l)); x.source = 'ofm';
+            x.layout = Object.assign({}, x.layout, {'text-field':['coalesce',['get','name:' + lang],['get','name:latin'],['get','name']]}); if(x.layout['text-font'] && !P3.font) P3.font = x.layout['text-font'];
+            x.paint = Object.assign({}, x.paint, {'text-color':'#ffffff', 'text-halo-color':'rgba(10,20,50,.85)', 'text-halo-width':1.4}); style.layers.push(x); });
+        }
+      } catch(e){}
+      if(P3 !== me) return;
+      const map = new maplibregl.Map({container:'p3-map', style, center:[8, 38], zoom:1.6, pitch:0, maxPitch:75, maxZoom:18,
+        pixelRatio:Math.min(2, window.devicePixelRatio || 1), maxTileCacheSize:80, fadeDuration:0, attributionControl:{compact:true}});
+      P3.map = map;
+      let ok = false; const go = async ()=>{
+        if(P3 !== me || ok) return; ok = true;
+        try { map.setTerrain({source:'dem', exaggeration:1.3}); } catch(e){}
+        const F = await p3Data(t); if(P3 !== me) return; P3.F = F;
+        p3Layers(map, F); p3Markers(map, F);
+        const m = document.getElementById('p3-msg'); if(m) m.hidden = true;
+        const zc = () => { const z = map.getZoom(), o = document.getElementById('cv-p3'); if(o) o.className = z >= 10.5 ? 'p3-near' : z >= 8 ? 'p3-mid' : 'p3-far'; };
+        map.on('zoom', zc); zc();
+        setTimeout(()=>p3Fit(), 400);
+      };
+      map.on('style.load', go); map.on('load', go); map.on('error', ()=>{});
+    } catch(e){ const m = document.getElementById('p3-msg'); if(m) m.textContent = '⚠️ ' + (e.message || 'Carte indisponible'); }
+  }
+  function p3Layers(map, F){
+    const fc = f => ({type:'geojson', data:{type:'FeatureCollection', features:f}}), font = P3.font || ['Noto Sans Bold'], lbl = !!map.getStyle().glyphs;
+    map.addSource('p3-hood', fc(F.hood)); map.addSource('p3-rays', fc(F.rays)); map.addSource('p3-legs', fc(F.legs)); map.addSource('p3-vis', fc(F.visits)); map.addSource('p3-act', fc(F.acts));
+    map.addLayer({id:'p3-hood-f', type:'fill', source:'p3-hood', minzoom:10, paint:{'fill-color':'#e11d48', 'fill-opacity':.22}});
+    map.addLayer({id:'p3-hood-l', type:'line', source:'p3-hood', minzoom:10, paint:{'line-color':'#e11d48', 'line-width':3}});
+    map.addLayer({id:'p3-rays', type:'line', source:'p3-rays', minzoom:10.5, paint:{'line-color':'#fde68a', 'line-width':2, 'line-dasharray':[2, 1.6]}});
+    map.addLayer({id:'p3-legs-c', type:'line', source:'p3-legs', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':'rgba(0,0,0,.45)', 'line-width':['interpolate',['linear'],['zoom'],2,4,10,9]}});
+    map.addLayer({id:'p3-legs', type:'line', source:'p3-legs', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':['get','col'], 'line-width':['interpolate',['linear'],['zoom'],2,2.5,10,6]}});
+    map.addLayer({id:'p3-vis', type:'circle', source:'p3-vis', minzoom:9.5, paint:{'circle-color':'#a78bfa', 'circle-radius':['interpolate',['linear'],['zoom'],9.5,4,14,8], 'circle-stroke-color':'#fff', 'circle-stroke-width':2}});
+    map.addLayer({id:'p3-act', type:'circle', source:'p3-act', minzoom:9.5, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],9.5,5,14,9], 'circle-stroke-color':'#fff', 'circle-stroke-width':2.5}});
+    if(lbl){ const L = (id, src, mz) => map.addLayer({id, type:'symbol', source:src, minzoom:mz, layout:{'text-field':['get','name'], 'text-font':font, 'text-size':12, 'text-offset':[0, 1.2], 'text-anchor':'top', 'text-max-width':10, 'text-optional':true},
+        paint:{'text-color':'#fff', 'text-halo-color':'rgba(10,20,50,.9)', 'text-halo-width':1.5}});
+      L('p3-vis-t', 'p3-vis', 12.5); L('p3-act-t', 'p3-act', 12); }
+  }
+  function p3Markers(map, F){
+    P3.mk.forEach(m=>m.remove()); P3.mk = [];
+    const add = (el, p, cls) => { el.className = cls; P3.mk.push(new maplibregl.Marker({element:el, anchor:'center'}).setLngLat([p.lng, p.lat]).addTo(map)); };
+    F.cities.forEach(c=>{ const e = document.createElement('div'); e.innerHTML = `<i>${c.home ? '🏠' : c.n}</i><span data-notr>${esc(c.name)}</span>`; add(e, c.c, 'p3-city' + (c.home ? ' home' : '')); });
+    F.hotels.forEach(x=>{ const e = document.createElement('button'); e.type = 'button';
+      e.innerHTML = `<i style="background:${P3C[x.st]}">🛏️</i><span data-notr>${esc(x.city)}</span><small>${esc(MSGT(x.st === 'paid' ? 'Payé' : x.st === 'booked' ? 'Réservé' : x.exact ? 'À réserver' : 'À réserver · dans le quartier conseillé'))}</small>`;
+      e.onclick = ev => { ev.stopPropagation(); prep3dClose(); setTimeout(()=>{ if(okB(x.h)) edit(x.h.id); else { const hs = ariData(trip()).hs.filter(y=>!okB(y)); guideHotel(Math.max(0, hs.findIndex(y=>y.id === x.h.id))); } }, 80); };
+      add(e, x.p, 'p3-hot'); });
+  }
+  function p3Fit(){
+    if(!P3 || !P3.map || !P3.F) return; const F = P3.F, pts = [...F.cities.map(c=>c.c), ...F.hotels.map(h=>h.p)]; if(!pts.length) return;
+    const b = new maplibregl.LngLatBounds(); pts.forEach(p=>b.extend([p.lng, p.lat]));
+    try { P3.map.fitBounds(b, {padding:{top:110, bottom:230, left:40, right:70}, pitch:pts.length > 1 ? 40 : 55, bearing:-12, duration:2600, maxZoom:12}); } catch(e){}
+  }
+  function p3Base(b){
+    if(!P3 || !P3.map) return; const map = P3.map, L = (map.getStyle().layers || []).filter(l=>/^ofm-b-/.test(l.id)).map(l=>l.id);
+    if(b === 'plan' && !L.length){ toast('🗺️ ' + MSGT('Plan indisponible hors connexion')); return; }
+    try { map.setLayoutProperty('sat', 'visibility', b === 'sat' ? 'visible' : 'none'); } catch(e){}
+    L.forEach(id=>{ try { map.setLayoutProperty(id, 'visibility', b === 'plan' ? 'visible' : 'none'); } catch(e){} });
+    document.querySelectorAll('#cv-p3 .lv-tools [data-b]').forEach(x=>x.classList.toggle('on', x.dataset.b === b));
+  }
+  function prep3dClose(quiet){
+    if(P3){ try { if(P3.map) P3.map.remove(); } catch(e){} P3 = null; }
+    const o = document.getElementById('cv-p3'); if(o) o.remove(); if(!quiet) document.body.style.overflow = '';
   }
 
 
