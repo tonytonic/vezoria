@@ -2745,4 +2745,12 @@ I18N.load({
 "Réservé sur {0} ?":"Prenotato su {0}?",
 "Déjà réservé ?":"Già prenotato?",
 "Remplir ma fiche":"Compila la scheda",
-"Je n’ai pas réservé":"Non ho prenotato"});
+"Je n’ai pas réservé":"Non ho prenotato",
+"{0} : modifié aussi par {1}, les deux versions sont fusionnées":"{0}: modificato anche da {1}, le due versioni sono state unite",
+"Une fiche":"Una scheda",
+"un autre appareil":"un altro dispositivo",
+"{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.":"{0} ha appena modificato questa scheda: salvando, le tue modifiche saranno unite alle sue.",
+"Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"Unito alle modifiche fatte altrove (stesso campo: tenuta la tua versione)",
+"Fusionné avec les modifications faites ailleurs":"Unito alle modifiche fatte altrove",
+"Appareil partagé : demander qui l’utilise à chaque ouverture":"Dispositivo condiviso: chiedi chi lo usa a ogni apertura",
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Per un computer o tablet di casa: ognuno firma le sue modifiche. Per un 2° telefono (partner, amico) dai piuttosto un codice compagno: nome e diritti propri."});

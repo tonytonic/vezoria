@@ -5684,4 +5684,12 @@ I18N.load({
 "Réservé sur {0} ?":"{0}에서 예약했나요?",
 "Déjà réservé ?":"이미 예약했나요?",
 "Remplir ma fiche":"카드 채우기",
-"Je n’ai pas réservé":"예약 안 했어요"});
+"Je n’ai pas réservé":"예약 안 했어요",
+"{0} : modifié aussi par {1}, les deux versions sont fusionnées":"{0}: {1}도 수정했어요, 두 버전을 합쳤어요",
+"Une fiche":"카드",
+"un autre appareil":"다른 기기",
+"{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.":"{0}이(가) 방금 이 카드를 수정했어요: 저장하면 변경 내용이 합쳐져요.",
+"Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"다른 곳의 변경과 합쳤어요(같은 항목: 내 버전 유지)",
+"Fusionné avec les modifications faites ailleurs":"다른 곳의 변경과 합쳤어요",
+"Appareil partagé : demander qui l’utilise à chaque ouverture":"공용 기기: 열 때마다 누가 쓰는지 묻기",
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"집의 컴퓨터나 태블릿: 각자 이름으로 수정해요. 두 번째 휴대폰(배우자, 친구)에는 동행자 코드를 주세요: 자기 이름과 권한을 가져요."});

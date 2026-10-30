@@ -2740,4 +2740,12 @@ I18N.load({
 "Réservé sur {0} ?":"Bei {0} gebucht?",
 "Déjà réservé ?":"Schon gebucht?",
 "Remplir ma fiche":"Karte ausfüllen",
-"Je n’ai pas réservé":"Ich habe nicht gebucht"});
+"Je n’ai pas réservé":"Ich habe nicht gebucht",
+"{0} : modifié aussi par {1}, les deux versions sont fusionnées":"{0}: auch von {1} geändert, beide Versionen zusammengeführt",
+"Une fiche":"Eine Karte",
+"un autre appareil":"ein anderes Gerät",
+"{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.":"{0} hat diese Karte gerade geändert: Beim Speichern werden deine Änderungen mit den seinen zusammengeführt.",
+"Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"Mit anderswo gemachten Änderungen zusammengeführt (gleiches Feld: deine Version bleibt)",
+"Fusionné avec les modifications faites ailleurs":"Mit anderswo gemachten Änderungen zusammengeführt",
+"Appareil partagé : demander qui l’utilise à chaque ouverture":"Geteiltes Gerät: bei jedem Öffnen fragen, wer es nutzt",
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Für einen Computer oder ein Tablet zu Hause: Jeder signiert seine Änderungen. Für ein zweites Handy (Partner, Freund) gib lieber einen Begleiter-Code: eigener Name, eigene Rechte."});

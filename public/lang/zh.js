@@ -5684,4 +5684,12 @@ I18N.load({
 "Réservé sur {0} ?":"已在 {0} 预订？",
 "Déjà réservé ?":"已经预订了？",
 "Remplir ma fiche":"填写我的卡片",
-"Je n’ai pas réservé":"我没有预订"});
+"Je n’ai pas réservé":"我没有预订",
+"{0} : modifié aussi par {1}, les deux versions sont fusionnées":"{0}：{1} 也修改了，两个版本已合并",
+"Une fiche":"一张卡片",
+"un autre appareil":"另一台设备",
+"{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.":"{0} 刚修改了这张卡片：保存时，你的修改会与其合并。",
+"Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"已与其他地方的修改合并（同一字段：保留你的版本）",
+"Fusionné avec les modifications faites ailleurs":"已与其他地方的修改合并",
+"Appareil partagé : demander qui l’utilise à chaque ouverture":"共用设备：每次打开时询问是谁在用",
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"家用电脑或平板：每个人的修改都署自己的名。第二部手机（伴侣、朋友）请改用同伴码：独立的名字和权限。"});

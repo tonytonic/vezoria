@@ -2736,4 +2736,12 @@ I18N.load({
 "Réservé sur {0} ?":"Geboekt via {0}?",
 "Déjà réservé ?":"Al geboekt?",
 "Remplir ma fiche":"Mijn kaart invullen",
-"Je n’ai pas réservé":"Ik heb niet geboekt"});
+"Je n’ai pas réservé":"Ik heb niet geboekt",
+"{0} : modifié aussi par {1}, les deux versions sont fusionnées":"{0}: ook gewijzigd door {1}, beide versies samengevoegd",
+"Une fiche":"Een kaart",
+"un autre appareil":"een ander apparaat",
+"{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.":"{0} heeft deze kaart net gewijzigd: bij opslaan worden je wijzigingen samengevoegd met de zijne.",
+"Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"Samengevoegd met elders gemaakte wijzigingen (zelfde veld: jouw versie behouden)",
+"Fusionné avec les modifications faites ailleurs":"Samengevoegd met elders gemaakte wijzigingen",
+"Appareil partagé : demander qui l’utilise à chaque ouverture":"Gedeeld apparaat: bij elk openen vragen wie het gebruikt",
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Voor een computer of tablet thuis: iedereen ondertekent zijn eigen wijzigingen. Voor een 2e telefoon (partner, vriend) geef je beter een reisgenotencode: eigen naam en eigen rechten."});

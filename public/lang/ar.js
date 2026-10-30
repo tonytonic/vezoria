@@ -5685,4 +5685,12 @@ I18N.load({
 "Réservé sur {0} ?":"هل حجزت عبر {0}؟",
 "Déjà réservé ?":"محجوز مسبقًا؟",
 "Remplir ma fiche":"املأ بطاقتي",
-"Je n’ai pas réservé":"لم أحجز"});
+"Je n’ai pas réservé":"لم أحجز",
+"{0} : modifié aussi par {1}, les deux versions sont fusionnées":"{0}: عدّله {1} أيضًا، تم دمج النسختين",
+"Une fiche":"بطاقة",
+"un autre appareil":"جهاز آخر",
+"{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.":"عدّل {0} هذه البطاقة للتو: عند الحفظ ستُدمج تغييراتك مع تغييراته.",
+"Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"تم الدمج مع التعديلات من مكان آخر (نفس الحقل: احتُفظ بنسختك)",
+"Fusionné avec les modifications faites ailleurs":"تم الدمج مع التعديلات من مكان آخر",
+"Appareil partagé : demander qui l’utilise à chaque ouverture":"جهاز مشترك: اسأل من يستخدمه عند كل فتح",
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"لحاسوب أو جهاز لوحي في المنزل: كلٌّ يوقّع تعديلاته. لهاتف ثانٍ (شريك، صديق)، أعطِ رمز رفيق بدلًا من ذلك: اسمه وصلاحياته الخاصة."});

@@ -5684,4 +5684,12 @@ I18N.load({
 "Réservé sur {0} ?":"{0} पर बुक किया?",
 "Déjà réservé ?":"पहले से बुक है?",
 "Remplir ma fiche":"अपना कार्ड भरो",
-"Je n’ai pas réservé":"मैंने बुक नहीं किया"});
+"Je n’ai pas réservé":"मैंने बुक नहीं किया",
+"{0} : modifié aussi par {1}, les deux versions sont fusionnées":"{0}: {1} ने भी बदला, दोनों वर्ज़न मिला दिए गए",
+"Une fiche":"एक कार्ड",
+"un autre appareil":"दूसरा डिवाइस",
+"{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.":"{0} ने अभी यह कार्ड बदला: सेव करने पर तुम्हारे बदलाव उनके साथ मिल जाएँगे।",
+"Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"दूसरी जगह के बदलावों के साथ मिलाया गया (एक ही फ़ील्ड: तुम्हारा वर्ज़न रखा गया)",
+"Fusionné avec les modifications faites ailleurs":"दूसरी जगह के बदलावों के साथ मिलाया गया",
+"Appareil partagé : demander qui l’utilise à chaque ouverture":"साझा डिवाइस: हर बार खोलने पर पूछो कौन इस्तेमाल कर रहा है",
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"घर के कंप्यूटर या टैबलेट के लिए: हर कोई अपने बदलाव पर अपना नाम देता है। दूसरे फ़ोन (जीवनसाथी, दोस्त) के लिए साथी कोड दो: अपना नाम और अपने अधिकार।"});

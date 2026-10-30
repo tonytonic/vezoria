@@ -5685,4 +5685,12 @@ I18N.load({
 "Réservé sur {0} ?":"Забронировано на {0}?",
 "Déjà réservé ?":"Уже забронировано?",
 "Remplir ma fiche":"Заполнить карточку",
-"Je n’ai pas réservé":"Я не бронировал"});
+"Je n’ai pas réservé":"Я не бронировал",
+"{0} : modifié aussi par {1}, les deux versions sont fusionnées":"{0}: также изменено ({1}), обе версии объединены",
+"Une fiche":"Карточка",
+"un autre appareil":"другое устройство",
+"{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.":"{0} только что изменил(а) эту карточку: при сохранении ваши изменения объединятся.",
+"Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"Объединено с изменениями с другого устройства (одно и то же поле: оставлена ваша версия)",
+"Fusionné avec les modifications faites ailleurs":"Объединено с изменениями с другого устройства",
+"Appareil partagé : demander qui l’utilise à chaque ouverture":"Общее устройство: спрашивать, кто пользуется, при каждом открытии",
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Для домашнего компьютера или планшета: каждый подписывает свои изменения. Для второго телефона (супруг, друг) лучше дай код попутчика: своё имя и свои права."});

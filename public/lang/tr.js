@@ -5672,4 +5672,12 @@ I18N.load({
 "Réservé sur {0} ?":"{0} üzerinden rezerve edildi mi?",
 "Déjà réservé ?":"Zaten rezerve edildi mi?",
 "Remplir ma fiche":"Kartımı doldur",
-"Je n’ai pas réservé":"Rezervasyon yapmadım"});
+"Je n’ai pas réservé":"Rezervasyon yapmadım",
+"{0} : modifié aussi par {1}, les deux versions sont fusionnées":"{0}: {1} de değiştirdi, iki sürüm birleştirildi",
+"Une fiche":"Bir kart",
+"un autre appareil":"başka bir cihaz",
+"{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.":"{0} bu kartı az önce değiştirdi: kaydettiğinde değişikliklerin onunkilerle birleşir.",
+"Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"Başka yerde yapılan değişikliklerle birleştirildi (aynı alan: senin sürümün korundu)",
+"Fusionné avec les modifications faites ailleurs":"Başka yerde yapılan değişikliklerle birleştirildi",
+"Appareil partagé : demander qui l’utilise à chaque ouverture":"Paylaşılan cihaz: her açılışta kimin kullandığını sor",
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Evdeki bilgisayar veya tablet için: herkes kendi değişikliklerini imzalar. İkinci bir telefon (eş, arkadaş) için yol arkadaşı kodu ver: kendi adı ve kendi yetkileri."});

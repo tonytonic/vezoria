@@ -5684,4 +5684,12 @@ I18N.load({
 "Réservé sur {0} ?":"{0}で予約済み？",
 "Déjà réservé ?":"もう予約済み？",
 "Remplir ma fiche":"カードを入力",
-"Je n’ai pas réservé":"予約していません"});
+"Je n’ai pas réservé":"予約していません",
+"{0} : modifié aussi par {1}, les deux versions sont fusionnées":"{0}：{1}も編集しました。両方の内容を統合しました",
+"Une fiche":"カード",
+"un autre appareil":"別の端末",
+"{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.":"{0}がこのカードを編集しました。保存すると、あなたの変更と統合されます。",
+"Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"別の場所での変更と統合しました（同じ項目はあなたの内容を優先）",
+"Fusionné avec les modifications faites ailleurs":"別の場所での変更と統合しました",
+"Appareil partagé : demander qui l’utilise à chaque ouverture":"共有端末：開くたびに誰が使うか確認",
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"家のパソコンやタブレット向け：各自が自分の名前で編集します。2台目のスマホ（パートナー・友人）には同行者コードを渡してください：自分の名前と権限になります。"});

@@ -2746,4 +2746,12 @@ I18N.load({
 "Réservé sur {0} ?":"¿Reservado en {0}?",
 "Déjà réservé ?":"¿Ya reservado?",
 "Remplir ma fiche":"Rellenar mi ficha",
-"Je n’ai pas réservé":"No he reservado"});
+"Je n’ai pas réservé":"No he reservado",
+"{0} : modifié aussi par {1}, les deux versions sont fusionnées":"{0}: también modificado por {1}, se han fusionado ambas versiones",
+"Une fiche":"Una ficha",
+"un autre appareil":"otro dispositivo",
+"{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.":"{0} acaba de modificar esta ficha: al guardar, tus cambios se fusionarán con los suyos.",
+"Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"Fusionado con los cambios hechos en otro lugar (mismo campo: se conserva tu versión)",
+"Fusionné avec les modifications faites ailleurs":"Fusionado con los cambios hechos en otro lugar",
+"Appareil partagé : demander qui l’utilise à chaque ouverture":"Dispositivo compartido: preguntar quién lo usa al abrir",
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Para un ordenador o tableta de casa: cada uno firma sus cambios. Para un 2.º teléfono (pareja, amigo), da mejor un código de compañero: su propio nombre y sus propios permisos."});
