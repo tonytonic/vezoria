@@ -142,7 +142,9 @@
 
   function phaseTheme(){ const t = M.trip !== LEGACY && trip(), ph = t ? tripPhase(t) : 'prep'; const was = document.body.className; document.body.classList.toggle('cv-ph-live', ph === 'live'); document.body.classList.toggle('cv-ph-past', ph === 'past'); if(was !== document.body.className && typeof viPhase === 'function') try { viPhase(); } catch(e){}
     // barre d'état Android (appli Google Play et Chrome) : même couleur que l'en-tête de la période
-    try { const c = getComputedStyle(document.body).getPropertyValue('--navy').trim(), m = document.querySelector('meta[name="theme-color"]'); if(c && m && m.content !== c) m.content = c; } catch(e){} }
+    // (balise remplacée et pas seulement modifiée : certaines versions de Chrome ne relisent que les nouvelles balises ; couleur retenue pour la prochaine ouverture)
+    try { const c = getComputedStyle(document.body).getPropertyValue('--navy').trim(), m = document.querySelector('meta[name="theme-color"]');
+      if(c && m && m.content !== c){ const n = document.createElement('meta'); n.name = 'theme-color'; n.content = c; m.replaceWith(n); try { localStorage.setItem('vz_tc', c); } catch(e){} } } catch(e){} }
   function render(){
     phaseTheme();
     setTimeout(moments, 900); setTimeout(liveMapHydrate, 80); setTimeout(lgHydrate, 120); setTimeout(cdHydrate, 70); setTimeout(bbMapHydrate, 90); setTimeout(lnHydrate, 60); setTimeout(poem, 0); setTimeout(progMapHydrate, 120); setTimeout(()=>{ if(document.querySelector('.cv-anniv img[data-ph]:not([data-ok])')) hydrate(); }, 60);
