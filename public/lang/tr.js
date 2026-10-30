@@ -5578,4 +5578,5 @@ I18N.load({
 /* 👆 Toutes les photos (2026-10-26g) */
 "👆 Photos":"👆 Fotoğraflar",
 "👆 Toutes les photos":"👆 Tüm fotoğraflar",
-"Pas encore de photo dans ce voyage.":"Bu seyahatte henüz fotoğraf yok."});
+"Pas encore de photo dans ce voyage.":"Bu seyahatte henüz fotoğraf yok.",
+"d’hôtel à hôtel":"otelden otele"});

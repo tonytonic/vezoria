@@ -5590,4 +5590,5 @@ I18N.load({
 /* 👆 Toutes les photos (2026-10-26g) */
 "👆 Photos":"👆 写真",
 "👆 Toutes les photos":"👆 すべての写真",
-"Pas encore de photo dans ce voyage.":"この旅にはまだ写真がありません。"});
+"Pas encore de photo dans ce voyage.":"この旅にはまだ写真がありません。",
+"d’hôtel à hôtel":"ホテルからホテルへ"});

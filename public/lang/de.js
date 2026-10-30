@@ -2646,4 +2646,5 @@ I18N.load({
 /* 👆 Toutes les photos (2026-10-26g) */
 "👆 Photos":"👆 Fotos",
 "👆 Toutes les photos":"👆 Alle Fotos",
-"Pas encore de photo dans ce voyage.":"Noch keine Fotos in dieser Reise."});
+"Pas encore de photo dans ce voyage.":"Noch keine Fotos in dieser Reise.",
+"d’hôtel à hôtel":"von Hotel zu Hotel"});

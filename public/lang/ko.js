@@ -5590,4 +5590,5 @@ I18N.load({
 /* 👆 Toutes les photos (2026-10-26g) */
 "👆 Photos":"👆 사진",
 "👆 Toutes les photos":"👆 모든 사진",
-"Pas encore de photo dans ce voyage.":"이 여행에는 아직 사진이 없어요."});
+"Pas encore de photo dans ce voyage.":"이 여행에는 아직 사진이 없어요.",
+"d’hôtel à hôtel":"호텔에서 호텔로"});

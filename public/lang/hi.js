@@ -5590,4 +5590,5 @@ I18N.load({
 /* 👆 Toutes les photos (2026-10-26g) */
 "👆 Photos":"👆 तस्वीरें",
 "👆 Toutes les photos":"👆 सभी तस्वीरें",
-"Pas encore de photo dans ce voyage.":"इस यात्रा में अभी कोई तस्वीर नहीं है।"});
+"Pas encore de photo dans ce voyage.":"इस यात्रा में अभी कोई तस्वीर नहीं है।",
+"d’hôtel à hôtel":"होटल से होटल तक"});
