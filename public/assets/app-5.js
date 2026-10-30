@@ -1719,30 +1719,44 @@
   function tcfRender(){
     const c = tcf, S = M.insp || {}, debut = inspDebut(c.x), dep = S.dep === 'autre' ? S.depTxt : S.dep; let cur = debut;
     const rows = c.stops.map(([v, n])=>{ const d = cur; cur = addDays(cur, n); return `<li><b>${esc(v)}</b> · ${RF(n > 1 ? '{0} nuits' : '{0} nuit', n)} <span class="v-sum-small">${fshort(d)} → ${fshort(cur)}</span></li>`; }).join('');
-    openSheet(`<h2>🧳 ${MSGT('Vérifie ton voyage avant de le créer')}</h2><div id="tcf-ord"></div>
-      <div class="wz-recap"><b>${flag(c.x.cc)} ${esc(c.x.nom)}</b><div class="v-sum-small">${fdate(debut)} → ${fdate(cur)} · ${RF(nights(debut, cur) > 1 ? '{0} nuits' : '{0} nuit', nights(debut, cur))}${dep ? ' · ' + RF('départ de {0}', esc(dep)) : ''}</div><ol>${rows}</ol></div>
-      <div class="v-f2"><div class="v-f"><label>🏠 ${MSGT('Départ de')}</label><input class="v-in" id="tcf-dep" data-place autocomplete="off" value="${esc(c.dep != null ? c.dep : dep || M.home || '')}" placeholder="${esc(MSGT('Ta ville'))}" oninput="tcf.dep=this.value"></div>
-        <div class="v-f"><label>🏁 ${MSGT('Retour à')}</label><input class="v-in" id="tcf-ret" data-place autocomplete="off" value="${esc(c.ret != null ? c.ret : c.dep != null ? c.dep : dep || M.home || '')}" placeholder="${esc(MSGT('Même ville'))}" oninput="tcf.ret=this.value"></div></div>
+    if(c.dep == null) c.dep = dep || M.home || ''; if(c.ret == null) c.ret = c.dep;
+    openSheet(`<h2>🧳 ${MSGT('Vérifie ton voyage avant de le créer')}</h2>
+      <div class="v-f2"><div class="v-f"><label>🏠 ${MSGT('Départ de')}</label><input class="v-in" id="tcf-dep" data-place autocomplete="off" value="${esc(c.dep)}" placeholder="${esc(MSGT('Ta ville'))}" oninput="CV.tcfDep('dep',this.value)" onchange="CV.tcfDep('dep',this.value,1)"></div>
+        <div class="v-f"><label>🏁 ${MSGT('Retour à')}</label><input class="v-in" id="tcf-ret" data-place autocomplete="off" value="${esc(c.ret)}" placeholder="${esc(MSGT('Même ville'))}" oninput="CV.tcfDep('ret',this.value)" onchange="CV.tcfDep('ret',this.value,1)"></div></div>
+      <div id="tcf-ord"></div>
+      <div class="wz-recap"><b>${flag(c.x.cc)} ${esc(c.x.nom)}</b><div class="v-sum-small">${fdate(debut)} → ${fdate(cur)} · ${RF(nights(debut, cur) > 1 ? '{0} nuits' : '{0} nuit', nights(debut, cur))}</div><ol>${rows}</ol></div>
       <div class="v-hint">${MSGT('Tu pourras tout modifier ensuite : dates, étapes, nuits.')}</div>
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.tcfBack()" aria-label="←">←</button><button type="button" class="v-btn" onclick="CV.tcfGo()">🚀 ${MSGT('Créer le voyage')}</button></div>`);
     tcfAsk();
   }
   async function tcfAsk(){
     const box = () => document.getElementById('tcf-ord'), c = tcf; if(!box() || !c) return;
-    const sig = tcfSig(); if(c.keep === sig || c.stops.length < 2) return;
+    const sig = tcfSig() + '#' + normQ(c.dep || '') + '>' + normQ(c.ret || ''), same = () => tcf === c && tcfSig() + '#' + normQ(c.dep || '') + '>' + normQ(c.ret || '') === sig && box();
+    if(c.keep === sig || c.stops.length < 2) return;
     box().innerHTML = `<div class="ar-run wz-run">🧭 ${MSGT('Je cherche l’ordre des villes le plus court…')}</div>`;
-    const S = M.insp || {}, h = DEPS[S.dep] || (S.depLL ? [S.depLL[0], S.depLL[1]] : null), H = h ? {lat:h[0], lng:h[1]} : null;
+    const S = M.insp || {}, sdep = S.dep === 'autre' ? S.depTxt : S.dep;
+    const home = async v => { v = (v || '').trim(); if(!v) return null;
+      if(v === sdep){ const h = DEPS[S.dep] || (S.depLL ? [S.depLL[0], S.depLL[1]] : null); if(h) return {lat:h[0], lng:h[1]}; }
+      const k = '@' + normQ(v); if(c.pts[k]) return c.pts[k];
+      const g = await geocode(v, null).catch(()=>null); return g && g.lat != null ? (c.pts[k] = {lat:g.lat, lng:g.lng}) : null; };
+    const H = await home(c.dep), Bk = (c.ret || '').trim() ? await home(c.ret) : H;
+    if(!same()) return;
     const P = [];
     for(const [v] of c.stops){ let p = c.pts[normQ(v)]; if(!p){ const g = await cityInfo(v + (c.x.pays ? ', ' + c.x.pays : '')).catch(()=>null); p = g && g.lat != null ? {lat:g.lat, lng:g.lng} : null; if(p) c.pts[normQ(v)] = p; }
-      if(tcf !== c || tcfSig() !== sig || !box()) return; if(!p){ box().innerHTML = ''; return; } P.push(p); }
+      if(!same()) return; if(!p){ box().innerHTML = ''; return; } P.push(p); }
     if(c.stops.length < (H ? 2 : 3)){ box().innerHTML = ''; return; }
-    const r = wzShortest(P, H, H);
-    if(!ordWorth(r)){ box().innerHTML = `<div class="v-sum-small wz-ok">✓ ${MSGT('Ton itinéraire est déjà dans l’ordre le plus court.')}</div>`; return; }
+    const r = wzShortest(P, H, Bk);
+    if(!ordWorth(r)){ c.prop = null; box().innerHTML = `<div class="v-sum-small wz-ok">✓ ${MSGT('Ton itinéraire est déjà dans l’ordre le plus court.')}</div>`; return; }
     c.prop = r.o.map(k=>c.stops[k]);
-    const dep = S.dep === 'autre' ? S.depTxt : S.dep, line = A => esc([H ? dep : '', ...A.map(a=>a[0]), H ? dep : ''].filter(Boolean).join(' → '));
+    const line = A => esc([H ? c.dep : '', ...A.map(a=>a[0]), Bk ? (c.ret || c.dep) : ''].filter(Boolean).join(' → '));
     box().innerHTML = ordHTML(line(c.stops), line(c.prop), r, 'tcfOrd');
   }
-  function tcfOrd(yes){ if(!tcf) return; if(yes && tcf.prop){ tcf.stops = tcf.prop; toast('🧭 ' + MSGT('Itinéraire réorganisé')); } tcf.prop = null; tcf.keep = tcfSig(); tcfRender(); }
+  function tcfOrd(yes){ if(!tcf) return; if(yes && tcf.prop){ tcf.stops = tcf.prop; toast('🧭 ' + MSGT('Itinéraire réorganisé')); } tcf.prop = null; tcf.keep = tcfSig() + '#' + normQ(tcf.dep || '') + '>' + normQ(tcf.ret || ''); tcfRender(); }
+  // 🏠 départ / 🏁 retour changés : l’ordre le plus court est recalculé depuis ces villes (le retour suit le départ tant qu’on ne l’a pas touché)
+  function tcfDep(k, v, done){ const c = tcf; if(!c) return;
+    if(k === 'dep' && !c.retSet){ c.ret = v; const r = document.getElementById('tcf-ret'); if(r) r.value = v; }
+    if(k === 'ret') c.retSet = 1;
+    c[k] = v; if(done){ c.keep = null; tcfAsk(); } }
   function tcfBack(){ const b = tcf && tcf.back; tcf = null; if(b === 'comp' && typeof comp !== 'undefined' && comp) compRender(); else inspShow(inspN); }
   function tcfGo(){ if(!tcf) return; const c = tcf, g = id => ((document.getElementById(id) || {}).value || '').trim(), dep = g('tcf-dep'), ret = g('tcf-ret') || dep; tcf = null;
     if(dep){ M.home = dep; persist(); }   // retenu pour le prochain voyage
@@ -1770,7 +1784,7 @@
     closeSheet(true); M.mode = 'prep'; M.tab = 'prog'; go(tid);
     const auto = custom.auto || !Object.values(custom.sel || {}).some(a=>a && a.length);
     if(auto) setTimeout(()=>suggFill(tid), 150);
-    setTimeout(()=>alert(`🧳 « ${x.nom} » est prêt, du ${fdate(debut)} au ${fdate(fin)} :\n${stops.map(s=>'• ' + s.c + ' (' + s.n + ' nuit' + (s.n>1?'s':'') + ')').join('\n')}\n\n` + (auto ? MSGT('💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.') : MSGT('Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».'))), 300);
+    setTimeout(()=>alert(`🧳 « ${x.nom} » est prêt, du ${fdate(debut)} au ${fdate(fin)} :\n${stops.map(s=>'• ' + s.c + ' (' + s.n + ' nuit' + (s.n>1?'s':'') + ')').join('\n')}\n\n` + (auto ? MSGT('💡 Je cherche les incontournables de chaque ville (4 par jour) : tu les retrouveras dans « Que faire » pour choisir ceux à ajouter à ton programme.') : MSGT('Tout est modifiable. Ensuite : 🔎 « Que voir » à chaque étape, 🪄 « Remplir mes journées ».')) + '\n\n' + MSGT('🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.')), 300);
   }
 
 

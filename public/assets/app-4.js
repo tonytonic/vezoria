@@ -1188,14 +1188,14 @@ ${pm.join('\n')}</Document></kml>`;
   function expOpen(){
     const t = trip(); if(!t) return; const G = expTrip(t);
     if(!G.length){ openSheet(`<h2>🎟️ ${MSGT('Expériences à vivre')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Tout est trié pour l’instant.')}</div>
-      <button type="button" class="v-btn" onclick="CV.expMore()">＋ ${MSGT('Plus d’expériences')}</button><div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`); return; }
+      <button type="button" class="v-btn" onclick="CV.expMore()">＋ ${MSGT('Plus d’expériences')}</button>${guideBack(t)}<div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`); return; }
     const y = (document.querySelector('#v-sheet-bg .v-sheet') || {}).scrollTop || 0;
     openSheet(`<h2>🎟️ ${MSGT('Expériences à vivre')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Les activités qui font la réputation de chaque étape. ✓ pour les mettre au programme (à réserver), ✕ pour les écarter.')}</div>
       ${G.map(g=>`<div class="sg-d"><div class="sg-dh">📍 <span data-notr>${esc(g.city)}</span>${g.L[0].gen ? ` · <small>${EXPA[normQ(g.city)] ? '📡 ' + MSGT('Je cherche les activités de la ville…') : MSGT('idées de la ville')}</small>` : ''}</div>
         ${g.L.map(e=>`<div class="sg-r ex-r"><span class="sg-i">${e.ic}</span><span class="sg-n"><b class="ex-t">${esc(MSGT(e.l))}</b><span data-notr>${esc(e.p)}</span>${expLinks(e)}</span>
           <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.expKeep('${ja(g.h.id)}','${ja(e.key)}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.expDrop('${ja(e.key)}')">✕</button></div>`).join('')}</div>`).join('')}
       ${G.some(g=>g.L.some(e=>e.src)) ? `<div class="v-sum-small" style="margin:4px 0 8px">${MSGT('Sources : Wikivoyage (CC BY-SA), OpenStreetMap')}</div>` : ''}
-      <button type="button" class="v-btn sec" style="margin:4px 0 8px" onclick="CV.expMore()">＋ ${MSGT('Plus d’expériences')}</button>
+      <button type="button" class="v-btn sec" style="margin:4px 0 8px" onclick="CV.expMore()">＋ ${MSGT('Plus d’expériences')}</button>${guideBack(t)}
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
     const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y;
   }
@@ -1418,8 +1418,9 @@ ${pm.join('\n')}</Document></kml>`;
       const xn = expCount(t);
       const pk = rgItems(t).length;
       ov.innerHTML = head + `<div class="sw-end"><div class="sw-end-i">✨</div><h2>${esc(MSGT('Tout est trié !'))}</h2><p>${esc(RF('{0} lieu(x) ajouté(s) à ton programme.', SW.kept))}</p>
-        ${pk ? `<button type="button" class="v-btn" onclick="CV.swClose(1);CV.rgOpen()">② ${esc(MSGT('Ranger mes visites dans les jours'))} (${pk})</button>` : ''}
-        <button type="button" class="v-btn${pk ? ' sec' : ''}" onclick="CV.swClose();CV.suggMore()">＋ ${esc(MSGT('Nouvelles suggestions'))}</button>
+        ${guideOn(t) ? `<button type="button" class="v-btn" onclick="CV.guideNext('sw')">🧭 ${pk ? '② ' + esc(MSGT('Ranger mes visites dans les jours')) + ' (' + pk + ')' : esc(MSGT('Continuer mon parcours guidé'))}</button>`
+          : pk ? `<button type="button" class="v-btn" onclick="CV.swClose(1);CV.rgOpen()">② ${esc(MSGT('Ranger mes visites dans les jours'))} (${pk})</button>` : ''}
+        <button type="button" class="v-btn${pk || guideOn(t) ? ' sec' : ''}" onclick="CV.swClose();CV.suggMore()">＋ ${esc(MSGT('Nouvelles suggestions'))}</button>
         <button type="button" class="v-btn sec" onclick="CV.suggRedo()">🔄 ${esc(MSGT('Refaire les suggestions'))}</button>
         <button type="button" class="v-btn sec" onclick="CV.swClose();CV.expOpen()">🎟️ ${esc(MSGT('Expériences à vivre'))}${xn ? ' (' + xn + ')' : ''}</button>
         ${SW.hist.length ? `<button type="button" class="v-btn sec" onclick="CV.swUndo()">↩️ ${esc(MSGT('Annuler le dernier choix'))}</button>` : ''}
@@ -1655,7 +1656,8 @@ ${pm.join('\n')}</Document></kml>`;
       ov.innerHTML = head + `<div class="sw-end rg-end"><div class="sw-end-i">🗓️</div><h2>${esc(MSGT('Tout est rangé !'))}</h2><p>${esc(MSGT('Chaque journée suit l’ordre du trajet, de proche en proche. Tu peux encore tout déplacer dans le programme.'))}</p>
         <div class="rg-hood"><b>🏨 ${esc(MSGT('Où dormir ? Le quartier au centre de tes visites'))}</b><div id="rg-hood">${rgHoods(t) || esc(MSGT('Ajoute au moins 2 visites par ville pour avoir un conseil.'))}</div>
           <small>${esc(MSGT('Rien n’est figé : si tu choisis un hôtel ailleurs, mets son adresse dans l’hébergement puis « Réorganiser depuis mon hôtel ». Les journées repartiront de là.'))}</small></div>
-        <button type="button" class="v-btn" onclick="CV.rgClose();CV.tab('prog')">📅 ${esc(MSGT('Voir mon programme'))}</button>
+        ${guideOn(t) ? `<button type="button" class="v-btn" onclick="CV.guideNext('rg')">🧭 ${esc(MSGT('Continuer : trajets, activités, hébergements'))}</button>` : ''}
+        <button type="button" class="v-btn${guideOn(t) ? ' sec' : ''}" onclick="CV.rgClose();CV.tab('prog')">📅 ${esc(MSGT('Voir mon programme'))}</button>
         ${RG.hist.length ? `<button type="button" class="v-btn sec" onclick="CV.rgUndo()">↩️ ${esc(MSGT('Annuler le dernier choix'))}</button>` : ''}
         <button type="button" class="v-btn sec" onclick="CV.rgClose()">${esc(MSGT('Fermer'))}</button></div>`;
       return;

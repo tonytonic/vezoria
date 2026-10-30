@@ -2976,3 +2976,24 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 
 /* 🚗 voiture laissée à la 1re étape (2026-10-29f) */
 .car-fix{display:block;text-align:start;line-height:1.4}.car-fix span{display:flex;gap:8px;margin-top:8px}.car-fix .v-btn{flex:1;padding:9px 10px;font-size:.88rem}
+/* 🧭 parcours guidé (30c) */
+.ar-guide{display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;margin-top:12px;padding:12px 14px;border:0;border-radius:16px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#3b1d00;text-align:left;font:inherit;cursor:pointer;box-shadow:0 6px 18px rgba(245,158,11,.35)}
+.ar-guide i{font-style:normal;font-size:1.4rem;flex:0 0 auto}
+.ar-guide span{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ar-guide b{font-size:1rem}.ar-guide small{font-size:.8rem;opacity:.85}
+.ar-guide em{font-style:normal;font-size:1.5rem;font-weight:700}
+.gd-ch .ar-sub{width:100%;box-sizing:border-box;margin-bottom:8px}
+.gd-act{flex-wrap:wrap}.gd-act .v-btn{flex:1 1 140px}
+.gd-map{margin:4px 0 8px;min-height:60px;border-radius:14px;overflow:hidden;background:#eef0f3}
+.gd-map .wz-run{margin:0;padding:18px 12px}
+.gd-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--muted,#6b7280);margin:2px 0 4px}
+.gd-leg i{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#7C3AED;color:#fff;font-style:normal;font-size:.68rem;font-weight:700;margin-right:4px;vertical-align:-3px}
+.gd-pl{margin:2px 0 8px;padding-left:22px;font-size:.85rem;columns:2;column-gap:18px}.gd-pl li{break-inside:avoid;margin:1px 0}
+.gd-warn{margin:8px 0;padding:10px 12px;border-radius:12px;background:#fff7ed;border:1px solid #fdba74;color:#7c2d12;font-size:.85rem;line-height:1.35}
+@media (prefers-color-scheme:dark){.gd-warn{background:#3b2410;border-color:#9a3412;color:#fed7aa}}
+/* parcours guidé : les blocs de la carte violette, sur fond clair de la feuille */
+.gd .ar-subs .ar-sub{background:var(--card,#fff);color:inherit;border:1.5px solid var(--line,#e5e0ee);box-shadow:none}
+.gd .ar-subs .ar-sub small{color:inherit;opacity:.7}.gd .ar-subs .ar-sub i{background:#ede9fe;color:#6d28d9}
+.gd .ar-subs .ar-sub.ok{background:var(--card,#fff);color:inherit;opacity:.6}.gd .ar-subs .ar-sub.ok small{color:inherit}.gd .ar-subs .ar-sub.ok i{background:#22c55e;color:#fff}
+.gd .ar-r{background:rgba(124,58,237,.07)}
+.gd .ar-ra a{background:#7c3aed;color:#fff}.gd .ar-ra button{background:#ede9fe;color:#4c1d95}
+.gd .ar-hood{margin:6px 0 10px;border-left-color:#c4b5fd}.gd .ar-hood .ex-ln a{background:#7c3aed;color:#fff}

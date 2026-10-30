@@ -40,6 +40,8 @@
     const cur = S.find(x=>!x.ok), op = SG && SG.tid === t.id ? 'faire' : ((M.ariOpen || {})[t.id]) || (cur && cur.k);
     const compact = !(SG && SG.tid === t.id) && !(M.ariFull || {})[t.id] && !((M.ariOpen || {})[t.id] && (M.ariOpen || {})[t.id] !== '-'), nx = compact ? ariNext(t, D, cur) : null;
     const lv = pct >= 100 ? ['✅','Prêt à partir'] : pct >= 75 ? ['🎒','Presque prêt'] : pct >= 45 ? ['🧩','En préparation'] : pct >= 15 ? ['✏️','Esquisse'] : ['💭','Rêve'];
+    // 🧭 parcours guidé : dès que les villes et les dates sont posées (en plus du mode manuel)
+    const gdOk = !!(cur && D.hs.length && cur.k !== 'ou' && !(SG && SG.tid === t.id)), gdB = `<button type="button" class="ar-guide" onclick="CV.guideGo()"><i>🧭</i><span><b>${MSGT(guideOn(t) ? 'Je reprends mon parcours guidé' : 'Je continue mon parcours guidé')}</b><small>${MSGT('Visites, jours, trajets, hébergements… je te guide jusqu’au bout')}</small></span><em>›</em></button>`;
     const A = [26, 92], B = [180, -4], C = [334, 92], path = `M${A} Q${B} ${C}`, tp = Math.max(.02, pct / 100), anim = ARI_ANIM[t.id] !== pct; ARI_ANIM[t.id] = pct;   // ✈️ l’avion ne repart que si l’avancement change
     const q = u => [(1-u)*(1-u)*A[0] + 2*(1-u)*u*B[0] + u*u*C[0], (1-u)*(1-u)*A[1] + 2*(1-u)*u*B[1] + u*u*C[1]];
     const co = D.hs[0] ? (M.ctry || {})[normQ(stayCity(D.hs[0]))] : null, fd = d => d ? fshort(d) : '';
@@ -86,7 +88,8 @@
       <div class="cd-clock ar-clock" id="cd-clock">${cdClock(ms)}</div>` : ''}
       <div class="p2-top ar-lv"><div><div class="p2-k">${MSGT('Ta préparation')}</div><div class="p2-l">${lv[0]} ${MSGT(lv[1])}</div></div><div class="p2-pct"><b>${pct}</b><small>%</small></div></div>
       ${compact ? `<div class="ar-seg">${S.map(x=>`<button type="button" class="${x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : ''}" onclick="CV.ariTog('${ja(x.k)}')"><i style="--f:${x.ok ? 100 : Math.round(x.f * 100)}%"></i><span>${MSGT(x.l)}${x.ok ? ' ✓' : ''}</span></button>`).join('')}</div>
-      ${nx ? `<div class="ar-nx"><div class="ar-nk">${MSGT('Ta prochaine étape')}</div><button type="button" class="ar-sub cur" onclick="${nx.fn}"><i>${nx.ic}</i><span><b>${nx.b}</b><small>${nx.s}</small></span></button></div>` : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}
+      ${nx && gdOk ? gdB : ''}
+      ${nx ? `<div class="ar-nx"><div class="ar-nk">${MSGT(gdOk ? 'Ou à la main, ta prochaine étape' : 'Ta prochaine étape')}</div><button type="button" class="ar-sub cur" onclick="${nx.fn}"><i>${nx.ic}</i><span><b>${nx.b}</b><small>${nx.s}</small></span></button></div>` : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}
       <button type="button" class="ar-all" onclick="CV.ariFull(1)">${MSGT('Voir les 4 étapes en détail')} ▾</button></div>` : `
       <svg class="p2-svg" viewBox="0 0 360 112" aria-hidden="true">
         <path d="${path}" class="p2-base"/><path d="${path}" class="p2-prog" pathLength="100" style="--p:${pct}"/>
@@ -95,6 +98,7 @@
         <g class="p2-plane"><text x="-12" y="8" font-size="24" transform="rotate(45)">✈️</text>
           <animateMotion dur="${anim ? '1.8s' : '0.001s'}" fill="freeze" keyPoints="${anim ? 0 : tp.toFixed(3)};${tp.toFixed(3)}" keyTimes="0;1" calcMode="spline" keySplines=".2 .7 .2 1" rotate="auto" path="${path}"/></g>
       </svg>
+      ${gdOk ? gdB : ''}
       <div class="ar-steps">${S.map((x, i)=>{ const o = op === x.k, st = x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : 'next';
         return `<div class="ar-s ${st}${o ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.ariTog('${ja(x.k)}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${MSGT(x.l)}</span><small>${x.ok ? '' : Math.round(x.f * 100) + ' %'}</small><em>${o ? '▾' : '▸'}</em></button>
           ${o ? `<div class="ar-b">${body(x.k)}</div>` : ''}</div>`; }).join('')}</div>
@@ -226,6 +230,92 @@
   function ariSkip(k){ const t = trip(); if(!t) return; M.ariSkip = M.ariSkip || {}; (M.ariSkip[t.id] = M.ariSkip[t.id] || {})[k] = 1; if(M.ariOpen) delete M.ariOpen[t.id]; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function ariBook(id){ const it = R[id]; if(!it) return; const c = clone(it); c.statut = 'booked'; put(c, '✓ ' + MSGT('Noté comme réservé')); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function ariFm(b){ cdFm(b); const y = window.scrollY; setTimeout(()=>{ render(); window.scrollTo(0, y); }, 250); }
+
+
+  /* ══════════ 🧭 PARCOURS GUIDÉ : après la création, on enchaîne ① choisir les visites → ② les ranger dans les jours (ordre du trajet)
+     → ③ au choix : trajets, activités payantes, hébergements (carte du quartier conseillé) → ④ finalisation. On peut arrêter à tout moment. ══════════ */
+  const guideOn = t => !!(t && (M.guide || {})[t.id]);
+  const guideBack = t => guideOn(t) ? `<button type="button" class="v-btn" style="margin:0 0 8px" onclick="CV.guideSheet()">🧭 ${MSGT('Revenir au parcours guidé')}</button>` : '';
+  function guideGo(){ const t = trip(); if(!t) return; M.guide = M.guide || {}; M.guide[t.id] = 1; persist(); guideNext(); }
+  function guideStop(){ const t = trip(); if(t && M.guide) delete M.guide[t.id]; persist(); closeSheet(true); toast('✋ ' + MSGT('Mode manuel : tout reste dans la carte « Ta préparation »')); render(); }
+  async function guideNext(from){
+    const t = trip(); if(!t) return;
+    if(from === 'sw') swClose(1); else if(from === 'rg') rgClose(); closeSheet(true);
+    let D = ariData(t);
+    if(!D.hs.length){ ariCity(); return; }
+    const skipF = ((M.ariSkip || {})[t.id] || {}).faire;
+    if(!skipF && from !== 'sw' && from !== 'rg' && !D.sg.length && !expCount(t) && !(M.suggDone || {})[t.id] && D.pl.length < 1){   // rien à choisir encore : on cherche les incontournables
+      if(!(SG && SG.tid === t.id)) suggFill(t.id);
+      for(let k = 0; k < 120 && SG && SG.tid === t.id; k++) await new Promise(r=>setTimeout(r, 500));
+      if(trip() !== t) return; D = ariData(t);
+    }
+    if(!skipF && !from && (D.sg.length || expCount(t))){ suggOpen(); if(document.getElementById('cv-sw')) return; }
+    if(from !== 'rg' && rgItems(t).length && t.debut){ rgOpen(); return; }
+    guideSheet();
+  }
+  function guideSheet(){
+    const t = trip(); if(!t) return; closeSheet(true); swClose(1); if(document.getElementById('cv-rg')) rgClose();
+    const D = ariData(t), tr = D.trs.filter(x=>!okB(x)), hs = D.hs.filter(x=>!okB(x)), xs = items(i=>i.cat === 'activite' && i.exp && !okB(i)), xn = expCount(t);
+    const row = (ic, b, sm, fn, ok) => `<button type="button" class="ar-sub${ok ? ' ok' : ''}" onclick="${fn}"><i>${ok ? '✓' : ic}</i><span><b>${b}</b><small>${sm}</small></span></button>`;
+    const all = !tr.length && !hs.length && !xs.length;
+    openSheet(`<div class="gd"><h2>🧭 ${MSGT('Ton parcours guidé')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT(all ? 'Tout est réservé : il ne reste que les derniers détails avant de partir.' : 'Tes visites sont rangées dans les jours. On continue par quoi ?')}</div>
+      <div class="ar-subs gd-ch">
+        ${row('🚆', MSGT('Les trajets'), tr.length ? RF('{0} à réserver', tr.length) : MSGT('Tout est réservé'), 'CV.guideTr()', !tr.length)}
+        ${row('🎟️', MSGT('Les activités payantes'), xs.length || xn ? [xn ? RF('{0} idées à trier', xn) : '', xs.length ? RF('{0} à réserver', xs.length) : ''].filter(Boolean).join(' · ') : MSGT('Rien à réserver'), 'CV.guideExp()', !xs.length && !xn)}
+        ${row('🛏️', MSGT('Les hébergements'), hs.length ? RF('{0} à réserver', hs.length) + ' · ' + MSGT('avec la carte du quartier conseillé') : MSGT('Tout est réservé'), 'CV.guideHotel(0)', !hs.length)}
+        ${row('✅', MSGT('Finaliser'), MSGT('Papiers, santé, argent, valise'), 'CV.guideFin()', false)}
+      </div>
+      <div class="v-actions gd-act"><button type="button" class="v-btn sec" onclick="CV.guideStop()">✋ ${MSGT('Je continue en manuel')}</button><button type="button" class="v-btn sec" onclick="CV.close()">⏰ ${MSGT('Plus tard')}</button></div>
+      <div class="v-sum-small">${MSGT('« Plus tard » : le bouton 🧭 de la carte « Ta préparation » te ramène ici.')}</div></div>`);
+  }
+  // une liste de réservations (trajets ou activités) : lien partenaire + « C’est réservé », puis retour au parcours
+  function guideList(kind){
+    const t = trip(); if(!t) return; const D = ariData(t);
+    const L = kind === 'tr' ? D.trs.filter(x=>!okB(x)) : items(i=>i.cat === 'activite' && i.exp && !okB(i)).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'));
+    const xn = kind === 'x' ? expCount(t) : 0, fd = d => d ? fshort(d) : '';
+    if(!L.length && !xn){ toast('✓ ' + MSGT('Tout est réservé')); return guideSheet(); }
+    openSheet(`<div class="gd"><h2>${kind === 'tr' ? '🚆 ' + MSGT('Les trajets') : '🎟️ ' + MSGT('Les activités payantes')}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">${MSGT(kind === 'tr' ? 'Dans l’ordre du voyage. Réserve chez le partenaire, puis touche « C’est réservé ».' : 'Choisis d’abord les expériences qui te tentent, puis réserve-les.')}</div>
+      ${xn ? `<button type="button" class="v-btn" style="margin:0 0 10px" onclick="CV.expOpen()">🎟️ ${RF('Choisir parmi {0} expériences', xn)}</button>` : ''}
+      <div class="ar-rs">${L.map(it=>`<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${icon(it)}</i>
+        <span><b data-notr>${esc(it.titre)}</b><small>${fd(it.date)}${it.mode ? ' · ' + esc(MSGT(it.mode)) : ''}</small></span>
+        <div class="ar-ra">${ariLink(it, t)}<button type="button" onclick="event.stopPropagation();CV.guideBook('${ja(it.id)}','${kind}')">${MSGT('C’est réservé')}</button></div></div>` + (kind === 'tr' ? aptHTML(it, t) : '')).join('')}</div>
+      <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.guideSheet()" aria-label="←">←</button><button type="button" class="v-btn" onclick="CV.guideSheet()">🧭 ${MSGT('Continuer')}</button></div></div>`);
+  }
+  const guideTr = () => guideList('tr'), guideExp = () => guideList('x');
+  function guideBook(id, kind, k){
+    const it = R[id]; if(!it) return; const c = clone(it); c.statut = 'booked'; putQuiet([c]); toast('✓ ' + MSGT('Noté comme réservé')); refresh();
+    if(kind === 'h') guideHotel(k || 0); else guideList(kind);
+  }
+  // 🛏️ hébergement par hébergement : la carte des visites de l’étape + le quartier au centre (calculé, pas connu !) + les liens de réservation
+  let GH = 0;
+  async function guideHotel(k){
+    const t = trip(); if(!t) return; const hs = ariData(t).hs.filter(x=>!okB(x));
+    if(!hs.length){ toast('✓ ' + MSGT('Tous les hébergements sont réservés')); return guideSheet(); }
+    k = Math.max(0, Math.min(+k || 0, hs.length - 1)); const h = hs[k], city = stayCity(h) || h.titre || '', my = ++GH;
+    const P = stayPlaces(t, h).sort((a, b)=>(a.date || '').localeCompare(b.date || ''));
+    const draw = () => `<div class="gd"><h2>🛏️ ${RF('Où dormir à {0} ?', `<span data-notr>${esc(city)}</span>`)}</h2>
+      <div class="v-sum-small" style="margin-bottom:8px">${fdate(h.date)} → ${fdate(h.dateFin || h.date)} · ${RF(nights(h.date, h.dateFin || h.date) > 1 ? '{0} nuits' : '{0} nuit', nights(h.date, h.dateFin || h.date))}${hs.length > 1 ? ' · ' + (k + 1) + '/' + hs.length : ''}</div>
+      <div class="gd-map" id="gd-map"><div class="ar-run wz-run">🗺️ ${MSGT('Je prépare la carte de tes visites…')}</div></div>
+      ${P.length ? `<div class="gd-leg"><span><i style="background:#e11d48">H</i> ${MSGT('Quartier conseillé')}</span><span><i>1</i> ${MSGT('Tes visites')}</span></div>
+        <ol class="gd-pl">${P.slice(0, 12).map(p=>`<li data-notr>${esc(p.nom)}</li>`).join('')}${P.length > 12 ? '<li>…</li>' : ''}</ol>`
+        : `<div class="v-sum-small" style="margin:6px 0">${MSGT('Pas encore de visites ici : choisis-en au moins 2 pour avoir un quartier conseillé.')}</div>`}
+      <div class="gd-warn">⚠️ ${MSGT('L’application ne connaît pas le quartier : elle le propose seulement parce qu’il est au centre de tes visites. Renseigne-toi avant de réserver (sécurité, bruit, avis).')}</div>
+      ${hoodHTML(h, t) || (hidden('blk:book') ? '' : `<div class="ar-hood"><div class="ex-ln">${bookA('booking', {what:city, date:h.date, end:h.dateFin, n:Math.max(1, (t.voyageurs || []).length)})}${bookA('airbnb', {city, date:h.date, end:h.dateFin, n:Math.max(1, (t.voyageurs || []).length)})}</div></div>`)}
+      <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.guideSheet()" aria-label="←">←</button>
+        <button type="button" class="v-btn" onclick="CV.guideBook('${ja(h.id)}','h',${k})">✓ ${MSGT('C’est réservé')}</button>
+        <button type="button" class="v-btn sec" onclick="${k + 1 < hs.length ? `CV.guideHotel(${k + 1})` : 'CV.guideSheet()'}">${MSGT(k + 1 < hs.length ? 'Suivant' : 'Terminer')} ›</button></div></div>`;
+    openSheet(draw());
+    if(P.length >= 2 && !(M.hood || {})[h.id]){ try { await hoodEnsure(t); } catch(e){} if(my !== GH) return; const sh = document.querySelector('#v-sheet-bg .v-sheet'), y = sh ? sh.scrollTop : 0; openSheet(draw()); const s2 = document.querySelector('#v-sheet-bg .v-sheet'); if(s2) s2.scrollTop = y; }
+    const o = (M.hood || {})[h.id], mk = P.map((p, i)=>({lat:+p.lat, lng:+p.lng, label:i + 1, color:'#7C3AED'}));
+    if(o && o.lat != null) mk.push({lat:o.lat, lng:o.lng, label:'H', color:'#e11d48', name:o.name || MSGT('Quartier conseillé')});
+    if(!mk.length){ const g = await geocode(city, null).catch(()=>null); if(g && g.lat != null) mk.push({lat:+g.lat, lng:+g.lng, label:'•', color:'#e11d48', name:city}); }
+    if(my !== GH) return; const box = document.getElementById('gd-map'); if(!box) return;
+    if(!mk.length){ box.remove(); return; }
+    try { const cv = await drawMap({w:640, h:400, round:true, markers:mk, maxZoom:mk.length > 1 ? 16 : 12, pad:40}); if(my !== GH || !document.getElementById('gd-map')) return; box.innerHTML = ''; cv.style.width = '100%'; cv.style.height = 'auto'; cv.style.borderRadius = '14px'; box.appendChild(cv); }
+    catch(e){ box.remove(); }
+  }
+  function guideFin(){ const t = trip(); if(t && M.guide){ delete M.guide[t.id]; persist(); } closeSheet(true); avantSheet(); }
 
   /* ══════════ 🧵 Fils d’Ariane : même carte pour chaque moment (en cours, voyage fini, compagnons, premiers pas) ══════════ */
   function filCard(o){
