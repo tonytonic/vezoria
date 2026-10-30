@@ -477,16 +477,18 @@
   const tileImg = {}; let tileBy = TILES[0].by;
   function loadOne(src){ return new Promise(res=>{ const im = new Image(); im.crossOrigin = 'anonymous'; let done = false; const end = v => { if(!done){ done = true; res(v); } };
     im.onload = ()=>end(im); im.onerror = ()=>end(null); im.src = src; setTimeout(()=>end(null), 8000); }); }
-  function loadTile(z,x,y){
-    const k = z+'/'+x+'/'+y; if(tileImg[k]) return tileImg[k];
-    return tileImg[k] = (async()=>{ for(const t of TILES){ const im = await Promise.race([esriTile(t.k, z, x, y), new Promise(r=>setTimeout(()=>r(null), 8000))]); if(im){ tileBy = t.by; return im; } } return null; })();
+  const TILES_SAT = [{k:'sat', by:'© Esri · Maxar · Earthstar'}, ...TILES];
+  function loadTile(z,x,y,sat){
+    const k = (sat ? 's' : '') + z+'/'+x+'/'+y; if(tileImg[k]) return tileImg[k];
+    return tileImg[k] = (async()=>{ for(const t of (sat ? TILES_SAT : TILES)){ const im = await Promise.race([esriTile(t.k, z, x, y), new Promise(r=>setTimeout(()=>r(null), 8000))]); if(im){ tileBy = t.by; return im; } } return null; })();
   }
   const lon2x = (lng,z) => (lng+180)/360*Math.pow(2,z)*256;
   const lat2y = (lat,z) => { const r = lat*Math.PI/180; return (1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*Math.pow(2,z)*256; };
   // Dessine une carte : fond de carte + tracé + repères. Renvoie un <canvas> (fond uni si hors ligne).
   async function drawMap(o){
     const W = o.w || 640, H = o.h || 380, S = 2, pad = o.pad || 46;
-    const all = [...(o.markers||[]), ...((o.line||[]).map(p=>({lat:p[0], lng:p[1]}))), ...((o.lines||[]).flatMap(l=>l.pts.map(p=>({lat:p[0], lng:p[1]}))))].filter(p=>p && p.lat != null && p.lng != null);
+    const cE = o.circle && o.circle.lat != null ? [{lat:o.circle.lat + o.circle.km / 111, lng:o.circle.lng}, {lat:o.circle.lat - o.circle.km / 111, lng:o.circle.lng}] : [];   // le cercle entre dans le cadre
+    const all = [...cE, ...(o.markers||[]), ...((o.line||[]).map(p=>({lat:p[0], lng:p[1]}))), ...((o.lines||[]).flatMap(l=>l.pts.map(p=>({lat:p[0], lng:p[1]}))))].filter(p=>p && p.lat != null && p.lng != null);
     const c = document.createElement('canvas'); c.width = W*S; c.height = H*S; const g = c.getContext('2d'); g.scale(S,S);
     g.fillStyle = '#eef0f3'; g.fillRect(0,0,W,H);
     if(!all.length) return c;
@@ -501,7 +503,7 @@
       const n = Math.pow(2,z), jobs = [];
       for(let tx = Math.floor(x0/256); tx <= Math.floor((x0+W)/256); tx++) for(let ty = Math.floor(y0/256); ty <= Math.floor((y0+H)/256); ty++){
         if(ty < 0 || ty >= n) continue; const wx = ((tx % n) + n) % n;
-        jobs.push(loadTile(z,wx,ty).then(im=>{ if(im){ g.drawImage(im, tx*256-x0, ty*256-y0, 256, 256); tilesOk++; } }));
+        jobs.push(loadTile(z,wx,ty,o.sat).then(im=>{ if(im){ g.drawImage(im, tx*256-x0, ty*256-y0, 256, 256); tilesOk++; } }));
       }
       await Promise.all(jobs);
     }
@@ -515,6 +517,13 @@
     (o.lines||[]).forEach(l=>{ const L = l.pts.map(p=>P({lat:p[0], lng:p[1]})); if(L.length < 2) return; g.lineJoin = 'round'; g.lineCap = 'round';
       g.strokeStyle = 'rgba(255,255,255,.95)'; g.lineWidth = 7; g.beginPath(); L.forEach(([a,b],i)=> i ? g.lineTo(a,b) : g.moveTo(a,b)); g.stroke();
       g.strokeStyle = l.color || '#0ea5e9'; g.lineWidth = 4; g.beginPath(); L.forEach(([a,b],i)=> i ? g.lineTo(a,b) : g.moveTo(a,b)); g.stroke(); });
+    // 🎯 triangulation : traits du centre conseillé vers chaque visite + cercle du quartier
+    if(o.rays && o.rays.from) o.rays.to.forEach(q=>{ const [a1,b1] = P(o.rays.from), [a2,b2] = P(q); g.setLineDash([7,6]); g.lineCap = 'round';
+      g.strokeStyle = 'rgba(0,0,0,.45)'; g.lineWidth = 4; g.beginPath(); g.moveTo(a1,b1); g.lineTo(a2,b2); g.stroke();
+      g.strokeStyle = '#fde68a'; g.lineWidth = 2.2; g.beginPath(); g.moveTo(a1,b1); g.lineTo(a2,b2); g.stroke(); g.setLineDash([]); });
+    if(o.circle && o.circle.lat != null){ const [a,b] = P(o.circle), r = Math.max(14, Math.abs(P({lat:o.circle.lat + o.circle.km / 111, lng:o.circle.lng})[1] - b));
+      g.fillStyle = 'rgba(225,29,72,.22)'; g.strokeStyle = '#fff'; g.lineWidth = 5; g.beginPath(); g.arc(a, b, r, 0, 7); g.fill(); g.stroke();
+      g.strokeStyle = '#e11d48'; g.lineWidth = 2.5; g.beginPath(); g.arc(a, b, r, 0, 7); g.stroke(); }
     if(o.round) (o.markers||[]).forEach(m=>{   // repères ronds numérotés, nom dans une pastille blanche
       const [a,b] = P(m); g.fillStyle = m.color || '#7C3AED'; g.strokeStyle = '#fff'; g.lineWidth = 3; g.beginPath(); g.arc(a, b, m.label === '•' ? 5 : 11, 0, 7); g.fill(); g.stroke();
       if(m.label !== '•'){ g.fillStyle = '#fff'; g.font = 'bold 11px -apple-system,Helvetica,Arial,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(m.label), a, b + .5); g.textBaseline = 'alphabetic'; }

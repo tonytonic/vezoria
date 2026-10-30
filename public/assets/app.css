@@ -3008,3 +3008,16 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 .sw-chip{all:unset;box-sizing:border-box;cursor:pointer;padding:9px 13px;min-height:40px;border-radius:99px;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.35);color:#fff;font-size:.88rem;font-weight:700;display:inline-flex;align-items:center;gap:6px}
 .sw-chip.on{background:#fff;color:#4c1d95;border-color:#fff}
 .sw-chip.on::after{content:'✓';font-weight:800;color:#16a34a}
+/* 🏘️ quartier conseillé (31a) */
+.gd-hood{margin:2px 0 10px;padding:10px 12px;border-radius:14px;background:linear-gradient(135deg,#ffe4e6,#fce7f3);border:1.5px solid #fda4af;color:#881337}
+.gd-hood .gd-hk{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.gd-hood b{display:block;font-size:1.15rem;margin:2px 0}.gd-hood small{font-size:.8rem;opacity:.85}
+@media (prefers-color-scheme:dark){.gd-hood{background:#3b0f1e;border-color:#9f1239;color:#fecdd3}}
+.gd-how{font-size:.8rem;line-height:1.4;opacity:.8;margin:2px 0 6px}
+.gd-dist{columns:1;list-style:none;padding:0;margin:0 0 8px}
+.gd-dist li{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid rgba(124,58,237,.1)}
+.gd-dist li span[data-notr]{flex:1;min-width:0}.gd-dist em{font-style:normal;font-weight:700;font-size:.82rem;opacity:.8}
+.gd-n{flex:none;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#7C3AED;color:#fff;font-size:.7rem;font-weight:800}.gd-n.c{background:#0ea5e9}
+.gd-links{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+.gd-links a{display:inline-flex;align-items:center;gap:4px;padding:8px 12px;border-radius:99px;background:#7c3aed;color:#fff;font-weight:800;font-size:.84rem;text-decoration:none}
+.gd-links a.gd-gm{background:#fff;color:#1a73e8;border:1.5px solid #1a73e8}

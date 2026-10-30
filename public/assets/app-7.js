@@ -305,38 +305,61 @@
   }
   // 🛏️ hébergement par hébergement : la carte des visites de l’étape + le quartier au centre (calculé, pas connu !) + les liens de réservation
   let GH = 0;
+  // 🏘️ le centre conseillé pour dormir : visites serrées → leur milieu ; visites éparpillées (Futuroscope + le centre de Poitiers)
+  //    → le point le plus central parmi elles (jamais un champ entre deux sites), le centre-ville gagnant à égalité.
+  function gdHub(A){
+    if(!A.length) return null; if(A.length === 1) return {lat:A[0].lat, lng:A[0].lng, r:.7};
+    const c = {lat:A.reduce((s, p)=>s + p.lat, 0) / A.length, lng:A.reduce((s, p)=>s + p.lng, 0) / A.length}, av = A.reduce((s, p)=>s + rawKm(c, p), 0) / A.length;
+    if(av <= 2) return {lat:c.lat, lng:c.lng, r:Math.min(1.5, Math.max(.45, av * .7))};
+    const sc = q => A.reduce((s, p)=>s + rawKm(q, p), 0) * (q.ctr ? .9 : 1), best = A.slice().sort((a, b)=>sc(a) - sc(b))[0];
+    return {lat:best.lat, lng:best.lng, r:.8};
+  }
   async function guideHotel(k){
     const t = trip(); if(!t) return; const hs = ariData(t).hs.filter(x=>!okB(x));
     if(!hs.length){ toast('✓ ' + MSGT('Tous les hébergements sont réservés')); return guideSheet(); }
     k = Math.max(0, Math.min(+k || 0, hs.length - 1)); const h = hs[k], city = stayCity(h) || h.titre || '', my = ++GH;
     const P = stayPlaces(t, h).sort((a, b)=>(a.date || '').localeCompare(b.date || ''));
     const X = items(i=>i.cat === 'activite' && i.date && i.date >= h.date && i.date < (h.dateFin || addDays(h.date, 1)));   // 🎟️ activités prévues pendant l’étape
-    // 🏘️ le point « H » : le quartier calculé (2 visites ou plus) ; sinon le milieu de tes visites proches
-    const hz = () => { const o = (M.hood || {})[h.id]; if(o && o.lat != null) return {lat:o.lat, lng:o.lng, name:o.name || MSGT('Quartier conseillé')};
-      if(!P.length) return null; const m = {lat:mid(P.map(p=>+p.lat)), lng:mid(P.map(p=>+p.lng))}, nr = P.filter(p=>rawKm(m, p) <= 25), L = nr.length ? nr : P;
-      return {lat:L.reduce((a, p)=>a + +p.lat, 0) / L.length, lng:L.reduce((a, p)=>a + +p.lng, 0) / L.length, name:MSGT('Autour de tes visites')}; };
-    const draw = () => `<div class="gd"><h2>🛏️ ${RF('Où dormir à {0} ?', `<span data-notr>${esc(city)}</span>`)}</h2>
-      <div class="v-sum-small" style="margin-bottom:8px">${fdate(h.date)} → ${fdate(h.dateFin || h.date)} · ${RF(nights(h.date, h.dateFin || h.date) > 1 ? '{0} nuits' : '{0} nuit', nights(h.date, h.dateFin || h.date))}${hs.length > 1 ? ' · ' + (k + 1) + '/' + hs.length : ''}</div>
-      <div class="gd-map" id="gd-map"><div class="ar-run wz-run">🗺️ ${MSGT('Je prépare la carte de tes visites…')}</div></div>
-      ${P.length ? `<div class="gd-leg"><span><i style="background:#e11d48">H</i> ${MSGT(P.length > 1 ? 'Quartier conseillé' : 'Autour de tes visites')}</span><span><i>1</i> ${MSGT('Tes visites')}</span>${X.some(x=>x.lat != null) ? `<span><i style="background:#f59e0b">★</i> ${MSGT('Activités')}</span>` : ''}</div>
-        <ol class="gd-pl">${P.slice(0, 12).map(p=>`<li data-notr>${esc(p.nom)}</li>`).join('')}${P.length > 12 ? '<li>…</li>' : ''}</ol>` : ''}
+    const n = Math.max(1, (t.voyageurs || []).length), nn = nights(h.date, h.dateFin || h.date);
+    // les points à rejoindre : tes visites + le centre-ville (visites guidées, gastronomie… s’y passent ; et il compte si tu as peu de visites)
+    const g0 = R['geo:' + normQ(city)], C0 = g0 && g0.lat != null ? {lat:+g0.lat, lng:+g0.lng, nom:RF('Centre de {0}', city), ctr:1} : null;
+    const near = C0 ? P.filter(p=>rawKm(C0, p) <= 40) : P, A = near.map(p=>({lat:+p.lat, lng:+p.lng, nom:p.nom}));
+    if(C0 && (A.length < 2 || X.some(x=>x.lat == null))) A.push(C0);
+    const hub = gdHub(A), hk = hub ? 'hn:' + hub.lat.toFixed(3) + ',' + hub.lng.toFixed(3) : '';
+    M.hoodN = M.hoodN || {}; const hn = () => hk && M.hoodN[hk] != null ? M.hoodN[hk] : null;
+    const km1 = v => v < 10 ? String(Math.round(v * 10) / 10).replace('.', ',') : String(Math.round(v));
+    const where = () => { const nm = hn(); return nm && normQ(nm) !== normQ(city) ? nm + ', ' + city : city; };
+    const gmap = q => hub ? `https://www.google.com/maps/search/${encodeURIComponent(q)}/@${hub.lat.toFixed(5)},${hub.lng.toFixed(5)},15z` : `https://www.google.com/maps/search/${encodeURIComponent(q + ' ' + city)}`;
+    const draw = () => { const nm = hn(), av = hub && A.length ? A.reduce((s, p)=>s + rawKm(hub, p), 0) / A.length : 0;
+      return `<div class="gd"><h2>🛏️ ${RF('Où dormir à {0} ?', `<span data-notr>${esc(city)}</span>`)}</h2>
+      <div class="v-sum-small" style="margin-bottom:8px">${fdate(h.date)} → ${fdate(h.dateFin || h.date)} · ${RF(nn > 1 ? '{0} nuits' : '{0} nuit', nn)}${hs.length > 1 ? ' · ' + (k + 1) + '/' + hs.length : ''}</div>
+      ${hub ? `<div class="gd-hood"><div class="gd-hk">🏘️ ${MSGT('Quartier conseillé pour dormir')}</div><b data-notr>${esc(nm || (nm === '' ? city : '…'))}</b>
+        <small>${A.length > 1 ? RF('au plus près de tes {0} points de visite · {1} km en moyenne', A.length, km1(av)) : MSGT('au plus près de ta visite')}</small></div>` : ''}
+      <div class="gd-map" id="gd-map"><div class="ar-run wz-run">🛰️ ${MSGT('Je prépare la carte de tes visites…')}</div></div>
+      ${hub ? `<div class="gd-how">${MSGT('Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.')}</div>
+        <ol class="gd-pl gd-dist">${A.map((p, i)=>`<li><span class="gd-n${p.ctr ? ' c' : ''}">${p.ctr ? 'C' : i + 1}</span><span data-notr>${esc(p.nom)}</span><em>${km1(rawKm(hub, p))} km</em></li>`).join('')}</ol>` : ''}
       ${P.length < 2 ? `<div class="v-sum-small" style="margin:6px 0">${MSGT(P.length ? 'Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.' : 'Pas encore de visites ici : choisis-en au moins 2 pour avoir un quartier conseillé.')}</div>` : ''}
       ${X.length ? `<div class="gd-x">🎟️ <b>${MSGT('Activités prévues ici')}</b> : <span data-notr>${X.map(x=>esc(x.titre)).join(' · ')}</span></div>` : ''}
       <div class="gd-warn">⚠️ ${MSGT('L’application ne connaît pas le quartier : elle le propose seulement parce qu’il est au centre de tes visites. Renseigne-toi avant de réserver (sécurité, bruit, avis).')}</div>
-      ${hoodHTML(h, t) || (hidden('blk:book') ? '' : `<div class="ar-hood"><div class="ex-ln">${bookA('booking', {what:city, date:h.date, end:h.dateFin, n:Math.max(1, (t.voyageurs || []).length)})}${bookA('airbnb', {city, date:h.date, end:h.dateFin, n:Math.max(1, (t.voyageurs || []).length)})}</div></div>`)}
+      <div class="gd-links"><a class="gd-gm" href="${esc(gmap(MSGT('hôtels')))}" target="_blank" rel="noopener">📍 ${MSGT('Voir le quartier dans Google Maps')}</a>
+        ${hidden('blk:book') ? '' : bookA('booking', {what:where(), date:h.date, end:h.dateFin, n}) + bookA('airbnb', {city:where(), date:h.date, end:h.dateFin, n})}</div>
       <button type="button" class="v-btn sec gd-ed" onclick="CV.guideEdit('${ja(h.id)}','h',${k})">✏️ ${MSGT('Saisir mon hébergement (adresse, prix…)')}</button>
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.guideSheet()" aria-label="←">←</button>
         <button type="button" class="v-btn" onclick="CV.guideBook('${ja(h.id)}','h',${k})">✓ ${MSGT('C’est réservé')}</button>
-        <button type="button" class="v-btn sec" onclick="${k + 1 < hs.length ? `CV.guideHotel(${k + 1})` : 'CV.guideSheet()'}">${MSGT(k + 1 < hs.length ? 'Suivant' : 'Terminer')} ›</button></div></div>`;
+        <button type="button" class="v-btn sec" onclick="${k + 1 < hs.length ? `CV.guideHotel(${k + 1})` : 'CV.guideSheet()'}">${MSGT(k + 1 < hs.length ? 'Suivant' : 'Terminer')} ›</button></div></div>`; };
     openSheet(draw());
-    if(P.length >= 2 && !(M.hood || {})[h.id]){ try { await hoodEnsure(t); } catch(e){} if(my !== GH) return; const sh = document.querySelector('#v-sheet-bg .v-sheet'), y = sh ? sh.scrollTop : 0; openSheet(draw()); const s2 = document.querySelector('#v-sheet-bg .v-sheet'); if(s2) s2.scrollTop = y; }
-    const mk = P.map((p, i)=>({lat:+p.lat, lng:+p.lng, label:i + 1, color:'#7C3AED'})), H0 = hz();
+    let cvs = null;
+    const place = () => { const box = document.getElementById('gd-map'); if(!box || !cvs) return; box.innerHTML = ''; cvs.style.width = '100%'; cvs.style.height = 'auto'; cvs.style.borderRadius = '14px'; box.appendChild(cvs); };
+    const redraw = () => { if(my !== GH || !document.getElementById('gd-map')) return; const sh = document.querySelector('#v-sheet-bg .v-sheet'), y = sh ? sh.scrollTop : 0; openSheet(draw()); place(); const s2 = document.querySelector('#v-sheet-bg .v-sheet'); if(s2) s2.scrollTop = y; };
+    if(hub && hn() == null) revName(hub.lat, hub.lng, 15).then(v=>{ M.hoodN[hk] = v || ''; persist(); redraw(); }).catch(()=>{ M.hoodN[hk] = ''; redraw(); });
+    const mk = A.map((p, i)=>({lat:p.lat, lng:p.lng, label:p.ctr ? 'C' : i + 1, color:p.ctr ? '#0ea5e9' : '#7C3AED'}));
     X.filter(x=>x.lat != null && x.lng != null).forEach(x=>mk.push({lat:+x.lat, lng:+x.lng, label:'★', color:'#f59e0b'}));
-    if(H0) mk.push({lat:H0.lat, lng:H0.lng, label:'H', color:'#e11d48', name:H0.name});
+    if(hub) mk.push({lat:hub.lat, lng:hub.lng, label:'H', color:'#e11d48'});
     if(!mk.length){ const g = await geocode(city, null).catch(()=>null); if(g && g.lat != null) mk.push({lat:+g.lat, lng:+g.lng, label:'•', color:'#e11d48', name:city}); }
     if(my !== GH) return; const box = document.getElementById('gd-map'); if(!box) return;
     if(!mk.length){ box.remove(); return; }
-    try { const cv = await drawMap({w:400, h:270, round:true, markers:mk, maxZoom:mk.length > 2 ? 16 : 14, pad:44}); if(my !== GH || !document.getElementById('gd-map')) return; box.innerHTML = ''; cv.style.width = '100%'; cv.style.height = 'auto'; cv.style.borderRadius = '14px'; box.appendChild(cv); }
+    try { cvs = await drawMap({w:400, h:300, round:true, sat:true, markers:mk, maxZoom:16, pad:40, circle:hub ? {lat:hub.lat, lng:hub.lng, km:hub.r} : null, rays:hub ? {from:hub, to:A} : null});
+      if(my !== GH) return; place(); }
     catch(e){ box.remove(); }
   }
   function guideFin(){ const t = trip(); if(t && M.guide){ delete M.guide[t.id]; persist(); } closeSheet(true); avantSheet(); }
