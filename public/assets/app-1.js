@@ -556,6 +556,19 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       if(base){ const c = base[k]; if(syEq(a, c)) return put1(b); if(syEq(b, c)) return put1(a); }
       else { if(syEmpty(a)) return put1(b); if(syEmpty(b)) return put1(a); }
       // les deux ont changé ce champ
+      const obj = x => x && typeof x === 'object' && !Array.isArray(x);
+      if(obj(a) && obj(b)){   // objet (votes d’un sondage, réglages…) : fusion clé par clé, chacun garde ses propres clés
+        const c = base && obj(base[k]) ? base[k] : null, o = {}; let hard = false;
+        new Set([...Object.keys(a), ...Object.keys(b)]).forEach(x=>{ const u = a[x], v = b[x];
+          if(syEq(u, v)){ if(u !== undefined) o[x] = clone(u); return; }
+          if(c && syEq(u, c[x])){ if(v !== undefined) o[x] = clone(v); return; }
+          if(c && syEq(v, c[x])){ if(u !== undefined) o[x] = clone(u); return; }
+          if(!c && u === undefined){ o[x] = clone(v); return; } if(!c && v === undefined){ o[x] = clone(u); return; }
+          const w = newer === theirs ? v : u; if(w !== undefined) o[x] = clone(w); hard = true; });
+        out[k] = o; if(hard && cf) cf.push(k); return; }
+      // 📍 traces GPS (même personne sur deux appareils, ou deux synchros croisées) : tous les points, dans l’ordre
+      const pts = x => Array.isArray(x) && x.length && x.every(v=>Array.isArray(v) && typeof v[2] === 'number');
+      if(pts(a) && pts(b)){ const m = new Map(); [...a, ...b].forEach(v=>m.set(v.join(','), v)); out[k] = [...m.values()].sort((u, v)=>u[2] - v[2]); return; }
       const prim = x => Array.isArray(x) && x.every(v=>v == null || typeof v !== 'object');
       if(prim(a) && prim(b)){ const c = base && Array.isArray(base[k]) ? base[k] : [], gone = new Set([...c.filter(v=>!a.includes(v)), ...c.filter(v=>!b.includes(v))]);
         out[k] = [...new Set([...a, ...b])].filter(v=>!gone.has(v)); return; }   // listes (photos, voyageurs…) : réunies, sauf ce qu’un côté a retiré
