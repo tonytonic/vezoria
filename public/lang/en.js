@@ -2695,4 +2695,9 @@ I18N.load({
 "au plus près de tes {0} points de visite · {1} km en moyenne":"closest to your {0} visit points · {1} km on average",
 "au plus près de ta visite":"closest to your visit",
 "Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"The red circle = the suggested area. The yellow lines link it to each of your visits: the shorter they are, the less travelling you do.",
-"Voir le quartier dans Google Maps":"See the area in Google Maps"});
+"Voir le quartier dans Google Maps":"See the area in Google Maps",
+"Ta préparation sur la carte":"Your preparation on the map",
+"Visites gratuites":"Free visits",
+"Finalisé":"Finalised",
+"Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Zoom in on a city: accommodation, visits, activities and the suggested area appear.",
+"À réserver · dans le quartier conseillé":"To book · in the suggested area"});

@@ -5637,4 +5637,9 @@ I18N.load({
 "au plus près de tes {0} points de visite · {1} km en moyenne":"{0} gezi noktana en yakın · ortalama {1} km",
 "au plus près de ta visite":"gezine en yakın",
 "Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"Kırmızı daire = önerilen semt. Sarı çizgiler onu her geziye bağlar: ne kadar kısaysa o kadar az yol.",
-"Voir le quartier dans Google Maps":"Semti Google Haritalar’da gör"});
+"Voir le quartier dans Google Maps":"Semti Google Haritalar’da gör",
+"Ta préparation sur la carte":"Haritada hazırlığın",
+"Visites gratuites":"Ücretsiz geziler",
+"Finalisé":"Tamamlandı",
+"Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Bir şehre yakınlaş: konaklama, geziler, etkinlikler ve önerilen semt görünür.",
+"À réserver · dans le quartier conseillé":"Rezerve edilecek · önerilen semtte"});

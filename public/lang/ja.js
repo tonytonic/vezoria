@@ -5649,4 +5649,9 @@ I18N.load({
 "au plus près de tes {0} points de visite · {1} km en moyenne":"{0}か所の訪問先に最も近い · 平均 {1} km",
 "au plus près de ta visite":"訪問先に最も近い",
 "Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"赤い円＝おすすめエリア。黄色の線は各訪問先への距離：短いほど移動が少なくなります。",
-"Voir le quartier dans Google Maps":"Google マップでエリアを見る"});
+"Voir le quartier dans Google Maps":"Google マップでエリアを見る",
+"Ta préparation sur la carte":"地図で見る準備",
+"Visites gratuites":"無料の訪問先",
+"Finalisé":"最終確認",
+"Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"都市を拡大すると、宿泊・訪問先・アクティビティ・おすすめエリアが表示されます。",
+"À réserver · dans le quartier conseillé":"要予約・おすすめエリア内"});

@@ -5649,4 +5649,9 @@ I18N.load({
 "au plus près de tes {0} points de visite · {1} km en moyenne":"방문지 {0}곳에 가장 가까운 곳 · 평균 {1}km",
 "au plus près de ta visite":"방문지에 가장 가까운 곳",
 "Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"빨간 원 = 추천 동네. 노란 선은 각 방문지와 연결돼요: 짧을수록 이동이 줄어요.",
-"Voir le quartier dans Google Maps":"Google 지도에서 동네 보기"});
+"Voir le quartier dans Google Maps":"Google 지도에서 동네 보기",
+"Ta préparation sur la carte":"지도로 보는 나의 준비",
+"Visites gratuites":"무료 방문지",
+"Finalisé":"마무리",
+"Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"도시를 확대하면 숙소, 방문지, 액티비티, 추천 동네가 나타나요.",
+"À réserver · dans le quartier conseillé":"예약 필요 · 추천 동네 안"});

@@ -5649,4 +5649,9 @@ I18N.load({
 "au plus près de tes {0} points de visite · {1} km en moyenne":"तुम्हारी {0} जगहों के सबसे पास · औसतन {1} किमी",
 "au plus près de ta visite":"तुम्हारी जगह के सबसे पास",
 "Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"लाल घेरा = सुझाया गया इलाक़ा। पीली रेखाएँ उसे हर जगह से जोड़ती हैं: जितनी छोटी, उतना कम सफ़र।",
-"Voir le quartier dans Google Maps":"इलाक़ा Google Maps में देखो"});
+"Voir le quartier dans Google Maps":"इलाक़ा Google Maps में देखो",
+"Ta préparation sur la carte":"नक़्शे पर तुम्हारी तैयारी",
+"Visites gratuites":"मुफ़्त जगहें",
+"Finalisé":"पूरा",
+"Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"किसी शहर पर ज़ूम करो: ठहरना, जगहें, एक्टिविटीज़ और सुझाया इलाक़ा दिखेंगे।",
+"À réserver · dans le quartier conseillé":"बुक करना है · सुझाए इलाक़े में"});

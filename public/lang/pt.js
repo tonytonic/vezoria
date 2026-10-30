@@ -2714,4 +2714,9 @@ I18N.load({
 "au plus près de tes {0} points de visite · {1} km en moyenne":"o mais perto dos seus {0} pontos de visita · {1} km em média",
 "au plus près de ta visite":"o mais perto da sua visita",
 "Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"O círculo vermelho = o bairro sugerido. As linhas amarelas o ligam a cada visita: quanto mais curtas, menos deslocamentos.",
-"Voir le quartier dans Google Maps":"Ver o bairro no Google Maps"});
+"Voir le quartier dans Google Maps":"Ver o bairro no Google Maps",
+"Ta préparation sur la carte":"Sua preparação no mapa",
+"Visites gratuites":"Visitas gratuitas",
+"Finalisé":"Finalizado",
+"Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Aproxime uma cidade: aparecem hospedagens, visitas, atividades e o bairro sugerido.",
+"À réserver · dans le quartier conseillé":"Para reservar · no bairro sugerido"});

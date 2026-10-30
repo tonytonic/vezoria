@@ -5649,4 +5649,9 @@ I18N.load({
 "au plus près de tes {0} points de visite · {1} km en moyenne":"离你的 {0} 个游览点最近 · 平均 {1} 公里",
 "au plus près de ta visite":"离你的景点最近",
 "Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"红圈 = 推荐街区。黄线连到你的每个景点：线越短，路程越少。",
-"Voir le quartier dans Google Maps":"在 Google 地图中查看街区"});
+"Voir le quartier dans Google Maps":"在 Google 地图中查看街区",
+"Ta préparation sur la carte":"地图上的准备进度",
+"Visites gratuites":"免费景点",
+"Finalisé":"已完成",
+"Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"放大某个城市：住宿、景点、活动和推荐街区就会出现。",
+"À réserver · dans le quartier conseillé":"待预订 · 在推荐街区"});

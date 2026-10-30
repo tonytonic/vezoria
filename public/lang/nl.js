@@ -2701,4 +2701,9 @@ I18N.load({
 "au plus près de tes {0} points de visite · {1} km en moyenne":"zo dicht mogelijk bij je {0} bezienswaardigheden · gemiddeld {1} km",
 "au plus près de ta visite":"zo dicht mogelijk bij je bezienswaardigheid",
 "Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"De rode cirkel = de aanbevolen buurt. De gele lijnen verbinden hem met elke bezienswaardigheid: hoe korter, hoe minder reistijd.",
-"Voir le quartier dans Google Maps":"Bekijk de buurt in Google Maps"});
+"Voir le quartier dans Google Maps":"Bekijk de buurt in Google Maps",
+"Ta préparation sur la carte":"Je voorbereiding op de kaart",
+"Visites gratuites":"Gratis bezienswaardigheden",
+"Finalisé":"Afgerond",
+"Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Zoom in op een stad: accommodaties, bezienswaardigheden, activiteiten en de aanbevolen buurt verschijnen.",
+"À réserver · dans le quartier conseillé":"Te boeken · in de aanbevolen buurt"});

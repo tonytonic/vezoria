@@ -5650,4 +5650,9 @@ I18N.load({
 "au plus près de tes {0} points de visite · {1} km en moyenne":"الأقرب إلى نقاط زيارتك الـ{0} · {1} كم في المتوسط",
 "au plus près de ta visite":"الأقرب إلى زيارتك",
 "Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"الدائرة الحمراء = الحي المقترح. الخطوط الصفراء تربطه بكل زيارة: كلما قصرت، قلّت تنقلاتك.",
-"Voir le quartier dans Google Maps":"عرض الحي في خرائط Google"});
+"Voir le quartier dans Google Maps":"عرض الحي في خرائط Google",
+"Ta préparation sur la carte":"تحضيرك على الخريطة",
+"Visites gratuites":"زيارات مجانية",
+"Finalisé":"مكتمل",
+"Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"قرّب على مدينة: تظهر أماكن الإقامة والزيارات والأنشطة والحي المقترح.",
+"À réserver · dans le quartier conseillé":"للحجز · في الحي المقترح"});

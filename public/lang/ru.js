@@ -5650,4 +5650,9 @@ I18N.load({
 "au plus près de tes {0} points de visite · {1} km en moyenne":"ближе всего к твоим точкам ({0}) · в среднем {1} км",
 "au plus près de ta visite":"ближе всего к твоему визиту",
 "Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"Красный круг — рекомендуемый район. Жёлтые линии ведут к каждому визиту: чем они короче, тем меньше переездов.",
-"Voir le quartier dans Google Maps":"Открыть район в Google Картах"});
+"Voir le quartier dans Google Maps":"Открыть район в Google Картах",
+"Ta préparation sur la carte":"Твоя подготовка на карте",
+"Visites gratuites":"Бесплатные места",
+"Finalisé":"Завершено",
+"Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Приблизь город — появятся жильё, места, развлечения и рекомендуемый район.",
+"À réserver · dans le quartier conseillé":"Забронировать · в рекомендуемом районе"});
