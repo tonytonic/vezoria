@@ -5631,4 +5631,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"أو يدويًا، خطوتك التالية",
 "Continuer mon parcours guidé":"متابعة مساري الموجّه",
 "Continuer : trajets, activités, hébergements":"التالي: التنقلات والأنشطة والإقامة",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 بعد ذلك، يرافقك «أكمل مساري الموجّه» (في تحضيرك) حتى النهاية: الزيارات والأيام والتنقلات والإقامة."});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 بعد ذلك، يرافقك «أكمل مساري الموجّه» (في تحضيرك) حتى النهاية: الزيارات والأيام والتنقلات والإقامة.",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"الأفكار تصل: يمكنك البدء بالفرز فورًا",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"أبحث عن أبرز معالم كل مدينة: يبدأ الفرز بمجرد أن تجهز الأفكار الأولى.",
+"Ma résa":"حجزي",
+"Saisir ma résa":"أدخل حجزي",
+"Saisir mon hébergement (adresse, prix…)":"أدخل مكان إقامتي (العنوان، السعر…)",
+"Autour de tes visites":"حول زياراتك",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"زيارة واحدة فقط هنا: أضف المزيد لاقتراح حي أدق.",
+"Activités prévues ici":"الأنشطة المخطط لها هنا",
+"Continuer : les villes suivantes":"التالي: المدن التالية"});

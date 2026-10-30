@@ -5618,4 +5618,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"Ya da elle, bir sonraki adımın",
 "Continuer mon parcours guidé":"Rehberli yoluma devam et",
 "Continuer : trajets, activités, hébergements":"Devam: ulaşım, etkinlikler, konaklama",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Sonra “Rehberli yolumla devam et” (hazırlığında) sana sonuna kadar eşlik eder: geziler, günler, ulaşım, konaklama."});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Sonra “Rehberli yolumla devam et” (hazırlığında) sana sonuna kadar eşlik eder: geziler, günler, ulaşım, konaklama.",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"Fikirler geliyor: hemen seçmeye başlayabilirsin",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"Her şehrin mutlaka görülecek yerlerini arıyorum: ilk fikirler hazır olur olmaz seçim başlar.",
+"Ma résa":"Rezervasyonum",
+"Saisir ma résa":"Rezervasyonumu gir",
+"Saisir mon hébergement (adresse, prix…)":"Konaklamamı gir (adres, fiyat…)",
+"Autour de tes visites":"Gezilerinin çevresi",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Burada tek gezi var: daha isabetli semt önerisi için ekle.",
+"Activités prévues ici":"Burada planlanan etkinlikler",
+"Continuer : les villes suivantes":"Devam: sonraki şehirler"});

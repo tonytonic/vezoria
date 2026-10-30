@@ -5630,4 +5630,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"या ख़ुद से, तुम्हारा अगला कदम",
 "Continuer mon parcours guidé":"गाइडेड सफ़र जारी रखो",
 "Continuer : trajets, activités, hébergements":"आगे: यात्राएँ, एक्टिविटीज़, ठहरना",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 इसके बाद “गाइडेड सफ़र जारी रखो” (तुम्हारी तैयारी में) आख़िर तक साथ देगा: जगहें, दिन, यात्राएँ, ठहरना।"});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 इसके बाद “गाइडेड सफ़र जारी रखो” (तुम्हारी तैयारी में) आख़िर तक साथ देगा: जगहें, दिन, यात्राएँ, ठहरना।",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"आइडिया आ रहे हैं: तुम अभी छाँटना शुरू कर सकते हो",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"हर शहर की ख़ास जगहें ढूँढ रहा हूँ: पहले आइडिया तैयार होते ही छँटाई शुरू होगी।",
+"Ma résa":"मेरी बुकिंग",
+"Saisir ma résa":"अपनी बुकिंग लिखो",
+"Saisir mon hébergement (adresse, prix…)":"अपना ठिकाना लिखो (पता, कीमत…)",
+"Autour de tes visites":"तुम्हारी जगहों के आसपास",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"यहाँ सिर्फ़ एक जगह है: बेहतर इलाक़े के सुझाव के लिए और जोड़ो।",
+"Activités prévues ici":"यहाँ की योजनाबद्ध एक्टिविटीज़",
+"Continuer : les villes suivantes":"आगे: अगले शहर"});

@@ -2691,4 +2691,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"Oppure a mano, il tuo prossimo passo",
 "Continuer mon parcours guidé":"Continua il percorso guidato",
 "Continuer : trajets, activités, hébergements":"Continua: trasferimenti, attività, alloggi",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Poi «Continuo il percorso guidato» (nella tua preparazione) ti accompagna fino alla fine: visite, giorni, trasferimenti, alloggi."});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Poi «Continuo il percorso guidato» (nella tua preparazione) ti accompagna fino alla fine: visite, giorni, trasferimenti, alloggi.",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"Le idee stanno arrivando: puoi iniziare a scegliere subito",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"Cerco le tappe imperdibili di ogni città: la scelta inizia appena sono pronte le prime idee.",
+"Ma résa":"La mia prenotazione",
+"Saisir ma résa":"Inserisci la prenotazione",
+"Saisir mon hébergement (adresse, prix…)":"Inserisci l’alloggio (indirizzo, prezzo…)",
+"Autour de tes visites":"Intorno alle tue visite",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Una sola visita qui: aggiungine altre per un consiglio di quartiere più preciso.",
+"Activités prévues ici":"Attività previste qui",
+"Continuer : les villes suivantes":"Continua: le città successive"});

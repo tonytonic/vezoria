@@ -2692,4 +2692,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"O a mano, tu siguiente paso",
 "Continuer mon parcours guidé":"Seguir mi recorrido guiado",
 "Continuer : trajets, activités, hébergements":"Seguir: trayectos, actividades, alojamientos",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Después, «Sigo con mi recorrido guiado» (en tu preparación) te acompaña hasta el final: visitas, días, trayectos, alojamientos."});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Después, «Sigo con mi recorrido guiado» (en tu preparación) te acompaña hasta el final: visitas, días, trayectos, alojamientos.",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"Las ideas están llegando: puedes empezar a elegir ya",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"Busco los imprescindibles de cada ciudad: la selección empieza en cuanto estén listas las primeras ideas.",
+"Ma résa":"Mi reserva",
+"Saisir ma résa":"Anotar mi reserva",
+"Saisir mon hébergement (adresse, prix…)":"Anotar mi alojamiento (dirección, precio…)",
+"Autour de tes visites":"Alrededor de tus visitas",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Solo una visita aquí: añade más para un consejo de barrio más preciso.",
+"Activités prévues ici":"Actividades previstas aquí",
+"Continuer : les villes suivantes":"Seguir: las siguientes ciudades"});

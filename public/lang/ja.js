@@ -5630,4 +5630,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"または手動で：次のステップ",
 "Continuer mon parcours guidé":"ガイド付きの準備を続ける",
 "Continuer : trajets, activités, hébergements":"次へ：移動・アクティビティ・宿泊",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 次は「ガイド付きで準備を続ける」（準備カード内）が最後までご案内します：訪問先・日程・移動・宿泊。"});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 次は「ガイド付きで準備を続ける」（準備カード内）が最後までご案内します：訪問先・日程・移動・宿泊。",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"アイデアが届いています。すぐに選び始められます",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"各都市の必見スポットを探しています。最初のアイデアがそろい次第、選び始められます。",
+"Ma résa":"自分の予約",
+"Saisir ma résa":"予約を入力",
+"Saisir mon hébergement (adresse, prix…)":"宿泊を入力（住所・料金…）",
+"Autour de tes visites":"訪問先の周辺",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"ここは訪問先が1件だけです。追加するとエリアの提案がより正確になります。",
+"Activités prévues ici":"ここで予定のアクティビティ",
+"Continuer : les villes suivantes":"次へ：次の都市"});

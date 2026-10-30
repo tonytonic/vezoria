@@ -2686,4 +2686,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"Oder von Hand: dein nächster Schritt",
 "Continuer mon parcours guidé":"Geführte Planung fortsetzen",
 "Continuer : trajets, activités, hébergements":"Weiter: Fahrten, Aktivitäten, Unterkünfte",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Danach begleitet dich „Mit geführter Planung weitermachen“ (in deiner Vorbereitung) bis zum Ende: Besichtigungen, Tage, Fahrten, Unterkünfte."});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Danach begleitet dich „Mit geführter Planung weitermachen“ (in deiner Vorbereitung) bis zum Ende: Besichtigungen, Tage, Fahrten, Unterkünfte.",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"Die Ideen kommen: Du kannst sofort mit dem Sortieren beginnen",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"Ich suche die Highlights jeder Stadt: Das Sortieren beginnt, sobald die ersten Ideen bereit sind.",
+"Ma résa":"Meine Buchung",
+"Saisir ma résa":"Meine Buchung eintragen",
+"Saisir mon hébergement (adresse, prix…)":"Meine Unterkunft eintragen (Adresse, Preis …)",
+"Autour de tes visites":"Rund um deine Besichtigungen",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Nur eine Besichtigung hier: Füge mehr hinzu für eine genauere Viertel-Empfehlung.",
+"Activités prévues ici":"Hier geplante Aktivitäten",
+"Continuer : les villes suivantes":"Weiter: die nächsten Städte"});

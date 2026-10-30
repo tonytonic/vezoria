@@ -2676,4 +2676,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"Or by hand, your next step",
 "Continuer mon parcours guidé":"Continue my guided journey",
 "Continuer : trajets, activités, hébergements":"Next: transport, activities, accommodation",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Next, “Continue my guided journey” (in your preparation) takes you all the way: visits, days, transport, accommodation."});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Next, “Continue my guided journey” (in your preparation) takes you all the way: visits, days, transport, accommodation.",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"Ideas are coming in: you can start sorting right away",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"I’m looking for each city’s must-sees: sorting starts as soon as the first ideas are ready.",
+"Ma résa":"My booking",
+"Saisir ma résa":"Enter my booking",
+"Saisir mon hébergement (adresse, prix…)":"Enter my accommodation (address, price…)",
+"Autour de tes visites":"Around your visits",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Only one visit here: add more for a better area suggestion.",
+"Activités prévues ici":"Activities planned here",
+"Continuer : les villes suivantes":"Next: the following cities"});

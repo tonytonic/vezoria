@@ -5631,4 +5631,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"Или вручную: следующий шаг",
 "Continuer mon parcours guidé":"Продолжить пошаговый план",
 "Continuer : trajets, activités, hébergements":"Дальше: переезды, развлечения, жильё",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Дальше кнопка «Продолжить пошаговый план» (в подготовке) проведёт тебя до конца: визиты, дни, переезды, жильё."});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Дальше кнопка «Продолжить пошаговый план» (в подготовке) проведёт тебя до конца: визиты, дни, переезды, жильё.",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"Идеи уже поступают: можно сразу начинать отбор",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"Ищу главные места каждого города: отбор начнётся, как только будут готовы первые идеи.",
+"Ma résa":"Моя бронь",
+"Saisir ma résa":"Внести бронь",
+"Saisir mon hébergement (adresse, prix…)":"Внести жильё (адрес, цена…)",
+"Autour de tes visites":"Рядом с твоими визитами",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Здесь всего один визит: добавь ещё для более точного совета по району.",
+"Activités prévues ici":"Развлечения здесь",
+"Continuer : les villes suivantes":"Дальше: следующие города"});

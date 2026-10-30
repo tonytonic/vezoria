@@ -2682,4 +2682,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"Of met de hand, je volgende stap",
 "Continuer mon parcours guidé":"Verder met mijn begeleide route",
 "Continuer : trajets, activités, hébergements":"Verder: reizen, activiteiten, accommodaties",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Daarna begeleidt ‘Verder met mijn begeleide route’ (in je voorbereiding) je tot het eind: bezienswaardigheden, dagen, reizen, accommodaties."});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 Daarna begeleidt ‘Verder met mijn begeleide route’ (in je voorbereiding) je tot het eind: bezienswaardigheden, dagen, reizen, accommodaties.",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"De ideeën komen binnen: je kunt meteen beginnen met sorteren",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"Ik zoek de hoogtepunten van elke stad: het sorteren begint zodra de eerste ideeën klaar zijn.",
+"Ma résa":"Mijn boeking",
+"Saisir ma résa":"Mijn boeking invullen",
+"Saisir mon hébergement (adresse, prix…)":"Mijn accommodatie invullen (adres, prijs…)",
+"Autour de tes visites":"Rond je bezienswaardigheden",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Maar één bezienswaardigheid hier: voeg er meer toe voor een beter buurtadvies.",
+"Activités prévues ici":"Hier geplande activiteiten",
+"Continuer : les villes suivantes":"Verder: de volgende steden"});

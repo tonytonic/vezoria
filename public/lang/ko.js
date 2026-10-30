@@ -5630,4 +5630,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"또는 직접: 다음 단계",
 "Continuer mon parcours guidé":"가이드 여정 계속하기",
 "Continuer : trajets, activités, hébergements":"다음: 이동, 액티비티, 숙소",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 다음은 ‘가이드 여정 계속하기’(나의 준비 안)가 끝까지 함께해요: 방문지, 일정, 이동, 숙소."});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 다음은 ‘가이드 여정 계속하기’(나의 준비 안)가 끝까지 함께해요: 방문지, 일정, 이동, 숙소.",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"아이디어가 도착하고 있어요: 바로 고르기 시작할 수 있어요",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"도시마다 꼭 가볼 곳을 찾고 있어요: 첫 아이디어가 준비되면 바로 고르기가 시작돼요.",
+"Ma résa":"내 예약",
+"Saisir ma résa":"내 예약 입력",
+"Saisir mon hébergement (adresse, prix…)":"내 숙소 입력(주소, 가격…)",
+"Autour de tes visites":"방문지 주변",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"방문지가 하나뿐이에요: 더 추가하면 동네 추천이 정확해져요.",
+"Activités prévues ici":"여기서 예정된 액티비티",
+"Continuer : les villes suivantes":"다음: 이어지는 도시들"});

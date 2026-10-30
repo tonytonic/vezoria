@@ -5630,4 +5630,13 @@ I18N.load({
 "Ou à la main, ta prochaine étape":"或手动：你的下一步",
 "Continuer mon parcours guidé":"继续引导流程",
 "Continuer : trajets, activités, hébergements":"继续：交通、活动、住宿",
-"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 接下来，“继续我的引导流程”（在你的准备中）会一路陪你完成：景点、日程、交通、住宿。"});
+"🧭 Ensuite, « Je continue mon parcours guidé » (dans ta préparation) t’accompagne jusqu’au bout : visites, jours, trajets, hébergements.":"🧭 接下来，“继续我的引导流程”（在你的准备中）会一路陪你完成：景点、日程、交通、住宿。",
+"Les idées arrivent : tu peux commencer à trier tout de suite":"点子陆续到来：你现在就可以开始挑选",
+"Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.":"正在查找每个城市的必去景点：第一批点子一准备好就开始挑选。",
+"Ma résa":"我的预订",
+"Saisir ma résa":"填写我的预订",
+"Saisir mon hébergement (adresse, prix…)":"填写我的住宿（地址、价格…）",
+"Autour de tes visites":"你的景点周边",
+"Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"这里只有一个景点：多加几个，街区推荐会更准。",
+"Activités prévues ici":"这里计划的活动",
+"Continuer : les villes suivantes":"继续：后面的城市"});
