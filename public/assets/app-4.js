@@ -1102,7 +1102,7 @@ ${pm.join('\n')}</Document></kml>`;
   const DUP_STOP = new Set('de du des la le les et the of and an di del della dei degli das der die den von van het een el los las do da dos em en au aux st ste saint sainte san santa sao'.split(' '));
   const DUP_GEN = new Set('tour tower torre turm musee museum museo museu muzeum eglise church iglesia chiesa kirche igreja kerk cathedrale cathedral catedral cattedrale duomo dom kathedrale basilique basilica basilika palais palace palacio palazzo palast paleis chateau castle castillo castello schloss burg castelo kasteel fort fortress forteresse fortaleza fortezza festung citadelle citadel ciudadela parc park parque parco jardin jardins garden gardens giardino garten tuin place square plaza piazza platz praca plein pont bridge puente ponte brucke brug marche market mercado mercato markt halles monastere monastery monasterio monastero kloster mosquee mosque mezquita moschea moschee temple tempio templo tempel synagogue gare station estacion stazione bahnhof porte gate puerta porta tor plage beach playa spiaggia strand lac lake lago see meer mont mount monte berg ile island isla isola insel vieux old ville city town centre center historic historique quartier district'.split(' '));
   const DUP_CLS = {}; ['tour tower torre turm', 'musee museum museo museu muzeum', 'eglise church iglesia chiesa kirche igreja kerk', 'cathedrale cathedral catedral cattedrale duomo dom kathedrale', 'basilique basilica basilika', 'palais palace palacio palazzo palast paleis', 'chateau castle castillo castello schloss burg castelo kasteel', 'fort fortress forteresse fortaleza fortezza festung citadelle citadel ciudadela', 'parc park parque parco', 'jardin jardins garden gardens giardino garten tuin', 'place square plaza piazza platz praca plein', 'pont bridge puente ponte brucke brug', 'marche market mercado mercato markt halles', 'monastere monastery monasterio monastero kloster', 'mosquee mosque mezquita moschea moschee', 'gare station estacion stazione bahnhof', 'porte gate puerta porta tor', 'plage beach playa spiaggia strand'].forEach((g, i)=>g.split(' ').forEach(w=>{ DUP_CLS[w] = i; }));
-  const dupTok = n => normQ(n).split(' ').filter(w=>w.length > 1 && !DUP_STOP.has(w));
+  const dupTok = n => normQ(n).split(' ').filter(w=>(w.length > 1 || /\d/.test(w)) && !DUP_STOP.has(w));
   function dupSame(a, b){
     const na = normQ(a.nom), nb = normQ(b.nom); if(!na || !nb) return false;
     if(a.lat == null || b.lat == null || b.lng == null || a.lng == null) return na === nb;
@@ -1463,7 +1463,8 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="sw-ttl"><b>① ${esc(MSGT('Choisir mes visites'))}</b><small>${Math.min(done + 1, total)}/${total}</small> <small class="sw-kept">· ✓ ${SW.kept}</small>${(()=>{ const cs = {}; left.forEach(id=>{ const c = swCityOf(swRec(id)) || '—'; cs[c] = (cs[c] || 0) + 1; }); const K = Object.keys(cs);
         return K.length > 1 ? `<label class="sw-csel">📍 <select aria-label="${esc(MSGT('Ville'))}" onchange="CV.swCityGo(this.value)">${K.map(c=>`<option value="${esc(c)}"${c === (c0 || '—') ? ' selected' : ''}>${esc(c)} (${cs[c]})</option>`).join('')}</select></label>` : `<small class="sw-city">${c0 ? '📍 <span data-notr>' + esc(c0) + '</span>' : ''}</small>`; })()}</div>
       <button type="button" class="sw-list" onclick="CV.suggList()" aria-label="${esc(MSGT('Voir en liste'))}">☰</button></div>
-      <div class="sw-bar"><span style="width:${total ? done / total * 100 : 100}%"></span></div>`;
+      <div class="sw-bar"><span style="width:${total ? done / total * 100 : 100}%"></span></div>
+      <div id="sw-stopw">${swStopB(t, left)}</div>`;
     if(!left.length){
       const xn = expCount(t);
       const pk = rgItems(t).length;
@@ -1493,6 +1494,7 @@ ${pm.join('\n')}</Document></kml>`;
     SW.ids = SW.ids.slice(0, SW.i).concat(left.filter(of), left.filter(id=>!of(id))); swRender(); }
   function swPre(left){ left.slice(2, 5).forEach(id=>{ const r = swRec(id); if(r) swInfo(r).then(x=>{ if(x.img) (new Image()).src = x.img; }); }); }   // les suivantes se préparent
   // carte suivante sans tout redessiner : celle de derrière passe devant (déjà chargée), une nouvelle se glisse derrière
+  const swStopB = (t, left) => left.length && rgItems(t).length ? `<button type="button" class="sw-stop" onclick="CV.swStopRg()">② ${esc(MSGT('Ranger maintenant'))} (${rgItems(t).length}) <small>· ${esc(RF('je finirai le tri plus tard ({0} restantes)', left.length))}</small> ›</button>` : '';
   function swNext(){
     const ov = document.getElementById('cv-sw'), st = ov && ov.querySelector('.sw-stack'); if(!st) return swRender();
     const left = swLeft(); if(!left.length) return swRender();
@@ -1505,6 +1507,7 @@ ${pm.join('\n')}</Document></kml>`;
     const bar = ov.querySelector('.sw-bar span'); if(bar) bar.style.width = (total ? done / total * 100 : 100) + '%';
     const ub = ov.querySelector('.sw-b.undo'); if(ub) ub.disabled = !SW.hist.length;
     const kp = ov.querySelector('.sw-kept'); if(kp) kp.textContent = '· ✓ ' + SW.kept;
+    { const w = ov.querySelector('#sw-stopw'), t = R[SW.tid]; if(w && t) w.innerHTML = swStopB(t, left); }
     { const cs = ov.querySelector('.sw-csel select'); if(cs && cs.value !== (swCityOf(swRec(left[0])) || '—')) return swRender(); }   // ville suivante : la liste des villes se met à jour
     const sc = ov.querySelector('.sw-city'), c0 = swCityOf(swRec(left[0])); if(sc && sc.textContent.replace(/^📍\s*/, '') !== c0){ sc.innerHTML = c0 ? '📍 <span data-notr>' + esc(c0) + '</span>' : ''; sc.classList.remove('pop'); void sc.offsetWidth; sc.classList.add('pop'); }
     swPre(left);
@@ -1588,6 +1591,8 @@ ${pm.join('\n')}</Document></kml>`;
     list('item', i=>i.trip === t.id && i.cat === 'hotel').forEach(h=>{ const c = stayCity(h); if(c && M.poiCache) delete M.poiCache[normQ(c)]; });
     if(M.suggDone) delete M.suggDone[t.id]; persist(); swClose(true); closeSheet(true); suggFill(t.id);
   }
+  // ⏸️ arrêter le tri à tout moment et ranger ce qui est déjà choisi : le reste attend (on reprend là où on s’était arrêté)
+  function swStopRg(){ const t = trip(); swClose(1); if(t && typeof guideOn === 'function' && guideOn(t)){ GSW = new Set(list('place', p=>p.trip === t.id && p.sugg).map(p=>p.id)); } rgOpen(); }
   function swClose(quiet){ const ov = document.getElementById('cv-sw'); if(ov) ov.remove(); if(ov || !quiet) document.body.style.overflow = ''; SW = null; if(!quiet) refresh(); }
   /* ② RANGER MES VISITES DANS LES JOURS : seulement les visites et activités choisies, dans l'ordre du trajet
      (de proche en proche depuis l'hôtel, pour voir le plus de choses chaque jour sans allers-retours).
@@ -1724,7 +1729,8 @@ ${pm.join('\n')}</Document></kml>`;
       ov.innerHTML = head + `<div class="sw-end rg-end"><div class="sw-end-i">🗓️</div><h2>${esc(MSGT('Tout est rangé !'))}</h2><p>${esc(MSGT('Chaque journée suit l’ordre du trajet, de proche en proche. Tu peux encore tout déplacer dans le programme.'))}</p>
         <div class="rg-hood"><b>🏨 ${esc(MSGT('Où dormir ? Le quartier au centre de tes visites'))}</b><div id="rg-hood">${rgHoods(t) || esc(MSGT('Ajoute au moins 2 visites par ville pour avoir un conseil.'))}</div>
           <small>${esc(MSGT('Rien n’est figé : si tu choisis un hôtel ailleurs, mets son adresse dans l’hébergement puis « Réorganiser depuis mon hôtel ». Les journées repartiront de là.'))}</small></div>
-        ${guideOn(t) ? `<button type="button" class="v-btn" onclick="CV.guideNext('rg')">🧭 ${esc(MSGT('Continuer : trajets, activités, hébergements'))}</button>` : ''}
+        ${(()=>{ const n = list('place', p=>p.trip === t.id && p.sugg).length + expCount(t); return n ? `<button type="button" class="v-btn" onclick="CV.rgClose();CV.suggOpen()">① ${esc(MSGT('Reprendre le choix des visites'))} (${n})</button>` : ''; })()}
+        ${guideOn(t) ? `<button type="button" class="v-btn${list('place', p=>p.trip === t.id && p.sugg).length + expCount(t) ? ' sec' : ''}" onclick="CV.guideNext('rg')">🧭 ${esc(MSGT('Continuer : trajets, activités, hébergements'))}</button>` : ''}
         <button type="button" class="v-btn${guideOn(t) ? ' sec' : ''}" onclick="CV.rgClose();CV.tab('prog')">📅 ${esc(MSGT('Voir mon programme'))}</button>
         ${RG.hist.length ? `<button type="button" class="v-btn sec" onclick="CV.rgUndo()">↩️ ${esc(MSGT('Annuler le dernier choix'))}</button>` : ''}
         <button type="button" class="v-btn sec" onclick="CV.rgClose()">${esc(MSGT('Fermer'))}</button></div>`;

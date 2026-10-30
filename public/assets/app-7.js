@@ -265,6 +265,7 @@
     if(from !== 'rg' && rgItems(t).length && t.debut){ rgOpen(); return; }
     guideSheet();
   }
+  function guideResume(){ const t = trip(); if(!t) return; GSW = null; closeSheet(true); suggOpen(); }
   // ✏️ saisie à la main depuis le parcours (adresse, prix, horaires…) : après « Enregistrer », on revient où on était
   function guideEdit(id, kind, k){ GRET = {id, kind, k:+k || 0}; edit(id); }
   function gdAfterSave(id){ const r = GRET; GRET = null; if(!r || r.id !== id) return;
@@ -276,6 +277,7 @@
     const all = !tr.length && !hs.length && !xs.length;
     openSheet(`<div class="gd"><h2>🧭 ${MSGT('Ton parcours guidé')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT(all ? 'Tout est réservé : il ne reste que les derniers détails avant de partir.' : 'Tes visites sont rangées dans les jours. On continue par quoi ?')}</div>
       <div class="ar-subs gd-ch">
+        ${D.sg.length + xn ? row('💡', MSGT('Reprendre le choix des visites'), RF('{0} idées à trier', D.sg.length + xn), 'CV.guideResume()', false) : ''}
         ${row('🚆', MSGT('Les trajets'), tr.length ? RF('{0} à réserver', tr.length) : MSGT('Tout est réservé'), 'CV.guideTr()', !tr.length)}
         ${row('🎟️', MSGT('Les activités payantes'), xs.length || xn ? [xn ? RF('{0} idées à trier', xn) : '', xs.length ? RF('{0} à réserver', xs.length) : ''].filter(Boolean).join(' · ') : MSGT('Rien à réserver'), 'CV.guideExp()', !xs.length && !xn)}
         ${row('🛏️', MSGT('Les hébergements'), hs.length ? RF('{0} à réserver', hs.length) + ' · ' + MSGT('avec la carte du quartier conseillé') : MSGT('Tout est réservé'), 'CV.guideHotel(0)', !hs.length)}
@@ -1819,7 +1821,8 @@
       if(!p) p = await g(q); if(!p) return loc ? {p:ctx.c} : null; p = {lat:+p.lat, lng:+p.lng};
       if(loc && rawKm(p, ctx.c) > 120) p = ctx.c;   // un « aéroport » trouvé loin de l’étape : on garde l’étape
       return {p}; };
-    const T = items(x=>x.cat === 'transport').sort((a, b)=>(a.date || '9').localeCompare(b.date || '9') || (a.heureDep || a.heure || '').localeCompare(b.heureDep || b.heure || ''));
+    const t0 = t.debut ? addDays(t.debut, -3) : '', t1 = t.fin ? addDays(t.fin, 3) : '';   // un trajet sans date ou hors du voyage (ancien brouillon) n’est pas dessiné
+    const T = items(x=>x.cat === 'transport' && x.date && (!t0 || x.date >= t0) && (!t1 || x.date <= t1)).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9') || (a.heureDep || a.heure || '').localeCompare(b.heureDep || b.heure || ''));
     const ends = [];
     for(const i of T){
       const ca = stageAt(i.date, true) || stageAt(i.date, false), cb = stageAt(i.date, false) || stageAt(i.date, true);
