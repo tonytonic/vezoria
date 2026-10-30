@@ -987,7 +987,7 @@
     document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && (M.dirty.length || Date.now() - lastSyncAt > AUTO_SYNC)) syncNow(); });
     window.addEventListener('online', ()=>syncNow());
     // synchro automatique toutes les heures quand l'appli est à l'écran (+ à chaque modification, à l'ouverture et au retour du réseau)
-    (function poll(){ setTimeout(()=>{ if(document.visibilityState==='visible' && !sheetOpen()) syncNow(); poll(); }, pollGap); })();
+    (function poll(){ setTimeout(()=>{ if(document.visibilityState==='visible' && !sheetOpen() && Date.now() - lastSyncAt >= pollGap) syncNow(); poll(); }, 30000); })();   // vérifié toutes les 30 s : le rythme suit pollGap (1 min si quelqu’un modifie en même temps)
     bootOffline();
     if(webFollowBoot()) return;
     if(installGate()) return;
@@ -995,6 +995,7 @@
     // (rappel de sauvegarde : voir protectNag, lancé avec les « moments » de l’ouverture)
     const boot2 = () => {
       if(!M.me || !prof(M.me)){ if(M.sync.on && profiles().length) whoSheet(); else onboarding(); }
+      else if(M.askWho && profiles().length > 1 && !(()=>{ try { return sessionStorage.getItem('vz-who'); } catch(e){ return 1; } })()){ try { sessionStorage.setItem('vz-who', '1'); } catch(e){} setTimeout(whoSheet, 400); }   // 🖥️ appareil partagé : qui est là ?
       else setTimeout(resumeLoad, 300);
     };
     if(!M.setup && M.me && prof(M.me)) setupSheet(boot2); else boot2();

@@ -251,9 +251,13 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const isDirty = id => M.dirty.includes(id) || (M.spaces||[]).some(x=>(x.dirty||[]).includes(id));
   // nouveau voyage créé ici (pas reçu, pas importé) : on demande avec qui on part, une fois l’écran du voyage affiché
   const newTripHook = r => { if(r && r.type === 'trip' && !R[r.id] && !r.createdAt && !r.demo && !r.deleted && r.src !== 'polarsteps' && !r.feed) setTimeout(()=>{ try { withWhom(r.id); } catch(e){} }, 1400); };
-  function put(r, msg){ newTripHook(r); if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); persist(); toast(msg); queueSync(); return r; }
-  function putMany(arr, msg){ arr.forEach(newTripHook); arr.forEach(r=>{ if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); persist(); toast(msg); queueSync(); }
-  function drop(id, msg){ const r = R[id]; if(!r) return; r.deleted = true; put(r, msg || '🗑 Supprimé'); }
+  // 🔀 version « d’avant » d’une fiche (celle que le serveur connaît) gardée au moment où on la modifie : sert à fusionner champ par champ
+  //    si quelqu’un d’autre l’a modifiée en même temps (on ne garde que les fiches pas encore envoyées)
+  function sbKeep(r){ const p = R[r.id]; if(!p || p === r || p.demo || isDirty(r.id)) return; (M.sbase || (M.sbase = {}))[r.id] = clone(p); }
+  function sbDone(ids){ const B = M.sbase; if(!B) return; ids.forEach(id=>{ if(!isDirty(id)) delete B[id]; }); }
+  function put(r, msg){ sbKeep(r); newTripHook(r); if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); persist(); toast(msg); queueSync(); return r; }
+  function putMany(arr, msg){ arr.forEach(newTripHook); arr.forEach(r=>{ sbKeep(r); if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); persist(); toast(msg); queueSync(); }
+  function drop(id, msg){ if(!R[id]) return; const r = clone(R[id]); r.deleted = true; put(r, msg || '🗑 Supprimé'); }
   const clone = o => JSON.parse(JSON.stringify(o));
 
   /* ── Affichage des personnes ── */
@@ -538,6 +542,34 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       if(out) out.innerHTML = sp && sp.err ? '⚠️ ' + esc(sp.err) : `✅ ${MSGT('Voyage renvoyé :')} <b>${tripCount(id).live}</b> ${MSGT('fiches')}. ${MSGT('Les compagnons le reçoivent à leur prochaine synchro.')}`; }
     catch(e){ if(out) out.textContent = '⚠️ ' + (e.message || e); }
   }
+  /* 🔀 FUSION CHAMP PAR CHAMP : la même fiche modifiée sur deux appareils (toi sur le PC, Claire sur son téléphone).
+     Avec la version d’avant (base) : chacun garde les champs qu’il a changés ; seul un même champ changé des deux côtés
+     prend la version la plus récente (et on prévient). Sans base : la plus récente, complétée par ce que l’autre a rempli. */
+  const SY_SKIP = ['updatedAt', 'updatedBy', 'createdAt', 'createdBy'];
+  const syEmpty = v => v == null || v === '' || (Array.isArray(v) && !v.length);
+  const syEq = (a, b) => (syEmpty(a) && syEmpty(b)) || JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b);   // vide = vide (un champ de formulaire vide n’efface pas ce qu’un autre a rempli)
+  function merge3(base, mine, theirs, cf){
+    const out = {}, newer = (theirs.updatedAt || 0) >= (mine.updatedAt || 0) ? theirs : mine;
+    new Set([...Object.keys(mine), ...Object.keys(theirs)]).forEach(k=>{
+      if(SY_SKIP.includes(k)) return; const a = mine[k], b = theirs[k], put1 = v => { if(v !== undefined) out[k] = clone(v); };
+      if(syEq(a, b)) return put1(a);
+      if(base){ const c = base[k]; if(syEq(a, c)) return put1(b); if(syEq(b, c)) return put1(a); }
+      else { if(syEmpty(a)) return put1(b); if(syEmpty(b)) return put1(a); }
+      // les deux ont changé ce champ
+      const prim = x => Array.isArray(x) && x.every(v=>v == null || typeof v !== 'object');
+      if(prim(a) && prim(b)){ const c = base && Array.isArray(base[k]) ? base[k] : [], gone = new Set([...c.filter(v=>!a.includes(v)), ...c.filter(v=>!b.includes(v))]);
+        out[k] = [...new Set([...a, ...b])].filter(v=>!gone.has(v)); return; }   // listes (photos, voyageurs…) : réunies, sauf ce qu’un côté a retiré
+      put1(newer[k]); if(k !== 'deleted' && cf) cf.push(k);
+    });
+    out.createdAt = mine.createdAt || theirs.createdAt; out.createdBy = mine.createdBy || theirs.createdBy;
+    out.updatedAt = Math.max(mine.updatedAt || 0, theirs.updatedAt || 0) + 1; out.updatedBy = mine.updatedBy || theirs.updatedBy;
+    return out;
+  }
+  let SY_CF = [];
+  function syConflictSay(){
+    if(!SY_CF.length) return; const L = SY_CF.slice(0, 3); SY_CF = [];
+    L.forEach((c, i)=>setTimeout(()=>toast('🔀 ' + RF('{0} : modifié aussi par {1}, les deux versions sont fusionnées', c.t, c.by)), i * 3200));
+  }
   function mergeRemote(records, fromMain){
     let changed = 0;
     for(const r of records){
@@ -547,21 +579,30 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       // depuis MON carnet principal : une suppression d’une fiche d’un voyage partagé ne compte pas (le dossier partagé fait foi)
       if(fromMain && r.deleted && r.trip && TS()[r.trip] && spaceObj(TS()[r.trip]) && R[r.id] && !R[r.id].deleted) continue;
       const l = R[r.id];
-      if(l && isDirty(r.id) && (l.updatedAt||0) > (r.updatedAt||0)) continue;
-      if(!l || (r.updatedAt||0) > (l.updatedAt||0)){ R[r.id] = r; changed++; }
+      if(l && isDirty(r.id)){   // 🔀 modifiée ici ET ailleurs : on fusionne au lieu d’écraser l’une des deux
+        if((r.updatedAt || 0) === (l.updatedAt || 0)) continue;
+        const B = M.sbase || (M.sbase = {}), base = B[r.id];
+        if(base && (r.updatedAt || 0) <= (base.updatedAt || 0)) continue;   // rien de neuf côté serveur
+        const cf = [], m = merge3(base || null, l, r, cf); R[r.id] = m; B[r.id] = clone(r); changed++; M.remoteAt = Date.now();
+        if(cf.length && r.updatedBy !== l.updatedBy) SY_CF.push({t:String(l.titre || l.nom || l.texte || l.question || '').slice(0, 40) || MSGT('Une fiche'), by:(typeof pname === 'function' && r.updatedBy) ? pname(r.updatedBy) : MSGT('un autre appareil')});
+        try { gdRemoteEdit(r); } catch(e){}
+        continue;
+      }
+      if(!l || (r.updatedAt||0) > (l.updatedAt||0)){ R[r.id] = r; changed++; if(l) M.remoteAt = Date.now(); try { gdRemoteEdit(r); } catch(e){} }
     }
     return changed;
   }
   async function syncSpace(sp, force){
     sp.dirty = (sp.dirty || []).filter(id=>R[id]); let changed = 0;   // une fiche qui n’existe plus ici ne reste pas « à envoyer » pour toujours
     try {
+      if(sp.dirty.length){ const j0 = await call(Math.max(0, (sp.since||0) - 5000), [], sp.code); changed += mergeRemote(j0.records); sp.since = j0.now; }   // 🔀 recevoir et fusionner avant d’envoyer
       const ids = [...sp.dirty]; let first = true;
       for(let i = 0; first || i < ids.length; i += 500){
         first = false;
         const chunk = ids.slice(i, i+500).map(id => R[id]).filter(Boolean);
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
-        sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id]));
+        sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id])); sbDone(Object.keys(sent));
         j.records.forEach(r=>{ if(r && force && r.type==='trip' && M.hide && M.hide[r.id]){ delete M.hide[r.id]; if(M.left) delete M.left[r.id]; if(M.mvSkip) delete M.mvSkip[r.id]; }   // rejoint exprès : un voyage retiré revient
           // 👀 voyage publié que je fais AUSSI en compagnon : je l'ai déjà en entier, pas besoin de le suivre en abonné (ex. Claire suit le carnet de Tony
           // sans revoir les voyages faits ensemble). S'il quitte un jour mes voyages, il redevient suivable.
@@ -632,6 +673,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       try { await codesPublish(); } catch(e){}   // 🔑 mes codes de voyages, chiffrés avec mon code administrateur : ils suivent mon compte sur un autre appareil
       if(mainOn && !(auto && !M.dirty.length && now0 - (M.sync.last || 0) < 120000)){   // rien à envoyer et vu il y a moins de 2 min : on passe
       M.dirty = M.dirty.filter(id=>R[id]);   // idem pour le carnet principal
+      if(M.dirty.length){   // 🔀 d’abord recevoir (et fusionner) ce que les autres ont changé, PUIS envoyer : personne n’écrase personne
+        const j0 = await call(Math.max(0, (M.sync.since||0) - 5000), []); changed += mergeRemote(j0.records, true); M.sync.since = j0.now; }
       const ids = [...M.dirty];
       let first = true;
       for(let i = 0; first || i < ids.length; i += 500){
@@ -640,6 +683,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (M.sync.since||0) - 5000), chunk);
         M.dirty = M.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id]));
+        sbDone(Object.keys(sent));
         changed += mergeRemote(j.records, true);
         M.sync.since = j.now;
       }
@@ -667,7 +711,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     }
     persist(); syncing = false; syncDot();
     lastSyncAt = Date.now();
-    pollGap = M.sync.err ? 300000 : liveShared() ? 300000 : AUTO_SYNC;   // voyage en cours partagé : toutes les 5 min, pour voir où sont les autres   // en cas d'erreur on réessaie dans 5 min, sinon dans 1 h
+    pollGap = M.sync.err ? 300000 : (M.remoteAt && Date.now() - M.remoteAt < 15 * 60e3) ? 60000 : liveShared() ? 300000 : AUTO_SYNC;   // 👥 quelqu’un d’autre modifie en ce moment : toutes les minutes
+    syConflictSay();   // voyage en cours partagé : toutes les 5 min, pour voir où sont les autres   // en cas d'erreur on réessaie dans 5 min, sinon dans 1 h
     softRefresh(changed);
     if(PU().on) setTimeout(()=>{ pushRegister().catch(()=>{}); pushPlan().catch(()=>{}); }, 2500);
     if(again){ again = false; syncNow(); }

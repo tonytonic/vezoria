@@ -495,7 +495,8 @@
     const mg = draft && typeof bkMerge === 'function' ? bkMerge(draft) : null; if(mg){ draft = null; id = mg.id; }   // 🛎️ import qui complète la fiche réservée chez le partenaire
     const src = mg ? mg : draft ? Object.assign({id:null, type:'item', trip:M.trip, titre:'', statut:'todo', date:'', mode:'Avion', qui:[]}, draft) : id ? R[id] : {id:null, type:'item', trip:M.trip, cat:newCat, titre:'', statut:'todo', date:'', mode:'Avion', qui: M.who!=='all' ? [M.who] : []};
     if(!src) return;
-    const it = clone(src); editing = it; STT = false;
+    const it = clone(src); editing = it; STT = false; EDB = id && R[id] ? clone(R[id]) : null;   // 🔀 la fiche telle qu’à l’ouverture
+    if(id && typeof syncNow === 'function' && Date.now() - (lastSyncAt || 0) > 20000) setTimeout(()=>{ try { syncNow('pull'); } catch(e){} }, 400);   // les dernières modifs des autres avant d’écrire
     const c = it.cat;
     let h = `<h2>${icon(it)} ${id ? esc(it.titre) : 'Nouveau ' + CATS[c].one}</h2>`;
     if(draft && impCtx) h += impTypeBar(c);
@@ -565,8 +566,21 @@
     if(STT && st0){ it.statut = st0; if(st0 === 'paid' && Array.isArray(it.echeances)) it.echeances = it.echeances.map(e=>Object.assign({}, e, {fait:true})); }   // statut choisi à la main (même revenir de « Payé ») : on le garde
     return it;
   }
+  let EDB = null;
+  // ✏️ quelqu’un a modifié la fiche pendant qu’elle était ouverte ici : on affiche un bandeau (la sauvegarde fusionnera)
+  function gdRemoteEdit(r){
+    if(!editing || !r || editing.id !== r.id || !EDB || (r.updatedAt || 0) === (EDB.updatedAt || 0)) return;
+    const f = document.getElementById('v-form'); if(!f || document.getElementById('cv-remote')) return;
+    const who = r.updatedBy && r.updatedBy !== M.me && typeof pname === 'function' ? pname(r.updatedBy) : MSGT('un autre appareil');
+    f.insertAdjacentHTML('beforebegin', `<div class="v-hint cv-remote" id="cv-remote">✏️ ${esc(RF('{0} vient de modifier cette fiche : en enregistrant, tes changements seront fusionnés avec les siens.', who))}</div>`);
+  }
   function saveForm(keepOpen){
-    const it = readForm(); if(!it) return false;
+    let it = readForm(); if(!it) return false;
+    if(it.id && EDB && R[it.id] && EDB.id === it.id && (R[it.id].updatedAt || 0) !== (EDB.updatedAt || 0)){   // 🔀 fusion avec ce qui a changé ailleurs entre-temps
+      it.updatedAt = Date.now() + 1;   // ce que tu enregistres maintenant passe devant sur un même champ
+      const cf = [], m = merge3(EDB, it, R[it.id], cf); m.id = it.id; it = m; editing = m;
+      toast('🔀 ' + MSGT(cf.length ? 'Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)' : 'Fusionné avec les modifications faites ailleurs'));
+    }
     if(!it.titre){ alert('Donne un intitulé.'); return false; }
     if(!it.id && !keepOpen && dupOf(it).length){ dupAsk([it]); return false; }
     const isNew = !it.id; if(isNew) it.id = 'i' + uid();
@@ -1377,8 +1391,11 @@
       <div class="v-sum-small" style="margin-bottom:10px">Tes ajouts et modifications seront signés de ce nom, dans sa couleur.</div>
       <div class="cv-plist">${profiles().map(p=>`<button class="cv-prow${p.id===M.me?' me':''}" onclick="CV.setMe('${ja(p.id)}')">${pchip(p.id)}<span>${p.id===M.me?'✓ c’est moi':'C’est moi'}</span></button>`).join('')}</div>
       <button class="v-btn sec" style="margin-top:10px" onclick="CV.editProfile(null)">＋ Nouveau profil</button>
-      ${prof(M.me) ? `<button class="v-btn sec" onclick="CV.editProfile('${ja(M.me)}')">🎨 Changer mon nom / ma couleur</button>` : ''}`, !prof(M.me));
+      ${prof(M.me) ? `<button class="v-btn sec" onclick="CV.editProfile('${ja(M.me)}')">🎨 Changer mon nom / ma couleur</button>` : ''}
+      ${profiles().length > 1 ? `<button type="button" class="v-btn sec cv-askwho${M.askWho ? ' on' : ''}" onclick="CV.askWhoTog()">🖥️ ${MSGT('Appareil partagé : demander qui l’utilise à chaque ouverture')} ${M.askWho ? '✓' : ''}</button>
+        <div class="v-sum-small">${MSGT('Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.')}</div>` : ''}`, !prof(M.me));
   }
+  function askWhoTog(){ M.askWho = !M.askWho; persist(); whoSheet(); }
   async function setMe(id){
     if(profLocked(id) && !(await uiConfirm(MSGT('Ce profil est déjà utilisé sur un autre téléphone. C’est bien toi (nouveau téléphone) ?')))) return;
     if(profLocked(id)) putQuiet([Object.assign(clone(R[id]), {dev:devId()})]);
