@@ -2720,4 +2720,7 @@ I18N.load({
 "Finalisé":"Finalizado",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Aproxime uma cidade: aparecem hospedagens, visitas, atividades e o bairro sugerido.",
 "À réserver · dans le quartier conseillé":"Para reservar · no bairro sugerido",
-"{0} trajets · {1} hébergements · {2} activités payantes":"{0} trajetos · {1} hospedagens · {2} atividades pagas"});
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} trajetos · {1} hospedagens · {2} atividades pagas",
+"Ranger maintenant":"Organizar agora",
+"je finirai le tri plus tard ({0} restantes)":"termino de escolher depois ({0} restantes)",
+"Reprendre le choix des visites":"Retomar a escolha das visitas"});

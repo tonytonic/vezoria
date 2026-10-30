@@ -5655,4 +5655,7 @@ I18N.load({
 "Finalisé":"마무리",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"도시를 확대하면 숙소, 방문지, 액티비티, 추천 동네가 나타나요.",
 "À réserver · dans le quartier conseillé":"예약 필요 · 추천 동네 안",
-"{0} trajets · {1} hébergements · {2} activités payantes":"이동 {0} · 숙소 {1} · 유료 액티비티 {2}"});
+"{0} trajets · {1} hébergements · {2} activités payantes":"이동 {0} · 숙소 {1} · 유료 액티비티 {2}",
+"Ranger maintenant":"지금 정리하기",
+"je finirai le tri plus tard ({0} restantes)":"나머지는 나중에 고를게요({0}개 남음)",
+"Reprendre le choix des visites":"방문지 고르기 계속"});

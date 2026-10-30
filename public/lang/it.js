@@ -2716,4 +2716,7 @@ I18N.load({
 "Finalisé":"Finalizzato",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Ingrandisci una città: compaiono alloggi, visite, attività e il quartiere consigliato.",
 "À réserver · dans le quartier conseillé":"Da prenotare · nel quartiere consigliato",
-"{0} trajets · {1} hébergements · {2} activités payantes":"{0} trasferimenti · {1} alloggi · {2} attività a pagamento"});
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} trasferimenti · {1} alloggi · {2} attività a pagamento",
+"Ranger maintenant":"Sistema ora",
+"je finirai le tri plus tard ({0} restantes)":"finirò di scegliere più tardi ({0} rimaste)",
+"Reprendre le choix des visites":"Riprendi la scelta delle visite"});

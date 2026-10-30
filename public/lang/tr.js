@@ -5643,4 +5643,7 @@ I18N.load({
 "Finalisé":"Tamamlandı",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Bir şehre yakınlaş: konaklama, geziler, etkinlikler ve önerilen semt görünür.",
 "À réserver · dans le quartier conseillé":"Rezerve edilecek · önerilen semtte",
-"{0} trajets · {1} hébergements · {2} activités payantes":"{0} ulaşım · {1} konaklama · {2} ücretli etkinlik"});
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} ulaşım · {1} konaklama · {2} ücretli etkinlik",
+"Ranger maintenant":"Şimdi yerleştir",
+"je finirai le tri plus tard ({0} restantes)":"kalanı sonra seçerim ({0} kaldı)",
+"Reprendre le choix des visites":"Gezi seçimine devam et"});

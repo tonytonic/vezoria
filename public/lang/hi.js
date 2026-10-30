@@ -5655,4 +5655,7 @@ I18N.load({
 "Finalisé":"पूरा",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"किसी शहर पर ज़ूम करो: ठहरना, जगहें, एक्टिविटीज़ और सुझाया इलाक़ा दिखेंगे।",
 "À réserver · dans le quartier conseillé":"बुक करना है · सुझाए इलाक़े में",
-"{0} trajets · {1} hébergements · {2} activités payantes":"{0} यात्राएँ · {1} ठहरने की जगहें · {2} पेड एक्टिविटीज़"});
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} यात्राएँ · {1} ठहरने की जगहें · {2} पेड एक्टिविटीज़",
+"Ranger maintenant":"अभी लगाओ",
+"je finirai le tri plus tard ({0} restantes)":"बाकी बाद में छाँटूँगा ({0} बचे)",
+"Reprendre le choix des visites":"जगहें चुनना फिर शुरू करो"});

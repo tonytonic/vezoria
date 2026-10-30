@@ -2701,4 +2701,7 @@ I18N.load({
 "Finalisé":"Finalised",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Zoom in on a city: accommodation, visits, activities and the suggested area appear.",
 "À réserver · dans le quartier conseillé":"To book · in the suggested area",
-"{0} trajets · {1} hébergements · {2} activités payantes":"{0} transport · {1} accommodation · {2} paid activities"});
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} transport · {1} accommodation · {2} paid activities",
+"Ranger maintenant":"Arrange now",
+"je finirai le tri plus tard ({0} restantes)":"I’ll finish sorting later ({0} left)",
+"Reprendre le choix des visites":"Resume choosing visits"});

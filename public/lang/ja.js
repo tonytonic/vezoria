@@ -5655,4 +5655,7 @@ I18N.load({
 "Finalisé":"最終確認",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"都市を拡大すると、宿泊・訪問先・アクティビティ・おすすめエリアが表示されます。",
 "À réserver · dans le quartier conseillé":"要予約・おすすめエリア内",
-"{0} trajets · {1} hébergements · {2} activités payantes":"移動 {0} · 宿泊 {1} · 有料アクティビティ {2}"});
+"{0} trajets · {1} hébergements · {2} activités payantes":"移動 {0} · 宿泊 {1} · 有料アクティビティ {2}",
+"Ranger maintenant":"今すぐ並べる",
+"je finirai le tri plus tard ({0} restantes)":"残りはあとで選ぶ（残り {0}）",
+"Reprendre le choix des visites":"訪問先選びを再開"});

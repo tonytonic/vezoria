@@ -5656,4 +5656,7 @@ I18N.load({
 "Finalisé":"Завершено",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Приблизь город — появятся жильё, места, развлечения и рекомендуемый район.",
 "À réserver · dans le quartier conseillé":"Забронировать · в рекомендуемом районе",
-"{0} trajets · {1} hébergements · {2} activités payantes":"Переезды: {0} · жильё: {1} · платные развлечения: {2}"});
+"{0} trajets · {1} hébergements · {2} activités payantes":"Переезды: {0} · жильё: {1} · платные развлечения: {2}",
+"Ranger maintenant":"Разложить сейчас",
+"je finirai le tri plus tard ({0} restantes)":"доберу позже (осталось {0})",
+"Reprendre le choix des visites":"Продолжить выбор мест"});

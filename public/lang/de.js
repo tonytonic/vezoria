@@ -2711,4 +2711,7 @@ I18N.load({
 "Finalisé":"Abgeschlossen",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Zoome auf eine Stadt: Unterkünfte, Besichtigungen, Aktivitäten und das empfohlene Viertel erscheinen.",
 "À réserver · dans le quartier conseillé":"Zu buchen · im empfohlenen Viertel",
-"{0} trajets · {1} hébergements · {2} activités payantes":"{0} Fahrten · {1} Unterkünfte · {2} kostenpflichtige Aktivitäten"});
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} Fahrten · {1} Unterkünfte · {2} kostenpflichtige Aktivitäten",
+"Ranger maintenant":"Jetzt einordnen",
+"je finirai le tri plus tard ({0} restantes)":"Rest später sortieren ({0} übrig)",
+"Reprendre le choix des visites":"Auswahl der Besichtigungen fortsetzen"});

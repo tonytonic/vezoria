@@ -5656,4 +5656,7 @@ I18N.load({
 "Finalisé":"مكتمل",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"قرّب على مدينة: تظهر أماكن الإقامة والزيارات والأنشطة والحي المقترح.",
 "À réserver · dans le quartier conseillé":"للحجز · في الحي المقترح",
-"{0} trajets · {1} hébergements · {2} activités payantes":"{0} تنقلات · {1} أماكن إقامة · {2} أنشطة مدفوعة"});
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} تنقلات · {1} أماكن إقامة · {2} أنشطة مدفوعة",
+"Ranger maintenant":"رتّب الآن",
+"je finirai le tri plus tard ({0} restantes)":"سأكمل الفرز لاحقًا (متبقٍ {0})",
+"Reprendre le choix des visites":"استئناف اختيار الزيارات"});
