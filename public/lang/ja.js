@@ -5639,4 +5639,9 @@ I18N.load({
 "Autour de tes visites":"訪問先の周辺",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"ここは訪問先が1件だけです。追加するとエリアの提案がより正確になります。",
 "Activités prévues ici":"ここで予定のアクティビティ",
-"Continuer : les villes suivantes":"次へ：次の都市"});
+"Continuer : les villes suivantes":"次へ：次の都市",
+"Activités à réserver":"予約するアクティビティ",
+"Que faire à {0} ?":"{0}で何をする？",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"気になるものをタップして ✓。不要なら ✕。",
+"Touche les activités qui te tentent, ou ✕ pour passer":"気になるアクティビティをタップ、またはスキップは ✕",
+"{0} activité(s) au programme":"{0}件のアクティビティを予定に追加"});

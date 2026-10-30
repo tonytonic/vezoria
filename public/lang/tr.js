@@ -5627,4 +5627,9 @@ I18N.load({
 "Autour de tes visites":"Gezilerinin çevresi",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Burada tek gezi var: daha isabetli semt önerisi için ekle.",
 "Activités prévues ici":"Burada planlanan etkinlikler",
-"Continuer : les villes suivantes":"Devam: sonraki şehirler"});
+"Continuer : les villes suivantes":"Devam: sonraki şehirler",
+"Activités à réserver":"Rezerve edilecek etkinlikler",
+"Que faire à {0} ?":"{0}’da ne yapılır?",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"İlgini çekenlere dokun, sonra ✓. Hiçbirini istemiyorsan ✕.",
+"Touche les activités qui te tentent, ou ✕ pour passer":"İlgini çeken etkinliklere dokun ya da geçmek için ✕",
+"{0} activité(s) au programme":"Programa {0} etkinlik eklendi"});

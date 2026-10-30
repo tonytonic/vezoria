@@ -5640,4 +5640,9 @@ I18N.load({
 "Autour de tes visites":"حول زياراتك",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"زيارة واحدة فقط هنا: أضف المزيد لاقتراح حي أدق.",
 "Activités prévues ici":"الأنشطة المخطط لها هنا",
-"Continuer : les villes suivantes":"التالي: المدن التالية"});
+"Continuer : les villes suivantes":"التالي: المدن التالية",
+"Activités à réserver":"أنشطة للحجز",
+"Que faire à {0} ?":"ماذا تفعل في {0}؟",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"المس ما يعجبك ثم ✓. ✕ لعدم الاحتفاظ بأي منها.",
+"Touche les activités qui te tentent, ou ✕ pour passer":"المس الأنشطة التي تعجبك، أو ✕ للتخطي",
+"{0} activité(s) au programme":"{0} نشاط في البرنامج"});

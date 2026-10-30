@@ -2700,4 +2700,9 @@ I18N.load({
 "Autour de tes visites":"Intorno alle tue visite",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Una sola visita qui: aggiungine altre per un consiglio di quartiere più preciso.",
 "Activités prévues ici":"Attività previste qui",
-"Continuer : les villes suivantes":"Continua: le città successive"});
+"Continuer : les villes suivantes":"Continua: le città successive",
+"Activités à réserver":"Attività da prenotare",
+"Que faire à {0} ?":"Cosa fare a {0}?",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"Tocca quelle che ti attirano, poi ✓. ✕ per non tenerne nessuna.",
+"Touche les activités qui te tentent, ou ✕ pour passer":"Tocca le attività che ti attirano, oppure ✕ per passare",
+"{0} activité(s) au programme":"{0} attività nel programma"});

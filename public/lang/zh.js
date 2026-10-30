@@ -5639,4 +5639,9 @@ I18N.load({
 "Autour de tes visites":"你的景点周边",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"这里只有一个景点：多加几个，街区推荐会更准。",
 "Activités prévues ici":"这里计划的活动",
-"Continuer : les villes suivantes":"继续：后面的城市"});
+"Continuer : les villes suivantes":"继续：后面的城市",
+"Activités à réserver":"待预订的活动",
+"Que faire à {0} ?":"在{0}做什么？",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"点选你感兴趣的，然后点 ✓。点 ✕ 则一个都不保留。",
+"Touche les activités qui te tentent, ou ✕ pour passer":"点选感兴趣的活动，或点 ✕ 跳过",
+"{0} activité(s) au programme":"已加入行程的活动：{0}"});

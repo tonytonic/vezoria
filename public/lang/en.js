@@ -2685,4 +2685,9 @@ I18N.load({
 "Autour de tes visites":"Around your visits",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Only one visit here: add more for a better area suggestion.",
 "Activités prévues ici":"Activities planned here",
-"Continuer : les villes suivantes":"Next: the following cities"});
+"Continuer : les villes suivantes":"Next: the following cities",
+"Activités à réserver":"Activities to book",
+"Que faire à {0} ?":"What to do in {0}?",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"Tap the ones you like, then ✓. ✕ to keep none.",
+"Touche les activités qui te tentent, ou ✕ pour passer":"Tap the activities you like, or ✕ to skip",
+"{0} activité(s) au programme":"{0} activity(ies) added to the plan"});

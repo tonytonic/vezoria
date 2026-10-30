@@ -5639,4 +5639,9 @@ I18N.load({
 "Autour de tes visites":"तुम्हारी जगहों के आसपास",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"यहाँ सिर्फ़ एक जगह है: बेहतर इलाक़े के सुझाव के लिए और जोड़ो।",
 "Activités prévues ici":"यहाँ की योजनाबद्ध एक्टिविटीज़",
-"Continuer : les villes suivantes":"आगे: अगले शहर"});
+"Continuer : les villes suivantes":"आगे: अगले शहर",
+"Activités à réserver":"बुक करने वाली एक्टिविटीज़",
+"Que faire à {0} ?":"{0} में क्या करें?",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"जो पसंद हों उन्हें छुओ, फिर ✓। कोई न रखना हो तो ✕।",
+"Touche les activités qui te tentent, ou ✕ pour passer":"पसंद की एक्टिविटीज़ छुओ, या छोड़ने के लिए ✕",
+"{0} activité(s) au programme":"{0} एक्टिविटी प्रोग्राम में"});

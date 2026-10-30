@@ -2695,4 +2695,9 @@ I18N.load({
 "Autour de tes visites":"Rund um deine Besichtigungen",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Nur eine Besichtigung hier: Füge mehr hinzu für eine genauere Viertel-Empfehlung.",
 "Activités prévues ici":"Hier geplante Aktivitäten",
-"Continuer : les villes suivantes":"Weiter: die nächsten Städte"});
+"Continuer : les villes suivantes":"Weiter: die nächsten Städte",
+"Activités à réserver":"Aktivitäten zum Buchen",
+"Que faire à {0} ?":"Was tun in {0}?",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"Tippe die an, die dich reizen, dann ✓. ✕, um keine zu behalten.",
+"Touche les activités qui te tentent, ou ✕ pour passer":"Tippe die Aktivitäten an, die dich reizen, oder ✕ zum Überspringen",
+"{0} activité(s) au programme":"{0} Aktivität(en) im Programm"});

@@ -2691,4 +2691,9 @@ I18N.load({
 "Autour de tes visites":"Rond je bezienswaardigheden",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Maar één bezienswaardigheid hier: voeg er meer toe voor een beter buurtadvies.",
 "Activités prévues ici":"Hier geplande activiteiten",
-"Continuer : les villes suivantes":"Verder: de volgende steden"});
+"Continuer : les villes suivantes":"Verder: de volgende steden",
+"Activités à réserver":"Activiteiten om te boeken",
+"Que faire à {0} ?":"Wat te doen in {0}?",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"Tik de activiteiten aan die je leuk vindt en dan ✓. ✕ om er geen te houden.",
+"Touche les activités qui te tentent, ou ✕ pour passer":"Tik de activiteiten aan die je leuk vindt, of ✕ om over te slaan",
+"{0} activité(s) au programme":"{0} activiteit(en) in het programma"});

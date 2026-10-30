@@ -5640,4 +5640,9 @@ I18N.load({
 "Autour de tes visites":"Рядом с твоими визитами",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Здесь всего один визит: добавь ещё для более точного совета по району.",
 "Activités prévues ici":"Развлечения здесь",
-"Continuer : les villes suivantes":"Дальше: следующие города"});
+"Continuer : les villes suivantes":"Дальше: следующие города",
+"Activités à réserver":"Развлечения для бронирования",
+"Que faire à {0} ?":"Чем заняться: {0}?",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"Отметь понравившиеся и нажми ✓. ✕ — не брать ни одной.",
+"Touche les activités qui te tentent, ou ✕ pour passer":"Отметь понравившиеся развлечения или нажми ✕, чтобы пропустить",
+"{0} activité(s) au programme":"В программе развлечений: {0}"});

@@ -2701,4 +2701,9 @@ I18N.load({
 "Autour de tes visites":"Alrededor de tus visitas",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"Solo una visita aquí: añade más para un consejo de barrio más preciso.",
 "Activités prévues ici":"Actividades previstas aquí",
-"Continuer : les villes suivantes":"Seguir: las siguientes ciudades"});
+"Continuer : les villes suivantes":"Seguir: las siguientes ciudades",
+"Activités à réserver":"Actividades por reservar",
+"Que faire à {0} ?":"¿Qué hacer en {0}?",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"Toca las que te apetecen y luego ✓. ✕ para no quedarte con ninguna.",
+"Touche les activités qui te tentent, ou ✕ pour passer":"Toca las actividades que te apetecen, o ✕ para pasar",
+"{0} activité(s) au programme":"{0} actividad(es) en el programa"});

@@ -5639,4 +5639,9 @@ I18N.load({
 "Autour de tes visites":"방문지 주변",
 "Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.":"방문지가 하나뿐이에요: 더 추가하면 동네 추천이 정확해져요.",
 "Activités prévues ici":"여기서 예정된 액티비티",
-"Continuer : les villes suivantes":"다음: 이어지는 도시들"});
+"Continuer : les villes suivantes":"다음: 이어지는 도시들",
+"Activités à réserver":"예약할 액티비티",
+"Que faire à {0} ?":"{0}에서 뭘 할까요?",
+"Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"마음에 드는 것을 누른 뒤 ✓. 하나도 원치 않으면 ✕.",
+"Touche les activités qui te tentent, ou ✕ pour passer":"마음에 드는 액티비티를 누르거나 ✕로 넘어가세요",
+"{0} activité(s) au programme":"액티비티 {0}개를 일정에 추가"});
