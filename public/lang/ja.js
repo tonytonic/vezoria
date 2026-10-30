@@ -5654,4 +5654,5 @@ I18N.load({
 "Visites gratuites":"無料の訪問先",
 "Finalisé":"最終確認",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"都市を拡大すると、宿泊・訪問先・アクティビティ・おすすめエリアが表示されます。",
-"À réserver · dans le quartier conseillé":"要予約・おすすめエリア内"});
+"À réserver · dans le quartier conseillé":"要予約・おすすめエリア内",
+"{0} trajets · {1} hébergements · {2} activités payantes":"移動 {0} · 宿泊 {1} · 有料アクティビティ {2}"});

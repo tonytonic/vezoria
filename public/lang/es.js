@@ -2716,4 +2716,5 @@ I18N.load({
 "Visites gratuites":"Visitas gratuitas",
 "Finalisé":"Finalizado",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Haz zoom en una ciudad: aparecen alojamientos, visitas, actividades y el barrio aconsejado.",
-"À réserver · dans le quartier conseillé":"Por reservar · en el barrio aconsejado"});
+"À réserver · dans le quartier conseillé":"Por reservar · en el barrio aconsejado",
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} trayectos · {1} alojamientos · {2} actividades de pago"});

@@ -5642,4 +5642,5 @@ I18N.load({
 "Visites gratuites":"Ücretsiz geziler",
 "Finalisé":"Tamamlandı",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Bir şehre yakınlaş: konaklama, geziler, etkinlikler ve önerilen semt görünür.",
-"À réserver · dans le quartier conseillé":"Rezerve edilecek · önerilen semtte"});
+"À réserver · dans le quartier conseillé":"Rezerve edilecek · önerilen semtte",
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} ulaşım · {1} konaklama · {2} ücretli etkinlik"});

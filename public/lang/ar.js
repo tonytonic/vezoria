@@ -5655,4 +5655,5 @@ I18N.load({
 "Visites gratuites":"زيارات مجانية",
 "Finalisé":"مكتمل",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"قرّب على مدينة: تظهر أماكن الإقامة والزيارات والأنشطة والحي المقترح.",
-"À réserver · dans le quartier conseillé":"للحجز · في الحي المقترح"});
+"À réserver · dans le quartier conseillé":"للحجز · في الحي المقترح",
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} تنقلات · {1} أماكن إقامة · {2} أنشطة مدفوعة"});

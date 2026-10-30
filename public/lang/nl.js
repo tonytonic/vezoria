@@ -2706,4 +2706,5 @@ I18N.load({
 "Visites gratuites":"Gratis bezienswaardigheden",
 "Finalisé":"Afgerond",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Zoom in op een stad: accommodaties, bezienswaardigheden, activiteiten en de aanbevolen buurt verschijnen.",
-"À réserver · dans le quartier conseillé":"Te boeken · in de aanbevolen buurt"});
+"À réserver · dans le quartier conseillé":"Te boeken · in de aanbevolen buurt",
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} reizen · {1} accommodaties · {2} betaalde activiteiten"});

@@ -5655,4 +5655,5 @@ I18N.load({
 "Visites gratuites":"Бесплатные места",
 "Finalisé":"Завершено",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Приблизь город — появятся жильё, места, развлечения и рекомендуемый район.",
-"À réserver · dans le quartier conseillé":"Забронировать · в рекомендуемом районе"});
+"À réserver · dans le quartier conseillé":"Забронировать · в рекомендуемом районе",
+"{0} trajets · {1} hébergements · {2} activités payantes":"Переезды: {0} · жильё: {1} · платные развлечения: {2}"});

@@ -2715,4 +2715,5 @@ I18N.load({
 "Visites gratuites":"Visite gratuite",
 "Finalisé":"Finalizzato",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Ingrandisci una città: compaiono alloggi, visite, attività e il quartiere consigliato.",
-"À réserver · dans le quartier conseillé":"Da prenotare · nel quartiere consigliato"});
+"À réserver · dans le quartier conseillé":"Da prenotare · nel quartiere consigliato",
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} trasferimenti · {1} alloggi · {2} attività a pagamento"});

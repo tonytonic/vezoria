@@ -5654,4 +5654,5 @@ I18N.load({
 "Visites gratuites":"免费景点",
 "Finalisé":"已完成",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"放大某个城市：住宿、景点、活动和推荐街区就会出现。",
-"À réserver · dans le quartier conseillé":"待预订 · 在推荐街区"});
+"À réserver · dans le quartier conseillé":"待预订 · 在推荐街区",
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} 段交通 · {1} 处住宿 · {2} 项付费活动"});

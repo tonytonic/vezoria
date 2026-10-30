@@ -2700,4 +2700,5 @@ I18N.load({
 "Visites gratuites":"Free visits",
 "Finalisé":"Finalised",
 "Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.":"Zoom in on a city: accommodation, visits, activities and the suggested area appear.",
-"À réserver · dans le quartier conseillé":"To book · in the suggested area"});
+"À réserver · dans le quartier conseillé":"To book · in the suggested area",
+"{0} trajets · {1} hébergements · {2} activités payantes":"{0} transport · {1} accommodation · {2} paid activities"});
