@@ -174,7 +174,7 @@
     const seen = new Set();
     return (j.results && j.results.bindings || []).map(b=>{ const m = (b.coord.value.match(/Point\(([-\d.]+) ([-\d.]+)\)/) || []);
       return {c:b.cLabel.value, lng:+m[1], lat:+m[2], img:b.img ? b.img.value.replace(/^http:/,'https:') + '?width=240' : '', n:+b.n.value}; })
-      .filter(x=>!/^Q\d+$/.test(x.c) && !seen.has(normQ(x.c)) && seen.add(normQ(x.c)));
+      .filter(x=>!/^Q\d+$/.test(x.c) && /[A-Za-zÀ-ÿ]/.test(x.c) && !seen.has(normQ(x.c)) && seen.add(normQ(x.c)));   // pas de nom en alphabet local illisible
   }
   async function inspOpen(i){
     const x = inspRes.find(r=>r.i === i); if(!x) return; const S = M.insp || {}, days = +(S.duree||7);
@@ -188,8 +188,8 @@
           if(pg.thumbnail){ const im = document.getElementById('cp-img'); if(im){ im.src = pg.thumbnail.source; im.parentNode.classList.add('has'); } } return; } } catch(e){} } })();
     // positions des étapes, puis lieux à voir
     for(const s of comp.stops){ if(!comp || comp.i !== i) return; const g = s.c === x.d[9][0][0] && x.d[3] ? null : await geocode(s.c + (x.pays ? ', ' + x.pays : ''), null).catch(()=>null);
-      s.lat = g ? g.lat : la; s.lng = g ? g.lng : lo; compPlaces(s); }
-    // villes proches (Wikidata)
+      s.lat = g ? g.lat : la; s.lng = g ? g.lat != null ? g.lng : lo : lo; compNearFetch(s); }
+    // villes proches de la région (Wikidata), en plus de celles autour de chaque étape
     try { comp.near = await wdNear(la, lo, days > 9 ? 280 : 160); } catch(e){ comp.near = []; }
     if(comp && comp.i === i) compNear();
   }
@@ -202,17 +202,18 @@
       <h3>🗺️ Mes étapes <small class="v-sum-small">${used} / ${c.nights} nuit${c.nights>1?'s':''}</small></h3>
       <div id="cp-stops">${c.stops.map((s,k)=>`<div class="cp-stop"><b>${k+1}. ${esc(s.c)}</b><span class="cp-n"><button type="button" onclick="CV.compN(${k},-1)" aria-label="Enlever">−</button>${s.n} n.<button type="button" onclick="CV.compN(${k},1)" aria-label="Ajouter">＋</button></span>${c.stops.length > 1 ? `<button type="button" class="cv-x" onclick="CV.compDel(${k})" aria-label="Retirer">✕</button>` : ''}</div>`).join('')}</div>
       ${used !== c.nights ? `<div class="v-sum-small" style="color:#a16207">${used < c.nights ? 'Il reste ' + (c.nights-used) + ' nuit(s) à placer' : 'Tu dépasses de ' + (used-c.nights) + ' nuit(s) : le voyage sera rallongé'}.</div>` : ''}
-      <h3>➕ Ajouter une étape <small class="v-sum-small">villes à proximité</small></h3><div id="cp-near" class="cp-near">${c.near ? '' : '<div class="v-sum-small">📡 Recherche des villes proches…</div>'}</div>
-      <h3>🔎 À voir <small class="v-sum-small">coche ce qui te tente</small></h3>
-      <div id="cp-places">${c.stops.map((s,k)=>`<div class="cp-pl" id="cp-pl-${k}"><b>${esc(s.c)}</b><div class="cp-grid">${(c.places[s.c]||null) ? '' : '<div class="v-sum-small">📡 Recherche…</div>'}</div></div>`).join('')}</div>
-      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.compCreate()">🧳 Créer mon voyage (${c.stops.length} étape${c.stops.length>1?'s':''}, ${Object.values(c.sel).reduce((s,a)=>s+a.length,0)} lieu${Object.values(c.sel).reduce((s,a)=>s+a.length,0)>1?'x':''})</button><button type="button" class="v-btn sec cv-sq" onclick="CV.inspBack()" aria-label="Revenir en arrière">←</button></div>`);
+      <h3 id="cp-add-h">➕ Ajouter une étape <small class="v-sum-small">${MSGT('villes autour de tes étapes')}</small></h3><div id="cp-near" class="cp-near">${c.near || Object.keys(c.nearBy || {}).length ? '' : '<div class="v-sum-small">📡 Recherche des villes proches…</div>'}</div>
+      <div class="v-sum-small" style="margin-top:8px">💡 ${MSGT('Les visites se choisissent après la création, ville par ville.')}</div>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.compCreate()">🧳 ${esc(RF('Créer mon voyage ({0} étapes)', c.stops.length))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.inspBack()" aria-label="Revenir en arrière">←</button></div>`);
     const im = document.getElementById('cp-img'); if(c.img && im){ im.src = c.img; im.parentNode.classList.add('has'); }
     if(c.sum){ const e = document.getElementById('cp-sum'); if(e) e.innerHTML = c.sum; }
-    if(c.near) compNear(); c.stops.forEach(s=>{ if(c.places[s.c]) compPlacesPaint(s); });
+    if(c.near || Object.keys(c.nearBy || {}).length) compNear();
   }
   function compNear(){
-    const el = document.getElementById('cp-near'); if(!el || !comp) return; const have = new Set(comp.stops.map(s=>normQ(s.c)));
-    const l = (comp.near||[]).filter(n=>!have.has(normQ(n.c))).slice(0, 12);
+    const el = document.getElementById('cp-near'); if(!el || !comp) return; const have = new Set(comp.stops.map(s=>normQ(s.c))), P = comp.stops.filter(s=>s.lat != null), seen = new Set();
+    // toutes les villes trouvées autour de chaque étape (et de la région), les plus proches du trajet d’abord
+    const all = [...Object.values(comp.nearBy || {}).flat(), ...(comp.near || [])].filter(n=>!have.has(normQ(n.c)) && !seen.has(normQ(n.c)) && seen.add(normQ(n.c)));
+    const dmin = n => P.length ? Math.min(...P.map(s=>km(s, n))) : 0, l = all.map(n=>Object.assign({d:dmin(n)}, n)).sort((a, b)=>(a.d > 150) - (b.d > 150) || b.n - a.n).slice(0, 12);
     el.innerHTML = l.length ? l.map(n=>`<button type="button" class="cp-city" onclick="CV.compAdd('${ja(n.c)}',${+n.lat||0},${+n.lng||0})">${n.img ? `<img src="${esc(n.img)}" alt="" loading="lazy">` : '<i>🏙️</i>'}<span>${esc(n.c)}</span><small>＋ ajouter</small></button>`).join('') : '<div class="v-sum-small">Pas d’autre ville proposée.</div>';
   }
   async function compPlaces(s){
@@ -227,11 +228,15 @@
   }
   function compTog(k, j){ const s = comp.stops[k], p = (comp.places[s.c]||[])[j]; if(!p) return; const L = comp.sel[s.c] = comp.sel[s.c] || []; const at = L.findIndex(x=>x.nom===p.nom); at >= 0 ? L.splice(at,1) : L.push(p); compPlacesPaint(s); compFoot(); }
   function compFoot(){ const b = document.querySelector('#v-sheet-bg .v-actions .v-btn'); if(b){ const n = Object.values(comp.sel).reduce((s,a)=>s+a.length,0); b.textContent = `🧳 Créer mon voyage (${comp.stops.length} étape${comp.stops.length>1?'s':''}, ${n} lieu${n>1?'x':''})`; } }
+  async function compNearFetch(s){ if(!comp || s.lat == null) return; const k = normQ(s.c), me = comp; comp.nearBy = comp.nearBy || {}; if(comp.nearBy[k]) return;
+    try { const l = await wdNear(s.lat, s.lng, 120); if(comp === me){ comp.nearBy[k] = l; compNear(); } } catch(e){} }
+  // ajouter ou retirer une étape : la rubrique « Ajouter une étape » reste à la même hauteur à l’écran
+  function compKeep(fn){ const sh = () => document.querySelector('#v-sheet-bg .v-sheet'), a = () => document.getElementById('cp-add-h'); const t0 = a() ? a().getBoundingClientRect().top : null; fn(); const s2 = sh(), e = a(); if(s2 && e && t0 != null) s2.scrollTop += e.getBoundingClientRect().top - t0; }
   function compN(k, d){ const s = comp.stops[k]; s.n = Math.max(1, s.n + d); const y = (document.querySelector('#v-sheet-bg .v-sheet')||{}).scrollTop; compRender(); const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y; }
-  function compDel(k){ const s = comp.stops.splice(k,1)[0]; delete comp.sel[s.c]; const y = (document.querySelector('#v-sheet-bg .v-sheet')||{}).scrollTop; compRender(); const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y; }
+  function compDel(k){ const s = comp.stops.splice(k,1)[0]; delete comp.sel[s.c]; compKeep(()=>{ const y = (document.querySelector('#v-sheet-bg .v-sheet')||{}).scrollTop; compRender(); const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y; }); }
   function compAdd(c, lat, lng){
     const s = {c, n:1, lat, lng}; const big = comp.stops.reduce((a,b)=>b.n > a.n ? b : a, comp.stops[0]); if(big && big.n > 2) big.n--;   // on prend une nuit à l'étape la plus longue
-    comp.stops.push(s); const y = (document.querySelector('#v-sheet-bg .v-sheet')||{}).scrollTop; compRender(); const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y; compPlaces(s); toast('➕ ' + c);
+    comp.stops.push(s); compKeep(()=>{ const y = (document.querySelector('#v-sheet-bg .v-sheet')||{}).scrollTop; compRender(); const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y; }); compNearFetch(s); toast('➕ ' + c);
   }
   function inspBack(){ comp = null; inspShow(inspN); }
   function compCreate(){ if(!comp) return; const c = comp, pts = {}; c.stops.forEach(s=>{ if(s.lat != null) pts[normQ(s.c)] = {lat:s.lat, lng:s.lng}; });
@@ -430,7 +435,7 @@
         if(!inspRes.some(r=>r.i === x.i)) inspRes.unshift(x);
         comp = Object.assign({}, o.c, {i:x.i, x}); compRender();
         const i = comp.i;
-        comp.stops.forEach(s=>{ if(!comp.places[s.c] && s.lat != null) compPlaces(s); });
+        comp.stops.forEach(s=>{ if(s.lat != null) compNearFetch(s); });
         if(!comp.near) wdNear(x.d[3], x.d[4], (+(M.insp.duree||7)) > 9 ? 280 : 160).then(n=>{ if(comp && comp.i === i){ comp.near = n; compNear(); } }).catch(()=>{ if(comp) comp.near = []; });
       }
       else if(o.v === 'wz' && o.wz){ wz = o.wz; wzRender(); }

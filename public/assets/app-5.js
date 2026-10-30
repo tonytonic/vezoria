@@ -1721,6 +1721,8 @@
     const rows = c.stops.map(([v, n])=>{ const d = cur; cur = addDays(cur, n); return `<li><b>${esc(v)}</b> · ${RF(n > 1 ? '{0} nuits' : '{0} nuit', n)} <span class="v-sum-small">${fshort(d)} → ${fshort(cur)}</span></li>`; }).join('');
     openSheet(`<h2>🧳 ${MSGT('Vérifie ton voyage avant de le créer')}</h2><div id="tcf-ord"></div>
       <div class="wz-recap"><b>${flag(c.x.cc)} ${esc(c.x.nom)}</b><div class="v-sum-small">${fdate(debut)} → ${fdate(cur)} · ${RF(nights(debut, cur) > 1 ? '{0} nuits' : '{0} nuit', nights(debut, cur))}${dep ? ' · ' + RF('départ de {0}', esc(dep)) : ''}</div><ol>${rows}</ol></div>
+      <div class="v-f2"><div class="v-f"><label>🏠 ${MSGT('Départ de')}</label><input class="v-in" id="tcf-dep" data-place autocomplete="off" value="${esc(c.dep != null ? c.dep : dep || M.home || '')}" placeholder="${esc(MSGT('Ta ville'))}" oninput="tcf.dep=this.value"></div>
+        <div class="v-f"><label>🏁 ${MSGT('Retour à')}</label><input class="v-in" id="tcf-ret" data-place autocomplete="off" value="${esc(c.ret != null ? c.ret : c.dep != null ? c.dep : dep || M.home || '')}" placeholder="${esc(MSGT('Même ville'))}" oninput="tcf.ret=this.value"></div></div>
       <div class="v-hint">${MSGT('Tu pourras tout modifier ensuite : dates, étapes, nuits.')}</div>
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.tcfBack()" aria-label="←">←</button><button type="button" class="v-btn" onclick="CV.tcfGo()">🚀 ${MSGT('Créer le voyage')}</button></div>`);
     tcfAsk();
@@ -1742,7 +1744,9 @@
   }
   function tcfOrd(yes){ if(!tcf) return; if(yes && tcf.prop){ tcf.stops = tcf.prop; toast('🧭 ' + MSGT('Itinéraire réorganisé')); } tcf.prop = null; tcf.keep = tcfSig(); tcfRender(); }
   function tcfBack(){ const b = tcf && tcf.back; tcf = null; if(b === 'comp' && typeof comp !== 'undefined' && comp) compRender(); else inspShow(inspN); }
-  function tcfGo(){ if(!tcf) return; const c = tcf; tcf = null; inspireCreate(c.i, {stops:c.stops, sel:c.sel, ok:1, auto:c.back === 'list'}); try { comp = null; } catch(e){} }
+  function tcfGo(){ if(!tcf) return; const c = tcf, g = id => ((document.getElementById(id) || {}).value || '').trim(), dep = g('tcf-dep'), ret = g('tcf-ret') || dep; tcf = null;
+    if(dep){ M.home = dep; persist(); }   // retenu pour le prochain voyage
+    inspireCreate(c.i, {stops:c.stops, sel:c.sel, ok:1, auto:c.back === 'list', dep, ret}); try { comp = null; } catch(e){} }
   function inspireCreate(i, custom){
     if(!custom || !custom.ok) return tripConfirm(i, custom);   // toujours l’écran de confirmation d’abord
     const x = inspRes.find(r=>r.i === i) || inspCalc(M.insp || {}).find(r=>r.i === i); if(!x) return;
@@ -1750,8 +1754,8 @@
     const tid = 't' + uid(), out = [], v = M.me ? [M.me] : [];
     let cur = debut; const stops = st.map(([c,n])=>{ const s = {c, n, d:cur, f:addDays(cur, n)}; cur = s.f; return s; }), fin = cur;
     out.push({id:tid, type:'trip', ccs:[x.d[2]].filter(Boolean), titre:x.nom + ' · ' + (days >= 7 ? Math.round(days/7) + ' semaine' + (days >= 14 ? 's' : '') : days + ' jours'), sous:stops.map(s=>s.c).join(' → '), debut, fin, voyageurs:v, objectif:num(S.budget)||''});
-    const mode = x.ground ? 'Voiture' : 'Avion';
-    out.push({id:'i'+uid()+'a', type:'item', trip:tid, cat:'transport', mode, titre:((S.dep === 'autre' ? S.depTxt : S.dep)||'Départ') + ' → ' + stops[0].c, from:(S.dep === 'autre' ? S.depTxt : S.dep)||'', to:stops[0].c, date:debut, statut:'todo', partage:'pp', qui:[], estime:String(Math.round((x.trans + (x.escale ? 80 : 0))/2))});
+    const mode = x.ground ? 'Voiture' : 'Avion', DEP = custom.dep != null ? custom.dep : (S.dep === 'autre' ? S.depTxt : S.dep) || '', RET = custom.ret != null ? custom.ret : DEP;
+    out.push({id:'i'+uid()+'a', type:'item', trip:tid, cat:'transport', mode, titre:(DEP||'Départ') + ' → ' + stops[0].c, from:DEP, to:stops[0].c, date:debut, statut:'todo', partage:'pp', qui:[], estime:String(Math.round((x.trans + (x.escale ? 80 : 0))/2))});
     stops.forEach((s,k)=>{
       const hid = 'i'+uid()+'h'+k; out.push({id:hid, type:'item', trip:tid, cat:'hotel', titre:s.c, base:s.c, date:s.d, dateFin:s.f, statut:'todo', partage:'grp', qui:[]});
       const pls = custom && custom.sel && custom.sel[s.c] || [], dd = range(s.d, s.f).slice(0, Math.max(1, s.n)), per = Math.max(1, Math.ceil(pls.length / dd.length));
@@ -1760,7 +1764,7 @@
       range(addDays(s.d,1), addDays(s.f,-1)).forEach(dd=>out.push({id:'day:'+tid+':'+dd, type:'day', trip:tid, date:dd, titre:s.c, plan:''}));
       if(k > 0) out.push({id:'i'+uid()+'t'+k, type:'item', trip:tid, cat:'transport', mode:mode === 'Voiture' ? 'Voiture' : 'Train', titre:stops[k-1].c + ' → ' + s.c, from:stops[k-1].c, to:s.c, date:s.d, statut:'todo', partage:'pp', qui:[]});
     });
-    out.push({id:'i'+uid()+'r', type:'item', trip:tid, cat:'transport', mode, titre:stops[stops.length-1].c + ' → ' + ((S.dep === 'autre' ? S.depTxt : S.dep)||'retour'), from:stops[stops.length-1].c, to:(S.dep === 'autre' ? S.depTxt : S.dep)||'', date:fin, statut:'todo', partage:'pp', qui:[], estime:String(Math.round((x.trans + (x.escale ? 80 : 0))/2))});
+    out.push({id:'i'+uid()+'r', type:'item', trip:tid, cat:'transport', mode, titre:stops[stops.length-1].c + ' → ' + (RET||'retour'), from:stops[stops.length-1].c, to:RET, date:fin, statut:'todo', partage:'pp', qui:[], estime:String(Math.round((x.trans + (x.escale ? 80 : 0))/2))});
     out.push({id:'day:'+tid+':'+fin, type:'day', trip:tid, date:fin, titre:stops[stops.length-1].c + ' → retour', plan:''});
     putMany(out, '🧳 Voyage créé : ' + x.nom); setTimeout(()=>fxPlay('trip', 'Le rêve commence !'), 600);
     closeSheet(true); M.mode = 'prep'; M.tab = 'prog'; go(tid);
