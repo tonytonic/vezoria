@@ -5644,4 +5644,9 @@ I18N.load({
 "Que faire à {0} ?":"{0} में क्या करें?",
 "Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"जो पसंद हों उन्हें छुओ, फिर ✓। कोई न रखना हो तो ✕।",
 "Touche les activités qui te tentent, ou ✕ pour passer":"पसंद की एक्टिविटीज़ छुओ, या छोड़ने के लिए ✕",
-"{0} activité(s) au programme":"{0} एक्टिविटी प्रोग्राम में"});
+"{0} activité(s) au programme":"{0} एक्टिविटी प्रोग्राम में",
+"Centre de {0}":"{0} का केंद्र",
+"au plus près de tes {0} points de visite · {1} km en moyenne":"तुम्हारी {0} जगहों के सबसे पास · औसतन {1} किमी",
+"au plus près de ta visite":"तुम्हारी जगह के सबसे पास",
+"Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"लाल घेरा = सुझाया गया इलाक़ा। पीली रेखाएँ उसे हर जगह से जोड़ती हैं: जितनी छोटी, उतना कम सफ़र।",
+"Voir le quartier dans Google Maps":"इलाक़ा Google Maps में देखो"});

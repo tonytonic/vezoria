@@ -2690,4 +2690,9 @@ I18N.load({
 "Que faire à {0} ?":"What to do in {0}?",
 "Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"Tap the ones you like, then ✓. ✕ to keep none.",
 "Touche les activités qui te tentent, ou ✕ pour passer":"Tap the activities you like, or ✕ to skip",
-"{0} activité(s) au programme":"{0} activity(ies) added to the plan"});
+"{0} activité(s) au programme":"{0} activity(ies) added to the plan",
+"Centre de {0}":"{0} centre",
+"au plus près de tes {0} points de visite · {1} km en moyenne":"closest to your {0} visit points · {1} km on average",
+"au plus près de ta visite":"closest to your visit",
+"Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"The red circle = the suggested area. The yellow lines link it to each of your visits: the shorter they are, the less travelling you do.",
+"Voir le quartier dans Google Maps":"See the area in Google Maps"});

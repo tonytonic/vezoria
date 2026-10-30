@@ -5644,4 +5644,9 @@ I18N.load({
 "Que faire à {0} ?":"{0}で何をする？",
 "Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"気になるものをタップして ✓。不要なら ✕。",
 "Touche les activités qui te tentent, ou ✕ pour passer":"気になるアクティビティをタップ、またはスキップは ✕",
-"{0} activité(s) au programme":"{0}件のアクティビティを予定に追加"});
+"{0} activité(s) au programme":"{0}件のアクティビティを予定に追加",
+"Centre de {0}":"{0}の中心部",
+"au plus près de tes {0} points de visite · {1} km en moyenne":"{0}か所の訪問先に最も近い · 平均 {1} km",
+"au plus près de ta visite":"訪問先に最も近い",
+"Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"赤い円＝おすすめエリア。黄色の線は各訪問先への距離：短いほど移動が少なくなります。",
+"Voir le quartier dans Google Maps":"Google マップでエリアを見る"});

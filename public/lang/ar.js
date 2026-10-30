@@ -5645,4 +5645,9 @@ I18N.load({
 "Que faire à {0} ?":"ماذا تفعل في {0}؟",
 "Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"المس ما يعجبك ثم ✓. ✕ لعدم الاحتفاظ بأي منها.",
 "Touche les activités qui te tentent, ou ✕ pour passer":"المس الأنشطة التي تعجبك، أو ✕ للتخطي",
-"{0} activité(s) au programme":"{0} نشاط في البرنامج"});
+"{0} activité(s) au programme":"{0} نشاط في البرنامج",
+"Centre de {0}":"وسط {0}",
+"au plus près de tes {0} points de visite · {1} km en moyenne":"الأقرب إلى نقاط زيارتك الـ{0} · {1} كم في المتوسط",
+"au plus près de ta visite":"الأقرب إلى زيارتك",
+"Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"الدائرة الحمراء = الحي المقترح. الخطوط الصفراء تربطه بكل زيارة: كلما قصرت، قلّت تنقلاتك.",
+"Voir le quartier dans Google Maps":"عرض الحي في خرائط Google"});

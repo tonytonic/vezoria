@@ -2696,4 +2696,9 @@ I18N.load({
 "Que faire à {0} ?":"Wat te doen in {0}?",
 "Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"Tik de activiteiten aan die je leuk vindt en dan ✓. ✕ om er geen te houden.",
 "Touche les activités qui te tentent, ou ✕ pour passer":"Tik de activiteiten aan die je leuk vindt, of ✕ om over te slaan",
-"{0} activité(s) au programme":"{0} activiteit(en) in het programma"});
+"{0} activité(s) au programme":"{0} activiteit(en) in het programma",
+"Centre de {0}":"Centrum van {0}",
+"au plus près de tes {0} points de visite · {1} km en moyenne":"zo dicht mogelijk bij je {0} bezienswaardigheden · gemiddeld {1} km",
+"au plus près de ta visite":"zo dicht mogelijk bij je bezienswaardigheid",
+"Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"De rode cirkel = de aanbevolen buurt. De gele lijnen verbinden hem met elke bezienswaardigheid: hoe korter, hoe minder reistijd.",
+"Voir le quartier dans Google Maps":"Bekijk de buurt in Google Maps"});

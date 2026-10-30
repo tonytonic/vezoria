@@ -5645,4 +5645,9 @@ I18N.load({
 "Que faire à {0} ?":"Чем заняться: {0}?",
 "Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"Отметь понравившиеся и нажми ✓. ✕ — не брать ни одной.",
 "Touche les activités qui te tentent, ou ✕ pour passer":"Отметь понравившиеся развлечения или нажми ✕, чтобы пропустить",
-"{0} activité(s) au programme":"В программе развлечений: {0}"});
+"{0} activité(s) au programme":"В программе развлечений: {0}",
+"Centre de {0}":"Центр: {0}",
+"au plus près de tes {0} points de visite · {1} km en moyenne":"ближе всего к твоим точкам ({0}) · в среднем {1} км",
+"au plus près de ta visite":"ближе всего к твоему визиту",
+"Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"Красный круг — рекомендуемый район. Жёлтые линии ведут к каждому визиту: чем они короче, тем меньше переездов.",
+"Voir le quartier dans Google Maps":"Открыть район в Google Картах"});

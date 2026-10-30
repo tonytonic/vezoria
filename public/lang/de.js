@@ -2700,4 +2700,9 @@ I18N.load({
 "Que faire à {0} ?":"Was tun in {0}?",
 "Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"Tippe die an, die dich reizen, dann ✓. ✕, um keine zu behalten.",
 "Touche les activités qui te tentent, ou ✕ pour passer":"Tippe die Aktivitäten an, die dich reizen, oder ✕ zum Überspringen",
-"{0} activité(s) au programme":"{0} Aktivität(en) im Programm"});
+"{0} activité(s) au programme":"{0} Aktivität(en) im Programm",
+"Centre de {0}":"Zentrum von {0}",
+"au plus près de tes {0} points de visite · {1} km en moyenne":"möglichst nah an deinen {0} Besichtigungspunkten · im Schnitt {1} km",
+"au plus près de ta visite":"möglichst nah an deiner Besichtigung",
+"Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"Der rote Kreis = das empfohlene Viertel. Die gelben Linien verbinden es mit jeder Besichtigung: Je kürzer sie sind, desto weniger Wege.",
+"Voir le quartier dans Google Maps":"Viertel in Google Maps ansehen"});

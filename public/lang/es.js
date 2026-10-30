@@ -2706,4 +2706,9 @@ I18N.load({
 "Que faire à {0} ?":"¿Qué hacer en {0}?",
 "Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"Toca las que te apetecen y luego ✓. ✕ para no quedarte con ninguna.",
 "Touche les activités qui te tentent, ou ✕ pour passer":"Toca las actividades que te apetecen, o ✕ para pasar",
-"{0} activité(s) au programme":"{0} actividad(es) en el programa"});
+"{0} activité(s) au programme":"{0} actividad(es) en el programa",
+"Centre de {0}":"Centro de {0}",
+"au plus près de tes {0} points de visite · {1} km en moyenne":"lo más cerca de tus {0} puntos de visita · {1} km de media",
+"au plus près de ta visite":"lo más cerca de tu visita",
+"Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"El círculo rojo = el barrio aconsejado. Las líneas amarillas lo unen a cada una de tus visitas: cuanto más cortas, menos trayectos.",
+"Voir le quartier dans Google Maps":"Ver el barrio en Google Maps"});

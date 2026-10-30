@@ -5644,4 +5644,9 @@ I18N.load({
 "Que faire à {0} ?":"在{0}做什么？",
 "Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"点选你感兴趣的，然后点 ✓。点 ✕ 则一个都不保留。",
 "Touche les activités qui te tentent, ou ✕ pour passer":"点选感兴趣的活动，或点 ✕ 跳过",
-"{0} activité(s) au programme":"已加入行程的活动：{0}"});
+"{0} activité(s) au programme":"已加入行程的活动：{0}",
+"Centre de {0}":"{0}市中心",
+"au plus près de tes {0} points de visite · {1} km en moyenne":"离你的 {0} 个游览点最近 · 平均 {1} 公里",
+"au plus près de ta visite":"离你的景点最近",
+"Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"红圈 = 推荐街区。黄线连到你的每个景点：线越短，路程越少。",
+"Voir le quartier dans Google Maps":"在 Google 地图中查看街区"});

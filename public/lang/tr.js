@@ -5632,4 +5632,9 @@ I18N.load({
 "Que faire à {0} ?":"{0}’da ne yapılır?",
 "Touche celles qui te tentent, puis ✓. ✕ pour n’en garder aucune.":"İlgini çekenlere dokun, sonra ✓. Hiçbirini istemiyorsan ✕.",
 "Touche les activités qui te tentent, ou ✕ pour passer":"İlgini çeken etkinliklere dokun ya da geçmek için ✕",
-"{0} activité(s) au programme":"Programa {0} etkinlik eklendi"});
+"{0} activité(s) au programme":"Programa {0} etkinlik eklendi",
+"Centre de {0}":"{0} merkezi",
+"au plus près de tes {0} points de visite · {1} km en moyenne":"{0} gezi noktana en yakın · ortalama {1} km",
+"au plus près de ta visite":"gezine en yakın",
+"Le cercle rouge = le quartier conseillé. Les traits jaunes le relient à chacune de tes visites : plus ils sont courts, moins tu fais de trajets.":"Kırmızı daire = önerilen semt. Sarı çizgiler onu her geziye bağlar: ne kadar kısaysa o kadar az yol.",
+"Voir le quartier dans Google Maps":"Semti Google Haritalar’da gör"});
