@@ -1780,13 +1780,16 @@
   const p3St = i => i.statut === 'paid' ? 'paid' : i.statut === 'booked' ? 'booked' : 'todo';
   const p3Circle = (c, km) => { const out = []; for(let i = 0; i <= 64; i++){ const a = i / 64 * 2 * Math.PI; out.push([c.lng + km / (111.32 * Math.cos(c.lat * Math.PI / 180)) * Math.cos(a), c.lat + km / 110.57 * Math.sin(a)]); } return out; };
   function p3Stats(t){
-    const D = ariData(t), L = [...D.hs, ...D.trs, ...items(i=>i.cat === 'activite' && i.exp)], n = L.length || 1, c = k => L.filter(i=>p3St(i) === k).length;
-    const S = D.S, pct = Math.round(S.reduce((a, x)=>a + (x.ok ? 1 : x.f) * (x.w || 1), 0) / S.reduce((a, x)=>a + (x.w || 1), 0) * 100), fin = S.find(x=>x.k === 'fin');
-    return {n:L.length, todo:c('todo'), booked:c('booked'), paid:c('paid'), p:k => Math.round(c(k) / n * 100), pct, fin:fin ? Math.round((fin.ok ? 1 : fin.f) * 100) : 0};
+    const D = ariData(t), xs = items(i=>i.cat === 'activite' && i.exp), L = [...D.hs, ...D.trs, ...xs], n = L.length || 1, c = k => L.filter(i=>p3St(i) === k).length;
+    const S = D.S, pct = Math.round(S.reduce((a, x)=>a + (x.ok ? 1 : x.f) * (x.w || 1), 0) / S.reduce((a, x)=>a + (x.w || 1), 0) * 100);
+    // ✅ finalisé : papiers, formalités et valise cochés (rien de coché = 0 %, pas 100 %)
+    const fp = []; if(D.ck.length) fp.push(D.ckd / D.ck.length); if(D.fm.length) fp.push(D.fm.filter(x=>x.done).length / D.fm.length); if(D.di.length) fp.push(0);
+    return {n:L.length, nh:D.hs.length, nt:D.trs.length, nx:xs.length, todo:c('todo'), booked:c('booked'), paid:c('paid'), p:k => Math.round(c(k) / n * 100), pct, fin:fp.length ? Math.round(fp.reduce((a, b)=>a + b, 0) / fp.length * 100) : 0};
   }
   function p3Legend(){
     const t = trip(), box = document.getElementById('p3-leg'); if(!t || !box) return; const s = p3Stats(t), open = !box.classList.contains('min');
     box.innerHTML = `<button type="button" class="p3-lh" onclick="this.parentNode.classList.toggle('min')"><b>${MSGT('Ta préparation')} · ${s.pct} %</b><em>▾</em></button>
+      <div class="p3-what">${RF('{0} trajets · {1} hébergements · {2} activités payantes', s.nt, s.nh, s.nx)}</div>
       <div class="p3-bar">${['paid', 'booked', 'todo'].map(k=>`<i style="width:${s.n ? s.p(k) : 0}%;background:${P3C[k]}"></i>`).join('')}</div>
       <div class="p3-rows">
         <span><i style="background:${P3C.todo}"></i>${MSGT('À réserver')} <b>${s.todo}</b> · ${s.p('todo')} %</span>
@@ -1801,24 +1804,39 @@
   async function p3Data(t){
     const g = async q => { q = (q || '').trim(); if(!q) return null; const r = await geocode(q, null).catch(()=>null); return r && r.lat != null ? {lat:+r.lat, lng:+r.lng} : null; };
     const F = {legs:[], cities:[], hood:[], rays:[], visits:[], acts:[], hotels:[]};
-    const st = tlStages(); let k = 0;
-    for(const s of st){ const c = await g(s.city); if(c) F.cities.push({c, name:s.city, n:++k}); }
-    for(const i of items(x=>x.cat === 'transport').sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'))){
-      const a = await g(i.from), b = await g(i.to); if(!a || !b || rawKm(a, b) < .3) continue;
-      F.legs.push({type:'Feature', properties:{col:P3C[p3St(i)], fly:/Avion/i.test(i.mode || '') ? 1 : 0, id:i.id}, geometry:{type:'LineString', coordinates:p3Arc(a, b)}});
-      [[a, i.from], [b, i.to]].forEach(([p, nm])=>{ if(!F.cities.some(x=>rawKm(x.c, p) < 3)) F.cities.push({c:p, name:nm, home:1}); });
+    const st = tlStages(), SC = []; let k = 0;
+    for(const s of st){ const c = await g(s.city); if(c){ F.cities.push({c, name:s.city, n:++k}); SC.push({s, c}); } }
+    // 🚆 un bout de trajet se place d’abord sur une ville d’étape ; sinon on le cherche AUTOUR de l’étape du jour
+    //    (« Aéroport », « Gare Termini », « Pompéi » : pas un aéroport au hasard en Biélorussie)
+    const stageAt = (d, leave) => { if(!d) return null; const x = SC.find(({s})=>leave ? (s.debut < d && d <= (s.fin || s.debut)) : (s.debut <= d && d < (s.fin || addDays(s.debut, 1)))); return x || null; };
+    const LOCAL = /a[eé]roport|airport|aeropuerto|aeroporto|flughafen|gare|station|stazione|estaci|bahnhof|termini|port\b|porto\b|terminal|centre|center|centro|h[oô]tel/i;
+    const resolve = async (q, ctx) => { q = (q || '').trim(); if(!q) return null; const nq = normQ(q);
+      const hit = SC.find(({s})=>{ const n = normQ(s.city); return n && (nq === n || nq.startsWith(n + ' ') || nq.endsWith(' ' + n)); }); if(hit) return {p:hit.c, stage:1};
+      let p = ctx ? await geocode(q, ctx.s.city).catch(()=>null) : null; if(!p) p = await g(q); if(!p) return null; p = {lat:+p.lat, lng:+p.lng};
+      if(ctx && rawKm(p, ctx.c) > 120 && LOCAL.test(q)) p = ctx.c;   // un « aéroport » trouvé loin de l’étape : on garde l’étape
+      return {p}; };
+    const T = items(x=>x.cat === 'transport').sort((a, b)=>(a.date || '9').localeCompare(b.date || '9') || (a.heureDep || a.heure || '').localeCompare(b.heureDep || b.heure || ''));
+    const ends = [];
+    for(const i of T){
+      const ca = stageAt(i.date, true) || stageAt(i.date, false), cb = stageAt(i.date, false) || stageAt(i.date, true);
+      const A = await resolve(i.from, ca), B = await resolve(i.to, cb); if(!A || !B) continue; const a = A.p, b = B.p, d = rawKm(a, b); if(d < .3) continue;
+      const far = q => SC.length && SC.every(({c})=>rawKm(c, q) > 2500); if(far(a) && far(b)) continue;   // adresse introuvable ou absurde : on n’invente rien
+      F.legs.push({type:'Feature', properties:{col:P3C[p3St(i)], local:d < 60 ? 1 : 0, id:i.id}, geometry:{type:'LineString', coordinates:p3Arc(a, b)}});
+      if(d >= 60){ if(!A.stage) ends.push({p:a, name:i.from}); if(!B.stage) ends.push({p:b, name:i.to}); }
     }
+    // 🏠 le départ et le retour (début et fin du voyage) ; les autres villes de passage (correspondance à Bruxelles…) en petit
+    ends.forEach((e, j)=>{ if(F.cities.some(x=>rawKm(x.c, e.p) < 25)) return; const home = j === 0 || j === ends.length - 1; F.cities.push({c:e.p, name:e.name, home:home ? 1 : 0, via:home ? 0 : 1}); });
     for(const h of items(x=>x.cat === 'hotel' && x.date)){
       const A0 = gdAnchors(t, h), hub = A0.hub;
       let p = h.lat != null && h.lng != null ? {lat:+h.lat, lng:+h.lng} : null;
-      if(!p && h.adresse && okB(h)) p = await g(h.adresse + ', ' + A0.city);
+      if(!p && h.adresse && okB(h)){ p = await g(h.adresse); const ref = A0.C0 || hub; if(p && ref && rawKm(p, ref) > 40) p = null; }   // adresse mal comprise : pas un hôtel à l’autre bout du pays
       if(!p) p = hub || A0.C0 || await g(A0.city); if(!p) continue;
-      F.hotels.push({p, h, city:A0.city, st:p3St(h), exact:!!(h.lat != null || (h.adresse && okB(h)))});
+      F.hotels.push({p, h, city:A0.city, st:p3St(h), exact:!!(h.lat != null || (h.adresse && okB(h) && p !== hub && p !== A0.C0))});
       if(hub && !okB(h)){ F.hood.push({type:'Feature', properties:{}, geometry:{type:'Polygon', coordinates:[p3Circle(hub, hub.r)]}});
         A0.A.forEach(q=>F.rays.push({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:[[hub.lng, hub.lat], [q.lng, q.lat]]}})); }
       A0.P.forEach(v=>F.visits.push({type:'Feature', properties:{name:v.nom}, geometry:{type:'Point', coordinates:[+v.lng, +v.lat]}}));
       const C = A0.C0 || p; A0.X.forEach((x, j)=>{ const q = x.lat != null && x.lng != null ? {lat:+x.lat, lng:+x.lng} : {lat:C.lat + .006 * Math.sin(j * 1.9 + 1), lng:C.lng + .009 * Math.cos(j * 1.9 + 1)};   // sans adresse : autour du centre
-        F.acts.push({type:'Feature', properties:{name:String(x.titre || '').replace(/ · .*$/, ''), col:P3C[p3St(x)]}, geometry:{type:'Point', coordinates:[q.lng, q.lat]}}); });
+        F.acts.push({type:'Feature', properties:{name:(z => z.length > 1 ? (normQ(z[1]) === normQ(A0.city) ? z[0] : z.slice(1).join(' · ')) : z[0])(String(x.titre || '').split(' · ')), col:P3C[p3St(x)]}, geometry:{type:'Point', coordinates:[q.lng, q.lat]}}); });
     }
     return F;
   }
@@ -1856,6 +1874,7 @@
           style.layers.push({id:'ofm-b-bg', type:'background', layout:{visibility:'none'}, paint:{'background-color':'#f8f4f0'}}, ...ofmBase(lib, vs[0], 0, true));
           const lang = (l => /^(ar|hi)$/.test(l) ? 'en' : l)((window.I18N && I18N.lang) || 'fr');
           (lib.layers || []).filter(l=>l.source === vs[0] && l.type === 'symbol' && l['source-layer'] === 'place' && /country|city|town|village|suburb|state|capital/.test(l.id)).forEach(l=>{ const x = JSON.parse(JSON.stringify(l)); x.source = 'ofm';
+            if(!/country/.test(x.id)) x.minzoom = Math.max(x.minzoom || 0, 8);   // de loin : seulement les pays (les étapes ont leurs propres noms)
             x.layout = Object.assign({}, x.layout, {'text-field':['coalesce',['get','name:' + lang],['get','name:latin'],['get','name']]}); if(x.layout['text-font'] && !P3.font) P3.font = x.layout['text-font'];
             x.paint = Object.assign({}, x.paint, {'text-color':'#ffffff', 'text-halo-color':'rgba(10,20,50,.85)', 'text-halo-width':1.4}); style.layers.push(x); });
         }
@@ -1883,8 +1902,9 @@
     map.addLayer({id:'p3-hood-f', type:'fill', source:'p3-hood', minzoom:10, paint:{'fill-color':'#e11d48', 'fill-opacity':.22}});
     map.addLayer({id:'p3-hood-l', type:'line', source:'p3-hood', minzoom:10, paint:{'line-color':'#e11d48', 'line-width':3}});
     map.addLayer({id:'p3-rays', type:'line', source:'p3-rays', minzoom:10.5, paint:{'line-color':'#fde68a', 'line-width':2, 'line-dasharray':[2, 1.6]}});
-    map.addLayer({id:'p3-legs-c', type:'line', source:'p3-legs', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':'rgba(0,0,0,.45)', 'line-width':['interpolate',['linear'],['zoom'],2,4,10,9]}});
-    map.addLayer({id:'p3-legs', type:'line', source:'p3-legs', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':['get','col'], 'line-width':['interpolate',['linear'],['zoom'],2,2.5,10,6]}});
+    map.addLayer({id:'p3-legs-c', type:'line', source:'p3-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':'rgba(0,0,0,.45)', 'line-width':['interpolate',['linear'],['zoom'],2,4,10,9]}});
+    map.addLayer({id:'p3-legs', type:'line', source:'p3-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':['get','col'], 'line-width':['interpolate',['linear'],['zoom'],2,2.5,10,6]}});
+    map.addLayer({id:'p3-legs-l', type:'line', source:'p3-legs', minzoom:9, filter:['==',['get','local'],1], layout:{'line-cap':'round'}, paint:{'line-color':['get','col'], 'line-width':4, 'line-dasharray':[1.5, 1.2]}});
     map.addLayer({id:'p3-vis', type:'circle', source:'p3-vis', minzoom:9.5, paint:{'circle-color':'#a78bfa', 'circle-radius':['interpolate',['linear'],['zoom'],9.5,4,14,8], 'circle-stroke-color':'#fff', 'circle-stroke-width':2}});
     map.addLayer({id:'p3-act', type:'circle', source:'p3-act', minzoom:9.5, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],9.5,5,14,9], 'circle-stroke-color':'#fff', 'circle-stroke-width':2.5}});
     if(lbl){ const L = (id, src, mz) => map.addLayer({id, type:'symbol', source:src, minzoom:mz, layout:{'text-field':['get','name'], 'text-font':font, 'text-size':12, 'text-offset':[0, 1.2], 'text-anchor':'top', 'text-max-width':10, 'text-optional':true},
@@ -1894,16 +1914,23 @@
   function p3Markers(map, F){
     P3.mk.forEach(m=>m.remove()); P3.mk = [];
     const add = (el, p, cls) => { el.className = cls; P3.mk.push(new maplibregl.Marker({element:el, anchor:'center'}).setLngLat([p.lng, p.lat]).addTo(map)); };
-    F.cities.forEach(c=>{ const e = document.createElement('div'); e.innerHTML = `<i>${c.home ? '🏠' : c.n}</i><span data-notr>${esc(c.name)}</span>`; add(e, c.c, 'p3-city' + (c.home ? ' home' : '')); });
+    F.cities.forEach(c=>{ const e = document.createElement('div'); e.innerHTML = `<i>${c.home ? '🏠' : c.via ? '·' : c.n}</i><span data-notr>${esc(c.name)}</span>`; add(e, c.c, 'p3-city' + (c.home ? ' home' : c.via ? ' via' : '')); });
     F.hotels.forEach(x=>{ const e = document.createElement('button'); e.type = 'button';
       e.innerHTML = `<i style="background:${P3C[x.st]}">🛏️</i><span data-notr>${esc(x.city)}</span><small>${esc(MSGT(x.st === 'paid' ? 'Payé' : x.st === 'booked' ? 'Réservé' : x.exact ? 'À réserver' : 'À réserver · dans le quartier conseillé'))}</small>`;
       e.onclick = ev => { ev.stopPropagation(); prep3dClose(); setTimeout(()=>{ if(okB(x.h)) edit(x.h.id); else { const hs = ariData(trip()).hs.filter(y=>!okB(y)); guideHotel(Math.max(0, hs.findIndex(y=>y.id === x.h.id))); } }, 80); };
       add(e, x.p, 'p3-hot'); });
   }
+  // 🎯 cadrage calculé à la main (fitBounds se trompe parfois sur le globe avec le relief) : toutes les villes et les hébergements
   function p3Fit(){
-    if(!P3 || !P3.map || !P3.F) return; const F = P3.F, pts = [...F.cities.map(c=>c.c), ...F.hotels.map(h=>h.p)]; if(!pts.length) return;
-    const b = new maplibregl.LngLatBounds(); pts.forEach(p=>b.extend([p.lng, p.lat]));
-    try { P3.map.fitBounds(b, {padding:{top:110, bottom:230, left:40, right:70}, pitch:pts.length > 1 ? 40 : 55, bearing:-12, duration:2600, maxZoom:12}); } catch(e){}
+    if(!P3 || !P3.map || !P3.F) return; const F = P3.F, map = P3.map;
+    const pts = [...F.cities.filter(c=>!c.home).map(c=>c.c), ...F.hotels.map(h=>h.p)], use = pts.length ? pts : F.cities.map(c=>c.c); if(!use.length) return;
+    const X = p => (p.lng + 180) / 360, Y = p => { const r = p.lat * Math.PI / 180; return (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2; };
+    const xs = use.map(X), ys = use.map(Y), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const el = map.getContainer(), W = Math.max(200, el.clientWidth - 110), H = Math.max(200, el.clientHeight - 360);
+    const dx = Math.max(x1 - x0, 1e-6), dy = Math.max(y1 - y0, 1e-6), z = Math.log2(Math.min(W / (dx * 512), H / (dy * 512)));
+    const zoom = Math.max(3, Math.min(use.length > 1 ? 11.5 : 12, z - .3)), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    const lng = cx * 360 - 180, lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * cy))) * 180 / Math.PI;
+    try { map.flyTo({center:[lng, lat], zoom, pitch:zoom > 9 ? 50 : 35, bearing:-12, duration:2600, essential:true, offset:[0, -60]}); } catch(e){ try { map.jumpTo({center:[lng, lat], zoom}); } catch(_){} }
   }
   function p3Base(b){
     if(!P3 || !P3.map) return; const map = P3.map, L = (map.getStyle().layers || []).filter(l=>/^ofm-b-/.test(l.id)).map(l=>l.id);
