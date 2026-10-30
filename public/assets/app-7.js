@@ -1812,8 +1812,12 @@
     const LOCAL = /a[eé]roport|airport|aeropuerto|aeroporto|flughafen|gare|station|stazione|estaci|bahnhof|termini|port\b|porto\b|terminal|centre|center|centro|h[oô]tel/i;
     const resolve = async (q, ctx) => { q = (q || '').trim(); if(!q) return null; const nq = normQ(q);
       const hit = SC.find(({s})=>{ const n = normQ(s.city); return n && (nq === n || nq.startsWith(n + ' ') || nq.endsWith(' ' + n)); }); if(hit) return {p:hit.c, stage:1};
-      let p = ctx ? await geocode(q, ctx.s.city).catch(()=>null) : null; if(!p) p = await g(q); if(!p) return null; p = {lat:+p.lat, lng:+p.lng};
-      if(ctx && rawKm(p, ctx.c) > 120 && LOCAL.test(q)) p = ctx.c;   // un « aéroport » trouvé loin de l’étape : on garde l’étape
+      // une vraie ville (« Bruxelles ») se cherche telle quelle — avec l’étape on tomberait sur la « Via Bruxelles » de Rome ;
+      // seuls les lieux sans ville (« Aéroport », « Gare ») se cherchent autour de l’étape du jour
+      const loc = LOCAL.test(q) && ctx;
+      let p = loc ? await geocode(q, ctx.s.city).catch(()=>null) : null; if(p && rawKm({lat:+p.lat, lng:+p.lng}, ctx.c) > 120) p = null;
+      if(!p) p = await g(q); if(!p) return loc ? {p:ctx.c} : null; p = {lat:+p.lat, lng:+p.lng};
+      if(loc && rawKm(p, ctx.c) > 120) p = ctx.c;   // un « aéroport » trouvé loin de l’étape : on garde l’étape
       return {p}; };
     const T = items(x=>x.cat === 'transport').sort((a, b)=>(a.date || '9').localeCompare(b.date || '9') || (a.heureDep || a.heure || '').localeCompare(b.heureDep || b.heure || ''));
     const ends = [];
