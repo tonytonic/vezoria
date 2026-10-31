@@ -452,12 +452,27 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     clearTimeout(cbT); cbT = setTimeout(()=>{ el.classList.remove('show'); cbSince = 0; }, wait);
   }
 
+  // 📴 réseau absent ou serveur muet : un message clair (pas « Failed to fetch »), et l’assurance que rien n’est perdu
+  const netErr = e => { const er = new Error(MSGT(navigator.onLine === false ? 'Pas de réseau : tes modifications restent sur ce téléphone et partiront dès que la connexion revient.'
+      : e && e.name === 'AbortError' ? 'Le serveur ne répond pas : tes modifications restent sur ce téléphone, nouvel essai dans quelques minutes.'
+      : 'Serveur injoignable pour le moment : tes modifications restent sur ce téléphone, nouvel essai dans quelques minutes.')); er.net = true; return er; };
   async function call(since, changes, code){
     const url = apiUrl(); if(!url) throw new Error('Adresse du serveur inconnue');
     const orig = changes;
     changes = E2E ? await Promise.all(changes.map(r=>sealRec(r, code))) : changes.map(slim);
-    const res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json','X-Carnet-Code':await authCode(code)}, body:JSON.stringify({since, changes})});
-    let j = {}; try { j = await res.json(); } catch(e){}
+    // ⏱️ une synchro bloquée par un réseau qui ne répond plus est abandonnée puis réessayée : 45 s, plus le temps d’envoyer
+    //    le paquet même sur un réseau très lent (≈ 20 Ko/s). Le téléchargement de la réponse, lui, n’est jamais coupé.
+    const body = JSON.stringify({since, changes}), ac = typeof AbortController === 'function' ? new AbortController() : null, to = ac ? setTimeout(()=>ac.abort(), 45000 + body.length / 20) : 0;
+    let res;
+    try { res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json','X-Carnet-Code':await authCode(code)}, body, signal:ac ? ac.signal : undefined}); }
+    catch(e){ throw netErr(e); }
+    finally { clearTimeout(to); }
+    syncAt = Date.now();   // la synchro avance : pas de « synchro bloquée » relancée en parallèle
+    let j = {}, cut = false; try { j = await res.json(); } catch(e){ cut = res.ok; }   // réponse coupée en route (réseau perdu pendant le téléchargement)
+    if(cut) throw netErr(null);
+    // 🧱 fiches que le serveur n’a pas pu garder (trop lourdes) : on le sait, au lieu de les croire envoyées
+    if(res.ok && orig.length) try { const big = Array.isArray(j.skipped) && j.skipped.length ? syBig(j.skipped, orig, changes) : new Set();
+      if(M.syncBig) orig.forEach(r=>{ if(r && M.syncBig[r.id] && !big.has(r.id)) delete M.syncBig[r.id]; }); } catch(e){}   // repartie (raccourcie) : plus signalée
     if(res.status === 429){ M.syncPause = Date.now() + Math.min(3600, Math.max(60, +j.retry || 600)) * 1000; persist(); }
     if(!res.ok) throw new Error(j.error || ('Erreur serveur ' + res.status));
     if(!Array.isArray(j.records)) throw new Error('Réponse inattendue du serveur');
@@ -467,6 +482,32 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     try { if(orig.length) pushNote(orig, code || M.sync.code); } catch(e){}
     try { if(j.wiped) wipeCheck(code, j.wiped, since); } catch(e){}
     return j;
+  }
+  // 🧱 fiche refusée par le serveur (plus de 100 Ko une fois chiffrée) : une trace GPS est allégée et renvoyée ;
+  //    les autres sont signalées dans « Cloud » (elles restent sur ce téléphone, rien n’est effacé)
+  function syBig(skipped, orig, sent){
+    const S = new Set(skipped), B = M.syncBig || (M.syncBig = {}), out = new Set();
+    sent.forEach((x, i)=>{ const r = orig[i]; if(!x || !r || !S.has(x.id)) return; out.add(r.id);
+      if(r.type === 'trk' && R[r.id] && (R[r.id].pts || []).length > 50){ const c = clone(R[r.id]); c.pts = trkThin(c.pts, Math.floor(c.pts.length / 2)); setTimeout(()=>putQuiet([c]), 0); return; }   // après la synchro en cours
+      B[r.id] = B[r.id] || Date.now(); });
+    Object.keys(B).forEach(id=>{ if(!R[id] || R[id].deleted || Date.now() - B[id] > 90 * 864e5) delete B[id]; });
+    persist(); return out;
+  }
+  // 🛰️ une trace trop longue : on garde le début, la fin et un point sur deux au milieu, jusqu’à « max » points (la forme du trajet reste)
+  function trkThin(pts, max){
+    let P = (pts || []).slice(); if(P.length <= max) return P;
+    while(P.length > max){ const keep = Math.min(200, Math.floor(max / 4)), head = P.slice(0, P.length - keep), tail = P.slice(P.length - keep);
+      const t2 = head.filter((_, i)=>i % 2 === 0 || i === head.length - 1); if(t2.length === head.length) break; P = t2.concat(tail); }
+    return P;
+  }
+  // 📦 paquets d’envoi : 500 fiches au plus, et quelques Mo au plus (une grosse trace ou un long récit ne fait pas tout refuser)
+  function syChunks(ids){
+    const out = []; let cur = [], sz = 0;
+    ids.forEach(id=>{ const r = R[id]; if(!r) return; let n = 400; try { n = JSON.stringify(r).length * (E2E ? 1.4 : 1); } catch(e){}
+      if(cur.length && (cur.length >= 500 || sz + n > 6e6)){ out.push(cur); cur = []; sz = 0; }
+      cur.push(id); sz += n; });
+    if(cur.length) out.push(cur);
+    return out;
   }
   /* 🗑 Un compagnon a vidé le serveur d’un voyage partagé (ou du carnet commun) : ce téléphone a encore tout ce qu’il a vu.
      On propose de le remettre en ligne pour tout le monde. Jamais pour un voyage suivi en abonné (il n’est pas à nous). */
@@ -609,10 +650,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     sp.dirty = (sp.dirty || []).filter(id=>R[id]); let changed = 0;   // une fiche qui n’existe plus ici ne reste pas « à envoyer » pour toujours
     try {
       if(sp.dirty.length){ const j0 = await call(Math.max(0, (sp.since||0) - 5000), [], sp.code); changed += mergeRemote(j0.records); sp.since = j0.now; }   // 🔀 recevoir et fusionner avant d’envoyer
-      const ids = [...sp.dirty]; let first = true;
-      for(let i = 0; first || i < ids.length; i += 500){
-        first = false;
-        const chunk = ids.slice(i, i+500).map(id => R[id]).filter(Boolean);
+      const groups = syChunks([...sp.dirty]); if(!groups.length) groups.push([]);
+      for(const g of groups){
+        const chunk = g.map(id => R[id]).filter(Boolean);
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id])); sbDone(Object.keys(sent));
@@ -626,9 +666,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
           if(r && (r.type==='feedgrant' || r.type==='packtrip') && r.trip && !TS()[r.trip] && (M.unfol || {})[r.trip] !== 2) TS()[r.trip] = sp.code; });
         changed += mergeRemote(j.records); sp.since = j.now;
       }
-      sp.last = Date.now(); sp.err = '';
+      sp.last = Date.now(); sp.err = ''; sp.net = false; sp.errSince = 0;
       mateFeedTidy(); ftPick();
-    } catch(e){ sp.err = e.message || String(e); }
+    } catch(e){ sp.err = e.message || String(e); sp.net = !!e.net; if(!sp.errSince) sp.errSince = Date.now(); }
     return changed;
   }
   // 👀 voyages suivis en abonné que je fais AUSSI en compagnon : retirés de « Je suis » (je les ai déjà en entier), et je ne compte plus
@@ -688,11 +728,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       M.dirty = M.dirty.filter(id=>R[id]);   // idem pour le carnet principal
       if(M.dirty.length){   // 🔀 d’abord recevoir (et fusionner) ce que les autres ont changé, PUIS envoyer : personne n’écrase personne
         const j0 = await call(Math.max(0, (M.sync.since||0) - 5000), []); changed += mergeRemote(j0.records, true); M.sync.since = j0.now; }
-      const ids = [...M.dirty];
-      let first = true;
-      for(let i = 0; first || i < ids.length; i += 500){
-        first = false;
-        const chunk = ids.slice(i, i+500).map(id => R[id]).filter(Boolean);
+      const groups = syChunks([...M.dirty]); if(!groups.length) groups.push([]);
+      for(const g of groups){
+        const chunk = g.map(id => R[id]).filter(Boolean);
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (M.sync.since||0) - 5000), chunk);
         M.dirty = M.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id]));
@@ -700,7 +738,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         changed += mergeRemote(j.records, true);
         M.sync.since = j.now;
       }
-      M.sync.last = Date.now(); M.sync.err = '';
+      M.sync.last = Date.now(); M.sync.err = ''; M.sync.net = false; M.sync.errSince = 0;
       }
       try { if(await codesAdopt()) changed++; } catch(e){}   // codes de voyages ajoutés ou quittés sur un autre de mes appareils
       for(const sp of (M.spaces||[])){
@@ -718,9 +756,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       else if(manual) toast('☁️ Synchronisé');
       setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500); setTimeout(()=>{ potGc().catch(()=>{}); }, 4000); setTimeout(()=>{ pubMapSync().catch(()=>{}); }, 6000); setTimeout(()=>{ potAuto().catch(()=>{}); }, 20000);
     } catch(e){
-      M.sync.err = e.message || String(e);
+      M.sync.err = e.message || String(e); M.sync.net = !!e.net; if(!M.sync.errSince) M.sync.errSince = Date.now();
       if(showC) cryptHide();
-      if(manual) alert('Synchro impossible : ' + M.sync.err);
+      if(manual) alert(e.net ? '📴 ' + M.sync.err : MSGT('Synchro impossible :') + ' ' + M.sync.err);
     }
     persist(); syncing = false; syncDot();
     lastSyncAt = Date.now();
@@ -1089,8 +1127,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const el = document.getElementById('cv-sd'); if(!el) return;
     // carnet principal dans le cloud : son état · « voyage par voyage » : l’état de l’ensemble des voyages dans le cloud
     const feeds = new Set(Object.values(M.feedPub || {})), sps = (M.spaces || []).filter(sp=>!sp.mate && !feeds.has(sp.code) && Object.values(TS()).includes(sp.code));
-    el.className = 'sd ' + (M.sync.on ? (M.sync.err ? 'err' : (M.dirty.length || syncing || (M.pq||[]).length) ? 'wait' : 'ok')
-      : !sps.length ? 'off' : sps.some(sp=>sp.err) ? 'err' : (syncing || (M.pq||[]).length || sps.some(sp=>(sp.dirty||[]).length)) ? 'wait' : 'ok');
+    // 📴 simple coupure de réseau : orange (« en attente »), pas rouge — rien n’est perdu, l’envoi reprend tout seul
+    el.className = 'sd ' + (M.sync.on ? (M.sync.err && !M.sync.net ? 'err' : (M.sync.err || M.dirty.length || syncing || (M.pq||[]).length) ? 'wait' : 'ok')
+      : !sps.length ? 'off' : sps.some(sp=>sp.err && !sp.net) ? 'err' : (syncing || (M.pq||[]).length || sps.some(sp=>sp.err || (sp.dirty||[]).length)) ? 'wait' : 'ok');
   }
 
   /* ══════════ En-tête, voyages, navigation ══════════ */

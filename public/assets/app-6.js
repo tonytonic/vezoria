@@ -2236,6 +2236,7 @@
       // 🎬 « Ton année en voyage » : du 15 décembre à fin janvier, une seule fois par année
       const mo = +td.slice(5, 7), yy = mo === 12 && +td.slice(8, 10) >= 15 ? td.slice(0, 4) : mo === 1 ? String(+td.slice(0, 4) - 1) : '';
       if(yy && !M.seen['yearM:' + yy] && trips().some(t=>!t.demo && t.debut && t.debut <= td && t.debut.slice(0, 4) === yy)){ momentDone = true; M.seen['yearM:' + yy] = 1; persist(); momentYear(yy); return; } }
+    try { if(syncStuckNag()){ momentDone = true; return; } } catch(e){}   // ☁️ plus rien n’arrive au serveur depuis 3 jours
     try { if(quotaNag()){ momentDone = true; return; } } catch(e){}   // 📦 place photos dépassée ou presque pleine
     try { if(protectNag()){ momentDone = true; return; } } catch(e){}   // 🛟 ne jamais tout perdre en changeant de téléphone
     try { if(M.cloud === 'trips' && !M.migTrips){ momentDone = true; cloudTripsMigrate(); return; } } catch(e){}   // 🔁 fin du cloud « voyage par voyage »
@@ -2254,6 +2255,23 @@
     momentDone = true; M.seen['hi:' + t.id + ':' + normQ(city)] = 1; persist();
     const c = await countryOf(city).catch(()=>null);
     momentHello(t, h, city, c);
+  }
+  // ☁️ des modifications attendent depuis plus de 3 jours (serveur injoignable, code retiré, carnet suspendu…) : on le dit au 3e jour,
+  //    puis une fois par semaine tant que ça dure (pas tous les jours : souvent, le voyageur n’y peut rien sur le moment).
+  //    Pas quand le téléphone est simplement hors ligne (en voyage sans données, on le sait déjà).
+  function syncStuckNag(){
+    const now = Date.now(), S = M.seen || (M.seen = {});
+    const L = [M.sync && M.sync.on && M.sync.code ? {sp:M.sync, n:M.dirty.length} : null, ...(M.spaces || []).map(sp=>({sp, n:(sp.dirty || []).length}))]
+      .filter(x=>x && x.sp.err && x.sp.errSince && now - x.sp.errSince > 3 * 864e5 && x.n > 0 && !(x.sp.net && navigator.onLine === false));
+    if(!L.length) return false;
+    const x = L.sort((a, b)=>a.sp.errSince - b.sp.errSince)[0], n = L.reduce((a, y)=>a + y.n, 0);
+    const k = 'syncStuck:' + x.sp.errSince + ':' + Math.floor((now - x.sp.errSince - 3 * 864e5) / (7 * 864e5)); if(S[k]) return false;
+    S[k] = 1; persist();
+    momentShow(`<div class="mo-k">${MSGT('Cloud Vezoria')}</div><div class="mo-big">${x.sp.net ? '📴' : '⚠️'}</div><h2>${MSGT('Tes dernières modifications ne sont pas encore parties')}</h2>
+      <div class="mo-sub">${esc(RF('{0} modification(s) attendent depuis le {1} : tant que l’envoi ne passe pas, elles ne sont que sur ce téléphone.', n, fdate(((d0)=>d0.getFullYear() + '-' + String(d0.getMonth() + 1).padStart(2, '0') + '-' + String(d0.getDate()).padStart(2, '0'))(new Date(x.sp.errSince)))))}</div>
+      <div class="mo-l" data-notr>${esc(String(x.sp.err).slice(0, 220))}</div>
+      <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.syncNow(true)">🔄 ${MSGT('Réessayer maintenant')}</button><button type="button" onclick="CV.momentClose();CV.cloudSheet()">☁️ ${MSGT('Voir le détail')}</button></div>`, '');
+    return true;
   }
   function momentShow(html, theme){
     const el = document.createElement('div'); el.id = 'cv-moment'; el.className = 'cv-moment ' + (theme || '');

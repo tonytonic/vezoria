@@ -706,7 +706,8 @@
         if(!upErr || upSt === 507){ upErr = (e && e.message) || String(e); upSt = e && e.st || 0; upJ = e && e.j; } stop = true; } } };
     try { await Promise.all([worker(), worker(), worker()]); }   // 3 envois en même temps : bien plus rapide sur mobile
     catch(e){ upErr = 'réseau : ' + (e && e.message || e); }
-    if(/Failed to fetch|NetworkError|Load failed/i.test(upErr)) upErr = 'réseau : ' + upErr;
+    let upNet = false;   // 📴 coupure de réseau : un message clair (pas « Failed to fetch »)
+    if(upErr && (navigator.onLine === false || /Failed to fetch|NetworkError|Load failed|network|réseau/i.test(upErr))){ upNet = true; upErr = '📴 ' + MSGT('Pas de réseau pour les photos : elles restent sur ce téléphone et partiront toutes seules au retour de la connexion.'); }
     // messages clairs : pause de sécurité (trop d’envois d’un coup) ou place du serveur pleine
     if(upSt === 429){ const min = Math.max(1, Math.round(((upJ && upJ.retry) || 600) / 60)); M.pqPause = Date.now() + min * 60000;
       upErr = '⏸️ Pause de sécurité : beaucoup de photos envoyées d’un coup. L’envoi reprend tout seul dans ' + min + ' min.'; }
@@ -716,7 +717,7 @@
         : '📦 Le serveur photos est plein pour le moment : les photos restantes restent sur ce téléphone, rien n’est perdu.';
       if(!/carnet/i.test(upJ && upJ.error || '')) M.pqPause = Date.now() + 3600000; }
     M.pqWait = waiting; M.pqErr = upErr || ''; persist();
-    cryptHide(upErr ? (upSt === 429 || upSt === 507 ? upErr : '⚠️ Photos non envoyées : ' + upErr) : left ? '' : '🔒 Photos chiffrées et envoyées');
+    cryptHide(upErr ? (upSt === 429 || upSt === 507 || upNet ? upErr : '⚠️ Photos non envoyées : ' + upErr) : left ? '' : '🔒 Photos chiffrées et envoyées');
     if(gen === upGen) uploading = false; syncDot();
     photoPurge();
   }
@@ -1514,7 +1515,7 @@
       <div class="v-sum-small" style="margin-bottom:12px">Ce téléphone est le tien : tout ce que tu ajoutes est signé ${esc(pname(M.me))}.</div>
       <button class="v-btn sec" onclick="CV.editProfile('${ja(M.me)}')">🎨 Changer mon nom / ma couleur</button>
       <button class="v-btn sec" style="margin-top:10px" onclick="CV.cloudSheet()">☁️ Cloud Vezoria</button>
-      <div class="v-sum-small" style="margin-top:10px">Synchro : ${!M.sync.on ? 'désactivée' : M.sync.err ? '🔴 ' + esc(M.sync.err) : (M.dirty.length || (M.pq||[]).length) ? '🟠 envoi en cours' : '🟢 à jour'}${M.sync.on ? ' · automatique toutes les heures' : ''}</div>`);
+      <div class="v-sum-small" style="margin-top:10px">Synchro : ${!M.sync.on ? 'désactivée' : M.sync.err ? (M.sync.net ? '🟠 ' : '🔴 ') + esc(M.sync.err) : (M.dirty.length || (M.pq||[]).length) ? '🟠 envoi en cours' : '🟢 à jour'}${M.sync.on ? ' · automatique toutes les heures' : ''}</div>`);
   }
   let tapN = 0, tapT = 0;
   function secretTap(e){
@@ -3136,7 +3137,7 @@
       if(info.plan) h += `<p class="v-sum-small">${esc(info.plan)}</p>`;
       [...own, ...night].forEach(it=>{
         h += `<div class="cv-dayi"><b>${icon(it)} ${esc(it.titre)}</b>${it.heureDep||it.heure ? ` · ${esc(it.heureDep||it.heure)}${it.heureArr ? ' → ' + esc(it.heureArr) : ''}` : ''}
-          <div>${[it.compagnie, it.nom && it.cat==='hotel' ? it.nom : '', it.ref ? 'Réf. <b>' + esc(it.ref) + '</b>' : ''].filter(Boolean).map(x=>x.startsWith('Réf.') ? x : esc(x)).join(' · ')}</div>
+          <div>${[it.compagnie, it.nom && it.cat==='hotel' ? it.nom : ''].filter(Boolean).map(esc).concat(it.ref ? ['Réf. <b>' + esc(it.ref) + '</b>'] : []).join(' · ')}</div>
           <div class="cv-dayl">${map(it.adresse)} ${tel(it.tel)} ${safeUrl(it.lien) ? `<a href="${esc(safeUrl(it.lien))}" target="_blank" rel="noopener">🔗 réservation</a>` : ''}</div>${pjChips(it)}</div>`;
       });
       const pl = placesOf(d); if(pl.length) h += `<div class="v-sum-small">À voir : ${pl.map((p,n)=>`${n+1}. ${esc(p.nom)}`).join(' · ')}</div>`;

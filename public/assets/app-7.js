@@ -2091,7 +2091,8 @@
   function syncState(){
     const sps = (M.spaces||[]), any = (M.sync.on && M.sync.code) || sps.length;
     if(!any) return 'off';
-    if(M.sync.err || sps.some(x=>x.err)) return navigator.onLine === false ? 'offline' : 'err';
+    { const er = [M.sync.err ? M.sync : null, ...sps.filter(x=>x.err)].filter(Boolean);   // 📴 réseau coupé ou serveur injoignable : « Hors ligne », pas « Souci »
+      if(er.length) return navigator.onLine === false || er.every(x=>x.net) ? 'offline' : 'err'; }
     const mainOn = !!(M.sync.on && M.sync.code), pqLive = Math.max(0, (M.pq||[]).length - (M.pqWait||0));   // en attente d’un carnet en ligne ≠ en cours d’envoi
     if(syncing || (mainOn && M.dirty.length) || sps.some(x=>(x.dirty||[]).length)) return 'wait';
     if(pqLive || (M.fq||[]).length) return 'ph';   // tes modifications sont parties ; seules des photos sont encore en route
@@ -2124,7 +2125,7 @@
   const tripInCloud = id => !!(TS()[id] && spaceObj(TS()[id]));
   const cloudMode = () => M.cloud || (M.sync.on && M.sync.code ? 'all' : myTrips().some(t=>tripInCloud(t.id)) ? 'trips' : '');
   const CLOUD_L = {all:['☁️', 'Tout mon carnet dans le cloud'], trips:['🧳', 'Voyage par voyage'], none:['📱', 'Sans cloud']};
-  function cloudState(sp){ return sp.err ? '⚠️ ' + esc(sp.err) : (sp.dirty||[]).length ? '⏳ ' + sp.dirty.length + ' modif(s) à envoyer' : '✓ à jour' + (sp.last ? ' · ' + vzWhen(sp.last) : ''); }
+  function cloudState(sp){ return sp.err ? (sp.net ? '📴 ' : '⚠️ ') + esc(sp.err) : (sp.dirty||[]).length ? '⏳ ' + sp.dirty.length + ' modif(s) à envoyer' : '✓ à jour' + (sp.last ? ' · ' + vzWhen(sp.last) : ''); }
   function cloudSheet(view){
     const mode = cloudMode(), choose = view === 'choose' || !mode;
     if(choose){
@@ -2144,6 +2145,7 @@
       <div class="cv-cl-mode"><span>${ic}</span><b>${lab}</b><button type="button" class="cv-cl-ch" onclick="CV.cloudSheet('choose')">Changer</button></div>
       ${(()=>{ const pend = [...(s.on && s.code ? M.dirty.map(id=>[id, '']) : []), ...(M.spaces||[]).flatMap(x=>(x.dirty||[]).map(id=>[id, x.code]))], dn = pend.length, last = Math.max(s.last || 0, ...(M.spaces||[]).map(x=>x.last || 0));
         return `<div class="cv-cl-st">${dn ? `<details><summary>📝 ${RF('{0} modification(s) à envoyer', dn)}${last ? ' · ' + vzWhen(last) : ''}</summary><div class="cv-cl-pd">${pend.slice(0, 25).map(([id, c])=>{ const r = R[id]; return `<div>${r ? esc(r.type) + ' · <span data-notr>' + esc(String(r.titre || r.nom || r.texte || r.id).slice(0, 40)) + '</span>' : '<i>' + esc(MSGT('fiche introuvable')) + '</i> ' + esc(String(id).slice(0, 24))}${c ? ' <small>' + esc(c.slice(0, 4)) + '…</small>' : ''}</div>`; }).join('')}</div></details>` : `<div>📝 ${MSGT('Tes modifications sont envoyées')}${last ? ' · ' + vzWhen(last) : ''}</div>`}${ph ? `<div>📷 ${RF('{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.', ph)}</div>` : ''}${M.pqErr ? `<div class="err">${esc(M.pqErr)}</div>` : ''}
+          ${(()=>{ const B = Object.keys(M.syncBig || {}).filter(id=>R[id] && !R[id].deleted); return B.length ? `<div class="err">🧱 ${RF('{0} fiche(s) trop volumineuse(s) pour le serveur : elles restent sur ce téléphone, sans être partagées. Raccourcis le texte pour qu’elles partent.', B.length)}<br><small data-notr>${B.slice(0, 5).map(id=>esc(String(R[id].titre || R[id].nom || R[id].texte || R[id].type || '').slice(0, 40))).join(' · ')}</small></div>` : ''; })()}
           <button type="button" class="v-btn sec" onclick="CV.syncNow(true)">🔄 ${MSGT('Synchroniser maintenant')}</button></div>`; })()}`;
     if(mode === 'all'){
       h += `<div class="sy-r"><b>🔑 Mon code administrateur</b><small>${s.on && s.code ? cloudState(s) : ''}</small>

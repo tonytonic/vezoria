@@ -258,7 +258,8 @@
       if(dk / dh > 950 && dh < 0.5) return;                                                     // saut impossible (> 950 km/h) : erreur de localisation
       if(TJ){ TJ.km += dk; if(c.speed == null) TJ.sp = dk / dh; }
     }
-    r.pts.push(p); trkBuf = r; wlcCheck(p[0], p[1]);
+    r.pts.push(p); if(r.pts.length > 1800) r.pts = trkThin(r.pts, 1400);   // 🛰️ longue journée de route : la trace reste sous la limite du serveur (sinon elle ne se synchronise plus)
+    trkBuf = r; wlcCheck(p[0], p[1]);
     if(Date.now() - trkLastSave > (drive ? 60000 : 5 * 60000) || r.pts.length === 1){ trkLastSave = Date.now(); put(r, false); trkBuf = null; fkMine(t.id); }
     if(LV && LV.key === t.id) liveSoon();
     const el = document.querySelector('.cv-trk small'); if(el && M.tab==='prog') el.textContent = r.pts.length + ' point(s) aujourd’hui';
@@ -664,9 +665,14 @@
   function loadCss(href){ return new Promise(res=>{ if(document.querySelector(`link[href="${href}"]`)) return res(); const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = href; l.onload = res; l.onerror = res; document.head.appendChild(l); }); }
   function loadJs(src){ return new Promise((res, rej)=>{ const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = ()=>rej(new Error('carte 3D indisponible (pas de réseau ?)')); document.head.appendChild(s); }); }
   const wmInfo = h => { const i = document.getElementById('wm-info'); if(i) i.innerHTML = h; };
+  let wmOpening = false;   // globe en cours de création : un 2e toucher ne crée pas un 2e globe par-dessus
+  let wmQ = Promise.resolve();   // 🔒 une seule construction des couches à la fois (ouverture et rafraîchissement se croisaient : couches en double)
+  const wmSerial = f => (wmQ = wmQ.then(f).catch(()=>{}));
   async function worldMap(){
     let ov = document.getElementById('cv-world');
     if(wm && wm.map && ov && ov.innerHTML){ ov.style.display = 'block'; document.body.style.overflow = 'hidden'; try { wm.map.resize(); } catch(e){} worldRefresh(); return; }
+    if(wmOpening && ov){ ov.style.display = 'block'; document.body.style.overflow = 'hidden'; return; }
+    wmOpening = true;
     if(!ov){ ov = document.createElement('div'); ov.id = 'cv-world'; document.body.appendChild(ov); }
     ov.innerHTML = `<div class="wm-stars"></div><div id="wm-map"></div>
       <div class="wm-top"><button type="button" class="wm-x" onclick="CV.worldClose()" aria-label="Fermer">✕</button>
@@ -708,12 +714,13 @@
       wm = {map, markers:[], mode:'trips', spin:true, sel:null, play:null};
       document.getElementById('cv-world').classList.add('wm-wait');
       map.on('load', async ()=>{
-        try { await worldData(); worldMode('trips'); worldCarousel(); } finally { const o = document.getElementById('cv-world'); if(o) o.classList.remove('wm-wait'); }
+        try { await wmSerial(async ()=>{ await worldData(); worldMode('trips'); worldCarousel(); }); } finally { const o = document.getElementById('cv-world'); if(o) o.classList.remove('wm-wait'); }
         if(wantPlan){ wantPlan = false; setTimeout(worldPlan, 300); }
         else { const f = wantFly || ((trip() && tripPhase(trip()) === 'live') ? M.trip : null); wantFly = null; if(f) setTimeout(()=>worldFly(f), 600); }
         spinGlobe();
       });
     } catch(e){ wmInfo('⚠️ ' + esc(e.message)); }
+    finally { wmOpening = false; }
   }
   function spinGlobe(){
     if(!wm) return; const map = wm.map, el = map.getContainer();
@@ -741,7 +748,8 @@
     try { wm.map.setPaintProperty('routes', 'line-opacity', ['case',['==',['get','id'],id],1,0.25]); wm.map.setPaintProperty('routes-glow', 'line-opacity', ['case',['==',['get','id'],id],0.7,0.1]); wm.map.setPaintProperty('routes', 'line-width', ['case',['==',['get','id'],id],3.6,2]); } catch(e){}
     const b = bounds(t.pts), single = t.pts.length < 2;
     if(single) wm.map.flyTo({center:[t.pts[0].lng, t.pts[0].lat], zoom:8, pitch:35, bearing:-15, duration:2600, essential:true});
-    else wm.map.fitBounds(b, {padding:{top:110, bottom:230, left:40, right:40}, pitch:30, bearing:-10, duration:2600, maxZoom:9});
+    else try { wm.map.fitBounds(b, {padding:{top:110, bottom:230, left:40, right:40}, pitch:30, bearing:-10, duration:2600, maxZoom:9}); }
+      catch(e){ try { wm.map.fitBounds(b, {padding:16, pitch:30, bearing:-10, duration:2600, maxZoom:9}); } catch(e2){} }   // carte trop basse pour ces marges (téléphone à l’horizontale) : la fiche du voyage s’affiche quand même
     wmInfo(`<b>${esc(t.titre)}</b> · ${esc(t.dates)}${t.steps.length ? `<div class="wm-tl"><button type="button" class="wm-play" onclick="CV.worldStory('${ja(id)}')">▶ Revivre le voyage</button><button type="button" class="wm-play" onclick="CV.flyover('${ja(id)}')">🎥 Survol 3D</button><input type="range" min="0" max="${t.steps.length-1}" value="0" oninput="CV.worldStep('${ja(id)}', this.value)" aria-label="Frise des steps"></div>` : '<br><small>Ajoute des steps 📍 pour la frise et « Revivre le voyage ».</small>'}<button type="button" class="wm-open" onclick="CV.worldOpen('${ja(id)}')">Ouvrir ce voyage</button>`);
   }
   function stepCard(s){
@@ -1174,20 +1182,20 @@
       const codes = Object.keys(wm.data.pays); if(!codes.length || !wm) return;
       if(!wm.ne) wm.ne = await neFetch();
       const gj = {type:'FeatureCollection', features:wm.ne.features.filter(f=>{ const p = f.properties || {}, c = p.ISO_A2_EH && p.ISO_A2_EH !== '-99' ? p.ISO_A2_EH : p.ISO_A2; return codes.includes(c); })};
-      const src = wm.map.getSource('pays');
-      if(src) src.setData(gj);
-      else { wm.map.addSource('pays', {type:'geojson', data:gj});
-        wm.map.addLayer({id:'pays-fill', type:'fill', source:'pays', paint:{'fill-color':'#e11d48', 'fill-opacity':0.3}}, 'routes-glow');
-        wm.map.addLayer({id:'pays-line', type:'line', source:'pays', paint:{'line-color':'#fb7185', 'line-width':1.3, 'line-opacity':0.9}}, 'routes-glow'); }
+      const m = wm.map, src = m.getSource('pays');
+      if(src) src.setData(gj); else m.addSource('pays', {type:'geojson', data:gj});
+      const bf = m.getLayer('routes-glow') ? 'routes-glow' : undefined;   // tracés pas (encore) là : les pays se posent simplement dessus
+      if(!m.getLayer('pays-fill')) m.addLayer({id:'pays-fill', type:'fill', source:'pays', paint:{'fill-color':'#e11d48', 'fill-opacity':0.3}}, bf);
+      if(!m.getLayer('pays-line')) m.addLayer({id:'pays-line', type:'line', source:'pays', paint:{'line-color':'#fb7185', 'line-width':1.3, 'line-opacity':0.9}}, bf);
     } catch(e){}
   }
   let wmRefT = null;
   function worldRefresh(){
     clearTimeout(wmRefT);
-    wmRefT = setTimeout(async ()=>{ if(!wm) return; const keep = {mode:wm.mode, sel:wm.sel};
+    wmRefT = setTimeout(()=>wmSerial(async ()=>{ if(!wm) return; const keep = {mode:wm.mode, sel:wm.sel};
       ['ph-count','ph-point','ph-cluster','steps','routes','routes-glow','pays-line','pays-fill'].forEach(l=>{ try { if(wm.map.getLayer(l)) wm.map.removeLayer(l); } catch(e){} });
       ['photos','steps','routes','pays'].forEach(s=>{ try { if(wm.map.getSource(s)) wm.map.removeSource(s); } catch(e){} });
-      await worldData(); worldCarousel(); worldMode(keep.mode); }, 400);
+      await worldData(); worldCarousel(); worldMode(keep.mode); }), 400);
   }
   const thumbM = new Map();
   function photoThumbs(){

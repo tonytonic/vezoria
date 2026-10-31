@@ -336,7 +336,7 @@
       ${v.map(pid=>`<div class="cv-dayc"><h3>${esc(pname(pid))}</h3>${docsOf(pid).map(d=>`<div class="cv-dayi"><b>${esc(d.kind)}</b>${d.expire ? ' · expire le ' + fdate(d.expire) : ''}${d.num ? ' · n° ' + esc(d.num) : ''}${d.note ? '<div class="v-sum-small">' + esc(d.note) + '</div>' : ''}
         <button type="button" class="v-day-edit" onclick="CV.tlDocEdit('${ja(pid)}','${ja(d.id)}')">modifier</button></div>`).join('') || '<div class="v-sum-small">Aucun document.</div>'}
         <button type="button" class="v-day-edit" onclick="CV.tlDocEdit('${ja(pid)}','')">＋ Ajouter un document</button></div>`).join('')}
-      <div class="v-sum-small" style="margin-top:8px">Règle courante : passeport valable au moins 6 mois après le retour pour de nombreux pays hors UE. Vérifie toujours sur diplomatie.gouv.fr (fiches Conseils aux voyageurs).${E2E ? '' : ' <b>Version perso</b> : le numéro est facultatif et, si tu l’indiques, il est stocké en clair sur le serveur de synchro.'}</div>
+      <div class="v-sum-small" style="margin-top:8px">Règle courante : passeport valable au moins 6 mois après le retour pour de nombreux pays hors UE. Vérifie toujours sur diplomatie.gouv.fr (fiches Conseils aux voyageurs).${E2E ? ' ' + esc(MSGT('🔒 Chiffré sur ton téléphone : le serveur ne peut pas le lire. Le numéro est facultatif ; les compagnons de tout ton carnet (code compagnon) voient aussi ces documents.')) : ' <b>Version perso</b> : le numéro est facultatif et, si tu l’indiques, il est stocké en clair sur le serveur de synchro.'}</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
   }
   function tlDocEdit(pid, id){
