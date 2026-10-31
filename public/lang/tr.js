@@ -5680,4 +5680,9 @@ I18N.load({
 "Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"Başka yerde yapılan değişikliklerle birleştirildi (aynı alan: senin sürümün korundu)",
 "Fusionné avec les modifications faites ailleurs":"Başka yerde yapılan değişikliklerle birleştirildi",
 "Appareil partagé : demander qui l’utilise à chaque ouverture":"Paylaşılan cihaz: her açılışta kimin kullandığını sor",
-"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Evdeki bilgisayar veya tablet için: herkes kendi değişikliklerini imzalar. İkinci bir telefon (eş, arkadaş) için yol arkadaşı kodu ver: kendi adı ve kendi yetkileri."});
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Evdeki bilgisayar veya tablet için: herkes kendi değişikliklerini imzalar. İkinci bir telefon (eş, arkadaş) için yol arkadaşı kodu ver: kendi adı ve kendi yetkileri.",
+"Départ {0}":"Kalkış {0}",
+"Le titre dit « {0} » mais Départ / Arrivée disent « {1} ».":"Başlık “{0}” diyor ama Kalkış / Varış “{1}” diyor.",
+"Garder le titre":"Başlığı koru",
+"Garder Départ / Arrivée":"Kalkış / Varış’ı koru",
+"Aligné : pense à enregistrer":"Eşitlendi: kaydetmeyi unutma"});

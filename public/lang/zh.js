@@ -5692,4 +5692,9 @@ I18N.load({
 "Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"已与其他地方的修改合并（同一字段：保留你的版本）",
 "Fusionné avec les modifications faites ailleurs":"已与其他地方的修改合并",
 "Appareil partagé : demander qui l’utilise à chaque ouverture":"共用设备：每次打开时询问是谁在用",
-"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"家用电脑或平板：每个人的修改都署自己的名。第二部手机（伴侣、朋友）请改用同伴码：独立的名字和权限。"});
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"家用电脑或平板：每个人的修改都署自己的名。第二部手机（伴侣、朋友）请改用同伴码：独立的名字和权限。",
+"Départ {0}":"出发 {0}",
+"Le titre dit « {0} » mais Départ / Arrivée disent « {1} ».":"标题是“{0}”，但出发 / 到达写的是“{1}”。",
+"Garder le titre":"保留标题",
+"Garder Départ / Arrivée":"保留出发 / 到达",
+"Aligné : pense à enregistrer":"已对齐：记得保存"});

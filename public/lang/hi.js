@@ -5692,4 +5692,9 @@ I18N.load({
 "Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"दूसरी जगह के बदलावों के साथ मिलाया गया (एक ही फ़ील्ड: तुम्हारा वर्ज़न रखा गया)",
 "Fusionné avec les modifications faites ailleurs":"दूसरी जगह के बदलावों के साथ मिलाया गया",
 "Appareil partagé : demander qui l’utilise à chaque ouverture":"साझा डिवाइस: हर बार खोलने पर पूछो कौन इस्तेमाल कर रहा है",
-"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"घर के कंप्यूटर या टैबलेट के लिए: हर कोई अपने बदलाव पर अपना नाम देता है। दूसरे फ़ोन (जीवनसाथी, दोस्त) के लिए साथी कोड दो: अपना नाम और अपने अधिकार।"});
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"घर के कंप्यूटर या टैबलेट के लिए: हर कोई अपने बदलाव पर अपना नाम देता है। दूसरे फ़ोन (जीवनसाथी, दोस्त) के लिए साथी कोड दो: अपना नाम और अपने अधिकार।",
+"Départ {0}":"प्रस्थान {0}",
+"Le titre dit « {0} » mais Départ / Arrivée disent « {1} ».":"शीर्षक “{0}” कहता है, पर प्रस्थान / आगमन “{1}” कहते हैं।",
+"Garder le titre":"शीर्षक रखो",
+"Garder Départ / Arrivée":"प्रस्थान / आगमन रखो",
+"Aligné : pense à enregistrer":"मिला दिया: सेव करना मत भूलो"});

@@ -2744,4 +2744,9 @@ I18N.load({
 "Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"Samengevoegd met elders gemaakte wijzigingen (zelfde veld: jouw versie behouden)",
 "Fusionné avec les modifications faites ailleurs":"Samengevoegd met elders gemaakte wijzigingen",
 "Appareil partagé : demander qui l’utilise à chaque ouverture":"Gedeeld apparaat: bij elk openen vragen wie het gebruikt",
-"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Voor een computer of tablet thuis: iedereen ondertekent zijn eigen wijzigingen. Voor een 2e telefoon (partner, vriend) geef je beter een reisgenotencode: eigen naam en eigen rechten."});
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Voor een computer of tablet thuis: iedereen ondertekent zijn eigen wijzigingen. Voor een 2e telefoon (partner, vriend) geef je beter een reisgenotencode: eigen naam en eigen rechten.",
+"Départ {0}":"Vertrek {0}",
+"Le titre dit « {0} » mais Départ / Arrivée disent « {1} ».":"De titel zegt ‘{0}’, maar Vertrek / Aankomst zeggen ‘{1}’.",
+"Garder le titre":"Titel houden",
+"Garder Départ / Arrivée":"Vertrek / Aankomst houden",
+"Aligné : pense à enregistrer":"Gelijkgezet: vergeet niet op te slaan"});

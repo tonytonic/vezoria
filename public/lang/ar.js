@@ -5693,4 +5693,9 @@ I18N.load({
 "Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"تم الدمج مع التعديلات من مكان آخر (نفس الحقل: احتُفظ بنسختك)",
 "Fusionné avec les modifications faites ailleurs":"تم الدمج مع التعديلات من مكان آخر",
 "Appareil partagé : demander qui l’utilise à chaque ouverture":"جهاز مشترك: اسأل من يستخدمه عند كل فتح",
-"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"لحاسوب أو جهاز لوحي في المنزل: كلٌّ يوقّع تعديلاته. لهاتف ثانٍ (شريك، صديق)، أعطِ رمز رفيق بدلًا من ذلك: اسمه وصلاحياته الخاصة."});
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"لحاسوب أو جهاز لوحي في المنزل: كلٌّ يوقّع تعديلاته. لهاتف ثانٍ (شريك، صديق)، أعطِ رمز رفيق بدلًا من ذلك: اسمه وصلاحياته الخاصة.",
+"Départ {0}":"المغادرة {0}",
+"Le titre dit « {0} » mais Départ / Arrivée disent « {1} ».":"العنوان يقول «{0}» لكن المغادرة / الوصول تقول «{1}».",
+"Garder le titre":"الإبقاء على العنوان",
+"Garder Départ / Arrivée":"الإبقاء على المغادرة / الوصول",
+"Aligné : pense à enregistrer":"تمت المطابقة: لا تنس الحفظ"});

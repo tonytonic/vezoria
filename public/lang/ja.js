@@ -5692,4 +5692,9 @@ I18N.load({
 "Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"別の場所での変更と統合しました（同じ項目はあなたの内容を優先）",
 "Fusionné avec les modifications faites ailleurs":"別の場所での変更と統合しました",
 "Appareil partagé : demander qui l’utilise à chaque ouverture":"共有端末：開くたびに誰が使うか確認",
-"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"家のパソコンやタブレット向け：各自が自分の名前で編集します。2台目のスマホ（パートナー・友人）には同行者コードを渡してください：自分の名前と権限になります。"});
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"家のパソコンやタブレット向け：各自が自分の名前で編集します。2台目のスマホ（パートナー・友人）には同行者コードを渡してください：自分の名前と権限になります。",
+"Départ {0}":"出発 {0}",
+"Le titre dit « {0} » mais Départ / Arrivée disent « {1} ».":"タイトルは「{0}」ですが、出発 / 到着は「{1}」です。",
+"Garder le titre":"タイトルを使う",
+"Garder Départ / Arrivée":"出発 / 到着を使う",
+"Aligné : pense à enregistrer":"揃えました：保存を忘れずに"});

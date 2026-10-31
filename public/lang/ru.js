@@ -5693,4 +5693,9 @@ I18N.load({
 "Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"Объединено с изменениями с другого устройства (одно и то же поле: оставлена ваша версия)",
 "Fusionné avec les modifications faites ailleurs":"Объединено с изменениями с другого устройства",
 "Appareil partagé : demander qui l’utilise à chaque ouverture":"Общее устройство: спрашивать, кто пользуется, при каждом открытии",
-"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Для домашнего компьютера или планшета: каждый подписывает свои изменения. Для второго телефона (супруг, друг) лучше дай код попутчика: своё имя и свои права."});
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Для домашнего компьютера или планшета: каждый подписывает свои изменения. Для второго телефона (супруг, друг) лучше дай код попутчика: своё имя и свои права.",
+"Départ {0}":"Отправление {0}",
+"Le titre dit « {0} » mais Départ / Arrivée disent « {1} ».":"В названии «{0}», а в полях Отправление / Прибытие — «{1}».",
+"Garder le titre":"Оставить название",
+"Garder Départ / Arrivée":"Оставить Отправление / Прибытие",
+"Aligné : pense à enregistrer":"Выровнено: не забудь сохранить"});

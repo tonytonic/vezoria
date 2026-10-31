@@ -2738,4 +2738,9 @@ I18N.load({
 "Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"Merged with changes made elsewhere (same field: your version kept)",
 "Fusionné avec les modifications faites ailleurs":"Merged with changes made elsewhere",
 "Appareil partagé : demander qui l’utilise à chaque ouverture":"Shared device: ask who is using it each time it opens",
-"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"For a home computer or tablet: everyone signs their own changes. For a second phone (partner, friend), give a companion code instead: their own name and their own rights."});
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"For a home computer or tablet: everyone signs their own changes. For a second phone (partner, friend), give a companion code instead: their own name and their own rights.",
+"Départ {0}":"Departure {0}",
+"Le titre dit « {0} » mais Départ / Arrivée disent « {1} ».":"The title says “{0}” but Departure / Arrival say “{1}”.",
+"Garder le titre":"Keep the title",
+"Garder Départ / Arrivée":"Keep Departure / Arrival",
+"Aligné : pense à enregistrer":"Aligned: remember to save"});

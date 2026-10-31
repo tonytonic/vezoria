@@ -5692,4 +5692,9 @@ I18N.load({
 "Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"다른 곳의 변경과 합쳤어요(같은 항목: 내 버전 유지)",
 "Fusionné avec les modifications faites ailleurs":"다른 곳의 변경과 합쳤어요",
 "Appareil partagé : demander qui l’utilise à chaque ouverture":"공용 기기: 열 때마다 누가 쓰는지 묻기",
-"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"집의 컴퓨터나 태블릿: 각자 이름으로 수정해요. 두 번째 휴대폰(배우자, 친구)에는 동행자 코드를 주세요: 자기 이름과 권한을 가져요."});
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"집의 컴퓨터나 태블릿: 각자 이름으로 수정해요. 두 번째 휴대폰(배우자, 친구)에는 동행자 코드를 주세요: 자기 이름과 권한을 가져요.",
+"Départ {0}":"출발 {0}",
+"Le titre dit « {0} » mais Départ / Arrivée disent « {1} ».":"제목은 “{0}”인데 출발 / 도착은 “{1}”이에요.",
+"Garder le titre":"제목 유지",
+"Garder Départ / Arrivée":"출발 / 도착 유지",
+"Aligné : pense à enregistrer":"맞췄어요: 저장을 잊지 마세요"});

@@ -2757,4 +2757,9 @@ I18N.load({
 "Fusionné avec les modifications faites ailleurs (même champ : ta version gardée)":"Mesclado com as alterações feitas em outro lugar (mesmo campo: sua versão mantida)",
 "Fusionné avec les modifications faites ailleurs":"Mesclado com as alterações feitas em outro lugar",
 "Appareil partagé : demander qui l’utilise à chaque ouverture":"Aparelho compartilhado: perguntar quem usa a cada abertura",
-"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Para um computador ou tablet de casa: cada um assina suas alterações. Para um 2.º celular (cônjuge, amigo), dê um código de companheiro: nome e permissões próprios."});
+"Pour un ordinateur ou une tablette de la maison : chacun signe ses modifications. Pour un 2e téléphone (conjoint, ami), donne plutôt un code compagnon : son propre nom et ses propres droits.":"Para um computador ou tablet de casa: cada um assina suas alterações. Para um 2.º celular (cônjuge, amigo), dê um código de companheiro: nome e permissões próprios.",
+"Départ {0}":"Partida {0}",
+"Le titre dit « {0} » mais Départ / Arrivée disent « {1} ».":"O título diz «{0}», mas Partida / Chegada dizem «{1}».",
+"Garder le titre":"Manter o título",
+"Garder Départ / Arrivée":"Manter Partida / Chegada",
+"Aligné : pense à enregistrer":"Alinhado: lembre-se de salvar"});
