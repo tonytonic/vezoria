@@ -19,12 +19,13 @@
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Admin, X-Carnet-Writer',
   'Access-Control-Max-Age': '86400',
 };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
 const KINDS = ['depense', 'resa', 'souv', 'sondage', 'notes', 'rappel', 'social'];
 const MAX_PER_HOUR = 60;
+const SOC_RATE = new Map();   // notifications d’abonnés : par appareil et par heure (en mémoire)
 // 🛡️ adresses d'abonnement acceptées : services de notification d'Apple, Google, Mozilla et Microsoft (le serveur n'envoie rien ailleurs)
 const PUSH_HOSTS = /^(fcm\.googleapis\.com|android\.googleapis\.com|updates\.push\.services\.mozilla\.com|push\.services\.mozilla\.com|web\.push\.apple\.com|[a-z0-9.-]+\.push\.apple\.com|[a-z0-9.-]+\.notify\.windows\.com|[a-z0-9.-]+\.push\.services\.mozilla\.com)$/i;
 const pushOk = u => { try { const x = new URL(u); return x.protocol === 'https:' && PUSH_HOSTS.test(x.hostname); } catch (e) { return false; } };        // par espace : un garde-fou contre les envois en boucle
@@ -214,6 +215,18 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (b.a === 'send') {
     const kind = KINDS.includes(b.kind) ? b.kind : null, msg = clean(b.msg, 3000);
     if (!kind || !msg) return json({ error: 'kind/msg' }, 400);
+    // ✍️ fil d’abonnés avec un auteur (voir sync.js) : un abonné ne prévient que de ses ❤️ et commentaires,
+    //    10 fois par heure au plus et par appareil (personne ne peut inonder les autres de notifications)
+    let author = true;
+    try { const row = await db.prepare('SELECT ah FROM space_admin WHERE space = ?1').bind(space).first();
+      if (row) { const k = (request.headers.get('X-Carnet-Admin') || '').trim().slice(0, 200); author = k.length >= 16 && row.ah === await sha256('vz-admin:' + k); } } catch (e) {}
+    if (!author) {
+      if (kind !== 'social' || msg.length > 1500) return json({ ok: false, error: 'Réservé à l’auteur du fil — Feed author only' }, 403);
+      const hr = Math.floor(Date.now() / 3600e3), key = space.slice(0, 16) + ':' + dev, r = SOC_RATE.get(key);
+      if (SOC_RATE.size > 20000) SOC_RATE.clear();
+      if (r && r.h === hr && r.n >= 10) return json({ ok: false, error: 'trop de notifications' }, 429);
+      SOC_RATE.set(key, { h: hr, n: r && r.h === hr ? r.n + 1 : 1 });
+    }
     if (!(await rateOk(db, space))) return json({ ok: false, error: 'trop de notifications' }, 429);
     const { results } = await db.prepare('SELECT dev, endpoint, p256dh, auth, kinds, tz, quiet FROM push_subs WHERE space = ?1 AND dev != ?2').bind(space, dev).all();
     const to = (results || []).filter(r => String(r.kinds).split(',').includes(kind) && !(r.quiet && nightAt(r.tz)));
