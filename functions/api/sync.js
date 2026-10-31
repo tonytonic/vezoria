@@ -276,10 +276,12 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (Math.random() < 0.08 && waitUntil) waitUntil(fetch(new URL('/api/push?a=flush', request.url)).catch(() => {}));
   let wiped = 0;
   try { const w = await env.DB.prepare('SELECT at FROM space_wipes WHERE space = ?1').bind(space).first(); if (w) wiped = w.at; } catch (e) {}
-  const out = { now, records: results.map(r => JSON.parse(r.data)) };
-  if (wiped) out.wiped = wiped;
-  if (skipped.length) out.skipped = skipped.slice(0, 200);
-  return json(out);
+  // 📦 les fiches sont déjà rangées en JSON : renvoyées telles quelles (sans relecture puis réécriture de chacune).
+  //    Deux fois moins de mémoire et de calcul pour la 1re synchro d'un gros carnet (des milliers de fiches, des traces GPS).
+  let out = '{"now":' + now + ',"records":[' + results.map(r => r.data).filter(d => typeof d === 'string' && d.charCodeAt(0) === 123).join(',') + ']';
+  if (wiped) out += ',"wiped":' + (Number(wiped) || 0);
+  if (skipped.length) out += ',"skipped":' + JSON.stringify(skipped.slice(0, 200));
+  return new Response(out + '}', { status: 200, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
 }
 
 export const onRequestGet = () => json({ ok: true, service: 'carnet-voyage' });
