@@ -471,7 +471,7 @@
     const city = dayCity(td) || cityOf(t.titre || '') || '';
     const steps = [
       {k:'jour', ic:'📍', l:MSGT('Ta journée'), ok: pl.length > 0 || own.length > 0 || filSk(key, 'jour'), f: pl.length || own.length ? 1 : 0, skip:true, n: pl.length ? pl.length + ' ' + MSGT('lieux') : '',
-        body: ()=>`${[...own, ...night].map(it=>`<div class="ar-r" role="button" onclick="CV.guideEdit('${ja(it.id)}','${kind}')"><i>${icon(it)}</i><span><b data-notr>${esc(it.titre)}</b><small>${esc(it.heureDep || it.heure || '')}</small></span></div>`).join('')}
+        body: ()=>`${[...own, ...night].map(it=>`<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${icon(it)}</i><span><b data-notr>${esc(it.titre)}</b><small>${esc(it.heureDep || it.heure || '')}</small></span></div>`).join('')}
           ${pl.length ? fbtn(`CV.planDay('${ja(td)}')`, `🗺️ ${MSGT('Itinéraire du jour')} (${pl.length} ${MSGT('lieux')})`) : ''}
           ${sgT.length ? fbtn('CV.suggOpen()', `💡 ${MSGT('Choisir mes visites')} (${sgT.length})`, pl.length) : !pl.length ? fbtn('CV.suggMore()', `💡 ${MSGT('Que voir aujourd’hui ?')}`) : ''}`},
       {k:'souv', ic:'📸', l:MSGT('Raconter ta journée'), ok: sv.length > 0 || filSk(key, 'souv'), skip:true, n: sv.length ? '' : MSGT('pas encore de souvenir'),
