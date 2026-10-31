@@ -1754,7 +1754,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   // le meilleur carnet partagé pour ces personnes : tout le monde dedans, le moins d’autres personnes possible
   function withWhomPick(sel){
     const m = spaceMembers(), me = M.me; let best = null;
-    Object.entries(m).forEach(([c, mem])=>{ if(c !== 'main' || !sel.every(p=>mem.has(p))) return;   // un voyage n’est jamais glissé dans le dossier d’un autre voyage const extra = [...mem].filter(p=>p !== me && !sel.includes(p));
+    Object.entries(m).forEach(([c, mem])=>{ if(c !== 'main' || !sel.every(p=>mem.has(p))) return;   // un voyage n’est jamais glissé dans le dossier d’un autre voyage
+      const extra = [...mem].filter(p=>p !== me && !sel.includes(p));
       if(!best || extra.length < best.extra.length || (extra.length === best.extra.length && c === 'main')) best = {c, extra}; });
     return best;
   }

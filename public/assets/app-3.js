@@ -543,14 +543,14 @@
   }
   /* ---------- 🔁 Doublons : voyages importés deux fois, puis ménage des photos qui ne servent plus ---------- */
   let DUPG = [];
-  function dupGroups(){
+  function tripDupGroups(){   // (nom distinct : « dupGroups » des profils, plus loin, l’écrasait)
     const g = {};
     trips().filter(t=>!t.demo && !t.deleted).forEach(t=>{ const k = t.src === 'polarsteps' && t.psId ? 'ps:' + t.psId : 't:' + normQ(t.titre || '') + '|' + (t.debut || '') + '|' + (t.fin || ''); (g[k] = g[k] || []).push(t); });
     const n = t => Object.values(R).filter(r=>r && !r.deleted && r.trip === t.id && r.type !== 'souv').length;
     return Object.values(g).filter(a=>a.length > 1).map(a=>a.slice().sort((x, y)=>(TS()[y.id] || FT()[y.id] ? 1 : 0) - (TS()[x.id] || FT()[x.id] ? 1 : 0) || n(y) - n(x) || (x.createdAt || 0) - (y.createdAt || 0)));
   }
   function dupSheet(){
-    DUPG = dupGroups();
+    DUPG = tripDupGroups();
     const sv = t => list('souv', s=>s.trip === t.id), nph = t => sv(t).reduce((k, s)=>k + (s.photos || []).length, 0), fd = t => t.createdAt ? new Date(t.createdAt).toLocaleDateString((window.I18N ? I18N.locale : 'fr-FR')) : '?';
     openSheet(`<h2>🔁 Doublons</h2>
       ${DUPG.length ? `<div class="v-sum-small" style="margin-bottom:8px">Ces voyages existent en plusieurs exemplaires. On garde celui qui est partagé ou le plus complet, les copies en trop sont supprimées (leurs photos aussi, si elles ne servent pas ailleurs).</div>`
