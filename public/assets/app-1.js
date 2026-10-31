@@ -13,7 +13,7 @@
     try { const s = typeof u === 'string' ? u : (u && u.url) || ''; o = o || {};
       if(/\/api\//.test(s)){
         // ✍️ synchro et photos : l’appareil signe ses envois, et l’auteur d’un fil d’abonnés présente sa clé d’auteur (voir admKey)
-        if(/\/api\/(?:sync|photo)\b/.test(s) && window.__vzHdr && o.headers && typeof Headers === 'function' && !(o.headers instanceof Headers)){
+        if(/\/api\/(?:sync|photo|push)\b/.test(s) && window.__vzHdr && o.headers && typeof Headers === 'function' && !(o.headers instanceof Headers)){
           const x = window.__vzHdr(o.headers['X-Carnet-Code']); if(x) o = Object.assign({}, o, {headers:Object.assign({}, o.headers, x)}); }
         const sig = o.signal; let own = null, t = 0;
         if(!sig && typeof AbortController === 'function'){ own = new AbortController(); t = setTimeout(()=>own.abort(), /\/api\/photo/.test(s) && o.method === 'POST' ? 120000 : 45000); o = Object.assign({}, o, {signal:own.signal}); }
@@ -529,7 +529,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(!res.ok){ const er = new Error(srvMsg(j.error) || ('Erreur serveur ' + res.status)); er.st = res.status; er.revoked = !!j.revoked; throw er; }   // revoked : accès compagnon retiré
     if(!Array.isArray(j.records)) throw new Error('Réponse inattendue du serveur');
     { const env0 = j.records; let recs = E2E ? await Promise.all(env0.map(x=>openRec(x, code))) : env0.slice();
-      recs = await admFilter(j, env0, recs, code); j.records = recs.filter(Boolean); j.records.forEach(r=>{ if(r && typeof r === 'object' && '_a' in r) delete r._a; }); }
+      // ✍️ « _au » : écrit par l’auteur du fil — vient UNIQUEMENT de la marque du serveur (une fiche qui le contient d’elle-même le perd)
+      recs = await admFilter(j, env0, recs, code); recs = recs.map((r, i)=>{ if(r && typeof r === 'object'){ delete r._a; delete r._au; if(j.adm && env0[i] && env0[i]._a) r._au = 1; } return r; }); j.records = recs.filter(Boolean); }
     if(code) admAck(j, code);
     if(code) try { j.records.forEach(r=>{ if(!r || r.type !== 'feedtrip') return; const k = r.id + '|' + code;   // 🔗 même voyage suivi par 2 liens : l’âge de chacun (voir ftPick)
       if(r.deleted){ if(M.ftAt) delete M.ftAt[k]; } else if(!FT()[String(r.id).slice(3)]) (M.ftAt || (M.ftAt = {}))[k] = (r.updatedAt || 0) + (r.link === code ? 1e12 : 0); }); } catch(e){}   // link : le lien où l’auteur publie aujourd’hui
@@ -2301,6 +2302,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   /* 🏘️ Les quartiers d’une ville, décrits par Wikivoyage (CC BY-SA : usage commercial permis, source citée) :
      la rubrique « Quartiers / Districts » de l’article de la ville, sinon ses sous-articles (« Rome/Trastevere »…). */
+  const WV_SLEEP = /^(sleep|se loger|dormir|hébergement|hebergement|unterkunft|übernachten|uebernachten|schlafen|dormire|alloggiare|alojamiento|alojarse|hospedagem|hospedar-se|slapen|overnachten|ночлег|где остановиться|konaklama|kalmak|泊まる|宿泊|住宿|住|ठहरें|रहें)$/i;
+  const WV_BUDGET = /budget|bon march|petits? prix|prix moyens?|moyen|luxe|haut de gamme|mid-?range|splurge|cheap|camping|auberge|hostel|appartement|apartment|gîte|gite|günstig|mittel|gehoben|economico|medio|lusso|barato|caro|económico|lujo|goedkoop|duur|бюджет|средн|дорог|ucuz|orta|lüks|安|高|उच्च|सस्त/i;
   const WV_HOOD = /^(districts?|neighbou?rhoods?|quartiers?|arrondissements|stadtteile|stadtbezirke|bezirke|stadtviertel|viertel|quartieri|zone|rioni|distritos|barrios|zonas|bairros|regiões|regioes|wijken|stadsdelen|districten|районы|округа|地区|区域|城区|エリア|地域|区|semtler|ilçeler|bölgeler|mahalleler|जिले|क्षेत्र)$/i;
   // paramètres d’un modèle {{…|a=…|b=…}} sans couper aux « | » des liens [[x|y]] ni des modèles imbriqués
   function wvParams(body){ const out = {}; let depth = 0, cur = '', parts = [];
@@ -2326,7 +2329,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     return out.slice(0, 24);
   }
   async function wvHoods(city){
-    const lang = (window.I18N && I18N.lang) || 'fr', key = normQ(city) + ':' + lang, C = M.wvH || (M.wvH = {});
+    const lang = (window.I18N && I18N.lang) || 'fr', key = normQ(city) + ':' + lang + ':2', C = M.wvH || (M.wvH = {});
     if(C[key] && Date.now() - C[key].at < 30 * 864e5) return C[key];
     const one = async lg => {
       const api = `https://${lg}.wikivoyage.org/w/api.php?format=json&origin=*&formatversion=2`;
@@ -2339,6 +2342,13 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       const re = /^(={2,3})\s*([^=\n]+?)\s*\1\s*$/gm, H = []; let m; while((m = re.exec(text))) H.push([m.index, m[0].length, m[1].length, wvClean(m[2])]);
       let items = [];
       for(let i = 0; i < H.length; i++){ if(!WV_HOOD.test(H[i][3])) continue; const nx = H.slice(i + 1).find(h=>h[2] <= H[i][2]); items = wvHoodParse(text.slice(H[i][0] + H[i][1], nx ? nx[0] : undefined)); if(items.length) break; }
+      // pas de rubrique « Quartiers » : la rubrique « Se loger » dit souvent où dormir (« les hôtels bon marché sont près de la gare… »)
+      let lead = '';
+      if(items.length < 2){ const i = H.findIndex(h=>WV_SLEEP.test(h[3]));
+        if(i >= 0){ const end = (H.slice(i + 1).find(h=>h[2] <= H[i][2]) || [text.length])[0], sec = text.slice(H[i][0] + H[i][1], end);
+          lead = wvClean(sec.split(/^=/m)[0].split('\n').filter(l=>!/^\s*[*#{|]/.test(l)).join(' ')).slice(0, 700);
+          const subs = H.filter(h=>h[0] > H[i][0] && h[0] < end && h[2] === H[i][2] + 1 && !WV_BUDGET.test(h[3]));
+          if(subs.length >= 2) items = subs.map(h=>{ const e = (H.find(x=>x[0] > h[0]) || [end])[0]; return {n:h[3], d:wvClean(text.slice(h[0] + h[1], e).split('\n').filter(l=>!/^\s*[*#{|=]/.test(l)).join(' ')).slice(0, 420)}; }).slice(0, 16); } }
       if(items.length < 2){   // les grandes villes : un article par quartier
         const sub = await expJ(api + '&action=query&list=allpages&apnamespace=0&aplimit=20&apprefix=' + encodeURIComponent(pg.title + '/')).catch(()=>null);
         const ts = (sub && sub.query && sub.query.allpages || []).map(x=>x.title).slice(0, 15);
@@ -2346,10 +2356,11 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
           const E = {}; (ex && ex.query && ex.query.pages || []).forEach(p=>{ E[p.title] = p.extract || ''; });
           items = ts.map(t=>({n:t.split('/').pop(), d:String(E[t] || '').replace(/\s+/g, ' ').trim().slice(0, 420)})); }
       }
+      if(lead && !items.length) return {lg, title:pg.title, url:`https://${lg}.wikivoyage.org/wiki/` + encodeURIComponent(pg.title.replace(/ /g, '_')), items:[], lead};
       return items.length ? {lg, title:pg.title, url:`https://${lg}.wikivoyage.org/wiki/` + encodeURIComponent(pg.title.replace(/ /g, '_')), items} : {lg, title:pg.title, url:`https://${lg}.wikivoyage.org/wiki/` + encodeURIComponent(pg.title.replace(/ /g, '_')), items:[]};
     };
     const wl = EXP_WV.includes(lang) ? lang : 'en';
-    let r = await one(wl); if((!r || !r.items.length) && wl !== 'en'){ const r2 = await one('en'); if(r2 && r2.items.length) r = r2; else r = r || r2; }
+    let r = await one(wl); if((!r || !r.items.length) && wl !== 'en'){ const r2 = await one('en').catch(()=>null); if(r2 && r2.items.length) r = r2; else if(!(r && r.lead) && r2 && r2.lead) r = r2; else r = r || r2; }
     const o = Object.assign({at:Date.now()}, r || {items:[]}); if(r) C[key] = o;   // pas de réseau : on réessaiera
     const ks = Object.keys(C); if(ks.length > 60) ks.sort((a, b)=>C[a].at - C[b].at).slice(0, ks.length - 60).forEach(k=>delete C[k]);
     persist(); return o;

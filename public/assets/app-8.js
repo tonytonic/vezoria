@@ -1081,7 +1081,7 @@
       <div class="fd-a"><button type="button" class="${mine ? 'on' : ''}" onclick="CV.feedLike('${ja(f.id)}')">${mine ? '❤️' : '🤍'} <b>${lk.length || ''}</b></button><button type="button" onclick="CV.feedCmFocus('${ja(f.id)}')">💬 <b>${cm.length || ''}</b></button>${isAuthorOf(f.trip) ? '' : `<button type="button" class="fd-more" aria-label="Signaler ou ne plus suivre" onclick="CV.postMenu('${ja(f.id)}')">⋯</button>`}</div>
       ${lk.length ? `<button type="button" class="fd-lk" onclick="CV.feedLikers('${ja(f.id)}')">${feedLikeLine(lk)}</button>` : ''}
       <div class="fd-c">${hid ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${ja(f.id)}')">${cm.length === 3 ? 'Voir les 3 commentaires' : `Voir les ${cm.length} commentaires`}</button>` : ''}
-        ${shown.map(c=>{ const au = ftTeam(ft).some(n=>String(c.who||'').trim().toLowerCase() === n.toLowerCase());
+        ${shown.map(c=>{ const au = c._au || (FT()[String(ft.id || '').replace(/^ft:/, '')] && c.dev === devId());   // ✍️ « auteur » : seulement si le serveur l’a reconnu (un abonné qui prend ton prénom ne l’a pas)
           return `<div class="fd-cm"><button type="button" class="fd-cmore" aria-label="Options" onclick="CV.cmMenu('${ja(c.id)}')">⋯</button><b data-notr>${esc(c.who||'?')}</b>${au ? ' <span class="fd-au">auteur</span>' : ''} <span class="fd-ctx" data-notr>${esc(c.text)}</span>
             <div class="fd-cmeta"><small>${c.at ? vzWhen(c.at) : ''}${c.edited ? ' · <span>modifié</span>' : ''}</small><button type="button" onclick="CV.feedReply('${ja(f.id)}','${ja(c.id)}')">Répondre</button></div></div>`; }).join('')}
         ${open && cm.length > 2 ? `<button type="button" class="fd-call" onclick="CV.feedTogC('${ja(f.id)}')">Réduire</button>` : ''}
@@ -1233,7 +1233,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-10-31g'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-10-31h'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1683,7 +1683,7 @@
   var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
-    toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
+    toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
     editTrip, saveTrip, delTrip, closeTrip, reopenTrip,

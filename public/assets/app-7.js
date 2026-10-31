@@ -83,7 +83,7 @@
       if(k === 'resa'){
         if(!D.rs.length) return `<div class="ar-p">${MSGT('Ajoute d’abord tes étapes : les nuits et les trajets apparaîtront ici.')}</div>`;
         return `<div class="ar-rs">${D.rs.map(it=>`<div class="ar-r${okB(it) ? ' ok' : ''}" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${okB(it) ? '✓' : it.cat === 'hotel' ? '🛏️' : icon(it)}</i>
-          <span><b data-notr>${esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre)}</b><small>${it.cat === 'hotel' ? `${fd(it.date)} → ${fd(it.dateFin)} · ${nights(it.date, it.dateFin || it.date)} ${MSGT('nuits')}` : fd(it.date)}</small></span>
+          <span><b data-notr>${esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : itLbl(it))}</b><small>${it.cat === 'hotel' ? `${fd(it.date)} → ${fd(it.dateFin)} · ${nights(it.date, it.dateFin || it.date)} ${MSGT('nuits')}` : fd(it.date)}</small></span>
           ${bkBtn(it)}<div class="ar-ra" data-bkid="${esc(it.id)}">${okB(it) ? '' : ariLink(it, t)}<button type="button" class="ar-ed" onclick="event.stopPropagation();CV.edit('${ja(it.id)}')">✏️ ${MSGT(okB(it) ? 'Ma résa' : 'Saisir ma résa')}</button>${okB(it) ? '' : `<button type="button" onclick="event.stopPropagation();CV.ariBook('${ja(it.id)}')">${MSGT('C’est réservé')}</button>`}</div></div>` + (okB(it) ? '' : it.cat === 'hotel' ? hoodHTML(it, t) : it.cat === 'transport' ? aptHTML(it, t) : '')).join('')}</div>`;
       }
       const rows = [
@@ -354,7 +354,7 @@
       <div class="v-sum-small" style="margin-bottom:10px">${MSGT(kind === 'tr' ? 'Dans l’ordre du voyage. Réserve chez le partenaire, puis touche « C’est réservé ».' : 'Choisis d’abord les expériences qui te tentent, puis réserve-les.')}</div>
       ${xn ? `<button type="button" class="v-btn" style="margin:0 0 10px" onclick="CV.expOpen()">🎟️ ${RF('Choisir parmi {0} expériences', xn)}</button>` : ''}
       <div class="ar-rs">${L.map(it=>`<div class="ar-r" role="button" onclick="CV.guideEdit('${ja(it.id)}','${kind}')"><i>${icon(it)}</i>
-        <span><b data-notr>${esc(it.titre)}</b><small>${fd(it.date)}${it.mode ? ' · ' + esc(MSGT(it.mode)) : ''}</small></span>
+        <span><b data-notr>${esc(itLbl(it))}</b><small>${fd(it.date)}${it.mode ? ' · ' + esc(MSGT(it.mode)) : ''}</small></span>
         ${bkBtn(it)}<div class="ar-ra" data-bkid="${esc(it.id)}">${ariLink(it, t)}<button type="button" class="ar-ed" onclick="event.stopPropagation();CV.guideEdit('${ja(it.id)}','${kind}')">✏️ ${MSGT('Saisir ma résa')}</button><button type="button" onclick="event.stopPropagation();CV.guideBook('${ja(it.id)}','${kind}')">${MSGT('C’est réservé')}</button></div></div>` + (kind === 'tr' ? aptHTML(it, t) : '')).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.guideSheet()" aria-label="←">←</button><button type="button" class="v-btn" onclick="CV.guideSheet()">🧭 ${MSGT('Continuer')}</button></div></div>`);
   }
@@ -386,7 +386,10 @@
   // 📍 le quartier conseillé dans Google Maps, avec les visites autour : un trajet qui part du point conseillé, passe par chaque visite
   //    et y revient — on voit tout de suite où il se trouve par rapport à ce que tu vas voir
   const gdTri = (hub, A) => { const c = p => (+p.lat).toFixed(5) + ',' + (+p.lng).toFixed(5), P = A.filter(p=>p && p.lat != null).slice(0, 8), far = P.some(p=>rawKm(hub, p) > 3);
-    return `https://www.google.com/maps/dir/?api=1&origin=${c(hub)}&destination=${c(hub)}${P.length ? '&waypoints=' + encodeURIComponent(P.map(c).join('|')) : ''}&travelmode=${far ? 'driving' : 'walking'}`; };
+    if(!P.length) return `https://www.google.com/maps/search/?api=1&query=${c(hub)}`;
+    // départ du quartier conseillé, puis chaque visite (de la plus proche à la plus loin) : Google Maps trace tout sur la carte
+    const S = P.slice().sort((a, b)=>rawKm(hub, a) - rawKm(hub, b)), last = S.pop();
+    return `https://www.google.com/maps/dir/?api=1&origin=${c(hub)}&destination=${c(last)}${S.length ? '&waypoints=' + encodeURIComponent(S.map(c).join('|')) : ''}&travelmode=${far ? 'driving' : 'walking'}`; };
   async function guideHotel(k){
     const t = trip(); if(!t) return; const hs = ariData(t).hs.filter(x=>!okB(x));
     if(!hs.length){ toast('✓ ' + MSGT('Tous les hébergements sont réservés')); return guideSheet(); }
@@ -410,7 +413,7 @@
       ${X.length ? `<div class="gd-x">🎟️ <b>${MSGT('Activités prévues ici')}</b> : <span data-notr>${X.map(x=>esc(x.titre)).join(' · ')}</span></div>` : ''}
       <div class="gd-warn">⚠️ ${MSGT('L’application ne connaît pas le quartier : elle le propose seulement parce qu’il est au centre de tes visites. Renseigne-toi avant de réserver (sécurité, bruit, avis).')}</div>
       ${bkBtn(h, 'big')}<div class="gd-links" data-bkid="${esc(h.id)}"><a class="gd-gm" href="${esc(hub && A.length ? gdTri(hub, A) : gmap(MSGT('hôtels')))}" target="_blank" rel="noopener">📍 ${MSGT('Voir le quartier dans Google Maps')}</a>
-        <button type="button" class="gd-gm" onclick="CV.hoodSheet('${ja(h.id)}')">🏘️ ${MSGT('Les avis sur les quartiers')}</button>
+        <button type="button" class="gd-gm" onclick="CV.hoodSheet('${ja(h.id)}', ${k})">🏘️ ${MSGT('Les avis sur les quartiers')}</button>
         ${hidden('blk:book') ? '' : bookA('booking', {what:where(), date:h.date, end:h.dateFin, n}) + bookA('airbnb', {city:where(), date:h.date, end:h.dateFin, n})}</div>
       <button type="button" class="v-btn sec gd-ed" onclick="CV.guideEdit('${ja(h.id)}','h',${k})">✏️ ${MSGT('Saisir mon hébergement (adresse, prix…)')}</button>
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.guideSheet()" aria-label="←">←</button>
@@ -533,7 +536,7 @@
     const city = dayCity(td) || cityOf(t.titre || '') || '';
     // 🛎️ le trajet du jour ou l’hôtel de ce soir pas encore réservés : c’est l’urgence de la journée (les dépenses ont leur propre étape)
     const ownJ = own.filter(i=>i.cat !== 'divers'), tdTodo = [...ownJ, ...night].filter(i=>needBook(i) && !okB(i));
-    const nmOf = it => it.cat === 'hotel' ? (it.nom || cityOf(it.titre) || it.titre) : it.titre;
+    const nmOf = it => it.cat === 'hotel' ? (it.nom || cityOf(it.titre) || it.titre) : itLbl(it);
     const rowB = (it, when) => `<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(nmOf(it))}</b><small>${when}</small></span>
       ${bkBtn(it)}<div class="ar-ra" data-bkid="${esc(it.id)}">${ariLink(it, t)}<button type="button" class="ar-ed" onclick="event.stopPropagation();CV.edit('${ja(it.id)}')">✏️ ${MSGT('Saisir ma résa')}</button><button type="button" onclick="event.stopPropagation();CV.ariBook('${ja(it.id)}')">${MSGT('C’est réservé')}</button></div></div>`;
     const steps = [
@@ -2779,7 +2782,8 @@
       ${(SO.rm || []).length ? `<div class="so-warn">🗑 ${esc(RF('Retirée(s) à l’enregistrement : {0}', SO.rm.map(r=>r.x.city).join(', ')))}</div>` : ''}
       <button type="button" class="so-auto" onclick="CV.soAuto()" id="so-auto"${SO.L.length > 2 ? '' : ' disabled'}>🧭 ${esc(MSGT('Ordre le plus court automatiquement'))}</button>
       ${SO.L.length > 1 ? `<div class="so-opt"><label>${esc(MSGT('Commencer par'))} <select class="v-in" id="so-first" onchange="CV.soAuto(+this.value)">${SO.L.map((x, i)=>`<option value="${i}"${i ? '' : ' selected'}>${esc(x.city)}</option>`).join('')}</select></label>
-        <button type="button" class="so-rev" onclick="CV.soRev()">⇄ ${esc(MSGT('Sens inverse'))}</button></div>` : ''}
+        <button type="button" class="so-rev" onclick="CV.soRev()">⇄ ${esc(MSGT('Sens inverse'))}</button></div>
+        <button type="button" class="so-auto so-even" onclick="CV.soEven()">⚖️ ${esc(MSGT('Répartir les nuits équitablement'))}</button>` : ''}
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.soSave()">✓ ${esc(MSGT('Enregistrer'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`;
     openSheet(html); soDrag();
   }
@@ -2851,6 +2855,16 @@
     if(!SO || SO.L.length < 2 || !SO.L[i]) return; const L = SO.L, x = L[i], nb = L[i - 1] || L[i + 1];
     (SO.rm = SO.rm || []).push({x, prev:(L[i - 1] || {}).city || '', next:(L[i + 1] || {}).city || ''});
     nb.span += x.span; L.splice(i, 1); soDraw();
+  }
+  // ⚖️ villes ajoutées après coup : la dernière gardait tout le reste (6 nuits à Monterosso, 1 à Pise). Même total, partagé à parts égales ;
+  //    les nuits en plus vont aux étapes qui en avaient le plus (souvent les grandes villes)
+  function soEven(){
+    if(!SO || SO.L.length < 2) return; const L = SO.L, T = L.reduce((s, x)=>s + x.span, 0), k = L.length, base = Math.max(1, Math.floor(T / k));
+    const rank = L.map((x, i)=>i).sort((a, b)=>L[b].span - L[a].span || a - b); let left = T - base * k;
+    L.forEach(x=>{ x.span = base; }); for(const i of rank){ if(left <= 0) break; L[i].span++; left--; }
+    L.forEach(x=>{ if(x.span - x.g < 1) x.span = x.g + 1; });
+    let over = L.reduce((s, x)=>s + x.span, 0) - T; while(over > 0){ const i = rank.find(j=>L[j].span - 1 - L[j].g >= 1 && L[j].span > 1); if(i == null) break; L[i].span--; over--; }
+    soDraw(); toast('⚖️ ' + MSGT('Nuits réparties'));
   }
   function soRev(){ if(!SO || SO.L.length < 2) return; SO.L.reverse(); soDraw(); toast('⇄ ' + MSGT('Itinéraire dans l’autre sens')); }
   // ⇅ directement sur la carte d’étape : monter / descendre, corriger la ville, la retirer — tout suit tout de suite

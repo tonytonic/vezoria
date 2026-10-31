@@ -718,10 +718,12 @@
   // liste des aéroports avec vols réguliers (OurAirports, domaine public) : chargée une fois, quand un vol est prévu
   let APTD = null;
   const aptData = () => APTD || (APTD = fetch((window.VZ_B || '') + 'data/airports.json').then(r=>{ if(!r.ok) throw new Error('apt'); return r.json(); }).catch(e=>{ APTD = null; throw e; }));
-  const aptFor = c => { const a = (M.aptC || {})[normQ(cityOf(String(c || '').replace(/\(.*?\)/g, '')) || c)]; return a && a.v === 2 && a.i && a.km > 25 ? a : null; };
+  const aptFor = c => { const a = (M.aptC || {})[normQ(cityOf(String(c || '').replace(/\(.*?\)/g, '')) || c)]; return a && a.v === 3 && a.i && a.km > 25 ? a : null; };
+  const aptAny = c => { const a = (M.aptC || {})[normQ(cityOf(String(c || '').replace(/\(.*?\)/g, '')) || c)]; return a && a.v === 3 && a.i && a.lat != null ? a : null; };   // l’aéroport de la ville, même tout près
+  const aptPt = a => (+a.lat).toFixed(5) + ',' + (+a.lng).toFixed(5);
   async function aptOne(city){
     const k = normQ(cityOf(city) || city); if(!k) return; M.aptC = M.aptC || {}; const o = M.aptC[k];
-    if((o && o.v === 2 && Date.now() - (o.at || 0) < 60 * 864e5) || APTQ[k]) return; APTQ[k] = 1;
+    if((o && o.v === 3 && Date.now() - (o.at || 0) < (o.i && !o.own && !o.nmOk ? 36e5 : 60 * 864e5)) || APTQ[k]) return;   // nom pas encore traduit : on réessaie dans l’heure APTQ[k] = 1;
     try {
       const g = geoCached(city) || await geocode(city, null).catch(()=>null); if(!g || g.lat == null) return;
       const D = await aptData().catch(()=>null); if(!D) return;
@@ -730,8 +732,9 @@
       // le plus proche ; un grand aéroport à peine plus loin (40 km de plus au plus) passe devant : plus de vols, moins chers
       const big = L.find(a=>a.big), best = L[0] && big && big !== L[0] && big.km <= L[0].km + 40 ? big : L[0];
       // le nom de la ville de l’aéroport dans la langue de l’appli (« Gênes » plutôt que « Genova »)
-      if(best && !own) try { const nm = await revName(best.lat, best.lng, 10); if(nm) best.n = nm; } catch(e){}
-      M.aptC[k] = own ? {v:2, own:1, i:own.i, n:own.n, km:own.km, at:Date.now()} : best && best.km <= 250 ? {v:2, i:best.i, n:best.n, km:best.km, at:Date.now()} : {v:2, at:Date.now()};
+      if(best && !own) try { const nm = await revName(best.lat, best.lng, 10); if(nm){ best.n = nm; best.nmOk = 1; } } catch(e){}
+      // la position exacte de l’aéroport est gardée : Google Maps va au bon endroit (« GOA » seul, c’est Goa en Inde)
+      M.aptC[k] = own ? {v:3, own:1, i:own.i, n:own.n, km:own.km, lat:own.lat, lng:own.lng, at:Date.now()} : best && best.km <= 250 ? {v:3, i:best.i, n:best.n, nmOk:best.nmOk || 0, km:best.km, lat:best.lat, lng:best.lng, at:Date.now()} : {v:3, at:Date.now()};
       persist(); refresh();
     } finally { delete APTQ[k]; }
   }
@@ -834,7 +837,7 @@
       const su0 = daySun(d);
       const row = i => `<div class="v-day-item" onclick="CV.edit('${ja(i.id)}')">
           <span>${icon(i)}</span>
-          <span class="x">${i.cat==='hotel' ? 'Nuit : ' : ''}${esc(i.titre)}${i.exp && su0 && su0.rise && /^(mon|vol|hel)\|/.test(i.exp) ? ` <small class="v-sun">🌅 ${su0.rise}</small>` : i.exp && su0 && su0.set && /^(sun|cat|cru)\|/.test(i.exp) ? ` <small class="v-sun">🌇 ${su0.set}</small>` : ''}${i.cat==='hotel'&&i.nom ? ' — '+esc(i.nom) : ''}${i.heureDep ? ' · '+esc(i.heureDep) : (i.heure && i.cat!=='hotel' ? ' · '+esc(i.heure) : '')}
+          <span class="x">${i.cat==='hotel' ? 'Nuit : ' : ''}${esc(itLbl(i))}${i.exp && su0 && su0.rise && /^(mon|vol|hel)\|/.test(i.exp) ? ` <small class="v-sun">🌅 ${su0.rise}</small>` : i.exp && su0 && su0.set && /^(sun|cat|cru)\|/.test(i.exp) ? ` <small class="v-sun">🌇 ${su0.set}</small>` : ''}${i.cat==='hotel'&&i.nom ? ' — '+esc(i.nom) : ''}${i.heureDep ? ' · '+esc(i.heureDep) : (i.heure && i.cat!=='hotel' ? ' · '+esc(i.heure) : '')}
           ${subset(i) ? `<span class="cv-qui-in">${parts(i).map(ini).join('')}</span>` : ''}${notesFor('item:'+i.id).length?' <span class="cv-nbadge">📌</span>':''}</span>
           <span class="dot ${i.statut}"></span>
         </div>`;
@@ -2076,13 +2079,12 @@
     const L = [], q = encodeURIComponent;
     if(it.cat==='transport'){
       if(it.from && it.to){
-        if(it.mode === 'Avion'){ const ia = (aptFor(it.from) || {}).i || it.from, ib = (aptFor(it.to) || {}).i || it.to;   // ✈️ un vol : les vols, pas les trains entre les deux villes
-          L.push(['✈️','Vols',`https://www.google.com/travel/flights?hl=${(window.I18N && I18N.lang) || 'fr'}&q=${q('Flights from ' + ia + ' to ' + ib + (it.date ? ' on ' + it.date : ''))}`]); }
+        if(it.mode === 'Avion') L.push(['🗺️','Trajet',`https://www.google.com/maps/dir/?api=1&origin=${q(tfPt(it.from, 'Avion'))}&destination=${q(tfPt(it.to, 'Avion'))}`]);   // ✈️ d’un aéroport à l’autre
         else L.push(['🗺️','Trajet',`https://www.google.com/maps/dir/?api=1&origin=${q(tfPt(it.from, it.mode))}&destination=${q(tfPt(it.to, it.mode))}&travelmode=transit`]);
         if(it.mode==='Avion' && ESCALE) L.push(['🛫','Escale', ESCALE]);
         if(it.mode==='Avion'){ const ta = aptFor(it.to), fa = aptFor(it.from);
-          if(ta) L.push(['🚆', esc(RF('Aéroport {0} → {1}', ta.i, cityOf(it.to) || it.to)), `https://www.google.com/maps/dir/?api=1&origin=${q(ta.i + ' airport')}&destination=${q(it.to)}&travelmode=transit`]);
-          if(fa) L.push(['🚆', esc(RF('{0} → aéroport {1}', cityOf(it.from) || it.from, fa.i)), `https://www.google.com/maps/dir/?api=1&origin=${q(it.from)}&destination=${q(fa.i + ' airport')}&travelmode=transit`]); }
+          if(ta) L.push(['🚆', esc(RF('Aéroport {0} → {1}', ta.i, cityOf(it.to) || it.to)), `https://www.google.com/maps/dir/?api=1&origin=${q(aptPt(ta))}&destination=${q(it.to)}&travelmode=transit`]);
+          if(fa) L.push(['🚆', esc(RF('{0} → aéroport {1}', cityOf(it.from) || it.from, fa.i)), `https://www.google.com/maps/dir/?api=1&origin=${q(it.from)}&destination=${q(aptPt(fa))}&travelmode=transit`]); }
         if(it.mode!=='Avion') L.push(['🔎','Horaires & prix',`https://www.rome2rio.com/fr/map/${q(it.from)}/${q(it.to)}`]);
       }
       { const fn = String(it.compagnie||'').match(/\b([A-Z0-9]{2})\s?(\d{1,4})\b/); if(it.mode==='Avion' && fn) L.push(['📡','Suivre le vol',`https://www.flightradar24.com/data/flights/${(fn[1]+fn[2]).toLowerCase()}`]);
@@ -2104,21 +2106,22 @@
   }
   /* 🏘️ Où dormir : les quartiers de la ville décrits par Wikivoyage, avec celui qui est le plus près de tes visites,
      et pour chacun la recherche d’hébergements dans ce quartier */
-  async function hoodSheet(id){
+  async function hoodSheet(id, back){
     const it = R[id]; if(!it) return; const city = stayCity(it) || cityOf(it.titre); if(!city) return;
     const hd = (M.hood || {})[id], g = (bookGroups(it).find(x=>(x.k || []).includes('booking')) || {}).c || {city};
     const top = hd && hd.name ? `<div class="hd-best">⭐ ${esc(MSGT('Le plus pratique pour tes visites'))} : <b data-notr>${esc(hd.name)}</b> · ${String(hd.km).replace('.', ',')} km ${esc(MSGT('en moyenne de tes visites'))} (${hd.n})</div>` : '';
     openSheet(`<h2>🏘️ ${esc(RF('Les quartiers de {0}', city))}</h2>${top}<div id="hd-list" class="v-sum-small">📡 ${esc(MSGT('Je cherche les quartiers sur Wikivoyage…'))}</div>
-      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`);
+      <div class="v-actions">${back != null ? `<button type="button" class="v-btn sec" onclick="CV.guideHotel(${+back || 0})">← ${esc(MSGT('Retour à l’hébergement'))}</button>` : `<button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button>`}</div>`);
     let w = null; try { w = await wvHoods(city); } catch(e){}
     const el = document.getElementById('hd-list'); if(!el) return;
-    if(!w || !w.title){ el.textContent = navigator.onLine === false ? MSGT('Pas de réseau : réessaie quand la connexion revient.') : RF('Wikivoyage ne décrit pas encore les quartiers de {0}.', city); return; }
+    if(!w || !w.title || (!w.items.length && !w.lead)){ el.textContent = navigator.onLine === false ? MSGT('Pas de réseau : réessaie quand la connexion revient.') : RF('Wikivoyage ne décrit pas encore les quartiers de {0}.', city); return; }
     const best = hd && hd.name ? normQ(hd.name) : '', hot = n => best && (normQ(n).includes(best) || best.includes(normQ(n)));
     const L = w.items.slice().sort((a, b)=>(hot(b.n) ? 1 : 0) - (hot(a.n) ? 1 : 0));
     const src = `<div class="v-sum-small hd-src">${esc(MSGT('Source'))} : <a href="${esc(w.url)}" target="_blank" rel="noopener">Wikivoyage · ${esc(w.title)}</a> — ${esc(MSGT('licence CC BY-SA, textes abrégés'))}</div>`;
-    el.className = 'hd-list'; el.innerHTML = (L.length ? L.map(x=>`<div class="hd-it${hot(x.n) ? ' on' : ''}"><b data-notr>${esc(x.n)}</b>${hot(x.n) ? ` <small>⭐ ${esc(MSGT('près de tes visites'))}</small>` : ''}${x.d ? `<p data-notr lang="${esc(w.lg)}">${esc(x.d)}</p>` : ''}
+    const lead = w.lead ? `<div class="hd-it"><b>${esc(MSGT('Où loger, selon Wikivoyage'))}</b><p data-notr lang="${esc(w.lg)}">${esc(w.lead)}</p></div>` : '';
+    el.className = 'hd-list'; el.innerHTML = lead + (L.length ? L.map(x=>`<div class="hd-it${hot(x.n) ? ' on' : ''}"><b data-notr>${esc(x.n)}</b>${hot(x.n) ? ` <small>⭐ ${esc(MSGT('près de tes visites'))}</small>` : ''}${x.d ? `<p data-notr lang="${esc(w.lg)}">${esc(x.d)}</p>` : ''}
         <a class="hd-bk" href="${esc(safeUrl(bookUrl('booking', Object.assign({}, g, {city:x.n + ', ' + city, what:x.n + ', ' + city}))))}" target="_blank" rel="noopener">🛏️ ${esc(MSGT('Hébergements dans ce quartier'))}</a></div>`).join('')
-      : `<div class="v-sum-small">${esc(RF('Wikivoyage ne décrit pas encore les quartiers de {0}.', city))}</div>`) + src;
+      : lead ? '' : `<div class="v-sum-small">${esc(RF('Wikivoyage ne décrit pas encore les quartiers de {0}.', city))}</div>`) + src;
   }
   // en tête de la fiche : comparer et réserver (seulement tant que c’est « à réserver »)
   function bookHTML(it){ const bk = bookOn(it) ? bookGroups(it) : []; return bk.length ? `<div class="bk-box top"><div class="bk-h">🛒 Comparer et réserver</div>${bookRows(bk)}</div>` : ''; }
@@ -2519,9 +2522,11 @@
   const ll = p => (+p.lat).toFixed(6) + ',' + (+p.lng).toFixed(6);
   const dirUrl = (a, b, mode, way) => `https://www.google.com/maps/dir/?api=1&origin=${ll(a)}&destination=${ll(b)}${way && way.length ? '&waypoints=' + way.map(ll).join('%7C') : ''}&travelmode=${mode}`;
   /* 🚕 Trajets d'arrivée et de départ : gare / aéroport ↔ hôtel (le jour où on arrive dans une ville, le jour où on la quitte) */
-  const tfPt = (n, m) => { n = String(n || '').trim(); if(!n) return ''; if(m === 'Avion' && aptFor(n)) return aptFor(n).i + ' airport'; if(m === 'Avion' && !/a[ée]roport|airport|aeropuerto|aeroporto|flughafen/i.test(n)) return n + ' ' + MSGT('aéroport'); if(/Train/i.test(m || '') && !/gare|station|bahnhof|stazione|estaci/i.test(n)) return n + ' ' + MSGT('gare'); return n; };
+  const tfPt = (n, m) => { n = String(n || '').trim(); if(!n) return ''; if(m === 'Avion' && aptAny(n)) return aptPt(aptAny(n)); if(m === 'Avion' && !/a[ée]roport|airport|aeropuerto|aeroporto|flughafen/i.test(n)) return n + ' ' + MSGT('aéroport'); if(/Train/i.test(m || '') && !/gare|station|bahnhof|stazione|estaci/i.test(n)) return n + ' ' + MSGT('gare'); return n; };
   const trLbl = it => { const f = cityOf(it.from), t = cityOf(it.to); if(!/Avion/i.test(it.mode || '')) return f + ' → ' + t; const a = aptFor(it.from), b = aptFor(it.to);
     return (a ? f + ' → ' + a.n + ' ✈️ ' : f + ' ✈️ ') + (b ? b.n + ' → ' + t : '→ ' + t); };
+  // ✈️ le nom affiché d’un vol vers ou depuis une ville sans aéroport : « Monterosso al Mare → Gênes ✈️ → Nantes »
+  const itLbl = it => it && it.cat === 'transport' && /Avion/i.test(it.mode || '') && it.from && it.to && (aptFor(it.from) || aptFor(it.to)) ? trLbl(it) : (it && it.titre) || '';
   const tfMode = m => m === 'Voiture' ? 'driving' : m === 'Pied' ? 'walking' : 'transit';
   // 🚶 hôtel ↔ gare (ou port) : souvent à quelques minutes, à pied ou en taxi ; l’aéroport, lui, est plus loin (taxi, navette, transports)
   const tfGround = (m, far) => far ? {ic:'🚆', how:MSGT('Train, bus ou taxi'), tm:'Train'} : /Avion/i.test(m || '') ? {ic:'🚕', how:MSGT('Taxi, navette ou transports'), tm:'Train'} : {ic:'🚶', how:MSGT('À pied ou en taxi'), tm:'Pied'};
@@ -2565,7 +2570,7 @@
     }
     // 🚆 le trajet lui-même, d’une gare (ou d’un aéroport) à l’autre : horaires et itinéraire entre les deux villes
     const fl = /Avion/i.test(t.mode || ''), q = encodeURIComponent;
-    const mid = t.from && t.to ? (fl ? tfRow('✈️', aptQ(t.from) + ' → ' + aptQ(t.to), MSGT('Les vols entre les deux villes'), `https://www.google.com/travel/flights?hl=${(window.I18N && I18N.lang) || 'fr'}&q=${q('Flights from ' + ((aptFor(t.from) || {}).i || t.from) + ' to ' + ((aptFor(t.to) || {}).i || t.to) + (t.date ? ' on ' + t.date : ''))}`)
+    const mid = t.from && t.to ? (fl ? tfRow('✈️', aptQ(t.from) + ' → ' + aptQ(t.to), MSGT('Le trajet entre les deux aéroports'), `https://www.google.com/maps/dir/?api=1&origin=${q(tfPt(t.from, 'Avion'))}&destination=${q(tfPt(t.to, 'Avion'))}`)
       : tfRow(ic, t.from + ' → ' + t.to, MSGT('Le trajet entre les deux villes : horaires et itinéraire'), tfLink(tfPt(t.from, t.mode), tfPt(t.to, t.mode), t.mode))) : '';
     // ✈️ ville sans aéroport (Monterosso al Mare) : on rejoint l’aéroport le plus proche, et on en repart vers la ville
     const aF = fl ? aptFor(t.from) : null, aT = fl ? aptFor(t.to) : null;

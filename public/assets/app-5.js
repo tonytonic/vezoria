@@ -1638,7 +1638,9 @@
     openSheet(`<h2>💡 Où partir ?</h2><div class="v-sum-small" style="margin-bottom:8px">Réponds en 30 secondes : l’appli compare ${DESTS.length} destinations (météo du mois, temps de trajet depuis chez toi, budget, formalités) et te propose les meilleures, avec un itinéraire type.</div>
       <div class="v-f2"><div class="v-f"><label>Départ de</label>${sel('in-dep', [...Object.keys(DEPS).map(k=>[k,k]), ['autre','✏️ Autre ville…']], v('dep','Nantes'))}</div>
         <div class="v-f"><label>Quand ?</label>${sel('in-mois', [['','Je suis flexible'], ...MOIS_L.map((m,i)=>[i+1, m])], v('mois',''))}</div></div>
-      <div class="v-f2"><div class="v-f"><label>Combien de jours ?</label>${sel('in-duree', [['3','Week-end (2–3 j)'],['5','4–5 jours'],['7','1 semaine'],['10','10 jours'],['14','2 semaines'],['21','3 semaines et +']], v('duree','7'))}</div>
+      <div class="v-f2 in-dates"><div class="v-f"><label>${esc(MSGT('Aller le (facultatif)'))}</label><input class="v-in" type="date" id="in-d1" value="${esc(v('d1',''))}" onchange="CV.inspDatesTouch()"></div>
+        <div class="v-f"><label>${esc(MSGT('Retour le'))}</label><input class="v-in" type="date" id="in-d2" value="${esc(v('d2',''))}" onchange="CV.inspDatesTouch()"></div></div>
+      <div class="v-f2"><div class="v-f"><label>Combien de jours ?</label>${sel('in-duree', [['3','Week-end (2–3 j)'],['5','4–5 jours'],['7','1 semaine'],['10','10 jours'],['14','2 semaines'],['21','3 semaines et +'], ...(['3','5','7','10','14','21'].includes(String(v('duree','7'))) ? [] : [[String(v('duree','7')), RF('{0} jours', v('duree','7'))]])], v('duree','7'))}</div>
         <div class="v-f"><label>Combien de voyageurs ?</label>${sel('in-nb', [['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6 et +']], v('nb','2'))}</div></div>
       <div class="v-f2"><div class="v-f"><label>Budget total par personne</label><input class="v-in" id="in-budget" inputmode="numeric" value="${esc(v('budget','1200'))}" placeholder="${CS()}, transport compris"></div>
         <div class="v-f"><label>Style</label>${sel('in-style', [['eco','Économique'],['confort','Confort'],['luxe','Petit luxe']], v('style','confort'))}</div></div>
@@ -1692,12 +1694,24 @@
     return st;
   }
   let inspRes = [];
+  // 📅 dates précises (facultatives) : elles fixent le mois, la durée et le jour du départ des voyages proposés
+  function inspDates(S){
+    const d1 = (document.getElementById('in-d1') || {}).value || '', d2 = (document.getElementById('in-d2') || {}).value || '';
+    if(/^\d{4}-\d{2}-\d{2}$/.test(d1) && /^\d{4}-\d{2}-\d{2}$/.test(d2) && d2 > d1){ S.d1 = d1; S.d2 = d2; S.duree = String(Math.min(60, nights(d1, d2) + 1)); S.mois = String(+d1.slice(5, 7)); }
+    else { delete S.d1; delete S.d2; }
+    return S;
+  }
+  function inspDatesTouch(){   // les deux dates choisies : le mois et la durée suivent dans le formulaire
+    const S = inspDates({}); if(!S.d1) return;
+    const m = document.getElementById('in-mois'); if(m) m.value = S.mois;
+    const d = document.getElementById('in-duree'); if(d){ if(![...d.options].some(o=>o.value === S.duree)){ const o = document.createElement('option'); o.value = S.duree; o.textContent = RF('{0} jours', S.duree); d.appendChild(o); } d.value = S.duree; }
+  }
   async function inspireGo(){
     const g = id => (document.getElementById(id)||{}).value;
     if(g('in-dep') === 'autre'){ const t = (g('in-deptxt')||'').trim(); if(!t){ alert('Indique ta ville de départ.'); return; }
       if(!M.insp || M.insp.depTxt !== t || !M.insp.depLL){ toast('📡 Je situe ' + t + '…'); const gg = await geocode(t, null).catch(()=>null); if(!gg){ alert('Ville introuvable : essaie avec le pays (ex. « Plougastel, France »).'); return; } M.insp = Object.assign({}, M.insp, {depTxt:t, depLL:[gg.lat, gg.lng]}); } }
-    const S = M.insp = Object.assign({}, M.insp, {dep:g('in-dep'), mois:g('in-mois'), duree:g('in-duree'), nb:g('in-nb'), budget:g('in-budget'), style:g('in-style'), vol:g('in-vol'), climat:g('in-climat'), qui:g('in-qui'), rythme:g('in-rythme'),
-      depTxt:(g('in-deptxt')||'').trim(), iata:(g('in-iata')||'').trim().toUpperCase(), cni:(document.getElementById('in-cni')||{}).checked, tags:[...document.querySelectorAll('[data-tag].on')].map(b=>b.dataset.tag)}); persist();
+    const S = M.insp = inspDates(Object.assign({}, M.insp, {dep:g('in-dep'), mois:g('in-mois'), duree:g('in-duree'), nb:g('in-nb'), budget:g('in-budget'), style:g('in-style'), vol:g('in-vol'), climat:g('in-climat'), qui:g('in-qui'), rythme:g('in-rythme'),
+      depTxt:(g('in-deptxt')||'').trim(), iata:(g('in-iata')||'').trim().toUpperCase(), cni:(document.getElementById('in-cni')||{}).checked, tags:[...document.querySelectorAll('[data-tag].on')].map(b=>b.dataset.tag)})); persist();
     inspRes = inspCalc(S); inspShow(8);
   }
   function inspShow(n, focus){
@@ -1737,7 +1751,8 @@
     put({id:'po'+uid(), type:'poll', question:'Où partir ' + (M.insp && M.insp.mois ? 'en ' + MOIS_L[M.insp.mois-1] : 'pour le prochain voyage') + ' ?', options:f, votes:{}, closed:false}, '🗳️ Sondage créé dans les Envies');
     M.inspFav = []; persist(); closeSheet(true); M.mode = 'prep'; tab('envies');
   }
-  function inspDebut(x){   // le premier samedi du mois conseillé (l’an prochain s’il est passé)
+  function inspDebut(x){   // le premier samedi du mois conseillé (l’an prochain s’il est passé) — ou la date choisie
+    if(M.insp && M.insp.d1 && M.insp.d2 && +M.insp.d1.slice(5, 7) === +x.mo) return M.insp.d1;
     const now = new Date(); let y = now.getFullYear(); const mo = x.mo; if(mo < now.getMonth() + 1 || (mo === now.getMonth() + 1 && now.getDate() > 10)) y++;
     const d = `${y}-${String(mo).padStart(2,'0')}-01`, dow = new Date(d + 'T12:00:00').getDay(); return addDays(d, (6 - dow + 7) % 7);
   }
