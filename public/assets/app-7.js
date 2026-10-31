@@ -2588,6 +2588,9 @@
       if(o.to && stOf(it.to) && stOf(it.to) === stOf(o.to)){ delete o.to; delete o.titre; }      // déjà la bonne ville (gare, aéroport, nom local) : on ne touche pas
       if(o.from && stOf(it.from) && stOf(it.from) === stOf(o.from)){ delete o.from; delete o.titre; }
       if(o.titre && !o.to && !o.from) delete o.titre;
+      // une seule extrémité change (Salzbourg → Hallstatt devient Vienne → Hallstatt) : le titre suit, en gardant le nom local de l’autre bout
+      if((o.from || o.to) && !o.titre){ const P = tp(it), two = P.length === 2 && P[0] && P[1];
+        o.titre = (o.from || (two ? P[0] : it.from) || '') + ' → ' + (o.to || (two ? P[1] : it.to) || ''); }
       const c = Object.assign(clone(it), o); if(['date', 'from', 'to', 'titre'].some(k=>(c[k] || '') !== (it[k] || ''))) out.push(c); used.add(it.id); };
     // l’aller : le 1ᵉʳ trajet qui arrive d’ailleurs (pas « Naples → Malte » au milieu du voyage)
     const cand = T.filter(i=>i.from && !isC(i.from) && isC(i.to)), d0 = cand.reduce((m, i)=>!m || (i.date || '9') < m ? (i.date || '9') : m, ''), outs = cand.filter(i=>(i.date || '9') === d0), homes = new Set(outs.map(i=>K(i.from)));

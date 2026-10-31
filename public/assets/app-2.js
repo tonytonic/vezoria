@@ -505,6 +505,10 @@
     if(!id && !draft && ['transport','hotel','activite'].includes(c)) h += `<button type="button" class="cv-tjbtn ed-imp" onclick="CV.impSheet('${ja(c)}')"><span>📄</span><span><b>Importer une réservation</b><small>PDF, capture d’écran, billet ou QR code : la fiche se remplit toute seule</small></span></button>`;
     if(id) h += byline(it);
     if(it.hint) h += `<div class="v-hint">💡 ${esc(it.hint)}</div>`;
+    if(id && c === 'transport'){ const P = String(it.titre || '').split(/\s*(?:→|->|⇒|–>|=>)\s*/).map(x=>x.trim()), nq = x => normQ(x || '');
+      if(P.length === 2 && P[0] && P[1] && it.from && it.to && (nq(P[0]) !== nq(it.from) || nq(P[1]) !== nq(it.to)) && !(nq(P[0]).includes(nq(it.from)) && nq(P[1]).includes(nq(it.to))))
+        h += `<div class="v-hint cv-trmis">⚠️ ${esc(RF('Le titre dit « {0} » mais Départ / Arrivée disent « {1} ».', P[0] + ' → ' + P[1], it.from + ' → ' + it.to))}
+          <div class="cv-row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><button type="button" class="v-btn sec" style="flex:1 1 140px" onclick="CV.trMis('title')">${esc(MSGT('Garder le titre'))}</button><button type="button" class="v-btn sec" style="flex:1 1 140px" onclick="CV.trMis('fields')">${esc(MSGT('Garder Départ / Arrivée'))}</button></div></div>`; }
     h += `<div id="cv-fbook">${bookHTML(it)}</div>`;
     h += `<form id="v-form" onsubmit="event.preventDefault();CV.saveForm()" oninput="CV.live()">`;
     h += `<div class="v-f"><label>Statut</label><div class="v-seg" id="v-seg">${Object.entries(STATUTS).map(([k,l])=>
@@ -568,6 +572,12 @@
     if(STT && st0){ it.statut = st0; if(st0 === 'paid' && Array.isArray(it.echeances)) it.echeances = it.echeances.map(e=>Object.assign({}, e, {fait:true})); }   // statut choisi à la main (même revenir de « Payé ») : on le garde
     return it;
   }
+  // ⚠️ trajet incohérent (titre ≠ Départ / Arrivée, ex. un ancien trajet recopié) : on aligne l’un sur l’autre en un geste
+  function trMis(keep){ const f = document.getElementById('v-form'); if(!f || !editing) return; const g = n => f.querySelector('[name="' + n + '"]');
+    const P = String((g('titre') || {}).value || '').split(/\s*(?:→|->|⇒|–>|=>)\s*/).map(x=>x.trim());
+    if(keep === 'title' && P.length === 2){ if(g('from')) g('from').value = P[0]; if(g('to')) g('to').value = P[1]; }
+    else if(keep === 'fields' && g('titre')) g('titre').value = ((g('from') || {}).value || '') + ' → ' + ((g('to') || {}).value || '');
+    const w = document.querySelector('.cv-trmis'); if(w) w.remove(); toast('✓ ' + MSGT('Aligné : pense à enregistrer')); }
   let EDB = null;
   // ✏️ quelqu’un a modifié la fiche pendant qu’elle était ouverte ici : on affiche un bandeau (la sauvegarde fusionnera)
   function gdRemoteEdit(r){
@@ -587,6 +597,14 @@
     if(!it.id && !keepOpen && dupOf(it).length){ dupAsk([it]); return false; }
     const isNew = !it.id; if(isNew) it.id = 'i' + uid();
     const was = R[it.id], booked = x => x && (x.statut === 'booked' || x.statut === 'paid');
+    // 🔗 trajet : le titre « A → B » et les champs Départ / Arrivée restent d’accord (sinon la carte et l’ordre des trajets suivent l’un, l’affichage l’autre)
+    if(it.cat === 'transport' && was){
+      const pair = t => { const P = String(t || '').split(/\s*(?:→|->|⇒|–>|=>)\s*/).map(x=>x.trim()); return P.length === 2 && P[0] && P[1] ? P : null; };
+      const same = (a, b) => normQ(a || '') === normQ(b || ''), wasAuto = !was.titre || (pair(was.titre) && same(pair(was.titre)[0], was.from) && same(pair(was.titre)[1], was.to));
+      const fieldsCh = !same(it.from, was.from) || !same(it.to, was.to), titleCh = !same(it.titre, was.titre);
+      if(fieldsCh && !titleCh && wasAuto && it.from && it.to) it.titre = it.from + ' → ' + it.to;   // on a changé Départ / Arrivée : le titre suit
+      else if(titleCh && !fieldsCh && wasAuto && pair(it.titre)){ it.from = pair(it.titre)[0]; it.to = pair(it.titre)[1]; }   // on a réécrit le titre « Lisbonne → Nantes » : Départ / Arrivée suivent
+    }
     if(isNew || !sameItem(was, it)) put(it);
     if(!keepOpen && (isNew || (booked(it) && !booked(was)))) setTimeout(()=>fxFor(it), 250);   // nouveau ou tout juste réservé
     if(keepOpen) return it.id;
