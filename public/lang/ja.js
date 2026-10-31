@@ -5798,4 +5798,11 @@ I18N.load({
 "{0} km de {1}":"{1}から{0} km",
 "{0} km jusqu’à {1}":"{1}まで{0} km",
 "Ton hôtel":"ホテル",
-"ton hôtel":"ホテル"});
+"ton hôtel":"ホテル",
+"Aller le (facultatif)":"行き（任意）",
+"Répartir les nuits équitablement":"泊数を均等に分ける",
+"Nuits réparties":"泊数を分けました",
+"Retour à l’hébergement":"宿に戻る",
+"Où loger, selon Wikivoyage":"Wikivoyage によるおすすめの宿泊エリア",
+"Le trajet entre les deux aéroports":"2つの空港間のルート",
+"Réservé à l’auteur du fil":"フィードの作者のみ"});

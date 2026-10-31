@@ -5799,4 +5799,11 @@ I18N.load({
 "{0} km de {1}":"{0} كم من {1}",
 "{0} km jusqu’à {1}":"{0} كم حتى {1}",
 "Ton hôtel":"فندقك",
-"ton hôtel":"فندقك"});
+"ton hôtel":"فندقك",
+"Aller le (facultatif)":"الذهاب في (اختياري)",
+"Répartir les nuits équitablement":"وزّع الليالي بالتساوي",
+"Nuits réparties":"تم توزيع الليالي",
+"Retour à l’hébergement":"العودة إلى الإقامة",
+"Où loger, selon Wikivoyage":"أين تقيم، بحسب ويكي رحلات",
+"Le trajet entre les deux aéroports":"المسار بين المطارين",
+"Réservé à l’auteur du fil":"خاص بمؤلف الصفحة"});

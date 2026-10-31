@@ -5798,4 +5798,11 @@ I18N.load({
 "{0} km de {1}":"{1}에서 {0}km",
 "{0} km jusqu’à {1}":"{1}까지 {0}km",
 "Ton hôtel":"숙소",
-"ton hôtel":"숙소"});
+"ton hôtel":"숙소",
+"Aller le (facultatif)":"가는 날 (선택)",
+"Répartir les nuits équitablement":"숙박일을 고르게 나누기",
+"Nuits réparties":"숙박일을 나눴어요",
+"Retour à l’hébergement":"숙소로 돌아가기",
+"Où loger, selon Wikivoyage":"Wikivoyage가 추천하는 숙소 지역",
+"Le trajet entre les deux aéroports":"두 공항 사이의 경로",
+"Réservé à l’auteur du fil":"피드 작성자 전용"});

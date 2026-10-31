@@ -5786,4 +5786,11 @@ I18N.load({
 "{0} km de {1}":"{1} kentine {0} km",
 "{0} km jusqu’à {1}":"{1} kentine {0} km",
 "Ton hôtel":"Otelin",
-"ton hôtel":"otelin"});
+"ton hôtel":"otelin",
+"Aller le (facultatif)":"Gidiş (isteğe bağlı)",
+"Répartir les nuits équitablement":"Geceleri eşit dağıt",
+"Nuits réparties":"Geceler dağıtıldı",
+"Retour à l’hébergement":"Konaklamaya dön",
+"Où loger, selon Wikivoyage":"Wikivoyage’a göre nerede kalınır",
+"Le trajet entre les deux aéroports":"İki havalimanı arasındaki güzergâh",
+"Réservé à l’auteur du fil":"Yalnızca akışın yazarı"});

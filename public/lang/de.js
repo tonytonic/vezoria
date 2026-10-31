@@ -2854,4 +2854,11 @@ I18N.load({
 "{0} km de {1}":"{0} km von {1}",
 "{0} km jusqu’à {1}":"{0} km bis {1}",
 "Ton hôtel":"Dein Hotel",
-"ton hôtel":"dein Hotel"});
+"ton hôtel":"dein Hotel",
+"Aller le (facultatif)":"Hinflug am (optional)",
+"Répartir les nuits équitablement":"Nächte gleichmäßig verteilen",
+"Nuits réparties":"Nächte verteilt",
+"Retour à l’hébergement":"Zurück zur Unterkunft",
+"Où loger, selon Wikivoyage":"Wo übernachten, laut Wikivoyage",
+"Le trajet entre les deux aéroports":"Die Strecke zwischen den beiden Flughäfen",
+"Réservé à l’auteur du fil":"Nur für den Autor des Feeds"});

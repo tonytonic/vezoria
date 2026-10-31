@@ -2859,4 +2859,11 @@ I18N.load({
 "{0} km de {1}":"a {0} km da {1}",
 "{0} km jusqu’à {1}":"{0} km fino a {1}",
 "Ton hôtel":"Il tuo hotel",
-"ton hôtel":"il tuo hotel"});
+"ton hôtel":"il tuo hotel",
+"Aller le (facultatif)":"Andata il (facoltativo)",
+"Répartir les nuits équitablement":"Distribuisci le notti in modo equo",
+"Nuits réparties":"Notti distribuite",
+"Retour à l’hébergement":"Torna all’alloggio",
+"Où loger, selon Wikivoyage":"Dove alloggiare, secondo Wikivoyage",
+"Le trajet entre les deux aéroports":"Il tragitto tra i due aeroporti",
+"Réservé à l’auteur du fil":"Riservato all’autore del diario"});

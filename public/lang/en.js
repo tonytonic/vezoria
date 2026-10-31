@@ -2844,4 +2844,11 @@ I18N.load({
 "{0} km de {1}":"{0} km from {1}",
 "{0} km jusqu’à {1}":"{0} km to {1}",
 "Ton hôtel":"Your hotel",
-"ton hôtel":"your hotel"});
+"ton hôtel":"your hotel",
+"Aller le (facultatif)":"Outbound on (optional)",
+"Répartir les nuits équitablement":"Share the nights out evenly",
+"Nuits réparties":"Nights shared out",
+"Retour à l’hébergement":"Back to the accommodation",
+"Où loger, selon Wikivoyage":"Where to stay, according to Wikivoyage",
+"Le trajet entre les deux aéroports":"The route between the two airports",
+"Réservé à l’auteur du fil":"Feed author only"});

@@ -5798,4 +5798,11 @@ I18N.load({
 "{0} km de {1}":"距{1} {0} 公里",
 "{0} km jusqu’à {1}":"到{1} {0} 公里",
 "Ton hôtel":"你的酒店",
-"ton hôtel":"你的酒店"});
+"ton hôtel":"你的酒店",
+"Aller le (facultatif)":"出发日期（可选）",
+"Répartir les nuits équitablement":"平均分配住宿晚数",
+"Nuits réparties":"已分配晚数",
+"Retour à l’hébergement":"返回住宿",
+"Où loger, selon Wikivoyage":"Wikivoyage 推荐的住宿区域",
+"Le trajet entre les deux aéroports":"两个机场之间的路线",
+"Réservé à l’auteur du fil":"仅限动态作者"});

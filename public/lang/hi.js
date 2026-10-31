@@ -5798,4 +5798,11 @@ I18N.load({
 "{0} km de {1}":"{1} से {0} किमी",
 "{0} km jusqu’à {1}":"{1} तक {0} किमी",
 "Ton hôtel":"तुम्हारा होटल",
-"ton hôtel":"तुम्हारा होटल"});
+"ton hôtel":"तुम्हारा होटल",
+"Aller le (facultatif)":"जाने की तारीख (वैकल्पिक)",
+"Répartir les nuits équitablement":"रातें बराबर बाँटो",
+"Nuits réparties":"रातें बाँट दी गईं",
+"Retour à l’hébergement":"ठहरने की जगह पर वापस",
+"Où loger, selon Wikivoyage":"Wikivoyage के अनुसार कहाँ ठहरें",
+"Le trajet entre les deux aéroports":"दोनों हवाई अड्डों के बीच का रास्ता",
+"Réservé à l’auteur du fil":"सिर्फ़ फ़ीड के लेखक के लिए"});

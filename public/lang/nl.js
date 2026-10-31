@@ -2850,4 +2850,11 @@ I18N.load({
 "{0} km de {1}":"{0} km van {1}",
 "{0} km jusqu’à {1}":"{0} km tot {1}",
 "Ton hôtel":"Je hotel",
-"ton hôtel":"je hotel"});
+"ton hôtel":"je hotel",
+"Aller le (facultatif)":"Heen op (optioneel)",
+"Répartir les nuits équitablement":"Nachten eerlijk verdelen",
+"Nuits réparties":"Nachten verdeeld",
+"Retour à l’hébergement":"Terug naar de accommodatie",
+"Où loger, selon Wikivoyage":"Waar overnachten, volgens Wikivoyage",
+"Le trajet entre les deux aéroports":"De route tussen de twee luchthavens",
+"Réservé à l’auteur du fil":"Alleen voor de auteur van de feed"});

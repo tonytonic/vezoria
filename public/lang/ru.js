@@ -5799,4 +5799,11 @@ I18N.load({
 "{0} km de {1}":"{0} км от {1}",
 "{0} km jusqu’à {1}":"{0} км до {1}",
 "Ton hôtel":"Твой отель",
-"ton hôtel":"твой отель"});
+"ton hôtel":"твой отель",
+"Aller le (facultatif)":"Туда (необязательно)",
+"Répartir les nuits équitablement":"Распределить ночи поровну",
+"Nuits réparties":"Ночи распределены",
+"Retour à l’hébergement":"Назад к жилью",
+"Où loger, selon Wikivoyage":"Где остановиться, по данным Wikivoyage",
+"Le trajet entre les deux aéroports":"Маршрут между двумя аэропортами",
+"Réservé à l’auteur du fil":"Только для автора ленты"});
