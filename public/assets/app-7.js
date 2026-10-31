@@ -383,6 +383,10 @@
     if(C0 && (A.length < 2 || X.some(x=>x.lat == null))) A.push(C0);
     return {city, P, X, A, C0, hub:gdHub(A)};
   }
+  // 📍 le quartier conseillé dans Google Maps, avec les visites autour : un trajet qui part du point conseillé, passe par chaque visite
+  //    et y revient — on voit tout de suite où il se trouve par rapport à ce que tu vas voir
+  const gdTri = (hub, A) => { const c = p => (+p.lat).toFixed(5) + ',' + (+p.lng).toFixed(5), P = A.filter(p=>p && p.lat != null).slice(0, 8), far = P.some(p=>rawKm(hub, p) > 3);
+    return `https://www.google.com/maps/dir/?api=1&origin=${c(hub)}&destination=${c(hub)}${P.length ? '&waypoints=' + encodeURIComponent(P.map(c).join('|')) : ''}&travelmode=${far ? 'driving' : 'walking'}`; };
   async function guideHotel(k){
     const t = trip(); if(!t) return; const hs = ariData(t).hs.filter(x=>!okB(x));
     if(!hs.length){ toast('✓ ' + MSGT('Tous les hébergements sont réservés')); return guideSheet(); }
@@ -405,7 +409,8 @@
       ${P.length < 2 ? `<div class="v-sum-small" style="margin:6px 0">${MSGT(P.length ? 'Une seule visite ici : ajoutes-en pour un conseil de quartier plus juste.' : 'Pas encore de visites ici : choisis-en au moins 2 pour avoir un quartier conseillé.')}</div>` : ''}
       ${X.length ? `<div class="gd-x">🎟️ <b>${MSGT('Activités prévues ici')}</b> : <span data-notr>${X.map(x=>esc(x.titre)).join(' · ')}</span></div>` : ''}
       <div class="gd-warn">⚠️ ${MSGT('L’application ne connaît pas le quartier : elle le propose seulement parce qu’il est au centre de tes visites. Renseigne-toi avant de réserver (sécurité, bruit, avis).')}</div>
-      ${bkBtn(h, 'big')}<div class="gd-links" data-bkid="${esc(h.id)}"><a class="gd-gm" href="${esc(gmap(MSGT('hôtels')))}" target="_blank" rel="noopener">📍 ${MSGT('Voir le quartier dans Google Maps')}</a>
+      ${bkBtn(h, 'big')}<div class="gd-links" data-bkid="${esc(h.id)}"><a class="gd-gm" href="${esc(hub && A.length ? gdTri(hub, A) : gmap(MSGT('hôtels')))}" target="_blank" rel="noopener">📍 ${MSGT('Voir le quartier dans Google Maps')}</a>
+        <button type="button" class="gd-gm" onclick="CV.hoodSheet('${ja(h.id)}')">🏘️ ${MSGT('Les avis sur les quartiers')}</button>
         ${hidden('blk:book') ? '' : bookA('booking', {what:where(), date:h.date, end:h.dateFin, n}) + bookA('airbnb', {city:where(), date:h.date, end:h.dateFin, n})}</div>
       <button type="button" class="v-btn sec gd-ed" onclick="CV.guideEdit('${ja(h.id)}','h',${k})">✏️ ${MSGT('Saisir mon hébergement (adresse, prix…)')}</button>
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.guideSheet()" aria-label="←">←</button>
@@ -2635,7 +2640,7 @@
       const nx = S[i + 1]; if(nx){
         const lo = x.fin > x.debut ? x.fin : addD(x.debut, 1);   // hôtel sans date de fin (ou fin avant l’arrivée) : on ne remonte pas à tout le voyage
         const tr = items(it=>it.cat === 'transport' && it.date && it.date >= lo && it.date <= nx.debut && !trSeen.has(it.id)).sort((a, b)=>(a.date + (a.heureDep || '')).localeCompare(b.date + (b.heureDep || ''))); tr.forEach(it=>trSeen.add(it.id));
-        h += `<div class="etp-link">${tr.length ? tr.map(it=>`<button type="button" onclick="CV.edit('${ja(it.id)}')">${icon(it)} <span data-notr>${esc(it.from && it.to ? cityOf(it.from) + ' → ' + cityOf(it.to) : it.titre)}</span> · ${fshort(it.date)}${it.heureDep ? ' ' + esc(it.heureDep) : ''}<b class="${it.statut === 'paid' ? 'ok' : okB(it) ? 'bk' : ''}">${MSGT(it.statut === 'paid' ? 'payé' : okB(it) ? 'réservé' : 'à réserver')}</b></button>`).join('')
+        h += `<div class="etp-link">${tr.length ? tr.map(it=>`<button type="button" onclick="CV.edit('${ja(it.id)}')">${icon(it)} <span data-notr>${esc(it.from && it.to ? trLbl(it) : it.titre)}</span> · ${fshort(it.date)}${it.heureDep ? ' ' + esc(it.heureDep) : ''}<b class="${it.statut === 'paid' ? 'ok' : okB(it) ? 'bk' : ''}">${MSGT(it.statut === 'paid' ? 'payé' : okB(it) ? 'réservé' : 'à réserver')}</b></button>`).join('')
           : `<span>↓ <span data-notr>${esc(x.city)} → ${esc(nx.city)}</span> · ${fshort(nx.debut)}</span>`}</div>`;
       }
     });
@@ -2864,7 +2869,7 @@
   }
   async function stRename(i){
     const t = trip(); if(!t || t.archived || M.lock) return; const S = stRanges(), x = S[i]; if(!x) return;
-    const v = await uiPrompt(MSGT('Le bon nom de la ville (ex. « Monterosso al Mare » plutôt que « Monterosso ») :'), x.city); if(v == null) return;
+    const v = await uiPromptPlace(MSGT('Le bon nom de la ville (ex. « Monterosso al Mare » plutôt que « Monterosso ») :'), x.city); if(v == null) return;
     const nc = String(v).trim().replace(/\s+/g, ' ').slice(0, 80); if(!nc || normQ(nc) === normQ(x.city)) return;
     const hs = items(it=>it.cat === 'hotel' && it.date && it.date >= x.debut && it.date < x.end), out = [];
     // l’hôtel dort parfois dans un village voisin (« Levanto » pour visiter Monterosso) : ce nom-là reste, seule la ville visitée change

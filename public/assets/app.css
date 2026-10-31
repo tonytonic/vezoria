@@ -3082,3 +3082,14 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 .insp-city small{color:#5f566a;font-size:.82rem}
 .insp-city .cv-row{gap:6px}
 .insp-city input{flex:1;min-width:0}
+/* 🏘️ quartiers (Wikivoyage) */
+.hd-best{background:#fff7e0;border:1px solid #f1d58a;border-radius:12px;padding:8px 10px;margin:4px 0 10px;font-size:.92em}
+.hd-list{display:flex;flex-direction:column;gap:8px}
+.hd-it{border:1px solid #e6e1ea;border-radius:12px;padding:8px 10px;background:#fff}
+.hd-it.on{border-color:#f1b84a;background:#fffaf0}
+.hd-it p{margin:4px 0 6px;font-size:.9em;line-height:1.35;color:#3b3442}
+.hd-it small{color:#a06a00}
+.hd-bk{font-size:.85em;text-decoration:none;font-weight:600}
+.hd-src{margin-top:6px}
+.hd-src a{color:inherit}
+.gd-links button.gd-gm{display:inline-flex;align-items:center;gap:4px;padding:8px 12px;border-radius:99px;font:inherit;font-weight:800;font-size:.84rem;background:#fff;color:#7c3aed;border:1.5px solid #7c3aed;cursor:pointer}

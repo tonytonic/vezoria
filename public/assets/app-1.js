@@ -12,6 +12,9 @@
   window.fetch = function(u, o){
     try { const s = typeof u === 'string' ? u : (u && u.url) || ''; o = o || {};
       if(/\/api\//.test(s)){
+        // ✍️ synchro et photos : l’appareil signe ses envois, et l’auteur d’un fil d’abonnés présente sa clé d’auteur (voir admKey)
+        if(/\/api\/(?:sync|photo)\b/.test(s) && window.__vzHdr && o.headers && typeof Headers === 'function' && !(o.headers instanceof Headers)){
+          const x = window.__vzHdr(o.headers['X-Carnet-Code']); if(x) o = Object.assign({}, o, {headers:Object.assign({}, o.headers, x)}); }
         const sig = o.signal; let own = null, t = 0;
         if(!sig && typeof AbortController === 'function'){ own = new AbortController(); t = setTimeout(()=>own.abort(), /\/api\/photo/.test(s) && o.method === 'POST' ? 120000 : 45000); o = Object.assign({}, o, {signal:own.signal}); }
         return F(u, o).catch(e=>{ if(sig && sig.aborted) throw e; throw net(e, !!(own && own.signal.aborted)); }).finally(()=>clearTimeout(t)); } } catch(e){}
@@ -98,8 +101,10 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const ov = document.createElement('div'); ov.className = 'ui-dlg'; ov.setAttribute('role', kind === 'alert' ? 'alertdialog' : 'dialog'); ov.setAttribute('aria-modal', 'true');
     ov.innerHTML = `<div class="ui-box"><div class="ui-msg"></div>${kind === 'prompt' ? '<input class="v-in ui-in" type="text" autocomplete="off">' : ''}<div class="ui-act">${kind !== 'alert' ? '<button type="button" class="v-btn sec ui-no">Annuler</button>' : ''}<button type="button" class="v-btn ui-ok">OK</button></div></div>`;
     ov.querySelector('.ui-msg').textContent = T(msg);
-    const inp = ov.querySelector('.ui-in'); if(inp) inp.value = def == null ? '' : String(def);
-    const key = e => { if(e.key === 'Enter'){ e.preventDefault(); e.stopPropagation(); ok(); } else if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); kind === 'alert' ? ok() : no(); } };
+    const inp = ov.querySelector('.ui-in'), dd = def && typeof def === 'object' ? def : {v:def};
+    // 🔎 une ville : propositions pendant la saisie (Entrée prend la 1re proposition)
+    if(inp){ inp.value = dd.v == null ? '' : String(dd.v); if(dd.place) inp.setAttribute('data-place', ''); }
+    const key = e => { if(e.key === 'Enter'){ e.preventDefault(); e.stopPropagation(); const f = inp && inp._pac && inp._pac.querySelector('.pac-i'); if(f){ f.click(); return; } ok(); } else if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); kind === 'alert' ? ok() : no(); } };
     const done = v => { document.removeEventListener('keydown', key, true); ov.remove(); dlgBusy = false; res(v); setTimeout(uiNext, 0); };
     const ok = () => done(kind === 'confirm' ? true : kind === 'prompt' ? inp.value : undefined);
     const no = () => done(kind === 'confirm' ? false : kind === 'prompt' ? null : undefined);
@@ -108,7 +113,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     document.body.appendChild(ov);
     setTimeout(()=>{ try { (inp || ov.querySelector('.ui-ok')).focus({preventScroll:true}); if(inp) inp.select(); } catch(e){} }, 40);
   }
-  const uiAlert = m => uiBox('alert', m), uiConfirm = m => uiBox('confirm', m), uiPrompt = (m, d) => uiBox('prompt', m, d);
+  const uiAlert = m => uiBox('alert', m), uiConfirm = m => uiBox('confirm', m), uiPrompt = (m, d) => uiBox('prompt', m, d), uiPromptPlace = (m, d) => uiBox('prompt', m, {v:d, place:1});
   window.alert = uiAlert;
   const D = d => d ? '2027-07-' + String(d).padStart(2,'0') : '';
   const num = v => { const n = parseFloat(String(v ?? '').replace(',','.')); return isNaN(n) ? 0 : n; };
@@ -437,6 +442,38 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     return ck[code] = {code, key, hkey, token};
   }
   async function authCode(code){ code = code || M.sync.code; return E2E ? (await keys(code)).token : code; }
+  /* ✍️ Fil d’abonnés : seul l’AUTEUR publie (le serveur le vérifie). Les abonnés et compagnons lisent, mettent des ❤️ et commentent.
+     La clé d’auteur d’un fil est tirée du carnet principal : tous MES téléphones (et les compagnons de mon carnet) ont la même ;
+     sans carnet principal, elle est gardée sur ce téléphone. Celle que le serveur a acceptée est retenue (admOk). */
+  const ADMT = {}, ADMC = {};   // empreinte du lien abonnés → ma clé d’auteur (ADMC : par code)
+  const wsec = () => { if(!M.wsec){ M.wsec = hex(crypto.getRandomValues(new Uint8Array(16))); setTimeout(()=>{ try { persist(); } catch(e){} }, 0); } return M.wsec; };   // gardée : mes ❤️ et commentaires restent modifiables par moi
+  window.__vzHdr = tok => { try { if(!tok || !M) return null; const h = {'X-Carnet-Writer': wsec()}; if(ADMT[tok]) h['X-Carnet-Admin'] = ADMT[tok]; return h; } catch(e){ return null; } };
+  const myFeedCode = c => !!c && (Object.values(typeof FT === 'function' ? FT() : {}).includes(c) || !!(M.admOk || {})[c] || (M.fold || []).some(x=>x.code === c));
+  async function admKey(code){
+    if((M.admOk || {})[code]) return M.admOk[code];
+    if(M.sync && M.sync.on && M.sync.code && M.sync.code !== code) return hex(await crypto.subtle.sign('HMAC', (await keys(M.sync.code)).hkey, te.encode('vz-feed-admin:' + code)));
+    const A = M.admW || (M.admW = {}); if(!A[code]){ A[code] = hex(crypto.getRandomValues(new Uint8Array(24))); persist(); } return A[code];
+  }
+  async function admPrime(code){ try { if(!myFeedCode(code)) return; const k = await admKey(code); ADMT[await authCode(code)] = k; ADMC[code] = k; } catch(e){} }
+  async function admPrimeAll(){ const cs = new Set([...Object.values(typeof FT === 'function' ? FT() : {}), ...Object.keys(M.admOk || {}), ...(M.fold || []).map(x=>x.code)].filter(Boolean)); for(const c of cs) await admPrime(c); }
+  // ce que le fil accepte d’un abonné : ses ❤️, commentaires, abonnement, signalement d’ancien lien — rien d’autre
+  const SOC_P = {like:'lk:', comment:'cm:', follower:'fw:', oldlink:'ol:'};
+  async function admFilter(j, env0, recs, code){
+    if(!j.adm) return recs;   // l’auteur aussi : une fiche glissée par un abonné n’entre nulle part
+    return Promise.all(recs.map(async (r, i)=>{ if(!r) return null; if(env0[i] && env0[i]._a) return r;
+      const p = SOC_P[r.type]; if(!p || !String(r.id || '').startsWith(p) || !/^ft:/.test(String(r.trip || ''))) return null;
+      if(E2E && env0[i] && await sid(r.id, code) !== env0[i].id) return null;   // une fiche glissée sous l’identifiant d’une autre
+      return r; }));
+  }
+  // la 1re fois que le serveur me reconnaît comme auteur : tout le fil repart, signé (plus personne d’autre ne peut le remplacer)
+  function admAck(j, code){
+    try {
+      if(j.me === 'a'){ const A = M.admOk || (M.admOk = {}); if(!A[code]){ const key = ADMC[code];
+          if(key){ A[code] = key; const sp = spaceObj(code); if(sp){ Object.keys(R).forEach(id=>{ if(R[id] && targets(R[id]).includes(code) && !sp.dirty.includes(id)) sp.dirty.push(id); }); } persist(); queueSync(); } } }
+      else if(j.admBad && myFeedCode(code)){ const B = M.admBadSeen || (M.admBadSeen = {}); if(!B[code]){ B[code] = Date.now(); persist();
+          setTimeout(()=>alert('⚠️ ' + MSGT('Ton lien abonnés est verrouillé par une autre clé d’auteur : tes nouvelles publications ne partent plus. Arrête la publication puis republie le voyage pour obtenir un nouveau lien.')), 300); } }
+    } catch(e){}
+  }
   async function sid(id, code){ if(!E2E) return id; return 'x' + hex(await crypto.subtle.sign('HMAC', (await keys(code)).hkey, te.encode(id))).slice(0, 40); }
   async function seal(bytes, code){
     const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -476,6 +513,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     changes = E2E ? await Promise.all(changes.map(r=>sealRec(r, code))) : changes.map(slim);
     // ⏱️ une synchro bloquée par un réseau qui ne répond plus est abandonnée puis réessayée : 45 s, plus le temps d’envoyer
     //    le paquet même sur un réseau très lent (≈ 20 Ko/s). Le téléchargement de la réponse, lui, n’est jamais coupé.
+    if(code) await admPrime(code);
     const body = JSON.stringify({since, changes}), ac = typeof AbortController === 'function' ? new AbortController() : null, to = ac ? setTimeout(()=>ac.abort(), 45000 + body.length / 20) : 0;
     let res;
     try { res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json','X-Carnet-Code':await authCode(code)}, body, signal:ac ? ac.signal : undefined}); }
@@ -490,7 +528,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(res.status === 429){ M.syncPause = Date.now() + Math.min(3600, Math.max(60, +j.retry || 600)) * 1000; persist(); }
     if(!res.ok){ const er = new Error(srvMsg(j.error) || ('Erreur serveur ' + res.status)); er.st = res.status; er.revoked = !!j.revoked; throw er; }   // revoked : accès compagnon retiré
     if(!Array.isArray(j.records)) throw new Error('Réponse inattendue du serveur');
-    if(E2E) j.records = (await Promise.all(j.records.map(x=>openRec(x, code)))).filter(Boolean);
+    { const env0 = j.records; let recs = E2E ? await Promise.all(env0.map(x=>openRec(x, code))) : env0.slice();
+      recs = await admFilter(j, env0, recs, code); j.records = recs.filter(Boolean); j.records.forEach(r=>{ if(r && typeof r === 'object' && '_a' in r) delete r._a; }); }
+    if(code) admAck(j, code);
     if(code) try { j.records.forEach(r=>{ if(!r || r.type !== 'feedtrip') return; const k = r.id + '|' + code;   // 🔗 même voyage suivi par 2 liens : l’âge de chacun (voir ftPick)
       if(r.deleted){ if(M.ftAt) delete M.ftAt[k]; } else if(!FT()[String(r.id).slice(3)]) (M.ftAt || (M.ftAt = {}))[k] = (r.updatedAt || 0) + (r.link === code ? 1e12 : 0); }); } catch(e){}   // link : le lien où l’auteur publie aujourd’hui
     try { if(orig.length) pushNote(orig, code || M.sync.code); } catch(e){}
@@ -2258,6 +2298,61 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     }
     const lead = wvClean((main.split(/^==/m)[0] || '').replace(/\{\{[\s\S]*?\}\}/g, '')).slice(0, 600);
     return {lg, title, items, lead};
+  }
+  /* 🏘️ Les quartiers d’une ville, décrits par Wikivoyage (CC BY-SA : usage commercial permis, source citée) :
+     la rubrique « Quartiers / Districts » de l’article de la ville, sinon ses sous-articles (« Rome/Trastevere »…). */
+  const WV_HOOD = /^(districts?|neighbou?rhoods?|quartiers?|arrondissements|stadtteile|stadtbezirke|bezirke|stadtviertel|viertel|quartieri|zone|rioni|distritos|barrios|zonas|bairros|regiões|regioes|wijken|stadsdelen|districten|районы|округа|地区|区域|城区|エリア|地域|区|semtler|ilçeler|bölgeler|mahalleler|जिले|क्षेत्र)$/i;
+  // paramètres d’un modèle {{…|a=…|b=…}} sans couper aux « | » des liens [[x|y]] ni des modèles imbriqués
+  function wvParams(body){ const out = {}; let depth = 0, cur = '', parts = [];
+    for(let i = 0; i < body.length; i++){ const c = body[i], n = body[i + 1];
+      if((c === '[' && n === '[') || (c === '{' && n === '{')){ depth++; cur += c + n; i++; continue; }
+      if((c === ']' && n === ']') || (c === '}' && n === '}')){ depth = Math.max(0, depth - 1); cur += c + n; i++; continue; }
+      if(c === '|' && !depth){ parts.push(cur); cur = ''; continue; } cur += c; }
+    parts.push(cur); parts.forEach(x=>{ const k = x.indexOf('='); if(k > 0) out[x.slice(0, k).trim().toLowerCase()] = x.slice(k + 1).trim(); }); return out; }
+  function wvHoodParse(sec){
+    const keep = x => String(x || '').replace(/\{\{\s*(?:nowrap|nobr|small|lang|langue|w|nihongo)\s*\|(?:[a-z]{2,3}\|)?([^{}|]*)[^{}]*\}\}/gi, '$1');   // {{nowrap|texte}} : on garde le texte
+    const out = [], seen = new Set(), add = (n, d) => { n = wvClean(keep(n)); d = keep(d); n = n.replace(/^.*\//, '').slice(0, 60); d = wvClean(d).replace(/^[\s.:–—-]+/, '').slice(0, 420); const k = normQ(n);
+      if(n && n.length > 1 && !seen.has(k)){ seen.add(k); out.push({n, d}); } };
+    // {{Regionlist | region1name=… | region1description=… }}
+    const t = sec.indexOf('{{'); if(t >= 0 && /regionlist|liste\s*r[ée]gions|quartierliste|regionsliste/i.test(sec.slice(t, t + 40))){
+      let depth = 0, end = -1; for(let i = t; i < sec.length - 1; i++){ if(sec[i] === '{' && sec[i + 1] === '{'){ depth++; i++; } else if(sec[i] === '}' && sec[i + 1] === '}'){ depth--; i++; if(!depth){ end = i - 1; break; } } }
+      const P = wvParams(sec.slice(t + 2, end > 0 ? end : undefined));
+      for(let i = 1; i < 40; i++){ const n = P['region' + i + 'name'] || P['region' + i + 'nom'] || P['quartier' + i] || ''; if(!n) continue; add(n, P['region' + i + 'description'] || P['region' + i + 'items'] || ''); }
+    }
+    // listes : « * '''Centro''' — le cœur historique… » ou « * [[Rome/Trastevere|Trastevere]] : … »
+    sec.split('\n').forEach(l=>{ const m = /^\*+\s*(.+)$/.exec(l); if(!m) return; const x = m[1];
+      const b = /'''(.+?)'''/.exec(x) || /^\[\[([^\]]+)\]\]/.exec(x); if(!b) return;
+      const name = b[1].split('|').pop(), rest = x.slice(b.index + b[0].length); add(name, rest); });
+    return out.slice(0, 24);
+  }
+  async function wvHoods(city){
+    const lang = (window.I18N && I18N.lang) || 'fr', key = normQ(city) + ':' + lang, C = M.wvH || (M.wvH = {});
+    if(C[key] && Date.now() - C[key].at < 30 * 864e5) return C[key];
+    const one = async lg => {
+      const api = `https://${lg}.wikivoyage.org/w/api.php?format=json&origin=*&formatversion=2`;
+      const q = await expJ(api + '&action=query&prop=revisions&rvprop=content&rvslots=main&redirects=1&titles=' + encodeURIComponent(city), 15000).catch(()=>null);
+      let pg = q && q.query && q.query.pages && q.query.pages[0];
+      if(!pg || pg.missing){ const s = await expJ(api + '&action=query&list=search&srlimit=1&srnamespace=0&srsearch=' + encodeURIComponent(city)).catch(()=>null); const h = s && s.query && s.query.search && s.query.search[0];
+        if(!h) return null; const q2 = await expJ(api + '&action=query&prop=revisions&rvprop=content&rvslots=main&redirects=1&titles=' + encodeURIComponent(h.title), 15000).catch(()=>null); pg = q2 && q2.query && q2.query.pages && q2.query.pages[0]; }
+      if(!pg || pg.missing) return null;
+      const txt = (((pg.revisions || [])[0] || {}).slots || {}).main; const text = (txt && txt.content) || '';
+      const re = /^(={2,3})\s*([^=\n]+?)\s*\1\s*$/gm, H = []; let m; while((m = re.exec(text))) H.push([m.index, m[0].length, m[1].length, wvClean(m[2])]);
+      let items = [];
+      for(let i = 0; i < H.length; i++){ if(!WV_HOOD.test(H[i][3])) continue; const nx = H.slice(i + 1).find(h=>h[2] <= H[i][2]); items = wvHoodParse(text.slice(H[i][0] + H[i][1], nx ? nx[0] : undefined)); if(items.length) break; }
+      if(items.length < 2){   // les grandes villes : un article par quartier
+        const sub = await expJ(api + '&action=query&list=allpages&apnamespace=0&aplimit=20&apprefix=' + encodeURIComponent(pg.title + '/')).catch(()=>null);
+        const ts = (sub && sub.query && sub.query.allpages || []).map(x=>x.title).slice(0, 15);
+        if(ts.length >= 2){ const ex = await expJ(api + '&action=query&prop=extracts&exintro=1&explaintext=1&exsentences=2&exlimit=20&titles=' + encodeURIComponent(ts.join('|'))).catch(()=>null);
+          const E = {}; (ex && ex.query && ex.query.pages || []).forEach(p=>{ E[p.title] = p.extract || ''; });
+          items = ts.map(t=>({n:t.split('/').pop(), d:String(E[t] || '').replace(/\s+/g, ' ').trim().slice(0, 420)})); }
+      }
+      return items.length ? {lg, title:pg.title, url:`https://${lg}.wikivoyage.org/wiki/` + encodeURIComponent(pg.title.replace(/ /g, '_')), items} : {lg, title:pg.title, url:`https://${lg}.wikivoyage.org/wiki/` + encodeURIComponent(pg.title.replace(/ /g, '_')), items:[]};
+    };
+    const wl = EXP_WV.includes(lang) ? lang : 'en';
+    let r = await one(wl); if((!r || !r.items.length) && wl !== 'en'){ const r2 = await one('en'); if(r2 && r2.items.length) r = r2; else r = r || r2; }
+    const o = Object.assign({at:Date.now()}, r || {items:[]}); if(r) C[key] = o;   // pas de réseau : on réessaiera
+    const ks = Object.keys(C); if(ks.length > 60) ks.sort((a, b)=>C[a].at - C[b].at).slice(0, ks.length - 60).forEach(k=>delete C[k]);
+    persist(); return o;
   }
   // photos : fichier donné par la fiche, sinon l’image Wikidata (une seule requête pour toute la ville)
   const commons = (f, w) => 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(String(f).replace(/^(file|fichier|image|datei):/i, '').trim()) + '?width=' + (w || 500);
