@@ -756,8 +756,11 @@
         ${ds.map((d,i)=>`<option value="${d}"${d===s.date?' selected':''}>${PJ(i+1)} · ${fdate(d)}${dayInfo(d).titre ? ' · ' + esc(dayInfo(d).titre) : ''}</option>`).join('')}
       </select><div class="v-sum-small" style="margin-top:4px">Le souvenir et ses photos sont classés sous ce jour.</div></div>`;
   }
-  function editSouv(id){
-    const s = id ? clone(R[id]) : {id:null, type:'souv', trip:M.trip, date:new Date().toISOString().slice(0,10), titre:'', lieu:'', texte:'', photos:[]};
+  function editSouv(id, d0){
+    // 📅 le jour proposé : celui demandé (un « jour sans souvenir » du bilan), sinon aujourd’hui ; voyage fini : son premier jour encore sans souvenir
+    const dd = (()=>{ if(d0) return d0; const td = isoToday(), t = trip(), ds = dayList(); if(!t || ds.includes(td) || tripPhase(t) !== 'past' || !ds.length) return td;
+      const sv = list('souv', x=>x.trip === t.id && !x.deleted); return ds.find(d=>!sv.some(x=>x.date === d)) || ds[ds.length - 1]; })();
+    const s = id ? clone(R[id]) : {id:null, type:'souv', trip:M.trip, date:dd, titre:'', lieu:'', texte:'', photos:[]};
     editing = s;
     openSheet(`<h2>📸 ${id ? esc(s.titre||'Souvenir') : 'Nouveau souvenir'}</h2>${byline(s)}
       <form id="v-form" onsubmit="event.preventDefault();CV.saveSouv()">
@@ -985,12 +988,19 @@
     if(window.VZ_HOST && M.trip === LEGACY) M.trip = R.t2026 && !R.t2026.deleted ? 't2026' : null;
     document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ if(vw) viewClose(); else closeSheet(); } if(vw && e.key==='ArrowRight') viewGo(1); if(vw && e.key==='ArrowLeft') viewGo(-1); });
     document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && (M.dirty.length || Date.now() - lastSyncAt > AUTO_SYNC)) syncNow(); });
+    // 🧭 l’appli revient au premier plan le jour du départ (ou après le retour) : l’écran passe à « Aujourd’hui » (ou au bilan) ;
+    //    et un nouveau jour (téléphone verrouillé pendant la nuit) : « Ta journée » se remet à jour au lieu de montrer celle d’hier.
+    //    (une fenêtre ouverte reste ouverte : seul l’écran derrière change)
+    let visDay = isoToday();
+    document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState !== 'visible') return;
+      try { const nd = isoToday(), sw = phaseFollow(); if(sw || nd !== visDay){ visDay = nd; applyMode(); if(sw && !sheetOpen() && !ovOpen()) window.scrollTo({top:0}); } } catch(e){} });
     window.addEventListener('online', ()=>syncNow());
     // synchro automatique toutes les heures quand l'appli est à l'écran (+ à chaque modification, à l'ouverture et au retour du réseau)
     (function poll(){ setTimeout(()=>{ if(document.visibilityState==='visible' && !sheetOpen() && Date.now() - lastSyncAt >= pollGap) syncNow(); poll(); }, 30000); })();   // vérifié toutes les 30 s : le rythme suit pollGap (1 min si quelqu’un modifie en même temps)
     bootOffline();
     if(webFollowBoot()) return;
     if(installGate()) return;
+    try { phaseFollow(true); } catch(e){}   // jour du départ, lendemain du retour : on ouvre sur le bon moment du voyage
     applyMode(); applyLock(); countInstall();
     // (rappel de sauvegarde : voir protectNag, lancé avec les « moments » de l’ouverture)
     const boot2 = () => {

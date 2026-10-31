@@ -318,14 +318,17 @@
   }
   function avantSheet(open){
     const t = trip(); if(!t) return; const {S, ccs} = avantData(), op = open || (M.avOpen || {})[t.id] || S[0].k;
+    // ✅ vu une fois : sans checklist, c’est ce qui valide l’étape « Finaliser » de la préparation (la carte se met à jour derrière)
+    if(!(M.avSeen || {})[t.id]){ (M.avSeen = M.avSeen || {})[t.id] = 1; persist(); try { const y = window.scrollY; render(); window.scrollTo(0, y); } catch(e){} }
     openSheet(`<h2>🧭 ${esc(MSGT('Avant de partir'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${ccs.length ? ccs.map(cc=>flag(cc) + ' <span data-notr>' + esc(ccName(cc)) + '</span>').join(' · ') : esc(MSGT('Ajoute les villes du voyage pour personnaliser cette liste.'))}</div>
       <div class="av-list">${S.map(x=>`<div class="av-s${x.k === op ? ' open' : ''}"><button type="button" class="av-h" onclick="CV.avantSheet('${ja(x.k === op ? '-' : x.k)}')"><i>${x.ic}</i><span>${esc(x.t)}</span>${x.warn ? `<em class="bad">${x.warn}</em>` : x.n ? `<em>${esc(x.n)}</em>` : ''}<b>${x.k === op ? '▴' : '▾'}</b></button>${x.k === op ? `<div class="av-b">${x.h}</div>` : ''}</div>`).join('')}</div>
       <div class="v-sum-small" style="margin-top:10px">${esc(MSGT('Règles générales pour un court séjour touristique : vérifie toujours avant de partir sur diplomatie.gouv.fr (Conseils aux voyageurs) ou le site officiel du pays.'))}</div>
-      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`);
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.avDone()">✓ ${esc(MSGT('C’est noté'))}</button></div>`);
     if(open){ (M.avOpen = M.avOpen || {})[t.id] = open; persist(); }
     // pays pas encore connus : on les cherche, puis on rafraîchit
     if(!ccs.length && bagCities().length) (async ()=>{ for(const c of bagCities()){ if(!(M.ctry || {})[normQ(c)] && !ccOf(c)) { try { await countryOf(c); } catch(e){} } } if(bagCcs().length && document.querySelector('.av-list')) avantSheet(open); })();
   }
+  function avDone(){ closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function tlDocs(){
     const v = tv(), di = docIssues();
     openSheet(`<h2>🛂 Documents de voyage</h2>
@@ -1211,7 +1214,9 @@ ${pm.join('\n')}</Document></kml>`;
   const expKept = tid => new Set(list('item', i=>i.trip === tid && i.exp).map(i=>i.exp));
   function expTrip(t){
     if(!t) return []; const no = new Set(((M.expNo || {})[t.id]) || []), kept = expKept(t.id), seen = new Set(), out = [];
+    const td = isoToday(), live = tripPhase(t) === 'live';   // 📍 pendant le voyage : seulement les étapes pas encore finies
     list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date).sort((a, b)=>a.date.localeCompare(b.date)).forEach(h=>{
+      if(live && (h.dateFin || h.date) < td) return;
       const city = stayCity(h); if(!city || seen.has(normQ(city))) return; seen.add(normQ(city));
       const cc = ((M.ctry || {})[normQ(city)] || {}).cc;
       const L = expFor(city, cc).filter(e=>!no.has(e.key) && !kept.has(e.key)); if(L.length) out.push({h, city, L});
@@ -1266,7 +1271,7 @@ ${pm.join('\n')}</Document></kml>`;
     SG = {tid, i:0, n:hs.length, city:'', got:0, more:!!more};
     if(M.trip === tid){ M.tab = 'prog'; M.ariOpen = M.ariOpen || {}; M.ariOpen[tid] = 'faire'; }
     toast('💡 ' + MSGT(more ? 'Je cherche de nouvelles suggestions…' : 'Je cherche les incontournables…')); refresh();
-    const exDay = {}, t0 = R[tid] || {};
+    const exDay = {}, t0 = R[tid] || {}, td0 = isoToday(), live = tripPhase(t0) === 'live', fut = d => !live || d >= td0;   // 📍 pendant le voyage : rien pour les jours passés
     // 🚌 1ʳᵉ recherche : les grands sites du pays (UNESCO) à plus de 25 km d’une étape mais à moins de 330 km = une journée d’excursion
     if(!more){ SG.city = MSGT('les grands sites du pays'); refresh();
       try { await withTimeout((async()=>{
@@ -1281,7 +1286,7 @@ ${pm.join('\n')}</Document></kml>`;
           if(sgName(tid, st.nom)) continue;
           let best = null, bd = 1e9; hs.forEach(h=>{ const g = geo[h.id]; if(!g) return; const d = km(g, st); if(d < bd){ bd = d; best = h; } });
           if(!best || bd < 25 || bd > 330) continue;
-          const days = (best.dateFin ? range(best.date, best.dateFin).slice(0, -1) : []).filter(d=>!nOf(d)); if(days.length < 2) continue;
+          const days = (best.dateFin ? range(best.date, best.dateFin).slice(0, -1) : []).filter(d=>!nOf(d) && fut(d)); if(days.length < 2) continue;
           const n = used[best.id] || 0, d = days[1 + n * 2]; if(!d || n >= Math.floor(days.length / 2)) continue;
           used[best.id] = n + 1; exDay[d] = 1;
           out.push({id:'pl' + uid() + 'x' + n, type:'place', trip:tid, stay:best.id, date:d, nom:st.nom, adresse:'', lat:st.lat, lng:st.lng, cat:'monu', lock:false, sugg:true, exc:Math.round(bd)});
@@ -1294,7 +1299,7 @@ ${pm.join('\n')}</Document></kml>`;
     for(const h of hs){
       const city = stayCity(h); if(!city) continue;
       SG.i++; SG.city = city; refresh();
-      const days = (h.dateFin ? range(h.date, h.dateFin).slice(0, -1) : [h.date]).filter(d=>!exDay[d] && !list('place', p=>p.trip === tid && p.date === d && p.exc).length); if(!days.length) continue;
+      const days = (h.dateFin ? range(h.date, h.dateFin).slice(0, -1) : [h.date]).filter(d=>fut(d) && !exDay[d] && !list('place', p=>p.trip === tid && p.date === d && p.exc).length); if(!days.length) continue;
       let cand = []; try { cand = await placesFor(city); } catch(e){}
       const have = list('place', p=>p.trip === tid && !p.deleted && p.nom);
       cand = cand.filter(p=>normQ(p.nom) !== normQ(city) && !sgName(tid, p.nom) && !have.some(q=>dupSame(p, q))); if(!cand.length){ miss++; continue; }
@@ -1361,7 +1366,8 @@ ${pm.join('\n')}</Document></kml>`;
   function suggOpen(){
     const t = trip(); if(!t) return; try { sgDedupe(t.id); } catch(er){}
     const st = tlStages(), si = c => { const k = st.findIndex(x=>normQ(x.city) === normQ(c)); return k < 0 ? 99 : k; };
-    const L = list('place', p=>p.trip === t.id && p.sugg).map(p=>({id:p.id, c:swCity(p), d:p.date || '9', x:p.exc ? 1 : 0}));
+    const td = isoToday(), live = tripPhase(t) === 'live';   // 📍 pendant le voyage : rien des jours déjà passés
+    const L = list('place', p=>p.trip === t.id && p.sugg && (!live || !p.date || p.date >= td)).map(p=>({id:p.id, c:swCity(p), d:p.date || '9', x:p.exc ? 1 : 0}));
     // une activité payante qui est déjà un lieu proposé ou gardé (Machu Picchu « à réserver » + Machu Picchu à visiter) : une seule carte, le lieu, marqué 🎟️
     const PL = list('place', p=>p.trip === t.id && !p.deleted && p.nom), PAY = {};
     const twin = (e, city) => { if(e.wg) return null; const n = normQ(e.p); if(n.length < 5) return null;
@@ -1381,7 +1387,7 @@ ${pm.join('\n')}</Document></kml>`;
     wgPend.forEach(([h, city])=>wgFetch(city).then(r=>swAddWg(t, h, city, r)).catch(()=>{}));
   }
   // 🎧 WeGoTrip dans le tri : 3 visites par ville, comme des « activités à réserver » (garder = au programme, avec le lien de la visite)
-  const wgStays = t => { const seen = new Set(), out = []; list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date).sort((a, b)=>a.date.localeCompare(b.date)).forEach(h=>{ const c = stayCity(h); if(c && !seen.has(normQ(c))){ seen.add(normQ(c)); out.push([h, c]); } }); return out; };
+  const wgStays = t => { const seen = new Set(), out = [], td = isoToday(), live = tripPhase(t) === 'live'; list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date && (!live || (i.dateFin || i.date) >= td)).sort((a, b)=>a.date.localeCompare(b.date)).forEach(h=>{ const c = stayCity(h); if(c && !seen.has(normQ(c))){ seen.add(normQ(c)); out.push([h, c]); } }); return out; };
   function wgCards(t, h, city, r){
     if(hidden('blk:book') || !r || !r.ok) return [];
     const no = new Set(((M.expNo || {})[t.id]) || []), kept = expKept(t.id);
@@ -1729,8 +1735,9 @@ ${pm.join('\n')}</Document></kml>`;
       ov.innerHTML = head + `<div class="sw-end rg-end"><div class="sw-end-i">🗓️</div><h2>${esc(MSGT('Tout est rangé !'))}</h2><p>${esc(MSGT('Chaque journée suit l’ordre du trajet, de proche en proche. Tu peux encore tout déplacer dans le programme.'))}</p>
         <div class="rg-hood"><b>🏨 ${esc(MSGT('Où dormir ? Le quartier au centre de tes visites'))}</b><div id="rg-hood">${rgHoods(t) || esc(MSGT('Ajoute au moins 2 visites par ville pour avoir un conseil.'))}</div>
           <small>${esc(MSGT('Rien n’est figé : si tu choisis un hôtel ailleurs, mets son adresse dans l’hébergement puis « Réorganiser depuis mon hôtel ». Les journées repartiront de là.'))}</small></div>
-        ${(()=>{ const n = list('place', p=>p.trip === t.id && p.sugg).length + expCount(t); return n ? `<button type="button" class="v-btn" onclick="CV.rgClose();CV.suggOpen()">① ${esc(MSGT('Reprendre le choix des visites'))} (${n})</button>` : ''; })()}
-        ${guideOn(t) ? `<button type="button" class="v-btn${list('place', p=>p.trip === t.id && p.sugg).length + expCount(t) ? ' sec' : ''}" onclick="CV.guideNext('rg')">🧭 ${esc(MSGT('Continuer : trajets, activités, hébergements'))}</button>` : ''}
+        ${(()=>{ const n = list('place', p=>p.trip === t.id && p.sugg).length; return n ? `<button type="button" class="v-btn" onclick="CV.rgClose();CV.suggOpen()">① ${esc(MSGT('Reprendre le choix des visites'))} (${n})</button>` : ''; })()}
+        ${guideOn(t) ? `<button type="button" class="v-btn${list('place', p=>p.trip === t.id && p.sugg).length ? ' sec' : ''}" onclick="CV.guideNext('rg')">🧭 ${esc(MSGT('Continuer : trajets, activités, hébergements'))}</button>`
+          : !list('place', p=>p.trip === t.id && p.sugg).length && expCount(t) ? `<button type="button" class="v-btn sec" onclick="CV.rgClose();CV.expOpen()">🎟️ ${esc(MSGT('Expériences à vivre'))} (${expCount(t)})</button>` : ''}
         <button type="button" class="v-btn${guideOn(t) ? ' sec' : ''}" onclick="CV.rgClose();CV.tab('prog')">📅 ${esc(MSGT('Voir mon programme'))}</button>
         ${RG.hist.length ? `<button type="button" class="v-btn sec" onclick="CV.rgUndo()">↩️ ${esc(MSGT('Annuler le dernier choix'))}</button>` : ''}
         <button type="button" class="v-btn sec" onclick="CV.rgClose()">${esc(MSGT('Fermer'))}</button></div>`;

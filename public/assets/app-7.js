@@ -3,25 +3,37 @@
 
   /* ══════════ 🧵 Fil d’Ariane de la préparation : Où et quand → Que faire → Réserver → Finaliser ══════════ */
   const okB = i => i.statut === 'booked' || i.statut === 'paid';
+  // 🎫 ce qui se réserve : les hébergements, les visites et activités (fiches « à réserver »), les trajets — sauf ta propre voiture,
+  //    à pied ou à vélo (rien à réserver… à moins d’une location ou d’un billet saisi : compagnie ou n° de réservation)
+  const OWN_WAY = /Voiture|Moto|V[ée]lo|Pied|Marche|Camping/i;
+  const needBook = i => !!i && (i.cat === 'hotel' || i.cat === 'activite'
+    || (i.cat === 'transport' && (!OWN_WAY.test(i.mode || '') || okB(i) || !!String(i.compagnie || '').trim() || !!String(i.ref || '').trim())));
   function ariData(t){
     const hs = items(i=>i.cat === 'hotel' && i.date).sort((a, b)=>a.date.localeCompare(b.date));
-    const trs = items(i=>i.cat === 'transport').sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'));
+    const trs = items(i=>i.cat === 'transport' && needBook(i)).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'));
     const pl = list('place', p=>p.trip === t.id), sg = pl.filter(p=>p.sugg), sk = (M.ariSkip || {})[t.id] || {};
-    const xs = items(i=>i.cat === 'activite' && i.exp);
+    const xs = items(i=>i.cat === 'activite' && needBook(i));
     const rs = [...hs, ...trs, ...xs].sort((a, b)=>(a.date || '9').localeCompare(b.date || '9') || (a.cat === 'transport' ? -1 : 1));
     const di = (()=>{ try { return docIssues(); } catch(e){ return []; } })();
     let fm = []; try { const from = bagFromDefault(), dest = [...new Set([...tlStages().map(x=>((M.ctry || {})[normQ(x.city)] || {}).cc).filter(Boolean), ...bagCcs()])], dn = (M.fmDone || {})[t.id] || {};
       dest.forEach(cc=>entryRules(cc, from).x.filter(x=>!/CEAM/.test(x)).forEach(x=>fm.push({l:x, done:!!dn[x]}))); } catch(e){}
     const ck = list('check', c=>c.trip === t.id), ckd = ck.filter(c=>chkDone(c)).length;
     const nd = t.debut ? Math.max(1, nights(t.debut, t.fin || t.debut)) : 0;
+    const av = !!((M.avSeen || {})[t.id]);   // ✅ « Avant de partir » ouvert au moins une fois (sans checklist, c’est ce qui valide la finalisation)
+    // 🛏️ les nuits du voyage sans aucun hébergement (une ville de 2 nuits dans un voyage de 10, un hôtel supprimé…) : à combler ou à confirmer
+    const gaps = [], ntr = t.debut && t.fin ? nights(t.debut, t.fin) : 0;
+    if(hs.length && ntr > 0 && ntr <= 120) for(let d = t.debut; d < t.fin; d = addDays(d, 1)) if(!hs.some(h=>h.date <= d && d < (h.dateFin || addDays(h.date, 1)))) gaps.push(d);
+    const gapOk = !gaps.length || !!sk.ou;
     const S = [
-      {k:'ou', ic:'📍', l:'Où et quand', ok: !!t.debut && hs.length > 0, f: (t.debut ? .5 : 0) + (hs.length ? .5 : 0)},
+      {k:'ou', ic:'📍', l:'Où et quand', ok: !!t.debut && hs.length > 0 && gapOk, f: (t.debut ? .5 : 0) + (hs.length ? .5 * (gapOk || !ntr ? 1 : 1 - gaps.length / ntr) : 0)},
       {k:'faire', ic:'🎟️', l:'Que faire', ok: (pl.length > 0 && !sg.length) || !!sk.faire || (nd > 0 && pl.length - sg.length >= nd), f: sk.faire ? 1 : nd ? Math.min(1, (pl.length - sg.length) / nd) : pl.length ? (pl.length - sg.length) / pl.length : 0},   // 1 lieu gardé par jour suffit : les suggestions pas triées ne comptent pas contre toi
       {k:'resa', ic:'🛏️', l:'Réserver', ok: rs.length > 0 && rs.every(okB), f: rs.length ? rs.filter(okB).length / rs.length : 0, w:2},
-      {k:'fin', ic:'✅', l:'Finaliser', ok: !di.length && fm.every(x=>x.done) && (!ck.length || ckd === ck.length), f: (()=>{ const p = []; if(ck.length) p.push(ckd / ck.length); if(fm.length) p.push(fm.filter(x=>x.done).length / fm.length); if(di.length) p.push(0); return p.length ? p.reduce((a, b)=>a + b, 0) / p.length : 1; })(), w:1}
+      {k:'fin', ic:'✅', l:'Finaliser', ok: !di.length && fm.every(x=>x.done) && (ck.length ? ckd === ck.length : av), f: (()=>{ const p = [ck.length ? ckd / ck.length : av ? 1 : 0]; if(fm.length) p.push(fm.filter(x=>x.done).length / fm.length); if(di.length) p.push(0); return p.reduce((a, b)=>a + b, 0) / p.length; })(), w:1}
     ];
-    return {hs, trs, pl, sg, rs, di, fm, ck, ckd, S};
+    return {hs, trs, pl, sg, rs, di, fm, ck, ckd, av, gaps:gapOk ? [] : gaps, S};
   }
+  // nuits consécutives sans hébergement, regroupées (« du 12 au 15 »)
+  const gapRuns = g => { const out = []; g.forEach(d=>{ const r = out[out.length - 1]; if(r && addDays(r[r.length - 1], 1) === d) r.push(d); else out.push([d]); }); return out; };
   function ariLink(it, t){
     if(hidden('blk:book')) return '';
     const n = Math.max(1, (t.voyageurs || []).length), c = cityOf(it.titre || '') || it.titre || '';
@@ -53,15 +65,18 @@
           ${(()=>{ const H = tripHols(t); return H.length ? `<div class="ar-hol">🎌 ${H.length} ${MSGT('jour(s) férié(s) pendant ton voyage')} : ${H.slice(0, 3).map(x=>`${fshort(x.d)} ${flag(x.cc)} <span data-notr>${esc(x.n)}</span>`).join(' · ')}${H.length > 3 ? ' …' : ''}</div>` : ''; })()}
           ${ccs.length ? `<div class="ar-st">🌍 ${ccs.map(cc=>`${flag(cc)} <span data-notr>${esc(ccName(cc))}</span>`).join(' · ')}</div>` : ''}
           ${st.length ? `<div class="ar-st">${st.map(x=>`📍 <span data-notr>${esc(x.city)}</span> <small>${fd(x.debut)} → ${fd(x.fin)} · ${nights(x.debut, x.fin || x.debut)} ${MSGT('nuits')}</small>`).join('<br>')}</div>` : ''}
-          <button type="button" class="ar-go" onclick="CV.ariCity()">📍 ${MSGT(st.length ? 'Ajouter une ville' : 'Ajouter les villes du voyage')}</button></div>`;
+          ${D.gaps.length ? `<div class="ar-p">🛏️ ${RF('{0} nuit(s) sans hébergement', D.gaps.length)}</div>${gapRuns(D.gaps).slice(0, 3).map(r=>`<button type="button" class="ar-go" onclick="CV.ariCity('${ja(r[0])}',${r.length})">📍 ${RF('Une ville pour le {0} → {1}', fd(r[0]), fd(addDays(r[r.length - 1], 1)))}</button>`).join('')}
+            <button type="button" class="ar-sk" onclick="CV.ariSkip('ou')">${MSGT('Ces nuits sont prévues autrement (train de nuit, chez des amis…)')}</button>`
+          : `<button type="button" class="ar-go" onclick="CV.ariCity()">📍 ${MSGT(st.length ? 'Ajouter une ville' : 'Ajouter les villes du voyage')}</button>`}</div>`;
       }
       if(k === 'faire'){   // ① choisir (swipe ville par ville, visites + activités payantes) → ② ranger dans les jours (ordre du trajet)
         const xn = expCount(t), pk = rgItems(t).length, nA = D.sg.length + xn;
         const more = `<button type="button" class="ar-more" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>`;
-        const subA = `<button type="button" class="ar-sub${nA ? ' cur' : ' ok'}" onclick="CV.suggOpen()"${nA ? '' : ' disabled'}><i>${nA ? '①' : '✓'}</i><span><b>${MSGT('Choisir mes visites')}</b><small>${nA ? RF('{0} idées à trier, ville par ville', nA) : MSGT('Tout est trié')}</small></span></button>`;
+        const subA = `<button type="button" class="ar-sub${nA ? ' cur' : ' ok'}" onclick="CV.suggOpen()"${nA ? '' : ' disabled'}><i>${nA ? '①' : '✓'}</i><span><b>${MSGT(D.sg.length || !xn ? 'Choisir mes visites' : 'Choisir mes activités payantes')}</b><small>${nA ? RF('{0} idées à trier, ville par ville', nA) : MSGT('Tout est trié')}</small></span></button>`;
         const subB = `<button type="button" class="ar-sub${pk ? (nA ? '' : ' cur') : ' ok'}" onclick="CV.rgOpen()"${pk ? '' : ' disabled'}><i>${pk ? '②' : '✓'}</i><span><b>${MSGT('Ranger mes visites dans les jours')}</b><small>${pk ? RF('{0} à placer, dans l’ordre du trajet', pk) : MSGT('Rien à ranger pour l’instant')}</small></span></button>`;
         if(SG && SG.tid === t.id) return `<div class="ar-run">${sgRun(t)}</div>${D.sg.length ? `<div class="ar-subs">${subA}</div>` : ''}`;   // dans son cadre (sinon texte blanc sur fond blanc)
-        if(!D.pl.length && !nA && !pk) return `<div class="ar-p">${MSGT('Les lieux à voir et les excursions, jour par jour.')}</div>${D.hs.length ? `<button type="button" class="ar-go" onclick="CV.suggGo()">💡 ${MSGT('Me proposer les incontournables (4 par jour)')}</button>` : ''}<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('Passer cette étape')}</button>`;
+        // pas encore un seul lieu : d’abord les incontournables (les activités payantes, toujours proposées, ne doivent pas les cacher)
+        if(!D.pl.length && !pk) return `<div class="ar-p">${MSGT('Les lieux à voir et les excursions, jour par jour.')}</div>${D.hs.length ? `<button type="button" class="ar-go" onclick="CV.suggGo()">💡 ${MSGT('Me proposer les incontournables (4 par jour)')}</button>` : ''}${xn ? `<button type="button" class="ar-more" onclick="CV.expOpen()">🎟️ ${RF('Choisir parmi {0} expériences', xn)}</button>` : ''}<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('Passer cette étape')}</button>`;
         const redo = !pk && D.pl.length - D.sg.length > 1 ? `<button type="button" class="ar-more" onclick="CV.rgRedo()">🏨 ${MSGT('Réorganiser depuis mon hôtel')}</button>` : '';
         return `<div class="ar-p">✓ ${D.pl.length - D.sg.length} ${MSGT('lieux au programme')}</div><div class="ar-subs">${subA}${subB}</div>${more}${redo}${D.sg.length && !((M.ariSkip || {})[t.id] || {}).faire ? `<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('C’est bon, j’ai assez de visites')}</button>` : ''}`;
       }
@@ -107,36 +122,53 @@
   }
   // 🧹 la carte de préparation : repliée sur « ta prochaine étape » (une seule action) ; le détail des 4 étapes à la demande
   function ariNext(t, D, cur){
-    if(!cur) return null; const n = (D.sg || []).length + expCount(t), pk = rgItems(t).length;
+    if(!cur) return null; const sgn = (D.sg || []).length, xn = expCount(t), pk = rgItems(t).length;
     { const pb = (D.rs || []).find(x=>bkP(x)); if(pb){ return {ic:'🛎️', b:MSGT('Remplir ma fiche') + ' : ' + esc(pb.cat === 'hotel' ? (cityOf(pb.titre) || pb.titre) : pb.titre), s:MSGT('Déjà réservé ?'), fn:`CV.bkFill('${ja(pb.id)}')`}; } }
     if(cur.k === 'ou'){ if(!t.debut) return {ic:'📅', b:MSGT('Choisir les dates'), s:MSGT('Le départ et le retour'), fn:'CV.datesSheet()'};
+      const r0 = D.hs.length ? gapRuns(D.gaps || [])[0] : null;   // 🛏️ des nuits sans hébergement : on les comble d’abord
+      if(r0) return {ic:'🛏️', b:RF('{0} nuit(s) sans hébergement', D.gaps.length), s:RF('Une ville pour le {0} → {1}', fshort(r0[0]), fshort(addDays(r0[r0.length - 1], 1))), fn:`CV.ariCity('${ja(r0[0])}',${r0.length})`};
       return {ic:'📍', b:MSGT('Ajouter les villes du voyage'), s:MSGT('Où tu dors, et combien de nuits'), fn:'CV.ariCity()'}; }
-    if(cur.k === 'faire'){ if(n) return {ic:'💡', b:MSGT('Choisir mes visites'), s:RF('{0} idées à trier, ville par ville', n), fn:'CV.suggOpen()'};
-      if(pk) return {ic:'🗓️', b:MSGT('Ranger mes visites dans les jours'), s:RF('{0} à placer, dans l’ordre du trajet', pk), fn:'CV.rgOpen()'};
+    const rg = {ic:'🗓️', b:MSGT('Ranger mes visites dans les jours'), s:RF('{0} à placer, dans l’ordre du trajet', pk), fn:'CV.rgOpen()'};
+    if(cur.k === 'faire'){
+      // ① pas encore un seul lieu : les incontournables d’abord (les activités payantes ne les remplacent pas)
+      if(!(D.pl || []).length && !pk && D.hs.length) return {ic:'💡', b:MSGT('Me proposer les incontournables (4 par jour)'), s:MSGT('Les lieux à voir et les excursions, jour par jour.'), fn:'CV.suggGo()'};
+      if(sgn) return {ic:'💡', b:MSGT('Choisir mes visites'), s:RF('{0} idées à trier, ville par ville', sgn + xn), fn:'CV.suggOpen()'};
+      if(pk && t.debut) return rg;
+      if(xn) return {ic:'🎟️', b:MSGT('Choisir mes activités payantes'), s:RF('{0} idées à trier, ville par ville', xn), fn:'CV.suggOpen()'};
       if(D.hs.length) return {ic:'💡', b:MSGT('Me proposer les incontournables (4 par jour)'), s:MSGT('Les lieux à voir et les excursions, jour par jour.'), fn:'CV.suggGo()'};
       return {ic:'🧩', b:MSGT('Que faire'), s:MSGT('Les lieux à voir et les excursions, jour par jour.'), fn:"CV.ariTog('faire')"}; }
+    if(pk && t.debut) return rg;   // ② des visites gardées attendent encore leur jour : on les range avant de réserver
     if(cur.k === 'resa'){ const it = (D.rs || []).find(x=>!okB(x)), left = (D.rs || []).filter(x=>!okB(x)).length;
       if(it) return {ic:it.cat === 'hotel' ? '🛏️' : icon(it), b:MSGT('Réserver') + ' : ' + esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre), s:(it.date ? fshort(it.date) + ' · ' : '') + RF('{0} à réserver', left), fn:"CV.ariTog('resa')"}; }
-    if(cur.k === 'fin') return {ic:'🧭', b:MSGT('Avant de partir'), s:MSGT('Papiers, valise et derniers détails'), fn:'CV.avantSheet()'};
+    if(cur.k === 'fin'){   // ✅ le point précis qui manque : un document, une formalité, « Avant de partir » pas encore vu, puis la valise
+      if((D.di || []).length) return {ic:'⚠️', b:esc(D.di[0]), s:MSGT('Documents de voyage'), fn:'CV.tlDocs()'};
+      const f0 = (D.fm || []).find(x=>!x.done); if(f0 && D.av) return {ic:'🛂', b:esc(f0.l), s:MSGT('Papiers et entrée'), fn:"CV.ariTog('fin')"};
+      if(!D.av || !(D.ck || []).length) return {ic:'🧭', b:MSGT('Avant de partir'), s:MSGT('Papiers, valise et derniers détails'), fn:'CV.avantSheet()'};
+      return {ic:'🧳', b:MSGT('Valise et checklist'), s:D.ckd + '/' + D.ck.length, fn:"CV.tab('check')"}; }
     return {ic:cur.ic, b:MSGT(cur.l), s:Math.round(cur.f * 100) + ' %', fn:`CV.ariTog('${ja(cur.k)}')`};
   }
   function ariFull(on){ const t = trip(); if(!t) return; M.ariFull = M.ariFull || {}; if(on) M.ariFull[t.id] = 1; else { delete M.ariFull[t.id]; if(M.ariOpen) delete M.ariOpen[t.id]; } persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   // ① ajouter une ville : le nom, l’arrivée et le nombre de nuits (l’hébergement « à réserver » est créé, il se réserve à l’étape ③)
-  function ariCity(){
+  function ariCity(gd, gn){
     const t = trip(); if(!t) return; const st = tlStages(), last = st[st.length - 1];
-    const d0 = last ? (last.fin || last.debut) : (t.debut || isoToday());
+    // 🛏️ des nuits du voyage sans hébergement (à la fin, ou celles demandées) : la ville les comble, sans rien décaler ni changer les dates du voyage
+    if(!gd && last && t.fin && t.fin > (last.fin || last.debut) && !((M.ariSkip || {})[t.id] || {}).ou){ gd = last.fin || last.debut; gn = nights(gd, t.fin); }
+    const gap = !!gd, d0 = gap ? gd : last ? (last.fin || last.debut) : (t.debut || isoToday());
+    const n0 = gap ? Math.max(1, Math.min(90, +gn || 1)) : !st.length && t.debut && t.fin && t.fin > t.debut ? Math.min(90, nights(t.debut, t.fin)) : 2;   // 1ʳᵉ ville : tout le voyage (à réduire s’il y en a d’autres)
     openSheet(`<h2>📍 ${esc(MSGT('Ajouter une ville'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Une ville où tu dors, avec tes dates. L’hôtel se réserve plus tard, à l’étape « Réserver ».'))}</div>
-      <form id="ac-f" onsubmit="event.preventDefault();CV.ariCitySave()">
+      ${gap ? `<div class="ac-gaph">🛏️ ${esc(RF('Pour les nuits sans hébergement : du {0} au {1}', fdate(d0), fdate(addDays(d0, n0))))}
+        <button type="button" onclick="CV.ariSkip('ou');CV.close()">${esc(MSGT('Ces nuits sont prévues autrement (train de nuit, chez des amis…)'))}</button></div>` : ''}
+      <form id="ac-f" onsubmit="event.preventDefault();CV.ariCitySave()">${gap ? '<input type="hidden" id="ac-gap" value="1">' : ''}
         <div class="v-f"><label>${esc(MSGT('Ville'))}</label><input class="v-in" id="ac-v" data-place autocomplete="off" required placeholder="${esc(MSGT('Ex. Rome, Lisbonne, Tokyo'))}" oninput="CV.ariCityGuess()"></div>
-        ${st.length ? `<div class="v-f"><label>${esc(MSGT('Où dans l’itinéraire ?'))}</label><select class="v-in" id="ac-pos" onchange="this.dataset.touched=1;CV.ariCityPos(this)">
+        ${st.length && !gap ? `<div class="v-f"><label>${esc(MSGT('Où dans l’itinéraire ?'))}</label><select class="v-in" id="ac-pos" onchange="this.dataset.touched=1;CV.ariCityPos(this)">
           <option value="0" data-d="${esc(st[0].debut)}">${esc(MSGT('Au début'))} · ${esc(MSGT('avant'))} ${esc(st[0].city)}</option>
           ${st.map((x, i)=>`<option value="${i + 1}" data-d="${esc(x.fin)}"${i === st.length - 1 ? ' selected' : ''}>${esc(MSGT('Après'))} ${esc(x.city)} (${fshort(x.debut)} → ${fshort(x.fin)})</option>`).join('')}</select>
           <div class="ac-guess" id="ac-guess"></div><div class="v-sum-small" id="ac-shift" style="margin-top:4px"></div></div>` : ''}
-        ${st.length && t.fin ? `<div class="v-f"><label>${esc(MSGT('Les dates du voyage'))}</label><div class="v-seg v-seg2" id="ac-mode">
+        ${st.length && t.fin && !gap ? `<div class="v-f"><label>${esc(MSGT('Les dates du voyage'))}</label><div class="v-seg v-seg2" id="ac-mode">
           <button type="button" data-v="keep" class="on" onclick="CV.seg(this);CV.ariShiftHint()">🔁 ${esc(MSGT('Garder mes dates'))}</button><button type="button" data-v="add" onclick="CV.seg(this);CV.ariShiftHint()">📅 ${esc(MSGT('Rallonger le voyage'))}</button></div>
           <div class="v-sum-small" id="ac-mode-h" style="margin-top:6px"></div></div>` : ''}
         <div class="cv-row" style="gap:8px"><div class="v-f" id="ac-d-w" style="flex:1;min-width:0"><label>${esc(MSGT('Arrivée'))}</label><input class="v-in" type="date" id="ac-d" value="${esc(d0)}" required></div>
-          <div class="v-f" style="flex:1;min-width:0"><label>${esc(MSGT('Nuits'))}</label><input class="v-in" type="number" id="ac-n" min="1" max="90" value="2" inputmode="numeric" required oninput="CV.ariShiftHint()"></div></div>
+          <div class="v-f" style="flex:1;min-width:0"><label>${esc(MSGT('Nuits'))}</label><input class="v-in" type="number" id="ac-n" min="1" max="90" value="${n0}" inputmode="numeric" required oninput="CV.ariShiftHint()"></div></div>
         <div class="v-actions"><button type="submit" class="v-btn">＋ ${esc(MSGT('Ajouter'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>
       </form>`);
     setTimeout(()=>{ const i = document.getElementById('ac-v'); if(i) i.focus(); ariShiftHint(); }, 60);
@@ -145,6 +177,10 @@
     const t = trip(); if(!t) return;
     const v = (document.getElementById('ac-v').value || '').trim(), d = document.getElementById('ac-d').value, n = Math.max(1, Math.min(90, Math.round(num(document.getElementById('ac-n').value)) || 1));
     if(!v || !d) return; const f = addDays(d, n), out = [];
+    if(document.getElementById('ac-gap')){   // 🛏️ nuits sans hébergement comblées : rien ne se décale, le voyage ne change de dates que si on dépasse
+      out.push({id:'i' + uid(), type:'item', trip:t.id, cat:'hotel', titre:v, base:v, date:d, dateFin:f, statut:'todo', partage:'grp', qui:[]});
+      const nt = clone(t); let ch = false; if(!nt.debut || d < nt.debut){ nt.debut = d; ch = true; } if(!nt.fin || f > nt.fin){ nt.fin = f; ch = true; } if(ch) out.push(nt);
+      putMany(out, '📍 ' + v); try { trChain(); } catch(e){} closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(ariCtry, 300); return; }
     const ps = document.getElementById('ac-pos'), st = tlStages(), mid = ps && +ps.value < st.length, md = document.getElementById('ac-mode');
     if(md && (md.querySelector('button.on') || {}).dataset.v === 'keep'){   // 🔁 mêmes dates : la ville s’insère, les autres étapes rétrécissent
       const kp = acKeep(ps ? +ps.value : st.length, n); if(kp){
@@ -254,31 +290,52 @@
     if(from === 'sw') swClose(1); else if(from === 'rg') rgClose(); closeSheet(true);
     const D = ariData(t);
     if(!D.hs.length){ ariCity(); return; }
+    if(!from && D.gaps.length){ const r = gapRuns(D.gaps)[0]; ariCity(r[0], r.length); return; }   // 🛏️ des nuits sans hébergement : d’abord une ville pour elles
     const skipF = ((M.ariSkip || {})[t.id] || {}).faire;
     if(!skipF && from !== 'rg'){
       if(!from){ GSW = null;
-        if(!D.sg.length && !expCount(t) && !(M.suggDone || {})[t.id] && D.pl.length < 1 && !(SG && SG.tid === t.id)) suggFill(t.id); }   // rien à choisir encore : on cherche
+        // pas encore un seul lieu : on cherche les incontournables (les activités payantes, toujours là, ne comptent pas comme « déjà choisi »)
+        if(!D.sg.length && !(M.suggDone || {})[t.id] && D.pl.length < 1 && !(SG && SG.tid === t.id)) suggFill(t.id); }
       const fresh = () => sgIds(t).filter(id=>!GSW || !GSW.has(id));
       if(!fresh().length && SG && SG.tid === t.id && !await guideWait(t, fresh)) return;
       if(trip() !== t) return;
-      if(fresh().length || (!from && expCount(t))){ GSW = new Set(sgIds(t)); suggOpen(); if(document.getElementById('cv-sw')) return; }
+      // des visites à trier → le tri (avec les activités payantes de chaque ville) ; sinon on ne rouvre pas le tri pour les seules activités :
+      // elles sont dans « Les activités payantes » du parcours
+      if(fresh().length){ GSW = new Set(sgIds(t)); suggOpen(); if(document.getElementById('cv-sw')) return; }
     }
     if(from !== 'rg' && rgItems(t).length && t.debut){ rgOpen(); return; }
     guideSheet();
   }
   function guideResume(){ const t = trip(); if(!t) return; GSW = null; closeSheet(true); suggOpen(); }
+  // 💡 « Les visites » du parcours : trier ce qui est proposé, ranger ce qui est gardé, sinon chercher des idées (et attendre qu’elles arrivent)
+  async function guideVisits(){
+    const t = trip(); if(!t) return; closeSheet(true);
+    const D = ariData(t);
+    if(D.sg.length){ GSW = new Set(); suggOpen(); if(document.getElementById('cv-sw')) return; }
+    if(rgItems(t).length && t.debut){ rgOpen(); return; }
+    GSW = new Set(sgIds(t)); const fresh = () => sgIds(t).filter(id=>!GSW.has(id));
+    if(!(SG && SG.tid === t.id)) suggFill(t.id, D.pl.length > 0);   // aucun lieu : les incontournables ; déjà des lieux : de nouvelles idées
+    if(SG && SG.tid === t.id && !fresh().length && !await guideWait(t, fresh)) return;
+    if(trip() !== t) return;
+    if(fresh().length){ GSW = new Set(sgIds(t)); suggOpen(); if(document.getElementById('cv-sw')) return; }
+    guideSheet();
+  }
   // ✏️ saisie à la main depuis le parcours (adresse, prix, horaires…) : après « Enregistrer », on revient où on était
   function guideEdit(id, kind, k){ GRET = {id, kind, k:+k || 0}; edit(id); }
   function gdAfterSave(id){ const r = GRET; GRET = null; if(!r || r.id !== id) return;
     setTimeout(()=>{ if(r.kind === 'h') guideHotel(r.k); else guideList(r.kind); }, 120); }
   function guideSheet(){
     const t = trip(); if(!t) return; GRET = null; closeSheet(true); swClose(1); if(document.getElementById('cv-rg')) rgClose();
-    const D = ariData(t), tr = D.trs.filter(x=>!okB(x)), hs = D.hs.filter(x=>!okB(x)), xs = items(i=>i.cat === 'activite' && i.exp && !okB(i)), xn = expCount(t);
+    const D = ariData(t), tr = D.trs.filter(x=>!okB(x)), hs = D.hs.filter(x=>!okB(x)), xs = items(i=>i.cat === 'activite' && needBook(i) && !okB(i)), xn = expCount(t);
     const row = (ic, b, sm, fn, ok) => `<button type="button" class="ar-sub${ok ? ' ok' : ''}" onclick="${fn}"><i>${ok ? '✓' : ic}</i><span><b>${b}</b><small>${sm}</small></span></button>`;
     const all = !tr.length && !hs.length && !xs.length;
-    openSheet(`<div class="gd"><h2>🧭 ${MSGT('Ton parcours guidé')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT(all ? 'Tout est réservé : il ne reste que les derniers détails avant de partir.' : 'Tes visites sont rangées dans les jours. On continue par quoi ?')}</div>
+    // 💡 où en sont les visites : à trier, à ranger, rangées… ou pas encore une seule (le message le dit, au lieu de « rangées » d’office)
+    const sgn = D.sg.length, pk = rgItems(t).length, kept = D.pl.length - sgn, vOk = kept > 0 && !sgn && !pk;
+    const msg = !kept && !sgn && !pk ? 'Tu n’as pas encore choisi de visites. On continue par quoi ?' : sgn ? 'Des idées de visites attendent ton tri. On continue par quoi ?' : pk ? 'Des visites attendent d’être rangées dans les jours. On continue par quoi ?'
+      : all ? 'Tout est réservé : il ne reste que les derniers détails avant de partir.' : 'Tes visites sont rangées dans les jours. On continue par quoi ?';
+    openSheet(`<div class="gd"><h2>🧭 ${MSGT('Ton parcours guidé')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT(msg)}</div>
       <div class="ar-subs gd-ch">
-        ${D.sg.length + xn ? row('💡', MSGT('Reprendre le choix des visites'), RF('{0} idées à trier', D.sg.length + xn), 'CV.guideResume()', false) : ''}
+        ${row('💡', MSGT('Les visites'), sgn ? RF('{0} idées à trier', sgn) : pk ? RF('{0} à placer, dans l’ordre du trajet', pk) : kept ? kept + ' ' + MSGT('lieux au programme') + ' · ＋ ' + MSGT('Nouvelles suggestions') : MSGT('Pas encore de visites : je t’en propose'), 'CV.guideVisits()', vOk)}
         ${row('🚆', MSGT('Les trajets'), tr.length ? RF('{0} à réserver', tr.length) : MSGT('Tout est réservé'), 'CV.guideTr()', !tr.length)}
         ${row('🎟️', MSGT('Les activités payantes'), xs.length || xn ? [xn ? RF('{0} idées à trier', xn) : '', xs.length ? RF('{0} à réserver', xs.length) : ''].filter(Boolean).join(' · ') : MSGT('Rien à réserver'), 'CV.guideExp()', !xs.length && !xn)}
         ${row('🛏️', MSGT('Les hébergements'), hs.length ? RF('{0} à réserver', hs.length) + ' · ' + MSGT('avec la carte du quartier conseillé') : MSGT('Tout est réservé'), 'CV.guideHotel(0)', !hs.length)}
@@ -290,7 +347,7 @@
   // une liste de réservations (trajets ou activités) : lien partenaire + « C’est réservé », puis retour au parcours
   function guideList(kind){
     const t = trip(); if(!t) return; const D = ariData(t);
-    const L = kind === 'tr' ? D.trs.filter(x=>!okB(x)) : items(i=>i.cat === 'activite' && i.exp && !okB(i)).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'));
+    const L = kind === 'tr' ? D.trs.filter(x=>!okB(x)) : items(i=>i.cat === 'activite' && needBook(i) && !okB(i)).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'));
     const xn = kind === 'x' ? expCount(t) : 0, fd = d => d ? fshort(d) : '';
     if(!L.length && !xn){ toast('✓ ' + MSGT('Tout est réservé')); return guideSheet(); }
     openSheet(`<div class="gd"><h2>${kind === 'tr' ? '🚆 ' + MSGT('Les trajets') : '🎟️ ' + MSGT('Les activités payantes')}</h2>
@@ -435,7 +492,7 @@
 
   /* ══════════ 🧵 Fils d’Ariane : même carte pour chaque moment (en cours, voyage fini, compagnons, premiers pas) ══════════ */
   function filCard(o){
-    const S = o.steps.filter(Boolean), done = S.filter(x=>x.ok).length, w = x => x.w || 1;
+    const S = o.steps.filter(Boolean), w = x => x.w || 1;
     const pct = o.pct != null ? o.pct : Math.round(S.reduce((a, x)=>a + (x.ok ? 1 : (x.f || 0)) * w(x), 0) / Math.max(1, S.reduce((a, x)=>a + w(x), 0)) * 100);
     const cur = S.find(x=>!x.ok), st = (M.filOpen || {})[o.key], op = st === '-' ? '' : st || (o.defClosed ? '' : cur && cur.k);
     // 🧹 replié par défaut : la barre d’avancement + la prochaine étape (avec ses boutons) ; toutes les étapes à la demande
@@ -443,7 +500,7 @@
       ${o.top || ''}
       <div class="p2-top ar-lv"><div><div class="p2-k">${o.kick}</div><div class="p2-l">${o.title}</div></div><div class="p2-pct"><b>${o.pctTxt || pct}</b><small>${o.pctTxt ? '' : '%'}</small></div></div>
       <div class="fil-bar"><i style="width:${Math.max(3, pct)}%"></i></div>
-      ${cur && !o.defClosed ? `<div class="ar-nx"><div class="ar-nk">${MSGT('Ta prochaine étape')} · ${done + 1}/${S.length}</div><div class="ar-s cur open"><div class="ar-h fil-nh"><i>${S.indexOf(cur) + 1}</i><span>${cur.ic} ${cur.l}</span><small>${cur.n || ''}</small></div><div class="ar-b">${cur.body()}${cur.skip ? `<button type="button" class="ar-sk" onclick="CV.filSkip('${ja(o.key)}','${ja(cur.k)}')">${MSGT('Passer cette étape')}</button>` : ''}</div></div></div>`
+      ${cur && !o.defClosed ? `<div class="ar-nx"><div class="ar-nk">${MSGT('Ta prochaine étape')} · ${S.indexOf(cur) + 1}/${S.length}</div><div class="ar-s cur open"><div class="ar-h fil-nh"><i>${S.indexOf(cur) + 1}</i><span>${cur.ic} ${cur.l}</span><small>${cur.n || ''}</small></div><div class="ar-b">${cur.body()}${cur.skip ? `<button type="button" class="ar-sk" onclick="CV.filSkip('${ja(o.key)}','${ja(cur.k)}')">${MSGT('Passer cette étape')}</button>` : ''}</div></div></div>`
         : cur ? '' : `<div class="p2-msg">${o.doneMsg || ''}</div>`}
       <button type="button" class="ar-all" onclick="CV.filFull('${ja(o.key)}',1)">${RF('Voir les {0} étapes', S.length)} ▾</button>${o.foot || ''}</div>`;
     return `<div class="cv-prep2 ar fil ${o.cls || ''}">
@@ -467,11 +524,18 @@
     const td = isoToday(), ds = dayList(), k = ds.indexOf(td), tm = ds[k + 1], key = 'lv:' + t.id + ':' + td;
     const {own, night} = itemsForDay(td), pl = placesOf(td), sgT = list('place', p=>p.trip === t.id && p.date === td && p.sugg);
     const sv = list('souv', s=>s.trip === t.id && s.date === td), dep = items(i=>i.cat === 'divers' && i.date === td), depT = dep.reduce((a, i)=>a + totalOf(i), 0);
-    const tmA = tm ? itemsForDay(tm) : {own:[], night:[]}, tmTodo = tm ? [...tmA.own, ...tmA.night].filter(i=>!okB(i)) : [];
+    const tmA = tm ? itemsForDay(tm) : {own:[], night:[]}, tmTodo = tm ? [...tmA.own, ...tmA.night].filter(i=>needBook(i) && !okB(i)) : [];
     const city = dayCity(td) || cityOf(t.titre || '') || '';
+    // 🛎️ le trajet du jour ou l’hôtel de ce soir pas encore réservés : c’est l’urgence de la journée (les dépenses ont leur propre étape)
+    const ownJ = own.filter(i=>i.cat !== 'divers'), tdTodo = [...ownJ, ...night].filter(i=>needBook(i) && !okB(i));
+    const nmOf = it => it.cat === 'hotel' ? (it.nom || cityOf(it.titre) || it.titre) : it.titre;
+    const rowB = (it, when) => `<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(nmOf(it))}</b><small>${when}</small></span>
+      ${bkBtn(it)}<div class="ar-ra" data-bkid="${esc(it.id)}">${ariLink(it, t)}<button type="button" class="ar-ed" onclick="event.stopPropagation();CV.edit('${ja(it.id)}')">✏️ ${MSGT('Saisir ma résa')}</button><button type="button" onclick="event.stopPropagation();CV.ariBook('${ja(it.id)}')">${MSGT('C’est réservé')}</button></div></div>`;
     const steps = [
-      {k:'jour', ic:'📍', l:MSGT('Ta journée'), ok: pl.length > 0 || own.length > 0 || filSk(key, 'jour'), f: pl.length || own.length ? 1 : 0, skip:true, n: pl.length ? pl.length + ' ' + MSGT('lieux') : '',
-        body: ()=>`${[...own, ...night].map(it=>`<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${icon(it)}</i><span><b data-notr>${esc(it.titre)}</b><small>${esc(it.heureDep || it.heure || '')}</small></span></div>`).join('')}
+      {k:'jour', ic:'📍', l:MSGT('Ta journée'), ok: filSk(key, 'jour') || (!tdTodo.length && (pl.length > 0 || ownJ.length > 0)), f: tdTodo.length ? .5 : pl.length || ownJ.length ? 1 : 0, skip:true,
+        n: tdTodo.length ? RF('{0} à réserver', tdTodo.length) : pl.length ? pl.length + ' ' + MSGT('lieux') : '',
+        body: ()=>`${tdTodo.length ? `<div class="ar-p">🛎️ ${MSGT(tdTodo.some(i=>i.cat === 'hotel') ? 'Ton hébergement de ce soir n’est pas encore réservé.' : 'Pas encore réservé pour aujourd’hui.')}</div>` : ''}
+          ${[...ownJ, ...night].map(it=>tdTodo.includes(it) ? rowB(it, it.cat === 'hotel' ? MSGT('Ce soir') : esc(it.heureDep || it.heure || '')) : `<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(nmOf(it))}</b><small>${it.cat === 'hotel' ? MSGT('Ce soir') : esc(it.heureDep || it.heure || '')}</small></span></div>`).join('')}
           ${pl.length ? fbtn(`CV.planDay('${ja(td)}')`, `🗺️ ${MSGT('Itinéraire du jour')} (${pl.length} ${MSGT('lieux')})`) : ''}
           ${sgT.length ? fbtn('CV.suggOpen()', `💡 ${MSGT('Choisir mes visites')} (${sgT.length})`, pl.length) : !pl.length ? fbtn('CV.suggMore()', `💡 ${MSGT('Que voir aujourd’hui ?')}`) : ''}`},
       {k:'souv', ic:'📸', l:MSGT('Raconter ta journée'), ok: sv.length > 0 || filSk(key, 'souv'), skip:true, n: sv.length ? '' : MSGT('pas encore de souvenir'),
@@ -480,7 +544,7 @@
         body: ()=>`<div class="ar-p">${dep.length ? `${dep.length} ${MSGT('dépense(s)')} · <b>${eur(depT)}</b>` : MSGT('Note les dépenses au fur et à mesure : les comptes entre vous se font tout seuls.')}</div>${fbtn('CV.tlReceipt()', `🧾 ${MSGT('Ajouter une dépense')}`)}`},
       tm ? {k:'dem', ic:'🌙', l:MSGT('Préparer demain'), ok: !tmTodo.length, n: tmTodo.length ? tmTodo.length + ' ' + MSGT('à réserver') : '',
         body: ()=>`<div class="ar-p"><b>${fdate(tm)}</b>${dayInfo(tm).titre ? ' · <span data-notr>' + esc(dayInfo(tm).titre) + '</span>' : ''}</div>
-          ${tmTodo.map(it=>`<div class="ar-r" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${it.cat === 'hotel' ? '🛏️' : icon(it)}</i><span><b data-notr>${esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : it.titre)}</b></span><div class="ar-ra">${ariLink(it, t)}<button type="button" onclick="event.stopPropagation();CV.ariBook('${ja(it.id)}')">${MSGT('C’est réservé')}</button></div></div>`).join('')}
+          ${tmTodo.map(it=>rowB(it, it.cat === 'hotel' ? MSGT('Demain soir') : esc(it.heureDep || it.heure || ''))).join('')}
           ${!tmTodo.length ? `<div class="ar-p">✓ ${MSGT('Tout est réservé pour demain')}</div>` : ''}${fbtn(`CV.planDay('${ja(tm)}')`, `🗺️ ${MSGT('Itinéraire de demain')}`, 1)}`} : null
     ];
     return filCard({key, kick:MSGT('Ta journée'), title:`${MSGT('Jour')} ${k + 1}/${ds.length}${city ? ' · <span data-notr>' + esc(city) + '</span>' : ''}`, steps, doneMsg:'✨ ' + MSGT('Belle journée ! Tout est noté.')});
@@ -495,7 +559,7 @@
       {k:'comptes', ic:'💸', l:MSGT('Les comptes'), ok: !tr.length, n: tr.length ? tr.length + ' ' + MSGT('remboursement(s)') : '',
         body: ()=>`${tr.map(x=>`<div class="ar-f"><i>💸</i><span><span data-notr>${esc(pname(x.de))}</span> → <span data-notr>${esc(pname(x.a))}</span> : <b>${eur(x.v)}</b></span></div>`).join('')}${fbtn(`CV.innerGo('budget')`, `💸 ${MSGT('Régler / demander')}`)}`},
       {k:'souv', ic:'📸', l:MSGT('Les souvenirs'), ok: !daysNo.length || filSk(key, 'souv'), skip:true, f: dayList().length ? 1 - daysNo.length / dayList().length : 1, n: daysNo.length ? daysNo.length + ' ' + MSGT('jour(s) sans souvenir') : '',
-        body: ()=>`<div class="ar-p">${daysNo.length ? `${MSGT('Jours sans souvenir')} : ${daysNo.slice(0, 8).map(fshort).join(' · ')}` : ''}</div>${fbtn('CV.editSouv(null)', `📸 ${MSGT('Ajouter un souvenir')}`)}`},
+        body: ()=>`${daysNo.length ? `<div class="ar-p">${MSGT('Jours sans souvenir')} :</div><div class="fil-chips fil-days">${daysNo.slice(0, 12).map(d=>`<button type="button" onclick="CV.editSouv(null,'${ja(d)}')">📸 ${fshort(d)}</button>`).join('')}</div>` : ''}${fbtn(`CV.editSouv(null${daysNo.length ? `,'${ja(daysNo[0])}'` : ''})`, `📸 ${MSGT('Ajouter un souvenir')}`)}${daysNo.length > 1 ? fbtn('CV.autoPhotoPick()', MSGT('✨ Ranger mes photos'), 1) : ''}`},
       {k:'notes', ic:'⭐', l:MSGT('Noter tes adresses'), ok: (rated && (!its.length || nr === its.length)) || filSk(key, 'notes'), skip:true, f: (rated ? .5 : 0) + (its.length ? nr / its.length * .5 : .5), n: its.length ? nr + '/' + its.length : '',
         body: ()=>`<div class="ar-p">${MSGT('Note le voyage, les hôtels et les visites : tu retrouveras tes meilleures adresses pour la prochaine fois.')}</div>${fbtn(`CV.rtSheet('${ja(t.id)}')`, `⭐ ${MSGT('Noter')}`)}`},
       {k:'part', ic:'🎬', l:MSGT('Revivre et partager'), ok: shared || filSk(key, 'part'), skip:true,
@@ -503,7 +567,10 @@
       {k:'ranger', ic:'📦', l:MSGT('Ranger dans tes souvenirs'), ok: !!t.archived,
         body: ()=>`<div class="ar-p">${MSGT('Le voyage rejoint tes voyages passés, avec sa carte et ses statistiques. Tu peux toujours le rouvrir.')}</div>${fbtn('CV.bilanClose()', `📦 ${MSGT('Ranger le voyage')}`)}`}
     ];
-    return filCard({key, kick:MSGT('Boucler ton voyage'), title:`🏁 <span data-notr>${esc(t.titre)}</span>`, steps, doneMsg:'✨ ' + MSGT('Voyage bouclé : il est rangé dans tes souvenirs.')});
+    // ✨ bouclé : la suite logique, c’est le prochain voyage (sauf s’il y en a déjà un en préparation : on l’ouvre)
+    const nx = trips().filter(x=>!x.demo && !x.deleted && !x.archived && x.id !== t.id && tripPhase(x) !== 'past').sort((a, b)=>(a.debut || '9').localeCompare(b.debut || '9'))[0];
+    const doneMsg = '✨ ' + MSGT('Voyage bouclé : il est rangé dans tes souvenirs.') + (nx ? fbtn(`CV.go('${ja(nx.id)}')`, `🧳 ${MSGT('Ouvrir mon prochain voyage')} · <span data-notr>${esc(nx.titre)}</span>`) : fbtn('CV.newTrip()', `🧳 ${MSGT('Préparer mon prochain voyage')}`));
+    return filCard({key, kick:MSGT('Boucler ton voyage'), title:`🏁 <span data-notr>${esc(t.titre)}</span>`, steps, doneMsg});
   }
   function finMark(tid){ M.finShared = M.finShared || {}; M.finShared[tid] = 1; persist(); }
 
@@ -568,7 +635,7 @@
     const r = tripRecap(t);
     momentShow(`<div class="mo-k">Bon retour !</div><div class="mo-big">🏡</div><h2>${esc(t.titre)}</h2><div class="mo-sub">${tripDatesLong(t)}</div>
       <div class="mo-w">${r.days ? `<div><small>Jours</small><b>${r.days}</b></div>` : ''}${r.km ? `<div><small>km</small><b>${r.km.toLocaleString(NL())}</b></div>` : ''}${r.ccs.length ? `<div><small>Pays</small><b>${r.ccs.map(flag).join(' ')}</b></div>` : ''}${r.nph ? `<div><small>Photos</small><b>${r.nph}</b></div>` : ''}</div>
-      <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.filmOpen()">🎬 Revivre en film</button><button type="button" onclick="CV.momentClose();CV.modeGo('bilan')">🏁 Le bilan</button></div>`, 'home');
+      <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.autoPhotoPick()">${MSGT('✨ Ranger mes photos')}</button><button type="button" onclick="CV.momentClose();CV.modeGo('bilan')">🏁 Le bilan</button></div>`, 'home');   // pas encore de souvenir : le film serait vide, on commence par les photos du voyage
   }
 
   /* ---------- Suivi GPS : où sont les autres (carte du voyage en cours) ---------- */
@@ -907,7 +974,7 @@
     const sameLang = (SAY_LANG[cc] || '') === mine, sameCur = !cur || cur === h; if((sameLang || !L.length) && sameCur) return '';
     const di = dayList().indexOf(isoToday()), x = L.length ? L[Math.max(0, di) % L.length] : null;
     return `<div class="lg" data-cc="${cc}" data-cur="${cur}">
-      ${!sameLang && x ? `<div class="lg-p"><div class="lg-k">🗣️ ${MSGT('Phrase du jour')} · ${flag(cc)}</div><div class="lg-w"><b data-notr>${esc(x.p)}</b><button type="button" onclick="CV.lgSay('${ja(cc)}',${L.indexOf(x)})" aria-label="Écouter">🔊</button></div><small>${esc(x.l)}</small>
+      ${!sameLang && x ? `<div class="lg-p"><div class="lg-k">🗣️ ${MSGT('Phrase du jour')} · ${flag(cc)}</div><div class="lg-w"><b data-notr>${esc(x.p)}</b><button type="button" onclick="CV.lgSay('${ja(cc)}',${L.indexOf(x)})" aria-label="${esc(MSGT('Écouter'))}">🔊</button></div><small>${esc(x.l)}</small>
         <button type="button" class="lg-all" onclick="CV.lgAll('${ja(cc)}')">📖 ${MSGT('Toutes les phrases utiles')}</button></div>` : ''}
       ${!sameCur ? `<div class="lg-fx"><div class="lg-k">💱 ${MSGT('Monnaie')} : ${cur} ${CURS[cur] && CURS[cur] !== cur ? '(' + CURS[cur] + ')' : ''}</div><div class="lg-r" id="lg-r">…</div>
         <div class="lg-cv"><input class="v-in" id="lg-a" inputmode="decimal" placeholder="1000" oninput="CV.lgFx()"><span>${cur}</span><b id="lg-o">=</b></div>
@@ -1841,15 +1908,15 @@
      De loin : les villes et les trajets (couleur = à réserver / réservé / payé). En zoomant : les hébergements,
      les visites gratuites, les activités payantes et le quartier conseillé (cercle + traits vers les visites). ══════════ */
   let P3 = null;
-  const P3C = {todo:'#f97316', booked:'#facc15', paid:'#22c55e'};
-  const p3St = i => i.statut === 'paid' ? 'paid' : i.statut === 'booked' ? 'booked' : 'todo';
+  const P3C = {todo:'#f97316', booked:'#facc15', paid:'#22c55e', none:'#e2e8f0'};
+  const p3St = i => i.statut === 'paid' ? 'paid' : i.statut === 'booked' ? 'booked' : needBook(i) ? 'todo' : 'none';   // 🚗 ta voiture, à pied… : rien à réserver
   const p3Circle = (c, km) => { const out = []; for(let i = 0; i <= 64; i++){ const a = i / 64 * 2 * Math.PI; out.push([c.lng + km / (111.32 * Math.cos(c.lat * Math.PI / 180)) * Math.cos(a), c.lat + km / 110.57 * Math.sin(a)]); } return out; };
   function p3Stats(t){
-    const D = ariData(t), xs = items(i=>i.cat === 'activite' && i.exp), L = [...D.hs, ...D.trs, ...xs], n = L.length || 1, c = k => L.filter(i=>p3St(i) === k).length;
+    const D = ariData(t), xs = items(i=>i.cat === 'activite' && needBook(i)), L = [...D.hs, ...D.trs, ...xs], n = L.length || 1, c = k => L.filter(i=>p3St(i) === k).length;
     const S = D.S, pct = Math.round(S.reduce((a, x)=>a + (x.ok ? 1 : x.f) * (x.w || 1), 0) / S.reduce((a, x)=>a + (x.w || 1), 0) * 100);
-    // ✅ finalisé : papiers, formalités et valise cochés (rien de coché = 0 %, pas 100 %)
-    const fp = []; if(D.ck.length) fp.push(D.ckd / D.ck.length); if(D.fm.length) fp.push(D.fm.filter(x=>x.done).length / D.fm.length); if(D.di.length) fp.push(0);
-    return {n:L.length, nh:D.hs.length, nt:D.trs.length, nx:xs.length, todo:c('todo'), booked:c('booked'), paid:c('paid'), p:k => Math.round(c(k) / n * 100), pct, fin:fp.length ? Math.round(fp.reduce((a, b)=>a + b, 0) / fp.length * 100) : 0};
+    // ✅ finalisé : le même calcul que l’étape « Finaliser » (valise cochée, ou « Avant de partir » vu s’il n’y a pas de checklist ; rien = 0 %)
+    const F = S.find(x=>x.k === 'fin'), own = items(i=>i.cat === 'transport' && !needBook(i)).length;
+    return {n:L.length, nh:D.hs.length, nt:D.trs.length, nx:xs.length, own, todo:c('todo'), booked:c('booked'), paid:c('paid'), p:k => Math.round(c(k) / n * 100), pct, fin:F ? Math.round((F.ok ? 1 : F.f) * 100) : 0};
   }
   function p3Legend(){
     const t = trip(), box = document.getElementById('p3-leg'); if(!t || !box) return; const s = p3Stats(t), open = !box.classList.contains('min');
@@ -1860,6 +1927,7 @@
         <span><i style="background:${P3C.todo}"></i>${MSGT('À réserver')} <b>${s.todo}</b> · ${s.p('todo')} %</span>
         <span><i style="background:${P3C.booked}"></i>${MSGT('Réservé')} <b>${s.booked}</b> · ${s.p('booked')} %</span>
         <span><i style="background:${P3C.paid}"></i>${MSGT('Payé')} <b>${s.paid}</b> · ${s.p('paid')} %</span>
+        ${s.own ? `<span><i style="background:${P3C.none}"></i>🚗 ${MSGT('Rien à réserver')} <b>${s.own}</b></span>` : ''}
         <span><i class="ok">✓</i>${MSGT('Finalisé')} <b>${s.fin} %</b></span>
         <span><i style="background:#a78bfa"></i>${MSGT('Visites gratuites')}</span>
         <span><i class="ring"></i>${MSGT('Quartier conseillé')}</span>
@@ -2739,7 +2807,7 @@
   const buNextEch = it => (it.echeances || []).filter(e=>!e.fait).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'))[0];
   function buFil(t){
     if(!t || t.archived || tripPhase(t) !== 'prep' || M.lock) return '';
-    const key = 'bu:' + t.id, nN = buNights(t), idx = buIdx(), rate = buRate(t), np = buNoPrice(), pay = buToPay(), todo = items(i=>i.statut === 'todo' && ['hotel', 'transport', 'activite'].includes(i.cat)).length;
+    const key = 'bu:' + t.id, nN = buNights(t), idx = buIdx(), rate = buRate(t), np = buNoPrice(), pay = buToPay(), todo = items(i=>(i.statut || 'todo') === 'todo' && needBook(i)).length;
     const ppl = Math.max(1, tv().length), spD = t.surplace ? buSp(t) : 0, sp0 = t.surplace || {}, spDraft = M.buSp && M.buSp[t.id] || {};
     const spV = k => spDraft[k] != null ? spDraft[k] : sp0[k] != null ? num(sp0[k]) : Math.round(BU_SP.find(x=>x[0] === k)[3] * Math.max(.4, idx));
     const steps = [

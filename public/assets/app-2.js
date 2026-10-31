@@ -131,7 +131,7 @@
     // pas sur l'onglet laissé ouvert dans le voyage précédent (Plus, Réglages…)
     if(was !== id){ const t = R[id], ph = t && t.type === 'trip' ? tripPhase(t) : 'prep';
       M.mode = ph === 'live' && !hidden('mode:live') ? 'live' : ph === 'past' && !hidden('mode:bilan') ? 'bilan' : 'prep';
-      M.tab = 'prog'; }
+      M.tab = 'prog'; if(t && t.type === 'trip') (M.phSeen = M.phSeen || {})[id] = ph; }   // l’écran suit déjà le moment du voyage
     persist(); applyMode(); window.scrollTo({top:0}); }
   function tab(id){
     M.tab = id; persist(); buildTabs(); render();
@@ -265,7 +265,7 @@
   // 🧹 Résas : en haut, ce qu’il reste à réserver en premier (toutes catégories, par date) + l’avancement global
   function resaTop(){
     const t = trip(); if(!t || t.archived || tripPhase(t) === 'past') return '';
-    const all = items(i=>['transport','hotel','activite'].includes(i.cat)).filter(forWho), todo = all.filter(i=>(i.statut || 'todo') === 'todo');
+    const all = items(needBook).filter(forWho), todo = all.filter(i=>(i.statut || 'todo') === 'todo');   // 🚗 ta voiture, à pied, à vélo : rien à réserver
     if(!all.length) return '';
     const done = all.length - todo.length, today = isoToday();
     const key = i => i.resaOpen && i.resaOpen >= today ? '0' + i.resaOpen : '1' + (i.date || '9999');   // ⏰ ventes à date fixe d’abord
@@ -312,6 +312,8 @@
   /* ══════════ Panneaux (bottom sheet) ══════════ */
   let editing = null;
   const sheetOpen = () => !!document.getElementById('v-sheet-bg');
+  // un écran plein est ouvert (tri des visites, rangement, carte 3D, film, story, photos…) : on n’ouvre rien par-dessus
+  const ovOpen = () => !!document.querySelector('#cv-sw, #cv-rg, #cv-p3, #cv-world, #cv-film, #cv-story, #cv-moment, #cv-viewer, #cv-gate, .ui-dlg');
   function field(lbl, name, val, type, extra){
     return `<div class="v-f"><label>${lbl}</label><input class="v-in" name="${name}" type="${type||'text'}" value="${esc(val)}" ${extra||''}></div>`;
   }

@@ -336,7 +336,27 @@
     M.mode = k;
     if(!trip()){ const t = trips()[0]; if(t) M.trip = t.id; }
     if(k === 'prep' && !groupOf(M.tab)) M.tab = 'prog';
+    { const t = trip(); if(t) (M.phSeen = M.phSeen || {})[t.id] = tripPhase(t); }   // choix de l’utilisateur : respecté jusqu’au prochain changement de moment
     persist(); applyMode(); window.scrollTo({top:0});
+  }
+  // 🧭 le voyage change de moment pendant qu’il reste ouvert (jour du départ, lendemain du retour) : l’écran suit, une seule fois.
+  //    L’utilisateur peut ensuite revenir où il veut (ex. le programme pendant le voyage), on ne le ramène plus de force.
+  function phaseFollow(boot){
+    if(M.trip === LEGACY) return false;
+    // ✈️ jour J d’un AUTRE voyage que celui ouvert (on préparait le suivant) : on ouvre celui qui commence, une fois
+    { const S = M.phSeen = M.phSeen || {}, lv = trips().find(x=>!x.demo && !x.deleted && !x.archived && !x.feed && !(M.notTrav || {})[x.id] && x.id !== M.trip && tripPhase(x) === 'live' && S[x.id] !== 'live' && x.debut === isoToday());
+      if(lv && !hidden('mode:live')){ const cur = trip(); if(cur) S[cur.id] = tripPhase(cur); S[lv.id] = 'live'; M.trip = lv.id; M.who = 'all'; M.mode = 'live'; M.tab = 'prog'; M.inner = M.inner || {}; M.inner.live = INNER.live[0][0]; persist();
+        setTimeout(()=>toast('📍 ' + RF('C’est le grand jour : {0} commence aujourd’hui', lv.titre)), boot ? 1200 : 300); return true; } }
+    const t = trip(); if(!t || t.deleted) return false;
+    const ph = tripPhase(t), want = ph === 'live' && !hidden('mode:live') ? 'live' : ph === 'past' && !hidden('mode:bilan') ? 'bilan' : 'prep';
+    const S = M.phSeen = M.phSeen || {}; if(S[t.id] === ph) return false;
+    S[t.id] = ph; const cur = M.mode || 'prep';
+    if(cur === want || (want === 'bilan' && cur === 'past')){ persist(); return false; }   // déjà au bon endroit (la liste des voyages passés convient aussi)
+    M.mode = want; M.inner = M.inner || {};
+    if(want === 'prep'){ if(!groupOf(M.tab)) M.tab = 'prog'; } else if(INNER[want]) M.inner[want] = INNER[want][0][0];
+    persist();
+    if(!t.demo) setTimeout(()=>toast(want === 'live' ? '📍 ' + MSGT('Ton voyage a commencé : voici ta journée') : want === 'bilan' ? '🏁 ' + MSGT('Voyage terminé : on le boucle ensemble ?') : '🧳 ' + MSGT('Retour à la préparation')), boot ? 1200 : 300);
+    return true;
   }
 
   function modeRender(){
@@ -356,7 +376,10 @@
     const t = trip(), live = t && tripPhase(t) === 'live';
     if(!live){ const ph = t ? tripPhase(t) : 'prep', lv = trips().find(x=>tripPhase(x)==='live');
       return `<div class="v-box"><h3>📍 ${t ? esc(t.titre) : 'Aucun voyage'}</h3><p>${!t ? 'Crée un voyage pour commencer.' : ph === 'prep' ? (t.debut ? `Ce voyage commence le <b>${fdate(t.debut)}</b> : cet espace s’allumera le jour J (fiche du jour, steps, traceur, dépenses).` : 'Ajoute des dates à ce voyage : cet espace s’allumera le jour J.') : `Ce voyage est terminé depuis le ${fdate(t.fin || t.debut)} : retrouve-le dans 🏁 Bilan.`}</p>
-        ${lv && lv.id !== (t||{}).id ? `<button class="v-btn" onclick="CV.go('${ja(lv.id)}')">📍 Ouvrir le voyage en cours : ${esc(lv.titre)}</button>` : ''}</div>`; }
+        ${lv && lv.id !== (t||{}).id ? `<button class="v-btn" onclick="CV.go('${ja(lv.id)}')">📍 Ouvrir le voyage en cours : ${esc(lv.titre)}</button>` : ''}
+        ${!t ? `<button class="v-btn${lv ? ' sec' : ''}" onclick="CV.newTrip()">🧳 ${MSGT('Créer un voyage')}</button>`
+          : ph === 'past' ? `<button class="v-btn${lv && lv.id !== t.id ? ' sec' : ''}" onclick="CV.modeGo('bilan')">🏁 ${MSGT('Ouvrir le bilan du voyage')}</button>`
+          : `<button class="v-btn${lv && lv.id !== t.id ? ' sec' : ''}" onclick="CV.modeGo('prep')${t.debut ? '' : ';CV.datesSheet()'}">🧳 ${MSGT(t.debut ? 'Continuer la préparation' : 'Choisir les dates')}</button>`}</div>`; }
     const k = dayList().indexOf(isoToday()), info = dayInfo(isoToday()), {own, night} = itemsForDay(isoToday());
     const tile = (ic, l, fn) => `<button type="button" class="cv-tile" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
     const lvF = !hidden('blk:prep');

@@ -1739,8 +1739,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   function withWhom(tid, n){
     const t = R[tid]; if(!t || t.deleted || M.wwSeen && M.wwSeen[tid]) return;
-    // une fenêtre est ouverte (ex. « Modifier le voyage ») : on attend qu’elle soit fermée (2 min au plus)
-    if(document.getElementById('v-sheet-bg') || document.querySelector('.ui-dlg, #cv-gate, #cv-world')){ if((n || 0) < 80) setTimeout(()=>withWhom(tid, (n || 0) + 1), 1500); return; }
+    // une fenêtre est ouverte (ex. « Modifier le voyage ») ou un écran plein (tri des visites, rangement, carte 3D du parcours guidé) :
+    // on attend qu’il soit fermé
+    if(document.getElementById('v-sheet-bg') || ovOpen()){ if((n || 0) < 600) setTimeout(()=>withWhom(tid, (n || 0) + 1), 1500); return; }   // 15 min au plus (le tri peut être long)
     M.wwSeen = Object.assign({}, M.wwSeen || {}, {[tid]:1}); persist();
     const me = M.me, ppl = profiles().filter(p=>p.id !== me).map(p=>p.id), v = new Set(t.voyageurs || []);
     openSheet(`<h2>👥 Avec qui pars-tu ?</h2><div class="v-sum-small" style="margin-bottom:8px">« ${esc(t.titre)} » arrive chez tes compagnons, qui reçoivent une notification. Ils pourront le compléter avec toi.</div>

@@ -197,7 +197,10 @@ body.cv-ph-past .hero{background:radial-gradient(120% 90% at 85% 115%, rgba(194,
 .ar-p{opacity:.92;line-height:1.4}.ar-st{margin-top:4px;line-height:1.6}.ar-st small{opacity:.75}
 .ar-go{all:unset;box-sizing:border-box;display:block;text-align:center;padding:11px 14px;border-radius:14px;background:#fff;color:#4c1d95;font-weight:800;cursor:pointer}
 .fil-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.18);margin:10px 0 12px;overflow:hidden}.fil-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#fde68a,#f9a8d4)}
-.fil-chips{display:flex;flex-wrap:wrap;gap:6px}.fil-hide{all:unset;display:block;margin:10px auto 0;font-size:.74rem;opacity:.7;text-decoration:underline;cursor:pointer}
+.fil-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ac-gaph{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:9px 11px;font-size:.86rem;font-weight:700;margin:0 0 10px}.ac-gaph button{all:unset;display:block;margin-top:6px;font-size:.78rem;font-weight:600;text-decoration:underline;cursor:pointer;opacity:.85}
+.fil-days{margin:2px 0 10px}.fil-days button{all:unset;box-sizing:border-box;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.38);color:#fff;font-weight:700;font-size:.8rem;cursor:pointer}
+.p2-msg .ar-go{margin-top:10px}.fil-hide{all:unset;display:block;margin:10px auto 0;font-size:.74rem;opacity:.7;text-decoration:underline;cursor:pointer}
 .fil-soc{margin:0 0 14px}
 .pi-sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 4px}
 .ar-more{all:unset;box-sizing:border-box;display:block;text-align:center;padding:9px 12px;border-radius:14px;border:1.5px dashed rgba(255,255,255,.55);color:#fff;font-weight:800;font-size:.82rem;cursor:pointer}

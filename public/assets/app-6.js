@@ -2266,9 +2266,9 @@
     const ck = list('check', c=>c.trip===t.id), left = ck.filter(c=>!c.done).length, di = (() => { try { return docIssues(); } catch(e){ return []; } })();
     momentShow(`<div class="mo-k">${tomorrow ? 'Demain, tu pars' : 'C’est le grand jour'}</div><div class="mo-big">🧳</div><h2>${esc(t.titre)}</h2>
       ${nx ? `<div class="mo-l">${icon(nx.it)} <b>${esc(nx.it.titre)}</b>${nx.timed ? ' · ' + esc(nx.it.cat==='transport' ? nx.it.heureDep : nx.it.heure) : ''}</div>` : ''}
-      <div class="mo-chk"><span class="${left ? '' : 'ok'}">${left ? '○' : '✓'} ${left ? left + ' chose(s) à cocher dans la checklist' : 'Checklist terminée'}</span>
+      <div class="mo-chk"><span class="${left || !ck.length ? '' : 'ok'}">${!ck.length ? '○ ' + MSGT('Pas encore de liste pour la valise') : left ? '○ ' + left + ' chose(s) à cocher dans la checklist' : '✓ Checklist terminée'}</span>
         <span class="${di.length ? '' : 'ok'}">${di.length ? '⚠️ ' + di.length + ' document(s) à vérifier' : '✓ Documents en ordre'}</span></div>
-      <div class="mo-b">${left ? `<button type="button" onclick="CV.momentClose();CV.tab('check')">✅ Checklist</button>` : ''}<button type="button" onclick="CV.momentClose();CV.tlDay()">📴 Fiche du jour</button><button type="button" class="pri" onclick="CV.momentClose()">Bon voyage !</button></div>`, 'eve');
+      <div class="mo-b">${left ? `<button type="button" onclick="CV.momentClose();CV.tab('check')">✅ Checklist</button>` : !ck.length ? `<button type="button" onclick="CV.momentClose();CV.avantSheet()">🧭 ${MSGT('Avant de partir')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.tlDay()">📴 Fiche du jour</button><button type="button" class="pri" onclick="CV.momentClose()">Bon voyage !</button></div>`, 'eve');
   }
   function momentHello(t, h, city, c){
     const cc = c && c.cc || '', words = SAY[cc], mine = (window.I18N && I18N.lang) || 'fr';
