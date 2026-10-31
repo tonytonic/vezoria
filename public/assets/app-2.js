@@ -607,7 +607,13 @@
       if(fieldsCh && !titleCh && wasAuto && it.from && it.to) it.titre = it.from + ' → ' + it.to;   // on a changé Départ / Arrivée : le titre suit
       else if(titleCh && !fieldsCh && wasAuto && pair(it.titre)){ it.from = pair(it.titre)[0]; it.to = pair(it.titre)[1]; }   // on a réécrit le titre « Lisbonne → Nantes » : Départ / Arrivée suivent
     }
+    // 🏙️ hébergement dont la ville est corrigée (« Monterosso » → « Monterosso al Mare ») : l’étape change de nom, les trajets suivent
+    let reCity = null;
+    if(it.cat === 'hotel' && was && !isNew){ const oc = cityOf(was.titre || '') || was.titre, nc = cityOf(it.titre || '') || it.titre;
+      if(oc && nc && trCanon(oc) !== trCanon(nc) && (!was.base || trCanon(was.base) === trCanon(oc)) && !/h[oô]tel|hostel|auberge|airbnb|chez |appart|apartment|b&b|camping|g[iî]te|r[ée]sidence|villa /i.test(nc)){
+        reCity = [oc, nc]; it.base = nc; delete it.lat; delete it.lng; } }
     if(isNew || !sameItem(was, it)) put(it);
+    if(reCity) try { stageRenamed(reCity[0], reCity[1], it.id); dayTitlesFix(); } catch(e){}
     if(!keepOpen && (isNew || (booked(it) && !booked(was)))) setTimeout(()=>fxFor(it), 250);   // nouveau ou tout juste réservé
     if(keepOpen) return it.id;
     closeSheet(); render(); try { gdAfterSave(it.id); } catch(e){} return it.id;
@@ -628,7 +634,11 @@
   async function del(id){
     const it = R[id];
     if(!it || !(await uiConfirm('Supprimer « ' + (it.titre||'') + ' » ?'))) return;
-    drop(id); closeSheet(); render();
+    // 🏙️ le seul hébergement d’une ville d’étape : la ville quitte l’itinéraire, les trajets voisins sont reliés entre eux
+    let sg = null; if(it.cat === 'hotel' && it.date && it.trip === M.trip) try { const S = stRanges(), k = S.findIndex(x=>it.date >= x.debut && it.date < x.end); if(k >= 0) sg = {city:S[k].city, prev:(S[k - 1] || {}).city || '', next:(S[k + 1] || {}).city || ''}; } catch(e){}
+    drop(id);
+    if(sg) try { if(!stRanges().some(x=>trCanon(x.city) === trCanon(sg.city))){ stageGone(sg.city, sg.prev, sg.next); dayTitlesFix([sg.city]); } } catch(e){}
+    closeSheet(); render();
   }
 
   /* ══════════ Jours ══════════ */
@@ -700,8 +710,35 @@
       }
     }
     if(ch){ const ks = Object.keys(M.hol || {}); if(ks.length > 40) delete M.hol[ks[0]]; persist(); refresh(); }
-    hoodEnsure(t);
+    hoodEnsure(t); aptEnsure(t);
   }
+  /* ✈️ Pas d’aéroport dans un village (Cinque Terre, Hallstatt…) : on cherche le plus proche, une fois par ville (gardé 60 jours).
+     Les vols se cherchent vers cet aéroport, et l’itinéraire aéroport → village est proposé. */
+  const APTQ = {};
+  const aptFor = c => { const a = (M.aptC || {})[normQ(cityOf(String(c || '').replace(/\(.*?\)/g, '')) || c)]; return a && a.i && a.km > 25 ? a : null; };
+  async function aptOne(city){
+    const k = normQ(cityOf(city) || city); if(!k) return; M.aptC = M.aptC || {}; const o = M.aptC[k];
+    if((o && Date.now() - (o.at || 0) < 60 * 864e5) || APTQ[k]) return; APTQ[k] = 1;
+    try {
+      const g = geoCached(city) || await geocode(city, null).catch(()=>null); if(!g || g.lat == null) return;
+      const q = `[out:json][timeout:20];nwr["aeroway"="aerodrome"]["iata"](around:160000,${g.lat},${g.lng});out center tags 40;`;
+      const one = ep => fetch(ep, {method:'POST', body:'data=' + encodeURIComponent(q), headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then(r=>{ if(!r.ok) throw new Error('osm'); return r.json(); });
+      const j = await withTimeout(Promise.any(['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'].map(one)), 25000).catch(()=>null); if(!j) return;
+      const L = (j.elements || []).map(e=>{ const tg = e.tags || {}, p = {lat:e.lat ?? (e.center || {}).lat, lng:e.lon ?? (e.center || {}).lon};
+          if(p.lat == null || !/^[A-Z]{3}$/.test(tg.iata || '') || /military|private/.test(tg['aerodrome:type'] || tg.military || tg.access || '')) return null;
+          const d = rawKm(g, p), big = /international|intl|internacional|internazionale|internationaal|flughafen/i.test(tg.name || '') || tg['aerodrome:type'] === 'international' || tg.aerodrome === 'international';
+          return {i:tg.iata, n:tg['name:' + ((window.I18N && I18N.lang) || 'fr')] || tg.name || tg.iata, km:Math.round(d), sc:d - (big ? 60 : 0)}; }).filter(Boolean).sort((a, b)=>a.sc - b.sc);
+      const own = L.find(a=>a.km <= 25);
+      M.aptC[k] = own ? {own:1, i:own.i, km:own.km, at:Date.now()} : L[0] ? {i:L[0].i, n:L[0].n, km:L[0].km, at:Date.now()} : {at:Date.now()};
+      persist(); refresh();
+    } finally { delete APTQ[k]; }
+  }
+  async function aptEnsure(t){
+    const F = list('item', i=>i.trip === t.id && i.cat === 'transport' && /Avion/i.test(i.mode || ''));
+    for(const c of [...new Set(F.flatMap(i=>[i.from, i.to]).filter(Boolean))].slice(0, 6)) await aptOne(c).catch(()=>{});
+  }
+  // nom à chercher pour un vol : l’aéroport le plus proche si la ville n’en a pas (« PSA » pour Monterosso al Mare)
+  const aptQ = c => { const a = aptFor(c); return a ? a.n + ' (' + a.i + ')' : c; };
   /* 🏘️ croisement visites × hébergement : le quartier le plus central par rapport à ce que tu as choisi, les visites éloignées, l’aéroport le plus pratique */
   async function revName(lat, lng, zoom){
     const wait = 1100 - (Date.now() - geoLast); if(wait > 0) await new Promise(r=>setTimeout(r, wait)); geoLast = Date.now();
@@ -1157,7 +1194,7 @@
       <div class="v-sum-small">Le fourre-tout de chacun : une étape à ajouter, un week-end à caler, un prochain voyage. Un week-end peut devenir un voyage en un clic.</div></div>
       <div class="v-filters">${[['all','Tout'],['weekend','🏖️ Week-ends ('+counts('weekend')+')'],['voyage','🌍 Voyages ('+counts('voyage')+')'],...(t?[['here','📍 Pour « '+esc((t.titre||'').slice(0,14))+' »']]:[]),['etape','📍 Étapes'],['idee','💡 Idées']].map(([k,l])=>
         `<button class="v-chip${f===k?' on':''}" onclick="CV.envF('${ja(k)}')">${l}</button>`).join('')}</div>
-      <div class="v-filters"><span class="cv-lbl">De</span><button class="v-chip${fp==='all'?' on':''}" onclick="CV.envP('all')">Tous</button>${profiles().map(p=>`<button class="v-chip cv-pc${fp===p.id?' on':''}" style="--pc:${p.couleur}" onclick="CV.envP('${ja(p.id)}')">${esc(p.nom)}</button>`).join('')}</div>`;
+      <div class="v-filters"><span class="cv-lbl">De</span><button class="v-chip${fp==='all'?' on':''}" onclick="CV.envP('all')">Tous</button>${profiles().map(p=>`<button class="v-chip cv-pc${fp===p.id?' on':''}" style="--pc:${pcol(p.id)}" onclick="CV.envP('${ja(p.id)}')">${esc(p.nom)}</button>`).join('')}</div>`;
     h += shown.map(wishCard).join('') || '<div class="v-empty">Aucune envie ici. Ajoute avec ＋ en bas.</div>';
     h = pollsHTML() + h;
     document.getElementById('cv-body').innerHTML = h;
@@ -2039,6 +2076,9 @@
       if(it.from && it.to){
         L.push(['🗺️','Trajet',`https://www.google.com/maps/dir/?api=1&origin=${q(it.from)}&destination=${q(it.to)}&travelmode=transit`]);
         if(it.mode==='Avion' && ESCALE) L.push(['🛫','Escale', ESCALE]);
+        if(it.mode==='Avion'){ const ta = aptFor(it.to), fa = aptFor(it.from);
+          if(ta) L.push(['🚆', esc(RF('Aéroport {0} → {1}', ta.i, cityOf(it.to) || it.to)), `https://www.google.com/maps/dir/?api=1&origin=${q(ta.n)}&destination=${q(it.to)}&travelmode=transit`]);
+          if(fa) L.push(['🚆', esc(RF('{0} → aéroport {1}', cityOf(it.from) || it.from, fa.i)), `https://www.google.com/maps/dir/?api=1&origin=${q(it.from)}&destination=${q(fa.n)}&travelmode=transit`]); }
         if(it.mode!=='Avion') L.push(['🔎','Horaires & prix',`https://www.rome2rio.com/fr/map/${q(it.from)}/${q(it.to)}`]);
       }
       { const fn = String(it.compagnie||'').match(/\b([A-Z0-9]{2})\s?(\d{1,4})\b/); if(it.mode==='Avion' && fn) L.push(['📡','Suivre le vol',`https://www.flightradar24.com/data/flights/${(fn[1]+fn[2]).toLowerCase()}`]);
@@ -2219,7 +2259,9 @@
     if(it.cat==='transport'){
       const c = {from:it.from, to:it.to, date:it.date, n}, at = {city:cityOf(it.to||''), what:cityOf(it.to||''), date:it.date, n};
       const m = it.mode || '';
-      if(m==='Avion'){ G.push({t:'Comparer les vols', k:['gflights','aviasales','skyscanner','kiwi'], c}); if(it.to) G.push({t:'À l’arrivée', k:['welcome','kiwitaxi','gettransfer','economy','localrent'], c:at}); }
+      if(m==='Avion'){ const fa = aptFor(it.from), ta = aptFor(it.to), cf = Object.assign({}, c, {from:fa ? fa.i : it.from, to:ta ? ta.i : it.to});
+        const why = [ta ? RF('Pas d’aéroport à {0} : vols vers {1} ({2}), à {3} km.', cityOf(it.to) || it.to, ta.n, ta.i, ta.km) : '', fa ? RF('Au départ : aéroport de {0} ({1}), à {2} km de {3}.', fa.n, fa.i, fa.km, cityOf(it.from) || it.from) : ''].filter(Boolean).join(' ');
+        G.push({t:why ? '✈️ ' + esc(why) : 'Comparer les vols', k:['gflights','aviasales','skyscanner','kiwi'], c:cf}); if(it.to) G.push({t:'À l’arrivée', k:['welcome','kiwitaxi','gettransfer','economy','localrent'], c:at}); }
       else if(m==='Train') G.push({t:'Trains', k:['trainline','omio','sncf','rome2rio'], c});
       else if(m==='Bus') G.push({t:'Bus et covoiturage', k:['flixbus','blablacar','omio','rome2rio'], c});
       else if(m==='Bateau') G.push({t:'Ferries', k:['ferryhopper','directferries','rome2rio'], c});
@@ -2454,7 +2496,7 @@
   const ll = p => (+p.lat).toFixed(6) + ',' + (+p.lng).toFixed(6);
   const dirUrl = (a, b, mode, way) => `https://www.google.com/maps/dir/?api=1&origin=${ll(a)}&destination=${ll(b)}${way && way.length ? '&waypoints=' + way.map(ll).join('%7C') : ''}&travelmode=${mode}`;
   /* 🚕 Trajets d'arrivée et de départ : gare / aéroport ↔ hôtel (le jour où on arrive dans une ville, le jour où on la quitte) */
-  const tfPt = (n, m) => { n = String(n || '').trim(); if(!n) return ''; if(m === 'Avion' && !/a[ée]roport|airport|aeropuerto|aeroporto|flughafen/i.test(n)) return n + ' ' + MSGT('aéroport'); if(/Train/i.test(m || '') && !/gare|station|bahnhof|stazione|estaci/i.test(n)) return n + ' ' + MSGT('gare'); return n; };
+  const tfPt = (n, m) => { n = String(n || '').trim(); if(!n) return ''; if(m === 'Avion' && aptFor(n)) return aptFor(n).n; if(m === 'Avion' && !/a[ée]roport|airport|aeropuerto|aeroporto|flughafen/i.test(n)) return n + ' ' + MSGT('aéroport'); if(/Train/i.test(m || '') && !/gare|station|bahnhof|stazione|estaci/i.test(n)) return n + ' ' + MSGT('gare'); return n; };
   const tfMode = m => m === 'Voiture' ? 'driving' : 'transit';
   const tfHotel = h => [h.nom, h.adresse || cityOf(h.titre)].filter(Boolean).join(', ');   // nom + adresse : Google Maps trouve le bon hôtel
   const tfLink = (a, b, m) => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(a)}&destination=${encodeURIComponent(b)}&travelmode=${tfMode(m)}`;
@@ -2494,14 +2536,18 @@
       const a = hFrom ? tfHotel(hFrom) : t.from, b = hTo ? tfHotel(hTo) : t.to;
       return {before:'', after:'', drive:tfRow(ic, `${hFrom ? '🏨 ' + hn(hFrom) : t.from || ''} → ${hTo ? '🏨 ' + hn(hTo) : t.to || ''}`, [t.heureDep ? RF('Départ {0}', t.heureDep) : '', MSGT('d’hôtel à hôtel')].filter(Boolean).join(' · '), tfLink(a, b, t.mode))};
     }
-    return {
+    // 🚆 le trajet lui-même, d’une gare (ou d’un aéroport) à l’autre : horaires et itinéraire entre les deux villes
+    const fl = /Avion/i.test(t.mode || ''), q = encodeURIComponent;
+    const mid = t.from && t.to ? (fl ? tfRow('✈️', aptQ(t.from) + ' → ' + aptQ(t.to), MSGT('Les vols entre les deux villes'), `https://www.google.com/travel/flights?hl=${(window.I18N && I18N.lang) || 'fr'}&q=${q('Flights from ' + ((aptFor(t.from) || {}).i || t.from) + ' to ' + ((aptFor(t.to) || {}).i || t.to) + (t.date ? ' on ' + t.date : ''))}`)
+      : tfRow(ic, t.from + ' → ' + t.to, MSGT('Le trajet entre les deux villes : horaires et itinéraire'), tfLink(tfPt(t.from, t.mode), tfPt(t.to, t.mode), t.mode))) : '';
+    return { mid,
       before: t.from && hFrom ? tfRow('🏨', RF('Ton hôtel → {0}', ic + ' ' + t.from), [hn(hFrom), t.heureDep ? RF('Départ {0} : sois sur place vers {1}', t.heureDep, tfEarly(t.heureDep, t.mode)) : ''].filter(Boolean).join(' · '), tfLink(tfHotel(hFrom), tfPt(t.from, t.mode), t.mode)) : '',
       after: t.to && hTo ? tfRow(ic, RF('{0} → ton hôtel', t.to), [t.heureArr ? RF('Arrivée {0}', t.heureArr) : '', hn(hTo)].filter(Boolean).join(' · '), tfLink(tfPt(t.to, t.mode), tfHotel(hTo), t.mode)) : ''};
   }
   function transferHTML(d){
     const out = [], {list:tr, dups} = dayTr(d);
     if(dups.length) out.push(`<button type="button" class="etp-fix" onclick="CV.trDupFix('${ja(d)}')">⚠️ ${esc(RF('{0} fiches pour le même trajet {1} : retirer le doublon', dups[0].length, dups[0][0].titre || (cityOf(dups[0][0].from) + ' → ' + cityOf(dups[0][0].to))))}</button>`);
-    tr.forEach(t=>{ const L = tfLegs(d, t); out.push(L.before, L.drive || '', L.after); });
+    tr.forEach(t=>{ const L = tfLegs(d, t); out.push(L.before, L.drive || L.mid || '', L.after); });
     const h = out.filter(Boolean); return h.length ? `<div class="cv-tfs">${h.join('')}</div>` : '';
   }
   // 📅 la journée dans l’ordre : quitter l’hôtel → le trajet → rejoindre l’hôtel du soir → la suite, puis la nuit
@@ -2510,7 +2556,7 @@
     if(dups.length) out.push(`<button type="button" class="etp-fix" onclick="CV.trDupFix('${ja(d)}')">⚠️ ${esc(RF('{0} fiches pour le même trajet {1} : retirer le doublon', dups[0].length, dups[0][0].titre || (cityOf(dups[0][0].from) + ' → ' + cityOf(dups[0][0].to))))}</button>`);
     const hm = i => i.heureDep || i.heure || (i.cat === 'transport' ? '00:00' : '99:99');   // un trajet sans heure passe en premier (on arrive, puis on visite)
     own.slice().sort((a, b)=>hm(a).localeCompare(hm(b))).forEach(i=>{ const L = legs[i.id]; if(!L){ out.push(row(i)); return; }
-      out.push(L.before ? `<div class="cv-tfs">${L.before}</div>` : '', row(i), L.drive || L.after ? `<div class="cv-tfs">${L.drive || L.after}</div>` : ''); });
+      out.push(L.before ? `<div class="cv-tfs">${L.before}</div>` : '', row(i), L.drive || L.mid || L.after ? `<div class="cv-tfs">${L.drive || (L.mid || '') + (L.after || '')}</div>` : ''); });
     night.forEach(i=>out.push(row(i)));
     return out.filter(Boolean).join('');
   }

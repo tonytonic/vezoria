@@ -191,7 +191,31 @@
       s.lat = g ? g.lat : la; s.lng = g ? g.lat != null ? g.lng : lo : lo; compNearFetch(s); }
     // villes proches de la région (Wikidata), en plus de celles autour de chaque étape
     try { comp.near = await wdNear(la, lo, days > 9 ? 280 : 160); } catch(e){ comp.near = []; }
-    if(comp && comp.i === i) compNear();
+    if(comp && comp.i === i){ compNear(); if(x.auto) compAuto(); }
+  }
+  // 🏙️ une seule ville donnée : la ville d’abord, puis 1 ou 2 villes proches (25 à 160 km) selon la durée — au moins la moitié des nuits dans la ville choisie
+  function compAuto(){
+    const c = comp; if(!c || c.autoDone) return; c.autoDone = 1;
+    const k = c.nights >= 9 ? 2 : c.nights >= 5 ? 1 : 0, s0 = c.stops[0]; if(!k || !s0 || s0.lat == null || c.stops.length > 1) return;
+    const L = (c.near || []).filter(nb=>normQ(nb.c) !== normQ(s0.c)).map(nb=>Object.assign({d:km(s0, nb)}, nb)).filter(nb=>nb.d >= 25 && nb.d <= 160).sort((a, b)=>b.n - a.n).slice(0, k);
+    L.forEach(nb=>{ const take = Math.min(2, s0.n - Math.ceil(c.nights / 2)); if(take < 1) return; s0.n -= take; c.stops.push({c:nb.c, n:take, lat:nb.lat, lng:nb.lng}); compNearFetch(c.stops[c.stops.length - 1]); });
+    if(c.stops.length > 1){ compRender(); toast('🧭 ' + RF('Itinéraire composé autour de {0}', s0.c)); }
+  }
+  // 🏙️ « Je ne trouve rien » : une seule ville suffit. Ville connue de l’appli → son itinéraire type ; sinon la ville + des villes proches.
+  async function inspCityGo(){
+    const inp = document.getElementById('in-city'), v = String(inp && inp.value || '').trim().slice(0, 80); if(v.length < 2){ if(inp) inp.focus(); return; }
+    const n = x => normQ(x || ''), S = M.insp || {}, days = Math.max(2, +S.duree || 7), nights = days - 1;
+    const m0 = DESTS.find(d=>n(d[0]).split(/[^a-z0-9]+/).filter(Boolean).join(' ') === n(v) || (d[9] || []).some(e=>n(e[0]) === n(v)));
+    if(m0){ const i = DESTS.indexOf(m0); if(!inspRes.find(r=>r.i === i)) inspRes = inspCalc(S); inspOpen(i); return; }
+    toast('📡 ' + RF('Je situe {0}…', v));
+    const o = await cityInfo(v).catch(()=>null); if(!o){ alert(MSGT('Ville introuvable : essaie avec le pays (ex. « Plougastel, France »).')); return; }
+    const pays = ((M.ctry || {})[n(v)] || {}).pays || '', city = v.split(',')[0].trim(), P0 = {city, pays, cc:o.cc, lat:o.lat, lng:o.lng};
+    const eu = EURO.includes(o.cc) || ['FR','CH','NO','IS','LI'].includes(o.cc);
+    const d = [city, pays, o.cc, o.lat, o.lng, 'ville culture', [4, 5, 6, 9, 10], 90, [2, Math.max(4, nights + 3)], [[city, nights]], MSGT('Itinéraire composé autour de ta ville : règle les nuits, ajoute ou retire des étapes, puis crée le voyage.'), eu ? 'UE' : 'P', Array(12).fill(20), city];
+    const cl = await climOf(P0).catch(()=>null); if(cl){ d[12] = cl.t; d[6] = bestOf(cl); }
+    const i = DESTS.push(d) - 1, now = new Date().getMonth() + 1, best = d[6], mo = +S.mois || best.find(m=>m > now) || best[0] || now;
+    inspRes.unshift({i, d, nom:city, pays, cc:o.cc, tip:d[10], visa:d[11], wk:d[13], tags:d[5].split(' '), best, dur:d[8], sc:0, est:d[7] * nights, trans:0, stay:d[7] * nights, h:0, ground:false, escale:false, mo, tmp:d[12][mo - 1], why:[], warn:[], itin:d[9], globe:1, known:!!cl, auto:1});
+    inspOpen(i);
   }
   function compRender(){
     const c = comp, x = c.x, used = c.stops.reduce((s,a)=>s+a.n,0);
@@ -1232,7 +1256,7 @@
       for(const code of codes){
         const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}});
         let j = {}; try { j = await r.json(); } catch(e){}
-        if(!r.ok) throw new Error(j.error || ('erreur ' + r.status));
+        if(!r.ok) throw new Error(srvMsg(j.error) || ('erreur ' + r.status));
         nR += j.records || 0; nP += j.photos || 0;
       }
       // le téléphone oublie ces codes : le voyage redevient « seulement sur ce téléphone » et n’est plus proposé ici
@@ -1262,7 +1286,7 @@
     try {
       const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(code)}});
       let j = {}; try { j = await r.json(); } catch(e){}
-      if(!r.ok) throw new Error(j.error || ('erreur ' + r.status));
+      if(!r.ok) throw new Error(srvMsg(j.error) || ('erreur ' + r.status));
       const keep = (await uiConfirm('🗑 Supprimé du serveur : ' + (j.records||0) + ' fiche(s) et ' + (j.photos||0) + ' photo(s).\nTes données restent sur ce téléphone.\n\nGarder le code sur ce téléphone ?\nOK = je garde le code : tu pourras tout renvoyer plus tard avec le même code (bouton « Tout renvoyer »).\nAnnuler = j’oublie ce code ici.'));
       if(keep){ if(main){ M.sync.since = 0; M.dirty = []; } else { const sp = spaceObj(code); if(sp){ sp.since = 0; sp.dirty = []; } } }
       else if(main){ M.sync.on = false; M.sync.since = 0; M.dirty = []; }
@@ -2236,6 +2260,7 @@
       // 🎬 « Ton année en voyage » : du 15 décembre à fin janvier, une seule fois par année
       const mo = +td.slice(5, 7), yy = mo === 12 && +td.slice(8, 10) >= 15 ? td.slice(0, 4) : mo === 1 ? String(+td.slice(0, 4) - 1) : '';
       if(yy && !M.seen['yearM:' + yy] && trips().some(t=>!t.demo && t.debut && t.debut <= td && t.debut.slice(0, 4) === yy)){ momentDone = true; M.seen['yearM:' + yy] = 1; persist(); momentYear(yy); return; } }
+    try { if(revokedNag()){ momentDone = true; return; } } catch(e){}   // 🚫 un proche m’a retiré l’accès à son carnet
     try { if(syncStuckNag()){ momentDone = true; return; } } catch(e){}   // ☁️ plus rien n’arrive au serveur depuis 3 jours
     try { if(quotaNag()){ momentDone = true; return; } } catch(e){}   // 📦 place photos dépassée ou presque pleine
     try { if(protectNag()){ momentDone = true; return; } } catch(e){}   // 🛟 ne jamais tout perdre en changeant de téléphone
@@ -2262,7 +2287,7 @@
   function syncStuckNag(){
     const now = Date.now(), S = M.seen || (M.seen = {});
     const L = [M.sync && M.sync.on && M.sync.code ? {sp:M.sync, n:M.dirty.length} : null, ...(M.spaces || []).map(sp=>({sp, n:(sp.dirty || []).length}))]
-      .filter(x=>x && x.sp.err && x.sp.errSince && now - x.sp.errSince > 3 * 864e5 && x.n > 0 && !(x.sp.net && navigator.onLine === false));
+      .filter(x=>x && x.sp.err && !x.sp.revoked && x.sp.errSince && now - x.sp.errSince > 3 * 864e5 && x.n > 0 && !(x.sp.net && navigator.onLine === false));
     if(!L.length) return false;
     const x = L.sort((a, b)=>a.sp.errSince - b.sp.errSince)[0], n = L.reduce((a, y)=>a + y.n, 0);
     const k = 'syncStuck:' + x.sp.errSince + ':' + Math.floor((now - x.sp.errSince - 3 * 864e5) / (7 * 864e5)); if(S[k]) return false;
@@ -2271,6 +2296,16 @@
       <div class="mo-sub">${esc(RF('{0} modification(s) attendent depuis le {1} : tant que l’envoi ne passe pas, elles ne sont que sur ce téléphone.', n, fdate(((d0)=>d0.getFullYear() + '-' + String(d0.getMonth() + 1).padStart(2, '0') + '-' + String(d0.getDate()).padStart(2, '0'))(new Date(x.sp.errSince)))))}</div>
       <div class="mo-l" data-notr>${esc(String(x.sp.err).slice(0, 220))}</div>
       <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.syncNow(true)">🔄 ${MSGT('Réessayer maintenant')}</button><button type="button" onclick="CV.momentClose();CV.cloudSheet()">☁️ ${MSGT('Voir le détail')}</button></div>`, '');
+    return true;
+  }
+  // 🚫 le propriétaire d’un carnet m’a retiré l’accès (code compagnon) : je le sais tout de suite, une seule fois, avec ce que ça change
+  function revokedNag(){
+    const S = M.seen || (M.seen = {}), sp = (M.spaces || []).find(x=>x.revoked && !S['revoked:' + x.code]); if(!sp) return false;
+    S['revoked:' + sp.code] = 1; persist();
+    const g = (M.memberGrant || {})[sp.code] || {}, n = (sp.dirty || []).length;
+    momentShow(`<div class="mo-k">${MSGT('Cloud Vezoria')}</div><div class="mo-big">🚫</div><h2>${esc(RF('{0} t’a retiré l’accès à son carnet', g.by || MSGT('Le propriétaire')))}</h2>
+      <div class="mo-sub">${esc(MSGT('Ses voyages restent sur ce téléphone, mais plus rien ne se synchronise avec lui. Pour retrouver l’accès, demande-lui un nouveau code compagnon.'))}${n ? '<br><br>' + esc(RF('{0} modification(s) faite(s) ici n’ont pas pu partir.', n)) : ''}</div>
+      <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.cloudSheet()">☁️ ${MSGT('Voir le détail')}</button></div>`, '');
     return true;
   }
   function momentShow(html, theme){

@@ -64,7 +64,7 @@
         return `<div class="ar-ou">${t.debut ? `<b>${fdate(t.debut)} → ${fdate(t.fin || t.debut)}</b> <button type="button" class="ar-more" onclick="CV.datesSheet()">📅 ${MSGT('Modifier')}</button>` : `<button type="button" class="ar-go" onclick="CV.datesSheet()">📅 ${MSGT('Choisir les dates')}</button>`}
           ${(()=>{ const H = tripHols(t); return H.length ? `<div class="ar-hol">🎌 ${H.length} ${MSGT('jour(s) férié(s) pendant ton voyage')} : ${H.slice(0, 3).map(x=>`${fshort(x.d)} ${flag(x.cc)} <span data-notr>${esc(x.n)}</span>`).join(' · ')}${H.length > 3 ? ' …' : ''}</div>` : ''; })()}
           ${ccs.length ? `<div class="ar-st">🌍 ${ccs.map(cc=>`${flag(cc)} <span data-notr>${esc(ccName(cc))}</span>`).join(' · ')}</div>` : ''}
-          ${st.length ? `<div class="ar-st">${st.map(x=>`📍 <span data-notr>${esc(x.city)}</span> <small>${fd(x.debut)} → ${fd(x.fin)} · ${nights(x.debut, x.fin || x.debut)} ${MSGT('nuits')}</small>`).join('<br>')}</div>` : ''}
+          ${st.length ? `<div class="ar-st">${st.map((x, i)=>`<div class="ar-stc">📍 <span data-notr>${esc(x.city)}</span> <small>${fd(x.debut)} → ${fd(x.fin)} · ${nights(x.debut, x.fin || x.debut)} ${MSGT('nuits')}</small>${M.lock ? '' : `<span class="ar-stb">${i ? `<button type="button" onclick="CV.stMove(${i},-1)" aria-label="${esc(MSGT('Monter cette étape'))}">▲</button>` : ''}${i < st.length - 1 ? `<button type="button" onclick="CV.stMove(${i},1)" aria-label="${esc(MSGT('Descendre cette étape'))}">▼</button>` : ''}<button type="button" onclick="CV.stRename(${i})" aria-label="${esc(MSGT('Corriger la ville'))}">✏️</button>${st.length > 1 ? `<button type="button" onclick="CV.stDel(${i})" aria-label="${esc(MSGT('Retirer cette ville'))}">🗑</button>` : ''}</span>`}</div>`).join('')}</div>` : ''}
           ${D.gaps.length ? `<div class="ar-p">🛏️ ${RF('{0} nuit(s) sans hébergement', D.gaps.length)}</div>${gapRuns(D.gaps).slice(0, 3).map(r=>`<button type="button" class="ar-go" onclick="CV.ariCity('${ja(r[0])}',${r.length})">📍 ${RF('Une ville pour le {0} → {1}', fd(r[0]), fd(addDays(r[r.length - 1], 1)))}</button>`).join('')}
             <button type="button" class="ar-sk" onclick="CV.ariSkip('ou')">${MSGT('Ces nuits sont prévues autrement (train de nuit, chez des amis…)')}</button>`
           : `<button type="button" class="ar-go" onclick="CV.ariCity()">📍 ${MSGT(st.length ? 'Ajouter une ville' : 'Ajouter les villes du voyage')}</button>`}</div>`;
@@ -180,7 +180,7 @@
     if(document.getElementById('ac-gap')){   // 🛏️ nuits sans hébergement comblées : rien ne se décale, le voyage ne change de dates que si on dépasse
       out.push({id:'i' + uid(), type:'item', trip:t.id, cat:'hotel', titre:v, base:v, date:d, dateFin:f, statut:'todo', partage:'grp', qui:[]});
       const nt = clone(t); let ch = false; if(!nt.debut || d < nt.debut){ nt.debut = d; ch = true; } if(!nt.fin || f > nt.fin){ nt.fin = f; ch = true; } if(ch) out.push(nt);
-      putMany(out, '📍 ' + v); try { trChain(); } catch(e){} closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(ariCtry, 300); return; }
+      putMany(out, '📍 ' + v); try { trChain(); dayTitlesFix(); } catch(e){} closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(ariCtry, 300); return; }
     const ps = document.getElementById('ac-pos'), st = tlStages(), mid = ps && +ps.value < st.length, md = document.getElementById('ac-mode');
     if(md && (md.querySelector('button.on') || {}).dataset.v === 'keep'){   // 🔁 mêmes dates : la ville s’insère, les autres étapes rétrécissent
       const kp = acKeep(ps ? +ps.value : st.length, n); if(kp){
@@ -190,7 +190,7 @@
     if(mid){ shiftFrom(d, n, out); }
     out.push({id:'i' + uid(), type:'item', trip:t.id, cat:'hotel', titre:v, base:v, date:d, dateFin:f, statut:'todo', partage:'grp', qui:[]});
     const nt = clone(t); let ch = false; if(mid && nt.fin){ nt.fin = addD(nt.fin, n); ch = true; } if(!nt.debut || d < nt.debut){ nt.debut = d; ch = true; } if(!nt.fin || f > nt.fin){ nt.fin = f; ch = true; } if(ch) out.push(nt);
-    putMany(out, '📍 ' + v + (mid ? ' · ' + RF('la suite est décalée de {0} nuit(s)', n) : '')); try { trChain(); } catch(e){} closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(ariCtry, 300);
+    putMany(out, '📍 ' + v + (mid ? ' · ' + RF('la suite est décalée de {0} nuit(s)', n) : '')); try { trChain(); dayTitlesFix(); } catch(e){} closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(ariCtry, 300);
   }
   // 🧭 la nouvelle ville est placée là où elle allonge le moins le trajet (Bologne : entre Milan et Venise), tant qu’on n’a pas choisi soi-même
   let acgT = 0, acgN = 0;
@@ -1030,7 +1030,7 @@
   // Chaque photo candidate est essayée tour à tour (une image Wikimedia peut refuser de s'afficher) ; celle qui marche est gardée pour ce voyage.
   // 🖼️ photo déjà chargée sur cet écran : remise tout de suite (pas de nouveau chargement ni de fondu) quand la carte est redessinée
   let CDBG = null;
-  function cdBgTag(){ const t = trip(); return CDBG && t && CDBG.tid === t.id ? `<div class="cd-bg ok still" id="cd-bg" style="background-image:url(&quot;${esc(CDBG.u)}&quot;)"></div>` : '<div class="cd-bg" id="cd-bg"></div>'; }
+  function cdBgTag(){ const t = trip(); return CDBG && t && CDBG.tid === t.id ? `<div class="cd-bg ok still" id="cd-bg" style="background-image:url(&quot;${esc(String(CDBG.u).replace(/["'()\\\s]/g, c=>'%' + c.charCodeAt(0).toString(16).padStart(2, '0')))}&quot;)"></div>` : '<div class="cd-bg" id="cd-bg"></div>'; }
   async function cdPhoto(t, city){
     const bg = document.getElementById('cd-bg'); if(!bg) return;   // (plus de photo de la ville dans la carte : l’en-tête porte la photo d’ambiance)
     if(bg.classList.contains('still') && CDBG && CDBG.tid === t.id) return;
@@ -1610,7 +1610,7 @@
   }
   function liveData(key){
     if(/^ft:/.test(key)){ const r = feedTrkRec(key), ft = R[key] || {};
-      return {title: ft.titre || '', sub: 'Voyage de ' + ftTeamTxt(ft), people: r ? r.people.map(p=>({n:p.n || '—', c:p.c || '#0ea5e9', pts:p.pts || [], gps:!!p.gps})) : [],
+      return {title: ft.titre || '', sub: 'Voyage de ' + ftTeamTxt(ft), people: r ? r.people.map(p=>({n:p.n || '—', c:hexc(p.c, '#0ea5e9'), pts:p.pts || [], gps:!!p.gps})) : [],
         ph: list('feed', f=>f.trip===key && f.lat != null && f.lng != null).map(f=>({id:f.id, lat:+f.lat, lng:+f.lng, ph:(f.photos||[])[0] || '', t:f.titre || f.lieu || '', by:f.by || '', d:f.date || ''}))}; }
     const t = R[key] || {}, by = trkByWho(key, true);
     return {title: t.titre || '', sub: (t.voyageurs||[]).length > 1 ? (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').join(' · ') : '',
@@ -1669,7 +1669,7 @@
         LV.raf = requestAnimationFrame(liveAnim);
       };
       map.on('style.load', go); map.on('load', go); map.on('error', ()=>{});
-    } catch(e){ const m = document.getElementById('lv-msg'); if(m) m.textContent = '⚠️ ' + (e.message || 'Carte indisponible'); }
+    } catch(e){ const m = document.getElementById('lv-msg'); if(m) m.textContent = '⚠️ ' + (e && e.message ? errTxt(e) : MSGT('Carte indisponible')); }
   }
   function liveClose(quiet){
     if(!LV) { const o = document.getElementById('cv-lmap'); if(o) o.remove(); return; }
@@ -1959,7 +1959,7 @@
       const ca = stageAt(i.date, true) || stageAt(i.date, false), cb = stageAt(i.date, false) || stageAt(i.date, true);
       const A = await resolve(i.from, ca), B = await resolve(i.to, cb); if(!A || !B) continue; const a = A.p, b = B.p, d = rawKm(a, b); if(d < .3) continue;
       const far = q => SC.length && SC.every(({c})=>rawKm(c, q) > 2500); if(far(a) && far(b)) continue;   // adresse introuvable ou absurde : on n’invente rien
-      F.legs.push({type:'Feature', properties:{col:P3C[p3St(i)], local:d < 60 ? 1 : 0, id:i.id}, geometry:{type:'LineString', coordinates:p3Arc(a, b)}});
+      F.legs.push({type:'Feature', properties:{col:P3C[p3St(i)], local:d < 25 ? 1 : 0, id:i.id}, geometry:{type:'LineString', coordinates:p3Arc(a, b)}});
       if(d >= 60){ if(!A.stage) ends.push({p:a, name:i.from}); if(!B.stage) ends.push({p:b, name:i.to}); }
     }
     // 🏠 le départ et le retour (début et fin du voyage) ; les autres villes de passage (correspondance à Bruxelles…) en petit
@@ -2032,7 +2032,7 @@
         setTimeout(()=>p3Fit(), 400);
       };
       map.on('style.load', go); map.on('load', go); map.on('error', ()=>{});
-    } catch(e){ const m = document.getElementById('p3-msg'); if(m) m.textContent = '⚠️ ' + (e.message || 'Carte indisponible'); }
+    } catch(e){ const m = document.getElementById('p3-msg'); if(m) m.textContent = '⚠️ ' + (e && e.message ? errTxt(e) : MSGT('Carte indisponible')); }
   }
   function p3Layers(map, F){
     const fc = f => ({type:'geojson', data:{type:'FeatureCollection', features:f}}), font = P3.font || ['Noto Sans Bold'], lbl = !!map.getStyle().glyphs;
@@ -2123,8 +2123,10 @@
      Choisir un cloud ne partage RIEN : le partage avec les amis est une étape à part (tout / au choix). */
   const myTrips = () => trips().filter(t=>t && !t.demo && !t.deleted && t.type === 'trip');
   const tripInCloud = id => !!(TS()[id] && spaceObj(TS()[id]));
-  const cloudMode = () => M.cloud || (M.sync.on && M.sync.code ? 'all' : myTrips().some(t=>tripInCloud(t.id)) ? 'trips' : '');
-  const CLOUD_L = {all:['☁️', 'Tout mon carnet dans le cloud'], trips:['🧳', 'Voyage par voyage'], none:['📱', 'Sans cloud']};
+  // 👥 voyages du carnet d’un proche (code compagnon) : ce n’est pas « mon » cloud voyage par voyage
+  const mateTrip = id => /^M:/.test(TS()[id] || '');
+  const cloudMode = () => M.cloud || (M.sync.on && M.sync.code ? 'all' : myTrips().some(t=>tripInCloud(t.id) && !mateTrip(t.id)) ? 'trips' : memberSpaces().length ? 'mate' : '');
+  const CLOUD_L = {all:['☁️', 'Tout mon carnet dans le cloud'], trips:['🧳', 'Voyage par voyage'], none:['📱', 'Sans cloud'], mate:['👥', 'Compagnon d’un carnet']};
   function cloudState(sp){ return sp.err ? (sp.net ? '📴 ' : '⚠️ ') + esc(sp.err) : (sp.dirty||[]).length ? '⏳ ' + sp.dirty.length + ' modif(s) à envoyer' : '✓ à jour' + (sp.last ? ' · ' + vzWhen(sp.last) : ''); }
   function cloudSheet(view){
     const mode = cloudMode(), choose = view === 'choose' || !mode;
@@ -2157,9 +2159,9 @@
         <div id="cv-mem"><div class="v-sum-small">…</div></div><button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.memberInvite()">➕ Créer un code compagnon</button>`;
     }
     if(memberSpaces().length) h += `<div class="cv-cl-h">👥 Carnets où je suis compagnon</div>` + memberSpaces().map(x=>{ const g = (M.memberGrant || {})[x.code] || {};
-      return `<div class="cv-cl-t"><span><b data-notr>${esc(g.by || '👤')}</b><small>${x.err ? '⚠️ ' + esc(x.err) : '☁️ ' + cloudState(x)}</small></span><button type="button" class="v-btn sec" onclick="CV.memberLeave('${ja(x.code)}')">Quitter</button></div>`; }).join('');
+      return `<div class="cv-cl-t"><span><b data-notr>${esc(g.by || '👤')}</b><small>${x.revoked ? '🚫 ' + esc(MSGT('Accès retiré : ses voyages restent sur ce téléphone, sans synchronisation.')) : x.err ? '⚠️ ' + esc(x.err) : '☁️ ' + cloudState(x)}</small></span><button type="button" class="v-btn sec" onclick="CV.memberLeave('${ja(x.code)}')">Quitter</button></div>`; }).join('');
     if(mode === 'trips'){
-      const ts = myTrips();
+      const ts = myTrips().filter(t=>!mateTrip(t.id));
       h += `<div class="sh-note">🔁 ${MSGT('Le cloud « voyage par voyage » s’arrête : passe à tout ton carnet, tes voyages en ligne s’y rattachent.')}<button type="button" class="v-btn" style="margin-top:8px" onclick="CV.cloudPick('all')">☁️ ${MSGT('Mettre tout mon carnet dans le cloud')}</button></div>`;
       h += `<div class="cv-cl-h">Mes voyages dans le cloud</div>`
         + (ts.map(t=>{ const c = TS()[t.id], sp = c && spaceObj(c);
@@ -2219,7 +2221,7 @@
       try {
         const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(s.code)}});
         let j = {}; try { j = await r.json(); } catch(e){}
-        if(!r.ok) throw new Error(j.error || ('erreur ' + r.status));
+        if(!r.ok) throw new Error(srvMsg(j.error) || ('erreur ' + r.status));
         { const owner = {}; Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, x.cover, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(p && !owner[p]) owner[p] = x; }); });
           M.pq = (M.pq||[]).filter(id=>{ const r = owner[String(id).replace(/\.t$/,'')]; return r && targets(r)[0] !== 'main'; }); }
         M.pgone = (M.pgone||[]).filter(g=>g.code !== s.code); toast('🗑 Carnet effacé du cloud');
@@ -2365,7 +2367,8 @@
   }
   async function memberLeave(mc){
     const g = (M.memberGrant || {})[mc] || {}, who = g.by || MSGT('ce carnet');
-    if(!(await uiConfirm(RF('Quitter le carnet de {0} ?\n\nSes voyages disparaissent de ce téléphone. Rien n’est effacé chez lui.', who)))) return;
+    const sp0 = spaceObj(mc), nd = sp0 && sp0.revoked ? (sp0.dirty || []).length : 0;   // accès retiré : ce qui n’est pas parti sera perdu
+    if(!(await uiConfirm(RF('Quitter le carnet de {0} ?\n\nSes voyages disparaissent de ce téléphone. Rien n’est effacé chez lui.', who) + (nd ? '\n\n⚠️ ' + RF('{0} modification(s) faite(s) ici n’ont pas pu partir : elles seront perdues.', nd) : '')))) return;
     try { await memberApiCall({a:'leave'}, mc); } catch(e){}
     Object.keys(TS()).forEach(tid=>{ if(TS()[tid] === mc){ delete TS()[tid]; (M.hide || (M.hide = {}))[tid] = 1;
       Object.keys(R).forEach(id=>{ const x = R[id]; if(x && (x.id === tid || x.trip === tid)) delete R[id]; }); } });
@@ -2391,7 +2394,7 @@
       const grant = await boxSeal(kc, {k:b64(k), h:b64(h), by:myName(), n:label});
       const lbl = label ? 'e1:' + await boxSeal(await ownerKey(), label) : '';   // 🔒 le prénom part chiffré : seul le propriétaire le relit
       const r = await memberApiCall({a:'add', mt, grant, label:lbl}, M.sync.code);
-      if(!r.ok) throw new Error(r.j.error || ('erreur ' + r.status));
+      if(!r.ok) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status));
       (M.memLocal || (M.memLocal = {}))[r.j.id] = C; persist(); try { await codesPublish(); } catch(e){}
       memberShow(C, label);
     } catch(e){ alert(RF('Code compagnon impossible à créer : {0}', e.message)); }
@@ -2411,7 +2414,7 @@
   async function memberListLoad(){
     const el = document.getElementById('cv-mem'); if(!el || !ownerOn()) return;
     try {
-      const r = await memberApiCall({a:'list'}, M.sync.code); if(!r.ok) throw new Error(r.j.error || r.status);
+      const r = await memberApiCall({a:'list'}, M.sync.code); if(!r.ok) throw new Error(srvMsg(r.j.error) || r.status);
       const L = r.j.members || [];
       for(const m of L) if(/^e1:/.test(m.label || '')) { try { m.label = String(await boxOpen(await ownerKey(), m.label.slice(3))); } catch(e){ m.label = '👤'; } }
       el.innerHTML = L.length ? L.map(m=>`<div class="cv-cl-t"><span><b data-notr>${esc(m.label || '👤')}</b><small>${m.last ? MSGT('vu') + ' ' + vzWhen(m.last) : MSGT('pas encore utilisé')}</small></span>`
@@ -2422,7 +2425,7 @@
   function memberShowId(id, label){ const C = (M.memLocal || {})[id]; if(C) memberShow(C, label); }
   async function memberRevoke(id, label){
     if(!(await uiConfirm(RF('Retirer l’accès de {0} ?\n\nSon appli ne pourra plus synchroniser ton carnet. Ce qu’il a déjà vu reste sur son téléphone.', label || MSGT('ce compagnon'))))) return;
-    try { const r = await memberApiCall({a:'revoke', id}, M.sync.code); if(!r.ok) throw new Error(r.j.error || r.status);
+    try { const r = await memberApiCall({a:'revoke', id}, M.sync.code); if(!r.ok) throw new Error(srvMsg(r.j.error) || r.status);
       if(M.memLocal) delete M.memLocal[id]; persist(); toast('🚫 ' + MSGT('Accès retiré')); memberListLoad(); } catch(e){ alert(e.message); }
   }
   // ── 📱 ajouter un de MES appareils : le code administrateur en QR code (jamais à donner à quelqu’un d’autre) ──
@@ -2527,7 +2530,7 @@
     const v = await uiPrompt(MSGT('Ton code cadeau'), ''); if(v === null || !String(v).trim()) return;
     try {
       const r = await planCall({a:'redeem', gift:String(v).trim()}, M.sync.code);
-      if(!r.ok) throw new Error(r.j.error || ('erreur ' + r.status));
+      if(!r.ok) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status));
       M.quotaNag = {}; M.pqFull = {}; M.pqErr = ''; toast('🎁 ' + MSGT('Cadeau activé : ta place photos est agrandie')); setTimeout(()=>{ try { uploadQueue(); } catch(e){} }, 500); await quotaLoad(true); cloudSheet();
     } catch(e){ alert(e.message); }
   }
@@ -2540,11 +2543,11 @@
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${MSGT('Fermer')}</button></div>`);
   }
   async function planBuy(plan, period){
-    try { const r = await planCall({a:'checkout', plan, period, back:location.href}, M.sync.code); if(!r.ok || !r.j.url) throw new Error(r.j.error || ('erreur ' + r.status)); location.href = r.j.url; }
+    try { const r = await planCall({a:'checkout', plan, period, back:location.href}, M.sync.code); if(!r.ok || !r.j.url) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status)); location.href = r.j.url; }
     catch(e){ alert(e.message); }
   }
   async function planPortal(){
-    try { const r = await planCall({a:'portal', back:location.href}, M.sync.code); if(!r.ok || !r.j.url) throw new Error(r.j.error || ('erreur ' + r.status)); location.href = r.j.url; }
+    try { const r = await planCall({a:'portal', back:location.href}, M.sync.code); if(!r.ok || !r.j.url) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status)); location.href = r.j.url; }
     catch(e){ alert(e.message); }
   }
   // retour du paiement : #abonnement=ok
@@ -2624,10 +2627,11 @@
         const nFree = days.filter(d=>!stChipTxt(d, x.city)).length;
         chips = `<div class="etp-chips">${C.slice(0, 5).join('')}${C.length > 5 ? `<span class="etp-chip free">+${C.length - 5}</span>` : ''}${canE && n >= 5 && nFree >= 4 ? `<button type="button" class="etp-chip tip" onclick="event.stopPropagation();CV.ariCity()">💡 ${MSGT('C’est long : ajouter une ville ?')}</button>` : ''}</div>`;
       }
+      const tools = canE ? `<div class="etp-tools">${i ? `<button type="button" onclick="CV.stMove(${i},-1)" aria-label="${esc(MSGT('Monter cette étape'))}">▲</button>` : ''}${i < S.length - 1 ? `<button type="button" onclick="CV.stMove(${i},1)" aria-label="${esc(MSGT('Descendre cette étape'))}">▼</button>` : ''}<button type="button" onclick="CV.stRename(${i})">✏️ ${esc(MSGT('Corriger la ville'))}</button>${S.length > 1 ? `<button type="button" onclick="CV.stDel(${i})" aria-label="${esc(MSGT('Retirer cette ville'))}">🗑</button>` : ''}</div>` : '';
       h += `<div class="etp-card${open ? ' open' : ''}" id="etp-${x.h.id}">
         <button type="button" class="etp-h" onclick="CV.stTog('${ja(x.h.id)}')" aria-expanded="${open}"><span class="etp-c" data-notr>${esc(x.city)}</span><span class="etp-n">${n} ${MSGT(n > 1 ? 'nuits' : 'nuit')}</span>
           <span class="etp-d">${fshort(x.debut)} → ${fshort(x.end)} · <i class="etp-dot${pd ? ' ok' : bk ? ' bk' : ''}" title="${esc(MSGT(pd ? 'Payé' : bk ? 'Réservé' : 'À réserver'))}"></i><span data-notr>${esc(hl)}</span></span><em aria-hidden="true">${open ? '▴' : '▾'}</em></button>
-        ${open ? `<div class="etp-b">${hs.map(it=>`<button type="button" class="etp-hotel" onclick="CV.edit('${ja(it.id)}')"><i>🛏️</i><span><b data-notr>${esc(it.nom || cityOf(it.titre) || it.titre)}</b><small>${MSGT(it.statut === 'paid' ? 'Payé' : okB(it) ? 'Réservé' : 'À réserver')} · ${fshort(it.date)} → ${fshort(it.dateFin || it.date)}</small></span><em>›</em></button>`).join('')}${(()=>{ DAY_NOCITY = x.city; try { return loose(days); } finally { DAY_NOCITY = false; } })()}</div>` : chips}</div>`;
+        ${open ? `<div class="etp-b">${hs.map(it=>`<button type="button" class="etp-hotel" onclick="CV.edit('${ja(it.id)}')"><i>🛏️</i><span><b data-notr>${esc(it.nom || cityOf(it.titre) || it.titre)}</b><small>${MSGT(it.statut === 'paid' ? 'Payé' : okB(it) ? 'Réservé' : 'À réserver')} · ${fshort(it.date)} → ${fshort(it.dateFin || it.date)}</small></span><em>›</em></button>`).join('')}${(()=>{ DAY_NOCITY = x.city; try { return loose(days); } finally { DAY_NOCITY = false; } })()}</div>` : chips}${tools}</div>`;
       const nx = S[i + 1]; if(nx){
         const lo = x.fin > x.debut ? x.fin : addD(x.debut, 1);   // hôtel sans date de fin (ou fin avant l’arrivée) : on ne remonte pas à tout le voyage
         const tr = items(it=>it.cat === 'transport' && it.date && it.date >= lo && it.date <= nx.debut && !trSeen.has(it.id)).sort((a, b)=>(a.date + (a.heureDep || '')).localeCompare(b.date + (b.heureDep || ''))); tr.forEach(it=>trSeen.add(it.id));
@@ -2662,9 +2666,15 @@
       if((o.from || o.to) && !o.titre){ const P = tp(it), two = P.length === 2 && P[0] && P[1];
         o.titre = (o.from || (two ? P[0] : it.from) || '') + ' → ' + (o.to || (two ? P[1] : it.to) || ''); }
       const c = Object.assign(clone(it), o); if(['date', 'from', 'to', 'titre'].some(k=>(c[k] || '') !== (it[k] || ''))) out.push(c); used.add(it.id); };
+    // une ville d’étape, même écrite autrement (« Monterosso » pour « Monterosso al Mare », « Roma Termini » pour Rome)
+    const isS = x => !!stOf(x);
     // l’aller : le 1ᵉʳ trajet qui arrive d’ailleurs (pas « Naples → Malte » au milieu du voyage)
-    const cand = T.filter(i=>i.from && !isC(i.from) && isC(i.to)), d0 = cand.reduce((m, i)=>!m || (i.date || '9') < m ? (i.date || '9') : m, ''), outs = cand.filter(i=>(i.date || '9') === d0), homes = new Set(outs.map(i=>K(i.from)));
-    const rets = T.filter(i=>!outs.includes(i) && isC(i.from) && i.to && !isC(i.to) && homes.has(K(i.to)));
+    let cand = T.filter(i=>i.from && !isS(i.from) && isS(i.to));
+    // … ou qui part de la maison vers une ville qui n’est plus une étape (ville corrigée ou retirée) : il arrive désormais à la 1ʳᵉ étape
+    if(!cand.length) cand = T.filter(i=>i.from && i.to && !isS(i.from) && !isS(i.to) && (i.date || '9') <= S[0].debut);
+    const d0 = cand.reduce((m, i)=>!m || (i.date || '9') < m ? (i.date || '9') : m, ''), outs = cand.filter(i=>(i.date || '9') === d0), homes = new Set(outs.map(i=>K(i.from)));
+    // le retour : vers la maison, depuis une étape (ou depuis une ville retirée, le dernier jour)
+    const rets = T.filter(i=>!outs.includes(i) && i.to && !isS(i.to) && homes.has(K(i.to)) && (isS(i.from) || (i.date || '') >= S[S.length - 1].debut));
     outs.forEach(i=>set(i, {to:S[0].city, titre:i.from + ' → ' + S[0].city, date:S[0].debut}));
     rets.forEach(i=>set(i, {from:S[S.length - 1].city, titre:S[S.length - 1].city + ' → ' + i.to, date:end}));
     const mid = T.filter(i=>!used.has(i.id) && fK(i) && tK(i) && fK(i) !== tK(i)), todo = [];
@@ -2675,8 +2685,43 @@
       if(it) set(it, {from:a.city, to:b.city, titre:a.city + ' → ' + b.city, date:b.debut});
       else if(!T.some(i=>!mid.includes(i) && !outs.includes(i) && !rets.includes(i) && tK(i) === K(b.city))) out.push({id:'i' + uid() + 'tc' + k, type:'item', trip:t.id, cat:'transport', mode:'Train', titre:a.city + ' → ' + b.city, from:a.city, to:b.city, date:b.debut, statut:'todo', partage:'pp', qui:[]}); });
     mid.filter(i=>!used.has(i.id) && !okB(i) && !num(i.prix) && !num(i.estime)).forEach(i=>{ const c = clone(i); c.deleted = true; out.push(c); });
+    // 🔁 trajet créé ici qui va d’une étape… à elle-même (« Monterosso → Monterosso al Mare » après une ville corrigée) : retiré
+    T.filter(i=>/tc\d+$/.test(i.id) && !used.has(i.id) && !okB(i) && !num(i.prix) && !num(i.estime) && fK(i) && fK(i) === tK(i)).forEach(i=>{ const c = clone(i); c.deleted = true; out.push(c); });
     if(!dry && out.length) putQuiet(out);
     return out;
+  }
+  // ✏️ une ville d’étape corrigée (« Monterosso » → « Monterosso al Mare ») : les trajets, les journées et le sous-titre suivent.
+  //    Avant : l’aller restait « Nantes → Monterosso » et un trajet « Monterosso → Monterosso al Mare » apparaissait.
+  // « Monterosso (Villa Steno) » → « Monterosso al Mare (Villa Steno) » : on ne change que la ville, pas les détails notés à côté
+  const cityRe = (ti, nc) => { const s = String(ti || ''), c = cityOf(s), k = c ? s.indexOf(c) : -1; return k >= 0 ? s.slice(0, k) + nc + s.slice(k + c.length) : nc; };
+  function stageRenamed(oldC, newC, skip){
+    const t = trip(); if(!t || !oldC || !newC) return 0; const o = trCanon(oldC); if(!o || o === trCanon(newC)) return 0;
+    const same = x => trCanon(x) === o, out = [];
+    const swap = s => String(s || '').split(/(\s*(?:→|->|–| - )\s*)/).map(p=>same(p) ? newC : p).join('');
+    const dayT = s => { const m = /^(Arrivée à |Départ de )(.+)$/.exec(String(s || '')); return m && same(m[2]) ? m[1] + newC : swap(s); };
+    items(i=>i.cat === 'transport' && !okB(i)).forEach(i=>{ const c = clone(i); let ch = false;
+      if(same(i.from)){ c.from = newC; ch = true; } if(same(i.to)){ c.to = newC; ch = true; }
+      const tt = swap(i.titre); if(tt !== String(i.titre || '')){ c.titre = tt; ch = true; } if(ch) out.push(c); });
+    items(i=>i.cat === 'hotel' && i.id !== skip && (same(i.base) || same(cityOf(i.titre || '') || i.titre))).forEach(h=>{ const c = clone(h);
+      if(same(h.base)) c.base = newC; if(same(cityOf(h.titre || '') || h.titre)) c.titre = cityRe(h.titre, newC); delete c.lat; delete c.lng; out.push(c); });
+    list('day', r=>r.trip === t.id && r.titre).forEach(r=>{ const tt = dayT(r.titre); if(tt !== r.titre) out.push(Object.assign(clone(r), {titre:tt})); });
+    if(t.sous){ const ss = swap(t.sous); if(ss !== t.sous) out.push(Object.assign(clone(t), {sous:ss})); }
+    if(out.length) putQuiet(out);
+    try { trChain(); } catch(e){}
+    return out.length;
+  }
+  // 🗑 une ville d’étape retirée : le trajet qui y arrivait relie maintenant l’étape d’avant à celle d’après (ou la maison),
+  //    celui qui en partait disparaît (sauf s’il est réservé) — puis tout se remet dans l’ordre
+  function stageGone(city, prev, next, noChain){
+    const t = trip(); if(!t || !city) return 0; const o = trCanon(city), same = x => trCanon(x) === o, out = [];
+    const T = items(i=>i.cat === 'transport'), inL = T.filter(i=>same(i.to)), outL = T.filter(i=>same(i.from));
+    inL.forEach(i=>{ const to = next || (outL[0] && outL[0].to) || ''; if(okB(i) || !to) return; out.push(Object.assign(clone(i), {to, titre:(i.from || '') + ' → ' + to})); });
+    outL.forEach(i=>{ if(okB(i)) return;   // un billet réservé reste tel quel : c’est un vrai trajet
+      if(inL.length || !prev) out.push(Object.assign(clone(i), {deleted:true})); else out.push(Object.assign(clone(i), {from:prev, titre:prev + ' → ' + (i.to || '')})); });
+    if(t.sous){ const P = t.sous.split(/\s*→\s*/), Q = P.filter(x=>!same(x)); if(Q.length !== P.length && Q.length) out.push(Object.assign(clone(t), {sous:Q.join(' → ')})); }
+    if(out.length) putQuiet(out);
+    if(!noChain) try { trChain(); } catch(e){}
+    return out.length;
   }
   // nom de ville comparable : sans gare ni aéroport, et les noms locaux courants ramenés à un seul (Roma = Rome, Napoli = Naples…)
   const TR_ALIAS = [['rome','roma','rom'],['naples','napoli','neapel'],['florence','firenze','florenz'],['venise','venezia','venice','venedig'],['milan','milano','mailand'],['turin','torino'],['genes','genova','genoa','genua'],['bruxelles','brussels','brussel','brussel zuid'],['anvers','antwerpen','antwerp'],['lisbonne','lisboa','lisbon','lissabon'],['seville','sevilla'],['prague','praha','prag'],['vienne','wien','vienna'],['munich','munchen','muenchen'],['cologne','koln','koeln'],['copenhague','kobenhavn','copenhagen','kopenhagen'],['varsovie','warszawa','warsaw','warschau'],['cracovie','krakow','cracow','krakau'],['athenes','athina','athens','athen'],['londres','london'],['edimbourg','edinburgh'],['moscou','moskva','moscow'],['geneve','geneva','genf','ginevra'],['bale','basel','basle'],['le caire','cairo','caire'],['pekin','beijing'],['marrakech','marrakesh'],['la haye','den haag','the hague']];
@@ -2703,7 +2748,7 @@
     else { const L = carMix(); if(L.length) putQuiet(L.map(i=>Object.assign(clone(i), {mode:'Voiture'}))); toast('🚗 ' + RF('{0} trajet(s) passés en voiture', L.length)); }
     const y = window.scrollY; render(); window.scrollTo(0, y);
   }
-  function trFix(){ const n = trChain().length; toast(n ? '🚆 ' + RF('{0} trajet(s) remis dans l’ordre des étapes', n) : '✓ ' + MSGT('Les trajets sont déjà dans l’ordre')); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  function trFix(){ const n = trChain().length; try { dayTitlesFix(); } catch(e){} toast(n ? '🚆 ' + RF('{0} trajet(s) remis dans l’ordre des étapes', n) : '✓ ' + MSGT('Les trajets sont déjà dans l’ordre')); const y = window.scrollY; render(); window.scrollTo(0, y); }
 
   /* ⇅ Réorganiser : on glisse les villes, on change les nuits ; à l’enregistrement, tout suit (hôtels, trajets, visites, journées, notes) */
   let SO = null;
@@ -2716,17 +2761,20 @@
   }
   function soPlan(){ let c = SO.start; return SO.L.map(x=>{ const d = c; c = addD(c, x.span); return {x, d, e:c}; }); }
   function soDraw(){
-    if(!SO) return; const P = soPlan(), tot0 = SO.L.reduce((a, x)=>a + x.span0, 0), tot = SO.L.reduce((a, x)=>a + x.span, 0), moved = SO.L.some((x, i)=>x.k !== i);
+    if(!SO) return; const P = soPlan(), tot0 = SO.L.reduce((a, x)=>a + x.span0, 0) + (SO.rm || []).reduce((a, r)=>a + r.x.span0, 0), tot = SO.L.reduce((a, x)=>a + x.span, 0), moved = SO.L.some((x, i)=>x.k !== i);
     const warn = P.filter(p=>p.x.bk && (p.d !== p.x.d0 || p.x.span !== p.x.span0)).map(p=>p.x.city);
     const html = `<h2>⇅ ${esc(MSGT('Réorganiser les étapes'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Glisse une ville par ⋮⋮ pour changer l’ordre. Les dates, les trajets et les jours suivent tout seuls.'))}</div>
       <div class="so-list" id="so-list">${P.map((p, i)=>`<div class="so-row" data-i="${i}"><span class="so-hd" aria-label="${esc(MSGT('Déplacer'))}" data-i="${i}">⋮⋮</span>
         <span class="so-c"><b data-notr>${esc(p.x.city)}</b><small>${fshort(p.d)} → ${fshort(p.e)}${p.d !== p.x.d0 ? ' ·' + ' <i>' + esc(MSGT('nouvelles dates')) + '</i>' : ''}</small></span>
         <span class="so-ud"><button type="button" aria-label="${esc(MSGT('Monter'))}" onclick="CV.soMove(${i},-1)"${i ? '' : ' disabled'}>▲</button><button type="button" aria-label="${esc(MSGT('Descendre'))}" onclick="CV.soMove(${i},1)"${i < P.length - 1 ? '' : ' disabled'}>▼</button></span>
-        <span class="so-st"><button type="button" aria-label="${esc(MSGT('Une nuit de moins'))}" onclick="CV.soN(${i},-1)"${p.x.span > 1 ? '' : ' disabled'}>−</button><b>${p.x.span}&nbsp;${esc(MSGT(p.x.span > 1 ? 'nuits' : 'nuit'))}</b><button type="button" aria-label="${esc(MSGT('Une nuit de plus'))}" onclick="CV.soN(${i},1)">＋</button></span></div>`).join('')}</div>
+        <span class="so-st"><button type="button" aria-label="${esc(MSGT('Une nuit de moins'))}" onclick="CV.soN(${i},-1)"${p.x.span > 1 ? '' : ' disabled'}>−</button><b>${p.x.span}&nbsp;${esc(MSGT(p.x.span > 1 ? 'nuits' : 'nuit'))}</b><button type="button" aria-label="${esc(MSGT('Une nuit de plus'))}" onclick="CV.soN(${i},1)">＋</button></span>${P.length > 1 ? `<button type="button" class="so-del" aria-label="${esc(MSGT('Retirer cette ville'))}" onclick="CV.soDel(${i})">🗑</button>` : ''}</div>`).join('')}</div>
       <div class="so-note${tot !== tot0 ? ' ch' : ''}">${tot === tot0 ? esc(RF('Total : {0} nuits, comme avant.', tot)) : esc(RF('Total : {0} nuits ({1}). Le retour passe au {2}.', tot, (tot > tot0 ? '+' : '') + (tot - tot0), fdate(addD(SO.oldEnd, tot - tot0))))}</div>
       ${moved ? `<div class="so-warn">🚆 ${esc(MSGT('L’ordre change : vérifie ensuite les trajets entre les villes.'))}</div>` : ''}
       ${warn.length ? `<div class="so-warn">🛏️ ${esc(RF('Déjà réservé à {0} : pense à modifier ta réservation.', warn.join(', ')))}</div>` : ''}
+      ${(SO.rm || []).length ? `<div class="so-warn">🗑 ${esc(RF('Retirée(s) à l’enregistrement : {0}', SO.rm.map(r=>r.x.city).join(', ')))}</div>` : ''}
       <button type="button" class="so-auto" onclick="CV.soAuto()" id="so-auto"${SO.L.length > 2 ? '' : ' disabled'}>🧭 ${esc(MSGT('Ordre le plus court automatiquement'))}</button>
+      ${SO.L.length > 1 ? `<div class="so-opt"><label>${esc(MSGT('Commencer par'))} <select class="v-in" id="so-first" onchange="CV.soAuto(+this.value)">${SO.L.map((x, i)=>`<option value="${i}"${i ? '' : ' selected'}>${esc(x.city)}</option>`).join('')}</select></label>
+        <button type="button" class="so-rev" onclick="CV.soRev()">⇄ ${esc(MSGT('Sens inverse'))}</button></div>` : ''}
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.soSave()">✓ ${esc(MSGT('Enregistrer'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`;
     openSheet(html); soDrag();
   }
@@ -2749,8 +2797,10 @@
     });
   }
   // 🧭 l’ordre qui fait le moins de kilomètres (la première ville ne bouge pas : c’est souvent là qu’on arrive)
-  async function soAuto(){
-    if(!SO || SO.L.length < 3) return; const b = document.getElementById('so-auto'); if(b){ b.disabled = true; b.textContent = '🧭 …'; }
+  async function soAuto(first){
+    if(!SO || SO.L.length < 2) return; const b = document.getElementById('so-auto'); if(b){ b.disabled = true; b.textContent = '🧭 …'; }
+    if(first > 0 && SO.L[first]){ const [f] = SO.L.splice(first, 1); SO.L.unshift(f); }   // 🏁 la ville choisie passe en premier, le reste s’ordonne derrière
+    if(SO.L.length < 3){ soDraw(); return; }
     try {
       const co = (M.ctry || {})[normQ(SO.L[0].city)], ctx = co && co.cc && typeof ccName === 'function' ? ccName(co.cc) : '';
       const P = []; for(const x of SO.L){ const c = geoCached(x.city) || await geocode(x.city, ctx); if(!c){ toast('📍 ' + RF('{0} introuvable sur la carte', x.city)); soDraw(); return; } P.push(c); }
@@ -2764,7 +2814,7 @@
     soDraw();
   }
   function soSave(msg){
-    const t = R[(SO || {}).tid]; if(!SO || !t) return; const P = soPlan(), tot0 = SO.L.reduce((a, x)=>a + x.span0, 0), tot = SO.L.reduce((a, x)=>a + x.span, 0), dl = tot - tot0;
+    const t = R[(SO || {}).tid]; if(!SO || !t) return; const P = soPlan(), tot0 = SO.L.reduce((a, x)=>a + x.span0, 0) + (SO.rm || []).reduce((a, r)=>a + r.x.span0, 0), tot = SO.L.reduce((a, x)=>a + x.span, 0), dl = tot - tot0;
     if(P.every((p, i)=>p.x.k === i && p.x.span === p.x.span0)){ closeSheet(); SO = null; return; }
     const map = x => { if(!x || x < SO.start) return x; const p = P.find(q=>x >= q.x.d0 && x < q.x.e0); if(p) return addD(p.d, Math.min(dDiff(p.x.d0, x), p.x.span - 1)); return x >= SO.oldEnd ? addD(x, dl) : x; };
     const out = [], hset = new Set(SO.L.flatMap(x=>x.hids));
@@ -2786,7 +2836,68 @@
     const chg = days.some(r=>map(r.date) !== r.date);
     if(chg){ days.forEach(r=>{ if(!NW[r.id]){ const c = clone(r); c.deleted = true; out.push(c); } }); out.push(...Object.values(NW)); }
     const nt = clone(t); let tc = false; if(nt.fin && nt.fin >= SO.oldEnd && dl){ nt.fin = addD(nt.fin, dl); tc = true; } if(tc) out.push(nt);
-    SO = null; putMany(out, msg || '⇅ ' + MSGT('Étapes réorganisées') + (dl ? ' · ' + RF('retour le {0}', fdate(nt.fin)) : '')); closeSheet(true); try { trChain(); } catch(e){} Object.keys(openD).forEach(k=>delete openD[k]); const y = window.scrollY; render(); window.scrollTo(0, y);
+    const rm = SO.rm || []; rm.forEach(r=>r.x.hids.forEach(id=>{ if(R[id] && !R[id].deleted) out.push(Object.assign(clone(R[id]), {deleted:true})); }));   // 🗑 villes retirées : leurs hébergements
+    SO = null; putMany(out, msg || '⇅ ' + MSGT('Étapes réorganisées') + (dl ? ' · ' + RF('retour le {0}', fdate(nt.fin)) : ''));
+    rm.forEach(r=>{ try { stageGone(r.x.city, r.prev, r.next, true); } catch(e){} });   // le trajet qui y arrivait relie maintenant les étapes voisines
+    closeSheet(true); try { trChain(); } catch(e){} try { dayTitlesFix(rm.map(r=>r.x.city)); } catch(e){} Object.keys(openD).forEach(k=>delete openD[k]); const y = window.scrollY; render(); window.scrollTo(0, y);
+  }
+  // 🗑 retirer une ville dans « Réorganiser » : ses nuits vont à l’étape d’avant (ou d’après si c’était la première)
+  function soDel(i){
+    if(!SO || SO.L.length < 2 || !SO.L[i]) return; const L = SO.L, x = L[i], nb = L[i - 1] || L[i + 1];
+    (SO.rm = SO.rm || []).push({x, prev:(L[i - 1] || {}).city || '', next:(L[i + 1] || {}).city || ''});
+    nb.span += x.span; L.splice(i, 1); soDraw();
+  }
+  function soRev(){ if(!SO || SO.L.length < 2) return; SO.L.reverse(); soDraw(); toast('⇄ ' + MSGT('Itinéraire dans l’autre sens')); }
+  // ⇅ directement sur la carte d’étape : monter / descendre, corriger la ville, la retirer — tout suit tout de suite
+  async function stMove(i, d){
+    const t = trip(); if(!t || t.archived || M.lock) return; const B = soBuild(t); if(!B) return; const j = i + d; if(!B.L[i] || j < 0 || j >= B.L.length) return;
+    const L = B.L, lo = Math.min(i, j), bk = L.slice(lo).filter(x=>x.bk).map(x=>x.city);   // les étapes dont les dates changent
+    if(bk.length && !(await uiConfirm(RF('Déjà réservé à {0} : les dates de ces nuits vont changer, pense à modifier ta réservation. Continuer ?', bk.join(', '))))) return;
+    [L[i], L[j]] = [L[j], L[i]]; SO = B; soSave('⇅ ' + RF('{0} : étape déplacée', L[j].city));
+  }
+  async function stDel(i){
+    const t = trip(); if(!t || t.archived || M.lock) return; const B = soBuild(t); if(!B || !B.L[i]) return; const x = B.L[i];
+    if(B.L.length < 2){ alert(MSGT('C’est la seule ville du voyage : ajoute d’abord la bonne ville, puis retire celle-ci.')); return; }
+    const nb = B.L[i - 1] || B.L[i + 1];
+    if(!(await uiConfirm(RF('Retirer {0} du voyage ?\n\nSes {1} nuit(s) vont à {2}. Les trajets sont recalculés.', x.city, x.span, nb.city) + (x.bk ? '\n\n⚠️ ' + MSGT('Son hébergement était réservé : pense à annuler ta réservation.') : '')))) return;
+    SO = B; soDel(i); closeSheet(true); soSave('🗑 ' + RF('{0} retirée du voyage', x.city));
+  }
+  async function stRename(i){
+    const t = trip(); if(!t || t.archived || M.lock) return; const S = stRanges(), x = S[i]; if(!x) return;
+    const v = await uiPrompt(MSGT('Le bon nom de la ville (ex. « Monterosso al Mare » plutôt que « Monterosso ») :'), x.city); if(v == null) return;
+    const nc = String(v).trim().replace(/\s+/g, ' ').slice(0, 80); if(!nc || normQ(nc) === normQ(x.city)) return;
+    const hs = items(it=>it.cat === 'hotel' && it.date && it.date >= x.debut && it.date < x.end), out = [];
+    // l’hôtel dort parfois dans un village voisin (« Levanto » pour visiter Monterosso) : ce nom-là reste, seule la ville visitée change
+    let near = false;
+    hs.forEach(h=>{ const c = clone(h), m = trCanon(cityOf(h.titre || '') || h.titre) === trCanon(x.city); if(!h.base || trCanon(h.base) === trCanon(x.city)) c.base = nc;
+      if(m || !String(h.titre || '').trim()) c.titre = m ? cityRe(h.titre, nc) : nc; else near = true; delete c.lat; delete c.lng; out.push(c); });
+    if(out.length) putMany(out, '✏️ ' + nc);
+    if(near) geocode(nc).then(()=>{ const y = window.scrollY; render(); window.scrollTo(0, y); }).catch(()=>{});
+    stageRenamed(x.city, nc); try { dayTitlesFix(); } catch(e){}
+    const y = window.scrollY; render(); window.scrollTo(0, y); setTimeout(()=>{ try { ariCtry(); } catch(e){} }, 300);
+  }
+  // 📅 les titres de journée écrits par l’appli (« Arrivée à Pise », « Pise → Florence », « Sienne → retour », le nom de la ville)
+  //    suivent l’ordre réel des étapes ; un titre écrit à la main n’est jamais touché
+  function dayTitlesFix(extra){
+    const t = trip(); if(!t) return 0; const S = stRanges(); if(!S.length) return 0;
+    const cs = new Set(S.map(x=>trCanon(x.city)));
+    // les noms de villes connus du voyage (étapes, trajets, sous-titre) : un titre fait seulement de ces noms vient de l’appli
+    const kn = new Set([...cs, 'retour', ...(extra || []).map(trCanon), ...items(i=>i.cat === 'transport').flatMap(i=>[i.from, i.to]).filter(Boolean).map(trCanon), ...String(t.sous || '').split(/\s*→\s*/).filter(Boolean).map(trCanon)]);
+    const known = x => kn.has(trCanon(x)) || /^retour$/i.test(String(x).trim());
+    const auto = s => { s = String(s || '').trim(); if(!s) return true; const m = /^(?:Arrivée à |Départ de )(.+)$/.exec(s); if(m) return known(m[1]);
+      const P = s.split(/\s*(?:→|->)\s*/); if(P.length === 2) return P.every(known);
+      return known(s) && !cs.has(trCanon(s)); };   // le nom d’une ville retirée ; une autre étape du voyage (excursion d’un jour) reste telle quelle
+    const want = d => { const k = S.findIndex(x=>x.debut === d), last = S[S.length - 1];
+      if(t.fin && d === t.fin && d >= last.end) return last.city + ' → retour';
+      if(k === 0) return 'Arrivée à ' + S[0].city; if(k > 0) return S[k - 1].city + ' → ' + S[k].city;
+      const x = S.find(x=>x.debut < d && d < x.end); return x ? x.city : ''; };
+    const out = []; list('day', r=>r.trip === t.id && r.date).forEach(r=>{ if(!auto(r.titre)) return; const w = want(r.date); if(w && w !== r.titre) out.push(Object.assign(clone(r), {titre:w})); });
+    // le sous-titre (« Florence → Sienne → Pise ») et la durée du titre (« · 3 jours », posée par « Je ne sais pas où aller ») suivent le voyage
+    let tc = null; const tt = () => tc || (tc = clone(t));
+    if(t.sous && t.sous.split(/\s*→\s*/).every(c=>known(c) || c === '')){ const ns = S.map(x=>x.city).join(' → '); if(ns !== t.sous) tt().sous = ns; }
+    { const m = /^(.+) · (\d+) (jours|semaines?)$/.exec(t.titre || ''); if(m && t.debut && t.fin){ const nd = nights(t.debut, t.fin) + 1, lbl = durLbl(nd), nt = m[1] + ' · ' + lbl; if(nt !== t.titre) tt().titre = nt; } }
+    if(tc) out.push(tc);
+    if(out.length) putQuiet(out); return out.length;
   }
 
   /* ══════════ 💶 Budget pas à pas : ① objectif ② chiffrer ③ sur place ④ payer à temps ══════════ */

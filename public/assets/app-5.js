@@ -1652,6 +1652,8 @@
       <div class="v-f"><label>Envies (plusieurs choix)</label><div class="v-filters" style="flex-wrap:wrap">${INSP_TAGS.map(([k,l])=>`<button type="button" class="v-chip${(S.tags||[]).includes(k)?' on':''}" data-tag="${k}" onclick="this.classList.toggle('on')">${l}</button>`).join('')}</div></div>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.inspireGo()">✨ Me proposer des destinations</button><button type="button" class="v-btn sec" onclick="CV.inspireDemo()">👀 Exemple</button></div>`);
   }
+  // ⏱️ « · 10 jours », « · 1 semaine », « · 2 semaines » : en semaines seulement quand le compte tombe juste
+  const durLbl = d => d >= 7 && d % 7 === 0 ? d / 7 + ' semaine' + (d >= 14 ? 's' : '') : d + ' jours';
   function inspireDemo(){ inspire({dep:'Nantes', mois:'5', duree:'7', nb:'2', budget:'1100', style:'confort', vol:'4', climat:'chaud', qui:'couple', rythme:'equil', tags:['mer','gastronomie','culture']}); }
   function inspCalc(S){
     const dep = DEPS[S.dep] || (S.depLL ? [S.depLL[0], S.depLL[1], 0] : DEPS.Nantes), days = +S.duree, bud = num(S.budget), maxH = +S.vol, sty = {eco:0.7, confort:1, luxe:1.8}[S.style] || 1, now = new Date();
@@ -1706,8 +1708,10 @@
     const top = fit.slice(0, n), mx = Math.max(1, inspRes[0].sc), mn = inspRes[inspRes.length - 1].sc;
     const tight = fit.length < 3 ? `<div class="cv-warnline" style="margin-bottom:8px">${fit.length ? 'Peu d’idées' : 'Aucune idée'} ne rentre dans tes réponses (${bud ? eur(bud) + ' / pers., ' : ''}${maxH < 99 ? maxH + ' h de trajet max' : ''}${S.cni ? ', carte d’identité' : ''}). Pour plus de choix : style « Économique », moins de jours, un trajet un peu plus long ou un budget plus grand.${over.length ? '<br>Les plus proches de tes critères :' : ''}</div>` + over.filter(x=>(!S.cni || ['UE','FR'].includes(x.visa))).sort((a,b)=>a.est-b.est).slice(0, 3 - Math.min(3, fit.length)).map(x=>`<button type="button" class="cv-prow" onclick="CV.inspOpen(${x.i})"><span>${flag(x.cc)} <b>${esc(x.nom)}</b></span><span>≈ ${eur(x.est)} · ${hhm(x.h)}</span></button>`).join('') : '';
     const pct = x => Math.max(5, Math.min(99, Math.round((x.sc - mn) / (mx - mn || 1) * 100)));
+    const cityBox = `<div class="insp-city"><b>🏙️ ${MSGT('Tu as une ville en tête ?')}</b><small>${MSGT('Donne-la : je compose un itinéraire autour, avec une ou deux villes proches si tu as le temps.')}</small>
+      <div class="cv-row"><input class="v-in" id="in-city" placeholder="${esc(MSGT('Ex. Florence, Séville, Cracovie'))}" autocomplete="off" enterkeyhint="go" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.inspCityGo()}"><button type="button" class="fd-send" onclick="CV.inspCityGo()">${MSGT('Composer')}</button></div></div>`;
     openSheet(`<h2>✨ Mes idées de voyage</h2><div class="v-sum-small" style="margin-bottom:8px">Depuis <b>${esc(S.dep === 'autre' ? S.depTxt : S.dep)}</b>, ${days} jours, ${nb} voyageur${nb>1?'s':''}. Budgets et temps de trajet = ordres de grandeur ; prix réels avec Escale, formalités sur diplomatie.gouv.fr.</div>
-      ${tight}${top.map(x=>`<div class="cv-idea${focus===x.i?' focus':''}" id="idea-${x.i}" data-i="${x.i}"><div class="im"><img data-wk="fr:${esc(x.wk)}" alt=""><span class="pc">${pct(x)} %</span><button type="button" class="fav${fav.has(x.nom)?' on':''}" onclick="CV.inspFav(${x.i}, this)" aria-label="Garder">${fav.has(x.nom)?'❤️':'🤍'}</button></div>
+      ${tight}${fit.length < 3 ? cityBox : ''}${top.map(x=>`<div class="cv-idea${focus===x.i?' focus':''}" id="idea-${x.i}" data-i="${x.i}"><div class="im"><img data-wk="fr:${esc(x.wk)}" alt=""><span class="pc">${pct(x)} %</span><button type="button" class="fav${fav.has(x.nom)?' on':''}" onclick="CV.inspFav(${x.i}, this)" aria-label="Garder">${fav.has(x.nom)?'❤️':'🤍'}</button></div>
         <div class="hd"><b>${flag(x.cc)} ${esc(x.nom)}</b><small>${esc(x.pays)} · idéal ${x.dur[0]}–${x.dur[1]} j</small></div>
         <div class="chips"><span data-k="t">🌡️ ${x.tmp} °C en ${MOIS_L[x.mo-1]}</span><span>${x.ground ? '🚗' : '✈️'} ≈ ${hhm(x.h)}${x.escale ? ' (escale probable)' : ''}</span><span data-k="p" class="${x.ground ? 'hide' : ''}">✈️ prix réel…</span><span data-k="e">💶 ≈ ${eur(x.est)} / pers.</span><span>${VISA[x.visa]}</span></div>
         ${x.why.length ? `<div class="why">${x.why.map(esc).join(' · ')}</div>` : ''}${x.warn.length ? `<div class="warn">⚠️ ${x.warn.map(esc).join(' · ')}</div>` : ''}
@@ -1715,7 +1719,7 @@
         <div class="bud" data-k="b">Trajet ≈ ${eur(x.trans + (x.escale ? 80 : 0))} · sur place ≈ ${eur(x.stay)} · <b>total groupe ≈ ${eur(x.est * nb)}</b></div>
         <p>💡 ${esc(x.tip)}</p>
         <div class="cv-row" style="gap:6px;flex-wrap:wrap"><button type="button" class="v-day-edit cp-go" onclick="CV.inspOpen(${x.i})">🧩 Explorer & composer</button><button type="button" class="v-day-edit" onclick="CV.inspireCreate(${x.i})">🧳 Créer tel quel</button>${ESCALE ? `<a class="v-day-edit" href="${ESCALE}">✈️ Prix réels</a>` : hidden('blk:book') ? '' : `<a class="v-day-edit" href="${esc(bookUrl('gflights', {from:S.dep === 'autre' ? S.depTxt : S.dep, to:x.nom}))}" target="_blank" rel="noopener">✈️ Vols</a><a class="v-day-edit" href="${esc(bookUrl('booking', {city:x.nom, n:nb}))}" target="_blank" rel="noopener">🛏️ Hébergements</a>`}<a class="v-day-edit" href="https://fr.wikipedia.org/wiki/${encodeURIComponent(x.wk.replace(/ /g,'_'))}" target="_blank" rel="noopener">📖 Découvrir</a></div></div>`).join('')}
-      ${n < 16 && fit.length > n ? `<button type="button" class="v-btn sec" onclick="CV.inspMore()">Voir d’autres idées</button>` : ''}<div id="insp-bp"></div>
+      ${n < 16 && fit.length > n ? `<button type="button" class="v-btn sec" onclick="CV.inspMore()">Voir d’autres idées</button>` : ''}${fit.length < 3 ? '' : cityBox}<div id="insp-bp"></div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.inspSurprise()">🎲 Surprends-moi</button>${fav.size >= 2 ? `<button type="button" class="v-btn" onclick="CV.inspVote()">🗳️ Faire voter (${fav.size})</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.inspire()">← Réponses</button></div>`);
     setTimeout(async ()=>{ const imgs = [...document.querySelectorAll('.cv-idea img[data-wk]')];
       imgs.forEach(async i=>{ const w = wkParse(i.dataset.wk); if(!w) return; const k = 'sum:' + w.title;
@@ -1798,7 +1802,7 @@
     const S = M.insp || {}, days = +(S.duree || 7), st = custom.stops, debut = inspDebut(x);
     const tid = 't' + uid(), out = [], v = M.me ? [M.me] : [];
     let cur = debut; const stops = st.map(([c,n])=>{ const s = {c, n, d:cur, f:addDays(cur, n)}; cur = s.f; return s; }), fin = cur;
-    out.push({id:tid, type:'trip', ccs:[x.d[2]].filter(Boolean), titre:x.nom + ' · ' + (days >= 7 ? Math.round(days/7) + ' semaine' + (days >= 14 ? 's' : '') : days + ' jours'), sous:stops.map(s=>s.c).join(' → '), debut, fin, voyageurs:v, objectif:num(S.budget)||''});
+    out.push({id:tid, type:'trip', ccs:[x.d[2]].filter(Boolean), titre:x.nom + ' · ' + durLbl(days), sous:stops.map(s=>s.c).join(' → '), debut, fin, voyageurs:v, objectif:num(S.budget)||''});
     const mode = x.ground ? 'Voiture' : 'Avion', DEP = custom.dep != null ? custom.dep : (S.dep === 'autre' ? S.depTxt : S.dep) || '', RET = custom.ret != null ? custom.ret : DEP;
     out.push({id:'i'+uid()+'a', type:'item', trip:tid, cat:'transport', mode, titre:(DEP||'Départ') + ' → ' + stops[0].c, from:DEP, to:stops[0].c, date:debut, statut:'todo', partage:'pp', qui:[], estime:String(Math.round((x.trans + (x.escale ? 80 : 0))/2))});
     stops.forEach((s,k)=>{

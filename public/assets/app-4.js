@@ -44,7 +44,7 @@
       try { const v = await meteoFor(st[i]);
         el.innerHTML = v.kind === 'prev' ? `${meteoIcon(v)} <b>${v.min}° → ${v.max}°</b> · risque de pluie jusqu’à ${v.pluie} % <i>(prévisions)</i>`
           : `${meteoIcon(v)} <b>${v.min}° → ${v.max}°</b> en moyenne · ${v.jp} jour${v.jp>1?'s':''} de pluie sur ${v.n} <i>(relevés ${v.year})</i>`;
-      } catch(e){ el.textContent = '⚠️ indisponible (' + e.message + ')'; }
+      } catch(e){ el.textContent = '⚠️ ' + MSGT(/introuvable/.test(e && e.message || '') ? 'Météo : ville introuvable' : 'Météo indisponible pour le moment'); }
     }
   }
 

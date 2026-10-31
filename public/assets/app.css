@@ -2992,7 +2992,7 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 .gd-leg i{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#7C3AED;color:#fff;font-style:normal;font-size:.68rem;font-weight:700;margin-right:4px;vertical-align:-3px}
 .gd-pl{margin:2px 0 8px;padding-left:22px;font-size:.85rem;columns:2;column-gap:18px}.gd-pl li{break-inside:avoid;margin:1px 0}
 .gd-warn{margin:8px 0;padding:10px 12px;border-radius:12px;background:#fff7ed;border:1px solid #fdba74;color:#7c2d12;font-size:.85rem;line-height:1.35}
-@media (prefers-color-scheme:dark){.gd-warn{background:#3b2410;border-color:#9a3412;color:#fed7aa}}
+
 /* parcours guidé : les blocs de la carte violette, sur fond clair de la feuille */
 .gd .ar-subs .ar-sub{background:var(--card,#fff);color:inherit;border:1.5px solid var(--line,#e5e0ee);box-shadow:none}
 .gd .ar-subs .ar-sub small{color:inherit;opacity:.7}.gd .ar-subs .ar-sub i{background:#ede9fe;color:#6d28d9}
@@ -3015,7 +3015,7 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 .gd-hood{margin:2px 0 10px;padding:10px 12px;border-radius:14px;background:linear-gradient(135deg,#ffe4e6,#fce7f3);border:1.5px solid #fda4af;color:#881337}
 .gd-hood .gd-hk{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
 .gd-hood b{display:block;font-size:1.15rem;margin:2px 0}.gd-hood small{font-size:.8rem;opacity:.85}
-@media (prefers-color-scheme:dark){.gd-hood{background:#3b0f1e;border-color:#9f1239;color:#fecdd3}}
+
 .gd-how{font-size:.8rem;line-height:1.4;opacity:.8;margin:2px 0 6px}
 .gd-dist{columns:1;list-style:none;padding:0;margin:0 0 8px}
 .gd-dist li{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid rgba(124,58,237,.1)}
@@ -3062,3 +3062,23 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 .ar-bkp{all:unset;box-sizing:border-box;grid-column:1/-1;display:block;width:100%;padding:9px 12px;border-radius:12px;background:linear-gradient(135deg,#fde68a,#fbbf24);color:#3b1d00;font-size:.82rem;line-height:1.3;cursor:pointer;margin:2px 0}
 .ar-bkp b{white-space:nowrap}.ar-bkp.big{margin:4px 0 10px;padding:12px 14px;font-size:.9rem;text-align:center}
 [dir=rtl] .v-actions .cv-sq[aria-label="←"]{transform:scaleX(-1)}
+
+/* ⇅ étapes : monter, descendre, corriger la ville, la retirer (31f) */
+.etp-tools{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap;padding:0 12px 12px}
+.etp-card.open .etp-tools{padding-top:8px;background:#fbf8fc}
+.etp-tools button,.ar-stb button{border:1px solid #e6dcea;background:#fff;color:#5a1f80;border-radius:999px;min-width:36px;min-height:34px;padding:0 10px;font:inherit;font-size:.8rem;font-weight:800;cursor:pointer}
+.ar-stc{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:2px 0}
+.ar-stb{margin-left:auto;display:flex;gap:4px}
+.ar-stb button{min-width:32px;min-height:30px;padding:0 6px}
+.so-del{border:0;background:none;font-size:1rem;padding:6px;cursor:pointer;opacity:.75}
+.so-opt{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:.84rem;color:#5f566a}
+.so-opt label{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
+.so-opt select{flex:1;min-width:0;min-height:40px;padding:6px 10px}
+.so-rev{min-height:40px;border-radius:12px;border:1.5px solid #c9a6dc;background:#fff;color:#5a1f80;font:inherit;font-weight:800;padding:0 12px;cursor:pointer}
+
+/* 🏙️ « Je ne sais pas où aller » : une seule ville suffit (31f) */
+.insp-city{background:#fff;border:1.5px dashed #c9a6dc;border-radius:16px;padding:12px;margin:8px 0 12px;display:flex;flex-direction:column;gap:6px}
+.insp-city b{color:#2A1238}
+.insp-city small{color:#5f566a;font-size:.82rem}
+.insp-city .cv-row{gap:6px}
+.insp-city input{flex:1;min-width:0}

@@ -373,7 +373,7 @@
   }
   async function v2Put(code, id, blob, kb, rh){
     const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':id, 'X-Photo-Cap':rh, 'Content-Type':'image/jpeg'}, body:new Blob([await v2Seal(new Uint8Array(await blob.arrayBuffer()), kb)], {type:'image/jpeg'})});
-    if(!r.ok){ let j = {}; try { j = (await r.json()) || {}; } catch(e){} const er = new Error((j.error ? j.error + ' ' : '') + '(' + r.status + ')'); er.st = r.status; er.j = j; er.code = code; throw er; }
+    if(!r.ok){ let j = {}; try { j = (await r.json()) || {}; } catch(e){} const er = new Error((j.error ? srvMsg(j.error) + ' ' : '') + '(' + r.status + ')'); er.st = r.status; er.j = j; er.code = code; throw er; }
   }
   // envoi d'une photo dans le pot commun (une fois) + sa fiche « pk: » ; ref : la remettre au même endroit (serveur vidé, « Tout renvoyer »)
   async function v2Upload(pid, full, thumb, code, trip, ref){
@@ -654,7 +654,9 @@
     const owner = {}, dead = new Set(); Object.values(R).forEach(x=>{ if(!x || x.type === 'feed') return; [...(x.photos||[]), x.recu, x.preuve, x.cover, ...(x.pj||[]).map(p=>p && p.id)].forEach(p=>{ if(!p) return; if(x.deleted) dead.add(p); else if(!owner[p]) owner[p] = x; }); });
     // photos de fiches supprimées (ex. souvenirs remplacés par un nouvel import) : elles ne partent plus et quittent la file
     { const n0 = M.pq.length; M.pq = M.pq.filter(id=>{ const b = String(id).replace(/\.t$/, ''); return owner[b] || !dead.has(b); }); if(M.pq.length !== n0) persist(); }
-    const codeOf = id => { const base = String(id).replace(/\.t$/,''), r = owner[base]; if(!r) return photoCode(id); if(r.demo) return null; const t = targets(r)[0]; return t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t; };
+    const codeOf = id => { const base = String(id).replace(/\.t$/,''), r = owner[base]; if(!r) return photoCode(id); if(r.demo) return null; const t = targets(r)[0];
+      if(t !== 'main'){ const so = spaceObj(t); if(so && so.revoked) return null; }   // 🚫 carnet dont l’accès m’a été retiré : ses photos restent ici, sans réessayer en boucle
+      return t === 'main' ? (M.sync.on && M.sync.code ? M.sync.code : null) : t; };
     // seules les photos des voyages en ligne partent ; les autres attendent sur le téléphone, sans être comptées
     M.pqFull = M.pqFull || {}; Object.keys(M.pqFull).forEach(c=>{ if(Date.now() > M.pqFull[c]) delete M.pqFull[c]; });
     const isFull = id => { const c = codeOf(id); return !!(c && M.pqFull[c]); };
@@ -664,7 +666,7 @@
     const send = async (blob, pid, code) => { const body = E2E ? new Blob([await seal(new Uint8Array(await blob.arrayBuffer()), code)], {type:'image/jpeg'}) : blob;
       const r = await fetch(photoApi(), {method:'POST', headers:{'X-Carnet-Code':await authCode(code), 'X-Photo-Id':await sid(pid, code), 'Content-Type':'image/jpeg'}, body});
       if(!r.ok && r.status !== 413){ let j = {}; try { j = (await r.json()) || {}; } catch(e){}
-        const er = new Error((j.error ? j.error + ' ' : '') + '(' + r.status + ')'); er.st = r.status; er.j = j; er.code = code; throw er; } };
+        const er = new Error((j.error ? srvMsg(j.error) + ' ' : '') + '(' + r.status + ')'); er.st = r.status; er.j = j; er.code = code; throw er; } };
     const one = async id => {
       const code = codeOf(id); if(!code) return;          // voyage repassé hors ligne entre-temps : la photo reste sur le téléphone
       let o = null; try { o = await idbT(id); } catch(e){ if(/délai/.test(e && e.message || '')) throw e; }   // base qui ne répond pas : on réessaiera, la photo ne quitte pas la file
@@ -698,16 +700,17 @@
       M.pq = M.pq.filter(x=>x!==id); syncDot();
       left--; if(left && !(left % 3)){ persist(); cryptShow('🔐 Chiffrement des photos… (' + left + ' restante' + (left > 1 ? 's' : '') + ')'); }
     };
-    let upSt = 0, upJ = null;
+    let upSt = 0, upJ = null, upNetE = false;
     const worker = async () => { while(!stop && !upHalt && gen === upGen && todo.length){ const id = todo.shift(); if(isFull(id)){ waiting++; continue; }
       try { await one(id); upAt = Date.now(); } catch(e){
         // place de CE carnet pleine : ses photos restent sur le téléphone, celles des autres voyages continuent de partir
         if(e && e.st === 507 && e.code && /carnet/i.test(e.j && e.j.error || '')){ M.pqFull[e.code] = Date.now() + (e.j && e.j.full ? 600000 : 3600000); if(M.quota) M.quota.at = 0; waiting++; if(!upErr || upSt !== 507){ upErr = e.message; upSt = 507; upJ = e.j; } continue; }
+        if(e && e.net) upNetE = true;
         if(!upErr || upSt === 507){ upErr = (e && e.message) || String(e); upSt = e && e.st || 0; upJ = e && e.j; } stop = true; } } };
     try { await Promise.all([worker(), worker(), worker()]); }   // 3 envois en même temps : bien plus rapide sur mobile
     catch(e){ upErr = 'réseau : ' + (e && e.message || e); }
     let upNet = false;   // 📴 coupure de réseau : un message clair (pas « Failed to fetch »)
-    if(upErr && (navigator.onLine === false || /Failed to fetch|NetworkError|Load failed|network|réseau/i.test(upErr))){ upNet = true; upErr = '📴 ' + MSGT('Pas de réseau pour les photos : elles restent sur ce téléphone et partiront toutes seules au retour de la connexion.'); }
+    if(upErr && (upNetE || navigator.onLine === false || /Failed to fetch|NetworkError|Load failed|network|réseau/i.test(upErr))){ upNet = true; upErr = '📴 ' + MSGT('Pas de réseau pour les photos : elles restent sur ce téléphone et partiront toutes seules au retour de la connexion.'); }
     // messages clairs : pause de sécurité (trop d’envois d’un coup) ou place du serveur pleine
     if(upSt === 429){ const min = Math.max(1, Math.round(((upJ && upJ.retry) || 600) / 60)); M.pqPause = Date.now() + min * 60000;
       upErr = '⏸️ Pause de sécurité : beaucoup de photos envoyées d’un coup. L’envoi reprend tout seul dans ' + min + ' min.'; }
@@ -2987,7 +2990,7 @@
       OM()[t.id] = {at:Date.now(), n:list.length - fail, tpl, style:OFM}; persist();
       say(fail ? `⚠️ ${fail} morceaux non téléchargés (réseau ?). Réessaie en Wi-Fi.` : '✅ Cartes prêtes : elles marchent maintenant sans réseau.');
       if(quiet) return !fail; setTimeout(omapSheet, fail ? 2500 : 1200);
-    } catch(e){ say('⚠️ ' + (e.message || e)); if(btn) btn.disabled = false; if(quiet) return false; }
+    } catch(e){ say('⚠️ ' + errTxt(e)); if(btn) btn.disabled = false; if(quiet) return false; }
   }
   async function omapDel(){
     if(!(await uiConfirm('Effacer les cartes hors ligne de ce téléphone ?'))) return;
@@ -3018,7 +3021,7 @@
       const info = document.getElementById('om-info');
       if(info) info.innerHTML = pts.length > 1 ? pts.map((p, i)=>`<button type="button" onclick="CV.omapFly(${i})">${esc(p.city)}</button>`).join('') : `<span>${navigator.onLine === false ? (OM()[t.id] ? '📴 Carte hors ligne' : '📴 Pas de réseau : télécharge les cartes avant le départ (Outils).') : ''}</span>`;
       OMV.pts = pts;
-    } catch(e){ const info = document.getElementById('om-info'); if(info) info.textContent = '⚠️ Carte indisponible : ' + (e.message || e); }
+    } catch(e){ const info = document.getElementById('om-info'); if(info) info.textContent = '⚠️ ' + MSGT('Carte indisponible') + ' : ' + errTxt(e); }
   }
   function omapFly(i){ if(OMV && OMV.pts && OMV.pts[i]) OMV.flyTo({center:[OMV.pts[i].lng, OMV.pts[i].lat], zoom:13}); }
   function omapClose(){ const ov = document.getElementById('cv-omap'); if(ov){ ov.style.display = 'none'; ov.innerHTML = ''; } try { if(OMV) OMV.remove(); } catch(e){} OMV = null; document.body.style.overflow = ''; }

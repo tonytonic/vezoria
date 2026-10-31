@@ -4,11 +4,17 @@
    (appli mise en arrière-plan, réseau qui change) bloquait la synchro et les envois jusqu’à la fermeture de l’appli. */
 (function(){ try {
   const F = window.fetch.bind(window);
+  // 📴 réseau coupé ou serveur muet : un message clair au lieu de « Failed to fetch » / « Load failed » (en anglais, incompréhensible).
+  //    L’erreur reste une TypeError (même comportement pour le code), marquée .net ; un envoi annulé exprès garde son erreur d’origine.
+  const T = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
+  const net = (e, slow) => { const er = new TypeError(T(navigator.onLine === false ? 'Pas de réseau : réessaie quand la connexion revient.'
+      : slow ? 'Le serveur ne répond pas : réessaie dans quelques minutes.' : 'Serveur injoignable pour le moment : réessaie dans quelques minutes.')); er.net = true; er.orig = e; return er; };
   window.fetch = function(u, o){
     try { const s = typeof u === 'string' ? u : (u && u.url) || ''; o = o || {};
-      if(/\/api\//.test(s) && !o.signal && typeof AbortController === 'function'){
-        const ac = new AbortController(), ms = /\/api\/photo/.test(s) && o.method === 'POST' ? 120000 : 45000, t = setTimeout(()=>ac.abort(), ms);
-        return F(u, Object.assign({}, o, {signal:ac.signal})).finally(()=>clearTimeout(t)); } } catch(e){}
+      if(/\/api\//.test(s)){
+        const sig = o.signal; let own = null, t = 0;
+        if(!sig && typeof AbortController === 'function'){ own = new AbortController(); t = setTimeout(()=>own.abort(), /\/api\/photo/.test(s) && o.method === 'POST' ? 120000 : 45000); o = Object.assign({}, o, {signal:own.signal}); }
+        return F(u, o).catch(e=>{ if(sig && sig.aborted) throw e; throw net(e, !!(own && own.signal.aborted)); }).finally(()=>clearTimeout(t)); } } catch(e){}
     return F(u, o); };
 } catch(e){} })();
 
@@ -215,6 +221,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   try { if(/Android/i.test(navigator.userAgent || '')) document.documentElement.classList.add('vz-and'); } catch(e){}
   const pname = id => { const p = prof(id); return p ? p.nom : (R[id] ? R[id].nom || '?' : '?'); };
   const pcol = id => { const p = prof(id) || R[id]; return p && p.couleur && /^#[0-9a-f]{3,8}$/i.test(p.couleur) ? p.couleur : '#999'; };   // 🛡️ seulement une vraie couleur (jamais du CSS venu d’ailleurs)
+  const hexc = (c, d) => /^#[0-9a-f]{3,8}$/i.test(String(c || '')) ? String(c) : (d || '#999');   // 🛡️ idem pour une couleur rangée dans une fiche (trace partagée, abonnés…)
   const profiles = () => list('profile').sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
   const trips = () => list('trip').sort((a,b)=>(a.debut||'9999').localeCompare(b.debut||'9999'));
   function trip(){ const t = R[M.trip]; return t && t.type==='trip' && !t.deleted ? t : null; }
@@ -456,6 +463,13 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const netErr = e => { const er = new Error(MSGT(navigator.onLine === false ? 'Pas de réseau : tes modifications restent sur ce téléphone et partiront dès que la connexion revient.'
       : e && e.name === 'AbortError' ? 'Le serveur ne répond pas : tes modifications restent sur ce téléphone, nouvel essai dans quelques minutes.'
       : 'Serveur injoignable pour le moment : tes modifications restent sur ce téléphone, nouvel essai dans quelques minutes.')); er.net = true; return er; };
+  // ⚠️ message d’erreur montré à la personne : une coupure de réseau d’un service extérieur (météo, cartes…) devient une phrase claire
+  const netMsg = () => MSGT(navigator.onLine === false ? 'Pas de réseau : réessaie quand la connexion revient.' : 'Serveur injoignable pour le moment : réessaie dans quelques minutes.');
+  const errTxt = e => { if(e && e.net) return e.message; const m = String((e && e.message) || e || '');
+    return /Failed to fetch|Load failed|NetworkError|network connection|Internet connection|offline|aborted/i.test(m) ? netMsg() : m; };
+  // 🌍 message du serveur écrit « français — English » : une seule langue à l’écran (traduction si on l’a, sinon l’anglais)
+  const srvMsg = m => { const p = String(m || '').split(' — '); if(p.length !== 2 || !p[0] || !p[1]) return m;
+    const L = (window.I18N && I18N.lang) || 'fr'; if(L === 'fr') return p[0]; const t = window.I18N && I18N.msg ? I18N.msg(p[0]) : p[0]; return t !== p[0] ? t : p[1]; };
   async function call(since, changes, code){
     const url = apiUrl(); if(!url) throw new Error('Adresse du serveur inconnue');
     const orig = changes;
@@ -474,7 +488,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(res.ok && orig.length) try { const big = Array.isArray(j.skipped) && j.skipped.length ? syBig(j.skipped, orig, changes) : new Set();
       if(M.syncBig) orig.forEach(r=>{ if(r && M.syncBig[r.id] && !big.has(r.id)) delete M.syncBig[r.id]; }); } catch(e){}   // repartie (raccourcie) : plus signalée
     if(res.status === 429){ M.syncPause = Date.now() + Math.min(3600, Math.max(60, +j.retry || 600)) * 1000; persist(); }
-    if(!res.ok) throw new Error(j.error || ('Erreur serveur ' + res.status));
+    if(!res.ok){ const er = new Error(srvMsg(j.error) || ('Erreur serveur ' + res.status)); er.st = res.status; er.revoked = !!j.revoked; throw er; }   // revoked : accès compagnon retiré
     if(!Array.isArray(j.records)) throw new Error('Réponse inattendue du serveur');
     if(E2E) j.records = (await Promise.all(j.records.map(x=>openRec(x, code)))).filter(Boolean);
     if(code) try { j.records.forEach(r=>{ if(!r || r.type !== 'feedtrip') return; const k = r.id + '|' + code;   // 🔗 même voyage suivi par 2 liens : l’âge de chacun (voir ftPick)
@@ -666,9 +680,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
           if(r && (r.type==='feedgrant' || r.type==='packtrip') && r.trip && !TS()[r.trip] && (M.unfol || {})[r.trip] !== 2) TS()[r.trip] = sp.code; });
         changed += mergeRemote(j.records); sp.since = j.now;
       }
-      sp.last = Date.now(); sp.err = ''; sp.net = false; sp.errSince = 0;
+      sp.last = Date.now(); sp.err = ''; sp.net = false; sp.errSince = 0; sp.revoked = false;
       mateFeedTidy(); ftPick();
-    } catch(e){ sp.err = e.message || String(e); sp.net = !!e.net; if(!sp.errSince) sp.errSince = Date.now(); }
+    } catch(e){ sp.err = e.message || String(e); sp.net = !!e.net; sp.revoked = !!e.revoked; if(!sp.errSince) sp.errSince = Date.now(); }
     return changed;
   }
   // 👀 voyages suivis en abonné que je fais AUSSI en compagnon : retirés de « Je suis » (je les ai déjà en entier), et je ne compte plus
@@ -818,7 +832,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   async function pushPost(code, body){
     const r = await fetch(pushApi(), {method:'POST', headers:{'Content-Type':'application/json', 'X-Carnet-Code':await authCode(code)}, body:JSON.stringify(Object.assign({dev:devId()}, body))});
-    let j = {}; try { j = await r.json(); } catch(e){} if(!r.ok) throw new Error(j.error || ('Erreur serveur ' + r.status)); return j;
+    let j = {}; try { j = await r.json(); } catch(e){} if(!r.ok) throw new Error(srvMsg(j.error) || ('Erreur serveur ' + r.status)); return j;
   }
   async function pushSub(){
     const reg = await navigator.serviceWorker.ready;
@@ -1893,9 +1907,10 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const msg = {set textContent(t){ say(t); }};
     msg.textContent = '📡 Connexion…';
     try { if(await memberTry(code)) { closeSheet(true); return; } } catch(e){}   // 👥 code compagnon d’un carnet complet
-    if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
+    const isNew = !spaceObj(code); if(isNew) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
     const sp = spaceObj(code); try { await syncSpace(sp, true); } catch(e){}
-    if(sp.err){ msg.textContent = '⚠️ ' + sp.err; return; }
+    // 📴 pas de réseau : on le dit simplement (rien n’est rejoint en douce plus tard) — il suffira de retaper le code
+    if(sp.err){ if(sp.net && isNew){ M.spaces = M.spaces.filter(x=>x !== sp); persist(); } msg.textContent = '⚠️ ' + (sp.net ? netMsg() : sp.err); return; }
     { const xf = list('xfer', r=>r.trip === 'xf:' + code)[0]; if(xf){ await xferApply(xf, code); return; } }
     if(list('packtrip', r=>TS()[r.trip] === code).length){   // paquet de voyages : on rejoint chacun d’eux
       msg.textContent = '📡 Voyages partagés…';
