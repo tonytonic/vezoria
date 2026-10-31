@@ -133,7 +133,9 @@ export async function onRequestPost({ request, env }) {
     await env.DB.prepare('CREATE TABLE IF NOT EXISTS errors (k TEXT PRIMARY KEY, msg TEXT, src TEXT, ver TEXT, ua TEXT, n INTEGER NOT NULL, first INTEGER NOT NULL, last INTEGER NOT NULL)').run();
     if (b.clear) { await env.DB.prepare('DELETE FROM errors').run(); await log(env, 'errors:clear', '-', ''); return json({ ok: true }); }
     const e = await env.DB.prepare('SELECT msg, src, ver, ua, n, first, last FROM errors ORDER BY last DESC LIMIT 200').all();
-    return json({ errors: e.results || [] });
+    // 🛡️ textes envoyés par n'importe qui (/api/err) : neutralisés aussi à la lecture (erreurs gardées avant ce correctif)
+    const N = { '<': '‹', '>': '›', '&': '＆', '"': '”', "'": '’', '`': '’' }, neut = s => typeof s === 'string' ? s.replace(/[<>&"'`]/g, c => N[c]) : s;
+    return json({ errors: (e.results || []).map(r => ({ ...r, msg: neut(r.msg), src: neut(r.src), ver: neut(r.ver), ua: neut(r.ua) })) });
   }
   if (a === 'folders') {   // 🧹 inventaire des dossiers photos : aucun contenu, seulement des nombres
     if (!env.PHOTOS) return json({ error: 'Stockage R2 non lié (binding PHOTOS)' }, 500);

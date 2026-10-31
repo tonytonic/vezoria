@@ -17,6 +17,7 @@
  */
 const MAX_CHANGES = 1000;
 const MAX_RECORD = 100_000;
+const MAX_BODY = 30_000_000;   // 🛡️ une requête de synchro ne dépasse jamais 30 Mo (le téléphone découpe ses envois bien en dessous)
 // 🔁 recouvrement : on renvoie aussi les fiches reçues dans les 15 s précédant « since ». Deux téléphones qui synchronisent
 // au même instant (deux serveurs Cloudflare) pouvaient sinon se croiser et l'un ne recevait jamais la fiche de l'autre.
 // Sans risque : à la réception, la fiche la plus récente gagne (updatedAt), un doublon ne change rien.
@@ -231,6 +232,8 @@ export async function onRequestDelete({ request, env }) {
 }
 
 export async function onRequestPost({ request, env, waitUntil }) {
+  // 🛡️ envoi démesuré : refusé AVANT d'être lu (un vrai téléphone envoie ses fiches par paquets de quelques Mo au plus)
+  if (Number(request.headers.get('Content-Length') || 0) > MAX_BODY) return json({ error: 'Envoi trop volumineux — Upload too large', tooBig: true }, 413);
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
 
@@ -244,6 +247,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const now = Date.now();
   if (waitUntil) waitUntil(markSeen(env, space, now)); else await markSeen(env, space, now);
 
+  // fiches refusées (trop lourdes, identifiant invalide) : le téléphone en est prévenu au lieu de les croire envoyées
+  const skipped = [];
   if (changes.length) {
     const stmt = env.DB.prepare(
       `INSERT INTO records (space, id, data, updated_at, rev) VALUES (?1, ?2, ?3, ?4, ?5)
@@ -252,9 +257,9 @@ export async function onRequestPost({ request, env, waitUntil }) {
     );
     const batch = [];
     for (const r of changes) {
-      if (!r || typeof r.id !== 'string' || !r.id || r.id.length > 120) continue;
+      if (!r || typeof r.id !== 'string' || !r.id || r.id.length > 120) { if (r && typeof r.id === 'string') skipped.push(r.id.slice(0, 120)); continue; }
       const data = JSON.stringify(r);
-      if (data.length > MAX_RECORD) continue;
+      if (data.length > MAX_RECORD) { skipped.push(r.id); continue; }
       batch.push(stmt.bind(space, r.id, data, Number(r.updatedAt) || 0, now));
     }
     if (batch.length) await env.DB.batch(batch);
@@ -271,7 +276,10 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (Math.random() < 0.08 && waitUntil) waitUntil(fetch(new URL('/api/push?a=flush', request.url)).catch(() => {}));
   let wiped = 0;
   try { const w = await env.DB.prepare('SELECT at FROM space_wipes WHERE space = ?1').bind(space).first(); if (w) wiped = w.at; } catch (e) {}
-  return json(wiped ? { now, records: results.map(r => JSON.parse(r.data)), wiped } : { now, records: results.map(r => JSON.parse(r.data)) });
+  const out = { now, records: results.map(r => JSON.parse(r.data)) };
+  if (wiped) out.wiped = wiped;
+  if (skipped.length) out.skipped = skipped.slice(0, 200);
+  return json(out);
 }
 
 export const onRequestGet = () => json({ ok: true, service: 'carnet-voyage' });

@@ -112,6 +112,8 @@ async function getTotal(env, k) {
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 
 export async function onRequestPost({ request, env }) {
+  // 🛡️ fichier trop lourd annoncé : refusé avant d'être lu en mémoire
+  if (Number(request.headers.get('Content-Length') || 0) > MAX_PHOTO) return json({ error: 'Photo trop lourde' }, 413);
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
   const id = request.headers.get('X-Photo-Id') || '';
@@ -280,8 +282,10 @@ export async function onRequestGet({ request, env }) {
       hs.forEach((h, j) => { if (h) sizes[ids[i + j]] = h.size; });
     }
     const rest = ids.filter(x => !(x in sizes));
-    if (rest.length) try {
-      const r = await env.DB.prepare('SELECT id, size FROM photos WHERE space = ?1 AND id IN (' + rest.map((_, i) => '?' + (i + 2)).join(',') + ')').bind(space, ...rest).all();
+    // D1 : 100 valeurs au plus par requête → par paquets de 90
+    for (let i = 0; i < rest.length; i += 90) try {
+      const part = rest.slice(i, i + 90);
+      const r = await env.DB.prepare('SELECT id, size FROM photos WHERE space = ?1 AND id IN (' + part.map((_, j) => '?' + (j + 2)).join(',') + ')').bind(space, ...part).all();
       (r.results || []).forEach(x => { sizes[x.id] = x.size; });
     } catch (e) {}
     return json({ sizes });

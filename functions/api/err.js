@@ -9,7 +9,9 @@
  */
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...CORS } });
-const cut = (x, n) => String(x == null ? '' : x).replace(/[\u0000-\u001f]+/g, ' ').replace(/\d{6,}/g, '#').slice(0, n);
+// 🛡️ n'importe qui peut écrire ici, et le tableau de bord affiche ces messages : aucun caractère HTML n'est gardé tel quel
+const NEUT = { '<': '‹', '>': '›', '&': '＆', '"': '”', "'": '’', '`': '’' };
+const cut = (x, n) => String(x == null ? '' : x).replace(/[\u0000-\u001f]+/g, ' ').replace(/\d{6,}/g, '#').replace(/[<>&"'`]/g, c => NEUT[c]).slice(0, n);
 let ready = false;
 
 async function rateIp(env, request, limit) {
