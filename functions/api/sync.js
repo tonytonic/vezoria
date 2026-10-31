@@ -26,7 +26,7 @@ const OVERLAP = 15_000;
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Admin, X-Carnet-Writer',
   'Access-Control-Max-Age': '86400',
 };
 const json = (obj, status = 200) =>
@@ -109,6 +109,36 @@ async function spaceOf(request, env) {
   return space;
 }
 
+// ✍️ Fil d’abonnés : l’AUTEUR seul publie, modifie, supprime ; les abonnés et compagnons lisent, mettent des ❤️ et commentent.
+//   Le lien abonné (le code) sert à lire et à commenter. L’auteur envoie en plus sa clé d’auteur (X-Carnet-Admin, jamais gardée :
+//   seule son empreinte l’est) : la 1re clé reçue devient celle du fil. Chaque appareil signe ses envois (X-Carnet-Writer) :
+//   une fiche n’est remplacée que par celui qui l’a écrite, ou par l’auteur. Les fiches de l’auteur sont marquées « _a »
+//   (les téléphones des abonnés n’acceptent rien d’autre que des ❤️, commentaires et abonnements sans cette marque).
+//   Un carnet ou un voyage partagé sans clé d’auteur fonctionne comme avant : tous ses membres écrivent tout.
+let wkReady = false;
+async function wkColumn(env) {
+  if (wkReady) return;
+  try { await env.DB.prepare('ALTER TABLE records ADD COLUMN wk TEXT').run(); } catch (e) {}   // déjà là : rien à faire
+  await env.DB.prepare('CREATE TABLE IF NOT EXISTS space_admin (space TEXT PRIMARY KEY, ah TEXT NOT NULL, at INTEGER NOT NULL)').run();
+  wkReady = true;
+}
+const hdr = (request, k) => (request.headers.get(k) || '').trim().slice(0, 200);
+async function writerOf(request) { const w = hdr(request, 'X-Carnet-Writer'); return w.length >= 16 ? (await sha256('vz-w:' + w)).slice(0, 32) : null; }
+// rôle de l’appelant sur cet espace : has = un auteur est déclaré ; me = c’est lui ; bad = il a présenté une autre clé
+async function adminOf(env, request, space, claim) {
+  await wkColumn(env);
+  const k = hdr(request, 'X-Carnet-Admin'), ah = k.length >= 16 ? await sha256('vz-admin:' + k) : '';
+  let row = await env.DB.prepare('SELECT ah FROM space_admin WHERE space = ?1').bind(space).first();
+  if (!row && ah && claim) {
+    const r = await env.DB.prepare('INSERT OR IGNORE INTO space_admin (space, ah, at) VALUES (?1, ?2, ?3)').bind(space, ah, Date.now()).run();
+    if (r && r.meta && r.meta.changes) {   // 1re clé d’auteur : ce qui est déjà en ligne vient de lui (marqué), le reste suivra
+      try { await env.DB.prepare(`UPDATE records SET data = json_set(data, '$._a', 1) WHERE space = ?1 AND json_valid(data)`).bind(space).run(); } catch (e) {}
+    }
+    row = await env.DB.prepare('SELECT ah FROM space_admin WHERE space = ?1').bind(space).first();
+  }
+  return { has: !!row, me: !!(row && ah && row.ah === ah), bad: !!(row && ah && row.ah !== ah) };
+}
+
 // Efface un carnet : fiches (D1) + photos (R2 et anciennes photos D1) + compteurs
 async function wipeSpace(env, space) {
   let photos = 0, freed = 0;
@@ -128,6 +158,7 @@ async function wipeSpace(env, space) {
   try { d1p = await env.DB.prepare('DELETE FROM photos WHERE space = ?1').bind(space).run(); } catch (e) {}
   try { await env.DB.prepare('DELETE FROM photo_caps WHERE space = ?1').bind(space).run(); } catch (e) {}   // droits de lecture du pot commun
   try { await env.DB.prepare('DELETE FROM space_members WHERE space = ?1').bind(space).run(); } catch (e) {}   // codes compagnon
+  try { await env.DB.prepare('DELETE FROM space_admin WHERE space = ?1').bind(space).run(); } catch (e) {}   // clé d’auteur du fil
   try { await env.DB.prepare('DELETE FROM space_links WHERE child = ?1 OR owner = ?1').bind(space).run(); } catch (e) {}   // 🌿 branches (la formule payée reste : table plans)
   try { await env.DB.batch([env.DB.prepare('DELETE FROM push_subs WHERE space = ?1').bind(space), env.DB.prepare('DELETE FROM push_due WHERE space = ?1').bind(space)]); } catch (e) {}   // notifications
   try {
@@ -226,6 +257,8 @@ export async function onRequestDelete({ request, env }) {
   if (isMb(request)) return json({ error: 'Un compagnon ne peut pas effacer le carnet : seul son propriétaire le peut. — A companion cannot erase the notebook.' }, 403);
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
+  const adm = await adminOf(env, request, space, false);
+  if (adm.has && !adm.me) return json({ error: 'Seul l’auteur peut effacer ce fil. — Only the author can erase this feed.', author: true }, 403);
   const out = await wipeSpace(env, space);
   const at = Date.now(); await wipeMark(env, space, at);
   return json({ ok: true, ...out, at });
@@ -248,19 +281,34 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (waitUntil) waitUntil(markSeen(env, space, now)); else await markSeen(env, space, now);
 
   // fiches refusées (trop lourdes, identifiant invalide) : le téléphone en est prévenu au lieu de les croire envoyées
-  const skipped = [];
+  const skipped = [], denied = [];
+  const adm = await adminOf(env, request, space, true), wh = await writerOf(request);
   if (changes.length) {
     const stmt = env.DB.prepare(
-      `INSERT INTO records (space, id, data, updated_at, rev) VALUES (?1, ?2, ?3, ?4, ?5)
-       ON CONFLICT (space, id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at, rev = excluded.rev
+      `INSERT INTO records (space, id, data, updated_at, rev, wk) VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+       ON CONFLICT (space, id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at, rev = excluded.rev, wk = excluded.wk
        WHERE excluded.updated_at >= records.updated_at`
     );
+    const ok = changes.filter(r => r && typeof r.id === 'string' && r.id && r.id.length <= 120);
+    changes.forEach(r => { if (r && typeof r.id === 'string' && !ok.includes(r)) skipped.push(r.id.slice(0, 120)); });
+    // ✍️ fil avec auteur : un abonné ne remplace que ses propres fiches (jamais celles de l’auteur ni d’un autre abonné)
+    const owner = new Map();
+    if (adm.has && !adm.me && ok.length) {
+      const ids = [...new Set(ok.map(r => r.id))];
+      for (let i = 0; i < ids.length; i += 90) {
+        const part = ids.slice(i, i + 90);
+        const { results: rs } = await env.DB.prepare(`SELECT id, wk FROM records WHERE space = ?1 AND id IN (${part.map((_, j) => '?' + (j + 2)).join(',')})`).bind(space, ...part).all();
+        (rs || []).forEach(x => owner.set(x.id, x.wk));
+      }
+    }
     const batch = [];
-    for (const r of changes) {
-      if (!r || typeof r.id !== 'string' || !r.id || r.id.length > 120) { if (r && typeof r.id === 'string') skipped.push(r.id.slice(0, 120)); continue; }
+    for (const r0 of ok) {
+      const r = Object.assign({}, r0); delete r._a;
+      if (adm.me) r._a = 1;
+      else if (adm.has && owner.has(r.id)) { const w = owner.get(r.id); if (w === 'A' || (w && w !== wh)) { denied.push(r.id); continue; } }
       const data = JSON.stringify(r);
       if (data.length > MAX_RECORD) { skipped.push(r.id); continue; }
-      batch.push(stmt.bind(space, r.id, data, Number(r.updatedAt) || 0, now));
+      batch.push(stmt.bind(space, r.id, data, Number(r.updatedAt) || 0, now, adm.me ? 'A' : wh));
     }
     if (batch.length) await env.DB.batch(batch);
   }
@@ -281,6 +329,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
   let out = '{"now":' + now + ',"records":[' + results.map(r => r.data).filter(d => typeof d === 'string' && d.charCodeAt(0) === 123).join(',') + ']';
   if (wiped) out += ',"wiped":' + (Number(wiped) || 0);
   if (skipped.length) out += ',"skipped":' + JSON.stringify(skipped.slice(0, 200));
+  if (adm.has) out += ',"adm":1' + (adm.me ? ',"me":"a"' : '') + (adm.bad ? ',"admBad":1' : '');
+  if (denied.length) out += ',"denied":' + JSON.stringify(denied.slice(0, 200));
   return new Response(out + '}', { status: 200, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
 }
 

@@ -17,7 +17,7 @@ const R2_MAX = env => (Number(env.R2_MAX_GB) || 999) * 1_000_000_000;
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Photo-Id, X-Photo-Cap',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Photo-Id, X-Photo-Cap, X-Carnet-Admin, X-Carnet-Writer',
   'Access-Control-Max-Age': '86400',
 };
 const json = (obj, status = 200) =>
@@ -111,11 +111,21 @@ async function getTotal(env, k) {
 
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 
+// ✍️ fil d’abonnés avec un auteur (voir sync.js) : seul l’auteur envoie ou supprime des photos ; les abonnés les regardent
+async function notAuthor(env, request, space) {
+  let row = null; try { row = await env.DB.prepare('SELECT ah FROM space_admin WHERE space = ?1').bind(space).first(); } catch (e) { return null; }   // table pas encore créée : pas d’auteur
+  if (!row) return null;
+  const k = (request.headers.get('X-Carnet-Admin') || '').trim().slice(0, 200);
+  if (k.length >= 16 && row.ah === await sha256('vz-admin:' + k)) return null;
+  return json({ error: 'Seul l’auteur du fil peut envoyer ou supprimer des photos. — Only the feed author can upload or delete photos.', author: true }, 403);
+}
+
 export async function onRequestPost({ request, env }) {
   // 🛡️ fichier trop lourd annoncé : refusé avant d'être lu en mémoire
   if (Number(request.headers.get('Content-Length') || 0) > MAX_PHOTO) return json({ error: 'Photo trop lourde' }, 413);
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
+  { const na = await notAuthor(env, request, space); if (na) return na; }
   const id = request.headers.get('X-Photo-Id') || '';
   if (!validId(id)) return json({ error: 'Identifiant de photo invalide' }, 400);
   const mime = (request.headers.get('Content-Type') || 'image/jpeg').split(';')[0].trim().toLowerCase();
@@ -161,6 +171,7 @@ export async function onRequestPost({ request, env }) {
 export async function onRequestDelete({ request, env }) {
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
+  { const na = await notAuthor(env, request, space); if (na) return na; }
   const u = new URL(request.url);
   const mb = (request.headers.get('X-Carnet-Code') || '').trim().startsWith('mb:');
   if (mb && (u.searchParams.get('all') === '1' || u.searchParams.get('bulk') === '1')) return json({ error: 'Réservé au propriétaire du carnet — Owner only' }, 403);   // un compagnon retire une photo à la fois, jamais tout
