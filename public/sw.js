@@ -3,7 +3,7 @@
 // Une nouvelle version de l'appli = un nouveau sw.js : il s'installe en arrière-plan, puis l'appli propose
 // « Nouvelle version · toucher pour recharger » (ou recharge seule si elle vient juste de s'ouvrir).
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-11-01t';
+const CACHE = 'vezoria-2026-11-01u';
 // le code et les styles sont dans assets/ (depuis la 2026-10-23d) : copiés dès l'installation pour marcher hors ligne tout de suite
 const CORE = ['./', './splash.webp', './img/entete-preparation.jpg', './img/entete-en-cours.jpg', './img/entete-passes.jpg', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './i18n.js',
   './assets/app.css', ...[1, 2, 3, 4, 5, 6, 7, 8].map(n => './assets/app-' + n + '.js'),
@@ -160,7 +160,7 @@ self.addEventListener('push', e => {
     const now = Date.now(), isTest = /^rappel-test-/.test(String(d.t || ''));
     const trip = (/[?&]vzt=([^&]*)/.exec(url) || [])[1] || '';
     const box = ((await kvGet('inbox')) || []).filter(x => now - x.at < 7 * 864e5);
-    const soc = d.k === 'social';
+    const soc = d.k === 'social' || d.k === 'follow';
     // même message reçu deux fois (prévenu par deux liens différents) : une seule notification
     if (!isTest && box.some(x => now - x.at < 180e3 && x.title === title && x.body === body)) return;
     if (!isTest) { box.push({ at: now, title, body, url, trip, soc }); while (box.length > 60) box.shift(); await kvPut('inbox', box); }
