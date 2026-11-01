@@ -13,9 +13,10 @@
       acts:[['Visite guidée du Colisée','Piazza del Colosseo, Rome','09:00'],['Musées du Vatican','Viale Vaticano, Rome','14:00'],['Dégustation de vins · Chianti','Chianti, Toscane',''],['Galerie des Offices','Piazzale degli Uffizi, Florence','11:00'],['Bateau des Cinque Terre','Port de Monterosso al Mare',''],['Tour en gondole','Venise','17:00']],
       divers:['eSIM Europe 3 semaines','Assurance voyage','Carte transports de Rome (recharges)'],
       souv:[['Premier spritz','Sienne','Sur la Piazza del Campo au coucher du soleil. Léo a commandé deux fois.'],['Florence au réveil','Ponte Vecchio, Florence','Partis à 6 h : personne sur le pont, seulement les mouettes.'],['La Bocca della Verità','Rome','Inès a quand même gardé sa main.']],
-      pics:[['city','temple'],['temple','sea'],['city','temple'],['sea','sea'],['sea','city']],
+      pics:[['city','dome'],['dome','city'],['city','dome'],['coast','coast'],['coast','city']],
       txt:[['Le Colisée au soleil couchant','Trastevere de nuit','La meilleure carbonara de Rome','Fontaine de Trevi à 7 h, enfin seuls'],['Piazza del Campo depuis la tour','Les collines du Chianti'],['Le Duomo vu du Piazzale Michelangelo','Ponte Vecchio au coucher du soleil','Les Offices sans la foule','Gelato sur l’Arno'],['Monterosso depuis la mer','Baignade à Vernazza'],['Le Grand Canal en vaporetto','Les maisons colorées de Burano']],
-      shop:['Eau ×6','Panini pour le train','Pansements','Billets de vaporetto'], rc:['Trattoria da Enzo','24'], taxi:['Taxi retour Termini','18'], tk:'ROMA'},
+      shop:['Eau ×6','Panini pour le train','Pansements','Billets de vaporetto'], rc:['Trattoria da Enzo','24'], taxi:['Taxi retour Termini','18'], tk:'ROMA',
+      tr:['Trenitalia · Regionale Veloce','Trenitalia · Regionale','Trenitalia · Regionale'], fl:[['ITA Airways AZ319','10:25','12:30'],['ITA Airways AZ330','12:05','14:15']]},
     us:{nom:'États-Unis', cc:'US', home:'New York', obj:4200, mode:'Voiture',
       cities:['San Francisco','Yosemite','Los Angeles','San Diego','Las Vegas'], coords:[[37.7749,-122.4194],[37.7456,-119.5936],[34.0522,-118.2437],[32.7157,-117.1611],[36.1699,-115.1398]],
       hotels:[['Hotel Zephyr','250 Beach Street, San Francisco'],['Yosemite Valley Lodge','9006 Yosemite Lodge Dr, Yosemite'],['The Hollywood Roosevelt','7000 Hollywood Blvd, Los Angeles'],['Hotel del Coronado','1500 Orange Ave, San Diego'],['The Venetian','3355 Las Vegas Blvd S, Las Vegas'],['Hotel Nikko','222 Mason Street, San Francisco']],
@@ -23,9 +24,10 @@
       acts:[['Ferry pour Alcatraz','Pier 33, San Francisco','09:00'],['Location de vélos · Golden Gate','Fisherman’s Wharf, San Francisco','14:00'],['Randonnée Mist Trail','Yosemite Valley',''],['Studios Universal','Universal City, Los Angeles','11:00'],['Kayak à La Jolla','La Jolla, San Diego',''],['Survol du Grand Canyon','Las Vegas','09:00']],
       divers:['eSIM États-Unis 3 semaines','Assurance voyage (frais médicaux)','Pass parcs nationaux'],
       souv:[['Premier séquoia','Yosemite','Un tronc plus large que la voiture. Léo a voulu en faire le tour en courant.'],['Golden Gate dans le brouillard','San Francisco','À 7 h, le pont sortait de la brume. Personne sur la piste cyclable.'],['Le Strip de nuit','Las Vegas','Inès a gagné 3 dollars et a tout de suite arrêté.']],
-      pics:[['city','sea'],['bamboo','temple'],['city','sea'],['sea','sea'],['city','city']],
+      pics:[['city','coast'],['bamboo','bamboo'],['city','coast'],['coast','coast'],['city','city']],
       txt:[['Le Golden Gate au coucher du soleil','Les maisons victoriennes d’Alamo Square','Le meilleur clam chowder du Wharf','Alcatraz dans la brume'],['Half Dome depuis Glacier Point','Les séquoias géants'],['Hollywood Sign depuis Griffith','Le Pier de Santa Monica','Venice Beach à vélo','Tacos à Grand Central Market'],['Les otaries de La Jolla','Coucher de soleil à Coronado'],['Le Strip illuminé','Le Grand Canyon vu d’en haut']],
-      shop:['Eau ×6','Sandwichs pour la route','Pansements','Crème solaire'], rc:['Diner sur la Route 66','24'], taxi:['Uber retour hôtel','18'], tk:'SAN FRANCISCO'},
+      shop:['Eau ×6','Sandwichs pour la route','Pansements','Crème solaire'], rc:['Diner sur la Route 66','24'], taxi:['Uber retour hôtel','18'], tk:'SAN FRANCISCO',
+      tr:['Voiture de location · Hertz','Voiture de location · Hertz','Voiture de location · Hertz'], fl:[['JetBlue B6 415','10:25','13:55'],['JetBlue B6 916','12:05','20:40']]},
     af:{nom:'Maroc', cc:'MA', home:'Dakar', obj:2200, mode:'Train',
       cities:['Marrakech','Ouarzazate','Fès','Chefchaouen','Rabat'], coords:[[31.6295,-7.9811],[30.9189,-6.8934],[34.0181,-5.0078],[35.1688,-5.2684],[34.0209,-6.8416]],
       hotels:[['Riad Kniza','Derb l’Hôtel, Marrakech'],['Kasbah Ait Ben Moro','Skoura, Ouarzazate'],['Riad Fès','Derb Ben Slimane, Fès'],['Dar Echchaouen','Rue Ibn Askar, Chefchaouen'],['Riad Kalaa','Médina, Rabat'],['La Mamounia','Avenue Bab Jdid, Marrakech']],
@@ -33,9 +35,10 @@
       acts:[['Cours de cuisine marocaine','Médina, Marrakech','10:00'],['Jardin Majorelle','Rue Yves Saint Laurent, Marrakech','14:00'],['Excursion à Aït-Ben-Haddou','Ouarzazate',''],['Visite guidée de la médina','Bab Boujloud, Fès','11:00'],['Randonnée à Akchour','Chefchaouen',''],['Hammam traditionnel','Médina, Rabat','17:00']],
       divers:['Carte SIM marocaine','Assurance voyage','Billets de train ONCF'],
       souv:[['Premier thé à la menthe','Ouarzazate','Sur la terrasse de la kasbah, face aux montagnes. Léo en a bu quatre.'],['La médina au réveil','Fès','Partis à 7 h : les ruelles vides, seulement les ânes et les chats.'],['La ville bleue','Chefchaouen','Inès a voulu photographier chaque porte.']],
-      pics:[['city','temple'],['temple','sea'],['city','temple'],['sea','city'],['sea','city']],
+      pics:[['city','dome'],['dome','city'],['city','dome'],['dome','city'],['coast','city']],
       txt:[['Jemaa el-Fna à la tombée de la nuit','Le jardin Majorelle','Le meilleur tajine de la médina','Les souks au petit matin'],['Aït-Ben-Haddou au coucher du soleil','Les palmeraies du Draa'],['Les tanneries vues des terrasses','La médina depuis les tombeaux mérinides','La porte Bab Boujloud','Pastilla au pigeon'],['Les ruelles bleues','Les cascades d’Akchour'],['La kasbah des Oudayas','La tour Hassan']],
-      shop:['Eau ×6','Msemen pour le train','Pansements','Billets de train'], rc:['Café de France','24'], taxi:['Petit taxi retour riad','18'], tk:'MARRAKECH'}
+      shop:['Eau ×6','Msemen pour le train','Pansements','Billets de train'], rc:['Café de France','24'], taxi:['Petit taxi retour riad','18'], tk:'MARRAKECH',
+      tr:['CTM · autocar','ONCF · train','CTM · autocar'], fl:[['Royal Air Maroc AT512','10:25','13:40'],['Royal Air Maroc AT513','12:05','13:20']]}
   };
   const DEMO_JP = ['Tokyo','Hakone','Kyoto','Hiroshima','Osaka'];
   // la région par défaut : celle de l’heure du téléphone (Amérique, Afrique, Europe ; le Japon pour le reste)
@@ -48,7 +51,11 @@
     out.forEach(r=>{
       if(r.type === 'trip'){ r.titre = G.nom + ' · 3 semaines'; r.sous = [...C, C[0]].join(' → '); r.objectif = G.obj; }
       else if(r.type === 'item' && r.cat === 'hotel'){ const k = H.indexOf(r.id); r.titre = sw(r.titre); if(k >= 0){ r.nom = G.hotels[k][0]; r.adresse = G.hotels[k][1]; } }
-      else if(r.type === 'item' && r.cat === 'transport'){ r.from = sw(r.from); r.to = sw(r.to); r.titre = r.from + ' → ' + r.to; if(r.mode !== 'Avion') r.mode = G.mode; }
+      else if(r.type === 'item' && r.cat === 'transport'){ r.from = sw(r.from); r.to = sw(r.to); r.titre = r.from + ' → ' + r.to; if(r.mode !== 'Avion') r.mode = G.mode;
+        // compagnies du pays (pas de Shinkansen en Italie) ; les vols aller et retour avec des horaires réalistes
+        const kt = ['~2','~4','~6'].indexOf(r.id), kf = ['~11','~12'].indexOf(r.id);
+        if(kt >= 0 && r.compagnie && G.tr) r.compagnie = G.tr[kt];
+        if(kf >= 0 && G.fl){ [r.compagnie, r.heureDep, r.heureArr] = G.fl[kf]; } }
       else if(r.type === 'day'){ r.titre = sw(r.titre); const n = +String(r.date).slice(1); r.plan = G.plans[n] || ''; }
       else if(r.type === 'item' && r.cat === 'activite'){ const k = A.indexOf(r.id); if(k >= 0){ r.titre = G.acts[k][0]; r.adresse = G.acts[k][1]; if(G.acts[k][2]) r.heure = G.acts[k][2]; else delete r.heure; } }
       else if(r.type === 'item' && r.cat === 'divers'){ const k = D.indexOf(r.id); if(k >= 0) r.titre = G.divers[k]; }
@@ -98,6 +105,15 @@
       for(let k=0;k<8;k++){ g.fillStyle = '#9a9aa6'; g.fillRect(-160,-170+k*38,150+rnd()*90,10); g.fillRect(90,-170+k*38,70,10); }
       g.fillStyle = '#2b2b33'; g.fillRect(-160,150,320,3); g.font = 'bold 38px monospace'; g.fillText('TOTAL', -160, 205); g.textAlign = 'right'; g.fillText(String(seed) + ' €', 160, 205);
       g.textAlign = 'left'; for(let k=0;k<40;k++){ g.fillStyle = '#2b2b33'; g.fillRect(-160 + k*8, 240, (k*7 % 5) + 2, 50); } g.restore(); }
+    else if(kind === 'coast'){ // village coloré sur la falaise, au bord de la mer
+      sky('#8fd0f4','#e3f4fb',440); g.fillStyle = '#2185c0'; g.fillRect(0,430,W,H-430); g.fillStyle = 'rgba(255,255,255,.4)'; for(let i=0;i<50;i++){ g.fillRect(rnd()*W, 440+rnd()*270, 30+rnd()*60, 3); }
+      g.fillStyle = '#7a6a4f'; g.beginPath(); g.moveTo(0,250); g.lineTo(420,300); g.lineTo(520,470); g.lineTo(0,470); g.fill();
+      const cols = ['#e9a23b','#d2553f','#f2d27a','#e88f6a','#c95f84','#f4e3c1','#7fb3a8']; for(let r=0;r<4;r++) for(let i=0;i<7-r;i++){ const x = 10 + i*62 + r*24, y = 300 + r*42 - i*6, w = 54, h = 62; g.fillStyle = cols[Math.floor(rnd()*cols.length)]; g.fillRect(x,y,w,h); g.fillStyle = '#5b3d2e'; g.fillRect(x-3,y-8,w+6,10); g.fillStyle = 'rgba(40,40,60,.55)'; g.fillRect(x+10,y+16,10,14); g.fillRect(x+32,y+16,10,14); }
+      g.fillStyle = '#fff'; g.beginPath(); g.moveTo(700,560); g.lineTo(760,560); g.lineTo(745,575); g.lineTo(712,575); g.fill(); g.fillRect(728,520,3,40); }
+    else if(kind === 'dome'){ // coupole et campanile au soleil couchant
+      sky('#f6b26b','#fbe3c4',560); ground('#c9a27a','#8f6d4b',560); g.fillStyle = '#e8d9bf'; for(let i=0;i<9;i++){ const x = i*110 + rnd()*20, h = 90 + rnd()*90; g.fillRect(x,560-h,96,h); g.fillStyle = '#b5523a'; g.fillRect(x-4,560-h-10,104,12); g.fillStyle = '#e8d9bf'; }
+      g.fillStyle = '#f1e6d0'; g.fillRect(330,330,300,230); g.fillStyle = '#c4553b'; g.beginPath(); g.ellipse(480,330,150,150,0,Math.PI,0); g.fill(); g.fillStyle = '#f1e6d0'; g.fillRect(468,160,24,30); g.strokeStyle = '#f1e6d0'; g.lineWidth = 6; for(let k=-2;k<=2;k++){ g.beginPath(); g.moveTo(480 + k*55, 330); g.quadraticCurveTo(480 + k*30, 220, 480, 182); g.stroke(); }
+      g.fillStyle = '#efe2c8'; g.fillRect(700,190,70,370); g.fillStyle = '#b5523a'; g.beginPath(); g.moveTo(690,190); g.lineTo(735,130); g.lineTo(780,190); g.fill(); g.fillStyle = 'rgba(60,40,30,.5)'; for(let k=0;k<5;k++) g.fillRect(722,220+k*62,26,34); }
     else if(kind === 'sea'){ sky('#7cc6ef','#d9f1fb',380); g.fillStyle = '#1d76b0'; g.fillRect(0,380,W,H-380); g.fillStyle = 'rgba(255,255,255,.45)'; for(let i=0;i<60;i++){ g.fillRect(rnd()*W, 390+rnd()*320, 30+rnd()*60, 3); }
       g.fillStyle = '#d23a2a'; g.fillRect(420,250,30,240); g.fillRect(560,250,30,240); g.fillStyle = '#1d1414'; g.fillRect(380,215,250,30); g.fillStyle = '#d23a2a'; g.fillRect(400,282,210,22); }
     g.fillStyle = 'rgba(255,255,255,.07)'; for(let i=0;i<500;i++) g.fillRect(rnd()*W, rnd()*H, 1.5, 1.5);   // grain photo
@@ -230,7 +246,9 @@
     if(!t && !['envies','reglages','prefs','livret','badges'].includes(M.tab)){
       // abonné qui n’a pas encore de voyage à lui : les personnes qu’il suit d’abord, chacune vers son carnet
       const fol = (()=>{ try { return followHTML(); } catch(e){ return ''; } })(); if(fol) setTimeout(()=>{ folPaint(); hydrate(); }, 40);
-      body.innerHTML = (fol ? `<div class="home-fol">${fol}</div>` : '') + `<div class="v-box"><h2 class="vb-h">${fol ? 'Mes propres voyages' : 'Aucun voyage'}</h2><p>${fol ? 'Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.' : 'Crée un voyage, ou transforme une envie en voyage depuis l’onglet ✨ Envies.'}</p>
+      // 👥 la grille Compagnons · Abonnés · Je suis, aussi sur l’accueil d’un carnet sans voyage à soi (ex. sur ordinateur, juste pour suivre un proche)
+      let hub = ''; try { if(fol) hub = `<div class="sp2 home-sp2">${spOverview()}</div><style>.home-sp2{margin:0 0 14px}.home-sp2 .sp2-top{display:none}@media(min-width:760px){.home-sp2 .sp2-body{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}.home-sp2 .sp2-blk{margin:0}}</style>`; } catch(e){}
+      body.innerHTML = hub + (fol ? `<div class="home-fol">${fol}</div>` : '') + `<div class="v-box"><h2 class="vb-h">${fol ? 'Mes propres voyages' : 'Aucun voyage'}</h2><p>${fol ? 'Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.' : 'Crée un voyage, ou transforme une envie en voyage depuis l’onglet ✨ Envies.'}</p>
         <button class="v-btn" onclick="CV.newTrip()">＋ Nouveau voyage</button>${tutoBtn()}${demoBtn()}</div>`;
       return;
     }
@@ -2477,19 +2495,34 @@
   const normQ = q => String(q||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim().slice(0,100);
   function coordsIn(q){ const m = String(q).match(/(-?\d{1,2}\.\d{3,})\s*,\s*(-?\d{1,3}\.\d{3,})/); return m ? {lat:+m[1], lng:+m[2]} : null; }
   let geoLast = 0;
+  /* 🧭 Homonymes (« Perth », « Laval », « Cornwall », « Terrebonne »…) : une ville du voyage est cherchée PRÈS des autres étapes
+     déjà situées (médiane de leurs positions), et pas à l’autre bout du monde. Une ville choisie dans les propositions (pick) n’est jamais changée. */
+  function geoAnchor(skip){
+    let st = []; try { if(!trip()) return null; st = tlStages(); } catch(e){ return null; }
+    const P = st.map(s=>s.city).filter(c=>c && normQ(c) !== normQ(skip)).map(c=>R['geo:' + normQ(c)]).filter(r=>r && !r.deleted && r.lat != null);
+    if(!P.length) return null;
+    const med = a => { const x = [...a].sort((u, v)=>u - v); return x[Math.floor(x.length / 2)]; };
+    return {lat:med(P.map(p=>+p.lat)), lng:med(P.map(p=>+p.lng)), n:P.length};
+  }
+  const geoFar = (r, A) => !!(A && A.n >= 2 && r && !r.pick && km(A, {lat:+r.lat, lng:+r.lng}) > 3000);   // ≈ 2 400 km à vol d’oiseau
   async function geocode(q, ctx){
     q = String(q||'').trim(); if(!q) return null;
     const c = coordsIn(q); if(c) return c;
     const full = ctx && !normQ(q).includes(normQ(ctx)) ? q + ', ' + ctx : q;
-    const key = 'geo:' + normQ(full);
-    if(R[key] && !R[key].deleted && R[key].lat != null) return {lat:R[key].lat, lng:R[key].lng};
+    const key = 'geo:' + normQ(full), A = ctx ? null : geoAnchor(q);
+    if(R[key] && !R[key].deleted && R[key].lat != null && !geoFar(R[key], A)) return {lat:R[key].lat, lng:R[key].lng};
     const wait = 1100 - (Date.now() - geoLast); if(wait > 0) await new Promise(r=>setTimeout(r, wait));
     geoLast = Date.now();
-    let res = null;
-    try { const j = await (await fetch(GEO + 'search?format=jsonv2&limit=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(full))).json(); if(j && j[0]) res = {lat:+j[0].lat, lng:+j[0].lon}; } catch(e){}
-    if(!res){ try { const j = await (await fetch('https://photon.komoot.io/api/?limit=1&q=' + encodeURIComponent(full))).json(); const f = j && j.features && j.features[0]; if(f) res = {lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0]}; } catch(e){} }
+    const lang = (window.I18N && I18N.lang) || 'fr';
+    const ask = async extra => { try { const j = await (await fetch(GEO + 'search?format=jsonv2&limit=' + (A ? 5 : 1) + '&accept-language=' + lang + extra + '&q=' + encodeURIComponent(full))).json();
+      return Array.isArray(j) ? j.map(x=>({lat:+x.lat, lng:+x.lon})).filter(x=>isFinite(x.lat) && isFinite(x.lng)) : []; } catch(e){ return []; } };
+    const near = L => A && L.length ? L.slice().sort((a, b)=>km(A, a) - km(A, b))[0] : L[0] || null;
+    const box = d => '&viewbox=' + [A.lng - d, A.lat + d * 0.75, A.lng + d, A.lat - d * 0.75].map(n=>n.toFixed(2)).join(',');
+    let res = near(await ask(A ? box(8) : ''));
+    if(A && A.n >= 2 && (!res || km(A, res) > 3000)){ const L = await ask(box(12) + '&bounded=1'); if(L.length) res = near(L); }   // une ville du même nom près du voyage ?
+    if(!res){ try { const j = await (await fetch('https://photon.komoot.io/api/?limit=1&q=' + encodeURIComponent(full) + (A ? '&lat=' + A.lat.toFixed(2) + '&lon=' + A.lng.toFixed(2) : ''))).json(); const f = j && j.features && j.features[0]; if(f) res = {lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0]}; } catch(e){} }
     if(!res && full !== q) return geocode(q, null);
-    if(res){ const g = {id:key, type:'geo', q:full, lat:res.lat, lng:res.lng}; stamp(g); R[key] = g; markDirty(key); persist(); }
+    if(res){ const g = Object.assign(R[key] && !R[key].deleted ? clone(R[key]) : {id:key, type:'geo', q:full}, {lat:res.lat, lng:res.lng}); stamp(g); R[key] = g; markDirty(key); persist(); }
     return res;
   }
   /* 🔎 Propositions de villes et de pays pendant la saisie (tout champ <input data-place>) :
@@ -2542,7 +2575,7 @@
   function pacClose(i){ const b = i && i._pac; if(b){ b.remove(); i._pac = null; } }
   function pacPick(i, it){
     const key = 'geo:' + normQ(it.name), cur = R[key];
-    const g = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:it.name}, {lat:it.lat, lng:it.lng, v:2}); stamp(g); R[key] = g; markDirty(key);
+    const g = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:it.name}, {lat:it.lat, lng:it.lng, v:2, pick:1}); delete g.auto; stamp(g); R[key] = g; markDirty(key);
     if(it.cc){ M.ctry = M.ctry || {}; M.ctry[normQ(it.name)] = {pays:it.ctry || '', cc:it.cc}; }
     persist(); pacClose(i);
     if(/multi/.test(i.dataset.place || '')){ const parts = i.value.split(','); parts[parts.length - 1] = ' ' + it.name; i.value = parts.map(x=>x.trim()).filter(Boolean).join(', ') + ', '; }   // liste de pays : on remplace le dernier
@@ -2575,25 +2608,32 @@
   });
   document.addEventListener('focusout', e=>{ const i = e.target; if(i && i._pac) setTimeout(()=>{ if(document.activeElement !== i) pacClose(i); }, 150); });
   document.addEventListener('keydown', e=>{ const i = e.target; if(e.key === 'Escape' && i && i._pac) pacClose(i); });
-  // 📍 villes des étapes : une ville peut exister ailleurs sous le même nom (Sorrente en Italie… et aux États-Unis).
-  // Une étape à plus de 1 500 km du milieu des autres est vérifiée : parmi les villes de ce nom, on prend celle qui est près des autres étapes
-  // (si elle est assez connue). Le bon point est gardé (v:2) et le pays de la ville est recalculé.
+  // 📍 villes des étapes : une ville peut exister ailleurs sous le même nom (Perth en Écosse, en Australie… et en Ontario).
+  // On prend le milieu (médiane) de toutes les étapes : une étape à plus de 1 500 km de ce milieu est vérifiée, et parmi les villes
+  // de ce nom on prend celle qui est près des autres étapes. (Avant : seule une étape isolée était vérifiée ; trois erreurs proches
+  // l’une de l’autre, comme Laval, Cornwall et Perth en Europe pour un voyage au Québec, passaient.) Une ville choisie à la main (pick) n’est jamais changée.
   async function stagesGeoFix(cities){
-    cities = [...new Set((cities || []).filter(Boolean))]; if(cities.length < 2) return;
+    cities = [...new Set((cities || []).filter(Boolean))]; if(cities.length < 3) return;
     const P = []; for(const c of cities){ const g = await geocode(c, null).catch(()=>null); if(g) P.push({c, g}); }
+    if(P.length < 3) return;
     const md = a => { const b = a.slice().sort((x, y)=>x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; };
-    const far = x => P.filter(y=>y !== x).every(y=>km(x.g, y.g) / 1.25 > 1500);   // aucune autre étape à moins de 1 500 km : à vérifier
-    const bad = P.filter(x=>far(x) && !((R['geo:' + normQ(x.c)] || {}).v >= 2)), ok = P.filter(x=>!bad.includes(x));
-    const near = ok.length ? {lat:md(ok.map(x=>x.g.lat)), lng:md(ok.map(x=>x.g.lng))} : null;
-    for(const {c} of bad){
+    const mid = {lat:md(P.map(x=>x.g.lat)), lng:md(P.map(x=>x.g.lng))};
+    const bad = P.filter(x=>km(x.g, mid) / 1.25 > 1500 && !(R['geo:' + normQ(x.c)] || {}).pick), ok = P.filter(x=>!bad.includes(x));
+    if(!ok.length || bad.length >= ok.length) return;   // pas de majorité claire : on ne touche à rien
+    const near = {lat:md(ok.map(x=>x.g.lat)), lng:md(ok.map(x=>x.g.lng))};
+    const box = d => '&viewbox=' + [near.lng - d, near.lat + d * 0.75, near.lng + d, near.lat - d * 0.75].map(n=>n.toFixed(2)).join(',');
+    for(const {c, g} of bad){
       const key = 'geo:' + normQ(c), cur = R[key];
-      const wait = 1100 - (Date.now() - geoLast); if(wait > 0) await new Promise(r=>setTimeout(r, wait)); geoLast = Date.now();
-      let L = null; try { L = await (await fetch(GEO + 'search?format=jsonv2&limit=8&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(c))).json(); } catch(e){}
-      if(!Array.isArray(L)) continue;   // pas de réponse : on réessaiera
-      L = L.map(x=>({lat:+x.lat, lng:+x.lon, imp:+x.importance || 0})).filter(x=>isFinite(x.lat) && isFinite(x.lng)); if(!L.length) continue;
-      // la ville la plus connue de ce nom… sauf si une presque aussi connue est près des autres étapes
-      const top = L.slice().sort((x, y)=>y.imp - x.imp)[0], alt = near ? L.filter(x=>x.imp >= top.imp * .75).sort((x, y)=>km(x, near) - km(y, near))[0] : null, best = alt || top;
-      const nx = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:c}, {lat:best.lat, lng:best.lng, v:2}); stamp(nx); R[key] = nx; markDirty(key);
+      let best = null;
+      for(const extra of [box(10), box(14) + '&bounded=1']){
+        const wait = 1100 - (Date.now() - geoLast); if(wait > 0) await new Promise(r=>setTimeout(r, wait)); geoLast = Date.now();
+        let L = null; try { L = await (await fetch(GEO + 'search?format=jsonv2&limit=8&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + extra + '&q=' + encodeURIComponent(c))).json(); } catch(e){}
+        if(!Array.isArray(L)) continue;
+        L = L.map(x=>({lat:+x.lat, lng:+x.lon})).filter(x=>isFinite(x.lat) && isFinite(x.lng) && km(x, near) / 1.25 <= 1500);
+        if(L.length){ best = L.sort((x, y)=>km(x, near) - km(y, near))[0]; break; }
+      }
+      if(!best) continue;   // pas d’homonyme près du voyage : la ville lointaine est sans doute voulue
+      const nx = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:c}, {lat:best.lat, lng:best.lng, v:2, auto:1}); delete nx.pick; stamp(nx); R[key] = nx; markDirty(key);
       if(!cur || cur.lat == null || km(cur, best) > 50){ if(M.ctry) delete M.ctry[normQ(c)]; }   // le pays sera recalculé avec le bon point
       persist();
     }

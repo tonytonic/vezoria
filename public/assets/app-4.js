@@ -129,7 +129,8 @@
       const it = clone(R[id]); it.recu = pid; put(it, '🧾 Ticket ajouté'); uploadQueue(); rcView(id); }, true);
   }
   /* ---------- 🗺️ Carte du voyage ---------- */
-  function geoCached(city){ const r = R['geo:' + normQ(city)]; return r && !r.deleted && r.lat != null ? {lat:r.lat, lng:r.lng} : null; }
+  function geoCached(city){ const r = R['geo:' + normQ(city)]; if(!(r && !r.deleted && r.lat != null)) return null; if(geoFar(r, geoAnchor(city))) return null;   // homonyme loin des autres étapes : geocode() cherche le bon
+    return {lat:r.lat, lng:r.lng}; }
   function tripMapSVG(pts){
     if(pts.length < 1) return '';
     const W = 600, H = 300, pad = 34, lat0 = pts.reduce((s,p)=>s+p.lat,0)/pts.length, kx = Math.cos(lat0*Math.PI/180);
@@ -1322,6 +1323,52 @@ ${pm.join('\n')}</Document></kml>`;
     if(M.trip === tid) refresh();
   }
   function suggMore(){ const t = trip(); if(t){ closeSheet(true); suggFill(t.id, true); } }
+  /* 📍 « Que voir aujourd’hui ? » (voyage en cours) : une fenêtre avec ce qu’il y a à voir et à faire autour de l’endroit où tu es
+     aujourd’hui (ta position si le téléphone la donne, sinon la ville du jour), les plus proches d’abord. Un geste l’ajoute à ta journée. */
+  let TSEE = null;
+  async function todaySee(){
+    const t = trip(); if(!t) return;
+    const td = isoToday(), lang = (window.I18N && I18N.lang) || 'fr', my = {};
+    TSEE = my;
+    let city = ''; try { city = dayCity(td) || ''; } catch(e){}
+    openSheet(`<h2>📍 ${esc(MSGT('Que voir aujourd’hui ?'))}</h2><div id="ts-box"><div class="ex-load"><span class="ex-dot"></span><span class="ex-dot"></span><span class="ex-dot"></span><div>${esc(MSGT('Je cherche autour de toi…'))}</div></div></div>`);
+    // où es-tu ? la position du téléphone (rapide, sans insister), sinon la ville du jour au programme
+    let here = null;
+    try { here = await new Promise((ok, ko)=>{ if(!navigator.geolocation) return ko(); navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude, lng:p.coords.longitude}), ko, {maximumAge:600000, timeout:8000}); }); } catch(e){}
+    if(TSEE !== my) return;
+    if(here){
+      let gc = null; try { const j = await withTimeout(fetch(GEO + 'reverse?format=jsonv2&zoom=10&accept-language=' + lang + '&lat=' + here.lat.toFixed(3) + '&lon=' + here.lng.toFixed(3)).then(r=>r.json()), 6000); const a = (j && j.address) || {}; gc = a.city || a.town || a.village || a.municipality || ''; } catch(e){}
+      const cc = city ? geoCached(city) : null;
+      // ailleurs que la ville prévue (excursion, retard…) : on prend l’endroit où tu es vraiment
+      if(gc && (!city || !cc || rawKm(cc, here) > 30)) city = gc;
+    }
+    if(!city){ const c = await uiPrompt(MSGT('Où es-tu aujourd’hui ?'), ''); if(!c || !c.trim()) { closeSheet(true); return; } city = c.trim(); }
+    let L = []; try { L = await placesFor(city); } catch(e){}
+    if(TSEE !== my || !document.getElementById('ts-box')) return;
+    const ctr = here || geoCached(city);
+    const mine = new Set(placesOf(td).map(p=>normQ(p.nom)));
+    L = L.filter(p=>p.lat != null && normQ(p.nom) !== normQ(city));
+    if(ctr) L = L.map(p=>Object.assign({}, p, {d:rawKm(ctr, p)})).filter(p=>p.d < 40).sort((a, b)=>(a.d < 1.5 && b.d < 1.5) ? (b.score || 0) - (a.score || 0) : a.d - b.d);
+    L = L.slice(0, 14); my.L = L; my.city = city; my.td = td;
+    const dist = d => d == null ? '' : d < 1 ? Math.round(d * 1000 / 50) * 50 + ' m' : (Math.round(d * 10) / 10).toLocaleString((window.I18N && I18N.locale) || 'fr-FR') + ' km';
+    const box = document.getElementById('ts-box');
+    box.innerHTML = `<style>.ts-r{display:flex;flex-wrap:nowrap;align-items:center;gap:8px}.ts-r>span{flex:1;min-width:0}.ts-r .v-day-edit{flex:none;white-space:nowrap;padding:7px 10px;font-size:13px}.ts-r .v-day-edit.on{background:#e8f6ee;border-color:#9fd8b8}</style><div class="v-sum-small" style="margin-bottom:10px">${here ? '📡 ' + esc(MSGT('Autour de toi')) : '🗓️ ' + esc(MSGT('Au programme aujourd’hui'))} · <b data-notr>${esc(city)}</b></div>`
+      + (L.length ? `<div class="ts-l">${L.map((p, i)=>{ const c = POI_CATS[p.cat] || {icon:'📍', lbl:''}, on = mine.has(normQ(p.nom));
+          return `<div class="ar-r ts-r"><i>${c.icon}</i><span><b data-notr>${esc(p.nom)}</b><small>${[c.lbl ? MSGT(c.lbl) : '', dist(p.d)].filter(Boolean).map(esc).join(' · ')}</small></span>
+            <button type="button" class="v-day-edit" onclick="CV.todaySeeGo(${i})" aria-label="${esc(MSGT('Y aller'))}">🧭</button>
+            <button type="button" class="v-day-edit${on ? ' on' : ''}" id="ts-a${i}" onclick="CV.todaySeeAdd(${i})">${on ? '✓' : '＋'} ${esc(MSGT(on ? 'Ma journée' : 'Ma journée'))}</button></div>`; }).join('')}</div>`
+        : `<div class="ex-empty">${esc(navigator.onLine === false ? MSGT('Hors connexion : impossible de chercher les lieux autour de toi.') : MSGT('Rien trouvé autour de toi pour l’instant.'))}</div>`)
+      + `<div class="v-actions" style="flex-wrap:wrap"><button type="button" class="v-btn" onclick="CV.close();CV.exploreCity(${esc(JSON.stringify(city))},'','${td}')">🔎 ${esc(MSGT('Explorer la ville'))}</button><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`;
+  }
+  function todaySeeAdd(i){
+    const p = TSEE && TSEE.L && TSEE.L[i], t = trip(); if(!p || !t) return;
+    const ex = placesOf(TSEE.td).find(x=>normQ(x.nom) === normQ(p.nom)), b = document.getElementById('ts-a' + i);
+    if(ex){ drop(ex.id, '↩️ ' + MSGT('Retiré')); if(b){ b.classList.remove('on'); b.textContent = '＋ ' + MSGT('Ma journée'); } return; }
+    let stay = ''; try { const h = hotelsAround(TSEE.td); stay = ((h.night || h.prev) || {}).id || ''; } catch(e){}
+    put({id:'pl' + uid(), type:'place', trip:t.id, stay, date:TSEE.td, nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat || 'monu', lock:false, wiki:p.wiki || ''}, '📍 ' + p.nom);
+    if(b){ b.classList.add('on'); b.textContent = '✓ ' + MSGT('Ma journée'); }
+  }
+  function todaySeeGo(i){ const p = TSEE && TSEE.L && TSEE.L[i]; if(!p) return; window.open('https://www.google.com/maps/dir/?api=1&destination=' + p.lat + ',' + p.lng, '_blank', 'noopener'); }
   const sgRun = t => SG && SG.tid === t.id ? `💡 ${MSGT(SG.more ? 'Je cherche de nouvelles suggestions…' : 'Je cherche les incontournables…')}<small class="sg-pr">${esc(SG.city)}${SG.n ? ` · ${Math.min(SG.i, SG.n)}/${SG.n}` : ''}${SG.got ? ` · ${SG.got} ${MSGT('trouvées')}` : ''}</small>` : '';
   function suggCard(){
     const t = trip(); if(!t || t.archived || t.demo || M.lock || tripPhase(t) === 'past') return '';
