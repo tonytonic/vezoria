@@ -1709,7 +1709,7 @@
       M.dirty = [];
       mergeRemote(j.records, true);
       Object.values(R).forEach(r=>{ if(!j.records.some(x=>x.id===r.id)) markDirty(r.id); });
-      M.sync.on = true; M.sync.since = j.now; M.sync.err = '';
+      M.sync.on = true; M.sync.since = j.now; M.sync.err = ''; if(remote.length) M.sync.joinAt = Date.now();   // 📱 carnet existant ouvert ici : les autres appareils en seront prévenus
       if(!remote.length) await photoQueueAll();   // serveur vide (neuf ou effacé) : les photos de ce téléphone repartent aussi
       persist();
       await syncNow();
@@ -1949,7 +1949,7 @@
     try {
       const j = await call(0, []);
       mergeRemote(j.records);
-      M.sync.on = true; M.sync.since = j.now; M.sync.err = ''; M.sync.last = Date.now(); delete M.joinCode;
+      M.sync.on = true; M.sync.since = j.now; M.sync.err = ''; M.sync.last = Date.now(); M.sync.joinAt = Date.now(); delete M.joinCode;
       persist(); closeSheet(true);
       applyMode();
       if(!profiles().length){ editProfile(null); return; }

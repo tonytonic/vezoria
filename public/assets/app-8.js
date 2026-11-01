@@ -1181,6 +1181,84 @@
     } catch(e){}
   }
   setTimeout(fwSelfHeal, 20000); setInterval(fwSelfHeal, 5 * 60e3);
+
+  /* ══════════ 📱 Mes appareils : qui a ouvert mon carnet avec mon code administrateur ══════════
+     Chaque appareil du propriétaire laisse une fiche chiffrée « dv:<appareil> » dans le carnet (son nom : « iPhone · Safari »).
+     Un appareil qui vient d’ouvrir le carnet avec le code prévient les autres (notification + message à l’ouverture), et chacun
+     peut le bloquer. On ne demande PAS l’accord d’un autre appareil : celui qui a perdu son téléphone n’a plus que son code. */
+  const devApi = () => { const u = apiUrl(); return u ? u.replace(/\/sync$/, '/device') : ''; };
+  // l’identifiant de l’appareil accompagne les synchros et les photos : le serveur refuse un appareil bloqué
+  { const f0 = window.fetch.bind(window);
+    window.fetch = (u, o) => { try { const url = typeof u === 'string' ? u : (u && u.url) || '';
+      if(/\/api\/(sync|photo|device)\b/.test(url) && o && o.headers && !(o.headers instanceof Headers) && o.headers['X-Carnet-Code'] && !o.headers['X-Carnet-Dev']) o = Object.assign({}, o, {headers:Object.assign({}, o.headers, {'X-Carnet-Dev':devId()})}); } catch(e){}
+      return f0(u, o); }; }
+  function devLabel(){
+    const ua = navigator.userAgent || '', pl = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iPad' : /Android/.test(ua) ? (/Mobile/.test(ua) ? MSGT('Téléphone Android') : MSGT('Tablette Android')) : /Windows/.test(ua) ? 'PC Windows' : /Macintosh/.test(ua) ? 'Mac' : /CrOS/.test(ua) ? 'Chromebook' : /Linux/.test(ua) ? 'Linux' : MSGT('Appareil');
+    const br = (typeof inPlay === 'function' && inPlay()) ? MSGT('appli Google Play') : /Edg\//.test(ua) ? 'Edge' : /Firefox\//.test(ua) ? 'Firefox' : /SamsungBrowser/.test(ua) ? 'Samsung Internet' : /Chrome\//.test(ua) && !/Edg\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : '';
+    return pl + (br ? ' · ' + br : '');
+  }
+  const dvMine = () => 'dv:' + devId();
+  const dvOwner = () => { try { return ownerOn(); } catch(e){ return false; } };
+  async function devPush(label){
+    try { const code = M.sync.code; if(!code || !pushApi()) return; const kk = await keys(code);
+      const p = {k:'device', who:myName() || '', it:[{x:label}], n:1};
+      const msg = b64(await seal(te.encode(JSON.stringify(p)), code));
+      await pushPost(code, {a:'send', kind:'device', kid:kk.token.slice(0, 16), msg, tag:'device-' + devId()}); } catch(e){}
+  }
+  let dvBusy = false;
+  async function dvTick(){
+    if(dvBusy || !dvOwner() || !M.sync.last) return; dvBusy = true;
+    try {
+      const id = dvMine(), cur = R[id], now = Date.now(), label = devLabel();
+      if(!cur || cur.deleted){
+        const others = list('device', d=>d.id !== id && !d.deleted).length, fresh = !!(M.sync.joinAt && now - M.sync.joinAt < 3600e3);
+        putQuiet([{id, type:'device', label, first:now, last:now, fresh, by:M.me || ''}]);
+        if(fresh && others) devPush(label);   // un appareil de plus sur un carnet qui en avait déjà : les autres sont prévenus
+        if(!M.dvSince) M.dvSince = now;
+      } else if(now - (cur.last || 0) > 864e5 || cur.label !== label) putQuiet([Object.assign(clone(cur), {last:now, label})]);
+      if(!M.dvSince){ M.dvSince = now; persist(); }
+      // 👀 un nouvel appareil a ouvert mon carnet depuis que celui-ci le surveille
+      const K = M.dvKnown || (M.dvKnown = {});
+      const nw = list('device', d=>d.id !== id && !d.deleted && !d.blocked && d.fresh && !K[d.id] && (d.first || 0) > M.dvSince - 60e3);
+      list('device', d=>d.id !== id && !K[d.id] && !nw.includes(d)).forEach(d=>{ K[d.id] = 1; });
+      if(nw.length && !document.getElementById('cv-moment') && !document.getElementById('v-sheet-bg')){
+        const d = nw[0]; K[d.id] = 1; persist();
+        momentShow(`<div class="mo-k">${MSGT('Sécurité')}</div><div class="mo-big">📱</div><h2>${MSGT('Un nouvel appareil a ouvert ton carnet')}</h2>
+          <div class="mo-sub"><b data-notr>${esc(d.label || MSGT('Appareil'))}</b> · ${esc(new Date(d.first || now).toLocaleString((window.I18N && I18N.locale) || 'fr-FR', {day:'numeric', month:'long', hour:'2-digit', minute:'2-digit'}))}<br><br>${MSGT('Il a utilisé ton code administrateur. Si c’est toi (nouveau téléphone, ordinateur), tout va bien. Sinon, bloque-le : il ne pourra plus rien lire ni modifier.')}</div>
+          <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose()">✓ ${MSGT('C’est moi')}</button><button type="button" onclick="CV.momentClose();CV.devBlock('${ja(d.id)}')">🚫 ${MSGT('Ce n’est pas moi : bloquer')}</button></div>`, 'eve');
+      } else if(nw.length) {} else persist();
+    } catch(e){} finally { dvBusy = false; }
+  }
+  setTimeout(dvTick, 12000); setInterval(dvTick, 60e3);
+  async function devBlock(id, un){
+    const d = R[id]; if(!d) return; const dev = String(id).replace(/^dv:/, '');
+    if(!un && !(await uiConfirm(RF('Bloquer « {0} » ? Il ne pourra plus ouvrir ton carnet.', d.label || MSGT('Appareil'))))) return;
+    try { const r = await fetch(devApi(), {method:'POST', headers:{'Content-Type':'application/json', 'X-Carnet-Code':await authCode(M.sync.code)}, body:JSON.stringify({a:un ? 'unblock' : 'block', dev})});
+      const j = await r.json().catch(()=>({})); if(!r.ok) throw new Error(srvMsg(j.error) || ('erreur ' + r.status)); }
+    catch(e){ alert(e.message); return; }
+    putQuiet([Object.assign(clone(d), {blocked:!un})]); persist();
+    if(!un) alert(MSGT('🚫 Appareil bloqué : il ne peut plus lire ni modifier ton carnet.') + '\n\n' + MSGT('Ton code administrateur reste le même : garde-le secret. Si quelqu’un d’autre le connaît, il pourrait revenir avec un autre appareil : tu en serais prévenu ici et tu pourrais le bloquer aussi.'));
+    else toast('✓ ' + MSGT('Appareil débloqué'));
+    devSheet();
+  }
+  function devSheet(){
+    if(!dvOwner()){ toast(MSGT('Mets d’abord ton carnet dans le cloud.')); return; }
+    const me = dvMine(), L = list('device', d=>!d.deleted).sort((a, b)=>(a.id === me ? -1 : b.id === me ? 1 : (b.last || 0) - (a.last || 0)));
+    const when = t => t ? new Date(t).toLocaleDateString((window.I18N && I18N.locale) || 'fr-FR', {day:'numeric', month:'short', year:'numeric'}) : '';
+    openSheet(`<h2>📱 ${esc(MSGT('Mes appareils'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Les appareils qui ont ouvert ton carnet avec ton code administrateur. Quand un nouveau arrive, les autres sont prévenus. Tu peux en bloquer un à tout moment.'))}</div>
+      ${L.map(d=>`<div class="cv-prow"><span><b data-notr>${esc(d.label || MSGT('Appareil'))}</b>${d.id === me ? ` · <small>${esc(MSGT('cet appareil'))}</small>` : ''}<small class="v-sum-small" style="display:block">${esc(RF('Depuis le {0} · vu le {1}', when(d.first), when(d.last)))}${d.blocked ? ' · 🚫 ' + esc(MSGT('bloqué')) : ''}</small></span>
+        ${d.id === me ? '' : `<button type="button" class="v-btn sec" style="width:auto;margin:0;padding:6px 12px" onclick="CV.devBlock('${ja(d.id)}'${d.blocked ? ', 1' : ''})">${d.blocked ? esc(MSGT('Débloquer')) : '🚫 ' + esc(MSGT('Bloquer'))}</button>`}</div>`).join('') || `<div class="v-sum-small">${esc(MSGT('Aucun appareil pour l’instant.'))}</div>`}
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${esc(MSGT('Fermer'))}</button></div>`);
+  }
+  // 📧 le code administrateur envoyé à soi-même : sans compte, c’est le seul moyen de le retrouver plus tard
+  function codeMail(){
+    const c = M.sync.code; if(!c) return;
+    const sub = MSGT('Mon code administrateur Vezoria (à garder)');
+    const body = RF('Mon code administrateur Vezoria : {0}', c) + '\n\n' + MSGT('Garde ce message. Avec ce code, tu retrouves tout ton carnet sur un nouveau téléphone ou un ordinateur : ouvre Vezoria → « J’ai déjà Vezoria sur un autre appareil » → colle le code.') + '\n' + MSGT('Ne le transmets à personne : il ouvre tout ton carnet.') + '\n\nhttps://vezoria.pages.dev/';
+    M.codeMailed = Date.now(); persist();
+    location.href = 'mailto:?subject=' + encodeURIComponent(sub) + '&body=' + encodeURIComponent(body);
+  }
   // anciens liens retirés : effacés du serveur 2 mois après (le temps que tous les abonnés soient passés au nouveau)
   async function feedOldWipe(){
     const due = (M.fold||[]).filter(x=>Date.now() - x.at > 60 * 864e5); if(!due.length || !apiUrl()) return;
@@ -1495,7 +1573,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-01x'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-01y'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1505,7 +1583,7 @@
     await uiAlert('Mise à jour prête : l’appli va se relancer.');
     location.replace(location.pathname + '?maj=' + Date.now());
   }
-  var APPAPI = {profDedupe, guideLater, fwForget, spSuisSheet, feedRefollow, spFw, spAbAdd, spCompAdd, spCompDel, spCompSheet, shMoreTog, bkCopy, hoodSheet, avPick, avDel, spAll, spTrips, spTripsSave, spTripOff, spMe, stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, wzOrder, wzOrdApply, tcfOrd, tcfBack, tcfGo, tcfDep, guideGo, guideNext, guideSheet, guideStop, guideTr, guideExp, guideHotel, guideBook, guideFin, guideEdit, guideResume, guideVisits, avDone, swStopRg, bkFill, bkLater, bkImp, bkMan, bkSave, bkNo, askWhoTog, trMis, prep3d, prep3dClose, p3Base, p3Fit, wzCk, suggOpen, suggKeep, suggDrop, suggGo, suggMore, expOpen, expKeep, expDrop, filTog, filFull, filSkip, finMark, startHide, bilanClose, storyTrip, feedPublish, feedShareLink, installSheet, cloudSheet, wzCountry, ariTog, ariFull, ariSkip, ariBook, ariFm, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, abPick, abSend, todaySee, todaySeeAdd, todaySeeGo, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, bigToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, yearFilm, yearFilmGo, memberInvite, memberSend, memberRevoke, memberShowId, memberLeave, deviceAdd, giftAsk, planSheet, planBuy, planPortal, quotaLoad, _quotaNag:()=>quotaNag(), _tf:d=>transferHTML(d), trDupFix, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {devBlock, devSheet, codeMail, profDedupe, guideLater, fwForget, spSuisSheet, feedRefollow, spFw, spAbAdd, spCompAdd, spCompDel, spCompSheet, shMoreTog, bkCopy, hoodSheet, avPick, avDel, spAll, spTrips, spTripsSave, spTripOff, spMe, stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, wzOrder, wzOrdApply, tcfOrd, tcfBack, tcfGo, tcfDep, guideGo, guideNext, guideSheet, guideStop, guideTr, guideExp, guideHotel, guideBook, guideFin, guideEdit, guideResume, guideVisits, avDone, swStopRg, bkFill, bkLater, bkImp, bkMan, bkSave, bkNo, askWhoTog, trMis, prep3d, prep3dClose, p3Base, p3Fit, wzCk, suggOpen, suggKeep, suggDrop, suggGo, suggMore, expOpen, expKeep, expDrop, filTog, filFull, filSkip, finMark, startHide, bilanClose, storyTrip, feedPublish, feedShareLink, installSheet, cloudSheet, wzCountry, ariTog, ariFull, ariSkip, ariBook, ariFm, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, abPick, abSend, todaySee, todaySeeAdd, todaySeeGo, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, bigToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, yearFilm, yearFilmGo, memberInvite, memberSend, memberRevoke, memberShowId, memberLeave, deviceAdd, giftAsk, planSheet, planBuy, planPortal, quotaLoad, _quotaNag:()=>quotaNag(), _tf:d=>transferHTML(d), trDupFix, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════

@@ -836,7 +836,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
      téléphone pour lui seul, chiffrés avec sa propre clé. */
   const PUSH_KINDS = [['depense','💶','Dépenses et remboursements'], ['resa','🗓️','Réservations et programme'], ['souv','📸','Souvenirs et photos'],
     ['sondage','🗳️','Sondages'], ['notes','🛒','Courses et notes'], ['social','💬','Abonnés : commentaires, ❤️ et nouveaux abonnés'], ['suivi','👀','Voyages que je suis : nouvelles étapes et photos'], ['rappel','⏰','Rappels : départ, enregistrement en ligne, échéances'], ['soir','🌙','Le soir en voyage : « raconte ta journée » et souvenirs « il y a un an »']];
-  const PUSH_TPL = {soc_iv:'📩 {0} t’invite dans le voyage « {1} »', soc_ivf:'📩 {0} te propose de suivre « {1} »', soc_iva:'✅ {0} a rejoint « {1} »', soc_ivr:'✕ {0} a refusé l’invitation : « {1} »', soc_cm:'💬 {0} a commenté : « {1} »', soc_lk:'❤️ {0} aime ta publication : {1}', soc_fw:'👀 {0} suit maintenant ton voyage', fb_social:'Du nouveau chez tes abonnés', depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
+  const PUSH_TPL = {dev_new:'📱 Nouvel appareil sur ton carnet : {0}. Ce n’est pas toi ? Ouvre Vezoria pour le bloquer.', soc_iv:'📩 {0} t’invite dans le voyage « {1} »', soc_ivf:'📩 {0} te propose de suivre « {1} »', soc_iva:'✅ {0} a rejoint « {1} »', soc_ivr:'✕ {0} a refusé l’invitation : « {1} »', soc_cm:'💬 {0} a commenté : « {1} »', soc_lk:'❤️ {0} aime ta publication : {1}', soc_fw:'👀 {0} suit maintenant ton voyage', fb_social:'Du nouveau chez tes abonnés', depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
     resa1:'{0} a ajouté au programme : {1}', resaN:'{0} a ajouté {1} éléments au programme', resaCh:'{0} a changé l’horaire : {1}',
     souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
     notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
@@ -872,7 +872,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const by = new Map(), add = (code, ks) => { if(!code) return; const o = by.get(code) || new Set(); ks.forEach(k=>o.add(k)); by.set(code, o); };
     // 👀 « X suit ton voyage » : seulement à l’auteur (ses propres liens abonnés), jamais aux compagnons, même abonnés au même voyage
     const ownF = new Set(Object.values(FT()).filter(Boolean));
-    codes.forEach(c=>add(c, want.filter(k=>k !== 'social'))); feeds.forEach(c=>add(c, ownF.has(c) ? ['social', 'follow'] : ['social'])); fol.forEach(c=>add(c, ['souv'])); ib.forEach(x=>add(x.code, x.kinds));
+    codes.forEach(c=>add(c, want.filter(k=>k !== 'social'))); if(M.sync.on && M.sync.code && !/^M:/.test(M.sync.code)) add(M.sync.code, ['device']);   // 📱 un nouvel appareil sur mon carnet : toujours prévenu feeds.forEach(c=>add(c, ownF.has(c) ? ['social', 'follow'] : ['social'])); fol.forEach(c=>add(c, ['souv'])); ib.forEach(x=>add(x.code, x.kinds));
     return [...by.entries()].filter(([, ks])=>ks.size).map(([code, ks])=>({code, kinds:[...ks]})).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
   }
   // 🔔 l’auteur est prévenu quand un abonné commente, aime ou commence à suivre (même un abonné sans l’appli)

@@ -1288,7 +1288,7 @@ a.v-btn.cv-escale{display:block;text-align:center;text-decoration:none}
 .cv-idea .im{position:relative;height:150px;background:linear-gradient(135deg,#c4b5fd,#f9a8d4);margin-bottom:8px}
 .cv-idea .im img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s}
 .cv-idea .im.has img{opacity:1}
-.cv-idea .pc{position:absolute;left:10px;top:10px;background:rgba(42,18,56,.85);color:#fff;border-radius:12px;padding:3px 9px;font-size:.74rem;font-weight:800}
+.cv-idea .ix-pc{position:absolute;left:10px;top:10px;background:rgba(42,18,56,.85);color:#fff;border-radius:12px;padding:3px 9px;font-size:.74rem;font-weight:800}
 .cv-idea .fav{position:absolute;right:10px;top:8px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.92);font-size:1.1rem}
 .cv-idea .chips{display:flex;flex-wrap:wrap;gap:5px;margin:6px 12px}
 .cv-idea .chips span{background:#f5f0fb;border-radius:10px;padding:3px 8px;font-size:.72rem}

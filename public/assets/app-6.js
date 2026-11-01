@@ -395,7 +395,7 @@
       momentShow(`<div class="mo-k">${MSGT('Ton compte Vezoria')}</div><div class="mo-big">🔑</div><h2>${MSGT('Garde bien ton code administrateur')}</h2>
         <div class="mo-sub">${MSGT('C’est lui qui ramène tout ton carnet sur un nouveau téléphone ou ton ordinateur. Note-le dans un endroit sûr.')}</div>
         <div class="mo-l"><b class="cv-code" data-notr>${esc(M.sync.code)}</b></div>
-        <div class="mo-b"><button type="button" onclick="CV.copyCode()">📋 ${MSGT('Copier')}</button><button type="button" onclick="CV.momentClose();CV.deviceAdd()">📱 ${MSGT('Ajouter un appareil')}</button><button type="button" class="pri" onclick="CV.momentClose()">${MSGT('C’est noté')}</button></div>`, 'eve');
+        <div class="mo-b"><button type="button" onclick="CV.codeMail()">📧 ${MSGT('M’envoyer le code par e-mail')}</button><button type="button" onclick="CV.copyCode()">📋 ${MSGT('Copier')}</button><button type="button" onclick="CV.momentClose();CV.deviceAdd()">📱 ${MSGT('Ajouter un appareil')}</button><button type="button" class="pri" onclick="CV.momentClose()">${MSGT('C’est noté')}</button></div>`, 'eve');
       return true;
     }
     if(now - (M.zipLast || 0) < 30 * 864e5 || now - (M.protAsk || 0) < 14 * 864e5) return false;
@@ -547,7 +547,9 @@
     openSheet(`<h2>📝 Note bien ton code</h2>
       <div class="cv-bigcode">${esc(M.sync.code)}</div>
       <p class="cv-warn">C’est la seule clé de ton carnet : sans lui, personne ne pourra le récupérer, même pas nous.</p>
-      <button class="v-btn" onclick="CV.copyCode()">📋 Copier le code</button>
+      <button class="v-btn" onclick="CV.codeMail()">📧 ${MSGT('M’envoyer le code par e-mail')}</button>
+      <div class="v-sum-small" style="margin:-2px 0 8px">${MSGT('Pas de compte chez Vezoria : ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.')}</div>
+      <button class="v-btn sec" onclick="CV.copyCode()">📋 Copier le code</button>
       <button class="v-btn sec" onclick="CV.codeKeep()">📤 Me l’envoyer pour le garder (notes, e-mail…)</button>
       <div class="v-sum-small" style="margin-top:6px">Ne le donne qu’à toi-même : il ouvre tout ton carnet. Pour inviter des amis : 👥 Partager, ou un code compagnon (☁️ Cloud).</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close();CV.cloudSheet()">C’est noté</button></div>`);
