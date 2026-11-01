@@ -1,3 +1,4 @@
+import { codeSpace, ROTATED } from './rotate.js';   // 🔑 code administrateur changé
 /**
  * Vezoria — 👥 codes compagnon du carnet principal (le code administrateur ne se partage plus).
  *
@@ -48,7 +49,8 @@ async function ownerSpace(request, env) {
   const code = (request.headers.get('X-Carnet-Code') || '').trim();
   if (code.length < 8) return json({ error: 'Code du carnet manquant' }, 400);
   if (code.startsWith('mb:')) return json({ error: 'Réservé au propriétaire du carnet (code administrateur) — Owner only' }, 403);
-  const space = await sha256('carnet-voyage:' + code);
+  const cs = await codeSpace(env, code), space = cs.space;
+  if (cs.dead) return json({ error: ROTATED, rotated: true }, 403);
   try { const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first(); if (b) return json({ error: 'suspendu', suspended: true }, 423); } catch (e) {}
   return space;
 }

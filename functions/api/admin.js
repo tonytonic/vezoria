@@ -1,3 +1,4 @@
+import { codeSpace } from './rotate.js';   // 🔑 code administrateur changé
 /**
  * Vezoria — administration des signalements (réservé à l'éditeur).
  *
@@ -203,7 +204,7 @@ export async function onRequestPost({ request, env }) {
     return json({ ok: true, code, plan, days, uses });
   }
   let space = '';
-  if (b.token && /^[0-9a-f]{64}$/.test(b.token)) space = await sha256('carnet-voyage:' + b.token);
+  if (b.token && /^[0-9a-f]{64}$/.test(b.token)) space = (await codeSpace(env, b.token)).space;
   else if (b.space && /^[0-9a-f]{64}$/.test(b.space)) space = b.space;
   if (!space) return json({ error: 'empreinte manquante' }, 400);
   if (a === 'planLook' || a === 'planSet') {

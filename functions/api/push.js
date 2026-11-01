@@ -1,3 +1,4 @@
+import { codeSpace, ROTATED } from './rotate.js';   // 🔑 code administrateur changé
 /**
  * Vezoria — notifications (Web Push), sans service payant : Cloudflare Pages Function + D1.
  *
@@ -171,7 +172,8 @@ async function spaceOf(request, env) {
     try { const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(row.space).first(); if (b) return json({ error: 'suspendu', suspended: true }, 423); } catch (e) {}
     return row.space;
   }
-  const space = await sha256('carnet-voyage:' + code);
+  const cs = await codeSpace(env, code), space = cs.space;
+  if (cs.dead) return json({ error: ROTATED, rotated: true }, 403);
   try { const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first(); if (b) return json({ error: 'suspendu', suspended: true }, 423); } catch (e) {}
   return space;
 }

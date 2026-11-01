@@ -1,3 +1,4 @@
+import { codeSpace, ROTATED } from './rotate.js';   // 🔑 code administrateur changé
 /**
  * Vezoria — 🫙 place photos par carnet · 🌿 voyages branchés · 💳 formules · 🎁 codes cadeaux
  *
@@ -131,7 +132,8 @@ async function who(request, env) {
     if (!row) return { err: json({ error: 'Accès compagnon retiré par le propriétaire du carnet. — Companion access was removed by the notebook owner.', revoked: true }, 403) };
     return { space: row.space, member: true };
   }
-  const space = await sha256('carnet-voyage:' + code);
+  const cs = await codeSpace(env, code), space = cs.space;
+  if (cs.dead) return { err: json({ error: ROTATED, rotated: true }, 403) };
   try { const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first(); if (b) return { err: json({ error: 'suspendu', suspended: true }, 423) }; } catch (e) {}
   return { space };
 }

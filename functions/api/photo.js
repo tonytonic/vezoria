@@ -1,3 +1,4 @@
+import { codeSpace, ROTATED } from './rotate.js';   // 🔑 code administrateur changé
 import { uploadCheck } from './plan.js';   // 🫙 place du carnet
 // Photos du carnet : POST = envoyer une photo, GET ?id= = la récupérer.
 // 🫙 Pot commun (photos « v2 ») : chaque photo est rangée UNE fois, chiffrée avec sa propre clé (sur le téléphone).
@@ -50,7 +51,8 @@ async function spaceOf(request, env) {
     const allowed = String(env.SPACE_CODES).split(',').map(s => s.trim()).filter(Boolean);
     if (!allowed.includes(code)) return json({ error: 'Code de carnet non autorisé sur ce serveur' }, 403);
   }
-  const space = await sha256('carnet-voyage:' + code);
+  const cs = await codeSpace(env, code), space = cs.space;
+  if (cs.dead) return json({ error: ROTATED, rotated: true }, 403);   // 🔑 ancien code administrateur
   // carnet suspendu après un signalement (voir admin.js) : plus aucune lecture ni écriture, données conservées
   try {
     const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first();

@@ -1,3 +1,4 @@
+import { codeSpace, ROTATED, devSeen } from './rotate.js';   // 🔑 code administrateur changé
 /**
  * Carnet de voyage — synchronisation (Cloudflare Pages Function + D1)
  *
@@ -107,7 +108,8 @@ async function spaceOf(request, env) {
     const allowed = String(env.SPACE_CODES).split(',').map(s => s.trim()).filter(Boolean);
     if (!allowed.includes(code)) return json({ error: 'Code de carnet non autorisé sur ce serveur' }, 403);
   }
-  const space = await sha256('carnet-voyage:' + code);
+  const cs = await codeSpace(env, code), space = cs.space;
+  if (cs.dead) return json({ error: ROTATED, rotated: true }, 403);   // 🔑 ancien code administrateur, remplacé par un nouveau
   // carnet suspendu après un signalement (voir admin.js) : plus aucune lecture ni écriture, données conservées
   try {
     const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first();
@@ -118,6 +120,7 @@ async function spaceOf(request, env) {
     const dv = (request.headers.get('X-Carnet-Dev') || '').trim().slice(0, 40);
     if (dv && (await devBlocked(env, space)).has(dv))
       return json({ error: 'Cet appareil a été retiré de ce carnet par son propriétaire. — This device was removed from this notebook by its owner.', devBlocked: true }, 403);
+    if (dv) await devSeen(env, space, dv);   // date d'arrivée de l'appareil (un appareil tout neuf ne peut pas changer le code)
   } catch (e) {}
   return space;
 }
@@ -355,6 +358,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (skipped.length) out += ',"skipped":' + JSON.stringify(skipped.slice(0, 200));
   if (adm.has) out += ',"adm":1' + (adm.me ? ',"me":"a"' : '') + (adm.bad ? ',"admBad":1' : '');
   if (denied.length) out += ',"denied":' + JSON.stringify(denied.slice(0, 200));
+  // 🔑 code administrateur changé : le carnet garde sa place d'origine, le téléphone en a besoin pour ses photos du pot commun
+  if (!isMb(request) && space !== await sha256('carnet-voyage:' + (request.headers.get('X-Carnet-Code') || '').trim())) out += ',"sh":"' + space + '"';
   return new Response(out + '}', { status: 200, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
 }
 
