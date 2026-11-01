@@ -4,6 +4,7 @@
 // Appels :
 //   /api/tp?op=tours&city=Rome&lang=fr   → visites audio WeGoTrip de la ville (API publique, sans clé), avec prix et note
 //   /api/tp?op=flight&olat=47.22&olng=-1.55&dlat=41.9&dlng=12.48&date=2026-12-12[&ret=2026-12-19]
+//   /api/tp?op=flights&olat=…&olng=…&dlat=…&dlng=…&date=…  → plusieurs aéroports de départ/arrivée avec un vol connu (direct d’abord)
 //   → { ok, o:'NTE', d:'ROM', on:'Nantes', dn:'Rome', price:89, currency:'EUR', at:'2026-12-12T07:05:00+01:00',
 //       transfers:0, airline:'FR', exact:true, link:'https://www.aviasales.com/search/…', search:'https://www.aviasales.com/search/NTE1212ROM1' }
 //
@@ -59,6 +60,47 @@ async function prices(env, o, d, dep, ret) {
 }
 const ddmm = s => s.slice(8, 10) + s.slice(5, 7);
 
+/* ── ✈️ PLUSIEURS AÉROPORTS (op=flights) : le plus proche n'a pas toujours de vol vers ta destination (petits aéroports).
+   On regarde les villes avec aéroport autour du départ (≤ 300 km, 6 au plus) et de l'arrivée (≤ 200 km, 3 au plus),
+   et on garde les lignes qu'Aviasales connaît ce mois-là : directes d'abord, puis les moins chères, puis les plus proches. ── */
+function around(list, lat, lng, max, n) {
+  const out = [];
+  for (const c of list) { if (Math.abs(c[1] - lat) > max / 100) continue; const d = km(lat, lng, c[1], c[2]); if (d <= max) out.push({ code: c[0], name: c[3], km: Math.round(d) }); }
+  return out.sort((a, b) => a.km - b.km).slice(0, n);
+}
+async function monthPrices(env, o, d, month) {
+  const q = new URLSearchParams({ origin: o, destination: d, departure_at: month, currency: 'eur', sorting: 'price', limit: '30', one_way: 'true', market: 'fr' });
+  const r = await fetch('https://api.travelpayouts.com/aviasales/v3/prices_for_dates?' + q, {
+    headers: { 'X-Access-Token': env.TP_TOKEN, 'Accept': 'application/json' }, cf: { cacheTtl: 21600, cacheEverything: true } });
+  if (!r.ok) return [];
+  const j = await r.json().catch(() => null);
+  return j && j.success && Array.isArray(j.data) ? j.data.filter(x => x && x.price > 0) : [];
+}
+async function flights(env, olat, olng, dlat, dlng, date) {
+  const L = await cities(), O = around(L, olat, olng, 300, 6), D = around(L, dlat, dlng, 200, 3);
+  if (!O.length || !D.length) return { ok: false, why: 'aeroport' };
+  const pairs = [];
+  for (const o of O) for (const d of D) if (o.code !== d.code) pairs.push([o, d]);
+  const month = date.slice(0, 7), day = date;
+  const res = await Promise.all(pairs.slice(0, 15).map(async ([o, d]) => {
+    const all = await monthPrices(env, o.code, d.code, month).catch(() => []);
+    if (!all.length) return null;
+    const sameDay = all.filter(x => String(x.departure_at || '').slice(0, 10) === day);
+    const pool = sameDay.length ? sameDay : all;
+    const direct = pool.filter(x => x.transfers === 0).sort((a, b) => a.price - b.price)[0];
+    const b = direct || pool.slice().sort((a, b) => (a.transfers - b.transfers) || (a.price - b.price))[0];
+    return { o: o.code, on: o.name, okm: o.km, d: d.code, dn: d.name, dkm: d.km, price: Math.round(b.price), transfers: b.transfers ?? null,
+      at: b.departure_at || '', exact: !!sameDay.length, airline: b.airline || '',
+      link: b.link ? 'https://www.aviasales.com' + (b.link.startsWith('/') ? '' : '/') + b.link : '',
+      search: `https://www.aviasales.com/search/${o.code}${ddmm(date)}${d.code}1` };
+  }));
+  const ok = res.filter(Boolean).sort((a, b) => ((a.transfers === 0 ? 0 : 1) - (b.transfers === 0 ? 0 : 1)) || (a.exact === b.exact ? 0 : a.exact ? -1 : 1) || (a.price - b.price) || (a.okm - b.okm));
+  // une seule ligne par aéroport de départ (la meilleure), 5 au plus
+  const seen = new Set(), list = []; for (const r of ok) { if (seen.has(r.o)) continue; seen.add(r.o); list.push(r); if (list.length >= 5) break; }
+  const none = O.filter(o => !seen.has(o.code)).slice(0, 4).map(o => ({ o: o.code, on: o.name, okm: o.km, search: `https://www.aviasales.com/search/${o.code}${ddmm(date)}${D[0].code}1` }));
+  return { ok: true, list, none, dest: D.map(d => ({ d: d.code, dn: d.name, dkm: d.km })) };
+}
+
 /* ── 🎧 WeGoTrip : visites audio d'une ville (doc partenaire : app.wegotrip.com/api/v2) ── */
 const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 async function wgt(path, lang) {
@@ -99,6 +141,13 @@ export async function onRequest({ request, env }) {
     if (!rateOk(request, 300)) return json({ ok: false, error: 'trop de demandes, réessaie dans une heure' }, 429);
     const city = String(p.get('city') || '').slice(0, 80), lang = /^[a-z]{2}$/.test(p.get('lang') || '') ? p.get('lang') : 'en';
     try { return json(await tours(city, lang)); } catch (e) { return json({ ok: false, error: 'service indisponible' }, 502); }
+  }
+  if (p.get('op') === 'flights') {
+    if (!env.TP_TOKEN) return json({ ok: false, error: 'TP_TOKEN manquant' }, 503);
+    if (!rateOk(request, 60)) return json({ ok: false, error: 'trop de demandes, réessaie dans une heure' }, 429);
+    const olat = num(p.get('olat')), olng = num(p.get('olng')), dlat = num(p.get('dlat')), dlng = num(p.get('dlng')), date = p.get('date') || '';
+    if ([olat, olng, dlat, dlng].some(v => v == null || Math.abs(v) > 180) || !DATE.test(date)) return json({ ok: false, error: 'paramètres invalides' }, 400);
+    try { return json(await flights(env, olat, olng, dlat, dlng, date)); } catch (e) { return json({ ok: false, error: 'service indisponible' }, 502); }
   }
   if (p.get('op') !== 'flight') return json({ ok: false, error: 'op inconnue' }, 400);
   if (!env.TP_TOKEN) return json({ ok: false, error: 'TP_TOKEN manquant' }, 503);
