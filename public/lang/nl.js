@@ -1,4 +1,13 @@
 I18N.load({
+/* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
+"Plus de place photos":"Meer ruimte voor foto’s",
+"Prochainement":"Binnenkort",
+"Les formules ne débloquent aucune fonction : seulement de la place pour les photos.":"De abonnementen ontgrendelen geen functies: alleen meer ruimte voor foto’s.",
+"Place dépassée : tes photos restent toutes en ligne et visibles, mais plus de nouvel envoi tant que tu n’es pas redescendu sous {0}. Tout le reste fonctionne (voyages, partage, commentaires, ❤️).":"Ruimte overschreden: al je foto’s blijven online en zichtbaar, maar geen nieuwe uploads tot je weer onder {0} zit. Al het andere blijft werken (reizen, delen, reacties, ❤️).",
+"Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tes photos restent toutes en ligne ; seuls les nouveaux envois s’arrêtent tant que tu dépasses la place gratuite.":"Voor je hele reisdagboek, gedeelde reizen inbegrepen: je reisgenoten profiteren ook. Zonder verplichting: stop je, dan blijven al je foto’s online; alleen nieuwe uploads pauzeren zolang je boven de gratis ruimte zit.",
+"Rien n’est effacé : tes photos restent toutes en ligne et visibles. Les nouvelles photos restent sur ton téléphone tant que tu n’es pas redescendu sous {0}.":"Er wordt niets gewist: al je foto’s blijven online en zichtbaar. Nieuwe foto’s blijven op je telefoon tot je weer onder {0} zit.",
+/* 💳 2 formules Plus / Max (2026-11-01q) */
+"usage raisonnable":"redelijk gebruik",
 /* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
 "D’où décoller ?":"Waar vertrek je?",
 "Les aéroports autour de toi qui ont un vol vers ta destination.":"Luchthavens in je buurt met een vlucht naar je bestemming.",

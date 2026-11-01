@@ -1,4 +1,13 @@
 I18N.load({
+/* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
+"Plus de place photos":"写真の保存容量を増やす",
+"Prochainement":"近日公開",
+"Les formules ne débloquent aucune fonction : seulement de la place pour les photos.":"プランで機能が増えることはありません。写真の保存容量が増えるだけです。",
+"Place dépassée : tes photos restent toutes en ligne et visibles, mais plus de nouvel envoi tant que tu n’es pas redescendu sous {0}. Tout le reste fonctionne (voyages, partage, commentaires, ❤️).":"容量を超えています：写真はすべてオンラインで表示されたままですが、{0} を下回るまで新しいアップロードはできません。ほかの機能（旅行、共有、コメント、❤️）はそのまま使えます。",
+"Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tes photos restent toutes en ligne ; seuls les nouveaux envois s’arrêtent tant que tu dépasses la place gratuite.":"共有中の旅行も含め、ノート全体に適用され、旅の仲間も恩恵を受けます。縛りなし：解約しても写真はすべてオンラインに残ります。無料容量を超えている間、新しいアップロードだけが止まります。",
+"Rien n’est effacé : tes photos restent toutes en ligne et visibles. Les nouvelles photos restent sur ton téléphone tant que tu n’es pas redescendu sous {0}.":"何も削除されません：写真はすべてオンラインで表示されたままです。{0} を下回るまで、新しい写真は端末に保存されます。",
+/* 💳 2 formules Plus / Max (2026-11-01q) */
+"usage raisonnable":"適正利用",
 /* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
 "D’où décoller ?":"どこから出発する？",
 "Les aéroports autour de toi qui ont un vol vers ta destination.":"目的地への便がある近くの空港。",

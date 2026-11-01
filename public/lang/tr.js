@@ -1,4 +1,13 @@
 I18N.load({
+/* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
+"Plus de place photos":"Fotoğraflar için daha fazla alan",
+"Prochainement":"Yakında",
+"Les formules ne débloquent aucune fonction : seulement de la place pour les photos.":"Paketler hiçbir özelliğin kilidini açmaz: yalnızca fotoğraflar için daha fazla alan.",
+"Place dépassée : tes photos restent toutes en ligne et visibles, mais plus de nouvel envoi tant que tu n’es pas redescendu sous {0}. Tout le reste fonctionne (voyages, partage, commentaires, ❤️).":"Alan aşıldı: tüm fotoğrafların çevrimiçi ve görünür kalır, ancak {0} altına inene kadar yeni yükleme yapılamaz. Geri kalan her şey çalışır (seyahatler, paylaşım, yorumlar, ❤️).",
+"Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tes photos restent toutes en ligne ; seuls les nouveaux envois s’arrêtent tant que tu dépasses la place gratuite.":"Paylaşılan seyahatler dahil tüm defterin için: yol arkadaşların da yararlanır. Taahhüt yok: bırakırsan tüm fotoğrafların çevrimiçi kalır; ücretsiz alanı aştığın sürece yalnızca yeni yüklemeler durur.",
+"Rien n’est effacé : tes photos restent toutes en ligne et visibles. Les nouvelles photos restent sur ton téléphone tant que tu n’es pas redescendu sous {0}.":"Hiçbir şey silinmez: tüm fotoğrafların çevrimiçi ve görünür kalır. Yeni fotoğraflar {0} altına inene kadar telefonunda kalır.",
+/* 💳 2 formules Plus / Max (2026-11-01q) */
+"usage raisonnable":"makul kullanım",
 /* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
 "D’où décoller ?":"Nereden kalkmalı?",
 "Les aéroports autour de toi qui ont un vol vers ta destination.":"Yakınındaki, varış noktana uçuşu olan havalimanları.",

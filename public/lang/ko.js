@@ -1,4 +1,13 @@
 I18N.load({
+/* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
+"Plus de place photos":"사진 공간 늘리기",
+"Prochainement":"곧 출시",
+"Les formules ne débloquent aucune fonction : seulement de la place pour les photos.":"요금제는 기능을 추가하지 않습니다. 사진 공간만 늘어납니다.",
+"Place dépassée : tes photos restent toutes en ligne et visibles, mais plus de nouvel envoi tant que tu n’es pas redescendu sous {0}. Tout le reste fonctionne (voyages, partage, commentaires, ❤️).":"공간 초과: 모든 사진은 온라인에 그대로 보이지만 {0} 아래로 내려갈 때까지 새 업로드는 할 수 없습니다. 나머지 기능(여행, 공유, 댓글, ❤️)은 모두 작동합니다.",
+"Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tes photos restent toutes en ligne ; seuls les nouveaux envois s’arrêtent tant que tu dépasses la place gratuite.":"공유 여행을 포함한 노트 전체에 적용되어 동행자도 함께 누립니다. 약정 없음: 해지해도 모든 사진은 온라인에 남고, 무료 공간을 넘는 동안 새 업로드만 멈춥니다.",
+"Rien n’est effacé : tes photos restent toutes en ligne et visibles. Les nouvelles photos restent sur ton téléphone tant que tu n’es pas redescendu sous {0}.":"아무것도 삭제되지 않습니다: 모든 사진은 온라인에 그대로 보입니다. {0} 아래로 내려갈 때까지 새 사진은 휴대폰에 남습니다.",
+/* 💳 2 formules Plus / Max (2026-11-01q) */
+"usage raisonnable":"합리적 사용",
 /* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
 "D’où décoller ?":"어디서 출발할까요?",
 "Les aéroports autour de toi qui ont un vol vers ta destination.":"목적지로 가는 항공편이 있는 주변 공항.",

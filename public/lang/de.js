@@ -1,4 +1,13 @@
 I18N.load({
+/* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
+"Plus de place photos":"Mehr Platz für Fotos",
+"Prochainement":"Demnächst",
+"Les formules ne débloquent aucune fonction : seulement de la place pour les photos.":"Die Tarife schalten keine Funktionen frei: nur mehr Platz für Fotos.",
+"Place dépassée : tes photos restent toutes en ligne et visibles, mais plus de nouvel envoi tant que tu n’es pas redescendu sous {0}. Tout le reste fonctionne (voyages, partage, commentaires, ❤️).":"Speicher überschritten: Alle deine Fotos bleiben online und sichtbar, aber keine neuen Uploads, bis du wieder unter {0} bist. Alles andere funktioniert weiter (Reisen, Teilen, Kommentare, ❤️).",
+"Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tes photos restent toutes en ligne ; seuls les nouveaux envois s’arrêtent tant que tu dépasses la place gratuite.":"Für dein ganzes Reisetagebuch, geteilte Reisen inklusive: Deine Mitreisenden profitieren auch. Ohne Bindung: Wenn du kündigst, bleiben alle Fotos online; nur neue Uploads pausieren, solange du über dem Gratis-Speicher bist.",
+"Rien n’est effacé : tes photos restent toutes en ligne et visibles. Les nouvelles photos restent sur ton téléphone tant que tu n’es pas redescendu sous {0}.":"Nichts wird gelöscht: Alle deine Fotos bleiben online und sichtbar. Neue Fotos bleiben auf deinem Handy, bis du wieder unter {0} bist.",
+/* 💳 2 formules Plus / Max (2026-11-01q) */
+"usage raisonnable":"faire Nutzung",
 /* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
 "D’où décoller ?":"Von wo abfliegen?",
 "Les aéroports autour de toi qui ont un vol vers ta destination.":"Flughäfen in deiner Nähe mit einem Flug zu deinem Ziel.",

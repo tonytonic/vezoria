@@ -1,4 +1,13 @@
 I18N.load({
+/* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
+"Plus de place photos":"更多照片空间",
+"Prochainement":"即将推出",
+"Les formules ne débloquent aucune fonction : seulement de la place pour les photos.":"套餐不会解锁任何功能：只是增加照片空间。",
+"Place dépassée : tes photos restent toutes en ligne et visibles, mais plus de nouvel envoi tant que tu n’es pas redescendu sous {0}. Tout le reste fonctionne (voyages, partage, commentaires, ❤️).":"空间已超出：你的所有照片仍在线且可查看，但在降到 {0} 以下之前无法上传新照片。其他功能照常使用（旅行、分享、评论、❤️）。",
+"Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tes photos restent toutes en ligne ; seuls les nouveaux envois s’arrêtent tant que tu dépasses la place gratuite.":"适用于整个旅行手账，包括共享旅行：你的同伴也能受益。无需承诺：停止后所有照片仍保留在线；只要超出免费空间，只会暂停新的上传。",
+"Rien n’est effacé : tes photos restent toutes en ligne et visibles. Les nouvelles photos restent sur ton téléphone tant que tu n’es pas redescendu sous {0}.":"不会删除任何内容：你的所有照片仍在线且可查看。在降到 {0} 以下之前，新照片会保留在你的手机上。",
+/* 💳 2 formules Plus / Max (2026-11-01q) */
+"usage raisonnable":"合理使用",
 /* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
 "D’où décoller ?":"从哪里起飞？",
 "Les aéroports autour de toi qui ont un vol vers ta destination.":"你附近有航班飞往目的地的机场。",

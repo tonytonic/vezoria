@@ -1,4 +1,13 @@
 I18N.load({
+/* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
+"Plus de place photos":"फ़ोटो के लिए ज़्यादा जगह",
+"Prochainement":"जल्द आ रहा है",
+"Les formules ne débloquent aucune fonction : seulement de la place pour les photos.":"प्लान कोई सुविधा अनलॉक नहीं करते: केवल फ़ोटो के लिए ज़्यादा जगह।",
+"Place dépassée : tes photos restent toutes en ligne et visibles, mais plus de nouvel envoi tant que tu n’es pas redescendu sous {0}. Tout le reste fonctionne (voyages, partage, commentaires, ❤️).":"जगह भर गई: आपकी सभी फ़ोटो ऑनलाइन और दिखती रहेंगी, लेकिन {0} से नीचे आने तक नई फ़ोटो अपलोड नहीं होंगी। बाकी सब चलता रहेगा (यात्राएँ, शेयरिंग, टिप्पणियाँ, ❤️)।",
+"Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tes photos restent toutes en ligne ; seuls les nouveaux envois s’arrêtent tant que tu dépasses la place gratuite.":"आपकी पूरी डायरी के लिए, साझा यात्राओं सहित: आपके साथी भी लाभ उठाते हैं। कोई बंधन नहीं: रोकने पर आपकी सभी फ़ोटो ऑनलाइन रहेंगी; मुफ़्त जगह से ऊपर रहने तक केवल नए अपलोड रुकेंगे।",
+"Rien n’est effacé : tes photos restent toutes en ligne et visibles. Les nouvelles photos restent sur ton téléphone tant que tu n’es pas redescendu sous {0}.":"कुछ भी नहीं मिटाया जाता: आपकी सभी फ़ोटो ऑनलाइन और दिखती रहती हैं। {0} से नीचे आने तक नई फ़ोटो आपके फ़ोन पर रहेंगी।",
+/* 💳 2 formules Plus / Max (2026-11-01q) */
+"usage raisonnable":"उचित उपयोग",
 /* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
 "D’où décoller ?":"कहाँ से उड़ान लें?",
 "Les aéroports autour de toi qui ont un vol vers ta destination.":"तुम्हारे आसपास के हवाई अड्डे जहाँ से तुम्हारी मंज़िल की उड़ान है।",
