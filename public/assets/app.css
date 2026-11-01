@@ -3224,3 +3224,18 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 .sp2-top2{flex-direction:column;align-items:flex-start;gap:10px}
 .sp2-top2 h2{font-size:1.6rem}
 .sp2-blk{border-bottom-color:rgba(42,18,56,.1)}
+/* 01f : abonnements — choisir ses voyages, 🟢 en voyage */
+.sp2-cl{cursor:pointer}
+.sp2-cn{display:block;color:#4b5563;font-size:.82rem;margin:-2px 0 6px}
+.sp2-live{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 7px;border-radius:12px;background:#16a34a;color:#fff;font-weight:800;font-size:.9rem;box-shadow:0 0 0 3px rgba(22,163,74,.18)}
+.sp2-livn{flex-basis:100%;font-size:.85rem;color:#15803d;font-weight:600}.sp2-livn i{font-style:normal;font-weight:400;color:#166534}
+.sp2-lv{color:#16a34a;font-weight:700;font-size:.8rem;white-space:nowrap}
+.sp2-sr{display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:6px 10px 6px 6px;margin-bottom:8px;box-shadow:0 2px 6px rgba(30,40,60,.07)}
+.sp2-sr .sp2-tc{width:76px;flex:none;padding:3px}.sp2-sr .sp2-tc img,.sp2-sr .sp2-tc i{width:70px;height:56px}
+.sp2-sb{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.sp2-sb b{color:#14263b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sp2-sb small{color:#4b5563;font-size:.8rem}
+.sp2-sr.off,.sp2-t.off{opacity:.55}.sp2-sr.off .sp2-tc img,.sp2-t.off img{filter:grayscale(1)}
+.sp2-sw{flex:none;width:50px;height:30px;border-radius:15px;border:0;background:#cbd5e1;position:relative;cursor:pointer;transition:background .15s}
+.sp2-sw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .15s}
+.sp2-sw.on{background:#16a34a}.sp2-sw.on i{left:23px}
+.sp2-tg{font-style:normal;font-size:.68rem;color:#374151;background:#eef2f7;border-radius:8px;padding:1px 6px}
+.sp2-livn{order:9}

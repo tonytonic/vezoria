@@ -837,7 +837,7 @@
   // 👥 « Partager » : d’abord la vue d’ensemble (compagnons · abonnés · abonnements), puis tous les réglages dans « Plus d’options »
   function shareHub(){
     const more = shareHubMore();
-    openSheet(`<div class="sp2">${spOverview()}<details class="sp2-more"${M.shMore ? ' open' : ''} ontoggle="CV.shMoreTog(this.open)"><summary>⚙️ ${esc(MSGT('Plus d’options de partage'))}</summary>${more}</details></div>`);
+    openSheet(`<div class="sp2" data-live="hub">${spOverview()}<details class="sp2-more"${M.shMore ? ' open' : ''} ontoggle="CV.shMoreTog(this.open)"><summary>⚙️ ${esc(MSGT('Plus d’options de partage'))}</summary>${more}</details></div>`);
     { const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = 0; }
     setTimeout(()=>{ folPaint(); hydrate(); }, 60);
     M.socSeen = Date.now(); persist(); setTimeout(socPill, 50);

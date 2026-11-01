@@ -479,7 +479,9 @@
   const shBar = locked => locked ? '' : `<div class="sh-bar">${shStack.length ? '<button type="button" class="sh-bk" aria-label="Retour" onclick="CV.sheetBack()">←</button>' : ''}<button type="button" class="sh-x" aria-label="Fermer" onclick="CV.xClose()">✕</button></div>`;
   function sheetBack(){
     const h = shStack.pop(); if(!h){ xClose(); return; }
-    shBack = true; openSheet(h);
+    shBack = true;
+    if(/data-live="hub"/.test(h) && typeof shareHub === 'function'){ shareHub(); return; }   // 👥 la page Partager est refaite : elle montre l’état actuel (voyage masqué, remis…)
+    openSheet(h);
   }
   async function xClose(){
     // l’assistant de création déjà commencé : on demande avant de tout perdre
