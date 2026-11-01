@@ -230,6 +230,15 @@ async function markSeen(env, space, now) {
   } catch (e) {}
 }
 
+// 💳 un abonnement en cours (le carnet ou celui sur lequel ce voyage est branché) : jamais effacé pour inactivité
+async function paidKeep(env, space) {
+  try {
+    const now = Date.now(), link = await env.DB.prepare('SELECT owner FROM space_links WHERE child = ?1').bind(space).first();
+    const p = await env.DB.prepare('SELECT until FROM plans WHERE space = ?1').bind((link && link.owner) || space).first();
+    return !!(p && (p.until === 0 || p.until > now));
+  } catch (e) { return false; }   // pas encore de table des formules : aucun abonnement
+}
+
 // Ménage occasionnel (≈ 1 requête sur 500) : carnets orphelins = ni modifiés ni ouverts depuis longtemps
 async function sweepInactive(env) {
   const days = Number(env.INACTIVE_DAYS) || 730;
@@ -240,7 +249,9 @@ async function sweepInactive(env) {
     `SELECT r.space AS space FROM records r LEFT JOIN space_seen s ON s.space = r.space
      GROUP BY r.space HAVING MAX(r.rev) < ?1 AND COALESCE(MAX(s.at), ?2) < ?1 LIMIT 3`
   ).bind(limit, (since && since.v) || Date.now()).all();
-  for (const r of results || []) { await wipeSpace(env, r.space); try { await env.DB.prepare('DELETE FROM space_seen WHERE space = ?1').bind(r.space).run(); } catch (e) {} }
+  for (const r of results || []) {
+    if (await paidKeep(env, r.space)) { try { await env.DB.prepare('INSERT INTO space_seen (space, at) VALUES (?1, ?2) ON CONFLICT (space) DO UPDATE SET at = ?2').bind(r.space, Date.now()).run(); } catch (e) {} continue; }
+    await wipeSpace(env, r.space); try { await env.DB.prepare('DELETE FROM space_seen WHERE space = ?1').bind(r.space).run(); } catch (e) {} }
   try { await env.DB.prepare('DELETE FROM space_wipes WHERE at < ?1').bind(Date.now() - 730 * 864e5).run(); } catch (e) {}
 }
 
