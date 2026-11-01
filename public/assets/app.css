@@ -3239,3 +3239,30 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 .sp2-sw.on{background:#16a34a}.sp2-sw.on i{left:23px}
 .sp2-tg{font-style:normal;font-size:.68rem;color:#374151;background:#eef2f7;border-radius:8px;padding:1px 6px}
 .sp2-livn{order:9}
+/* 01g : la page Partager prend les couleurs de l’appli (violet en préparation, vert d’eau en voyage, brun/bleu pour les passés) */
+.sp2{--n:#4C1D95;--nl:#F3EAFF;--nb:#E9DDFB;--nt:#1f1630}
+body.cv-ph-live .sp2{--n:#0B5D63;--nl:#D3F1EB;--nb:#B9E6DD}
+body.cv-ph-past .sp2{--n:#1E2C5C;--nl:#E6EBF8;--nb:#C8D2F0}
+.sp2-top{background:linear-gradient(160deg,var(--navy,#2A1238) 0%,var(--n) 100%)}
+.sp2-top h2{font-family:var(--display,Georgia,serif);font-weight:700;letter-spacing:.2px}
+.sp2-sec,.sp2-sec svg,.sp2-sec b{color:var(--n)}
+.sp2-sec b{font-family:var(--display,Georgia,serif);font-weight:700;font-size:1.2rem}
+.sp2-sec small{color:#5b5368}
+.sp2-blk{background:#fff;border:1px solid var(--nb);border-radius:20px;padding:14px 12px 12px;margin-bottom:14px;box-shadow:0 4px 14px rgba(76,29,149,.08)}
+.sp2-blk:last-child{margin-bottom:4px;border-bottom:1px solid var(--nb)}
+.sp2-row,.sp2-card,.sp2-sr{background:var(--nl);box-shadow:none;border:0}
+.sp2-row>b,.sp2-ct b,.sp2-pb b,.sp2-sb b{color:var(--nt)}
+.sp2-tc{background:#fff}
+.sp2-pills button,.sp2-fol{border-color:var(--n);color:var(--n);background:#fff}
+.sp2-pills button.soft{background:var(--nl);border-color:var(--nl)}
+.sp2-pills button.danger{border-color:#dc2626;color:#dc2626;background:#fff}
+.sp2-add2,.sp2-save{background:var(--n);color:#fff}
+.sp2-chips button{border-color:var(--n);color:var(--n)}.sp2-chips button.sel{background:var(--n);color:#fff}
+.sp2-add{background:var(--nl)}.sp2-add b,.sp2-ph .sp2-ph0,.sp2-more>summary{color:var(--n)}
+.sp2-ph .sp2-ph0{background:#fff}
+.sp2-pc{border-bottom-color:var(--nb)}.sp2-pc.on{background:var(--nl)}
+.sp2-hid{background:var(--n)}
+.sp2-tg{background:var(--nl);color:var(--n)}
+.sp2-sw.on{background:var(--n)}
+.sp2-tx{background:var(--n)}
+.sp2-fol{white-space:nowrap;padding:6px 12px}
