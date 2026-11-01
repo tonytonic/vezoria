@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
+"Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"未勾选：不给任何人看。🙈：对某个人隐藏。",
+"vu par tes abonnés":"关注者可见",
+"Cacher à quelqu’un":"对某人隐藏",
+"… et {0} autre(s) voyage(s)":"……还有 {0} 个旅程",
 /* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
 "montré à personne":"未向任何人展示",
 "caché à {0} abonné(s)":"已对 {0} 位关注者隐藏",

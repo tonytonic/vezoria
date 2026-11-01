@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
+"Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"체크 해제: 아무에게도 안 보임. 🙈: 특정 사람에게 숨기기.",
+"vu par tes abonnés":"팔로워에게 보임",
+"Cacher à quelqu’un":"누군가에게 숨기기",
+"… et {0} autre(s) voyage(s)":"… 그 외 여행 {0}개",
 /* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
 "montré à personne":"아무에게도 안 보임",
 "caché à {0} abonné(s)":"팔로워 {0}명에게 숨김",

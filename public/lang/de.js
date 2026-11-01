@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
+"Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"Nicht angehakt: niemandem gezeigt. 🙈: vor einer bestimmten Person verbergen.",
+"vu par tes abonnés":"von deinen Followern gesehen",
+"Cacher à quelqu’un":"Vor jemandem verbergen",
+"… et {0} autre(s) voyage(s)":"… und {0} weitere Reise(n)",
 /* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
 "montré à personne":"niemandem gezeigt",
 "caché à {0} abonné(s)":"vor {0} Follower(n) verborgen",

@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
+"Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"チェックなし：誰にも見せない。🙈：特定の人だけに隠す。",
+"vu par tes abonnés":"フォロワーに表示",
+"Cacher à quelqu’un":"誰かに隠す",
+"… et {0} autre(s) voyage(s)":"…ほか {0} 件の旅行",
 /* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
 "montré à personne":"誰にも見せていない",
 "caché à {0} abonné(s)":"フォロワー {0} 人に非表示",

@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
+"Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"Без галочки: никому не показан. 🙈: скрыть от конкретного человека.",
+"vu par tes abonnés":"видят подписчики",
+"Cacher à quelqu’un":"Скрыть от кого-то",
+"… et {0} autre(s) voyage(s)":"… и ещё поездок: {0}",
 /* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
 "montré à personne":"никому не показан",
 "caché à {0} abonné(s)":"скрыт от подписчиков: {0}",

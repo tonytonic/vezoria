@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
+"Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"बिना टिक: किसी को नहीं दिखेगा। 🙈: किसी ख़ास व्यक्ति से छिपाओ।",
+"vu par tes abonnés":"तुम्हारे फ़ॉलोअर देखते हैं",
+"Cacher à quelqu’un":"किसी से छिपाओ",
+"… et {0} autre(s) voyage(s)":"… और {0} यात्राएँ",
 /* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
 "montré à personne":"किसी को नहीं दिखाया",
 "caché à {0} abonné(s)":"{0} फ़ॉलोअर से छिपा",

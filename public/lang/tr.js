@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
+"Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"İşaretsiz: kimseye gösterilmez. 🙈: belirli birinden gizle.",
+"vu par tes abonnés":"takipçilerin görüyor",
+"Cacher à quelqu’un":"Birinden gizle",
+"… et {0} autre(s) voyage(s)":"… ve {0} yolculuk daha",
 /* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
 "montré à personne":"kimseye gösterilmiyor",
 "caché à {0} abonné(s)":"{0} takipçiden gizli",

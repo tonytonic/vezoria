@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
+"Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"Non spuntato: non mostrato a nessuno. 🙈: nasconderlo a una persona in particolare.",
+"vu par tes abonnés":"visto dai tuoi follower",
+"Cacher à quelqu’un":"Nascondi a qualcuno",
+"… et {0} autre(s) voyage(s)":"… e altri {0} viaggi",
 /* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
 "montré à personne":"non mostrato a nessuno",
 "caché à {0} abonné(s)":"nascosto a {0} follower",
