@@ -2317,8 +2317,30 @@
     if(v.length < 8){ alert('Colle ton code administrateur ou ton code compagnon.'); return; }
     try { if(await memberTry(v)) { closeSheet(true); return; } } catch(e){}   // 👥 c’était un code compagnon
     closeSheet(true); await syncOn(v);
-    if(M.sync.on && M.sync.code){ M.cloud = 'all'; persist(); refresh(); }
+    if(M.sync.on && M.sync.code){ M.cloud = 'all'; persist(); refresh(); setTimeout(()=>profDedupe(true), 800); }
   }
+  /* 👤 un seul « moi » : sur un nouvel appareil, on crée un profil puis on entre son code administrateur → le carnet arrive
+     avec MON profil déjà dedans (créé sur l’autre appareil). Les deux portent le même prénom : on garde le plus ancien,
+     tout ce que le nouveau a signé passe sur l’ancien, et le nouveau disparaît. Demandé une fois (deux personnes peuvent avoir le même prénom). */
+  let pdBusy = false;
+  async function profDedupe(asked){
+    if(pdBusy) return; const me = R[M.me]; if(!me || me.type !== 'profile' || me.deleted) return;
+    const twin = profiles().find(p=>p.id !== me.id && !p.deleted && normQ(p.nom || '') === normQ(me.nom || '') && (p.createdAt || 0) < (me.createdAt || 0));
+    if(!twin) return; const D = M.pdNo || (M.pdNo = {}); if(D[twin.id]) return;
+    pdBusy = true;
+    try {
+      if(!(await uiConfirm(RF('Le profil « {0} » existe déjà dans ce carnet (créé sur ton autre appareil). C’est toi ?\n\nOK = je garde un seul profil « {0} » (tout ce que tu as ajouté ici passe dessus).\nAnnuler = ce sont deux personnes différentes.', me.nom || '')))){ D[twin.id] = 1; persist(); return; }
+      const from = me.id, to = twin.id, out = [];
+      const swap = v => { if(v === from) return [to, true]; if(Array.isArray(v)){ let ch = false; const a = v.map(x=>{ const [y, c] = swap(x); ch = ch || c; return y; }); return [a.filter((x, i)=>a.indexOf(x) === i), ch]; }
+        if(v && typeof v === 'object'){ let ch = false; const o = {}; Object.entries(v).forEach(([k, x])=>{ const [y, c] = swap(x); const k2 = k === from ? to : k; if(k2 !== k || c) ch = true; o[k2] = y; }); return [o, ch]; }
+        return [v, false]; };
+      Object.values(R).forEach(r=>{ if(!r || r.id === from || r.type === 'geo') return; const [n, ch] = swap(r); if(ch) out.push(n); });
+      out.push(Object.assign(clone(twin), {dev:devId(), couleur:twin.couleur || me.couleur}));
+      out.push(Object.assign(clone(me), {deleted:true}));
+      M.me = to; putQuiet(out); persist(); refresh(); toast('👤 ' + RF('Un seul profil « {0} » : c’est toi sur ce téléphone.', twin.nom || ''));
+    } finally { pdBusy = false; }
+  }
+  setTimeout(()=>{ try { profDedupe(); } catch(e){} }, 9000);
 
   /* ══════════ 🔑 Code administrateur · 👥 code compagnon · 📱 mon compte sur tous mes appareils ══════════
      • Code administrateur (= code principal) : TON compte. Il ne se partage plus. Sur un autre appareil, il ramène TOUT :
