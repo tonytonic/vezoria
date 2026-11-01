@@ -126,7 +126,7 @@
     if(!ts.length){ alert('Crée d’abord un voyage.'); return; }
     openSheet(`<h2>👀 Mon carnet pour des abonnés</h2><div class="v-sum-small" style="margin-bottom:8px">Coche les voyages à montrer. Tes abonnés passent de l’un à l’autre avec un seul lien.</div>
       <div style="margin-bottom:6px"><button type="button" class="v-btn sec" style="width:auto;display:inline-block;margin:0 6px 0 0" onclick="document.querySelectorAll('.cpub:not(:disabled)').forEach(x=>x.checked=true)">${esc(MSGT('Tout cocher'))}</button><button type="button" class="v-btn sec" style="width:auto;display:inline-block;margin:0" onclick="document.querySelectorAll('.cpub:not(:disabled)').forEach(x=>x.checked=false)">${esc(MSGT('Tout décocher'))}</button></div>
-      ${ts.map(t=>{ const own = FT()[t.id] && grpCodeOf(t.id) !== ac, nf = own ? soloFw(t.id) : 0; return `<label class="cv-checkline"><input type="checkbox" class="cpub" value="${t.id}"${(ac && grpCodeOf(t.id) === ac) || (!ac && !own) || (add && t.id === add && !own) ? ' checked' : ''}${own && nf ? ' disabled' : ''}> <span data-notr>${esc(t.titre)}</span>${own ? (nf ? ` <small>(publié à part : ${nf} abonné${nf > 1 ? 's' : ''} sur son propre lien)</small>` : ' <small>(publié à part, sans abonné : coche-le pour le mettre dans le carnet)</small>') : ''}</label>`; }).join('')}
+      ${ts.map(t=>{ const own = FT()[t.id] && grpCodeOf(t.id) !== ac, nf = own ? soloFw(t.id) : 0; return `<label class="cv-checkline"><input type="checkbox" class="cpub" value="${t.id}"${(ac && grpCodeOf(t.id) === ac) || (!ac && !own) || (add && t.id === add && !own) ? ' checked' : ''}${own && nf ? ' disabled' : ''}> <span data-notr>${esc(t.titre)}</span>${own ? (nf ? ` <small>(publié à part : ${nf} abonné${nf > 1 ? 's' : ''} sur son propre lien)</small>` : ' <small>(publié à part, sans abonné : coche-le pour le mettre dans le carnet)</small>') : !FT()[t.id] ? ` <small>🔒 ${esc(MSGT('montré à personne'))}</small>` : ((FRX()[t.id] || {}).ex || []).length ? ` <small>🙈 ${esc(RF('caché à {0} abonné(s)', FRX()[t.id].ex.length))}</small>` : ''}</label>`; }).join('')}
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.carnetPublish()">👀 Publier et inviter</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
   // abonnés d’un voyage publié à part (sur son propre lien)
@@ -1037,12 +1037,23 @@
         return `<div class="sh-k" style="margin-top:12px">📣 Publiés à part, avec leur propre lien</div><div class="v-sum-small" style="margin-bottom:6px">Hors du carnet : cette personne les voit seulement si elle a reçu leur lien.</div>`
           + solo.map(t=>{ const sees = list('follower', x=>x.trip === ftId(t) && !x.deleted && twins.has(fwDevOf(x))).length;
             return `<div class="cv-checkline" style="cursor:default"><span>${sees ? '✅' : '➖'}</span> <span><span data-notr>${esc(R[t].titre)}</span> <small class="v-sum-small">${sees ? 'le suit' : 'ne le suit pas'}</small></span></div>`; }).join(''); })()}
+      ${(()=>{ const none = myTrips().filter(t=>!FT()[t.id]).sort((a,b)=>(b.debut||'').localeCompare(a.debut||''));
+        if(!none.length) return '';
+        return `<div class="sh-k" style="margin-top:12px">🔒 ${esc(MSGT('Montrés à personne'))}</div><div class="v-sum-small" style="margin-bottom:6px">${esc(MSGT('Coche un voyage pour le montrer à cette personne seulement.'))}</div>`
+          + none.map(t=>`<label class="cv-checkline"><input type="checkbox" class="fwn" value="${t.id}"> <span data-notr>${esc(t.titre)}</span></label>`).join(''); })()}
       ${f.pk ? '' : `<div class="v-sum-small" style="margin-top:6px">⚠️ Cette personne a une ancienne version de l’appli : un voyage caché ne lui sera plus montré, mais un voyage remis ne lui reviendra qu’après sa mise à jour.</div>`}
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.fwTripsSave('${ja(g)}','${ja(dev)}')">✅ Enregistrer</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
   async function fwTripsSave(g, dev){
-    const on = new Set([...document.querySelectorAll('.fwt:checked')].map(i=>i.value)), ts = grpTrips(g); closeSheet(true);
+    const on = new Set([...document.querySelectorAll('.fwt:checked')].map(i=>i.value)), add = [...document.querySelectorAll('.fwn:checked')].map(i=>i.value), ts = grpTrips(g); closeSheet(true);
     let hid = 0, shown = 0;
+    // 🔒 un voyage montré à personne → à cette personne seulement : il rejoint le carnet, caché à tous les autres abonnés
+    const others = Object.keys(grpFollowers(g)).filter(d=>d !== dev);
+    for(const t of add){ if(!R[t] || FT()[t]) continue;
+      FT()[t] = g; persist();
+      if(others.length){ FRX()[t] = {g, c:g, ex:others.slice(), sent:{}}; await feedRestrict(t, others[0]); }
+      feedBuild(t); shown++; }
+    if(add.length){ for(const t of add) if(FRX()[t]) await feedGrantSync(t); setTimeout(()=>{ try { pushRegister(true); } catch(e){} }, 2500); }
     for(const t of ts){ const r = FRX()[t], ex = (r && r.ex) || [];
       if(on.has(t) && ex.includes(dev)){ r.ex = ex.filter(x=>x !== dev); persist(); shown++; }
       else if(!on.has(t) && !ex.includes(dev)){ await feedRestrict(t, dev); hid++; } }
@@ -1448,7 +1459,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-01h'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-01i'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

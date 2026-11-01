@@ -129,7 +129,7 @@
       const it = clone(R[id]); it.recu = pid; put(it, '🧾 Ticket ajouté'); uploadQueue(); rcView(id); }, true);
   }
   /* ---------- 🗺️ Carte du voyage ---------- */
-  function geoCached(city){ const r = R['geo:' + normQ(city)]; if(!(r && !r.deleted && r.lat != null)) return null; if(geoFar(r, geoAnchor(city))) return null;   // homonyme loin des autres étapes : geocode() cherche le bon
+  function geoCached(city){ const r = R['geo:' + normQ(city)]; if(!(r && !r.deleted && r.lat != null)) return null; if(geoFar(r, geoAnchor(city)) || geoStale(r, city)) return null;   // homonyme loin des autres étapes : geocode() cherche le bon
     return {lat:r.lat, lng:r.lng}; }
   function tripMapSVG(pts){
     if(pts.length < 1) return '';

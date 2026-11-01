@@ -1146,17 +1146,19 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       + `<div class="v-actions">${a.length ? `<button type="button" class="v-btn sec" onclick="CV.bellClear()">🗑 Tout effacer</button>` : ''}${PU().on ? '' : `<button type="button" class="v-btn sec" onclick="CV.close();CV.plusGo('prefs')">⚙️ Réglages</button>`}<button type="button" class="v-btn" onclick="CV.close()">OK</button></div>`);
     nhSet(nhGet().map(x=>Object.assign(x, {read:true})));   // tout est lu : le chiffre rouge disparaît
     pushBadgeClear(); pushKv('inbox').then(b=>{ if(b && b.length){ nhAdd(b, true); return pushKv('inbox', []); } }).catch(()=>{});
+    pushKv('hist').then(h=>{ const n = nhGet().length; if(h && h.length){ nhAdd(h.filter(x=>Date.now() - x.at < 30 * 864e5), true); if(nhGet().length !== n) bellSheetRe(); } }).catch(()=>{});
   }
-  let NHV = [];
+  let NHV = [], nhRe = 0;
+  function bellSheetRe(){ if(nhRe++ < 1 && document.getElementById('v-sheet-bg')) bellSheet(); setTimeout(()=>{ nhRe = 0; }, 2000); }   // la cloche ouverte se complète avec l’historique du téléphone
   function bellGo(i){ const x = NHV[i]; closeSheet(); if(x && x.url) pushOpen(x.url); }
-  async function bellClear(){ if(!(await uiConfirm('Effacer toutes les notifications de la cloche ?'))) return; nhSet([]); closeSheet(); }
+  async function bellClear(){ if(!(await uiConfirm('Effacer toutes les notifications de la cloche ?'))) return; nhSet([]); try { await pushKv('hist', []); } catch(e){} closeSheet(); }
   // notifications arrivées pendant que l’appli dormait : le chiffre rouge de la cloche se met à jour à l’ouverture
-  async function bellSync(){ try { if(!pushOk()) return; const b = (await pushKv('inbox')) || []; if(b.length) nhAdd(b.filter(x=>Date.now() - x.at < 7 * 864e5)); } catch(e){} }
+  async function bellSync(){ try { if(!('indexedDB' in window)) return; const b = ((await pushKv('inbox')) || []).concat((await pushKv('hist')) || []); if(b.length) nhAdd(b.filter(x=>Date.now() - x.at < 30 * 864e5)); } catch(e){} }
   function recapGo(i){ const x = pushRecapBox[i]; closeSheet(); if(x) pushOpen(x.url); }
   // appli ouverte : petit bandeau en haut, touchable
   function pushBanner(d){
     if(!d || d.test || !d.body || document.visibilityState !== 'visible') return;
-    pushKv('inbox', []).catch(()=>{}); pushBadgeClear(); nhAdd([{at:Date.now(), title:d.title, body:d.body, url:d.url}], true);
+    pushKv('inbox').then(b=>{ if(b && b.length) nhAdd(b); return pushKv('inbox', []); }).catch(()=>{}); pushBadgeClear(); nhAdd([{at:d.at || Date.now(), title:d.title, body:d.body, url:d.url}], true);
     let b = document.getElementById('cv-inb'); if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'cv-inb'; document.body.appendChild(b); }
     b.innerHTML = `<b>🔔 ${esc(d.title || 'Vezoria')}</b><span>${esc(String(d.body).split('\n')[0])}</span>`;
     b.onclick = ()=>{ b.classList.remove('show'); pushOpen(d.url); };
