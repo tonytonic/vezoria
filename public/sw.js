@@ -3,7 +3,7 @@
 // Une nouvelle version de l'appli = un nouveau sw.js : il s'installe en arrière-plan, puis l'appli propose
 // « Nouvelle version · toucher pour recharger » (ou recharge seule si elle vient juste de s'ouvrir).
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-11-01h';
+const CACHE = 'vezoria-2026-11-01i';
 // le code et les styles sont dans assets/ (depuis la 2026-10-23d) : copiés dès l'installation pour marcher hors ligne tout de suite
 const CORE = ['./', './splash.webp', './img/entete-preparation.jpg', './img/entete-en-cours.jpg', './img/entete-passes.jpg', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './i18n.js',
   './assets/app.css', ...[1, 2, 3, 4, 5, 6, 7, 8].map(n => './assets/app-' + n + '.js'),
@@ -164,6 +164,8 @@ self.addEventListener('push', e => {
     // même message reçu deux fois (prévenu par deux liens différents) : une seule notification
     if (!isTest && box.some(x => now - x.at < 180e3 && x.title === title && x.body === body)) return;
     if (!isTest) { box.push({ at: now, title, body, url, trip, soc }); while (box.length > 60) box.shift(); await kvPut('inbox', box); }
+    // 🔔 historique de la cloche, gardé ici aussi (30 jours) : rien n’est perdu si la boîte de réception est vidée avant que l’appli l’ait recopiée
+    if (!isTest) { try { const h = ((await kvGet('hist')) || []).filter(x => now - x.at < 30 * 864e5); h.push({ at: now, title, body, url }); while (h.length > 80) h.shift(); await kvPut('hist', h); } catch (_) {} }
     // regroupement : une seule notification par voyage, qui se complète ; pas de nouvelle sonnerie avant 5 min
     let tag = d.t || 'vezoria', nTitle = title, nBody = body, silent = false;
     if (!isTest && trip) {
@@ -176,7 +178,7 @@ self.addEventListener('push', e => {
       const last = (await kvGet('la:' + tag)) || 0;
       if (now - last < (soc ? 60e3 : 5 * 60e3)) silent = true; else await kvPut('la:' + tag, now);
     }
-    let ack = { type: 'vz-push', ok: true, test: isTest, title, body, url };
+    let ack = { type: 'vz-push', ok: true, test: isTest, title, body, url, at: now };
     // appli ouverte à l’écran : pas de notification système (elle resterait dans la barre d’Android), seulement le bandeau dans l’appli
     let shown = false;
     try { const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true }); shown = !isTest && cs.some(c => c.visibilityState === 'visible' && c.focused); } catch (_) {}
