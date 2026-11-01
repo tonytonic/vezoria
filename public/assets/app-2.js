@@ -3,10 +3,74 @@
   /* ══════════ 👀 Voyage de démo (version grand public) ══════════ */
   const DEMO_TPL = [{"id":"__P1__","type":"profile","nom":"Léo","couleur":"#2e9e6a"},{"id":"__P2__","type":"profile","nom":"Inès","couleur":"#e8862e"},{"id":"__T__","type":"trip","titre":"Japon · 3 semaines","sous":"Tokyo → Hakone → Kyoto → Hiroshima → Osaka → Tokyo","debut":"@0","fin":"@20","voyageurs":["__P1__","__P2__","__ME__"],"objectif":3500,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~0","type":"item","trip":"__T__","cat":"hotel","titre":"Tokyo","date":"@0","dateFin":"@5","statut":"booked","partage":"grp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","echeances":[{"id":"emutz7gp7i3a1q0","date":"@-149","montant":273.33,"fait":false},{"id":"emutz7gp76i6j51","date":"@-119","montant":273.33,"fait":false},{"id":"emutz7gp7cah962","date":"@-88","montant":273.34,"fait":false}],"nom":"Hotel Gracery Shinjuku","adresse":"","heure":"","tel":"","prix":"820","estime":"","ref":"","lien":"","payeur":"__P1__"},{"id":"~1","type":"item","trip":"__T__","cat":"hotel","titre":"Hakone","date":"@5","dateFin":"@7","statut":"paid","partage":"grp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","nom":"Ryokan Fujiya","adresse":"Miyanoshita, Hakone","heure":"15:00","prix":"540","payeur":"__P2__"},{"id":"~2","type":"item","trip":"__T__","cat":"transport","statut":"booked","partage":"pp","qui":[],"mode":"Train","titre":"Tokyo → Hakone","from":"Tokyo","to":"Hakone","date":"@5","createdBy":"__ME__","updatedBy":"__ME__","compagnie":"Odakyu Romancecar","heureDep":"09:30","heureArr":"11:00","prix":"25","payeur":"chacun"},{"id":"~3","type":"item","trip":"__T__","cat":"hotel","titre":"Kyoto","date":"@7","dateFin":"@12","statut":"booked","partage":"grp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","nom":"Machiya Gion","adresse":"Higashiyama, Kyoto","heure":"16:00","prix":"950","payeur":"__ME__"},{"id":"~4","type":"item","trip":"__T__","cat":"transport","statut":"booked","partage":"pp","qui":[],"mode":"Train","titre":"Hakone → Kyoto","from":"Hakone","to":"Kyoto","date":"@7","createdBy":"__ME__","updatedBy":"__ME__","compagnie":"Shinkansen Hikari","heureDep":"10:12","heureArr":"12:20","prix":"95","payeur":"__P1__"},{"id":"~5","type":"item","trip":"__T__","cat":"hotel","titre":"Hiroshima","date":"@12","dateFin":"@14","statut":"booked","partage":"grp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","nom":"Hotel Granvia","adresse":"Gare de Hiroshima","heure":"15:00","prix":"260","payeur":"__P1__"},{"id":"~6","type":"item","trip":"__T__","cat":"transport","statut":"paid","partage":"pp","qui":[],"mode":"Train","titre":"Kyoto → Hiroshima","from":"Kyoto","to":"Hiroshima","date":"@12","createdBy":"__ME__","updatedBy":"__ME__","compagnie":"Shinkansen Nozomi","heureDep":"09:05","heureArr":"10:45","prix":"85","payeur":"__P2__"},{"id":"~7","type":"item","trip":"__T__","cat":"hotel","titre":"Osaka","date":"@14","dateFin":"@17","statut":"todo","partage":"grp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","nom":"Cross Hotel","adresse":"Dōtonbori, Osaka","estime":"390"},{"id":"~8","type":"item","trip":"__T__","cat":"transport","statut":"todo","partage":"pp","qui":[],"mode":"Train","titre":"Hiroshima → Osaka","from":"Hiroshima","to":"Osaka","date":"@14","createdBy":"__ME__","updatedBy":"__ME__","estime":"75"},{"id":"~9","type":"item","trip":"__T__","cat":"hotel","titre":"Tokyo","date":"@17","dateFin":"@20","statut":"todo","partage":"grp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","nom":"Mitsui Garden Ginza","adresse":"Ginza, Tokyo","estime":"600"},{"id":"~10","type":"item","trip":"__T__","cat":"transport","statut":"todo","partage":"pp","qui":[],"mode":"Train","titre":"Osaka → Tokyo","from":"Osaka","to":"Tokyo","date":"@17","createdBy":"__ME__","updatedBy":"__ME__","estime":"105"},{"id":"~11","type":"item","trip":"__T__","cat":"transport","statut":"paid","partage":"pp","qui":[],"mode":"Avion","titre":"Paris → Tokyo","from":"Paris","to":"Tokyo","date":"@0","createdBy":"__ME__","updatedBy":"__ME__","compagnie":"Air France AF276","heureDep":"10:25","heureArr":"06:40","prix":"980","estime":"","ref":"","lien":"","payeur":"__ME__"},{"id":"~12","type":"item","trip":"__T__","cat":"transport","statut":"paid","partage":"pp","qui":[],"mode":"Avion","titre":"Tokyo → Paris","from":"Tokyo","to":"Paris","date":"@20","createdBy":"__ME__","updatedBy":"__ME__","compagnie":"Air France AF275","heureDep":"12:05","heureArr":"18:30","prix":"0","estime":"","payeur":"__ME__","note":"inclus dans l’aller-retour"},{"type":"day","trip":"__T__","date":"@0","titre":"Arrivée à Tokyo","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@1","titre":"Tokyo","plan":"Shibuya, Harajuku, Meiji-jingu","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@2","titre":"Tokyo","plan":"teamLab le matin, Odaiba l’après-midi","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@3","titre":"Tokyo","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@4","titre":"Tokyo","plan":"Asakusa, Senso-ji, Skytree au coucher du soleil","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@5","titre":"Tokyo → Hakone","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@6","titre":"Hakone","plan":"Lac Ashi, Owakudani, onsen le soir","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@7","titre":"Hakone → Kyoto","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@8","titre":"Kyoto","plan":"Fushimi Inari tôt le matin, Gion le soir","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@9","titre":"Kyoto","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@10","titre":"Kyoto","plan":"Arashiyama, bambouseraie","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@11","titre":"Kyoto","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@12","titre":"Kyoto → Hiroshima","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@13","titre":"Hiroshima","plan":"Miyajima, torii flottant à marée haute","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@14","titre":"Hiroshima → Osaka","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@15","titre":"Osaka","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@16","titre":"Osaka","plan":"Dōtonbori, street food","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@17","titre":"Osaka → Tokyo","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@18","titre":"Tokyo","plan":"Shimokitazawa, dernières emplettes","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@19","titre":"Tokyo","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"type":"day","trip":"__T__","date":"@20","titre":"Tokyo → retour","plan":"","createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~13","type":"check","trip":"__T__","cat":"📋 Documents","label":"Pièce d’identité / passeport valide","done":true,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~14","type":"check","trip":"__T__","cat":"📋 Documents","label":"Assurance voyage (rapatriement)","done":true,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~15","type":"check","trip":"__T__","cat":"📋 Documents","label":"Carte bancaire sans frais à l’étranger + 2e carte","done":true,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~16","type":"check","trip":"__T__","cat":"📋 Documents","label":"Copies numériques (papiers, billets, réservations)","done":true,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~17","type":"check","trip":"__T__","cat":"🗓️ À réserver tôt","label":"Trajets aller et retour","done":true,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~18","type":"check","trip":"__T__","cat":"🗓️ À réserver tôt","label":"Hébergements","done":false,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~19","type":"check","trip":"__T__","cat":"🗓️ À réserver tôt","label":"Visites à créneau","done":false,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~20","type":"check","trip":"__T__","cat":"☀️ Santé","label":"Trousse pharmacie","done":false,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~21","type":"check","trip":"__T__","cat":"☀️ Santé","label":"Crème solaire, gourde","done":false,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~22","type":"check","trip":"__T__","cat":"📱 Tech","label":"Chargeur + batterie externe","done":false,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~23","type":"check","trip":"__T__","cat":"📱 Tech","label":"Cartes hors ligne","done":false,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~24","type":"check","trip":"__T__","cat":"📱 Tech","label":"eSIM / forfait à l’étranger","done":false,"createdBy":"__ME__","updatedBy":"__ME__"},{"id":"~25","type":"item","trip":"__T__","statut":"paid","partage":"pp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","cat":"activite","titre":"teamLab Planets","date":"@2","heure":"10:00","adresse":"Toyosu, Tokyo","prix":"32","payeur":"__ME__"},{"id":"~26","type":"item","trip":"__T__","statut":"booked","partage":"pp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","cat":"activite","titre":"Musée Ghibli","date":"@3","heure":"14:00","adresse":"Mitaka, Tokyo","prix":"8","payeur":"__P2__"},{"id":"~27","type":"item","trip":"__T__","statut":"todo","partage":"pp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","cat":"activite","titre":"Croisière lac Ashi","date":"@6","adresse":"Hakone","estime":"15"},{"id":"~28","type":"item","trip":"__T__","statut":"booked","partage":"pp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","cat":"activite","titre":"Cours de cuisine japonaise","date":"@9","heure":"11:00","adresse":"Nishiki, Kyoto","prix":"75","payeur":"__P2__"},{"id":"~29","type":"item","trip":"__T__","statut":"todo","partage":"pp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","cat":"activite","titre":"Ferry pour Miyajima","date":"@13","adresse":"Port de Miyajimaguchi","estime":"5"},{"id":"~30","type":"item","trip":"__T__","statut":"paid","partage":"pp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","cat":"activite","titre":"Universal Studios Japan","date":"@15","heure":"09:00","adresse":"Osaka","prix":"85","payeur":"__P1__"},{"id":"~31","type":"item","trip":"__T__","statut":"paid","partage":"grp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","cat":"divers","titre":"Pocket Wi-Fi 3 semaines","prix":"90","payeur":"__ME__"},{"id":"~32","type":"item","trip":"__T__","statut":"paid","partage":"pp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","cat":"divers","titre":"Assurance voyage","prix":"45","payeur":"chacun"},{"id":"~33","type":"item","trip":"__T__","statut":"todo","partage":"pp","qui":[],"createdBy":"__ME__","updatedBy":"__ME__","cat":"divers","titre":"Carte Suica (recharges)","estime":"60"},{"id":"~34","type":"souv","trip":"__T__","date":"@6","titre":"Premier onsen","lieu":"Hakone","texte":"Eau à 42 °C avec vue sur la montagne. Léo a tenu 4 minutes.","photos":[],"createdBy":"__P2__","updatedBy":"__P2__"},{"id":"~35","type":"souv","trip":"__T__","date":"@8","titre":"Mille torii à l’aube","lieu":"Fushimi Inari, Kyoto","texte":"Partis à 6 h : personne sur le sentier, seulement les corbeaux.","photos":[],"createdBy":"__P2__","updatedBy":"__P2__"},{"id":"~36","type":"souv","trip":"__T__","date":"@6","titre":"Le Fuji au coucher du soleil","lieu":"Hakone","texte":"Le ciel a viré au rose juste au moment où le Fuji est sorti des nuages.","photos":[],"createdBy":"__ME__","updatedBy":"__ME__"}];
   const demoTrip = () => list('trip', t=>t.demo)[0] || null;
+  /* 🌍 La démo dans ta région : chacun reconnaît des lieux et un itinéraire qu’il connaît.
+     Même trame que le Japon (5 étapes, 21 jours, retour à la 1re ville) ; ici, on change les lieux, les hôtels, les visites et les récits. */
+  const DEMO_REG = {
+    eu:{nom:'Italie', cc:'IT', home:'Paris', obj:2800, mode:'Train',
+      cities:['Rome','Sienne','Florence','Monterosso al Mare','Venise'], coords:[[41.9028,12.4964],[43.3188,11.3308],[43.7696,11.2558],[44.1465,9.6540],[45.4408,12.3155]],
+      hotels:[['Hotel Artemide','Via Nazionale 22, Rome'],['Palazzo Ravizza','Pian dei Mantellini 34, Sienne'],['Hotel Brunelleschi','Piazza Santa Elisabetta 3, Florence'],['Hotel Pasquale','Via Fegina 4, Monterosso al Mare'],['Hotel Al Ponte Antico','Cannaregio 5768, Venise'],['Hotel Raphaël','Largo Febo 2, Rome']],
+      plans:{1:'Colisée, Forum, Palatin',2:'Vatican : musées et chapelle Sixtine',4:'Trastevere, Campo de’ Fiori',6:'Piazza del Campo, Duomo, Torre del Mangia',8:'Offices le matin, Ponte Vecchio au coucher du soleil',10:'Jardins de Boboli, Oltrarno',13:'Sentier des Cinque Terre, baignade à Vernazza',15:'Place Saint-Marc, palais des Doges',16:'Murano et Burano en vaporetto',18:'Villa Borghèse, dernières emplettes'},
+      acts:[['Visite guidée du Colisée','Piazza del Colosseo, Rome','09:00'],['Musées du Vatican','Viale Vaticano, Rome','14:00'],['Dégustation de vins · Chianti','Chianti, Toscane',''],['Galerie des Offices','Piazzale degli Uffizi, Florence','11:00'],['Bateau des Cinque Terre','Port de Monterosso al Mare',''],['Tour en gondole','Venise','17:00']],
+      divers:['eSIM Europe 3 semaines','Assurance voyage','Carte transports de Rome (recharges)'],
+      souv:[['Premier spritz','Sienne','Sur la Piazza del Campo au coucher du soleil. Léo a commandé deux fois.'],['Florence au réveil','Ponte Vecchio, Florence','Partis à 6 h : personne sur le pont, seulement les mouettes.'],['La Bocca della Verità','Rome','Inès a quand même gardé sa main.']],
+      pics:[['city','temple'],['temple','sea'],['city','temple'],['sea','sea'],['sea','city']],
+      txt:[['Le Colisée au soleil couchant','Trastevere de nuit','La meilleure carbonara de Rome','Fontaine de Trevi à 7 h, enfin seuls'],['Piazza del Campo depuis la tour','Les collines du Chianti'],['Le Duomo vu du Piazzale Michelangelo','Ponte Vecchio au coucher du soleil','Les Offices sans la foule','Gelato sur l’Arno'],['Monterosso depuis la mer','Baignade à Vernazza'],['Le Grand Canal en vaporetto','Les maisons colorées de Burano']],
+      shop:['Eau ×6','Panini pour le train','Pansements','Billets de vaporetto'], rc:['Trattoria da Enzo','24'], taxi:['Taxi retour Termini','18'], tk:'ROMA'},
+    us:{nom:'États-Unis', cc:'US', home:'New York', obj:4200, mode:'Voiture',
+      cities:['San Francisco','Yosemite','Los Angeles','San Diego','Las Vegas'], coords:[[37.7749,-122.4194],[37.7456,-119.5936],[34.0522,-118.2437],[32.7157,-117.1611],[36.1699,-115.1398]],
+      hotels:[['Hotel Zephyr','250 Beach Street, San Francisco'],['Yosemite Valley Lodge','9006 Yosemite Lodge Dr, Yosemite'],['The Hollywood Roosevelt','7000 Hollywood Blvd, Los Angeles'],['Hotel del Coronado','1500 Orange Ave, San Diego'],['The Venetian','3355 Las Vegas Blvd S, Las Vegas'],['Hotel Nikko','222 Mason Street, San Francisco']],
+      plans:{1:'Golden Gate à vélo, Sausalito',2:'Alcatraz le matin, Fisherman’s Wharf',4:'Chinatown, Lombard Street, tramway',6:'Half Dome, Mariposa Grove',8:'Hollywood, Griffith Observatory au coucher du soleil',10:'Santa Monica, Venice Beach',13:'Balboa Park, La Jolla et ses otaries',15:'Le Strip de nuit',16:'Grand Canyon (journée)',18:'Mission District, dernières emplettes'},
+      acts:[['Ferry pour Alcatraz','Pier 33, San Francisco','09:00'],['Location de vélos · Golden Gate','Fisherman’s Wharf, San Francisco','14:00'],['Randonnée Mist Trail','Yosemite Valley',''],['Studios Universal','Universal City, Los Angeles','11:00'],['Kayak à La Jolla','La Jolla, San Diego',''],['Survol du Grand Canyon','Las Vegas','09:00']],
+      divers:['eSIM États-Unis 3 semaines','Assurance voyage (frais médicaux)','Pass parcs nationaux'],
+      souv:[['Premier séquoia','Yosemite','Un tronc plus large que la voiture. Léo a voulu en faire le tour en courant.'],['Golden Gate dans le brouillard','San Francisco','À 7 h, le pont sortait de la brume. Personne sur la piste cyclable.'],['Le Strip de nuit','Las Vegas','Inès a gagné 3 dollars et a tout de suite arrêté.']],
+      pics:[['city','sea'],['bamboo','temple'],['city','sea'],['sea','sea'],['city','city']],
+      txt:[['Le Golden Gate au coucher du soleil','Les maisons victoriennes d’Alamo Square','Le meilleur clam chowder du Wharf','Alcatraz dans la brume'],['Half Dome depuis Glacier Point','Les séquoias géants'],['Hollywood Sign depuis Griffith','Le Pier de Santa Monica','Venice Beach à vélo','Tacos à Grand Central Market'],['Les otaries de La Jolla','Coucher de soleil à Coronado'],['Le Strip illuminé','Le Grand Canyon vu d’en haut']],
+      shop:['Eau ×6','Sandwichs pour la route','Pansements','Crème solaire'], rc:['Diner sur la Route 66','24'], taxi:['Uber retour hôtel','18'], tk:'SAN FRANCISCO'},
+    af:{nom:'Maroc', cc:'MA', home:'Dakar', obj:2200, mode:'Train',
+      cities:['Marrakech','Ouarzazate','Fès','Chefchaouen','Rabat'], coords:[[31.6295,-7.9811],[30.9189,-6.8934],[34.0181,-5.0078],[35.1688,-5.2684],[34.0209,-6.8416]],
+      hotels:[['Riad Kniza','Derb l’Hôtel, Marrakech'],['Kasbah Ait Ben Moro','Skoura, Ouarzazate'],['Riad Fès','Derb Ben Slimane, Fès'],['Dar Echchaouen','Rue Ibn Askar, Chefchaouen'],['Riad Kalaa','Médina, Rabat'],['La Mamounia','Avenue Bab Jdid, Marrakech']],
+      plans:{1:'Place Jemaa el-Fna, souks',2:'Jardin Majorelle, palais de la Bahia',4:'Vallée de l’Ourika',6:'Aït-Ben-Haddou, studios de cinéma',8:'Médina de Fès, tanneries Chouara',10:'Médersa Bou Inania, poterie',13:'La ville bleue, cascades d’Akchour',15:'Kasbah des Oudayas, tour Hassan',16:'Plage de Rabat, Chellah',18:'Hammam, dernières emplettes'},
+      acts:[['Cours de cuisine marocaine','Médina, Marrakech','10:00'],['Jardin Majorelle','Rue Yves Saint Laurent, Marrakech','14:00'],['Excursion à Aït-Ben-Haddou','Ouarzazate',''],['Visite guidée de la médina','Bab Boujloud, Fès','11:00'],['Randonnée à Akchour','Chefchaouen',''],['Hammam traditionnel','Médina, Rabat','17:00']],
+      divers:['Carte SIM marocaine','Assurance voyage','Billets de train ONCF'],
+      souv:[['Premier thé à la menthe','Ouarzazate','Sur la terrasse de la kasbah, face aux montagnes. Léo en a bu quatre.'],['La médina au réveil','Fès','Partis à 7 h : les ruelles vides, seulement les ânes et les chats.'],['La ville bleue','Chefchaouen','Inès a voulu photographier chaque porte.']],
+      pics:[['city','temple'],['temple','sea'],['city','temple'],['sea','city'],['sea','city']],
+      txt:[['Jemaa el-Fna à la tombée de la nuit','Le jardin Majorelle','Le meilleur tajine de la médina','Les souks au petit matin'],['Aït-Ben-Haddou au coucher du soleil','Les palmeraies du Draa'],['Les tanneries vues des terrasses','La médina depuis les tombeaux mérinides','La porte Bab Boujloud','Pastilla au pigeon'],['Les ruelles bleues','Les cascades d’Akchour'],['La kasbah des Oudayas','La tour Hassan']],
+      shop:['Eau ×6','Msemen pour le train','Pansements','Billets de train'], rc:['Café de France','24'], taxi:['Petit taxi retour riad','18'], tk:'MARRAKECH'}
+  };
+  const DEMO_JP = ['Tokyo','Hakone','Kyoto','Hiroshima','Osaka'];
+  // la région par défaut : celle de l’heure du téléphone (Amérique, Afrique, Europe ; le Japon pour le reste)
+  const demoRegAuto = () => { let z = ''; try { z = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch(e){} return /^America\//.test(z) ? 'us' : /^Africa\//.test(z) ? 'af' : /^(Europe|Atlantic)\//.test(z) ? 'eu' : 'jp'; };
+  function demoTpl(reg){
+    const G = DEMO_REG[reg]; if(!G) return DEMO_TPL;
+    const C = G.cities, map = {}; DEMO_JP.forEach((c, i)=>{ map[c] = C[i]; }); map.Paris = G.home;
+    const sw = x => String(x || '').replace(/Tokyo|Hakone|Kyoto|Hiroshima|Osaka|Paris/g, m=>map[m] || m);
+    const out = clone(DEMO_TPL), H = ['~0','~1','~3','~5','~7','~9'], A = ['~25','~26','~27','~28','~29','~30'], D = ['~31','~32','~33'], S = ['~34','~35','~36'];
+    out.forEach(r=>{
+      if(r.type === 'trip'){ r.titre = G.nom + ' · 3 semaines'; r.sous = [...C, C[0]].join(' → '); r.objectif = G.obj; }
+      else if(r.type === 'item' && r.cat === 'hotel'){ const k = H.indexOf(r.id); r.titre = sw(r.titre); if(k >= 0){ r.nom = G.hotels[k][0]; r.adresse = G.hotels[k][1]; } }
+      else if(r.type === 'item' && r.cat === 'transport'){ r.from = sw(r.from); r.to = sw(r.to); r.titre = r.from + ' → ' + r.to; if(r.mode !== 'Avion') r.mode = G.mode; }
+      else if(r.type === 'day'){ r.titre = sw(r.titre); const n = +String(r.date).slice(1); r.plan = G.plans[n] || ''; }
+      else if(r.type === 'item' && r.cat === 'activite'){ const k = A.indexOf(r.id); if(k >= 0){ r.titre = G.acts[k][0]; r.adresse = G.acts[k][1]; if(G.acts[k][2]) r.heure = G.acts[k][2]; else delete r.heure; } }
+      else if(r.type === 'item' && r.cat === 'divers'){ const k = D.indexOf(r.id); if(k >= 0) r.titre = G.divers[k]; }
+      else if(r.type === 'souv'){ const k = S.indexOf(r.id); if(k >= 0 && G.souv[k]){ [r.titre, r.lieu, r.texte] = G.souv[k]; } else { r.titre = sw(r.titre); r.lieu = sw(r.lieu); } }
+      else if(typeof r.titre === 'string') r.titre = sw(r.titre);
+    });
+    // un road trip aux États-Unis : la dernière étape revient en avion (Las Vegas → San Francisco), pas en voiture
+    if(reg === 'us') out.forEach(r=>{ if(r.type === 'item' && r.cat === 'transport' && r.from === C[4] && r.to === C[0]) r.mode = 'Avion'; });
+    return out;
+  }
+  // tout ce qui change avec la région, pour le reste de la démo (photos dessinées, récits, courses, tickets)
+  function demoKit(reg){
+    const G = DEMO_REG[reg];
+    if(!G) return {nom:'Japon', cc:'JP', CITY:DEMO_CITY, PICS:DEMO_PICS, TXT:DEMO_TXT, shop:['Eau ×6', 'Onigiri pour le train', 'Pansements', 'Pass métro Kyoto'], rc:['Ramen Ichiran', '24'], taxi:['Taxi retour Shinjuku', '18'], tk:'TOKYO', first:'Tokyo'};
+    const CITY = {}, PICS = {}, TXT = {}; G.cities.forEach((c, i)=>{ CITY[normQ(c)] = G.coords[i]; PICS[c] = G.pics[i]; TXT[c] = G.txt[i]; });
+    return {nom:G.nom, cc:G.cc, CITY, PICS, TXT, shop:G.shop, rc:G.rc, taxi:G.taxi, tk:G.tk, first:G.cities[0]};
+  }
   /* 👀 Voyages de démo : le même Japon sous 3 angles pour tout explorer —
      à préparer (dans 6 mois) · en cours (on est au jour 7) · terminé (souvenirs, photos, bilan).
      Photos dessinées sur le téléphone, rien n'est téléchargé, rien n'est partagé. */
   const DEMO_CITY = {tokyo:[35.6812,139.7671], hakone:[35.2324,139.1069], kyoto:[35.0116,135.7681], hiroshima:[34.3853,132.4553], osaka:[34.6937,135.5023]};
+  let DEMO_TK = 'TOKYO';
   function demoPaint(kind, seed){
     const W = 960, H = 720, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
     let s = seed * 9301 + 49297; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
@@ -29,8 +93,8 @@
     else if(kind === 'ticket'){ // reçu / ticket de caisse (seed = montant)
       g.fillStyle = '#5b5f6b'; g.fillRect(0,0,W,H); g.save(); g.translate(W/2, H/2); g.rotate((rnd()-0.5)*0.12);
       g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(-196,-316,400,640); g.fillStyle = '#fbfaf5'; g.fillRect(-200,-320,400,640);
-      g.fillStyle = '#2b2b33'; g.textAlign = 'center'; g.font = 'bold 34px sans-serif'; g.fillText(['ホテル','レストラン','チケット','HOTEL'][seed % 4], 0, -250);
-      g.font = '22px monospace'; g.fillText('TOKYO · ' + String(10 + seed % 18) + '/07', 0, -212); g.textAlign = 'left';
+      g.fillStyle = '#2b2b33'; g.textAlign = 'center'; g.font = 'bold 34px sans-serif'; g.fillText(DEMO_TK === 'TOKYO' ? ['ホテル','レストラン','チケット','HOTEL'][seed % 4] : ['HOTEL','RESTAURANT','TICKET','CAFÉ'][seed % 4], 0, -250);
+      g.font = '22px monospace'; g.fillText(DEMO_TK + ' · ' + String(10 + seed % 18) + '/07', 0, -212); g.textAlign = 'left';
       for(let k=0;k<8;k++){ g.fillStyle = '#9a9aa6'; g.fillRect(-160,-170+k*38,150+rnd()*90,10); g.fillRect(90,-170+k*38,70,10); }
       g.fillStyle = '#2b2b33'; g.fillRect(-160,150,320,3); g.font = 'bold 38px monospace'; g.fillText('TOTAL', -160, 205); g.textAlign = 'right'; g.fillText(String(seed) + ' €', 160, 205);
       g.textAlign = 'left'; for(let k=0;k<40;k++){ g.fillStyle = '#2b2b33'; g.fillRect(-160 + k*8, 240, (k*7 % 5) + 2, 50); } g.restore(); }
@@ -55,8 +119,9 @@
       if(r.type==='trip') r.devise = c; });
   }
   let demoBusy = false;   // deux touchers rapides : une seule préparation de la démo
-  async function demoLoad(){ if(demoBusy) return; demoBusy = true; try { await demoLoad1(); } finally { demoBusy = false; } }
-  async function demoLoad1(){
+  async function demoLoad(reg){ if(demoBusy) return; demoBusy = true; try { await demoLoad1(reg); } finally { demoBusy = false; } }
+  async function demoLoad1(reg){
+    reg = DEMO_REG[reg] || reg === 'jp' ? reg : (M.demoReg || demoRegAuto()); M.demoReg = reg; const K = demoKit(reg), TPL = demoTpl(reg);
     if(!M.me){ alert('Indique d’abord ton prénom.'); return; }
     const ex = demoTrip(); if(ex){ closeSheet(true); M.mode = 'live'; const lv = list('trip', t=>t.demo && tripPhase(t)==='live')[0]; go((lv||ex).id); return; }
     closeSheet(true); toast('👀 Préparation des voyages de démo…');
@@ -67,21 +132,21 @@
       const conv = v => typeof v==='string' ? (/^@-?\d+$/.test(v) ? addDays(day0, parseInt(v.slice(1))) : /^(__|~)/.test(v) ? mapId(v) : v)
         : Array.isArray(v) ? v.map(conv) : (v && typeof v==='object') ? Object.fromEntries(Object.entries(v).map(([k,x])=>[k,conv(x)])) : v;
       const recs = [];
-      DEMO_TPL.forEach((t,k)=>{ if(t.type==='profile' && all.some(r=>r.id===mapId(t.id))) return; const r = conv(clone(t)); if(r.type==='day') r.id = 'day:' + tid + ':' + r.date; if(r.type==='trip') r.titre = titre;
+      TPL.forEach((t,k)=>{ if(t.type==='profile' && all.some(r=>r.id===mapId(t.id))) return; const r = conv(clone(t)); if(r.type==='day') r.id = 'day:' + tid + ':' + r.date; if(r.type==='trip') r.titre = titre;
         if(!r.createdBy) r.createdBy = M.me; if(!r.updatedBy) r.updatedBy = r.createdBy; r.createdAt = now + all.length + k; r.updatedAt = r.createdAt; r.demo = true; recs.push(r); });
       all.push(...recs); return {tid, recs, day0};
     };
-    const prep = mk(addDays(today, 180), 'Japon · 3 semaines (à préparer)');
-    const live = mk(addDays(today, -6), 'Japon · voyage en cours (démo)');
-    const past = mk(addDays(today, -80), 'Japon · souvenirs (démo)');
+    const prep = mk(addDays(today, 180), K.nom + ' · 3 semaines (à préparer)');
+    const live = mk(addDays(today, -6), K.nom + ' · voyage en cours (démo)');
+    const past = mk(addDays(today, -80), K.nom + ' · souvenirs (démo)');
     all.forEach(r=>{ R[r.id] = r; });
-    const cityOn = (v, d) => { const h = v.recs.find(r=>r.type==='item' && r.cat==='hotel' && r.date <= d && (!r.dateFin || r.dateFin > d)); return h ? stayCity(h) : 'Tokyo'; };
-    const coords = c => DEMO_CITY[normQ(c)] || DEMO_CITY.tokyo;
+    const cityOn = (v, d) => { const h = v.recs.find(r=>r.type==='item' && r.cat==='hotel' && r.date <= d && (!r.dateFin || r.dateFin > d)); return h ? stayCity(h) : K.first; };
+    const coords = c => K.CITY[normQ(c)] || K.CITY[normQ(K.first)];
     let n = 0, photos = 0;
     const addSouv = async (v, d, i, withPh, txt) => {
-      const c = cityOn(v, d), [la, lo] = coords(c), kinds = DEMO_PICS[c] || ['city'], ph = [];
+      const c = cityOn(v, d), [la, lo] = coords(c), kinds = K.PICS[c] || ['city'], ph = [];
       for(let k=0; k<withPh; k++){ const pid = 'ph' + uid() + 'dm' + (n++); await storePhoto(await demoPaint(kinds[(i+k) % kinds.length], i*7 + k + 3), pid); ph.push(pid); photos++; }
-      const r = {id:'s' + uid() + 'dm' + i, type:'souv', trip:v.tid, date:d, titre:(DEMO_TXT[c]||['Belle journée'])[i % (DEMO_TXT[c]||[1]).length], lieu:c + ', Japon', pays:'Japon', cc:'JP',
+      const r = {id:'s' + uid() + 'dm' + i, type:'souv', trip:v.tid, date:d, titre:(K.TXT[c]||['Belle journée'])[i % (K.TXT[c]||[1]).length], lieu:c + ', ' + K.nom, pays:K.nom, cc:K.cc,
         lat:+(la + (Math.sin(i*1.7)*0.03)).toFixed(5), lng:+(lo + (Math.cos(i*1.3)*0.04)).toFixed(5), texte: txt || '', photos:ph, createdBy: i % 3 === 0 ? p2 : i % 3 === 1 ? M.me : p1, createdAt:now+5000+i, updatedAt:now+5000+i, demo:true};
       R[r.id] = r; if(photos % 6 === 0) toast(`📸 Photos de démo : ${photos}…`);
     };
@@ -90,7 +155,7 @@
     past.recs.filter(r=>r.type==='item').forEach(r=>{ r.statut = 'paid'; if(!num(r.prix) && num(r.estime)) r.prix = r.estime; });
     // justificatifs : quelques tickets et reçus déjà photographiés (Bilan › Budget)
     { const its = past.recs.filter(r=>r.type==='item' && num(r.prix) > 0 && r.cat !== 'transport').slice(0, 6);
-      for(const [k, r] of its.entries()){ const rc = 'rc' + uid() + 'dmp' + k; await storePhoto(await demoPaint('ticket', Math.round(num(r.prix)) || 20 + k), rc); r.recu = rc; } }
+      for(const [k, r] of its.entries()){ const rc = 'rc' + uid() + 'dmp' + k; DEMO_TK = K.tk; await storePhoto(await demoPaint('ticket', Math.round(num(r.prix)) || 20 + k), rc); r.recu = rc; } }
     R['rb' + uid() + 'dm'] = {id:'rb' + uid() + 'dm', type:'remb', trip:past.tid, de:p1, a:M.me, montant:'400', date:addDays(past.day0, 25), demo:true, createdAt:now, updatedAt:now};
     // ── voyage en cours : jour 7, steps des jours passés, traces, tickets, courses, plafond, parts ──
     for(let i=0;i<6;i++) await addSouv(live, addDays(live.day0, i), i + 3, i % 2 ? 2 : 1, '');
@@ -98,10 +163,10 @@
     for(let i=0;i<7;i++){ const d = addDays(live.day0, i), [la, lo] = coords(cityOn(live, d)), pts = [];
       for(let k=0;k<14;k++) pts.push([+(la + Math.sin(k/2 + i)*0.02 + k*0.002).toFixed(5), +(lo + Math.cos(k/3 + i)*0.025 + k*0.003).toFixed(5), now - (7-i)*864e5 + k*1800e3]);
       R['trk:' + live.tid + ':' + d] = {id:'trk:' + live.tid + ':' + d, type:'trk', trip:live.tid, date:d, pts, demo:true, createdAt:now, updatedAt:now}; }
-    for(const [k, [t, px]] of [['ramen', ['Ramen Ichiran', '24']], ['city', ['Taxi retour Shinjuku', '18']]].entries()){
+    for(const [k, [t, px]] of [['ramen', K.rc], ['city', K.taxi]].entries()){
       const rc = 'rc' + uid() + 'dm' + k; await storePhoto(await demoPaint(t, 40 + k), rc);
       R['i' + uid() + 'dmr' + k] = {id:'i' + uid() + 'dmr' + k, type:'item', trip:live.tid, cat:'divers', titre:px[0], date:today, statut:'paid', prix:px[1], partage:'grp', payeur: k ? p1 : M.me, qui:[], recu:rc, demo:true, createdAt:now, updatedAt:now}; }
-    ['Eau ×6', 'Onigiri pour le train', 'Pansements', 'Pass métro Kyoto'].forEach((l,k)=>{ R['c' + uid() + 'dmc' + k] = {id:'c' + uid() + 'dmc' + k, type:'check', trip:live.tid, cat:'🛒 Courses', label:l, done:k===2, createdBy:k%2?p1:M.me, demo:true, createdAt:now+k, updatedAt:now+k}; });
+    K.shop.forEach((l,k)=>{ R['c' + uid() + 'dmc' + k] = {id:'c' + uid() + 'dmc' + k, type:'check', trip:live.tid, cat:'🛒 Courses', label:l, done:k===2, createdBy:k%2?p1:M.me, demo:true, createdAt:now+k, updatedAt:now+k}; });
     if(!R[live.tid]) return;   // démo effacée pendant sa préparation
     Object.assign(R[live.tid], {plafond:'150', coef:{[p2]:0.5}, foyer:{[p1]:'Léo & Inès', [p2]:'Léo & Inès'}});
     // ── sondage dans les Envies ──
@@ -109,6 +174,7 @@
     for(const v of [prep, live, past]) Object.values(R).filter(r=>r.demo && (r.trip===v.tid || r.id===v.tid)).forEach(r=>{ r.demo = true; });
     { const dm = new Set(Object.values(R).filter(r=>r.demo).flatMap(r=>[...(r.photos||[]), r.recu].filter(Boolean))); M.pq = (M.pq||[]).filter(x=>!dm.has(String(x).replace(/\.t$/,''))); }
     demoCur(M.cur || 'EUR'); persist(); M.mode = 'live'; M.tab = 'prog'; go(live.tid);
+    if(reg !== 'jp'){ setTimeout(()=>alert(RF('👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.', K.nom)), 300); return; }
     setTimeout(()=>alert('👀 3 voyages de démo sont prêts (rien n’est partagé) :\n\n📍 En cours : on est au jour 7 — traceur, steps, tickets, courses, plafond, parts inégales.\n🧳 Préparation : le même Japon dans 6 mois, à organiser.\n🗺️ Passés / 🏁 Bilan : le voyage terminé avec ses photos, son album et ses comptes.\n\nPasse d’un onglet à l’autre en haut de l’écran. « Supprimer la démo » efface tout.'), 300);
   }
   async function demoDel(){
@@ -124,8 +190,16 @@
   }
   const demoBtn = () => PUBLIC ? (demoTrip()
       ? `<button class="v-btn sec" onclick="CV.demoReset()">↺ Relancer le voyage de démo (remis à neuf)</button>
+         <button class="v-btn sec" onclick="CV.demoPick()">🌍 ${esc(MSGT('Changer de démo (Europe, États-Unis, Afrique, Japon)'))}</button>
          <button class="v-btn sec" onclick="CV.demoDel()">🗑 Supprimer le voyage de démo</button>`
-      : `<button class="v-btn sec" onclick="CV.demoLoad()">👀 Voir les voyages de démo (préparation, en cours, souvenirs)</button>`) : '';
+      : `<button class="v-btn sec" onclick="CV.demoPick()">👀 Voir les voyages de démo (préparation, en cours, souvenirs)</button>`) : '';
+  // 🌍 4 démos : Japon, Italie (Europe), Ouest américain, Maroc (Afrique)
+  function demoPick(){
+    const cur = M.demoReg || demoRegAuto(), b = (k, f, l) => `<button type="button" class="v-btn${k === cur ? '' : ' sec'}" onclick="CV.demoGo('${k}')">${f} ${esc(MSGT(l))}</button>`;
+    openSheet(`<h2>👀 ${esc(MSGT('Quelle démo ?'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.'))}</div>
+      ${b('eu', '🇮🇹', 'Europe · Italie (Rome, Florence, Venise)')}${b('us', '🇺🇸', 'États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)')}${b('af', '🇲🇦', 'Afrique · Maroc (Marrakech, Fès, Chefchaouen)')}${b('jp', '🇯🇵', 'Asie · Japon (Tokyo, Kyoto, Osaka)')}`);
+  }
+  async function demoGo(reg){ closeSheet(true); if(demoTrip()){ Object.keys(R).forEach(id=>{ if(R[id].demo) delete R[id]; }); persist(); } await demoLoad(reg); }
   function go(id){ const was = M.trip; M.trip = id; M.who = 'all';
     // autre voyage : on arrive sur son 1er onglet selon sa période (en cours → « En cours », fini → « Bilan », à venir → « Programme »),
     // pas sur l'onglet laissé ouvert dans le voyage précédent (Plus, Réglages…)
@@ -366,7 +440,7 @@
       st.innerHTML = !s ? esc(RF('Touche le jour : {0}', la)) : !e ? `<b>${esc(drF(s))}</b> → ${esc(RF('touche le jour : {0}', lb))}` : `<b>${esc(drF(s))}</b> → <b>${esc(drF(e))}</b> · ${esc(drNights(drN(s, e)))}`;
       okB.disabled = !s;
     };
-    const close = () => { bg.remove(); };
+    const close = () => { window.__drClosed = Date.now(); bg.remove(); };   // le même toucher ne doit pas fermer aussi la fenêtre en dessous
     const save = () => {
       const fire = x => { x.dispatchEvent(new Event('input', {bubbles:true})); x.dispatchEvent(new Event('change', {bubbles:true})); };
       A.value = s; fire(A); B.value = e; fire(B); upd(); close();
@@ -413,6 +487,9 @@
     if(document.getElementById('wz') && typeof wz === 'object' && wz && (wz.step > 1 || (wz.titre || '').trim() || (wt && wt.value.trim()))){
       if(!(await uiConfirm('Abandonner la création du voyage ?'))) return;
     }
+    // 🧭 parcours guidé : fermer une fenêtre ouverte depuis une de ses étapes ramène à cette étape (pas au menu principal)
+    const top = shStack[shStack.length - 1];
+    if(top && /class="gd[\s"]/.test(top)){ sheetBack(); return; }
     shStack = []; closeSheet();
   }
   function shSwipe(bg){
@@ -456,7 +533,7 @@
     bg.className = 'v-sheet-bg'; bg.id = 'v-sheet-bg';
     const ro = M.lock && /<form|v-actions/.test(html) && !locked;
     bg.innerHTML = `<div class="v-sheet${ro?' ro':''}${!locked && shStack.length ? ' has-bk' : ''}">${shBar(locked)}${locked?'':'<div class="v-grab"></div>'}${ro?'<div class="cv-robanner">🔒 Lecture seule</div>':''}${html}</div>`;
-    if(!locked){ bg.addEventListener('click', e=>{ if(e.target===bg) xClose(); }); shSwipe(bg); }
+    if(!locked){ bg.addEventListener('click', e=>{ if(e.target===bg && Date.now() - (window.__drClosed || 0) > 600) xClose(); }); shSwipe(bg); }
     if(locked) bg.dataset.locked = '1';
     document.body.appendChild(bg);
     document.body.style.overflow = 'hidden';

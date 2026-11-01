@@ -2314,7 +2314,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     parts.push(cur); parts.forEach(x=>{ const k = x.indexOf('='); if(k > 0) out[x.slice(0, k).trim().toLowerCase()] = x.slice(k + 1).trim(); }); return out; }
   function wvHoodParse(sec){
     const keep = x => String(x || '').replace(/\{\{\s*(?:nowrap|nobr|small|lang|langue|w|nihongo)\s*\|(?:[a-z]{2,3}\|)?([^{}|]*)[^{}]*\}\}/gi, '$1');   // {{nowrap|texte}} : on garde le texte
-    const out = [], seen = new Set(), add = (n, d) => { n = wvClean(keep(n)); d = keep(d); n = n.replace(/^.*\//, '').slice(0, 60); d = wvClean(d).replace(/^[\s.:–—-]+/, '').slice(0, 420); const k = normQ(n);
+    const out = [], seen = new Set(), add = (n, d) => { n = wvClean(keep(n)); d = keep(d); n = n.replace(/^.*\//, '').slice(0, 60); d = wvClean(String(d).replace(/\{\{(?:[^{}]|\{\{[^{}]*\}\})*\}\}/g, ' ')).replace(/[{}|]+/g, ' ').replace(/\s+/g, ' ').replace(/^[\s.:–—-]+/, '').trim().slice(0, 420); const k = normQ(n);
       if(n && n.length > 1 && !seen.has(k)){ seen.add(k); out.push({n, d}); } };
     // {{Regionlist | region1name=… | region1description=… }}
     const t = sec.indexOf('{{'); if(t >= 0 && /regionlist|liste\s*r[ée]gions|quartierliste|regionsliste/i.test(sec.slice(t, t + 40))){
@@ -2329,7 +2329,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     return out.slice(0, 24);
   }
   async function wvHoods(city){
-    const lang = (window.I18N && I18N.lang) || 'fr', key = normQ(city) + ':' + lang + ':2', C = M.wvH || (M.wvH = {});
+    const lang = (window.I18N && I18N.lang) || 'fr', key = normQ(city) + ':' + lang + ':3', C = M.wvH || (M.wvH = {});
     if(C[key] && Date.now() - C[key].at < 30 * 864e5) return C[key];
     const one = async lg => {
       const api = `https://${lg}.wikivoyage.org/w/api.php?format=json&origin=*&formatversion=2`;
@@ -2346,9 +2346,12 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       let lead = '';
       if(items.length < 2){ const i = H.findIndex(h=>WV_SLEEP.test(h[3]));
         if(i >= 0){ const end = (H.slice(i + 1).find(h=>h[2] <= H[i][2]) || [text.length])[0], sec = text.slice(H[i][0] + H[i][1], end);
-          lead = wvClean(sec.split(/^=/m)[0].split('\n').filter(l=>!/^\s*[*#{|]/.test(l)).join(' ')).slice(0, 700);
+          // le texte d’intro seulement : sans les fiches d’adresses ({{listing…}} sur plusieurs lignes) ni leurs restes « }} »
+          const intro = sec.split(/^=/m)[0].replace(/\{\{(?:[^{}]|\{\{[^{}]*\}\})*\}\}/g, ' ');
+          lead = wvClean(intro.split('\n').filter(l=>!/^\s*[*#{|}!]/.test(l)).join(' ')).replace(/[{}|]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 700);
+          if((lead.match(/\p{L}/gu) || []).length < 40) lead = '';
           const subs = H.filter(h=>h[0] > H[i][0] && h[0] < end && h[2] === H[i][2] + 1 && !WV_BUDGET.test(h[3]));
-          if(subs.length >= 2) items = subs.map(h=>{ const e = (H.find(x=>x[0] > h[0]) || [end])[0]; return {n:h[3], d:wvClean(text.slice(h[0] + h[1], e).split('\n').filter(l=>!/^\s*[*#{|=]/.test(l)).join(' ')).slice(0, 420)}; }).slice(0, 16); } }
+          if(subs.length >= 2) items = subs.map(h=>{ const e = (H.find(x=>x[0] > h[0]) || [end])[0]; return {n:h[3], d:wvClean(text.slice(h[0] + h[1], e).replace(/\{\{(?:[^{}]|\{\{[^{}]*\}\})*\}\}/g, ' ').split('\n').filter(l=>!/^\s*[*#{|=}!]/.test(l)).join(' ')).replace(/[{}|]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 420)}; }).slice(0, 16); } }
       if(items.length < 2){   // les grandes villes : un article par quartier
         const sub = await expJ(api + '&action=query&list=allpages&apnamespace=0&aplimit=20&apprefix=' + encodeURIComponent(pg.title + '/')).catch(()=>null);
         const ts = (sub && sub.query && sub.query.allpages || []).map(x=>x.title).slice(0, 15);

@@ -384,7 +384,9 @@
     const k = dayList().indexOf(isoToday()), info = dayInfo(isoToday()), {own, night} = itemsForDay(isoToday());
     const tile = (ic, l, fn) => `<button type="button" class="cv-tile" onclick="${fn}"><i>${ic}</i><span>${l}</span></button>`;
     const lvF = !hidden('blk:prep');
-    return `${offBand(t)}${lnHTML(t)}${lvF ? liveFil(t) : actBand()}${annivCard()}${nextHero()}${transferHTML(isoToday())}${trkHTML()}${liveMapCard()}${lvF ? '' : liveCard()}
+    // ⚡ en haut, au-dessus de tout (et de la carte 3D) : noter un step ou prendre une photo en un geste
+    const quick = `<div class="lv-quick"><button type="button" onclick="CV.hereNow()">📍 ${esc(MSGT('Step ici'))}</button><button type="button" onclick="CV.livePhoto()">📸 ${esc(MSGT('Photo'))}</button><button type="button" onclick="CV.tlReceipt()">🧾 ${esc(MSGT('Dépense'))}</button></div>`;
+    return `${quick}${offBand(t)}${lnHTML(t)}${lvF ? liveFil(t) : actBand()}${annivCard()}${nextHero()}${transferHTML(isoToday())}${trkHTML()}${liveMapCard()}${lvF ? '' : liveCard()}
       <div class="cv-tiles">${tile('📍','Step ici','CV.hereNow()')}${tile('🧾','Dépense','CV.tlReceipt()')}${tile('📴','Fiche du jour','CV.tlDay()')}${tile('🌤️','Météo','CV.tlMeteo()')}</div>
       <details class="cv-fold cv-tmore"><summary>${MSGT('Plus d’outils')} <small>${MSGT('Courses, carte, importer, papiers')}</small></summary><div class="cv-tiles">${tile('🛒','Courses','CV.shopSheet()')}${tile('🌍','Carte','CV.worldMap()')}${tile('📄','Importer','CV.impSheet()')}${tile('🛂','Papiers','CV.tlDocs()')}</div></details>
       ${lvF ? '<div hidden>' : ''}<div class="v-box"><h3>Aujourd’hui · J${k+1}${info.titre ? ' · ' + esc(info.titre) : ''}</h3>${info.plan ? `<p>${esc(info.plan)}</p>` : ''}
@@ -1743,7 +1745,8 @@
       inspPaint(); inspEnrich(); }, 30);
   }
   let inspN = 8;
-  function inspMore(){ inspN = 16; inspShow(16); }
+  // « Voir d’autres idées » : la liste s’allonge sous tes yeux, l’écran reste à la même hauteur (on continue à lire en descendant)
+  function inspMore(){ const sh = () => document.querySelector('#v-sheet-bg .v-sheet'), y = (sh() || {}).scrollTop || 0; inspN = 16; inspShow(16); const s2 = sh(); if(s2){ s2.scrollTop = y; requestAnimationFrame(()=>{ s2.scrollTop = y; }); } }
   function inspFav(i, b){ const nm = DESTS[i][0]; const f = new Set(M.inspFav || []); f.has(nm) ? f.delete(nm) : f.add(nm); M.inspFav = [...f].slice(-8); persist(); b.classList.toggle('on', f.has(nm)); b.textContent = f.has(nm) ? '❤️' : '🤍'; toast(f.has(nm) ? '❤️ Gardé pour le vote' : 'Retiré'); }
   function inspSurprise(){ const pool = inspRes.slice(0, 12), x = pool[Math.floor(Math.random() * pool.length)]; if(!inspRes.slice(0, inspN).includes(x)) inspShow(16, x.i); else inspShow(inspN, x.i); toast('🎲 ' + x.nom + ' !'); }
   function inspVote(){

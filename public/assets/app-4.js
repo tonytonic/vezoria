@@ -1914,6 +1914,19 @@ ${pm.join('\n')}</Document></kml>`;
       const h2 = document.querySelector('.v-sheet h2'); if(h2) h2.insertAdjacentHTML('afterend', `<div class="cv-here">${flag(cc)} <b>${esc(lieu || 'Position enregistrée')}</b>${pays ? ', ' + esc(pays) : ''} · ${new Date().toLocaleTimeString((window.I18N ? I18N.locale : 'fr-FR'),{hour:'2-digit',minute:'2-digit'})}<small>Ajoute des photos et un petit récit, comme un step Polarsteps. Il apparaît sur la carte du monde et dans le journal.</small></div>`);
     }, err => alert('Position introuvable (' + (err && err.message || 'refusée') + '). Autorise la localisation pour l’appli dans les réglages du téléphone.'), {enableHighAccuracy:true, timeout:15000, maximumAge:60000});
   }
+  // 📸 raccourci du voyage en cours : l’appareil photo s’ouvre tout de suite (le geste du doigt est encore « frais »),
+  //    la position du step se remplit pendant que tu prends la photo
+  function livePhoto(){
+    editSouv(null); const i = document.querySelector('#v-sheet-bg .cv-addph input[capture]'); if(i) try { i.click(); } catch(e){}
+    if(!navigator.geolocation) return; const ed = editing;
+    navigator.geolocation.getCurrentPosition(async pos => {
+      if(editing !== ed || !ed) return; const lat = +pos.coords.latitude.toFixed(5), lng = +pos.coords.longitude.toFixed(5); let lieu = '', pays = '', cc = '';
+      try { const j = await (await fetch(`${GEO}reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${lat}&lon=${lng}`)).json();
+        const a = (j && j.address) || {}; lieu = a.city || a.town || a.village || a.municipality || a.county || ''; pays = a.country || ''; cc = (a.country_code || '').toUpperCase(); } catch(e){}
+      if(editing !== ed) return; Object.assign(ed, {lat, lng, pays, cc, step:1});
+      const f = document.getElementById('v-form'); if(f){ if(f.titre && !f.titre.value) f.titre.value = lieu || 'Step'; if(f.lieu && !f.lieu.value) f.lieu.value = [lieu, pays].filter(Boolean).join(', '); }
+    }, ()=>{}, {enableHighAccuracy:true, timeout:15000, maximumAge:60000});
+  }
   const geoSouvs = (tripId) => [...list('souv', s=>s.lat != null && (!tripId || s.trip===tripId)), ...list('step', s=>s.lat != null && (!tripId || s.trip===tripId))];
 
   /* ---------- 📄 Importer une réservation : PDF, capture d'écran, photo ou texte ---------- */

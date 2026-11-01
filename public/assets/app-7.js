@@ -383,13 +383,8 @@
     if(C0 && (A.length < 2 || X.some(x=>x.lat == null))) A.push(C0);
     return {city, P, X, A, C0, hub:gdHub(A)};
   }
-  // 📍 le quartier conseillé dans Google Maps, avec les visites autour : un trajet qui part du point conseillé, passe par chaque visite
-  //    et y revient — on voit tout de suite où il se trouve par rapport à ce que tu vas voir
-  const gdTri = (hub, A) => { const c = p => (+p.lat).toFixed(5) + ',' + (+p.lng).toFixed(5), P = A.filter(p=>p && p.lat != null).slice(0, 8), far = P.some(p=>rawKm(hub, p) > 3);
-    if(!P.length) return `https://www.google.com/maps/search/?api=1&query=${c(hub)}`;
-    // départ du quartier conseillé, puis chaque visite (de la plus proche à la plus loin) : Google Maps trace tout sur la carte
-    const S = P.slice().sort((a, b)=>rawKm(hub, a) - rawKm(hub, b)), last = S.pop();
-    return `https://www.google.com/maps/dir/?api=1&origin=${c(hub)}&destination=${c(last)}${S.length ? '&waypoints=' + encodeURIComponent(S.map(c).join('|')) : ''}&travelmode=${far ? 'driving' : 'walking'}`; };
+  // 📍 le quartier conseillé dans Google Maps : un simple repère à cet endroit (le tracé par les visites ne s’affichait pas toujours)
+  const gdTri = hub => `https://www.google.com/maps/search/?api=1&query=${(+hub.lat).toFixed(5)},${(+hub.lng).toFixed(5)}`;
   async function guideHotel(k){
     const t = trip(); if(!t) return; const hs = ariData(t).hs.filter(x=>!okB(x));
     if(!hs.length){ toast('✓ ' + MSGT('Tous les hébergements sont réservés')); return guideSheet(); }
@@ -421,7 +416,9 @@
         <button type="button" class="v-btn sec" onclick="${k + 1 < hs.length ? `CV.guideHotel(${k + 1})` : 'CV.guideSheet()'}">${MSGT(k + 1 < hs.length ? 'Suivant' : 'Terminer')} ›</button></div></div>`; };
     openSheet(draw());
     let cvs = null;
-    const place = () => { const box = document.getElementById('gd-map'); if(!box || !cvs) return; box.innerHTML = ''; cvs.style.width = '100%'; cvs.style.height = 'auto'; cvs.style.borderRadius = '14px'; box.appendChild(cvs); };
+    const place = () => { const box = document.getElementById('gd-map'); if(!box || !cvs) return; box.innerHTML = ''; cvs.style.width = '100%'; cvs.style.height = 'auto'; cvs.style.borderRadius = '14px'; box.appendChild(cvs);
+      box.style.cursor = 'zoom-in'; box.onclick = () => mapZoom(MO); const hint = document.createElement('div'); hint.className = 'gd-zh'; hint.textContent = '🔍 ' + MSGT('Touche la carte pour l’agrandir'); box.appendChild(hint); };
+    let MO = null;
     const redraw = () => { if(my !== GH || !document.getElementById('gd-map')) return; const sh = document.querySelector('#v-sheet-bg .v-sheet'), y = sh ? sh.scrollTop : 0; openSheet(draw()); place(); const s2 = document.querySelector('#v-sheet-bg .v-sheet'); if(s2) s2.scrollTop = y; };
     if(hub && hn() == null) revName(hub.lat, hub.lng, 15).then(v=>{ M.hoodN[hk] = v || ''; persist(); redraw(); }).catch(()=>{ M.hoodN[hk] = ''; redraw(); });
     const mk = A.map((p, i)=>({lat:p.lat, lng:p.lng, label:p.ctr ? 'C' : i + 1, color:p.ctr ? '#0ea5e9' : '#7C3AED'}));
@@ -430,9 +427,33 @@
     if(!mk.length){ const g = await geocode(city, null).catch(()=>null); if(g && g.lat != null) mk.push({lat:+g.lat, lng:+g.lng, label:'•', color:'#e11d48', name:city}); }
     if(my !== GH) return; const box = document.getElementById('gd-map'); if(!box) return;
     if(!mk.length){ box.remove(); return; }
-    try { cvs = await drawMap({w:400, h:300, round:true, sat:true, markers:mk, maxZoom:16, pad:40, circle:hub ? {lat:hub.lat, lng:hub.lng, km:hub.r} : null, rays:hub ? {from:hub, to:A} : null});
+    MO = {sat:true, markers:mk, maxZoom:17, pad:40, circle:hub ? {lat:hub.lat, lng:hub.lng, km:hub.r} : null, rays:hub ? {from:hub, to:A} : null};
+    try { cvs = await drawMap(Object.assign({w:400, h:300, round:true}, MO));
       if(my !== GH) return; place(); }
     catch(e){ box.remove(); }
+  }
+  /* 🔍 carte en grand : on la redessine plus fine, puis on zoome (boutons, double-toucher, pincer) et on se déplace en la faisant glisser */
+  async function mapZoom(o){
+    if(!o) return; const ov = document.createElement('div'); ov.className = 'mz-bg';
+    ov.innerHTML = `<div class="mz-v"><div class="ar-run wz-run">🛰️ …</div></div><div class="mz-b"><button type="button" data-z="1">＋</button><button type="button" data-z="-1">−</button><button type="button" data-x="1" aria-label="${esc(MSGT('Fermer'))}">✕</button></div>`;
+    document.body.appendChild(ov); const v = ov.querySelector('.mz-v');
+    let sc = 1, tx = 0, ty = 0, img = null; const ap = () => { if(img) img.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`; };
+    const zoom = f => { sc = Math.max(1, Math.min(6, sc * f)); if(sc === 1){ tx = 0; ty = 0; } ap(); };
+    ov.querySelector('[data-z="1"]').onclick = () => zoom(1.6); ov.querySelector('[data-z="-1"]').onclick = () => zoom(1 / 1.6);
+    const close = () => { window.__drClosed = Date.now(); ov.remove(); }; ov.querySelector('[data-x]').onclick = close;
+    const P = new Map(); let d0 = 0, s0 = 1, last = 0;
+    v.addEventListener('pointerdown', e=>{ v.setPointerCapture(e.pointerId); P.set(e.pointerId, {x:e.clientX, y:e.clientY});
+      if(P.size === 2){ const [a, b] = [...P.values()]; d0 = Math.hypot(a.x - b.x, a.y - b.y); s0 = sc; }
+      if(Date.now() - last < 300) zoom(sc > 2.5 ? 1 / sc : 2); last = Date.now(); });
+    v.addEventListener('pointermove', e=>{ const p = P.get(e.pointerId); if(!p) return;
+      if(P.size === 2){ P.set(e.pointerId, {x:e.clientX, y:e.clientY}); const [a, b] = [...P.values()], d = Math.hypot(a.x - b.x, a.y - b.y); if(d0){ sc = Math.max(1, Math.min(6, s0 * d / d0)); ap(); } return; }
+      if(sc > 1){ tx += e.clientX - p.x; ty += e.clientY - p.y; ap(); } P.set(e.pointerId, {x:e.clientX, y:e.clientY}); });
+    const up = e=>{ P.delete(e.pointerId); if(P.size < 2) d0 = 0; }; v.addEventListener('pointerup', up); v.addEventListener('pointercancel', up);
+    try { const W = Math.min(900, Math.round(innerWidth * (devicePixelRatio || 1))), H = Math.round(W * 1.2);
+      const c = await drawMap(Object.assign({}, o, {w:W, h:H, round:false, pad:60})); if(!ov.isConnected) return;
+      try { img = new Image(); img.src = c.toDataURL('image/jpeg', .9); } catch(e){ img = c; }   // carte « protégée » par le serveur des tuiles : on garde le dessin tel quel
+      img.draggable = false; img.style.maxWidth = '100%'; img.style.maxHeight = '100%'; v.innerHTML = ''; v.appendChild(img); ap(); }
+    catch(e){ v.textContent = MSGT('Carte indisponible'); }
   }
   function guideFin(){ const t = trip(); if(t && M.guide){ delete M.guide[t.id]; persist(); } closeSheet(true); avantSheet(); }
 
