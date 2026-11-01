@@ -152,9 +152,9 @@
         if(!r.createdBy) r.createdBy = M.me; if(!r.updatedBy) r.updatedBy = r.createdBy; r.createdAt = now + all.length + k; r.updatedAt = r.createdAt; r.demo = true; recs.push(r); });
       all.push(...recs); return {tid, recs, day0};
     };
-    const prep = mk(addDays(today, 180), K.nom + ' · 3 semaines (à préparer)');
-    const live = mk(addDays(today, -6), K.nom + ' · voyage en cours (démo)');
-    const past = mk(addDays(today, -80), K.nom + ' · souvenirs (démo)');
+    const prep = mk(addDays(today, 180), K.nom + ' · ' + MSGT('3 semaines (à préparer)'));
+    const live = mk(addDays(today, -6), K.nom + ' · ' + MSGT('voyage en cours (démo)'));
+    const past = mk(addDays(today, -80), K.nom + ' · ' + MSGT('souvenirs (démo)'));
     all.forEach(r=>{ R[r.id] = r; });
     const cityOn = (v, d) => { const h = v.recs.find(r=>r.type==='item' && r.cat==='hotel' && r.date <= d && (!r.dateFin || r.dateFin > d)); return h ? stayCity(h) : K.first; };
     const coords = c => K.CITY[normQ(c)] || K.CITY[normQ(K.first)];
@@ -482,6 +482,7 @@
   let shStack = [], shCur = '', shPend = null, shBack = false;
   const shTitle = h => ((String(h).match(/<h2[^>]*>([\s\S]*?)<\/h2>/) || [])[1] || '').replace(/<[^>]+>/g, '').trim();
   const shMenu = h => !/<form|<input|<textarea|<select/i.test(h);   // un menu (des choix) : on peut y revenir sans rien perdre
+  let gdRoot = '';
   function shNav(html, locked, prevOpen){
     if(locked){ shStack = []; shPend = null; shCur = ''; return; }
     let from = null;
@@ -489,8 +490,13 @@
     else if(shPend){ from = shPend.cur; shStack = shPend.stack; }
     else shStack = [];
     // 🧭 parcours guidé : d’une fiche à la suivante (hébergement 1 → 2 → 3…), on ne s’empile pas : ✕ ramène au menu du parcours, pas à la ville d’avant
-    const gdStep = h => /<div class="gd">/.test(h || '') && !/gd-ch/.test(h || '');
-    if(from && !shBack && gdStep(from) && gdStep(html)){ shPend = null; shBack = false; shCur = html; return; }
+    const isGd = h => /<div class="gd">/.test(h || ''), gdMenu = h => isGd(h) && /gd-ch/.test(h || '');
+    if(isGd(html) && !shBack){   // 🧭 parcours guidé : jamais d’empilement entre ses pages ; ✕ sur une étape → le menu du parcours, ✕ sur le menu → l’appli
+      shStack = shStack.filter(h=>!isGd(h));
+      if(gdMenu(html)){ gdRoot = html; shStack = []; }
+      else if(gdRoot && (from && isGd(from) || shStack.length === 0)) shStack.push(gdRoot);
+      shPend = null; shBack = false; shCur = html; return;
+    }
     if(from && !shBack && shTitle(from) !== shTitle(html)){
       if(shMenu(from)) shStack.push(from);
       if(shStack.length > 8) shStack.shift();
@@ -501,7 +507,8 @@
   function sheetBack(){
     const h = shStack.pop(); if(!h){ xClose(); return; }
     shBack = true;
-    if(/data-live="hub"/.test(h) && typeof shareHub === 'function'){ shareHub(); return; }   // 👥 la page Partager est refaite : elle montre l’état actuel (voyage masqué, remis…)
+    if(/data-live="hub"/.test(h) && typeof shareHub === 'function'){ shareHub(); return; }
+    if(/<div class="gd">/.test(h) && /gd-ch/.test(h) && typeof guideSheet === 'function'){ shBack = false; shStack = []; guideSheet(); return; }   // 🧭 le menu du parcours, à jour   // 👥 la page Partager est refaite : elle montre l’état actuel (voyage masqué, remis…)
     openSheet(h);
   }
   async function xClose(){

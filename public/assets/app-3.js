@@ -1522,6 +1522,8 @@
       <div class="v-sum-small" style="margin-bottom:12px">Ce téléphone est le tien : tout ce que tu ajoutes est signé ${esc(pname(M.me))}.</div>
       <button class="v-btn sec" onclick="CV.editProfile('${ja(M.me)}')">🎨 Changer mon nom / ma couleur</button>
       <button class="v-btn sec" style="margin-top:10px" onclick="CV.cloudSheet()">☁️ Cloud Vezoria</button>
+      ${M.sync.on && M.sync.code && !/^M:/.test(M.sync.code) ? `<button class="v-btn sec" style="margin-top:10px" onclick="CV.close();CV.deviceAdd()">📱 ${esc(MSGT('Ajouter un de mes appareils (QR code)'))}</button>`
+        : `<button class="v-btn sec" style="margin-top:10px" onclick="CV.cloudSheet('choose')">🔑 ${esc(MSGT('J’ai déjà Vezoria sur un autre appareil'))}</button>`}
       <div class="v-sum-small" style="margin-top:10px">Synchro : ${!M.sync.on ? 'désactivée' : M.sync.err ? (M.sync.net ? '🟠 ' : '🔴 ') + esc(M.sync.err) : (M.dirty.length || (M.pq||[]).length) ? '🟠 envoi en cours' : '🟢 à jour'}${M.sync.on ? ' · automatique toutes les heures' : ''}</div>`);
   }
   let tapN = 0, tapT = 0;

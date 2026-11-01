@@ -1782,12 +1782,12 @@ ${pm.join('\n')}</Document></kml>`;
     if(!RG) return; const t = R[RG.tid]; if(!t){ rgClose(); return; }
     let ov = document.getElementById('cv-rg');
     if(!ov){ ov = document.createElement('div'); ov.id = 'cv-rg'; ov.className = 'cv-sw-like'; document.body.appendChild(ov); document.body.style.overflow = 'hidden'; }
-    const P = rgPlan(t), ds = dayList(), left = P.out.length, total = Math.max(RG.n0, RG.done + left);
+    const P = rgPlan(t), ds = dayList(), later = P.out.length && RG.later.has(P.out[0].x.id) ? P.out.length : 0, left = later ? 0 : P.out.length, total = Math.max(RG.n0, RG.done + P.out.length);   // tout ce qui reste a été mis « plus tard » : on s’arrête (plus de boucle)
     const head = `<div class="sw-head"><button type="button" class="sw-x" onclick="CV.rgClose()" aria-label="${esc(MSGT('Fermer'))}">✕</button>
       <div class="sw-ttl"><b>② ${esc(MSGT('Ranger mes visites dans les jours'))}</b><small>${Math.min(RG.done + 1, total)}/${total}</small></div><span></span></div>
       <div class="sw-bar"><span style="width:${total ? RG.done / total * 100 : 100}%"></span></div>`;
     if(!left){
-      ov.innerHTML = head + `<div class="sw-end rg-end"><div class="sw-end-i">🗓️</div><h2>${esc(MSGT('Tout est rangé !'))}</h2><p>${esc(MSGT('Chaque journée suit l’ordre du trajet, de proche en proche. Tu peux encore tout déplacer dans le programme.'))}</p>
+      ov.innerHTML = head + `<div class="sw-end rg-end"><div class="sw-end-i">🗓️</div><h2>${esc(MSGT(later ? 'C’est noté pour aujourd’hui' : 'Tout est rangé !'))}</h2><p>${esc(MSGT('Chaque journée suit l’ordre du trajet, de proche en proche. Tu peux encore tout déplacer dans le programme.'))}</p>${later ? `<p>⏭️ ${esc(RF('{0} visite(s) laissée(s) pour plus tard : tu les retrouveras ici.', later))}</p>` : ''}
         <div class="rg-hood"><b>🏨 ${esc(MSGT('Où dormir ? Le quartier au centre de tes visites'))}</b><div id="rg-hood">${rgHoods(t) || esc(MSGT('Ajoute au moins 2 visites par ville pour avoir un conseil.'))}</div>
           <small>${esc(MSGT('Rien n’est figé : si tu choisis un hôtel ailleurs, mets son adresse dans l’hébergement puis « Réorganiser depuis mon hôtel ». Les journées repartiront de là.'))}</small></div>
         ${(()=>{ const n = list('place', p=>p.trip === t.id && p.sugg).length; return n ? `<button type="button" class="v-btn" onclick="CV.rgClose();CV.suggOpen()">① ${esc(MSGT('Reprendre le choix des visites'))} (${n})</button>` : ''; })()}

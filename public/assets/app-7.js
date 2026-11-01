@@ -283,7 +283,7 @@
   async function guideWait(t, fresh){
     openSheet(`<div class="gd"><h2>🧭 ${MSGT('Ton parcours guidé')}</h2><div class="ar-run wz-run" id="gd-wait">${sgRun(t)}</div>
       <div class="v-sum-small" style="margin:8px 0">${MSGT('Je cherche les incontournables de chaque ville : le tri commence dès que les premières idées sont prêtes.')}</div>
-      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">⏰ ${MSGT('Plus tard')}</button></div></div>`);
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.guideLater()">⏰ ${MSGT('Plus tard')}</button></div></div>`);
     for(let k = 0; k < 360 && SG && SG.tid === t.id && !fresh().length; k++){ await new Promise(r=>setTimeout(r, 500)); const b = document.getElementById('gd-wait'); if(!b) return false; b.innerHTML = sgRun(t); }
     const ok = !!document.getElementById('gd-wait'); if(ok) closeSheet(true); return ok;
   }
@@ -308,6 +308,8 @@
     if(from !== 'rg' && rgItems(t).length && t.debut){ rgOpen(); return; }
     guideSheet();
   }
+  // ⏰ « Plus tard » : on quitte vraiment le parcours (retour à l’appli), sans repasser par les fenêtres d’avant
+  function guideLater(){ try { shStack = []; } catch(e){} closeSheet(true); refresh(); toast('🧭 ' + MSGT('Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».')); }
   function guideResume(){ const t = trip(); if(!t) return; GSW = null; closeSheet(true); suggOpen(); }
   // 💡 « Les visites » du parcours : trier ce qui est proposé, ranger ce qui est gardé, sinon chercher des idées (et attendre qu’elles arrivent)
   async function guideVisits(){
@@ -343,7 +345,7 @@
         ${row('🛏️', MSGT('Les hébergements'), hs.length ? RF('{0} à réserver', hs.length) + ' · ' + MSGT('avec la carte du quartier conseillé') : MSGT('Tout est réservé'), 'CV.guideHotel(0)', !hs.length)}
         ${row('✅', MSGT('Finaliser'), MSGT('Papiers, santé, argent, valise'), 'CV.guideFin()', false)}
       </div>
-      <div class="v-actions gd-act"><button type="button" class="v-btn sec" onclick="CV.guideStop()">✋ ${MSGT('Je continue en manuel')}</button><button type="button" class="v-btn sec" onclick="CV.close()">⏰ ${MSGT('Plus tard')}</button></div>
+      <div class="v-actions gd-act"><button type="button" class="v-btn sec" onclick="CV.guideStop()">✋ ${MSGT('Je continue en manuel')}</button><button type="button" class="v-btn sec" onclick="CV.guideLater()">⏰ ${MSGT('Plus tard')}</button></div>
       <div class="v-sum-small">${MSGT('« Plus tard » : le bouton 🧭 de la carte « Ta préparation » te ramène ici.')}</div></div>`);
   }
   // une liste de réservations (trajets ou activités) : lien partenaire + « C’est réservé », puis retour au parcours

@@ -870,7 +870,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     // une seule inscription par lien (le serveur n’en garde qu’une par téléphone et par lien) : on réunit les catégories.
     // Avant, un compagnon qui suivait aussi le voyage en abonné était inscrit 2 fois sur le même lien, et « nouvelles étapes » effaçait « ❤️ et 💬 ».
     const by = new Map(), add = (code, ks) => { if(!code) return; const o = by.get(code) || new Set(); ks.forEach(k=>o.add(k)); by.set(code, o); };
-    codes.forEach(c=>add(c, want.filter(k=>k !== 'social'))); feeds.forEach(c=>add(c, ['social'])); fol.forEach(c=>add(c, ['souv'])); ib.forEach(x=>add(x.code, x.kinds));
+    // 👀 « X suit ton voyage » : seulement à l’auteur (ses propres liens abonnés), jamais aux compagnons, même abonnés au même voyage
+    const ownF = new Set(Object.values(FT()).filter(Boolean));
+    codes.forEach(c=>add(c, want.filter(k=>k !== 'social'))); feeds.forEach(c=>add(c, ownF.has(c) ? ['social', 'follow'] : ['social'])); fol.forEach(c=>add(c, ['souv'])); ib.forEach(x=>add(x.code, x.kinds));
     return [...by.entries()].filter(([, ks])=>ks.size).map(([code, ks])=>({code, kinds:[...ks]})).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
   }
   // 🔔 l’auteur est prévenu quand un abonné commente, aime ou commence à suivre (même un abonné sans l’appli)
@@ -881,7 +883,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       const p = {k:'social', who: myName() || 'Un proche', trip: tid, tt: ft.titre || '', it:[{s, x: String(x || '').slice(0, 120)}], n:1};
       if(fid) p.r = String(fid).slice(0, 60);   // 💬 la publication concernée : toucher la notification ouvre ses commentaires
       const msg = b64(await seal(te.encode(JSON.stringify(p)), code));
-      await pushPost(code, {a:'send', kind:'social', kid, msg, tag:'social-' + tid});
+      await pushPost(code, {a:'send', kind:s === 'follow' ? 'follow' : 'social', kid, msg, tag:'social-' + tid});
     } catch(e){}
   }
   async function pushPost(code, body){
