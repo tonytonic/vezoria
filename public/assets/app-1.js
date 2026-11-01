@@ -874,11 +874,12 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     return [...by.entries()].filter(([, ks])=>ks.size).map(([code, ks])=>({code, kinds:[...ks]})).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
   }
   // 🔔 l’auteur est prévenu quand un abonné commente, aime ou commence à suivre (même un abonné sans l’appli)
-  async function socialPush(ftid, s, x, to){
+  async function socialPush(ftid, s, x, to, fid){
     try {
       const code = to || TS()[ftid] || mateCode(String(ftid).replace(/^ft:/, '')); if(!code || !pushApi()) return;
       const ft = R[ftid] || {}, tid = String(ftid).replace(/^ft:/, ''), kk = await keys(code), kid = kk.token.slice(0, 16);
       const p = {k:'social', who: myName() || 'Un proche', trip: tid, tt: ft.titre || '', it:[{s, x: String(x || '').slice(0, 120)}], n:1};
+      if(fid) p.r = String(fid).slice(0, 60);   // 💬 la publication concernée : toucher la notification ouvre ses commentaires
       const msg = b64(await seal(te.encode(JSON.stringify(p)), code));
       await pushPost(code, {a:'send', kind:'social', kid, msg, tag:'social-' + tid});
     } catch(e){}
@@ -1073,6 +1074,12 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(/[?&]vzt=/.test(location.search)) history.replaceState(null, '', location.pathname);
     if(/^ft:/.test(tid)){ if(R[tid] && !R[tid].deleted) setTimeout(()=>{ try { feedView(tid); } catch(e){} }, 200); setTimeout(()=>syncNow('pull'), 400); return; }   // 👀 voyage suivi : son fil
     if(tid && R[tid] && !R[tid].deleted){ M.trip = tid; M.who = 'all'; }
+    // 💬 ❤️ d’un abonné : on ouvre directement les commentaires de l’étape (sinon la fenêtre des abonnés)
+    if(k === 'social'){
+      if(tid && R[tid] && !R[tid].deleted) go(tid);
+      setTimeout(()=>{ try { const sid = /^fd:/.test(rr) ? rr.slice(3) : ''; if(sid && R[sid] && !R[sid].deleted) souvComments(sid); else if(/^fd:/.test(rr) && R['ft:' + tid]) feedView('ft:' + tid); else shareHub(); } catch(e){} }, 350);
+      setTimeout(()=>syncNow('pull'), 400); return;
+    }
     const tb = k === 'notes' && rr === 'note' ? 'notes' : /^(soir|anniv)/.test(rr) ? 'souv' : {depense:'budget', resa:'prog', souv:'souv', sondage:'envies', notes:'prog', rappel:'prog'}[k] || 'prog';
     M.mode = 'prep'; M.tab = tb; persist(); applyMode(); window.scrollTo({top:0});
     if(k === 'notes' && rr !== 'note') setTimeout(()=>{ try { shopSheet(); } catch(e){} }, 300);

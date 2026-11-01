@@ -1288,20 +1288,20 @@
     const f = R[fid]; if(!f) return; if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
     const id = 'lk:' + fid + ':' + devId(), cur = R[id];
     putQuiet([{id, type:'like', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), on: !(cur && cur.on)}]); syncNow(); feedPaint(fid);
-    if(!(cur && cur.on)){ fxPlay && fxHeart(); socialPush(f.trip, 'like', f.titre || f.lieu || ''); }
+    if(!(cur && cur.on)){ fxPlay && fxHeart(); socialPush(f.trip, 'like', f.titre || f.lieu || '', null, f.id); }
   }
   // les autres personnes qui ont commenté cette publication (abonnés) : prévenues sur leur propre téléphone
   function replyPush(f, txt){
     try {
       const me = devId(), devs = new Set(commentsOf(f.id).map(c=>c.dev).filter(d=>d && d !== me)), ibs = new Set();
       devs.forEach(d=>{ const fw = list('follower', x=>!x.deleted && String(x.id).endsWith(':' + d) && x.ib).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0))[0]; if(fw && fw.ib && fw.ib !== M.ib && !fwMatePid(fw)) ibs.add(fw.ib); });   // un compagnon est déjà prévenu par le lien abonnés
-      [...ibs].slice(0, 8).forEach(ib=>socialPush(f.trip, 'comment', txt, ib));
+      [...ibs].slice(0, 8).forEach(ib=>socialPush(f.trip, 'comment', txt, ib, f.id));
     } catch(e){}
   }
   async function feedComment(fid){
     const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
     if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
-    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socialPush(f.trip, 'comment', txt); replyPush(f, txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
+    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socialPush(f.trip, 'comment', txt, null, f.id); replyPush(f, txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
   }
   function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="' + (window.VZ_B || '') + 'anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
   function feedPostHTML(f){
@@ -1467,7 +1467,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-01m'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-01n'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

@@ -1627,7 +1627,7 @@
       nw.forEach(x=>{ const f = R[x.f] || {}, t = R[String(f.trip || '').replace(/^ft:/, '')] || {}, w = x.w || MSGT('Un abonné'), at = x.at || Date.now();
         if(H.some(e=>Math.abs((e.at || 0) - at) < 15 * 60e3 && String(e.body || '').includes(w) && (x.k === 'lk' ? /❤/.test(e.body) : /💬/.test(e.body)))) return;
         const body = x.k === 'lk' ? RF('❤️ {0} aime ta publication : {1}', w, f.titre || f.lieu || '') : RF('💬 {0} a commenté : « {1} »', w, String(x.tx || '').slice(0, 120)) + (f.titre || f.lieu ? '\n' + (f.titre || f.lieu) : '');
-        out.push({at, title:t.titre || 'Vezoria', body, url:t.id ? './?vzt=' + encodeURIComponent(t.id) + '&vzk=social' : ''}); });
+        out.push({at, title:t.titre || 'Vezoria', body, url:t.id ? './?vzt=' + encodeURIComponent(t.id) + '&vzk=social' + (x.f ? '&vzr=' + encodeURIComponent(x.f) : '') : ''}); });
       if(out.length) nhAdd(out);
     } catch(e){}
   }
