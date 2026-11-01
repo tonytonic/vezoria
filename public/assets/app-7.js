@@ -2546,7 +2546,7 @@
     const code = M.sync.on && M.sync.code ? M.sync.code : ''; if(!code || !planApi() || !memberOk()) return null;
     const ttl = M.quota && M.quota.used >= M.quota.quota * 0.9 ? 120000 : 6 * 3600e3;   // presque plein : relu toutes les 2 min (un cadeau ou un paiement compte tout de suite)
     if(!force && M.quota && Date.now() - (M.quota.at || 0) < ttl) return M.quota;
-    try { const r = await planCall({a:'status'}, code); if(r.ok){ M.quota = Object.assign({}, r.j, {at:Date.now()}); persist(); quotaPaint(); } } catch(e){}
+    try { const r = await planCall({a:'status'}, code); if(r.ok){ M.quota = Object.assign({}, r.j, {at:Date.now()}); persist(); quotaPaint(); setTimeout(playRestore, 1500); } } catch(e){}
     return M.quota;
   }
   const planName = q => q && q.active ? ({plus:'Plus', max:'Max', unlimited:MSGT('Illimité')}[q.plan] || q.plan) : MSGT('Gratuit');
@@ -2561,17 +2561,18 @@
     const q = M.quota;
     if(!q) return `<div class="sy-r" id="cv-quota"><b>📦 ${MSGT('Place photos')}</b><small>…</small></div>`;
     const unl = q.active && q.plan === 'unlimited', pct = unl ? 4 : Math.min(100, Math.round(q.used / Math.max(1, q.quota) * 100)), over = q.used > q.quota;
-    const pay = q.pay && !inPlay() && q.owner;
+    const pay = payAny(q), manage = q.owner && q.active && (q.src === 'stripe' || q.src === 'play');
     let h = `<div class="sy-r cv-quota${over ? ' over' : pct >= 90 ? ' near' : ''}" id="cv-quota"><b>📦 ${MSGT('Place photos')} · ${esc(planName(q))}</b>
       <div class="cv-qbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${Math.max(2, pct)}%"></i></div>
       <small>${unl ? RF('{0} utilisés · sans limite', fmtB(q.used)) : RF('{0} utilisés sur {1}', fmtB(q.used), fmtB(q.quota)) + (over ? '' : ' · ' + RF('≈ {0} photos encore possibles', phN(q.quota - q.used)))}${q.active && q.until ? ' · ' + RF('jusqu’au {0}', dLong(q.until)) : ''}</small>`;
     if(q.branch) h += `<small>${MSGT('Ce carnet est branché sur celui de son créateur : ses photos comptent chez lui.')}</small>`;
+    if(q.active && (q.src === 'stripe' || q.src === 'play')) h += `<small>${q.src === 'play' ? MSGT('Abonnement Google Play : il vaut aussi sur tes autres appareils.') : MSGT('Abonnement pris sur le site : il vaut aussi sur tes autres appareils.')}${q.per ? ' · ' + (q.per === 'year' ? MSGT('annuel') : MSGT('mensuel')) : ''}</small>`;
     if(over) h += `<div class="cv-qwarn">⚠️ ${q.graceEnd ? RF('Place dépassée : plus de nouvel envoi de photos. Tout reste visible jusqu’au {0}. Ensuite, on garde les photos les plus récentes dans ta place : enregistre les autres chez toi (Sauvegarde ZIP).', dLong(q.graceEnd)) : RF('Place dépassée : tes photos restent toutes en ligne et visibles, mais plus de nouvel envoi tant que tu n’es pas redescendu sous {0}. Tout le reste fonctionne (voyages, partage, commentaires, ❤️).', fmtB(q.quota))}</div>`;
     else h += `<small>${MSGT('Tes voyages partagés comptent ici, photos de tes compagnons comprises. Les vignettes comptent à peine. En mode sans cloud, aucune limite : tout reste sur ton téléphone.')}</small>`;
-    if(q.owner && !pay && !q.active) h += soonPlans();
+    if(q.owner && !q.pay && !q.active) h += soonPlans();
     if(q.owner) h += `<div class="cv-row" style="margin-top:8px;flex-wrap:wrap;gap:6px"><button type="button" class="v-btn sec" style="flex:1;margin:0" onclick="CV.giftAsk()">🎁 ${MSGT('J’ai un code cadeau')}</button>`
-      + (pay ? `<button type="button" class="v-btn" style="flex:1;margin:0" onclick="CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : '')
-      + (pay && q.src === 'stripe' ? `<button type="button" class="v-btn sec" style="flex:1;margin:0" onclick="CV.planPortal()">${MSGT('Gérer mon abonnement')}</button>` : '') + `</div>`;
+      + (pay && !manage ? `<button type="button" class="v-btn" style="flex:1;margin:0" onclick="CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : '')
+      + (manage ? `<button type="button" class="v-btn sec" style="flex:1;margin:0" onclick="CV.planPortal()">${MSGT('Gérer mon abonnement')}</button>` : '') + `</div>`;
     if(over && q.owner) h += `<button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.close();CV.zipSheet()">💾 ${MSGT('Sauvegarde ZIP')}</button>`;
     if((over || pct >= 90) && q.owner) h += `<button type="button" class="v-btn sec" style="margin-top:6px" onclick="CV.cloudPick('none')">📱 ${MSGT('Passer en hors ligne : aucune limite de photos')}</button>`;
     return h + `</div>`;
@@ -2586,19 +2587,88 @@
       M.quotaNag = {}; M.pqFull = {}; M.pqErr = ''; toast('🎁 ' + MSGT('Cadeau activé : ta place photos est agrandie')); setTimeout(()=>{ try { uploadQueue(); } catch(e){} }, 500); await quotaLoad(true); cloudSheet();
     } catch(e){ alert(e.message); }
   }
-  function planSheet(){
-    const q = M.quota || {}, P = q.plans || {};
-    const row = (p, per) => `<button type="button" class="cv-choice" onclick="CV.planBuy('${ja(p)}','${ja(per)}')"><i>${p === 'max' ? '🚀' : '➕'}</i><span><b>${p === 'max' ? 'Max' : 'Plus'} · ${fmtB(P[p] || 0)} · ${PRICE[p][per]} ${per === 'year' ? MSGT('par an') : MSGT('par mois')}</b><small>${RF('≈ {0} photos', phN(P[p] || 0))}${p === 'max' ? ' · ' + MSGT('usage raisonnable') : ''}</small></span></button>`;
+  /* 🤖 Google Play (appli Android) : l’achat passe par Google, le serveur le vérifie et le relie au carnet.
+     Il suit le carnet : sur l’ordinateur ou l’iPhone, la place est la même (même code administrateur). */
+  const PLAY_IDS = {plus:{year:'vezoria_plus_an', month:'vezoria_plus_mois'}, max:{year:'vezoria_max_an', month:'vezoria_max_mois'}};
+  const PLAY_PKG = 'fr.vezoria.app';
+  let playSvcP = null;
+  function playSvc(){
+    if(!inPlay() || !('getDigitalGoodsService' in window)) return Promise.resolve(null);
+    return playSvcP || (playSvcP = window.getDigitalGoodsService('https://play.google.com/billing').catch(()=>null));
+  }
+  const payWeb = q => !!(q && q.pay && q.owner && !inPlay());
+  const payPlay = q => !!(q && q.pay && q.owner && q.play && inPlay() && ('getDigitalGoodsService' in window));
+  const payAny = q => payWeb(q) || payPlay(q);
+  const playManageUrl = sku => 'https://play.google.com/store/account/subscriptions?package=' + PLAY_PKG + (sku ? '&sku=' + encodeURIComponent(sku) : '');
+  async function planSheet(){
+    const q = M.quota || {}, P = q.plans || {}, play = payPlay(q);
+    let gp = {};
+    if(play){ try { const svc = await playSvc(); if(svc){ const ids = Object.values(PLAY_IDS).flatMap(o=>Object.values(o));
+      (await svc.getDetails(ids)).forEach(it=>{ try { gp[it.itemId] = new Intl.NumberFormat((window.I18N && I18N.locale) || 'fr-FR', {style:'currency', currency:it.price.currency}).format(Number(it.price.value)); } catch(e){} }); } } catch(e){} }
+    const price = (p, per) => play ? (gp[PLAY_IDS[p][per]] || '') : PRICE[p][per];
+    const row = (p, per) => { const pr = price(p, per); if(play && !pr) return '';
+      return `<button type="button" class="cv-choice" onclick="CV.planBuy('${ja(p)}','${ja(per)}')"><i>${p === 'max' ? '🚀' : '➕'}</i><span><b>${p === 'max' ? 'Max' : 'Plus'} · ${fmtB(P[p] || 0)} · ${esc(pr)} ${per === 'year' ? MSGT('par an') : MSGT('par mois')}</b><small>${RF('≈ {0} photos', phN(P[p] || 0))}${p === 'max' ? ' · ' + MSGT('usage raisonnable') : ''}</small></span></button>`; };
+    const rows = row('plus', 'year') + row('max', 'year') + row('plus', 'month') + row('max', 'month');
     openSheet(`<h2>⬆️ ${MSGT('Agrandir ma place photos')}</h2>
       <div class="v-sum-small" style="margin-bottom:10px">${MSGT('Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tes photos restent toutes en ligne ; seuls les nouveaux envois s’arrêtent tant que tu dépasses la place gratuite.')}</div>
-      ${row('plus', 'year')}${row('max', 'year')}${row('plus', 'month')}${row('max', 'month')}
+      ${rows || `<div class="v-sum-small">${MSGT('Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.')}</div>`}
+      <div class="v-sum-small" style="margin-top:8px">${play ? MSGT('Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.') : MSGT('Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.')}
+        <a href="mentions-legales.html#abonnements" target="_blank" rel="noopener">${MSGT('Conditions des abonnements')}</a></div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${MSGT('Fermer')}</button></div>`);
   }
   async function planBuy(plan, period){
-    try { const r = await planCall({a:'checkout', plan, period, back:location.href}, M.sync.code); if(!r.ok || !r.j.url) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status)); location.href = r.j.url; }
+    if(payPlay(M.quota)) return playBuy(plan, period);
+    try { const r = await planCall({a:'checkout', plan, period, back:location.href}, M.sync.code);
+      if(r.status === 409 && r.j.already === 'stripe'){ if(await uiConfirm(srvMsg(r.j.error))) planPortal(); return; }
+      if(!r.ok || !r.j.url) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status)); location.href = r.j.url; }
     catch(e){ alert(e.message); }
   }
+  async function playBuy(plan, period){
+    const sku = PLAY_IDS[plan] && PLAY_IDS[plan][period]; if(!sku) return;
+    let resp = null;
+    try {
+      const req = new PaymentRequest([{supportedMethods:'https://play.google.com/billing', data:{sku}}], {total:{label:'Total', amount:{currency:'EUR', value:'0'}}});
+      resp = await req.show();
+    } catch(e){ if(e && e.name !== 'AbortError') alert(MSGT('Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.')); return; }
+    const token = resp && resp.details && resp.details.purchaseToken;
+    try {
+      const r = await playLink(token, sku);
+      await resp.complete(r.ok ? 'success' : 'fail');
+      if(!r.ok) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status));
+      M.quotaNag = {}; M.pqFull = {}; M.pqErr = ''; toast('✅ ' + MSGT('Merci ! Ta place photos est agrandie.'));
+      setTimeout(()=>{ try { uploadQueue(); } catch(e){} }, 500); await quotaLoad(true); cloudSheet();
+    } catch(e){ try { await resp.complete('fail'); } catch(x){} alert(e.message + '\n\n' + MSGT('Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.')); }
+  }
+  async function playLink(token, sku){
+    const r = await planCall({a:'play', token, sku}, M.sync.code);
+    if(r.ok || r.status === 409){ const L = M.playLinked || (M.playLinked = {}); L[token.slice(-24)] = Date.now(); persist(); }
+    return r;
+  }
+  /* 🔁 nouveau téléphone, appli réinstallée, achat pas encore relié : on retrouve les abonnements Google Play du compte Google (1 fois par jour) */
+  let playRestBusy = false;
+  async function playRestore(){
+    const q = M.quota; if(playRestBusy || !payPlay(q) || !ownerOn()) return;
+    const L = M.playLinked || (M.playLinked = {}), now = Date.now(); if(now - (L._at || 0) < 864e5 && q.active) return;
+    playRestBusy = true;
+    try {
+      const svc = await playSvc(); if(!svc) return; L._at = now; persist();
+      const list = await svc.listPurchases(); let got = false;
+      for(const pu of list || []){
+        if(!pu || !pu.purchaseToken || (L[pu.purchaseToken.slice(-24)] && q.active && q.src === 'play')) continue;
+        const r = await playLink(pu.purchaseToken, pu.itemId);
+        if(r.ok && r.j.live) got = true;
+        else if(r.status === 409 && r.j.other && !L['w' + pu.purchaseToken.slice(-20)]){ L['w' + pu.purchaseToken.slice(-20)] = now; persist(); toast('ℹ️ ' + srvMsg(r.j.error)); }
+      }
+      if(got){ toast('✅ ' + MSGT('Ton abonnement Google Play est relié à ce carnet.')); await quotaLoad(true); }
+    } catch(e){} finally { playRestBusy = false; }
+  }
   async function planPortal(){
+    const q = M.quota || {};
+    if(q.src === 'play'){   // abonnement Google : il se gère dans Google Play (aussi depuis un ordinateur, sur play.google.com)
+      const u = playManageUrl(q.plan && q.per ? PLAY_IDS[q.plan] && PLAY_IDS[q.plan][q.per] : '');
+      if(inPlay()) location.href = u; else window.open(u, '_blank', 'noopener');
+      return;
+    }
     try { const r = await planCall({a:'portal', back:location.href}, M.sync.code); if(!r.ok || !r.j.url) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status)); location.href = r.j.url; }
     catch(e){ alert(e.message); }
   }
@@ -2615,21 +2685,29 @@
       N.s = q.overSince; N.st = st; persist();
       momentShow(`<div class="mo-k">${MSGT('Place photos')}</div><div class="mo-big">📦</div><h2>${st === 1 ? MSGT('Ta place photos est dépassée') : RF('Plus que {0} jours pour enregistrer tes photos', Math.max(1, Math.ceil(left / 864e5)))}</h2>
         <div class="mo-sub">${RF('Tes photos restent toutes visibles jusqu’au {0}, mais tu ne peux plus en envoyer de nouvelles. Après cette date, on garde les photos les plus récentes dans ta place ({1}) et les plus anciennes sont effacées du serveur.', dLong(q.graceEnd), fmtB(q.quota))}<br><br>${MSGT('Enregistre-les dès maintenant sur ton téléphone ou ton ordinateur (Sauvegarde ZIP).')}</div>
-        <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.zipSheet()">💾 ${MSGT('Sauvegarde ZIP')}</button>${q.pay && !inPlay() ? `<button type="button" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet('choose')">📱 ${MSGT('Hors ligne, sans limite')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
+        <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.zipSheet()">💾 ${MSGT('Sauvegarde ZIP')}</button>${payAny(q) && !q.active ? `<button type="button" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet('choose')">📱 ${MSGT('Hors ligne, sans limite')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
+      return true;
+    }
+    // 🔔 abonnement annuel : rappel entre 3 mois et 1 mois avant l’échéance (on peut l’arrêter)
+    if(q.active && q.per === 'year' && (q.src === 'stripe' || q.src === 'play') && q.until - now < 90 * 864e5 && q.until - now > 30 * 864e5 && N.renew !== q.until){
+      N.renew = q.until; persist();
+      momentShow(`<div class="mo-k">${MSGT('Abonnement')}</div><div class="mo-big">🔔</div><h2>${RF('Ton abonnement {0} se renouvelle le {1}', planName(q), dLong(q.until))}</h2>
+        <div class="mo-sub">${MSGT('Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.')}</div>
+        <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose()">${MSGT('C’est noté')}</button><button type="button" onclick="CV.momentClose();CV.planPortal()">${MSGT('Gérer mon abonnement')}</button></div>`, 'eve');
       return true;
     }
     if(q.used > q.quota && !q.graceEnd && q.overSince && N.s !== q.overSince){
       N.s = q.overSince; N.st = 1; persist();
       momentShow(`<div class="mo-k">${MSGT('Place photos')}</div><div class="mo-big">📦</div><h2>${MSGT('Ta place photos est dépassée')}</h2>
         <div class="mo-sub">${RF('Rien n’est effacé : tes photos restent toutes en ligne et visibles. Les nouvelles photos restent sur ton téléphone tant que tu n’es pas redescendu sous {0}.', fmtB(q.quota))}</div>
-        <div class="mo-b">${q.pay && !inPlay() ? `<button type="button" class="pri" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet()">☁️ ${MSGT('Voir ma place')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
+        <div class="mo-b">${payAny(q) && !q.active ? `<button type="button" class="pri" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet()">☁️ ${MSGT('Voir ma place')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
       return true;
     }
     if(!(q.active && q.plan === 'unlimited') && q.used >= q.quota * 0.9 && q.used <= q.quota && now - (N.near || 0) > 30 * 864e5){
       N.near = now; persist();
       momentShow(`<div class="mo-k">${MSGT('Place photos')}</div><div class="mo-big">📦</div><h2>${MSGT('Ton carnet est presque plein')}</h2>
         <div class="mo-sub">${RF('{0} utilisés sur {1}.', fmtB(q.used), fmtB(q.quota))} ${MSGT('Une fois plein, tes nouvelles photos restent sur ton téléphone sans partir dans le cloud.')}</div>
-        <div class="mo-b">${q.pay && !inPlay() ? `<button type="button" class="pri" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet()">☁️ ${MSGT('Voir ma place')}</button><button type="button" onclick="CV.momentClose();CV.cloudSheet('choose')">📱 ${MSGT('Hors ligne, sans limite')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
+        <div class="mo-b">${payAny(q) && !q.active ? `<button type="button" class="pri" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet()">☁️ ${MSGT('Voir ma place')}</button><button type="button" onclick="CV.momentClose();CV.cloudSheet('choose')">📱 ${MSGT('Hors ligne, sans limite')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
       return true;
     }
     return false;
