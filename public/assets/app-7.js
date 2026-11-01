@@ -1614,11 +1614,23 @@
         .concat(list('comment', c=>mine.has(c.trip) && c.dev !== dv).map(c=>({id:c.id, at:c.at || 0, k:'cm', w:c.who, f:c.feed, tx:c.text})));
       if(!M.rxSeen){ M.rxSeen = {}; L.forEach(x=>M.rxSeen[x.id] = 1); persist(); return; }
       const nw = L.filter(x=>!M.rxSeen[x.id]); if(!nw.length) return;
-      nw.forEach(x=>M.rxSeen[x.id] = 1); const ks = Object.keys(M.rxSeen); if(ks.length > 600) ks.slice(0, ks.length - 600).forEach(k=>delete M.rxSeen[k]); persist();
+      nw.forEach(x=>M.rxSeen[x.id] = 1); rxBell(nw); const ks = Object.keys(M.rxSeen); if(ks.length > 600) ks.slice(0, ks.length - 600).forEach(k=>delete M.rxSeen[k]); persist();
       nw.filter(x=>x.at > lim).sort((a, b)=>a.at - b.at).slice(-3).forEach((x, i)=>setTimeout(()=>rxShow(x), i * 1800));
     } catch(e){}
   }
   setInterval(rxTick, 4000);
+  // 🔔 ces ❤️ et 💬 vont aussi dans la cloche : un compagnon les voit arriver à la synchro, sans notification du serveur
+  // (si la notification du serveur les a déjà notés — le voyageur qui a publié — on ne les ajoute pas une 2e fois)
+  function rxBell(nw){
+    try {
+      const H = nhGet(), out = [];
+      nw.forEach(x=>{ const f = R[x.f] || {}, t = R[String(f.trip || '').replace(/^ft:/, '')] || {}, w = x.w || MSGT('Un abonné'), at = x.at || Date.now();
+        if(H.some(e=>Math.abs((e.at || 0) - at) < 15 * 60e3 && String(e.body || '').includes(w) && (x.k === 'lk' ? /❤/.test(e.body) : /💬/.test(e.body)))) return;
+        const body = x.k === 'lk' ? RF('❤️ {0} aime ta publication : {1}', w, f.titre || f.lieu || '') : RF('💬 {0} a commenté : « {1} »', w, String(x.tx || '').slice(0, 120)) + (f.titre || f.lieu ? '\n' + (f.titre || f.lieu) : '');
+        out.push({at, title:t.titre || 'Vezoria', body, url:t.id ? './?vzt=' + encodeURIComponent(t.id) + '&vzk=social' : ''}); });
+      if(out.length) nhAdd(out);
+    } catch(e){}
+  }
   function rxShow(x){
     const f = R[x.f] || {}, ph = (f.photos||[])[0];
     // une pluie de cœurs (ou de bulles)
