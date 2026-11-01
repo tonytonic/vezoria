@@ -2851,4 +2851,13 @@ I18N.load({
 "Retour à l’hébergement":"Back to the accommodation",
 "Où loger, selon Wikivoyage":"Where to stay, according to Wikivoyage",
 "Le trajet entre les deux aéroports":"The route between the two airports",
-"Réservé à l’auteur du fil":"Feed author only"});
+"Réservé à l’auteur du fil":"Feed author only",
+"Touche la carte pour l’agrandir":"Tap the map to enlarge it",
+"Quelle démo ?":"Which demo?",
+"Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.":"The same 3-week trip from 3 angles (to plan, in progress, memories). Pick places you know.",
+"Europe · Italie (Rome, Florence, Venise)":"Europe · Italy (Rome, Florence, Venice)",
+"États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)":"United States · American West (San Francisco, Los Angeles, Las Vegas)",
+"Afrique · Maroc (Marrakech, Fès, Chefchaouen)":"Africa · Morocco (Marrakesh, Fez, Chefchaouen)",
+"Asie · Japon (Tokyo, Kyoto, Osaka)":"Asia · Japan (Tokyo, Kyoto, Osaka)",
+"Changer de démo (Europe, États-Unis, Afrique, Japon)":"Switch demo (Europe, United States, Africa, Japan)",
+"👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.":"👀 3 demo trips are ready ({0}): to plan, in progress and memories. Switch between them at the top of the screen; “Delete the demo” removes everything. Nothing is shared."});

@@ -5805,4 +5805,13 @@ I18N.load({
 "Retour à l’hébergement":"宿に戻る",
 "Où loger, selon Wikivoyage":"Wikivoyage によるおすすめの宿泊エリア",
 "Le trajet entre les deux aéroports":"2つの空港間のルート",
-"Réservé à l’auteur du fil":"フィードの作者のみ"});
+"Réservé à l’auteur du fil":"フィードの作者のみ",
+"Touche la carte pour l’agrandir":"地図をタップして拡大",
+"Quelle démo ?":"どのデモにする？",
+"Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.":"同じ3週間の旅を3つの角度で（準備中・旅行中・思い出）。知っている場所を選んでね。",
+"Europe · Italie (Rome, Florence, Venise)":"ヨーロッパ・イタリア（ローマ、フィレンツェ、ヴェネツィア）",
+"États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)":"アメリカ・アメリカ西部（サンフランシスコ、ロサンゼルス、ラスベガス）",
+"Afrique · Maroc (Marrakech, Fès, Chefchaouen)":"アフリカ・モロッコ（マラケシュ、フェズ、シャウエン）",
+"Asie · Japon (Tokyo, Kyoto, Osaka)":"アジア・日本（東京、京都、大阪）",
+"Changer de démo (Europe, États-Unis, Afrique, Japon)":"デモを変える（ヨーロッパ、アメリカ、アフリカ、日本）",
+"👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.":"👀 デモの旅が3つ準備できました（{0}）：準備中・旅行中・思い出。画面上部で切り替えられます。「デモを削除」ですべて消えます。何も共有されません。"});

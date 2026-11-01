@@ -5806,4 +5806,13 @@ I18N.load({
 "Retour à l’hébergement":"Назад к жилью",
 "Où loger, selon Wikivoyage":"Где остановиться, по данным Wikivoyage",
 "Le trajet entre les deux aéroports":"Маршрут между двумя аэропортами",
-"Réservé à l’auteur du fil":"Только для автора ленты"});
+"Réservé à l’auteur du fil":"Только для автора ленты",
+"Touche la carte pour l’agrandir":"Нажми на карту, чтобы увеличить",
+"Quelle démo ?":"Какое демо?",
+"Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.":"Одна и та же поездка на 3 недели с трёх сторон (подготовка, в пути, воспоминания). Выбери места, которые знаешь.",
+"Europe · Italie (Rome, Florence, Venise)":"Европа · Италия (Рим, Флоренция, Венеция)",
+"États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)":"США · Американский Запад (Сан-Франциско, Лос-Анджелес, Лас-Вегас)",
+"Afrique · Maroc (Marrakech, Fès, Chefchaouen)":"Африка · Марокко (Марракеш, Фес, Шефшауэн)",
+"Asie · Japon (Tokyo, Kyoto, Osaka)":"Азия · Япония (Токио, Киото, Осака)",
+"Changer de démo (Europe, États-Unis, Afrique, Japon)":"Сменить демо (Европа, США, Африка, Япония)",
+"👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.":"👀 3 демо-поездки готовы ({0}): подготовка, в пути и воспоминания. Переключайся вверху экрана; «Удалить демо» стирает всё. Ничего не публикуется."});

@@ -5805,4 +5805,13 @@ I18N.load({
 "Retour à l’hébergement":"返回住宿",
 "Où loger, selon Wikivoyage":"Wikivoyage 推荐的住宿区域",
 "Le trajet entre les deux aéroports":"两个机场之间的路线",
-"Réservé à l’auteur du fil":"仅限动态作者"});
+"Réservé à l’auteur du fil":"仅限动态作者",
+"Touche la carte pour l’agrandir":"点按地图可放大",
+"Quelle démo ?":"选择哪个演示？",
+"Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.":"同一趟 3 周的旅行，从 3 个角度看（准备中、进行中、回忆）。选你熟悉的地方。",
+"Europe · Italie (Rome, Florence, Venise)":"欧洲 · 意大利（罗马、佛罗伦萨、威尼斯）",
+"États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)":"美国 · 美国西部（旧金山、洛杉矶、拉斯维加斯）",
+"Afrique · Maroc (Marrakech, Fès, Chefchaouen)":"非洲 · 摩洛哥（马拉喀什、非斯、舍夫沙万）",
+"Asie · Japon (Tokyo, Kyoto, Osaka)":"亚洲 · 日本（东京、京都、大阪）",
+"Changer de démo (Europe, États-Unis, Afrique, Japon)":"切换演示（欧洲、美国、非洲、日本）",
+"👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.":"👀 3 个演示旅行已准备好（{0}）：准备中、进行中和回忆。在屏幕顶部切换；“删除演示”会清除全部。不会分享任何内容。"});

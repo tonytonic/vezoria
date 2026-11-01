@@ -5805,4 +5805,13 @@ I18N.load({
 "Retour à l’hébergement":"숙소로 돌아가기",
 "Où loger, selon Wikivoyage":"Wikivoyage가 추천하는 숙소 지역",
 "Le trajet entre les deux aéroports":"두 공항 사이의 경로",
-"Réservé à l’auteur du fil":"피드 작성자 전용"});
+"Réservé à l’auteur du fil":"피드 작성자 전용",
+"Touche la carte pour l’agrandir":"지도를 눌러 크게 보기",
+"Quelle démo ?":"어떤 데모를 볼까요?",
+"Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.":"같은 3주 여행을 3가지 모습으로 (준비, 여행 중, 추억). 아는 곳을 골라 보세요.",
+"Europe · Italie (Rome, Florence, Venise)":"유럽 · 이탈리아 (로마, 피렌체, 베네치아)",
+"États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)":"미국 · 미국 서부 (샌프란시스코, 로스앤젤레스, 라스베이거스)",
+"Afrique · Maroc (Marrakech, Fès, Chefchaouen)":"아프리카 · 모로코 (마라케시, 페스, 셰프샤우엔)",
+"Asie · Japon (Tokyo, Kyoto, Osaka)":"아시아 · 일본 (도쿄, 교토, 오사카)",
+"Changer de démo (Europe, États-Unis, Afrique, Japon)":"데모 바꾸기 (유럽, 미국, 아프리카, 일본)",
+"👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.":"👀 데모 여행 3개가 준비됐어요 ({0}): 준비, 여행 중, 추억. 화면 위에서 바꿔 보세요. ‘데모 삭제’로 모두 지워져요. 아무것도 공유되지 않아요."});

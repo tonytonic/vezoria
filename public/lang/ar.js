@@ -5806,4 +5806,13 @@ I18N.load({
 "Retour à l’hébergement":"العودة إلى الإقامة",
 "Où loger, selon Wikivoyage":"أين تقيم، بحسب ويكي رحلات",
 "Le trajet entre les deux aéroports":"المسار بين المطارين",
-"Réservé à l’auteur du fil":"خاص بمؤلف الصفحة"});
+"Réservé à l’auteur du fil":"خاص بمؤلف الصفحة",
+"Touche la carte pour l’agrandir":"المس الخريطة لتكبيرها",
+"Quelle démo ?":"أي عرض تجريبي؟",
+"Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.":"الرحلة نفسها لمدة 3 أسابيع من 3 زوايا (للتحضير، جارية، ذكريات). اختر أماكن تعرفها.",
+"Europe · Italie (Rome, Florence, Venise)":"أوروبا · إيطاليا (روما، فلورنسا، البندقية)",
+"États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)":"الولايات المتحدة · الغرب الأمريكي (سان فرانسيسكو، لوس أنجلوس، لاس فيغاس)",
+"Afrique · Maroc (Marrakech, Fès, Chefchaouen)":"أفريقيا · المغرب (مراكش، فاس، شفشاون)",
+"Asie · Japon (Tokyo, Kyoto, Osaka)":"آسيا · اليابان (طوكيو، كيوتو، أوساكا)",
+"Changer de démo (Europe, États-Unis, Afrique, Japon)":"تغيير العرض التجريبي (أوروبا، الولايات المتحدة، أفريقيا، اليابان)",
+"👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.":"👀 3 رحلات تجريبية جاهزة ({0}): للتحضير، جارية، وذكريات. تنقّل بينها أعلى الشاشة؛ «حذف العرض التجريبي» يمحو كل شيء. لا تتم مشاركة أي شيء."});

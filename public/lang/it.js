@@ -2866,4 +2866,13 @@ I18N.load({
 "Retour à l’hébergement":"Torna all’alloggio",
 "Où loger, selon Wikivoyage":"Dove alloggiare, secondo Wikivoyage",
 "Le trajet entre les deux aéroports":"Il tragitto tra i due aeroporti",
-"Réservé à l’auteur du fil":"Riservato all’autore del diario"});
+"Réservé à l’auteur du fil":"Riservato all’autore del diario",
+"Touche la carte pour l’agrandir":"Tocca la mappa per ingrandirla",
+"Quelle démo ?":"Quale demo?",
+"Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.":"Lo stesso viaggio di 3 settimane visto da 3 angolazioni (da preparare, in corso, ricordi). Scegli luoghi che conosci.",
+"Europe · Italie (Rome, Florence, Venise)":"Europa · Italia (Roma, Firenze, Venezia)",
+"États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)":"Stati Uniti · Ovest americano (San Francisco, Los Angeles, Las Vegas)",
+"Afrique · Maroc (Marrakech, Fès, Chefchaouen)":"Africa · Marocco (Marrakech, Fès, Chefchaouen)",
+"Asie · Japon (Tokyo, Kyoto, Osaka)":"Asia · Giappone (Tokyo, Kyoto, Osaka)",
+"Changer de démo (Europe, États-Unis, Afrique, Japon)":"Cambia demo (Europa, Stati Uniti, Africa, Giappone)",
+"👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.":"👀 3 viaggi demo pronti ({0}): da preparare, in corso e ricordi. Passa dall’uno all’altro in alto; «Elimina la demo» cancella tutto. Nulla è condiviso."});

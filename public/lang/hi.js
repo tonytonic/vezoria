@@ -5805,4 +5805,13 @@ I18N.load({
 "Retour à l’hébergement":"ठहरने की जगह पर वापस",
 "Où loger, selon Wikivoyage":"Wikivoyage के अनुसार कहाँ ठहरें",
 "Le trajet entre les deux aéroports":"दोनों हवाई अड्डों के बीच का रास्ता",
-"Réservé à l’auteur du fil":"सिर्फ़ फ़ीड के लेखक के लिए"});
+"Réservé à l’auteur du fil":"सिर्फ़ फ़ीड के लेखक के लिए",
+"Touche la carte pour l’agrandir":"बड़ा करने के लिए नक्शे को छुओ",
+"Quelle démo ?":"कौन-सा डेमो?",
+"Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.":"वही 3 हफ़्ते की यात्रा 3 नज़रियों से (तैयारी, चल रही, यादें)। ऐसी जगहें चुनो जिन्हें तुम जानते हो।",
+"Europe · Italie (Rome, Florence, Venise)":"यूरोप · इटली (रोम, फ़्लोरेंस, वेनिस)",
+"États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)":"अमेरिका · अमेरिकी पश्चिम (सैन फ़्रांसिस्को, लॉस एंजेलिस, लास वेगास)",
+"Afrique · Maroc (Marrakech, Fès, Chefchaouen)":"अफ़्रीका · मोरक्को (मराकेश, फ़ेज़, शेफ़शौएन)",
+"Asie · Japon (Tokyo, Kyoto, Osaka)":"एशिया · जापान (टोक्यो, क्योटो, ओसाका)",
+"Changer de démo (Europe, États-Unis, Afrique, Japon)":"डेमो बदलो (यूरोप, अमेरिका, अफ़्रीका, जापान)",
+"👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.":"👀 3 डेमो यात्राएँ तैयार हैं ({0}): तैयारी, चल रही और यादें। स्क्रीन के ऊपर से बदलो; «डेमो हटाओ» सब मिटा देता है। कुछ भी साझा नहीं होता।"});

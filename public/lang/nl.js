@@ -2857,4 +2857,13 @@ I18N.load({
 "Retour à l’hébergement":"Terug naar de accommodatie",
 "Où loger, selon Wikivoyage":"Waar overnachten, volgens Wikivoyage",
 "Le trajet entre les deux aéroports":"De route tussen de twee luchthavens",
-"Réservé à l’auteur du fil":"Alleen voor de auteur van de feed"});
+"Réservé à l’auteur du fil":"Alleen voor de auteur van de feed",
+"Touche la carte pour l’agrandir":"Tik op de kaart om te vergroten",
+"Quelle démo ?":"Welke demo?",
+"Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.":"Dezelfde reis van 3 weken vanuit 3 hoeken (voor te bereiden, onderweg, herinneringen). Kies plekken die je kent.",
+"Europe · Italie (Rome, Florence, Venise)":"Europa · Italië (Rome, Florence, Venetië)",
+"États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)":"Verenigde Staten · Amerikaanse westen (San Francisco, Los Angeles, Las Vegas)",
+"Afrique · Maroc (Marrakech, Fès, Chefchaouen)":"Afrika · Marokko (Marrakesh, Fez, Chefchaouen)",
+"Asie · Japon (Tokyo, Kyoto, Osaka)":"Azië · Japan (Tokio, Kyoto, Osaka)",
+"Changer de démo (Europe, États-Unis, Afrique, Japon)":"Andere demo (Europa, Verenigde Staten, Afrika, Japan)",
+"👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.":"👀 3 demoreizen staan klaar ({0}): voor te bereiden, onderweg en herinneringen. Wissel bovenaan het scherm; ‘Demo verwijderen’ wist alles. Er wordt niets gedeeld."});

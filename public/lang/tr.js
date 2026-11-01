@@ -5793,4 +5793,13 @@ I18N.load({
 "Retour à l’hébergement":"Konaklamaya dön",
 "Où loger, selon Wikivoyage":"Wikivoyage’a göre nerede kalınır",
 "Le trajet entre les deux aéroports":"İki havalimanı arasındaki güzergâh",
-"Réservé à l’auteur du fil":"Yalnızca akışın yazarı"});
+"Réservé à l’auteur du fil":"Yalnızca akışın yazarı",
+"Touche la carte pour l’agrandir":"Büyütmek için haritaya dokun",
+"Quelle démo ?":"Hangi demo?",
+"Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.":"Aynı 3 haftalık seyahat 3 açıdan (hazırlanacak, devam eden, anılar). Bildiğin yerleri seç.",
+"Europe · Italie (Rome, Florence, Venise)":"Avrupa · İtalya (Roma, Floransa, Venedik)",
+"États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)":"ABD · Amerikan Batısı (San Francisco, Los Angeles, Las Vegas)",
+"Afrique · Maroc (Marrakech, Fès, Chefchaouen)":"Afrika · Fas (Marakeş, Fes, Şafşavan)",
+"Asie · Japon (Tokyo, Kyoto, Osaka)":"Asya · Japonya (Tokyo, Kyoto, Osaka)",
+"Changer de démo (Europe, États-Unis, Afrique, Japon)":"Demoyu değiştir (Avrupa, ABD, Afrika, Japonya)",
+"👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.":"👀 3 demo seyahat hazır ({0}): hazırlanacak, devam eden ve anılar. Ekranın üstünden geçiş yap; «Demoyu sil» her şeyi siler. Hiçbir şey paylaşılmaz."});
