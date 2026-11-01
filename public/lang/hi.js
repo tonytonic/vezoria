@@ -1,4 +1,13 @@
 I18N.load({
+"Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"आपका गाइडेड रास्ता इंतज़ार कर रहा है: «आपकी तैयारी» कार्ड पर 🧭 बटन।",
+/* 🔁 parcours guidé · démo · escale (2026-11-01u) */
+"escale probable":"स्टॉपओवर संभव",
+"3 semaines (à préparer)":"3 हफ़्ते (तैयारी बाकी)",
+"voyage en cours (démo)":"यात्रा जारी (डेमो)",
+"souvenirs (démo)":"यादें (डेमो)",
+"Ajouter un de mes appareils (QR code)":"मेरा एक डिवाइस जोड़ें (QR कोड)",
+"{0} visite(s) laissée(s) pour plus tard : tu les retrouveras ici.":"{0} विज़िट बाद के लिए छोड़ी गईं: आप उन्हें यहाँ पाएँगे।",
+"C’est noté pour aujourd’hui":"आज के लिए नोट किया",
 /* 🧹 abonné fantôme · 🔑 code admin · 🌍 départs du monde · 🚗 sans avion (2026-11-01t) */
 "Je préviens le serveur…":"सर्वर को बता रहा हूँ…",
 "Effacer de la liste (appareil effacé ou plus utilisé)":"सूची से हटाएँ (डिवाइस मिटाया गया या अब इस्तेमाल नहीं)",

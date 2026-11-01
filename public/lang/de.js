@@ -1,4 +1,13 @@
 I18N.load({
+"Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"Dein geführter Weg wartet: 🧭-Taste auf der Karte „Deine Vorbereitung“.",
+/* 🔁 parcours guidé · démo · escale (2026-11-01u) */
+"escale probable":"Zwischenstopp wahrscheinlich",
+"3 semaines (à préparer)":"3 Wochen (zu planen)",
+"voyage en cours (démo)":"laufende Reise (Demo)",
+"souvenirs (démo)":"Erinnerungen (Demo)",
+"Ajouter un de mes appareils (QR code)":"Eines meiner Geräte hinzufügen (QR-Code)",
+"{0} visite(s) laissée(s) pour plus tard : tu les retrouveras ici.":"{0} Besuch(e) für später gelassen: du findest sie hier wieder.",
+"C’est noté pour aujourd’hui":"Für heute notiert",
 /* 🧹 abonné fantôme · 🔑 code admin · 🌍 départs du monde · 🚗 sans avion (2026-11-01t) */
 "Je préviens le serveur…":"Ich sage dem Server Bescheid…",
 "Effacer de la liste (appareil effacé ou plus utilisé)":"Aus der Liste entfernen (Gerät gelöscht oder nicht mehr genutzt)",

@@ -1,4 +1,13 @@
 I18N.load({
+"Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"引导流程在等你：「我的准备」卡片上的 🧭 按钮。",
+/* 🔁 parcours guidé · démo · escale (2026-11-01u) */
+"escale probable":"可能需要转机",
+"3 semaines (à préparer)":"3 周（待准备）",
+"voyage en cours (démo)":"进行中的旅行（演示）",
+"souvenirs (démo)":"回忆（演示）",
+"Ajouter un de mes appareils (QR code)":"添加我的设备（二维码）",
+"{0} visite(s) laissée(s) pour plus tard : tu les retrouveras ici.":"{0} 个参观留到以后：你会在这里找到它们。",
+"C’est noté pour aujourd’hui":"今天先到这里",
 /* 🧹 abonné fantôme · 🔑 code admin · 🌍 départs du monde · 🚗 sans avion (2026-11-01t) */
 "Je préviens le serveur…":"正在通知服务器…",
 "Effacer de la liste (appareil effacé ou plus utilisé)":"从列表中移除（设备已清除或不再使用）",

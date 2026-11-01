@@ -1,4 +1,13 @@
 I18N.load({
+"Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"Je begeleide route wacht: 🧭-knop op de kaart ‘Je voorbereiding’.",
+/* 🔁 parcours guidé · démo · escale (2026-11-01u) */
+"escale probable":"overstap waarschijnlijk",
+"3 semaines (à préparer)":"3 weken (voor te bereiden)",
+"voyage en cours (démo)":"reis bezig (demo)",
+"souvenirs (démo)":"herinneringen (demo)",
+"Ajouter un de mes appareils (QR code)":"Een van mijn apparaten toevoegen (QR-code)",
+"{0} visite(s) laissée(s) pour plus tard : tu les retrouveras ici.":"{0} bezoek(en) voor later: je vindt ze hier terug.",
+"C’est noté pour aujourd’hui":"Genoteerd voor vandaag",
 /* 🧹 abonné fantôme · 🔑 code admin · 🌍 départs du monde · 🚗 sans avion (2026-11-01t) */
 "Je préviens le serveur…":"Ik laat het de server weten…",
 "Effacer de la liste (appareil effacé ou plus utilisé)":"Uit de lijst halen (apparaat gewist of niet meer gebruikt)",

@@ -1,4 +1,13 @@
 I18N.load({
+"Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"Rehberli yolun seni bekliyor: «Hazırlığın» kartındaki 🧭 düğmesi.",
+/* 🔁 parcours guidé · démo · escale (2026-11-01u) */
+"escale probable":"aktarma olası",
+"3 semaines (à préparer)":"3 hafta (hazırlanacak)",
+"voyage en cours (démo)":"devam eden seyahat (demo)",
+"souvenirs (démo)":"anılar (demo)",
+"Ajouter un de mes appareils (QR code)":"Cihazlarımdan birini ekle (QR kod)",
+"{0} visite(s) laissée(s) pour plus tard : tu les retrouveras ici.":"{0} ziyaret sonraya bırakıldı: onları burada bulacaksın.",
+"C’est noté pour aujourd’hui":"Bugünlük not edildi",
 /* 🧹 abonné fantôme · 🔑 code admin · 🌍 départs du monde · 🚗 sans avion (2026-11-01t) */
 "Je préviens le serveur…":"Sunucuya haber veriyorum…",
 "Effacer de la liste (appareil effacé ou plus utilisé)":"Listeden çıkar (cihaz silindi veya artık kullanılmıyor)",

@@ -1,4 +1,13 @@
 I18N.load({
+"Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"안내 과정이 기다리고 있어요: 「나의 준비」 카드의 🧭 버튼.",
+/* 🔁 parcours guidé · démo · escale (2026-11-01u) */
+"escale probable":"경유 가능성 있음",
+"3 semaines (à préparer)":"3주(준비 중)",
+"voyage en cours (démo)":"여행 중(데모)",
+"souvenirs (démo)":"추억(데모)",
+"Ajouter un de mes appareils (QR code)":"내 기기 추가(QR 코드)",
+"{0} visite(s) laissée(s) pour plus tard : tu les retrouveras ici.":"나중으로 미룬 방문 {0}개: 여기서 다시 볼 수 있어요.",
+"C’est noté pour aujourd’hui":"오늘은 여기까지",
 /* 🧹 abonné fantôme · 🔑 code admin · 🌍 départs du monde · 🚗 sans avion (2026-11-01t) */
 "Je préviens le serveur…":"서버에 알리는 중…",
 "Effacer de la liste (appareil effacé ou plus utilisé)":"목록에서 삭제(지운 기기 또는 사용하지 않는 기기)",
