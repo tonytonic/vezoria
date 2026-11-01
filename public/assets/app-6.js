@@ -834,11 +834,18 @@
     hub.dataset.on = k; hub.querySelectorAll('.sh-tab').forEach(x=>{ const o = x.dataset.k === k; x.classList.toggle('on', o); x.setAttribute('aria-selected', o); });
     if(sh && bar){ const dy = bar.getBoundingClientRect().top - y0; if(dy) sh.scrollTop += dy; }
   }
+  // 👥 « Partager » : d’abord la vue d’ensemble (compagnons · abonnés · abonnements), puis tous les réglages dans « Plus d’options »
   function shareHub(){
+    const more = shareHubMore();
+    openSheet(`<div class="sp2">${spOverview()}<details class="sp2-more"${M.shMore ? ' open' : ''} ontoggle="CV.shMoreTog(this.open)"><summary>⚙️ ${esc(MSGT('Plus d’options de partage'))}</summary>${more}</details></div>`);
+    { const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = 0; }
+    setTimeout(()=>{ folPaint(); hydrate(); }, 60);
+    M.socSeen = Date.now(); persist(); setTimeout(socPill, 50);
+  }
+  function shMoreTog(o){ M.shMore = !!o; persist(); }
+  function shareHubMore(){
     const t0 = trip(), t = t0 && !t0.demo ? t0 : null;
-    let h = `<h2>👥 Partager</h2>` + (t0 && !t0.demo && !hidden('blk:prep') ? socFil(t0) : '') + shTabsBar()
-      + `<div class="sh-tb" data-t="comp">${spComp()}</div><div class="sh-tb" data-t="ab">${spAb()}</div><div class="sh-tb" data-t="suis">${spSuis()}</div>`   // 👥 la vue d’ensemble, en haut de chaque onglet
-      + `<details class="sh-tb sh-det" data-t="suis"><summary>${esc(MSGT('Tous les voyages que je suis'))}</summary>` + followHTML() + `</details>`; setTimeout(()=>{ folPaint(); hydrate(); }, 60);
+    let h = (t0 && !t0.demo && !hidden('blk:prep') ? socFil(t0) : '') + shTabsBar() + `<div class="sh-tb" data-t="suis">` + followHTML() + `</div>`; setTimeout(()=>{ folPaint(); hydrate(); }, 60);
     if(t){
       const code = TS()[t.id], on = code && spaceObj(code), sp = on ? spaceObj(code) : null, v = (t.voyageurs||[]).filter(prof), fc = feedCode(t.id);
       const grpT = fc ? Object.keys(FT()).filter(x=>FT()[x] === fc && R[x] && !R[x].deleted) : [], gIds = new Set(grpT.map(ftId));   // carnet publié d’un coup : les abonnés voient tous ces voyages
@@ -860,9 +867,7 @@
       <div class="sh-sec sh-tb" data-t="comp">🔗 On t’a invité ?</div><div class="sh-card sh-tb" data-t="comp"><p>Un code ou un lien reçu par message : colle-le ici pour rejoindre un voyage, un carnet, ou suivre un voyage.</p>
       <button type="button" class="v-btn sec" onclick="CV.joinAny()">🔗 Rejoindre avec un code</button></div>`;
     h += socialHTML(t ? t.id : '');
-    h += `<div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`;
-    openSheet(`<div class="sh-hub" data-on="${shTabNow()}">` + h + `</div>`); { const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = 0; }
-    M.socSeen = Date.now(); persist(); setTimeout(socPill, 50);
+    return `<div class="sh-hub" data-on="${shTabNow()}">` + h + `</div>`;
   }
 
   /* ---------- 🔎 « Que voir » : lieux ajoutés à la main (ville sans hôtel, excursion…) ---------- */

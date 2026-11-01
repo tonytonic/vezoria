@@ -3160,3 +3160,55 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 
 .v-mapbtn{flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#fff;border:1px solid #eadff2;text-decoration:none;font-size:.9rem;margin-right:6px}
 .pl-none{background:#f7f3fb;border-radius:14px;padding:10px;margin:0 0 12px;display:flex;flex-direction:column;gap:6px}.pl-nl{display:flex;gap:6px;align-items:center;justify-content:flex-start;width:100%;text-align:left}
+/* 👥 Partager — comme la maquette : bandeau bleu nuit, fond crème, grandes photos rondes, boutons ronds */
+.sp2{--n:#1e4d7b;--n2:#2b5f93;--cr:#fbf2e6;margin:-6px -4px 0;background:var(--cr);border-radius:22px;overflow:hidden;color:#1f2a37}
+.sp2-top{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,#1b4775,#22578b);color:#fff;padding:18px 18px 26px}
+.sp2-top h2{margin:0;font-family:inherit;font-style:normal;font-weight:800;font-size:1.9rem;color:#fff;line-height:1.1}
+.sp2-share{border:0;background:none;color:#fff;padding:6px;cursor:pointer}
+.sp2-body{margin-top:-14px;background:var(--cr);border-radius:20px 20px 0 0;padding:14px 12px 12px}
+.sp2-blk{padding:4px 2px 14px;border-bottom:1px solid #ecdcc6;margin-bottom:12px}.sp2-blk:last-child{border-bottom:0;margin-bottom:0}
+.sp2-sec{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:var(--n);margin:4px 2px 12px}.sp2-sec b{font-size:1.12rem;color:#14263b}.sp2-sec small{font-size:.95rem;color:#3b4654}
+.sp2-sec svg{color:#14263b;flex:none}
+.sp2-avs{display:flex;align-items:center;border:0;background:none;padding:0 0 0 10px;margin:0 0 14px;cursor:pointer}
+.sp2-avs .av{margin-left:-10px;border:3px solid #fff}
+.av-xl{width:72px;height:72px;font-size:1.6rem}
+.sp2 .av-more{background:#e7e2db;color:#3b4654;font-size:1.2rem;font-weight:700}
+.sp2-pills{display:flex;gap:10px;flex-wrap:wrap}
+.sp2-pills button{flex:1;min-width:130px;border:2px solid var(--n);background:#fff;color:var(--n);border-radius:99px;padding:11px 14px;font:inherit;font-weight:700;font-size:.98rem;cursor:pointer}
+.sp2-pills button.soft{background:#dfe6f1;border-color:#dfe6f1}
+.sp2-row{display:flex;align-items:center;gap:12px;background:#fffaf3;border-radius:18px;padding:10px 12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(30,40,60,.07)}
+.sp2-row>b{flex:1;font-size:1.08rem;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp2-hid{width:60px;height:60px;border-radius:50%;background:#4b4f57;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.sp2-ic{position:relative;display:inline-flex}.sp2-ic.off{opacity:.35}
+.sp2-ic i{position:absolute;right:-6px;top:-6px;min-width:18px;height:18px;border-radius:9px;background:#fff;border:1px solid #e5e7eb;font-size:.68rem;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;color:#1f2a37}
+.sp2-dots{border:0;background:none;font-size:1.3rem;color:#6b7280;padding:2px 4px;cursor:pointer}
+.sp2-card{background:#fffaf3;border-radius:18px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(30,40,60,.07)}
+.sp2-ch{display:flex;gap:12px}.sp2-cb{flex:1;min-width:0}
+.sp2-ct{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0 8px}.sp2-ct b{font-size:1.12rem;font-weight:600}
+.sp2-fol{border:2px solid var(--n);background:#fff;color:var(--n);border-radius:99px;padding:6px 14px;font:inherit;font-weight:700;font-size:.9rem;cursor:pointer}
+.sp2-ph{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sp2-ph button{border:0;padding:0;border-radius:10px;overflow:hidden;aspect-ratio:4/3;background:#e9e1d4;cursor:pointer}
+.sp2-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.sp2-ph .sp2-ph0{grid-column:1/-1;aspect-ratio:auto;padding:10px;font:inherit;font-weight:700;color:var(--n)}
+.sp2-empty{color:#4b5563;font-size:.92rem;margin:0 2px 10px}
+.sp2-pc{display:flex;gap:14px;padding:12px 4px;border-bottom:1px solid #ecdcc6;cursor:pointer}.sp2-pc.on{background:rgba(30,77,123,.05);border-radius:14px}
+.sp2-pb{flex:1;min-width:0}.sp2-pb b{font-size:1.15rem;font-weight:600}.sp2-pb small{display:block;color:#3b4654;margin:2px 0 8px;font-size:.92rem}
+.sp2-chips{display:flex;gap:8px;flex-wrap:wrap}
+.sp2-chips button{border:1.5px solid #1e4d7b;background:#fff;color:#1e4d7b;border-radius:99px;padding:7px 12px;font:inherit;font-size:.84rem;font-weight:600;cursor:pointer}
+.sp2-chips button.sel{background:#1e4d7b;color:#fff}
+.sp2-ts{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 4px}
+.sp2-t{position:relative;flex:none;width:92px}
+.sp2-tc,.sp2-add{display:flex;flex-direction:column;align-items:center;gap:4px;width:92px;border:0;background:#fff;border-radius:12px;padding:4px 4px 6px;font:inherit;cursor:pointer;box-shadow:0 2px 6px rgba(30,40,60,.08)}
+.sp2-tc img,.sp2-tc i{width:84px;height:70px;border-radius:9px;object-fit:cover;background:#e9e1d4;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:1.6rem}
+.sp2-tc small,.sp2-add small{font-size:.74rem;color:#374151;max-width:86px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp2-add{justify-content:center;min-height:100px;background:#f1ece4}.sp2-add b{font-size:1.6rem;color:var(--n)}
+.sp2-tx{position:absolute;top:-6px;right:-4px;width:24px;height:24px;border-radius:50%;border:2px solid #fff;background:#1f2a37;color:#fff;font-size:.72rem;cursor:pointer}
+.sp2-save{display:block;width:calc(100% - 24px);margin:14px 12px 16px;border:0;border-radius:99px;background:var(--n);color:#fff;font:inherit;font-weight:700;font-size:1.05rem;padding:14px;cursor:pointer}
+.sp2-more{margin:12px 8px 8px}.sp2-more>summary{font-weight:700;color:var(--n);padding:10px 4px;cursor:pointer}
+.sp2-top{padding-top:46px}
+.sp2-pc .av-xl{width:62px;height:62px;font-size:1.4rem}
+.sp2-chips{flex-wrap:nowrap}.sp2-chips button{white-space:nowrap;padding:6px 9px;font-size:.78rem}
+.sp2-add small{white-space:normal;line-height:1.15}
+@media (max-width:350px){.sp2-chips{flex-wrap:wrap}}
+.sp2-chips{gap:5px}.sp2-chips button{padding:6px 7px;font-size:.74rem}.sp2-pc{gap:10px}
+@media (max-width:380px){.sp2-chips{flex-wrap:wrap}}

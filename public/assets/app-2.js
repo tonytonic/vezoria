@@ -492,6 +492,12 @@
     if(shStack.length){ sheetBack(); return; }
     shStack = []; closeSheet();
   }
+  // ↩️ les boutons « Fermer » / ✕ d’une fenêtre ouverte depuis une autre reviennent à celle d’avant (pas au menu principal)
+  document.addEventListener('click', e=>{
+    const b = e.target && e.target.closest && e.target.closest('#v-sheet-bg button[onclick]'); if(!b || !shStack.length) return;
+    if(String(b.getAttribute('onclick')).replace(/\s+/g, '') !== 'CV.close()') return;
+    e.preventDefault(); e.stopPropagation(); sheetBack();
+  }, true);
   function shSwipe(bg){
     let y0 = null, dy = 0, sh = null;
     bg.addEventListener('touchstart', e => {
@@ -2387,7 +2393,7 @@
       const m = it.mode || '';
       if(m==='Avion'){ const fa = aptFor(it.from), ta = aptFor(it.to), cf = Object.assign({}, c, {from:(aptAny(it.from) || {}).i || it.from, to:(aptAny(it.to) || {}).i || it.to});
         const why = [ta ? RF('Pas d’aéroport à {0} : vols vers {1} ({2}), à {3} km.', cityOf(it.to) || it.to, ta.n, ta.i, ta.km) : '', fa ? RF('Au départ : aéroport de {0} ({1}), à {2} km de {3}.', fa.n, fa.i, fa.km, cityOf(it.from) || it.from) : ''].filter(Boolean).join(' ');
-        G.push({t:why ? '✈️ ' + esc(why) : 'Comparer les vols', k:['gflights','aviasales','skyscanner','kiwi'], c:cf}); if(it.to) G.push({t:'À l’arrivée', k:['welcome','kiwitaxi','gettransfer','economy','localrent'], c:at}); }
+        G.push({t:why ? '✈️ ' + esc(why) : 'Comparer les vols', k:['skyscanner','aviasales','kayak','gflights'], c:cf}); if(it.to) G.push({t:'À l’arrivée', k:['welcome','kiwitaxi','gettransfer','economy','localrent'], c:at}); }
       else if(m==='Train') G.push({t:'Trains', k:['trainline','omio','sncf','rome2rio'], c});
       else if(m==='Bus') G.push({t:'Bus et covoiturage', k:['flixbus','blablacar','omio','rome2rio'], c});
       else if(m==='Bateau') G.push({t:'Ferries', k:['ferryhopper','directferries','rome2rio'], c});
@@ -2416,7 +2422,7 @@
     if(/assurance|rapatriement/.test(s) && !/maladie|ceam/.test(s)) return {t:'Assurance voyage', k:['chapka','heymondo','safetywing'], c};
     if(/carte bancaire|sans frais|devise|change /.test(s)) return {t:'Carte sans frais à l’étranger', k:['wise','revolut'], c};
     if(/hebergement|hotel|logement/.test(s)) return {t:'Hébergements', k:['booking','airbnb','hotelscom','hostelworld'], c};
-    if(/trajet|billet d avion|vols? |train/.test(s)) return {t:'Trajets', k:['gflights','skyscanner','trainline','omio'], c:{}};
+    if(/trajet|billet d avion|vols? |train/.test(s)) return {t:'Trajets', k:['skyscanner','trainline','omio','gflights'], c:{}};
     if(BK_SHOW.test(s)) return BK_SHOWG;
     if(/visite|creneau|musee|activite|excursion/.test(s)) return {t:'Visites et billets', k:['tiqets','gyg','viator','wegotrip','kkday'], c};
     if(/location|voiture|permis/.test(s)) return {t:'Voiture', k:['economy','autoeurope','qeeq','localrent','getrentacar'], c};
@@ -2632,7 +2638,8 @@
     if(i.cat === 'transport'){ if(!i.from || !i.to) return ''; const fl = /Avion/i.test(i.mode || ''); return `https://www.google.com/maps/dir/?api=1&origin=${q(tfPt(i.from, i.mode))}&destination=${q(tfPt(i.to, i.mode))}${fl ? '' : '&travelmode=' + tfMode(i.mode)}`; }
     if(i.cat === 'hotel'){ const w = [i.nom, i.adresse || cityOf(i.titre)].filter(Boolean).join(', '); return w ? `https://www.google.com/maps/search/?api=1&query=${q(w)}` : ''; }
     if(i.lat != null && i.lng != null) return `https://www.google.com/maps/search/?api=1&query=${(+i.lat).toFixed(5)},${(+i.lng).toFixed(5)}`;
-    const c = d && typeof dayCity === 'function' ? dayCity(d) : '', w = i.adresse || [i.q || i.titre, c].filter(Boolean).join(', ');
+    const c = d && typeof dayCity === 'function' ? dayCity(d) : '', a = String(i.adresse || '').trim(), street = /\d|\b(rue|via|piazza|piazzale|plaza|calle|avenue|av\.|bd|boulevard|street|st\.|road|rd|strasse|straße|platz|place|quai|chemin|largo|corso|viale|praça|rua)\b/i.test(a);
+    const w = street ? [i.titre, a].filter(Boolean).join(', ') : [i.q || i.titre, a && normQ(a) !== normQ(c) ? a : '', c].filter(Boolean).join(', ');   // « Galerie des Offices, Florence » (pas « Florence » seul)
     return (i.titre || i.adresse) && !/^divers$/.test(i.cat) ? `https://www.google.com/maps/search/?api=1&query=${q(w)}` : ''; };
   const tfMode = m => m === 'Voiture' ? 'driving' : m === 'Pied' ? 'walking' : 'transit';
   // 🚶 hôtel ↔ gare (ou port) : souvent à quelques minutes, à pied ou en taxi ; l’aéroport, lui, est plus loin (taxi, navette, transports)
