@@ -5840,4 +5840,13 @@ I18N.load({
 "Plus d’options de partage":"Diğer paylaşım seçenekleri",
 "Inviter quelqu’un":"Birini davet et",
 "Tu ne suis personne pour l’instant.":"Henüz kimseyi takip etmiyorsun.",
-"Voyages sélectionnés":"Seçili seyahatler"});
+"Voyages sélectionnés":"Seçili seyahatler",
+"Ce qu’il voit":"Neleri görüyor",
+"Aucun voyage pour l’instant.":"Henüz seyahat yok.",
+"Choisir les voyages qu’il voit":"Görebileceği seyahatleri seç",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · {1} yorum",
+"Renommer":"Yeniden adlandır",
+"Retirer cet abonné":"Bu takipçiyi çıkar",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"Çıkar: artık hiçbir şey görmez. Diğer takipçilerin otomatik olarak yeni bağlantıya geçer.",
+"Ajouter un compagnon":"Yol arkadaşı ekle",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"{0} yol arkadaşlarından çıkarılsın mı?\n\n{0} tüm seyahatlerinden çıkarılır ve harcamalarda sayılmaz. Tüm defterine erişimi varsa kaldırılır."});

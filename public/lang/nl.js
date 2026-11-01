@@ -2904,4 +2904,13 @@ I18N.load({
 "Plus d’options de partage":"Meer deelopties",
 "Inviter quelqu’un":"Iemand uitnodigen",
 "Tu ne suis personne pour l’instant.":"Je volgt nog niemand.",
-"Voyages sélectionnés":"Geselecteerde reizen"});
+"Voyages sélectionnés":"Geselecteerde reizen",
+"Ce qu’il voit":"Wat hij ziet",
+"Aucun voyage pour l’instant.":"Nog geen reizen.",
+"Choisir les voyages qu’il voit":"Kies de reizen die hij ziet",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · {1} reactie(s)",
+"Renommer":"Hernoemen",
+"Retirer cet abonné":"Deze volger verwijderen",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"Verwijderen: hij ziet niets meer. Je andere volgers gaan vanzelf naar een nieuwe link.",
+"Ajouter un compagnon":"Reisgenoot toevoegen",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"{0} uit je reisgenoten halen?\n\n{0} wordt uit al je reizen gehaald en telt niet meer mee in de uitgaven. Had hij toegang tot je hele reisdagboek, dan wordt die ingetrokken."});

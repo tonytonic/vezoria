@@ -5852,4 +5852,13 @@ I18N.load({
 "Plus d’options de partage":"その他の共有オプション",
 "Inviter quelqu’un":"誰かを招待",
 "Tu ne suis personne pour l’instant.":"まだ誰もフォローしていません。",
-"Voyages sélectionnés":"選んだ旅"});
+"Voyages sélectionnés":"選んだ旅",
+"Ce qu’il voit":"見られるもの",
+"Aucun voyage pour l’instant.":"まだ旅はありません。",
+"Choisir les voyages qu’il voit":"見られる旅を選ぶ",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · コメント {1} 件",
+"Renommer":"名前を変える",
+"Retirer cet abonné":"このフォロワーを外す",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"外すと何も見えなくなります。ほかのフォロワーは自動で新しいリンクに移ります。",
+"Ajouter un compagnon":"同行者を追加",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"{0}さんを同行者から外しますか？\n\nすべての旅から外され、費用にも含まれなくなります。旅ノート全体へのアクセスがあれば取り消されます。"});

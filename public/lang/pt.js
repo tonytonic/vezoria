@@ -2917,4 +2917,13 @@ I18N.load({
 "Plus d’options de partage":"Mais opções de partilha",
 "Inviter quelqu’un":"Convidar alguém",
 "Tu ne suis personne pour l’instant.":"Você ainda não segue ninguém.",
-"Voyages sélectionnés":"Viagens selecionadas"});
+"Voyages sélectionnés":"Viagens selecionadas",
+"Ce qu’il voit":"O que vê",
+"Aucun voyage pour l’instant.":"Nenhuma viagem por enquanto.",
+"Choisir les voyages qu’il voit":"Escolher as viagens que vê",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · {1} comentário(s)",
+"Renommer":"Renomear",
+"Retirer cet abonné":"Remover este seguidor",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"Remover: a pessoa não vê mais nada. Seus outros seguidores passam sozinhos para um novo link.",
+"Ajouter un compagnon":"Adicionar um companheiro",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"Remover {0} dos seus companheiros?\n\n{0} sai de todas as suas viagens e deixa de contar nas despesas. Se tinha acesso a todo o caderno, esse acesso é retirado."});

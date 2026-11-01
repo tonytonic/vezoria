@@ -5853,4 +5853,13 @@ I18N.load({
 "Plus d’options de partage":"Другие настройки доступа",
 "Inviter quelqu’un":"Пригласить кого-нибудь",
 "Tu ne suis personne pour l’instant.":"Ты пока ни на кого не подписан.",
-"Voyages sélectionnés":"Выбранные поездки"});
+"Voyages sélectionnés":"Выбранные поездки",
+"Ce qu’il voit":"Что видит",
+"Aucun voyage pour l’instant.":"Пока нет поездок.",
+"Choisir les voyages qu’il voit":"Выбрать поездки, которые он видит",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · комментариев: {1}",
+"Renommer":"Переименовать",
+"Retirer cet abonné":"Удалить подписчика",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"Удалить: он больше ничего не видит. Остальные подписчики сами перейдут на новую ссылку.",
+"Ajouter un compagnon":"Добавить спутника",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"Убрать {0} из спутников?\n\n{0} удаляется из всех твоих поездок и больше не учитывается в расходах. Если у него был доступ ко всему дневнику, он отзывается."});

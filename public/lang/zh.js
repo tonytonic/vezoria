@@ -5852,4 +5852,13 @@ I18N.load({
 "Plus d’options de partage":"更多分享选项",
 "Inviter quelqu’un":"邀请某人",
 "Tu ne suis personne pour l’instant.":"你还没有关注任何人。",
-"Voyages sélectionnés":"已选旅行"});
+"Voyages sélectionnés":"已选旅行",
+"Ce qu’il voit":"他能看到的",
+"Aucun voyage pour l’instant.":"暂无旅行。",
+"Choisir les voyages qu’il voit":"选择他能看到的旅行",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · {1} 条评论",
+"Renommer":"重命名",
+"Retirer cet abonné":"移除该关注者",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"移除后他将什么都看不到。你的其他关注者会自动换到新链接。",
+"Ajouter un compagnon":"添加旅伴",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"要把{0}从旅伴中移除吗？\n\n{0}会被移出你所有的旅行，不再计入开销。如果他能访问你的整本手账，该权限也会收回。"});

@@ -2908,4 +2908,13 @@ I18N.load({
 "Plus d’options de partage":"Weitere Teilen-Optionen",
 "Inviter quelqu’un":"Jemanden einladen",
 "Tu ne suis personne pour l’instant.":"Du folgst noch niemandem.",
-"Voyages sélectionnés":"Ausgewählte Reisen"});
+"Voyages sélectionnés":"Ausgewählte Reisen",
+"Ce qu’il voit":"Was diese Person sieht",
+"Aucun voyage pour l’instant.":"Noch keine Reisen.",
+"Choisir les voyages qu’il voit":"Reisen auswählen, die diese Person sieht",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · {1} Kommentar(e)",
+"Renommer":"Umbenennen",
+"Retirer cet abonné":"Diesen Follower entfernen",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"Entfernen: Die Person sieht nichts mehr. Deine anderen Follower wechseln automatisch zu einem neuen Link.",
+"Ajouter un compagnon":"Begleiter hinzufügen",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"{0} aus deinen Begleitern entfernen?\n\n{0} wird aus allen deinen Reisen entfernt und zählt nicht mehr bei den Ausgaben. Hatte die Person Zugriff auf dein ganzes Reisetagebuch, wird er entzogen."});

@@ -5852,4 +5852,13 @@ I18N.load({
 "Plus d’options de partage":"शेयर करने के और विकल्प",
 "Inviter quelqu’un":"किसी को बुलाओ",
 "Tu ne suis personne pour l’instant.":"तुम अभी किसी को फ़ॉलो नहीं करते।",
-"Voyages sélectionnés":"चुनी गई यात्राएँ"});
+"Voyages sélectionnés":"चुनी गई यात्राएँ",
+"Ce qu’il voit":"वह क्या देखता है",
+"Aucun voyage pour l’instant.":"अभी कोई यात्रा नहीं।",
+"Choisir les voyages qu’il voit":"चुनो वह कौन-सी यात्राएँ देखे",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · {1} टिप्पणी",
+"Renommer":"नाम बदलो",
+"Retirer cet abonné":"इस फ़ॉलोअर को हटाओ",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"हटाओ: उसे अब कुछ नहीं दिखेगा। तुम्हारे बाकी फ़ॉलोअर अपने आप नए लिंक पर चले जाएँगे।",
+"Ajouter un compagnon":"साथी जोड़ो",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"{0} को साथियों से हटाएँ?\n\n{0} तुम्हारी सारी यात्राओं से हटेगा और ख़र्चों में नहीं गिना जाएगा। अगर उसके पास पूरी नोटबुक की पहुँच थी, तो वह हटा दी जाएगी।"});

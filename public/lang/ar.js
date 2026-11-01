@@ -5853,4 +5853,13 @@ I18N.load({
 "Plus d’options de partage":"خيارات مشاركة إضافية",
 "Inviter quelqu’un":"ادعُ شخصًا",
 "Tu ne suis personne pour l’instant.":"لا تتابع أحدًا بعد.",
-"Voyages sélectionnés":"الرحلات المختارة"});
+"Voyages sélectionnés":"الرحلات المختارة",
+"Ce qu’il voit":"ما يراه",
+"Aucun voyage pour l’instant.":"لا رحلات بعد.",
+"Choisir les voyages qu’il voit":"اختر الرحلات التي يراها",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · {1} تعليق",
+"Renommer":"إعادة التسمية",
+"Retirer cet abonné":"إزالة هذا المتابع",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"إزالة: لن يرى شيئًا بعد الآن. ينتقل باقي متابعيك تلقائيًا إلى رابط جديد.",
+"Ajouter un compagnon":"أضف مرافقًا",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"هل تزيل {0} من رفاقك؟\n\nسيُزال {0} من كل رحلاتك ولن يُحتسب في المصاريف. إن كان لديه وصول إلى دفترك كله فسيُسحب."});

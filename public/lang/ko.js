@@ -5852,4 +5852,13 @@ I18N.load({
 "Plus d’options de partage":"공유 옵션 더 보기",
 "Inviter quelqu’un":"누군가 초대하기",
 "Tu ne suis personne pour l’instant.":"아직 아무도 팔로우하지 않아요.",
-"Voyages sélectionnés":"선택한 여행"});
+"Voyages sélectionnés":"선택한 여행",
+"Ce qu’il voit":"볼 수 있는 것",
+"Aucun voyage pour l’instant.":"아직 여행이 없어요.",
+"Choisir les voyages qu’il voit":"볼 수 있는 여행 고르기",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · 댓글 {1}개",
+"Renommer":"이름 바꾸기",
+"Retirer cet abonné":"이 팔로워 삭제",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"삭제하면 아무것도 볼 수 없어요. 다른 팔로워는 자동으로 새 링크로 옮겨져요.",
+"Ajouter un compagnon":"동행자 추가",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"{0}님을 동행자에서 뺄까요?\n\n모든 여행에서 빠지고 비용에도 포함되지 않아요. 노트 전체 접근 권한이 있었다면 회수돼요."});

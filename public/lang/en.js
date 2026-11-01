@@ -2898,4 +2898,13 @@ I18N.load({
 "Plus d’options de partage":"More sharing options",
 "Inviter quelqu’un":"Invite someone",
 "Tu ne suis personne pour l’instant.":"You’re not following anyone yet.",
-"Voyages sélectionnés":"Selected trips"});
+"Voyages sélectionnés":"Selected trips",
+"Ce qu’il voit":"What they see",
+"Aucun voyage pour l’instant.":"No trips yet.",
+"Choisir les voyages qu’il voit":"Choose the trips they see",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · {1} comment(s)",
+"Renommer":"Rename",
+"Retirer cet abonné":"Remove this follower",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"Remove: they no longer see anything. Your other followers move to a new link automatically.",
+"Ajouter un compagnon":"Add a companion",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"Remove {0} from your companions?\n\n{0} is removed from all your trips and no longer counts in expenses. If they had access to your whole journal, that access is removed."});

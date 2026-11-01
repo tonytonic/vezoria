@@ -2913,4 +2913,13 @@ I18N.load({
 "Plus d’options de partage":"Altre opzioni di condivisione",
 "Inviter quelqu’un":"Invita qualcuno",
 "Tu ne suis personne pour l’instant.":"Non segui ancora nessuno.",
-"Voyages sélectionnés":"Viaggi selezionati"});
+"Voyages sélectionnés":"Viaggi selezionati",
+"Ce qu’il voit":"Cosa vede",
+"Aucun voyage pour l’instant.":"Ancora nessun viaggio.",
+"Choisir les voyages qu’il voit":"Scegli i viaggi che vede",
+"{0} ❤️ · {1} commentaire(s)":"{0} ❤️ · {1} commento/i",
+"Renommer":"Rinomina",
+"Retirer cet abonné":"Rimuovi questo follower",
+"Retirer : il ne voit plus rien. Tes autres abonnés passent tout seuls sur un nouveau lien.":"Rimuovi: non vede più nulla. Gli altri follower passano da soli a un nuovo link.",
+"Ajouter un compagnon":"Aggiungi un compagno",
+"Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.":"Rimuovere {0} dai tuoi compagni?\n\n{0} esce da tutti i tuoi viaggi e non conta più nelle spese. Se aveva accesso a tutto il diario, l’accesso viene revocato."});
