@@ -15,6 +15,10 @@
  *   PURGE        '1' = effacer vraiment après le délai (sinon : on bloque les envois, on n'efface jamais)
  *   PAY_ON       '1' = abonnements ouverts dans l'appli (sinon : boutons cachés, paiement refusé)
  *   STRIPE_SECRET, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_PLUS_Y, STRIPE_PRICE_PLUS_M, STRIPE_PRICE_MAX_Y, STRIPE_PRICE_MAX_M
+ *   STRIPE_MANAGED  '0' = Stripe classique (sinon : Managed Payments, Stripe vend à ta place et gère la TVA)
+ *   PLAY_SA         clé JSON du compte de service Google (accès « Voir les données financières » + « Gérer les commandes » dans la Play Console)
+ *   PLAY_PKG        nom du paquet Android (défaut fr.vezoria.app)
+ *   PLAY_RTDN_KEY   mot de passe de l’adresse des notifications Google Play (Pub/Sub → /api/plan?play=1&k=…)
  *
  * POST /api/plan
  *   {a:'status'}              en-tête X-Carnet-Code (administrateur, compagnon « mb: » ou code d'un voyage branché)
@@ -24,7 +28,9 @@
  *   {a:'redeem', gift}        administrateur : utiliser un code cadeau
  *   {a:'checkout', plan, period} administrateur : lien de paiement Stripe (seulement si PAY_ON = 1)
  *   {a:'portal'}              administrateur : gérer / résilier son abonnement Stripe
+ *   {a:'play', token, sku}    administrateur, appli Google Play : relier un achat (ou le retrouver sur un nouveau téléphone) à ce carnet
  * POST /api/plan?stripe=1     webhook Stripe (signature vérifiée)
+ * POST /api/plan?play=1&k=…   notifications Google Play (renouvellement, résiliation, remboursement)
  */
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -51,7 +57,9 @@ export async function planTables(db) {
     db.prepare('CREATE TABLE IF NOT EXISTS gifts (gh TEXT PRIMARY KEY, plan TEXT NOT NULL, mb INTEGER NOT NULL, days INTEGER NOT NULL, uses INTEGER NOT NULL, used INTEGER NOT NULL DEFAULT 0, note TEXT, created INTEGER NOT NULL, revoked INTEGER NOT NULL DEFAULT 0)'),
     db.prepare('CREATE TABLE IF NOT EXISTS gift_uses (gh TEXT NOT NULL, space TEXT NOT NULL, at INTEGER NOT NULL, PRIMARY KEY (gh, space))'),
     db.prepare('CREATE TABLE IF NOT EXISTS photo_stats (k TEXT PRIMARY KEY, v INTEGER NOT NULL)'),
+    db.prepare('CREATE TABLE IF NOT EXISTS play_tokens (token TEXT PRIMARY KEY, space TEXT NOT NULL, sku TEXT, at INTEGER NOT NULL)'),
   ]);
+  try { await db.prepare('ALTER TABLE plans ADD COLUMN per TEXT').run(); } catch (e) {}   // 'year' | 'month' (déjà là : erreur ignorée)
   ready = true;
 }
 
@@ -68,7 +76,7 @@ export async function usedOf(env, owner) {
 export async function quotaOf(env, owner, used) {
   await planTables(env.DB);
   const now = Date.now(), free = FREE_MB(env) * MB, hard = HARD_MB(env) * MB;
-  const p = await env.DB.prepare('SELECT plan, mb, until, src FROM plans WHERE space = ?1').bind(owner).first();
+  const p = await env.DB.prepare('SELECT plan, mb, until, src, per FROM plans WHERE space = ?1').bind(owner).first();
   const active = !!(p && (!p.until || p.until > now));
   let quota = active ? (p.mb < 0 ? hard : Math.max(free, p.mb * MB)) : free;
   quota = Math.min(quota, hard);
@@ -82,7 +90,7 @@ export async function quotaOf(env, owner, used) {
   } else if (used <= quota && overSince) {
     overSince = 0; await env.DB.prepare('DELETE FROM quota_state WHERE space = ?1').bind(owner).run();
   }
-  return { used, quota, free, plan: active ? p.plan : (p ? p.plan : ''), active, until: p ? p.until : 0, src: p ? p.src : '', overSince, graceEnd: overSince ? overSince + GRACE(env) : 0 };
+  return { used, quota, free, plan: active ? p.plan : (p ? p.plan : ''), active, until: p ? p.until : 0, src: p ? p.src : '', per: p ? p.per || '' : '', overSince, graceEnd: overSince ? overSince + GRACE(env) : 0 };
 }
 // vérification avant un envoi de photo (photo.js) : null = OK, sinon la réponse d'erreur à renvoyer
 export async function uploadCheck(env, space, delta) {
@@ -138,7 +146,7 @@ const giftNorm = g => String(g || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 // ── 💳 Stripe (inactif tant que PAY_ON ≠ 1 et que les clés ne sont pas posées) ──
 async function stripe(env, path, params) {
   const body = new URLSearchParams(); Object.entries(params || {}).forEach(([k, v]) => { if (v != null) body.append(k, String(v)); });
-  const r = await fetch('https://api.stripe.com/v1/' + path, { method: 'POST', headers: { Authorization: 'Bearer ' + env.STRIPE_SECRET, 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+  const r = await fetch('https://api.stripe.com/v1/' + path, { method: 'POST', headers: { Authorization: 'Bearer ' + env.STRIPE_SECRET, 'Content-Type': 'application/x-www-form-urlencoded', 'Stripe-Version': env.STRIPE_VERSION || '2025-03-31.basil' }, body });
   const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error((j.error && j.error.message) || ('Stripe ' + r.status)); return j;
 }
 async function hmacHex(secret, msg) {
@@ -158,11 +166,12 @@ async function stripeHook(request, env) {
   let ev = {}; try { ev = JSON.parse(raw); } catch (e) { return json({ error: 'illisible' }, 400); }
   await planTables(env.DB);
   const o = (ev.data && ev.data.object) || {}, now = Date.now();
-  const setPlan = (space, plan, until, ref, cust) => env.DB.prepare('INSERT INTO plans (space, plan, mb, until, src, ref, cust, at) VALUES (?1, ?2, ?3, ?4, \'stripe\', ?5, ?6, ?7) ON CONFLICT (space) DO UPDATE SET plan = ?2, mb = ?3, until = ?4, src = \'stripe\', ref = ?5, cust = ?6, at = ?7')
-    .bind(space, plan, PLAN_MB(env, plan), until, ref || '', cust || '', now).run();
+  const perOf = x => { const it = x && x.items && x.items.data && x.items.data[0]; const iv = it && it.price && it.price.recurring && it.price.recurring.interval; return iv === 'month' ? 'month' : iv === 'year' ? 'year' : ''; };
+  const setPlan = (space, plan, until, ref, cust, per) => env.DB.prepare('INSERT INTO plans (space, plan, mb, until, src, ref, cust, at, per) VALUES (?1, ?2, ?3, ?4, \'stripe\', ?5, ?6, ?7, ?8) ON CONFLICT (space) DO UPDATE SET plan = ?2, mb = ?3, until = ?4, src = \'stripe\', ref = ?5, cust = ?6, at = ?7, per = COALESCE(NULLIF(?8, \'\'), plans.per)')
+    .bind(space, plan, PLAN_MB(env, plan), until, ref || '', cust || '', now, per || '').run();
   if (ev.type === 'checkout.session.completed' && o.mode === 'subscription') {
     const space = (o.metadata && o.metadata.space) || o.client_reference_id || '', plan = (o.metadata && o.metadata.plan) || 'plus';
-    if (/^[0-9a-f]{64}$/.test(space)) await setPlan(space, plan, now + ((o.metadata && o.metadata.period) === 'month' ? 35 : 370) * DAY, o.subscription, o.customer);
+    if (/^[0-9a-f]{64}$/.test(space)) await setPlan(space, plan, now + ((o.metadata && o.metadata.period) === 'month' ? 35 : 370) * DAY, o.subscription, o.customer, (o.metadata && o.metadata.period) === 'month' ? 'month' : 'year');
   } else if (ev.type === 'customer.subscription.updated' || ev.type === 'customer.subscription.created' || ev.type === 'customer.subscription.deleted') {
     const row = await env.DB.prepare('SELECT space, plan FROM plans WHERE ref = ?1').bind(o.id || '').first();
     const space = row ? row.space : ((o.metadata && o.metadata.space) || '');
@@ -170,16 +179,99 @@ async function stripeHook(request, env) {
       const plan = (o.metadata && o.metadata.plan) || (row && row.plan) || 'plus';
       const end = (o.current_period_end || (o.items && o.items.data && o.items.data[0] && o.items.data[0].current_period_end) || 0) * 1000;
       const until = ev.type === 'customer.subscription.deleted' || o.status === 'canceled' ? Math.min(end || now, now) : (end || now + 35 * DAY) + 3 * DAY;   // 3 jours de marge pour un paiement en retard
-      await setPlan(space, plan, until, o.id, o.customer);
+      await setPlan(space, plan, until, o.id, o.customer, perOf(o));
     }
   }
   return json({ ok: true });
+}
+
+
+// ── 🤖 Google Play (appli Android) : achat dans l’appli, vérifié ici auprès de Google, relié au carnet ──
+// 4 abonnements dans la Play Console, chacun avec UNE offre de base « rétrocompatible » :
+const PLAY_SKU = { vezoria_plus_an: ['plus', 'year'], vezoria_plus_mois: ['plus', 'month'], vezoria_max_an: ['max', 'year'], vezoria_max_mois: ['max', 'month'] };
+const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const b64uStr = str => b64u(new TextEncoder().encode(str));
+let PLAY_TOK = { t: '', exp: 0 };
+async function playAuth(env) {
+  if (PLAY_TOK.t && PLAY_TOK.exp > Date.now() + 60e3) return PLAY_TOK.t;
+  const sa = JSON.parse(env.PLAY_SA), now = Math.floor(Date.now() / 1000);
+  const head = b64uStr(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const claim = b64uStr(JSON.stringify({ iss: sa.client_email, scope: 'https://www.googleapis.com/auth/androidpublisher', aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 }));
+  const pem = String(sa.private_key).replace(/-----[^-]+-----/g, '').replace(/\s+/g, '');
+  const der = Uint8Array.from(atob(pem), c => c.charCodeAt(0));
+  const key = await crypto.subtle.importKey('pkcs8', der, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, new TextEncoder().encode(head + '.' + claim));
+  const r = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: head + '.' + claim + '.' + b64u(sig) }) });
+  const j = await r.json().catch(() => ({})); if (!r.ok || !j.access_token) throw new Error('Google : connexion refusée (' + r.status + ')');
+  PLAY_TOK = { t: j.access_token, exp: Date.now() + (j.expires_in || 3600) * 1000 }; return PLAY_TOK.t;
+}
+const playPkg = env => env.PLAY_PKG || 'fr.vezoria.app';
+async function playGet(env, token) {
+  const r = await fetch(`https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${playPkg(env)}/purchases/subscriptionsv2/tokens/${encodeURIComponent(token)}`,
+    { headers: { Authorization: 'Bearer ' + await playAuth(env) } });
+  const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error('Google : achat introuvable (' + r.status + ')'); return j;
+}
+async function playAck(env, sku, token) {
+  try { await fetch(`https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${playPkg(env)}/purchases/subscriptions/${sku}/tokens/${encodeURIComponent(token)}:acknowledge`,
+    { method: 'POST', headers: { Authorization: 'Bearer ' + await playAuth(env), 'Content-Type': 'application/json' }, body: '{}' }); } catch (e) {}
+}
+// lit l’achat chez Google et met la formule du carnet à jour ; space = carnet qui le réclame (vide : notification Google)
+async function playApply(env, token, space) {
+  const g = await playGet(env, token), now = Date.now();
+  const li = (g.lineItems || [])[0] || {}, sku = li.productId || '', map = PLAY_SKU[sku];
+  if (!map) return { error: 'Produit Google Play inconnu : ' + sku, status: 400 };
+  // à qui appartient cet achat : le carnet qui l’a relié le premier (ou celui de l’achat qu’il remplace : changement de formule, réabonnement)
+  let row = await env.DB.prepare('SELECT space FROM play_tokens WHERE token = ?1').bind(token).first();
+  if (!row && g.linkedPurchaseToken) {
+    const old = await env.DB.prepare('SELECT space FROM play_tokens WHERE token = ?1').bind(g.linkedPurchaseToken).first();
+    if (old) { row = old; await env.DB.prepare('INSERT OR IGNORE INTO play_tokens (token, space, sku, at) VALUES (?1, ?2, ?3, ?4)').bind(token, old.space, sku, now).run(); }
+  }
+  if (!row) {
+    if (!space) return { error: 'Achat pas encore relié à un carnet', status: 404 };
+    await env.DB.prepare('INSERT OR IGNORE INTO play_tokens (token, space, sku, at) VALUES (?1, ?2, ?3, ?4)').bind(token, space, sku, now).run();
+    row = { space };
+  } else if (space && row.space !== space) {
+    return { error: 'Cet abonnement Google Play est déjà relié à un autre carnet. Ouvre ce carnet-là avec son code administrateur. — This Google Play subscription is linked to another notebook.', status: 409, other: true };
+  }
+  const st = g.subscriptionState || '', exp = Date.parse(li.expiryTime || '') || 0;
+  const live = ['SUBSCRIPTION_STATE_ACTIVE', 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD', 'SUBSCRIPTION_STATE_CANCELED'].includes(st) && exp > now;
+  const until = live ? exp + (st === 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD' ? 3 * DAY : 0) : Math.min(exp || now, now);
+  // un abonnement Stripe en cours plus grand reste en place (rare : payé deux fois)
+  const cur = await env.DB.prepare('SELECT src, ref, mb, until FROM plans WHERE space = ?1').bind(row.space).first();
+  const curOn = cur && (!cur.until || cur.until > now) && cur.ref !== token;
+  const keepCur = curOn && cur.src === 'stripe' && (cur.mb < 0 || cur.mb >= PLAN_MB(env, map[0]));
+  if (!keepCur && (live || (cur && cur.ref === token)))
+    await env.DB.prepare('INSERT INTO plans (space, plan, mb, until, src, ref, cust, at, per) VALUES (?1, ?2, ?3, ?4, \'play\', ?5, ?6, ?7, ?8) ON CONFLICT (space) DO UPDATE SET plan = ?2, mb = ?3, until = ?4, src = \'play\', ref = ?5, cust = ?6, at = ?7, per = ?8')
+      .bind(row.space, map[0], PLAN_MB(env, map[0]), until, token, sku, now, map[1]).run();
+  if (live && g.acknowledgementState === 'ACKNOWLEDGEMENT_STATE_PENDING') await playAck(env, sku, token);   // sinon Google rembourse au bout de 3 jours
+  return { ok: true, plan: map[0], per: map[1], until, live, dup: !!keepCur };
+}
+async function playHook(request, env) {
+  const url = new URL(request.url);
+  if (!env.PLAY_SA || !env.PLAY_RTDN_KEY || url.searchParams.get('k') !== env.PLAY_RTDN_KEY) return json({ error: 'refusé' }, 403);
+  await planTables(env.DB);
+  let m = {}; try { const b = await request.json(); m = JSON.parse(atob((b.message && b.message.data) || '')); } catch (e) { return json({ ok: true }); }   // message illisible : on l’accuse quand même (sinon Google le renvoie sans fin)
+  const n = m.subscriptionNotification;
+  if (n && n.purchaseToken) { try { await playApply(env, n.purchaseToken, ''); } catch (e) { return json({ error: String(e.message || e) }, 500); } }   // 500 : Google réessaiera
+  return json({ ok: true });
+}
+// filet de sécurité si une notification se perd : un abonnement Google arrivé à échéance est relu chez Google (au plus 1 fois / 6 h)
+async function playRefresh(env, owner) {
+  if (!env.PLAY_SA) return false;
+  try {
+    const p = await env.DB.prepare('SELECT src, ref, until, at FROM plans WHERE space = ?1').bind(owner).first(), now = Date.now();
+    if (!p || p.src !== 'play' || !p.ref || p.until > now + DAY || now - p.at < 6 * 3600e3 || now - p.until > 60 * DAY) return false;
+    await env.DB.prepare('UPDATE plans SET at = ?2 WHERE space = ?1').bind(owner, now).run();
+    await playApply(env, p.ref, ''); return true;
+  } catch (e) { return false; }
 }
 
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 export async function onRequestPost({ request, env }) {
   if (!env.DB) return json({ error: 'Base D1 non liée (DB)' }, 500);
   if (new URL(request.url).searchParams.get('stripe') === '1') return stripeHook(request, env);
+  if (new URL(request.url).searchParams.get('play') === '1') return playHook(request, env);
   await planTables(env.DB);
   let b = {}; try { b = await request.json(); } catch (e) { return json({ error: 'Requête illisible' }, 400); }
   const a = b.a, w = await who(request, env); if (w.err) return w.err;
@@ -188,9 +280,10 @@ export async function onRequestPost({ request, env }) {
   if (a === 'status') {
     if (!rate(request, 'ps', 600)) return json({ error: 'Trop de demandes' }, 429);
     const owner = await billOf(env, w.space); let q = await quotaOf(env, owner);
+    if (q.src === 'play' && await playRefresh(env, owner)) q = await quotaOf(env, owner);
     const gone = !w.member && owner === w.space ? await purge(env, owner, q) : 0;
     if (gone) q = await quotaOf(env, owner, await usedOf(env, owner));
-    return json({ used: q.used, quota: q.quota, free: q.free, plan: q.plan, active: q.active, until: q.until, src: q.src, overSince: q.overSince, graceEnd: env.PURGE === '1' ? q.graceEnd : 0,   // sans PURGE : on n’efface jamais, donc pas de date limite
+    return json({ used: q.used, quota: q.quota, free: q.free, plan: q.plan, active: q.active, until: q.until, src: q.src, per: q.per, play: !!env.PLAY_SA, overSince: q.overSince, graceEnd: env.PURGE === '1' ? q.graceEnd : 0,   // sans PURGE : on n’efface jamais, donc pas de date limite
       branch: owner !== w.space, owner: owner === w.space && !w.member, pay, purge: env.PURGE === '1', purged: gone,
       plans: { plus: PLAN_MB(env, 'plus') * MB, max: PLAN_MB(env, 'max') * MB } });
   }
@@ -246,6 +339,13 @@ export async function onRequestPost({ request, env }) {
     const q = await quotaOf(env, w.space);
     return json({ ok: true, plan: row.plan, until, quota: q.quota, used: q.used });
   }
+  if (a === 'play') {
+    if (!pay || !env.PLAY_SA) return json({ error: 'Les abonnements ne sont pas encore ouverts — Subscriptions are not open yet', closed: true }, 503);
+    if (!rate(request, 'pp', 60)) return json({ error: 'Trop de demandes' }, 429);
+    const token = String(b.token || '').slice(0, 600); if (token.length < 20) return json({ error: 'Achat Google Play manquant' }, 400);
+    try { const r = await playApply(env, token, w.space); return json(r, r.status || 200); }
+    catch (e) { return json({ error: String(e.message || e) }, 502); }
+  }
   if (a === 'checkout' || a === 'portal') {
     if (!pay || !env.STRIPE_SECRET) return json({ error: 'Les abonnements ne sont pas encore ouverts — Subscriptions are not open yet', closed: true }, 503);
     const origin = new URL(request.url).origin, back = String(b.back || '').split('#')[0];   // retour toujours vers l’appli elle-même (vezoria.pages.dev), jamais ailleurs
@@ -257,12 +357,16 @@ export async function onRequestPost({ request, env }) {
       return json({ url: s.url });
     }
     const plan = b.plan === 'max' ? 'max' : 'plus', period = b.period === 'month' ? 'month' : 'year';
+    const cur = await env.DB.prepare('SELECT src, until FROM plans WHERE space = ?1').bind(w.space).first();
+    if (cur && (cur.src === 'stripe' || cur.src === 'play') && cur.until > Date.now())   // déjà abonné : on change de formule depuis là où on a payé
+      return json({ error: cur.src === 'play' ? 'Ce carnet a déjà un abonnement Google Play : change-le depuis Google Play. — Already subscribed on Google Play.' : 'Ce carnet a déjà un abonnement : utilise « Gérer mon abonnement ». — Already subscribed.', already: cur.src }, 409);
     const price = env['STRIPE_PRICE_' + plan.toUpperCase() + '_' + (period === 'month' ? 'M' : 'Y')];
     if (!price) return json({ error: 'Formule pas encore configurée' }, 503);
     const s = await stripe(env, 'checkout/sessions', { mode: 'subscription', 'line_items[0][price]': price, 'line_items[0][quantity]': 1,
       client_reference_id: w.space, 'metadata[space]': w.space, 'metadata[plan]': plan, 'metadata[period]': period,
       'subscription_data[metadata][space]': w.space, 'subscription_data[metadata][plan]': plan,
-      success_url: base + '#abonnement=ok', cancel_url: base + '#abonnement=annule', allow_promotion_codes: 'true' });
+      success_url: base + '#abonnement=ok', cancel_url: base + '#abonnement=annule', allow_promotion_codes: 'true',
+      'managed_payments[enabled]': env.STRIPE_MANAGED === '0' ? null : 'true' });   // Stripe vend à ta place : TVA, factures, litiges
     return json({ url: s.url });
   }
   return json({ error: 'action inconnue' }, 400);
