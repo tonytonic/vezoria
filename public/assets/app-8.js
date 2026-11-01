@@ -1091,6 +1091,11 @@
     openSheet(`<h2>🙈 ${esc(RF('Cacher « {0} » à quelqu’un', t.titre || ''))}</h2>
       <div class="v-sum-small" style="margin-bottom:8px">${esc(MSGT('Écris le prénom de la personne, même si elle ne s’est pas encore abonnée : si elle s’abonne sous ce prénom, ce voyage ne lui est jamais montré. Déjà abonnée : il disparaît de son appli.'))}</div>
       ${L.map(n=>`<div class="cv-prow" style="cursor:default"><span data-notr>🙈 ${esc(n)}</span><button type="button" class="v-btn sec" style="width:auto;margin:0;padding:4px 10px" onclick="CV.preHideDel('${ja(tid)}','${ja(n)}')" aria-label="${esc(MSGT('Retirer'))}">✕</button></div>`).join('')}
+      ${(()=>{ // 👥 les prénoms déjà connus : tes abonnés et tes compagnons, à toucher plutôt qu’à retaper
+        let fw = []; try { const ids = new Set(Object.keys(FT()).filter(x=>R[x] && !R[x].deleted).map(ftId)); const F = fwUniq(list('follower', x=>ids.has(x.trip) && !isBlk(x) && !String(x.id).endsWith(':' + devId()))), N = fwNames(F); fw = F.map(x=>String(N[x.id] || x.who || '').replace(/^🧳\s*/, '').trim()); } catch(e){}
+        const comp = list('profile', p=>p.id !== M.me && !p.deleted).map(p=>pname(p.id));
+        const seen = new Set(L.map(phName)), names = [...fw, ...comp].filter(n=>{ const k = phName(n); if(!n || !k || seen.has(k)) return false; seen.add(k); return true; });
+        return names.length ? `<div class="v-sum-small" style="margin-top:10px">${esc(MSGT('Toucher un prénom :'))}</div><div class="sp2-pills" style="flex-wrap:wrap;margin-top:6px">${names.map(n=>`<button type="button" onclick="document.getElementById('ph-n').value=${esc(JSON.stringify(n))};CV.preHideAdd('${ja(tid)}')"><span data-notr>🙈 ${esc(n)}</span></button>`).join('')}</div>` : ''; })()}
       <div class="cv-row" style="margin-top:8px;gap:6px"><input class="v-in" id="ph-n" placeholder="${esc(MSGT('Prénom'))}" maxlength="40" autocomplete="off"><button type="button" class="v-btn" style="width:auto;margin:0" onclick="CV.preHideAdd('${ja(tid)}')">＋ ${esc(MSGT('Cacher'))}</button></div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`);
   }
@@ -1462,7 +1467,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-01j'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-01k'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

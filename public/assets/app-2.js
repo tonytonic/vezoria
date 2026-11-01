@@ -2346,6 +2346,7 @@
   function fpShow(el, r){
     const g = el.closest('.bk-g'), a = g && g.querySelector('a[href*="aviasales"]');
     if(!r || !r.ok){ el.remove(); return; }
+    if(Array.isArray(r.list)) return fpMulti(el, r, a);
     const url = affWrap('aviasales', r.found ? r.link : r.search); if(a) a.href = url;
     if(!r.found){ el.innerHTML = `✈️ ${RF('Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.', esc(r.on), esc(r.dn))}`; return; }
     const dd = r.at ? new Date(r.at) : null, day = dd && !isNaN(dd) ? dd.toLocaleDateString(NL(), {day:'numeric', month:'short'}) : '';
@@ -2355,6 +2356,23 @@
       <a href="${esc(url)}" target="_blank"${bookRel('aviasales')} onclick="event.stopPropagation()">${MSGT('Voir ce vol')} ›</a>
       <small>${MSGT('Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.')}</small>`;
   }
+  // ✈️ plusieurs aéroports : d’où décoller vraiment (le plus proche n’a pas toujours de vol vers la destination)
+  function fpMulti(el, r, a){
+    const cur = x => (+x).toLocaleString(NL(), {style:'currency', currency:'EUR', maximumFractionDigits:0});
+    const stp = n => n === 0 ? MSGT('direct') : n === 1 ? MSGT('1 escale') : n > 1 ? RF('{0} escales', n) : '';
+    const day = x => { const dd = x.at ? new Date(x.at) : null; return dd && !isNaN(dd) ? dd.toLocaleDateString(NL(), {day:'numeric', month:'short'}) : ''; };
+    if(!r.list.length){
+      el.innerHTML = `✈️ ${MSGT('Aucun vol récent connu depuis les aéroports autour de toi pour ce mois-ci.')}${(r.none || []).length ? `<div class="fpm-n">${MSGT('Regarde quand même depuis :')} ${r.none.map(x=>`<a href="${esc(affWrap('aviasales', x.search))}" target="_blank"${bookRel('aviasales')} onclick="event.stopPropagation()">${esc(x.on)} (${esc(x.o)}) · ${x.okm} km</a>`).join(' · ')}</div>` : ''}`;
+      return;
+    }
+    if(a) a.href = affWrap('aviasales', r.list[0].link || r.list[0].search);
+    el.innerHTML = `<style>.fpm{display:flex;flex-direction:column;gap:6px;margin-top:6px}.fpm a{white-space:normal;margin-left:0;font-weight:500;display:flex;gap:8px;align-items:center;text-decoration:none;color:inherit;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:7px 10px}.fpm a>.fpt{flex:1;min-width:0}.fpm a>b{white-space:nowrap}.fpm a small{display:block;opacity:.75}.fpm .fpd{font-weight:700;color:#14804a}.fpm-n{margin-top:6px;font-size:12px}.fpm-n a{text-decoration:underline}</style>
+      ✈️ <b>${MSGT('D’où décoller ?')}</b> <small>${MSGT('Les aéroports autour de toi qui ont un vol vers ta destination.')}</small>
+      <div class="fpm">${r.list.map(x=>`<a href="${esc(affWrap('aviasales', x.link || x.search))}" target="_blank"${bookRel('aviasales')} onclick="event.stopPropagation()"><span class="fpt"><b data-notr>${esc(x.on)} (${esc(x.o)})</b> → <span data-notr>${esc(x.dn)} (${esc(x.d)})</span>
+        <small>${[x.okm ? RF('à {0} km', x.okm) : '', `<span class="${x.transfers === 0 ? 'fpd' : ''}">${stp(x.transfers)}</span>`, day(x) ? (x.exact ? day(x) : RF('le {0}, même mois', day(x))) : ''].filter(Boolean).join(' · ')}</small></span><b>${RF('dès {0}', cur(x.price))}</b> ›</a>`).join('')}</div>
+      ${(r.none || []).length ? `<div class="fpm-n">${MSGT('Sans vol connu ce mois-ci :')} ${r.none.map(x=>`<a href="${esc(affWrap('aviasales', x.search))}" target="_blank"${bookRel('aviasales')} onclick="event.stopPropagation()">${esc(x.on)} (${esc(x.o)})</a>`).join(', ')}</div>` : ''}
+      <small>${MSGT('Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.')}</small>`;
+  }
   async function fpFill(){
     for(const el of document.querySelectorAll('.bk-fp:not([data-go])')){
       if(!el.isConnected) continue; el.dataset.go = 1; const f = el.dataset.f, t = el.dataset.t, d = el.dataset.d, key = normQ(f) + '|' + normQ(t) + '|' + d;
@@ -2362,7 +2380,9 @@
       try {
         const [a, b] = await Promise.all([cityInfo(f), cityInfo(t)]);
         if(!a || !b){ el.remove(); continue; }
-        const r = await (await withTimeout(fetch(`/api/tp?op=flight&olat=${a.lat}&olng=${a.lng}&dlat=${b.lat}&dlng=${b.lng}&date=${d}`), 12000)).json();
+        // ✈️ plusieurs aéroports autour du départ et de l’arrivée, avec les lignes qu’Aviasales connaît (directes d’abord)
+        let r = null; try { r = await (await withTimeout(fetch(`/api/tp?op=flights&olat=${a.lat}&olng=${a.lng}&dlat=${b.lat}&dlng=${b.lng}&date=${d}`), 15000)).json(); } catch(e){}
+        if(!(r && r.ok && Array.isArray(r.list))) r = await (await withTimeout(fetch(`/api/tp?op=flight&olat=${a.lat}&olng=${a.lng}&dlat=${b.lat}&dlng=${b.lng}&date=${d}`), 12000)).json();   // serveur pas encore à jour : l’ancien prix seul
         if(r && r.ok) FP[key] = r;
         document.querySelectorAll('.bk-fp').forEach(x=>{ if(x.dataset.f === f && x.dataset.t === t && x.dataset.d === d) fpShow(x, r); });
       } catch(e){ el.remove(); }
