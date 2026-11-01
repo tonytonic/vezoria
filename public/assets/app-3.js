@@ -363,7 +363,7 @@
   const potOn = () => M.pot !== false;   // 🫙 pot commun : pour tout le monde par défaut (rangement automatique des anciennes photos)
   const b64u = u8 => b64(u8).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const shk = {};
-  async function spaceHash(code){ if(!code) return ''; if(shk[code]) return shk[code]; return shk[code] = hex(await crypto.subtle.digest('SHA-256', te.encode('carnet-voyage:' + await authCode(code)))); }
+  async function spaceHash(code){ if(!code) return ''; if(code === M.sync.code && M.sync.sh) return M.sync.sh; if(shk[code]) return shk[code]; return shk[code] = hex(await crypto.subtle.digest('SHA-256', te.encode('carnet-voyage:' + await authCode(code)))); }
   const pkOf = id => { const r = R['pk:' + String(id).replace(/\.t$/, '')]; return r && !r.deleted && r.s && r.k ? r : null; };
   const phRef = id => { const b = String(id).replace(/\.t$/, ''); return pkOf(b) || (()=>{ const f = R['fp:' + b]; return f && !f.deleted && f.s && f.k ? f : null; })(); };
   const capOf = async rk => hex(await crypto.subtle.digest('SHA-256', te.encode('vz-cap:' + rk)));

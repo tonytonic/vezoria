@@ -532,12 +532,13 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(res.ok && orig.length) try { const big = Array.isArray(j.skipped) && j.skipped.length ? syBig(j.skipped, orig, changes) : new Set();
       if(M.syncBig) orig.forEach(r=>{ if(r && M.syncBig[r.id] && !big.has(r.id)) delete M.syncBig[r.id]; }); } catch(e){}   // repartie (raccourcie) : plus signalée
     if(res.status === 429){ M.syncPause = Date.now() + Math.min(3600, Math.max(60, +j.retry || 600)) * 1000; persist(); }
-    if(!res.ok){ const er = new Error(srvMsg(j.error) || ('Erreur serveur ' + res.status)); er.st = res.status; er.revoked = !!j.revoked; throw er; }   // revoked : accès compagnon retiré
+    if(!res.ok){ const er = new Error(srvMsg(j.error) || ('Erreur serveur ' + res.status)); er.st = res.status; er.revoked = !!j.revoked; er.rotated = !!j.rotated; throw er; }   // revoked : accès compagnon retiré · rotated : code administrateur remplacé
     if(!Array.isArray(j.records)) throw new Error('Réponse inattendue du serveur');
     { const env0 = j.records; let recs = E2E ? await Promise.all(env0.map(x=>openRec(x, code))) : env0.slice();
       // ✍️ « _au » : écrit par l’auteur du fil — vient UNIQUEMENT de la marque du serveur (une fiche qui le contient d’elle-même le perd)
       recs = await admFilter(j, env0, recs, code); recs = recs.map((r, i)=>{ if(r && typeof r === 'object'){ delete r._a; delete r._au; if(j.adm && env0[i] && env0[i]._a) r._au = 1; } return r; }); j.records = recs.filter(Boolean); }
     if(code) admAck(j, code);
+    if(j.sh && (!code || code === M.sync.code) && /^[0-9a-f]{64}$/.test(j.sh) && M.sync.sh !== j.sh){ M.sync.sh = j.sh; persist(); }   // 🔑 code changé : place d’origine du carnet (photos du pot commun)
     if(code) try { j.records.forEach(r=>{ if(!r || r.type !== 'feedtrip') return; const k = r.id + '|' + code;   // 🔗 même voyage suivi par 2 liens : l’âge de chacun (voir ftPick)
       if(r.deleted){ if(M.ftAt) delete M.ftAt[k]; } else if(!FT()[String(r.id).slice(3)]) (M.ftAt || (M.ftAt = {}))[k] = (r.updatedAt || 0) + (r.link === code ? 1e12 : 0); }); } catch(e){}   // link : le lien où l’auteur publie aujourd’hui
     try { if(orig.length) pushNote(orig, code || M.sync.code); } catch(e){}
@@ -818,6 +819,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500); setTimeout(()=>{ potGc().catch(()=>{}); }, 4000); setTimeout(()=>{ pubMapSync().catch(()=>{}); }, 6000); setTimeout(()=>{ potAuto().catch(()=>{}); }, 20000);
     } catch(e){
       M.sync.err = e.message || String(e); M.sync.net = !!e.net; if(!M.sync.errSince) M.sync.errSince = Date.now();
+      if(e.rotated) setTimeout(()=>{ try { rotLost(); } catch(x){} }, 600);   // 🔑 le code de ce carnet a été changé sur un autre appareil
       if(showC) cryptHide();
       if(manual) alert(e.net ? '📴 ' + M.sync.err : MSGT('Synchro impossible :') + ' ' + M.sync.err);
     }
