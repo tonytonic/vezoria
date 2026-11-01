@@ -1,4 +1,12 @@
 I18N.load({
+/* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
+"D’où décoller ?":"Where to fly from?",
+"Les aéroports autour de toi qui ont un vol vers ta destination.":"Airports near you with a flight to your destination.",
+"Sans vol connu ce mois-ci :":"No known flight this month:",
+"Aucun vol récent connu depuis les aéroports autour de toi pour ce mois-ci.":"No recent flight known from the airports near you this month.",
+"Regarde quand même depuis :":"Still have a look from:",
+"Toucher un prénom :":"Tap a name:",
+"à {0} km":"{0} km away",
 /* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
 "Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"Unticked: shown to no one. 🙈: hide it from someone in particular.",
 "vu par tes abonnés":"seen by your followers",

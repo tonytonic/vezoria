@@ -1,4 +1,12 @@
 I18N.load({
+/* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
+"D’où décoller ?":"从哪里起飞？",
+"Les aéroports autour de toi qui ont un vol vers ta destination.":"你附近有航班飞往目的地的机场。",
+"Sans vol connu ce mois-ci :":"本月暂无已知航班：",
+"Aucun vol récent connu depuis les aéroports autour de toi pour ce mois-ci.":"本月附近机场暂无近期已知航班。",
+"Regarde quand même depuis :":"仍可从这里查看：",
+"Toucher un prénom :":"点一个名字：",
+"à {0} km":"距离 {0} 公里",
 /* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
 "Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"未勾选：不给任何人看。🙈：对某个人隐藏。",
 "vu par tes abonnés":"关注者可见",

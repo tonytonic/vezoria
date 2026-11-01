@@ -1,4 +1,12 @@
 I18N.load({
+/* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
+"D’où décoller ?":"Nereden kalkmalı?",
+"Les aéroports autour de toi qui ont un vol vers ta destination.":"Yakınındaki, varış noktana uçuşu olan havalimanları.",
+"Sans vol connu ce mois-ci :":"Bu ay bilinen uçuş yok:",
+"Aucun vol récent connu depuis les aéroports autour de toi pour ce mois-ci.":"Bu ay yakınındaki havalimanlarından bilinen yakın tarihli uçuş yok.",
+"Regarde quand même depuis :":"Yine de şuradan bak:",
+"Toucher un prénom :":"Bir isme dokun:",
+"à {0} km":"{0} km uzakta",
 /* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
 "Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"İşaretsiz: kimseye gösterilmez. 🙈: belirli birinden gizle.",
 "vu par tes abonnés":"takipçilerin görüyor",

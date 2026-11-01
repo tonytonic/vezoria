@@ -1,4 +1,12 @@
 I18N.load({
+/* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
+"D’où décoller ?":"कहाँ से उड़ान लें?",
+"Les aéroports autour de toi qui ont un vol vers ta destination.":"तुम्हारे आसपास के हवाई अड्डे जहाँ से तुम्हारी मंज़िल की उड़ान है।",
+"Sans vol connu ce mois-ci :":"इस महीने कोई ज्ञात उड़ान नहीं:",
+"Aucun vol récent connu depuis les aéroports autour de toi pour ce mois-ci.":"इस महीने आसपास के हवाई अड्डों से कोई हाल की उड़ान ज्ञात नहीं।",
+"Regarde quand même depuis :":"फिर भी यहाँ से देखो:",
+"Toucher un prénom :":"किसी नाम पर टैप करो:",
+"à {0} km":"{0} किमी दूर",
 /* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
 "Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"बिना टिक: किसी को नहीं दिखेगा। 🙈: किसी ख़ास व्यक्ति से छिपाओ।",
 "vu par tes abonnés":"तुम्हारे फ़ॉलोअर देखते हैं",

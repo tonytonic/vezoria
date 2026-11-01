@@ -1,4 +1,12 @@
 I18N.load({
+/* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
+"D’où décoller ?":"어디서 출발할까요?",
+"Les aéroports autour de toi qui ont un vol vers ta destination.":"목적지로 가는 항공편이 있는 주변 공항.",
+"Sans vol connu ce mois-ci :":"이번 달 알려진 항공편 없음:",
+"Aucun vol récent connu depuis les aéroports autour de toi pour ce mois-ci.":"이번 달 주변 공항에서 알려진 최근 항공편이 없어요.",
+"Regarde quand même depuis :":"그래도 여기서 찾아보세요:",
+"Toucher un prénom :":"이름을 누르세요:",
+"à {0} km":"{0}km 거리",
 /* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
 "Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"체크 해제: 아무에게도 안 보임. 🙈: 특정 사람에게 숨기기.",
 "vu par tes abonnés":"팔로워에게 보임",

@@ -1,4 +1,12 @@
 I18N.load({
+/* ✈️ d’où décoller · 🙈 prénoms connus (2026-11-01k) */
+"D’où décoller ?":"どこから出発する？",
+"Les aéroports autour de toi qui ont un vol vers ta destination.":"目的地への便がある近くの空港。",
+"Sans vol connu ce mois-ci :":"今月は既知の便なし：",
+"Aucun vol récent connu depuis les aéroports autour de toi pour ce mois-ci.":"今月、近くの空港から最近の既知の便はありません。",
+"Regarde quand même depuis :":"念のためこちらから：",
+"Toucher un prénom :":"名前をタップ：",
+"à {0} km":"{0} km先",
 /* 👀 carnet pour abonnés : montré à personne (2026-11-01j) */
 "Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.":"チェックなし：誰にも見せない。🙈：特定の人だけに隠す。",
 "vu par tes abonnés":"フォロワーに表示",
