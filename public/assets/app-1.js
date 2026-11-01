@@ -1077,8 +1077,17 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     // 💬 ❤️ d’un abonné : on ouvre directement les commentaires de l’étape (sinon la fenêtre des abonnés)
     if(k === 'social'){
       if(tid && R[tid] && !R[tid].deleted) go(tid);
-      setTimeout(()=>{ try { const sid = /^fd:/.test(rr) ? rr.slice(3) : ''; if(sid && R[sid] && !R[sid].deleted) souvComments(sid); else if(/^fd:/.test(rr) && R['ft:' + tid]) feedView('ft:' + tid); else shareHub(); } catch(e){} }, 350);
-      setTimeout(()=>syncNow('pull'), 400); return;
+      // d’abord la synchro (le commentaire vient peut-être d’arriver), puis l’étape : celle de la notification, sinon la dernière commentée ou aimée
+      setTimeout(async ()=>{ try { await withTimeout(Promise.resolve(syncNow('pull')), 6000); } catch(e){}
+        try {
+          let sid = /^fd:/.test(rr) ? rr.slice(3) : '';
+          if(!sid && tid){ const ft = 'ft:' + tid, me = devId(), lim = Date.now() - 3 * 864e5;
+            const L = list('comment', c=>c.trip === ft && c.dev !== me).map(c=>({f:c.feed, t:c.at || c.updatedAt || 0}))
+              .concat(list('like', l=>l.trip === ft && l.on && !String(l.id).endsWith(':' + me)).map(l=>({f:l.feed, t:l.updatedAt || 0}))).filter(x=>x.f && x.t > lim).sort((a, b)=>b.t - a.t);
+            if(L[0]) sid = String(L[0].f).replace(/^fd:/, ''); }
+          if(sid && R[sid] && !R[sid].deleted) souvComments(sid); else if(sid && R['ft:' + tid]) feedView('ft:' + tid); else shareHub();
+        } catch(e){} }, 300);
+      return;
     }
     const tb = k === 'notes' && rr === 'note' ? 'notes' : /^(soir|anniv)/.test(rr) ? 'souv' : {depense:'budget', resa:'prog', souv:'souv', sondage:'envies', notes:'prog', rappel:'prog'}[k] || 'prog';
     M.mode = 'prep'; M.tab = tb; persist(); applyMode(); window.scrollTo({top:0});
