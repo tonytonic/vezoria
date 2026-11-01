@@ -124,9 +124,12 @@
   function carnetPublishSheet(add){
     const ac = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : '', ts = myTrips();
     if(!ts.length){ alert('Crée d’abord un voyage.'); return; }
-    openSheet(`<h2>👀 Mon carnet pour des abonnés</h2><div class="v-sum-small" style="margin-bottom:8px">Coche les voyages à montrer. Tes abonnés passent de l’un à l’autre avec un seul lien.</div>
+    openSheet(`<h2>👀 Mon carnet pour des abonnés</h2><div class="v-sum-small" style="margin-bottom:8px">Coche les voyages à montrer. Tes abonnés passent de l’un à l’autre avec un seul lien.<br>${esc(MSGT('Décoché : montré à personne. 🙈 : le cacher à quelqu’un en particulier.'))}</div>
       <div style="margin-bottom:6px"><button type="button" class="v-btn sec" style="width:auto;display:inline-block;margin:0 6px 0 0" onclick="document.querySelectorAll('.cpub:not(:disabled)').forEach(x=>x.checked=true)">${esc(MSGT('Tout cocher'))}</button><button type="button" class="v-btn sec" style="width:auto;display:inline-block;margin:0" onclick="document.querySelectorAll('.cpub:not(:disabled)').forEach(x=>x.checked=false)">${esc(MSGT('Tout décocher'))}</button></div>
-      ${ts.map(t=>{ const own = FT()[t.id] && grpCodeOf(t.id) !== ac, nf = own ? soloFw(t.id) : 0; return `<label class="cv-checkline"><input type="checkbox" class="cpub" value="${t.id}"${(ac && grpCodeOf(t.id) === ac) || (!ac && !own) || (add && t.id === add && !own) ? ' checked' : ''}${own && nf ? ' disabled' : ''}> <span data-notr>${esc(t.titre)}</span>${own ? (nf ? ` <small>(publié à part : ${nf} abonné${nf > 1 ? 's' : ''} sur son propre lien)</small>` : ' <small>(publié à part, sans abonné : coche-le pour le mettre dans le carnet)</small>') : !FT()[t.id] ? ` <small>🔒 ${esc(MSGT('montré à personne'))}</small>` : ((FRX()[t.id] || {}).ex || []).length ? ` <small>🙈 ${esc(RF('caché à {0} abonné(s)', FRX()[t.id].ex.length))}</small>` : ''}</label>`; }).join('')}
+      <style>.cpl{display:flex;align-items:center;gap:6px}.cpl label{flex:1;min-width:0}.cpl .cps{display:block;font-size:12px;opacity:.8}.cpl .cpub:not(:checked)~span .cps-on,.cpl .cpub:checked~span .cps-off{display:none}.cpl .cph{flex:none;padding:4px 9px;font-size:14px}</style>
+      ${ts.map(t=>{ const own = FT()[t.id] && grpCodeOf(t.id) !== ac, nf = own ? soloFw(t.id) : 0, nh = ((FRX()[t.id] || {}).ex || []).length + (((M.preHide || {})[t.id]) || []).length;
+        const st = `<small class="cps cps-on">${nh ? '🙈 ' + esc(RF('caché à {0} abonné(s)', nh)) : '👀 ' + esc(MSGT('vu par tes abonnés'))}</small><small class="cps cps-off">🔒 ${esc(MSGT('montré à personne'))}</small>`;
+        return `<div class="cpl"><label class="cv-checkline"><input type="checkbox" class="cpub" value="${t.id}"${(ac && grpCodeOf(t.id) === ac) || (!ac && !own) || (add && t.id === add && !own) ? ' checked' : ''}${own && nf ? ' disabled' : ''}> <span><span data-notr>${esc(t.titre)}</span>${own ? (nf ? ` <small>(publié à part : ${nf} abonné${nf > 1 ? 's' : ''} sur son propre lien)</small>` : ' <small>(publié à part, sans abonné : coche-le pour le mettre dans le carnet)</small>') : st}</span></label>${own ? '' : `<button type="button" class="v-day-edit cph" onclick="CV.preHideSheet('${ja(t.id)}')" aria-label="${esc(MSGT('Cacher à quelqu’un'))}">🙈</button>`}</div>`; }).join('')}
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.carnetPublish()">👀 Publier et inviter</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
   // abonnés d’un voyage publié à part (sur son propre lien)
@@ -778,7 +781,7 @@
     const codes = Object.keys(G).sort((a, b)=>(b === M.feedAll) - (a === M.feedAll) || G[b].length - G[a].length);
     const card = c => { const ts = G[c].map(x=>R[x]).filter(Boolean), nf = abFans(G[c]), multi = c === M.feedAll, inIt = cur && G[c].includes(cur.id);
       return `<div class="sp2-blk" style="margin-bottom:10px"><div class="sp2-sec">🔗 <b>${esc(multi ? MSGT('Lien de plusieurs voyages') : MSGT('Lien d’un voyage'))}</b> <small>· ${esc(RF('{0} abonné(s)', nf))}</small></div>
-        <div class="v-sum-small" style="margin:4px 0 8px" data-notr>${ts.map(x=>'· ' + esc(x.titre)).join('<br>')}</div>
+        <div class="v-sum-small" style="margin:4px 0 8px"><span data-notr>${ts.slice(0, 4).map(x=>'· ' + esc(x.titre)).join('<br>')}</span>${ts.length > 4 ? '<br>' + esc(RF('… et {0} autre(s) voyage(s)', ts.length - 4)) : ''}</div>
         <div class="sp2-pills"><button type="button" onclick="CV.abSend('${ja(c)}')">📤 ${esc(MSGT('Envoyer ce lien'))}</button>${multi ? `<button type="button" onclick="CV.carnetPublishSheet('${cur && !inIt ? ja(cur.id) : ''}')">${cur && !inIt ? '＋ ' + esc(RF('Ajouter « {0} »', cur.titre)) : '✏️ ' + esc(MSGT('Choisir les voyages'))}</button>` : ''}</div></div>`; };
     const solo = cur && !FT()[cur.id];
     openSheet(`<h2>👀 ${esc(MSGT('Inviter des abonnés'))}</h2>
@@ -1459,7 +1462,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-01i'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-01j'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
