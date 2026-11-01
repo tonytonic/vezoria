@@ -734,6 +734,7 @@
     fol.forEach(f=>{ const n = String(f.owner || '').trim() || '?', k = n.toLocaleLowerCase(); (G[k] = G[k] || {n, f:[], h:0}).f.push(f); });
     // 🙈 ses voyages masqués : la personne reste dans la liste, pour pouvoir les remettre
     Object.entries(M.unfolT || {}).forEach(([id, m])=>{ if((M.unfol || {})[id] !== 1 || TS()[id] || !m.code) return; const n = String(m.owner || '').trim() || '?', k = n.toLocaleLowerCase(); (G[k] = G[k] || {n, f:[], h:0}).h++; if(!G[k].av && avOk(m.oav)) G[k].av = m.oav; });
+    Object.keys(G).forEach(k=>{ if(!G[k].f.length) delete G[k]; });   // 🚫 je ne suis plus aucun de ses voyages : la personne disparaît (son lien la ramène)
     const lvS = Object.values(G).filter(g=>g.f.some(f=>tripPhase(f) === 'live'));
     const suis = `<div class="sp2-sec">${SVG_ME}<b>${esc(MSGT('Mes abonnements'))}</b>${spLive(lvS.map(g=>g.n))}<br><small>(${esc(MSGT('ceux que je suis'))})</small></div>
       ${Object.keys(G).length ? Object.values(G).map(g=>{ const fids = new Set(g.f.map(f=>f.id)), av = (g.f.find(f=>avOk(f.oav)) || {}).oav || g.av || '', k = ja(g.n.toLocaleLowerCase()), live = g.f.some(f=>tripPhase(f) === 'live');
@@ -1477,7 +1478,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-01u'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-01v'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

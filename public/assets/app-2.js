@@ -135,6 +135,23 @@
       if(r.type==='trip') r.devise = c; });
   }
   let demoBusy = false;   // deux touchers rapides : une seule préparation de la démo
+  /* 🌍 voyages de démo traduits : un dictionnaire par langue (data/demo/xx.json, phrase française → traduction),
+     appliqué une fois à la création. Les noms d’hôtels et les adresses de rue restent tels quels. */
+  async function demoTr(){
+    const lang = (window.I18N && I18N.lang) || 'fr'; if(lang === 'fr') return;
+    let D = null; try { const r = await fetch((window.VZ_B || '') + 'data/demo/' + lang + '.json'); if(r.ok) D = await r.json(); } catch(e){}
+    if(!D) return;
+    const one = x => { const k = String(x).trim(); return D[k] != null ? D[k] : (window.I18N && I18N.msg ? I18N.msg(k) : k); };
+    const tx = v => { if(typeof v !== 'string' || !v.trim()) return v; if(D[v.trim()] != null) return D[v.trim()];
+      // « Rome → Sienne », « Italie · 3 semaines », « Port de Monterosso al Mare, Rome » : morceau par morceau
+      return v.split(/( → | · |, )/).map((p, i)=>i % 2 ? p : one(p)).join(''); };
+    const F = ['titre','sous','texte','plan','lieu','label','question','adresse','compagnie','note','from','to'];
+    Object.values(R).filter(r=>r && r.demo).forEach(r=>{
+      F.forEach(f=>{ if(typeof r[f] === 'string') r[f] = tx(r[f]); });
+      if(Array.isArray(r.options)) r.options = r.options.map(tx);
+      if(r.type === 'souv' && r.cc) try { r.pays = new Intl.DisplayNames([lang], {type:'region'}).of(r.cc) || r.pays; } catch(e){}
+    });
+  }
   async function demoLoad(reg){ if(demoBusy) return; demoBusy = true; try { await demoLoad1(reg); } finally { demoBusy = false; } }
   async function demoLoad1(reg){
     reg = DEMO_REG[reg] || reg === 'jp' ? reg : (M.demoReg || demoRegAuto()); M.demoReg = reg; const K = demoKit(reg), TPL = demoTpl(reg);
@@ -189,6 +206,7 @@
     R['po' + uid() + 'dm'] = {id:'po' + uid() + 'dm', type:'poll', question:'Prochain voyage : on part où ?', options:['Islande','Lisbonne','Vietnam'], votes:{[M.me]:0, [p1]:2, [p2]:0}, closed:false, demo:true, createdBy:p1, createdAt:now, updatedAt:now};
     for(const v of [prep, live, past]) Object.values(R).filter(r=>r.demo && (r.trip===v.tid || r.id===v.tid)).forEach(r=>{ r.demo = true; });
     { const dm = new Set(Object.values(R).filter(r=>r.demo).flatMap(r=>[...(r.photos||[]), r.recu].filter(Boolean))); M.pq = (M.pq||[]).filter(x=>!dm.has(String(x).replace(/\.t$/,''))); }
+    try { await demoTr(); } catch(e){}   // 🌍 la démo dans la langue de l’appli (récits, visites, villes…)
     demoCur(M.cur || 'EUR'); persist(); M.mode = 'live'; M.tab = 'prog'; go(live.tid);
     if(reg !== 'jp'){ setTimeout(()=>alert(RF('👀 3 voyages de démo sont prêts ({0}) : à préparer, en cours et en souvenirs. Passe de l’un à l’autre en haut de l’écran ; « Supprimer la démo » efface tout. Rien n’est partagé.', K.nom)), 300); return; }
     setTimeout(()=>alert('👀 3 voyages de démo sont prêts (rien n’est partagé) :\n\n📍 En cours : on est au jour 7 — traceur, steps, tickets, courses, plafond, parts inégales.\n🧳 Préparation : le même Japon dans 6 mois, à organiser.\n🗺️ Passés / 🏁 Bilan : le voyage terminé avec ses photos, son album et ses comptes.\n\nPasse d’un onglet à l’autre en haut de l’écran. « Supprimer la démo » efface tout.'), 300);
