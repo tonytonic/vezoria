@@ -1,4 +1,20 @@
 I18N.load({
+/* 💳 Google Play · Stripe · rappel de renouvellement (2026-11-01s) */
+"Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.":"प्लान अभी उपलब्ध नहीं हैं। थोड़ी देर बाद फिर कोशिश करें।",
+"Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.":"Google Play से भुगतान। सदस्यता आपके एडमिन कोड के साथ आपके सभी डिवाइस (कंप्यूटर, iPhone…) पर आपकी डायरी के लिए मान्य है।",
+"Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.":"हमारे प्रदाता के माध्यम से सुरक्षित भुगतान, जो सदस्यता बेचता है और चालान जारी करता है। सदस्यता आपके एडमिन कोड के साथ आपके सभी डिवाइस पर आपकी डायरी के लिए मान्य है।",
+"Conditions des abonnements":"सदस्यता की शर्तें",
+"Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.":"Google Play भुगतान नहीं खोल सका। बाद में फिर कोशिश करें।",
+"Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.":"आपकी खरीद खोई नहीं है: अगली बार ऐप खोलने पर यह आपकी डायरी से जुड़ जाएगी।",
+"Ton abonnement Google Play est relié à ce carnet.":"आपकी Google Play सदस्यता इस डायरी से जुड़ गई है।",
+"Abonnement Google Play : il vaut aussi sur tes autres appareils.":"Google Play सदस्यता: यह आपके दूसरे डिवाइस पर भी मान्य है।",
+"Abonnement pris sur le site : il vaut aussi sur tes autres appareils.":"वेबसाइट पर ली गई सदस्यता: यह आपके दूसरे डिवाइस पर भी मान्य है।",
+"annuel":"वार्षिक",
+"mensuel":"मासिक",
+"Abonnement":"सदस्यता",
+"Ton abonnement {0} se renouvelle le {1}":"आपकी {0} सदस्यता {1} को नवीनीकृत होगी",
+"Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.":"यह अपने आप एक साल के लिए नवीनीकृत होती है। आप इसे कभी भी मुफ़्त में रोक सकते हैं: आपकी सभी फ़ोटो ऑनलाइन रहेंगी।",
+"C’est noté":"समझ गया",
 /* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
 "Plus de place photos":"फ़ोटो के लिए ज़्यादा जगह",
 "Prochainement":"जल्द आ रहा है",

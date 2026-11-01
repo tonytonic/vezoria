@@ -1,4 +1,20 @@
 I18N.load({
+/* 💳 Google Play · Stripe · rappel de renouvellement (2026-11-01s) */
+"Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.":"I piani non sono disponibili al momento. Riprova un po’ più tardi.",
+"Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.":"Pagamento con Google Play. L’abbonamento vale per il tuo diario su tutti i tuoi dispositivi (computer, iPhone…), con il tuo codice amministratore.",
+"Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.":"Pagamento sicuro tramite il nostro fornitore, che vende l’abbonamento ed emette la fattura. L’abbonamento vale per il tuo diario su tutti i tuoi dispositivi, con il tuo codice amministratore.",
+"Conditions des abonnements":"Condizioni degli abbonamenti",
+"Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.":"Google Play non è riuscito ad aprire il pagamento. Riprova più tardi.",
+"Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.":"Il tuo acquisto non è perso: verrà collegato al tuo diario alla prossima apertura dell’app.",
+"Ton abonnement Google Play est relié à ce carnet.":"Il tuo abbonamento Google Play è collegato a questo diario.",
+"Abonnement Google Play : il vaut aussi sur tes autres appareils.":"Abbonamento Google Play: vale anche sugli altri tuoi dispositivi.",
+"Abonnement pris sur le site : il vaut aussi sur tes autres appareils.":"Abbonamento sottoscritto sul sito: vale anche sugli altri tuoi dispositivi.",
+"annuel":"annuale",
+"mensuel":"mensile",
+"Abonnement":"Abbonamento",
+"Ton abonnement {0} se renouvelle le {1}":"Il tuo abbonamento {0} si rinnova il {1}",
+"Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.":"Si rinnova automaticamente per un anno. Puoi interromperlo quando vuoi, senza costi: tutte le tue foto restano online.",
+"C’est noté":"Ho capito",
 /* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
 "Plus de place photos":"Più spazio per le foto",
 "Prochainement":"Prossimamente",

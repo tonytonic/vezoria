@@ -1,4 +1,20 @@
 I18N.load({
+/* 💳 Google Play · Stripe · rappel de renouvellement (2026-11-01s) */
+"Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.":"Die Tarife sind gerade nicht verfügbar. Versuch es etwas später noch einmal.",
+"Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.":"Bezahlung über Google Play. Das Abo gilt für dein Reisetagebuch auf all deinen Geräten (Computer, iPhone…), mit deinem Admin-Code.",
+"Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.":"Sichere Bezahlung über unseren Anbieter, der das Abo verkauft und die Rechnung ausstellt. Das Abo gilt für dein Reisetagebuch auf all deinen Geräten, mit deinem Admin-Code.",
+"Conditions des abonnements":"Abo-Bedingungen",
+"Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.":"Google Play konnte die Zahlung nicht öffnen. Versuch es später noch einmal.",
+"Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.":"Dein Kauf ist nicht verloren: Er wird beim nächsten Öffnen der App mit deinem Reisetagebuch verknüpft.",
+"Ton abonnement Google Play est relié à ce carnet.":"Dein Google-Play-Abo ist mit diesem Reisetagebuch verknüpft.",
+"Abonnement Google Play : il vaut aussi sur tes autres appareils.":"Google-Play-Abo: Es gilt auch auf deinen anderen Geräten.",
+"Abonnement pris sur le site : il vaut aussi sur tes autres appareils.":"Auf der Website abgeschlossenes Abo: Es gilt auch auf deinen anderen Geräten.",
+"annuel":"jährlich",
+"mensuel":"monatlich",
+"Abonnement":"Abo",
+"Ton abonnement {0} se renouvelle le {1}":"Dein Abo {0} verlängert sich am {1}",
+"Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.":"Es verlängert sich automatisch um ein Jahr. Du kannst es jederzeit kostenlos beenden: Alle deine Fotos bleiben online.",
+"C’est noté":"Verstanden",
 /* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
 "Plus de place photos":"Mehr Platz für Fotos",
 "Prochainement":"Demnächst",

@@ -1,4 +1,20 @@
 I18N.load({
+/* 💳 Google Play · Stripe · rappel de renouvellement (2026-11-01s) */
+"Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.":"Тарифы сейчас недоступны. Попробуйте чуть позже.",
+"Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.":"Оплата через Google Play. Подписка действует для вашего дневника на всех устройствах (компьютер, iPhone…) с вашим кодом администратора.",
+"Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.":"Безопасная оплата через нашего партнёра, который продаёт подписку и выставляет счёт. Подписка действует для вашего дневника на всех устройствах с вашим кодом администратора.",
+"Conditions des abonnements":"Условия подписки",
+"Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.":"Google Play не удалось открыть оплату. Попробуйте позже.",
+"Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.":"Покупка не потеряна: она будет привязана к дневнику при следующем открытии приложения.",
+"Ton abonnement Google Play est relié à ce carnet.":"Ваша подписка Google Play привязана к этому дневнику.",
+"Abonnement Google Play : il vaut aussi sur tes autres appareils.":"Подписка Google Play: действует и на других ваших устройствах.",
+"Abonnement pris sur le site : il vaut aussi sur tes autres appareils.":"Подписка оформлена на сайте: действует и на других ваших устройствах.",
+"annuel":"годовая",
+"mensuel":"месячная",
+"Abonnement":"Подписка",
+"Ton abonnement {0} se renouvelle le {1}":"Ваша подписка {0} продлится {1}",
+"Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.":"Она автоматически продлевается на год. Вы можете отменить её в любой момент бесплатно: все фото останутся онлайн.",
+"C’est noté":"Понятно",
 /* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
 "Plus de place photos":"Больше места для фото",
 "Prochainement":"Скоро",

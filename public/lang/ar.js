@@ -1,4 +1,20 @@
 I18N.load({
+/* 💳 Google Play · Stripe · rappel de renouvellement (2026-11-01s) */
+"Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.":"الباقات غير متاحة حاليًا. حاول مرة أخرى بعد قليل.",
+"Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.":"الدفع عبر Google Play. يسري الاشتراك على دفترك في جميع أجهزتك (الحاسوب، iPhone…) باستخدام رمز المسؤول.",
+"Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.":"دفع آمن عبر مزوّدنا الذي يبيع الاشتراك ويصدر الفاتورة. يسري الاشتراك على دفترك في جميع أجهزتك باستخدام رمز المسؤول.",
+"Conditions des abonnements":"شروط الاشتراكات",
+"Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.":"تعذّر على Google Play فتح الدفع. حاول لاحقًا.",
+"Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.":"لم يضِع شراؤك: سيُربط بدفترك عند فتح التطبيق في المرة القادمة.",
+"Ton abonnement Google Play est relié à ce carnet.":"اشتراكك في Google Play مرتبط بهذا الدفتر.",
+"Abonnement Google Play : il vaut aussi sur tes autres appareils.":"اشتراك Google Play: يسري أيضًا على أجهزتك الأخرى.",
+"Abonnement pris sur le site : il vaut aussi sur tes autres appareils.":"اشتراك من الموقع: يسري أيضًا على أجهزتك الأخرى.",
+"annuel":"سنوي",
+"mensuel":"شهري",
+"Abonnement":"الاشتراك",
+"Ton abonnement {0} se renouvelle le {1}":"يتجدد اشتراكك {0} في {1}",
+"Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.":"يتجدد تلقائيًا لمدة سنة. يمكنك إيقافه متى شئت دون رسوم: تبقى كل صورك على الإنترنت.",
+"C’est noté":"حسنًا",
 /* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
 "Plus de place photos":"مساحة أكبر للصور",
 "Prochainement":"قريبًا",

@@ -1,4 +1,20 @@
 I18N.load({
+/* 💳 Google Play · Stripe · rappel de renouvellement (2026-11-01s) */
+"Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.":"套餐暂时不可用，请稍后再试。",
+"Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.":"通过 Google Play 付款。订阅凭你的管理员代码适用于你在所有设备（电脑、iPhone…）上的手账。",
+"Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.":"通过我们的支付服务商安全付款，由其销售订阅并开具发票。订阅凭你的管理员代码适用于你在所有设备上的手账。",
+"Conditions des abonnements":"订阅条款",
+"Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.":"Google Play 无法打开付款，请稍后再试。",
+"Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.":"你的购买没有丢失：下次打开应用时会关联到你的手账。",
+"Ton abonnement Google Play est relié à ce carnet.":"你的 Google Play 订阅已关联到此手账。",
+"Abonnement Google Play : il vaut aussi sur tes autres appareils.":"Google Play 订阅：在你的其他设备上同样有效。",
+"Abonnement pris sur le site : il vaut aussi sur tes autres appareils.":"在网站上购买的订阅：在你的其他设备上同样有效。",
+"annuel":"按年",
+"mensuel":"按月",
+"Abonnement":"订阅",
+"Ton abonnement {0} se renouvelle le {1}":"你的 {0} 订阅将于 {1} 续订",
+"Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.":"订阅会自动续订一年。你可以随时免费取消：所有照片仍保留在线。",
+"C’est noté":"知道了",
 /* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
 "Plus de place photos":"更多照片空间",
 "Prochainement":"即将推出",

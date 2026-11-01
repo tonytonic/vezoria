@@ -1,4 +1,20 @@
 I18N.load({
+/* 💳 Google Play · Stripe · rappel de renouvellement (2026-11-01s) */
+"Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.":"지금은 요금제를 이용할 수 없습니다. 잠시 후 다시 시도해 주세요.",
+"Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.":"Google Play로 결제합니다. 구독은 관리자 코드로 모든 기기(컴퓨터, iPhone…)의 노트에 적용됩니다.",
+"Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.":"구독을 판매하고 영수증을 발행하는 결제 대행사를 통한 안전한 결제입니다. 구독은 관리자 코드로 모든 기기의 노트에 적용됩니다.",
+"Conditions des abonnements":"구독 약관",
+"Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.":"Google Play에서 결제를 열 수 없습니다. 나중에 다시 시도해 주세요.",
+"Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.":"구매는 사라지지 않았습니다. 다음에 앱을 열면 노트에 연결됩니다.",
+"Ton abonnement Google Play est relié à ce carnet.":"Google Play 구독이 이 노트에 연결되었습니다.",
+"Abonnement Google Play : il vaut aussi sur tes autres appareils.":"Google Play 구독: 다른 기기에서도 적용됩니다.",
+"Abonnement pris sur le site : il vaut aussi sur tes autres appareils.":"웹사이트에서 가입한 구독: 다른 기기에서도 적용됩니다.",
+"annuel":"연간",
+"mensuel":"월간",
+"Abonnement":"구독",
+"Ton abonnement {0} se renouvelle le {1}":"{0} 구독이 {1}에 갱신됩니다",
+"Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.":"1년 단위로 자동 갱신됩니다. 언제든 무료로 해지할 수 있으며 모든 사진은 온라인에 남습니다.",
+"C’est noté":"확인",
 /* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
 "Plus de place photos":"사진 공간 늘리기",
 "Prochainement":"곧 출시",

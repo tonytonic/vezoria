@@ -1,4 +1,20 @@
 I18N.load({
+/* 💳 Google Play · Stripe · rappel de renouvellement (2026-11-01s) */
+"Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.":"De abonnementen zijn nu niet beschikbaar. Probeer het later nog eens.",
+"Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.":"Betaling via Google Play. Het abonnement geldt voor je reisdagboek op al je apparaten (computer, iPhone…), met je beheerderscode.",
+"Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.":"Veilige betaling via onze provider, die het abonnement verkoopt en de factuur opstelt. Het abonnement geldt voor je reisdagboek op al je apparaten, met je beheerderscode.",
+"Conditions des abonnements":"Abonnementsvoorwaarden",
+"Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.":"Google Play kon de betaling niet openen. Probeer het later nog eens.",
+"Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.":"Je aankoop is niet verloren: hij wordt de volgende keer dat je de app opent aan je reisdagboek gekoppeld.",
+"Ton abonnement Google Play est relié à ce carnet.":"Je Google Play-abonnement is aan dit reisdagboek gekoppeld.",
+"Abonnement Google Play : il vaut aussi sur tes autres appareils.":"Google Play-abonnement: het geldt ook op je andere apparaten.",
+"Abonnement pris sur le site : il vaut aussi sur tes autres appareils.":"Abonnement afgesloten op de website: het geldt ook op je andere apparaten.",
+"annuel":"jaarlijks",
+"mensuel":"maandelijks",
+"Abonnement":"Abonnement",
+"Ton abonnement {0} se renouvelle le {1}":"Je abonnement {0} wordt verlengd op {1}",
+"Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.":"Het wordt automatisch met een jaar verlengd. Je kunt het altijd kosteloos stopzetten: al je foto’s blijven online.",
+"C’est noté":"Begrepen",
 /* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
 "Plus de place photos":"Meer ruimte voor foto’s",
 "Prochainement":"Binnenkort",

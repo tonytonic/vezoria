@@ -1,4 +1,20 @@
 I18N.load({
+/* 💳 Google Play · Stripe · rappel de renouvellement (2026-11-01s) */
+"Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.":"Paketler şu anda kullanılamıyor. Biraz sonra tekrar dene.",
+"Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.":"Google Play ile ödeme. Abonelik, yönetici kodunla tüm cihazlarında (bilgisayar, iPhone…) defterin için geçerlidir.",
+"Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.":"Aboneliği satan ve faturayı düzenleyen sağlayıcımız üzerinden güvenli ödeme. Abonelik, yönetici kodunla tüm cihazlarında defterin için geçerlidir.",
+"Conditions des abonnements":"Abonelik koşulları",
+"Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.":"Google Play ödemeyi açamadı. Daha sonra tekrar dene.",
+"Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.":"Satın alman kaybolmadı: uygulamayı bir sonraki açışında defterine bağlanacak.",
+"Ton abonnement Google Play est relié à ce carnet.":"Google Play aboneliğin bu deftere bağlandı.",
+"Abonnement Google Play : il vaut aussi sur tes autres appareils.":"Google Play aboneliği: diğer cihazlarında da geçerlidir.",
+"Abonnement pris sur le site : il vaut aussi sur tes autres appareils.":"Sitede alınan abonelik: diğer cihazlarında da geçerlidir.",
+"annuel":"yıllık",
+"mensuel":"aylık",
+"Abonnement":"Abonelik",
+"Ton abonnement {0} se renouvelle le {1}":"{0} aboneliğin {1} tarihinde yenilenecek",
+"Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.":"Otomatik olarak bir yıl yenilenir. İstediğin zaman ücretsiz durdurabilirsin: tüm fotoğrafların çevrimiçi kalır.",
+"C’est noté":"Anladım",
 /* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
 "Plus de place photos":"Fotoğraflar için daha fazla alan",
 "Prochainement":"Yakında",

@@ -1,4 +1,20 @@
 I18N.load({
+/* 💳 Google Play · Stripe · rappel de renouvellement (2026-11-01s) */
+"Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.":"Plans aren’t available right now. Please try again a little later.",
+"Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.":"Payment through Google Play. The subscription applies to your journal on all your devices (computer, iPhone…), with your admin code.",
+"Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.":"Secure payment through our provider, which sells the subscription and issues the invoice. The subscription applies to your journal on all your devices, with your admin code.",
+"Conditions des abonnements":"Subscription terms",
+"Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.":"Google Play couldn’t open the payment. Please try again later.",
+"Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.":"Your purchase isn’t lost: it will be linked to your journal the next time you open the app.",
+"Ton abonnement Google Play est relié à ce carnet.":"Your Google Play subscription is linked to this journal.",
+"Abonnement Google Play : il vaut aussi sur tes autres appareils.":"Google Play subscription: it also applies on your other devices.",
+"Abonnement pris sur le site : il vaut aussi sur tes autres appareils.":"Subscription taken on the website: it also applies on your other devices.",
+"annuel":"yearly",
+"mensuel":"monthly",
+"Abonnement":"Subscription",
+"Ton abonnement {0} se renouvelle le {1}":"Your {0} subscription renews on {1}",
+"Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.":"It renews automatically for one year. You can stop it whenever you like, free of charge: all your photos stay online.",
+"C’est noté":"Got it",
 /* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
 "Plus de place photos":"More photo space",
 "Prochainement":"Coming soon",

@@ -1,4 +1,20 @@
 I18N.load({
+/* 💳 Google Play · Stripe · rappel de renouvellement (2026-11-01s) */
+"Les formules ne sont pas disponibles pour le moment. Réessaie un peu plus tard.":"現在プランはご利用いただけません。しばらくしてからもう一度お試しください。",
+"Paiement par Google Play. L’abonnement vaut pour ton carnet sur tous tes appareils (ordinateur, iPhone…), avec ton code administrateur.":"Google Play でのお支払い。サブスクリプションは管理者コードを使って、すべての端末（パソコン、iPhone など）のノートに適用されます。",
+"Paiement sécurisé par notre prestataire, qui vend l’abonnement et établit la facture. L’abonnement vaut pour ton carnet sur tous tes appareils, avec ton code administrateur.":"サブスクリプションを販売し請求書を発行する決済代行会社による安全なお支払い。サブスクリプションは管理者コードを使って、すべての端末のノートに適用されます。",
+"Conditions des abonnements":"サブスクリプションの条件",
+"Google Play n’a pas pu ouvrir le paiement. Réessaie plus tard.":"Google Play で支払いを開けませんでした。後でもう一度お試しください。",
+"Ton achat n’est pas perdu : il sera relié à ton carnet à la prochaine ouverture de l’appli.":"購入は失われていません。次にアプリを開いたときにノートに紐づけられます。",
+"Ton abonnement Google Play est relié à ce carnet.":"Google Play のサブスクリプションがこのノートに紐づけられました。",
+"Abonnement Google Play : il vaut aussi sur tes autres appareils.":"Google Play のサブスクリプション：ほかの端末でも有効です。",
+"Abonnement pris sur le site : il vaut aussi sur tes autres appareils.":"サイトで購入したサブスクリプション：ほかの端末でも有効です。",
+"annuel":"年額",
+"mensuel":"月額",
+"Abonnement":"サブスクリプション",
+"Ton abonnement {0} se renouvelle le {1}":"{0} のサブスクリプションは {1} に更新されます",
+"Il se renouvelle automatiquement pour un an. Tu peux l’arrêter quand tu veux, sans frais : tes photos restent toutes en ligne.":"自動的に1年間更新されます。いつでも無料で解約でき、写真はすべてオンラインに残ります。",
+"C’est noté":"了解",
 /* 🔜 formules à venir · rien n’est effacé (2026-11-01r) */
 "Plus de place photos":"写真の保存容量を増やす",
 "Prochainement":"近日公開",
