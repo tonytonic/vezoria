@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
+"montré à personne":"niemandem gezeigt",
+"caché à {0} abonné(s)":"vor {0} Follower(n) verborgen",
+"Montrés à personne":"Niemandem gezeigt",
+"Coche un voyage pour le montrer à cette personne seulement.":"Hake eine Reise an, um sie nur dieser Person zu zeigen.",
 /* 📍 que voir aujourd’hui · 👀 abonnés : choisir ses voyages (2026-11-01) */
 "Je cherche autour de toi…":"Ich suche in deiner Nähe…",
 "Où es-tu aujourd’hui ?":"Wo bist du heute?",

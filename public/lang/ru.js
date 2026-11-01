@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
+"montré à personne":"никому не показан",
+"caché à {0} abonné(s)":"скрыт от подписчиков: {0}",
+"Montrés à personne":"Никому не показаны",
+"Coche un voyage pour le montrer à cette personne seulement.":"Отметь поездку, чтобы показать её только этому человеку.",
 /* 📍 que voir aujourd’hui · 👀 abonnés : choisir ses voyages (2026-11-01) */
 "Je cherche autour de toi…":"Ищу вокруг тебя…",
 "Où es-tu aujourd’hui ?":"Где ты сегодня?",

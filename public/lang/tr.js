@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
+"montré à personne":"kimseye gösterilmiyor",
+"caché à {0} abonné(s)":"{0} takipçiden gizli",
+"Montrés à personne":"Kimseye gösterilmeyenler",
+"Coche un voyage pour le montrer à cette personne seulement.":"Yalnızca bu kişiye göstermek için bir yolculuk işaretle.",
 /* 📍 que voir aujourd’hui · 👀 abonnés : choisir ses voyages (2026-11-01) */
 "Je cherche autour de toi…":"Çevrende arıyorum…",
 "Où es-tu aujourd’hui ?":"Bugün neredesin?",

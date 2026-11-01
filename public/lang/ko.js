@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
+"montré à personne":"아무에게도 안 보임",
+"caché à {0} abonné(s)":"팔로워 {0}명에게 숨김",
+"Montrés à personne":"아무에게도 안 보이는 여행",
+"Coche un voyage pour le montrer à cette personne seulement.":"이 사람에게만 보여 줄 여행을 체크하세요.",
 /* 📍 que voir aujourd’hui · 👀 abonnés : choisir ses voyages (2026-11-01) */
 "Je cherche autour de toi…":"주변을 찾는 중…",
 "Où es-tu aujourd’hui ?":"오늘 어디에 있어요?",

@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
+"montré à personne":"किसी को नहीं दिखाया",
+"caché à {0} abonné(s)":"{0} फ़ॉलोअर से छिपा",
+"Montrés à personne":"किसी को नहीं दिखाई गईं",
+"Coche un voyage pour le montrer à cette personne seulement.":"सिर्फ़ इस व्यक्ति को दिखाने के लिए कोई यात्रा चुनो।",
 /* 📍 que voir aujourd’hui · 👀 abonnés : choisir ses voyages (2026-11-01) */
 "Je cherche autour de toi…":"तुम्हारे आसपास खोज रही हूँ…",
 "Où es-tu aujourd’hui ?":"आज तुम कहाँ हो?",

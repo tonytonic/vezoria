@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
+"montré à personne":"غير معروض لأحد",
+"caché à {0} abonné(s)":"مخفي عن {0} متابع",
+"Montrés à personne":"غير معروضة لأحد",
+"Coche un voyage pour le montrer à cette personne seulement.":"حدّد رحلة لعرضها على هذا الشخص فقط.",
 /* 📍 que voir aujourd’hui · 👀 abonnés : choisir ses voyages (2026-11-01) */
 "Je cherche autour de toi…":"أبحث من حولك…",
 "Où es-tu aujourd’hui ?":"أين أنت اليوم؟",

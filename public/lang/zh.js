@@ -1,4 +1,9 @@
 I18N.load({
+/* 👀 abonnés : voyages cachés et montrés à personne (2026-11-01i) */
+"montré à personne":"未向任何人展示",
+"caché à {0} abonné(s)":"已对 {0} 位关注者隐藏",
+"Montrés à personne":"未向任何人展示",
+"Coche un voyage pour le montrer à cette personne seulement.":"勾选一个旅程，只给这个人看。",
 /* 📍 que voir aujourd’hui · 👀 abonnés : choisir ses voyages (2026-11-01) */
 "Je cherche autour de toi…":"正在搜索你周围…",
 "Où es-tu aujourd’hui ?":"你今天在哪里？",
