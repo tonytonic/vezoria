@@ -26,7 +26,7 @@ const OVERLAP = 15_000;
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Admin, X-Carnet-Writer',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Admin, X-Carnet-Writer, X-Carnet-Dev',
   'Access-Control-Max-Age': '86400',
 };
 const json = (obj, status = 200) =>
@@ -84,6 +84,13 @@ const TOO_MANY = 'Trop d’envois depuis cette connexion : réessaie dans une he
 
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 
+// 📱 appareils bloqués d’un carnet : relus au plus une fois par minute (une seule requête D1 pour toutes les synchros et photos)
+const DEVB = new Map();
+async function devBlocked(env, space) {
+  const c = DEVB.get(space), now = Date.now(); if (c && now - c.at < 60e3) return c.set;
+  let set = new Set(); try { const { results } = await env.DB.prepare('SELECT dev FROM dev_block WHERE space = ?1').bind(space).all(); set = new Set((results || []).map(r => r.dev)); } catch (e) {}
+  if (DEVB.size > 5000) DEVB.clear(); DEVB.set(space, { at: now, set }); return set;
+}
 async function spaceOf(request, env) {
   if (!env.DB) return json({ error: 'Base D1 non liée (binding « DB » manquant)' }, 500);
   const code = (request.headers.get('X-Carnet-Code') || '').trim();
@@ -106,6 +113,12 @@ async function spaceOf(request, env) {
     const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first();
     if (b) return json({ error: 'Ce carnet est suspendu à la suite d’un signalement. Pour contester : ' + (env.CONTACT || 'contact.vezoria@icloud.com') + ' — This notebook is suspended following a report. To contest, write to the address above.', suspended: true }, 423);
   } catch (e) {}   // table pas encore créée : aucun carnet suspendu
+  // 📱 appareil bloqué par le propriétaire du carnet (voir device.js) : plus aucune lecture ni écriture depuis lui
+  try {
+    const dv = (request.headers.get('X-Carnet-Dev') || '').trim().slice(0, 40);
+    if (dv && (await devBlocked(env, space)).has(dv))
+      return json({ error: 'Cet appareil a été retiré de ce carnet par son propriétaire. — This device was removed from this notebook by its owner.', devBlocked: true }, 403);
+  } catch (e) {}
   return space;
 }
 

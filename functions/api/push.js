@@ -23,7 +23,7 @@ const CORS = {
   'Access-Control-Max-Age': '86400',
 };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
-const KINDS = ['depense', 'resa', 'souv', 'sondage', 'notes', 'rappel', 'social', 'follow'];   // follow : « X suit ton voyage », pour l’auteur seulement
+const KINDS = ['depense', 'resa', 'souv', 'sondage', 'notes', 'rappel', 'social', 'follow', 'device'];   // device : « nouvel appareil sur ton carnet »   // follow : « X suit ton voyage », pour l’auteur seulement
 const MAX_PER_HOUR = 60;
 const SOC_RATE = new Map();   // notifications d’abonnés : par appareil et par heure (en mémoire)
 // 🛡️ adresses d'abonnement acceptées : services de notification d'Apple, Google, Mozilla et Microsoft (le serveur n'envoie rien ailleurs)
@@ -221,7 +221,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
     try { const row = await db.prepare('SELECT ah FROM space_admin WHERE space = ?1').bind(space).first();
       if (row) { const k = (request.headers.get('X-Carnet-Admin') || '').trim().slice(0, 200); author = k.length >= 16 && row.ah === await sha256('vz-admin:' + k); } } catch (e) {}
     if (!author) {
-      if ((kind !== 'social' && kind !== 'follow') || msg.length > 1500) return json({ ok: false, error: 'Réservé à l’auteur du fil — Feed author only' }, 403);
+      if ((kind !== 'social' && kind !== 'follow' && kind !== 'device') || msg.length > 1500) return json({ ok: false, error: 'Réservé à l’auteur du fil — Feed author only' }, 403);
       const hr = Math.floor(Date.now() / 3600e3), key = space.slice(0, 16) + ':' + dev, r = SOC_RATE.get(key);
       if (SOC_RATE.size > 20000) SOC_RATE.clear();
       if (r && r.h === hr && r.n >= 10) return json({ ok: false, error: 'trop de notifications' }, 429);
