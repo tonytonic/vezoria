@@ -3212,3 +3212,15 @@ a[data-aff]::after{content:' · ' attr(data-aff);font-size:.72em;font-weight:600
 @media (max-width:350px){.sp2-chips{flex-wrap:wrap}}
 .sp2-chips{gap:5px}.sp2-chips button{padding:6px 7px;font-size:.74rem}.sp2-pc{gap:10px}
 @media (max-width:380px){.sp2-chips{flex-wrap:wrap}}
+/* Partager : le fond du thème de l’appli (pas de crème), boutons Ajouter / Retirer */
+.sp2{background:transparent}.sp2-body{background:var(--cream);margin-top:-14px}
+.sp2-row{width:100%;border:0;font:inherit;text-align:left;cursor:pointer;background:#fff}
+.sp2-card,.sp2-tc{background:#fff}
+.sp2-sh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sp2-sh .sp2-sec{margin-bottom:12px}
+.sp2-add2{flex:none;border:0;background:#1e4d7b;color:#fff;border-radius:99px;padding:7px 12px;font:inherit;font-weight:700;font-size:.85rem;cursor:pointer;margin-bottom:10px}
+.sp2-del{flex:none;align-self:center;border:0;background:#fff;border-radius:50%;width:38px;height:38px;font-size:1rem;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.sp2-pills button.danger{border-color:#dc2626;color:#dc2626}
+.sp2-top2{flex-direction:column;align-items:flex-start;gap:10px}
+.sp2-top2 h2{font-size:1.6rem}
+.sp2-blk{border-bottom-color:rgba(42,18,56,.1)}

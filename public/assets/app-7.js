@@ -40,10 +40,12 @@
     let k = null, ctx = {};
     if(it.cat === 'hotel'){ k = 'booking'; const sc = stayCity(it) || c, hd = (M.hood || {})[it.id]; ctx = {what:hd && hd.name && normQ(hd.name) !== normQ(sc) ? hd.name + ', ' + sc : sc, date:it.date, end:it.dateFin, n}; }
     else if(it.cat === 'activite'){ k = 'gyg'; ctx = {what:it.q || it.titre}; }
-    else if(/Avion/i.test(it.mode || '')){ k = 'gflights'; ctx = {from:it.from || '', to:it.to || '', date:it.date || ''}; }
+    else if(/Avion/i.test(it.mode || '')){ const ia = c => (aptAny(c) || {}).i || '', f = ia(it.from), t = ia(it.to);   // ✈️ Skyscanner, ouvert sur le vol (codes d’aéroport) ; Google Flights si on ne les connaît pas encore
+      k = 'skyscanner'; if(!(f && t)) try { const tr = trip(); if(tr) aptEnsure(tr); } catch(e){}   // codes pas encore connus : cherchés pour la prochaine fois
+      ctx = {from:f || it.from || '', to:t || it.to || '', date:it.date || ''}; }
     else if(/Ferry|Bateau/i.test(it.mode || '')) k = 'directferries';
     else if(!/Voiture|Moto|Vélo|Pied/i.test(it.mode || '')){ k = 'rome2rio'; ctx = {from:it.from || '', to:it.to || ''}; }
-    return k && BK[k] ? `<a class="ar-bk" href="${esc(bookUrl(k, ctx))}" target="_blank"${bookRel(k)} onclick="event.stopPropagation()">${MSGT('Réserver')} · ${BK[k][1]}</a>` : '';
+    return k && BK[k] ? `<a class="ar-bk" href="${esc(bookUrl(k, ctx))}" target="_blank"${bookRel(k)} onclick="event.stopPropagation()${!bkPre(k, ctx) && bkTxt(ctx) ? `;CV.bkCopy('${ja(bkTxt(ctx) + (ctx.date ? ' · ' + ctx.date : ''))}')` : ''}">${MSGT('Réserver')} · ${BK[k][1]}</a>` : '';
   }
   const ARI_ANIM = {};
   function ariHTML(){
