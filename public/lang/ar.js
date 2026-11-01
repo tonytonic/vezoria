@@ -1,4 +1,7 @@
 I18N.load({
+/* 👤 un seul profil (2026-11-01x) */
+"Le profil « {0} » existe déjà dans ce carnet (créé sur ton autre appareil). C’est toi ?\n\nOK = je garde un seul profil « {0} » (tout ce que tu as ajouté ici passe dessus).\nAnnuler = ce sont deux personnes différentes.":"الملف «{0}» موجود بالفعل في هذا الدفتر (أُنشئ على جهازك الآخر). هل هذا أنت؟\n\nموافق = الإبقاء على ملف «{0}» واحد (كل ما أضفته هنا ينتقل إليه).\nإلغاء = هذان شخصان مختلفان.",
+"Un seul profil « {0} » : c’est toi sur ce téléphone.":"ملف «{0}» واحد: هذا أنت على هذا الهاتف.",
 "Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"مسارك الموجّه بانتظارك: زر 🧭 في بطاقة «تحضيراتك».",
 /* 🔁 parcours guidé · démo · escale (2026-11-01u) */
 "escale probable":"توقف مرجّح",

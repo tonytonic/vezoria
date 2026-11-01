@@ -1,4 +1,7 @@
 I18N.load({
+/* 👤 un seul profil (2026-11-01x) */
+"Le profil « {0} » existe déjà dans ce carnet (créé sur ton autre appareil). C’est toi ?\n\nOK = je garde un seul profil « {0} » (tout ce que tu as ajouté ici passe dessus).\nAnnuler = ce sont deux personnes différentes.":"प्रोफ़ाइल «{0}» इस डायरी में पहले से है (आपके दूसरे डिवाइस पर बनी)। क्या वह आप हैं?\n\nOK = एक ही प्रोफ़ाइल «{0}» रखें (यहाँ जोड़ा सब कुछ उसमें चला जाएगा)।\nरद्द करें = ये दो अलग लोग हैं।",
+"Un seul profil « {0} » : c’est toi sur ce téléphone.":"एक ही प्रोफ़ाइल «{0}»: इस फ़ोन पर वह आप हैं।",
 "Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"आपका गाइडेड रास्ता इंतज़ार कर रहा है: «आपकी तैयारी» कार्ड पर 🧭 बटन।",
 /* 🔁 parcours guidé · démo · escale (2026-11-01u) */
 "escale probable":"स्टॉपओवर संभव",

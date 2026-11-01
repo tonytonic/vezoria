@@ -1,4 +1,7 @@
 I18N.load({
+/* 👤 un seul profil (2026-11-01x) */
+"Le profil « {0} » existe déjà dans ce carnet (créé sur ton autre appareil). C’est toi ?\n\nOK = je garde un seul profil « {0} » (tout ce que tu as ajouté ici passe dessus).\nAnnuler = ce sont deux personnes différentes.":"«{0}» profili bu defterde zaten var (diğer cihazında oluşturuldu). Bu sen misin?\n\nTamam = tek bir «{0}» profili kalsın (burada eklediğin her şey ona geçer).\nİptal = bunlar iki farklı kişi.",
+"Un seul profil « {0} » : c’est toi sur ce téléphone.":"Tek bir «{0}» profili: bu telefonda sensin.",
 "Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"Rehberli yolun seni bekliyor: «Hazırlığın» kartındaki 🧭 düğmesi.",
 /* 🔁 parcours guidé · démo · escale (2026-11-01u) */
 "escale probable":"aktarma olası",

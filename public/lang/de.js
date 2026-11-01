@@ -1,4 +1,7 @@
 I18N.load({
+/* 👤 un seul profil (2026-11-01x) */
+"Le profil « {0} » existe déjà dans ce carnet (créé sur ton autre appareil). C’est toi ?\n\nOK = je garde un seul profil « {0} » (tout ce que tu as ajouté ici passe dessus).\nAnnuler = ce sont deux personnes différentes.":"Das Profil „{0}“ gibt es in diesem Reisetagebuch schon (auf deinem anderen Gerät erstellt). Bist du das?\n\nOK = nur ein Profil „{0}“ behalten (alles, was du hier hinzugefügt hast, wandert dorthin).\nAbbrechen = das sind zwei verschiedene Personen.",
+"Un seul profil « {0} » : c’est toi sur ce téléphone.":"Ein einziges Profil „{0}“: das bist du auf diesem Handy.",
 "Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"Dein geführter Weg wartet: 🧭-Taste auf der Karte „Deine Vorbereitung“.",
 /* 🔁 parcours guidé · démo · escale (2026-11-01u) */
 "escale probable":"Zwischenstopp wahrscheinlich",

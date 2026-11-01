@@ -1,4 +1,7 @@
 I18N.load({
+/* 👤 un seul profil (2026-11-01x) */
+"Le profil « {0} » existe déjà dans ce carnet (créé sur ton autre appareil). C’est toi ?\n\nOK = je garde un seul profil « {0} » (tout ce que tu as ajouté ici passe dessus).\nAnnuler = ce sont deux personnes différentes.":"「{0}」 프로필이 이 노트에 이미 있습니다(다른 기기에서 만듦). 본인인가요?\n\n확인 = 「{0}」 프로필을 하나로 유지(여기서 추가한 내용은 그쪽으로 옮겨짐)\n취소 = 서로 다른 두 사람입니다",
+"Un seul profil « {0} » : c’est toi sur ce téléphone.":"「{0}」 프로필 하나: 이 휴대폰의 나입니다.",
 "Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"안내 과정이 기다리고 있어요: 「나의 준비」 카드의 🧭 버튼.",
 /* 🔁 parcours guidé · démo · escale (2026-11-01u) */
 "escale probable":"경유 가능성 있음",

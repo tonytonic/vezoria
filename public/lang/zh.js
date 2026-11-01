@@ -1,4 +1,7 @@
 I18N.load({
+/* 👤 un seul profil (2026-11-01x) */
+"Le profil « {0} » existe déjà dans ce carnet (créé sur ton autre appareil). C’est toi ?\n\nOK = je garde un seul profil « {0} » (tout ce que tu as ajouté ici passe dessus).\nAnnuler = ce sont deux personnes différentes.":"此手账中已有资料「{0}」（在你的另一台设备上创建）。是你吗？\n\n确定 = 只保留一个「{0}」资料（你在这里添加的内容都会归到它名下）。\n取消 = 这是两个不同的人。",
+"Un seul profil « {0} » : c’est toi sur ce téléphone.":"只有一个「{0}」资料：就是这台手机上的你。",
 "Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"引导流程在等你：「我的准备」卡片上的 🧭 按钮。",
 /* 🔁 parcours guidé · démo · escale (2026-11-01u) */
 "escale probable":"可能需要转机",

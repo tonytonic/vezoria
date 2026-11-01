@@ -1,4 +1,7 @@
 I18N.load({
+/* 👤 un seul profil (2026-11-01x) */
+"Le profil « {0} » existe déjà dans ce carnet (créé sur ton autre appareil). C’est toi ?\n\nOK = je garde un seul profil « {0} » (tout ce que tu as ajouté ici passe dessus).\nAnnuler = ce sont deux personnes différentes.":"Het profiel ‘{0}’ bestaat al in dit reisdagboek (gemaakt op je andere apparaat). Ben jij dat?\n\nOK = één profiel ‘{0}’ houden (alles wat je hier toevoegde gaat daarnaartoe).\nAnnuleren = dit zijn twee verschillende personen.",
+"Un seul profil « {0} » : c’est toi sur ce téléphone.":"Eén profiel ‘{0}’: dat ben jij op deze telefoon.",
 "Le parcours t’attend : bouton 🧭 de la carte « Ta préparation ».":"Je begeleide route wacht: 🧭-knop op de kaart ‘Je voorbereiding’.",
 /* 🔁 parcours guidé · démo · escale (2026-11-01u) */
 "escale probable":"overstap waarschijnlijk",
