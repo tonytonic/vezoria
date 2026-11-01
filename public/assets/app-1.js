@@ -2422,18 +2422,28 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   // ── tout ce qu’il faut pour une ville ──
   async function expLoad(city){
-    const lang = (window.I18N && I18N.lang) || 'fr', key = 'c2:' + normQ(city) + ':' + lang;
+    const lang = (window.I18N && I18N.lang) || 'fr';
+    // 📍 le point de la ville = celui du voyage (homonymes rangés près des autres étapes), pas le premier résultat du monde
+    const pt = await withTimeout(geocode(city, null), 12000).catch(()=>null), lat = pt ? +pt.lat : null, lng = pt ? +pt.lng : null;
+    const key = 'c3:' + normQ(city) + ':' + lang + (pt ? ':' + lat.toFixed(1) + ',' + lng.toFixed(1) : '');
     const old = await expKv(key).catch(()=>null);
     if(old && Date.now() - old.t < 30 * 864e5 && old.n) return old;
-    const geo = await expJ(GEO + 'search?format=jsonv2&limit=1&addressdetails=1&accept-language=' + lang + '&q=' + encodeURIComponent(city), 10000).catch(()=>null);
-    const g = geo && geo[0], cc = g && g.address && g.address.country_code || '', lat = g ? +g.lat : null, lng = g ? +g.lon : null;
-    const wiki = async lg => { const j = await expJ(`https://${lg}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(city)}?redirect=true`, 9000); return j && j.type !== 'disambiguation' ? j : null; };
+    const ci = pt ? ((M.ctry || {})[normQ(city)] && (M.ctry || {})[normQ(city)].at ? M.ctry[normQ(city)] : await ctryAt(lat, lng).catch(()=>null)) : null;
+    const cc = ci ? ci.cc.toLowerCase() : '', g = ci ? {address:{country:ci.pays}} : null;
+    // l’article doit parler de CETTE ville : « Armenia » seul, c’est le pays ; on essaie alors « Armenia (Colombie) » puis l’article le plus proche du point
+    const wkOk = j => j && j.type !== 'disambiguation' && !(lat != null && j.coordinates && rawKm({lat, lng}, {lat:j.coordinates.lat, lng:j.coordinates.lon}) > 120);
+    const wkOne = async (lg, title) => { const j = await expJ(`https://${lg}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}?redirect=true`, 9000).catch(()=>null); return wkOk(j) ? j : null; };
+    const wiki = async lg => { let j = await wkOne(lg, city); if(j || lat == null) return j;
+      if(ci && ci.pays) j = await wkOne(lg, city + ' (' + ci.pays + ')'); if(j) return j;
+      try { const gs = await expJ(`https://${lg}.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${lat}%7C${lng}&gsradius=10000&gslimit=20&format=json&origin=*`, 9000);
+        const hit = (((gs || {}).query || {}).geosearch || []).find(x=>normQ(x.title).startsWith(normQ(city))); if(hit) return await wkOne(lg, hit.title); } catch(e){}
+      return null; };
     const wvLang = EXP_WV.includes(lang) ? lang : 'en';
     const [wp, wv, wx] = await Promise.all([
       wiki(lang).catch(()=>null).then(x=>x || (lang !== 'en' ? wiki('en').catch(()=>null) : null)),
       wvFetch(wvLang, city).catch(()=>null).then(async x=>(x && x.items.length >= 8) || wvLang === 'en' ? x : ((await wvFetch('en', city).catch(()=>null)) || x)),
       lat != null ? expJ(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weather_code,is_day&timezone=auto`, 8000).catch(()=>null) : null]);
-    let items = (wv && wv.items) || [];
+    let items = ((wv && wv.items) || []).filter(it=>lat == null || it.lat == null || !isFinite(+it.lat) || rawKm({lat, lng}, {lat:+it.lat, lng:+it.lng}) <= 150);   // guide d’un homonyme (le pays Arménie) : ses lieux lointains sont écartés
     // pas (assez) de guide pour cette ville : les lieux connus autour (Wikipédia)
     if(items.filter(x=>x.cat === 'see').length < 4 && lat != null){
       try { const near = await seeWiki({lat, lng}); items = items.concat(near.slice(0, 30).map(p=>({cat:'see', n:p.nom, d:'', a:'', h:'', pr:'', lat:p.lat, lng:p.lng, u:'', img:'', wd:'', wk:p.wiki}))); } catch(e){}

@@ -54,11 +54,15 @@
   async function cityInfo(city){   // coordonnées + pays d’une ville, en une seule question à OpenStreetMap (gardé en mémoire)
     const k = normQ(city); M.ctry = M.ctry || {}; const g = R['geo:' + k];
     if(g && !g.deleted && g.lat != null && M.ctry[k] && M.ctry[k].cc) return {lat:g.lat, lng:g.lng, cc:M.ctry[k].cc};
+    // 📍 le point vient de geocode() (homonymes rangés près des autres étapes : Armenia en Colombie, pas l’Arménie), le pays du point lui-même
+    try { const p = await withTimeout(geocode(city, null), 12000); if(!p) return null;
+      const c = await ctryAt(p.lat, p.lng); if(c && c.cc) M.ctry[k] = c; persist(); return {lat:p.lat, lng:p.lng, cc:c ? c.cc : ''}; } catch(e){ return null; }
+  }
+  // 🏳️ le pays d’un point (et pas d’un nom : « Salento » est aussi en Italie, « Cartagena » en Espagne)
+  async function ctryAt(lat, lng){
     const wait = 1100 - (Date.now() - geoLast); if(wait > 0) await new Promise(r=>setTimeout(r, wait)); geoLast = Date.now();
-    try { const j = await (await withTimeout(fetch(GEO + 'search?format=jsonv2&limit=1&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(city)), 10000)).json();
-      const x = j && j[0]; if(!x) return null; const o = {lat:+x.lat, lng:+x.lon, cc:((x.address || {}).country_code || '').toUpperCase()};
-      const geo = {id:'geo:' + k, type:'geo', q:city, lat:o.lat, lng:o.lng}; stamp(geo); R[geo.id] = geo; markDirty(geo.id);
-      if(o.cc) M.ctry[k] = {pays:(x.address || {}).country || '', cc:o.cc}; persist(); return o; } catch(e){ return null; }
+    try { const j = await (await withTimeout(fetch(GEO + 'reverse?format=jsonv2&zoom=3&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&lat=' + (+lat).toFixed(4) + '&lon=' + (+lng).toFixed(4)), 10000)).json();
+      const a = (j && j.address) || {}; return a.country_code ? {pays:a.country || '', cc:String(a.country_code).toUpperCase(), at:1} : null; } catch(e){ return null; }
   }
   async function wzLocate(){
     if(!wz) return; wz.geo = wz.geo || {}; const L = wz.etapes.filter(e=>e.ville && !wz.geo[normQ(e.ville)]); if(!L.length) return true;

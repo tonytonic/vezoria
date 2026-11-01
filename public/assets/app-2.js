@@ -488,6 +488,9 @@
     if(prevOpen) from = shCur;
     else if(shPend){ from = shPend.cur; shStack = shPend.stack; }
     else shStack = [];
+    // 🧭 parcours guidé : d’une fiche à la suivante (hébergement 1 → 2 → 3…), on ne s’empile pas : ✕ ramène au menu du parcours, pas à la ville d’avant
+    const gdStep = h => /<div class="gd">/.test(h || '') && !/gd-ch/.test(h || '');
+    if(from && !shBack && gdStep(from) && gdStep(html)){ shPend = null; shBack = false; shCur = html; return; }
     if(from && !shBack && shTitle(from) !== shTitle(html)){
       if(shMenu(from)) shStack.push(from);
       if(shStack.length > 8) shStack.shift();
@@ -1777,6 +1780,16 @@
     const w = (await uiPrompt('Pour confirmer, écris EFFACER en majuscules :', ''));
     if(w === null) return;
     if(w.trim() !== 'EFFACER'){ alert('Mot incorrect : rien n’a été effacé.'); return; }
+    // 👋 avant d’effacer : je ne suis plus abonné nulle part (l’auteur voit un abonné de moins) et ce téléphone ne reçoit plus de notifications
+    try {
+      toast('🧹 ' + MSGT('Je préviens le serveur…'));
+      const me = devId(), out = list('follower', f=>String(f.id).endsWith(':' + me) || f.dev === me).map(f=>Object.assign(clone(f), {deleted:true}));
+      if(out.length) putQuiet(out);
+      await Promise.race([(async()=>{
+        if(out.length) try { await syncNow(); } catch(e){}
+        try { for(const s of pushSpaces()) await pushPost(s.code, {a:'unsub'}).catch(()=>{}); const reg = await navigator.serviceWorker.ready, sub = await reg.pushManager.getSubscription(); if(sub) await sub.unsubscribe(); } catch(e){}
+      })(), new Promise(r=>setTimeout(r, 8000))]);   // hors ligne : on n’attend pas plus de 8 s
+    } catch(e){}
     persistOff = true; clearTimeout(persistT);   // plus aucune écriture : sinon le carnet serait réécrit juste avant le rechargement
     localStorage.removeItem(KEY);
     try { indexedDB.deleteDatabase('carnet-photos'); } catch(e){}
@@ -1804,21 +1817,23 @@
     openSheet(`<h2>Bienvenue à bord ✈️</h2>
       <div class="v-sum-small" style="margin-bottom:12px">Ici on prépare les voyages à plusieurs. Chacun a sa couleur, et tout ce que tu ajoutes est signé de ton prénom.</div>
       ${obSetupHTML()}
-      <div class="cv-seg-big">${segBtns('cv-ob', [['new','🆕 Je crée mon carnet'],['join','🔗 Je rejoins un carnet'],['fol','👀 Je suis un proche']], 'new')}</div>
+      <div class="cv-seg-big">${segBtns('cv-ob', [['new','🆕 Je crée mon carnet'],['join','🔑 ' + MSGT('J’ai déjà un code')],['fol','👀 Je suis un proche']], 'new')}</div>
       <div id="cv-ob-new">
         <div class="v-f"><label>Ton prénom</label><input class="v-in" id="cv-pnom" placeholder="Ex. Camille"></div>
         <div class="v-f"><label>Ta couleur</label>${colorPick(COLORS[0])}</div>
         ${!PUBLIC && old && Array.isArray(old.items) ? `<div class="v-hint">✅ Tes saisies du voyage 2027 (${old.items.length} fiches) seront reprises.</div>` : ''}
         <button class="v-btn" onclick="CV.obCreate()">Commencer</button>
+        ${PUBLIC ? `<button type="button" class="v-btn sec" onclick="document.querySelector('#cv-ob button[data-v=&quot;join&quot;]').click()">🔑 ${esc(MSGT('J’ai déjà Vezoria sur un autre appareil'))}</button>` : ''}
         ${PUBLIC ? `<button class="v-btn sec" onclick="CV.obCreate('demo')">👀 Commencer avec un voyage de démo</button>
         <div class="v-sum-small" style="margin-top:6px;text-align:center">Trois voyages déjà remplis (à préparer, en cours, terminé) pour tout découvrir. Il reste sur ton téléphone et se supprime en un geste.</div>` : ''}
       </div>
       <div id="cv-ob-join" style="display:none">
         ${hosted ? '' : `<div class="v-f"><label>Adresse de l’appli en ligne</label><input class="v-in" id="cv-surl" placeholder="https://carnet-voyage.pages.dev"></div>`}
-        <div class="v-f"><label>Invitation reçue (lien ou code)</label><input class="v-in" id="cv-scode" placeholder="https://… ou XXXX-XXXX-XXXX" autocapitalize="characters"></div>
+        <div class="v-sum-small" style="margin-bottom:10px">🔑 ${esc(MSGT('Ton code administrateur (sur ton autre appareil : Cloud → Mon code administrateur) ramène ici tout ton carnet, avec tes voyages, tes abonnés et ton abonnement. Sur l’autre appareil, « Ajouter un de mes appareils » affiche aussi un QR code à scanner.'))}</div>
+        <div class="v-f"><label>${esc(MSGT('Code administrateur, ou invitation reçue (lien ou code)'))}</label><input class="v-in" id="cv-scode" placeholder="https://… ou XXXX-XXXX-XXXX" autocapitalize="characters"></div>
         ${qrBtn('cv-scode')}<button type="button" class="v-btn sec" style="margin-bottom:8px" onclick="CV.obPaste()">📋 Coller l’invitation</button>
         <div class="v-sum-small" style="margin:-4px 0 10px">Un code de voyage reçu par message marche ici : seul ce voyage est ajouté, sans créer de carnet en ligne.</div>
-        <button class="v-btn" onclick="CV.obJoin()">Rejoindre</button>
+        <button class="v-btn" onclick="CV.obJoin()">${esc(MSGT('Continuer'))}</button>
       </div>
       <div id="cv-ob-fol" style="display:none">
         <div class="v-sum-small" style="margin-bottom:10px">Un ami ou un proche t’a envoyé son lien abonné (ou te montre son QR code) : tu suis ses voyages, ses photos, et tu peux mettre des ❤️ et des commentaires. Pas besoin de créer de voyage.</div>
@@ -2253,7 +2268,9 @@
   const IA = x => /^[A-Z]{3}$/.test(String(x || ''));   // un code d’aéroport (les comparateurs de vols en ont besoin)
   const BK = {
     gflights:['✈️','Google Flights', c=>c.from && c.to ? `https://www.google.com/travel/flights?hl=${(window.I18N && I18N.lang) || 'fr'}&q=${encodeURIComponent('Flights from '+c.from+' to '+c.to+(c.date?' on '+c.date:''))}` : 'https://www.google.com/travel/flights'],
-    skyscanner:['✈️','Skyscanner', c=>IA(c.from) && IA(c.to) && c.date ? `https://www.skyscanner.fr/transport/vols/${c.from.toLowerCase()}/${c.to.toLowerCase()}/${c.date.slice(2).replace(/-/g, '')}/` : 'https://www.skyscanner.fr/'],
+    skyscanner:['✈️','Skyscanner', c=>{ const fr = !window.I18N || I18N.lang === 'fr', base = fr ? 'https://www.skyscanner.fr/transport/vols/' : 'https://www.skyscanner.net/transport/flights/', yy = x => x.slice(2).replace(/-/g, ''), q = c.n > 1 ? '?adultsv2=' + c.n : '';
+      if(IA(c.from) && IA(c.to)) return base + c.from.toLowerCase() + '/' + c.to.toLowerCase() + '/' + (c.date ? yy(c.date) + '/' + (c.end ? yy(c.end) + '/' : '') : '') + q;
+      return fr ? 'https://www.skyscanner.fr/' : 'https://www.skyscanner.net/'; }],
     kayak:['✈️','Kayak', c=>IA(c.from) && IA(c.to) ? `https://www.kayak.fr/flights/${c.from}-${c.to}${c.date ? '/' + c.date : ''}` : 'https://www.kayak.fr/flights'],
     kiwi:['✈️','Kiwi.com', ()=>'https://www.kiwi.com/fr/'],
     aviasales:['✈️','Aviasales', c=>IA(c.from) && IA(c.to) && c.date ? `https://www.aviasales.com/search/${c.from}${c.date.slice(8, 10)}${c.date.slice(5, 7)}${c.to}1` : 'https://www.aviasales.com/'],
@@ -2546,7 +2563,10 @@
     const box = d => '&viewbox=' + [A.lng - d, A.lat + d * 0.75, A.lng + d, A.lat - d * 0.75].map(n=>n.toFixed(2)).join(',');
     let res = near(await ask(A ? box(8) : ''));
     if(A && A.n >= 2 && (!res || km(A, res) > 3000)){ const L = await ask(box(12) + '&bounded=1'); if(L.length) res = near(L); }   // une ville du même nom près du voyage ?
-    if(!res){ try { const j = await (await fetch('https://photon.komoot.io/api/?limit=1&q=' + encodeURIComponent(full) + (A ? '&lat=' + A.lat.toFixed(2) + '&lon=' + A.lng.toFixed(2) : ''))).json(); const f = j && j.features && j.features[0]; if(f) res = {lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0]}; } catch(e){} }
+    if(!res){ try { const j = await (await fetch('https://photon.komoot.io/api/?limit=3&q=' + encodeURIComponent(full) + (A ? '&lat=' + A.lat.toFixed(2) + '&lon=' + A.lng.toFixed(2) : ''))).json();
+      // Photon devine large (« Termocartagena » → une rue de Lorient) : seulement un lieu qui porte bien ce nom, et près du voyage
+      const nq = normQ(q).replace(/\s+/g, ''), ok = f => { const n = normQ((f.properties || {}).name || '').replace(/\s+/g, ''); if(!n || !(n.includes(nq) || nq.includes(n))) return false; const p = {lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0]}; return !(A && A.n >= 2 && km(A, p) > 3000); };
+      const f = ((j && j.features) || []).find(ok); if(f) res = {lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0]}; } catch(e){} }
     if(!res && full !== q) return geocode(q, null);
     if(res){ const g = Object.assign(R[key] && !R[key].deleted ? clone(R[key]) : {id:key, type:'geo', q:full}, {lat:res.lat, lng:res.lng, g3:1}); if(A) g.near = 1; else delete g.near; stamp(g); R[key] = g; markDirty(key); persist(); }
     return res;

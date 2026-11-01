@@ -1628,7 +1628,56 @@
     ["Patagonie", "Argentine", "AR", -50.338, -72.264, "nature montagne randonnée aventure", [11, 12, 1, 2, 3], 120, [8, 12], [["El Calafate", 3], ["El Chaltén", 3], ["Ushuaïa", 2]], "Perito Moreno, randonnée au Fitz Roy depuis El Chaltén, canal de Beagle à Ushuaïa.", "P", [19, 19, 16, 13, 8, 5, 5, 7, 10, 13, 16, 18], "El Chaltén"],
     ["Canaries (Gran Canaria)", "Espagne", "ES", 27.958, -15.596, "plage nature randonnée détente", [1, 2, 3, 4, 5, 9, 10, 11, 12], 90, [5, 8], [["Las Palmas", 3], ["Maspalomas", 3]], "Dunes de Maspalomas, Roque Nublo, plage de Las Canteras en ville.", "UE", [21, 21, 22, 23, 24, 25, 26, 27, 27, 26, 24, 22], "Gran Canaria"]
   ];
-  const DEPS = {Paris:[48.86,2.35,1], Nantes:[47.22,-1.55,0], Brest:[48.39,-4.49,0], Rennes:[48.11,-1.68,0], Lyon:[45.76,4.84,1], Marseille:[43.30,5.37,1], Nice:[43.70,7.27,1], Bordeaux:[44.84,-0.58,0], Toulouse:[43.60,1.44,0], Lille:[50.63,3.06,0], Strasbourg:[48.57,7.75,0], Montpellier:[43.61,3.88,0], Bruxelles:[50.85,4.35,1], 'Genève':[46.20,6.15,1]};
+  /* 🌍 villes de départ du monde entier, rangées par région : celle de l’utilisateur en premier (fuseau horaire du téléphone).
+     [lat, lng, grand aéroport, code IATA, région, fuseau, nom anglais, pays] */
+  const DEPW = [
+    ['Paris',48.86,2.35,1,'PAR','fr','Europe/Paris','Paris','FR'], ['Nantes',47.22,-1.55,0,'NTE','fr','','Nantes','FR'], ['Brest',48.39,-4.49,0,'BES','fr','','Brest','FR'], ['Rennes',48.11,-1.68,0,'RNS','fr','','Rennes','FR'],
+    ['Lyon',45.76,4.84,1,'LYS','fr','','Lyon','FR'], ['Marseille',43.30,5.37,1,'MRS','fr','','Marseille','FR'], ['Nice',43.70,7.27,1,'NCE','fr','','Nice','FR'], ['Bordeaux',44.84,-0.58,0,'BOD','fr','','Bordeaux','FR'],
+    ['Toulouse',43.60,1.44,0,'TLS','fr','','Toulouse','FR'], ['Lille',50.63,3.06,0,'LIL','fr','','Lille','FR'], ['Strasbourg',48.57,7.75,0,'SXB','fr','','Strasbourg','FR'], ['Montpellier',43.61,3.88,0,'MPL','fr','','Montpellier','FR'],
+    ['Bruxelles',50.85,4.35,1,'BRU','eu','Europe/Brussels','Brussels','BE'], ['Genève',46.20,6.15,1,'GVA','eu','Europe/Zurich','Geneva','CH'], ['Zurich',47.37,8.54,1,'ZRH','eu','','Zurich','CH'], ['Luxembourg',49.61,6.13,0,'LUX','eu','Europe/Luxembourg','Luxembourg','LU'],
+    ['Londres',51.51,-0.13,1,'LON','eu','Europe/London','London','GB'], ['Dublin',53.35,-6.26,1,'DUB','eu','Europe/Dublin','Dublin','IE'], ['Amsterdam',52.37,4.90,1,'AMS','eu','Europe/Amsterdam','Amsterdam','NL'],
+    ['Berlin',52.52,13.40,1,'BER','eu','Europe/Berlin','Berlin','DE'], ['Francfort',50.11,8.68,1,'FRA','eu','','Frankfurt','DE'], ['Munich',48.14,11.58,1,'MUC','eu','','Munich','DE'],
+    ['Madrid',40.42,-3.70,1,'MAD','eu','Europe/Madrid','Madrid','ES'], ['Barcelone',41.39,2.17,1,'BCN','eu','','Barcelona','ES'], ['Lisbonne',38.72,-9.14,1,'LIS','eu','Europe/Lisbon','Lisbon','PT'],
+    ['Rome',41.90,12.50,1,'ROM','eu','Europe/Rome','Rome','IT'], ['Milan',45.46,9.19,1,'MIL','eu','','Milan','IT'], ['Vienne',48.21,16.37,1,'VIE','eu','Europe/Vienna','Vienna','AT'],
+    ['Varsovie',52.23,21.01,1,'WAW','eu','Europe/Warsaw','Warsaw','PL'], ['Prague',50.08,14.44,1,'PRG','eu','Europe/Prague','Prague','CZ'], ['Copenhague',55.68,12.57,1,'CPH','eu','Europe/Copenhagen','Copenhagen','DK'],
+    ['Stockholm',59.33,18.07,1,'STO','eu','Europe/Stockholm','Stockholm','SE'], ['Oslo',59.91,10.75,1,'OSL','eu','Europe/Oslo','Oslo','NO'], ['Helsinki',60.17,24.94,1,'HEL','eu','Europe/Helsinki','Helsinki','FI'],
+    ['Athènes',37.98,23.73,1,'ATH','eu','Europe/Athens','Athens','GR'], ['Istanbul',41.01,28.98,1,'IST','eu','Europe/Istanbul','Istanbul','TR'], ['Moscou',55.76,37.62,1,'MOW','eu','Europe/Moscow','Moscow','RU'],
+    ['New York',40.71,-74.01,1,'NYC','am','America/New_York','New York','US'], ['Boston',42.36,-71.06,1,'BOS','am','','Boston','US'], ['Washington',38.91,-77.04,1,'WAS','am','','Washington','US'],
+    ['Miami',25.76,-80.19,1,'MIA','am','','Miami','US'], ['Chicago',41.88,-87.63,1,'CHI','am','America/Chicago','Chicago','US'], ['Denver',39.74,-104.99,1,'DEN','am','America/Denver','Denver','US'],
+    ['Los Angeles',34.05,-118.24,1,'LAX','am','America/Los_Angeles','Los Angeles','US'], ['San Francisco',37.77,-122.42,1,'SFO','am','','San Francisco','US'],
+    ['Montréal',45.50,-73.57,1,'YMQ','am','America/Montreal','Montreal','CA'], ['Toronto',43.65,-79.38,1,'YTO','am','America/Toronto','Toronto','CA'], ['Vancouver',49.28,-123.12,1,'YVR','am','America/Vancouver','Vancouver','CA'],
+    ['Mexico',19.43,-99.13,1,'MEX','am','America/Mexico_City','Mexico City','MX'],
+    ['Bogotá',4.71,-74.07,1,'BOG','sa','America/Bogota','Bogotá','CO'], ['Medellín',6.25,-75.56,0,'MDE','sa','','Medellín','CO'], ['Lima',-12.05,-77.04,1,'LIM','sa','America/Lima','Lima','PE'],
+    ['Santiago',-33.45,-70.67,1,'SCL','sa','America/Santiago','Santiago','CL'], ['Buenos Aires',-34.60,-58.38,1,'BUE','sa','America/Argentina/Buenos_Aires','Buenos Aires','AR'],
+    ['São Paulo',-23.55,-46.63,1,'SAO','sa','America/Sao_Paulo','São Paulo','BR'], ['Rio de Janeiro',-22.91,-43.17,1,'RIO','sa','','Rio de Janeiro','BR'],
+    ['Casablanca',33.57,-7.59,1,'CAS','af','Africa/Casablanca','Casablanca','MA'], ['Tunis',36.81,10.18,1,'TUN','af','Africa/Tunis','Tunis','TN'], ['Alger',36.75,3.06,1,'ALG','af','Africa/Algiers','Algiers','DZ'],
+    ['Dakar',14.72,-17.47,1,'DSS','af','Africa/Dakar','Dakar','SN'], ['Abidjan',5.36,-4.01,1,'ABJ','af','Africa/Abidjan','Abidjan','CI'], ['Le Caire',30.04,31.24,1,'CAI','af','Africa/Cairo','Cairo','EG'],
+    ['Nairobi',-1.29,36.82,1,'NBO','af','Africa/Nairobi','Nairobi','KE'], ['Johannesburg',-26.20,28.05,1,'JNB','af','Africa/Johannesburg','Johannesburg','ZA'], ['Saint-Denis (La Réunion)',-20.88,55.45,0,'RUN','af','Indian/Reunion','Saint-Denis (Réunion)','RE'],
+    ['Dubaï',25.20,55.27,1,'DXB','as','Asia/Dubai','Dubai','AE'], ['Delhi',28.61,77.21,1,'DEL','as','Asia/Kolkata','Delhi','IN'], ['Mumbai',19.08,72.88,1,'BOM','as','','Mumbai','IN'],
+    ['Bangkok',13.76,100.50,1,'BKK','as','Asia/Bangkok','Bangkok','TH'], ['Singapour',1.35,103.82,1,'SIN','as','Asia/Singapore','Singapore','SG'], ['Hong Kong',22.32,114.17,1,'HKG','as','Asia/Hong_Kong','Hong Kong','HK'],
+    ['Pékin',39.90,116.41,1,'BJS','as','Asia/Shanghai','Beijing','CN'], ['Shanghai',31.23,121.47,1,'SHA','as','','Shanghai','CN'], ['Séoul',37.57,126.98,1,'SEL','as','Asia/Seoul','Seoul','KR'],
+    ['Tokyo',35.68,139.69,1,'TYO','as','Asia/Tokyo','Tokyo','JP'], ['Osaka',34.69,135.50,1,'OSA','as','','Osaka','JP'], ['Taipei',25.03,121.57,1,'TPE','as','Asia/Taipei','Taipei','TW'],
+    ['Sydney',-33.87,151.21,1,'SYD','oc','Australia/Sydney','Sydney','AU'], ['Melbourne',-37.81,144.96,1,'MEL','oc','Australia/Melbourne','Melbourne','AU'], ['Auckland',-36.85,174.76,1,'AKL','oc','Pacific/Auckland','Auckland','NZ'],
+    ['Nouméa',-22.28,166.46,0,'NOU','oc','Pacific/Noumea','Nouméa','NC'], ['Papeete',-17.54,-149.57,0,'PPT','oc','Pacific/Tahiti','Papeete','PF'],
+  ];
+  const DEPS = Object.fromEntries(DEPW.map(c=>[c[0], [c[1], c[2], c[3]]]));
+  const DEPM = Object.fromEntries(DEPW.map(c=>[c[0], {iata:c[4], reg:c[5], tz:c[6], en:c[7], cc:c[8]}]));
+  const DEP_REG = [['fr','France'],['eu','Europe'],['am','Amérique du Nord'],['sa','Amérique du Sud'],['af','Afrique'],['as','Asie et Moyen-Orient'],['oc','Océanie']];
+  const depLbl = k => k === 'autre' ? '' : (window.I18N && I18N.lang !== 'fr' && DEPM[k] ? DEPM[k].en : k);
+  const depName = S => S.dep === 'autre' ? S.depTxt : depLbl(S.dep);
+  // la ville de départ la plus probable : celle du fuseau horaire du téléphone, sinon la première de sa région
+  function depGuess(){
+    let tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch(e){}
+    const hit = DEPW.find(c=>c[6] && c[6] === tz); if(hit) return hit[0];
+    const cont = tz.split('/')[0], reg = {Europe:'eu', America:'am', Africa:'af', Asia:'as', Australia:'oc', Pacific:'oc', Indian:'af'}[cont];
+    if(reg === 'am' && /Bogota|Lima|Santiago|Argentina|Sao_Paulo|Caracas|Montevideo|La_Paz|Asuncion|Guayaquil/.test(tz)) return 'Bogotá';
+    const r = DEPW.find(c=>c[5] === reg); return r ? r[0] : 'Paris';
+  }
+  const depRegOf = k => (DEPM[k] || {}).reg || 'fr';
+  function depSelect(cur){
+    const first = depRegOf(depGuess()), order = [...DEP_REG.filter(r=>r[0] === first), ...DEP_REG.filter(r=>r[0] !== first)];
+    return `<select class="v-in" id="in-dep">${order.map(([r, l])=>`<optgroup label="${esc(MSGT(l))}">${DEPW.filter(c=>c[5] === r).map(c=>`<option value="${esc(c[0])}"${c[0] === cur ? ' selected' : ''}>${esc(depLbl(c[0]))}</option>`).join('')}</optgroup>`).join('')}<option value="autre"${cur === 'autre' ? ' selected' : ''}>✏️ ${esc(MSGT('Autre ville…'))}</option></select>`;
+  }
   const VISA = {UE:'🪪 Carte d’identité suffit', FR:'🇫🇷 Comme en France', P:'🛂 Passeport', E:'🛂 Passeport + autorisation en ligne (ESTA, AVE, ETA…)', V:'🛂 Passeport + visa (souvent en ligne ou à l’arrivée)'};
   const INSP_TAGS = [['plage','🏖️ Plage'],['ville','🏙️ Ville'],['culture','🏛️ Culture'],['nature','🌿 Nature'],['randonnée','🥾 Rando'],['gastronomie','🍝 Gastronomie'],['aventure','🧗 Aventure'],['détente','🧘 Détente'],['fête','🎉 Fête'],['mer','⛵ Mer'],['montagne','🏔️ Montagne'],['histoire','🏺 Histoire'],['romantique','💕 Romantique'],['faune','🐘 Animaux'],['neige','❄️ Neige'],['roadtrip','🚐 Road-trip']];
   const MOIS_L = (window.I18N && I18N.lang !== 'fr') ? [...Array(12).keys()].map(i=>new Intl.DateTimeFormat(I18N.locale, {month:'long'}).format(new Date(2024, i, 15))) : ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -1638,7 +1687,7 @@
     const sel = (id, opts, cur) => `<select class="v-in" id="${id}">${opts.map(([val,l])=>`<option value="${val}"${String(cur)===String(val)?' selected':''}>${l}</option>`).join('')}</select>`;
     setTimeout(()=>{ const d = document.getElementById('in-dep'); if(d) d.onchange = () => { document.getElementById('in-other').style.display = d.value === 'autre' ? '' : 'none'; }; }, 50);
     openSheet(`<h2>💡 Où partir ?</h2><div class="v-sum-small" style="margin-bottom:8px">Réponds en 30 secondes : l’appli compare ${DESTS.length} destinations (météo du mois, temps de trajet depuis chez toi, budget, formalités) et te propose les meilleures, avec un itinéraire type.</div>
-      <div class="v-f2"><div class="v-f"><label>Départ de</label>${sel('in-dep', [...Object.keys(DEPS).map(k=>[k,k]), ['autre','✏️ Autre ville…']], v('dep','Nantes'))}</div>
+      <div class="v-f2"><div class="v-f"><label>Départ de</label>${depSelect(v('dep', depGuess()))}</div>
         <div class="v-f"><label>Quand ?</label>${sel('in-mois', [['','Je suis flexible'], ...MOIS_L.map((m,i)=>[i+1, m])], v('mois',''))}</div></div>
       <div class="v-f2 in-dates"><div class="v-f"><label>${esc(MSGT('Aller le (facultatif)'))}</label><input class="v-in" type="date" id="in-d1" value="${esc(v('d1',''))}" onchange="CV.inspDatesTouch()"></div>
         <div class="v-f"><label>${esc(MSGT('Retour le'))}</label><input class="v-in" type="date" id="in-d2" value="${esc(v('d2',''))}" onchange="CV.inspDatesTouch()"></div></div>
@@ -1646,7 +1695,8 @@
         <div class="v-f"><label>Combien de voyageurs ?</label>${sel('in-nb', [['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6 et +']], v('nb','2'))}</div></div>
       <div class="v-f2"><div class="v-f"><label>Budget total par personne</label><input class="v-in" id="in-budget" inputmode="numeric" value="${esc(v('budget','1200'))}" placeholder="${CS()}, transport compris"></div>
         <div class="v-f"><label>Style</label>${sel('in-style', [['eco','Économique'],['confort','Confort'],['luxe','Petit luxe']], v('style','confort'))}</div></div>
-      <div class="v-f2"><div class="v-f"><label>Trajet au maximum</label>${sel('in-vol', [['2','2 h'],['4','4 h'],['8','8 h'],['99','Peu importe']], v('vol','4'))}</div>
+      <div class="v-f"><label>${esc(MSGT('Comment y aller ?'))}</label><div class="v-filters in-how" style="flex-wrap:wrap">${[['tout', MSGT('Peu importe')], ['avion', '✈️ ' + MSGT('Avion')], ['sol', '🚗 🚆 🚌 ' + MSGT('Sans avion (voiture, train, bus)')]].map(([k, l])=>`<button type="button" class="v-chip${v('how','tout') === k ? ' on' : ''}" data-how="${k}" onclick="this.parentNode.querySelectorAll('[data-how]').forEach(b=>b.classList.toggle('on', b === this))">${esc(l)}</button>`).join('')}</div></div>
+      <div class="v-f2"><div class="v-f"><label>Trajet au maximum</label>${sel('in-vol', [['1','1 h'],['2','2 h'],['3','3 h'],['4','4 h'],['6','6 h'],['8','8 h'],['99','Peu importe']], v('vol','4'))}</div>
         <div class="v-f"><label>Climat souhaité</label>${sel('in-climat', [['','Peu importe'],['chaud','Chaud (26 °C et +)'],['doux','Doux (18–25 °C)'],['frais','Frais (< 18 °C)']], v('climat',''))}</div></div>
       <div class="v-f2"><div class="v-f"><label>Avec qui ?</label>${sel('in-qui', [['solo','Seul(e)'],['couple','En couple'],['amis','Entre amis'],['famille','En famille']], v('qui','couple'))}</div>
         <div class="v-f"><label>Rythme</label>${sel('in-rythme', [['calme','Tranquille'],['equil','Équilibré'],['intense','J’en veux plein']], v('rythme','equil'))}</div></div>
@@ -1658,14 +1708,14 @@
   }
   // ⏱️ « · 10 jours », « · 1 semaine », « · 2 semaines » : en semaines seulement quand le compte tombe juste
   const durLbl = d => d >= 7 && d % 7 === 0 ? d / 7 + ' semaine' + (d >= 14 ? 's' : '') : d + ' jours';
-  function inspireDemo(){ inspire({dep:'Nantes', mois:'5', duree:'7', nb:'2', budget:'1100', style:'confort', vol:'4', climat:'chaud', qui:'couple', rythme:'equil', tags:['mer','gastronomie','culture']}); }
+  function inspireDemo(){ inspire({dep:depGuess(), mois:'5', duree:'7', nb:'2', budget:'1100', style:'confort', vol:'4', climat:'chaud', qui:'couple', rythme:'equil', tags:['mer','gastronomie','culture']}); }
   function inspCalc(S){
-    const dep = DEPS[S.dep] || (S.depLL ? [S.depLL[0], S.depLL[1], 0] : DEPS.Nantes), days = +S.duree, bud = num(S.budget), maxH = +S.vol, sty = {eco:0.7, confort:1, luxe:1.8}[S.style] || 1, now = new Date();
+    const dep = DEPS[S.dep] || (S.depLL ? [S.depLL[0], S.depLL[1], 0] : DEPS[depGuess()] || DEPS.Paris), depCC = (DEPM[S.dep] || {}).cc || S.depCC || 'FR', days = +S.duree, bud = num(S.budget), maxH = +S.vol, sty = {eco:0.7, confort:1, luxe:1.8}[S.style] || 1, now = new Date();
     return DESTS.map((d, i)=>{
       const [nom, pays, cc, la, lo, tg, best, perDay, dur, itin, tip, visa, temps, wk] = d, tags = tg.split(' ');
-      const km_ = km({lat:dep[0], lng:dep[1]}, {lat:la, lng:lo}), ground = cc === 'FR' && km_ < 900 && !['RE','GP'].includes(cc);
-      const escale = !dep[2] && km_ > 2500, h = ground ? km_ / 85 : km_ / 780 + 0.7 + (escale ? 2.5 : 0);
-      const trans = ground ? Math.round(km_ * 0.24) : km_ < 1000 ? 140 : km_ < 2000 ? 210 : km_ < 3500 ? 320 : km_ < 6000 ? 560 : km_ < 9000 ? 780 : 980;
+      const km_ = km({lat:dep[0], lng:dep[1]}, {lat:la, lng:lo}), ground = km_ < 700 || (cc === depCC && km_ < 1000) || (S.how === 'sol' && km_ < 1500);
+      const escale = !dep[2] && km_ > 2500, h = ground ? Math.max(0.3, km_ / 85) : km_ / 780 + 0.7 + (escale ? 2.5 : 0);
+      const trans = ground ? Math.max(10, Math.round(km_ * 0.24)) : km_ < 1000 ? 140 : km_ < 2000 ? 210 : km_ < 3500 ? 320 : km_ < 6000 ? 560 : km_ < 9000 ? 780 : 980;
       const mo = +S.mois || (best.find(m=>m > now.getMonth()+1) || best[0]), tmp = temps[mo-1];
       const stay = Math.round(perDay * sty * Math.max(1, days - 1)), est = trans + (escale ? 80 : 0) + stay;
       let sc = 0; const why = [], warn = [];
@@ -1674,13 +1724,14 @@
       const cl = tmp >= 26 ? 'chaud' : tmp >= 18 ? 'doux' : 'frais';
       if(S.climat){ if(cl === S.climat){ sc += 3; } else { sc -= 3; warn.push(`${tmp} °C en moyenne (${cl})`); } }
       if(h > maxH){ sc -= 8; warn.push(`trajet ≈ ${hhm(h)}`); }
+      if(S.how === 'sol' && !ground){ sc -= 30; } else if(S.how === 'avion' && ground && km_ < 500){ sc -= 6; }
       if(bud){ if(est <= bud){ sc += 3; } else if(est <= bud * 1.15){ warn.push('budget un peu juste'); } else { sc -= 4; warn.push(`budget ≈ ${eur(est)}`); } }
       if(days >= dur[0] && days <= dur[1] + 3) sc += 2; else if(days < dur[0] * 0.6){ sc -= 4; warn.push(`idéal ${dur[0]}–${dur[1]} jours`); }
       if(S.cni && !['UE','FR'].includes(visa)){ sc -= 10; warn.push('passeport nécessaire'); }
       if(S.qui === 'famille'){ if(tags.includes('plage')) sc += 1; if(tags.includes('fête')) sc -= 2; }
       if(S.qui === 'couple' && tags.includes('romantique')) sc += 2;
       if(S.qui === 'amis' && tags.includes('fête')) sc += 2;
-      if(hit.length) why.unshift('✔︎ ' + hit.join(', '));
+      if(hit.length) why.unshift('✔︎ ' + hit.map(k=>{ const l = (INSP_TAGS.find(x=>x[0] === k) || [k, k])[1]; return MSGT(l).replace(/^\S+\s/, '').toLocaleLowerCase(); }).join(', '));   // libellés traduits (« beach, city »), pas les clés internes
       return {i, d, nom, pays, cc, tip, visa, wk, tags, best, dur, sc, est, trans, stay, h, ground, escale, mo, tmp, why, warn, itin, tb: -Math.abs(tmp - 25) - h / 10};
     }).sort((a,b)=>b.sc-a.sc || b.tb-a.tb);   // à score égal : le climat le plus agréable ce mois-là et le trajet le plus court
   }
@@ -1713,36 +1764,36 @@
     if(g('in-dep') === 'autre'){ const t = (g('in-deptxt')||'').trim(); if(!t){ alert('Indique ta ville de départ.'); return; }
       if(!M.insp || M.insp.depTxt !== t || !M.insp.depLL){ toast('📡 Je situe ' + t + '…'); const gg = await geocode(t, null).catch(()=>null); if(!gg){ alert('Ville introuvable : essaie avec le pays (ex. « Plougastel, France »).'); return; } M.insp = Object.assign({}, M.insp, {depTxt:t, depLL:[gg.lat, gg.lng]}); } }
     const S = M.insp = inspDates(Object.assign({}, M.insp, {dep:g('in-dep'), mois:g('in-mois'), duree:g('in-duree'), nb:g('in-nb'), budget:g('in-budget'), style:g('in-style'), vol:g('in-vol'), climat:g('in-climat'), qui:g('in-qui'), rythme:g('in-rythme'),
-      depTxt:(g('in-deptxt')||'').trim(), iata:(g('in-iata')||'').trim().toUpperCase(), cni:(document.getElementById('in-cni')||{}).checked, tags:[...document.querySelectorAll('[data-tag].on')].map(b=>b.dataset.tag)})); persist();
+      depTxt:(g('in-deptxt')||'').trim(), iata:(g('in-iata')||'').trim().toUpperCase(), cni:(document.getElementById('in-cni')||{}).checked, tags:[...document.querySelectorAll('[data-tag].on')].map(b=>b.dataset.tag), how:((document.querySelector('[data-how].on') || {}).dataset || {}).how || 'tout'})); persist();
     inspRes = inspCalc(S); inspShow(8);
   }
   function inspShow(n, focus){
     const S = M.insp, days = +S.duree, nb = Math.min(6, +S.nb || 1), fav = new Set(M.inspFav || []);
     const bud = num(S.budget), maxH = +S.vol;
-    const ok = x => (!bud || (x.live != null ? x.live + x.stay : x.est) <= bud * 1.12) && (maxH >= 99 || x.h <= maxH * 1.25) && (!S.cni || ['UE','FR'].includes(x.visa));
+    const ok = x => (!bud || (x.live != null ? x.live + x.stay : x.est) <= bud * 1.12) && (maxH >= 99 || x.h <= maxH * 1.25) && (!S.cni || ['UE','FR'].includes(x.visa)) && (S.how !== 'sol' || x.ground);
     const fit = inspRes.filter(ok), over = inspRes.filter(x=>!ok(x));
     const top = fit.slice(0, n), mx = Math.max(1, inspRes[0].sc), mn = inspRes[inspRes.length - 1].sc;
     const tight = fit.length < 3 ? `<div class="cv-warnline" style="margin-bottom:8px">${fit.length ? 'Peu d’idées' : 'Aucune idée'} ne rentre dans tes réponses (${bud ? eur(bud) + ' / pers., ' : ''}${maxH < 99 ? maxH + ' h de trajet max' : ''}${S.cni ? ', carte d’identité' : ''}). Pour plus de choix : style « Économique », moins de jours, un trajet un peu plus long ou un budget plus grand.${over.length ? '<br>Les plus proches de tes critères :' : ''}</div>` + over.filter(x=>(!S.cni || ['UE','FR'].includes(x.visa))).sort((a,b)=>a.est-b.est).slice(0, 3 - Math.min(3, fit.length)).map(x=>`<button type="button" class="cv-prow" onclick="CV.inspOpen(${x.i})"><span>${flag(x.cc)} <b>${esc(x.nom)}</b></span><span>≈ ${eur(x.est)} · ${hhm(x.h)}</span></button>`).join('') : '';
     const pct = x => Math.max(5, Math.min(99, Math.round((x.sc - mn) / (mx - mn || 1) * 100)));
     const cityBox = `<div class="insp-city"><b>🏙️ ${MSGT('Tu as une ville en tête ?')}</b><small>${MSGT('Donne-la : je compose un itinéraire autour, avec une ou deux villes proches si tu as le temps.')}</small>
       <div class="cv-row"><input class="v-in" id="in-city" data-place autocomplete="off" placeholder="${esc(MSGT('Ex. Florence, Séville, Cracovie'))}" enterkeyhint="go" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.inspCityGo()}"><button type="button" class="fd-send" onclick="CV.inspCityGo()">${MSGT('Composer')}</button></div></div>`;
-    openSheet(`<h2>✨ Mes idées de voyage</h2><div class="v-sum-small" style="margin-bottom:8px">Depuis <b>${esc(S.dep === 'autre' ? S.depTxt : S.dep)}</b>, ${days} jours, ${nb} voyageur${nb>1?'s':''}. Budgets et temps de trajet = ordres de grandeur ; prix réels avec Escale, formalités sur diplomatie.gouv.fr.</div>
+    openSheet(`<h2>✨ Mes idées de voyage</h2><div class="v-sum-small" style="margin-bottom:8px">Depuis <b>${esc(depName(S))}</b>, ${days} jours, ${nb} voyageur${nb>1?'s':''}. Budgets et temps de trajet = ordres de grandeur ; prix réels avec Escale, formalités sur diplomatie.gouv.fr.</div>
       ${tight}${fit.length < 3 ? cityBox : ''}${top.map(x=>`<div class="cv-idea${focus===x.i?' focus':''}" id="idea-${x.i}" data-i="${x.i}"><div class="im"><img data-wk="fr:${esc(x.wk)}" alt=""><span class="pc">${pct(x)} %</span><button type="button" class="fav${fav.has(x.nom)?' on':''}" onclick="CV.inspFav(${x.i}, this)" aria-label="Garder">${fav.has(x.nom)?'❤️':'🤍'}</button></div>
         <div class="hd"><b>${flag(x.cc)} ${esc(x.nom)}</b><small>${esc(x.pays)} · idéal ${x.dur[0]}–${x.dur[1]} j</small></div>
-        <div class="chips"><span data-k="t">🌡️ ${x.tmp} °C en ${MOIS_L[x.mo-1]}</span><span>${x.ground ? '🚗' : '✈️'} ≈ ${hhm(x.h)}${x.escale ? ' (escale probable)' : ''}</span><span data-k="p" class="${x.ground ? 'hide' : ''}">✈️ prix réel…</span><span data-k="e">💶 ≈ ${eur(x.est)} / pers.</span><span>${VISA[x.visa]}</span></div>
+        <div class="chips"><span data-k="t">🌡️ ${x.tmp} °C en ${MOIS_L[x.mo-1]}</span><span>${x.ground ? '🚗 🚆' : '✈️'} ≈ ${hhm(x.h)}${x.escale ? ' (escale probable)' : ''}</span><span data-k="p" class="${x.ground ? 'hide' : ''}">✈️ prix réel…</span><span data-k="e">💶 ≈ ${eur(x.est)} / pers.</span><span>${VISA[x.visa]}</span></div>
         ${x.why.length ? `<div class="why">${x.why.map(esc).join(' · ')}</div>` : ''}${x.warn.length ? `<div class="warn">⚠️ ${x.warn.map(esc).join(' · ')}</div>` : ''}
         <div class="iti">🗺️ ${inspItin(x, days, S.rythme).map(([c,n])=>`${esc(c)} <small>${n} n.</small>`).join(' → ')}</div>
         <div class="bud" data-k="b">Trajet ≈ ${eur(x.trans + (x.escale ? 80 : 0))} · sur place ≈ ${eur(x.stay)} · <b>total groupe ≈ ${eur(x.est * nb)}</b></div>
         <p>💡 ${esc(x.tip)}</p>
-        <div class="cv-row" style="gap:6px;flex-wrap:wrap"><button type="button" class="v-day-edit cp-go" onclick="CV.inspOpen(${x.i})">🧩 Explorer & composer</button><button type="button" class="v-day-edit" onclick="CV.inspireCreate(${x.i})">🧳 Créer tel quel</button>${ESCALE ? `<a class="v-day-edit" href="${ESCALE}">✈️ Prix réels</a>` : hidden('blk:book') ? '' : `<a class="v-day-edit" href="${esc(bookUrl('gflights', {from:S.dep === 'autre' ? S.depTxt : S.dep, to:x.nom}))}" target="_blank" rel="noopener">✈️ Vols</a><a class="v-day-edit" href="${esc(bookUrl('booking', {city:x.nom, n:nb}))}" target="_blank" rel="noopener">🛏️ Hébergements</a>`}<a class="v-day-edit" href="https://fr.wikipedia.org/wiki/${encodeURIComponent(x.wk.replace(/ /g,'_'))}" target="_blank" rel="noopener">📖 Découvrir</a></div></div>`).join('')}
-      ${n < 16 && fit.length > n ? `<button type="button" class="v-btn sec" onclick="CV.inspMore()">Voir d’autres idées</button>` : ''}${fit.length < 3 ? '' : cityBox}<div id="insp-bp"></div>
+        <div class="cv-row" style="gap:6px;flex-wrap:wrap"><button type="button" class="v-day-edit cp-go" onclick="CV.inspOpen(${x.i})">🧩 Explorer & composer</button><button type="button" class="v-day-edit" onclick="CV.inspireCreate(${x.i})">🧳 Créer tel quel</button>${ESCALE ? `<a class="v-day-edit" href="${ESCALE}">✈️ Prix réels</a>` : hidden('blk:book') ? '' : (x.ground ? `<a class="v-day-edit" href="${esc(bookUrl('rome2rio', {from:depName(S), to:(x.itin[0] || [x.nom])[0]}))}" target="_blank" rel="noopener">🚆 ${MSGT('Trajets')}</a>` : '') + (x.ground && x.h < 5 ? '' : `<button type="button" class="v-day-edit" onclick="CV.inspFly(${x.i})">✈️ Vols</button>`) + `<a class="v-day-edit" href="${esc(bookUrl('booking', {city:x.nom, n:nb}))}" target="_blank" rel="noopener">🛏️ Hébergements</a>`}<a class="v-day-edit" href="https://fr.wikipedia.org/wiki/${encodeURIComponent(x.wk.replace(/ /g,'_'))}" target="_blank" rel="noopener">📖 Découvrir</a></div></div>`).join('')}
+      ${n < 16 && fit.length > n ? `<button type="button" class="v-btn sec" onclick="CV.inspMore()">Voir d’autres idées</button>` : ''}${S.how === 'sol' || days <= 3 ? '<div id="insp-near"></div>' : ''}${fit.length < 3 ? '' : cityBox}<div id="insp-bp"></div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.inspSurprise()">🎲 Surprends-moi</button>${fav.size >= 2 ? `<button type="button" class="v-btn" onclick="CV.inspVote()">🗳️ Faire voter (${fav.size})</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.inspire()">← Réponses</button></div>`);
     setTimeout(async ()=>{ const imgs = [...document.querySelectorAll('.cv-idea img[data-wk]')];
       imgs.forEach(async i=>{ const w = wkParse(i.dataset.wk); if(!w) return; const k = 'sum:' + w.title;
         try { if(!(k in wkCache)){ const j = await (await fetch('https://fr.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(w.title.replace(/ /g,'_')))).json(); wkCache[k] = (j.originalimage && j.thumbnail && j.thumbnail.source) || (j.thumbnail && j.thumbnail.source) || ''; }
           if(wkCache[k]){ i.src = wkCache[k].replace(/\/\d+px-/, '/500px-'); i.onload = () => i.parentNode.classList.add('has'); } } catch(e){} });
       if(focus != null){ const e = document.getElementById('idea-' + focus); if(e) e.scrollIntoView({behavior:'smooth', block:'start'}); }
-      inspPaint(); inspEnrich(); }, 30);
+      inspPaint(); inspEnrich(); inspNear(); }, 30);
   }
   let inspN = 8;
   // « Voir d’autres idées » : la liste s’allonge sous tes yeux, l’écran reste à la même hauteur (on continue à lire en descendant)

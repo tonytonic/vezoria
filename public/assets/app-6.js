@@ -116,7 +116,7 @@
     'Québec':'YMQ','Japon':'TYO','Thaïlande':'BKK','Vietnam':'HAN','Bali':'DPS','Sri Lanka':'CMB','La Réunion':'RUN','Guadeloupe':'PTP','Costa Rica':'SJO','Mexique (Yucatán)':'CUN','Cap-Vert':'SID'};
   const DEP_IATA = {Paris:'PAR', Nantes:'NTE', Brest:'BES', Rennes:'RNS', Lyon:'LYS', Marseille:'MRS', Nice:'NCE', Bordeaux:'BOD', Toulouse:'TLS', Lille:'LIL', Strasbourg:'SXB', Montpellier:'MPL', Bruxelles:'BRU', 'Genève':'GVA'};
   const inspLive = {prices:null, temps:{}, names:null, key:''};
-  function depIata(S){ if(DEP_IATA[S.dep]) return DEP_IATA[S.dep]; if(/^[A-Z]{3}$/.test(S.iata||'')) return S.iata;
+  function depIata(S){ if(DEP_IATA[S.dep]) return DEP_IATA[S.dep]; if(DEPM[S.dep] && DEPM[S.dep].iata) return DEPM[S.dep].iata; if(/^[A-Z]{3}$/.test(S.iata||'')) return S.iata;
     if(!S.depLL) return ''; let best = null, bd = 1e9; Object.entries(DEPS).forEach(([k,d])=>{ const x = km({lat:S.depLL[0], lng:S.depLL[1]}, {lat:d[0], lng:d[1]}); if(x < bd){ bd = x; best = k; } }); return bd <= 250 ? DEP_IATA[best] : ''; }
   const monthKey = S => { const now = new Date(); let m = +S.mois || (now.getMonth() + 2); let y = now.getFullYear(); if(m > 12){ m -= 12; y++; } if(m < now.getMonth() + 1) y++; return `${y}-${String(m).padStart(2,'0')}`; };
   async function inspEnrich(){
@@ -161,6 +161,47 @@
     const d = [nm, '', '', g.lat, g.lng, 'ville culture', [], 90, [3, Math.max(4, days)], [[nm, Math.max(1, days-1)]], 'Bon plan trouvé dans les prix récents : vérifie le tarif du jour avec Escale.', 'P', Array(12).fill(20), nm];
     const i = DESTS.push(d) - 1; DIATA[nm] = code;
     inspRes.unshift({i, d, nom:nm, pays:'', cc:'', tip:d[10], visa:'P', wk:nm, tags:['ville'], best:[], dur:d[8], sc:0, est:(pr ? pr.price : 0) + 90*Math.max(1,days-1), trans:pr ? pr.price : 0, stay:90*Math.max(1,days-1), h:0, ground:false, escale:false, mo:+monthKey(S).slice(5), tmp:'?', why:['✈️ bon plan dès ' + eur(pr ? pr.price : 0)], warn:[], itin:d[9]});
+    inspOpen(i);
+  }
+
+  /* ✈️ « Vols » d’une idée : Skyscanner, de l’aéroport de départ vers l’aéroport le plus proche de la destination, aux dates proposées */
+  async function aptNear(lat, lng){
+    const D = await aptData().catch(()=>null); if(!D) return '';
+    const L = D.map(x=>({i:x[0], big:x[3] === 'L', km:rawKm({lat, lng}, {lat:x[1], lng:x[2]})})).sort((a, b)=>a.km - b.km).slice(0, 8);
+    const big = L.find(a=>a.big), best = L[0] && big && big.km <= L[0].km + 60 ? big : L[0];
+    return best && best.km <= 300 ? best.i : '';
+  }
+  async function inspFly(i){
+    const x = inspRes.find(r=>r.i === i), d = DESTS[i]; if(!d) return;
+    const S = M.insp || {}, w = window.open('about:blank', '_blank');   // ouvert tout de suite (sinon le téléphone bloque la fenêtre)
+    let from = depIata(S);
+    if(!from){ const ll = DEPS[S.dep] || S.depLL; if(ll) from = await aptNear(ll[0], ll[1]); }
+    const to = DIATA[d[0]] || await aptNear(d[3], d[4]);
+    const d1 = x && typeof inspDebut === 'function' ? inspDebut(x) : '', d2 = d1 ? addDays(d1, Math.max(1, (+S.duree || 7) - 1)) : '';
+    const u = bookUrl('skyscanner', {from, to, date:d1, end:d2, n:Math.min(9, +S.nb || 1)});
+    if(w) w.location.href = u; else location.href = u;
+  }
+  /* 📍 week-end sans avion : les villes connues autour du départ (Wikidata), à moins de quelques heures de route ou de train */
+  let nearSeq = 0;
+  async function inspNear(){
+    const box = document.getElementById('insp-near'), S = M.insp; if(!box || !S) return;
+    const ll = DEPS[S.dep] || S.depLL; if(!ll) return; const seq = ++nearSeq;
+    const maxH = Math.min(+S.vol || 3, 5), rad = Math.round(Math.max(1, maxH) * 75);
+    box.innerHTML = `<h3 style="margin:14px 0 6px">📍 ${esc(MSGT('Près de chez toi, sans avion'))}</h3><div class="v-sum-small">${esc(MSGT('Je cherche les villes à voir autour…'))}</div>`;
+    let L = []; try { L = await wdNear(ll[0], ll[1], rad); } catch(e){}
+    if(seq !== nearSeq || !document.body.contains(box)) return;
+    L = L.map(c=>Object.assign(c, {km:Math.round(rawKm({lat:ll[0], lng:ll[1]}, c))})).filter(c=>c.km >= 30 && c.km <= rad).slice(0, 10);
+    if(!L.length){ box.innerHTML = ''; return; }
+    inspNearL = L;
+    box.innerHTML = `<h3 style="margin:14px 0 6px">📍 ${esc(MSGT('Près de chez toi, sans avion'))}</h3><div class="v-sum-small" style="margin-bottom:6px">${esc(RF('Villes connues à moins de {0} km de {1} : en voiture, en train ou en bus.', rad, depName(S)))}</div>
+      <div class="cv-deals">${L.map((c, k)=>`<button type="button" class="cv-deal" onclick="CV.inspNearGo(${k})">${c.img ? `<img src="${esc(c.img)}" alt="" loading="lazy">` : ''}<b data-notr>${esc(c.c)}</b><small>🚗 ≈ ${hhm(c.km / 70 + 0.2)} · ${c.km} km</small></button>`).join('')}</div>`;
+  }
+  let inspNearL = [];
+  function inspNearGo(k){
+    const c = inspNearL[k], S = M.insp || {}; if(!c) return; const days = +(S.duree || 3);
+    const d = [c.c, '', '', c.lat, c.lng, 'ville culture nature', [], 90, [2, Math.max(3, days)], [[c.c, Math.max(1, days - 1)]], MSGT('Idée proche de chez toi : pas besoin de prendre l’avion.'), 'FR', Array(12).fill(18), c.c];
+    const i = DESTS.push(d) - 1, h = c.km / 70 + 0.2;
+    inspRes.unshift({i, d, nom:c.c, pays:'', cc:'', tip:d[10], visa:'FR', wk:c.c, tags:['ville'], best:[], dur:d[8], sc:0, est:Math.round(c.km * 0.24 + 90 * Math.max(1, days - 1)), trans:Math.round(c.km * 0.24), stay:90 * Math.max(1, days - 1), h, ground:true, escale:false, mo:+monthKey(S).slice(5), tmp:'?', why:[], warn:[], itin:d[9], tb:0});
     inspOpen(i);
   }
 

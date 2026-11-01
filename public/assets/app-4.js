@@ -204,11 +204,15 @@
   }
   function bagCcs(){
     const t = trip(), out = new Set();
-    bagCities().forEach(c=>{ const k = (M.ctry || {})[normQ(c)]; if(k && k.cc) out.add(k.cc); const d = ccOf(c); if(d) out.add(d); });
+    ctryRepair();
+    // un pays tapé comme étape (« Japon ») compte ; une VILLE qui porte le nom d’un pays (Armenia en Colombie) non : son pays est celui de son point
+    bagCities().forEach(c=>{ const k = (M.ctry || {})[normQ(c)], g = R['geo:' + normQ(c)]; if(k && k.cc) out.add(k.cc); else if(!(g && !g.deleted && g.lat != null)){ const d = ccOf(c); if(d) out.add(d); } });
     souvs().forEach(s=>{ const cc = s.cc || ccOf(s.pays); if(cc) out.add(cc); });
     const home = (M.bagHome || '').toUpperCase(); if(home) out.delete(home);   // le pays de départ n’est pas une destination
     return [...out];
   }
+  // 🩹 (2026-11-01) les pays des villes étaient cherchés par leur nom seul : on les recalcule une fois depuis le point de la ville
+  function ctryRepair(){ if(M.ctryV === 2) return; M.ctryV = 2; const C = M.ctry || {}; Object.keys(C).forEach(k=>{ if(!C[k].at && R['geo:' + k]) delete C[k]; }); persist(); }
   const ccName = cc => { try { return new Intl.DisplayNames([(window.I18N && I18N.lang) || 'fr'], {type:'region'}).of(cc); } catch(e){ return cc; } };
   function bagFromDefault(){ return M.bagFrom || (/^(fr|de|es|it|pt|nl)/.test(((window.I18N && I18N.lang) || navigator.language || 'fr')) ? 'eu' : 'other'); }
   function bagEntryHtml(){
@@ -327,7 +331,7 @@
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.avDone()">✓ ${esc(MSGT('C’est noté'))}</button></div>`);
     if(open){ (M.avOpen = M.avOpen || {})[t.id] = open; persist(); }
     // pays pas encore connus : on les cherche, puis on rafraîchit
-    if(!ccs.length && bagCities().length) (async ()=>{ for(const c of bagCities()){ if(!(M.ctry || {})[normQ(c)] && !ccOf(c)) { try { await countryOf(c); } catch(e){} } } if(bagCcs().length && document.querySelector('.av-list')) avantSheet(open); })();
+    { const miss = bagCities().filter(c=>!(M.ctry || {})[normQ(c)] && (R['geo:' + normQ(c)] || !ccOf(c))); if(miss.length) (async ()=>{ let nw = 0; for(const c of miss){ try { if(await countryOf(c)) nw++; } catch(e){} } if(nw && document.querySelector('.av-list')) avantSheet(open); })(); }
   }
   function avDone(){ closeSheet(true); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function tlDocs(){
@@ -1053,10 +1057,7 @@
   /* ---------- 📍 Je suis ici · 📊 Mes stats ---------- */
   async function countryOf(city){
     M.ctry = M.ctry || {}; const k = normQ(city); if(M.ctry[k]) return M.ctry[k];
-    const wait = 1100 - (Date.now() - geoLast); if(wait > 0) await new Promise(r=>setTimeout(r, wait)); geoLast = Date.now();
-    try { const j = await (await fetch(GEO + 'search?format=jsonv2&limit=1&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(city))).json();
-      const a = j && j[0] && j[0].address; if(a && a.country){ M.ctry[k] = {pays:a.country, cc:(a.country_code||'').toUpperCase()}; persist(); return M.ctry[k]; } } catch(e){}
-    return null;
+    const o = await cityInfo(city).catch(()=>null); return o && o.cc ? M.ctry[k] : null;
   }
   const flag = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc].map(c=>127397 + c.charCodeAt(0))) : '🌍';
   const frCountry = (cc, fb) => { try { return new Intl.DisplayNames([window.I18N ? I18N.lang : 'fr'], {type:'region'}).of(cc) || fb || cc; } catch(e){ return fb || cc; } };
@@ -1129,18 +1130,25 @@ ${pm.join('\n')}</Document></kml>`;
   }
   async function placesFor(city){
     const key = normQ(city); M.poiCache = M.poiCache || {};
-    const hit = M.poiCache[key]; if(hit && hit.v === 2 && Date.now() - hit.t < DISC_TTL && hit.list.length && (hit.wd || Date.now() - hit.t < 864e5)) return dupClean(hit.list);
     const c = await withTimeout(geocode(city, null), 10000).catch(()=>null); if(!c) return [];
+    const hit = M.poiCache[key]; if(hit && hit.v === 3 && hit.c && km(hit.c, c) < 40 && Date.now() - hit.t < DISC_TTL && hit.list.length && (hit.wd || Date.now() - hit.t < 864e5)) return dupClean(hit.list);
     const res = await Promise.allSettled([seeWiki(c), seeApi(c), seeOverpass(c), seeWD(c)].map(p=>withTimeout(p, 10000)));
     const seen = new Set(), all = res.filter(r=>r.status==='fulfilled').flatMap(r=>r.value||[]);
     const list_ = all.filter(p=>p.nom && p.lat != null && !/^\d+$/.test(p.nom)).sort((x,y)=>y.score-x.score).filter(p=>{ const k = normQ(p.nom); if(seen.has(k)) return false; seen.add(k); return true; }).slice(0,150);
-    if(list_.length){ M.poiCache[key] = {t:Date.now(), list:list_, wd: all.some(p=>p.sl), v:2}; persist(); }
+    if(list_.length){ M.poiCache[key] = {t:Date.now(), list:list_, wd: all.some(p=>p.sl), v:3, c:{lat:c.lat, lng:c.lng}}; persist(); }
     return dupClean(list_);
   }
   /* ---------- 💡 Suggestions : 4 incontournables par jour, à trier quand on veut ---------- */
   const SUGG_N = 4;
   // recherche en cours (en mémoire seulement : si l’appli est fermée pendant la recherche, rien ne reste bloqué)
   let SG = null;
+  // 🧹 idées restées d’un ancien mauvais emplacement de la ville (stade de Lorient pour une étape en Colombie) : retirées
+  function sgFar(tid){
+    const out = list('place', p=>p.trip === tid && p.sugg && !p.deleted && p.lat != null && p.stay).filter(p=>{ const h = R[p.stay]; if(!h) return false;
+      const g = R['geo:' + normQ(stayCity(h))]; if(!g || g.deleted || g.lat == null) return false; return km(g, p) > (p.exc ? 450 : 150); });
+    if(out.length){ putQuiet(out.map(p=>Object.assign(clone(p), {deleted:true}))); persist(); }
+    return out.length;
+  }
   const sgName = (tid, nom) => { const L = ((M.suggNo || {})[tid] || []).concat(list('place', p=>p.trip === tid).map(p=>p.nom)); return new Set(L.map(normQ)).has(normQ(nom)); };
 
   /* 🎟️ EXPÉRIENCES À VIVRE : 3 ou 4 activités phares par destination (croisière, montgolfière, plongée…), réservables chez nos partenaires.
@@ -1411,7 +1419,7 @@ ${pm.join('\n')}</Document></kml>`;
   let SW = null; const SWC = {};
   // ① choisir, VILLE PAR VILLE : les visites suggérées puis les activités payantes de la ville (pas de jour à choisir ici : c'est l'étape ②)
   function suggOpen(){
-    const t = trip(); if(!t) return; try { sgDedupe(t.id); } catch(er){}
+    const t = trip(); if(!t) return; try { sgDedupe(t.id); } catch(er){} try { sgFar(t.id); } catch(er){}
     const st = tlStages(), si = c => { const k = st.findIndex(x=>normQ(x.city) === normQ(c)); return k < 0 ? 99 : k; };
     const td = isoToday(), live = tripPhase(t) === 'live';   // 📍 pendant le voyage : rien des jours déjà passés
     const L = list('place', p=>p.trip === t.id && p.sugg && (!live || !p.date || p.date >= td)).map(p=>({id:p.id, c:swCity(p), d:p.date || '9', x:p.exc ? 1 : 0}));
