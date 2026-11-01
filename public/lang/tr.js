@@ -5836,4 +5836,8 @@ I18N.load({
 "Depuis ma position → {0}":"Bulunduğum yerden → {0}",
 "aéroport de {0}":"{0} havalimanı",
 "Pas encore de visite ce jour-là. Pour te repérer :":"O gün henüz bir ziyaret yok. Yolunu bulmak için:",
-"« {0} » copié : colle-le dans la recherche du site":"«{0}» kopyalandı: sitenin aramasına yapıştır"});
+"« {0} » copié : colle-le dans la recherche du site":"«{0}» kopyalandı: sitenin aramasına yapıştır",
+"Plus d’options de partage":"Diğer paylaşım seçenekleri",
+"Inviter quelqu’un":"Birini davet et",
+"Tu ne suis personne pour l’instant.":"Henüz kimseyi takip etmiyorsun.",
+"Voyages sélectionnés":"Seçili seyahatler"});

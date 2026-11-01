@@ -5848,4 +5848,8 @@ I18N.load({
 "Depuis ma position → {0}":"내 위치에서 → {0}",
 "aéroport de {0}":"{0} 공항",
 "Pas encore de visite ce jour-là. Pour te repérer :":"그날은 아직 방문지가 없어요. 길 찾기:",
-"« {0} » copié : colle-le dans la recherche du site":"‘{0}’ 복사됨: 사이트 검색창에 붙여 넣으세요"});
+"« {0} » copié : colle-le dans la recherche du site":"‘{0}’ 복사됨: 사이트 검색창에 붙여 넣으세요",
+"Plus d’options de partage":"공유 옵션 더 보기",
+"Inviter quelqu’un":"누군가 초대하기",
+"Tu ne suis personne pour l’instant.":"아직 아무도 팔로우하지 않아요.",
+"Voyages sélectionnés":"선택한 여행"});

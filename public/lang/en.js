@@ -2894,4 +2894,8 @@ I18N.load({
 "Depuis ma position → {0}":"From where I am → {0}",
 "aéroport de {0}":"{0} airport",
 "Pas encore de visite ce jour-là. Pour te repérer :":"No visits planned that day yet. To find your way:",
-"« {0} » copié : colle-le dans la recherche du site":"“{0}” copied: paste it into the site’s search"});
+"« {0} » copié : colle-le dans la recherche du site":"“{0}” copied: paste it into the site’s search",
+"Plus d’options de partage":"More sharing options",
+"Inviter quelqu’un":"Invite someone",
+"Tu ne suis personne pour l’instant.":"You’re not following anyone yet.",
+"Voyages sélectionnés":"Selected trips"});

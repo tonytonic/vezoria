@@ -2909,4 +2909,8 @@ I18N.load({
 "Depuis ma position → {0}":"Dalla mia posizione → {0}",
 "aéroport de {0}":"aeroporto di {0}",
 "Pas encore de visite ce jour-là. Pour te repérer :":"Ancora nessuna visita quel giorno. Per orientarti:",
-"« {0} » copié : colle-le dans la recherche du site":"«{0}» copiato: incollalo nella ricerca del sito"});
+"« {0} » copié : colle-le dans la recherche du site":"«{0}» copiato: incollalo nella ricerca del sito",
+"Plus d’options de partage":"Altre opzioni di condivisione",
+"Inviter quelqu’un":"Invita qualcuno",
+"Tu ne suis personne pour l’instant.":"Non segui ancora nessuno.",
+"Voyages sélectionnés":"Viaggi selezionati"});

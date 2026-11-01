@@ -5848,4 +5848,8 @@ I18N.load({
 "Depuis ma position → {0}":"从我的位置 → {0}",
 "aéroport de {0}":"{0}机场",
 "Pas encore de visite ce jour-là. Pour te repérer :":"那天还没有安排参观。帮你找方向：",
-"« {0} » copié : colle-le dans la recherche du site":"已复制“{0}”：粘贴到网站的搜索框中"});
+"« {0} » copié : colle-le dans la recherche du site":"已复制“{0}”：粘贴到网站的搜索框中",
+"Plus d’options de partage":"更多分享选项",
+"Inviter quelqu’un":"邀请某人",
+"Tu ne suis personne pour l’instant.":"你还没有关注任何人。",
+"Voyages sélectionnés":"已选旅行"});

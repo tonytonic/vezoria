@@ -5849,4 +5849,8 @@ I18N.load({
 "Depuis ma position → {0}":"От моего местоположения → {0}",
 "aéroport de {0}":"аэропорт {0}",
 "Pas encore de visite ce jour-là. Pour te repérer :":"В этот день пока нет посещений. Чтобы сориентироваться:",
-"« {0} » copié : colle-le dans la recherche du site":"«{0}» скопировано: вставь в поиск на сайте"});
+"« {0} » copié : colle-le dans la recherche du site":"«{0}» скопировано: вставь в поиск на сайте",
+"Plus d’options de partage":"Другие настройки доступа",
+"Inviter quelqu’un":"Пригласить кого-нибудь",
+"Tu ne suis personne pour l’instant.":"Ты пока ни на кого не подписан.",
+"Voyages sélectionnés":"Выбранные поездки"});

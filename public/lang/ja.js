@@ -5848,4 +5848,8 @@ I18N.load({
 "Depuis ma position → {0}":"現在地から → {0}",
 "aéroport de {0}":"{0}空港",
 "Pas encore de visite ce jour-là. Pour te repérer :":"この日はまだ予定がありません。道案内：",
-"« {0} » copié : colle-le dans la recherche du site":"「{0}」をコピーしました。サイトの検索に貼り付けてね"});
+"« {0} » copié : colle-le dans la recherche du site":"「{0}」をコピーしました。サイトの検索に貼り付けてね",
+"Plus d’options de partage":"その他の共有オプション",
+"Inviter quelqu’un":"誰かを招待",
+"Tu ne suis personne pour l’instant.":"まだ誰もフォローしていません。",
+"Voyages sélectionnés":"選んだ旅"});

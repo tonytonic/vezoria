@@ -5848,4 +5848,8 @@ I18N.load({
 "Depuis ma position → {0}":"मेरी जगह से → {0}",
 "aéroport de {0}":"{0} हवाई अड्डा",
 "Pas encore de visite ce jour-là. Pour te repérer :":"उस दिन अभी कोई जगह नहीं। रास्ता जानने के लिए:",
-"« {0} » copié : colle-le dans la recherche du site":"«{0}» कॉपी हुआ: साइट की खोज में पेस्ट करो"});
+"« {0} » copié : colle-le dans la recherche du site":"«{0}» कॉपी हुआ: साइट की खोज में पेस्ट करो",
+"Plus d’options de partage":"शेयर करने के और विकल्प",
+"Inviter quelqu’un":"किसी को बुलाओ",
+"Tu ne suis personne pour l’instant.":"तुम अभी किसी को फ़ॉलो नहीं करते।",
+"Voyages sélectionnés":"चुनी गई यात्राएँ"});

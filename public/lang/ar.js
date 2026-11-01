@@ -5849,4 +5849,8 @@ I18N.load({
 "Depuis ma position → {0}":"من موقعي ← {0}",
 "aéroport de {0}":"مطار {0}",
 "Pas encore de visite ce jour-là. Pour te repérer :":"لا زيارات في ذلك اليوم بعد. لتحديد طريقك:",
-"« {0} » copié : colle-le dans la recherche du site":"تم نسخ «{0}»: الصقه في بحث الموقع"});
+"« {0} » copié : colle-le dans la recherche du site":"تم نسخ «{0}»: الصقه في بحث الموقع",
+"Plus d’options de partage":"خيارات مشاركة إضافية",
+"Inviter quelqu’un":"ادعُ شخصًا",
+"Tu ne suis personne pour l’instant.":"لا تتابع أحدًا بعد.",
+"Voyages sélectionnés":"الرحلات المختارة"});

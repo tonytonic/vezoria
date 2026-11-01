@@ -2900,4 +2900,8 @@ I18N.load({
 "Depuis ma position → {0}":"Vanaf mijn locatie → {0}",
 "aéroport de {0}":"luchthaven {0}",
 "Pas encore de visite ce jour-là. Pour te repérer :":"Nog geen bezoek die dag. Om je weg te vinden:",
-"« {0} » copié : colle-le dans la recherche du site":"‘{0}’ gekopieerd: plak het in de zoekbalk van de site"});
+"« {0} » copié : colle-le dans la recherche du site":"‘{0}’ gekopieerd: plak het in de zoekbalk van de site",
+"Plus d’options de partage":"Meer deelopties",
+"Inviter quelqu’un":"Iemand uitnodigen",
+"Tu ne suis personne pour l’instant.":"Je volgt nog niemand.",
+"Voyages sélectionnés":"Geselecteerde reizen"});
