@@ -860,12 +860,18 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const P = PU(), want = PUSH_KINDS.map(k=>k[0]).filter(k=>k !== 'rappel' && k !== 'suivi' && P.kinds[k]), codes = new Set();
     if(M.sync.on && M.sync.code) codes.add(M.sync.code);
     Object.entries(TS()).forEach(([tid, c])=>{ if(c && spaceObj(c) && R[tid] && R[tid].type === 'trip') codes.add(c); });
-    const feeds = P.kinds.social ? [...new Set([...Object.values(FT()).filter(Boolean), ...trips().map(t=>mateCode(t.id)).filter(Boolean)])] : [];
+    // 👥 compagnon : le lien abonnés du voyage publié par un autre (pubCode), même si ce téléphone ne l’a jamais ouvert : ❤️ et 💬 des abonnés
+    const mates = trips().filter(t=>t && !t.deleted && !t.demo && t.pubCode && t.pubBy && t.pubBy !== M.me && !FT()[t.id]).map(t=>mateCode(t.id) || t.pubCode);
+    const feeds = P.kinds.social ? [...new Set([...Object.values(FT()).filter(Boolean), ...mates].filter(Boolean))] : [];
     // 👀 voyages que je suis (pas les miens) : prévenu quand le voyageur publie une étape (envoyé en « souv » sur le lien abonnés)
     const mineF = new Set(Object.values(FT()).filter(Boolean)), fol = new Set();
     if(P.kinds.suivi) list('feedtrip', f=>!f.deleted && TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !(M.unfol||{})[f.id]).forEach(f=>{ const c = TS()[f.id]; if(c && !mineF.has(c) && !codes.has(c) && spaceObj(c)) fol.add(c); });
     const ib = M.ib && spaceObj(M.ib) ? [{code:M.ib, kinds:['social']}] : [];   // ma boîte aux lettres : invitations et réponses, toujours
-    return [...codes].map(code=>({code, kinds:want.filter(k=>k !== 'social')})).concat(feeds.map(code=>({code, kinds:['social']}))).concat([...fol].map(code=>({code, kinds:['souv']}))).concat(ib).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
+    // une seule inscription par lien (le serveur n’en garde qu’une par téléphone et par lien) : on réunit les catégories.
+    // Avant, un compagnon qui suivait aussi le voyage en abonné était inscrit 2 fois sur le même lien, et « nouvelles étapes » effaçait « ❤️ et 💬 ».
+    const by = new Map(), add = (code, ks) => { if(!code) return; const o = by.get(code) || new Set(); ks.forEach(k=>o.add(k)); by.set(code, o); };
+    codes.forEach(c=>add(c, want.filter(k=>k !== 'social'))); feeds.forEach(c=>add(c, ['social'])); fol.forEach(c=>add(c, ['souv'])); ib.forEach(x=>add(x.code, x.kinds));
+    return [...by.entries()].filter(([, ks])=>ks.size).map(([code, ks])=>({code, kinds:[...ks]})).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
   }
   // 🔔 l’auteur est prévenu quand un abonné commente, aime ou commence à suivre (même un abonné sans l’appli)
   async function socialPush(ftid, s, x, to){
