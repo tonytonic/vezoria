@@ -629,8 +629,8 @@
   }
   // couvertures automatiques des voyages suivis (photo Wikipédia de la destination, gardée en mémoire)
   function folPaint(root){
-    (root || document).querySelectorAll('.fol-c[data-fid]').forEach(async b=>{
-      const f = R[b.dataset.fid], im = b.querySelector('.fol-im'); if(!f || !im || im.querySelector('img') || !f.place) return;
+    (root || document).querySelectorAll('.fol-c[data-fid], .sp2-tc[data-fid]').forEach(async b=>{
+      const f = R[b.dataset.fid], im = b.querySelector('.fol-im') || (b.classList.contains('sp2-tc') ? b : null); if(!f || !im || im.querySelector('img') || !f.place) return;
       const C = M.tripImg || (M.tripImg = {}), c = C[f.id]; let u = '';
       if(c && c.q === f.place && (c.u || Date.now() - (c.at || 0) < 3 * 864e5)) u = c.u; else { u = await wkPhoto(f.place); C[f.id] = {q:f.place, u, at:Date.now()}; persist(); }
       if(u && !im.querySelector('img')) im.innerHTML = `<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`;
@@ -651,7 +651,8 @@
     return Object.entries(by).map(([pid, ts])=>({pid, ts:ts.sort((a, b)=>(b.debut || '').localeCompare(a.debut || ''))})).sort((a, b)=>b.ts.length - a.ts.length || pname(a.pid).localeCompare(pname(b.pid)));
   }
   const spCov = t => { const p = (list('souv', s=>s.trip === t.id && (s.photos || []).length)[0] || {}).photos; const ph = t.cover || (p && p[0]);
-    return ph ? `<img data-ph="${esc(ph)}.t" alt="">` : t.coverWk ? `<img src="${esc(t.coverWk)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : `<i>${flag(((t.ccs || [])[0]) || '') || '🧳'}</i>`; };
+    const wk = t.coverWk || (((M.tripImg || {})[t.id] || {}).u) || '';   // 🖼️ sinon la photo Wikipédia automatique de la destination (comme sur l’accueil)
+    return ph ? `<img data-ph="${esc(ph)}.t" alt="">` : wk ? `<img src="${esc(wk)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : `<i>${flag(((t.ccs || [])[0]) || '') || '🧳'}</i>`; };
   function spComp(){
     const P = spPeople(), me = M.me && prof(M.me) ? M.me : '';
     const meRow = me ? `<button type="button" class="sp-me" onclick="CV.spMe()">${pav(me, 'av-sm')}<span><b data-notr>${esc(pname(me))}</b><small>${esc(MSGT(myAv() ? 'Ma photo de profil' : 'Ajoute ta photo de profil'))}</small></span><em>✏️</em></button>` : '';
@@ -1274,7 +1275,7 @@
     const nm = (fol[0] || hid[0] || comp[0] || {}).owner || key, av = ([...fol, ...hid].find(f=>avOk(f.oav)) || {}).oav || '';
     const row = ([f, st]) => { const id = ja(f.id), live = tripPhase(f) === 'live';
       const open = st === 'comp' ? `CV.go('${ja(String(f.id).slice(3))}');CV.close()` : st === 'on' ? `CV.feedView('${id}')` : '';
-      return `<div class="sp2-sr${st === 'off' ? ' off' : ''}"><button type="button" class="sp2-tc"${open ? ` onclick="${open}"` : ''}>${spCov(f)}</button><div class="sp2-sb"><b data-notr>${esc(f.titre || '?')}</b><small>${esc(tripDates(f))}${live ? ` · <span class="sp2-lv">● ${esc(MSGT('en voyage'))}</span>` : ''}</small>
+      return `<div class="sp2-sr${st === 'off' ? ' off' : ''}"><button type="button" class="sp2-tc" data-fid="${esc(f.id)}"${open ? ` onclick="${open}"` : ''}>${spCov(f)}</button><div class="sp2-sb"><b data-notr>${esc(f.titre || '?')}</b><small>${esc(tripDates(f))}${live ? ` · <span class="sp2-lv">● ${esc(MSGT('en voyage'))}</span>` : ''}</small>
         <small>${st === 'comp' ? '🧳 ' + esc(MSGT('Tu le fais en compagnon : tu l’as déjà en entier')) : st === 'off' ? '🙈 ' + esc(MSGT('Masqué')) : '👀 ' + esc(MSGT('Je le vois'))}</small></div>
         ${st === 'comp' ? '' : `<button type="button" class="sp2-sw${st === 'on' ? ' on' : ''}" role="switch" aria-checked="${st === 'on'}" aria-label="${esc(MSGT('Je le vois'))}" onclick="${st === 'on' ? `CV.feedUnfollow('${id}', false, '${ja(key)}')` : `CV.feedRefollow('${id}', '${ja(key)}')`}"><i></i></button>`}</div>`; };
     openSheet(`<div class="sp2"><div class="sp2-top sp2-top2">${avTag(av, nm, '#3b82f6', 'av-xl')}<h2 data-notr>${esc(nm)}</h2></div><div class="sp2-body">
@@ -1282,6 +1283,7 @@
       <div class="sp2-empty">${esc(MSGT('Un voyage masqué disparaît de ce téléphone ; remets-le quand tu veux.'))}</div>
       ${all.map(row).join('') || `<div class="sp2-empty">${esc(MSGT('Aucun voyage pour l’instant.'))}</div>`}</div>
       ${fol.length ? `<div class="sp2-pills"><button type="button" class="danger" onclick="CV.feedUnfollow('${ja(fol[0].id)}', true)">🚫 ${esc(MSGT('Ne plus suivre cette personne'))}</button></div>` : ''}</div></div>`);
+    setTimeout(()=>{ try { folPaint(document.getElementById('v-sheet-bg')); } catch(e){} }, 60);   // 🖼️ couvertures Wikipédia automatiques
   }
   function feedRepaintAll(){ document.querySelectorAll('.fd-post[id^="fp-"]').forEach(el=>feedPaint(el.id.slice(3))); }
   async function feedLike(fid){
@@ -1467,7 +1469,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-01o'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-01p'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
