@@ -274,7 +274,13 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
 
   /* ── Affichage des personnes ── */
   const ini = id => `<span class="cv-ini" style="background:${pcol(id)}" title="${esc(pname(id))}">${esc((pname(id)[0]||'?').toUpperCase())}</span>`;
-  const pchip = (id, extra) => `<span class="cv-pchip" style="--pc:${pcol(id)}"><span data-notr>${esc(pname(id))}</span>${extra||''}</span>`;
+  /* 🙂 Photo de profil : une petite image (128 px) rangée dans la fiche du profil, partagée avec les compagnons et les abonnés ;
+     sans photo, l’initiale sur la couleur de la personne. Seule une image JPEG/PNG/WebP en base64 est acceptée (rien d’autre ne s’affiche). */
+  const avOk = av => typeof av === 'string' && av.length < 60000 && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(av);
+  const avTag = (av, nom, col, cls) => avOk(av) ? `<img class="av ${cls || ''}" src="${av}" alt="">` : `<span class="av av-i ${cls || ''}" style="--pc:${hexc(col, '#7c3aed')}" data-notr>${esc(((String(nom || '?').match(/\p{L}|\d/u) || ['?'])[0]).toUpperCase())}</span>`;
+  const pav = (id, cls) => { const p = R[id] || {}; return avTag(p.av, pname(id), pcol(id), cls); };
+  const myAv = () => { const p = M.me && R[M.me]; return p && avOk(p.av) ? p.av : ''; };
+  const pchip = (id, extra) => `<span class="cv-pchip" style="--pc:${pcol(id)}">${R[id] && avOk(R[id].av) ? pav(id, 'av-xs') : ''}<span data-notr>${esc(pname(id))}</span>${extra||''}</span>`;
   // ♿ prénom en couleur : même teinte, assombrie jusqu’à un contraste de 4,5:1 sur fond clair (lisible)
   const pcolTxt = c => { const m = /^#?([0-9a-f]{6})$/i.exec(String(c || '').trim()); if(!m) return c; let [r, g, b] = [0, 2, 4].map(i=>parseInt(m[1].slice(i, i + 2), 16));
     const lum = (r, g, b) => [r, g, b].map(x=>{ x /= 255; return x <= .03928 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4); }).reduce((a, x, i)=>a + x * [.2126, .7152, .0722][i], 0);
@@ -2328,8 +2334,16 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       const name = b[1].split('|').pop(), rest = x.slice(b.index + b[0].length); add(name, rest); });
     return out.slice(0, 24);
   }
+  // traduction faite par le navigateur, sur le téléphone (Chrome récent) : rien n’est envoyé ailleurs ; sinon, un lien « Lire en … » (Google Traduction)
+  async function wvTr(r, to){
+    try { if(typeof Translator === 'undefined' || !Translator.create) return; const o = {sourceLanguage:'en', targetLanguage:to};
+      if(Translator.availability && (await Translator.availability(o)) === 'unavailable') return; const t = await Translator.create(o);
+      const T = async x => x ? String(await t.translate(x)) : x;
+      if(r.lead) r.lead = await T(r.lead); for(const it of r.items) it.d = await T(it.d); r.trd = to;
+    } catch(e){}
+  }
   async function wvHoods(city){
-    const lang = (window.I18N && I18N.lang) || 'fr', key = normQ(city) + ':' + lang + ':3', C = M.wvH || (M.wvH = {});
+    const lang = (window.I18N && I18N.lang) || 'fr', key = normQ(city) + ':' + lang + ':4', C = M.wvH || (M.wvH = {});
     if(C[key] && Date.now() - C[key].at < 30 * 864e5) return C[key];
     const one = async lg => {
       const api = `https://${lg}.wikivoyage.org/w/api.php?format=json&origin=*&formatversion=2`;
@@ -2353,7 +2367,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
           const subs = H.filter(h=>h[0] > H[i][0] && h[0] < end && h[2] === H[i][2] + 1 && !WV_BUDGET.test(h[3]));
           if(subs.length >= 2) items = subs.map(h=>{ const e = (H.find(x=>x[0] > h[0]) || [end])[0]; return {n:h[3], d:wvClean(text.slice(h[0] + h[1], e).replace(/\{\{(?:[^{}]|\{\{[^{}]*\}\})*\}\}/g, ' ').split('\n').filter(l=>!/^\s*[*#{|=}!]/.test(l)).join(' ')).replace(/[{}|]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 420)}; }).slice(0, 16); } }
       if(items.length < 2){   // les grandes villes : un article par quartier
-        const sub = await expJ(api + '&action=query&list=allpages&apnamespace=0&aplimit=20&apprefix=' + encodeURIComponent(pg.title + '/')).catch(()=>null);
+        const sub = await expJ(api + '&action=query&list=allpages&apnamespace=0&apfilterredir=nonredirects&aplimit=20&apprefix=' + encodeURIComponent(pg.title + '/')).catch(()=>null);   // sans les redirections (« Belbuda », « Belvaros »… en double)
         const ts = (sub && sub.query && sub.query.allpages || []).map(x=>x.title).slice(0, 15);
         if(ts.length >= 2){ const ex = await expJ(api + '&action=query&prop=extracts&exintro=1&explaintext=1&exsentences=2&exlimit=20&titles=' + encodeURIComponent(ts.join('|'))).catch(()=>null);
           const E = {}; (ex && ex.query && ex.query.pages || []).forEach(p=>{ E[p.title] = p.extract || ''; });
@@ -2363,7 +2377,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       return items.length ? {lg, title:pg.title, url:`https://${lg}.wikivoyage.org/wiki/` + encodeURIComponent(pg.title.replace(/ /g, '_')), items} : {lg, title:pg.title, url:`https://${lg}.wikivoyage.org/wiki/` + encodeURIComponent(pg.title.replace(/ /g, '_')), items:[]};
     };
     const wl = EXP_WV.includes(lang) ? lang : 'en';
-    let r = await one(wl); if((!r || !r.items.length) && wl !== 'en'){ const r2 = await one('en').catch(()=>null); if(r2 && r2.items.length) r = r2; else if(!(r && r.lead) && r2 && r2.lead) r = r2; else r = r || r2; }
+    // 🌐 d’abord dans la langue de l’appli (même juste « Se loger ») ; l’anglais seulement s’il n’y a rien, traduit sur le téléphone quand il sait le faire
+    let r = await one(wl); if((!r || (!r.items.length && !r.lead)) && wl !== 'en'){ const r2 = await one('en').catch(()=>null); if(r2 && (r2.items.length || r2.lead)){ r = r2; await wvTr(r, wl); } else r = r || r2; }
     const o = Object.assign({at:Date.now()}, r || {items:[]}); if(r) C[key] = o;   // pas de réseau : on réessaiera
     const ks = Object.keys(C); if(ks.length > 60) ks.sort((a, b)=>C[a].at - C[b].at).slice(0, ks.length - 60).forEach(k=>delete C[k]);
     persist(); return o;

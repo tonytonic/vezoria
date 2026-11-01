@@ -488,8 +488,8 @@
       if(!(await uiConfirm('Abandonner la création du voyage ?'))) return;
     }
     // 🧭 parcours guidé : fermer une fenêtre ouverte depuis une de ses étapes ramène à cette étape (pas au menu principal)
-    const top = shStack[shStack.length - 1];
-    if(top && /class="gd[\s"]/.test(top)){ sheetBack(); return; }
+    // une fenêtre ouverte depuis une autre (← visible) : toucher à côté ou ✕ ramène à celle d’avant, pas au menu principal
+    if(shStack.length){ sheetBack(); return; }
     shStack = []; closeSheet();
   }
   function shSwipe(bg){
@@ -916,7 +916,7 @@
           <span>${icon(i)}</span>
           <span class="x">${i.cat==='hotel' ? 'Nuit : ' : ''}${esc(itLbl(i))}${i.exp && su0 && su0.rise && /^(mon|vol|hel)\|/.test(i.exp) ? ` <small class="v-sun">🌅 ${su0.rise}</small>` : i.exp && su0 && su0.set && /^(sun|cat|cru)\|/.test(i.exp) ? ` <small class="v-sun">🌇 ${su0.set}</small>` : ''}${i.cat==='hotel'&&i.nom ? ' — '+esc(i.nom) : ''}${i.heureDep ? ' · '+esc(i.heureDep) : (i.heure && i.cat!=='hotel' ? ' · '+esc(i.heure) : '')}
           ${subset(i) ? `<span class="cv-qui-in">${parts(i).map(ini).join('')}</span>` : ''}${notesFor('item:'+i.id).length?' <span class="cv-nbadge">📌</span>':''}</span>
-          <span class="dot ${i.statut}"></span>
+          ${itMapUrl(i, d) ? `<a class="v-mapbtn" href="${esc(itMapUrl(i, d))}" target="_blank" rel="noopener" aria-label="Google Maps" onclick="event.stopPropagation()">📍</a>` : ''}<span class="dot ${i.statut}"></span>
         </div>`;
       return `<div class="v-day" id="d-${d}">
         <div class="v-day-h" onclick="CV.toggleDay('${ja(d)}')">
@@ -1511,11 +1511,26 @@
     openSheet(`<h2>👤 ${id ? 'Modifier le profil' : 'Nouveau profil'}</h2>${byline(p)}
       <form onsubmit="event.preventDefault();CV.saveProfile()">
         <div class="v-f"><label>Prénom</label><input class="v-in" id="cv-pnom" value="${esc(p.nom)}" required></div>
+        <div class="v-f"><label>${esc(MSGT('Photo de profil'))}</label><div class="av-ed"><span id="av-prev">${avTag(p.av, p.nom, p.couleur, 'av-lg')}</span>
+          <label class="v-btn sec av-pick">📷 ${esc(MSGT(p.av ? 'Changer la photo' : 'Choisir une photo'))}<input type="file" accept="image/*" onchange="CV.avPick(this)"></label>
+          ${p.av ? `<button type="button" class="v-btn sec av-rm" onclick="CV.avDel()">🗑</button>` : ''}</div>
+          <div class="v-sum-small">${esc(MSGT('Elle apparaît à tes compagnons et à tes abonnés, à côté de ton prénom.'))}</div></div>
         <div class="v-f"><label>Couleur</label>${colorPick(p.couleur)}</div>
         <div class="v-f"><label>Pour me rembourser (facultatif)</label><input class="v-in" id="cv-prb" value="${esc(p.rembours||'')}" placeholder="Ex. Lydia ou Wero au 06…, ou IBAN FR76…"></div>
         ${actions(id && id!==M.me ? `CV.delProfile('${ja(id)}')` : '')}
       </form>`);
   }
+  // 📷 la photo est recadrée en carré et réduite à 128 px sur le téléphone (quelques Ko) : rien d’autre ne part
+  async function avPick(inp){
+    const f = inp && inp.files && inp.files[0]; if(!f || !editing) return;
+    try { const bmp = await new Promise((res, rej)=>{ const u = URL.createObjectURL(f), im = new Image(); im.onload = ()=>{ URL.revokeObjectURL(u); res(im); }; im.onerror = rej; im.src = u; });
+      const S = 128, c = document.createElement('canvas'); c.width = S; c.height = S; const g = c.getContext('2d'), m = Math.min(bmp.naturalWidth, bmp.naturalHeight);
+      g.drawImage(bmp, (bmp.naturalWidth - m) / 2, (bmp.naturalHeight - m) / 2, m, m, 0, 0, S, S);
+      let q = .82, d = c.toDataURL('image/jpeg', q); while(d.length > 14000 && q > .4){ q -= .1; d = c.toDataURL('image/jpeg', q); }
+      editing.av = d; const pv = document.getElementById('av-prev'); if(pv) pv.innerHTML = avTag(d, editing.nom, editing.couleur, 'av-lg');
+    } catch(e){ toast('⚠️ ' + MSGT('Photo illisible')); }
+  }
+  function avDel(){ if(!editing) return; delete editing.av; const pv = document.getElementById('av-prev'); if(pv) pv.innerHTML = avTag('', editing.nom, editing.couleur, 'av-lg'); }
   function saveProfile(){
     const p = editing; p.nom = document.getElementById('cv-pnom').value.trim(); if(!p.nom) return;
     p.couleur = document.getElementById('cv-pcol').value; p.type = 'profile';
@@ -2194,8 +2209,11 @@
     if(!w || !w.title || (!w.items.length && !w.lead)){ el.textContent = navigator.onLine === false ? MSGT('Pas de réseau : réessaie quand la connexion revient.') : RF('Wikivoyage ne décrit pas encore les quartiers de {0}.', city); return; }
     const best = hd && hd.name ? normQ(hd.name) : '', hot = n => best && (normQ(n).includes(best) || best.includes(normQ(n)));
     const L = w.items.slice().sort((a, b)=>(hot(b.n) ? 1 : 0) - (hot(a.n) ? 1 : 0));
-    const src = `<div class="v-sum-small hd-src">${esc(MSGT('Source'))} : <a href="${esc(w.url)}" target="_blank" rel="noopener">Wikivoyage · ${esc(w.title)}</a> — ${esc(MSGT('licence CC BY-SA, textes abrégés'))}</div>`;
-    const lead = w.lead ? `<div class="hd-it"><b>${esc(MSGT('Où loger, selon Wikivoyage'))}</b><p data-notr lang="${esc(w.lg)}">${esc(w.lead)}</p></div>` : '';
+    const lg0 = (window.I18N && I18N.lang) || 'fr', foreign = w.lg !== lg0 && !w.trd;
+    const src = `${foreign ? `<a class="v-btn sec hd-tr" href="${esc('https://translate.google.com/translate?sl=' + w.lg + '&tl=' + lg0 + '&u=' + encodeURIComponent(w.url))}" target="_blank" rel="noopener">🌐 ${esc(MSGT('Lire la page traduite'))}</a>` : ''}
+      <div class="v-sum-small hd-src">${esc(MSGT('Source'))} : <a href="${esc(w.url)}" target="_blank" rel="noopener">Wikivoyage · ${esc(w.title)}</a> — ${esc(MSGT(w.trd ? 'licence CC BY-SA, textes abrégés et traduits automatiquement' : 'licence CC BY-SA, textes abrégés'))}</div>`;
+    const lead0 = w.lg !== ((window.I18N && I18N.lang) || 'fr') && !w.trd ? `<div class="v-sum-small" style="margin-bottom:6px">🌐 ${esc(MSGT('Rien dans ta langue sur Wikivoyage : voici la page en anglais.'))}</div>` : '';
+    const lead = lead0 + (w.lead ? `<div class="hd-it"><b>${esc(MSGT('Où loger, selon Wikivoyage'))}</b><p data-notr lang="${esc(w.trd || w.lg)}">${esc(w.lead)}</p></div>` : '');
     el.className = 'hd-list'; el.innerHTML = lead + (L.length ? L.map(x=>`<div class="hd-it${hot(x.n) ? ' on' : ''}"><b data-notr>${esc(x.n)}</b>${hot(x.n) ? ` <small>⭐ ${esc(MSGT('près de tes visites'))}</small>` : ''}${x.d ? `<p data-notr lang="${esc(w.lg)}">${esc(x.d)}</p>` : ''}
         <a class="hd-bk" href="${esc(safeUrl(bookUrl('booking', Object.assign({}, g, {city:x.n + ', ' + city, what:x.n + ', ' + city}))))}" target="_blank" rel="noopener">🛏️ ${esc(MSGT('Hébergements dans ce quartier'))}</a></div>`).join('')
       : lead ? '' : `<div class="v-sum-small">${esc(RF('Wikivoyage ne décrit pas encore les quartiers de {0}.', city))}</div>`) + src;
@@ -2206,12 +2224,13 @@
   /* ══════════ 🛒 Réserver avec… : liens directs vers les sites, sans pub ni pistage ══════════
      Toutes les adresses de partenaires passent par bookUrl() : le jour d’une éventuelle affiliation,
      c’est le seul endroit à changer (lien construit dans le téléphone, rien ne passe par notre serveur). */
+  const IA = x => /^[A-Z]{3}$/.test(String(x || ''));   // un code d’aéroport (les comparateurs de vols en ont besoin)
   const BK = {
     gflights:['✈️','Google Flights', c=>c.from && c.to ? `https://www.google.com/travel/flights?hl=${(window.I18N && I18N.lang) || 'fr'}&q=${encodeURIComponent('Flights from '+c.from+' to '+c.to+(c.date?' on '+c.date:''))}` : 'https://www.google.com/travel/flights'],
-    skyscanner:['✈️','Skyscanner', ()=>'https://www.skyscanner.fr/'],
-    kayak:['✈️','Kayak', ()=>'https://www.kayak.fr/flights'],
+    skyscanner:['✈️','Skyscanner', c=>IA(c.from) && IA(c.to) && c.date ? `https://www.skyscanner.fr/transport/vols/${c.from.toLowerCase()}/${c.to.toLowerCase()}/${c.date.slice(2).replace(/-/g, '')}/` : 'https://www.skyscanner.fr/'],
+    kayak:['✈️','Kayak', c=>IA(c.from) && IA(c.to) ? `https://www.kayak.fr/flights/${c.from}-${c.to}${c.date ? '/' + c.date : ''}` : 'https://www.kayak.fr/flights'],
     kiwi:['✈️','Kiwi.com', ()=>'https://www.kiwi.com/fr/'],
-    aviasales:['✈️','Aviasales', ()=>'https://www.aviasales.com/'],
+    aviasales:['✈️','Aviasales', c=>IA(c.from) && IA(c.to) && c.date ? `https://www.aviasales.com/search/${c.from}${c.date.slice(8, 10)}${c.date.slice(5, 7)}${c.to}1` : 'https://www.aviasales.com/'],
     rome2rio:['🔎','Rome2rio', c=>c.from && c.to ? `https://www.rome2rio.com/fr/map/${encodeURIComponent(c.from)}/${encodeURIComponent(c.to)}` : 'https://www.rome2rio.com/fr/'],
     trainline:['🚆','Trainline', ()=>'https://www.thetrainline.com/fr'],
     omio:['🧭','Omio', ()=>'https://www.omio.fr/'],
@@ -2282,7 +2301,11 @@
   const bookUrl = (k, c) => BK[k] ? affWrap(k, BK[k][2](c || {})) : '';
   // attributs d’un lien : « sponsored » + petite mention « partenaire » quand c’est un lien rémunéré (obligation d’identifier la publicité)
   const bookRel = k => affOn(k) ? ` rel="sponsored noopener" data-aff="${esc(MSGT('partenaire'))}"` : ' rel="noopener"';
-  const bookA = (k, c) => `<a href="${esc(bookUrl(k, c))}" target="_blank"${bookRel(k)} onclick="event.stopPropagation()">${BK[k][0]} ${BK[k][1]}</a>`;
+  const bkPre = (k, c) => { try { return BK[k][2](c || {}) !== BK[k][2]({}); } catch(e){ return false; } };   // le lien change avec la recherche : il est pré-rempli
+  const bkTxt = c => c ? (c.what || c.city || (c.from && c.to ? c.from + ' → ' + c.to : '')) : '';
+  const bookA = (k, c) => `<a href="${esc(bookUrl(k, c))}" target="_blank"${bookRel(k)} onclick="event.stopPropagation()${!bkPre(k, c) && bkTxt(c) ? `;CV.bkCopy('${ja(bkTxt(c) + (c.date ? ' · ' + c.date + (c.end ? ' → ' + c.end : '') : ''))}')` : ''}">${BK[k][0]} ${BK[k][1]}</a>`;
+  // 📋 ce site ne se pré-remplit pas depuis un lien : ta recherche part dans le presse-papiers, tu n’as plus qu’à la coller
+  function bkCopy(t){ try { navigator.clipboard.writeText(t).then(()=>toast('📋 ' + RF('« {0} » copié : colle-le dans la recherche du site', t)), ()=>{}); } catch(e){} }
   const bookRows = G => G.map(g=>`<div class="bk-g"><small>${g.t}</small><div class="cv-links">${g.k.map(k=>bookA(k, g.c)).join('')}</div>${fpSlot(g)}${wgSlot(g)}</div>`).join('')
     + (G.some(g=>g.k.some(affOn)) ? `<div class="v-sum-small bk-aff">🔗 ${MSGT('Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.')}</div>` : '');
   /* ✈️ Prix des vols (Aviasales, via /api/tp) : sous « Comparer les vols », le prix « dès » le jour du vol (sinon dans le mois),
@@ -2362,7 +2385,7 @@
     if(it.cat==='transport'){
       const c = {from:it.from, to:it.to, date:it.date, n}, at = {city:cityOf(it.to||''), what:cityOf(it.to||''), date:it.date, n};
       const m = it.mode || '';
-      if(m==='Avion'){ const fa = aptFor(it.from), ta = aptFor(it.to), cf = Object.assign({}, c, {from:fa ? fa.i : it.from, to:ta ? ta.i : it.to});
+      if(m==='Avion'){ const fa = aptFor(it.from), ta = aptFor(it.to), cf = Object.assign({}, c, {from:(aptAny(it.from) || {}).i || it.from, to:(aptAny(it.to) || {}).i || it.to});
         const why = [ta ? RF('Pas d’aéroport à {0} : vols vers {1} ({2}), à {3} km.', cityOf(it.to) || it.to, ta.n, ta.i, ta.km) : '', fa ? RF('Au départ : aéroport de {0} ({1}), à {2} km de {3}.', fa.n, fa.i, fa.km, cityOf(it.from) || it.from) : ''].filter(Boolean).join(' ');
         G.push({t:why ? '✈️ ' + esc(why) : 'Comparer les vols', k:['gflights','aviasales','skyscanner','kiwi'], c:cf}); if(it.to) G.push({t:'À l’arrivée', k:['welcome','kiwitaxi','gettransfer','economy','localrent'], c:at}); }
       else if(m==='Train') G.push({t:'Trains', k:['trainline','omio','sncf','rome2rio'], c});
@@ -2604,6 +2627,13 @@
     return (a ? f + ' → ' + a.n + ' ✈️ ' : f + ' ✈️ ') + (b ? b.n + ' → ' + t : '→ ' + t); };
   // ✈️ le nom affiché d’un vol vers ou depuis une ville sans aéroport : « Monterosso al Mare → Gênes ✈️ → Nantes »
   const itLbl = it => it && it.cat === 'transport' && /Avion/i.test(it.mode || '') && it.from && it.to && (aptFor(it.from) || aptFor(it.to)) ? trLbl(it) : (it && it.titre) || '';
+  // 📍 à côté de chaque visite, trajet ou hébergement : l’ouvrir dans Google Maps (le trajet d’un point à l’autre, ou l’endroit)
+  const itMapUrl = (i, d) => { const q = encodeURIComponent;
+    if(i.cat === 'transport'){ if(!i.from || !i.to) return ''; const fl = /Avion/i.test(i.mode || ''); return `https://www.google.com/maps/dir/?api=1&origin=${q(tfPt(i.from, i.mode))}&destination=${q(tfPt(i.to, i.mode))}${fl ? '' : '&travelmode=' + tfMode(i.mode)}`; }
+    if(i.cat === 'hotel'){ const w = [i.nom, i.adresse || cityOf(i.titre)].filter(Boolean).join(', '); return w ? `https://www.google.com/maps/search/?api=1&query=${q(w)}` : ''; }
+    if(i.lat != null && i.lng != null) return `https://www.google.com/maps/search/?api=1&query=${(+i.lat).toFixed(5)},${(+i.lng).toFixed(5)}`;
+    const c = d && typeof dayCity === 'function' ? dayCity(d) : '', w = i.adresse || [i.q || i.titre, c].filter(Boolean).join(', ');
+    return (i.titre || i.adresse) && !/^divers$/.test(i.cat) ? `https://www.google.com/maps/search/?api=1&query=${q(w)}` : ''; };
   const tfMode = m => m === 'Voiture' ? 'driving' : m === 'Pied' ? 'walking' : 'transit';
   // 🚶 hôtel ↔ gare (ou port) : souvent à quelques minutes, à pied ou en taxi ; l’aéroport, lui, est plus loin (taxi, navette, transports)
   const tfGround = (m, far) => far ? {ic:'🚆', how:MSGT('Train, bus ou taxi'), tm:'Train'} : /Avion/i.test(m || '') ? {ic:'🚕', how:MSGT('Taxi, navette ou transports'), tm:'Train'} : {ic:'🚶', how:MSGT('À pied ou en taxi'), tm:'Pied'};
@@ -2701,11 +2731,20 @@
     </div>`;
   }
   let planD = null;
+  // 🧭 pas de visite ce jour-là : les trajets du jour, et ton hôtel (ou la gare, l’aéroport) depuis l’endroit où tu es
+  function planNone(d){
+    const q = encodeURIComponent, here = dest => `https://www.google.com/maps/dir/?api=1&destination=${q(dest)}&travelmode=transit`, {list:tr} = dayTr(d), {night} = hotelsAround(d), L = [];
+    tr.forEach(t=>{ if(t.from) L.push([MODE_ICON[t.mode] || '🧭', RF('Depuis ma position → {0}', /Avion/i.test(t.mode || '') ? RF('aéroport de {0}', (aptAny(t.from) || {}).n || cityOf(t.from)) : t.from), here(tfPt(t.from, t.mode))]);
+      const u = itMapUrl(t, d); if(u) L.push(['🗺️', (t.from || '') + ' → ' + (t.to || ''), u]); });
+    if(night && (night.nom || night.adresse || night.titre)) L.push(['🏨', RF('Depuis ma position → {0}', night.nom || cityOf(night.titre)), here(tfHotel(night))]);
+    if(!L.length) return '';
+    return `<div class="pl-none"><div class="v-sum-small" style="margin-bottom:6px">${esc(MSGT('Pas encore de visite ce jour-là. Pour te repérer :'))}</div>${L.map(([i, l, u])=>`<a class="cv-tf-go pl-nl" href="${esc(u)}" target="_blank" rel="noopener">${i} <span data-notr>${esc(l)}</span></a>`).join('')}</div>`;
+  }
   function planDay(d, map){
     planD = d; const rh = routeHTML(d, false), showMap = map !== false;   // 🗺️ venu de « Itinéraire » : trajet ouvert · après « remettre dans l’ordre » : on reste sur la liste
     const cfg = dayCfg(d), opts = pointOptions(d), pl = placesOf(d), t = trip(), city = dayCity(d);
     const sel = (id, cur, loop) => `<select class="v-in" id="${id}" onchange="CV.plCfg()">${loop ? `<option value="boucle"${cur==='boucle'?' selected':''}>↩️ Retour au point de départ (boucle)</option><option value="fin"${cur==='fin'?' selected':''}>🏁 Fin au dernier lieu visité</option>` : ''}${opts.map(o=>`<option value="${o.k}"${o.k===cur?' selected':''}>${esc(o.lbl)}</option>`).join('')}</select>`;
-    openSheet(`<h2>🗺️ ${fdate(d)}${dayInfo(d).titre ? ' · ' + esc(dayInfo(d).titre) : ''}</h2>
+    openSheet(`<h2>🗺️ ${fdate(d)}${dayInfo(d).titre ? ' · ' + esc(dayInfo(d).titre) : ''}</h2>${pl.length ? '' : planNone(d)}
       ${showMap ? `<div class="pl-trace" id="pl-trace"><div class="cv-route-load">🗺️ ${MSGT('Je dessine le trajet…')}</div></div>` : ''}
       <div class="v-f"><label>Point de départ</label>${sel('pl-dep', cfg.dep)}
         <input class="v-in" id="pl-dept" style="margin-top:6px;${cfg.dep==='libre'?'':'display:none'}" value="${esc(cfg.depTxt)}" placeholder="Adresse, lieu ou lien Google Maps" onchange="CV.plCfg()"></div>

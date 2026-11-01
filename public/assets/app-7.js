@@ -2412,9 +2412,9 @@
     return (await uiConfirm(RF('Ranger ce nouveau voyage dans le carnet partagé de {0} ?\n\nOK = carnet partagé (vous le voyez tous les deux).\nAnnuler = seulement dans ton carnet.', g.by || MSGT('ton compagnon')))) ? ms[0].code : '';
   }
   // ── 👥 côté propriétaire : créer, lister, retirer les codes compagnon ──
-  async function memberInvite(){
+  async function memberInvite(who){
     if(!ownerOn() || !memberApi()){ alert(MSGT('Il faut d’abord mettre tout ton carnet dans le cloud (☁️ Cloud → « Tout mon carnet »).')); return; }
-    const raw = await uiPrompt(MSGT('Pour qui est ce code compagnon ? (prénom)'), ''); if(raw === null) return;
+    const raw = typeof who === 'string' && who.trim() ? who : await uiPrompt(MSGT('Pour qui est ce code compagnon ? (prénom)'), ''); if(raw === null) return;
     const label = String(raw || '').trim().slice(0, 40);
     toast('🔐 ' + MSGT('Création du code compagnon…'));
     try {
@@ -2424,7 +2424,7 @@
       const lbl = label ? 'e1:' + await boxSeal(await ownerKey(), label) : '';   // 🔒 le prénom part chiffré : seul le propriétaire le relit
       const r = await memberApiCall({a:'add', mt, grant, label:lbl}, M.sync.code);
       if(!r.ok) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status));
-      (M.memLocal || (M.memLocal = {}))[r.j.id] = C; persist(); try { await codesPublish(); } catch(e){}
+      (M.memLocal || (M.memLocal = {}))[r.j.id] = C; if(label) (M.memNames || (M.memNames = {}))[r.j.id] = label; persist(); try { await codesPublish(); } catch(e){}
       memberShow(C, label);
     } catch(e){ alert(RF('Code compagnon impossible à créer : {0}', e.message)); }
   }
@@ -2446,6 +2446,7 @@
       const r = await memberApiCall({a:'list'}, M.sync.code); if(!r.ok) throw new Error(srvMsg(r.j.error) || r.status);
       const L = r.j.members || [];
       for(const m of L) if(/^e1:/.test(m.label || '')) { try { m.label = String(await boxOpen(await ownerKey(), m.label.slice(3))); } catch(e){ m.label = '👤'; } }
+      M.memNames = Object.fromEntries(L.filter(m=>m.label && m.label !== '👤').map(m=>[m.id, m.label])); persist();   // qui a accès à tout le carnet (pour « Partager »)
       el.innerHTML = L.length ? L.map(m=>`<div class="cv-cl-t"><span><b data-notr>${esc(m.label || '👤')}</b><small>${m.last ? MSGT('vu') + ' ' + vzWhen(m.last) : MSGT('pas encore utilisé')}</small></span>`
         + `${(M.memLocal || {})[m.id] ? `<button type="button" class="v-btn sec" onclick="CV.memberShowId('${ja(m.id)}','${ja(m.label || '')}')">${MSGT('Code')}</button>` : ''}<button type="button" class="v-btn sec" onclick="CV.memberRevoke('${ja(m.id)}','${ja(m.label || '')}')">${MSGT('Retirer l’accès')}</button></div>`).join('')
         : `<div class="v-sum-small">${MSGT('Aucun compagnon pour l’instant.')}</div>`;
@@ -2455,7 +2456,7 @@
   async function memberRevoke(id, label){
     if(!(await uiConfirm(RF('Retirer l’accès de {0} ?\n\nSon appli ne pourra plus synchroniser ton carnet. Ce qu’il a déjà vu reste sur son téléphone.', label || MSGT('ce compagnon'))))) return;
     try { const r = await memberApiCall({a:'revoke', id}, M.sync.code); if(!r.ok) throw new Error(srvMsg(r.j.error) || r.status);
-      if(M.memLocal) delete M.memLocal[id]; persist(); toast('🚫 ' + MSGT('Accès retiré')); memberListLoad(); } catch(e){ alert(e.message); }
+      if(M.memLocal) delete M.memLocal[id]; if(M.memNames) delete M.memNames[id]; persist(); toast('🚫 ' + MSGT('Accès retiré')); memberListLoad(); } catch(e){ alert(e.message); }
   }
   // ── 📱 ajouter un de MES appareils : le code administrateur en QR code (jamais à donner à quelqu’un d’autre) ──
   function deviceAdd(){

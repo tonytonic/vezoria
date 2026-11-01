@@ -836,7 +836,9 @@
   }
   function shareHub(){
     const t0 = trip(), t = t0 && !t0.demo ? t0 : null;
-    let h = `<h2>👥 Partager</h2>` + (t0 && !t0.demo && !hidden('blk:prep') ? socFil(t0) : '') + shTabsBar() + `<div class="sh-tb" data-t="suis">` + followHTML() + `</div>`; setTimeout(()=>{ folPaint(); hydrate(); }, 60);
+    let h = `<h2>👥 Partager</h2>` + (t0 && !t0.demo && !hidden('blk:prep') ? socFil(t0) : '') + shTabsBar()
+      + `<div class="sh-tb" data-t="comp">${spComp()}</div><div class="sh-tb" data-t="ab">${spAb()}</div><div class="sh-tb" data-t="suis">${spSuis()}</div>`   // 👥 la vue d’ensemble, en haut de chaque onglet
+      + `<details class="sh-tb sh-det" data-t="suis"><summary>${esc(MSGT('Tous les voyages que je suis'))}</summary>` + followHTML() + `</details>`; setTimeout(()=>{ folPaint(); hydrate(); }, 60);
     if(t){
       const code = TS()[t.id], on = code && spaceObj(code), sp = on ? spaceObj(code) : null, v = (t.voyageurs||[]).filter(prof), fc = feedCode(t.id);
       const grpT = fc ? Object.keys(FT()).filter(x=>FT()[x] === fc && R[x] && !R[x].deleted) : [], gIds = new Set(grpT.map(ftId));   // carnet publié d’un coup : les abonnés voient tous ces voyages
