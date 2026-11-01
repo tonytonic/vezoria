@@ -539,6 +539,8 @@
     code = String(code || '').trim().toUpperCase(); if(code.length < 8){ alert('Code trop court.'); return; }
     if(!myName() && !web){ const n = (await uiPrompt('Ton prénom (pour signer tes ❤️ et commentaires) :', '')); if(!n || !n.trim()) return; M.followName = n.trim(); }
     const isNew = !spaceObj(code); if(isNew) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
+    // 🔁 je reviens sur ce lien (après « Ne plus suivre ») : ses voyages masqués reviennent, avant de relire le lien
+    { const un = M.unfol || {}, UT = M.unfolT || {}; Object.keys(un).forEach(k=>{ if(un[k] === 1 && (TS()[k] === code || (UT[k] && UT[k].code === code))){ delete un[k]; delete UT[k]; } }); }
     toast('📡 Connexion…'); const sp = spaceObj(code); sp.since = 0; M._mateSkip = 0; await syncSpace(sp, true);
     if(sp.err && sp.net){ if(isNew){ M.spaces = M.spaces.filter(x=>x !== sp); persist(); } alert('📴 ' + netMsg()); return; }
     if(M.unfol) Object.keys(TS()).forEach(k=>{ if(TS()[k] === code) delete M.unfol[k]; });   // je suis à nouveau ce lien : ses voyages reviennent
@@ -551,7 +553,7 @@
     if(web) M.webCode = code;
     let pk; try { pk = (await fKey()).pub; } catch(e){}
     if(myName() && !(M.fwChk = M.fwChk || {})[code]){ M.fwChk[code] = 1; const r = await fwNameResolve(myName()); if(r && r.n !== myName()) (M.fwAs = M.fwAs || {})[code] = r.n; }
-    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', pid:fwPid(), trip:ft.id, who: fwAsFor(code) || 'Un proche', pk}; if(!R[fw.id]){ putQuiet([fw]); socialPush(ft.id, 'follow', ''); }
+    const fw = {id:'fw:' + ft.id + ':' + devId(), type:'follower', pid:fwPid(), trip:ft.id, who: fwAsFor(code) || 'Un proche', pk}; if(!R[fw.id] || R[fw.id].deleted){ putQuiet([fw]); socialPush(ft.id, 'follow', ''); }   // revenu après « Ne plus suivre » : la fiche d’abonné effacée renaît (l’auteur te revoit)
     persist(); syncNow(); closeSheet(true); feedView(ft.id); toast('👀 Tu suis « ' + ft.titre + ' »');
   }
   function followSheet(){
@@ -1164,6 +1166,21 @@
     // voyage qu’on m’a retiré : j’arrête de le suivre
     Object.entries(got).forEach(([t, c])=>{ const x = R['fg:' + t + ':' + me]; if(x && x.deleted){ M.spaces = (M.spaces||[]).filter(s=>s.code !== c); delete got[t]; persist(); } });
   }
+  // 🩹 je suis ce voyage mais ma fiche d’abonné a été effacée (« Ne plus suivre » puis retour par le même lien, ou retiré de la liste
+  //    par l’auteur alors que j’utilise toujours ce téléphone) : elle renaît, l’auteur me revoit dans ses abonnés
+  let fwHealAt = 0;
+  async function fwSelfHeal(){
+    if(Date.now() - fwHealAt < 110e3) return; fwHealAt = Date.now();
+    try {
+      const me = devId(), un = M.unfol || {}, out = [];
+      const fol = list('feedtrip', f=>!f.deleted && TS()[f.id] && !FT()[String(f.id).replace(/^ft:/, '')] && !un[f.id] && spaceObj(TS()[f.id]));
+      if(!fol.length) return; let pk = ''; try { pk = (await fKey()).pub; } catch(e){}
+      fol.forEach(ft=>{ const id = 'fw:' + ft.id + ':' + me, cur = R[id]; if(cur && !cur.deleted) return;
+        out.push({id, type:'follower', pid:fwPid(), trip:ft.id, who:fwAsFor(TS()[ft.id]) || myName() || 'Un proche', pk}); });
+      if(out.length){ putQuiet(out); socialPush(out[0].trip, 'follow', ''); }
+    } catch(e){}
+  }
+  setTimeout(fwSelfHeal, 20000); setInterval(fwSelfHeal, 5 * 60e3);
   // anciens liens retirés : effacés du serveur 2 mois après (le temps que tous les abonnés soient passés au nouveau)
   async function feedOldWipe(){
     const due = (M.fold||[]).filter(x=>Date.now() - x.at > 60 * 864e5); if(!due.length || !apiUrl()) return;
@@ -1478,7 +1495,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-01v'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-01w'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
