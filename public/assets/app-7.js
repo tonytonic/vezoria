@@ -2504,10 +2504,10 @@
   }
   const PH_B = 466000;   // repère d’affichage : 700 Mo ≈ 1 500 photos (une photo ≈ 285 Ko + sa vignette, avec de la marge)
   const fmtB = b => b >= 1e9 ? String(Math.round(b / 1e8) / 10).replace('.', ',') + ' Go' : Math.max(0, Math.round(b / 1e6)) + ' Mo';
-  const phN = b => { const n = Math.max(0, Math.floor(b / PH_B)); return (n >= 1000 ? Math.floor(n / 100) * 100 : n).toLocaleString((window.I18N && I18N.locale) || 'fr-FR'); };
+  const phN = b => { const n = Math.max(0, Math.floor(b / PH_B)); return (n >= 100000 ? Math.floor(n / 10000) * 10000 : n >= 10000 ? Math.floor(n / 1000) * 1000 : n >= 1000 ? Math.floor(n / 100) * 100 : n).toLocaleString((window.I18N && I18N.locale) || 'fr-FR'); };
   const dLong = ms => new Date(ms).toLocaleDateString((window.I18N && I18N.locale) || 'fr-FR', {day:'numeric', month:'long', year:'numeric'});
   const inPlay = () => { try { return isPlay(); } catch(e){ return false; } };   // appli Android (Google Play) : jamais de paiement web (règle Google)
-  const PRICE = {plus:{year:'7,99 €', month:'0,99 €'}, max:{year:'14,99 €', month:'1,99 €'}};
+  const PRICE = {plus:{year:'14,99 €', month:'1,99 €'}, max:{year:'29,99 €', month:'3,99 €'}};   // 2 formules : Plus ≈ 10 000 photos, Max ≈ 100 000 photos (usage raisonnable)
   // codes que j’ai créés : mes voyages partagés, paquets et publications (jamais un voyage rejoint chez quelqu’un d’autre)
   function myBranchCodes(){
     const main = M.sync.code, my = M.myCodes || {}, out = new Set();
@@ -2550,6 +2550,13 @@
     return M.quota;
   }
   const planName = q => q && q.active ? ({plus:'Plus', max:'Max', unlimited:MSGT('Illimité')}[q.plan] || q.plan) : MSGT('Gratuit');
+  /* 🔜 formules pas encore ouvertes (en attente du SIRET et des paiements) : on les annonce sans prix */
+  function soonPlans(){
+    const P = (M.quota && M.quota.plans) || {}, it = (ic, n, b, x) => `<div class="cv-soon-p"><i>${ic}</i><span><b>${n}</b><small>${RF('≈ {0} photos', phN(b))}${x ? ' · ' + x : ''}</small></span></div>`;
+    return `<div class="cv-soon"><div class="cv-soon-h">✨ ${MSGT('Plus de place photos')} <em>${MSGT('Prochainement')}</em></div>`
+      + it('➕', 'Plus', P.plus || 4.8e9, '') + it('🚀', 'Max', P.max || 50e9, MSGT('usage raisonnable'))
+      + `<small>${MSGT('Les formules ne débloquent aucune fonction : seulement de la place pour les photos.')}</small></div>`;
+  }
   function quotaBox(){
     const q = M.quota;
     if(!q) return `<div class="sy-r" id="cv-quota"><b>📦 ${MSGT('Place photos')}</b><small>…</small></div>`;
@@ -2559,8 +2566,9 @@
       <div class="cv-qbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${Math.max(2, pct)}%"></i></div>
       <small>${unl ? RF('{0} utilisés · sans limite', fmtB(q.used)) : RF('{0} utilisés sur {1}', fmtB(q.used), fmtB(q.quota)) + (over ? '' : ' · ' + RF('≈ {0} photos encore possibles', phN(q.quota - q.used)))}${q.active && q.until ? ' · ' + RF('jusqu’au {0}', dLong(q.until)) : ''}</small>`;
     if(q.branch) h += `<small>${MSGT('Ce carnet est branché sur celui de son créateur : ses photos comptent chez lui.')}</small>`;
-    if(over) h += `<div class="cv-qwarn">⚠️ ${q.graceEnd ? RF('Place dépassée : plus de nouvel envoi de photos. Tout reste visible jusqu’au {0}. Ensuite, on garde les photos les plus récentes dans ta place : enregistre les autres chez toi (Sauvegarde ZIP).', dLong(q.graceEnd)) : MSGT('Place dépassée : plus de nouvel envoi de photos.')}</div>`;
+    if(over) h += `<div class="cv-qwarn">⚠️ ${q.graceEnd ? RF('Place dépassée : plus de nouvel envoi de photos. Tout reste visible jusqu’au {0}. Ensuite, on garde les photos les plus récentes dans ta place : enregistre les autres chez toi (Sauvegarde ZIP).', dLong(q.graceEnd)) : RF('Place dépassée : tes photos restent toutes en ligne et visibles, mais plus de nouvel envoi tant que tu n’es pas redescendu sous {0}. Tout le reste fonctionne (voyages, partage, commentaires, ❤️).', fmtB(q.quota))}</div>`;
     else h += `<small>${MSGT('Tes voyages partagés comptent ici, photos de tes compagnons comprises. Les vignettes comptent à peine. En mode sans cloud, aucune limite : tout reste sur ton téléphone.')}</small>`;
+    if(q.owner && !pay && !q.active) h += soonPlans();
     if(q.owner) h += `<div class="cv-row" style="margin-top:8px;flex-wrap:wrap;gap:6px"><button type="button" class="v-btn sec" style="flex:1;margin:0" onclick="CV.giftAsk()">🎁 ${MSGT('J’ai un code cadeau')}</button>`
       + (pay ? `<button type="button" class="v-btn" style="flex:1;margin:0" onclick="CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : '')
       + (pay && q.src === 'stripe' ? `<button type="button" class="v-btn sec" style="flex:1;margin:0" onclick="CV.planPortal()">${MSGT('Gérer mon abonnement')}</button>` : '') + `</div>`;
@@ -2580,9 +2588,9 @@
   }
   function planSheet(){
     const q = M.quota || {}, P = q.plans || {};
-    const row = (p, per) => `<button type="button" class="cv-choice" onclick="CV.planBuy('${ja(p)}','${ja(per)}')"><i>${p === 'max' ? '🚀' : '➕'}</i><span><b>${p === 'max' ? 'Max' : 'Plus'} · ${fmtB(P[p] || 0)} · ${PRICE[p][per]} ${per === 'year' ? MSGT('par an') : MSGT('par mois')}</b><small>${RF('≈ {0} photos', phN(P[p] || 0))}</small></span></button>`;
+    const row = (p, per) => `<button type="button" class="cv-choice" onclick="CV.planBuy('${ja(p)}','${ja(per)}')"><i>${p === 'max' ? '🚀' : '➕'}</i><span><b>${p === 'max' ? 'Max' : 'Plus'} · ${fmtB(P[p] || 0)} · ${PRICE[p][per]} ${per === 'year' ? MSGT('par an') : MSGT('par mois')}</b><small>${RF('≈ {0} photos', phN(P[p] || 0))}${p === 'max' ? ' · ' + MSGT('usage raisonnable') : ''}</small></span></button>`;
     openSheet(`<h2>⬆️ ${MSGT('Agrandir ma place photos')}</h2>
-      <div class="v-sum-small" style="margin-bottom:10px">${MSGT('Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tout reste visible 6 mois.')}</div>
+      <div class="v-sum-small" style="margin-bottom:10px">${MSGT('Pour tout ton carnet, voyages partagés compris : tes compagnons en profitent aussi. Sans engagement : à l’arrêt, tes photos restent toutes en ligne ; seuls les nouveaux envois s’arrêtent tant que tu dépasses la place gratuite.')}</div>
       ${row('plus', 'year')}${row('max', 'year')}${row('plus', 'month')}${row('max', 'month')}
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${MSGT('Fermer')}</button></div>`);
   }
@@ -2608,6 +2616,13 @@
       momentShow(`<div class="mo-k">${MSGT('Place photos')}</div><div class="mo-big">📦</div><h2>${st === 1 ? MSGT('Ta place photos est dépassée') : RF('Plus que {0} jours pour enregistrer tes photos', Math.max(1, Math.ceil(left / 864e5)))}</h2>
         <div class="mo-sub">${RF('Tes photos restent toutes visibles jusqu’au {0}, mais tu ne peux plus en envoyer de nouvelles. Après cette date, on garde les photos les plus récentes dans ta place ({1}) et les plus anciennes sont effacées du serveur.', dLong(q.graceEnd), fmtB(q.quota))}<br><br>${MSGT('Enregistre-les dès maintenant sur ton téléphone ou ton ordinateur (Sauvegarde ZIP).')}</div>
         <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.zipSheet()">💾 ${MSGT('Sauvegarde ZIP')}</button>${q.pay && !inPlay() ? `<button type="button" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet('choose')">📱 ${MSGT('Hors ligne, sans limite')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
+      return true;
+    }
+    if(q.used > q.quota && !q.graceEnd && q.overSince && N.s !== q.overSince){
+      N.s = q.overSince; N.st = 1; persist();
+      momentShow(`<div class="mo-k">${MSGT('Place photos')}</div><div class="mo-big">📦</div><h2>${MSGT('Ta place photos est dépassée')}</h2>
+        <div class="mo-sub">${RF('Rien n’est effacé : tes photos restent toutes en ligne et visibles. Les nouvelles photos restent sur ton téléphone tant que tu n’es pas redescendu sous {0}.', fmtB(q.quota))}</div>
+        <div class="mo-b">${q.pay && !inPlay() ? `<button type="button" class="pri" onclick="CV.momentClose();CV.planSheet()">⬆️ ${MSGT('Agrandir ma place')}</button>` : ''}<button type="button" onclick="CV.momentClose();CV.cloudSheet()">☁️ ${MSGT('Voir ma place')}</button><button type="button" onclick="CV.momentClose()">${MSGT('Plus tard')}</button></div>`, 'eve');
       return true;
     }
     if(!(q.active && q.plan === 'unlimited') && q.used >= q.quota * 0.9 && q.used <= q.quota && now - (N.near || 0) > 30 * 864e5){

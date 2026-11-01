@@ -2895,6 +2895,13 @@ body.cv-ph-past .cv-prep2 .ar-go:not(.ex-go){color:#1E2C5C}
 .cv-quota.near .cv-qbar i{background:linear-gradient(90deg,#f59e0b,#f97316)}
 .cv-quota.over .cv-qbar i{background:#dc2626}
 .cv-qwarn{margin-top:6px;padding:8px 10px;border-radius:10px;background:#fff1f0;color:#9b1c1c;font-size:.8rem;line-height:1.35}
+.cv-soon{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px dashed #c4b5fd;background:rgba(237,233,254,.45)}
+.cv-soon-h{font-weight:700;font-size:.86rem;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.cv-soon-h em{font-style:normal;font-size:.66rem;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:#6d28d9;background:#ede9fe;border-radius:99px;padding:3px 8px}
+.cv-soon-p{display:flex;align-items:center;gap:10px;padding:5px 0}
+.cv-soon-p>i{font-style:normal;font-size:1.1rem;width:26px;text-align:center}
+.cv-soon-p span{display:flex;flex-direction:column}.cv-soon-p b{font-size:.88rem}.cv-soon-p small{opacity:.75}
+.cv-soon>small{display:block;margin-top:4px;opacity:.75}
 /* 📱 hors ligne mis en avant · ⚖️ comparaison cloud / hors ligne */
 .cv-choice.cv-off,body.vz-glass .cv-choice.cv-off{border-color:#c4b5fd!important;background:linear-gradient(135deg,rgba(237,233,254,.9),rgba(255,255,255,.75))!important}
 .cv-choice .cv-offb{display:inline-block;position:static;font-style:normal;font-size:.68rem;font-weight:800;letter-spacing:.02em;color:#6d28d9;background:#ede9fe;border-radius:99px;padding:3px 8px;margin-bottom:4px}
