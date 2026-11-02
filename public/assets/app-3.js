@@ -537,10 +537,7 @@
       <div class="v-box" style="margin:0 0 10px"><div>💾 Utilisé par Vezoria : <b>${used ? mo(used) : '?'}</b></div>${quota ? `<div class="v-sum-small">Place disponible pour l’appli : ${mo(quota)}</div>` : ''}
         <div style="margin-top:6px">${kept ? '🔒 Stockage protégé : le téléphone ne fera pas de ménage dans tes voyages et tes photos.' : '⚠️ Stockage non protégé : si le téléphone manque de place, il peut effacer les données de l’appli.'}</div></div>
       ${kept ? '' : `<div class="v-sum-small" style="margin-bottom:10px">${isIOSDev ? 'Sur iPhone : ajoute Vezoria à l’écran d’accueil (Safari → Partager → « Sur l’écran d’accueil ») et ouvre-la de là. Garde aussi une 💾 sauvegarde complète de temps en temps.' : 'Installe Vezoria (Google Play ou « Installer l’appli ») et ouvre-la souvent : Android protège alors son stockage. Garde aussi une 💾 sauvegarde complète de temps en temps.'}</div>`}
-      <h3 style="margin:8px 0 4px">🧹 Libérer de la place</h3>
-      <div class="v-sum-small">Pour les voyages terminés (${past}), les grandes photos déjà envoyées sur le serveur sont retirées de ce téléphone. Les vignettes restent : la grille et le film s’affichent toujours, et la grande photo revient du serveur, en version allégée, quand tu l’ouvres (il faut du réseau). Les photos pas encore envoyées ne sont jamais touchées.</div>
-      <div id="sp-msg" class="v-sum-small" style="margin-top:6px"></div>
-      <div class="v-actions"><button type="button" class="v-btn" id="sp-go" onclick="CV.spaceFree()"${past ? '' : ' disabled'}>🧹 Libérer de la place</button></div>
+      <div class="v-sum-small" style="margin:8px 0" data-notr>📸 ${MSGT('Tes photos restent toujours sur ce téléphone, en entier. Le serveur n’en garde qu’une copie, pour tes autres appareils, tes compagnons et tes abonnés.')}</div>
       <h3 style="margin:14px 0 4px">🔁 Doublons et photos inutiles</h3>
       <div class="v-sum-small">Un voyage importé deux fois, des souvenirs remplacés : l’appli retrouve les copies en trop et les photos qui ne servent plus à rien, sur ce téléphone et sur le serveur.</div>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.dupSheet()">🔁 Chercher les doublons</button><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
@@ -621,7 +618,10 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  async function spaceFree(){
+  // 🧹 ancienne option « Libérer de la place » (grandes photos retirées du téléphone) : retirée. Le téléphone garde toujours ses photos,
+  //    le serveur n’en a qu’une copie : un souci de serveur ne touche que le partage avec les compagnons et les abonnés.
+  async function spaceFree(){ return; }
+  async function spaceFreeOld(){
     const say = m => { const e = document.getElementById('sp-msg'); if(e) e.textContent = m; }, btn = document.getElementById('sp-go');
     if(!(await uiConfirm('Retirer de ce téléphone les grandes photos des voyages terminés déjà sur le serveur ? Les vignettes restent, et chaque grande photo revient quand tu l’ouvres.'))) return;
     if(btn) btn.disabled = true;
