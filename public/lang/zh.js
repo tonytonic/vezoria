@@ -1,4 +1,7 @@
 I18N.load({
+/* 📸 photos gardées sur le téléphone (2026-11-02a) */
+"Tes photos restent toujours sur ce téléphone, en entier. Le serveur n’en garde qu’une copie, pour tes autres appareils, tes compagnons et tes abonnés.":"你的照片始终完整保存在这部手机上。服务器只保留一份副本，供你的其他设备、同伴和关注者使用。",
+"Protège tes photos contre le ménage automatique du téléphone, et retrouve les doublons.":"保护照片不被手机自动清理，并查找重复项。",
 /* 🔑 changer de code administrateur (2026-11-01y) */
 "Changer mon code administrateur":"更改我的管理员代码",
 "À faire si quelqu’un d’autre connaît ton code (téléphone perdu, code partagé par erreur). Tu gardes tout : voyages, photos, abonnement, abonnés.":"如果别人知道了你的代码（手机丢失、误分享代码），请这样做。旅行、照片、订阅、关注者全都保留。",

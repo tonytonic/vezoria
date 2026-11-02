@@ -1,4 +1,7 @@
 I18N.load({
+/* 📸 photos gardées sur le téléphone (2026-11-02a) */
+"Tes photos restent toujours sur ce téléphone, en entier. Le serveur n’en garde qu’une copie, pour tes autres appareils, tes compagnons et tes abonnés.":"आपकी फ़ोटो हमेशा इस फ़ोन पर पूरी रहती हैं। सर्वर केवल एक कॉपी रखता है, आपके दूसरे डिवाइस, साथियों और फ़ॉलोअर के लिए।",
+"Protège tes photos contre le ménage automatique du téléphone, et retrouve les doublons.":"अपनी फ़ोटो को फ़ोन की अपने-आप सफ़ाई से बचाएँ और डुप्लिकेट खोजें।",
 /* 🔑 changer de code administrateur (2026-11-01y) */
 "Changer mon code administrateur":"मेरा एडमिन कोड बदलें",
 "À faire si quelqu’un d’autre connaît ton code (téléphone perdu, code partagé par erreur). Tu gardes tout : voyages, photos, abonnement, abonnés.":"यह तब करें जब कोई और आपका कोड जानता हो (फ़ोन खो गया, कोड गलती से साझा हुआ)। सब कुछ आपके पास रहेगा: यात्राएँ, फ़ोटो, सदस्यता, फ़ॉलोअर।",

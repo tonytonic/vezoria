@@ -1,4 +1,7 @@
 I18N.load({
+/* 📸 photos gardées sur le téléphone (2026-11-02a) */
+"Tes photos restent toujours sur ce téléphone, en entier. Le serveur n’en garde qu’une copie, pour tes autres appareils, tes compagnons et tes abonnés.":"As tuas fotos ficam sempre neste telemóvel, completas. O servidor só guarda uma cópia, para os teus outros dispositivos, companheiros e seguidores.",
+"Protège tes photos contre le ménage automatique du téléphone, et retrouve les doublons.":"Protege as tuas fotos da limpeza automática do telemóvel e encontra duplicados.",
 /* 🔑 changer de code administrateur (2026-11-01y) */
 "Changer mon code administrateur":"Mudar o meu código de administrador",
 "À faire si quelqu’un d’autre connaît ton code (téléphone perdu, code partagé par erreur). Tu gardes tout : voyages, photos, abonnement, abonnés.":"Faz isto se outra pessoa conhece o teu código (telemóvel perdido, código partilhado por engano). Manténs tudo: viagens, fotos, subscrição, seguidores.",

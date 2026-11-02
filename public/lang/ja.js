@@ -1,4 +1,7 @@
 I18N.load({
+/* 📸 photos gardées sur le téléphone (2026-11-02a) */
+"Tes photos restent toujours sur ce téléphone, en entier. Le serveur n’en garde qu’une copie, pour tes autres appareils, tes compagnons et tes abonnés.":"写真はいつもこのスマホに元のまま残ります。サーバーには、他の端末・仲間・フォロワーのためのコピーだけが保存されます。",
+"Protège tes photos contre le ménage automatique du téléphone, et retrouve les doublons.":"スマホの自動整理から写真を守り、重複を見つけます。",
 /* 🔑 changer de code administrateur (2026-11-01y) */
 "Changer mon code administrateur":"管理者コードを変更",
 "À faire si quelqu’un d’autre connaît ton code (téléphone perdu, code partagé par erreur). Tu gardes tout : voyages, photos, abonnement, abonnés.":"他の人にコードを知られた場合（スマホ紛失、誤って共有など）に行ってください。旅行・写真・サブスクリプション・フォロワーはすべてそのままです。",
