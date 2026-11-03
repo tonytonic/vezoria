@@ -54,12 +54,9 @@ html.vz-dark .bp-pl{color:rgb(168, 124, 243)}
 html.vz-dark .bp-cut{border-top-color:rgb(46, 46, 46)}
 html.vz-dark .board .mo-b button{background-color:rgb(22, 22, 22);color:rgb(188, 157, 236)}
 html.vz-dark .cv-eve{background-image:linear-gradient(160deg, rgb(15, 15, 15), rgb(48, 48, 48))}
-html.vz-dark .ev-b .pri{color:rgb(249, 224, 184)}
 html.vz-dark .cv-anniv{background-image:linear-gradient(135deg, rgb(39, 39, 39), rgb(71, 71, 71))}
-html.vz-dark .wm-new{color:rgb(249, 224, 184)}
 html.vz-dark #wm-plan{background-color:rgba(14, 14, 14, 0.92)}
-html.vz-dark .wp-b .pri{color:rgb(249, 224, 184)}
-html.vz-dark .wm-plan-pin{color:rgb(249, 224, 184);box-shadow:rgba(0, 0, 0, 0.455) 0px 0px 0px 4px, rgb(0, 0, 0) 0px 0px 18px}
+html.vz-dark .wm-plan-pin{box-shadow:rgba(0, 0, 0, 0.455) 0px 0px 0px 4px, rgb(0, 0, 0) 0px 0px 18px}
 html.vz-dark .cp-facts span{background-color:rgb(22, 22, 22);color:rgb(212, 166, 248)}
 html.vz-dark .cp-facts .tip{background-color:rgb(23, 23, 23);color:rgb(242, 182, 162)}
 html.vz-dark body.cv-ph-live .hero{background-image:radial-gradient(120% 90% at 85% 115%, rgb(44, 44, 44) 0%, rgba(45, 45, 45, 0.7) 38%, transparent 70%), linear-gradient(rgb(12, 12, 12) 0%, rgb(23, 23, 23) 60%, rgb(33, 33, 33) 100%)}
@@ -77,7 +74,6 @@ html.vz-dark .cv-prep2::before{background-image:radial-gradient(1.5px 1.5px at 2
 html.vz-dark .p2-pct b{background-image:linear-gradient(rgb(20, 20, 20), rgb(255, 217, 160))}
 html.vz-dark .p2-next{background-color:rgb(20, 20, 20);color:rgb(227, 183, 231);box-shadow:rgba(0, 0, 0, 0.234) 0px 6px 16px}
 html.vz-dark .p2-next i{color:rgb(189, 135, 232)}
-html.vz-dark .p2-list .ok i{color:rgb(227, 183, 231)}
 html.vz-dark .cv-bhero{background-image:radial-gradient(110% 80% at 100% 0%, rgba(98, 98, 98, 0.45), transparent 60%), linear-gradient(150deg, rgb(14, 14, 14) 0%, rgb(35, 35, 35) 60%, rgb(58, 58, 58) 100%);box-shadow:rgba(0, 0, 0, 0.455) 0px 12px 30px}
 html.vz-dark .bh-b .pri{background-color:rgb(36, 36, 36);color:rgb(228, 202, 193)}
 html.vz-dark .cv-moment.home .mo-card{background-image:linear-gradient(160deg, rgb(14, 14, 14), rgb(35, 35, 35) 55%, rgb(58, 58, 58))}
@@ -365,7 +361,7 @@ html.vz-dark .cv-live{background-color:rgb(23, 23, 23)}
 html.vz-dark .cv-tripcard{background-color:rgb(20, 20, 20);color:var(--dk-t1)}
 html.vz-dark .cv-tripact button{background-color:rgb(20, 20, 20);color:var(--dk-t1)}
 html.vz-dark .cv-tripact button.on{border-top-color:rgb(54, 54, 54);border-right-color:rgb(54, 54, 54);border-bottom-color:rgb(54, 54, 54);border-left-color:rgb(54, 54, 54);background-color:rgb(23, 23, 23)}
-html.vz-dark .cv-tripcard.tc{color:var(--dk-t1);background-color:rgb(22, 22, 22);box-shadow:rgba(255, 255, 255, 0.05) 0px 1px 0px, rgba(0, 0, 0, 0.156) 0px 8px 18px}
+html.vz-dark .cv-tripcard.tc{background-color:rgb(22, 22, 22);box-shadow:rgba(255, 255, 255, 0.05) 0px 1px 0px, rgba(0, 0, 0, 0.156) 0px 8px 18px}
 html.vz-dark .tc .tc-pic{background-color:rgb(20, 20, 20);box-shadow:rgba(0, 0, 0, 0.195) 0px 3px 10px}
 html.vz-dark .tc .td{border-bottom-color:rgb(50, 50, 50)}
 html.vz-dark .tc .tc-st b{color:var(--dk-t1)}
@@ -520,7 +516,6 @@ html.vz-dark .wm-bottom{background-image:linear-gradient(transparent, rgba(8, 8,
 html.vz-dark .wm-card{background-color:rgba(16, 16, 16, 0.72)}
 html.vz-dark .wm-card.on{box-shadow:rgba(0, 0, 0, 0.325) 0px 8px 24px}
 html.vz-dark .wm-card .im{background-color:rgb(28, 28, 28)}
-html.vz-dark .wm-play{color:rgb(218, 190, 234)}
 html.vz-dark .wm-story{background-color:rgba(20, 20, 20, 0.96);box-shadow:rgba(0, 0, 0, 0.585) 0px 12px 34px}
 html.vz-dark .wm-sx{background-color:rgb(24, 24, 24)}
 html.vz-dark .wm-sph{background-color:rgb(26, 26, 26)}
@@ -604,7 +599,7 @@ html.vz-dark .st-edg button{background-color:rgb(24, 24, 24)}
 html.vz-dark .st-edg button.on{box-shadow:rgb(0, 0, 0) 0px 0px 0px 3px inset}
 html.vz-dark .vx{background-color:rgba(10, 10, 10, 0.88)}
 html.vz-dark .vx-pv{box-shadow:rgba(0, 0, 0, 0.78) 0px 20px 40px}
-html.vz-dark .bb-scr{color:rgb(249, 226, 175);background-image:linear-gradient(120deg, rgb(184, 137, 46), rgb(246, 220, 154) 40%, rgb(201, 153, 59) 70%, rgb(37, 37, 37));box-shadow:rgb(0, 0, 0) 0px 12px 26px -14px}
+html.vz-dark .bb-scr{background-image:linear-gradient(120deg, rgb(184, 137, 46), rgb(246, 220, 154) 40%, rgb(201, 153, 59) 70%, rgb(37, 37, 37));box-shadow:rgb(0, 0, 0) 0px 12px 26px -14px}
 html.vz-dark .scr{background-image:radial-gradient(120% 70% at 50% 0%, rgb(33, 33, 33), rgb(10, 10, 10))}
 html.vz-dark .scr-map{box-shadow:rgba(0, 0, 0, 0.65) 0px 18px 40px}
 html.vz-dark .scr-cd{background-image:linear-gradient(150deg, rgb(20, 20, 20), rgb(23, 23, 23));color:rgb(198, 208, 223);box-shadow:rgba(0, 0, 0, 0.455) 0px 8px 20px}
@@ -685,7 +680,7 @@ html.vz-dark .st-pd > img{border-top-color:rgb(43, 43, 43);border-right-color:rg
 html.vz-dark .st-pd b{background-color:rgba(20, 20, 20, 0.95);color:rgb(244, 140, 165)}
 html.vz-dark .bb-story{background-image:linear-gradient(120deg, rgb(28, 28, 28), rgb(81, 81, 81) 55%, rgb(71, 71, 71));box-shadow:rgb(0, 0, 0) 0px 14px 30px -14px}
 html.vz-dark .bb-pl{background-color:rgb(20, 20, 20);color:rgb(168, 124, 243)}
-html.vz-dark .bb-t{background-image:linear-gradient(160deg, rgb(28, 28, 28), rgb(253, 230, 138));box-shadow:rgba(0, 0, 0, 0.78) 0px 8px 18px -10px;color:rgb(249, 226, 175)}
+html.vz-dark .bb-t{background-image:linear-gradient(160deg, rgb(28, 28, 28), rgb(253, 230, 138));box-shadow:rgba(0, 0, 0, 0.78) 0px 8px 18px -10px}
 html.vz-dark .bb-map{background-color:rgb(16, 16, 16)}
 html.vz-dark .bb-mh button{background-color:rgb(20, 20, 20);color:rgb(195, 207, 234)}
 html.vz-dark .bb-ph{background-color:rgb(26, 26, 26)}
@@ -802,7 +797,7 @@ html.vz-dark #cv-exp .ex-body{background-color:rgb(10, 10, 10)}
 html.vz-dark #cv-exp .ex-card{background-color:rgb(18, 18, 18);box-shadow:rgba(0, 0, 0, 0.52) 0px 12px 30px}
 html.vz-dark #cv-exp .ex-ok{background-color:rgb(55, 55, 55);box-shadow:rgba(0, 0, 0, 0.39) 0px 2px 8px}
 html.vz-dark #cv-exp .ex-dc{background-color:rgb(14, 14, 14)}
-html.vz-dark #cv-exp .v-btn{color:rgb(249, 224, 184);box-shadow:rgba(0, 0, 0, 0.455) 0px 8px 22px}
+html.vz-dark #cv-exp .v-btn{box-shadow:rgba(0, 0, 0, 0.455) 0px 8px 22px}
 html.vz-dark .lv-idx button{border-top-color:rgb(47, 47, 47);border-right-color:rgb(47, 47, 47);border-bottom-color:rgb(47, 47, 47);border-left-color:rgb(47, 47, 47);background-color:rgb(20, 20, 20);box-shadow:rgba(0, 0, 0, 0.065) 0px 2px 8px}
 html.vz-dark .lv-ch{background-color:rgb(20, 20, 20);box-shadow:rgba(0, 0, 0, 0.104) 0px 6px 22px}
 html.vz-dark .lv-n{background-color:rgba(20, 20, 20, 0.88);color:rgb(209, 189, 230)}
@@ -926,7 +921,6 @@ html.vz-dark body.cv-ph-past .cv-disc-card .dc button{background-color:rgb(26, 2
 html.vz-dark body.cv-ph-past .cv-disc-card .dc button.cy{background-color:rgb(20, 20, 20);border-top-color:rgb(49, 49, 49);border-right-color:rgb(49, 49, 49);border-bottom-color:rgb(49, 49, 49);border-left-color:rgb(49, 49, 49)}
 html.vz-dark body.cv-ph-past .cv-disc-card .dc button.add{background-color:rgb(34, 34, 34)}
 html.vz-dark .cv-bhero{background-image:radial-gradient(2.4px 2.4px at 6% 14%, rgba(20, 20, 20, 0.95) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 14% 58%, rgba(20, 20, 20, 0.7) 50%, transparent 51%), radial-gradient(2px 2px at 21% 30%, rgba(20, 20, 20, 0.85) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 29% 8%, rgba(20, 20, 20, 0.6) 50%, transparent 51%), radial-gradient(2.7px 2.7px at 34% 46%, rgba(20, 20, 20, 0.9) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 42% 22%, rgba(20, 20, 20, 0.7) 50%, transparent 51%), radial-gradient(1.8px 1.8px at 49% 64%, rgba(20, 20, 20, 0.6) 50%, transparent 51%), radial-gradient(2.2px 2.2px at 55% 12%, rgba(20, 20, 20, 0.9) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 61% 38%, rgba(20, 20, 20, 0.65) 50%, transparent 51%), radial-gradient(1.8px 1.8px at 68% 26%, rgba(20, 20, 20, 0.8) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 73% 6%, rgba(20, 20, 20, 0.6) 50%, transparent 51%), radial-gradient(2.4px 2.4px at 79% 48%, rgba(20, 20, 20, 0.85) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 86% 18%, rgba(20, 20, 20, 0.7) 50%, transparent 51%), radial-gradient(2px 2px at 92% 34%, rgba(20, 20, 20, 0.8) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 96% 60%, rgba(20, 20, 20, 0.6) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 10% 82%, rgba(20, 20, 20, 0.5) 50%, transparent 51%), radial-gradient(1.8px 1.8px at 38% 86%, rgba(20, 20, 20, 0.5) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 64% 80%, rgba(20, 20, 20, 0.5) 50%, transparent 51%), radial-gradient(2.1px 2.1px at 26% 70%, rgba(20, 20, 20, 0.6) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 48% 36%, rgba(20, 20, 20, 0.75) 50%, transparent 51%), radial-gradient(110% 80% at 100% 0%, rgba(95, 95, 95, 0.45), transparent 60%), linear-gradient(150deg, rgb(10, 10, 10) 0%, rgb(19, 19, 19) 55%, rgb(46, 46, 46) 100%);box-shadow:rgba(0, 0, 0, 0.455) 0px 12px 30px}
-html.vz-dark .bh-b .pri{color:rgb(187, 199, 238)}
 html.vz-dark .cv-moment.home .mo-card{background-image:linear-gradient(160deg, rgb(10, 10, 10), rgb(19, 19, 19) 55%, rgb(46, 46, 46))}
 html.vz-dark body.cv-ph-past .cv-sub .active,html.vz-dark body.cv-ph-past .cv-sub .on{background-color:rgb(19, 19, 19) !important}
 html.vz-dark body .cv-live.done{background-image:linear-gradient(135deg, rgb(19, 19, 19), rgb(46, 46, 46))}
@@ -962,11 +956,10 @@ html.vz-dark .sw-b.yes{background-image:linear-gradient(135deg, rgb(34, 197, 94)
 html.vz-dark .ar-pr button small{background-color:rgb(20, 20, 20);color:rgb(218, 190, 234)}
 html.vz-dark #cv-rg{background-image:radial-gradient(120% 80% at 50% 0%, rgb(28, 28, 28), rgb(9, 9, 9) 70%)}
 html.vz-dark .rg-day u{color:rgb(134, 233, 170)}
-html.vz-dark .rg-day.hov{color:rgb(206, 196, 238);border-top-color:rgb(43, 43, 43);border-right-color:rgb(43, 43, 43);border-bottom-color:rgb(43, 43, 43);border-left-color:rgb(43, 43, 43)}
+html.vz-dark .rg-day.hov{border-top-color:rgb(43, 43, 43);border-right-color:rgb(43, 43, 43);border-bottom-color:rgb(43, 43, 43);border-left-color:rgb(43, 43, 43)}
 html.vz-dark .rg-day.hov em,html.vz-dark .rg-day.hov u{color:rgb(206, 196, 238)}
 html.vz-dark .rg-ok{background-image:linear-gradient(135deg, rgb(34, 197, 94), rgb(51, 51, 51));box-shadow:rgba(0, 0, 0, 0.78) 0px 8px 20px -8px}
 html.vz-dark .ar-sub{background:var(--card,rgb(20, 20, 20));border:1.5px solid var(--line,rgb(47, 47, 47))}
-html.vz-dark .ar-sub i{color:rgb(168, 124, 243)}
 html.vz-dark .ar-sub.cur{box-shadow:rgba(0, 0, 0, 0.91) 0px 6px 18px -10px}
 html.vz-dark .ar-sub.ok i{color:rgb(150, 241, 183)}
 html.vz-dark #cv-ps{background-color:rgb(10, 10, 10)}
@@ -1114,7 +1107,7 @@ html.vz-dark .dr-x{background-color:rgb(25, 25, 25)}
 html.vz-dark .dr-s{color:rgb(228, 228, 228)}
 html.vz-dark .dr-wk span{color:rgb(168, 168, 168);border-bottom-color:rgb(46, 46, 46)}
 html.vz-dark .dr-g button.a,html.vz-dark .dr-g button.b{background-color:rgb(24, 24, 24)}
-html.vz-dark .ar-guide{color:rgb(249, 214, 180);box-shadow:rgba(0, 0, 0, 0.455) 0px 6px 18px}
+html.vz-dark .ar-guide{box-shadow:rgba(0, 0, 0, 0.455) 0px 6px 18px}
 html.vz-dark .gd-map{background-color:rgb(25, 25, 25)}
 html.vz-dark .gd-leg{color:var(--muted,rgb(168, 168, 168))}
 html.vz-dark .gd-warn{background-color:rgb(23, 23, 23);border-top-color:rgb(54, 54, 54);border-right-color:rgb(54, 54, 54);border-bottom-color:rgb(54, 54, 54);border-left-color:rgb(54, 54, 54);color:rgb(242, 182, 162)}
@@ -1143,7 +1136,6 @@ html.vz-dark .p3-hot span{text-shadow:rgb(0, 0, 0) 0px 1px 3px}
 html.vz-dark .p3-hot small{background-color:rgba(15, 15, 15, 0.8)}
 html.vz-dark .p3-city.via i{background-color:rgb(26, 26, 26)}
 html.vz-dark .p3-city.home i{border-top-color:rgb(51, 51, 51);border-right-color:rgb(51, 51, 51);border-bottom-color:rgb(51, 51, 51);border-left-color:rgb(51, 51, 51)}
-html.vz-dark .ar-bkp{color:rgb(249, 214, 180)}
 html.vz-dark .etp-card.open .etp-tools{background-color:rgb(21, 21, 21)}
 html.vz-dark .etp-tools button,html.vz-dark .ar-stb button{border-top-color:rgb(48, 48, 48);border-right-color:rgb(48, 48, 48);border-bottom-color:rgb(48, 48, 48);border-left-color:rgb(48, 48, 48);background-color:rgb(20, 20, 20);color:rgb(207, 165, 233)}
 html.vz-dark .so-opt{color:rgb(226, 226, 226)}
