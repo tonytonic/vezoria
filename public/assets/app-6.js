@@ -584,7 +584,7 @@
   function bootOffline(){
     if(!window.VZ_HOST && 'serviceWorker' in navigator && /^https?:/.test(location.protocol)){
       const had = !!navigator.serviceWorker.controller;
-      navigator.serviceWorker.register('sw.js').then(reg => { try { reg.update().catch(()=>{}); document.addEventListener('visibilitychange', () => { if(!document.hidden) reg.update().catch(()=>{}); }); } catch(e){} }).catch(()=>{});
+      navigator.serviceWorker.register('sw.js').then(reg => { try { bgSyncSetup(reg); } catch(e){} try { reg.update().catch(()=>{}); document.addEventListener('visibilitychange', () => { if(!document.hidden) reg.update().catch(()=>{}); }); } catch(e){} }).catch(()=>{});
       // une nouvelle version vient de prendre la main : juste à l’ouverture, on recharge sans rien dire ;
       // ensuite, on le propose (« Nouvelle version · toucher pour recharger ») pour ne jamais couper ce qu’on fait
       const t0 = Date.now();
@@ -602,6 +602,12 @@
     try { if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
   }
 
+  /* 🔄 Synchros du service worker : au retour du réseau (« vz-sync ») et rafraîchissement régulier de l'appli (« vz-refresh », une fois par jour au plus) */
+  function bgSyncSetup(reg){
+    const ask = () => { try { if(reg.sync) reg.sync.register('vz-sync').catch(()=>{}); } catch(e){} };
+    window.addEventListener('offline', ask);
+    if(reg.periodicSync && navigator.permissions) navigator.permissions.query({name:'periodic-background-sync'}).then(p=>{ if(p.state === 'granted') reg.periodicSync.register('vz-refresh', {minInterval: 24 * 3600e3}).catch(()=>{}); }).catch(()=>{});
+  }
   /* ══════════ 🔒 Mode lecture / modification (propre à ce téléphone) ══════════ */
   function applyLock(){
     document.body.classList.toggle('locked', !!M.lock);

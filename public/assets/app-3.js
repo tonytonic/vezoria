@@ -985,11 +985,24 @@
   // 📲 raccourcis de l’icône (appui long) : « Ajouter une dépense », « Je suis ici », « Nouveau souvenir »
   function shortcutGo(){
     let go = ''; try { go = new URLSearchParams(location.search).get('go') || ''; } catch(e){}
-    if(!go) return; try { const u = new URL(location.href); u.searchParams.delete('go'); history.replaceState(null, '', u.pathname + u.search + u.hash); } catch(e){}
+    if(!go) return; let lien = ''; try { lien = new URLSearchParams(location.search).get('u') || ''; } catch(e){}
+    try { const u = new URL(location.href); u.searchParams.delete('go'); u.searchParams.delete('u'); history.replaceState(null, '', u.pathname + u.search + u.hash); } catch(e){}
+    // 🔗 lien « web+vezoria:… » (invitation ou suivi envoyé par un proche) : on ouvre l'adresse Vezoria qu'il contient
+    if(go === 'lien'){ const v = String(lien).replace(/^web\+vezoria:\/*/i, ''); const m = v.match(/#.*$/); if(m && /^#(suivre|join|invite|c)=/i.test(m[0])){ location.hash = m[0]; location.reload(); } return; }
     if(!M.me || !prof(M.me) || document.getElementById('v-sheet-bg')) return;
+    if(go === 'import'){ fileLaunch(); return; }   // un ZIP Polarsteps ouvert « avec Vezoria »
+    if(go === 'note'){ editNote(null); return; }
     const t = trips().find(x=>tripPhase(x) === 'live' && !x.deleted) || trip(); if(!t){ toast('🧳 ' + MSGT('Crée d’abord un voyage')); return; }
     if(M.trip !== t.id) go2(t.id);
     if(go === 'depense') tlReceipt(); else if(go === 'ici') hereNow(); else if(go === 'souvenir'){ M.tab = 'souv'; editSouv(null); }
+  }
+  // 📂 fichier ouvert avec Vezoria (ordinateur, Android) : le ZIP Polarsteps ou un trip.json part dans l'import
+  function fileLaunch(){
+    if(!('launchQueue' in window)) { psImport(); return; }
+    let done = false;
+    window.launchQueue.setConsumer(async p => { if(done || !p || !p.files || !p.files.length) return; done = true;
+      try { const f = await p.files[0].getFile(); psImport(); setTimeout(()=>psFile({files:[f], value:''}), 300); } catch(e){ psImport(); } });
+    setTimeout(()=>{ if(!done) psImport(); }, 1500);
   }
   function go2(id){ try { go(id); } catch(e){} }
   function init2(){

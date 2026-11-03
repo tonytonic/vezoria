@@ -1192,6 +1192,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev=>{ const d = ev.data || {};
     if(d.type === 'vz-open'){ recapVia = d.url; pushOpen(d.url); pushKv('inbox').then(b=>{ if(b && b.length) nhAdd(b, true); return pushKv('inbox', []); }).catch(()=>{}); }
+    else if(d.type === 'vz-sync'){ try { syncNow(); } catch(e){} }
     else if(d.type === 'vz-push'){ if(pushAck) pushAck(d); else { pushBanner(d); if(!d.test) pushPull(true); } } });
   // une notification est arrivée : on va chercher les modifications tout de suite (sans attendre la synchro de l’heure)
   let pullT = 0;
