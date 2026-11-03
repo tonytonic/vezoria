@@ -3275,8 +3275,13 @@ body.cv-ph-past .sp2{--n:#1E2C5C;--nl:#E6EBF8;--nb:#C8D2F0}
 .sp2-fol{white-space:nowrap;padding:6px 12px}
 
 /* 🌙 thème sombre : retouches à la main (le reste est fabriqué dans dark.css par tools/sombre.mjs) */
-html.vz-dark .v-chip.on,html.vz-dark .v-seg2 button.on,html.vz-dark .cv-seg-big .v-seg button.on,html.vz-dark .wz-steps span.done,html.vz-dark .cv-qrsw .v-btn.on,html.vz-dark .sh-tab.on{background:#F5F5F7;color:#000;border-color:#F5F5F7}
+html.vz-dark body .v-chip.on,html.vz-dark body .v-seg2 button.on,html.vz-dark body .cv-seg-big .v-seg button.on,html.vz-dark body .wz-steps span.done,html.vz-dark body .cv-qrsw .v-btn.on,html.vz-dark body .sh-tab.on{background:#F5F5F7;color:#000;border-color:#F5F5F7}
 html.vz-dark body .v-in,html.vz-dark body input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),html.vz-dark body textarea,html.vz-dark body select{background:#0A0A0C!important;color:#F5F5F7!important;border-color:#34343A!important}
 html.vz-dark body ::placeholder{color:#8A8A92!important}
 html.vz-dark body .cv-hero,html.vz-dark body .cv-live,html.vz-dark body .cv-prep,html.vz-dark body .cv-prep2,html.vz-dark body .cv-bhero,html.vz-dark body .cv-eve,html.vz-dark body .cv-anniv{background:#1C1C1E!important;box-shadow:none!important;border:1px solid #2C2C30}
 html.vz-dark body .sw-card{background:linear-gradient(160deg,#2C2C30,#141416)}
+.cv-thm{margin-right:8px!important;font-size:19px}.cv-thm+.cv-bell{margin-left:0!important}
+html.vz-dark body .cv-hero-qr{background:#1C1C1E!important;border:1px solid #3A3A3E;color:#F5F5F7}
+html.vz-dark body .cv-hero-qr svg{filter:invert(1) brightness(.92);border-radius:4px}
+html.vz-dark body .cv-bell,html.vz-dark body .cv-thm{background:#1C1C1E!important;border:1px solid #3A3A3E!important}
+html.vz-dark body .cv-share-qr{background:#fff!important}

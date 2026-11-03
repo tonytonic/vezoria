@@ -611,9 +611,9 @@
     const b = document.getElementById('cv-lock');
     if(b){ b.textContent = M.lock ? '🔒' : '✏️'; b.setAttribute('aria-label', M.lock ? 'Mode lecture : toucher pour modifier' : 'Mode modification : toucher pour verrouiller'); b.classList.toggle('on', !!M.lock); }
   }
-  /* 🌙 Thème : « auto » suit le téléphone (clair le jour, sombre si le téléphone est en mode sombre), ou toujours clair / toujours sombre.
+  /* 🌙 Thème : clair par défaut ; « auto » suit le téléphone (clair le jour, sombre si le téléphone est en mode sombre), ou toujours clair / toujours sombre.
      Les couleurs sombres sont dans assets/dark.css (fabriqué par tools/sombre.mjs) ; index.html pose déjà la classe avant le premier affichage. */
-  const themeOf = () => ['auto', 'light', 'dark'].includes(M.theme) ? M.theme : 'auto';
+  const themeOf = () => ['auto', 'light', 'dark'].includes(M.theme) ? M.theme : 'light';
   let themeMq = null;
   function themeApply(){
     const t = themeOf(); if(!themeMq && window.matchMedia){ themeMq = matchMedia('(prefers-color-scheme: dark)'); const f = () => { if(themeOf() === 'auto') themeApply(); }; try { themeMq.addEventListener('change', f); } catch(e){ try { themeMq.addListener(f); } catch(x){} } }
@@ -621,7 +621,10 @@
     document.documentElement.classList.toggle('vz-dark', dark);
     const m = document.querySelector('meta[name="color-scheme"]'); if(m) m.setAttribute('content', dark ? 'dark' : t === 'auto' ? 'light dark' : 'only light');   // le navigateur n'assombrit plus l'appli de force
     try { localStorage.setItem('vz-theme', t); } catch(e){}
+    const b = document.getElementById('cv-thm');   // petit bouton 🌙/☀️ à côté de la cloche
+    if(b){ b.textContent = dark ? '☀️' : '🌙'; b.setAttribute('aria-pressed', String(dark)); b.setAttribute('aria-label', MSGT(dark ? 'Passer en clair' : 'Passer en sombre')); }
   }
+  function themeToggle(){ themeSet(document.documentElement.classList.contains('vz-dark') ? 'light' : 'dark'); toast(document.documentElement.classList.contains('vz-dark') ? '🌙 ' + MSGT('Mode sombre') : '☀️ ' + MSGT('Mode clair')); }
   function themeSet(v){ M.theme = v; persist(); themeApply(); try { render(); } catch(e){ refresh(); } }
   function bigToggle(){ M.bigText = !M.bigText; persist(); applyLock(); toast(M.bigText ? '🔠 ' + MSGT('Texte plus grand') : MSGT('Texte normal')); try { render(); } catch(e){ refresh(); } }
   function glassToggle(){ M.glass = M.glass === false; persist(); applyLock(); toast(M.glass ? '✨ ' + MSGT('Effet verre activé') : MSGT('Effet verre désactivé')); try { render(); } catch(e){ refresh(); } }
