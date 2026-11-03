@@ -32,7 +32,7 @@ const out = await page.evaluate((css) => {
       return fmt(grey(Math.max(.03, l * .55)), a);
     }
     if (kind === 'bg') {
-      if (l < .32 && s > .18) return fmt(grey(Math.max(.04, l * .6)), a);   // fond sombre teinté (prune, vert…) → gris très sombre
+      if (l < .4 && s > .18) return fmt(grey(Math.max(.04, l * .55)), a);   // fond sombre teinté (prune, vert…) → gris très sombre
       if (l < .55) return null;                         // boutons et couleurs vives moyennes : on garde
       if (s > .55 && l < .82) return null;              // or, corail… : accent, on garde
       if (a < .35 && l > .9) return null;               // voile blanc léger posé sur une photo
@@ -77,6 +77,7 @@ const out = await page.evaluate((css) => {
     if (/^:root\b/.test(s)) return P + s.slice(5);
     if (/^html\b/.test(s)) return P + s.slice(4);
     return P + ' ' + s; }).join(',');
+  const USE = {}, KEEP = new Set(['--cream', '--light', '--gray', '--card', '--navy', '--navy2', '--ink', '--sun1', '--sun2', '--sun3', '--sunset', '--gold', '--gold2', '--red', '--green', '--amber', '--blue']);
   function rule(r) {
     if (/#vz-splash|\.vz-dark/.test(r.selectorText)) return '';   // écran de démarrage déjà sombre
     const st = r.style, decl = [];
@@ -86,10 +87,21 @@ const out = await page.evaluate((css) => {
       const nv = swap(k, v); if (nv) decl.push(`${sh}:${nv}${st.getPropertyPriority(sh) ? ' !important' : ''}`);
     }
     for (let i = 0; i < st.length; i++) {
-      const p = st[i]; if (p.startsWith('--')) continue; const k = KIND(p); if (!k) continue;
+      const p = st[i];
+      if (p.startsWith('--')) {   // variable locale de couleur, servant à une seule sorte de chose
+        if (KEEP.has(p) || !USE[p]) continue; const v = st.getPropertyValue(p).trim();
+        if (USE[p].size > 1) {   // sert au texte ET aux fonds : deux versions (le fond devient gris, le texte devient clair)
+          if (!USE[p].has('text')) { const b = swap('bg', v); if (b) decl.push(`${p}:${b}`); continue; }
+          const b = swap('bg', v), t = 'var(--dk-t1)';
+          if (b) decl.push(`${p}:${b}`); decl.push(`${p}-dkt:${t || v}`); continue; }
+        const k1 = [...USE[p]][0];
+        let nv = /var\(--(navy2?|ink)\b/.test(v) && k1 === 'text' ? 'var(--dk-t1)' : swap(k1, v); if (nv) decl.push(`${p}:${nv}`); continue; }
+      const k = KIND(p); if (!k) continue;
       const v = st.getPropertyValue(p), pr = st.getPropertyPriority(p) ? ' !important' : '';
       let nv = null;
-      if (k === 'text' && /var\(--(navy2?|ink)\b/.test(v)) nv = 'var(--dk-t1)';
+      const mx = k === 'text' ? (v.match(/var\(--[\w-]+/g) || []).map(m => m.slice(4)).filter(n => !KEEP.has(n) && USE[n] && USE[n].size > 1 && USE[n].has('text')) : [];
+      if (mx.length) { nv = v; mx.forEach(n => { nv = nv.split('var(' + n + ')').join('var(' + n + '-dkt)').split('var(' + n + ',').join('var(' + n + '-dkt,'); }); nv = swap(k, nv) || nv; }
+      else if (k === 'text' && /var\(--(navy2?|ink)\b/.test(v)) nv = 'var(--dk-t1)';
       else if (k === 'text' && /var\(--gray\b/.test(v)) nv = null;   // la variable elle-même est changée
       else nv = swap(k, v);
       if (nv) decl.push(`${p}:${nv}${pr}`);
@@ -103,6 +115,12 @@ const out = await page.evaluate((css) => {
       else if (r instanceof CSSSupportsRule) { const x = walk(r.cssRules); if (x) s += `@supports ${r.conditionText}{${x}}`; }
     }
     return s; }
+  // variables locales (« --n », « --pc »…) : on regarde à quoi elles servent (texte, fond, bord) pour les assombrir comme il faut
+  const flat = l => { const o = []; for (const r of l) { if (r instanceof CSSStyleRule) o.push(r); else if (r.cssRules) o.push(...flat(r.cssRules)); } return o; };
+  const ALL = flat(st.sheet.cssRules);
+  for (const r of ALL) { const s2 = r.style; for (let i = 0; i < s2.length; i++) { const p = s2[i], k = p.startsWith('--') ? 'var' : KIND(p) || (/^(background|border|outline)/.test(p) ? (p.startsWith('background') ? 'bg' : 'border') : null); if (!k || k === 'var') continue;
+    const v = s2.getPropertyValue(p); (v.match(/var\(--[\w-]+/g) || []).forEach(m => { const n = m.slice(4); (USE[n] = USE[n] || new Set()).add(k); }); }
+    for (const sh of ['background', 'border', 'border-color', 'border-top', 'border-bottom', 'outline']) { const v = s2.getPropertyValue(sh); (v.match(/var\(--[\w-]+/g) || []).forEach(m => { const n = m.slice(4); (USE[n] = USE[n] || new Set()).add(sh.startsWith('background') ? 'bg' : 'border'); }); } }
   return walk(st.sheet.cssRules);
 }, css);
 await browser.close();
