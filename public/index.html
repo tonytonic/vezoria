@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="color-scheme" content="only light">
 <link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/dark.css">
+<script>/* 🌙 thème sombre posé avant le premier affichage (pas d'éclair blanc) : « auto » suit le téléphone */
+(function(){ try { var t = localStorage.getItem('vz-theme') || 'auto', d = t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+  if(d) document.documentElement.className += ' vz-dark';
+  var m = document.querySelector('meta[name="color-scheme"]'); if(m) m.setAttribute('content', d ? 'dark' : t === 'auto' ? 'light dark' : 'only light'); } catch(e){} })();</script>
 <link rel="preload" href="assets/app-1.js" as="fetch" crossorigin>
 <link rel="preload" href="assets/app-2.js" as="fetch" crossorigin>
 <link rel="preload" href="assets/app-3.js" as="fetch" crossorigin>
