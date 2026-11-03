@@ -3,7 +3,7 @@
 // Une nouvelle version de l'appli = un nouveau sw.js : il s'installe en arrière-plan, puis l'appli propose
 // « Nouvelle version · toucher pour recharger » (ou recharge seule si elle vient juste de s'ouvrir).
 // La synchro (/api/…) passe toujours par le réseau : les données restent dans le téléphone en attendant.
-const CACHE = 'vezoria-2026-11-03h';
+const CACHE = 'vezoria-2026-11-03i';
 // le code et les styles sont dans assets/ (depuis la 2026-10-23d) : copiés dès l'installation pour marcher hors ligne tout de suite
 const CORE = ['./', './splash.webp', './img/entete-preparation.jpg', './img/entete-en-cours.jpg', './img/entete-passes.jpg', './manifest.json', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './i18n.js',
   './assets/app.css', './assets/dark.css', ...[1, 2, 3, 4, 5, 6, 7, 8].map(n => './assets/app-' + n + '.js'),
@@ -198,6 +198,23 @@ self.addEventListener('notificationclick', e => {
     if (self.clients.openWindow) await self.clients.openWindow(url);
   })());
 });
+
+// 🔄 Synchro au retour du réseau (« Background Sync ») : l'appli a demandé « vz-sync » en passant hors ligne ;
+// dès que le réseau revient, on lui dit de synchroniser (rien n'est envoyé par le service worker lui-même : tout reste chiffré par l'appli)
+const tellClients = async msg => { const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true }); cs.forEach(c => c.postMessage(msg)); return cs.length; };
+self.addEventListener('sync', e => { if (e.tag === 'vz-sync') e.waitUntil(tellClients({ type: 'vz-sync' })); });
+// 🕑 Rafraîchissement régulier (« Periodic Sync », Chrome Android sur une appli installée) : l'appli et ses fichiers restent à jour
+// même si on ne l'ouvre pas pendant des jours (le voyage s'ouvre alors tout de suite, même sans réseau)
+self.addEventListener('periodicsync', e => {
+  if (e.tag !== 'vz-refresh') return;
+  e.waitUntil((async () => {
+    try { const c = await caches.open(CACHE); await Promise.all(CORE.map(u => c.add(new Request(u, { cache: 'reload' })).catch(() => null))); } catch (_) {}
+    try { await self.registration.update(); } catch (_) {}
+    try { await tellClients({ type: 'vz-sync' }); } catch (_) {}
+  })());
+});
+// 🪟 Widget Windows : rien à calculer, la carte est fixe (widgets/carnet-data.json)
+self.addEventListener('widgetinstall', e => { e.waitUntil(Promise.resolve()); });
 
 // 🔔 L’appli demande d’effacer les notifications (ouverture, cloche) : le service worker les ferme lui-même,
 // y compris celles affichées en silence (regroupées), et remet le compteur à zéro
