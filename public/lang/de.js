@@ -1,4 +1,8 @@
 I18N.load({
+"Passer en clair":"Hell anzeigen",
+"Passer en sombre":"Dunkel anzeigen",
+"Mode sombre":"Dunkelmodus",
+"Mode clair":"Hellmodus",
 /* 🌙 thème (2026-11-03) */
 "Thème de l’appli":"App-Design",
 "Comme le téléphone":"Wie das Telefon",

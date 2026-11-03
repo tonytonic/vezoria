@@ -1,4 +1,8 @@
 I18N.load({
+"Passer en clair":"Светлая тема",
+"Passer en sombre":"Тёмная тема",
+"Mode sombre":"Тёмный режим",
+"Mode clair":"Светлый режим",
 /* 🌙 thème (2026-11-03) */
 "Thème de l’appli":"Тема приложения",
 "Comme le téléphone":"Как в телефоне",

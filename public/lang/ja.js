@@ -1,4 +1,8 @@
 I18N.load({
+"Passer en clair":"ライトに切り替え",
+"Passer en sombre":"ダークに切り替え",
+"Mode sombre":"ダークモード",
+"Mode clair":"ライトモード",
 /* 🌙 thème (2026-11-03) */
 "Thème de l’appli":"アプリのテーマ",
 "Comme le téléphone":"端末に合わせる",

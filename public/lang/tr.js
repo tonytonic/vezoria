@@ -1,4 +1,8 @@
 I18N.load({
+"Passer en clair":"Açığa geç",
+"Passer en sombre":"Koyuya geç",
+"Mode sombre":"Koyu mod",
+"Mode clair":"Açık mod",
 /* 🌙 thème (2026-11-03) */
 "Thème de l’appli":"Uygulama teması",
 "Comme le téléphone":"Telefondaki gibi",

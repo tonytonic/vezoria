@@ -1,4 +1,8 @@
 I18N.load({
+"Passer en clair":"切换到浅色",
+"Passer en sombre":"切换到深色",
+"Mode sombre":"深色模式",
+"Mode clair":"浅色模式",
 /* 🌙 thème (2026-11-03) */
 "Thème de l’appli":"应用主题",
 "Comme le téléphone":"跟随手机",

@@ -1,4 +1,8 @@
 I18N.load({
+"Passer en clair":"라이트로 전환",
+"Passer en sombre":"다크로 전환",
+"Mode sombre":"다크 모드",
+"Mode clair":"라이트 모드",
 /* 🌙 thème (2026-11-03) */
 "Thème de l’appli":"앱 테마",
 "Comme le téléphone":"휴대폰 설정 따름",

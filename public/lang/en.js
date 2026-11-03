@@ -1,4 +1,8 @@
 I18N.load({
+"Passer en clair":"Switch to light",
+"Passer en sombre":"Switch to dark",
+"Mode sombre":"Dark mode",
+"Mode clair":"Light mode",
 /* 🌙 thème (2026-11-03) */
 "Thème de l’appli":"App theme",
 "Comme le téléphone":"Same as phone",

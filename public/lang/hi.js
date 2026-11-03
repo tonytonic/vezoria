@@ -1,4 +1,8 @@
 I18N.load({
+"Passer en clair":"हल्के पर जाएँ",
+"Passer en sombre":"गहरे पर जाएँ",
+"Mode sombre":"डार्क मोड",
+"Mode clair":"लाइट मोड",
 /* 🌙 thème (2026-11-03) */
 "Thème de l’appli":"ऐप थीम",
 "Comme le téléphone":"फ़ोन जैसा",

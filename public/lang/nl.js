@@ -1,4 +1,8 @@
 I18N.load({
+"Passer en clair":"Naar licht",
+"Passer en sombre":"Naar donker",
+"Mode sombre":"Donkere modus",
+"Mode clair":"Lichte modus",
 /* 🌙 thème (2026-11-03) */
 "Thème de l’appli":"App-thema",
 "Comme le téléphone":"Zoals de telefoon",

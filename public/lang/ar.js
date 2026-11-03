@@ -1,4 +1,8 @@
 I18N.load({
+"Passer en clair":"التبديل إلى الفاتح",
+"Passer en sombre":"التبديل إلى الداكن",
+"Mode sombre":"الوضع الداكن",
+"Mode clair":"الوضع الفاتح",
 /* 🌙 thème (2026-11-03) */
 "Thème de l’appli":"سمة التطبيق",
 "Comme le téléphone":"مثل الهاتف",
