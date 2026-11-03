@@ -81,6 +81,11 @@ const out = await page.evaluate((css) => {
   function rule(r) {
     if (/#vz-splash|\.vz-dark/.test(r.selectorText)) return '';   // écran de démarrage déjà sombre
     const st = r.style, decl = [];
+    // fond clair qui RESTE clair (bouton jaune, or…) : on ne touche pas au texte foncé posé dessus
+    let brightBg = false;
+    for (const bp of ['background-color', 'background-image', 'background']) { const bv = st.getPropertyValue(bp); if (!bv) continue;
+      bv.replace(/#([0-9a-f]{6}|[0-9a-f]{3})\b/gi, m => { const h = m.length === 4 ? m.slice(1).split('').map(c => c + c).join('') : m.slice(1); const n = h.match(/../g).map(x => parseInt(x, 16)); const [, , L] = hsl(...n); if (L > .55 && !map('bg', ...n, 1)) brightBg = true; return m; });
+      bv.replace(RX, (m, r1, g1, b1) => { const [, , L] = hsl(+r1, +g1, +b1); if (L > .55 && !map('bg', +r1, +g1, +b1, 1)) brightBg = true; return m; }); }
     // raccourcis écrits avec var() (« background: linear-gradient(#fff, var(--cream)) ») : le navigateur ne les découpe pas
     for (const [sh, k] of [['background', 'bg'], ['border', 'border'], ['border-top', 'border'], ['border-bottom', 'border'], ['border-left', 'border'], ['border-right', 'border'], ['border-color', 'border'], ['outline', 'border']]) {
       const v = st.getPropertyValue(sh); if (!v || !v.includes('var(')) continue;
@@ -97,6 +102,7 @@ const out = await page.evaluate((css) => {
         const k1 = [...USE[p]][0];
         let nv = /var\(--(navy2?|ink)\b/.test(v) && k1 === 'text' ? 'var(--dk-t1)' : swap(k1, v); if (nv) decl.push(`${p}:${nv}`); continue; }
       const k = KIND(p); if (!k) continue;
+      if (k === 'text' && brightBg) continue;
       const v = st.getPropertyValue(p), pr = st.getPropertyPriority(p) ? ' !important' : '';
       let nv = null;
       const mx = k === 'text' ? (v.match(/var\(--[\w-]+/g) || []).map(m => m.slice(4)).filter(n => !KEEP.has(n) && USE[n] && USE[n].size > 1 && USE[n].has('text')) : [];
