@@ -1,4 +1,8 @@
 I18N.load({
+/* 🌙 thème (2026-11-03) */
+"Thème de l’appli":"App-thema",
+"Comme le téléphone":"Zoals de telefoon",
+"Clair":"Licht",
 /* 📸 photos gardées sur le téléphone (2026-11-02a) */
 "Tes photos restent toujours sur ce téléphone, en entier. Le serveur n’en garde qu’une copie, pour tes autres appareils, tes compagnons et tes abonnés.":"Je foto’s blijven altijd volledig op deze telefoon. De server bewaart alleen een kopie, voor je andere apparaten, je reisgenoten en je volgers.",
 "Protège tes photos contre le ménage automatique du téléphone, et retrouve les doublons.":"Bescherm je foto’s tegen het automatisch opruimen van de telefoon en vind dubbele items.",

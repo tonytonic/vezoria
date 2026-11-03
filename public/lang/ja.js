@@ -1,4 +1,8 @@
 I18N.load({
+/* 🌙 thème (2026-11-03) */
+"Thème de l’appli":"アプリのテーマ",
+"Comme le téléphone":"端末に合わせる",
+"Clair":"ライト",
 /* 📸 photos gardées sur le téléphone (2026-11-02a) */
 "Tes photos restent toujours sur ce téléphone, en entier. Le serveur n’en garde qu’une copie, pour tes autres appareils, tes compagnons et tes abonnés.":"写真はいつもこのスマホに元のまま残ります。サーバーには、他の端末・仲間・フォロワーのためのコピーだけが保存されます。",
 "Protège tes photos contre le ménage automatique du téléphone, et retrouve les doublons.":"スマホの自動整理から写真を守り、重複を見つけます。",

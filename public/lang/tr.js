@@ -1,4 +1,8 @@
 I18N.load({
+/* 🌙 thème (2026-11-03) */
+"Thème de l’appli":"Uygulama teması",
+"Comme le téléphone":"Telefondaki gibi",
+"Clair":"Açık",
 /* 📸 photos gardées sur le téléphone (2026-11-02a) */
 "Tes photos restent toujours sur ce téléphone, en entier. Le serveur n’en garde qu’une copie, pour tes autres appareils, tes compagnons et tes abonnés.":"Fotoğrafların her zaman eksiksiz olarak bu telefonda kalır. Sunucu yalnızca diğer cihazların, yol arkadaşların ve takipçilerin için bir kopya tutar.",
 "Protège tes photos contre le ménage automatique du téléphone, et retrouve les doublons.":"Fotoğraflarını telefonun otomatik temizliğinden koru ve kopyaları bul.",

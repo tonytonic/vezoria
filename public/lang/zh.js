@@ -1,4 +1,8 @@
 I18N.load({
+/* 🌙 thème (2026-11-03) */
+"Thème de l’appli":"应用主题",
+"Comme le téléphone":"跟随手机",
+"Clair":"浅色",
 /* 📸 photos gardées sur le téléphone (2026-11-02a) */
 "Tes photos restent toujours sur ce téléphone, en entier. Le serveur n’en garde qu’une copie, pour tes autres appareils, tes compagnons et tes abonnés.":"你的照片始终完整保存在这部手机上。服务器只保留一份副本，供你的其他设备、同伴和关注者使用。",
 "Protège tes photos contre le ménage automatique du téléphone, et retrouve les doublons.":"保护照片不被手机自动清理，并查找重复项。",
