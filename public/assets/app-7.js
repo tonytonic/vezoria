@@ -996,6 +996,7 @@
   const TTS_LG = {pt:'pt-PT',ptbr:'pt-BR',es:'es-ES',it:'it-IT',de:'de-DE',nl:'nl-NL',en:'en-GB',enus:'en-US',el:'el-GR',tr:'tr-TR',hr:'hr-HR',cs:'cs-CZ',pl:'pl-PL',hu:'hu-HU',sv:'sv-SE',no:'nb-NO',da:'da-DK',ja:'ja-JP',zh:'zh-CN',ko:'ko-KR',th:'th-TH',vi:'vi-VN',id:'id-ID'};
   const LG_LAB = ['Bonjour','Merci','S’il te plaît','Au revoir','Santé !','Combien ça coûte ?','L’addition, s’il te plaît','Où sont les toilettes ?','Excuse-moi','C’est délicieux !'];
   function lgCC(t){
+    if(t && t.demo) try { const K = demoKit(M.demoReg || 'jp'); M.ctry = M.ctry || {}; Object.keys(K.CITY).forEach(k=>{ if(!M.ctry[k] || M.ctry[k].cc !== K.cc) M.ctry[k] = {pays:K.nom, cc:K.cc}; }); } catch(e){}   // démo déjà chargée avec un mauvais pays en cache
     try { const l = lnLast(t.id), g = l ? LN.geo[lnGK(l)] : null; if(g && g.cc) return g.cc; } catch(e){}
     try { const h = itemsForDay(isoToday()).night[0], c = h ? (M.ctry || {})[normQ(stayCity(h))] : null; if(c && c.cc) return c.cc; } catch(e){}
     try { const st = tlStages().find(x=>x.debut <= isoToday() && x.fin >= isoToday()), c = st ? (M.ctry || {})[normQ(st.city)] : null; if(c && c.cc) return c.cc; } catch(e){}

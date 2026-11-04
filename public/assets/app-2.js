@@ -155,6 +155,8 @@
   async function demoLoad(reg){ if(demoBusy) return; demoBusy = true; try { await demoLoad1(reg); } finally { demoBusy = false; } }
   async function demoLoad1(reg){
     reg = DEMO_REG[reg] || reg === 'jp' ? reg : (M.demoReg || demoRegAuto()); M.demoReg = reg; const K = demoKit(reg), TPL = demoTpl(reg);
+    // 🌍 le pays de chaque ville de la démo est connu : pas de recherche par le nom (« Yosemite » trouvé en Australie → monnaie et phrases australiennes)
+    { M.ctry = M.ctry || {}; Object.keys(K.CITY).forEach(k=>{ M.ctry[k] = {pays:K.nom, cc:K.cc}; }); }
     if(!M.me){ alert('Indique d’abord ton prénom.'); return; }
     const ex = demoTrip(); if(ex){ closeSheet(true); M.mode = 'live'; const lv = list('trip', t=>t.demo && tripPhase(t)==='live')[0]; go((lv||ex).id); return; }
     closeSheet(true); toast('👀 Préparation des voyages de démo…');
