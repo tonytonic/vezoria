@@ -743,13 +743,15 @@
         : `<div class="sp2-empty">${esc(MSGT('Personne pour l’instant : envoie ton lien abonné à ta famille et à tes amis.'))}</div>${trip() && !trip().demo ? `<div class="sp2-pills"><button type="button" class="soft" onclick="CV.feedPublish('${ja(trip().id)}')">👀 ${esc(MSGT('Inviter des abonnés'))}</button></div>` : ''}`}
       ${mpBtn()}`;
     const fol = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/, '')] && !f.deleted), G = {};
-    fol.forEach(f=>{ const n = String(f.owner || '').trim() || '?', k = n.toLocaleLowerCase(); (G[k] = G[k] || {n, f:[], h:0}).f.push(f); });
+    // 👥 voyage fait à plusieurs (« Voyage de Anthony & Claire ») : je suis aussi Claire, pas seulement celui qui l’a publié
+    const meN = String(myName() || '').trim().toLocaleLowerCase();
+    fol.forEach(f=>{ const names = ftTeam(f); (names.length ? names : ['?']).forEach((n, i)=>{ const k = n.toLocaleLowerCase(); if(i > 0 && k === meN) return; (G[k] = G[k] || {n, f:[], h:0}).f.push(f); }); });
     // 🙈 ses voyages masqués : la personne reste dans la liste, pour pouvoir les remettre
     Object.entries(M.unfolT || {}).forEach(([id, m])=>{ if((M.unfol || {})[id] !== 1 || TS()[id] || !m.code) return; const n = String(m.owner || '').trim() || '?', k = n.toLocaleLowerCase(); (G[k] = G[k] || {n, f:[], h:0}).h++; if(!G[k].av && avOk(m.oav)) G[k].av = m.oav; });
     Object.keys(G).forEach(k=>{ if(!G[k].f.length) delete G[k]; });   // 🚫 je ne suis plus aucun de ses voyages : la personne disparaît (son lien la ramène)
     const lvS = Object.values(G).filter(g=>g.f.some(f=>tripPhase(f) === 'live'));
     const suis = `<div class="sp2-sec">${SVG_ME}<b>${esc(MSGT('Mes abonnements'))}</b>${spLive(lvS.map(g=>g.n))}<br><small>(${esc(MSGT('ceux que je suis'))})</small></div>
-      ${Object.keys(G).length ? Object.values(G).map(g=>{ const fids = new Set(g.f.map(f=>f.id)), av = (g.f.find(f=>avOk(f.oav)) || {}).oav || g.av || '', k = ja(g.n.toLocaleLowerCase()), live = g.f.some(f=>tripPhase(f) === 'live');
+      ${Object.keys(G).length ? Object.values(G).map(g=>{ const fids = new Set(g.f.map(f=>f.id)), av = (g.f.find(f=>avOk(f.oav) && String(f.owner || '').trim().toLocaleLowerCase() === g.n.toLocaleLowerCase()) || {}).oav || g.av || '', k = ja(g.n.toLocaleLowerCase()), live = g.f.some(f=>tripPhase(f) === 'live');
         const ph = list('feed', x=>fids.has(x.trip) && !x.deleted && (x.photos || []).length).sort((a, b)=>(b.date || '').localeCompare(a.date || '')).flatMap(x=>x.photos.map(p=>[p, x.trip])).slice(0, 3);
         return `<div class="sp2-card sp2-cl" onclick="CV.spSuisSheet('${k}')"><div class="sp2-ch">${avTag(av, g.n, '#3b82f6', 'av-xl')}<div class="sp2-cb"><div class="sp2-ct"><b data-notr>${esc(g.n)}</b>${live ? `<span class="sp2-lv">● ${esc(MSGT('en voyage'))}</span>` : ''}<button type="button" class="sp2-fol" onclick="event.stopPropagation();CV.spSuisSheet('${k}')">${esc(MSGT('Suivi(e)'))} ›</button></div>
           <small class="sp2-cn">${esc(RF('{0} voyage(s) suivi(s)', g.f.length))}${g.h ? ' · 🙈 ' + esc(RF('{0} masqué(s)', g.h)) : ''}</small>
@@ -1542,7 +1544,7 @@
   }
   // ➡️ une personne que je suis : tous ses voyages, je choisis ceux que je vois (les masqués peuvent revenir)
   function spSuisSheet(key){
-    key = nq(key); const ow = f => nq(f.owner || '') === key || (!String(f.owner || '').trim() && key === '?');
+    key = nq(key); const ow = f => nq(f.owner || '') === key || (!String(f.owner || '').trim() && key === '?') || ((f && f.team) || []).some(n=>nq(n) === key);
     const fol = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/, '')] && !f.deleted && ow(f));
     const un = M.unfol || {}, UT = M.unfolT || {};
     const hid = Object.keys(un).filter(id=>un[id] === 1 && !TS()[id]).map(id=>UT[id] ? Object.assign({id}, UT[id]) : (R[id] && R[id].type === 'feedtrip' && !R[id].deleted ? R[id] : null)).filter(f=>f && ow(f) && (UT[f.id] || {}).code);
@@ -1748,7 +1750,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-04j'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-04k'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
