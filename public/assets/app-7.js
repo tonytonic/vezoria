@@ -1118,7 +1118,7 @@
   }
   function tripLines(tid){
     const by = trkByWho(tid, false), lines = Object.entries(by).filter(([, p])=>p.length > 1).map(([w, p])=>({pts:p.filter((x, i)=>i % Math.max(1, Math.ceil(p.length / 600)) === 0).map(x=>[x[0], x[1]]), color: w ? pcol(w) : '#0ea5e9'}));
-    const geo = list('souv', x=>x.trip === tid && x.lat != null && x.lng != null).sort((a, b)=>(a.date||'').localeCompare(b.date||''));
+    const geo = list('souv', x=>x.trip === tid && !x.deleted && x.lat != null && x.lng != null).sort((a, b)=>(a.date||'').localeCompare(b.date||'') || (a.heure||'').localeCompare(b.heure||'') || (a.ordre||0) - (b.ordre||0));
     if(!lines.length && geo.length > 1) lines.push({pts:geo.map(x=>[+x.lat, +x.lng]), color:'#f43f5e'});
     return {lines, mk: geo.filter((x, i)=>i % Math.max(1, Math.ceil(geo.length / 25)) === 0).map((x, i)=>({lat:+x.lat, lng:+x.lng, label:'•', color:'#f43f5e'}))};
   }
@@ -1949,9 +1949,23 @@
      Les étapes numérotées avec leurs nuits et une photo du voyage, le moyen de transport sur chaque trajet,
      et (au choix) chaque souvenir posé à son endroit. Toucher une étape : ses dates, ses nuits, ses visites. ══════════ */
   let VM = null;
+  /* 📸 voyage sans hébergement (import d’une autre appli, souvenirs seuls) : les étapes se déduisent des souvenirs,
+     dans l’ordre du temps — les souvenirs proches (moins de 25 km) à la suite forment une étape */
+  function souvStages(tid){
+    const g = list('souv', x=>x.trip === tid && !x.deleted && x.lat != null && x.lng != null && isFinite(+x.lat) && isFinite(+x.lng))
+      .sort((a, b)=>(a.date || '').localeCompare(b.date || '') || (a.heure || '').localeCompare(b.heure || '') || (a.ordre || 0) - (b.ordre || 0));
+    const nm = x => { const pays = normQ(x.pays || ''), p = String(x.lieu || '').split(',').map(v=>v.trim()).filter(v=>v && !/^\d/.test(v) && (!pays || normQ(v) !== pays)); return p.length > 1 && x.src !== 'polarsteps' ? p[p.length - 1] : p[0] || ''; };
+    const out = [];
+    for(const x of g){ const c = {lat:+x.lat, lng:+x.lng}, L = out[out.length - 1];
+      if(L && rawKm(L.c, c) < 25){ if(x.date) L.fin = x.date; L.sv.push(x.id); L.names.push(nm(x)); continue; }
+      out.push({c, debut:x.date || '', fin:x.date || '', sv:[x.id], names:[nm(x)], h:null}); }
+    out.forEach(o=>{ const k = {}; o.names.filter(Boolean).forEach(n=>k[n] = (k[n] || 0) + 1); o.city = Object.keys(k).sort((a, b)=>k[b] - k[a])[0] || (o.debut ? fshort(o.debut) : '📍'); });
+    return out;
+  }
   function vmClose(){ const o = document.getElementById('cv-vm'); if(o) o.remove(); document.body.style.overflow = ''; if(VM && VM.map) try { VM.map.remove(); } catch(e){} VM = null; }
   async function vmOpen(){
-    const t = trip(); if(!t) return; const st = tlStages(); if(!st.length){ alert(MSGT('Ajoute des hébergements avec leur ville pour dessiner la carte.')); return; }
+    const t = trip(); if(!t) return; let st = tlStages(); if(!st.length) st = souvStages(t.id);
+    if(!st.length){ alert(MSGT('Ajoute des hébergements avec leur ville pour dessiner la carte.')); return; }
     vmClose(); document.body.style.overflow = 'hidden';
     const ov = document.createElement('div'); ov.id = 'cv-vm'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', MSGT('Carte vivante'));
     ov.innerHTML = `<div id="vm-map"></div>
@@ -1963,8 +1977,8 @@
     try {
       await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
       if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
-      try { await stagesGeoFix(st.map(x=>x.city)); } catch(e){}
-      for(const x of st){ const c = geoCached(x.city) || await geocode(x.city, null).catch(()=>null); me.pts.push(c ? {lat:c.lat, lng:c.lng} : null); }
+      if(!st[0].c) try { await stagesGeoFix(st.map(x=>x.city)); } catch(e){}
+      for(const x of st){ const c = x.c || geoCached(x.city) || await geocode(x.city, null).catch(()=>null); me.pts.push(c ? {lat:c.lat, lng:c.lng} : null); }
       if(VM !== me) return;
       const P = me.pts.map((c, i)=>c && Object.assign({i, s:st[i]}, c)).filter(Boolean); if(!P.length) throw new Error(MSGT('Villes introuvables sur la carte'));
       const dark = document.documentElement.classList.contains('vz-dark');
@@ -1978,7 +1992,9 @@
         center:[P[0].lng, P[0].lat], zoom:5, maxZoom:17, pixelRatio:Math.min(2, window.devicePixelRatio || 1), attributionControl:{compact:true}, dragRotate:false, pitchWithRotate:false});
       try { map.touchZoomRotate.disableRotation(); } catch(e){}
       map.on('load', ()=>{ if(VM !== me) return; const m = document.getElementById('vm-msg'); if(m) m.hidden = true;
-        map.addSource('route', {type:'geojson', data:{type:'Feature', geometry:{type:'LineString', coordinates:P.map(p=>[p.lng, p.lat])}}});
+        // souvenirs seuls : le chemin passe par chaque souvenir (ou la trace GPS), pas seulement par le centre des étapes
+        const tl = st[0].c ? tripLines(t.id) : null, rc = tl && tl.lines.length ? tl.lines[0].pts.map(q=>[q[1], q[0]]) : P.map(p=>[p.lng, p.lat]);
+        map.addSource('route', {type:'geojson', data:{type:'Feature', geometry:{type:'LineString', coordinates:rc}}});
         map.addLayer({id:'route-halo', type:'line', source:'route', paint:{'line-color':'#2A1238', 'line-width':7, 'line-opacity':.55}, layout:{'line-cap':'round', 'line-join':'round'}});
         map.addLayer({id:'route', type:'line', source:'route', paint:{'line-color':'#ffffff', 'line-width':3, 'line-dasharray':[1.2, 1.6]}, layout:{'line-cap':'round', 'line-join':'round'}});
         vmDraw(); vmFit(true);
@@ -2029,16 +2045,16 @@
         map.addLayer({id:'vm-legs-l', type:'line', source:'vm-legs', minzoom:9, filter:['==',['get','local'],1], layout:{'line-cap':'round'}, paint:{'line-color':'#fde68a', 'line-width':4, 'line-dasharray':[1.5, 1.2]}});
       }
       map.addSource('vm-vis', fc(F.visits)); map.addSource('vm-act', fc(F.acts));
-      map.addLayer({id:'vm-vis', type:'circle', source:'vm-vis', minzoom:9.5, paint:{'circle-color':'#a78bfa', 'circle-radius':['interpolate',['linear'],['zoom'],9.5,4,14,8], 'circle-stroke-color':'#fff', 'circle-stroke-width':2}});
-      map.addLayer({id:'vm-act', type:'circle', source:'vm-act', minzoom:9.5, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],9.5,5,14,9], 'circle-stroke-color':'#fff', 'circle-stroke-width':2.5}});
+      map.addLayer({id:'vm-vis', type:'circle', source:'vm-vis', minzoom:7, paint:{'circle-color':'#a78bfa', 'circle-radius':['interpolate',['linear'],['zoom'],7,3,10,5,14,8], 'circle-stroke-color':'#fff', 'circle-stroke-width':2}});
+      map.addLayer({id:'vm-act', type:'circle', source:'vm-act', minzoom:7, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],7,4,10,6,14,9], 'circle-stroke-color':'#fff', 'circle-stroke-width':2.5}});
       if(map.getStyle().glyphs && me.font){ const L = (id, src, mz) => map.addLayer({id, type:'symbol', source:src, minzoom:mz, layout:{'text-field':['get','name'], 'text-font':me.font, 'text-size':12, 'text-offset':[0, 1.2], 'text-anchor':'top', 'text-max-width':10, 'text-optional':true},
           paint:{'text-color':'#fff', 'text-halo-color':'rgba(10,20,50,.9)', 'text-halo-width':1.5}});
-        L('vm-vis-t', 'vm-vis', 12.5); L('vm-act-t', 'vm-act', 12); }
+        L('vm-vis-t', 'vm-vis', 11); L('vm-act-t', 'vm-act', 10.5); }
     } catch(e){}
     me.lg.forEach(m=>m.remove()); me.lg = [];
     const add = (el, p, anchor) => me.lg.push(new maplibregl.Marker({element:el, anchor:anchor || 'center'}).setLngLat([p.lng, p.lat]).addTo(map));
     // ✈️ 🚆 🚗 au milieu de chaque trajet ; l’avion tourné vers sa destination
-    F.legs.forEach(f=>{ if(f.properties.local) return; const C = f.geometry.coordinates, k = Math.floor((C.length - 1) / 2), a = C[k], b = C[Math.min(C.length - 1, k + 1)], m = C.length > 2 ? a : [(C[0][0] + C[1][0]) / 2, (C[0][1] + C[1][1]) / 2];
+    F.legs.forEach(f=>{ if(f.properties.local || f.properties.souv) return; const C = f.geometry.coordinates, k = Math.floor((C.length - 1) / 2), a = C[k], b = C[Math.min(C.length - 1, k + 1)], m = C.length > 2 ? a : [(C[0][0] + C[1][0]) / 2, (C[0][1] + C[1][1]) / 2];
       const md = f.properties.mode || '', fly = /avion|vol|plane|flight/i.test(md), e = document.createElement('span'); e.className = 'vm-tr';
       if(fly){ const pa = map.project(C.length > 2 ? a : C[0]), pb = map.project(C.length > 2 ? b : C[1]), deg = Math.atan2(pb.x - pa.x, pa.y - pb.y) * 180 / Math.PI;
         e.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" style="transform:rotate(${deg.toFixed(0)}deg)" aria-hidden="true"><path fill="#E11D74" d="M12 2c.8 0 1.4.7 1.4 1.6V9l7.6 4.6v2l-7.6-2.3v4.5l2.2 1.7V21L12 20l-3.6 1v-1.5l2.2-1.7v-4.5L3 15.6v-2L10.6 9V3.6C10.6 2.7 11.2 2 12 2z"/></svg>`;
@@ -2082,7 +2098,7 @@
     const n = nights(x.debut, x.fin), vis = items(it=>it.cat === 'activite' && it.date >= x.debut && it.date <= x.fin).length + list('place', p=>p.trip === M.trip && !p.sugg && !p.deleted && p.date >= x.debut && p.date <= x.fin).length;
     card.innerHTML = `<button type="button" class="vm-cx" onclick="this.parentNode.hidden=true" aria-label="${esc(MSGT('Fermer'))}">✕</button><div class="vm-ck">${esc(RF('Étape {0}', i + 1))}</div><b data-notr>${esc(x.city)}</b>
       <small>${fshort(x.debut)} → ${fshort(x.fin)}${n ? ' · ' + esc(n > 1 ? RF('{0} nuits', n) : '1 ' + MSGT('nuit')) : ''}${vis ? ' · ' + esc(RF('{0} visite(s) au programme', vis)) : ''}</small>
-      <div class="vm-ca"><button type="button" onclick="CV.vmZoom(${i})">🔍 ${esc(MSGT('Zoomer'))}</button><button type="button" onclick="CV.vmDays('${ja(x.h.id)}')">📅 ${esc(MSGT('Voir ces jours'))}</button></div>`;
+      <div class="vm-ca"><button type="button" onclick="CV.vmZoom(${i})">🔍 ${esc(MSGT('Zoomer'))}</button>${x.h ? `<button type="button" onclick="CV.vmDays('${ja(x.h.id)}')">📅 ${esc(MSGT('Voir ces jours'))}</button>` : x.sv ? `<button type="button" onclick="CV.vmClose();CV.view('${ja(x.sv[0])}',0)">📸 ${esc(MSGT('Voir les souvenirs'))}</button>` : ''}</div>`;
     card.hidden = false; if(c) me.map.easeTo({center:[c.lng, c.lat], duration:700});
   }
   function vmZoom(i){ const c = VM && VM.pts[i]; if(c) VM.map.flyTo({center:[c.lng, c.lat], zoom:13, duration:1200}); }
@@ -2164,6 +2180,7 @@
     }
     // 🏠 le départ et le retour (début et fin du voyage) ; les autres villes de passage (correspondance à Bruxelles…) en petit
     ends.forEach((e, j)=>{ if(F.cities.some(x=>rawKm(x.c, e.p) < 25)) return; const home = j === 0 || j === ends.length - 1; F.cities.push({c:e.p, name:e.name, home:home ? 1 : 0, via:home ? 0 : 1}); });
+    const seenP = new Set(), seenX = new Set();
     for(const h of items(x=>x.cat === 'hotel' && x.date)){
       const A0 = gdAnchors(t, h), hub = A0.hub;
       let p = h.lat != null && h.lng != null ? {lat:+h.lat, lng:+h.lng} : null;
@@ -2172,10 +2189,16 @@
       F.hotels.push({p, h, city:A0.city, st:p3St(h), exact:!!(h.lat != null || (h.adresse && okB(h) && p !== hub && p !== A0.C0))});
       if(hub && !okB(h)){ F.hood.push({type:'Feature', properties:{}, geometry:{type:'Polygon', coordinates:[p3Circle(hub, hub.r)]}});
         A0.A.forEach(q=>F.rays.push({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:[[hub.lng, hub.lat], [q.lng, q.lat]]}})); }
-      A0.P.forEach(v=>F.visits.push({type:'Feature', properties:{name:v.nom}, geometry:{type:'Point', coordinates:[+v.lng, +v.lat]}}));
-      const C = A0.C0 || p; A0.X.forEach((x, j)=>{ const q = x.lat != null && x.lng != null ? {lat:+x.lat, lng:+x.lng} : {lat:C.lat + .006 * Math.sin(j * 1.9 + 1), lng:C.lng + .009 * Math.cos(j * 1.9 + 1)};   // sans adresse : autour du centre
+      A0.P.forEach(v=>{ if(seenP.has(v.id)) return; seenP.add(v.id); F.visits.push({type:'Feature', properties:{name:v.nom}, geometry:{type:'Point', coordinates:[+v.lng, +v.lat]}}); });
+      const C = A0.C0 || p; A0.X.forEach((x, j)=>{ if(seenX.has(x.id)) return; seenX.add(x.id); const q = x.lat != null && x.lng != null ? {lat:+x.lat, lng:+x.lng} : {lat:C.lat + .006 * Math.sin(j * 1.9 + 1), lng:C.lng + .009 * Math.cos(j * 1.9 + 1)};   // sans adresse : autour du centre
         F.acts.push({type:'Feature', properties:{name:(z => z.length > 1 ? (normQ(z[1]) === normQ(A0.city) ? z[0] : z.slice(1).join(' · ')) : z[0])(String(x.titre || '').split(' · ')), col:P3C[p3St(x)]}, geometry:{type:'Point', coordinates:[q.lng, q.lat]}}); });
     }
+    // 📍 les visites et activités du programme qui ne tombent dans aucun hébergement (journée hors étape, hôtel sans dates…)
+    list('place', q=>q.trip === t.id && !q.sugg && !q.deleted && q.lat != null && q.lng != null && (q.date || q.stay) && !seenP.has(q.id)).forEach(q=>F.visits.push({type:'Feature', properties:{name:q.nom}, geometry:{type:'Point', coordinates:[+q.lng, +q.lat]}}));
+    items(i=>i.cat === 'activite' && i.lat != null && i.lng != null && !seenX.has(i.id)).forEach(i=>F.acts.push({type:'Feature', properties:{name:String(i.titre || '').split(' · ')[0], col:P3C[p3St(i)]}, geometry:{type:'Point', coordinates:[+i.lng, +i.lat]}}));
+    // 📸 voyage sans hébergement ni trajet saisi (import d’une autre appli) : les étapes et le chemin viennent des souvenirs
+    if(!F.cities.length) souvStages(t.id).forEach((o, j)=>F.cities.push({c:o.c, name:o.city, n:j + 1}));
+    if(!F.legs.length){ const tl = tripLines(t.id); tl.lines.forEach(l=>{ if(l.pts.length > 1) F.legs.push({type:'Feature', properties:{col:'#f43f5e', local:0, souv:1, mode:''}, geometry:{type:'LineString', coordinates:l.pts.map(q=>[q[1], q[0]])}}); }); }
     return F;
   }
   function p3Arc(a, b){   // vol : légère courbe ; route ou train : ligne droite
@@ -2244,11 +2267,11 @@
     map.addLayer({id:'p3-legs-c', type:'line', source:'p3-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':'rgba(0,0,0,.45)', 'line-width':['interpolate',['linear'],['zoom'],2,4,10,9]}});
     map.addLayer({id:'p3-legs', type:'line', source:'p3-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':['get','col'], 'line-width':['interpolate',['linear'],['zoom'],2,2.5,10,6]}});
     map.addLayer({id:'p3-legs-l', type:'line', source:'p3-legs', minzoom:9, filter:['==',['get','local'],1], layout:{'line-cap':'round'}, paint:{'line-color':['get','col'], 'line-width':4, 'line-dasharray':[1.5, 1.2]}});
-    map.addLayer({id:'p3-vis', type:'circle', source:'p3-vis', minzoom:9.5, paint:{'circle-color':'#a78bfa', 'circle-radius':['interpolate',['linear'],['zoom'],9.5,4,14,8], 'circle-stroke-color':'#fff', 'circle-stroke-width':2}});
-    map.addLayer({id:'p3-act', type:'circle', source:'p3-act', minzoom:9.5, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],9.5,5,14,9], 'circle-stroke-color':'#fff', 'circle-stroke-width':2.5}});
+    map.addLayer({id:'p3-vis', type:'circle', source:'p3-vis', minzoom:7, paint:{'circle-color':'#a78bfa', 'circle-radius':['interpolate',['linear'],['zoom'],7,3,10,5,14,8], 'circle-stroke-color':'#fff', 'circle-stroke-width':2}});
+    map.addLayer({id:'p3-act', type:'circle', source:'p3-act', minzoom:7, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],7,4,10,6,14,9], 'circle-stroke-color':'#fff', 'circle-stroke-width':2.5}});
     if(lbl){ const L = (id, src, mz) => map.addLayer({id, type:'symbol', source:src, minzoom:mz, layout:{'text-field':['get','name'], 'text-font':font, 'text-size':12, 'text-offset':[0, 1.2], 'text-anchor':'top', 'text-max-width':10, 'text-optional':true},
         paint:{'text-color':'#fff', 'text-halo-color':'rgba(10,20,50,.9)', 'text-halo-width':1.5}});
-      L('p3-vis-t', 'p3-vis', 12.5); L('p3-act-t', 'p3-act', 12); }
+      L('p3-vis-t', 'p3-vis', 11); L('p3-act-t', 'p3-act', 10.5); }
   }
   function p3Markers(map, F){
     P3.mk.forEach(m=>m.remove()); P3.mk = [];
