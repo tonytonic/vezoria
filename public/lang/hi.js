@@ -1,4 +1,18 @@
 I18N.load({
+/* 📸 import des photos (2026-11-04) */
+"Importer toutes mes photos":"मेरी सभी फ़ोटो आयात करें",
+"Chaque photo à son endroit et à son heure, sur la carte":"हर फ़ोटो अपनी जगह और समय पर, नक्शे पर",
+"Choisis toutes les photos du voyage d’un coup. L’appli lit dans chaque photo l’endroit exact et l’heure où elle a été prise, et place chaque souvenir à son point sur la carte, dans l’ordre de la journée.":"यात्रा की सभी फ़ोटो एक साथ चुनें। ऐप हर फ़ोटो की सटीक जगह और समय पढ़ता है और हर याद को नक्शे पर उसकी जगह दिन के क्रम में रखता है।",
+"Regrouper les photos":"फ़ोटो समूहित करें",
+"À chaque endroit":"हर जगह",
+"Par ville":"शहर के अनुसार",
+"Un souvenir par endroit visité (photos prises à moins de 500 m et à moins de 3 h d’écart).":"हर देखी जगह के लिए एक याद (500 मी और 3 घंटे से कम अंतर वाली फ़ोटो)।",
+"Un souvenir par jour et par ville.":"हर दिन और शहर के लिए एक याद।",
+"Choisir les photos":"फ़ोटो चुनें",
+"Astuce iPhone : dans la sélection, touche « Options » puis active « Lieu » pour que la position soit gardée dans les photos.":"iPhone सुझाव: चुनते समय “विकल्प” दबाएँ और “स्थान” चालू करें ताकि जगह फ़ोटो में रहे।",
+"Ces {0} photo(s) sont déjà dans tes souvenirs.":"ये {0} फ़ोटो पहले से आपकी यादों में हैं।",
+"Lecture des lieux et des heures…":"जगहें और समय पढ़े जा रहे हैं…",
+"Recherche des lieux…":"जगहें खोजी जा रही हैं…",
 "Passer en clair":"हल्के पर जाएँ",
 "Passer en sombre":"गहरे पर जाएँ",
 "Mode sombre":"डार्क मोड",

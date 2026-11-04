@@ -1,4 +1,18 @@
 I18N.load({
+/* 📸 import des photos (2026-11-04) */
+"Importer toutes mes photos":"사진 한 번에 가져오기",
+"Chaque photo à son endroit et à son heure, sur la carte":"사진마다 찍은 장소와 시간대로 지도에",
+"Choisis toutes les photos du voyage d’un coup. L’appli lit dans chaque photo l’endroit exact et l’heure où elle a été prise, et place chaque souvenir à son point sur la carte, dans l’ordre de la journée.":"여행 사진을 한 번에 고르세요. 앱이 사진마다 정확한 장소와 시간을 읽어 추억을 하루 순서대로 지도 위 지점에 놓습니다.",
+"Regrouper les photos":"사진 묶기",
+"À chaque endroit":"장소별",
+"Par ville":"도시별",
+"Un souvenir par endroit visité (photos prises à moins de 500 m et à moins de 3 h d’écart).":"방문한 장소마다 추억 하나(500 m, 3시간 이내 사진).",
+"Un souvenir par jour et par ville.":"하루·도시마다 추억 하나.",
+"Choisir les photos":"사진 고르기",
+"Astuce iPhone : dans la sélection, touche « Options » puis active « Lieu » pour que la position soit gardée dans les photos.":"iPhone 팁: 선택 화면에서 ‘옵션’을 눌러 ‘위치’를 켜야 사진에 위치가 남습니다.",
+"Ces {0} photo(s) sont déjà dans tes souvenirs.":"이 사진 {0}장은 이미 추억에 있어요.",
+"Lecture des lieux et des heures…":"장소와 시간 읽는 중…",
+"Recherche des lieux…":"장소 찾는 중…",
 "Passer en clair":"라이트로 전환",
 "Passer en sombre":"다크로 전환",
 "Mode sombre":"다크 모드",

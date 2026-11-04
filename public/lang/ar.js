@@ -1,4 +1,18 @@
 I18N.load({
+/* 📸 import des photos (2026-11-04) */
+"Importer toutes mes photos":"استيراد كل صوري",
+"Chaque photo à son endroit et à son heure, sur la carte":"كل صورة في مكانها ووقتها على الخريطة",
+"Choisis toutes les photos du voyage d’un coup. L’appli lit dans chaque photo l’endroit exact et l’heure où elle a été prise, et place chaque souvenir à son point sur la carte, dans l’ordre de la journée.":"اختر كل صور الرحلة دفعة واحدة. يقرأ التطبيق المكان والوقت الدقيقين لكل صورة ويضع كل ذكرى في نقطتها على الخريطة بترتيب اليوم.",
+"Regrouper les photos":"تجميع الصور",
+"À chaque endroit":"في كل مكان",
+"Par ville":"حسب المدينة",
+"Un souvenir par endroit visité (photos prises à moins de 500 m et à moins de 3 h d’écart).":"ذكرى لكل مكان تمت زيارته (صور بفارق أقل من 500 م و3 ساعات).",
+"Un souvenir par jour et par ville.":"ذكرى لكل يوم ومدينة.",
+"Choisir les photos":"اختيار الصور",
+"Astuce iPhone : dans la sélection, touche « Options » puis active « Lieu » pour que la position soit gardée dans les photos.":"نصيحة آيفون: في الاختيار اضغط «خيارات» وفعّل «الموقع» ليبقى في الصور.",
+"Ces {0} photo(s) sont déjà dans tes souvenirs.":"هذه الصور ({0}) موجودة بالفعل في ذكرياتك.",
+"Lecture des lieux et des heures…":"قراءة الأماكن والأوقات…",
+"Recherche des lieux…":"البحث عن الأماكن…",
 "Passer en clair":"التبديل إلى الفاتح",
 "Passer en sombre":"التبديل إلى الداكن",
 "Mode sombre":"الوضع الداكن",

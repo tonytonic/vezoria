@@ -1,4 +1,18 @@
 I18N.load({
+/* 📸 import des photos (2026-11-04) */
+"Importer toutes mes photos":"Импортировать все мои фото",
+"Chaque photo à son endroit et à son heure, sur la carte":"Каждое фото на своём месте и во своё время, на карте",
+"Choisis toutes les photos du voyage d’un coup. L’appli lit dans chaque photo l’endroit exact et l’heure où elle a été prise, et place chaque souvenir à son point sur la carte, dans l’ordre de la journée.":"Выберите сразу все фото поездки. Приложение прочитает точное место и время каждого снимка и поставит каждое воспоминание в его точку на карте, в порядке дня.",
+"Regrouper les photos":"Группировать фото",
+"À chaque endroit":"По каждому месту",
+"Par ville":"По городу",
+"Un souvenir par endroit visité (photos prises à moins de 500 m et à moins de 3 h d’écart).":"Одно воспоминание на место (снимки ближе 500 м и 3 ч друг к другу).",
+"Un souvenir par jour et par ville.":"Одно воспоминание на день и город.",
+"Choisir les photos":"Выбрать фото",
+"Astuce iPhone : dans la sélection, touche « Options » puis active « Lieu » pour que la position soit gardée dans les photos.":"Совет для iPhone: при выборе нажмите «Параметры» и включите «Геопозиция», чтобы сохранить место в фото.",
+"Ces {0} photo(s) sont déjà dans tes souvenirs.":"Эти фото ({0}) уже есть в воспоминаниях.",
+"Lecture des lieux et des heures…":"Читаю места и время…",
+"Recherche des lieux…":"Ищу места…",
 "Passer en clair":"Светлая тема",
 "Passer en sombre":"Тёмная тема",
 "Mode sombre":"Тёмный режим",

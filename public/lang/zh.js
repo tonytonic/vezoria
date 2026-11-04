@@ -1,4 +1,18 @@
 I18N.load({
+/* 📸 import des photos (2026-11-04) */
+"Importer toutes mes photos":"一次导入全部照片",
+"Chaque photo à son endroit et à son heure, sur la carte":"每张照片按拍摄地点和时间放到地图上",
+"Choisis toutes les photos du voyage d’un coup. L’appli lit dans chaque photo l’endroit exact et l’heure où elle a été prise, et place chaque souvenir à son point sur la carte, dans l’ordre de la journée.":"一次选择全部旅行照片。应用读取每张照片的准确地点和时间，按当天顺序把每段回忆放到地图上对应的位置。",
+"Regrouper les photos":"照片分组方式",
+"À chaque endroit":"按地点",
+"Par ville":"按城市",
+"Un souvenir par endroit visité (photos prises à moins de 500 m et à moins de 3 h d’écart).":"每个去过的地点一段回忆（相距不到 500 米、3 小时内的照片）。",
+"Un souvenir par jour et par ville.":"每天每个城市一段回忆。",
+"Choisir les photos":"选择照片",
+"Astuce iPhone : dans la sélection, touche « Options » puis active « Lieu » pour que la position soit gardée dans les photos.":"iPhone 提示：选择时点“选项”并开启“位置”，照片才会保留位置。",
+"Ces {0} photo(s) sont déjà dans tes souvenirs.":"这 {0} 张照片已在回忆中。",
+"Lecture des lieux et des heures…":"正在读取地点和时间…",
+"Recherche des lieux…":"正在查找地点…",
 "Passer en clair":"切换到浅色",
 "Passer en sombre":"切换到深色",
 "Mode sombre":"深色模式",

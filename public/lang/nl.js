@@ -1,4 +1,18 @@
 I18N.load({
+/* 📸 import des photos (2026-11-04) */
+"Importer toutes mes photos":"Al mijn foto’s importeren",
+"Chaque photo à son endroit et à son heure, sur la carte":"Elke foto op zijn plek en tijd, op de kaart",
+"Choisis toutes les photos du voyage d’un coup. L’appli lit dans chaque photo l’endroit exact et l’heure où elle a été prise, et place chaque souvenir à son point sur la carte, dans l’ordre de la journée.":"Kies alle reisfoto’s in één keer. De app leest de exacte plek en tijd van elke foto en zet elke herinnering op haar punt op de kaart, in de volgorde van de dag.",
+"Regrouper les photos":"Foto’s groeperen",
+"À chaque endroit":"Per plek",
+"Par ville":"Per stad",
+"Un souvenir par endroit visité (photos prises à moins de 500 m et à moins de 3 h d’écart).":"Eén herinnering per bezochte plek (foto’s minder dan 500 m en 3 uur uit elkaar).",
+"Un souvenir par jour et par ville.":"Eén herinnering per dag en per stad.",
+"Choisir les photos":"Foto’s kiezen",
+"Astuce iPhone : dans la sélection, touche « Options » puis active « Lieu » pour que la position soit gardée dans les photos.":"iPhone-tip: tik in de keuze op ‘Opties’ en zet ‘Locatie’ aan zodat de positie bewaard blijft.",
+"Ces {0} photo(s) sont déjà dans tes souvenirs.":"Deze {0} foto(’s) staan al in je herinneringen.",
+"Lecture des lieux et des heures…":"Plekken en tijden lezen…",
+"Recherche des lieux…":"Plekken opzoeken…",
 "Passer en clair":"Naar licht",
 "Passer en sombre":"Naar donker",
 "Mode sombre":"Donkere modus",

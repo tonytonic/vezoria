@@ -1,4 +1,18 @@
 I18N.load({
+/* 📸 import des photos (2026-11-04) */
+"Importer toutes mes photos":"Importar todas mis fotos",
+"Chaque photo à son endroit et à son heure, sur la carte":"Cada foto en su lugar y a su hora, en el mapa",
+"Choisis toutes les photos du voyage d’un coup. L’appli lit dans chaque photo l’endroit exact et l’heure où elle a été prise, et place chaque souvenir à son point sur la carte, dans l’ordre de la journée.":"Elige todas las fotos del viaje a la vez. La app lee el lugar exacto y la hora de cada foto, y coloca cada recuerdo en su punto del mapa, en el orden del día.",
+"Regrouper les photos":"Agrupar las fotos",
+"À chaque endroit":"En cada lugar",
+"Par ville":"Por ciudad",
+"Un souvenir par endroit visité (photos prises à moins de 500 m et à moins de 3 h d’écart).":"Un recuerdo por lugar visitado (fotos a menos de 500 m y 3 h de diferencia).",
+"Un souvenir par jour et par ville.":"Un recuerdo por día y por ciudad.",
+"Choisir les photos":"Elegir las fotos",
+"Astuce iPhone : dans la sélection, touche « Options » puis active « Lieu » pour que la position soit gardée dans les photos.":"Consejo iPhone: en la selección, toca «Opciones» y activa «Ubicación» para conservar la posición.",
+"Ces {0} photo(s) sont déjà dans tes souvenirs.":"Estas {0} foto(s) ya están en tus recuerdos.",
+"Lecture des lieux et des heures…":"Leyendo lugares y horas…",
+"Recherche des lieux…":"Buscando lugares…",
 "Passer en clair":"Pasar a claro",
 "Passer en sombre":"Pasar a oscuro",
 "Mode sombre":"Modo oscuro",

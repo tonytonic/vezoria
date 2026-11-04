@@ -1,4 +1,18 @@
 I18N.load({
+/* 📸 import des photos (2026-11-04) */
+"Importer toutes mes photos":"写真をまとめて取り込む",
+"Chaque photo à son endroit et à son heure, sur la carte":"写真ごとに撮影場所と時刻で地図に",
+"Choisis toutes les photos du voyage d’un coup. L’appli lit dans chaque photo l’endroit exact et l’heure où elle a été prise, et place chaque souvenir à son point sur la carte, dans l’ordre de la journée.":"旅の写真を一度に選んでください。アプリが各写真の正確な場所と時刻を読み取り、思い出をその日の順番で地図上の地点に置きます。",
+"Regrouper les photos":"写真のまとめ方",
+"À chaque endroit":"場所ごと",
+"Par ville":"都市ごと",
+"Un souvenir par endroit visité (photos prises à moins de 500 m et à moins de 3 h d’écart).":"訪れた場所ごとに1つの思い出（500 m・3時間以内の写真）。",
+"Un souvenir par jour et par ville.":"1日・1都市ごとに1つの思い出。",
+"Choisir les photos":"写真を選ぶ",
+"Astuce iPhone : dans la sélection, touche « Options » puis active « Lieu » pour que la position soit gardée dans les photos.":"iPhoneのヒント：選択画面で「オプション」をタップし「位置情報」をオンにすると位置が残ります。",
+"Ces {0} photo(s) sont déjà dans tes souvenirs.":"この{0}枚はすでに思い出にあります。",
+"Lecture des lieux et des heures…":"場所と時刻を読み取り中…",
+"Recherche des lieux…":"場所を検索中…",
 "Passer en clair":"ライトに切り替え",
 "Passer en sombre":"ダークに切り替え",
 "Mode sombre":"ダークモード",

@@ -1,4 +1,18 @@
 I18N.load({
+/* 📸 import des photos (2026-11-04) */
+"Importer toutes mes photos":"Tüm fotoğraflarımı içe aktar",
+"Chaque photo à son endroit et à son heure, sur la carte":"Her fotoğraf kendi yerinde ve saatinde, haritada",
+"Choisis toutes les photos du voyage d’un coup. L’appli lit dans chaque photo l’endroit exact et l’heure où elle a été prise, et place chaque souvenir à son point sur la carte, dans l’ordre de la journée.":"Gezinin tüm fotoğraflarını tek seferde seç. Uygulama her fotoğrafın tam yerini ve saatini okur, her anıyı haritada kendi noktasına günün sırasıyla yerleştirir.",
+"Regrouper les photos":"Fotoğrafları grupla",
+"À chaque endroit":"Her yerde",
+"Par ville":"Şehre göre",
+"Un souvenir par endroit visité (photos prises à moins de 500 m et à moins de 3 h d’écart).":"Ziyaret edilen her yer için bir anı (500 m ve 3 saatten yakın çekilen fotoğraflar).",
+"Un souvenir par jour et par ville.":"Gün ve şehir başına bir anı.",
+"Choisir les photos":"Fotoğrafları seç",
+"Astuce iPhone : dans la sélection, touche « Options » puis active « Lieu » pour que la position soit gardée dans les photos.":"iPhone ipucu: seçimde “Seçenekler”e dokunup “Konum”u aç, konum fotoğraflarda kalsın.",
+"Ces {0} photo(s) sont déjà dans tes souvenirs.":"Bu {0} fotoğraf zaten anılarında.",
+"Lecture des lieux et des heures…":"Yerler ve saatler okunuyor…",
+"Recherche des lieux…":"Yerler aranıyor…",
 "Passer en clair":"Açığa geç",
 "Passer en sombre":"Koyuya geç",
 "Mode sombre":"Koyu mod",
