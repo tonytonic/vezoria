@@ -3134,6 +3134,7 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Ton voyage sur la carte":"Your trip on the map",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"Add photos and a short story. It appears on the world map and in the journal.",
 "J’importe mes voyages d’une autre appli":"I import my trips from another app",
 "Tes étapes, récits et photos, à partir du fichier de données que ton ancienne appli t’envoie.":"Your steps, stories and photos, from the data file your previous app sends you.",

@@ -6089,6 +6089,7 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Ton voyage sur la carte":"رحلتك على الخريطة",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"أضف صورًا وحكاية قصيرة. تظهر على خريطة العالم وفي اليوميات.",
 "J’importe mes voyages d’une autre appli":"أستورد رحلاتي من تطبيق آخر",
 "Tes étapes, récits et photos, à partir du fichier de données que ton ancienne appli t’envoie.":"مراحلك وقصصك وصورك، من ملف البيانات الذي يرسله لك تطبيقك السابق.",

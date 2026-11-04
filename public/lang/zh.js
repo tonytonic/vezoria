@@ -6088,6 +6088,7 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Ton voyage sur la carte":"地图上的你的旅行",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"添加照片和简短的文字。它会显示在世界地图和日记中。",
 "J’importe mes voyages d’une autre appli":"从其他应用导入我的旅行",
 "Tes étapes, récits et photos, à partir du fichier de données que ton ancienne appli t’envoie.":"你的行程站点、游记和照片，来自旧应用发给你的数据文件。",

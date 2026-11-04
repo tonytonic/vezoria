@@ -6088,6 +6088,7 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Ton voyage sur la carte":"नक्शे पर तुम्हारी यात्रा",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"फ़ोटो और छोटी कहानी जोड़ो। यह विश्व मानचित्र और रोज़नामचे में दिखेगी।",
 "J’importe mes voyages d’une autre appli":"मैं किसी दूसरे ऐप से अपनी यात्राएँ इम्पोर्ट करता/करती हूँ",
 "Tes étapes, récits et photos, à partir du fichier de données que ton ancienne appli t’envoie.":"तुम्हारे पुराने ऐप द्वारा भेजी गई डेटा फ़ाइल से तुम्हारे पड़ाव, कहानियाँ और फ़ोटो।",
