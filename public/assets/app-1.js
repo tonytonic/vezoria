@@ -248,6 +248,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(!r) return ['main'];
     const sp = id => { const c = TS()[id] || (/^ft:/.test(id) ? mateCode(id.slice(3)) : null); return c && spaceObj(c) ? c : null; };
     if(r.type==='feedtrip') return sp(r.id) ? [sp(r.id)] : [];
+    // 👥 mes ❤️ et commentaires sur un voyage commun : sur mon fil ET sur celui de chaque compagnon qui le montre
+    if((r.type === 'like' || r.type === 'comment') && /^ft:/.test(r.trip || '') && R[r.trip.slice(3)] && R[r.trip.slice(3)].type === 'trip' && (r.dev === devId() || String(r.id).endsWith(':' + devId()))){ const L = socCodes(r.trip); if(L.length) return L; }
     if(/^f[tai]:/.test(r.trip || '')) return sp(r.trip) ? [sp(r.trip)] : [];   // fil abonnés : jamais dans mon carnet
     if(r.type==='trip') return [sp(r.id) || 'main'];
     if(r.trip) return [sp(r.trip) || 'main'];
@@ -710,7 +712,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   async function syncSpace(sp, force){
     sp.dirty = (sp.dirty || []).filter(id=>R[id]); let changed = 0;
-    const flt = recs => sp.sub ? ab2In(recs, sp) : sp.ivme ? ab2InIv(recs, sp) : (recs || []);
+    const flt = recs => sp.sub ? ab2In(recs, sp) : sp.ivme ? ab2InIv(recs, sp) : sp.mate ? ab2MateIn(recs) : (recs || []);
     const aft = () => { if(sp.sub) ab2Map(sp.code); else if(sp.ivme && sp.of) ab2Map(sp.of); };   // 👀 lien suivi : seulement ses voyages (abonnés v2)   // une fiche qui n’existe plus ici ne reste pas « à envoyer » pour toujours
     try {
       if(sp.dirty.length){ const j0 = await call(Math.max(0, (sp.since||0) - 5000), [], sp.code); changed += mergeRemote(flt(j0.records)); sp.since = j0.now; aft(); }   // 🔀 recevoir et fusionner avant d’envoyer
@@ -721,7 +723,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id])); sbDone(Object.keys(sent));
         j.records = flt(j.records);
-        j.records.forEach(r=>{ if(sp.sub || sp.ivme || sp.inv) return; if(r && force && r.type==='trip' && M.hide && M.hide[r.id]){ delete M.hide[r.id]; if(M.left) delete M.left[r.id]; if(M.mvSkip) delete M.mvSkip[r.id]; }   // rejoint exprès : un voyage retiré revient
+        j.records.forEach(r=>{ if(sp.sub || sp.ivme || sp.inv || sp.mate) return; if(r && force && r.type==='trip' && M.hide && M.hide[r.id]){ delete M.hide[r.id]; if(M.left) delete M.left[r.id]; if(M.mvSkip) delete M.mvSkip[r.id]; }   // rejoint exprès : un voyage retiré revient
           // 👀 voyage publié que je fais AUSSI en compagnon : je l'ai déjà en entier, pas besoin de le suivre en abonné (ex. Claire suit le carnet de Tony
           // sans revoir les voyages faits ensemble). S'il quitte un jour mes voyages, il redevient suivable.
           if(r && r.type==='feedtrip' && !r.deleted){ const tid = String(r.id).slice(3), own = R[tid] && R[tid].type === 'trip' && !R[tid].deleted && !R[tid].demo && !FT()[tid] && !(typeof ownFt === 'function' && ownFt(r)), un = M.unfol || (M.unfol = {});
@@ -868,7 +870,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(M.sync.on && M.sync.code) codes.add(M.sync.code);
     Object.entries(TS()).forEach(([tid, c])=>{ if(c && spaceObj(c) && R[tid] && R[tid].type === 'trip') codes.add(c); });
     // 👥 compagnon : le lien abonnés du voyage publié par un autre (pubCode), même si ce téléphone ne l’a jamais ouvert : ❤️ et 💬 des abonnés
-    const mates = [];   // abonnés v2 : chacun ses abonnés
+    const mates = [...new Set(trips().filter(t=>t && !t.deleted && !t.demo).flatMap(t=>mateCodes(t.id)))];   // 👥 fils de mes compagnons : ❤️ et 💬 de nos voyages communs
     const feeds = P.kinds.social ? [...new Set([...Object.values(FT()).filter(Boolean), ...mates].filter(Boolean))] : [];
     // 👀 voyages que je suis (pas les miens) : prévenu quand le voyageur publie une étape (envoyé en « souv » sur le lien abonnés)
     const mineF = new Set(Object.values(FT()).filter(Boolean)), fol = new Set();
@@ -879,7 +881,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const by = new Map(), add = (code, ks) => { if(!code) return; const o = by.get(code) || new Set(); ks.forEach(k=>o.add(k)); by.set(code, o); };
     // 👀 « X suit ton voyage » : seulement à l’auteur (ses propres liens abonnés), jamais aux compagnons, même abonnés au même voyage
     const ownF = new Set(Object.values(FT()).filter(Boolean));
-    codes.forEach(c=>add(c, want.filter(k=>k !== 'social'))); if(M.sync.on && M.sync.code && !/^M:/.test(M.sync.code)) add(M.sync.code, ['device']);   // 📱 un nouvel appareil sur mon carnet : toujours prévenu feeds.forEach(c=>add(c, ownF.has(c) ? ['social', 'follow'] : ['social'])); fol.forEach(c=>add(c, ['souv'])); ib.forEach(x=>add(x.code, x.kinds));
+    codes.forEach(c=>add(c, want.filter(k=>k !== 'social'))); if(M.sync.on && M.sync.code && !/^M:/.test(M.sync.code)) add(M.sync.code, ['device']);   // 📱 un nouvel appareil sur mon carnet : toujours prévenu
+    feeds.forEach(c=>add(c, ownF.has(c) ? ['social', 'follow'] : ['social'])); fol.forEach(c=>add(c, ['souv'])); ib.forEach(x=>add(x.code, x.kinds));
     return [...by.entries()].filter(([, ks])=>ks.size).map(([code, ks])=>({code, kinds:[...ks]})).concat([{code:pushDevCode(), kinds:['rappel'], dev:true}]);
   }
   // 🔔 l’auteur est prévenu quand un abonné commente, aime ou commence à suivre (même un abonné sans l’appli)

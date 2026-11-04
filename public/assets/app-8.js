@@ -265,17 +265,28 @@
   const FT = () => M.feedPub || (M.feedPub = {});            // voyage → code abonnés (chez l'auteur)
   const ftId = tid => 'ft:' + tid;
   const feedCode = tid => { const c = FT()[tid]; return c && spaceObj(c) ? c : null; };
-  const mateCode = tid => { return null;   // abonnés v2 : plus de lien d’un compagnon
-    const t = R[tid]; if(!t || t.deleted || !t.pubCode || !t.pubBy || t.pubBy === M.me || FT()[tid]) return null; return spaceObj(t.pubCode) ? t.pubCode : null; };
+  // 👥 voyage commun : chaque compagnon qui le montre à SES abonnés laisse son code de fil dans le voyage (« fc:<voyage>:<lui> »).
+  //    Ses compagnons lisent sur ce fil les ❤️ et commentaires de CE voyage (rien d’autre), en sont prévenus, et y répondent.
+  const mateCodes = tid => { const t = R[tid]; if(!t || t.deleted || t.type !== 'trip' || !M.me) return [];
+    return [...new Set(list('feedco', r=>r.trip === tid && r.pid !== M.me && r.code && r.code !== FT()[tid]).map(r=>r.code))].filter(c=>spaceObj(c)); };
+  const mateCode = tid => mateCodes(tid)[0] || null;
+  const socCodes = ftid => { const tid = String(ftid).replace(/^ft:/, ''), t = R[tid];
+    if(t && t.type === 'trip' && !t.deleted) return [...new Set([feedCode(tid), ...mateCodes(tid)].filter(Boolean))];
+    return [TS()[ftid]].filter(Boolean); };
   const socCode = tid => feedCode(tid) || mateCode(tid);
   // suivre en silence le code abonnés des voyages communs publiés par un compagnon (et l’oublier quand il n’est plus publié)
-  function mateFeedSync(){ return 0;   // abonnés v2 : chacun ses abonnés, plus de lien d’un compagnon suivi en silence
+  function mateFeedSync(){   // abonnés v2 : les fils de mes compagnons, pour les ❤️ et commentaires de nos voyages communs
     const want = new Set(); let ch = 0;
-    trips().forEach(t=>{ if(t && !t.deleted && t.pubCode && t.pubBy && t.pubBy !== M.me && !FT()[t.id] && (t.voyageurs||[]).includes(M.me)) want.add(t.pubCode); });
+    list('feedco', r=>r.pid !== M.me && r.code && R[r.trip] && R[r.trip].type === 'trip' && !R[r.trip].deleted && ((R[r.trip].voyageurs || []).includes(M.me)) && r.code !== FT()[r.trip]).forEach(r=>want.add(r.code));
     want.forEach(c=>{ if(!spaceObj(c)){ (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:'', mate:1}); ch++; } });
-    const used = new Set([...Object.values(FT()), ...Object.values(TS())]);
-    const keep = (M.spaces||[]).filter(sp=>!sp.mate || want.has(sp.code) || used.has(sp.code)); if(keep.length !== (M.spaces||[]).length){ M.spaces = keep; ch++; }
-    if(ch) persist(); return ch;
+    const keep = (M.spaces || []).filter(sp=>!sp.mate || want.has(sp.code)); if(keep.length !== (M.spaces || []).length){ M.spaces = keep; ch++; }
+    if(ch){ persist(); try { pushRegister(true); } catch(e){} } return ch;
+  }
+  // fil d’un compagnon : seulement les ❤️, commentaires et publications de NOS voyages communs
+  function ab2MateIn(recs){
+    return (recs || []).filter(r=>{ if(!r || !['like','comment','feed'].includes(r.type) || !/^ft:/.test(r.trip || '')) return false;
+      const tid = r.trip.slice(3), t = R[tid]; if(!(t && t.type === 'trip' && !t.deleted && (t.voyageurs || []).includes(M.me))) return false;
+      return r.type !== 'feed' || !FT()[tid]; });
   }
   const devId = () => M.devId || (M.devId = 'd' + uid());
   const myName = () => (M.me && prof(M.me) ? pname(M.me) : '') || M.followName || '';
@@ -285,6 +296,8 @@
   function feedBuild(tid){
     const c = feedCode(tid), t = R[tid]; if(!c || !t) return 0;
     TS()[ftId(tid)] = c; const out = [];
+    // 👥 voyage commun : mes compagnons trouvent mon fil dans le voyage (pour les ❤️ et commentaires de mes abonnés)
+    if(M.me && (t.voyageurs || []).length > 1 && TS()[tid] && spaceObj(TS()[tid])){ const co = {id:'fc:' + tid + ':' + M.me, type:'feedco', trip:tid, pid:M.me, code:c}; if(!R[co.id] || R[co.id].deleted || R[co.id].code !== c) out.push(co); }
     // couverture pour les abonnés : ma photo › photo Wikipédia choisie › 1re photo d’un souvenir publié (jamais d’un souvenir privé)
     const cov = t.cover || (t.coverWk ? '' : ((list('souv', x=>x.trip===tid && !x.priv && (x.photos||[]).length).sort((a,b)=>(a.date||'').localeCompare(b.date||''))[0] || {}).photos || [])[0] || '');
     const head = {id:ftId(tid), type:'feedtrip', oav:myAv(), titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', team: (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').slice(0, 30), tids: (t.voyageurs||[]).slice(0, 30), opid: (M.me && prof(M.me)) ? M.me : undefined, pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', link: c, blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
@@ -569,7 +582,7 @@
   function socEvents(day){   // day : tout ce qui est arrivé ces dernières 24 h (les non vues sont marquées « nw »)
     if(M.socSeen == null){ M.socSeen = Date.now(); persist(); }
     const seen0 = M.socSeen, seen = day ? Math.min(seen0, Date.now() - 864e5) : seen0, me = devId(), nm = myName();
-    const mine = new Set(Object.keys(FT()).map(ftId)), fol = new Set(list('feedtrip', f=>TS()[f.id] && !mine.has(f.id)).map(f=>f.id)), out = [];
+    const mine = new Set([...Object.keys(FT()), ...myTrips().filter(t=>mateCode(t.id)).map(t=>t.id)].map(ftId)), fol = new Set(list('feedtrip', f=>TS()[f.id] && !mine.has(f.id)).map(f=>f.id)), out = [];
     for(const r of Object.values(R)){
       if(!r || r.deleted || !r.trip || !(mine.has(r.trip) || fol.has(r.trip)) || isBlk(r)) continue;
       const t = r.updatedAt || r.createdAt || 0; if(t <= seen) continue;
@@ -1546,7 +1559,7 @@
     const f = R[fid]; if(!f) return; if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
     const id = 'lk:' + fid + ':' + devId(), cur = R[id];
     putQuiet([{id, type:'like', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), on: !(cur && cur.on)}]); syncNow(); feedPaint(fid);
-    if(!(cur && cur.on)){ fxPlay && fxHeart(); socialPush(f.trip, 'like', f.titre || f.lieu || '', null, f.id); }
+    if(!(cur && cur.on)){ fxPlay && fxHeart(); socCodes(f.trip).forEach(c=>socialPush(f.trip, 'like', f.titre || f.lieu || '', c, f.id)); }
   }
   // les autres personnes qui ont commenté cette publication (abonnés) : prévenues sur leur propre téléphone
   function replyPush(f, txt){
@@ -1559,7 +1572,7 @@
   async function feedComment(fid){
     const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
     if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
-    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socialPush(f.trip, 'comment', txt, null, f.id); replyPush(f, txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
+    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socCodes(f.trip).forEach(c=>socialPush(f.trip, 'comment', txt, c, f.id)); replyPush(f, txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
   }
   function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="' + (window.VZ_B || '') + 'anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
   function feedPostHTML(f){
@@ -1728,7 +1741,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-04o'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-04p'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1810,6 +1823,7 @@
     const out = Object.values(R).filter(r=>r && !r.deleted && (r.id === fid || r.id === 'fk:' + tid || r.id === 'fm:' + tid || (r.trip === fid && r.type !== 'like' && r.type !== 'comment'))).map(r=>Object.assign(clone(r), {deleted:true}));
     const ph = new Set(list('feed', f=>f.trip === fid).flatMap(f=>(f.photos || []).map(String)));
     M.fdel = (M.fdel || []).concat(Object.keys((M.fup || {})[c] || {}).filter(id=>ph.has(String(id).replace(/\.t$/, ''))).map(id=>[c, id]));
+    { const co = R['fc:' + tid + ':' + M.me]; if(co && !co.deleted) out.push(Object.assign(clone(co), {deleted:true})); }
     TS()[fid] = c; putQuiet(out); delete FT()[tid]; persist();
     if(!nosync) try { await syncNow(); feedPurge(); } catch(e){}
   }
