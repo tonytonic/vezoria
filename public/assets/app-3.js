@@ -734,7 +734,7 @@
     const all = souvs(), nph = all.reduce((s,x)=>s+(x.photos||[]).length,0);
     let h = souvTop() + studioHTML(all, nph) + `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">📸 ${all.length} souvenir${all.length>1?'s':''}</div><div class="v-sum-small">${nph} photo${nph>1?'s':''}</div></div>
       <div class="v-sum-small">Les étapes, les récits et les photos du voyage. Ajoute tes propres souvenirs avec leurs photos.</div>
-      <div class="cv-row" style="margin-top:10px"><button class="v-day-edit" onclick="CV.editSouv(null)">＋ Souvenir</button><button class="v-day-edit" onclick="CV.autoPhotoPick()">✨ Ranger mes photos</button>${nph || all.length ? `<button class="v-day-edit" onclick="CV.filmOpen()">🎬 Film du voyage</button>` : ''}</div>
+      <div class="cv-row" style="margin-top:10px"><button class="v-day-edit" onclick="CV.editSouv(null)">＋ Souvenir</button><button class="v-day-edit" onclick="CV.autoPhotoPick()">🖼️ Importer toutes mes photos</button>${nph || all.length ? `<button class="v-day-edit" onclick="CV.filmOpen()">🎬 Film du voyage</button>` : ''}</div>
       ${(M.pq||[]).length && M.sync.on ? `<div class="v-sum-small" style="margin-top:6px">${E2E ? '🔐' : '☁️'} ${pqN()} photo(s) en cours ${E2E ? 'de chiffrement et d’envoi' : 'd’envoi'}…</div>` : ''}
       ${!M.sync.on && nph ? `<div class="v-sum-small" style="margin-top:6px">Les photos restent sur ce téléphone tant que la synchro n’est pas activée.</div>` : ''}</div>`;
     if(!all.length) h += `<div class="v-empty">Encore aucun souvenir pour ce voyage.</div>`;
@@ -744,7 +744,7 @@
       const g = grpOf(s), gh = g !== lastG ? (lastG = g, `<div class="cv-souv-grp">📅 ${esc(g.split('|')[0])}${g.split('|')[1] ? ` <small>${esc(g.split('|')[1])}</small>` : ''}${s.date ? `<button type="button" class="st-dbtn" onclick="CV.storyOpen('${ja(s.date)}')">▶ Story</button>` : ''}</div>`) : '';
       const ph = s.photos || [], more = ph.length - 9;
       return gh + `<div class="cv-souv">
-        <div class="cv-souv-h"><span class="v-day-d">${s.date ? fdate(s.date) : '—'}</span><div><div class="cv-souv-t">${esc(s.titre||s.lieu||'Souvenir')}</div>
+        <div class="cv-souv-h"><span class="v-day-d">${s.date ? fdate(s.date) : '—'}${s.heure ? ' · ' + esc(s.heure) : ''}</span><div><div class="cv-souv-t">${esc(s.titre||s.lieu||'Souvenir')}</div>
           ${s.lieu || s.pays ? `<div class="v-sum-small">📍 ${esc(lieuPays(s.lieu, s.pays))}</div>` : ''}</div>
           ${(s.photos||[]).length ? `<button class="cv-x cv-pcb" onclick="CV.pcOpen('${ja(s.id)}')" aria-label="Carte postale" title="Carte postale">💌</button>` : ''}<button class="cv-x" onclick="CV.editSouv('${ja(s.id)}')" aria-label="Modifier">✏️</button>${/^💌/.test(s.titre || '') ? `<button class="cv-x" onclick="CV.delSouv('${ja(s.id)}')" aria-label="Supprimer la carte postale" title="Supprimer">🗑</button>` : ''}</div>
         ${s.texte ? `<div class="cv-souv-txt" onclick="this.classList.toggle('open')">${esc(s.texte)}</div>` : ''}${souvSocial(s)}

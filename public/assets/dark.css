@@ -1242,3 +1242,4 @@ html.vz-dark .sp2-chips button{color:var(--n-dkt)}
 html.vz-dark .sp2-add b,html.vz-dark .sp2-ph .sp2-ph0,html.vz-dark .sp2-more > summary{color:var(--n-dkt)}
 html.vz-dark .sp2-ph .sp2-ph0{background-color:rgb(20, 20, 20)}
 html.vz-dark .sp2-tg{color:var(--n-dkt)}
+html.vz-dark .lv-imp{border-top-color:rgb(49, 49, 49);border-right-color:rgb(49, 49, 49);border-bottom-color:rgb(49, 49, 49);border-left-color:rgb(49, 49, 49);background-color:rgba(20, 20, 20, 0.75);color:rgb(218, 190, 234)}

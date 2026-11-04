@@ -3287,3 +3287,4 @@ html.vz-dark body .cv-bell,html.vz-dark body .cv-thm{background:#1C1C1E!importan
 html.vz-dark body .cv-share-qr{background:#fff!important}
 /* 👥 partage : le bouton « Suivi(e) » passe à la ligne au lieu de déborder (colonnes étroites, iPad) */
 .sp2-ct{flex-wrap:wrap;row-gap:6px}.sp2-ct b{min-width:0;overflow:hidden;text-overflow:ellipsis}.sp2-fol{flex:none;white-space:nowrap}.sp2-card{overflow:hidden}
+.lv-imp{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin:0 0 12px;padding:12px 14px;border:1.5px dashed #c4b5fd;border-radius:16px;background:rgba(255,255,255,.75);color:#2A1238;font:inherit;text-align:left;cursor:pointer}.lv-imp b{font-size:.98rem}.lv-imp small{font-size:.8rem;opacity:.8}

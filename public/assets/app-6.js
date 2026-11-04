@@ -1498,50 +1498,64 @@
     if(s.lat == null){ s.lat = ex.lat; s.lng = ex.lng; }
   }
   let AP = null;
+  // 📸 « Importer toutes mes photos » : chaque groupe de photos devient un souvenir posé à l'endroit EXACT où elles ont été prises
+  // (position GPS et heure lues dans les photos), comme les « steps » de Polarsteps ; ou bien, au choix, un souvenir par ville.
   function autoPhotoPick(){
-    if(!trip()){ alert('Ouvre d’abord un voyage.'); return; }
-    openSheet(`<h2>✨ Ranger mes photos</h2><div class="v-sum-small" style="margin-bottom:10px">Choisis toutes les photos du voyage d’un coup. L’appli lit leur date et leur lieu, les groupe par jour et par endroit, et te propose les souvenirs déjà prêts.</div>
-      <label class="v-btn cv-addph" style="display:block;text-align:center">📷 Choisir les photos<input type="file" accept="image/heic,image/heif,image/jpeg,image/png,image/webp" multiple onchange="CV.autoPhotoRead(this)"></label>
+    if(!trip()){ alert(MSGT('Ouvre d’abord un voyage.')); return; }
+    const md = M.apMode === 'ville' ? 'ville' : 'precis';
+    openSheet(`<h2>📸 ${MSGT('Importer toutes mes photos')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Choisis toutes les photos du voyage d’un coup. L’appli lit dans chaque photo l’endroit exact et l’heure où elle a été prise, et place chaque souvenir à son point sur la carte, dans l’ordre de la journée.')}</div>
+      <div class="v-seg v-seg2" role="group" aria-label="${esc(MSGT('Regrouper les photos'))}" style="margin-bottom:10px"><button type="button" class="${md === 'precis' ? 'on' : ''}" onclick="CV.apMode('precis')">📍 ${MSGT('À chaque endroit')}</button><button type="button" class="${md === 'ville' ? 'on' : ''}" onclick="CV.apMode('ville')">🏙️ ${MSGT('Par ville')}</button></div>
+      <div class="v-sum-small" style="margin-bottom:10px">${MSGT(md === 'precis' ? 'Un souvenir par endroit visité (photos prises à moins de 500 m et à moins de 3 h d’écart).' : 'Un souvenir par jour et par ville.')}</div>
+      <label class="v-btn cv-addph" style="display:block;text-align:center">🖼️ ${MSGT('Choisir les photos')}<input type="file" accept="image/heic,image/heif,image/jpeg,image/png,image/webp" multiple onchange="CV.autoPhotoRead(this)"></label>
+      <div class="v-sum-small" style="margin-top:8px">${MSGT('Astuce iPhone : dans la sélection, touche « Options » puis active « Lieu » pour que la position soit gardée dans les photos.')}</div>
       <div class="v-sum-small" id="ap-msg" style="margin-top:8px"></div>
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
+  function apMode(m){ M.apMode = m === 'ville' ? 'ville' : 'precis'; persist(); autoPhotoPick(); }
+  const apKey = f => [f.name, f.size, f.lastModified].join('|');
   async function autoPhotoRead(input){
-    const files = [...(input.files||[])].filter(f=>/^image\//.test(f.type) || /\.(jpe?g|heic|heif|png|webp)$/i.test(f.name)); if(!files.length) return;
+    const all = [...(input.files||[])].filter(f=>/^image\//.test(f.type) || /\.(jpe?g|heic|heif|png|webp)$/i.test(f.name)); if(!all.length) return;
+    const t = trip(), seen = new Set(((M.apSeen || {})[t.id]) || []), files = all.filter(f=>!seen.has(apKey(f))), dup = all.length - files.length;
     const msg = document.getElementById('ap-msg'); const say = s => { if(msg) msg.textContent = s; };
-    say(`Lecture des dates et lieux… 0/${files.length}`); await new Promise(r => setTimeout(r, 30));
+    if(!files.length){ say(RF('Ces {0} photo(s) sont déjà dans tes souvenirs.', all.length)); return; }
+    const precis = M.apMode !== 'ville';
+    say(`${MSGT('Lecture des lieux et des heures…')} 0/${files.length}`); await new Promise(r => setTimeout(r, 30));
     const info = [];
-    for(let i=0;i<files.length;i++){ if(i%10===0) say(`Lecture des dates et lieux… ${i}/${files.length}`); info.push(Object.assign({f:files[i]}, await exifOf(files[i]))); }
-    info.sort((a,b)=>(a.date + (a.time||'')).localeCompare(b.date + (b.time||'')));
-    const groups = [];
+    for(let i=0;i<files.length;i++){ if(i%10===0) say(`${MSGT('Lecture des lieux et des heures…')} ${i}/${files.length}`); const ex = await exifOf(files[i]); info.push(Object.assign({f:files[i], ts:exTs(ex)}, ex)); }
+    info.sort((a,b)=>a.ts - b.ts);
+    const groups = [], R1 = precis ? 0.5 : 40, GAP = precis ? 3 * 3600e3 : 24 * 3600e3;
+    const cen = g => { const P = g.ph.filter(p=>p.lat != null); if(!P.length) return null; return {lat:P.reduce((a,p)=>a+p.lat,0)/P.length, lng:P.reduce((a,p)=>a+p.lng,0)/P.length}; };
     info.forEach(p => {
-      const g = groups[groups.length-1];
-      const near = g && g.date === p.date && (!p.lat || !g.lat || hav(g, p) < 40);
-      if(near){ g.ph.push(p); if(p.lat && !g.lat){ g.lat = p.lat; g.lng = p.lng; } }
-      else groups.push({date:p.date, lat:p.lat, lng:p.lng, ph:[p], titre:'', lieu:'', pays:'', cc:''});
+      const g = groups[groups.length-1], c = g && cen(g), last = g && g.ph[g.ph.length-1];
+      const same = g && g.date === p.date && p.ts - last.ts < GAP && (p.lat == null || !c || hav(c, p) < R1);
+      if(same) g.ph.push(p); else groups.push({date:p.date, ph:[p]});
     });
-    // lieux : un seul appel par groupe (1 par seconde, politesse envers le service gratuit)
+    groups.forEach(g => { const c = cen(g); if(c){ g.lat = +c.lat.toFixed(5); g.lng = +c.lng.toFixed(5); } g.time = g.ph[0].time || ''; g.titre = g.lieu = g.pays = g.cc = g.city = ''; });
+    // nom des endroits : un appel par groupe (1 par seconde, politesse envers le service gratuit), mémorisé à ~100 m près
     const cache = {}; let n = 0;
     for(const g of groups){
-      n++; say(`Recherche des lieux… ${n}/${groups.length}`);
-      if(!g.lat) continue;
-      const key = g.lat.toFixed(1) + ',' + g.lng.toFixed(1);
+      n++; say(`${MSGT('Recherche des lieux…')} ${n}/${groups.length}`);
+      if(g.lat == null) continue;
+      const key = precis ? g.lat.toFixed(3) + ',' + g.lng.toFixed(3) : g.lat.toFixed(1) + ',' + g.lng.toFixed(1);
       if(!cache[key]){
-        try { const j = await (await fetch(`${GEO}reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${g.lat}&lon=${g.lng}`)).json();
-          const a = (j && j.address) || {}; cache[key] = {city: a.city || a.town || a.village || a.municipality || a.county || '', pays: a.country || '', cc: (a.country_code || '').toUpperCase()}; } catch(e){ cache[key] = {}; }
+        try { const j = await (await fetch(`${GEO}reverse?format=jsonv2&zoom=${precis ? 17 : 10}&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${g.lat}&lon=${g.lng}`)).json();
+          const a = (j && j.address) || {}, city = a.city || a.town || a.village || a.municipality || a.county || '';
+          const spot = precis ? (j && j.name) || a.tourism || a.attraction || a.leisure || a.amenity || a.neighbourhood || a.suburb || a.quarter || '' : '';
+          cache[key] = {city, spot: spot && normQ(spot) !== normQ(city) ? spot : '', pays: a.country || '', cc: (a.country_code || '').toUpperCase()}; } catch(e){ cache[key] = {}; }
         await new Promise(r => setTimeout(r, 1100));
       }
-      Object.assign(g, {lieu: [cache[key].city, cache[key].pays].filter(Boolean).join(', '), pays: cache[key].pays || '', cc: cache[key].cc || ''}); g.titre = g.city = cache[key].city || '';
+      const c = cache[key]; Object.assign(g, {city: c.city || '', pays: c.pays || '', cc: c.cc || '', lieu: [c.spot, c.city].filter(Boolean).join(', ')});
+      g.titre = c.spot || c.city || '';
     }
     groups.forEach(g => { if(!g.titre) g.titre = TT('Journée du ' + fdate(g.date)); });
-    const t = trip(); AP = {groups, t};
-    apRender();
+    AP = {groups, t, dup}; apRender();
   }
   function apRender(){
     const t = AP.t, out = d => t.debut && (d < t.debut || (t.fin && d > t.fin)), nAll = AP.groups.reduce((s,g)=>s+g.ph.length,0);
     openSheet(`<h2>✨ ${AP.groups.length} souvenir${AP.groups.length>1?'s':''} proposé${AP.groups.length>1?'s':''}</h2>
-      <div class="v-sum-small" style="margin-bottom:8px">${nAll} photo(s) rangées par jour et par lieu. Corrige les titres si tu veux, décoche ce que tu ne veux pas.</div>
-      <div class="ap-list">${AP.groups.map((g,i)=>`<div class="ap-row"><label class="cv-checkline"><input type="checkbox" id="ap-${i}" checked></label>
-        <div class="ap-b"><div class="ap-d"><span>${fdate(g.date)}</span> · <span>${g.ph.length} photo${g.ph.length>1?'s':''}</span>${g.cc ? ' · ' + flag(g.cc) : ''}${out(g.date) ? ' · <span class="ap-w">hors dates du voyage</span>' : ''}${g.ph.some(p=>p.guess) ? ' · <span>date estimée</span>' : ''}</div>
+      <div class="v-sum-small" style="margin-bottom:8px">${nAll} photo(s) rangées par lieu et par heure${AP.dup ? ' · ' + RF('{0} déjà importée(s), ignorée(s)', AP.dup) : ''}. Corrige les titres si tu veux, décoche ce que tu ne veux pas.</div>
+      <div class="ap-list">${AP.groups.map((g,i)=>`<div class="ap-row"><label class="cv-checkline"><input type="checkbox" id="ap-${i}"${out(g.date) ? '' : ' checked'}></label>
+        <div class="ap-b"><div class="ap-d"><span>${fdate(g.date)}${g.time ? ' · ' + esc(g.time) : ''}</span> · <span>${g.ph.length} photo${g.ph.length>1?'s':''}</span>${g.lat != null ? ' · 📍' : ' · <span>sans position</span>'}${g.cc ? ' · ' + flag(g.cc) : ''}${out(g.date) ? ' · <span class="ap-w">hors dates du voyage</span>' : ''}${g.ph.some(p=>p.guess) ? ' · <span>date estimée</span>' : ''}</div>
         <input class="v-in" id="ap-t-${i}" value="${esc(g.titre)}">
         <div class="ap-th">${g.ph.slice(0,5).map(p=>`<img src="${URL.createObjectURL(p.f)}" alt="" loading="lazy">`).join('')}</div></div></div>`).join('')}</div>
       <div class="v-sum-small" id="ap-msg2"></div>
@@ -1556,10 +1570,14 @@
       for(const p of g.ph){ done++; if(msg) msg.textContent = `Préparation des photos… ${done}/${total}`;
         try { const pid = 'ph' + uid() + done; await storePhoto(p.f, pid); ids.push(pid); if(p.lat != null) (g.pts = g.pts || []).push([p.lat, p.lng, exTs(p), pid]); } catch(e){ bad++; } }
       if(!ids.length) continue;
-      const s = {id:'sv' + uid() + i, type:'souv', trip:AP.t.id, date:g.date, titre:(document.getElementById('ap-t-' + i).value || '').trim() || g.titre, lieu: g.pays ? (g.city || '') : g.lieu, texte:'', photos:ids};
-      if(g.lat){ s.lat = g.lat; s.lng = g.lng; s.pays = g.pays; s.cc = g.cc; } if(g.pts) s.pts = g.pts;
+      const hm = /^(\d\d):(\d\d)/.exec(g.time || '');
+      const s = {id:'sv' + uid() + i, type:'souv', trip:AP.t.id, date:g.date, titre:(document.getElementById('ap-t-' + i).value || '').trim() || g.titre, lieu: g.lieu || g.city || '', texte:'', photos:ids};
+      if(hm){ s.heure = hm[0]; s.ordre = +hm[1] * 60 + +hm[2]; }   // dans l'ordre de la journée
+      if(g.lat != null){ s.lat = g.lat; s.lng = g.lng; s.pays = g.pays; s.cc = g.cc; } if(g.pts) s.pts = g.pts;
+      (AP.keys = AP.keys || []).push(...g.ph.map(p=>apKey(p.f)));
       made.push(s);
     }
+    if(AP.keys && AP.keys.length){ M.apSeen = M.apSeen || {}; const k = M.apSeen[AP.t.id] = (M.apSeen[AP.t.id] || []).concat(AP.keys); if(k.length > 5000) M.apSeen[AP.t.id] = k.slice(-5000); persist(); }   // réimporter les mêmes photos ne crée pas de doublon
     AP = null;
     if(made.length) putMany(made, '✨ ' + made.length + ' souvenir(s) créé(s)');
     closeSheet(true); render(); uploadQueue();
