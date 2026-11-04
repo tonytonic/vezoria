@@ -2102,10 +2102,26 @@
     if(on) await fmCalc(tid, true); else fmDel(tid);
     syncNow(); refresh();
   }
+  async function mapNow(){
+    const t = trip(); if(!t) return; toast('🗺️ ' + MSGT('Carte en préparation…'));
+    if(feedCode(t.id)) feedBuild(t.id); await fmCalc(t.id, true); await syncNow(true);
+    toast(R['fm:' + t.id] && !R['fm:' + t.id].deleted ? '✓ ' + MSGT('Carte envoyée aux abonnés') : '⚠️ ' + MSGT('Carte indisponible')); refresh();
+  }
+  /* 📚 carnet publié pour des abonnés : un voyage CRÉÉ ensuite y entre tout seul (une seule fois : décoché ensuite, il reste privé) */
+  function carnetAuto(){
+    try {
+      const c = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : ''; if(!c || M.feedAllAuto === false) return;
+      if(!M.feedAllSince){ M.feedAllSince = Date.now() - 2 * 864e5; persist(); }   // 1re fois : les voyages créés ces deux derniers jours aussi
+      const A = M.feedAuto || (M.feedAuto = {}); let n = 0;
+      myTrips().forEach(t=>{ if(!t || t.demo || FT()[t.id] || A[t.id] || mateTrip(t.id) || (t.createdBy && M.me && t.createdBy !== M.me) || (t.createdAt || 0) < M.feedAllSince) return;
+        A[t.id] = 1; FT()[t.id] = c; n++; setTimeout(()=>{ try { feedBuild(t.id); } catch(e){} }, 50); });
+      if(n){ persist(); toast('👀 ' + RF('{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés', n)); }
+    } catch(e){}
+  }
   function fmDel(tid){ const r = R['fm:' + tid]; if(r && !r.deleted) putQuiet([Object.assign(clone(r), {deleted:true, c:[], l:[], v:[], a:[]})]); }
   const r4 = n => Math.round(n * 1e4) / 1e4, r3 = n => Math.round(n * 1e3) / 1e3;
   function fmFromF(tid, F){
-    if(!socCode(tid) || !mpOn(tid)) return;
+    if(!feedCode(tid) || !mpOn(tid)) return;   // seul le téléphone qui publie le voyage écrit la carte (les abonnés n’acceptent que les fiches de l’auteur)
     const rec = {id:'fm:' + tid, type:'feedmap', trip:ftId(tid),
       c:F.cities.slice(0, 80).map(x=>[String(x.name || '').slice(0, 80), r4(x.c.lat), r4(x.c.lng), x.n || 0, x.home ? 1 : 0, x.via ? 1 : 0]),
       l:F.legs.slice(0, 120).map(f=>[f.properties.mode || '', f.properties.local ? 1 : 0, f.properties.souv ? 1 : 0, f.geometry.coordinates.filter((q, i, A)=>A.length < 300 || i % Math.ceil(A.length / 300) === 0 || i === A.length - 1).map(q=>[r3(q[0]), r3(q[1])])]),
@@ -2120,7 +2136,7 @@
   let FMRUN = 0;
   async function fmCalc(tid, force){
     try {
-      if(!tid || tid !== M.trip || !mpOn(tid) || !socCode(tid) || FMRUN) return;
+      if(!tid || tid !== M.trip || !mpOn(tid) || !feedCode(tid) || FMRUN) return;
       const sig = [...items(i=>/^(hotel|transport|activite)$/.test(i.cat)), ...list('place', q=>q.trip === tid && !q.sugg), ...list('souv', x=>x.trip === tid && x.lat != null)].map(x=>x.id + (x.updatedAt || '') + (x.deleted ? 'x' : '')).sort().join('|');
       const S = M.fmSig || (M.fmSig = {}); let h = 0; for(let i = 0; i < sig.length; i++) h = (h * 31 + sig.charCodeAt(i)) | 0;
       if(!force && S[tid] === h && R['fm:' + tid] && !R['fm:' + tid].deleted) return;

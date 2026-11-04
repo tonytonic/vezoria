@@ -774,7 +774,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       (M.spaces||[]).forEach(sp=>{ if(!own.has(sp.code) && !tsp.has(sp.code) && sp.code !== M.ib) sp.since = 0; }); }
     try { mateFeedSync(); } catch(e){}   // codes abonnés des voyages communs publiés par un compagnon
     fkLive();
-    try { if(M.trip) fmCalc(M.trip); } catch(e){}   // 🗺️ carte des abonnés du voyage ouvert (étapes déjà prévues comprises)
+    try { carnetAuto(); if(M.trip) fmCalc(M.trip); } catch(e){}   // 🗺️ carte des abonnés du voyage ouvert (étapes déjà prévues comprises)
     const mainOn = !!(M.sync.on && M.sync.code);
     if(!mainOn && !(M.spaces||[]).length) return;
     if(manual !== true && !pull && M.syncPause && Date.now() < M.syncPause) return;   // pause demandée par le serveur (trop de synchros)

@@ -3333,3 +3333,6 @@ html.vz-dark body .cv-share-qr{background:#fff!important}
 .fm-me span{display:flex;flex-direction:column;background:rgba(10,20,45,.82);color:#fff;border-radius:10px;padding:3px 8px;line-height:1.15}.fm-me b{font-size:.78rem}.fm-me small{font-size:.66rem;opacity:.9}.fm-me.on small{color:#4ade80;opacity:1}
 @keyframes fmPulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.7)}100%{box-shadow:0 0 0 14px rgba(74,222,128,0)}}
 .p3-city.w i{padding:0 7px;border-radius:13px}
+.cv-mpb{margin:10px 0}.cv-mpb .cv-trkpub{margin:0}
+.cv-mps{display:flex;align-items:center;gap:8px;margin:6px 2px 0}.cv-mps small{flex:1;min-width:0;font-size:.74rem;color:var(--gray)}
+.cv-mps button{flex:none;border:1.5px solid #d8cbe8;background:#fff;border-radius:99px;padding:5px 10px;font:inherit;font-weight:700;font-size:.74rem;cursor:pointer}
