@@ -1940,7 +1940,7 @@
      ces abonnements sous le même nom et retire l’ancien abonné du navigateur : pas de doublon, et personne d’autre
      ne peut se faire passer pour moi (il faudrait ce code, qui n’existe que sur mon téléphone). */
   async function xferCode(){
-    const codes = [...new Set(list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted).map(f=>TS()[f.id]))].sort();
+    const codes = ab2Subs().map(([c, S])=>S.iv || c).sort();   // 👀 abonnés v2
     const sig = codes.join(',') + '|' + myName() + '|' + JSON.stringify(M.fwAs || {});
     if(M.xfer && M.xfer.c && M.xfer.sig === sig && Date.now() - M.xfer.at < 30 * 864e5) return M.xfer.c;
     const c = genCode(), rec = {id:'xf:' + devId(), type:'xfer', trip:'xf:' + c, dev:devId(), who:myName() || '', as:M.fwAs || {}, codes, at:Date.now()};
@@ -1959,12 +1959,8 @@
       const k = await fKey(), ib = inbox();
       for(const c of x.codes || []){
         M.fwChk[c] = 1; if(!M.fwAs[c] && x.who) M.fwAs[c] = x.who;
-        if(M.unfol) Object.keys(M.unfol).forEach(id=>{ if(TS()[id] === c) delete M.unfol[id]; });
-        if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
-        const sp = spaceObj(c); sp.since = 0; try { await syncSpace(sp, true); } catch(e){}
-        const old = list('follower', f=>fwDevOf(f) === x.dev && TS()[f.trip] === c);
-        const mine = list('feedtrip', f=>TS()[f.id] === c && !f.deleted).map(ft=>({id:'fw:' + ft.id + ':' + devId(), type:'follower', pid:fwPid(), trip:ft.id, who:fwAsFor(c) || 'Un proche', pk:k.pub, ib}));
-        putQuiet([...old.map(f=>Object.assign(clone(f), {deleted:true})), ...mine]);
+        try { await ab2Follow(c, false, true); } catch(e){}   // 👀 abonnés v2 : mon lien d’abonné, ouvert ici aussi
+        const old = R['fw:' + c + ':' + x.dev]; if(old && !old.deleted) putQuiet([Object.assign(clone(old), {deleted:true})]);
       }
       const sp0 = spaceObj(code); if(sp0){ try { await spacePushOnly(sp0, [Object.assign(clone(x), {deleted:true})]); } catch(e){} }   // le code ne sert qu’une fois
       M.spaces = (M.spaces || []).filter(z=>z.code !== code); delete R[x.id]; persist();

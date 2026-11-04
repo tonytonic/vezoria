@@ -910,11 +910,11 @@
   function shMoreTog(o){ M.shMore = !!o; persist(); }
   function shareHubMore(){
     const t0 = trip(), t = t0 && !t0.demo ? t0 : null;
-    let h = (t0 && !t0.demo && !hidden('blk:prep') ? socFil(t0) : '') + shTabsBar() + `<div class="sh-tb" data-t="suis">` + followHTML() + `</div>`; setTimeout(()=>{ folPaint(); hydrate(); }, 60);
+    let h = (t0 && !t0.demo && !hidden('blk:prep') ? socFil(t0) : '');   // 👀 abonnés et abonnements : tout est sur la page Partager (abonnés v2)
     if(t){
       const code = TS()[t.id], on = code && spaceObj(code), sp = on ? spaceObj(code) : null, v = (t.voyageurs||[]).filter(prof), fc = feedCode(t.id);
       const grpT = fc ? Object.keys(FT()).filter(x=>FT()[x] === fc && R[x] && !R[x].deleted) : [], gIds = new Set(grpT.map(ftId));   // carnet publié d’un coup : les abonnés voient tous ces voyages
-      const nfw = fc ? new Set(list('follower', x=>gIds.has(x.trip) && !isBlk(x)).map(fwKey)).size : 0, nlk = fc ? list('like', l=>l.trip===ftId(t.id) && l.on && !isBlk(l)).length : 0, ncm = fc ? list('comment', c=>c.trip===ftId(t.id) && !isBlk(c)).length : 0;
+      const nfw = fc ? ab2NFw(t.id) : 0, nlk = fc ? list('like', l=>l.trip===ftId(t.id) && l.on && !isBlk(l)).length : 0, ncm = fc ? list('comment', c=>c.trip===ftId(t.id) && !isBlk(c)).length : 0;
       h += `<div class="sh-sec sh-tb" data-t="comp" data-notr>🧳 ${esc(t.titre)}</div>
       <div class="sh-card sh-tb" data-t="comp"><div class="sh-k">👥 Voyager ensemble</div><p>Tes compagnons voient tout le voyage et le complètent avec toi : programme, résas, budget, souvenirs. Chaque ajout est signé.</p>
         <div class="cv-row" style="gap:6px;flex-wrap:wrap;margin:6px 0 10px">${v.map(pid=>pchip(pid)).join('') || '<span class="v-sum-small">Personne d’autre pour l’instant</span>'}</div>
@@ -931,8 +931,7 @@
       <button type="button" class="v-btn sec" onclick="CV.carnetShareSheet()">📚 Partager tout mon carnet</button></div>
       <div class="sh-sec sh-tb" data-t="comp">🔗 On t’a invité ?</div><div class="sh-card sh-tb" data-t="comp"><p>Un code ou un lien reçu par message : colle-le ici pour rejoindre un voyage, un carnet, ou suivre un voyage.</p>
       <button type="button" class="v-btn sec" onclick="CV.joinAny()">🔗 Rejoindre avec un code</button></div>`;
-    h += socialHTML(t ? t.id : '');
-    return `<div class="sh-hub" data-on="${shTabNow()}">` + h + `</div>`;
+    return `<div class="sh-hub" data-on="comp">` + h + `</div>`;
   }
 
   /* ---------- 🔎 « Que voir » : lieux ajoutés à la main (ville sans hôtel, excursion…) ---------- */

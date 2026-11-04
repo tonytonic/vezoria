@@ -614,7 +614,7 @@
     if(!t || t.demo) return '';
     const key = 'soc:' + t.id, code = TS()[t.id], sp = code ? spaceObj(code) : null, v = (t.voyageurs || []).filter(prof), fc = feedCode(t.id);
     const grpT = fc ? Object.keys(FT()).filter(x=>FT()[x] === fc && R[x] && !R[x].deleted) : [], gIds = new Set(grpT.map(ftId));
-    const nfw = fc ? new Set(list('follower', x=>gIds.has(x.trip) && !isBlk(x)).map(fwKey)).size : 0;
+    const nfw = fc ? ab2NFw(t.id) : 0;
     const steps = [
       {k:'comp', ic:'👥', l:MSGT('Tes compagnons de voyage'), ok: v.length > 1 || filSk(key, 'comp'), skip:true, n: v.length + ' ' + MSGT('voyageur(s)'),
         body: ()=>`<div class="ar-p">${MSGT('Ils voient tout le voyage et le complètent avec toi : programme, résas, budget, souvenirs.')}</div><div class="fil-chips">${v.map(pid=>pchip(pid)).join('')}</div>${fbtn(`CV.close();CV.tripInviteNow('${ja(t.id)}')`, `📤 ${MSGT('Inviter un compagnon')}`)}`},
@@ -2115,7 +2115,7 @@
       const A = M.feedAuto || (M.feedAuto = {}); let n = 0;
       myTrips().forEach(t=>{ if(!t || t.demo || FT()[t.id] || A[t.id] || mateTrip(t.id) || (t.createdBy && M.me && t.createdBy !== M.me) || (t.createdAt || 0) < M.feedAllSince) return;
         A[t.id] = 1; FT()[t.id] = c; n++; setTimeout(()=>{ try { feedBuild(t.id); } catch(e){} }, 50); });
-      if(n){ persist(); toast('👀 ' + RF('{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés', n)); }
+      if(n){ persist(); try { ab2CfgSave(); } catch(e){} toast('👀 ' + RF('{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés', n)); }
     } catch(e){}
   }
   function fmDel(tid){ const r = R['fm:' + tid]; if(r && !r.deleted) putQuiet([Object.assign(clone(r), {deleted:true, c:[], l:[], v:[], a:[]})]); }

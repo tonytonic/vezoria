@@ -248,7 +248,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(!r) return ['main'];
     const sp = id => { const c = TS()[id] || (/^ft:/.test(id) ? mateCode(id.slice(3)) : null); return c && spaceObj(c) ? c : null; };
     if(r.type==='feedtrip') return sp(r.id) ? [sp(r.id)] : [];
-    if(/^ft:/.test(r.trip || '')) return sp(r.trip) ? [sp(r.trip)] : [];
+    if(/^f[tai]:/.test(r.trip || '')) return sp(r.trip) ? [sp(r.trip)] : [];   // fil abonnés : jamais dans mon carnet
     if(r.type==='trip') return [sp(r.id) || 'main'];
     if(r.trip) return [sp(r.trip) || 'main'];
     if(r.type==='profile'){ const out = new Set(['main']); Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(t && t.type === 'trip' && spaceObj(c) && ((t.voyageurs||[]).includes(r.id) || r.id === M.me)) out.add(c); }); return [...out]; }
@@ -454,7 +454,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const ADMT = {}, ADMC = {};   // empreinte du lien abonnés → ma clé d’auteur (ADMC : par code)
   const wsec = () => { if(!M.wsec){ M.wsec = hex(crypto.getRandomValues(new Uint8Array(16))); setTimeout(()=>{ try { persist(); } catch(e){} }, 0); } return M.wsec; };   // gardée : mes ❤️ et commentaires restent modifiables par moi
   window.__vzHdr = tok => { try { if(!tok || !M) return null; const h = {'X-Carnet-Writer': wsec()}; if(ADMT[tok]) h['X-Carnet-Admin'] = ADMT[tok]; return h; } catch(e){ return null; } };
-  const myFeedCode = c => !!c && (Object.values(typeof FT === 'function' ? FT() : {}).includes(c) || !!(M.admOk || {})[c] || (M.fold || []).some(x=>x.code === c));
+  const myFeedCode = c => !!c && (c === M.feedAll || (M.abInv || []).some(x=>x.code === c) || Object.values(typeof FT === 'function' ? FT() : {}).includes(c) || !!(M.admOk || {})[c] || (M.fold || []).some(x=>x.code === c));
   async function admKey(code){
     if((M.admOk || {})[code]) return M.admOk[code];
     if(M.sync && M.sync.on && M.sync.code && M.sync.code !== code) return hex(await crypto.subtle.sign('HMAC', (await keys(M.sync.code)).hkey, te.encode('vz-feed-admin:' + code)));
@@ -467,7 +467,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   async function admFilter(j, env0, recs, code){
     if(!j.adm) return recs;   // l’auteur aussi : une fiche glissée par un abonné n’entre nulle part
     return Promise.all(recs.map(async (r, i)=>{ if(!r) return null; if(env0[i] && env0[i]._a) return r;
-      const p = SOC_P[r.type]; if(!p || !String(r.id || '').startsWith(p) || !/^ft:/.test(String(r.trip || ''))) return null;
+      const p = SOC_P[r.type]; if(!p || !String(r.id || '').startsWith(p) || !/^f[tai]:/.test(String(r.trip || ''))) return null;
       if(E2E && env0[i] && await sid(r.id, code) !== env0[i].id) return null;   // une fiche glissée sous l’identifiant d’une autre
       return r; }));
   }
@@ -709,16 +709,19 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     return changed;
   }
   async function syncSpace(sp, force){
-    sp.dirty = (sp.dirty || []).filter(id=>R[id]); let changed = 0;   // une fiche qui n’existe plus ici ne reste pas « à envoyer » pour toujours
+    sp.dirty = (sp.dirty || []).filter(id=>R[id]); let changed = 0;
+    const flt = recs => sp.sub ? ab2In(recs, sp) : sp.ivme ? ab2InIv(recs, sp) : (recs || []);
+    const aft = () => { if(sp.sub) ab2Map(sp.code); else if(sp.ivme && sp.of) ab2Map(sp.of); };   // 👀 lien suivi : seulement ses voyages (abonnés v2)   // une fiche qui n’existe plus ici ne reste pas « à envoyer » pour toujours
     try {
-      if(sp.dirty.length){ const j0 = await call(Math.max(0, (sp.since||0) - 5000), [], sp.code); changed += mergeRemote(j0.records); sp.since = j0.now; }   // 🔀 recevoir et fusionner avant d’envoyer
+      if(sp.dirty.length){ const j0 = await call(Math.max(0, (sp.since||0) - 5000), [], sp.code); changed += mergeRemote(flt(j0.records)); sp.since = j0.now; aft(); }   // 🔀 recevoir et fusionner avant d’envoyer
       const groups = syChunks([...sp.dirty]); if(!groups.length) groups.push([]);
       for(const g of groups){
         const chunk = g.map(id => R[id]).filter(Boolean);
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id])); sbDone(Object.keys(sent));
-        j.records.forEach(r=>{ if(r && force && r.type==='trip' && M.hide && M.hide[r.id]){ delete M.hide[r.id]; if(M.left) delete M.left[r.id]; if(M.mvSkip) delete M.mvSkip[r.id]; }   // rejoint exprès : un voyage retiré revient
+        j.records = flt(j.records);
+        j.records.forEach(r=>{ if(sp.sub || sp.ivme || sp.inv) return; if(r && force && r.type==='trip' && M.hide && M.hide[r.id]){ delete M.hide[r.id]; if(M.left) delete M.left[r.id]; if(M.mvSkip) delete M.mvSkip[r.id]; }   // rejoint exprès : un voyage retiré revient
           // 👀 voyage publié que je fais AUSSI en compagnon : je l'ai déjà en entier, pas besoin de le suivre en abonné (ex. Claire suit le carnet de Tony
           // sans revoir les voyages faits ensemble). S'il quitte un jour mes voyages, il redevient suivable.
           if(r && r.type==='feedtrip' && !r.deleted){ const tid = String(r.id).slice(3), own = R[tid] && R[tid].type === 'trip' && !R[tid].deleted && !R[tid].demo && !FT()[tid] && !(typeof ownFt === 'function' && ownFt(r)), un = M.unfol || (M.unfol = {});
@@ -726,7 +729,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
             if(un[r.id] === 2) delete un[r.id]; }
           if(r && (r.type==='trip' || r.type==='feedtrip') && !(M.hide && M.hide[r.id]) && (force || !TS()[r.id]) && !(r.type==='feedtrip' && (M.unfol||{})[r.id] && !force)){ if(r.type==='trip' && !TS()[r.id]) tombClear(r.id); TS()[r.id] = sp.code; }
           if(r && (r.type==='feedgrant' || r.type==='packtrip') && r.trip && !TS()[r.trip] && (M.unfol || {})[r.trip] !== 2) TS()[r.trip] = sp.code; });
-        changed += mergeRemote(j.records); sp.since = j.now;
+        changed += mergeRemote(j.records); sp.since = j.now; aft();
       }
       sp.last = Date.now(); sp.err = ''; sp.net = false; sp.errSince = 0; sp.revoked = false;
       mateFeedTidy(); ftPick();
@@ -738,7 +741,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   // 🔗 un voyage suivi par DEUX liens (ancien lien resté en ligne + lien actuel de l’auteur) : on garde celui où l’auteur publie encore
   // (fiche du voyage la plus récente). Les commentaires et ❤️ partent alors chez lui, les notifications aussi. L’auteur est prévenu de
   // l’ancien lien (fiche « oldlink » sur le lien actuel) : son téléphone y récupère les commentaires et fait passer les abonnés restés dessus.
-  function ftPick(){
+  function ftPick(){ return 0;   // abonnés v2 : un seul lien par personne, plus d’anciens liens à départager
     const at = M.ftAt; if(!at) return 0; const best = {}, sent = M.olSent || (M.olSent = {}); let n = 0;
     const parts = k => { const i = k.lastIndexOf('|'); return [k.slice(0, i), k.slice(i + 1)]; };
     Object.entries(at).forEach(([k, v])=>{ const [id, c] = parts(k); if(Date.now() - (v % 1e12) > 400 * 864e5 && !spaceObj(c)){ delete at[k]; return; }
@@ -755,7 +758,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(n){ persist(); try { pushRegister(true); } catch(e){} }
     return n;
   }
-  function mateFeedTidy(){
+  function mateFeedTidy(){ return 0;   // abonnés v2 : fait par ab2In
     let n = 0; const un = M.unfol || (M.unfol = {}), me = devId();
     Object.keys(TS()).filter(k=>/^ft:/.test(k)).forEach(k=>{ const tid = k.slice(3), t = R[tid], ft = R[k];
       if(!(t && t.type === 'trip' && !t.deleted && !t.demo) || FT()[tid] || (ft && typeof ownFt === 'function' && ownFt(ft))) return;
@@ -768,6 +771,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   var AUTO_SYNC = 3600000, pollGap = AUTO_SYNC, lastSyncAt = 0;
   async function syncNow(manual){
     if(storeLoading || storeBroken) return;   // carnet pas encore lu depuis la base
+    try { ab2Reset(); ab2CfgLoad(); } catch(e){}
     const pull = manual === 'pull'; if(pull) manual = false;   // « pull » : aller chercher les nouveautés tout de suite (notification touchée), sans message
     if(manual === true){ M.pqPause = 0; M.pqFull = {}; }   // « Synchroniser » à la main : on réessaie d’envoyer les photos tout de suite
     if(!M.ftScan1 && (M.spaces||[]).length){ M.ftScan1 = 1; const own = new Set(Object.values(FT())), tsp = new Set(Object.entries(TS()).filter(([k])=>R[k] && R[k].type === 'trip').map(([, c])=>c));   // une fois : relire les liens abonnés en entier (voir ftPick)
@@ -864,7 +868,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(M.sync.on && M.sync.code) codes.add(M.sync.code);
     Object.entries(TS()).forEach(([tid, c])=>{ if(c && spaceObj(c) && R[tid] && R[tid].type === 'trip') codes.add(c); });
     // 👥 compagnon : le lien abonnés du voyage publié par un autre (pubCode), même si ce téléphone ne l’a jamais ouvert : ❤️ et 💬 des abonnés
-    const mates = trips().filter(t=>t && !t.deleted && !t.demo && t.pubCode && t.pubBy && t.pubBy !== M.me && !FT()[t.id]).map(t=>mateCode(t.id) || t.pubCode);
+    const mates = [];   // abonnés v2 : chacun ses abonnés
     const feeds = P.kinds.social ? [...new Set([...Object.values(FT()).filter(Boolean), ...mates].filter(Boolean))] : [];
     // 👀 voyages que je suis (pas les miens) : prévenu quand le voyageur publie une étape (envoyé en « souv » sur le lien abonnés)
     const mineF = new Set(Object.values(FT()).filter(Boolean)), fol = new Set();
@@ -1231,7 +1235,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   function syncDot(){
     const el = document.getElementById('cv-sd'); if(!el) return;
     // carnet principal dans le cloud : son état · « voyage par voyage » : l’état de l’ensemble des voyages dans le cloud
-    const feeds = new Set(Object.values(M.feedPub || {})), sps = (M.spaces || []).filter(sp=>!sp.mate && !feeds.has(sp.code) && Object.values(TS()).includes(sp.code));
+    const feeds = new Set(Object.values(M.feedPub || {})), sps = (M.spaces || []).filter(sp=>!sp.mate && !sp.sub && !sp.ivme && !sp.inv && sp.code !== M.feedAll && !feeds.has(sp.code) && Object.values(TS()).includes(sp.code));
     // 📴 simple coupure de réseau : orange (« en attente »), pas rouge — rien n’est perdu, l’envoi reprend tout seul
     el.className = 'sd ' + (M.sync.on ? (M.sync.err && !M.sync.net ? 'err' : (M.sync.err || M.dirty.length || syncing || (M.pq||[]).length) ? 'wait' : 'ok')
       : !sps.length ? 'off' : sps.some(sp=>sp.err && !sp.net) ? 'err' : (syncing || (M.pq||[]).length || sps.some(sp=>sp.err || (sp.dirty||[]).length)) ? 'wait' : 'ok');
@@ -1265,7 +1269,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const box = document.getElementById('cv-hstats'); if(!box) return;
     if(!show){ box.style.display = 'none'; return; }
     const me = devId(), mine = new Set(Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted).map(ftId));
-    const fw = new Set(list('follower', x=>mine.has(x.trip) && !isBlk(x) && !String(x.id).endsWith(':' + me)).map(fwKey)).size;
+    const fw = ab2Fws().length;   // abonnés v2
     const lk = list('like', l=>mine.has(l.trip) && l.on && !isBlk(l) && !String(l.id).endsWith(':' + me)).length;
     const fo = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted).length;
     if(!mine.size && !fo && !fw && !lk){ box.style.display = 'none'; return; }   // rien de publié, rien de suivi : pas de « 0 · 0 · 0 »
@@ -1629,7 +1633,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       if(!pid || pid === M.me) return; const c = L[pid];
       if(!c || (m.at || 0) >= (c.at || 0) && (c.dev !== m.dev || c.ib !== m.ib || c.pk !== m.pk)){ L[pid] = {dev:m.dev, pk:m.pk, ib:m.ib, who:m.who || '', at:m.at || 0}; ch++; } });
     const mine = new Set(Object.keys(FT()).filter(t=>R[t] && !R[t].deleted).map(ftId));   // abonnés de MES publications seulement
-    const F2 = {}; fwUniq(list('follower', f=>mine.has(f.trip) && f.pk && f.ib && !isBlk(f) && fwDevOf(f) !== me && !(M.blkDev||{})[fwDevOf(f)]))
+    const F2 = {}; ab2Fws().filter(f=>f.pk && f.ib)
       .forEach(f=>{ F2[fwDevOf(f)] = {who:fwLabel(f) || f.who || '?', pk:f.pk, ib:f.ib, at:(F[fwDevOf(f)] || {}).at || Date.now()}; });
     if(JSON.stringify(Object.keys(F2).sort().map(d=>[d, F2[d].who, F2[d].ib])) !== JSON.stringify(Object.keys(F).sort().map(d=>[d, F[d].who, F[d].ib]))){ M.flinks = F2; ch++; }
     const gone = M.goneDone || (M.goneDone = {}), out = [];
@@ -2173,7 +2177,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       pts.sort((a, b)=>a.d.localeCompare(b.d)); for(let i = 1; i < pts.length; i++){ const d = hav(pts[i-1], pts[i]); if(d > 1) km += d; }
     });
     const me = devId(), mine = new Set(Object.keys(FT()).map(ftId));
-    const fw = new Set(list('follower', x=>mine.has(x.trip) && !isBlk(x) && !String(x.id).endsWith(':' + me)).map(fwKey)).size;
+    const fw = ab2Fws().length;   // abonnés v2
     const lk = list('like', l=>mine.has(l.trip) && l.on && !isBlk(l) && !String(l.id).endsWith(':' + me)).length;
     // organisation (tous les voyages, même à venir), continents, plus long voyage
     const allT = new Set(trips().filter(t=>!t.demo && !t.deleted).map(t=>t.id));
