@@ -1,4 +1,14 @@
 I18N.load({
+/* 🗺️ carte vivante (2026-11-04) */
+"Ouvrir la carte vivante":"ライブマップを開く",
+"Carte vivante":"ライブマップ",
+"Souvenirs sur la carte":"地図上の思い出",
+"Étape {0}":"{0}番目の滞在地",
+"{0} visite(s) au programme":"予定の見どころ{0}件",
+"Zoomer":"ズーム",
+"Voir ces jours":"この日程を見る",
+"Ouvrir le souvenir":"思い出を開く",
+"Villes introuvables sur la carte":"地図上に都市が見つかりません",
 "Chargement des photos…":"写真を読み込み中…",
 "Chargement de la photo…":"写真を読み込み中…",
 "Chargement du fichier…":"ファイルを読み込み中…",

@@ -1,4 +1,14 @@
 I18N.load({
+/* 🗺️ carte vivante (2026-11-04) */
+"Ouvrir la carte vivante":"افتح الخريطة الحية",
+"Carte vivante":"الخريطة الحية",
+"Souvenirs sur la carte":"الذكريات على الخريطة",
+"Étape {0}":"المحطة {0}",
+"{0} visite(s) au programme":"{0} زيارة في البرنامج",
+"Zoomer":"تكبير",
+"Voir ces jours":"عرض هذه الأيام",
+"Ouvrir le souvenir":"فتح الذكرى",
+"Villes introuvables sur la carte":"لم يتم العثور على المدن على الخريطة",
 "Chargement des photos…":"جارٍ تحميل الصور…",
 "Chargement de la photo…":"جارٍ تحميل الصورة…",
 "Chargement du fichier…":"جارٍ تحميل الملف…",

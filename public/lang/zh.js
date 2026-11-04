@@ -1,4 +1,14 @@
 I18N.load({
+/* 🗺️ carte vivante (2026-11-04) */
+"Ouvrir la carte vivante":"打开动态地图",
+"Carte vivante":"动态地图",
+"Souvenirs sur la carte":"地图上的回忆",
+"Étape {0}":"第 {0} 站",
+"{0} visite(s) au programme":"行程中有 {0} 个景点",
+"Zoomer":"放大",
+"Voir ces jours":"查看这几天",
+"Ouvrir le souvenir":"打开回忆",
+"Villes introuvables sur la carte":"地图上找不到这些城市",
 "Chargement des photos…":"正在载入照片…",
 "Chargement de la photo…":"正在载入照片…",
 "Chargement du fichier…":"正在载入文件…",

@@ -1,4 +1,14 @@
 I18N.load({
+/* 🗺️ carte vivante (2026-11-04) */
+"Ouvrir la carte vivante":"जीवंत नक्शा खोलें",
+"Carte vivante":"जीवंत नक्शा",
+"Souvenirs sur la carte":"नक्शे पर यादें",
+"Étape {0}":"पड़ाव {0}",
+"{0} visite(s) au programme":"कार्यक्रम में {0} जगहें",
+"Zoomer":"ज़ूम करें",
+"Voir ces jours":"ये दिन देखें",
+"Ouvrir le souvenir":"याद खोलें",
+"Villes introuvables sur la carte":"शहर नक्शे पर नहीं मिले",
 "Chargement des photos…":"फ़ोटो लोड हो रही हैं…",
 "Chargement de la photo…":"फ़ोटो लोड हो रही है…",
 "Chargement du fichier…":"फ़ाइल लोड हो रही है…",

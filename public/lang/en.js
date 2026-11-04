@@ -1,4 +1,14 @@
 I18N.load({
+/* 🗺️ carte vivante (2026-11-04) */
+"Ouvrir la carte vivante":"Open the living map",
+"Carte vivante":"Living map",
+"Souvenirs sur la carte":"Memories on the map",
+"Étape {0}":"Stop {0}",
+"{0} visite(s) au programme":"{0} visit(s) planned",
+"Zoomer":"Zoom in",
+"Voir ces jours":"See these days",
+"Ouvrir le souvenir":"Open the memory",
+"Villes introuvables sur la carte":"Cities not found on the map",
 "Chargement des photos…":"Loading photos…",
 "Chargement de la photo…":"Loading photo…",
 "Chargement du fichier…":"Loading file…",

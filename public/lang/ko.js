@@ -1,4 +1,14 @@
 I18N.load({
+/* 🗺️ carte vivante (2026-11-04) */
+"Ouvrir la carte vivante":"살아있는 지도 열기",
+"Carte vivante":"살아있는 지도",
+"Souvenirs sur la carte":"지도 위 추억",
+"Étape {0}":"{0}번째 구간",
+"{0} visite(s) au programme":"일정의 방문지 {0}곳",
+"Zoomer":"확대",
+"Voir ces jours":"이 날짜 보기",
+"Ouvrir le souvenir":"추억 열기",
+"Villes introuvables sur la carte":"지도에서 도시를 찾을 수 없어요",
 "Chargement des photos…":"사진 불러오는 중…",
 "Chargement de la photo…":"사진 불러오는 중…",
 "Chargement du fichier…":"파일 불러오는 중…",

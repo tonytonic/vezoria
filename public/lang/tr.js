@@ -1,4 +1,14 @@
 I18N.load({
+/* 🗺️ carte vivante (2026-11-04) */
+"Ouvrir la carte vivante":"Canlı haritayı aç",
+"Carte vivante":"Canlı harita",
+"Souvenirs sur la carte":"Haritada anılar",
+"Étape {0}":"Durak {0}",
+"{0} visite(s) au programme":"Programda {0} ziyaret",
+"Zoomer":"Yakınlaştır",
+"Voir ces jours":"Bu günleri gör",
+"Ouvrir le souvenir":"Anıyı aç",
+"Villes introuvables sur la carte":"Şehirler haritada bulunamadı",
 "Chargement des photos…":"Fotoğraflar yükleniyor…",
 "Chargement de la photo…":"Fotoğraf yükleniyor…",
 "Chargement du fichier…":"Dosya yükleniyor…",
