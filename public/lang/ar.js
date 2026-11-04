@@ -1,4 +1,8 @@
 I18N.load({
+"Chargement des photos…":"جارٍ تحميل الصور…",
+"Chargement de la photo…":"جارٍ تحميل الصورة…",
+"Chargement du fichier…":"جارٍ تحميل الملف…",
+"Le téléphone prépare les fichiers choisis : ça peut prendre quelques secondes.":"يجهّز الهاتف الملفات المختارة: قد يستغرق ذلك بضع ثوانٍ.",
 /* 📸 import des photos (2026-11-04) */
 "Importer toutes mes photos":"استيراد كل صوري",
 "Chaque photo à son endroit et à son heure, sur la carte":"كل صورة في مكانها ووقتها على الخريطة",

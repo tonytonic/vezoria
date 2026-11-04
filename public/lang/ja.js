@@ -1,4 +1,8 @@
 I18N.load({
+"Chargement des photos…":"写真を読み込み中…",
+"Chargement de la photo…":"写真を読み込み中…",
+"Chargement du fichier…":"ファイルを読み込み中…",
+"Le téléphone prépare les fichiers choisis : ça peut prendre quelques secondes.":"端末が選んだファイルを準備しています。数秒かかることがあります。",
 /* 📸 import des photos (2026-11-04) */
 "Importer toutes mes photos":"写真をまとめて取り込む",
 "Chaque photo à son endroit et à son heure, sur la carte":"写真ごとに撮影場所と時刻で地図に",

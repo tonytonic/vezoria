@@ -1,4 +1,8 @@
 I18N.load({
+"Chargement des photos…":"正在载入照片…",
+"Chargement de la photo…":"正在载入照片…",
+"Chargement du fichier…":"正在载入文件…",
+"Le téléphone prépare les fichiers choisis : ça peut prendre quelques secondes.":"手机正在准备所选文件，可能需要几秒钟。",
 /* 📸 import des photos (2026-11-04) */
 "Importer toutes mes photos":"一次导入全部照片",
 "Chaque photo à son endroit et à son heure, sur la carte":"每张照片按拍摄地点和时间放到地图上",

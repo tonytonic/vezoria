@@ -1,4 +1,8 @@
 I18N.load({
+"Chargement des photos…":"사진 불러오는 중…",
+"Chargement de la photo…":"사진 불러오는 중…",
+"Chargement du fichier…":"파일 불러오는 중…",
+"Le téléphone prépare les fichiers choisis : ça peut prendre quelques secondes.":"휴대폰이 선택한 파일을 준비 중이에요. 몇 초 걸릴 수 있어요.",
 /* 📸 import des photos (2026-11-04) */
 "Importer toutes mes photos":"사진 한 번에 가져오기",
 "Chaque photo à son endroit et à son heure, sur la carte":"사진마다 찍은 장소와 시간대로 지도에",

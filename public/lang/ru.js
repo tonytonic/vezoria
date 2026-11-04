@@ -1,4 +1,8 @@
 I18N.load({
+"Chargement des photos…":"Загрузка фото…",
+"Chargement de la photo…":"Загрузка фото…",
+"Chargement du fichier…":"Загрузка файла…",
+"Le téléphone prépare les fichiers choisis : ça peut prendre quelques secondes.":"Телефон готовит выбранные файлы: это может занять несколько секунд.",
 /* 📸 import des photos (2026-11-04) */
 "Importer toutes mes photos":"Импортировать все мои фото",
 "Chaque photo à son endroit et à son heure, sur la carte":"Каждое фото на своём месте и во своё время, на карте",
