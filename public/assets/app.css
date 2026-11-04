@@ -3324,3 +3324,12 @@ html.vz-dark body .cv-share-qr{background:#fff!important}
 .bb-mb{display:flex;gap:6px}.bb-mh b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bb-sl .bb-mm{cursor:pointer}
 .maplibregl-marker.p3-sv{z-index:1}.p3-far .p3-sv{width:22px;height:22px}
+/* 🗺️ abonnés : carte du voyage 2D / 3D */
+.fd-mb{display:flex;align-items:center;gap:8px;padding:10px 12px 0}.fd-mb span{flex:1;min-width:0;font-weight:800;font-size:.9rem}
+.fd-mb button{border:0;border-radius:99px;padding:7px 14px;font:inherit;font-weight:800;font-size:.85rem;background:#2A1238;color:#fff;cursor:pointer}
+#cv-vm.fm{z-index:99985}
+.fm-me{display:flex;align-items:center;gap:6px;pointer-events:none}.fm-me i{width:18px;height:18px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.fm-me.on i{animation:fmPulse 1.6s ease-out infinite}
+.fm-me span{display:flex;flex-direction:column;background:rgba(10,20,45,.82);color:#fff;border-radius:10px;padding:3px 8px;line-height:1.15}.fm-me b{font-size:.78rem}.fm-me small{font-size:.66rem;opacity:.9}.fm-me.on small{color:#4ade80;opacity:1}
+@keyframes fmPulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.7)}100%{box-shadow:0 0 0 14px rgba(74,222,128,0)}}
+.p3-city.w i{padding:0 7px;border-radius:13px}

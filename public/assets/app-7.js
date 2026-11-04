@@ -1703,7 +1703,7 @@
             paint:{'fill-extrusion-color':'#f4efe6', 'fill-extrusion-height':['coalesce',['get','render_height'],8], 'fill-extrusion-base':['coalesce',['get','render_min_height'],0], 'fill-extrusion-opacity':['interpolate',['linear'],['zoom'],14.5,0,15.5,.8]}});
           (lib.layers||[]).filter(l=>l.source===vs[0] && l.type==='symbol' && l['source-layer']==='place' && /country|city|town|village|suburb|state|capital/.test(l.id)).forEach(l=>{ const x = JSON.parse(JSON.stringify(l)); x.source = 'ofm';
             x.layout = Object.assign({}, x.layout, {'text-field':['coalesce',['get','name:' + lang],['get','name:latin'],['get','name']]});
-            x.paint = Object.assign({}, x.paint, {'text-color':'#ffffff', 'text-halo-color':'rgba(10,20,50,.85)', 'text-halo-width':1.4}); style.layers.push(x); });
+            x.paint = Object.assign({}, x.paint, {'text-color':'#ffffff', 'text-halo-color':'rgba(10,20,50,.85)', 'text-halo-width':1.4}); if(x.layout['text-font'] && !me.font) me.font = x.layout['text-font']; style.layers.push(x); });
         }
       } catch(e){}
       if(LV !== me) return;
@@ -1717,6 +1717,10 @@
         try { map.setTerrain({source:'dem', exaggeration:1.4}); } catch(e){}
         { const m = document.getElementById('lv-msg'); if(m) m.hidden = true; }
         liveDraw(true); liveFit(true);
+        // 🗺️ voyage suivi dont la carte est partagée : étapes, trajets, visites et activités sous la route en direct et les photos
+        if(/^ft:/.test(key)){ const fr = R['fm:' + key.slice(3)]; if(fr && !fr.deleted){ const F = fmToF(fr);
+          mapRich(map, F, me.font, (el, p) => new maplibregl.Marker({element:el, anchor:'center'}).setLngLat([p.lng, p.lat]).addTo(map), true);
+          if(!D.people.length && !D.ph.length && F.cities.length){ const b = new maplibregl.LngLatBounds(); F.cities.forEach(c=>b.extend([c.c.lng, c.c.lat])); try { map.fitBounds(b, {padding:80, maxZoom:11, pitch:50, duration:0}); } catch(e){} } } }
         LV.iv = setInterval(liveTick, 25000); LV.up = setInterval(liveUp, 5000); liveUp();
         LV.raf = requestAnimationFrame(liveAnim);
       };
@@ -2036,33 +2040,11 @@
      dans le sens du vol, et en zoomant les hébergements, les visites et les activités */
   async function vmRich(me){
     let F = null; try { F = await p3Data(trip()); } catch(e){} if(VM !== me || !F || !me.map) return; me.F = F; const map = me.map; if(F.legs.length) vmDraw();   // retire les pictos posés en attendant
-    const fc = f => ({type:'geojson', data:{type:'FeatureCollection', features:f}});
-    try {
-      if(F.legs.length){ ['route', 'route-halo'].forEach(id=>{ try { map.setLayoutProperty(id, 'visibility', 'none'); } catch(e){} });
-        map.addSource('vm-legs', fc(F.legs));
-        map.addLayer({id:'vm-legs-c', type:'line', source:'vm-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':'#2A1238', 'line-width':['interpolate',['linear'],['zoom'],2,5,10,9], 'line-opacity':.55}});
-        map.addLayer({id:'vm-legs', type:'line', source:'vm-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':'#ffffff', 'line-width':['interpolate',['linear'],['zoom'],2,2.5,10,5], 'line-dasharray':[1.4, 1.4]}});
-        map.addLayer({id:'vm-legs-l', type:'line', source:'vm-legs', minzoom:9, filter:['==',['get','local'],1], layout:{'line-cap':'round'}, paint:{'line-color':'#fde68a', 'line-width':4, 'line-dasharray':[1.5, 1.2]}});
-      }
-      map.addSource('vm-vis', fc(F.visits)); map.addSource('vm-act', fc(F.acts));
-      map.addLayer({id:'vm-vis', type:'circle', source:'vm-vis', minzoom:7, paint:{'circle-color':'#a78bfa', 'circle-radius':['interpolate',['linear'],['zoom'],7,3,10,5,14,8], 'circle-stroke-color':'#fff', 'circle-stroke-width':2}});
-      map.addLayer({id:'vm-act', type:'circle', source:'vm-act', minzoom:7, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],7,4,10,6,14,9], 'circle-stroke-color':'#fff', 'circle-stroke-width':2.5}});
-      if(map.getStyle().glyphs && me.font){ const L = (id, src, mz) => map.addLayer({id, type:'symbol', source:src, minzoom:mz, layout:{'text-field':['get','name'], 'text-font':me.font, 'text-size':12, 'text-offset':[0, 1.2], 'text-anchor':'top', 'text-max-width':10, 'text-optional':true},
-          paint:{'text-color':'#fff', 'text-halo-color':'rgba(10,20,50,.9)', 'text-halo-width':1.5}});
-        L('vm-vis-t', 'vm-vis', 11); L('vm-act-t', 'vm-act', 10.5); }
-    } catch(e){}
+    try { const t = trip(); if(t && mpOn(t.id)) fmFromF(t.id, F); } catch(e){}   // 👀 la carte des abonnés suit le programme
+    if(F.legs.length) ['route', 'route-halo'].forEach(id=>{ try { map.setLayoutProperty(id, 'visibility', 'none'); } catch(e){} });
     me.lg.forEach(m=>m.remove()); me.lg = [];
     const add = (el, p, anchor) => me.lg.push(new maplibregl.Marker({element:el, anchor:anchor || 'center'}).setLngLat([p.lng, p.lat]).addTo(map));
-    // ✈️ 🚆 🚗 au milieu de chaque trajet ; l’avion tourné vers sa destination
-    F.legs.forEach(f=>{ if(f.properties.local || f.properties.souv) return; const C = f.geometry.coordinates, k = Math.floor((C.length - 1) / 2), a = C[k], b = C[Math.min(C.length - 1, k + 1)], m = C.length > 2 ? a : [(C[0][0] + C[1][0]) / 2, (C[0][1] + C[1][1]) / 2];
-      const md = f.properties.mode || '', fly = /avion|vol|plane|flight/i.test(md), e = document.createElement('span'); e.className = 'vm-tr';
-      if(fly){ const pa = map.project(C.length > 2 ? a : C[0]), pb = map.project(C.length > 2 ? b : C[1]), deg = Math.atan2(pb.x - pa.x, pa.y - pb.y) * 180 / Math.PI;
-        e.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" style="transform:rotate(${deg.toFixed(0)}deg)" aria-hidden="true"><path fill="#E11D74" d="M12 2c.8 0 1.4.7 1.4 1.6V9l7.6 4.6v2l-7.6-2.3v4.5l2.2 1.7V21L12 20l-3.6 1v-1.5l2.2-1.7v-4.5L3 15.6v-2L10.6 9V3.6C10.6 2.7 11.2 2 12 2z"/></svg>`;
-      } else e.textContent = MODE_ICON[md] || '🧭';
-      add(e, {lng:m[0], lat:m[1]}); });
-    // 🏠 aéroport ou gare de départ et de retour (et les correspondances en petit)
-    F.cities.filter(c=>c.home || c.via).forEach(c=>{ const e = document.createElement('div'); e.className = 'p3-city vm-home' + (c.home ? ' home' : ' via');
-      e.innerHTML = `<i>${c.home ? '🏠' : '·'}</i><span data-notr>${esc(c.name)}</span>`; add(e, c.c); });
+    mapRich(map, F, me.font, add, false);
     // 🛏️ hébergements : visibles en zoomant
     F.hotels.forEach(x=>{ const e = document.createElement('button'); e.type = 'button'; e.className = 'p3-hot';
       e.innerHTML = `<i style="background:${P3C[x.st]}">🛏️</i><span data-notr>${esc(x.h.titre || x.city)}</span><small>${esc(MSGT(x.st === 'paid' ? 'Payé' : x.st === 'booked' ? 'Réservé' : 'À réserver'))}</small>`;
@@ -2070,11 +2052,155 @@
       add(e, x.p); });
     vmFit(true);
   }
+  /* 🗺️ commun à la carte vivante et à la carte des abonnés : trajets (avion orienté), visites, activités, départ et retour ;
+     stages = true : les étapes numérotées aussi (la carte vivante a déjà les siennes, avec photo) */
+  function mapRich(map, F, font, add, stages){
+    const fc = f => ({type:'geojson', data:{type:'FeatureCollection', features:f}});
+    try {
+      if(F.legs.length){ map.addSource('vm-legs', fc(F.legs));
+        map.addLayer({id:'vm-legs-c', type:'line', source:'vm-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':'#2A1238', 'line-width':['interpolate',['linear'],['zoom'],2,5,10,9], 'line-opacity':.55}});
+        map.addLayer({id:'vm-legs', type:'line', source:'vm-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':'#ffffff', 'line-width':['interpolate',['linear'],['zoom'],2,2.5,10,5], 'line-dasharray':[1.4, 1.4]}});
+        map.addLayer({id:'vm-legs-l', type:'line', source:'vm-legs', minzoom:9, filter:['==',['get','local'],1], layout:{'line-cap':'round'}, paint:{'line-color':'#fde68a', 'line-width':4, 'line-dasharray':[1.5, 1.2]}});
+      }
+      map.addSource('vm-vis', fc(F.visits)); map.addSource('vm-act', fc(F.acts));
+      map.addLayer({id:'vm-vis', type:'circle', source:'vm-vis', minzoom:7, paint:{'circle-color':'#a78bfa', 'circle-radius':['interpolate',['linear'],['zoom'],7,3,10,5,14,8], 'circle-stroke-color':'#fff', 'circle-stroke-width':2}});
+      map.addLayer({id:'vm-act', type:'circle', source:'vm-act', minzoom:7, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],7,4,10,6,14,9], 'circle-stroke-color':'#fff', 'circle-stroke-width':2.5}});
+      if(map.getStyle().glyphs && font){ const L = (id, src, mz) => map.addLayer({id, type:'symbol', source:src, minzoom:mz, layout:{'text-field':['get','name'], 'text-font':font, 'text-size':12, 'text-offset':[0, 1.2], 'text-anchor':'top', 'text-max-width':10, 'text-optional':true},
+          paint:{'text-color':'#fff', 'text-halo-color':'rgba(10,20,50,.9)', 'text-halo-width':1.5}});
+        L('vm-vis-t', 'vm-vis', 11); L('vm-act-t', 'vm-act', 10.5); }
+    } catch(e){}
+    // ✈️ 🚆 🚗 au milieu de chaque trajet ; l’avion tourné vers sa destination
+    F.legs.forEach(f=>{ if(f.properties.local || f.properties.souv) return; const C = f.geometry.coordinates; if(C.length < 2) return; const k = Math.floor((C.length - 1) / 2), a = C[k], b = C[Math.min(C.length - 1, k + 1)], m = C.length > 2 ? a : [(C[0][0] + C[1][0]) / 2, (C[0][1] + C[1][1]) / 2];
+      const md = f.properties.mode || '', fly = /avion|vol|plane|flight/i.test(md), e = document.createElement('span'); e.className = 'vm-tr';
+      if(fly){ const pa = map.project(C.length > 2 ? a : C[0]), pb = map.project(C.length > 2 ? b : C[1]), deg = Math.atan2(pb.x - pa.x, pa.y - pb.y) * 180 / Math.PI;
+        e.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" style="transform:rotate(${deg.toFixed(0)}deg)" aria-hidden="true"><path fill="#E11D74" d="M12 2c.8 0 1.4.7 1.4 1.6V9l7.6 4.6v2l-7.6-2.3v4.5l2.2 1.7V21L12 20l-3.6 1v-1.5l2.2-1.7v-4.5L3 15.6v-2L10.6 9V3.6C10.6 2.7 11.2 2 12 2z"/></svg>`;
+      } else e.textContent = MODE_ICON[md] || '🧭';
+      add(e, {lng:m[0], lat:m[1]}); });
+    // 🏠 aéroport ou gare de départ et de retour (et les correspondances en petit) ; les étapes numérotées si demandé
+    // même ville deux fois (départ et retour à Rome) : un seul repère « 1 · 6 »
+    const G = []; F.cities.filter(c=>stages || c.home || c.via).forEach(c=>{ const g = !c.home && !c.via && G.find(x=>!x.home && !x.via && Math.abs(x.c.lat - c.c.lat) + Math.abs(x.c.lng - c.c.lng) < 0.02); if(g){ if(c.n) g.ns.push(c.n); } else G.push(Object.assign({}, c, {ns:c.n ? [c.n] : []})); });
+    G.forEach(c=>{ const e = document.createElement('div'); e.className = 'p3-city vm-home' + (c.home ? ' home' : c.via ? ' via' : '') + (c.ns.length > 1 ? ' w' : '');
+      e.innerHTML = `<i>${c.home ? '🏠' : c.via ? '·' : c.ns.join(' · ') || '•'}</i><span data-notr>${esc(c.name)}</span>`; add(e, c.c); });
+  }
   function vmBase(){
     const me = VM; if(!me || !me.map) return; me.sat = !me.sat; const map = me.map;
     try { map.setLayoutProperty('sat', 'visibility', me.sat ? 'visible' : 'none'); map.setLayoutProperty('base', 'visibility', me.sat ? 'none' : 'visible'); } catch(e){}
     const o = document.getElementById('cv-vm'); if(o) o.classList.toggle('vm-plan', !me.sat);
     const b = document.getElementById('vm-bs'); if(b) b.textContent = me.sat ? '🗺️' : '🛰️';
+  }
+  /* ══════════ 👀 CARTE DU VOYAGE POUR LES ABONNÉS (2D et 3D) ══════════
+     Un voyageur (moi ou un compagnon) choisit de la montrer. On publie seulement les étapes, les trajets, les visites et les activités
+     du programme : jamais les hébergements, les résas, le budget ni les documents. Les abonnés y voient aussi les photos des souvenirs
+     publiés et, pendant le voyage, la route en direct de ceux qui la partagent. */
+  const mpOn = tid => { const r = R['mp:' + tid]; return !!(r && !r.deleted && r.on); };
+  async function mapPub(tid){
+    tid = tid || M.trip; const t = R[tid]; if(!t || t.demo) return; const on = !mpOn(tid);
+    if(on && !(await uiConfirm('Montrer la carte du voyage à tes abonnés ?\n\nIls verront, en 2D et en 3D : les étapes, les trajets, les visites et les activités du programme, les photos des souvenirs publiés, et la route en direct de ceux qui la partagent.\nLes hébergements, les résas, le budget et les documents restent privés.\nTes compagnons peuvent aussi l’activer ou la couper.'))) return;
+    put({id:'mp:' + tid, type:'mappub', trip:tid, who:M.me || '', on}, on ? '🗺️ ' + MSGT('Carte visible des abonnés') : '🔒 ' + MSGT('Carte masquée aux abonnés'));
+    if(on) await fmCalc(tid, true); else fmDel(tid);
+    syncNow(); refresh();
+  }
+  function fmDel(tid){ const r = R['fm:' + tid]; if(r && !r.deleted) putQuiet([Object.assign(clone(r), {deleted:true, c:[], l:[], v:[], a:[]})]); }
+  const r4 = n => Math.round(n * 1e4) / 1e4, r3 = n => Math.round(n * 1e3) / 1e3;
+  function fmFromF(tid, F){
+    if(!socCode(tid) || !mpOn(tid)) return;
+    const rec = {id:'fm:' + tid, type:'feedmap', trip:ftId(tid),
+      c:F.cities.slice(0, 80).map(x=>[String(x.name || '').slice(0, 80), r4(x.c.lat), r4(x.c.lng), x.n || 0, x.home ? 1 : 0, x.via ? 1 : 0]),
+      l:F.legs.slice(0, 120).map(f=>[f.properties.mode || '', f.properties.local ? 1 : 0, f.properties.souv ? 1 : 0, f.geometry.coordinates.filter((q, i, A)=>A.length < 300 || i % Math.ceil(A.length / 300) === 0 || i === A.length - 1).map(q=>[r3(q[0]), r3(q[1])])]),
+      v:F.visits.slice(0, 400).map(f=>[String(f.properties.name || '').slice(0, 80), r4(f.geometry.coordinates[1]), r4(f.geometry.coordinates[0])]),
+      a:F.acts.slice(0, 400).map(f=>[String(f.properties.name || '').slice(0, 80), r4(f.geometry.coordinates[1]), r4(f.geometry.coordinates[0]), f.properties.col || '#f97316'])};
+    const cur = R[rec.id]; if(cur && !cur.deleted && stripStamp(cur) === stripStamp(rec)) return;
+    putQuiet([rec]);
+  }
+  // recalcul quand le programme change (seulement sur le voyage ouvert : les adresses se cherchent avec ses étapes)
+  let FMRUN = 0;
+  async function fmCalc(tid, force){
+    try {
+      if(!tid || tid !== M.trip || !mpOn(tid) || !socCode(tid) || FMRUN) return;
+      const sig = [...items(i=>/^(hotel|transport|activite)$/.test(i.cat)), ...list('place', q=>q.trip === tid && !q.sugg), ...list('souv', x=>x.trip === tid && x.lat != null)].map(x=>x.id + (x.updatedAt || '') + (x.deleted ? 'x' : '')).sort().join('|');
+      const S = M.fmSig || (M.fmSig = {}); let h = 0; for(let i = 0; i < sig.length; i++) h = (h * 31 + sig.charCodeAt(i)) | 0;
+      if(!force && S[tid] === h && R['fm:' + tid] && !R['fm:' + tid].deleted) return;
+      FMRUN = 1; const F = await p3Data(R[tid]); if(M.trip === tid){ fmFromF(tid, F); S[tid] = h; persist(); }
+    } catch(e){} finally { FMRUN = 0; }
+  }
+  function fmToF(r){
+    const F = {cities:[], legs:[], visits:[], acts:[], hotels:[]}; if(!r || r.deleted) return F;
+    (r.c || []).forEach(x=>F.cities.push({name:x[0], c:{lat:+x[1], lng:+x[2]}, n:x[3] || 0, home:x[4] || 0, via:x[5] || 0}));
+    (r.l || []).forEach(x=>{ if((x[3] || []).length > 1) F.legs.push({type:'Feature', properties:{mode:x[0] || '', local:x[1] || 0, souv:x[2] || 0}, geometry:{type:'LineString', coordinates:x[3]}}); });
+    (r.v || []).forEach(x=>F.visits.push({type:'Feature', properties:{name:x[0]}, geometry:{type:'Point', coordinates:[+x[2], +x[1]]}}));
+    (r.a || []).forEach(x=>F.acts.push({type:'Feature', properties:{name:x[0], col:x[3] || '#f97316'}, geometry:{type:'Point', coordinates:[+x[2], +x[1]]}}));
+    return F;
+  }
+  // 👀 côté abonné : la carte 2D (d3 = 0) ou 3D (d3 = 1), avec les souvenirs publiés et le suivi en direct
+  let FMV = null;
+  function fmClose(){ if(FMV){ clearInterval(FMV.iv); try { FMV.map.remove(); } catch(e){} FMV = null; } const o = document.getElementById('cv-vm'); if(o && o.classList.contains('fm')) o.remove(); }
+  async function fmOpen(ftid, d3){
+    const ft = R[ftid]; if(!ft) return; fmClose(); const tid = String(ftid).replace(/^ft:/, '');
+    const ov = document.createElement('div'); ov.id = 'cv-vm'; ov.className = 'fm'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', MSGT('La carte du voyage'));
+    ov.innerHTML = `<div id="vm-map"></div>
+      <div class="vm-top"><button type="button" class="vm-b" onclick="CV.fmClose()" aria-label="${esc(MSGT('Fermer'))}">✕</button><div class="vm-tt"><b data-notr>${esc(ft.titre || '')}</b><small>${d3 ? '🛰️ 3D' : '🗺️ 2D'} · ${esc(MSGT('La carte du voyage'))}</small></div>
+        <button type="button" class="vm-b" id="vm-bs" onclick="CV.fmBase()" aria-label="${esc(MSGT('Satellite'))} / ${esc(MSGT('Plan'))}">🗺️</button><button type="button" class="vm-b" onclick="${d3 ? `CV.fmOpen('${ja(ftid)}',0)` : `CV.fmClose();CV.liveOpen('${ja(ftid)}')`}" aria-label="${d3 ? '2D' : '3D'}">${d3 ? '2D' : '3D'}</button><button type="button" class="vm-b" onclick="CV.fmFit()" aria-label="${esc(MSGT('Tout le voyage'))}">⤢</button></div>
+      <div class="vm-card" id="vm-card" hidden></div><div class="vm-msg" id="vm-msg">🗺️ ${esc(MSGT('Chargement de la carte…'))}</div>`;
+    document.body.appendChild(ov);
+    const me = FMV = {map:null, ftid, d3:!!d3, sat:true, mk:[], tk:[], iv:0, font:null, pts:[]};
+    try {
+      await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
+      if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
+      const dark = document.documentElement.classList.contains('vz-dark');
+      const style = {version:8, sources:{base:Object.assign(esriML(dark ? 'dark' : 'light'), {maxzoom:16, attribution:'© Esri · © OpenStreetMap'}), sat:Object.assign(esriML('sat'), {maxzoom:18, attribution:'Esri, Maxar'})},
+        layers:[{id:'bg', type:'background', paint:{'background-color':'#0b1a3a'}}, {id:'base', type:'raster', source:'base', layout:{visibility:'none'}}, {id:'sat', type:'raster', source:'sat'}]};
+      if(d3){ style.projection = {type:'globe'}; style.sources.dem = {type:'raster-dem', tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], tileSize:256, maxzoom:14, encoding:'terrarium', attribution:'Mapzen terrain'};
+        style.sky = {'sky-color':'#0b1a3a', 'horizon-color':'#5fa8ff', 'fog-color':'#0b1a3a', 'sky-horizon-blend':0.6, 'horizon-fog-blend':0.4, 'fog-ground-blend':0.2, 'atmosphere-blend':['interpolate',['linear'],['zoom'],0,1,5,1,7,0]}; }
+      try { const lib = await withTimeout(fetch('https://tiles.openfreemap.org/styles/liberty').then(r=>r.json()), 4000);
+        if(lib && lib.glyphs){ style.glyphs = lib.glyphs; const f = (lib.layers || []).find(l=>l.type === 'symbol' && l.layout && Array.isArray(l.layout['text-font'])); me.font = f ? f.layout['text-font'] : null; } } catch(e){}
+      if(FMV !== me) return;
+      const map = me.map = new maplibregl.Map({container:'vm-map', style, center:[8, 38], zoom:d3 ? 1.6 : 4, maxZoom:17, maxPitch:75, pixelRatio:Math.min(2, window.devicePixelRatio || 1), attributionControl:{compact:true}, fadeDuration:0,
+        dragRotate:!!d3, pitchWithRotate:!!d3});
+      if(!d3) try { map.touchZoomRotate.disableRotation(); } catch(e){}
+      let ok = false; const go = () => { if(FMV !== me || ok) return; ok = true; const m = document.getElementById('vm-msg'); if(m) m.hidden = true;
+        if(d3) try { map.setTerrain({source:'dem', exaggeration:1.3}); } catch(e){}
+        const F = fmToF(R['fm:' + tid]), posts = list('feed', f=>f.trip === ftid && !f.deleted && f.lat != null && f.lng != null).sort((a, b)=>(a.date || '').localeCompare(b.date || ''));
+        if(!F.legs.length && posts.length > 1) F.legs.push({type:'Feature', properties:{souv:1, local:0, mode:''}, geometry:{type:'LineString', coordinates:posts.map(f=>[+f.lng, +f.lat])}});
+        const add = (el, p) => { const k = new maplibregl.Marker({element:el, anchor:'center'}).setLngLat([p.lng, p.lat]).addTo(map); me.mk.push(k); return k; };
+        mapRich(map, F, me.font, add, true);
+        // 📸 les souvenirs publiés, à leur endroit
+        posts.filter(f=>(f.photos || []).length).forEach(f=>{ const e = document.createElement('button'); e.type = 'button'; e.className = 'vm-sv'; e.setAttribute('aria-label', f.titre || f.lieu || MSGT('Souvenir'));
+          e.innerHTML = `<img data-ph="${esc(f.photos[0])}.t" alt="">`; e.onclick = ev => { ev.stopPropagation(); fmPost(f.id); }; add(e, {lat:+f.lat, lng:+f.lng}); });
+        me.pts = [...F.cities.map(c=>c.c), ...posts.map(f=>({lat:+f.lat, lng:+f.lng}))];
+        fmTrk(); fmFit(true); hydrate();
+        // 🛰️ suivi en direct : on relit la route toutes les 30 s
+        me.iv = setInterval(()=>{ if(FMV !== me || document.visibilityState !== 'visible') return; Promise.resolve(syncNow()).catch(()=>{}).then(()=>{ if(FMV === me) fmTrk(); }); }, 30000);
+      };
+      map.on('style.load', go); map.on('load', go); map.on('error', ()=>{});
+    } catch(e){ const m = document.getElementById('vm-msg'); if(m){ m.hidden = false; m.textContent = '⚠️ ' + (e && e.message ? errTxt(e) : MSGT('Carte indisponible')); } }
+  }
+  function fmTrk(){
+    const me = FMV; if(!me || !me.map) return; const map = me.map, r = feedTrkRec(me.ftid);
+    me.tk.forEach(k=>k.remove()); me.tk = [];
+    const P = r ? r.people : [], live = p => Date.now() - fkLast(p) < LIVE_MS;
+    P.forEach((p, i)=>{ const id = 'fm-trk-' + i, coords = (p.pts || []).map(q=>[+q[1], +q[0]]); if(coords.length < 1) return;
+      const data = {type:'Feature', geometry:{type:'LineString', coordinates:coords.length > 1 ? coords : [coords[0], coords[0]]}};
+      try { if(map.getSource(id)) map.getSource(id).setData(data); else { map.addSource(id, {type:'geojson', data});
+        map.addLayer({id, type:'line', source:id, layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':hexc(p.c, '#0ea5e9'), 'line-width':4, 'line-opacity':.9}}); } } catch(e){}
+      const l = p.pts[p.pts.length - 1], e = document.createElement('div'); e.className = 'fm-me' + (live(p) ? ' on' : '');
+      e.innerHTML = `<i style="background:${hexc(p.c, '#0ea5e9')}"></i><span><b data-notr>${esc(p.n || '—')}</b><small>${live(p) ? '● ' + esc(MSGT('en direct')) : l && l[2] ? esc(vzWhen(l[2])) : ''}</small></span>`;
+      me.tk.push(new maplibregl.Marker({element:e, anchor:'left', offset:[-9, 0]}).setLngLat([+l[1], +l[0]]).addTo(map));
+      me.pts.push({lat:+l[0], lng:+l[1]}); });
+  }
+  function fmFit(quick){
+    const me = FMV; if(!me || !me.map || !me.pts.length) return; const b = new maplibregl.LngLatBounds(); me.pts.forEach(p=>b.extend([p.lng, p.lat]));
+    try { if(me.pts.length === 1) me.map.jumpTo({center:b.getCenter(), zoom:11}); else me.map.fitBounds(b, {padding:{top:110, bottom:120, left:50, right:50}, maxZoom:12, pitch:me.d3 ? 45 : 0, bearing:me.d3 ? -12 : 0, duration:quick === true ? 0 : 800}); } catch(e){}
+  }
+  function fmBase(){
+    const me = FMV; if(!me || !me.map) return; me.sat = !me.sat;
+    try { me.map.setLayoutProperty('sat', 'visibility', me.sat ? 'visible' : 'none'); me.map.setLayoutProperty('base', 'visibility', me.sat ? 'none' : 'visible'); } catch(e){}
+    const b = document.getElementById('vm-bs'); if(b) b.textContent = me.sat ? '🗺️' : '🛰️';
+  }
+  function fmPost(id){
+    const f = R[id], card = document.getElementById('vm-card'); if(!f || !card) return;
+    card.innerHTML = `<button type="button" class="vm-cx" onclick="this.parentNode.hidden=true" aria-label="${esc(MSGT('Fermer'))}">✕</button><div class="vm-svc"><img data-ph="${esc((f.photos || [])[0] || '')}.t" alt=""><div><b data-notr>${esc(f.titre || f.lieu || MSGT('Souvenir'))}</b><small>${f.date ? fdate(f.date) : ''}${f.lieu && f.titre ? ' · <span data-notr>' + esc(String(f.lieu).split(',')[0]) + '</span>' : ''}${(f.photos || []).length > 1 ? ' · 📸 ' + f.photos.length : ''}</small></div></div>
+      <div class="vm-ca"><button type="button" onclick="CV.fmClose();CV.psFeed('${ja(FMV ? FMV.ftid : '')}')">👆 ${esc(MSGT('Voir les photos une par une'))}</button></div>`;
+    card.hidden = false; hydrate(); if(FMV && f.lat != null) FMV.map.easeTo({center:[+f.lng, +f.lat], duration:700});
   }
   function vmSvDraw(){
     const me = VM; if(!me || !me.map) return; me.svm.forEach(m=>m.remove()); me.svm = []; if(!me.svOn) return;

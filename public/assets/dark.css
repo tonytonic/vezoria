@@ -1260,3 +1260,7 @@ html.vz-dark .vm-cx{background-color:rgb(25, 25, 25);color:rgb(218, 190, 234)}
 html.vz-dark .vm-ca button{background-color:rgb(20, 20, 20)}
 html.vz-dark .vm-ca button + button{background-color:rgb(25, 25, 25);color:rgb(218, 190, 234)}
 html.vz-dark .vm-svc img{background-color:rgb(34, 34, 34)}
+html.vz-dark .fd-mb button{background-color:rgb(20, 20, 20)}
+html.vz-dark .fm-me i{border-top-color:rgb(43, 43, 43);border-right-color:rgb(43, 43, 43);border-bottom-color:rgb(43, 43, 43);border-left-color:rgb(43, 43, 43);box-shadow:rgba(0, 0, 0, 0.65) 0px 2px 8px}
+html.vz-dark .fm-me span{background-color:rgba(15, 15, 15, 0.82)}
+html.vz-dark .fm-me.on small{color:rgb(134, 233, 170)}
