@@ -237,6 +237,7 @@
   }
   async function demoGo(reg){ closeSheet(true); if(demoTrip()){ Object.keys(R).forEach(id=>{ if(R[id].demo) delete R[id]; }); persist(); } await demoLoad(reg); }
   function go(id){ const was = M.trip; M.trip = id; M.who = 'all';
+    setTimeout(()=>{ try { if(M.trip === id) fmCalc(id); } catch(e){} }, 2500);   // 🗺️ carte des abonnés à jour
     // autre voyage : on arrive sur son 1er onglet selon sa période (en cours → « En cours », fini → « Bilan », à venir → « Programme »),
     // pas sur l'onglet laissé ouvert dans le voyage précédent (Plus, Réglages…)
     if(was !== id){ const t = R[id], ph = t && t.type === 'trip' ? tripPhase(t) : 'prep';

@@ -2093,7 +2093,8 @@
      Un voyageur (moi ou un compagnon) choisit de la montrer. On publie seulement les étapes, les trajets, les visites et les activités
      du programme : jamais les hébergements, les résas, le budget ni les documents. Les abonnés y voient aussi les photos des souvenirs
      publiés et, pendant le voyage, la route en direct de ceux qui la partagent. */
-  const mpOn = tid => { const r = R['mp:' + tid]; return !!(r && !r.deleted && r.on); };
+  // activée par défaut : un voyage publié montre son itinéraire (même à venir) ; chaque voyageur peut la couper
+  const mpOn = tid => { const r = R['mp:' + tid]; return r && !r.deleted ? !!r.on : true; };
   async function mapPub(tid){
     tid = tid || M.trip; const t = R[tid]; if(!t || t.demo) return; const on = !mpOn(tid);
     if(on && !(await uiConfirm('Montrer la carte du voyage à tes abonnés ?\n\nIls verront, en 2D et en 3D : les étapes, les trajets, les visites et les activités du programme, les photos des souvenirs publiés, et la route en direct de ceux qui la partagent.\nLes hébergements, les résas, le budget et les documents restent privés.\nTes compagnons peuvent aussi l’activer ou la couper.'))) return;
@@ -2110,6 +2111,8 @@
       l:F.legs.slice(0, 120).map(f=>[f.properties.mode || '', f.properties.local ? 1 : 0, f.properties.souv ? 1 : 0, f.geometry.coordinates.filter((q, i, A)=>A.length < 300 || i % Math.ceil(A.length / 300) === 0 || i === A.length - 1).map(q=>[r3(q[0]), r3(q[1])])]),
       v:F.visits.slice(0, 400).map(f=>[String(f.properties.name || '').slice(0, 80), r4(f.geometry.coordinates[1]), r4(f.geometry.coordinates[0])]),
       a:F.acts.slice(0, 400).map(f=>[String(f.properties.name || '').slice(0, 80), r4(f.geometry.coordinates[1]), r4(f.geometry.coordinates[0]), f.properties.col || '#f97316'])};
+    // voyage à venir sans trajet saisi : un trait simple d’une étape à l’autre, dans l’ordre
+    if(!rec.l.length){ const st = F.cities.filter(x=>!x.home && !x.via).sort((a, b)=>(a.n || 0) - (b.n || 0)); if(st.length > 1) rec.l.push(['', 0, 1, st.map(x=>[r3(x.c.lng), r3(x.c.lat)])]); }
     const cur = R[rec.id]; if(cur && !cur.deleted && stripStamp(cur) === stripStamp(rec)) return;
     putQuiet([rec]);
   }
