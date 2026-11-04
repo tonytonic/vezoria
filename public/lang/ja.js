@@ -6088,6 +6088,14 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Carte visible des abonnés":"地図をフォロワーに公開中",
+"Carte masquée aux abonnés":"地図をフォロワーに非公開",
+"La carte du voyage":"旅の地図",
+"Carte du voyage pour les abonnés":"フォロワー向けの旅の地図",
+"visible":"公開",
+"masquée":"非公開",
+"2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct. Les hébergements restent privés.":"2Dと3D：行程、移動、見どころとアクティビティ、思い出の写真、リアルタイムの位置。宿泊先は非公開のままです。",
+"Montrer la carte du voyage à tes abonnés ?\n\nIls verront, en 2D et en 3D : les étapes, les trajets, les visites et les activités du programme, les photos des souvenirs publiés, et la route en direct de ceux qui la partagent.\nLes hébergements, les résas, le budget et les documents restent privés.\nTes compagnons peuvent aussi l’activer ou la couper.":"旅の地図をフォロワーに見せますか？\n\nフォロワーは2Dと3Dで、旅程の行程・移動・見どころ・アクティビティ、公開した思い出の写真、共有している人のリアルタイムのルートを見られます。\n宿泊先、予約、予算、書類は非公開のままです。\n旅の仲間もオン・オフを切り替えられます。",
 "Ton voyage sur la carte":"地図で見るあなたの旅",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"写真と短い文章を追加しましょう。世界地図と日記に表示されます。",
 "J’importe mes voyages d’une autre appli":"ほかのアプリから旅行をインポート",

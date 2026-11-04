@@ -6089,6 +6089,14 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Carte visible des abonnés":"Карта видна подписчикам",
+"Carte masquée aux abonnés":"Карта скрыта от подписчиков",
+"La carte du voyage":"Карта поездки",
+"Carte du voyage pour les abonnés":"Карта поездки для подписчиков",
+"visible":"видна",
+"masquée":"скрыта",
+"2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct. Les hébergements restent privés.":"2D и 3D: этапы, переезды, места и занятия, фото воспоминаний и отслеживание в реальном времени. Жильё остаётся личным.",
+"Montrer la carte du voyage à tes abonnés ?\n\nIls verront, en 2D et en 3D : les étapes, les trajets, les visites et les activités du programme, les photos des souvenirs publiés, et la route en direct de ceux qui la partagent.\nLes hébergements, les résas, le budget et les documents restent privés.\nTes compagnons peuvent aussi l’activer ou la couper.":"Показать карту поездки подписчикам?\n\nОни увидят в 2D и 3D: этапы, переезды, места и занятия из программы, фото опубликованных воспоминаний и маршрут в реальном времени тех, кто им делится.\nЖильё, брони, бюджет и документы остаются личными.\nТвои спутники тоже могут её включить или выключить.",
 "Ton voyage sur la carte":"Твоя поездка на карте",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"Добавь фото и короткий рассказ. Он появится на карте мира и в журнале.",
 "J’importe mes voyages d’une autre appli":"Импортирую поездки из другого приложения",

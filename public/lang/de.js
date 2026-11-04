@@ -3144,6 +3144,14 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Carte visible des abonnés":"Karte für Follower sichtbar",
+"Carte masquée aux abonnés":"Karte vor Followern verborgen",
+"La carte du voyage":"Die Reisekarte",
+"Carte du voyage pour les abonnés":"Reisekarte für Follower",
+"visible":"sichtbar",
+"masquée":"verborgen",
+"2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct. Les hébergements restent privés.":"2D und 3D: Etappen, Strecken, Besichtigungen und Aktivitäten, Erinnerungsfotos und Live-Verfolgung. Unterkünfte bleiben privat.",
+"Montrer la carte du voyage à tes abonnés ?\n\nIls verront, en 2D et en 3D : les étapes, les trajets, les visites et les activités du programme, les photos des souvenirs publiés, et la route en direct de ceux qui la partagent.\nLes hébergements, les résas, le budget et les documents restent privés.\nTes compagnons peuvent aussi l’activer ou la couper.":"Die Reisekarte deinen Followern zeigen?\n\nSie sehen in 2D und 3D: die Etappen, Strecken, Besichtigungen und Aktivitäten des Programms, die Fotos veröffentlichter Erinnerungen und die Live-Route derer, die sie teilen.\nUnterkünfte, Buchungen, Budget und Dokumente bleiben privat.\nDeine Mitreisenden können sie ebenfalls ein- oder ausschalten.",
 "Ton voyage sur la carte":"Deine Reise auf der Karte",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"Füge Fotos und einen kurzen Bericht hinzu. Er erscheint auf der Weltkarte und im Tagebuch.",
 "J’importe mes voyages d’une autre appli":"Ich importiere meine Reisen aus einer anderen App",

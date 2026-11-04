@@ -6088,6 +6088,14 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Carte visible des abonnés":"팔로워에게 지도 공개 중",
+"Carte masquée aux abonnés":"팔로워에게 지도 숨김",
+"La carte du voyage":"여행 지도",
+"Carte du voyage pour les abonnés":"팔로워용 여행 지도",
+"visible":"공개",
+"masquée":"숨김",
+"2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct. Les hébergements restent privés.":"2D와 3D: 여정, 이동, 명소와 활동, 추억 사진, 실시간 위치. 숙소는 비공개로 유지돼요.",
+"Montrer la carte du voyage à tes abonnés ?\n\nIls verront, en 2D et en 3D : les étapes, les trajets, les visites et les activités du programme, les photos des souvenirs publiés, et la route en direct de ceux qui la partagent.\nLes hébergements, les résas, le budget et les documents restent privés.\nTes compagnons peuvent aussi l’activer ou la couper.":"여행 지도를 팔로워에게 보여 줄까요?\n\n팔로워는 2D와 3D로 일정의 여정, 이동, 명소와 활동, 공개한 추억 사진, 공유하는 사람의 실시간 경로를 볼 수 있어요.\n숙소, 예약, 예산, 문서는 비공개로 유지돼요.\n동행자도 켜거나 끌 수 있어요.",
 "Ton voyage sur la carte":"지도 위의 내 여행",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"사진과 짧은 이야기를 추가하세요. 세계 지도와 일기에 표시돼요.",
 "J’importe mes voyages d’une autre appli":"다른 앱에서 내 여행 가져오기",

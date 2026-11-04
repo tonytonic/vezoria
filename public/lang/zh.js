@@ -6088,6 +6088,14 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Carte visible des abonnés":"地图对关注者可见",
+"Carte masquée aux abonnés":"地图对关注者隐藏",
+"La carte du voyage":"旅行地图",
+"Carte du voyage pour les abonnés":"给关注者的旅行地图",
+"visible":"可见",
+"masquée":"隐藏",
+"2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct. Les hébergements restent privés.":"2D 和 3D：站点、行程、景点和活动、回忆照片以及实时追踪。住宿保持私密。",
+"Montrer la carte du voyage à tes abonnés ?\n\nIls verront, en 2D et en 3D : les étapes, les trajets, les visites et les activités du programme, les photos des souvenirs publiés, et la route en direct de ceux qui la partagent.\nLes hébergements, les résas, le budget et les documents restent privés.\nTes compagnons peuvent aussi l’activer ou la couper.":"向关注者展示旅行地图？\n\n他们将以 2D 和 3D 看到：行程中的站点、路线、景点和活动，已发布回忆的照片，以及分享者的实时路线。\n住宿、预订、预算和文件保持私密。\n你的旅伴也可以开启或关闭它。",
 "Ton voyage sur la carte":"地图上的你的旅行",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"添加照片和简短的文字。它会显示在世界地图和日记中。",
 "J’importe mes voyages d’une autre appli":"从其他应用导入我的旅行",

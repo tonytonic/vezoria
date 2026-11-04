@@ -3140,6 +3140,14 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Carte visible des abonnés":"Kaart zichtbaar voor volgers",
+"Carte masquée aux abonnés":"Kaart verborgen voor volgers",
+"La carte du voyage":"De reiskaart",
+"Carte du voyage pour les abonnés":"Reiskaart voor volgers",
+"visible":"zichtbaar",
+"masquée":"verborgen",
+"2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct. Les hébergements restent privés.":"2D en 3D: etappes, trajecten, bezienswaardigheden en activiteiten, herinneringsfoto’s en live volgen. Accommodaties blijven privé.",
+"Montrer la carte du voyage à tes abonnés ?\n\nIls verront, en 2D et en 3D : les étapes, les trajets, les visites et les activités du programme, les photos des souvenirs publiés, et la route en direct de ceux qui la partagent.\nLes hébergements, les résas, le budget et les documents restent privés.\nTes compagnons peuvent aussi l’activer ou la couper.":"De reiskaart aan je volgers tonen?\n\nZe zien in 2D en 3D: de etappes, trajecten, bezienswaardigheden en activiteiten van het programma, de foto’s van gepubliceerde herinneringen en de live route van wie die deelt.\nAccommodaties, boekingen, budget en documenten blijven privé.\nJe reisgenoten kunnen hem ook aan- of uitzetten.",
 "Ton voyage sur la carte":"Je reis op de kaart",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"Voeg foto’s en een kort verhaal toe. Het verschijnt op de wereldkaart en in het dagboek.",
 "J’importe mes voyages d’une autre appli":"Ik importeer mijn reizen uit een andere app",

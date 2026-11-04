@@ -6088,6 +6088,14 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Carte visible des abonnés":"नक्शा फ़ॉलोअर्स को दिख रहा है",
+"Carte masquée aux abonnés":"नक्शा फ़ॉलोअर्स से छिपा है",
+"La carte du voyage":"यात्रा का नक्शा",
+"Carte du voyage pour les abonnés":"फ़ॉलोअर्स के लिए यात्रा का नक्शा",
+"visible":"दिख रहा",
+"masquée":"छिपा",
+"2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct. Les hébergements restent privés.":"2D और 3D: पड़ाव, सफ़र, घूमने की जगहें और गतिविधियाँ, यादों की फ़ोटो और लाइव ट्रैकिंग। ठहरने की जगहें निजी रहती हैं।",
+"Montrer la carte du voyage à tes abonnés ?\n\nIls verront, en 2D et en 3D : les étapes, les trajets, les visites et les activités du programme, les photos des souvenirs publiés, et la route en direct de ceux qui la partagent.\nLes hébergements, les résas, le budget et les documents restent privés.\nTes compagnons peuvent aussi l’activer ou la couper.":"यात्रा का नक्शा अपने फ़ॉलोअर्स को दिखाएँ?\n\nवे 2D और 3D में देखेंगे: कार्यक्रम के पड़ाव, सफ़र, घूमने की जगहें और गतिविधियाँ, प्रकाशित यादों की फ़ोटो, और साझा करने वालों का लाइव रास्ता।\nठहरने की जगहें, बुकिंग, बजट और दस्तावेज़ निजी रहते हैं।\nतुम्हारे साथी भी इसे चालू या बंद कर सकते हैं।",
 "Ton voyage sur la carte":"नक्शे पर तुम्हारी यात्रा",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"फ़ोटो और छोटी कहानी जोड़ो। यह विश्व मानचित्र और रोज़नामचे में दिखेगी।",
 "J’importe mes voyages d’une autre appli":"मैं किसी दूसरे ऐप से अपनी यात्राएँ इम्पोर्ट करता/करती हूँ",

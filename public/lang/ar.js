@@ -6089,6 +6089,14 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Carte visible des abonnés":"الخريطة ظاهرة للمتابعين",
+"Carte masquée aux abonnés":"الخريطة مخفية عن المتابعين",
+"La carte du voyage":"خريطة الرحلة",
+"Carte du voyage pour les abonnés":"خريطة الرحلة للمتابعين",
+"visible":"ظاهرة",
+"masquée":"مخفية",
+"2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct. Les hébergements restent privés.":"ثنائية وثلاثية الأبعاد: المراحل والتنقلات والزيارات والأنشطة وصور الذكريات والتتبع المباشر. تبقى أماكن الإقامة خاصة.",
+"Montrer la carte du voyage à tes abonnés ?\n\nIls verront, en 2D et en 3D : les étapes, les trajets, les visites et les activités du programme, les photos des souvenirs publiés, et la route en direct de ceux qui la partagent.\nLes hébergements, les résas, le budget et les documents restent privés.\nTes compagnons peuvent aussi l’activer ou la couper.":"هل تريد عرض خريطة الرحلة على متابعيك؟\n\nسيرون بالأبعاد الثنائية والثلاثية: مراحل البرنامج وتنقلاته وزياراته وأنشطته، وصور الذكريات المنشورة، والمسار المباشر لمن يشاركه.\nتبقى أماكن الإقامة والحجوزات والميزانية والمستندات خاصة.\nيمكن لرفاقك أيضًا تفعيلها أو إيقافها.",
 "Ton voyage sur la carte":"رحلتك على الخريطة",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"أضف صورًا وحكاية قصيرة. تظهر على خريطة العالم وفي اليوميات.",
 "J’importe mes voyages d’une autre appli":"أستورد رحلاتي من تطبيق آخر",

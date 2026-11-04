@@ -6076,6 +6076,14 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"Carte visible des abonnés":"Harita takipçilere açık",
+"Carte masquée aux abonnés":"Harita takipçilerden gizli",
+"La carte du voyage":"Gezi haritası",
+"Carte du voyage pour les abonnés":"Takipçiler için gezi haritası",
+"visible":"açık",
+"masquée":"gizli",
+"2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct. Les hébergements restent privés.":"2D ve 3D: etaplar, yolculuklar, geziler ve etkinlikler, anı fotoğrafları ve canlı takip. Konaklamalar gizli kalır.",
+"Montrer la carte du voyage à tes abonnés ?\n\nIls verront, en 2D et en 3D : les étapes, les trajets, les visites et les activités du programme, les photos des souvenirs publiés, et la route en direct de ceux qui la partagent.\nLes hébergements, les résas, le budget et les documents restent privés.\nTes compagnons peuvent aussi l’activer ou la couper.":"Gezi haritası takipçilerine gösterilsin mi?\n\n2D ve 3D olarak şunları görecekler: programdaki etaplar, yolculuklar, geziler ve etkinlikler, yayınlanan anıların fotoğrafları ve paylaşanların canlı rotası.\nKonaklamalar, rezervasyonlar, bütçe ve belgeler gizli kalır.\nYol arkadaşların da açıp kapatabilir.",
 "Ton voyage sur la carte":"Gezin haritada",
 "Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.":"Fotoğraf ve kısa bir anlatı ekle. Dünya haritasında ve günlükte görünür.",
 "J’importe mes voyages d’une autre appli":"Gezilerimi başka bir uygulamadan aktarıyorum",
