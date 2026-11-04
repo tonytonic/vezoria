@@ -1938,7 +1938,100 @@
     const key = M.trip + '|' + st.map(s=>s.city).join('>');
     return `<div class="cv-pmap"><div class="pm-h pm-h2"><div><b>Mon itinéraire</b><small>${st.map(s=>esc(s.city)).join(' → ')}</small></div>
       <div class="pm-sw" role="group"><button type="button" class="on">2D</button><button type="button" onclick="CV.prep3d()">🛰️ 3D</button></div></div>
-      <button type="button" class="pm-m" data-pmap="${esc(key)}" onclick="CV.tlMap()" aria-label="Agrandir la carte">${PMAP[key] ? `<img src="${PMAP[key]}" alt="">` : '<span class="v-sum-small">🗺️ Carte en cours…</span>'}</button></div>`;
+      <button type="button" class="pm-m" data-pmap="${esc(key)}" onclick="CV.vmOpen()" aria-label="${esc(MSGT('Ouvrir la carte vivante'))}">${PMAP[key] ? `<img src="${PMAP[key]}" alt="">` : '<span class="v-sum-small">🗺️ Carte en cours…</span>'}<em class="pm-go">🗺️ ${MSGT('Carte vivante')} ›</em></button></div>`;
+  }
+  /* ══════════ 🗺️ CARTE VIVANTE : le voyage sur une vraie carte qu'on fait glisser et zoomer.
+     Les étapes numérotées avec leurs nuits et une photo du voyage, le moyen de transport sur chaque trajet,
+     et (au choix) chaque souvenir posé à son endroit. Toucher une étape : ses dates, ses nuits, ses visites. ══════════ */
+  let VM = null;
+  function vmClose(){ const o = document.getElementById('cv-vm'); if(o) o.remove(); document.body.style.overflow = ''; if(VM && VM.map) try { VM.map.remove(); } catch(e){} VM = null; }
+  async function vmOpen(){
+    const t = trip(); if(!t) return; const st = tlStages(); if(!st.length){ alert(MSGT('Ajoute des hébergements avec leur ville pour dessiner la carte.')); return; }
+    vmClose(); document.body.style.overflow = 'hidden';
+    const ov = document.createElement('div'); ov.id = 'cv-vm'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', MSGT('Carte vivante'));
+    ov.innerHTML = `<div id="vm-map"></div>
+      <div class="vm-top"><button type="button" class="vm-b" onclick="CV.vmClose()" aria-label="${esc(MSGT('Fermer'))}">✕</button><div class="vm-tt"><b data-notr>${esc(t.titre || '')}</b><small>${esc(RF('{0} étapes', st.length))} · ${esc(st.map(x=>x.city).join(' → '))}</small></div>
+        <button type="button" class="vm-b" id="vm-sv" onclick="CV.vmSouv()" aria-label="${esc(MSGT('Souvenirs sur la carte'))}" aria-pressed="true">📸</button><button type="button" class="vm-b" onclick="CV.vmFit()" aria-label="${esc(MSGT('Tout le voyage'))}">⤢</button></div>
+      <div class="vm-card" id="vm-card" hidden></div><div class="vm-msg" id="vm-msg">🗺️ ${esc(MSGT('Chargement de la carte…'))}</div>`;
+    document.body.appendChild(ov);
+    const me = VM = {map:null, st, pts:[], sv:[], svOn:true, mk:[], svm:[]};
+    try {
+      await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
+      if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
+      try { await stagesGeoFix(st.map(x=>x.city)); } catch(e){}
+      for(const x of st){ const c = geoCached(x.city) || await geocode(x.city, null).catch(()=>null); me.pts.push(c ? {lat:c.lat, lng:c.lng} : null); }
+      if(VM !== me) return;
+      const P = me.pts.map((c, i)=>c && Object.assign({i, s:st[i]}, c)).filter(Boolean); if(!P.length) throw new Error(MSGT('Villes introuvables sur la carte'));
+      const dark = document.documentElement.classList.contains('vz-dark');
+      const map = me.map = new maplibregl.Map({container:'vm-map', style:{version:8, sources:{base:Object.assign(esriML(dark ? 'dark' : 'light'), {maxzoom:16, attribution:'© Esri · © OpenStreetMap'})}, layers:[{id:'base', type:'raster', source:'base'}]},
+        center:[P[0].lng, P[0].lat], zoom:5, maxZoom:17, pixelRatio:Math.min(2, window.devicePixelRatio || 1), attributionControl:{compact:true}, dragRotate:false, pitchWithRotate:false});
+      try { map.touchZoomRotate.disableRotation(); } catch(e){}
+      map.on('load', ()=>{ if(VM !== me) return; const m = document.getElementById('vm-msg'); if(m) m.hidden = true;
+        map.addSource('route', {type:'geojson', data:{type:'Feature', geometry:{type:'LineString', coordinates:P.map(p=>[p.lng, p.lat])}}});
+        map.addLayer({id:'route-halo', type:'line', source:'route', paint:{'line-color':'#ffffff', 'line-width':7, 'line-opacity':.85}, layout:{'line-cap':'round', 'line-join':'round'}});
+        map.addLayer({id:'route', type:'line', source:'route', paint:{'line-color':'#2A1238', 'line-width':3, 'line-dasharray':[1.2, 1.6]}, layout:{'line-cap':'round', 'line-join':'round'}});
+        vmDraw(); vmFit(true); });
+      map.on('error', ()=>{});
+    } catch(e){ const m = document.getElementById('vm-msg'); if(m){ m.hidden = false; m.textContent = '⚠️ ' + (e && e.message ? errTxt(e) : MSGT('Carte indisponible')); } }
+  }
+  function vmDraw(){
+    const me = VM; if(!me || !me.map) return; const map = me.map, st = me.st, t = trip(); if(!t) return;
+    me.mk.forEach(m=>m.remove()); me.mk = [];
+    const sv = list('souv', x=>x.trip === t.id && !x.deleted);
+    // même ville à plusieurs moments (départ et retour à Rome) : un seul repère « 1 · 6 »
+    const twin = i => me.pts.findIndex((c, j)=>j < i && c && me.pts[i] && Math.abs(c.lat - me.pts[i].lat) + Math.abs(c.lng - me.pts[i].lng) < 0.02);
+    st.forEach((x, i)=>{ const c = me.pts[i]; if(!c) return;
+      if(twin(i) >= 0){ vmTr(me, st, i); return; }
+      const nums = [i + 1, ...st.map((y, j)=>j > i && twin(j) === i ? j + 1 : 0).filter(Boolean)];
+      const n = nums.reduce((a, k)=>a + nights(st[k - 1].debut, st[k - 1].fin), 0), ph = sv.filter(v=>v.date >= x.debut && v.date <= x.fin && (v.photos || []).length).sort((a, b)=>(a.date || '').localeCompare(b.date || '') || (a.ordre || 0) - (b.ordre || 0))[0];
+      const el = document.createElement('button'); el.type = 'button'; el.className = 'vm-st';
+      el.innerHTML = `${ph ? `<span class="vm-ph"><img data-ph="${esc(ph.photos[0])}.t" alt=""></span>` : ''}<b class="vm-n${nums.length > 1 ? ' w' : ''}">${nums.join(' · ')}</b><span class="vm-lb"><span data-notr>${esc(x.city)}</span>${n ? ' · ' + esc(n > 1 ? RF('{0} nuits', n) : '1 ' + MSGT('nuit')) : ''}</span>`;
+      el.onclick = ev => { ev.stopPropagation(); vmPick(i); };
+      me.mk.push(new maplibregl.Marker({element:el, anchor:'bottom'}).setLngLat([c.lng, c.lat]).addTo(map));
+      vmTr(me, st, i);
+    });
+    vmSvDraw(); hydrate();
+  }
+  // le moyen de transport (🚆 ✈️ 🚗 ⛴️…), au milieu du trajet vers l'étape suivante
+  function vmTr(me, st, i){
+    const x = st[i], c = me.pts[i], map = me.map;
+      const nx = st[i + 1], c2 = me.pts[i + 1]; if(!nx || !c2 || !c) return;
+      const lo = x.fin > x.debut ? x.fin : x.debut, tr = items(it=>it.cat === 'transport' && it.date && it.date >= lo && it.date <= nx.debut)[0];
+      const ic = tr ? (MODE_ICON[tr.mode] || '🧭') : ''; if(!ic) return;
+      const e2 = document.createElement('span'); e2.className = 'vm-tr'; e2.textContent = ic; e2.title = tr.titre || '';
+      me.mk.push(new maplibregl.Marker({element:e2, anchor:'center'}).setLngLat([(c.lng + c2.lng) / 2, (c.lat + c2.lat) / 2]).addTo(map));
+  }
+  function vmSvDraw(){
+    const me = VM; if(!me || !me.map) return; me.svm.forEach(m=>m.remove()); me.svm = []; if(!me.svOn) return;
+    const t = trip(); if(!t) return;
+    list('souv', x=>x.trip === t.id && !x.deleted && x.lat != null && (x.photos || []).length).forEach(x=>{
+      const el = document.createElement('button'); el.type = 'button'; el.className = 'vm-sv'; el.setAttribute('aria-label', x.titre || x.lieu || MSGT('Souvenir'));
+      el.innerHTML = `<img data-ph="${esc(x.photos[0])}.t" alt="">`;
+      el.onclick = ev => { ev.stopPropagation(); vmSvPick(x.id); };
+      me.svm.push(new maplibregl.Marker({element:el, anchor:'center'}).setLngLat([x.lng, x.lat]).addTo(me.map)); });
+    hydrate();
+  }
+  function vmSouv(){ if(!VM) return; VM.svOn = !VM.svOn; const b = document.getElementById('vm-sv'); if(b){ b.classList.toggle('off', !VM.svOn); b.setAttribute('aria-pressed', String(VM.svOn)); } vmSvDraw(); }
+  function vmFit(quick){
+    const me = VM; if(!me || !me.map) return; const b = new maplibregl.LngLatBounds(); let k = 0;
+    me.pts.forEach(c=>{ if(c){ b.extend([c.lng, c.lat]); k++; } }); if(!k) return;
+    if(k === 1) me.map.jumpTo({center:b.getCenter(), zoom:11}); else me.map.fitBounds(b, {padding:{top:110, bottom:150, left:50, right:50}, maxZoom:12, duration:quick === true ? 0 : 800});
+  }
+  function vmPick(i){
+    const me = VM; if(!me) return; const x = me.st[i], c = me.pts[i], card = document.getElementById('vm-card'); if(!x || !card) return;
+    const n = nights(x.debut, x.fin), vis = items(it=>it.cat === 'activite' && it.date >= x.debut && it.date <= x.fin).length + list('place', p=>p.trip === M.trip && !p.sugg && !p.deleted && p.date >= x.debut && p.date <= x.fin).length;
+    card.innerHTML = `<button type="button" class="vm-cx" onclick="this.parentNode.hidden=true" aria-label="${esc(MSGT('Fermer'))}">✕</button><div class="vm-ck">${esc(RF('Étape {0}', i + 1))}</div><b data-notr>${esc(x.city)}</b>
+      <small>${fshort(x.debut)} → ${fshort(x.fin)}${n ? ' · ' + esc(n > 1 ? RF('{0} nuits', n) : '1 ' + MSGT('nuit')) : ''}${vis ? ' · ' + esc(RF('{0} visite(s) au programme', vis)) : ''}</small>
+      <div class="vm-ca"><button type="button" onclick="CV.vmZoom(${i})">🔍 ${esc(MSGT('Zoomer'))}</button><button type="button" onclick="CV.vmDays('${ja(x.h.id)}')">📅 ${esc(MSGT('Voir ces jours'))}</button></div>`;
+    card.hidden = false; if(c) me.map.easeTo({center:[c.lng, c.lat], duration:700});
+  }
+  function vmZoom(i){ const c = VM && VM.pts[i]; if(c) VM.map.flyTo({center:[c.lng, c.lat], zoom:13, duration:1200}); }
+  function vmDays(hid){ vmClose(); M.progV = 'etapes'; persist(); render(); setTimeout(()=>{ try { stTog(hid); } catch(e){} }, 80); }
+  function vmSvPick(id){
+    const x = R[id], card = document.getElementById('vm-card'); if(!x || !card) return;
+    card.innerHTML = `<button type="button" class="vm-cx" onclick="this.parentNode.hidden=true" aria-label="${esc(MSGT('Fermer'))}">✕</button><div class="vm-svc"><img data-ph="${esc((x.photos || [])[0] || '')}.t" alt=""><div><b data-notr>${esc(x.titre || x.lieu || MSGT('Souvenir'))}</b><small>${x.date ? fdate(x.date) : ''}${x.heure ? ' · ' + esc(x.heure) : ''}${x.lieu ? ' · <span data-notr>' + esc(x.lieu) + '</span>' : ''}</small></div></div>
+      <div class="vm-ca"><button type="button" onclick="CV.vmClose();CV.editSouv('${ja(id)}')">📸 ${esc(MSGT('Ouvrir le souvenir'))}</button></div>`;
+    card.hidden = false; hydrate(); if(VM && x.lat != null) VM.map.easeTo({center:[x.lng, x.lat], duration:700});
   }
   const PMAP_BUSY = {};
   async function progMapHydrate(){
@@ -2765,7 +2858,7 @@
   function progV(v){ M.progV = v; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function progViewBar(ds){
     const t = trip(); if(!t || !tlStages().length || (ds || []).length < 2) return ''; const on = progStOn(ds);
-    return `<div class="etp-vbar" role="tablist"><button type="button" role="tab" aria-selected="${on}" class="${on ? 'on' : ''}" onclick="CV.progV('etapes')">🧳 ${MSGT('Étapes')}</button><button type="button" role="tab" aria-selected="${!on}" class="${on ? '' : 'on'}" onclick="CV.progV('jours')">📅 ${MSGT('Jours')}</button><button type="button" onclick="CV.tlMap()">🗺️ ${MSGT('Carte')}</button></div>`;
+    return `<div class="etp-vbar" role="tablist"><button type="button" role="tab" aria-selected="${on}" class="${on ? 'on' : ''}" onclick="CV.progV('etapes')">🧳 ${MSGT('Étapes')}</button><button type="button" role="tab" aria-selected="${!on}" class="${on ? '' : 'on'}" onclick="CV.progV('jours')">📅 ${MSGT('Jours')}</button><button type="button" onclick="CV.vmOpen()">🗺️ ${MSGT('Carte')}</button></div>`;
   }
   function stRanges(){ const st = tlStages(); return st.map((x, i)=>({city:x.city, h:x.h, debut:x.debut, fin:x.fin, end:st[i + 1] ? st[i + 1].debut : x.fin})); }
   function stChipTxt(d, city){

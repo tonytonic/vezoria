@@ -1245,3 +1245,18 @@ html.vz-dark .sp2-tg{color:var(--n-dkt)}
 html.vz-dark .lv-imp{border-top-color:rgb(49, 49, 49);border-right-color:rgb(49, 49, 49);border-bottom-color:rgb(49, 49, 49);border-left-color:rgb(49, 49, 49);background-color:rgba(20, 20, 20, 0.75);color:rgb(218, 190, 234)}
 html.vz-dark #vz-pick{background-color:rgb(20, 20, 20);box-shadow:rgba(0, 0, 0, 0.455) 0px 12px 30px}
 html.vz-dark .vz-spin{border-right-color:rgba(43, 43, 43, 0.3);border-bottom-color:rgba(43, 43, 43, 0.3);border-left-color:rgba(43, 43, 43, 0.3);border-top-color:rgb(53, 53, 53)}
+html.vz-dark .pm-go{background-color:rgb(20, 20, 20);color:rgb(218, 190, 234);box-shadow:rgba(0, 0, 0, 0.26) 0px 4px 14px}
+html.vz-dark #cv-vm{background-color:rgb(26, 26, 26)}
+html.vz-dark .vm-tt{background-color:rgba(20, 20, 20, 0.94);box-shadow:rgba(0, 0, 0, 0.195) 0px 4px 14px;color:rgb(218, 190, 234)}
+html.vz-dark .vm-b{background-color:rgba(20, 20, 20, 0.94);color:rgb(218, 190, 234);box-shadow:rgba(0, 0, 0, 0.195) 0px 4px 14px}
+html.vz-dark .vm-msg{background-color:rgb(20, 20, 20);color:rgb(218, 190, 234);box-shadow:rgba(0, 0, 0, 0.195) 0px 6px 18px}
+html.vz-dark .vm-ph{border-top-color:rgb(43, 43, 43);border-right-color:rgb(43, 43, 43);border-bottom-color:rgb(43, 43, 43);border-left-color:rgb(43, 43, 43);box-shadow:rgba(0, 0, 0, 0.325) 0px 6px 16px;background-color:rgb(34, 34, 34)}
+html.vz-dark .vm-n{background-color:rgb(20, 20, 20);color:rgb(218, 190, 234);box-shadow:rgba(0, 0, 0, 0.325) 0px 4px 12px;border-top-color:rgb(51, 51, 51);border-right-color:rgb(51, 51, 51);border-bottom-color:rgb(51, 51, 51);border-left-color:rgb(51, 51, 51)}
+html.vz-dark .vm-lb{background-color:rgb(20, 20, 20);color:rgb(218, 190, 234);box-shadow:rgba(0, 0, 0, 0.234) 0px 3px 10px}
+html.vz-dark .vm-tr{background-color:rgb(20, 20, 20);box-shadow:rgba(0, 0, 0, 0.26) 0px 3px 10px}
+html.vz-dark .vm-sv{border-top-color:rgb(43, 43, 43);border-right-color:rgb(43, 43, 43);border-bottom-color:rgb(43, 43, 43);border-left-color:rgb(43, 43, 43);background-color:rgb(42, 42, 42);box-shadow:rgba(0, 0, 0, 0.39) 0px 2px 8px}
+html.vz-dark .vm-card{background-color:rgb(20, 20, 20);color:rgb(218, 190, 234);box-shadow:rgba(0, 0, 0, 0.325) 0px 10px 30px}
+html.vz-dark .vm-cx{background-color:rgb(25, 25, 25);color:rgb(218, 190, 234)}
+html.vz-dark .vm-ca button{background-color:rgb(20, 20, 20)}
+html.vz-dark .vm-ca button + button{background-color:rgb(25, 25, 25);color:rgb(218, 190, 234)}
+html.vz-dark .vm-svc img{background-color:rgb(34, 34, 34)}

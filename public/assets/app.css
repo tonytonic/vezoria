@@ -3292,3 +3292,27 @@ html.vz-dark body .cv-share-qr{background:#fff!important}
 #vz-pick span{flex:1;display:flex;flex-direction:column;gap:2px}#vz-pick b{font-size:.95rem}#vz-pick small{font-size:.78rem;opacity:.85}
 #vz-pick button{border:0;background:rgba(255,255,255,.15);color:#fff;width:32px;height:32px;border-radius:50%;flex:none;cursor:pointer}
 .vz-spin{width:22px;height:22px;border-radius:50%;border:3px solid rgba(255,255,255,.3);border-top-color:#F3C98B;animation:vzsp-r .9s linear infinite;flex:none}
+
+/* 🗺️ carte vivante */
+.pm-m{position:relative}.pm-go{position:absolute;right:10px;bottom:10px;font-style:normal;font-weight:800;font-size:.82rem;background:#fff;color:#2A1238;border-radius:99px;padding:6px 12px;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+#cv-vm{position:fixed;inset:0;z-index:99980;background:#e9eef3}
+#vm-map{position:absolute;inset:0}
+.vm-top{position:absolute;left:10px;right:10px;top:calc(10px + env(safe-area-inset-top));display:flex;align-items:center;gap:8px;z-index:2}
+.vm-tt{flex:1;min-width:0;background:rgba(255,255,255,.94);border-radius:16px;padding:8px 12px;box-shadow:0 4px 14px rgba(0,0,0,.15);color:#2A1238}
+.vm-tt b{display:block;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.vm-tt small{display:block;font-size:.74rem;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vm-b{width:44px;height:44px;flex:none;border:0;border-radius:50%;background:rgba(255,255,255,.94);color:#2A1238;font-size:1.05rem;box-shadow:0 4px 14px rgba(0,0,0,.15);cursor:pointer}.vm-b.off{opacity:.5}
+.vm-msg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;color:#2A1238;padding:10px 14px;border-radius:14px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.15)}
+.vm-st{position:relative;display:flex;flex-direction:column;align-items:center;border:0;background:none;padding:0;cursor:pointer}
+.vm-ph{width:64px;height:64px;border-radius:16px;overflow:hidden;border:3px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.25);background:#ddd;margin-bottom:-12px}.vm-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.vm-n{position:relative;width:34px;height:34px;border-radius:50%;background:#fff;color:#2A1238;display:grid;place-items:center;font:700 1.05rem 'Bodoni Moda',Georgia,serif;box-shadow:0 4px 12px rgba(0,0,0,.25);border:2px solid #2A1238}
+.vm-lb{margin-top:4px;background:#fff;color:#2A1238;border-radius:99px;padding:4px 10px;font-weight:700;font-size:.78rem;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.vm-tr{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:1.05rem;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+.vm-sv{width:30px;height:30px;border-radius:50%;padding:0;border:2px solid #fff;overflow:hidden;background:#ccc;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer}.vm-sv img{width:100%;height:100%;object-fit:cover;display:block}
+.vm-card{position:absolute;left:10px;right:10px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:2;background:#fff;color:#2A1238;border-radius:20px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:520px;margin:0 auto}
+.vm-card b{display:block;font:italic 500 1.35rem 'Bodoni Moda',Georgia,serif}.vm-card small{display:block;font-size:.84rem;opacity:.8;margin-top:2px}
+.vm-ck{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
+.vm-cx{position:absolute;right:10px;top:10px;width:32px;height:32px;border:0;border-radius:50%;background:#f1edf3;color:#2A1238;cursor:pointer}
+.vm-ca{display:flex;gap:8px;margin-top:10px}.vm-ca button{flex:1;border:0;border-radius:14px;padding:10px;font:inherit;font-weight:700;background:#2A1238;color:#fff;cursor:pointer}.vm-ca button+button{background:#f1edf3;color:#2A1238}
+.vm-svc{display:flex;gap:12px;align-items:center;padding-right:30px}.vm-svc img{width:64px;height:64px;border-radius:12px;object-fit:cover;flex:none;background:#ddd}.vm-svc b{font-size:1.1rem}
+.vm-n.w{width:auto;min-width:34px;padding:0 9px;border-radius:99px}
+.maplibregl-marker.vm-st{z-index:3}.maplibregl-marker.vm-tr{z-index:2}.maplibregl-marker.vm-sv{z-index:1}
