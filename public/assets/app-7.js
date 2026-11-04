@@ -1169,7 +1169,7 @@
       <div class="bb-car" aria-label="${esc(MSGT('Souvenirs du voyage'))}">
         ${bd ? `<div class="bb-sl"><div class="bb-best"><div class="bb-bi">${bph.slice(0, 3).map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><div class="bb-bt"><small>⭐ Le meilleur jour</small><b>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${esc(fdate(bd))}</b><span>${esc(dayInfo(bd).titre || bbPlaces(bS))}</span><button type="button" onclick="CV.storyOpen('${ja(bd)}')">▶ Revivre ce jour</button></div></div></div>` : ''}
         ${top.length ? `<div class="bb-sl bb-slp"><div class="bb-sec"><b>❤️ ${top.some(x=>x.n) ? 'Les plus aimées' : 'Quelques pépites'}</b></div><div class="bb-top">${top.map((x, i)=>`<button type="button" class="bb-ph${i === 0 ? ' big' : ''}" style="--i:${i}" onclick="CV.view('${ja(x.s.id)}',${(x.s.photos||[]).indexOf(x.p)})"><img data-ph="${esc(x.p)}.t" alt="">${x.n ? `<b>${x.n} ❤️</b>` : ''}</button>`).join('')}</div></div>` : ''}
-        ${tl.lines.length || tl.mk.length > 1 ? `<div class="bb-sl"><div class="bb-map"><div class="bb-mh"><b>🗺️ Tout le voyage</b><button type="button" onclick="CV.flyover('${ja(t.id)}')">🎥 Survol 3D</button></div><div class="bb-mm" data-bmap="${t.id}"><div class="v-sum-small">🗺️ Carte en cours…</div></div></div></div>` : ''}
+        ${tl.lines.length || tl.mk.length > 1 ? `<div class="bb-sl"><div class="bb-map"><div class="bb-mh"><b>🗺️ Tout le voyage</b><span class="bb-mb"><button type="button" onclick="CV.vmOpen()" aria-label="${esc(MSGT('Carte vivante'))}">🗺️ 2D</button><button type="button" onclick="CV.prep3d()" aria-label="${esc(MSGT('Ton voyage sur la carte'))} 3D">🛰️ 3D</button><button type="button" onclick="CV.flyover('${ja(t.id)}')" aria-label="${esc(MSGT('Survol 3D'))}">🎥</button></span></div><div class="bb-mm" data-bmap="${t.id}" role="button" tabindex="0" onclick="CV.vmOpen()" aria-label="${esc(MSGT('Ouvrir la carte vivante'))}"><div class="v-sum-small">🗺️ Carte en cours…</div></div></div></div>` : ''}
       </div>
       <button type="button" class="bb-scr" onclick="CV.scrOpen()"><span>🗺️</span><span><b>${MSGT('Ma carte du monde à gratter')}</b><small>${MSGT('Gratte les pays que tu as visités')}</small></span><i>✨</i></button>
     </div>`;
@@ -2190,12 +2190,13 @@
     const ov = document.createElement('div'); ov.id = 'cv-p3'; ov.className = 'p3-far'; document.body.appendChild(ov); document.body.style.overflow = 'hidden';
     ov.innerHTML = `<div id="p3-map"></div>
       <div class="lv-top"><button type="button" class="lv-x" onclick="CV.prep3dClose()" aria-label="${esc(MSGT('Fermer'))}">✕</button>
-        <div class="lv-t"><span class="lv-badge p3-badge">🛰️ 3D</span><b data-notr>${esc(t.titre || '')}</b><small><span>${esc(MSGT('Ta préparation sur la carte'))}</span></small></div></div>
+        <div class="lv-t"><span class="lv-badge p3-badge">🛰️ 3D</span><b data-notr>${esc(t.titre || '')}</b><small><span>${esc(MSGT(tripPhase(t) === 'prep' ? 'Ta préparation sur la carte' : 'Ton voyage sur la carte'))}</span></small></div></div>
       <div class="lv-tools"><button type="button" data-b="sat" class="on" onclick="CV.p3Base('sat')" aria-label="Satellite">🛰️</button><button type="button" data-b="plan" onclick="CV.p3Base('plan')" aria-label="Plan">🗺️</button><button type="button" onclick="CV.p3Fit()" aria-label="${esc(MSGT('Tout le voyage'))}">🎯</button></div>
       <div class="lv-msg" id="p3-msg">🌍 ${esc(MSGT('Chargement de la carte 3D…'))}</div>
       <div class="p3-leg" id="p3-leg"></div>`;
-    p3Legend();
-    P3 = {map:null, mk:[], t:t.id}; const me = P3;
+    // 🎒 en préparation : la légende des réservations ; pendant et après le voyage : les souvenirs posés sur la carte
+    const souv = tripPhase(t) !== 'prep'; if(souv){ const lg = document.getElementById('p3-leg'); if(lg) lg.remove(); } else p3Legend();
+    P3 = {map:null, mk:[], t:t.id, souv}; const me = P3;
     try {
       await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
       if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
@@ -2257,6 +2258,12 @@
       e.innerHTML = `<i style="background:${P3C[x.st]}">🛏️</i><span data-notr>${esc(x.city)}</span><small>${esc(MSGT(x.st === 'paid' ? 'Payé' : x.st === 'booked' ? 'Réservé' : x.exact ? 'À réserver' : 'À réserver · dans le quartier conseillé'))}</small>`;
       e.onclick = ev => { ev.stopPropagation(); prep3dClose(); setTimeout(()=>{ if(okB(x.h)) edit(x.h.id); else { const hs = ariData(trip()).hs.filter(y=>!okB(y)); guideHotel(Math.max(0, hs.findIndex(y=>y.id === x.h.id))); } }, 80); };
       add(e, x.p, 'p3-hot'); });
+    // 📸 les souvenirs du voyage à leur endroit (photo ronde) : toucher pour la voir en grand
+    if(P3.souv) list('souv', x=>x.trip === P3.t && !x.deleted && x.lat != null && (x.photos || []).length).forEach(x=>{
+      const e = document.createElement('button'); e.type = 'button'; e.setAttribute('aria-label', x.titre || x.lieu || MSGT('Souvenir'));
+      e.innerHTML = `<img data-ph="${esc(x.photos[0])}.t" alt="">`; e.onclick = ev => { ev.stopPropagation(); prep3dClose(); setTimeout(()=>{ try { CV.view(x.id, 0); } catch(_){} }, 80); };
+      add(e, {lat:+x.lat, lng:+x.lng}, 'vm-sv p3-sv'); });
+    hydrate();
   }
   // 🎯 cadrage calculé à la main (fitBounds se trompe parfois sur le globe avec le relief) : toutes les villes et les hébergements
   function p3Fit(){

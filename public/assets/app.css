@@ -3320,3 +3320,7 @@ html.vz-dark body .cv-share-qr{background:#fff!important}
 #cv-vm .p3-hot span{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #cv-vm .vm-tr svg{display:block}
 #cv-vm .maplibregl-marker.p3-hot{z-index:2}#cv-vm .maplibregl-marker.vm-home{z-index:2}
+/* 🏁 bilan : carte 2D et 3D */
+.bb-mb{display:flex;gap:6px}.bb-mh b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bb-sl .bb-mm{cursor:pointer}
+.maplibregl-marker.p3-sv{z-index:1}.p3-far .p3-sv{width:22px;height:22px}
