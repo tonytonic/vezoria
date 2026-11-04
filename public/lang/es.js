@@ -3224,4 +3224,5 @@ I18N.load({
 "Son lien n’a pas encore été ouvert.":"Aún no ha abierto su enlace.",
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"Toca ＋ Añadir: cada persona recibe su propio enlace. Podrás quitarla en cualquier momento sin cambiar nada para los demás.",
 "lien pas encore ouvert":"enlace aún no abierto",
-"ne suit plus":"ya no sigue"});
+"ne suit plus":"ya no sigue",
+"Masquer {0} voyage(s) à tous tes abonnés ?":"¿Ocultar {0} viaje(s) a todos tus seguidores?"});

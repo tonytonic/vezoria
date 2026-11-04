@@ -6163,4 +6163,5 @@ I18N.load({
 "Son lien n’a pas encore été ouvert.":"Ссылка ещё не открыта.",
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"Нажмите ＋ Добавить: каждый получает свою ссылку. Вы сможете удалить человека в любой момент, ничего не меняя для остальных.",
 "lien pas encore ouvert":"ссылка ещё не открыта",
-"ne suit plus":"больше не подписан"});
+"ne suit plus":"больше не подписан",
+"Masquer {0} voyage(s) à tous tes abonnés ?":"Скрыть путешествия ({0}) от всех подписчиков?"});

@@ -6150,4 +6150,5 @@ I18N.load({
 "Son lien n’a pas encore été ouvert.":"Bağlantısı henüz açılmadı.",
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"＋ Ekle’ye dokun: herkes kendi bağlantısını alır. Diğerleri için hiçbir şey değiştirmeden istediğin zaman çıkarabilirsin.",
 "lien pas encore ouvert":"bağlantı henüz açılmadı",
-"ne suit plus":"artık takip etmiyor"});
+"ne suit plus":"artık takip etmiyor",
+"Masquer {0} voyage(s) à tous tes abonnés ?":"{0} seyahat tüm takipçilerden gizlensin mi?"});

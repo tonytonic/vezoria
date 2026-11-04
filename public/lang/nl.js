@@ -3214,4 +3214,5 @@ I18N.load({
 "Son lien n’a pas encore été ouvert.":"Zijn link is nog niet geopend.",
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"Tik op ＋ Toevoegen: iedereen krijgt een eigen link. Je kunt iemand altijd verwijderen zonder dat er voor de anderen iets verandert.",
 "lien pas encore ouvert":"link nog niet geopend",
-"ne suit plus":"volgt niet meer"});
+"ne suit plus":"volgt niet meer",
+"Masquer {0} voyage(s) à tous tes abonnés ?":"{0} reis/reizen verbergen voor al je volgers?"});

@@ -3208,4 +3208,5 @@ I18N.load({
 "Son lien n’a pas encore été ouvert.":"Their link hasn't been opened yet.",
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"Tap ＋ Add: each person gets their own link. You can remove them at any time without changing anything for the others.",
 "lien pas encore ouvert":"link not opened yet",
-"ne suit plus":"no longer following"});
+"ne suit plus":"no longer following",
+"Masquer {0} voyage(s) à tous tes abonnés ?":"Hide {0} trip(s) from all your followers?"});

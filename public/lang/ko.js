@@ -6162,4 +6162,5 @@ I18N.load({
 "Son lien n’a pas encore été ouvert.":"아직 링크를 열지 않았습니다.",
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"＋ 추가를 누르세요. 한 사람마다 전용 링크가 생깁니다. 언제든 삭제할 수 있고 다른 사람에게는 변화가 없습니다.",
 "lien pas encore ouvert":"아직 열지 않은 링크",
-"ne suit plus":"팔로우 취소함"});
+"ne suit plus":"팔로우 취소함",
+"Masquer {0} voyage(s) à tous tes abonnés ?":"모든 팔로워에게 여행 {0}개를 숨길까요?"});

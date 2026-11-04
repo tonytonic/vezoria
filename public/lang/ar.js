@@ -6163,4 +6163,5 @@ I18N.load({
 "Son lien n’a pas encore été ouvert.":"لم يُفتح رابطه بعد.",
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"المس ＋ إضافة: يحصل كل شخص على رابطه الخاص. يمكنك إزالته في أي وقت دون تغيير شيء للآخرين.",
 "lien pas encore ouvert":"لم يُفتح الرابط بعد",
-"ne suit plus":"لم يعد يتابع"});
+"ne suit plus":"لم يعد يتابع",
+"Masquer {0} voyage(s) à tous tes abonnés ?":"إخفاء {0} رحلة عن جميع المتابعين؟"});

@@ -6162,4 +6162,5 @@ I18N.load({
 "Son lien n’a pas encore été ouvert.":"उनका लिंक अभी तक नहीं खोला गया।",
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"＋ जोड़ें दबाएँ: हर व्यक्ति को अपना लिंक मिलता है। आप किसी को भी कभी भी हटा सकते हैं, बाकियों के लिए कुछ नहीं बदलेगा।",
 "lien pas encore ouvert":"लिंक अभी नहीं खुला",
-"ne suit plus":"अब फ़ॉलो नहीं करता"});
+"ne suit plus":"अब फ़ॉलो नहीं करता",
+"Masquer {0} voyage(s) à tous tes abonnés ?":"{0} यात्राएँ सभी फ़ॉलोअर्स से छिपाएँ?"});
