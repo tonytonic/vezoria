@@ -2109,6 +2109,7 @@
   }
   /* 📚 carnet publié pour des abonnés : un voyage CRÉÉ ensuite y entre tout seul (une seule fois : décoché ensuite, il reste privé) */
   function carnetAuto(){
+    return;   // abonnés v2 : rien ne se coche tout seul, je choisis mes voyages montrés
     try {
       const c = M.feedAll && spaceObj(M.feedAll) ? M.feedAll : ''; if(!c || M.feedAllAuto === false) return;
       if(!M.feedAllSince){ M.feedAllSince = Date.now() - 2 * 864e5; persist(); }   // 1re fois : les voyages créés ces deux derniers jours aussi

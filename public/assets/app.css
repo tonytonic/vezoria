@@ -3337,3 +3337,4 @@ html.vz-dark body .cv-share-qr{background:#fff!important}
 .cv-mps{display:flex;align-items:center;gap:8px;margin:6px 2px 0}.cv-mps small{flex:1;min-width:0;font-size:.74rem;color:var(--gray)}
 .cv-mps button{flex:none;border:1.5px solid #d8cbe8;background:#fff;border-radius:99px;padding:5px 10px;font:inherit;font-weight:700;font-size:.74rem;cursor:pointer}
 .sp2-wait{margin-left:auto;font-size:.78rem;color:#6b7280;white-space:nowrap}
+.sp2-allr{display:flex;gap:8px;margin:2px 0 10px}.sp2-allr button{flex:1;border:1px solid var(--nb,#E9DDFB);background:#fff;color:var(--n,#4C1D95);border-radius:999px;padding:7px 10px;font-weight:700;font-size:.85rem;cursor:pointer}
