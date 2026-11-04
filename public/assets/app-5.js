@@ -1319,7 +1319,7 @@
       <button type="button" class="cv-choice" onclick="CV.inspire()"><i>💡</i><span><b>Je ne sais pas encore où aller</b><small>Quelques questions, et l’appli te propose des destinations adaptées avec ses conseils.</small></span></button>
       <button type="button" class="cv-choice" onclick="CV.blankTrip()"><i>📄</i><span><b>Voyage vierge</b><small>Juste un nom : tu remplis tout toi-même, à ton rythme.</small></span></button>
       <button type="button" class="cv-choice" onclick="CV.close();CV.joinAny()"><i>🔗</i><span><b>Je rejoins le voyage ou le carnet d’un ami</b><small>Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.</small></span></button>
-      <button type="button" class="cv-choice" onclick="CV.psImport()"><i>📥</i><span><b>J’importe mes voyages Polarsteps</b><small>Tes étapes, récits et photos, à partir du fichier de données que Polarsteps t’envoie.</small></span></button>
+      <button type="button" class="cv-choice" onclick="CV.psImport()"><i>📥</i><span><b>J’importe mes voyages d’une autre appli</b><small>Tes étapes, récits et photos, à partir du fichier de données que ton ancienne appli t’envoie.</small></span></button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Annuler</button></div>`);
   }
   /* ══════════ 📥 Import Polarsteps : l’utilisateur reprend SES données (fichier d’export de Polarsteps) ══════════ */
@@ -1337,9 +1337,9 @@
       if(!on && PSRUN && PSRUN.lock){ await PSRUN.lock.release(); PSRUN.lock = null; } } catch(e){}
   }
   function psImport(){
-    openSheet(`<h2>📥 Importer mes voyages Polarsteps</h2>
-      <ol class="ps-how"><li>Dans Polarsteps : Profil → Paramètres → Télécharger mes données. Tu reçois un fichier ZIP par e-mail.</li><li>Choisis ce fichier ici (ou le fichier trip.json d’un voyage).</li></ol>
-      <div class="v-sum-small" style="margin:8px 0">Tes étapes, lieux, récits et photos deviennent des souvenirs Vezoria. Tout se passe sur ton téléphone : le fichier n’est envoyé nulle part. Vezoria n’est pas lié à Polarsteps.</div>
+    openSheet(`<h2>📥 Importer mes voyages d’une autre appli</h2>
+      <ol class="ps-how"><li>Dans ton ancienne appli de carnet de voyage : Profil → Paramètres → Télécharger mes données. Tu reçois un fichier ZIP par e-mail.</li><li>Choisis ce fichier ici (ou le fichier trip.json d’un voyage).</li></ol>
+      <div class="v-sum-small" style="margin:8px 0">Tes étapes, lieux, récits et photos deviennent des souvenirs Vezoria. Tout se passe sur ton téléphone : le fichier n’est envoyé nulle part.</div>
       <label class="cv-checkline"><input type="checkbox" id="ps-all"> Importer toutes les photos (sinon 3 par étape : plus léger pour ton téléphone)</label>
       <div id="ps-msg" class="ps-msg">${PSRUN && PSRUN.m ? esc(PSRUN.m) : ''}</div>
       <div class="ps-bgnote">⏳ L’import se fait en arrière-plan : une fois le fichier choisi, tu peux fermer cette fenêtre et continuer à utiliser Vezoria. Garde juste l’appli ouverte, une pastille en bas t’indique où il en est.</div>
@@ -1348,7 +1348,7 @@
   const psIso = ts => { const n = +ts; if(!n) return ''; try { return new Date(n > 1e12 ? n : n * 1000).toISOString().slice(0, 10); } catch(e){ return ''; } };
   // voyage déjà importé ? même identifiant Polarsteps, ou (anciens imports) même nom et même date de départ
   function psFind(j){
-    const id = String(j.id || ''), nm = String(j.name || j.title || 'Voyage Polarsteps').slice(0, 120), d = psIso(j.start_date);
+    const id = String(j.id || ''), nm = String(j.name || j.title || 'Voyage importé').slice(0, 120), d = psIso(j.start_date);
     return trips().find(t=>t && !t.deleted && t.type === 'trip' && t.src === 'polarsteps' && ((id && t.psId === id) || (!t.psId && t.titre === nm && (!d || !t.debut || t.debut === d)))) || null;
   }
   function psAsk(name){
@@ -1366,11 +1366,11 @@
   }
   async function psFile(input){
     const f = input.files && input.files[0]; if(!f) return; input.value = '';
-    if(PSRUN){ alert('Un import Polarsteps est déjà en cours.'); return; }
+    if(PSRUN){ alert('Un import est déjà en cours.'); return; }
     const all = !!(document.getElementById('ps-all') || {}).checked;
     PSRUN = {m:''}; psLock(true);
     const msg = m => { if(PSRUN) PSRUN.m = m; const e = document.getElementById('ps-msg'); if(e) e.textContent = m;
-      if(m) psPill(`<i class="ps-spin"></i><span>📥 Import Polarsteps</span><span class="ps-st">${esc(m)}</span>`); };
+      if(m) psPill(`<i class="ps-spin"></i><span>📥 Import de voyages</span><span class="ps-st">${esc(m)}</span>`); };
     let rd = null;
     msg('📦 Lecture du fichier…'); toast('📥 Import lancé : tu peux continuer à utiliser l’appli');
     try {
@@ -1382,7 +1382,7 @@
         msg('📦 Lecture du fichier…'); const z = await loadZip(); rd = new z.ZipReader(new z.BlobReader(f)); const ents = await rd.getEntries();
         for(const e of ents.filter(e=>!e.directory && /(^|\/)trip\.json$/i.test(e.filename) && (e.uncompressedSize || 0) <= PS_JMAX).slice(0, 500)){ try { const j = JSON.parse(await e.getData(new z.TextWriter())); if(isObj(j)) list_.push({j, base:e.filename.replace(/trip\.json$/i, ''), ents, z, pmax:PS_PMAX}); } catch(err){} }
       }
-      if(!list_.length) throw new Error('aucun voyage Polarsteps trouvé dans ce fichier (il faut le ZIP de Polarsteps ou un fichier trip.json).');
+      if(!list_.length) throw new Error('aucun voyage trouvé dans ce fichier (il faut le fichier ZIP de données de ton ancienne appli, ou un fichier trip.json).');
       let nS = 0, nP = 0, last = '';
       let same = null;   // « Même choix pour les voyages suivants »
       for(let k = 0; k < list_.length; k++){
@@ -1407,7 +1407,7 @@
     const j = tr.j || {}, st0 = Array.isArray(j.all_steps) ? j.all_steps : Array.isArray(j.steps) ? j.steps : [];
     const steps = st0.filter(x=>x && typeof x === 'object').slice(0, 3000).sort((a, b)=>(+a.start_time || 0) - (+b.start_time || 0));
     const tid = old ? old.id : 't' + uid(), debut = psIso(j.start_date) || psIso((steps[0] || {}).start_time), fin = psIso(j.end_date) || psIso((steps[steps.length - 1] || {}).start_time) || debut;
-    const head = {id:tid, type:'trip', titre:String(j.name || j.title || 'Voyage Polarsteps').slice(0, 120), sous:String(j.summary || '').slice(0, 160), debut, fin, voyageurs:M.me ? [M.me] : [], objectif:'', src:'polarsteps', psId:String(j.id || '')};
+    const head = {id:tid, type:'trip', titre:String(j.name || j.title || 'Voyage importé').slice(0, 120), sous:String(j.summary || '').slice(0, 160), debut, fin, voyageurs:M.me ? [M.me] : [], objectif:'', src:'polarsteps', psId:String(j.id || '')};
     // remplacer : même voyage (compagnons, abonnés, budget… gardés), seuls ses souvenirs importés repartent de zéro
     const out = [old ? Object.assign(clone(old), {titre:head.titre, sous:head.sous || old.sous || '', debut:debut || old.debut, fin:fin || old.fin, src:'polarsteps', psId:head.psId}) : head];
     // identifiants stables : réimporter le même ZIP ne crée ni nouveau souvenir ni nouvelle photo (pas de doublon sur le téléphone ni sur le serveur)

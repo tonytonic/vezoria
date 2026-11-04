@@ -1150,6 +1150,11 @@
     try { if(feedCode(tid)) feedBuild(tid); } catch(e){}
     refresh();
   }
+  // 📍 lieux du meilleur jour : la ville plutôt que la rue (« rue, ville »), 3 au plus
+  function bbPlaces(S){
+    const c = {}; S.forEach(x=>{ const p = String(x.lieu || '').split(',').map(v=>v.trim()).filter(Boolean); const v = p.length > 1 ? p[p.length - 1] : p[0]; if(v) c[v] = (c[v] || 0) + 1; });
+    const L = Object.keys(c).sort((a, b)=>c[b] - c[a]); return L.slice(0, 3).join(' · ') + (L.length > 3 ? ' +' + (L.length - 3) : '');
+  }
   function bilanBig(t){
     if(!t || tripPhase(t) === 'prep') return '';
     const all = list('souv', x=>x.trip === t.id), nph = all.reduce((a, x)=>a + (x.photos||[]).length, 0); if(!all.length) return '';
@@ -1162,7 +1167,7 @@
       <div class="bb-tro">${tr.slice(0, 4).map((x, i)=>`<div class="bb-t" style="--i:${i}"><i>${x.i}</i><b>${esc(x.t)}</b><small>${esc(x.d)}</small></div>`).join('')}</div>
       <button type="button" class="bb-story" onclick="CV.storyTrip('${ja(t.id)}')"><span class="bb-pl">▶</span><span><b>La story du voyage</b><small>${nph} photos · en musique · un chapitre par jour</small></span></button>
       <div class="bb-car" aria-label="${esc(MSGT('Souvenirs du voyage'))}">
-        ${bd ? `<div class="bb-sl"><div class="bb-best"><div class="bb-bi">${bph.slice(0, 3).map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><div class="bb-bt"><small>⭐ Le meilleur jour</small><b>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${esc(fdate(bd))}</b><span>${esc(dayInfo(bd).titre || [...new Set(bS.map(x=>String(x.lieu || '').split(',')[0].trim()).filter(Boolean))].join(' · '))}</span><button type="button" onclick="CV.storyOpen('${ja(bd)}')">▶ Revivre ce jour</button></div></div></div>` : ''}
+        ${bd ? `<div class="bb-sl"><div class="bb-best"><div class="bb-bi">${bph.slice(0, 3).map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><div class="bb-bt"><small>⭐ Le meilleur jour</small><b>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${esc(fdate(bd))}</b><span>${esc(dayInfo(bd).titre || bbPlaces(bS))}</span><button type="button" onclick="CV.storyOpen('${ja(bd)}')">▶ Revivre ce jour</button></div></div></div>` : ''}
         ${top.length ? `<div class="bb-sl bb-slp"><div class="bb-sec"><b>❤️ ${top.some(x=>x.n) ? 'Les plus aimées' : 'Quelques pépites'}</b></div><div class="bb-top">${top.map((x, i)=>`<button type="button" class="bb-ph${i === 0 ? ' big' : ''}" style="--i:${i}" onclick="CV.view('${ja(x.s.id)}',${(x.s.photos||[]).indexOf(x.p)})"><img data-ph="${esc(x.p)}.t" alt="">${x.n ? `<b>${x.n} ❤️</b>` : ''}</button>`).join('')}</div></div>` : ''}
         ${tl.lines.length || tl.mk.length > 1 ? `<div class="bb-sl"><div class="bb-map"><div class="bb-mh"><b>🗺️ Tout le voyage</b><button type="button" onclick="CV.flyover('${ja(t.id)}')">🎥 Survol 3D</button></div><div class="bb-mm" data-bmap="${t.id}"><div class="v-sum-small">🗺️ Carte en cours…</div></div></div></div>` : ''}
       </div>
@@ -1951,10 +1956,10 @@
     const ov = document.createElement('div'); ov.id = 'cv-vm'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', MSGT('Carte vivante'));
     ov.innerHTML = `<div id="vm-map"></div>
       <div class="vm-top"><button type="button" class="vm-b" onclick="CV.vmClose()" aria-label="${esc(MSGT('Fermer'))}">✕</button><div class="vm-tt"><b data-notr>${esc(t.titre || '')}</b><small>${esc(RF('{0} étapes', st.length))} · ${esc(st.map(x=>x.city).join(' → '))}</small></div>
-        <button type="button" class="vm-b" id="vm-sv" onclick="CV.vmSouv()" aria-label="${esc(MSGT('Souvenirs sur la carte'))}" aria-pressed="true">📸</button><button type="button" class="vm-b" onclick="CV.vmFit()" aria-label="${esc(MSGT('Tout le voyage'))}">⤢</button></div>
+        <button type="button" class="vm-b" id="vm-bs" onclick="CV.vmBase()" aria-label="${esc(MSGT('Satellite'))} / ${esc(MSGT('Plan'))}">🗺️</button><button type="button" class="vm-b" id="vm-sv" onclick="CV.vmSouv()" aria-label="${esc(MSGT('Souvenirs sur la carte'))}" aria-pressed="true">📸</button><button type="button" class="vm-b" onclick="CV.vmFit()" aria-label="${esc(MSGT('Tout le voyage'))}">⤢</button></div>
       <div class="vm-card" id="vm-card" hidden></div><div class="vm-msg" id="vm-msg">🗺️ ${esc(MSGT('Chargement de la carte…'))}</div>`;
     document.body.appendChild(ov);
-    const me = VM = {map:null, st, pts:[], sv:[], svOn:true, mk:[], svm:[]};
+    const me = VM = {map:null, st, pts:[], sv:[], svOn:true, mk:[], svm:[], lg:[], F:null, sat:true, font:null};
     try {
       await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
       if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
@@ -1963,14 +1968,23 @@
       if(VM !== me) return;
       const P = me.pts.map((c, i)=>c && Object.assign({i, s:st[i]}, c)).filter(Boolean); if(!P.length) throw new Error(MSGT('Villes introuvables sur la carte'));
       const dark = document.documentElement.classList.contains('vz-dark');
-      const map = me.map = new maplibregl.Map({container:'vm-map', style:{version:8, sources:{base:Object.assign(esriML(dark ? 'dark' : 'light'), {maxzoom:16, attribution:'© Esri · © OpenStreetMap'})}, layers:[{id:'base', type:'raster', source:'base'}]},
+      // 🛰️ satellite (par défaut) ou plan, comme sur la carte 3D ; les polices servent aux noms des visites et activités
+      const style = {version:8, sources:{base:Object.assign(esriML(dark ? 'dark' : 'light'), {maxzoom:16, attribution:'© Esri · © OpenStreetMap'}), sat:Object.assign(esriML('sat'), {maxzoom:18, attribution:'Esri, Maxar'})},
+        layers:[{id:'base', type:'raster', source:'base', layout:{visibility:'none'}}, {id:'sat', type:'raster', source:'sat'}]};
+      try { const lib = await withTimeout(fetch('https://tiles.openfreemap.org/styles/liberty').then(r=>r.json()), 4000);
+        if(lib && lib.glyphs){ style.glyphs = lib.glyphs; const f = (lib.layers || []).find(l=>l.type === 'symbol' && l.layout && Array.isArray(l.layout['text-font'])); me.font = f ? f.layout['text-font'] : null; } } catch(e){}
+      if(VM !== me) return;
+      const map = me.map = new maplibregl.Map({container:'vm-map', style,
         center:[P[0].lng, P[0].lat], zoom:5, maxZoom:17, pixelRatio:Math.min(2, window.devicePixelRatio || 1), attributionControl:{compact:true}, dragRotate:false, pitchWithRotate:false});
       try { map.touchZoomRotate.disableRotation(); } catch(e){}
       map.on('load', ()=>{ if(VM !== me) return; const m = document.getElementById('vm-msg'); if(m) m.hidden = true;
         map.addSource('route', {type:'geojson', data:{type:'Feature', geometry:{type:'LineString', coordinates:P.map(p=>[p.lng, p.lat])}}});
-        map.addLayer({id:'route-halo', type:'line', source:'route', paint:{'line-color':'#ffffff', 'line-width':7, 'line-opacity':.85}, layout:{'line-cap':'round', 'line-join':'round'}});
-        map.addLayer({id:'route', type:'line', source:'route', paint:{'line-color':'#2A1238', 'line-width':3, 'line-dasharray':[1.2, 1.6]}, layout:{'line-cap':'round', 'line-join':'round'}});
-        vmDraw(); vmFit(true); });
+        map.addLayer({id:'route-halo', type:'line', source:'route', paint:{'line-color':'#2A1238', 'line-width':7, 'line-opacity':.55}, layout:{'line-cap':'round', 'line-join':'round'}});
+        map.addLayer({id:'route', type:'line', source:'route', paint:{'line-color':'#ffffff', 'line-width':3, 'line-dasharray':[1.2, 1.6]}, layout:{'line-cap':'round', 'line-join':'round'}});
+        vmDraw(); vmFit(true);
+        const zc = () => { const o = document.getElementById('cv-vm'), z = map.getZoom(); if(!o) return; o.classList.toggle('p3-mid', z >= 8 && z < 10.5); o.classList.toggle('p3-near', z >= 10.5); o.classList.toggle('p3-far', z < 8); };
+        map.on('zoom', zc); zc();
+        vmRich(me); });
       map.on('error', ()=>{});
     } catch(e){ const m = document.getElementById('vm-msg'); if(m){ m.hidden = false; m.textContent = '⚠️ ' + (e && e.message ? errTxt(e) : MSGT('Carte indisponible')); } }
   }
@@ -1994,12 +2008,57 @@
   }
   // le moyen de transport (🚆 ✈️ 🚗 ⛴️…), au milieu du trajet vers l'étape suivante
   function vmTr(me, st, i){
+    if(me.F && me.F.legs.length) return;   // les vrais trajets (avec l’avion dans le bon sens) sont posés par vmRich
     const x = st[i], c = me.pts[i], map = me.map;
       const nx = st[i + 1], c2 = me.pts[i + 1]; if(!nx || !c2 || !c) return;
       const lo = x.fin > x.debut ? x.fin : x.debut, tr = items(it=>it.cat === 'transport' && it.date && it.date >= lo && it.date <= nx.debut)[0];
       const ic = tr ? (MODE_ICON[tr.mode] || '🧭') : ''; if(!ic) return;
       const e2 = document.createElement('span'); e2.className = 'vm-tr'; e2.textContent = ic; e2.title = tr.titre || '';
       me.mk.push(new maplibregl.Marker({element:e2, anchor:'center'}).setLngLat([(c.lng + c2.lng) / 2, (c.lat + c2.lat) / 2]).addTo(map));
+  }
+  /* 🗺️ ce que montre aussi la carte 3D : les vrais trajets (aéroport de départ et de retour compris), l’avion orienté
+     dans le sens du vol, et en zoomant les hébergements, les visites et les activités */
+  async function vmRich(me){
+    let F = null; try { F = await p3Data(trip()); } catch(e){} if(VM !== me || !F || !me.map) return; me.F = F; const map = me.map; if(F.legs.length) vmDraw();   // retire les pictos posés en attendant
+    const fc = f => ({type:'geojson', data:{type:'FeatureCollection', features:f}});
+    try {
+      if(F.legs.length){ ['route', 'route-halo'].forEach(id=>{ try { map.setLayoutProperty(id, 'visibility', 'none'); } catch(e){} });
+        map.addSource('vm-legs', fc(F.legs));
+        map.addLayer({id:'vm-legs-c', type:'line', source:'vm-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':'#2A1238', 'line-width':['interpolate',['linear'],['zoom'],2,5,10,9], 'line-opacity':.55}});
+        map.addLayer({id:'vm-legs', type:'line', source:'vm-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':'#ffffff', 'line-width':['interpolate',['linear'],['zoom'],2,2.5,10,5], 'line-dasharray':[1.4, 1.4]}});
+        map.addLayer({id:'vm-legs-l', type:'line', source:'vm-legs', minzoom:9, filter:['==',['get','local'],1], layout:{'line-cap':'round'}, paint:{'line-color':'#fde68a', 'line-width':4, 'line-dasharray':[1.5, 1.2]}});
+      }
+      map.addSource('vm-vis', fc(F.visits)); map.addSource('vm-act', fc(F.acts));
+      map.addLayer({id:'vm-vis', type:'circle', source:'vm-vis', minzoom:9.5, paint:{'circle-color':'#a78bfa', 'circle-radius':['interpolate',['linear'],['zoom'],9.5,4,14,8], 'circle-stroke-color':'#fff', 'circle-stroke-width':2}});
+      map.addLayer({id:'vm-act', type:'circle', source:'vm-act', minzoom:9.5, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],9.5,5,14,9], 'circle-stroke-color':'#fff', 'circle-stroke-width':2.5}});
+      if(map.getStyle().glyphs && me.font){ const L = (id, src, mz) => map.addLayer({id, type:'symbol', source:src, minzoom:mz, layout:{'text-field':['get','name'], 'text-font':me.font, 'text-size':12, 'text-offset':[0, 1.2], 'text-anchor':'top', 'text-max-width':10, 'text-optional':true},
+          paint:{'text-color':'#fff', 'text-halo-color':'rgba(10,20,50,.9)', 'text-halo-width':1.5}});
+        L('vm-vis-t', 'vm-vis', 12.5); L('vm-act-t', 'vm-act', 12); }
+    } catch(e){}
+    me.lg.forEach(m=>m.remove()); me.lg = [];
+    const add = (el, p, anchor) => me.lg.push(new maplibregl.Marker({element:el, anchor:anchor || 'center'}).setLngLat([p.lng, p.lat]).addTo(map));
+    // ✈️ 🚆 🚗 au milieu de chaque trajet ; l’avion tourné vers sa destination
+    F.legs.forEach(f=>{ if(f.properties.local) return; const C = f.geometry.coordinates, k = Math.floor((C.length - 1) / 2), a = C[k], b = C[Math.min(C.length - 1, k + 1)], m = C.length > 2 ? a : [(C[0][0] + C[1][0]) / 2, (C[0][1] + C[1][1]) / 2];
+      const md = f.properties.mode || '', fly = /avion|vol|plane|flight/i.test(md), e = document.createElement('span'); e.className = 'vm-tr';
+      if(fly){ const pa = map.project(C.length > 2 ? a : C[0]), pb = map.project(C.length > 2 ? b : C[1]), deg = Math.atan2(pb.x - pa.x, pa.y - pb.y) * 180 / Math.PI;
+        e.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" style="transform:rotate(${deg.toFixed(0)}deg)" aria-hidden="true"><path fill="#E11D74" d="M12 2c.8 0 1.4.7 1.4 1.6V9l7.6 4.6v2l-7.6-2.3v4.5l2.2 1.7V21L12 20l-3.6 1v-1.5l2.2-1.7v-4.5L3 15.6v-2L10.6 9V3.6C10.6 2.7 11.2 2 12 2z"/></svg>`;
+      } else e.textContent = MODE_ICON[md] || '🧭';
+      add(e, {lng:m[0], lat:m[1]}); });
+    // 🏠 aéroport ou gare de départ et de retour (et les correspondances en petit)
+    F.cities.filter(c=>c.home || c.via).forEach(c=>{ const e = document.createElement('div'); e.className = 'p3-city vm-home' + (c.home ? ' home' : ' via');
+      e.innerHTML = `<i>${c.home ? '🏠' : '·'}</i><span data-notr>${esc(c.name)}</span>`; add(e, c.c); });
+    // 🛏️ hébergements : visibles en zoomant
+    F.hotels.forEach(x=>{ const e = document.createElement('button'); e.type = 'button'; e.className = 'p3-hot';
+      e.innerHTML = `<i style="background:${P3C[x.st]}">🛏️</i><span data-notr>${esc(x.h.titre || x.city)}</span><small>${esc(MSGT(x.st === 'paid' ? 'Payé' : x.st === 'booked' ? 'Réservé' : 'À réserver'))}</small>`;
+      e.onclick = ev => { ev.stopPropagation(); vmClose(); setTimeout(()=>{ try { edit(x.h.id); } catch(_){} }, 80); };
+      add(e, x.p); });
+    vmFit(true);
+  }
+  function vmBase(){
+    const me = VM; if(!me || !me.map) return; me.sat = !me.sat; const map = me.map;
+    try { map.setLayoutProperty('sat', 'visibility', me.sat ? 'visible' : 'none'); map.setLayoutProperty('base', 'visibility', me.sat ? 'none' : 'visible'); } catch(e){}
+    const o = document.getElementById('cv-vm'); if(o) o.classList.toggle('vm-plan', !me.sat);
+    const b = document.getElementById('vm-bs'); if(b) b.textContent = me.sat ? '🗺️' : '🛰️';
   }
   function vmSvDraw(){
     const me = VM; if(!me || !me.map) return; me.svm.forEach(m=>m.remove()); me.svm = []; if(!me.svOn) return;
@@ -2015,6 +2074,7 @@
   function vmFit(quick){
     const me = VM; if(!me || !me.map) return; const b = new maplibregl.LngLatBounds(); let k = 0;
     me.pts.forEach(c=>{ if(c){ b.extend([c.lng, c.lat]); k++; } }); if(!k) return;
+    if(me.F) me.F.cities.forEach(c=>{ if(c.home) b.extend([c.c.lng, c.c.lat]); });   // l’aéroport de départ et de retour dans le cadre
     if(k === 1) me.map.jumpTo({center:b.getCenter(), zoom:11}); else me.map.fitBounds(b, {padding:{top:110, bottom:150, left:50, right:50}, maxZoom:12, duration:quick === true ? 0 : 800});
   }
   function vmPick(i){
@@ -2099,7 +2159,7 @@
       const ca = stageAt(i.date, true) || stageAt(i.date, false), cb = stageAt(i.date, false) || stageAt(i.date, true);
       const A = await resolve(i.from, ca), B = await resolve(i.to, cb); if(!A || !B) continue; const a = A.p, b = B.p, d = rawKm(a, b); if(d < .3) continue;
       const far = q => SC.length && SC.every(({c})=>rawKm(c, q) > 2500); if(far(a) && far(b)) continue;   // adresse introuvable ou absurde : on n’invente rien
-      F.legs.push({type:'Feature', properties:{col:P3C[p3St(i)], local:d < 25 ? 1 : 0, id:i.id}, geometry:{type:'LineString', coordinates:p3Arc(a, b)}});
+      F.legs.push({type:'Feature', properties:{col:P3C[p3St(i)], local:d < 25 ? 1 : 0, id:i.id, mode:i.mode || ''}, geometry:{type:'LineString', coordinates:p3Arc(a, b)}});
       if(d >= 60){ if(!A.stage) ends.push({p:a, name:i.from}); if(!B.stage) ends.push({p:b, name:i.to}); }
     }
     // 🏠 le départ et le retour (début et fin du voyage) ; les autres villes de passage (correspondance à Bruxelles…) en petit

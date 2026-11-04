@@ -1966,7 +1966,7 @@ ${pm.join('\n')}</Document></kml>`;
       editSouv(null);
       Object.assign(editing, {lat, lng, pays, cc, step:1});
       const f = document.getElementById('v-form'); if(f){ if(f.titre) f.titre.value = lieu || 'Step'; if(f.lieu) f.lieu.value = [lieu, pays].filter(Boolean).join(', '); }
-      const h2 = document.querySelector('.v-sheet h2'); if(h2) h2.insertAdjacentHTML('afterend', `<div class="cv-here">${flag(cc)} <b>${esc(lieu || 'Position enregistrée')}</b>${pays ? ', ' + esc(pays) : ''} · ${new Date().toLocaleTimeString((window.I18N ? I18N.locale : 'fr-FR'),{hour:'2-digit',minute:'2-digit'})}<small>Ajoute des photos et un petit récit, comme un step Polarsteps. Il apparaît sur la carte du monde et dans le journal.</small></div>`);
+      const h2 = document.querySelector('.v-sheet h2'); if(h2) h2.insertAdjacentHTML('afterend', `<div class="cv-here">${flag(cc)} <b>${esc(lieu || 'Position enregistrée')}</b>${pays ? ', ' + esc(pays) : ''} · ${new Date().toLocaleTimeString((window.I18N ? I18N.locale : 'fr-FR'),{hour:'2-digit',minute:'2-digit'})}<small>Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.</small></div>`);
     }, err => alert('Position introuvable (' + (err && err.message || 'refusée') + '). Autorise la localisation pour l’appli dans les réglages du téléphone.'), {enableHighAccuracy:true, timeout:15000, maximumAge:60000});
   }
   // 📸 raccourci du voyage en cours : l’appareil photo s’ouvre tout de suite (le geste du doigt est encore « frais »),
