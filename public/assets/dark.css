@@ -1243,3 +1243,5 @@ html.vz-dark .sp2-add b,html.vz-dark .sp2-ph .sp2-ph0,html.vz-dark .sp2-more > s
 html.vz-dark .sp2-ph .sp2-ph0{background-color:rgb(20, 20, 20)}
 html.vz-dark .sp2-tg{color:var(--n-dkt)}
 html.vz-dark .lv-imp{border-top-color:rgb(49, 49, 49);border-right-color:rgb(49, 49, 49);border-bottom-color:rgb(49, 49, 49);border-left-color:rgb(49, 49, 49);background-color:rgba(20, 20, 20, 0.75);color:rgb(218, 190, 234)}
+html.vz-dark #vz-pick{background-color:rgb(20, 20, 20);box-shadow:rgba(0, 0, 0, 0.455) 0px 12px 30px}
+html.vz-dark .vz-spin{border-right-color:rgba(43, 43, 43, 0.3);border-bottom-color:rgba(43, 43, 43, 0.3);border-left-color:rgba(43, 43, 43, 0.3);border-top-color:rgb(53, 53, 53)}

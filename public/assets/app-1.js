@@ -1190,6 +1190,20 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     b.onclick = ()=>{ b.classList.remove('show'); pushOpen(d.url); };
     requestAnimationFrame(()=>b.classList.add('show')); clearTimeout(b._t); b._t = setTimeout(()=>b.classList.remove('show'), 6000);
   }
+  /* ⏳ Choix de fichiers : en refermant la photothèque, le téléphone copie d'abord les photos (plusieurs secondes s'il y en a
+     beaucoup) avant de les donner à l'appli. Pendant ce temps on affiche « Chargement des photos… » pour qu'on ne croie pas que rien ne se passe. */
+  let pickT = 0, pickIn = null;
+  function pickOff(){ clearTimeout(pickT); const b = document.getElementById('vz-pick'); if(b) b.remove(); if(pickIn){ pickIn.removeEventListener('change', pickOff); pickIn.removeEventListener('cancel', pickOff); pickIn = null; } }
+  document.addEventListener('click', ev=>{
+    const inp = ev.target && ev.target.closest && ev.target.closest('input[type=file]'); if(!inp || inp.disabled) return;
+    pickOff(); pickIn = inp; inp.addEventListener('change', pickOff); inp.addEventListener('cancel', pickOff);
+    const img = /image|heic/i.test(inp.accept || '') || !inp.accept, many = inp.multiple;
+    setTimeout(()=>{ if(pickIn !== inp) return;
+      const b = document.createElement('div'); b.id = 'vz-pick'; b.setAttribute('role', 'status'); b.setAttribute('aria-live', 'polite');
+      b.innerHTML = `<i class="vz-spin" aria-hidden="true"></i><span><b>${esc(MSGT(img ? (many ? 'Chargement des photos…' : 'Chargement de la photo…') : 'Chargement du fichier…'))}</b><small>${esc(MSGT('Le téléphone prépare les fichiers choisis : ça peut prendre quelques secondes.'))}</small></span><button type="button" aria-label="${esc(MSGT('Fermer'))}">✕</button>`;
+      b.querySelector('button').onclick = pickOff; document.body.appendChild(b); }, 350);
+    pickT = setTimeout(pickOff, 90000);   // filet : jamais bloqué si le navigateur ne prévient pas de l'annulation
+  }, true);
   if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev=>{ const d = ev.data || {};
     if(d.type === 'vz-open'){ recapVia = d.url; pushOpen(d.url); pushKv('inbox').then(b=>{ if(b && b.length) nhAdd(b, true); return pushKv('inbox', []); }).catch(()=>{}); }
     else if(d.type === 'vz-sync'){ try { syncNow(); } catch(e){} }

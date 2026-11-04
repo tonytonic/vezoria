@@ -3288,3 +3288,7 @@ html.vz-dark body .cv-share-qr{background:#fff!important}
 /* 👥 partage : le bouton « Suivi(e) » passe à la ligne au lieu de déborder (colonnes étroites, iPad) */
 .sp2-ct{flex-wrap:wrap;row-gap:6px}.sp2-ct b{min-width:0;overflow:hidden;text-overflow:ellipsis}.sp2-fol{flex:none;white-space:nowrap}.sp2-card{overflow:hidden}
 .lv-imp{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin:0 0 12px;padding:12px 14px;border:1.5px dashed #c4b5fd;border-radius:16px;background:rgba(255,255,255,.75);color:#2A1238;font:inherit;text-align:left;cursor:pointer}.lv-imp b{font-size:.98rem}.lv-imp small{font-size:.8rem;opacity:.8}
+#vz-pick{position:fixed;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:100020;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#2A1238;color:#fff;box-shadow:0 12px 30px rgba(0,0,0,.35);max-width:520px;margin:0 auto;animation:uiIn .2s ease-out}
+#vz-pick span{flex:1;display:flex;flex-direction:column;gap:2px}#vz-pick b{font-size:.95rem}#vz-pick small{font-size:.78rem;opacity:.85}
+#vz-pick button{border:0;background:rgba(255,255,255,.15);color:#fff;width:32px;height:32px;border-radius:50%;flex:none;cursor:pointer}
+.vz-spin{width:22px;height:22px;border-radius:50%;border:3px solid rgba(255,255,255,.3);border-top-color:#F3C98B;animation:vzsp-r .9s linear infinite;flex:none}
