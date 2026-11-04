@@ -1728,7 +1728,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-04m'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-04n'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1796,6 +1796,7 @@
     if(!cur || cur.deleted || stripStamp(cur) !== stripStamp(r)) putQuiet([r]); }
   // 🟢 un voyage montré / caché à tous mes abonnés
   async function ab2TripSet(tid, on){
+    try { ab2Reset(); } catch(e){}   // l’ancien système part AVANT, jamais après (il effacerait ce qu’on vient de faire)
     const t = R[tid]; if(!t || t.demo) return;
     (M.feedAuto = M.feedAuto || {})[tid] = 1;   // choisi à la main : l’ajout automatique des nouveaux voyages n’y touche plus
     if(on){
@@ -1847,6 +1848,7 @@
   }
   // ＋ un abonné : son prénom → son propre lien (QR code + message)
   async function ab2Invite(){
+    try { ab2Reset(); } catch(e){}   // l’ancien système part AVANT, jamais après (il effacerait ce qu’on vient de faire)
     if(!(await ab2Name())) return;
     if(!ab2Vis().length){ if(!myTrips().length){ alert(MSGT('Crée d’abord un voyage.')); return; } toast('👁️ ' + MSGT('Allume d’abord les voyages à montrer')); return ab2TripsSheet(); }
     const n = await uiPrompt(MSGT('Qui invites-tu ? Son prénom (toi seul le vois) :'), ''); if(!n || !n.trim()) return;
@@ -1952,6 +1954,7 @@
   }
   const ab2IvOf = c => { const S = (M.subs || {})[c]; return S && S.iv; };
   async function ab2Follow(code, web, q){
+    try { ab2Reset(); } catch(e){}   // l’ancien système part AVANT, jamais après (il effacerait ce qu’on vient de faire)
     code = String(code || '').trim().toUpperCase(); if(code.length < 8){ alert(MSGT('Code trop court.')); return; }
     if(AI().some(x=>x.code === code) || code === M.feedAll){ toast('👀 ' + MSGT('C’est ton propre lien abonnés.')); return shareHub(); }
     if(!web && !q && !(await ab2Name())) return;
@@ -1972,7 +1975,7 @@
     persist(); syncNow(); if(q) return true; closeSheet(true);
     if(!fts.length){ alert(MSGT('Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.')); return shareHub(); }
     const vis = fts.filter(id=>TS()[id] === c);
-    if(vis.length === 1) feedView(vis[0]); else shareHub();
+    if(vis.length === 1 || (web && vis.length)) feedView(vis[0]); else shareHub();   // 🌐 sans l’appli : directement le voyage
     toast('👀 ' + RF('Tu suis {0}', S.owner || '?'));
   }
   // ne plus suivre quelqu’un (ou retiré par lui) : ses liens quittent ce téléphone, rien ne les ramène sauf rouvrir mon lien
