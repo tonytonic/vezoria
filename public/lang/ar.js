@@ -6089,6 +6089,13 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"La carte part du téléphone qui a publié ce voyage : ouvre-le sur ce téléphone.":"تُرسل الخريطة من الهاتف الذي نشر هذه الرحلة: افتحها على ذلك الهاتف.",
+"Envoyée : {0} étape(s), {1} visite(s) et activité(s)":"أُرسلت: {0} مرحلة، {1} زيارة ونشاط",
+"Carte en préparation : garde ce voyage ouvert quelques secondes.":"جارٍ تجهيز الخريطة: أبقِ هذه الرحلة مفتوحة بضع ثوانٍ.",
+"Carte en préparation…":"جارٍ تجهيز الخريطة…",
+"Carte envoyée aux abonnés":"أُرسلت الخريطة إلى المتابعين",
+"{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés":"أُضيفت {0} رحلة جديدة لمتابعيك",
+"Mettre à jour":"تحديث",
 "Carte visible des abonnés":"الخريطة ظاهرة للمتابعين",
 "Carte masquée aux abonnés":"الخريطة مخفية عن المتابعين",
 "La carte du voyage":"خريطة الرحلة",

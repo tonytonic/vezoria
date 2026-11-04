@@ -6088,6 +6088,13 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"La carte part du téléphone qui a publié ce voyage : ouvre-le sur ce téléphone.":"地図はこの旅を公開したスマホから送信されます：そのスマホで開いてください。",
+"Envoyée : {0} étape(s), {1} visite(s) et activité(s)":"送信済み：行程 {0}、見どころ・アクティビティ {1}",
+"Carte en préparation : garde ce voyage ouvert quelques secondes.":"地図を準備中：この旅を数秒開いたままにしてください。",
+"Carte en préparation…":"地図を準備中…",
+"Carte envoyée aux abonnés":"地図をフォロワーに送信しました",
+"{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés":"フォロワー向けに新しい旅を {0} 件追加しました",
+"Mettre à jour":"更新",
 "Carte visible des abonnés":"地図をフォロワーに公開中",
 "Carte masquée aux abonnés":"地図をフォロワーに非公開",
 "La carte du voyage":"旅の地図",

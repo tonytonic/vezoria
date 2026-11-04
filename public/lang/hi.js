@@ -6088,6 +6088,13 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"La carte part du téléphone qui a publié ce voyage : ouvre-le sur ce téléphone.":"नक्शा उसी फ़ोन से भेजा जाता है जिसने यह यात्रा प्रकाशित की: उसे उसी फ़ोन पर खोलो।",
+"Envoyée : {0} étape(s), {1} visite(s) et activité(s)":"भेजा गया: {0} पड़ाव, {1} जगहें और गतिविधियाँ",
+"Carte en préparation : garde ce voyage ouvert quelques secondes.":"नक्शा तैयार हो रहा है: यह यात्रा कुछ सेकंड खुली रखो।",
+"Carte en préparation…":"नक्शा तैयार हो रहा है…",
+"Carte envoyée aux abonnés":"नक्शा फ़ॉलोअर्स को भेजा गया",
+"{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés":"तुम्हारे फ़ॉलोअर्स के लिए {0} नई यात्रा जोड़ी गई",
+"Mettre à jour":"अपडेट करें",
 "Carte visible des abonnés":"नक्शा फ़ॉलोअर्स को दिख रहा है",
 "Carte masquée aux abonnés":"नक्शा फ़ॉलोअर्स से छिपा है",
 "La carte du voyage":"यात्रा का नक्शा",

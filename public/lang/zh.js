@@ -6088,6 +6088,13 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"La carte part du téléphone qui a publié ce voyage : ouvre-le sur ce téléphone.":"地图由发布此旅行的手机发送：请在那部手机上打开它。",
+"Envoyée : {0} étape(s), {1} visite(s) et activité(s)":"已发送：{0} 个站点，{1} 个景点和活动",
+"Carte en préparation : garde ce voyage ouvert quelques secondes.":"地图准备中：请让此旅行保持打开几秒钟。",
+"Carte en préparation…":"正在准备地图…",
+"Carte envoyée aux abonnés":"地图已发送给关注者",
+"{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés":"已为关注者添加 {0} 个新旅行",
+"Mettre à jour":"更新",
 "Carte visible des abonnés":"地图对关注者可见",
 "Carte masquée aux abonnés":"地图对关注者隐藏",
 "La carte du voyage":"旅行地图",

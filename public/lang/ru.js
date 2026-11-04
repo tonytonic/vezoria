@@ -6089,6 +6089,13 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"La carte part du téléphone qui a publié ce voyage : ouvre-le sur ce téléphone.":"Карта отправляется с телефона, опубликовавшего поездку: открой её на нём.",
+"Envoyée : {0} étape(s), {1} visite(s) et activité(s)":"Отправлено: этапов {0}, мест и занятий {1}",
+"Carte en préparation : garde ce voyage ouvert quelques secondes.":"Карта готовится: оставь эту поездку открытой на несколько секунд.",
+"Carte en préparation…":"Готовим карту…",
+"Carte envoyée aux abonnés":"Карта отправлена подписчикам",
+"{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés":"Новых поездок для подписчиков: {0}",
+"Mettre à jour":"Обновить",
 "Carte visible des abonnés":"Карта видна подписчикам",
 "Carte masquée aux abonnés":"Карта скрыта от подписчиков",
 "La carte du voyage":"Карта поездки",

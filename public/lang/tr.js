@@ -6076,6 +6076,13 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"La carte part du téléphone qui a publié ce voyage : ouvre-le sur ce téléphone.":"Harita, bu geziyi yayınlayan telefondan gönderilir: geziyi o telefonda aç.",
+"Envoyée : {0} étape(s), {1} visite(s) et activité(s)":"Gönderildi: {0} etap, {1} gezi ve etkinlik",
+"Carte en préparation : garde ce voyage ouvert quelques secondes.":"Harita hazırlanıyor: bu geziyi birkaç saniye açık tut.",
+"Carte en préparation…":"Harita hazırlanıyor…",
+"Carte envoyée aux abonnés":"Harita takipçilere gönderildi",
+"{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés":"Takipçilerin için {0} yeni gezi eklendi",
+"Mettre à jour":"Güncelle",
 "Carte visible des abonnés":"Harita takipçilere açık",
 "Carte masquée aux abonnés":"Harita takipçilerden gizli",
 "La carte du voyage":"Gezi haritası",

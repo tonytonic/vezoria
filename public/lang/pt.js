@@ -3153,6 +3153,13 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"La carte part du téléphone qui a publié ce voyage : ouvre-le sur ce téléphone.":"O mapa sai do telemóvel que publicou esta viagem: abre-a nesse telemóvel.",
+"Envoyée : {0} étape(s), {1} visite(s) et activité(s)":"Enviado: {0} etapa(s), {1} visita(s) e atividade(s)",
+"Carte en préparation : garde ce voyage ouvert quelques secondes.":"Mapa em preparação: deixa esta viagem aberta alguns segundos.",
+"Carte en préparation…":"A preparar o mapa…",
+"Carte envoyée aux abonnés":"Mapa enviado aos seguidores",
+"{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés":"{0} nova(s) viagem(ns) adicionada(s) para os teus seguidores",
+"Mettre à jour":"Atualizar",
 "Carte visible des abonnés":"Mapa visível para os seguidores",
 "Carte masquée aux abonnés":"Mapa escondido dos seguidores",
 "La carte du voyage":"O mapa da viagem",

@@ -3134,6 +3134,13 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"La carte part du téléphone qui a publié ce voyage : ouvre-le sur ce téléphone.":"The map is sent from the phone that published this trip: open it on that phone.",
+"Envoyée : {0} étape(s), {1} visite(s) et activité(s)":"Sent: {0} stop(s), {1} visit(s) and activity(ies)",
+"Carte en préparation : garde ce voyage ouvert quelques secondes.":"Map being prepared: keep this trip open for a few seconds.",
+"Carte en préparation…":"Preparing the map…",
+"Carte envoyée aux abonnés":"Map sent to followers",
+"{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés":"{0} new trip(s) added for your followers",
+"Mettre à jour":"Update",
 "Carte visible des abonnés":"Map visible to followers",
 "Carte masquée aux abonnés":"Map hidden from followers",
 "La carte du voyage":"The trip map",

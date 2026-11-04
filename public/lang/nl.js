@@ -3140,6 +3140,13 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"La carte part du téléphone qui a publié ce voyage : ouvre-le sur ce téléphone.":"De kaart komt van de telefoon die deze reis heeft gepubliceerd: open hem daar.",
+"Envoyée : {0} étape(s), {1} visite(s) et activité(s)":"Verzonden: {0} etappe(s), {1} bezienswaardigheid/activiteit(en)",
+"Carte en préparation : garde ce voyage ouvert quelques secondes.":"Kaart wordt voorbereid: laat deze reis een paar seconden open.",
+"Carte en préparation…":"Kaart wordt voorbereid…",
+"Carte envoyée aux abonnés":"Kaart naar volgers gestuurd",
+"{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés":"{0} nieuwe reis/reizen toegevoegd voor je volgers",
+"Mettre à jour":"Bijwerken",
 "Carte visible des abonnés":"Kaart zichtbaar voor volgers",
 "Carte masquée aux abonnés":"Kaart verborgen voor volgers",
 "La carte du voyage":"De reiskaart",

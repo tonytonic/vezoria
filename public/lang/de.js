@@ -3144,6 +3144,13 @@ I18N.load({
 
 I18N.load({
 /* 📥 import depuis une autre appli (2026-11-04) */
+"La carte part du téléphone qui a publié ce voyage : ouvre-le sur ce téléphone.":"Die Karte kommt vom Handy, das diese Reise veröffentlicht hat: öffne sie dort.",
+"Envoyée : {0} étape(s), {1} visite(s) et activité(s)":"Gesendet: {0} Etappe(n), {1} Besichtigung(en) und Aktivität(en)",
+"Carte en préparation : garde ce voyage ouvert quelques secondes.":"Karte wird vorbereitet: lass diese Reise ein paar Sekunden geöffnet.",
+"Carte en préparation…":"Karte wird vorbereitet…",
+"Carte envoyée aux abonnés":"Karte an Follower gesendet",
+"{0} nouveau(x) voyage(s) ajouté(s) pour tes abonnés":"{0} neue Reise(n) für deine Follower hinzugefügt",
+"Mettre à jour":"Aktualisieren",
 "Carte visible des abonnés":"Karte für Follower sichtbar",
 "Carte masquée aux abonnés":"Karte vor Followern verborgen",
 "La carte du voyage":"Die Reisekarte",
