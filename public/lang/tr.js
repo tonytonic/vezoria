@@ -6151,4 +6151,8 @@ I18N.load({
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"＋ Ekle’ye dokun: herkes kendi bağlantısını alır. Diğerleri için hiçbir şey değiştirmeden istediğin zaman çıkarabilirsin.",
 "lien pas encore ouvert":"bağlantı henüz açılmadı",
 "ne suit plus":"artık takip etmiyor",
-"Masquer {0} voyage(s) à tous tes abonnés ?":"{0} seyahat tüm takipçilerden gizlensin mi?"});
+"Masquer {0} voyage(s) à tous tes abonnés ?":"{0} seyahat tüm takipçilerden gizlensin mi?",
+"Mon départ":"Benim kalkışım",
+"Visites":"Ziyaretler",
+"Réservations du jour":"Günün rezervasyonları",
+"de trajets":"yolda"});

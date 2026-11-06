@@ -6164,4 +6164,8 @@ I18N.load({
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"المس ＋ إضافة: يحصل كل شخص على رابطه الخاص. يمكنك إزالته في أي وقت دون تغيير شيء للآخرين.",
 "lien pas encore ouvert":"لم يُفتح الرابط بعد",
 "ne suit plus":"لم يعد يتابع",
-"Masquer {0} voyage(s) à tous tes abonnés ?":"إخفاء {0} رحلة عن جميع المتابعين؟"});
+"Masquer {0} voyage(s) à tous tes abonnés ?":"إخفاء {0} رحلة عن جميع المتابعين؟",
+"Mon départ":"مغادرتي",
+"Visites":"الزيارات",
+"Réservations du jour":"حجوزات اليوم",
+"de trajets":"من التنقل"});

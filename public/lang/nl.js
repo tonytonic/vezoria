@@ -3215,4 +3215,8 @@ I18N.load({
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"Tik op ＋ Toevoegen: iedereen krijgt een eigen link. Je kunt iemand altijd verwijderen zonder dat er voor de anderen iets verandert.",
 "lien pas encore ouvert":"link nog niet geopend",
 "ne suit plus":"volgt niet meer",
-"Masquer {0} voyage(s) à tous tes abonnés ?":"{0} reis/reizen verbergen voor al je volgers?"});
+"Masquer {0} voyage(s) à tous tes abonnés ?":"{0} reis/reizen verbergen voor al je volgers?",
+"Mon départ":"Mijn vertrek",
+"Visites":"Bezoeken",
+"Réservations du jour":"Boekingen van de dag",
+"de trajets":"reistijd"});

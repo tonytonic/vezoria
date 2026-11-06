@@ -3225,4 +3225,8 @@ I18N.load({
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"Toca ＋ Añadir: cada persona recibe su propio enlace. Podrás quitarla en cualquier momento sin cambiar nada para los demás.",
 "lien pas encore ouvert":"enlace aún no abierto",
 "ne suit plus":"ya no sigue",
-"Masquer {0} voyage(s) à tous tes abonnés ?":"¿Ocultar {0} viaje(s) a todos tus seguidores?"});
+"Masquer {0} voyage(s) à tous tes abonnés ?":"¿Ocultar {0} viaje(s) a todos tus seguidores?",
+"Mon départ":"Mi salida",
+"Visites":"Visitas",
+"Réservations du jour":"Reservas del día",
+"de trajets":"de trayectos"});

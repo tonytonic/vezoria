@@ -6163,4 +6163,8 @@ I18N.load({
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"点击＋添加：每个人都有自己的链接。你可以随时移除某人，其他人不受影响。",
 "lien pas encore ouvert":"链接尚未打开",
 "ne suit plus":"已取消关注",
-"Masquer {0} voyage(s) à tous tes abonnés ?":"对所有关注者隐藏 {0} 个旅行？"});
+"Masquer {0} voyage(s) à tous tes abonnés ?":"对所有关注者隐藏 {0} 个旅行？",
+"Mon départ":"我的出发",
+"Visites":"参观",
+"Réservations du jour":"当日预订",
+"de trajets":"路程"});

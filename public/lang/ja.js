@@ -6163,4 +6163,8 @@ I18N.load({
 "Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.":"＋追加 をタップ：一人ひとりに専用のリンクが届きます。いつでも削除でき、他の人には影響しません。",
 "lien pas encore ouvert":"未開封のリンク",
 "ne suit plus":"フォロー解除済み",
-"Masquer {0} voyage(s) à tous tes abonnés ?":"{0} 件の旅行をすべてのフォロワーに非表示にしますか？"});
+"Masquer {0} voyage(s) à tous tes abonnés ?":"{0} 件の旅行をすべてのフォロワーに非表示にしますか？",
+"Mon départ":"自分の出発",
+"Visites":"見学",
+"Réservations du jour":"当日の予約",
+"de trajets":"移動"});
