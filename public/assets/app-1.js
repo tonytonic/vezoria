@@ -269,8 +269,11 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   //    si quelqu’un d’autre l’a modifiée en même temps (on ne garde que les fiches pas encore envoyées)
   function sbKeep(r){ const p = R[r.id]; if(!p || p === r || p.demo || isDirty(r.id)) return; (M.sbase || (M.sbase = {}))[r.id] = clone(p); }
   function sbDone(ids){ const B = M.sbase; if(!B) return; ids.forEach(id=>{ if(!isDirty(id)) delete B[id]; }); }
-  function put(r, msg){ sbKeep(r); newTripHook(r); if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); persist(); toast(msg); queueSync(); return r; }
-  function putMany(arr, msg){ arr.forEach(newTripHook); arr.forEach(r=>{ sbKeep(r); if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); persist(); toast(msg); queueSync(); }
+  // 📖 voyage d’un ancien compagnon (retiré par l’auteur) : gardé en lecture seule ; seules les suppressions passent
+  const roOf = r => { if(!r || r.deleted) return false; const tid = r.type === 'trip' ? r.id : r.trip, t = tid && R[tid]; return !!(t && t.type === 'trip' && t.ro); };
+  let roT = 0; const roToast = () => { if(Date.now() - roT > 2500){ roT = Date.now(); setTimeout(()=>toast('📖 ' + MSGT('Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.')), 50); } };
+  function put(r, msg){ if(roOf(r)){ roToast(); return R[r.id] || r; } sbKeep(r); newTripHook(r); if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); persist(); toast(msg); queueSync(); return r; }
+  function putMany(arr, msg){ if(arr.some(roOf)){ roToast(); arr = arr.filter(x=>!roOf(x)); if(!arr.length) return; } arr.forEach(newTripHook); arr.forEach(r=>{ sbKeep(r); if(r.type==='trip' && !r.devise && !R[r.id]) r.devise = M.cur || 'EUR'; photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); persist(); toast(msg); queueSync(); }
   function drop(id, msg){ if(!R[id]) return; const r = clone(R[id]); r.deleted = true; put(r, msg || '🗑 Supprimé'); }
   const clone = o => JSON.parse(JSON.stringify(o));
 
@@ -1584,7 +1587,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   // retirer UN voyage à UNE personne
   async function packRemoveTrip(P, t, quiet){
     const pk = PACKS()[P], old = TS()[t], oldSp = old && spaceObj(old); if(!pk) return;
-    if(!quiet && !(await uiConfirm(MSGT('Ne plus partager ce voyage avec cette personne ?') + '\n\n' + (pk.who || '') + ' · ' + ((R[t]||{}).titre || '') + '\n\n' + MSGT('Elle garde sa copie (avec les photos) mais ne reçoit plus tes modifications. Les autres compagnons continuent normalement.')))) return;
+    if(!quiet && !(await uiConfirm(MSGT('Ne plus partager ce voyage avec cette personne ?') + '\n\n' + (pk.who || '') + ' · ' + ((R[t]||{}).titre || '') + '\n\n' + MSGT('Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.')))) return;
     pk.trips = pk.trips.filter(x=>x !== t); persist();
     { const x = R['pt:' + t + '@' + P] || {id:'pt:' + t + '@' + P, type:'packtrip', trip:'pa:' + P, tid:t};   // retiré de SON paquet seulement
       TS()['pa:' + P] = P; putQuiet([Object.assign(clone(x), {deleted:true})]); }
@@ -1598,6 +1601,13 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
           const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(c)));
           env.push({id:'tx:' + t + ':' + m.dev, type:'tripmove', trip:'tm:' + t, tid:t, dev:m.dev, opk:k.pub, iv:b64(iv), ct:b64(ct)}); } catch(e){} }
       if(env.length) await spacePushOnly(oldSp, env);
+      // 👀 ancien compagnon : il garde le voyage en lecture seule ; si ce voyage est montré aux abonnés, il reçoit son lien d’abonné (❤️ et 💬)
+      { const mm = list('member', y=>y.trip === t && y.via === bad && y.pk && y.ib)[0];
+        if(mm && typeof ab2Vis === 'function' && ab2Vis().includes(t)) setTimeout(async ()=>{ try { const x = await ab2NewInv(pk.who || mm.who || '?');
+          await ivSend({dev:mm.dev, pk:mm.pk, ib:mm.ib}, {k:'follow', id:uid(), c:x.code, t:(R[t] || {}).titre || ''}); } catch(e){} }, 1500); }
+      // 👤 la personne retirée quitte aussi la liste des voyageurs (ses appareils venus par ce paquet)
+      { const gone = new Set(list('member', y=>y.trip === t && y.via === bad && y.pid).map(y=>y.pid)), tr = R[t];
+        if(tr && gone.size && (tr.voyageurs || []).some(p=>gone.has(p))) put(Object.assign(clone(tr), {voyageurs:(tr.voyageurs || []).filter(p=>!gone.has(p))}), false); }
       (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t] = c;
       Object.values(R).filter(r=>r && !r.demo && (r.id === t || r.trip === t) && r.type !== 'member').forEach(r=>markDirty(r.id));
       // les autres paquets qui contiennent ce voyage reçoivent le nouveau code
@@ -1613,7 +1623,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   async function packDel(P){
     const pk = PACKS()[P]; if(!pk) return;
-    if(!(await uiConfirm(MSGT('Ne plus rien partager avec cette personne ?') + '\n\n' + (pk.who || '') + '\n\n' + MSGT('Elle garde sa copie de vos voyages mais ne reçoit plus rien.')))) return;
+    if(!(await uiConfirm(MSGT('Ne plus rien partager avec cette personne ?') + '\n\n' + (pk.who || '') + '\n\n' + MSGT('Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.')))) return;
     for(const t of [...pk.trips]) await packRemoveTrip(P, t, true);
     try { await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(P)}}); } catch(e){}
     delete PACKS()[P]; delete TS()['pa:' + P]; M.spaces = (M.spaces||[]).filter(x=>x.code !== P); persist(); toast('👥 Partage arrêté'); refresh();
@@ -1643,7 +1653,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         if(prev && !Object.values(TS()).includes(prev)) M.spaces = (M.spaces||[]).filter(x=>x.code !== prev); n++; } }
     for(const r of Object.values(R).filter(x=>x && x.type === 'packtrip' && x.deleted && TS()[x.trip] && !mine[TS()[x.trip]])){
       const tid = r.tid || String(r.id).slice(3).split('@')[0]; if(viaP[tid] !== TS()[r.trip] || !TS()[tid]) continue;
-      if(await tripLeaveGo(tid, 'keep', true)){ delete viaP[tid]; delete viaH[tid]; n++; } }
+      if(await tripLeaveGo(tid, 'keep', true)){ delete viaP[tid]; delete viaH[tid]; n++;   // 👤 retiré par l’auteur : je garde le voyage complet, en lecture seule (❤️ et 💬 via le lien abonné qu’il m’envoie)
+        const t = R[tid]; if(t && !t.deleted){ putQuiet([Object.assign(clone(t), {ro:1, roAt:Date.now()})]); } } }
     if(n) persist();
     return n;
   }
@@ -1891,6 +1902,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       } catch(e){ /* sans réseau : on part quand même, rien n’est perdu chez moi */ }
     }
     delete TS()[id];
+    (M.left = M.left || {})[id] = 1;   // 🚪 parti : l’invitation (paquet) ne me fait pas revenir toute seule — seulement si je la rejoins exprès
     (M.mvSkip = M.mvSkip || {})[id] = 1; if(R['mv:' + id] && !R['mv:' + id].deleted) putQuiet([Object.assign(clone(R['mv:' + id]), {deleted:true})]);   // plus de « déménagement » : les autres appareils ne le rejoignent plus d’eux-mêmes
     if(code && !Object.values(TS()).includes(code)) M.spaces = (M.spaces||[]).filter(x=>x.code!==code);
     M.pq = (M.pq||[]).filter(x=>photoCode(x) !== code);
@@ -1905,7 +1917,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     Object.values(R).filter(r=>!r.demo && (r.id===id || r.trip===id)).forEach(r=>markDirty(r.id));
     (M.cloudAsked = M.cloudAsked || {})[id] = Date.now();   // pas de question « mettre ce nouveau voyage dans le cloud ? » pour une copie qu’on garde
     if(cloudMode() === 'trips' && !(M.sync.on && M.sync.code)) { try { cloudSpace(id); } catch(e){} }   // rangé voyage par voyage : la copie va dans SON cloud privé
-    persist(); refresh(); queueSync(); toast(silent ? '📦 Un voyage n’est plus partagé avec toi : tu gardes ta copie' : '🚪 Tu as quitté le voyage partagé');
+    persist(); refresh(); queueSync(); toast(silent ? '📖 ' + MSGT('Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.') : '🚪 Tu as quitté le voyage partagé');
     return true;
   }
   function tripJoin(){
@@ -2067,7 +2079,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     { const xf = list('xfer', r=>r.trip === 'xf:' + code)[0]; if(xf){ await xferApply(xf, code); return; } }
     if(list('packtrip', r=>TS()[r.trip] === code).length){   // paquet de voyages : on rejoint chacun d’eux
       msg.textContent = '📡 Voyages partagés…';
-      if(M.left) list('packtrip', r=>TS()[r.trip] === code).forEach(r=>{ delete M.left[r.tid]; });   // rejoindre exprès : les voyages quittés reviennent
+      if(M.left) list('packtrip', r=>TS()[r.trip] === code).forEach(r=>{ delete M.left[r.tid]; if(R[r.tid] && R[r.tid].ro){ const x = clone(R[r.tid]); delete x.ro; delete x.roBy; R[r.tid] = x; markDirty(r.tid); } });   // rejoindre exprès : les voyages quittés reviennent
       await packApply(); const codes = [...new Set(list('packtrip', r=>TS()[r.trip] === code).map(r=>r.code))];
       for(const c of codes){ try { await syncSpace(spaceObj(c), true); } catch(e){} }
       persist(); closeSheet(true); refresh(); const first = Object.keys(TS()).find(k=>codes.includes(TS()[k]) && R[k] && R[k].type === 'trip'); if(first) go(first); joinPick(codes); return; }

@@ -249,7 +249,13 @@
     const sub = document.getElementById('tabsC'), y = sub && sub.style.display!=='none' ? sub.getBoundingClientRect().top + window.scrollY : 0;
     if(window.scrollY > y && y) window.scrollTo({top:y}); else if(!y) window.scrollTo({top:0});
   }
-  function refresh(){ if(M.trip===LEGACY){ renderHeader(); return; } applyMode(); }
+  function refresh(){ if(M.trip===LEGACY){ renderHeader(); return; } applyMode(); roBand(); }
+  // 📖 bandeau « lecture seule » en haut d’un voyage dont on a été retiré
+  function roBand(){ try { const t = trip(), b = document.getElementById('cv-body'); let el = document.getElementById('cv-roban');
+    if(!(t && t.ro && b)){ if(el) el.remove(); return; }
+    if(!el || el.parentNode !== b){ if(el) el.remove(); el = document.createElement('div'); el.id = 'cv-roban'; el.className = 'v-box'; el.style.cssText = 'margin:0 0 12px;border-left:4px solid var(--gold,#e0b030)'; b.prepend(el); }
+    el.innerHTML = '📖 <b>' + esc(MSGT('Lecture seule')) + '</b><br><small>' + esc(MSGT('Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.')) + '</small>';
+  } catch(e){} }
 
   function phaseTheme(){ const t = M.trip !== LEGACY && trip(), ph = t ? tripPhase(t) : 'prep'; const was = document.body.className; document.body.classList.toggle('cv-ph-live', ph === 'live'); document.body.classList.toggle('cv-ph-past', ph === 'past'); if(was !== document.body.className && typeof viPhase === 'function') try { viPhase(); } catch(e){}
     // barre d'état Android (appli Google Play et Chrome) : même couleur que l'en-tête de la période

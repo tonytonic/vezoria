@@ -265,6 +265,9 @@
     const h = decodeURIComponent(location.hash || ''); const m = h.match(/#(rejoindre|suivre)=([A-Z0-9-]{8,})/i); if(!m) return;
     history.replaceState(null, '', location.pathname + location.search);
     const code = m[2].toUpperCase();
+    // 🌐 lien de compagnon ouvert dans le NAVIGATEUR (iPhone : jamais dans l’appli de l’écran d’accueil) : on ne rejoint RIEN ici,
+    //    sinon c’est ce navigateur qui prendrait l’invitation personnelle ; la page propose de la copier pour la coller dans l’appli.
+    if(m[1].toLowerCase() !== 'suivre' && !isInstalled()){ const j0 = M.joinCode; M.joinCode = code; let g = false; try { g = installGate(); } catch(e){} if(g){ persist(); return; } M.joinCode = j0; }   // (accès navigateur voulu : ?web=1, localhost → comme avant)
     if(m[1].toLowerCase() !== 'suivre' && !(M.me && prof(M.me))){ M.joinCode = code; persist(); const ci = document.getElementById('cv-scode'); if(ci) obJoinPrefill(); return; }
     if(m[1].toLowerCase() === 'suivre'){ followGo(code); return; }
     if(Object.values(TS()).includes(code)){ const tid = Object.keys(TS()).find(k=>TS()[k]===code); if(R[tid]) go(tid); return; }
@@ -1930,7 +1933,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06s'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-06u'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
