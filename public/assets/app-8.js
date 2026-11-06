@@ -771,7 +771,7 @@
     const lvP = P.filter(x=>x.ts.some(t=>tripPhase(t) === 'live'));
     const comp = `<div class="sp2-sh"><div class="sp2-sec">${SVG_PPL}<b>${esc(MSGT('Mes compagnons de voyage'))}</b>${spLive(lvP.map(x=>pname(x.pid)))}</div>${myTripsAll().length ? `<button type="button" class="sp2-add2" onclick="CV.spCompAdd()">＋ ${esc(MSGT('Ajouter'))}</button>` : ''}</div>
       ${P.length ? `<button type="button" class="sp2-avs" onclick="CV.spCompSheet()">${P.slice(0, 4).map(x=>pav(x.pid, 'av-xl')).join('')}${P.length > 4 ? `<span class="av av-xl av-more">+${P.length - 4}</span>` : ''}</button>
-        <div class="sp2-pills"><button type="button" onclick="CV.spCompSheet()">${esc(MSGT('Tous mes voyages'))}</button><button type="button" class="soft" onclick="CV.spCompSheet()">${esc(MSGT('Voyage par voyage'))}</button></div>`
+        <div class="sp2-pills"><button type="button" class="soft" onclick="CV.spCompSheet()">👥 ${esc(MSGT('Qui voit quel voyage'))}</button></div>`
       : `<div class="sp2-empty">${esc(MSGT('Invite quelqu’un dans un voyage : il apparaîtra ici, et tu choisiras ce qu’il peut voir.'))}</div>${trip() && !trip().demo ? `<div class="sp2-pills"><button type="button" class="soft" onclick="CV.tripInviteNow('${ja(trip().id)}')">📤 ${esc(MSGT('Inviter quelqu’un'))}</button></div>` : ''}`}`;
     const ab = ab2AbHTML(), suis = ab2SuisHTML();   // 👀 abonnés v2
     return `<div class="sp2-top"><h2>${esc(MSGT('Partager'))}</h2><button type="button" class="sp2-share" aria-label="${esc(MSGT('Faire découvrir Vezoria'))}" onclick="CV.shareSheet()">${SVG_SHARE}</button></div>
@@ -835,7 +835,17 @@
   }
   function abSend(c){ const G = abGroups(), ts = G[c] || []; closeSheet(true); if(ts.length === 1 && c !== M.feedAll) return feedShareLink(ts[0]); return carnetInvite(c); }
   // ＋ compagnon : l’inviter dans le voyage ouvert (ou en choisir un)
-  async function spCompAdd(){ const t = trip(); if(t && !t.demo) return tripInviteNow(t.id); const ts = myTripsAll(); if(ts[0]){ go(ts[0].id); return tripInviteNow(ts[0].id); } }
+  // ➕ ajouter un compagnon : on choisit d’abord CE QU’IL PARTAGE avec toi (un voyage, plusieurs, ou tout le carnet)
+  function spCompAdd(){
+    const t = trip(), one = t && !t.demo && myTripsAll().some(x=>x.id === t.id) ? t : null;
+    const ch = (ic, b, sm, fn) => `<button type="button" class="cv-choice" onclick="CV.close();${fn}"><i>${ic}</i><span><b>${b}</b><small>${sm}</small></span></button>`;
+    openSheet(`<h2>➕ ${esc(MSGT('Ajouter un compagnon'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.'))}</div>
+      ${one ? ch('🧳', esc(RF('Un seul voyage : « {0} »', one.titre)), esc(MSGT('Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.')), `CV.tripInviteNow('${ja(one.id)}')`) : ''}
+      ${ch('🗂️', esc(MSGT('Plusieurs voyages, au choix')), esc(MSGT('Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.')), "CV.packSheet('')")}
+      ${ch('📚', esc(MSGT('Tous mes voyages (tout mon carnet)')), esc(MSGT('Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.')), 'CV.memberInvite()')}
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Annuler'))}</button></div>`);
+  }
   // retirer un compagnon : de tous mes voyages, et son code « tout mon carnet » s’il en a un
   async function spCompDel(pid){
     if(!(await uiConfirm(RF('Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.', pname(pid))))) return;
@@ -1942,7 +1952,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06y'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-06z'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
