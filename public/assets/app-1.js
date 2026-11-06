@@ -851,6 +851,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       try { if(movedApply()) changed++; } catch(e){}
       feedMoveCheck().catch(()=>{}); feedGrantCheck().catch(()=>{}); feedOldWipe().catch(()=>{});
       try { mateFeedSync(); } catch(e){}
+      try { roFix(); } catch(e){}
       try { if(await packApply()) { changed++; setTimeout(()=>{ try { syncNow(); } catch(e){} }, 800); } await tripMoveCheck(); linksScan(); inviteCheck().catch(()=>{}); } catch(e){}
       setTimeout(()=>{ tripExtract().catch(()=>{}); }, 20000);
       if(showC) cryptHide('🔒 Données chiffrées et synchronisées');
@@ -1645,6 +1646,13 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     return fail;
   }
   // compagnon : mes paquets → je rejoins les voyages listés, je suis les changements de code, je garde ma copie d’un voyage retiré
+  // 📖 réparation : voyage d’un autre, dont je ne fais plus partie et qui n’est plus partagé avec moi (retiré avant la 06u) → lecture seule
+  function roFix(){
+    if(!M.me) return; const fix = [];
+    list('trip', t=>!t.deleted && !t.demo && !t.ro && t.createdBy && t.createdBy !== M.me && !(t.voyageurs || []).includes(M.me) && !TS()[t.id] && ((M.mvSkip || {})[t.id] || (M.left || {})[t.id]))   // marqué « parti d’un voyage partagé » (jamais un voyage du carnet d’un proche)
+      .forEach(t=>fix.push(Object.assign(clone(t), {ro:1, roAt:Date.now()})));
+    if(fix.length){ putQuiet(fix); refresh(); }
+  }
   async function packApply(){
     const mine = PACKS(), viaP = M.viaP || (M.viaP = {}), viaH = M.viaH || (M.viaH = {}); let n = 0;
     for(const r of list('packtrip', x=>TS()[x.trip] && !mine[TS()[x.trip]] && !(M.left || {})[x.tid])){
