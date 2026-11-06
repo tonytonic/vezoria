@@ -260,7 +260,7 @@
     }
     r.pts.push(p); if(r.pts.length > 1800) r.pts = trkThin(r.pts, 1400);   // 🛰️ longue journée de route : la trace reste sous la limite du serveur (sinon elle ne se synchronise plus)
     trkBuf = r; wlcCheck(p[0], p[1]);
-    if(Date.now() - trkLastSave > (drive ? 60000 : 5 * 60000) || r.pts.length === 1){ trkLastSave = Date.now(); put(r, false); trkBuf = null; fkMine(t.id); }
+    if(Date.now() - trkLastSave > (drive ? 60000 : 2 * 60000) || r.pts.length === 1){ trkLastSave = Date.now(); put(r, false); trkBuf = null; fkMine(t.id); }   // 📍 envoyé toutes les 2 min (1 min en mode trajet)
     if(LV && LV.key === t.id) liveSoon();
     const el = document.querySelector('.cv-trk small'); if(el && M.tab==='prog') el.textContent = r.pts.length + ' point(s) aujourd’hui';
   }

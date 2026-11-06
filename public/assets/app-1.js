@@ -842,7 +842,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       for(const sp of (M.spaces||[])){
         // carnets sans modif à envoyer : 5 min mini entre deux passages (15 min pour les voyages suivis en abonné)
         const fol = list('feedtrip', f=>TS()[f.id] === sp.code).length && !Object.values(FT()).includes(sp.code);
-        if(auto && !(sp.dirty || []).length && sp.last && now0 - sp.last < (fol ? 900000 : 300000)) continue;
+        if(auto && !(sp.dirty || []).length && sp.last && now0 - sp.last < (now0 - (syncNow.live || 0) < 60000 ? 20000 : fol ? 900000 : 300000)) continue;   // 🛰️ carte en direct ouverte : toutes les 20 s
         changed += await syncSpace(sp); }
       try { await branchSync(); quotaLoad(); } catch(e){}   // 🌿 mes voyages partagés comptent dans la place de mon carnet (après la synchro des voyages : un voyage qu’on vient de me passer) · 🫙 place photos
       try { if(movedApply()) changed++; } catch(e){}

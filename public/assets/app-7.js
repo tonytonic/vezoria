@@ -1733,7 +1733,7 @@
         if(/^ft:/.test(key)){ const fr = R['fm:' + key.slice(3)]; if(fr && !fr.deleted){ const F = fmToF(fr);
           mapRich(map, F, me.font, (el, p) => new maplibregl.Marker({element:el, anchor:'center'}).setLngLat([p.lng, p.lat]).addTo(map), true);
           if(!D.people.length && !D.ph.length && F.cities.length){ const b = new maplibregl.LngLatBounds(); F.cities.forEach(c=>b.extend([c.c.lng, c.c.lat])); try { map.fitBounds(b, {padding:80, maxZoom:11, pitch:50, duration:0}); } catch(e){} } } }
-        LV.iv = setInterval(liveTick, 25000); LV.up = setInterval(liveUp, 5000); liveUp();
+        LV.iv = setInterval(liveTick, 20000); setTimeout(liveTick, 1500); LV.up = setInterval(liveUp, 5000); liveUp();
         LV.raf = requestAnimationFrame(liveAnim);
       };
       map.on('style.load', go); map.on('load', go); map.on('error', ()=>{});
@@ -1749,6 +1749,7 @@
   function liveSoon(){ clearTimeout(lvSoonT); lvSoonT = setTimeout(()=>{ if(LV) liveDraw(false); }, 600); }
   async function liveTick(){
     if(!LV || document.visibilityState !== 'visible' || LV.busy) return; LV.busy = true;
+    syncNow.live = Date.now();   // 🛰️ les positions des voyageurs suivis sont relues toutes les 20 s tant que la carte est ouverte (sinon 15 min)
     try { await syncNow(); } catch(e){} finally { if(LV) LV.busy = false; }
     if(LV){ LV.seen = Date.now(); liveDraw(false); liveUp(); }
   }
