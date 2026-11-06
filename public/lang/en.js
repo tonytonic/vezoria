@@ -3348,4 +3348,7 @@ I18N.load({
 "Tu suis déjà {0} : rien ne change pour toi.":"You already follow {0}: nothing changes for you.",
 "Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"This link was probably meant for someone else: let the person who sent it know.",
 "km à pied":"km on foot",
-"J’ai reçu une invitation (compagnon ou abonné)":"I got an invitation (companion or follower)"});
+"J’ai reçu une invitation (compagnon ou abonné)":"I got an invitation (companion or follower)",
+"Retirer {0} du voyage « {1} » ?":"Remove {0} from the trip “{1}”?",
+"Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"They no longer count in the expenses and lose access to the shared trip: they keep a read-only copy they can’t edit.",
+"au total":"in total"});

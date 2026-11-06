@@ -3363,4 +3363,7 @@ I18N.load({
 "Tu suis déjà {0} : rien ne change pour toi.":"Segui già {0}: per te non cambia nulla.",
 "Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Questo link era probabilmente per qualcun altro: avvisa chi te l’ha inviato.",
 "km à pied":"km a piedi",
-"J’ai reçu une invitation (compagnon ou abonné)":"Ho ricevuto un invito (compagno o follower)"});
+"J’ai reçu une invitation (compagnon ou abonné)":"Ho ricevuto un invito (compagno o follower)",
+"Retirer {0} du voyage « {1} » ?":"Togliere {0} dal viaggio «{1}»?",
+"Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"Non conta più nelle spese e perde l’accesso al viaggio condiviso: tiene una copia in sola lettura.",
+"au total":"in totale"});

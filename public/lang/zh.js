@@ -6302,4 +6302,7 @@ I18N.load({
 "Tu suis déjà {0} : rien ne change pour toi.":"你已在关注 {0}：对你没有任何变化。",
 "Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"此链接可能是发给别人的：请告诉发送者。",
 "km à pied":"步行公里",
-"J’ai reçu une invitation (compagnon ou abonné)":"我收到邀请（旅伴或关注者）"});
+"J’ai reçu une invitation (compagnon ou abonné)":"我收到邀请（旅伴或关注者）",
+"Retirer {0} du voyage « {1} » ?":"将 {0} 移出旅行「{1}」？",
+"Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"不再计入开支，并失去共享旅行的访问权：保留一份只读副本。",
+"au total":"总计"});

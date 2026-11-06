@@ -3354,4 +3354,7 @@ I18N.load({
 "Tu suis déjà {0} : rien ne change pour toi.":"Je volgt {0} al: voor jou verandert er niets.",
 "Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Deze link was waarschijnlijk voor iemand anders: laat het de afzender weten.",
 "km à pied":"km te voet",
-"J’ai reçu une invitation (compagnon ou abonné)":"Ik kreeg een uitnodiging (reisgenoot of volger)"});
+"J’ai reçu une invitation (compagnon ou abonné)":"Ik kreeg een uitnodiging (reisgenoot of volger)",
+"Retirer {0} du voyage « {1} » ?":"{0} uit de reis ‘{1}’ verwijderen?",
+"Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"Telt niet meer mee in de uitgaven en verliest toegang tot de gedeelde reis: houdt een kopie alleen om te lezen.",
+"au total":"in totaal"});

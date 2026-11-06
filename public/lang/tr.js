@@ -6290,4 +6290,7 @@ I18N.load({
 "Tu suis déjà {0} : rien ne change pour toi.":"{0} kişisini zaten takip ediyorsun: senin için bir şey değişmez.",
 "Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Bu bağlantı muhtemelen başkası içindi: gönderen kişiye haber ver.",
 "km à pied":"km yürüyüş",
-"J’ai reçu une invitation (compagnon ou abonné)":"Davet aldım (yol arkadaşı veya takipçi)"});
+"J’ai reçu une invitation (compagnon ou abonné)":"Davet aldım (yol arkadaşı veya takipçi)",
+"Retirer {0} du voyage « {1} » ?":"{0} “{1}” seyahatinden çıkarılsın mı?",
+"Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"Artık harcamalarda sayılmaz ve paylaşılan seyahate erişimi kalmaz: salt okunur bir kopyası kalır.",
+"au total":"toplam"});

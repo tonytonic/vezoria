@@ -6303,4 +6303,7 @@ I18N.load({
 "Tu suis déjà {0} : rien ne change pour toi.":"أنت تتابع {0} بالفعل: لا يتغير شيء بالنسبة لك.",
 "Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"كان هذا الرابط غالبًا لشخص آخر: أخبر من أرسله إليك.",
 "km à pied":"كم سيرًا",
-"J’ai reçu une invitation (compagnon ou abonné)":"وصلتني دعوة (رفيق أو متابع)"});
+"J’ai reçu une invitation (compagnon ou abonné)":"وصلتني دعوة (رفيق أو متابع)",
+"Retirer {0} du voyage « {1} » ?":"إزالة {0} من رحلة «{1}»؟",
+"Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"لم يعد يُحسب في المصاريف ويفقد الوصول إلى الرحلة المشتركة: تبقى لديه نسخة للقراءة فقط.",
+"au total":"إجمالًا"});

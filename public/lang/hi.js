@@ -6302,4 +6302,7 @@ I18N.load({
 "Tu suis déjà {0} : rien ne change pour toi.":"आप {0} को पहले से फ़ॉलो करते हैं: आपके लिए कुछ नहीं बदलता।",
 "Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"यह लिंक शायद किसी और के लिए था: भेजने वाले को बता दें।",
 "km à pied":"किमी पैदल",
-"J’ai reçu une invitation (compagnon ou abonné)":"मुझे निमंत्रण मिला (साथी या फ़ॉलोअर)"});
+"J’ai reçu une invitation (compagnon ou abonné)":"मुझे निमंत्रण मिला (साथी या फ़ॉलोअर)",
+"Retirer {0} du voyage « {1} » ?":"{0} को यात्रा “{1}” से हटाएं?",
+"Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"अब खर्चों में नहीं गिना जाएगा और साझा यात्रा तक पहुंच खत्म: केवल पढ़ने वाली कॉपी रहेगी।",
+"au total":"कुल"});

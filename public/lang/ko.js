@@ -6302,4 +6302,7 @@ I18N.load({
 "Tu suis déjà {0} : rien ne change pour toi.":"이미 {0}님을 팔로우 중이에요: 달라지는 건 없어요.",
 "Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"이 링크는 다른 사람용이었던 것 같아요: 보낸 사람에게 알려 주세요.",
 "km à pied":"km 도보",
-"J’ai reçu une invitation (compagnon ou abonné)":"초대를 받았어요 (동행 또는 팔로워)"});
+"J’ai reçu une invitation (compagnon ou abonné)":"초대를 받았어요 (동행 또는 팔로워)",
+"Retirer {0} du voyage « {1} » ?":"{0}님을 ‘{1}’ 여행에서 뺄까요?",
+"Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"더 이상 지출에 포함되지 않고 공유 여행에 접근할 수 없어요: 읽기 전용 사본만 남아요.",
+"au total":"총"});

@@ -6303,4 +6303,7 @@ I18N.load({
 "Tu suis déjà {0} : rien ne change pour toi.":"Ты уже подписан(а) на {0}: для тебя ничего не меняется.",
 "Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Скорее всего, ссылка предназначалась другому человеку: предупреди отправителя.",
 "km à pied":"км пешком",
-"J’ai reçu une invitation (compagnon ou abonné)":"Мне пришло приглашение (попутчик или подписчик)"});
+"J’ai reçu une invitation (compagnon ou abonné)":"Мне пришло приглашение (попутчик или подписчик)",
+"Retirer {0} du voyage « {1} » ?":"Удалить {0} из поездки «{1}»?",
+"Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"Больше не учитывается в расходах и теряет доступ к общей поездке: остаётся копия только для чтения.",
+"au total":"всего"});

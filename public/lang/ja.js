@@ -6302,4 +6302,7 @@ I18N.load({
 "Tu suis déjà {0} : rien ne change pour toi.":"すでに {0} をフォローしています：何も変わりません。",
 "Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"このリンクは別の人宛てだったようです：送ってくれた人に知らせてください。",
 "km à pied":"km 徒歩",
-"J’ai reçu une invitation (compagnon ou abonné)":"招待を受け取った（仲間またはフォロワー）"});
+"J’ai reçu une invitation (compagnon ou abonné)":"招待を受け取った（仲間またはフォロワー）",
+"Retirer {0} du voyage « {1} » ?":"{0} を旅行「{1}」から外しますか？",
+"Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"支出の対象から外れ、共有旅行にアクセスできなくなります：閲覧のみのコピーが残ります。",
+"au total":"合計"});
