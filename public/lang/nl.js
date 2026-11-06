@@ -3251,4 +3251,7 @@ I18N.load({
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"Je zit in deze reis via een persoonlijke uitnodiging: die kun je niet doorgeven. Vraag de persoon die jou uitnodigde om iemand toe te voegen.",
 "Qui invites-tu dans ce voyage ? Son prénom :":"Wie nodig je uit voor deze reis? Voornaam:",
 "Invitation…":"Uitnodiging…",
-"après ton arrivée":"na je aankomst"});
+"après ton arrivée":"na je aankomst",
+"Tout le monde en direct":"Iedereen live",
+"{0} voyage(s) en cours":"{0} lopende reis/reizen",
+"une seule carte":"één kaart"});

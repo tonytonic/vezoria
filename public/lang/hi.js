@@ -6199,4 +6199,7 @@ I18N.load({
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"आप निजी निमंत्रण से इस यात्रा में हैं: इसे आगे नहीं दिया जा सकता। किसी को जोड़ने के लिए आमंत्रित करने वाले से कहें।",
 "Qui invites-tu dans ce voyage ? Son prénom :":"इस यात्रा में किसे आमंत्रित कर रहे हैं? उनका नाम:",
 "Invitation…":"निमंत्रण…",
-"après ton arrivée":"आपके पहुँचने के बाद"});
+"après ton arrivée":"आपके पहुँचने के बाद",
+"Tout le monde en direct":"सब लाइव",
+"{0} voyage(s) en cours":"{0} यात्राएँ चल रही हैं",
+"une seule carte":"एक ही नक्शा"});

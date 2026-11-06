@@ -6199,4 +6199,7 @@ I18N.load({
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"你通过个人邀请加入此旅行：邀请无法转让。要邀请他人，请联系邀请你的人。",
 "Qui invites-tu dans ce voyage ? Son prénom :":"你要邀请谁加入这次旅行？对方的名字：",
 "Invitation…":"邀请中…",
-"après ton arrivée":"你到达之后"});
+"après ton arrivée":"你到达之后",
+"Tout le monde en direct":"所有人实时位置",
+"{0} voyage(s) en cours":"{0} 个进行中的旅行",
+"une seule carte":"一张地图"});

@@ -6187,4 +6187,7 @@ I18N.load({
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"Bu seyahate kişisel bir davetle katıldın: başkasına aktarılamaz. Birini eklemek için seni davet edene sor.",
 "Qui invites-tu dans ce voyage ? Son prénom :":"Bu seyahate kimi davet ediyorsun? Adı:",
 "Invitation…":"Davet…",
-"après ton arrivée":"varışından sonra"});
+"après ton arrivée":"varışından sonra",
+"Tout le monde en direct":"Herkes canlı",
+"{0} voyage(s) en cours":"{0} süren seyahat",
+"une seule carte":"tek harita"});

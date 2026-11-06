@@ -3260,4 +3260,7 @@ I18N.load({
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"Sei in questo viaggio con un invito personale: non si può passare ad altri. Per far venire qualcuno, chiedi a chi ti ha invitato.",
 "Qui invites-tu dans ce voyage ? Son prénom :":"Chi inviti in questo viaggio? Il suo nome:",
 "Invitation…":"Invito…",
-"après ton arrivée":"dopo il tuo arrivo"});
+"après ton arrivée":"dopo il tuo arrivo",
+"Tout le monde en direct":"Tutti in diretta",
+"{0} voyage(s) en cours":"{0} viaggio/i in corso",
+"une seule carte":"una sola mappa"});

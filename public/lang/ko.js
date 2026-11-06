@@ -6199,4 +6199,7 @@ I18N.load({
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"개인 초대로 이 여행에 참여 중이라 초대를 넘길 수 없습니다. 다른 사람을 부르려면 초대한 사람에게 요청하세요.",
 "Qui invites-tu dans ce voyage ? Son prénom :":"이 여행에 누구를 초대하나요? 이름:",
 "Invitation…":"초대 중…",
-"après ton arrivée":"도착 후"});
+"après ton arrivée":"도착 후",
+"Tout le monde en direct":"모두 실시간",
+"{0} voyage(s) en cours":"진행 중인 여행 {0}개",
+"une seule carte":"하나의 지도"});

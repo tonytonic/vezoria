@@ -6200,4 +6200,7 @@ I18N.load({
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"Вы в поездке по личному приглашению: его нельзя передать. Чтобы позвать кого-то, попросите пригласившего.",
 "Qui invites-tu dans ce voyage ? Son prénom :":"Кого приглашаете в поездку? Имя:",
 "Invitation…":"Приглашение…",
-"après ton arrivée":"после вашего прибытия"});
+"après ton arrivée":"после вашего прибытия",
+"Tout le monde en direct":"Все в прямом эфире",
+"{0} voyage(s) en cours":"Идёт путешествий: {0}",
+"une seule carte":"одна карта"});

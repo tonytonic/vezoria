@@ -6199,4 +6199,7 @@ I18N.load({
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"個人招待で参加中のため、招待は譲渡できません。誰かを招くには招待してくれた人に頼んでください。",
 "Qui invites-tu dans ce voyage ? Son prénom :":"この旅行に誰を招待しますか？名前：",
 "Invitation…":"招待中…",
-"après ton arrivée":"到着後"});
+"après ton arrivée":"到着後",
+"Tout le monde en direct":"みんなのライブ",
+"{0} voyage(s) en cours":"進行中の旅行 {0}",
+"une seule carte":"1枚の地図"});
