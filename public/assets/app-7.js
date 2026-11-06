@@ -1661,7 +1661,18 @@
   function liveBtnHTML(key, live, n, title){
     return `<button type="button" class="lv-go${live.length ? ' on' : ''}" onclick="CV.liveOpen('${ja(key)}')"><span class="lv-dot"><i></i></span><span class="tx"><b>${live.length ? 'Suivre en direct sur la carte 3D' : 'La carte 3D du voyage'}</b>${title ? `<small class="lv-tt" data-notr>${esc(title)}</small>` : ''}<small>${live.length ? '<span data-notr>' + esc(live.slice(0, 4).join(', ')) + '</span>' + (live.length > 4 ? ' +' + (live.length - 4) : '') + ' · position mise à jour toute seule' : n ? 'La route de chacun, ses photos, sa dernière position' : 'Les photos du voyage sur la carte'}</small></span><span class="lv-ar">›</span></button>`;
   }
+  // 🌍 tout le monde sur une seule carte : chaque voyage en cours (les miens et ceux que je suis), chacun à sa couleur
+  function liveAllKeys(){
+    const fol = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted).filter(f=>{ const r = feedTrkRec(f.id); return tripPhase(f) === 'live' || (r && r.people.some(p=>Date.now() - fkLast(p) < LIVE_MS)); }).map(f=>f.id);
+    const mine = myTrips().filter(t=>!t.demo && tripPhase(t) === 'live').map(t=>t.id);
+    return [...mine, ...fol];
+  }
   function liveData(key){
+    if(key === '*all'){ const ks = liveAllKeys(), seen = {}, people = [], ph = [];
+      ks.forEach(k=>{ let D; try { D = liveData(k); } catch(e){ return; } const tt = D.title || '';
+        D.people.filter(p=>p.pts && p.pts.length).forEach(p=>{ let n = p.n; if(seen[n]) n = p.n + ' · ' + tt; seen[n] = 1; people.push(Object.assign({}, p, {n, tt, k})); });
+        D.ph.slice().sort((a, b)=>String(b.d || '').localeCompare(String(a.d || ''))).slice(0, 12).forEach(x=>ph.push(Object.assign({}, x, {by:[x.by, tt].filter(Boolean).join(' · ')}))); });
+      return {title: MSGT('Tout le monde en direct'), sub: RF('{0} voyage(s) en cours', ks.length), people, ph}; }
     if(/^ft:/.test(key)){ const r = feedTrkRec(key), ft = R[key] || {};
       return {title: ft.titre || '', sub: 'Voyage de ' + ftTeamTxt(ft), people: r ? r.people.map(p=>({n:p.n || '—', c:hexc(p.c, '#0ea5e9'), pts:p.pts || [], gps:!!p.gps})) : [],
         ph: list('feed', f=>f.trip===key && f.lat != null && f.lng != null).map(f=>({id:f.id, lat:+f.lat, lng:+f.lng, ph:(f.photos||[])[0] || '', t:f.titre || f.lieu || '', by:f.by || '', d:f.date || ''}))}; }
@@ -1768,6 +1779,7 @@
   }
   function liveFocus(i){
     if(!LV || !LV.map || !LV.D) return; const p = LV.D.people[+i]; if(!p) return; const l = p.pts[p.pts.length-1];
+    if(LV.key === '*all' && LV.focus === p.n && p.k){ liveOpen(p.k); return; }   // 2e touche : son voyage, en grand
     LV.focus = p.n; LV.map.flyTo({center:[l[1], l[0]], zoom:16, pitch:65, bearing:(LV.map.getBearing() + 40) % 360, duration:2200, essential:true});
     document.querySelectorAll('#lv-people .lv-p').forEach((x, k)=>x.classList.toggle('on', k === +i));
   }
@@ -1791,7 +1803,7 @@
       if(!m){ const el = document.createElement('div'); el.className = 'lv-pin'; el.onclick = ev => { ev.stopPropagation(); liveFocus(LV.D.people.findIndex(q=>q.n === k)); };
         m = LV.mk[k] = {el, mk:new maplibregl.Marker({element:el, anchor:'bottom', opacity:'1', opacityWhenCovered:'1'}).setLngLat([l[1], l[0]]).addTo(map), at:[l[1], l[0]]}; }
       m.el.style.setProperty('--c', p.c); m.el.classList.toggle('on', !!on);
-      m.el.innerHTML = `<span class="lv-ring"></span><span class="lv-av">${esc(((p.n || '?')[0] || '?').toUpperCase())}</span><span class="lv-nm"><b data-notr>${esc(p.n)}</b><small>${p.gps ? '🛰️' : '📸'} ${l[2] ? vzWhen(l[2]) : ''}</small></span>`;
+      m.el.innerHTML = `<span class="lv-ring"></span><span class="lv-av">${esc(((p.n || '?')[0] || '?').toUpperCase())}</span><span class="lv-nm"><b data-notr>${esc(p.n)}</b><small>${p.tt ? '<span data-notr>' + esc(p.tt) + '</span> · ' : ''}${p.gps ? '🛰️' : '📸'} ${l[2] ? vzWhen(l[2]) : ''}</small></span>`;
       liveMove(m, [l[1], l[0]]); });
     Object.keys(LV.mk).forEach(k=>{ if(!keep.has(k)){ LV.mk[k].mk.remove(); delete LV.mk[k]; } });
     // photos : vignettes posées sur la carte, touchées → elles s’agrandissent

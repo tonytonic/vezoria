@@ -633,8 +633,9 @@
         const live = r ? r.people.filter(p=>Date.now() - fkLast(p) < LIVE_MS) : [], cur = f.debut && tripPhase(f) === 'live'; if(!live.length && !cur) return null;
         return {f, r, live, at: r ? Math.max(...r.people.map(fkLast)) : 0}; }).filter(Boolean).sort((a, b)=>b.live.length - a.live.length || b.at - a.at);
       const sig = L.map(x=>x.f.id + x.live.map(p=>p.n + fkLast(p)).join()).join('|');
-      if(!L.length) return `<div class="cv-follive" data-sg=""></div>`;
-      return `<div class="cv-follive" data-sg="${esc(sig)}"><div class="sh-sec">🛰️ En ce moment</div>${L.slice(0, 6).map(x=>liveBtnHTML(x.f.id, x.live.map(p=>p.n), x.r ? x.r.people.length : 0, x.f.titre)).join('')}</div>`;
+      const AK = liveAllKeys(), all = AK.length >= 2 ? `<button type="button" class="lv-go lv-all on" onclick="CV.liveOpen('*all')"><span class="lv-dot"><i></i></span><span class="tx"><b>🌍 ${esc(MSGT('Tout le monde en direct'))}</b><small>${esc(RF('{0} voyage(s) en cours', AK.length))} · ${esc(MSGT('une seule carte'))}</small></span><span class="lv-ar">›</span></button>` : '';
+      if(!L.length && !all) return `<div class="cv-follive" data-sg=""></div>`;
+      return `<div class="cv-follive" data-sg="${esc(sig + '#' + AK.join())}"><div class="sh-sec">🛰️ En ce moment</div>${all}${L.slice(0, 6).map(x=>liveBtnHTML(x.f.id, x.live.map(p=>p.n), x.r ? x.r.people.length : 0, x.f.titre)).join('')}</div>`;
     } catch(e){ return ''; }
   }
   // la page des voyages suivis reste à jour toute seule (toutes les 30 s)
@@ -1749,7 +1750,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06e'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-06f'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
