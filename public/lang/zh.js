@@ -6314,4 +6314,9 @@ I18N.load({
 "Tous mes voyages (tout mon carnet)":"我的全部旅行（整本手账）",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"看到并补充你所有的旅行，包括以后的。",
 "Qui voit quel voyage":"谁能看到哪次旅行",
-"Je coupe son accès aux voyages partagés…":"正在取消其对共享旅行的访问…"});
+"Je coupe son accès aux voyages partagés…":"正在取消其对共享旅行的访问…",
+"J’ai reçu une invitation":"我收到了邀请",
+"Je partage un code":"我来分享代码",
+"Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"你还没有关注任何人。有人发来链接时，用「我收到了邀请」粘贴。",
+"J’aime et commentaires":"点赞和评论",
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"你的旅行还没有点赞或评论。"});

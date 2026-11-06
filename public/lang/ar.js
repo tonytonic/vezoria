@@ -6315,4 +6315,9 @@ I18N.load({
 "Tous mes voyages (tout mon carnet)":"كل رحلاتي (دفتري كله)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"ترى وتكمل كل رحلاتك الحالية والقادمة.",
 "Qui voit quel voyage":"من يرى أي رحلة",
-"Je coupe son accès aux voyages partagés…":"جارٍ إلغاء وصوله إلى الرحلات المشتركة…"});
+"Je coupe son accès aux voyages partagés…":"جارٍ إلغاء وصوله إلى الرحلات المشتركة…",
+"J’ai reçu une invitation":"وصلتني دعوة",
+"Je partage un code":"أشارك رمزًا",
+"Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"لا تتابع أحدًا بعد. عندما يرسل لك أحدهم رابطه، الصقه عبر «وصلتني دعوة».",
+"J’aime et commentaires":"الإعجابات والتعليقات",
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"لا إعجابات ولا تعليقات على رحلاتك بعد."});

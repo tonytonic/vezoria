@@ -6315,4 +6315,9 @@ I18N.load({
 "Tous mes voyages (tout mon carnet)":"Все мои поездки (весь дневник)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Видит и дополняет все твои поездки, нынешние и будущие.",
 "Qui voit quel voyage":"Кто видит какую поездку",
-"Je coupe son accès aux voyages partagés…":"Закрываю доступ к общим поездкам…"});
+"Je coupe son accès aux voyages partagés…":"Закрываю доступ к общим поездкам…",
+"J’ai reçu une invitation":"Мне пришло приглашение",
+"Je partage un code":"Поделиться кодом",
+"Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"Ты пока ни на кого не подписан. Когда пришлют ссылку, вставь её через «Мне пришло приглашение».",
+"J’aime et commentaires":"Лайки и комментарии",
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"Пока нет лайков и комментариев."});

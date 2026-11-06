@@ -6314,4 +6314,9 @@ I18N.load({
 "Tous mes voyages (tout mon carnet)":"すべての旅行（手帳全体）",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"今の旅行もこれからの旅行も、すべて見て編集できます。",
 "Qui voit quel voyage":"誰がどの旅行を見られるか",
-"Je coupe son accès aux voyages partagés…":"共有旅行へのアクセスを解除中…"});
+"Je coupe son accès aux voyages partagés…":"共有旅行へのアクセスを解除中…",
+"J’ai reçu une invitation":"招待を受け取った",
+"Je partage un code":"コードを共有する",
+"Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"まだ誰もフォローしていません。リンクが届いたら「招待を受け取った」で貼り付けてください。",
+"J’aime et commentaires":"いいねとコメント",
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"まだいいねやコメントはありません。"});

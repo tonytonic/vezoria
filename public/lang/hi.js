@@ -6314,4 +6314,9 @@ I18N.load({
 "Tous mes voyages (tout mon carnet)":"मेरी सभी यात्राएं (पूरी डायरी)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"आपकी सभी यात्राएं, अभी की और आने वाली, देखेगा और पूरा करेगा।",
 "Qui voit quel voyage":"कौन कौन-सी यात्रा देखता है",
-"Je coupe son accès aux voyages partagés…":"साझा यात्राओं तक पहुंच हटाई जा रही है…"});
+"Je coupe son accès aux voyages partagés…":"साझा यात्राओं तक पहुंच हटाई जा रही है…",
+"J’ai reçu une invitation":"मुझे निमंत्रण मिला",
+"Je partage un code":"मैं कोड साझा करूं",
+"Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"आप अभी किसी को फ़ॉलो नहीं करते। कोई लिंक भेजे तो “मुझे निमंत्रण मिला” से पेस्ट करें।",
+"J’aime et commentaires":"लाइक और टिप्पणियां",
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"आपकी यात्राओं पर अभी कोई लाइक या टिप्पणी नहीं।"});

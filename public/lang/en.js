@@ -3360,4 +3360,9 @@ I18N.load({
 "Tous mes voyages (tout mon carnet)":"All my trips (my whole journal)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"They see and complete all your trips, current and future.",
 "Qui voit quel voyage":"Who sees which trip",
-"Je coupe son accès aux voyages partagés…":"Removing their access to shared trips…"});
+"Je coupe son accès aux voyages partagés…":"Removing their access to shared trips…",
+"J’ai reçu une invitation":"I got an invitation",
+"Je partage un code":"I share a code",
+"Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"You don’t follow anyone yet. When someone sends you their follower link, paste it with “I got an invitation”.",
+"J’aime et commentaires":"Likes and comments",
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"No likes or comments on your trips yet."});

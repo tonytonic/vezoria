@@ -3366,4 +3366,9 @@ I18N.load({
 "Tous mes voyages (tout mon carnet)":"Al mijn reizen (mijn hele dagboek)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Ze ziet en vult al je reizen aan, nu en later.",
 "Qui voit quel voyage":"Wie ziet welke reis",
-"Je coupe son accès aux voyages partagés…":"Toegang tot gedeelde reizen wordt verwijderd…"});
+"Je coupe son accès aux voyages partagés…":"Toegang tot gedeelde reizen wordt verwijderd…",
+"J’ai reçu une invitation":"Ik kreeg een uitnodiging",
+"Je partage un code":"Ik deel een code",
+"Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"Je volgt nog niemand. Als iemand je zijn link stuurt, plak je hem met ‘Ik kreeg een uitnodiging’.",
+"J’aime et commentaires":"Likes en reacties",
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"Nog geen likes of reacties op je reizen."});

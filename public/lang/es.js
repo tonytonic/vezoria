@@ -3376,4 +3376,9 @@ I18N.load({
 "Tous mes voyages (tout mon carnet)":"Todos mis viajes (todo mi cuaderno)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Ve y completa todos tus viajes, los de hoy y los futuros.",
 "Qui voit quel voyage":"Quién ve qué viaje",
-"Je coupe son accès aux voyages partagés…":"Quitando su acceso a los viajes compartidos…"});
+"Je coupe son accès aux voyages partagés…":"Quitando su acceso a los viajes compartidos…",
+"J’ai reçu une invitation":"Recibí una invitación",
+"Je partage un code":"Comparto un código",
+"Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"Aún no sigues a nadie. Cuando alguien te envíe su enlace, pégalo con «Recibí una invitación».",
+"J’aime et commentaires":"Me gusta y comentarios",
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"Aún no hay me gusta ni comentarios en tus viajes."});

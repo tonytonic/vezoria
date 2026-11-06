@@ -3375,4 +3375,9 @@ I18N.load({
 "Tous mes voyages (tout mon carnet)":"Tutti i miei viaggi (tutto il diario)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Vede e completa tutti i tuoi viaggi, attuali e futuri.",
 "Qui voit quel voyage":"Chi vede quale viaggio",
-"Je coupe son accès aux voyages partagés…":"Tolgo l’accesso ai viaggi condivisi…"});
+"Je coupe son accès aux voyages partagés…":"Tolgo l’accesso ai viaggi condivisi…",
+"J’ai reçu une invitation":"Ho ricevuto un invito",
+"Je partage un code":"Condivido un codice",
+"Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"Non segui ancora nessuno. Quando qualcuno ti manda il suo link, incollalo con «Ho ricevuto un invito».",
+"J’aime et commentaires":"Mi piace e commenti",
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"Ancora nessun mi piace o commento sui tuoi viaggi."});

@@ -6314,4 +6314,9 @@ I18N.load({
 "Tous mes voyages (tout mon carnet)":"내 모든 여행 (수첩 전체)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"지금과 앞으로의 모든 여행을 보고 채워요.",
 "Qui voit quel voyage":"누가 어떤 여행을 보는지",
-"Je coupe son accès aux voyages partagés…":"공유 여행 접근을 해제하는 중…"});
+"Je coupe son accès aux voyages partagés…":"공유 여행 접근을 해제하는 중…",
+"J’ai reçu une invitation":"초대를 받았어요",
+"Je partage un code":"코드 공유하기",
+"Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"아직 팔로우하는 사람이 없어요. 링크를 받으면 ‘초대를 받았어요’로 붙여넣으세요.",
+"J’aime et commentaires":"좋아요와 댓글",
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"아직 좋아요나 댓글이 없어요."});

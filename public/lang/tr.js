@@ -6302,4 +6302,9 @@ I18N.load({
 "Tous mes voyages (tout mon carnet)":"Tüm seyahatlerim (tüm günlüğüm)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Şimdiki ve gelecekteki tüm seyahatlerini görür ve tamamlar.",
 "Qui voit quel voyage":"Kim hangi seyahati görüyor",
-"Je coupe son accès aux voyages partagés…":"Paylaşılan seyahatlere erişimi kaldırılıyor…"});
+"Je coupe son accès aux voyages partagés…":"Paylaşılan seyahatlere erişimi kaldırılıyor…",
+"J’ai reçu une invitation":"Davet aldım",
+"Je partage un code":"Kod paylaşıyorum",
+"Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"Henüz kimseyi takip etmiyorsun. Biri bağlantısını gönderince “Davet aldım” ile yapıştır.",
+"J’aime et commentaires":"Beğeniler ve yorumlar",
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"Seyahatlerinde henüz beğeni veya yorum yok."});
