@@ -6298,4 +6298,7 @@ I18N.load({
 "Lecture seule":"Только чтение",
 "Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"Тебя удалили из поездки: всё остаётся, но изменять нельзя. Для ❤️ и 💬 подпишись.",
 "Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"Поездка остаётся у неё только для чтения. Если она показана подписчикам, она получит ссылку для ❤️ и 💬. Остальные продолжают как обычно.",
-"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Ваши поездки остаются у неё только для чтения, изменения больше не приходят."});
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Ваши поездки остаются у неё только для чтения, изменения больше не приходят.",
+"C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"Это тот же человек, что и {0}: ссылка, видимо, отправлена по ошибке. Удали её и создай новую для нужного человека.",
+"Tu suis déjà {0} : rien ne change pour toi.":"Ты уже подписан(а) на {0}: для тебя ничего не меняется.",
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Скорее всего, ссылка предназначалась другому человеку: предупреди отправителя."});

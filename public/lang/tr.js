@@ -6285,4 +6285,7 @@ I18N.load({
 "Lecture seule":"Salt okunur",
 "Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"Bu seyahatten çıkarıldın: her şey sende kalır ama değiştiremezsin. ❤️ ve 💬 için takip et.",
 "Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"Seyahat onda salt okunur kalır. Takipçilere gösteriliyorsa ❤️ ve 💬 için takipçi bağlantısını alır. Diğerleri normal devam eder.",
-"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Seyahatleriniz onda salt okunur kalır, değişikliklerini artık almaz."});
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Seyahatleriniz onda salt okunur kalır, değişikliklerini artık almaz.",
+"C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"Bu kişi {0} ile aynı: bu bağlantı muhtemelen yanlışlıkla gönderildi. Kaldır, sonra doğru kişi için yeni bağlantı oluştur.",
+"Tu suis déjà {0} : rien ne change pour toi.":"{0} kişisini zaten takip ediyorsun: senin için bir şey değişmez.",
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Bu bağlantı muhtemelen başkası içindi: gönderen kişiye haber ver."});

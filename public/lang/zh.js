@@ -6297,4 +6297,7 @@ I18N.load({
 "Lecture seule":"只读",
 "Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"你已被移出此旅行：内容都保留，但不能再修改。要点 ❤️ 和 💬，请关注它。",
 "Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"她以只读方式保留该旅行，不能修改。若旅行对关注者可见，她会收到关注链接以便点 ❤️ 和 💬。其他旅伴照常。",
-"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"她以只读方式保留你们的旅行，不再收到你的修改。"});
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"她以只读方式保留你们的旅行，不再收到你的修改。",
+"C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"这和 {0} 是同一个人：此链接可能是误发的。请移除它，再为正确的人创建新链接。",
+"Tu suis déjà {0} : rien ne change pour toi.":"你已在关注 {0}：对你没有任何变化。",
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"此链接可能是发给别人的：请告诉发送者。"});

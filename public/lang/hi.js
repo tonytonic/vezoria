@@ -6297,4 +6297,7 @@ I18N.load({
 "Lecture seule":"केवल पढ़ने के लिए",
 "Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"आपको इस यात्रा से हटाया गया: सब आपके पास रहेगा, पर बदल नहीं सकते। ❤️ और 💬 के लिए फ़ॉलो करें।",
 "Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"यात्रा उसके पास केवल पढ़ने के लिए रहेगी। अगर फ़ॉलोअर्स को दिखाई जाती है, तो उसे ❤️ और 💬 के लिए फ़ॉलोअर लिंक मिलेगा। बाकी सामान्य रहेंगे।",
-"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"आपकी यात्राएं उसके पास केवल पढ़ने के लिए रहेंगी, बदलाव अब नहीं मिलेंगे।"});
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"आपकी यात्राएं उसके पास केवल पढ़ने के लिए रहेंगी, बदलाव अब नहीं मिलेंगे।",
+"C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"यह वही व्यक्ति है जो {0} है: यह लिंक शायद गलती से भेजा गया। इसे हटाएं, फिर सही व्यक्ति के लिए नया लिंक बनाएं।",
+"Tu suis déjà {0} : rien ne change pour toi.":"आप {0} को पहले से फ़ॉलो करते हैं: आपके लिए कुछ नहीं बदलता।",
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"यह लिंक शायद किसी और के लिए था: भेजने वाले को बता दें।"});

@@ -3343,4 +3343,7 @@ I18N.load({
 "Lecture seule":"Read-only",
 "Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"You were removed from this trip: you keep everything, but can no longer edit it. To add ❤️ and 💬, follow it.",
 "Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"They keep the trip read-only, without editing. If it’s shown to your followers, they get their follower link for ❤️ and 💬. The other companions carry on as usual.",
-"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"They keep your trips read-only and no longer receive your changes."});
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"They keep your trips read-only and no longer receive your changes.",
+"C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"This is the same person as {0}: this link was probably sent by mistake. Remove it, then create a new link for the right person.",
+"Tu suis déjà {0} : rien ne change pour toi.":"You already follow {0}: nothing changes for you.",
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"This link was probably meant for someone else: let the person who sent it know."});

@@ -6298,4 +6298,7 @@ I18N.load({
 "Lecture seule":"للقراءة فقط",
 "Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"تمت إزالتك من هذه الرحلة: تحتفظ بكل شيء لكن لا يمكنك التعديل. لـ❤️ و💬 تابعها.",
 "Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"تحتفظ بالرحلة للقراءة فقط دون تعديل. إن كانت معروضة لمتابعيك تتلقى رابط المتابعة لـ❤️ و💬. يستمر الآخرون كالمعتاد.",
-"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"تحتفظ برحلاتكما للقراءة فقط ولا تتلقى تعديلاتك بعد الآن."});
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"تحتفظ برحلاتكما للقراءة فقط ولا تتلقى تعديلاتك بعد الآن.",
+"C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"هذا هو الشخص نفسه {0}: أُرسل هذا الرابط غالبًا بالخطأ. احذفه ثم أنشئ رابطًا جديدًا للشخص الصحيح.",
+"Tu suis déjà {0} : rien ne change pour toi.":"أنت تتابع {0} بالفعل: لا يتغير شيء بالنسبة لك.",
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"كان هذا الرابط غالبًا لشخص آخر: أخبر من أرسله إليك."});

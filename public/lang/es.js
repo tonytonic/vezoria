@@ -3359,4 +3359,7 @@ I18N.load({
 "Lecture seule":"Solo lectura",
 "Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"Te quitaron de este viaje: lo conservas todo, pero ya no puedes modificarlo. Para poner ❤️ y 💬, síguelo.",
 "Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"Conserva el viaje en solo lectura, sin poder modificarlo. Si se muestra a tus seguidores, recibe su enlace para ❤️ y 💬. Los demás compañeros siguen con normalidad.",
-"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Conserva vuestros viajes en solo lectura y ya no recibe tus cambios."});
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Conserva vuestros viajes en solo lectura y ya no recibe tus cambios.",
+"C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"Es la misma persona que {0}: este enlace se envió seguramente por error. Quítalo y crea un enlace nuevo para la persona correcta.",
+"Tu suis déjà {0} : rien ne change pour toi.":"Ya sigues a {0}: para ti no cambia nada.",
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Este enlace seguramente era para otra persona: avisa a quien te lo envió."});
