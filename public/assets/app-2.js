@@ -2830,6 +2830,16 @@
     night.forEach(i=>out.push(row(i)));
     return out.filter(Boolean).join('');
   }
+  // 🗺️ l’ordre de la journée, avec chaque trajet (marche / métro / taxi) : pour l’écran et pour le PDF
+  function routeLegs(d){
+    const r = dayInfo(d).route, pl = placesOf(d); if(!pl.length || !r || !r.ids) return null;
+    const byId = Object.fromEntries(pl.map(p=>[p.id,p]));
+    if(!(r.ids.every(id=>byId[id]) && pl.every(p=>r.ids.includes(p.id) || (r.miss||[]).includes(p.id)))) return null;
+    const stops = [r.start, ...r.ids.map(id=>Object.assign({}, r.pts[id], {nom:byId[id].nom})), ...(r.fin ? [] : [r.end])];
+    let tot = 0, walk = 0, mins = 0; const legs = [];
+    for(let i=1;i<stops.length;i++){ const dk = km(stops[i-1], stops[i]), a = legAdvice(dk, r.walk||2.5, (r.tr||[]).includes(i-1)); tot += dk; if(a.mode==='walking') walk += dk; mins += a.min; legs.push({dk, a, from:stops[i-1], to:stops[i]}); }
+    return {stops, legs, tot, walk, mins, ids:r.ids, fin:r.fin, loop:r.loop};
+  }
   function routeHTML(d, compact){
     const r = dayInfo(d).route, pl = placesOf(d);
     if(!pl.length) return '';

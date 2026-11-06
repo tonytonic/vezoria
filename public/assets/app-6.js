@@ -1421,7 +1421,12 @@
   /* ---------- 1) Carte « Prochaine étape » ---------- */
   function nextHero(){
     const t = trip(); if(!t || t.archived || t.demo && false) return '';
-    const L = nextMoves(); const nx = L[0]; if(!nx) return '';
+    // 👥 chacun son départ : Claire part de Bruxelles, Anthony de Nantes → « Mon départ » d’abord, un onglet par compagnon
+    const L0 = nextMoves(), V = tv(), mine = M.me && V.includes(M.me) ? M.me : '';
+    const forP = pid => L0.filter(m=>parts(m.it).includes(pid));
+    const who = (M.nhWho && V.includes(M.nhWho)) ? M.nhWho : mine;
+    const L = who ? forP(who) : L0; const nx = L[0]; if(!nx) return '';
+    const tabs = V.length > 1 && L0.some(m=>parts(m.it).length < V.length) ? `<div class="hw">${V.filter(pid=>forP(pid).length).map(pid=>`<button type="button" class="${pid === who ? 'on' : ''}" onclick="CV.nhWho('${ja(pid)}')">${esc(pid === mine ? MSGT('Mon départ') : pname(pid))}</button>`).join('')}</div>` : '';
     if(nx.at - Date.now() > 10*864e5) return '';
     const it = nx.it, td = isoToday(), tm = it.cat==='transport' ? it.heureDep : it.heure;
     const day = it.date === td ? 'Aujourd’hui' : it.date === new Date(Date.now()+864e5).toISOString().slice(0,10) ? 'Demain' : fdate(it.date);
@@ -1431,7 +1436,7 @@
     const b = (ic, l, fn) => `<button type="button" onclick="${fn}"><i>${ic}</i>${l}</button>`;
     const enr = nx.on, pc = enr ? Math.round(100 * (Date.now() - nx.at) / Math.max(1, nx.end - nx.at)) : 0;
     return `<div class="cv-hero${enr ? ' enr' : ''}" id="cv-hero" data-at="${enr ? nx.end : nx.at}" data-on="${enr ? 1 : 0}">
-      <div class="hk">${enr ? '🚀 En route' : 'Prochaine étape'}</div>
+      ${tabs}<div class="hk">${enr ? '🚀 En route' : 'Prochaine étape'}${who && who !== mine ? ' · ' + esc(pname(who)) : ''}</div>
       <div class="ht"><span class="hi">${icon(it)}</span><div><b>${esc(it.titre)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div></div>
       ${enr ? `<div class="hc"><span id="cv-hero-cd">${hhmm(nx.end - Date.now())}</span><small>avant l’arrivée · ${esc(it.heureArr)}</small></div><div class="hpr"><i style="width:${pc}%"></i><b style="left:${pc}%">${icon(it)}</b></div>`
         : `<div class="hc"><span id="cv-hero-cd">${hhmm(nx.at - Date.now())}</span><small>${day}${nx.timed ? ' · ' + esc(tm) : it.cat==='hotel' ? ' · arrivée à l’hôtel' : ''}</small></div>`}
@@ -1439,6 +1444,7 @@
       <div class="hb">${it.cat==='transport' && it.mode==='Avion' && nx.at - Date.now() < 36*3600e3 ? b('🛫','Embarquement',`CV.boardShow('${ja(it.id)}')`) : ''}${b('🧭','Y aller',`CV.nhGo('${ja(it.id)}')`)}${pj ? b('🎫','Billet',`CV.pjOpen('${ja(pj.id)}','${esc(pj.t||'img')}')`) : ''}${it.tel ? b('📞','Appeler',`location.href='tel:${esc(String(it.tel).replace(/[^+\d]/g,''))}'`) : ''}${b('✏️','Fiche',`CV.edit('${ja(it.id)}')`)}</div>
       ${more.length ? `<div class="hn">Ensuite : ${more.map(m=>`${icon(m.it)} ${esc(m.it.titre)} <small>${m.it.date === td ? '' : fshort(m.it.date) + ' '}${esc((m.it.cat==='transport' ? m.it.heureDep : m.it.heure) || '')}</small>`).join(' &nbsp;·&nbsp; ')}</div>` : ''}</div>`;
   }
+  function nhWho(pid){ M.nhWho = pid === M.me ? '' : pid; persist(); refresh(); }
   function nhGo(id){
     const it = R[id]; if(!it) return; const q = encodeURIComponent;
     let u;

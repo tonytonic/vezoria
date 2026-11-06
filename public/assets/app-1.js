@@ -453,9 +453,26 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   /* ✍️ Fil d’abonnés : seul l’AUTEUR publie (le serveur le vérifie). Les abonnés et compagnons lisent, mettent des ❤️ et commentent.
      La clé d’auteur d’un fil est tirée du carnet principal : tous MES téléphones (et les compagnons de mon carnet) ont la même ;
      sans carnet principal, elle est gardée sur ce téléphone. Celle que le serveur a acceptée est retenue (admOk). */
+  const CLMT = {}, LOCKT = {};   // 🔒 liens personnels : mon empreinte de compte par lien, et mes liens à verrouiller (abonnés)
+  // l’empreinte de MON compte : la même sur tous mes appareils (secret gardé dans mon carnet), une autre pour chacun ;
+  // sans carnet en ligne, un secret de ce téléphone. Un lien d’abonné ouvert avec elle ne s’ouvre plus avec aucune autre.
+  function acctSecret(){
+    const r = R.acct; if(r && !r.deleted && r.k) return r.k;
+    const loc = M.acctLocal || (M.acctLocal = hex(crypto.getRandomValues(new Uint8Array(24))));
+    if(M.sync && M.sync.on && M.sync.code && (M.sync.since || M.sync.last)){ try { put({id:'acct', type:'acct', k:loc}, false); } catch(e){} }   // carnet en ligne : le secret le rejoint (mes autres appareils l’auront)
+    return loc;
+  }
+  async function clmPrime(code){
+    try { if(!code || myFeedCode(code)) { if((M.abInv || []).some(x=>x.code === code)) LOCKT[await authCode(code)] = 1; return; }
+      const tok = await authCode(code); if(CLMT[tok]) return;
+      const over = (M.clOver || {})[code]; if(over){ CLMT[tok] = over; return; }   // reçu du navigateur (« passer dans l’appli »)
+      const k = await crypto.subtle.importKey('raw', te.encode('vz-acct:' + acctSecret()), {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
+      CLMT[tok] = hex(await crypto.subtle.sign('HMAC', k, te.encode('vz-claim:' + code))).slice(0, 48);
+    } catch(e){}
+  }
   const ADMT = {}, ADMC = {};   // empreinte du lien abonnés → ma clé d’auteur (ADMC : par code)
   const wsec = () => { if(!M.wsec){ M.wsec = hex(crypto.getRandomValues(new Uint8Array(16))); setTimeout(()=>{ try { persist(); } catch(e){} }, 0); } return M.wsec; };   // gardée : mes ❤️ et commentaires restent modifiables par moi
-  window.__vzHdr = tok => { try { if(!tok || !M) return null; const h = {'X-Carnet-Writer': wsec()}; if(ADMT[tok]) h['X-Carnet-Admin'] = ADMT[tok]; return h; } catch(e){ return null; } };
+  window.__vzHdr = tok => { try { if(!tok || !M) return null; const h = {'X-Carnet-Writer': wsec()}; if(ADMT[tok]) h['X-Carnet-Admin'] = ADMT[tok]; if(CLMT[tok]) h['X-Carnet-Claim'] = CLMT[tok]; if(LOCKT[tok]) h['X-Carnet-Lock'] = '1'; return h; } catch(e){ return null; } };
   const myFeedCode = c => !!c && (c === M.feedAll || (M.abInv || []).some(x=>x.code === c) || Object.values(typeof FT === 'function' ? FT() : {}).includes(c) || !!(M.admOk || {})[c] || (M.fold || []).some(x=>x.code === c));
   async function admKey(code){
     if((M.admOk || {})[code]) return M.admOk[code];
@@ -712,6 +729,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   async function syncSpace(sp, force){
     sp.dirty = (sp.dirty || []).filter(id=>R[id]); let changed = 0;
+    await clmPrime(sp.code);
     const flt = recs => sp.sub ? ab2In(recs, sp) : sp.ivme ? ab2InIv(recs, sp) : sp.mate ? ab2MateIn(recs) : (recs || []);
     const aft = () => { if(sp.sub) ab2Map(sp.code); else if(sp.ivme && sp.of) ab2Map(sp.of); };   // 👀 lien suivi : seulement ses voyages (abonnés v2)   // une fiche qui n’existe plus ici ne reste pas « à envoyer » pour toujours
     try {

@@ -1943,7 +1943,8 @@
     const codes = ab2Subs().map(([c, S])=>S.iv || c).sort();   // 👀 abonnés v2
     const sig = codes.join(',') + '|' + myName() + '|' + JSON.stringify(M.fwAs || {});
     if(M.xfer && M.xfer.c && M.xfer.sig === sig && Date.now() - M.xfer.at < 30 * 864e5) return M.xfer.c;
-    const c = genCode(), rec = {id:'xf:' + devId(), type:'xfer', trip:'xf:' + c, dev:devId(), who:myName() || '', as:M.fwAs || {}, codes, at:Date.now()};
+    const cl = {}; for(const k of codes){ try { await clmPrime(k); const v = CLMT[await authCode(k)]; if(v) cl[k] = v; } catch(e){} }   // 🔒 mes liens personnels restent à moi dans l’appli
+    const c = genCode(), rec = {id:'xf:' + devId(), type:'xfer', trip:'xf:' + c, dev:devId(), who:myName() || '', as:M.fwAs || {}, codes, cl, at:Date.now()};
     const sp = {code:c, since:0, dirty:[], last:0, err:''}; (M.spaces = M.spaces || []).push(sp); TS()['xf:' + c] = c;
     try { await spacePushOnly(sp, [rec]); }
     finally { M.spaces = M.spaces.filter(x=>x !== sp); delete TS()['xf:' + c]; delete R[rec.id]; persist(); }
@@ -1955,7 +1956,7 @@
     closeSheet(true); cryptShow('📲 ' + MSGT('Je récupère les voyages que tu suis…'));
     try {
       if(x.who && !M.followName) M.followName = x.who;
-      M.fwAs = Object.assign(M.fwAs || {}, x.as || {}); M.fwChk = M.fwChk || {};
+      M.fwAs = Object.assign(M.fwAs || {}, x.as || {}); M.fwChk = M.fwChk || {}; M.clOver = Object.assign(M.clOver || {}, x.cl || {});
       const k = await fKey(), ib = inbox();
       for(const c of x.codes || []){
         M.fwChk[c] = 1; if(!M.fwAs[c] && x.who) M.fwAs[c] = x.who;

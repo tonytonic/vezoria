@@ -729,29 +729,58 @@
       const D = await newPdf((opt ? PT(opt.t) : 'Carnet de route') + ' · ' + t.titre);
       D.cover(opt ? PT(opt.t) : 'Carnet de route', t.titre, [tripDatesLong(t), t.sous||''].filter(Boolean).join(' · '), whoSel==='all' ? tv().map(pname).join(' · ') : pname(whoSel));
       if(maps){ pdfSay('Carte du voyage…'); D.text('Le voyage en un coup d’œil', {font:D.F.b, size:12, gap:4}); await D.img(await tripMapCanvas(700, 470), 360); }
-      if(sec.recap){   // ④ en une page : où l’on dort, combien de nuits, comment on arrive
-        D.add(); D.h1(PT('Récap des étapes'));
-        const st = tlStages(), trs = its.filter(i=>i.cat === 'transport');
-        D.table([.22,.26,.1,.24,.18], [PT('Étape'), PT('Dates'), PT('Nuits'), PT('Hébergement'), PT('Arrivée')], st.map(x=>{
-          const h = x.h || {}, tr = trs.find(r=>r.date === x.debut && normQ(r.to || '').includes(normQ(x.city).slice(0, 5)));
-          return [x.city, fdate(x.debut) + ' -> ' + fdate(x.fin), String(nights(x.debut, x.fin || x.debut)), [h.nom, stTxt(h)].filter(Boolean).join(' · '), tr ? (tr.mode || '') + (tr.heureArr ? ' ' + tr.heureArr : '') : '']; }));
-        D.text(PT('Total') + ' : ' + st.length + ' ' + PT('étapes') + ' · ' + nights(t.debut || (st[0] || {}).debut, t.fin || (st[st.length - 1] || {}).fin) + ' ' + PT('nuits'), {size:9.5, color:D.C.mut});
+      let fresh = !maps;   // rien après la couverture : on continue sur la même page
+      const pg = () => { if(fresh){ fresh = false; D.y -= 10; } else D.add(); };
+      const allV = tv(), whoOf = it => { const q = parts(it); return q.length && q.length < allV.length ? ' (' + q.map(pname).join(', ') + ')' : ''; };
+      const hm = it => (it.heureDep || it.heure || '') + (it.heureArr ? ' -> ' + it.heureArr : '');
+      const trLine = it => [hm(it), kindLbl(it) + ' : ' + PT(it.titre || [it.from, it.to].filter(Boolean).join(' -> ')), PT(it.compagnie || ''), it.ref ? PT('Réf.') + ' ' + it.ref : '', stTxt(it)].filter(Boolean).join(' · ') + whoOf(it);
+      const hoLine = h => [h.nom || h.titre, h.adresse, h.tel, h.ref ? PT('Réf.') + ' ' + h.ref : '', stTxt(h)].filter(Boolean).join(' · ') + whoOf(h);
+      if(sec.recap){   // ④ les étapes : où l’on dort, comment on arrive et repart (qui fait quoi), ce qu’on visite
+        pg(); D.h1(PT('Récap des étapes'));
+        const st = tlStages(), trs = its.filter(i=>i.cat === 'transport').sort(sortItems), acts = its.filter(i=>i.cat === 'activite'), P = list('place', x=>x.trip === M.trip && !x.sugg);
+        const inSt = (x, d) => d && d >= x.debut && d <= (x.fin || x.debut);
+        const arrOf = x => trs.filter(r=>r.date === x.debut || (r.to && normQ(r.to).includes(normQ(x.city).slice(0, 5)) && inSt(x, r.date)));
+        D.table([.2,.24,.08,.26,.22], [PT('Étape'), PT('Dates'), PT('Nuits'), PT('Hébergement'), PT('Arrivée')], st.map(x=>{
+          const h = x.h || {}, ar = arrOf(x).filter(r=>r.date === x.debut);
+          return [x.city, fdate(x.debut) + ' -> ' + fdate(x.fin), String(nights(x.debut, x.fin || x.debut)), [h.nom, stTxt(h)].filter(Boolean).join(' · '), ar.map(r=>(PT(r.mode || 'Trajet')) + (r.heureArr ? ' ' + r.heureArr : '') + whoOf(r)).join(' / ')]; }));
+        D.text(PT('Total') + ' : ' + st.length + ' ' + PT('étapes') + ' · ' + nights(t.debut || (st[0] || {}).debut, t.fin || (st[st.length - 1] || {}).fin) + ' ' + PT('nuits'), {size:9.5, color:D.C.mut, gap:6});
+        st.forEach((x, k)=>{   // le détail, étape par étape
+          D.need(90); D.h2((k + 1) + '. ' + x.city + ' · ' + fdate(x.debut) + ' -> ' + fdate(x.fin) + ' · ' + nights(x.debut, x.fin || x.debut) + ' ' + PT('nuits'));
+          const tr = trs.filter(r=>inSt(x, r.date)), hs = its.filter(i=>i.cat === 'hotel' && inSt(x, i.date)), ac = acts.filter(i=>inSt(x, i.date)).sort(sortItems);
+          const pl = P.filter(q=>(x.h && q.stay === x.h.id) || inSt(x, q.date));
+          if(hs.length){ D.text(PT('Hébergement'), {font:D.F.b, size:10}); hs.forEach(h=>D.text(hoLine(h), {size:9.5, indent:8})); }
+          if(tr.length){ D.text(PT('Trajets'), {font:D.F.b, size:10}); tr.forEach(r=>D.text(fdate(r.date) + ' · ' + trLine(r), {size:9.5, indent:8})); }
+          if(ac.length){ D.text(PT('Visites & réservations'), {font:D.F.b, size:10}); ac.forEach(a=>D.text(fdate(a.date) + ' · ' + [a.heure, PT(a.titre), a.adresse, a.ref ? PT('Réf.') + ' ' + a.ref : '', stTxt(a)].filter(Boolean).join(' · ') + whoOf(a), {size:9.5, indent:8})); }
+          if(pl.length){ D.text(PT('À voir') + ' (' + pl.length + ')', {font:D.F.b, size:10}); pl.sort((a, b)=>(a.date || '').localeCompare(b.date || '')).forEach((q, i)=>D.text((i + 1) + '. ' + q.nom + (q.date ? ' · ' + fdate(q.date) : '') + (q.adresse && q.adresse !== q.nom ? ' · ' + q.adresse : ''), {size:9.5, indent:8})); }
+          D.y -= 6;
+        });
       }
       if(sec.prog){
-        D.add(); D.h1('Programme jour par jour');
+        pg(); D.h1('Programme jour par jour');
         const ds = dayList();
         for(let i=0;i<ds.length;i++){
-          const day = ds[i], info = dayInfo(day), {own, night} = itemsForDay(day), pl = placesOf(day);
+          const day = ds[i], info = dayInfo(day), {own, night} = itemsForDay(day), pl = placesOf(day), rl = routeLegs(day);
           pdfSay(`Jour ${i+1} / ${ds.length}…`);
-          D.h2(`${PJ(i+1)} · ${longDate(day)}${info.titre ? ' - ' + PT(info.titre) : ''}`);
+          D.need(70); D.h2(`${PJ(i+1)} · ${longDate(day)}${info.titre ? ' - ' + PT(info.titre) : ''}`);
           if(info.plan) D.text(info.plan, {font:D.F.i, size:9.5, color:D.C.mut, gap:2});
-          own.forEach(it=>D.text(`${it.heureDep || it.heure || ''}${it.heureArr ? ' -> ' + it.heureArr : ''}  ${kindLbl(it)} : ${PT(it.titre)}${[PT(it.compagnie || ''), it.ref ? PT('Réf.') + ' ' + it.ref : '', PT(it.adresse || ''), it.tel].filter(Boolean).map(x=>' · ' + x).join('')}  ${stTxt(it)}`, {size:9.5, indent:6}));
-          night.forEach(it=>D.text(`Nuit : ${it.nom || it.titre}${[it.adresse, it.tel, it.ref ? PT('Réf.') + ' ' + it.ref : ''].filter(Boolean).map(x=>' · ' + x).join('')}  ${stTxt(it)}`, {size:9.5, indent:6}));
-          if(pl.length) D.text('À voir : ' + pl.map((p,k)=>`${k+1}. ${p.nom}`).join('  '), {size:9.5, indent:6});
+          const trj = own.filter(it=>it.cat === 'transport'), oth = own.filter(it=>it.cat !== 'transport');
+          if(trj.length){ D.text(PT('Trajets'), {font:D.F.b, size:10}); trj.forEach(it=>{ D.text(trLine(it), {size:9.5, indent:8}); if(it.adresse || it.tel || it.note) D.text([PT(it.adresse || ''), it.tel, it.note].filter(Boolean).join(' · '), {size:9, indent:16, color:D.C.mut}); }); }
+          if(oth.length){ D.text(PT('Réservations du jour'), {font:D.F.b, size:10}); oth.forEach(it=>D.text([hm(it), kindLbl(it) + ' : ' + PT(it.titre), PT(it.compagnie || ''), PT(it.adresse || ''), it.tel, it.ref ? PT('Réf.') + ' ' + it.ref : '', stTxt(it)].filter(Boolean).join(' · ') + whoOf(it), {size:9.5, indent:8})); }
+          if(pl.length){
+            D.text(PT('Visites') + ' (' + pl.length + ')', {font:D.F.b, size:10});
+            if(rl){   // l’ordre de la journée, avec la marche / le métro / le taxi entre chaque visite
+              D.text(PT('Départ') + ' : ' + (rl.stops[0].lbl || PT('Départ')), {size:9.5, indent:8});
+              rl.legs.forEach((L, k)=>{ D.text('   ' + L.a.txt + ' · ' + fmtKm(L.dk) + ' · ~' + fmtMin(L.a.min) + (L.a.alt ? ' (' + L.a.alt + ')' : ''), {size:8.5, indent:14, color:D.C.mut});
+                const last = k === rl.legs.length - 1 && !rl.fin, p = !last && pl.find(q=>q.id === rl.ids[k]);
+                D.text(last ? (rl.loop ? PT('Retour') : PT('Arrivée')) + ' : ' + (rl.stops[k + 1].lbl || '') : (k + 1) + '. ' + (p ? p.nom + (p.adresse && p.adresse !== p.nom ? ' · ' + p.adresse : '') : rl.stops[k + 1].nom || ''), {size:9.5, indent:8}); });
+              D.text('≈ ' + fmtKm(rl.tot) + ' · ' + fmtKm(rl.walk) + ' ' + PT('à pied') + ' · ' + fmtMin(rl.mins) + ' ' + PT('de trajets'), {size:9, indent:8, color:D.C.mut});
+            } else pl.forEach((p, k)=>D.text((k + 1) + '. ' + p.nom + (p.adresse && p.adresse !== p.nom ? ' · ' + p.adresse : ''), {size:9.5, indent:8}));
+          }
+          if(night.length){ D.text(PT('Nuit'), {font:D.F.b, size:10}); night.forEach(it=>D.text(hoLine(it), {size:9.5, indent:8})); }
           const nts = notesFor('day:'+day); nts.forEach(n=>D.text('Note : ' + n.texte, {size:9, indent:6, color:D.C.mut}));
           if(maps && info.route && (info.route.ids||[]).length){ pdfSay(`Jour ${i+1} : carte de l’itinéraire…`); await D.img(await dayMapCanvas(day, 700, 400), 300); }
           if(lines) D.lines(3);
-          D.y -= 6;
+          D.y -= 8;
         }
       }
       const tab = (cat, title, cols, head, row) => { const l = its.filter(i=>i.cat===cat).sort(sortItems); if(!l.length) return; D.need(80); D.h1(title); D.table(cols, head, l.map(row)); };
