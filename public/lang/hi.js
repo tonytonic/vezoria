@@ -6300,4 +6300,6 @@ I18N.load({
 "Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"आपकी यात्राएं उसके पास केवल पढ़ने के लिए रहेंगी, बदलाव अब नहीं मिलेंगे।",
 "C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"यह वही व्यक्ति है जो {0} है: यह लिंक शायद गलती से भेजा गया। इसे हटाएं, फिर सही व्यक्ति के लिए नया लिंक बनाएं।",
 "Tu suis déjà {0} : rien ne change pour toi.":"आप {0} को पहले से फ़ॉलो करते हैं: आपके लिए कुछ नहीं बदलता।",
-"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"यह लिंक शायद किसी और के लिए था: भेजने वाले को बता दें।"});
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"यह लिंक शायद किसी और के लिए था: भेजने वाले को बता दें।",
+"km à pied":"किमी पैदल",
+"J’ai reçu une invitation (compagnon ou abonné)":"मुझे निमंत्रण मिला (साथी या फ़ॉलोअर)"});

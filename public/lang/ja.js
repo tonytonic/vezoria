@@ -6300,4 +6300,6 @@ I18N.load({
 "Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"旅行は閲覧のみで残り、あなたの変更は届かなくなります。",
 "C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"{0} と同じ人です：このリンクは誤って送られたようです。削除して、正しい相手に新しいリンクを作ってください。",
 "Tu suis déjà {0} : rien ne change pour toi.":"すでに {0} をフォローしています：何も変わりません。",
-"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"このリンクは別の人宛てだったようです：送ってくれた人に知らせてください。"});
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"このリンクは別の人宛てだったようです：送ってくれた人に知らせてください。",
+"km à pied":"km 徒歩",
+"J’ai reçu une invitation (compagnon ou abonné)":"招待を受け取った（仲間またはフォロワー）"});

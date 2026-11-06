@@ -6301,4 +6301,6 @@ I18N.load({
 "Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"تحتفظ برحلاتكما للقراءة فقط ولا تتلقى تعديلاتك بعد الآن.",
 "C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"هذا هو الشخص نفسه {0}: أُرسل هذا الرابط غالبًا بالخطأ. احذفه ثم أنشئ رابطًا جديدًا للشخص الصحيح.",
 "Tu suis déjà {0} : rien ne change pour toi.":"أنت تتابع {0} بالفعل: لا يتغير شيء بالنسبة لك.",
-"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"كان هذا الرابط غالبًا لشخص آخر: أخبر من أرسله إليك."});
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"كان هذا الرابط غالبًا لشخص آخر: أخبر من أرسله إليك.",
+"km à pied":"كم سيرًا",
+"J’ai reçu une invitation (compagnon ou abonné)":"وصلتني دعوة (رفيق أو متابع)"});

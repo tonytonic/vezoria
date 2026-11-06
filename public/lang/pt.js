@@ -3365,4 +3365,6 @@ I18N.load({
 "Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Ela fica com as viagens só para leitura e não recebe mais suas alterações.",
 "C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"É a mesma pessoa que {0}: este link foi enviado por engano. Remova-o e crie um novo link para a pessoa certa.",
 "Tu suis déjà {0} : rien ne change pour toi.":"Você já segue {0}: nada muda para você.",
-"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Este link provavelmente era para outra pessoa: avise quem o enviou."});
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Este link provavelmente era para outra pessoa: avise quem o enviou.",
+"km à pied":"km a pé",
+"J’ai reçu une invitation (compagnon ou abonné)":"Recebi um convite (companheiro ou seguidor)"});

@@ -3346,4 +3346,6 @@ I18N.load({
 "Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"They keep your trips read-only and no longer receive your changes.",
 "C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"This is the same person as {0}: this link was probably sent by mistake. Remove it, then create a new link for the right person.",
 "Tu suis déjà {0} : rien ne change pour toi.":"You already follow {0}: nothing changes for you.",
-"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"This link was probably meant for someone else: let the person who sent it know."});
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"This link was probably meant for someone else: let the person who sent it know.",
+"km à pied":"km on foot",
+"J’ai reçu une invitation (compagnon ou abonné)":"I got an invitation (companion or follower)"});

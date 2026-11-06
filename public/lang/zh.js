@@ -6300,4 +6300,6 @@ I18N.load({
 "Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"她以只读方式保留你们的旅行，不再收到你的修改。",
 "C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"这和 {0} 是同一个人：此链接可能是误发的。请移除它，再为正确的人创建新链接。",
 "Tu suis déjà {0} : rien ne change pour toi.":"你已在关注 {0}：对你没有任何变化。",
-"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"此链接可能是发给别人的：请告诉发送者。"});
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"此链接可能是发给别人的：请告诉发送者。",
+"km à pied":"步行公里",
+"J’ai reçu une invitation (compagnon ou abonné)":"我收到邀请（旅伴或关注者）"});

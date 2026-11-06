@@ -6300,4 +6300,6 @@ I18N.load({
 "Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"여행들은 읽기 전용으로 남고 변경 사항은 더 이상 받지 않아요.",
 "C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"{0}와 같은 사람이에요: 이 링크는 실수로 보낸 것 같아요. 삭제하고 맞는 사람에게 새 링크를 만드세요.",
 "Tu suis déjà {0} : rien ne change pour toi.":"이미 {0}님을 팔로우 중이에요: 달라지는 건 없어요.",
-"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"이 링크는 다른 사람용이었던 것 같아요: 보낸 사람에게 알려 주세요."});
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"이 링크는 다른 사람용이었던 것 같아요: 보낸 사람에게 알려 주세요.",
+"km à pied":"km 도보",
+"J’ai reçu une invitation (compagnon ou abonné)":"초대를 받았어요 (동행 또는 팔로워)"});

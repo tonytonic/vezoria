@@ -3352,4 +3352,6 @@ I18N.load({
 "Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Ze houdt jullie reizen alleen om te lezen en krijgt je wijzigingen niet meer.",
 "C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"Dit is dezelfde persoon als {0}: deze link is waarschijnlijk per vergissing gestuurd. Verwijder hem en maak een nieuwe link voor de juiste persoon.",
 "Tu suis déjà {0} : rien ne change pour toi.":"Je volgt {0} al: voor jou verandert er niets.",
-"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Deze link was waarschijnlijk voor iemand anders: laat het de afzender weten."});
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Deze link was waarschijnlijk voor iemand anders: laat het de afzender weten.",
+"km à pied":"km te voet",
+"J’ai reçu une invitation (compagnon ou abonné)":"Ik kreeg een uitnodiging (reisgenoot of volger)"});

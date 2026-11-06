@@ -6301,4 +6301,6 @@ I18N.load({
 "Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Ваши поездки остаются у неё только для чтения, изменения больше не приходят.",
 "C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.":"Это тот же человек, что и {0}: ссылка, видимо, отправлена по ошибке. Удали её и создай новую для нужного человека.",
 "Tu suis déjà {0} : rien ne change pour toi.":"Ты уже подписан(а) на {0}: для тебя ничего не меняется.",
-"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Скорее всего, ссылка предназначалась другому человеку: предупреди отправителя."});
+"Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.":"Скорее всего, ссылка предназначалась другому человеку: предупреди отправителя.",
+"km à pied":"км пешком",
+"J’ai reçu une invitation (compagnon ou abonné)":"Мне пришло приглашение (попутчик или подписчик)"});
