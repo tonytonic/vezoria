@@ -3380,4 +3380,9 @@ I18N.load({
 "Je partage un code":"Condivido un codice",
 "Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"Non segui ancora nessuno. Quando qualcuno ti manda il suo link, incollalo con «Ho ricevuto un invito».",
 "J’aime et commentaires":"Mi piace e commenti",
-"Pas encore de j’aime ni de commentaire sur tes voyages.":"Ancora nessun mi piace o commento sui tuoi viaggi."});
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"Ancora nessun mi piace o commento sui tuoi viaggi.",
+"Retirer ce voyage de mon Vezoria":"Togli questo viaggio dal mio Vezoria",
+"Retirer « {0} » de ton Vezoria ?":"Togliere «{0}» dal tuo Vezoria?",
+"Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"Continui a seguirlo come follower (❤️ e 💬), tra i seguiti.",
+"Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Non lo vedrai più. Se ricevi un link, incollalo con «Ho ricevuto un invito» per seguirlo.",
+"Voyage retiré":"Viaggio tolto"});

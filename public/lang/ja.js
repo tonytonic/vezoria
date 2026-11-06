@@ -6319,4 +6319,9 @@ I18N.load({
 "Je partage un code":"コードを共有する",
 "Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"まだ誰もフォローしていません。リンクが届いたら「招待を受け取った」で貼り付けてください。",
 "J’aime et commentaires":"いいねとコメント",
-"Pas encore de j’aime ni de commentaire sur tes voyages.":"まだいいねやコメントはありません。"});
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"まだいいねやコメントはありません。",
+"Retirer ce voyage de mon Vezoria":"この旅行を私のVezoriaから削除",
+"Retirer « {0} » de ton Vezoria ?":"「{0}」をVezoriaから削除しますか？",
+"Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"フォロワーとして引き続きフォローできます（❤️と💬）。",
+"Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"今後は表示されません。リンクが届いたら「招待を受け取った」で貼り付けてください。",
+"Voyage retiré":"旅行を削除しました"});

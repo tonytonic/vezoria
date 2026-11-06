@@ -3384,4 +3384,9 @@ I18N.load({
 "Je partage un code":"Compartilho um código",
 "Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"Você ainda não segue ninguém. Quando alguém enviar o link, cole com “Recebi um convite”.",
 "J’aime et commentaires":"Curtidas e comentários",
-"Pas encore de j’aime ni de commentaire sur tes voyages.":"Ainda não há curtidas nem comentários nas suas viagens."});
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"Ainda não há curtidas nem comentários nas suas viagens.",
+"Retirer ce voyage de mon Vezoria":"Remover esta viagem do meu Vezoria",
+"Retirer « {0} » de ton Vezoria ?":"Remover “{0}” do seu Vezoria?",
+"Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"Você continua seguindo como seguidor (❤️ e 💬), nos seguidos.",
+"Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Você não verá mais. Se receber um link, cole com “Recebi um convite” para seguir.",
+"Voyage retiré":"Viagem removida"});

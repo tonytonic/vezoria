@@ -6320,4 +6320,9 @@ I18N.load({
 "Je partage un code":"أشارك رمزًا",
 "Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"لا تتابع أحدًا بعد. عندما يرسل لك أحدهم رابطه، الصقه عبر «وصلتني دعوة».",
 "J’aime et commentaires":"الإعجابات والتعليقات",
-"Pas encore de j’aime ni de commentaire sur tes voyages.":"لا إعجابات ولا تعليقات على رحلاتك بعد."});
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"لا إعجابات ولا تعليقات على رحلاتك بعد.",
+"Retirer ce voyage de mon Vezoria":"إزالة هذه الرحلة من Vezoria",
+"Retirer « {0} » de ton Vezoria ?":"إزالة «{0}» من Vezoria؟",
+"Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"تواصل متابعتها كمتابع (❤️ و💬) ضمن من تتابعهم.",
+"Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"لن تراها بعد الآن. إن وصلك رابط متابعة، الصقه عبر «وصلتني دعوة».",
+"Voyage retiré":"تمت إزالة الرحلة"});

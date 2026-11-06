@@ -6319,4 +6319,9 @@ I18N.load({
 "Je partage un code":"코드 공유하기",
 "Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"아직 팔로우하는 사람이 없어요. 링크를 받으면 ‘초대를 받았어요’로 붙여넣으세요.",
 "J’aime et commentaires":"좋아요와 댓글",
-"Pas encore de j’aime ni de commentaire sur tes voyages.":"아직 좋아요나 댓글이 없어요."});
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"아직 좋아요나 댓글이 없어요.",
+"Retirer ce voyage de mon Vezoria":"내 Vezoria에서 이 여행 삭제",
+"Retirer « {0} » de ton Vezoria ?":"‘{0}’을(를) Vezoria에서 삭제할까요?",
+"Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"팔로워로 계속 볼 수 있어요 (❤️ 와 💬).",
+"Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"더 이상 보이지 않아요. 링크를 받으면 ‘초대를 받았어요’로 붙여넣으세요.",
+"Voyage retiré":"여행 삭제됨"});

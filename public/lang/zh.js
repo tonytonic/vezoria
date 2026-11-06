@@ -6319,4 +6319,9 @@ I18N.load({
 "Je partage un code":"我来分享代码",
 "Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"你还没有关注任何人。有人发来链接时，用「我收到了邀请」粘贴。",
 "J’aime et commentaires":"点赞和评论",
-"Pas encore de j’aime ni de commentaire sur tes voyages.":"你的旅行还没有点赞或评论。"});
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"你的旅行还没有点赞或评论。",
+"Retirer ce voyage de mon Vezoria":"从我的 Vezoria 移除此旅行",
+"Retirer « {0} » de ton Vezoria ?":"从你的 Vezoria 移除「{0}」？",
+"Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"你仍以关注者身份关注它（❤️ 和 💬），在关注列表中。",
+"Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"你将不再看到它。收到关注链接时，用「我收到了邀请」粘贴即可关注。",
+"Voyage retiré":"旅行已移除"});

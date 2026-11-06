@@ -6320,4 +6320,9 @@ I18N.load({
 "Je partage un code":"Поделиться кодом",
 "Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"Ты пока ни на кого не подписан. Когда пришлют ссылку, вставь её через «Мне пришло приглашение».",
 "J’aime et commentaires":"Лайки и комментарии",
-"Pas encore de j’aime ni de commentaire sur tes voyages.":"Пока нет лайков и комментариев."});
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"Пока нет лайков и комментариев.",
+"Retirer ce voyage de mon Vezoria":"Убрать эту поездку из моего Vezoria",
+"Retirer « {0} » de ton Vezoria ?":"Убрать «{0}» из твоего Vezoria?",
+"Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"Ты продолжаешь следить как подписчик (❤️ и 💬), в подписках.",
+"Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Ты больше её не увидишь. Если пришлют ссылку, вставь через «Мне пришло приглашение».",
+"Voyage retiré":"Поездка убрана"});

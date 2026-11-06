@@ -3371,4 +3371,9 @@ I18N.load({
 "Je partage un code":"Ik deel een code",
 "Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"Je volgt nog niemand. Als iemand je zijn link stuurt, plak je hem met ‘Ik kreeg een uitnodiging’.",
 "J’aime et commentaires":"Likes en reacties",
-"Pas encore de j’aime ni de commentaire sur tes voyages.":"Nog geen likes of reacties op je reizen."});
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"Nog geen likes of reacties op je reizen.",
+"Retirer ce voyage de mon Vezoria":"Deze reis uit mijn Vezoria halen",
+"Retirer « {0} » de ton Vezoria ?":"‘{0}’ uit je Vezoria halen?",
+"Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"Je blijft hem volgen als volger (❤️ en 💬), bij je gevolgden.",
+"Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Je ziet hem niet meer. Krijg je een volgerslink, plak die met ‘Ik kreeg een uitnodiging’.",
+"Voyage retiré":"Reis verwijderd"});

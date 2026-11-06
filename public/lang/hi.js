@@ -6319,4 +6319,9 @@ I18N.load({
 "Je partage un code":"मैं कोड साझा करूं",
 "Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"आप अभी किसी को फ़ॉलो नहीं करते। कोई लिंक भेजे तो “मुझे निमंत्रण मिला” से पेस्ट करें।",
 "J’aime et commentaires":"लाइक और टिप्पणियां",
-"Pas encore de j’aime ni de commentaire sur tes voyages.":"आपकी यात्राओं पर अभी कोई लाइक या टिप्पणी नहीं।"});
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"आपकी यात्राओं पर अभी कोई लाइक या टिप्पणी नहीं।",
+"Retirer ce voyage de mon Vezoria":"इस यात्रा को मेरे Vezoria से हटाएं",
+"Retirer « {0} » de ton Vezoria ?":"“{0}” को अपने Vezoria से हटाएं?",
+"Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"आप इसे फ़ॉलोअर के रूप में देखते रहेंगे (❤️ और 💬)।",
+"Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"यह अब नहीं दिखेगी। फ़ॉलोअर लिंक मिले तो “मुझे निमंत्रण मिला” से पेस्ट करें।",
+"Voyage retiré":"यात्रा हटाई गई"});

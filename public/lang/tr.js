@@ -6307,4 +6307,9 @@ I18N.load({
 "Je partage un code":"Kod paylaşıyorum",
 "Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».":"Henüz kimseyi takip etmiyorsun. Biri bağlantısını gönderince “Davet aldım” ile yapıştır.",
 "J’aime et commentaires":"Beğeniler ve yorumlar",
-"Pas encore de j’aime ni de commentaire sur tes voyages.":"Seyahatlerinde henüz beğeni veya yorum yok."});
+"Pas encore de j’aime ni de commentaire sur tes voyages.":"Seyahatlerinde henüz beğeni veya yorum yok.",
+"Retirer ce voyage de mon Vezoria":"Bu seyahati Vezoria’mdan kaldır",
+"Retirer « {0} » de ton Vezoria ?":"“{0}” Vezoria’ndan kaldırılsın mı?",
+"Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"Takipçi olarak izlemeye devam edersin (❤️ ve 💬), takip ettiklerinde.",
+"Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Artık görmeyeceksin. Bağlantı gelirse “Davet aldım” ile yapıştır.",
+"Voyage retiré":"Seyahat kaldırıldı"});
