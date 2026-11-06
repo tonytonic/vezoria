@@ -727,7 +727,10 @@
   // 🔑 retirer VRAIMENT l’accès d’un compagnon à un voyage partagé (pas seulement de la liste des voyageurs)
   async function compRevoke(tid, pid){
     const code = TS()[tid]; if(!code || !spaceObj(code) || !pid || pid === M.me) return;
-    const ms = list('member', m=>m.trip === tid && m.pid === pid); if(!ms.length) return;   // jamais venu sur ce voyage : rien à couper
+    const ms = list('member', m=>m.trip === tid && m.pid === pid);
+    if(!ms.length){   // pas de présence connue : son invitation à son prénom
+      const nm = nmKey(pname(pid)), hit = Object.entries(PACKS()).find(([P, pk])=>pk.trips.includes(tid) && nmKey(pk.who) === nm);
+      if(hit) return packRemoveTrip(hit[0], tid, true); return; }
     for(const [P, pk] of Object.entries(PACKS())) if(pk.trips.includes(tid) && ms.some(m=>m.via && m.via !== 'direct')){ const h = await viaHash(tid, P); if(ms.some(m=>m.via === h)) return packRemoveTrip(P, tid, true); }
     return packRemoveTrip(null, tid, true, pid);
   }
@@ -849,8 +852,10 @@
   // retirer un compagnon : de tous mes voyages, et son code « tout mon carnet » s’il en a un
   async function spCompDel(pid){
     if(!(await uiConfirm(RF('Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.', pname(pid))))) return;
-    const out = myTripsAll().filter(t=>(t.voyageurs || []).includes(pid)).map(t=>Object.assign(clone(t), {voyageurs:t.voyageurs.filter(x=>x !== pid)}));
+    const all = myTripsAll(), out = all.filter(t=>(t.voyageurs || []).includes(pid)).map(t=>Object.assign(clone(t), {voyageurs:t.voyageurs.filter(x=>x !== pid)}));
     if(out.length) putMany(out, '👥 ' + RF('{0} retiré', pname(pid)));
+    cryptShow('🔑 ' + MSGT('Je coupe son accès aux voyages partagés…'));
+    try { for(const t of all) { try { await compRevoke(t.id, pid); } catch(e){} } } finally { cryptHide(''); }   // 🔑 vrai retrait : il garde une copie en lecture seule
     const id = spAllId(pid); if(id){ try { const r = await memberApiCall({a:'revoke', id}, M.sync.code); if(r.ok){ if(M.memLocal) delete M.memLocal[id]; if(M.memNames) delete M.memNames[id]; persist(); } } catch(e){} }
     spCompSheet();
   }
@@ -944,7 +949,7 @@
   async function cmEdit(cid){ const c = R[cid]; if(!c || c.dev !== devId()) return; closeSheet(true);
     const t = await uiPrompt('Modifier ton commentaire :', c.text || ''); if(t === null) return; const v = String(t).trim().slice(0, 600); if(!v){ cmDel(cid); return; }
     if(v === c.text) return; putQuiet([Object.assign(clone(c), {text:v, edited:Date.now()})]); syncNow(); if(c.feed) feedPaint(c.feed); toast('✏️ Commentaire modifié'); }
-  async function cmDel(cid){ const c = R[cid]; if(!c || !(await uiConfirm('Supprimer ce commentaire ?'))) return; putQuiet([Object.assign(clone(c), {deleted:true})]); syncNow(); closeSheet(true); if(c.feed) feedPaint(c.feed); toast('🗑 Commentaire supprimé'); }
+  async function cmDel(cid){ const c = R[cid]; if(!c || !(await uiConfirm('Supprimer ce commentaire ?'))) return; const del = Object.assign(clone(c), {deleted:true}); putQuiet([del]); syncNow(); cmGoneEverywhere(R[cid] || del).catch(()=>{}); closeSheet(true); if(c.feed) feedPaint(c.feed); toast('🗑 Commentaire supprimé'); }
   // 🙈 personnes masquées sur ce téléphone (leurs ❤️ et commentaires n'apparaissent plus ici) : la liste, pour pouvoir les réafficher
   function blkHTML(){
     const D = Object.keys(M.blkDev || {}); if(!D.length) return '';
@@ -1771,10 +1776,22 @@
       [...ibs].slice(0, 8).forEach(ib=>socialPush(f.trip, 'comment', txt, ib, f.id));
     } catch(e){}
   }
+  // 💬 les fils où mon commentaire est parti (gardé ICI seulement : les codes ne voyagent jamais dans les fiches)
+  function cmSent(id){ try { const L = targets(R[id]).filter(c=>c !== 'main'); if(L.length){ const S = M.cmTo || (M.cmTo = {}); S[id] = [...new Set([...(S[id] || []), ...L])]; const k = Object.keys(S); if(k.length > 400) delete S[k[0]]; persist(); } } catch(e){} }
+  // la suppression va aussi sur ces fils, même si je ne les suis plus (retiré d’un voyage, compagnon parti…)
+  async function cmGoneEverywhere(rec){
+    const now = new Set(targets(rec)), L = ((M.cmTo || {})[rec.id] || []).filter(c=>!now.has(c));
+    for(const code of L){ const had = spaceObj(code), sp = had || {code, since:0, dirty:[], last:0, err:''}; if(!had) (M.spaces = M.spaces || []).push(sp);
+      const t0 = TS()[rec.trip]; TS()[rec.trip] = code;
+      try { await spacePushOnly(sp, [clone(rec)]); } catch(e){}
+      finally { if(t0) TS()[rec.trip] = t0; else delete TS()[rec.trip]; if(!had) M.spaces = (M.spaces || []).filter(x=>x !== sp); persist(); } }
+    if(M.cmTo) { delete M.cmTo[rec.id]; persist(); }
+  }
   async function feedComment(fid){
     const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
     if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
-    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), pk:(M.fkey || {}).pub, ib:(M.fkey && M.fkey.pub) ? inbox() : '', text:txt.slice(0, 600), at:Date.now()}]); socCodes(f.trip).forEach(c=>socialPush(f.trip, 'comment', txt, c, f.id)); replyPush(f, txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
+    const cmId = 'cm:' + uid(); setTimeout(()=>cmSent(cmId), 0);
+    putQuiet([{id:cmId, type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), pk:(M.fkey || {}).pub, ib:(M.fkey && M.fkey.pub) ? inbox() : '', text:txt.slice(0, 600), at:Date.now()}]); socCodes(f.trip).forEach(c=>socialPush(f.trip, 'comment', txt, c, f.id)); replyPush(f, txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
   }
   function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="' + (window.VZ_B || '') + 'anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
   function feedPostHTML(f){
@@ -1952,7 +1969,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06z'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-06z2'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
