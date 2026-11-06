@@ -1824,7 +1824,16 @@
   }
   function feedPaint(fid){ const el = document.getElementById('fp-' + fid), f = R[fid]; if(el && f){ el.outerHTML = feedPostHTML(f); hydrate(); } }
   function feedTogC(fid){ M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = !M.cmOpen[fid]; feedPaint(fid); }
+  // 🔗 déjà abonné par un lien commun, sans prénom : on le demande à l’ouverture (une fois par session tant qu’il manque)
+  let pubAsked = false;
+  async function pubNameAsk(){
+    if(pubAsked || myName() || !(M.spaces || []).some(sp=>sp.pub && sp.real)) return; pubAsked = true;
+    const v = await uiPrompt(MSGT('Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.'), '');
+    const n = String(v || '').trim().slice(0, 40); if(!n) return;
+    M.followName = n; persist(); try { await fwKeyTouch(); await syncNow(); } catch(e){} toast('👋 ' + MSGT('Merci') + ' ' + n + ' !');
+  }
   function feedView(ftid){
+    setTimeout(()=>{ pubNameAsk().catch(()=>{}); }, 1200);
     const ft = R[ftid]; if(!ft) return; closeSheet(true);
     let ov = document.getElementById('cv-feed'); if(ov) ov.remove(); ov = document.createElement('div'); ov.id = 'cv-feed';
     const posts = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
@@ -1921,7 +1930,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06p'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-06q'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
