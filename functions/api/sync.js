@@ -137,6 +137,7 @@ async function wkColumn(env) {
   try { await env.DB.prepare('ALTER TABLE records ADD COLUMN wk TEXT').run(); } catch (e) {}   // déjà là : rien à faire
   await env.DB.prepare('CREATE TABLE IF NOT EXISTS space_admin (space TEXT PRIMARY KEY, ah TEXT NOT NULL, at INTEGER NOT NULL)').run();
   await env.DB.prepare('CREATE TABLE IF NOT EXISTS space_lock (space TEXT PRIMARY KEY, ch TEXT, at INTEGER NOT NULL)').run();
+  try { await env.DB.prepare('ALTER TABLE space_lock ADD COLUMN oh TEXT').run(); } catch (e) {}   // empreinte du compte qui a créé le lien (ses appareils passent toujours)
   wkReady = true;
 }
 const hdr = (request, k) => (request.headers.get(k) || '').trim().slice(0, 200);
@@ -159,16 +160,22 @@ async function adminOf(env, request, space, claim) {
 // 🔒 lien personnel (lien d’abonné) : l’auteur le verrouille en le créant (X-Carnet-Lock: 1) ; le 1er COMPTE qui l’ouvre le prend
 //   (X-Carnet-Claim : empreinte tirée de son carnet, la même sur tous ses appareils). Ensuite, plus personne d’autre ne peut le lire.
 async function lockOf(env, request, space, adm) {
+  const k = hdr(request, 'X-Carnet-Claim'), h = k.length >= 16 ? await sha256('vz-claim:' + k) : '', lock = hdr(request, 'X-Carnet-Lock') === '1';
   if (adm.me) {
-    if (hdr(request, 'X-Carnet-Lock') === '1') { try { await env.DB.prepare('INSERT OR IGNORE INTO space_lock (space, ch, at) VALUES (?1, NULL, ?2)').bind(space, Date.now()).run(); } catch (e) {} }
+    if (lock) { try { await env.DB.prepare('INSERT OR IGNORE INTO space_lock (space, ch, at, oh) VALUES (?1, NULL, ?2, ?3)').bind(space, Date.now(), h || null).run(); } catch (e) {} }
     return null;
   }
-  let row = null; try { row = await env.DB.prepare('SELECT ch FROM space_lock WHERE space = ?1').bind(space).first(); } catch (e) { return null; }
-  if (!row) return null;
-  const k = hdr(request, 'X-Carnet-Claim'), h = k.length >= 16 ? await sha256('vz-claim:' + k) : '';
+  let row = null; try { row = await env.DB.prepare('SELECT ch, oh FROM space_lock WHERE space = ?1').bind(space).first(); } catch (e) { return null; }
+  if (!row) {
+    // invitation de compagnon : verrouillée par son créateur à son 1er envoi, tant que l’espace est encore vide
+    if (lock && h) { const any = await env.DB.prepare('SELECT 1 FROM records WHERE space = ?1 LIMIT 1').bind(space).first();
+      if (!any) { try { await env.DB.prepare('INSERT OR IGNORE INTO space_lock (space, ch, at, oh) VALUES (?1, NULL, ?2, ?3)').bind(space, Date.now(), h).run(); } catch (e) {} } }
+    return null;
+  }
+  if (row.oh && h && row.oh === h) return null;   // le créateur, sur n’importe lequel de ses appareils
   const no = () => json({ error: 'Ce lien est personnel et a déjà été ouvert par quelqu’un d’autre. Demande ton propre lien. — This link is personal and was already opened by someone else.', claimed: true }, 403);
   if (!h) return no();
-  if (!row.ch) { await env.DB.prepare('UPDATE space_lock SET ch = ?2 WHERE space = ?1 AND ch IS NULL').bind(space, h).run(); row = await env.DB.prepare('SELECT ch FROM space_lock WHERE space = ?1').bind(space).first(); }
+  if (!row.ch) { await env.DB.prepare('UPDATE space_lock SET ch = ?2 WHERE space = ?1 AND ch IS NULL').bind(space, h).run(); row = await env.DB.prepare('SELECT ch, oh FROM space_lock WHERE space = ?1').bind(space).first(); }
   return row && row.ch === h ? null : no();
 }
 
