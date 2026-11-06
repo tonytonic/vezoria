@@ -1,4 +1,5 @@
-import { codeSpace, ROTATED } from './rotate.js';   // 🔑 code administrateur changé
+import { codeSpace, ROTATED } from './rotate.js';
+import { acctGate } from './account.js';   // 🔑 code administrateur changé
 import { uploadCheck } from './plan.js';   // 🫙 place du carnet
 // Photos du carnet : POST = envoyer une photo, GET ?id= = la récupérer.
 // 🫙 Pot commun (photos « v2 ») : chaque photo est rangée UNE fois, chiffrée avec sa propre clé (sur le téléphone).
@@ -18,7 +19,7 @@ const R2_MAX = env => (Number(env.R2_MAX_GB) || 999) * 1_000_000_000;
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Photo-Id, X-Photo-Cap, X-Carnet-Admin, X-Carnet-Writer, X-Carnet-Dev',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Photo-Id, X-Photo-Cap, X-Carnet-Admin, X-Carnet-Writer, X-Carnet-Dev, X-Carnet-Claim, X-Carnet-Lock, X-Carnet-Main, X-Carnet-Acct',
   'Access-Control-Max-Age': '86400',
 };
 const json = (obj, status = 200) =>
@@ -64,6 +65,7 @@ async function spaceOf(request, env) {
     if (dv && (await devBlocked(env, space)).has(dv))
       return json({ error: 'Cet appareil a été retiré de ce carnet par son propriétaire. — This device was removed from this notebook by its owner.', devBlocked: true }, 403);
   } catch (e) {}
+  { const g = await acctGate(env, space, (request.headers.get('X-Carnet-Dev') || '').trim().slice(0, 40)); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
   return space;
 }
 

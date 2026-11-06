@@ -1,4 +1,5 @@
 import { codeSpace, ROTATED } from './rotate.js';   // 🔑 code administrateur changé
+import { acctGate } from './account.js';
 /**
  * Vezoria — 👥 codes compagnon du carnet principal (le code administrateur ne se partage plus).
  *
@@ -51,6 +52,7 @@ async function ownerSpace(request, env) {
   if (code.startsWith('mb:')) return json({ error: 'Réservé au propriétaire du carnet (code administrateur) — Owner only' }, 403);
   const cs = await codeSpace(env, code), space = cs.space;
   if (cs.dead) return json({ error: ROTATED, rotated: true }, 403);
+  { const g = await acctGate(env, space, (request.headers.get('X-Carnet-Dev') || '').trim().slice(0, 40)); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
   try { const b = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first(); if (b) return json({ error: 'suspendu', suspended: true }, 423); } catch (e) {}
   return space;
 }

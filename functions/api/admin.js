@@ -22,6 +22,10 @@ import { codeSpace } from './rotate.js';   // 🔑 code administrateur changé
  *   {action:'giftRevoke', id}              → retirer un code cadeau (les carnets qui l'ont déjà utilisé gardent leur formule)
  *   {action:'planSet', token|space, plan, days} → donner une formule à un carnet ('free' = la retirer)
  *   {action:'planLook', token|space}       → place utilisée, place permise, formule
+ *   {action:'owner', token|space}          → 👤 le COMPTE derrière un code signalé (fil d’abonnés, voyage, invitation) : son adresse e-mail,
+ *                                            ses appareils, tous les espaces qu’il a créés et leur état — sans jamais voir le contenu
+ *   {action:'suspendOwner', token|space, note} → ⏸ suspendre tout le compte : son carnet + tous les espaces qu’il a créés (réversible)
+ *   {action:'restoreOwner', token|space, note} → ▶ tout rétablir
  *
  * Le CODE du carnet n'est jamais envoyé ici : la page d'administration calcule elle-même son empreinte
  * (« token », la même que celle de l'appli), et le serveur en déduit le dossier du carnet.
@@ -38,6 +42,7 @@ const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, header
 async function sha256(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
 const short = s => s ? s.slice(0, 12) : '';
 import { planTables, PLAN_MB, quotaOf, billOf } from './plan.js';   // 🎁 codes cadeaux et formules
+import { acctTables, mailDec, ownerOf } from './account.js';   // 👤 compte du carnet (adresse chiffrée)
 
 async function tables(db) {
   await db.batch([
@@ -221,6 +226,26 @@ export async function onRequestPost({ request, env }) {
     }
     const q = await quotaOf(env, owner), kids = await env.DB.prepare('SELECT COUNT(*) AS n FROM space_links WHERE owner = ?1').bind(owner).first();
     return json({ owner: short(owner), branch: owner !== space, kids: (kids && kids.n) || 0, usedMb: Math.round(q.used / 1e5) / 10, quotaMb: Math.round(q.quota / 1e5) / 10, plan: q.plan, active: q.active, until: q.until, src: q.src, graceEnd: q.graceEnd });
+  }
+  if (a === 'owner' || a === 'suspendOwner' || a === 'restoreOwner') {
+    await acctTables(env.DB);
+    let owner = await ownerOf(env, space);
+    if (!owner) { const ac = await env.DB.prepare('SELECT 1 FROM acct WHERE space = ?1').bind(space).first(); if (ac) owner = space; }   // le code signalé EST le carnet principal
+    if (!owner) { try { const bo = await billOf(env, space); if (bo && bo !== space) owner = bo; } catch (e) {} }   // ancien voyage partagé (avant les comptes) : son carnet d’origine
+    if (!owner) return json({ found: false, space: short(space), error: 'Aucun compte relié à ce code (espace créé avant les comptes, ou jamais synchronisé).', ...(await info(env, space)) });
+    const ac = await env.DB.prepare('SELECT email, verified, at FROM acct WHERE space = ?1').bind(owner).first();
+    const { results: kids } = await env.DB.prepare('SELECT space FROM space_owner WHERE owner = ?1 AND space != ?1 ORDER BY at').bind(owner).all();
+    const all = [owner, ...(kids || []).map(k => k.space)];
+    if (a !== 'owner') {
+      for (const sp of all) {
+        if (a === 'suspendOwner') await env.DB.prepare("INSERT INTO blocked (space, status, at, note) VALUES (?1, 'suspendu', ?2, ?3) ON CONFLICT(space) DO UPDATE SET status = CASE WHEN blocked.status = 'effacé' THEN 'effacé' ELSE 'suspendu' END, at = ?2, note = ?3").bind(sp, Date.now(), String(b.note || '').slice(0, 500)).run();
+        else await env.DB.prepare("DELETE FROM blocked WHERE space = ?1 AND status = 'suspendu'").bind(sp).run();
+      }
+      await log(env, a === 'suspendOwner' ? 'compte suspendu' : 'compte rétabli', owner, (b.note || '') + ` (${all.length} espace(s))`);
+    }
+    const dv = await env.DB.prepare('SELECT COUNT(*) AS n FROM acct_dev WHERE space = ?1 AND ok = 1').bind(owner).first();
+    const spaces = []; for (const sp of all.slice(0, 60)) spaces.push(await info(env, sp));
+    return json({ found: true, owner: short(owner), ownerSpace: owner, isMain: owner === space, mail: ac ? (await mailDec(env, ac.email)) || '(illisible : MAIL_KEY ?)' : '(pas de compte : carnet d’avant les comptes)', verified: !!(ac && ac.verified), since: ac ? ac.at : 0, devices: (dv && dv.n) || 0, spaces, more: Math.max(0, all.length - 60) });
   }
   if (a === 'look') return json(await info(env, space));
   if (a === 'suspend') {

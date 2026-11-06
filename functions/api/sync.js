@@ -1,4 +1,5 @@
-import { codeSpace, ROTATED, devSeen } from './rotate.js';   // 🔑 code administrateur changé
+import { codeSpace, ROTATED, devSeen } from './rotate.js';
+import { acctGate, acctMain, acctNew } from './account.js';   // 👤 compte du carnet : seuls ses appareils validés   // 🔑 code administrateur changé
 /**
  * Carnet de voyage — synchronisation (Cloudflare Pages Function + D1)
  *
@@ -27,7 +28,7 @@ const OVERLAP = 15_000;
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Admin, X-Carnet-Writer, X-Carnet-Dev',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Admin, X-Carnet-Writer, X-Carnet-Dev, X-Carnet-Claim, X-Carnet-Lock, X-Carnet-Main, X-Carnet-Acct',
   'Access-Control-Max-Age': '86400',
 };
 const json = (obj, status = 200) =>
@@ -122,6 +123,8 @@ async function spaceOf(request, env) {
       return json({ error: 'Cet appareil a été retiré de ce carnet par son propriétaire. — This device was removed from this notebook by its owner.', devBlocked: true }, 403);
     if (dv) await devSeen(env, space, dv);   // date d'arrivée de l'appareil (un appareil tout neuf ne peut pas changer le code)
   } catch (e) {}
+  { const g = await acctGate(env, space, (request.headers.get('X-Carnet-Dev') || '').trim().slice(0, 40), 1); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
+  { const g = await acctMain(env, request, space); if (g) return json(g, 403); }   // 📧 carnet principal : compte obligatoire
   return space;
 }
 
@@ -199,7 +202,9 @@ async function wipeSpace(env, space) {
   try { await env.DB.prepare('DELETE FROM photo_caps WHERE space = ?1').bind(space).run(); } catch (e) {}   // droits de lecture du pot commun
   try { await env.DB.prepare('DELETE FROM space_members WHERE space = ?1').bind(space).run(); } catch (e) {}   // codes compagnon
   try { await env.DB.prepare('DELETE FROM space_admin WHERE space = ?1').bind(space).run(); } catch (e) {}   // clé d’auteur du fil
-  try { await env.DB.prepare('DELETE FROM space_lock WHERE space = ?1').bind(space).run(); } catch (e) {}   // lien personnel
+  try { await env.DB.prepare('DELETE FROM space_lock WHERE space = ?1').bind(space).run(); } catch (e) {}
+  for (const t of ['acct', 'acct_dev', 'acct_otp']) try { await env.DB.prepare('DELETE FROM ' + t + ' WHERE space = ?1').bind(space).run(); } catch (e) {}
+  try { await env.DB.prepare('DELETE FROM space_owner WHERE space = ?1 OR owner = ?1').bind(space).run(); } catch (e) {}   // 👤 compte du carnet (adresse e-mail) effacé avec lui   // lien personnel
   try { await env.DB.prepare('DELETE FROM space_links WHERE child = ?1 OR owner = ?1').bind(space).run(); } catch (e) {}   // 🌿 branches (la formule payée reste : table plans)
   try { await env.DB.batch([env.DB.prepare('DELETE FROM push_subs WHERE space = ?1').bind(space), env.DB.prepare('DELETE FROM push_due WHERE space = ?1').bind(space)]); } catch (e) {}   // notifications
   try {
@@ -336,6 +341,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const skipped = [], denied = [];
   const adm = await adminOf(env, request, space, true), wh = await writerOf(request);
   { const lk = await lockOf(env, request, space, adm); if (lk) return lk; }
+  if (changes.length) { const na = await acctNew(env, request, space); if (na) return json(na, 403); }   // 📧 nouvel espace : seulement depuis un carnet avec compte
   if (changes.length) {
     const stmt = env.DB.prepare(
       `INSERT INTO records (space, id, data, updated_at, rev, wk) VALUES (?1, ?2, ?3, ?4, ?5, ?6)
