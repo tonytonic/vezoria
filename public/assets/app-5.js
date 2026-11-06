@@ -1898,13 +1898,35 @@
     if(isInstalled() || !/^https?:/.test(location.protocol)) return false;
     const m = decodeURIComponent(location.hash || '').match(/#suivre=([A-Z0-9-]{8,})/i);
     const fl = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted);
+    if(!m && M.webPend && !fl.length){ M.webFollow = true; document.body.classList.add('vz-webf'); webChoice(M.webPend); return true; }
     if(!m && !(M.webFollow && fl.length)) return false;
     M.webFollow = true; persist(); document.body.classList.add('vz-webf');
     try { applyMode(); applyLock(); } catch(e){}
-    if(m){ history.replaceState(null, '', location.pathname + location.search); followGo(m[1].toUpperCase(), true); }
+    if(m){ history.replaceState(null, '', location.pathname + location.search); webChoice(m[1].toUpperCase()); }
     else { feedView(fl[0].id); setTimeout(webCheck, 800); }
     return true;
   }
+  // 🔀 lien abonné ouvert dans le navigateur : AVANT de suivre (le lien perso ne sert qu’une fois), on demande s’il a l’appli.
+  //    Sur iPhone le lien ne peut pas ouvrir l’appli de l’écran d’accueil : on copie l’invitation, il la colle dans SON appli.
+  function webChoice(code){
+    M.webPend = code; persist();
+    const T2 = x => esc(MSGT(x));
+    let o = document.getElementById('cv-wch'); if(!o){ o = document.createElement('div'); o.id = 'cv-wch'; document.body.appendChild(o); }
+    o.style.cssText = 'position:fixed;inset:0;z-index:9999;background:var(--bg,#f4f7f6);overflow:auto;padding:28px 18px;display:flex;flex-direction:column;gap:12px;max-width:520px;margin:0 auto';
+    o.innerHTML = `<div style="text-align:center"><img src="icon-192.png" alt="" style="width:64px;height:64px;border-radius:16px"><h2 style="margin:10px 0 4px">👀 ${T2('Tu es invité(e) à suivre un voyage')}</h2></div>
+      <button type="button" class="v-btn" onclick="CV.webChoiceApp()">📲 ${T2('J’ai déjà l’appli Vezoria')}</button>
+      <div id="cv-wch-app" class="v-box" style="display:none"></div>
+      <button type="button" class="v-btn sec" onclick="CV.webChoiceWeb()">🌐 ${T2('Je n’ai pas l’appli : voir le voyage ici')}</button>
+      <div class="v-sum-small" style="text-align:center">${T2('Ton lien est personnel et ne sert qu’une fois : choisis où tu veux suivre ce voyage.')}</div>`;
+  }
+  async function webChoiceApp(){
+    const c = M.webPend; if(!c) return; const t = location.origin + location.pathname + '#suivre=' + c;
+    let okc = false; try { await navigator.clipboard.writeText(t); okc = true; } catch(e){}
+    const b = document.getElementById('cv-wch-app'); if(!b) return; b.style.display = '';
+    b.innerHTML = (okc ? '<b>✅ ' + esc(MSGT('Invitation copiée')) + '</b><br>' : '<div class="cv-bigcode" data-notr style="user-select:all">' + esc(t) + '</div>' + esc(MSGT('Copie ce lien.')) + '<br>')
+      + esc(MSGT('Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.'));
+  }
+  function webChoiceWeb(){ const c = M.webPend; if(!c) return; delete M.webPend; persist(); const o = document.getElementById('cv-wch'); if(o) o.remove(); followGo(c, true); }
   // le voyage suivi a été retiré par son auteur : plus d'aperçu, retour à la page d'installation classique
   async function webCheck(){
     const codes = [...new Set(list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')]).map(f=>TS()[f.id]))];

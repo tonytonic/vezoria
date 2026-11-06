@@ -88,8 +88,10 @@
   }
   /* ---------- 📤 Invitation guidée : la personne est à côté (QR code) ou loin (message avec le lien et le code) ---------- */
   const inviteText = (kind, titre, code) => { const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : '';
+    // 👆 la personne n’a qu’à toucher le lien (Android : l’appli s’ouvre toute seule). Seul cas sans lien direct : l’iPhone qui a déjà l’appli → copier le message puis 📋 Coller.
     return (kind === 'pack' ? MSG('Rejoins nos voyages sur Vezoria 🧳 : à compléter ensemble') : kind === 'carnet' ? MSG('Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble') : MSG(`Rejoins notre voyage « ${titre} » sur Vezoria 🧳`))
-      + '\n' + (link || url) + '\n' + MSG('Code :') + ' ' + code + '\n' + MSG('(Vezoria déjà installée ? Ouvre-la → 👥 Partager → « Rejoindre avec un code » et colle le code.)'); };
+      // 📋 pas de lien direct : sur iPhone il s’ouvrirait dans Safari, pas dans l’appli de l’écran d’accueil (= un autre compte). On copie le message, l’appli le colle.
+      + '\n\n' + MSG('Code :') + ' ' + code + '\n\n' + MSG('1. Copie ce message') + '\n' + MSG('2. Ouvre ton appli Vezoria → 👥 → Rejoindre → 📋 Coller l’invitation reçue') + '\n\n' + MSG('Pas encore Vezoria ? Installe-la :') + ' ' + url + '\n' + MSG('puis touche « Coller l’invitation » au démarrage.'); };
   function inviteSheet(tid, kind, code0){
     if(kind === 'carnet'){ closeSheet(true); memberInvite(); return; }   // 🔑 le code administrateur ne se donne plus : code compagnon
     kind = kind || 'trip'; const t = tid ? R[tid] : null, code = kind === 'pack' ? code0 : kind === 'carnet' ? M.sync.code : TS()[tid]; if(!code) return;
@@ -98,10 +100,10 @@
     openSheet(`<h2>📤 ${pk ? 'Invitation pour <span data-notr>' + esc(pk.who || '?') + '</span>' : kind === 'carnet' ? 'Inviter dans tout mon carnet' : 'Inviter dans « ' + esc(t ? t.titre : '') + ' »'}</h2>
       ${pk ? `<div class="v-sum-small" style="margin-bottom:6px">${pk.trips.map(x=>'🧳 <span data-notr>' + esc((R[x]||{}).titre || '') + '</span>').join(' · ')}</div>` : ''}
       <div class="v-sum-small" style="margin-bottom:8px">${pk ? 'Cette personne verra et complètera ces voyages seulement. Tu pourras en retirer un à tout moment.' : kind === 'carnet' ? 'Ton compagnon verra et complètera tous tes voyages, et les voyages qu’il créera avec toi arriveront chez toi.' : 'La personne verra et complètera ce voyage seulement. Tes autres voyages restent privés.'}</div>
-      <div class="iv-step"><b>📱 Elle est à côté de toi</b><span>Elle scanne ce QR code avec l’appareil photo de son téléphone. Vezoria déjà installée ? Elle ouvre 👥 Partager → « Rejoindre avec un code » et tape le code.</span></div>
+      <div class="iv-step"><b>📱 Elle est à côté de toi</b><span>Elle scanne ce QR code avec l’appareil photo de son téléphone. Vezoria déjà installée ? 👥 Partager → « Rejoindre » → 📷 et elle scanne ce QR code : rien à taper.</span></div>
       <div class="iv-qr">${qrSVG(link)}</div>
       <div class="cv-bigcode" data-notr>${esc(code)}</div>
-      <div class="iv-step"><b>💬 Elle est loin</b><span>Envoie-lui le message : il contient le lien et le code (utile si elle a déjà l’appli).</span></div>
+      <div class="iv-step"><b>💬 Elle est loin</b><span>Envoie-lui le message : elle le copie et le colle dans son appli (👥 → Rejoindre → 📋), rien à taper.</span></div>
       <button type="button" class="v-btn" onclick="CV.inviteSend('${ja(tid || '')}','${ja(kind)}','${ja(pk ? code : '')}')">💬 Envoyer l’invitation</button>
       <button type="button" class="v-btn sec" onclick="CV.inviteCopy('${ja(code)}')">📋 Copier le code</button>
       <div class="v-sum-small" style="margin-top:8px">${kind === 'carnet' ? '🔐 Tout est chiffré : seules les personnes qui ont ce code peuvent lire ton carnet.' : '🔐 Tout est chiffré : seules les personnes qui ont ce code peuvent lire ce voyage.'}</div>
@@ -232,9 +234,12 @@
     try { await syncNow(); feedUpload(); setTimeout(()=>{ try { pushRegister(true); } catch(e){} }, 2500); } catch(e){}
     await carnetInvite(c);
   }
+  // 👀 abonné : déjà Vezoria → il colle le message dans SON appli (le lien ouvrirait Safari = un autre compte sur iPhone) ; pas d’appli → le lien suffit
+  const fwTail = (link, c) => { const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
+    return '\n\n' + MSG('Code :') + ' ' + c + '\n\n' + MSG('Tu as Vezoria ? Copie ce message, ouvre ton appli → 👥 → Rejoindre → 📋 Coller l’invitation reçue.') + '\n' + MSG('Pas Vezoria ? Touche simplement ce lien, rien à installer :') + ' ' + link; };
   async function carnetInvite(c){
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(c) : '';
-    const text = MSG(`Suis mes voyages sur Vezoria ✈️ : photos et récits au fil des étapes`) + '\n' + link + '\n' + MSG(`(code abonné : ${c})`);
+    const text = MSG(`Suis mes voyages sur Vezoria ✈️ : photos et récits au fil des étapes`) + fwTail(link, c);
     fwInviteSheet(c, link, text, MSGT('Inviter des abonnés'));
   }
   // 👀 inviter un abonné : QR code (la personne est à côté de toi) + message (elle est loin)
@@ -245,7 +250,7 @@
       <div class="iv-step"><b>📱 ${esc(MSGT('Elle est à côté de toi'))}</b><span>${esc(MSGT('Elle scanne ce QR code avec l’appareil photo de son téléphone : le voyage s’ouvre directement, sans rien installer.'))}</span></div>
       <div class="iv-qr">${qrSVG(link || c)}</div>
       <div class="cv-bigcode" data-notr>${esc(c)}</div>
-      <div class="iv-step"><b>💬 ${esc(MSGT('Elle est loin'))}</b><span>${esc(MSGT('Envoie-lui le message : il contient le lien et le code abonné.'))}</span></div>
+      <div class="iv-step"><b>💬 ${esc(MSGT('Elle est loin'))}</b><span>${esc(MSGT('Envoie-lui le message : avec Vezoria, elle le colle dans son appli ; sans Vezoria, elle touche le lien.'))}</span></div>
       <button type="button" class="v-btn" onclick="CV.fwInviteSend()">💬 ${esc(MSGT('Envoyer l’invitation'))}</button>
       <button type="button" class="v-btn sec" onclick="CV.fwInviteSend(1)">📋 ${esc(MSGT('Copier le lien'))}</button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`);
@@ -469,7 +474,7 @@
     const t = R[tid]; if(!t || !FT()[t.id]) return;
     const link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(FT()[t.id]) : '';
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
-    const text = MSG(`Suis mon voyage « ${t.titre} » sur Vezoria ✈️ : photos et récits au fil des étapes`) + '\n' + MSG('Le lien s’ouvre directement, sans rien installer :') + '\n' + link + '\n' + MSG(`(code abonné : ${FT()[t.id]})`);
+    const text = MSG(`Suis mon voyage « ${t.titre} » sur Vezoria ✈️ : photos et récits au fil des étapes`) + fwTail(link, FT()[t.id]);
     fwInviteSheet(FT()[t.id], link, text, t.titre || MSGT('Inviter des abonnés'));
   }
   async function feedStop(tid, silent){ if(!silent && !(await uiConfirm(MSGT('Masquer ce voyage à tous tes abonnés ?')))) return; await ab2TripOff(tid); ab2CfgSave(); ab2Repaint(); return;
@@ -1202,7 +1207,7 @@
   // l’identifiant de l’appareil accompagne les synchros et les photos : le serveur refuse un appareil bloqué
   { const f0 = window.fetch.bind(window);
     window.fetch = (u, o) => { try { const url = typeof u === 'string' ? u : (u && u.url) || '';
-      if(/\/api\/(sync|photo|device|rotate)\b/.test(url) && o && o.headers && !(o.headers instanceof Headers) && o.headers['X-Carnet-Code'] && !o.headers['X-Carnet-Dev']) o = Object.assign({}, o, {headers:Object.assign({}, o.headers, {'X-Carnet-Dev':devId()})}); } catch(e){}
+      if(/\/api\/(sync|photo|device|rotate|member|account)\b/.test(url) && o && o.headers && !(o.headers instanceof Headers) && o.headers['X-Carnet-Code'] && !o.headers['X-Carnet-Dev']) o = Object.assign({}, o, {headers:Object.assign({}, o.headers, {'X-Carnet-Dev':devId()})}); } catch(e){}
       return f0(u, o); }; }
   function devLabel(){
     const ua = navigator.userAgent || '', pl = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iPad' : /Android/.test(ua) ? (/Mobile/.test(ua) ? MSGT('Téléphone Android') : MSGT('Tablette Android')) : /Windows/.test(ua) ? 'PC Windows' : /Macintosh/.test(ua) ? 'Mac' : /CrOS/.test(ua) ? 'Chromebook' : /Linux/.test(ua) ? 'Linux' : MSGT('Appareil');
@@ -1211,8 +1216,8 @@
   }
   const dvMine = () => 'dv:' + devId();
   const dvOwner = () => { try { return ownerOn(); } catch(e){ return false; } };
-  async function devPush(label){
-    try { const code = M.sync.code; if(!code || !pushApi()) return; const kk = await keys(code);
+  async function devPush(label, code0){
+    try { const code = code0 || M.sync.code; if(!code || !pushApi()) return; const kk = await keys(code);
       const p = {k:'device', who:myName() || '', it:[{x:label}], n:1};
       const msg = b64(await seal(te.encode(JSON.stringify(p)), code));
       await pushPost(code, {a:'send', kind:'device', kid:kk.token.slice(0, 16), msg, tag:'device-' + devId()}); } catch(e){}
@@ -1262,9 +1267,175 @@
       ${L.map(d=>`<div class="cv-prow"><span><b data-notr>${esc(d.label || MSGT('Appareil'))}</b>${d.id === me ? ` · <small>${esc(MSGT('cet appareil'))}</small>` : ''}<small class="v-sum-small" style="display:block">${esc(RF('Depuis le {0} · vu le {1}', when(d.first), when(d.last)))}${d.blocked ? ' · 🚫 ' + esc(MSGT('bloqué')) : ''}</small></span>
         ${d.id === me ? '' : `<button type="button" class="v-btn sec" style="width:auto;margin:0;padding:6px 12px" onclick="CV.devBlock('${ja(d.id)}'${d.blocked ? ', 1' : ''})">${d.blocked ? esc(MSGT('Débloquer')) : '🚫 ' + esc(MSGT('Bloquer'))}</button>`}</div>`).join('') || `<div class="v-sum-small">${esc(MSGT('Aucun appareil pour l’instant.'))}</div>`}
       <div class="v-sum-small" style="margin:12px 0 4px">${esc(MSGT('Quelqu’un d’autre connaît ton code ? Change-le : l’ancien ne marchera plus pour personne.'))}</div>
+      <button type="button" class="v-btn sec" style="margin-bottom:8px" onclick="CV.acctSheet()">👤 ${esc(MSGT('Mon compte'))}${(M.acctSt || {}).acct ? ' ✅' : ''}</button>
       <button type="button" class="v-btn sec" onclick="CV.rotSheet()">🔑 ${esc(MSGT('Changer mon code administrateur'))}</button>
       <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${esc(MSGT('Fermer'))}</button></div>`);
   }
+  /* ══════════ 👤 Mon compte : une adresse e-mail vérifiée + le code administrateur (2 éléments) ══════════
+     Dès que le carnet est en ligne, on propose de créer le compte. Ensuite, un NOUVEL appareil qui entre le code ne voit
+     rien tant qu’il n’est pas validé : soit par un code reçu par e-mail, soit depuis un de mes appareils déjà validés.
+     Les appareils déjà sur le carnet au moment de la création restent ouverts. Le serveur ne garde que l’adresse e-mail
+     (jamais le code ni le contenu, chiffrés) ; supprimer le compte efface l’adresse. */
+  const acctApi = () => { const u = apiUrl(); return u ? u.replace(/\/sync$/, '/account') : ''; };
+  async function acctPost(body, code){
+    code = code || M.sync.code; if(!code || !acctApi()) throw new Error(MSGT('Mets d’abord ton carnet dans le cloud.'));
+    let r; try { r = await fetch(acctApi(), {method:'POST', headers:{'Content-Type':'application/json', 'X-Carnet-Code':await authCode(code), 'X-Carnet-Dev':devId()}, body:JSON.stringify(Object.assign({lang:(window.I18N && I18N.lang) || 'fr', lb:devLabel()}, body))}); }
+    catch(e){ throw new Error(netMsg()); }
+    let j = {}; try { j = await r.json(); } catch(e){}
+    if(!r.ok){ const er = new Error(srvMsg(j.error) || ('erreur ' + r.status)); er.j = j; throw er; }
+    return j;
+  }
+  const acctBox = (id, ph, t) => `<input id="${id}" class="v-in" ${t === 'otp' ? 'inputmode="numeric" autocomplete="one-time-code" maxlength="6" style="width:100%;letter-spacing:.3em;font-size:1.3rem;text-align:center"' : 'type="email" autocomplete="email" autocapitalize="off" style="width:100%"'} placeholder="${esc(ph)}">`;
+  const acctVal = id => String(((document.getElementById(id) || {}).value) || '').trim();
+  // ── fiche « Mon compte » (depuis ☁️ Cloud ou 📱 Mes appareils)
+  async function acctSheet(){
+    if(!dvOwner()){ toast(MSGT('Mets d’abord ton carnet dans le cloud.')); return; }
+    openSheet(`<h2>👤 ${esc(MSGT('Mon compte'))}</h2><div class="v-sum-small">📡 ${esc(MSGT('Connexion…'))}</div>`);
+    let s; try { s = await acctPost({a:'status'}); M.acctSt = {at:Date.now(), acct:s.acct}; persist(); } catch(e){ openSheet(`<h2>👤 ${esc(MSGT('Mon compte'))}</h2><div class="v-box">⚠️ ${esc(e.message)}</div><div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`); return; }
+    if(!s.acct) return acctNew(s);
+    const when = t => new Date(t).toLocaleString((window.I18N && I18N.locale) || 'fr-FR', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+    openSheet(`<h2>👤 ${esc(MSGT('Mon compte'))}</h2>
+      <div class="v-box"><b>✉️ <span data-notr>${esc(s.mail)}</span></b> · ✅ ${esc(MSGT('vérifiée'))}<br><small>${esc(RF('{0} appareil(s) validé(s)', s.n))}</small></div>
+      <div class="v-sum-small" style="margin:8px 0">${esc(MSGT('Pour ouvrir ton carnet sur un nouvel appareil, il faut ton code administrateur ET valider l’appareil : par un code reçu à cette adresse, ou depuis un de tes appareils déjà validés.'))}</div>
+      ${(s.pend || []).length ? `<div class="cv-cl-h">⏳ ${esc(MSGT('Appareils qui attendent ta validation'))}</div>` + s.pend.map(d=>`<div class="cv-prow"><span><b data-notr>${esc(d.lb || MSGT('Appareil'))}</b><small class="v-sum-small" style="display:block">${esc(when(d.at))}</small></span>
+        <span style="display:flex;gap:6px"><button type="button" class="v-btn" style="width:auto;margin:0;padding:6px 12px" onclick="CV.acctOk('${ja(d.dev)}')">✓ ${esc(MSGT('Valider'))}</button><button type="button" class="v-btn sec" style="width:auto;margin:0;padding:6px 12px" onclick="CV.acctOk('${ja(d.dev)}', 1)">✕</button></span></div>`).join('') : ''}
+      <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.acctKit()">🆘 ${esc(MSGT('Mon kit de secours'))}</button>
+      <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.acctNew()">✏️ ${esc(MSGT('Changer d’adresse e-mail'))}</button>
+      ${ACCT_MAX ? `<div class="v-f" style="margin-top:8px"><label>${esc(MSGT('Nombre maximum d’appareils'))}</label><select class="v-in" onchange="CV.acctMax(this.value)">${[0,1,2,3,4,5,8,10].map(n=>`<option value="${n}"${n === (s.max || 0) ? ' selected' : ''}>${n ? n : esc(MSGT('Pas de limite'))}</option>`).join('')}</select></div>` : ''}
+      <button type="button" class="v-btn sec" style="margin-top:8px;color:var(--danger,#c0392b)" onclick="CV.acctDel()">🗑️ ${esc(MSGT('Supprimer mon compte'))}</button>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`);
+  }
+  // 🔧 limite d’appareils par compte : prête côté serveur, cachée tant que ce réglage est à false
+  const ACCT_MAX = false;
+  function acctNew(s, code){
+    const has = s && s.acct === false ? false : true; acctNew.code = code || (has ? '' : M.sync.code) || '';
+    openSheet(`<h2>👤 ${esc(has ? MSGT('Changer d’adresse e-mail') : MSGT('Crée ton compte pour mettre ton carnet en ligne'))}</h2>
+      ${has ? '' : `<div class="v-box"><ul style="margin:0;padding-left:18px;line-height:1.5">
+        <li><b>${esc(MSGT('Obligatoire pour garder ton carnet sur le serveur : pas d’adresse e-mail, pas de carnet en ligne.'))}</b></li>
+        <li>${esc(MSGT('Ton compte = ton adresse e-mail + ton code administrateur.'))}</li>
+        <li>${esc(MSGT('Quelqu’un qui trouverait ton code ne pourra pas ouvrir ton carnet sur son téléphone sans ta validation.'))}</li>
+        <li>${esc(MSGT('Tes appareils actuels restent ouverts, rien ne change pour eux.'))}</li>
+        <li>${esc(MSGT('L’adresse sert seulement à vérifier que c’est toi : pas de publicité.'))}</li></ul></div>`}
+      <div class="v-f" style="margin-top:8px"><label>${esc(MSGT('Ton adresse e-mail'))}</label>${acctBox('ac-mail', 'prenom@exemple.fr')}</div>
+      <button type="button" class="v-btn" onclick="CV.acctStart()">✉️ ${esc(MSGT('Recevoir un code de vérification'))}</button>
+      <div class="v-sum-small" style="margin-top:8px">${esc(MSGT('En créant ton compte, tu acceptes les conditions d’utilisation et la politique de confidentialité.'))} <a href="/privacy.html" target="_blank" rel="noopener">${esc(MSGT('Confidentialité'))}</a> · <a href="/mentions-legales.html" target="_blank" rel="noopener">${esc(MSGT('CGU'))}</a></div>
+      ${has ? '' : `<div class="v-sum-small" style="margin-top:8px">${esc(MSGT('Sans compte, ton carnet reste seulement sur ce téléphone.'))}</div>`}
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.acctLater()">${esc(has ? MSGT('Annuler') : MSGT('Pas maintenant'))}</button></div>`);
+  }
+  function acctLater(){ M.acctAsk = Date.now(); persist(); closeSheet(); }
+  async function acctStart(){
+    const email = acctVal('ac-mail').toLowerCase(); if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)){ toast(MSGT('Adresse e-mail invalide')); return; }
+    const code = acctNew.code || undefined;
+    try { const j = await acctPost({a:'start', email}, code); acctOtpSheet(j.mail, 'start', j.devOtp, code); } catch(e){ alert(e.message); }
+  }
+  // ── saisie du code à 6 chiffres (création, changement d’adresse ou nouvel appareil)
+  function acctOtpSheet(mail, why, dev, code){
+    acctOtpSheet.code = code || '';
+    openSheet(`<h2>✉️ ${esc(MSGT('Entre le code reçu'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:8px">${esc(RF('Un code à 6 chiffres vient d’être envoyé à {0}. Il est valable 15 minutes (regarde aussi dans les indésirables).', mail || ''))}</div>
+      ${acctBox('ac-otp', '••••••', 'otp')}${dev ? `<div class="v-sum-small" data-notr>test : ${esc(dev)}</div>` : ''}
+      <button type="button" class="v-btn" style="margin-top:8px" onclick="CV.acctVerify('${ja(why)}')">✓ ${esc(MSGT('Valider'))}</button>
+      <button type="button" class="v-btn sec" style="margin-top:8px" onclick="${why === 'login' ? `CV.acctLogin()` : 'CV.acctNew()'}">↻ ${esc(MSGT('Renvoyer un code'))}</button>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Annuler'))}</button></div>`);
+    setTimeout(()=>{ const el = document.getElementById('ac-otp'); if(el) el.focus(); }, 200);
+  }
+  async function acctVerify(why){
+    const otp = acctVal('ac-otp').replace(/\D/g, ''); if(otp.length !== 6){ toast(MSGT('Le code a 6 chiffres')); return; }
+    const code = acctOtpSheet.code || '';
+    try { await acctPost({a:'verify', otp}, code || undefined); } catch(e){ alert(e.message); return; }
+    M.acctSt = {at:Date.now(), acct:true}; persist();
+    if(why === 'login'){ closeSheet(true); toast('✅ ' + MSGT('Appareil validé')); return acctResume(code); }
+    toast('✅ ' + (why === 'start' ? MSGT('Compte créé : ton carnet est protégé') : MSGT('Adresse e-mail vérifiée')));
+    if(why === 'start' && (code && code !== M.sync.code || !M.sync.on || M.sync.err)){ closeSheet(true); return acctResume(code || M.sync.code); }   // le carnet (re)part en ligne
+    acctSheet();
+  }
+  async function acctOk(dev, no){
+    if(no && !(await uiConfirm(MSGT('Refuser cet appareil ? Il ne pourra pas ouvrir ton carnet.')))) return;
+    try { await acctPost({a:no ? 'deny' : 'approve', dev}); toast(no ? MSGT('Appareil refusé') : '✅ ' + MSGT('Appareil validé')); } catch(e){ alert(e.message); }
+    acctSheet();
+  }
+  async function acctMax(n){ try { await acctPost({a:'max', n:+n || 0}); toast('✓'); } catch(e){ alert(e.message); } }
+  async function acctDel(){
+    if(!(await uiConfirm(MSGT('Supprimer ton compte ? Ton adresse e-mail ET ton carnet sont effacés du serveur. Tout reste sur ce téléphone, hors ligne. Les voyages partagés avec tes compagnons restent chez eux.')))) return;
+    try { await mainPrime(); const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(M.sync.code)}}); if(!r.ok){ const j = await r.json().catch(()=>({})); throw new Error(srvMsg(j.error) || ('erreur ' + r.status)); }
+      await acctPost({a:'delete'}).catch(()=>{}); M.sync.on = false; M.acctSt = {at:Date.now(), acct:false}; M.acctAsk = Date.now(); persist(); toast(MSGT('Compte supprimé')); closeSheet(); } catch(e){ alert(e.message); }
+  }
+  // ── 🆘 kit de secours : le code administrateur à garder hors du téléphone (sans lui, rien ne peut rouvrir le carnet)
+  function acctKit(){
+    const c = M.sync.code; if(!c) return;
+    openSheet(`<h2>🆘 ${esc(MSGT('Mon kit de secours'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:8px">${esc(MSGT('Téléphone perdu ou volé ? Avec ce code et ton adresse e-mail, tu retrouves tout ton carnet sur un nouvel appareil. Garde-le hors de ton téléphone : imprimé, dans un gestionnaire de mots de passe, ou envoyé à toi-même.'))}</div>
+      <div class="v-box" style="text-align:center;font-size:1.25rem;letter-spacing:.08em;user-select:all" data-notr><b>${esc(c)}</b></div>
+      <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.acctKitGo('copy')">📋 ${esc(MSGT('Copier'))}</button>
+      <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.acctKitGo('file')">⬇️ ${esc(MSGT('Télécharger le kit (fichier à imprimer)'))}</button>
+      <button type="button" class="v-btn sec" style="margin-top:8px" onclick="CV.codeMail()">📧 ${esc(MSGT('M’envoyer le code par e-mail'))}</button>
+      <div class="v-sum-small" style="margin-top:8px">⚠️ ${esc(MSGT('Ne le donne à personne : personne chez Vezoria ne te le demandera jamais.'))}</div>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`);
+  }
+  async function acctKitGo(how){
+    const c = M.sync.code; if(!c) return;
+    if(how === 'copy'){ try { await navigator.clipboard.writeText(c); toast('📋 ' + MSGT('Code copié')); } catch(e){ await uiPrompt(MSGT('Copie ce code :'), c); } M.codeMailed = Date.now(); persist(); return; }
+    const L = [MSGT('Vezoria — mon kit de secours'), '', MSGT('Code administrateur :') + ' ' + c, '', MSGT('Pour retrouver mon carnet sur un nouvel appareil : ouvre Vezoria → « J’ai déjà Vezoria sur un autre appareil » → entre ce code, puis le code reçu par e-mail.'), '', MSGT('Ne le donne à personne : personne chez Vezoria ne te le demandera jamais.'), '', new Date().toLocaleDateString((window.I18N && I18N.locale) || 'fr-FR')];
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([L.join('\r\n')], {type:'text/plain;charset=utf-8'})); a.download = 'vezoria-kit-de-secours.txt'; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 3000);
+    M.codeMailed = Date.now(); persist();
+  }
+  // ── 📧 partager en ligne (compagnons, abonnés) demande un carnet en ligne avec compte
+  function acctNeedSpace(){
+    if(document.getElementById('v-sheet-bg') || Date.now() - (acctNeedSpace.at || 0) < 60000) return; acctNeedSpace.at = Date.now();
+    if(M.sync.on && M.sync.code) return acctNew({acct:false, must:1}, M.sync.code);
+    openSheet(`<h2>📧 ${esc(MSGT('Partager en ligne demande un compte'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Pour partager tes voyages (compagnons, abonnés), mets d’abord ton carnet en ligne : il faut un compte avec ton adresse e-mail. Ce que tu viens de préparer partira tout seul ensuite.'))}</div>
+      <button type="button" class="v-btn" onclick="CV.cloudSheet()">☁️ ${esc(MSGT('Mettre mon carnet en ligne'))}</button>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Pas maintenant'))}</button></div>`);
+  }
+  // ── 🔒 nouvel appareil refusé par le serveur : il faut le valider (e-mail ou autre appareil)
+  let acctGateAt = 0;
+  function acctGateSheet(code, mail){
+    code = code || M.sync.code; if(!code) return; acctGateAt = Date.now(); acctOtpSheet.code = code;
+    const w0 = M.acctWait && M.acctWait.code === code ? M.acctWait : null;
+    M.acctWait = {code, mail:mail || (w0 && w0.mail) || '', at:Date.now(), pushed:w0 ? w0.pushed : 0}; persist();
+    if(!M.acctWait.pushed){ M.acctWait.pushed = 1; persist(); acctPost({a:'ask'}, code).catch(()=>{}); devPush(devLabel(), code); }   // mes appareils validés sont prévenus
+    openSheet(`<h2>🔒 ${esc(MSGT('Nouvel appareil : vérifie que c’est toi'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Ce carnet est protégé par un compte. Ton code est bon : il reste à valider cet appareil.'))}</div>
+      <button type="button" class="v-btn" onclick="CV.acctLogin()">✉️ ${esc(mail ? RF('Recevoir un code à {0}', mail) : MSGT('Recevoir un code par e-mail'))}</button>
+      <div class="v-sum-small" style="margin:12px 0 4px">${esc(MSGT('Ou, sur un de tes appareils déjà validés : ☁️ Cloud → 👤 Mon compte → Valider cet appareil.'))}</div>
+      <button type="button" class="v-btn sec" onclick="CV.acctResume()">↻ ${esc(MSGT('C’est validé, réessayer'))}</button>
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Plus tard'))}</button></div>`);
+  }
+  async function acctLogin(){
+    const code = acctOtpSheet.code || (M.acctWait && M.acctWait.code) || M.sync.code;
+    try { const j = await acctPost({a:'login'}, code); if(j.devOk) return acctResume(code); acctOtpSheet(j.mail, 'login', j.devOtp, code); } catch(e){ alert(e.message); }
+  }
+  async function acctResume(code){
+    code = code || (M.acctWait && M.acctWait.code) || M.sync.code; delete M.acctWait; persist(); closeSheet(true);
+    if(M.sync.on && M.sync.code === code){ M.sync.err = ''; return syncNow(true); }
+    if(code === (M.rotTry || '')){ delete M.rotTry; return rotJoinCode(code); }
+    await syncOn(code);
+    if(M.sync.on && M.sync.code){ M.cloud = 'all'; persist(); refresh(); setTimeout(()=>profDedupe(true), 800); }
+  }
+  function rotJoinCode(code){ rotLost(); setTimeout(()=>{ const el = document.getElementById('rot-code'); if(el){ el.value = code; rotJoin(); } }, 100); }
+  // ── 🔔 sur un appareil validé : un nouvel appareil attend → on le montre ; et une fois, on propose de créer le compte
+  let acctBusy = false;
+  async function acctTick(){
+    if(acctBusy || !dvOwner() || !M.sync.last || M.sync.err || document.hidden) return; acctBusy = true;
+    try {
+      const st = M.acctSt || {}, now = Date.now();
+      if(!st.acct){   // pas encore de compte : le serveur refuse la synchro (needAcct) et la fiche s’ouvre d’elle-même ; ici on vérifie juste une fois par jour
+        if(!st.at || now - st.at > 864e5){ const s = await acctPost({a:'status'}); M.acctSt = {at:now, acct:s.acct}; persist(); }
+        return;
+      }
+      const s = await acctPost({a:'status'}); M.acctSt = {at:Date.now(), acct:s.acct}; persist();
+      const K = M.acctSeen || (M.acctSeen = {}), d = (s.pend || []).find(x=>!K[x.dev]);
+      if(d && !document.getElementById('cv-moment') && !document.getElementById('v-sheet-bg')){
+        K[d.dev] = 1; persist();
+        momentShow(`<div class="mo-k">${MSGT('Sécurité')}</div><div class="mo-big">🔒</div><h2>${MSGT('Un appareil demande à ouvrir ton carnet')}</h2>
+          <div class="mo-sub"><b data-notr>${esc(d.lb || MSGT('Appareil'))}</b><br><br>${MSGT('Il a ton code administrateur. Valide-le seulement si c’est toi.')}</div>
+          <div class="mo-b"><button type="button" class="pri" onclick="CV.momentClose();CV.acctOk('${ja(d.dev)}')">✓ ${MSGT('C’est moi : valider')}</button><button type="button" onclick="CV.momentClose();CV.acctOk('${ja(d.dev)}', 1)">🚫 ${MSGT('Ce n’est pas moi')}</button></div>`, 'eve');
+      }
+    } catch(e){} finally { acctBusy = false; }
+  }
+  setTimeout(acctTick, 15000); setInterval(acctTick, 120e3);
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && (M.acctSt || {}).acct) setTimeout(acctTick, 1500); });
   // 📧 le code administrateur envoyé à soi-même : sans compte, c’est le seul moyen de le retrouver plus tard
   function codeMail(){
     const c = M.sync.code; if(!c) return;
@@ -1431,7 +1602,7 @@
       Object.keys(ADMT).forEach(k=>{ delete ADMT[k]; });
       persist(); closeSheet(true); toast('✅ ' + MSGT('Carnet retrouvé avec le nouveau code'));
       await syncNow(); refresh(); try { pushRegister(true); } catch(e){}
-    } catch(e){ M.sync = prev; M.admOk = adm0; persist(); alert(e.rotated ? MSGT('Ce code a lui aussi été remplacé. Entre le code le plus récent.') : (e.message || String(e))); }
+    } catch(e){ M.sync = prev; M.admOk = adm0; persist(); if(e.needVerify){ M.rotTry = code; persist(); closeSheet(true); acctGateSheet(code, e.mail); return; } alert(e.rotated ? MSGT('Ce code a lui aussi été remplacé. Entre le code le plus récent.') : (e.message || String(e))); }
   }
   // anciens liens retirés : effacés du serveur 2 mois après (le temps que tous les abonnés soient passés au nouveau)
   async function feedOldWipe(){
@@ -1750,7 +1921,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06f'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-06l'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1967,6 +2138,7 @@
   // ＋ un abonné : son prénom → son propre lien (QR code + message)
   async function ab2Invite(){
     try { ab2Reset(); } catch(e){}   // l’ancien système part AVANT, jamais après (il effacerait ce qu’on vient de faire)
+    if(!(M.sync.on && M.sync.code)){ acctNeedSpace.at = 0; return acctNeedSpace(); }   // 📧 abonnés = en ligne = carnet en ligne avec compte
     if(!(await ab2Name())) return;
     if(!ab2Vis().length){ if(!myTrips().length){ alert(MSGT('Crée d’abord un voyage.')); return; } toast('👁️ ' + MSGT('Allume d’abord les voyages à montrer')); return ab2TripsSheet(); }
     const n = await uiPrompt(MSGT('Qui invites-tu ? Son prénom (toi seul le vois) :'), ''); if(!n || !n.trim()) return;
@@ -1979,7 +2151,7 @@
   }
   function ab2Send(id){
     const x = ab2Inv(id); if(!x) return; const MSG = s => (window.I18N && I18N.msg ? I18N.msg(s) : s), link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(x.code) : '';
-    const text = MSG('Suis mes voyages sur Vezoria ✈️ : photos et récits au fil des étapes') + '\n' + link + '\n' + MSG(`(code abonné : ${x.code})`);
+    const text = MSG('Suis mes voyages sur Vezoria ✈️ : photos et récits au fil des étapes') + fwTail(link, x.code);
     fwInviteSheet(x.code, link, text, RF('Lien de {0}', x.name));
   }
   // 👤 un abonné : ce qu’il voit (voyage par voyage), ses ❤️ et commentaires, son lien, le renommer, le retirer
@@ -2152,7 +2324,7 @@
           ${L.map(m=>{ const k = m.dev || m.pid; return `<div class="sp2-row"><b data-notr>${esc(m.nom)}</b>${asked[k] ? `<small class="sp2-wait">🙋 ${esc(MSGT('demandé'))}</small>` : `<button type="button" class="sp2-fol" onclick="CV.ab2ReqFw('${ja(c)}','${ja(k)}')">🙋 ${esc(MSGT('Demander à suivre'))}</button>`}</div>`; }).join('')}</div>`; })()}
       <div class="sp2-pills"><button type="button" class="danger" onclick="CV.ab2Unfollow('${ja(c)}')">🚫 ${esc(MSGT('Ne plus suivre cette personne'))}</button></div></div></div>`);
   }
-  var APPAPI = {ab2Common, ab2AskFw, ab2ReqFw, nhWho, ab2TripsAll, ab2FwAll, ab2SubAll, ab2Invite, ab2TripsSheet, ab2TripSet, ab2Send, ab2Rename, ab2FwSheet, ab2FwHide, ab2FwDel, ab2SubSheet, ab2SubHide, ab2Unfollow, ab2Follow, vmOpen, vmClose, vmFit, vmSouv, vmBase, mapPub, mapNow, fmOpen, fmClose, fmFit, fmBase, vmZoom, vmDays, apMode, themeSet, themeToggle, rotSheet, rotGo, rotJoin, rotLost, devBlock, devSheet, codeMail, profDedupe, guideLater, fwForget, spSuisSheet, feedRefollow, spFw, spAbAdd, spCompAdd, spCompDel, spCompSheet, shMoreTog, bkCopy, hoodSheet, avPick, avDel, spAll, spTrips, spTripsSave, spTripOff, spMe, stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, wzOrder, wzOrdApply, tcfOrd, tcfBack, tcfGo, tcfDep, guideGo, guideNext, guideSheet, guideStop, guideTr, guideExp, guideHotel, guideBook, guideFin, guideEdit, guideResume, guideVisits, avDone, swStopRg, bkFill, bkLater, bkImp, bkMan, bkSave, bkNo, askWhoTog, trMis, prep3d, prep3dClose, p3Base, p3Fit, wzCk, suggOpen, suggKeep, suggDrop, suggGo, suggMore, expOpen, expKeep, expDrop, filTog, filFull, filSkip, finMark, startHide, bilanClose, storyTrip, feedPublish, feedShareLink, installSheet, cloudSheet, wzCountry, ariTog, ariFull, ariSkip, ariBook, ariFm, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, abPick, abSend, todaySee, todaySeeAdd, todaySeeGo, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, bigToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, yearFilm, yearFilmGo, memberInvite, memberSend, memberRevoke, memberShowId, memberLeave, deviceAdd, giftAsk, planSheet, planBuy, planPortal, quotaLoad, _quotaNag:()=>quotaNag(), _tf:d=>transferHTML(d), trDupFix, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {ab2Common, ab2AskFw, ab2ReqFw, nhWho, ab2TripsAll, ab2FwAll, ab2SubAll, ab2Invite, ab2TripsSheet, ab2TripSet, ab2Send, ab2Rename, ab2FwSheet, ab2FwHide, ab2FwDel, ab2SubSheet, ab2SubHide, ab2Unfollow, ab2Follow, vmOpen, vmClose, vmFit, vmSouv, vmBase, mapPub, mapNow, fmOpen, fmClose, fmFit, fmBase, vmZoom, vmDays, apMode, themeSet, themeToggle, rotSheet, rotGo, rotJoin, rotLost, devBlock, devSheet, webChoiceApp, webChoiceWeb, acctSheet, acctNew, acctLater, acctStart, acctVerify, acctOk, acctMax, acctDel, acctKit, acctKitGo, acctLogin, acctResume, acctGateSheet, codeMail, profDedupe, guideLater, fwForget, spSuisSheet, feedRefollow, spFw, spAbAdd, spCompAdd, spCompDel, spCompSheet, shMoreTog, bkCopy, hoodSheet, avPick, avDel, spAll, spTrips, spTripsSave, spTripOff, spMe, stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, wzOrder, wzOrdApply, tcfOrd, tcfBack, tcfGo, tcfDep, guideGo, guideNext, guideSheet, guideStop, guideTr, guideExp, guideHotel, guideBook, guideFin, guideEdit, guideResume, guideVisits, avDone, swStopRg, bkFill, bkLater, bkImp, bkMan, bkSave, bkNo, askWhoTog, trMis, prep3d, prep3dClose, p3Base, p3Fit, wzCk, suggOpen, suggKeep, suggDrop, suggGo, suggMore, expOpen, expKeep, expDrop, filTog, filFull, filSkip, finMark, startHide, bilanClose, storyTrip, feedPublish, feedShareLink, installSheet, cloudSheet, wzCountry, ariTog, ariFull, ariSkip, ariBook, ariFm, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, abPick, abSend, todaySee, todaySeeAdd, todaySeeGo, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, bigToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, yearFilm, yearFilmGo, memberInvite, memberSend, memberRevoke, memberShowId, memberLeave, deviceAdd, giftAsk, planSheet, planBuy, planPortal, quotaLoad, _quotaNag:()=>quotaNag(), _tf:d=>transferHTML(d), trDupFix, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════

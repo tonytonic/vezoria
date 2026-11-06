@@ -473,7 +473,11 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   const ADMT = {}, ADMC = {};   // empreinte du lien abonnés → ma clé d’auteur (ADMC : par code)
   const wsec = () => { if(!M.wsec){ M.wsec = hex(crypto.getRandomValues(new Uint8Array(16))); setTimeout(()=>{ try { persist(); } catch(e){} }, 0); } return M.wsec; };   // gardée : mes ❤️ et commentaires restent modifiables par moi
-  window.__vzHdr = tok => { try { if(!tok || !M) return null; const h = {'X-Carnet-Writer': wsec()}; if(ADMT[tok]) h['X-Carnet-Admin'] = ADMT[tok]; if(CLMT[tok]) h['X-Carnet-Claim'] = CLMT[tok]; if(LOCKT[tok]) h['X-Carnet-Lock'] = '1'; return h; } catch(e){ return null; } };
+  // 📧 mon carnet principal : « X-Carnet-Main » sur ses envois, et son empreinte (« X-Carnet-Acct ») sur les autres espaces,
+  //    pour que le serveur sache qu’un nouvel espace vient d’un carnet qui a un compte vérifié
+  let MAINT = '', MAINC = '';
+  async function mainPrime(){ try { const c = M.sync && M.sync.code; if(!c){ MAINT = MAINC = ''; return; } if(c !== MAINC){ MAINT = await authCode(c); MAINC = c; } } catch(e){} }
+  window.__vzHdr = tok => { try { if(!tok || !M) return null; const h = {'X-Carnet-Writer': wsec()}; if(MAINT && M.sync && M.sync.code === MAINC){ if(tok === MAINT) h['X-Carnet-Main'] = '1'; else h['X-Carnet-Acct'] = MAINT; } if(ADMT[tok]) h['X-Carnet-Admin'] = ADMT[tok]; if(CLMT[tok]) h['X-Carnet-Claim'] = CLMT[tok]; if(LOCKT[tok]) h['X-Carnet-Lock'] = '1'; return h; } catch(e){ return null; } };
   const myFeedCode = c => !!c && (c === M.feedAll || (M.abInv || []).some(x=>x.code === c) || Object.values(typeof FT === 'function' ? FT() : {}).includes(c) || !!(M.admOk || {})[c] || (M.fold || []).some(x=>x.code === c));
   async function admKey(code){
     if((M.admOk || {})[code]) return M.admOk[code];
@@ -542,6 +546,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(code) await admPrime(code);
     const body = JSON.stringify({since, changes}), ac = typeof AbortController === 'function' ? new AbortController() : null, to = ac ? setTimeout(()=>ac.abort(), 45000 + body.length / 20) : 0;
     let res;
+    await mainPrime();
     try { res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json','X-Carnet-Code':await authCode(code)}, body, signal:ac ? ac.signal : undefined}); }
     catch(e){ throw netErr(e); }
     finally { clearTimeout(to); }
@@ -552,7 +557,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(res.ok && orig.length) try { const big = Array.isArray(j.skipped) && j.skipped.length ? syBig(j.skipped, orig, changes) : new Set();
       if(M.syncBig) orig.forEach(r=>{ if(r && M.syncBig[r.id] && !big.has(r.id)) delete M.syncBig[r.id]; }); } catch(e){}   // repartie (raccourcie) : plus signalée
     if(res.status === 429){ M.syncPause = Date.now() + Math.min(3600, Math.max(60, +j.retry || 600)) * 1000; persist(); }
-    if(!res.ok){ const er = new Error(srvMsg(j.error) || ('Erreur serveur ' + res.status)); er.st = res.status; er.revoked = !!j.revoked; er.rotated = !!j.rotated; throw er; }   // revoked : accès compagnon retiré · rotated : code administrateur remplacé
+    if(!res.ok){ const er = new Error(srvMsg(j.error) || ('Erreur serveur ' + res.status)); er.st = res.status; er.revoked = !!j.revoked; er.rotated = !!j.rotated; er.needVerify = !!j.needVerify; er.needAcct = !!j.needAcct; er.mail = j.mail || ''; throw er; }   // revoked : accès compagnon retiré · rotated : code administrateur remplacé
     if(!Array.isArray(j.records)) throw new Error('Réponse inattendue du serveur');
     { const env0 = j.records; let recs = E2E ? await Promise.all(env0.map(x=>openRec(x, code))) : env0.slice();
       // ✍️ « _au » : écrit par l’auteur du fil — vient UNIQUEMENT de la marque du serveur (une fiche qui le contient d’elle-même le perd)
@@ -756,7 +761,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       }
       sp.last = Date.now(); sp.err = ''; sp.net = false; sp.errSince = 0; sp.revoked = false;
       mateFeedTidy(); ftPick();
-    } catch(e){ sp.err = e.message || String(e); sp.net = !!e.net; sp.revoked = !!e.revoked; if(!sp.errSince) sp.errSince = Date.now(); }
+    } catch(e){ sp.err = e.message || String(e); sp.net = !!e.net; sp.revoked = !!e.revoked; if(!sp.errSince) sp.errSince = Date.now(); if(e.needAcct) setTimeout(()=>{ try { acctNeedSpace(); } catch(x){} }, 700); }
     return changed;
   }
   // 👀 voyages suivis en abonné que je fais AUSSI en compagnon : retirés de « Je suis » (je les ai déjà en entier), et je ne compte plus
@@ -814,6 +819,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       const now0 = Date.now(), auto = manual !== true && !pull;
       try { rejoinFix(); mvMark(); mbTouch(); fwKeyTouch().catch(()=>{}); if((M.hideQ || []).length) hideFlush(); } catch(e){}
       try { await codesPublish(); } catch(e){}   // 🔑 mes codes de voyages, chiffrés avec mon code administrateur : ils suivent mon compte sur un autre appareil
+      try {   // 📧 carnet principal bloqué (pas de compte / appareil à valider) : les voyages partagés continuent quand même
       if(mainOn && !(auto && !M.dirty.length && now0 - (M.sync.last || 0) < 120000)){   // rien à envoyer et vu il y a moins de 2 min : on passe
       M.dirty = M.dirty.filter(id=>R[id]);   // idem pour le carnet principal
       if(M.dirty.length){   // 🔀 d’abord recevoir (et fusionner) ce que les autres ont changé, PUIS envoyer : personne n’écrase personne
@@ -830,6 +836,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       }
       M.sync.last = Date.now(); M.sync.err = ''; M.sync.net = false; M.sync.errSince = 0;
       }
+      } catch(e){ if(!(e.needAcct || e.needVerify)) throw e; M.sync.err = e.message; M.sync.net = false;
+        if(!document.getElementById('v-sheet-bg') && Date.now() - (syncNow.acctAt || 0) > 60000){ syncNow.acctAt = Date.now(); setTimeout(()=>{ try { if(document.getElementById('v-sheet-bg')) return; if(e.needAcct) acctNew({acct:false, must:1}, M.sync.code); else acctGateSheet(M.sync.code, e.mail); } catch(x){} }, 600); } }
       try { if(await codesAdopt()) changed++; } catch(e){}   // codes de voyages ajoutés ou quittés sur un autre de mes appareils
       for(const sp of (M.spaces||[])){
         // carnets sans modif à envoyer : 5 min mini entre deux passages (15 min pour les voyages suivis en abonné)
@@ -847,7 +855,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500); setTimeout(()=>{ potGc().catch(()=>{}); }, 4000); setTimeout(()=>{ pubMapSync().catch(()=>{}); }, 6000); setTimeout(()=>{ potAuto().catch(()=>{}); }, 20000);
     } catch(e){
       M.sync.err = e.message || String(e); M.sync.net = !!e.net; if(!M.sync.errSince) M.sync.errSince = Date.now();
-      if(e.rotated) setTimeout(()=>{ try { rotLost(); } catch(x){} }, 600);   // 🔑 le code de ce carnet a été changé sur un autre appareil
+      if(e.rotated) setTimeout(()=>{ try { rotLost(); } catch(x){} }, 600);
+      if(e.needAcct) setTimeout(()=>{ try { if(!document.getElementById('v-sheet-bg')) acctNew({acct:false, must:1}, M.sync.code); } catch(x){} }, 600);   // 📧 pas de compte : pas de carnet en ligne
+      if(e.needVerify) setTimeout(()=>{ try { if(!document.getElementById('v-sheet-bg')) acctGateSheet(M.sync.code, e.mail); } catch(x){} }, 600);   // 👤 compte : cet appareil n’est pas (ou plus) validé   // 🔑 le code de ce carnet a été changé sur un autre appareil
       if(showC) cryptHide();
       if(manual) alert(e.net ? '📴 ' + M.sync.err : MSGT('Synchro impossible :') + ' ' + M.sync.err);
     }
@@ -1377,7 +1387,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   async function tripInvite(id){
     const t = R[id], url = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
-    const text = `Rejoins notre voyage « ${t.titre} » 🧳\n${url}\nCode du voyage : ${TS()[id]}\n(Mes voyages → 🔗 Rejoindre un voyage partagé → colle le code)`;
+    const text = inviteText('trip', t.titre, TS()[id]);
     if(navigator.share){ try { await navigator.share({title:t.titre, text}); return; } catch(e){ return; } }
     try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
   }
@@ -2026,13 +2036,16 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const qrBtn = id => `<button type="button" class="v-btn sec qr-btn" onclick="CV.qrScan('${ja(id)}')">📷 Scanner le QR code</button>`;
   // un seul champ pour tout : lien ou code de voyage, de carnet ou d’abonné
   function joinAny(){
-    openSheet(`<h2>🔗 Rejoindre avec un code</h2>${qrBtn('ja-code')}<div class="v-sum-small" style="margin-bottom:8px">Ou colle le message, le lien ou le code reçu.</div>
+    openSheet(`<h2>🔗 Rejoindre avec un code</h2>
+      ${navigator.clipboard && navigator.clipboard.readText ? `<button type="button" class="v-btn" onclick="CV.joinPaste()">📋 ${esc(MSGT('Coller l’invitation reçue'))}</button><div class="v-sum-small" style="margin:4px 0 10px">${esc(MSGT('Copie le message reçu (SMS, WhatsApp…), puis touche ce bouton : rien à taper.'))}</div>` : ''}
+      ${qrBtn('ja-code')}<div class="v-sum-small" style="margin-bottom:8px">Ou colle le message, le lien ou le code reçu.</div>
       <textarea class="v-in" id="ja-code" rows="3" placeholder="XXXX-XXXX-XXXX ou le lien reçu"></textarea>
-      ${navigator.clipboard && navigator.clipboard.readText ? `<button type="button" class="v-day-edit" style="margin-top:6px" onclick="CV.joinPaste()">📋 Coller</button>` : ''}
       <div id="ja-msg" class="v-sum-small" style="margin-top:6px"></div>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.joinAnyGo()">🔗 Rejoindre</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
-  async function joinPaste(){ try { const t = await navigator.clipboard.readText(); const e = document.getElementById('ja-code'); if(e && t) e.value = t; } catch(e){ toast('Touche longuement la zone de texte → Coller'); } }
+  async function joinPaste(){ try { const t = await navigator.clipboard.readText(); const e = document.getElementById('ja-code'); if(e && t) e.value = t;
+      if(/(?:rejoindre|suivre)=[A-Za-z0-9-]{8,}|\b[A-Z0-9]{4}(?:-[A-Z0-9]{4}){2,}\b/i.test(t || '')) return joinAnyGo();   // 📋 une invitation : on rejoint tout de suite
+      toast(MSGT('Aucune invitation dans le presse-papiers : copie d’abord le message reçu.')); } catch(e){ toast('Touche longuement la zone de texte → Coller'); } }
   async function joinAnyGo(){
     const raw = (document.getElementById('ja-code') || {}).value || '', msg = document.getElementById('ja-msg');
     const fm = raw.match(/suivre=([A-Za-z0-9-]{8,})/i); if(fm){ closeSheet(true); followGo(fm[1].toUpperCase()); return; }

@@ -21,7 +21,7 @@
       : li(installEvt ? 'Clique sur le bouton ci-dessous.' : 'Dans Chrome ou Edge : l’icône « Installer » à droite de la barre d’adresse. Dans Safari (Mac) : menu Fichier → Ajouter au Dock.') + li('Ouvre Vezoria depuis tes applications.');
     g.innerHTML = `<div class="gt"><img src="icon-192.png" alt="" class="gi"><h1>Vezoria</h1>
       <p><span>Pour garder tes voyages sur ton téléphone, fonctionner sans réseau et protéger tes données, l’appli s’utilise installée sur ton écran d’accueil.</span> <b>C’est gratuit et ça prend 10 secondes.</b></p>
-      ${/[#&]rejoindre=/i.test(location.hash) || M.joinCode ? `<div class="gv"><b>🎟️ Tu es invité(e) dans un voyage</b><b class="cv-code" data-notr>${esc(((location.hash.match(/rejoindre=([A-Za-z0-9-]{8,})/i) || [])[1] || M.joinCode || '').toUpperCase())}</b><p>Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ».</p><button type="button" class="v-btn sec" id="gv-copy" onclick="CV.gateCopy()">📋 Copier l’invitation</button></div>` : ''}
+      ${/[#&]rejoindre=/i.test(location.hash) || M.joinCode ? `<div class="gv"><b>🎟️ Tu es invité(e) dans un voyage</b><b class="cv-code" data-notr>${esc(((location.hash.match(/rejoindre=([A-Za-z0-9-]{8,})/i) || [])[1] || M.joinCode || '').toUpperCase())}</b><p>Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ». Vezoria déjà installée ? Copie l’invitation, ouvre Vezoria → 👥 → Rejoindre → 📋 Coller l’invitation reçue.</p><button type="button" class="v-btn sec" id="gv-copy" onclick="CV.gateCopy()">📋 Copier l’invitation</button></div>` : ''}
       <ol class="gs">${steps}</ol>
       ${installEvt ? `<button type="button" class="v-btn" onclick="CV.gateInstall()">📲 Installer l’appli</button>` : ''}
       ${webFollowing() ? `<div class="gb"><button type="button" onclick="CV.webBack()">← Revenir au voyage que je suis</button><button type="button" id="gw-copy" onclick="CV.webCopy()">📋 Copier mon lien de passage (à coller dans l’appli installée)</button></div>` : ''}
@@ -32,7 +32,9 @@
   const invCode = s => { const m = String(s || '').match(/rejoindre=([A-Za-z0-9-]{8,})/i); return (m ? m[1] : String(s || '').trim()).toUpperCase(); };
   async function obPaste(){
     let t = ''; try { t = await navigator.clipboard.readText(); } catch(e){}
-    const c = /rejoindre=|^[A-Z0-9]{4}-[A-Z0-9]{4}/i.test(t || '') ? invCode(t) : '';
+    const fm = String(t || '').match(/suivre=([A-Za-z0-9-]{8,})/i); if(fm){ followGo(fm[1].toUpperCase()); return; }   // 👀 invitation d’abonné
+    const cm = String(t || '').match(/rejoindre=([A-Za-z0-9-]{8,})/i) || String(t || '').match(/\b([A-Z0-9]{4}(?:-[A-Z0-9]{4}){2,})\b/i);   // le code, n’importe où dans le message
+    const c = cm ? cm[1].toUpperCase() : '';
     const i = document.getElementById('cv-scode'); if(c && i){ i.value = c; return; }
     alert('Aucune invitation trouvée dans le presse-papiers : colle-la dans le champ.');
   }
@@ -1419,38 +1421,52 @@
     return 2*6371*Math.asin(Math.sqrt(Math.sin(dLa/2)**2 + Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dLo/2)**2)); };
 
   /* ---------- 1) Carte « Prochaine étape » ---------- */
+  // 📍 les visites rangées dans les jours (Itinéraire) font aussi partie des prochaines étapes, dans l’ordre de la journée
+  const ICON0 = it => icon(it);
+  function nhVisits(){
+    const t = trip(); if(!t) return []; const td = isoToday(), now = Date.now(), lim = new Date(Date.now() + 10 * 864e5).toISOString().slice(0, 10), out = [];
+    const days = [...new Set(list('place', p=>p.trip === M.trip && p.date && !p.sugg && p.date >= td && p.date <= lim).map(p=>p.date))].sort();
+    days.forEach(d=>{ const pl = placesOf(d);
+      pl.forEach((p, k)=>{ let at = new Date(d + 'T09:00:00').getTime() + k * 1000; if(d === td && at < now) at = now + 60000 + k * 1000;   // aujourd’hui : celles qui restent
+        out.push({it:{id:p.id, _pl:1, cat:'visite', titre:p.nom || MSGT('Visite'), date:d, adresse:p.adresse || '', qui:p.qui, k1:k + 1, n:pl.length}, at, end:0, timed:false, on:false, k}); }); });
+    return out;
+  }
   function nextHero(){
     const t = trip(); if(!t || t.archived || t.demo && false) return '';
     // 👥 chacun son départ : Claire part de Bruxelles, Anthony de Nantes → « Mon départ » d’abord, un onglet par compagnon
-    const L0 = nextMoves(), V = tv(), mine = M.me && V.includes(M.me) ? M.me : '';
+    const L0 = nextMoves().concat(nhVisits()).sort((a,b)=>(b.on - a.on) || a.at - b.at), V = tv(), mine = M.me && V.includes(M.me) ? M.me : '';
     // l’hôtel vient APRÈS mon arrivée : si mon vol / train du jour arrive après l’heure de l’hôtel, l’hôtel passe derrière
     const forP = pid => { const L1 = L0.filter(m=>parts(m.it).includes(pid));
-      return L1.map(m=>{ if(m.it.cat !== 'hotel') return m; const arr = L1.filter(x=>x.it.cat === 'transport' && x.it.date === m.it.date && x.end && x.end > m.at).map(x=>x.end);
-        return arr.length ? Object.assign({}, m, {at:Math.max(...arr) + 60000, afterArr:1}) : m; }).sort((a, b)=>(b.on - a.on) || a.at - b.at); };
+      return L1.map(m=>{ if(m.it.cat !== 'hotel' && !m.it._pl) return m; const arr = L1.filter(x=>x.it.cat === 'transport' && x.it.date === m.it.date && x.end && x.end > m.at).map(x=>x.end);
+        return arr.length ? Object.assign({}, m, {at:Math.max(...arr) + (m.it._pl ? 120000 + (m.k || 0) * 1000 : 60000), afterArr:1}) : m; }).sort((a, b)=>(b.on - a.on) || a.at - b.at); };
     const who = (M.nhWho && V.includes(M.nhWho)) ? M.nhWho : mine;
     const L = who ? forP(who) : L0; const nx = L[0]; if(!nx) return '';
     const tabs = V.length > 1 && L0.some(m=>parts(m.it).length < V.length) ? `<div class="hw">${V.filter(pid=>forP(pid).length).map(pid=>`<button type="button" class="${pid === who ? 'on' : ''}" onclick="CV.nhWho('${ja(pid)}')">${esc(pid === mine ? MSGT('Mon départ') : pname(pid))}</button>`).join('')}</div>` : '';
     if(nx.at - Date.now() > 10*864e5) return '';
-    const it = nx.it, td = isoToday(), tm = it.cat==='transport' ? it.heureDep : it.heure;
+    const it = nx.it, td = isoToday(), tm = it.cat==='transport' ? it.heureDep : it.heure, icon = x => x._pl ? '📍' : ICON0(x);
     const day = it.date === td ? 'Aujourd’hui' : it.date === new Date(Date.now()+864e5).toISOString().slice(0,10) ? 'Demain' : fdate(it.date);
     const sub = it.cat==='transport' ? [it.from && it.to ? it.from + ' → ' + it.to : '', it.compagnie, it.heureArr ? 'arrivée ' + it.heureArr : ''].filter(Boolean).join(' · ')
-      : it.cat==='hotel' ? [it.nom, it.adresse].filter(Boolean).join(' · ') : [it.adresse, it.lieu].filter(Boolean).join(' · ');
+      : it.cat==='hotel' ? [it.nom, it.adresse].filter(Boolean).join(' · ') : it._pl ? [MSGT('Visite') + (it.n > 1 ? ' ' + it.k1 + '/' + it.n : ''), it.adresse].filter(Boolean).join(' · ') : [it.adresse, it.lieu].filter(Boolean).join(' · ');
     const pj = (it.pj||[])[0], more = L.slice(1, 3);
     const b = (ic, l, fn) => `<button type="button" onclick="${fn}"><i>${ic}</i>${l}</button>`;
     const enr = nx.on, pc = enr ? Math.round(100 * (Date.now() - nx.at) / Math.max(1, nx.end - nx.at)) : 0;
-    return `<div class="cv-hero${enr ? ' enr' : ''}" id="cv-hero" data-at="${enr ? nx.end : nx.at}" data-on="${enr ? 1 : 0}">
+    const noCd = it._pl && !nx.timed;   // visite sans heure : le jour, pas un compte à rebours
+    const dAt = enr ? nx.end : noCd ? new Date(it.date + 'T23:59:00').getTime() : nx.at;
+    return `<div class="cv-hero${enr ? ' enr' : ''}" id="cv-hero" data-at="${dAt}" data-on="${enr ? 1 : 0}">
       ${tabs}<div class="hk">${enr ? '🚀 En route' : 'Prochaine étape'}${who && who !== mine ? ' · ' + esc(pname(who)) : ''}</div>
       <div class="ht"><span class="hi">${icon(it)}</span><div><b>${esc(it.titre)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div></div>
       ${enr ? `<div class="hc"><span id="cv-hero-cd">${hhmm(nx.end - Date.now())}</span><small>avant l’arrivée · ${esc(it.heureArr)}</small></div><div class="hpr"><i style="width:${pc}%"></i><b style="left:${pc}%">${icon(it)}</b></div>`
+        : noCd ? `<div class="hc"><span>${esc(TT(day))}</span><small>${nx.afterArr ? esc(MSGT('après ton arrivée')) : esc(MSGT('dans l’ordre de la journée'))}</small></div>`
         : `<div class="hc"><span id="cv-hero-cd">${hhmm(nx.at - Date.now())}</span><small>${day}${nx.afterArr ? ' · ' + esc(MSGT('après ton arrivée')) : nx.timed ? ' · ' + esc(tm) : it.cat==='hotel' ? ' · arrivée à l’hôtel' : ''}</small></div>`}
       ${it.ref ? `<button type="button" class="href" onclick="CV.nhCopy('${ja(it.ref)}')">Réf. <b>${esc(it.ref)}</b> <i>⧉</i></button>` : ''}
-      <div class="hb">${it.cat==='transport' && it.mode==='Avion' && nx.at - Date.now() < 36*3600e3 ? b('🛫','Embarquement',`CV.boardShow('${ja(it.id)}')`) : ''}${b('🧭','Y aller',`CV.nhGo('${ja(it.id)}')`)}${pj ? b('🎫','Billet',`CV.pjOpen('${ja(pj.id)}','${esc(pj.t||'img')}')`) : ''}${it.tel ? b('📞','Appeler',`location.href='tel:${esc(String(it.tel).replace(/[^+\d]/g,''))}'`) : ''}${b('✏️','Fiche',`CV.edit('${ja(it.id)}')`)}</div>
-      ${more.length ? `<div class="hn">Ensuite : ${more.map(m=>`${icon(m.it)} ${esc(m.it.titre)} <small>${m.it.date === td ? '' : fshort(m.it.date) + ' '}${esc(m.afterArr ? '' : (m.it.cat==='transport' ? m.it.heureDep : m.it.heure) || '')}</small>`).join(' &nbsp;·&nbsp; ')}</div>` : ''}</div>`;
+      <div class="hb">${it.cat==='transport' && it.mode==='Avion' && nx.at - Date.now() < 36*3600e3 ? b('🛫','Embarquement',`CV.boardShow('${ja(it.id)}')`) : ''}${b('🧭','Y aller',`CV.nhGo('${ja(it.id)}')`)}${pj ? b('🎫','Billet',`CV.pjOpen('${ja(pj.id)}','${esc(pj.t||'img')}')`) : ''}${it.tel ? b('📞','Appeler',`location.href='tel:${esc(String(it.tel).replace(/[^+\d]/g,''))}'`) : ''}${b('✏️', 'Fiche', it._pl ? `CV.plInfo('${ja(it.id)}')` : `CV.edit('${ja(it.id)}')`)}</div>
+      ${more.length ? `<div class="hn">Ensuite : ${more.map(m=>`${icon(m.it)} ${esc(m.it.titre)} <small>${m.it.date === td ? '' : fshort(m.it.date) + ' '}${esc(m.afterArr || m.it._pl ? '' : (m.it.cat==='transport' ? m.it.heureDep : m.it.heure) || '')}</small>`).join(' &nbsp;·&nbsp; ')}</div>` : ''}</div>`;
   }
   function nhWho(pid){ M.nhWho = pid === M.me ? '' : pid; persist(); refresh(); }
   function nhGo(id){
     const it = R[id]; if(!it) return; const q = encodeURIComponent;
     let u;
+    if(it.type === 'place'){ window.open(`https://www.google.com/maps/dir/?api=1&destination=${it.lat && it.lng ? it.lat + ',' + it.lng : q([it.nom, it.adresse].filter(Boolean).join(' '))}`, '_blank', 'noopener'); return; }
     if(it.cat==='transport'){ const pt = String(it.from||'') + (it.mode==='Avion' ? ' aéroport' : /Train/i.test(it.mode||'') ? ' gare' : ''); u = `https://www.google.com/maps/dir/?api=1&destination=${q(pt)}`; }
     else if(it.cat==='hotel') u = `https://www.google.com/maps/dir/?api=1&destination=${q([it.nom, it.adresse || it.titre].filter(Boolean).join(' '))}`;
     else u = `https://www.google.com/maps/dir/?api=1&destination=${q(it.adresse || [it.titre, it.lieu].filter(Boolean).join(' '))}`;

@@ -1719,7 +1719,7 @@
       if(!prof(M.me)) whoSheet();
       refresh(); toast('☁️ Synchro activée');
       if(PUBLIC && prof(M.me) && !syncOn.quiet) setTimeout(codeSheet, 300);
-    } catch(e){ M.sync = prev; persist(); alert('Connexion impossible : ' + e.message); }
+    } catch(e){ M.sync = prev; persist(); if(e.needVerify){ acctGateSheet(code, e.mail); return; } if(e.needAcct){ acctNew({acct:false, must:1}, code); return; } alert('Connexion impossible : ' + e.message); }
   }
   async function syncOff(){ if(!(await uiConfirm('Désactiver la synchro sur ce téléphone ? Les données restent ici.'))) return; M.sync.on = false; persist(); refresh(); }
   async function shareCode(){
