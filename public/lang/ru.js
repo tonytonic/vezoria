@@ -6199,4 +6199,5 @@ I18N.load({
 "{0} a rejoint « {1} »":"{0} присоединился к «{1}»",
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"Вы в поездке по личному приглашению: его нельзя передать. Чтобы позвать кого-то, попросите пригласившего.",
 "Qui invites-tu dans ce voyage ? Son prénom :":"Кого приглашаете в поездку? Имя:",
-"Invitation…":"Приглашение…"});
+"Invitation…":"Приглашение…",
+"après ton arrivée":"после вашего прибытия"});

@@ -3244,4 +3244,5 @@ I18N.load({
 "{0} a rejoint « {1} »":"{0} joined “{1}”",
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"You're on this trip through a personal invitation: it can't be passed on. To bring someone along, ask the person who invited you.",
 "Qui invites-tu dans ce voyage ? Son prénom :":"Who are you inviting to this trip? Their first name:",
-"Invitation…":"Invitation…"});
+"Invitation…":"Invitation…",
+"après ton arrivée":"after you arrive"});

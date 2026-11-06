@@ -6198,4 +6198,5 @@ I18N.load({
 "{0} a rejoint « {1} »":"{0} “{1}” में शामिल हुए",
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"आप निजी निमंत्रण से इस यात्रा में हैं: इसे आगे नहीं दिया जा सकता। किसी को जोड़ने के लिए आमंत्रित करने वाले से कहें।",
 "Qui invites-tu dans ce voyage ? Son prénom :":"इस यात्रा में किसे आमंत्रित कर रहे हैं? उनका नाम:",
-"Invitation…":"निमंत्रण…"});
+"Invitation…":"निमंत्रण…",
+"après ton arrivée":"आपके पहुँचने के बाद"});

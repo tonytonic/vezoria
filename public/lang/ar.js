@@ -6199,4 +6199,5 @@ I18N.load({
 "{0} a rejoint « {1} »":"انضم {0} إلى «{1}»",
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"أنت في هذه الرحلة بدعوة شخصية لا يمكن نقلها. لإضافة أحد، اطلب ممن دعاك.",
 "Qui invites-tu dans ce voyage ? Son prénom :":"من تدعو إلى هذه الرحلة؟ اسمه الأول:",
-"Invitation…":"دعوة…"});
+"Invitation…":"دعوة…",
+"après ton arrivée":"بعد وصولك"});

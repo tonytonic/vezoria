@@ -3250,4 +3250,5 @@ I18N.load({
 "{0} a rejoint « {1} »":"{0} doet mee aan “{1}”",
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"Je zit in deze reis via een persoonlijke uitnodiging: die kun je niet doorgeven. Vraag de persoon die jou uitnodigde om iemand toe te voegen.",
 "Qui invites-tu dans ce voyage ? Son prénom :":"Wie nodig je uit voor deze reis? Voornaam:",
-"Invitation…":"Uitnodiging…"});
+"Invitation…":"Uitnodiging…",
+"après ton arrivée":"na je aankomst"});

@@ -3260,4 +3260,5 @@ I18N.load({
 "{0} a rejoint « {1} »":"{0} se ha unido a «{1}»",
 "Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.":"Estás en este viaje por una invitación personal: no se puede transmitir. Para traer a alguien, pídeselo a quien te invitó.",
 "Qui invites-tu dans ce voyage ? Son prénom :":"¿A quién invitas a este viaje? Su nombre:",
-"Invitation…":"Invitación…"});
+"Invitation…":"Invitación…",
+"après ton arrivée":"tras tu llegada"});
