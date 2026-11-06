@@ -3339,3 +3339,6 @@ html.vz-dark body .cv-share-qr{background:#fff!important}
 .sp2-wait{margin-left:auto;font-size:.78rem;color:#6b7280;white-space:nowrap}
 .sp2-allr{display:flex;gap:8px;margin:2px 0 10px}.sp2-allr button{flex:1;border:1px solid var(--nb,#E9DDFB);background:#fff;color:var(--n,#4C1D95);border-radius:999px;padding:7px 10px;font-weight:700;font-size:.85rem;cursor:pointer}
 .cv-hero .hw{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}.cv-hero .hw button{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:5px 12px;font-weight:700;font-size:.82rem;cursor:pointer}.cv-hero .hw button.on{background:#fff;color:#4C1D95;border-color:#fff}
+/* 06e : 4 boutons dans « Prochaine étape » : le texte reste dans son bouton (Embarquement) */
+.cv-hero .hb button{min-width:0;overflow:hidden;text-align:center;line-height:1.15;white-space:nowrap;text-overflow:ellipsis;font-size:min(.8rem,3.3vw);padding:10px 3px;letter-spacing:-.01em}
+.cv-hero .hb:has(> button:nth-child(4)) button{font-size:min(.8rem,2.7vw)}
