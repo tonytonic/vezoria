@@ -3359,4 +3359,5 @@ I18N.load({
 "Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"You tick the trips they do with you. The others stay private.",
 "Tous mes voyages (tout mon carnet)":"All my trips (my whole journal)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"They see and complete all your trips, current and future.",
-"Qui voit quel voyage":"Who sees which trip"});
+"Qui voit quel voyage":"Who sees which trip",
+"Je coupe son accès aux voyages partagés…":"Removing their access to shared trips…"});

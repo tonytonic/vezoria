@@ -6301,4 +6301,5 @@ I18N.load({
 "Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"Seninle yaptığı seyahatleri işaretlersin. Diğerleri gizli kalır.",
 "Tous mes voyages (tout mon carnet)":"Tüm seyahatlerim (tüm günlüğüm)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Şimdiki ve gelecekteki tüm seyahatlerini görür ve tamamlar.",
-"Qui voit quel voyage":"Kim hangi seyahati görüyor"});
+"Qui voit quel voyage":"Kim hangi seyahati görüyor",
+"Je coupe son accès aux voyages partagés…":"Paylaşılan seyahatlere erişimi kaldırılıyor…"});

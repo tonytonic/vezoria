@@ -6313,4 +6313,5 @@ I18N.load({
 "Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"一緒に行く旅行にチェック。他は非公開のままです。",
 "Tous mes voyages (tout mon carnet)":"すべての旅行（手帳全体）",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"今の旅行もこれからの旅行も、すべて見て編集できます。",
-"Qui voit quel voyage":"誰がどの旅行を見られるか"});
+"Qui voit quel voyage":"誰がどの旅行を見られるか",
+"Je coupe son accès aux voyages partagés…":"共有旅行へのアクセスを解除中…"});

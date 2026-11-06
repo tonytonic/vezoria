@@ -6313,4 +6313,5 @@ I18N.load({
 "Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"함께하는 여행을 체크하세요. 나머지는 비공개예요.",
 "Tous mes voyages (tout mon carnet)":"내 모든 여행 (수첩 전체)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"지금과 앞으로의 모든 여행을 보고 채워요.",
-"Qui voit quel voyage":"누가 어떤 여행을 보는지"});
+"Qui voit quel voyage":"누가 어떤 여행을 보는지",
+"Je coupe son accès aux voyages partagés…":"공유 여행 접근을 해제하는 중…"});

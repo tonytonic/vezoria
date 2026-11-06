@@ -6314,4 +6314,5 @@ I18N.load({
 "Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"Отметь поездки, в которых вы вместе. Остальные останутся личными.",
 "Tous mes voyages (tout mon carnet)":"Все мои поездки (весь дневник)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Видит и дополняет все твои поездки, нынешние и будущие.",
-"Qui voit quel voyage":"Кто видит какую поездку"});
+"Qui voit quel voyage":"Кто видит какую поездку",
+"Je coupe son accès aux voyages partagés…":"Закрываю доступ к общим поездкам…"});

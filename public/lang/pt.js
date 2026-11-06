@@ -3378,4 +3378,5 @@ I18N.load({
 "Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"Você marca as viagens que ela faz com você. As outras continuam privadas.",
 "Tous mes voyages (tout mon carnet)":"Todas as minhas viagens (todo o caderno)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Ela vê e completa todas as suas viagens, atuais e futuras.",
-"Qui voit quel voyage":"Quem vê qual viagem"});
+"Qui voit quel voyage":"Quem vê qual viagem",
+"Je coupe son accès aux voyages partagés…":"Removendo o acesso às viagens compartilhadas…"});

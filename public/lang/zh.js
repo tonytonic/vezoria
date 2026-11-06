@@ -6313,4 +6313,5 @@ I18N.load({
 "Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"勾选你们一起的旅行，其余保持私密。",
 "Tous mes voyages (tout mon carnet)":"我的全部旅行（整本手账）",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"看到并补充你所有的旅行，包括以后的。",
-"Qui voit quel voyage":"谁能看到哪次旅行"});
+"Qui voit quel voyage":"谁能看到哪次旅行",
+"Je coupe son accès aux voyages partagés…":"正在取消其对共享旅行的访问…"});

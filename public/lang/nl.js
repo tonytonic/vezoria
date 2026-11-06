@@ -3365,4 +3365,5 @@ I18N.load({
 "Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"Je vinkt de reizen aan die ze met je maakt. De rest blijft privé.",
 "Tous mes voyages (tout mon carnet)":"Al mijn reizen (mijn hele dagboek)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Ze ziet en vult al je reizen aan, nu en later.",
-"Qui voit quel voyage":"Wie ziet welke reis"});
+"Qui voit quel voyage":"Wie ziet welke reis",
+"Je coupe son accès aux voyages partagés…":"Toegang tot gedeelde reizen wordt verwijderd…"});

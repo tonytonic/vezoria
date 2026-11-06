@@ -6313,4 +6313,5 @@ I18N.load({
 "Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"आप वे यात्राएं चुनें जो वह आपके साथ करेगा। बाकी निजी रहेंगी।",
 "Tous mes voyages (tout mon carnet)":"मेरी सभी यात्राएं (पूरी डायरी)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"आपकी सभी यात्राएं, अभी की और आने वाली, देखेगा और पूरा करेगा।",
-"Qui voit quel voyage":"कौन कौन-सी यात्रा देखता है"});
+"Qui voit quel voyage":"कौन कौन-सी यात्रा देखता है",
+"Je coupe son accès aux voyages partagés…":"साझा यात्राओं तक पहुंच हटाई जा रही है…"});

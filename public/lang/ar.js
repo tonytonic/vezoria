@@ -6314,4 +6314,5 @@ I18N.load({
 "Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"تحدد الرحلات التي تقوم بها معك. تبقى الأخرى خاصة.",
 "Tous mes voyages (tout mon carnet)":"كل رحلاتي (دفتري كله)",
 "Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"ترى وتكمل كل رحلاتك الحالية والقادمة.",
-"Qui voit quel voyage":"من يرى أي رحلة"});
+"Qui voit quel voyage":"من يرى أي رحلة",
+"Je coupe son accès aux voyages partagés…":"جارٍ إلغاء وصوله إلى الرحلات المشتركة…"});
