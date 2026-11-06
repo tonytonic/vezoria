@@ -463,8 +463,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     return loc;
   }
   async function clmPrime(code){
-    try { if(!code || myFeedCode(code)) { if((M.abInv || []).some(x=>x.code === code)) LOCKT[await authCode(code)] = 1; return; }
-      const tok = await authCode(code); if(CLMT[tok]) return;
+    try { if(!code) return; const tok = await authCode(code);
+      if((M.abInv || []).some(x=>x.code === code && !x.pub) || (M.packs || {})[code]) LOCKT[tok] = 1;   // mes liens personnels (abonnés, compagnons)
+      if(CLMT[tok]) return;
       const over = (M.clOver || {})[code]; if(over){ CLMT[tok] = over; return; }   // reçu du navigateur (« passer dans l’appli »)
       const k = await crypto.subtle.importKey('raw', te.encode('vz-acct:' + acctSecret()), {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
       CLMT[tok] = hex(await crypto.subtle.sign('HMAC', k, te.encode('vz-claim:' + code))).slice(0, 48);
@@ -741,7 +742,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id])); sbDone(Object.keys(sent));
         j.records = flt(j.records);
-        j.records.forEach(r=>{ if(sp.sub || sp.ivme || sp.inv || sp.mate) return; if(r && force && r.type==='trip' && M.hide && M.hide[r.id]){ delete M.hide[r.id]; if(M.left) delete M.left[r.id]; if(M.mvSkip) delete M.mvSkip[r.id]; }   // rejoint exprès : un voyage retiré revient
+        j.records.forEach(r=>{ if(r && r.type === 'trip' && !r.deleted && R[r.id] && R[r.id].type === 'trip' && r.updatedBy !== M.me){   // 🆕 quelqu’un a rejoint un voyage
+            const was = new Set(R[r.id].voyageurs || []); (r.voyageurs || []).filter(p=>!was.has(p) && p !== M.me).forEach(p=>{ (M.joinNote = M.joinNote || []).push({tid:r.id, pid:p, at:Date.now()}); setTimeout(()=>{ try { toast('🆕 ' + RF('{0} a rejoint « {1} »', pname(p), r.titre || '')); } catch(e){} }, 400); }); }
+          if(sp.sub || sp.ivme || sp.inv || sp.mate) return; if(r && force && r.type==='trip' && M.hide && M.hide[r.id]){ delete M.hide[r.id]; if(M.left) delete M.left[r.id]; if(M.mvSkip) delete M.mvSkip[r.id]; }   // rejoint exprès : un voyage retiré revient
           // 👀 voyage publié que je fais AUSSI en compagnon : je l'ai déjà en entier, pas besoin de le suivre en abonné (ex. Claire suit le carnet de Tony
           // sans revoir les voyages faits ensemble). S'il quitte un jour mes voyages, il redevient suivable.
           if(r && r.type==='feedtrip' && !r.deleted){ const tid = String(r.id).slice(3), own = R[tid] && R[tid].type === 'trip' && !R[tid].deleted && !R[tid].demo && !FT()[tid] && !(typeof ownFt === 'function' && ownFt(r)), un = M.unfol || (M.unfol = {});
@@ -1352,6 +1355,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   function tripShareSheet(id){
     const t = R[id], code = TS()[id], sp = spaceObj(code) || {};
+    if((M.viaP || {})[id]){ openSheet(`<h2>🔗 ${esc(t.titre)}</h2><div class="v-sum-small" style="margin-bottom:8px">${esc(MSGT('Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.'))}</div><div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`); return; }
     openSheet(`<h2>🔗 ${esc(t.titre)}</h2><div class="v-sum-small" style="margin-bottom:8px">Ce voyage a son propre code : seuls ceux qui l’ont le voient. Tes autres voyages restent privés.</div>
       <div class="cv-bigcode">${esc(code)}</div>
       <div class="v-sum-small" style="margin:6px 0 10px">État : ${sp.err ? '🔴 ' + esc(sp.err) : (sp.dirty||[]).length ? '🟠 ' + sp.dirty.length + ' modif(s) en attente' : sp.last ? '🟢 À jour (' + vzWhen(sp.last) + ')' : '⏳ première synchro…'}</div>
@@ -1542,12 +1546,21 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="pkt" value="${t.id}"${pk ? (pk.trips.includes(t.id) ? ' checked' : '') : ''}> <span data-notr>${esc(t.titre)}</span>${t.debut ? ' <small>' + esc(tripDatesLong(t)) + '</small>' : ''}</label>`).join('')}
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.packSave('${ja(P || '')}')">${pk ? '✅ Enregistrer' : '📤 Créer l’invitation'}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
+  async function packQuick(tid, who){
+    const t = R[tid]; if(!t) return; const P = genCode(); (M.spaces = M.spaces || []).push({code:P, since:0, dirty:[], last:0, err:''}); PACKS()[P] = {who: who || '?', trips:[], at:Date.now()};
+    const pk = PACKS()[P]; TS()['pa:' + P] = P;
+    if(!(TS()[tid] && spaceObj(TS()[tid]))){ const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[tid] = c;
+      Object.values(R).filter(r=>!r.demo && (r.id === tid || r.trip === tid)).forEach(r=>markDirty(r.id)); photoResend(tid); }
+    putQuiet([{id:'pt:' + tid + '@' + P, type:'packtrip', trip:'pa:' + P, tid, code:TS()[tid], titre:t.titre || ''}]); pk.trips.push(tid);
+    persist(); try { await clmPrime(P); await syncNow(); } catch(e){}
+    return P;
+  }
   async function packSave(P){
     const sel = [...document.querySelectorAll('.pkt:checked')].map(i=>i.value), who = ((document.getElementById('pk-who')||{}).value || '').trim();
     if(!sel.length && !P){ alert('Coche au moins un voyage.'); return; }
     closeSheet(true);
     const isNew = !P;
-    if(isNew){ P = genCode(); (M.spaces = M.spaces || []).push({code:P, since:0, dirty:[], last:0, err:''}); PACKS()[P] = {who: who || '?', trips:[], at:Date.now()}; }
+    if(isNew){ P = genCode(); (M.spaces = M.spaces || []).push({code:P, since:0, dirty:[], last:0, err:''}); PACKS()[P] = {who: who || '?', trips:[], at:Date.now()}; try { await clmPrime(P); } catch(e){} }
     const pk = PACKS()[P]; TS()['pa:' + P] = P;
     const add = sel.filter(t=>!pk.trips.includes(t)), rem = pk.trips.filter(t=>!sel.includes(t)), out = [];
     for(const t of add){
@@ -1754,7 +1767,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     for(const r of list('invite', x=>x.dev === me && x.ct && x.opk && TS()[x.trip] === M.ib)){
       const key = r.id + ':' + r.ct.slice(0, 12); if(done[key] || ivLater[key]) continue;
       let m = null; try { const sk = await fShared(k.priv, r.opk); m = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(r.iv)}, sk, unb64(r.ct)))); } catch(e){}
-      if(m && m.k === 'reply'){ done[key] = 1; putQuiet([Object.assign(clone(r), {deleted:true})]); ivReply(m); continue; }
+      if(m && m.k === 'reply'){ done[key] = 1; putQuiet([Object.assign(clone(r), {deleted:true})]); if(m.id === 'fwreq') toast('✕ ' + (m.from || '?') + ' · ' + MSGT('a refusé ta demande')); else ivReply(m); continue; }
+      if(m && m.k === 'fwreq'){ todo.push({r, key, m}); continue; }   // 🙋 quelqu’un demande à me suivre
       if(!m || !/^[A-Z0-9-]{8,}$/.test(m.c || '')){ done[key] = 1; continue; }
       const already = m.k === 'follow' ? list('feedtrip', f=>TS()[f.id] === m.c && !f.deleted).length : Object.values(TS()).includes(m.c);
       if(already){ done[key] = 1; putQuiet([Object.assign(clone(r), {deleted:true})]); continue; }
@@ -1763,6 +1777,14 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(document.getElementById('v-sheet-bg') || document.querySelector('.ui-dlg, #cv-gate, #cv-world, #qr-ov')){ if((n || 0) < 60) setTimeout(()=>inviteCheck((n || 0) + 1), 2000); return; }
     const {r, key, m} = todo[0]; ivOpen = true;
     const who = esc(m.from || '?'), ttl = esc(m.t || '');
+    if(m.k === 'fwreq'){ openSheet(`<h2>🙋 ${esc(MSGT('Demande à te suivre'))}</h2>
+      <div class="sh-k" style="font-size:1.05rem;margin:4px 0 12px"><b data-notr>${who}</b>${ttl ? ` · <span>${esc(RF('abonné(e) de {0}', m.t))}</span>` : ''}</div>
+      <div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Elle verra les souvenirs (photos, étapes, récits) des voyages que tu montres. Le programme, les réservations et le budget restent privés.'))}</div>
+      <div class="v-actions" style="flex-direction:column"><button type="button" class="v-btn" onclick="CV.inviteAnswer('${ja(key)}',1)">✅ ${esc(MSGT('Accepter : son propre lien'))}</button>
+        <button type="button" class="v-btn sec" onclick="CV.inviteAnswer('${ja(key)}',2)">🔗 ${esc(MSGT('Accepter : mon lien commun'))}</button>
+        <button type="button" class="v-btn sec" onclick="CV.inviteAnswer('${ja(key)}',0)">${esc(MSGT('Plus tard'))}</button>
+        <button type="button" class="v-btn sec" onclick="CV.inviteAnswer('${ja(key)}',-1)">✕ ${esc(MSGT('Refuser'))}</button></div>`, true);
+      inviteCheck.cur = {r, key, m}; return; }
     openSheet(`<h2>📩 Invitation</h2>
       <div class="sh-k" style="font-size:1.05rem;margin:4px 0 12px"><b data-notr>${who}</b> · <span>${m.k === 'follow' ? 'te propose de suivre un voyage' : 't’invite dans un voyage'}</span><div style="margin-top:6px">🧳 <b data-notr>${ttl}</b></div></div>
       <div class="v-sum-small" style="margin-bottom:10px">${m.k === 'follow' ? 'Tu verras ses photos et récits au fil des étapes.' : 'Tu le verras et le compléteras avec tes compagnons. Tes autres voyages restent privés.'}</div>
@@ -1799,7 +1821,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const cur = inviteCheck.cur; ivOpen = false; inviteCheck.cur = null; closeSheet(true);
     if(!cur || cur.key !== key) return;
     if(a === 0){ ivLater[key] = 1; return; }
+    if(cur.m.k === 'fwreq' && a > 0 && !ab2Vis().length){ alert(MSGT('Allume d’abord les voyages à montrer') + '. ' + MSGT('La demande reviendra ensuite.')); ab2TripsSheet(); return; }
     (M.ivDone = M.ivDone || {})[key] = 1; putQuiet([Object.assign(clone(cur.r), {deleted:true})]); persist();
+    if(cur.m.k === 'fwreq'){ await ab2ReqAnswer(cur.m, cur.r.opk, a); setTimeout(()=>inviteCheck().catch(()=>{}), 1500); return; }
     if(cur.m.ib && cur.r.opk && cur.m.k === 'trip') ivSend({dev:cur.m.dev, pk:cur.r.opk, ib:cur.m.ib}, {k:'reply', id:cur.m.id, ok:a === 1, t:cur.m.t || ''}).catch(()=>{});   // l’auteur sait si c’est oui ou non
     if(a === 1){ if(cur.m.k === 'follow') await followGo(cur.m.c); else await joinCodeGo(cur.m.c, t=>toast(t)); }
     setTimeout(()=>inviteCheck().catch(()=>{}), 1500);

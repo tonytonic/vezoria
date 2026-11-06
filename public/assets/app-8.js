@@ -64,6 +64,13 @@
     const t = R[id || M.trip]; if(!t || t.demo) return;
     const cloud0 = M.cloud;
     if(!tripInCloud(t.id) && !(await cloudNeedAll())) return;   // ☁️ le carnet d’abord : le voyage partagé s’y branche
+    if((M.viaP || {})[t.id]){ alert(MSGT('Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.')); return; }
+    {   // 👤 une invitation PAR PERSONNE : le 1er compte qui l’ouvre la garde ; la retirer change le code du voyage pour elle seule
+      if(!(TS()[t.id] && spaceObj(TS()[t.id])) && !(await uiConfirm(MSGT('Envoyer « {0} » sur le serveur ?').replace('{0}', t.titre) + '\n' + MSGT('Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.')))) return;
+      const who = await uiPrompt(MSGT('Qui invites-tu dans ce voyage ? Son prénom :'), ''); if(!who || !who.trim()) return;
+      cryptShow('🔐 ' + MSGT('Invitation…'));
+      let P = null; try { P = await packQuick(t.id, who.trim().slice(0, 40)); } finally { cryptHide(''); }
+      if(P){ inviteSheet('', 'pack', P); refresh(); } return; }
     // pas encore en ligne : on demande d’abord la permission d’envoyer le voyage sur le serveur
     let fresh = false;
     if(!(TS()[t.id] && spaceObj(TS()[t.id]))){
@@ -300,7 +307,8 @@
     if(M.me && (t.voyageurs || []).length > 1 && TS()[tid] && spaceObj(TS()[tid])){ const co = {id:'fc:' + tid + ':' + M.me, type:'feedco', trip:tid, pid:M.me, code:c}; if(!R[co.id] || R[co.id].deleted || R[co.id].code !== c) out.push(co); }
     // couverture pour les abonnés : ma photo › photo Wikipédia choisie › 1re photo d’un souvenir publié (jamais d’un souvenir privé)
     const cov = t.cover || (t.coverWk ? '' : ((list('souv', x=>x.trip===tid && !x.priv && (x.photos||[]).length).sort((a,b)=>(a.date||'').localeCompare(b.date||''))[0] || {}).photos || [])[0] || '');
-    const head = {id:ftId(tid), type:'feedtrip', oav:myAv(), titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', team: (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').slice(0, 30), tids: (t.voyageurs||[]).slice(0, 30), opid: (M.me && prof(M.me)) ? M.me : undefined, pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', link: c, blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
+    const ct = (t.voyageurs || []).filter(v=>v !== M.me && (M.links || {})[v] && M.links[v].ib && M.links[v].pk).slice(0, 12).map(v=>({pid:v, nom:pname(v), dev:M.links[v].dev, pk:M.links[v].pk, ib:M.links[v].ib}));   // 🙋 les abonnés peuvent leur demander à les suivre
+    const head = {id:ftId(tid), type:'feedtrip', ct, oav:myAv(), titre:t.titre || '', debut:t.debut || '', fin:t.fin || '', owner: myName() || 'Moi', team: (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').slice(0, 30), tids: (t.voyageurs||[]).slice(0, 30), opid: (M.me && prof(M.me)) ? M.me : undefined, pk: (M.fkey && M.fkey.pub) || undefined, cover: cov || '', coverWk: cov ? '' : (t.coverWk || ''), place: tripPlace(t) || '', link: c, blk: ((M.feedBlk||{})[tid] || []).slice(0, 200)};
     if(!R[head.id] || stripStamp(R[head.id]) !== stripStamp(head)) out.push(head);
     const keep = new Set(), first = !R[head.id] || R[head.id].deleted, fresh = [], fpWant = new Set();
     // 🫙 photo dans le pot commun : les abonnés reçoivent son droit de lecture (« fp: »), pas une copie ; sinon, l'ancienne vignette
@@ -1558,7 +1566,7 @@
   async function feedLike(fid){
     const f = R[fid]; if(!f) return; if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
     const id = 'lk:' + fid + ':' + devId(), cur = R[id];
-    putQuiet([{id, type:'like', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), on: !(cur && cur.on)}]); syncNow(); feedPaint(fid);
+    putQuiet([{id, type:'like', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), pk:(M.fkey || {}).pub, ib:(M.fkey && M.fkey.pub) ? inbox() : '', on: !(cur && cur.on)}]); syncNow(); feedPaint(fid);
     if(!(cur && cur.on)){ fxPlay && fxHeart(); socCodes(f.trip).forEach(c=>socialPush(f.trip, 'like', f.titre || f.lieu || '', c, f.id)); }
   }
   // les autres personnes qui ont commenté cette publication (abonnés) : prévenues sur leur propre téléphone
@@ -1572,7 +1580,7 @@
   async function feedComment(fid){
     const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
     if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
-    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), text:txt.slice(0, 600), at:Date.now()}]); socCodes(f.trip).forEach(c=>socialPush(f.trip, 'comment', txt, c, f.id)); replyPush(f, txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
+    putQuiet([{id:'cm:' + uid(), type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), pk:(M.fkey || {}).pub, ib:(M.fkey && M.fkey.pub) ? inbox() : '', text:txt.slice(0, 600), at:Date.now()}]); socCodes(f.trip).forEach(c=>socialPush(f.trip, 'comment', txt, c, f.id)); replyPush(f, txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
   }
   function fxHeart(){ const el = document.createElement('div'); el.className = 'fx-like'; el.innerHTML = '<img src="' + (window.VZ_B || '') + 'anim/heart.webp" alt="">'; document.body.appendChild(el); setTimeout(()=>el.remove(), 1100); }
   function feedPostHTML(f){
@@ -1741,7 +1749,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06a'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-06c'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -1805,7 +1813,8 @@
   async function ab2Name(){ if(myName()) return true; const n = await uiPrompt(MSGT('Ton prénom (affiché à tes abonnés) :'), ''); if(!n || !n.trim()) return false; M.followName = n.trim(); persist(); return true; }
   // 🔗 la fiche du lien d’un abonné : le code du fil (il le suit avec), son prénom, ses voyages cachés
   function ab2InvRec(x, extra){ TS()['fi:' + x.code] = x.code; const cur = R['iv:' + x.code];
-    const r = Object.assign({id:'iv:' + x.code, type:'abinv', trip:'fi:' + x.code, code:ab2C(), name:x.name, owner:myName() || '', oav:myAv() || '', hide:(cur && !cur.deleted && cur.hide) || []}, extra || {});
+    const keep = cur && !cur.deleted ? cur : {};
+    const r = Object.assign({id:'iv:' + x.code, type:'abinv', trip:'fi:' + x.code, code:ab2C(), name:x.name, owner:myName() || '', oav:myAv() || '', hide:keep.hide || []}, x.pub ? {pub:1, ban:keep.ban || [], hd:keep.hd || {}} : {}, extra || {});
     if(!cur || cur.deleted || stripStamp(cur) !== stripStamp(r)) putQuiet([r]); }
   // 🟢 un voyage montré / caché à tous mes abonnés
   async function ab2TripSet(tid, on){
@@ -1840,15 +1849,94 @@
   }
   // 👀 mes abonnés = mes liens ; chacun peut l’ouvrir sur plusieurs appareils (fiche « fw:<son lien>:<appareil> » sur son lien)
   const ab2InvFws = x => list('follower', f=>f.code === x.code).sort((a, b)=>(b.updatedAt || 0) - (a.updatedAt || 0));
+  // 🔗 lien commun (option) : un seul lien pour plusieurs personnes. Chacune y apparaît à part ; la retirer la coupe dans l’appli
+  //    (sur son téléphone), sans vraie coupure : pour ça, un lien personnel.
+  const ab2Pub = () => AI().find(x=>x.pub);
+  const ab2PubRec = () => { const x = ab2Pub(), r = x && R['iv:' + x.code]; return r && !r.deleted ? r : {}; };
+  const ab2PubFws = () => { const x = ab2Pub(); if(!x) return []; const ban = new Set(ab2PubRec().ban || []), by = {};
+    ab2InvFws(x).forEach(f=>{ const d = fwDevOf(f); if(!ban.has(d) && !by[d]) by[d] = f; }); return Object.values(by); };
+  // une « personne » de ma liste : un lien personnel (id) ou un abonné du lien commun (« pub:<appareil> »)
+  function ab2P(id){
+    if(String(id).startsWith('pub:')){ const d = id.slice(4), x = ab2Pub(), f = ab2PubFws().find(y=>fwDevOf(y) === d); if(!x || !f) return null;
+      return {id, x, f, pub:1, devs:[d], name:ab2Nm(f), hide:new Set((ab2PubRec().hd || {})[d] || [])}; }
+    const x = ab2Inv(id); if(!x || x.pub) return null; const f = ab2InvFws(x)[0];
+    return {id, x, f, devs:ab2InvFws(x).map(fwDevOf), name:ab2InvNm(x), hide:ab2InvHide(x)};
+  }
+  const ab2People = () => [...AI().filter(x=>!x.pub).map(x=>ab2P(x.id)), ...ab2PubFws().map(f=>ab2P('pub:' + fwDevOf(f)))].filter(Boolean);
+  // 🤝 les abonnés de mes compagnons (ils ont aimé ou commenté nos voyages communs) : je peux les inviter à me suivre
+  function ab2MatesFws(){
+    const me = devId(), mine = new Set(ab2Fws().map(fwDevOf)), asked = M.abAsked || {}, by = {};
+    [...list('comment'), ...list('like', l=>l.on)].forEach(c=>{ const tid = String(c.trip || '').replace(/^ft:/, ''), d = c.dev || devOfRec(c);
+      if(!d || d === me || mine.has(d) || !c.pk || !c.ib || !mateCodes(tid).length) return;
+      const w = String(c.who || '').replace(/^🧳\s*/, ''); if(!w || fwGeneric(w)) return;
+      if(!by[d] || (c.updatedAt || 0) > (by[d].at || 0)) by[d] = {dev:d, who:w, pk:c.pk, ib:c.ib, at:c.updatedAt || 0, asked:!!asked[d]}; });
+    return Object.values(by);
+  }
+  function ab2MatesFwHTML(){
+    const L = ab2MatesFws(); if(!L.length) return '';
+    return `<div class="sp2-sec" style="margin-top:12px">🤝 <b>${esc(MSGT('Les abonnés de mes compagnons'))}</b></div><div class="sp2-empty">${esc(MSGT('Ils suivent nos voyages communs chez un compagnon. Invite-les à te suivre aussi.'))}</div>
+      ${L.map(x=>`<div class="sp2-row"><b data-notr>${esc(x.who)}</b>${x.asked ? `<small class="sp2-wait">📩 ${esc(MSGT('invité'))}</small>` : `<button type="button" class="sp2-fol" onclick="CV.ab2AskFw('${ja(x.dev)}')">📩 ${esc(MSGT('Inviter'))}</button>`}</div>`).join('')}`;
+  }
+  // un lien personnel pour cette personne, envoyé dans sa boîte de l’appli (elle accepte ou refuse)
+  async function ab2NewInv(name){
+    await ab2Make(); const x = {id:'i' + uid(), name:String(name || '?').slice(0, 40), code:genCode(), at:Date.now()};
+    AI().push(x); ab2Space(x.code, {inv:1}); persist();
+    try { await admPrime(x.code); await clmPrime(x.code); } catch(e){}
+    ab2InvRec(x); ab2CfgSave(); try { await syncNow(); } catch(e){} return x;
+  }
+  async function ab2AskFw(dev){
+    const x0 = ab2MatesFws().find(y=>y.dev === dev); if(!x0) return;
+    if(!(await ab2Name())) return;
+    if(!ab2Vis().length){ toast('👁️ ' + MSGT('Allume d’abord les voyages à montrer')); return ab2TripsSheet(); }
+    if(!(await uiConfirm(RF('Inviter {0} à te suivre ?', x0.who) + '\n\n' + MSGT('Elle reçoit l’invitation dans son appli et choisit de te suivre ou non. Elle aura son propre lien.')))) return;
+    const x = await ab2NewInv(x0.who);
+    const ok = await ivSend({dev:x0.dev, pk:x0.pk, ib:x0.ib}, {k:'follow', id:x.id, c:x.code, t:myName() || ''}).catch(()=>false);
+    if(ok){ (M.abAsked = M.abAsked || {})[dev] = Date.now(); persist(); toast('📩 ' + MSGT('Invitation envoyée dans l’appli :') + ' ' + x0.who); }
+    else toast('⚠️ ' + MSGT('Envoi impossible pour le moment'));
+    ab2Repaint();
+  }
+  // 🙋 abonné : demander à suivre un compagnon de la personne que je suis (il accepte : lien personnel, lien commun, ou refuse)
+  function ab2SubMates(c){
+    const S = (M.subs || {})[c]; if(!S) return []; const by = {}, mine = new Set(ab2Subs().map(([, T])=>String(T.owner || '').toLowerCase()));
+    ab2SubTrips(c).forEach(f=>(f.ct || []).forEach(m=>{ if(m && m.pk && m.ib && m.nom && !mine.has(String(m.nom).toLowerCase()) && m.ib !== M.ib) by[m.dev || m.pid] = m; }));
+    return Object.values(by);
+  }
+  async function ab2ReqFw(c, key){
+    const m = ab2SubMates(c).find(y=>(y.dev || y.pid) === key); if(!m) return;
+    if(!(await ab2Name())) return;
+    const ok = await ivSend({dev:m.dev, pk:m.pk, ib:m.ib}, {k:'fwreq', id:uid(), c:'', t:((M.subs || {})[c] || {}).owner || ''}).catch(()=>false);
+    if(ok){ (M.abReq = M.abReq || {})[key] = Date.now(); persist(); toast('🙋 ' + RF('Demande envoyée à {0}', m.nom)); ab2Repaint(); }
+    else toast('⚠️ ' + MSGT('Envoi impossible pour le moment'));
+  }
+  // réponse à une demande reçue : 1 = son propre lien · 2 = mon lien commun · -1 = non
+  async function ab2ReqAnswer(m, opk, a){
+    const lk = {dev:m.dev, pk:opk, ib:m.ib}; if(!lk.ib || !lk.pk) return;
+    if(a < 0){ ivSend(lk, {k:'reply', id:'fwreq', ok:false, t:''}).catch(()=>{}); return; }
+    if(!(await ab2Name())) return;
+    let code;
+    if(a === 2){ let x = ab2Pub(); if(!x){ await ab2Make(); x = {id:'i' + uid(), name:MSGT('Lien commun'), code:genCode(), at:Date.now(), pub:1}; AI().push(x); ab2Space(x.code, {inv:1}); persist(); try { await admPrime(x.code); } catch(e){} ab2InvRec(x); ab2CfgSave(); try { await syncNow(); } catch(e){} } code = x.code; }
+    else code = (await ab2NewInv(m.from || '?')).code;
+    const ok = await ivSend(lk, {k:'follow', id:uid(), c:code, t:myName() || ''}).catch(()=>false);
+    toast(ok ? '✅ ' + RF('{0} peut maintenant te suivre', m.from || '?') : '⚠️ ' + MSGT('Envoi impossible pour le moment'));
+  }
+  async function ab2Common(){
+    if(!(await ab2Name())) return; try { ab2Reset(); } catch(e){}
+    if(!ab2Vis().length){ toast('👁️ ' + MSGT('Allume d’abord les voyages à montrer')); return ab2TripsSheet(); }
+    let x = ab2Pub();
+    if(!x){ if(!(await uiConfirm(MSGT('Créer un lien commun ?') + '\n\n' + MSGT('Un seul lien pour plusieurs personnes : pratique pour un groupe. Chacune apparaît dans ta liste et tu peux la retirer, mais seulement dans l’appli. Pour pouvoir couper vraiment, préfère un lien par personne.')))) return;
+      await ab2Make(); x = {id:'i' + uid(), name:MSGT('Lien commun'), code:genCode(), at:Date.now(), pub:1}; AI().push(x); ab2Space(x.code, {inv:1}); persist();
+      try { await admPrime(x.code); } catch(e){} ab2InvRec(x); ab2CfgSave(); try { await syncNow(); } catch(e){} }
+    ab2Send(x.id);
+  }
   const ab2Devs = x => ab2InvFws(x).map(fwDevOf);
-  function ab2Fws(){ return AI().map(x=>ab2InvFws(x)[0]).filter(Boolean); }   // une fiche (la plus récente) par abonné qui a ouvert son lien
+  function ab2Fws(){ return [...AI().filter(x=>!x.pub).map(x=>ab2InvFws(x)[0]).filter(Boolean), ...ab2PubFws()]; }   // une fiche (la plus récente) par abonné qui a ouvert son lien
   const ab2InvHide = x => { const r = R['iv:' + x.code]; return new Set(r && !r.deleted ? (r.hide || []) : []); };
   const ab2Hid = d => { const x = AI().find(y=>ab2Devs(y).includes(d)); return x ? ab2InvHide(x) : new Set(); };
-  const ab2NFw = tid => AI().filter(x=>ab2InvFws(x).length && !ab2InvHide(x).has(ftId(tid))).length;   // abonnés qui voient ce voyage
+  const ab2NFw = tid => ab2People().filter(P=>P.f && !P.hide.has(ftId(tid)) && !(P.pub && (ab2PubRec().hide || []).includes(ftId(tid)))).length;   // abonnés qui voient ce voyage
   const ab2Nm = x => String(((M.fwNick || {})[fwDevOf(x)]) || (fwGeneric(x.who) ? MSGT('Un proche') : x.who) || '?').replace(/^🧳\s*/, '');
   const ab2InvNm = x => x.name || ((ab2InvFws(x)[0] || {}).who) || '?';
   const ab2Vis = () => Object.keys(FT()).filter(t=>R[t] && !R[t].deleted && FT()[t] === ab2C()).sort((a, b)=>(R[b].debut || '').localeCompare(R[a].debut || ''));
-  const ab2Soc = x => { const ids = new Set(ab2Vis().map(ftId)), ds = new Set(ab2Devs(x)); return {lk:list('like', l=>ids.has(l.trip) && l.on && ds.has(devOfRec(l))).length, cm:list('comment', c=>ids.has(c.trip) && ds.has(c.dev))}; };
+  const ab2Soc = P => { const ids = new Set(ab2Vis().map(ftId)), ds = new Set(P.devs || []); return {lk:list('like', l=>ids.has(l.trip) && l.on && ds.has(devOfRec(l))).length, cm:list('comment', c=>ids.has(c.trip) && ds.has(c.dev))}; };
   const ab2Sw = (on, js, lbl) => `<button type="button" class="sp2-sw${on ? ' on' : ''}" role="switch" aria-checked="${on}" aria-label="${esc(lbl || '')}" onclick="${js}"><i></i></button>`;
   function ab2Repaint(){ const sh = document.querySelector('#v-sheet-bg .v-sheet'), y = sh ? sh.scrollTop : 0;
     setTimeout(()=>{ const s2 = document.querySelector('#v-sheet-bg .v-sheet'); if(s2 && y) s2.scrollTop = y; }, 0);   // on reste où on était (plus de saut en haut)
@@ -1857,12 +1945,13 @@
     else if(document.querySelector('#v-sheet-bg .sp2[data-live="hub"]')){ shBack = true; shareHub(); } } catch(e){} refresh(); }
   // la carte « Mes abonnés » de la page Partager
   function ab2AbHTML(){
-    const L = AI(), nv = ab2Vis().length;
+    const L = ab2People(), nv = ab2Vis().length, pub = ab2Pub();
     return `<div class="sp2-sh"><div class="sp2-sec">${SVG_EYE}<b>${esc(MSGT('Mes abonnés'))}</b> <small>(${esc(MSGT('lecture seule'))})</small></div><button type="button" class="sp2-add2" onclick="CV.ab2Invite()">＋ ${esc(MSGT('Ajouter'))}</button></div>
-      ${L.length ? L.map(x=>{ const f = ab2InvFws(x)[0], nm = ab2InvNm(x), s = ab2Soc(x), av = f && avOk(f.av) ? f.av : '';
-        return `<button type="button" class="sp2-row" onclick="CV.ab2FwSheet('${ja(x.id)}')">${av ? avTag(av, nm, '', 'av-lg') : SVG_HID}<b data-notr>${esc(nm)}</b>${f ? `<span class="sp2-ic${s.lk ? '' : ' off'}">${SVG_HEART}</span><span class="sp2-ic${s.cm.length ? '' : ' off'}">${SVG_BUBBLE}</span>` : `<small class="sp2-wait">${Object.values(R).some(r=>r && r.type === 'follower' && r.code === x.code && r.deleted) ? '🚪 ' + esc(MSGT('ne suit plus')) : '⏳ ' + esc(MSGT('lien pas encore ouvert'))}</small>`}<span class="sp2-dots">›</span></button>`; }).join('')
+      ${L.length ? L.map(P=>{ const f = P.f, nm = P.name, s = ab2Soc(P), av = f && avOk(f.av) ? f.av : '';
+        return `<button type="button" class="sp2-row" onclick="CV.ab2FwSheet('${ja(P.id)}')">${av ? avTag(av, nm, '', 'av-lg') : SVG_HID}<b data-notr>${esc(nm)}</b>${P.pub ? `<small class="sp2-wait">🔗 ${esc(MSGT('lien commun'))}</small>` : ''}${f ? `<span class="sp2-ic${s.lk ? '' : ' off'}">${SVG_HEART}</span><span class="sp2-ic${s.cm.length ? '' : ' off'}">${SVG_BUBBLE}</span>` : `<small class="sp2-wait">${Object.values(R).some(r=>r && r.type === 'follower' && r.code === P.x.code && r.deleted) ? '🚪 ' + esc(MSGT('ne suit plus')) : '⏳ ' + esc(MSGT('lien pas encore ouvert'))}</small>`}<span class="sp2-dots">›</span></button>`; }).join('')
         : `<div class="sp2-empty">${esc(MSGT('Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.'))}</div>`}
-      <div class="sp2-pills"><button type="button" class="soft" onclick="CV.ab2TripsSheet()">👁️ ${esc(RF('Voyages montrés : {0}', nv))}</button></div>${mpBtn()}`;
+      <div class="sp2-pills"><button type="button" class="soft" onclick="CV.ab2TripsSheet()">👁️ ${esc(RF('Voyages montrés : {0}', nv))}</button><button type="button" class="soft" onclick="CV.ab2Common()">🔗 ${esc(MSGT('Lien commun'))}${pub ? ' (' + ab2PubFws().length + ')' : ''}</button></div>
+      ${ab2MatesFwHTML()}${mpBtn()}`;
   }
   // 👁️ les voyages que mes abonnés voient (un interrupteur par voyage)
   function ab2TripsSheet(){
@@ -1894,29 +1983,35 @@
   }
   // 👤 un abonné : ce qu’il voit (voyage par voyage), ses ❤️ et commentaires, son lien, le renommer, le retirer
   function ab2FwSheet(id){
-    const x = ab2Inv(id); if(!x) return shareHub();
-    const f = ab2InvFws(x)[0], nm = ab2InvNm(x), s = ab2Soc(x), H = ab2InvHide(x), vis = ab2Vis(), mp = f && f.pid && prof(f.pid) ? f.pid : '';
+    const P = ab2P(id); if(!P) return shareHub();
+    const f = P.f, nm = P.name, s = ab2Soc(P), H = P.hide, vis = ab2Vis(), mp = f && f.pid && prof(f.pid) ? f.pid : '';
     openSheet(`<div class="sp2" data-ab2="fw:${esc(id)}"><div class="sp2-top sp2-top2">${f && avOk(f.av) ? avTag(f.av, nm, '', 'av-xl') : SVG_HID}<h2 data-notr>${esc(nm)}</h2></div><div class="sp2-body">
       ${f ? '' : `<div class="sp2-blk"><div class="sp2-empty">⏳ ${esc(MSGT('Son lien n’a pas encore été ouvert.'))}</div></div>`}
+      ${P.pub ? `<div class="sp2-blk"><div class="sp2-empty">🔗 ${esc(MSGT('Abonné par ton lien commun.'))}</div></div>` : ''}
       <div class="sp2-blk"><div class="sp2-sec">👁️ <b>${esc(MSGT('Ce qu’il voit'))}</b></div><div class="sp2-empty">${esc(MSGT('Éteins un voyage pour le cacher à cette personne seulement.'))}</div>
         ${vis.length > 1 ? `<div class="sp2-allr"><button type="button" onclick="CV.ab2FwAll('${ja(id)}', true)">☑️ ${esc(MSGT('Tout cocher'))}</button><button type="button" onclick="CV.ab2FwAll('${ja(id)}', false)">⬜ ${esc(MSGT('Tout décocher'))}</button></div>` : ''}
         ${vis.map(t=>{ const on = !H.has(ftId(t)), cp = mp && (R[t].voyageurs || []).includes(mp);
           return `<div class="sp2-sr${on ? '' : ' off'}"><span class="sp2-tc">${spCov(R[t])}</span><div class="sp2-sb"><b data-notr>${esc(R[t].titre || '?')}</b><small>${esc(tripDates(R[t]))}</small><small>${cp ? '🧳 ' + esc(MSGT('compagnon : il l’a déjà en entier')) : on ? '👀 ' + esc(MSGT('Il le voit')) : '🙈 ' + esc(MSGT('Caché pour lui'))}</small></div>${cp ? '' : ab2Sw(on, `CV.ab2FwHide('${ja(id)}','${ja(t)}')`, R[t].titre)}</div>`; }).join('') || `<div class="sp2-empty">${esc(MSGT('Aucun voyage montré pour l’instant.'))}</div>`}</div>
       ${f ? `<div class="sp2-blk"><div class="sp2-sec">💬 <b>${esc(RF('{0} ❤️ · {1} commentaire(s)', s.lk, s.cm.length))}</b></div>${s.cm.slice(-3).map(c=>`<div class="sp2-empty">« <span data-notr>${esc(String(c.text || '').slice(0, 140))}</span> »</div>`).join('')}</div>` : ''}
-      <div class="sp2-pills"><button type="button" class="soft" onclick="CV.ab2Send('${ja(id)}')">📤 ${esc(MSGT('Renvoyer son lien'))}</button><button type="button" onclick="CV.ab2Rename('${ja(id)}')">✏️ ${esc(MSGT('Renommer'))}</button></div>
+      <div class="sp2-pills">${P.pub ? '' : `<button type="button" class="soft" onclick="CV.ab2Send('${ja(id)}')">📤 ${esc(MSGT('Renvoyer son lien'))}</button>`}<button type="button" onclick="CV.ab2Rename('${ja(id)}')">✏️ ${esc(MSGT('Renommer'))}</button></div>
       <div class="sp2-pills"><button type="button" class="danger" onclick="CV.ab2FwDel('${ja(id)}')">🚫 ${esc(MSGT('Retirer cet abonné'))}</button></div>
-      <div class="sp2-empty" style="margin-top:8px">${esc(MSGT('Retiré : son lien ne marche plus, ses voyages suivis disparaissent de son téléphone. Tes autres abonnés ne voient aucune différence.'))}</div></div></div>`);
+      <div class="sp2-empty" style="margin-top:8px">${esc(MSGT(P.pub ? 'Retiré : ses voyages suivis disparaissent de son téléphone. Comme il est venu par le lien commun, il a encore ce lien : pour couper vraiment, crée des liens personnels.' : 'Retiré : son lien ne marche plus, ses voyages suivis disparaissent de son téléphone. Tes autres abonnés ne voient aucune différence.'))}</div></div></div>`);
   }
-  async function ab2Rename(id){ const x = ab2Inv(id); if(!x) return; const n = await uiPrompt(MSGT('Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).'), x.name || ''); if(!n || !n.trim()) return; x.name = n.trim().slice(0, 40); persist(); ab2InvRec(x); ab2CfgSave(); ab2Repaint(); try { await syncNow(); } catch(e){} }
-  async function ab2FwAll(id, on){ const x = ab2Inv(id); if(!x) return; ab2InvRec(x, {hide:on ? [] : ab2Vis().map(ftId)}); ab2Repaint(); try { await syncNow(); } catch(e){} }
+  async function ab2Rename(id){ const P = ab2P(id); if(!P) return; if(P.pub) return fwNickAsk(P.devs[0]);
+    const x = P.x, n = await uiPrompt(MSGT('Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).'), x.name || ''); if(!n || !n.trim()) return; x.name = n.trim().slice(0, 40); persist(); ab2InvRec(x); ab2CfgSave(); ab2Repaint(); try { await syncNow(); } catch(e){} }
+  function ab2SetHide(P, arr){ if(P.pub){ const hd = Object.assign({}, ab2PubRec().hd || {}); hd[P.devs[0]] = arr; ab2InvRec(P.x, {hd}); } else ab2InvRec(P.x, {hide:arr}); }
+  async function ab2FwAll(id, on){ const P = ab2P(id); if(!P) return; ab2SetHide(P, on ? [] : ab2Vis().map(ftId)); ab2Repaint(); try { await syncNow(); } catch(e){} }
   async function ab2FwHide(id, tid){
-    const x = ab2Inv(id); if(!x) return; const H = ab2InvHide(x), fid = ftId(tid);
+    const P = ab2P(id); if(!P) return; const H = new Set(P.hide), fid = ftId(tid);
     if(H.has(fid)) H.delete(fid); else H.add(fid);
-    ab2InvRec(x, {hide:[...H]}); ab2Repaint();
+    ab2SetHide(P, [...H]); ab2Repaint();
     try { await syncNow(); } catch(e){}
   }
   // 🚫 retirer : nouveau fil, le nouveau code part dans chaque lien restant ; son lien à lui dit « retiré » puis s’efface
   async function ab2FwDel(id){
+    { const P = ab2P(id); if(P && P.pub){
+      if(!(await uiConfirm(RF('Retirer {0} de tes abonnés ?', P.name) + '\n\n' + MSGT('Ses voyages suivis disparaissent de son téléphone. Il a reçu le lien commun : pour couper vraiment, crée des liens personnels.')))) return;
+      ab2InvRec(P.x, {ban:[...new Set([...(ab2PubRec().ban || []), P.devs[0]])]}); closeSheet(true); shareHub(); toast('🚫 ' + MSGT('Abonné retiré')); try { await syncNow(); } catch(e){} return; } }
     const x = ab2Inv(id), old = ab2C(); if(!x) return;
     if(!(await uiConfirm(RF('Retirer {0} de tes abonnés ?', ab2InvNm(x)) + '\n\n' + MSGT('Son lien ne marche plus et tes voyages disparaissent de son téléphone. Tes autres abonnés continuent sans rien faire.')))) return;
     closeSheet(true); cryptShow('🚫 ' + MSGT('Je retire cet abonné…'));
@@ -1947,9 +2042,10 @@
     const me = devId(), S = (M.subs || {})[sp.of] || null, out = [];
     (recs || []).forEach(r=>{ if(!r) return;
       if(r.type === 'abinv'){ const k = sp.of && S ? S : null;
-        if(r.deleted || r.gone){ if(k) k.ban = 1; else sp.ban = 1; return; }
-        sp.real = r.code; if(k){ k.ah = r.hide || []; if(r.owner) k.owner = r.owner; if(avOk(r.oav)) k.oav = r.oav; if(r.code && r.code !== sp.of) setTimeout(()=>ab2Move(sp.code, r.code), 30); }
-        sp.owner = r.owner || sp.owner; sp.oav = avOk(r.oav) ? r.oav : sp.oav; sp.ah = r.hide || []; return; }
+        if(r.deleted || r.gone || (r.pub && (r.ban || []).includes(me))){ if(k) k.ban = 1; else sp.ban = 1; return; }
+        const ahx = [...(r.hide || []), ...(r.pub ? ((r.hd || {})[me] || []) : [])];
+        sp.real = r.code; if(k){ k.ah = ahx; if(r.owner) k.owner = r.owner; if(avOk(r.oav)) k.oav = r.oav; if(r.code && r.code !== sp.of) setTimeout(()=>ab2Move(sp.code, r.code), 30); }
+        sp.owner = r.owner || sp.owner; sp.oav = avOk(r.oav) ? r.oav : sp.oav; sp.ah = ahx; return; }
       if(r.type === 'follower' && !String(r.id).endsWith(':' + me)) return;
       if(r.type !== 'follower') return;
       out.push(r); });
@@ -2033,7 +2129,7 @@
   function ab2SuisHTML(){
     const L = ab2Subs(), lv = L.filter(([c])=>ab2SubTrips(c).some(f=>TS()[f.id] === c && tripPhase(f) === 'live'));
     return `<div class="sp2-sec">${SVG_ME}<b>${esc(MSGT('Mes abonnements'))}</b>${spLive(lv.map(([, S])=>S.owner || '?'))}<br><small>(${esc(MSGT('ceux que je suis'))})</small></div>
-      ${L.length ? L.map(([c, S])=>{ const ts = ab2SubTrips(c), on = ts.filter(f=>TS()[f.id] === c), nh = ts.length - on.length, fids = new Set(on.map(f=>f.id)), nm = S.owner || '?', live = on.some(f=>tripPhase(f) === 'live');
+      ${L.length ? L.map(([c, S])=>{ const ts = ab2SubTrips(c), on = ts.filter(f=>TS()[f.id] && !S.hide[f.id]), nh = ts.filter(f=>S.hide[f.id]).length, fids = new Set(on.map(f=>f.id)), nm = S.owner || '?', live = on.some(f=>tripPhase(f) === 'live');
           const ph = list('feed', x=>fids.has(x.trip) && (x.photos || []).length).sort((a, b)=>(b.date || '').localeCompare(a.date || '')).flatMap(x=>x.photos.map(p=>[p, x.trip])).slice(0, 3);
           return `<div class="sp2-card sp2-cl" onclick="CV.ab2SubSheet('${ja(c)}')"><div class="sp2-ch">${avTag(avOk(S.oav) ? S.oav : '', nm, '#3b82f6', 'av-xl')}<div class="sp2-cb"><div class="sp2-ct"><b data-notr>${esc(nm)}</b>${live ? `<span class="sp2-lv">● ${esc(MSGT('en voyage'))}</span>` : ''}<button type="button" class="sp2-fol" onclick="event.stopPropagation();CV.ab2SubSheet('${ja(c)}')">${esc(MSGT('Suivi(e)'))} ›</button></div>
             <small class="sp2-cn">${esc(RF('{0} voyage(s) suivi(s)', on.length))}${nh ? ' · 🙈 ' + esc(RF('{0} masqué(s)', nh)) : ''}</small>
@@ -2048,11 +2144,14 @@
       <div class="sp2-blk"><div class="sp2-sec">👁️ <b>${esc(MSGT('Ses voyages : choisis ce que tu vois'))}</b></div>
       ${ts.length > 1 ? `<div class="sp2-allr"><button type="button" onclick="CV.ab2SubAll('${ja(c)}', true)">☑️ ${esc(MSGT('Tout cocher'))}</button><button type="button" onclick="CV.ab2SubAll('${ja(c)}', false)">⬜ ${esc(MSGT('Tout décocher'))}</button></div>` : ''}
       ${ts.map(f=>{ const on = !S.hide[f.id], live = tripPhase(f) === 'live';
-        return `<div class="sp2-sr${on ? '' : ' off'}"><button type="button" class="sp2-tc"${on ? ` onclick="CV.feedView('${ja(f.id)}')"` : ''}>${spCov(f)}</button><div class="sp2-sb"><b data-notr>${esc(f.titre || '?')}</b><small>${esc(tripDates(f))}${live ? ` · <span class="sp2-lv">● ${esc(MSGT('en voyage'))}</span>` : ''}</small><small>${on ? '👀 ' + esc(MSGT('Je le vois')) : '🙈 ' + esc(MSGT('Masqué'))}</small></div>${ab2Sw(on, `CV.ab2SubHide('${ja(c)}','${ja(f.id)}')`, f.titre)}</div>`; }).join('') || `<div class="sp2-empty">${esc(MSGT('Aucun voyage pour l’instant.'))}</div>`}
+        return `<div class="sp2-sr${on ? '' : ' off'}"><button type="button" class="sp2-tc"${on ? ` onclick="CV.feedView('${ja(f.id)}')"` : ''}>${spCov(f)}</button><div class="sp2-sb"><b data-notr>${esc(f.titre || '?')}</b><small>${esc(tripDates(f))}${live ? ` · <span class="sp2-lv">● ${esc(MSGT('en voyage'))}</span>` : ''}</small><small>${on && TS()[f.id] && TS()[f.id] !== c ? '👀 ' + esc(RF('Déjà suivi chez {0}', ((M.subs || {})[TS()[f.id]] || {}).owner || '?')) : on ? '👀 ' + esc(MSGT('Je le vois')) : '🙈 ' + esc(MSGT('Masqué'))}</small></div>${ab2Sw(on, `CV.ab2SubHide('${ja(c)}','${ja(f.id)}')`, f.titre)}</div>`; }).join('') || `<div class="sp2-empty">${esc(MSGT('Aucun voyage pour l’instant.'))}</div>`}
       ${nmt ? `<div class="sp2-empty">🧳 ${esc(RF('{0} voyage(s) que tu fais avec lui en compagnon : déjà en entier dans tes voyages.', nmt))}</div>` : ''}</div>
+      ${(()=>{ const L = ab2SubMates(c); if(!L.length) return ''; const asked = M.abReq || {};
+        return `<div class="sp2-blk"><div class="sp2-sec">🤝 <b>${esc(MSGT('Ses compagnons de voyage'))}</b></div><div class="sp2-empty">${esc(MSGT('Demande-leur de les suivre aussi : ils acceptent ou non.'))}</div>
+          ${L.map(m=>{ const k = m.dev || m.pid; return `<div class="sp2-row"><b data-notr>${esc(m.nom)}</b>${asked[k] ? `<small class="sp2-wait">🙋 ${esc(MSGT('demandé'))}</small>` : `<button type="button" class="sp2-fol" onclick="CV.ab2ReqFw('${ja(c)}','${ja(k)}')">🙋 ${esc(MSGT('Demander à suivre'))}</button>`}</div>`; }).join('')}</div>`; })()}
       <div class="sp2-pills"><button type="button" class="danger" onclick="CV.ab2Unfollow('${ja(c)}')">🚫 ${esc(MSGT('Ne plus suivre cette personne'))}</button></div></div></div>`);
   }
-  var APPAPI = {nhWho, ab2TripsAll, ab2FwAll, ab2SubAll, ab2Invite, ab2TripsSheet, ab2TripSet, ab2Send, ab2Rename, ab2FwSheet, ab2FwHide, ab2FwDel, ab2SubSheet, ab2SubHide, ab2Unfollow, ab2Follow, vmOpen, vmClose, vmFit, vmSouv, vmBase, mapPub, mapNow, fmOpen, fmClose, fmFit, fmBase, vmZoom, vmDays, apMode, themeSet, themeToggle, rotSheet, rotGo, rotJoin, rotLost, devBlock, devSheet, codeMail, profDedupe, guideLater, fwForget, spSuisSheet, feedRefollow, spFw, spAbAdd, spCompAdd, spCompDel, spCompSheet, shMoreTog, bkCopy, hoodSheet, avPick, avDel, spAll, spTrips, spTripsSave, spTripOff, spMe, stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, wzOrder, wzOrdApply, tcfOrd, tcfBack, tcfGo, tcfDep, guideGo, guideNext, guideSheet, guideStop, guideTr, guideExp, guideHotel, guideBook, guideFin, guideEdit, guideResume, guideVisits, avDone, swStopRg, bkFill, bkLater, bkImp, bkMan, bkSave, bkNo, askWhoTog, trMis, prep3d, prep3dClose, p3Base, p3Fit, wzCk, suggOpen, suggKeep, suggDrop, suggGo, suggMore, expOpen, expKeep, expDrop, filTog, filFull, filSkip, finMark, startHide, bilanClose, storyTrip, feedPublish, feedShareLink, installSheet, cloudSheet, wzCountry, ariTog, ariFull, ariSkip, ariBook, ariFm, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, abPick, abSend, todaySee, todaySeeAdd, todaySeeGo, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, bigToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, yearFilm, yearFilmGo, memberInvite, memberSend, memberRevoke, memberShowId, memberLeave, deviceAdd, giftAsk, planSheet, planBuy, planPortal, quotaLoad, _quotaNag:()=>quotaNag(), _tf:d=>transferHTML(d), trDupFix, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
+  var APPAPI = {ab2Common, ab2AskFw, ab2ReqFw, nhWho, ab2TripsAll, ab2FwAll, ab2SubAll, ab2Invite, ab2TripsSheet, ab2TripSet, ab2Send, ab2Rename, ab2FwSheet, ab2FwHide, ab2FwDel, ab2SubSheet, ab2SubHide, ab2Unfollow, ab2Follow, vmOpen, vmClose, vmFit, vmSouv, vmBase, mapPub, mapNow, fmOpen, fmClose, fmFit, fmBase, vmZoom, vmDays, apMode, themeSet, themeToggle, rotSheet, rotGo, rotJoin, rotLost, devBlock, devSheet, codeMail, profDedupe, guideLater, fwForget, spSuisSheet, feedRefollow, spFw, spAbAdd, spCompAdd, spCompDel, spCompSheet, shMoreTog, bkCopy, hoodSheet, avPick, avDel, spAll, spTrips, spTripsSave, spTripOff, spMe, stExport, scrOpen, scrClose, rtSheet, rtSet, rtTxt, rtAll, refreshNow:()=>refresh(), dfGo, dfOk, vjOpen, vjTog, vjStop, vjSave, lgSay, lgAll, lgFx, omapAuto, cdFm, chkEach, pollWin, stEdMus, stEdPh, stEdAll, stEdClose, stEdGo, annivShow, storyTrip, tripFinal, storyOpen, stClose, stRestart, wallOpen, wallClose, wallShow, pcOpen, pcPick, pcShow, pcFlip, pcClose, pcShare, pcSend, wlcPost, wlcClose, wlcShow, wzOrder, wzOrdApply, tcfOrd, tcfBack, tcfGo, tcfDep, guideGo, guideNext, guideSheet, guideStop, guideTr, guideExp, guideHotel, guideBook, guideFin, guideEdit, guideResume, guideVisits, avDone, swStopRg, bkFill, bkLater, bkImp, bkMan, bkSave, bkNo, askWhoTog, trMis, prep3d, prep3dClose, p3Base, p3Fit, wzCk, suggOpen, suggKeep, suggDrop, suggGo, suggMore, expOpen, expKeep, expDrop, filTog, filFull, filSkip, finMark, startHide, bilanClose, storyTrip, feedPublish, feedShareLink, installSheet, cloudSheet, wzCountry, ariTog, ariFull, ariSkip, ariBook, ariFm, liveOpen, liveClose, liveBase, liveFit, liveFocus, liveOrbit, xferApply, fwNickAsk, fwNameSave, feedShareOne, planExplore, pendAgain, pendDrop, inviteAnswer, followInviteGo, feedShareLink, shareQr, qrScan, qrStop, qrPhoto, explore, exploreCity, expOpen, expShut, expAdd, expClose, livretTry, livretJump, abPick, abSend, todaySee, todaySeeAdd, todaySeeGo, codeKeep, cloudFeedCut, folFilter, shTab, impPickCam, tripLeaveGo, packSheet, packSave, packRemoveTrip, packDel, fwTripsSheet, fwTripsSave, fwHideOne, feedMorePh, cloudLeave, cloudSheet, cloudPick, cloudJoinMain, cloudTrip, cloudInvite, cloudShareAll, recapGo, gateCopy, obPaste, pushTog, pushKind, pushQuiet, pushTest, omapSheet, omapGo, omapOpen, omapClose, omapDel, omapFly, plInfo, tjOpen, tjClose, objAsk, budTog, syncSheet, syncMainNew, syncMainJoin, tripInviteNow, feedPublish, feedStop, followGo, followSheet, webCreate, webBack, webCopy, webCopyCode, feedLike, feedComment, feedTogC, geoToggle, carnetToggle, evToggle, glassToggle, bigToggle, cmEdit, feedLikers, feedCmFocus, feedReply, cmMenu, cmDel, userHide, userBlock, fwBlock, feedReset, ugcReport, postMenu, feedUnfollow, feedView, feedClose, souvComments, fxPlay, filmTrack, worldTrip, coverSet, flyover, flyoverRec, cineStop, cineSet, cineStep, cineSteps, cineOpen, cineGo, cinePreX, cinePhs, cinePh, prepTog, momentClose, boardShow, evePhotos, eveSave, eveSkip, annivGo, annivSkip, worldNew, worldPlan, worldPlanUndo, worldPlanStop, worldPlanGo, filmMute, nhGo, nhCopy, autoPhotoPick, autoPhotoRead, autoPhotoGo, filmOpen, filmClose, yearFilm, yearFilmGo, memberInvite, memberSend, memberRevoke, memberShowId, memberLeave, deviceAdd, giftAsk, planSheet, planBuy, planPortal, quotaLoad, _quotaNag:()=>quotaNag(), _tf:d=>transferHTML(d), trDupFix, wrapped, wrappedShare, wrappedSave, wrSet, wrTog, wrReset, wrPick, wrPickX, wrPickStep, wrPickMore, wrPickSet, wrSlotX, filmPlay, filmRestart, filmSave, setLang, pollPin, navTo, plusGo, coffeeGo, destSet, serverWipeSheet, serverWipeTrip, cloudTripOff, serverWipe, coffeeLater, photoResend, forceUpdate, setupGo, setCur};
 
 
   /* ══════════ 🧭 Pont Carnet ⇄ Vezoria (version test de Vezoria dans le carnet, même stockage) ══════════
@@ -2509,7 +2608,7 @@
     'echAdd','echDel','echSpread','echToggle','lisser','echReset','echRange','echRangeReset','plCfg','plAdd','plDel','plOpt',
     'wizard','wzCreate','discAdd','cityMove','cityLock','cityDel','cityOpt','newProfile','saveProfile','delProfile','importPick','wipe','editSouv','autoPhotoPick','autoPhotoGo','coverSet','eveSave','worldPlanGo','worldNew'];
   // partage, abonnés, compagnons : tout ce qui retire, bloque, coupe ou efface est aussi bloqué en mode lecture
-  const SHAREMUT = ['ab2TripsAll','ab2FwAll','ab2SubAll','ab2TripSet','ab2Rename','ab2FwHide','ab2FwDel','ab2SubHide','ab2Unfollow','feedStop','feedReset','feedPublish','carnetPublish','feedShareOne','fwBlock','fwHideOne','fwTripsSave','userBlock','userHide','cmDel','feedUnfollow',
+  const SHAREMUT = ['ab2Common','ab2AskFw','ab2TripsAll','ab2FwAll','ab2SubAll','ab2TripSet','ab2Rename','ab2FwHide','ab2FwDel','ab2SubHide','ab2Unfollow','feedStop','feedReset','feedPublish','carnetPublish','feedShareOne','fwBlock','fwHideOne','fwTripsSave','userBlock','userHide','cmDel','feedUnfollow',
     'packSave','packRemoveTrip','packDel','tripLeaveGo','tripUnshare','tripNewCode','serverWipeTrip','serverWipeSheet','cloudLeave','cloudTripOff','cloudFeedCut','syncOff',
     'demoDel','demoReset','pendDrop','pendAgain','expAdd','tripInviteNow','withWhomGo','followInviteGo','pjDel','pollDel','tlDocDel','shopClear','spaceFree','photoSweep'];
   [...MUT, ...NEWMUT, ...SHAREMUT, 'serverWipe'].forEach(n=>{ const f = api[n]; if(!f) return; api[n] = (...a) => {
