@@ -6306,4 +6306,12 @@ I18N.load({
 "J’ai reçu une invitation (compagnon ou abonné)":"وصلتني دعوة (رفيق أو متابع)",
 "Retirer {0} du voyage « {1} » ?":"إزالة {0} من رحلة «{1}»؟",
 "Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"لم يعد يُحسب في المصاريف ويفقد الوصول إلى الرحلة المشتركة: تبقى لديه نسخة للقراءة فقط.",
-"au total":"إجمالًا"});
+"au total":"إجمالًا",
+"Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.":"ماذا يشاركك هذا الشخص؟ يرى ويكمل فقط ما تختاره هنا.",
+"Un seul voyage : « {0} »":"رحلة واحدة فقط: «{0}»",
+"Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.":"ترى وتكمل هذه الرحلة فقط. تبقى رحلاتك الأخرى خاصة.",
+"Plusieurs voyages, au choix":"عدة رحلات حسب اختيارك",
+"Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"تحدد الرحلات التي تقوم بها معك. تبقى الأخرى خاصة.",
+"Tous mes voyages (tout mon carnet)":"كل رحلاتي (دفتري كله)",
+"Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"ترى وتكمل كل رحلاتك الحالية والقادمة.",
+"Qui voit quel voyage":"من يرى أي رحلة"});

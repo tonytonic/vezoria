@@ -6305,4 +6305,12 @@ I18N.load({
 "J’ai reçu une invitation (compagnon ou abonné)":"मुझे निमंत्रण मिला (साथी या फ़ॉलोअर)",
 "Retirer {0} du voyage « {1} » ?":"{0} को यात्रा “{1}” से हटाएं?",
 "Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"अब खर्चों में नहीं गिना जाएगा और साझा यात्रा तक पहुंच खत्म: केवल पढ़ने वाली कॉपी रहेगी।",
-"au total":"कुल"});
+"au total":"कुल",
+"Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.":"यह व्यक्ति आपके साथ क्या साझा करेगा? वह सिर्फ़ वही देखेगा और पूरा करेगा जो आप यहां चुनें।",
+"Un seul voyage : « {0} »":"सिर्फ़ एक यात्रा: “{0}”",
+"Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.":"सिर्फ़ यही यात्रा देखेगा और पूरा करेगा। बाकी निजी रहेंगी।",
+"Plusieurs voyages, au choix":"कई यात्राएं, आपकी पसंद से",
+"Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"आप वे यात्राएं चुनें जो वह आपके साथ करेगा। बाकी निजी रहेंगी।",
+"Tous mes voyages (tout mon carnet)":"मेरी सभी यात्राएं (पूरी डायरी)",
+"Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"आपकी सभी यात्राएं, अभी की और आने वाली, देखेगा और पूरा करेगा।",
+"Qui voit quel voyage":"कौन कौन-सी यात्रा देखता है"});

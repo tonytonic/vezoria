@@ -6306,4 +6306,12 @@ I18N.load({
 "J’ai reçu une invitation (compagnon ou abonné)":"Мне пришло приглашение (попутчик или подписчик)",
 "Retirer {0} du voyage « {1} » ?":"Удалить {0} из поездки «{1}»?",
 "Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"Больше не учитывается в расходах и теряет доступ к общей поездке: остаётся копия только для чтения.",
-"au total":"всего"});
+"au total":"всего",
+"Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.":"Что этот человек делит с тобой? Он видит и дополняет только то, что ты выберешь здесь.",
+"Un seul voyage : « {0} »":"Только одна поездка: «{0}»",
+"Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.":"Видит и дополняет только эту поездку. Остальные остаются личными.",
+"Plusieurs voyages, au choix":"Несколько поездок на выбор",
+"Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"Отметь поездки, в которых вы вместе. Остальные останутся личными.",
+"Tous mes voyages (tout mon carnet)":"Все мои поездки (весь дневник)",
+"Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Видит и дополняет все твои поездки, нынешние и будущие.",
+"Qui voit quel voyage":"Кто видит какую поездку"});

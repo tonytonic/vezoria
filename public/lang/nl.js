@@ -3357,4 +3357,12 @@ I18N.load({
 "J’ai reçu une invitation (compagnon ou abonné)":"Ik kreeg een uitnodiging (reisgenoot of volger)",
 "Retirer {0} du voyage « {1} » ?":"{0} uit de reis ‘{1}’ verwijderen?",
 "Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"Telt niet meer mee in de uitgaven en verliest toegang tot de gedeelde reis: houdt een kopie alleen om te lezen.",
-"au total":"in totaal"});
+"au total":"in totaal",
+"Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.":"Wat deelt deze persoon met je? Ze ziet en vult alleen aan wat je hier kiest.",
+"Un seul voyage : « {0} »":"Eén reis: ‘{0}’",
+"Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.":"Ze ziet en vult alleen deze reis aan. Je andere reizen blijven privé.",
+"Plusieurs voyages, au choix":"Meerdere reizen, naar keuze",
+"Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"Je vinkt de reizen aan die ze met je maakt. De rest blijft privé.",
+"Tous mes voyages (tout mon carnet)":"Al mijn reizen (mijn hele dagboek)",
+"Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Ze ziet en vult al je reizen aan, nu en later.",
+"Qui voit quel voyage":"Wie ziet welke reis"});

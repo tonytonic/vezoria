@@ -6305,4 +6305,12 @@ I18N.load({
 "J’ai reçu une invitation (compagnon ou abonné)":"我收到邀请（旅伴或关注者）",
 "Retirer {0} du voyage « {1} » ?":"将 {0} 移出旅行「{1}」？",
 "Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"不再计入开支，并失去共享旅行的访问权：保留一份只读副本。",
-"au total":"总计"});
+"au total":"总计",
+"Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.":"这个人和你共享什么？对方只能看到并补充你在这里选择的内容。",
+"Un seul voyage : « {0} »":"仅一次旅行：「{0}」",
+"Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.":"只看到并补充这次旅行，你的其他旅行保持私密。",
+"Plusieurs voyages, au choix":"多次旅行，自选",
+"Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"勾选你们一起的旅行，其余保持私密。",
+"Tous mes voyages (tout mon carnet)":"我的全部旅行（整本手账）",
+"Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"看到并补充你所有的旅行，包括以后的。",
+"Qui voit quel voyage":"谁能看到哪次旅行"});

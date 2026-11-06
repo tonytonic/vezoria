@@ -6305,4 +6305,12 @@ I18N.load({
 "J’ai reçu une invitation (compagnon ou abonné)":"招待を受け取った（仲間またはフォロワー）",
 "Retirer {0} du voyage « {1} » ?":"{0} を旅行「{1}」から外しますか？",
 "Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"支出の対象から外れ、共有旅行にアクセスできなくなります：閲覧のみのコピーが残ります。",
-"au total":"合計"});
+"au total":"合計",
+"Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.":"この人と何を共有しますか？ここで選んだものだけを見て、編集できます。",
+"Un seul voyage : « {0} »":"1つの旅行だけ：「{0}」",
+"Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.":"この旅行だけを見て編集できます。他の旅行は非公開のままです。",
+"Plusieurs voyages, au choix":"複数の旅行を選ぶ",
+"Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"一緒に行く旅行にチェック。他は非公開のままです。",
+"Tous mes voyages (tout mon carnet)":"すべての旅行（手帳全体）",
+"Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"今の旅行もこれからの旅行も、すべて見て編集できます。",
+"Qui voit quel voyage":"誰がどの旅行を見られるか"});

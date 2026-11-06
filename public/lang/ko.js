@@ -6305,4 +6305,12 @@ I18N.load({
 "J’ai reçu une invitation (compagnon ou abonné)":"초대를 받았어요 (동행 또는 팔로워)",
 "Retirer {0} du voyage « {1} » ?":"{0}님을 ‘{1}’ 여행에서 뺄까요?",
 "Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"더 이상 지출에 포함되지 않고 공유 여행에 접근할 수 없어요: 읽기 전용 사본만 남아요.",
-"au total":"총"});
+"au total":"총",
+"Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.":"이 사람과 무엇을 함께하나요? 여기서 고른 것만 보고 채울 수 있어요.",
+"Un seul voyage : « {0} »":"여행 하나만: ‘{0}’",
+"Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.":"이 여행만 보고 채워요. 다른 여행은 비공개예요.",
+"Plusieurs voyages, au choix":"여러 여행, 직접 선택",
+"Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"함께하는 여행을 체크하세요. 나머지는 비공개예요.",
+"Tous mes voyages (tout mon carnet)":"내 모든 여행 (수첩 전체)",
+"Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"지금과 앞으로의 모든 여행을 보고 채워요.",
+"Qui voit quel voyage":"누가 어떤 여행을 보는지"});

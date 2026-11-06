@@ -3366,4 +3366,12 @@ I18N.load({
 "J’ai reçu une invitation (compagnon ou abonné)":"Ho ricevuto un invito (compagno o follower)",
 "Retirer {0} du voyage « {1} » ?":"Togliere {0} dal viaggio «{1}»?",
 "Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"Non conta più nelle spese e perde l’accesso al viaggio condiviso: tiene una copia in sola lettura.",
-"au total":"in totale"});
+"au total":"in totale",
+"Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.":"Cosa condivide questa persona con te? Vede e completa solo ciò che scegli qui.",
+"Un seul voyage : « {0} »":"Un solo viaggio: «{0}»",
+"Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.":"Vede e completa solo questo viaggio. Gli altri restano privati.",
+"Plusieurs voyages, au choix":"Più viaggi, a scelta",
+"Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"Spunti i viaggi che fa con te. Gli altri restano privati.",
+"Tous mes voyages (tout mon carnet)":"Tutti i miei viaggi (tutto il diario)",
+"Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Vede e completa tutti i tuoi viaggi, attuali e futuri.",
+"Qui voit quel voyage":"Chi vede quale viaggio"});

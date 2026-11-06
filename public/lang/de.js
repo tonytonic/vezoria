@@ -3361,4 +3361,12 @@ I18N.load({
 "J’ai reçu une invitation (compagnon ou abonné)":"Ich habe eine Einladung (Mitreisende/r oder Follower)",
 "Retirer {0} du voyage « {1} » ?":"{0} aus der Reise „{1}“ entfernen?",
 "Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"Zählt nicht mehr bei den Ausgaben und verliert den Zugang zur geteilten Reise: behält eine Kopie nur zum Lesen.",
-"au total":"insgesamt"});
+"au total":"insgesamt",
+"Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.":"Was teilt diese Person mit dir? Sie sieht und ergänzt nur, was du hier auswählst.",
+"Un seul voyage : « {0} »":"Nur eine Reise: „{0}“",
+"Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.":"Sie sieht und ergänzt nur diese Reise. Deine anderen Reisen bleiben privat.",
+"Plusieurs voyages, au choix":"Mehrere Reisen, nach Wahl",
+"Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"Du hakst die Reisen an, die sie mit dir macht. Die anderen bleiben privat.",
+"Tous mes voyages (tout mon carnet)":"Alle meine Reisen (mein ganzes Tagebuch)",
+"Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Sie sieht und ergänzt alle deine Reisen, jetzige und künftige.",
+"Qui voit quel voyage":"Wer sieht welche Reise"});

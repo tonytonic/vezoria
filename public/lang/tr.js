@@ -6293,4 +6293,12 @@ I18N.load({
 "J’ai reçu une invitation (compagnon ou abonné)":"Davet aldım (yol arkadaşı veya takipçi)",
 "Retirer {0} du voyage « {1} » ?":"{0} “{1}” seyahatinden çıkarılsın mı?",
 "Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"Artık harcamalarda sayılmaz ve paylaşılan seyahate erişimi kalmaz: salt okunur bir kopyası kalır.",
-"au total":"toplam"});
+"au total":"toplam",
+"Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.":"Bu kişi seninle neyi paylaşıyor? Sadece burada seçtiğini görür ve tamamlar.",
+"Un seul voyage : « {0} »":"Tek bir seyahat: “{0}”",
+"Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.":"Sadece bu seyahati görür ve tamamlar. Diğerleri gizli kalır.",
+"Plusieurs voyages, au choix":"Seçtiğin birkaç seyahat",
+"Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"Seninle yaptığı seyahatleri işaretlersin. Diğerleri gizli kalır.",
+"Tous mes voyages (tout mon carnet)":"Tüm seyahatlerim (tüm günlüğüm)",
+"Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"Şimdiki ve gelecekteki tüm seyahatlerini görür ve tamamlar.",
+"Qui voit quel voyage":"Kim hangi seyahati görüyor"});

@@ -3351,4 +3351,12 @@ I18N.load({
 "J’ai reçu une invitation (compagnon ou abonné)":"I got an invitation (companion or follower)",
 "Retirer {0} du voyage « {1} » ?":"Remove {0} from the trip “{1}”?",
 "Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.":"They no longer count in the expenses and lose access to the shared trip: they keep a read-only copy they can’t edit.",
-"au total":"in total"});
+"au total":"in total",
+"Qu’est-ce que cette personne partage avec toi ? Elle voit et complète seulement ce que tu choisis ici.":"What does this person share with you? They only see and complete what you choose here.",
+"Un seul voyage : « {0} »":"Just one trip: “{0}”",
+"Elle voit et complète ce voyage uniquement. Tes autres voyages restent privés.":"They see and complete this trip only. Your other trips stay private.",
+"Plusieurs voyages, au choix":"Several trips, you choose",
+"Tu coches les voyages qu’elle fait avec toi. Les autres restent privés.":"You tick the trips they do with you. The others stay private.",
+"Tous mes voyages (tout mon carnet)":"All my trips (my whole journal)",
+"Elle voit et complète tous tes voyages, ceux d’aujourd’hui et ceux à venir.":"They see and complete all your trips, current and future.",
+"Qui voit quel voyage":"Who sees which trip"});
