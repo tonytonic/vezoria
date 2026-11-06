@@ -895,7 +895,7 @@
   function dfDoneBy(t, d, x){
     const r = R[dfId(t.id, d, x.k)], by = Object.assign({}, (r && !r.deleted && r.by) || {});
     if(x.auto){ (t.voyageurs || []).forEach(p=>{ const sv = list('souv', s=>s.trip === t.id && s.date === d && s.createdBy === p);
-      if(x.auto === 'km' && liveKmDay((trkByWho(t.id, false)[p]) || []) >= 10) by[p] = by[p] || 1;
+      if(x.auto === 'km' && liveWalkDay((trkByWho(t.id, false)[p]) || []) >= 10) by[p] = by[p] || 1;
       if(x.auto === 'sv' && sv.length >= 5) by[p] = by[p] || 1;
       if(x.auto === 'ph' && sv.reduce((a, s)=>a + (s.photos||[]).length, 0) >= 20) by[p] = by[p] || 1; }); }
     return by;
@@ -1657,6 +1657,9 @@
   /* ══════════ 🛰️ Carte 3D en direct : où est chacun, sa route qui se dessine, ses photos — mise à jour toute seule ══════════
      key = id du voyage (compagnon : les traces du voyage) ou « ft:… » (abonné : ce que chaque voyageur a accepté de montrer) */
   let LV = null, lvSoonT = 0;
+  // 🚶 seulement la marche : les tronçons à plus de 7,5 km/h (voiture, train, vélo…) ne comptent pas
+  function liveWalkDay(pts){ const d0 = new Date(); d0.setHours(0,0,0,0); let k = 0, a = null;
+    (pts||[]).forEach(p=>{ if((p[2]||0) < +d0) return; if(a && p[2] && a[2] && p[2] > a[2]){ const dk = km({lat:a[0], lng:a[1]}, {lat:p[0], lng:p[1]}), h = (p[2] - a[2]) / 3600e3; if(dk / h <= 7.5) k += dk; } a = p; }); return k; }
   function liveKmDay(pts){ const d0 = new Date(); d0.setHours(0,0,0,0); let k = 0, a = null; (pts||[]).forEach(p=>{ if((p[2]||0) < +d0) return; if(a) k += km({lat:a[0], lng:a[1]}, {lat:p[0], lng:p[1]}); a = p; }); return k; }
   function liveBtnHTML(key, live, n, title){
     return `<button type="button" class="lv-go${live.length ? ' on' : ''}" onclick="CV.liveOpen('${ja(key)}')"><span class="lv-dot"><i></i></span><span class="tx"><b>${live.length ? 'Suivre en direct sur la carte 3D' : 'La carte 3D du voyage'}</b>${title ? `<small class="lv-tt" data-notr>${esc(title)}</small>` : ''}<small>${live.length ? '<span data-notr>' + esc(live.slice(0, 4).join(', ')) + '</span>' + (live.length > 4 ? ' +' + (live.length - 4) : '') + ' · position mise à jour toute seule' : n ? 'La route de chacun, ses photos, sa dernière position' : 'Les photos du voyage sur la carte'}</small></span><span class="lv-ar">›</span></button>`;

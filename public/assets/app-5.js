@@ -373,6 +373,16 @@
     body.innerHTML = (INNER[k] ? innerBar() : '') + (k === 'live' ? liveHTML() : k === 'past' ? pastHTML() : bilanHTML());
     hydrate(); return true;
   }
+  // 📋 le programme du jour, sur la 1re page : réservations à l’heure, puis les visites dans l’ordre de la journée
+  function progToday(k, info, own, night){
+    const td = isoToday(), pl = placesOf(td), res = [...own, ...night];
+    const hm = it => esc(it.cat === 'transport' ? (it.heureDep || '') : (it.heure || ''));
+    return `<div class="v-box cv-prog"><h3>📋 ${esc(MSGT('Programme du jour'))} · J${k+1}${info.titre ? ' · ' + esc(info.titre) : ''}</h3>${info.plan ? `<p>${esc(info.plan)}</p>` : ''}
+      ${res.map(it=>`<button type="button" class="cv-prow" onclick="CV.edit('${ja(it.id)}')"><span>${icon(it)} <b>${esc(it.titre)}</b></span><span>${hm(it)}</span></button>`).join('')}
+      ${pl.map((p, i)=>`<button type="button" class="cv-prow" onclick="CV.plInfo('${ja(p.id)}')"><span>📍 <b data-notr>${esc(p.nom || '')}</b></span><span>${i + 1}/${pl.length}</span></button>`).join('')}
+      ${!res.length && !pl.length ? `<div class="v-sum-small">${esc(MSGT('Rien de prévu aujourd’hui.'))}</div>` : ''}
+      ${pl.length ? `<button class="v-btn sec" onclick="CV.planDay('${ja(td)}')">🗺️ ${esc(RF('Itinéraire du jour ({0} lieux)', pl.length))}</button>` : ''}</div>`;
+  }
   function liveHTML(){
     const t = trip(), live = t && tripPhase(t) === 'live';
     if(!live){ const ph = t ? tripPhase(t) : 'prep', lv = trips().find(x=>tripPhase(x)==='live');
@@ -386,12 +396,9 @@
     const lvF = !hidden('blk:prep');
     // ⚡ en haut, au-dessus de tout (et de la carte 3D) : noter un step ou prendre une photo en un geste
     const quick = `<div class="lv-quick"><button type="button" onclick="CV.hereNow()">📍 ${esc(MSGT('Step ici'))}</button><button type="button" onclick="CV.livePhoto()">📸 ${esc(MSGT('Photo'))}</button><button type="button" onclick="CV.tlReceipt()">🧾 ${esc(MSGT('Dépense'))}</button></div><button type="button" class="lv-imp" onclick="CV.autoPhotoPick()"><b>🖼️ ${esc(MSGT('Importer toutes mes photos'))}</b><small>${esc(MSGT('Chaque photo à son endroit et à son heure, sur la carte'))}</small></button>`;
-    return `${quick}${offBand(t)}${lnHTML(t)}${lvF ? liveFil(t) : actBand()}${annivCard()}${nextHero()}${transferHTML(isoToday())}${trkHTML()}${liveMapCard()}${lvF ? '' : liveCard()}
+    return `${quick}${offBand(t)}${lnHTML(t)}${lvF ? liveFil(t) : actBand()}${annivCard()}${nextHero()}${transferHTML(isoToday())}${progToday(k, info, own, night)}${trkHTML()}${liveMapCard()}${lvF ? '' : liveCard()}
       <div class="cv-tiles">${tile('📍','Step ici','CV.hereNow()')}${tile('🧾','Dépense','CV.tlReceipt()')}${tile('📴','Fiche du jour','CV.tlDay()')}${tile('🌤️','Météo','CV.tlMeteo()')}</div>
       <details class="cv-fold cv-tmore"><summary>${MSGT('Plus d’outils')} <small>${MSGT('Courses, carte, importer, papiers')}</small></summary><div class="cv-tiles">${tile('🛒','Courses','CV.shopSheet()')}${tile('🌍','Carte','CV.worldMap()')}${tile('📄','Importer','CV.impSheet()')}${tile('🛂','Papiers','CV.tlDocs()')}</div></details>
-      ${lvF ? '<div hidden>' : ''}<div class="v-box"><h3>Aujourd’hui · J${k+1}${info.titre ? ' · ' + esc(info.titre) : ''}</h3>${info.plan ? `<p>${esc(info.plan)}</p>` : ''}
-        ${[...own, ...night].map(it=>`<button type="button" class="cv-prow" onclick="CV.edit('${ja(it.id)}')"><span>${icon(it)} <b>${esc(it.titre)}</b></span><span>${esc(it.heureDep||it.heure||'')}</span></button>`).join('') || '<div class="v-sum-small">Rien de réservé aujourd’hui.</div>'}
-        ${placesOf(isoToday()).length ? `<button class="v-btn sec" onclick="CV.planDay('${ja(isoToday())}')">🗺️ Itinéraire du jour (${placesOf(isoToday()).length} lieux)</button>` : ''}</div>${lvF ? '</div>' : ''}
       <button class="v-btn sec" onclick="CV.innerGo('souv')">📸 Voir les souvenirs</button>
       <div class="lv-more">${storyTodayHTML(t)}${eveCard()}${(()=>{ const d = dfHTML(t); return d ? `<details class="cv-fold"><summary>🎯 ${MSGT('Défis du jour')}${(()=>{ const m = /(\d+)\s*\/\s*(\d+)/.exec(d.replace(/<[^>]+>/g, ' ')); return m ? ` <small>${m[1]}/${m[2]}</small>` : ''; })()}</summary>${d}</details>` : ''; })()}${vjBtn(t)}${lgHTML(t)}</div>`;
   }

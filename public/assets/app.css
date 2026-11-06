@@ -3343,3 +3343,4 @@ html.vz-dark body .cv-share-qr{background:#fff!important}
 .cv-hero .hb button{min-width:0;overflow:hidden;text-align:center;line-height:1.15;white-space:nowrap;text-overflow:ellipsis;font-size:min(.8rem,3.3vw);padding:10px 3px;letter-spacing:-.01em}
 .cv-hero .hb:has(> button:nth-child(4)) button{font-size:min(.8rem,2.7vw)}
 .lv-go.lv-all{background:linear-gradient(120deg,#0b3d91 0%,#7c3aed 55%,#db2777 100%)}
+.cv-prog .cv-prow{width:100%;margin:0 0 6px;text-align:left;font-size:.86rem;color:var(--ink,#2b1740)}.cv-prog .cv-prow>span:last-child{flex:none;margin-left:8px;color:var(--gray);font-size:.78rem}.cv-prog h3{margin-bottom:8px}
