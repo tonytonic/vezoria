@@ -249,7 +249,21 @@
     const sub = document.getElementById('tabsC'), y = sub && sub.style.display!=='none' ? sub.getBoundingClientRect().top + window.scrollY : 0;
     if(window.scrollY > y && y) window.scrollTo({top:y}); else if(!y) window.scrollTo({top:0});
   }
-  function refresh(){ if(M.trip===LEGACY){ renderHeader(); return; } applyMode(); roBand(); }
+  function refresh(){ if(M.trip===LEGACY){ renderHeader(); return; } roMode(); applyMode(); roBand(); }
+  // 📖 voyage en lecture seule : le « mode lecture » de l’appli est forcé tant qu’on est dessus (rendu comme avant en le quittant)
+  function roMode(){ try { const t = trip(), ro = !!(t && t.ro);
+    if(ro && !M.roLock){ M.roLock = {prev: !!M.lock}; M.lock = true; persist(); }
+    else if(!ro && M.roLock){ M.lock = M.roLock.prev; delete M.roLock; persist(); }
+    document.body.classList.toggle('vz-ro', ro); try { applyLock(); } catch(e){} } catch(e){} }
+  // 📖 en lecture seule, seuls les boutons pour regarder marchent (les autres expliquent pourquoi)
+  const RO_OK = /CV\.(tab|innerGo|go|modeGo|liveOpen|liveClose|liveFocus|liveBase|liveOrbit|feedView|tlDay|tlMeteo|worldMap|planDay|plInfo|psTrip|filmOpen|flyover|wrapped|albumSheet|boardShow|nhGo|nhWho|pjOpen|nhCopy|tripUnshare|close|shareHub|socialHub|edit|dayMenu|tlDocs|cdOpen|evToggle|shMoreTog)\b/;
+  document.addEventListener('click', e=>{ try {
+    if(!document.body.classList.contains('vz-ro')) return;
+    const el = e.target.closest && e.target.closest('#cv-body [onclick], #cv-body input, #cv-body textarea, #cv-body select, #cv-fab, #cv-hero-qr');
+    if(!el || RO_OK.test(el.getAttribute('onclick') || '')) return;
+    e.preventDefault(); e.stopPropagation(); if(el.blur) el.blur();
+    toast('📖 ' + MSGT('Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.'));
+  } catch(x){} }, true);
   // 📖 bandeau « lecture seule » en haut d’un voyage dont on a été retiré
   function roBand(){ try { const t = trip(), b = document.getElementById('cv-body'); let el = document.getElementById('cv-roban');
     if(!(t && t.ro && b)){ if(el) el.remove(); return; }

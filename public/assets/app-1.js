@@ -1966,7 +1966,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     return m;
   }
   function withWhom(tid, n){
-    const t = R[tid]; if(!t || t.deleted || M.wwSeen && M.wwSeen[tid]) return;
+    const t = R[tid]; if(!t || t.deleted || t.ro || M.wwSeen && M.wwSeen[tid]) return;   // 📖 lecture seule : on ne demande rien
     // une fenêtre est ouverte (ex. « Modifier le voyage ») ou un écran plein (tri des visites, rangement, carte 3D du parcours guidé) :
     // on attend qu’il soit fermé
     if(document.getElementById('v-sheet-bg') || ovOpen()){ if((n || 0) < 600) setTimeout(()=>withWhom(tid, (n || 0) + 1), 1500); return; }   // 15 min au plus (le tri peut être long)

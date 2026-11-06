@@ -637,6 +637,7 @@
   function bigToggle(){ M.bigText = !M.bigText; persist(); applyLock(); toast(M.bigText ? '🔠 ' + MSGT('Texte plus grand') : MSGT('Texte normal')); try { render(); } catch(e){ refresh(); } }
   function glassToggle(){ M.glass = M.glass === false; persist(); applyLock(); toast(M.glass ? '✨ ' + MSGT('Effet verre activé') : MSGT('Effet verre désactivé')); try { render(); } catch(e){ refresh(); } }
   function toggleLock(){
+    if(M.roLock){ toast('📖 ' + MSGT('Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.')); return; }
     M.lock = !M.lock; persist(); applyLock();
     toast(M.lock ? '🔒 Mode lecture : rien ne peut être modifié' : '✏️ Mode modification');
     if(M.trip !== LEGACY) render();
