@@ -273,12 +273,13 @@
 
   // 📖 ancien compagnon : il retire sa copie en lecture seule ; s’il suit le voyage comme abonné, il le garde côté « suivis »
   async function roDrop(id){ const t = R[id]; if(!t || !t.ro) return;
-    const fol = Object.values(M.subs || {}).some(S=>S && !S.gone && S.t && S.t['ft:' + id]);
+    const fol = Object.values(M.subs || {}).some(S=>S && !S.gone && ((S.t && S.t['ft:' + id]) || (S.mt && S.mt['ft:' + id])));
     if(!(await uiConfirm(MSGT('Retirer « {0} » de ton Vezoria ?').replace('{0}', t.titre || '') + '\n\n' + MSGT(fol ? 'Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.' : 'Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.')))) return;
     const out = Object.values(R).filter(r=>r && r.trip === id && !r.deleted).map(r=>Object.assign(clone(r), {deleted:true}));
     (M.left = M.left || {})[id] = Date.now();
     putMany([...out, Object.assign(clone(t), {deleted:true})], '🗑 ' + MSGT('Voyage retiré'));
     closeSheet(true); M.trip = null; persist(); applyMode(); refresh();
+    try { roFeedBack(); syncNow(); } catch(e){}
     if(fol) setTimeout(()=>{ try { socialHub('fo'); } catch(e){} }, 400); }
   function phaseTheme(){ const t = M.trip !== LEGACY && trip(), ph = t ? tripPhase(t) : 'prep'; const was = document.body.className; document.body.classList.toggle('cv-ph-live', ph === 'live'); document.body.classList.toggle('cv-ph-past', ph === 'past'); if(was !== document.body.className && typeof viPhase === 'function') try { viPhase(); } catch(e){}
     // barre d'état Android (appli Google Play et Chrome) : même couleur que l'en-tête de la période

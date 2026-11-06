@@ -755,7 +755,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
           if(sp.sub || sp.ivme || sp.inv || sp.mate) return; if(r && force && r.type==='trip' && M.hide && M.hide[r.id]){ delete M.hide[r.id]; if(M.left) delete M.left[r.id]; if(M.mvSkip) delete M.mvSkip[r.id]; }   // rejoint exprès : un voyage retiré revient
           // 👀 voyage publié que je fais AUSSI en compagnon : je l'ai déjà en entier, pas besoin de le suivre en abonné (ex. Claire suit le carnet de Tony
           // sans revoir les voyages faits ensemble). S'il quitte un jour mes voyages, il redevient suivable.
-          if(r && r.type==='feedtrip' && !r.deleted){ const tid = String(r.id).slice(3), own = R[tid] && R[tid].type === 'trip' && !R[tid].deleted && !R[tid].demo && !FT()[tid] && !(typeof ownFt === 'function' && ownFt(r)), un = M.unfol || (M.unfol = {});
+          if(r && r.type==='feedtrip' && !r.deleted){ const tid = String(r.id).slice(3), own = R[tid] && R[tid].type === 'trip' && !R[tid].deleted && !R[tid].demo && !R[tid].ro && !FT()[tid] && !(typeof ownFt === 'function' && ownFt(r)), un = M.unfol || (M.unfol = {});
             if(own){ un[r.id] = 2; if(TS()[r.id] === sp.code) delete TS()[r.id]; M._mateSkip = (M._mateSkip || 0) + 1; return; }
             if(un[r.id] === 2) delete un[r.id]; }
           if(r && (r.type==='trip' || r.type==='feedtrip') && !(M.hide && M.hide[r.id]) && (force || !TS()[r.id]) && !(r.type==='feedtrip' && (M.unfol||{})[r.id] && !force)){ if(r.type==='trip' && !TS()[r.id]) tombClear(r.id); TS()[r.id] = sp.code; }
@@ -1656,6 +1656,16 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     list('trip', t=>!t.deleted && !t.demo && !t.ro && t.createdBy && t.createdBy !== M.me && !(t.voyageurs || []).includes(M.me) && !TS()[t.id] && ((M.mvSkip || {})[t.id] || (M.left || {})[t.id]))   // marqué « parti d’un voyage partagé » (jamais un voyage du carnet d’un proche)
       .forEach(t=>fix.push(Object.assign(clone(t), {ro:1, roAt:Date.now()})));
     if(fix.length){ putQuiet(fix); refresh(); }
+    roFeedBack();
+  }
+  // 👀 ancien compagnon (voyage en lecture seule ou retiré) : le voyage suivi en abonné, mis de côté tant qu’il était compagnon, revient dans « Suivis »
+  function roFeedBack(){ let n = 0; const un = M.unfol || {};
+    Object.entries(M.subs || {}).forEach(([c, S])=>{ if(!S || !S.mt) return;
+      Object.keys(S.mt).forEach(fid=>{ const t = R[fid.slice(3)]; if(t && t.type === 'trip' && !t.deleted && !t.demo && !t.ro) return;
+        delete S.mt[fid]; if(un[fid] === 2) delete un[fid]; const sp = spaceObj(c); if(sp) sp.since = 0; n++; }); });
+    Object.keys(un).forEach(fid=>{ if(un[fid] !== 2 || !/^ft:/.test(fid)) return; const t = R[fid.slice(3)]; if(t && t.type === 'trip' && !t.deleted && !t.demo && !t.ro) return;
+      delete un[fid]; (M.spaces || []).forEach(sp=>{ if(sp.sub || sp.ivme) sp.since = 0; }); n++; });
+    if(n) persist(); return n;
   }
   async function packApply(){
     const mine = PACKS(), viaP = M.viaP || (M.viaP = {}), viaH = M.viaH || (M.viaH = {}); let n = 0;

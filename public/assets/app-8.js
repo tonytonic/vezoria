@@ -1992,7 +1992,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-06z5'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-06z6'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2318,7 +2318,7 @@
     (recs || []).forEach(r=>{ if(!r) return;
       if(['follower','fwban','fwhide','abinv','abcfg','trip','profile'].includes(r.type)) return;
       const fid = r.type === 'feedtrip' ? r.id : String(r.trip || '');
-      if(/^ft:/.test(fid)){ const t = R[fid.slice(3)]; if(t && t.type === 'trip' && !t.deleted && !t.demo){ if(r.type === 'feedtrip' && !r.deleted) (S.mt = S.mt || {})[r.id] = 1; return; } }
+      if(/^ft:/.test(fid)){ const t = R[fid.slice(3)]; if(t && t.type === 'trip' && !t.deleted && !t.demo && !t.ro){ if(r.type === 'feedtrip' && !r.deleted) (S.mt = S.mt || {})[r.id] = 1; return; } }
       if(r.type === 'feedtrip'){ S.t[r.id] = r.deleted ? 0 : 1; if(!r.deleted && !S.owner && r.owner) S.owner = r.owner; if(!S.oav && avOk(r.oav)) S.oav = r.oav; }
       out.push(r); });
     return out;
