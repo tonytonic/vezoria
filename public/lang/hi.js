@@ -6282,4 +6282,6 @@ I18N.load({
 "Je n’ai pas l’appli : voir le voyage ici":"मेरे पास ऐप नहीं: यात्रा यहीं देखें",
 "Ton lien est personnel et ne sert qu’une fois : choisis où tu veux suivre ce voyage.":"आपका लिंक निजी है और एक ही बार चलता है: चुनें कि यह यात्रा कहां फ़ॉलो करनी है।",
 "Copie ce lien.":"यह लिंक कॉपी करें।",
-"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"अब होम स्क्रीन से Vezoria खोलें → 👥 → जुड़ें → 📋 निमंत्रण पेस्ट करें। आप अपने ऐप में, अपने खाते से यात्रा फ़ॉलो करेंगे।"});
+"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"अब होम स्क्रीन से Vezoria खोलें → 👥 → जुड़ें → 📋 निमंत्रण पेस्ट करें। आप अपने ऐप में, अपने खाते से यात्रा फ़ॉलो करेंगे।",
+"plus vu depuis {0} j":"{0} दिन से नहीं देखा",
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"आपका नाम? साझा लिंक से फ़ॉलो करने के लिए ज़रूरी है: इसी से व्यक्ति जानेगा कि आप कौन हैं।"});

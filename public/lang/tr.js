@@ -6270,4 +6270,6 @@ I18N.load({
 "Je n’ai pas l’appli : voir le voyage ici":"Uygulama yok: seyahati burada gör",
 "Ton lien est personnel et ne sert qu’une fois : choisis où tu veux suivre ce voyage.":"Bağlantın kişiseldir ve bir kez çalışır: seyahati nerede takip edeceğini seç.",
 "Copie ce lien.":"Bu bağlantıyı kopyala.",
-"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"Şimdi Vezoria’yı ana ekrandan aç → 👥 → Katıl → 📋 Gelen daveti yapıştır. Seyahati kendi uygulamanda, kendi hesabınla takip edeceksin."});
+"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"Şimdi Vezoria’yı ana ekrandan aç → 👥 → Katıl → 📋 Gelen daveti yapıştır. Seyahati kendi uygulamanda, kendi hesabınla takip edeceksin.",
+"plus vu depuis {0} j":"{0} gündür görülmedi",
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Adın? Ortak bağlantıyla takip etmek için zorunlu: kişi kim olduğunu böyle bilecek."});

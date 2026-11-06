@@ -6283,4 +6283,6 @@ I18N.load({
 "Je n’ai pas l’appli : voir le voyage ici":"ليس لدي التطبيق: عرض الرحلة هنا",
 "Ton lien est personnel et ne sert qu’une fois : choisis où tu veux suivre ce voyage.":"رابطك شخصي ويعمل مرة واحدة فقط: اختر أين تريد متابعة هذه الرحلة.",
 "Copie ce lien.":"انسخ هذا الرابط.",
-"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"افتح الآن Vezoria من شاشتك الرئيسية ← 👥 ← انضمام ← 📋 لصق الدعوة. ستتابع الرحلة في تطبيقك بحسابك."});
+"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"افتح الآن Vezoria من شاشتك الرئيسية ← 👥 ← انضمام ← 📋 لصق الدعوة. ستتابع الرحلة في تطبيقك بحسابك.",
+"plus vu depuis {0} j":"لم يُشاهد منذ {0} يوم",
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"اسمك الأول؟ إلزامي للمتابعة برابط مشترك: هكذا سيعرف الشخص من أنت."});

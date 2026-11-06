@@ -3343,4 +3343,6 @@ I18N.load({
 "Je n’ai pas l’appli : voir le voyage ici":"Non ho l’app: vedi il viaggio qui",
 "Ton lien est personnel et ne sert qu’une fois : choisis où tu veux suivre ce voyage.":"Il tuo link è personale e vale una sola volta: scegli dove seguire questo viaggio.",
 "Copie ce lien.":"Copia questo link.",
-"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"Ora apri Vezoria dalla schermata Home → 👥 → Unisciti → 📋 Incolla l’invito ricevuto. Seguirai il viaggio nella tua app, con il tuo account."});
+"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"Ora apri Vezoria dalla schermata Home → 👥 → Unisciti → 📋 Incolla l’invito ricevuto. Seguirai il viaggio nella tua app, con il tuo account.",
+"plus vu depuis {0} j":"non visto da {0} g",
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Il tuo nome? È obbligatorio per seguire con un link comune: così la persona saprà chi sei."});

@@ -6282,4 +6282,6 @@ I18N.load({
 "Je n’ai pas l’appli : voir le voyage ici":"アプリなし：ここで旅行を見る",
 "Ton lien est personnel et ne sert qu’une fois : choisis où tu veux suivre ce voyage.":"リンクは個人用で1回しか使えません：どこでフォローするか選んでください。",
 "Copie ce lien.":"このリンクをコピーしてください。",
-"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"ホーム画面からVezoriaを開き → 👥 → 参加 → 📋 招待を貼り付け。自分のアプリ・アカウントで旅行をフォローできます。"});
+"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"ホーム画面からVezoriaを開き → 👥 → 参加 → 📋 招待を貼り付け。自分のアプリ・アカウントで旅行をフォローできます。",
+"plus vu depuis {0} j":"{0}日間未確認",
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"お名前は？共通リンクでフォローするには必須です：相手があなたを識別するために使います。"});

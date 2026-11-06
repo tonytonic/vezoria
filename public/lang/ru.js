@@ -6283,4 +6283,6 @@ I18N.load({
 "Je n’ai pas l’appli : voir le voyage ici":"У меня нет приложения: смотреть здесь",
 "Ton lien est personnel et ne sert qu’une fois : choisis où tu veux suivre ce voyage.":"Ссылка личная и работает один раз: выбери, где следить за поездкой.",
 "Copie ce lien.":"Скопируй эту ссылку.",
-"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"Теперь открой Vezoria с главного экрана → 👥 → Присоединиться → 📋 Вставить приглашение. Ты будешь следить за поездкой в своём приложении."});
+"Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"Теперь открой Vezoria с главного экрана → 👥 → Присоединиться → 📋 Вставить приглашение. Ты будешь следить за поездкой в своём приложении.",
+"plus vu depuis {0} j":"не заходил {0} дн.",
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Твоё имя? Оно обязательно для подписки по общей ссылке: так человек узнает, кто ты."});
