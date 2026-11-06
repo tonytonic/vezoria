@@ -3347,3 +3347,4 @@ html.vz-dark body .cv-share-qr{background:#fff!important}
 .sp2-join{margin:0 0 14px!important}
 .ln-tot{display:inline-block;margin-top:2px;font-size:.92em;opacity:.85;white-space:nowrap}
 body.vz-ro .lv-quick,body.vz-ro #cv-fab,body.vz-ro .ln-go~.ln-cta{display:none!important}body.vz-ro #cv-body input,body.vz-ro #cv-body textarea{pointer-events:none;opacity:.6}
+.hub-q{display:flex;gap:8px;margin:0 0 12px}.hub-q .v-btn{flex:1;margin:0;font-size:.82rem;padding:10px 6px}.rx-step{padding:8px 0;border-bottom:1px solid var(--line,#eee)}.rx-step:last-child{border:0}.rx-step>b{display:block;margin-bottom:4px}.rx-p{margin:4px 0 4px 10px}.rx-w{display:block;font-size:.9rem}.rx-c{display:block;width:100%;text-align:left;background:var(--soft,#f4f1f8);border:0;border-radius:10px;padding:6px 10px;margin:4px 0 0;font:inherit;font-size:.86rem;color:inherit}

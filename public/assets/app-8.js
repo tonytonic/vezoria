@@ -618,7 +618,30 @@
     const n = socEvents().length, h = `<span>👥</span><small>Partager</small>${n ? `<b class="cv-badge">${n > 99 ? '99+' : n}</b>` : ''}`;
     if(b.dataset.h !== h){ b.dataset.h = h; b.innerHTML = h; b.setAttribute('aria-label', n ? n + ' nouveauté(s)' : 'Partager'); }
   }
-  function socialHub(){ shareHub(); }
+  // 📊 les 3 compteurs de l’en-tête ouvrent chacun SA partie : abonnés · j’aime et commentaires · ceux que je suis
+  const hubQuick = () => `<div class="hub-q"><button type="button" class="v-btn sec" onclick="CV.joinAny()">🔗 ${esc(MSGT('J’ai reçu une invitation'))}</button><button type="button" class="v-btn sec" onclick="CV.shareHub()">📤 ${esc(MSGT('Je partage un code'))}</button></div>`;
+  function socialHub(k){
+    if(k === 'fw') return openSheet(`<div class="sp2" data-live="hubfw">${hubQuick()}${ab2AbHTML()}</div>`);
+    if(k === 'fo'){ const h = ab2SuisHTML(); return openSheet(`<div class="sp2" data-live="hubfo">${hubQuick()}${h || `<div class="sp2-card"><div class="sp2-empty">${esc(MSGT('Tu ne suis encore personne. Quand quelqu’un t’envoie son lien d’abonné, colle-le avec « J’ai reçu une invitation ».'))}</div></div>`}</div>`); }
+    if(k === 'lk') return socReacts();
+    shareHub();
+  }
+  // ❤️💬 tout ce que les gens ont aimé ou commenté sur mes voyages : rangé par voyage, puis par étape, puis par personne
+  function socReacts(){
+    const me = devId(), mine = new Set(Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted).map(ftId));
+    const cmp = (a, b) => String(a).localeCompare(String(b), undefined, {sensitivity:'base', numeric:true});
+    const L = [...list('like', l=>mine.has(l.trip) && l.on && !isBlk(l) && !String(l.id).endsWith(':' + me)).map(l=>({k:'lk', r:l})),
+               ...list('comment', c=>mine.has(c.trip) && !isBlk(c) && c.dev !== me).map(c=>({k:'cm', r:c}))];
+    const T = {}; L.forEach(x=>{ const tid = String(x.r.trip).replace(/^ft:/, ''), t = R[tid] || {}, post = R[x.r.feed] || {};
+      const tk = t.titre || '?', pk = post.titre || post.lieu || (post.date ? fdate(post.date) : MSGT('Le voyage'));
+      const TT0 = T[tk] || (T[tk] = {}), P = TT0[pk] || (TT0[pk] = {}), who = String(x.r.who || '?').replace(/^🧳\s*/, ''); (P[who] = P[who] || []).push(x); });
+    const tks = Object.keys(T).sort(cmp);
+    openSheet(`<div class="sp2" data-live="hublk">${hubQuick()}<h2>❤️ ${esc(MSGT('J’aime et commentaires'))}</h2>
+      ${tks.length ? tks.map(tk=>`<div class="sh-sec">🧳 <span data-notr>${esc(tk)}</span></div><div class="sp2-card">${Object.keys(T[tk]).sort(cmp).map(pk=>`<div class="rx-step"><b data-notr>📍 ${esc(pk)}</b>
+        ${Object.keys(T[tk][pk]).sort(cmp).map(w=>{ const xs = T[tk][pk][w], lk = xs.some(x=>x.k === 'lk'), cms = xs.filter(x=>x.k === 'cm').sort((a, b)=>(a.r.at || 0) - (b.r.at || 0));
+          return `<div class="rx-p"><span class="rx-w"><b data-notr>${esc(w)}</b>${lk ? ' ❤️' : ''}</span>${cms.map(x=>`<button type="button" class="rx-c" onclick="CV.cmMenu('${ja(x.r.id)}')">💬 <span data-notr>${esc(String(x.r.text || '').slice(0, 160))}</span></button>`).join('')}</div>`; }).join('')}</div>`).join('')}</div>`).join('')
+        : `<div class="sp2-card"><div class="sp2-empty">${esc(MSGT('Pas encore de j’aime ni de commentaire sur tes voyages.'))}</div></div>`}</div>`);
+  }
   // ➡️ Les voyages que je suis : en haut, rangés par personne (A → Z), chaque personne se déplie sur ses voyages
   function followHTML(){
     const fol = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted); if(!fol.length) return '';
@@ -1969,7 +1992,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06z3'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-06z4'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2166,7 +2189,8 @@
     setTimeout(()=>{ const s2 = document.querySelector('#v-sheet-bg .v-sheet'); if(s2 && y) s2.scrollTop = y; }, 0);   // on reste où on était (plus de saut en haut)
     try { const s = document.querySelector('#v-sheet-bg .sp2[data-ab2]'); if(s){ const k = s.getAttribute('data-ab2'); shBack = true;
       if(k === 'trips') ab2TripsSheet(); else if(k.startsWith('fw:')) ab2FwSheet(k.slice(3)); else if(k.startsWith('sub:')) ab2SubSheet(k.slice(4)); else shareHub(); }
-    else if(document.querySelector('#v-sheet-bg .sp2[data-live="hub"]')){ shBack = true; shareHub(); } } catch(e){} refresh(); }
+    else if(document.querySelector('#v-sheet-bg .sp2[data-live="hub"]')){ shBack = true; shareHub(); }
+    else { const h = document.querySelector('#v-sheet-bg .sp2[data-live^="hub"]'); if(h){ shBack = true; socialHub(h.getAttribute('data-live').slice(3)); } } } catch(e){} refresh(); }
   // 👻 abonné qui n’ouvre plus rien (navigateur vidé, appli supprimée…) : rien ne prévient le serveur ; on le repère à sa dernière visite
   const ab2Ghost = f => { const t = Math.max(f.seen || 0, f.updatedAt || 0, f.at || 0); const d = t ? Math.floor((Date.now() - t) / 864e5) : 0; return d >= 14 ? d : 0; };
   // la carte « Mes abonnés » de la page Partager

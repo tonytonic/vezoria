@@ -2381,7 +2381,7 @@
     try { if(quotaNag()){ momentDone = true; return; } } catch(e){}   // 📦 place photos dépassée ou presque pleine
     try { if(protectNag()){ momentDone = true; return; } } catch(e){}   // 🛟 ne jamais tout perdre en changeant de téléphone
     try { if(M.cloud === 'trips' && !M.migTrips){ momentDone = true; cloudTripsMigrate(); return; } } catch(e){}   // 🔁 fin du cloud « voyage par voyage »
-    const t = trip(); if(!t || !t.debut || t.demo) return;
+    const t = trip(); if(!t || !t.debut || t.demo || t.ro) return;   // 📖 lecture seule : aucun « Demain tu pars », « Bienvenue », « Bon retour »…
     const td = isoToday(), tm = new Date(Date.now() + 864e5).toISOString().slice(0,10); M.seen = M.seen || {};
     // la veille (ou le matin du départ) : « Demain, tu pars »
     if(!t.archived && (t.debut === tm || (t.debut === td && new Date().getHours() < 11)) && !M.seen['eve:' + t.id]){
@@ -2468,6 +2468,7 @@
 
   /* ---------- Vivre : « Ta journée en 30 secondes » (le soir, pendant le voyage) ---------- */
   function eveCard(){
+    if((trip() || {}).ro) return '';   // 📖 lecture seule : pas d’invitation à raconter, défis, etc.
     const t = trip(); if(!t || t.archived || tripPhase(t) !== 'live' || hidden('blk:eve')) return '';
     const td = isoToday(), hr = new Date().getHours(); if(hr < 18 && !M.eveForce) return '';
     const sv = list('souv', s=>s.trip===t.id && s.date===td && s.day30);

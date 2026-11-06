@@ -556,6 +556,7 @@
 
   /* 📍 EN COURS : la journée en 4 gestes (aujourd’hui, raconter, dépenses, demain) */
   function liveFil(t){
+    if((trip() || {}).ro) return '';   // 📖 lecture seule : pas d’invitation à raconter, défis, etc.
     const td = isoToday(), ds = dayList(), k = ds.indexOf(td), tm = ds[k + 1], key = 'lv:' + t.id + ':' + td;
     const {own, night} = itemsForDay(td), pl = placesOf(td), sgT = list('place', p=>p.trip === t.id && p.date === td && p.sugg);
     const sv = list('souv', s=>s.trip === t.id && s.date === td), dep = items(i=>i.cat === 'divers' && i.date === td), depT = dep.reduce((a, i)=>a + totalOf(i), 0);
@@ -902,6 +903,7 @@
   }
   function dfScore(t){ const sc = {}; list('defi', r=>r.trip === t.id).forEach(r=>Object.keys(r.by || {}).forEach(p=>sc[p] = (sc[p] || 0) + 1)); return sc; }
   function dfHTML(t){
+    if((trip() || {}).ro) return '';   // 📖 lecture seule : pas d’invitation à raconter, défis, etc.
     if(!t || hidden('blk:defi')) return ''; const d = isoToday(), L = dfToday(t, d), V = (t.voyageurs || []).filter(p=>prof(p)), sc = dfScore(t);
     const mine = L.filter(x=>dfDoneBy(t, d, x)[M.me]).length;
     return `<div class="df"><div class="df-h"><b>🎯 Défis du jour</b><small>${mine}/3 ${MSGT('réussis')}</small></div>
@@ -1202,6 +1204,7 @@
       <button type="button" class="sto-b s3" onclick="CV.pcOpen()"><i>💌</i><b>Carte postale</b><small>à envoyer</small></button></div>`;
   }
   function storyTodayHTML(t){
+    if((trip() || {}).ro) return '';   // 📖 lecture seule : pas d’invitation à raconter, défis, etc.
     const td = isoToday(), sv = list('souv', x=>x.trip === t.id && x.date === td); if(!sv.length) return '';
     const ph = sv.flatMap(x=>x.photos || []).slice(0, 4);
     return `<button type="button" class="st-today" onclick="CV.storyOpen('${ja(td)}')"><span class="st-stack">${ph.map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('') || '<i>📍</i>'}</span><span class="tx"><b>▶ Ta journée en story</b><small>${sv.length} souvenir${sv.length > 1 ? 's' : ''} · ${sv.reduce((a, x)=>a + (x.photos||[]).length, 0)} photos · en musique</small></span></button>`;
@@ -1945,6 +1948,7 @@
     return pct >= .7 ? ACTS[2] : ACTS[1];
   }
   function actBand(){
+    if((trip() || {}).ro) return '';   // 📖 lecture seule : pas d’invitation à raconter, défis, etc.
     const t = trip(); if(!t || hidden('blk:act')) return '';
     const a = actOf(t);
     return `<div class="cv-actb"><div class="ac-path">${ACTS.map(x=>`<span class="${x.n < a.n ? 'past' : x.n === a.n ? 'on' : ''}" title="${x.t}">${x.n}</span>`).join('<i></i>')}</div>

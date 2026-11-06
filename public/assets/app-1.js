@@ -1087,7 +1087,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const code = pushDevCode(), now = Date.now(), items = [];
     const at = (d, hm) => new Date(d + 'T' + hm + ':00').getTime();
     const money = (n, t) => Math.round(n * 100) / 100 + ' ' + (CURS[(t && t.devise) || 'EUR'] || (t && t.devise) || '€');
-    if(P.kinds.rappel) trips().filter(t=>!t.demo && !t.deleted).forEach(t=>{
+    if(P.kinds.rappel) trips().filter(t=>!t.demo && !t.deleted && !t.ro).forEach(t=>{   // 📖 voyage en lecture seule : aucun rappel
       const its = Object.values(R).filter(r=>r.type === 'item' && r.trip === t.id && !r.deleted);
       if(t.debut){ const first = its.filter(i=>i.cat === 'transport' && i.date === t.debut).sort((a,b)=>String(a.heureDep||'').localeCompare(String(b.heureDep||'')))[0];
         items.push({id:'dep-' + t.id, at:at(addD(t.debut, -1), '19:00'), p:{k:'rappel', r:'depart', a:[t.titre], sub:first ? [first.heureDep || '', first.titre || ''].join(' ').trim() : '', trip:t.id, tt:t.titre}}); }
@@ -1315,7 +1315,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const fmt = n => n >= 10000 ? Math.round(n / 1000) + 'k' : n >= 1000 ? (Math.round(n / 100) / 10).toString().replace('.', ',') + 'k' : String(n);
     const cell = (k, n, lbl) => {
       const up = old && n > (old[k] || 0) ? n - (old[k] || 0) : 0;
-      return `<span class="hs-c${up ? ' up' : ''}"><b>${fmt(n)}</b><small>${lbl}</small>${up ? `<i class="hs-plus">+${up}</i>` : ''}</span>`;
+      return `<span class="hs-c${up ? ' up' : ''}" role="button" onclick="event.stopPropagation();CV.socialHub('${k}')"><b>${fmt(n)}</b><small>${lbl}</small>${up ? `<i class="hs-plus">+${up}</i>` : ''}</span>`;
     };
     box.innerHTML = cell('fw', fw, 'abonnés') + cell('lk', lk, 'j’aime') + cell('fo', fo, 'suivis');
     box.style.display = '';

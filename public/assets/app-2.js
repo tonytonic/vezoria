@@ -549,6 +549,7 @@
     const h = shStack.pop(); if(!h){ xClose(); return; }
     shBack = true;
     if(/data-live="hub"/.test(h) && typeof shareHub === 'function'){ shareHub(); return; }
+    { const m = /data-live="hub(fw|fo|lk)"/.exec(h); if(m && typeof socialHub === 'function'){ socialHub(m[1]); return; } }
     if(/<div class="gd">/.test(h) && /gd-ch/.test(h) && typeof guideSheet === 'function'){ shBack = false; shStack = []; guideSheet(); return; }   // 🧭 le menu du parcours, à jour   // 👥 la page Partager est refaite : elle montre l’état actuel (voyage masqué, remis…)
     openSheet(h);
   }
@@ -594,7 +595,7 @@
     const prev = document.getElementById('v-sheet-bg');
     shNav(html, locked, !!(prev && !prev.dataset.locked));
     if(prev && !prev.dataset.locked === !locked){   // fenêtre déjà ouverte : on change son contenu sans rejouer l’animation (plus de flash)
-      const ro = M.lock && /<form|v-actions/.test(html) && !locked;
+      const ro = M.lock && (M.roLock ? /<form/.test(html) : /<form|v-actions/.test(html)) && !locked;   // 📖 lecture seule forcée : seules les fiches du voyage sont figées, pas les réglages
       prev.className = 'v-sheet-bg';
       const sh = document.createElement('div'); sh.className = 'v-sheet' + (ro ? ' ro' : '') + (!locked && shStack.length ? ' has-bk' : ''); sh.style.animation = 'none';
       sh.innerHTML = `${shBar(locked)}${locked?'':'<div class="v-grab"></div>'}${ro?'<div class="cv-robanner">🔒 Lecture seule</div>':''}${html}`;
@@ -608,7 +609,7 @@
     if(prev) prev.remove();
     const bg = document.createElement('div');
     bg.className = 'v-sheet-bg'; bg.id = 'v-sheet-bg';
-    const ro = M.lock && /<form|v-actions/.test(html) && !locked;
+    const ro = M.lock && (M.roLock ? /<form/.test(html) : /<form|v-actions/.test(html)) && !locked;   // 📖 lecture seule forcée : seules les fiches du voyage sont figées, pas les réglages
     bg.innerHTML = `<div class="v-sheet${ro?' ro':''}${!locked && shStack.length ? ' has-bk' : ''}">${shBar(locked)}${locked?'':'<div class="v-grab"></div>'}${ro?'<div class="cv-robanner">🔒 Lecture seule</div>':''}${html}</div>`;
     if(!locked){ bg.addEventListener('click', e=>{ if(e.target===bg && Date.now() - (window.__drClosed || 0) > 600) xClose(); }); shSwipe(bg); }
     if(locked) bg.dataset.locked = '1';
