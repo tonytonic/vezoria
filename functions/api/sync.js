@@ -136,6 +136,7 @@ async function wkColumn(env) {
   if (wkReady) return;
   try { await env.DB.prepare('ALTER TABLE records ADD COLUMN wk TEXT').run(); } catch (e) {}   // déjà là : rien à faire
   await env.DB.prepare('CREATE TABLE IF NOT EXISTS space_admin (space TEXT PRIMARY KEY, ah TEXT NOT NULL, at INTEGER NOT NULL)').run();
+  await env.DB.prepare('CREATE TABLE IF NOT EXISTS space_lock (space TEXT PRIMARY KEY, ch TEXT, at INTEGER NOT NULL)').run();
   wkReady = true;
 }
 const hdr = (request, k) => (request.headers.get(k) || '').trim().slice(0, 200);
@@ -153,6 +154,22 @@ async function adminOf(env, request, space, claim) {
     row = await env.DB.prepare('SELECT ah FROM space_admin WHERE space = ?1').bind(space).first();
   }
   return { has: !!row, me: !!(row && ah && row.ah === ah), bad: !!(row && ah && row.ah !== ah) };
+}
+
+// 🔒 lien personnel (lien d’abonné) : l’auteur le verrouille en le créant (X-Carnet-Lock: 1) ; le 1er COMPTE qui l’ouvre le prend
+//   (X-Carnet-Claim : empreinte tirée de son carnet, la même sur tous ses appareils). Ensuite, plus personne d’autre ne peut le lire.
+async function lockOf(env, request, space, adm) {
+  if (adm.me) {
+    if (hdr(request, 'X-Carnet-Lock') === '1') { try { await env.DB.prepare('INSERT OR IGNORE INTO space_lock (space, ch, at) VALUES (?1, NULL, ?2)').bind(space, Date.now()).run(); } catch (e) {} }
+    return null;
+  }
+  let row = null; try { row = await env.DB.prepare('SELECT ch FROM space_lock WHERE space = ?1').bind(space).first(); } catch (e) { return null; }
+  if (!row) return null;
+  const k = hdr(request, 'X-Carnet-Claim'), h = k.length >= 16 ? await sha256('vz-claim:' + k) : '';
+  const no = () => json({ error: 'Ce lien est personnel et a déjà été ouvert par quelqu’un d’autre. Demande ton propre lien. — This link is personal and was already opened by someone else.', claimed: true }, 403);
+  if (!h) return no();
+  if (!row.ch) { await env.DB.prepare('UPDATE space_lock SET ch = ?2 WHERE space = ?1 AND ch IS NULL').bind(space, h).run(); row = await env.DB.prepare('SELECT ch FROM space_lock WHERE space = ?1').bind(space).first(); }
+  return row && row.ch === h ? null : no();
 }
 
 // Efface un carnet : fiches (D1) + photos (R2 et anciennes photos D1) + compteurs
@@ -175,6 +192,7 @@ async function wipeSpace(env, space) {
   try { await env.DB.prepare('DELETE FROM photo_caps WHERE space = ?1').bind(space).run(); } catch (e) {}   // droits de lecture du pot commun
   try { await env.DB.prepare('DELETE FROM space_members WHERE space = ?1').bind(space).run(); } catch (e) {}   // codes compagnon
   try { await env.DB.prepare('DELETE FROM space_admin WHERE space = ?1').bind(space).run(); } catch (e) {}   // clé d’auteur du fil
+  try { await env.DB.prepare('DELETE FROM space_lock WHERE space = ?1').bind(space).run(); } catch (e) {}   // lien personnel
   try { await env.DB.prepare('DELETE FROM space_links WHERE child = ?1 OR owner = ?1').bind(space).run(); } catch (e) {}   // 🌿 branches (la formule payée reste : table plans)
   try { await env.DB.batch([env.DB.prepare('DELETE FROM push_subs WHERE space = ?1').bind(space), env.DB.prepare('DELETE FROM push_due WHERE space = ?1').bind(space)]); } catch (e) {}   // notifications
   try {
@@ -310,6 +328,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   // fiches refusées (trop lourdes, identifiant invalide) : le téléphone en est prévenu au lieu de les croire envoyées
   const skipped = [], denied = [];
   const adm = await adminOf(env, request, space, true), wh = await writerOf(request);
+  { const lk = await lockOf(env, request, space, adm); if (lk) return lk; }
   if (changes.length) {
     const stmt = env.DB.prepare(
       `INSERT INTO records (space, id, data, updated_at, rev, wk) VALUES (?1, ?2, ?3, ?4, ?5, ?6)
