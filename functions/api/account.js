@@ -71,13 +71,22 @@ export async function acctMain(env, request, space) {
   if (env.ACCT_REQUIRED === '0' || request.headers.get('X-Carnet-Main') !== '1') return null;
   try { await acctTables(env.DB); const a = await env.DB.prepare('SELECT verified FROM acct WHERE space = ?1').bind(space).first(); return a && a.verified ? null : NEED; } catch (e) { return null; }
 }
-export async function acctNew(env, request, space) {
+export async function acctNew(env, request, space, nChanges = 1) {
   if (env.ACCT_REQUIRED === '0') return null;
   try {
-    const any = await env.DB.prepare('SELECT 1 FROM records WHERE space = ?1 LIMIT 1').bind(space).first(); if (any) return null;   // espace existant : rien ne change
     await acctTables(env.DB);
+    const ow = await ownerOf(env, space);
+    if (ow === '-light') {   // petit espace créé sans compte (boîte d’invitations, code de passage) : il reste petit
+      const r = await env.DB.prepare('SELECT COUNT(*) AS n FROM records WHERE space = ?1').bind(space).first();
+      return r && r.n + nChanges > 200 ? NEED : null;
+    }
+    const any = await env.DB.prepare('SELECT 1 FROM records WHERE space = ?1 LIMIT 1').bind(space).first(); if (any) return null;   // espace existant : rien ne change
     const dev = String(request.headers.get('X-Carnet-Dev') || '').replace(/[^a-z0-9]/gi, '').slice(0, 40);
     const own = (o) => env.DB.prepare('INSERT OR IGNORE INTO space_owner (space, owner, at) VALUES (?1, ?2, ?3)').bind(space, o, Date.now()).run().catch(() => {});
+    const tok0 = (request.headers.get('X-Carnet-Acct') || '').trim();
+    // 📨 sans compte, on peut quand même déposer 1 à 3 petites fiches dans un espace neuf : une invitation dans la boîte d’un compagnon,
+    //    le code de passage navigateur → appli d’un abonné. Ces espaces restent limités à 200 fiches.
+    if (request.headers.get('X-Carnet-Main') !== '1' && tok0.length < 8 && nChanges <= 3 && Number(request.headers.get('Content-Length') || 0) <= 16384) { await own('-light'); return null; }
     if (request.headers.get('X-Carnet-Main') === '1') { if (!(await acctReady(env, space, dev))) return NEED; await own(space); return null; }
     const tok = (request.headers.get('X-Carnet-Acct') || '').trim(); if (tok.length < 8 || tok.startsWith('mb:')) return NEED;
     const cs = await codeSpace(env, tok); if (cs.dead || !cs.space) return NEED;

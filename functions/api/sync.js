@@ -341,7 +341,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const skipped = [], denied = [];
   const adm = await adminOf(env, request, space, true), wh = await writerOf(request);
   { const lk = await lockOf(env, request, space, adm); if (lk) return lk; }
-  if (changes.length) { const na = await acctNew(env, request, space); if (na) return json(na, 403); }   // 📧 nouvel espace : seulement depuis un carnet avec compte
+  if (changes.length) { const na = await acctNew(env, request, space, changes.length); if (na) return json(na, 403); }   // 📧 nouvel espace : seulement depuis un carnet avec compte
   if (changes.length) {
     const stmt = env.DB.prepare(
       `INSERT INTO records (space, id, data, updated_at, rev, wk) VALUES (?1, ?2, ?3, ?4, ?5, ?6)

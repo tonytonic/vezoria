@@ -229,7 +229,7 @@ export async function onRequestPost({ request, env }) {
   }
   if (a === 'owner' || a === 'suspendOwner' || a === 'restoreOwner') {
     await acctTables(env.DB);
-    let owner = await ownerOf(env, space);
+    let owner = await ownerOf(env, space); if (owner === '-light') owner = '';   // petit espace sans compte (invitation, passage)
     if (!owner) { const ac = await env.DB.prepare('SELECT 1 FROM acct WHERE space = ?1').bind(space).first(); if (ac) owner = space; }   // le code signalé EST le carnet principal
     if (!owner) { try { const bo = await billOf(env, space); if (bo && bo !== space) owner = bo; } catch (e) {} }   // ancien voyage partagé (avant les comptes) : son carnet d’origine
     if (!owner) return json({ found: false, space: short(space), error: 'Aucun compte relié à ce code (espace créé avant les comptes, ou jamais synchronisé).', ...(await info(env, space)) });
