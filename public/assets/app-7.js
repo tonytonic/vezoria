@@ -1485,7 +1485,8 @@
     const dep = items(i=>i.cat === 'divers' && i.date === td).reduce((a, i)=>a + totalOf(i), 0);
     const ft = 'ft:' + t.id, d0 = new Date(); d0.setHours(0,0,0,0);
     const rx = list('like', l=>l.trip === ft && l.on && (l.updatedAt||0) >= +d0).length + list('comment', c=>c.trip === ft && (c.at||0) >= +d0).length;
-    return {km:kmMe, ph, dep, rx, sv:sv.length};
+    const mine = by[M.me || ''] || []; let tot = 0; for(let i = 1; i < mine.length; i++) tot += km({lat:mine[i-1][0], lng:mine[i-1][1]}, {lat:mine[i][0], lng:mine[i][1]});   // 🛣️ tout le voyage, tous moyens confondus
+    return {km:kmMe, tot, ph, dep, rx, sv:sv.length};
   }
   function lnEvents(t){
     const me = M.me || '', d0 = new Date(); d0.setHours(0,0,0,0); const ft = 'ft:' + t.id, ev = [], td = isoToday();
@@ -1505,7 +1506,7 @@
       <div class="ln-top"><span class="ln-badge"><i></i>EN DIRECT · ${PJ(k + 1)}/${n}</span><span class="ln-wx" id="ln-wx">${w ? wxIcon(w.c, w.d) + ' ' + w.t + '°' : ''}</span></div>
       <div class="ln-place"><b id="ln-city" data-notr>${esc(g ? g.city : (t.titre || ''))}</b><small><span id="ln-clock">${lnClock(w)}</span>${g && g.cc ? ' · ' + flag(g.cc) + ' <span data-notr>' + esc(g.country || '') + '</span>' : ''}</small></div>
       <button type="button" class="ln-go" onclick="CV.liveOpen('${ja(t.id)}')">🛰️ Carte live</button>
-      <div class="ln-stats">${stat('🚶', +st.km.toFixed(1), MSGT('km à pied'), 'km', 1)}${stat('📸', st.ph, st.ph > 1 ? 'photos' : 'photo', 'ph')}${stat('💶', Math.round(st.dep), ((t.devise || M.cur || 'EUR') === 'EUR' ? '€ ' : (t.devise || M.cur) + ' ') + MSGT('dépensés'), 'dep')}${stat('❤️', st.rx, st.rx > 1 ? 'réactions' : 'réaction', 'rx')}</div>
+      <div class="ln-stats">${stat('🚶', +st.km.toFixed(1), MSGT('km à pied') + (st.tot >= 1 ? `<br><span class="ln-tot">🛣️ ${Math.round(st.tot).toLocaleString((window.I18N && I18N.locale) || 'fr-FR')} km ${esc(MSGT('au total'))}</span>` : ''), 'km', 1)}${stat('📸', st.ph, st.ph > 1 ? 'photos' : 'photo', 'ph')}${stat('💶', Math.round(st.dep), ((t.devise || M.cur || 'EUR') === 'EUR' ? '€ ' : (t.devise || M.cur) + ' ') + MSGT('dépensés'), 'dep')}${stat('❤️', st.rx, st.rx > 1 ? 'réactions' : 'réaction', 'rx')}</div>
       <div class="ln-tick" id="ln-tick">${ev.length ? ev.map((e, i)=>`<div class="ln-e${i === 0 ? ' on' : ''}" style="--c:${esc(e.c)}"><i>${e.ic}</i><span><b data-notr>${esc(e.w)}</b> <span>${esc(e.tx)}</span>${e.x ? ' · <span>' + esc(e.x) + '</span>' : ''}</span><small>${vzWhen(e.at)}</small></div>`).join('') : `<div class="ln-e on calm"><i>✨</i><span>Tout est calme… un souvenir pour réveiller tes abonnés ?</span><button type="button" onclick="CV.hereNow()">📍 Step ici</button></div>`}</div>
     </div>`;
   }

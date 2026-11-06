@@ -1586,28 +1586,32 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(isNew) inviteSheet('', 'pack', P); else { toast('👥 C’est enregistré'); refresh(); }
   }
   // retirer UN voyage à UNE personne
-  async function packRemoveTrip(P, t, quiet){
-    const pk = PACKS()[P], old = TS()[t], oldSp = old && spaceObj(old); if(!pk) return;
+  async function packRemoveTrip(P, t, quiet, exPid){   // exPid : compagnon venu directement (sans paquet) qu’on retire aussi pour de vrai
+    const pk = P ? PACKS()[P] : {who: exPid && prof(exPid) ? pname(exPid) : '', trips:[]}, old = TS()[t], oldSp = old && spaceObj(old); if(!pk) return;
     if(!quiet && !(await uiConfirm(MSGT('Ne plus partager ce voyage avec cette personne ?') + '\n\n' + (pk.who || '') + ' · ' + ((R[t]||{}).titre || '') + '\n\n' + MSGT('Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.')))) return;
     pk.trips = pk.trips.filter(x=>x !== t); persist();
-    { const x = R['pt:' + t + '@' + P] || {id:'pt:' + t + '@' + P, type:'packtrip', trip:'pa:' + P, tid:t};   // retiré de SON paquet seulement
+    if(P){ const x = R['pt:' + t + '@' + P] || {id:'pt:' + t + '@' + P, type:'packtrip', trip:'pa:' + P, tid:t};   // retiré de SON paquet seulement
       TS()['pa:' + P] = P; putQuiet([Object.assign(clone(x), {deleted:true})]); }
     if(!old || !oldSp) return;
     cryptShow('🔑 Nouveau code pour ce voyage…');
     try {
-      const c = genCode(), me = devId(), k = await fKey(), bad = await viaHash(t, P), env = [];
-      // compagnons venus directement (sans paquet) : le nouveau code, chiffré pour chacun
-      for(const m of list('member', y=>y.trip === t && y.on && y.dev !== me && y.pk && y.via && y.via !== bad)){
+      const c = genCode(), me = devId(), k = await fKey(), bad = P ? await viaHash(t, P) : '-', env = [];
+      const isBad = y => y.via === bad || (exPid && y.pid === exPid);
+      // compagnons venus directement (sans paquet) : le nouveau code, chiffré pour chacun ; la personne retirée reçoit « GONE »
+      for(const m of list('member', y=>y.trip === t && y.dev !== me && y.pk && y.via && (y.on || isBad(y)))){
+        if(isBad(m)){ try { const key = await fShared(k.priv, m.pk), iv = crypto.getRandomValues(new Uint8Array(12));
+          const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode('GONE')));
+          env.push({id:'tx:' + t + ':' + m.dev, type:'tripmove', trip:'tm:' + t, tid:t, dev:m.dev, opk:k.pub, iv:b64(iv), ct:b64(ct)}); } catch(e){} continue; }
         try { const key = await fShared(k.priv, m.pk), iv = crypto.getRandomValues(new Uint8Array(12));
           const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(c)));
           env.push({id:'tx:' + t + ':' + m.dev, type:'tripmove', trip:'tm:' + t, tid:t, dev:m.dev, opk:k.pub, iv:b64(iv), ct:b64(ct)}); } catch(e){} }
       if(env.length) await spacePushOnly(oldSp, env);
       // 👀 ancien compagnon : il garde le voyage en lecture seule ; si ce voyage est montré aux abonnés, il reçoit son lien d’abonné (❤️ et 💬)
-      { const mm = list('member', y=>y.trip === t && y.via === bad && y.pk && y.ib)[0];
+      { const mm = list('member', y=>y.trip === t && isBad(y) && y.pk && y.ib)[0];
         if(mm && typeof ab2Vis === 'function' && ab2Vis().includes(t)) setTimeout(async ()=>{ try { const x = await ab2NewInv(pk.who || mm.who || '?');
           await ivSend({dev:mm.dev, pk:mm.pk, ib:mm.ib}, {k:'follow', id:uid(), c:x.code, t:(R[t] || {}).titre || ''}); } catch(e){} }, 1500); }
       // 👤 la personne retirée quitte aussi la liste des voyageurs (ses appareils venus par ce paquet)
-      { const gone = new Set(list('member', y=>y.trip === t && y.via === bad && y.pid).map(y=>y.pid)), tr = R[t];
+      { const gone = new Set(list('member', y=>y.trip === t && isBad(y) && y.pid).map(y=>y.pid)), tr = R[t]; if(exPid) gone.add(exPid);
         if(tr && gone.size && (tr.voyageurs || []).some(p=>gone.has(p))) put(Object.assign(clone(tr), {voyageurs:(tr.voyageurs || []).filter(p=>!gone.has(p))}), false); }
       (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t] = c;
       Object.values(R).filter(r=>r && !r.demo && (r.id === t || r.trip === t) && r.type !== 'member').forEach(r=>markDirty(r.id));
@@ -1673,6 +1677,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       const key = m.id + ':' + m.ct.slice(0, 12); if(done[key]) continue; done[key] = 1;
       try { const k = await fKey(), sk = await fShared(k.priv, m.opk);
         const c = new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(m.iv)}, sk, unb64(m.ct)));
+        if(c === 'GONE'){ if(await tripLeaveGo(m.tid, 'keep', true)){ const t = R[m.tid]; if(t && !t.deleted) putQuiet([Object.assign(clone(t), {ro:1, roAt:Date.now()})]); refresh(); } continue; }   // 👤 retiré par l’auteur
         if(!/^[A-Z0-9-]{8,}$/.test(c) || TS()[m.tid] === c) continue;
         const prev = TS()[m.tid]; TS()[m.tid] = c; if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
         if(prev && !Object.values(TS()).includes(prev)) M.spaces = (M.spaces||[]).filter(x=>x.code !== prev);

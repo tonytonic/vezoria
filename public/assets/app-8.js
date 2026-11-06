@@ -715,13 +715,22 @@
     if(!spSel) return; const pid = spSel.pid, now = new Set([...document.querySelectorAll('.sp-g.on')].map(b=>b.dataset.t)), out = [], added = [];
     myTripsAll().forEach(t=>{ const v = new Set(t.voyageurs || []), had = v.has(pid), want = now.has(t.id); if(had === want) return; want ? v.add(pid) : v.delete(pid); out.push(Object.assign(clone(t), {voyageurs:[...v]})); if(want) added.push(t); });
     if(out.length) putMany(out, '👥 ' + RF('Voyages de {0} mis à jour', pname(pid))); spSel = null; closeSheet(true);
+    for(const t of out) if(!(t.voyageurs || []).includes(pid)) { try { await compRevoke(t.id, pid); } catch(e){} }
     // un voyage qu’il ne peut pas encore ouvrir : on propose d’envoyer l’invitation (lien du voyage)
     if(added.length && await uiConfirm(RF('Envoyer l’invitation à {0} pour {1} ?', pname(pid), added.map(t=>t.titre).join(', ')))) for(const t of added){ await tripInviteNow(t.id); }
     spCompSheet(pid);
   }
   async function spTripOff(pid, tid){ const t = R[tid]; if(!t) return;
-    if(!(await uiConfirm(RF('Retirer {0} du voyage « {1} » ?\n\nIl ne compte plus dans les dépenses de ce voyage. S’il a déjà le lien du voyage, il peut encore l’ouvrir.', pname(pid), t.titre)))) return;
-    put(Object.assign(clone(t), {voyageurs:(t.voyageurs || []).filter(x=>x !== pid)}), '👥 ' + RF('{0} retiré', pname(pid))); spCompSheet(pid); }
+    if(!(await uiConfirm(RF('Retirer {0} du voyage « {1} » ?', pname(pid), t.titre) + '\n\n' + MSGT('Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.')))) return;
+    put(Object.assign(clone(t), {voyageurs:(t.voyageurs || []).filter(x=>x !== pid)}), '👥 ' + RF('{0} retiré', pname(pid)));
+    await compRevoke(tid, pid); spCompSheet(pid); }
+  // 🔑 retirer VRAIMENT l’accès d’un compagnon à un voyage partagé (pas seulement de la liste des voyageurs)
+  async function compRevoke(tid, pid){
+    const code = TS()[tid]; if(!code || !spaceObj(code) || !pid || pid === M.me) return;
+    const ms = list('member', m=>m.trip === tid && m.pid === pid); if(!ms.length) return;   // jamais venu sur ce voyage : rien à couper
+    for(const [P, pk] of Object.entries(PACKS())) if(pk.trips.includes(tid) && ms.some(m=>m.via && m.via !== 'direct')){ const h = await viaHash(tid, P); if(ms.some(m=>m.via === h)) return packRemoveTrip(P, tid, true); }
+    return packRemoveTrip(null, tid, true, pid);
+  }
   // 👀 mes abonnés : une ligne par personne, avec ses ❤️ et ses commentaires sur tous mes voyages publiés
   function spAb(){
     const ids = new Set(Object.keys(FT()).filter(t=>R[t] && !R[t].deleted).map(ftId)); if(!ids.size) return '';
@@ -1933,7 +1942,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06x'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-06y'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
