@@ -90,8 +90,8 @@
   const inviteText = (kind, titre, code) => { const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : '';
     // 👆 la personne n’a qu’à toucher le lien (Android : l’appli s’ouvre toute seule). Seul cas sans lien direct : l’iPhone qui a déjà l’appli → copier le message puis 📋 Coller.
     return (kind === 'pack' ? MSG('Rejoins nos voyages sur Vezoria 🧳 : à compléter ensemble') : kind === 'carnet' ? MSG('Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble') : MSG(`Rejoins notre voyage « ${titre} » sur Vezoria 🧳`))
-      // 📋 pas de lien direct : sur iPhone il s’ouvrirait dans Safari, pas dans l’appli de l’écran d’accueil (= un autre compte). On copie le message, l’appli le colle.
-      + '\n\n' + MSG('Code :') + ' ' + code + '\n\n' + MSG('1. Copie ce message') + '\n' + MSG('2. Ouvre ton appli Vezoria → 👥 → Rejoindre → 📋 Coller l’invitation reçue') + '\n\n' + MSG('Pas encore Vezoria ? Installe-la :') + ' ' + url + '\n' + MSG('puis touche « Coller l’invitation » au démarrage.'); };
+      // 👆 comme pour les abonnés : Android → le lien ouvre l’appli et rejoint ; iPhone → Safari ne rejoint rien (page « copier l’invitation ») et on colle dans l’appli
+      + '\n\n👉 ' + MSG('Touche ce lien :') + ' ' + (link || url) + '\n' + MSG('(iPhone avec Vezoria déjà installée : copie ce message, ouvre Vezoria → 👥 → Rejoindre → 📋 Coller l’invitation reçue.)') + '\n\n' + MSG('Code :') + ' ' + code; };
   function inviteSheet(tid, kind, code0){
     if(kind === 'carnet'){ closeSheet(true); memberInvite(); return; }   // 🔑 le code administrateur ne se donne plus : code compagnon
     kind = kind || 'trip'; const t = tid ? R[tid] : null, code = kind === 'pack' ? code0 : kind === 'carnet' ? M.sync.code : TS()[tid]; if(!code) return;
@@ -103,7 +103,7 @@
       <div class="iv-step"><b>📱 Elle est à côté de toi</b><span>Elle scanne ce QR code avec l’appareil photo de son téléphone. Vezoria déjà installée ? 👥 Partager → « Rejoindre » → 📷 et elle scanne ce QR code : rien à taper.</span></div>
       <div class="iv-qr">${qrSVG(link)}</div>
       <div class="cv-bigcode" data-notr>${esc(code)}</div>
-      <div class="iv-step"><b>💬 Elle est loin</b><span>Envoie-lui le message : elle le copie et le colle dans son appli (👥 → Rejoindre → 📋), rien à taper.</span></div>
+      <div class="iv-step"><b>💬 Elle est loin</b><span>${esc(MSGT('Envoie-lui le message : avec Vezoria, elle le colle dans son appli ; sans Vezoria, elle touche le lien.'))}</span></div>
       <button type="button" class="v-btn" onclick="CV.inviteSend('${ja(tid || '')}','${ja(kind)}','${ja(pk ? code : '')}')">💬 Envoyer l’invitation</button>
       <button type="button" class="v-btn sec" onclick="CV.inviteCopy('${ja(code)}')">📋 Copier le code</button>
       <div class="v-sum-small" style="margin-top:8px">${kind === 'carnet' ? '🔐 Tout est chiffré : seules les personnes qui ont ce code peuvent lire ton carnet.' : '🔐 Tout est chiffré : seules les personnes qui ont ce code peuvent lire ce voyage.'}</div>
@@ -1930,7 +1930,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06r'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-06s'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
