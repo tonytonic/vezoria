@@ -256,7 +256,7 @@
     else if(!ro && M.roLock){ M.lock = M.roLock.prev; delete M.roLock; persist(); }
     document.body.classList.toggle('vz-ro', ro); try { applyLock(); } catch(e){} } catch(e){} }
   // 📖 en lecture seule, seuls les boutons pour regarder marchent (les autres expliquent pourquoi)
-  const RO_OK = /CV\.(tab|innerGo|go|modeGo|liveOpen|liveClose|liveFocus|liveBase|liveOrbit|feedView|tlDay|tlMeteo|worldMap|planDay|plInfo|psTrip|filmOpen|flyover|wrapped|albumSheet|boardShow|nhGo|nhWho|pjOpen|nhCopy|tripUnshare|close|shareHub|socialHub|edit|dayMenu|tlDocs|cdOpen|evToggle|shMoreTog)\b/;
+  const RO_OK = /CV\.(roDrop|tab|innerGo|go|modeGo|liveOpen|liveClose|liveFocus|liveBase|liveOrbit|feedView|tlDay|tlMeteo|worldMap|planDay|plInfo|psTrip|filmOpen|flyover|wrapped|albumSheet|boardShow|nhGo|nhWho|pjOpen|nhCopy|tripUnshare|close|shareHub|socialHub|edit|dayMenu|tlDocs|cdOpen|evToggle|shMoreTog)\b/;
   document.addEventListener('click', e=>{ try {
     if(!document.body.classList.contains('vz-ro')) return;
     const el = e.target.closest && e.target.closest('#cv-body [onclick], #cv-body input, #cv-body textarea, #cv-body select, #cv-fab, #cv-hero-qr');
@@ -268,9 +268,18 @@
   function roBand(){ try { const t = trip(), b = document.getElementById('cv-body'); let el = document.getElementById('cv-roban');
     if(!(t && t.ro && b)){ if(el) el.remove(); return; }
     if(!el || el.parentNode !== b){ if(el) el.remove(); el = document.createElement('div'); el.id = 'cv-roban'; el.className = 'v-box'; el.style.cssText = 'margin:0 0 12px;border-left:4px solid var(--gold,#e0b030)'; b.prepend(el); }
-    el.innerHTML = '📖 <b>' + esc(MSGT('Lecture seule')) + '</b><br><small>' + esc(MSGT('Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.')) + '</small>';
+    el.innerHTML = '📖 <b>' + esc(MSGT('Lecture seule')) + '</b><br><small>' + esc(MSGT('Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.')) + '</small>' + '<div style="margin-top:8px"><button type="button" class="v-btn ghost" onclick="CV.roDrop(\'' + t.id + '\')">🗑 ' + esc(MSGT('Retirer ce voyage de mon Vezoria')) + '</button></div>';
   } catch(e){} }
 
+  // 📖 ancien compagnon : il retire sa copie en lecture seule ; s’il suit le voyage comme abonné, il le garde côté « suivis »
+  async function roDrop(id){ const t = R[id]; if(!t || !t.ro) return;
+    const fol = Object.values(M.subs || {}).some(S=>S && !S.gone && S.t && S.t['ft:' + id]);
+    if(!(await uiConfirm(MSGT('Retirer « {0} » de ton Vezoria ?').replace('{0}', t.titre || '') + '\n\n' + MSGT(fol ? 'Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.' : 'Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.')))) return;
+    const out = Object.values(R).filter(r=>r && r.trip === id && !r.deleted).map(r=>Object.assign(clone(r), {deleted:true}));
+    (M.left = M.left || {})[id] = Date.now();
+    putMany([...out, Object.assign(clone(t), {deleted:true})], '🗑 ' + MSGT('Voyage retiré'));
+    closeSheet(true); M.trip = null; persist(); applyMode(); refresh();
+    if(fol) setTimeout(()=>{ try { socialHub('fo'); } catch(e){} }, 400); }
   function phaseTheme(){ const t = M.trip !== LEGACY && trip(), ph = t ? tripPhase(t) : 'prep'; const was = document.body.className; document.body.classList.toggle('cv-ph-live', ph === 'live'); document.body.classList.toggle('cv-ph-past', ph === 'past'); if(was !== document.body.className && typeof viPhase === 'function') try { viPhase(); } catch(e){}
     // barre d'état Android (appli Google Play et Chrome) : même couleur que l'en-tête de la période
     // (balise remplacée et pas seulement modifiée : certaines versions de Chrome ne relisent que les nouvelles balises ; couleur retenue pour la prochaine ouverture)
