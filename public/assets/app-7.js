@@ -1480,7 +1480,7 @@
     return mine.length ? mine[mine.length-1] : all[0] || null;
   }
   function lnStats(t){
-    const td = isoToday(), by = trkByWho(t.id, true), kmMe = liveKmDay(by[M.me || ''] || []);
+    const td = isoToday(), by = trkByWho(t.id, true), kmMe = liveWalkDay(by[M.me || ''] || []);   // 🚶 la marche seulement (pas la voiture ni le train)
     const sv = list('souv', x=>x.trip === t.id && x.date === td), ph = sv.reduce((a, x)=>a + (x.photos||[]).length, 0);
     const dep = items(i=>i.cat === 'divers' && i.date === td).reduce((a, i)=>a + totalOf(i), 0);
     const ft = 'ft:' + t.id, d0 = new Date(); d0.setHours(0,0,0,0);
@@ -1505,7 +1505,7 @@
       <div class="ln-top"><span class="ln-badge"><i></i>EN DIRECT · ${PJ(k + 1)}/${n}</span><span class="ln-wx" id="ln-wx">${w ? wxIcon(w.c, w.d) + ' ' + w.t + '°' : ''}</span></div>
       <div class="ln-place"><b id="ln-city" data-notr>${esc(g ? g.city : (t.titre || ''))}</b><small><span id="ln-clock">${lnClock(w)}</span>${g && g.cc ? ' · ' + flag(g.cc) + ' <span data-notr>' + esc(g.country || '') + '</span>' : ''}</small></div>
       <button type="button" class="ln-go" onclick="CV.liveOpen('${ja(t.id)}')">🛰️ Carte live</button>
-      <div class="ln-stats">${stat('🚶', +st.km.toFixed(1), 'km aujourd’hui', 'km', 1)}${stat('📸', st.ph, st.ph > 1 ? 'photos' : 'photo', 'ph')}${stat('💶', Math.round(st.dep), ((t.devise || M.cur || 'EUR') === 'EUR' ? '€ ' : (t.devise || M.cur) + ' ') + MSGT('dépensés'), 'dep')}${stat('❤️', st.rx, st.rx > 1 ? 'réactions' : 'réaction', 'rx')}</div>
+      <div class="ln-stats">${stat('🚶', +st.km.toFixed(1), MSGT('km à pied'), 'km', 1)}${stat('📸', st.ph, st.ph > 1 ? 'photos' : 'photo', 'ph')}${stat('💶', Math.round(st.dep), ((t.devise || M.cur || 'EUR') === 'EUR' ? '€ ' : (t.devise || M.cur) + ' ') + MSGT('dépensés'), 'dep')}${stat('❤️', st.rx, st.rx > 1 ? 'réactions' : 'réaction', 'rx')}</div>
       <div class="ln-tick" id="ln-tick">${ev.length ? ev.map((e, i)=>`<div class="ln-e${i === 0 ? ' on' : ''}" style="--c:${esc(e.c)}"><i>${e.ic}</i><span><b data-notr>${esc(e.w)}</b> <span>${esc(e.tx)}</span>${e.x ? ' · <span>' + esc(e.x) + '</span>' : ''}</span><small>${vzWhen(e.at)}</small></div>`).join('') : `<div class="ln-e on calm"><i>✨</i><span>Tout est calme… un souvenir pour réveiller tes abonnés ?</span><button type="button" onclick="CV.hereNow()">📍 Step ici</button></div>`}</div>
     </div>`;
   }

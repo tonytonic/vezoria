@@ -2056,7 +2056,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const qrBtn = id => `<button type="button" class="v-btn sec qr-btn" onclick="CV.qrScan('${ja(id)}')">📷 Scanner le QR code</button>`;
   // un seul champ pour tout : lien ou code de voyage, de carnet ou d’abonné
   function joinAny(){
-    openSheet(`<h2>🔗 Rejoindre avec un code</h2>
+    openSheet(`<h2>🔗 ${esc(MSGT('J’ai reçu une invitation (compagnon ou abonné)'))}</h2>
       ${navigator.clipboard && navigator.clipboard.readText ? `<button type="button" class="v-btn" onclick="CV.joinPaste()">📋 ${esc(MSGT('Coller l’invitation reçue'))}</button><div class="v-sum-small" style="margin:4px 0 10px">${esc(MSGT('Copie le message reçu (SMS, WhatsApp…), puis touche ce bouton : rien à taper.'))}</div>` : ''}
       ${qrBtn('ja-code')}<div class="v-sum-small" style="margin-bottom:8px">Ou colle le message, le lien ou le code reçu.</div>
       <textarea class="v-in" id="ja-code" rows="3" placeholder="XXXX-XXXX-XXXX ou le lien reçu"></textarea>

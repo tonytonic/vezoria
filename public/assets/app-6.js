@@ -905,7 +905,7 @@
   function shareHub(){
     const more = shareHubMore();
     const tq = trip(), leave = tq && !tq.demo && TS()[tq.id] && spaceObj(TS()[tq.id]) && tq.createdBy && tq.createdBy !== M.me;   // 🚪 voyage d’un compagnon : je peux en partir moi-même
-    openSheet(`<div class="sp2" data-live="hub"><button type="button" class="v-btn sp2-join" onclick="CV.joinAny()">🔗 ${esc(MSGT('J’ai reçu une invitation : rejoindre avec un code'))}</button>${spOverview()}${leave ? `<button type="button" class="v-btn sec" style="margin:4px 0 12px" onclick="CV.close();CV.tripUnshare('${ja(tq.id)}')">🚪 ${esc(RF('Quitter le voyage « {0} »', tq.titre || ''))}</button>` : ''}<details class="sp2-more"${M.shMore ? ' open' : ''} ontoggle="CV.shMoreTog(this.open)"><summary>⚙️ ${esc(MSGT('Plus d’options de partage'))}</summary>${more}</details></div>`);
+    openSheet(`<div class="sp2" data-live="hub"><button type="button" class="v-btn sp2-join" onclick="CV.joinAny()">🔗 ${esc(MSGT('J’ai reçu une invitation (compagnon ou abonné)'))}</button>${spOverview()}${leave ? `<button type="button" class="v-btn sec" style="margin:4px 0 12px" onclick="CV.close();CV.tripUnshare('${ja(tq.id)}')">🚪 ${esc(RF('Quitter le voyage « {0} »', tq.titre || ''))}</button>` : ''}<details class="sp2-more"${M.shMore ? ' open' : ''} ontoggle="CV.shMoreTog(this.open)"><summary>⚙️ ${esc(MSGT('Plus d’options de partage'))}</summary>${more}</details></div>`);
     { const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = 0; }
     setTimeout(()=>{ folPaint(); hydrate(); }, 60);
     M.socSeen = Date.now(); persist(); setTimeout(socPill, 50);
