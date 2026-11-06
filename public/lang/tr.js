@@ -6272,4 +6272,7 @@ I18N.load({
 "Copie ce lien.":"Bu bağlantıyı kopyala.",
 "Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"Şimdi Vezoria’yı ana ekrandan aç → 👥 → Katıl → 📋 Gelen daveti yapıştır. Seyahati kendi uygulamanda, kendi hesabınla takip edeceksin.",
 "plus vu depuis {0} j":"{0} gündür görülmedi",
-"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Adın? Ortak bağlantıyla takip etmek için zorunlu: kişi kim olduğunu böyle bilecek."});
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Adın? Ortak bağlantıyla takip etmek için zorunlu: kişi kim olduğunu böyle bilecek.",
+"Programme du jour":"Günün programı",
+"Rien de prévu aujourd’hui.":"Bugün plan yok.",
+"Itinéraire du jour ({0} lieux)":"Günün rotası ({0} yer)"});

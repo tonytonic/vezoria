@@ -6285,4 +6285,7 @@ I18N.load({
 "Copie ce lien.":"Скопируй эту ссылку.",
 "Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"Теперь открой Vezoria с главного экрана → 👥 → Присоединиться → 📋 Вставить приглашение. Ты будешь следить за поездкой в своём приложении.",
 "plus vu depuis {0} j":"не заходил {0} дн.",
-"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Твоё имя? Оно обязательно для подписки по общей ссылке: так человек узнает, кто ты."});
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Твоё имя? Оно обязательно для подписки по общей ссылке: так человек узнает, кто ты.",
+"Programme du jour":"План на день",
+"Rien de prévu aujourd’hui.":"На сегодня ничего не запланировано.",
+"Itinéraire du jour ({0} lieux)":"Маршрут дня ({0} мест)"});

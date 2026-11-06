@@ -6284,4 +6284,7 @@ I18N.load({
 "Copie ce lien.":"이 링크를 복사하세요.",
 "Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"이제 홈 화면에서 Vezoria를 열고 → 👥 → 참여 → 📋 받은 초대 붙여넣기. 내 앱, 내 계정으로 여행을 팔로우해요.",
 "plus vu depuis {0} j":"{0}일째 안 보임",
-"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"이름이 뭐예요? 공용 링크로 팔로우하려면 필수예요: 상대가 누구인지 알 수 있도록요."});
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"이름이 뭐예요? 공용 링크로 팔로우하려면 필수예요: 상대가 누구인지 알 수 있도록요.",
+"Programme du jour":"오늘 일정",
+"Rien de prévu aujourd’hui.":"오늘은 일정이 없어요.",
+"Itinéraire du jour ({0} lieux)":"오늘 경로 ({0}곳)"});

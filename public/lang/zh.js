@@ -6284,4 +6284,7 @@ I18N.load({
 "Copie ce lien.":"复制此链接。",
 "Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"现在从主屏幕打开 Vezoria → 👥 → 加入 → 📋 粘贴收到的邀请。你将在自己的应用中用自己的账户关注这次旅行。",
 "plus vu depuis {0} j":"已 {0} 天未出现",
-"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"你的名字？通过共享链接关注时必填：对方这样才知道你是谁。"});
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"你的名字？通过共享链接关注时必填：对方这样才知道你是谁。",
+"Programme du jour":"今日安排",
+"Rien de prévu aujourd’hui.":"今天没有安排。",
+"Itinéraire du jour ({0} lieux)":"今日路线（{0} 个地点）"});

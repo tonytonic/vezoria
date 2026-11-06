@@ -3340,4 +3340,7 @@ I18N.load({
 "Copie ce lien.":"Kopiere diesen Link.",
 "Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"Öffne jetzt Vezoria vom Startbildschirm → 👥 → Beitreten → 📋 Erhaltene Einladung einfügen. Du folgst der Reise in deiner App, mit deinem Konto.",
 "plus vu depuis {0} j":"seit {0} T nicht gesehen",
-"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Dein Vorname? Pflicht beim Folgen über einen gemeinsamen Link: So weiß die Person, wer du bist."});
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Dein Vorname? Pflicht beim Folgen über einen gemeinsamen Link: So weiß die Person, wer du bist.",
+"Programme du jour":"Tagesprogramm",
+"Rien de prévu aujourd’hui.":"Heute nichts geplant.",
+"Itinéraire du jour ({0} lieux)":"Tagesroute ({0} Orte)"});

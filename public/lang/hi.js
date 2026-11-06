@@ -6284,4 +6284,7 @@ I18N.load({
 "Copie ce lien.":"यह लिंक कॉपी करें।",
 "Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"अब होम स्क्रीन से Vezoria खोलें → 👥 → जुड़ें → 📋 निमंत्रण पेस्ट करें। आप अपने ऐप में, अपने खाते से यात्रा फ़ॉलो करेंगे।",
 "plus vu depuis {0} j":"{0} दिन से नहीं देखा",
-"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"आपका नाम? साझा लिंक से फ़ॉलो करने के लिए ज़रूरी है: इसी से व्यक्ति जानेगा कि आप कौन हैं।"});
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"आपका नाम? साझा लिंक से फ़ॉलो करने के लिए ज़रूरी है: इसी से व्यक्ति जानेगा कि आप कौन हैं।",
+"Programme du jour":"आज का कार्यक्रम",
+"Rien de prévu aujourd’hui.":"आज कुछ तय नहीं है।",
+"Itinéraire du jour ({0} lieux)":"आज का रूट ({0} जगहें)"});

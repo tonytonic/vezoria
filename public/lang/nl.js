@@ -3336,4 +3336,7 @@ I18N.load({
 "Copie ce lien.":"Kopieer deze link.",
 "Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"Open nu Vezoria vanaf je beginscherm → 👥 → Deelnemen → 📋 Ontvangen uitnodiging plakken. Je volgt de reis in je app, met je account.",
 "plus vu depuis {0} j":"{0} d niet gezien",
-"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Je voornaam? Verplicht om te volgen met een gedeelde link: zo weet de persoon wie je bent."});
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Je voornaam? Verplicht om te volgen met een gedeelde link: zo weet de persoon wie je bent.",
+"Programme du jour":"Dagprogramma",
+"Rien de prévu aujourd’hui.":"Vandaag niets gepland.",
+"Itinéraire du jour ({0} lieux)":"Dagroute ({0} plekken)"});

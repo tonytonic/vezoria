@@ -3330,4 +3330,7 @@ I18N.load({
 "Copie ce lien.":"Copy this link.",
 "Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.":"Now open Vezoria from your home screen → 👥 → Join → 📋 Paste the invitation you received. You’ll follow the trip in your app, with your account.",
 "plus vu depuis {0} j":"not seen for {0} d",
-"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Your first name? It’s required to follow with a shared link: that’s how the person will know who you are."});
+"Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Your first name? It’s required to follow with a shared link: that’s how the person will know who you are.",
+"Programme du jour":"Today’s plan",
+"Rien de prévu aujourd’hui.":"Nothing planned today.",
+"Itinéraire du jour ({0} lieux)":"Today’s route ({0} places)"});
