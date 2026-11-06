@@ -1921,7 +1921,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06o'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-06p'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2122,7 +2122,7 @@
     const L = ab2People(), nv = ab2Vis().length, pub = ab2Pub();
     return `<div class="sp2-sh"><div class="sp2-sec">${SVG_EYE}<b>${esc(MSGT('Mes abonnés'))}</b> <small>(${esc(MSGT('lecture seule'))})</small></div><button type="button" class="sp2-add2" onclick="CV.ab2Invite()">＋ ${esc(MSGT('Ajouter'))}</button></div>
       ${L.length ? L.map(P=>{ const f = P.f, nm = P.name, s = ab2Soc(P), av = f && avOk(f.av) ? f.av : '';
-        return `<button type="button" class="sp2-row" onclick="CV.ab2FwSheet('${ja(P.id)}')">${av ? avTag(av, nm, '', 'av-lg') : SVG_HID}<b data-notr>${esc(nm)}</b>${P.pub ? `<small class="sp2-wait">🔗 ${esc(MSGT('lien commun'))}</small>` : ''}${f && ab2Ghost(f) ? `<small class="sp2-wait">👻 ${esc(RF('plus vu depuis {0} j', ab2Ghost(f)))}</small>` : ''}${f ? `<span class="sp2-ic${s.lk ? '' : ' off'}">${SVG_HEART}</span><span class="sp2-ic${s.cm.length ? '' : ' off'}">${SVG_BUBBLE}</span>` : `<small class="sp2-wait">${Object.values(R).some(r=>r && r.type === 'follower' && r.code === P.x.code && r.deleted) ? '🚪 ' + esc(MSGT('ne suit plus')) : '⏳ ' + esc(MSGT('lien pas encore ouvert'))}</small>`}<span class="sp2-dots">›</span></button>`; }).join('')
+        return `<button type="button" class="sp2-row" onclick="CV.ab2FwSheet('${ja(P.id)}')">${av ? avTag(av, nm, '', 'av-lg') : SVG_HID}<b data-notr>${esc(nm)}</b>${P.pub ? `<small class="sp2-wait" title="${esc(MSGT('lien commun'))}">🔗</small>` : ''}${f && ab2Ghost(f) ? `<small class="sp2-wait">👻 ${esc(RF('plus vu depuis {0} j', ab2Ghost(f)))}</small>` : ''}${f ? `<span class="sp2-ic${s.lk ? '' : ' off'}">${SVG_HEART}</span><span class="sp2-ic${s.cm.length ? '' : ' off'}">${SVG_BUBBLE}</span>` : `<small class="sp2-wait">${Object.values(R).some(r=>r && r.type === 'follower' && r.code === P.x.code && r.deleted) ? '🚪 ' + esc(MSGT('ne suit plus')) : '⏳ ' + esc(MSGT('lien pas encore ouvert'))}</small>`}<span class="sp2-dots">›</span></button>`; }).join('')
         : `<div class="sp2-empty">${esc(MSGT('Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.'))}</div>`}
       <div class="sp2-pills"><button type="button" class="soft" onclick="CV.ab2TripsSheet()">👁️ ${esc(RF('Voyages montrés : {0}', nv))}</button><button type="button" class="soft" onclick="CV.ab2Common()">🔗 ${esc(MSGT('Lien commun'))}${pub ? ' (' + ab2PubFws().length + ')' : ''}</button></div>
       ${ab2MatesFwHTML()}${mpBtn()}`;
@@ -2219,7 +2219,7 @@
       if(r.type === 'abinv'){ const k = sp.of && S ? S : null;
         if(r.deleted || r.gone || (r.pub && (r.ban || []).includes(me))){ if(k) k.ban = 1; else sp.ban = 1; return; }
         const ahx = [...(r.hide || []), ...(r.pub ? ((r.hd || {})[me] || []) : [])];
-        sp.real = r.code; if(k){ k.ah = ahx; if(r.owner) k.owner = r.owner; if(avOk(r.oav)) k.oav = r.oav; if(r.code && r.code !== sp.of) setTimeout(()=>ab2Move(sp.code, r.code), 30); }
+        sp.real = r.code; sp.pub = !!r.pub; if(k){ k.ah = ahx; if(r.owner) k.owner = r.owner; if(avOk(r.oav)) k.oav = r.oav; if(r.code && r.code !== sp.of) setTimeout(()=>ab2Move(sp.code, r.code), 30); }
         sp.owner = r.owner || sp.owner; sp.oav = avOk(r.oav) ? r.oav : sp.oav; sp.ah = ahx; return; }
       if(r.type === 'follower' && !String(r.id).endsWith(':' + me)) return;
       if(r.type !== 'follower') return;
@@ -2265,6 +2265,10 @@
     if(iv.err){ drop(); alert(iv.net ? '📴 ' + netMsg() : '⚠️ ' + iv.err); return; }
     if(iv.ban){ drop(); alert(MSGT('Ce lien a été retiré par son auteur.')); return; }
     if(!iv.real){ drop(); alert(MSGT('Aucun voyage publié avec ce code.') + '\n\n' + MSGT('Demande-lui de te renvoyer son lien abonnés actuel.')); return; }
+    // 🔗 lien commun : l’auteur ne sait pas qui arrive → le prénom est obligatoire (sinon il ne verrait que « Un proche »)
+    if(iv.pub && !myName()){
+      let n = ''; while(!n){ const v = await uiPrompt(MSGT('Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.'), ''); if(v === null){ drop(); return; } n = String(v).trim().slice(0, 40); }
+      M.followName = n; persist(); }
     const c = iv.real, S = ab2Sub(c); delete S.ban; delete S.gone; S.iv = code; S.ah = iv.ah || []; if(iv.owner) S.owner = iv.owner; if(avOk(iv.oav)) S.oav = iv.oav;
     iv.of = c; const sp = ab2Space(c, {sub:1, iv:code}); sp.since = 0; await syncSpace(sp, true);
     if(sp.err){ alert(sp.net ? '📴 ' + netMsg() : '⚠️ ' + sp.err); return; }
