@@ -1933,7 +1933,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD = '2026-11-06u'; window.VZ_BUILD = BUILD;
+  const BUILD = '2026-11-06v'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2046,6 +2046,10 @@
     const x = ab2Inv(id); if(!x || x.pub) return null; const f = ab2InvFws(x)[0];
     return {id, x, f, devs:ab2InvFws(x).map(fwDevOf), name:ab2InvNm(x), hide:ab2InvHide(x)};
   }
+  // ⚠️ même personne derrière deux lignes (lien perso envoyé par erreur à quelqu’un qui me suivait déjà) : même profil ou même appareil
+  const ab2Key = P => P && P.f ? (P.f.pid || fwDevOf(P.f)) : '';
+  function ab2Dup(P){ const k = ab2Key(P); if(!k) return null; const L = ab2People(); const i = L.findIndex(q=>q.id === P.id);
+    const o = L.find((q, j)=>j !== i && ab2Key(q) === k && (j < i || (P.x && q.x && (q.x.at || 0) < (P.x.at || 0)))); return o || null; }
   const ab2People = () => [...AI().filter(x=>!x.pub).map(x=>ab2P(x.id)), ...ab2PubFws().map(f=>ab2P('pub:' + fwDevOf(f)))].filter(Boolean);
   // 🤝 les abonnés de mes compagnons (ils ont aimé ou commenté nos voyages communs) : je peux les inviter à me suivre
   function ab2MatesFws(){
@@ -2134,7 +2138,7 @@
     const L = ab2People(), nv = ab2Vis().length, pub = ab2Pub();
     return `<div class="sp2-sh"><div class="sp2-sec">${SVG_EYE}<b>${esc(MSGT('Mes abonnés'))}</b> <small>(${esc(MSGT('lecture seule'))})</small></div><button type="button" class="sp2-add2" onclick="CV.ab2Invite()">＋ ${esc(MSGT('Ajouter'))}</button></div>
       ${L.length ? L.map(P=>{ const f = P.f, nm = P.name, s = ab2Soc(P), av = f && avOk(f.av) ? f.av : '';
-        return `<button type="button" class="sp2-row" onclick="CV.ab2FwSheet('${ja(P.id)}')">${av ? avTag(av, nm, '', 'av-lg') : SVG_HID}<b data-notr>${esc(nm)}</b>${P.pub ? `<small class="sp2-wait" title="${esc(MSGT('lien commun'))}">🔗</small>` : ''}${f && ab2Ghost(f) ? `<small class="sp2-wait">👻 ${esc(RF('plus vu depuis {0} j', ab2Ghost(f)))}</small>` : ''}${f ? `<span class="sp2-ic${s.lk ? '' : ' off'}">${SVG_HEART}</span><span class="sp2-ic${s.cm.length ? '' : ' off'}">${SVG_BUBBLE}</span>` : `<small class="sp2-wait">${Object.values(R).some(r=>r && r.type === 'follower' && r.code === P.x.code && r.deleted) ? '🚪 ' + esc(MSGT('ne suit plus')) : '⏳ ' + esc(MSGT('lien pas encore ouvert'))}</small>`}<span class="sp2-dots">›</span></button>`; }).join('')
+        return `<button type="button" class="sp2-row" onclick="CV.ab2FwSheet('${ja(P.id)}')">${av ? avTag(av, nm, '', 'av-lg') : SVG_HID}<b data-notr>${esc(nm)}</b>${P.pub ? `<small class="sp2-wait" title="${esc(MSGT('lien commun'))}">🔗</small>` : ''}${(()=>{ const d = ab2Dup(P); return d ? `<small class="sp2-wait">⚠️ = <span data-notr>${esc(d.name)}</span></small>` : ''; })()}${f && ab2Ghost(f) ? `<small class="sp2-wait">👻 ${esc(RF('plus vu depuis {0} j', ab2Ghost(f)))}</small>` : ''}${f ? `<span class="sp2-ic${s.lk ? '' : ' off'}">${SVG_HEART}</span><span class="sp2-ic${s.cm.length ? '' : ' off'}">${SVG_BUBBLE}</span>` : `<small class="sp2-wait">${Object.values(R).some(r=>r && r.type === 'follower' && r.code === P.x.code && r.deleted) ? '🚪 ' + esc(MSGT('ne suit plus')) : '⏳ ' + esc(MSGT('lien pas encore ouvert'))}</small>`}<span class="sp2-dots">›</span></button>`; }).join('')
         : `<div class="sp2-empty">${esc(MSGT('Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.'))}</div>`}
       <div class="sp2-pills"><button type="button" class="soft" onclick="CV.ab2TripsSheet()">👁️ ${esc(RF('Voyages montrés : {0}', nv))}</button><button type="button" class="soft" onclick="CV.ab2Common()">🔗 ${esc(MSGT('Lien commun'))}${pub ? ' (' + ab2PubFws().length + ')' : ''}</button></div>
       ${ab2MatesFwHTML()}${mpBtn()}`;
@@ -2174,6 +2178,7 @@
     const f = P.f, nm = P.name, s = ab2Soc(P), H = P.hide, vis = ab2Vis(), mp = f && f.pid && prof(f.pid) ? f.pid : '';
     openSheet(`<div class="sp2" data-ab2="fw:${esc(id)}"><div class="sp2-top sp2-top2">${f && avOk(f.av) ? avTag(f.av, nm, '', 'av-xl') : SVG_HID}<h2 data-notr>${esc(nm)}</h2></div><div class="sp2-body">
       ${f ? '' : `<div class="sp2-blk"><div class="sp2-empty">⏳ ${esc(MSGT('Son lien n’a pas encore été ouvert.'))}</div></div>`}
+      ${(()=>{ const d = ab2Dup(P); return d ? `<div class="sp2-blk"><div class="sp2-empty" style="color:var(--danger,#c0392b)">⚠️ ${esc(RF('C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.', d.name))}</div></div>` : ''; })()}
       ${P.pub ? `<div class="sp2-blk"><div class="sp2-empty">🔗 ${esc(MSGT('Abonné par ton lien commun.'))}</div></div>` : ''}
       <div class="sp2-blk"><div class="sp2-sec">👁️ <b>${esc(MSGT('Ce qu’il voit'))}</b></div><div class="sp2-empty">${esc(MSGT('Éteins un voyage pour le cacher à cette personne seulement.'))}</div>
         ${vis.length > 1 ? `<div class="sp2-allr"><button type="button" onclick="CV.ab2FwAll('${ja(id)}', true)">☑️ ${esc(MSGT('Tout cocher'))}</button><button type="button" onclick="CV.ab2FwAll('${ja(id)}', false)">⬜ ${esc(MSGT('Tout décocher'))}</button></div>` : ''}
@@ -2281,7 +2286,7 @@
     if(iv.pub && !myName()){
       let n = ''; while(!n){ const v = await uiPrompt(MSGT('Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.'), ''); if(v === null){ drop(); return; } n = String(v).trim().slice(0, 40); }
       M.followName = n; persist(); }
-    const c = iv.real, S = ab2Sub(c); delete S.ban; delete S.gone; S.iv = code; S.ah = iv.ah || []; if(iv.owner) S.owner = iv.owner; if(avOk(iv.oav)) S.oav = iv.oav;
+    const c = iv.real, S = ab2Sub(c), prevIv = S.iv && S.iv !== code && !S.gone && spaceObj(S.iv) ? S.iv : ''; delete S.ban; delete S.gone; S.iv = prevIv || code;   // déjà abonné par un autre lien : on garde le sien S.ah = iv.ah || []; if(iv.owner) S.owner = iv.owner; if(avOk(iv.oav)) S.oav = iv.oav;
     iv.of = c; const sp = ab2Space(c, {sub:1, iv:code}); sp.since = 0; await syncSpace(sp, true);
     if(sp.err){ alert(sp.net ? '📴 ' + netMsg() : '⚠️ ' + sp.err); return; }
     if(web) M.webCode = c;
@@ -2290,6 +2295,7 @@
     const fw = {id:'fw:' + code + ':' + devId(), type:'follower', trip:'fi:' + code, code, pid:fwPid(), who:myName() || MSGT('Un proche'), pk}; if(myAv()) fw.av = myAv();
     if(!R[fw.id] || R[fw.id].deleted){ putQuiet([fw]); if(fts[0]) try { socialPush(fts[0], 'follow', ''); } catch(e){} }
     persist(); syncNow(); if(q) return true; closeSheet(true);
+    if(prevIv && !q){ alert(RF('Tu suis déjà {0} : rien ne change pour toi.', S.owner || '?') + '\n\n' + MSGT('Ce lien était sans doute destiné à quelqu’un d’autre : préviens la personne qui te l’a envoyé.')); return; }
     if(!fts.length){ alert(MSGT('Tu as déjà tous ces voyages : tu les fais en compagnon. Tu verras ici les prochains voyages publiés que tu ne fais pas.')); return shareHub(); }
     const vis = fts.filter(id=>TS()[id] === c);
     if(vis.length === 1 || (web && vis.length)) feedView(vis[0]); else shareHub();   // 🌐 sans l’appli : directement le voyage
