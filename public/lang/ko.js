@@ -6287,4 +6287,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"이름이 뭐예요? 공용 링크로 팔로우하려면 필수예요: 상대가 누구인지 알 수 있도록요.",
 "Programme du jour":"오늘 일정",
 "Rien de prévu aujourd’hui.":"오늘은 일정이 없어요.",
-"Itinéraire du jour ({0} lieux)":"오늘 경로 ({0}곳)"});
+"Itinéraire du jour ({0} lieux)":"오늘 경로 ({0}곳)",
+"J’ai reçu une invitation : rejoindre avec un code":"초대를 받았어요: 코드로 참여",
+"Quitter le voyage « {0} »":"‘{0}’ 여행 나가기",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"여행이 상대 휴대폰에서 삭제돼요 (팔로우 중이면 팔로워로는 계속 보여요). 다른 동행은 그대로예요.",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"여행들이 상대 휴대폰에서 삭제돼요: 더 이상 아무것도 받지 않아요.",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"읽기 전용: 이 여행에서 제외됐어요. 팔로우하면 ❤️와 💬는 가능해요.",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"여행에서 제외됐어요: 읽기 전용으로 남아요.",
+"Lecture seule":"읽기 전용",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"이 여행에서 제외됐어요: 모두 남지만 수정은 못 해요. ❤️와 💬는 팔로우해서 하세요.",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"여행은 읽기 전용으로 남고 수정은 못 해요. 팔로워에게 공개 중이면 ❤️와 💬용 팔로우 링크를 받아요. 다른 동행은 그대로예요.",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"여행들은 읽기 전용으로 남고 변경 사항은 더 이상 받지 않아요."});

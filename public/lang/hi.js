@@ -6287,4 +6287,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"आपका नाम? साझा लिंक से फ़ॉलो करने के लिए ज़रूरी है: इसी से व्यक्ति जानेगा कि आप कौन हैं।",
 "Programme du jour":"आज का कार्यक्रम",
 "Rien de prévu aujourd’hui.":"आज कुछ तय नहीं है।",
-"Itinéraire du jour ({0} lieux)":"आज का रूट ({0} जगहें)"});
+"Itinéraire du jour ({0} lieux)":"आज का रूट ({0} जगहें)",
+"J’ai reçu une invitation : rejoindre avec un code":"मुझे निमंत्रण मिला: कोड से जुड़ें",
+"Quitter le voyage « {0} »":"यात्रा “{0}” छोड़ें",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"यात्रा उसके फ़ोन से हट जाएगी (अगर वह आपको फ़ॉलो करती है तो फ़ॉलोअर की तरह देखती रहेगी)। बाकी साथी सामान्य रूप से जारी रहेंगे।",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"आपकी यात्राएं उसके फ़ोन से हट जाएंगी: उसे अब कुछ नहीं मिलेगा।",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"केवल पढ़ने के लिए: आपको इस यात्रा से हटा दिया गया। फ़ॉलो करके ❤️ और 💬 कर सकते हैं।",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"आपको एक यात्रा से हटाया गया: वह आपके पास केवल पढ़ने के लिए रहेगी।",
+"Lecture seule":"केवल पढ़ने के लिए",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"आपको इस यात्रा से हटाया गया: सब आपके पास रहेगा, पर बदल नहीं सकते। ❤️ और 💬 के लिए फ़ॉलो करें।",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"यात्रा उसके पास केवल पढ़ने के लिए रहेगी। अगर फ़ॉलोअर्स को दिखाई जाती है, तो उसे ❤️ और 💬 के लिए फ़ॉलोअर लिंक मिलेगा। बाकी सामान्य रहेंगे।",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"आपकी यात्राएं उसके पास केवल पढ़ने के लिए रहेंगी, बदलाव अब नहीं मिलेंगे।"});

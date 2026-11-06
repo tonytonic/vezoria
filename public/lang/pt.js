@@ -3352,4 +3352,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Seu nome? É obrigatório para seguir com um link comum: é assim que a pessoa saberá quem você é.",
 "Programme du jour":"Programa do dia",
 "Rien de prévu aujourd’hui.":"Nada previsto hoje.",
-"Itinéraire du jour ({0} lieux)":"Roteiro do dia ({0} lugares)"});
+"Itinéraire du jour ({0} lieux)":"Roteiro do dia ({0} lugares)",
+"J’ai reçu une invitation : rejoindre avec un code":"Recebi um convite: entrar com um código",
+"Quitter le voyage « {0} »":"Sair da viagem “{0}”",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"A viagem sai do celular dela (se ela te segue, continua vendo como seguidora). Os outros companheiros continuam normalmente.",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"Suas viagens saem do celular dela: ela não recebe mais nada.",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"Viagem só para leitura: você foi retirado desta viagem. ❤️ e 💬 continuam possíveis seguindo-a.",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"Você foi retirado de uma viagem: ela fica só para leitura.",
+"Lecture seule":"Somente leitura",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"Você foi retirado desta viagem: guarda tudo, mas não pode mais editar. Para ❤️ e 💬, siga-a.",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"Ela fica com a viagem só para leitura, sem editar. Se for mostrada aos seguidores, recebe o link de seguidora para ❤️ e 💬. Os outros continuam normalmente.",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Ela fica com as viagens só para leitura e não recebe mais suas alterações."});

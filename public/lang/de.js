@@ -3343,4 +3343,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Dein Vorname? Pflicht beim Folgen über einen gemeinsamen Link: So weiß die Person, wer du bist.",
 "Programme du jour":"Tagesprogramm",
 "Rien de prévu aujourd’hui.":"Heute nichts geplant.",
-"Itinéraire du jour ({0} lieux)":"Tagesroute ({0} Orte)"});
+"Itinéraire du jour ({0} lieux)":"Tagesroute ({0} Orte)",
+"J’ai reçu une invitation : rejoindre avec un code":"Ich habe eine Einladung: mit Code beitreten",
+"Quitter le voyage « {0} »":"Reise „{0}“ verlassen",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"Die Reise wird von ihrem Handy entfernt (folgt sie dir, sieht sie sie weiter als Follower). Die anderen Mitreisenden machen normal weiter.",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"Eure Reisen werden von ihrem Handy entfernt: Sie erhält nichts mehr.",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"Nur lesen: Du wurdest aus dieser Reise entfernt. ❤️ und 💬 gehen weiter, wenn du ihr folgst.",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"Du wurdest aus einer Reise entfernt: Du behältst sie nur zum Lesen.",
+"Lecture seule":"Nur lesen",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"Du wurdest aus dieser Reise entfernt: Du behältst alles, kannst aber nichts mehr ändern. Für ❤️ und 💬 folge ihr.",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"Sie behält die Reise nur zum Lesen, ohne Änderungen. Wird sie deinen Followern gezeigt, bekommt sie ihren Follower-Link für ❤️ und 💬. Die anderen machen normal weiter.",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Sie behält eure Reisen nur zum Lesen und bekommt deine Änderungen nicht mehr."});

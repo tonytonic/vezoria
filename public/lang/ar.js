@@ -6288,4 +6288,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"اسمك الأول؟ إلزامي للمتابعة برابط مشترك: هكذا سيعرف الشخص من أنت.",
 "Programme du jour":"برنامج اليوم",
 "Rien de prévu aujourd’hui.":"لا شيء مخطط اليوم.",
-"Itinéraire du jour ({0} lieux)":"مسار اليوم ({0} أماكن)"});
+"Itinéraire du jour ({0} lieux)":"مسار اليوم ({0} أماكن)",
+"J’ai reçu une invitation : rejoindre avec un code":"وصلتني دعوة: الانضمام برمز",
+"Quitter le voyage « {0} »":"مغادرة رحلة «{0}»",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"تُزال الرحلة من هاتفها (إن كانت تتابعك فستراها كمتابِعة). يستمر بقية الرفاق كالمعتاد.",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"تُزال رحلاتكما من هاتفها: لن تتلقى أي شيء بعد الآن.",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"رحلة للقراءة فقط: تمت إزالتك منها. ❤️ و💬 ممكنة بمتابعتها.",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"تمت إزالتك من رحلة: تبقى لديك للقراءة فقط.",
+"Lecture seule":"للقراءة فقط",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"تمت إزالتك من هذه الرحلة: تحتفظ بكل شيء لكن لا يمكنك التعديل. لـ❤️ و💬 تابعها.",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"تحتفظ بالرحلة للقراءة فقط دون تعديل. إن كانت معروضة لمتابعيك تتلقى رابط المتابعة لـ❤️ و💬. يستمر الآخرون كالمعتاد.",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"تحتفظ برحلاتكما للقراءة فقط ولا تتلقى تعديلاتك بعد الآن."});

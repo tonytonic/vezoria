@@ -3348,4 +3348,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Il tuo nome? È obbligatorio per seguire con un link comune: così la persona saprà chi sei.",
 "Programme du jour":"Programma del giorno",
 "Rien de prévu aujourd’hui.":"Niente in programma oggi.",
-"Itinéraire du jour ({0} lieux)":"Itinerario del giorno ({0} luoghi)"});
+"Itinéraire du jour ({0} lieux)":"Itinerario del giorno ({0} luoghi)",
+"J’ai reçu une invitation : rejoindre avec un code":"Ho ricevuto un invito: unisciti con un codice",
+"Quitter le voyage « {0} »":"Lascia il viaggio «{0}»",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"Il viaggio viene tolto dal suo telefono (se ti segue, lo vede ancora come follower). Gli altri compagni continuano normalmente.",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"I vostri viaggi vengono tolti dal suo telefono: non riceve più nulla.",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"Viaggio in sola lettura: sei stato tolto da questo viaggio. ❤️ e 💬 restano possibili seguendolo.",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"Sei stato tolto da un viaggio: lo conservi in sola lettura.",
+"Lecture seule":"Sola lettura",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"Sei stato tolto da questo viaggio: conservi tutto, ma non puoi più modificarlo. Per ❤️ e 💬, seguilo.",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"Conserva il viaggio in sola lettura, senza modificarlo. Se è mostrato ai follower, riceve il suo link per ❤️ e 💬. Gli altri compagni continuano normalmente.",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Conserva i vostri viaggi in sola lettura e non riceve più le tue modifiche."});

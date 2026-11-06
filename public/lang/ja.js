@@ -6287,4 +6287,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"お名前は？共通リンクでフォローするには必須です：相手があなたを識別するために使います。",
 "Programme du jour":"今日の予定",
 "Rien de prévu aujourd’hui.":"今日の予定はありません。",
-"Itinéraire du jour ({0} lieux)":"今日のルート（{0}か所）"});
+"Itinéraire du jour ({0} lieux)":"今日のルート（{0}か所）",
+"J’ai reçu une invitation : rejoindre avec un code":"招待を受け取った：コードで参加",
+"Quitter le voyage « {0} »":"旅行「{0}」から抜ける",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"旅行は相手のスマホから削除されます（フォローしていればフォロワーとして見られます）。他の仲間はそのまま続けられます。",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"旅行は相手のスマホから削除され、何も届かなくなります。",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"閲覧のみ：この旅行から外されました。フォローすれば ❤️ と 💬 はできます。",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"旅行から外されました：閲覧のみで残ります。",
+"Lecture seule":"閲覧のみ",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"この旅行から外されました：内容は残りますが編集はできません。❤️ と 💬 はフォローして。",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"旅行は閲覧のみで残り、編集はできません。フォロワーに公開中なら、❤️ と 💬 用のフォローリンクが届きます。他の仲間はそのままです。",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"旅行は閲覧のみで残り、あなたの変更は届かなくなります。"});

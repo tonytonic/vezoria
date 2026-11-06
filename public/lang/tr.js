@@ -6275,4 +6275,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Adın? Ortak bağlantıyla takip etmek için zorunlu: kişi kim olduğunu böyle bilecek.",
 "Programme du jour":"Günün programı",
 "Rien de prévu aujourd’hui.":"Bugün plan yok.",
-"Itinéraire du jour ({0} lieux)":"Günün rotası ({0} yer)"});
+"Itinéraire du jour ({0} lieux)":"Günün rotası ({0} yer)",
+"J’ai reçu une invitation : rejoindre avec un code":"Davet aldım: kodla katıl",
+"Quitter le voyage « {0} »":"“{0}” seyahatinden ayrıl",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"Seyahat telefonundan kaldırılır (seni takip ediyorsa takipçi olarak görmeye devam eder). Diğer yol arkadaşları normal devam eder.",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"Seyahatleriniz telefonundan kaldırılır: artık hiçbir şey almaz.",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"Salt okunur: bu seyahatten çıkarıldın. Takip ederek ❤️ ve 💬 yapabilirsin.",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"Bir seyahatten çıkarıldın: salt okunur olarak kalır.",
+"Lecture seule":"Salt okunur",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"Bu seyahatten çıkarıldın: her şey sende kalır ama değiştiremezsin. ❤️ ve 💬 için takip et.",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"Seyahat onda salt okunur kalır. Takipçilere gösteriliyorsa ❤️ ve 💬 için takipçi bağlantısını alır. Diğerleri normal devam eder.",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Seyahatleriniz onda salt okunur kalır, değişikliklerini artık almaz."});

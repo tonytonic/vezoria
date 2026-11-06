@@ -6287,4 +6287,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"你的名字？通过共享链接关注时必填：对方这样才知道你是谁。",
 "Programme du jour":"今日安排",
 "Rien de prévu aujourd’hui.":"今天没有安排。",
-"Itinéraire du jour ({0} lieux)":"今日路线（{0} 个地点）"});
+"Itinéraire du jour ({0} lieux)":"今日路线（{0} 个地点）",
+"J’ai reçu une invitation : rejoindre avec un code":"我收到邀请：用代码加入",
+"Quitter le voyage « {0} »":"退出旅行「{0}」",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"该旅行会从她的手机上移除（如果她关注了你，仍能以关注者身份看到）。其他旅伴照常继续。",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"你们的旅行会从她的手机上移除：她将不再收到任何内容。",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"只读旅行：你已被移出此旅行。关注后仍可点 ❤️ 和 💬。",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"你已被移出一次旅行：它以只读方式保留。",
+"Lecture seule":"只读",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"你已被移出此旅行：内容都保留，但不能再修改。要点 ❤️ 和 💬，请关注它。",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"她以只读方式保留该旅行，不能修改。若旅行对关注者可见，她会收到关注链接以便点 ❤️ 和 💬。其他旅伴照常。",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"她以只读方式保留你们的旅行，不再收到你的修改。"});

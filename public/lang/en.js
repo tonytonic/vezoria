@@ -3333,4 +3333,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Your first name? It’s required to follow with a shared link: that’s how the person will know who you are.",
 "Programme du jour":"Today’s plan",
 "Rien de prévu aujourd’hui.":"Nothing planned today.",
-"Itinéraire du jour ({0} lieux)":"Today’s route ({0} places)"});
+"Itinéraire du jour ({0} lieux)":"Today’s route ({0} places)",
+"J’ai reçu une invitation : rejoindre avec un code":"I got an invitation: join with a code",
+"Quitter le voyage « {0} »":"Leave the trip “{0}”",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"The trip is removed from their phone (if they follow you, they still see it as a follower). The other companions carry on as usual.",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"Your trips are removed from their phone: they no longer receive anything.",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"Read-only trip: you were removed from this trip. ❤️ and 💬 are still possible by following it.",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"You were removed from a trip: you keep it read-only.",
+"Lecture seule":"Read-only",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"You were removed from this trip: you keep everything, but can no longer edit it. To add ❤️ and 💬, follow it.",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"They keep the trip read-only, without editing. If it’s shown to your followers, they get their follower link for ❤️ and 💬. The other companions carry on as usual.",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"They keep your trips read-only and no longer receive your changes."});

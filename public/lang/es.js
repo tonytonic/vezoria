@@ -3349,4 +3349,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"¿Tu nombre? Es obligatorio para seguir con un enlace común: así la persona sabrá quién eres.",
 "Programme du jour":"Programa del día",
 "Rien de prévu aujourd’hui.":"Nada previsto hoy.",
-"Itinéraire du jour ({0} lieux)":"Ruta del día ({0} lugares)"});
+"Itinéraire du jour ({0} lieux)":"Ruta del día ({0} lugares)",
+"J’ai reçu une invitation : rejoindre avec un code":"Recibí una invitación: unirme con un código",
+"Quitter le voyage « {0} »":"Salir del viaje «{0}»",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"El viaje se quita de su teléfono (si te sigue, lo sigue viendo como seguidora). Los demás compañeros siguen con normalidad.",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"Vuestros viajes se quitan de su teléfono: ya no recibe nada.",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"Viaje de solo lectura: te quitaron de este viaje. ❤️ y 💬 siguen posibles siguiéndolo.",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"Te quitaron de un viaje: lo conservas en solo lectura.",
+"Lecture seule":"Solo lectura",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"Te quitaron de este viaje: lo conservas todo, pero ya no puedes modificarlo. Para poner ❤️ y 💬, síguelo.",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"Conserva el viaje en solo lectura, sin poder modificarlo. Si se muestra a tus seguidores, recibe su enlace para ❤️ y 💬. Los demás compañeros siguen con normalidad.",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Conserva vuestros viajes en solo lectura y ya no recibe tus cambios."});

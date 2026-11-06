@@ -6288,4 +6288,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Твоё имя? Оно обязательно для подписки по общей ссылке: так человек узнает, кто ты.",
 "Programme du jour":"План на день",
 "Rien de prévu aujourd’hui.":"На сегодня ничего не запланировано.",
-"Itinéraire du jour ({0} lieux)":"Маршрут дня ({0} мест)"});
+"Itinéraire du jour ({0} lieux)":"Маршрут дня ({0} мест)",
+"J’ai reçu une invitation : rejoindre avec un code":"Мне пришло приглашение: войти по коду",
+"Quitter le voyage « {0} »":"Выйти из поездки «{0}»",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"Поездка удаляется с её телефона (если она подписана на тебя, она увидит её как подписчик). Остальные попутчики продолжают как обычно.",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"Ваши поездки удаляются с её телефона: она больше ничего не получает.",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"Только чтение: тебя удалили из поездки. ❤️ и 💬 доступны, если подписаться.",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"Тебя удалили из поездки: она остаётся у тебя только для чтения.",
+"Lecture seule":"Только чтение",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"Тебя удалили из поездки: всё остаётся, но изменять нельзя. Для ❤️ и 💬 подпишись.",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"Поездка остаётся у неё только для чтения. Если она показана подписчикам, она получит ссылку для ❤️ и 💬. Остальные продолжают как обычно.",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Ваши поездки остаются у неё только для чтения, изменения больше не приходят."});

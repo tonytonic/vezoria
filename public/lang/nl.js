@@ -3339,4 +3339,14 @@ I18N.load({
 "Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.":"Je voornaam? Verplicht om te volgen met een gedeelde link: zo weet de persoon wie je bent.",
 "Programme du jour":"Dagprogramma",
 "Rien de prévu aujourd’hui.":"Vandaag niets gepland.",
-"Itinéraire du jour ({0} lieux)":"Dagroute ({0} plekken)"});
+"Itinéraire du jour ({0} lieux)":"Dagroute ({0} plekken)",
+"J’ai reçu une invitation : rejoindre avec un code":"Ik kreeg een uitnodiging: deelnemen met een code",
+"Quitter le voyage « {0} »":"Reis ‘{0}’ verlaten",
+"Le voyage est retiré de son téléphone (si elle te suit en abonnée, elle le voit encore comme abonnée). Les autres compagnons continuent normalement.":"De reis wordt van haar telefoon gehaald (volgt ze je, dan ziet ze hem nog als volger). De andere reisgenoten gaan gewoon door.",
+"Vos voyages sont retirés de son téléphone : elle ne reçoit plus rien.":"Jullie reizen worden van haar telefoon gehaald: ze ontvangt niets meer.",
+"Voyage en lecture seule : tu as été retiré(e) de ce voyage. ❤️ et 💬 restent possibles en le suivant comme abonné.":"Alleen lezen: je bent uit deze reis verwijderd. ❤️ en 💬 kan nog door hem te volgen.",
+"Tu as été retiré(e) d’un voyage : tu le gardes en lecture seule.":"Je bent uit een reis verwijderd: je houdt hem om te lezen.",
+"Lecture seule":"Alleen lezen",
+"Tu as été retiré(e) de ce voyage : tu gardes tout, mais tu ne peux plus le modifier. Pour mettre des ❤️ et des 💬, suis-le comme abonné.":"Je bent uit deze reis verwijderd: je houdt alles, maar kunt niets meer wijzigen. Voor ❤️ en 💬 volg je hem.",
+"Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.":"Ze houdt de reis alleen om te lezen, zonder wijzigen. Wordt hij aan je volgers getoond, dan krijgt ze haar volgerslink voor ❤️ en 💬. De anderen gaan gewoon door.",
+"Elle garde vos voyages en lecture seule et ne reçoit plus tes modifications.":"Ze houdt jullie reizen alleen om te lezen en krijgt je wijzigingen niet meer."});
