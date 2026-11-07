@@ -1597,6 +1597,9 @@
   // ✓ « C’est vu » : une visite cochée au fil de l’itinéraire
   function plVu(id, on){ const p = R[id]; if(!p || p.deleted) return; const v = on == null ? !p.vu : !!on; const c = clone(p); if(v) c.vu = Date.now(); else delete c.vu;
     put(c, v ? '✅ ' + MSGT('C’est vu') : '↩️ ' + MSGT('Pas encore vu'));
+    // 👀 carte des abonnés : la visite passe au vert tout de suite (sans tout recalculer)
+    try { const tid = p.trip, fm = R['fm:' + tid]; if(fm && !fm.deleted && feedCode(tid) && mpOn(tid)){ let ch = 0; const v2 = (fm.v || []).map(x=>{ if(x[0] === String(p.nom || '').slice(0, 80) && (p.lat == null || Math.abs(x[1] - p.lat) < 0.002)){ ch = 1; const y = x.slice(0, 3); if(v) y.push(1); return y; } return x; });
+      if(ch) putQuiet([Object.assign(clone(fm), {v:v2})]); } } catch(e){}
     try { const src = LV && LV.map && LV.map.getSource('vm-vis'); if(src && LV.vis){ LV.vis.forEach(f=>{ if(f.properties && f.properties.id === id) f.properties.vu = v ? 1 : 0; }); src.setData({type:'FeatureCollection', features:LV.vis}); } } catch(e){}   // 🗺️ la carte live suit
     if(document.querySelector('#v-sheet-bg #pi-box')) plInfo(id); else if(!LV) refresh(); }
   async function wlcCheck(lat, lng){
@@ -2204,7 +2207,7 @@
     const rec = {id:'fm:' + tid, type:'feedmap', trip:ftId(tid),
       c:F.cities.slice(0, 80).map(x=>[String(x.name || '').slice(0, 80), r4(x.c.lat), r4(x.c.lng), x.n || 0, x.home ? 1 : 0, x.via ? 1 : 0]),
       l:F.legs.slice(0, 120).map(f=>[f.properties.mode || '', f.properties.local ? 1 : 0, f.properties.souv ? 1 : 0, f.geometry.coordinates.filter((q, i, A)=>A.length < 300 || i % Math.ceil(A.length / 300) === 0 || i === A.length - 1).map(q=>[r3(q[0]), r3(q[1])])]),
-      v:F.visits.slice(0, 400).map(f=>[String(f.properties.name || '').slice(0, 80), r4(f.geometry.coordinates[1]), r4(f.geometry.coordinates[0])]),
+      v:F.visits.slice(0, 400).map(f=>{ const x = [String(f.properties.name || '').slice(0, 80), r4(f.geometry.coordinates[1]), r4(f.geometry.coordinates[0])]; if(f.properties.vu) x.push(1); return x; }),   // ✓ vue : verte chez les abonnés aussi
       a:F.acts.slice(0, 400).map(f=>[String(f.properties.name || '').slice(0, 80), r4(f.geometry.coordinates[1]), r4(f.geometry.coordinates[0]), f.properties.col || '#f97316'])};
     // voyage à venir sans trajet saisi : un trait simple d’une étape à l’autre, dans l’ordre
     if(!rec.l.length){ const st = F.cities.filter(x=>!x.home && !x.via).sort((a, b)=>(a.n || 0) - (b.n || 0)); if(st.length > 1) rec.l.push(['', 0, 1, st.map(x=>[r3(x.c.lng), r3(x.c.lat)])]); }
@@ -2226,7 +2229,7 @@
     const F = {cities:[], legs:[], visits:[], acts:[], hotels:[]}; if(!r || r.deleted) return F;
     (r.c || []).forEach(x=>F.cities.push({name:x[0], c:{lat:+x[1], lng:+x[2]}, n:x[3] || 0, home:x[4] || 0, via:x[5] || 0}));
     (r.l || []).forEach(x=>{ if((x[3] || []).length > 1) F.legs.push({type:'Feature', properties:{mode:x[0] || '', local:x[1] || 0, souv:x[2] || 0}, geometry:{type:'LineString', coordinates:x[3]}}); });
-    (r.v || []).forEach(x=>F.visits.push({type:'Feature', properties:{name:x[0]}, geometry:{type:'Point', coordinates:[+x[2], +x[1]]}}));
+    (r.v || []).forEach(x=>F.visits.push({type:'Feature', properties:{name:x[0], vu:x[3] ? 1 : 0}, geometry:{type:'Point', coordinates:[+x[2], +x[1]]}}));
     (r.a || []).forEach(x=>F.acts.push({type:'Feature', properties:{name:x[0], col:x[3] || '#f97316'}, geometry:{type:'Point', coordinates:[+x[2], +x[1]]}}));
     return F;
   }
