@@ -2109,7 +2109,7 @@
     const ts = yfTrips().filter(t=>t.debut.slice(0, 4) === y).sort((a, b)=>a.debut.localeCompare(b.debut)), out = [];
     for(const t of ts){
       await yieldUI();
-      const sv = list('souv', s=>s.trip===t.id).sort((a, b)=>(a.date||'').localeCompare(b.date||'') || (a.ordre||0)-(b.ordre||0));
+      const sv = list('souv', s=>s.trip===t.id).sort(svOrd);
       const hs = list('item', i=>i.trip===t.id && i.cat==='hotel' && i.date);
       const geo = [...geoSouvs(t.id).map(s=>({lat:+s.lat, lng:+s.lng, date:s.date||'', name:String(s.lieu || s.titre || '').split(',')[0].trim(), cc:s.cc || ccOf(s.pays) || ''})),
         ...hs.map(h=>{ const c = stayCity(h), g = h.lat != null ? {lat:h.lat, lng:h.lng} : (c ? geoCached(c) : null); if(!g) return null;

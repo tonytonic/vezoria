@@ -1121,14 +1121,14 @@
   }
   function tripLines(tid){
     const by = trkByWho(tid, false), lines = Object.entries(by).filter(([, p])=>p.length > 1).map(([w, p])=>({pts:p.filter((x, i)=>i % Math.max(1, Math.ceil(p.length / 600)) === 0).map(x=>[x[0], x[1]]), color: w ? pcol(w) : '#0ea5e9'}));
-    const geo = list('souv', x=>x.trip === tid && !x.deleted && x.lat != null && x.lng != null).sort((a, b)=>(a.date||'').localeCompare(b.date||'') || (a.heure||'').localeCompare(b.heure||'') || (a.ordre||0) - (b.ordre||0));
+    const geo = list('souv', x=>x.trip === tid && !x.deleted && x.lat != null && x.lng != null).sort(svOrd);
     if(!lines.length && geo.length > 1) lines.push({pts:geo.map(x=>[+x.lat, +x.lng]), color:'#f43f5e'});
     return {lines, mk: geo.filter((x, i)=>i % Math.max(1, Math.ceil(geo.length / 25)) === 0).map((x, i)=>({lat:+x.lat, lng:+x.lng, label:'•', color:'#f43f5e'}))};
   }
   function storyTrip(tid, mode){
     tid = tid || M.trip; const t = R[tid]; if(!t) return;
     if(M.trip !== tid){ try { go(tid); } catch(e){} }
-    const r = tripRecap(t), all = list('souv', x=>x.trip === tid).sort((a, b)=>(a.date||'').localeCompare(b.date||'') || (a.ordre||0) - (b.ordre||0));
+    const r = tripRecap(t), all = list('souv', x=>x.trip === tid).sort(svOrd);
     if(!all.length){ alert('Ajoute des souvenirs pour créer la story du voyage.'); return; }
     const ds = dayList(), days = [...new Set(all.filter(x=>x.date).map(x=>x.date))].sort(), lk = Object.values(tripLikes(tid)).reduce((a, b)=>a + b, 0);
     const cov = (coverId && coverId(t)) || (all.find(x=>(x.photos||[]).length) || {photos:[]}).photos[0];
@@ -1215,7 +1215,7 @@
     const t = trip(); if(!t) return;
     const all = list('souv', x=>x.trip === t.id);
     if(!date){ const ds = [...new Set(all.filter(x=>x.date).map(x=>x.date))].sort(); date = ds.includes(isoToday()) ? isoToday() : ds[ds.length - 1]; }
-    const S = all.filter(x=>x.date === date).sort((a, b)=>(a.ordre||0) - (b.ordre||0) || (a.createdAt||0) - (b.createdAt||0));
+    const S = all.filter(x=>x.date === date).sort(svOrd);
     if(!S.length){ alert('Pas encore de souvenir ce jour-là.'); return; }
     const ds = dayList(), k = ds.indexOf(date), slides = [], multi = (t.voyageurs||[]).length > 1;
     const key = 'd:' + t.id + ':' + date, cfg = stCfg(key), cands = S.flatMap(x=>(x.photos||[]).map(p=>({p, s:x})));
@@ -1375,7 +1375,7 @@
   function wallStep(){ const L = wallFlat(true); if(L.length) psOpen(L, 0); }
   // 👆 toutes les photos d’un voyage en plein écran (glisser) : depuis « Passés » ou le haut du bilan, sans quitter la page
   function psTrip(tid){
-    const sv = list('souv', s=>s.trip === tid && (s.photos||[]).length).sort((a, b)=>(a.date||'').localeCompare(b.date||'') || (a.ordre||0)-(b.ordre||0));
+    const sv = list('souv', s=>s.trip === tid && (s.photos||[]).length).sort(svOrd);
     if(!sv.length){ alert('Pas encore de photo dans ce voyage.'); return; }
     const many = new Set(sv.map(s=>s.createdBy).filter(Boolean)).size > 1;
     psOpen(sv.flatMap(s=>s.photos.map((p, i)=>({p, sid:s.id, i, d:s.date || '', lieu:s.lieu || '', t:s.titre || '', by:many && s.createdBy ? pname(s.createdBy) : ''}))), 0);

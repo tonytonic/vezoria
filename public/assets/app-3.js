@@ -729,7 +729,10 @@
     photoPurge();
   }
 
-  const souvs = () => list('souv', s=>s.trip===M.trip).sort((a,b)=>(a.date||'').localeCompare(b.date||'') || (a.ordre||0)-(b.ordre||0));
+  // ⏰ un seul ordre partout (moi, compagnons, abonnés) : le jour, puis l’heure du souvenir (ordre → heure → heure de création)
+  const svMin = x => x.ordre != null && x.ordre !== '' ? +x.ordre : /^\d\d:\d\d/.test(x.heure || '') ? +x.heure.slice(0, 2) * 60 + +x.heure.slice(3, 5) : x.createdAt ? (d => d.getHours() * 60 + d.getMinutes())(new Date(x.createdAt)) : 1e4;
+  const svOrd = (a, b) => (a.date || '').localeCompare(b.date || '') || svMin(a) - svMin(b) || (a.createdAt || 0) - (b.createdAt || 0);
+  const souvs = () => list('souv', s=>s.trip===M.trip).sort(svOrd);
   function renderSouv(){
     const all = souvs(), nph = all.reduce((s,x)=>s+(x.photos||[]).length,0);
     let h = souvTop() + studioHTML(all, nph) + `<div class="v-sum"><div class="v-sum-row"><div class="v-sum-big">📸 ${all.length} souvenir${all.length>1?'s':''}</div><div class="v-sum-small">${nph} photo${nph>1?'s':''}</div></div>
@@ -782,6 +785,7 @@
           <div class="cv-row cv-phrow"><label class="v-btn cv-addph">📸 Prendre une photo<input type="file" accept="image/*" capture="environment" onchange="CV.souvAddPhotos(this)"></label><label class="v-btn sec cv-addph">🖼️ Mes photos<input type="file" accept="image/*" multiple onchange="CV.souvAddPhotos(this)"></label></div>
           <div class="v-sum-small" id="sv-prog"></div></div>
         ${feedCode(s.trip) ? `<label class="cv-checkline" style="margin:4px 0 10px"><input type="checkbox" name="priv"${s.priv ? ' checked' : ''}> 🔒 Privé : ne pas montrer à mes abonnés</label>` : ''}
+        ${id ? souvPhDiag(R[id]) : ''}
         ${id && souvSplitG(R[id]).length > 1 ? `<button type="button" class="v-btn sec" onclick="CV.souvSplit('${ja(id)}')">✂️ ${esc(RF('Séparer en {0} souvenirs (photos prises à des moments différents)', souvSplitG(R[id]).length))}</button>` : ''}
         ${actions(id ? `CV.delSouv('${ja(id)}')` : '')}
       </form>`);
@@ -837,6 +841,19 @@
       const f = document.getElementById('v-form'), v = [nm, city && normQ(city) !== normQ(nm) ? city : ''].filter(Boolean).join(', ');
       if(f && f.lieu && v){ f.lieu.value = v; f.lieu._pacSkip = 1; } if(f && f.titre && !f.titre.value.trim() && nm) f.titre.value = nm;
     } catch(e){} }
+  // 🔍 photos d’un souvenir pas encore en ligne (cases grises chez les compagnons) : où elles en sont, et « Renvoyer »
+  function souvPhDiag(s){ if(!s || !(s.photos || []).length) return '';
+    const miss = s.photos.filter(p=>!phRef(p)); if(!miss.length) return '';
+    const q = new Set((M.pq || []).map(String)), inQ = miss.filter(p=>q.has(String(p))).length;
+    const er = M.pqPause && M.pqPause > Date.now() ? '⏸️ ' + MSGT('envoi en pause') : (M.pqErr || '');
+    return `<div class="v-box sv-diag"><div>📷 <b>${esc(RF('{0} photo(s) sur {1} pas encore en ligne', miss.length, s.photos.length))}</b>${inQ ? ' · ' + esc(RF('{0} en attente d’envoi sur ce téléphone', inQ)) : ''}${er ? `<br><small>${esc(er)}</small>` : ''}</div>
+      <button type="button" class="v-btn sec" onclick="CV.souvResend('${ja(s.id)}')">🔁 ${esc(MSGT('Renvoyer ces photos'))}</button></div>`; }
+  async function souvResend(id){ const s = R[id]; if(!s) return; let n = 0; M.pq = M.pq || [];
+    for(const p of (s.photos || []).filter(p=>!phRef(p))){ let o = null; try { o = await IDB.get(p); } catch(e){} if(o && o.blob){ if(!M.pq.includes(p)) M.pq.push(p); n++; } }
+    if(!n){ toast(RF('Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».', pname(s.createdBy) || MSGT('la personne qui les a ajoutées'))); return; }
+    delete M.pqPause; M.pqFull = {}; M.pqErr = ''; persist(); toast('🔁 ' + RF('{0} photo(s) renvoyée(s)…', n)); closeSheet(true);
+    try { await uploadQueue(); } catch(e){} try { pkFix(); } catch(e){} try { syncNow(); } catch(e){}
+    const left = (R[id].photos || []).filter(p=>!phRef(p)).length; toast(left ? '⚠️ ' + RF('{0} photo(s) pas encore envoyée(s)', left) + (M.pqErr ? ' : ' + M.pqErr : '') : '✅ ' + MSGT('Photos en ligne : tes compagnons vont les voir')); }
   // ✂️ un souvenir qui mélange plusieurs moments (le matin et le soir au même endroit) : on le coupe d’après l’heure de chaque photo
   function souvSplitG(s){ if(!s || !s.photos || s.photos.length < 2) return [];
     const ph = new Set(s.photos), P = (s.pts || []).filter(q=>q && q[2] && q[3] && ph.has(q[3])).sort((a, b)=>a[2] - b[2]), G = [];

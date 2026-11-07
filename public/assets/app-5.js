@@ -1145,7 +1145,7 @@
         const g = h.lat != null ? {lat:h.lat, lng:h.lng} : geoCached(c); if(!g){ missing.add(c); return; }
         pts.push({lat:g.lat, lng:g.lng, city:c}); const co = (M.ctry||{})[normQ(c)]; if(co && t.debut && t.debut <= isoToday()) addPays(co.cc, co.pays, g.lat, g.lng); });
       const steps = [];
-      b.s.sort((x,y)=>(x.date||'').localeCompare(y.date||'') || (x.ordre||0)-(y.ordre||0) || (x.heure||'').localeCompare(y.heure||'')).forEach(s=>{
+      b.s.sort(svOrd).forEach(s=>{
         let lat = s.lat, lng = s.lng; if(lat == null && s.lieu){ const g = geoCached(s.lieu); if(g){ lat = g.lat; lng = g.lng; } } if(lat == null) return;
         const o = {id:s.id, lat:+lat, lng:+lng, titre:s.titre||s.lieu||'Step', lieu:s.lieu||'', date:s.date, ph:(s.photos||[])[0] || null, n:(s.photos||[]).length, texte:s.texte||'', trip:t.id, cc:s.cc || ccOf(s.pays)};
         steps.push(o); data.steps.push(o); addPays(o.cc, s.pays, o.lat, o.lng); if(o.ph) data.photos.push(o); });

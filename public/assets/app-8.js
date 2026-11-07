@@ -312,7 +312,7 @@
   function putQuiet(arr){ arr.forEach(r=>{ sbKeep(r); photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); if(arr.length){ persist(); queueSync(); } }
   // côté auteur : les souvenirs (non privés) deviennent des publications
   // ordre des étapes chez les abonnés : jour, puis heure dans la journée (avant : le jour seulement → photos du soir avant celles du matin)
-  const fdOrd = (a, b) => (a.date || '').localeCompare(b.date || '') || ((a.ordre != null ? a.ordre : 1e4) - (b.ordre != null ? b.ordre : 1e4)) || (a.heure || '').localeCompare(b.heure || '') || (a.createdAt || 0) - (b.createdAt || 0);
+  const fdOrd = (a, b) => (a.date || '').localeCompare(b.date || '') || ((a.ordre != null ? a.ordre : 1e4) - (b.ordre != null ? b.ordre : 1e4)) || (a.sat || a.createdAt || 0) - (b.sat || b.createdAt || 0);
   function feedBuild(tid){
     const c = feedCode(tid), t = R[tid]; if(!c || !t) return 0;
     TS()[ftId(tid)] = c; const out = [];
@@ -332,7 +332,7 @@
       const d = (M.fup || {})[c]; if(d && d[p]){ delete d[p]; (M.fdel = M.fdel || []).push([c, p]); }   // l'ancienne vignette d'abonné ne sert plus
       M.fq = (M.fq || []).filter(x=>!(x[0] === c && x[1] === p)); };
     list('souv', s=>s.trip===tid && !s.priv && ((s.photos||[]).length || (s.texte||'').trim())).forEach(s=>{
-      const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, by: (t.voyageurs||[]).length > 1 && s.createdBy ? pname(s.createdBy) : '', date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 2000), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''}; if(s.heure) f.heure = s.heure; if(s.ordre != null) f.ordre = s.ordre;   // ⏰ abonnés : dans l’ordre de la journée, comme chez moi
+      const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, by: (t.voyageurs||[]).length > 1 && s.createdBy ? pname(s.createdBy) : '', date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 2000), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''}; if(s.heure) f.heure = s.heure; f.ordre = svMin(s); f.sat = s.createdAt || 0;   // ⏰ abonnés : dans l’ordre de la journée, comme chez moi
       keep.add(f.id); if(!R[f.id] || R[f.id].deleted || stripStamp(R[f.id]) !== stripStamp(f)){ if(!R[f.id] || R[f.id].deleted) fresh.push(f); out.push(f); }
       f.photos.forEach(feedPh);
     });
@@ -2000,7 +2000,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-08g'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-08h'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2855,7 +2855,7 @@
   }
   var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
-  const api = {obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
+  const api = {souvResend, obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
