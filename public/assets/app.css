@@ -3394,3 +3394,7 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 /* 🔗 accueil : « J’ai reçu un code » bien visible */
 .v-box.hj{border:2px solid #14b8a6;background:linear-gradient(160deg,rgba(20,184,166,.12),rgba(15,76,92,.06))}
 .hj-row{display:flex;gap:8px;margin:10px 0 8px}.hj-row .v-in{flex:1;min-width:0;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase}.hj-row .v-btn{width:auto;margin:0;padding:0 16px}
+
+/* 📍 🔄 carte live : me recentrer, actualiser ma position */
+#lv-gps.spin{animation:lvSpin 1s linear infinite}@keyframes lvSpin{to{transform:rotate(360deg)}}
+.lv-dot{width:18px;height:18px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 0 0 6px rgba(37,99,235,.25)}

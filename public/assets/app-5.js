@@ -244,7 +244,7 @@
     M.trkSeen = 1; M.trk = {on:true, trip:t.id, since:Date.now()}; persist(); trkStart(); toast('🛰️ Suivi activé'); refresh();
     if(socCode(t.id) && !trkPubOn(t.id)) setTimeout(()=>{ try { trkPub(); } catch(e){} }, 500);
   }
-  function trkAdd(pos){
+  function trkAdd(pos, force){
     if(!trkOn() || trkAutoOff()) return; const t = R[M.trk.trip]; if(!t || t.deleted) return;
     const c = pos.coords, ts = Math.min(Date.now(), pos.timestamp || Date.now()), drive = !!TJ;
     if(TJ){ TJ.acc = c.accuracy; TJ.sp = (c.speed != null && c.speed >= 0) ? c.speed * 3.6 : TJ.sp; TJ.fix = Date.now(); }
@@ -254,7 +254,7 @@
     const last = r.pts[r.pts.length - 1];
     if(last){
       const dk = km({lat:last[0], lng:last[1]}, {lat:p[0], lng:p[1]}), dh = Math.max(1000, ts - (last[2] || 0)) / 3600e3;
-      if(dk < (drive ? 0.05 : 0.3) && ts - (last[2] || 0) < (drive ? 3 : 15) * 60000) return;   // trop près du point précédent
+      if(!force && dk < (drive ? 0.05 : 0.3) && ts - (last[2] || 0) < (drive ? 3 : 15) * 60000) return;   // trop près du point précédent (sauf « actualiser ma position »)
       if(dk / dh > 950 && dh < 0.5) return;                                                     // saut impossible (> 950 km/h) : erreur de localisation
       if(TJ){ TJ.km += dk; if(c.speed == null) TJ.sp = dk / dh; }
     }

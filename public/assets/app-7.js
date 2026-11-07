@@ -1729,7 +1729,7 @@
     ov.innerHTML = `<div id="lv-map"></div>
       <div class="lv-top"><button type="button" class="lv-x" onclick="CV.liveClose()" aria-label="Fermer">✕</button>
         <div class="lv-t"><span class="lv-badge"><i></i>EN DIRECT</span><b data-notr>${esc(D.title)}</b><small><span>${esc(D.sub)}</span><span id="lv-up"></span></small></div></div>
-      <div class="lv-tools"><button type="button" data-b="sat" class="on" onclick="CV.liveBase('sat')" aria-label="Satellite">🛰️</button><button type="button" data-b="plan" onclick="CV.liveBase('plan')" aria-label="Plan">🗺️</button><button type="button" onclick="CV.liveFit()" aria-label="Tout le monde">🎯</button><button type="button" id="lv-orb" class="on" onclick="CV.liveOrbit()" aria-label="Tourner">🎥</button></div>
+      <div class="lv-tools"><button type="button" data-b="sat" class="on" onclick="CV.liveBase('sat')" aria-label="Satellite">🛰️</button><button type="button" data-b="plan" onclick="CV.liveBase('plan')" aria-label="Plan">🗺️</button><button type="button" onclick="CV.liveFit()" aria-label="Tout le monde">🎯</button><button type="button" onclick="CV.liveMe()" aria-label="${esc(MSGT('Me recentrer'))}" title="${esc(MSGT('Me recentrer'))}">📍</button><button type="button" id="lv-gps" onclick="CV.liveMe(true)" aria-label="${esc(MSGT('Actualiser ma position'))}" title="${esc(MSGT('Actualiser ma position'))}">🔄</button><button type="button" id="lv-orb" class="on" onclick="CV.liveOrbit()" aria-label="Tourner">🎥</button></div>
       <div class="lv-msg" id="lv-msg">🌍 Chargement de la carte 3D…</div>
       <div class="lv-people" id="lv-people"></div>`;
     LV = {key, map:null, mk:{}, phm:{}, sig:'', orbit:true, focus:null, prog:0, t0:Date.now(), seen:Date.now(), n:0, sweep:0};
@@ -1848,6 +1848,20 @@
     const use = last.length ? last.concat(D.people.flatMap(p=>p.pts.slice(-12).map(x=>[x[1], x[0]]))) : pts;
     const b = new maplibregl.LngLatBounds(); use.forEach(p=>b.extend(p));
     try { LV.map.fitBounds(b, {padding:{top:120, bottom:170, left:50, right:60}, maxZoom:15.5, pitch:58, bearing:LV.map.getBearing(), duration:first ? 2800 : 1400, essential:true}); } catch(e){}
+  }
+  // 📍 revenir sur moi après avoir navigué · 🔄 relire ma position GPS maintenant (le point est enregistré et partagé tout de suite)
+  function liveMe(fresh){
+    if(!LV || !LV.map) return; const me = LV; LV.orbit = false; const ob = document.getElementById('lv-orb'); if(ob) ob.classList.remove('on');
+    const go = (lat, lng) => { if(LV !== me) return; me.map.flyTo({center:[lng, lat], zoom:Math.max(16, me.map.getZoom()), duration:1200, essential:true}); };
+    const D = me.D || liveData(me.key), mine = D.people.find(p=>p.me), last = mine && mine.pts[mine.pts.length - 1];
+    if(!fresh && last){ me.focus = mine.n; go(last[0], last[1]); return; }
+    if(!navigator.geolocation){ toast('📍 ' + MSGT('Position indisponible')); return; }
+    const b = document.getElementById('lv-gps'); if(b) b.classList.add('spin');
+    navigator.geolocation.getCurrentPosition(pos=>{ if(b) b.classList.remove('spin'); if(LV !== me) return;
+      const c = pos.coords; try { if(trkOn()){ trkAdd(pos, true); trkFlush(); liveSoon(); } } catch(e){}
+      if(!trkOn()){ try { if(me.meMk) me.meMk.remove(); const el = document.createElement('div'); el.className = 'lv-dot'; me.meMk = new maplibregl.Marker({element:el}).setLngLat([c.longitude, c.latitude]).addTo(me.map); } catch(e){} }
+      go(c.latitude, c.longitude); toast('📍 ' + RF('Position à jour (± {0} m)', Math.round(c.accuracy || 0)) + (trkOn() ? '' : ' · ' + MSGT('non partagée : le suivi GPS est coupé')));
+    }, e=>{ if(b) b.classList.remove('spin'); toast('📍 ' + MSGT(e && e.code === 1 ? 'Position refusée : autorise la localisation pour Vezoria' : 'Position introuvable pour l’instant, réessaie dehors')); }, {enableHighAccuracy:true, maximumAge:0, timeout:20000});
   }
   function liveFocus(i){
     if(!LV || !LV.map || !LV.D) return; const p = LV.D.people[+i]; if(!p) return; const l = p.pts[p.pts.length-1];
