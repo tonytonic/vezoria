@@ -6344,4 +6344,9 @@ I18N.load({
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Нет направления: разреши «Движение и ориентация» для Safari (Настройки › Safari), затем нажми 🧭",
 "Boussole refusée":"Доступ к компасу запрещён",
 "{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"{0} фото без координат размещены по GPS-треку группы по времени",
-"ajoutées à « {0} »":"добавлены в «{0}»"});
+"ajoutées à « {0} »":"добавлены в «{0}»",
+"Visite passée":"Посещение пропущено",
+"Remise au programme":"Возвращено в программу",
+"Remettre au programme":"Вернуть в программу",
+"Pas le temps / plus envie":"Нет времени / неинтересно",
+"Passer":"Пропустить"});

@@ -6344,4 +6344,9 @@ I18N.load({
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"لا يوجد اتجاه: اسمح بـ«الحركة والاتجاه» لـ Safari (الإعدادات › Safari) ثم اضغط 🧭",
 "Boussole refusée":"تم رفض البوصلة",
 "{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"{0} صورة بلا موقع وُضعت حسب مسار GPS للمجموعة وفق الوقت",
-"ajoutées à « {0} »":"أُضيفت إلى «{0}»"});
+"ajoutées à « {0} »":"أُضيفت إلى «{0}»",
+"Visite passée":"تم تخطي الزيارة",
+"Remise au programme":"أُعيدت إلى البرنامج",
+"Remettre au programme":"إعادتها إلى البرنامج",
+"Pas le temps / plus envie":"لا وقت / لم أعد مهتمًا",
+"Passer":"تخطٍّ"});

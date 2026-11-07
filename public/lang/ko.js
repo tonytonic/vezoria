@@ -6343,4 +6343,9 @@ I18N.load({
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"방향을 받지 못했어요: 설정 › Safari에서 ‘동작 및 방향’을 허용한 뒤 🧭를 누르세요",
 "Boussole refusée":"나침반이 거부됐어요",
 "{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"위치 없는 사진 {0}장을 시간에 맞춰 그룹 GPS로 배치했어요",
-"ajoutées à « {0} »":"‘{0}’에 추가됨"});
+"ajoutées à « {0} »":"‘{0}’에 추가됨",
+"Visite passée":"방문 건너뜀",
+"Remise au programme":"일정에 다시 추가",
+"Remettre au programme":"일정에 다시 넣기",
+"Pas le temps / plus envie":"시간 없음 / 관심 없음",
+"Passer":"건너뛰기"});

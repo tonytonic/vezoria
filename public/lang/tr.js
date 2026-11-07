@@ -6331,4 +6331,9 @@ I18N.load({
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Yön alınamadı: Safari için “Hareket ve Yön”e izin ver (Ayarlar › Safari), sonra 🧭’ye dokun",
 "Boussole refusée":"Pusula reddedildi",
 "{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"Konumsuz {0} fotoğraf, grubun GPS izine göre saatle yerleştirildi",
-"ajoutées à « {0} »":"“{0}” içine eklendi"});
+"ajoutées à « {0} »":"“{0}” içine eklendi",
+"Visite passée":"Ziyaret atlandı",
+"Remise au programme":"Programa geri alındı",
+"Remettre au programme":"Programa geri koy",
+"Pas le temps / plus envie":"Zaman yok / ilgilenmiyorum",
+"Passer":"Atla"});

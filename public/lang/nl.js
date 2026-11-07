@@ -3395,4 +3395,9 @@ I18N.load({
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Geen richting: sta ‘Beweging en richting’ toe voor Safari (Instellingen › Safari) en tik op 🧭",
 "Boussole refusée":"Kompas geweigerd",
 "{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"{0} foto(’s) zonder locatie geplaatst via de GPS van de groep, op tijd",
-"ajoutées à « {0} »":"toegevoegd aan ‘{0}’"});
+"ajoutées à « {0} »":"toegevoegd aan ‘{0}’",
+"Visite passée":"Bezoek overgeslagen",
+"Remise au programme":"Weer in het programma",
+"Remettre au programme":"Terugzetten in het programma",
+"Pas le temps / plus envie":"Geen tijd / geen zin meer",
+"Passer":"Overslaan"});

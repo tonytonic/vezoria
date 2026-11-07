@@ -6343,4 +6343,9 @@ I18N.load({
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"दिशा नहीं मिली: Safari के लिए “मोशन और ओरिएंटेशन” की अनुमति दें (सेटिंग्स › Safari), फिर 🧭 दबाएं",
 "Boussole refusée":"कम्पास अस्वीकृत",
 "{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"{0} बिना लोकेशन फ़ोटो समूह के GPS से समय के अनुसार रखी गईं",
-"ajoutées à « {0} »":"“{0}” में जोड़ी गईं"});
+"ajoutées à « {0} »":"“{0}” में जोड़ी गईं",
+"Visite passée":"यात्रा छोड़ी गई",
+"Remise au programme":"कार्यक्रम में वापस",
+"Remettre au programme":"कार्यक्रम में वापस रखें",
+"Pas le temps / plus envie":"समय नहीं / अब रुचि नहीं",
+"Passer":"छोड़ें"});

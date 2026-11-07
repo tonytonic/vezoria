@@ -3405,4 +3405,9 @@ I18N.load({
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Sin dirección: permite «Movimiento y orientación» para Safari (Ajustes › Safari) y toca 🧭",
 "Boussole refusée":"Brújula denegada",
 "{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"{0} foto(s) sin ubicación colocadas con el GPS del grupo, según la hora",
-"ajoutées à « {0} »":"añadidas a «{0}»"});
+"ajoutées à « {0} »":"añadidas a «{0}»",
+"Visite passée":"Visita omitida",
+"Remise au programme":"De vuelta al programa",
+"Remettre au programme":"Volver a poner en el programa",
+"Pas le temps / plus envie":"Sin tiempo / ya no me interesa",
+"Passer":"Omitir"});
