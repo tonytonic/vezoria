@@ -1995,7 +1995,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-07y'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-07z'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2850,6 +2850,19 @@
   }
   var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
+  /* 📷 Choix de photos : une appli web n’a pas accès à la photothèque (Polarsteps, appli native, l’a). Après « Ajouter », le téléphone
+     prépare lui-même les photos (conversion HEIC → JPEG) avant de les donner à Vezoria : quelques secondes sans rien à l’écran.
+     On montre tout de suite que ça charge, dès que le choix se ferme. */
+  { let pick = null, ov = null;
+    const off = () => { pick = null; if(ov){ ov.remove(); ov = null; } };
+    // affiché sous le sélecteur de photos (invisible tant qu’il est ouvert) : quand il se ferme, on voit tout de suite que ça charge
+    document.addEventListener('click', e=>{ const i = e.target && e.target.closest ? e.target.closest('input[type=file]') : null; if(!i || !/image|video/.test(i.accept || 'image')) return;
+      off(); const me = pick = {i, at:Date.now()};
+      setTimeout(()=>{ if(pick !== me || ov) return; ov = document.createElement('div'); ov.className = 'pk-wait'; ov.onclick = off;
+        ov.innerHTML = `<div><i class="pk-sp"></i><b>${esc(MSGT('Ton téléphone prépare les photos…'))}</b><small>${esc(MSGT('Ça peut prendre quelques secondes s’il y en a beaucoup.'))}</small><small class="pk-x">${esc(MSGT('Touche pour fermer si tu as annulé'))}</small></div>`;
+        document.body.appendChild(ov); setTimeout(()=>{ if(pick === me) off(); }, 90000); }, 700); }, true);
+    document.addEventListener('change', e=>{ if(e.target && e.target.type === 'file') off(); }, true);
+    document.addEventListener('cancel', e=>{ if(e.target && e.target.type === 'file') off(); }, true); }
   const api = {liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
