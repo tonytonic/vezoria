@@ -940,17 +940,36 @@
     VJ = {SR, rec:null, on:false, base:''};
     if(!SR) setTimeout(()=>{ const x = document.getElementById('vj-tx'); if(x) x.focus(); }, 300);
   }
-  function vjTog(){
-    if(!VJ) return; if(!VJ.SR){ const x = document.getElementById('vj-tx'); if(x) x.focus(); return; }
-    if(VJ.on){ try { VJ.rec.stop(); } catch(e){} return; }
-    const rec = new VJ.SR(); VJ.rec = rec; rec.lang = (window.I18N && I18N.locale) || 'fr-FR'; rec.continuous = true; rec.interimResults = true;
-    const tx = document.getElementById('vj-tx'); VJ.base = tx.value ? tx.value.trim() + ' ' : '';
-    rec.onresult = e => { let fin = '', tmp = ''; for(let i = 0; i < e.results.length; i++){ const r = e.results[i]; if(r.isFinal) fin += r[0].transcript; else tmp += r[0].transcript; } tx.value = (VJ.base + fin + tmp).replace(/\s+/g, ' '); tx.scrollTop = tx.scrollHeight; };
-    rec.onend = () => { if(!VJ) return; VJ.on = false; VJ.base = tx.value ? tx.value.trim() + ' ' : ''; const o = document.getElementById('vj-orb'); if(o) o.classList.remove('on'); const st = document.getElementById('vj-st'); if(st) st.textContent = MSGT('Touche pour continuer'); };
-    rec.onerror = e => { const st = document.getElementById('vj-st'); if(st) st.textContent = e.error === 'not-allowed' ? MSGT('Autorise le micro pour l’appli') : MSGT('Dictée vocale : utilise le micro de ton clavier'); };
-    try { rec.start(); VJ.on = true; const o = document.getElementById('vj-orb'); if(o) o.classList.add('on'); const st = document.getElementById('vj-st'); if(st) st.textContent = MSGT('Je t’écoute…'); } catch(e){}
+  // 🎙️ Android : la dictée du navigateur s’arrête souvent toute seule (on la relance tant qu’on parle) et demande d’abord le micro ;
+  // chaque erreur a son message clair (pas d’internet, micro refusé…) et le clavier reste là en secours
+  const VJ_ERR = {'network':'La dictée de l’appli a besoin d’internet. Sans réseau, touche la zone de texte et utilise le micro 🎤 de ton clavier : il marche hors ligne.',
+    'not-allowed':'Micro refusé : autorise le micro pour Vezoria (Réglages du téléphone › Applications › Vezoria ou Chrome › Autorisations › Micro), puis réessaie.',
+    'service-not-allowed':'La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.',
+    'audio-capture':'Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.', 'no-speech':'Je n’ai rien entendu : touche le micro et parle un peu plus fort.',
+    'language-not-supported':'Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.'};
+  async function vjTog(){
+    if(!VJ) return; const tx = document.getElementById('vj-tx'), st = document.getElementById('vj-st'), orb = document.getElementById('vj-orb'), say = m => { if(st) st.textContent = m; };
+    if(!VJ.SR){ if(tx) tx.focus(); return; }
+    if(VJ.on || VJ.want){ VJ.want = false; try { VJ.rec && VJ.rec.stop(); } catch(e){} return; }
+    const android = /Android/i.test(navigator.userAgent);
+    if(android && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && !VJ.mic){   // demande le micro d’abord (sinon la dictée échoue sans rien dire)
+      try { const sm = await navigator.mediaDevices.getUserMedia({audio:true}); sm.getTracks().forEach(t=>t.stop()); VJ.mic = 1; }
+      catch(e){ say(MSGT(VJ_ERR['not-allowed'])); return; } }
+    if(!VJ) return; VJ.want = true; VJ.tries = 0; VJ.base = tx.value ? tx.value.trim() + ' ' : '';
+    const start = () => {
+      const rec = new VJ.SR(); VJ.rec = rec; rec.lang = (window.I18N && I18N.locale) || 'fr-FR'; rec.continuous = !android; rec.interimResults = true; rec.maxAlternatives = 1;
+      let fin = '';
+      rec.onresult = e => { let f = '', tmp = ''; for(let i = e.resultIndex; i < e.results.length; i++){ const r = e.results[i]; if(r.isFinal) f += r[0].transcript + ' '; else tmp += r[0].transcript; }
+        if(f) fin += f; tx.value = (VJ.base + fin + tmp).replace(/\s+/g, ' '); tx.scrollTop = tx.scrollHeight; VJ.tries = 0; };
+      rec.onerror = e => { VJ.err = e.error; if(e.error !== 'no-speech' && e.error !== 'aborted') VJ.want = false; say(MSGT(VJ_ERR[e.error] || 'Dictée vocale : utilise le micro de ton clavier') + (VJ_ERR[e.error] ? '' : ' (' + e.error + ')')); };
+      rec.onend = () => { if(!VJ) return; VJ.on = false; VJ.base = tx.value ? tx.value.trim() + ' ' : '';
+        if(VJ.want && VJ.tries++ < 30){ setTimeout(()=>{ if(VJ && VJ.want) try { start(); } catch(e){ VJ.want = false; } }, 150); return; }   // Android : on enchaîne tant que tu n’as pas touché stop
+        VJ.want = false; if(orb) orb.classList.remove('on'); if(!VJ.err) say(MSGT('Touche le micro et raconte')); VJ.err = null; };
+      rec.start(); VJ.on = true; if(orb) orb.classList.add('on'); say(MSGT('Je t’écoute…'));
+    };
+    try { start(); } catch(e){ VJ.want = false; say(MSGT('Dictée vocale : utilise le micro de ton clavier')); if(tx) tx.focus(); }
   }
-  function vjStop(quiet){ if(VJ && VJ.rec) try { VJ.rec.abort(); } catch(e){} VJ = null; const o = document.getElementById('cv-vj'); if(o) o.remove(); }
+  function vjStop(quiet){ if(VJ){ VJ.want = false; if(VJ.rec) try { VJ.rec.abort(); } catch(e){} } VJ = null; const o = document.getElementById('cv-vj'); if(o) o.remove(); }
   function vjSave(){
     const t = trip(), tx = (document.getElementById('vj-tx') || {}).value || ''; if(!t) return; if(!tx.trim()){ alert(MSGT('Raconte d’abord quelque chose 🙂')); return; }
     const k = dayList().indexOf(isoToday()), l = lnLast(t.id), g = l ? LN.geo[lnGK(l)] : null;
