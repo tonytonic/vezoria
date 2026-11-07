@@ -3429,4 +3429,7 @@ I18N.load({
 "Touche pour fermer si tu as annulé":"Tap to close if you cancelled",
 "Retour à l’hôtel":"Back to the hotel",
 "ce soir":"tonight",
-"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"One memory per place and moment: photos within 500 m, with no break longer than 1 h 15. Coming back to the same spot later makes a new memory."});
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"One memory per place and moment: photos within 500 m, with no break longer than 1 h 15. Coming back to the same spot later makes a new memory.",
+"Séparer en {0} souvenirs (photos prises à des moments différents)":"Split into {0} memories (photos taken at different times)",
+"Rien à séparer":"Nothing to split",
+"Séparer « {0} » en {1} souvenirs, un par moment de la journée ?":"Split “{0}” into {1} memories, one per moment of the day?"});

@@ -6384,4 +6384,7 @@ I18N.load({
 "Touche pour fermer si tu as annulé":"Нажми, чтобы закрыть, если отменил",
 "Retour à l’hôtel":"Возвращение в отель",
 "ce soir":"сегодня вечером",
-"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Одно воспоминание на место и момент: фото в пределах 500 м, без перерыва дольше 1 ч 15 мин. Вернулись позже — новое воспоминание."});
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Одно воспоминание на место и момент: фото в пределах 500 м, без перерыва дольше 1 ч 15 мин. Вернулись позже — новое воспоминание.",
+"Séparer en {0} souvenirs (photos prises à des moments différents)":"Разделить на {0} воспоминаний (фото в разное время)",
+"Rien à séparer":"Нечего разделять",
+"Séparer « {0} » en {1} souvenirs, un par moment de la journée ?":"Разделить «{0}» на {1} воспоминаний, по одному на момент дня?"});

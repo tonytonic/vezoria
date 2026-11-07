@@ -3444,4 +3444,7 @@ I18N.load({
 "Touche pour fermer si tu as annulé":"Tocca per chiudere se hai annullato",
 "Retour à l’hôtel":"Rientro in hotel",
 "ce soir":"stasera",
-"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Un ricordo per luogo e momento: foto entro 500 m, senza pause oltre 1 h 15. Ripassare più tardi nello stesso posto crea un nuovo ricordo."});
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Un ricordo per luogo e momento: foto entro 500 m, senza pause oltre 1 h 15. Ripassare più tardi nello stesso posto crea un nuovo ricordo.",
+"Séparer en {0} souvenirs (photos prises à des moments différents)":"Dividi in {0} ricordi (foto scattate in momenti diversi)",
+"Rien à séparer":"Niente da dividere",
+"Séparer « {0} » en {1} souvenirs, un par moment de la journée ?":"Dividere «{0}» in {1} ricordi, uno per momento della giornata?"});

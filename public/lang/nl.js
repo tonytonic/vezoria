@@ -3435,4 +3435,7 @@ I18N.load({
 "Touche pour fermer si tu as annulé":"Tik om te sluiten als je annuleerde",
 "Retour à l’hôtel":"Terug naar het hotel",
 "ce soir":"vanavond",
-"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Eén herinnering per plek en moment: foto’s binnen 500 m, zonder pauze langer dan 1 u 15. Later terugkomen op dezelfde plek geeft een nieuwe herinnering."});
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Eén herinnering per plek en moment: foto’s binnen 500 m, zonder pauze langer dan 1 u 15. Later terugkomen op dezelfde plek geeft een nieuwe herinnering.",
+"Séparer en {0} souvenirs (photos prises à des moments différents)":"Splitsen in {0} herinneringen (foto’s op verschillende momenten)",
+"Rien à séparer":"Niets te splitsen",
+"Séparer « {0} » en {1} souvenirs, un par moment de la journée ?":"‘{0}’ splitsen in {1} herinneringen, één per moment van de dag?"});

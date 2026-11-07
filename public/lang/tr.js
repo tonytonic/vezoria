@@ -6371,4 +6371,7 @@ I18N.load({
 "Touche pour fermer si tu as annulé":"İptal ettiysen kapatmak için dokun",
 "Retour à l’hôtel":"Otele dönüş",
 "ce soir":"bu akşam",
-"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Her yer ve an için bir anı: 500 m içinde, 1 sa 15 dk’dan uzun ara vermeden çekilen fotoğraflar. Aynı yere sonra dönmek yeni bir anı olur."});
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Her yer ve an için bir anı: 500 m içinde, 1 sa 15 dk’dan uzun ara vermeden çekilen fotoğraflar. Aynı yere sonra dönmek yeni bir anı olur.",
+"Séparer en {0} souvenirs (photos prises à des moments différents)":"{0} anıya böl (farklı zamanlarda çekilen fotoğraflar)",
+"Rien à séparer":"Bölünecek bir şey yok",
+"Séparer « {0} » en {1} souvenirs, un par moment de la journée ?":"“{0}” günün her anı için bir tane olmak üzere {1} anıya bölünsün mü?"});

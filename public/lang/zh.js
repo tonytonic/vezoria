@@ -6383,4 +6383,7 @@ I18N.load({
 "Touche pour fermer si tu as annulé":"如已取消，轻点关闭",
 "Retour à l’hôtel":"返回酒店",
 "ce soir":"今晚",
-"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"每个地点和时段一个回忆：500 米内、间隔不超过 1 小时 15 分的照片。稍后再回到同一地点会生成新回忆。"});
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"每个地点和时段一个回忆：500 米内、间隔不超过 1 小时 15 分的照片。稍后再回到同一地点会生成新回忆。",
+"Séparer en {0} souvenirs (photos prises à des moments différents)":"拆分为 {0} 个回忆（不同时段拍摄的照片）",
+"Rien à séparer":"无需拆分",
+"Séparer « {0} » en {1} souvenirs, un par moment de la journée ?":"将「{0}」拆分为 {1} 个回忆，每个时段一个？"});

@@ -6383,4 +6383,7 @@ I18N.load({
 "Touche pour fermer si tu as annulé":"취소했다면 눌러서 닫기",
 "Retour à l’hôtel":"호텔로 돌아가기",
 "ce soir":"오늘 저녁",
-"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"장소와 순간마다 추억 하나: 500m 이내, 1시간 15분 넘게 쉬지 않고 찍은 사진. 나중에 같은 곳에 다시 오면 새 추억이 돼요."});
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"장소와 순간마다 추억 하나: 500m 이내, 1시간 15분 넘게 쉬지 않고 찍은 사진. 나중에 같은 곳에 다시 오면 새 추억이 돼요.",
+"Séparer en {0} souvenirs (photos prises à des moments différents)":"추억 {0}개로 나누기 (다른 시간에 찍은 사진)",
+"Rien à séparer":"나눌 것이 없어요",
+"Séparer « {0} » en {1} souvenirs, un par moment de la journée ?":"‘{0}’을(를) 시간대별로 추억 {1}개로 나눌까요?"});

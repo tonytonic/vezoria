@@ -6383,4 +6383,7 @@ I18N.load({
 "Touche pour fermer si tu as annulé":"キャンセルした場合はタップして閉じる",
 "Retour à l’hôtel":"ホテルへ戻る",
 "ce soir":"今夜",
-"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"場所と時間ごとに1つの思い出：500 m以内、1時間15分以上の間隔なしの写真。後で同じ場所に戻ると新しい思い出になります。"});
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"場所と時間ごとに1つの思い出：500 m以内、1時間15分以上の間隔なしの写真。後で同じ場所に戻ると新しい思い出になります。",
+"Séparer en {0} souvenirs (photos prises à des moments différents)":"{0}件の思い出に分ける（撮影時間が異なる写真）",
+"Rien à séparer":"分けるものはありません",
+"Séparer « {0} » en {1} souvenirs, un par moment de la journée ?":"「{0}」を時間帯ごとに{1}件の思い出に分けますか？"});

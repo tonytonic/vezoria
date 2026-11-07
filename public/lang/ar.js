@@ -6384,4 +6384,7 @@ I18N.load({
 "Touche pour fermer si tu as annulé":"اضغط للإغلاق إن ألغيت",
 "Retour à l’hôtel":"العودة إلى الفندق",
 "ce soir":"هذا المساء",
-"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"ذكرى لكل مكان ولحظة: صور ضمن 500 م دون توقف أطول من ساعة و15 دقيقة. العودة لاحقًا إلى المكان نفسه تصنع ذكرى جديدة."});
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"ذكرى لكل مكان ولحظة: صور ضمن 500 م دون توقف أطول من ساعة و15 دقيقة. العودة لاحقًا إلى المكان نفسه تصنع ذكرى جديدة.",
+"Séparer en {0} souvenirs (photos prises à des moments différents)":"تقسيم إلى {0} ذكريات (صور في أوقات مختلفة)",
+"Rien à séparer":"لا شيء للتقسيم",
+"Séparer « {0} » en {1} souvenirs, un par moment de la journée ?":"تقسيم «{0}» إلى {1} ذكريات، واحدة لكل وقت من اليوم؟"});
