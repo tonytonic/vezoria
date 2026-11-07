@@ -6422,4 +6422,10 @@ I18N.load({
 "{0} photo(s) renvoyée(s)…":"{0} фото отправляются снова…",
 "{0} photo(s) pas encore envoyée(s)":"{0} фото ещё не отправлены",
 "Photos en ligne : tes compagnons vont les voir":"Фото в сети: попутчики их увидят",
-"Renvoyer les photos à mes compagnons":"Отправить фото попутчикам ещё раз"});
+"Renvoyer les photos à mes compagnons":"Отправить фото попутчикам ещё раз",
+"La dictée de l’appli a besoin d’internet. Sans réseau, touche la zone de texte et utilise le micro 🎤 de ton clavier : il marche hors ligne.":"Диктовке в приложении нужен интернет. Без сети нажми на поле текста и используй микрофон 🎤 клавиатуры: он работает офлайн.",
+"Micro refusé : autorise le micro pour Vezoria (Réglages du téléphone › Applications › Vezoria ou Chrome › Autorisations › Micro), puis réessaie.":"Микрофон запрещён: разреши его для Vezoria (Настройки › Приложения › Vezoria или Chrome › Разрешения › Микрофон) и попробуй снова.",
+"La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"Диктовка здесь недоступна: нажми на поле и используй микрофон 🎤 клавиатуры.",
+"Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"Микрофон не найден: проверь, не занят ли он другим приложением.",
+"Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"Ничего не слышно: нажми на микрофон и говори громче.",
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Диктовка недоступна на этом языке: используй микрофон 🎤 клавиатуры."});

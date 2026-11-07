@@ -6421,4 +6421,10 @@ I18N.load({
 "{0} photo(s) renvoyée(s)…":"正在重新发送 {0} 张照片…",
 "{0} photo(s) pas encore envoyée(s)":"{0} 张照片尚未发送",
 "Photos en ligne : tes compagnons vont les voir":"照片已上线：旅伴们将看到",
-"Renvoyer les photos à mes compagnons":"重新把照片发给旅伴"});
+"Renvoyer les photos à mes compagnons":"重新把照片发给旅伴",
+"La dictée de l’appli a besoin d’internet. Sans réseau, touche la zone de texte et utilise le micro 🎤 de ton clavier : il marche hors ligne.":"应用听写需要网络。离线时，点文本框并使用键盘的 🎤 麦克风：可离线使用。",
+"Micro refusé : autorise le micro pour Vezoria (Réglages du téléphone › Applications › Vezoria ou Chrome › Autorisations › Micro), puis réessaie.":"麦克风被拒绝：请在 设置 › 应用 › Vezoria 或 Chrome › 权限 › 麦克风 中允许，然后重试。",
+"La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"此处无法听写：点文本框并使用键盘的 🎤 麦克风。",
+"Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"未找到麦克风：请确认没有其他应用在使用。",
+"Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"没有听到声音：点麦克风，说大声一点。",
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"该语言不支持听写：请使用键盘的 🎤 麦克风。"});

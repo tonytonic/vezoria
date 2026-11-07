@@ -6422,4 +6422,10 @@ I18N.load({
 "{0} photo(s) renvoyée(s)…":"جارٍ إعادة إرسال {0} صور…",
 "{0} photo(s) pas encore envoyée(s)":"{0} صور لم تُرسل بعد",
 "Photos en ligne : tes compagnons vont les voir":"الصور متاحة: سيراها رفاقك",
-"Renvoyer les photos à mes compagnons":"إعادة إرسال الصور إلى رفاقي"});
+"Renvoyer les photos à mes compagnons":"إعادة إرسال الصور إلى رفاقي",
+"La dictée de l’appli a besoin d’internet. Sans réseau, touche la zone de texte et utilise le micro 🎤 de ton clavier : il marche hors ligne.":"الإملاء في التطبيق يحتاج إلى الإنترنت. دون شبكة، اضغط على مربع النص واستخدم ميكروفون 🎤 لوحة المفاتيح: يعمل دون اتصال.",
+"Micro refusé : autorise le micro pour Vezoria (Réglages du téléphone › Applications › Vezoria ou Chrome › Autorisations › Micro), puis réessaie.":"تم رفض الميكروفون: اسمح به لـ Vezoria (الإعدادات › التطبيقات › Vezoria أو Chrome › الأذونات › الميكروفون) ثم أعد المحاولة.",
+"La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"الإملاء غير متاح هنا: اضغط على مربع النص واستخدم ميكروفون 🎤 لوحة المفاتيح.",
+"Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"لم يُعثر على ميكروفون: تأكد أن تطبيقًا آخر لا يستخدمه.",
+"Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"لم أسمع شيئًا: اضغط على الميكروفون وتحدث بصوت أعلى قليلًا.",
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"الإملاء غير متاح بهذه اللغة: استخدم ميكروفون 🎤 لوحة المفاتيح."});

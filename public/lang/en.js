@@ -3467,4 +3467,10 @@ I18N.load({
 "{0} photo(s) renvoyée(s)…":"{0} photo(s) being resent…",
 "{0} photo(s) pas encore envoyée(s)":"{0} photo(s) not sent yet",
 "Photos en ligne : tes compagnons vont les voir":"Photos online: your companions will see them",
-"Renvoyer les photos à mes compagnons":"Resend the photos to my companions"});
+"Renvoyer les photos à mes compagnons":"Resend the photos to my companions",
+"La dictée de l’appli a besoin d’internet. Sans réseau, touche la zone de texte et utilise le micro 🎤 de ton clavier : il marche hors ligne.":"The app’s dictation needs internet. Offline, tap the text box and use your keyboard’s 🎤 mic: it works offline.",
+"Micro refusé : autorise le micro pour Vezoria (Réglages du téléphone › Applications › Vezoria ou Chrome › Autorisations › Micro), puis réessaie.":"Mic blocked: allow the microphone for Vezoria (phone Settings › Apps › Vezoria or Chrome › Permissions › Microphone), then try again.",
+"La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"Dictation isn’t available here: tap the text box and use your keyboard’s 🎤 mic.",
+"Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"No microphone found: check that no other app is using it.",
+"Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"I didn’t hear anything: tap the mic and speak a bit louder.",
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Dictation unavailable in this language: use your keyboard’s 🎤 mic."});

@@ -6409,4 +6409,10 @@ I18N.load({
 "{0} photo(s) renvoyée(s)…":"{0} fotoğraf yeniden gönderiliyor…",
 "{0} photo(s) pas encore envoyée(s)":"{0} fotoğraf henüz gönderilmedi",
 "Photos en ligne : tes compagnons vont les voir":"Fotoğraflar çevrimiçi: yol arkadaşların görecek",
-"Renvoyer les photos à mes compagnons":"Fotoğrafları yol arkadaşlarıma yeniden gönder"});
+"Renvoyer les photos à mes compagnons":"Fotoğrafları yol arkadaşlarıma yeniden gönder",
+"La dictée de l’appli a besoin d’internet. Sans réseau, touche la zone de texte et utilise le micro 🎤 de ton clavier : il marche hors ligne.":"Uygulama dikte için internet ister. Çevrimdışıysan metin kutusuna dokun ve klavyenin 🎤 mikrofonunu kullan: çevrimdışı çalışır.",
+"Micro refusé : autorise le micro pour Vezoria (Réglages du téléphone › Applications › Vezoria ou Chrome › Autorisations › Micro), puis réessaie.":"Mikrofon reddedildi: Vezoria için mikrofona izin ver (Ayarlar › Uygulamalar › Vezoria veya Chrome › İzinler › Mikrofon), sonra tekrar dene.",
+"La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"Dikte burada kullanılamıyor: metin kutusuna dokun ve klavyenin 🎤 mikrofonunu kullan.",
+"Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"Mikrofon bulunamadı: başka bir uygulamanın kullanmadığını kontrol et.",
+"Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"Bir şey duymadım: mikrofona dokun ve biraz daha yüksek konuş.",
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Bu dilde dikte yok: klavyenin 🎤 mikrofonunu kullan."});

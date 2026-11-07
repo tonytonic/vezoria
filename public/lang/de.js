@@ -3477,4 +3477,10 @@ I18N.load({
 "{0} photo(s) renvoyée(s)…":"{0} Foto(s) werden erneut gesendet…",
 "{0} photo(s) pas encore envoyée(s)":"{0} Foto(s) noch nicht gesendet",
 "Photos en ligne : tes compagnons vont les voir":"Fotos online: deine Mitreisenden sehen sie",
-"Renvoyer les photos à mes compagnons":"Fotos erneut an meine Mitreisenden senden"});
+"Renvoyer les photos à mes compagnons":"Fotos erneut an meine Mitreisenden senden",
+"La dictée de l’appli a besoin d’internet. Sans réseau, touche la zone de texte et utilise le micro 🎤 de ton clavier : il marche hors ligne.":"Die Diktierfunktion braucht Internet. Offline: ins Textfeld tippen und das 🎤-Mikro der Tastatur nutzen – es geht offline.",
+"Micro refusé : autorise le micro pour Vezoria (Réglages du téléphone › Applications › Vezoria ou Chrome › Autorisations › Micro), puis réessaie.":"Mikro blockiert: erlaube das Mikrofon für Vezoria (Einstellungen › Apps › Vezoria oder Chrome › Berechtigungen › Mikrofon) und versuch es erneut.",
+"La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"Diktieren ist hier nicht verfügbar: ins Textfeld tippen und das 🎤-Mikro der Tastatur nutzen.",
+"Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"Kein Mikrofon gefunden: prüfe, ob eine andere App es nutzt.",
+"Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"Ich habe nichts gehört: tippe aufs Mikro und sprich etwas lauter.",
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Diktieren in dieser Sprache nicht verfügbar: nutze das 🎤-Mikro der Tastatur."});

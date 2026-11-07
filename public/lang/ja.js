@@ -6421,4 +6421,10 @@ I18N.load({
 "{0} photo(s) renvoyée(s)…":"{0}枚を再送信中…",
 "{0} photo(s) pas encore envoyée(s)":"{0}枚がまだ送信されていません",
 "Photos en ligne : tes compagnons vont les voir":"写真はオンラインです：仲間に表示されます",
-"Renvoyer les photos à mes compagnons":"仲間に写真を再送信"});
+"Renvoyer les photos à mes compagnons":"仲間に写真を再送信",
+"La dictée de l’appli a besoin d’internet. Sans réseau, touche la zone de texte et utilise le micro 🎤 de ton clavier : il marche hors ligne.":"アプリの音声入力にはネットが必要です。オフライン時はテキスト欄をタップし、キーボードの🎤を使ってください（オフラインで動作）。",
+"Micro refusé : autorise le micro pour Vezoria (Réglages du téléphone › Applications › Vezoria ou Chrome › Autorisations › Micro), puis réessaie.":"マイクが拒否されました：設定 › アプリ › Vezoria または Chrome › 権限 › マイク で許可して再試行してください。",
+"La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"ここでは音声入力が使えません：テキスト欄をタップしてキーボードの🎤を使ってください。",
+"Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"マイクが見つかりません：他のアプリが使っていないか確認してください。",
+"Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"何も聞こえませんでした：マイクをタップして少し大きな声で話してください。",
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"この言語では音声入力が使えません：キーボードの🎤を使ってください。"});

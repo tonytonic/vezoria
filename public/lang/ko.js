@@ -6421,4 +6421,10 @@ I18N.load({
 "{0} photo(s) renvoyée(s)…":"사진 {0}장 다시 보내는 중…",
 "{0} photo(s) pas encore envoyée(s)":"사진 {0}장이 아직 전송되지 않았어요",
 "Photos en ligne : tes compagnons vont les voir":"사진이 올라갔어요: 동행자들이 볼 수 있어요",
-"Renvoyer les photos à mes compagnons":"동행자에게 사진 다시 보내기"});
+"Renvoyer les photos à mes compagnons":"동행자에게 사진 다시 보내기",
+"La dictée de l’appli a besoin d’internet. Sans réseau, touche la zone de texte et utilise le micro 🎤 de ton clavier : il marche hors ligne.":"앱 받아쓰기는 인터넷이 필요해요. 오프라인이면 입력칸을 누르고 키보드 🎤 마이크를 쓰세요: 오프라인에서도 돼요.",
+"Micro refusé : autorise le micro pour Vezoria (Réglages du téléphone › Applications › Vezoria ou Chrome › Autorisations › Micro), puis réessaie.":"마이크 거부됨: 설정 › 앱 › Vezoria 또는 Chrome › 권한 › 마이크에서 허용한 뒤 다시 시도하세요.",
+"La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"여기선 받아쓰기를 쓸 수 없어요: 입력칸을 누르고 키보드 🎤 마이크를 쓰세요.",
+"Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"마이크를 찾을 수 없어요: 다른 앱이 쓰고 있지 않은지 확인하세요.",
+"Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"아무것도 안 들렸어요: 마이크를 누르고 조금 더 크게 말하세요.",
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"이 언어는 받아쓰기를 지원하지 않아요: 키보드 🎤 마이크를 쓰세요."});

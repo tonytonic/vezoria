@@ -6421,4 +6421,10 @@ I18N.load({
 "{0} photo(s) renvoyée(s)…":"{0} फ़ोटो फिर भेजी जा रही हैं…",
 "{0} photo(s) pas encore envoyée(s)":"{0} फ़ोटो अभी नहीं भेजी गईं",
 "Photos en ligne : tes compagnons vont les voir":"फ़ोटो ऑनलाइन: आपके साथी देखेंगे",
-"Renvoyer les photos à mes compagnons":"फ़ोटो साथियों को फिर भेजें"});
+"Renvoyer les photos à mes compagnons":"फ़ोटो साथियों को फिर भेजें",
+"La dictée de l’appli a besoin d’internet. Sans réseau, touche la zone de texte et utilise le micro 🎤 de ton clavier : il marche hors ligne.":"ऐप की डिक्टेशन को इंटरनेट चाहिए। बिना नेटवर्क, टेक्स्ट बॉक्स पर टैप करें और कीबोर्ड का 🎤 माइक इस्तेमाल करें: यह ऑफ़लाइन चलता है।",
+"Micro refusé : autorise le micro pour Vezoria (Réglages du téléphone › Applications › Vezoria ou Chrome › Autorisations › Micro), puis réessaie.":"माइक अस्वीकृत: Vezoria के लिए माइक की अनुमति दें (सेटिंग्स › ऐप्स › Vezoria या Chrome › अनुमतियां › माइक), फिर कोशिश करें।",
+"La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"यहां डिक्टेशन उपलब्ध नहीं: टेक्स्ट बॉक्स पर टैप करें और कीबोर्ड का 🎤 माइक इस्तेमाल करें।",
+"Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"कोई माइक नहीं मिला: देखें कि कोई और ऐप इसे इस्तेमाल तो नहीं कर रहा।",
+"Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"कुछ सुनाई नहीं दिया: माइक दबाएं और थोड़ा ज़ोर से बोलें।",
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"इस भाषा में डिक्टेशन नहीं: कीबोर्ड का 🎤 माइक इस्तेमाल करें।"});
