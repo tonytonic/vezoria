@@ -1429,7 +1429,8 @@
     const t = trip(); if(!t) return []; const td = isoToday(), now = Date.now(), lim = new Date(Date.now() + 10 * 864e5).toISOString().slice(0, 10), out = [];
     const days = [...new Set(list('place', p=>p.trip === M.trip && p.date && !p.sugg && p.date >= td && p.date <= lim).map(p=>p.date))].sort();
     days.forEach(d=>{ const pl = placesOf(d);
-      pl.forEach((p, k)=>{ let at = new Date(d + 'T09:00:00').getTime() + k * 1000; if(d === td && at < now) at = now + 60000 + k * 1000;   // aujourd’hui : celles qui restent
+      pl.forEach((p, k)=>{ if(p.vu) return;   // ✓ déjà vue : l’étape suivante prend la place
+        let at = new Date(d + 'T09:00:00').getTime() + k * 1000; if(d === td && at < now) at = now + 60000 + k * 1000;   // aujourd’hui : celles qui restent
         out.push({it:{id:p.id, _pl:1, cat:'visite', titre:p.nom || MSGT('Visite'), date:d, adresse:p.adresse || '', qui:p.qui, k1:k + 1, n:pl.length}, at, end:0, timed:false, on:false, k}); }); });
     return out;
   }
@@ -1442,29 +1443,36 @@
       return L1.map(m=>{ if(m.it.cat !== 'hotel' && !m.it._pl) return m; const arr = L1.filter(x=>x.it.cat === 'transport' && x.it.date === m.it.date && x.end && x.end > m.at).map(x=>x.end);
         return arr.length ? Object.assign({}, m, {at:Math.max(...arr) + (m.it._pl ? 120000 + (m.k || 0) * 1000 : 60000), afterArr:1}) : m; }).sort((a, b)=>(b.on - a.on) || a.at - b.at); };
     const who = (M.nhWho && V.includes(M.nhWho)) ? M.nhWho : mine;
-    const L = who ? forP(who) : L0; const nx = L[0]; if(!nx) return '';
+    const L = who ? forP(who) : L0; if(!L.length) return '';
+    // 👆 glisser (ou ‹ ›) : parcourir toutes les étapes à venir dans l’encart
+    if(NHI.t !== M.trip){ NHI.t = M.trip; NHI.i = 0; } const ix = Math.max(0, Math.min(NHI.i, L.length - 1)); NHI.i = ix; NHI.n = L.length; const nx = L[ix];
     const tabs = V.length > 1 && L0.some(m=>parts(m.it).length < V.length) ? `<div class="hw">${V.filter(pid=>forP(pid).length).map(pid=>`<button type="button" class="${pid === who ? 'on' : ''}" onclick="CV.nhWho('${ja(pid)}')">${esc(pid === mine ? MSGT('Mon départ') : pname(pid))}</button>`).join('')}</div>` : '';
     if(nx.at - Date.now() > 10*864e5) return '';
     const it = nx.it, td = isoToday(), tm = it.cat==='transport' ? it.heureDep : it.heure, icon = x => x._pl ? '📍' : ICON0(x);
     const day = it.date === td ? 'Aujourd’hui' : it.date === new Date(Date.now()+864e5).toISOString().slice(0,10) ? 'Demain' : fdate(it.date);
     const sub = it.cat==='transport' ? [it.from && it.to ? it.from + ' → ' + it.to : '', it.compagnie, it.heureArr ? 'arrivée ' + it.heureArr : ''].filter(Boolean).join(' · ')
       : it.cat==='hotel' ? [it.nom, it.adresse].filter(Boolean).join(' · ') : it._pl ? [MSGT('Visite') + (it.n > 1 ? ' ' + it.k1 + '/' + it.n : ''), it.adresse].filter(Boolean).join(' · ') : [it.adresse, it.lieu].filter(Boolean).join(' · ');
-    const pj = (it.pj||[])[0], more = L.slice(1, 3);
+    const pj = (it.pj||[])[0], more = L.slice(ix + 1, ix + 3);
     const b = (ic, l, fn) => `<button type="button" onclick="${fn}"><i>${ic}</i>${l}</button>`;
     const enr = nx.on, pc = enr ? Math.round(100 * (Date.now() - nx.at) / Math.max(1, nx.end - nx.at)) : 0;
     const noCd = it._pl && !nx.timed;   // visite sans heure : le jour, pas un compte à rebours
     const dAt = enr ? nx.end : noCd ? new Date(it.date + 'T23:59:00').getTime() : nx.at;
     return `<div class="cv-hero${enr ? ' enr' : ''}" id="cv-hero" data-at="${dAt}" data-on="${enr ? 1 : 0}">
-      ${tabs}<div class="hk">${enr ? '🚀 En route' : 'Prochaine étape'}${who && who !== mine ? ' · ' + esc(pname(who)) : ''}</div>
+      ${tabs}<div class="hk">${enr ? '🚀 En route' : ix ? esc(MSGT('Étape')) + ' ' + (ix + 1) : 'Prochaine étape'}${who && who !== mine ? ' · ' + esc(pname(who)) : ''}${L.length > 1 ? `<span class="hnav"><button type="button" onclick="CV.nhStep(-1)" aria-label="‹"${ix ? '' : ' disabled'}>‹</button><small>${ix + 1}/${L.length}</small><button type="button" onclick="CV.nhStep(1)" aria-label="›"${ix < L.length - 1 ? '' : ' disabled'}>›</button></span>` : ''}</div>
       <div class="ht"><span class="hi">${icon(it)}</span><div><b>${esc(it.titre)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div></div>
       ${enr ? `<div class="hc"><span id="cv-hero-cd">${hhmm(nx.end - Date.now())}</span><small>avant l’arrivée · ${esc(it.heureArr)}</small></div><div class="hpr"><i style="width:${pc}%"></i><b style="left:${pc}%">${icon(it)}</b></div>`
         : noCd ? `<div class="hc"><span>${esc(TT(day))}</span><small>${nx.afterArr ? esc(MSGT('après ton arrivée')) : esc(MSGT('dans l’ordre de la journée'))}</small></div>`
         : `<div class="hc"><span id="cv-hero-cd">${hhmm(nx.at - Date.now())}</span><small>${day}${nx.afterArr ? ' · ' + esc(MSGT('après ton arrivée')) : nx.timed ? ' · ' + esc(tm) : it.cat==='hotel' ? ' · arrivée à l’hôtel' : ''}</small></div>`}
       ${it.ref ? `<button type="button" class="href" onclick="CV.nhCopy('${ja(it.ref)}')">Réf. <b>${esc(it.ref)}</b> <i>⧉</i></button>` : ''}
-      <div class="hb">${it.cat==='transport' && it.mode==='Avion' && nx.at - Date.now() < 36*3600e3 ? b('🛫','Embarquement',`CV.boardShow('${ja(it.id)}')`) : ''}${b('🧭','Y aller',`CV.nhGo('${ja(it.id)}')`)}${pj ? b('🎫','Billet',`CV.pjOpen('${ja(pj.id)}','${esc(pj.t||'img')}')`) : ''}${it.tel ? b('📞','Appeler',`location.href='tel:${esc(String(it.tel).replace(/[^+\d]/g,''))}'`) : ''}${b('✏️', 'Fiche', it._pl ? `CV.plInfo('${ja(it.id)}')` : `CV.edit('${ja(it.id)}')`)}</div>
+      <div class="hb">${it.cat==='transport' && it.mode==='Avion' && nx.at - Date.now() < 36*3600e3 ? b('🛫','Embarquement',`CV.boardShow('${ja(it.id)}')`) : ''}${b('🧭','Y aller',`CV.nhGo('${ja(it.id)}')`)}${it._pl ? b('✅', MSGT('C’est vu'), `CV.plVu('${ja(it.id)}',1)`) : ''}${pj ? b('🎫','Billet',`CV.pjOpen('${ja(pj.id)}','${esc(pj.t||'img')}')`) : ''}${it.tel ? b('📞','Appeler',`location.href='tel:${esc(String(it.tel).replace(/[^+\d]/g,''))}'`) : ''}${b('✏️', 'Fiche', it._pl ? `CV.plInfo('${ja(it.id)}')` : `CV.edit('${ja(it.id)}')`)}</div>
       ${more.length ? `<div class="hn">Ensuite : ${more.map(m=>`${icon(m.it)} ${esc(m.it.titre)} <small>${m.it.date === td ? '' : fshort(m.it.date) + ' '}${esc(m.afterArr || m.it._pl ? '' : (m.it.cat==='transport' ? m.it.heureDep : m.it.heure) || '')}</small>`).join(' &nbsp;·&nbsp; ')}</div>` : ''}</div>`;
   }
-  function nhWho(pid){ M.nhWho = pid === M.me ? '' : pid; persist(); refresh(); }
+  const NHI = {t:'', i:0, n:0};
+  function nhStep(d){ NHI.i = Math.max(0, Math.min((NHI.n || 1) - 1, NHI.i + d)); const h = document.getElementById('cv-hero'); if(!h) return refresh();
+    const x = document.createElement('div'); x.innerHTML = nextHero(); if(x.firstElementChild){ x.firstElementChild.classList.add(d > 0 ? 'nh-r' : 'nh-l'); h.replaceWith(x.firstElementChild); hydrate(); } }
+  { let x0 = null, y0 = 0; document.addEventListener('touchstart', e=>{ const h = e.target.closest && e.target.closest('#cv-hero'); x0 = h ? e.touches[0].clientX : null; y0 = h ? e.touches[0].clientY : 0; }, {passive:true});
+    document.addEventListener('touchend', e=>{ if(x0 === null) return; const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null; if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) nhStep(dx < 0 ? 1 : -1); }, {passive:true}); }
+  function nhWho(pid){ NHI.i = 0; M.nhWho = pid === M.me ? '' : pid; persist(); refresh(); }
   function nhGo(id){
     const it = R[id]; if(!it) return; const q = encodeURIComponent;
     let u;

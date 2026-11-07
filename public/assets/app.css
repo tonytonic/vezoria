@@ -3374,3 +3374,9 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .lv-hd .lv-hb{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from -35deg at 50% 50%, rgba(37,99,235,.8) 0deg 70deg, transparent 70deg 360deg);
   -webkit-mask:radial-gradient(circle at 50% 50%, transparent 15%, #000 16%, rgba(0,0,0,.45) 36%, transparent 50%);mask:radial-gradient(circle at 50% 50%, transparent 15%, #000 16%, rgba(0,0,0,.45) 36%, transparent 50%)}
 .lv-hd .lv-ha{position:absolute;left:50%;top:calc(50% - 40px);margin-left:-9px;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:13px solid #2563eb;filter:drop-shadow(0 0 2px #fff)}
+
+/* 👆 encart « Prochaine étape » : parcourir les étapes */
+.cv-hero .hk{display:flex;align-items:center;gap:8px}.cv-hero .hnav{margin-left:auto;display:inline-flex;align-items:center;gap:6px;letter-spacing:0;text-transform:none}
+.cv-hero .hnav button{width:30px;height:30px;border-radius:50%;border:0;background:rgba(255,255,255,.22);color:#fff;font-size:1.1rem;line-height:1}.cv-hero .hnav button:disabled{opacity:.3}
+.cv-hero .hnav small{font-size:.8rem;opacity:.85}
+.cv-hero.nh-r{animation:nhR .25s ease}.cv-hero.nh-l{animation:nhL .25s ease}@keyframes nhR{from{transform:translateX(30px);opacity:.4}}@keyframes nhL{from{transform:translateX(-30px);opacity:.4}}
