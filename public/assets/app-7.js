@@ -1575,7 +1575,30 @@
 
   /* ══════════ 🎉 « Bienvenue à … » : le GPS voit qu’on arrive dans une nouvelle ville (ou un nouveau pays) ══════════ */
   let wlcBusy = false;
+  /* 📍 À côté d’un lieu choisi (comme un guide) : quand la position passe à moins de 200 m d’une visite prévue, une notification arrive,
+     avec « ✓ C’est vu ». Fonctionne quand Vezoria est ouverte (iPhone et Android ne laissent pas une appli web suivre la position en arrière-plan). */
+  function nearCands(){ const t = trip(); if(!t || t.ro || tripPhase(t) !== 'live') return [];
+    return list('place', p=>p.trip === t.id && !p.deleted && !p.sugg && !p.vu && p.lat != null && p.lng != null); }
+  function nearCheck(lat, lng){ try {
+    if(hidden('blk:near')) return; const td = isoToday(), A = M.nearA || (M.nearA = {});
+    const hit = nearCands().map(p=>[p, km({lat, lng}, {lat:p.lat, lng:p.lng})]).filter(([p, d])=>d <= 0.2 && A[p.id] !== td).sort((a, b)=>a[1] - b[1])[0];
+    if(!hit) return; const [p, d] = hit; A[p.id] = td; persist();
+    const msg = RF('Tu es à côté de « {0} »', p.nom || '') + ' · ' + Math.round(d * 1000) + ' m';
+    try { if(window.Notification && Notification.permission === 'granted' && navigator.serviceWorker) navigator.serviceWorker.ready.then(r=>r.showNotification('📍 ' + (p.nom || 'Vezoria'), {body:msg, tag:'vz-near-' + p.id, icon:'icon-192.png', data:{url:'./#'}})).catch(()=>{}); } catch(e){}
+    let b = document.getElementById('cv-near'); if(b) b.remove(); b = document.createElement('div'); b.id = 'cv-near';
+    b.innerHTML = `<div class="nr-t">📍 <b data-notr>${esc(p.nom || '')}</b><small>${esc(RF('À {0} m de toi', Math.round(d * 1000)))}</small></div>
+      <div class="nr-a"><button type="button" onclick="CV.plVu('${ja(p.id)}', 1);document.getElementById('cv-near').remove()">✓ ${esc(MSGT('C’est vu'))}</button><button type="button" onclick="document.getElementById('cv-near').remove();CV.plInfo('${ja(p.id)}')">ⓘ</button><button type="button" onclick="document.getElementById('cv-near').remove()" aria-label="Fermer">✕</button></div>`;
+    document.body.appendChild(b); try { navigator.vibrate && navigator.vibrate(120); } catch(e){}
+    setTimeout(()=>{ if(b.parentNode) b.remove(); }, 60000);
+  } catch(e){} }
+  // sans le partage de position allumé : un coup d’œil toutes les 2 min tant que l’appli est ouverte pendant le voyage
+  setInterval(()=>{ try { if(document.visibilityState !== 'visible' || !navigator.geolocation || !navigator.permissions || !nearCands().length || (typeof trkOn === 'function' && trkOn())) return;
+    navigator.permissions.query({name:'geolocation'}).then(st=>{ if(st.state === 'granted') navigator.geolocation.getCurrentPosition(q=>nearCheck(q.coords.latitude, q.coords.longitude), ()=>{}, {maximumAge:60000, timeout:20000}); }).catch(()=>{}); } catch(e){} }, 120000);
+  // ✓ « C’est vu » : une visite cochée au fil de l’itinéraire
+  function plVu(id, on){ const p = R[id]; if(!p || p.deleted) return; const v = on == null ? !p.vu : !!on; const c = clone(p); if(v) c.vu = Date.now(); else delete c.vu;
+    put(c, v ? '✅ ' + MSGT('C’est vu') : '↩️ ' + MSGT('Pas encore vu')); if(document.querySelector('#v-sheet-bg #pi-box')) plInfo(id); else refresh(); }
   async function wlcCheck(lat, lng){
+    nearCheck(lat, lng);
     try {
       const t = trip(); if(!t || tripPhase(t) !== 'live' || wlcBusy || hidden('blk:wlc')) return;
       M.wlc = M.wlc || {}; const W = M.wlc[t.id] = M.wlc[t.id] || {cities:[], ccs:[], lat:null, lng:null, at:0};
@@ -1740,6 +1763,10 @@
         if(/^ft:/.test(key)){ const fr = R['fm:' + key.slice(3)]; if(fr && !fr.deleted){ const F = fmToF(fr);
           mapRich(map, F, me.font, (el, p) => new maplibregl.Marker({element:el, anchor:'center'}).setLngLat([p.lng, p.lat]).addTo(map), true);
           if(!D.people.length && !D.ph.length && F.cities.length){ const b = new maplibregl.LngLatBounds(); F.cities.forEach(c=>b.extend([c.c.lng, c.c.lat])); try { map.fitBounds(b, {padding:80, maxZoom:11, pitch:50, duration:0}); } catch(e){} } } }
+        // 🗺️ mon voyage (ou un voyage commun) : toutes les visites et activités du séjour, pour se situer en temps réel
+        else if(R[key] && R[key].type === 'trip' && !R[key].deleted) p3Data(R[key]).then(F=>{ if(LV !== me || !F) return;
+          mapRich(map, F, me.font, (el, p) => new maplibregl.Marker({element:el, anchor:'center'}).setLngLat([p.lng, p.lat]).addTo(map), true);
+          if(!D.people.length && !D.ph.length && F.cities.length){ const b = new maplibregl.LngLatBounds(); F.cities.forEach(c=>b.extend([c.c.lng, c.c.lat])); try { map.fitBounds(b, {padding:80, maxZoom:11, pitch:50, duration:0}); } catch(e){} } }).catch(()=>{});
         LV.iv = setInterval(liveTick, 20000); setTimeout(liveTick, 1500); LV.up = setInterval(liveUp, 5000); liveUp();
         LV.raf = requestAnimationFrame(liveAnim);
       };

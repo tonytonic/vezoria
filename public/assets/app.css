@@ -3358,3 +3358,10 @@ body.vz-ro .lv-quick,body.vz-ro #cv-fab,body.vz-ro .ln-go~.ln-cta{display:none!i
 #cv-pin .pin-bar{position:absolute;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:3;display:flex;flex-direction:column;gap:8px}
 #cv-pin .pin-st{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}#cv-pin .pin-st button{flex:0 0 auto;border:0;border-radius:999px;background:#fff;padding:8px 12px;box-shadow:0 2px 8px rgba(0,0,0,.2);font:inherit;font-size:.85rem;color:#222}
 #cv-pin .pin-o{font-size:1.1rem}#cv-pin .maplibregl-ctrl-top-right{top:calc(env(safe-area-inset-top,0px) + 60px)}
+
+/* 📍 à côté d’un lieu · ✓ c’est vu */
+#cv-near{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:100005;background:#fff;color:#1e1b2e;border-radius:18px;box-shadow:0 8px 28px rgba(0,0,0,.28);padding:12px 14px;display:flex;align-items:center;gap:10px;animation:nrIn .3s ease}
+@keyframes nrIn{from{transform:translateY(-20px);opacity:0}to{transform:none;opacity:1}}
+#cv-near .nr-t{flex:1;min-width:0}#cv-near .nr-t b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#cv-near .nr-t small{opacity:.7}
+#cv-near .nr-a{display:flex;gap:6px}#cv-near .nr-a button{border:0;border-radius:999px;padding:8px 11px;background:#f1edf7;font:inherit;font-size:.85rem;color:inherit}#cv-near .nr-a button:first-child{background:#16a34a;color:#fff;font-weight:600}
+.vu-b{cursor:pointer;font-size:1.05rem;padding:0 2px}.cv-prow.vu b,.cv-place.vu u{text-decoration:line-through;opacity:.6}.cv-place .n.vu-b.on{background:#16a34a;color:#fff}
