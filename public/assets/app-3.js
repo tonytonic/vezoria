@@ -3126,12 +3126,15 @@
   }
   const ohNow = (ranges, hm) => (ranges || []).some(r=>{ const [a, b] = r.replace('+', '').split('-'); return hm >= a.padStart(5, '0') && hm < (b === '24:00' ? '24:00' : b.padStart(5, '0')); });
   async function placeLookup(p, city){
-    const lang = (window.I18N && I18N.lang) || 'fr', info = {ts:Date.now()};
+    const lang = (window.I18N && I18N.lang) || 'fr', info = {ts:Date.now(), v:2};
     // 1) OpenStreetMap : la fiche du lieu, avec ses étiquettes (horaires, site, téléphone…)
     try {
       let q = `${GEO}search?format=jsonv2&extratags=1&limit=1&accept-language=${lang}&q=` + encodeURIComponent(p.nom + (city && !normQ(p.nom).includes(normQ(city)) ? ', ' + city : ''));
       if(p.lat != null) q += `&viewbox=${p.lng - 0.03},${p.lat + 0.03},${p.lng + 0.03},${p.lat - 0.03}&bounded=1`;
-      const j = await withTimeout(fetch(q).then(r=>r.json()), 9000), o = j && j[0];
+      let j = await withTimeout(fetch(q).then(r=>r.json()), 9000);
+      // la ville du jour peut être celle de l’hôtel (ex. Satigny pour Genève) : on réessaie avec le seul nom du lieu, autour de sa position
+      if(!(j && j[0]) && city && p.lat != null){ const q2 = `${GEO}search?format=jsonv2&extratags=1&limit=1&accept-language=${lang}&q=` + encodeURIComponent(p.nom) + `&viewbox=${p.lng - 0.03},${p.lat + 0.03},${p.lng + 0.03},${p.lat - 0.03}&bounded=1`; j = await withTimeout(fetch(q2).then(r=>r.json()), 9000).catch(()=>null); }
+      const o = j && j[0];
       if(o){ const x = o.extratags || {};
         Object.assign(info, {oh:x.opening_hours || '', web:x.website || x['contact:website'] || x.url || '', tel:x.phone || x['contact:phone'] || '', wc:x.wheelchair || '', fee:x.fee || '', wiki:x.wikipedia || '', lat:+o.lat, lng:+o.lon}); }
     } catch(e){}
@@ -3139,8 +3142,14 @@
     try {
       let w = info.wiki ? wkParse(info.wiki) : null, data = null;
       const one = async (lg, title) => { const j = await withTimeout(fetch(`https://${lg}.wikipedia.org/w/api.php?action=query&prop=pageimages|extracts|langlinks&piprop=thumbnail&pithumbsize=640&exintro=1&explaintext=1&exsentences=4&lllang=${lang}&redirects=1&format=json&origin=*&titles=` + encodeURIComponent(title)).then(r=>r.json()), 9000); return Object.values((j.query||{}).pages||{})[0]; };
-      if(!w){ const s = await withTimeout(fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srlimit=1&format=json&origin=*&srsearch=` + encodeURIComponent(p.nom + ' ' + (city || ''))).then(r=>r.json()), 9000);
-        const hit = ((s.query||{}).search||[])[0]; if(hit) w = {lang, title:hit.title}; }
+      // sans lien Wikipédia dans OpenStreetMap : l’article doit vraiment parler de CE lieu (mots du nom dans le titre), jamais la commune ou les bus d’à côté
+      const STOP = new Set(['de','du','des','la','le','les','l','d','et','a','au','aux','en','the','of','and','di','del','della','von','der','die','das','el','los','las','san','saint','sainte','st','ste']);
+      const words = x => normQ(x).replace(/[^a-z0-9]+/g, ' ').split(' ').filter(z=>z.length > 1 && !STOP.has(z));
+      const nw = words(p.nom), fit = title => { const tw = new Set(words(title)); if(!nw.length) return 0; return nw.filter(z=>tw.has(z)).length / nw.length; };
+      if(!w && p.lat != null){ const g = await withTimeout(fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=1500&gslimit=20&format=json&origin=*&gscoord=${(+p.lat).toFixed(5)}|${(+p.lng).toFixed(5)}`).then(r=>r.json()), 9000).catch(()=>null);
+        const best = (((g || {}).query || {}).geosearch || []).map(x=>({t:x.title, f:fit(x.title), d:x.dist})).filter(x=>x.f >= 0.5).sort((a, b)=>b.f - a.f || a.d - b.d)[0]; if(best) w = {lang, title:best.t}; }
+      if(!w){ const s = await withTimeout(fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srlimit=5&format=json&origin=*&srsearch=` + encodeURIComponent(p.nom)).then(r=>r.json()), 9000);
+        const hit = ((s.query||{}).search||[]).map(x=>({t:x.title, f:fit(x.title)})).filter(x=>x.f >= 0.6).sort((a, b)=>b.f - a.f)[0]; if(hit) w = {lang, title:hit.t}; }
       if(w){ data = await one(w.lang, w.title);
         const ll = data && (data.langlinks || [])[0]; if(w.lang !== lang && ll && ll['*']){ const d2 = await one(lang, ll['*']).catch(()=>null); if(d2 && d2.extract){ data = Object.assign(d2, {thumbnail: d2.thumbnail || data.thumbnail}); w = {lang, title:ll['*']}; } } }
       if(data && data.extract){ info.txt = data.extract.slice(0, 700); info.wl = w.lang; info.wt = data.title || w.title; }
@@ -3159,9 +3168,9 @@
       ${!p.sugg ? `<button type="button" class="v-btn${p.vu ? ' sec' : ''}" style="margin-top:8px" onclick="CV.plVu('${ja(id)}')">${p.vu ? '↩️ ' + esc(MSGT('Pas encore vu')) : '✓ ' + esc(MSGT('C’est vu'))}</button>` : ''}
       <div class="v-actions">${back}<button type="button" class="v-btn sec cv-sq" onclick="${sg ? 'CV.suggOpen()' : 'CV.close()'}" aria-label="Fermer">✕</button></div>`);
     let info = p.info;
-    if(!info || refresh || Date.now() - (info.ts || 0) > 30 * 864e5){
+    if(!info || refresh || info.v !== 2 || Date.now() - (info.ts || 0) > 30 * 864e5){   // v2 : recherche Wikipédia plus stricte (anciennes fiches refaites)
       if(navigator.onLine !== false){ const got = await placeLookup(p, city);
-        if(got.oh || got.txt || got.web || got.img){ info = got; const c = clone(R[id]); c.info = got; if(c.lat == null && got.lat){ c.lat = got.lat; c.lng = got.lng; } put(c, false); } else if(!info) info = got; }
+        if(got.oh || got.txt || got.web || got.img){ info = got; const c = clone(R[id]); c.info = got; if(c.lat == null && got.lat){ c.lat = got.lat; c.lng = got.lng; } put(c, false); } else if(!info || info.v !== 2){ const bad = info && info.v !== 2; info = got; if(bad){ const c = clone(R[id]); c.info = got; put(c, false); } } }
     }
     const box = document.getElementById('pi-box'); if(!box || !R[id]) return; box.className = '';
     const P = R[id], I = info || {}, L = (window.I18N && I18N.locale) || 'fr-FR';
