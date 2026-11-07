@@ -3385,4 +3385,8 @@ I18N.load({
 "Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Nog niet geplaatst: kies een plek uit de lijst of zet hem op de kaart",
 "Déplace la carte : le souvenir se pose sous l’épingle":"Verschuif de kaart: de herinnering komt onder de speld",
 "Poser ici":"Hier plaatsen",
-"Souvenir posé ici":"Herinnering hier geplaatst"});
+"Souvenir posé ici":"Herinnering hier geplaatst",
+"Tu es à côté de « {0} »":"Je bent vlak bij ‘{0}’",
+"À {0} m de toi":"{0} m bij je vandaan",
+"C’est vu":"Gezien",
+"Pas encore vu":"Nog niet gezien"});

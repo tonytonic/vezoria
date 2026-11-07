@@ -6333,4 +6333,8 @@ I18N.load({
 "Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"अभी नहीं रखा: सूची से जगह चुनें या मानचित्र पर रखें",
 "Déplace la carte : le souvenir se pose sous l’épingle":"मानचित्र खिसकाएं: याद पिन के नीचे रखी जाएगी",
 "Poser ici":"यहां रखें",
-"Souvenir posé ici":"याद यहां रखी गई"});
+"Souvenir posé ici":"याद यहां रखी गई",
+"Tu es à côté de « {0} »":"आप “{0}” के पास हैं",
+"À {0} m de toi":"आपसे {0} मी दूर",
+"C’est vu":"देख लिया",
+"Pas encore vu":"अभी नहीं देखा"});

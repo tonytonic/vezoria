@@ -6334,4 +6334,8 @@ I18N.load({
 "Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"لم يُحدَّد بعد: اختر مكانًا من القائمة أو ضعه على الخريطة",
 "Déplace la carte : le souvenir se pose sous l’épingle":"حرّك الخريطة: توضع الذكرى تحت الدبوس",
 "Poser ici":"ضع هنا",
-"Souvenir posé ici":"تم وضع الذكرى هنا"});
+"Souvenir posé ici":"تم وضع الذكرى هنا",
+"Tu es à côté de « {0} »":"أنت بجانب «{0}»",
+"À {0} m de toi":"على بعد {0} م منك",
+"C’est vu":"تمت رؤيته",
+"Pas encore vu":"لم تتم رؤيته بعد"});

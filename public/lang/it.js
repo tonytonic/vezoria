@@ -3394,4 +3394,8 @@ I18N.load({
 "Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Non ancora posizionato: scegli un luogo dalla lista o mettilo sulla mappa",
 "Déplace la carte : le souvenir se pose sous l’épingle":"Sposta la mappa: il ricordo va sotto lo spillo",
 "Poser ici":"Posiziona qui",
-"Souvenir posé ici":"Ricordo posizionato qui"});
+"Souvenir posé ici":"Ricordo posizionato qui",
+"Tu es à côté de « {0} »":"Sei vicino a «{0}»",
+"À {0} m de toi":"A {0} m da te",
+"C’est vu":"Visto",
+"Pas encore vu":"Non ancora visto"});

@@ -6333,4 +6333,8 @@ I18N.load({
 "Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"尚未放置：从列表中选择地点或放到地图上",
 "Déplace la carte : le souvenir se pose sous l’épingle":"移动地图：回忆会放在图钉下",
 "Poser ici":"放在这里",
-"Souvenir posé ici":"回忆已放在这里"});
+"Souvenir posé ici":"回忆已放在这里",
+"Tu es à côté de « {0} »":"你就在「{0}」旁边",
+"À {0} m de toi":"距你 {0} 米",
+"C’est vu":"看过了",
+"Pas encore vu":"还没看"});

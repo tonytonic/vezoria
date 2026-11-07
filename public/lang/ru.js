@@ -6334,4 +6334,8 @@ I18N.load({
 "Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Ещё не отмечено: выбери место из списка или отметь на карте",
 "Déplace la carte : le souvenir se pose sous l’épingle":"Двигай карту: воспоминание встанет под булавку",
 "Poser ici":"Поставить здесь",
-"Souvenir posé ici":"Воспоминание отмечено здесь"});
+"Souvenir posé ici":"Воспоминание отмечено здесь",
+"Tu es à côté de « {0} »":"Ты рядом с «{0}»",
+"À {0} m de toi":"В {0} м от тебя",
+"C’est vu":"Видел(а)",
+"Pas encore vu":"Ещё не видел(а)"});

@@ -6333,4 +6333,8 @@ I18N.load({
 "Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"아직 위치 없음: 목록에서 장소를 고르거나 지도에 놓으세요",
 "Déplace la carte : le souvenir se pose sous l’épingle":"지도를 움직이세요: 추억이 핀 아래에 놓여요",
 "Poser ici":"여기에 놓기",
-"Souvenir posé ici":"추억을 여기에 놓았어요"});
+"Souvenir posé ici":"추억을 여기에 놓았어요",
+"Tu es à côté de « {0} »":"‘{0}’ 근처에 있어요",
+"À {0} m de toi":"{0}m 거리",
+"C’est vu":"봤어요",
+"Pas encore vu":"아직 안 봤어요"});

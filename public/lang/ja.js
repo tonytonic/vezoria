@@ -6333,4 +6333,8 @@ I18N.load({
 "Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"まだ未配置：リストから場所を選ぶか地図に置いてください",
 "Déplace la carte : le souvenir se pose sous l’épingle":"地図を動かす：思い出はピンの下に置かれます",
 "Poser ici":"ここに置く",
-"Souvenir posé ici":"思い出をここに置きました"});
+"Souvenir posé ici":"思い出をここに置きました",
+"Tu es à côté de « {0} »":"「{0}」のすぐ近くです",
+"À {0} m de toi":"あなたから {0} m",
+"C’est vu":"見た",
+"Pas encore vu":"まだ見ていない"});

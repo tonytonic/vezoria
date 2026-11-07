@@ -3398,4 +3398,8 @@ I18N.load({
 "Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Ainda não colocado: escolha um lugar da lista ou coloque no mapa",
 "Déplace la carte : le souvenir se pose sous l’épingle":"Mova o mapa: a lembrança fica sob o alfinete",
 "Poser ici":"Colocar aqui",
-"Souvenir posé ici":"Lembrança colocada aqui"});
+"Souvenir posé ici":"Lembrança colocada aqui",
+"Tu es à côté de « {0} »":"Você está perto de “{0}”",
+"À {0} m de toi":"A {0} m de você",
+"C’est vu":"Visto",
+"Pas encore vu":"Ainda não visto"});

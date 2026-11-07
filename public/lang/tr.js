@@ -6321,4 +6321,8 @@ I18N.load({
 "Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Henüz yerleştirilmedi: listeden bir yer seç veya haritaya koy",
 "Déplace la carte : le souvenir se pose sous l’épingle":"Haritayı kaydır: anı iğnenin altına konur",
 "Poser ici":"Buraya koy",
-"Souvenir posé ici":"Anı buraya kondu"});
+"Souvenir posé ici":"Anı buraya kondu",
+"Tu es à côté de « {0} »":"“{0}” yakınındasın",
+"À {0} m de toi":"Sana {0} m uzaklıkta",
+"C’est vu":"Görüldü",
+"Pas encore vu":"Henüz görülmedi"});

@@ -3379,4 +3379,8 @@ I18N.load({
 "Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Not placed yet: pick a place from the list or put it on the map",
 "Déplace la carte : le souvenir se pose sous l’épingle":"Move the map: the memory goes under the pin",
 "Poser ici":"Place here",
-"Souvenir posé ici":"Memory placed here"});
+"Souvenir posé ici":"Memory placed here",
+"Tu es à côté de « {0} »":"You’re next to “{0}”",
+"À {0} m de toi":"{0} m from you",
+"C’est vu":"Seen it",
+"Pas encore vu":"Not seen yet"});
