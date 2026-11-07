@@ -1560,10 +1560,11 @@
     closeSheet(true);
     if(isNew){ M.tab = 'prog'; go(t.id); } else { refresh(); inviteAdded(t.id, t.voyageurs.filter(p=>!before.includes(p)));
       const rm = before.filter(p=>p !== M.me && !t.voyageurs.includes(p) && list('member', m=>m.trip === t.id && m.pid === p).length);   // 👤 compagnon décoché : il perd vraiment l’accès (copie en lecture seule)
-      if(rm.length) setTimeout(async ()=>{ for(const p of rm){ try { await compRevoke(t.id, p); (M.rvAsk = M.rvAsk || {})[t.id + '|' + p] = Date.now(); } catch(e){} } persist(); }, 300); }
+      if(rm.length) setTimeout(async ()=>{ for(const p of rm){ try { if(await uiConfirm(RF('{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.', pname(p), t.titre || ''))) await compRevoke(t.id, p); } catch(e){} } persist(); }, 300); }
   }
   async function delTrip(id){
     const t = R[id]; if(!t) return;
+    if(t.ro) return roDrop(id);   // 📖 copie en lecture seule : on la retire de mon Vezoria
     // voyage partagé créé par quelqu’un d’autre : on ne le supprime que chez soi (on le quitte), jamais chez les autres
     const sc = TS()[id], shared = sc && spaceObj(sc), notMine = (t.createdBy && t.createdBy !== M.me) || (!t.createdBy && (M.viaP || {})[id]);
     if(shared && (notMine || mbOthers(id).length)){   // créateur aussi : s’il reste des compagnons, le voyage continue pour eux

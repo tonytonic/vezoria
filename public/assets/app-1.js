@@ -1608,7 +1608,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       if(env.length) await spacePushOnly(oldSp, env);
       // 👀 ancien compagnon : il garde le voyage en lecture seule ; si ce voyage est montré aux abonnés, il reçoit son lien d’abonné (❤️ et 💬)
       { const mm = list('member', y=>y.trip === t && isBad(y) && y.pk && y.ib)[0];
-        if(mm && typeof ab2Vis === 'function' && ab2Vis().includes(t)) setTimeout(async ()=>{ try { const x = await ab2NewInv(pk.who || mm.who || '?');
+        const nmw = nmKey(pk.who || (mm && mm.who) || ''), already = mm && (list('follower', f=>!f.deleted && ((mm.pid && f.pid === mm.pid) || fwDevOf(f) === mm.dev)).length || (nmw && AI().some(x=>!x.pub && nmKey(x.name) === nmw)));
+        if(mm && !already && typeof ab2Vis === 'function' && ab2Vis().includes(t)) setTimeout(async ()=>{ try { const x = await ab2NewInv(pk.who || mm.who || '?');
           await ivSend({dev:mm.dev, pk:mm.pk, ib:mm.ib}, {k:'follow', id:uid(), c:x.code, t:(R[t] || {}).titre || ''}); } catch(e){} }, 1500); }
       // 👤 la personne retirée quitte aussi la liste des voyageurs (ses appareils venus par ce paquet)
       { const gone = new Set(list('member', y=>y.trip === t && isBad(y) && y.pid).map(y=>y.pid)), tr = R[t]; if(exPid) gone.add(exPid);
@@ -1658,11 +1659,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       .forEach(t=>{ if(revk(t)){ const c = TS()[t.id]; delete TS()[t.id]; (M.left = M.left || {})[t.id] = Date.now(); if(!Object.values(TS()).includes(c)) M.spaces = (M.spaces || []).filter(x=>x.code !== c); }
         fix.push(Object.assign(clone(t), {ro:1, roAt:Date.now()})); });
     if(fix.length){ persist(); putQuiet(fix); refresh(); }
-    // 👤 retiré des voyageurs par l’auteur alors que mon téléphone y est encore : je quitte le voyage, il reste en lecture seule
-    { const me = devId(), kick = list('trip', t=>!t.deleted && !t.demo && !t.ro && TS()[t.id] && t.createdBy && t.createdBy !== M.me && tripAdmin(t) !== M.me && !(t.voyageurs || []).includes(M.me) && t.updatedBy !== M.me
-        && list('member', m=>m.trip === t.id && m.dev === me && m.pid === M.me).length);
-      if(kick.length && !roFix.busy){ roFix.busy = 1; (async ()=>{ try { for(const t of kick){ if(await tripLeaveGo(t.id, 'keep', true)){ const x = R[t.id]; if(x && !x.deleted) putQuiet([Object.assign(clone(x), {ro:1, roAt:Date.now()})]); } } } catch(e){} finally { roFix.busy = 0; refresh(); } })(); } }
-    roFeedBack(); setTimeout(()=>{ try { compOrphans().catch(()=>{}); } catch(e){} }, 4000);
+    roFeedBack();
+    // 📖 voyage en lecture seule : je ne le montre plus à MES abonnés (ce n’est plus mon voyage)
+    try { list('trip', t=>t.ro && !t.deleted && FT()[t.id] && FT()[t.id] === ab2C()).forEach(t=>{ feedStop(t.id, true).catch(()=>{}); }); } catch(e){}
   }
   // 👤 compagnon décoché des voyageurs (fiche du voyage) mais qui a encore l’accès : on propose de lui retirer pour de vrai
   async function compOrphans(){ if(compOrphans.busy || !M.me) return; const A = M.rvAsk || (M.rvAsk = {}), me = devId();

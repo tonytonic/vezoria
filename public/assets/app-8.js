@@ -1992,7 +1992,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-07a'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-07b'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2869,7 +2869,7 @@
     'packSave','packRemoveTrip','packDel','tripLeaveGo','tripUnshare','tripNewCode','serverWipeTrip','serverWipeSheet','cloudLeave','cloudTripOff','cloudFeedCut','syncOff',
     'demoDel','demoReset','pendDrop','pendAgain','expAdd','tripInviteNow','withWhomGo','followInviteGo','pjDel','pollDel','tlDocDel','shopClear','spaceFree','photoSweep'];
   [...MUT, ...NEWMUT, ...SHAREMUT, 'serverWipe'].forEach(n=>{ const f = api[n]; if(!f) return; api[n] = (...a) => {
-    if(M.lock && !(n==='editSouv' && a[0])){ toast('🔒 Mode lecture : touche le cadenas en haut pour modifier'); return; }
+    if(M.lock && !(n==='editSouv' && a[0]) && !(n==='delTrip' && R[a[0]] && R[a[0]].ro)){ toast('🔒 Mode lecture : touche le cadenas en haut pour modifier'); return; }
     return f(...a); }; });
   const CV = api;
 
