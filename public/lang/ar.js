@@ -6378,4 +6378,7 @@ I18N.load({
 "Position à jour (± {0} m)":"تم تحديث الموقع (± {0} م)",
 "non partagée : le suivi GPS est coupé":"غير مشاركة: تتبع GPS متوقف",
 "Position refusée : autorise la localisation pour Vezoria":"تم رفض الموقع: اسمح بتحديد الموقع لـ Vezoria",
-"Position introuvable pour l’instant, réessaie dehors":"تعذّر العثور على الموقع، حاول في الخارج"});
+"Position introuvable pour l’instant, réessaie dehors":"تعذّر العثور على الموقع، حاول في الخارج",
+"Ton téléphone prépare les photos…":"هاتفك يجهّز الصور…",
+"Ça peut prendre quelques secondes s’il y en a beaucoup.":"قد يستغرق بضع ثوانٍ إذا كانت كثيرة.",
+"Touche pour fermer si tu as annulé":"اضغط للإغلاق إن ألغيت"});

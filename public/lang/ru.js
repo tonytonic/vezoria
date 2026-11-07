@@ -6378,4 +6378,7 @@ I18N.load({
 "Position à jour (± {0} m)":"Местоположение обновлено (± {0} м)",
 "non partagée : le suivi GPS est coupé":"не передаётся: GPS-трекинг выключен",
 "Position refusée : autorise la localisation pour Vezoria":"Доступ к геолокации запрещён: разреши его для Vezoria",
-"Position introuvable pour l’instant, réessaie dehors":"Местоположение не найдено, попробуй на улице"});
+"Position introuvable pour l’instant, réessaie dehors":"Местоположение не найдено, попробуй на улице",
+"Ton téléphone prépare les photos…":"Телефон готовит фото…",
+"Ça peut prendre quelques secondes s’il y en a beaucoup.":"Если фото много, это займёт несколько секунд.",
+"Touche pour fermer si tu as annulé":"Нажми, чтобы закрыть, если отменил"});

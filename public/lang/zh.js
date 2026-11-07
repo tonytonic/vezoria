@@ -6377,4 +6377,7 @@ I18N.load({
 "Position à jour (± {0} m)":"位置已更新（± {0} 米）",
 "non partagée : le suivi GPS est coupé":"未共享：GPS 追踪已关闭",
 "Position refusée : autorise la localisation pour Vezoria":"位置被拒绝：请允许 Vezoria 使用定位",
-"Position introuvable pour l’instant, réessaie dehors":"暂时找不到位置，请到户外再试"});
+"Position introuvable pour l’instant, réessaie dehors":"暂时找不到位置，请到户外再试",
+"Ton téléphone prépare les photos…":"手机正在准备照片…",
+"Ça peut prendre quelques secondes s’il y en a beaucoup.":"照片较多时可能需要几秒钟。",
+"Touche pour fermer si tu as annulé":"如已取消，轻点关闭"});

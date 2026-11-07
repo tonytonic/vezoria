@@ -6377,4 +6377,7 @@ I18N.load({
 "Position à jour (± {0} m)":"위치 업데이트됨 (± {0}m)",
 "non partagée : le suivi GPS est coupé":"공유 안 됨: GPS 추적이 꺼져 있어요",
 "Position refusée : autorise la localisation pour Vezoria":"위치 거부됨: Vezoria에 위치 권한을 허용하세요",
-"Position introuvable pour l’instant, réessaie dehors":"아직 위치를 찾지 못했어요. 밖에서 다시 시도하세요"});
+"Position introuvable pour l’instant, réessaie dehors":"아직 위치를 찾지 못했어요. 밖에서 다시 시도하세요",
+"Ton téléphone prépare les photos…":"휴대폰이 사진을 준비하고 있어요…",
+"Ça peut prendre quelques secondes s’il y en a beaucoup.":"사진이 많으면 몇 초 걸릴 수 있어요.",
+"Touche pour fermer si tu as annulé":"취소했다면 눌러서 닫기"});

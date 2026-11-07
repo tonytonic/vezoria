@@ -6377,4 +6377,7 @@ I18N.load({
 "Position à jour (± {0} m)":"現在地を更新（± {0} m）",
 "non partagée : le suivi GPS est coupé":"共有されていません：GPS追跡がオフです",
 "Position refusée : autorise la localisation pour Vezoria":"位置情報が拒否されました：Vezoriaに許可してください",
-"Position introuvable pour l’instant, réessaie dehors":"まだ位置が取れません。屋外で再度お試しください"});
+"Position introuvable pour l’instant, réessaie dehors":"まだ位置が取れません。屋外で再度お試しください",
+"Ton téléphone prépare les photos…":"スマホが写真を準備しています…",
+"Ça peut prendre quelques secondes s’il y en a beaucoup.":"枚数が多いと数秒かかることがあります。",
+"Touche pour fermer si tu as annulé":"キャンセルした場合はタップして閉じる"});

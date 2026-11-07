@@ -3438,4 +3438,7 @@ I18N.load({
 "Position à jour (± {0} m)":"Posizione aggiornata (± {0} m)",
 "non partagée : le suivi GPS est coupé":"non condivisa: il tracciamento GPS è spento",
 "Position refusée : autorise la localisation pour Vezoria":"Posizione negata: consenti la localizzazione a Vezoria",
-"Position introuvable pour l’instant, réessaie dehors":"Posizione non trovata per ora, riprova all’aperto"});
+"Position introuvable pour l’instant, réessaie dehors":"Posizione non trovata per ora, riprova all’aperto",
+"Ton téléphone prépare les photos…":"Il telefono sta preparando le foto…",
+"Ça peut prendre quelques secondes s’il y en a beaucoup.":"Può richiedere qualche secondo se sono tante.",
+"Touche pour fermer si tu as annulé":"Tocca per chiudere se hai annullato"});

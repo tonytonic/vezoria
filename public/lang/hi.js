@@ -6377,4 +6377,7 @@ I18N.load({
 "Position à jour (± {0} m)":"लोकेशन अपडेट (± {0} मी)",
 "non partagée : le suivi GPS est coupé":"साझा नहीं: GPS ट्रैकिंग बंद है",
 "Position refusée : autorise la localisation pour Vezoria":"लोकेशन अस्वीकृत: Vezoria के लिए अनुमति दें",
-"Position introuvable pour l’instant, réessaie dehors":"लोकेशन अभी नहीं मिली, बाहर फिर कोशिश करें"});
+"Position introuvable pour l’instant, réessaie dehors":"लोकेशन अभी नहीं मिली, बाहर फिर कोशिश करें",
+"Ton téléphone prépare les photos…":"आपका फ़ोन फ़ोटो तैयार कर रहा है…",
+"Ça peut prendre quelques secondes s’il y en a beaucoup.":"ज़्यादा फ़ोटो हों तो कुछ सेकंड लग सकते हैं।",
+"Touche pour fermer si tu as annulé":"रद्द किया हो तो बंद करने के लिए टैप करें"});

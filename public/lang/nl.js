@@ -3429,4 +3429,7 @@ I18N.load({
 "Position à jour (± {0} m)":"Locatie bijgewerkt (± {0} m)",
 "non partagée : le suivi GPS est coupé":"niet gedeeld: GPS-volgen staat uit",
 "Position refusée : autorise la localisation pour Vezoria":"Locatie geweigerd: sta locatie toe voor Vezoria",
-"Position introuvable pour l’instant, réessaie dehors":"Locatie nog niet gevonden, probeer het buiten"});
+"Position introuvable pour l’instant, réessaie dehors":"Locatie nog niet gevonden, probeer het buiten",
+"Ton téléphone prépare les photos…":"Je telefoon bereidt de foto’s voor…",
+"Ça peut prendre quelques secondes s’il y en a beaucoup.":"Bij veel foto’s kan het een paar seconden duren.",
+"Touche pour fermer si tu as annulé":"Tik om te sluiten als je annuleerde"});

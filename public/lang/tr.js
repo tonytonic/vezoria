@@ -6365,4 +6365,7 @@ I18N.load({
 "Position à jour (± {0} m)":"Konum güncellendi (± {0} m)",
 "non partagée : le suivi GPS est coupé":"paylaşılmadı: GPS takibi kapalı",
 "Position refusée : autorise la localisation pour Vezoria":"Konum reddedildi: Vezoria için konuma izin ver",
-"Position introuvable pour l’instant, réessaie dehors":"Konum henüz bulunamadı, dışarıda tekrar dene"});
+"Position introuvable pour l’instant, réessaie dehors":"Konum henüz bulunamadı, dışarıda tekrar dene",
+"Ton téléphone prépare les photos…":"Telefonun fotoğrafları hazırlıyor…",
+"Ça peut prendre quelques secondes s’il y en a beaucoup.":"Çok fotoğraf varsa birkaç saniye sürebilir.",
+"Touche pour fermer si tu as annulé":"İptal ettiysen kapatmak için dokun"});
