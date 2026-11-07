@@ -2489,7 +2489,8 @@
   function syncState(){
     const sps = (M.spaces||[]), any = (M.sync.on && M.sync.code) || sps.length;
     if(!any) return 'off';
-    { const er = [M.sync.err ? M.sync : null, ...sps.filter(x=>x.err)].filter(Boolean);   // 📴 réseau coupé ou serveur injoignable : « Hors ligne », pas « Souci »
+    // ⚠️ seulement ce qui bloque vraiment : pas un espace qui attend juste un compte et n’a rien à envoyer (ex. ancien fil d’abonnés vide)
+    { const er = [M.sync.err ? M.sync : null, ...sps.filter(x=>x.err && !(x.needAcct && !(x.dirty || []).length))].filter(Boolean);   // 📴 réseau coupé ou serveur injoignable : « Hors ligne », pas « Souci »
       if(er.length) return navigator.onLine === false || er.every(x=>x.net) ? 'offline' : 'err'; }
     const mainOn = !!(M.sync.on && M.sync.code), pqLive = Math.max(0, (M.pq||[]).length - (M.pqWait||0));   // en attente d’un carnet en ligne ≠ en cours d’envoi
     if(syncing || (mainOn && M.dirty.length) || sps.some(x=>(x.dirty||[]).length)) return 'wait';
@@ -2526,6 +2527,13 @@
   const cloudMode = () => M.cloud || (M.sync.on && M.sync.code ? 'all' : myTrips().some(t=>tripInCloud(t.id) && !mateTrip(t.id)) ? 'trips' : memberSpaces().length ? 'mate' : '');
   const CLOUD_L = {all:['☁️', 'Tout mon carnet dans le cloud'], trips:['🧳', 'Voyage par voyage'], none:['📱', 'Sans cloud'], mate:['👥', 'Compagnon d’un carnet']};
   function cloudState(sp){ return sp.err ? (sp.net ? '📴 ' : '⚠️ ') + esc(sp.err) : (sp.dirty||[]).length ? '⏳ ' + sp.dirty.length + ' modif(s) à envoyer' : '✓ à jour' + (sp.last ? ' · ' + vzWhen(sp.last) : ''); }
+  // ⚠️ ce qui ne passe pas, en clair (voyage, abonnement, fil d’abonnés)
+  function cloudErrs(){ try {
+    const nm = c => { if(M.subs && M.subs[c]) return '👀 ' + (M.subs[c].owner || MSGT('Abonnement')); if(c === ab2C()) return '👀 ' + MSGT('Mes abonnés');
+      const tid = Object.keys(TS()).find(k=>TS()[k] === c && R[k] && R[k].type === 'trip'); return tid ? '🧳 ' + (R[tid].titre || '') : '☁️ ' + c.slice(0, 4) + '…'; };
+    const L = (M.spaces || []).filter(x=>x.err && !(x.needAcct && !(x.dirty || []).length));
+    return L.length ? `<div class="err" style="margin:8px 0">${L.map(x=>`<div><b data-notr>${esc(nm(x.code))}</b> : ${esc(x.err)}</div>`).join('')}</div>` : '';
+  } catch(e){ return ''; } }
   function cloudSheet(view){
     const mode = cloudMode(), choose = view === 'choose' || !mode;
     if(choose){
@@ -2537,6 +2545,7 @@
         <div class="sy-r" style="margin-top:6px"><b>🔑 Tu as déjà un code ?</b><small>Ton code administrateur (celui de ton autre appareil : tout ton carnet arrive ici) ou un code compagnon reçu d’un proche.</small>
           <div class="cv-row" style="margin-top:6px"><input class="v-in" id="sy-join" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.cloudJoinMain()">Utiliser</button></div>${qrBtn('sy-join')}</div>
         <button type="button" class="v-btn sec" onclick="CV.close();CV.joinAny()">🤝 J’ai reçu une invitation dans un voyage</button>
+        ${(M.spaces || []).length ? `${cloudErrs()}<button type="button" class="v-btn sec" onclick="CV.syncNow(true)">🔄 ${MSGT('Synchroniser maintenant')}</button>` : ''}
         <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${mode ? 'Annuler' : 'Plus tard'}</button></div>`);
       return;
     }
@@ -2546,7 +2555,7 @@
       ${(()=>{ const pend = [...(s.on && s.code ? M.dirty.map(id=>[id, '']) : []), ...(M.spaces||[]).flatMap(x=>(x.dirty||[]).map(id=>[id, x.code]))], dn = pend.length, last = Math.max(s.last || 0, ...(M.spaces||[]).map(x=>x.last || 0));
         return `<div class="cv-cl-st">${dn ? `<details><summary>📝 ${RF('{0} modification(s) à envoyer', dn)}${last ? ' · ' + vzWhen(last) : ''}</summary><div class="cv-cl-pd">${pend.slice(0, 25).map(([id, c])=>{ const r = R[id]; return `<div>${r ? esc(r.type) + ' · <span data-notr>' + esc(String(r.titre || r.nom || r.texte || r.id).slice(0, 40)) + '</span>' : '<i>' + esc(MSGT('fiche introuvable')) + '</i> ' + esc(String(id).slice(0, 24))}${c ? ' <small>' + esc(c.slice(0, 4)) + '…</small>' : ''}</div>`; }).join('')}</div></details>` : `<div>📝 ${MSGT('Tes modifications sont envoyées')}${last ? ' · ' + vzWhen(last) : ''}</div>`}${ph ? `<div>📷 ${RF('{0} photo(s) en route : elles partent en arrière-plan, appli ouverte.', ph)}</div>` : ''}${M.pqErr ? `<div class="err">${esc(M.pqErr)}</div>` : ''}
           ${(()=>{ const B = Object.keys(M.syncBig || {}).filter(id=>R[id] && !R[id].deleted); return B.length ? `<div class="err">🧱 ${RF('{0} fiche(s) trop volumineuse(s) pour le serveur : elles restent sur ce téléphone, sans être partagées. Raccourcis le texte pour qu’elles partent.', B.length)}<br><small data-notr>${B.slice(0, 5).map(id=>esc(String(R[id].titre || R[id].nom || R[id].texte || R[id].type || '').slice(0, 40))).join(' · ')}</small></div>` : ''; })()}
-          <button type="button" class="v-btn sec" onclick="CV.syncNow(true)">🔄 ${MSGT('Synchroniser maintenant')}</button></div>`; })()}`;
+          ${cloudErrs()}<button type="button" class="v-btn sec" onclick="CV.syncNow(true)">🔄 ${MSGT('Synchroniser maintenant')}</button></div>`; })()}`;
     if(mode === 'all'){
       h += `<div class="sy-r"><b>🔑 Mon code administrateur</b><small>${s.on && s.code ? cloudState(s) : ''}</small>
           <div class="cv-row" style="margin-top:6px"><b class="cv-code">${esc(s.code || '')}</b><button type="button" class="v-btn sec" style="width:auto;margin:0 0 0 auto;padding:6px 12px" onclick="CV.copyCode()">📋 Copier</button></div>

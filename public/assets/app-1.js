@@ -762,9 +762,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
           if(r && (r.type==='feedgrant' || r.type==='packtrip') && r.trip && !TS()[r.trip] && (M.unfol || {})[r.trip] !== 2) TS()[r.trip] = sp.code; });
         changed += mergeRemote(j.records); sp.since = j.now; aft();
       }
-      sp.last = Date.now(); sp.err = ''; sp.net = false; sp.errSince = 0; sp.revoked = false;
+      sp.last = Date.now(); sp.err = ''; sp.net = false; sp.errSince = 0; sp.revoked = false; sp.needAcct = false;
       mateFeedTidy(); ftPick();
-    } catch(e){ sp.err = e.message || String(e); sp.net = !!e.net; sp.revoked = !!e.revoked; if(!sp.errSince) sp.errSince = Date.now(); if(e.needAcct) setTimeout(()=>{ try { acctNeedSpace(); } catch(x){} }, 700); }
+    } catch(e){ sp.err = e.message || String(e); sp.net = !!e.net; sp.revoked = !!e.revoked; sp.needAcct = !!e.needAcct; if(!sp.errSince) sp.errSince = Date.now(); if(e.needAcct) setTimeout(()=>{ try { acctNeedSpace(); } catch(x){} }, 700); }
     return changed;
   }
   // 👀 voyages suivis en abonné que je fais AUSSI en compagnon : retirés de « Je suis » (je les ai déjà en entier), et je ne compte plus
