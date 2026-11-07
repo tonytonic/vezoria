@@ -6382,4 +6382,5 @@ I18N.load({
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"사진이 많으면 몇 초 걸릴 수 있어요.",
 "Touche pour fermer si tu as annulé":"취소했다면 눌러서 닫기",
 "Retour à l’hôtel":"호텔로 돌아가기",
-"ce soir":"오늘 저녁"});
+"ce soir":"오늘 저녁",
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"장소와 순간마다 추억 하나: 500m 이내, 1시간 15분 넘게 쉬지 않고 찍은 사진. 나중에 같은 곳에 다시 오면 새 추억이 돼요."});

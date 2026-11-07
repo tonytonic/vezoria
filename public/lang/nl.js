@@ -3434,4 +3434,5 @@ I18N.load({
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"Bij veel foto’s kan het een paar seconden duren.",
 "Touche pour fermer si tu as annulé":"Tik om te sluiten als je annuleerde",
 "Retour à l’hôtel":"Terug naar het hotel",
-"ce soir":"vanavond"});
+"ce soir":"vanavond",
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Eén herinnering per plek en moment: foto’s binnen 500 m, zonder pauze langer dan 1 u 15. Later terugkomen op dezelfde plek geeft een nieuwe herinnering."});

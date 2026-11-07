@@ -3428,4 +3428,5 @@ I18N.load({
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"It can take a few seconds if there are many.",
 "Touche pour fermer si tu as annulé":"Tap to close if you cancelled",
 "Retour à l’hôtel":"Back to the hotel",
-"ce soir":"tonight"});
+"ce soir":"tonight",
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"One memory per place and moment: photos within 500 m, with no break longer than 1 h 15. Coming back to the same spot later makes a new memory."});

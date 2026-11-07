@@ -3447,4 +3447,5 @@ I18N.load({
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"Pode levar alguns segundos se forem muitas.",
 "Touche pour fermer si tu as annulé":"Toque para fechar se cancelou",
 "Retour à l’hôtel":"Volta ao hotel",
-"ce soir":"hoje à noite"});
+"ce soir":"hoje à noite",
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Uma lembrança por lugar e momento: fotos a menos de 500 m, sem pausa maior que 1 h 15. Voltar ao mesmo lugar mais tarde cria uma nova lembrança."});

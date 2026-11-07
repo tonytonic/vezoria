@@ -6383,4 +6383,5 @@ I18N.load({
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"قد يستغرق بضع ثوانٍ إذا كانت كثيرة.",
 "Touche pour fermer si tu as annulé":"اضغط للإغلاق إن ألغيت",
 "Retour à l’hôtel":"العودة إلى الفندق",
-"ce soir":"هذا المساء"});
+"ce soir":"هذا المساء",
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"ذكرى لكل مكان ولحظة: صور ضمن 500 م دون توقف أطول من ساعة و15 دقيقة. العودة لاحقًا إلى المكان نفسه تصنع ذكرى جديدة."});

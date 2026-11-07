@@ -3438,4 +3438,5 @@ I18N.load({
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"Bei vielen Fotos kann es ein paar Sekunden dauern.",
 "Touche pour fermer si tu as annulé":"Tippen zum Schließen, falls abgebrochen",
 "Retour à l’hôtel":"Zurück zum Hotel",
-"ce soir":"heute Abend"});
+"ce soir":"heute Abend",
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Eine Erinnerung pro Ort und Moment: Fotos innerhalb von 500 m, ohne Pause über 1 Std. 15. Später an denselben Ort zurück = neue Erinnerung."});

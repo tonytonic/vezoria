@@ -6382,4 +6382,5 @@ I18N.load({
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"ज़्यादा फ़ोटो हों तो कुछ सेकंड लग सकते हैं।",
 "Touche pour fermer si tu as annulé":"रद्द किया हो तो बंद करने के लिए टैप करें",
 "Retour à l’hôtel":"होटल वापसी",
-"ce soir":"आज शाम"});
+"ce soir":"आज शाम",
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"हर जगह और पल की एक याद: 500 मी के भीतर, 1 घं 15 मि से लंबे विराम के बिना फ़ोटो। बाद में उसी जगह लौटना नई याद बनाता है।"});

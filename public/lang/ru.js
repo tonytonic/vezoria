@@ -6383,4 +6383,5 @@ I18N.load({
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"Если фото много, это займёт несколько секунд.",
 "Touche pour fermer si tu as annulé":"Нажми, чтобы закрыть, если отменил",
 "Retour à l’hôtel":"Возвращение в отель",
-"ce soir":"сегодня вечером"});
+"ce soir":"сегодня вечером",
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Одно воспоминание на место и момент: фото в пределах 500 м, без перерыва дольше 1 ч 15 мин. Вернулись позже — новое воспоминание."});

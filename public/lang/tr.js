@@ -6370,4 +6370,5 @@ I18N.load({
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"Çok fotoğraf varsa birkaç saniye sürebilir.",
 "Touche pour fermer si tu as annulé":"İptal ettiysen kapatmak için dokun",
 "Retour à l’hôtel":"Otele dönüş",
-"ce soir":"bu akşam"});
+"ce soir":"bu akşam",
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"Her yer ve an için bir anı: 500 m içinde, 1 sa 15 dk’dan uzun ara vermeden çekilen fotoğraflar. Aynı yere sonra dönmek yeni bir anı olur."});

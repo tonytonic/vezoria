@@ -6382,4 +6382,5 @@ I18N.load({
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"枚数が多いと数秒かかることがあります。",
 "Touche pour fermer si tu as annulé":"キャンセルした場合はタップして閉じる",
 "Retour à l’hôtel":"ホテルへ戻る",
-"ce soir":"今夜"});
+"ce soir":"今夜",
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"場所と時間ごとに1つの思い出：500 m以内、1時間15分以上の間隔なしの写真。後で同じ場所に戻ると新しい思い出になります。"});

@@ -6382,4 +6382,5 @@ I18N.load({
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"照片较多时可能需要几秒钟。",
 "Touche pour fermer si tu as annulé":"如已取消，轻点关闭",
 "Retour à l’hôtel":"返回酒店",
-"ce soir":"今晚"});
+"ce soir":"今晚",
+"Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.":"每个地点和时段一个回忆：500 米内、间隔不超过 1 小时 15 分的照片。稍后再回到同一地点会生成新回忆。"});
