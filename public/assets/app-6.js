@@ -1431,7 +1431,7 @@
     days.forEach(d=>{ const pl = placesOf(d);
       pl.forEach((p, k)=>{ if(p.vu) return;   // ✓ déjà vue : l’étape suivante prend la place
         let at = new Date(d + 'T09:00:00').getTime() + k * 1000; if(d === td && at < now) at = now + 60000 + k * 1000;   // aujourd’hui : celles qui restent
-        out.push({it:{id:p.id, _pl:1, cat:'visite', titre:p.nom || MSGT('Visite'), date:d, adresse:p.adresse || '', qui:p.qui, k1:k + 1, n:pl.length}, at, end:0, timed:false, on:false, k}); }); });
+        out.push({it:{id:p.id, _pl:1, cat:'visite', titre:p.nom || MSGT('Visite'), date:d, adresse:p.adresse || '', ville:p.ville || '', qui:p.qui, k1:k + 1, n:pl.length}, at, end:0, timed:false, on:false, k}); }); });
     return out;
   }
   function nextHero(){
@@ -1451,7 +1451,7 @@
     const it = nx.it, td = isoToday(), tm = it.cat==='transport' ? it.heureDep : it.heure, icon = x => x._pl ? '📍' : ICON0(x);
     const day = it.date === td ? 'Aujourd’hui' : it.date === new Date(Date.now()+864e5).toISOString().slice(0,10) ? 'Demain' : fdate(it.date);
     const sub = it.cat==='transport' ? [it.from && it.to ? it.from + ' → ' + it.to : '', it.compagnie, it.heureArr ? 'arrivée ' + it.heureArr : ''].filter(Boolean).join(' · ')
-      : it.cat==='hotel' ? [it.nom, it.adresse].filter(Boolean).join(' · ') : it._pl ? [MSGT('Visite') + (it.n > 1 ? ' ' + it.k1 + '/' + it.n : ''), it.adresse].filter(Boolean).join(' · ') : [it.adresse, it.lieu].filter(Boolean).join(' · ');
+      : it.cat==='hotel' ? [it.nom, it.adresse].filter(Boolean).join(' · ') : it._pl ? [MSGT('Visite') + (it.n > 1 ? ' ' + it.k1 + '/' + it.n : ''), it.ville ? '🏙️ ' + it.ville : '', it.adresse].filter(Boolean).join(' · ') : [it.adresse, it.lieu].filter(Boolean).join(' · ');
     const pj = (it.pj||[])[0], more = L.slice(ix + 1, ix + 3);
     const b = (ic, l, fn) => `<button type="button" onclick="${fn}"><i>${ic}</i>${l}</button>`;
     const enr = nx.on, pc = enr ? Math.round(100 * (Date.now() - nx.at) / Math.max(1, nx.end - nx.at)) : 0;
@@ -1465,7 +1465,7 @@
         : `<div class="hc"><span id="cv-hero-cd">${hhmm(nx.at - Date.now())}</span><small>${day}${nx.afterArr ? ' · ' + esc(MSGT('après ton arrivée')) : nx.timed ? ' · ' + esc(tm) : it.cat==='hotel' ? ' · arrivée à l’hôtel' : ''}</small></div>`}
       ${it.ref ? `<button type="button" class="href" onclick="CV.nhCopy('${ja(it.ref)}')">Réf. <b>${esc(it.ref)}</b> <i>⧉</i></button>` : ''}
       <div class="hb">${it.cat==='transport' && it.mode==='Avion' && nx.at - Date.now() < 36*3600e3 ? b('🛫','Embarquement',`CV.boardShow('${ja(it.id)}')`) : ''}${b('🧭','Y aller',`CV.nhGo('${ja(it.id)}')`)}${it._pl ? b('✅', MSGT('C’est vu'), `CV.plVu('${ja(it.id)}',1)`) : ''}${pj ? b('🎫','Billet',`CV.pjOpen('${ja(pj.id)}','${esc(pj.t||'img')}')`) : ''}${it.tel ? b('📞','Appeler',`location.href='tel:${esc(String(it.tel).replace(/[^+\d]/g,''))}'`) : ''}${b('✏️', 'Fiche', it._pl ? `CV.plInfo('${ja(it.id)}')` : `CV.edit('${ja(it.id)}')`)}</div>
-      ${more.length ? `<div class="hn">Ensuite : ${more.map(m=>`${icon(m.it)} ${esc(m.it.titre)} <small>${m.it.date === td ? '' : fshort(m.it.date) + ' '}${esc(m.afterArr || m.it._pl ? '' : (m.it.cat==='transport' ? m.it.heureDep : m.it.heure) || '')}</small>`).join(' &nbsp;·&nbsp; ')}</div>` : ''}</div>`;
+      ${more.length ? `<div class="hn">Ensuite : ${more.map(m=>`${icon(m.it)} ${esc(m.it.titre)}${m.it.ville && m.it.ville !== it.ville ? ' (' + esc(m.it.ville) + ')' : ''} <small>${m.it.date === td ? '' : fshort(m.it.date) + ' '}${esc(m.afterArr || m.it._pl ? '' : (m.it.cat==='transport' ? m.it.heureDep : m.it.heure) || '')}</small>`).join(' &nbsp;·&nbsp; ')}</div>` : ''}</div>`;
   }
   const NHI = {t:'', i:0, n:0};
   function nhStep(d){ NHI.i = Math.max(0, Math.min((NHI.n || 1) - 1, NHI.i + d)); const h = document.getElementById('cv-hero'); if(!h) return refresh();

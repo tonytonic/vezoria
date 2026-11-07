@@ -3380,3 +3380,5 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .cv-hero .hnav button{width:30px;height:30px;border-radius:50%;border:0;background:rgba(255,255,255,.22);color:#fff;font-size:1.1rem;line-height:1}.cv-hero .hnav button:disabled{opacity:.3}
 .cv-hero .hnav small{font-size:.8rem;opacity:.85}
 .cv-hero.nh-r{animation:nhR .25s ease}.cv-hero.nh-l{animation:nhL .25s ease}@keyframes nhR{from{transform:translateX(30px);opacity:.4}}@keyframes nhL{from{transform:translateX(-30px);opacity:.4}}
+
+.pl-v{font-weight:500;opacity:.65;font-size:.8em;margin-left:4px}

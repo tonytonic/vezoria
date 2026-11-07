@@ -374,12 +374,18 @@
     hydrate(); return true;
   }
   // 📋 le programme du jour, sur la 1re page : réservations à l’heure, puis les visites dans l’ordre de la journée
+  // 🏙️ la ville de chaque visite (journée à Lausanne depuis l’hôtel de Genève…) : lue une fois d’après sa position, gardée dans la fiche
+  let PLV = 0;
+  function plCityFill(){ if(PLV) return; PLV = 1; setTimeout(async ()=>{ let n = 0;
+    try { const td = isoToday(), L = list('place', p=>p.trip === M.trip && !p.deleted && !p.sugg && !p.ville && p.lat != null && (!p.date || p.date >= td)).slice(0, 12);
+      for(const p of L){ const g = await revGeo(p.lat, p.lng).catch(()=>null); const c = R[p.id]; if(g && g.city && c && !c.ville && !roOf(c)){ putQuiet([Object.assign(clone(c), {ville:g.city})]); n++; } } } catch(e){}
+    PLV = 0; if(n) refresh(); }, 1500); }
   function progToday(k, info, own, night){
-    const td = isoToday(), pl = placesOf(td), res = [...own, ...night];
+    const td = isoToday(), pl = placesOf(td), res = [...own, ...night]; if(pl.some(p=>!p.ville && p.lat != null)) plCityFill();
     const hm = it => esc(it.cat === 'transport' ? (it.heureDep || '') : (it.heure || ''));
     return `<div class="v-box cv-prog"><h3>📋 ${esc(MSGT('Programme du jour'))} · J${k+1}${info.titre ? ' · ' + esc(info.titre) : ''}</h3>${info.plan ? `<p>${esc(info.plan)}</p>` : ''}
       ${res.map(it=>`<button type="button" class="cv-prow" onclick="CV.edit('${ja(it.id)}')"><span>${icon(it)} <b>${esc(it.titre)}</b></span><span>${hm(it)}</span></button>`).join('')}
-      ${pl.map((p, i)=>`<button type="button" class="cv-prow${p.vu ? ' vu' : ''}" onclick="CV.plInfo('${ja(p.id)}')"><span>📍 <b data-notr>${esc(p.nom || '')}</b></span><span class="vu-b${p.vu ? ' on' : ''}" role="button" aria-label="${esc(MSGT('C’est vu'))}" onclick="event.stopPropagation();CV.plVu('${ja(p.id)}')">${p.vu ? '✅' : '⬜'}</span></button>`).join('')}
+      ${pl.map((p, i)=>`<button type="button" class="cv-prow${p.vu ? ' vu' : ''}" onclick="CV.plInfo('${ja(p.id)}')"><span>📍 <b data-notr>${esc(p.nom || '')}</b>${p.ville ? ` <small class="pl-v" data-notr>${esc(p.ville)}</small>` : ''}</span><span class="vu-b${p.vu ? ' on' : ''}" role="button" aria-label="${esc(MSGT('C’est vu'))}" onclick="event.stopPropagation();CV.plVu('${ja(p.id)}')">${p.vu ? '✅' : '⬜'}</span></button>`).join('')}
       ${!res.length && !pl.length ? `<div class="v-sum-small">${esc(MSGT('Rien de prévu aujourd’hui.'))}</div>` : ''}
       ${pl.length ? `<button class="v-btn sec" onclick="CV.planDay('${ja(td)}')">🗺️ ${esc(RF('Itinéraire du jour ({0} lieux)', pl.length))}</button>` : ''}</div>`;
   }
