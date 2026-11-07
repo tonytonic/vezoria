@@ -6368,4 +6368,6 @@ I18N.load({
 "Touche un temps pour le voir sur un voyage de démo.":"किसी चरण पर टैप करें, डेमो यात्रा में देखें।",
 "J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"“{0}” में 30 दिन: {1} तैयारी बाकी",
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"“{0}” में 7 दिन: जाने से पहले {1} काम बाकी",
-"J-{1} avant « {0} » : tout est prêt ✨":"“{0}” में {1} दिन: सब तैयार ✨"});
+"J-{1} avant « {0} » : tout est prêt ✨":"“{0}” में {1} दिन: सब तैयार ✨",
+"J’ai reçu un code ou un lien":"मुझे कोड या लिंक मिला",
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"सहयात्री या फ़ॉलोअर: जो मिला उसे यहां पेस्ट करें और तुरंत जुड़ें।"});

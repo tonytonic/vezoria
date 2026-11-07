@@ -6369,4 +6369,6 @@ I18N.load({
 "Touche un temps pour le voir sur un voyage de démo.":"اضغط على مرحلة لتراها في رحلة تجريبية.",
 "J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"30 يومًا على «{0}»: بقي {1} أمور للتحضير",
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"7 أيام على «{0}»: بقي {1} أمور قبل السفر",
-"J-{1} avant « {0} » : tout est prêt ✨":"{1} يومًا على «{0}»: كل شيء جاهز ✨"});
+"J-{1} avant « {0} » : tout est prêt ✨":"{1} يومًا على «{0}»: كل شيء جاهز ✨",
+"J’ai reçu un code ou un lien":"وصلني رمز أو رابط",
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"رفيق سفر أو متابع: الصق هنا ما أُرسل إليك وانضم فورًا."});

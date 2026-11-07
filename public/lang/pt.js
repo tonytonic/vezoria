@@ -3433,4 +3433,6 @@ I18N.load({
 "Touche un temps pour le voir sur un voyage de démo.":"Toque num tempo para vê-lo numa viagem demo.",
 "J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"Faltam 30 dias para “{0}”: ainda {1} coisa(s) a preparar",
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"Faltam 7 dias para “{0}”: ainda {1} coisa(s) antes de partir",
-"J-{1} avant « {0} » : tout est prêt ✨":"Faltam {1} dias para “{0}”: tudo pronto ✨"});
+"J-{1} avant « {0} » : tout est prêt ✨":"Faltam {1} dias para “{0}”: tudo pronto ✨",
+"J’ai reçu un code ou un lien":"Recebi um código ou link",
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Companheiro de viagem ou seguidor: cole aqui o que recebeu e entre na hora."});

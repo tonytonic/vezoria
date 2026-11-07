@@ -6368,4 +6368,6 @@ I18N.load({
 "Touche un temps pour le voir sur un voyage de démo.":"ステップをタップしてデモ旅行で見てみよう。",
 "J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"「{0}」まであと30日：準備があと{1}件",
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"「{0}」まであと7日：出発前にあと{1}件",
-"J-{1} avant « {0} » : tout est prêt ✨":"「{0}」まであと{1}日：準備万端 ✨"});
+"J-{1} avant « {0} » : tout est prêt ✨":"「{0}」まであと{1}日：準備万端 ✨",
+"J’ai reçu un code ou un lien":"コードやリンクを受け取った",
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"旅の仲間・フォロワー：届いた内容をここに貼り付ければすぐ参加できます。"});

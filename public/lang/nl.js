@@ -3420,4 +3420,6 @@ I18N.load({
 "Touche un temps pour le voir sur un voyage de démo.":"Tik op een stap om hem in een demoreis te zien.",
 "J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"Nog 30 dagen tot ‘{0}’: nog {1} ding(en) voor te bereiden",
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"Nog 7 dagen tot ‘{0}’: nog {1} ding(en) vóór vertrek",
-"J-{1} avant « {0} » : tout est prêt ✨":"Nog {1} dagen tot ‘{0}’: alles klaar ✨"});
+"J-{1} avant « {0} » : tout est prêt ✨":"Nog {1} dagen tot ‘{0}’: alles klaar ✨",
+"J’ai reçu un code ou un lien":"Ik kreeg een code of link",
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Reisgenoot of volger: plak hier wat je kreeg en doe meteen mee."});

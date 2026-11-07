@@ -3424,4 +3424,6 @@ I18N.load({
 "Touche un temps pour le voir sur un voyage de démo.":"Tippe auf einen Schritt, um ihn an einer Demo-Reise zu sehen.",
 "J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"Noch 30 Tage bis „{0}“: noch {1} Sache(n) vorzubereiten",
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"Noch 7 Tage bis „{0}“: noch {1} Sache(n) vor der Abreise",
-"J-{1} avant « {0} » : tout est prêt ✨":"Noch {1} Tage bis „{0}“: alles bereit ✨"});
+"J-{1} avant « {0} » : tout est prêt ✨":"Noch {1} Tage bis „{0}“: alles bereit ✨",
+"J’ai reçu un code ou un lien":"Ich habe einen Code oder Link",
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Reisebegleitung oder Follower: füge hier ein, was du bekommen hast, und mach sofort mit."});

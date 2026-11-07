@@ -3429,4 +3429,6 @@ I18N.load({
 "Touche un temps pour le voir sur un voyage de démo.":"Tocca un tempo per vederlo su un viaggio demo.",
 "J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"-30 giorni a «{0}»: ti restano {1} cose da preparare",
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"-7 giorni a «{0}»: ancora {1} cose da fare prima di partire",
-"J-{1} avant « {0} » : tout est prêt ✨":"-{1} giorni a «{0}»: tutto pronto ✨"});
+"J-{1} avant « {0} » : tout est prêt ✨":"-{1} giorni a «{0}»: tutto pronto ✨",
+"J’ai reçu un code ou un lien":"Ho ricevuto un codice o un link",
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Compagno di viaggio o follower: incolla qui ciò che ti hanno inviato e unisciti subito."});

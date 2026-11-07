@@ -3430,4 +3430,6 @@ I18N.load({
 "Touche un temps pour le voir sur un voyage de démo.":"Toca un tiempo para verlo en un viaje de demostración.",
 "J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"Faltan 30 días para «{0}»: te quedan {1} cosa(s) por preparar",
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"Faltan 7 días para «{0}»: aún {1} cosa(s) por hacer antes de salir",
-"J-{1} avant « {0} » : tout est prêt ✨":"Faltan {1} días para «{0}»: todo listo ✨"});
+"J-{1} avant « {0} » : tout est prêt ✨":"Faltan {1} días para «{0}»: todo listo ✨",
+"J’ai reçu un code ou un lien":"Recibí un código o un enlace",
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Compañero de viaje o seguidor: pega aquí lo que te enviaron y únete al instante."});

@@ -6368,4 +6368,6 @@ I18N.load({
 "Touche un temps pour le voir sur un voyage de démo.":"点一个阶段，在示例旅行中查看。",
 "J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"距「{0}」还有 30 天：还有 {1} 项要准备",
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"距「{0}」还有 7 天：出发前还有 {1} 项",
-"J-{1} avant « {0} » : tout est prêt ✨":"距「{0}」还有 {1} 天：一切就绪 ✨"});
+"J-{1} avant « {0} » : tout est prêt ✨":"距「{0}」还有 {1} 天：一切就绪 ✨",
+"J’ai reçu un code ou un lien":"我收到了代码或链接",
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"旅伴或关注者：把收到的内容粘贴到这里，立即加入。"});

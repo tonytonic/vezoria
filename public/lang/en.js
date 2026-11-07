@@ -3414,4 +3414,6 @@ I18N.load({
 "Touche un temps pour le voir sur un voyage de démo.":"Tap a step to see it on a demo trip.",
 "J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"30 days to “{0}”: {1} thing(s) left to prepare",
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"7 days to “{0}”: {1} thing(s) still to do before you leave",
-"J-{1} avant « {0} » : tout est prêt ✨":"{1} days to “{0}”: everything is ready ✨"});
+"J-{1} avant « {0} » : tout est prêt ✨":"{1} days to “{0}”: everything is ready ✨",
+"J’ai reçu un code ou un lien":"I got a code or a link",
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Travel companion or follower: paste what you were sent here and join right away."});

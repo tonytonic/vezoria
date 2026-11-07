@@ -6356,4 +6356,6 @@ I18N.load({
 "Touche un temps pour le voir sur un voyage de démo.":"Bir adıma dokun, demo seyahatte gör.",
 "J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"“{0}” için 30 gün: hazırlanacak {1} şey kaldı",
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"“{0}” için 7 gün: gitmeden önce {1} şey kaldı",
-"J-{1} avant « {0} » : tout est prêt ✨":"“{0}” için {1} gün: her şey hazır ✨"});
+"J-{1} avant « {0} » : tout est prêt ✨":"“{0}” için {1} gün: her şey hazır ✨",
+"J’ai reçu un code ou un lien":"Bir kod veya bağlantı aldım",
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Yol arkadaşı veya takipçi: sana gönderileni buraya yapıştır, hemen katıl."});
