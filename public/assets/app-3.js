@@ -493,6 +493,13 @@
       }
     } finally { hydrating = false; }
   }
+  // 🖼️ photo qui ne s’affiche pas (vignette abîmée gardée sur le téléphone, ou pas encore arrivée) : on la reprend, une fois
+  document.addEventListener('error', e=>{ const img = e.target; if(!img || img.tagName !== 'IMG' || !img.dataset || !img.dataset.ph || img.dataset.rt) return;
+    const id = img.dataset.ph; img.dataset.rt = '1'; if(!/\.t$/.test(id)) return;   // seules les vignettes (refaites à volonté) sont jetées
+    (async ()=>{ try { await IDB.del(id); } catch(e){} if(urls[id]){ try { URL.revokeObjectURL(urls[id]); } catch(e){} delete urls[id]; }
+      img.removeAttribute('src'); delete img.dataset.ok; delete img.dataset.ld; hydrate(); })(); }, true);
+  setInterval(()=>{ const L = [...document.querySelectorAll('img[data-ph].miss:not([data-rm])')]; if(!L.length) return;
+    L.forEach(i=>{ i.dataset.rm = '1'; i.classList.remove('miss'); delete i.dataset.ok; delete i.dataset.ld; }); hydrate(); }, 20000);   // pas encore arrivée : un nouvel essai 20 s plus tard
   async function sniffImg(blob){
     try { const h = new Uint8Array(await blob.slice(0, 12).arrayBuffer());
       const t = h[0]===0xFF && h[1]===0xD8 ? 'image/jpeg' : h[0]===0x89 && h[1]===0x50 ? 'image/png' : (h[8]===0x57 && h[9]===0x45 && h[10]===0x42 && h[11]===0x50) ? 'image/webp' : (h[4]===0x66 && h[5]===0x74 && h[6]===0x79 && h[7]===0x70) ? 'image/heic' : '';
