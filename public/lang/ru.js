@@ -6371,4 +6371,11 @@ I18N.load({
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"7 дней до «{0}»: перед отъездом осталось {1}",
 "J-{1} avant « {0} » : tout est prêt ✨":"{1} дн. до «{0}»: всё готово ✨",
 "J’ai reçu un code ou un lien":"Мне прислали код или ссылку",
-"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Попутчик или подписчик: вставь сюда то, что тебе прислали, и присоединяйся сразу."});
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Попутчик или подписчик: вставь сюда то, что тебе прислали, и присоединяйся сразу.",
+"Me recentrer":"Ко мне",
+"Actualiser ma position":"Обновить моё местоположение",
+"Position indisponible":"Местоположение недоступно",
+"Position à jour (± {0} m)":"Местоположение обновлено (± {0} м)",
+"non partagée : le suivi GPS est coupé":"не передаётся: GPS-трекинг выключен",
+"Position refusée : autorise la localisation pour Vezoria":"Доступ к геолокации запрещён: разреши его для Vezoria",
+"Position introuvable pour l’instant, réessaie dehors":"Местоположение не найдено, попробуй на улице"});

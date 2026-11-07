@@ -3431,4 +3431,11 @@ I18N.load({
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"-7 giorni a «{0}»: ancora {1} cose da fare prima di partire",
 "J-{1} avant « {0} » : tout est prêt ✨":"-{1} giorni a «{0}»: tutto pronto ✨",
 "J’ai reçu un code ou un lien":"Ho ricevuto un codice o un link",
-"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Compagno di viaggio o follower: incolla qui ciò che ti hanno inviato e unisciti subito."});
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Compagno di viaggio o follower: incolla qui ciò che ti hanno inviato e unisciti subito.",
+"Me recentrer":"Centra su di me",
+"Actualiser ma position":"Aggiorna la mia posizione",
+"Position indisponible":"Posizione non disponibile",
+"Position à jour (± {0} m)":"Posizione aggiornata (± {0} m)",
+"non partagée : le suivi GPS est coupé":"non condivisa: il tracciamento GPS è spento",
+"Position refusée : autorise la localisation pour Vezoria":"Posizione negata: consenti la localizzazione a Vezoria",
+"Position introuvable pour l’instant, réessaie dehors":"Posizione non trovata per ora, riprova all’aperto"});

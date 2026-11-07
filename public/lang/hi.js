@@ -6370,4 +6370,11 @@ I18N.load({
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"“{0}” में 7 दिन: जाने से पहले {1} काम बाकी",
 "J-{1} avant « {0} » : tout est prêt ✨":"“{0}” में {1} दिन: सब तैयार ✨",
 "J’ai reçu un code ou un lien":"मुझे कोड या लिंक मिला",
-"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"सहयात्री या फ़ॉलोअर: जो मिला उसे यहां पेस्ट करें और तुरंत जुड़ें।"});
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"सहयात्री या फ़ॉलोअर: जो मिला उसे यहां पेस्ट करें और तुरंत जुड़ें।",
+"Me recentrer":"मुझ पर केंद्रित करें",
+"Actualiser ma position":"मेरी लोकेशन अपडेट करें",
+"Position indisponible":"लोकेशन उपलब्ध नहीं",
+"Position à jour (± {0} m)":"लोकेशन अपडेट (± {0} मी)",
+"non partagée : le suivi GPS est coupé":"साझा नहीं: GPS ट्रैकिंग बंद है",
+"Position refusée : autorise la localisation pour Vezoria":"लोकेशन अस्वीकृत: Vezoria के लिए अनुमति दें",
+"Position introuvable pour l’instant, réessaie dehors":"लोकेशन अभी नहीं मिली, बाहर फिर कोशिश करें"});

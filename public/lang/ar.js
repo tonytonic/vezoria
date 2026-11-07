@@ -6371,4 +6371,11 @@ I18N.load({
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"7 أيام على «{0}»: بقي {1} أمور قبل السفر",
 "J-{1} avant « {0} » : tout est prêt ✨":"{1} يومًا على «{0}»: كل شيء جاهز ✨",
 "J’ai reçu un code ou un lien":"وصلني رمز أو رابط",
-"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"رفيق سفر أو متابع: الصق هنا ما أُرسل إليك وانضم فورًا."});
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"رفيق سفر أو متابع: الصق هنا ما أُرسل إليك وانضم فورًا.",
+"Me recentrer":"التوسيط عليّ",
+"Actualiser ma position":"تحديث موقعي",
+"Position indisponible":"الموقع غير متاح",
+"Position à jour (± {0} m)":"تم تحديث الموقع (± {0} م)",
+"non partagée : le suivi GPS est coupé":"غير مشاركة: تتبع GPS متوقف",
+"Position refusée : autorise la localisation pour Vezoria":"تم رفض الموقع: اسمح بتحديد الموقع لـ Vezoria",
+"Position introuvable pour l’instant, réessaie dehors":"تعذّر العثور على الموقع، حاول في الخارج"});

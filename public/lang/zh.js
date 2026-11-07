@@ -6370,4 +6370,11 @@ I18N.load({
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"距「{0}」还有 7 天：出发前还有 {1} 项",
 "J-{1} avant « {0} » : tout est prêt ✨":"距「{0}」还有 {1} 天：一切就绪 ✨",
 "J’ai reçu un code ou un lien":"我收到了代码或链接",
-"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"旅伴或关注者：把收到的内容粘贴到这里，立即加入。"});
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"旅伴或关注者：把收到的内容粘贴到这里，立即加入。",
+"Me recentrer":"回到我的位置",
+"Actualiser ma position":"刷新我的位置",
+"Position indisponible":"无法获取位置",
+"Position à jour (± {0} m)":"位置已更新（± {0} 米）",
+"non partagée : le suivi GPS est coupé":"未共享：GPS 追踪已关闭",
+"Position refusée : autorise la localisation pour Vezoria":"位置被拒绝：请允许 Vezoria 使用定位",
+"Position introuvable pour l’instant, réessaie dehors":"暂时找不到位置，请到户外再试"});

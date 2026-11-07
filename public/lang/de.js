@@ -3426,4 +3426,11 @@ I18N.load({
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"Noch 7 Tage bis „{0}“: noch {1} Sache(n) vor der Abreise",
 "J-{1} avant « {0} » : tout est prêt ✨":"Noch {1} Tage bis „{0}“: alles bereit ✨",
 "J’ai reçu un code ou un lien":"Ich habe einen Code oder Link",
-"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Reisebegleitung oder Follower: füge hier ein, was du bekommen hast, und mach sofort mit."});
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Reisebegleitung oder Follower: füge hier ein, was du bekommen hast, und mach sofort mit.",
+"Me recentrer":"Auf mich zentrieren",
+"Actualiser ma position":"Meinen Standort aktualisieren",
+"Position indisponible":"Standort nicht verfügbar",
+"Position à jour (± {0} m)":"Standort aktualisiert (± {0} m)",
+"non partagée : le suivi GPS est coupé":"nicht geteilt: GPS-Tracking ist aus",
+"Position refusée : autorise la localisation pour Vezoria":"Standort verweigert: erlaube Ortungsdienste für Vezoria",
+"Position introuvable pour l’instant, réessaie dehors":"Standort noch nicht gefunden, versuch es draußen"});

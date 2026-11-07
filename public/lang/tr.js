@@ -6358,4 +6358,11 @@ I18N.load({
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"“{0}” için 7 gün: gitmeden önce {1} şey kaldı",
 "J-{1} avant « {0} » : tout est prêt ✨":"“{0}” için {1} gün: her şey hazır ✨",
 "J’ai reçu un code ou un lien":"Bir kod veya bağlantı aldım",
-"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Yol arkadaşı veya takipçi: sana gönderileni buraya yapıştır, hemen katıl."});
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Yol arkadaşı veya takipçi: sana gönderileni buraya yapıştır, hemen katıl.",
+"Me recentrer":"Bana odakla",
+"Actualiser ma position":"Konumumu yenile",
+"Position indisponible":"Konum kullanılamıyor",
+"Position à jour (± {0} m)":"Konum güncellendi (± {0} m)",
+"non partagée : le suivi GPS est coupé":"paylaşılmadı: GPS takibi kapalı",
+"Position refusée : autorise la localisation pour Vezoria":"Konum reddedildi: Vezoria için konuma izin ver",
+"Position introuvable pour l’instant, réessaie dehors":"Konum henüz bulunamadı, dışarıda tekrar dene"});

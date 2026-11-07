@@ -3416,4 +3416,11 @@ I18N.load({
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"7 days to “{0}”: {1} thing(s) still to do before you leave",
 "J-{1} avant « {0} » : tout est prêt ✨":"{1} days to “{0}”: everything is ready ✨",
 "J’ai reçu un code ou un lien":"I got a code or a link",
-"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Travel companion or follower: paste what you were sent here and join right away."});
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Travel companion or follower: paste what you were sent here and join right away.",
+"Me recentrer":"Center on me",
+"Actualiser ma position":"Refresh my location",
+"Position indisponible":"Location unavailable",
+"Position à jour (± {0} m)":"Location updated (± {0} m)",
+"non partagée : le suivi GPS est coupé":"not shared: GPS tracking is off",
+"Position refusée : autorise la localisation pour Vezoria":"Location denied: allow location access for Vezoria",
+"Position introuvable pour l’instant, réessaie dehors":"Can’t find your location yet, try again outdoors"});

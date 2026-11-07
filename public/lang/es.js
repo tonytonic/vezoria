@@ -3432,4 +3432,11 @@ I18N.load({
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"Faltan 7 días para «{0}»: aún {1} cosa(s) por hacer antes de salir",
 "J-{1} avant « {0} » : tout est prêt ✨":"Faltan {1} días para «{0}»: todo listo ✨",
 "J’ai reçu un code ou un lien":"Recibí un código o un enlace",
-"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Compañero de viaje o seguidor: pega aquí lo que te enviaron y únete al instante."});
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Compañero de viaje o seguidor: pega aquí lo que te enviaron y únete al instante.",
+"Me recentrer":"Centrar en mí",
+"Actualiser ma position":"Actualizar mi ubicación",
+"Position indisponible":"Ubicación no disponible",
+"Position à jour (± {0} m)":"Ubicación actualizada (± {0} m)",
+"non partagée : le suivi GPS est coupé":"no compartida: el seguimiento GPS está apagado",
+"Position refusée : autorise la localisation pour Vezoria":"Ubicación denegada: permite la localización para Vezoria",
+"Position introuvable pour l’instant, réessaie dehors":"No se encuentra la ubicación, inténtalo al aire libre"});

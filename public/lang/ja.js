@@ -6370,4 +6370,11 @@ I18N.load({
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"「{0}」まであと7日：出発前にあと{1}件",
 "J-{1} avant « {0} » : tout est prêt ✨":"「{0}」まであと{1}日：準備万端 ✨",
 "J’ai reçu un code ou un lien":"コードやリンクを受け取った",
-"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"旅の仲間・フォロワー：届いた内容をここに貼り付ければすぐ参加できます。"});
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"旅の仲間・フォロワー：届いた内容をここに貼り付ければすぐ参加できます。",
+"Me recentrer":"現在地へ",
+"Actualiser ma position":"現在地を更新",
+"Position indisponible":"位置情報を取得できません",
+"Position à jour (± {0} m)":"現在地を更新（± {0} m）",
+"non partagée : le suivi GPS est coupé":"共有されていません：GPS追跡がオフです",
+"Position refusée : autorise la localisation pour Vezoria":"位置情報が拒否されました：Vezoriaに許可してください",
+"Position introuvable pour l’instant, réessaie dehors":"まだ位置が取れません。屋外で再度お試しください"});

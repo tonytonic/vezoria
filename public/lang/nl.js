@@ -3422,4 +3422,11 @@ I18N.load({
 "J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"Nog 7 dagen tot ‘{0}’: nog {1} ding(en) vóór vertrek",
 "J-{1} avant « {0} » : tout est prêt ✨":"Nog {1} dagen tot ‘{0}’: alles klaar ✨",
 "J’ai reçu un code ou un lien":"Ik kreeg een code of link",
-"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Reisgenoot of volger: plak hier wat je kreeg en doe meteen mee."});
+"Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.":"Reisgenoot of volger: plak hier wat je kreeg en doe meteen mee.",
+"Me recentrer":"Op mij centreren",
+"Actualiser ma position":"Mijn locatie verversen",
+"Position indisponible":"Locatie niet beschikbaar",
+"Position à jour (± {0} m)":"Locatie bijgewerkt (± {0} m)",
+"non partagée : le suivi GPS est coupé":"niet gedeeld: GPS-volgen staat uit",
+"Position refusée : autorise la localisation pour Vezoria":"Locatie geweigerd: sta locatie toe voor Vezoria",
+"Position introuvable pour l’instant, réessaie dehors":"Locatie nog niet gevonden, probeer het buiten"});
