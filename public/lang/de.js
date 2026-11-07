@@ -3393,4 +3393,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"Du bist neben „{0}“",
 "À {0} m de toi":"{0} m von dir",
 "C’est vu":"Gesehen",
-"Pas encore vu":"Noch nicht gesehen"});
+"Pas encore vu":"Noch nicht gesehen",
+"Boussole":"Kompass",
+"Pas de boussole sur cet appareil":"Kein Kompass auf diesem Gerät",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Keine Richtung: erlaube „Bewegung & Ausrichtung“ für Safari (Einstellungen › Safari), dann 🧭 tippen",
+"Boussole refusée":"Kompass abgelehnt"});

@@ -6337,4 +6337,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"你就在「{0}」旁边",
 "À {0} m de toi":"距你 {0} 米",
 "C’est vu":"看过了",
-"Pas encore vu":"还没看"});
+"Pas encore vu":"还没看",
+"Boussole":"指南针",
+"Pas de boussole sur cet appareil":"此设备没有指南针",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"未收到方向：在“设置 › Safari”中允许“运动与方向”，然后轻点 🧭",
+"Boussole refusée":"指南针被拒绝"});

@@ -6337,4 +6337,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"「{0}」のすぐ近くです",
 "À {0} m de toi":"あなたから {0} m",
 "C’est vu":"見た",
-"Pas encore vu":"まだ見ていない"});
+"Pas encore vu":"まだ見ていない",
+"Boussole":"コンパス",
+"Pas de boussole sur cet appareil":"この端末にはコンパスがありません",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"方向を取得できません：設定 › Safari で「モーションと画面の向き」を許可し、🧭 をタップ",
+"Boussole refusée":"コンパスが拒否されました"});

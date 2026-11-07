@@ -3398,4 +3398,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"Sei vicino a «{0}»",
 "À {0} m de toi":"A {0} m da te",
 "C’est vu":"Visto",
-"Pas encore vu":"Non ancora visto"});
+"Pas encore vu":"Non ancora visto",
+"Boussole":"Bussola",
+"Pas de boussole sur cet appareil":"Nessuna bussola su questo dispositivo",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Nessuna direzione: consenti «Movimento e orientamento» per Safari (Impostazioni › Safari), poi tocca 🧭",
+"Boussole refusée":"Bussola negata"});

@@ -6337,4 +6337,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"आप “{0}” के पास हैं",
 "À {0} m de toi":"आपसे {0} मी दूर",
 "C’est vu":"देख लिया",
-"Pas encore vu":"अभी नहीं देखा"});
+"Pas encore vu":"अभी नहीं देखा",
+"Boussole":"कम्पास",
+"Pas de boussole sur cet appareil":"इस डिवाइस में कम्पास नहीं है",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"दिशा नहीं मिली: Safari के लिए “मोशन और ओरिएंटेशन” की अनुमति दें (सेटिंग्स › Safari), फिर 🧭 दबाएं",
+"Boussole refusée":"कम्पास अस्वीकृत"});

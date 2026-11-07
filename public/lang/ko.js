@@ -6337,4 +6337,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"‘{0}’ 근처에 있어요",
 "À {0} m de toi":"{0}m 거리",
 "C’est vu":"봤어요",
-"Pas encore vu":"아직 안 봤어요"});
+"Pas encore vu":"아직 안 봤어요",
+"Boussole":"나침반",
+"Pas de boussole sur cet appareil":"이 기기에는 나침반이 없어요",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"방향을 받지 못했어요: 설정 › Safari에서 ‘동작 및 방향’을 허용한 뒤 🧭를 누르세요",
+"Boussole refusée":"나침반이 거부됐어요"});

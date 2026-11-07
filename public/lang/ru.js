@@ -6338,4 +6338,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"Ты рядом с «{0}»",
 "À {0} m de toi":"В {0} м от тебя",
 "C’est vu":"Видел(а)",
-"Pas encore vu":"Ещё не видел(а)"});
+"Pas encore vu":"Ещё не видел(а)",
+"Boussole":"Компас",
+"Pas de boussole sur cet appareil":"На этом устройстве нет компаса",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Нет направления: разреши «Движение и ориентация» для Safari (Настройки › Safari), затем нажми 🧭",
+"Boussole refusée":"Доступ к компасу запрещён"});

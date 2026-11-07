@@ -3383,4 +3383,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"You’re next to “{0}”",
 "À {0} m de toi":"{0} m from you",
 "C’est vu":"Seen it",
-"Pas encore vu":"Not seen yet"});
+"Pas encore vu":"Not seen yet",
+"Boussole":"Compass",
+"Pas de boussole sur cet appareil":"No compass on this device",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"No direction received: allow “Motion & Orientation Access” for Safari (Settings › Safari), then tap 🧭",
+"Boussole refusée":"Compass denied"});

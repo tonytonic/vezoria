@@ -6338,4 +6338,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"أنت بجانب «{0}»",
 "À {0} m de toi":"على بعد {0} م منك",
 "C’est vu":"تمت رؤيته",
-"Pas encore vu":"لم تتم رؤيته بعد"});
+"Pas encore vu":"لم تتم رؤيته بعد",
+"Boussole":"البوصلة",
+"Pas de boussole sur cet appareil":"لا توجد بوصلة في هذا الجهاز",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"لا يوجد اتجاه: اسمح بـ«الحركة والاتجاه» لـ Safari (الإعدادات › Safari) ثم اضغط 🧭",
+"Boussole refusée":"تم رفض البوصلة"});

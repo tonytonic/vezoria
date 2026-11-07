@@ -3389,4 +3389,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"Je bent vlak bij ‘{0}’",
 "À {0} m de toi":"{0} m bij je vandaan",
 "C’est vu":"Gezien",
-"Pas encore vu":"Nog niet gezien"});
+"Pas encore vu":"Nog niet gezien",
+"Boussole":"Kompas",
+"Pas de boussole sur cet appareil":"Geen kompas op dit apparaat",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Geen richting: sta ‘Beweging en richting’ toe voor Safari (Instellingen › Safari) en tik op 🧭",
+"Boussole refusée":"Kompas geweigerd"});

@@ -6325,4 +6325,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"“{0}” yakınındasın",
 "À {0} m de toi":"Sana {0} m uzaklıkta",
 "C’est vu":"Görüldü",
-"Pas encore vu":"Henüz görülmedi"});
+"Pas encore vu":"Henüz görülmedi",
+"Boussole":"Pusula",
+"Pas de boussole sur cet appareil":"Bu cihazda pusula yok",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Yön alınamadı: Safari için “Hareket ve Yön”e izin ver (Ayarlar › Safari), sonra 🧭’ye dokun",
+"Boussole refusée":"Pusula reddedildi"});

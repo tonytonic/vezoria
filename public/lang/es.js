@@ -3399,4 +3399,8 @@ I18N.load({
 "Tu es à côté de « {0} »":"Estás junto a «{0}»",
 "À {0} m de toi":"A {0} m de ti",
 "C’est vu":"Visto",
-"Pas encore vu":"Aún no visto"});
+"Pas encore vu":"Aún no visto",
+"Boussole":"Brújula",
+"Pas de boussole sur cet appareil":"Este dispositivo no tiene brújula",
+"Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Sin dirección: permite «Movimiento y orientación» para Safari (Ajustes › Safari) y toca 🧭",
+"Boussole refusée":"Brújula denegada"});
