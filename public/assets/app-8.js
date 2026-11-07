@@ -371,7 +371,9 @@
       try {
         const kk = await keys(code), kid = kk.token.slice(0, 16);
         const it = ids.slice(0, 5).map(id=>{ const f = R[id]; return {x:String(f.titre || f.lieu || '').slice(0, 80)}; });
-        const p = {k:'souv', f:1, who: myName() || '', trip: ftId(tid), tt: t.titre || '', it, n: ids.length};
+        // 👥 voyage commun : c’est mon téléphone qui publie, mais le step peut être celui de Claire → son prénom dans la notification
+        const by = [...new Set(ids.map(id=>{ const f = R[id], sv = f && R[f.src]; return (sv && sv.createdBy && pname(sv.createdBy)) || (f && f.by) || myName() || ''; }).filter(x=>x && x !== '?'))];
+        const p = {k:'souv', f:1, who: by.length ? by.slice(0, 2).join(' & ') : (myName() || ''), trip: ftId(tid), tt: t.titre || '', it, n: ids.length};
         await pushPost(code, {a:'send', kind:'souv', kid, msg: b64(await seal(te.encode(JSON.stringify(p)), code)), tag:'fol-' + tid});
       } catch(e){}
     }
@@ -2000,7 +2002,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-08h'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-08i'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
