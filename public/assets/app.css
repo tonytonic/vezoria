@@ -3412,3 +3412,5 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .ob-inv{border:2px solid #14b8a6;border-radius:16px;padding:12px;margin:0 0 14px;background:rgba(20,184,166,.08);display:flex;flex-direction:column;gap:8px}.ob-inv .v-btn{margin:0}.ob-inv small{opacity:.75}
 
 .sv-diag{display:flex;flex-direction:column;gap:8px;border:1px dashed #f59e0b;margin:8px 0}.sv-diag .v-btn{margin:0}
+
+.sv-miss{display:block;margin:6px 0;border:1px dashed #f59e0b;background:rgba(245,158,11,.08);color:inherit;border-radius:12px;padding:6px 10px;font:inherit;font-size:.82rem;text-align:left;width:100%}

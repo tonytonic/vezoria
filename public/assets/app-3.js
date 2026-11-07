@@ -750,7 +750,7 @@
         <div class="cv-souv-h"><span class="v-day-d">${s.date ? fdate(s.date) : '—'}${s.heure ? ' · ' + esc(s.heure) : ''}</span><div><div class="cv-souv-t">${esc(s.titre||s.lieu||'Souvenir')}</div>
           ${s.lieu || s.pays ? `<div class="v-sum-small">📍 ${esc(lieuPays(s.lieu, s.pays))}</div>` : ''}</div>
           ${(s.photos||[]).length ? `<button class="cv-x cv-pcb" onclick="CV.pcOpen('${ja(s.id)}')" aria-label="Carte postale" title="Carte postale">💌</button>` : ''}<button class="cv-x" onclick="CV.editSouv('${ja(s.id)}')" aria-label="Modifier">✏️</button>${/^💌/.test(s.titre || '') ? `<button class="cv-x" onclick="CV.delSouv('${ja(s.id)}')" aria-label="Supprimer la carte postale" title="Supprimer">🗑</button>` : ''}</div>
-        ${s.texte ? `<div class="cv-souv-txt" onclick="this.classList.toggle('open')">${esc(s.texte)}</div>` : ''}${souvSocial(s)}
+        ${s.texte ? `<div class="cv-souv-txt" onclick="this.classList.toggle('open')">${esc(s.texte)}</div>` : ''}${souvSocial(s)}${(()=>{ const n = (s.photos || []).filter(p=>!phRef(p)).length; return n && R[s.trip] && (R[s.trip].voyageurs || []).length > 1 ? `<button type="button" class="sv-miss" onclick="CV.editSouv('${ja(s.id)}')">📷 ${esc(RF('{0} photo(s) sur {1} pas encore en ligne', n, s.photos.length))} · ${esc(MSGT('Voir'))}</button>` : ''; })()}
         ${ph.length ? `<div class="cv-grid">${ph.slice(0,9).map((p,i)=>`<button class="cv-th" onclick="CV.view('${ja(s.id)}',${i})" aria-label="Photo"><img data-ph="${esc(p)}.t" alt="">${i===8 && more>0 ? `<span>+${more}</span>` : ''}</button>`).join('')}</div>` : ''}
         ${byline(s)}
       </div>`;
