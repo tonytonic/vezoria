@@ -6325,4 +6325,5 @@ I18N.load({
 "Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"フォロワーとして引き続きフォローできます（❤️と💬）。",
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"今後は表示されません。リンクが届いたら「招待を受け取った」で貼り付けてください。",
 "Voyage retiré":"旅行を削除しました",
-"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} は「{1}」の旅行者ではなくなりましたが、まだアクセスできます。アクセスを外しますか？閲覧専用のコピーは残ります。"});
+"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} は「{1}」の旅行者ではなくなりましたが、まだアクセスできます。アクセスを外しますか？閲覧専用のコピーは残ります。",
+"Synchronisation":"同期"});

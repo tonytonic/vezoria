@@ -6325,4 +6325,5 @@ I18N.load({
 "Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"你仍以关注者身份关注它（❤️ 和 💬），在关注列表中。",
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"你将不再看到它。收到关注链接时，用「我收到了邀请」粘贴即可关注。",
 "Voyage retiré":"旅行已移除",
-"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} 已不在「{1}」的旅行者中，但仍有访问权限。移除其权限吗？对方保留只读副本。"});
+"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} 已不在「{1}」的旅行者中，但仍有访问权限。移除其权限吗？对方保留只读副本。",
+"Synchronisation":"同步"});

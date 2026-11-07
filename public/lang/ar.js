@@ -6326,4 +6326,5 @@ I18N.load({
 "Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"تواصل متابعتها كمتابع (❤️ و💬) ضمن من تتابعهم.",
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"لن تراها بعد الآن. إن وصلك رابط متابعة، الصقه عبر «وصلتني دعوة».",
 "Voyage retiré":"تمت إزالة الرحلة",
-"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} لم يعد من مسافري «{1}» لكنه ما زال يملك الوصول. إزالة الوصول؟ تبقى لديه نسخة للقراءة فقط."});
+"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} لم يعد من مسافري «{1}» لكنه ما زال يملك الوصول. إزالة الوصول؟ تبقى لديه نسخة للقراءة فقط.",
+"Synchronisation":"المزامنة"});

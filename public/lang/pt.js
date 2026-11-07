@@ -3390,4 +3390,5 @@ I18N.load({
 "Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"Você continua seguindo como seguidor (❤️ e 💬), nos seguidos.",
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Você não verá mais. Se receber um link, cole com “Recebi um convite” para seguir.",
 "Voyage retiré":"Viagem removida",
-"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} não está mais entre os viajantes de “{1}”, mas ainda tem acesso. Remover o acesso? Fica com uma cópia só de leitura."});
+"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} não está mais entre os viajantes de “{1}”, mas ainda tem acesso. Remover o acesso? Fica com uma cópia só de leitura.",
+"Synchronisation":"Sincronização"});

@@ -3377,4 +3377,5 @@ I18N.load({
 "Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"Je blijft hem volgen als volger (❤️ en 💬), bij je gevolgden.",
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Je ziet hem niet meer. Krijg je een volgerslink, plak die met ‘Ik kreeg een uitnodiging’.",
 "Voyage retiré":"Reis verwijderd",
-"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} staat niet meer bij de reizigers van ‘{1}’ maar heeft nog toegang. Toegang intrekken? Er blijft een alleen-lezen kopie."});
+"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} staat niet meer bij de reizigers van ‘{1}’ maar heeft nog toegang. Toegang intrekken? Er blijft een alleen-lezen kopie.",
+"Synchronisation":"Synchronisatie"});
