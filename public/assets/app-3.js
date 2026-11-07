@@ -782,6 +782,7 @@
           <div class="cv-row cv-phrow"><label class="v-btn cv-addph">📸 Prendre une photo<input type="file" accept="image/*" capture="environment" onchange="CV.souvAddPhotos(this)"></label><label class="v-btn sec cv-addph">🖼️ Mes photos<input type="file" accept="image/*" multiple onchange="CV.souvAddPhotos(this)"></label></div>
           <div class="v-sum-small" id="sv-prog"></div></div>
         ${feedCode(s.trip) ? `<label class="cv-checkline" style="margin:4px 0 10px"><input type="checkbox" name="priv"${s.priv ? ' checked' : ''}> 🔒 Privé : ne pas montrer à mes abonnés</label>` : ''}
+        ${id && souvSplitG(R[id]).length > 1 ? `<button type="button" class="v-btn sec" onclick="CV.souvSplit('${ja(id)}')">✂️ ${esc(RF('Séparer en {0} souvenirs (photos prises à des moments différents)', souvSplitG(R[id]).length))}</button>` : ''}
         ${actions(id ? `CV.delSouv('${ja(id)}')` : '')}
       </form>`);
     hydrate();
@@ -836,6 +837,19 @@
       const f = document.getElementById('v-form'), v = [nm, city && normQ(city) !== normQ(nm) ? city : ''].filter(Boolean).join(', ');
       if(f && f.lieu && v){ f.lieu.value = v; f.lieu._pacSkip = 1; } if(f && f.titre && !f.titre.value.trim() && nm) f.titre.value = nm;
     } catch(e){} }
+  // ✂️ un souvenir qui mélange plusieurs moments (le matin et le soir au même endroit) : on le coupe d’après l’heure de chaque photo
+  function souvSplitG(s){ if(!s || !s.photos || s.photos.length < 2) return [];
+    const ph = new Set(s.photos), P = (s.pts || []).filter(q=>q && q[2] && q[3] && ph.has(q[3])).sort((a, b)=>a[2] - b[2]), G = [];
+    P.forEach(q=>{ const g = G[G.length - 1]; if(g && q[2] - g[g.length - 1][2] < 75 * 60000 && q[2] - g[0][2] < 3 * 3600e3) g.push(q); else G.push([q]); });
+    return G; }
+  async function souvSplit(id){ const s = R[id], G = souvSplitG(s); if(G.length < 2) return toast(MSGT('Rien à séparer'));
+    if(!(await uiConfirm(RF('Séparer « {0} » en {1} souvenirs, un par moment de la journée ?', s.titre || s.lieu || '', G.length)))) return;
+    const inG = new Set(G.flat().map(q=>q[3])), hm = ts => { const d = new Date(ts); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+    const mk = (g, base) => { const lat = g.reduce((a, q)=>a + q[0], 0) / g.length, lng = g.reduce((a, q)=>a + q[1], 0) / g.length, h = hm(g[0][2]);
+      return Object.assign(base, {photos:g.map(q=>q[3]), pts:g, heure:h, ordre:+h.slice(0, 2) * 60 + +h.slice(3), lat:+lat.toFixed(5), lng:+lng.toFixed(5)}); };
+    const first = mk(G[0], clone(s)); first.photos = [...first.photos, ...s.photos.filter(p=>!inG.has(p))];
+    const out = [first, ...G.slice(1).map((g, k)=>mk(g, {id:'sv' + uid() + 'x' + k, type:'souv', trip:s.trip, date:s.date, titre:s.titre || '', lieu:s.lieu || '', texte:'', pays:s.pays, cc:s.cc}))];
+    putMany(out, '✂️ ' + RF('{0} souvenirs', out.length)); closeSheet(true); render(); }
   function readSouv(){
     const s = editing, fd = new FormData(document.getElementById('v-form'));
     for(const [k,v] of fd.entries()) s[k] = String(v).trim();
