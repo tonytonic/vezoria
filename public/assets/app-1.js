@@ -1677,6 +1677,17 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         delete S.mt[fid]; if(un[fid] === 2) delete un[fid]; const sp = spaceObj(c); if(sp) sp.since = 0; n++; }); });
     Object.keys(un).forEach(fid=>{ if(un[fid] !== 2 || !/^ft:/.test(fid)) return; const t = R[fid.slice(3)]; if(t && t.type === 'trip' && !t.deleted && !t.demo && !t.ro) return;
       delete un[fid]; (M.spaces || []).forEach(sp=>{ if(sp.sub || sp.ivme) sp.since = 0; }); n++; });
+    // 🔀 même voyage publié aussi par moi (ancien compagnon) : mêmes fiches « ft:… » que le fil de l’auteur ; une fois ma publication arrêtée,
+    // le voyage suivi revient : copies locales effacées oubliées, le lien d’abonné redonne tout (une fois)
+    Object.entries(M.subs || {}).forEach(([c, S])=>{ const sp = spaceObj(c); if(!S || S.gone || !sp) return;
+      Object.keys(S.t || {}).forEach(fid=>{ if(!S.t[fid] || !/^ft:/.test(fid)) return; const tid = fid.slice(3), t = R[tid];
+        if((t && t.type === 'trip' && !t.deleted && !t.ro && !t.demo) || FT()[tid]) return;
+        const h = R[fid]; if(h && !h.deleted && TS()[fid] === c) return;
+        const mine = id => id === fid || id === 'fk:' + tid || id === 'fm:' + tid || (R[id] && R[id].trip === fid);
+        if([M.dirty || [], ...(M.spaces || []).map(x=>x.dirty || [])].some(L=>L.some(mine))) return;   // mes effacements pas encore envoyés
+        const rb = sp.rb || (sp.rb = {}); if(rb[fid] && Date.now() - rb[fid] < 6 * 3600e3) return; rb[fid] = Date.now();
+        Object.keys(R).forEach(id=>{ if(R[id] && R[id].deleted && mine(id)) delete R[id]; });
+        TS()[fid] = c; sp.since = 0; n++; }); });
     if(n) persist(); return n;
   }
   async function packApply(){
