@@ -3370,4 +3370,5 @@ I18N.load({
 "Retirer « {0} » de ton Vezoria ?":"Remove “{0}” from your Vezoria?",
 "Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"You keep following it as a follower (❤️ and 💬), in the people you follow.",
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"You won’t see it anymore. If you get a follower link, paste it with “I got an invitation” to follow it.",
-"Voyage retiré":"Trip removed"});
+"Voyage retiré":"Trip removed",
+"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} is no longer a traveller on “{1}” but still has access. Remove their access? They keep a read-only copy."});

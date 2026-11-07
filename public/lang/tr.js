@@ -6312,4 +6312,5 @@ I18N.load({
 "Retirer « {0} » de ton Vezoria ?":"“{0}” Vezoria’ndan kaldırılsın mı?",
 "Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"Takipçi olarak izlemeye devam edersin (❤️ ve 💬), takip ettiklerinde.",
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Artık görmeyeceksin. Bağlantı gelirse “Davet aldım” ile yapıştır.",
-"Voyage retiré":"Seyahat kaldırıldı"});
+"Voyage retiré":"Seyahat kaldırıldı",
+"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} artık “{1}” yolcuları arasında değil ama hâlâ erişimi var. Erişimi kaldırılsın mı? Salt okunur bir kopya kalır."});

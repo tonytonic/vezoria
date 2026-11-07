@@ -6324,4 +6324,5 @@ I18N.load({
 "Retirer « {0} » de ton Vezoria ?":"“{0}” को अपने Vezoria से हटाएं?",
 "Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"आप इसे फ़ॉलोअर के रूप में देखते रहेंगे (❤️ और 💬)।",
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"यह अब नहीं दिखेगी। फ़ॉलोअर लिंक मिले तो “मुझे निमंत्रण मिला” से पेस्ट करें।",
-"Voyage retiré":"यात्रा हटाई गई"});
+"Voyage retiré":"यात्रा हटाई गई",
+"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} अब “{1}” के यात्रियों में नहीं है पर पहुंच बाकी है। पहुंच हटाएं? केवल-पढ़ने वाली प्रति रहेगी।"});

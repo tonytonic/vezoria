@@ -3385,4 +3385,5 @@ I18N.load({
 "Retirer « {0} » de ton Vezoria ?":"Togliere «{0}» dal tuo Vezoria?",
 "Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"Continui a seguirlo come follower (❤️ e 💬), tra i seguiti.",
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Non lo vedrai più. Se ricevi un link, incollalo con «Ho ricevuto un invito» per seguirlo.",
-"Voyage retiré":"Viaggio tolto"});
+"Voyage retiré":"Viaggio tolto",
+"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} non è più tra i viaggiatori di «{1}» ma ha ancora accesso. Togliergli l’accesso? Conserva una copia in sola lettura."});

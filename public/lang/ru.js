@@ -6325,4 +6325,5 @@ I18N.load({
 "Retirer « {0} » de ton Vezoria ?":"Убрать «{0}» из твоего Vezoria?",
 "Tu continues à le suivre comme abonné (❤️ et 💬), dans tes suivis.":"Ты продолжаешь следить как подписчик (❤️ и 💬), в подписках.",
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Ты больше её не увидишь. Если пришлют ссылку, вставь через «Мне пришло приглашение».",
-"Voyage retiré":"Поездка убрана"});
+"Voyage retiré":"Поездка убрана",
+"{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} больше не в списке путешественников «{1}», но всё ещё имеет доступ. Убрать доступ? Останется копия только для чтения."});
