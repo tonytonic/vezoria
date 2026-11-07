@@ -1726,7 +1726,8 @@
       <div class="lv-people" id="lv-people"></div>`;
     LV = {key, map:null, mk:{}, phm:{}, sig:'', orbit:true, focus:null, prog:0, t0:Date.now(), seen:Date.now(), n:0, sweep:0};
     const me = LV;
-    if(lvMine()) lvCompass();   // 🧭 compagnon : flèche de direction sur mon médaillon (comme Google Maps)
+    if(lvMine()){ lvCompass();   // 🧭 compagnon : flèche de direction sur mon médaillon (comme Google Maps)
+      const tl = ov.querySelector('.lv-tools'); if(tl){ const b = document.createElement('button'); b.type = 'button'; b.id = 'lv-cmp'; b.setAttribute('aria-label', MSGT('Boussole')); b.textContent = '🧭'; b.onclick = () => lvCompass(true); tl.appendChild(b); } }
     try {
       await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
       if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
@@ -1784,19 +1785,21 @@
   }
   // 🧭 ma direction (boussole du téléphone) : seulement sur la carte de MES voyages (compagnons), pas chez les abonnés
   const lvMine = () => !!(LV && LV.key && !/^ft:/.test(LV.key) && LV.key !== '*all' && R[LV.key] && R[LV.key].type === 'trip');
-  function lvCompass(){ try {
-    if(!LV || LV.cmp || !window.DeviceOrientationEvent) return; const me = LV;
+  function lvCompass(manual){ try {
+    if(!LV || !window.DeviceOrientationEvent){ if(manual) toast('🧭 ' + MSGT('Pas de boussole sur cet appareil')); return; } const me = LV;
+    if(me.cmp){ if(!manual) return; window.removeEventListener(me.cmp.ev, me.cmp.on, true); me.cmp = null; }
+    if(manual) setTimeout(()=>{ if(LV === me && me.hd == null) toast('🧭 ' + MSGT('Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭')); }, 4000);
     const on = e => { if(LV !== me) return; let h = null;
       if(e.webkitCompassHeading != null && isFinite(e.webkitCompassHeading)) h = e.webkitCompassHeading;   // iPhone
       else if(e.absolute && e.alpha != null) h = 360 - e.alpha;                                               // Android
       if(h == null) return; const so = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
       me.hd = (h + so + 360) % 360; if(!me.hdRaf) me.hdRaf = requestAnimationFrame(()=>{ me.hdRaf = 0; lvHdDraw(); }); };
     const go = () => { if(LV !== me) return; const ev = 'ondeviceorientationabsolute' in window ? 'deviceorientationabsolute' : 'deviceorientation'; window.addEventListener(ev, on, true); me.cmp = {ev, on}; };
-    if(typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().then(r=>{ if(r === 'granted') go(); }).catch(()=>{});   // iPhone : autorisation demandée au toucher
+    if(typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().then(r=>{ if(r === 'granted') go(); else if(manual) toast('🧭 ' + MSGT('Boussole refusée')); }).catch(()=>{ go(); });   // iPhone : autorisation demandée au toucher (déjà accordée : on écoute quand même)
     else go();
   } catch(e){} }
   function lvHdDraw(){ try { if(!LV || LV.hd == null || !LV.map) return; const el = document.querySelector('#cv-lmap .lv-hd'); if(!el) return;
-    el.hidden = false; el.style.transform = 'rotate(' + Math.round(LV.hd - LV.map.getBearing() ) + 'deg)';
+    el.hidden = false; el.style.transform = 'rotate(' + Math.round(LV.hd - LV.map.getBearing()) + 'deg)'; const cb = document.getElementById('lv-cmp'); if(cb) cb.classList.add('on');
     if(!LV.hdRot){ LV.hdRot = 1; LV.map.on('rotate', lvHdDraw); } } catch(e){} }
   function liveClose(quiet){
     try { if(LV && LV.cmp) window.removeEventListener(LV.cmp.ev, LV.cmp.on, true); } catch(e){}
@@ -1864,7 +1867,7 @@
       if(!m){ const el = document.createElement('div'); el.className = 'lv-pin'; el.onclick = ev => { ev.stopPropagation(); liveFocus(LV.D.people.findIndex(q=>q.n === k)); };
         m = LV.mk[k] = {el, mk:new maplibregl.Marker({element:el, anchor:'bottom', opacity:'1', opacityWhenCovered:'1'}).setLngLat([l[1], l[0]]).addTo(map), at:[l[1], l[0]]}; }
       m.el.style.setProperty('--c', p.c); m.el.classList.toggle('on', !!on);
-      m.el.innerHTML = `${p.me && lvMine() ? '<span class="lv-hd" hidden></span>' : ''}<span class="lv-ring"></span><span class="lv-av">${esc(((p.n || '?')[0] || '?').toUpperCase())}</span><span class="lv-nm"><b data-notr>${esc(p.n)}</b><small>${p.tt ? '<span data-notr>' + esc(p.tt) + '</span> · ' : ''}${p.gps ? '🛰️' : '📸'} ${l[2] ? vzWhen(l[2]) : ''}</small></span>`;
+      m.el.innerHTML = `${p.me && lvMine() ? '<span class="lv-hd" hidden><i class="lv-hb"></i><i class="lv-ha"></i></span>' : ''}<span class="lv-ring"></span><span class="lv-av">${esc(((p.n || '?')[0] || '?').toUpperCase())}</span><span class="lv-nm"><b data-notr>${esc(p.n)}</b><small>${p.tt ? '<span data-notr>' + esc(p.tt) + '</span> · ' : ''}${p.gps ? '🛰️' : '📸'} ${l[2] ? vzWhen(l[2]) : ''}</small></span>`;
       liveMove(m, [l[1], l[0]]); });
     lvHdDraw();
     Object.keys(LV.mk).forEach(k=>{ if(!keep.has(k)){ LV.mk[k].mk.remove(); delete LV.mk[k]; } });

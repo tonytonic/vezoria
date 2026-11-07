@@ -3368,7 +3368,9 @@ body.vz-ro .lv-quick,body.vz-ro #cv-fab,body.vz-ro .ln-go~.ln-cta{display:none!i
 
 body.lv-sheet .v-sheet-bg{z-index:9200}
 
-/* 🧭 ma direction sur la carte live (compagnons) */
-.lv-pin .lv-hd{position:absolute;top:-36px;left:50%;width:110px;height:110px;margin-left:-55px;border-radius:50%;z-index:1;pointer-events:none;transition:transform .15s linear;
-  background:conic-gradient(from -32deg at 50% 50%, rgba(37,99,235,.62) 0deg 64deg, transparent 64deg 360deg);
-  -webkit-mask:radial-gradient(circle at 50% 50%, #000 18%, rgba(0,0,0,.55) 38%, transparent 50%);mask:radial-gradient(circle at 50% 50%, #000 18%, rgba(0,0,0,.55) 38%, transparent 50%)}
+/* 🧭 ma direction sur la carte live (compagnons) : faisceau + flèche, comme Google Maps */
+.lv-pin .lv-hd{position:absolute;top:-56px;left:50%;width:150px;height:150px;margin-left:-75px;z-index:3;pointer-events:none;transition:transform .15s linear}
+.lv-pin .lv-hd[hidden]{display:none}
+.lv-hd .lv-hb{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from -35deg at 50% 50%, rgba(37,99,235,.8) 0deg 70deg, transparent 70deg 360deg);
+  -webkit-mask:radial-gradient(circle at 50% 50%, transparent 15%, #000 16%, rgba(0,0,0,.45) 36%, transparent 50%);mask:radial-gradient(circle at 50% 50%, transparent 15%, #000 16%, rgba(0,0,0,.45) 36%, transparent 50%)}
+.lv-hd .lv-ha{position:absolute;left:50%;top:calc(50% - 40px);margin-left:-9px;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:13px solid #2563eb;filter:drop-shadow(0 0 2px #fff)}
