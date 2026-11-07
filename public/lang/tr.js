@@ -6314,4 +6314,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Artık görmeyeceksin. Bağlantı gelirse “Davet aldım” ile yapıştır.",
 "Voyage retiré":"Seyahat kaldırıldı",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} artık “{1}” yolcuları arasında değil ama hâlâ erişimi var. Erişimi kaldırılsın mı? Salt okunur bir kopya kalır.",
-"Synchronisation":"Senkronizasyon"});
+"Synchronisation":"Senkronizasyon",
+"Monument, rue, quartier, ville":"Anıt, sokak, semt, şehir",
+"Placer sur la carte":"Haritada yerleştir",
+"Posé sur la carte":"Haritaya yerleştirildi",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Henüz yerleştirilmedi: listeden bir yer seç veya haritaya koy",
+"Déplace la carte : le souvenir se pose sous l’épingle":"Haritayı kaydır: anı iğnenin altına konur",
+"Poser ici":"Buraya koy",
+"Souvenir posé ici":"Anı buraya kondu"});

@@ -3388,4 +3388,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Ya no lo verás. Si te envían un enlace, pégalo con «Recibí una invitación» para seguirlo.",
 "Voyage retiré":"Viaje quitado",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} ya no está entre los viajeros de «{1}» pero aún tiene acceso. ¿Quitarle el acceso? Conserva una copia de solo lectura.",
-"Synchronisation":"Sincronización"});
+"Synchronisation":"Sincronización",
+"Monument, rue, quartier, ville":"Monumento, calle, barrio, ciudad",
+"Placer sur la carte":"Colocar en el mapa",
+"Posé sur la carte":"Colocado en el mapa",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Aún sin colocar: elige un lugar de la lista o colócalo en el mapa",
+"Déplace la carte : le souvenir se pose sous l’épingle":"Mueve el mapa: el recuerdo se coloca bajo el alfiler",
+"Poser ici":"Colocar aquí",
+"Souvenir posé ici":"Recuerdo colocado aquí"});

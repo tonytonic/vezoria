@@ -6326,4 +6326,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"यह अब नहीं दिखेगी। फ़ॉलोअर लिंक मिले तो “मुझे निमंत्रण मिला” से पेस्ट करें।",
 "Voyage retiré":"यात्रा हटाई गई",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} अब “{1}” के यात्रियों में नहीं है पर पहुंच बाकी है। पहुंच हटाएं? केवल-पढ़ने वाली प्रति रहेगी।",
-"Synchronisation":"सिंक"});
+"Synchronisation":"सिंक",
+"Monument, rue, quartier, ville":"स्मारक, सड़क, मोहल्ला, शहर",
+"Placer sur la carte":"मानचित्र पर रखें",
+"Posé sur la carte":"मानचित्र पर रखा गया",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"अभी नहीं रखा: सूची से जगह चुनें या मानचित्र पर रखें",
+"Déplace la carte : le souvenir se pose sous l’épingle":"मानचित्र खिसकाएं: याद पिन के नीचे रखी जाएगी",
+"Poser ici":"यहां रखें",
+"Souvenir posé ici":"याद यहां रखी गई"});

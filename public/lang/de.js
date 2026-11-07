@@ -3382,4 +3382,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Du siehst sie nicht mehr. Bekommst du einen Follower-Link, füge ihn mit „Ich habe eine Einladung“ ein.",
 "Voyage retiré":"Reise entfernt",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} ist nicht mehr unter den Reisenden von „{1}“, hat aber noch Zugriff. Zugriff entziehen? Eine schreibgeschützte Kopie bleibt.",
-"Synchronisation":"Synchronisierung"});
+"Synchronisation":"Synchronisierung",
+"Monument, rue, quartier, ville":"Sehenswürdigkeit, Straße, Viertel, Stadt",
+"Placer sur la carte":"Auf der Karte setzen",
+"Posé sur la carte":"Auf der Karte gesetzt",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Noch nicht gesetzt: wähle einen Ort aus der Liste oder setze ihn auf die Karte",
+"Déplace la carte : le souvenir se pose sous l’épingle":"Verschiebe die Karte: die Erinnerung landet unter der Nadel",
+"Poser ici":"Hier setzen",
+"Souvenir posé ici":"Erinnerung hier gesetzt"});

@@ -6326,4 +6326,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"더 이상 보이지 않아요. 링크를 받으면 ‘초대를 받았어요’로 붙여넣으세요.",
 "Voyage retiré":"여행 삭제됨",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0}님은 더 이상 ‘{1}’ 여행자가 아니지만 아직 접근할 수 있어요. 접근을 해제할까요? 읽기 전용 사본은 남아요.",
-"Synchronisation":"동기화"});
+"Synchronisation":"동기화",
+"Monument, rue, quartier, ville":"명소, 거리, 동네, 도시",
+"Placer sur la carte":"지도에 놓기",
+"Posé sur la carte":"지도에 놓음",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"아직 위치 없음: 목록에서 장소를 고르거나 지도에 놓으세요",
+"Déplace la carte : le souvenir se pose sous l’épingle":"지도를 움직이세요: 추억이 핀 아래에 놓여요",
+"Poser ici":"여기에 놓기",
+"Souvenir posé ici":"추억을 여기에 놓았어요"});

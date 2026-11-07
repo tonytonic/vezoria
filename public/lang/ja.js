@@ -6326,4 +6326,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"今後は表示されません。リンクが届いたら「招待を受け取った」で貼り付けてください。",
 "Voyage retiré":"旅行を削除しました",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} は「{1}」の旅行者ではなくなりましたが、まだアクセスできます。アクセスを外しますか？閲覧専用のコピーは残ります。",
-"Synchronisation":"同期"});
+"Synchronisation":"同期",
+"Monument, rue, quartier, ville":"名所・通り・地区・都市",
+"Placer sur la carte":"地図に置く",
+"Posé sur la carte":"地図に配置済み",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"まだ未配置：リストから場所を選ぶか地図に置いてください",
+"Déplace la carte : le souvenir se pose sous l’épingle":"地図を動かす：思い出はピンの下に置かれます",
+"Poser ici":"ここに置く",
+"Souvenir posé ici":"思い出をここに置きました"});

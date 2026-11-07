@@ -6327,4 +6327,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Ты больше её не увидишь. Если пришлют ссылку, вставь через «Мне пришло приглашение».",
 "Voyage retiré":"Поездка убрана",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} больше не в списке путешественников «{1}», но всё ещё имеет доступ. Убрать доступ? Останется копия только для чтения.",
-"Synchronisation":"Синхронизация"});
+"Synchronisation":"Синхронизация",
+"Monument, rue, quartier, ville":"Достопримечательность, улица, район, город",
+"Placer sur la carte":"Отметить на карте",
+"Posé sur la carte":"Отмечено на карте",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Ещё не отмечено: выбери место из списка или отметь на карте",
+"Déplace la carte : le souvenir se pose sous l’épingle":"Двигай карту: воспоминание встанет под булавку",
+"Poser ici":"Поставить здесь",
+"Souvenir posé ici":"Воспоминание отмечено здесь"});

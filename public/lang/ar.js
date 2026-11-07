@@ -6327,4 +6327,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"لن تراها بعد الآن. إن وصلك رابط متابعة، الصقه عبر «وصلتني دعوة».",
 "Voyage retiré":"تمت إزالة الرحلة",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} لم يعد من مسافري «{1}» لكنه ما زال يملك الوصول. إزالة الوصول؟ تبقى لديه نسخة للقراءة فقط.",
-"Synchronisation":"المزامنة"});
+"Synchronisation":"المزامنة",
+"Monument, rue, quartier, ville":"معلم، شارع، حي، مدينة",
+"Placer sur la carte":"ضع على الخريطة",
+"Posé sur la carte":"موضوع على الخريطة",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"لم يُحدَّد بعد: اختر مكانًا من القائمة أو ضعه على الخريطة",
+"Déplace la carte : le souvenir se pose sous l’épingle":"حرّك الخريطة: توضع الذكرى تحت الدبوس",
+"Poser ici":"ضع هنا",
+"Souvenir posé ici":"تم وضع الذكرى هنا"});

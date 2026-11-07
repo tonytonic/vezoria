@@ -3378,4 +3378,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Je ziet hem niet meer. Krijg je een volgerslink, plak die met ‘Ik kreeg een uitnodiging’.",
 "Voyage retiré":"Reis verwijderd",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} staat niet meer bij de reizigers van ‘{1}’ maar heeft nog toegang. Toegang intrekken? Er blijft een alleen-lezen kopie.",
-"Synchronisation":"Synchronisatie"});
+"Synchronisation":"Synchronisatie",
+"Monument, rue, quartier, ville":"Monument, straat, wijk, stad",
+"Placer sur la carte":"Op de kaart zetten",
+"Posé sur la carte":"Op de kaart gezet",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Nog niet geplaatst: kies een plek uit de lijst of zet hem op de kaart",
+"Déplace la carte : le souvenir se pose sous l’épingle":"Verschuif de kaart: de herinnering komt onder de speld",
+"Poser ici":"Hier plaatsen",
+"Souvenir posé ici":"Herinnering hier geplaatst"});

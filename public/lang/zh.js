@@ -6326,4 +6326,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"你将不再看到它。收到关注链接时，用「我收到了邀请」粘贴即可关注。",
 "Voyage retiré":"旅行已移除",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} 已不在「{1}」的旅行者中，但仍有访问权限。移除其权限吗？对方保留只读副本。",
-"Synchronisation":"同步"});
+"Synchronisation":"同步",
+"Monument, rue, quartier, ville":"景点、街道、街区、城市",
+"Placer sur la carte":"在地图上放置",
+"Posé sur la carte":"已放在地图上",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"尚未放置：从列表中选择地点或放到地图上",
+"Déplace la carte : le souvenir se pose sous l’épingle":"移动地图：回忆会放在图钉下",
+"Poser ici":"放在这里",
+"Souvenir posé ici":"回忆已放在这里"});

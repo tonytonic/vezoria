@@ -3372,4 +3372,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"You won’t see it anymore. If you get a follower link, paste it with “I got an invitation” to follow it.",
 "Voyage retiré":"Trip removed",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} is no longer a traveller on “{1}” but still has access. Remove their access? They keep a read-only copy.",
-"Synchronisation":"Sync"});
+"Synchronisation":"Sync",
+"Monument, rue, quartier, ville":"Landmark, street, area, city",
+"Placer sur la carte":"Place on the map",
+"Posé sur la carte":"Placed on the map",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Not placed yet: pick a place from the list or put it on the map",
+"Déplace la carte : le souvenir se pose sous l’épingle":"Move the map: the memory goes under the pin",
+"Poser ici":"Place here",
+"Souvenir posé ici":"Memory placed here"});

@@ -3387,4 +3387,11 @@ I18N.load({
 "Tu ne le verras plus. Si on t’envoie un lien d’abonné, colle-le avec « J’ai reçu une invitation » pour le suivre.":"Non lo vedrai più. Se ricevi un link, incollalo con «Ho ricevuto un invito» per seguirlo.",
 "Voyage retiré":"Viaggio tolto",
 "{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.":"{0} non è più tra i viaggiatori di «{1}» ma ha ancora accesso. Togliergli l’accesso? Conserva una copia in sola lettura.",
-"Synchronisation":"Sincronizzazione"});
+"Synchronisation":"Sincronizzazione",
+"Monument, rue, quartier, ville":"Monumento, via, quartiere, città",
+"Placer sur la carte":"Posiziona sulla mappa",
+"Posé sur la carte":"Posizionato sulla mappa",
+"Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte":"Non ancora posizionato: scegli un luogo dalla lista o mettilo sulla mappa",
+"Déplace la carte : le souvenir se pose sous l’épingle":"Sposta la mappa: il ricordo va sotto lo spillo",
+"Poser ici":"Posiziona qui",
+"Souvenir posé ici":"Ricordo posizionato qui"});
