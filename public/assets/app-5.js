@@ -385,7 +385,7 @@
     const hm = it => esc(it.cat === 'transport' ? (it.heureDep || '') : (it.heure || ''));
     return `<div class="v-box cv-prog"><h3>📋 ${esc(MSGT('Programme du jour'))} · J${k+1}${info.titre ? ' · ' + esc(info.titre) : ''}</h3>${info.plan ? `<p>${esc(info.plan)}</p>` : ''}
       ${res.map(it=>`<button type="button" class="cv-prow" onclick="CV.edit('${ja(it.id)}')"><span>${icon(it)} <b>${esc(it.titre)}</b></span><span>${hm(it)}</span></button>`).join('')}
-      ${pl.map((p, i)=>`<button type="button" class="cv-prow${p.vu ? ' vu' : ''}" onclick="CV.plInfo('${ja(p.id)}')"><span>📍 <b data-notr>${esc(p.nom || '')}</b>${p.ville ? ` <small class="pl-v" data-notr>${esc(p.ville)}</small>` : ''}</span><span class="vu-b${p.vu ? ' on' : ''}" role="button" aria-label="${esc(MSGT('C’est vu'))}" onclick="event.stopPropagation();CV.plVu('${ja(p.id)}')">${p.vu ? '✅' : '⬜'}</span></button>`).join('')}
+      ${pl.map((p, i)=>`<button type="button" class="cv-prow${p.vu ? ' vu' : ''}${p.skip ? ' skip' : ''}" onclick="CV.plInfo('${ja(p.id)}')"><span>📍 <b data-notr>${esc(p.nom || '')}</b>${p.ville ? ` <small class="pl-v" data-notr>${esc(p.ville)}</small>` : ''}</span><span class="vu-b${p.vu ? ' on' : ''}" role="button" aria-label="${esc(MSGT('C’est vu'))}" onclick="event.stopPropagation();CV.plVu('${ja(p.id)}')">${p.vu ? '✅' : p.skip ? '⏭️' : '⬜'}</span></button>`).join('')}
       ${!res.length && !pl.length ? `<div class="v-sum-small">${esc(MSGT('Rien de prévu aujourd’hui.'))}</div>` : ''}
       ${pl.length ? `<button class="v-btn sec" onclick="CV.planDay('${ja(td)}')">🗺️ ${esc(RF('Itinéraire du jour ({0} lieux)', pl.length))}</button>` : ''}</div>`;
   }

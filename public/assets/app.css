@@ -3382,3 +3382,5 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .cv-hero.nh-r{animation:nhR .25s ease}.cv-hero.nh-l{animation:nhL .25s ease}@keyframes nhR{from{transform:translateX(30px);opacity:.4}}@keyframes nhL{from{transform:translateX(-30px);opacity:.4}}
 
 .pl-v{font-weight:500;opacity:.65;font-size:.8em;margin-left:4px}
+
+.cv-prow.skip b,.cv-place.skip u{opacity:.45;font-style:italic}.pi-vu{display:flex;gap:8px;margin-top:8px}.pi-vu .v-btn{flex:1;margin:0}
