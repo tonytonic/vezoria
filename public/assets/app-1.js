@@ -885,6 +885,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const PUSH_KINDS = [['depense','💶','Dépenses et remboursements'], ['resa','🗓️','Réservations et programme'], ['souv','📸','Souvenirs et photos'],
     ['sondage','🗳️','Sondages'], ['notes','🛒','Courses et notes'], ['social','💬','Abonnés : commentaires, ❤️ et nouveaux abonnés'], ['suivi','👀','Voyages que je suis : nouvelles étapes et photos'], ['rappel','⏰','Rappels : départ, enregistrement en ligne, échéances'], ['soir','🌙','Le soir en voyage : « raconte ta journée » et souvenirs « il y a un an »']];
   const PUSH_TPL = {dev_new:'📱 Nouvel appareil sur ton carnet : {0}. Ce n’est pas toi ? Ouvre Vezoria pour le bloquer.', soc_iv:'📩 {0} t’invite dans le voyage « {1} »', soc_ivf:'📩 {0} te propose de suivre « {1} »', soc_iva:'✅ {0} a rejoint « {1} »', soc_ivr:'✕ {0} a refusé l’invitation : « {1} »', soc_cm:'💬 {0} a commenté : « {1} »', soc_lk:'❤️ {0} aime ta publication : {1}', soc_fw:'👀 {0} suit maintenant ton voyage', fb_social:'Du nouveau chez tes abonnés', depense1:'{0} a ajouté une dépense : {1}', depenseN:'{0} a ajouté {1} dépenses', remb:'{0} a enregistré un remboursement : {1}',
+    j30:'J-30 avant « {0} » : il te reste {1} chose(s) à préparer', j7:'J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ', jok:'J-{1} avant « {0} » : tout est prêt ✨',
     resa1:'{0} a ajouté au programme : {1}', resaN:'{0} a ajouté {1} éléments au programme', resaCh:'{0} a changé l’horaire : {1}',
     souv1:'{0} a ajouté un souvenir : {1}', souvN:'{0} a ajouté {1} souvenirs', sondage:'{0} lance un sondage : {1}',
     notes1:'{0} a ajouté aux courses : {1}', notesN:'{0} a ajouté {1} articles aux courses', note:'{0} a ajouté une note : {1}',
@@ -1096,6 +1097,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const money = (n, t) => Math.round(n * 100) / 100 + ' ' + (CURS[(t && t.devise) || 'EUR'] || (t && t.devise) || '€');
     if(P.kinds.rappel) trips().filter(t=>!t.demo && !t.deleted && !t.ro).forEach(t=>{   // 📖 voyage en lecture seule : aucun rappel
       const its = Object.values(R).filter(r=>r.type === 'item' && r.trip === t.id && !r.deleted);
+      // ⏳ entre la préparation et le départ : J-30 et J-7, avec ce qu’il reste à préparer
+      if(t.debut && t.debut > isoToday()){ let left = 0; const was = M.trip; try { M.trip = t.id; left = prepSteps().filter(x=>!x.ok && !x.opt).length; } catch(e){} finally { M.trip = was; }
+        [30, 7].forEach(n=>items.push({id:'j' + n + '-' + t.id, at:at(addD(t.debut, -n), '10:00'), p:{k:'rappel', r:left ? 'j' + n : 'jok', a:[t.titre, left || n], trip:t.id, tt:t.titre}})); }
       if(t.debut){ const first = its.filter(i=>i.cat === 'transport' && i.date === t.debut).sort((a,b)=>String(a.heureDep||'').localeCompare(String(b.heureDep||'')))[0];
         items.push({id:'dep-' + t.id, at:at(addD(t.debut, -1), '19:00'), p:{k:'rappel', r:'depart', a:[t.titre], sub:first ? [first.heureDep || '', first.titre || ''].join(' ').trim() : '', trip:t.id, tt:t.titre}}); }
       its.filter(i=>i.cat === 'transport' && /avion|vol\b|flight|plane/i.test((i.mode || '') + ' ' + (i.titre || '')) && i.date && i.heureDep).forEach(i=>{

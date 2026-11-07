@@ -246,6 +246,16 @@
     openSheet(`<h2>👀 ${esc(MSGT('Quelle démo ?'))}</h2><div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Le même voyage de 3 semaines vu sous 3 angles (à préparer, en cours, souvenirs). Choisis des lieux que tu connais.'))}</div>
       ${b('eu', '🇮🇹', 'Europe · Italie (Rome, Florence, Venise)')}${b('us', '🇺🇸', 'États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)')}${b('af', '🇲🇦', 'Afrique · Maroc (Marrakech, Fès, Chefchaouen)')}${b('jp', '🇯🇵', 'Asie · Japon (Tokyo, Kyoto, Osaka)')}`);
   }
+  // 🧳 → 🗺️ → 🎬 Vezoria en 3 temps, sur l’accueil d’un nouveau : chaque temps s’ouvre sur le voyage de démo correspondant
+  function tri3HTML(){ if(!PUBLIC) return ''; const c = (ph, ic, t, d) => `<button type="button" class="tri3-c" onclick="CV.demoPhase('${ph}')"><i>${ic}</i><b>${esc(MSGT(t))}</b><small>${esc(MSGT(d))}</small></button>`;
+    return `<div class="v-box tri3"><h2 class="vb-h">${esc(MSGT('Vezoria en 3 temps'))}</h2><div class="tri3-g">
+      ${c('prep', '🧳', 'Avant', 'Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire')}
+      ${c('live', '🗺️', 'Pendant', 'La carte te guide : visites, trajets, et tu coches ce que tu as vu')}
+      ${c('past', '🎬', 'Après', 'Le film, le récap et le bilan se font tout seuls')}</div>
+      <div class="v-sum-small">${esc(MSGT('Touche un temps pour le voir sur un voyage de démo.'))}</div></div>`; }
+  async function demoPhase(ph){ closeSheet(true);
+    if(!demoTrip()) await demoLoad(M.demoReg || demoRegAuto());
+    const t = list('trip', x=>x.demo && !x.deleted && tripPhase(x) === ph)[0] || demoTrip(); if(t) go(t.id); }
   async function demoGo(reg){ closeSheet(true); if(demoTrip()){ Object.keys(R).forEach(id=>{ if(R[id].demo) delete R[id]; }); persist(); } await demoLoad(reg); }
   function go(id){ const was = M.trip; M.trip = id; M.who = 'all';
     setTimeout(()=>{ try { if(M.trip === id) fmCalc(id); } catch(e){} }, 2500);   // 🗺️ carte des abonnés à jour
@@ -311,7 +321,7 @@
       // 👥 la grille Compagnons · Abonnés · Je suis, aussi sur l’accueil d’un carnet sans voyage à soi (ex. sur ordinateur, juste pour suivre un proche)
       let hub = ''; try { if(fol) hub = `<div class="sp2 home-sp2">${spOverview()}</div><style>.home-sp2{margin:0 0 14px}.home-sp2 .sp2-top{display:none}@media(min-width:760px){.home-sp2 .sp2-body{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}.home-sp2 .sp2-blk{margin:0}}</style>`; } catch(e){}
       body.innerHTML = hub + (fol ? `<div class="home-fol">${fol}</div>` : '') + `<div class="v-box"><h2 class="vb-h">${fol ? 'Mes propres voyages' : 'Aucun voyage'}</h2><p>${fol ? 'Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.' : 'Crée un voyage, ou transforme une envie en voyage depuis l’onglet ✨ Envies.'}</p>
-        <button class="v-btn" onclick="CV.newTrip()">＋ Nouveau voyage</button>${tutoBtn()}${demoBtn()}</div>`;
+        <button class="v-btn" onclick="CV.newTrip()">＋ Nouveau voyage</button>${tutoBtn()}${demoBtn()}</div>${fol ? '' : tri3HTML()}`;
       return;
     }
     if(CATS[M.tab]) renderList(M.tab);
