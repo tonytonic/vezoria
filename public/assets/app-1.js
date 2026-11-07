@@ -858,7 +858,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       else if(manual) toast('☁️ Synchronisé');
       setTimeout(uploadQueue, 100); setTimeout(feedUpload, 1500); setTimeout(()=>{ potGc().catch(()=>{}); }, 4000); setTimeout(()=>{ pubMapSync().catch(()=>{}); }, 6000); setTimeout(()=>{ potAuto().catch(()=>{}); }, 20000);
     } catch(e){
-      M.sync.err = e.message || String(e); M.sync.net = !!e.net; if(!M.sync.errSince) M.sync.errSince = Date.now();
+      M.sync.err = e.message || String(e); M.sync.net = !!e.net; if(!M.sync.errSince) M.sync.errSince = Date.now(); try { M.sync.errAt = String(e.stack || '').split('\n').slice(0, 3).join(' / ').slice(0, 300); console.warn('[sync]', e); } catch(x){}
       if(e.rotated) setTimeout(()=>{ try { rotLost(); } catch(x){} }, 600);
       if(e.needAcct) setTimeout(()=>{ try { if(!document.getElementById('v-sheet-bg')) acctNew({acct:false, must:1}, M.sync.code); } catch(x){} }, 600);   // 📧 pas de compte : pas de carnet en ligne
       if(e.needVerify) setTimeout(()=>{ try { if(!document.getElementById('v-sheet-bg')) acctGateSheet(M.sync.code, e.mail); } catch(x){} }, 600);   // 👤 compte : cet appareil n’est pas (ou plus) validé   // 🔑 le code de ce carnet a été changé sur un autre appareil

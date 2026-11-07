@@ -2532,7 +2532,8 @@
     const nm = c => { if(M.subs && M.subs[c]) return '👀 ' + (M.subs[c].owner || MSGT('Abonnement')); if(c === ab2C()) return '👀 ' + MSGT('Mes abonnés');
       const tid = Object.keys(TS()).find(k=>TS()[k] === c && R[k] && R[k].type === 'trip'); return tid ? '🧳 ' + (R[tid].titre || '') : '☁️ ' + c.slice(0, 4) + '…'; };
     const L = (M.spaces || []).filter(x=>x.err && !(x.needAcct && !(x.dirty || []).length));
-    return L.length ? `<div class="err" style="margin:8px 0">${L.map(x=>`<div><b data-notr>${esc(nm(x.code))}</b> : ${esc(x.err)}</div>`).join('')}</div>` : '';
+    const mainE = M.sync.err ? `<div><b>☁️ ${esc(MSGT('Synchronisation'))}</b> : ${esc(M.sync.err)}${M.sync.errAt ? `<br><small style="opacity:.7">${esc(M.sync.errAt)}</small>` : ''}</div>` : '';
+    return (L.length || mainE) ? `<div class="err" style="margin:8px 0">${mainE}${L.map(x=>`<div><b data-notr>${esc(nm(x.code))}</b> : ${esc(x.err)}</div>`).join('')}</div>` : '';
   } catch(e){ return ''; } }
   function cloudSheet(view){
     const mode = cloudMode(), choose = view === 'choose' || !mode;
@@ -2545,7 +2546,7 @@
         <div class="sy-r" style="margin-top:6px"><b>🔑 Tu as déjà un code ?</b><small>Ton code administrateur (celui de ton autre appareil : tout ton carnet arrive ici) ou un code compagnon reçu d’un proche.</small>
           <div class="cv-row" style="margin-top:6px"><input class="v-in" id="sy-join" placeholder="XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button type="button" class="fd-send" onclick="CV.cloudJoinMain()">Utiliser</button></div>${qrBtn('sy-join')}</div>
         <button type="button" class="v-btn sec" onclick="CV.close();CV.joinAny()">🤝 J’ai reçu une invitation dans un voyage</button>
-        ${(M.spaces || []).length ? `${cloudErrs()}<button type="button" class="v-btn sec" onclick="CV.syncNow(true)">🔄 ${MSGT('Synchroniser maintenant')}</button>` : ''}
+        ${(M.spaces || []).length || M.sync.err ? `${cloudErrs()}<button type="button" class="v-btn sec" onclick="CV.syncNow(true)">🔄 ${MSGT('Synchroniser maintenant')}</button>` : ''}
         <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${mode ? 'Annuler' : 'Plus tard'}</button></div>`);
       return;
     }
