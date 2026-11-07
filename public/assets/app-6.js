@@ -1547,7 +1547,7 @@
     const md = M.apMode === 'ville' ? 'ville' : 'precis';
     openSheet(`<h2>📸 ${MSGT('Importer toutes mes photos')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Choisis toutes les photos du voyage d’un coup. L’appli lit dans chaque photo l’endroit exact et l’heure où elle a été prise, et place chaque souvenir à son point sur la carte, dans l’ordre de la journée.')}</div>
       <div class="v-seg v-seg2" role="group" aria-label="${esc(MSGT('Regrouper les photos'))}" style="margin-bottom:10px"><button type="button" class="${md === 'precis' ? 'on' : ''}" onclick="CV.apMode('precis')">📍 ${MSGT('À chaque endroit')}</button><button type="button" class="${md === 'ville' ? 'on' : ''}" onclick="CV.apMode('ville')">🏙️ ${MSGT('Par ville')}</button></div>
-      <div class="v-sum-small" style="margin-bottom:10px">${MSGT(md === 'precis' ? 'Un souvenir par endroit visité (photos prises à moins de 500 m et à moins de 3 h d’écart).' : 'Un souvenir par jour et par ville.')}</div>
+      <div class="v-sum-small" style="margin-bottom:10px">${MSGT(md === 'precis' ? 'Un souvenir par endroit et par moment : photos à moins de 500 m, sans pause de plus d’1 h 15. Repasser au même endroit plus tard fait un nouveau souvenir.' : 'Un souvenir par jour et par ville.')}</div>
       <label class="v-btn cv-addph" style="display:block;text-align:center">🖼️ ${MSGT('Choisir les photos')}<input type="file" accept="image/heic,image/heif,image/jpeg,image/png,image/webp" multiple onchange="CV.autoPhotoRead(this)"></label>
       <div class="v-sum-small" style="margin-top:8px">${MSGT('Astuce iPhone : dans la sélection, touche « Options » puis active « Lieu » pour que la position soit gardée dans les photos.')}</div>
       <div class="v-sum-small" id="ap-msg" style="margin-top:8px"></div>
@@ -1574,11 +1574,13 @@
         const c = [T[lo], T[lo - 1]].filter(Boolean).sort((a, b)=>Math.abs(a[0] - p.ts) - Math.abs(b[0] - p.ts))[0];
         if(c && Math.abs(c[0] - p.ts) <= 20 * 60000){ p.lat = c[1]; p.lng = c[2]; p.viaTrk = 1; nG++; } });
       AP_TRK = nG; }
-    const groups = [], R1 = precis ? 0.5 : 40, GAP = precis ? 3 * 3600e3 : 24 * 3600e3;
+    // précis : un nouveau step dès qu’on s’arrête de photographier plus d’1 h 15, ou après 3 h au même endroit
+    // (repasser le soir dans le quartier du matin = un autre souvenir, pas les photos du matin mélangées avec celles du soir)
+    const groups = [], R1 = precis ? 0.5 : 40, GAP = precis ? 75 * 60000 : 24 * 3600e3, SPAN = precis ? 3 * 3600e3 : 48 * 3600e3;
     const cen = g => { const P = g.ph.filter(p=>p.lat != null); if(!P.length) return null; return {lat:P.reduce((a,p)=>a+p.lat,0)/P.length, lng:P.reduce((a,p)=>a+p.lng,0)/P.length}; };
     info.forEach(p => {
       const g = groups[groups.length-1], c = g && cen(g), last = g && g.ph[g.ph.length-1];
-      const same = g && g.date === p.date && p.ts - last.ts < GAP && (p.lat == null || !c || hav(c, p) < R1);
+      const same = g && g.date === p.date && p.ts - last.ts < GAP && p.ts - g.ph[0].ts < SPAN && (p.lat == null || !c || hav(c, p) < R1);
       if(same) g.ph.push(p); else groups.push({date:p.date, ph:[p]});
     });
     groups.forEach(g => { const c = cen(g); if(c){ g.lat = +c.lat.toFixed(5); g.lng = +c.lng.toFixed(5); } g.time = g.ph[0].time || ''; g.titre = g.lieu = g.pays = g.cc = g.city = ''; });
