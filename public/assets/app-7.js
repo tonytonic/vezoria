@@ -1726,6 +1726,7 @@
       <div class="lv-people" id="lv-people"></div>`;
     LV = {key, map:null, mk:{}, phm:{}, sig:'', orbit:true, focus:null, prog:0, t0:Date.now(), seen:Date.now(), n:0, sweep:0};
     const me = LV;
+    if(lvMine()) lvCompass();   // 🧭 compagnon : flèche de direction sur mon médaillon (comme Google Maps)
     try {
       await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
       if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
@@ -1772,7 +1773,8 @@
           // 👆 toucher une visite : sa fiche (description, horaires) avec « ✓ C’est vu » · une activité : sa réservation
           const tap = (ly, fn) => { map.on('click', ly, e=>{ const f = e.features && e.features[0], id = f && f.properties && f.properties.id; if(id && R[id]) fn(id); });
             map.on('mouseenter', ly, ()=>{ map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', ly, ()=>{ map.getCanvas().style.cursor = ''; }); };
-          try { tap('vm-vis', id=>{ if(LV) LV.orbit = false; plInfo(id); }); tap('vm-act', id=>{ if(LV) LV.orbit = false; edit(id); }); } catch(e){}
+          const over = () => { document.body.classList.add('lv-sheet'); clearInterval(me.shIv); me.shIv = setInterval(()=>{ if(!document.getElementById('v-sheet-bg') || LV !== me){ document.body.classList.remove('lv-sheet'); clearInterval(me.shIv); } }, 800); };   // la fiche passe au-dessus de la carte
+          try { tap('vm-vis', id=>{ if(LV) LV.orbit = false; over(); plInfo(id); }); tap('vm-act', id=>{ if(LV) LV.orbit = false; over(); edit(id); }); } catch(e){}
           if(!D.people.length && !D.ph.length && F.cities.length){ const b = new maplibregl.LngLatBounds(); F.cities.forEach(c=>b.extend([c.c.lng, c.c.lat])); try { map.fitBounds(b, {padding:80, maxZoom:11, pitch:50, duration:0}); } catch(e){} } }).catch(()=>{});
         LV.iv = setInterval(liveTick, 20000); setTimeout(liveTick, 1500); LV.up = setInterval(liveUp, 5000); liveUp();
         LV.raf = requestAnimationFrame(liveAnim);
@@ -1780,7 +1782,24 @@
       map.on('style.load', go); map.on('load', go); map.on('error', ()=>{});
     } catch(e){ const m = document.getElementById('lv-msg'); if(m) m.textContent = '⚠️ ' + (e && e.message ? errTxt(e) : MSGT('Carte indisponible')); }
   }
+  // 🧭 ma direction (boussole du téléphone) : seulement sur la carte de MES voyages (compagnons), pas chez les abonnés
+  const lvMine = () => !!(LV && LV.key && !/^ft:/.test(LV.key) && LV.key !== '*all' && R[LV.key] && R[LV.key].type === 'trip');
+  function lvCompass(){ try {
+    if(!LV || LV.cmp || !window.DeviceOrientationEvent) return; const me = LV;
+    const on = e => { if(LV !== me) return; let h = null;
+      if(e.webkitCompassHeading != null && isFinite(e.webkitCompassHeading)) h = e.webkitCompassHeading;   // iPhone
+      else if(e.absolute && e.alpha != null) h = 360 - e.alpha;                                               // Android
+      if(h == null) return; const so = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+      me.hd = (h + so + 360) % 360; if(!me.hdRaf) me.hdRaf = requestAnimationFrame(()=>{ me.hdRaf = 0; lvHdDraw(); }); };
+    const go = () => { if(LV !== me) return; const ev = 'ondeviceorientationabsolute' in window ? 'deviceorientationabsolute' : 'deviceorientation'; window.addEventListener(ev, on, true); me.cmp = {ev, on}; };
+    if(typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().then(r=>{ if(r === 'granted') go(); }).catch(()=>{});   // iPhone : autorisation demandée au toucher
+    else go();
+  } catch(e){} }
+  function lvHdDraw(){ try { if(!LV || LV.hd == null || !LV.map) return; const el = document.querySelector('#cv-lmap .lv-hd'); if(!el) return;
+    el.hidden = false; el.style.transform = 'rotate(' + Math.round(LV.hd - LV.map.getBearing() ) + 'deg)';
+    if(!LV.hdRot){ LV.hdRot = 1; LV.map.on('rotate', lvHdDraw); } } catch(e){} }
   function liveClose(quiet){
+    try { if(LV && LV.cmp) window.removeEventListener(LV.cmp.ev, LV.cmp.on, true); } catch(e){}
     if(!LV) { const o = document.getElementById('cv-lmap'); if(o) o.remove(); return; }
     clearInterval(LV.iv); clearInterval(LV.up); cancelAnimationFrame(LV.raf); clearTimeout(lvSoonT);
     try { if(LV.map) LV.map.remove(); } catch(e){}
@@ -1845,8 +1864,9 @@
       if(!m){ const el = document.createElement('div'); el.className = 'lv-pin'; el.onclick = ev => { ev.stopPropagation(); liveFocus(LV.D.people.findIndex(q=>q.n === k)); };
         m = LV.mk[k] = {el, mk:new maplibregl.Marker({element:el, anchor:'bottom', opacity:'1', opacityWhenCovered:'1'}).setLngLat([l[1], l[0]]).addTo(map), at:[l[1], l[0]]}; }
       m.el.style.setProperty('--c', p.c); m.el.classList.toggle('on', !!on);
-      m.el.innerHTML = `<span class="lv-ring"></span><span class="lv-av">${esc(((p.n || '?')[0] || '?').toUpperCase())}</span><span class="lv-nm"><b data-notr>${esc(p.n)}</b><small>${p.tt ? '<span data-notr>' + esc(p.tt) + '</span> · ' : ''}${p.gps ? '🛰️' : '📸'} ${l[2] ? vzWhen(l[2]) : ''}</small></span>`;
+      m.el.innerHTML = `${p.me && lvMine() ? '<span class="lv-hd" hidden></span>' : ''}<span class="lv-ring"></span><span class="lv-av">${esc(((p.n || '?')[0] || '?').toUpperCase())}</span><span class="lv-nm"><b data-notr>${esc(p.n)}</b><small>${p.tt ? '<span data-notr>' + esc(p.tt) + '</span> · ' : ''}${p.gps ? '🛰️' : '📸'} ${l[2] ? vzWhen(l[2]) : ''}</small></span>`;
       liveMove(m, [l[1], l[0]]); });
+    lvHdDraw();
     Object.keys(LV.mk).forEach(k=>{ if(!keep.has(k)){ LV.mk[k].mk.remove(); delete LV.mk[k]; } });
     // photos : vignettes posées sur la carte, touchées → elles s’agrandissent
     const pk = new Set();

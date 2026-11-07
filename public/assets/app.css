@@ -3366,4 +3366,9 @@ body.vz-ro .lv-quick,body.vz-ro #cv-fab,body.vz-ro .ln-go~.ln-cta{display:none!i
 #cv-near .nr-a{display:flex;gap:6px}#cv-near .nr-a button{border:0;border-radius:999px;padding:8px 11px;background:#f1edf7;font:inherit;font-size:.85rem;color:inherit}#cv-near .nr-a button:first-child{background:#16a34a;color:#fff;font-weight:600}
 .vu-b{cursor:pointer;font-size:1.05rem;padding:0 2px}.cv-prow.vu b,.cv-place.vu u{text-decoration:line-through;opacity:.6}.cv-place .n.vu-b.on{background:#16a34a;color:#fff}
 
-body:has(#cv-lmap) .v-sheet-bg{z-index:9200}
+body.lv-sheet .v-sheet-bg{z-index:9200}
+
+/* 🧭 ma direction sur la carte live (compagnons) */
+.lv-pin .lv-hd{position:absolute;top:-36px;left:50%;width:110px;height:110px;margin-left:-55px;border-radius:50%;z-index:1;pointer-events:none;transition:transform .15s linear;
+  background:conic-gradient(from -32deg at 50% 50%, rgba(37,99,235,.62) 0deg 64deg, transparent 64deg 360deg);
+  -webkit-mask:radial-gradient(circle at 50% 50%, #000 18%, rgba(0,0,0,.55) 38%, transparent 50%);mask:radial-gradient(circle at 50% 50%, #000 18%, rgba(0,0,0,.55) 38%, transparent 50%)}
