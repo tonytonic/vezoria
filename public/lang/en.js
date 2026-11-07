@@ -3466,4 +3466,5 @@ I18N.load({
 "la personne qui les a ajoutées":"the person who added them",
 "{0} photo(s) renvoyée(s)…":"{0} photo(s) being resent…",
 "{0} photo(s) pas encore envoyée(s)":"{0} photo(s) not sent yet",
-"Photos en ligne : tes compagnons vont les voir":"Photos online: your companions will see them"});
+"Photos en ligne : tes compagnons vont les voir":"Photos online: your companions will see them",
+"Renvoyer les photos à mes compagnons":"Resend the photos to my companions"});

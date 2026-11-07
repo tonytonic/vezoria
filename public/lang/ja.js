@@ -6420,4 +6420,5 @@ I18N.load({
 "la personne qui les a ajoutées":"追加した人",
 "{0} photo(s) renvoyée(s)…":"{0}枚を再送信中…",
 "{0} photo(s) pas encore envoyée(s)":"{0}枚がまだ送信されていません",
-"Photos en ligne : tes compagnons vont les voir":"写真はオンラインです：仲間に表示されます"});
+"Photos en ligne : tes compagnons vont les voir":"写真はオンラインです：仲間に表示されます",
+"Renvoyer les photos à mes compagnons":"仲間に写真を再送信"});

@@ -6420,4 +6420,5 @@ I18N.load({
 "la personne qui les a ajoutées":"추가한 사람",
 "{0} photo(s) renvoyée(s)…":"사진 {0}장 다시 보내는 중…",
 "{0} photo(s) pas encore envoyée(s)":"사진 {0}장이 아직 전송되지 않았어요",
-"Photos en ligne : tes compagnons vont les voir":"사진이 올라갔어요: 동행자들이 볼 수 있어요"});
+"Photos en ligne : tes compagnons vont les voir":"사진이 올라갔어요: 동행자들이 볼 수 있어요",
+"Renvoyer les photos à mes compagnons":"동행자에게 사진 다시 보내기"});

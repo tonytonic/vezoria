@@ -6420,4 +6420,5 @@ I18N.load({
 "la personne qui les a ajoutées":"जिसने उन्हें जोड़ा",
 "{0} photo(s) renvoyée(s)…":"{0} फ़ोटो फिर भेजी जा रही हैं…",
 "{0} photo(s) pas encore envoyée(s)":"{0} फ़ोटो अभी नहीं भेजी गईं",
-"Photos en ligne : tes compagnons vont les voir":"फ़ोटो ऑनलाइन: आपके साथी देखेंगे"});
+"Photos en ligne : tes compagnons vont les voir":"फ़ोटो ऑनलाइन: आपके साथी देखेंगे",
+"Renvoyer les photos à mes compagnons":"फ़ोटो साथियों को फिर भेजें"});

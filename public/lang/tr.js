@@ -6408,4 +6408,5 @@ I18N.load({
 "la personne qui les a ajoutées":"onları ekleyen kişi",
 "{0} photo(s) renvoyée(s)…":"{0} fotoğraf yeniden gönderiliyor…",
 "{0} photo(s) pas encore envoyée(s)":"{0} fotoğraf henüz gönderilmedi",
-"Photos en ligne : tes compagnons vont les voir":"Fotoğraflar çevrimiçi: yol arkadaşların görecek"});
+"Photos en ligne : tes compagnons vont les voir":"Fotoğraflar çevrimiçi: yol arkadaşların görecek",
+"Renvoyer les photos à mes compagnons":"Fotoğrafları yol arkadaşlarıma yeniden gönder"});

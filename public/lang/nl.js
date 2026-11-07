@@ -3472,4 +3472,5 @@ I18N.load({
 "la personne qui les a ajoutées":"degene die ze toevoegde",
 "{0} photo(s) renvoyée(s)…":"{0} foto(’s) worden opnieuw verstuurd…",
 "{0} photo(s) pas encore envoyée(s)":"{0} foto(’s) nog niet verstuurd",
-"Photos en ligne : tes compagnons vont les voir":"Foto’s online: je reisgenoten zien ze"});
+"Photos en ligne : tes compagnons vont les voir":"Foto’s online: je reisgenoten zien ze",
+"Renvoyer les photos à mes compagnons":"Foto’s opnieuw naar mijn reisgenoten sturen"});

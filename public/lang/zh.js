@@ -6420,4 +6420,5 @@ I18N.load({
 "la personne qui les a ajoutées":"添加它们的人",
 "{0} photo(s) renvoyée(s)…":"正在重新发送 {0} 张照片…",
 "{0} photo(s) pas encore envoyée(s)":"{0} 张照片尚未发送",
-"Photos en ligne : tes compagnons vont les voir":"照片已上线：旅伴们将看到"});
+"Photos en ligne : tes compagnons vont les voir":"照片已上线：旅伴们将看到",
+"Renvoyer les photos à mes compagnons":"重新把照片发给旅伴"});

@@ -6421,4 +6421,5 @@ I18N.load({
 "la personne qui les a ajoutées":"الشخص الذي أضافها",
 "{0} photo(s) renvoyée(s)…":"جارٍ إعادة إرسال {0} صور…",
 "{0} photo(s) pas encore envoyée(s)":"{0} صور لم تُرسل بعد",
-"Photos en ligne : tes compagnons vont les voir":"الصور متاحة: سيراها رفاقك"});
+"Photos en ligne : tes compagnons vont les voir":"الصور متاحة: سيراها رفاقك",
+"Renvoyer les photos à mes compagnons":"إعادة إرسال الصور إلى رفاقي"});

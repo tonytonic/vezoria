@@ -6421,4 +6421,5 @@ I18N.load({
 "la personne qui les a ajoutées":"тот, кто их добавил",
 "{0} photo(s) renvoyée(s)…":"{0} фото отправляются снова…",
 "{0} photo(s) pas encore envoyée(s)":"{0} фото ещё не отправлены",
-"Photos en ligne : tes compagnons vont les voir":"Фото в сети: попутчики их увидят"});
+"Photos en ligne : tes compagnons vont les voir":"Фото в сети: попутчики их увидят",
+"Renvoyer les photos à mes compagnons":"Отправить фото попутчикам ещё раз"});
