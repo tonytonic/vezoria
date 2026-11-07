@@ -1557,6 +1557,15 @@
     const info = [];
     for(let i=0;i<files.length;i++){ if(i%10===0) say(`${MSGT('Lecture des lieux et des heures…')} ${i}/${files.length}`); const ex = await exifOf(files[i]); info.push(Object.assign({f:files[i], ts:exTs(ex)}, ex)); }
     info.sort((a,b)=>a.ts - b.ts);
+    // 🛰️ photo sans position (téléphone en mode avion, localisation coupée) : l’endroit où était le groupe à cette heure-là,
+    // d’après le suivi GPS d’un compagnon ou les souvenirs déjà posés (à 20 min près)
+    { const T = []; list('trk', r=>r.trip === t.id && !r.deleted).forEach(r=>(r.pts || []).forEach(q=>{ if(q[2]) T.push([q[2], q[0], q[1]]); }));
+      list('souv', x=>x.trip === t.id && !x.deleted).forEach(x=>(x.pts || []).forEach(q=>{ if(q[2]) T.push([q[2], q[0], q[1]]); }));
+      T.sort((a, b)=>a[0] - b[0]); let nG = 0;
+      if(T.length) info.forEach(p=>{ if(p.lat != null || p.guess || !p.ts) return; let lo = 0, hi = T.length - 1; while(lo < hi){ const m = (lo + hi) >> 1; if(T[m][0] < p.ts) lo = m + 1; else hi = m; }
+        const c = [T[lo], T[lo - 1]].filter(Boolean).sort((a, b)=>Math.abs(a[0] - p.ts) - Math.abs(b[0] - p.ts))[0];
+        if(c && Math.abs(c[0] - p.ts) <= 20 * 60000){ p.lat = c[1]; p.lng = c[2]; p.viaTrk = 1; nG++; } });
+      AP_TRK = nG; }
     const groups = [], R1 = precis ? 0.5 : 40, GAP = precis ? 3 * 3600e3 : 24 * 3600e3;
     const cen = g => { const P = g.ph.filter(p=>p.lat != null); if(!P.length) return null; return {lat:P.reduce((a,p)=>a+p.lat,0)/P.length, lng:P.reduce((a,p)=>a+p.lng,0)/P.length}; };
     info.forEach(p => {
@@ -1582,14 +1591,21 @@
       g.titre = c.spot || c.city || '';
     }
     groups.forEach(g => { if(!g.titre) g.titre = TT('Journée du ' + fdate(g.date)); });
-    AP = {groups, t, dup}; apRender();
+    // 🤝 un souvenir existe déjà au même endroit et à la même heure (posé par un compagnon) : les photos s’y ajoutent au lieu d’en créer un autre
+    { const sv = list('souv', x=>x.trip === t.id && !x.deleted && x.lat != null && !roOf(x)), WIN = precis ? 90 * 60000 : 12 * 3600e3;
+      const tsOf = x => { const L = (x.pts || []).map(q=>q[2]).filter(Boolean); if(x.heure) L.push(Date.parse(x.date + 'T' + x.heure + ':00')); return L.filter(isFinite); };
+      groups.forEach(g=>{ if(g.lat == null) return; const a = g.ph[0].ts, b = g.ph[g.ph.length - 1].ts;
+        const best = sv.filter(x=>x.date === g.date && hav(x, g) < R1).map(x=>({x, d:Math.min(...tsOf(x).map(u=>u < a ? a - u : u > b ? u - b : 0), Infinity)})).filter(o=>o.d <= WIN).sort((p, q)=>p.d - q.d)[0];
+        if(best){ g.into = best.x.id; g.titre = best.x.titre || g.titre; } }); }
+    AP = {groups, t, dup, trk:AP_TRK}; apRender();
   }
+  let AP_TRK = 0;
   function apRender(){
     const t = AP.t, out = d => t.debut && (d < t.debut || (t.fin && d > t.fin)), nAll = AP.groups.reduce((s,g)=>s+g.ph.length,0);
     openSheet(`<h2>✨ ${AP.groups.length} souvenir${AP.groups.length>1?'s':''} proposé${AP.groups.length>1?'s':''}</h2>
-      <div class="v-sum-small" style="margin-bottom:8px">${nAll} photo(s) rangées par lieu et par heure${AP.dup ? ' · ' + RF('{0} déjà importée(s), ignorée(s)', AP.dup) : ''}. Corrige les titres si tu veux, décoche ce que tu ne veux pas.</div>
+      <div class="v-sum-small" style="margin-bottom:8px">${nAll} photo(s) rangées par lieu et par heure${AP.dup ? ' · ' + RF('{0} déjà importée(s), ignorée(s)', AP.dup) : ''}. Corrige les titres si tu veux, décoche ce que tu ne veux pas.${AP.trk ? '<br>🛰️ ' + esc(RF('{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure', AP.trk)) : ''}</div>
       <div class="ap-list">${AP.groups.map((g,i)=>`<div class="ap-row"><label class="cv-checkline"><input type="checkbox" id="ap-${i}"${out(g.date) ? '' : ' checked'}></label>
-        <div class="ap-b"><div class="ap-d"><span>${fdate(g.date)}${g.time ? ' · ' + esc(g.time) : ''}</span> · <span>${g.ph.length} photo${g.ph.length>1?'s':''}</span>${g.lat != null ? ' · 📍' : ' · <span>sans position</span>'}${g.cc ? ' · ' + flag(g.cc) : ''}${out(g.date) ? ' · <span class="ap-w">hors dates du voyage</span>' : ''}${g.ph.some(p=>p.guess) ? ' · <span>date estimée</span>' : ''}</div>
+        <div class="ap-b"><div class="ap-d"><span>${fdate(g.date)}${g.time ? ' · ' + esc(g.time) : ''}</span> · <span>${g.ph.length} photo${g.ph.length>1?'s':''}</span>${g.lat != null ? (g.ph.some(p=>p.viaTrk) ? ' · 🛰️' : ' · 📍') : ' · <span>sans position</span>'}${g.into && R[g.into] ? ' · <b>➕ ' + esc(RF('ajoutées à « {0} »', R[g.into].titre || '')) + '</b>' : ''}${g.cc ? ' · ' + flag(g.cc) : ''}${out(g.date) ? ' · <span class="ap-w">hors dates du voyage</span>' : ''}${g.ph.some(p=>p.guess) ? ' · <span>date estimée</span>' : ''}</div>
         <input class="v-in" id="ap-t-${i}" value="${esc(g.titre)}">
         <div class="ap-th">${g.ph.slice(0,5).map(p=>`<img src="${URL.createObjectURL(p.f)}" alt="" loading="lazy">`).join('')}</div></div></div>`).join('')}</div>
       <div class="v-sum-small" id="ap-msg2"></div>
@@ -1604,6 +1620,7 @@
       for(const p of g.ph){ done++; if(msg) msg.textContent = `Préparation des photos… ${done}/${total}`;
         try { const pid = 'ph' + uid() + done; await storePhoto(p.f, pid); ids.push(pid); if(p.lat != null) (g.pts = g.pts || []).push([p.lat, p.lng, exTs(p), pid]); } catch(e){ bad++; } }
       if(!ids.length) continue;
+      if(g.into && R[g.into] && !R[g.into].deleted){ const c = clone(R[g.into]); c.photos = [...(c.photos || []), ...ids]; if(g.pts) c.pts = [...(c.pts || []), ...g.pts]; (AP.keys = AP.keys || []).push(...g.ph.map(p=>apKey(p.f))); made.push(c); continue; }   // 🤝 dans le souvenir du compagnon
       const hm = /^(\d\d):(\d\d)/.exec(g.time || '');
       const s = {id:'sv' + uid() + i, type:'souv', trip:AP.t.id, date:g.date, titre:(document.getElementById('ap-t-' + i).value || '').trim() || g.titre, lieu: g.lieu || g.city || '', texte:'', photos:ids};
       if(hm){ s.heure = hm[0]; s.ordre = +hm[1] * 60 + +hm[2]; }   // dans l'ordre de la journée
