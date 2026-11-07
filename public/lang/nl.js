@@ -3393,4 +3393,6 @@ I18N.load({
 "Boussole":"Kompas",
 "Pas de boussole sur cet appareil":"Geen kompas op dit apparaat",
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Geen richting: sta ‘Beweging en richting’ toe voor Safari (Instellingen › Safari) en tik op 🧭",
-"Boussole refusée":"Kompas geweigerd"});
+"Boussole refusée":"Kompas geweigerd",
+"{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"{0} foto(’s) zonder locatie geplaatst via de GPS van de groep, op tijd",
+"ajoutées à « {0} »":"toegevoegd aan ‘{0}’"});

@@ -6341,4 +6341,6 @@ I18N.load({
 "Boussole":"指南针",
 "Pas de boussole sur cet appareil":"此设备没有指南针",
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"未收到方向：在“设置 › Safari”中允许“运动与方向”，然后轻点 🧭",
-"Boussole refusée":"指南针被拒绝"});
+"Boussole refusée":"指南针被拒绝",
+"{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"{0} 张无位置照片已按时间根据团队 GPS 轨迹定位",
+"ajoutées à « {0} »":"已添加到「{0}」"});

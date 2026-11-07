@@ -3397,4 +3397,6 @@ I18N.load({
 "Boussole":"Kompass",
 "Pas de boussole sur cet appareil":"Kein Kompass auf diesem Gerät",
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Keine Richtung: erlaube „Bewegung & Ausrichtung“ für Safari (Einstellungen › Safari), dann 🧭 tippen",
-"Boussole refusée":"Kompass abgelehnt"});
+"Boussole refusée":"Kompass abgelehnt",
+"{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"{0} Foto(s) ohne Ort per GPS-Spur der Gruppe nach Uhrzeit platziert",
+"ajoutées à « {0} »":"zu „{0}“ hinzugefügt"});

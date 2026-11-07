@@ -6341,4 +6341,6 @@ I18N.load({
 "Boussole":"कम्पास",
 "Pas de boussole sur cet appareil":"इस डिवाइस में कम्पास नहीं है",
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"दिशा नहीं मिली: Safari के लिए “मोशन और ओरिएंटेशन” की अनुमति दें (सेटिंग्स › Safari), फिर 🧭 दबाएं",
-"Boussole refusée":"कम्पास अस्वीकृत"});
+"Boussole refusée":"कम्पास अस्वीकृत",
+"{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"{0} बिना लोकेशन फ़ोटो समूह के GPS से समय के अनुसार रखी गईं",
+"ajoutées à « {0} »":"“{0}” में जोड़ी गईं"});

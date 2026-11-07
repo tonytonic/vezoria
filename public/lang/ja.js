@@ -6341,4 +6341,6 @@ I18N.load({
 "Boussole":"コンパス",
 "Pas de boussole sur cet appareil":"この端末にはコンパスがありません",
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"方向を取得できません：設定 › Safari で「モーションと画面の向き」を許可し、🧭 をタップ",
-"Boussole refusée":"コンパスが拒否されました"});
+"Boussole refusée":"コンパスが拒否されました",
+"{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"位置情報のない {0} 枚の写真を、時刻からグループのGPSで配置しました",
+"ajoutées à « {0} »":"「{0}」に追加"});

@@ -3402,4 +3402,6 @@ I18N.load({
 "Boussole":"Bussola",
 "Pas de boussole sur cet appareil":"Nessuna bussola su questo dispositivo",
 "Pas de direction reçue : autorise « Mouvement et orientation » pour Safari (Réglages › Safari), puis touche 🧭":"Nessuna direzione: consenti «Movimento e orientamento» per Safari (Impostazioni › Safari), poi tocca 🧭",
-"Boussole refusée":"Bussola negata"});
+"Boussole refusée":"Bussola negata",
+"{0} photo(s) sans position placée(s) grâce au suivi GPS du groupe, d’après l’heure":"{0} foto senza posizione collocate grazie al GPS del gruppo, in base all’ora",
+"ajoutées à « {0} »":"aggiunte a «{0}»"});
