@@ -1653,11 +1653,24 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   // 📖 réparation : voyage d’un autre, dont je ne fais plus partie et qui n’est plus partagé avec moi (retiré avant la 06u) → lecture seule
   function roFix(){
     if(!M.me) return; const fix = [];
-    list('trip', t=>!t.deleted && !t.demo && !t.ro && t.createdBy && t.createdBy !== M.me && !(t.voyageurs || []).includes(M.me) && !TS()[t.id] && ((M.mvSkip || {})[t.id] || (M.left || {})[t.id]))   // marqué « parti d’un voyage partagé » (jamais un voyage du carnet d’un proche)
-      .forEach(t=>fix.push(Object.assign(clone(t), {ro:1, roAt:Date.now()})));
-    if(fix.length){ putQuiet(fix); refresh(); }
-    roFeedBack();
+    const revk = t => { const c = TS()[t.id], sp = c && spaceObj(c); return !!(sp && sp.revoked); };   // 🔑 code du voyage changé par l’auteur : je n’y ai plus accès
+    list('trip', t=>!t.deleted && !t.demo && !t.ro && t.createdBy && t.createdBy !== M.me && !(t.voyageurs || []).includes(M.me) && ((!TS()[t.id] && ((M.mvSkip || {})[t.id] || (M.left || {})[t.id])) || revk(t)))   // marqué « parti d’un voyage partagé » (jamais un voyage du carnet d’un proche)
+      .forEach(t=>{ if(revk(t)){ const c = TS()[t.id]; delete TS()[t.id]; (M.left = M.left || {})[t.id] = Date.now(); if(!Object.values(TS()).includes(c)) M.spaces = (M.spaces || []).filter(x=>x.code !== c); }
+        fix.push(Object.assign(clone(t), {ro:1, roAt:Date.now()})); });
+    if(fix.length){ persist(); putQuiet(fix); refresh(); }
+    // 👤 retiré des voyageurs par l’auteur alors que mon téléphone y est encore : je quitte le voyage, il reste en lecture seule
+    { const me = devId(), kick = list('trip', t=>!t.deleted && !t.demo && !t.ro && TS()[t.id] && t.createdBy && t.createdBy !== M.me && tripAdmin(t) !== M.me && !(t.voyageurs || []).includes(M.me) && t.updatedBy !== M.me
+        && list('member', m=>m.trip === t.id && m.dev === me && m.pid === M.me).length);
+      if(kick.length && !roFix.busy){ roFix.busy = 1; (async ()=>{ try { for(const t of kick){ if(await tripLeaveGo(t.id, 'keep', true)){ const x = R[t.id]; if(x && !x.deleted) putQuiet([Object.assign(clone(x), {ro:1, roAt:Date.now()})]); } } } catch(e){} finally { roFix.busy = 0; refresh(); } })(); } }
+    roFeedBack(); setTimeout(()=>{ try { compOrphans().catch(()=>{}); } catch(e){} }, 4000);
   }
+  // 👤 compagnon décoché des voyageurs (fiche du voyage) mais qui a encore l’accès : on propose de lui retirer pour de vrai
+  async function compOrphans(){ if(compOrphans.busy || !M.me) return; const A = M.rvAsk || (M.rvAsk = {}), me = devId();
+    for(const t of list('trip', t=>!t.deleted && !t.demo && !t.ro && TS()[t.id] && tripAdmin(t) === M.me)){
+      const vs = new Set(t.voyageurs || []), gone = [...new Set(list('member', m=>m.trip === t.id && m.pid && m.on && m.dev !== me && m.pid !== M.me && !vs.has(m.pid)).map(m=>m.pid))];
+      for(const pid of gone){ const k = t.id + '|' + pid; if(A[k]) continue; A[k] = Date.now(); persist(); compOrphans.busy = 1;
+        try { if(await uiConfirm(RF('{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.', pname(pid), t.titre || ''))) await compRevoke(t.id, pid); }
+        finally { compOrphans.busy = 0; } } } }
   // 👀 ancien compagnon (voyage en lecture seule ou retiré) : le voyage suivi en abonné, mis de côté tant qu’il était compagnon, revient dans « Suivis »
   function roFeedBack(){ let n = 0; const un = M.unfol || {};
     Object.entries(M.subs || {}).forEach(([c, S])=>{ if(!S || !S.mt) return;

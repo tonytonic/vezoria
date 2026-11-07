@@ -1006,6 +1006,7 @@
   }
   function go2(id){ try { go(id); } catch(e){} }
   function init2(){
+    demoRetitle();
     if(window.VZ_HOST && M.trip === LEGACY) M.trip = R.t2026 && !R.t2026.deleted ? 't2026' : null;
     document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ if(vw) viewClose(); else closeSheet(); } if(vw && e.key==='ArrowRight') viewGo(1); if(vw && e.key==='ArrowLeft') viewGo(-1); });
     document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && (M.dirty.length || Date.now() - lastSyncAt > AUTO_SYNC)) syncNow(); });
