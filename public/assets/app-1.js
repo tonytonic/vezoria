@@ -1054,7 +1054,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         else if(seen && seen !== 1 && seen !== sig) o = {k:'resa', ch:1, x:r.titre || r.nom || '', h:[r.date ? fshort(r.date) : '', r.heureDep || r.heure || ''].filter(Boolean).join(' ')};
         seenAll[r.id] = sig; return o ? Object.assign(o, {trip:r.trip}) : null; }
     } else if(r.type === 'remb' && r.trip){ if(isNew && !seen) o = {k:'depense', rb:1, x:eur(num(r.montant)), w:pname(r.a)}; }
-    else if(r.type === 'souv' && r.trip){ if(isNew && !seen) o = {k:'souv', x:r.titre || r.lieu || ''}; }
+    else if(r.type === 'souv' && r.trip){ if(isNew && !seen) o = {k:'souv', x:r.titre || r.lieu || '', sid:r.id}; }
     else if(r.type === 'poll'){ if(isNew && !seen) o = {k:'sondage', x:r.question || ''}; }
     else if(r.type === 'check' && r.trip && /courses/i.test(r.cat || '')){ if(isNew && !seen) o = {k:'notes', x:r.label || ''}; }
     else if(r.type === 'note' && r.trip){ if(isNew && !seen) o = {k:'notes', note:1, x:String(r.texte || '').slice(0, 80)}; }
@@ -1075,9 +1075,12 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     for(const [code, list] of Object.entries(buf)){
       const by = {}; list.forEach(o=>{ const k = o.k + '|' + (o.ch ? 'ch|' : '') + (o.note ? 'note|' : '') + o.trip; (by[k] = by[k] || []).push(o); });
       for(const arr of Object.values(by)){
+        // 📸 nouvelles photos : la notification part quand elles sont arrivées sur le serveur (sinon on ouvre et elles ne sont pas encore là)
+        if(arr[0].k === 'souv'){ const pq = new Set((M.pq || []).map(String)), wait = arr.some(o=>((R[o.sid] || {}).photos || []).some(id=>pq.has(String(id))));
+          if(wait && (arr[0].tries || 0) < 40){ arr.forEach(o=>o.tries = (o.tries || 0) + 1); (pushBuf[code] = pushBuf[code] || []).push(...arr); clearTimeout(pushT); pushT = setTimeout(pushOut, 20000); continue; } }
         try {
           const o0 = arr[0], t = R[o0.trip], kk = await keys(code), kid = kk.token.slice(0, 16);
-          const p = {k:o0.k, who:myName(), trip:o0.trip, tt:t ? t.titre : '', it:arr.slice(0, 5).map(o=>{ const c = Object.assign({}, o); delete c.k; delete c.trip; return c; }), n:arr.length}; if(o0.k === 'notes' && o0.note) p.r = 'note';   // 📌 note (et pas courses) : la notification ouvre les notes
+          const p = {k:o0.k, who:myName(), trip:o0.trip, tt:t ? t.titre : '', it:arr.slice(0, 5).map(o=>{ const c = Object.assign({}, o); delete c.k; delete c.trip; delete c.sid; delete c.tries; return c; }), n:arr.length}; if(o0.k === 'notes' && o0.note) p.r = 'note';   // 📌 note (et pas courses) : la notification ouvre les notes
           const msg = b64(await seal(te.encode(JSON.stringify(p)), code));
           await pushPost(code, {a:'send', kind:o0.k, kid, msg, tag:o0.k + (o0.note ? '-note' : '') + '-' + (o0.trip || '')});
         } catch(e){}

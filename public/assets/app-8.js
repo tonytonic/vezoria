@@ -358,6 +358,9 @@
     clearTimeout(fnT); fnT = null; const q = M.fnq || {}; if(!Object.keys(q).length || !pushApi() || !navigator.onLine) return; delete M.fnqAt;
     for(const tid of Object.keys(q)){
       const code = feedCode(tid), t = R[tid], ids = q[tid].filter(id=>R[id] && !R[id].deleted);
+      // 📸 abonnés : on attend que les photos de ces souvenirs soient en ligne (au plus ~30 min)
+      if(code && (M.fq || []).some(x=>x[0] === code) && (M.fnqTry = (M.fnqTry || 0) + 1) <= 30){ M.fnqAt = M.fnqAt || Date.now(); persist(); clearTimeout(fnT); fnT = setTimeout(feedNotifyGo, 60000); return; }
+      M.fnqTry = 0;
       delete q[tid]; persist();
       if(!code || !t || t.deleted || !ids.length) continue;
       try {
@@ -1992,7 +1995,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-07r'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-07s'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
