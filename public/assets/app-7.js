@@ -1726,7 +1726,7 @@
       <div class="lv-people" id="lv-people"></div>`;
     LV = {key, map:null, mk:{}, phm:{}, sig:'', orbit:true, focus:null, prog:0, t0:Date.now(), seen:Date.now(), n:0, sweep:0};
     const me = LV;
-    if(lvMine()){ lvCompass();   // 🧭 compagnon : flèche de direction sur mon médaillon (comme Google Maps)
+    if(lvMine()){ if(!(window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function')) lvCompass();   // 🧭 compagnon (iPhone : seulement en touchant 🧭, sinon il redemande à chaque ouverture) : flèche de direction sur mon médaillon (comme Google Maps)
       const tl = ov.querySelector('.lv-tools'); if(tl){ const b = document.createElement('button'); b.type = 'button'; b.id = 'lv-cmp'; b.setAttribute('aria-label', MSGT('Boussole')); b.textContent = '🧭'; b.onclick = () => lvCompass(true); tl.appendChild(b); } }
     try {
       await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
