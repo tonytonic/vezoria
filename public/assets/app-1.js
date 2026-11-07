@@ -764,7 +764,11 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       }
       sp.last = Date.now(); sp.err = ''; sp.net = false; sp.errSince = 0; sp.revoked = false; sp.needAcct = false;
       mateFeedTidy(); ftPick();
-    } catch(e){ sp.err = e.message || String(e); sp.net = !!e.net; sp.revoked = !!e.revoked; sp.needAcct = !!e.needAcct; if(!sp.errSince) sp.errSince = Date.now(); if(e.needAcct) setTimeout(()=>{ try { acctNeedSpace(); } catch(x){} }, 700); }
+    } catch(e){ sp.err = e.message || String(e); sp.net = !!e.net; sp.revoked = !!e.revoked; sp.needAcct = !!e.needAcct;
+      // 🧹 espace jamais mis en ligne (pas de compte) : des effacements n’y ont aucun sens, et mon fil d’abonnés vide n’a rien à envoyer → plus de « Souci » pour rien
+      if(e.needAcct && !sp.last){ try { const own = typeof ab2C === 'function' && sp.code === ab2C() && !ab2Vis().length;
+        sp.dirty = own ? [] : (sp.dirty || []).filter(id=>R[id] && !R[id].deleted);
+        if(!sp.dirty.length){ sp.err = ''; sp.needAcct = false; sp.errSince = 0; } persist(); } catch(x){} } if(!sp.errSince && sp.err) sp.errSince = Date.now(); if(e.needAcct && sp.needAcct) setTimeout(()=>{ try { acctNeedSpace(); } catch(x){} }, 700); }
     return changed;
   }
   // 👀 voyages suivis en abonné que je fais AUSSI en compagnon : retirés de « Je suis » (je les ai déjà en entier), et je ne compte plus
