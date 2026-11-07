@@ -929,7 +929,7 @@
   function psList(sid){
     const s = R[sid]; if(!s) return null;
     if(s.type === 'feed'){
-      const posts = list('feed', f=>f.trip === s.trip && !f.deleted).sort((a, b)=>(a.date || '').localeCompare(b.date || '') || (a.createdAt || 0) - (b.createdAt || 0));
+      const posts = list('feed', f=>f.trip === s.trip && !f.deleted).sort(fdOrd);
       return posts.flatMap(f=>(f.photos || []).map((p, i)=>({p, sid:f.id, i, d:f.date || '', lieu:f.lieu || '', t:f.titre || '', by:f.by || ''})));
     }
     if(s.type === 'souv' && s.trip === M.trip && typeof wallFlat === 'function') return wallFlat(!!document.getElementById('cv-wall'));

@@ -308,6 +308,8 @@
   const stripStamp = r => { const o = Object.assign({}, r); ['createdAt','createdBy','updatedAt','updatedBy'].forEach(k=>delete o[k]); return JSON.stringify(o); };
   function putQuiet(arr){ arr.forEach(r=>{ sbKeep(r); photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); if(arr.length){ persist(); queueSync(); } }
   // côté auteur : les souvenirs (non privés) deviennent des publications
+  // ordre des étapes chez les abonnés : jour, puis heure dans la journée (avant : le jour seulement → photos du soir avant celles du matin)
+  const fdOrd = (a, b) => (a.date || '').localeCompare(b.date || '') || ((a.ordre != null ? a.ordre : 1e4) - (b.ordre != null ? b.ordre : 1e4)) || (a.heure || '').localeCompare(b.heure || '') || (a.createdAt || 0) - (b.createdAt || 0);
   function feedBuild(tid){
     const c = feedCode(tid), t = R[tid]; if(!c || !t) return 0;
     TS()[ftId(tid)] = c; const out = [];
@@ -327,7 +329,7 @@
       const d = (M.fup || {})[c]; if(d && d[p]){ delete d[p]; (M.fdel = M.fdel || []).push([c, p]); }   // l'ancienne vignette d'abonné ne sert plus
       M.fq = (M.fq || []).filter(x=>!(x[0] === c && x[1] === p)); };
     list('souv', s=>s.trip===tid && !s.priv && ((s.photos||[]).length || (s.texte||'').trim())).forEach(s=>{
-      const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, by: (t.voyageurs||[]).length > 1 && s.createdBy ? pname(s.createdBy) : '', date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 2000), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''};
+      const f = {id:'fd:' + s.id, type:'feed', trip:ftId(tid), src:s.id, by: (t.voyageurs||[]).length > 1 && s.createdBy ? pname(s.createdBy) : '', date:s.date || '', titre:s.titre || '', lieu:s.lieu || '', texte:s.texte || '', photos:(s.photos||[]).slice(0, 2000), lat:s.lat != null ? s.lat : null, lng:s.lng != null ? s.lng : null, cc:s.cc || ''}; if(s.heure) f.heure = s.heure; if(s.ordre != null) f.ordre = s.ordre;   // ⏰ abonnés : dans l’ordre de la journée, comme chez moi
       keep.add(f.id); if(!R[f.id] || R[f.id].deleted || stripStamp(R[f.id]) !== stripStamp(f)){ if(!R[f.id] || R[f.id].deleted) fresh.push(f); out.push(f); }
       f.photos.forEach(feedPh);
     });
@@ -1901,7 +1903,7 @@
     setTimeout(()=>{ pubNameAsk().catch(()=>{}); }, 1200);
     const ft = R[ftid]; if(!ft) return; closeSheet(true);
     let ov = document.getElementById('cv-feed'); if(ov) ov.remove(); ov = document.createElement('div'); ov.id = 'cv-feed';
-    const posts = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    const posts = list('feed', f=>f.trip===ftid).sort((a,b)=>fdOrd(b, a));
     const fw = FT()[String(ftid).slice(3)] ? ab2NFw(String(ftid).slice(3)) : 0;
     ov.innerHTML = `<div class="fd-top"><button type="button" class="fd-x" onclick="CV.feedClose()" aria-label="Fermer">✕</button><div><small>Voyage de ${esc(ftTeamTxt(ft))}</small><b>${esc(ft.titre)}</b><small>${ft.debut ? tripDatesLong(ft) : ''}${fw ? ' · 👀 ' + fw + ' abonné' + (fw>1?'s':'') : ''}</small></div></div>
       ${(()=>{ const c = TS()[ftid], sib = c ? list('feedtrip', f=>TS()[f.id] === c && !f.deleted).sort((a, b)=>(b.debut||'').localeCompare(a.debut||'')) : [];
@@ -1918,7 +1920,7 @@
     if(!window._fdRetry) window._fdRetry = setInterval(()=>{ if(!document.getElementById('cv-feed') || document.visibilityState !== 'visible') return;
       const m = document.querySelectorAll('#cv-feed img.miss'); if(!m.length) return; m.forEach(i=>{ i.classList.remove('miss'); delete i.dataset.ok; delete i.dataset.ld; }); hydrate(); }, 61000);
     if(webFollowing()) ov.insertAdjacentHTML('beforeend', webCta().replace('class="fd-cta"', 'class="fd-cta" style="position:relative;margin:0"'));
-    syncNow().then(()=>{ if(M.feedOpen === ftid && document.getElementById('cv-feed')){ const y = ov.querySelector('.fd-list').scrollTop; const p2 = list('feed', f=>f.trip===ftid).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    syncNow().then(()=>{ if(M.feedOpen === ftid && document.getElementById('cv-feed')){ const y = ov.querySelector('.fd-list').scrollTop; const p2 = list('feed', f=>f.trip===ftid).sort((a,b)=>fdOrd(b, a));
       const h2 = p2.map(feedPostHTML).join('') + '|' + fkSig(ftid) + '|' + fmSigOf(ftid); if(h2 === ov._h){ hydrate(); return; } ov._h = h2; ov.querySelector('.fd-list').innerHTML = feedMapHTML(ftid) + (p2.map(feedPostHTML).join('') || '<div class="fd-empty">Pas encore d’étape publiée. Reviens bientôt !</div>'); setTimeout(feedMapHydrate, 30); ov.querySelector('.fd-list').scrollTop = y; hydrate(); } });
   }
   // 🔔 abonné avec l’appli : un bouton pour être prévenu des nouvelles étapes (sans aller dans les réglages)
@@ -1995,7 +1997,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-08d'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-08e'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

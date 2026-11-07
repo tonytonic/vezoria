@@ -2280,7 +2280,7 @@
       if(!d3) try { map.touchZoomRotate.disableRotation(); } catch(e){}
       let ok = false; const go = () => { if(FMV !== me || ok) return; ok = true; const m = document.getElementById('vm-msg'); if(m) m.hidden = true;
         if(d3) try { map.setTerrain({source:'dem', exaggeration:1.3}); } catch(e){}
-        const F = fmToF(R['fm:' + tid]), posts = list('feed', f=>f.trip === ftid && !f.deleted && f.lat != null && f.lng != null).sort((a, b)=>(a.date || '').localeCompare(b.date || ''));
+        const F = fmToF(R['fm:' + tid]), posts = list('feed', f=>f.trip === ftid && !f.deleted && f.lat != null && f.lng != null).sort(fdOrd);
         if(!F.legs.length && posts.length > 1) F.legs.push({type:'Feature', properties:{souv:1, local:0, mode:''}, geometry:{type:'LineString', coordinates:posts.map(f=>[+f.lng, +f.lat])}});
         const add = (el, p) => { const k = new maplibregl.Marker({element:el, anchor:'center'}).setLngLat([p.lng, p.lat]).addTo(map); me.mk.push(k); return k; };
         mapRich(map, F, me.font, add, true);
