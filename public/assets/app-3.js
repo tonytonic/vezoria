@@ -774,7 +774,8 @@
       <form id="v-form" onsubmit="event.preventDefault();CV.saveSouv()">
         ${souvDaySel(s)}
         ${field('Titre','titre',s.titre,'text','placeholder="Ex. Coucher de soleil sur le Golden Gate"')}
-        <div class="v-f2">${field('Date','date',s.date,'date')}${field('Lieu','lieu',s.lieu,'text','data-place autocomplete="off" placeholder="Ville, endroit"')}</div>
+        <div class="v-f2">${field('Date','date',s.date,'date')}${field('Lieu','lieu',s.lieu,'text','data-place="poi" autocomplete="off" placeholder="' + esc(MSGT('Monument, rue, quartier, ville')) + '"')}</div>
+        <div class="sv-pos"><span id="sv-pos">${souvPosTxt(s)}</span><button type="button" class="v-btn sec" onclick="CV.pinOpen()">🗺️ ${esc(MSGT('Placer sur la carte'))}</button></div>
         <div class="v-f"><label>Récit</label><textarea class="v-in" name="texte" style="min-height:120px">${esc(s.texte)}</textarea></div>
         <div class="v-f"><label>Photos (${(s.photos||[]).length})</label>
           <div class="cv-grid" id="sv-grid">${(s.photos||[]).map((p,i)=>`<div class="cv-th"><img data-ph="${esc(p)}.t" alt=""><button type="button" class="cv-thx" onclick="CV.souvDelPhoto(${i})" aria-label="Retirer">✕</button></div>`).join('')}</div>
@@ -785,6 +786,56 @@
       </form>`);
     hydrate();
   }
+  // 📍 où est posé le souvenir (comme les « steps » de Polarsteps) : lieu choisi dans la liste, posé sur la carte ou lu dans les photos
+  const souvPosTxt = s => s && s.lat != null ? '📍 ' + MSGT('Posé sur la carte') : '⚪ ' + MSGT('Pas encore placé : choisis un lieu dans la liste ou place-le sur la carte');
+  function souvPosShow(){ const e = document.getElementById('sv-pos'); if(e) e.textContent = souvPosTxt(editing); }
+  // autour de quel endroit chercher : le souvenir lui-même, sinon le dernier souvenir placé avant ce jour, sinon la ville de l’hôtel ce jour-là
+  function souvNear(s){ try {
+    if(!s) return null; if(s.lat != null) return {lat:s.lat, lng:s.lng};
+    const d = (document.querySelector('#v-form [name=date]') || {}).value || s.date || isoToday(), tid = s.trip || M.trip;
+    const sv = list('souv', x=>x.trip === tid && !x.deleted && x.lat != null && x.id !== s.id).sort((a, b)=>(a.date || '').localeCompare(b.date || ''));
+    const before = sv.filter(x=>(x.date || '') <= d).pop(); if(before) return {lat:before.lat, lng:before.lng};
+    const h = list('item', i=>i.trip === tid && !i.deleted && i.cat === 'hotel' && i.date && i.date <= d && (!i.dateFin || i.dateFin > d))[0];
+    const g = h && R['geo:' + normQ(stayCity(h))]; if(g && g.lat != null) return {lat:g.lat, lng:g.lng};
+    return sv[0] ? {lat:sv[0].lat, lng:sv[0].lng} : null;
+  } catch(e){ return null; } }
+  let PINV = null;
+  async function pinOpen(){
+    const s = editing; if(!s) return; try { readSouv(); } catch(e){}
+    let ov = document.getElementById('cv-pin'); if(!ov){ ov = document.createElement('div'); ov.id = 'cv-pin'; document.body.appendChild(ov); }
+    ov.innerHTML = `<div id="pin-map"></div><div class="pin-c" aria-hidden="true">📍</div><button type="button" class="om-x" onclick="CV.pinClose()" aria-label="Fermer">✕</button>
+      <div class="pin-top">${esc(MSGT('Déplace la carte : le souvenir se pose sous l’épingle'))}</div>
+      <div class="pin-bar"><div class="pin-st" id="pin-st"></div><button type="button" class="v-btn" onclick="CV.pinOk()">📍 ${esc(MSGT('Poser ici'))}</button></div>`;
+    ov.style.display = 'block';
+    try {
+      await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
+      if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
+      const style = await withTimeout(fetch(OFM).then(r=>r.json()), 8000);
+      const lang = (l => /^(ar|hi)$/.test(l) ? 'en' : l)((window.I18N && I18N.lang) || 'fr');
+      (style.layers || []).forEach(l=>{ if(l.type === 'symbol' && l.layout && l.layout['text-field']) l.layout['text-field'] = ['coalesce', ['get', 'name:' + lang], ['get', 'name:latin'], ['get', 'name']]; });
+      const near = souvNear(s), pts = await omapPoints().catch(()=>[]), c0 = near || pts[0] || {lat:48.85, lng:2.35};
+      if(PINV){ try { PINV.remove(); } catch(e){} }
+      const map = new maplibregl.Map({container:'pin-map', style, center:[c0.lng, c0.lat], zoom: s.lat != null ? 16 : near ? 14 : 12, maxZoom:19, attributionControl:{compact:true}, pixelRatio:Math.min(2, window.devicePixelRatio || 1)});
+      PINV = map; map.addControl(new maplibregl.NavigationControl({showCompass:false}), 'top-right');
+      map.addControl(new maplibregl.GeolocateControl({positionOptions:{enableHighAccuracy:true}}), 'top-right');
+      const mk = (lng, lat, html, tt) => { const el = document.createElement('div'); el.className = 'om-mk pin-o'; el.innerHTML = html; if(tt) el.title = tt; new maplibregl.Marker({element:el}).setLngLat([lng, lat]).addTo(map); };
+      list('souv', x=>x.trip === s.trip && !x.deleted && x.lat != null && x.id !== s.id).forEach(x=>mk(x.lng, x.lat, '📸', x.titre || x.lieu || ''));   // l’itinéraire déjà posé
+      pts.forEach(p=>{ if(p.h) mk(p.h.lng, p.h.lat, '🏨', p.hotel); });
+      const st = document.getElementById('pin-st'); if(st) st.innerHTML = pts.map((p, i)=>`<button type="button" onclick="CV.pinFly(${i})">${esc(p.city)}</button>`).join('');
+      PINV.pts = pts;
+    } catch(e){ const st = document.getElementById('pin-st'); if(st) st.textContent = '⚠️ ' + MSGT('Carte indisponible') + ' : ' + errTxt(e); }
+  }
+  function pinFly(i){ const p = PINV && PINV.pts && PINV.pts[i]; if(p) PINV.flyTo({center:[p.lng, p.lat], zoom:14}); }
+  function pinClose(){ const ov = document.getElementById('cv-pin'); if(ov){ ov.style.display = 'none'; ov.innerHTML = ''; } if(PINV){ try { PINV.remove(); } catch(e){} PINV = null; } }
+  async function pinOk(){
+    const s = editing; if(!s || !PINV) return pinClose(); const c = PINV.getCenter();
+    s.lat = +c.lat.toFixed(6); s.lng = +c.lng.toFixed(6); s.pinAt = Date.now(); pinClose(); souvPosShow(); toast('📍 ' + MSGT('Souvenir posé ici'));
+    try { const j = await (await fetch(`${GEO}reverse?format=jsonv2&zoom=18&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${s.lat}&lon=${s.lng}`)).json();
+      const a = (j && j.address) || {}, city = a.city || a.town || a.village || a.municipality || '', nm = (j && j.name) || a.tourism || a.attraction || a.road || a.neighbourhood || a.suburb || city;
+      if(a.country_code){ s.cc = String(a.country_code).toUpperCase(); s.pays = a.country || ''; }
+      const f = document.getElementById('v-form'), v = [nm, city && normQ(city) !== normQ(nm) ? city : ''].filter(Boolean).join(', ');
+      if(f && f.lieu && v){ f.lieu.value = v; f.lieu._pacSkip = 1; } if(f && f.titre && !f.titre.value.trim() && nm) f.titre.value = nm;
+    } catch(e){} }
   function readSouv(){
     const s = editing, fd = new FormData(document.getElementById('v-form'));
     for(const [k,v] of fd.entries()) s[k] = String(v).trim();

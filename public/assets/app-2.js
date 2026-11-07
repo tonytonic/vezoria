@@ -2648,10 +2648,10 @@
      « la vale… » → La Valette 🇲🇹 Malte, Valence 🇪🇸 Espagne… Le choix garde la position exacte : Explorer, suggestions et carte
      utilisent ensuite le bon endroit (et pas une autre ville du même nom). */
   const PAC = {}; let pacT = 0, pacN = 0;
-  async function pacFetch(q, onlyC, near){
+  async function pacFetch(q, onlyC, near, poi){
     const bias = near ? '&lat=' + (+near.lat).toFixed(2) + '&lon=' + (+near.lng).toFixed(2) : '';   // 🎯 priorité aux lieux proches (le pays tapé)
-    const k = (onlyC ? 'c|' : '') + bias + normQ(q); if(PAC[k]) return PAC[k];
-    let L = []; try { const j = await (await fetch(GEO + 'search?ac=1' + (onlyC ? '&pl=country' : '') + bias + '&format=jsonv2&limit=5&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(q))).json(); if(Array.isArray(j)) L = j; } catch(e){}
+    const k = (onlyC ? 'c|' : '') + (poi ? 'p|' : '') + bias + normQ(q); if(PAC[k]) return PAC[k];
+    let L = []; try { const j = await (await fetch(GEO + 'search?ac=1' + (onlyC ? '&pl=country' : poi ? '&pl=poi' : '') + bias + '&format=jsonv2&limit=5&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(q))).json(); if(Array.isArray(j)) L = j; } catch(e){}
     const seen = new Set(), out = [];
     for(const x of L){
       const a = x.address || {}, lat = +x.lat, lng = +x.lon; if(!isFinite(lat) || !isFinite(lng)) continue;
@@ -2659,9 +2659,10 @@
       const isC = x.addresstype === 'country' || x.type === 'country';
       const name = String(x.name || (x.display_name || '').split(',')[0] || '').trim(); if(!name) continue;
       const k2 = normQ(name) + '|' + cc; if(seen.has(k2)) continue; seen.add(k2);
-      const sub = isC ? MSGT('Pays') : [a.state && normQ(a.state) !== normQ(name) ? a.state : '', ctry].filter(Boolean).join(', ');
+      const city = a.city || a.town || a.village || a.municipality || '';
+      const sub = isC ? MSGT('Pays') : poi ? [...new Set([a.road, a.neighbourhood || a.suburb, city, ctry].filter(x=>x && normQ(x) !== normQ(name)))].join(', ') : [a.state && normQ(a.state) !== normQ(name) ? a.state : '', ctry].filter(Boolean).join(', ');
       if(onlyC && !isC) continue;
-      out.push({name, sub, cc, ctry: isC ? name : ctry, lat, lng});
+      out.push({name, sub, cc, ctry: isC ? name : ctry, lat, lng, city});
     }
     if(Object.keys(PAC).length > 200) Object.keys(PAC).slice(0, 100).forEach(x=>delete PAC[x]);
     return (PAC[k] = out);
@@ -2693,6 +2694,10 @@
   }
   function pacClose(i){ const b = i && i._pac; if(b){ b.remove(); i._pac = null; } }
   function pacPick(i, it){
+    if(/poi/.test(i.dataset.place || '')){   // 📍 lieu précis d’un souvenir : il est posé à cet endroit exact
+      i.value = it.name + (it.city && normQ(it.city) !== normQ(it.name) ? ', ' + it.city : ''); pacClose(i); i._pacSkip = 1;
+      if(editing && editing.type === 'souv'){ editing.lat = +(+it.lat).toFixed(6); editing.lng = +(+it.lng).toFixed(6); editing.pinAt = Date.now(); if(it.cc){ editing.cc = it.cc; editing.pays = it.ctry || ''; } try { souvPosShow(); } catch(e){} }
+      i.dispatchEvent(new Event('change', {bubbles:true})); return; }
     const key = 'geo:' + normQ(it.name), cur = R[key];
     const g = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:it.name}, {lat:it.lat, lng:it.lng, v:2, pick:1}); delete g.auto; stamp(g); R[key] = g; markDirty(key);
     if(it.cc){ M.ctry = M.ctry || {}; M.ctry[normQ(it.name)] = {pays:it.ctry || '', cc:it.cc}; }
@@ -2720,10 +2725,10 @@
   document.addEventListener('input', e=>{
     const i = e.target; if(!i || !i.matches || !i.matches('input[data-place]')) return;
     if(i._pacSkip){ i._pacSkip = 0; return; }
-    const md = i.dataset.place || '', multi = /multi/.test(md), onlyC = /country/.test(md), cur = i.value;
+    const md = i.dataset.place || '', multi = /multi/.test(md), onlyC = /country/.test(md), poi = /poi/.test(md), cur = i.value;
     clearTimeout(pacT); const q = (multi ? cur.split(',').pop() : cur).trim(), my = ++pacN;
     if(q.length < 2){ pacClose(i); return; }
-    pacT = setTimeout(async ()=>{ const L = await pacSmart(q, onlyC); if(my === pacN && i.value === cur) pacShow(i, L); }, 300);
+    pacT = setTimeout(async ()=>{ const L = poi ? await pacFetch(q, false, souvNear(editing), true) : await pacSmart(q, onlyC); if(my === pacN && i.value === cur) pacShow(i, L); }, 300);
   });
   document.addEventListener('focusout', e=>{ const i = e.target; if(i && i._pac) setTimeout(()=>{ if(document.activeElement !== i) pacClose(i); }, 150); });
   document.addEventListener('keydown', e=>{ const i = e.target; if(e.key === 'Escape' && i && i._pac) pacClose(i); });
