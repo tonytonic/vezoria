@@ -1619,7 +1619,7 @@
       // 1re ville vue : on fête seulement si c’est une étape prévue (sinon c’est souvent la ville de départ)
       const planned = (()=>{ try { return tlStages().some(x=>normQ(x.city || '').includes(k) || k.includes(normQ(x.city || '') || '§')); } catch(e){ return false; } })();
       if(first && !planned){ wlcBusy = false; return; }
-      wlcShow({city, cc, country, newC: newC && W.ccs.length > 1, nC: W.ccs.length, nV: W.cities.length, lat, lng});
+      toast((cc ? flag(cc) + ' ' : '📍 ') + MSGT('Bienvenue à') + ' ' + city);   // discret : plus de grand écran « Prévenir tout le monde » à chaque ville
     } catch(e){} wlcBusy = false;
   }
   async function wlcShow(o){
