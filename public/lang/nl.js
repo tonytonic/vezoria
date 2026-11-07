@@ -3410,4 +3410,14 @@ I18N.load({
 "Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"Vergelijk Trenitalia en Italo: op hoofdlijnen is er vaak één goedkoper",
 "Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"Op Madrid–Barcelona en hoofdlijnen zijn Iryo en Ouigo vaak goedkoper dan Renfe",
 "À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"In Londen betaal je metro en bus contactloos: er is een dagplafond",
-"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"Voeg een Suica-kaart toe aan de iPhone-Wallet: voor treinen, metro en kleine aankopen"});
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"Voeg een Suica-kaart toe aan de iPhone-Wallet: voor treinen, metro en kleine aankopen",
+"Vezoria en 3 temps":"Vezoria in 3 stappen",
+"Avant":"Voor",
+"Pendant":"Tijdens",
+"Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire":"Je reis klaar in 10 minuten: we begeleiden je en je ziet wat nog moet",
+"La carte te guide : visites, trajets, et tu coches ce que tu as vu":"De kaart leidt je: bezoeken, routes, en je vinkt af wat je zag",
+"Le film, le récap et le bilan se font tout seuls":"De film, de samenvatting en de balans maken zichzelf",
+"Touche un temps pour le voir sur un voyage de démo.":"Tik op een stap om hem in een demoreis te zien.",
+"J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"Nog 30 dagen tot ‘{0}’: nog {1} ding(en) voor te bereiden",
+"J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"Nog 7 dagen tot ‘{0}’: nog {1} ding(en) vóór vertrek",
+"J-{1} avant « {0} » : tout est prêt ✨":"Nog {1} dagen tot ‘{0}’: alles klaar ✨"});

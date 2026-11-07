@@ -6346,4 +6346,14 @@ I18N.load({
 "Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"Trenitalia ile Italo’yu karşılaştır: ana hatlarda biri genelde daha ucuz",
 "Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"Madrid–Barselona ve ana hatlarda Iryo ve Ouigo genelde Renfe’den ucuz",
 "À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"Londra’da metro ve otobüsü temassız kartla öde: günlük tavan var",
-"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhone Cüzdan’a Suica kartı ekle: tren, metro ve küçük alışverişlerde geçer"});
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhone Cüzdan’a Suica kartı ekle: tren, metro ve küçük alışverişlerde geçer",
+"Vezoria en 3 temps":"3 adımda Vezoria",
+"Avant":"Önce",
+"Pendant":"Sırasında",
+"Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire":"Seyahatin 10 dakikada hazır: sana rehberlik eder, kalanları gösteririz",
+"La carte te guide : visites, trajets, et tu coches ce que tu as vu":"Harita sana yol gösterir: ziyaretler, rotalar, gördüklerini işaretle",
+"Le film, le récap et le bilan se font tout seuls":"Film, özet ve bilanço kendiliğinden hazırlanır",
+"Touche un temps pour le voir sur un voyage de démo.":"Bir adıma dokun, demo seyahatte gör.",
+"J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"“{0}” için 30 gün: hazırlanacak {1} şey kaldı",
+"J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"“{0}” için 7 gün: gitmeden önce {1} şey kaldı",
+"J-{1} avant « {0} » : tout est prêt ✨":"“{0}” için {1} gün: her şey hazır ✨"});

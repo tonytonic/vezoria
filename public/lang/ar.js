@@ -6359,4 +6359,14 @@ I18N.load({
 "Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"قارن Trenitalia وItalo: على الخطوط الرئيسية غالبًا يكون أحدهما أرخص",
 "Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"على مدريد–برشلونة والخطوط الرئيسية غالبًا تكون Iryo وOuigo أرخص من Renfe",
 "À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"في لندن ادفع للمترو والحافلة ببطاقة لاتلامسية: السعر له سقف يومي",
-"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"أضف بطاقة Suica إلى محفظة iPhone: للقطارات والمترو والمشتريات الصغيرة"});
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"أضف بطاقة Suica إلى محفظة iPhone: للقطارات والمترو والمشتريات الصغيرة",
+"Vezoria en 3 temps":"Vezoria في 3 مراحل",
+"Avant":"قبل",
+"Pendant":"أثناء",
+"Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire":"رحلتك جاهزة في 10 دقائق: نرشدك وترى ما تبقى",
+"La carte te guide : visites, trajets, et tu coches ce que tu as vu":"الخريطة ترشدك: زيارات ومسارات، وتؤشر ما رأيته",
+"Le film, le récap et le bilan se font tout seuls":"الفيلم والملخص والحصيلة تُصنع تلقائيًا",
+"Touche un temps pour le voir sur un voyage de démo.":"اضغط على مرحلة لتراها في رحلة تجريبية.",
+"J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"30 يومًا على «{0}»: بقي {1} أمور للتحضير",
+"J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"7 أيام على «{0}»: بقي {1} أمور قبل السفر",
+"J-{1} avant « {0} » : tout est prêt ✨":"{1} يومًا على «{0}»: كل شيء جاهز ✨"});

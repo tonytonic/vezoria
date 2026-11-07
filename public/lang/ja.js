@@ -6358,4 +6358,14 @@ I18N.load({
 "Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"TrenitaliaとItaloを比較：幹線ではどちらかが安いことが多い",
 "Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"マドリード–バルセロナなどではIryoとOuigoがRenfeより安いことが多い",
 "À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"ロンドンでは地下鉄・バスをタッチ決済で：1日の上限あり",
-"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhoneのウォレットにSuicaを追加：電車・地下鉄・買い物に使えます"});
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhoneのウォレットにSuicaを追加：電車・地下鉄・買い物に使えます",
+"Vezoria en 3 temps":"Vezoriaの3ステップ",
+"Avant":"出発前",
+"Pendant":"旅行中",
+"Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire":"10分で旅の準備完了：ガイド付きで、残りのタスクも一目で",
+"La carte te guide : visites, trajets, et tu coches ce que tu as vu":"地図が案内：見どころ、移動、見た場所はチェック",
+"Le film, le récap et le bilan se font tout seuls":"ムービー・まとめ・振り返りは自動で完成",
+"Touche un temps pour le voir sur un voyage de démo.":"ステップをタップしてデモ旅行で見てみよう。",
+"J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"「{0}」まであと30日：準備があと{1}件",
+"J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"「{0}」まであと7日：出発前にあと{1}件",
+"J-{1} avant « {0} » : tout est prêt ✨":"「{0}」まであと{1}日：準備万端 ✨"});

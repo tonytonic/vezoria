@@ -6359,4 +6359,14 @@ I18N.load({
 "Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"Сравни Trenitalia и Italo: на основных линиях один часто дешевле",
 "Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"На линии Мадрид–Барселона Iryo и Ouigo часто дешевле Renfe",
 "À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"В Лондоне плати за метро и автобус бесконтактной картой: есть дневной лимит",
-"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"Добавь карту Suica в Wallet iPhone: для поездов, метро и мелких покупок"});
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"Добавь карту Suica в Wallet iPhone: для поездов, метро и мелких покупок",
+"Vezoria en 3 temps":"Vezoria в 3 этапа",
+"Avant":"До",
+"Pendant":"Во время",
+"Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire":"Поездка готова за 10 минут: подскажем, что осталось сделать",
+"La carte te guide : visites, trajets, et tu coches ce que tu as vu":"Карта ведёт тебя: места, маршруты, отмечай увиденное",
+"Le film, le récap et le bilan se font tout seuls":"Фильм, итоги и отчёт создаются сами",
+"Touche un temps pour le voir sur un voyage de démo.":"Нажми на этап, чтобы увидеть его на демо-поездке.",
+"J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"30 дней до «{0}»: осталось подготовить {1}",
+"J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"7 дней до «{0}»: перед отъездом осталось {1}",
+"J-{1} avant « {0} » : tout est prêt ✨":"{1} дн. до «{0}»: всё готово ✨"});

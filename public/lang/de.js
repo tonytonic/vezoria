@@ -3414,4 +3414,14 @@ I18N.load({
 "Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"Vergleiche Trenitalia und Italo: auf Hauptstrecken ist oft einer günstiger",
 "Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"Auf Madrid–Barcelona und Hauptstrecken sind Iryo und Ouigo oft günstiger als Renfe",
 "À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"In London Tube und Bus kontaktlos zahlen: der Preis ist pro Tag gedeckelt",
-"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"Füge eine Suica-Karte zur iPhone-Wallet hinzu: für Züge, U-Bahn und kleine Einkäufe"});
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"Füge eine Suica-Karte zur iPhone-Wallet hinzu: für Züge, U-Bahn und kleine Einkäufe",
+"Vezoria en 3 temps":"Vezoria in 3 Schritten",
+"Avant":"Vorher",
+"Pendant":"Während",
+"Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire":"Deine Reise in 10 Minuten bereit: wir führen dich, du siehst, was noch fehlt",
+"La carte te guide : visites, trajets, et tu coches ce que tu as vu":"Die Karte führt dich: Besuche, Wege, und du hakst ab, was du gesehen hast",
+"Le film, le récap et le bilan se font tout seuls":"Film, Rückblick und Bilanz entstehen von selbst",
+"Touche un temps pour le voir sur un voyage de démo.":"Tippe auf einen Schritt, um ihn an einer Demo-Reise zu sehen.",
+"J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"Noch 30 Tage bis „{0}“: noch {1} Sache(n) vorzubereiten",
+"J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"Noch 7 Tage bis „{0}“: noch {1} Sache(n) vor der Abreise",
+"J-{1} avant « {0} » : tout est prêt ✨":"Noch {1} Tage bis „{0}“: alles bereit ✨"});

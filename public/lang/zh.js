@@ -6358,4 +6358,14 @@ I18N.load({
 "Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"比较 Trenitalia 和 Italo：干线上常有一家更便宜",
 "Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"马德里–巴塞罗那等干线上，Iryo 和 Ouigo 常比 Renfe 便宜",
 "À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"在伦敦用非接触式银行卡乘地铁和公交：每日封顶",
-"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"在 iPhone 钱包中添加 Suica 卡：可乘火车、地铁和小额消费"});
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"在 iPhone 钱包中添加 Suica 卡：可乘火车、地铁和小额消费",
+"Vezoria en 3 temps":"Vezoria 三部曲",
+"Avant":"出发前",
+"Pendant":"旅途中",
+"Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire":"10 分钟准备好旅行：一步步引导，随时看到还剩什么",
+"La carte te guide : visites, trajets, et tu coches ce que tu as vu":"地图带路：景点、路线，看过就打勾",
+"Le film, le récap et le bilan se font tout seuls":"影片、回顾和总结自动生成",
+"Touche un temps pour le voir sur un voyage de démo.":"点一个阶段，在示例旅行中查看。",
+"J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"距「{0}」还有 30 天：还有 {1} 项要准备",
+"J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"距「{0}」还有 7 天：出发前还有 {1} 项",
+"J-{1} avant « {0} » : tout est prêt ✨":"距「{0}」还有 {1} 天：一切就绪 ✨"});

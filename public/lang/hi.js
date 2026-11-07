@@ -6358,4 +6358,14 @@ I18N.load({
 "Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"Trenitalia और Italo की तुलना करें: मुख्य रूट पर एक अक्सर सस्ता होता है",
 "Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"मैड्रिड–बार्सिलोना पर Iryo और Ouigo अक्सर Renfe से सस्ते",
 "À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"लंदन में मेट्रो-बस का कॉन्टैक्टलेस भुगतान करें: दैनिक सीमा लगती है",
-"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhone Wallet में Suica कार्ड जोड़ें: ट्रेन, मेट्रो और छोटी खरीदारी के लिए"});
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhone Wallet में Suica कार्ड जोड़ें: ट्रेन, मेट्रो और छोटी खरीदारी के लिए",
+"Vezoria en 3 temps":"3 चरणों में Vezoria",
+"Avant":"पहले",
+"Pendant":"दौरान",
+"Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire":"10 मिनट में यात्रा तैयार: हम गाइड करते हैं, बाकी काम दिखते हैं",
+"La carte te guide : visites, trajets, et tu coches ce que tu as vu":"मानचित्र राह दिखाता है: जगहें, रास्ते, और देखी चीज़ों पर टिक",
+"Le film, le récap et le bilan se font tout seuls":"फ़िल्म, सार और हिसाब अपने-आप बनते हैं",
+"Touche un temps pour le voir sur un voyage de démo.":"किसी चरण पर टैप करें, डेमो यात्रा में देखें।",
+"J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"“{0}” में 30 दिन: {1} तैयारी बाकी",
+"J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"“{0}” में 7 दिन: जाने से पहले {1} काम बाकी",
+"J-{1} avant « {0} » : tout est prêt ✨":"“{0}” में {1} दिन: सब तैयार ✨"});

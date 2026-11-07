@@ -6358,4 +6358,14 @@ I18N.load({
 "Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"Trenitalia와 Italo를 비교하세요: 주요 노선에선 한쪽이 더 싼 경우가 많아요",
 "Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"마드리드–바르셀로나 등 주요 노선은 Iryo와 Ouigo가 Renfe보다 싼 경우가 많아요",
 "À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"런던에선 지하철·버스를 비접촉 카드로: 하루 요금 상한이 있어요",
-"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhone 지갑에 Suica 카드를 추가하세요: 기차·지하철·소액 결제에 써요"});
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhone 지갑에 Suica 카드를 추가하세요: 기차·지하철·소액 결제에 써요",
+"Vezoria en 3 temps":"3단계로 보는 Vezoria",
+"Avant":"출발 전",
+"Pendant":"여행 중",
+"Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire":"10분 만에 여행 준비: 안내를 따라가며 남은 일을 확인해요",
+"La carte te guide : visites, trajets, et tu coches ce que tu as vu":"지도가 안내해요: 명소, 경로, 본 곳은 체크",
+"Le film, le récap et le bilan se font tout seuls":"영상, 요약, 결산이 저절로 만들어져요",
+"Touche un temps pour le voir sur un voyage de démo.":"단계를 눌러 데모 여행에서 확인해 보세요.",
+"J-30 avant « {0} » : il te reste {1} chose(s) à préparer":"‘{0}’까지 30일: 준비할 일 {1}개 남음",
+"J-7 avant « {0} » : encore {1} chose(s) à faire avant le départ":"‘{0}’까지 7일: 출발 전 할 일 {1}개",
+"J-{1} avant « {0} » : tout est prêt ✨":"‘{0}’까지 {1}일: 준비 완료 ✨"});
