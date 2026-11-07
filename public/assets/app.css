@@ -3390,3 +3390,7 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .tri3-c{border:0;border-radius:16px;padding:12px 8px;background:linear-gradient(160deg,#0F4C5C,#14b8a6);color:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;font:inherit;cursor:pointer}
 .tri3-c i{font-style:normal;font-size:1.6rem}.tri3-c b{font-size:1rem}.tri3-c small{font-size:.72rem;line-height:1.25;opacity:.92}
 @media(max-width:380px){.tri3-g{grid-template-columns:1fr}.tri3-c{flex-direction:row;text-align:left}.tri3-c small{flex:1}}
+
+/* 🔗 accueil : « J’ai reçu un code » bien visible */
+.v-box.hj{border:2px solid #14b8a6;background:linear-gradient(160deg,rgba(20,184,166,.12),rgba(15,76,92,.06))}
+.hj-row{display:flex;gap:8px;margin:10px 0 8px}.hj-row .v-in{flex:1;min-width:0;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase}.hj-row .v-btn{width:auto;margin:0;padding:0 16px}

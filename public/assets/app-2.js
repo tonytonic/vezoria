@@ -247,6 +247,11 @@
       ${b('eu', '🇮🇹', 'Europe · Italie (Rome, Florence, Venise)')}${b('us', '🇺🇸', 'États-Unis · Ouest américain (San Francisco, Los Angeles, Las Vegas)')}${b('af', '🇲🇦', 'Afrique · Maroc (Marrakech, Fès, Chefchaouen)')}${b('jp', '🇯🇵', 'Asie · Japon (Tokyo, Kyoto, Osaka)')}`);
   }
   // 🧳 → 🗺️ → 🎬 Vezoria en 3 temps, sur l’accueil d’un nouveau : chaque temps s’ouvre sur le voyage de démo correspondant
+  // 🔗 tout en haut de l’accueil : « J’ai reçu un code » (compagnon ou abonné), à taper ou coller ici, sans chercher
+  function homeJoinHTML(){ const pst = navigator.clipboard && navigator.clipboard.readText;
+    return `<div class="v-box hj"><h2 class="vb-h">🔗 ${esc(MSGT('J’ai reçu un code ou un lien'))}</h2><div class="v-sum-small">${esc(MSGT('Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.'))}</div>
+      <div class="hj-row"><input class="v-in" id="hj-code" autocomplete="off" autocapitalize="characters" placeholder="ABCD-EFGH-IJKL" onkeydown="if(event.key==='Enter')CV.joinAnyGo('hj')"><button type="button" class="v-btn" onclick="CV.joinAnyGo('hj')">${esc(MSGT('Rejoindre'))}</button></div>
+      ${pst ? `<button type="button" class="v-btn sec" onclick="CV.joinPaste('hj')">📋 ${esc(MSGT('Coller l’invitation reçue'))}</button>` : ''}<div class="v-sum-small" id="hj-msg"></div></div>`; }
   function tri3HTML(){ if(!PUBLIC) return ''; const c = (ph, ic, t, d) => `<button type="button" class="tri3-c" onclick="CV.demoPhase('${ph}')"><i>${ic}</i><b>${esc(MSGT(t))}</b><small>${esc(MSGT(d))}</small></button>`;
     return `<div class="v-box tri3"><h2 class="vb-h">${esc(MSGT('Vezoria en 3 temps'))}</h2><div class="tri3-g">
       ${c('prep', '🧳', 'Avant', 'Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire')}
@@ -320,7 +325,7 @@
       const fol = (()=>{ try { return followHTML(); } catch(e){ return ''; } })(); if(fol) setTimeout(()=>{ folPaint(); hydrate(); }, 40);
       // 👥 la grille Compagnons · Abonnés · Je suis, aussi sur l’accueil d’un carnet sans voyage à soi (ex. sur ordinateur, juste pour suivre un proche)
       let hub = ''; try { if(fol) hub = `<div class="sp2 home-sp2">${spOverview()}</div><style>.home-sp2{margin:0 0 14px}.home-sp2 .sp2-top{display:none}@media(min-width:760px){.home-sp2 .sp2-body{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}.home-sp2 .sp2-blk{margin:0}}</style>`; } catch(e){}
-      body.innerHTML = hub + (fol ? `<div class="home-fol">${fol}</div>` : '') + `<div class="v-box"><h2 class="vb-h">${fol ? 'Mes propres voyages' : 'Aucun voyage'}</h2><p>${fol ? 'Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.' : 'Crée un voyage, ou transforme une envie en voyage depuis l’onglet ✨ Envies.'}</p>
+      body.innerHTML = homeJoinHTML() + hub + (fol ? `<div class="home-fol">${fol}</div>` : '') + `<div class="v-box"><h2 class="vb-h">${fol ? 'Mes propres voyages' : 'Aucun voyage'}</h2><p>${fol ? 'Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.' : 'Crée un voyage, ou transforme une envie en voyage depuis l’onglet ✨ Envies.'}</p>
         <button class="v-btn" onclick="CV.newTrip()">＋ Nouveau voyage</button>${tutoBtn()}${demoBtn()}</div>${fol ? '' : tri3HTML()}`;
       return;
     }

@@ -2055,7 +2055,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
      Lecture : BarcodeDetector quand le téléphone l’a (Android/Chrome), sinon jsQR (vendor/jsqr.min.js, chargé au premier scan).
      Si la caméra est refusée ou indisponible : photo du QR code à la place. Le texte lu remplit le champ puis lance l’action. */
   let qrSt = null; window.addEventListener('pagehide', ()=>qrStop());
-  const QR_GO = {'ja-code':()=>joinAnyGo(), 'tj-code':()=>tripJoinGo(), 'cv-scode':()=>obJoin(), 'cv-fcode':()=>{ const n = document.getElementById('cv-fnom'); if(n && n.value.trim()) obFollow(); else if(n) n.focus(); }, 'fw-code':()=>followGo(document.getElementById('fw-code').value)};
+  const QR_GO = {'ja-code':()=>joinAnyGo(), 'hj-code':()=>joinAnyGo('hj'), 'tj-code':()=>tripJoinGo(), 'cv-scode':()=>obJoin(), 'cv-fcode':()=>{ const n = document.getElementById('cv-fnom'); if(n && n.value.trim()) obFollow(); else if(n) n.focus(); }, 'fw-code':()=>followGo(document.getElementById('fw-code').value)};
   async function qrDecoder(){
     try { if('BarcodeDetector' in window && (await BarcodeDetector.getSupportedFormats()).includes('qr_code')){ const d = new BarcodeDetector({formats:['qr_code']}); return async src => { const r = await d.detect(src); return r[0] ? r[0].rawValue : ''; }; } } catch(e){}
     if(!window.jsQR) await new Promise((res, rej)=>{ const sc = document.createElement('script'); sc.src = (window.VZ_B || '') + 'vendor/jsqr.min.js'; sc.onload = res; sc.onerror = ()=>rej(new Error(MSGT('Lecteur de QR code indisponible (pas de réseau ?)'))); document.head.appendChild(sc); });
@@ -2112,11 +2112,11 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       <div id="ja-msg" class="v-sum-small" style="margin-top:6px"></div>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.joinAnyGo()">🔗 Rejoindre</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
-  async function joinPaste(){ try { const t = await navigator.clipboard.readText(); const e = document.getElementById('ja-code'); if(e && t) e.value = t;
-      if(/(?:rejoindre|suivre)=[A-Za-z0-9-]{8,}|\b[A-Z0-9]{4}(?:-[A-Z0-9]{4}){2,}\b/i.test(t || '')) return joinAnyGo();   // 📋 une invitation : on rejoint tout de suite
+  async function joinPaste(pre){ pre = typeof pre === 'string' ? pre : 'ja'; try { const t = await navigator.clipboard.readText(); const e = document.getElementById(pre + '-code'); if(e && t) e.value = t;
+      if(/(?:rejoindre|suivre)=[A-Za-z0-9-]{8,}|\b[A-Z0-9]{4}(?:-[A-Z0-9]{4}){2,}\b/i.test(t || '')) return joinAnyGo(pre);   // 📋 une invitation : on rejoint tout de suite
       toast(MSGT('Aucune invitation dans le presse-papiers : copie d’abord le message reçu.')); } catch(e){ toast('Touche longuement la zone de texte → Coller'); } }
-  async function joinAnyGo(){
-    const raw = (document.getElementById('ja-code') || {}).value || '', msg = document.getElementById('ja-msg');
+  async function joinAnyGo(pre){ pre = typeof pre === 'string' ? pre : 'ja';   // 'hj' : la case de l’accueil
+    const raw = (document.getElementById(pre + '-code') || {}).value || '', msg = document.getElementById(pre + '-msg') || {};
     const fm = raw.match(/suivre=([A-Za-z0-9-]{8,})/i); if(fm){ closeSheet(true); followGo(fm[1].toUpperCase()); return; }
     const cm = raw.match(/rejoindre=([A-Za-z0-9-]{8,})/i) || raw.match(/\b([A-Z0-9]{4}(?:-[A-Z0-9]{4}){2,})\b/i);
     const code = cm ? cm[1].toUpperCase() : raw.trim().toUpperCase();
