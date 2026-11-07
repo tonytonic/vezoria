@@ -850,12 +850,16 @@
     } catch(e){} }
   // 🔍 photos d’un souvenir pas encore en ligne (cases grises chez les compagnons) : où elles en sont, et « Renvoyer »
   function souvPhDiag(s){ if(!s || !(s.photos || []).length) return '';
-    const miss = s.photos.filter(p=>!phRef(p)); if(!miss.length) return '';
+    const miss = s.photos.filter(p=>!phRef(p)), shared = R[s.trip] && (R[s.trip].voyageurs || []).length > 1;
+    if(!miss.length) return shared ? `<button type="button" class="v-btn sec" style="margin:6px 0" onclick="CV.souvResend('${ja(s.id)}')">🔁 ${esc(MSGT('Renvoyer les photos à mes compagnons'))}</button>` : '';
     const q = new Set((M.pq || []).map(String)), inQ = miss.filter(p=>q.has(String(p))).length;
     const er = M.pqPause && M.pqPause > Date.now() ? '⏸️ ' + MSGT('envoi en pause') : (M.pqErr || '');
     return `<div class="v-box sv-diag"><div>📷 <b>${esc(RF('{0} photo(s) sur {1} pas encore en ligne', miss.length, s.photos.length))}</b>${inQ ? ' · ' + esc(RF('{0} en attente d’envoi sur ce téléphone', inQ)) : ''}${er ? `<br><small>${esc(er)}</small>` : ''}</div>
       <button type="button" class="v-btn sec" onclick="CV.souvResend('${ja(s.id)}')">🔁 ${esc(MSGT('Renvoyer ces photos'))}</button></div>`; }
   async function souvResend(id){ const s = R[id]; if(!s) return; let n = 0; M.pq = M.pq || [];
+    // déjà en ligne : on renvoie leurs clés dans le voyage (les compagnons qui ne les ont pas les reçoivent)
+    const keys = (s.photos || []).map(p=>pkOf(p)).filter(Boolean).map(k=>Object.assign(clone(k), {trip:s.trip}));
+    if(keys.length){ putQuiet(keys); n += keys.length; }
     for(const p of (s.photos || []).filter(p=>!phRef(p))){ let o = null; try { o = await IDB.get(p); } catch(e){} if(o && o.blob){ if(!M.pq.includes(p)) M.pq.push(p); n++; } }
     if(!n){ toast(RF('Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».', pname(s.createdBy) || MSGT('la personne qui les a ajoutées'))); return; }
     delete M.pqPause; M.pqFull = {}; M.pqErr = ''; persist(); toast('🔁 ' + RF('{0} photo(s) renvoyée(s)…', n)); closeSheet(true);

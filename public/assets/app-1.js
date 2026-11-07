@@ -1677,6 +1677,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         fix.push(Object.assign(clone(t), {ro:1, roAt:Date.now()})); });
     if(fix.length){ persist(); putQuiet(fix); refresh(); }
     roFeedBack();
+    pkFix();
     // 📖 voyage en lecture seule : je ne le montre plus à MES abonnés (ce n’est plus mon voyage)
     try { list('trip', t=>t.ro && !t.deleted && FT()[t.id] && FT()[t.id] === ab2C()).forEach(t=>{ feedStop(t.id, true).catch(()=>{}); }); } catch(e){}
   }
@@ -1687,6 +1688,15 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       for(const pid of gone){ const k = t.id + '|' + pid; if(A[k]) continue; A[k] = Date.now(); persist(); compOrphans.busy = 1;
         try { if(await uiConfirm(RF('{0} n’est plus dans les voyageurs de « {1} » mais y a encore accès. Lui retirer l’accès ? Il garde une copie en lecture seule.', pname(pid), t.titre || ''))) await compRevoke(t.id, pid); }
         finally { compOrphans.busy = 0; } } } }
+  // 🫙 fiche « pk: » d’une photo envoyée avant d’être rangée dans un souvenir (voyage inconnu à l’envoi) : elle restait dans MON carnet,
+  // les abonnés avaient la photo mais pas les compagnons (cases grises). On la range dans le voyage de son souvenir → elle part chez eux.
+  function pkFix(){ try {
+    const own = {}; list('souv', s=>!s.deleted && s.trip).forEach(s=>(s.photos || []).forEach(p=>{ own[p] = s.trip; }));
+    // + une fois : les clés des photos de mes voyages partagés sont renvoyées dans le voyage (celles parties ailleurs avant la correction)
+    const out = list('phk', r=>/^pk:/.test(r.id) && !r.deleted && (!r.by || r.by === M.me)).filter(r=>{ const tr = own[r.id.slice(3)]; return tr && R[tr] && !R[tr].deleted && !R[tr].ro && (r.trip !== tr || (r.tsv !== 2 && TS()[tr] && spaceObj(TS()[tr]))); })
+      .map(r=>Object.assign(clone(r), {trip:own[r.id.slice(3)], tsv:2}));
+    if(out.length) putQuiet(out.slice(0, 400));
+  } catch(e){} }
   // 👀 ancien compagnon (voyage en lecture seule ou retiré) : le voyage suivi en abonné, mis de côté tant qu’il était compagnon, revient dans « Suivis »
   function roFeedBack(){ let n = 0; const un = M.unfol || {};
     Object.entries(M.subs || {}).forEach(([c, S])=>{ if(!S || !S.mt) return;
