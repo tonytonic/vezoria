@@ -3432,4 +3432,6 @@ I18N.load({
 "Position introuvable pour l’instant, réessaie dehors":"Locatie nog niet gevonden, probeer het buiten",
 "Ton téléphone prépare les photos…":"Je telefoon bereidt de foto’s voor…",
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"Bij veel foto’s kan het een paar seconden duren.",
-"Touche pour fermer si tu as annulé":"Tik om te sluiten als je annuleerde"});
+"Touche pour fermer si tu as annulé":"Tik om te sluiten als je annuleerde",
+"Retour à l’hôtel":"Terug naar het hotel",
+"ce soir":"vanavond"});

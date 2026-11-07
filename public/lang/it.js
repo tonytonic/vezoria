@@ -3441,4 +3441,6 @@ I18N.load({
 "Position introuvable pour l’instant, réessaie dehors":"Posizione non trovata per ora, riprova all’aperto",
 "Ton téléphone prépare les photos…":"Il telefono sta preparando le foto…",
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"Può richiedere qualche secondo se sono tante.",
-"Touche pour fermer si tu as annulé":"Tocca per chiudere se hai annullato"});
+"Touche pour fermer si tu as annulé":"Tocca per chiudere se hai annullato",
+"Retour à l’hôtel":"Rientro in hotel",
+"ce soir":"stasera"});

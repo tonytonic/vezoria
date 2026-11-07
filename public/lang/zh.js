@@ -6380,4 +6380,6 @@ I18N.load({
 "Position introuvable pour l’instant, réessaie dehors":"暂时找不到位置，请到户外再试",
 "Ton téléphone prépare les photos…":"手机正在准备照片…",
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"照片较多时可能需要几秒钟。",
-"Touche pour fermer si tu as annulé":"如已取消，轻点关闭"});
+"Touche pour fermer si tu as annulé":"如已取消，轻点关闭",
+"Retour à l’hôtel":"返回酒店",
+"ce soir":"今晚"});

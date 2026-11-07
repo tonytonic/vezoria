@@ -6381,4 +6381,6 @@ I18N.load({
 "Position introuvable pour l’instant, réessaie dehors":"Местоположение не найдено, попробуй на улице",
 "Ton téléphone prépare les photos…":"Телефон готовит фото…",
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"Если фото много, это займёт несколько секунд.",
-"Touche pour fermer si tu as annulé":"Нажми, чтобы закрыть, если отменил"});
+"Touche pour fermer si tu as annulé":"Нажми, чтобы закрыть, если отменил",
+"Retour à l’hôtel":"Возвращение в отель",
+"ce soir":"сегодня вечером"});

@@ -6380,4 +6380,6 @@ I18N.load({
 "Position introuvable pour l’instant, réessaie dehors":"아직 위치를 찾지 못했어요. 밖에서 다시 시도하세요",
 "Ton téléphone prépare les photos…":"휴대폰이 사진을 준비하고 있어요…",
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"사진이 많으면 몇 초 걸릴 수 있어요.",
-"Touche pour fermer si tu as annulé":"취소했다면 눌러서 닫기"});
+"Touche pour fermer si tu as annulé":"취소했다면 눌러서 닫기",
+"Retour à l’hôtel":"호텔로 돌아가기",
+"ce soir":"오늘 저녁"});

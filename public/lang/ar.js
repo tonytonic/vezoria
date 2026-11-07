@@ -6381,4 +6381,6 @@ I18N.load({
 "Position introuvable pour l’instant, réessaie dehors":"تعذّر العثور على الموقع، حاول في الخارج",
 "Ton téléphone prépare les photos…":"هاتفك يجهّز الصور…",
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"قد يستغرق بضع ثوانٍ إذا كانت كثيرة.",
-"Touche pour fermer si tu as annulé":"اضغط للإغلاق إن ألغيت"});
+"Touche pour fermer si tu as annulé":"اضغط للإغلاق إن ألغيت",
+"Retour à l’hôtel":"العودة إلى الفندق",
+"ce soir":"هذا المساء"});

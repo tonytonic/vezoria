@@ -3426,4 +3426,6 @@ I18N.load({
 "Position introuvable pour l’instant, réessaie dehors":"Can’t find your location yet, try again outdoors",
 "Ton téléphone prépare les photos…":"Your phone is preparing the photos…",
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"It can take a few seconds if there are many.",
-"Touche pour fermer si tu as annulé":"Tap to close if you cancelled"});
+"Touche pour fermer si tu as annulé":"Tap to close if you cancelled",
+"Retour à l’hôtel":"Back to the hotel",
+"ce soir":"tonight"});

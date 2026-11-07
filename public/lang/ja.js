@@ -6380,4 +6380,6 @@ I18N.load({
 "Position introuvable pour l’instant, réessaie dehors":"まだ位置が取れません。屋外で再度お試しください",
 "Ton téléphone prépare les photos…":"スマホが写真を準備しています…",
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"枚数が多いと数秒かかることがあります。",
-"Touche pour fermer si tu as annulé":"キャンセルした場合はタップして閉じる"});
+"Touche pour fermer si tu as annulé":"キャンセルした場合はタップして閉じる",
+"Retour à l’hôtel":"ホテルへ戻る",
+"ce soir":"今夜"});

@@ -6368,4 +6368,6 @@ I18N.load({
 "Position introuvable pour l’instant, réessaie dehors":"Konum henüz bulunamadı, dışarıda tekrar dene",
 "Ton téléphone prépare les photos…":"Telefonun fotoğrafları hazırlıyor…",
 "Ça peut prendre quelques secondes s’il y en a beaucoup.":"Çok fotoğraf varsa birkaç saniye sürebilir.",
-"Touche pour fermer si tu as annulé":"İptal ettiysen kapatmak için dokun"});
+"Touche pour fermer si tu as annulé":"İptal ettiysen kapatmak için dokun",
+"Retour à l’hôtel":"Otele dönüş",
+"ce soir":"bu akşam"});
