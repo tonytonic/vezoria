@@ -6348,4 +6348,14 @@ I18N.load({
 "Remise au programme":"已放回行程",
 "Remettre au programme":"放回行程",
 "Pas le temps / plus envie":"没时间 / 不感兴趣了",
-"Passer":"跳过"});
+"Passer":"跳过",
+"Bus, tram, métro":"公交、电车、地铁",
+"Taxis et VTC":"出租车和网约车",
+"Se déplacer : applis locales":"出行：当地应用",
+"Itinéraires en transports":"公共交通路线",
+"Installe-les avant de partir : sur place, le réseau peut manquer":"出发前安装：当地可能没有网络",
+"Billets dégriffés (Supersaver) dans SBB Mobile : souvent bien moins chers que le plein tarif, sur un train précis":"SBB Mobile 的 Supersaver 特价票：指定车次，通常便宜很多",
+"Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"比较 Trenitalia 和 Italo：干线上常有一家更便宜",
+"Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"马德里–巴塞罗那等干线上，Iryo 和 Ouigo 常比 Renfe 便宜",
+"À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"在伦敦用非接触式银行卡乘地铁和公交：每日封顶",
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"在 iPhone 钱包中添加 Suica 卡：可乘火车、地铁和小额消费"});

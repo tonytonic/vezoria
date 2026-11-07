@@ -6336,4 +6336,14 @@ I18N.load({
 "Remise au programme":"Programa geri alındı",
 "Remettre au programme":"Programa geri koy",
 "Pas le temps / plus envie":"Zaman yok / ilgilenmiyorum",
-"Passer":"Atla"});
+"Passer":"Atla",
+"Bus, tram, métro":"Otobüs, tramvay, metro",
+"Taxis et VTC":"Taksi ve araç çağırma",
+"Se déplacer : applis locales":"Ulaşım: yerel uygulamalar",
+"Itinéraires en transports":"Toplu taşıma rotaları",
+"Installe-les avant de partir : sur place, le réseau peut manquer":"Gitmeden yükle: orada şebeke olmayabilir",
+"Billets dégriffés (Supersaver) dans SBB Mobile : souvent bien moins chers que le plein tarif, sur un train précis":"SBB Mobile’da Supersaver biletleri: belirli bir tren için çoğu zaman çok daha ucuz",
+"Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"Trenitalia ile Italo’yu karşılaştır: ana hatlarda biri genelde daha ucuz",
+"Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"Madrid–Barselona ve ana hatlarda Iryo ve Ouigo genelde Renfe’den ucuz",
+"À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"Londra’da metro ve otobüsü temassız kartla öde: günlük tavan var",
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhone Cüzdan’a Suica kartı ekle: tren, metro ve küçük alışverişlerde geçer"});

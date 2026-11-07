@@ -6348,4 +6348,14 @@ I18N.load({
 "Remise au programme":"कार्यक्रम में वापस",
 "Remettre au programme":"कार्यक्रम में वापस रखें",
 "Pas le temps / plus envie":"समय नहीं / अब रुचि नहीं",
-"Passer":"छोड़ें"});
+"Passer":"छोड़ें",
+"Bus, tram, métro":"बस, ट्राम, मेट्रो",
+"Taxis et VTC":"टैक्सी और राइड ऐप",
+"Se déplacer : applis locales":"आवागमन: स्थानीय ऐप",
+"Itinéraires en transports":"परिवहन मार्ग",
+"Installe-les avant de partir : sur place, le réseau peut manquer":"जाने से पहले इंस्टॉल करें: वहां नेटवर्क न हो सकता है",
+"Billets dégriffés (Supersaver) dans SBB Mobile : souvent bien moins chers que le plein tarif, sur un train précis":"SBB Mobile में Supersaver टिकट: किसी खास ट्रेन के लिए अक्सर काफ़ी सस्ते",
+"Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"Trenitalia और Italo की तुलना करें: मुख्य रूट पर एक अक्सर सस्ता होता है",
+"Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"मैड्रिड–बार्सिलोना पर Iryo और Ouigo अक्सर Renfe से सस्ते",
+"À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"लंदन में मेट्रो-बस का कॉन्टैक्टलेस भुगतान करें: दैनिक सीमा लगती है",
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhone Wallet में Suica कार्ड जोड़ें: ट्रेन, मेट्रो और छोटी खरीदारी के लिए"});

@@ -3404,4 +3404,14 @@ I18N.load({
 "Remise au programme":"Wieder im Programm",
 "Remettre au programme":"Zurück ins Programm",
 "Pas le temps / plus envie":"Keine Zeit / keine Lust mehr",
-"Passer":"Überspringen"});
+"Passer":"Überspringen",
+"Bus, tram, métro":"Bus, Tram, U-Bahn",
+"Taxis et VTC":"Taxis und Fahrdienste",
+"Se déplacer : applis locales":"Unterwegs: lokale Apps",
+"Itinéraires en transports":"Verbindungen mit Öffis",
+"Installe-les avant de partir : sur place, le réseau peut manquer":"Vor der Abreise installieren: vor Ort kann das Netz fehlen",
+"Billets dégriffés (Supersaver) dans SBB Mobile : souvent bien moins chers que le plein tarif, sur un train précis":"Sparbillette in SBB Mobile: oft viel günstiger als der Normalpreis, für einen bestimmten Zug",
+"Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"Vergleiche Trenitalia und Italo: auf Hauptstrecken ist oft einer günstiger",
+"Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"Auf Madrid–Barcelona und Hauptstrecken sind Iryo und Ouigo oft günstiger als Renfe",
+"À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"In London Tube und Bus kontaktlos zahlen: der Preis ist pro Tag gedeckelt",
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"Füge eine Suica-Karte zur iPhone-Wallet hinzu: für Züge, U-Bahn und kleine Einkäufe"});

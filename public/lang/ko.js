@@ -6348,4 +6348,14 @@ I18N.load({
 "Remise au programme":"일정에 다시 추가",
 "Remettre au programme":"일정에 다시 넣기",
 "Pas le temps / plus envie":"시간 없음 / 관심 없음",
-"Passer":"건너뛰기"});
+"Passer":"건너뛰기",
+"Bus, tram, métro":"버스·트램·지하철",
+"Taxis et VTC":"택시·차량 호출",
+"Se déplacer : applis locales":"이동: 현지 앱",
+"Itinéraires en transports":"대중교통 경로",
+"Installe-les avant de partir : sur place, le réseau peut manquer":"출발 전에 설치하세요: 현지엔 신호가 없을 수 있어요",
+"Billets dégriffés (Supersaver) dans SBB Mobile : souvent bien moins chers que le plein tarif, sur un train précis":"SBB Mobile의 Supersaver 할인권: 특정 열차 한정, 정가보다 훨씬 저렴한 경우가 많아요",
+"Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"Trenitalia와 Italo를 비교하세요: 주요 노선에선 한쪽이 더 싼 경우가 많아요",
+"Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"마드리드–바르셀로나 등 주요 노선은 Iryo와 Ouigo가 Renfe보다 싼 경우가 많아요",
+"À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"런던에선 지하철·버스를 비접촉 카드로: 하루 요금 상한이 있어요",
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhone 지갑에 Suica 카드를 추가하세요: 기차·지하철·소액 결제에 써요"});

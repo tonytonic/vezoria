@@ -3409,4 +3409,14 @@ I18N.load({
 "Remise au programme":"Rimessa nel programma",
 "Remettre au programme":"Rimetti nel programma",
 "Pas le temps / plus envie":"Niente tempo / non mi interessa",
-"Passer":"Salta"});
+"Passer":"Salta",
+"Bus, tram, métro":"Bus, tram, metro",
+"Taxis et VTC":"Taxi e NCC",
+"Se déplacer : applis locales":"Spostarsi: app locali",
+"Itinéraires en transports":"Percorsi con i mezzi",
+"Installe-les avant de partir : sur place, le réseau peut manquer":"Installale prima di partire: sul posto la rete può mancare",
+"Billets dégriffés (Supersaver) dans SBB Mobile : souvent bien moins chers que le plein tarif, sur un train précis":"Biglietti risparmio (Supersaver) in SBB Mobile: spesso molto meno cari, per un treno preciso",
+"Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"Confronta Trenitalia e Italo: sulle grandi linee uno è spesso più economico",
+"Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"Su Madrid–Barcellona e grandi linee, Iryo e Ouigo sono spesso meno cari di Renfe",
+"À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"A Londra paga metro e bus con carta contactless: c’è un tetto giornaliero",
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"Aggiungi una carta Suica al Wallet dell’iPhone: vale per treni, metro e piccoli acquisti"});

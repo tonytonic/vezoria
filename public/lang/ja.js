@@ -6348,4 +6348,14 @@ I18N.load({
 "Remise au programme":"予定に戻しました",
 "Remettre au programme":"予定に戻す",
 "Pas le temps / plus envie":"時間がない / 興味なし",
-"Passer":"スキップ"});
+"Passer":"スキップ",
+"Bus, tram, métro":"バス・路面電車・地下鉄",
+"Taxis et VTC":"タクシー・配車アプリ",
+"Se déplacer : applis locales":"移動：現地アプリ",
+"Itinéraires en transports":"乗換案内",
+"Installe-les avant de partir : sur place, le réseau peut manquer":"出発前にインストール：現地は電波がないことも",
+"Billets dégriffés (Supersaver) dans SBB Mobile : souvent bien moins chers que le plein tarif, sur un train précis":"SBB Mobileのスーパーセーバー：特定の列車で、正規運賃よりかなり安いことが多い",
+"Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre":"TrenitaliaとItaloを比較：幹線ではどちらかが安いことが多い",
+"Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe":"マドリード–バルセロナなどではIryoとOuigoがRenfeより安いことが多い",
+"À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour":"ロンドンでは地下鉄・バスをタッチ決済で：1日の上限あり",
+"Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats":"iPhoneのウォレットにSuicaを追加：電車・地下鉄・買い物に使えます"});
