@@ -290,6 +290,32 @@
     GB:'Europe/London', IE:'Europe/Dublin', PT:'Europe/Lisbon', IS:'Atlantic/Reykjavik', GR:'Europe/Athens', FI:'Europe/Helsinki', US:'America/New_York', CA:'America/Toronto', MX:'America/Mexico_City', CU:'America/Havana', DO:'America/Santo_Domingo', CR:'America/Costa_Rica', CO:'America/Bogota', PE:'America/Lima', CL:'America/Santiago', AR:'America/Argentina/Buenos_Aires', BR:'America/Sao_Paulo', GP:'America/Guadeloupe', MQ:'America/Martinique', PF:'Pacific/Tahiti', NC:'Pacific/Noumea', AU:'Australia/Sydney', NZ:'Pacific/Auckland'};
   const TZ_MULTI = {US:'New York', CA:'Toronto', AU:'Sydney', BR:'São Paulo', MX:'Mexico', ID:'Jakarta'};
   function tzOff(tz, d){ try { const p = new Intl.DateTimeFormat('en-US', {timeZone:tz, timeZoneName:'shortOffset'}).formatToParts(d).find(x=>x.type === 'timeZoneName'); const m = /GMT([+-]\d+)(?::(\d+))?/.exec(p ? p.value : ''); return m ? +m[1] + (m[2] ? Math.sign(+m[1] || 1) * +m[2] / 60 : 0) : (p && p.value === 'GMT' ? 0 : null); } catch(e){ return null; } }
+  const APPK = {tr:['🚆', 'Trains'], loc:['🚇', 'Bus, tram, métro'], taxi:['🚕', 'Taxis et VTC']};
+  const LOCAPPS = {
+    FR:{tr:'SNCF Connect', loc:'Bonjour RATP (Paris)', taxi:'Uber, Bolt, G7'},
+    CH:{tr:'SBB Mobile (CFF)', loc:'SBB Mobile', taxi:'Uber', tip:'Billets dégriffés (Supersaver) dans SBB Mobile : souvent bien moins chers que le plein tarif, sur un train précis'},
+    IT:{tr:'Trenitalia, Italo', taxi:'FreeNow, itTaxi', tip:'Compare Trenitalia et Italo : sur les grandes lignes, l’un est souvent moins cher que l’autre'},
+    ES:{tr:'Renfe, Iryo, Ouigo', taxi:'Cabify, FreeNow, Uber', tip:'Sur Madrid–Barcelone et les grandes lignes, Iryo et Ouigo sont souvent moins chers que Renfe'},
+    PT:{tr:'CP – Comboios de Portugal', taxi:'Bolt, Uber'},
+    DE:{tr:'DB Navigator', taxi:'FreeNow, Uber'},
+    AT:{tr:'ÖBB', loc:'WienMobil (Vienne)', taxi:'Uber, Bolt'},
+    BE:{tr:'SNCB', loc:'STIB-MIVB (Bruxelles)', taxi:'Uber'},
+    NL:{tr:'NS', loc:'9292', taxi:'Uber, Bolt'},
+    GB:{tr:'Trainline', loc:'TfL Go (Londres), Citymapper', taxi:'Uber, Bolt, FreeNow', tip:'À Londres, paie le métro et le bus par carte sans contact : le prix est plafonné par jour'},
+    IE:{tr:'Irish Rail', loc:'TFI Live', taxi:'FreeNow, Uber'},
+    GR:{tr:'Hellenic Train', taxi:'FreeNow, Uber'},
+    MT:{loc:'Tallinja', taxi:'Bolt, eCabs, Uber'},
+    HR:{tr:'HŽPP', taxi:'Bolt, Uber'},
+    CZ:{tr:'Můj vlak (ČD), RegioJet', loc:'PID Lítačka (Prague)', taxi:'Bolt, Liftago'},
+    HU:{tr:'MÁV', loc:'BudapestGO', taxi:'Bolt, Főtaxi'},
+    PL:{tr:'PKP Intercity', loc:'Jakdojade', taxi:'Bolt, Uber'},
+    TR:{tr:'TCDD Taşımacılık', loc:'İstanbulkart', taxi:'BiTaksi, Uber'},
+    EG:{tr:'Egyptian National Railways', taxi:'Uber, Careem, inDrive'},
+    MA:{tr:'ONCF Voyages', taxi:'Careem, inDrive'},
+    US:{tr:'Amtrak', loc:'Transit', taxi:'Uber, Lyft'},
+    CA:{tr:'VIA Rail', loc:'Transit', taxi:'Uber, Lyft'},
+    JP:{tr:'smartEX (Shinkansen)', loc:'Japan Transit (Navitime)', taxi:'GO Taxi', tip:'Ajoute une carte Suica dans le Wallet de l’iPhone : elle sert pour les trains, métros et petits achats'},
+    IS:{loc:'Klappið (Strætó)', taxi:'Hopp'}};
   function avantData(){
     const t = trip(), from = bagFromDefault(), ccs = bagCcs(), d0 = t && t.debut ? new Date(t.debut + 'T12:00:00') : new Date(), here = -d0.getTimezoneOffset() / 60;
     const nm = cc => `${flag(cc)} ${esc(ccName(cc))}`, li = (ic, h) => `<div class="av-li"><i>${ic}</i><span>${h}</span></div>`;
@@ -309,6 +335,9 @@
     { const pl = [...new Set(ccs.map(cc=>PLUG[cc]).filter(Boolean))], eu = ccs.length && ccs.every(cc=>EU_CEAM.includes(cc));
       S.push({k:'tel', ic:'📱', t:MSGT('Téléphone et prises'), h:(pl.length && from === 'eu' ? li('🔌', esc(MSGT('Adaptateur de prise')) + ' : type ' + esc(pl.join(', '))) : '') + li('📶', esc(MSGT(eu ? 'Itinérance en Europe au prix de ton forfait : vérifie auprès de ton opérateur' : 'Hors Europe, l’itinérance coûte cher : eSIM locale ou forfait international')))
         + li('🗺️', esc(MSGT('Télécharge les cartes hors ligne de tes villes et garde tes billets dans l’appli')))}); }
+    // 🚆 se déplacer : les applis locales (billets de train, transports en ville, taxis)
+    { const rows = ccs.map(cc=>{ const A = LOCAPPS[cc]; if(!A) return ''; return `<div class="av-li"><i>${flag(cc)}</i><span><b>${esc(ccName(cc))}</b></span></div>` + ['tr', 'loc', 'taxi'].filter(k=>A[k]).map(k=>li(APPK[k][0], `${esc(MSGT(APPK[k][1]))} : <b data-notr>${esc(A[k])}</b>`)).join('') + (A.tip ? li('💡', esc(MSGT(A.tip))) : ''); }).filter(Boolean).join('');
+      S.push({k:'app', ic:'🚆', t:MSGT('Se déplacer : applis locales'), h:rows + li('🗺️', esc(MSGT('Itinéraires en transports')) + ' : <b data-notr>Google Maps, Citymapper, Moovit</b>') + li('📥', esc(MSGT('Installe-les avant de partir : sur place, le réseau peut manquer')))}); }
     // 🌙 décalage horaire
     { const rows = []; let mx = 0; ccs.forEach(cc=>{ const tz = TZ[cc]; if(!tz) return; const o = tzOff(tz, d0); if(o == null) return; const df = Math.round((o - here) * 2) / 2; mx = Math.max(mx, Math.abs(df));
         rows.push(li('🕐', `<b>${nm(cc)}</b>${TZ_MULTI[cc] ? ' (' + esc(TZ_MULTI[cc]) + ')' : ''} · ${df === 0 ? esc(MSGT('même heure que chez toi')) : (df > 0 ? '+' : '') + String(df).replace('.5', ' h 30').replace(/^([+-]?\d+)$/, '$1 h')}`)); });
