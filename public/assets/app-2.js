@@ -251,7 +251,7 @@
   function homeJoinHTML(){ const pst = navigator.clipboard && navigator.clipboard.readText;
     return `<div class="v-box hj"><h2 class="vb-h">🔗 ${esc(MSGT('J’ai reçu un code ou un lien'))}</h2><div class="v-sum-small">${esc(MSGT('Compagnon de voyage ou abonné : colle ici ce qu’on t’a envoyé, tu rejoins tout de suite.'))}</div>
       <div class="hj-row"><input class="v-in" id="hj-code" autocomplete="off" autocapitalize="characters" placeholder="ABCD-EFGH-IJKL" onkeydown="if(event.key==='Enter')CV.joinAnyGo('hj')"><button type="button" class="v-btn" onclick="CV.joinAnyGo('hj')">${esc(MSGT('Rejoindre'))}</button></div>
-      ${pst ? `<button type="button" class="v-btn sec" onclick="CV.joinPaste('hj')">📋 ${esc(MSGT('Coller l’invitation reçue'))}</button>` : ''}<div class="v-sum-small" id="hj-msg"></div></div>`; }
+      ${pst ? `<button type="button" class="v-btn sec" onclick="CV.joinPaste('hj')">📋 ${esc(MSGT('Coller mon invitation'))}</button>` : ''}<div class="v-sum-small" id="hj-msg"></div></div>`; }
   function tri3HTML(){ if(!PUBLIC) return ''; const c = (ph, ic, t, d) => `<button type="button" class="tri3-c" onclick="CV.demoPhase('${ph}')"><i>${ic}</i><b>${esc(MSGT(t))}</b><small>${esc(MSGT(d))}</small></button>`;
     return `<div class="v-box tri3"><h2 class="vb-h">${esc(MSGT('Vezoria en 3 temps'))}</h2><div class="tri3-g">
       ${c('prep', '🧳', 'Avant', 'Ton voyage prêt en 10 minutes : on te guide, tu vois ce qu’il reste à faire')}
@@ -1905,6 +1905,9 @@
     openSheet(`<h2>Bienvenue à bord ✈️</h2>
       <div class="v-sum-small" style="margin-bottom:12px">Ici on prépare les voyages à plusieurs. Chacun a sa couleur, et tout ce que tu ajoutes est signé de ton prénom.</div>
       ${obSetupHTML()}
+      ${PUBLIC ? `<div class="ob-inv"><b>🎟️ ${esc(MSGT('On t’a invité(e) ? Compagnon de voyage ou abonné'))}</b>
+        <button type="button" class="v-btn" onclick="CV.obMagic()">📋 ${esc(MSGT('Coller mon invitation'))}</button>
+        <small>${esc(MSGT('Copie d’abord le message ou le lien reçu (SMS, WhatsApp, e-mail), puis touche ce bouton.'))}</small><div class="v-sum-small" id="ob-inv-msg"></div></div>` : ''}
       <div class="cv-seg-big">${segBtns('cv-ob', [['new','🆕 Je crée mon carnet'],['join','🔑 ' + MSGT('J’ai déjà un code')],['fol','👀 Je suis un proche']], 'new')}</div>
       <div id="cv-ob-new">
         <div class="v-f"><label>Ton prénom</label><input class="v-in" id="cv-pnom" placeholder="Ex. Camille"></div>
@@ -1938,6 +1941,17 @@
     }));
     if(M.joinCode) obJoinPrefill();
   }
+  // 🎟️ 1re ouverture après une invitation : un seul bouton, l’appli lit l’invitation copiée et fait le reste
+  async function obMagic(){ const say = t => { const e = document.getElementById('ob-inv-msg'); if(e) e.textContent = t; };
+    let t = ''; try { t = await navigator.clipboard.readText(); } catch(e){}
+    const seg = v => { const b = document.querySelector('#cv-ob button[data-v="' + v + '"]'); if(b) b.click(); };
+    const fm = String(t || '').match(/suivre=([A-Za-z0-9-]{8,})/i);
+    if(fm){ seg('fol'); const c = document.getElementById('cv-fcode'), n = document.getElementById('cv-fnom'); if(c) c.value = fm[1].toUpperCase(); if(n){ n.focus(); n.scrollIntoView({block:'center'}); }
+      say('✅ ' + MSGT('Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».')); return; }
+    const cm = String(t || '').match(/rejoindre=([A-Za-z0-9-]{8,})/i) || String(t || '').match(/\b([A-Z0-9]{4}(?:-[A-Z0-9]{4}){2,})\b/i);
+    if(cm){ seg('join'); const i = document.getElementById('cv-scode'); if(i) i.value = cm[1].toUpperCase(); say('✅ ' + MSGT('Invitation trouvée, on te fait entrer…')); return obJoin(cm[1].toUpperCase()); }
+    seg('join'); const i = document.getElementById('cv-scode'); if(i) i.focus();
+    say(t ? MSGT('Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).') : MSGT('Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.')); }
   function obJoinPrefill(){ const jb = document.querySelector('#cv-ob button[data-v="join"]'), ci = document.getElementById('cv-scode'); if(jb) jb.click(); if(ci && M.joinCode) ci.value = M.joinCode; }
   // ✈️ premier lancement en UN écran : langue et devise (si pas encore choisies), prénom, couleur, conditions
   const I18N_LEGAL = () => (window.I18N && I18N.lang !== 'fr') ? 'legal-en.html' : 'mentions-legales';

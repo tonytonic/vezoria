@@ -1926,10 +1926,13 @@
     const T2 = x => esc(MSGT(x));
     let o = document.getElementById('cv-wch'); if(!o){ o = document.createElement('div'); o.id = 'cv-wch'; document.body.appendChild(o); }
     o.style.cssText = 'position:fixed;inset:0;z-index:9999;background:var(--bg,#f4f7f6);overflow:auto;padding:28px 18px;display:flex;flex-direction:column;gap:12px;max-width:520px;margin:0 auto';
-    o.innerHTML = `<div style="text-align:center"><img src="icon-192.png" alt="" style="width:64px;height:64px;border-radius:16px"><h2 style="margin:10px 0 4px">👀 ${T2('Tu es invité(e) à suivre un voyage')}</h2></div>
-      <button type="button" class="v-btn" onclick="CV.webChoiceApp()">📲 ${T2('J’ai déjà l’appli Vezoria')}</button>
+    const F = M.invFrom || {}, hd = F.de ? RF('{0} t’invite à suivre ses voyages', F.de) : MSGT('Tu es invité(e) à suivre un voyage');
+    o.innerHTML = `<div style="text-align:center"><img src="icon-192.png" alt="" style="width:64px;height:64px;border-radius:16px"><h2 style="margin:10px 0 4px" data-notr>👀 ${esc(hd)}</h2>
+        <div class="v-sum-small">${T2('Photos, étapes et carte du voyage, au fil des jours. Tu peux mettre des ❤️ et des commentaires.')}</div></div>
+      <button type="button" class="v-btn" onclick="CV.webChoiceWeb()">👀 ${T2('Voir le voyage maintenant')}</button>
+      <div class="v-sum-small" style="text-align:center;margin-top:-6px">${T2('Directement ici, sans rien installer.')}</div>
+      <button type="button" class="v-btn sec" onclick="CV.webChoiceApp()">📲 ${T2('Suivre dans l’appli Vezoria (notifications)')}</button>
       <div id="cv-wch-app" class="v-box" style="display:none"></div>
-      <button type="button" class="v-btn sec" onclick="CV.webChoiceWeb()">🌐 ${T2('Je n’ai pas l’appli : voir le voyage ici')}</button>
       <div class="v-sum-small" style="text-align:center">${T2('Ton lien est personnel et ne sert qu’une fois : choisis où tu veux suivre ce voyage.')}</div>`;
   }
   async function webChoiceApp(){
@@ -1937,7 +1940,7 @@
     let okc = false; try { await navigator.clipboard.writeText(t); okc = true; } catch(e){}
     const b = document.getElementById('cv-wch-app'); if(!b) return; b.style.display = '';
     b.innerHTML = (okc ? '<b>✅ ' + esc(MSGT('Invitation copiée')) + '</b><br>' : '<div class="cv-bigcode" data-notr style="user-select:all">' + esc(t) + '</div>' + esc(MSGT('Copie ce lien.')) + '<br>')
-      + esc(MSGT('Ouvre maintenant Vezoria depuis ton écran d’accueil → 👥 → Rejoindre → 📋 Coller l’invitation reçue. Tu suivras le voyage dans ton appli, avec ton compte.'));
+      + esc(MSGT('Ouvre Vezoria et touche « 📋 Coller mon invitation » : tu suis le voyage dans ton appli.')) + '<br><br>' + esc(MSGT('Pas encore l’appli ? iPhone : dans Safari, Partager → « Sur l’écran d’accueil ». Android : installe Vezoria depuis Google Play. Puis ouvre-la et colle.'));
   }
   function webChoiceWeb(){ const c = M.webPend; if(!c) return; delete M.webPend; persist(); const o = document.getElementById('cv-wch'); if(o) o.remove(); followGo(c, true); }
   // le voyage suivi a été retiré par son auteur : plus d'aperçu, retour à la page d'installation classique

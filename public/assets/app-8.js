@@ -87,7 +87,8 @@
     inviteSheet(t.id);   // invitation guidée : QR code (la personne est à côté) ou message avec le lien ET le code
   }
   /* ---------- 📤 Invitation guidée : la personne est à côté (QR code) ou loin (message avec le lien et le code) ---------- */
-  const inviteText = (kind, titre, code) => { const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) : '';
+  const invTag = titre => (myName() ? '&de=' + encodeURIComponent(String(myName()).slice(0, 30)) : '') + (titre ? '&v=' + encodeURIComponent(String(titre).slice(0, 60)) : '');   // 🎟️ « Anthony t’invite dans « Genève » » sur la page d’invitation
+  const inviteText = (kind, titre, code) => { const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), url = appUrl(), link = url ? url + '#rejoindre=' + encodeURIComponent(code) + invTag(kind === 'trip' || !kind ? titre : '') : '';
     // 👆 la personne n’a qu’à toucher le lien (Android : l’appli s’ouvre toute seule). Seul cas sans lien direct : l’iPhone qui a déjà l’appli → copier le message puis 📋 Coller.
     return (kind === 'pack' ? MSG('Rejoins nos voyages sur Vezoria 🧳 : à compléter ensemble') : kind === 'carnet' ? MSG('Rejoins mon carnet de voyage sur Vezoria 🧳 : tous mes voyages, à compléter ensemble') : MSG(`Rejoins notre voyage « ${titre} » sur Vezoria 🧳`))
       // 👆 comme pour les abonnés : Android → le lien ouvre l’appli et rejoint ; iPhone → Safari ne rejoint rien (page « copier l’invitation ») et on colle dans l’appli
@@ -238,7 +239,7 @@
   const fwTail = (link, c) => { const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
     return '\n\n' + MSG('Code :') + ' ' + c + '\n\n' + MSG('Tu as Vezoria ? Copie ce message, ouvre ton appli → 👥 → Rejoindre → 📋 Coller l’invitation reçue.') + '\n' + MSG('Pas Vezoria ? Touche simplement ce lien, rien à installer :') + ' ' + link; };
   async function carnetInvite(c){
-    const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(c) : '';
+    const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x), link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(c) + invTag('') : '';
     const text = MSG(`Suis mes voyages sur Vezoria ✈️ : photos et récits au fil des étapes`) + fwTail(link, c);
     fwInviteSheet(c, link, text, MSGT('Inviter des abonnés'));
   }
@@ -262,7 +263,9 @@
   }
   // lien reçu : #rejoindre=CODE (voyage partagé) ou #suivre=CODE (abonné)
   async function hashJoin(){
-    const h = decodeURIComponent(location.hash || ''); const m = h.match(/#(rejoindre|suivre)=([A-Z0-9-]{8,})/i); if(!m) return;
+    const h = location.hash || ''; const m = h.match(/#(rejoindre|suivre)=([A-Z0-9-]{8,})/i); if(!m) return;
+    { const g = k => { const x = h.match(new RegExp('[&#]' + k + '=([^&]*)')); try { return x ? decodeURIComponent(x[1]).slice(0, 60) : ''; } catch(e){ return ''; } };
+      const de = g('de'), v = g('v'); M.invFrom = de || v ? {de, v, at:Date.now()} : null; }
     history.replaceState(null, '', location.pathname + location.search);
     const code = m[2].toUpperCase();
     // 🌐 lien de compagnon ouvert dans le NAVIGATEUR (iPhone : jamais dans l’appli de l’écran d’accueil) : on ne rejoint RIEN ici,
@@ -1997,7 +2000,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-08e'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-08g'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2233,7 +2236,7 @@
     ab2Send(x.id);
   }
   function ab2Send(id){
-    const x = ab2Inv(id); if(!x) return; const MSG = s => (window.I18N && I18N.msg ? I18N.msg(s) : s), link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(x.code) : '';
+    const x = ab2Inv(id); if(!x) return; const MSG = s => (window.I18N && I18N.msg ? I18N.msg(s) : s), link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(x.code) + invTag('') : '';
     const text = MSG('Suis mes voyages sur Vezoria ✈️ : photos et récits au fil des étapes') + fwTail(link, x.code);
     fwInviteSheet(x.code, link, text, RF('Lien de {0}', x.name));
   }
@@ -2852,7 +2855,7 @@
   }
   var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
-  const api = {souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
+  const api = {obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,

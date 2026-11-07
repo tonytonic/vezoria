@@ -7,6 +7,14 @@
     let g = document.getElementById('cv-gate'); if(!g){ g = document.createElement('div'); g.id = 'cv-gate'; document.body.appendChild(g); }
     gateRender(); return true;
   }
+  // 🎟️ la carte d’invitation (lien de compagnon ouvert dans le navigateur) : qui invite, dans quoi, et les 3 gestes dans l’ordre
+  function invCard(){ const F = M.invFrom || {}, T2 = x => esc(MSGT(x)), code = (((location.hash.match(/rejoindre=([A-Za-z0-9-]{8,})/i) || [])[1]) || M.joinCode || '').toUpperCase();
+    const h = F.de && F.v ? RF('{0} t’invite dans le voyage « {1} »', F.de, F.v) : F.de ? RF('{0} t’invite à préparer vos voyages ensemble', F.de) : MSGT('Tu es invité(e) dans un voyage');
+    return `<div class="gv gv2"><div class="gv2-h">🎟️ <b data-notr>${esc(h)}</b></div>
+      <ol class="gv2-s"><li><i>1</i><div><b>${T2('Copie ton invitation')}</b><button type="button" class="v-btn" id="gv-copy" onclick="CV.gateCopy()">📋 ${T2('Copier mon invitation')}</button></div></li>
+        <li><i>2</i><div><b>${T2('Installe Vezoria')}</b><small>${T2('Gratuit, 10 secondes : les étapes sont juste en dessous.')}</small></div></li>
+        <li><i>3</i><div><b>${T2('Ouvre Vezoria et touche « 📋 Coller mon invitation »')}</b><small>${T2('Tu rejoins le voyage tout de suite, rien à taper.')}</small></div></li></ol>
+      <div class="v-sum-small">${T2('Vezoria déjà installée ? Copie l’invitation, ouvre l’appli et touche « 📋 Coller mon invitation ».')} · <span data-notr>${esc(code)}</span></div></div>`; }
   function gateRender(){
     const g = document.getElementById('cv-gate'); if(!g) return;
     const ua = navigator.userAgent, ios = isIOS(), iosOther = ios && /CriOS|FxiOS|EdgiOS|OPiOS/.test(ua), android = /Android/i.test(ua);
@@ -21,14 +29,14 @@
       : li(installEvt ? 'Clique sur le bouton ci-dessous.' : 'Dans Chrome ou Edge : l’icône « Installer » à droite de la barre d’adresse. Dans Safari (Mac) : menu Fichier → Ajouter au Dock.') + li('Ouvre Vezoria depuis tes applications.');
     g.innerHTML = `<div class="gt"><img src="icon-192.png" alt="" class="gi"><h1>Vezoria</h1>
       <p><span>Pour garder tes voyages sur ton téléphone, fonctionner sans réseau et protéger tes données, l’appli s’utilise installée sur ton écran d’accueil.</span> <b>C’est gratuit et ça prend 10 secondes.</b></p>
-      ${/[#&]rejoindre=/i.test(location.hash) || M.joinCode ? `<div class="gv"><b>🎟️ Tu es invité(e) dans un voyage</b><b class="cv-code" data-notr>${esc(((location.hash.match(/rejoindre=([A-Za-z0-9-]{8,})/i) || [])[1] || M.joinCode || '').toUpperCase())}</b><p>Pour le rejoindre après l’installation : touche « Copier l’invitation », installe l’appli, puis dans Vezoria touche « Coller l’invitation ». Vezoria déjà installée ? Copie l’invitation, ouvre Vezoria → 👥 → Rejoindre → 📋 Coller l’invitation reçue.</p><button type="button" class="v-btn sec" id="gv-copy" onclick="CV.gateCopy()">📋 Copier l’invitation</button></div>` : ''}
+      ${/[#&]rejoindre=/i.test(location.hash) || M.joinCode ? `${invCard()}` : ''}
       <ol class="gs">${steps}</ol>
       ${installEvt ? `<button type="button" class="v-btn" onclick="CV.gateInstall()">📲 Installer l’appli</button>` : ''}
       ${webFollowing() ? `<div class="gb"><button type="button" onclick="CV.webBack()">← Revenir au voyage que je suis</button><button type="button" id="gw-copy" onclick="CV.webCopy()">📋 Copier mon lien de passage (à coller dans l’appli installée)</button></div>` : ''}
       <p class="gm">Aucune inscription, aucune publicité. <a href="mentions-legales">Mentions légales</a> · <a href="privacy">Confidentialité</a></p></div>`;
   }
   // l’appli installée sur iPhone ne voit pas le lien ouvert dans Safari : l’invitation passe par le presse-papiers
-  async function gateCopy(){ const b = document.getElementById('gv-copy'), jc = ((location.hash.match(/rejoindre=([A-Za-z0-9-]{8,})/i) || [])[1] || M.joinCode || ''), href = jc ? location.origin + location.pathname + '#rejoindre=' + jc.toUpperCase() : location.href; try { await navigator.clipboard.writeText(href); if(b) b.textContent = '📋 Invitation copiée'; } catch(e){ await uiPrompt('Copie ce texte :', href); } }
+  async function gateCopy(){ const b = document.getElementById('gv-copy'), jc = ((location.hash.match(/rejoindre=([A-Za-z0-9-]{8,})/i) || [])[1] || M.joinCode || ''), href = jc ? location.origin + location.pathname + '#rejoindre=' + jc.toUpperCase() : location.href; try { await navigator.clipboard.writeText(href); if(b){ b.textContent = '✅ ' + MSGT('Invitation copiée : installe l’appli puis colle-la'); b.classList.add('sec'); } } catch(e){ await uiPrompt('Copie ce texte :', href); } }
   const invCode = s => { const m = String(s || '').match(/rejoindre=([A-Za-z0-9-]{8,})/i); return (m ? m[1] : String(s || '').trim()).toUpperCase(); };
   async function obPaste(){
     let t = ''; try { t = await navigator.clipboard.readText(); } catch(e){}
