@@ -1247,15 +1247,21 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   /* ⏳ Choix de fichiers : en refermant la photothèque, le téléphone copie d'abord les photos (plusieurs secondes s'il y en a
      beaucoup) avant de les donner à l'appli. Pendant ce temps on affiche « Chargement des photos… » pour qu'on ne croie pas que rien ne se passe. */
   let pickT = 0, pickIn = null;
-  function pickOff(){ clearTimeout(pickT); const b = document.getElementById('vz-pick'); if(b) b.remove(); if(pickIn){ pickIn.removeEventListener('change', pickOff); pickIn.removeEventListener('cancel', pickOff); pickIn = null; } }
+  function pickOff(){ clearTimeout(pickT); const b = document.getElementById('vz-pick'); if(b) b.remove(); if(pickIn){ try { pickIn._pickBye && pickIn._pickBye(); } catch(e){} pickIn.removeEventListener('change', pickOff); pickIn.removeEventListener('cancel', pickOff); pickIn = null; } }
   document.addEventListener('click', ev=>{
     const inp = ev.target && ev.target.closest && ev.target.closest('input[type=file]'); if(!inp || inp.disabled) return;
     pickOff(); pickIn = inp; inp.addEventListener('change', pickOff); inp.addEventListener('cancel', pickOff);
     const img = /image|heic/i.test(inp.accept || '') || !inp.accept, many = inp.multiple;
-    setTimeout(()=>{ if(pickIn !== inp) return;
+    // 📱 iPhone : d’abord un petit menu (Photothèque, Appareil photo, Fichiers), puis la photothèque en plein écran.
+    // Le message n’apparaît qu’au retour dans l’appli (la photothèque refermée), pas pendant le choix.
+    let gone = false; const away = () => { gone = true; }, back = () => { if(gone && pickIn === inp) show(); };
+    const vis = () => { if(document.visibilityState === 'hidden') away(); else back(); };
+    window.addEventListener('blur', away); document.addEventListener('visibilitychange', vis);
+    window.addEventListener('focus', back); inp._pickBye = () => { window.removeEventListener('blur', away); window.removeEventListener('focus', back); document.removeEventListener('visibilitychange', vis); };
+    const show = () => { if(pickIn !== inp || document.getElementById('vz-pick')) return;
       const b = document.createElement('div'); b.id = 'vz-pick'; b.setAttribute('role', 'status'); b.setAttribute('aria-live', 'polite');
       b.innerHTML = `<i class="vz-spin" aria-hidden="true"></i><span><b>${esc(MSGT(img ? (many ? 'Chargement des photos…' : 'Chargement de la photo…') : 'Chargement du fichier…'))}</b><small>${esc(MSGT('Le téléphone prépare les fichiers choisis : ça peut prendre quelques secondes.'))}</small></span><button type="button" aria-label="${esc(MSGT('Fermer'))}">✕</button>`;
-      b.querySelector('button').onclick = pickOff; document.body.appendChild(b); }, 350);
+      b.querySelector('button').onclick = pickOff; document.body.appendChild(b); };
     pickT = setTimeout(pickOff, 90000);   // filet : jamais bloqué si le navigateur ne prévient pas de l'annulation
   }, true);
   if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev=>{ const d = ev.data || {};
