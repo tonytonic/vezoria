@@ -6411,4 +6411,13 @@ I18N.load({
 "Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».":"找到邀请：输入名字，然后点「关注旅行」。",
 "Invitation trouvée, on te fait entrer…":"找到邀请，正在加入…",
 "Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).":"复制的内容不是 Vezoria 邀请：复制收到的消息后再点一次（或在下方粘贴代码）。",
-"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"无法读取：请把代码或链接粘贴到下方框中。"});
+"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"无法读取：请把代码或链接粘贴到下方框中。",
+"{0} photo(s) sur {1} pas encore en ligne":"{1} 张中有 {0} 张尚未上线",
+"{0} en attente d’envoi sur ce téléphone":"{0} 张在此手机上等待发送",
+"envoi en pause":"上传已暂停",
+"Renvoyer ces photos":"重新发送这些照片",
+"Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».":"这些照片不在此手机上：需要 {0} 打开这个回忆并点「重新发送这些照片」。",
+"la personne qui les a ajoutées":"添加它们的人",
+"{0} photo(s) renvoyée(s)…":"正在重新发送 {0} 张照片…",
+"{0} photo(s) pas encore envoyée(s)":"{0} 张照片尚未发送",
+"Photos en ligne : tes compagnons vont les voir":"照片已上线：旅伴们将看到"});

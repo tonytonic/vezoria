@@ -6411,4 +6411,13 @@ I18N.load({
 "Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».":"초대를 찾았어요: 이름을 입력하고 ‘여행 팔로우’를 누르세요.",
 "Invitation trouvée, on te fait entrer…":"초대를 찾았어요, 참여하는 중…",
 "Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).":"복사한 내용이 Vezoria 초대가 아니에요: 메시지를 복사하고 다시 누르세요 (또는 아래에 코드 붙여넣기).",
-"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"읽을 수 없어요: 아래 칸에 코드나 링크를 붙여넣으세요."});
+"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"읽을 수 없어요: 아래 칸에 코드나 링크를 붙여넣으세요.",
+"{0} photo(s) sur {1} pas encore en ligne":"사진 {1}장 중 {0}장이 아직 올라가지 않았어요",
+"{0} en attente d’envoi sur ce téléphone":"{0}장이 이 휴대폰에서 전송 대기 중",
+"envoi en pause":"전송 일시 중지",
+"Renvoyer ces photos":"이 사진 다시 보내기",
+"Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».":"이 사진은 이 휴대폰에 없어요: {0}님이 이 추억을 열고 ‘이 사진 다시 보내기’를 눌러야 해요.",
+"la personne qui les a ajoutées":"추가한 사람",
+"{0} photo(s) renvoyée(s)…":"사진 {0}장 다시 보내는 중…",
+"{0} photo(s) pas encore envoyée(s)":"사진 {0}장이 아직 전송되지 않았어요",
+"Photos en ligne : tes compagnons vont les voir":"사진이 올라갔어요: 동행자들이 볼 수 있어요"});

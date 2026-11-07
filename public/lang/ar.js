@@ -6412,4 +6412,13 @@ I18N.load({
 "Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».":"تم العثور على الدعوة: اكتب اسمك ثم «متابعة رحلاته».",
 "Invitation trouvée, on te fait entrer…":"تم العثور على الدعوة، جارٍ إدخالك…",
 "Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).":"المنسوخ ليس دعوة Vezoria: انسخ الرسالة ثم اضغط مجددًا (أو الصق الرمز أدناه).",
-"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"تعذرت القراءة: الصق الرمز أو الرابط في الخانة أدناه."});
+"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"تعذرت القراءة: الصق الرمز أو الرابط في الخانة أدناه.",
+"{0} photo(s) sur {1} pas encore en ligne":"{0} من {1} صور لم تُرفع بعد",
+"{0} en attente d’envoi sur ce téléphone":"{0} بانتظار الإرسال من هذا الهاتف",
+"envoi en pause":"الإرسال متوقف مؤقتًا",
+"Renvoyer ces photos":"إعادة إرسال هذه الصور",
+"Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».":"هذه الصور ليست على هذا الهاتف: على {0} فتح هذه الذكرى والضغط «إعادة إرسال هذه الصور».",
+"la personne qui les a ajoutées":"الشخص الذي أضافها",
+"{0} photo(s) renvoyée(s)…":"جارٍ إعادة إرسال {0} صور…",
+"{0} photo(s) pas encore envoyée(s)":"{0} صور لم تُرسل بعد",
+"Photos en ligne : tes compagnons vont les voir":"الصور متاحة: سيراها رفاقك"});

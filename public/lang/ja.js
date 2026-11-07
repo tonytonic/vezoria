@@ -6411,4 +6411,13 @@ I18N.load({
 "Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».":"招待が見つかりました：名前を入れて「旅をフォロー」へ。",
 "Invitation trouvée, on te fait entrer…":"招待が見つかりました、参加中…",
 "Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).":"コピーした内容はVezoriaの招待ではありません：メッセージをコピーして再度タップ（または下にコードを貼り付け）。",
-"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"読み取れませんでした：下の欄にコードかリンクを貼り付けてください。"});
+"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"読み取れませんでした：下の欄にコードかリンクを貼り付けてください。",
+"{0} photo(s) sur {1} pas encore en ligne":"{1}枚中{0}枚がまだオンラインにありません",
+"{0} en attente d’envoi sur ce téléphone":"{0}枚がこの端末で送信待ち",
+"envoi en pause":"送信を一時停止中",
+"Renvoyer ces photos":"この写真を再送信",
+"Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».":"この写真はこの端末にありません：{0}さんがこの思い出を開き「この写真を再送信」をタップしてください。",
+"la personne qui les a ajoutées":"追加した人",
+"{0} photo(s) renvoyée(s)…":"{0}枚を再送信中…",
+"{0} photo(s) pas encore envoyée(s)":"{0}枚がまだ送信されていません",
+"Photos en ligne : tes compagnons vont les voir":"写真はオンラインです：仲間に表示されます"});

@@ -3467,4 +3467,13 @@ I18N.load({
 "Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».":"Einladung gefunden: Vornamen eingeben, dann „Reisen folgen“.",
 "Invitation trouvée, on te fait entrer…":"Einladung gefunden, du wirst hinzugefügt…",
 "Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).":"Das Kopierte ist keine Vezoria-Einladung: kopiere die Nachricht und tippe erneut (oder füge den Code unten ein).",
-"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Nichts lesbar: füge Code oder Link unten ins Feld ein."});
+"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Nichts lesbar: füge Code oder Link unten ins Feld ein.",
+"{0} photo(s) sur {1} pas encore en ligne":"{0} von {1} Foto(s) noch nicht online",
+"{0} en attente d’envoi sur ce téléphone":"{0} warten auf diesem Handy auf den Versand",
+"envoi en pause":"Versand pausiert",
+"Renvoyer ces photos":"Diese Fotos erneut senden",
+"Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».":"Diese Fotos sind nicht auf diesem Handy: {0} muss die Erinnerung öffnen und „Diese Fotos erneut senden“ tippen.",
+"la personne qui les a ajoutées":"die Person, die sie hinzugefügt hat",
+"{0} photo(s) renvoyée(s)…":"{0} Foto(s) werden erneut gesendet…",
+"{0} photo(s) pas encore envoyée(s)":"{0} Foto(s) noch nicht gesendet",
+"Photos en ligne : tes compagnons vont les voir":"Fotos online: deine Mitreisenden sehen sie"});

@@ -6411,4 +6411,13 @@ I18N.load({
 "Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».":"निमंत्रण मिला: अपना नाम लिखें, फिर “यात्राएं फ़ॉलो करें”।",
 "Invitation trouvée, on te fait entrer…":"निमंत्रण मिला, आपको जोड़ रहे हैं…",
 "Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).":"कॉपी की गई चीज़ Vezoria निमंत्रण नहीं: संदेश कॉपी कर फिर दबाएं (या नीचे कोड पेस्ट करें)।",
-"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"कुछ पढ़ा नहीं जा सका: नीचे बॉक्स में कोड या लिंक पेस्ट करें।"});
+"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"कुछ पढ़ा नहीं जा सका: नीचे बॉक्स में कोड या लिंक पेस्ट करें।",
+"{0} photo(s) sur {1} pas encore en ligne":"{1} में से {0} फ़ोटो अभी ऑनलाइन नहीं",
+"{0} en attente d’envoi sur ce téléphone":"{0} इस फ़ोन से भेजे जाने के इंतज़ार में",
+"envoi en pause":"भेजना रुका है",
+"Renvoyer ces photos":"ये फ़ोटो फिर भेजें",
+"Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».":"ये फ़ोटो इस फ़ोन पर नहीं: {0} को यह याद खोलकर “ये फ़ोटो फिर भेजें” दबाना होगा।",
+"la personne qui les a ajoutées":"जिसने उन्हें जोड़ा",
+"{0} photo(s) renvoyée(s)…":"{0} फ़ोटो फिर भेजी जा रही हैं…",
+"{0} photo(s) pas encore envoyée(s)":"{0} फ़ोटो अभी नहीं भेजी गईं",
+"Photos en ligne : tes compagnons vont les voir":"फ़ोटो ऑनलाइन: आपके साथी देखेंगे"});

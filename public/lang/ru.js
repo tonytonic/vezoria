@@ -6412,4 +6412,13 @@ I18N.load({
 "Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».":"Приглашение найдено: впиши имя и нажми «Следить за поездками».",
 "Invitation trouvée, on te fait entrer…":"Приглашение найдено, подключаем…",
 "Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).":"Скопировано не приглашение Vezoria: скопируй сообщение и нажми снова (или вставь код ниже).",
-"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Ничего не прочитано: вставь код или ссылку в поле ниже."});
+"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Ничего не прочитано: вставь код или ссылку в поле ниже.",
+"{0} photo(s) sur {1} pas encore en ligne":"{0} из {1} фото ещё не в сети",
+"{0} en attente d’envoi sur ce téléphone":"{0} ждут отправки с этого телефона",
+"envoi en pause":"отправка приостановлена",
+"Renvoyer ces photos":"Отправить эти фото снова",
+"Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».":"Этих фото нет на телефоне: {0} должен открыть воспоминание и нажать «Отправить эти фото снова».",
+"la personne qui les a ajoutées":"тот, кто их добавил",
+"{0} photo(s) renvoyée(s)…":"{0} фото отправляются снова…",
+"{0} photo(s) pas encore envoyée(s)":"{0} фото ещё не отправлены",
+"Photos en ligne : tes compagnons vont les voir":"Фото в сети: попутчики их увидят"});

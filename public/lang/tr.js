@@ -6399,4 +6399,13 @@ I18N.load({
 "Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».":"Davet bulundu: adını yaz, sonra “Seyahatlerini takip et”.",
 "Invitation trouvée, on te fait entrer…":"Davet bulundu, seni ekliyoruz…",
 "Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).":"Kopyalanan bir Vezoria daveti değil: mesajı kopyala ve tekrar dokun (veya kodu aşağı yapıştır).",
-"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Hiçbir şey okunamadı: kodu veya bağlantıyı aşağıdaki kutuya yapıştır."});
+"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Hiçbir şey okunamadı: kodu veya bağlantıyı aşağıdaki kutuya yapıştır.",
+"{0} photo(s) sur {1} pas encore en ligne":"{1} fotoğraftan {0} tanesi henüz çevrimiçi değil",
+"{0} en attente d’envoi sur ce téléphone":"{0} tanesi bu telefonda gönderilmeyi bekliyor",
+"envoi en pause":"gönderim duraklatıldı",
+"Renvoyer ces photos":"Bu fotoğrafları yeniden gönder",
+"Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».":"Bu fotoğraflar bu telefonda değil: {0} bu anıyı açıp “Bu fotoğrafları yeniden gönder”e dokunmalı.",
+"la personne qui les a ajoutées":"onları ekleyen kişi",
+"{0} photo(s) renvoyée(s)…":"{0} fotoğraf yeniden gönderiliyor…",
+"{0} photo(s) pas encore envoyée(s)":"{0} fotoğraf henüz gönderilmedi",
+"Photos en ligne : tes compagnons vont les voir":"Fotoğraflar çevrimiçi: yol arkadaşların görecek"});

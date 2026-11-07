@@ -3472,4 +3472,13 @@ I18N.load({
 "Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».":"Invito trovato: scrivi il tuo nome, poi «Segui i suoi viaggi».",
 "Invitation trouvée, on te fait entrer…":"Invito trovato, ti facciamo entrare…",
 "Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).":"Ciò che è copiato non è un invito Vezoria: copia il messaggio ricevuto e ritocca (o incolla il codice sotto).",
-"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Nulla da leggere: incolla il codice o il link nella casella qui sotto."});
+"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Nulla da leggere: incolla il codice o il link nella casella qui sotto.",
+"{0} photo(s) sur {1} pas encore en ligne":"{0} foto su {1} non ancora online",
+"{0} en attente d’envoi sur ce téléphone":"{0} in attesa di invio su questo telefono",
+"envoi en pause":"invio in pausa",
+"Renvoyer ces photos":"Reinvia queste foto",
+"Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».":"Queste foto non sono su questo telefono: {0} deve aprire il ricordo e toccare «Reinvia queste foto».",
+"la personne qui les a ajoutées":"la persona che le ha aggiunte",
+"{0} photo(s) renvoyée(s)…":"{0} foto in reinvio…",
+"{0} photo(s) pas encore envoyée(s)":"{0} foto non ancora inviate",
+"Photos en ligne : tes compagnons vont les voir":"Foto online: i tuoi compagni le vedranno"});

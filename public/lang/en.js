@@ -3457,4 +3457,13 @@ I18N.load({
 "Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».":"Invitation found: type your first name, then “Follow their trips”.",
 "Invitation trouvée, on te fait entrer…":"Invitation found, letting you in…",
 "Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).":"What’s copied isn’t a Vezoria invitation: copy the message you got, then tap again (or paste the code below).",
-"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Nothing could be read: paste the code or link into the box below."});
+"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Nothing could be read: paste the code or link into the box below.",
+"{0} photo(s) sur {1} pas encore en ligne":"{0} of {1} photo(s) not online yet",
+"{0} en attente d’envoi sur ce téléphone":"{0} waiting to be sent from this phone",
+"envoi en pause":"upload paused",
+"Renvoyer ces photos":"Resend these photos",
+"Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».":"These photos aren’t on this phone: {0} needs to open this memory and tap “Resend these photos”.",
+"la personne qui les a ajoutées":"the person who added them",
+"{0} photo(s) renvoyée(s)…":"{0} photo(s) being resent…",
+"{0} photo(s) pas encore envoyée(s)":"{0} photo(s) not sent yet",
+"Photos en ligne : tes compagnons vont les voir":"Photos online: your companions will see them"});

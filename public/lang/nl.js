@@ -3463,4 +3463,13 @@ I18N.load({
 "Invitation trouvée : écris ton prénom, puis « Suivre ses voyages ».":"Uitnodiging gevonden: vul je voornaam in en tik ‘Volg de reizen’.",
 "Invitation trouvée, on te fait entrer…":"Uitnodiging gevonden, je wordt toegevoegd…",
 "Ce qui est copié n’est pas une invitation Vezoria : copie le message reçu, puis retouche le bouton (ou colle le code ci-dessous).":"Wat gekopieerd is, is geen Vezoria-uitnodiging: kopieer het bericht en tik opnieuw (of plak de code hieronder).",
-"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Niets gelezen: plak de code of link in het vak hieronder."});
+"Rien n’a pu être lu : colle le code ou le lien reçu dans la case ci-dessous.":"Niets gelezen: plak de code of link in het vak hieronder.",
+"{0} photo(s) sur {1} pas encore en ligne":"{0} van {1} foto(’s) nog niet online",
+"{0} en attente d’envoi sur ce téléphone":"{0} wachten op verzending op deze telefoon",
+"envoi en pause":"verzenden gepauzeerd",
+"Renvoyer ces photos":"Deze foto’s opnieuw versturen",
+"Ces photos ne sont pas sur ce téléphone : {0} doit ouvrir ce souvenir et toucher « Renvoyer ces photos ».":"Deze foto’s staan niet op deze telefoon: {0} moet deze herinnering openen en ‘Deze foto’s opnieuw versturen’ tikken.",
+"la personne qui les a ajoutées":"degene die ze toevoegde",
+"{0} photo(s) renvoyée(s)…":"{0} foto(’s) worden opnieuw verstuurd…",
+"{0} photo(s) pas encore envoyée(s)":"{0} foto(’s) nog niet verstuurd",
+"Photos en ligne : tes compagnons vont les voir":"Foto’s online: je reisgenoten zien ze"});
