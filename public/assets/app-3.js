@@ -29,7 +29,7 @@
       if(wz.step===2 && !wz.debut){ alert('Choisis la date de départ.'); return; }
       if(wz.step===2 && wz.etapes.length===1) wz.etapes[0].nuits = wz.nuits;
       if(wz.step===3 && !wz.etapes.some(e=>e.ville)){ alert('Ajoute au moins une étape (une ville).'); return; }
-      if(wz.step===3){ wz.etapes = wz.etapes.filter(e=>e.ville); if(wz.etapes.some(e=>!e.nuits) && wz.etapes.length <= wz.nuits) wzNights(); wzModes(); }
+      if(wz.step===3){ wz.etapes = wz.etapes.filter(e=>e.ville); if(wz.etapes.every(e=>!e.nuits) && wz.etapes.length <= wz.nuits) wzNights(); wzModes(); }   // 🌙 tes nuits restent les tiennes : on ne répartit que si aucune n’est remplie
     }
     wz.step = n; wzRender();
   }
@@ -74,7 +74,7 @@
   // 🧭 une ville ajoutée avec « ＋ Étape » va là où elle allonge le moins le trajet (Bologne entre Milan et Venise) ; les autres gardent leur ordre
   function wzPlace(){
     const E = wz.etapes; let moved = '';
-    E.filter(e=>e.nw && e.ville && wzPt(e)).forEach(e=>{ delete e.nw;
+    E.filter(e=>e.nw && e.ville && wzPt(e)).forEach(e=>{ delete e.nw; if(E.some(x=>x !== e && normQ(x.ville) === normQ(e.ville))) return;   // 🔁 même ville deux fois (arrivée et départ) : elle reste où tu l’as mise
       const O = E.filter(x=>x !== e), K = O.map((x, i)=>[i, wzPt(x)]).filter(x=>x[1]); if(K.length < 2) return;
       const p = wzPt(e); let best = O.length, bc = Infinity;
       for(let j = 0; j <= K.length; j++){ const a = K[j - 1], b = K[j], c = (a ? rawKm(a[1], p) : 0) + (b ? rawKm(p, b[1]) : 0) - (a && b ? rawKm(a[1], b[1]) : 0);
@@ -100,12 +100,13 @@
   async function wzOrder(){
     wzRead(); const btn = document.getElementById('wz-ord'); if(btn) btn.disabled = true;
     await wzLocate(); if(!wz) return;
-    const E = wz.etapes.filter(e=>e.ville), K = E.filter(wzPt), rest = E.filter(e=>!wzPt(e)); if(K.length < 3){ wzModes(); wzRender(); return; }
+    const E0 = wz.etapes.filter(e=>e.ville), loop = E0.length > 2 && normQ(E0[0].ville) === normQ(E0[E0.length - 1].ville) ? E0[E0.length - 1] : null;   // 🔁 arrivée et départ dans la même ville : elle reste au début ET à la fin
+    const E = loop ? E0.slice(0, -1) : E0, K = E.filter(wzPt), rest = E.filter(e=>!wzPt(e)); if(K.length < 3){ wzModes(); wzRender(); return; }
     // le plus proche à chaque fois depuis la 1ʳᵉ ville, puis on décroise les trajets (2-opt)
     const ord = [K[0]], todo = K.slice(1); while(todo.length){ const l = wzPt(ord[ord.length - 1]); todo.sort((a, b)=>rawKm(l, wzPt(a)) - rawKm(l, wzPt(b))); ord.push(todo.shift()); }
-    const len = A => A.reduce((s, e, i)=>i ? s + rawKm(wzPt(A[i - 1]), wzPt(e)) : 0, 0); let best = len(ord), imp = true, g = 0;
+    const len = A => A.reduce((s, e, i)=>i ? s + rawKm(wzPt(A[i - 1]), wzPt(e)) : 0, 0) + (loop && wzPt(loop) ? rawKm(wzPt(A[A.length - 1]), wzPt(loop)) : 0); let best = len(ord), imp = true, g = 0;
     while(imp && g < 60){ imp = false; g++; for(let i = 1; i < ord.length - 1; i++) for(let k = i + 1; k < ord.length; k++){ const c = ord.slice(0, i).concat(ord.slice(i, k + 1).reverse(), ord.slice(k + 1)), l2 = len(c); if(l2 < best - 1){ ord.splice(0, ord.length, ...c); best = l2; imp = true; } } }
-    const before = len(K); wz.etapes = ord.concat(rest); wzModes(); wzRender();
+    const before = len(K); wz.etapes = ord.concat(rest, loop ? [loop] : []); wzModes(); wzRender();
     toast('🧭 ' + MSGT('Itinéraire ordonné') + (before - best > 20 ? ' · −' + Math.round(before - best).toLocaleString(NL()) + ' km' : ''));
   }
   /* 🧭 Avant de créer le voyage : l’ordre des villes qui fait le moins de route, départ et retour de la maison compris.
@@ -150,9 +151,14 @@
     const dep = Object.keys(cnt).sort((a, b)=>cnt[b] - cnt[a])[0] || '', who = dep && wz.voyageurs.find(p=>(wz.gens[p] || {}).dep === dep), ret = (who && wz.gens[who].ret) || dep;
     const H = dep ? await cityInfo(dep).catch(()=>null) : null, Bk = ret && normQ(ret) !== normQ(dep) ? await cityInfo(ret).catch(()=>null) : H;
     if(!wz || wz.step !== 5 || wzSig() !== sig || !box()) return;
-    const K = E.filter(wzPt);
-    if(K.length !== E.length || K.length < (H ? 2 : 3)){ box().innerHTML = ''; return; }   // une ville pas située, ou rien à réordonner
-    const r = wzShortest(K.map(wzPt), H, Bk);
+    // 🔁 arrivée et départ dans la même ville (atterrir à Pise, repartir de Pise) : ces deux-là restent aux bouts, on ordonne l’entre-deux
+    const lp = E.length > 3 && normQ(E[0].ville) === normQ(E[E.length - 1].ville) && wzPt(E[0]);
+    const K = (lp ? E.slice(1, -1) : E).filter(wzPt);
+    if(K.length !== (lp ? E.length - 2 : E.length) || K.length < (H || lp ? 2 : 3)){ box().innerHTML = ''; return; }   // une ville pas située, ou rien à réordonner
+    const r = lp ? wzShortest(K.map(wzPt), wzPt(E[0]), wzPt(E[E.length - 1])) : wzShortest(K.map(wzPt), H, Bk);
+    if(lp && ordWorth(r)){ wz.ordProp = [E[0], ...r.o.map(i=>K[i]), E[E.length - 1]]; const line = A => esc(A.map(e=>e.ville).join(' → '));
+      box().innerHTML = ordHTML(line(E), line(wz.ordProp), r, 'wzOrdApply'); return; }
+    if(lp){ box().innerHTML = `<div class="v-sum-small wz-ok">✓ ${MSGT('Ton itinéraire est déjà dans l’ordre le plus court.')}</div>`; return; }
     if(!ordWorth(r)){ box().innerHTML = `<div class="v-sum-small wz-ok">✓ ${MSGT('Ton itinéraire est déjà dans l’ordre le plus court.')}</div>`; return; }
     wz.ordProp = r.o.map(i=>K[i]);
     const line = A => esc([dep, ...A.map(e=>e.ville), H ? ret : ''].filter(Boolean).join(' → '));
@@ -190,7 +196,7 @@
     const E = wz.etapes.filter(e=>e.ville), n = E.length, tot = wz.nuits, z = E.filter(e=>!e.nuits).length;
     const w = [];
     if(n >= 4 && n > tot / 1.6) w.push(`⚠️ ${n} ${MSGT('villes en')} ${tot} ${MSGT('nuits')} : ${MSGT('un trajet presque chaque jour. Retire quelques villes ou ajoute des nuits pour profiter.')}`);
-    if(z) w.push(`⚠️ ${z} ${MSGT('étape(s) à 0 nuit')} : ${MSGT('touche « Répartir les nuits ».')}`);
+    if(z && E.reduce((a, e)=>a + e.nuits, 0) < tot) w.push(`💡 ${z} ${MSGT('étape(s) à 0 nuit')} : ${MSGT('simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».')}`);
     const fly = E.filter((e, i)=>i && e.mode === 'Avion').length; if(n > 1 && fly) w.push(`✈️ ${fly} ${MSGT('vol(s) entre les étapes, choisis selon la distance')}`);
     return w.map(x=>`<div class="wz-w">${x}</div>`).join('');
   }

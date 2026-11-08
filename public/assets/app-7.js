@@ -3692,9 +3692,11 @@
     if(!SO || SO.L.length < 2) return; const b = document.getElementById('so-auto'); if(b){ b.disabled = true; b.textContent = '🧭 …'; }
     if(first > 0 && SO.L[first]){ const [f] = SO.L.splice(first, 1); SO.L.unshift(f); }   // 🏁 la ville choisie passe en premier, le reste s’ordonne derrière
     if(SO.L.length < 3){ soDraw(); return; }
+    // 🔁 arrivée et départ dans la même ville (Pise → … → Pise) : la dernière reste à la fin, on ordonne l’entre-deux
+    let lpx = SO.L.length > 3 && normQ(SO.L[0].city) === normQ(SO.L[SO.L.length - 1].city) ? SO.L.pop() : null;
     try {
       const co = (M.ctry || {})[normQ(SO.L[0].city)], ctx = co && co.cc && typeof ccName === 'function' ? ccName(co.cc) : '';
-      const P = []; for(const x of SO.L){ const c = geoCached(x.city) || await geocode(x.city, ctx); if(!c){ toast('📍 ' + RF('{0} introuvable sur la carte', x.city)); soDraw(); return; } P.push(c); }
+      const P = []; for(const x of SO.L){ const c = geoCached(x.city) || await geocode(x.city, ctx); if(!c){ toast('📍 ' + RF('{0} introuvable sur la carte', x.city)); if(lpx){ SO.L.push(lpx); lpx = null; } soDraw(); return; } P.push(c); }
       const n = P.length, D = P.map(a=>P.map(c=>km(a, c))), len = o => o.reduce((s, k, i)=>i ? s + D[o[i - 1]][k] : 0, 0);
       let best = [...Array(n).keys()];
       if(n <= 8){ const rest = best.slice(1), perm = (a, l = 0)=>{ if(l === a.length){ const o = [0, ...a]; if(len(o) < len(best) - .5) best = o; return; } for(let i = l; i < a.length; i++){ [a[l], a[i]] = [a[i], a[l]]; perm(a, l + 1); [a[l], a[i]] = [a[i], a[l]]; } }; perm(rest); }
@@ -3702,6 +3704,7 @@
       const before = Math.round(len([...Array(n).keys()])), after = Math.round(len(best));
       SO.L = best.map(k=>SO.L[k]); toast(after < before ? '🧭 ' + RF('{0} km de moins sur la route', before - after) : '🧭 ' + MSGT('Ton ordre est déjà le plus court'));
     } catch(e){ toast('📍 ' + MSGT('Carte indisponible pour l’instant')); }
+    finally { if(lpx) SO.L.push(lpx); }
     soDraw();
   }
   function soSave(msg){
