@@ -2,6 +2,14 @@
 
 /* ⏱️ Nos appels au serveur (/api/…) ont un délai maximum : sur iPhone, une requête restée sans réponse
    (appli mise en arrière-plan, réseau qui change) bloquait la synchro et les envois jusqu’à la fermeture de l’appli. */
+/* 📊 Compteur des requêtes au serveur (ce que Cloudflare compte : les /api/…), par jour UTC, sur ce téléphone */
+(function(){ try {
+  const F0 = window.fetch.bind(window);
+  window.fetch = function(u, o){ try { const s = typeof u === 'string' ? u : (u && u.url) || '';
+      if(/\/api\/[a-z]/.test(s)){ const d = new Date().toISOString().slice(0, 10), m = s.match(/\/api\/([a-z0-9-]+)(?:\/([a-z0-9-]+))?/i), k = (m ? m[1] + (m[2] && !/^[A-Z0-9-]{8,}$/i.test(m[2]) ? '/' + m[2] : '') : '?') + ' ' + ((o && o.method) || (u && u.method) || 'GET').toUpperCase();
+        let c = {}; try { c = JSON.parse(localStorage.getItem('vz_rq') || '{}'); } catch(e){} if(c.d !== d) c = {d, n:{}, t:0}; c.n[k] = (c.n[k] || 0) + 1; c.t++; try { localStorage.setItem('vz_rq', JSON.stringify(c)); } catch(e){} } } catch(e){}
+    return F0(u, o); };
+} catch(e){} })();
 (function(){ try {
   const F = window.fetch.bind(window);
   // 📴 réseau coupé ou serveur muet : un message clair au lieu de « Failed to fetch » / « Load failed » (en anglais, incompréhensible).
@@ -1696,6 +1704,13 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const out = list('phk', r=>/^pk:/.test(r.id) && !r.deleted && (!r.by || r.by === M.me)).filter(r=>{ const tr = own[r.id.slice(3)]; return tr && R[tr] && !R[tr].deleted && !R[tr].ro && (r.trip !== tr || (r.tsv !== 2 && TS()[tr] && spaceObj(TS()[tr]))); })
       .map(r=>Object.assign(clone(r), {trip:own[r.id.slice(3)], tsv:2}));
     if(out.length) putQuiet(out.slice(0, 400));
+    // 🔁 renvoi automatique : chaque clé de MES photos d’un voyage partagé part au moins une fois dans l’espace actuel du voyage
+    // (clé perdue en route, voyage passé sur un nouveau code…) → plus de cases grises chez les compagnons, sans « Renvoyer » à la main
+    const S = M.pkSent || (M.pkSent = {}), again = [];
+    list('phk', r=>/^pk:/.test(r.id) && !r.deleted && r.trip && (!r.by || r.by === M.me)).forEach(r=>{ if(again.length >= 200) return;
+      const t = R[r.trip], c = TS()[r.trip]; if(!t || t.deleted || t.ro || !c || !spaceObj(c) || (t.voyageurs || []).length < 2) return;
+      if(S[r.id] === c) return; S[r.id] = c; again.push(clone(r)); });
+    if(again.length){ putQuiet(again); persist(); }
   } catch(e){} }
   // 👀 ancien compagnon (voyage en lecture seule ou retiré) : le voyage suivi en abonné, mis de côté tant qu’il était compagnon, revient dans « Suivis »
   function roFeedBack(){ let n = 0; const un = M.unfol || {};

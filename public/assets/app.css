@@ -3418,3 +3418,5 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 /* 🏨 hôtel sur la carte live (compagnons) */
 .lv-hot{display:flex;flex-direction:column;align-items:center;cursor:pointer}.lv-hot i{font-style:normal;font-size:1.3rem;width:36px;height:36px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.35);border:2px solid #0d9488}
 .lv-hot b{margin-top:3px;font-size:.7rem;background:rgba(15,23,42,.8);color:#fff;padding:2px 7px;border-radius:8px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.rq{margin:8px 0;font-size:.85rem}.rq summary{cursor:pointer}.rq>div{display:flex;flex-direction:column;gap:3px;margin-top:6px}.rq>div>div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dashed rgba(0,0,0,.1);padding:2px 0}.rq small{opacity:.65;margin-top:4px}
