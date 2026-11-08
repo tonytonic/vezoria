@@ -2118,6 +2118,9 @@
         map.addLayer({id:src + 'l', type:'line', source:src, layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-width':4.5, 'line-gradient':lvGrad(p.c, first ? 0.001 : 1, -1)}});
         [src + 'l', src + 'x'].forEach(ly=>{ map.on('click', ly, e=>{ const f = e.features && e.features[0], k = f && f.properties && f.properties.k; if(k){ if(e.originalEvent) e.originalEvent.stopPropagation(); lvTmPick(k, +src.slice(4)); } });
           map.on('mouseenter', ly, ()=>{ map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', ly, ()=>{ map.getCanvas().style.cursor = ''; }); }); } });
+    // 👥 deux voyageurs sur le même chemin : leurs traits côte à côte (décalés de quelques pixels) au lieu de l’un sur l’autre
+    D.people.forEach((p, i)=>{ const off = D.people.length > 1 ? (i - (D.people.length - 1) / 2) * 5 : 0;
+      ['g', 'l', 'x'].forEach(z=>{ try { if(map.getLayer('lv-r' + i + z)) map.setPaintProperty('lv-r' + i + z, 'line-offset', off); } catch(e){} }); });
     try { lvTmMarks(map, TM); } catch(e){}
     for(let i = D.people.length; map.getSource('lv-r' + i); i++){ ['g','l','x'].forEach(s=>{ if(map.getLayer('lv-r' + i + s)) map.removeLayer('lv-r' + i + s); }); map.removeSource('lv-r' + i); if(map.getSource('lv-r' + i + 'x')) map.removeSource('lv-r' + i + 'x'); }
     if(first) LV.prog = 0;
