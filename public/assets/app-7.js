@@ -1899,6 +1899,29 @@
     (pts || []).forEach((x, k)=>{ const prev = pts[k - 1];
       if(prev && km({lat:prev[0], lng:prev[1]}, {lat:x[0], lng:x[1]}) > 2.5){ if(cur.length > 1) runs.push(cur); gaps.push([prev, x]); cur = [x]; } else cur.push(x); });
     if(cur.length > 1) runs.push(cur); return {runs, gaps}; }
+  // 🛣️ le tracé plein colle aux rues : les points GPS (un toutes les quelques centaines de mètres) sont « recalés » sur la carte
+  // (serveur OSM public, par morceaux de 80 points, gardé en cache sur le téléphone) ; à pied ou en voiture selon la vitesse
+  let LVM = null;
+  function lvRunLine(r){ const raw = r.map(x=>[x[1], x[0]]); if(r.length < 3) return raw;
+    if(!LVM){ try { LVM = JSON.parse(localStorage.getItem('vz_mm') || '{}'); } catch(e){ LVM = {}; } }
+    const out = [];
+    for(let i = 0; i < r.length - 1; i += 79){ const ch = r.slice(i, i + 80); if(ch.length < 2) break;
+      const k = ch.length + ':' + ch[0].slice(0, 2).map(v=>(+v).toFixed(4)).join(',') + ':' + ch[ch.length - 1].slice(0, 2).map(v=>(+v).toFixed(4)).join(',') + ':' + (ch[ch.length - 1][2] || 0);
+      const got = LVM[k]; if(got && got.length){ out.push(...got); continue; }
+      if(!got && ch.length >= 3){ LVM[k] = [];
+        const dur = ((ch[ch.length - 1][2] || 0) - (ch[0][2] || 0)) / 3600e3, dist = ch.reduce((a, x, j)=>j ? a + km({lat:ch[j - 1][0], lng:ch[j - 1][1]}, {lat:x[0], lng:x[1]}) : 0, 0);
+        const car = dur > 0 && dist / dur > 18, base = car ? 'routed-car' : 'routed-foot';
+        const co = ch.map(x=>(+x[1]).toFixed(5) + ',' + (+x[0]).toFixed(5)).join(';'), rad = ch.map(()=>car ? 60 : 35).join(';');
+        const prof = car ? 'driving' : 'foot', get = u => withTimeout(fetch(u), 15000).then(x=>x.json());
+        get(`https://routing.openstreetmap.de/${base}/match/v1/${prof}/${co}?overview=full&geometries=geojson&gaps=ignore&tidy=true&radiuses=${rad}`)
+          .then(j=>j && j.code === 'Ok' && (j.matchings || []).length ? j : get(`https://routing.openstreetmap.de/${base}/route/v1/${prof}/${co}?overview=full&geometries=geojson`).then(q=>({matchings:(q && q.routes) || []})))   // recalage indisponible : itinéraire par les points
+          .then(j=>{ const L = ((j && j.matchings) || []).flatMap(m=>(m.geometry && m.geometry.coordinates) || []);
+            if(L.length > 1){ LVM[k] = L.map(c=>[+c[0].toFixed(5), +c[1].toFixed(5)]);
+              try { const ks = Object.keys(LVM); if(ks.length > 300) ks.slice(0, ks.length - 300).forEach(z=>delete LVM[z]); localStorage.setItem('vz_mm', JSON.stringify(LVM)); } catch(e){}
+              if(LV){ LV.sig = ''; liveDraw(false); } } }).catch(()=>{}); }
+      out.push(...ch.map(x=>[x[1], x[0]]));
+    }
+    return out.length > 1 ? out : raw; }
   // le trou est redessiné par la route (serveur OSM public, mis en cache) : il longe le lac au lieu de le traverser
   const LVG = {};
   function lvGapLine(g){ const a = g[0], b = g[1], k = [a[0], a[1], b[0], b[1]].map(v=>(+v).toFixed(3)).join(',');
@@ -1915,7 +1938,7 @@
     // routes : un calque par voyageur, à sa couleur (le trait se dessine à l’ouverture, puis une lueur le parcourt)
     // trou dans le suivi (train, mode avion, appli fermée) : pas de trait plein à travers le lac — un pointillé qui suit la route
     D.people.forEach((p, i)=>{ const src = 'lv-r' + i, sp = lvSplit(p.pts);
-      const gj = {type:'FeatureCollection', features: sp.runs.length ? sp.runs.map(r=>({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:r.map(x=>[x[1], x[0]])}}))
+      const gj = {type:'FeatureCollection', features: sp.runs.length ? sp.runs.map(r=>({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:lvRunLine(r)}}))
         : [{type:'Feature', properties:{}, geometry:{type:'Point', coordinates:[p.pts[0][1], p.pts[0][0]]}}]};
       const gg = {type:'FeatureCollection', features: sp.gaps.map(g=>({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:lvGapLine(g)}}))};
       if(map.getSource(src)){ map.getSource(src).setData(gj); if(map.getSource(src + 'x')) map.getSource(src + 'x').setData(gg); }
