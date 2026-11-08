@@ -6431,4 +6431,7 @@ I18N.load({
 "Exporter les points GPS":"GPS noktalarını dışa aktar",
 "Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"Tüm seyahat, tüm yol arkadaşları · analiz için gönderilecek dosya",
 "Aucun point GPS pour ce voyage":"Bu seyahat için GPS noktası yok",
-"{0} points GPS exportés":"{0} GPS noktası dışa aktarıldı"});
+"{0} points GPS exportés":"{0} GPS noktası dışa aktarıldı",
+"Choisir de où à où sur le tracé":"Rotada nereden nereye olduğunu seç",
+"De {0} à {1}":"{0} ile {1} arası",
+"Glisse les deux points sur le tracé":"İki noktayı rota boyunca kaydır"});

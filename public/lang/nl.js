@@ -3495,4 +3495,7 @@ I18N.load({
 "Exporter les points GPS":"GPS-punten exporteren",
 "Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"Hele reis, alle reisgenoten · bestand om te versturen voor analyse",
 "Aucun point GPS pour ce voyage":"Geen GPS-punten voor deze reis",
-"{0} points GPS exportés":"{0} GPS-punten geëxporteerd"});
+"{0} points GPS exportés":"{0} GPS-punten geëxporteerd",
+"Choisir de où à où sur le tracé":"Kies van waar tot waar op de route",
+"De {0} à {1}":"Van {0} tot {1}",
+"Glisse les deux points sur le tracé":"Sleep de twee punten over de route"});

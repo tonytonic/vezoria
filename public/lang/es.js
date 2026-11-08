@@ -3505,4 +3505,7 @@ I18N.load({
 "Exporter les points GPS":"Exportar los puntos GPS",
 "Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"Todo el viaje, todos los compañeros · archivo para enviar y analizar",
 "Aucun point GPS pour ce voyage":"No hay puntos GPS para este viaje",
-"{0} points GPS exportés":"{0} puntos GPS exportados"});
+"{0} points GPS exportés":"{0} puntos GPS exportados",
+"Choisir de où à où sur le tracé":"Elegir desde dónde hasta dónde en el trazado",
+"De {0} à {1}":"De {0} a {1}",
+"Glisse les deux points sur le tracé":"Desliza los dos puntos por el trazado"});

@@ -6444,4 +6444,7 @@ I18N.load({
 "Exporter les points GPS":"Экспорт GPS-точек",
 "Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"Вся поездка, все спутники · файл для отправки на анализ",
 "Aucun point GPS pour ce voyage":"Нет GPS-точек для этой поездки",
-"{0} points GPS exportés":"Экспортировано GPS-точек: {0}"});
+"{0} points GPS exportés":"Экспортировано GPS-точек: {0}",
+"Choisir de où à où sur le tracé":"Выбрать участок маршрута",
+"De {0} à {1}":"С {0} до {1}",
+"Glisse les deux points sur le tracé":"Перетащи две точки по маршруту"});

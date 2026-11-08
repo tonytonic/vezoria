@@ -6443,4 +6443,7 @@ I18N.load({
 "Exporter les points GPS":"GPS पॉइंट निर्यात करो",
 "Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"पूरी यात्रा, सभी साथी · विश्लेषण के लिए भेजने वाली फ़ाइल",
 "Aucun point GPS pour ce voyage":"इस यात्रा के लिए कोई GPS पॉइंट नहीं",
-"{0} points GPS exportés":"{0} GPS पॉइंट निर्यात हुए"});
+"{0} points GPS exportés":"{0} GPS पॉइंट निर्यात हुए",
+"Choisir de où à où sur le tracé":"रास्ते पर कहाँ से कहाँ तक चुनो",
+"De {0} à {1}":"{0} से {1} तक",
+"Glisse les deux points sur le tracé":"दोनों पॉइंट को रास्ते पर खिसकाओ"});

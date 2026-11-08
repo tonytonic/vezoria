@@ -6443,4 +6443,7 @@ I18N.load({
 "Exporter les points GPS":"导出 GPS 点",
 "Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"整个旅行、所有同伴 · 发送用于分析的文件",
 "Aucun point GPS pour ce voyage":"此旅行没有 GPS 点",
-"{0} points GPS exportés":"已导出 {0} 个 GPS 点"});
+"{0} points GPS exportés":"已导出 {0} 个 GPS 点",
+"Choisir de où à où sur le tracé":"在路线上选择从哪里到哪里",
+"De {0} à {1}":"从 {0} 到 {1}",
+"Glisse les deux points sur le tracé":"沿路线拖动两个点"});

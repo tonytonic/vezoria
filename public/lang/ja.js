@@ -6443,4 +6443,7 @@ I18N.load({
 "Exporter les points GPS":"GPSポイントを書き出す",
 "Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"旅全体・同行者全員 · 分析用に送るファイル",
 "Aucun point GPS pour ce voyage":"この旅のGPSポイントはありません",
-"{0} points GPS exportés":"{0}件のGPSポイントを書き出しました"});
+"{0} points GPS exportés":"{0}件のGPSポイントを書き出しました",
+"Choisir de où à où sur le tracé":"ルート上のどこからどこまでかを選ぶ",
+"De {0} à {1}":"{0}から{1}まで",
+"Glisse les deux points sur le tracé":"2つの点をルートに沿って動かしてね"});

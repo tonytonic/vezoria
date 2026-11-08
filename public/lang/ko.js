@@ -6443,4 +6443,7 @@ I18N.load({
 "Exporter les points GPS":"GPS 지점 내보내기",
 "Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"여행 전체, 모든 동행 · 분석용으로 보낼 파일",
 "Aucun point GPS pour ce voyage":"이 여행의 GPS 지점이 없어요",
-"{0} points GPS exportés":"GPS 지점 {0}개를 내보냈어요"});
+"{0} points GPS exportés":"GPS 지점 {0}개를 내보냈어요",
+"Choisir de où à où sur le tracé":"경로에서 어디부터 어디까지인지 선택",
+"De {0} à {1}":"{0}부터 {1}까지",
+"Glisse les deux points sur le tracé":"두 점을 경로를 따라 끌어 보세요"});
