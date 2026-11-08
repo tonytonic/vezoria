@@ -6519,4 +6519,12 @@ I18N.load({
 "Corriger l’étape":"경유지 수정",
 "les étapes suivantes et le retour sont décalés de {0} nuit(s)":"다음 경유지와 귀국이 {0}박 늦춰져요",
 "les étapes suivantes et le retour avancent de {0} nuit(s)":"다음 경유지와 귀국이 {0}박 앞당겨져요",
-"{0} : {1} nuit(s)":"{0}: {1}박"});
+"{0} : {1} nuit(s)":"{0}: {1}박",
+"Tu as déjà noté {0} (adresse, horaires, n° de réservation…).":"이미 {0}을(를) 적어 두었어요 (주소, 시간, 예약 번호…).",
+"C’est déjà réservé ?":"이미 예약했나요?",
+"Oui, c’est réservé":"네, 예약했어요",
+"Pas encore":"아직이요",
+"hébergement(s)":"숙소",
+"trajet(s)":"이동",
+"activité(s)":"활동",
+"{0} réservation(s) validée(s)":"예약 {0}건 확정"});

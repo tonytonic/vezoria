@@ -6520,4 +6520,12 @@ I18N.load({
 "Corriger l’étape":"تعديل المحطة",
 "les étapes suivantes et le retour sont décalés de {0} nuit(s)":"تتأخر المحطات التالية والعودة {0} ليلة",
 "les étapes suivantes et le retour avancent de {0} nuit(s)":"تتقدم المحطات التالية والعودة {0} ليلة",
-"{0} : {1} nuit(s)":"{0}: {1} ليلة"});
+"{0} : {1} nuit(s)":"{0}: {1} ليلة",
+"Tu as déjà noté {0} (adresse, horaires, n° de réservation…).":"لقد دوّنت بالفعل {0} (العنوان، المواعيد، رقم الحجز…).",
+"C’est déjà réservé ?":"هل تم الحجز بالفعل؟",
+"Oui, c’est réservé":"نعم، تم الحجز",
+"Pas encore":"ليس بعد",
+"hébergement(s)":"سكن",
+"trajet(s)":"رحلة",
+"activité(s)":"نشاط",
+"{0} réservation(s) validée(s)":"تم تأكيد {0} حجز"});

@@ -6520,4 +6520,12 @@ I18N.load({
 "Corriger l’étape":"Изменить этап",
 "les étapes suivantes et le retour sont décalés de {0} nuit(s)":"следующие этапы и возвращение сдвигаются на {0} ноч.",
 "les étapes suivantes et le retour avancent de {0} nuit(s)":"следующие этапы и возвращение сдвигаются раньше на {0} ноч.",
-"{0} : {1} nuit(s)":"{0}: {1} ноч."});
+"{0} : {1} nuit(s)":"{0}: {1} ноч.",
+"Tu as déjà noté {0} (adresse, horaires, n° de réservation…).":"Ты уже записал(а) {0} (адрес, время, номер брони…).",
+"C’est déjà réservé ?":"Уже забронировано?",
+"Oui, c’est réservé":"Да, забронировано",
+"Pas encore":"Ещё нет",
+"hébergement(s)":"жильё",
+"trajet(s)":"поездк(и)",
+"activité(s)":"занятие(я)",
+"{0} réservation(s) validée(s)":"Подтверждено бронирований: {0}"});

@@ -6519,4 +6519,12 @@ I18N.load({
 "Corriger l’étape":"पड़ाव ठीक करो",
 "les étapes suivantes et le retour sont décalés de {0} nuit(s)":"अगले पड़ाव और वापसी {0} रात आगे खिसकेंगे",
 "les étapes suivantes et le retour avancent de {0} nuit(s)":"अगले पड़ाव और वापसी {0} रात पहले होंगे",
-"{0} : {1} nuit(s)":"{0}: {1} रात"});
+"{0} : {1} nuit(s)":"{0}: {1} रात",
+"Tu as déjà noté {0} (adresse, horaires, n° de réservation…).":"तुमने पहले से {0} लिख रखे हैं (पता, समय, बुकिंग नंबर…)।",
+"C’est déjà réservé ?":"पहले से बुक है?",
+"Oui, c’est réservé":"हाँ, बुक है",
+"Pas encore":"अभी नहीं",
+"hébergement(s)":"आवास",
+"trajet(s)":"सफ़र",
+"activité(s)":"गतिविधि",
+"{0} réservation(s) validée(s)":"{0} बुकिंग पक्की"});

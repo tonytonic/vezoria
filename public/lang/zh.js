@@ -6519,4 +6519,12 @@ I18N.load({
 "Corriger l’étape":"修改站点",
 "les étapes suivantes et le retour sont décalés de {0} nuit(s)":"后续站点和返程推迟 {0} 晚",
 "les étapes suivantes et le retour avancent de {0} nuit(s)":"后续站点和返程提前 {0} 晚",
-"{0} : {1} nuit(s)":"{0}：{1} 晚"});
+"{0} : {1} nuit(s)":"{0}：{1} 晚",
+"Tu as déjà noté {0} (adresse, horaires, n° de réservation…).":"你已记下 {0}（地址、时间、预订号…）。",
+"C’est déjà réservé ?":"已经预订了吗？",
+"Oui, c’est réservé":"是的，已预订",
+"Pas encore":"还没有",
+"hébergement(s)":"住宿",
+"trajet(s)":"行程",
+"activité(s)":"活动",
+"{0} réservation(s) validée(s)":"已确认 {0} 个预订"});

@@ -6519,4 +6519,12 @@ I18N.load({
 "Corriger l’étape":"行程を修正",
 "les étapes suivantes et le retour sont décalés de {0} nuit(s)":"以降の行程と帰りが{0}泊後ろにずれます",
 "les étapes suivantes et le retour avancent de {0} nuit(s)":"以降の行程と帰りが{0}泊早まります",
-"{0} : {1} nuit(s)":"{0}：{1}泊"});
+"{0} : {1} nuit(s)":"{0}：{1}泊",
+"Tu as déjà noté {0} (adresse, horaires, n° de réservation…).":"{0}はすでにメモ済みです（住所、時刻、予約番号など）。",
+"C’est déjà réservé ?":"もう予約済み？",
+"Oui, c’est réservé":"はい、予約済み",
+"Pas encore":"まだ",
+"hébergement(s)":"宿泊先",
+"trajet(s)":"移動",
+"activité(s)":"アクティビティ",
+"{0} réservation(s) validée(s)":"{0}件の予約を確定"});

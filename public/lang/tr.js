@@ -6507,4 +6507,12 @@ I18N.load({
 "Corriger l’étape":"Durağı düzenle",
 "les étapes suivantes et le retour sont décalés de {0} nuit(s)":"sonraki duraklar ve dönüş {0} gece ileri kayar",
 "les étapes suivantes et le retour avancent de {0} nuit(s)":"sonraki duraklar ve dönüş {0} gece öne alınır",
-"{0} : {1} nuit(s)":"{0}: {1} gece"});
+"{0} : {1} nuit(s)":"{0}: {1} gece",
+"Tu as déjà noté {0} (adresse, horaires, n° de réservation…).":"Zaten {0} not ettin (adres, saatler, rezervasyon no…).",
+"C’est déjà réservé ?":"Zaten rezerve mi?",
+"Oui, c’est réservé":"Evet, rezerve",
+"Pas encore":"Henüz değil",
+"hébergement(s)":"konaklama",
+"trajet(s)":"yolculuk",
+"activité(s)":"etkinlik",
+"{0} réservation(s) validée(s)":"{0} rezervasyon onaylandı"});

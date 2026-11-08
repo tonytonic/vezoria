@@ -3584,4 +3584,12 @@ I18N.load({
 "Corriger l’étape":"Corrigir a etapa",
 "les étapes suivantes et le retour sont décalés de {0} nuit(s)":"as etapas seguintes e o regresso passam {0} noite(s) para a frente",
 "les étapes suivantes et le retour avancent de {0} nuit(s)":"as etapas seguintes e o regresso adiantam {0} noite(s)",
-"{0} : {1} nuit(s)":"{0}: {1} noite(s)"});
+"{0} : {1} nuit(s)":"{0}: {1} noite(s)",
+"Tu as déjà noté {0} (adresse, horaires, n° de réservation…).":"Já anotaste {0} (morada, horários, n.º de reserva…).",
+"C’est déjà réservé ?":"Já está reservado?",
+"Oui, c’est réservé":"Sim, está reservado",
+"Pas encore":"Ainda não",
+"hébergement(s)":"alojamento(s)",
+"trajet(s)":"trajeto(s)",
+"activité(s)":"atividade(s)",
+"{0} réservation(s) validée(s)":"{0} reserva(s) confirmada(s)"});

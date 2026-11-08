@@ -3565,4 +3565,12 @@ I18N.load({
 "Corriger l’étape":"Edit the stop",
 "les étapes suivantes et le retour sont décalés de {0} nuit(s)":"the following stops and the return move back {0} night(s)",
 "les étapes suivantes et le retour avancent de {0} nuit(s)":"the following stops and the return move forward {0} night(s)",
-"{0} : {1} nuit(s)":"{0}: {1} night(s)"});
+"{0} : {1} nuit(s)":"{0}: {1} night(s)",
+"Tu as déjà noté {0} (adresse, horaires, n° de réservation…).":"You’ve already noted {0} (address, times, booking number…).",
+"C’est déjà réservé ?":"Already booked?",
+"Oui, c’est réservé":"Yes, it’s booked",
+"Pas encore":"Not yet",
+"hébergement(s)":"accommodation(s)",
+"trajet(s)":"journey(s)",
+"activité(s)":"activity(ies)",
+"{0} réservation(s) validée(s)":"{0} booking(s) confirmed"});

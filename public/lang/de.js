@@ -3575,4 +3575,12 @@ I18N.load({
 "Corriger l’étape":"Etappe bearbeiten",
 "les étapes suivantes et le retour sont décalés de {0} nuit(s)":"die folgenden Etappen und die Rückreise verschieben sich um {0} Nacht/Nächte",
 "les étapes suivantes et le retour avancent de {0} nuit(s)":"die folgenden Etappen und die Rückreise rücken {0} Nacht/Nächte vor",
-"{0} : {1} nuit(s)":"{0}: {1} Nacht/Nächte"});
+"{0} : {1} nuit(s)":"{0}: {1} Nacht/Nächte",
+"Tu as déjà noté {0} (adresse, horaires, n° de réservation…).":"Du hast schon {0} notiert (Adresse, Zeiten, Buchungsnummer…).",
+"C’est déjà réservé ?":"Schon gebucht?",
+"Oui, c’est réservé":"Ja, gebucht",
+"Pas encore":"Noch nicht",
+"hébergement(s)":"Unterkunft/Unterkünfte",
+"trajet(s)":"Strecke(n)",
+"activité(s)":"Aktivität(en)",
+"{0} réservation(s) validée(s)":"{0} Buchung(en) bestätigt"});

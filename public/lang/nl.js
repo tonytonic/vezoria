@@ -3571,4 +3571,12 @@ I18N.load({
 "Corriger l’étape":"Etappe aanpassen",
 "les étapes suivantes et le retour sont décalés de {0} nuit(s)":"de volgende etappes en de terugreis schuiven {0} nacht(en) op",
 "les étapes suivantes et le retour avancent de {0} nuit(s)":"de volgende etappes en de terugreis komen {0} nacht(en) eerder",
-"{0} : {1} nuit(s)":"{0}: {1} nacht(en)"});
+"{0} : {1} nuit(s)":"{0}: {1} nacht(en)",
+"Tu as déjà noté {0} (adresse, horaires, n° de réservation…).":"Je hebt al {0} genoteerd (adres, tijden, boekingsnummer…).",
+"C’est déjà réservé ?":"Al geboekt?",
+"Oui, c’est réservé":"Ja, geboekt",
+"Pas encore":"Nog niet",
+"hébergement(s)":"accommodatie(s)",
+"trajet(s)":"traject(en)",
+"activité(s)":"activiteit(en)",
+"{0} réservation(s) validée(s)":"{0} boeking(en) bevestigd"});
