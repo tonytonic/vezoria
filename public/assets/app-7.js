@@ -333,6 +333,15 @@
   function guideEdit(id, kind, k){ GRET = {id, kind, k:+k || 0}; edit(id); }
   function gdAfterSave(id){ const r = GRET; GRET = null; if(!r || r.id !== id) return;
     setTimeout(()=>{ if(r.kind === 'h') guideHotel(r.k); else guideList(r.kind); }, 120); }
+  // 📝 une fiche remplie à la main ressemble à une réservation faite : un hôtel avec son nom ou son adresse, un trajet avec ses horaires ou son n°
+  function gdNoted(L){ return (L || []).filter(i=>{ if(!i || okB(i)) return false; if(i.ref || i.prix) return true;
+    if(i.cat === 'hotel'){ const nm = String(i.nom || '').trim(); return !!(String(i.adresse || '').trim().length > 5 || (nm.length > 3 && normQ(nm) !== normQ(stayCity(i) || i.titre || ''))); }
+    if(i.cat === 'transport') return !!(i.heureDep && (i.heureArr || i.numero || i.compagnie));
+    return !!(i.heure && i.lien); }); }
+  function gdNotedOk(yes){ const t = trip(); if(!t) return; const D = ariData(t), L = gdNoted([...D.trs, ...D.hs, ...items(i=>i.cat === 'activite' && needBook(i))]);
+    if(yes){ if(L.length) putMany(L.map(i=>Object.assign(clone(i), {statut:'booked'})), '✓ ' + RF('{0} réservation(s) validée(s)', L.length)); }
+    else { M.gdNo = M.gdNo || {}; M.gdNo[t.id] = L.map(i=>i.id).sort().join(','); persist(); }
+    guideSheet(); }
   function guideSheet(){
     const t = trip(); if(!t) return; GRET = null; closeSheet(true); swClose(1); if(document.getElementById('cv-rg')) rgClose();
     const D = ariData(t), tr = D.trs.filter(x=>!okB(x)), hs = D.hs.filter(x=>!okB(x)), xs = items(i=>i.cat === 'activite' && needBook(i) && !okB(i)), xn = expCount(t);
@@ -342,7 +351,12 @@
     const sgn = D.sg.length, pk = rgItems(t).length, kept = D.pl.length - sgn, vOk = kept > 0 && !sgn && !pk;
     const msg = !kept && !sgn && !pk ? 'Tu n’as pas encore choisi de visites. On continue par quoi ?' : sgn ? 'Des idées de visites attendent ton tri. On continue par quoi ?' : pk ? 'Des visites attendent d’être rangées dans les jours. On continue par quoi ?'
       : all ? 'Tout est réservé : il ne reste que les derniers détails avant de partir.' : 'Tes visites sont rangées dans les jours. On continue par quoi ?';
+    // 📝 déjà notés à la main (adresse de l’hôtel, horaires du train, n° de réservation…) mais encore « à réserver » : on demande, une fois
+    const nt = gdNoted([...tr, ...hs, ...xs]), nsig = nt.map(i=>i.id).sort().join(','), nAsk = nt.length && !M.lock && !t.archived && ((M.gdNo || {})[t.id] !== nsig);
+    const nTxt = nAsk ? [[nt.filter(i=>i.cat === 'hotel').length, 'hébergement(s)'], [nt.filter(i=>i.cat === 'transport').length, 'trajet(s)'], [nt.filter(i=>i.cat === 'activite').length, 'activité(s)']].filter(x=>x[0]).map(x=>x[0] + ' ' + MSGT(x[1])).join(', ') : '';
     openSheet(`<div class="gd"><h2>🧭 ${MSGT('Ton parcours guidé')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT(msg)}</div>
+      ${nAsk ? `<div class="gd-noted"><b>📝 ${esc(RF('Tu as déjà noté {0} (adresse, horaires, n° de réservation…).', nTxt))}</b><small>${esc(MSGT('C’est déjà réservé ?'))}</small>
+        <div class="cv-row" style="gap:8px;margin-top:8px"><button type="button" class="v-btn" onclick="CV.gdNotedOk(1)">✓ ${esc(MSGT('Oui, c’est réservé'))}</button><button type="button" class="v-btn sec" onclick="CV.gdNotedOk(0)">${esc(MSGT('Pas encore'))}</button></div></div>` : ''}
       <div class="ar-subs gd-ch">
         ${row('💡', MSGT('Les visites'), sgn ? RF('{0} idées à trier', sgn) : pk ? RF('{0} à placer, dans l’ordre du trajet', pk) : kept ? kept + ' ' + MSGT('lieux au programme') + ' · ＋ ' + MSGT('Nouvelles suggestions') : MSGT('Pas encore de visites : je t’en propose'), 'CV.guideVisits()', vOk)}
         ${row('🚆', MSGT('Les trajets'), tr.length ? RF('{0} à réserver', tr.length) : MSGT('Tout est réservé'), 'CV.guideTr()', !tr.length)}
