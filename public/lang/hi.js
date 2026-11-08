@@ -6514,4 +6514,9 @@ I18N.load({
 "Lien commun supprimé":"साझा लिंक हटा दिया",
 "Supprimer le lien commun":"साझा लिंक हटाओ",
 "Passer en lien personnel (il ne le voit pas)":"निजी लिंक पर ले जाओ (उसे पता नहीं चलेगा)",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"सिर्फ़ गुज़रना (पहुँचना, निकलना…)। रातें देने के लिए संख्या बदलो या «रातें बाँटो» दबाओ।"});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"सिर्फ़ गुज़रना (पहुँचना, निकलना…)। रातें देने के लिए संख्या बदलो या «रातें बाँटो» दबाओ।",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0} पहले से एक पड़ाव है: मैं इसे आख़िर में रख रहा हूँ, वहीं से लौटने के लिए। चाहो तो जगह बदलो।",
+"Corriger l’étape":"पड़ाव ठीक करो",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"अगले पड़ाव और वापसी {0} रात आगे खिसकेंगे",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"अगले पड़ाव और वापसी {0} रात पहले होंगे",
+"{0} : {1} nuit(s)":"{0}: {1} रात"});

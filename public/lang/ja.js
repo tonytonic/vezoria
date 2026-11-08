@@ -6514,4 +6514,9 @@ I18N.load({
 "Lien commun supprimé":"共通リンクを削除しました",
 "Supprimer le lien commun":"共通リンクを削除",
 "Passer en lien personnel (il ne le voit pas)":"個人リンクに切り替え（気づかれません）",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"通過のみ（到着・出発など）。泊数を付けるには数字を変えるか「泊数を割り振る」をタップ。"});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"通過のみ（到着・出発など）。泊数を付けるには数字を変えるか「泊数を割り振る」をタップ。",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0}はすでに行程にあります：そこから出発できるよう最後に置きます。場所は変更できます。",
+"Corriger l’étape":"行程を修正",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"以降の行程と帰りが{0}泊後ろにずれます",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"以降の行程と帰りが{0}泊早まります",
+"{0} : {1} nuit(s)":"{0}：{1}泊"});

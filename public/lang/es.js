@@ -3576,4 +3576,9 @@ I18N.load({
 "Lien commun supprimé":"Enlace común eliminado",
 "Supprimer le lien commun":"Eliminar el enlace común",
 "Passer en lien personnel (il ne le voit pas)":"Pasar a enlace personal (no lo notará)",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"solo de paso (llegada, salida…). Para darles noches, cambia el número o toca «Repartir las noches»."});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"solo de paso (llegada, salida…). Para darles noches, cambia el número o toca «Repartir las noches».",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0} ya es una etapa: la pongo al final, para salir desde allí. Cambia el lugar si quieres.",
+"Corriger l’étape":"Corregir la etapa",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"las etapas siguientes y la vuelta se retrasan {0} noche(s)",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"las etapas siguientes y la vuelta se adelantan {0} noche(s)",
+"{0} : {1} nuit(s)":"{0}: {1} noche(s)"});

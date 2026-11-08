@@ -6514,4 +6514,9 @@ I18N.load({
 "Lien commun supprimé":"공유 링크를 삭제했어요",
 "Supprimer le lien commun":"공유 링크 삭제",
 "Passer en lien personnel (il ne le voit pas)":"개인 링크로 바꾸기 (모르게)",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"잠깐 들르는 곳 (도착, 출발…). 숙박을 넣으려면 숫자를 바꾸거나 «숙박 나누기»를 누르세요."});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"잠깐 들르는 곳 (도착, 출발…). 숙박을 넣으려면 숫자를 바꾸거나 «숙박 나누기»를 누르세요.",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0}은(는) 이미 경유지예요: 거기서 떠나도록 마지막에 넣을게요. 원하면 위치를 바꾸세요.",
+"Corriger l’étape":"경유지 수정",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"다음 경유지와 귀국이 {0}박 늦춰져요",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"다음 경유지와 귀국이 {0}박 앞당겨져요",
+"{0} : {1} nuit(s)":"{0}: {1}박"});

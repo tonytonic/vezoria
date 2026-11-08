@@ -3560,4 +3560,9 @@ I18N.load({
 "Lien commun supprimé":"Shared link deleted",
 "Supprimer le lien commun":"Delete the shared link",
 "Passer en lien personnel (il ne le voit pas)":"Switch to a personal link (they won’t notice)",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"just passing through (arrival, departure…). To give them nights, change the number or tap “Spread the nights”."});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"just passing through (arrival, departure…). To give them nights, change the number or tap “Spread the nights”.",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0} is already a stop: I’m putting it at the end, to leave from there. Change its place if you like.",
+"Corriger l’étape":"Edit the stop",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"the following stops and the return move back {0} night(s)",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"the following stops and the return move forward {0} night(s)",
+"{0} : {1} nuit(s)":"{0}: {1} night(s)"});

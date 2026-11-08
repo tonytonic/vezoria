@@ -3570,4 +3570,9 @@ I18N.load({
 "Lien commun supprimé":"Gemeinsamer Link gelöscht",
 "Supprimer le lien commun":"Gemeinsamen Link löschen",
 "Passer en lien personnel (il ne le voit pas)":"Auf persönlichen Link umstellen (merkt es nicht)",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"nur Durchreise (Ankunft, Abreise…). Für Nächte die Zahl ändern oder „Nächte verteilen“ tippen."});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"nur Durchreise (Ankunft, Abreise…). Für Nächte die Zahl ändern oder „Nächte verteilen“ tippen.",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0} ist schon eine Etappe: ich setze sie ans Ende, um von dort abzureisen. Ändere die Stelle, wenn du willst.",
+"Corriger l’étape":"Etappe bearbeiten",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"die folgenden Etappen und die Rückreise verschieben sich um {0} Nacht/Nächte",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"die folgenden Etappen und die Rückreise rücken {0} Nacht/Nächte vor",
+"{0} : {1} nuit(s)":"{0}: {1} Nacht/Nächte"});

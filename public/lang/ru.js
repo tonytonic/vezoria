@@ -6515,4 +6515,9 @@ I18N.load({
 "Lien commun supprimé":"Общая ссылка удалена",
 "Supprimer le lien commun":"Удалить общую ссылку",
 "Passer en lien personnel (il ne le voit pas)":"Перевести на личную ссылку (незаметно)",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"просто проезд (прилёт, отъезд…). Чтобы добавить ночи, измени число или нажми «Распределить ночи»."});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"просто проезд (прилёт, отъезд…). Чтобы добавить ночи, измени число или нажми «Распределить ночи».",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0} уже есть в маршруте: ставлю в конец, чтобы уехать оттуда. Можно поменять место.",
+"Corriger l’étape":"Изменить этап",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"следующие этапы и возвращение сдвигаются на {0} ноч.",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"следующие этапы и возвращение сдвигаются раньше на {0} ноч.",
+"{0} : {1} nuit(s)":"{0}: {1} ноч."});

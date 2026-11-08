@@ -3575,4 +3575,9 @@ I18N.load({
 "Lien commun supprimé":"Link comune eliminato",
 "Supprimer le lien commun":"Elimina il link comune",
 "Passer en lien personnel (il ne le voit pas)":"Passa a link personale (non se ne accorge)",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"solo di passaggio (arrivo, partenza…). Per dare loro delle notti, cambia il numero o tocca «Ripartisci le notti»."});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"solo di passaggio (arrivo, partenza…). Per dare loro delle notti, cambia il numero o tocca «Ripartisci le notti».",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0} è già una tappa: la metto alla fine, per ripartire da lì. Cambia posizione se vuoi.",
+"Corriger l’étape":"Correggi la tappa",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"le tappe successive e il ritorno slittano di {0} notte/i",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"le tappe successive e il ritorno anticipano di {0} notte/i",
+"{0} : {1} nuit(s)":"{0}: {1} notte/i"});

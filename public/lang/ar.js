@@ -6515,4 +6515,9 @@ I18N.load({
 "Lien commun supprimé":"تم حذف الرابط المشترك",
 "Supprimer le lien commun":"حذف الرابط المشترك",
 "Passer en lien personnel (il ne le voit pas)":"التحويل إلى رابط شخصي (لن يلاحظ)",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"مرور فقط (وصول، مغادرة…). لإضافة ليالٍ، غيّر الرقم أو المس «توزيع الليالي»."});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"مرور فقط (وصول، مغادرة…). لإضافة ليالٍ، غيّر الرقم أو المس «توزيع الليالي».",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0} محطة موجودة: أضعها في النهاية للمغادرة منها. غيّر مكانها إن أردت.",
+"Corriger l’étape":"تعديل المحطة",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"تتأخر المحطات التالية والعودة {0} ليلة",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"تتقدم المحطات التالية والعودة {0} ليلة",
+"{0} : {1} nuit(s)":"{0}: {1} ليلة"});

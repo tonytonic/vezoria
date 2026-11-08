@@ -3566,4 +3566,9 @@ I18N.load({
 "Lien commun supprimé":"Gedeelde link verwijderd",
 "Supprimer le lien commun":"Gedeelde link verwijderen",
 "Passer en lien personnel (il ne le voit pas)":"Naar persoonlijke link (merkt het niet)",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"alleen doorreis (aankomst, vertrek…). Voor nachten: wijzig het getal of tik op „Nachten verdelen”."});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"alleen doorreis (aankomst, vertrek…). Voor nachten: wijzig het getal of tik op „Nachten verdelen”.",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0} is al een etappe: ik zet hem aan het eind, om van daar te vertrekken. Verander de plek als je wilt.",
+"Corriger l’étape":"Etappe aanpassen",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"de volgende etappes en de terugreis schuiven {0} nacht(en) op",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"de volgende etappes en de terugreis komen {0} nacht(en) eerder",
+"{0} : {1} nuit(s)":"{0}: {1} nacht(en)"});

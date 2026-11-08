@@ -6514,4 +6514,9 @@ I18N.load({
 "Lien commun supprimé":"共享链接已删除",
 "Supprimer le lien commun":"删除共享链接",
 "Passer en lien personnel (il ne le voit pas)":"改为个人链接（对方不会察觉）",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"只是路过（抵达、出发…）。要安排过夜，改数字或点「分配夜数」。"});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"只是路过（抵达、出发…）。要安排过夜，改数字或点「分配夜数」。",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0} 已是一个站点：我把它放在最后，从那里离开。可以改位置。",
+"Corriger l’étape":"修改站点",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"后续站点和返程推迟 {0} 晚",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"后续站点和返程提前 {0} 晚",
+"{0} : {1} nuit(s)":"{0}：{1} 晚"});

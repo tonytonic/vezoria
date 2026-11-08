@@ -6502,4 +6502,9 @@ I18N.load({
 "Lien commun supprimé":"Ortak bağlantı silindi",
 "Supprimer le lien commun":"Ortak bağlantıyı sil",
 "Passer en lien personnel (il ne le voit pas)":"Kişisel bağlantıya geçir (fark etmez)",
-"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"sadece geçiş (varış, kalkış…). Gece eklemek için sayıyı değiştir veya «Geceleri dağıt»a dokun."});
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"sadece geçiş (varış, kalkış…). Gece eklemek için sayıyı değiştir veya «Geceleri dağıt»a dokun.",
+"{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.":"{0} zaten bir durak: oradan ayrılmak için sona koyuyorum. İstersen yerini değiştir.",
+"Corriger l’étape":"Durağı düzenle",
+"les étapes suivantes et le retour sont décalés de {0} nuit(s)":"sonraki duraklar ve dönüş {0} gece ileri kayar",
+"les étapes suivantes et le retour avancent de {0} nuit(s)":"sonraki duraklar ve dönüş {0} gece öne alınır",
+"{0} : {1} nuit(s)":"{0}: {1} gece"});
