@@ -400,23 +400,26 @@
   // les points à rejoindre depuis l’hébergement : tes visites + le centre-ville (visites guidées, gastronomie… s’y passent ; et il compte si tu as peu de visites)
   // 🏨 retrouver un hôtel : « Via Piliers corridoni 10356125 pise », « Viale … 67 53100 », ou seulement son nom (« Hotel Italia » à Sienne)
   async function hotelGeo(h, city, ref){
-    M.hgeo = M.hgeo || {}; const key = 'v4|' + normQ([h.adresse || '', h.nom || '', city || ''].join('|')); const c = M.hgeo[key];
+    M.hgeo = M.hgeo || {}; const key = 'v5|' + normQ([h.adresse || '', h.nom || '', city || ''].join('|')); const c = M.hgeo[key];
     if(c && (!c.miss || Date.now() - c.at < 6 * 3600e3)) return c.miss ? null : {lat:c.lat, lng:c.lng};
     // 📏 un hôtel de ville est près du centre : la même rue existe dans le village d’à côté (Viale Cavour à Poggibonsi ≠ à Sienne)
     const ok = (r, lim) => r && r.lat != null && isFinite(+r.lat) && (!ref || rawKm({lat:+r.lat, lng:+r.lng}, ref) <= (lim || 12));
     const save = r => { M.hgeo[key] = {lat:+r.lat, lng:+r.lng}; const ks = Object.keys(M.hgeo); if(ks.length > 300) delete M.hgeo[ks[0]]; persist(); return {lat:+r.lat, lng:+r.lng}; };
     const fix = x => String(x || '').replace(/\b(\d{1,4})(\d{5})\b/g, '$1 $2').replace(/\s+/g, ' ').trim();   // « 10356125 » collé → « 103 56125 »
     const a = fix(h.adresse), noCp = a.replace(/\b\d{5}\b/g, ' ').replace(/\s+,|\s+/g, ' ').trim(), cty = city && a && !normQ(a).includes(normQ(city)) ? ', ' + city : '';
-    const nm = String(h.nom || '').trim(), nmOk = nm.length >= 4 && !/^(h[oô]tel|hostel|airbnb|appartement|logement)$/i.test(nm);
+    const nm = String(h.nom || '').trim(), nmG = normQ(nm).replace(/\b(h[oô]tel|hotel|hostel|auberge|airbnb|appartement|appart|logement|chambre|b ?& ?b|gite|a reserver|reserver|a trouver)\b/g, ' ').replace(/\s+/g, ' ').trim();
+    // un nom qui n’apprend rien (« Pise », « Hôtel Pise », « Logement ») : pas de recherche par nom, l’hôtel va au quartier conseillé
+    const nmOk = nm.length >= 4 && nmG.length >= 3 && !(city && (nmG === normQ(city) || normQ(city).includes(nmG)));
     // 🧾 adresse Booking : « Campomanes, 4, Centre de Madrid, 28013 Madrid, Espagne » → « Campomanes 4, 28013 Madrid » (le quartier et le pays gênent la recherche)
     const P = a.split(',').map(x=>x.trim()).filter(Boolean); let short = '';
     if(P.length >= 2){ let st = P[0], k = 1; if(/^\d+[a-z]?$/i.test(P[1] || '')){ st += ' ' + P[1]; k = 2; }
       const pc = P.slice(k).find(x=>/\b\d{4,5}(-\d{3,4})?\b/.test(x)) || ''; short = pc ? st + ', ' + pc : st + (city ? ', ' + city : ''); }
     const Q1 = [short, a && a + cty, a].filter(Boolean), Q2 = [noCp && noCp + cty].filter(Boolean);
-    for(const q of [...new Set(Q1)]){ try { const r = await geocode(q, null); if(ok(r)) return save(r); } catch(e){} }
+    // ✍️ l’adresse saisie par l’utilisateur fait foi : acceptée jusqu’à 30 km de l’étape (une rue du même nom à l’autre bout du pays, non)
+    for(const q of [...new Set(Q1)]){ try { const r = await geocode(q, null); if(ok(r, 30)) return save(r); } catch(e){} }
     // le nom de l’hôtel (« Room Mate Mario Madrid ») : souvent le plus sûr quand l’adresse est longue ou mal tapée
     if(ref && nmOk){ try { const L = (await pacFetch(nm + (city ? ' ' + city : ''), false, ref, true) || []).filter(r=>ok(r, 15)).sort((x, y)=>rawKm(x, ref) - rawKm(y, ref)); if(L[0]) return save(L[0]); } catch(e){} }
-    for(const q of [...new Set(Q2)].filter(q=>!Q1.includes(q))){ try { const r = await geocode(q, null); if(ok(r)) return save(r); } catch(e){} }
+    for(const q of [...new Set(Q2)].filter(q=>!Q1.includes(q))){ try { const r = await geocode(q, null); if(ok(r, 30)) return save(r); } catch(e){} }
     if(ref){ for(const q of [noCp].filter(Boolean)){   // fautes de frappe et noms d’hôtels : la recherche de lieux (Photon), autour de l’étape
       try { const L = (await pacFetch(q, false, ref, true) || []).filter(r=>ok(r, 15)).sort((a, b)=>rawKm(a, ref) - rawKm(b, ref)); if(L[0]) return save(L[0]); } catch(e){} } }
     M.hgeo[key] = {miss:1, at:Date.now()}; return null;
@@ -425,7 +428,9 @@
     const city = stayCity(h) || h.titre || '', P = stayPlaces(t, h).sort((a, b)=>(a.date || '').localeCompare(b.date || ''));
     const X = list('item', i=>i.trip === t.id && i.cat === 'activite' && i.date && i.date >= h.date && i.date < (h.dateFin || addDays(h.date, 1)));   // 🎟️ activités prévues pendant l’étape
     const g0 = R['geo:' + normQ(city)], C0 = g0 && g0.lat != null ? {lat:+g0.lat, lng:+g0.lng, nom:RF('Centre de {0}', city), ctr:1} : null;
-    const near = C0 ? P.filter(p=>rawKm(C0, p) <= 40) : P, A = near.map(p=>({lat:+p.lat, lng:+p.lng, nom:p.nom, id:p.id}));
+    // 🏨 le quartier conseillé : les visites ET les activités placées de l’étape, à moins de 10 km du centre (une villa à 20 km ne tire plus l’hôtel hors de la ville)
+    const XL = X.filter(x=>x.lat != null && x.lng != null && isFinite(+x.lat) && isFinite(+x.lng)).map(x=>({lat:+x.lat, lng:+x.lng, nom:x.titre, id:x.id}));
+    const near = C0 ? [...P, ...XL].filter(p=>rawKm(C0, p) <= 10) : [...P, ...XL], A = near.map(p=>({lat:+p.lat, lng:+p.lng, nom:p.nom, id:p.id}));
     if(C0 && (A.length < 2 || X.some(x=>x.lat == null))) A.push(C0);
     return {city, P, X, A, C0, hub:gdHub(A)};
   }
@@ -2383,7 +2388,19 @@
     out.forEach(o=>{ const k = {}; o.names.filter(Boolean).forEach(n=>k[n] = (k[n] || 0) + 1); o.city = Object.keys(k).sort((a, b)=>k[b] - k[a])[0] || (o.debut ? fshort(o.debut) : '📍'); });
     return out;
   }
-  function vmClose(){ const o = document.getElementById('cv-vm'); if(o) o.remove(); document.body.style.overflow = ''; if(VM && VM.map) try { VM.map.remove(); } catch(e){} VM = null; }
+  // 👆 ouvrir une fiche depuis la carte : la carte reste derrière (cachée), et revient au même endroit, au même zoom, quand la fiche se ferme
+  function mapAway(ov, alive, close, fn){ if(!ov || !alive()){ try { fn(); } catch(e){} return; }
+    if(ov._ob) try { ov._ob.disconnect(); } catch(e){}
+    ov.style.display = 'none'; try { fn(); } catch(e){}
+    let seen = false; const back = () => { if(!alive() || !document.body.contains(ov)){ ob.disconnect(); return; }
+      if(document.getElementById('v-sheet-bg')){ seen = true; return; } if(!seen) return;
+      ob.disconnect(); ov._ob = null; ov.style.display = ''; document.body.style.overflow = 'hidden'; try { const m = alive(); m && m.resize && m.resize(); } catch(e){} };
+    const ob = ov._ob = new MutationObserver(()=>setTimeout(back, 0)); ob.observe(document.body, {childList:true});
+    setTimeout(()=>{ if(!seen && !document.getElementById('v-sheet-bg') && alive()){ ob.disconnect(); ov._ob = null; close(); } }, 1500);   // pas de fiche (une autre page s’est ouverte) : la carte se ferme
+    back(); }
+  function vmAway(fn){ const me = VM; mapAway(document.getElementById('cv-vm'), ()=>VM === me && me && me.map, vmClose, fn); }
+  function p3Away(fn){ const me = P3; mapAway(document.getElementById('cv-p3'), ()=>P3 === me && me && me.map, ()=>prep3dClose(), fn); }
+  function vmClose(){ const o = document.getElementById('cv-vm'); if(o && o._ob) try { o._ob.disconnect(); } catch(e){} if(o) o.remove(); document.body.style.overflow = ''; if(VM && VM.map) try { VM.map.remove(); } catch(e){} VM = null; }
   async function vmOpen(){
     const t = trip(); if(!t) return; let st = tlStages(); if(!st.length) st = souvStages(t.id);
     if(!st.length){ alert(MSGT('Ajoute des hébergements avec leur ville pour dessiner la carte.')); return; }
@@ -2463,13 +2480,13 @@
     const add = (el, p, anchor) => me.lg.push(new maplibregl.Marker({element:el, anchor:anchor || 'center'}).setLngLat([p.lng, p.lat]).addTo(map));
     mapRich(map, F, me.font, add, false);
     // 👆 toucher une visite : sa fiche · une activité : sa réservation (comme les hôtels)
-    if(!me.tapOn){ me.tapOn = 1; try { const tap = (ly, fn) => { map.on('click', ly, e=>{ const f = e.features && e.features[0], id = f && f.properties && f.properties.id; if(id && R[id]){ vmClose(); setTimeout(()=>{ try { fn(id); } catch(_){} }, 80); } });
+    if(!me.tapOn){ me.tapOn = 1; try { const tap = (ly, fn) => { map.on('click', ly, e=>{ const f = e.features && e.features[0], id = f && f.properties && f.properties.id; if(id && R[id]) vmAway(()=>fn(id)); });
         map.on('mouseenter', ly, ()=>{ map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', ly, ()=>{ map.getCanvas().style.cursor = ''; }); };
       tap('vm-vis', plInfo); tap('vm-act', edit); } catch(e){} }
     // 🛏️ hébergements : visibles en zoomant
     F.hotels.forEach(x=>{ const e = document.createElement('button'); e.type = 'button'; e.className = 'p3-hot';
       e.innerHTML = `<i style="background:${P3C[x.st]}">🛏️</i><span data-notr>${esc(x.h.titre || x.city)}</span><small>${esc(MSGT(x.st === 'paid' ? 'Payé' : x.st === 'booked' ? 'Réservé' : 'À réserver'))}</small>`;
-      e.onclick = ev => { ev.stopPropagation(); vmClose(); setTimeout(()=>{ try { edit(x.h.id); } catch(_){} }, 80); };
+      e.onclick = ev => { ev.stopPropagation(); vmAway(()=>edit(x.h.id)); };
       add(e, x.p); });
     vmFit(true);
   }
@@ -2678,7 +2695,7 @@
   function vmSvPick(id){
     const x = R[id], card = document.getElementById('vm-card'); if(!x || !card) return;
     card.innerHTML = `<button type="button" class="vm-cx" onclick="this.parentNode.hidden=true" aria-label="${esc(MSGT('Fermer'))}">✕</button><div class="vm-svc"><img data-ph="${esc((x.photos || [])[0] || '')}.t" alt=""><div><b data-notr>${esc(x.titre || x.lieu || MSGT('Souvenir'))}</b><small>${x.date ? fdate(x.date) : ''}${x.heure ? ' · ' + esc(x.heure) : ''}${x.lieu ? ' · <span data-notr>' + esc(x.lieu) + '</span>' : ''}</small></div></div>
-      <div class="vm-ca"><button type="button" onclick="CV.vmClose();CV.editSouv('${ja(id)}')">📸 ${esc(MSGT('Ouvrir le souvenir'))}</button></div>`;
+      <div class="vm-ca"><button type="button" onclick="CV.vmAway(()=>CV.editSouv('${ja(id)}'))">📸 ${esc(MSGT('Ouvrir le souvenir'))}</button></div>`;
     card.hidden = false; hydrate(); if(VM && x.lat != null) VM.map.easeTo({center:[x.lng, x.lat], duration:700});
   }
   const PMAP_BUSY = {};
@@ -2824,6 +2841,10 @@
         try { map.setTerrain({source:'dem', exaggeration:1.3}); } catch(e){}
         const F = await p3Data(t); if(P3 !== me) return; P3.F = F;
         p3Layers(map, F); p3Markers(map, F);
+        // 👆 toucher une visite : sa fiche · une activité : sa réservation ; en fermant, retour à la carte au même endroit
+        try { const tap = (ly, fn) => { map.on('click', ly, e=>{ const f = e.features && e.features[0], id = f && f.properties && f.properties.id; if(id && R[id]) p3Away(()=>fn(id)); });
+          map.on('mouseenter', ly, ()=>{ map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', ly, ()=>{ map.getCanvas().style.cursor = ''; }); };
+          tap('p3-vis', plInfo); tap('p3-act', edit); } catch(e){}
         const m = document.getElementById('p3-msg'); if(m) m.hidden = true;
         const zc = () => { const z = map.getZoom(), o = document.getElementById('cv-p3'); if(o) o.className = z >= 10.5 ? 'p3-near' : z >= 8 ? 'p3-mid' : 'p3-far'; };
         map.on('zoom', zc); zc();
@@ -2853,7 +2874,7 @@
     F.cities.forEach(c=>{ const e = document.createElement('div'); e.innerHTML = `<i>${c.home ? '🏠' : c.via ? '·' : c.n}</i><span data-notr>${esc(c.name)}</span>`; add(e, c.c, 'p3-city' + (c.home ? ' home' : c.via ? ' via' : '')); });
     F.hotels.forEach(x=>{ const e = document.createElement('button'); e.type = 'button';
       e.innerHTML = `<i style="background:${P3C[x.st]}">🛏️</i><span data-notr>${esc(x.city)}</span><small>${esc(MSGT(x.st === 'paid' ? 'Payé' : x.st === 'booked' ? 'Réservé' : x.exact ? 'À réserver' : 'À réserver · dans le quartier conseillé'))}</small>`;
-      e.onclick = ev => { ev.stopPropagation(); prep3dClose(); setTimeout(()=>{ if(okB(x.h)) edit(x.h.id); else { const hs = ariData(trip()).hs.filter(y=>!okB(y)); guideHotel(Math.max(0, hs.findIndex(y=>y.id === x.h.id))); } }, 80); };
+      e.onclick = ev => { ev.stopPropagation(); p3Away(()=>{ if(okB(x.h)) edit(x.h.id); else { const hs = ariData(trip()).hs.filter(y=>!okB(y)); guideHotel(Math.max(0, hs.findIndex(y=>y.id === x.h.id))); } }); };
       add(e, x.p, 'p3-hot'); });
     // 📸 les souvenirs du voyage à leur endroit (photo ronde) : toucher pour la voir en grand
     if(P3.souv) list('souv', x=>x.trip === P3.t && !x.deleted && x.lat != null && (x.photos || []).length).forEach(x=>{
