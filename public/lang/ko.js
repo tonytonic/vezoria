@@ -6503,4 +6503,14 @@ I18N.load({
 "2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct.":"2D와 3D: 경유지, 경로, 방문지와 활동, 추억 사진, 실시간 위치.",
 "se fait appeler {0}":"{0}(으)로 불려요",
 "Se fait appeler {0} dans son appli":"앱에서는 {0}(으)로 불려요",
-"L’appeler {0}":"{0}(으)로 부르기"});
+"L’appeler {0}":"{0}(으)로 부르기",
+"Passer {0} sur un lien personnel ?":"{0}님을 개인 링크로 바꿀까요?",
+"Son appli change de lien toute seule, sans rien lui demander ni rien lui montrer. Tu pourras ensuite le retirer pour de vrai.":"상대 앱이 묻거나 보여주지 않고 알아서 링크를 바꿔요. 그다음 진짜로 내보낼 수 있어요.",
+"{0} a maintenant son propre lien":"{0}님은 이제 자기 링크가 있어요",
+"Supprimer le lien commun ? Plus personne ne pourra l’ouvrir.":"공유 링크를 삭제할까요? 더는 아무도 열 수 없어요.",
+"{0} personne(s) suivent par ce lien. Leur donner chacune un lien personnel, sans qu’elles le remarquent ?":"이 링크로 {0}명이 팔로우해요. 모르게 각자에게 개인 링크를 줄까요?",
+"OK : elles continuent de te suivre, chacune avec son lien. Annuler : elles sont retirées.":"확인: 각자 링크로 계속 팔로우해요. 취소: 내보내져요.",
+"Je supprime le lien commun…":"공유 링크 삭제 중…",
+"Lien commun supprimé":"공유 링크를 삭제했어요",
+"Supprimer le lien commun":"공유 링크 삭제",
+"Passer en lien personnel (il ne le voit pas)":"개인 링크로 바꾸기 (모르게)"});

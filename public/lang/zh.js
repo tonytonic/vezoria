@@ -6503,4 +6503,14 @@ I18N.load({
 "2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct.":"2D 和 3D：站点、路线、景点和活动、回忆照片和实时追踪。",
 "se fait appeler {0}":"自称 {0}",
 "Se fait appeler {0} dans son appli":"在应用中名为 {0}",
-"L’appeler {0}":"称为 {0}"});
+"L’appeler {0}":"称为 {0}",
+"Passer {0} sur un lien personnel ?":"将 {0} 改为个人链接？",
+"Son appli change de lien toute seule, sans rien lui demander ni rien lui montrer. Tu pourras ensuite le retirer pour de vrai.":"对方的应用会自动换链接，不询问也不显示任何内容。之后你就能真正移除他。",
+"{0} a maintenant son propre lien":"{0} 现在有了自己的链接",
+"Supprimer le lien commun ? Plus personne ne pourra l’ouvrir.":"删除共享链接？之后没人能再打开它。",
+"{0} personne(s) suivent par ce lien. Leur donner chacune un lien personnel, sans qu’elles le remarquent ?":"有 {0} 人通过此链接关注。悄悄给每人一个个人链接？",
+"OK : elles continuent de te suivre, chacune avec son lien. Annuler : elles sont retirées.":"确定：他们继续关注你，各用自己的链接。取消：将他们移除。",
+"Je supprime le lien commun…":"正在删除共享链接…",
+"Lien commun supprimé":"共享链接已删除",
+"Supprimer le lien commun":"删除共享链接",
+"Passer en lien personnel (il ne le voit pas)":"改为个人链接（对方不会察觉）"});

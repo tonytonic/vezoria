@@ -3564,4 +3564,14 @@ I18N.load({
 "2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct.":"2D e 3D: tappe, tragitti, visite e attività, foto dei ricordi e posizione in diretta.",
 "se fait appeler {0}":"si fa chiamare {0}",
 "Se fait appeler {0} dans son appli":"Nella sua app si chiama {0}",
-"L’appeler {0}":"Chiamalo {0}"});
+"L’appeler {0}":"Chiamalo {0}",
+"Passer {0} sur un lien personnel ?":"Passare {0} a un link personale?",
+"Son appli change de lien toute seule, sans rien lui demander ni rien lui montrer. Tu pourras ensuite le retirer pour de vrai.":"La sua app cambia link da sola, senza chiedere né mostrare nulla. Poi potrai rimuoverlo davvero.",
+"{0} a maintenant son propre lien":"{0} ora ha il suo link",
+"Supprimer le lien commun ? Plus personne ne pourra l’ouvrir.":"Eliminare il link comune? Nessuno potrà più aprirlo.",
+"{0} personne(s) suivent par ce lien. Leur donner chacune un lien personnel, sans qu’elles le remarquent ?":"{0} persona/e seguono con questo link. Dare a ognuna un link personale, senza che se ne accorgano?",
+"OK : elles continuent de te suivre, chacune avec son lien. Annuler : elles sont retirées.":"OK: continuano a seguirti, ognuna con il suo link. Annulla: vengono rimosse.",
+"Je supprime le lien commun…":"Elimino il link comune…",
+"Lien commun supprimé":"Link comune eliminato",
+"Supprimer le lien commun":"Elimina il link comune",
+"Passer en lien personnel (il ne le voit pas)":"Passa a link personale (non se ne accorge)"});

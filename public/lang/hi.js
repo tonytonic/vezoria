@@ -6503,4 +6503,14 @@ I18N.load({
 "2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct.":"2D और 3D: पड़ाव, रास्ते, जगहें और गतिविधियाँ, यादों की तस्वीरें और लाइव ट्रैकिंग।",
 "se fait appeler {0}":"ख़ुद को {0} कहते हैं",
 "Se fait appeler {0} dans son appli":"अपने ऐप में ख़ुद को {0} कहते हैं",
-"L’appeler {0}":"{0} कहो"});
+"L’appeler {0}":"{0} कहो",
+"Passer {0} sur un lien personnel ?":"{0} को निजी लिंक पर ले जाएँ?",
+"Son appli change de lien toute seule, sans rien lui demander ni rien lui montrer. Tu pourras ensuite le retirer pour de vrai.":"उसका ऐप अपने आप लिंक बदल लेगा, बिना कुछ पूछे या दिखाए। फिर तुम उसे सच में हटा सकोगे।",
+"{0} a maintenant son propre lien":"{0} के पास अब अपना लिंक है",
+"Supprimer le lien commun ? Plus personne ne pourra l’ouvrir.":"साझा लिंक हटाएँ? अब कोई उसे नहीं खोल पाएगा।",
+"{0} personne(s) suivent par ce lien. Leur donner chacune un lien personnel, sans qu’elles le remarquent ?":"इस लिंक से {0} लोग फ़ॉलो करते हैं। बिना उन्हें पता चले हर एक को निजी लिंक दें?",
+"OK : elles continuent de te suivre, chacune avec son lien. Annuler : elles sont retirées.":"ठीक है: वे अपने-अपने लिंक से तुम्हें फ़ॉलो करते रहेंगे। रद्द करें: उन्हें हटा दिया जाएगा।",
+"Je supprime le lien commun…":"साझा लिंक हटा रहा हूँ…",
+"Lien commun supprimé":"साझा लिंक हटा दिया",
+"Supprimer le lien commun":"साझा लिंक हटाओ",
+"Passer en lien personnel (il ne le voit pas)":"निजी लिंक पर ले जाओ (उसे पता नहीं चलेगा)"});

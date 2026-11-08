@@ -6504,4 +6504,14 @@ I18N.load({
 "2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct.":"ثنائي وثلاثي الأبعاد: المحطات والمسارات والزيارات والأنشطة وصور الذكريات والتتبع المباشر.",
 "se fait appeler {0}":"يسمي نفسه {0}",
 "Se fait appeler {0} dans son appli":"يسمي نفسه {0} في تطبيقه",
-"L’appeler {0}":"سمِّه {0}"});
+"L’appeler {0}":"سمِّه {0}",
+"Passer {0} sur un lien personnel ?":"نقل {0} إلى رابط شخصي؟",
+"Son appli change de lien toute seule, sans rien lui demander ni rien lui montrer. Tu pourras ensuite le retirer pour de vrai.":"يغيّر تطبيقه الرابط تلقائيًا دون أن يسأله أو يُظهر له شيئًا. بعدها يمكنك إزالته فعليًا.",
+"{0} a maintenant son propre lien":"أصبح لدى {0} رابطه الخاص",
+"Supprimer le lien commun ? Plus personne ne pourra l’ouvrir.":"حذف الرابط المشترك؟ لن يتمكن أحد من فتحه بعد الآن.",
+"{0} personne(s) suivent par ce lien. Leur donner chacune un lien personnel, sans qu’elles le remarquent ?":"يتابع {0} شخص عبر هذا الرابط. إعطاء كل منهم رابطًا شخصيًا دون أن يلاحظ؟",
+"OK : elles continuent de te suivre, chacune avec son lien. Annuler : elles sont retirées.":"موافق: يواصلون متابعتك، كلٌّ برابطه. إلغاء: تتم إزالتهم.",
+"Je supprime le lien commun…":"جارٍ حذف الرابط المشترك…",
+"Lien commun supprimé":"تم حذف الرابط المشترك",
+"Supprimer le lien commun":"حذف الرابط المشترك",
+"Passer en lien personnel (il ne le voit pas)":"التحويل إلى رابط شخصي (لن يلاحظ)"});

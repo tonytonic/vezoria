@@ -3549,4 +3549,14 @@ I18N.load({
 "2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct.":"2D and 3D: stops, routes, visits and activities, memory photos and live tracking.",
 "se fait appeler {0}":"goes by {0}",
 "Se fait appeler {0} dans son appli":"Goes by {0} in their app",
-"L’appeler {0}":"Call them {0}"});
+"L’appeler {0}":"Call them {0}",
+"Passer {0} sur un lien personnel ?":"Move {0} to a personal link?",
+"Son appli change de lien toute seule, sans rien lui demander ni rien lui montrer. Tu pourras ensuite le retirer pour de vrai.":"Their app switches links by itself, without asking or showing them anything. You’ll then be able to remove them for real.",
+"{0} a maintenant son propre lien":"{0} now has their own link",
+"Supprimer le lien commun ? Plus personne ne pourra l’ouvrir.":"Delete the shared link? Nobody will be able to open it anymore.",
+"{0} personne(s) suivent par ce lien. Leur donner chacune un lien personnel, sans qu’elles le remarquent ?":"{0} person(s) follow through this link. Give each one a personal link, without them noticing?",
+"OK : elles continuent de te suivre, chacune avec son lien. Annuler : elles sont retirées.":"OK: they keep following you, each with their own link. Cancel: they are removed.",
+"Je supprime le lien commun…":"Deleting the shared link…",
+"Lien commun supprimé":"Shared link deleted",
+"Supprimer le lien commun":"Delete the shared link",
+"Passer en lien personnel (il ne le voit pas)":"Switch to a personal link (they won’t notice)"});

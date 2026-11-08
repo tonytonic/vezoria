@@ -6504,4 +6504,14 @@ I18N.load({
 "2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct.":"2D и 3D: этапы, маршруты, места и занятия, фото воспоминаний и отслеживание вживую.",
 "se fait appeler {0}":"называет себя {0}",
 "Se fait appeler {0} dans son appli":"В своём приложении — {0}",
-"L’appeler {0}":"Называть {0}"});
+"L’appeler {0}":"Называть {0}",
+"Passer {0} sur un lien personnel ?":"Перевести {0} на личную ссылку?",
+"Son appli change de lien toute seule, sans rien lui demander ni rien lui montrer. Tu pourras ensuite le retirer pour de vrai.":"Приложение само сменит ссылку, ничего не спрашивая и не показывая. Потом его можно будет удалить по-настоящему.",
+"{0} a maintenant son propre lien":"У {0} теперь своя ссылка",
+"Supprimer le lien commun ? Plus personne ne pourra l’ouvrir.":"Удалить общую ссылку? Её больше никто не откроет.",
+"{0} personne(s) suivent par ce lien. Leur donner chacune un lien personnel, sans qu’elles le remarquent ?":"По этой ссылке подписано: {0}. Дать каждому личную ссылку незаметно для них?",
+"OK : elles continuent de te suivre, chacune avec son lien. Annuler : elles sont retirées.":"OK: они продолжат следить, у каждого своя ссылка. Отмена: их удалят.",
+"Je supprime le lien commun…":"Удаляю общую ссылку…",
+"Lien commun supprimé":"Общая ссылка удалена",
+"Supprimer le lien commun":"Удалить общую ссылку",
+"Passer en lien personnel (il ne le voit pas)":"Перевести на личную ссылку (незаметно)"});

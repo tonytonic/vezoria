@@ -6503,4 +6503,14 @@ I18N.load({
 "2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct.":"2Dと3D：行程、ルート、見どころとアクティビティ、思い出の写真、ライブ追跡。",
 "se fait appeler {0}":"{0}と名乗っています",
 "Se fait appeler {0} dans son appli":"アプリでは{0}と名乗っています",
-"L’appeler {0}":"{0}と呼ぶ"});
+"L’appeler {0}":"{0}と呼ぶ",
+"Passer {0} sur un lien personnel ?":"{0}さんを個人リンクに切り替えますか？",
+"Son appli change de lien toute seule, sans rien lui demander ni rien lui montrer. Tu pourras ensuite le retirer pour de vrai.":"相手のアプリが何も聞かず表示もせずに自動でリンクを切り替えます。その後、本当に削除できます。",
+"{0} a maintenant son propre lien":"{0}さんに専用リンクができました",
+"Supprimer le lien commun ? Plus personne ne pourra l’ouvrir.":"共通リンクを削除しますか？誰も開けなくなります。",
+"{0} personne(s) suivent par ce lien. Leur donner chacune un lien personnel, sans qu’elles le remarquent ?":"このリンクで{0}人がフォロー中。気づかれずに各自へ個人リンクを渡しますか？",
+"OK : elles continuent de te suivre, chacune avec son lien. Annuler : elles sont retirées.":"OK：各自のリンクでフォローを続けます。キャンセル：削除されます。",
+"Je supprime le lien commun…":"共通リンクを削除中…",
+"Lien commun supprimé":"共通リンクを削除しました",
+"Supprimer le lien commun":"共通リンクを削除",
+"Passer en lien personnel (il ne le voit pas)":"個人リンクに切り替え（気づかれません）"});

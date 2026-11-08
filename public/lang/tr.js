@@ -6491,4 +6491,14 @@ I18N.load({
 "2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct.":"2D ve 3D: duraklar, güzergâhlar, ziyaretler ve etkinlikler, anı fotoğrafları ve canlı takip.",
 "se fait appeler {0}":"kendini {0} olarak adlandırıyor",
 "Se fait appeler {0} dans son appli":"Uygulamasında adı {0}",
-"L’appeler {0}":"{0} diye adlandır"});
+"L’appeler {0}":"{0} diye adlandır",
+"Passer {0} sur un lien personnel ?":"{0} kişisel bağlantıya geçirilsin mi?",
+"Son appli change de lien toute seule, sans rien lui demander ni rien lui montrer. Tu pourras ensuite le retirer pour de vrai.":"Uygulaması bağlantıyı kendiliğinden değiştirir, hiçbir şey sormadan veya göstermeden. Sonra onu gerçekten çıkarabilirsin.",
+"{0} a maintenant son propre lien":"{0} artık kendi bağlantısına sahip",
+"Supprimer le lien commun ? Plus personne ne pourra l’ouvrir.":"Ortak bağlantı silinsin mi? Artık kimse açamayacak.",
+"{0} personne(s) suivent par ce lien. Leur donner chacune un lien personnel, sans qu’elles le remarquent ?":"Bu bağlantıyla {0} kişi takip ediyor. Fark etmeden her birine kişisel bağlantı verilsin mi?",
+"OK : elles continuent de te suivre, chacune avec son lien. Annuler : elles sont retirées.":"Tamam: her biri kendi bağlantısıyla seni takip etmeye devam eder. İptal: çıkarılırlar.",
+"Je supprime le lien commun…":"Ortak bağlantı siliniyor…",
+"Lien commun supprimé":"Ortak bağlantı silindi",
+"Supprimer le lien commun":"Ortak bağlantıyı sil",
+"Passer en lien personnel (il ne le voit pas)":"Kişisel bağlantıya geçir (fark etmez)"});
