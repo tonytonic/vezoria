@@ -6528,4 +6528,7 @@ I18N.load({
 "hébergement(s)":"سكن",
 "trajet(s)":"رحلة",
 "activité(s)":"نشاط",
-"{0} réservation(s) validée(s)":"تم تأكيد {0} حجز"});
+"{0} réservation(s) validée(s)":"تم تأكيد {0} حجز",
+"Commence à taper : nom de l’hôtel ou rue":"ابدأ الكتابة: اسم الفندق أو الشارع",
+"Placé exactement sur la carte":"وُضع بدقة على الخريطة",
+"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"اختر من القائمة: سيوضع الفندق بدقة على الخريطة"});

@@ -6528,4 +6528,7 @@ I18N.load({
 "hébergement(s)":"жильё",
 "trajet(s)":"поездк(и)",
 "activité(s)":"занятие(я)",
-"{0} réservation(s) validée(s)":"Подтверждено бронирований: {0}"});
+"{0} réservation(s) validée(s)":"Подтверждено бронирований: {0}",
+"Commence à taper : nom de l’hôtel ou rue":"Начни вводить: название отеля или улицу",
+"Placé exactement sur la carte":"Точно отмечено на карте",
+"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"Выбери из списка — отель будет точно на карте"});

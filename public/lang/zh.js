@@ -6527,4 +6527,7 @@ I18N.load({
 "hébergement(s)":"住宿",
 "trajet(s)":"行程",
 "activité(s)":"活动",
-"{0} réservation(s) validée(s)":"已确认 {0} 个预订"});
+"{0} réservation(s) validée(s)":"已确认 {0} 个预订",
+"Commence à taper : nom de l’hôtel ou rue":"开始输入：酒店名称或街道",
+"Placé exactement sur la carte":"已精确标在地图上",
+"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"从列表中选择：酒店会精确标在地图上"});

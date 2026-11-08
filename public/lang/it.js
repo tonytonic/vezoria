@@ -3588,4 +3588,7 @@ I18N.load({
 "hébergement(s)":"alloggio/i",
 "trajet(s)":"tragitto/i",
 "activité(s)":"attività",
-"{0} réservation(s) validée(s)":"{0} prenotazione/i confermata/e"});
+"{0} réservation(s) validée(s)":"{0} prenotazione/i confermata/e",
+"Commence à taper : nom de l’hôtel ou rue":"Inizia a scrivere: nome dell’hotel o via",
+"Placé exactement sur la carte":"Posizionato esattamente sulla mappa",
+"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"Scegli dall’elenco: l’hotel sarà posizionato esattamente sulla mappa"});

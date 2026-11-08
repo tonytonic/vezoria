@@ -6515,4 +6515,7 @@ I18N.load({
 "hébergement(s)":"konaklama",
 "trajet(s)":"yolculuk",
 "activité(s)":"etkinlik",
-"{0} réservation(s) validée(s)":"{0} rezervasyon onaylandı"});
+"{0} réservation(s) validée(s)":"{0} rezervasyon onaylandı",
+"Commence à taper : nom de l’hôtel ou rue":"Yazmaya başla: otel adı veya sokak",
+"Placé exactement sur la carte":"Haritada tam yerine kondu",
+"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"Listeden seç: otel haritada tam yerine konur"});
