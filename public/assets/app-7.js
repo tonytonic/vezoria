@@ -1803,6 +1803,12 @@
             map.on('mouseenter', ly, ()=>{ map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', ly, ()=>{ map.getCanvas().style.cursor = ''; }); };
           const over = () => { document.body.classList.add('lv-sheet'); clearInterval(me.shIv); me.shIv = setInterval(()=>{ if(!document.getElementById('v-sheet-bg') || LV !== me){ document.body.classList.remove('lv-sheet'); clearInterval(me.shIv); } }, 800); };   // la fiche passe au-dessus de la carte
           try { tap('vm-vis', id=>{ if(LV) LV.orbit = false; over(); plInfo(id); }); tap('vm-act', id=>{ if(LV) LV.orbit = false; over(); edit(id); }); } catch(e){}
+          // 🏨 les hôtels du séjour : pour les compagnons seulement (jamais sur la carte des abonnés : c’est où vous dormez)
+          (async ()=>{ for(const h of list('item', i=>i.trip === key && i.cat === 'hotel' && !i.deleted && (i.adresse || i.nom))){ if(LV !== me) return;
+            const g = await geocode(h.adresse || h.nom, stayCity(h)).catch(()=>null); if(!g || LV !== me) continue;
+            const el = document.createElement('div'); el.className = 'lv-hot'; el.innerHTML = `<i>🏨</i><b data-notr>${esc(h.nom || h.titre || '')}</b>`;
+            el.onclick = ev => { ev.stopPropagation(); if(LV) LV.orbit = false; over(); edit(h.id); };
+            new maplibregl.Marker({element:el, anchor:'bottom'}).setLngLat([g.lng, g.lat]).addTo(map); } })();
           if(!D.people.length && !D.ph.length && F.cities.length){ const b = new maplibregl.LngLatBounds(); F.cities.forEach(c=>b.extend([c.c.lng, c.c.lat])); try { map.fitBounds(b, {padding:80, maxZoom:11, pitch:50, duration:0}); } catch(e){} } }).catch(()=>{});
         LV.iv = setInterval(liveTick, 20000); setTimeout(liveTick, 1500); LV.up = setInterval(liveUp, 5000); liveUp();
         LV.raf = requestAnimationFrame(liveAnim);
