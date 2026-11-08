@@ -725,7 +725,7 @@
       h += `<div class="v-f2">${field('Check-in','heure',it.heure,'time')}${field('Téléphone','tel',it.tel,'tel')}</div>`;
     } else {
       h += `<div class="v-f2">${field('Date','date',it.date,'date')}${field('Heure / créneau','heure',it.heure,'time')}</div>`;
-      h += field('Lieu / prestataire','adresse',it.adresse);
+      h += field('Lieu / prestataire','adresse',it.adresse,'text','data-place="poi addr" autocomplete="off" placeholder="' + esc(MSGT('Commence à taper : musée, monument, adresse…')) + '"');   // 🎟️ aide à la saisie : l’activité va à son endroit exact sur la carte
     }
     if(['transport','hotel','activite'].includes(c)) h += `<details class="cv-ro"${it.resaOpen ? ' open' : ''}><summary>⏰ ${MSGT('Les réservations ouvrent à une date précise ?')}</summary>
       <div class="v-f2">${field(MSGT('Ouverture des ventes'),'resaOpen',it.resaOpen,'date')}${field(MSGT('Heure (chez toi)'),'resaOpenH',it.resaOpenH,'time')}</div>
@@ -803,7 +803,7 @@
     if(it.cat === 'hotel' && was && !isNew){ const oc = cityOf(was.titre || '') || was.titre, nc = cityOf(it.titre || '') || it.titre;
       if(oc && nc && trCanon(oc) !== trCanon(nc) && (!was.base || trCanon(was.base) === trCanon(oc)) && !/h[oô]tel|hostel|auberge|airbnb|chez |appart|apartment|b&b|camping|g[iî]te|r[ée]sidence|villa /i.test(nc)){
         reCity = [oc, nc]; it.base = nc; delete it.lat; delete it.lng; } }
-    if(it.cat === 'hotel' && it.lat != null && normQ(it.adresse || '') !== normQ((it.geoAddr != null ? it.geoAddr : (was || {}).adresse) || '')){ delete it.lat; delete it.lng; delete it.geoAddr; }   // 📍 adresse retapée à la main : l’ancien point ne vaut plus
+    if((it.cat === 'hotel' || it.cat === 'activite') && it.lat != null && normQ(it.adresse || '') !== normQ((it.geoAddr != null ? it.geoAddr : (was || {}).adresse) || '')){ delete it.lat; delete it.lng; delete it.geoAddr; }   // 📍 adresse retapée à la main : l’ancien point ne vaut plus
     if(isNew || !sameItem(was, it)) put(it);
     if(reCity) try { stageRenamed(reCity[0], reCity[1], it.id); dayTitlesFix(); } catch(e){}
     if(!keepOpen && (isNew || (booked(it) && !booked(was)))) setTimeout(()=>fxFor(it), 250);   // nouveau ou tout juste réservé
@@ -2729,7 +2729,12 @@
     return out.slice(0, 6);
   }
   // 🏨 l’adresse d’un hôtel se cherche autour de SA ville (champ « Étape / ville » du formulaire)
-  async function adrNear(){ try { const v = ((document.querySelector('#v-form [name=titre]') || {}).value || (editing && (editing.base || editing.titre)) || '').trim(); const c = cityOf(v) || v; if(!c) return null;
+  async function adrNear(){ try {
+    // hôtel : sa ville (« Étape / ville ») · activité, trajet : la ville où l’on est ce jour-là
+    const isH = editing && editing.cat === 'hotel', d = (document.querySelector('#v-form [name=date]') || {}).value || (editing && editing.date) || '';
+    let v = isH ? ((document.querySelector('#v-form [name=titre]') || {}).value || editing.base || editing.titre || '').trim() : '';
+    if(!v && d) try { v = dayCity(d) || ''; } catch(e){} if(!v) try { v = (tlStages()[0] || {}).city || ''; } catch(e){}
+    const c = cityOf(v) || v; if(!c) return null;
     const g = geoCached(c) || await geocode(c, null); return g ? {lat:+g.lat, lng:+g.lng} : null; } catch(e){ return null; } }
   function pacClose(i){ const b = i && i._pac; if(b){ b.remove(); i._pac = null; } }
   function pacPick(i, it){
@@ -2769,7 +2774,8 @@
     const md = i.dataset.place || '', multi = /multi/.test(md), onlyC = /country/.test(md), poi = /poi/.test(md), cur = i.value;
     clearTimeout(pacT); const q = (multi ? cur.split(',').pop() : cur).trim(), my = ++pacN;
     if(q.length < 2){ pacClose(i); return; }
-    pacT = setTimeout(async ()=>{ const L = poi ? await pacFetch(q, false, /addr/.test(md) ? await adrNear() : souvNear(editing), true) : await pacSmart(q, onlyC); if(my === pacN && i.value === cur) pacShow(i, L); }, 300);
+    const stop = !poi && !onlyC && !multi && /\b(gare|a[ée]roport|airport|aeroporto|aeropuerto|station|stazione|estaci[oó]n|bahnhof|hbf|termini|port|porto|terminal|ferry)\b/i.test(q);   // 🚆 « Gare de Pise », « Aéroport Fiumicino » : les vraies gares et aéroports, autour de l’étape
+    pacT = setTimeout(async ()=>{ const L = poi || stop ? await pacFetch(q, false, /addr/.test(md) || stop ? await adrNear() : souvNear(editing), true) : await pacSmart(q, onlyC); if(my === pacN && i.value === cur) pacShow(i, L); }, 300);
   });
   document.addEventListener('focusout', e=>{ const i = e.target; if(i && i._pac) setTimeout(()=>{ if(document.activeElement !== i) pacClose(i); }, 150); });
   document.addEventListener('keydown', e=>{ const i = e.target; if(e.key === 'Escape' && i && i._pac) pacClose(i); });
