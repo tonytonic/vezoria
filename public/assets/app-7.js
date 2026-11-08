@@ -1598,11 +1598,35 @@
       const b = new maplibregl.LngLatBounds(); pts.forEach(p=>b.extend([p[1], p[0]]));
       LN.map.fitBounds(b, {padding:{top:110, bottom:150, left:60, right:60}, maxZoom:15.5, pitch:58, bearing:LN.map.getBearing(), duration: now ? 0 : 1200});
     } catch(e){} }
+  // la petite carte de l’accueil dessine exactement comme la carte live (trajets, train sur les rails, tracé repris d’un compagnon, côte à côte)
   function lnLines(D){
-    const map = LN.map; if(!map) return;
-    D.people.forEach((p, i)=>{ const id = 'ln' + i, gj = {type:'Feature', properties:{}, geometry: p.pts.length > 1 ? {type:'LineString', coordinates:p.pts.slice(-300).map(x=>[x[1], x[0]])} : {type:'Point', coordinates:[p.pts[0][1], p.pts[0][0]]}};
-      if(map.getSource(id)) map.getSource(id).setData(gj); else { map.addSource(id, {type:'geojson', data:gj}); map.addLayer({id:id + 'g', type:'line', source:id, paint:{'line-color':p.c, 'line-width':9, 'line-blur':6, 'line-opacity':.5}}); map.addLayer({id, type:'line', source:id, layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':p.c, 'line-width':3.5}}); } });
+    const map = LN.map; if(!map || !LN.key) return; let G = null;
+    try { G = lvGeoFor(LN.key, D); } catch(e){}
+    D.people.forEach((p, i)=>{ const id = 'ln' + i, g = G && G[i];
+      const gj = {type:'FeatureCollection', features: g && g.sol.length ? g.sol : [{type:'Feature', properties:{}, geometry: p.pts.length > 1 ? {type:'LineString', coordinates:p.pts.slice(-300).map(x=>[x[1], x[0]])} : {type:'Point', coordinates:[p.pts[0][1], p.pts[0][0]]}}]};
+      const gg = {type:'FeatureCollection', features: (g && g.dsh) || []}, off = D.people.length > 1 ? (i - (D.people.length - 1) / 2) * 4 : 0;
+      if(map.getSource(id)){ map.getSource(id).setData(gj); if(map.getSource(id + 'x')) map.getSource(id + 'x').setData(gg); }
+      else { map.addSource(id, {type:'geojson', data:gj}); map.addSource(id + 'x', {type:'geojson', data:gg});
+        map.addLayer({id:id + 'x', type:'line', source:id + 'x', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':p.c, 'line-width':2.5, 'line-opacity':.75, 'line-dasharray':[1.2, 1.8], 'line-offset':off}});
+        map.addLayer({id:id + 'g', type:'line', source:id, paint:{'line-color':p.c, 'line-width':9, 'line-blur':6, 'line-opacity':.5, 'line-offset':off}});
+        map.addLayer({id, type:'line', source:id, layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':p.c, 'line-width':3.5, 'line-offset':off}}); }
+      [id, id + 'g', id + 'x'].forEach(z=>{ try { map.setPaintProperty(z, 'line-offset', off); } catch(e){} }); });
   }
+  // les traits d’un voyage (pour la petite carte) : même calcul que la carte live, sans toucher à la carte live ouverte
+  function lvGeoFor(key, D){ const keep = LV, shim = !LV || LV.key !== key; if(shim) LV = {key, shim:1};
+    try {
+      const fw = []; D.people.forEach((p, i)=>{ lvLegs(lvBorrowSeq(lvSplit(p.pts).seq, D.people, i)).forEach(L=>{ if(L.force && !L.wm && L.t1 > L.t0) fw.push([L.t0, L.t1, L.force]); }); });
+      const fw0 = LV.fw; LV.fw = fw;
+      const out = D.people.map((p, i)=>{ const sol = [], dsh = [];
+        lvLegs(lvBorrowSeq(lvSplit(p.pts).seq, D.people, i)).forEach(L=>{ const M = L.force || (L.segs.length > 1 ? L.m : '');
+          L.segs.forEach(x=>{ if(x.r){ sol.push({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:lvRunLine(x.r, M)}}); return; }
+            const m = M || x.auto; (m === 'rail' ? sol : dsh).push({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:lvGapLine(x.g, m)}}); }); });
+        return {sol, dsh}; });
+      if(!shim) LV.fw = fw0; return out;
+    } finally { if(shim) LV = keep; } }
+  // un tracé (route, rails) vient d’arriver du serveur : on redessine la carte live et la petite carte
+  function lvRedraw(){ if(LV && !LV.shim && LV.map){ LV.sig = ''; liveDraw(false); }
+    clearTimeout(LN.rt); LN.rt = setTimeout(()=>{ try { if(LN.map && LN.key && LN.map.isStyleLoaded()) lnLines(liveData(LN.key)); } catch(e){} }, 400); }
 
   /* ══════════ 🎉 « Bienvenue à … » : le GPS voit qu’on arrive dans une nouvelle ville (ou un nouveau pays) ══════════ */
   let wlcBusy = false;
@@ -2011,7 +2035,7 @@
       const dur = ((ch[ch.length - 1][2] || 0) - (ch[0][2] || 0)) / 3600e3, dist = ch.reduce((a, x, j)=>j ? a + km({lat:ch[j - 1][0], lng:ch[j - 1][1]}, {lat:x[0], lng:x[1]}) : 0, 0);
       const mode = force || lvWinMode(ch[0][2], ch[ch.length - 1][2]) || lvPlan(ch[0][2], ch[ch.length - 1][2]) || (dur > 0 && dist / dur > 18 ? 'car' : 'foot');
       if(mode === 'plane' || mode === 'boat'){ out.push(...ch.map(x=>[x[1], x[0]])); continue; }
-      if(mode === 'rail'){ const L = lvRail(ch, 'r:' + k, ()=>{ if(LV){ LV.sig = ''; liveDraw(false); } }); out.push(...(L || ch.map(x=>[x[1], x[0]]))); continue; }
+      if(mode === 'rail'){ const L = lvRail(ch, 'r:' + k, lvRedraw); out.push(...(L || ch.map(x=>[x[1], x[0]]))); continue; }
       if(mode !== (dur > 0 && dist / dur > 18 ? 'car' : 'foot')) k += ':' + mode;
       const got = LVM[k]; if(got && got.length){ out.push(...got); continue; }
       if(!got && ch.length >= 3){ LVM[k] = [];
@@ -2023,7 +2047,7 @@
           .then(j=>{ const L = ((j && j.matchings) || []).flatMap(m=>(m.geometry && m.geometry.coordinates) || []);
             if(L.length > 1){ LVM[k] = L.map(c=>[+c[0].toFixed(5), +c[1].toFixed(5)]);
               try { const ks = Object.keys(LVM); if(ks.length > 300) ks.slice(0, ks.length - 300).forEach(z=>delete LVM[z]); localStorage.setItem('vz_mm', JSON.stringify(LVM)); } catch(e){}
-              if(LV){ LV.sig = ''; liveDraw(false); } } }).catch(()=>{}); }
+              lvRedraw(); } }).catch(()=>{}); }
       out.push(...ch.map(x=>[x[1], x[0]]));
     }
     return out.length > 1 ? out : raw; }
@@ -2032,11 +2056,11 @@
   function lvGapLine(g, mode){ const a = g[0], b = g[1], k0 = lvGK(g), k = k0 + (mode === 'foot' ? ':f' : '');
     mode = mode || 'car'; if(mode === 'plane' || mode === 'boat') return [[a[1], a[0]], [b[1], b[0]]];
     if(mode === 'rail'){ if(km({lat:a[0], lng:a[1]}, {lat:b[0], lng:b[1]}) > 1500) return [[a[1], a[0]], [b[1], b[0]]];
-      return lvRail(g, 'rg:' + k0, ()=>{ if(LV){ LV.sig = ''; liveDraw(false); } }) || lvGapLine(g, 'car'); }   // en attendant les rails (ou s’ils sont introuvables) : la route, jamais à travers le lac
+      return lvRail(g, 'rg:' + k0, lvRedraw) || lvGapLine(g, 'car'); }   // en attendant les rails (ou s’ils sont introuvables) : la route, jamais à travers le lac
     if(LVG[k] && LVG[k].length) return LVG[k];
     if((!LVG[k] || Date.now() - (LVG[k].t || 0) > 60e3) && km({lat:a[0], lng:a[1]}, {lat:b[0], lng:b[1]}) < 300){ LVG[k] = []; LVG[k].t = Date.now();
       withTimeout(fetch(`https://routing.openstreetmap.de/${mode === 'foot' ? 'routed-foot/route/v1/foot' : 'routed-car/route/v1/driving'}/${(+a[1]).toFixed(5)},${(+a[0]).toFixed(5)};${(+b[1]).toFixed(5)},${(+b[0]).toFixed(5)}?overview=simplified&geometries=geojson`), 12000)
-        .then(r=>r.json()).then(j=>{ const co = j && j.routes && j.routes[0] && j.routes[0].geometry.coordinates; if(co && co.length > 1){ LVG[k] = co.map(c=>[+c[0].toFixed(5), +c[1].toFixed(5)]); if(LV){ LV.sig = ''; liveDraw(false); } } }).catch(()=>{}); }
+        .then(r=>r.json()).then(j=>{ const co = j && j.routes && j.routes[0] && j.routes[0].geometry.coordinates; if(co && co.length > 1){ LVG[k] = co.map(c=>[+c[0].toFixed(5), +c[1].toFixed(5)]); lvRedraw(); } }).catch(()=>{}); }
     return [[a[1], a[0]], [b[1], b[0]]]; }
   const LV_IC = {car:'🚗', rail:'🚆', plane:'✈️', boat:'⛴️', foot:'🚶'};
   function lvRunMode(r){ const o = lvTM()[lvRK(r)]; return o || lvRunAuto(r); }
@@ -2072,7 +2096,7 @@
         const T = lvTM(); delete T[k]; ((LV.legMem || {})[k] || []).forEach(q=>delete T[q]);
         Object.keys(T).forEach(q=>{ if(q[0] !== '@') return; const [u, v] = q.slice(1).split('-').map(Number); if(Math.min(v, t1) > Math.max(u, t0)) delete T[q]; });
         T['@' + t0 + '-' + t1] = S.m; lvTMSave(T);
-        lvSegEnd(); LV.sig = ''; liveDraw(false); } };
+        lvSegEnd(); lvRedraw(); } };
     ['a', 'b'].forEach((h, n)=>{ const el = document.createElement('div'); el.className = 'lv-segh'; el.textContent = n ? 'B' : 'A'; el.setAttribute('data-notr', '');
       const mk = new maplibregl.Marker({element:el, draggable:true, anchor:'center'}).setLngLat([P[S[h]][1], P[S[h]][0]]).addTo(map);
       const snap = () => { const ll = mk.getLngLat(); let j = 0, bd = 1e9; P.forEach((x, q)=>{ const d = km({lat:x[0], lng:x[1]}, {lat:ll.lat, lng:ll.lng}); if(d < bd){ bd = d; j = q; } }); S[h] = j; return j; };
@@ -2091,7 +2115,7 @@
     el.onclick = ev => { ev.stopPropagation(); const b = ev.target.closest('button'); if(!b) return; if(b.classList.contains('lv-tm-x')){ el.remove(); return; } if(b.dataset.seg){ el.remove(); lvSegEdit(pi, k); return; }
       const T = lvTM(); ((LV && LV.legMem && LV.legMem[k]) || []).forEach(z=>delete T[z]); if(b.dataset.m) T[k] = b.dataset.m; else delete T[k];
       const w = LV && LV.legWin && LV.legWin[k]; if(w && w[0] && w[1] > w[0]){ Object.keys(T).forEach(z=>{ if(z[0] === '@' && lvWinMode(w[0], w[1]) && (()=>{ const [a, c] = z.slice(1).split('-').map(Number); return Math.min(c, w[1]) > Math.max(a, w[0]); })()) delete T[z]; }); if(b.dataset.m) T['@' + w[0] + '-' + w[1]] = b.dataset.m; } lvTMSave(T);
-      el.remove(); if(LV){ LV.sig = ''; liveDraw(false); } };
+      el.remove(); lvRedraw(); };
     box.appendChild(el); }
   function liveDraw(first){
     if(!LV || !LV.map || !LV.map.isStyleLoaded || !LV.map.getStyle()) return;
