@@ -719,7 +719,7 @@
       h += `<div class="v-f2">${field('Date','date',it.date,'date')}${field('Compagnie / n° vol','compagnie',it.compagnie)}</div>`;
       h += `<div class="v-f2">${field('Heure départ','heureDep',it.heureDep,'time')}${field('Heure arrivée','heureArr',it.heureArr,'time')}</div>`;
     } else if(c==='hotel'){
-      h += field('Nom de l’hôtel / du bateau','nom',it.nom);
+      h += field('Nom de l’hôtel / du bateau','nom',it.nom,'text','data-place="poi addr hname" autocomplete="off" placeholder="' + esc(MSGT('Commence à taper le nom de l’hôtel')) + '"');   // 🏨 aide à la saisie autour de la ville de l’étape
       h += `<div class="v-f2">${field('Arrivée','date',it.date,'date')}${field('Départ','dateFin',it.dateFin,'date')}</div>`;
       h += field('Adresse','adresse',it.adresse,'text','data-place="poi addr" autocomplete="off" placeholder="' + esc(MSGT('Commence à taper : nom de l’hôtel ou rue')) + '"') + `<div class="v-sum-small" id="adr-ok" style="margin:-4px 0 8px">${it.lat != null ? '📍 ' + esc(MSGT('Placé exactement sur la carte')) : '💡 ' + esc(MSGT('Choisis dans la liste : l’hôtel sera placé exactement sur la carte'))}</div>`;   // 🏨 aide à la saisie, comme pour les villes
       h += `<div class="v-f2">${field('Check-in','heure',it.heure,'time')}${field('Téléphone','tel',it.tel,'tel')}</div>`;
@@ -2707,7 +2707,8 @@
       const city = a.city || a.town || a.village || a.municipality || '';
       const sub = isC ? MSGT('Pays') : poi ? [...new Set([a.road, a.neighbourhood || a.suburb, city, ctry].filter(x=>x && normQ(x) !== normQ(name)))].join(', ') : [a.state && normQ(a.state) !== normQ(name) ? a.state : '', ctry].filter(Boolean).join(', ');
       if(onlyC && !isC) continue;
-      out.push({name, sub, cc, ctry: isC ? name : ctry, lat, lng, city});
+      const nb1 = /^(fr|be|lu|mc|gb|us|ca|au|ie|nz)$/i.test(a.country_code || ''), adr = [(nb1 ? [a.house_number, a.road] : [a.road, a.house_number]).filter(Boolean).join(nb1 && /^(fr|be|lu|mc)$/i.test(a.country_code || '') ? ' ' : ' '), [a.postcode, city].filter(Boolean).join(' '), ctry].filter(Boolean).join(', ');
+      out.push({name, sub, cc, ctry: isC ? name : ctry, lat, lng, city, adr});
     }
     if(Object.keys(PAC).length > 200) Object.keys(PAC).slice(0, 100).forEach(x=>delete PAC[x]);
     return (PAC[k] = out);
@@ -2747,6 +2748,13 @@
     const g = geoCached(c) || await geocode(c, null); return g ? {lat:+g.lat, lng:+g.lng} : null; } catch(e){ return null; } }
   function pacClose(i){ const b = i && i._pac; if(b){ b.remove(); i._pac = null; } }
   function pacPick(i, it){
+    if(/hname/.test(i.dataset.place || '') && editing && editing.type === 'item'){   // 🏨 nom de l’hôtel choisi : son nom, son adresse et sa place exacte d’un coup
+      i.value = it.name; pacClose(i); i._pacSkip = 1;
+      const ad = document.querySelector('#v-form [name=adresse]'), av = it.adr || [it.name, it.city].filter(Boolean).join(', ');
+      if(ad) ad.value = av;
+      editing.lat = +(+it.lat).toFixed(6); editing.lng = +(+it.lng).toFixed(6); editing.geoAddr = ad ? ad.value : av;
+      const ok = document.getElementById('adr-ok'); if(ok) ok.textContent = '📍 ' + MSGT('Placé exactement sur la carte');
+      i.dispatchEvent(new Event('change', {bubbles:true})); if(ad) ad.dispatchEvent(new Event('change', {bubbles:true})); return; }
     if(/poi/.test(i.dataset.place || '')){   // 📍 lieu précis d’un souvenir : il est posé à cet endroit exact
       i.value = it.name + (it.city && normQ(it.city) !== normQ(it.name) ? ', ' + it.city : ''); pacClose(i); i._pacSkip = 1;
       if(editing && editing.type === 'item' && /addr/.test(i.dataset.place || '')){ editing.lat = +(+it.lat).toFixed(6); editing.lng = +(+it.lng).toFixed(6); editing.geoAddr = i.value; const ok = document.getElementById('adr-ok'); if(ok) ok.textContent = '📍 ' + MSGT('Placé exactement sur la carte');
