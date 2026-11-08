@@ -1920,17 +1920,26 @@
     const d = km({lat:g[0][0], lng:g[0][1]}, {lat:g[1][0], lng:g[1][1]}), h = ((g[1][2] || 0) - (g[0][2] || 0)) / 3600e3;
     return d > 500 || (h > 0 && d / h > 250) ? 'plane' : 'car'; }
   // les rails (serveur BRouter public, profil « rail ») : le train suit la voie au lieu de couper à travers champs
+  const LVRS = {};   // état des rails par morceau : 'wait' · 'ok' · 'err: …' (affiché dans le choix du transport)
   function lvRail(pts, k, done){
     if(!LVM){ try { LVM = JSON.parse(localStorage.getItem('vz_mm') || '{}'); } catch(e){ LVM = {}; } }
-    const got = LVM[k]; if(got) return got.length ? got : null; LVM[k] = [];
+    const got = LVM[k]; if(got) return got.length ? got : null; LVM[k] = []; LVRS[k] = 'wait';
     const st = pts.length > 12 ? pts.filter((x, j)=>j % Math.ceil(pts.length / 12) === 0 || j === pts.length - 1) : pts;
-    withTimeout(fetch('https://brouter.de/brouter?lonlats=' + st.map(x=>(+x[1]).toFixed(5) + ',' + (+x[0]).toFixed(5)).join('|') + '&profile=rail&alternativeidx=0&format=geojson'), 20000).then(x=>x.json()).then(j=>{
-      const co = j && j.features && j.features[0] && j.features[0].geometry && j.features[0].geometry.coordinates; if(!co || co.length < 2) return;
-      const a = pts[0], b = pts[pts.length - 1], f = co[0], l = co[co.length - 1];
-      if(km({lat:a[0], lng:a[1]}, {lat:f[1], lng:f[0]}) > 4 || km({lat:b[0], lng:b[1]}, {lat:l[1], lng:l[0]}) > 4) return;   // pas de voie près du départ ou de l’arrivée
-      LVM[k] = [[+(+a[1]).toFixed(5), +(+a[0]).toFixed(5)], ...co.map(c=>[+c[0].toFixed(5), +c[1].toFixed(5)]), [+(+b[1]).toFixed(5), +(+b[0]).toFixed(5)]];
+    const ll = L => L.map(x=>(+x[1]).toFixed(5) + ',' + (+x[0]).toFixed(5)).join('|');
+    const br = L => withTimeout(fetch('https://brouter.de/brouter?lonlats=' + ll(L) + '&profile=rail&alternativeidx=0&format=geojson'), 20000).then(async x=>{
+      const t = await x.text(); let j; try { j = JSON.parse(t); } catch(e){ throw new Error((t || 'HTTP ' + x.status).slice(0, 90)); }
+      const co = j && j.features && j.features[0] && j.features[0].geometry && j.features[0].geometry.coordinates; if(!co || co.length < 2) throw new Error('aucune voie'); return co; });
+    // la gare la plus proche (Photon, 5 km autour) : le GPS s’arrête souvent avant le quai
+    const gare = p => withTimeout(fetch(`https://photon.komoot.io/reverse?lat=${(+p[0]).toFixed(5)}&lon=${(+p[1]).toFixed(5)}&radius=5&limit=1&osm_tag=railway:station`), 12000).then(x=>x.json())
+      .then(j=>{ const c = j && j.features && j.features[0] && j.features[0].geometry && j.features[0].geometry.coordinates; if(!c) throw new Error('pas de gare à moins de 5 km'); return [c[1], c[0]]; });
+    const a = pts[0], b = pts[pts.length - 1];
+    const ok = co => { const f = co[0], l = co[co.length - 1];
+      if(km({lat:a[0], lng:a[1]}, {lat:f[1], lng:f[0]}) > 6 || km({lat:b[0], lng:b[1]}, {lat:l[1], lng:l[0]}) > 6) throw new Error('voie trop loin du départ ou de l’arrivée');
+      LVM[k] = [[+(+a[1]).toFixed(5), +(+a[0]).toFixed(5)], ...co.map(c=>[+c[0].toFixed(5), +c[1].toFixed(5)]), [+(+b[1]).toFixed(5), +(+b[0]).toFixed(5)]]; LVRS[k] = 'ok';
       try { localStorage.setItem('vz_mm', JSON.stringify(LVM)); } catch(e){}
-      if(done) done(); }).catch(()=>{});
+      if(done) done(); };
+    br(st).then(ok).catch(()=>Promise.all([gare(a), gare(b)]).then(([g1, g2])=>br([g1, g2])).then(ok))
+      .catch(e=>{ LVRS[k] = 'err: ' + String((e && e.message) || e || '?').slice(0, 120); if(done) done(); });
     return null; }
   let LVM = null;
   function lvRunLine(r, force){ const raw = r.map(x=>[x[1], x[0]]); if(r.length < 3) return raw;
@@ -1962,16 +1971,29 @@
   function lvGapLine(g, mode){ const a = g[0], b = g[1], k0 = lvGK(g), k = k0 + (mode === 'foot' ? ':f' : '');
     mode = mode || 'car'; if(mode === 'plane' || mode === 'boat') return [[a[1], a[0]], [b[1], b[0]]];
     if(mode === 'rail'){ if(km({lat:a[0], lng:a[1]}, {lat:b[0], lng:b[1]}) > 1500) return [[a[1], a[0]], [b[1], b[0]]];
-      return lvRail(g, 'rg:' + k0, ()=>{ if(LV){ LV.sig = ''; liveDraw(false); } }) || [[a[1], a[0]], [b[1], b[0]]]; }
+      return lvRail(g, 'rg:' + k0, ()=>{ if(LV){ LV.sig = ''; liveDraw(false); } }) || lvGapLine(g, 'car'); }   // en attendant les rails (ou s’ils sont introuvables) : la route, jamais à travers le lac
     if(LVG[k] && LVG[k].length) return LVG[k];
     if(!LVG[k] && km({lat:a[0], lng:a[1]}, {lat:b[0], lng:b[1]}) < 300){ LVG[k] = [];
       withTimeout(fetch(`https://routing.openstreetmap.de/${mode === 'foot' ? 'routed-foot/route/v1/foot' : 'routed-car/route/v1/driving'}/${(+a[1]).toFixed(5)},${(+a[0]).toFixed(5)};${(+b[1]).toFixed(5)},${(+b[0]).toFixed(5)}?overview=simplified&geometries=geojson`), 12000)
         .then(r=>r.json()).then(j=>{ const co = j && j.routes && j.routes[0] && j.routes[0].geometry.coordinates; if(co && co.length > 1){ LVG[k] = co.map(c=>[+c[0].toFixed(5), +c[1].toFixed(5)]); if(LV){ LV.sig = ''; liveDraw(false); } } }).catch(()=>{}); }
     return [[a[1], a[0]], [b[1], b[0]]]; }
+  const LV_IC = {car:'🚗', rail:'🚆', plane:'✈️', boat:'⛴️', foot:'🚶'};
+  function lvRunMode(r){ const o = lvTM()[lvRK(r)]; if(o) return o; const p = lvPlan(r[0][2], r[r.length - 1][2]); if(p) return p;
+    const h = ((r[r.length - 1][2] || 0) - (r[0][2] || 0)) / 3600e3, d = r.reduce((s, x, j)=>j ? s + km({lat:r[j - 1][0], lng:r[j - 1][1]}, {lat:x[0], lng:x[1]}) : 0, 0);
+    return h > 0 && d / h > 18 ? 'car' : 'foot'; }
+  // 🚆🚗🚶 un petit emoji au milieu de chaque trait : on voit d’un coup d’œil comment on s’est déplacé (toucher = changer)
+  function lvTmMarks(map, marks){ LV.tmk = LV.tmk || {}; const keep = new Set();
+    marks.forEach(x=>{ const id = x.i + '|' + x.k; keep.add(id); let m = LV.tmk[id];
+      if(!m){ const el = document.createElement('button'); el.type = 'button'; el.className = 'lv-tmi'; el.setAttribute('data-notr', '');
+        el.onclick = ev => { ev.stopPropagation(); lvTmPick(x.k); };
+        m = LV.tmk[id] = {el, mk:new maplibregl.Marker({element:el, anchor:'center'}).setLngLat(x.at).addTo(map)}; }
+      m.mk.setLngLat(x.at); m.el.textContent = LV_IC[x.m] || '🧭'; m.el.style.setProperty('--c', x.c); });
+    Object.keys(LV.tmk).forEach(id=>{ if(!keep.has(id)){ LV.tmk[id].mk.remove(); delete LV.tmk[id]; } }); }
   function lvTmPick(k){ const box = document.getElementById('cv-lmap') || document.body; let el = document.getElementById('lv-tm'); if(el) el.remove();
     const cur = lvTM()[k] || '', M5 = [['car', '🚗 Voiture'], ['rail', '🚆 Train'], ['plane', '✈️ Avion'], ['boat', '⛴️ Bateau'], ['foot', '🚶 À pied'], ['', '✨ Auto']];
     el = document.createElement('div'); el.id = 'lv-tm'; el.className = 'lv-tm';
-    el.innerHTML = `<b>${esc(MSGT('Comment as-tu fait ce trajet ?'))}</b><div>${M5.map(([m, l])=>`<button type="button" class="${m === cur ? 'on' : ''}" data-m="${m}">${esc(MSGT(l))}</button>`).join('')}</div><button type="button" class="lv-tm-x" aria-label="×">✕</button>`;
+    const rs = LVRS['rg:' + k] || Object.keys(LVRS).filter(z=>z.startsWith('r:')).map(z=>LVRS[z]).find(v=>/^err/.test(v)) || '';
+    el.innerHTML = `<b>${esc(MSGT('Comment as-tu fait ce trajet ?'))}</b>${cur === 'rail' && rs ? `<small class="lv-tm-st">${rs === 'ok' ? '🚆 ' + esc(MSGT('Rails trouvés')) : rs === 'wait' ? '⏳ ' + esc(MSGT('Recherche des rails…')) : '⚠️ ' + esc(MSGT('Rails introuvables')) + ' <span data-notr>(' + esc(rs.slice(5)) + ')</span>'}</small>` : ''}<div>${M5.map(([m, l])=>`<button type="button" class="${m === cur ? 'on' : ''}" data-m="${m}">${esc(MSGT(l))}</button>`).join('')}</div><button type="button" class="lv-tm-x" aria-label="×">✕</button>`;
     el.onclick = ev => { ev.stopPropagation(); const b = ev.target.closest('button'); if(!b) return; if(b.classList.contains('lv-tm-x')){ el.remove(); return; }
       const T = lvTM(); if(b.dataset.m) T[k] = b.dataset.m; else delete T[k]; try { localStorage.setItem('vz_tm', JSON.stringify(T)); } catch(e){}
       el.remove(); if(LV){ LV.sig = ''; liveDraw(false); } };
@@ -1983,6 +2005,7 @@
     LV.sig = sig; LV.D = D;
     // routes : un calque par voyageur, à sa couleur (le trait se dessine à l’ouverture, puis une lueur le parcourt)
     // trou dans le suivi (train, mode avion, appli fermée) : pas de trait plein à travers le lac — un pointillé qui suit la route
+    const TM = [];
     D.people.forEach((p, i)=>{ const src = 'lv-r' + i, sp = lvSplit(p.pts);
       // 🚆 un trou fait en train : trait plein le long des rails (on voit la différence voiture / train / avion) ; toucher un trait = dire comment on l’a fait
       const gm = sp.gaps.map(g=>({g, m:lvGapMode(g)})), rail = gm.filter(x=>x.m === 'rail'), dash = gm.filter(x=>x.m !== 'rail');
@@ -1990,6 +2013,11 @@
           ...rail.map(x=>({type:'Feature', properties:{k:lvGK(x.g)}, geometry:{type:'LineString', coordinates:lvGapLine(x.g, 'rail')}}))]
         : [{type:'Feature', properties:{}, geometry:{type:'Point', coordinates:[p.pts[0][1], p.pts[0][0]]}}]};
       const gg = {type:'FeatureCollection', features: dash.map(x=>({type:'Feature', properties:{k:lvGK(x.g), m:x.m}, geometry:{type:'LineString', coordinates:lvGapLine(x.g, x.m)}}))};
+      const midOf = co => co[Math.floor(co.length / 2)];
+      gj.features.forEach((f, j)=>{ const k = f.properties.k; if(!k || f.geometry.type !== 'LineString') return; const r = j < sp.runs.length ? sp.runs[j] : null;
+        if(r && r.reduce((s, x, q)=>q ? s + km({lat:r[q - 1][0], lng:r[q - 1][1]}, {lat:x[0], lng:x[1]}) : 0, 0) < 1) return;
+        TM.push({i, k, m: r ? lvRunMode(r) : 'rail', at: midOf(f.geometry.coordinates), c:p.c}); });
+      gg.features.forEach(f=>TM.push({i, k:f.properties.k, m:f.properties.m, at:midOf(f.geometry.coordinates), c:p.c}));
       if(map.getSource(src)){ map.getSource(src).setData(gj); if(map.getSource(src + 'x')) map.getSource(src + 'x').setData(gg); }
       else { map.addSource(src, {type:'geojson', data:gj, lineMetrics:true}); map.addSource(src + 'x', {type:'geojson', data:gg});
         map.addLayer({id:src + 'x', type:'line', source:src + 'x', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':p.c, 'line-width':3, 'line-opacity':.75, 'line-dasharray':[1.2, 1.8]}});
@@ -1997,6 +2025,7 @@
         map.addLayer({id:src + 'l', type:'line', source:src, layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-width':4.5, 'line-gradient':lvGrad(p.c, first ? 0.001 : 1, -1)}});
         [src + 'l', src + 'x'].forEach(ly=>{ map.on('click', ly, e=>{ const f = e.features && e.features[0], k = f && f.properties && f.properties.k; if(k){ if(e.originalEvent) e.originalEvent.stopPropagation(); lvTmPick(k); } });
           map.on('mouseenter', ly, ()=>{ map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', ly, ()=>{ map.getCanvas().style.cursor = ''; }); }); } });
+    try { lvTmMarks(map, TM); } catch(e){}
     for(let i = D.people.length; map.getSource('lv-r' + i); i++){ ['g','l','x'].forEach(s=>{ if(map.getLayer('lv-r' + i + s)) map.removeLayer('lv-r' + i + s); }); map.removeSource('lv-r' + i); if(map.getSource('lv-r' + i + 'x')) map.removeSource('lv-r' + i + 'x'); }
     if(first) LV.prog = 0;
     // chacun : un médaillon à sa couleur qui pulse s’il est en direct
