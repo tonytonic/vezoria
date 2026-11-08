@@ -3448,3 +3448,8 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .sp2-own{font-weight:500;color:var(--gray);font-size:.78rem}
 .se-st{display:flex;align-items:center;gap:8px}.se-st .cv-num{width:80px;text-align:center}.se-st button{width:40px;height:40px;border-radius:12px;border:1px solid var(--light,#ddd);background:var(--card,#fff);font-size:1.2rem;color:inherit}
 .gd-noted{margin:0 0 12px;padding:12px 14px;border-radius:16px;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.35)}.gd-noted b{display:block}.gd-noted small{opacity:.8}.gd-noted .v-btn{flex:1;padding:9px}
+/* ✍️ parcours guidé : ajouter à la main */
+.gd-man{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 2px}
+.gd-man .v-btn{flex:1 1 180px;margin:0;font-size:.86rem}
+/* 👥 compteur compagnons de l’en-tête */
+.hs-cp b{color:inherit}

@@ -1336,14 +1336,15 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const fw = ab2Fws().length;   // abonnés v2
     const lk = list('like', l=>mine.has(l.trip) && l.on && !isBlk(l) && !String(l.id).endsWith(':' + me)).length;
     const fo = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted).length;
-    if(!mine.size && !fo && !fw && !lk){ box.style.display = 'none'; return; }   // rien de publié, rien de suivi : pas de « 0 · 0 · 0 »
+    // 👥 toujours visible, même à 0 : c’est la porte d’entrée du partage (et des compagnons) pour un nouveau venu
+    const t0 = trip(), cp = t0 ? (t0.voyageurs || []).filter(v=>v && v !== M.me && prof(v)).length : 0;
     const now = {fw, lk, fo}, old = M.hStat || null;
     const fmt = n => n >= 10000 ? Math.round(n / 1000) + 'k' : n >= 1000 ? (Math.round(n / 100) / 10).toString().replace('.', ',') + 'k' : String(n);
     const cell = (k, n, lbl) => {
       const up = old && n > (old[k] || 0) ? n - (old[k] || 0) : 0;
       return `<span class="hs-c${up ? ' up' : ''}" role="button" onclick="event.stopPropagation();CV.socialHub('${k}')"><b>${fmt(n)}</b><small>${lbl}</small>${up ? `<i class="hs-plus">+${up}</i>` : ''}</span>`;
     };
-    box.innerHTML = cell('fw', fw, 'abonnés') + cell('lk', lk, 'j’aime') + cell('fo', fo, 'suivis');
+    box.innerHTML = `<span class="hs-c hs-cp" role="button" onclick="event.stopPropagation();CV.${cp ? 'spCompSheet' : 'spCompAdd'}()"><b>${cp ? fmt(cp) : '＋'}</b><small>${cp > 1 ? 'compagnons' : 'compagnon'}</small></span>` + cell('fw', fw, 'abonnés') + cell('lk', lk, 'j’aime') + cell('fo', fo, 'suivis');
     box.style.display = '';
     if(!old || old.fw !== fw || old.lk !== lk || old.fo !== fo){ M.hStat = now; try { persist(); } catch(e){} }
   }

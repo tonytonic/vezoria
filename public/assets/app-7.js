@@ -331,7 +331,8 @@
   }
   // ✏️ saisie à la main depuis le parcours (adresse, prix, horaires…) : après « Enregistrer », on revient où on était
   function guideEdit(id, kind, k){ GRET = {id, kind, k:+k || 0}; edit(id); }
-  function gdAfterSave(id){ const r = GRET; GRET = null; if(!r || r.id !== id) return;
+  function gdAfterSave(id){ const r = GRET; GRET = null; if(!r || (r.id !== id && !r.nw)) return;
+    if(r.nw){ setTimeout(()=>gdMan(r.nw === 'x' ? 'x' : 'v'), 120); return; }
     setTimeout(()=>{ if(r.kind === 'h') guideHotel(r.k); else guideList(r.kind); }, 120); }
   // 📝 une fiche remplie à la main ressemble à une réservation faite : un hôtel avec son nom ou son adresse, un trajet avec ses horaires ou son n°
   function gdNoted(L){ return (L || []).filter(i=>{ if(!i || okB(i)) return false; if(i.ref || i.prix) return true;
@@ -364,6 +365,7 @@
         ${row('🛏️', MSGT('Les hébergements'), hs.length ? RF('{0} à réserver', hs.length) + ' · ' + MSGT('avec la carte du quartier conseillé') : MSGT('Tout est réservé'), 'CV.guideHotel(0)', !hs.length)}
         ${row('✅', MSGT('Finaliser'), MSGT('Papiers, santé, argent, valise'), 'CV.guideFin()', false)}
       </div>
+      <div class="gd-man"><button type="button" class="v-btn sec" onclick="CV.gdMan('v')">✍️ ${esc(MSGT('Ajouter une visite à la main'))}</button><button type="button" class="v-btn sec" onclick="CV.gdMan('x')">✍️ ${esc(MSGT('Ajouter une activité à la main'))}</button></div>
       <div class="v-actions gd-act"><button type="button" class="v-btn sec" onclick="CV.guideStop()">✋ ${MSGT('Je continue en manuel')}</button><button type="button" class="v-btn sec" onclick="CV.guideLater()">⏰ ${MSGT('Plus tard')}</button></div>
       <div class="v-sum-small">${MSGT('« Plus tard » : le bouton 🧭 de la carte « Ta préparation » te ramène ici.')}</div></div>`);
   }
@@ -376,12 +378,40 @@
     openSheet(`<div class="gd"><h2>${kind === 'tr' ? '🚆 ' + MSGT('Les trajets') : '🎟️ ' + MSGT('Les activités payantes')}</h2>
       <div class="v-sum-small" style="margin-bottom:10px">${MSGT(kind === 'tr' ? 'Dans l’ordre du voyage. Réserve chez le partenaire, puis touche « C’est réservé ».' : 'Choisis d’abord les expériences qui te tentent, puis réserve-les.')}</div>
       ${xn ? `<button type="button" class="v-btn" style="margin:0 0 10px" onclick="CV.expOpen()">🎟️ ${RF('Choisir parmi {0} expériences', xn)}</button>` : ''}
+      ${kind === 'x' ? `<button type="button" class="v-btn sec" style="margin:0 0 10px" onclick="CV.gdManX()">✍️ ${esc(MSGT('Ajouter une activité à la main'))}</button>` : ''}
       <div class="ar-rs">${L.map(it=>`<div class="ar-r" role="button" onclick="CV.guideEdit('${ja(it.id)}','${kind}')"><i>${icon(it)}</i>
         <span><b data-notr>${esc(itLbl(it))}</b><small>${fd(it.date)}${it.mode ? ' · ' + esc(MSGT(it.mode)) : ''}</small></span>
         ${bkBtn(it)}<div class="ar-ra" data-bkid="${esc(it.id)}">${ariLink(it, t)}<button type="button" class="ar-ed" onclick="event.stopPropagation();CV.guideEdit('${ja(it.id)}','${kind}')">✏️ ${MSGT('Saisir ma résa')}</button><button type="button" onclick="event.stopPropagation();CV.guideBook('${ja(it.id)}','${kind}')">${MSGT('C’est réservé')}</button></div></div>` + (kind === 'tr' ? aptHTML(it, t) : '')).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.guideSheet()" aria-label="←">←</button><button type="button" class="v-btn" onclick="CV.guideSheet()">🧭 ${MSGT('Continuer')}</button></div></div>`);
   }
   const guideTr = () => guideList('tr'), guideExp = () => guideList('x');
+  // ✍️ ajouter à la main depuis le parcours guidé : une visite (nom ou adresse, le jour choisi) ou une activité (sa fiche complète), puis retour au parcours
+  let GDM = null;
+  function gdManX(){ GRET = {nw:'x'}; edit(null, 'activite'); }
+  function gdMan(k){
+    if(k === 'x') return gdManX();
+    const t = trip(); if(!t || !t.debut) return guideSheet(); const fin = t.fin || t.debut, days = [];
+    for(let d = t.debut; d <= fin && days.length < 120; d = addDays(d, 1)) days.push(d);
+    const cur = GDM && days.includes(GDM.d) ? GDM.d : (days.find(d=>d >= locIso()) || days[0]);
+    const pl = list('place', p=>p.trip === t.id && !p.deleted && !p.sugg && p.date === cur);
+    openSheet(`<div class="gd"><h2>✍️ ${esc(MSGT('Ajouter une visite à la main'))}</h2>
+      <div class="v-f"><label>${esc(MSGT('Quel jour ?'))}</label><select class="v-in" id="gdm-d" onchange="CV.gdManDay(this.value)">${days.map(d=>{ const c = dayCity(d); return `<option value="${d}"${d === cur ? ' selected' : ''}>${esc(fshort(d))}${c ? ' · ' + esc(c) : ''}</option>`; }).join('')}</select></div>
+      <div class="v-f"><label>${esc(MSGT('La visite'))}</label><div class="cv-row"><input class="v-in" id="gdm-n" placeholder="${esc(MSGT('Ex. Tour de Pise ; Piazza dei Miracoli'))}" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.gdManAdd()}">
+        <button type="button" class="v-btn cv-sq" onclick="CV.gdManAdd()" aria-label="${esc(MSGT('Ajouter'))}">＋</button></div>
+        <div class="v-sum-small" style="margin-top:4px">${esc(MSGT('Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».'))}</div></div>
+      ${pl.length ? `<div class="v-f"><label>${esc(MSGT('Déjà prévu ce jour-là'))} (${pl.length})</label>${pl.map(p=>`<div class="cv-place"><span class="x" role="button" onclick="CV.plInfo('${ja(p.id)}')"><u data-notr>${esc(p.nom || '')}</u></span></div>`).join('')}</div>` : ''}
+      <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.guideSheet()" aria-label="←">←</button><button type="button" class="v-btn" onclick="CV.guideSheet()">🧭 ${esc(MSGT('Continuer'))}</button></div></div>`);
+    setTimeout(()=>{ const i = document.getElementById('gdm-n'); if(i) try { i.focus(); } catch(e){} }, 120);
+  }
+  function gdManDay(d){ GDM = {d}; gdMan('v'); }
+  function gdManAdd(){
+    const d = (document.getElementById('gdm-d') || {}).value, raw = String((document.getElementById('gdm-n') || {}).value || '').trim(); if(!d || !raw) return;
+    GDM = {d}; const st = hotelsAround(d).night, n0 = list('place', p=>p.trip === M.trip && !p.deleted && p.date === d).length;
+    const out = raw.split(/[;\n]+/).map(x=>x.trim()).filter(Boolean).map((x, i)=>{ let nom = x; const m = x.match(/\/place\/([^/@?]+)/);
+      if(/^https?:/.test(x)) nom = m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : MSGT('Lieu') + ' ' + (n0 + i + 1);
+      return {id:'pl' + uid() + i, type:'place', trip:M.trip, date:d, stay:st ? st.id : '', nom, adresse:x !== nom ? x : ''}; });
+    putMany(out, '📍 ' + MSGT('Ajouté')); gdMan('v');
+  }
   function guideBook(id, kind, k){
     const it = R[id]; if(!it) return; const c = clone(it); c.statut = 'booked'; putQuiet([c]); toast('✓ ' + MSGT('Noté comme réservé')); refresh();
     if(kind === 'h') guideHotel(k || 0); else guideList(kind);
