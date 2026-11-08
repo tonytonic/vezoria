@@ -6429,4 +6429,11 @@ I18N.load({
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"何も聞こえませんでした：マイクをタップして少し大きな声で話してください。",
 "Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"この言語では音声入力が使えません：キーボードの🎤を使ってください。",
 "{0} requêtes au serveur aujourd’hui (ce téléphone)":"今日のサーバーへのリクエスト {0} 件（この端末）",
-"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"UTC深夜0時からの集計。アプリのページや画像は含みません。"});
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"UTC深夜0時からの集計。アプリのページや画像は含みません。",
+"Comment as-tu fait ce trajet ?":"この区間はどうやって移動した？",
+"🚗 Voiture":"🚗 車",
+"🚆 Train":"🚆 電車",
+"✈️ Avion":"✈️ 飛行機",
+"⛴️ Bateau":"⛴️ 船",
+"🚶 À pied":"🚶 徒歩",
+"✨ Auto":"✨ 自動"});

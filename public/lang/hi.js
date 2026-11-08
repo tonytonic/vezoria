@@ -6429,4 +6429,11 @@ I18N.load({
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"कुछ सुनाई नहीं दिया: माइक दबाएं और थोड़ा ज़ोर से बोलें।",
 "Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"इस भाषा में डिक्टेशन नहीं: कीबोर्ड का 🎤 माइक इस्तेमाल करें।",
 "{0} requêtes au serveur aujourd’hui (ce téléphone)":"आज सर्वर को {0} अनुरोध (यह फ़ोन)",
-"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"मध्यरात्रि UTC से गिना गया। ऐप के पेज और चित्र नहीं गिने जाते।"});
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"मध्यरात्रि UTC से गिना गया। ऐप के पेज और चित्र नहीं गिने जाते।",
+"Comment as-tu fait ce trajet ?":"यह सफ़र तुमने कैसे किया?",
+"🚗 Voiture":"🚗 कार",
+"🚆 Train":"🚆 ट्रेन",
+"✈️ Avion":"✈️ हवाई जहाज़",
+"⛴️ Bateau":"⛴️ नाव",
+"🚶 À pied":"🚶 पैदल",
+"✨ Auto":"✨ अपने आप"});

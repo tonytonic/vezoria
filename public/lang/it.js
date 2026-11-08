@@ -3490,4 +3490,11 @@ I18N.load({
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"Non ho sentito nulla: tocca il microfono e parla un po’ più forte.",
 "Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Dettatura non disponibile in questa lingua: usa il microfono 🎤 della tastiera.",
 "{0} requêtes au serveur aujourd’hui (ce téléphone)":"{0} richieste al server oggi (questo telefono)",
-"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"Contate dalla mezzanotte UTC. Pagine e immagini dell’app non contano."});
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"Contate dalla mezzanotte UTC. Pagine e immagini dell’app non contano.",
+"Comment as-tu fait ce trajet ?":"Come hai fatto questo tragitto?",
+"🚗 Voiture":"🚗 Auto",
+"🚆 Train":"🚆 Treno",
+"✈️ Avion":"✈️ Aereo",
+"⛴️ Bateau":"⛴️ Battello",
+"🚶 À pied":"🚶 A piedi",
+"✨ Auto":"✨ Auto"});

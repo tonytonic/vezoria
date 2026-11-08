@@ -6429,4 +6429,11 @@ I18N.load({
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"没有听到声音：点麦克风，说大声一点。",
 "Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"该语言不支持听写：请使用键盘的 🎤 麦克风。",
 "{0} requêtes au serveur aujourd’hui (ce téléphone)":"今天 {0} 次服务器请求（本机）",
-"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"自 UTC 零点起计算。应用页面和图片不计入。"});
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"自 UTC 零点起计算。应用页面和图片不计入。",
+"Comment as-tu fait ce trajet ?":"这段路你是怎么走的？",
+"🚗 Voiture":"🚗 汽车",
+"🚆 Train":"🚆 火车",
+"✈️ Avion":"✈️ 飞机",
+"⛴️ Bateau":"⛴️ 船",
+"🚶 À pied":"🚶 步行",
+"✨ Auto":"✨ 自动"});

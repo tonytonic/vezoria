@@ -6429,4 +6429,11 @@ I18N.load({
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"아무것도 안 들렸어요: 마이크를 누르고 조금 더 크게 말하세요.",
 "Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"이 언어는 받아쓰기를 지원하지 않아요: 키보드 🎤 마이크를 쓰세요.",
 "{0} requêtes au serveur aujourd’hui (ce téléphone)":"오늘 서버 요청 {0}건 (이 휴대폰)",
-"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"UTC 자정부터 집계. 앱 페이지와 이미지는 포함되지 않아요."});
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"UTC 자정부터 집계. 앱 페이지와 이미지는 포함되지 않아요.",
+"Comment as-tu fait ce trajet ?":"이 구간은 어떻게 이동했나요?",
+"🚗 Voiture":"🚗 자동차",
+"🚆 Train":"🚆 기차",
+"✈️ Avion":"✈️ 비행기",
+"⛴️ Bateau":"⛴️ 배",
+"🚶 À pied":"🚶 도보",
+"✨ Auto":"✨ 자동"});

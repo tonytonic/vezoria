@@ -6417,4 +6417,11 @@ I18N.load({
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"Bir şey duymadım: mikrofona dokun ve biraz daha yüksek konuş.",
 "Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Bu dilde dikte yok: klavyenin 🎤 mikrofonunu kullan.",
 "{0} requêtes au serveur aujourd’hui (ce téléphone)":"Bugün {0} sunucu isteği (bu telefon)",
-"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"UTC gece yarısından beri sayılır. Uygulama sayfaları ve görselleri sayılmaz."});
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"UTC gece yarısından beri sayılır. Uygulama sayfaları ve görselleri sayılmaz.",
+"Comment as-tu fait ce trajet ?":"Bu yolculuğu nasıl yaptın?",
+"🚗 Voiture":"🚗 Araba",
+"🚆 Train":"🚆 Tren",
+"✈️ Avion":"✈️ Uçak",
+"⛴️ Bateau":"⛴️ Tekne",
+"🚶 À pied":"🚶 Yürüyerek",
+"✨ Auto":"✨ Otomatik"});

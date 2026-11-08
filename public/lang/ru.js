@@ -6430,4 +6430,11 @@ I18N.load({
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"Ничего не слышно: нажми на микрофон и говори громче.",
 "Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Диктовка недоступна на этом языке: используй микрофон 🎤 клавиатуры.",
 "{0} requêtes au serveur aujourd’hui (ce téléphone)":"{0} запросов к серверу сегодня (этот телефон)",
-"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"Считается с полуночи UTC. Страницы и картинки приложения не учитываются."});
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"Считается с полуночи UTC. Страницы и картинки приложения не учитываются.",
+"Comment as-tu fait ce trajet ?":"Как ты проделал этот путь?",
+"🚗 Voiture":"🚗 Машина",
+"🚆 Train":"🚆 Поезд",
+"✈️ Avion":"✈️ Самолёт",
+"⛴️ Bateau":"⛴️ Корабль",
+"🚶 À pied":"🚶 Пешком",
+"✨ Auto":"✨ Авто"});
