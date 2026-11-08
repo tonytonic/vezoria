@@ -2462,6 +2462,10 @@
     me.lg.forEach(m=>m.remove()); me.lg = [];
     const add = (el, p, anchor) => me.lg.push(new maplibregl.Marker({element:el, anchor:anchor || 'center'}).setLngLat([p.lng, p.lat]).addTo(map));
     mapRich(map, F, me.font, add, false);
+    // 👆 toucher une visite : sa fiche · une activité : sa réservation (comme les hôtels)
+    if(!me.tapOn){ me.tapOn = 1; try { const tap = (ly, fn) => { map.on('click', ly, e=>{ const f = e.features && e.features[0], id = f && f.properties && f.properties.id; if(id && R[id]){ vmClose(); setTimeout(()=>{ try { fn(id); } catch(_){} }, 80); } });
+        map.on('mouseenter', ly, ()=>{ map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', ly, ()=>{ map.getCanvas().style.cursor = ''; }); };
+      tap('vm-vis', plInfo); tap('vm-act', edit); } catch(e){} }
     // 🛏️ hébergements : visibles en zoomant
     F.hotels.forEach(x=>{ const e = document.createElement('button'); e.type = 'button'; e.className = 'p3-hot';
       e.innerHTML = `<i style="background:${P3C[x.st]}">🛏️</i><span data-notr>${esc(x.h.titre || x.city)}</span><small>${esc(MSGT(x.st === 'paid' ? 'Payé' : x.st === 'booked' ? 'Réservé' : 'À réserver'))}</small>`;
@@ -2722,7 +2726,15 @@
     const g = async q => { q = (q || '').trim(); if(!q) return null; const r = await geocode(q, null).catch(()=>null); return r && r.lat != null ? {lat:+r.lat, lng:+r.lng} : null; };
     const F = {legs:[], cities:[], hood:[], rays:[], visits:[], acts:[], hotels:[]};
     const st = tlStages(), SC = []; let k = 0;
-    for(const s of st){ const c = await g(s.city); if(c){ F.cities.push({c, name:s.city, n:++k}); SC.push({s, c}); } }
+    for(const s of st){ let c = await g(s.city); if(!c) continue;
+      // 🎯 contrôle : là où sont les visites, activités et hôtels de l’étape (placés au point exact). Si la ville est loin d’eux
+      //    (« Pise » tombé au milieu de sa province, à 25 km), c’est elle qui se trompe : on la met au milieu de ce qu’on y fait.
+      try { const end = s.fin && s.fin > s.debut ? s.fin : addDays(s.debut, 1), inS = d => d && d >= s.debut && d < end;
+        const P = [...list('place', q=>q.trip === t.id && !q.deleted && !q.sugg && q.lat != null && inS(q.date)), ...list('item', i=>i.trip === t.id && (i.cat === 'activite' || i.cat === 'hotel') && i.lat != null && inS(i.date))].map(q=>({lat:+q.lat, lng:+q.lng})).filter(q=>isFinite(q.lat) && isFinite(q.lng));
+        if(P.length >= 2){ const med = a => { const b = a.slice().sort((x, y)=>x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; };
+          const M0 = {lat:med(P.map(q=>q.lat)), lng:med(P.map(q=>q.lng))}, near = P.filter(q=>rawKm(q, M0) < 6).length;
+          if(rawKm(c, M0) > 8 && near >= Math.max(2, P.length / 2)) c = M0; } } catch(e){}
+      F.cities.push({c, name:s.city, n:++k}); SC.push({s, c}); }
     // 🚆 un bout de trajet se place d’abord sur une ville d’étape ; sinon on le cherche AUTOUR de l’étape du jour
     //    (« Aéroport », « Gare Termini », « Pompéi » : pas un aéroport au hasard en Biélorussie)
     const stageAt = (d, leave) => { if(!d) return null; const x = SC.find(({s})=>leave ? (s.debut < d && d <= (s.fin || s.debut)) : (s.debut <= d && d < (s.fin || addDays(s.debut, 1)))); return x || null; };
@@ -2760,7 +2772,7 @@
         A0.A.forEach(q=>F.rays.push({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:[[hub.lng, hub.lat], [q.lng, q.lat]]}})); }
       A0.P.forEach(v=>{ if(seenP.has(v.id)) return; seenP.add(v.id); F.visits.push({type:'Feature', properties:{name:v.nom, id:v.id, vu:v.vu ? 1 : 0, skip:v.skip ? 1 : 0}, geometry:{type:'Point', coordinates:[+v.lng, +v.lat]}}); });
       const C = A0.C0 || p; A0.X.forEach((x, j)=>{ if(seenX.has(x.id)) return; seenX.add(x.id); const q = x.lat != null && x.lng != null ? {lat:+x.lat, lng:+x.lng} : {lat:C.lat + .006 * Math.sin(j * 1.9 + 1), lng:C.lng + .009 * Math.cos(j * 1.9 + 1)};   // sans adresse : autour du centre
-        F.acts.push({type:'Feature', properties:{name:(z => z.length > 1 ? (normQ(z[1]) === normQ(A0.city) ? z[0] : z.slice(1).join(' · ')) : z[0])(String(x.titre || '').split(' · ')), col:P3C[p3St(x)]}, geometry:{type:'Point', coordinates:[q.lng, q.lat]}}); });
+        F.acts.push({type:'Feature', properties:{name:(z => z.length > 1 ? (normQ(z[1]) === normQ(A0.city) ? z[0] : z.slice(1).join(' · ')) : z[0])(String(x.titre || '').split(' · ')), col:P3C[p3St(x)], id:x.id}, geometry:{type:'Point', coordinates:[q.lng, q.lat]}}); });
     }
     // 📍 les visites et activités du programme qui ne tombent dans aucun hébergement (journée hors étape, hôtel sans dates…)
     list('place', q=>q.trip === t.id && !q.sugg && !q.deleted && q.lat != null && q.lng != null && (q.date || q.stay) && !seenP.has(q.id)).forEach(q=>F.visits.push({type:'Feature', properties:{name:q.nom, id:q.id, vu:q.vu ? 1 : 0, skip:q.skip ? 1 : 0}, geometry:{type:'Point', coordinates:[+q.lng, +q.lat]}}));
