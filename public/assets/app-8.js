@@ -2009,7 +2009,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-08ze'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-08zf'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2052,7 +2052,7 @@
     return 1;
   }
   // 📱 mon fil, mes liens d’abonnés et mes voyages montrés, pareils sur tous mes appareils (fiche « abcfg » de mon carnet)
-  function ab2CfgSave(){ const c = ab2C(); M.ab2At = Date.now(); putQuiet([{id:'abcfg', type:'abcfg', v:AB_V, code:c, inv:AI().map(x=>({id:x.id, name:x.name, code:x.code, at:x.at})), vis:Object.keys(FT()).filter(t=>FT()[t] === c), at:M.ab2At}]); }
+  function ab2CfgSave(){ const c = ab2C(); M.ab2At = Date.now(); putQuiet([{id:'abcfg', type:'abcfg', v:AB_V, code:c, inv:AI().map(x=>Object.assign({id:x.id, name:x.name, code:x.code, at:x.at}, x.pub ? {pub:1} : {}, x.closed ? {closed:1} : {})), vis:Object.keys(FT()).filter(t=>FT()[t] === c), at:M.ab2At}]); }
   function ab2Space(c, f){ if(!c) return null; if(!spaceObj(c)) (M.spaces = M.spaces || []).push(Object.assign({code:c, since:0, dirty:[], last:0, err:''}, f || {})); const sp = spaceObj(c); Object.assign(sp, f || {}); return sp; }
   function ab2CfgLoad(){
     const r = R.abcfg; if(!r || r.deleted || r.v !== AB_V || !r.at || r.at <= (M.ab2At || 0)) return 0;
@@ -2074,7 +2074,7 @@
   // 🔗 la fiche du lien d’un abonné : le code du fil (il le suit avec), son prénom, ses voyages cachés
   function ab2InvRec(x, extra){ TS()['fi:' + x.code] = x.code; const cur = R['iv:' + x.code];
     const keep = cur && !cur.deleted ? cur : {};
-    const r = Object.assign({id:'iv:' + x.code, type:'abinv', trip:'fi:' + x.code, code:ab2C(), name:x.name, owner:myName() || '', oav:myAv() || '', hide:keep.hide || []}, x.pub ? {pub:1, ban:keep.ban || [], hd:keep.hd || {}} : {}, extra || {});
+    const r = Object.assign({id:'iv:' + x.code, type:'abinv', trip:'fi:' + x.code, code:ab2C(), name:x.name, owner:myName() || '', oav:myAv() || '', hide:keep.hide || []}, x.pub ? {pub:1, ban:keep.ban || [], hd:keep.hd || {}, mv:keep.mv || {}} : {}, x.pub && (x.closed || keep.closed) ? {closed:1} : {}, extra || {});
     if(!cur || cur.deleted || stripStamp(cur) !== stripStamp(r)) putQuiet([r]); }
   // 🟢 un voyage montré / caché à tous mes abonnés
   async function ab2TripSet(tid, on){
@@ -2111,10 +2111,10 @@
   const ab2InvFws = x => list('follower', f=>f.code === x.code).sort((a, b)=>(b.updatedAt || 0) - (a.updatedAt || 0));
   // 🔗 lien commun (option) : un seul lien pour plusieurs personnes. Chacune y apparaît à part ; la retirer la coupe dans l’appli
   //    (sur son téléphone), sans vraie coupure : pour ça, un lien personnel.
-  const ab2Pub = () => AI().find(x=>x.pub);
+  const ab2Pub = () => AI().find(x=>x.pub && !x.closed);
   const ab2PubRec = () => { const x = ab2Pub(), r = x && R['iv:' + x.code]; return r && !r.deleted ? r : {}; };
   const ab2PubFws = () => { const x = ab2Pub(); if(!x) return []; const ban = new Set(ab2PubRec().ban || []), by = {};
-    ab2InvFws(x).forEach(f=>{ const d = fwDevOf(f); if(!ban.has(d) && !by[d]) by[d] = f; }); return Object.values(by); };
+    const mv = ab2PubRec().mv || {}; ab2InvFws(x).forEach(f=>{ const d = fwDevOf(f); if(!ban.has(d) && !mv[d] && !by[d]) by[d] = f; }); return Object.values(by); };
   // une « personne » de ma liste : un lien personnel (id) ou un abonné du lien commun (« pub:<appareil> »)
   // 🏷️ un abonné a changé son prénom (Camille → Victoria) : on garde le nom que JE lui ai donné à côté, pour savoir qui c’est
   function fwLbl(d){ if(!d) return ''; const nk = (M.fwNick || {})[d]; if(nk) return nk;
@@ -2188,6 +2188,27 @@
     const ok = await ivSend(lk, {k:'follow', id:uid(), c:code, t:myName() || ''}).catch(()=>false);
     toast(ok ? '✅ ' + RF('{0} peut maintenant te suivre', m.from || '?') : '⚠️ ' + MSGT('Envoi impossible pour le moment'));
   }
+  // 🔀 un abonné venu par le lien commun passe sur SON lien personnel, sans rien voir : son appli lit « mv » dans le lien commun et bascule seule
+  async function ab2Indiv(id, quiet){
+    const P = ab2P(id); if(!P || !P.pub) return null; const d = P.devs[0], nm = fwLbl(d) || P.name;
+    if(!quiet && !(await uiConfirm(RF('Passer {0} sur un lien personnel ?', nm) + '\n\n' + MSGT('Son appli change de lien toute seule, sans rien lui demander ni rien lui montrer. Tu pourras ensuite le retirer pour de vrai.')))) return null;
+    const x = await ab2NewInv(nm), hd = (ab2PubRec().hd || {})[d] || [];
+    if(hd.length) ab2InvRec(x, {hide:hd});
+    const pub = ab2Pub() || AI().find(y=>y.pub); ab2InvRec(pub, {mv:Object.assign({}, ab2PubRec().mv || {}, {[d]:x.code})});
+    if(M.fwNick && M.fwNick[d]) delete M.fwNick[d]; persist(); ab2CfgSave();
+    try { await syncNow(); } catch(e){}
+    if(!quiet){ toast('🔀 ' + RF('{0} a maintenant son propre lien', nm)); closeSheet(true); ab2FwSheet(x.id); }
+    return x; }
+  // 🗑️ supprimer le lien commun : ceux qui l’ont utilisé passent d’abord sur un lien personnel (ou sont coupés), plus personne ne peut l’ouvrir
+  async function ab2PubDel(){
+    const x = ab2Pub(); if(!x) return; const L = ab2PubFws();
+    if(!(await uiConfirm(MSGT('Supprimer le lien commun ? Plus personne ne pourra l’ouvrir.')))) return;
+    const ch = L.length && (await uiConfirm(RF('{0} personne(s) suivent par ce lien. Leur donner chacune un lien personnel, sans qu’elles le remarquent ?', L.length) + '\n\n' + MSGT('OK : elles continuent de te suivre, chacune avec son lien. Annuler : elles sont retirées.'))) ? 'keep' : 'cut'; cryptShow('🗑️ ' + MSGT('Je supprime le lien commun…'));
+    try {
+      if(ch === 'keep') for(const f of L){ try { await ab2Indiv('pub:' + fwDevOf(f), true); } catch(e){} }
+      x.closed = 1; ab2InvRec(x, {closed:1}); persist(); ab2CfgSave(); try { await syncNow(); } catch(e){}
+    } finally { cryptHide('🗑️ ' + MSGT('Lien commun supprimé')); }
+    closeSheet(true); shareHub(); }
   async function ab2Common(){
     if(!(await ab2Name())) return; try { ab2Reset(); } catch(e){}
     if(!ab2Vis().length){ toast('👁️ ' + MSGT('Allume d’abord les voyages à montrer')); return ab2TripsSheet(); }
@@ -2250,7 +2271,7 @@
     ab2Send(x.id);
   }
   function ab2Send(id){
-    const x = ab2Inv(id); if(!x) return; const MSG = s => (window.I18N && I18N.msg ? I18N.msg(s) : s), link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(x.code) + invTag('') : '';
+    const x = ab2Inv(id); if(!x) return; if(x.pub) setTimeout(()=>{ try { const b = document.querySelector('#v-sheet-bg .v-sheet'); if(b && !b.querySelector('.ab2-pdel')){ const d = document.createElement('div'); d.className = 'sp2-pills ab2-pdel'; d.innerHTML = `<button type="button" class="danger" onclick="CV.ab2PubDel()">🗑️ ${esc(MSGT('Supprimer le lien commun'))}</button>`; b.appendChild(d); } } catch(e){} }, 60); const MSG = s => (window.I18N && I18N.msg ? I18N.msg(s) : s), link = appUrl() ? appUrl() + '#suivre=' + encodeURIComponent(x.code) + invTag('') : '';
     const text = MSG('Suis mes voyages sur Vezoria ✈️ : photos et récits au fil des étapes') + fwTail(link, x.code);
     fwInviteSheet(x.code, link, text, RF('Lien de {0}', x.name));
   }
@@ -2268,6 +2289,7 @@
           return `<div class="sp2-sr${on ? '' : ' off'}"><span class="sp2-tc">${spCov(R[t])}</span><div class="sp2-sb"><b data-notr>${esc(R[t].titre || '?')}</b><small>${esc(tripDates(R[t]))}</small><small>${cp ? '🧳 ' + esc(MSGT('compagnon : il l’a déjà en entier')) : on ? '👀 ' + esc(MSGT('Il le voit')) : '🙈 ' + esc(MSGT('Caché pour lui'))}</small></div>${cp ? '' : ab2Sw(on, `CV.ab2FwHide('${ja(id)}','${ja(t)}')`, R[t].titre)}</div>`; }).join('') || `<div class="sp2-empty">${esc(MSGT('Aucun voyage montré pour l’instant.'))}</div>`}</div>
       ${f ? `<div class="sp2-blk"><div class="sp2-sec">💬 <b>${esc(RF('{0} ❤️ · {1} commentaire(s)', s.lk, s.cm.length))}</b></div>${s.cm.slice(-3).map(c=>`<div class="sp2-empty">« <span data-notr>${esc(String(c.text || '').slice(0, 140))}</span> »</div>`).join('')}</div>` : ''}
       <div class="sp2-pills">${P.pub ? '' : `<button type="button" class="soft" onclick="CV.ab2Send('${ja(id)}')">📤 ${esc(MSGT('Renvoyer son lien'))}</button>`}<button type="button" onclick="CV.ab2Rename('${ja(id)}')">✏️ ${esc(MSGT('Renommer'))}</button>${ab2Own(P) ? `<button type="button" onclick="CV.ab2Rename('${ja(id)}', 1)">🏷️ ${esc(RF('L’appeler {0}', ab2Own(P)))}</button>` : ''}</div>
+      ${P.pub ? `<div class="sp2-pills"><button type="button" onclick="CV.ab2Indiv('${ja(id)}')">🔀 ${esc(MSGT('Passer en lien personnel (il ne le voit pas)'))}</button></div>` : ''}
       <div class="sp2-pills"><button type="button" class="danger" onclick="CV.ab2FwDel('${ja(id)}')">🚫 ${esc(MSGT('Retirer cet abonné'))}</button></div>
       <div class="sp2-empty" style="margin-top:8px">${esc(MSGT(P.pub ? 'Retiré : ses voyages suivis disparaissent de son téléphone. Comme il est venu par le lien commun, il a encore ce lien : pour couper vraiment, crée des liens personnels.' : 'Retiré : son lien ne marche plus, ses voyages suivis disparaissent de son téléphone. Tes autres abonnés ne voient aucune différence.'))}</div></div></div>`);
   }
@@ -2318,7 +2340,8 @@
     const me = devId(), S = (M.subs || {})[sp.of] || null, out = [];
     (recs || []).forEach(r=>{ if(!r) return;
       if(r.type === 'abinv'){ const k = sp.of && S ? S : null;
-        if(r.deleted || r.gone || (r.pub && (r.ban || []).includes(me))){ if(k) k.ban = 1; else sp.ban = 1; return; }
+        if(r.pub && r.mv && r.mv[me]){ const nc = r.mv[me]; sp.real = r.code; if(k && k.iv !== nc) setTimeout(()=>ab2Switch(sp.code, nc, sp.of), 40); return; }   // 🔀 l’auteur m’a donné mon propre lien : je bascule sans rien dire
+        if(r.deleted || r.gone || (r.pub && (r.ban || []).includes(me)) || (r.pub && r.closed)){ if(k) k.ban = 1; else sp.ban = 1; return; }
         const ahx = [...(r.hide || []), ...(r.pub ? ((r.hd || {})[me] || []) : [])];
         sp.real = r.code; sp.pub = !!r.pub; if(k){ k.ah = ahx; if(r.owner) k.owner = r.owner; if(avOk(r.oav)) k.oav = r.oav; if(r.code && r.code !== sp.of) setTimeout(()=>ab2Move(sp.code, r.code), 30); }
         sp.owner = r.owner || sp.owner; sp.oav = avOk(r.oav) ? r.oav : sp.oav; sp.ah = ahx; return; }
@@ -2327,6 +2350,17 @@
       out.push(r); });
     return out;
   }
+  // 🔀 du lien commun vers mon lien personnel : même fil, mêmes réglages ; seul le lien change (rien n’est montré)
+  let AB2SW = 0;
+  async function ab2Switch(old, nc, c){
+    if(AB2SW) return; const S = (M.subs || {})[c]; if(!S || S.gone || S.iv === nc) return; AB2SW = 1;
+    try {
+      const ok = await ab2Follow(nc, false, true); if(!ok) return;
+      const S2 = (M.subs || {})[c] || S; S2.iv = nc;
+      const mine = R['fw:' + old + ':' + devId()]; if(mine && !mine.deleted){ putQuiet([Object.assign(clone(mine), {deleted:true})]); try { const o = spaceObj(old); if(o) await syncSpace(o); } catch(e){} }
+      Object.keys(R).forEach(id=>{ if(id.includes(':' + old + ':') || id === 'iv:' + old) delete R[id]; }); delete TS()['fi:' + old];
+      M.spaces = (M.spaces || []).filter(x=>x.code !== old); persist();
+    } catch(e){} finally { AB2SW = 0; } }
   // le fil de l’auteur a changé (il a retiré quelqu’un) : je passe sur le nouveau, sans rien perdre de mes réglages
   async function ab2Move(iv, nc){
     const ivs = spaceObj(iv); if(!ivs) return; const oc = ivs.of; if(!oc || oc === nc) return;
@@ -2364,7 +2398,7 @@
     if(!q) toast('📡 ' + MSGT('Connexion…')); await syncSpace(iv, true);
     const drop = () => { if(!had) M.spaces = (M.spaces || []).filter(x=>x.code !== code); delete TS()['fi:' + code]; persist(); };
     if(iv.err){ drop(); alert(iv.net ? '📴 ' + netMsg() : '⚠️ ' + iv.err); return; }
-    if(iv.ban){ drop(); alert(MSGT('Ce lien a été retiré par son auteur.')); return; }
+    if(iv.ban){ drop(); if(!q) alert(MSGT('Ce lien a été retiré par son auteur.')); return; }
     if(!iv.real){ drop(); alert(MSGT('Aucun voyage publié avec ce code.') + '\n\n' + MSGT('Demande-lui de te renvoyer son lien abonnés actuel.')); return; }
     // 🔗 lien commun : l’auteur ne sait pas qui arrive → le prénom est obligatoire (sinon il ne verrait que « Un proche »)
     if(iv.pub && !myName()){
@@ -2869,7 +2903,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
+  var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {souvResend, obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
