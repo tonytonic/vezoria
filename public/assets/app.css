@@ -2765,7 +2765,7 @@ html.vz-and body.vz-glass .v-sheet{-webkit-backdrop-filter:none!important;backdr
 .cv-fold>summary small{font-weight:600;color:var(--gray);font-size:.8rem;margin-left:auto;text-align:right}
 .cv-fold>summary::after{content:'▾';opacity:.5;font-size:.8rem;margin-left:6px}.cv-fold[open]>summary::after{content:'▴'}
 .cv-fold[open]>summary{border-bottom:1px solid var(--light)}
-.cv-fold>*:not(summary){margin:10px}
+.cv-fold>*:not(summary){margin:10px;box-sizing:border-box}.cv-fold>button,.cv-fold>.cv-trkpub,.cv-fold>.cv-tjbtn{width:calc(100% - 20px)}
 .cv-fold>.cv-tiles{margin:10px}
 .fil-nh{cursor:default}
 /* 🧹 bilan : les temps forts en carrousel (on fait glisser) */
