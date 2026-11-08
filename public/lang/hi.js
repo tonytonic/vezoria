@@ -6530,4 +6530,5 @@ I18N.load({
 "{0} réservation(s) validée(s)":"{0} बुकिंग पक्की",
 "Commence à taper : nom de l’hôtel ou rue":"लिखना शुरू करो: होटल का नाम या सड़क",
 "Placé exactement sur la carte":"नक़्शे पर ठीक जगह रखा गया",
-"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"सूची से चुनो: होटल नक़्शे पर ठीक जगह दिखेगा"});
+"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"सूची से चुनो: होटल नक़्शे पर ठीक जगह दिखेगा",
+"Commence à taper : musée, monument, adresse…":"लिखना शुरू करो: संग्रहालय, स्मारक, पता…"});

@@ -3595,4 +3595,5 @@ I18N.load({
 "{0} réservation(s) validée(s)":"{0} reserva(s) confirmada(s)",
 "Commence à taper : nom de l’hôtel ou rue":"Começa a escrever: nome do hotel ou rua",
 "Placé exactement sur la carte":"Colocado exatamente no mapa",
-"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"Escolhe na lista: o hotel ficará exatamente no mapa"});
+"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"Escolhe na lista: o hotel ficará exatamente no mapa",
+"Commence à taper : musée, monument, adresse…":"Começa a escrever: museu, monumento, morada…"});

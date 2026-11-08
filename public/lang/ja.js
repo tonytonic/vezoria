@@ -6530,4 +6530,5 @@ I18N.load({
 "{0} réservation(s) validée(s)":"{0}件の予約を確定",
 "Commence à taper : nom de l’hôtel ou rue":"入力を開始：ホテル名または通り",
 "Placé exactement sur la carte":"地図上の正確な位置に配置",
-"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"リストから選ぶと、ホテルが地図上の正確な位置に置かれます"});
+"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"リストから選ぶと、ホテルが地図上の正確な位置に置かれます",
+"Commence à taper : musée, monument, adresse…":"入力を開始：美術館、名所、住所…"});

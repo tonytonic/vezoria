@@ -3576,4 +3576,5 @@ I18N.load({
 "{0} réservation(s) validée(s)":"{0} booking(s) confirmed",
 "Commence à taper : nom de l’hôtel ou rue":"Start typing: hotel name or street",
 "Placé exactement sur la carte":"Placed exactly on the map",
-"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"Pick from the list: the hotel will be placed exactly on the map"});
+"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"Pick from the list: the hotel will be placed exactly on the map",
+"Commence à taper : musée, monument, adresse…":"Start typing: museum, monument, address…"});

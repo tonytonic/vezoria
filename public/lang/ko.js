@@ -6530,4 +6530,5 @@ I18N.load({
 "{0} réservation(s) validée(s)":"예약 {0}건 확정",
 "Commence à taper : nom de l’hôtel ou rue":"입력해 보세요: 호텔 이름이나 거리",
 "Placé exactement sur la carte":"지도에 정확히 표시됨",
-"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"목록에서 고르면 호텔이 지도에 정확히 표시돼요"});
+"Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"목록에서 고르면 호텔이 지도에 정확히 표시돼요",
+"Commence à taper : musée, monument, adresse…":"입력해 보세요: 박물관, 명소, 주소…"});
