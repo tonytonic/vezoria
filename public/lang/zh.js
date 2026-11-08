@@ -6545,4 +6545,5 @@ I18N.load({
 "Tes abonnés":"你的关注者",
 "Quelqu’un d’autre":"其他人",
 "Son prénom":"名字",
-"Tape le début du nom : choisis le lieu exact dans la liste.":"输入名称开头，然后在列表中选择准确地点。"});
+"Tape le début du nom : choisis le lieu exact dans la liste.":"输入名称开头，然后在列表中选择准确地点。",
+"Commence à taper le nom de l’hôtel":"开始输入酒店名称"});

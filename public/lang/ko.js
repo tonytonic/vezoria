@@ -6545,4 +6545,5 @@ I18N.load({
 "Tes abonnés":"내 팔로워",
 "Quelqu’un d’autre":"다른 사람",
 "Son prénom":"이름",
-"Tape le début du nom : choisis le lieu exact dans la liste.":"이름 앞부분을 입력하고 목록에서 정확한 장소를 고르세요."});
+"Tape le début du nom : choisis le lieu exact dans la liste.":"이름 앞부분을 입력하고 목록에서 정확한 장소를 고르세요.",
+"Commence à taper le nom de l’hôtel":"호텔 이름을 입력하세요"});

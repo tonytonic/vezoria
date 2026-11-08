@@ -6533,4 +6533,5 @@ I18N.load({
 "Tes abonnés":"Takipçilerin",
 "Quelqu’un d’autre":"Başka biri",
 "Son prénom":"Adı",
-"Tape le début du nom : choisis le lieu exact dans la liste.":"Adın başını yaz, listeden tam yeri seç."});
+"Tape le début du nom : choisis le lieu exact dans la liste.":"Adın başını yaz, listeden tam yeri seç.",
+"Commence à taper le nom de l’hôtel":"Otelin adını yazmaya başla"});

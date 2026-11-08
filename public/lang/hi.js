@@ -6545,4 +6545,5 @@ I18N.load({
 "Tes abonnés":"तुम्हारे फ़ॉलोअर्स",
 "Quelqu’un d’autre":"कोई और",
 "Son prénom":"पहला नाम",
-"Tape le début du nom : choisis le lieu exact dans la liste.":"नाम की शुरुआत लिखो, फिर सूची से सही जगह चुनो।"});
+"Tape le début du nom : choisis le lieu exact dans la liste.":"नाम की शुरुआत लिखो, फिर सूची से सही जगह चुनो।",
+"Commence à taper le nom de l’hôtel":"होटल का नाम लिखना शुरू करो"});

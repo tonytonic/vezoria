@@ -6545,4 +6545,5 @@ I18N.load({
 "Tes abonnés":"あなたのフォロワー",
 "Quelqu’un d’autre":"ほかの人",
 "Son prénom":"名前",
-"Tape le début du nom : choisis le lieu exact dans la liste.":"名前の最初を入力して、リストから正確な場所を選んでね。"});
+"Tape le début du nom : choisis le lieu exact dans la liste.":"名前の最初を入力して、リストから正確な場所を選んでね。",
+"Commence à taper le nom de l’hôtel":"ホテル名を入力してね"});

@@ -3606,4 +3606,5 @@ I18N.load({
 "Tes abonnés":"I tuoi follower",
 "Quelqu’un d’autre":"Qualcun altro",
 "Son prénom":"Il suo nome",
-"Tape le début du nom : choisis le lieu exact dans la liste.":"Scrivi l’inizio del nome e scegli il luogo esatto nell’elenco."});
+"Tape le début du nom : choisis le lieu exact dans la liste.":"Scrivi l’inizio del nome e scegli il luogo esatto nell’elenco.",
+"Commence à taper le nom de l’hôtel":"Inizia a scrivere il nome dell’hotel"});

@@ -6546,4 +6546,5 @@ I18N.load({
 "Tes abonnés":"Твои подписчики",
 "Quelqu’un d’autre":"Кто-то другой",
 "Son prénom":"Имя",
-"Tape le début du nom : choisis le lieu exact dans la liste.":"Начни вводить название и выбери точное место в списке."});
+"Tape le début du nom : choisis le lieu exact dans la liste.":"Начни вводить название и выбери точное место в списке.",
+"Commence à taper le nom de l’hôtel":"Начни вводить название отеля"});

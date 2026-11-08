@@ -6546,4 +6546,5 @@ I18N.load({
 "Tes abonnés":"متابعوك",
 "Quelqu’un d’autre":"شخص آخر",
 "Son prénom":"اسمه الأول",
-"Tape le début du nom : choisis le lieu exact dans la liste.":"اكتب بداية الاسم ثم اختر المكان الدقيق من القائمة."});
+"Tape le début du nom : choisis le lieu exact dans la liste.":"اكتب بداية الاسم ثم اختر المكان الدقيق من القائمة.",
+"Commence à taper le nom de l’hôtel":"ابدأ بكتابة اسم الفندق"});

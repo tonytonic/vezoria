@@ -3597,4 +3597,5 @@ I18N.load({
 "Tes abonnés":"Je volgers",
 "Quelqu’un d’autre":"Iemand anders",
 "Son prénom":"Voornaam",
-"Tape le début du nom : choisis le lieu exact dans la liste.":"Typ het begin van de naam en kies de juiste plek uit de lijst."});
+"Tape le début du nom : choisis le lieu exact dans la liste.":"Typ het begin van de naam en kies de juiste plek uit de lijst.",
+"Commence à taper le nom de l’hôtel":"Begin de naam van het hotel te typen"});
