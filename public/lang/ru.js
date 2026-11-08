@@ -6440,4 +6440,8 @@ I18N.load({
 "✨ Auto":"✨ Авто",
 "Rails trouvés":"Пути найдены",
 "Recherche des rails…":"Ищем пути…",
-"Rails introuvables":"Пути не найдены"});
+"Rails introuvables":"Пути не найдены",
+"Exporter les points GPS":"Экспорт GPS-точек",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"Вся поездка, все спутники · файл для отправки на анализ",
+"Aucun point GPS pour ce voyage":"Нет GPS-точек для этой поездки",
+"{0} points GPS exportés":"Экспортировано GPS-точек: {0}"});

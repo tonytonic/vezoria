@@ -3501,4 +3501,8 @@ I18N.load({
 "✨ Auto":"✨ Auto",
 "Rails trouvés":"Vías encontradas",
 "Recherche des rails…":"Buscando las vías…",
-"Rails introuvables":"Vías no encontradas"});
+"Rails introuvables":"Vías no encontradas",
+"Exporter les points GPS":"Exportar los puntos GPS",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"Todo el viaje, todos los compañeros · archivo para enviar y analizar",
+"Aucun point GPS pour ce voyage":"No hay puntos GPS para este viaje",
+"{0} points GPS exportés":"{0} puntos GPS exportados"});

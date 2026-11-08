@@ -6427,4 +6427,8 @@ I18N.load({
 "✨ Auto":"✨ Otomatik",
 "Rails trouvés":"Raylar bulundu",
 "Recherche des rails…":"Raylar aranıyor…",
-"Rails introuvables":"Raylar bulunamadı"});
+"Rails introuvables":"Raylar bulunamadı",
+"Exporter les points GPS":"GPS noktalarını dışa aktar",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"Tüm seyahat, tüm yol arkadaşları · analiz için gönderilecek dosya",
+"Aucun point GPS pour ce voyage":"Bu seyahat için GPS noktası yok",
+"{0} points GPS exportés":"{0} GPS noktası dışa aktarıldı"});

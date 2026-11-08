@@ -6439,4 +6439,8 @@ I18N.load({
 "✨ Auto":"✨ 自动",
 "Rails trouvés":"已找到铁轨",
 "Recherche des rails…":"正在查找铁轨…",
-"Rails introuvables":"找不到铁轨"});
+"Rails introuvables":"找不到铁轨",
+"Exporter les points GPS":"导出 GPS 点",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"整个旅行、所有同伴 · 发送用于分析的文件",
+"Aucun point GPS pour ce voyage":"此旅行没有 GPS 点",
+"{0} points GPS exportés":"已导出 {0} 个 GPS 点"});

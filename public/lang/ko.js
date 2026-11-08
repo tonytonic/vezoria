@@ -6439,4 +6439,8 @@ I18N.load({
 "✨ Auto":"✨ 자동",
 "Rails trouvés":"선로를 찾았어요",
 "Recherche des rails…":"선로를 찾는 중…",
-"Rails introuvables":"선로를 찾을 수 없어요"});
+"Rails introuvables":"선로를 찾을 수 없어요",
+"Exporter les points GPS":"GPS 지점 내보내기",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"여행 전체, 모든 동행 · 분석용으로 보낼 파일",
+"Aucun point GPS pour ce voyage":"이 여행의 GPS 지점이 없어요",
+"{0} points GPS exportés":"GPS 지점 {0}개를 내보냈어요"});

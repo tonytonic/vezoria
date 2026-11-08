@@ -3491,4 +3491,8 @@ I18N.load({
 "✨ Auto":"✨ Automatisch",
 "Rails trouvés":"Sporen gevonden",
 "Recherche des rails…":"Sporen zoeken…",
-"Rails introuvables":"Geen sporen gevonden"});
+"Rails introuvables":"Geen sporen gevonden",
+"Exporter les points GPS":"GPS-punten exporteren",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"Hele reis, alle reisgenoten · bestand om te versturen voor analyse",
+"Aucun point GPS pour ce voyage":"Geen GPS-punten voor deze reis",
+"{0} points GPS exportés":"{0} GPS-punten geëxporteerd"});

@@ -3495,4 +3495,8 @@ I18N.load({
 "✨ Auto":"✨ Automatisch",
 "Rails trouvés":"Gleise gefunden",
 "Recherche des rails…":"Gleise werden gesucht…",
-"Rails introuvables":"Keine Gleise gefunden"});
+"Rails introuvables":"Keine Gleise gefunden",
+"Exporter les points GPS":"GPS-Punkte exportieren",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"Ganze Reise, alle Mitreisenden · Datei zum Senden für eine Analyse",
+"Aucun point GPS pour ce voyage":"Keine GPS-Punkte für diese Reise",
+"{0} points GPS exportés":"{0} GPS-Punkte exportiert"});

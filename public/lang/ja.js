@@ -6439,4 +6439,8 @@ I18N.load({
 "✨ Auto":"✨ 自動",
 "Rails trouvés":"線路が見つかりました",
 "Recherche des rails…":"線路を検索中…",
-"Rails introuvables":"線路が見つかりません"});
+"Rails introuvables":"線路が見つかりません",
+"Exporter les points GPS":"GPSポイントを書き出す",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"旅全体・同行者全員 · 分析用に送るファイル",
+"Aucun point GPS pour ce voyage":"この旅のGPSポイントはありません",
+"{0} points GPS exportés":"{0}件のGPSポイントを書き出しました"});

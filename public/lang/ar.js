@@ -6440,4 +6440,8 @@ I18N.load({
 "✨ Auto":"✨ تلقائي",
 "Rails trouvés":"تم العثور على السكك",
 "Recherche des rails…":"جارٍ البحث عن السكك…",
-"Rails introuvables":"لم يتم العثور على السكك"});
+"Rails introuvables":"لم يتم العثور على السكك",
+"Exporter les points GPS":"تصدير نقاط GPS",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"الرحلة كاملة وكل الرفاق · ملف لإرساله للتحليل",
+"Aucun point GPS pour ce voyage":"لا توجد نقاط GPS لهذه الرحلة",
+"{0} points GPS exportés":"تم تصدير {0} من نقاط GPS"});

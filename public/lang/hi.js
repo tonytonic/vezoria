@@ -6439,4 +6439,8 @@ I18N.load({
 "✨ Auto":"✨ अपने आप",
 "Rails trouvés":"पटरियाँ मिल गईं",
 "Recherche des rails…":"पटरियाँ ढूँढ रहे हैं…",
-"Rails introuvables":"पटरियाँ नहीं मिलीं"});
+"Rails introuvables":"पटरियाँ नहीं मिलीं",
+"Exporter les points GPS":"GPS पॉइंट निर्यात करो",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"पूरी यात्रा, सभी साथी · विश्लेषण के लिए भेजने वाली फ़ाइल",
+"Aucun point GPS pour ce voyage":"इस यात्रा के लिए कोई GPS पॉइंट नहीं",
+"{0} points GPS exportés":"{0} GPS पॉइंट निर्यात हुए"});

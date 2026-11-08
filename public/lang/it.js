@@ -3500,4 +3500,8 @@ I18N.load({
 "✨ Auto":"✨ Auto",
 "Rails trouvés":"Binari trovati",
 "Recherche des rails…":"Ricerca dei binari…",
-"Rails introuvables":"Binari non trovati"});
+"Rails introuvables":"Binari non trovati",
+"Exporter les points GPS":"Esporta i punti GPS",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"Tutto il viaggio, tutti i compagni · file da inviare per l’analisi",
+"Aucun point GPS pour ce voyage":"Nessun punto GPS per questo viaggio",
+"{0} points GPS exportés":"{0} punti GPS esportati"});

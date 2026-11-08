@@ -3485,4 +3485,8 @@ I18N.load({
 "✨ Auto":"✨ Auto",
 "Rails trouvés":"Tracks found",
 "Recherche des rails…":"Looking for the tracks…",
-"Rails introuvables":"Tracks not found"});
+"Rails introuvables":"Tracks not found",
+"Exporter les points GPS":"Export GPS points",
+"Tout le voyage, tous les compagnons · fichier à envoyer pour analyse":"Whole trip, all companions · file to send for analysis",
+"Aucun point GPS pour ce voyage":"No GPS points for this trip",
+"{0} points GPS exportés":"{0} GPS points exported"});
