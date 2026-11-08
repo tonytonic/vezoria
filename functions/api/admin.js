@@ -26,6 +26,8 @@ import { codeSpace } from './rotate.js';   // 🔑 code administrateur changé
  *                                            ses appareils, tous les espaces qu’il a créés et leur état — sans jamais voir le contenu
  *   {action:'suspendOwner', token|space, note} → ⏸ suspendre tout le compte : son carnet + tous les espaces qu’il a créés (réversible)
  *   {action:'restoreOwner', token|space, note} → ▶ tout rétablir
+ *   {action:'userDelete', space, note}     → 🗑️ supprimer à la demande de l’utilisateur : fiches, photos, compte (sans bloquer)
+ *   {action:'mailFind', email}             → 🗑️ demande de suppression par e-mail : le(s) carnet(s) de cette adresse (puis 'userDelete' avec space)
  *
  * Le CODE du carnet n'est jamais envoyé ici : la page d'administration calcule elle-même son empreinte
  * (« token », la même que celle de l'appli), et le serveur en déduit le dossier du carnet.
@@ -208,6 +210,13 @@ export async function onRequestPost({ request, env }) {
     await log(env, 'cadeau:créé', gh.slice(0, 12), plan + ' · ' + (days ? days + ' j' : 'toujours') + ' · ' + (uses || '∞') + ' · ' + (b.note || ''));
     return json({ ok: true, code, plan, days, uses });
   }
+  if (a === 'mailFind') {   // 🗑️ demande de suppression reçue par e-mail : retrouver le carnet de cette adresse (les adresses sont chiffrées : on les relit une à une)
+    const want = String(b.email || '').trim().toLowerCase(); if (!/^[^\s@]+@[^\s@]+$/.test(want)) return json({ error: 'adresse invalide' }, 400);
+    await acctTables(env.DB); const { results } = await env.DB.prepare('SELECT space, email, verified, at FROM acct').all(); const out = [];
+    for (const r of results || []) { const m = String(await mailDec(env, r.email) || '').trim().toLowerCase(); if (m === want) out.push({ space: r.space, verified: !!r.verified, at: r.at }); }
+    await log(env, 'recherche par e-mail', '', out.length + ' carnet(s)');
+    return json({ ok: true, spaces: out });   // puis {action:'userDelete', space} pour effacer le carnet ; le compte part avec lui
+  }
   let space = '';
   if (b.token && /^[0-9a-f]{64}$/.test(b.token)) space = (await codeSpace(env, b.token)).space;
   else if (b.space && /^[0-9a-f]{64}$/.test(b.space)) space = b.space;
@@ -255,6 +264,11 @@ export async function onRequestPost({ request, env }) {
   if (a === 'restore') {
     await env.DB.prepare('DELETE FROM blocked WHERE space = ?1').bind(space).run();
     await log(env, 'rétabli', space, b.note); return json({ ok: true, ...(await info(env, space)) });
+  }
+  if (a === 'userDelete') {   // 🗑️ suppression DEMANDÉE par l’utilisateur (pas une sanction) : fiches, photos ET compte (adresse, appareils) ; le carnet n’est pas bloqué
+    const w = await wipe(env, space); await acctTables(env.DB);
+    await env.DB.batch(['acct', 'acct_dev', 'acct_otp'].map(t => env.DB.prepare(`DELETE FROM ${t} WHERE space = ?1`).bind(space)));
+    await log(env, 'supprimé à la demande', space, (b.note || '') + ` (${w.records} fiches, ${w.photos} photos, compte effacé)`); return json({ ok: true, wiped: w });
   }
   if (a === 'delete') {
     const w = await wipe(env, space);
