@@ -6427,4 +6427,6 @@ I18N.load({
 "La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"此处无法听写：点文本框并使用键盘的 🎤 麦克风。",
 "Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"未找到麦克风：请确认没有其他应用在使用。",
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"没有听到声音：点麦克风，说大声一点。",
-"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"该语言不支持听写：请使用键盘的 🎤 麦克风。"});
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"该语言不支持听写：请使用键盘的 🎤 麦克风。",
+"{0} requêtes au serveur aujourd’hui (ce téléphone)":"今天 {0} 次服务器请求（本机）",
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"自 UTC 零点起计算。应用页面和图片不计入。"});

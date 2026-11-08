@@ -6415,4 +6415,6 @@ I18N.load({
 "La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"Dikte burada kullanılamıyor: metin kutusuna dokun ve klavyenin 🎤 mikrofonunu kullan.",
 "Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"Mikrofon bulunamadı: başka bir uygulamanın kullanmadığını kontrol et.",
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"Bir şey duymadım: mikrofona dokun ve biraz daha yüksek konuş.",
-"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Bu dilde dikte yok: klavyenin 🎤 mikrofonunu kullan."});
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Bu dilde dikte yok: klavyenin 🎤 mikrofonunu kullan.",
+"{0} requêtes au serveur aujourd’hui (ce téléphone)":"Bugün {0} sunucu isteği (bu telefon)",
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"UTC gece yarısından beri sayılır. Uygulama sayfaları ve görselleri sayılmaz."});

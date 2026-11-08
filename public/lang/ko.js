@@ -6427,4 +6427,6 @@ I18N.load({
 "La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"여기선 받아쓰기를 쓸 수 없어요: 입력칸을 누르고 키보드 🎤 마이크를 쓰세요.",
 "Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"마이크를 찾을 수 없어요: 다른 앱이 쓰고 있지 않은지 확인하세요.",
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"아무것도 안 들렸어요: 마이크를 누르고 조금 더 크게 말하세요.",
-"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"이 언어는 받아쓰기를 지원하지 않아요: 키보드 🎤 마이크를 쓰세요."});
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"이 언어는 받아쓰기를 지원하지 않아요: 키보드 🎤 마이크를 쓰세요.",
+"{0} requêtes au serveur aujourd’hui (ce téléphone)":"오늘 서버 요청 {0}건 (이 휴대폰)",
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"UTC 자정부터 집계. 앱 페이지와 이미지는 포함되지 않아요."});

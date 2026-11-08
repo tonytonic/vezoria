@@ -3473,4 +3473,6 @@ I18N.load({
 "La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"Dictation isn’t available here: tap the text box and use your keyboard’s 🎤 mic.",
 "Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"No microphone found: check that no other app is using it.",
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"I didn’t hear anything: tap the mic and speak a bit louder.",
-"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Dictation unavailable in this language: use your keyboard’s 🎤 mic."});
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Dictation unavailable in this language: use your keyboard’s 🎤 mic.",
+"{0} requêtes au serveur aujourd’hui (ce téléphone)":"{0} server requests today (this phone)",
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"Counted since midnight UTC. App pages and images don’t count."});

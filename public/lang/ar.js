@@ -6428,4 +6428,6 @@ I18N.load({
 "La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"الإملاء غير متاح هنا: اضغط على مربع النص واستخدم ميكروفون 🎤 لوحة المفاتيح.",
 "Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"لم يُعثر على ميكروفون: تأكد أن تطبيقًا آخر لا يستخدمه.",
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"لم أسمع شيئًا: اضغط على الميكروفون وتحدث بصوت أعلى قليلًا.",
-"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"الإملاء غير متاح بهذه اللغة: استخدم ميكروفون 🎤 لوحة المفاتيح."});
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"الإملاء غير متاح بهذه اللغة: استخدم ميكروفون 🎤 لوحة المفاتيح.",
+"{0} requêtes au serveur aujourd’hui (ce téléphone)":"{0} طلبات إلى الخادم اليوم (هذا الهاتف)",
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"محسوب منذ منتصف الليل UTC. صفحات التطبيق وصوره لا تُحسب."});

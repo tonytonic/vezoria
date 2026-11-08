@@ -3483,4 +3483,6 @@ I18N.load({
 "La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"Diktieren ist hier nicht verfügbar: ins Textfeld tippen und das 🎤-Mikro der Tastatur nutzen.",
 "Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"Kein Mikrofon gefunden: prüfe, ob eine andere App es nutzt.",
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"Ich habe nichts gehört: tippe aufs Mikro und sprich etwas lauter.",
-"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Diktieren in dieser Sprache nicht verfügbar: nutze das 🎤-Mikro der Tastatur."});
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Diktieren in dieser Sprache nicht verfügbar: nutze das 🎤-Mikro der Tastatur.",
+"{0} requêtes au serveur aujourd’hui (ce téléphone)":"{0} Serveranfragen heute (dieses Handy)",
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"Gezählt seit Mitternacht UTC. App-Seiten und -Bilder zählen nicht."});

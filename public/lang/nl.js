@@ -3479,4 +3479,6 @@ I18N.load({
 "La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"Dicteren kan hier niet: tik in het tekstvak en gebruik de 🎤-microfoon van je toetsenbord.",
 "Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"Geen microfoon gevonden: controleer of geen andere app hem gebruikt.",
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"Ik hoorde niets: tik op de microfoon en praat iets harder.",
-"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Dicteren niet beschikbaar in deze taal: gebruik de 🎤-microfoon van je toetsenbord."});
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Dicteren niet beschikbaar in deze taal: gebruik de 🎤-microfoon van je toetsenbord.",
+"{0} requêtes au serveur aujourd’hui (ce téléphone)":"{0} serververzoeken vandaag (deze telefoon)",
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"Geteld sinds middernacht UTC. Pagina’s en afbeeldingen van de app tellen niet."});

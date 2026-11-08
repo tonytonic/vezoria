@@ -6427,4 +6427,6 @@ I18N.load({
 "La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"ここでは音声入力が使えません：テキスト欄をタップしてキーボードの🎤を使ってください。",
 "Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"マイクが見つかりません：他のアプリが使っていないか確認してください。",
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"何も聞こえませんでした：マイクをタップして少し大きな声で話してください。",
-"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"この言語では音声入力が使えません：キーボードの🎤を使ってください。"});
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"この言語では音声入力が使えません：キーボードの🎤を使ってください。",
+"{0} requêtes au serveur aujourd’hui (ce téléphone)":"今日のサーバーへのリクエスト {0} 件（この端末）",
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"UTC深夜0時からの集計。アプリのページや画像は含みません。"});

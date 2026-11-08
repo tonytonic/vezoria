@@ -3492,4 +3492,6 @@ I18N.load({
 "La dictée n’est pas disponible ici : touche la zone de texte et utilise le micro 🎤 de ton clavier.":"O ditado não está disponível aqui: toque na caixa de texto e use o microfone 🎤 do teclado.",
 "Aucun micro trouvé : vérifie qu’aucune autre appli ne l’utilise.":"Nenhum microfone encontrado: verifique se outro app não o está usando.",
 "Je n’ai rien entendu : touche le micro et parle un peu plus fort.":"Não ouvi nada: toque no microfone e fale um pouco mais alto.",
-"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Ditado indisponível neste idioma: use o microfone 🎤 do teclado."});
+"Dictée indisponible dans cette langue : utilise le micro 🎤 de ton clavier.":"Ditado indisponível neste idioma: use o microfone 🎤 do teclado.",
+"{0} requêtes au serveur aujourd’hui (ce téléphone)":"{0} requisições ao servidor hoje (este telefone)",
+"Compté depuis minuit UTC. Les pages et images de l’appli ne comptent pas.":"Contado desde a meia-noite UTC. Páginas e imagens do app não contam."});
