@@ -400,16 +400,17 @@
   // les points à rejoindre depuis l’hébergement : tes visites + le centre-ville (visites guidées, gastronomie… s’y passent ; et il compte si tu as peu de visites)
   // 🏨 retrouver un hôtel : « Via Piliers corridoni 10356125 pise », « Viale … 67 53100 », ou seulement son nom (« Hotel Italia » à Sienne)
   async function hotelGeo(h, city, ref){
-    M.hgeo = M.hgeo || {}; const key = normQ([h.adresse || '', h.nom || '', city || ''].join('|')); const c = M.hgeo[key];
+    M.hgeo = M.hgeo || {}; const key = 'v2|' + normQ([h.adresse || '', h.nom || '', city || ''].join('|')); const c = M.hgeo[key];
     if(c && (!c.miss || Date.now() - c.at < 6 * 3600e3)) return c.miss ? null : {lat:c.lat, lng:c.lng};
-    const ok = r => r && r.lat != null && isFinite(+r.lat) && (!ref || rawKm({lat:+r.lat, lng:+r.lng}, ref) <= 40);
+    // 📏 un hôtel de ville est près du centre : la même rue existe dans le village d’à côté (Viale Cavour à Poggibonsi ≠ à Sienne)
+    const ok = (r, lim) => r && r.lat != null && isFinite(+r.lat) && (!ref || rawKm({lat:+r.lat, lng:+r.lng}, ref) <= (lim || 12));
     const save = r => { M.hgeo[key] = {lat:+r.lat, lng:+r.lng}; const ks = Object.keys(M.hgeo); if(ks.length > 300) delete M.hgeo[ks[0]]; persist(); return {lat:+r.lat, lng:+r.lng}; };
     const fix = x => String(x || '').replace(/\b(\d{1,4})(\d{5})\b/g, '$1 $2').replace(/\s+/g, ' ').trim();   // « 10356125 » collé → « 103 56125 »
     const a = fix(h.adresse), noCp = a.replace(/\b\d{5}\b/g, ' ').replace(/\s+,|\s+/g, ' ').trim(), cty = city && a && !normQ(a).includes(normQ(city)) ? ', ' + city : '';
     const nm = String(h.nom || '').trim(), nmOk = nm.length >= 4 && !/^(h[oô]tel|hostel|airbnb|appartement|logement)$/i.test(nm);
     for(const q of [...new Set([a && a + cty, a, noCp && noCp + cty].filter(Boolean))]){ try { const r = await geocode(q, null); if(ok(r)) return save(r); } catch(e){} }
     if(ref){ for(const q of [nmOk && nm + (city ? ' ' + city : ''), noCp].filter(Boolean)){   // fautes de frappe et noms d’hôtels : la recherche de lieux (Photon), autour de l’étape
-      try { const L = await pacFetch(q, false, ref, true); const r = (L || []).find(ok); if(r) return save(r); } catch(e){} } }
+      try { const L = (await pacFetch(q, false, ref, true) || []).filter(r=>ok(r, 15)).sort((a, b)=>rawKm(a, ref) - rawKm(b, ref)); if(L[0]) return save(L[0]); } catch(e){} } }
     M.hgeo[key] = {miss:1, at:Date.now()}; return null;
   }
   function gdAnchors(t, h){
