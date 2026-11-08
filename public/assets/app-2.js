@@ -1794,7 +1794,7 @@
     let arch = null; try { arch = JSON.parse(localStorage.getItem(ARCHIVE_KEY) || 'null'); } catch(e){}
     return {app:'carnet-voyage', format:2, exportedAt:new Date().toISOString(), records:R, archive2026:arch};
   }
-  const fileName = () => 'carnet-voyage-' + new Date().toISOString().slice(0,10) + '.json';
+  const fileName = () => 'carnet-voyage-' + locIso() + '.json';
   function exportDownload(){
     const blob = new Blob([JSON.stringify(backupObject(), null, 2)], {type:'application/json'});
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileName();

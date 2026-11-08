@@ -1,3 +1,4 @@
+function locIso(d){ d = d || new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
 /* Vezoria — code de l’appli, partie 1/8 (chargées dans l’ordre par index.html, même portée globale) */
 
 /* ⏱️ Nos appels au serveur (/api/…) ont un délai maximum : sur iPhone, une requête restée sans réponse
@@ -6,7 +7,7 @@
 (function(){ try {
   const F0 = window.fetch.bind(window);
   window.fetch = function(u, o){ try { const s = typeof u === 'string' ? u : (u && u.url) || '';
-      if(/\/api\/[a-z]/.test(s)){ const d = new Date().toISOString().slice(0, 10), m = s.match(/\/api\/([a-z0-9-]+)(?:\/([a-z0-9-]+))?/i), k = (m ? m[1] + (m[2] && !/^[A-Z0-9-]{8,}$/i.test(m[2]) ? '/' + m[2] : '') : '?') + ' ' + ((o && o.method) || (u && u.method) || 'GET').toUpperCase();
+      if(/\/api\/[a-z]/.test(s)){ const d = locIso(), m = s.match(/\/api\/([a-z0-9-]+)(?:\/([a-z0-9-]+))?/i), k = (m ? m[1] + (m[2] && !/^[A-Z0-9-]{8,}$/i.test(m[2]) ? '/' + m[2] : '') : '?') + ' ' + ((o && o.method) || (u && u.method) || 'GET').toUpperCase();
         let c = {}; try { c = JSON.parse(localStorage.getItem('vz_rq') || '{}'); } catch(e){} if(c.d !== d) c = {d, n:{}, t:0}; c.n[k] = (c.n[k] || 0) + 1; c.t++; try { localStorage.setItem('vz_rq', JSON.stringify(c)); } catch(e){} } } catch(e){}
     return F0(u, o); };
 } catch(e){} })();
@@ -397,7 +398,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const t = (await uiPrompt(`Montant remboursé par ${pname(de)} à ${pname(a)} (${CS()}) :`, String(Math.round(v*100)/100).replace('.',',')));
     if(t === null) return;
     const m = num(t); if(!(m > 0)){ alert('Montant invalide.'); return; }
-    put({id:'rb'+uid(), type:'remb', trip:M.trip, de, a, montant:m, date:new Date().toISOString().slice(0,10)}, '💸 Remboursement noté');
+    put({id:'rb'+uid(), type:'remb', trip:M.trip, de, a, montant:m, date:locIso()}, '💸 Remboursement noté');
     render();
   }
   async function rembDel(id){ const x = R[id]; if(!x || !(await uiConfirm(`Supprimer ce remboursement de ${eur(num(x.montant))} ?`))) return; drop(id); render(); }
@@ -1322,7 +1323,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   function countdown(t){
     if(!t || !t.debut) return '';
-    const today = new Date().toISOString().slice(0,10);
+    const today = locIso();
     if(today < t.debut){ if(!t.demo && !t.archived && !hidden('blk:cd') && t.id === M.trip) return ''; const n = nights(today, t.debut); return `<b>J-${n}</b><span>${n>1?'avant le départ':'demain on part !'}</span>`; }
     if(!t.fin || today <= t.fin){ const k = nights(t.debut, today) + 1, tot = nights(t.debut, t.fin||t.debut) + 1; return `<b>Jour ${k}</b><span>sur ${tot}, profitez</span>`; }
     return `<b>✓</b><span>souvenirs</span>`;

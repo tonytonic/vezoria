@@ -897,7 +897,7 @@
     persist();
     if(prog) prog.textContent = '';
     { const f = document.getElementById('v-form');
-      if(f && isNew && firstDate && f.date && (!f.date.value || f.date.value === new Date().toISOString().slice(0,10))){ f.date.value = firstDate; s.date = firstDate; }
+      if(f && isNew && firstDate && f.date && (!f.date.value || f.date.value === locIso())){ f.date.value = firstDate; s.date = firstDate; }
       if(f && s.lat != null && f.lieu && !f.lieu.value.trim()){ revGeo(s.lat, s.lng).then(g=>{ if(!g || !g.city) return; if(f.lieu && !f.lieu.value.trim()) f.lieu.value = [g.city, g.pays].filter(Boolean).join(', '); if(f.titre && !f.titre.value.trim()) f.titre.value = g.city; s.pays = g.pays; s.cc = g.cc; }); } }
     document.getElementById('sv-grid').innerHTML = s.photos.map((p,i)=>`<div class="cv-th"><img data-ph="${esc(p)}.t" alt=""><button type="button" class="cv-thx" onclick="CV.souvDelPhoto(${i})" aria-label="Retirer">✕</button></div>`).join('');
     input.value = '';
