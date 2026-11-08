@@ -1900,12 +1900,12 @@
       if(prev && km({lat:prev[0], lng:prev[1]}, {lat:x[0], lng:x[1]}) > 2.5){ if(cur.length > 1) runs.push(cur); gaps.push([prev, x]); cur = [x]; } else cur.push(x); });
     if(cur.length > 1) runs.push(cur); return {runs, gaps}; }
   // 🛣️ le tracé plein colle aux rues : les points GPS (un toutes les quelques centaines de mètres) sont « recalés » sur la carte
-  // (serveur OSM public, par morceaux de 80 points, gardé en cache sur le téléphone) ; à pied ou en voiture selon la vitesse
+  // (serveur OSM public, par morceaux de 25 points, gardé en cache sur le téléphone) ; à pied ou en voiture selon la vitesse
   let LVM = null;
   function lvRunLine(r){ const raw = r.map(x=>[x[1], x[0]]); if(r.length < 3) return raw;
     if(!LVM){ try { LVM = JSON.parse(localStorage.getItem('vz_mm') || '{}'); } catch(e){ LVM = {}; } }
     const out = [];
-    for(let i = 0; i < r.length - 1; i += 79){ const ch = r.slice(i, i + 80); if(ch.length < 2) break;
+    for(let i = 0; i < r.length - 1; i += 24){ const ch = r.slice(i, i + 25); if(ch.length < 2) break;
       const k = ch.length + ':' + ch[0].slice(0, 2).map(v=>(+v).toFixed(4)).join(',') + ':' + ch[ch.length - 1].slice(0, 2).map(v=>(+v).toFixed(4)).join(',') + ':' + (ch[ch.length - 1][2] || 0);
       const got = LVM[k]; if(got && got.length){ out.push(...got); continue; }
       if(!got && ch.length >= 3){ LVM[k] = [];
@@ -1913,8 +1913,8 @@
         const car = dur > 0 && dist / dur > 18, base = car ? 'routed-car' : 'routed-foot';
         const co = ch.map(x=>(+x[1]).toFixed(5) + ',' + (+x[0]).toFixed(5)).join(';'), rad = ch.map(()=>car ? 60 : 35).join(';');
         const prof = car ? 'driving' : 'foot', get = u => withTimeout(fetch(u), 15000).then(x=>x.json());
-        get(`https://routing.openstreetmap.de/${base}/match/v1/${prof}/${co}?overview=full&geometries=geojson&gaps=ignore&tidy=true&radiuses=${rad}`)
-          .then(j=>j && j.code === 'Ok' && (j.matchings || []).length ? j : get(`https://routing.openstreetmap.de/${base}/route/v1/${prof}/${co}?overview=full&geometries=geojson`).then(q=>({matchings:(q && q.routes) || []})))   // recalage indisponible : itinéraire par les points
+        // itinéraire qui passe par les points (même service que les balades à pied de l’appli, 25 points par appel)
+        get(`https://routing.openstreetmap.de/${base}/route/v1/${prof}/${co}?overview=full&geometries=geojson`).then(q=>({matchings:(q && q.code === 'Ok' && q.routes) || []}))
           .then(j=>{ const L = ((j && j.matchings) || []).flatMap(m=>(m.geometry && m.geometry.coordinates) || []);
             if(L.length > 1){ LVM[k] = L.map(c=>[+c[0].toFixed(5), +c[1].toFixed(5)]);
               try { const ks = Object.keys(LVM); if(ks.length > 300) ks.slice(0, ks.length - 300).forEach(z=>delete LVM[z]); localStorage.setItem('vz_mm', JSON.stringify(LVM)); } catch(e){}
