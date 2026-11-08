@@ -400,7 +400,7 @@
   // les points à rejoindre depuis l’hébergement : tes visites + le centre-ville (visites guidées, gastronomie… s’y passent ; et il compte si tu as peu de visites)
   // 🏨 retrouver un hôtel : « Via Piliers corridoni 10356125 pise », « Viale … 67 53100 », ou seulement son nom (« Hotel Italia » à Sienne)
   async function hotelGeo(h, city, ref){
-    M.hgeo = M.hgeo || {}; const key = 'v2|' + normQ([h.adresse || '', h.nom || '', city || ''].join('|')); const c = M.hgeo[key];
+    M.hgeo = M.hgeo || {}; const key = 'v3|' + normQ([h.adresse || '', h.nom || '', city || ''].join('|')); const c = M.hgeo[key];
     if(c && (!c.miss || Date.now() - c.at < 6 * 3600e3)) return c.miss ? null : {lat:c.lat, lng:c.lng};
     // 📏 un hôtel de ville est près du centre : la même rue existe dans le village d’à côté (Viale Cavour à Poggibonsi ≠ à Sienne)
     const ok = (r, lim) => r && r.lat != null && isFinite(+r.lat) && (!ref || rawKm({lat:+r.lat, lng:+r.lng}, ref) <= (lim || 12));
@@ -408,8 +408,16 @@
     const fix = x => String(x || '').replace(/\b(\d{1,4})(\d{5})\b/g, '$1 $2').replace(/\s+/g, ' ').trim();   // « 10356125 » collé → « 103 56125 »
     const a = fix(h.adresse), noCp = a.replace(/\b\d{5}\b/g, ' ').replace(/\s+,|\s+/g, ' ').trim(), cty = city && a && !normQ(a).includes(normQ(city)) ? ', ' + city : '';
     const nm = String(h.nom || '').trim(), nmOk = nm.length >= 4 && !/^(h[oô]tel|hostel|airbnb|appartement|logement)$/i.test(nm);
-    for(const q of [...new Set([a && a + cty, a, noCp && noCp + cty].filter(Boolean))]){ try { const r = await geocode(q, null); if(ok(r)) return save(r); } catch(e){} }
-    if(ref){ for(const q of [nmOk && nm + (city ? ' ' + city : ''), noCp].filter(Boolean)){   // fautes de frappe et noms d’hôtels : la recherche de lieux (Photon), autour de l’étape
+    // 🧾 adresse Booking : « Campomanes, 4, Centre de Madrid, 28013 Madrid, Espagne » → « Campomanes 4, 28013 Madrid » (le quartier et le pays gênent la recherche)
+    const P = a.split(',').map(x=>x.trim()).filter(Boolean); let short = '';
+    if(P.length >= 2){ let st = P[0], k = 1; if(/^\d+[a-z]?$/i.test(P[1] || '')){ st += ' ' + P[1]; k = 2; }
+      const pc = P.slice(k).find(x=>/\b\d{4,5}(-\d{3,4})?\b/.test(x)) || ''; short = pc ? st + ', ' + pc : st + (city ? ', ' + city : ''); }
+    const Q1 = [short, a && a + cty, a].filter(Boolean), Q2 = [noCp && noCp + cty].filter(Boolean);
+    for(const q of [...new Set(Q1)]){ try { const r = await geocode(q, null); if(ok(r)) return save(r); } catch(e){} }
+    // le nom de l’hôtel (« Room Mate Mario Madrid ») : souvent le plus sûr quand l’adresse est longue ou mal tapée
+    if(ref && nmOk){ try { const L = (await pacFetch(nm + (city ? ' ' + city : ''), false, ref, true) || []).filter(r=>ok(r, 15)).sort((x, y)=>rawKm(x, ref) - rawKm(y, ref)); if(L[0]) return save(L[0]); } catch(e){} }
+    for(const q of [...new Set(Q2)].filter(q=>!Q1.includes(q))){ try { const r = await geocode(q, null); if(ok(r)) return save(r); } catch(e){} }
+    if(ref){ for(const q of [noCp].filter(Boolean)){   // fautes de frappe et noms d’hôtels : la recherche de lieux (Photon), autour de l’étape
       try { const L = (await pacFetch(q, false, ref, true) || []).filter(r=>ok(r, 15)).sort((a, b)=>rawKm(a, ref) - rawKm(b, ref)); if(L[0]) return save(L[0]); } catch(e){} } }
     M.hgeo[key] = {miss:1, at:Date.now()}; return null;
   }
