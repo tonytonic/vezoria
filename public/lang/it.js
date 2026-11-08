@@ -3497,4 +3497,7 @@ I18N.load({
 "✈️ Avion":"✈️ Aereo",
 "⛴️ Bateau":"⛴️ Battello",
 "🚶 À pied":"🚶 A piedi",
-"✨ Auto":"✨ Auto"});
+"✨ Auto":"✨ Auto",
+"Rails trouvés":"Binari trovati",
+"Recherche des rails…":"Ricerca dei binari…",
+"Rails introuvables":"Binari non trovati"});

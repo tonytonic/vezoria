@@ -6436,4 +6436,7 @@ I18N.load({
 "✈️ Avion":"✈️ 飞机",
 "⛴️ Bateau":"⛴️ 船",
 "🚶 À pied":"🚶 步行",
-"✨ Auto":"✨ 自动"});
+"✨ Auto":"✨ 自动",
+"Rails trouvés":"已找到铁轨",
+"Recherche des rails…":"正在查找铁轨…",
+"Rails introuvables":"找不到铁轨"});

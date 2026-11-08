@@ -3501,4 +3501,7 @@ I18N.load({
 "✈️ Avion":"✈️ Avião",
 "⛴️ Bateau":"⛴️ Barco",
 "🚶 À pied":"🚶 A pé",
-"✨ Auto":"✨ Auto"});
+"✨ Auto":"✨ Auto",
+"Rails trouvés":"Trilhos encontrados",
+"Recherche des rails…":"Procurando os trilhos…",
+"Rails introuvables":"Trilhos não encontrados"});

@@ -6437,4 +6437,7 @@ I18N.load({
 "✈️ Avion":"✈️ Самолёт",
 "⛴️ Bateau":"⛴️ Корабль",
 "🚶 À pied":"🚶 Пешком",
-"✨ Auto":"✨ Авто"});
+"✨ Auto":"✨ Авто",
+"Rails trouvés":"Пути найдены",
+"Recherche des rails…":"Ищем пути…",
+"Rails introuvables":"Пути не найдены"});

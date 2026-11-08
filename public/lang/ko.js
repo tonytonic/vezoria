@@ -6436,4 +6436,7 @@ I18N.load({
 "✈️ Avion":"✈️ 비행기",
 "⛴️ Bateau":"⛴️ 배",
 "🚶 À pied":"🚶 도보",
-"✨ Auto":"✨ 자동"});
+"✨ Auto":"✨ 자동",
+"Rails trouvés":"선로를 찾았어요",
+"Recherche des rails…":"선로를 찾는 중…",
+"Rails introuvables":"선로를 찾을 수 없어요"});

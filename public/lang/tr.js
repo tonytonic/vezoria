@@ -6424,4 +6424,7 @@ I18N.load({
 "✈️ Avion":"✈️ Uçak",
 "⛴️ Bateau":"⛴️ Tekne",
 "🚶 À pied":"🚶 Yürüyerek",
-"✨ Auto":"✨ Otomatik"});
+"✨ Auto":"✨ Otomatik",
+"Rails trouvés":"Raylar bulundu",
+"Recherche des rails…":"Raylar aranıyor…",
+"Rails introuvables":"Raylar bulunamadı"});

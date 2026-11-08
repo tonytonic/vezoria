@@ -6436,4 +6436,7 @@ I18N.load({
 "✈️ Avion":"✈️ 飛行機",
 "⛴️ Bateau":"⛴️ 船",
 "🚶 À pied":"🚶 徒歩",
-"✨ Auto":"✨ 自動"});
+"✨ Auto":"✨ 自動",
+"Rails trouvés":"線路が見つかりました",
+"Recherche des rails…":"線路を検索中…",
+"Rails introuvables":"線路が見つかりません"});
