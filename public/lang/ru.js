@@ -6532,4 +6532,13 @@ I18N.load({
 "Commence à taper : nom de l’hôtel ou rue":"Начни вводить: название отеля или улицу",
 "Placé exactement sur la carte":"Точно отмечено на карте",
 "Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"Выбери из списка — отель будет точно на карте",
-"Commence à taper : musée, monument, adresse…":"Начни вводить: музей, памятник, адрес…"});
+"Commence à taper : musée, monument, adresse…":"Начни вводить: музей, памятник, адрес…",
+"Ajouter une visite à la main":"Добавить место вручную",
+"Ajouter une activité à la main":"Добавить занятие вручную",
+"Quel jour ?":"Какой день?",
+"La visite":"Место",
+"Ex. Tour de Pise ; Piazza dei Miracoli":"Напр. Пизанская башня; Пьяцца-деи-Мираколи",
+"Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"Достаточно названия, адреса или ссылки Google Maps. Несколько сразу: раздели «;».",
+"Déjà prévu ce jour-là":"Уже запланировано в этот день",
+"compagnons":"попутчики",
+"Ajouté":"Добавлено"});

@@ -6531,4 +6531,13 @@ I18N.load({
 "Commence à taper : nom de l’hôtel ou rue":"입력해 보세요: 호텔 이름이나 거리",
 "Placé exactement sur la carte":"지도에 정확히 표시됨",
 "Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"목록에서 고르면 호텔이 지도에 정확히 표시돼요",
-"Commence à taper : musée, monument, adresse…":"입력해 보세요: 박물관, 명소, 주소…"});
+"Commence à taper : musée, monument, adresse…":"입력해 보세요: 박물관, 명소, 주소…",
+"Ajouter une visite à la main":"방문지 직접 추가",
+"Ajouter une activité à la main":"액티비티 직접 추가",
+"Quel jour ?":"어느 날?",
+"La visite":"방문지",
+"Ex. Tour de Pise ; Piazza dei Miracoli":"예: 피사의 사탑; 기적의 광장",
+"Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"이름, 주소, Google 지도 링크 중 하나면 돼요. 여러 개는 «;»로 구분하세요.",
+"Déjà prévu ce jour-là":"그날 이미 계획됨",
+"compagnons":"동행",
+"Ajouté":"추가됨"});

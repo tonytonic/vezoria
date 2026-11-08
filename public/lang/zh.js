@@ -6531,4 +6531,13 @@ I18N.load({
 "Commence à taper : nom de l’hôtel ou rue":"开始输入：酒店名称或街道",
 "Placé exactement sur la carte":"已精确标在地图上",
 "Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"从列表中选择：酒店会精确标在地图上",
-"Commence à taper : musée, monument, adresse…":"开始输入：博物馆、古迹、地址…"});
+"Commence à taper : musée, monument, adresse…":"开始输入：博物馆、古迹、地址…",
+"Ajouter une visite à la main":"手动添加景点",
+"Ajouter une activité à la main":"手动添加活动",
+"Quel jour ?":"哪一天？",
+"La visite":"景点",
+"Ex. Tour de Pise ; Piazza dei Miracoli":"例如：比萨斜塔；奇迹广场",
+"Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"填名称、地址或 Google 地图链接都可以。一次添加多个：用“;”分隔。",
+"Déjà prévu ce jour-là":"当天已安排",
+"compagnons":"旅伴",
+"Ajouté":"已添加"});

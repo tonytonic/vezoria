@@ -6519,4 +6519,13 @@ I18N.load({
 "Commence à taper : nom de l’hôtel ou rue":"Yazmaya başla: otel adı veya sokak",
 "Placé exactement sur la carte":"Haritada tam yerine kondu",
 "Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"Listeden seç: otel haritada tam yerine konur",
-"Commence à taper : musée, monument, adresse…":"Yazmaya başla: müze, anıt, adres…"});
+"Commence à taper : musée, monument, adresse…":"Yazmaya başla: müze, anıt, adres…",
+"Ajouter une visite à la main":"Elle gezi ekle",
+"Ajouter une activité à la main":"Elle etkinlik ekle",
+"Quel jour ?":"Hangi gün?",
+"La visite":"Gezi",
+"Ex. Tour de Pise ; Piazza dei Miracoli":"Örn. Pisa Kulesi; Piazza dei Miracoli",
+"Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"Bir ad yeter, ya da adres veya Google Maps bağlantısı. Birden fazla: «;» ile ayır.",
+"Déjà prévu ce jour-là":"O gün zaten planlı",
+"compagnons":"yol arkadaşları",
+"Ajouté":"Eklendi"});

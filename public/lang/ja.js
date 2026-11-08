@@ -6531,4 +6531,13 @@ I18N.load({
 "Commence à taper : nom de l’hôtel ou rue":"入力を開始：ホテル名または通り",
 "Placé exactement sur la carte":"地図上の正確な位置に配置",
 "Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"リストから選ぶと、ホテルが地図上の正確な位置に置かれます",
-"Commence à taper : musée, monument, adresse…":"入力を開始：美術館、名所、住所…"});
+"Commence à taper : musée, monument, adresse…":"入力を開始：美術館、名所、住所…",
+"Ajouter une visite à la main":"見学先を手動で追加",
+"Ajouter une activité à la main":"アクティビティを手動で追加",
+"Quel jour ?":"何日？",
+"La visite":"見学先",
+"Ex. Tour de Pise ; Piazza dei Miracoli":"例：ピサの斜塔；ミラコリ広場",
+"Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"名前、住所、Google マップのリンクのどれでもOK。複数まとめて：「;」で区切ってね。",
+"Déjà prévu ce jour-là":"その日の予定",
+"compagnons":"旅の仲間",
+"Ajouté":"追加しました"});

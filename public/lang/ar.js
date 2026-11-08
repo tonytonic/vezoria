@@ -6532,4 +6532,13 @@ I18N.load({
 "Commence à taper : nom de l’hôtel ou rue":"ابدأ الكتابة: اسم الفندق أو الشارع",
 "Placé exactement sur la carte":"وُضع بدقة على الخريطة",
 "Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"اختر من القائمة: سيوضع الفندق بدقة على الخريطة",
-"Commence à taper : musée, monument, adresse…":"ابدأ الكتابة: متحف، معلم، عنوان…"});
+"Commence à taper : musée, monument, adresse…":"ابدأ الكتابة: متحف، معلم، عنوان…",
+"Ajouter une visite à la main":"إضافة زيارة يدويًا",
+"Ajouter une activité à la main":"إضافة نشاط يدويًا",
+"Quel jour ?":"أي يوم؟",
+"La visite":"الزيارة",
+"Ex. Tour de Pise ; Piazza dei Miracoli":"مثال: برج بيزا؛ ساحة المعجزات",
+"Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"يكفي اسم، أو عنوان، أو رابط خرائط Google. عدة أماكن معًا: افصل بينها بـ «;».",
+"Déjà prévu ce jour-là":"مخطط له بالفعل في ذلك اليوم",
+"compagnons":"رفقاء",
+"Ajouté":"تمت الإضافة"});

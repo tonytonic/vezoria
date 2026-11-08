@@ -3583,4 +3583,13 @@ I18N.load({
 "Commence à taper : nom de l’hôtel ou rue":"Begin te typen: hotelnaam of straat",
 "Placé exactement sur la carte":"Precies op de kaart geplaatst",
 "Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"Kies uit de lijst: het hotel komt precies op de kaart",
-"Commence à taper : musée, monument, adresse…":"Begin te typen: museum, monument, adres…"});
+"Commence à taper : musée, monument, adresse…":"Begin te typen: museum, monument, adres…",
+"Ajouter une visite à la main":"Bezoek handmatig toevoegen",
+"Ajouter une activité à la main":"Activiteit handmatig toevoegen",
+"Quel jour ?":"Welke dag?",
+"La visite":"Het bezoek",
+"Ex. Tour de Pise ; Piazza dei Miracoli":"Bijv. Toren van Pisa; Piazza dei Miracoli",
+"Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"Een naam is genoeg, of een adres, of een Google Maps-link. Meerdere tegelijk: scheid met „;”.",
+"Déjà prévu ce jour-là":"Al gepland die dag",
+"compagnons":"reisgenoten",
+"Ajouté":"Toegevoegd"});

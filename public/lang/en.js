@@ -3577,4 +3577,13 @@ I18N.load({
 "Commence à taper : nom de l’hôtel ou rue":"Start typing: hotel name or street",
 "Placé exactement sur la carte":"Placed exactly on the map",
 "Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"Pick from the list: the hotel will be placed exactly on the map",
-"Commence à taper : musée, monument, adresse…":"Start typing: museum, monument, address…"});
+"Commence à taper : musée, monument, adresse…":"Start typing: museum, monument, address…",
+"Ajouter une visite à la main":"Add a visit manually",
+"Ajouter une activité à la main":"Add an activity manually",
+"Quel jour ?":"Which day?",
+"La visite":"The visit",
+"Ex. Tour de Pise ; Piazza dei Miracoli":"E.g. Leaning Tower of Pisa; Piazza dei Miracoli",
+"Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"A name is enough, or an address, or a Google Maps link. Several at once: separate with “;”.",
+"Déjà prévu ce jour-là":"Already planned that day",
+"compagnons":"companions",
+"Ajouté":"Added"});

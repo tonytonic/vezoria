@@ -6531,4 +6531,13 @@ I18N.load({
 "Commence à taper : nom de l’hôtel ou rue":"लिखना शुरू करो: होटल का नाम या सड़क",
 "Placé exactement sur la carte":"नक़्शे पर ठीक जगह रखा गया",
 "Choisis dans la liste : l’hôtel sera placé exactement sur la carte":"सूची से चुनो: होटल नक़्शे पर ठीक जगह दिखेगा",
-"Commence à taper : musée, monument, adresse…":"लिखना शुरू करो: संग्रहालय, स्मारक, पता…"});
+"Commence à taper : musée, monument, adresse…":"लिखना शुरू करो: संग्रहालय, स्मारक, पता…",
+"Ajouter une visite à la main":"घूमने की जगह ख़ुद जोड़ो",
+"Ajouter une activité à la main":"गतिविधि ख़ुद जोड़ो",
+"Quel jour ?":"कौन सा दिन?",
+"La visite":"घूमने की जगह",
+"Ex. Tour de Pise ; Piazza dei Miracoli":"जैसे पीसा की मीनार; पियाज़ा देई मिराकोली",
+"Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"नाम काफ़ी है, या पता, या Google Maps लिंक। एक साथ कई: «;» से अलग करो।",
+"Déjà prévu ce jour-là":"उस दिन पहले से तय",
+"compagnons":"साथी",
+"Ajouté":"जोड़ा गया"});
