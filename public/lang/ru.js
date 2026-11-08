@@ -6541,4 +6541,9 @@ I18N.load({
 "Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"Достаточно названия, адреса или ссылки Google Maps. Несколько сразу: раздели «;».",
 "Déjà prévu ce jour-là":"Уже запланировано в этот день",
 "compagnons":"попутчики",
-"Ajouté":"Добавлено"});
+"Ajouté":"Добавлено",
+"Qui invites-tu dans ce voyage ?":"Кого ты приглашаешь в эту поездку?",
+"Tes abonnés":"Твои подписчики",
+"Quelqu’un d’autre":"Кто-то другой",
+"Son prénom":"Имя",
+"Tape le début du nom : choisis le lieu exact dans la liste.":"Начни вводить название и выбери точное место в списке."});

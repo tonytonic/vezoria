@@ -6540,4 +6540,9 @@ I18N.load({
 "Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"이름, 주소, Google 지도 링크 중 하나면 돼요. 여러 개는 «;»로 구분하세요.",
 "Déjà prévu ce jour-là":"그날 이미 계획됨",
 "compagnons":"동행",
-"Ajouté":"추가됨"});
+"Ajouté":"추가됨",
+"Qui invites-tu dans ce voyage ?":"이 여행에 누구를 초대할까요?",
+"Tes abonnés":"내 팔로워",
+"Quelqu’un d’autre":"다른 사람",
+"Son prénom":"이름",
+"Tape le début du nom : choisis le lieu exact dans la liste.":"이름 앞부분을 입력하고 목록에서 정확한 장소를 고르세요."});

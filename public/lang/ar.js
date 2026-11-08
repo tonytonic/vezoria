@@ -6541,4 +6541,9 @@ I18N.load({
 "Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"يكفي اسم، أو عنوان، أو رابط خرائط Google. عدة أماكن معًا: افصل بينها بـ «;».",
 "Déjà prévu ce jour-là":"مخطط له بالفعل في ذلك اليوم",
 "compagnons":"رفقاء",
-"Ajouté":"تمت الإضافة"});
+"Ajouté":"تمت الإضافة",
+"Qui invites-tu dans ce voyage ?":"من تدعو إلى هذه الرحلة؟",
+"Tes abonnés":"متابعوك",
+"Quelqu’un d’autre":"شخص آخر",
+"Son prénom":"اسمه الأول",
+"Tape le début du nom : choisis le lieu exact dans la liste.":"اكتب بداية الاسم ثم اختر المكان الدقيق من القائمة."});

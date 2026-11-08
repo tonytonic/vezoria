@@ -3586,4 +3586,9 @@ I18N.load({
 "Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"A name is enough, or an address, or a Google Maps link. Several at once: separate with “;”.",
 "Déjà prévu ce jour-là":"Already planned that day",
 "compagnons":"companions",
-"Ajouté":"Added"});
+"Ajouté":"Added",
+"Qui invites-tu dans ce voyage ?":"Who are you inviting to this trip?",
+"Tes abonnés":"Your followers",
+"Quelqu’un d’autre":"Someone else",
+"Son prénom":"Their first name",
+"Tape le début du nom : choisis le lieu exact dans la liste.":"Type the start of the name, then pick the exact place in the list."});

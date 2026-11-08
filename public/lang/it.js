@@ -3601,4 +3601,9 @@ I18N.load({
 "Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"Basta un nome, un indirizzo o un link di Google Maps. Più di uno insieme: separa con «;».",
 "Déjà prévu ce jour-là":"Già previsto quel giorno",
 "compagnons":"compagni",
-"Ajouté":"Aggiunto"});
+"Ajouté":"Aggiunto",
+"Qui invites-tu dans ce voyage ?":"Chi inviti a questo viaggio?",
+"Tes abonnés":"I tuoi follower",
+"Quelqu’un d’autre":"Qualcun altro",
+"Son prénom":"Il suo nome",
+"Tape le début du nom : choisis le lieu exact dans la liste.":"Scrivi l’inizio del nome e scegli il luogo esatto nell’elenco."});

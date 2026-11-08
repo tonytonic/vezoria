@@ -6540,4 +6540,9 @@ I18N.load({
 "Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"नाम काफ़ी है, या पता, या Google Maps लिंक। एक साथ कई: «;» से अलग करो।",
 "Déjà prévu ce jour-là":"उस दिन पहले से तय",
 "compagnons":"साथी",
-"Ajouté":"जोड़ा गया"});
+"Ajouté":"जोड़ा गया",
+"Qui invites-tu dans ce voyage ?":"इस यात्रा में किसे बुला रहे हो?",
+"Tes abonnés":"तुम्हारे फ़ॉलोअर्स",
+"Quelqu’un d’autre":"कोई और",
+"Son prénom":"पहला नाम",
+"Tape le début du nom : choisis le lieu exact dans la liste.":"नाम की शुरुआत लिखो, फिर सूची से सही जगह चुनो।"});

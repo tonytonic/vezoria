@@ -3592,4 +3592,9 @@ I18N.load({
 "Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"Een naam is genoeg, of een adres, of een Google Maps-link. Meerdere tegelijk: scheid met „;”.",
 "Déjà prévu ce jour-là":"Al gepland die dag",
 "compagnons":"reisgenoten",
-"Ajouté":"Toegevoegd"});
+"Ajouté":"Toegevoegd",
+"Qui invites-tu dans ce voyage ?":"Wie nodig je uit voor deze reis?",
+"Tes abonnés":"Je volgers",
+"Quelqu’un d’autre":"Iemand anders",
+"Son prénom":"Voornaam",
+"Tape le début du nom : choisis le lieu exact dans la liste.":"Typ het begin van de naam en kies de juiste plek uit de lijst."});

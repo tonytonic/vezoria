@@ -6528,4 +6528,9 @@ I18N.load({
 "Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"Bir ad yeter, ya da adres veya Google Maps bağlantısı. Birden fazla: «;» ile ayır.",
 "Déjà prévu ce jour-là":"O gün zaten planlı",
 "compagnons":"yol arkadaşları",
-"Ajouté":"Eklendi"});
+"Ajouté":"Eklendi",
+"Qui invites-tu dans ce voyage ?":"Bu seyahate kimi davet ediyorsun?",
+"Tes abonnés":"Takipçilerin",
+"Quelqu’un d’autre":"Başka biri",
+"Son prénom":"Adı",
+"Tape le début du nom : choisis le lieu exact dans la liste.":"Adın başını yaz, listeden tam yeri seç."});

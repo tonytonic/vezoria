@@ -6540,4 +6540,9 @@ I18N.load({
 "Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"填名称、地址或 Google 地图链接都可以。一次添加多个：用“;”分隔。",
 "Déjà prévu ce jour-là":"当天已安排",
 "compagnons":"旅伴",
-"Ajouté":"已添加"});
+"Ajouté":"已添加",
+"Qui invites-tu dans ce voyage ?":"你要邀请谁加入这次旅行？",
+"Tes abonnés":"你的关注者",
+"Quelqu’un d’autre":"其他人",
+"Son prénom":"名字",
+"Tape le début du nom : choisis le lieu exact dans la liste.":"输入名称开头，然后在列表中选择准确地点。"});

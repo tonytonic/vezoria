@@ -6540,4 +6540,9 @@ I18N.load({
 "Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».":"名前、住所、Google マップのリンクのどれでもOK。複数まとめて：「;」で区切ってね。",
 "Déjà prévu ce jour-là":"その日の予定",
 "compagnons":"旅の仲間",
-"Ajouté":"追加しました"});
+"Ajouté":"追加しました",
+"Qui invites-tu dans ce voyage ?":"この旅に誰を招待する？",
+"Tes abonnés":"あなたのフォロワー",
+"Quelqu’un d’autre":"ほかの人",
+"Son prénom":"名前",
+"Tape le début du nom : choisis le lieu exact dans la liste.":"名前の最初を入力して、リストから正確な場所を選んでね。"});
