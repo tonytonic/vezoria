@@ -721,7 +721,7 @@
     } else if(c==='hotel'){
       h += field('Nom de l’hôtel / du bateau','nom',it.nom);
       h += `<div class="v-f2">${field('Arrivée','date',it.date,'date')}${field('Départ','dateFin',it.dateFin,'date')}</div>`;
-      h += field('Adresse','adresse',it.adresse);
+      h += field('Adresse','adresse',it.adresse,'text','data-place="poi addr" autocomplete="off" placeholder="' + esc(MSGT('Commence à taper : nom de l’hôtel ou rue')) + '"') + `<div class="v-sum-small" id="adr-ok" style="margin:-4px 0 8px">${it.lat != null ? '📍 ' + esc(MSGT('Placé exactement sur la carte')) : '💡 ' + esc(MSGT('Choisis dans la liste : l’hôtel sera placé exactement sur la carte'))}</div>`;   // 🏨 aide à la saisie, comme pour les villes
       h += `<div class="v-f2">${field('Check-in','heure',it.heure,'time')}${field('Téléphone','tel',it.tel,'tel')}</div>`;
     } else {
       h += `<div class="v-f2">${field('Date','date',it.date,'date')}${field('Heure / créneau','heure',it.heure,'time')}</div>`;
@@ -803,6 +803,7 @@
     if(it.cat === 'hotel' && was && !isNew){ const oc = cityOf(was.titre || '') || was.titre, nc = cityOf(it.titre || '') || it.titre;
       if(oc && nc && trCanon(oc) !== trCanon(nc) && (!was.base || trCanon(was.base) === trCanon(oc)) && !/h[oô]tel|hostel|auberge|airbnb|chez |appart|apartment|b&b|camping|g[iî]te|r[ée]sidence|villa /i.test(nc)){
         reCity = [oc, nc]; it.base = nc; delete it.lat; delete it.lng; } }
+    if(it.cat === 'hotel' && it.lat != null && normQ(it.adresse || '') !== normQ((it.geoAddr != null ? it.geoAddr : (was || {}).adresse) || '')){ delete it.lat; delete it.lng; delete it.geoAddr; }   // 📍 adresse retapée à la main : l’ancien point ne vaut plus
     if(isNew || !sameItem(was, it)) put(it);
     if(reCity) try { stageRenamed(reCity[0], reCity[1], it.id); dayTitlesFix(); } catch(e){}
     if(!keepOpen && (isNew || (booked(it) && !booked(was)))) setTimeout(()=>fxFor(it), 250);   // nouveau ou tout juste réservé
@@ -2727,10 +2728,15 @@
     [...W, ...B.filter(inC), ...A.filter(inC), ...(C ? [C] : []), ...B, ...A].forEach(x=>{ const k = normQ(x.name) + '|' + x.cc; if(!seen.has(k)){ seen.add(k); out.push(x); } });
     return out.slice(0, 6);
   }
+  // 🏨 l’adresse d’un hôtel se cherche autour de SA ville (champ « Étape / ville » du formulaire)
+  async function adrNear(){ try { const v = ((document.querySelector('#v-form [name=titre]') || {}).value || (editing && (editing.base || editing.titre)) || '').trim(); const c = cityOf(v) || v; if(!c) return null;
+    const g = geoCached(c) || await geocode(c, null); return g ? {lat:+g.lat, lng:+g.lng} : null; } catch(e){ return null; } }
   function pacClose(i){ const b = i && i._pac; if(b){ b.remove(); i._pac = null; } }
   function pacPick(i, it){
     if(/poi/.test(i.dataset.place || '')){   // 📍 lieu précis d’un souvenir : il est posé à cet endroit exact
       i.value = it.name + (it.city && normQ(it.city) !== normQ(it.name) ? ', ' + it.city : ''); pacClose(i); i._pacSkip = 1;
+      if(editing && editing.type === 'item' && /addr/.test(i.dataset.place || '')){ editing.lat = +(+it.lat).toFixed(6); editing.lng = +(+it.lng).toFixed(6); editing.geoAddr = i.value; const ok = document.getElementById('adr-ok'); if(ok) ok.textContent = '📍 ' + MSGT('Placé exactement sur la carte');
+        const nm = document.querySelector('#v-form [name=nom]'); if(nm && !nm.value.trim() && /h[oô]tel|hostel|albergo|b&b|residen|inn\b|suites?\b/i.test(it.name)) nm.value = it.name; }
       if(editing && editing.type === 'souv'){ editing.lat = +(+it.lat).toFixed(6); editing.lng = +(+it.lng).toFixed(6); editing.pinAt = Date.now(); if(it.cc){ editing.cc = it.cc; editing.pays = it.ctry || ''; } try { souvPosShow(); } catch(e){} }
       i.dispatchEvent(new Event('change', {bubbles:true})); return; }
     const key = 'geo:' + normQ(it.name), cur = R[key];
@@ -2763,7 +2769,7 @@
     const md = i.dataset.place || '', multi = /multi/.test(md), onlyC = /country/.test(md), poi = /poi/.test(md), cur = i.value;
     clearTimeout(pacT); const q = (multi ? cur.split(',').pop() : cur).trim(), my = ++pacN;
     if(q.length < 2){ pacClose(i); return; }
-    pacT = setTimeout(async ()=>{ const L = poi ? await pacFetch(q, false, souvNear(editing), true) : await pacSmart(q, onlyC); if(my === pacN && i.value === cur) pacShow(i, L); }, 300);
+    pacT = setTimeout(async ()=>{ const L = poi ? await pacFetch(q, false, /addr/.test(md) ? await adrNear() : souvNear(editing), true) : await pacSmart(q, onlyC); if(my === pacN && i.value === cur) pacShow(i, L); }, 300);
   });
   document.addEventListener('focusout', e=>{ const i = e.target; if(i && i._pac) setTimeout(()=>{ if(document.activeElement !== i) pacClose(i); }, 150); });
   document.addEventListener('keydown', e=>{ const i = e.target; if(e.key === 'Escape' && i && i._pac) pacClose(i); });
