@@ -3569,4 +3569,5 @@ I18N.load({
 "Je supprime le lien commun…":"Gemeinsamer Link wird gelöscht…",
 "Lien commun supprimé":"Gemeinsamer Link gelöscht",
 "Supprimer le lien commun":"Gemeinsamen Link löschen",
-"Passer en lien personnel (il ne le voit pas)":"Auf persönlichen Link umstellen (merkt es nicht)"});
+"Passer en lien personnel (il ne le voit pas)":"Auf persönlichen Link umstellen (merkt es nicht)",
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"nur Durchreise (Ankunft, Abreise…). Für Nächte die Zahl ändern oder „Nächte verteilen“ tippen."});

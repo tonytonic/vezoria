@@ -3578,4 +3578,5 @@ I18N.load({
 "Je supprime le lien commun…":"A eliminar o link comum…",
 "Lien commun supprimé":"Link comum eliminado",
 "Supprimer le lien commun":"Eliminar o link comum",
-"Passer en lien personnel (il ne le voit pas)":"Passar para link pessoal (não repara)"});
+"Passer en lien personnel (il ne le voit pas)":"Passar para link pessoal (não repara)",
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"só de passagem (chegada, partida…). Para lhes dar noites, muda o número ou toca em «Repartir as noites»."});

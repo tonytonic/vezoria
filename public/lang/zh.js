@@ -6513,4 +6513,5 @@ I18N.load({
 "Je supprime le lien commun…":"正在删除共享链接…",
 "Lien commun supprimé":"共享链接已删除",
 "Supprimer le lien commun":"删除共享链接",
-"Passer en lien personnel (il ne le voit pas)":"改为个人链接（对方不会察觉）"});
+"Passer en lien personnel (il ne le voit pas)":"改为个人链接（对方不会察觉）",
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"只是路过（抵达、出发…）。要安排过夜，改数字或点「分配夜数」。"});

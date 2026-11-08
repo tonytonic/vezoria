@@ -3559,4 +3559,5 @@ I18N.load({
 "Je supprime le lien commun…":"Deleting the shared link…",
 "Lien commun supprimé":"Shared link deleted",
 "Supprimer le lien commun":"Delete the shared link",
-"Passer en lien personnel (il ne le voit pas)":"Switch to a personal link (they won’t notice)"});
+"Passer en lien personnel (il ne le voit pas)":"Switch to a personal link (they won’t notice)",
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"just passing through (arrival, departure…). To give them nights, change the number or tap “Spread the nights”."});

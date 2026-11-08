@@ -6513,4 +6513,5 @@ I18N.load({
 "Je supprime le lien commun…":"共通リンクを削除中…",
 "Lien commun supprimé":"共通リンクを削除しました",
 "Supprimer le lien commun":"共通リンクを削除",
-"Passer en lien personnel (il ne le voit pas)":"個人リンクに切り替え（気づかれません）"});
+"Passer en lien personnel (il ne le voit pas)":"個人リンクに切り替え（気づかれません）",
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"通過のみ（到着・出発など）。泊数を付けるには数字を変えるか「泊数を割り振る」をタップ。"});

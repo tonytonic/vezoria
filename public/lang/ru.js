@@ -6514,4 +6514,5 @@ I18N.load({
 "Je supprime le lien commun…":"Удаляю общую ссылку…",
 "Lien commun supprimé":"Общая ссылка удалена",
 "Supprimer le lien commun":"Удалить общую ссылку",
-"Passer en lien personnel (il ne le voit pas)":"Перевести на личную ссылку (незаметно)"});
+"Passer en lien personnel (il ne le voit pas)":"Перевести на личную ссылку (незаметно)",
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"просто проезд (прилёт, отъезд…). Чтобы добавить ночи, измени число или нажми «Распределить ночи»."});

@@ -6501,4 +6501,5 @@ I18N.load({
 "Je supprime le lien commun…":"Ortak bağlantı siliniyor…",
 "Lien commun supprimé":"Ortak bağlantı silindi",
 "Supprimer le lien commun":"Ortak bağlantıyı sil",
-"Passer en lien personnel (il ne le voit pas)":"Kişisel bağlantıya geçir (fark etmez)"});
+"Passer en lien personnel (il ne le voit pas)":"Kişisel bağlantıya geçir (fark etmez)",
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"sadece geçiş (varış, kalkış…). Gece eklemek için sayıyı değiştir veya «Geceleri dağıt»a dokun."});

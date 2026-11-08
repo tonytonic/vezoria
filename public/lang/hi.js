@@ -6513,4 +6513,5 @@ I18N.load({
 "Je supprime le lien commun…":"साझा लिंक हटा रहा हूँ…",
 "Lien commun supprimé":"साझा लिंक हटा दिया",
 "Supprimer le lien commun":"साझा लिंक हटाओ",
-"Passer en lien personnel (il ne le voit pas)":"निजी लिंक पर ले जाओ (उसे पता नहीं चलेगा)"});
+"Passer en lien personnel (il ne le voit pas)":"निजी लिंक पर ले जाओ (उसे पता नहीं चलेगा)",
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"सिर्फ़ गुज़रना (पहुँचना, निकलना…)। रातें देने के लिए संख्या बदलो या «रातें बाँटो» दबाओ।"});

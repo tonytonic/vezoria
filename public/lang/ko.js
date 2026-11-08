@@ -6513,4 +6513,5 @@ I18N.load({
 "Je supprime le lien commun…":"공유 링크 삭제 중…",
 "Lien commun supprimé":"공유 링크를 삭제했어요",
 "Supprimer le lien commun":"공유 링크 삭제",
-"Passer en lien personnel (il ne le voit pas)":"개인 링크로 바꾸기 (모르게)"});
+"Passer en lien personnel (il ne le voit pas)":"개인 링크로 바꾸기 (모르게)",
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"잠깐 들르는 곳 (도착, 출발…). 숙박을 넣으려면 숫자를 바꾸거나 «숙박 나누기»를 누르세요."});

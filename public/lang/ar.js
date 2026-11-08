@@ -6514,4 +6514,5 @@ I18N.load({
 "Je supprime le lien commun…":"جارٍ حذف الرابط المشترك…",
 "Lien commun supprimé":"تم حذف الرابط المشترك",
 "Supprimer le lien commun":"حذف الرابط المشترك",
-"Passer en lien personnel (il ne le voit pas)":"التحويل إلى رابط شخصي (لن يلاحظ)"});
+"Passer en lien personnel (il ne le voit pas)":"التحويل إلى رابط شخصي (لن يلاحظ)",
+"simple passage (arrivée, départ…). Pour leur donner des nuits, change le chiffre ou touche « Répartir les nuits ».":"مرور فقط (وصول، مغادرة…). لإضافة ليالٍ، غيّر الرقم أو المس «توزيع الليالي»."});
