@@ -340,7 +340,7 @@
     list('phk', x=>x.trip === ftId(tid) && /^fp:/.test(x.id) && !fpWant.has(x.id.slice(3))).forEach(x=>out.push(Object.assign(clone(x), {deleted:true})));   // photo plus publiée : plus de droit de lecture
     list('feed', f=>f.trip===ftId(tid) && !keep.has(f.id)).forEach(f=>out.push(Object.assign(clone(f), {deleted:true})));
     const people = feedTrk(tid), fkId = 'fk:' + tid;
-    if(people.length){ const fk = {id:fkId, type:'feedtrk', trip:ftId(tid), people}; if(!R[fkId] || R[fkId].deleted || stripStamp(R[fkId]) !== stripStamp(fk)) out.push(fk); }
+    if(people.length){ const fk = {id:fkId, type:'feedtrk', trip:ftId(tid), people, tm:((R['tm:' + tid] || {}).m || {}), pl:lvPlanWins(tid)}; if(!R[fkId] || R[fkId].deleted || stripStamp(R[fkId]) !== stripStamp(fk)) out.push(fk); }
     else if(R[fkId] && !R[fkId].deleted) out.push(Object.assign(clone(R[fkId]), {deleted:true, people:[]}));
     putQuiet(out);
     // 🗺️ la carte 2D/3D des abonnés (si un voyageur l’a choisie) : recalculée en arrière-plan quand le programme change
@@ -1951,7 +1951,10 @@
     if(base && !base.deleted) (base.people||[]).forEach(p=>{ const n = k(p.n); if(!(p.pts||[]).length) return;
       if(off[n] && String(off[n]) >= String(base.updatedAt || base.createdAt || '')) return;   // il a arrêté de partager depuis
       if(!by[n] || fkLast(p) > fkLast(by[n])) by[n] = p; });
-    const people = Object.values(by); return people.length ? {people} : null;
+    // 🚆 les modes de transport choisis par les voyageurs et leurs trajets prévus voyagent avec la route
+    let tm = {}, pl = [], at = '';
+    Object.values(R).forEach(r=>{ if(r && r.type === 'feedtrk' && r.trip === fid && !r.deleted && (r.tm || r.pl) && String(r.updatedAt || '') >= at){ at = String(r.updatedAt || ''); tm = r.tm || tm; pl = r.pl || pl; } });
+    const people = Object.values(by); return people.length ? {people, tm, pl} : null;
   }
   const fkSig = ftid => { const r = feedTrkRec(ftid); return r ? r.people.map(p=>p.n + fkLast(p) + (p.pts||[]).length).join('|') : ''; };
   const fmSigOf = ftid => { const r = R['fm:' + String(ftid).replace(/^ft:/, '')]; return r && !r.deleted ? String(r.updatedAt || 1) : ''; };
@@ -2002,7 +2005,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-08zb'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-08zc'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

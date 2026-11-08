@@ -680,7 +680,7 @@
     const by = trkByWho(t.id, true), out = {v:1, build:(window.VZ_BUILD || ''), at:new Date().toISOString(), tz:new Date().getTimezoneOffset(), trip:{titre:t.titre || '', debut:t.debut || '', fin:t.fin || ''},
       people:Object.entries(by).map(([w, pts])=>({n:w ? pname(w) : '—', me:w === (M.me || ''), pts:pts.slice().sort((a, b)=>(a[2] || 0) - (b[2] || 0))})),
       transports:list('item', i=>i.trip === t.id && i.cat === 'transport' && !i.deleted).map(i=>({titre:i.titre || '', mode:i.mode || '', date:i.date || '', dep:i.heureDep || '', arr:i.heureArr || '', from:i.from || '', to:i.to || ''})),
-      modes:(()=>{ try { return JSON.parse(localStorage.getItem('vz_tm') || '{}'); } catch(e){ return {}; } })()};
+      modes:((R['tm:' + t.id] || {}).m || {})};
     const n = out.people.reduce((s, p)=>s + p.pts.length, 0); if(!n){ toast(MSGT('Aucun point GPS pour ce voyage')); return; }
     const name = 'gps-' + String(t.titre || 'voyage').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + locIso() + '.json';
     const blob = new Blob([JSON.stringify(out)], {type:'application/json'}), file = new File([blob], name, {type:'application/json'});
@@ -1752,7 +1752,7 @@
       people: Object.entries(by).filter(([, p])=>p.length).map(([w, pts])=>({n: w ? pname(w) : '—', c: w ? pcol(w) : '#0ea5e9', pts, gps: trkHas(key, w), me: w === (M.me || '')})),
       ph: list('souv', x=>x.trip===key && x.lat != null && x.lng != null && geoOn(key, x.createdBy || '')).map(x=>({id:x.id, lat:+x.lat, lng:+x.lng, ph:(x.photos||[])[0] || '', t:x.titre || x.lieu || '', by: x.createdBy && (t.voyageurs||[]).length > 1 ? pname(x.createdBy) : '', d:x.date || ''}))};
   }
-  const lvSig = D => JSON.stringify([D.people.map(p=>[p.n, p.c, p.pts.length, p.pts[p.pts.length-1]]), D.ph.map(p=>p.id + p.ph)]);
+  const lvSig = D => JSON.stringify([D.people.map(p=>[p.n, p.c, p.pts.length, p.pts[p.pts.length-1]]), D.ph.map(p=>p.id + p.ph), lvTM()]);
   async function liveOpen(key){
     if(!key) return; liveClose(true); closeSheet(true);
     const ov = document.createElement('div'); ov.id = 'cv-lmap'; document.body.appendChild(ov); document.body.style.overflow = 'hidden';
@@ -1945,18 +1945,27 @@
   // 🛣️ le tracé plein colle aux rues : les points GPS (un toutes les quelques centaines de mètres) sont « recalés » sur la carte
   // (serveur OSM public, par morceaux de 25 points, gardé en cache sur le téléphone) ; à pied ou en voiture selon la vitesse
   // 🚆 comment on s’est déplacé : choisi à la main (toucher le trait) > trajet prévu dans le voyage à cette heure-là > vitesse
-  let LVTM = null; const lvTM = () => { if(!LVTM){ try { LVTM = JSON.parse(localStorage.getItem('vz_tm') || '{}'); } catch(e){ LVTM = {}; } } return LVTM; };
+  // 🚆 les modes choisis : enregistrés dans le voyage (« tm: », partagé avec les compagnons) et publiés aux abonnés avec la route
+  const lvTripKey = () => { const K = (LV && LV.key) || ''; return /^ft:|^\*/.test(K) ? '' : K; };
+  function lvTM(){ const K = (LV && LV.key) || '';
+    if(/^ft:/.test(K)) return Object.assign({}, (feedTrkRec(K) || {}).tm || {});
+    if(!K || K[0] === '*') return {};
+    const r = R['tm:' + K], T = Object.assign({}, r && !r.deleted ? r.m || {} : {});
+    if(!r){ try { const old = JSON.parse(localStorage.getItem('vz_tm') || '{}'); if(Object.keys(old).length){ Object.assign(T, old); localStorage.removeItem('vz_tm'); lvTMSave(T, K); } } catch(e){} }
+    return T; }
+  function lvTMSave(T, K){ K = K || lvTripKey(); if(!K) return; put({id:'tm:' + K, type:'tmode', trip:K, m:T}, false);
+    try { fkMine(K); if(feedCode(K)) feedBuild(K); } catch(e){} }
+  // les trajets prévus (train, avion… avec horaires) : fenêtres [début, fin, mode] ; publiées aux abonnés aussi
+  function lvPlanWins(K){ const out = [];
+    const hm = (d, h) => { const m = /^(\d{1,2})\s*[:h]\s*(\d{2})/.exec(String(h || '')); return m ? new Date(d + 'T' + m[1].padStart(2, '0') + ':' + m[2] + ':00').getTime() : 0; };
+    list('item', i=>i.trip === K && i.cat === 'transport' && !i.deleted && i.date && i.heureDep).forEach(i=>{ const a = hm(i.date, i.heureDep); if(!a) return; let b = i.heureArr ? hm(i.date, i.heureArr) : a + 3 * 3600e3; if(b < a) b += 864e5;
+      const m = (i.mode || '') + ' ' + (i.titre || ''), md = /avion|\bvol\b|flight|plane/i.test(m) ? 'plane' : /bateau|ferry|ship|boat|\bcgn\b/i.test(m) ? 'boat' : /train|tgv|\bter\b|rail|\bic\b|eurostar|sbb|cff|tram|m[ée]tro/i.test(m) ? 'rail' : /voiture|taxi|uber|bus|\bcar\b/i.test(m) ? 'car' : '';
+      if(md) out.push([a - 45 * 60e3, b + 45 * 60e3, md]); });
+    return out; }
   const lvRK = r => 'R' + (+r[0][0]).toFixed(4) + ',' + (+r[0][1]).toFixed(4) + ',' + (r[0][2] || 0);
   const lvGK = g => [g[0][0], g[0][1], g[g.length - 1][0], g[g.length - 1][1]].map(v=>(+v).toFixed(3)).join(',');
-  function lvPlan(t0, t1){ try {
-    if(!LV || !t0 || !t1 || /^(ft:|\*)/.test(LV.key || '')) return '';
-    const hm = (d, h) => { const m = /^(\d{1,2})\s*[:h]\s*(\d{2})/.exec(String(h || '')); return m ? new Date(d + 'T' + m[1].padStart(2, '0') + ':' + m[2] + ':00').getTime() : 0; };
-    const days = [locIso(new Date(t0)), locIso(new Date(t1))];
-    const it = list('item', i=>i.trip === LV.key && i.cat === 'transport' && !i.deleted && days.includes(i.date) && i.heureDep).find(i=>{
-      const a = hm(i.date, i.heureDep); if(!a) return false; let b = i.heureArr ? hm(i.date, i.heureArr) : a + 3 * 3600e3; if(b < a) b += 864e5;
-      return t0 < b + 45 * 60e3 && t1 > a - 45 * 60e3; });
-    if(!it) return ''; const m = (it.mode || '') + ' ' + (it.titre || '');
-    return /avion|\bvol\b|flight|plane/i.test(m) ? 'plane' : /bateau|ferry|ship|boat|\bcgn\b/i.test(m) ? 'boat' : /train|tgv|\bter\b|rail|\bic\b|eurostar|sbb|cff|tram|m[ée]tro/i.test(m) ? 'rail' : /voiture|taxi|uber|bus|\bcar\b/i.test(m) ? 'car' : '';
+  function lvPlan(t0, t1){ try { if(!LV || !t0 || !t1) return ''; const K = LV.key || ''; if(K[0] === '*') return '';
+    const W = /^ft:/.test(K) ? ((feedTrkRec(K) || {}).pl || []) : lvPlanWins(K); const w = W.find(w=>t0 < w[1] && t1 > w[0]); return w ? w[2] : '';
   } catch(e){ return ''; } }
   // le mode choisi pour un trajet vaut aussi pour les compagnons qui l’ont fait en même temps (même train)
   function lvWinMode(t0, t1){ if(!t0 || !t1) return ''; const T = lvTM();
@@ -2062,7 +2071,7 @@
       if(b.dataset.ok){ const a = Math.min(S.a, S.b), z = Math.max(S.a, S.b), t0 = P[a][2], t1 = P[z][2]; if(!t0 || !t1 || t1 <= t0){ lvSegEnd(); return; }
         const T = lvTM(); delete T[k]; ((LV.legMem || {})[k] || []).forEach(q=>delete T[q]);
         Object.keys(T).forEach(q=>{ if(q[0] !== '@') return; const [u, v] = q.slice(1).split('-').map(Number); if(Math.min(v, t1) > Math.max(u, t0)) delete T[q]; });
-        T['@' + t0 + '-' + t1] = S.m; try { localStorage.setItem('vz_tm', JSON.stringify(T)); } catch(e){}
+        T['@' + t0 + '-' + t1] = S.m; lvTMSave(T);
         lvSegEnd(); LV.sig = ''; liveDraw(false); } };
     ['a', 'b'].forEach((h, n)=>{ const el = document.createElement('div'); el.className = 'lv-segh'; el.textContent = n ? 'B' : 'A'; el.setAttribute('data-notr', '');
       const mk = new maplibregl.Marker({element:el, draggable:true, anchor:'center'}).setLngLat([P[S[h]][1], P[S[h]][0]]).addTo(map);
@@ -2073,7 +2082,7 @@
     draw(); }
   function lvSegEnd(){ if(!LV) return; const S = LV.seg; if(S) S.mk.forEach(m=>m.remove()); LV.seg = null; const b = document.getElementById('lv-seg'); if(b) b.remove();
     try { if(LV.map.getLayer('lv-sel')) LV.map.removeLayer('lv-sel'); if(LV.map.getSource('lv-sel')) LV.map.removeSource('lv-sel'); } catch(e){} }
-  function lvTmPick(k, pi){ const box = document.getElementById('cv-lmap') || document.body; let el = document.getElementById('lv-tm'); if(el) el.remove();
+  function lvTmPick(k, pi){ if(!lvTripKey() || (R[lvTripKey()] && R[lvTripKey()].ro)) return; const box = document.getElementById('cv-lmap') || document.body; let el = document.getElementById('lv-tm'); if(el) el.remove();
     const cur = lvTM()[k] || ((LV && LV.legMem && LV.legMem[k]) || []).map(z=>lvTM()[z]).find(Boolean) || '', M5 = [['car', '🚗 Voiture'], ['rail', '🚆 Train'], ['plane', '✈️ Avion'], ['boat', '⛴️ Bateau'], ['foot', '🚶 À pied'], ['', '✨ Auto']];
     el = document.createElement('div'); el.id = 'lv-tm'; el.className = 'lv-tm';
     const mem = (LV && LV.legMem && LV.legMem[k]) || [], st = [...mem.map(z=>LVRS['rg:' + z]).filter(Boolean), ...Object.keys(LVRS).filter(z=>z.startsWith('r:')).map(z=>LVRS[z])];
@@ -2081,7 +2090,7 @@
     el.innerHTML = `<b>${esc(MSGT('Comment as-tu fait ce trajet ?'))}</b>${cur === 'rail' && rs ? `<small class="lv-tm-st">${rs === 'ok' ? '🚆 ' + esc(MSGT('Rails trouvés')) : rs === 'wait' ? '⏳ ' + esc(MSGT('Recherche des rails…')) : '⚠️ ' + esc(MSGT('Rails introuvables')) + ' <span data-notr>(' + esc(rs.slice(5)) + ')</span>'}</small>` : ''}<div>${M5.map(([m, l])=>`<button type="button" class="${m === cur ? 'on' : ''}" data-m="${m}">${esc(MSGT(l))}</button>`).join('')}</div>${pi != null && LV && LV.ppts && (LV.ppts[pi] || []).length > 2 ? `<button type="button" class="lv-tm-seg" data-seg="1">✂️ ${esc(MSGT('Choisir de où à où sur le tracé'))}</button>` : ''}<button type="button" class="lv-tm-x" aria-label="×">✕</button>`;
     el.onclick = ev => { ev.stopPropagation(); const b = ev.target.closest('button'); if(!b) return; if(b.classList.contains('lv-tm-x')){ el.remove(); return; } if(b.dataset.seg){ el.remove(); lvSegEdit(pi, k); return; }
       const T = lvTM(); ((LV && LV.legMem && LV.legMem[k]) || []).forEach(z=>delete T[z]); if(b.dataset.m) T[k] = b.dataset.m; else delete T[k];
-      const w = LV && LV.legWin && LV.legWin[k]; if(w && w[0] && w[1] > w[0]){ Object.keys(T).forEach(z=>{ if(z[0] === '@' && lvWinMode(w[0], w[1]) && (()=>{ const [a, c] = z.slice(1).split('-').map(Number); return Math.min(c, w[1]) > Math.max(a, w[0]); })()) delete T[z]; }); if(b.dataset.m) T['@' + w[0] + '-' + w[1]] = b.dataset.m; } try { localStorage.setItem('vz_tm', JSON.stringify(T)); } catch(e){}
+      const w = LV && LV.legWin && LV.legWin[k]; if(w && w[0] && w[1] > w[0]){ Object.keys(T).forEach(z=>{ if(z[0] === '@' && lvWinMode(w[0], w[1]) && (()=>{ const [a, c] = z.slice(1).split('-').map(Number); return Math.min(c, w[1]) > Math.max(a, w[0]); })()) delete T[z]; }); if(b.dataset.m) T['@' + w[0] + '-' + w[1]] = b.dataset.m; } lvTMSave(T);
       el.remove(); if(LV){ LV.sig = ''; liveDraw(false); } };
     box.appendChild(el); }
   function liveDraw(first){

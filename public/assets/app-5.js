@@ -220,7 +220,7 @@
       if(!trkPubOn(tid, me)){ if(cur && !cur.deleted) putQuiet([{id, type:'feedtrk', trip:ftId(tid), who:me, n: me ? pname(me) : '', people:[], deleted:true}]); return; }
       const pts = trkByWho(tid, true)[me] || []; if(!pts.length) return;
       const step = Math.max(1, Math.ceil(pts.length / 400)), P = pts.filter((_, i)=>i % step === 0 || i === pts.length - 1).map(p=>[+(+p[0]).toFixed(3), +(+p[1]).toFixed(3), p[2] || 0]);
-      const rec = {id, type:'feedtrk', trip:ftId(tid), who:me, people:[{n: me ? pname(me) : (myName() || ''), c: me ? pcol(me) : '#0ea5e9', pts:P, gps: trkHas(tid, me) ? 1 : 0}]};
+      const rec = {id, type:'feedtrk', trip:ftId(tid), who:me, people:[{n: me ? pname(me) : (myName() || ''), c: me ? pcol(me) : '#0ea5e9', pts:P, gps: trkHas(tid, me) ? 1 : 0}], tm:((R['tm:' + tid] || {}).m || {}), pl:lvPlanWins(tid)};
       if(cur && !cur.deleted && stripStamp(cur) === stripStamp(rec)) return;
       putQuiet([rec]);
     } catch(e){}
