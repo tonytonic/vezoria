@@ -400,7 +400,7 @@
   // les points à rejoindre depuis l’hébergement : tes visites + le centre-ville (visites guidées, gastronomie… s’y passent ; et il compte si tu as peu de visites)
   // 🏨 retrouver un hôtel : « Via Piliers corridoni 10356125 pise », « Viale … 67 53100 », ou seulement son nom (« Hotel Italia » à Sienne)
   async function hotelGeo(h, city, ref){
-    M.hgeo = M.hgeo || {}; const key = 'v3|' + normQ([h.adresse || '', h.nom || '', city || ''].join('|')); const c = M.hgeo[key];
+    M.hgeo = M.hgeo || {}; const key = 'v4|' + normQ([h.adresse || '', h.nom || '', city || ''].join('|')); const c = M.hgeo[key];
     if(c && (!c.miss || Date.now() - c.at < 6 * 3600e3)) return c.miss ? null : {lat:c.lat, lng:c.lng};
     // 📏 un hôtel de ville est près du centre : la même rue existe dans le village d’à côté (Viale Cavour à Poggibonsi ≠ à Sienne)
     const ok = (r, lim) => r && r.lat != null && isFinite(+r.lat) && (!ref || rawKm({lat:+r.lat, lng:+r.lng}, ref) <= (lim || 12));
@@ -2726,14 +2726,7 @@
     const g = async q => { q = (q || '').trim(); if(!q) return null; const r = await geocode(q, null).catch(()=>null); return r && r.lat != null ? {lat:+r.lat, lng:+r.lng} : null; };
     const F = {legs:[], cities:[], hood:[], rays:[], visits:[], acts:[], hotels:[]};
     const st = tlStages(), SC = []; let k = 0;
-    for(const s of st){ let c = await g(s.city); if(!c) continue;
-      // 🎯 contrôle : là où sont les visites, activités et hôtels de l’étape (placés au point exact). Si la ville est loin d’eux
-      //    (« Pise » tombé au milieu de sa province, à 25 km), c’est elle qui se trompe : on la met au milieu de ce qu’on y fait.
-      try { const end = s.fin && s.fin > s.debut ? s.fin : addDays(s.debut, 1), inS = d => d && d >= s.debut && d < end;
-        const P = [...list('place', q=>q.trip === t.id && !q.deleted && !q.sugg && q.lat != null && inS(q.date)), ...list('item', i=>i.trip === t.id && (i.cat === 'activite' || i.cat === 'hotel') && i.lat != null && inS(i.date))].map(q=>({lat:+q.lat, lng:+q.lng})).filter(q=>isFinite(q.lat) && isFinite(q.lng));
-        if(P.length >= 2){ const med = a => { const b = a.slice().sort((x, y)=>x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; };
-          const M0 = {lat:med(P.map(q=>q.lat)), lng:med(P.map(q=>q.lng))}, near = P.filter(q=>rawKm(q, M0) < 6).length;
-          if(rawKm(c, M0) > 8 && near >= Math.max(2, P.length / 2)) c = M0; } } catch(e){}
+    for(const s of st){ const c = await g(s.city); if(!c) continue;
       F.cities.push({c, name:s.city, n:++k}); SC.push({s, c}); }
     // 🚆 un bout de trajet se place d’abord sur une ville d’étape ; sinon on le cherche AUTOUR de l’étape du jour
     //    (« Aéroport », « Gare Termini », « Pompéi » : pas un aéroport au hasard en Biélorussie)

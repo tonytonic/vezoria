@@ -2656,28 +2656,37 @@
     const key = 'geo:' + normQ(full), A = ctx ? null : geoAnchor(q);
     // 🩹 réparation (2026-11-01h) : une ville hors étapes (départ, retour…) a pu être déplacée près des étapes (Paris → Paris, Ontario) : on la recherche une fois, normalement
     // 🏙️ réparation (2026-11-08) : « Pise », « Sienne » ont pu tomber sur la PROVINCE (son centre est à 20 km de la ville) : une ville sans chiffres est recherchée une fois à nouveau
-    const fix = (!A && geoStale(R[key], q)) || (R[key] && !R[key].g4 && !/[\d,]/.test(q) && q.split(/\s+/).length <= 3 && !coordsIn(q));
+    // 🏙️ (2026-11-08zq) : une ville = son CENTRE-VILLE. Recherche limitée aux villes et villages (featureType=settlement) : jamais la province ni la région
+    const isSt = () => { try { if(trip() && tlStages().some(s=>normQ(s.city) === normQ(q))) return true; } catch(e){} return geoStage(q) || !!(R[key] && R[key].pick); };
+    const city1 = !ctx && !/[\d,]/.test(q) && q.split(/\s+/).length <= 4 && isSt();
+    const fix = (!A && geoStale(R[key], q)) || (R[key] && city1 && !R[key].g5);
     if(R[key] && !R[key].deleted && R[key].lat != null && !geoFar(R[key], A) && !fix) return {lat:R[key].lat, lng:R[key].lng};
     const wait = 1100 - (Date.now() - geoLast); if(wait > 0) await new Promise(r=>setTimeout(r, wait));
     geoLast = Date.now();
     const lang = (window.I18N && I18N.lang) || 'fr';
     // la ville plutôt que sa province, son département ou sa région (« Pise » = la ville de Pise, pas la province de Pise)
     const AREA = /^(county|state|province|region|state_district|country|administrative)$/, TOWN = /^(city|town|village|municipality|hamlet|suburb|borough|quarter|island)$/;
-    const ask = async extra => { try { const j = await (await fetch(GEO + 'search?format=jsonv2&limit=5&accept-language=' + lang + extra + '&q=' + encodeURIComponent(full))).json();
+    const ask = async (extra, all) => { try { const j = await (await fetch(GEO + 'search?format=jsonv2&limit=5&accept-language=' + lang + extra + '&q=' + encodeURIComponent(full))).json();
       let L = Array.isArray(j) ? j.map(x=>({lat:+x.lat, lng:+x.lon, at:String(x.addresstype || x.type || ''), ty:String(x.type || '')})).filter(x=>isFinite(x.lat) && isFinite(x.lng)) : [];
       if(L.some(x=>!AREA.test(x.at))) L = L.filter(x=>!AREA.test(x.at));
-      if(!/\d/.test(q)){ const T = L.filter(x=>TOWN.test(x.at) || TOWN.test(x.ty)); if(T.length) L = [...T, ...L.filter(x=>!T.includes(x))]; }
-      return (A ? L : L.slice(0, 1)).map(x=>({lat:x.lat, lng:x.lng})); } catch(e){ return []; } };
+      if(!/\d/.test(q)){ const T = L.filter(x=>TOWN.test(x.at) || TOWN.test(x.ty)); if(T.length) L = T; }
+      return (A || all ? L : L.slice(0, 1)).map(x=>({lat:x.lat, lng:x.lng})); } catch(e){ return []; } };
     const near = L => A && L.length ? L.slice().sort((a, b)=>km(A, a) - km(A, b))[0] : L[0] || null;
     const box = d => '&viewbox=' + [A.lng - d, A.lat + d * 0.75, A.lng + d, A.lat - d * 0.75].map(n=>n.toFixed(2)).join(',');
-    let res = near(await ask(A ? box(8) : ''));
+    let res = null;
+    if(city1){ const P0 = R[key] && R[key].pick && R[key].lat != null ? {lat:+R[key].lat, lng:+R[key].lng} : null;   // ville choisie dans la liste : la ville de ce nom la plus proche du choix
+      const L = await ask('&featureType=settlement', true); const ref = P0 || A;
+      if(L.length) res = ref ? L.slice().sort((a, b)=>km(ref, a) - km(ref, b))[0] : L[0];
+      if(res && P0 && km(P0, res) > 80) res = null;   // une autre ville du même nom : on garde le choix
+      if(!res && P0) res = P0; }
+    if(!res) res = near(await ask(A ? box(8) : ''));
     if(A && A.n >= 2 && (!res || km(A, res) > 3000)){ const L = await ask(box(12) + '&bounded=1'); if(L.length) res = near(L); }   // une ville du même nom près du voyage ?
     if(!res){ try { const j = await (await fetch('https://photon.komoot.io/api/?limit=3&q=' + encodeURIComponent(full) + (A ? '&lat=' + A.lat.toFixed(2) + '&lon=' + A.lng.toFixed(2) : ''))).json();
       // Photon devine large (« Termocartagena » → une rue de Lorient) : seulement un lieu qui porte bien ce nom, et près du voyage
       const nq = normQ(q).replace(/\s+/g, ''), ok = f => { const n = normQ((f.properties || {}).name || '').replace(/\s+/g, ''); if(!n || !(n.includes(nq) || nq.includes(n))) return false; const p = {lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0]}; return !(A && A.n >= 2 && km(A, p) > 3000); };
       const f = ((j && j.features) || []).find(ok); if(f) res = {lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0]}; } catch(e){} }
     if(!res && full !== q) return geocode(q, null);
-    if(res){ const g = Object.assign(R[key] && !R[key].deleted ? clone(R[key]) : {id:key, type:'geo', q:full}, {lat:res.lat, lng:res.lng, g3:1, g4:1}); if(A) g.near = 1; else delete g.near; stamp(g); R[key] = g; markDirty(key); persist(); }
+    if(res){ const g = Object.assign(R[key] && !R[key].deleted ? clone(R[key]) : {id:key, type:'geo', q:full}, {lat:res.lat, lng:res.lng, g3:1, g4:1, g5:1}); if(A) g.near = 1; else delete g.near; stamp(g); R[key] = g; markDirty(key); persist(); }
     return res;
   }
   /* 🔎 Propositions de villes et de pays pendant la saisie (tout champ <input data-place>) :
