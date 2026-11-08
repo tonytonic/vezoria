@@ -1894,18 +1894,36 @@
     LV.focus = p.n; LV.map.flyTo({center:[l[1], l[0]], zoom:16, pitch:65, bearing:(LV.map.getBearing() + 40) % 360, duration:2200, essential:true});
     document.querySelectorAll('#lv-people .lv-p').forEach((x, k)=>x.classList.toggle('on', k === +i));
   }
+  // ✂️ coupe le tracé là où le suivi s’est interrompu (plus de 2,5 km d’un point au suivant)
+  function lvSplit(pts){ const runs = [], gaps = []; let cur = [];
+    (pts || []).forEach((x, k)=>{ const prev = pts[k - 1];
+      if(prev && km({lat:prev[0], lng:prev[1]}, {lat:x[0], lng:x[1]}) > 2.5){ if(cur.length > 1) runs.push(cur); gaps.push([prev, x]); cur = [x]; } else cur.push(x); });
+    if(cur.length > 1) runs.push(cur); return {runs, gaps}; }
+  // le trou est redessiné par la route (serveur OSM public, mis en cache) : il longe le lac au lieu de le traverser
+  const LVG = {};
+  function lvGapLine(g){ const a = g[0], b = g[1], k = [a[0], a[1], b[0], b[1]].map(v=>(+v).toFixed(3)).join(',');
+    if(LVG[k] && LVG[k].length) return LVG[k];
+    if(!LVG[k] && km({lat:a[0], lng:a[1]}, {lat:b[0], lng:b[1]}) < 300){ LVG[k] = [];
+      withTimeout(fetch(`https://routing.openstreetmap.de/routed-car/route/v1/driving/${(+a[1]).toFixed(5)},${(+a[0]).toFixed(5)};${(+b[1]).toFixed(5)},${(+b[0]).toFixed(5)}?overview=simplified&geometries=geojson`), 12000)
+        .then(r=>r.json()).then(j=>{ const co = j && j.routes && j.routes[0] && j.routes[0].geometry.coordinates; if(co && co.length > 1){ LVG[k] = co.map(c=>[+c[0].toFixed(5), +c[1].toFixed(5)]); if(LV){ LV.sig = ''; liveDraw(false); } } }).catch(()=>{}); }
+    return [[a[1], a[0]], [b[1], b[0]]]; }
   function liveDraw(first){
     if(!LV || !LV.map || !LV.map.isStyleLoaded || !LV.map.getStyle()) return;
     const map = LV.map, D = liveData(LV.key), sig = lvSig(D); if(!first && sig === LV.sig) return;
     const grew = !first && LV.D && D.people.some(p=>{ const o = LV.D.people.find(q=>q.n === p.n); return !o || p.pts.length > o.pts.length; });
     LV.sig = sig; LV.D = D;
     // routes : un calque par voyageur, à sa couleur (le trait se dessine à l’ouverture, puis une lueur le parcourt)
-    D.people.forEach((p, i)=>{ const src = 'lv-r' + i, gj = {type:'Feature', properties:{}, geometry: p.pts.length > 1 ? {type:'LineString', coordinates:p.pts.map(x=>[x[1], x[0]])} : {type:'Point', coordinates:[p.pts[0][1], p.pts[0][0]]}};
-      if(map.getSource(src)) map.getSource(src).setData(gj);
-      else { map.addSource(src, {type:'geojson', data:gj, lineMetrics:true});
+    // trou dans le suivi (train, mode avion, appli fermée) : pas de trait plein à travers le lac — un pointillé qui suit la route
+    D.people.forEach((p, i)=>{ const src = 'lv-r' + i, sp = lvSplit(p.pts);
+      const gj = {type:'FeatureCollection', features: sp.runs.length ? sp.runs.map(r=>({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:r.map(x=>[x[1], x[0]])}}))
+        : [{type:'Feature', properties:{}, geometry:{type:'Point', coordinates:[p.pts[0][1], p.pts[0][0]]}}]};
+      const gg = {type:'FeatureCollection', features: sp.gaps.map(g=>({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:lvGapLine(g)}}))};
+      if(map.getSource(src)){ map.getSource(src).setData(gj); if(map.getSource(src + 'x')) map.getSource(src + 'x').setData(gg); }
+      else { map.addSource(src, {type:'geojson', data:gj, lineMetrics:true}); map.addSource(src + 'x', {type:'geojson', data:gg});
+        map.addLayer({id:src + 'x', type:'line', source:src + 'x', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':p.c, 'line-width':3, 'line-opacity':.75, 'line-dasharray':[1.2, 1.8]}});
         map.addLayer({id:src + 'g', type:'line', source:src, layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':p.c, 'line-width':12, 'line-blur':8, 'line-opacity':.45}});
         map.addLayer({id:src + 'l', type:'line', source:src, layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-width':4.5, 'line-gradient':lvGrad(p.c, first ? 0.001 : 1, -1)}}); } });
-    for(let i = D.people.length; map.getSource('lv-r' + i); i++){ ['g','l'].forEach(s=>{ if(map.getLayer('lv-r' + i + s)) map.removeLayer('lv-r' + i + s); }); map.removeSource('lv-r' + i); }
+    for(let i = D.people.length; map.getSource('lv-r' + i); i++){ ['g','l','x'].forEach(s=>{ if(map.getLayer('lv-r' + i + s)) map.removeLayer('lv-r' + i + s); }); map.removeSource('lv-r' + i); if(map.getSource('lv-r' + i + 'x')) map.removeSource('lv-r' + i + 'x'); }
     if(first) LV.prog = 0;
     // chacun : un médaillon à sa couleur qui pulse s’il est en direct
     const keep = new Set();
