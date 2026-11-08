@@ -384,6 +384,20 @@
     return {lat:best.lat, lng:best.lng, r:.8};
   }
   // les points à rejoindre depuis l’hébergement : tes visites + le centre-ville (visites guidées, gastronomie… s’y passent ; et il compte si tu as peu de visites)
+  // 🏨 retrouver un hôtel : « Via Piliers corridoni 10356125 pise », « Viale … 67 53100 », ou seulement son nom (« Hotel Italia » à Sienne)
+  async function hotelGeo(h, city, ref){
+    M.hgeo = M.hgeo || {}; const key = normQ([h.adresse || '', h.nom || '', city || ''].join('|')); const c = M.hgeo[key];
+    if(c && (!c.miss || Date.now() - c.at < 6 * 3600e3)) return c.miss ? null : {lat:c.lat, lng:c.lng};
+    const ok = r => r && r.lat != null && isFinite(+r.lat) && (!ref || rawKm({lat:+r.lat, lng:+r.lng}, ref) <= 40);
+    const save = r => { M.hgeo[key] = {lat:+r.lat, lng:+r.lng}; const ks = Object.keys(M.hgeo); if(ks.length > 300) delete M.hgeo[ks[0]]; persist(); return {lat:+r.lat, lng:+r.lng}; };
+    const fix = x => String(x || '').replace(/\b(\d{1,4})(\d{5})\b/g, '$1 $2').replace(/\s+/g, ' ').trim();   // « 10356125 » collé → « 103 56125 »
+    const a = fix(h.adresse), noCp = a.replace(/\b\d{5}\b/g, ' ').replace(/\s+,|\s+/g, ' ').trim(), cty = city && a && !normQ(a).includes(normQ(city)) ? ', ' + city : '';
+    const nm = String(h.nom || '').trim(), nmOk = nm.length >= 4 && !/^(h[oô]tel|hostel|airbnb|appartement|logement)$/i.test(nm);
+    for(const q of [...new Set([a && a + cty, a, noCp && noCp + cty].filter(Boolean))]){ try { const r = await geocode(q, null); if(ok(r)) return save(r); } catch(e){} }
+    if(ref){ for(const q of [nmOk && nm + (city ? ' ' + city : ''), noCp].filter(Boolean)){   // fautes de frappe et noms d’hôtels : la recherche de lieux (Photon), autour de l’étape
+      try { const L = await pacFetch(q, false, ref, true); const r = (L || []).find(ok); if(r) return save(r); } catch(e){} } }
+    M.hgeo[key] = {miss:1, at:Date.now()}; return null;
+  }
   function gdAnchors(t, h){
     const city = stayCity(h) || h.titre || '', P = stayPlaces(t, h).sort((a, b)=>(a.date || '').localeCompare(b.date || ''));
     const X = list('item', i=>i.trip === t.id && i.cat === 'activite' && i.date && i.date >= h.date && i.date < (h.dateFin || addDays(h.date, 1)));   // 🎟️ activités prévues pendant l’étape
@@ -1845,7 +1859,7 @@
           try { tap('vm-vis', id=>{ if(LV) LV.orbit = false; over(); plInfo(id); }); tap('vm-act', id=>{ if(LV) LV.orbit = false; over(); edit(id); }); } catch(e){}
           // 🏨 les hôtels du séjour : pour les compagnons seulement (jamais sur la carte des abonnés : c’est où vous dormez)
           (async ()=>{ for(const h of list('item', i=>i.trip === key && i.cat === 'hotel' && !i.deleted && (i.adresse || i.nom))){ if(LV !== me) return;
-            const g = await geocode(h.adresse || h.nom, stayCity(h)).catch(()=>null); if(!g || LV !== me) continue;
+            const cc = stayCity(h), ref = cc ? await geocode(cc, null).catch(()=>null) : null, g = h.lat != null ? {lat:+h.lat, lng:+h.lng} : await hotelGeo(h, cc, ref).catch(()=>null); if(!g || LV !== me) continue;
             const el = document.createElement('div'); el.className = 'lv-hot'; el.innerHTML = `<i>🏨</i><b data-notr>${esc(h.nom || h.titre || '')}</b>`;
             el.onclick = ev => { ev.stopPropagation(); if(LV) LV.orbit = false; over(); edit(h.id); };
             new maplibregl.Marker({element:el, anchor:'bottom'}).setLngLat([g.lng, g.lat]).addTo(map); } })();
@@ -2715,10 +2729,11 @@
     for(const h of items(x=>x.cat === 'hotel' && x.date)){
       const A0 = gdAnchors(t, h), hub = A0.hub;
       let p = h.lat != null && h.lng != null ? {lat:+h.lat, lng:+h.lng} : null;
-      if(!p && h.adresse && okB(h)){ p = await g(h.adresse); const ref = A0.C0 || hub; if(p && ref && rawKm(p, ref) > 40) p = null; }   // adresse mal comprise : pas un hôtel à l’autre bout du pays
+      // 🏨 l’adresse (ou le nom) tapée à la main, même pas encore réservé : l’hôtel va à sa vraie place (adresse imparfaite comprise)
+      let fx = false; if(!p && (h.adresse || h.nom)){ p = await hotelGeo(h, A0.city, A0.C0 || hub); fx = !!p; }
       if(!p) p = hub || A0.C0 || await g(A0.city); if(!p) continue;
-      F.hotels.push({p, h, city:A0.city, st:p3St(h), exact:!!(h.lat != null || (h.adresse && okB(h) && p !== hub && p !== A0.C0))});
-      if(hub && !okB(h)){ F.hood.push({type:'Feature', properties:{}, geometry:{type:'Polygon', coordinates:[p3Circle(hub, hub.r)]}});
+      F.hotels.push({p, h, city:A0.city, st:p3St(h), exact:!!(h.lat != null || fx)});
+      if(hub && !okB(h) && !fx){ F.hood.push({type:'Feature', properties:{}, geometry:{type:'Polygon', coordinates:[p3Circle(hub, hub.r)]}});
         A0.A.forEach(q=>F.rays.push({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:[[hub.lng, hub.lat], [q.lng, q.lat]]}})); }
       A0.P.forEach(v=>{ if(seenP.has(v.id)) return; seenP.add(v.id); F.visits.push({type:'Feature', properties:{name:v.nom, id:v.id, vu:v.vu ? 1 : 0, skip:v.skip ? 1 : 0}, geometry:{type:'Point', coordinates:[+v.lng, +v.lat]}}); });
       const C = A0.C0 || p; A0.X.forEach((x, j)=>{ if(seenX.has(x.id)) return; seenX.add(x.id); const q = x.lat != null && x.lng != null ? {lat:+x.lat, lng:+x.lng} : {lat:C.lat + .006 * Math.sin(j * 1.9 + 1), lng:C.lng + .009 * Math.cos(j * 1.9 + 1)};   // sans adresse : autour du centre
