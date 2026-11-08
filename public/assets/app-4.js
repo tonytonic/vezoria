@@ -1501,7 +1501,7 @@ ${pm.join('\n')}</Document></kml>`;
     L.sort((a, b)=>si(a.c) - si(b.c) || a.x - b.x || a.d.localeCompare(b.d));
     closeSheet(true); SW = {tid:t.id, ids:L.map(x=>x.id), i:0, hist:[], kept:0, EX, PAY, exDone:new Set()}; swRender();
     wgPend.forEach(([h, city])=>wgFetch(city).then(r=>swAddWg(t, h, city, r)).catch(()=>{}));
-    vtPend.forEach(([h, city])=>vtFetch(city).then(r=>swAddWg(t, h, city, r, vtCards)).catch(()=>{}));
+    vtPend.forEach(([h, city])=>vtFetch(city, h.date, h.dateFin).then(r=>swAddWg(t, h, city, r, vtCards)).catch(()=>{}));
   }
   // 🎧 WeGoTrip dans le tri : 3 visites par ville, comme des « activités à réserver » (garder = au programme, avec le lien de la visite)
   const wgStays = t => { const seen = new Set(), out = [], td = isoToday(), live = tripPhase(t) === 'live'; list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date && (!live || (i.dateFin || i.date) >= td)).sort((a, b)=>a.date.localeCompare(b.date)).forEach(h=>{ const c = stayCity(h); if(c && !seen.has(normQ(c))){ seen.add(normQ(c)); out.push([h, c]); } }); return out; };
@@ -1513,11 +1513,12 @@ ${pm.join('\n')}</Document></kml>`;
   }
   // 🎟️ Viator (via /api/act) : visites guidées, excursions, billets coupe-file… 3 par ville, comme WeGoTrip
   const VT = {};
-  async function vtFetch(city){
+  async function vtFetch(city, d1, d2){
     const cur = (trip() && trip().devise) || 'EUR', key = normQ(city) + '|' + BLANG() + '|' + cur; if(VT[key]) return VT[key];
+    const dq = d1 && d1 >= locIso() ? '&from=' + d1 + (d2 && d2 > d1 ? '&to=' + d2 : '') : '';   // 📅 réservable pendant l’étape
     M.vtt = M.vtt || {}; const c = M.vtt[key]; if(c && Date.now() - c.at < 864e5){ VT[key] = c.r; return c.r; }
     if(!city || city.length < 3) return null;
-    const r = await (await withTimeout(fetch(`/api/act?q=${encodeURIComponent(city)}&lang=${BLANG()}&cur=${cur}`), 15000)).json().catch(()=>null);
+    const r = await (await withTimeout(fetch(`/api/act?q=${encodeURIComponent(city)}&lang=${BLANG()}&cur=${cur}${dq}`), 15000)).json().catch(()=>null);
     if(r && (r.ok || r.reason === 'nokey')){ VT[key] = r; M.vtt[key] = {at:Date.now(), r}; const ks = Object.keys(M.vtt); if(ks.length > 40) delete M.vtt[ks[0]]; persist(); }
     return r; }
   const vtHave = city => { const cur = (trip() && trip().devise) || 'EUR', k = normQ(city) + '|' + BLANG() + '|' + cur; if(VT[k]) return VT[k]; const c = (M.vtt || {})[k]; return c && Date.now() - c.at < 864e5 ? (VT[k] = c.r) : null; };
