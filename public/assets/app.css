@@ -3427,3 +3427,6 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .lv-tm-x{position:absolute;top:8px;right:8px;border:0;background:none;color:#fff;font-size:1rem;cursor:pointer;opacity:.7}
 .lv-tmi{width:30px;height:30px;border-radius:50%;border:2.5px solid var(--c,#0d9488);background:#fff;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.35);cursor:pointer}
 .lv-tm-st{display:block;font-size:.78rem;opacity:.85;margin:-4px 26px 8px 2px}
+.lv-tm-seg{display:block;width:100%;margin-top:8px;border:1px dashed rgba(255,255,255,.35);background:none;color:#fff;border-radius:12px;padding:9px;font:inherit;font-size:.86rem;cursor:pointer}
+.lv-seg>div button{font-size:1.15rem}.lv-seg .lv-seg-act{margin-top:8px}.lv-seg .lv-seg-act button{font-size:.9rem}
+.lv-segh{width:34px;height:34px;border-radius:50%;background:#0d9488;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,.45);cursor:grab;touch-action:none}
