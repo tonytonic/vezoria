@@ -11,7 +11,7 @@
   function ariData(t){
     const hs = items(i=>i.cat === 'hotel' && i.date).sort((a, b)=>a.date.localeCompare(b.date));
     const trs = items(i=>i.cat === 'transport' && needBook(i)).sort((a, b)=>(a.date || '9').localeCompare(b.date || '9'));
-    const pl = list('place', p=>p.trip === t.id), sg = pl.filter(p=>p.sugg), sk = (M.ariSkip || {})[t.id] || {};
+    const pl = list('place', p=>p.trip === t.id && (!p.sugg || swMine(p))), sg = pl.filter(p=>swMine(p)), sk = (M.ariSkip || {})[t.id] || {};
     const xs = items(i=>i.cat === 'activite' && needBook(i));
     const rs = [...hs, ...trs, ...xs].sort((a, b)=>(a.date || '9').localeCompare(b.date || '9') || (a.cat === 'transport' ? -1 : 1));
     const di = (()=>{ try { return docIssues(); } catch(e){ return []; } })();
@@ -82,7 +82,7 @@
         // pas encore un seul lieu : d’abord les incontournables (les activités payantes, toujours proposées, ne doivent pas les cacher)
         if(!D.pl.length && !pk) return `<div class="ar-p">${MSGT('Les lieux à voir et les excursions, jour par jour.')}</div>${D.hs.length ? `<button type="button" class="ar-go" onclick="CV.suggGo()">💡 ${MSGT('Me proposer les incontournables (4 par jour)')}</button>` : ''}${xn ? `<button type="button" class="ar-more" onclick="CV.expOpen()">🎟️ ${RF('Choisir parmi {0} expériences', xn)}</button>` : ''}<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('Passer cette étape')}</button>`;
         const redo = !pk && D.pl.length - D.sg.length > 1 ? `<button type="button" class="ar-more" onclick="CV.rgRedo()">🏨 ${MSGT('Réorganiser depuis mon hôtel')}</button>` : '';
-        return `<div class="ar-p">✓ ${D.pl.length - D.sg.length} ${MSGT('lieux au programme')}</div><div class="ar-subs">${subA}${subB}</div>${more}${redo}${D.sg.length && !((M.ariSkip || {})[t.id] || {}).faire ? `<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('C’est bon, j’ai assez de visites')}</button>` : ''}`;
+        return `<div class="ar-p">✓ ${D.pl.length - D.sg.length} ${MSGT('lieux au programme')}</div><div class="ar-subs">${subA}${subB}</div>${more}${redo}<button type="button" class="ar-more" onclick="CV.plkOpen()">🔗 ${MSGT('Ajouter un lieu depuis un lien')}</button><button type="button" class="ar-more" onclick="CV.swReset()">🔁 ${MSGT('Recommencer ma sélection à zéro')}</button>${D.sg.length && !((M.ariSkip || {})[t.id] || {}).faire ? `<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('C’est bon, j’ai assez de visites')}</button>` : ''}`;
       }
       if(k === 'resa'){
         if(!D.rs.length) return `<div class="ar-p">${MSGT('Ajoute d’abord tes étapes : les nuits et les trajets apparaîtront ici.')}</div>`;
@@ -101,7 +101,7 @@
     };
     const ms = t.debut ? cdLeft(t) : 0, cdOn = !!t.debut && !t.demo && ms > -864e5 && ms <= 400 * 864e5 && !hidden('blk:cd');
     const dj = t.debut ? Math.max(0, nights(isoToday(), t.debut)) : 0, dest = cdDest(t), dco = (M.ctry || {})[normQ(dest)] || co;
-    return `<div class="cv-prep2 ar${cdOn ? ' ar-cd' : ''}${anim ? '' : ' still'}"${cdOn ? ` id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"` : ''}>
+    return `${rainCard(t)}<div class="cv-prep2 ar${cdOn ? ' ar-cd' : ''}${anim ? '' : ' still'}"${cdOn ? ` id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"` : ''}>
       ${cdOn ? `<div class="ar-top"><span>${dj === 0 ? '🧳 ' + MSGT('C’est aujourd’hui !') : dj === 1 ? '✈️ ' + MSGT('Départ demain') : '⏳ ' + MSGT('Départ dans')}</span><span class="cd-wx" id="cd-wx"></span></div>
       <div class="ar-j"><b>${dj === 0 ? MSGT('Jour J') : 'J-' + dj}</b><span class="cd-dest">${dco && dco.cc ? flag(dco.cc) + ' ' : '📍 '}<span data-notr>${esc(dest)}</span></span></div>
       <div class="cd-clock ar-clock" id="cd-clock">${cdClock(ms)}</div>` : ''}
@@ -280,7 +280,7 @@
   function guideGo(){ const t = trip(); if(!t) return; M.guide = M.guide || {}; M.guide[t.id] = 1; persist(); guideNext(); }
   function guideStop(){ const t = trip(); if(t && M.guide) delete M.guide[t.id]; persist(); closeSheet(true); toast('✋ ' + MSGT('Mode manuel : tout reste dans la carte « Ta préparation »')); render(); }
   let GSW = null, GRET = null;   // suggestions déjà montrées dans le tri guidé ; fiche à rouvrir après une saisie
-  const sgIds = t => list('place', p=>p.trip === t.id && p.sugg).map(p=>p.id);
+  const sgIds = t => list('place', p=>p.trip === t.id && swMine(p)).map(p=>p.id);
   // ⏳ la recherche des incontournables tourne : on attend en montrant où elle en est (le tri commence dès les premières idées)
   async function guideWait(t, fresh){
     openSheet(`<div class="gd"><h2>🧭 ${MSGT('Ton parcours guidé')}</h2><div class="ar-run wz-run" id="gd-wait">${sgRun(t)}</div>
@@ -1526,8 +1526,8 @@
     const me = M.me || '', d0 = new Date(); d0.setHours(0,0,0,0); const ft = 'ft:' + t.id, ev = [], td = isoToday();
     list('souv', x=>x.trip === t.id && (x.createdAt||0) >= +d0 && x.createdBy && x.createdBy !== me).forEach(x=>ev.push({at:x.createdAt, c:pcol(x.createdBy), ic:(x.photos||[]).length ? '📸' : '📍', w:pname(x.createdBy), tx:'a ajouté « ' + (x.titre || x.lieu || '…') + ' »' + ((x.photos||[]).length > 1 ? ' · ' + x.photos.length + ' photos' : '')}));
     items(i=>i.cat === 'divers' && i.date === td && i.createdBy && i.createdBy !== me && (i.createdAt||0) >= +d0).forEach(i=>ev.push({at:i.createdAt, c:pcol(i.createdBy), ic:'💶', w:pname(i.createdBy), tx:(i.titre || 'dépense') + ' · ' + eur(totalOf(i))}));
-    list('like', l=>l.trip === ft && l.on && (l.updatedAt||0) >= +d0 && !String(l.id).endsWith(':' + devId())).forEach(l=>{ const f = R[l.feed] || {}; ev.push({at:l.updatedAt, c:'#e11d48', ic:'❤️', w:l.who || 'Un abonné', tx:'aime « ' + (f.titre || f.lieu || 'ta photo') + ' »'}); });
-    list('comment', c=>c.trip === ft && (c.at||0) >= +d0 && c.dev !== devId()).forEach(c=>ev.push({at:c.at, c:'#7c3aed', ic:'💬', w:c.who || 'Un abonné', tx:'« ' + String(c.text || '').slice(0, 70) + ' »'}));
+    list('like', l=>l.trip === ft && l.on && (l.updatedAt||0) >= +d0 && !String(l.id).endsWith(':' + devId())).forEach(l=>{ const f = R[l.feed] || {}; ev.push({at:l.updatedAt, c:'#e11d48', ic:'❤️', w:fwWho(l.who, devOfRec(l)) || 'Un abonné', tx:'aime « ' + (f.titre || f.lieu || 'ta photo') + ' »'}); });
+    list('comment', c=>c.trip === ft && (c.at||0) >= +d0 && c.dev !== devId()).forEach(c=>ev.push({at:c.at, c:'#7c3aed', ic:'💬', w:fwWho(c.who, c.dev) || 'Un abonné', tx:'« ' + String(c.text || '').slice(0, 70) + ' »'}));
     Object.entries(trkByWho(t.id, false)).forEach(([w, p])=>{ if(!w || w === me || !p.length) return; const l = p[p.length-1]; if(l[2] && Date.now() - l[2] < LIVE_MS) ev.push({at:l[2], c:pcol(w), ic:'🛰️', w:pname(w), tx:'est en route', x:fmtKm(liveKmDay(p)) + ' aujourd’hui'}); });
     return ev.sort((a, b)=>(b.at||0) - (a.at||0)).slice(0, 10);
   }
@@ -1712,8 +1712,8 @@
     try {
       if(document.visibilityState !== 'visible' || document.getElementById('cv-wlc')) return;
       const mine = rxMine(); if(!mine.size) return; const dv = devId(), lim = Date.now() - 6 * 3600e3;
-      const L = list('like', l=>mine.has(l.trip) && l.on && !String(l.id).endsWith(':' + dv)).map(l=>({id:l.id + ':' + (l.updatedAt||0), at:l.updatedAt || 0, k:'lk', w:l.who, f:l.feed}))
-        .concat(list('comment', c=>mine.has(c.trip) && c.dev !== dv).map(c=>({id:c.id, at:c.at || 0, k:'cm', w:c.who, f:c.feed, tx:c.text})));
+      const L = list('like', l=>mine.has(l.trip) && l.on && !String(l.id).endsWith(':' + dv)).map(l=>({id:l.id + ':' + (l.updatedAt||0), at:l.updatedAt || 0, k:'lk', w:fwWho(l.who, devOfRec(l)), f:l.feed}))
+        .concat(list('comment', c=>mine.has(c.trip) && c.dev !== dv).map(c=>({id:c.id, at:c.at || 0, k:'cm', w:fwWho(c.who, c.dev), f:c.feed, tx:c.text})));
       if(!M.rxSeen){ M.rxSeen = {}; L.forEach(x=>M.rxSeen[x.id] = 1); persist(); return; }
       const nw = L.filter(x=>!M.rxSeen[x.id]); if(!nw.length) return;
       nw.forEach(x=>M.rxSeen[x.id] = 1); rxBell(nw); const ks = Object.keys(M.rxSeen); if(ks.length > 600) ks.slice(0, ks.length - 600).forEach(k=>delete M.rxSeen[k]); persist();
@@ -1829,6 +1829,7 @@
         // 🗺️ voyage suivi dont la carte est partagée : étapes, trajets, visites et activités sous la route en direct et les photos
         if(/^ft:/.test(key)){ const fr = R['fm:' + key.slice(3)]; if(fr && !fr.deleted){ const F = fmToF(fr);
           mapRich(map, F, me.font, (el, p) => new maplibregl.Marker({element:el, anchor:'center'}).setLngLat([p.lng, p.lat]).addTo(map), true);
+          fmHotels(F, (el, p) => new maplibregl.Marker({element:el, anchor:'bottom'}).setLngLat([p.lng, p.lat]).addTo(map));
           if(!D.people.length && !D.ph.length && F.cities.length){ const b = new maplibregl.LngLatBounds(); F.cities.forEach(c=>b.extend([c.c.lng, c.c.lat])); try { map.fitBounds(b, {padding:80, maxZoom:11, pitch:50, duration:0}); } catch(e){} } } }
         // 🗺️ mon voyage (ou un voyage commun) : toutes les visites et activités du séjour, pour se situer en temps réel
         else if(R[key] && R[key].type === 'trip' && !R[key].deleted) p3Data(R[key]).then(F=>{ if(LV !== me || !F) return;
@@ -2501,8 +2502,10 @@
     const rec = {id:'fm:' + tid, type:'feedmap', trip:ftId(tid),
       c:F.cities.slice(0, 80).map(x=>[String(x.name || '').slice(0, 80), r4(x.c.lat), r4(x.c.lng), x.n || 0, x.home ? 1 : 0, x.via ? 1 : 0]),
       l:F.legs.slice(0, 120).map(f=>[f.properties.mode || '', f.properties.local ? 1 : 0, f.properties.souv ? 1 : 0, f.geometry.coordinates.filter((q, i, A)=>A.length < 300 || i % Math.ceil(A.length / 300) === 0 || i === A.length - 1).map(q=>[r3(q[0]), r3(q[1])])]),
-      v:F.visits.slice(0, 400).map(f=>{ const x = [String(f.properties.name || '').slice(0, 80), r4(f.geometry.coordinates[1]), r4(f.geometry.coordinates[0])]; if(f.properties.vu) x.push(1); return x; }),   // ✓ vue : verte chez les abonnés aussi
+      v:F.visits.slice(0, 400).map(f=>{ const x = [String(f.properties.name || '').slice(0, 80), r4(f.geometry.coordinates[1]), r4(f.geometry.coordinates[0])]; if(f.properties.vu) x.push(1); else if(f.properties.skip) x.push(2); return x; }),   // ✓ vue : verte chez les abonnés aussi · ⏭️ passée : grise
       a:F.acts.slice(0, 400).map(f=>[String(f.properties.name || '').slice(0, 80), r4(f.geometry.coordinates[1]), r4(f.geometry.coordinates[0]), f.properties.col || '#f97316'])};
+    // 🏨 les hôtels : seulement si les voyageurs l’ont choisi (par défaut, les abonnés ne savent pas où vous dormez)
+    if(R[tid] && R[tid].hotelPub) rec.h = F.hotels.filter(x=>x.exact && x.p).slice(0, 60).map(x=>[String((x.h && (x.h.nom || x.h.titre)) || '').slice(0, 80), r4(x.p.lat), r4(x.p.lng)]);
     // voyage à venir sans trajet saisi : un trait simple d’une étape à l’autre, dans l’ordre
     if(!rec.l.length){ const st = F.cities.filter(x=>!x.home && !x.via).sort((a, b)=>(a.n || 0) - (b.n || 0)); if(st.length > 1) rec.l.push(['', 0, 1, st.map(x=>[r3(x.c.lng), r3(x.c.lat)])]); }
     const cur = R[rec.id]; if(cur && !cur.deleted && stripStamp(cur) === stripStamp(rec)) return;
@@ -2513,17 +2516,20 @@
   async function fmCalc(tid, force){
     try {
       if(!tid || tid !== M.trip || !mpOn(tid) || !feedCode(tid) || FMRUN) return;
-      const sig = [...items(i=>/^(hotel|transport|activite)$/.test(i.cat)), ...list('place', q=>q.trip === tid && !q.sugg), ...list('souv', x=>x.trip === tid && x.lat != null)].map(x=>x.id + (x.updatedAt || '') + (x.deleted ? 'x' : '')).sort().join('|');
+      const sig = [...items(i=>/^(hotel|transport|activite)$/.test(i.cat)), ...list('place', q=>q.trip === tid && !q.sugg), ...list('souv', x=>x.trip === tid && x.lat != null)].map(x=>x.id + (x.updatedAt || '') + (x.deleted ? 'x' : '')).sort().join('|') + (R[tid] && R[tid].hotelPub ? '|H' : '');
       const S = M.fmSig || (M.fmSig = {}); let h = 0; for(let i = 0; i < sig.length; i++) h = (h * 31 + sig.charCodeAt(i)) | 0;
       if(!force && S[tid] === h && R['fm:' + tid] && !R['fm:' + tid].deleted) return;
       FMRUN = 1; const F = await p3Data(R[tid]); if(M.trip === tid){ fmFromF(tid, F); S[tid] = h; persist(); }
     } catch(e){} finally { FMRUN = 0; }
   }
+  // 🏨 l’hôtel, chez les abonnés, seulement quand les voyageurs ont choisi de le montrer
+  function fmHotels(F, add){ (F.pubHotels || []).forEach(h=>{ if(!isFinite(h.lat) || !isFinite(h.lng)) return; const el = document.createElement('div'); el.className = 'lv-hot'; el.innerHTML = `<i>🏨</i><b data-notr>${esc(h.n || '')}</b>`; add(el, h); }); }
   function fmToF(r){
     const F = {cities:[], legs:[], visits:[], acts:[], hotels:[]}; if(!r || r.deleted) return F;
     (r.c || []).forEach(x=>F.cities.push({name:x[0], c:{lat:+x[1], lng:+x[2]}, n:x[3] || 0, home:x[4] || 0, via:x[5] || 0}));
     (r.l || []).forEach(x=>{ if((x[3] || []).length > 1) F.legs.push({type:'Feature', properties:{mode:x[0] || '', local:x[1] || 0, souv:x[2] || 0}, geometry:{type:'LineString', coordinates:x[3]}}); });
-    (r.v || []).forEach(x=>F.visits.push({type:'Feature', properties:{name:x[0], vu:x[3] ? 1 : 0}, geometry:{type:'Point', coordinates:[+x[2], +x[1]]}}));
+    (r.v || []).forEach(x=>F.visits.push({type:'Feature', properties:{name:x[0], vu:x[3] === 1 ? 1 : 0, skip:x[3] === 2 ? 1 : 0}, geometry:{type:'Point', coordinates:[+x[2], +x[1]]}}));
+    F.pubHotels = (r.h || []).map(x=>({n:x[0], lat:+x[1], lng:+x[2]}));
     (r.a || []).forEach(x=>F.acts.push({type:'Feature', properties:{name:x[0], col:x[3] || '#f97316'}, geometry:{type:'Point', coordinates:[+x[2], +x[1]]}}));
     return F;
   }
@@ -2558,7 +2564,7 @@
         const F = fmToF(R['fm:' + tid]), posts = list('feed', f=>f.trip === ftid && !f.deleted && f.lat != null && f.lng != null).sort(fdOrd);
         if(!F.legs.length && posts.length > 1) F.legs.push({type:'Feature', properties:{souv:1, local:0, mode:''}, geometry:{type:'LineString', coordinates:posts.map(f=>[+f.lng, +f.lat])}});
         const add = (el, p) => { const k = new maplibregl.Marker({element:el, anchor:'center'}).setLngLat([p.lng, p.lat]).addTo(map); me.mk.push(k); return k; };
-        mapRich(map, F, me.font, add, true);
+        mapRich(map, F, me.font, add, true); fmHotels(F, add);
         // 📸 les souvenirs publiés, à leur endroit
         posts.filter(f=>(f.photos || []).length).forEach(f=>{ const e = document.createElement('button'); e.type = 'button'; e.className = 'vm-sv'; e.setAttribute('aria-label', f.titre || f.lieu || MSGT('Souvenir'));
           e.innerHTML = `<img data-ph="${esc(f.photos[0])}.t" alt="">`; e.onclick = ev => { ev.stopPropagation(); fmPost(f.id); }; add(e, {lat:+f.lat, lng:+f.lng}); });
@@ -3861,3 +3867,144 @@
     const day = BU_SP.reduce((a, [k])=>a + num(c.surplace[k]), 0); if(!num(c.plafond)) c.plafond = String(day * Math.max(1, tv().length));   // le plafond du jour, pour tout le groupe
     if(M.buSp) delete M.buSp[t.id]; put(c, '🍝 ' + MSGT('Sur-place ajouté au budget')); buRe(); }
   function buPaid(id){ const it = R[id]; if(!it) return; const c = clone(it); c.statut = 'paid'; if(Array.isArray(c.echeances)) c.echeances = c.echeances.map(e=>Object.assign({}, e, {fait:true})); put(c, '✓ ' + MSGT('Payé')); buRe(); }
+
+  /* ══════════ 🧭 « Et maintenant ? » : depuis là où je suis, les visites pas encore vues les plus proches, ouvertes maintenant,
+     et la fin de journée réorganisée (ce qui ne rentre plus part au lendemain) ══════════ */
+  let NOW = null;
+  const nowVisitMin = p => p.cat === 'musee' ? 120 : p.cat === 'loisir' ? 240 : 60;
+  const nowHM = () => { const d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+  function nowBtn(t){ if(!t || t.ro || tripPhase(t) !== 'live') return '';
+    const n = list('place', p=>p.trip === t.id && !p.deleted && !p.sugg && !p.vu && !p.skip && p.lat != null && (!p.date || p.date >= isoToday())).length; if(!n) return '';
+    return `<button type="button" class="now-b" onclick="CV.nowOpen()"><i>🧭</i><span><b>${esc(MSGT('Et maintenant ?'))}</b><small>${esc(MSGT('Les visites les plus proches de toi, ouvertes maintenant'))}</small></span><em>›</em></button>`; }
+  async function nowPos(t){
+    const mine = (trkByWho(t.id, false)[M.me || ''] || []), l = mine[mine.length - 1];
+    if(l && l[2] && Date.now() - l[2] < 20 * 60e3) return {lat:+l[0], lng:+l[1], src:'gps'};
+    const g = await new Promise(res=>{ try { navigator.geolocation.getCurrentPosition(p=>res({lat:p.coords.latitude, lng:p.coords.longitude, src:'gps'}), ()=>res(null), {enableHighAccuracy:true, timeout:9000, maximumAge:120000}); } catch(e){ res(null); } });
+    if(g) return g;
+    if(l) return {lat:+l[0], lng:+l[1], src:'old', at:l[2]};
+    return null; }
+  async function nowOpen(){
+    const t = trip(); if(!t) return;
+    openSheet(`<h2>🧭 ${esc(MSGT('Et maintenant ?'))}</h2><div id="now-b" class="v-sum-small">📡 ${esc(MSGT('Je cherche où tu es…'))}</div>`);
+    const pos = await nowPos(t); NOW = {tid:t.id, pos}; nowRender(); }
+  function nowCands(t, pos){
+    const td = isoToday(), hm = nowHM(), city = dayCity(td);
+    return list('place', p=>p.trip === t.id && !p.deleted && !p.sugg && !p.vu && !p.skip && p.lat != null && p.lng != null && (!p.date || p.date >= td)).map(p=>{
+      const d = pos ? rawKm(pos, {lat:+p.lat, lng:+p.lng}) : 0, oh = ohOf(p), rg = oh ? ohDay(oh, td) : null;
+      const open = rg == null ? null : ohNow(rg, hm), close = open ? (rg.find(r=>{ const [a, b] = r.replace('+', '').split('-'); return hm >= a.padStart(5, '0') && hm < b.padStart(5, '0'); }) || '').split('-')[1] : '';
+      const later = rg && !open ? (rg.map(r=>r.split('-')[0].padStart(5, '0')).filter(a=>a > hm).sort()[0] || '') : '';
+      return {p, d, open, close, later, today:p.date === td, sameCity:!city || !p.date || normQ(dayCity(p.date) || '') === normQ(city)}; })
+      .filter(x=>x.today || (x.sameCity && x.d < 15)); }
+  function nowRender(){
+    const el = document.getElementById('now-b'), t = R[NOW && NOW.tid]; if(!el || !t) return; const pos = NOW.pos, td = isoToday();
+    const C = nowCands(t, pos), walk = d => Math.max(1, Math.round(d * 1.25 / 4.5 * 60));
+    const score = x => (x.open === false ? 1e4 : 0) + (x.today ? 0 : 3) + x.d;
+    const best = C.slice().sort((a, b)=>score(a) - score(b)).slice(0, 5);
+    const row = x => { const p = x.p, ic = (POI_CATS[p.cat] || {icon:'📍'}).icon;
+      const st = x.open === true ? `<span class="now-ok">🟢 ${esc(x.close ? RF('ouvert jusqu’à {0}', x.close) : MSGT('ouvert'))}</span>` : x.open === false ? `<span class="now-ko">🔴 ${esc(x.later ? RF('ouvre à {0}', x.later) : MSGT('fermé aujourd’hui'))}</span>` : '';
+      const go = `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking`;
+      return `<div class="now-r"><div class="now-t" role="button" onclick="CV.plInfo('${ja(p.id)}')"><i>${ic}</i><span><b data-notr>${esc(p.nom || '')}</b>
+        <small>${pos ? '🚶 ' + esc(RF('{0} min', walk(x.d))) + ' · ' + fmtKm(x.d) : ''}${x.today ? '' : ' · ' + esc(MSGT(p.date ? 'prévu un autre jour' : 'pas encore placé'))}${p.ville ? ' · <span data-notr>' + esc(p.ville) + '</span>' : ''}</small>${st}</span></div>
+        <div class="now-a"><a class="v-btn" href="${esc(go)}" target="_blank" rel="noopener">🗺️ ${esc(MSGT('Y aller'))}</a><button type="button" class="v-btn sec" onclick="CV.nowMark('${ja(p.id)}',1)">✅</button><button type="button" class="v-btn sec" onclick="CV.nowMark('${ja(p.id)}',0)">⏭️</button></div></div>`; };
+    const left = C.filter(x=>x.today);
+    el.className = ''; el.innerHTML = `${pos ? (pos.src === 'old' ? `<div class="v-sum-small">⚠️ ${esc(MSGT('Position GPS indisponible : je pars de ta dernière position connue.'))}</div>` : '') : `<div class="v-sum-small">⚠️ ${esc(MSGT('Position GPS indisponible : active la localisation pour les distances.'))}</div>`}
+      ${best.length ? best.map(row).join('') : `<div class="v-sum-small">✨ ${esc(MSGT('Tout est vu pour aujourd’hui !'))}</div>`}
+      ${left.length > 1 ? `<button type="button" class="v-btn" style="margin-top:10px" onclick="CV.nowPlan()">🔄 ${esc(MSGT('Réorganiser la fin de journée depuis ici'))} (${left.length})</button>` : ''}
+      <div id="now-plan"></div>`;
+  }
+  function nowMark(id, vu){ try { if(vu) plVu(id, true); else plSkip(id, true); } catch(e){} setTimeout(nowRender, 50); }
+  // 🔄 la fin de journée : de proche en proche depuis ma position ; ce qui dépasse 19 h part au lendemain (ou reste « à placer »)
+  function nowPlan(){
+    const t = R[NOW && NOW.tid], box = document.getElementById('now-plan'); if(!t || !box) return; const td = isoToday(), pos = NOW.pos;
+    let L = nowCands(t, pos).filter(x=>x.today).map(x=>x.p), cur = pos || (L[0] ? {lat:+L[0].lat, lng:+L[0].lng} : null); if(!cur || !L.length) return;
+    const ord = []; while(L.length){ L.sort((a, b)=>rawKm(cur, {lat:+a.lat, lng:+a.lng}) - rawKm(cur, {lat:+b.lat, lng:+b.lng})); const n = L.shift(); ord.push(n); cur = {lat:+n.lat, lng:+n.lng}; }
+    const now = new Date(), end = new Date(td + 'T19:00:00'); let tm = now.getTime(), at = pos || {lat:+ord[0].lat, lng:+ord[0].lng}; const fit = [], over = [];
+    ord.forEach(p=>{ const d = rawKm(at, {lat:+p.lat, lng:+p.lng}), mv = d * 1.25 / 4.5 * 3600e3, arr = tm + mv; if(arr + nowVisitMin(p) * 60e3 <= end.getTime() || !fit.length){ fit.push({p, at:arr}); tm = arr + nowVisitMin(p) * 60e3; at = {lat:+p.lat, lng:+p.lng}; } else over.push(p); });
+    NOW.plan = {fit:fit.map(x=>x.p.id), over:over.map(p=>p.id)};
+    const hh = ms => new Date(ms).toLocaleTimeString(NL(), {hour:'2-digit', minute:'2-digit'});
+    box.innerHTML = `<div class="now-pl"><b>${esc(MSGT('Ta fin de journée'))}</b>${fit.map((x, k)=>`<div class="now-pr"><i>${k + 1}</i><span data-notr>${esc(x.p.nom || '')}</span><small>~${hh(x.at)}</small></div>`).join('')}
+      ${over.length ? `<div class="now-ov">⏰ ${esc(RF('{0} ne rentre(nt) plus avant 19 h', over.length))} : ${over.map(p=>`<span data-notr>${esc(p.nom || '')}</span>`).join(', ')}</div>` : ''}
+      <button type="button" class="v-btn" onclick="CV.nowPlanOk()">✓ ${esc(MSGT(over.length ? 'Valider (le reste passe à demain)' : 'Valider cet ordre'))}</button></div>`;
+  }
+  function nowPlanOk(){
+    const t = R[NOW && NOW.tid], P = NOW && NOW.plan; if(!t || !P) return; const td = isoToday(), out = [];
+    const di = Object.assign(clone(R['day:' + t.id + ':' + td] || {}), {id:'day:' + t.id + ':' + td, type:'day', trip:t.id, date:td}); delete di.deleted;
+    const done = placesOf(td).filter(p=>p.vu || p.skip).map(p=>p.id), ids = [...done, ...P.fit];
+    const pts = Object.fromEntries(ids.map(id=>[id, {lat:+R[id].lat, lng:+R[id].lng}])), last = ids[ids.length - 1], st0 = NOW.pos ? {lat:NOW.pos.lat, lng:NOW.pos.lng, lbl:MSGT('Ma position')} : Object.assign({}, pts[ids[0]], {lbl:R[ids[0]].nom || ''});
+    di.route = di.route && di.route.start ? Object.assign({}, di.route, {ids, pts}) : {start:st0, end:Object.assign({}, pts[last], {lbl:R[last].nom || ''}), loop:false, fin:true, ids, pts, miss:[], walk:num(t.marche || 2.5), tr:[]}; out.push(di);
+    const ds = dayList(), nx = ds.find(d=>d > td && normQ(dayCity(d) || '') === normQ(dayCity(td) || '')) || ds.find(d=>d > td);
+    P.over.forEach(id=>{ const c = clone(R[id]); if(nx) c.date = nx; else { delete c.date; c.pick = 1; } out.push(c); });
+    putMany(out, P.over.length ? '🔄 ' + RF('Journée réorganisée · {0} visite(s) demain', P.over.length) : '🔄 ' + MSGT('Journée réorganisée'));
+    closeSheet(true); refresh(); }
+
+  /* ══════════ 🌧️ La pluie change le programme : un jour pluvieux avec des visites dehors ↔ un jour sec (même ville) ══════════ */
+  const RAIN_OUT = p => p.cat === 'parc' || p.cat === 'vue' || /plage|beach|jardin|garden|parc|park|belv[ée]d[èe]re|lac |randonn|promenade/i.test(p.nom || '');
+  const RAIN_IN = p => p.cat === 'musee' || /mus[ée]e|museum|galerie|gallery|aquarium|march[ée] couvert|cath[ée]drale|basilique|[ée]glise|church/i.test(p.nom || '');
+  async function rainFetch(t){
+    M.wxd = M.wxd || {}; const td = isoToday(), lim = (()=>{ const d = new Date(); d.setDate(d.getDate() + 7); return locIso(d); })();
+    for(const st of tlStages()){ const a = st.debut > td ? st.debut : td, b = (st.fin || st.debut) < lim ? (st.fin || st.debut) : lim; if(a > b) continue;
+      const k = normQ(st.city) + '|' + a + '|' + b, c = M.wxd[k]; if(c && Date.now() - c.at < 3 * 3600e3) continue;
+      try { const g = await geocode(st.city, null); if(!g) continue;
+        const j = await (await withTimeout(fetch(`https://api.open-meteo.com/v1/forecast?latitude=${(+g.lat).toFixed(3)}&longitude=${(+g.lng).toFixed(3)}&daily=precipitation_probability_max,precipitation_sum&timezone=auto&start_date=${a}&end_date=${b}`), 10000)).json();
+        const D = j.daily || {}; M.wxd[k] = {at:Date.now(), city:st.city, d:Object.fromEntries((D.time || []).map((x, i)=>[x, [(D.precipitation_probability_max || [])[i] || 0, (D.precipitation_sum || [])[i] || 0]]))};
+      } catch(e){} }
+    const ks = Object.keys(M.wxd); if(ks.length > 30) ks.slice(0, ks.length - 30).forEach(k=>delete M.wxd[k]); persist(); }
+  function rainSug(t){
+    const W = {}; Object.values(M.wxd || {}).forEach(c=>Object.assign(W, c.d || {})); const td = isoToday(), no = (M.rainNo || {})[t.id] || [];
+    const vis = d => list('place', p=>p.trip === t.id && p.date === d && !p.deleted && !p.sugg && !p.vu && !p.skip);
+    const wet = d => W[d] && W[d][0] >= 60 && W[d][1] >= 1, dry = d => W[d] && W[d][0] <= 35;
+    for(const d of dayList().filter(x=>x >= td && W[x]).sort()){ if(!wet(d) || no.includes(d)) continue;
+      const out = vis(d).filter(RAIN_OUT); if(!out.length) continue; const city = normQ(dayCity(d) || '');
+      const d2 = dayList().filter(x=>x >= td && x !== d && dry(x) && normQ(dayCity(x) || '') === city).sort((a, b)=>Math.abs(nights(a, d)) - Math.abs(nights(b, d)))[0]; if(!d2) continue;
+      return {d, d2, out, inn:vis(d2).filter(RAIN_IN), p:W[d][0]}; }
+    return null; }
+  function rainCard(t){ if(!t || t.ro || t.archived || t.demo) return ''; const ph = tripPhase(t); if(ph === 'past') return '';
+    const td = isoToday(); if(!dayList().some(d=>d >= td && nights(td, d) <= 7)) return '';
+    if(!rainCard.at || Date.now() - rainCard.at > 30 * 60e3){ rainCard.at = Date.now(); rainFetch(t).then(()=>{ if(rainSug(t)) refresh(); }).catch(()=>{}); }
+    const s = rainSug(t); if(!s) return ''; const day = d => fdate(d);
+    return `<div class="rain-c"><i>🌧️</i><div><b>${esc(RF('Pluie prévue {0} ({1} %)', day(s.d), s.p))}</b><small>${esc(RF('{0} visite(s) dehors ce jour-là · {1} s’annonce sec', s.out.length, day(s.d2)))}</small>
+      <div class="rain-a"><button type="button" class="v-btn" onclick="CV.rainSwap('${ja(s.d)}','${ja(s.d2)}')">🔁 ${esc(MSGT('Échanger'))}</button><button type="button" class="v-btn sec" onclick="CV.rainNo('${ja(s.d)}')">${esc(MSGT('Non merci'))}</button></div></div></div>`; }
+  function rainSwap(d, d2){ const t = trip(); if(!t) return; const s = rainSug(t); if(!s || s.d !== d) return;
+    const out = [...s.out.map(p=>Object.assign(clone(p), {date:d2})), ...s.inn.map(p=>Object.assign(clone(p), {date:d}))];
+    putMany(out, '🌧️ ' + RF('{0} visite(s) dehors déplacée(s) au {1}', s.out.length, fdate(d2)) + (s.inn.length ? ' · ' + RF('{0} au sec le {1}', s.inn.length, fdate(d)) : '')); refresh(); }
+  function rainNo(d){ const t = trip(); if(!t) return; M.rainNo = M.rainNo || {}; (M.rainNo[t.id] = M.rainNo[t.id] || []).push(d); persist(); refresh(); }
+
+  /* ══════════ 🔗 Coller un lien : Google Maps (même court), TikTok, Instagram, YouTube… → le lieu, ajouté à la bonne ville ══════════ */
+  let PLK = null;
+  function plkOpen(){ const t = trip(); if(!t) return;
+    openSheet(`<h2>🔗 ${esc(MSGT('Ajouter un lieu depuis un lien'))}</h2><div class="v-sum-small" style="margin-bottom:8px">${esc(MSGT('Colle un lien Google Maps, TikTok, Instagram, YouTube… ou simplement le nom du lieu. Il rejoint ta liste de visites, dans la bonne ville.'))}</div>
+      <textarea class="v-in" id="plk-in" rows="3" placeholder="https://maps.app.goo.gl/…"></textarea>
+      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.plkGo()">🔎 ${esc(MSGT('Trouver le lieu'))}</button><button type="button" class="v-btn sec" onclick="CV.plkPaste()">📋 ${esc(MSGT('Coller'))}</button></div>
+      <div id="plk-res"></div>`);
+    setTimeout(()=>{ const i = document.getElementById('plk-in'); if(i) i.focus(); }, 200); }
+  async function plkPaste(){ try { const x = await navigator.clipboard.readText(); const i = document.getElementById('plk-in'); if(i && x){ i.value = x; plkGo(); } } catch(e){ toast(MSGT('Colle le lien dans la case (appui long → Coller)')); } }
+  // les noms de lieux dans une légende : après 📍, les hashtags (#ChateauDeChillon), le titre avant « | »
+  function plkQs(o){ const T = [o.name, o.title, o.desc].filter(Boolean).join('\n'), Q = [];
+    if(o.name) Q.push(o.name);
+    (T.match(/📍\s*([^\n#|•·]{3,60})/g) || []).forEach(m=>Q.push(m.replace(/📍\s*/, '').trim()));
+    const BAD = /^(fyp|foryou|foryoupage|viral|travel|voyage|trip|travelgram|instatravel|wanderlust|explore|reels?|tiktok|vacances|holiday|summer|ete|été|europe|food|foodie|love|beautiful|nature|photography|vlog|traveltiktok)$/i;
+    (T.match(/#[\p{L}\p{N}_]{4,40}/gu) || []).map(h=>h.slice(1)).filter(h=>!BAD.test(h)).forEach(h=>Q.push(h.replace(/([a-zà-ÿ])([A-ZÀ-Þ])/g, '$1 $2').replace(/_/g, ' ')));
+    if(o.title) Q.push(o.title.split(/\s[|–—-]\s|[#📍\n]/)[0].trim());
+    return [...new Set(Q.map(q=>q.replace(/https?:\S+/g, '').trim()).filter(q=>q.length >= 3))].slice(0, 5); }
+  async function plkGo(){
+    const t = trip(), inp = document.getElementById('plk-in'), box = document.getElementById('plk-res'); if(!t || !inp || !box) return; const raw = inp.value.trim(); if(!raw) return;
+    box.innerHTML = `<div class="cv-route-load">🔎 ${esc(MSGT('Je lis le lien…'))}</div>`;
+    let o = {}; const url = (raw.match(/https?:\/\/\S+/) || [''])[0];
+    if(url){ try { o = await (await withTimeout(fetch('/api/unfurl?u=' + encodeURIComponent(url)), 15000)).json(); } catch(e){ o = {}; } if(!o || o.ok === false) o = {}; o.src = url;
+      const rest = raw.replace(url, '').trim(); if(rest) o.desc = [o.desc, rest].filter(Boolean).join('\n'); }
+    else o = {name:raw};
+    // les villes du voyage : on cherche autour d’elles (et on garde ce qui est à moins de 40 km d’une étape)
+    const C = []; for(const st of tlStages().slice(0, 8)){ try { const g = await geocode(st.city, null); if(g) C.push({city:st.city, lat:+g.lat, lng:+g.lng, h:st.h}); } catch(e){} }
+    const near = p => C.map(c=>({c, d:rawKm(c, p)})).sort((a, b)=>a.d - b.d)[0];
+    const found = [];
+    if(o.lat != null && isFinite(o.lat)) found.push({name:o.name || plkQs(o)[0] || MSGT('Lieu'), lat:+o.lat, lng:+o.lng, sub:o.site || ''});
+    if(!found.length){ for(const q of plkQs(o)){ for(const c of (C.length ? C.slice(0, 3) : [null])){ try { (await pacFetch(q, false, c, true)).forEach(r=>{ if(!found.some(f=>normQ(f.name) === normQ(r.name) && rawKm(f, r) < .3)) found.push(r); }); } catch(e){} } if(found.length >= 6) break; } }
+    const ok = found.map(f=>Object.assign(f, {nb:C.length ? near(f) : null})).filter(f=>!C.length || (f.nb && f.nb.d < 40)).slice(0, 6);
+    PLK = {o, found:ok};
+    box.innerHTML = ok.length ? `<div class="v-sum-small" style="margin:10px 0 6px">${esc(MSGT(ok.length > 1 ? 'Lequel est le bon ?' : 'Lieu trouvé :'))}</div>${ok.map((f, i)=>`<button type="button" class="plk-r" onclick="CV.plkAdd(${i})"><i>📍</i><span><b data-notr>${esc(f.name)}</b><small data-notr>${esc([f.sub, f.nb ? f.nb.c.city : ''].filter(Boolean).join(' · '))}</small></span><em>＋</em></button>`).join('')}`
+      : `<div class="v-sum-small" style="margin-top:10px">🤷 ${esc(MSGT(o.title || o.desc ? 'Je n’ai pas reconnu de lieu près des villes de ton voyage. Tape son nom à la place du lien.' : 'Lien illisible (compte privé ou site bloqué ?). Tape le nom du lieu à la place.'))}</div>${o.title ? `<div class="v-sum-small" data-notr>« ${esc(o.title.slice(0, 160))} »</div>` : ''}`; }
+  function plkAdd(i){
+    const t = trip(), f = PLK && PLK.found[i]; if(!t || !f) return; const st = f.nb && f.nb.c.h;
+    if(list('place', p=>p.trip === t.id && !p.deleted && p.lat != null && rawKm(p, f) < .15 && swSim(p.nom, f.name) >= .5).length){ toast('✓ ' + MSGT('Déjà dans ton voyage')); return; }
+    putQuiet([{id:'pl' + uid(), type:'place', trip:t.id, nom:f.name, lat:+f.lat, lng:+f.lng, adresse:f.sub || '', stay:st ? st.id : '', date:'', pick:1, kept:Date.now(), src:(PLK.o && PLK.o.src) || '', ...(M.me ? {votes:{[M.me]:1}} : {})}]);
+    toast('📍 ' + f.name + ' · ' + MSGT('ajouté à tes visites')); closeSheet(true); refresh(); }

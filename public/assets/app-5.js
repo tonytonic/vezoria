@@ -402,7 +402,7 @@
     const lvF = !hidden('blk:prep');
     // ⚡ en haut, au-dessus de tout (et de la carte 3D) : noter un step ou prendre une photo en un geste
     const quick = `<div class="lv-quick"><button type="button" onclick="CV.hereNow()">📍 ${esc(MSGT('Step ici'))}</button><button type="button" onclick="CV.livePhoto()">📸 ${esc(MSGT('Photo'))}</button><button type="button" onclick="CV.tlReceipt()">🧾 ${esc(MSGT('Dépense'))}</button></div><button type="button" class="lv-imp" onclick="CV.autoPhotoPick()"><b>🖼️ ${esc(MSGT('Importer toutes mes photos'))}</b><small>${esc(MSGT('Chaque photo à son endroit et à son heure, sur la carte'))}</small></button>`;
-    return `${quick}${offBand(t)}${lnHTML(t)}${lvF ? liveFil(t) : actBand()}${annivCard()}${nextHero()}${transferHTML(isoToday())}${progToday(k, info, own, night)}${trkHTML()}${liveMapCard()}${lvF ? '' : liveCard()}
+    return `${quick}${offBand(t)}${lnHTML(t)}${nowBtn(t)}${rainCard(t)}${lvF ? liveFil(t) : actBand()}${annivCard()}${nextHero()}${transferHTML(isoToday())}${progToday(k, info, own, night)}${trkHTML()}${liveMapCard()}${lvF ? '' : liveCard()}
       <div class="cv-tiles">${tile('📍','Step ici','CV.hereNow()')}${tile('🧾','Dépense','CV.tlReceipt()')}${tile('📴','Fiche du jour','CV.tlDay()')}${tile('🌤️','Météo','CV.tlMeteo()')}</div>
       <details class="cv-fold cv-tmore"><summary>${MSGT('Plus d’outils')} <small>${MSGT('Courses, carte, importer, papiers')}</small></summary><div class="cv-tiles">${tile('🛒','Courses','CV.shopSheet()')}${tile('🌍','Carte','CV.worldMap()')}${tile('📄','Importer','CV.impSheet()')}${tile('🛂','Papiers','CV.tlDocs()')}</div></details>
       <button class="v-btn sec" onclick="CV.innerGo('souv')">📸 Voir les souvenirs</button>

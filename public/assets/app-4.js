@@ -1439,7 +1439,7 @@ ${pm.join('\n')}</Document></kml>`;
   function suggCard(){
     const t = trip(); if(!t || t.archived || t.demo || M.lock || tripPhase(t) === 'past') return '';
     if(SG && SG.tid === t.id) return `<div class="sg-c run"><i>💡</i><div><b>${sgRun(t)}</b></div></div>`;
-    const L = list('place', p=>p.trip === t.id && p.sugg), xn = expCount(t);
+    const L = list('place', p=>p.trip === t.id && swMine(p)), xn = expCount(t);
     if(!L.length){
       if(xn && ((M.suggDone || {})[t.id] || list('place', p=>p.trip === t.id).length)) return `<button type="button" class="sg-c" onclick="CV.expOpen()"><i>🎟️</i><div><b>${xn} ${MSGT('expériences à vivre')}</b><small>${MSGT('Croisières, excursions, plongée… à réserver chez nos partenaires')}</small></div><span class="sg-go">${MSGT('Voir')} ›</span></button>`;
       const hs = list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date && stayCity(i));
@@ -1449,7 +1449,7 @@ ${pm.join('\n')}</Document></kml>`;
     return `<button type="button" class="sg-c" onclick="CV.suggOpen()"><i>💡</i><div><b>${L.length} ${MSGT('suggestions à choisir')}</b><small>${MSGT('Ajoute celles qui te plaisent à ton programme')}${xn ? ' · 🎟️ ' + xn + ' ' + MSGT('expériences à vivre') : ''}</small></div><span class="sg-go">${MSGT('Trier')} ›</span></button>`;
   }
   function suggList(){
-    swClose(true); const t = trip(); if(!t) return; const L = list('place', p=>p.trip === t.id && p.sugg);
+    swClose(true); const t = trip(); if(!t) return; const L = list('place', p=>p.trip === t.id && swMine(p));
     if(!L.length){ if(expCount(t)) return expOpen(); closeSheet(true); refresh(); return; }
     const by = {}, xn = expCount(t); L.forEach(p=>(by[p.date] = by[p.date] || []).push(p)); const ds = dayList();
     const y = (document.querySelector('#v-sheet-bg .v-sheet') || {}).scrollTop || 0;
@@ -1459,13 +1459,15 @@ ${pm.join('\n')}</Document></kml>`;
           <button type="button" class="sg-ok" aria-label="${MSGT('Garder')}" onclick="CV.suggKeep('${ja(p.id)}')">✓</button><button type="button" class="sg-no" aria-label="${MSGT('Retirer')}" onclick="CV.suggDrop('${ja(p.id)}')">✕</button></div>`).join('')}</div>`).join('')}
       <button type="button" class="v-btn sec" style="margin:4px 0 8px" onclick="CV.suggMore()">＋ ${MSGT('Nouvelles suggestions')}</button>
       <button type="button" class="v-btn sec" style="margin:0 0 8px" onclick="CV.suggRedo()">🔄 ${MSGT('Refaire les suggestions')}</button>
+      <button type="button" class="v-btn sec" style="margin:0 0 8px" onclick="CV.swReset()">🔁 ${MSGT('Recommencer ma sélection à zéro')}</button>
+      <button type="button" class="v-btn sec" style="margin:0 0 8px" onclick="CV.plkOpen()">🔗 ${MSGT('Ajouter un lieu depuis un lien')}</button>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.suggKeep('*')">✓ ${MSGT('Tout ajouter')}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
     const sh = document.querySelector('#v-sheet-bg .v-sheet'); if(sh) sh.scrollTop = y;
   }
   function suggKeep(id){
     const t = trip(); if(!t) return;
-    const L = id === '*' ? list('place', p=>p.trip === t.id && p.sugg) : [R[id]].filter(Boolean);
-    L.forEach(p=>{ const c = clone(p); delete c.sugg; c.kept = Date.now(); c.pick = 1; putQuiet([c]);
+    const L = id === '*' ? list('place', p=>p.trip === t.id && swMine(p)) : [R[id]].filter(Boolean);
+    L.forEach(p=>{ const c = clone(p); delete c.sugg; c.kept = Date.now(); c.pick = 1; if(M.me) c.votes = Object.assign({}, p.votes || {}, {[M.me]:1}); putQuiet([c]);
       const di = p.exc && R['day:' + p.trip + ':' + p.date]; if(di && !di.deleted && !String(di.titre || '').includes(p.nom)) putQuiet([Object.assign(clone(di), {titre:(di.titre ? di.titre + ' · ' : '') + '🚌 ' + p.nom})]); });
     if(id === '*'){ toast('✓ ' + L.length + ' ' + MSGT('lieux ajoutés au programme')); closeSheet(true); refresh(); return; }
     toast('✓ ' + MSGT('Ajouté au programme'));
@@ -1480,7 +1482,7 @@ ${pm.join('\n')}</Document></kml>`;
     const t = trip(); if(!t) return; try { sgDedupe(t.id); } catch(er){} try { sgFar(t.id); } catch(er){}
     const st = tlStages(), si = c => { const k = st.findIndex(x=>normQ(x.city) === normQ(c)); return k < 0 ? 99 : k; };
     const td = isoToday(), live = tripPhase(t) === 'live';   // 📍 pendant le voyage : rien des jours déjà passés
-    const L = list('place', p=>p.trip === t.id && p.sugg && (!live || !p.date || p.date >= td)).map(p=>({id:p.id, c:swCity(p), d:p.date || '9', x:p.exc ? 1 : 0}));
+    const L = list('place', p=>p.trip === t.id && swMine(p) && (!live || !p.date || p.date >= td)).map(p=>({id:p.id, c:swCity(p), d:p.date || '9', x:p.exc ? 1 : 0}));
     // une activité payante qui est déjà un lieu proposé ou gardé (Machu Picchu « à réserver » + Machu Picchu à visiter) : une seule carte, le lieu, marqué 🎟️
     const PL = list('place', p=>p.trip === t.id && !p.deleted && p.nom), PAY = {};
     const twin = (e, city) => { if(e.wg) return null; const n = normQ(e.p); if(n.length < 5) return null;
@@ -1493,11 +1495,13 @@ ${pm.join('\n')}</Document></kml>`;
       const id = 'ex|' + g.h.id + '|' + e.key; EX[id] = {h:g.h, e, city:g.city}; L.push({id, c:g.city, d:'~', x:2}); }));
     Object.values(GR).forEach(g=>{ const id = 'ex|g|' + g.h.id; EX[id] = {h:g.h, city:g.city, grp:g.grp, sel:new Set(), e:{key:'grp|' + g.h.id, ic:'🎟️', l:'Activités à réserver', p:g.city}}; L.push({id, c:g.city, d:'~', x:2.5}); });
     // 🎧 visites audio WeGoTrip de chaque ville (déjà connues : tout de suite ; sinon elles arrivent pendant le tri)
-    const wgPend = []; wgStays(t).forEach(([h, city])=>{ const r = wgHave(city); if(r) wgCards(t, h, city, r).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.5}); }); else wgPend.push([h, city]); });
+    const wgPend = [], vtPend = []; wgStays(t).forEach(([h, city])=>{ const r = wgHave(city); if(r) wgCards(t, h, city, r).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.5}); }); else wgPend.push([h, city]);
+      const v = vtHave(city); if(v) vtCards(t, h, city, v).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.7}); }); else vtPend.push([h, city]); });
     if(!L.length && !wgPend.length){ closeSheet(true); refresh(); return; }
     L.sort((a, b)=>si(a.c) - si(b.c) || a.x - b.x || a.d.localeCompare(b.d));
     closeSheet(true); SW = {tid:t.id, ids:L.map(x=>x.id), i:0, hist:[], kept:0, EX, PAY, exDone:new Set()}; swRender();
     wgPend.forEach(([h, city])=>wgFetch(city).then(r=>swAddWg(t, h, city, r)).catch(()=>{}));
+    vtPend.forEach(([h, city])=>vtFetch(city).then(r=>swAddWg(t, h, city, r, vtCards)).catch(()=>{}));
   }
   // 🎧 WeGoTrip dans le tri : 3 visites par ville, comme des « activités à réserver » (garder = au programme, avec le lien de la visite)
   const wgStays = t => { const seen = new Set(), out = [], td = isoToday(), live = tripPhase(t) === 'live'; list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date && (!live || (i.dateFin || i.date) >= td)).sort((a, b)=>a.date.localeCompare(b.date)).forEach(h=>{ const c = stayCity(h); if(c && !seen.has(normQ(c))){ seen.add(normQ(c)); out.push([h, c]); } }); return out; };
@@ -1507,14 +1511,39 @@ ${pm.join('\n')}</Document></kml>`;
     return (r.tours || []).filter(x=>x && x.id && !no.has('wg|' + x.id) && !kept.has('wg|' + x.id)).slice(0, 3)
       .map(x=>({id:'ex|' + h.id + '|wg|' + x.id, v:{h, city, e:{key:'wg|' + x.id, ic:'🎧', l:'Visite audio', p:x.title, q:x.title, wg:x}}}));
   }
-  function swAddWg(t, h, city, r){
-    if(!SW || SW.tid !== t.id) return; const C = wgCards(t, h, city, r).filter(x=>!SW.EX[x.id]); if(!C.length) return;
+  // 🎟️ Viator (via /api/act) : visites guidées, excursions, billets coupe-file… 3 par ville, comme WeGoTrip
+  const VT = {};
+  async function vtFetch(city){
+    const cur = (trip() && trip().devise) || 'EUR', key = normQ(city) + '|' + BLANG() + '|' + cur; if(VT[key]) return VT[key];
+    M.vtt = M.vtt || {}; const c = M.vtt[key]; if(c && Date.now() - c.at < 864e5){ VT[key] = c.r; return c.r; }
+    if(!city || city.length < 3) return null;
+    const r = await (await withTimeout(fetch(`/api/act?q=${encodeURIComponent(city)}&lang=${BLANG()}&cur=${cur}`), 15000)).json().catch(()=>null);
+    if(r && (r.ok || r.reason === 'nokey')){ VT[key] = r; M.vtt[key] = {at:Date.now(), r}; const ks = Object.keys(M.vtt); if(ks.length > 40) delete M.vtt[ks[0]]; persist(); }
+    return r; }
+  const vtHave = city => { const cur = (trip() && trip().devise) || 'EUR', k = normQ(city) + '|' + BLANG() + '|' + cur; if(VT[k]) return VT[k]; const c = (M.vtt || {})[k]; return c && Date.now() - c.at < 864e5 ? (VT[k] = c.r) : null; };
+  function vtCards(t, h, city, r){
+    if(hidden('blk:book') || !r || !r.ok) return [];
+    const no = new Set(((M.expNo || {})[t.id]) || []), kept = expKept(t.id);
+    return (r.tours || []).filter(x=>x && x.id && !no.has('vt|' + x.id) && !kept.has('vt|' + x.id)).slice(0, 4)
+      .map(x=>({id:'ex|' + h.id + '|vt|' + x.id, v:{h, city, e:{key:'vt|' + x.id, ic:'🎟️', l:'Activité à réserver', p:x.title, q:x.title, wg:x, vt:1}}}));
+  }
+  function swAddWg(t, h, city, r, mk){
+    mk = mk || wgCards;
+    if(!SW || SW.tid !== t.id) return; const C = mk(t, h, city, r).filter(x=>!SW.EX[x.id]); if(!C.length) return;
     C.forEach(x=>{ SW.EX[x.id] = x.v; });
     const last = SW.ids.reduce((a, id, i)=>normQ(swCityOf(swRec(id)) || '') === normQ(city) ? i : a, -1);   // après les idées de cette ville
     const at = Math.max(SW.i + 1, last + 1); SW.ids.splice(at, 0, ...C.map(x=>x.id));
     if(SW.ids.slice(SW.i).filter(swPend).length === C.length) swRender(); else { const sm = document.querySelector('#cv-sw .sw-ttl small'), T = SW.ids.length; if(sm) sm.textContent = Math.min(T - SW.ids.slice(SW.i).filter(swPend).length + 1, T) + '/' + T; }
   }
-  const swPend = id => /^ex\|/.test(id) ? !!(SW && SW.EX && SW.EX[id] && !SW.exDone.has(id)) : !!(R[id] && R[id].sugg && !R[id].deleted);
+  // 👥 trier à deux : chaque voyageur du voyage partagé donne son avis (p.votes = {voyageur: 1 gardé / 0 écarté}), fusionné voyageur par voyageur
+  const swMulti = t => !!(t && M.me && TS()[t.id] && (t.voyageurs || []).some(v=>v && v !== M.me));
+  const swMyVote = p => p && p.votes && p.votes[M.me] != null ? p.votes[M.me] : null;
+  const swOthers = p => Object.entries((p && p.votes) || {}).filter(([w, v])=>w !== M.me && v != null);
+  // à trier pour MOI : une suggestion où je n’ai pas encore donné mon avis, ou un lieu gardé par un compagnon que je n’ai pas encore vu
+  const swMine = p => !!(p && !p.deleted && swMyVote(p) == null && (p.sugg || (p.kept && swOthers(p).length && swMulti(R[p.trip]) && !p.vu)));
+  const voteTag = p => { if(!p || !p.votes) return ''; const V = Object.values(p.votes).filter(v=>v != null); if(V.length < 2) return '';
+    return V.every(v=>v === 1) ? `<span class="vt-tag all">⭐ ${esc(MSGT('Vous l’avez tous gardé'))}</span>` : V.some(v=>v === 1) ? `<span class="vt-tag mix">💬 ${esc(MSGT('À discuter'))}</span>` : ''; };
+  const swPend = id => /^ex\|/.test(id) ? !!(SW && SW.EX && SW.EX[id] && !SW.exDone.has(id)) : swMine(R[id]);
   const swRec = id => /^ex\|/.test(id) ? Object.assign({id, ex:1, nom:SW.EX[id].e.p, city:SW.EX[id].city}, SW.EX[id]) : R[id];   // (groupe d’une ville : nom = la ville, pour sa photo)
   const swCityOf = r => r && r.ex ? r.city : swCity(r);
   const swCity = p => { const h = p.stay && R[p.stay]; return (h && (h.type === 'city' ? h.titre : stayCity(h))) || (p.date && dayCity(p.date)) || ''; };
@@ -1556,16 +1585,18 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="sw-ph"><span class="sw-ic">${ic}</span><img class="sw-img" alt="" decoding="async"></div><div class="sw-shade"></div>
       <i class="sw-tag yes">${esc(MSGT('Je garde'))}</i><i class="sw-tag no">${esc(MSGT('Non merci'))}</i>
       <div class="sw-tx"><small>${c ? '📍 <span data-notr>' + esc(c) + '</span>' : ''}</small>
-        ${p.ex && p.e.wg ? `<em class="sw-pay">🎧 ${esc(MSGT('Visite audio'))}${p.e.wg.price ? ' · ' + esc(RF('dès {0}', (+p.e.wg.price).toLocaleString(NL(), {style:'currency', currency:p.e.wg.currency || 'EUR', maximumFractionDigits:p.e.wg.price % 1 ? 2 : 0}))) : ''}${p.e.wg.rating ? ' · ⭐ ' + (+p.e.wg.rating).toFixed(1).replace('.', ',') : ''} · ${esc(MSGT('partenaire'))}</em>`
+        ${p.ex && p.e.wg ? `<em class="sw-pay">${p.e.vt ? '🎟️ ' + esc(MSGT('Activité à réserver')) : '🎧 ' + esc(MSGT('Visite audio'))}${p.e.wg.price ? ' · ' + esc(RF('dès {0}', (+p.e.wg.price).toLocaleString(NL(), {style:'currency', currency:p.e.wg.currency || 'EUR', maximumFractionDigits:p.e.wg.price % 1 ? 2 : 0}))) : ''}${p.e.wg.rating ? ' · ⭐ ' + (+p.e.wg.rating).toFixed(1).replace('.', ',') : ''} · ${esc(MSGT('partenaire'))}</em>`
         : p.ex ? `<em class="sw-pay">🎟️ ${esc(MSGT(p.e.l))} · ${esc(MSGT('activité à réserver'))}</em>`
         : SW && SW.PAY && SW.PAY[p.id] ? `<em class="sw-pay">🎟️ ${esc(MSGT('Payant : pense à réserver'))}</em>` : ''}
+        ${!p.ex && swOthers(p).length ? `<em class="sw-vt">${swOthers(p).map(([w, v])=>(v ? '❤️ ' : '✕ ') + esc(RF(v ? '{0} l’a gardé' : '{0} l’a écarté', pname(w)))).join(' · ')}</em>` : ''}
         <b data-notr>${esc(p.nom)}</b>${p.exc ? `<em>🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</em>` : ''}<p class="sw-ex" data-notr></p><a class="sw-wk" target="_blank" rel="noopener" hidden>📖 Wikipédia</a></div></div>`;
   }
   function swFill(el, p){
     if(p && p.ex && p.e && p.e.wg){ const w = p.e.wg, im = el.querySelector('.sw-img');   // visite WeGoTrip : sa photo, sa durée, son lien
       if(w.img){ im.onload = () => im.classList.add('ok'); im.src = w.img; }
       el.querySelector('.sw-ex').textContent = [w.duration, w.reviews ? RF('{0} avis', w.reviews) : ''].filter(Boolean).join(' · ');
-      const a = el.querySelector('.sw-wk'); a.href = affWrap('wegotrip', w.url); a.textContent = '🎧 WeGoTrip ›'; if(affOn('wegotrip')) a.rel = 'sponsored noopener'; a.hidden = false; return; }
+      const a = el.querySelector('.sw-wk'); if(p.e.vt){ a.href = w.url; a.textContent = '🎟️ Viator ›'; a.rel = 'sponsored noopener'; a.hidden = false; return; }
+      a.href = affWrap('wegotrip', w.url); a.textContent = '🎧 WeGoTrip ›'; if(affOn('wegotrip')) a.rel = 'sponsored noopener'; a.hidden = false; return; }
     swInfo(p).then(x=>{ if(!el.isConnected) return; const im = el.querySelector('.sw-img');
       if(x.img){ im.onload = () => im.classList.add('ok'); im.src = x.img; }
       if(p.grp) return;   // carte « que faire à… » : la photo de la ville seulement
@@ -1592,6 +1623,8 @@ ${pm.join('\n')}</Document></kml>`;
           : pk ? `<button type="button" class="v-btn" onclick="CV.swClose(1);CV.rgOpen()">② ${esc(MSGT('Ranger mes visites dans les jours'))} (${pk})</button>` : ''}
         <button type="button" class="v-btn${pk || guideOn(t) ? ' sec' : ''}" onclick="CV.swClose();CV.suggMore()">＋ ${esc(MSGT('Nouvelles suggestions'))}</button>
         <button type="button" class="v-btn sec" onclick="CV.suggRedo()">🔄 ${esc(MSGT('Refaire les suggestions'))}</button>
+        <button type="button" class="v-btn sec" onclick="CV.swReset()">🔁 ${esc(MSGT('Recommencer ma sélection à zéro'))}</button>
+        <button type="button" class="v-btn sec" onclick="CV.swClose(1);CV.plkOpen()">🔗 ${esc(MSGT('Ajouter un lieu depuis un lien'))}</button>
         <button type="button" class="v-btn sec" onclick="CV.swClose();CV.expOpen()">🎟️ ${esc(MSGT('Expériences à vivre'))}${xn ? ' (' + xn + ')' : ''}</button>
         ${SW.hist.length ? `<button type="button" class="v-btn sec" onclick="CV.swUndo()">↩️ ${esc(MSGT('Annuler le dernier choix'))}</button>` : ''}
         <button type="button" class="v-btn sec" onclick="CV.swClose()">${esc(MSGT('Fermer'))}</button></div>`;
@@ -1646,8 +1679,10 @@ ${pm.join('\n')}</Document></kml>`;
     if(/^ex\|/.test(el.dataset.id)) return swGoEx(el, keep);
     const p = R[el.dataset.id]; if(!p) return;
     const before = clone(p), di = R['day:' + p.trip + ':' + p.date], dayBefore = di ? clone(di) : null;
-    if(keep){ const c = clone(p); delete c.sugg; c.kept = Date.now(); c.pick = 1; putQuiet([c]); SW.kept++;
+    const multi = swMulti(R[p.trip]), vot = Object.assign({}, p.votes || {}, M.me ? {[M.me]:keep ? 1 : 0} : {});
+    if(keep){ const c = clone(p); delete c.sugg; if(!c.kept) c.kept = Date.now(); c.pick = 1; if(M.me) c.votes = vot; putQuiet([c]); SW.kept++;
       if(p.exc && di && !di.deleted && !String(di.titre || '').includes(p.nom)) putQuiet([Object.assign(clone(di), {titre:(di.titre ? di.titre + ' · ' : '') + '🚌 ' + p.nom})]); }
+    else if(multi){ const c = clone(p); c.votes = vot; putQuiet([c]); }   // à plusieurs : mon ✕ ne retire rien aux autres (le lieu attend leur avis)
     else { M.suggNo = M.suggNo || {}; const nl = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!nl.includes(p.nom)) nl.push(p.nom); if(nl.length > 300) nl.shift(); const c = clone(p); c.deleted = true; putQuiet([c]); }
     SW.hist.push({id:p.id, keep, before, dayBefore});
     try { persistNow(); } catch(e){}   // enregistré tout de suite : on peut s’arrêter à tout moment, rien n’est perdu
@@ -1692,7 +1727,7 @@ ${pm.join('\n')}</Document></kml>`;
       if(h.keep){ SW.kept = Math.max(0, SW.kept - 1); if(h.made && R[h.made]) putQuiet([Object.assign(clone(R[h.made]), {deleted:true})]); }
       else { const nl = ((M.expNo || {})[h.tid]) || []; const i = nl.indexOf(h.key); if(i >= 0) nl.splice(i, 1); persist(); }
       const at = SW.ids.indexOf(h.id); if(at >= 0) SW.i = Math.min(SW.i, at); swRender(); return; }
-    const r = Object.assign(clone(h.before), {sugg:true}); delete r.deleted; delete r.kept; putQuiet([r]);
+    const r = clone(h.before); if(!h.before.kept) r.sugg = true; delete r.deleted; if(M.me && (r.votes || (R[h.id] || {}).votes)) r.votes = Object.assign({}, (R[h.id] || {}).votes || {}, r.votes || {}, {[M.me]:null}); putQuiet([r]);
     if(h.keep){ SW.kept = Math.max(0, SW.kept - 1); if(h.dayBefore && R[h.dayBefore.id] && R[h.dayBefore.id].titre !== h.dayBefore.titre) putQuiet([Object.assign(clone(R[h.dayBefore.id]), {titre:h.dayBefore.titre || ''})]); }
     else { const nl = ((M.suggNo || {})[h.before.trip]) || []; const i = nl.indexOf(h.before.nom); if(i >= 0) nl.splice(i, 1); persist(); }
     const at = SW.ids.indexOf(h.id); if(at >= 0) SW.i = Math.min(SW.i, at);
@@ -1702,6 +1737,23 @@ ${pm.join('\n')}</Document></kml>`;
     if(!SW) return; const n = SW.ids.filter(id=>!/^ex\|/.test(id) && R[id] && R[id].sugg && !R[id].deleted).length; if(!n) return;
     if(!(await uiConfirm(RF('Ajouter les {0} lieux restants à ton programme ?', n)))) return;
     SW.kept += n; suggKeep('*'); swRender();
+  }
+  // 🔁 recommencer MA sélection à zéro : ce que j’ai gardé ou écarté redevient « à trier » (les lieux déjà vus restent ; à plusieurs, les choix des autres restent)
+  async function swReset(){
+    const t = trip(); if(!t) return; const multi = swMulti(t), me = M.me || '';
+    const P = list('place', p=>p.trip === t.id && !p.vu && (p.kept || (p.votes && p.votes[me] != null))), D = Object.values(R).filter(p=>p && p.type === 'place' && p.trip === t.id && p.deleted && p.sugg && !p.vu);
+    const X = list('item', i=>i.trip === t.id && i.cat === 'activite' && i.exp && (i.statut || 'todo') === 'todo' && !i.ref && !i.prix);
+    if(!P.length && !D.length && !X.length){ toast(MSGT('Rien à recommencer : tu n’as encore rien trié.')); return; }
+    if(!(await uiConfirm(RF('Recommencer ta sélection à zéro ? Les {0} lieux et activités que tu as gardés ou écartés reviennent dans le tri. Ce que vous avez déjà vu ne bouge pas.', P.length + D.length + X.length)))) return;
+    const out = [];
+    P.forEach(p=>{ const c = clone(p); if(me) c.votes = Object.assign({}, p.votes || {}, {[me]:null});
+      const others = swOthers(c).some(([, v])=>v === 1);
+      if(!(multi && others)){ c.sugg = true; delete c.kept; delete c.pick; } out.push(c); });
+    D.forEach(p=>{ const c = clone(p); delete c.deleted; if(me && c.votes) c.votes = Object.assign({}, c.votes, {[me]:null}); out.push(c); });
+    X.forEach(i=>out.push(Object.assign(clone(i), {deleted:true})));
+    if(out.length) putQuiet(out);
+    if(M.suggNo) delete M.suggNo[t.id]; if(M.expNo) delete M.expNo[t.id]; persist();
+    toast('🔁 ' + MSGT('Sélection remise à zéro')); swClose(true); closeSheet(true); refresh(); suggOpen();
   }
   async function suggRedo(){
     const t = trip(); if(!t) return; const L = list('place', p=>p.trip === t.id && p.sugg);
@@ -1848,9 +1900,9 @@ ${pm.join('\n')}</Document></kml>`;
       ov.innerHTML = head + `<div class="sw-end rg-end"><div class="sw-end-i">🗓️</div><h2>${esc(MSGT(later ? 'C’est noté pour aujourd’hui' : 'Tout est rangé !'))}</h2><p>${esc(MSGT('Chaque journée suit l’ordre du trajet, de proche en proche. Tu peux encore tout déplacer dans le programme.'))}</p>${later ? `<p>⏭️ ${esc(RF('{0} visite(s) laissée(s) pour plus tard : tu les retrouveras ici.', later))}</p>` : ''}
         <div class="rg-hood"><b>🏨 ${esc(MSGT('Où dormir ? Le quartier au centre de tes visites'))}</b><div id="rg-hood">${rgHoods(t) || esc(MSGT('Ajoute au moins 2 visites par ville pour avoir un conseil.'))}</div>
           <small>${esc(MSGT('Rien n’est figé : si tu choisis un hôtel ailleurs, mets son adresse dans l’hébergement puis « Réorganiser depuis mon hôtel ». Les journées repartiront de là.'))}</small></div>
-        ${(()=>{ const n = list('place', p=>p.trip === t.id && p.sugg).length; return n ? `<button type="button" class="v-btn" onclick="CV.rgClose();CV.suggOpen()">① ${esc(MSGT('Reprendre le choix des visites'))} (${n})</button>` : ''; })()}
-        ${guideOn(t) ? `<button type="button" class="v-btn${list('place', p=>p.trip === t.id && p.sugg).length ? ' sec' : ''}" onclick="CV.guideNext('rg')">🧭 ${esc(MSGT('Continuer : trajets, activités, hébergements'))}</button>`
-          : !list('place', p=>p.trip === t.id && p.sugg).length && expCount(t) ? `<button type="button" class="v-btn sec" onclick="CV.rgClose();CV.expOpen()">🎟️ ${esc(MSGT('Expériences à vivre'))} (${expCount(t)})</button>` : ''}
+        ${(()=>{ const n = list('place', p=>p.trip === t.id && swMine(p)).length; return n ? `<button type="button" class="v-btn" onclick="CV.rgClose();CV.suggOpen()">① ${esc(MSGT('Reprendre le choix des visites'))} (${n})</button>` : ''; })()}
+        ${guideOn(t) ? `<button type="button" class="v-btn${list('place', p=>p.trip === t.id && swMine(p)).length ? ' sec' : ''}" onclick="CV.guideNext('rg')">🧭 ${esc(MSGT('Continuer : trajets, activités, hébergements'))}</button>`
+          : !list('place', p=>p.trip === t.id && swMine(p)).length && expCount(t) ? `<button type="button" class="v-btn sec" onclick="CV.rgClose();CV.expOpen()">🎟️ ${esc(MSGT('Expériences à vivre'))} (${expCount(t)})</button>` : ''}
         <button type="button" class="v-btn${guideOn(t) ? ' sec' : ''}" onclick="CV.rgClose();CV.tab('prog')">📅 ${esc(MSGT('Voir mon programme'))}</button>
         ${RG.hist.length ? `<button type="button" class="v-btn sec" onclick="CV.rgUndo()">↩️ ${esc(MSGT('Annuler le dernier choix'))}</button>` : ''}
         <button type="button" class="v-btn sec" onclick="CV.rgClose()">${esc(MSGT('Fermer'))}</button></div>`;
@@ -1865,7 +1917,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="sw-stack rg-stack"><div class="sw-card top rg-card" data-id="${esc(x.id)}">
         <div class="sw-ph"><span class="sw-ic">${x.type === 'place' ? (POI_CATS[x.cat] || {icon:'📍'}).icon : '🎟️'}</span><img class="sw-img" alt="" decoding="async"></div><div class="sw-shade"></div>
         <i class="sw-tag no">${esc(MSGT('Plus tard'))}</i>
-        <div class="sw-tx"><small>${esc(MSGT('Conseillé'))} : ${ds.indexOf(sug) >= 0 ? PJ(ds.indexOf(sug) + 1) + ' · ' : ''}${esc(fdate(sug))}</small><b data-notr>${esc(rgNom(x))}</b>
+        <div class="sw-tx"><small>${esc(MSGT('Conseillé'))} : ${ds.indexOf(sug) >= 0 ? PJ(ds.indexOf(sug) + 1) + ' · ' : ''}${esc(fdate(sug))}</small><b data-notr>${esc(rgNom(x))}</b>${x.type === 'place' ? voteTag(x) : ''}
           <div class="rg-tips">${rgTips(t, x, sug, D).map(s=>`<span>${esc(s)}</span>`).join('')}</div></div></div></div>
       <div class="rg-hint">👆 ${esc(MSGT('Fais glisser la carte sur un jour'))}</div>
       <div class="rg-days">${days.map(dayB).join('')}<button type="button" class="rg-day rg-more" onclick="CV.rgAll()"><b>📅</b><small>${esc(MSGT(RG.all ? 'Moins de jours' : 'Autre jour'))}</small></button></div>
@@ -1971,7 +2023,9 @@ ${pm.join('\n')}</Document></kml>`;
     return out.join('');
   }
 
-  function suggDrop(id){ const p = R[id]; if(!p) return; M.suggNo = M.suggNo || {}; const nl = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!nl.includes(p.nom)) nl.push(p.nom); if(nl.length > 300) nl.shift(); p.deleted = true; putQuiet([p]); if(document.getElementById('cv-sw')) swRender(); else suggList(); refresh(); }
+  function suggDrop(id){ const p = R[id]; if(!p) return;
+    if(swMulti(R[p.trip])){ const c = clone(p); c.votes = Object.assign({}, p.votes || {}, {[M.me]:0}); putQuiet([c]); if(document.getElementById('cv-sw')) swRender(); else suggList(); refresh(); return; }
+    M.suggNo = M.suggNo || {}; const nl = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!nl.includes(p.nom)) nl.push(p.nom); if(nl.length > 300) nl.shift(); p.deleted = true; putQuiet([p]); if(document.getElementById('cv-sw')) swRender(); else suggList(); refresh(); }
   function tlFill(){
     const st = items(i=>i.cat==='hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date));
     if(!st.length){ alert('Ajoute d’abord les hébergements (une ville par étape).'); return; }

@@ -796,11 +796,15 @@
   const SVG_BUBBLE = '<svg viewBox="0 0 24 24" width="26" height="26" fill="#3fb8c4"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.4 1.3 4.5 3.4 6L4.5 21l4.6-2.3c.9.2 1.9.3 2.9.3 5.5 0 10-3.6 10-8s-4.5-8-10-8z"/></svg>';
   const SVG_HID = '<span class="sp2-hid"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg></span>';
   // 🗺️ interrupteur « carte du voyage pour les abonnés » (voyage ouvert, déjà publié ou partagé avec des compagnons)
+  async function hotelPub(){ const t = trip(); if(!t) return; const on = !t.hotelPub;
+    if(on && !(await uiConfirm(MSGT('Montrer ton hôtel sur la carte de tes abonnés ? Ils verront où tu dors. Tu peux le cacher à tout moment.')))) return;
+    const c = clone(t); if(on) c.hotelPub = 1; else delete c.hotelPub; put(c, false); toast(on ? '🏨 ' + MSGT('Hôtel visible des abonnés') : '🔒 ' + MSGT('Hôtel caché aux abonnés'));
+    try { await fmCalc(t.id, true); syncNow(); } catch(e){} refresh(); }
   function mpBtn(){
     const t = trip(); if(!t || t.demo || !socCode(t.id)) return ''; const on = mpOn(t.id);
     const r = R['fm:' + t.id], ok = r && !r.deleted, mine = !!feedCode(t.id);
     const st = !on ? '' : !mine && !ok ? '📱 ' + MSGT('La carte part du téléphone qui a publié ce voyage : ouvre-le sur ce téléphone.') : ok ? '✓ ' + RF('Envoyée : {0} étape(s), {1} visite(s) et activité(s)', (r.c || []).filter(x=>!x[4] && !x[5]).length, (r.v || []).length + (r.a || []).length) + ' · ' + vzWhen(r.updatedAt) : '⏳ ' + MSGT('Carte en préparation : garde ce voyage ouvert quelques secondes.');
-    return `<div class="cv-mpb"><button type="button" class="cv-trkpub${on ? ' on' : ''}" onclick="CV.mapPub()"><span>${on ? '🗺️' : '🔒'}</span><span><b>${esc(MSGT('Carte du voyage pour les abonnés'))} · ${esc(MSGT(on ? 'visible' : 'masquée'))}</b><small>${esc(MSGT('2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct. Les hébergements restent privés.'))}</small></span></button>${on ? `<div class="cv-mps"><small>${esc(st)}</small>${mine ? `<button type="button" onclick="CV.mapNow()">🔄 ${esc(MSGT('Mettre à jour'))}</button>` : ''}</div>` : ''}</div>`;
+    return `<div class="cv-mpb"><button type="button" class="cv-trkpub${on ? ' on' : ''}" onclick="CV.mapPub()"><span>${on ? '🗺️' : '🔒'}</span><span><b>${esc(MSGT('Carte du voyage pour les abonnés'))} · ${esc(MSGT(on ? 'visible' : 'masquée'))}</b><small>${esc(MSGT(t.hotelPub ? '2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct.' : '2D et 3D : étapes, trajets, visites et activités, photos des souvenirs et suivi en direct. Les hébergements restent privés.'))}</small></span></button>${on ? `<button type="button" class="cv-trkpub${t.hotelPub ? ' on' : ''}" style="margin-top:8px" onclick="CV.hotelPub()"><span>${t.hotelPub ? '🏨' : '🔒'}</span><span><b>${esc(MSGT(t.hotelPub ? 'Ton hôtel est visible des abonnés' : 'Ton hôtel est caché aux abonnés'))}</b><small>${esc(MSGT(t.hotelPub ? 'Touche pour le cacher' : 'Pour ta sécurité, les abonnés ne voient pas où tu dors · touche pour le montrer'))}</small></span></button>` : ''}${on ? `<div class="cv-mps"><small>${esc(st)}</small>${mine ? `<button type="button" onclick="CV.mapNow()">🔄 ${esc(MSGT('Mettre à jour'))}</button>` : ''}</div>` : ''}</div>`;
   }
   function spOverview(){
     const P = spPeople(), ids = new Set(Object.keys(FT()).filter(t=>R[t] && !R[t].deleted).map(ftId));
@@ -2005,7 +2009,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-08zd'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-08ze'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2112,6 +2116,11 @@
   const ab2PubFws = () => { const x = ab2Pub(); if(!x) return []; const ban = new Set(ab2PubRec().ban || []), by = {};
     ab2InvFws(x).forEach(f=>{ const d = fwDevOf(f); if(!ban.has(d) && !by[d]) by[d] = f; }); return Object.values(by); };
   // une « personne » de ma liste : un lien personnel (id) ou un abonné du lien commun (« pub:<appareil> »)
+  // 🏷️ un abonné a changé son prénom (Camille → Victoria) : on garde le nom que JE lui ai donné à côté, pour savoir qui c’est
+  function fwLbl(d){ if(!d) return ''; const nk = (M.fwNick || {})[d]; if(nk) return nk;
+    try { const x = AI().find(y=>!y.pub && ab2InvFws(y).some(f=>fwDevOf(f) === d)); return x && x.name ? x.name : ''; } catch(e){ return ''; } }
+  function fwWho(who, d){ const w = String(who || '').replace(/^🧳\s*/, '').trim(), l = fwLbl(d); if(!l) return who; if(!w) return l; return normQ(w) === normQ(l) ? w : w + ' (' + l + ')'; }
+  const ab2Own = P => { const w = P && P.f ? String(P.f.who || '').replace(/^🧳\s*/, '').trim() : ''; return w && !fwGeneric(w) && normQ(w) !== normQ(P.name || '') ? w : ''; };
   function ab2P(id){
     if(String(id).startsWith('pub:')){ const d = id.slice(4), x = ab2Pub(), f = ab2PubFws().find(y=>fwDevOf(y) === d); if(!x || !f) return null;
       return {id, x, f, pub:1, devs:[d], name:ab2Nm(f), hide:new Set((ab2PubRec().hd || {})[d] || [])}; }
@@ -2211,7 +2220,7 @@
     const L = ab2People(), nv = ab2Vis().length, pub = ab2Pub();
     return `<div class="sp2-sh"><div class="sp2-sec">${SVG_EYE}<b>${esc(MSGT('Mes abonnés'))}</b> <small>(${esc(MSGT('lecture seule'))})</small></div><button type="button" class="sp2-add2" onclick="CV.ab2Invite()">＋ ${esc(MSGT('Ajouter'))}</button></div>
       ${L.length ? L.map(P=>{ const f = P.f, nm = P.name, s = ab2Soc(P), av = f && avOk(f.av) ? f.av : '';
-        return `<button type="button" class="sp2-row" onclick="CV.ab2FwSheet('${ja(P.id)}')">${av ? avTag(av, nm, '', 'av-lg') : SVG_HID}<b data-notr>${esc(nm)}</b>${P.pub ? `<small class="sp2-wait" title="${esc(MSGT('lien commun'))}">🔗</small>` : ''}${(()=>{ const d = ab2Dup(P); return d ? `<small class="sp2-wait">⚠️ = <span data-notr>${esc(d.name)}</span></small>` : ''; })()}${f && ab2Ghost(f) ? `<small class="sp2-wait">👻 ${esc(RF('plus vu depuis {0} j', ab2Ghost(f)))}</small>` : ''}${f ? `<span class="sp2-ic${s.lk ? '' : ' off'}">${SVG_HEART}</span><span class="sp2-ic${s.cm.length ? '' : ' off'}">${SVG_BUBBLE}</span>` : `<small class="sp2-wait">${Object.values(R).some(r=>r && r.type === 'follower' && r.code === P.x.code && r.deleted) ? '🚪 ' + esc(MSGT('ne suit plus')) : '⏳ ' + esc(MSGT('lien pas encore ouvert'))}</small>`}<span class="sp2-dots">›</span></button>`; }).join('')
+        return `<button type="button" class="sp2-row" onclick="CV.ab2FwSheet('${ja(P.id)}')">${av ? avTag(av, nm, '', 'av-lg') : SVG_HID}<b data-notr>${esc(nm)}${ab2Own(P) ? ` <small class="sp2-own">· ${esc(RF('se fait appeler {0}', ab2Own(P)))}</small>` : ''}</b>${P.pub ? `<small class="sp2-wait" title="${esc(MSGT('lien commun'))}">🔗</small>` : ''}${(()=>{ const d = ab2Dup(P); return d ? `<small class="sp2-wait">⚠️ = <span data-notr>${esc(d.name)}</span></small>` : ''; })()}${f && ab2Ghost(f) ? `<small class="sp2-wait">👻 ${esc(RF('plus vu depuis {0} j', ab2Ghost(f)))}</small>` : ''}${f ? `<span class="sp2-ic${s.lk ? '' : ' off'}">${SVG_HEART}</span><span class="sp2-ic${s.cm.length ? '' : ' off'}">${SVG_BUBBLE}</span>` : `<small class="sp2-wait">${Object.values(R).some(r=>r && r.type === 'follower' && r.code === P.x.code && r.deleted) ? '🚪 ' + esc(MSGT('ne suit plus')) : '⏳ ' + esc(MSGT('lien pas encore ouvert'))}</small>`}<span class="sp2-dots">›</span></button>`; }).join('')
         : `<div class="sp2-empty">${esc(MSGT('Touche ＋ Ajouter : chaque personne reçoit son propre lien. Tu pourras la retirer à tout moment, sans rien changer pour les autres.'))}</div>`}
       <div class="sp2-pills"><button type="button" class="soft" onclick="CV.ab2TripsSheet()">👁️ ${esc(RF('Voyages montrés : {0}', nv))}</button><button type="button" class="soft" onclick="CV.ab2Common()">🔗 ${esc(MSGT('Lien commun'))}${pub ? ' (' + ab2PubFws().length + ')' : ''}</button></div>
       ${ab2MatesFwHTML()}${mpBtn()}`;
@@ -2249,7 +2258,7 @@
   function ab2FwSheet(id){
     const P = ab2P(id); if(!P) return shareHub();
     const f = P.f, nm = P.name, s = ab2Soc(P), H = P.hide, vis = ab2Vis(), mp = f && f.pid && prof(f.pid) ? f.pid : '';
-    openSheet(`<div class="sp2" data-ab2="fw:${esc(id)}"><div class="sp2-top sp2-top2">${f && avOk(f.av) ? avTag(f.av, nm, '', 'av-xl') : SVG_HID}<h2 data-notr>${esc(nm)}</h2></div><div class="sp2-body">
+    openSheet(`<div class="sp2" data-ab2="fw:${esc(id)}"><div class="sp2-top sp2-top2">${f && avOk(f.av) ? avTag(f.av, nm, '', 'av-xl') : SVG_HID}<h2 data-notr>${esc(nm)}</h2>${ab2Own(P) ? `<div class="sp2-empty">${esc(RF('Se fait appeler {0} dans son appli', ab2Own(P)))}</div>` : ''}</div><div class="sp2-body">
       ${f ? '' : `<div class="sp2-blk"><div class="sp2-empty">⏳ ${esc(MSGT('Son lien n’a pas encore été ouvert.'))}</div></div>`}
       ${(()=>{ const d = ab2Dup(P); return d ? `<div class="sp2-blk"><div class="sp2-empty" style="color:var(--danger,#c0392b)">⚠️ ${esc(RF('C’est la même personne que {0} : ce lien a sans doute été envoyé par erreur. Retire-le, puis crée un nouveau lien pour la bonne personne.', d.name))}</div></div>` : ''; })()}
       ${P.pub ? `<div class="sp2-blk"><div class="sp2-empty">🔗 ${esc(MSGT('Abonné par ton lien commun.'))}</div></div>` : ''}
@@ -2258,12 +2267,14 @@
         ${vis.map(t=>{ const on = !H.has(ftId(t)), cp = mp && (R[t].voyageurs || []).includes(mp);
           return `<div class="sp2-sr${on ? '' : ' off'}"><span class="sp2-tc">${spCov(R[t])}</span><div class="sp2-sb"><b data-notr>${esc(R[t].titre || '?')}</b><small>${esc(tripDates(R[t]))}</small><small>${cp ? '🧳 ' + esc(MSGT('compagnon : il l’a déjà en entier')) : on ? '👀 ' + esc(MSGT('Il le voit')) : '🙈 ' + esc(MSGT('Caché pour lui'))}</small></div>${cp ? '' : ab2Sw(on, `CV.ab2FwHide('${ja(id)}','${ja(t)}')`, R[t].titre)}</div>`; }).join('') || `<div class="sp2-empty">${esc(MSGT('Aucun voyage montré pour l’instant.'))}</div>`}</div>
       ${f ? `<div class="sp2-blk"><div class="sp2-sec">💬 <b>${esc(RF('{0} ❤️ · {1} commentaire(s)', s.lk, s.cm.length))}</b></div>${s.cm.slice(-3).map(c=>`<div class="sp2-empty">« <span data-notr>${esc(String(c.text || '').slice(0, 140))}</span> »</div>`).join('')}</div>` : ''}
-      <div class="sp2-pills">${P.pub ? '' : `<button type="button" class="soft" onclick="CV.ab2Send('${ja(id)}')">📤 ${esc(MSGT('Renvoyer son lien'))}</button>`}<button type="button" onclick="CV.ab2Rename('${ja(id)}')">✏️ ${esc(MSGT('Renommer'))}</button></div>
+      <div class="sp2-pills">${P.pub ? '' : `<button type="button" class="soft" onclick="CV.ab2Send('${ja(id)}')">📤 ${esc(MSGT('Renvoyer son lien'))}</button>`}<button type="button" onclick="CV.ab2Rename('${ja(id)}')">✏️ ${esc(MSGT('Renommer'))}</button>${ab2Own(P) ? `<button type="button" onclick="CV.ab2Rename('${ja(id)}', 1)">🏷️ ${esc(RF('L’appeler {0}', ab2Own(P)))}</button>` : ''}</div>
       <div class="sp2-pills"><button type="button" class="danger" onclick="CV.ab2FwDel('${ja(id)}')">🚫 ${esc(MSGT('Retirer cet abonné'))}</button></div>
       <div class="sp2-empty" style="margin-top:8px">${esc(MSGT(P.pub ? 'Retiré : ses voyages suivis disparaissent de son téléphone. Comme il est venu par le lien commun, il a encore ce lien : pour couper vraiment, crée des liens personnels.' : 'Retiré : son lien ne marche plus, ses voyages suivis disparaissent de son téléphone. Tes autres abonnés ne voient aucune différence.'))}</div></div></div>`);
   }
-  async function ab2Rename(id){ const P = ab2P(id); if(!P) return; if(P.pub) return fwNickAsk(P.devs[0]);
-    const x = P.x, n = await uiPrompt(MSGT('Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).'), x.name || ''); if(!n || !n.trim()) return; x.name = n.trim().slice(0, 40); persist(); ab2InvRec(x); ab2CfgSave(); ab2Repaint(); try { await syncNow(); } catch(e){} }
+  async function ab2Rename(id, own){ const P = ab2P(id); if(!P) return;
+    if(own && ab2Own(P)){ const n = ab2Own(P); if(P.pub){ M.fwNick = M.fwNick || {}; M.fwNick[P.devs[0]] = n; persist(); ab2Repaint(); return; } P.x.name = n.slice(0, 40); persist(); ab2InvRec(P.x); ab2CfgSave(); ab2Repaint(); try { await syncNow(); } catch(e){} return; }
+    if(P.pub) return fwNickAsk(P.devs[0]);
+    const x = P.x, n = await uiPrompt(MSGT('Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).'), x.name || ab2Own(P) || ''); if(!n || !n.trim()) return; x.name = n.trim().slice(0, 40); persist(); ab2InvRec(x); ab2CfgSave(); ab2Repaint(); try { await syncNow(); } catch(e){} }
   function ab2SetHide(P, arr){ if(P.pub){ const hd = Object.assign({}, ab2PubRec().hd || {}); hd[P.devs[0]] = arr; ab2InvRec(P.x, {hd}); } else ab2InvRec(P.x, {hide:arr}); }
   async function ab2FwAll(id, on){ const P = ab2P(id); if(!P) return; ab2SetHide(P, on ? [] : ab2Vis().map(ftId)); ab2Repaint(); try { await syncNow(); } catch(e){} }
   async function ab2FwHide(id, tid){
@@ -2858,7 +2869,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
+  var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
 
   const api = {souvResend, obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
