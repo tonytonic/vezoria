@@ -3446,3 +3446,4 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .plk-r{display:flex;align-items:center;gap:10px;width:100%;margin:6px 0;padding:10px 12px;border:1px solid var(--light,#e5e7eb);border-radius:14px;background:var(--card,#fff);text-align:left;font:inherit;color:inherit;cursor:pointer}
 .plk-r i{font-style:normal}.plk-r span{flex:1;display:flex;flex-direction:column}.plk-r small{color:var(--gray);font-size:.8rem}.plk-r em{font-style:normal;font-weight:800;color:#0d9488;font-size:1.2rem}
 .sp2-own{font-weight:500;color:var(--gray);font-size:.78rem}
+.se-st{display:flex;align-items:center;gap:8px}.se-st .cv-num{width:80px;text-align:center}.se-st button{width:40px;height:40px;border-radius:12px;border:1px solid var(--light,#ddd);background:var(--card,#fff);font-size:1.2rem;color:inherit}

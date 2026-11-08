@@ -42,7 +42,7 @@
   }
   function wzEt(action, i){
     wzRead();
-    if(action==='add') wz.etapes.push({ville:'', nuits:Math.max(0, wz.nuits - wz.etapes.reduce((s,e)=>s+e.nuits,0)), mode:(wz.etapes[0] || {}).mode === 'Voiture' ? 'Voiture' : 'Train', nw:1});   // nw : placée sur le chemin dès qu’elle est située
+    if(action==='add') wz.etapes.push({ville:'', nuits:Math.max(0, wz.nuits - wz.etapes.reduce((s,e)=>s+e.nuits,0)), mode:(wz.etapes[0] || {}).mode === 'Voiture' ? 'Voiture' : 'Train'});   // ✋ ton ordre reste le tien : rien ne bouge tout seul (« 🧭 Ordonner » si tu veux le plus court)
     if(action==='del') wz.etapes.splice(i,1);
     if(action==='up' && i > 0){ [wz.etapes[i-1], wz.etapes[i]] = [wz.etapes[i], wz.etapes[i-1]]; delete wz.etapes[i-1].nw; delete wz.etapes[i].nw; }
     if(action==='even') wzNights();

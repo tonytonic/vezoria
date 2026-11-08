@@ -202,6 +202,9 @@
   async function ariCityGuessGo(){
     const inp = document.getElementById('ac-v'), sel = document.getElementById('ac-pos'), g = document.getElementById('ac-guess'); if(!inp || !sel || !g) return;
     const v = inp.value.trim(), st = tlStages(), my = ++acgN; if(v.length < 3 || !st.length){ g.textContent = ''; return; }
+    // 🔁 une ville déjà dans le voyage (atterrir à Pise, repartir de Pise) : c’est le retour, elle va à la fin (pas collée à la première)
+    const dup = st.findIndex(x=>trCanon(x.city) === trCanon(v));
+    if(dup >= 0){ g.innerHTML = `🔁 ${esc(RF('{0} est déjà une étape : je la mets à la fin, pour repartir de là. Change la place si tu veux.', st[dup].city))}`; if(!sel.dataset.touched){ sel.value = String(st.length); ariCityPos(sel); } return; }
     try {
       const co = (M.ctry || {})[normQ(st[0].city)], ctx = co && co.cc && typeof ccName === 'function' ? ccName(co.cc) : '';
       const P = []; for(const x of st){ const c = geoCached(x.city) || await geocode(x.city, ctx); if(!c) return; P.push(c); } if(my !== acgN) return;
@@ -213,8 +216,8 @@
       let best = st.length, bc = Infinity;
       for(let k = 0; k <= st.length; k++){ const a = P[k - 1], b = P[k]; const c = (a ? km(a, p) : 0) + (b ? km(p, b) : 0) - (a && b ? km(a, b) : 0); if(c < bc - 1){ bc = c; best = k; } }
       const lbl = best === 0 ? RF('avant {0}', st[0].city) : best === st.length ? RF('après {0}, à la fin', st[st.length - 1].city) : RF('entre {0} et {1}', st[best - 1].city, st[best].city);
-      g.innerHTML = `💡 ${esc(MSGT('Sur ton chemin'))} : <b>${esc(lbl)}</b>${sel.dataset.touched && +sel.value !== best ? ` <button type="button" class="ac-guess-b" onclick="(s=>{s.value='${ja(best)}';delete s.dataset.touched;CV.ariCityPos(s)})(document.getElementById('ac-pos'))">${esc(MSGT('Placer ici'))}</button>` : ''}`;
-      if(!sel.dataset.touched){ sel.value = String(best); ariCityPos(sel); }
+      g.innerHTML = `💡 ${esc(MSGT('Sur ton chemin'))} : <b>${esc(lbl)}</b>${+sel.value !== best ? ` <button type="button" class="ac-guess-b" onclick="(s=>{s.value='${ja(best)}';delete s.dataset.touched;CV.ariCityPos(s)})(document.getElementById('ac-pos'))">${esc(MSGT('Placer ici'))}</button>` : ''}`;
+      // ✋ on propose seulement (bouton « Placer là ») : la place choisie ne change jamais toute seule
     } catch(e){}
   }
   // la ville tapée : la plus connue de ce nom (Paris = Paris, France), sauf si une ville presque aussi connue est près du voyage (Sorrente en Italie, pas aux États-Unis)
@@ -3766,10 +3769,27 @@
     if(!(await uiConfirm(RF('Retirer {0} du voyage ?\n\nSes {1} nuit(s) vont à {2}. Les trajets sont recalculés.', x.city, x.span, nb.city) + (x.bk ? '\n\n⚠️ ' + MSGT('Son hébergement était réservé : pense à annuler ta réservation.') : '')))) return;
     SO = B; soDel(i); closeSheet(true); soSave('🗑 ' + RF('{0} retirée du voyage', x.city));
   }
-  async function stRename(i){
+  // ✏️ corriger une étape : son nom ET son nombre de nuits (les étapes suivantes, les trajets et les journées suivent)
+  function stRename(i){
+    const t = trip(); if(!t || t.archived || M.lock) return; const S = stRanges(), x = S[i]; if(!x) return; const n = Math.max(1, nights(x.debut, x.end));
+    openSheet(`<h2>✏️ ${esc(MSGT('Corriger l’étape'))}</h2><form onsubmit="event.preventDefault();CV.stEditSave(${i})">
+      <div class="v-f"><label>${esc(MSGT('Ville'))}</label><input class="v-in" id="se-v" data-place autocomplete="off" value="${esc(x.city)}"><div class="v-sum-small" style="margin-top:4px">${esc(MSGT('Le bon nom de la ville (ex. « Monterosso al Mare » plutôt que « Monterosso ») :').replace(/\s*:$/, ''))}</div></div>
+      <div class="v-f"><label>${esc(MSGT('Nuits'))}</label><div class="so-st se-st"><button type="button" onclick="(i=>{i.value=Math.max(1,(+i.value||1)-1);CV.stEditHint(${i})})(document.getElementById('se-n'))">−</button><input class="v-in cv-num" type="number" id="se-n" min="1" max="90" inputmode="numeric" value="${n}" oninput="CV.stEditHint(${i})"><button type="button" onclick="(i=>{i.value=Math.min(90,(+i.value||1)+1);CV.stEditHint(${i})})(document.getElementById('se-n'))">+</button></div>
+        <div class="v-sum-small" id="se-h" style="margin-top:6px">${esc(fdate(x.debut))} → ${esc(fdate(x.end))}</div></div>
+      <div class="v-actions"><button type="submit" class="v-btn">✓ ${esc(MSGT('Enregistrer'))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div></form>`);
+  }
+  function stEditHint(i){ const x = stRanges()[i], el = document.getElementById('se-h'), n = Math.max(1, Math.min(90, Math.round(+((document.getElementById('se-n') || {}).value) || 1))); if(!x || !el) return;
+    const d = n - Math.max(1, nights(x.debut, x.end)); el.textContent = fdate(x.debut) + ' → ' + fdate(addDays(x.debut, n)) + (d ? ' · ' + (d > 0 ? RF('les étapes suivantes et le retour sont décalés de {0} nuit(s)', d) : RF('les étapes suivantes et le retour avancent de {0} nuit(s)', -d)) : ''); }
+  async function stEditSave(i){
+    const t = trip(); if(!t) return; const x = stRanges()[i]; if(!x) return;
+    const nc = String((document.getElementById('se-v') || {}).value || '').trim().replace(/\s+/g, ' ').slice(0, 80), n = Math.max(1, Math.min(90, Math.round(+((document.getElementById('se-n') || {}).value) || 1)));
+    const n0 = Math.max(1, nights(x.debut, x.end)); closeSheet(true);
+    if(nc && normQ(nc) !== normQ(x.city)) stRenameTo(i, nc);
+    if(n !== n0){ const B = soBuild(t); if(B && B.L[i]){ const y = B.L[i]; y.span = Math.max(y.g + 1, n); SO = B; soSave('🌙 ' + RF('{0} : {1} nuit(s)', y.city, y.span)); } }
+  }
+  function stRenameTo(i, nc){
     const t = trip(); if(!t || t.archived || M.lock) return; const S = stRanges(), x = S[i]; if(!x) return;
-    const v = await uiPromptPlace(MSGT('Le bon nom de la ville (ex. « Monterosso al Mare » plutôt que « Monterosso ») :'), x.city); if(v == null) return;
-    const nc = String(v).trim().replace(/\s+/g, ' ').slice(0, 80); if(!nc || normQ(nc) === normQ(x.city)) return;
+    if(!nc || normQ(nc) === normQ(x.city)) return;
     const hs = items(it=>it.cat === 'hotel' && it.date && it.date >= x.debut && it.date < x.end), out = [];
     // l’hôtel dort parfois dans un village voisin (« Levanto » pour visiter Monterosso) : ce nom-là reste, seule la ville visitée change
     let near = false;
