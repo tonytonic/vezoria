@@ -70,6 +70,7 @@ function clean(op, sp) {
     p.set('q', q); p.set('limit', String(Math.min(5, Math.max(1, +sp.get('limit') || 1))));
     if (sp.get('addressdetails') === '1') p.set('addressdetails', '1');
     if (sp.get('extratags') === '1') p.set('extratags', '1');
+    if (/^(settlement|city)$/.test(sp.get('featureType') || '')) p.set('featureType', sp.get('featureType'));   // 🏙️ seulement les villes et villages (pas la province)
     const vb = (sp.get('viewbox') || '').split(',').map(Number);
     if (vb.length === 4 && vb.every(Number.isFinite)) { p.set('viewbox', vb.map(n => n.toFixed(3)).join(',')); if (sp.get('bounded') === '1') p.set('bounded', '1'); }
   } else {
@@ -105,6 +106,7 @@ async function photon(op, p, ac, onlyC, near, poi) {
   const lg = (p.get('accept-language') || 'en').slice(0, 2), lang = PH_LANG.includes(lg) ? lg : 'en';
   const qs = new URLSearchParams({ q: p.get('q'), limit: p.get('limit') || '1', lang });
   // 🔎 saisie en cours : seulement des villes, régions et pays (pas de rues), mots incomplets acceptés
+  if (p.get('featureType')) qs.append('layer', 'city');   // 🏙️ villes et villages seulement
   if (ac && !poi) (onlyC ? ['country'] : ['city', 'locality', 'district', 'county', 'state', 'country']).forEach(l => qs.append('layer', l));
   // 📍 lieu d’un souvenir : monuments, rues, quartiers… autour de l’endroit du voyage
   if (poi && near) { qs.set('lat', near.lat); qs.set('lon', near.lon); qs.set('zoom', '13'); qs.set('location_bias_scale', '0.3'); }
