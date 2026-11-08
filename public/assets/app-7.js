@@ -396,9 +396,9 @@
     const pl = list('place', p=>p.trip === t.id && !p.deleted && !p.sugg && p.date === cur);
     openSheet(`<div class="gd"><h2>✍️ ${esc(MSGT('Ajouter une visite à la main'))}</h2>
       <div class="v-f"><label>${esc(MSGT('Quel jour ?'))}</label><select class="v-in" id="gdm-d" onchange="CV.gdManDay(this.value)">${days.map(d=>{ const c = dayCity(d); return `<option value="${d}"${d === cur ? ' selected' : ''}>${esc(fshort(d))}${c ? ' · ' + esc(c) : ''}</option>`; }).join('')}</select></div>
-      <div class="v-f"><label>${esc(MSGT('La visite'))}</label><div class="cv-row"><input class="v-in" id="gdm-n" placeholder="${esc(MSGT('Ex. Tour de Pise ; Piazza dei Miracoli'))}" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.gdManAdd()}">
+      <div class="v-f"><label>${esc(MSGT('La visite'))}</label><div class="cv-row"><input class="v-in" id="gdm-n" data-place="poi addr" autocomplete="off" placeholder="${esc(MSGT('Ex. Tour de Pise ; Piazza dei Miracoli'))}" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.gdManAdd()}">
         <button type="button" class="v-btn cv-sq" onclick="CV.gdManAdd()" aria-label="${esc(MSGT('Ajouter'))}">＋</button></div>
-        <div class="v-sum-small" style="margin-top:4px">${esc(MSGT('Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».'))}</div></div>
+        <div class="v-sum-small" style="margin-top:4px">🔎 ${esc(MSGT('Tape le début du nom : choisis le lieu exact dans la liste.'))} ${esc(MSGT('Un nom suffit, ou une adresse, ou un lien Google Maps. Plusieurs d’un coup : sépare par « ; ».'))}</div></div>
       ${pl.length ? `<div class="v-f"><label>${esc(MSGT('Déjà prévu ce jour-là'))} (${pl.length})</label>${pl.map(p=>`<div class="cv-place"><span class="x" role="button" onclick="CV.plInfo('${ja(p.id)}')"><u data-notr>${esc(p.nom || '')}</u></span></div>`).join('')}</div>` : ''}
       <div class="v-actions"><button type="button" class="v-btn sec cv-sq" onclick="CV.guideSheet()" aria-label="←">←</button><button type="button" class="v-btn" onclick="CV.guideSheet()">🧭 ${esc(MSGT('Continuer'))}</button></div></div>`);
     setTimeout(()=>{ const i = document.getElementById('gdm-n'); if(i) try { i.focus(); } catch(e){} }, 120);
@@ -409,7 +409,9 @@
     GDM = {d}; const st = hotelsAround(d).night, n0 = list('place', p=>p.trip === M.trip && !p.deleted && p.date === d).length;
     const out = raw.split(/[;\n]+/).map(x=>x.trim()).filter(Boolean).map((x, i)=>{ let nom = x; const m = x.match(/\/place\/([^/@?]+)/);
       if(/^https?:/.test(x)) nom = m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : MSGT('Lieu') + ' ' + (n0 + i + 1);
-      return {id:'pl' + uid() + i, type:'place', trip:M.trip, date:d, stay:st ? st.id : '', nom, adresse:x !== nom ? x : ''}; });
+      const P = window.GDMP, pk = P && P.v === x ? P : null;   // choisi dans la liste : placé exactement
+      return Object.assign({id:'pl' + uid() + i, type:'place', trip:M.trip, date:d, stay:st ? st.id : '', nom:pk ? x.split(',')[0].trim() : nom, adresse:pk ? x : x !== nom ? x : ''}, pk ? {lat:pk.lat, lng:pk.lng} : {}); });
+    window.GDMP = null;
     putMany(out, '📍 ' + MSGT('Ajouté')); gdMan('v');
   }
   function guideBook(id, kind, k){

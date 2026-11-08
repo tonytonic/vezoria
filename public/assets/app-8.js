@@ -67,7 +67,7 @@
     if((M.viaP || {})[t.id]){ alert(MSGT('Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.')); return; }
     {   // 👤 une invitation PAR PERSONNE : le 1er compte qui l’ouvre la garde ; la retirer change le code du voyage pour elle seule
       if(!(TS()[t.id] && spaceObj(TS()[t.id])) && !(await uiConfirm(MSGT('Envoyer « {0} » sur le serveur ?').replace('{0}', t.titre) + '\n' + MSGT('Pour inviter tes compagnons, le voyage et ses photos sont mis en ligne, chiffrés : seuls ceux qui reçoivent l’invitation peuvent les voir.')))) return;
-      const who = await uiPrompt(MSGT('Qui invites-tu dans ce voyage ? Son prénom :'), ''); if(!who || !who.trim()) return;
+      const who = await invWho(t); if(!who || !who.trim()) return;
       cryptShow('🔐 ' + MSGT('Invitation…'));
       let P = null; try { P = await packQuick(t.id, who.trim().slice(0, 40)); } finally { cryptHide(''); }
       if(P){ inviteSheet('', 'pack', P); refresh(); } return; }
@@ -85,6 +85,32 @@
       setTimeout(async ()=>{ try { await photoQueueAll(t.id); persist(); await syncNow(); uploadQueue(); refresh(); } catch(e){} }, 50); };
     go(); refresh();
     inviteSheet(t.id);   // invitation guidée : QR code (la personne est à côté) ou message avec le lien ET le code
+  }
+  // 👥 qui invites-tu ? tes compagnons des voyages précédents et tes abonnés en un geste, ou un nouveau prénom
+  let IWR = null;
+  function invWho(t){
+    return new Promise(res=>{
+      if(IWR) try { IWR(''); } catch(e){}
+      let done = false; const fin = v => { if(done) return; done = true; IWR = null; ob.disconnect(); closeSheet(true); res(v || ''); };
+      IWR = fin;
+      const inT = new Set(t.voyageurs || []), seen = new Set(), C = [], A = [];
+      try { spPeople().forEach(x=>{ if(inT.has(x.pid)) return; const n = String(pname(x.pid) || '').trim(); if(!n || n === '?' || seen.has(normQ(n))) return; seen.add(normQ(n)); C.push({n, av:pav(x.pid, 'av-md'), sub:x.ts.slice(0, 2).map(y=>y.titre).join(' · ')}); }); } catch(e){}
+      try { ab2Fws().forEach(f=>{ const n = String(ab2Nm(f) || '').trim(); if(!n || n === '?' || fwGeneric(n) || n === MSGT('Un proche') || seen.has(normQ(n))) return; seen.add(normQ(n)); A.push({n}); }); } catch(e){}
+      const btn = (x, ic) => `<button type="button" class="iw-p" data-n="${esc(x.n)}">${x.av || `<i>${ic}</i>`}<span><b data-notr>${esc(x.n)}</b>${x.sub ? `<small data-notr>${esc(x.sub)}</small>` : ''}</span></button>`;
+      openSheet(`<h2>👥 ${esc(MSGT('Qui invites-tu dans ce voyage ?'))}</h2>
+        ${C.length ? `<div class="sh-sec">🧳 ${esc(MSGT('Tes compagnons de voyage'))}</div><div class="iw-l">${C.map(x=>btn(x, '🧳')).join('')}</div>` : ''}
+        ${A.length ? `<div class="sh-sec">👀 ${esc(MSGT('Tes abonnés'))}</div><div class="iw-l">${A.map(x=>btn(x, '👀')).join('')}</div>` : ''}
+        <div class="sh-sec">✍️ ${esc(MSGT(C.length || A.length ? 'Quelqu’un d’autre' : 'Son prénom'))}</div>
+        <div class="cv-row"><input class="v-in" id="iw-n" maxlength="40" placeholder="${esc(MSGT('Son prénom'))}" autocomplete="off"><button type="button" class="v-btn cv-sq" id="iw-ok" aria-label="OK">OK</button></div>
+        <div class="v-actions"><button type="button" class="v-btn sec" id="iw-no">${esc(MSGT('Annuler'))}</button></div>`);
+      const bg = document.getElementById('v-sheet-bg');
+      bg.querySelectorAll('.iw-p').forEach(b=>b.onclick = () => fin(b.dataset.n));
+      const inp = document.getElementById('iw-n'), ok = () => { const v = inp.value.trim(); if(v) fin(v); else inp.focus(); };
+      document.getElementById('iw-ok').onclick = ok; inp.onkeydown = e => { if(e.key === 'Enter'){ e.preventDefault(); ok(); } };
+      document.getElementById('iw-no').onclick = () => fin('');
+      const ob = new MutationObserver(()=>{ if(!document.body.contains(bg)) fin(''); }); ob.observe(document.body, {childList:true});   // fiche fermée autrement (✕, glisser) : rien
+      if(!C.length && !A.length) setTimeout(()=>{ try { inp.focus(); } catch(e){} }, 120);
+    });
   }
   /* ---------- 📤 Invitation guidée : la personne est à côté (QR code) ou loin (message avec le lien et le code) ---------- */
   const invTag = titre => (myName() ? '&de=' + encodeURIComponent(String(myName()).slice(0, 30)) : '') + (titre ? '&v=' + encodeURIComponent(String(titre).slice(0, 60)) : '');   // 🎟️ « Anthony t’invite dans « Genève » » sur la page d’invitation
@@ -2009,7 +2035,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-08zu'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-08zv'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

@@ -3453,3 +3453,10 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .gd-man .v-btn{flex:1 1 180px;margin:0;font-size:.86rem}
 /* 👥 compteur compagnons de l’en-tête */
 .hs-cp b{color:inherit}
+/* 👥 qui invites-tu ? */
+.iw-l{display:flex;flex-direction:column;gap:6px;margin:4px 0 12px}
+.iw-p{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 12px;border-radius:14px;border:1px solid rgba(74,26,79,.14);background:var(--card,#fff);color:inherit;font:inherit;cursor:pointer}
+.iw-p>i{font-style:normal;font-size:1.3rem;width:36px;text-align:center}
+.iw-p span{display:flex;flex-direction:column;min-width:0}
+.iw-p small{opacity:.65;font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iw-p:active{transform:scale(.98)}

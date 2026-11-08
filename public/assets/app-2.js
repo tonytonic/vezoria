@@ -2740,7 +2740,7 @@
   // 🏨 l’adresse d’un hôtel se cherche autour de SA ville (champ « Étape / ville » du formulaire)
   async function adrNear(){ try {
     // hôtel : sa ville (« Étape / ville ») · activité, trajet : la ville où l’on est ce jour-là
-    const isH = editing && editing.cat === 'hotel', d = (document.querySelector('#v-form [name=date]') || {}).value || (editing && editing.date) || '';
+    const isH = editing && editing.cat === 'hotel', d = (document.querySelector('#v-form [name=date]') || {}).value || (editing && editing.date) || (document.getElementById('gdm-d') || {}).value || '';
     let v = isH ? ((document.querySelector('#v-form [name=titre]') || {}).value || editing.base || editing.titre || '').trim() : '';
     if(!v && d) try { v = dayCity(d) || ''; } catch(e){} if(!v) try { v = (tlStages()[0] || {}).city || ''; } catch(e){}
     const c = cityOf(v) || v; if(!c) return null;
@@ -2751,6 +2751,7 @@
       i.value = it.name + (it.city && normQ(it.city) !== normQ(it.name) ? ', ' + it.city : ''); pacClose(i); i._pacSkip = 1;
       if(editing && editing.type === 'item' && /addr/.test(i.dataset.place || '')){ editing.lat = +(+it.lat).toFixed(6); editing.lng = +(+it.lng).toFixed(6); editing.geoAddr = i.value; const ok = document.getElementById('adr-ok'); if(ok) ok.textContent = '📍 ' + MSGT('Placé exactement sur la carte');
         const nm = document.querySelector('#v-form [name=nom]'); if(nm && !nm.value.trim() && /h[oô]tel|hostel|albergo|b&b|residen|inn\b|suites?\b/i.test(it.name)) nm.value = it.name; }
+      if(i.id === 'gdm-n') window.GDMP = {v:i.value, lat:+(+it.lat).toFixed(6), lng:+(+it.lng).toFixed(6)};   // ✍️ visite ajoutée depuis le parcours guidé : l’endroit exact
       if(editing && editing.type === 'souv'){ editing.lat = +(+it.lat).toFixed(6); editing.lng = +(+it.lng).toFixed(6); editing.pinAt = Date.now(); if(it.cc){ editing.cc = it.cc; editing.pays = it.ctry || ''; } try { souvPosShow(); } catch(e){} }
       i.dispatchEvent(new Event('change', {bubbles:true})); return; }
     const key = 'geo:' + normQ(it.name), cur = R[key];
