@@ -2659,7 +2659,9 @@
     // 🏙️ (2026-11-08zq) : une ville = son CENTRE-VILLE. Recherche limitée aux villes et villages (featureType=settlement) : jamais la province ni la région
     const isSt = () => { try { if(trip() && tlStages().some(s=>normQ(s.city) === normQ(q))) return true; } catch(e){} return geoStage(q) || !!(R[key] && R[key].pick); };
     const city1 = !ctx && !/[\d,]/.test(q) && q.split(/\s+/).length <= 4 && isSt();
-    const fix = (!A && geoStale(R[key], q)) || (R[key] && city1 && !R[key].g5);
+    // 🏙️ (2026-11-09c) : une ville d’étape choisie dans la liste pouvait être la PROVINCE (« Pise » → centre de la province, à 30 km) et n’était
+    //    plus jamais revérifiée : on la recherche une fois parmi les villes (la ville de ce nom la plus proche du choix, 80 km au plus)
+    const fix = (!A && geoStale(R[key], q)) || (R[key] && city1 && !R[key].g7);   // g7 (2026-11-09e) : recherche « ville » stricte + contrôle par l’hôtel
     if(R[key] && !R[key].deleted && R[key].lat != null && !geoFar(R[key], A) && !fix) return {lat:R[key].lat, lng:R[key].lng};
     const wait = 1100 - (Date.now() - geoLast); if(wait > 0) await new Promise(r=>setTimeout(r, wait));
     geoLast = Date.now();
@@ -2675,8 +2677,14 @@
     const box = d => '&viewbox=' + [A.lng - d, A.lat + d * 0.75, A.lng + d, A.lat - d * 0.75].map(n=>n.toFixed(2)).join(',');
     let res = null;
     if(city1){ const P0 = R[key] && R[key].pick && R[key].lat != null ? {lat:+R[key].lat, lng:+R[key].lng} : null;   // ville choisie dans la liste : la ville de ce nom la plus proche du choix
-      const L = await ask('&featureType=settlement', true); const ref = P0 || A;
+      // 🏙️ featureType=city : villes, bourgs et villages SEULEMENT (« settlement » acceptait aussi les provinces et les régions)
+      let L = await ask('&featureType=city', true); if(!L.length) L = await ask('&featureType=settlement', true);
+      // 🛏️ l’hôtel de l’étape (adresse placée) fait foi : la ville de ce nom la plus proche de lui
+      const HP = (()=>{ try { const h = list('item', i=>i.cat === 'hotel' && i.lat != null && i.lng != null && normQ(stayCity(i)) === normQ(q))[0]; return h ? {lat:+h.lat, lng:+h.lng} : null; } catch(e){ return null; } })();
+      const ref = HP || P0 || A;
       if(L.length) res = ref ? L.slice().sort((a, b)=>km(ref, a) - km(ref, b))[0] : L[0];
+      if(HP && (!res || km(HP, res) > 25)){ const B = await ask('&featureType=city&bounded=1&viewbox=' + [HP.lng - .3, HP.lat + .22, HP.lng + .3, HP.lat - .22].map(n=>n.toFixed(2)).join(','), true);
+        if(B.length) res = B.slice().sort((a, b)=>km(HP, a) - km(HP, b))[0]; }
       if(res && P0 && km(P0, res) > 80) res = null;   // une autre ville du même nom : on garde le choix
       if(!res && P0) res = P0; }
     if(!res) res = near(await ask(A ? box(8) : ''));
@@ -2686,7 +2694,7 @@
       const nq = normQ(q).replace(/\s+/g, ''), ok = f => { const n = normQ((f.properties || {}).name || '').replace(/\s+/g, ''); if(!n || !(n.includes(nq) || nq.includes(n))) return false; const p = {lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0]}; return !(A && A.n >= 2 && km(A, p) > 3000); };
       const f = ((j && j.features) || []).find(ok); if(f) res = {lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0]}; } catch(e){} }
     if(!res && full !== q) return geocode(q, null);
-    if(res){ const g = Object.assign(R[key] && !R[key].deleted ? clone(R[key]) : {id:key, type:'geo', q:full}, {lat:res.lat, lng:res.lng, g3:1, g4:1, g5:1}); if(A) g.near = 1; else delete g.near; stamp(g); R[key] = g; markDirty(key); persist(); }
+    if(res){ const g = Object.assign(R[key] && !R[key].deleted ? clone(R[key]) : {id:key, type:'geo', q:full}, {lat:res.lat, lng:res.lng, g3:1, g4:1, g5:1, g6:1, g7:1}); if(A) g.near = 1; else delete g.near; stamp(g); R[key] = g; markDirty(key); persist(); }
     return res;
   }
   /* 🔎 Propositions de villes et de pays pendant la saisie (tout champ <input data-place>) :
@@ -2697,7 +2705,8 @@
     const bias = near ? '&lat=' + (+near.lat).toFixed(2) + '&lon=' + (+near.lng).toFixed(2) : '';   // 🎯 priorité aux lieux proches (le pays tapé)
     const k = (onlyC ? 'c|' : '') + (poi ? 'p|' : '') + bias + normQ(q); if(PAC[k]) return PAC[k];
     let L = []; try { const j = await (await fetch(GEO + 'search?ac=1' + (onlyC ? '&pl=country' : poi ? '&pl=poi' : '') + bias + '&format=jsonv2&limit=5&addressdetails=1&accept-language=' + ((window.I18N && I18N.lang) || 'fr') + '&q=' + encodeURIComponent(q))).json(); if(Array.isArray(j)) L = j; } catch(e){}
-    const seen = new Set(), out = [];
+    const seen = new Set(), out = [], AR = x => /^(county|state|province|region|state_district|administrative)$/.test(String(x.addresstype || '')) || /^(county|state|province|region)$/.test(String(x.type || ''));
+    L = L.slice().sort((a, b)=>(AR(a) ? 1 : 0) - (AR(b) ? 1 : 0));   // 🏙️ « Pise » la ville avant « Pise » la province
     for(const x of L){
       const a = x.address || {}, lat = +x.lat, lng = +x.lon; if(!isFinite(lat) || !isFinite(lng)) continue;
       const cc = String(a.country_code || '').toUpperCase().slice(0, 2), ctry = a.country || '';
@@ -2708,7 +2717,7 @@
       const sub = isC ? MSGT('Pays') : poi ? [...new Set([a.road, a.neighbourhood || a.suburb, city, ctry].filter(x=>x && normQ(x) !== normQ(name)))].join(', ') : [a.state && normQ(a.state) !== normQ(name) ? a.state : '', ctry].filter(Boolean).join(', ');
       if(onlyC && !isC) continue;
       const nb1 = /^(fr|be|lu|mc|gb|us|ca|au|ie|nz)$/i.test(a.country_code || ''), adr = [(nb1 ? [a.house_number, a.road] : [a.road, a.house_number]).filter(Boolean).join(nb1 && /^(fr|be|lu|mc)$/i.test(a.country_code || '') ? ' ' : ' '), [a.postcode, city].filter(Boolean).join(' '), ctry].filter(Boolean).join(', ');
-      out.push({name, sub, cc, ctry: isC ? name : ctry, lat, lng, city, adr});
+      out.push({name, sub, cc, ctry: isC ? name : ctry, lat, lng, city, adr, ar:AR(x) && !isC ? 1 : 0});
     }
     if(Object.keys(PAC).length > 200) Object.keys(PAC).slice(0, 100).forEach(x=>delete PAC[x]);
     return (PAC[k] = out);
@@ -2763,7 +2772,7 @@
       if(editing && editing.type === 'souv'){ editing.lat = +(+it.lat).toFixed(6); editing.lng = +(+it.lng).toFixed(6); editing.pinAt = Date.now(); if(it.cc){ editing.cc = it.cc; editing.pays = it.ctry || ''; } try { souvPosShow(); } catch(e){} }
       i.dispatchEvent(new Event('change', {bubbles:true})); return; }
     const key = 'geo:' + normQ(it.name), cur = R[key];
-    const g = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:it.name}, {lat:it.lat, lng:it.lng, v:2, pick:1}); delete g.auto; stamp(g); R[key] = g; markDirty(key);
+    const g = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:it.name}, {lat:it.lat, lng:it.lng, v:2, pick:1}); delete g.auto; delete g.g5; delete g.g6; delete g.g7; if(it.ar) g.area = 1; else delete g.area;   // revérifiée une fois : la ville de ce nom la plus proche du choix stamp(g); R[key] = g; markDirty(key);
     if(it.cc){ M.ctry = M.ctry || {}; M.ctry[normQ(it.name)] = {pays:it.ctry || '', cc:it.cc}; }
     persist(); pacClose(i);
     if(/multi/.test(i.dataset.place || '')){ const parts = i.value.split(','); parts[parts.length - 1] = ' ' + it.name; i.value = parts.map(x=>x.trim()).filter(Boolean).join(', ') + ', '; }   // liste de pays : on remplace le dernier
