@@ -3038,11 +3038,11 @@
   }
 
   /* ══════════ 🗺️ MA CARTE DE PRÉPARATION — en 2D ou en 3D, comme la carte en direct. On y modifie le voyage en touchant la carte :
-     visites (vert = gardée · rouge = écartée · orange = à discuter à plusieurs · blanc = à trier) → toucher pour garder ou annuler ;
+     visites (violet = au programme · rouge = écartée · orange = à discuter à plusieurs · blanc = à trier) → toucher pour garder ou annuler ;
      ton hébergement (bleu) ou, s’il n’est pas encore choisi, le quartier conseillé (rouge) ; un trajet → changer de transport,
      enregistré dans tes réservations. Tout reste faisable à la main, comme avant. ══════════ */
   let PG = null;
-  const PGC = {yes:'#22c55e', no:'#ef4444', mix:'#f59e0b', todo:'#f1f5f9'};
+  const PGC = {yes:'#a78bfa', no:'#ef4444', mix:'#f59e0b', todo:'#f1f5f9'};   // violet = au programme, comme « à visiter » pendant le voyage (vert = fait, réservé au voyage)
   const pgNo = p => ((M.suggNo || {})[p.trip] || []).includes(p.nom);
   function pgSt(p){
     if(!p || p.type !== 'place' || !p.nom) return null;
