@@ -3209,11 +3209,12 @@
   function pgVisit(id){
     const p = R[id], t = trip(); if(!p || !t) return; const s = pgStOf(id); if(!s) return; const oth = swOthers(p), my = swMyVote(p), c = swCity(p);
     const lab = {yes:'Au programme', no:'Écartée', mix:'À discuter', todo:'À trier'}[s];
-    const showNo = s === 'yes' || s === 'todo' || (s === 'mix' && my !== 0), showYes = s !== 'yes' && !(s === 'mix' && my === 1);
+    const showNo = s === 'yes' || s === 'todo', showYes = s === 'no' || s === 'todo';
     pgCard(`<div class="pg-ct"><b><i class="pg-dot" style="background:${PGC[s]}"></i><span data-notr>${esc(p.nom)}</span></b>
       <small>${c ? '📍 <span data-notr>' + esc(c) + '</span> · ' : ''}${p.date && !p.deleted && s === 'yes' ? esc(fshort(p.date)) + ' · ' : ''}${esc(MSGT(lab))}</small>
       ${oth.length ? `<small class="pg-vt">${oth.map(([w, v])=>(v ? '❤️ ' : '✕ ') + esc(RF(v ? '{0} l’a gardé' : '{0} l’a écarté', pname(w)))).join(' · ')}</small>` : ''}</div>
-      <div class="pg-acts">${showYes ? `<button type="button" class="yes" onclick="CV.pgVote('${ja(id)}',1)">✓ ${esc(MSGT(s === 'no' ? 'Finalement, je la garde' : 'Je la garde'))}</button>` : ''}
+      <div class="pg-acts">${s === 'mix' ? `<button type="button" class="yes" onclick="CV.pgDecide('${ja(id)}',1)">✓ ${esc(MSGT('OK pour tous : on la garde'))}</button><button type="button" class="no" onclick="CV.pgDecide('${ja(id)}',0)">✕ ${esc(MSGT('On l’écarte'))}</button>` : ''}
+        ${showYes ? `<button type="button" class="yes" onclick="CV.pgVote('${ja(id)}',1)">✓ ${esc(MSGT(s === 'no' ? 'Finalement, je la garde' : 'Je la garde'))}</button>` : ''}
         ${showNo ? `<button type="button" class="no" onclick="CV.pgVote('${ja(id)}',0)">✕ ${esc(MSGT(s === 'yes' || s === 'mix' ? 'Annuler cette visite' : 'Non merci'))}</button>` : ''}
         ${p.deleted ? '' : `<button type="button" onclick="CV.pgInfo('${ja(id)}')">ℹ️ ${esc(MSGT('Infos'))}</button>`}</div>`);
   }
@@ -3232,6 +3233,20 @@
       if(keep || !multi){ d.deleted = true; if(!keep) d.no = 1; } else if(!Object.values(d.votes || {}).includes(1)){ d.sugg = true; delete d.kept; delete d.pick; } return d; });
     putQuiet([c, ...dup]); try { persistNow(); } catch(e){}
     toast(keep ? '✓ ' + p.nom + ' · ' + MSGT('Ajouté au programme') : '✕ ' + p.nom + ' · ' + MSGT('Visite annulée'));
+    pgCard(null); pgVisRefresh(); refresh();
+  }
+  // 💬 « à discuter » tranché pour tout le groupe : gardée par tous (au programme) ou écartée par tous
+  function pgDecide(id, keep){
+    const p = R[id], t = p && R[p.trip]; if(!p || !t || pgLock()) return; keep = +keep === 1;
+    const G = (pgPlaces(t).find(x=>x.ids.includes(id)) || {ids:[id]}).ids.map(x=>R[x]).filter(Boolean), out = [];
+    G.forEach((r, i)=>{ const c = clone(r), V = Object.assign({}, r.votes || {}); if(M.me) V[M.me] = 1;
+      Object.keys(V).forEach(w=>{ if(V[w] != null) V[w] = keep ? 1 : 0; }); c.votes = V; c.dec = keep ? 1 : 0; c.decBy = M.me || '';
+      if(keep && r.id === id){ delete c.deleted; delete c.no; delete c.sugg; if(!c.kept) c.kept = Date.now(); if(r.sugg || r.deleted) c.pick = 1; }
+      else { c.deleted = true; c.no = keep ? 0 : 1; if(!keep){ M.suggNo = M.suggNo || {}; const L = M.suggNo[r.trip] = M.suggNo[r.trip] || []; if(!L.includes(r.nom)) L.push(r.nom); } }
+      out.push(c); });
+    if(keep){ const L = (M.suggNo || {})[p.trip] || [], i = L.indexOf(p.nom); if(i >= 0) L.splice(i, 1); }
+    persist(); putQuiet(out); try { persistNow(); } catch(e){}
+    toast(keep ? '✓ ' + p.nom + ' · ' + MSGT('Gardée pour tout le monde') : '✕ ' + p.nom + ' · ' + MSGT('Écartée pour tout le monde'));
     pgCard(null); pgVisRefresh(); refresh();
   }
   function pgVisRefresh(){ if(!PG || !PG.map) return; const t = R[PG.t]; try { const s = PG.map.getSource('pg-vis'); if(s && t) s.setData(pgFc(pgVisF(t))); } catch(e){} pgLegend(); }
