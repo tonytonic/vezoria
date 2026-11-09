@@ -3655,4 +3655,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"Of droog blijven die dag:",
 "Billets et visites guidées":"Tickets en rondleidingen",
 "Activités payantes":"Betaalde activiteiten",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Activiteiten en trajecten: oranje = te boeken · geel = geboekt · groen = betaald"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Activiteiten en trajecten: oranje = te boeken · geel = geboekt · groen = betaald",
+"OK pour tous : on la garde":"OK voor iedereen: houden",
+"On l’écarte":"Laten vallen",
+"Gardée pour tout le monde":"Voor iedereen gehouden",
+"Écartée pour tout le monde":"Voor iedereen weggelaten"});

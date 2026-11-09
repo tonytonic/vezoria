@@ -6591,4 +6591,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"Ya da o gün kapalı mekânda:",
 "Billets et visites guidées":"Biletler ve rehberli turlar",
 "Activités payantes":"Ücretli etkinlikler",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Etkinlikler ve güzergâhlar: turuncu = rezerve edilecek · sarı = rezerve · yeşil = ödendi"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Etkinlikler ve güzergâhlar: turuncu = rezerve edilecek · sarı = rezerve · yeşil = ödendi",
+"OK pour tous : on la garde":"Herkes için tamam: tutuyoruz",
+"On l’écarte":"Eliyoruz",
+"Gardée pour tout le monde":"Herkes için tutuldu",
+"Écartée pour tout le monde":"Herkes için elendi"});

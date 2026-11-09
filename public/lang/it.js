@@ -3664,4 +3664,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"Oppure al coperto quel giorno:",
 "Billets et visites guidées":"Biglietti e visite guidate",
 "Activités payantes":"Attività a pagamento",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Attività e tragitti: arancione = da prenotare · giallo = prenotato · verde = pagato"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Attività e tragitti: arancione = da prenotare · giallo = prenotato · verde = pagato",
+"OK pour tous : on la garde":"OK per tutti: la teniamo",
+"On l’écarte":"La scartiamo",
+"Gardée pour tout le monde":"Tenuta per tutti",
+"Écartée pour tout le monde":"Scartata per tutti"});

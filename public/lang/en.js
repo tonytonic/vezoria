@@ -3649,4 +3649,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"Or stay dry that day:",
 "Billets et visites guidées":"Tickets and guided tours",
 "Activités payantes":"Paid activities",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Activities and routes: orange = to book · yellow = booked · green = paid"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Activities and routes: orange = to book · yellow = booked · green = paid",
+"OK pour tous : on la garde":"OK for everyone: keep it",
+"On l’écarte":"Drop it",
+"Gardée pour tout le monde":"Kept for everyone",
+"Écartée pour tout le monde":"Dropped for everyone"});

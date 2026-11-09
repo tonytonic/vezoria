@@ -3668,4 +3668,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"Ou ao abrigo nesse dia:",
 "Billets et visites guidées":"Bilhetes e visitas guiadas",
 "Activités payantes":"Atividades pagas",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Atividades e trajetos: laranja = por reservar · amarelo = reservado · verde = pago"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Atividades e trajetos: laranja = por reservar · amarelo = reservado · verde = pago",
+"OK pour tous : on la garde":"OK para todos: fica",
+"On l’écarte":"Descartamos",
+"Gardée pour tout le monde":"Mantida para todos",
+"Écartée pour tout le monde":"Descartada para todos"});

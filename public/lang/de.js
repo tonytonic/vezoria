@@ -3659,4 +3659,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"Oder an diesem Tag im Trockenen:",
 "Billets et visites guidées":"Tickets und Führungen",
 "Activités payantes":"Kostenpflichtige Aktivitäten",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Aktivitäten und Strecken: orange = zu buchen · gelb = gebucht · grün = bezahlt"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Aktivitäten und Strecken: orange = zu buchen · gelb = gebucht · grün = bezahlt",
+"OK pour tous : on la garde":"OK für alle: behalten",
+"On l’écarte":"Streichen",
+"Gardée pour tout le monde":"Für alle behalten",
+"Écartée pour tout le monde":"Für alle gestrichen"});

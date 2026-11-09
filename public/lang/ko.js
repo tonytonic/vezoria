@@ -6603,4 +6603,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"또는 그날은 실내에서:",
 "Billets et visites guidées":"입장권 및 가이드 투어",
 "Activités payantes":"유료 활동",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"활동과 경로: 주황 = 예약 필요 · 노랑 = 예약됨 · 초록 = 결제됨"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"활동과 경로: 주황 = 예약 필요 · 노랑 = 예약됨 · 초록 = 결제됨",
+"OK pour tous : on la garde":"모두 OK: 유지",
+"On l’écarte":"제외",
+"Gardée pour tout le monde":"모두에게 유지됨",
+"Écartée pour tout le monde":"모두에게서 제외됨"});

@@ -6603,4 +6603,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"その日は屋内で：",
 "Billets et visites guidées":"チケットとガイドツアー",
 "Activités payantes":"有料アクティビティ",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"アクティビティとルート：オレンジ＝要予約・黄＝予約済み・緑＝支払済み"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"アクティビティとルート：オレンジ＝要予約・黄＝予約済み・緑＝支払済み",
+"OK pour tous : on la garde":"全員OK：残す",
+"On l’écarte":"外す",
+"Gardée pour tout le monde":"全員分残しました",
+"Écartée pour tout le monde":"全員分外しました"});

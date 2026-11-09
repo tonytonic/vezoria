@@ -6603,4 +6603,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"或者那天待在室内：",
 "Billets et visites guidées":"门票与导览",
 "Activités payantes":"付费活动",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"活动和路线：橙色＝待预订 · 黄色＝已预订 · 绿色＝已付款"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"活动和路线：橙色＝待预订 · 黄色＝已预订 · 绿色＝已付款",
+"OK pour tous : on la garde":"大家都同意：保留",
+"On l’écarte":"排除",
+"Gardée pour tout le monde":"已为所有人保留",
+"Écartée pour tout le monde":"已为所有人排除"});

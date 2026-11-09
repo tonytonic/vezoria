@@ -6604,4 +6604,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"Или в этот день под крышей:",
 "Billets et visites guidées":"Билеты и экскурсии",
 "Activités payantes":"Платные занятия",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Занятия и маршруты: оранжевый = забронировать · жёлтый = забронировано · зелёный = оплачено"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Занятия и маршруты: оранжевый = забронировать · жёлтый = забронировано · зелёный = оплачено",
+"OK pour tous : on la garde":"Всем подходит: оставляем",
+"On l’écarte":"Убираем",
+"Gardée pour tout le monde":"Оставлено для всех",
+"Écartée pour tout le monde":"Убрано для всех"});

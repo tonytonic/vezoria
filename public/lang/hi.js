@@ -6603,4 +6603,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"या उस दिन छत के नीचे:",
 "Billets et visites guidées":"टिकट और गाइडेड टूर",
 "Activités payantes":"सशुल्क गतिविधियाँ",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"गतिविधियाँ और रास्ते: नारंगी = बुक करना है · पीला = बुक · हरा = भुगतान हुआ"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"गतिविधियाँ और रास्ते: नारंगी = बुक करना है · पीला = बुक · हरा = भुगतान हुआ",
+"OK pour tous : on la garde":"सबके लिए ठीक: रखें",
+"On l’écarte":"हटाएँ",
+"Gardée pour tout le monde":"सबके लिए रखी गई",
+"Écartée pour tout le monde":"सबके लिए हटाई गई"});

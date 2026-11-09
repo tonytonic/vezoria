@@ -6604,4 +6604,8 @@ I18N.load({
 "Ou au sec ce jour-là :":"أو في مكان مغطى ذلك اليوم:",
 "Billets et visites guidées":"تذاكر وجولات مصحوبة بمرشد",
 "Activités payantes":"أنشطة مدفوعة",
-"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"الأنشطة والمسارات: برتقالي = للحجز · أصفر = محجوز · أخضر = مدفوع"});
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"الأنشطة والمسارات: برتقالي = للحجز · أصفر = محجوز · أخضر = مدفوع",
+"OK pour tous : on la garde":"موافقة الجميع: نحتفظ بها",
+"On l’écarte":"نستبعدها",
+"Gardée pour tout le monde":"محتفَظ بها للجميع",
+"Écartée pour tout le monde":"مستبعَدة للجميع"});
