@@ -2435,7 +2435,7 @@
   const AFF = {tiqets:[89, 2074], airalo:[541, 8310], yesim:[224, 5998], welcome:[627, 8919], kiwitaxi:[1, 647], gettransfer:[147, 4439], economy:[10, 2018], localrent:[87, 2043], getrentacar:[222, 5996], airhelp:[120, 9139],
     aviasales:[100, 4114], saily:[629, 8979], kkday:[633, 9074], wegotrip:[150, 4487], qeeq:[172, 4845], autoeurope:[143, 4354], bikesbooking:[57, 1767], intui:[22, 657], radical:[209, 5867], compensair:[86, 4129]};   // [campaign_id, p]
   // 🎟️ Viator (programme direct, pas Travelpayouts) : ton identifiant partenaire « P00… » ici ; vide = liens directs, sans commission
-  const VIATOR_PID = '', VIATOR_MCID = '42383';
+  const VIATOR_PID = 'P00330602', VIATOR_MCID = '42383';
   const affOn = k => !AFF_OFF && isoToday() >= AFF_FROM && (k === 'viator' ? /^P\d{5,}$/.test(VIATOR_PID) : !!AFF[k]);
   const BLANG = () => (window.I18N && I18N.lang) || 'fr';
   const ESIM_FIX = {US:'united-states', GB:'united-kingdom', KR:'south-korea', CZ:'czech-republic', TR:'turkey', AE:'united-arab-emirates', VN:'vietnam', RU:'russia', HK:'hong-kong', MO:'macau', TW:'taiwan', LA:'laos', BO:'bolivia', VE:'venezuela', TZ:'tanzania', IR:'iran', SY:'syria', MD:'moldova', MK:'north-macedonia', CI:'ivory-coast', CD:'democratic-republic-of-the-congo', BA:'bosnia-and-herzegovina'};

@@ -1541,7 +1541,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(el.dataset.vto) return; el.dataset.vto = '1'; const [d1, d2] = (el.dataset.vtd || '|').split('|'), n = +el.dataset.vtn || 3;
     el.innerHTML = '<div class="vt-ld"></div><div class="vt-ld"></div><div class="vt-ld"></div>';
     let r = null; try { r = await vtFetch(el.dataset.vtq, d1, d2); } catch(e){}
-    const L = r && r.ok ? (r.tours || []).filter(x=>x && x.url).slice(0, n) : [];
+    const L = r && r.ok ? (r.tours || []).filter(x=>x && x.url && !/transf[eé]r|airport|a[ée]roport|navette|shuttle|chauffeur/i.test(x.title || '')).slice(0, n) : [];   // pas de transferts d’aéroport dans les idées d’activités
     if(!el.isConnected) return; if(!L.length){ (el.closest('.rain-vt, .vt-sec') || el).remove(); return; }
     el.innerHTML = L.map(vtTile).join('');
   }
