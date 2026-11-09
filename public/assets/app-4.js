@@ -1558,7 +1558,7 @@ ${pm.join('\n')}</Document></kml>`;
       (el.closest('.rain-vt, .vt-sec, .sw-vt') || el).remove(); return; }
     { const sv = el.closest('.sw-vt'); if(sv){ const c = sv.closest('.sw-card'); if(c){ c.classList.add('has-vt');
         const nom = (c.querySelector('.sw-tx > b') || {}).textContent || '', m = L.find(x=>x.img && vtMatch(x.title, nom));
-        if(m){ c.dataset.vtled = '1'; const im = c.querySelector('.sw-img'); if(im){ im.onload = () => im.classList.add('ok'); im.src = m.img; } const wk = c.querySelector('.sw-wk'); if(wk) wk.hidden = true; } } } }
+        if(m){ c.dataset.vtled = '1'; const im = c.querySelector('.sw-img'); if(im){ im.onload = () => im.classList.add('ok'); im.src = m.img; } } } } }
     { const pr = el.previousElementSibling; if(pr && pr.classList.contains('ex-r')){ const ln = pr.querySelector('.ex-ln'); if(ln) ln.remove(); } }
     el.innerHTML = L.map(vtTile).join('');
   }
@@ -1643,7 +1643,7 @@ ${pm.join('\n')}</Document></kml>`;
       if(x.img && !el.dataset.vtled){ im.onload = () => im.classList.add('ok'); im.src = x.img; }
       if(p.grp) return;   // carte « que faire à… » : la photo de la ville seulement
       if(x.ex) el.querySelector('.sw-ex').textContent = x.ex;
-      if(x.url && !el.dataset.vtled){ const a = el.querySelector('.sw-wk'); a.href = x.url; a.hidden = false; } });
+      if(x.url){ const a = el.querySelector('.sw-wk'); a.href = x.url; a.hidden = false; } });   // texte de Wikipédia affiché = sa source citée (licence CC BY-SA), même quand la photo vient de Viator
   }
   function swRender(){
     if(!SW) return; const t = R[SW.tid]; if(!t){ swClose(); return; }
