@@ -806,7 +806,7 @@
     openSheet(`<h2>📅 ${PJ(k+1)} · ${fdate(d)}</h2>
       <button type="button" class="v-btn sec" onclick="CV.close();CV.planDay('${ja(d)}')">🗺️ Itinéraire de la journée</button>
       <button type="button" class="v-btn sec" onclick="CV.editDay('${ja(d)}')">✏️ Titre et programme du jour</button>
-      <button type="button" class="v-btn sec" onclick="CV.close();CV.editNote(null,'day:${d}')">📌 Note épinglée</button>
+      <button type="button" class="v-btn sec" onclick="CV.close();CV.editNote(null,'day:${ja(d)}')">📌 Note épinglée</button>
       ${ed ? `<div class="v-sum-small" style="margin:12px 0 8px">Ajouter ou retirer un jour : les journées suivantes se décalent avec leurs fiches, leur programme et leurs lieux.</div>
       <button type="button" class="v-btn sec" onclick="CV.dayIns('${ja(d)}',0)">＋ Insérer un jour avant</button>
       <button type="button" class="v-btn sec" onclick="CV.dayIns('${ja(d)}',1)">＋ Insérer un jour après</button>
