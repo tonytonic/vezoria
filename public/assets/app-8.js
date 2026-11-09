@@ -324,6 +324,9 @@
   // suivre en silence le code abonnés des voyages communs publiés par un compagnon (et l’oublier quand il n’est plus publié)
   function mateFeedSync(){   // abonnés v2 : les fils de mes compagnons, pour les ❤️ et commentaires de nos voyages communs
     const want = new Set(); let ch = 0;
+    try { socWhoFix(); } catch(e){}
+    // 🩹 (2026-11-09f) : un fil que je SUIS aussi en abonné jetait les ❤️ et commentaires de nos voyages communs → on le relit une fois en entier
+    if(!M.mtFix1){ M.mtFix1 = 1; (M.spaces || []).forEach(sp=>{ if(sp.sub) sp.since = 0; }); ch++; }
     list('feedco', r=>r.pid !== M.me && r.code && R[r.trip] && R[r.trip].type === 'trip' && !R[r.trip].deleted && ((R[r.trip].voyageurs || []).includes(M.me)) && r.code !== FT()[r.trip]).forEach(r=>want.add(r.code));
     want.forEach(c=>{ if(!spaceObj(c)){ (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:'', mate:1}); ch++; } });
     const keep = (M.spaces || []).filter(sp=>!sp.mate || want.has(sp.code)); if(keep.length !== (M.spaces || []).length){ M.spaces = keep; ch++; }
@@ -1757,7 +1760,15 @@
   const fwPid = () => (M.me && prof(M.me)) ? M.me : undefined;
   // je voyage déjà avec cet auteur (je suis dans l’un de ses voyages) : je garde mon prénom de compagnon
   const fwIsMate = code => !!(M.me && list('feedtrip', f=>TS()[f.id] === code && !f.deleted && (((f.tids||[]).includes(M.me)) || (f.opid && f.opid !== M.me && prof(f.opid)))).length);
-  const fwAsFor = code => (fwIsMate(code) ? myName() : ((M.fwAs || {})[code])) || myName();
+  // le nom montré à l’auteur et à ses compagnons : mon prénom actuel (un ancien prénom gardé pour ce fil — profil renommé de Camille en Victoria — ne sert plus)
+  const fwAsFor = code => { const me = myName(), a = fwIsMate(code) ? '' : ((M.fwAs || {})[code]) || ''; return a && (!me || normQ(a).startsWith(normQ(me))) ? a : me || a; };
+  // ✏️ profil renommé : mes ❤️ et commentaires déjà envoyés prennent mon nouveau prénom (une fois par changement de nom)
+  function socWhoFix(){
+    const me = myName(); if(!me || M.whoFix === me) return; const d = devId(), out = [];
+    list('like').concat(list('comment')).forEach(r=>{ if(!/^ft:/.test(r.trip || '') || !(r.dev === d || String(r.id).endsWith(':' + d))) return;
+      const w = String(r.who || ''); if(/^🧳/.test(w)) return; const nw = fwAsFor(TS()[r.trip]); if(nw && nw !== w) out.push(Object.assign(clone(r), {who:nw})); });
+    if(out.length) putQuiet(out); M.whoFix = me; persist();
+  }
   async function fwNameResolve(n){
     n = String(n || '').trim().slice(0, 36); if(!n) return null;
     const me = devId(), fol = new Set(list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')]).map(f=>f.id));
@@ -2038,7 +2049,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-09e'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-09f'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2421,7 +2432,10 @@
     (recs || []).forEach(r=>{ if(!r) return;
       if(['follower','fwban','fwhide','abinv','abcfg','trip','profile'].includes(r.type)) return;
       const fid = r.type === 'feedtrip' ? r.id : String(r.trip || '');
-      if(/^ft:/.test(fid)){ const t = R[fid.slice(3)]; if(t && t.type === 'trip' && !t.deleted && !t.demo && !t.ro){ if(r.type === 'feedtrip' && !r.deleted) (S.mt = S.mt || {})[r.id] = 1; return; } }
+      if(/^ft:/.test(fid)){ const t = R[fid.slice(3)]; if(t && t.type === 'trip' && !t.deleted && !t.demo && !t.ro){ if(r.type === 'feedtrip' && !r.deleted) (S.mt = S.mt || {})[r.id] = 1;
+        // 👥 un voyage que je fais moi-même : pas de 2e copie du voyage, MAIS ses ❤️ et commentaires (Victoria aime une étape d’Anthony → Claire la voit)
+        if((r.type === 'like' || r.type === 'comment') && (t.voyageurs || []).includes(M.me)) out.push(r);
+        return; } }
       if(r.type === 'feedtrip'){ S.t[r.id] = r.deleted ? 0 : 1; if(!r.deleted && !S.owner && r.owner) S.owner = r.owner; if(!S.oav && avOk(r.oav)) S.oav = r.oav; }
       out.push(r); });
     return out;
