@@ -106,7 +106,7 @@ async function photon(op, p, ac, onlyC, near, poi) {
   const lg = (p.get('accept-language') || 'en').slice(0, 2), lang = PH_LANG.includes(lg) ? lg : 'en';
   const qs = new URLSearchParams({ q: p.get('q'), limit: p.get('limit') || '1', lang });
   // 🔎 saisie en cours : seulement des villes, régions et pays (pas de rues), mots incomplets acceptés
-  if (p.get('featureType')) qs.append('layer', 'city');   // 🏙️ villes et villages seulement
+  if (p.get('featureType')) { qs.append('layer', 'city'); if (p.get('featureType') === 'city') qs.append('osm_tag', 'place'); }   // 🏙️ villes et villages seulement ; « city » : le point du centre-ville (place=city/town/village), jamais le contour
   if (ac && !poi) (onlyC ? ['country'] : ['city', 'locality', 'district', 'county', 'state', 'country']).forEach(l => qs.append('layer', l));
   // 📍 lieu d’un souvenir : monuments, rues, quartiers… autour de l’endroit du voyage
   if (poi && near) { qs.set('lat', near.lat); qs.set('lon', near.lon); qs.set('zoom', '13'); qs.set('location_bias_scale', '0.3'); }
