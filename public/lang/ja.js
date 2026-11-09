@@ -6600,4 +6600,5 @@ I18N.load({
 "Noté, pas encore réservé":"メモ済み・未予約",
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"今日または明日に予約できるもの",
-"Ou au sec ce jour-là :":"その日は屋内で："});
+"Ou au sec ce jour-là :":"その日は屋内で：",
+"Billets et visites guidées":"チケットとガイドツアー"});

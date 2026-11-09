@@ -3661,4 +3661,5 @@ I18N.load({
 "Noté, pas encore réservé":"Annotato, non ancora prenotato",
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"Da prenotare oggi o domani",
-"Ou au sec ce jour-là :":"Oppure al coperto quel giorno:"});
+"Ou au sec ce jour-là :":"Oppure al coperto quel giorno:",
+"Billets et visites guidées":"Biglietti e visite guidate"});

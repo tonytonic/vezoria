@@ -3652,4 +3652,5 @@ I18N.load({
 "Noté, pas encore réservé":"Genoteerd, nog niet geboekt",
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"Vandaag of morgen te boeken",
-"Ou au sec ce jour-là :":"Of droog blijven die dag:"});
+"Ou au sec ce jour-là :":"Of droog blijven die dag:",
+"Billets et visites guidées":"Tickets en rondleidingen"});

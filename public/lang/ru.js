@@ -6601,4 +6601,5 @@ I18N.load({
 "Noté, pas encore réservé":"Записано, ещё не забронировано",
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"Забронировать на сегодня или завтра",
-"Ou au sec ce jour-là :":"Или в этот день под крышей:"});
+"Ou au sec ce jour-là :":"Или в этот день под крышей:",
+"Billets et visites guidées":"Билеты и экскурсии"});

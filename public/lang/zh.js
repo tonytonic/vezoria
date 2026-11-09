@@ -6600,4 +6600,5 @@ I18N.load({
 "Noté, pas encore réservé":"已记录，尚未预订",
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"今天或明天可预订",
-"Ou au sec ce jour-là :":"或者那天待在室内："});
+"Ou au sec ce jour-là :":"或者那天待在室内：",
+"Billets et visites guidées":"门票与导览"});

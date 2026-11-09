@@ -6600,4 +6600,5 @@ I18N.load({
 "Noté, pas encore réservé":"नोट किया, अभी बुक नहीं",
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"आज या कल के लिए बुक करें",
-"Ou au sec ce jour-là :":"या उस दिन छत के नीचे:"});
+"Ou au sec ce jour-là :":"या उस दिन छत के नीचे:",
+"Billets et visites guidées":"टिकट और गाइडेड टूर"});
