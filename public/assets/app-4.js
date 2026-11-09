@@ -1293,7 +1293,8 @@ ${pm.join('\n')}</Document></kml>`;
     return out;
   }
   const expCount = t => expTrip(t).reduce((a, g)=>a + g.L.length, 0);
-  const expLinks = e => hidden('blk:book') ? '' : `<span class="ex-ln">${(affOn('viator') ? ['viator'] : ['gyg','viator']).map(b=>bookA(b, {what:e.q})).join('')}</span>`;
+  const expLinks = e => hidden('blk:book') ? '' : affOn('viator') ? `<span class="ex-ln">${bookA('viator', {what:e.q})}<span class="vt-alt" hidden>${['gyg','tiqets'].map(b=>bookA(b, {what:e.q})).join('')}</span></span>`
+    : `<span class="ex-ln">${['gyg','viator'].map(b=>bookA(b, {what:e.q})).join('')}</span>`;
   function expOpen(){
     const t = trip(); if(!t) return; const G = expTrip(t);
     if(!G.length){ openSheet(`<h2>🎟️ ${MSGT('Expériences à vivre')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Tout est trié pour l’instant.')}</div>
@@ -1499,13 +1500,17 @@ ${pm.join('\n')}</Document></kml>`;
       const id = 'ex|' + g.h.id + '|' + e.key; EX[id] = {h:g.h, e, city:g.city}; L.push({id, c:g.city, d:'~', x:2}); }));
     Object.values(GR).forEach(g=>{ const id = 'ex|g|' + g.h.id; EX[id] = {h:g.h, city:g.city, grp:g.grp, sel:new Set(), e:{key:'grp|' + g.h.id, ic:'🎟️', l:'Activités à réserver', p:g.city}}; L.push({id, c:g.city, d:'~', x:2.5}); });
     // 🎧 visites audio WeGoTrip de chaque ville (déjà connues : tout de suite ; sinon elles arrivent pendant le tri)
-    const wgPend = [], vtPend = [], VTON = affOn('viator'); wgStays(t).forEach(([h, city])=>{ const r = VTON ? null : wgHave(city); if(VTON){} else if(r) wgCards(t, h, city, r).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.5}); }); else wgPend.push([h, city]);
-      const v = vtHave(city); if(v) vtCards(t, h, city, v).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.7}); }); else vtPend.push([h, city]); });
+    // 🎟️ Viator d’abord ; s’il n’a rien pour la ville (ou ne répond pas), WeGoTrip prend le relais
+    const wgPend = [], vtPend = [], VTON = affOn('viator'), vtNone = r => !(r && r.ok && (r.tours || []).length);
+    const addWg = (h, city) => { const r = wgHave(city); if(r) wgCards(t, h, city, r).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.5}); }); else wgPend.push([h, city]); };
+    wgStays(t).forEach(([h, city])=>{ if(!VTON) addWg(h, city);
+      const v = vtHave(city); if(v){ vtCards(t, h, city, v).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.7}); }); if(VTON && vtNone(v)) addWg(h, city); } else vtPend.push([h, city]); });
     if(!L.length && !wgPend.length && !vtPend.length){ closeSheet(true); refresh(); return; }
     L.sort((a, b)=>si(a.c) - si(b.c) || a.x - b.x || a.d.localeCompare(b.d));
     closeSheet(true); SW = {tid:t.id, ids:L.map(x=>x.id), i:0, hist:[], kept:0, EX, PAY, exDone:new Set()}; swRender();
     wgPend.forEach(([h, city])=>wgFetch(city).then(r=>swAddWg(t, h, city, r)).catch(()=>{}));
-    vtPend.forEach(([h, city])=>vtFetch(city, h.date, h.dateFin).then(r=>swAddWg(t, h, city, r, vtCards)).catch(()=>{}));
+    const wgLater = (h, city) => wgFetch(city).then(r=>swAddWg(t, h, city, r)).catch(()=>{});
+    vtPend.forEach(([h, city])=>vtFetch(city, h.date, h.dateFin).then(r=>{ swAddWg(t, h, city, r, vtCards); if(VTON && vtNone(r)) wgLater(h, city); }).catch(()=>{ if(VTON) wgLater(h, city); }));
   }
   // 🎧 WeGoTrip dans le tri : 3 visites par ville, comme des « activités à réserver » (garder = au programme, avec le lien de la visite)
   const wgStays = t => { const seen = new Set(), out = [], td = isoToday(), live = tripPhase(t) === 'live'; list('item', i=>i.trip === t.id && i.cat === 'hotel' && i.date && (!live || (i.dateFin || i.date) >= td)).sort((a, b)=>a.date.localeCompare(b.date)).forEach(h=>{ const c = stayCity(h); if(c && !seen.has(normQ(c))){ seen.add(normQ(c)); out.push([h, c]); } }); return out; };
@@ -1546,7 +1551,11 @@ ${pm.join('\n')}</Document></kml>`;
     el.innerHTML = '<div class="vt-ld"></div><div class="vt-ld"></div><div class="vt-ld"></div>';
     let r = null; try { r = await vtFetch(el.dataset.vtq, d1, d2); } catch(e){}
     const L = r && r.ok ? (r.tours || []).filter(x=>x && x.url && !/transf[eé]r|airport|a[ée]roport|navette|shuttle|chauffeur/i.test(x.title || '')).slice(0, n) : [];   // pas de transferts d’aéroport dans les idées d’activités
-    if(!el.isConnected) return; if(!L.length){ (el.closest('.rain-vt, .vt-sec, .sw-vt') || el).remove(); return; }
+    if(!el.isConnected) return;
+    if(!L.length){   // Viator n’a rien ici : les autres partenaires reprennent la main (fiche à réserver, expériences)
+      const nx = el.nextElementSibling; if(nx && nx.classList.contains('vt-alt')) nx.hidden = false;
+      const pr = el.previousElementSibling; if(pr && pr.classList.contains('ex-r')) pr.querySelectorAll('.vt-alt').forEach(a=>{ a.hidden = false; });
+      (el.closest('.rain-vt, .vt-sec, .sw-vt') || el).remove(); return; }
     { const sv = el.closest('.sw-vt'); if(sv){ const c = sv.closest('.sw-card'); if(c){ c.classList.add('has-vt');
         const nom = (c.querySelector('.sw-tx > b') || {}).textContent || '', m = L.find(x=>x.img && vtMatch(x.title, nom));
         if(m){ c.dataset.vtled = '1'; const im = c.querySelector('.sw-img'); if(im){ im.onload = () => im.classList.add('ok'); im.src = m.img; } const wk = c.querySelector('.sw-wk'); if(wk) wk.hidden = true; } } } }

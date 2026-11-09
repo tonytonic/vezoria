@@ -3534,3 +3534,4 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .sw-tx .sw-vt .vt-t em{display:none}
 .sw-vt .vt-ld{flex:0 0 min(70%,230px);height:62px;border-radius:12px}
 .sw-card.has-vt .sw-ex{-webkit-line-clamp:2}
+.vt-alt[hidden]{display:none!important}.ex-ln .vt-alt{display:contents}
