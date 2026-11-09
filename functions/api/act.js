@@ -42,7 +42,7 @@ export async function onRequest({ request, env }) {
   let j;
   try {
     const body = { searchTerm: q, currency: cur, productSorting: { sort: "DEFAULT" }, searchTypes: [{ searchType: "PRODUCTS", pagination: { start: 1, count: n } }] };
-    if (from) body.productFiltering = { searchTerm: q, dateRange: to ? { from, to } : { from } };
+    if (from) body.productFiltering = { dateRange: to ? { from, to } : { from } };   // (doc Partner API 2.0 : productFiltering n’accepte pas searchTerm, qui était refusé → dates perdues)
     const call = b => fetch(base + "/search/freetext?campaign-value=vezoria", { method: "POST", headers: { "exp-api-key": env.VIATOR_KEY, "Accept-Language": lang, "Accept": "application/json;version=2.0", "Content-Type": "application/json" },
       body: JSON.stringify(b) });
     let r = await call(body);
