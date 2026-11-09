@@ -3510,3 +3510,16 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 /* 🤝 abonnés de mes compagnons : inviter en abonné ou en compagnon */
 .sp2-mf{flex-wrap:wrap;gap:8px}.sp2-mfn{flex:1 1 140px;min-width:0;display:flex;flex-direction:column}.sp2-mfn small{font-size:.76rem;opacity:.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sp2-mfb{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+/* 🎟️ offres Viator en images (2026-11-09i) */
+.vt-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:4px 2px 10px;margin:4px 0 8px;scrollbar-width:none}
+.vt-row::-webkit-scrollbar{display:none}
+.vt-t{flex:0 0 min(52%,190px);scroll-snap-align:start;display:flex;flex-direction:column;border-radius:14px;overflow:hidden;background:#fff;border:1px solid #e5e7eb;color:#1e1b4b;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.vt-t img,.vt-t>i{display:block;width:100%;height:92px;object-fit:cover;background:#eef2ff}.vt-t>i{display:grid;place-items:center;font-style:normal;font-size:2rem}
+.vt-t span{display:flex;flex-direction:column;gap:3px;padding:8px 10px 4px;min-width:0}
+.vt-t b{font-size:.84rem;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vt-t small{font-size:.74rem;opacity:.75}
+.vt-t em{font-style:normal;font-size:.66rem;opacity:.55;padding:0 10px 8px}
+.vt-ld{flex:0 0 min(52%,190px);height:150px;border-radius:14px;background:linear-gradient(90deg,#eef0f3 25%,#f8fafc 50%,#eef0f3 75%);background-size:200% 100%;animation:vtl 1.2s linear infinite}
+@keyframes vtl{to{background-position:-200% 0}}
+.rain-vt{margin-top:10px}.rain-vt>small{display:block;font-size:.78rem;opacity:.85;margin-bottom:2px}
+.vt-sec{margin:12px 0 4px}

@@ -4437,7 +4437,8 @@
     if(!rainCard.at || Date.now() - rainCard.at > 30 * 60e3){ rainCard.at = Date.now(); rainFetch(t).then(()=>{ if(rainSug(t)) refresh(); }).catch(()=>{}); }
     const s = rainSug(t); if(!s) return ''; const day = d => fdate(d);
     return `<div class="rain-c"><i>🌧️</i><div><b>${esc(RF('Pluie prévue {0} ({1} %)', day(s.d), s.p))}</b><small>${esc(RF('{0} visite(s) dehors ce jour-là · {1} s’annonce sec', s.out.length, day(s.d2)))}</small>
-      <div class="rain-a"><button type="button" class="v-btn" onclick="CV.rainSwap('${ja(s.d)}','${ja(s.d2)}')">🔁 ${esc(MSGT('Échanger'))}</button><button type="button" class="v-btn sec" onclick="CV.rainNo('${ja(s.d)}')">${esc(MSGT('Non merci'))}</button></div></div></div>`; }
+      <div class="rain-a"><button type="button" class="v-btn" onclick="CV.rainSwap('${ja(s.d)}','${ja(s.d2)}')">🔁 ${esc(MSGT('Échanger'))}</button><button type="button" class="v-btn sec" onclick="CV.rainNo('${ja(s.d)}')">${esc(MSGT('Non merci'))}</button></div>
+      ${hidden('blk:book') ? '' : `<div class="rain-vt"><small>☔ ${esc(MSGT('Ou au sec ce jour-là :'))}</small>${VTR((dayCity(s.d) || '') + ' museum', s.d, s.d, 3)}</div>`}</div></div>`; }
   function rainSwap(d, d2){ const t = trip(); if(!t) return; const s = rainSug(t); if(!s || s.d !== d) return;
     const out = [...s.out.map(p=>Object.assign(clone(p), {date:d2})), ...s.inn.map(p=>Object.assign(clone(p), {date:d}))];
     putMany(out, '🌧️ ' + RF('{0} visite(s) dehors déplacée(s) au {1}', s.out.length, fdate(d2)) + (s.inn.length ? ' · ' + RF('{0} au sec le {1}', s.inn.length, fdate(d)) : '')); refresh(); }

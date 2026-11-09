@@ -1276,3 +1276,5 @@ html.vz-dark .pg-modes button,html.vz-dark .pg-acts>button,html.vz-dark .pg-acts
 html.vz-dark .pg-modes button.on{background-color:rgb(25,45,90);border-color:rgb(96,140,240)}
 html.vz-dark .pg-acts>button.yes{background-color:#16a34a;color:#fff}
 html.vz-dark .pg-acts>button.no{background-color:rgb(34,34,38);border-color:rgb(150,60,60);color:rgb(252,165,165)}
+html.vz-dark .vt-t{background-color:rgb(28,28,30);border-color:rgb(55,55,60);color:rgb(235,235,240)}
+html.vz-dark .vt-ld{background:linear-gradient(90deg,#26262a 25%,#323238 50%,#26262a 75%);background-size:200% 100%}

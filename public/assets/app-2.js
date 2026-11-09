@@ -2434,7 +2434,9 @@
   const AFF_OFF = false, AFF_FROM = '2026-11-01', AFF_MARKER = '767584', AFF_TRS = '591336';
   const AFF = {tiqets:[89, 2074], airalo:[541, 8310], yesim:[224, 5998], welcome:[627, 8919], kiwitaxi:[1, 647], gettransfer:[147, 4439], economy:[10, 2018], localrent:[87, 2043], getrentacar:[222, 5996], airhelp:[120, 9139],
     aviasales:[100, 4114], saily:[629, 8979], kkday:[633, 9074], wegotrip:[150, 4487], qeeq:[172, 4845], autoeurope:[143, 4354], bikesbooking:[57, 1767], intui:[22, 657], radical:[209, 5867], compensair:[86, 4129]};   // [campaign_id, p]
-  const affOn = k => !AFF_OFF && !!AFF[k] && isoToday() >= AFF_FROM;
+  // 🎟️ Viator (programme direct, pas Travelpayouts) : ton identifiant partenaire « P00… » ici ; vide = liens directs, sans commission
+  const VIATOR_PID = '', VIATOR_MCID = '42383';
+  const affOn = k => !AFF_OFF && isoToday() >= AFF_FROM && (k === 'viator' ? /^P\d{5,}$/.test(VIATOR_PID) : !!AFF[k]);
   const BLANG = () => (window.I18N && I18N.lang) || 'fr';
   const ESIM_FIX = {US:'united-states', GB:'united-kingdom', KR:'south-korea', CZ:'czech-republic', TR:'turkey', AE:'united-arab-emirates', VN:'vietnam', RU:'russia', HK:'hong-kong', MO:'macau', TW:'taiwan', LA:'laos', BO:'bolivia', VE:'venezuela', TZ:'tanzania', IR:'iran', SY:'syria', MD:'moldova', MK:'north-macedonia', CI:'ivory-coast', CD:'democratic-republic-of-the-congo', BA:'bosnia-and-herzegovina'};
   function esimSlug(cc){   // page eSIM du pays chez Airalo (ex. Italie → italy-esim)
@@ -2442,7 +2444,9 @@
     if(ESIM_FIX[cc]) return ESIM_FIX[cc];
     try { return new Intl.DisplayNames(['en'], {type:'region'}).of(cc).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z]+/g, '-').replace(/^-|-$/g, ''); } catch(e){ return ''; }
   }
-  const affWrap = (k, u) => { if(!affOn(k) || !u) return u; const a = AFF[k];
+  const affWrap = (k, u) => { if(!affOn(k) || !u) return u;
+    if(k === 'viator') return u + (u.includes('?') ? '&' : '?') + 'pid=' + VIATOR_PID + '&mcid=' + VIATOR_MCID + '&medium=link&campaign=' + ((typeof inPlay === 'function' && inPlay()) ? 'play' : 'web');
+    const a = AFF[k];
     return `https://tp.media/r?campaign_id=${a[0]}&marker=${AFF_MARKER}&p=${a[1]}&trs=${AFF_TRS}&sub_id=${(typeof inPlay === 'function' && inPlay()) ? 'play' : 'web'}&u=${encodeURIComponent(u)}`; };
   const bookUrl = (k, c) => BK[k] ? affWrap(k, BK[k][2](c || {})) : '';
   // attributs d’un lien : « sponsored » + petite mention « partenaire » quand c’est un lien rémunéré (obligation d’identifier la publicité)
