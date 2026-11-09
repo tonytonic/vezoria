@@ -3008,7 +3008,7 @@
     if(hub){ M.hoodN = M.hoodN || {}; if(M.hoodN[hk] == null) revName(hub.lat, hub.lng, 15).then(v=>{ M.hoodN[hk] = v || ''; persist(); document.querySelectorAll(`[data-hn="${CSS.escape(hk)}"]`).forEach(b=>{ b.textContent = v || city; }); }).catch(()=>{}); }
     let hp = h.lat != null && h.lng != null ? {lat:+h.lat, lng:+h.lng} : null;
     if(!hp && gdSet(h) && (h.adresse || h.nom)) hp = await hotelGeo(h, city, C0 || hub).catch(()=>null);
-    const ctr = hp || hub || C0, ord = {todo:0, no:1, mix:2, yes:3};
+    const ctr = hp || hub || C0, ord = {todo:0, no:1, yes:2, mix:3};
     const mk = P.filter(x=>normQ(swCity(x.p)) === normQ(city) && (!ctr || rawKm(ctr, {lat:+x.p.lat, lng:+x.p.lng}) <= 30)).sort((a, b)=>ord[a.s] - ord[b.s])
       .map(x=>({lat:+x.p.lat, lng:+x.p.lng, label:x.s === 'yes' ? '✓' : x.s === 'no' ? '✕' : x.s === 'mix' ? '?' : '•', color:x.s === 'todo' ? '#94a3b8' : PGC[x.s]}));
     if(hp) mk.push({lat:hp.lat, lng:hp.lng, label:'H', color:'#1d4ed8'});
@@ -3052,15 +3052,22 @@
     if(V.length && V.every(v=>v === 0)) return 'no';
     return p.sugg ? 'todo' : 'yes';
   }
+  // un même lieu peut exister en plusieurs fiches (idée proposée deux fois, copie d’un compagnon…) : UN point par lieu, avec le statut de tout le monde
+  //    (l’un l’a gardé, l’autre l’a écarté → à discuter) ; la fiche affichée est celle qui porte ce statut
   function pgPlaces(t){
-    const by = new Map();
+    const by = new Map(), multi = swMulti(t);
     Object.values(R).forEach(p=>{ if(!p || p.type !== 'place' || p.trip !== t.id || p.lat == null || p.lng == null || !isFinite(+p.lat) || !isFinite(+p.lng)) return;
-      const s = pgSt(p); if(!s) return; const k = normQ(p.nom) + '|' + (+p.lat).toFixed(2) + ',' + (+p.lng).toFixed(2), o = by.get(k);
-      if(!o || (o.p.deleted && !p.deleted)) by.set(k, {p, s}); });
-    return [...by.values()];
+      const s = pgSt(p); if(!s) return; const k = normQ(p.nom) + '|' + normQ(swCity(p) || ((+p.lat).toFixed(2) + ',' + (+p.lng).toFixed(2)));
+      (by.get(k) || by.set(k, []).get(k)).push({p, s}); });
+    const RK = {mix:4, yes:3, todo:2, no:1};
+    return [...by.values()].map(G=>{ const S = new Set(G.map(x=>x.s));
+      const s = S.has('mix') || (multi && S.has('yes') && S.has('no')) ? 'mix' : S.has('yes') ? 'yes' : S.has('todo') ? 'todo' : 'no';
+      const rep = G.filter(x=>!x.p.deleted).sort((a, b)=>(b.s === s) - (a.s === s) || RK[b.s] - RK[a.s])[0] || G[0];
+      return {p:rep.p, s, ids:G.map(x=>x.p.id)}; });
   }
+  const pgStOf = id => { const t = trip(), x = t && pgPlaces(t).find(y=>y.ids.includes(id)); return x ? x.s : pgSt(R[id]); };
   const pgFc = f => ({type:'FeatureCollection', features:f});
-  function pgVisF(t){ const ord = {todo:0, no:1, mix:2, yes:3};
+  function pgVisF(t){ const ord = {todo:0, no:1, yes:2, mix:3};   // « à discuter » par-dessus : c’est lui qu’on cherche
     return pgPlaces(t).sort((a, b)=>ord[a.s] - ord[b.s]).map(({p, s})=>({type:'Feature', properties:{id:p.id, name:p.nom, s, col:PGC[s]}, geometry:{type:'Point', coordinates:[+p.lng, +p.lat]}})); }
   // 🛏️ autour de chaque hébergement choisi (adresse connue, ou réservé) : sa zone, en bleu
   const pgHz = F => F.hotels.filter(x=>x.exact || okB(x.h)).map(x=>({type:'Feature', properties:{}, geometry:{type:'Polygon', coordinates:[p3Circle(x.p, x.exact ? .45 : .8)]}}));
@@ -3200,7 +3207,7 @@
     setTimeout(()=>{ if(kind === 'a') pgAct(id); else pgVisit(id); }, 1200);
   }
   function pgVisit(id){
-    const p = R[id], t = trip(); if(!p || !t) return; const s = pgSt(p); if(!s) return; const oth = swOthers(p), my = swMyVote(p), c = swCity(p);
+    const p = R[id], t = trip(); if(!p || !t) return; const s = pgStOf(id); if(!s) return; const oth = swOthers(p), my = swMyVote(p), c = swCity(p);
     const lab = {yes:'Au programme', no:'Écartée', mix:'À discuter', todo:'À trier'}[s];
     const showNo = s === 'yes' || s === 'todo' || (s === 'mix' && my !== 0), showYes = s !== 'yes' && !(s === 'mix' && my === 1);
     pgCard(`<div class="pg-ct"><b><i class="pg-dot" style="background:${PGC[s]}"></i><span data-notr>${esc(p.nom)}</span></b>
@@ -3219,7 +3226,11 @@
       const nl = (M.suggNo || {})[p.trip] || [], i = nl.indexOf(p.nom); if(i >= 0){ nl.splice(i, 1); persist(); } }
     else if(multi){ if(!Object.values(c.votes || {}).includes(1)){ c.sugg = true; delete c.kept; delete c.pick; } }   // plus personne ne la garde : elle redevient une idée
     else { c.deleted = true; c.no = 1; M.suggNo = M.suggNo || {}; const L = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!L.includes(p.nom)) L.push(p.nom); if(L.length > 300) L.shift(); persist(); }
-    putQuiet([c]); try { persistNow(); } catch(e){}
+    // 🧹 le même lieu en double (idée proposée deux fois, copie d’un compagnon) : on n’en garde qu’une fiche, ou on les écarte toutes
+    const G = (pgPlaces(t).find(x=>x.ids.includes(id)) || {ids:[]}).ids.filter(x=>x !== id && R[x] && !R[x].deleted);
+    const dup = G.map(x=>{ const d = clone(R[x]); if(M.me) d.votes = Object.assign({}, d.votes || {}, {[M.me]:keep ? 1 : 0});
+      if(keep || !multi){ d.deleted = true; if(!keep) d.no = 1; } else if(!Object.values(d.votes || {}).includes(1)){ d.sugg = true; delete d.kept; delete d.pick; } return d; });
+    putQuiet([c, ...dup]); try { persistNow(); } catch(e){}
     toast(keep ? '✓ ' + p.nom + ' · ' + MSGT('Ajouté au programme') : '✕ ' + p.nom + ' · ' + MSGT('Visite annulée'));
     pgCard(null); pgVisRefresh(); refresh();
   }
