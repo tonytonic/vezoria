@@ -926,7 +926,7 @@
     if(t){
       const code = TS()[t.id], on = code && spaceObj(code), sp = on ? spaceObj(code) : null, v = (t.voyageurs||[]).filter(prof), fc = feedCode(t.id);
       const grpT = fc ? Object.keys(FT()).filter(x=>FT()[x] === fc && R[x] && !R[x].deleted) : [], gIds = new Set(grpT.map(ftId));   // carnet publié d’un coup : les abonnés voient tous ces voyages
-      const nfw = fc ? ab2NFw(t.id) : 0, nlk = fc ? list('like', l=>l.trip===ftId(t.id) && l.on && !isBlk(l)).length : 0, ncm = fc ? list('comment', c=>c.trip===ftId(t.id) && !isBlk(c)).length : 0;
+      const nfw = fc ? ab2NFw(t.id) : 0, nlk = fc || mateCode(t.id) ? list('like', l=>l.trip===ftId(t.id) && l.on && !isBlk(l)).length : 0, ncm = fc || mateCode(t.id) ? list('comment', c=>c.trip===ftId(t.id) && !isBlk(c)).length : 0;
       h += `<div class="sh-sec sh-tb" data-t="comp" data-notr>🧳 ${esc(t.titre)}</div>
       <div class="sh-card sh-tb" data-t="comp"><div class="sh-k">👥 Voyager ensemble</div><p>Tes compagnons voient tout le voyage et le complètent avec toi : programme, résas, budget, souvenirs. Chaque ajout est signé.</p>
         <div class="cv-row" style="gap:6px;flex-wrap:wrap;margin:6px 0 10px">${v.map(pid=>pchip(pid)).join('') || '<span class="v-sum-small">Personne d’autre pour l’instant</span>'}</div>

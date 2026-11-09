@@ -1332,7 +1332,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   function heroStats(show){
     const box = document.getElementById('cv-hstats'); if(!box) return;
     if(!show){ box.style.display = 'none'; return; }
-    const me = devId(), mine = new Set(Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted).map(ftId));
+    const me = devId(), mine = socMineFt();   // 👥 + nos voyages communs montrés par un compagnon
     const fw = ab2Fws().length;   // abonnés v2
     const lk = list('like', l=>mine.has(l.trip) && l.on && !isBlk(l) && !String(l.id).endsWith(':' + me)).length;
     const fo = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted).length;
@@ -2336,7 +2336,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       });
       pts.sort((a, b)=>a.d.localeCompare(b.d)); for(let i = 1; i < pts.length; i++){ const d = hav(pts[i-1], pts[i]); if(d > 1) km += d; }
     });
-    const me = devId(), mine = new Set(Object.keys(FT()).map(ftId));
+    const me = devId(), mine = socMineFt();
     const fw = ab2Fws().length;   // abonnés v2
     const lk = list('like', l=>mine.has(l.trip) && l.on && !isBlk(l) && !String(l.id).endsWith(':' + me)).length;
     // organisation (tous les voyages, même à venir), continents, plus long voyage

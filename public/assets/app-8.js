@@ -318,6 +318,9 @@
     if(t && t.type === 'trip' && !t.deleted) return [...new Set([feedCode(tid), ...mateCodes(tid)].filter(Boolean))];
     return [TS()[ftid]].filter(Boolean); };
   const socCode = tid => feedCode(tid) || mateCode(tid);
+  // ❤️💬 les fils dont je vois les réactions : les voyages que JE montre, et nos voyages communs montrés par un compagnon
+  //    (Victoria aime une étape chez Anthony → Claire, compagne du voyage, la voit aussi)
+  function socMineFt(){ return new Set([...Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted), ...myTrips().filter(t=>mateCodes(t.id).length).map(t=>t.id)].map(ftId)); }
   // suivre en silence le code abonnés des voyages communs publiés par un compagnon (et l’oublier quand il n’est plus publié)
   function mateFeedSync(){   // abonnés v2 : les fils de mes compagnons, pour les ❤️ et commentaires de nos voyages communs
     const want = new Set(); let ch = 0;
@@ -664,7 +667,7 @@
   }
   // ❤️💬 tout ce que les gens ont aimé ou commenté sur mes voyages : rangé par voyage, puis par étape, puis par personne
   function socReacts(){
-    const me = devId(), mine = new Set(Object.keys(FT()).filter(tid=>R[tid] && !R[tid].deleted).map(ftId));
+    const me = devId(), mine = socMineFt();
     const cmp = (a, b) => String(a).localeCompare(String(b), undefined, {sensitivity:'base', numeric:true});
     const L = [...list('like', l=>mine.has(l.trip) && l.on && !isBlk(l) && !String(l.id).endsWith(':' + me)).map(l=>({k:'lk', r:l})),
                ...list('comment', c=>mine.has(c.trip) && !isBlk(c) && c.dev !== me).map(c=>({k:'cm', r:c}))];
@@ -2035,7 +2038,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-09a'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-09b'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2164,13 +2167,16 @@
     [...list('comment'), ...list('like', l=>l.on)].forEach(c=>{ const tid = String(c.trip || '').replace(/^ft:/, ''), d = c.dev || devOfRec(c);
       if(!d || d === me || mine.has(d) || !c.pk || !c.ib || !mateCodes(tid).length) return;
       const w = String(c.who || '').replace(/^🧳\s*/, ''); if(!w || fwGeneric(w)) return;
-      if(!by[d] || (c.updatedAt || 0) > (by[d].at || 0)) by[d] = {dev:d, who:w, pk:c.pk, ib:c.ib, at:c.updatedAt || 0, asked:!!asked[d]}; });
+      if(!by[d] || (c.updatedAt || 0) > (by[d].at || 0)) by[d] = {dev:d, who:w, pk:c.pk, ib:c.ib, at:c.updatedAt || 0, asked:!!asked[d], tid, mate:!!(M.abMate || {})[d]}; });
     return Object.values(by);
   }
   function ab2MatesFwHTML(){
     const L = ab2MatesFws(); if(!L.length) return '';
-    return `<div class="sp2-sec" style="margin-top:12px">🤝 <b>${esc(MSGT('Les abonnés de mes compagnons'))}</b></div><div class="sp2-empty">${esc(MSGT('Ils suivent nos voyages communs chez un compagnon. Invite-les à te suivre aussi.'))}</div>
-      ${L.map(x=>`<div class="sp2-row"><b data-notr>${esc(x.who)}</b>${x.asked ? `<small class="sp2-wait">📩 ${esc(MSGT('invité'))}</small>` : `<button type="button" class="sp2-fol" onclick="CV.ab2AskFw('${ja(x.dev)}')">📩 ${esc(MSGT('Inviter'))}</button>`}</div>`).join('')}`;
+    return `<div class="sp2-sec" style="margin-top:12px">🤝 <b>${esc(MSGT('Les abonnés de mes compagnons'))}</b></div><div class="sp2-empty">${esc(MSGT('Ils suivent nos voyages communs chez un compagnon. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.'))}</div>
+      ${L.map(x=>{ const t = R[x.tid];
+        return `<div class="sp2-row sp2-mf"><span class="sp2-mfn"><b data-notr>${esc(x.who)}</b>${t ? `<small>❤️ <span data-notr>${esc(t.titre || '')}</span></small>` : ''}</span><span class="sp2-mfb">
+          ${x.asked ? `<small class="sp2-wait">📩 ${esc(MSGT('invité'))}</small>` : `<button type="button" class="sp2-fol" onclick="CV.ab2AskFw('${ja(x.dev)}')">👀 ${esc(MSGT('Abonné'))}</button>`}
+          ${x.mate ? `<small class="sp2-wait">🧳 ${esc(MSGT('invité'))}</small>` : t ? `<button type="button" class="sp2-fol" onclick="CV.ab2AskMate('${ja(x.dev)}')">🧳 ${esc(MSGT('Compagnon'))}</button>` : ''}</span></div>`; }).join('')}`;
   }
   // un lien personnel pour cette personne, envoyé dans sa boîte de l’appli (elle accepte ou refuse)
   async function ab2NewInv(name){
@@ -2187,6 +2193,19 @@
     const x = await ab2NewInv(x0.who);
     const ok = await ivSend({dev:x0.dev, pk:x0.pk, ib:x0.ib}, {k:'follow', id:x.id, c:x.code, t:myName() || ''}).catch(()=>false);
     if(ok){ (M.abAsked = M.abAsked || {})[dev] = Date.now(); persist(); toast('📩 ' + MSGT('Invitation envoyée dans l’appli :') + ' ' + x0.who); }
+    else toast('⚠️ ' + MSGT('Envoi impossible pour le moment'));
+    ab2Repaint();
+  }
+  // 🧳 l’inviter comme COMPAGNON du voyage commun qu’elle a aimé : une invitation personnelle (rien que pour elle), reçue dans son appli
+  async function ab2AskMate(dev){
+    const x0 = ab2MatesFws().find(y=>y.dev === dev), t = x0 && R[x0.tid]; if(!x0 || !t) return;
+    if(M.lock || t.ro){ toast('🔒 ' + MSGT('Mode lecture : touche le cadenas en haut pour modifier')); return; }
+    if((M.viaP || {})[t.id]){ alert(MSGT('Tu es dans ce voyage par une invitation personnelle : elle ne se transmet pas. Pour faire venir quelqu’un, demande à celui qui t’a invité.')); return; }
+    if(!(await uiConfirm(RF('Inviter {0} comme compagnon dans « {1} » ?', x0.who, t.titre || '') + '\n\n' + MSGT('Elle reçoit l’invitation dans son appli. Si elle accepte, elle voit et complète ce voyage (programme, réservations, budget) ; tes autres voyages restent privés.')))) return;
+    cryptShow('🔐 ' + MSGT('Invitation…'));
+    let P = null; try { P = await packQuick(t.id, x0.who); } catch(e){} finally { cryptHide(''); }
+    const ok = P ? await ivSend({dev:x0.dev, pk:x0.pk, ib:x0.ib}, {k:'trip', id:uid(), c:P, t:t.titre || ''}).catch(()=>false) : false;
+    if(ok){ (M.abMate = M.abMate || {})[dev] = Date.now(); persist(); toast('📩 ' + MSGT('Invitation envoyée dans l’appli :') + ' ' + x0.who); }
     else toast('⚠️ ' + MSGT('Envoi impossible pour le moment'));
     ab2Repaint();
   }
@@ -2929,7 +2948,7 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo};
+  var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg};
 
   const api = {souvResend, obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,

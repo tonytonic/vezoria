@@ -58,6 +58,7 @@
     const lv = pct >= 100 ? ['✅','Prêt à partir'] : pct >= 75 ? ['🎒','Presque prêt'] : pct >= 45 ? ['🧩','En préparation'] : pct >= 15 ? ['✏️','Esquisse'] : ['💭','Rêve'];
     // 🧭 parcours guidé : dès que les villes et les dates sont posées (en plus du mode manuel)
     const gdOk = !!(cur && D.hs.length && cur.k !== 'ou'), gdB = `<button type="button" class="ar-guide" onclick="CV.guideGo()"><i>🧭</i><span><b>${MSGT(guideOn(t) ? 'Je reprends mon parcours guidé' : 'Je continue mon parcours guidé')}</b><small>${MSGT(SG && SG.tid === t.id ? 'Les idées arrivent : tu peux commencer à trier tout de suite' : 'Visites, jours, trajets, hébergements… je te guide jusqu’au bout')}</small></span><em>›</em></button>`;
+    const pgB = D.hs.length ? `<button type="button" class="ar-pgm" onclick="CV.pgOpen()"><i>🗺️</i><span><b>${MSGT('Ma carte de préparation')}</b><small>${MSGT('2D · 3D : visites, hébergements, trajets')}</small></span><em>›</em></button>` : '';
     const A = [26, 92], B = [180, -4], C = [334, 92], path = `M${A} Q${B} ${C}`, tp = Math.max(.02, pct / 100), anim = ARI_ANIM[t.id] !== pct; ARI_ANIM[t.id] = pct;   // ✈️ l’avion ne repart que si l’avancement change
     const q = u => [(1-u)*(1-u)*A[0] + 2*(1-u)*u*B[0] + u*u*C[0], (1-u)*(1-u)*A[1] + 2*(1-u)*u*B[1] + u*u*C[1]];
     const co = D.hs[0] ? (M.ctry || {})[normQ(stayCity(D.hs[0]))] : null, fd = d => d ? fshort(d) : '';
@@ -111,7 +112,7 @@
       ${compact ? `<div class="ar-seg">${S.map(x=>`<button type="button" class="${x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : ''}" onclick="CV.ariTog('${ja(x.k)}')"><i style="--f:${x.ok ? 100 : Math.round(x.f * 100)}%"></i><span>${MSGT(x.l)}${x.ok ? ' ✓' : ''}</span></button>`).join('')}</div>
       ${nx && gdOk ? gdB : ''}
       ${nx ? `<div class="ar-nx"><div class="ar-nk">${MSGT(gdOk ? 'Ou à la main, ta prochaine étape' : 'Ta prochaine étape')}</div><button type="button" class="ar-sub cur" onclick="${nx.fn}"><i>${nx.ic}</i><span><b>${nx.b}</b><small>${nx.s}</small></span></button></div>` : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}
-      <button type="button" class="ar-all" onclick="CV.ariFull(1)">${MSGT('Voir les 4 étapes en détail')} ▾</button></div>` : `
+      ${pgB}<button type="button" class="ar-all" onclick="CV.ariFull(1)">${MSGT('Voir les 4 étapes en détail')} ▾</button></div>` : `
       <svg class="p2-svg" viewBox="0 0 360 112" aria-hidden="true">
         <path d="${path}" class="p2-base"/><path d="${path}" class="p2-prog" pathLength="100" style="--p:${pct}"/>
         ${S.map((x, i)=>{ const [cx, cy] = q((i + 1) / (S.length + 1)); return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${x.ok ? 6 : 4.5}" class="${x.ok ? 'on' : ''}" style="animation-delay:${(i * .12).toFixed(2)}s"/>`; }).join('')}
@@ -124,7 +125,7 @@
         return `<div class="ar-s ${st}${o ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.ariTog('${ja(x.k)}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${MSGT(x.l)}</span><small>${x.ok ? '' : Math.round(x.f * 100) + ' %'}</small><em>${o ? '▾' : '▸'}</em></button>
           ${o ? `<div class="ar-b">${body(x.k)}</div>` : ''}</div>`; }).join('')}</div>
       ${cur ? '' : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}
-      <button type="button" class="ar-all" onclick="CV.ariFull(0)">${MSGT('Réduire')} ▴</button></div>`}`;
+      ${pgB}<button type="button" class="ar-all" onclick="CV.ariFull(0)">${MSGT('Réduire')} ▴</button></div>`}`;
   }
   // 🧹 la carte de préparation : repliée sur « ta prochaine étape » (une seule action) ; le détail des 4 étapes à la demande
   function ariNext(t, D, cur){
@@ -312,6 +313,7 @@
       // elles sont dans « Les activités payantes » du parcours
       if(fresh().length){ GSW = new Set(sgIds(t)); suggOpen(); if(document.getElementById('cv-sw')) return; }
     }
+    if(from === 'sw'){ gdHoods(); return; }   // 🏘️ tri fini : où dormir (ton hôtel s’il est choisi, sinon le quartier conseillé), avec la carte
     if(from !== 'rg' && rgItems(t).length && t.debut){ rgOpen(); return; }
     guideSheet();
   }
@@ -365,6 +367,7 @@
         ${row('🚆', MSGT('Les trajets'), tr.length ? RF('{0} à réserver', tr.length) : MSGT('Tout est réservé'), 'CV.guideTr()', !tr.length)}
         ${row('🎟️', MSGT('Les activités payantes'), xs.length || xn ? [xn ? RF('{0} idées à trier', xn) : '', xs.length ? RF('{0} à réserver', xs.length) : ''].filter(Boolean).join(' · ') : MSGT('Rien à réserver'), 'CV.guideExp()', !xs.length && !xn)}
         ${row('🛏️', MSGT('Les hébergements'), hs.length ? RF('{0} à réserver', hs.length) + ' · ' + MSGT('avec la carte du quartier conseillé') : MSGT('Tout est réservé'), 'CV.guideHotel(0)', !hs.length)}
+        ${row('🗺️', MSGT('Ma carte de préparation'), MSGT('2D ou 3D · touche une visite pour la garder ou l’annuler, un trajet pour changer de transport'), 'CV.pgOpen()', false)}
         ${row('✅', MSGT('Finaliser'), MSGT('Papiers, santé, argent, valise'), 'CV.guideFin()', false)}
       </div>
       <div class="gd-man"><button type="button" class="v-btn sec" onclick="CV.gdMan('v')">✍️ ${esc(MSGT('Ajouter une visite à la main'))}</button><button type="button" class="v-btn sec" onclick="CV.gdMan('x')">✍️ ${esc(MSGT('Ajouter une activité à la main'))}</button></div>
@@ -2962,6 +2965,333 @@
   function prep3dClose(quiet){
     if(P3){ try { if(P3.map) P3.map.remove(); } catch(e){} P3 = null; }
     const o = document.getElementById('cv-p3'); if(o) o.remove(); if(!quiet) document.body.style.overflow = '';
+  }
+
+
+  /* ══════════ 🏘️ OÙ DORMIR ? TES QUARTIERS — juste après le tri des visites (parcours guidé)
+     Étape par étape : ton hébergement s’il est déjà choisi (réservé, ou son adresse notée), sinon le quartier au centre de tes visites.
+     Hébergement choisi → on propose de faire repartir les journées de lui ; sinon on continue le parcours comme avant. ══════════ */
+  const gdSet = h => !!h && (okB(h) || (h.lat != null && h.lng != null) || String(h.adresse || '').trim().length > 5);
+  const gdHk = hub => hub ? 'hn:' + hub.lat.toFixed(3) + ',' + hub.lng.toFixed(3) : '';
+  let GHD = 0;
+  function gdHoods(){
+    const t = trip(); if(!t) return; GRET = null; closeSheet(true); swClose(1); const my = ++GHD;
+    const hs = ariData(t).hs, P = pgPlaces(t), anySet = hs.some(gdSet), multi = swMulti(t);
+    if(!hs.length) return guideNext('hd');
+    const card = h => {
+      const city = stayCity(h) || h.titre || '', nn = nights(h.date, h.dateFin || h.date), set = gdSet(h), {A, hub} = gdAnchors(t, h);
+      const mine = P.filter(x=>normQ(swCity(x.p)) === normQ(city)), n = s => mine.filter(x=>x.s === s).length;
+      const hk = gdHk(hub), hn = hk ? (M.hoodN || {})[hk] : null, nm = String(h.nom || '').trim();
+      return `<div class="hd-c"><div class="hd-h"><b>📍 <span data-notr>${esc(city)}</span></b><small>${esc(fshort(h.date))} → ${esc(fshort(h.dateFin || h.date))} · ${esc(RF(nn > 1 ? '{0} nuits' : '{0} nuit', nn))}</small></div>
+        <button type="button" class="hd-map" data-hd="${esc(h.id)}" onclick="CV.pgOpen('${ja(h.id)}')" aria-label="${esc(MSGT('Ma carte de préparation'))}"><span class="ar-run wz-run">🛰️ …</span><em>🗺️ 2D · 3D ›</em></button>
+        ${set ? `<div class="hd-ht ok"><i>🛏️</i><span><small>${esc(MSGT(h.statut === 'paid' ? 'Ton hébergement · payé' : okB(h) ? 'Ton hébergement · réservé' : 'Ton hébergement · noté'))}</small><b data-notr>${esc(nm && normQ(nm) !== normQ(city) ? nm : (h.adresse || city))}</b>${nm && h.adresse ? `<small data-notr>${esc(h.adresse)}</small>` : ''}</span></div>`
+          : `<div class="hd-ht"><i>🏘️</i><span><small>${esc(MSGT('Quartier conseillé pour dormir'))}</small><b data-notr data-hn="${esc(hk)}">${esc(hn || (hk && hn == null ? '…' : city))}</b><small>${A.length > 1 ? esc(RF('au centre de tes {0} points de visite', A.length)) : esc(MSGT('Choisis au moins 2 visites ici pour un conseil plus juste.'))}</small></span></div>
+            <button type="button" class="v-btn sec hd-bk" onclick="CV.gdHoodHotel('${ja(h.id)}')">🛏️ ${esc(MSGT('Trouver un hébergement dans ce quartier'))}</button>`}
+        <div class="hd-n"><span class="y">✓ ${n('yes')}</span><span class="r">✕ ${n('no')}</span>${multi || n('mix') ? `<span class="o">💬 ${n('mix')}</span>` : ''}${n('todo') ? `<span class="g">? ${n('todo')}</span>` : ''}</div></div>`;
+    };
+    openSheet(`<div class="gd"><h2>🏘️ ${esc(MSGT('Où dormir ? Tes quartiers'))}</h2>
+      <div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT(anySet ? 'Ton hébergement est déjà choisi : tes journées peuvent partir de lui.' : 'Le quartier conseillé est au centre de tes visites. Vérifie sur la carte, puis continue.'))}</div>
+      <button type="button" class="hd-big" onclick="CV.pgOpen()"><i>🗺️</i><span><b>${esc(MSGT('Ma carte de préparation'))}</b><small>${esc(MSGT('2D ou 3D · touche une visite pour la garder ou l’annuler, un trajet pour changer de transport'))}</small></span><em>›</em></button>
+      ${hs.map(card).join('')}
+      <div class="gd-warn">⚠️ ${esc(MSGT('L’application ne connaît pas le quartier : elle le propose seulement parce qu’il est au centre de tes visites. Renseigne-toi avant de réserver (sécurité, bruit, avis).'))}</div>
+      ${anySet ? `<button type="button" class="v-btn" onclick="CV.gdFromHotel()">🏨 ${esc(MSGT('Réorganiser mes visites depuis mon hôtel'))}</button>
+        <button type="button" class="v-btn sec hd-go2" onclick="CV.guideNext('hd')">${esc(MSGT('Continuer sans réorganiser'))} ›</button>`
+        : `<button type="button" class="v-btn" onclick="CV.guideNext('hd')">🧭 ${esc(MSGT('Continuer mon parcours guidé'))} ›</button>
+        <div class="v-sum-small hd-note">${esc(MSGT('Tes journées partiront du quartier conseillé. Quand tu auras ton hôtel, « Réorganiser depuis mon hôtel » les fera repartir de lui.'))}</div>`}
+      <div class="v-actions gd-act"><button type="button" class="v-btn sec" onclick="CV.guideSheet()">🧭 ${esc(MSGT('Menu du parcours'))}</button><button type="button" class="v-btn sec" onclick="CV.guideLater()">⏰ ${esc(MSGT('Plus tard'))}</button></div></div>`);
+    (async()=>{ for(const h of hs){ if(my !== GHD) return; try { await gdHoodMap(t, h, P, my); } catch(e){} } })();   // les petites cartes, une à une
+  }
+  // 🗺️ la petite carte d’une étape : tes visites en couleur, ton hôtel (bleu) ou le quartier conseillé (cercle rouge)
+  async function gdHoodMap(t, h, P, my){
+    const box = document.querySelector(`.hd-map[data-hd="${CSS.escape(h.id)}"]`); if(!box) return;
+    const city = stayCity(h) || h.titre || '', {hub, C0} = gdAnchors(t, h), hk = gdHk(hub);
+    if(hub){ M.hoodN = M.hoodN || {}; if(M.hoodN[hk] == null) revName(hub.lat, hub.lng, 15).then(v=>{ M.hoodN[hk] = v || ''; persist(); document.querySelectorAll(`[data-hn="${CSS.escape(hk)}"]`).forEach(b=>{ b.textContent = v || city; }); }).catch(()=>{}); }
+    let hp = h.lat != null && h.lng != null ? {lat:+h.lat, lng:+h.lng} : null;
+    if(!hp && gdSet(h) && (h.adresse || h.nom)) hp = await hotelGeo(h, city, C0 || hub).catch(()=>null);
+    const ctr = hp || hub || C0, ord = {todo:0, no:1, mix:2, yes:3};
+    const mk = P.filter(x=>normQ(swCity(x.p)) === normQ(city) && (!ctr || rawKm(ctr, {lat:+x.p.lat, lng:+x.p.lng}) <= 30)).sort((a, b)=>ord[a.s] - ord[b.s])
+      .map(x=>({lat:+x.p.lat, lng:+x.p.lng, label:x.s === 'yes' ? '✓' : x.s === 'no' ? '✕' : x.s === 'mix' ? '?' : '•', color:x.s === 'todo' ? '#94a3b8' : PGC[x.s]}));
+    if(hp) mk.push({lat:hp.lat, lng:hp.lng, label:'H', color:'#1d4ed8'});
+    if(!mk.length && ctr) mk.push({lat:ctr.lat, lng:ctr.lng, label:'•', color:'#64748b'});
+    if(my !== GHD || !box.isConnected) return; const sp = box.querySelector('.wz-run');
+    if(!mk.length){ if(sp) sp.textContent = '🗺️'; return; }
+    try { const c = await drawMap({w:400, h:210, round:true, sat:true, markers:mk, maxZoom:16, pad:30, circle:hp ? {lat:hp.lat, lng:hp.lng, km:.45, col:'#1d4ed8'} : hub ? {lat:hub.lat, lng:hub.lng, km:hub.r} : null});
+      if(my !== GHD || !box.isConnected) return; if(sp) sp.remove(); c.className = 'hd-cv'; box.prepend(c); }
+    catch(e){ if(sp) sp.textContent = '🗺️'; }
+  }
+  function gdHoodHotel(hid){ const t = trip(); if(!t) return; const hs = ariData(t).hs.filter(y=>!okB(y)); guideHotel(Math.max(0, hs.findIndex(y=>y.id === hid))); }
+  // 🏨 hébergement choisi : on le place sur la carte (son adresse), puis les journées repartent de lui (à valider jour par jour)
+  async function gdFromHotel(){
+    const t = trip(); if(!t) return; if(M.lock){ toast('🔒 ' + MSGT('Mode lecture : touche le cadenas en haut pour modifier')); return; }
+    if(!t.debut){ toast('📅 ' + MSGT('Choisis d’abord les dates du voyage.')); return; }
+    toast('🏨 ' + MSGT('Je place tes hôtels sur la carte…'));
+    const up = [];
+    for(const h of ariData(t).hs.filter(gdSet)){ if(h.lat != null && h.lng != null) continue; if(!(h.adresse || h.nom)) continue;
+      const {city, C0, hub} = gdAnchors(t, h), p = await hotelGeo(h, city, C0 || hub).catch(()=>null);
+      if(p) up.push(Object.assign(clone(h), {lat:+(+p.lat).toFixed(6), lng:+(+p.lng).toFixed(6), geoAddr:h.adresse || ''})); }   // geoAddr : si l’adresse change, la position est recalculée
+    if(up.length) putQuiet(up);
+    const L = [...list('place', p=>p.trip === t.id && !p.sugg && !p.pick && !p.lock && p.date), ...list('item', i=>i.trip === t.id && i.cat === 'activite' && i.exp && !i.pick && !okB(i))];
+    if(L.length) putQuiet(L.map(x=>Object.assign(clone(x), {pick:1})));
+    closeSheet(true);
+    if(!rgItems(t).length){ toast(MSGT('Rien à réorganiser pour l’instant.')); return guideSheet(); }
+    toast('🏨 ' + MSGT('Tes journées repartent de ton hôtel : valide-les une par une.')); rgOpen();
+  }
+
+  /* ══════════ 🗺️ MA CARTE DE PRÉPARATION — en 2D ou en 3D, comme la carte en direct. On y modifie le voyage en touchant la carte :
+     visites (vert = gardée · rouge = écartée · orange = à discuter à plusieurs · blanc = à trier) → toucher pour garder ou annuler ;
+     ton hébergement (bleu) ou, s’il n’est pas encore choisi, le quartier conseillé (rouge) ; un trajet → changer de transport,
+     enregistré dans tes réservations. Tout reste faisable à la main, comme avant. ══════════ */
+  let PG = null;
+  const PGC = {yes:'#22c55e', no:'#ef4444', mix:'#f59e0b', todo:'#f1f5f9'};
+  const pgNo = p => ((M.suggNo || {})[p.trip] || []).includes(p.nom);
+  function pgSt(p){
+    if(!p || p.type !== 'place' || !p.nom) return null;
+    if(p.deleted) return p.no || ((p.sugg || p.kept) && pgNo(p)) ? 'no' : null;   // supprimée par le tri (✕) : en rouge ; nettoyée par l’appli : rien
+    const V = Object.values(p.votes || {}).filter(v=>v != null);
+    if(V.includes(1) && V.includes(0)) return 'mix';
+    if(V.length && V.every(v=>v === 0)) return 'no';
+    return p.sugg ? 'todo' : 'yes';
+  }
+  function pgPlaces(t){
+    const by = new Map();
+    Object.values(R).forEach(p=>{ if(!p || p.type !== 'place' || p.trip !== t.id || p.lat == null || p.lng == null || !isFinite(+p.lat) || !isFinite(+p.lng)) return;
+      const s = pgSt(p); if(!s) return; const k = normQ(p.nom) + '|' + (+p.lat).toFixed(2) + ',' + (+p.lng).toFixed(2), o = by.get(k);
+      if(!o || (o.p.deleted && !p.deleted)) by.set(k, {p, s}); });
+    return [...by.values()];
+  }
+  const pgFc = f => ({type:'FeatureCollection', features:f});
+  function pgVisF(t){ const ord = {todo:0, no:1, mix:2, yes:3};
+    return pgPlaces(t).sort((a, b)=>ord[a.s] - ord[b.s]).map(({p, s})=>({type:'Feature', properties:{id:p.id, name:p.nom, s, col:PGC[s]}, geometry:{type:'Point', coordinates:[+p.lng, +p.lat]}})); }
+  // 🛏️ autour de chaque hébergement choisi (adresse connue, ou réservé) : sa zone, en bleu
+  const pgHz = F => F.hotels.filter(x=>x.exact || okB(x.h)).map(x=>({type:'Feature', properties:{}, geometry:{type:'Polygon', coordinates:[p3Circle(x.p, x.exact ? .45 : .8)]}}));
+  const pgLock = () => { const t = trip(); if(M.lock || !t || t.ro){ toast('🔒 ' + MSGT('Mode lecture : touche le cadenas en haut pour modifier')); return true; } return false; };
+  async function pgOpen(focus){
+    const t = trip(); if(!t) return; pgClose(true);
+    // ouverte depuis la page des quartiers ou le menu du parcours : ✕ y ramène
+    const back = document.querySelector('#v-sheet-bg .hd-c') ? 'hd' : document.querySelector('#v-sheet-bg .gd-ch') ? 'gd' : ''; closeSheet(true);
+    const d3 = M.pgD3 !== 0, ov = document.createElement('div'); ov.id = 'cv-pg'; ov.className = 'p3-far'; document.body.appendChild(ov); document.body.style.overflow = 'hidden';
+    ov.innerHTML = `<div id="pg-map"></div>
+      <div class="lv-top"><button type="button" class="lv-x" onclick="CV.pgClose('x')" aria-label="${esc(MSGT('Fermer'))}">✕</button>
+        <div class="lv-t"><span class="lv-badge p3-badge">🗺️ ${esc(MSGT('Préparation'))}</span><b data-notr>${esc(t.titre || '')}</b><small><span>${esc(MSGT('Touche une visite ou un trajet pour le modifier'))}</span></small></div></div>
+      <div class="lv-tools"><button type="button" data-d="2"${d3 ? '' : ' class="on"'} onclick="CV.pgD3(0)" aria-label="2D">2D</button><button type="button" data-d="3"${d3 ? ' class="on"' : ''} onclick="CV.pgD3(1)" aria-label="3D">3D</button>
+        <button type="button" data-b="sat" class="on" onclick="CV.pgBase('sat')" aria-label="${esc(MSGT('Satellite'))}">🛰️</button><button type="button" data-b="plan" onclick="CV.pgBase('plan')" aria-label="${esc(MSGT('Plan'))}">🗺️</button><button type="button" onclick="CV.pgFit()" aria-label="${esc(MSGT('Tout le voyage'))}">🎯</button></div>
+      <div class="lv-msg" id="pg-msg">🌍 ${esc(MSGT('Chargement de la carte…'))}</div>
+      <div class="pg-card" id="pg-card" hidden></div>
+      <div class="p3-leg pg-leg" id="pg-leg"></div>`;
+    const me = PG = {map:null, mk:[], lk:[], t:t.id, d3, focus:focus || '', F:null, font:null, back};
+    pgLegend();
+    try {
+      await loadCss((window.VZ_B || '') + 'vendor/maplibre-gl.css');
+      if(!window.maplibregl) await loadJs((window.VZ_B || '') + 'vendor/maplibre-gl.js');
+      if(PG !== me) return;
+      const style = {version:8, projection:{type:d3 ? 'globe' : 'mercator'},
+        sources:{sat:Object.assign(esriML('sat'), {maxzoom:18, attribution:'Esri, Maxar'}),
+          dem:{type:'raster-dem', tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], tileSize:256, maxzoom:14, encoding:'terrarium', attribution:'Mapzen terrain'}},
+        layers:[{id:'bg', type:'background', paint:{'background-color':'#0b1a3a'}}, {id:'sat', type:'raster', source:'sat'}],
+        sky:{'sky-color':'#0b1a3a', 'horizon-color':'#5fa8ff', 'fog-color':'#0b1a3a', 'sky-horizon-blend':0.6, 'horizon-fog-blend':0.4, 'fog-ground-blend':0.2, 'atmosphere-blend':['interpolate',['linear'],['zoom'],0,1,5,1,7,0]}};
+      try {   // 🗺️ le plan (OpenFreeMap) et les noms des villes, comme sur la carte 3D
+        const lib = await withTimeout(fetch('https://tiles.openfreemap.org/styles/liberty').then(r=>r.json()), 5000);
+        const vs = Object.entries(lib.sources || {}).find(([,v])=>v.type === 'vector');
+        if(lib.glyphs && vs){ style.glyphs = lib.glyphs; style.sources.ofm = vs[1];
+          style.layers.push({id:'ofm-b-bg', type:'background', layout:{visibility:'none'}, paint:{'background-color':'#f8f4f0'}}, ...ofmBase(lib, vs[0], 0, true));
+          const lang = (l => /^(ar|hi)$/.test(l) ? 'en' : l)((window.I18N && I18N.lang) || 'fr');
+          (lib.layers || []).filter(l=>l.source === vs[0] && l.type === 'symbol' && l['source-layer'] === 'place' && /country|city|town|village|suburb|state|capital/.test(l.id)).forEach(l=>{ const x = JSON.parse(JSON.stringify(l)); x.source = 'ofm';
+            if(!/country/.test(x.id)) x.minzoom = Math.max(x.minzoom || 0, 8);
+            x.layout = Object.assign({}, x.layout, {'text-field':['coalesce',['get','name:' + lang],['get','name:latin'],['get','name']]}); if(x.layout['text-font'] && !me.font) me.font = x.layout['text-font'];
+            x.paint = Object.assign({}, x.paint, {'text-color':'#ffffff', 'text-halo-color':'rgba(10,20,50,.85)', 'text-halo-width':1.4}); style.layers.push(x); });
+        }
+      } catch(e){}
+      if(PG !== me) return;
+      const map = me.map = new maplibregl.Map({container:'pg-map', style, center:[8, 38], zoom:d3 ? 1.6 : 3, pitch:0, maxPitch:75, maxZoom:18,
+        pixelRatio:Math.min(2, window.devicePixelRatio || 1), maxTileCacheSize:80, fadeDuration:0, attributionControl:{compact:true}, dragRotate:d3, pitchWithRotate:d3});
+      if(!d3) try { map.touchZoomRotate.disableRotation(); } catch(e){}
+      let ok = false; const go = async ()=>{
+        if(PG !== me || ok) return; ok = true;
+        if(d3) try { map.setTerrain({source:'dem', exaggeration:1.3}); } catch(e){}
+        const F = await p3Data(t); if(PG !== me) return; me.F = F;
+        pgLayers(map); pgMarkers(); pgLegend();
+        // 👆 un seul geste pour tout : la visite la plus proche du doigt, sinon l’activité, sinon le trajet ; ailleurs = on referme la fiche
+        map.on('click', e=>{ if(PG !== me) return; const b = [[e.point.x - 16, e.point.y - 16], [e.point.x + 16, e.point.y + 16]];
+          const q = ly => { try { return map.getLayer(ly) ? map.queryRenderedFeatures(b, {layers:[ly]}) : []; } catch(_){ return []; } };
+          const v = q('pg-vis')[0], a = q('pg-act')[0], l = q('pg-legs-hit')[0];
+          if(v) return pgVisit(v.properties.id); if(a) return pgAct(a.properties.id); if(l) return pgLeg(l.properties.id); pgCard(null); });
+        const m = document.getElementById('pg-msg'); if(m) m.hidden = true;
+        const zc = () => { const z = map.getZoom(), o = document.getElementById('cv-pg'); if(o) o.className = z >= 10.5 ? 'p3-near' : z >= 8 ? 'p3-mid' : 'p3-far'; };
+        map.on('zoom', zc); zc();
+        setTimeout(()=>pgFit(me.focus), 400);
+      };
+      map.on('style.load', go); map.on('load', go); map.on('error', ()=>{});
+    } catch(e){ const m = document.getElementById('pg-msg'); if(m) m.textContent = '⚠️ ' + (e && e.message ? errTxt(e) : MSGT('Carte indisponible')); }
+  }
+  function pgLayers(map){
+    const F = PG.F, t = R[PG.t], fc = f => ({type:'geojson', data:pgFc(f)}), font = PG.font || ['Noto Sans Bold'], lbl = !!map.getStyle().glyphs;
+    map.addSource('pg-hood', fc(F.hood)); map.addSource('pg-rays', fc(F.rays)); map.addSource('pg-hz', fc(pgHz(F))); map.addSource('pg-legs', fc(F.legs)); map.addSource('pg-act', fc(F.acts)); map.addSource('pg-vis', fc(t ? pgVisF(t) : []));
+    map.addLayer({id:'pg-hood-f', type:'fill', source:'pg-hood', minzoom:9, paint:{'fill-color':'#e11d48', 'fill-opacity':.18}});
+    map.addLayer({id:'pg-hood-l', type:'line', source:'pg-hood', minzoom:9, paint:{'line-color':'#e11d48', 'line-width':3, 'line-dasharray':[2, 1.2]}});
+    map.addLayer({id:'pg-hz-f', type:'fill', source:'pg-hz', minzoom:9, paint:{'fill-color':'#3b82f6', 'fill-opacity':.2}});
+    map.addLayer({id:'pg-hz-l', type:'line', source:'pg-hz', minzoom:9, paint:{'line-color':'#3b82f6', 'line-width':3}});
+    map.addLayer({id:'pg-rays', type:'line', source:'pg-rays', minzoom:10.5, paint:{'line-color':'#fde68a', 'line-width':2, 'line-dasharray':[2, 1.6]}});
+    map.addLayer({id:'pg-legs-c', type:'line', source:'pg-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':'rgba(0,0,0,.45)', 'line-width':['interpolate',['linear'],['zoom'],2,4,10,9]}});
+    map.addLayer({id:'pg-legs', type:'line', source:'pg-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':['get','col'], 'line-width':['interpolate',['linear'],['zoom'],2,2.5,10,6]}});
+    map.addLayer({id:'pg-legs-l', type:'line', source:'pg-legs', minzoom:9, filter:['==',['get','local'],1], layout:{'line-cap':'round'}, paint:{'line-color':['get','col'], 'line-width':4, 'line-dasharray':[1.5, 1.2]}});
+    map.addLayer({id:'pg-legs-hit', type:'line', source:'pg-legs', filter:['!=',['get','souv'],1], layout:{'line-cap':'round'}, paint:{'line-color':'#000', 'line-width':26, 'line-opacity':0.01}});   // zone de toucher large (invisible)
+    map.addLayer({id:'pg-act', type:'circle', source:'pg-act', minzoom:6, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],6,3,10,6,14,9], 'circle-stroke-color':'#1e1b4b', 'circle-stroke-width':2.5}});
+    map.addLayer({id:'pg-vis', type:'circle', source:'pg-vis', minzoom:6, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],6,3,10,6,14,10],
+      'circle-stroke-color':['match',['get','s'],'no','#7f1d1d','mix','#7c2d12','#ffffff'], 'circle-stroke-width':2.2}});
+    if(lbl){ const L = (id, src, mz, col) => map.addLayer({id, type:'symbol', source:src, minzoom:mz, layout:{'text-field':['get','name'], 'text-font':font, 'text-size':12, 'text-offset':[0, 1.2], 'text-anchor':'top', 'text-max-width':10, 'text-optional':true},
+        paint:{'text-color':col || '#fff', 'text-halo-color':'rgba(10,20,50,.9)', 'text-halo-width':1.5}});
+      L('pg-vis-t', 'pg-vis', 11.5, ['match',['get','s'],'no','#fecaca','mix','#fde68a','#ffffff']); L('pg-act-t', 'pg-act', 10.5); }
+  }
+  // les villes, les hébergements (toucher = choisir / ma résa) et le moyen de transport au milieu de chaque trajet (toucher = changer)
+  function pgMarkers(){
+    if(!PG || !PG.map || !PG.F) return; const map = PG.map, F = PG.F; PG.mk.forEach(m=>m.remove()); PG.mk = [];
+    const add = (el, p, cls, anchor) => { el.className = cls; PG.mk.push(new maplibregl.Marker({element:el, anchor:anchor || 'center'}).setLngLat([p.lng, p.lat]).addTo(map)); };
+    F.cities.forEach(c=>{ const e = document.createElement('div'); e.innerHTML = `<i>${c.home ? '🏠' : c.via ? '·' : c.n}</i><span data-notr>${esc(c.name)}</span>`; add(e, c.c, 'p3-city' + (c.home ? ' home' : c.via ? ' via' : '')); });
+    F.hotels.forEach(x=>{ const e = document.createElement('button'); e.type = 'button'; const set = gdSet(x.h);
+      e.innerHTML = `<i style="background:${set ? '#3b82f6' : P3C[x.st]}">🛏️</i><span data-notr>${esc(x.city)}</span><small>${esc(MSGT(x.st === 'paid' ? 'Payé' : x.st === 'booked' ? 'Réservé' : x.exact ? 'À réserver' : 'À réserver · dans le quartier conseillé'))}</small>`;
+      e.onclick = ev => { ev.stopPropagation(); pgHot(x.h.id); }; add(e, x.p, 'p3-hot pg-hot'); });
+    pgLegIcons();
+  }
+  function pgLegIcons(){
+    if(!PG || !PG.map || !PG.F) return; const map = PG.map; PG.lk.forEach(m=>m.remove()); PG.lk = [];
+    PG.F.legs.forEach(f=>{ const pr = f.properties; if(pr.local || pr.souv || !pr.id || !R[pr.id]) return; const C = f.geometry.coordinates; if(C.length < 2) return;
+      const k = Math.floor((C.length - 1) / 2), m = C.length > 2 ? C[k] : [(C[0][0] + C[1][0]) / 2, (C[0][1] + C[1][1]) / 2];
+      const e = document.createElement('button'); e.type = 'button'; e.className = 'vm-tr pg-tr'; e.style.borderColor = pr.col || '#fff'; e.textContent = MODE_ICON[pr.mode] || '🧭';
+      e.setAttribute('aria-label', MSGT('Changer de transport')); e.onclick = ev => { ev.stopPropagation(); pgLeg(pr.id); };
+      PG.lk.push(new maplibregl.Marker({element:e, anchor:'center'}).setLngLat(m).addTo(map)); });
+  }
+  function pgLegend(){
+    const box = document.getElementById('pg-leg'), t = trip(); if(!box || !t) return; const L = pgPlaces(t), n = s => L.filter(x=>x.s === s).length, multi = swMulti(t), mn = box.classList.contains('min');
+    box.innerHTML = `<button type="button" class="p3-lh" onclick="this.parentNode.classList.toggle('min')"><b>🗺️ ${esc(MSGT('Ma carte de préparation'))}</b><em>▾</em></button>
+      <div class="p3-rows">
+        <span><i style="background:${PGC.yes}"></i>${esc(MSGT('Gardées'))} <b>${n('yes')}</b></span>
+        <span><i style="background:${PGC.no}"></i>${esc(MSGT('Écartées'))} <b>${n('no')}</b></span>
+        ${multi || n('mix') ? `<span><i style="background:${PGC.mix}"></i>${esc(MSGT('À discuter'))} <b>${n('mix')}</b></span>` : ''}
+        ${n('todo') ? `<span><i style="background:${PGC.todo}"></i>${esc(MSGT('À trier'))} <b>${n('todo')}</b></span>` : ''}
+        <span><i class="ring pg-ring h"></i>${esc(MSGT('Ton hébergement'))}</span>
+        <span><i class="ring"></i>${esc(MSGT('Quartier conseillé'))}</span>
+      </div>
+      <small class="p3-z">👆 ${esc(MSGT('Touche une visite pour la garder ou l’annuler, un trajet pour changer de transport. Tout est enregistré dans ton programme et tes réservations.'))}</small>`;
+    box.classList.toggle('min', mn);
+  }
+  // la fiche en bas de la carte (une seule à la fois) ; la légende se replie pour lui laisser la place
+  function pgCard(html){ const c = document.getElementById('pg-card'), lg = document.getElementById('pg-leg'); if(!c) return;
+    if(!html){ c.hidden = true; c.innerHTML = ''; return; }
+    c.innerHTML = `<button type="button" class="pg-x" onclick="CV.pgCardX()" aria-label="${esc(MSGT('Fermer'))}">✕</button>${html}`; c.hidden = false; if(lg) lg.classList.add('min'); hydrate(); }
+  const pgCardX = () => pgCard(null);
+  function pgVisit(id){
+    const p = R[id], t = trip(); if(!p || !t) return; const s = pgSt(p); if(!s) return; const oth = swOthers(p), my = swMyVote(p), c = swCity(p);
+    const lab = {yes:'Au programme', no:'Écartée', mix:'À discuter', todo:'À trier'}[s];
+    const showNo = s === 'yes' || s === 'todo' || (s === 'mix' && my !== 0), showYes = s !== 'yes' && !(s === 'mix' && my === 1);
+    pgCard(`<div class="pg-ct"><b><i class="pg-dot" style="background:${PGC[s]}"></i><span data-notr>${esc(p.nom)}</span></b>
+      <small>${c ? '📍 <span data-notr>' + esc(c) + '</span> · ' : ''}${p.date && !p.deleted && s === 'yes' ? esc(fshort(p.date)) + ' · ' : ''}${esc(MSGT(lab))}</small>
+      ${oth.length ? `<small class="pg-vt">${oth.map(([w, v])=>(v ? '❤️ ' : '✕ ') + esc(RF(v ? '{0} l’a gardé' : '{0} l’a écarté', pname(w)))).join(' · ')}</small>` : ''}</div>
+      <div class="pg-acts">${showYes ? `<button type="button" class="yes" onclick="CV.pgVote('${ja(id)}',1)">✓ ${esc(MSGT(s === 'no' ? 'Finalement, je la garde' : 'Je la garde'))}</button>` : ''}
+        ${showNo ? `<button type="button" class="no" onclick="CV.pgVote('${ja(id)}',0)">✕ ${esc(MSGT(s === 'yes' || s === 'mix' ? 'Annuler cette visite' : 'Non merci'))}</button>` : ''}
+        ${p.deleted ? '' : `<button type="button" onclick="CV.pgInfo('${ja(id)}')">ℹ️ ${esc(MSGT('Infos'))}</button>`}</div>`);
+  }
+  // ✓ / ✕ depuis la carte : la même règle que le tri en cartes (à plusieurs, mon ✕ ne retire rien aux autres)
+  function pgVote(id, keep){
+    const p = R[id], t = p && R[p.trip]; if(!p || !t || pgLock()) return;
+    const multi = swMulti(t), c = clone(p); keep = +keep === 1;
+    if(M.me) c.votes = Object.assign({}, p.votes || {}, {[M.me]:keep ? 1 : 0});
+    if(keep){ const back = !!(p.deleted || p.sugg); delete c.deleted; delete c.no; delete c.sugg; if(!c.kept) c.kept = Date.now(); if(back) c.pick = 1;   // revenue au programme : à ranger dans un jour
+      const nl = (M.suggNo || {})[p.trip] || [], i = nl.indexOf(p.nom); if(i >= 0){ nl.splice(i, 1); persist(); } }
+    else if(multi){ if(!Object.values(c.votes || {}).includes(1)){ c.sugg = true; delete c.kept; delete c.pick; } }   // plus personne ne la garde : elle redevient une idée
+    else { c.deleted = true; c.no = 1; M.suggNo = M.suggNo || {}; const L = M.suggNo[p.trip] = M.suggNo[p.trip] || []; if(!L.includes(p.nom)) L.push(p.nom); if(L.length > 300) L.shift(); persist(); }
+    putQuiet([c]); try { persistNow(); } catch(e){}
+    toast(keep ? '✓ ' + p.nom + ' · ' + MSGT('Ajouté au programme') : '✕ ' + p.nom + ' · ' + MSGT('Visite annulée'));
+    pgCard(null); pgVisRefresh(); refresh();
+  }
+  function pgVisRefresh(){ if(!PG || !PG.map) return; const t = R[PG.t]; try { const s = PG.map.getSource('pg-vis'); if(s && t) s.setData(pgFc(pgVisF(t))); } catch(e){} pgLegend(); }
+  const pgInfo = id => pgAway(()=>plInfo(id));
+  const pgEdit = id => pgAway(()=>edit(id));
+  function pgAct(id){
+    const x = R[id], t = trip(); if(!x || !t) return;
+    pgCard(`<div class="pg-ct"><b>🎟️ <span data-notr>${esc(x.titre || '')}</span></b><small>${x.date ? esc(fshort(x.date)) + ' · ' : ''}${esc(MSGT(x.statut === 'paid' ? 'Payé' : okB(x) ? 'Réservé' : 'À réserver'))}</small></div>
+      <div class="pg-acts" data-bkid="${esc(id)}">${okB(x) ? '' : ariLink(x, t)}<button type="button" onclick="CV.pgEdit('${ja(id)}')">✏️ ${esc(MSGT(okB(x) ? 'Ma résa' : 'Saisir ma résa'))}</button>
+        ${okB(x) ? '' : `<button type="button" class="no" onclick="CV.pgActDel('${ja(id)}')">✕ ${esc(MSGT('Annuler cette activité'))}</button>`}</div>`);
+  }
+  async function pgActDel(id){
+    const x = R[id]; if(!x || okB(x) || pgLock()) return;
+    if(!(await uiConfirm(RF('Retirer « {0} » de ton programme ?', x.titre || '')))) return;
+    if(x.exp){ M.expNo = M.expNo || {}; const nl = M.expNo[x.trip] = M.expNo[x.trip] || []; if(!nl.includes(x.exp)) nl.push(x.exp); persist(); }   // plus reproposée
+    putQuiet([Object.assign(clone(x), {deleted:true})]); toast('✕ ' + MSGT('Activité retirée')); pgCard(null);
+    if(PG && PG.F && PG.map){ PG.F.acts = PG.F.acts.filter(f=>f.properties.id !== id); try { PG.map.getSource('pg-act').setData(pgFc(PG.F.acts)); } catch(e){} }
+    refresh();
+  }
+  function pgHot(hid){
+    const h = R[hid], t = trip(); if(!h || !t) return; const city = stayCity(h) || h.titre || '', set = gdSet(h), nn = nights(h.date, h.dateFin || h.date), nm = String(h.nom || '').trim();
+    pgCard(`<div class="pg-ct"><b>🛏️ <span data-notr>${esc(set && nm && normQ(nm) !== normQ(city) ? nm : city)}</span></b>
+      <small>${esc(fshort(h.date))} → ${esc(fshort(h.dateFin || h.date))} · ${esc(RF(nn > 1 ? '{0} nuits' : '{0} nuit', nn))} · ${esc(MSGT(h.statut === 'paid' ? 'Payé' : okB(h) ? 'Réservé' : set ? 'Noté, pas encore réservé' : 'À réserver · dans le quartier conseillé'))}</small>${h.adresse ? `<small data-notr>${esc(h.adresse)}</small>` : ''}</div>
+      <div class="pg-acts">${okB(h) ? '' : `<button type="button" class="yes" onclick="CV.pgHotel('${ja(hid)}')">🏘️ ${esc(MSGT('Où dormir ? Quartier et réservation'))}</button>`}
+        <button type="button" onclick="CV.pgEdit('${ja(hid)}')">✏️ ${esc(MSGT(okB(h) ? 'Ma résa' : 'Saisir mon hébergement (adresse, prix…)'))}</button></div>`);
+  }
+  function pgHotel(hid){ const t = trip(); if(!t) return; const hs = ariData(t).hs.filter(y=>!okB(y)); pgAway(()=>guideHotel(Math.max(0, hs.findIndex(y=>y.id === hid)))); }
+  // 🚆 un trajet : changer de transport (avion, train, bus…) — la fiche du trajet suit, donc tes réservations aussi
+  function pgLeg(id){
+    const it = R[id], t = trip(); if(!it || it.cat !== 'transport' || !t) return;
+    pgCard(`<div class="pg-ct"><b>${MODE_ICON[it.mode] || '🧭'} <span data-notr>${esc(itLbl(it))}</span></b><small>${it.date ? esc(fshort(it.date)) + ' · ' : ''}${esc(MSGT(it.statut === 'paid' ? 'Payé' : okB(it) ? 'Réservé' : needBook(it) ? 'À réserver' : 'Rien à réserver'))}</small></div>
+      <div class="pg-k">${esc(MSGT('Changer de transport'))}</div>
+      <div class="pg-modes">${Object.keys(MODE_ICON).map(m=>`<button type="button" class="${it.mode === m ? 'on' : ''}" onclick="CV.pgMode('${ja(id)}','${ja(m)}')"><span>${MODE_ICON[m]}</span><small>${esc(MSGT(m))}</small></button>`).join('')}</div>
+      <div class="pg-acts" data-bkid="${esc(id)}">${okB(it) ? '' : ariLink(it, t)}<button type="button" onclick="CV.pgEdit('${ja(id)}')">✏️ ${esc(MSGT(okB(it) ? 'Ma résa' : 'Saisir ma résa'))}</button></div>`);
+  }
+  async function pgMode(id, m){
+    const it = R[id]; if(!it || it.cat !== 'transport' || !MODE_ICON[m] || it.mode === m || pgLock()) return;
+    if(okB(it) && !(await uiConfirm(RF('Ce trajet est déjà réservé. Passer en {0} ? Il redevient « à réserver ».', MSGT(m))))) return;
+    const c = clone(it); c.mode = m; if(okB(it)) c.statut = 'todo';
+    put(c, MODE_ICON[m] + ' ' + RF('Trajet en {0} : noté dans tes réservations', MSGT(m)));
+    if(PG && PG.F){ PG.F.legs.forEach(f=>{ if(f.properties.id === id){ f.properties.mode = m; f.properties.col = P3C[p3St(c)]; } });
+      try { PG.map.getSource('pg-legs').setData(pgFc(PG.F.legs)); } catch(e){} pgLegIcons(); }
+    pgLeg(id); refresh();
+  }
+  // ✏️ une fiche ouverte depuis la carte : la carte attend derrière, puis se remet à jour (adresse d’hôtel, nouvelle visite…)
+  function pgAway(fn){
+    const me = PG, ov = document.getElementById('cv-pg'); if(!me || !ov){ try { fn(); } catch(e){} return; }
+    pgCard(null); mapAway(ov, ()=>PG === me && me && me.map, ()=>pgClose(), fn);
+    const iv = setInterval(()=>{ if(PG !== me || !ov.isConnected){ clearInterval(iv); return; } if(ov.style.display !== 'none'){ clearInterval(iv); pgReload(); } }, 500);
+  }
+  async function pgReload(){
+    const me = PG, t = me && R[me.t]; if(!me || !me.map || !t) return; let F = null; try { F = await p3Data(t); } catch(e){} if(PG !== me || !F) return; me.F = F; const map = me.map;
+    try { map.getSource('pg-hood').setData(pgFc(F.hood)); map.getSource('pg-rays').setData(pgFc(F.rays)); map.getSource('pg-hz').setData(pgFc(pgHz(F)));
+      map.getSource('pg-legs').setData(pgFc(F.legs)); map.getSource('pg-act').setData(pgFc(F.acts)); map.getSource('pg-vis').setData(pgFc(pgVisF(t))); } catch(e){}
+    pgMarkers(); pgLegend();
+  }
+  // 🎯 tout le voyage ; ou, depuis la page des quartiers, directement l’étape (son hôtel ou son quartier)
+  function pgFit(focus){
+    if(!PG || !PG.map || !PG.F) return; const F = PG.F, map = PG.map, d3 = PG.d3;
+    const hf = focus && F.hotels.find(x=>x.h.id === focus);
+    if(hf){ try { map.flyTo({center:[hf.p.lng, hf.p.lat], zoom:13.4, pitch:d3 ? 55 : 0, bearing:d3 ? -12 : 0, duration:2400, essential:true}); } catch(e){} return; }
+    const pts = [...F.cities.filter(c=>!c.home).map(c=>c.c), ...F.hotels.map(h=>h.p)], use = pts.length ? pts : F.cities.map(c=>c.c); if(!use.length) return;
+    const X = p => (p.lng + 180) / 360, Y = p => { const r = p.lat * Math.PI / 180; return (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2; };
+    const xs = use.map(X), ys = use.map(Y), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const el = map.getContainer(), W = Math.max(200, el.clientWidth - 110), H = Math.max(200, el.clientHeight - 360);
+    const dx = Math.max(x1 - x0, 1e-6), dy = Math.max(y1 - y0, 1e-6), z = Math.log2(Math.min(W / (dx * 512), H / (dy * 512)));
+    const zoom = Math.max(3, Math.min(use.length > 1 ? 11.5 : 12.5, z - .3)), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    const lng = cx * 360 - 180, lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * cy))) * 180 / Math.PI;
+    try { map.flyTo({center:[lng, lat], zoom, pitch:d3 ? (zoom > 9 ? 50 : 35) : 0, bearing:d3 ? -12 : 0, duration:2400, essential:true, offset:[0, -60]}); } catch(e){ try { map.jumpTo({center:[lng, lat], zoom}); } catch(_){} }
+  }
+  // 2D (carte à plat, plus légère) ↔ 3D (globe, relief, inclinaison) ; le choix est retenu
+  function pgD3(on){
+    if(!PG || !PG.map) return; on = +on === 1; const map = PG.map; PG.d3 = on; M.pgD3 = on ? 1 : 0; persist();
+    try { map.setProjection({type:on ? 'globe' : 'mercator'}); } catch(e){}
+    try { map.setTerrain(on ? {source:'dem', exaggeration:1.3} : null); } catch(e){}
+    try { if(on){ map.dragRotate.enable(); map.touchZoomRotate.enableRotation(); } else { map.dragRotate.disable(); map.touchZoomRotate.disableRotation(); } } catch(e){}
+    try { map.easeTo({pitch:on ? (map.getZoom() > 9 ? 55 : 35) : 0, bearing:on ? -12 : 0, duration:900}); } catch(e){}
+    document.querySelectorAll('#cv-pg [data-d]').forEach(b=>b.classList.toggle('on', (b.dataset.d === '3') === on));
+  }
+  function pgBase(b){
+    if(!PG || !PG.map) return; const map = PG.map, L = (map.getStyle().layers || []).filter(l=>/^ofm-b-/.test(l.id)).map(l=>l.id);
+    if(b === 'plan' && !L.length){ toast('🗺️ ' + MSGT('Plan indisponible hors connexion')); return; }
+    try { map.setLayoutProperty('sat', 'visibility', b === 'sat' ? 'visible' : 'none'); } catch(e){}
+    L.forEach(id=>{ try { map.setLayoutProperty(id, 'visibility', b === 'plan' ? 'visible' : 'none'); } catch(e){} });
+    document.querySelectorAll('#cv-pg .lv-tools [data-b]').forEach(x=>x.classList.toggle('on', x.dataset.b === b));
+  }
+  function pgClose(quiet){
+    const back = PG && PG.back;
+    if(PG){ try { if(PG.map) PG.map.remove(); } catch(e){} PG = null; }
+    const o = document.getElementById('cv-pg'); if(o){ if(o._ob) try { o._ob.disconnect(); } catch(e){} o.remove(); } if(!quiet || quiet === 'x') document.body.style.overflow = '';
+    if(quiet === 'x' && back) setTimeout(()=>{ try { const t = trip(); if(t && guideOn(t)){ if(back === 'hd') gdHoods(); else guideSheet(); } } catch(e){} }, 60);   // ✕ : retour à la page du parcours d’où on venait
   }
 
 

@@ -559,8 +559,9 @@
       g.strokeStyle = 'rgba(0,0,0,.45)'; g.lineWidth = 4; g.beginPath(); g.moveTo(a1,b1); g.lineTo(a2,b2); g.stroke();
       g.strokeStyle = '#fde68a'; g.lineWidth = 2.2; g.beginPath(); g.moveTo(a1,b1); g.lineTo(a2,b2); g.stroke(); g.setLineDash([]); });
     if(o.circle && o.circle.lat != null){ const [a,b] = P(o.circle), r = Math.max(14, Math.abs(P({lat:o.circle.lat + o.circle.km / 111, lng:o.circle.lng})[1] - b));
-      g.fillStyle = 'rgba(225,29,72,.22)'; g.strokeStyle = '#fff'; g.lineWidth = 5; g.beginPath(); g.arc(a, b, r, 0, 7); g.fill(); g.stroke();
-      g.strokeStyle = '#e11d48'; g.lineWidth = 2.5; g.beginPath(); g.arc(a, b, r, 0, 7); g.stroke(); }
+      const cc = /^#[0-9a-f]{6}$/i.test(o.circle.col || '') ? o.circle.col : '#e11d48';   // 🏘️ rouge = quartier conseillé ; une autre couleur au choix (ton hôtel…)
+      g.fillStyle = cc + '38'; g.strokeStyle = '#fff'; g.lineWidth = 5; g.beginPath(); g.arc(a, b, r, 0, 7); g.fill(); g.stroke();
+      g.strokeStyle = cc; g.lineWidth = 2.5; g.beginPath(); g.arc(a, b, r, 0, 7); g.stroke(); }
     if(o.round) (o.markers||[]).forEach(m=>{   // repères ronds numérotés, nom dans une pastille blanche
       const [a,b] = P(m); g.fillStyle = m.color || '#7C3AED'; g.strokeStyle = '#fff'; g.lineWidth = 3; g.beginPath(); g.arc(a, b, m.label === '•' ? 5 : 11, 0, 7); g.fill(); g.stroke();
       if(m.label !== '•'){ g.fillStyle = '#fff'; g.font = 'bold 11px -apple-system,Helvetica,Arial,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(m.label), a, b + .5); g.textBaseline = 'alphabetic'; }
@@ -1329,9 +1330,10 @@ ${pm.join('\n')}</Document></kml>`;
     expPut(t, h, e); toast('🎟️ ' + MSGT('Au programme, à réserver')); expOpen(); refresh();
   }
   function expDrop(key){ const t = trip(); if(!t) return; M.expNo = M.expNo || {}; const nl = M.expNo[t.id] = M.expNo[t.id] || []; if(!nl.includes(key)) nl.push(key); persist(); expOpen(); refresh(); }
-  async function suggFill(tid, more){
+  async function suggFill(tid, more, only){
     if(SG && SG.tid === tid) return;
-    const hs = list('item', i=>i.trip === tid && i.cat === 'hotel' && i.date).sort((a,b)=>a.date.localeCompare(b.date));
+    // only : une seule ville (« Voir plus de visites à… » à la fin de ses cartes dans le tri)
+    const hs = list('item', i=>i.trip === tid && i.cat === 'hotel' && i.date && (!only || normQ(stayCity(i)) === normQ(only))).sort((a,b)=>a.date.localeCompare(b.date));
     if(!hs.length){ toast('🏨 ' + MSGT('Ajoute d’abord une étape (une ville où dormir).')); return; }
     if(M.suggRun) delete M.suggRun;
     const nOf = d => list('place', p=>p.trip === tid && p.date === d).length;
@@ -1616,12 +1618,24 @@ ${pm.join('\n')}</Document></kml>`;
       <button type="button" class="sw-list" onclick="CV.suggList()" aria-label="${esc(MSGT('Voir en liste'))}">☰</button></div>
       <div class="sw-bar"><span style="width:${total ? done / total * 100 : 100}%"></span></div>
       <div id="sw-stopw">${swStopB(t, left)}</div>`;
+    // 🏁 fin d’une ville : plus de visites pour cette étape, ou la ville suivante
+    if(SW.gate){ const g = SW.gate, kc = list('place', p=>p.trip === t.id && !p.sugg && normQ(swCity(p)) === normQ(g.from)).length;
+      ov.innerHTML = head + `<div class="sw-end sw-gate"><div class="sw-end-i">🏁</div><h2>${RF('Fini pour {0} !', `<span data-notr>${esc(g.from)}</span>`)}</h2>
+        <p>${esc(RF('{0} visite(s) au programme', kc))}</p>
+        ${g.busy ? `<div class="ar-run wz-run">📡 ${esc(MSGT('Je cherche d’autres visites…'))}</div>`
+          : g.none ? `<div class="v-sum-small sw-gn">${esc(MSGT('Pas d’autre idée pour l’instant : tu as déjà les lieux les plus connus.'))}</div>`
+          : `<button type="button" class="v-btn sec sw-gm" onclick="CV.swGateMore()">＋ ${esc(RF('Voir plus de visites à {0}', g.from))}</button>`}
+        <button type="button" class="v-btn" onclick="CV.swGateNext()"${g.busy ? ' disabled' : ''}>${g.to ? esc(RF('Continuer avec {0}', g.to)) : esc(MSGT('Continuer'))} ›</button>
+        ${SW.hist.length && !g.busy ? `<button type="button" class="v-btn sec" onclick="CV.swUndo()">↩️ ${esc(MSGT('Annuler le dernier choix'))}</button>` : ''}</div>`;
+      return;
+    }
     if(!left.length){
       const xn = expCount(t);
       const pk = rgItems(t).length;
       ov.innerHTML = head + `<div class="sw-end"><div class="sw-end-i">✨</div><h2>${esc(MSGT('Tout est trié !'))}</h2><p>${esc(RF('{0} lieu(x) ajouté(s) à ton programme.', SW.kept))}</p>
-        ${guideOn(t) ? `<button type="button" class="v-btn" onclick="CV.guideNext('sw')">🧭 ${SG && SG.tid === t.id ? esc(MSGT('Continuer : les villes suivantes')) : pk ? '② ' + esc(MSGT('Ranger mes visites dans les jours')) + ' (' + pk + ')' : esc(MSGT('Continuer mon parcours guidé'))}</button>`
+        ${guideOn(t) ? `<button type="button" class="v-btn" onclick="CV.guideNext('sw')">${SG && SG.tid === t.id ? '🧭 ' + esc(MSGT('Continuer : les villes suivantes')) : '🏘️ ' + esc(MSGT('Continuer : où dormir ?'))}</button>`
           : pk ? `<button type="button" class="v-btn" onclick="CV.swClose(1);CV.rgOpen()">② ${esc(MSGT('Ranger mes visites dans les jours'))} (${pk})</button>` : ''}
+        ${SW.lastCity && !(SG && SG.tid === t.id) ? `<button type="button" class="v-btn sec" onclick="CV.swEndMore()">＋ ${esc(RF('Voir plus de visites à {0}', SW.lastCity))}</button>` : ''}
         <button type="button" class="v-btn${pk || guideOn(t) ? ' sec' : ''}" onclick="CV.swClose();CV.suggMore()">＋ ${esc(MSGT('Nouvelles suggestions'))}</button>
         <button type="button" class="v-btn sec" onclick="CV.suggRedo()">🔄 ${esc(MSGT('Refaire les suggestions'))}</button>
         <button type="button" class="v-btn sec" onclick="CV.swReset()">🔁 ${esc(MSGT('Recommencer ma sélection à zéro'))}</button>
@@ -1643,14 +1657,18 @@ ${pm.join('\n')}</Document></kml>`;
   }
   const swLeft = () => SW ? SW.ids.slice(SW.i).filter(swPend) : [];
   // 📍 aller directement à une ville : ses idées passent devant, les autres restent à trier après
-  function swCityGo(c){ if(!SW) return; const left = swLeft(), of = id => (swCityOf(swRec(id)) || '—') === c;
+  function swCityGo(c){ if(!SW) return; SW.gate = null; const left = swLeft(), of = id => (swCityOf(swRec(id)) || '—') === c;
     SW.ids = SW.ids.slice(0, SW.i).concat(left.filter(of), left.filter(id=>!of(id))); swRender(); }
   function swPre(left){ left.slice(2, 5).forEach(id=>{ const r = swRec(id); if(r) swInfo(r).then(x=>{ if(x.img) (new Image()).src = x.img; }); }); }   // les suivantes se préparent
   // carte suivante sans tout redessiner : celle de derrière passe devant (déjà chargée), une nouvelle se glisse derrière
   const swStopB = (t, left) => left.length && rgItems(t).length ? `<button type="button" class="sw-stop" onclick="CV.swStopRg()">② ${esc(MSGT('Ranger maintenant'))} (${rgItems(t).length}) <small>· ${esc(RF('je finirai le tri plus tard ({0} restantes)', left.length))}</small> ›</button>` : '';
   function swNext(){
     const ov = document.getElementById('cv-sw'), st = ov && ov.querySelector('.sw-stack'); if(!st) return swRender();
+    const pv = st.querySelector('.sw-card.top'), pc = pv ? swCityOf(swRec(pv.dataset.id)) : '';   // la ville de la carte qu’on vient de trier
+    if(pc) SW.lastCity = pc;
     const left = swLeft(); if(!left.length) return swRender();
+    { const c1 = swCityOf(swRec(left[0])); SW.passed = SW.passed || new Set();
+      if(pc && c1 && normQ(c1) !== normQ(pc) && !SW.passed.has(normQ(pc))){ SW.gate = {from:pc, to:c1}; return swRender(); } }   // 🏁 dernière carte d’une ville
     st.querySelectorAll('.sw-card.top').forEach(x=>x.remove());
     let topEl = st.querySelector('.sw-card'); if(!topEl || topEl.dataset.id !== left[0]) return swRender();
     topEl.classList.add('top'); swDrag(topEl);
@@ -1719,7 +1737,7 @@ ${pm.join('\n')}</Document></kml>`;
     setTimeout(swNext, 300);
   }
   function swUndo(){
-    if(!SW || !SW.hist.length || swBusy) return; const h = SW.hist.pop();
+    if(!SW || !SW.hist.length || swBusy) return; SW.gate = null; const h = SW.hist.pop();
     if(h.ex && Array.isArray(h.made)){ SW.exDone.delete(h.id); SW.kept = Math.max(0, SW.kept - (h.n || 0));
       h.made.forEach(m=>{ if(R[m]) putQuiet([Object.assign(clone(R[m]), {deleted:true})]); });
       const nl = ((M.expNo || {})[h.tid]) || []; (h.keys || []).forEach(k=>{ const i = nl.indexOf(k); if(i >= 0) nl.splice(i, 1); }); persist();
@@ -1733,6 +1751,21 @@ ${pm.join('\n')}</Document></kml>`;
     else { const nl = ((M.suggNo || {})[h.before.trip]) || []; const i = nl.indexOf(h.before.nom); if(i >= 0) nl.splice(i, 1); persist(); }
     const at = SW.ids.indexOf(h.id); if(at >= 0) SW.i = Math.min(SW.i, at);
     swRender();
+  }
+  // 🏁 page de fin d’une ville : ＋ plus de visites pour elle (elles passent devant), ou la ville suivante
+  function swGateNext(){ if(!SW || !SW.gate || SW.gate.busy) return; SW.passed = SW.passed || new Set(); SW.passed.add(normQ(SW.gate.from)); SW.gate = null; swRender(); }
+  function swEndMore(){ if(!SW || !SW.lastCity) return; SW.gate = {from:SW.lastCity, to:''}; swGateMore(); }
+  async function swGateMore(){
+    if(!SW || !SW.gate || SW.gate.busy) return; const g = SW.gate, t = R[SW.tid]; if(!t) return;
+    g.busy = 1; g.none = 0; swRender();
+    for(let k = 0; k < 120 && SG && SG.tid === t.id; k++) await new Promise(r=>setTimeout(r, 500));   // les incontournables des autres villes arrivent encore : on attend la fin
+    const before = new Set(list('place', p=>p.trip === t.id).map(p=>p.id));
+    try { await suggFill(t.id, true, g.from); } catch(e){}
+    if(!SW || SW.gate !== g) return; g.busy = 0;
+    const nw = list('place', p=>p.trip === t.id && swMine(p) && !before.has(p.id) && !SW.ids.includes(p.id) && normQ(swCity(p)) === normQ(g.from)).map(p=>p.id);
+    if(!nw.length){ g.none = 1; swRender(); return; }
+    try { if(GSW) nw.forEach(id=>GSW.add(id)); } catch(e){}
+    SW.ids = SW.ids.slice(0, SW.i).concat(nw, SW.ids.slice(SW.i)); SW.gate = null; swRender();
   }
   async function swAll(){
     if(!SW) return; const n = SW.ids.filter(id=>!/^ex\|/.test(id) && R[id] && R[id].sugg && !R[id].deleted).length; if(!n) return;

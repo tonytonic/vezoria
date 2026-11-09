@@ -3460,3 +3460,53 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .iw-p span{display:flex;flex-direction:column;min-width:0}
 .iw-p small{opacity:.65;font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .iw-p:active{transform:scale(.98)}
+
+/* ══════════ 2026-11-09b · 🏁 fin d’une ville dans le tri · 🏘️ où dormir (quartiers) · 🗺️ carte de préparation 2D / 3D ══════════ */
+.sw-gate h2 span{color:inherit}.sw-gate .v-btn{width:100%;margin-top:8px}.sw-gate .sw-gn{margin:6px 0}.sw-gate .wz-run{margin:8px 0}
+.ar-pgm{display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;margin-top:10px;padding:11px 14px;border:1.5px solid rgba(255,255,255,.35);border-radius:16px;background:rgba(255,255,255,.12);color:#fff;text-align:left;font:inherit;cursor:pointer}
+.ar-pgm i{font-style:normal;font-size:1.35rem}.ar-pgm span{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ar-pgm b{font-size:.95rem}.ar-pgm small{font-size:.76rem;opacity:.85}.ar-pgm em{font-style:normal;font-size:1.4rem;font-weight:700}
+.hd-big{display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;margin:0 0 12px;padding:12px 14px;border:0;border-radius:16px;background:linear-gradient(135deg,#1d4ed8,#0b1a3a);color:#fff;text-align:left;font:inherit;cursor:pointer}
+.hd-big i{font-style:normal;font-size:1.5rem}.hd-big span{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.hd-big b{font-size:1rem}.hd-big small{font-size:.78rem;opacity:.85;line-height:1.3}.hd-big em{font-style:normal;font-size:1.5rem;font-weight:700}
+.hd-c{margin:0 0 12px;padding:12px;border-radius:16px;background:#f8fafc;border:1px solid #e2e8f0}
+.hd-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}.hd-h b{font-size:1.02rem}.hd-h small{font-size:.78rem;opacity:.7}
+.hd-map{position:relative;display:block;width:100%;min-height:90px;padding:0;margin:0 0 8px;border:0;border-radius:14px;overflow:hidden;background:#e5e7eb;cursor:zoom-in}
+.hd-map .hd-cv{display:block;width:100%;height:auto}.hd-map .wz-run{margin:0;padding:30px 12px}
+.hd-map em{position:absolute;right:8px;bottom:8px;font-style:normal;font-size:.75rem;font-weight:800;color:#fff;background:rgba(10,20,45,.78);padding:5px 9px;border-radius:99px}
+.hd-ht{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-radius:12px;background:#fff1f2;border:1.5px solid #fda4af;color:#881337}
+.hd-ht.ok{background:#eff6ff;border-color:#93c5fd;color:#1e3a8a}
+.hd-ht i{font-style:normal;font-size:1.3rem}.hd-ht span{display:flex;flex-direction:column;min-width:0;gap:1px}.hd-ht b{font-size:1rem;overflow-wrap:anywhere}.hd-ht small{font-size:.76rem;opacity:.85}
+.hd-bk{width:100%;margin-top:8px}.hd-go2{width:100%;margin-top:8px}.hd-note{margin-top:6px}
+.hd-n{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.hd-n span{font-size:.76rem;font-weight:800;padding:3px 9px;border-radius:99px}
+.hd-n .y{background:#dcfce7;color:#166534}.hd-n .r{background:#fee2e2;color:#991b1b}.hd-n .o{background:#fef3c7;color:#92400e}.hd-n .g{background:#f1f5f9;color:#475569}
+#cv-pg{position:fixed;inset:0;z-index:9100;background:#0b1a3a;overflow:hidden;overscroll-behavior:none}
+#pg-map{position:absolute;inset:0}
+#cv-pg .maplibregl-ctrl-attrib{font-size:9px}#cv-pg .maplibregl-marker{opacity:1!important}
+#cv-pg .lv-tools button[data-d]{font-size:.85rem;font-weight:900}
+#cv-pg .p3-hot span{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#cv-pg .maplibregl-marker.p3-hot{z-index:3}#cv-pg .maplibregl-marker.pg-tr{z-index:2}
+.pg-tr{border:3px solid #fff;cursor:pointer;padding:0;font:inherit;font-size:1.05rem;line-height:1}
+.p3-rows i.pg-ring.h{border:2.5px solid #3b82f6;background:rgba(59,130,246,.3);box-sizing:border-box}
+.pg-card{position:absolute;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 64px);z-index:4;background:#fff;color:#1e1b4b;border-radius:18px;padding:14px 14px 12px;box-shadow:0 10px 30px rgba(0,0,0,.45);max-height:60vh;overflow:auto;box-sizing:border-box}
+.pg-card[hidden]{display:none}
+.pg-x{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;border:0;background:#f1f5f9;color:#334155;font-size:.9rem;cursor:pointer}
+.pg-ct{display:flex;flex-direction:column;gap:3px;padding-right:34px}.pg-ct b{font-size:1.02rem;display:flex;align-items:center;gap:8px;overflow-wrap:anywhere}.pg-ct small{font-size:.8rem;opacity:.75}
+.pg-dot{flex:none;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.pg-vt{opacity:.9!important}
+.pg-k{margin:10px 0 6px;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.7}
+.pg-modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.pg-modes button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;font:inherit;cursor:pointer;color:inherit;min-width:0}
+.pg-modes button span{font-size:1.3rem}.pg-modes button small{font-size:.68rem;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pg-modes button.on{border-color:#1d4ed8;background:#eff6ff;box-shadow:0 0 0 2px rgba(29,78,216,.25)}
+.pg-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pg-acts>button,.pg-acts>a{flex:1 1 auto;min-height:40px;padding:8px 12px;border-radius:12px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#1e1b4b;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center}
+.pg-acts>button.yes{background:#16a34a;border-color:#16a34a;color:#fff}.pg-acts>button.no{background:#fff;border-color:#fca5a5;color:#b91c1c}
+.pg-leg .p3-rows{margin-top:8px}
+/* 📱 Android (police système agrandie) : « Mes compagnons de voyage » ne déborde plus — les choix passent à la ligne, la poubelle en haut à droite */
+.sp2-pc{position:relative;padding-right:46px;min-width:0;overflow:hidden}
+.sp2-chips{flex-wrap:wrap!important;max-width:100%}
+.sp2-chips button{white-space:normal!important;flex:1 1 auto;min-width:0;max-width:100%;text-align:center;line-height:1.2;box-sizing:border-box}
+.sp2-del{position:absolute;top:10px;right:4px;width:36px;height:36px}
+.sp2-pb small{overflow-wrap:anywhere}
+/* 🤝 abonnés de mes compagnons : inviter en abonné ou en compagnon */
+.sp2-mf{flex-wrap:wrap;gap:8px}.sp2-mfn{flex:1 1 140px;min-width:0;display:flex;flex-direction:column}.sp2-mfn small{font-size:.76rem;opacity:.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp2-mfb{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
