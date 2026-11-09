@@ -3164,11 +3164,11 @@
     const box = document.getElementById('pg-leg'), t = trip(); if(!box || !t) return; const L = pgPlaces(t), n = s => L.filter(x=>x.s === s).length, multi = swMulti(t), mn = box.classList.contains('min');
     box.innerHTML = `<button type="button" class="p3-lh" onclick="this.parentNode.classList.toggle('min')"><b>🗺️ ${esc(MSGT('Ma carte de préparation'))}</b><em>▾</em></button>
       <div class="p3-rows">
-        <span><i style="background:${PGC.yes}"></i>${esc(MSGT('Gardées'))} <b>${n('yes')}</b></span>
-        <span><i style="background:${PGC.no}"></i>${esc(MSGT('Écartées'))} <b>${n('no')}</b></span>
-        ${multi || n('mix') ? `<span><i style="background:${PGC.mix}"></i>${esc(MSGT('À discuter'))} <b>${n('mix')}</b></span>` : ''}
-        ${n('todo') ? `<span><i style="background:${PGC.todo}"></i>${esc(MSGT('À trier'))} <b>${n('todo')}</b></span>` : ''}
-        <span><i class="pg-sq" style="background:${P3C.todo}"></i>${esc(MSGT('Activités payantes'))}</span>
+        <button type="button" class="pg-lk" onclick="CV.pgList('yes')"><i style="background:${PGC.yes}"></i>${esc(MSGT('Gardées'))} <b>${n('yes')}</b> ›</button>
+        <button type="button" class="pg-lk" onclick="CV.pgList('no')"><i style="background:${PGC.no}"></i>${esc(MSGT('Écartées'))} <b>${n('no')}</b> ›</button>
+        ${multi || n('mix') ? `<button type="button" class="pg-lk" onclick="CV.pgList('mix')"><i style="background:${PGC.mix}"></i>${esc(MSGT('À discuter'))} <b>${n('mix')}</b> ›</button>` : ''}
+        ${n('todo') ? `<button type="button" class="pg-lk" onclick="CV.pgList('todo')"><i style="background:${PGC.todo}"></i>${esc(MSGT('À trier'))} <b>${n('todo')}</b> ›</button>` : ''}
+        <button type="button" class="pg-lk" onclick="CV.pgList('act')"><i class="pg-sq" style="background:${P3C.todo}"></i>${esc(MSGT('Activités payantes'))} <b>${(PG && PG.F ? PG.F.acts.length : 0)}</b> ›</button>
         <span><i class="ring pg-ring h"></i>${esc(MSGT('Ton hébergement'))}</span>
         <span><i class="ring"></i>${esc(MSGT('Quartier conseillé'))}</span>
       </div>
@@ -3181,6 +3181,24 @@
     if(!html){ c.hidden = true; c.innerHTML = ''; return; }
     c.innerHTML = `<button type="button" class="pg-x" onclick="CV.pgCardX()" aria-label="${esc(MSGT('Fermer'))}">✕</button>${html}`; c.hidden = false; if(lg) lg.classList.add('min'); hydrate(); }
   const pgCardX = () => pgCard(null);
+  // 📋 toucher une ligne de la légende : la liste de ces visites (à discuter, écartées…) ; toucher un nom → la carte zoome dessus et ouvre sa fiche
+  function pgList(k){
+    const t = trip(); if(!t || !PG) return;
+    const L = k === 'act' ? (PG.F ? PG.F.acts : []).map(f=>({id:f.properties.id, nom:f.properties.name, col:f.properties.col, c:f.geometry.coordinates}))
+      : pgPlaces(t).filter(x=>x.s === k).map(({p})=>({id:p.id, nom:p.nom, col:PGC[k], c:[+p.lng, +p.lat], city:swCity(p)}));
+    const lab = {yes:'Gardées', no:'Écartées', mix:'À discuter', todo:'À trier', act:'Activités payantes'}[k];
+    L.sort((a, b)=>String(a.city || '').localeCompare(String(b.city || '')) || String(a.nom).localeCompare(String(b.nom)));
+    pgCard(`<div class="pg-ct"><b>${esc(MSGT(lab))} · ${L.length}</b></div>
+      <div class="pg-ls">${L.length ? L.map(x=>`<button type="button" onclick="CV.pgGo('${ja(x.id)}','${k === 'act' ? 'a' : 'v'}')"><i style="background:${x.col}"></i><span data-notr>${esc(x.nom || '?')}</span>${x.city ? `<small data-notr>${esc(x.city)}</small>` : ''}<em>›</em></button>`).join('') : `<small>${esc(MSGT('Rien pour l’instant.'))}</small>`}</div>`);
+  }
+  function pgGo(id, kind){
+    if(!PG || !PG.map) return; let c = null;
+    if(kind === 'a'){ const f = (PG.F ? PG.F.acts : []).find(f=>f.properties.id === id); if(f) c = f.geometry.coordinates; }
+    else { const p = R[id]; if(p && p.lat != null) c = [+p.lng, +p.lat]; }
+    if(!c) return; pgCard(null);
+    try { PG.map.flyTo({center:c, zoom:16, pitch:PG.d3 ? 50 : 0, duration:1600, essential:true, offset:[0, -80]}); } catch(e){}
+    setTimeout(()=>{ if(kind === 'a') pgAct(id); else pgVisit(id); }, 1200);
+  }
   function pgVisit(id){
     const p = R[id], t = trip(); if(!p || !t) return; const s = pgSt(p); if(!s) return; const oth = swOthers(p), my = swMyVote(p), c = swCity(p);
     const lab = {yes:'Au programme', no:'Écartée', mix:'À discuter', todo:'À trier'}[s];
