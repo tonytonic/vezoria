@@ -3523,3 +3523,14 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 @keyframes vtl{to{background-position:-200% 0}}
 .rain-vt{margin-top:10px}.rain-vt>small{display:block;font-size:.78rem;opacity:.85;margin-bottom:2px}
 .vt-sec{margin:12px 0 4px}
+/* 🎟️ billets Viator sur les cartes du tri des visites (2026-11-09k) */
+.sw-vt{margin-top:8px}.sw-vt>small{display:block;font-size:.72rem!important;font-weight:700;opacity:.9;margin-bottom:2px}
+.sw-vt .vt-row{margin:2px 0 0;padding:2px 0 4px;gap:8px}
+.sw-vt .vt-t{flex:0 0 min(70%,230px);flex-direction:row;align-items:stretch;background:rgba(255,255,255,.94);border:0;border-radius:12px}
+.sw-vt .vt-t img,.sw-vt .vt-t>i{width:62px;height:auto;min-height:62px;flex:none}
+.sw-vt .vt-t span{padding:6px 8px;gap:2px}
+.sw-tx .sw-vt .vt-t b{font-family:inherit;font-style:normal;font-size:.76rem;line-height:1.2;margin:0;-webkit-line-clamp:2}
+.sw-tx .sw-vt .vt-t small{font-size:.68rem;opacity:.75;font-weight:600}
+.sw-tx .sw-vt .vt-t em{display:none}
+.sw-vt .vt-ld{flex:0 0 min(70%,230px);height:62px;border-radius:12px}
+.sw-card.has-vt .sw-ex{-webkit-line-clamp:2}

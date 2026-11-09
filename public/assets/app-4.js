@@ -1542,7 +1542,8 @@ ${pm.join('\n')}</Document></kml>`;
     el.innerHTML = '<div class="vt-ld"></div><div class="vt-ld"></div><div class="vt-ld"></div>';
     let r = null; try { r = await vtFetch(el.dataset.vtq, d1, d2); } catch(e){}
     const L = r && r.ok ? (r.tours || []).filter(x=>x && x.url && !/transf[eé]r|airport|a[ée]roport|navette|shuttle|chauffeur/i.test(x.title || '')).slice(0, n) : [];   // pas de transferts d’aéroport dans les idées d’activités
-    if(!el.isConnected) return; if(!L.length){ (el.closest('.rain-vt, .vt-sec') || el).remove(); return; }
+    if(!el.isConnected) return; if(!L.length){ (el.closest('.rain-vt, .vt-sec, .sw-vt') || el).remove(); return; }
+    { const sv = el.closest('.sw-vt'); if(sv){ const c = sv.closest('.sw-card'); if(c) c.classList.add('has-vt'); } }
     el.innerHTML = L.map(vtTile).join('');
   }
   let VTIO = null;
@@ -1613,7 +1614,8 @@ ${pm.join('\n')}</Document></kml>`;
         : p.ex ? `<em class="sw-pay">🎟️ ${esc(MSGT(p.e.l))} · ${esc(MSGT('activité à réserver'))}</em>`
         : SW && SW.PAY && SW.PAY[p.id] ? `<em class="sw-pay">🎟️ ${esc(MSGT('Payant : pense à réserver'))}</em>` : ''}
         ${!p.ex && swOthers(p).length ? `<em class="sw-vt">${swOthers(p).map(([w, v])=>(v ? '❤️ ' : '✕ ') + esc(RF(v ? '{0} l’a gardé' : '{0} l’a écarté', pname(w)))).join(' · ')}</em>` : ''}
-        <b data-notr>${esc(p.nom)}</b>${p.exc ? `<em>🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</em>` : ''}<p class="sw-ex" data-notr></p><a class="sw-wk" target="_blank" rel="noopener" hidden>📖 Wikipédia</a></div></div>`;
+        <b data-notr>${esc(p.nom)}</b>${p.exc ? `<em>🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</em>` : ''}<p class="sw-ex" data-notr></p><a class="sw-wk" target="_blank" rel="noopener" hidden>📖 Wikipédia</a>
+        ${p.ex ? '' : (()=>{ const v = VTR(p.nom + (c && normQ(c) !== normQ(p.nom) ? ' ' + c : ''), p.date && p.date >= isoToday() ? p.date : '', p.date && p.date >= isoToday() ? p.date : '', 3); return v ? `<div class="sw-vt" onpointerdown="event.stopPropagation()"><small>🎟️ ${esc(MSGT('Billets et visites guidées'))} · Viator · ${esc(MSGT('partenaire'))}</small>${v}</div>` : ''; })()}</div></div>`;
   }
   function swFill(el, p){
     if(p && p.ex && p.e && p.e.wg){ const w = p.e.wg, im = el.querySelector('.sw-img');   // visite WeGoTrip : sa photo, sa durée, son lien
