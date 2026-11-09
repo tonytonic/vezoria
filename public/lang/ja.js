@@ -6597,4 +6597,7 @@ I18N.load({
 "Annuler cette visite":"この訪問を取り消す",
 "Au programme":"予定に入っています",
 "Écartée":"外した",
-"Noté, pas encore réservé":"メモ済み・未予約"});
+"Noté, pas encore réservé":"メモ済み・未予約",
+/* 🎟️ offres Viator (2026-11-09i) */
+"À réserver aujourd’hui ou demain":"今日または明日に予約できるもの",
+"Ou au sec ce jour-là :":"その日は屋内で："});

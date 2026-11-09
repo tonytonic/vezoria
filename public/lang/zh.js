@@ -6597,4 +6597,7 @@ I18N.load({
 "Annuler cette visite":"取消此景点",
 "Au programme":"已在行程中",
 "Écartée":"已排除",
-"Noté, pas encore réservé":"已记录，尚未预订"});
+"Noté, pas encore réservé":"已记录，尚未预订",
+/* 🎟️ offres Viator (2026-11-09i) */
+"À réserver aujourd’hui ou demain":"今天或明天可预订",
+"Ou au sec ce jour-là :":"或者那天待在室内："});

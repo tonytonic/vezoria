@@ -6598,4 +6598,7 @@ I18N.load({
 "Annuler cette visite":"Отменить это место",
 "Au programme":"В программе",
 "Écartée":"Отклонено",
-"Noté, pas encore réservé":"Записано, ещё не забронировано"});
+"Noté, pas encore réservé":"Записано, ещё не забронировано",
+/* 🎟️ offres Viator (2026-11-09i) */
+"À réserver aujourd’hui ou demain":"Забронировать на сегодня или завтра",
+"Ou au sec ce jour-là :":"Или в этот день под крышей:"});

@@ -3649,4 +3649,7 @@ I18N.load({
 "Annuler cette visite":"Dit bezoek schrappen",
 "Au programme":"In het programma",
 "Écartée":"Weggelaten",
-"Noté, pas encore réservé":"Genoteerd, nog niet geboekt"});
+"Noté, pas encore réservé":"Genoteerd, nog niet geboekt",
+/* 🎟️ offres Viator (2026-11-09i) */
+"À réserver aujourd’hui ou demain":"Vandaag of morgen te boeken",
+"Ou au sec ce jour-là :":"Of droog blijven die dag:"});

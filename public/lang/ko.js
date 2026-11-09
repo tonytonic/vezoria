@@ -6597,4 +6597,7 @@ I18N.load({
 "Annuler cette visite":"이 방문 취소",
 "Au programme":"일정에 있음",
 "Écartée":"제외됨",
-"Noté, pas encore réservé":"메모됨, 아직 예약 전"});
+"Noté, pas encore réservé":"메모됨, 아직 예약 전",
+/* 🎟️ offres Viator (2026-11-09i) */
+"À réserver aujourd’hui ou demain":"오늘 또는 내일 예약 가능",
+"Ou au sec ce jour-là :":"또는 그날은 실내에서:"});

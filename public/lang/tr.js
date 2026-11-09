@@ -6585,4 +6585,7 @@ I18N.load({
 "Annuler cette visite":"Bu ziyareti iptal et",
 "Au programme":"Programda",
 "Écartée":"Elendi",
-"Noté, pas encore réservé":"Not edildi, henüz rezerve değil"});
+"Noté, pas encore réservé":"Not edildi, henüz rezerve değil",
+/* 🎟️ offres Viator (2026-11-09i) */
+"À réserver aujourd’hui ou demain":"Bugün veya yarın için rezerve et",
+"Ou au sec ce jour-là :":"Ya da o gün kapalı mekânda:"});

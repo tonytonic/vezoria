@@ -3643,4 +3643,7 @@ I18N.load({
 "Annuler cette visite":"Cancel this visit",
 "Au programme":"Planned",
 "Écartée":"Dropped",
-"Noté, pas encore réservé":"Noted, not booked yet"});
+"Noté, pas encore réservé":"Noted, not booked yet",
+/* 🎟️ offres Viator (2026-11-09i) */
+"À réserver aujourd’hui ou demain":"To book today or tomorrow",
+"Ou au sec ce jour-là :":"Or stay dry that day:"});

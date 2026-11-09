@@ -6597,4 +6597,7 @@ I18N.load({
 "Annuler cette visite":"यह जगह रद्द करें",
 "Au programme":"कार्यक्रम में",
 "Écartée":"हटाई गई",
-"Noté, pas encore réservé":"नोट किया, अभी बुक नहीं"});
+"Noté, pas encore réservé":"नोट किया, अभी बुक नहीं",
+/* 🎟️ offres Viator (2026-11-09i) */
+"À réserver aujourd’hui ou demain":"आज या कल के लिए बुक करें",
+"Ou au sec ce jour-là :":"या उस दिन छत के नीचे:"});
