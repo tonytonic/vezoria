@@ -3477,7 +3477,7 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .hd-ht i{font-style:normal;font-size:1.3rem}.hd-ht span{display:flex;flex-direction:column;min-width:0;gap:1px}.hd-ht b{font-size:1rem;overflow-wrap:anywhere}.hd-ht small{font-size:.76rem;opacity:.85}
 .hd-bk{width:100%;margin-top:8px}.hd-go2{width:100%;margin-top:8px}.hd-note{margin-top:6px}
 .hd-n{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.hd-n span{font-size:.76rem;font-weight:800;padding:3px 9px;border-radius:99px}
-.hd-n .y{background:#ede9fe;color:#5b21b6}.hd-n .r{background:#fee2e2;color:#991b1b}.hd-n .o{background:#fef3c7;color:#92400e}.hd-n .g{background:#f1f5f9;color:#475569}
+.hd-n .y{background:#ede9fe;color:#5b21b6}.hd-n .r{background:#fee2e2;color:#991b1b}.hd-n .o{background:#fce7f3;color:#9d174d}.hd-n .g{background:#f1f5f9;color:#475569}
 #cv-pg{position:fixed;inset:0;z-index:9100;background:#0b1a3a;overflow:hidden;overscroll-behavior:none}
 #pg-map{position:absolute;inset:0}
 #cv-pg .maplibregl-ctrl-attrib{font-size:9px}#cv-pg .maplibregl-marker{opacity:1!important}
@@ -3535,3 +3535,4 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .sw-vt .vt-ld{flex:0 0 min(70%,230px);height:62px;border-radius:12px}
 .sw-card.has-vt .sw-ex{-webkit-line-clamp:2}
 .vt-alt[hidden]{display:none!important}.ex-ln .vt-alt{display:contents}
+.p3-rows i.pg-sq{border-radius:3px;border:2px solid #fff;box-sizing:border-box}

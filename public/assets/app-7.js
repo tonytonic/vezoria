@@ -3042,7 +3042,7 @@
      ton hébergement (bleu) ou, s’il n’est pas encore choisi, le quartier conseillé (rouge) ; un trajet → changer de transport,
      enregistré dans tes réservations. Tout reste faisable à la main, comme avant. ══════════ */
   let PG = null;
-  const PGC = {yes:'#a78bfa', no:'#ef4444', mix:'#f59e0b', todo:'#f1f5f9'};   // violet = au programme, comme « à visiter » pendant le voyage (vert = fait, réservé au voyage)
+  const PGC = {yes:'#a78bfa', no:'#ef4444', mix:'#ec4899', todo:'#f1f5f9'};   // rose = à discuter (l’orange est déjà pris : activités et trajets à réserver)   // violet = au programme, comme « à visiter » pendant le voyage (vert = fait, réservé au voyage)
   const pgNo = p => ((M.suggNo || {})[p.trip] || []).includes(p.nom);
   function pgSt(p){
     if(!p || p.type !== 'place' || !p.nom) return null;
@@ -3135,12 +3135,12 @@
     map.addLayer({id:'pg-legs', type:'line', source:'pg-legs', filter:['==',['get','local'],0], layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':['get','col'], 'line-width':['interpolate',['linear'],['zoom'],2,2.5,10,6]}});
     map.addLayer({id:'pg-legs-l', type:'line', source:'pg-legs', minzoom:9, filter:['==',['get','local'],1], layout:{'line-cap':'round'}, paint:{'line-color':['get','col'], 'line-width':4, 'line-dasharray':[1.5, 1.2]}});
     map.addLayer({id:'pg-legs-hit', type:'line', source:'pg-legs', filter:['!=',['get','souv'],1], layout:{'line-cap':'round'}, paint:{'line-color':'#000', 'line-width':26, 'line-opacity':0.01}});   // zone de toucher large (invisible)
-    map.addLayer({id:'pg-act', type:'circle', source:'pg-act', minzoom:6, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],6,3,10,6,14,9], 'circle-stroke-color':'#1e1b4b', 'circle-stroke-width':2.5}});
+    map.addLayer({id:'pg-act', type:'circle', source:'pg-act', minzoom:6, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],6,3,10,6,14,9], 'circle-stroke-color':'#ffffff', 'circle-stroke-width':3.5}});
     map.addLayer({id:'pg-vis', type:'circle', source:'pg-vis', minzoom:6, paint:{'circle-color':['get','col'], 'circle-radius':['interpolate',['linear'],['zoom'],6,3,10,6,14,10],
-      'circle-stroke-color':['match',['get','s'],'no','#7f1d1d','mix','#7c2d12','#ffffff'], 'circle-stroke-width':2.2}});
+      'circle-stroke-color':['match',['get','s'],'no','#7f1d1d','mix','#831843','#ffffff'], 'circle-stroke-width':2.2}});
     if(lbl){ const L = (id, src, mz, col) => map.addLayer({id, type:'symbol', source:src, minzoom:mz, layout:{'text-field':['get','name'], 'text-font':font, 'text-size':12, 'text-offset':[0, 1.2], 'text-anchor':'top', 'text-max-width':10, 'text-optional':true},
         paint:{'text-color':col || '#fff', 'text-halo-color':'rgba(10,20,50,.9)', 'text-halo-width':1.5}});
-      L('pg-vis-t', 'pg-vis', 11.5, ['match',['get','s'],'no','#fecaca','mix','#fde68a','#ffffff']); L('pg-act-t', 'pg-act', 10.5); }
+      L('pg-vis-t', 'pg-vis', 11.5, ['match',['get','s'],'no','#fecaca','mix','#fbcfe8','#ffffff']); L('pg-act-t', 'pg-act', 10.5); }
   }
   // les villes, les hébergements (toucher = choisir / ma résa) et le moyen de transport au milieu de chaque trajet (toucher = changer)
   function pgMarkers(){
@@ -3168,9 +3168,11 @@
         <span><i style="background:${PGC.no}"></i>${esc(MSGT('Écartées'))} <b>${n('no')}</b></span>
         ${multi || n('mix') ? `<span><i style="background:${PGC.mix}"></i>${esc(MSGT('À discuter'))} <b>${n('mix')}</b></span>` : ''}
         ${n('todo') ? `<span><i style="background:${PGC.todo}"></i>${esc(MSGT('À trier'))} <b>${n('todo')}</b></span>` : ''}
+        <span><i class="pg-sq" style="background:${P3C.todo}"></i>${esc(MSGT('Activités payantes'))}</span>
         <span><i class="ring pg-ring h"></i>${esc(MSGT('Ton hébergement'))}</span>
         <span><i class="ring"></i>${esc(MSGT('Quartier conseillé'))}</span>
       </div>
+      <small class="p3-z">🎟️ ${esc(MSGT('Activités et trajets : orange = à réserver · jaune = réservé · vert = payé'))}</small>
       <small class="p3-z">👆 ${esc(MSGT('Touche une visite pour la garder ou l’annuler, un trajet pour changer de transport. Tout est enregistré dans ton programme et tes réservations.'))}</small>`;
     box.classList.toggle('min', mn);
   }
