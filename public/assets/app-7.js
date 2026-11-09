@@ -1703,8 +1703,27 @@
         return {sol, dsh}; });
       if(!shim) LV.fw = fw0; return out;
     } finally { if(shim) LV = keep; } }
+  // 🛰️ le tracé GPS réel (chacun dans sa couleur, train sur les rails…) sur une autre carte : la carte 3D et la carte du voyage, pendant et après
+  function gpsLayers(map, tid, pre){
+    if(!map || !tid) return 0; let D, G = null; try { D = liveData(tid); } catch(e){ return 0; }
+    const P = (D.people || []).filter(p=>p.pts && p.pts.length > 1); if(!P.length) return 0;
+    try { G = lvGeoFor(tid, Object.assign({}, D, {people:P})); } catch(e){}
+    P.forEach((p, i)=>{ const id = pre + i, g = G && G[i];
+      const gj = {type:'FeatureCollection', features: g && g.sol.length ? g.sol : [{type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:p.pts.map(x=>[x[1], x[0]])}}]};
+      const gg = {type:'FeatureCollection', features: (g && g.dsh) || []}, off = P.length > 1 ? (i - (P.length - 1) / 2) * 4 : 0;
+      try {
+        if(map.getSource(id)){ map.getSource(id).setData(gj); map.getSource(id + 'x').setData(gg); return; }
+        map.addSource(id, {type:'geojson', data:gj}); map.addSource(id + 'x', {type:'geojson', data:gg});
+        map.addLayer({id:id + 'x', type:'line', source:id + 'x', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':p.c, 'line-width':2.5, 'line-opacity':.8, 'line-dasharray':[1.2, 1.8], 'line-offset':off}});
+        map.addLayer({id:id + 'g', type:'line', source:id, paint:{'line-color':p.c, 'line-width':10, 'line-blur':6, 'line-opacity':.45, 'line-offset':off}});
+        map.addLayer({id, type:'line', source:id, layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color':p.c, 'line-width':4, 'line-offset':off}});
+      } catch(e){} });
+    return P.length;
+  }
   // un tracé (route, rails) vient d’arriver du serveur : on redessine la carte live et la petite carte
   function lvRedraw(){ if(LV && !LV.shim && LV.map){ LV.sig = ''; liveDraw(false); }
+    try { if(P3 && P3.map && P3.gps) gpsLayers(P3.map, P3.t, 'p3g'); } catch(e){}
+    try { if(VM && VM.map && VM.gps && trip()) gpsLayers(VM.map, trip().id, 'vmg'); } catch(e){}
     clearTimeout(LN.rt); LN.rt = setTimeout(()=>{ try { if(LN.map && LN.key && LN.map.isStyleLoaded()) lnLines(liveData(LN.key)); } catch(e){} }, 400); }
 
   /* ══════════ 🎉 « Bienvenue à … » : le GPS voit qu’on arrive dans une nouvelle ville (ou un nouveau pays) ══════════ */
@@ -2513,6 +2532,8 @@
     me.lg.forEach(m=>m.remove()); me.lg = [];
     const add = (el, p, anchor) => me.lg.push(new maplibregl.Marker({element:el, anchor:anchor || 'center'}).setLngLat([p.lng, p.lat]).addTo(map));
     mapRich(map, F, me.font, add, false);
+    // 🛰️ pendant et après le voyage : le vrai tracé GPS par-dessus le trajet prévu
+    try { const t = trip(); if(t && tripPhase(t) !== 'prep' && gpsLayers(map, t.id, 'vmg')) me.gps = 1; } catch(e){}
     // 👆 toucher une visite : sa fiche · une activité : sa réservation (comme les hôtels)
     if(!me.tapOn){ me.tapOn = 1; try { const tap = (ly, fn) => { map.on('click', ly, e=>{ const f = e.features && e.features[0], id = f && f.properties && f.properties.id; if(id && R[id]) vmAway(()=>fn(id)); });
         map.on('mouseenter', ly, ()=>{ map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', ly, ()=>{ map.getCanvas().style.cursor = ''; }); };
@@ -2875,6 +2896,8 @@
         try { map.setTerrain({source:'dem', exaggeration:1.3}); } catch(e){}
         const F = await p3Data(t); if(P3 !== me) return; P3.F = F;
         p3Layers(map, F); p3Markers(map, F);
+        // 🛰️ pendant et après le voyage : le vrai tracé GPS ; le trajet prévu passe en discret
+        if(souv) try { if(gpsLayers(map, t.id, 'p3g')){ P3.gps = 1; ['p3-legs', 'p3-legs-c', 'p3-legs-l'].forEach(id=>{ try { map.setPaintProperty(id, 'line-opacity', id === 'p3-legs-c' ? .15 : .35); } catch(e){} }); } } catch(e){}
         // 👆 toucher une visite : sa fiche · une activité : sa réservation ; en fermant, retour à la carte au même endroit
         try { const tap = (ly, fn) => { map.on('click', ly, e=>{ const f = e.features && e.features[0], id = f && f.properties && f.properties.id; if(id && R[id]) p3Away(()=>fn(id)); });
           map.on('mouseenter', ly, ()=>{ map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', ly, ()=>{ map.getCanvas().style.cursor = ''; }); };
