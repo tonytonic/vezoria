@@ -6601,4 +6601,6 @@ I18N.load({
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"今天或明天可预订",
 "Ou au sec ce jour-là :":"或者那天待在室内：",
-"Billets et visites guidées":"门票与导览"});
+"Billets et visites guidées":"门票与导览",
+"Activités payantes":"付费活动",
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"活动和路线：橙色＝待预订 · 黄色＝已预订 · 绿色＝已付款"});

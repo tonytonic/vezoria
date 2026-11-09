@@ -6601,4 +6601,6 @@ I18N.load({
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"今日または明日に予約できるもの",
 "Ou au sec ce jour-là :":"その日は屋内で：",
-"Billets et visites guidées":"チケットとガイドツアー"});
+"Billets et visites guidées":"チケットとガイドツアー",
+"Activités payantes":"有料アクティビティ",
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"アクティビティとルート：オレンジ＝要予約・黄＝予約済み・緑＝支払済み"});

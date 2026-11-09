@@ -6602,4 +6602,6 @@ I18N.load({
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"للحجز اليوم أو غدًا",
 "Ou au sec ce jour-là :":"أو في مكان مغطى ذلك اليوم:",
-"Billets et visites guidées":"تذاكر وجولات مصحوبة بمرشد"});
+"Billets et visites guidées":"تذاكر وجولات مصحوبة بمرشد",
+"Activités payantes":"أنشطة مدفوعة",
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"الأنشطة والمسارات: برتقالي = للحجز · أصفر = محجوز · أخضر = مدفوع"});

@@ -6601,4 +6601,6 @@ I18N.load({
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"오늘 또는 내일 예약 가능",
 "Ou au sec ce jour-là :":"또는 그날은 실내에서:",
-"Billets et visites guidées":"입장권 및 가이드 투어"});
+"Billets et visites guidées":"입장권 및 가이드 투어",
+"Activités payantes":"유료 활동",
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"활동과 경로: 주황 = 예약 필요 · 노랑 = 예약됨 · 초록 = 결제됨"});

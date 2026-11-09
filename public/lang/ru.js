@@ -6602,4 +6602,6 @@ I18N.load({
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"Забронировать на сегодня или завтра",
 "Ou au sec ce jour-là :":"Или в этот день под крышей:",
-"Billets et visites guidées":"Билеты и экскурсии"});
+"Billets et visites guidées":"Билеты и экскурсии",
+"Activités payantes":"Платные занятия",
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Занятия и маршруты: оранжевый = забронировать · жёлтый = забронировано · зелёный = оплачено"});

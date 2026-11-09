@@ -6601,4 +6601,6 @@ I18N.load({
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"आज या कल के लिए बुक करें",
 "Ou au sec ce jour-là :":"या उस दिन छत के नीचे:",
-"Billets et visites guidées":"टिकट और गाइडेड टूर"});
+"Billets et visites guidées":"टिकट और गाइडेड टूर",
+"Activités payantes":"सशुल्क गतिविधियाँ",
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"गतिविधियाँ और रास्ते: नारंगी = बुक करना है · पीला = बुक · हरा = भुगतान हुआ"});

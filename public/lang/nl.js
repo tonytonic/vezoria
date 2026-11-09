@@ -3653,4 +3653,6 @@ I18N.load({
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"Vandaag of morgen te boeken",
 "Ou au sec ce jour-là :":"Of droog blijven die dag:",
-"Billets et visites guidées":"Tickets en rondleidingen"});
+"Billets et visites guidées":"Tickets en rondleidingen",
+"Activités payantes":"Betaalde activiteiten",
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Activiteiten en trajecten: oranje = te boeken · geel = geboekt · groen = betaald"});

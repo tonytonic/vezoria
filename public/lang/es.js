@@ -3663,4 +3663,6 @@ I18N.load({
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"Para reservar hoy o mañana",
 "Ou au sec ce jour-là :":"O a cubierto ese día:",
-"Billets et visites guidées":"Entradas y visitas guiadas"});
+"Billets et visites guidées":"Entradas y visitas guiadas",
+"Activités payantes":"Actividades de pago",
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Actividades y trayectos: naranja = por reservar · amarillo = reservado · verde = pagado"});

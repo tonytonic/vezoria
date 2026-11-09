@@ -6589,4 +6589,6 @@ I18N.load({
 /* 🎟️ offres Viator (2026-11-09i) */
 "À réserver aujourd’hui ou demain":"Bugün veya yarın için rezerve et",
 "Ou au sec ce jour-là :":"Ya da o gün kapalı mekânda:",
-"Billets et visites guidées":"Biletler ve rehberli turlar"});
+"Billets et visites guidées":"Biletler ve rehberli turlar",
+"Activités payantes":"Ücretli etkinlikler",
+"Activités et trajets : orange = à réserver · jaune = réservé · vert = payé":"Etkinlikler ve güzergâhlar: turuncu = rezerve edilecek · sarı = rezerve · yeşil = ödendi"});
