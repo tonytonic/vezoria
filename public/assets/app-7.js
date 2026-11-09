@@ -362,12 +362,12 @@
     openSheet(`<div class="gd"><h2>🧭 ${MSGT('Ton parcours guidé')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT(msg)}</div>
       ${nAsk ? `<div class="gd-noted"><b>📝 ${esc(RF('Tu as déjà noté {0} (adresse, horaires, n° de réservation…).', nTxt))}</b><small>${esc(MSGT('C’est déjà réservé ?'))}</small>
         <div class="cv-row" style="gap:8px;margin-top:8px"><button type="button" class="v-btn" onclick="CV.gdNotedOk(1)">✓ ${esc(MSGT('Oui, c’est réservé'))}</button><button type="button" class="v-btn sec" onclick="CV.gdNotedOk(0)">${esc(MSGT('Pas encore'))}</button></div></div>` : ''}
+      <button type="button" class="hd-big gd-map-big" onclick="CV.pgOpen()"><i>🗺️</i><span><b>${esc(MSGT('Ma carte de préparation'))}</b><small>${esc(MSGT('2D ou 3D · touche une visite pour la garder ou l’annuler, un trajet pour changer de transport'))}</small></span><em>›</em></button>
       <div class="ar-subs gd-ch">
         ${row('💡', MSGT('Les visites'), sgn ? RF('{0} idées à trier', sgn) : pk ? RF('{0} à placer, dans l’ordre du trajet', pk) : kept ? kept + ' ' + MSGT('lieux au programme') + ' · ＋ ' + MSGT('Nouvelles suggestions') : MSGT('Pas encore de visites : je t’en propose'), 'CV.guideVisits()', vOk)}
         ${row('🚆', MSGT('Les trajets'), tr.length ? RF('{0} à réserver', tr.length) : MSGT('Tout est réservé'), 'CV.guideTr()', !tr.length)}
         ${row('🎟️', MSGT('Les activités payantes'), xs.length || xn ? [xn ? RF('{0} idées à trier', xn) : '', xs.length ? RF('{0} à réserver', xs.length) : ''].filter(Boolean).join(' · ') : MSGT('Rien à réserver'), 'CV.guideExp()', !xs.length && !xn)}
         ${row('🛏️', MSGT('Les hébergements'), hs.length ? RF('{0} à réserver', hs.length) + ' · ' + MSGT('avec la carte du quartier conseillé') : MSGT('Tout est réservé'), 'CV.guideHotel(0)', !hs.length)}
-        ${row('🗺️', MSGT('Ma carte de préparation'), MSGT('2D ou 3D · touche une visite pour la garder ou l’annuler, un trajet pour changer de transport'), 'CV.pgOpen()', false)}
         ${row('✅', MSGT('Finaliser'), MSGT('Papiers, santé, argent, valise'), 'CV.guideFin()', false)}
       </div>
       <div class="gd-man"><button type="button" class="v-btn sec" onclick="CV.gdMan('v')">✍️ ${esc(MSGT('Ajouter une visite à la main'))}</button><button type="button" class="v-btn sec" onclick="CV.gdMan('x')">✍️ ${esc(MSGT('Ajouter une activité à la main'))}</button></div>
