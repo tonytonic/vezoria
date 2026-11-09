@@ -1,4 +1,4 @@
-import { codeSpace, ROTATED } from './rotate.js';
+import { codeSpace, ROTATED, cleanDev } from './rotate.js';
 import { acctGate } from './account.js';   // 🔑 code administrateur changé
 import { uploadCheck } from './plan.js';   // 🫙 place du carnet
 // Photos du carnet : POST = envoyer une photo, GET ?id= = la récupérer.
@@ -61,11 +61,11 @@ async function spaceOf(request, env) {
   } catch (e) {}
   // 📱 appareil bloqué par le propriétaire du carnet (voir device.js) : plus aucune lecture ni écriture depuis lui
   try {
-    const dv = (request.headers.get('X-Carnet-Dev') || '').trim().slice(0, 40);
+    const dv = cleanDev(request.headers.get('X-Carnet-Dev'));
     if (dv && (await devBlocked(env, space)).has(dv))
       return json({ error: 'Cet appareil a été retiré de ce carnet par son propriétaire. — This device was removed from this notebook by its owner.', devBlocked: true }, 403);
   } catch (e) {}
-  { const g = await acctGate(env, space, (request.headers.get('X-Carnet-Dev') || '').trim().slice(0, 40)); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
+  { const g = await acctGate(env, space, cleanDev(request.headers.get('X-Carnet-Dev'))); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
   return space;
 }
 

@@ -53,11 +53,19 @@ async function tables(db) {
   ]);
 }
 const tok = s => typeof s === 'string' && /^[0-9a-f]{64}$/.test(s);
+// 🛡️ identifiant d'appareil : toujours nettoyé de la même façon sur toutes les routes (lettres et chiffres seulement).
+//    Sinon un appareil bloqué passait en ajoutant un tiret à son identifiant : le blocage ne le reconnaissait plus, le compte si.
+export const cleanDev = d => String(d || '').replace(/[^a-z0-9]/gi, '').slice(0, 40);
+// 🛡️ cet appareil a-t-il été retiré du carnet par son propriétaire ? (device.js)
+export async function devIsBlocked(env, space, dev) {
+  dev = cleanDev(dev); if (!dev) return false;
+  try { return !!(await env.DB.prepare('SELECT 1 AS x FROM dev_block WHERE space = ?1 AND dev = ?2').bind(space, dev).first()); } catch (e) { return false; }   // pas encore de table : aucun appareil bloqué
+}
 
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 export async function onRequestPost({ request, env, waitUntil }) {
   if (!env.DB) return json({ error: 'Base D1 non liée (DB)' }, 500);
-  const code = (request.headers.get('X-Carnet-Code') || '').trim(), dev = (request.headers.get('X-Carnet-Dev') || '').trim().slice(0, 40);
+  const code = (request.headers.get('X-Carnet-Code') || '').trim(), dev = cleanDev(request.headers.get('X-Carnet-Dev'));
   if (code.length < 8 || code.startsWith('mb:')) return json({ error: 'Réservé au propriétaire du carnet (code administrateur) — Owner only' }, 403);
   let b = {}; try { b = await request.json(); } catch (e) { return json({ error: 'Requête illisible' }, 400); }
   await tables(env.DB);

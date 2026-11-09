@@ -10,7 +10,10 @@ const H = { "Access-Control-Allow-Origin": "*", "Content-Type": "application/jso
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: H });
 const UA = "Mozilla/5.0 (compatible; Vezoria/1.0; +https://vezoria.pages.dev)";
 // seulement des sites connus (pas un relais ouvert vers n'importe quelle adresse)
-const OK = /(^|\.)(google\.[a-z.]+|goo\.gl|app\.goo\.gl|maps\.app\.goo\.gl|tiktok\.com|instagram\.com|youtube\.com|youtu\.be|facebook\.com|fb\.watch|tripadvisor\.[a-z.]+|booking\.com|airbnb\.[a-z.]+|wikipedia\.org|openstreetmap\.org|apple\.com|bing\.com|yelp\.[a-z.]+|thefork\.[a-z.]+|lafourchette\.com|getyourguide\.[a-z.]+|viator\.com|komoot\.[a-z.]+|alltrails\.com|pinterest\.[a-z.]+|pin\.it)$/i;
+// 🛡️ l'extension du site est limitée à une vraie extension de pays (google.fr, google.co.uk, google.com.br…) :
+//    avant, « google.n-importe-quoi.com » passait, et le serveur allait lire la page d'un inconnu.
+const TLD = "(?:[a-z]{2,3}|com?\\.[a-z]{2})";
+const OK = new RegExp("(^|\\.)(google\\." + TLD + "|goo\\.gl|tiktok\\.com|instagram\\.com|youtube\\.com|youtu\\.be|facebook\\.com|fb\\.watch|tripadvisor\\." + TLD + "|booking\\.com|airbnb\\." + TLD + "|wikipedia\\.org|openstreetmap\\.org|apple\\.com|bing\\.com|yelp\\." + TLD + "|thefork\\." + TLD + "|lafourchette\\.com|getyourguide\\." + TLD + "|viator\\.com|komoot\\." + TLD + "|alltrails\\.com|pinterest\\." + TLD + "|pin\\.it)$", "i");
 
 const dec = s => String(s || "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&#x27;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).trim();
 const meta = (html, k) => { const m = html.match(new RegExp(`<meta[^>]+(?:property|name)=["']${k}["'][^>]*content=["']([^"']*)["']`, "i")) || html.match(new RegExp(`<meta[^>]+content=["']([^"']*)["'][^>]*(?:property|name)=["']${k}["']`, "i")); return m ? dec(m[1]) : ""; };

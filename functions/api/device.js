@@ -1,4 +1,4 @@
-import { codeSpace, ROTATED } from './rotate.js';   // 🔑 code administrateur changé
+import { codeSpace, ROTATED, cleanDev } from './rotate.js';   // 🔑 code administrateur changé
 import { acctGate } from './account.js';
 /**
  * Vezoria — 📱 appareils d’un carnet : le propriétaire bloque (ou débloque) un appareil qui a ouvert son carnet.
@@ -16,7 +16,7 @@ export async function onRequestPost({ request, env }) {
   if (!env.DB) return json({ error: 'Base D1 non liée (DB)' }, 500);
   const code = (request.headers.get('X-Carnet-Code') || '').trim();
   if (code.length < 8 || code.startsWith('mb:')) return json({ error: 'Réservé au propriétaire du carnet (code administrateur) — Owner only' }, 403);
-  const cs = await codeSpace(env, code), space = cs.space, me = (request.headers.get('X-Carnet-Dev') || '').trim().slice(0, 40);
+  const cs = await codeSpace(env, code), space = cs.space, me = cleanDev(request.headers.get('X-Carnet-Dev'));
   if (cs.dead) return json({ error: ROTATED, rotated: true }, 403);
   { const g = await acctGate(env, space, me); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
   // un appareil bloqué ne peut pas se débloquer lui-même
@@ -27,7 +27,12 @@ export async function onRequestPost({ request, env }) {
   if (b.a === 'list') { const { results } = await env.DB.prepare('SELECT dev, at FROM dev_block WHERE space = ?1').bind(space).all(); return json({ ok: true, blocked: results || [] }); }
   if (dev.length < 8) return json({ error: 'Appareil inconnu' }, 400);
   if (dev === me) return json({ error: 'Tu ne peux pas bloquer l’appareil que tu utilises — You can’t block this device' }, 400);
-  if (b.a === 'block') { await env.DB.prepare('INSERT OR REPLACE INTO dev_block (space, dev, at) VALUES (?1, ?2, ?3)').bind(space, dev, Date.now()).run(); return json({ ok: true }); }
+  if (b.a === 'block') {
+    await env.DB.prepare('INSERT OR REPLACE INTO dev_block (space, dev, at) VALUES (?1, ?2, ?3)').bind(space, dev, Date.now()).run();
+    // 🛡️ il perd aussi sa validation sur le compte (sinon il pouvait encore valider un autre appareil, changer l'adresse e-mail ou créer un code compagnon)
+    for (const q of ['DELETE FROM acct_dev WHERE space = ?1 AND dev = ?2', 'DELETE FROM acct_otp WHERE space = ?1 AND dev = ?2', 'DELETE FROM push_subs WHERE space = ?1 AND dev = ?2', 'DELETE FROM push_due WHERE space = ?1 AND dev = ?2']) { try { await env.DB.prepare(q).bind(space, dev).run(); } catch (e) {} }   // table pas encore créée : rien à retirer
+    return json({ ok: true });
+  }
   if (b.a === 'unblock') { await env.DB.prepare('DELETE FROM dev_block WHERE space = ?1 AND dev = ?2').bind(space, dev).run(); return json({ ok: true }); }
   return json({ error: 'action inconnue' }, 400);
 }

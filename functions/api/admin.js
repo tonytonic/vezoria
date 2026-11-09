@@ -202,7 +202,7 @@ export async function onRequestPost({ request, env }) {
       const id = String(b.id || ''); if (!/^[0-9a-f]{12}$/.test(id)) return json({ error: 'id' }, 400);
       await env.DB.prepare('UPDATE gifts SET revoked = 1 WHERE substr(gh, 1, 12) = ?1').bind(id).run(); await log(env, 'cadeau:retiré', id, b.note); return json({ ok: true });
     }
-    const plan = ['plus', 'max', 'unlimited'].includes(b.plan) ? b.plan : 'plus', days = Math.max(0, Math.min(3650, Math.round(Number(b.days) || 0))), uses = Math.max(0, Math.min(10000, Math.round(Number(b.uses) || 1)));
+    const plan = ['plus', 'max', 'unlimited'].includes(b.plan) ? b.plan : 'plus', days = Math.max(0, Math.min(3650, Math.round(Number(b.days) || 0))), uses = Math.max(0, Math.min(10000, Math.round(b.uses === 0 || b.uses === '0' ? 0 : Number(b.uses) || 1)));   // 0 = sans limite (avant, 0 devenait 1 : un code « sans limite » ne servait qu'une fois)
     const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', rnd = crypto.getRandomValues(new Uint8Array(12));
     const raw = [...rnd].map(x => A[x % A.length]).join(''), code = 'VZ-' + raw.slice(0, 4) + '-' + raw.slice(4, 8) + '-' + raw.slice(8, 12);
     const gh = await sha256('vz-gift:' + code.replace(/[^A-Z0-9]/g, ''));

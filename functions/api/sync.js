@@ -1,4 +1,4 @@
-import { codeSpace, ROTATED, devSeen } from './rotate.js';
+import { codeSpace, ROTATED, devSeen, cleanDev } from './rotate.js';
 import { acctGate, acctMain, acctNew } from './account.js';   // 👤 compte du carnet : seuls ses appareils validés   // 🔑 code administrateur changé
 /**
  * Carnet de voyage — synchronisation (Cloudflare Pages Function + D1)
@@ -118,12 +118,12 @@ async function spaceOf(request, env) {
   } catch (e) {}   // table pas encore créée : aucun carnet suspendu
   // 📱 appareil bloqué par le propriétaire du carnet (voir device.js) : plus aucune lecture ni écriture depuis lui
   try {
-    const dv = (request.headers.get('X-Carnet-Dev') || '').trim().slice(0, 40);
+    const dv = cleanDev(request.headers.get('X-Carnet-Dev'));
     if (dv && (await devBlocked(env, space)).has(dv))
       return json({ error: 'Cet appareil a été retiré de ce carnet par son propriétaire. — This device was removed from this notebook by its owner.', devBlocked: true }, 403);
     if (dv) await devSeen(env, space, dv);   // date d'arrivée de l'appareil (un appareil tout neuf ne peut pas changer le code)
   } catch (e) {}
-  { const g = await acctGate(env, space, (request.headers.get('X-Carnet-Dev') || '').trim().slice(0, 40), 1); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
+  { const g = await acctGate(env, space, cleanDev(request.headers.get('X-Carnet-Dev')), 1); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
   { const g = await acctMain(env, request, space); if (g) return json(g, 403); }   // 📧 carnet principal : compte obligatoire
   return space;
 }

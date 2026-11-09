@@ -1,4 +1,5 @@
-import { codeSpace, ROTATED } from './rotate.js';   // 🔑 code administrateur changé
+import { codeSpace, ROTATED, cleanDev, devIsBlocked } from './rotate.js';   // 🔑 code administrateur changé
+import { acctGate } from './account.js';   // 👤 compte du carnet : appareils validés
 /**
  * Vezoria — 🫙 place photos par carnet · 🌿 voyages branchés · 💳 formules · 🎁 codes cadeaux
  *
@@ -36,7 +37,7 @@ import { codeSpace, ROTATED } from './rotate.js';   // 🔑 code administrateur 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Dev',
   'Access-Control-Max-Age': '86400',
 };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
@@ -333,11 +334,19 @@ export async function onRequestPost({ request, env }) {
     const mb = row.mb, until = row.days > 0 ? Math.max(now, curOn && cur.until ? cur.until : now) + row.days * DAY : 0;
     // un abonnement payant en cours plus grand reste en place : le cadeau ne le remplace pas
     if (curOn && cur.src === 'stripe' && (cur.mb < 0 || (mb >= 0 && cur.mb >= mb))) return json({ error: 'Ton abonnement en cours offre déjà autant de place — Your current plan already gives as much space' }, 409);
-    await env.DB.batch([
-      env.DB.prepare('INSERT INTO plans (space, plan, mb, until, src, ref, cust, at) VALUES (?1, ?2, ?3, ?4, \'gift\', ?5, \'\', ?6) ON CONFLICT (space) DO UPDATE SET plan = ?2, mb = ?3, until = ?4, src = \'gift\', ref = ?5, at = ?6').bind(w.space, row.plan, mb, until, gh.slice(0, 12), now),
-      env.DB.prepare('UPDATE gifts SET used = used + 1 WHERE gh = ?1').bind(gh),
-      env.DB.prepare('INSERT INTO gift_uses (gh, space, at) VALUES (?1, ?2, ?3)').bind(gh, w.space, now),
-    ]);
+    // 🛡️ on prend d'abord une utilisation du code, seulement s'il en reste (une seule requête) : deux carnets qui l'entrent
+    //    au même instant ne peuvent plus dépasser le nombre d'utilisations prévu
+    const take = await env.DB.prepare('UPDATE gifts SET used = used + 1 WHERE gh = ?1 AND revoked = 0 AND (uses <= 0 OR used < uses)').bind(gh).run();
+    if (!(take.meta && take.meta.changes)) return json({ error: 'Ce code cadeau a déjà servi — This gift code has been used up' }, 410);
+    try {
+      await env.DB.batch([
+        env.DB.prepare('INSERT INTO gift_uses (gh, space, at) VALUES (?1, ?2, ?3)').bind(gh, w.space, now),   // en premier : refusé si ce carnet l'a déjà utilisé (rien d'autre n'est alors écrit)
+        env.DB.prepare('INSERT INTO plans (space, plan, mb, until, src, ref, cust, at) VALUES (?1, ?2, ?3, ?4, \'gift\', ?5, \'\', ?6) ON CONFLICT (space) DO UPDATE SET plan = ?2, mb = ?3, until = ?4, src = \'gift\', ref = ?5, at = ?6').bind(w.space, row.plan, mb, until, gh.slice(0, 12), now),
+      ]);
+    } catch (e) {   // déjà utilisé sur ce carnet (deux appuis en même temps) : l'utilisation prise est rendue
+      await env.DB.prepare('UPDATE gifts SET used = MAX(0, used - 1) WHERE gh = ?1').bind(gh).run().catch(() => {});
+      return json({ error: 'Ce code cadeau est déjà utilisé sur ce carnet — Already used on this notebook' }, 409);
+    }
     const q = await quotaOf(env, w.space);
     return json({ ok: true, plan: row.plan, until, quota: q.quota, used: q.used });
   }
@@ -353,6 +362,11 @@ export async function onRequestPost({ request, env }) {
     const origin = new URL(request.url).origin, back = String(b.back || '').split('#')[0];   // retour toujours vers l’appli elle-même (vezoria.pages.dev), jamais ailleurs
     const base = back.startsWith(origin + '/') ? back : (env.APP_URL || origin + '/');
     if (a === 'portal') {
+      // 🛡️ l'espace client Stripe montre le nom, l'adresse, les factures et permet de résilier : comme la synchro, il n'est ouvert
+      //    qu'à un appareil validé du compte (le code seul ne suffit pas), et jamais à un appareil retiré du carnet
+      const dev = cleanDev(request.headers.get('X-Carnet-Dev'));
+      if (await devIsBlocked(env, w.space, dev)) return json({ error: 'Appareil bloqué — Device blocked', devBlocked: true }, 403);
+      { const g = await acctGate(env, w.space, dev); if (g) return json(g, 403); }
       const p = await env.DB.prepare('SELECT cust FROM plans WHERE space = ?1').bind(w.space).first();
       if (!p || !p.cust) return json({ error: 'Aucun abonnement Stripe sur ce carnet' }, 404);
       const s = await stripe(env, 'billing_portal/sessions', { customer: p.cust, return_url: base });

@@ -16,7 +16,7 @@
  *   {a:'delete'}              → supprime le compte (l’adresse e-mail ; les appareils redeviennent libres)
  * Conservation : l’adresse est effacée à la suppression du compte ou du carnet.
  */
-import { codeSpace, ROTATED, devSeen } from './rotate.js';
+import { codeSpace, ROTATED, devSeen, cleanDev, devIsBlocked } from './rotate.js';
 import { sendMail } from './_mail.js';
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Dev', 'Access-Control-Max-Age': '86400' };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
@@ -86,13 +86,29 @@ export async function acctNew(env, request, space, nChanges = 1) {
     const tok0 = (request.headers.get('X-Carnet-Acct') || '').trim();
     // 📨 sans compte, on peut quand même déposer 1 à 3 petites fiches dans un espace neuf : une invitation dans la boîte d’un compagnon,
     //    le code de passage navigateur → appli d’un abonné. Ces espaces restent limités à 200 fiches.
-    if (request.headers.get('X-Carnet-Main') !== '1' && tok0.length < 8 && nChanges <= 3 && Number(request.headers.get('Content-Length') || 0) <= 16384) { await own('-light'); return null; }
+    if (request.headers.get('X-Carnet-Main') !== '1' && tok0.length < 8 && nChanges <= 3 && Number(request.headers.get('Content-Length') || 0) <= 16384) {
+      // 🛡️ 40 nouveaux petits espaces par heure et par connexion : un robot ne peut pas remplir la base d'espaces vides
+      if (!(await dbRate(env, 'ls:' + (request.headers.get('CF-Connecting-IP') || 'x'), HOUR, 40))) return { error: 'Trop de créations depuis cette connexion : réessaie dans une heure. — Too many new links from this connection: try again in an hour.', retry: 3600 };
+      await own('-light'); return null; }
     if (request.headers.get('X-Carnet-Main') === '1') { if (!(await acctReady(env, space, dev))) return NEED; await own(space); return null; }
     const tok = (request.headers.get('X-Carnet-Acct') || '').trim(); if (tok.length < 8 || tok.startsWith('mb:')) return NEED;
     const cs = await codeSpace(env, tok); if (cs.dead || !cs.space) return NEED;
     if (!(await acctReady(env, cs.space, dev))) return NEED; await own(cs.space); return null;   // cet espace appartient à ce compte
   } catch (e) { return null; }
 }
+// 🛡️ limites gardées dans la base (les compteurs en mémoire ci-dessous repartent de zéro sur chaque serveur Cloudflare : un robot passait entre).
+//    Une ligne par compteur (empreinte seulement : jamais l'adresse e-mail ni l'adresse IP en clair), effacée quand elle a expiré.
+let rlReady = false;
+export async function dbRate(env, key, ms, max) {
+  try {
+    if (!rlReady) { await env.DB.prepare('CREATE TABLE IF NOT EXISTS rate_db (k TEXT PRIMARY KEY, n INTEGER NOT NULL, exp INTEGER NOT NULL)').run(); rlReady = true; }
+    const k = (await sha256('vz-rl:' + key)).slice(0, 24), now = Date.now();
+    const r = await env.DB.prepare('INSERT INTO rate_db (k, n, exp) VALUES (?1, 1, ?2) ON CONFLICT (k) DO UPDATE SET n = CASE WHEN rate_db.exp > ?3 THEN rate_db.n + 1 ELSE 1 END, exp = CASE WHEN rate_db.exp > ?3 THEN rate_db.exp ELSE ?2 END RETURNING n').bind(k, now + ms, now).first();
+    if (Math.random() < 0.02) await env.DB.prepare('DELETE FROM rate_db WHERE exp < ?1').bind(now).run();
+    return !r || r.n <= max;
+  } catch (e) { return true; }   // en cas de souci, on ne bloque jamais un vrai voyageur
+}
+const HOUR = 3600e3, DAY = 864e5;
 const lim = new Map();
 function rate(k, n, ms) { const now = Date.now(), a = (lim.get(k) || []).filter(t => now - t < ms); if (a.length >= n) return false; a.push(now); lim.set(k, a); if (lim.size > 20000) lim.clear(); return true; }
 async function mailCode(env, space, dev, to, lang) {
@@ -108,13 +124,16 @@ async function mailCode(env, space, dev, to, lang) {
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 export async function onRequestPost({ request, env }) {
   if (!env.DB) return json({ error: 'Base D1 non liée (DB)' }, 500);
-  const code = (request.headers.get('X-Carnet-Code') || '').trim(), dev = (request.headers.get('X-Carnet-Dev') || '').trim().replace(/[^a-z0-9]/gi, '').slice(0, 40);
+  const code = (request.headers.get('X-Carnet-Code') || '').trim(), dev = cleanDev(request.headers.get('X-Carnet-Dev'));
   if (code.length < 8 || code.startsWith('mb:')) return json({ error: 'Réservé au propriétaire du carnet — Owner only' }, 403);
   if (dev.length < 8) return json({ error: 'Appareil inconnu' }, 400);
   const cs = await codeSpace(env, code), space = cs.space; if (cs.dead) return json({ error: ROTATED, rotated: true }, 403);
   await acctTables(env.DB);
+  // 🛡️ un appareil retiré du carnet (device.js) ne touche plus au compte : ni valider un autre appareil, ni changer l'adresse, ni supprimer le compte
+  if (await devIsBlocked(env, space, dev)) return json({ error: 'Cet appareil a été retiré de ce carnet par son propriétaire. — This device was removed from this notebook by its owner.', devBlocked: true }, 403);
   let b = {}; try { b = await request.json(); } catch (e) { return json({ error: 'Requête illisible' }, 400); }
   const ip = request.headers.get('CF-Connecting-IP') || 'x';
+  const TOO_MAIL = { error: 'Trop d’envois, réessaie plus tard — Too many e-mails, try again later' };
   const a = await env.DB.prepare('SELECT * FROM acct WHERE space = ?1').bind(space).first();
   const me = await env.DB.prepare('SELECT ok FROM acct_dev WHERE space = ?1 AND dev = ?2').bind(space, dev).first();
   const devOk = !!(me && me.ok), active = !!(a && a.verified);
@@ -128,6 +147,9 @@ export async function onRequestPost({ request, env }) {
     if (!canAdmin) return json({ error: 'Valide d’abord cet appareil — Verify this device first' }, 403);
     const email = String(b.email || '').trim().toLowerCase(); if (!okMail(email)) return json({ error: 'Adresse e-mail invalide — Invalid e-mail address' }, 400);
     if (!rate('m:' + space, 5, 3600e3) || !rate('i:' + ip, 20, 3600e3)) return json({ error: 'Trop d’envois, réessaie dans une heure — Too many e-mails, try again later' }, 429);
+    // 🛡️ une même adresse ne reçoit pas plus de 4 codes par heure et 10 par jour, quel que soit le carnet qui les demande
+    //    (sinon n'importe qui pouvait faire envoyer des dizaines de messages Vezoria à l'adresse de quelqu'un d'autre)
+    if (!(await dbRate(env, 'mi:' + ip, HOUR, 12)) || !(await dbRate(env, 'mt:' + email, HOUR, 4)) || !(await dbRate(env, 'md:' + email, DAY, 10))) return json(TOO_MAIL, 429);
     const ee = await mailEnc(env, email);
     if (a) await env.DB.prepare('UPDATE acct SET pend = ?2 WHERE space = ?1').bind(space, ee).run();
     else await env.DB.prepare('INSERT INTO acct (space, email, pend, verified, maxdev, at) VALUES (?1, NULL, ?2, 0, 0, ?3)').bind(space, ee, Date.now()).run();
@@ -138,6 +160,10 @@ export async function onRequestPost({ request, env }) {
     if (!active) return json({ error: 'Pas de compte sur ce carnet' }, 400);
     if (devOk) return json({ ok: true, devOk: true });
     if (!rate('l:' + space + dev, 4, 3600e3) || !rate('i:' + ip, 20, 3600e3)) return json({ error: 'Trop d’envois, réessaie dans une heure — Too many e-mails, try again later' }, 429);
+    // 🛡️ par CARNET : 5 codes par heure et 12 par jour au plus, tous appareils confondus. Avant, la limite était par appareil,
+    //    et l'identifiant d'appareil est choisi par celui qui appelle : en le changeant, on obtenait autant de codes (et d'essais) qu'on voulait.
+    if (!(await dbRate(env, 'mi:' + ip, HOUR, 12)) || !(await dbRate(env, 'ms:' + space, HOUR, 5)) || !(await dbRate(env, 'mS:' + space, DAY, 12))) return json(TOO_MAIL, 429);
+    try { await env.DB.prepare('DELETE FROM acct_otp WHERE space = ?1 AND exp < ?2').bind(space, Date.now() - DAY).run(); } catch (e) {}   // vieux codes expirés
     if (a.maxdev > 0) { const r = await env.DB.prepare('SELECT COUNT(*) AS n FROM acct_dev WHERE space = ?1 AND ok = 1').bind(space).first(); if (r && r.n >= a.maxdev) return json({ error: 'Nombre maximum d’appareils atteint : retire un appareil depuis « Mes appareils ». — Device limit reached.', maxdev: true }, 403); }
     await env.DB.prepare('INSERT INTO acct_dev (space, dev, ok, at, lb) VALUES (?1, ?2, 0, ?3, ?4) ON CONFLICT (space, dev) DO UPDATE SET lb = ?4').bind(space, dev, Date.now(), lbOf(b)).run();
     const em = await mailDec(env, a.email); if (!em) return json({ error: 'Adresse du compte illisible (clé MAIL_KEY changée ?) — contacte le support' }, 500);
@@ -154,6 +180,7 @@ export async function onRequestPost({ request, env }) {
     const o = await env.DB.prepare('SELECT h, exp, tries FROM acct_otp WHERE space = ?1 AND dev = ?2').bind(space, dev).first();
     if (!o || o.exp < Date.now()) return json({ error: 'Code expiré : redemande un code — Code expired' }, 400);
     if (o.tries >= 5) return json({ error: 'Trop d’essais : redemande un code — Too many attempts' }, 429);
+    if (!(await dbRate(env, 'mv:' + space, HOUR, 20))) return json({ error: 'Trop d’essais : réessaie dans une heure — Too many attempts, try again in an hour' }, 429);   // 🛡️ par carnet, tous appareils confondus
     const otp = String(b.otp || '').replace(/\D/g, '');
     if (await sha256('vz-otp:' + space + ':' + otp) !== o.h) { await env.DB.prepare('UPDATE acct_otp SET tries = tries + 1 WHERE space = ?1 AND dev = ?2').bind(space, dev).run(); return json({ error: 'Code incorrect — Wrong code' }, 400); }
     await env.DB.prepare('DELETE FROM acct_otp WHERE space = ?1 AND dev = ?2').bind(space, dev).run();

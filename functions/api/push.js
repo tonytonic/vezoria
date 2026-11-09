@@ -1,4 +1,5 @@
-import { codeSpace, ROTATED } from './rotate.js';   // 🔑 code administrateur changé
+import { codeSpace, ROTATED, devIsBlocked } from './rotate.js';   // 🔑 code administrateur changé
+import { acctGate } from './account.js';   // 👤 compte du carnet : appareils validés
 /**
  * Vezoria — notifications (Web Push), sans service payant : Cloudflare Pages Function + D1.
  *
@@ -201,6 +202,14 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (space instanceof Response) return space;
   const db = env.DB, dev = clean(b.dev, 40).replace(/[^a-z0-9]/gi, '');
   if (dev.length < 8) return json({ error: 'dev' }, 400);
+  // 🛡️ comme la synchro : avec le code administrateur, seuls les appareils validés du compte s'abonnent aux notifications
+  //    ou en envoient (sinon quelqu'un qui aurait le code recevait les notifications du carnet sans passer la vérification par e-mail).
+  //    Un appareil retiré du carnet n'en reçoit plus et n'en envoie plus. (Se désabonner reste toujours possible.)
+  if (b.a !== 'unsub' && !(request.headers.get('X-Carnet-Code') || '').trim().startsWith('mb:')) {
+    if (await devIsBlocked(env, space, dev)) return json({ error: 'Appareil bloqué — Device blocked', devBlocked: true }, 403);
+    // (exception : l'alerte « nouvel appareil sur ton carnet », envoyée justement par l'appareil pas encore validé, pour prévenir les autres)
+    if (!(b.a === 'send' && b.kind === 'device')) { const g = await acctGate(env, space, dev); if (g) return json(g, 403); }
+  }
 
   if (b.a === 'sub') {
     const s = b.sub || {}, k = s.keys || {};
