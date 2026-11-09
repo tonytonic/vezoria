@@ -2456,7 +2456,7 @@
   const bookA = (k, c) => `<a href="${esc(bookUrl(k, c))}" target="_blank"${bookRel(k)} onclick="event.stopPropagation()${!bkPre(k, c) && bkTxt(c) ? `;CV.bkCopy('${ja(bkTxt(c) + (c.date ? ' · ' + c.date + (c.end ? ' → ' + c.end : '') : ''))}')` : ''}">${BK[k][0]} ${BK[k][1]}</a>`;
   // 📋 ce site ne se pré-remplit pas depuis un lien : ta recherche part dans le presse-papiers, tu n’as plus qu’à la coller
   function bkCopy(t){ try { navigator.clipboard.writeText(t).then(()=>toast('📋 ' + RF('« {0} » copié : colle-le dans la recherche du site', t)), ()=>{}); } catch(e){} }
-  const bookRows = G => G.map(g=>`<div class="bk-g"><small>${g.t}</small><div class="cv-links">${g.k.map(k=>bookA(k, g.c)).join('')}</div>${fpSlot(g)}${wgSlot(g)}</div>`).join('')
+  const bookRows = G => G.map(g=>`<div class="bk-g"><small>${g.t}</small><div class="cv-links">${g.k.map(k=>bookA(k, g.c)).join('')}</div>${fpSlot(g)}${wgSlot(g)}${g.vt ? VTR(g.vt.q, g.vt.d, g.vt.d, 4) : ''}</div>`).join('')
     + (G.some(g=>g.k.some(affOn)) ? `<div class="v-sum-small bk-aff">🔗 ${MSGT('Les liens marqués « partenaire » peuvent rapporter une petite commission à Vezoria, sans surcoût pour toi.')}</div>` : '');
   /* ✈️ Prix des vols (Aviasales, via /api/tp) : sous « Comparer les vols », le prix « dès » le jour du vol (sinon dans le mois),
      et le bouton Aviasales ouvre directement ce trajet à cette date. Rien n’est envoyé sur l’utilisateur : seulement
@@ -2569,7 +2569,9 @@
       G.push({t:hd && hd.name ? `🏘️ ${MSGT('Quartier conseillé pour dormir')} : <b>${esc(hd.name)}</b> · ${String(hd.km).replace('.', ',')} km ${MSGT('en moyenne de tes visites')} (${hd.n})` : 'Hébergements', k:['booking','airbnb','hotelscom','hostelworld','agoda'], c:{city:hw, what:it.nom ? it.nom + ' ' + city : hw, date:it.date, end:it.dateFin, n}});
     } else if(it.cat==='activite'){
       if(BK_SHOW.test(nzTxt(it.titre))) G.push(BK_SHOWG);
-      G.push({t:'Visites et billets', k:['tiqets','gyg','viator','wegotrip','kkday','civitatis'], c:{city, what:it.q || [it.titre, it.adresse ? cityOf(it.adresse.split(',').pop()) : ''].filter(Boolean).join(' ')}});
+      // 🎟️ activité payante : Viator prend la main (ses vraies offres, en images) ; les autres sites seulement si Viator n’est pas branché
+      const wq = it.q || [it.titre, it.adresse ? cityOf(it.adresse.split(',').pop()) : ''].filter(Boolean).join(' ');
+      G.push(affOn('viator') ? {t:'Visites et billets', k:['viator'], c:{city, what:wq}, vt:{q:wq, d:it.date && it.date >= isoToday() ? it.date : ''}} : {t:'Visites et billets', k:['tiqets','gyg','viator','wegotrip','kkday','civitatis'], c:{city, what:wq}});
     } else {
       const g = checkBook(it.titre || ''); if(g) G.push(g);
       else if(it.cat==='divers') G.push(BK_SHOWG);   // une dépense « divers » à réserver : souvent un concert, un spectacle, un match
@@ -2588,7 +2590,7 @@
     if(/hebergement|hotel|logement/.test(s)) return {t:'Hébergements', k:['booking','airbnb','hotelscom','hostelworld'], c};
     if(/trajet|billet d avion|vols? |train/.test(s)) return {t:'Trajets', k:['skyscanner','trainline','omio','gflights'], c:{}};
     if(BK_SHOW.test(s)) return BK_SHOWG;
-    if(/visite|creneau|musee|activite|excursion/.test(s)) return {t:'Visites et billets', k:['tiqets','gyg','viator','wegotrip','kkday'], c};
+    if(/visite|creneau|musee|activite|excursion/.test(s)) return {t:'Visites et billets', k:affOn('viator') ? ['viator'] : ['tiqets','gyg','viator','wegotrip','kkday'], c};
     if(/location|voiture|permis/.test(s)) return {t:'Voiture', k:['economy','autoeurope','qeeq','localrent','getrentacar'], c};
     if(/scooter|moto|velo|deux.roues/.test(s)) return {t:'Deux-roues', k:['bikesbooking'], c};
     if(/bagage|consigne|valise/.test(s) && /garder|consigne|deposer|stock/.test(s)) return {t:'Consigne à bagages', k:['radical'], c};

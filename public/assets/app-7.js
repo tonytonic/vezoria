@@ -41,7 +41,7 @@
     if(it.cat === 'hotel'){ k = 'booking'; const sc = stayCity(it) || c, hd = (M.hood || {})[it.id]; ctx = {what:hd && hd.name && normQ(hd.name) !== normQ(sc) ? hd.name + ', ' + sc : sc, date:it.date, end:it.dateFin, n}; }
     else if(it.cat === 'activite' && /^wg\|/.test(it.exp || '') && safeUrl(it.lien)){   // 🎧 visite audio gardée dans le tri : directement sa page WeGoTrip
       return `<a class="ar-bk" href="${esc(affWrap('wegotrip', safeUrl(it.lien)))}" target="_blank"${bookRel('wegotrip')} onclick="event.stopPropagation()">${MSGT('Réserver')} · WeGoTrip</a>`; }
-    else if(it.cat === 'activite'){ k = 'gyg'; ctx = {what:it.q || it.titre}; }
+    else if(it.cat === 'activite'){ k = affOn('viator') ? 'viator' : 'gyg'; ctx = {what:it.q || it.titre}; }   // 🎟️ Viator d’abord pour les activités payantes
     else if(/Avion/i.test(it.mode || '')){ const ia = c => (aptAny(c) || {}).i || '', f = ia(it.from), t = ia(it.to);   // ✈️ Skyscanner, ouvert sur le vol (codes d’aéroport) ; Google Flights si on ne les connaît pas encore
       k = 'skyscanner'; if(!(f && t)) try { const tr = trip(); if(tr) aptEnsure(tr); } catch(e){}   // codes pas encore connus : cherchés pour la prochaine fois
       ctx = {from:f || it.from || '', to:t || it.to || '', date:it.date || ''}; }

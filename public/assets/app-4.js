@@ -1293,7 +1293,7 @@ ${pm.join('\n')}</Document></kml>`;
     return out;
   }
   const expCount = t => expTrip(t).reduce((a, g)=>a + g.L.length, 0);
-  const expLinks = e => hidden('blk:book') ? '' : `<span class="ex-ln">${['gyg','viator'].map(b=>bookA(b, {what:e.q})).join('')}</span>`;
+  const expLinks = e => hidden('blk:book') ? '' : `<span class="ex-ln">${(affOn('viator') ? ['viator'] : ['gyg','viator']).map(b=>bookA(b, {what:e.q})).join('')}</span>`;
   function expOpen(){
     const t = trip(); if(!t) return; const G = expTrip(t);
     if(!G.length){ openSheet(`<h2>🎟️ ${MSGT('Expériences à vivre')}</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Tout est trié pour l’instant.')}</div>
@@ -1499,9 +1499,9 @@ ${pm.join('\n')}</Document></kml>`;
       const id = 'ex|' + g.h.id + '|' + e.key; EX[id] = {h:g.h, e, city:g.city}; L.push({id, c:g.city, d:'~', x:2}); }));
     Object.values(GR).forEach(g=>{ const id = 'ex|g|' + g.h.id; EX[id] = {h:g.h, city:g.city, grp:g.grp, sel:new Set(), e:{key:'grp|' + g.h.id, ic:'🎟️', l:'Activités à réserver', p:g.city}}; L.push({id, c:g.city, d:'~', x:2.5}); });
     // 🎧 visites audio WeGoTrip de chaque ville (déjà connues : tout de suite ; sinon elles arrivent pendant le tri)
-    const wgPend = [], vtPend = []; wgStays(t).forEach(([h, city])=>{ const r = wgHave(city); if(r) wgCards(t, h, city, r).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.5}); }); else wgPend.push([h, city]);
+    const wgPend = [], vtPend = [], VTON = affOn('viator'); wgStays(t).forEach(([h, city])=>{ const r = VTON ? null : wgHave(city); if(VTON){} else if(r) wgCards(t, h, city, r).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.5}); }); else wgPend.push([h, city]);
       const v = vtHave(city); if(v) vtCards(t, h, city, v).forEach(x=>{ EX[x.id] = x.v; L.push({id:x.id, c:city, d:'~', x:1.7}); }); else vtPend.push([h, city]); });
-    if(!L.length && !wgPend.length){ closeSheet(true); refresh(); return; }
+    if(!L.length && !wgPend.length && !vtPend.length){ closeSheet(true); refresh(); return; }
     L.sort((a, b)=>si(a.c) - si(b.c) || a.x - b.x || a.d.localeCompare(b.d));
     closeSheet(true); SW = {tid:t.id, ids:L.map(x=>x.id), i:0, hist:[], kept:0, EX, PAY, exDone:new Set()}; swRender();
     wgPend.forEach(([h, city])=>wgFetch(city).then(r=>swAddWg(t, h, city, r)).catch(()=>{}));
@@ -1529,11 +1529,15 @@ ${pm.join('\n')}</Document></kml>`;
   function vtCards(t, h, city, r){
     if(hidden('blk:book') || !r || !r.ok) return [];
     const no = new Set(((M.expNo || {})[t.id]) || []), kept = expKept(t.id);
-    return (r.tours || []).filter(x=>x && x.id && !no.has('vt|' + x.id) && !kept.has('vt|' + x.id)).slice(0, 4)
+    const PN = list('place', p=>p.trip === t.id && !p.deleted && p.nom && normQ(swCity(p)) === normQ(city)).map(p=>p.nom)
+      .concat(...expTrip(t).filter(g=>normQ(g.city) === normQ(city)).map(g=>g.L.filter(e=>!e.wg && normQ(e.p) !== normQ(city)).map(e=>e.p)));   // et les idées d’activités du lieu (Vatican…) : leurs offres Viator sont sur leur carte
+    return (r.tours || []).filter(x=>x && x.id && !no.has('vt|' + x.id) && !kept.has('vt|' + x.id) && !PN.some(n=>vtMatch(x.title, n)) && !/transf[eé]r|airport|a[ée]roport|navette|shuttle/i.test(x.title || '')).slice(0, 4)
       .map(x=>({id:'ex|' + h.id + '|vt|' + x.id, v:{h, city, e:{key:'vt|' + x.id, ic:'🎟️', l:'Activité à réserver', p:x.title, q:x.title, wg:x, vt:1}}}));
   }
   /* 🎟️ OFFRES VIATOR EN IMAGES (2026-11-09i) : une rangée de vraies activités (photo, prix, note, durée) qui se charge seule quand elle
      devient visible — « Expériences à vivre », « Que voir aujourd’hui ? », jour de pluie. Sans clé API ou hors ligne : la rangée disparaît. */
+  // une offre Viator qui porte le nom du lieu (« Colisée : billet coupe-file… ») : c’est ce lieu, en version payante
+  const vtMatch = (title, nom) => { const a = normQ(nom); if(a.length < 4) return false; return normQ(title).includes(a) || swSim(title, nom) >= .5; };
   const VTR = (q, d1, d2, n) => hidden('blk:book') || !q ? '' : `<div class="vt-row" data-vtq="${esc(q)}" data-vtd="${esc((d1 || '') + '|' + (d2 || ''))}" data-vtn="${n || 3}"></div>`;
   function vtTile(x){ const pr = x.price ? RF('dès {0}', (+x.price).toLocaleString(NL(), {style:'currency', currency:x.currency || 'EUR', maximumFractionDigits:x.price % 1 ? 2 : 0})) : '';
     return `<a class="vt-t" href="${esc(safeUrl(x.url) || '#')}" target="_blank" rel="sponsored noopener" onclick="event.stopPropagation()">${x.img ? `<img src="${esc(x.img)}" alt="" loading="lazy" decoding="async">` : '<i>🎟️</i>'}<span><b data-notr>${esc(x.title)}</b><small>${[pr, x.rating ? '⭐ ' + (+x.rating).toFixed(1).replace('.', ',') : '', x.duration].filter(Boolean).map(esc).join(' · ')}</small></span><em>Viator · ${esc(MSGT('partenaire'))}</em></a>`; }
@@ -1543,7 +1547,10 @@ ${pm.join('\n')}</Document></kml>`;
     let r = null; try { r = await vtFetch(el.dataset.vtq, d1, d2); } catch(e){}
     const L = r && r.ok ? (r.tours || []).filter(x=>x && x.url && !/transf[eé]r|airport|a[ée]roport|navette|shuttle|chauffeur/i.test(x.title || '')).slice(0, n) : [];   // pas de transferts d’aéroport dans les idées d’activités
     if(!el.isConnected) return; if(!L.length){ (el.closest('.rain-vt, .vt-sec, .sw-vt') || el).remove(); return; }
-    { const sv = el.closest('.sw-vt'); if(sv){ const c = sv.closest('.sw-card'); if(c) c.classList.add('has-vt'); } }
+    { const sv = el.closest('.sw-vt'); if(sv){ const c = sv.closest('.sw-card'); if(c){ c.classList.add('has-vt');
+        const nom = (c.querySelector('.sw-tx > b') || {}).textContent || '', m = L.find(x=>x.img && vtMatch(x.title, nom));
+        if(m){ c.dataset.vtled = '1'; const im = c.querySelector('.sw-img'); if(im){ im.onload = () => im.classList.add('ok'); im.src = m.img; } const wk = c.querySelector('.sw-wk'); if(wk) wk.hidden = true; } } } }
+    { const pr = el.previousElementSibling; if(pr && pr.classList.contains('ex-r')){ const ln = pr.querySelector('.ex-ln'); if(ln) ln.remove(); } }
     el.innerHTML = L.map(vtTile).join('');
   }
   let VTIO = null;
@@ -1615,7 +1622,7 @@ ${pm.join('\n')}</Document></kml>`;
         : SW && SW.PAY && SW.PAY[p.id] ? `<em class="sw-pay">🎟️ ${esc(MSGT('Payant : pense à réserver'))}</em>` : ''}
         ${!p.ex && swOthers(p).length ? `<em class="sw-vt">${swOthers(p).map(([w, v])=>(v ? '❤️ ' : '✕ ') + esc(RF(v ? '{0} l’a gardé' : '{0} l’a écarté', pname(w)))).join(' · ')}</em>` : ''}
         <b data-notr>${esc(p.nom)}</b>${p.exc ? `<em>🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</em>` : ''}<p class="sw-ex" data-notr></p><a class="sw-wk" target="_blank" rel="noopener" hidden>📖 Wikipédia</a>
-        ${p.ex ? '' : (()=>{ const v = VTR(p.nom + (c && normQ(c) !== normQ(p.nom) ? ' ' + c : ''), p.date && p.date >= isoToday() ? p.date : '', p.date && p.date >= isoToday() ? p.date : '', 3); return v ? `<div class="sw-vt" onpointerdown="event.stopPropagation()"><small>🎟️ ${esc(MSGT('Billets et visites guidées'))} · Viator · ${esc(MSGT('partenaire'))}</small>${v}</div>` : ''; })()}</div></div>`;
+        ${p.ex && (p.grp || (p.e && p.e.wg)) ? '' : (()=>{ const v = VTR(p.ex ? (p.e.q || p.nom + ' ' + c) : p.nom + (c && normQ(c) !== normQ(p.nom) ? ' ' + c : ''), p.date && p.date >= isoToday() ? p.date : '', p.date && p.date >= isoToday() ? p.date : '', 3); return v ? `<div class="sw-vt" onpointerdown="event.stopPropagation()"><small>🎟️ ${esc(MSGT('Billets et visites guidées'))} · Viator · ${esc(MSGT('partenaire'))}</small>${v}</div>` : ''; })()}</div></div>`;
   }
   function swFill(el, p){
     if(p && p.ex && p.e && p.e.wg){ const w = p.e.wg, im = el.querySelector('.sw-img');   // visite WeGoTrip : sa photo, sa durée, son lien
@@ -1624,10 +1631,10 @@ ${pm.join('\n')}</Document></kml>`;
       const a = el.querySelector('.sw-wk'); if(p.e.vt){ a.href = w.url; a.textContent = '🎟️ Viator ›'; a.rel = 'sponsored noopener'; a.hidden = false; return; }
       a.href = affWrap('wegotrip', w.url); a.textContent = '🎧 WeGoTrip ›'; if(affOn('wegotrip')) a.rel = 'sponsored noopener'; a.hidden = false; return; }
     swInfo(p).then(x=>{ if(!el.isConnected) return; const im = el.querySelector('.sw-img');
-      if(x.img){ im.onload = () => im.classList.add('ok'); im.src = x.img; }
+      if(x.img && !el.dataset.vtled){ im.onload = () => im.classList.add('ok'); im.src = x.img; }
       if(p.grp) return;   // carte « que faire à… » : la photo de la ville seulement
       if(x.ex) el.querySelector('.sw-ex').textContent = x.ex;
-      if(x.url){ const a = el.querySelector('.sw-wk'); a.href = x.url; a.hidden = false; } });
+      if(x.url && !el.dataset.vtled){ const a = el.querySelector('.sw-wk'); a.href = x.url; a.hidden = false; } });
   }
   function swRender(){
     if(!SW) return; const t = R[SW.tid]; if(!t){ swClose(); return; }
