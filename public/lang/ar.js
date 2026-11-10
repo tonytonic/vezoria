@@ -6663,4 +6663,5 @@ I18N.load({
 "Porto-Vecchio":"بورتو فيكيو",
 "Saint-Gilles":"سان جيل",
 "Saint-Pierre":"سان بيير",
-"Sainte-Anne":"سانت آن"});
+"Sainte-Anne":"سانت آن",
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"لا توجد إعجابات أو تعليقات على هذه الذكرى بعد."});

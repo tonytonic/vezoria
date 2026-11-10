@@ -6662,4 +6662,5 @@ I18N.load({
 "Porto-Vecchio":"포르토베키오",
 "Saint-Gilles":"생질",
 "Saint-Pierre":"생피에르",
-"Sainte-Anne":"생탄"});
+"Sainte-Anne":"생탄",
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"이 추억에는 아직 좋아요나 댓글이 없어요."});

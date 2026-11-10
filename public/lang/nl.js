@@ -3712,4 +3712,5 @@ I18N.load({
 "plage mer détente nature":"strand zee ontspanning natuur",
 "nature randonnée mer aventure":"natuur wandelen zee avontuur",
 "nature randonnée mer":"natuur wandelen zee",
-"Pays-Bas":"Nederland"});
+"Pays-Bas":"Nederland",
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Nog geen likes of reacties op deze herinnering."});

@@ -6644,4 +6644,5 @@ I18N.load({
 "🧭 Vezoria reste accessible avec le bouton en haut":"🧭 Vezoria üstteki düğmeyle erişilebilir kalır",
 "↩︎ Remettre le carnet comme avant Vezoria":"↩︎ Defteri Vezoria öncesindeki haline getir",
 "https://… ou XXXX-XXXX-XXXX":"https://… veya XXXX-XXXX-XXXX",
-"Pays-Bas":"Hollanda"});
+"Pays-Bas":"Hollanda",
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Bu anıda henüz beğeni veya yorum yok."});

@@ -3722,4 +3722,5 @@ I18N.load({
 "🧭 Vezoria reste accessible avec le bouton en haut":"🧭 O Vezoria continua acessível pelo botão no topo",
 "↩︎ Remettre le carnet comme avant Vezoria":"↩︎ Deixar o caderno como antes do Vezoria",
 "https://… ou XXXX-XXXX-XXXX":"https://… ou XXXX-XXXX-XXXX",
-"Pays-Bas":"Países Baixos"});
+"Pays-Bas":"Países Baixos",
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Ainda não há curtidas nem comentários nesta lembrança."});

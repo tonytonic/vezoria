@@ -6663,4 +6663,5 @@ I18N.load({
 "Porto-Vecchio":"Порто-Веккьо",
 "Saint-Gilles":"Сен-Жиль",
 "Saint-Pierre":"Сен-Пьер",
-"Sainte-Anne":"Сент-Анн"});
+"Sainte-Anne":"Сент-Анн",
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"У этого воспоминания пока нет лайков и комментариев."});

@@ -6662,4 +6662,5 @@ I18N.load({
 "Porto-Vecchio":"韦基奥港",
 "Saint-Gilles":"圣吉尔",
 "Saint-Pierre":"圣皮埃尔",
-"Sainte-Anne":"圣安妮"});
+"Sainte-Anne":"圣安妮",
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"这条回忆还没有点赞或评论。"});

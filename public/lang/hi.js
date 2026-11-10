@@ -6662,4 +6662,5 @@ I18N.load({
 "Porto-Vecchio":"पोर्टो-वेक्कियो",
 "Saint-Gilles":"सेंट-जिल्स",
 "Saint-Pierre":"सेंट-पियरे",
-"Sainte-Anne":"सेंट-ऐन"});
+"Sainte-Anne":"सेंट-ऐन",
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"इस याद पर अभी कोई लाइक या टिप्पणी नहीं।"});

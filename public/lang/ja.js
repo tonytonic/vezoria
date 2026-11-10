@@ -6662,4 +6662,5 @@ I18N.load({
 "Porto-Vecchio":"ポルト＝ヴェッキオ",
 "Saint-Gilles":"サン＝ジル",
 "Saint-Pierre":"サン＝ピエール",
-"Sainte-Anne":"サンタンヌ"});
+"Sainte-Anne":"サンタンヌ",
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"この思い出にはまだいいねもコメントもありません。"});

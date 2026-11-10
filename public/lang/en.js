@@ -3703,4 +3703,5 @@ I18N.load({
 "🧭 Vezoria reste accessible avec le bouton en haut":"🧭 Vezoria stays available with the button at the top",
 "↩︎ Remettre le carnet comme avant Vezoria":"↩︎ Restore the notebook as it was before Vezoria",
 "https://… ou XXXX-XXXX-XXXX":"https://… or XXXX-XXXX-XXXX",
-"Pays-Bas":"Netherlands"});
+"Pays-Bas":"Netherlands",
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"No likes or comments on this memory yet."});
