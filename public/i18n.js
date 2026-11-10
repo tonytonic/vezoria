@@ -85,6 +85,8 @@
   }
   function look(core){
     if(memo.has(core)) return memo.get(core);
+    // « · il y a 3 min » : un séparateur « · » devant un texte connu (sinon un modèle trop large comme « {0} min » le gardait en français)
+    if(/^·\s/.test(core) && !EXACT.has(core)){ var rs = look(core.replace(/^·\s+/, '')); if(rs != null){ memo.set(core, '· ' + rs); return '· ' + rs; } }
     var r = EXACT.has(core) ? EXACT.get(core) : null, pm = /^([^A-Za-zÀ-ÿ]+?)([A-Za-zÀ-ÿ][\s\S]*)$/.exec(core);
     if(r == null && pm && !/\d/.test(pm[1]) && EXACT.has(pm[2])) r = pm[1] + EXACT.get(pm[2]);   // « 💶 Plafond de dépenses » : symbole + texte connu, avant les modèles
     if(r == null && /[A-Za-zÀ-ÿ]/.test(core)) r = viaPattern(core);   // « 3 voyages » : un nombre devant passe d’abord par les modèles (« {0} voyages »)
