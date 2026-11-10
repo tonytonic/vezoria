@@ -6663,4 +6663,5 @@ I18N.load({
 "Saint-Gilles":"सेंट-जिल्स",
 "Saint-Pierre":"सेंट-पियरे",
 "Sainte-Anne":"सेंट-ऐन",
-"Pas encore de j’aime ni de commentaire sur ce souvenir.":"इस याद पर अभी कोई लाइक या टिप्पणी नहीं।"});
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"इस याद पर अभी कोई लाइक या टिप्पणी नहीं।",
+"Carnet de voyage gratuit, sans publicité.":"मुफ़्त यात्रा डायरी, बिना विज्ञापन।"});

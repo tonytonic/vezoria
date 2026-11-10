@@ -3704,4 +3704,5 @@ I18N.load({
 "↩︎ Remettre le carnet comme avant Vezoria":"↩︎ Restore the notebook as it was before Vezoria",
 "https://… ou XXXX-XXXX-XXXX":"https://… or XXXX-XXXX-XXXX",
 "Pays-Bas":"Netherlands",
-"Pas encore de j’aime ni de commentaire sur ce souvenir.":"No likes or comments on this memory yet."});
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"No likes or comments on this memory yet.",
+"Carnet de voyage gratuit, sans publicité.":"Free travel journal, no ads."});

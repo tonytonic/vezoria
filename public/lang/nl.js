@@ -3713,4 +3713,5 @@ I18N.load({
 "nature randonnée mer aventure":"natuur wandelen zee avontuur",
 "nature randonnée mer":"natuur wandelen zee",
 "Pays-Bas":"Nederland",
-"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Nog geen likes of reacties op deze herinnering."});
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Nog geen likes of reacties op deze herinnering.",
+"Carnet de voyage gratuit, sans publicité.":"Gratis reisdagboek, zonder advertenties."});

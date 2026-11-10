@@ -6645,4 +6645,5 @@ I18N.load({
 "↩︎ Remettre le carnet comme avant Vezoria":"↩︎ Defteri Vezoria öncesindeki haline getir",
 "https://… ou XXXX-XXXX-XXXX":"https://… veya XXXX-XXXX-XXXX",
 "Pays-Bas":"Hollanda",
-"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Bu anıda henüz beğeni veya yorum yok."});
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Bu anıda henüz beğeni veya yorum yok.",
+"Carnet de voyage gratuit, sans publicité.":"Ücretsiz seyahat defteri, reklamsız."});

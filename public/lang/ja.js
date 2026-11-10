@@ -6663,4 +6663,5 @@ I18N.load({
 "Saint-Gilles":"サン＝ジル",
 "Saint-Pierre":"サン＝ピエール",
 "Sainte-Anne":"サンタンヌ",
-"Pas encore de j’aime ni de commentaire sur ce souvenir.":"この思い出にはまだいいねもコメントもありません。"});
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"この思い出にはまだいいねもコメントもありません。",
+"Carnet de voyage gratuit, sans publicité.":"無料の旅ノート、広告なし。"});

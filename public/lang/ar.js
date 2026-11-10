@@ -6664,4 +6664,5 @@ I18N.load({
 "Saint-Gilles":"سان جيل",
 "Saint-Pierre":"سان بيير",
 "Sainte-Anne":"سانت آن",
-"Pas encore de j’aime ni de commentaire sur ce souvenir.":"لا توجد إعجابات أو تعليقات على هذه الذكرى بعد."});
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"لا توجد إعجابات أو تعليقات على هذه الذكرى بعد.",
+"Carnet de voyage gratuit, sans publicité.":"دفتر رحلات مجاني، بلا إعلانات."});

@@ -3723,4 +3723,5 @@ I18N.load({
 "↩︎ Remettre le carnet comme avant Vezoria":"↩︎ Deixar o caderno como antes do Vezoria",
 "https://… ou XXXX-XXXX-XXXX":"https://… ou XXXX-XXXX-XXXX",
 "Pays-Bas":"Países Baixos",
-"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Ainda não há curtidas nem comentários nesta lembrança."});
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Ainda não há curtidas nem comentários nesta lembrança.",
+"Carnet de voyage gratuit, sans publicité.":"Caderno de viagem grátis, sem anúncios."});

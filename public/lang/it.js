@@ -3722,4 +3722,5 @@ I18N.load({
 "nature randonnée mer":"natura escursionismo mare",
 "https://… ou XXXX-XXXX-XXXX":"https://… o XXXX-XXXX-XXXX",
 "Pays-Bas":"Paesi Bassi",
-"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Ancora nessun mi piace né commento su questo ricordo."});
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Ancora nessun mi piace né commento su questo ricordo.",
+"Carnet de voyage gratuit, sans publicité.":"Diario di viaggio gratuito, senza pubblicità."});

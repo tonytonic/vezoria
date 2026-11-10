@@ -6664,4 +6664,5 @@ I18N.load({
 "Saint-Gilles":"Сен-Жиль",
 "Saint-Pierre":"Сен-Пьер",
 "Sainte-Anne":"Сент-Анн",
-"Pas encore de j’aime ni de commentaire sur ce souvenir.":"У этого воспоминания пока нет лайков и комментариев."});
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"У этого воспоминания пока нет лайков и комментариев.",
+"Carnet de voyage gratuit, sans publicité.":"Бесплатный дневник путешествий, без рекламы."});

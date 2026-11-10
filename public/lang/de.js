@@ -3716,4 +3716,5 @@ I18N.load({
 "nature randonnée mer":"Natur Wandern Meer",
 "https://… ou XXXX-XXXX-XXXX":"https://… oder XXXX-XXXX-XXXX",
 "Pays-Bas":"Niederlande",
-"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Noch keine Likes oder Kommentare zu dieser Erinnerung."});
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"Noch keine Likes oder Kommentare zu dieser Erinnerung.",
+"Carnet de voyage gratuit, sans publicité.":"Kostenloses Reisetagebuch, ohne Werbung."});

@@ -6663,4 +6663,5 @@ I18N.load({
 "Saint-Gilles":"생질",
 "Saint-Pierre":"생피에르",
 "Sainte-Anne":"생탄",
-"Pas encore de j’aime ni de commentaire sur ce souvenir.":"이 추억에는 아직 좋아요나 댓글이 없어요."});
+"Pas encore de j’aime ni de commentaire sur ce souvenir.":"이 추억에는 아직 좋아요나 댓글이 없어요.",
+"Carnet de voyage gratuit, sans publicité.":"무료 여행 노트, 광고 없음."});
