@@ -87,8 +87,8 @@ export async function acctNew(env, request, space, nChanges = 1) {
     // 📨 sans compte, on peut quand même déposer 1 à 3 petites fiches dans un espace neuf : une invitation dans la boîte d’un compagnon,
     //    le code de passage navigateur → appli d’un abonné. Ces espaces restent limités à 200 fiches.
     if (request.headers.get('X-Carnet-Main') !== '1' && tok0.length < 8 && nChanges <= 3 && Number(request.headers.get('Content-Length') || 0) <= 16384) {
-      // 🛡️ 40 nouveaux petits espaces par heure et par connexion : un robot ne peut pas remplir la base d'espaces vides
-      if (!(await dbRate(env, 'ls:' + (request.headers.get('CF-Connecting-IP') || 'x'), HOUR, 40))) return { error: 'Trop de créations depuis cette connexion : réessaie dans une heure. — Too many new links from this connection: try again in an hour.', retry: 3600 };
+      // 🛡️ 150 nouveaux petits espaces par heure et par connexion (large : sur mobile, des centaines de personnes partagent la même adresse IP) : un robot ne peut pas remplir la base d'espaces vides
+      if (!(await dbRate(env, 'ls:' + (request.headers.get('CF-Connecting-IP') || 'x'), HOUR, 150))) return { error: 'Trop de créations depuis cette connexion : réessaie dans une heure. — Too many new links from this connection: try again in an hour.', retry: 3600 };
       await own('-light'); return null; }
     if (request.headers.get('X-Carnet-Main') === '1') { if (!(await acctReady(env, space, dev))) return NEED; await own(space); return null; }
     const tok = (request.headers.get('X-Carnet-Acct') || '').trim(); if (tok.length < 8 || tok.startsWith('mb:')) return NEED;
@@ -149,7 +149,7 @@ export async function onRequestPost({ request, env }) {
     if (!rate('m:' + space, 5, 3600e3) || !rate('i:' + ip, 20, 3600e3)) return json({ error: 'Trop d’envois, réessaie dans une heure — Too many e-mails, try again later' }, 429);
     // 🛡️ une même adresse ne reçoit pas plus de 4 codes par heure et 10 par jour, quel que soit le carnet qui les demande
     //    (sinon n'importe qui pouvait faire envoyer des dizaines de messages Vezoria à l'adresse de quelqu'un d'autre)
-    if (!(await dbRate(env, 'mi:' + ip, HOUR, 12)) || !(await dbRate(env, 'mt:' + email, HOUR, 4)) || !(await dbRate(env, 'md:' + email, DAY, 10))) return json(TOO_MAIL, 429);
+    if (!(await dbRate(env, 'mi:' + ip, HOUR, 60)) || !(await dbRate(env, 'mt:' + email, HOUR, 4)) || !(await dbRate(env, 'md:' + email, DAY, 10))) return json(TOO_MAIL, 429);
     const ee = await mailEnc(env, email);
     if (a) await env.DB.prepare('UPDATE acct SET pend = ?2 WHERE space = ?1').bind(space, ee).run();
     else await env.DB.prepare('INSERT INTO acct (space, email, pend, verified, maxdev, at) VALUES (?1, NULL, ?2, 0, 0, ?3)').bind(space, ee, Date.now()).run();
@@ -162,7 +162,7 @@ export async function onRequestPost({ request, env }) {
     if (!rate('l:' + space + dev, 4, 3600e3) || !rate('i:' + ip, 20, 3600e3)) return json({ error: 'Trop d’envois, réessaie dans une heure — Too many e-mails, try again later' }, 429);
     // 🛡️ par CARNET : 5 codes par heure et 12 par jour au plus, tous appareils confondus. Avant, la limite était par appareil,
     //    et l'identifiant d'appareil est choisi par celui qui appelle : en le changeant, on obtenait autant de codes (et d'essais) qu'on voulait.
-    if (!(await dbRate(env, 'mi:' + ip, HOUR, 12)) || !(await dbRate(env, 'ms:' + space, HOUR, 5)) || !(await dbRate(env, 'mS:' + space, DAY, 12))) return json(TOO_MAIL, 429);
+    if (!(await dbRate(env, 'mi:' + ip, HOUR, 60)) || !(await dbRate(env, 'ms:' + space, HOUR, 5)) || !(await dbRate(env, 'mS:' + space, DAY, 12))) return json(TOO_MAIL, 429);
     try { await env.DB.prepare('DELETE FROM acct_otp WHERE space = ?1 AND exp < ?2').bind(space, Date.now() - DAY).run(); } catch (e) {}   // vieux codes expirés
     if (a.maxdev > 0) { const r = await env.DB.prepare('SELECT COUNT(*) AS n FROM acct_dev WHERE space = ?1 AND ok = 1').bind(space).first(); if (r && r.n >= a.maxdev) return json({ error: 'Nombre maximum d’appareils atteint : retire un appareil depuis « Mes appareils ». — Device limit reached.', maxdev: true }, 403); }
     await env.DB.prepare('INSERT INTO acct_dev (space, dev, ok, at, lb) VALUES (?1, ?2, 0, ?3, ?4) ON CONFLICT (space, dev) DO UPDATE SET lb = ?4').bind(space, dev, Date.now(), lbOf(b)).run();
