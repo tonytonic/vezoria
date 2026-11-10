@@ -1958,7 +1958,7 @@
   function webCta(){
     if(!webFollowing()) return '';
     const c = M.webCode || (list('feedtrip', f=>TS()[f.id] && !f.deleted).map(f=>TS()[f.id]))[0] || '';
-    return `<div class="fd-cta"><span><b>Toi aussi, raconte tes voyages</b><small>Carnet de voyage gratuit, sans compte, sans publicité.</small></span><button type="button" onclick="CV.webCreate()">✨ Créer mon carnet</button></div>`
+    return `<div class="fd-cta"><span><b>Toi aussi, raconte tes voyages</b><small>Carnet de voyage gratuit, sans publicité.</small></span><button type="button" onclick="CV.webCreate()">✨ Créer mon carnet</button></div>`
       + (c ? `<div class="fd-wcode"><span><b>📲 Passer à l’appli sans rien perdre</b><small>Installe Vezoria, puis colle ce code dans l’appli (à l’accueil « J’ai reçu une invitation », ou 👥 → « Rejoindre avec un code ») : tu retrouves tes voyages suivis, sous ton nom, sans compter deux fois.</small></span><b class="cv-code" id="gw-xcode">${M.xfer && M.xfer.c ? esc(M.xfer.c) : '••••-••••-••••'}</b><button type="button" id="gw-copy2" onclick="CV.webCopyCode()">📋 Copier mon code de passage</button></div>` : '');
   }
   function webCreate(){
