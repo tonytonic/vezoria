@@ -326,6 +326,9 @@
     const want = new Set(); let ch = 0;
     try { socWhoFix(); } catch(e){}
     // 🩹 (2026-11-09f) : un fil que je SUIS aussi en abonné jetait les ❤️ et commentaires de nos voyages communs → on le relit une fois en entier
+    // 🌍 (2026-11-10) : le nom proposé « Mon prochain voyage » restait en français dans les autres langues → renommé une fois dans la langue de l’appli
+    if(!M.tnFix1 && window.I18N && I18N.lang !== 'fr' && I18N.ready){ M.tnFix1 = 1; const nm = MSGT('Mon prochain voyage');
+      if(nm !== 'Mon prochain voyage'){ const fx = myTrips().filter(t=>t.titre === 'Mon prochain voyage').map(t=>Object.assign(clone(t), {titre:nm})); if(fx.length) putQuiet(fx); } ch++; }
     if(!M.mtFix1){ M.mtFix1 = 1; (M.spaces || []).forEach(sp=>{ if(sp.sub) sp.since = 0; }); ch++; }
     list('feedco', r=>r.pid !== M.me && r.code && R[r.trip] && R[r.trip].type === 'trip' && !R[r.trip].deleted && ((R[r.trip].voyageurs || []).includes(M.me)) && r.code !== FT()[r.trip]).forEach(r=>want.add(r.code));
     want.forEach(c=>{ if(!spaceObj(c)){ (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:'', mate:1}); ch++; } });
@@ -2049,7 +2052,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-10a'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-10b'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

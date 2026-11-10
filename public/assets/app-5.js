@@ -1451,9 +1451,9 @@
     return {tid, s:steps.length, p};
   }
   async function blankTrip(){
-    const n = (await uiPrompt('Nom du voyage :', 'Mon prochain voyage')); if(n === null) return;
+    const n = (await uiPrompt('Nom du voyage :', MSGT('Mon prochain voyage'))); if(n === null) return;   // 🌍 nom proposé dans la langue de l’appli
     const tid = 't' + uid();
-    put({id:tid, type:'trip', titre:n.trim() || 'Mon prochain voyage', sous:'', debut:'', fin:'', voyageurs:M.me ? [M.me] : [], objectif:''}, '📄 Voyage vierge créé');
+    put({id:tid, type:'trip', titre:n.trim() || MSGT('Mon prochain voyage'), sous:'', debut:'', fin:'', voyageurs:M.me ? [M.me] : [], objectif:''}, '📄 Voyage vierge créé');
     closeSheet(true); M.mode = 'prep'; M.tab = 'prog'; go(tid);
     setTimeout(()=>CV.editTrip && CV.editTrip(tid), 300);
   }
@@ -1610,7 +1610,6 @@
     ["Rocheuses canadiennes", "Canada", "CA", 51.178, -115.571, "nature montagne randonnée lac faune", [6, 7, 8, 9], 160, [7, 12], [["Calgary", 1], ["Banff", 3], ["Jasper", 3]], "Lacs Louise et Moraine tôt le matin (navettes), Icefields Parkway, ours et wapitis.", "E", [-4, -2, 3, 9, 14, 18, 22, 21, 16, 9, 1, -4], "Parc national de Banff"],
     ["Vancouver & île de Vancouver", "Canada", "CA", 49.283, -123.121, "nature ville mer faune", [5, 6, 7, 8, 9], 150, [7, 12], [["Vancouver", 3], ["Victoria", 2], ["Tofino", 3]], "Stanley Park à vélo, baleines et ours depuis Tofino, ferry vers l’île.", "E", [7, 8, 11, 14, 17, 20, 23, 23, 19, 14, 9, 7], "Tofino"],
     ["Mexico & Oaxaca", "Mexique", "MX", 19.433, -99.133, "culture gastronomie histoire ville", [10, 11, 12, 1, 2, 3, 4], 70, [8, 12], [["Mexico", 4], ["Puebla", 1], ["Oaxaca", 3]], "Teotihuacán au lever du soleil, musée d’anthropologie, mole et mezcal à Oaxaca, Fête des morts début novembre.", "P", [21, 23, 26, 27, 27, 25, 24, 24, 23, 22, 22, 21], "Oaxaca de Juárez"],
-    ["Cuba", "Cuba", "CU", 23.113, -82.366, "culture musique plage histoire", [11, 12, 1, 2, 3, 4], 70, [10, 14], [["La Havane", 3], ["Viñales", 2], ["Trinidad", 3], ["Varadero", 2]], "Casas particulares, vieille Havane en voiture américaine, vallée de Viñales à cheval. Prévoir des espèces.", "V", [26, 27, 28, 29, 30, 31, 32, 32, 31, 29, 28, 27], "La Havane"],
     ["République dominicaine", "République dominicaine", "DO", 18.582, -68.405, "plage détente nature", [12, 1, 2, 3, 4], 90, [7, 12], [["Punta Cana", 4], ["Samaná", 3]], "Baleines à bosse de Samaná en février, plage de Playa Rincón, île Saona.", "P", [29, 29, 30, 30, 31, 31, 32, 32, 32, 31, 30, 29], "Samaná"],
     ["Guatemala", "Guatemala", "GT", 14.557, -90.733, "culture volcan histoire nature", [11, 12, 1, 2, 3, 4], 50, [10, 14], [["Antigua", 3], ["Lac Atitlán", 3], ["Flores", 2]], "Antigua et ses volcans, villages du lac Atitlán, cité maya de Tikal à l’aube.", "P", [23, 25, 26, 27, 26, 24, 24, 24, 24, 23, 23, 23], "Antigua Guatemala"],
     ["Panama", "Panama", "PA", 8.983, -79.517, "nature plage ville plongée", [1, 2, 3, 4], 90, [8, 12], [["Panama", 2], ["Boquete", 2], ["Bocas del Toro", 3], ["San Blas", 2]], "Écluses de Miraflores, café de Boquete, îles de San Blas chez les Guna.", "P", [31, 32, 32, 32, 31, 30, 30, 30, 29, 29, 29, 30], "Bocas del Toro"],

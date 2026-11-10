@@ -2307,7 +2307,7 @@ ${pm.join('\n')}</Document></kml>`;
     try {
       impSay('🎫 Lecture de la carte Wallet…');
       const z = await zipRead(file), get = async n => { const v = z[n]; return typeof v === 'function' ? await v() : v; };
-      const raw = await get('pass.json'); if(!raw) throw new Error('ce fichier n’est pas une carte Wallet');
+      const raw = await get('pass.json'); if(!raw) throw new Error(MSGT('ce fichier n’est pas une carte Wallet'));
       const P = JSON.parse(new TextDecoder().decode(raw).replace(/^\uFEFF/, ''));
       // textes traduits du billet (fr, sinon en) : « label » et « value » peuvent être des clés
       let loc = {}; for(const lg of ['fr', 'en']){ const b = await get(lg + '.lproj/pass.strings'); if(b){ const tx = (b[0] === 0xFF || b[0] === 0xFE) ? new TextDecoder('utf-16le').decode(b) : new TextDecoder().decode(b);
@@ -2331,7 +2331,7 @@ ${pm.join('\n')}</Document></kml>`;
           await img.decode(); const c = document.createElement('canvas'); c.width = c.height = 900; const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, 900, 900); g.drawImage(img, 0, 0, 900, 900);
           await storePhoto(await new Promise(r => c.toBlob(r, 'image/png')), id); uploadQueue(); pj = [{id, t:'img', n:'Billet Wallet'}]; } catch(e){}
       }
-      const base = {type:'item', trip:M.trip, date:dt.d, ref, statut:'booked', note: note + (bc && bc.message && !pj ? '\nCode du billet : ' + bc.message : '')};
+      const base = {type:'item', trip:M.trip, date:dt.d, ref, statut:'booked', note: note + (bc && bc.message && !pj ? '\n' + MSGT('Code du billet :') + ' ' + bc.message : '')};
       let d;
       if(kind === 'boardingPass'){
         const tt = String(S.transitType || ''), mode = /Air/.test(tt) ? 'Avion' : /Bus/.test(tt) ? 'Bus' : /Boat/.test(tt) ? 'Bateau' : 'Train';
@@ -2342,7 +2342,7 @@ ${pm.join('\n')}</Document></kml>`;
           heureDep: dt.t || fv(/depart|boarding|embarq|départ/i).match(/\d{1,2}:\d{2}/)?.[0] || '', heureArr: (fv(/arriv/i).match(/\d{1,2}:\d{2}/) || [''])[0],
           compagnie: [P.organizationName, flight].filter(Boolean).join(' ')});
       } else if(kind === 'eventTicket'){
-        const ev = fv(/event|[ée]v[ée]nement|show|spectacle|match/i) || P.description || P.logoText || P.organizationName || 'Événement';
+        const ev = fv(/event|[ée]v[ée]nement|show|spectacle|match/i) || P.description || P.logoText || P.organizationName || MSGT('Événement');
         d = Object.assign(base, {cat:'activite', titre: ev, heure: dt.t, adresse: fv(/venue|lieu|location|adresse|salle|stade/i), lat: P.locations && P.locations[0] ? P.locations[0].latitude : undefined, lng: P.locations && P.locations[0] ? P.locations[0].longitude : undefined});
       } else {
         // carte « générique » : le texte passe par la lecture habituelle des réservations (hôtel, location…)
@@ -2372,13 +2372,13 @@ ${pm.join('\n')}</Document></kml>`;
       const many = isPdf ? [] : multiCards(txt);
       if(many.length >= 2){ const ref = cfRef(txt, pj);
         cfPending = many.map(bp=>({type:'item', trip:M.trip, cat:'transport', mode:'Avion', from:bp.from, to:bp.to, titre:bp.from + ' → ' + bp.to, date:bp.date, heureDep:bp.heure, heureArr:bp.heureArr, compagnie:bp.compagnie, ref:bp.ref || ref, statut:'booked', pj:clone(pj),
-          note:[bp.seat && 'Place : ' + bp.seat, bp.board && 'Embarquement / fermeture de la porte : ' + bp.board, bp.pax && 'Passager : ' + bp.pax].filter(Boolean).join('\n')}));
+          note:[bp.seat && MSGT('Place :') + ' ' + bp.seat, bp.board && MSGT('Embarquement / fermeture de la porte :') + ' ' + bp.board, bp.pax && MSGT('Passager :') + ' ' + bp.pax].filter(Boolean).join('\n')}));
         impCtx = {raw:txt, pj}; cfSegSheet(); return; }
       const bp = isPdf ? null : boardingParse(txt);
       if(!isPdf && !bp){ closeSheet(true); cfImport(stripStatus(txt), pj); return; }
       if(bp){ pj[0].n = 'Carte d’embarquement';
         edit({type:'item', trip:M.trip, cat:'transport', mode:'Avion', from:bp.from, to:bp.to, titre:bp.from + ' → ' + bp.to, date:bp.date, heureDep:bp.heure, heureArr:bp.heureArr, compagnie:bp.compagnie, ref:bp.ref, statut:'booked', pj,
-          note:[bp.seat && 'Place : ' + bp.seat, bp.board && 'Embarquement / fermeture de la porte : ' + bp.board, bp.pax && 'Passager : ' + bp.pax].filter(Boolean).join('\n')});
+          note:[bp.seat && MSGT('Place :') + ' ' + bp.seat, bp.board && MSGT('Embarquement / fermeture de la porte :') + ' ' + bp.board, bp.pax && MSGT('Passager :') + ' ' + bp.pax].filter(Boolean).join('\n')});
         toast('✈️ Carte d’embarquement lue — vérifie puis Enregistrer'); return; }
       cfImport(txt, pj);
     } catch(e){ impSay('⚠️ ' + e.message); }
@@ -2434,7 +2434,7 @@ ${pm.join('\n')}</Document></kml>`;
     const pr = g(/Montant total\s*€\s*(\d[\d .]*(?:,\d{1,2})?)/i); if(pr) r.prix = pr.replace(/\s|\.(?=\d{3})/g,'').replace(',', '.');
     const room = g(/Votre r[ée]servation\s+(\d+ nuits?,?[^\n]{0,60})/i).trim();
     const free = g(/annuler GRATUITEMENT jusqu['’]au\s+(\d{1,2} \p{L}+ \d{4})/iu);
-    r.note = ['Booking.com', pin ? 'code confidentiel ' + pin : '', room, free ? 'annulation gratuite jusqu’au ' + free : ''].filter(Boolean).join(' · ');
+    r.note = ['Booking.com', pin ? MSGT('code confidentiel') + ' ' + pin : '', room, free ? MSGT('annulation gratuite jusqu’au') + ' ' + free : ''].filter(Boolean).join(' · ');
     return r;
   }
   /* 🏨 Écran de réservation d’hébergement (appli Booking, Airbnb, Hotels.com, Expedia, mail…) :

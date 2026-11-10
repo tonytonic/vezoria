@@ -1785,7 +1785,7 @@
   async function syncOff(){ if(!(await uiConfirm('Désactiver la synchro sur ce téléphone ? Les données restent ici.'))) return; M.sync.on = false; persist(); refresh(); }
   async function shareCode(){
     const url = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
-    const text = `Rejoins mon carnet Vezoria 🧳\n${url}\nCode principal : ${M.sync.code}\n(☁️ Cloud → « Tu as déjà un code principal ? » → colle le code)`;
+    const text = MSGT('Rejoins mon carnet Vezoria 🧳') + `\n${url}\n` + RF('Code principal : {0}', M.sync.code) + '\n' + MSGT('(☁️ Cloud → « Tu as déjà un code principal ? » → colle le code)');   // 🌍 message envoyé dans la langue de l’appli
     if(navigator.share){ try { await navigator.share({title:'Vezoria', text}); return; } catch(e){ return; } }
     try { await navigator.clipboard.writeText(text); toast('📋 Invitation copiée'); } catch(e){ (await uiPrompt('Copie ce texte :', text)); }
   }
