@@ -3543,3 +3543,8 @@ body.lv-sheet .v-sheet-bg{z-index:9200}
 .pg-ls i{flex:none;width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.2)}
 .pg-ls span{flex:1;min-width:0;font-weight:700;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pg-ls small{font-size:.74rem;opacity:.6;white-space:nowrap}.pg-ls em{font-style:normal;opacity:.5}
+
+/* 👉 « J’aime et commentaires » : l’étape, la personne et chaque commentaire ouvrent le souvenir (2026-11-10) */
+.rx-go{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;border:0;background:none;padding:2px 0 4px;margin:0 0 2px;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.rx-go>span{opacity:.5;font-size:1.1rem}
+button.rx-w{border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer}

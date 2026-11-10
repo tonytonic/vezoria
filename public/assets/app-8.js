@@ -678,15 +678,18 @@
     const L = [...list('like', l=>mine.has(l.trip) && l.on && !isBlk(l) && !String(l.id).endsWith(':' + me)).map(l=>({k:'lk', r:l})),
                ...list('comment', c=>mine.has(c.trip) && !isBlk(c) && c.dev !== me).map(c=>({k:'cm', r:c}))];
     const T = {}; L.forEach(x=>{ const tid = String(x.r.trip).replace(/^ft:/, ''), t = R[tid] || {}, post = R[x.r.feed] || {};
-      const tk = t.titre || '?', pk = post.titre || post.lieu || (post.date ? fdate(post.date) : MSGT('Le voyage'));
-      const TT0 = T[tk] || (T[tk] = {}), P = TT0[pk] || (TT0[pk] = {}), who = String(x.r.who || '?').replace(/^🧳\s*/, ''); (P[who] = P[who] || []).push(x); });
+      const sid = post.src || String(x.r.feed || '').replace(/^fd:/, ''), sv = R[sid] && R[sid].type === 'souv' ? R[sid] : {};   // 🧳 compagnon : la publication n’est pas chez lui, le souvenir si
+      const tk = t.titre || '?', pk = post.titre || post.lieu || sv.titre || sv.lieu || (post.date || sv.date ? fdate(post.date || sv.date) : MSGT('Le voyage'));
+      const TT0 = T[tk] || (T[tk] = {}), P = TT0[pk] || (TT0[pk] = {}), who = String(x.r.who || '?').replace(/^🧳\s*/, ''); if(R[sid] && !P._sid) Object.defineProperty(P, '_sid', {value:sid, enumerable:false}); (P[who] = P[who] || []).push(x); });
     const tks = Object.keys(T).sort(cmp);
     openSheet(`<div class="sp2" data-live="hublk">${hubQuick()}<h2>❤️ ${esc(MSGT('J’aime et commentaires'))}</h2>
-      ${tks.length ? tks.map(tk=>`<div class="sh-sec">🧳 <span data-notr>${esc(tk)}</span></div><div class="sp2-card">${Object.keys(T[tk]).sort(cmp).map(pk=>`<div class="rx-step"><b data-notr>📍 ${esc(pk)}</b>
+      ${tks.length ? tks.map(tk=>`<div class="sh-sec">🧳 <span data-notr>${esc(tk)}</span></div><div class="sp2-card">${Object.keys(T[tk]).sort(cmp).map(pk=>{ const sid = T[tk][pk]._sid, go = sid ? `CV.rxGo('${ja(sid)}')` : ''; return `<div class="rx-step">${go ? `<button type="button" class="rx-go" onclick="${go}"><b data-notr>📍 ${esc(pk)}</b><span>›</span></button>` : `<b data-notr>📍 ${esc(pk)}</b>`}
         ${Object.keys(T[tk][pk]).sort(cmp).map(w=>{ const xs = T[tk][pk][w], lk = xs.some(x=>x.k === 'lk'), cms = xs.filter(x=>x.k === 'cm').sort((a, b)=>(a.r.at || 0) - (b.r.at || 0));
-          return `<div class="rx-p"><span class="rx-w"><b data-notr>${esc(w)}</b>${lk ? ' ❤️' : ''}</span>${cms.map(x=>`<button type="button" class="rx-c" onclick="CV.cmMenu('${ja(x.r.id)}')">💬 <span data-notr>${esc(String(x.r.text || '').slice(0, 160))}</span></button>`).join('')}</div>`; }).join('')}</div>`).join('')}</div>`).join('')
+          return `<div class="rx-p">${go ? `<button type="button" class="rx-w" onclick="${go}">` : '<span class="rx-w">'}<b data-notr>${esc(w)}</b>${lk ? ' ❤️' : ''}${go ? '</button>' : '</span>'}${cms.map(x=>`<button type="button" class="rx-c" onclick="${go || `CV.cmMenu('${ja(x.r.id)}')`}">💬 <span data-notr>${esc(String(x.r.text || '').slice(0, 160))}</span></button>`).join('')}</div>`; }).join('')}</div>`; }).join('')}</div>`).join('')
         : `<div class="sp2-card"><div class="sp2-empty">${esc(MSGT('Pas encore de j’aime ni de commentaire sur tes voyages.'))}</div></div>`}</div>`);
   }
+  // 👉 depuis « J’aime et commentaires » : le souvenir concerné, avec ses ❤️ et tout le fil de commentaires (auteur comme compagnon)
+  function rxGo(sid){ if(!R[sid]) return; closeSheet(true); setTimeout(()=>souvComments(sid), 60); }
   // ➡️ Les voyages que je suis : en haut, rangés par personne (A → Z), chaque personne se déplie sur ses voyages
   function followHTML(){
     const fol = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted); if(!fol.length) return '';
@@ -1941,7 +1944,7 @@
     const keep = () => { if(!user && Math.abs(sc.scrollTop - y) > 2) sc.scrollTop = y; };   // le doigt reprend la main dès qu’il touche l’écran
     keep(); hydrate(); requestAnimationFrame(keep); setTimeout(keep, 120); setTimeout(keep, 400);
   }
-  function feedPaint(fid){ const el = document.getElementById('fp-' + fid), f = R[fid]; if(el && f){ el.outerHTML = feedPostHTML(f); hydrate(); } }
+  function feedPaint(fid){ const el = document.getElementById('fp-' + fid), f = R[fid] || FDV[fid]; if(el && f){ el.outerHTML = feedPostHTML(f); hydrate(); } }
   function feedTogC(fid){ M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = !M.cmOpen[fid]; feedPaint(fid); }
   // 🔗 déjà abonné par un lien commun, sans prénom : on le demande à l’ouverture (une fois par session tant qu’il manque)
   let pubAsked = false;
@@ -2045,14 +2048,18 @@
     const fid = 'fd:' + s.id, lk = likesOf(fid), cm = commentsOf(fid);
     return `<button type="button" class="sv-so" onclick="CV.souvComments('${ja(s.id)}')">❤️ <b>${lk.length}</b> · 💬 <b>${cm.length}</b>${lk.length ? ` <small>${lk.slice(0,3).map(l=>esc(l.who||'')).join(', ')}</small>` : ''}</button>`;
   }
+  const FDV = {};   // publications reconstruites pour un compagnon qui ne publie pas lui-même (le fil reste lisible et on peut répondre)
   function souvComments(sid){
-    const s = R[sid]; if(!s) return; const fid = 'fd:' + sid; if(!R[fid]){ toast('Publication en cours…'); if(feedCode(s.trip)) feedBuild(s.trip); else { syncNow(); return; } }
-    const f = R[fid]; if(!f) return;
+    const s = R[sid]; if(!s) return; const fid = 'fd:' + sid;
+    if(!R[fid] && feedCode(s.trip)){ toast(MSGT('Publication en cours…')); feedBuild(s.trip); }
+    let f = R[fid];
+    if(!f){ if(!commentsOf(fid).length && !likesOf(fid).length){ toast(MSGT('Pas encore de j’aime ni de commentaire sur ce souvenir.')); syncNow(); return; }
+      f = FDV[fid] = {id:fid, type:'feed', trip:ftId(s.trip), src:sid, titre:s.titre || '', lieu:s.lieu || '', date:s.date || '', cc:s.cc || '', texte:s.texte || '', by:s.createdBy && (R[s.trip] || {}).voyageurs && R[s.trip].voyageurs.length > 1 ? pname(s.createdBy) : '', photos:(s.photos || []).slice(0, 12)}; }
     openSheet(`<h2>💬 ${esc(s.titre || 'Souvenir')}</h2><div id="sc-box">${feedPostHTML(f)}</div><div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">Fermer</button></div>`);
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-10b'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-10c'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2438,6 +2445,8 @@
       if(/^ft:/.test(fid)){ const t = R[fid.slice(3)]; if(t && t.type === 'trip' && !t.deleted && !t.demo && !t.ro){ if(r.type === 'feedtrip' && !r.deleted) (S.mt = S.mt || {})[r.id] = 1;
         // 👥 un voyage que je fais moi-même : pas de 2e copie du voyage, MAIS ses ❤️ et commentaires (Victoria aime une étape d’Anthony → Claire la voit)
         if((r.type === 'like' || r.type === 'comment') && (t.voyageurs || []).includes(M.me)) out.push(r);
+        // 💬 (2026-11-10) … et la publication elle-même (si je ne publie pas ce voyage moi-même) : sans elle, Claire ne pouvait pas ouvrir les commentaires (« Publication en cours… » sans fin)
+        else if(r.type === 'feed' && (t.voyageurs || []).includes(M.me) && !FT()[fid.slice(3)]) out.push(r);
         return; } }
       if(r.type === 'feedtrip'){ S.t[r.id] = r.deleted ? 0 : 1; if(!r.deleted && !S.owner && r.owner) S.owner = r.owner; if(!S.oav && avOk(r.oav)) S.oav = r.oav; }
       out.push(r); });
@@ -2965,7 +2974,30 @@
     } catch(e){ say('⚠️ ' + (e.message || e)); }
     if(btn) btn.disabled = false;
   }
-  var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg, pgList, pgGo, pgDecide};
+  // 📱 (2026-11-10) Barre du bas au milieu de l’écran à l’ouverture (iPhone, réseau lent) : Safari calcule parfois une hauteur d’écran
+  //    trop petite au démarrage, et tout ce qui est « collé en bas » se retrouve au milieu. On vérifie, et si la barre flotte,
+  //    on oblige Safari à recalculer ; si ça ne suffit pas, on la recolle en bas nous-mêmes jusqu’au prochain vrai changement de taille.
+  (function navGuard(){
+    let raf = 0, tries = 0;
+    const bottomOf = () => { const v = window.visualViewport; return Math.max(window.innerHeight || 0, v ? v.height + v.offsetTop : 0, document.documentElement.clientHeight || 0); };
+    function check(){ raf = 0;
+      const n = document.querySelector('.cv-nav'); if(!n || !n.getClientRects().length || getComputedStyle(n).position !== 'fixed') return;
+      if(document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;   // clavier ouvert : on ne touche à rien
+      n.style.transform = '';
+      const gap = bottomOf() - n.getBoundingClientRect().bottom;
+      if(gap <= 48) { tries = 0; return; }   // normal : ~10 px au-dessus du bas (+ la zone de la barre d’accueil)
+      if(tries++ < 2){ const y = window.scrollY; n.style.position = 'absolute'; void n.offsetHeight; n.style.position = ''; window.scrollTo(window.scrollX, y + 1); window.scrollTo(window.scrollX, y); return later(250); }
+      n.style.transform = 'translateY(' + Math.round(gap - 12) + 'px)';   // dernier recours
+    }
+    const later = ms => setTimeout(()=>{ if(!raf) raf = requestAnimationFrame(check); }, ms || 0);
+    const soon = () => { tries = 0; later(0); };
+    ['load', 'pageshow', 'resize', 'orientationchange', 'online', 'focus'].forEach(e=>window.addEventListener(e, soon, {passive:true}));
+    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden){ soon(); later(600); } });
+    if(window.visualViewport) visualViewport.addEventListener('resize', soon, {passive:true});
+    window.addEventListener('scroll', ()=>{ if(!raf) raf = requestAnimationFrame(check); }, {passive:true});
+    [300, 1200, 3000, 6000].forEach(later);
+  })();
+  var RECAPI = {userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg, pgList, pgGo, pgDecide, rxGo};
 
   const api = {souvResend, obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
