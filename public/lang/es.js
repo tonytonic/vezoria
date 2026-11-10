@@ -852,7 +852,6 @@ I18N.load({
 "Visa pour le Népal (en ligne ou à l’arrivée)":"Visado para Nepal (en línea o a la llegada)",
 "eTA pour le Kenya (en ligne)":"eTA para Kenia (en línea)",
 "Visa pour la Tanzanie (e-Visa en ligne)":"Visado para Tanzania (e-Visa en línea)",
-"Carte de tourisme / e-Visa pour Cuba":"Tarjeta de turista / e-Visa para Cuba",
 "Carte d’arrivée numérique TDAC (en ligne, dans les 3 jours avant l’arrivée)":"Tarjeta de llegada digital TDAC (en línea, en los 3 días antes de llegar)",
 "K-ETA pour la Corée du Sud : vérifie si elle est exigée à tes dates":"K-ETA para Corea del Sur: comprueba si se exige en tus fechas",
 "Chine : vérifie que l’exemption de visa court séjour s’applique à tes dates":"China: comprueba que la exención de visado de corta estancia se aplica a tus fechas",
@@ -2193,7 +2192,7 @@ I18N.load({
 "Lacs Louise et Moraine tôt le matin (navettes), Icefields Parkway, ours et wapitis.":"Lagos Louise y Moraine temprano (lanzaderas), Icefields Parkway, osos y uapitíes.",
 "Stanley Park à vélo, baleines et ours depuis Tofino, ferry vers l’île.":"Stanley Park en bici, ballenas y osos desde Tofino, ferry a la isla.",
 "Teotihuacán au lever du soleil, musée d’anthropologie, mole et mezcal à Oaxaca, Fête des morts début novembre.":"Teotihuacán al amanecer, museo de Antropología, mole y mezcal en Oaxaca, Día de Muertos a principios de noviembre.",
-"Casas particulares, vieille Havane en voiture américaine, vallée de Viñales à cheval. Prévoir des espèces.":"Casas particulares, La Habana Vieja en coche americano, valle de Viñales a caballo. Lleva efectivo.",
+
 "Baleines à bosse de Samaná en février, plage de Playa Rincón, île Saona.":"Ballenas jorobadas en Samaná en febrero, Playa Rincón, isla Saona.",
 "Antigua et ses volcans, villages du lac Atitlán, cité maya de Tikal à l’aube.":"Antigua y sus volcanes, pueblos del lago Atitlán, ciudad maya de Tikal al amanecer.",
 "Écluses de Miraflores, café de Boquete, îles de San Blas chez les Guna.":"Esclusas de Miraflores, café de Boquete, islas de San Blas con los guna.",

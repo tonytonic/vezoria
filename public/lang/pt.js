@@ -852,7 +852,6 @@ I18N.load({
 "Visa pour le Népal (en ligne ou à l’arrivée)":"Visto para o Nepal (online ou na chegada)",
 "eTA pour le Kenya (en ligne)":"eTA para o Quênia (online)",
 "Visa pour la Tanzanie (e-Visa en ligne)":"Visto para a Tanzânia (e-Visa online)",
-"Carte de tourisme / e-Visa pour Cuba":"Cartão de turista / e-Visa para Cuba",
 "Carte d’arrivée numérique TDAC (en ligne, dans les 3 jours avant l’arrivée)":"Cartão de chegada digital TDAC (online, nos 3 dias antes da chegada)",
 "K-ETA pour la Corée du Sud : vérifie si elle est exigée à tes dates":"K-ETA para a Coreia do Sul: verifique se é exigida nas suas datas",
 "Chine : vérifie que l’exemption de visa court séjour s’applique à tes dates":"China: verifique se a isenção de visto de curta duração vale para as suas datas",
@@ -2195,7 +2194,7 @@ I18N.load({
 "Lacs Louise et Moraine tôt le matin (navettes), Icefields Parkway, ours et wapitis.":"Lagos Louise e Moraine de manhã cedo (vaivéns), Icefields Parkway, ursos e uapitis.",
 "Stanley Park à vélo, baleines et ours depuis Tofino, ferry vers l’île.":"Stanley Park de bicicleta, baleias e ursos a partir de Tofino, ferry para a ilha.",
 "Teotihuacán au lever du soleil, musée d’anthropologie, mole et mezcal à Oaxaca, Fête des morts début novembre.":"Teotihuacán ao nascer do sol, museu de Antropologia, mole e mezcal em Oaxaca, Dia dos Mortos no início de novembro.",
-"Casas particulares, vieille Havane en voiture américaine, vallée de Viñales à cheval. Prévoir des espèces.":"Casas particulares, Havana Velha em carro americano, vale de Viñales a cavalo. Leve dinheiro vivo.",
+
 "Baleines à bosse de Samaná en février, plage de Playa Rincón, île Saona.":"Baleias-jubarte em Samaná em fevereiro, praia de Playa Rincón, ilha Saona.",
 "Antigua et ses volcans, villages du lac Atitlán, cité maya de Tikal à l’aube.":"Antigua e os seus vulcões, aldeias do lago Atitlán, cidade maia de Tikal ao amanhecer.",
 "Écluses de Miraflores, café de Boquete, îles de San Blas chez les Guna.":"Eclusas de Miraflores, café de Boquete, ilhas de San Blas com os Guna.",

@@ -852,7 +852,6 @@ I18N.load({
 "Visa pour le Népal (en ligne ou à l’arrivée)":"Nepal visa (online or on arrival)",
 "eTA pour le Kenya (en ligne)":"eTA for Kenya (online)",
 "Visa pour la Tanzanie (e-Visa en ligne)":"Tanzania visa (e-Visa online)",
-"Carte de tourisme / e-Visa pour Cuba":"Tourist card / e-Visa for Cuba",
 "Carte d’arrivée numérique TDAC (en ligne, dans les 3 jours avant l’arrivée)":"TDAC digital arrival card (online, within 3 days before arrival)",
 "K-ETA pour la Corée du Sud : vérifie si elle est exigée à tes dates":"K-ETA for South Korea: check whether it is required for your dates",
 "Chine : vérifie que l’exemption de visa court séjour s’applique à tes dates":"China: check that the short-stay visa exemption applies to your dates",
@@ -2176,7 +2175,7 @@ I18N.load({
 "Lacs Louise et Moraine tôt le matin (navettes), Icefields Parkway, ours et wapitis.":"Lake Louise and Moraine Lake early in the morning (shuttles), the Icefields Parkway, bears and elk.",
 "Stanley Park à vélo, baleines et ours depuis Tofino, ferry vers l’île.":"Stanley Park by bike, whales and bears from Tofino, the ferry to the island.",
 "Teotihuacán au lever du soleil, musée d’anthropologie, mole et mezcal à Oaxaca, Fête des morts début novembre.":"Teotihuacán at sunrise, the Anthropology Museum, mole and mezcal in Oaxaca, Day of the Dead in early November.",
-"Casas particulares, vieille Havane en voiture américaine, vallée de Viñales à cheval. Prévoir des espèces.":"Casas particulares, Old Havana in a vintage American car, Viñales Valley on horseback. Bring cash.",
+
 "Baleines à bosse de Samaná en février, plage de Playa Rincón, île Saona.":"Humpback whales in Samaná in February, Playa Rincón beach, Saona Island.",
 "Antigua et ses volcans, villages du lac Atitlán, cité maya de Tikal à l’aube.":"Antigua and its volcanoes, Lake Atitlán’s villages, the Mayan city of Tikal at dawn.",
 "Écluses de Miraflores, café de Boquete, îles de San Blas chez les Guna.":"The Miraflores Locks, Boquete coffee, the San Blas Islands with the Guna people.",

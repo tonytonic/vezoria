@@ -852,7 +852,6 @@ I18N.load({
 "Visa pour le Népal (en ligne ou à l’arrivée)":"Visto per il Nepal (online o all’arrivo)",
 "eTA pour le Kenya (en ligne)":"eTA per il Kenya (online)",
 "Visa pour la Tanzanie (e-Visa en ligne)":"Visto per la Tanzania (e-Visa online)",
-"Carte de tourisme / e-Visa pour Cuba":"Carta turistica / e-Visa per Cuba",
 "Carte d’arrivée numérique TDAC (en ligne, dans les 3 jours avant l’arrivée)":"Carta d’arrivo digitale TDAC (online, nei 3 giorni prima dell’arrivo)",
 "K-ETA pour la Corée du Sud : vérifie si elle est exigée à tes dates":"K-ETA per la Corea del Sud: verifica se è richiesta per le tue date",
 "Chine : vérifie que l’exemption de visa court séjour s’applique à tes dates":"Cina: verifica che l’esenzione dal visto per brevi soggiorni valga per le tue date",
@@ -2191,7 +2190,7 @@ I18N.load({
 "Lacs Louise et Moraine tôt le matin (navettes), Icefields Parkway, ours et wapitis.":"Laghi Louise e Moraine di prima mattina (navette), Icefields Parkway, orsi e wapiti.",
 "Stanley Park à vélo, baleines et ours depuis Tofino, ferry vers l’île.":"Stanley Park in bici, balene e orsi da Tofino, traghetto per l’isola.",
 "Teotihuacán au lever du soleil, musée d’anthropologie, mole et mezcal à Oaxaca, Fête des morts début novembre.":"Teotihuacán all’alba, museo di Antropologia, mole e mezcal a Oaxaca, Giorno dei Morti a inizio novembre.",
-"Casas particulares, vieille Havane en voiture américaine, vallée de Viñales à cheval. Prévoir des espèces.":"Casas particulares, L’Avana Vecchia in auto americana, valle di Viñales a cavallo. Portare contanti.",
+
 "Baleines à bosse de Samaná en février, plage de Playa Rincón, île Saona.":"Megattere a Samaná a febbraio, spiaggia di Playa Rincón, isola Saona.",
 "Antigua et ses volcans, villages du lac Atitlán, cité maya de Tikal à l’aube.":"Antigua e i suoi vulcani, villaggi del lago Atitlán, città maya di Tikal all’alba.",
 "Écluses de Miraflores, café de Boquete, îles de San Blas chez les Guna.":"Chiuse di Miraflores, caffè di Boquete, isole San Blas presso i Guna.",

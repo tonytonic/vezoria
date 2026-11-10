@@ -852,7 +852,6 @@ I18N.load({
 "Visa pour le Népal (en ligne ou à l’arrivée)":"Visum voor Nepal (online of bij aankomst)",
 "eTA pour le Kenya (en ligne)":"eTA voor Kenia (online)",
 "Visa pour la Tanzanie (e-Visa en ligne)":"Visum voor Tanzania (e-visum online)",
-"Carte de tourisme / e-Visa pour Cuba":"Toeristenkaart / e-visum voor Cuba",
 "Carte d’arrivée numérique TDAC (en ligne, dans les 3 jours avant l’arrivée)":"Digitale aankomstkaart TDAC (online, binnen 3 dagen vóór aankomst)",
 "K-ETA pour la Corée du Sud : vérifie si elle est exigée à tes dates":"K-ETA voor Zuid-Korea: controleer of die op jouw data verplicht is",
 "Chine : vérifie que l’exemption de visa court séjour s’applique à tes dates":"China: controleer of de visumvrijstelling voor kort verblijf op jouw data geldt",
@@ -2182,7 +2181,7 @@ I18N.load({
 "Lacs Louise et Moraine tôt le matin (navettes), Icefields Parkway, ours et wapitis.":"Lake Louise en Moraine Lake vroeg in de ochtend (pendelbussen), Icefields Parkway, beren en wapiti’s.",
 "Stanley Park à vélo, baleines et ours depuis Tofino, ferry vers l’île.":"Stanley Park per fiets, walvissen en beren vanuit Tofino, veerboot naar het eiland.",
 "Teotihuacán au lever du soleil, musée d’anthropologie, mole et mezcal à Oaxaca, Fête des morts début novembre.":"Teotihuacán bij zonsopkomst, Antropologisch Museum, mole en mezcal in Oaxaca, Dag van de Doden begin november.",
-"Casas particulares, vieille Havane en voiture américaine, vallée de Viñales à cheval. Prévoir des espèces.":"Casas particulares, Oud-Havana in een Amerikaanse oldtimer, Viñalesvallei te paard. Neem contant geld mee.",
+
 "Baleines à bosse de Samaná en février, plage de Playa Rincón, île Saona.":"Bultruggen in Samaná in februari, strand Playa Rincón, eiland Saona.",
 "Antigua et ses volcans, villages du lac Atitlán, cité maya de Tikal à l’aube.":"Antigua en zijn vulkanen, dorpen aan het Atitlánmeer, Mayastad Tikal bij dageraad.",
 "Écluses de Miraflores, café de Boquete, îles de San Blas chez les Guna.":"Sluizen van Miraflores, koffie uit Boquete, San Blas-eilanden bij de Guna.",
