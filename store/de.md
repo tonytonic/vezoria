@@ -5,7 +5,7 @@ Vezoria – Reiseplaner
 Reisen planen, erleben, erinnern. Kostenlos, werbefrei, offline, verschlüsselt.
 
 ## Full description (≤4000)
-Vezoria bündelt deine ganze Reise an einem Ort: Programm, Buchungen, Budget und Erinnerungen. Kostenlos, ohne Werbung, ohne Konto – und es funktioniert auch ohne Internetverbindung.
+Vezoria bündelt deine ganze Reise an einem Ort: Programm, Buchungen, Budget und Erinnerungen. Kostenlos, ohne Werbung – und es funktioniert auch ohne Internetverbindung.
 
 Planen
 • Programm Tag für Tag: Tage hinzufügen oder entfernen, Daten ändern
@@ -36,7 +36,7 @@ Gemeinsam reisen
 Teile eine Reise per Code mit deinem Partner oder deinen Freunden. Jede Person hat ihre eigene Farbe und jede Änderung ist signiert – so weißt du immer, wer was geändert hat.
 
 Deine Daten gehören dir
-• Kein Konto, keine Werbung
+• Keine Werbung; ein Konto (E-Mail-Adresse) nur für das Online-Reisetagebuch
 • Alles funktioniert offline
 • Optionale Synchronisierung, Ende-zu-Ende-verschlüsselt
 • Importiere deine Reisen aus einem Datenexport (ZIP)

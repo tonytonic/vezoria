@@ -5,7 +5,7 @@ Vezoria – viagens em grupo
 Planeje, viva e guarde suas viagens. Grátis, sem anúncios, funciona offline.
 
 ## Full description (≤4000)
-O Vezoria reúne toda a sua viagem em um só lugar: roteiro, reservas, orçamento e lembranças. É grátis, não tem anúncios, não precisa de conta e funciona até sem conexão.
+O Vezoria reúne toda a sua viagem em um só lugar: roteiro, reservas, orçamento e lembranças. É grátis, não tem anúncios e funciona até sem conexão.
 
 Planejar
 • Roteiro dia a dia: adicione ou remova dias, mude as datas
@@ -36,7 +36,7 @@ Viajar juntos
 Compartilhe uma viagem com seu par ou seus amigos usando um código. Cada pessoa tem sua cor e cada alteração é assinada: você sempre sabe quem fez o quê.
 
 Seus dados são seus
-• Sem conta, sem anúncios
+• Sem anúncios; uma conta (e-mail) só para o caderno online
 • Tudo funciona offline
 • Sincronização opcional, com criptografia de ponta a ponta
 • Importe suas viagens de uma exportação de dados (ZIP)

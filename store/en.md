@@ -5,7 +5,7 @@ Vezoria – group travel
 Plan, live and remember your trips. Free, no ads, works offline, encrypted.
 
 ## Full description (≤4000)
-Vezoria keeps your whole trip in one place: the itinerary, bookings, budget and memories. It's free, has no ads, needs no account, and works even without a connection.
+Vezoria keeps your whole trip in one place: the itinerary, bookings, budget and memories. It's free, has no ads, and works even without a connection.
 
 Plan
 • Day-by-day itinerary: add or remove days, change dates
@@ -36,7 +36,7 @@ Travel together
 Share a trip with your partner or friends using a code. Everyone has their own color and every edit is signed, so you always know who changed what.
 
 Your data stays yours
-• No account, no ads
+• No ads; an account (email address) only for the online journal
 • Everything works offline
 • Optional sync, end-to-end encrypted
 • Import your trips from a data export (ZIP)

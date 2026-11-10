@@ -5,7 +5,7 @@ Vezoria – reisplanner
 Plan, beleef en bewaar je reizen. Gratis, zonder advertenties, offline.
 
 ## Full description (≤4000)
-Vezoria brengt je hele reis samen op één plek: het programma, de boekingen, het budget en de herinneringen. Gratis, zonder advertenties, zonder account, en het werkt ook zonder verbinding.
+Vezoria brengt je hele reis samen op één plek: het programma, de boekingen, het budget en de herinneringen. Gratis, zonder advertenties, en het werkt ook zonder verbinding.
 
 Plannen
 • Programma per dag: dagen toevoegen of verwijderen, data wijzigen
@@ -36,7 +36,7 @@ Samen reizen
 Deel een reis met je partner of vrienden via een code. Iedereen heeft een eigen kleur en elke wijziging is ondertekend, zodat je altijd weet wie wat heeft aangepast.
 
 Jouw gegevens blijven van jou
-• Geen account, geen advertenties
+• Geen advertenties; een account (e-mailadres) alleen voor het online reisdagboek
 • Alles werkt offline
 • Optionele synchronisatie, end-to-end versleuteld
 • Importeer je reizen uit een gegevensexport (zip)

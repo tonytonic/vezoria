@@ -5,7 +5,7 @@ Vezoria – birlikte seyahat
 Seyahatlerini planla, yaşa, sakla. Ücretsiz, reklamsız, çevrimdışı, şifreli.
 
 ## Full description (≤4000)
-Vezoria tüm seyahatini tek bir yerde toplar: program, rezervasyonlar, bütçe ve anılar. Ücretsizdir, reklam içermez, hesap gerektirmez ve bağlantı olmadan da çalışır.
+Vezoria tüm seyahatini tek bir yerde toplar: program, rezervasyonlar, bütçe ve anılar. Ücretsizdir, reklam içermez ve bağlantı olmadan da çalışır.
 
 Hazırlık
 • Gün gün program: gün ekle ya da çıkar, tarihleri değiştir
@@ -36,7 +36,7 @@ Birlikte seyahat
 Bir seyahati partnerinle ya da arkadaşlarınla bir kodla paylaş. Herkesin kendi rengi var ve her değişiklik imzalı; kimin neyi değiştirdiğini hep bilirsin.
 
 Verilerin sende kalır
-• Hesap yok, reklam yok
+• Reklam yok; hesap (e-posta adresi) yalnızca çevrimiçi defter için
 • Her şey çevrimdışı çalışır
 • İsteğe bağlı, uçtan uca şifreli senkronizasyon
 • Seyahatlerini bir veri dışa aktarmasından (ZIP) içe aktar

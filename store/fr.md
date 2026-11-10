@@ -5,7 +5,7 @@ Vezoria – carnet de voyage
 Préparez, vivez et gardez vos voyages. Gratuit, sans pub, hors ligne, chiffré.
 
 ## Full description (≤4000)
-Vezoria réunit tout votre voyage au même endroit : le programme, les réservations, le budget et les souvenirs. Gratuit, sans publicité, sans compte, et il fonctionne même sans connexion.
+Vezoria réunit tout votre voyage au même endroit : le programme, les réservations, le budget et les souvenirs. Gratuit, sans publicité, et il fonctionne même sans connexion.
 
 Préparer
 • Programme jour par jour : ajoutez ou retirez des jours, changez les dates
@@ -36,7 +36,7 @@ Voyager à plusieurs
 Partagez un voyage avec votre compagnon ou vos amis grâce à un code. Chacun a sa couleur et chaque modification est signée : on sait qui a fait quoi.
 
 Vos données restent à vous
-• Pas de compte, pas de publicité
+• Pas de publicité ; un compte (adresse e-mail) seulement pour le carnet en ligne
 • Tout fonctionne hors ligne
 • Synchronisation facultative, chiffrée de bout en bout
 • Importez vos voyages depuis un export de données (ZIP)
