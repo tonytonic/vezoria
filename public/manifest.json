@@ -2,7 +2,7 @@
   "id": "/",
   "name": "Vezoria",
   "short_name": "Vezoria",
-  "description": "Vezoria : prépare, vis et garde tes voyages à plusieurs, gratuitement. Programme jour par jour, réservations, budget partagé, souvenirs, film et album du voyage. Sans compte, sans publicité, chiffré de bout en bout.",
+  "description": "Vezoria : prépare, vis et garde tes voyages à plusieurs, gratuitement. Programme jour par jour, réservations, budget partagé, souvenirs, film et album du voyage. Sans publicité, sans compte pour commencer, chiffré de bout en bout.",
   "lang": "fr",
   "dir": "ltr",
   "start_url": "./?src=app",
