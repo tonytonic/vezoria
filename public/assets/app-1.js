@@ -1368,9 +1368,10 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       pill.textContent = trips().length > 1 ? trips().length + ' voyages' : 'Mes voyages';
       cd.innerHTML = countdown(t); cd.style.display = cd.innerHTML ? '' : 'none';
       const vv = tv(), shown = vv.slice(0, 8);
-      av.innerHTML = shown.map(id=>`<span class="cv-av" style="background:${pcol(id)}" title="${esc(pname(id))}">${esc((pname(id)[0]||'?').toUpperCase())}</span>`).join('')
+      const adm = TS()[t.id] && vv.length > 1 && typeof tripAdmin === 'function' ? tripAdmin(t) : '';   // 👑 voyage partagé : on voit qui l’administre
+      av.innerHTML = shown.map(id=>`<span class="cv-av" style="background:${pcol(id)};position:relative" title="${esc(pname(id))}${id === adm ? ' · ' + esc(MSGT('administrateur du voyage')) : ''}">${esc((pname(id)[0]||'?').toUpperCase())}${id === adm ? '<i style="position:absolute;top:-9px;right:-5px;font-style:normal;font-size:.75em">👑</i>' : ''}</span>`).join('')
         + (vv.length > 8 ? `<span class="cv-av" style="background:#444" title="${vv.length - 8} autres">+${vv.length - 8}</span>` : '')
-        + `<span class="cv-av-names">${vv.length <= 3 ? vv.map(id=>esc(pname(id))).join(' & ') : vv.slice(0,2).map(id=>esc(pname(id))).join(', ') + ' et ' + (vv.length - 2) + ' autres'}</span>`;
+        + `<span class="cv-av-names">${vv.length <= 3 ? vv.map(id=>esc(pname(id)) + (id === adm ? ' 👑' : '')).join(' & ') : vv.slice(0,2).map(id=>esc(pname(id)) + (id === adm ? ' 👑' : '')).join(', ') + ' et ' + (vv.length - 2) + ' autres'}</span>`;
       document.title = 'Vezoria · ' + (t.titre||'Voyage');
     } else { { const hc = document.getElementById('hdr-chips'); if(hc) hc.innerHTML = ''; } title.textContent = 'Vezoria'; sub.textContent = 'Ton premier voyage t’attend'; pill.textContent = 'Mes voyages'; cd.innerHTML = ''; av.innerHTML = ''; }
     try { heroStats(!legacy && !!t); } catch(e){}
@@ -1639,9 +1640,10 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       { const mm = list('member', y=>y.trip === t && isBad(y) && y.pk && y.ib)[0];
         const nmw = nmKey(pk.who || (mm && mm.who) || ''), already = mm && (list('follower', f=>!f.deleted && ((mm.pid && f.pid === mm.pid) || fwDevOf(f) === mm.dev)).length || (nmw && AI().some(x=>!x.pub && nmKey(x.name) === nmw)));
         if(mm && !already && typeof ab2Vis === 'function' && ab2Vis().includes(t)) setTimeout(async ()=>{ try { const x = await ab2NewInv(pk.who || mm.who || '?');
+          try { ab2InvRec(x, {hide:ab2Vis().filter(v=>v !== t).map(ftId)}); ab2CfgSave(); } catch(e){}   // 👀 il ne suit QUE ce voyage-là (pas tous les voyages montrés aux abonnés)
           await ivSend({dev:mm.dev, pk:mm.pk, ib:mm.ib}, {k:'follow', id:uid(), c:x.code, t:(R[t] || {}).titre || ''}); } catch(e){} }, 1500); }
       // 👤 la personne retirée quitte aussi la liste des voyageurs (ses appareils venus par ce paquet)
-      { const gone = new Set(list('member', y=>y.trip === t && isBad(y) && y.pid).map(y=>y.pid)), tr = R[t]; if(exPid) gone.add(exPid);
+      { const gone = new Set(list('member', y=>y.trip === t && isBad(y) && y.pid).map(y=>y.pid)), tr = R[t]; if(exPid) gone.add(exPid); gone.delete(M.me);   // 🛡️ jamais moi : un appareil retiré qui avait pris mon profil ne m’emporte pas avec lui
         if(tr && gone.size && (tr.voyageurs || []).some(p=>gone.has(p))) put(Object.assign(clone(tr), {voyageurs:(tr.voyageurs || []).filter(p=>!gone.has(p))}), false); }
       (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t] = c;
       Object.values(R).filter(r=>r && !r.demo && (r.id === t || r.trip === t) && r.type !== 'member').forEach(r=>markDirty(r.id));
@@ -2193,6 +2195,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const taken = pid => pid !== me && (authors.has(pid) || profLocked(pid));
     const ppl = ppl0.filter(pid=>!taken(pid)), busy = ppl0.filter(taken);
     openSheet(`<h2>🙋 Bienvenue !</h2><div class="v-sum-small" style="margin-bottom:8px">${ts.length > 1 ? ts.length + ' voyages sont maintenant sur ton téléphone.' : 'Le voyage « ' + esc(ts[0].titre) + ' » est maintenant sur ton téléphone.'}</div>
+      ${(()=>{ const ad = ts.length === 1 && typeof tripAdmin === 'function' ? tripAdmin(ts[0]) : ''; return ad && prof(ad) ? `<div class="v-sum-small" style="margin-bottom:8px">👑 <span>Administrateur du voyage :</span> <b data-notr>${esc(pname(ad))}</b></div>` : ''; })()}
       <div class="v-f"><label>Qui es-tu ?</label><div class="jp-who">
         ${ppl.map(pid=>`<label class="jp-p"><input type="radio" name="jp-me" value="${pid}"${pid === me ? ' checked' : ''}> ${pchip(pid)}</label>`).join('')}
         ${me && !meIn ? `<label class="jp-p"><input type="radio" name="jp-me" value="${me}" checked> ${pchip(me)} <small>(ton profil)</small></label>` : ''}
