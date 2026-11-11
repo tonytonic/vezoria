@@ -3778,6 +3778,24 @@
     const t = R[tid]; if(!t) return []; const act = new Set(mbOthers(tid).map(m=>m.pid).filter(Boolean));
     const v = (t.voyageurs || []).filter(p=>p && p !== M.me && prof(p)); return [...v.filter(p=>act.has(p)), ...v.filter(p=>!act.has(p))];
   }
+  /* 👑 passer l’administration d’un voyage partagé à un compagnon, sans partir.
+     Le voyage reste le même voyage partagé (même dossier, mêmes fiches, mêmes publications) : compagnons et abonnés ne voient rien changer.
+     Seule change la place où comptent ses photos : chez le nouvel admin (son téléphone le branche sur son carnet à la prochaine synchro). */
+  async function adminPass(tid, pid){
+    const t = R[tid], c = TS()[tid]; if(!t || t.deleted || !c || !spaceObj(c)) return;
+    if(tripAdmin(t) !== M.me){ alert(RF('Seul l’administrateur du voyage peut passer la main. Ici : {0}.', pname(tripAdmin(t)) || '?')); return; }
+    const L = adminNext(tid); if(!L.length){ alert(MSGT('Il faut un autre voyageur dans ce voyage pour lui passer l’administration.')); return; }
+    if(!pid){ openSheet(`<h2>👑 ${esc(MSGT('Passer l’administration'))}</h2><div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(t.titre || '')}</div>
+        <div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.'))}</div>
+        <div class="cv-plist">${L.map(p=>`<button type="button" class="cv-prow" onclick="CV.adminPass('${ja(tid)}','${ja(p)}')">${pchip(p)}<span>👑</span></button>`).join('')}</div>
+        <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Annuler'))}</button></div>`); return; }
+    if(!L.includes(pid)) return;
+    if(!(await uiConfirm(RF('Passer l’administration de « {0} » à {1} ?', t.titre || '', pname(pid)) + '\n\n' + MSGT('Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.')))) return;
+    put(Object.assign(clone(t), {adminBy:pid}), false); closeSheet(true); refresh();
+    try { await syncNow(true); } catch(e){}
+    try { await adminRelease(c); } catch(e){}
+    toast('👑 ' + RF('{0} est maintenant l’admin de « {1} ».', pname(pid), t.titre || ''));
+  }
   async function adminRelease(code){
     try { if(ownerOn() && planApi()) await planCall({a:'unlink', kids:[await authCode(code)]}, M.sync.code); } catch(e){}
     if(M.linked) delete M.linked[code]; if(M.quota) M.quota.at = 0; persist();

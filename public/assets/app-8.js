@@ -947,7 +947,8 @@
     const F = P.find(x=>x.pid === spFocus), all = F && spAllId(F.pid);
     const sel = F && !all ? `<div class="sp2-sec">🧳 <b>${esc(MSGT('Voyages sélectionnés'))}</b> <small data-notr>· ${esc(pname(F.pid))}</small></div>
       <div class="sp2-ts">${F.ts.map(t=>`<span class="sp2-t"><button type="button" class="sp2-tc" onclick="CV.go('${ja(t.id)}');CV.close()">${spCov(t)}<small data-notr>${tripAdmin(t) === F.pid ? '👑 ' : ''}${esc(t.titre)}</small></button><button type="button" class="sp2-tx" aria-label="${esc(MSGT('Retirer'))}" onclick="CV.spTripOff('${ja(F.pid)}','${ja(t.id)}')">✕</button></span>`).join('')}
-        <button type="button" class="sp2-t sp2-add" onclick="CV.spTrips('${ja(F.pid)}')"><b>＋</b><small>${esc(MSGT('Ajouter un voyage'))}</small></button></div>` : '';
+        <button type="button" class="sp2-t sp2-add" onclick="CV.spTrips('${ja(F.pid)}')"><b>＋</b><small>${esc(MSGT('Ajouter un voyage'))}</small></button></div>
+      ${F.ts.filter(t=>tripAdmin(t) === M.me && TS()[t.id] && (t.voyageurs || []).includes(F.pid)).map(t=>`<div class="sp2-pills" style="margin-top:6px"><button type="button" class="soft" onclick="CV.adminPass('${ja(t.id)}','${ja(F.pid)}')">👑 ${esc(RF('Lui passer l’admin de « {0} »', t.titre || ''))}</button></div>`).join('')}` : '';
     openSheet(`<div class="sp2"><div class="sp2-top"><h2>${esc(MSGT('Mes compagnons de voyage'))}</h2></div><div class="sp2-body"><div class="sp2-pills" style="margin-bottom:8px"><button type="button" class="soft" onclick="CV.spCompAdd()">＋ ${esc(MSGT('Ajouter un compagnon'))}</button></div><div class="sp2-blk">${P.map(card).join('') || `<div class="sp2-empty">${esc(MSGT('Invite quelqu’un dans un voyage : il apparaîtra ici, et tu choisiras ce qu’il peut voir.'))}</div>`}${sel}</div>
       <button type="button" class="sp2-save" onclick="CV.shareHub()">${esc(MSGT('Enregistrer'))}</button></div></div>`);
   }
@@ -2062,7 +2063,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-11h'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-11i'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -3001,7 +3002,7 @@
     window.addEventListener('scroll', ()=>{ if(!raf) raf = requestAnimationFrame(check); }, {passive:true});
     [300, 1200, 3000, 6000].forEach(later);
   })();
-  var RECAPI = {codeNoted, joinPickBusy, userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg, pgList, pgGo, pgDecide, rxGo};
+  var RECAPI = {adminPass, codeNoted, joinPickBusy, userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg, pgList, pgGo, pgDecide, rxGo};
 
   const api = {souvResend, obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
