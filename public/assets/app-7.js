@@ -3779,21 +3779,10 @@
     const v = (t.voyageurs || []).filter(p=>p && p !== M.me && prof(p)); return [...v.filter(p=>act.has(p)), ...v.filter(p=>!act.has(p))];
   }
   /* 🛡️ Seul l’admin d’un voyage partagé retire quelqu’un (un compagnon peut seulement partir lui-même).
-     Sortie de secours : l’admin n’a pas ouvert le voyage depuis 30 jours → un compagnon peut reprendre l’admin. */
+     L’admin ne change que s’il le passe lui-même (« Passer l’administration », ou en quittant le voyage). */
   const canKick = t => !t || !TS()[t.id] || !spaceObj(TS()[t.id]) || tripAdmin(t) === M.me;
-  const ADM_IDLE = 30 * 864e5;
-  function adminSeen(t){ const a = tripAdmin(t); if(!a) return 0; let at = 0;
-    list('member', m=>m.trip === t.id && m.pid === a).forEach(m=>{ at = Math.max(at, m.at || 0); });
-    Object.values(R).forEach(r=>{ if(r && (r.id === t.id || r.trip === t.id) && r.updatedBy === a) at = Math.max(at, r.updatedAt || 0); });
-    return at; }
-  const adminIdle = t => { const a = tripAdmin(t); return !!(t && a && a !== M.me && TS()[t.id] && (t.voyageurs || []).includes(M.me) && Date.now() - adminSeen(t) > ADM_IDLE); };
-  async function kickDenied(t){ if(!t) return;
-    const a = pname(tripAdmin(t)) || '?';
-    if(adminIdle(t)){ if(await uiConfirm(RF('Seul l’admin du voyage ({0}) peut retirer quelqu’un.', a) + '\n\n' + RF('{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.', a, t.titre || '') + '\n\n' + MSGT('Reprendre l’admin maintenant ?'))) return adminTake(t.id); return; }
-    alert(RF('Seul l’admin du voyage ({0}) peut retirer quelqu’un.', a) + '\n\n' + MSGT('Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.')); }
-  async function adminTake(tid){ const t = R[tid]; if(!t || !adminIdle(t)) return;
-    put(Object.assign(clone(t), {adminBy:M.me}), false); refresh(); try { await syncNow(true); } catch(e){}
-    toast('👑 ' + RF('Tu es maintenant l’admin de « {0} ».', t.titre || '')); }
+  function kickDenied(t){ if(!t) return;
+    alert(RF('Seul l’admin du voyage ({0}) peut retirer quelqu’un.', pname(tripAdmin(t)) || '?') + '\n\n' + MSGT('Toi, tu peux quitter le voyage. L’admin peut aussi te passer l’administration.')); }
   /* 👑 passer l’administration d’un voyage partagé à un compagnon, sans partir.
      Le voyage reste le même voyage partagé (même dossier, mêmes fiches, mêmes publications) : compagnons et abonnés ne voient rien changer.
      Seule change la place où comptent ses photos : chez le nouvel admin (son téléphone le branche sur son carnet à la prochaine synchro). */
