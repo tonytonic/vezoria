@@ -6666,4 +6666,6 @@ I18N.load({
 "Sainte-Anne":"سانت آن",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"لا توجد إعجابات أو تعليقات على هذه الذكرى بعد.",
 "Carnet de voyage gratuit, sans publicité.":"دفتر رحلات مجاني، بلا إعلانات.",
-"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"تعذّر تحديد الموقع: ضع الذكرى على الخريطة أو اسمح بالوصول إلى الموقع من إعدادات الهاتف."});
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"تعذّر تحديد الموقع: ضع الذكرى على الخريطة أو اسمح بالوصول إلى الموقع من إعدادات الهاتف.",
+"Pour te repérer :":"لتحديد اتجاهك:",
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"هذه الرسالة في بريدك ستكون نسختك الاحتياطية. أرسلها إلى عنوانك الخاص."});

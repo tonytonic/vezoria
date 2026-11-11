@@ -3724,4 +3724,6 @@ I18N.load({
 "Pays-Bas":"Paesi Bassi",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"Ancora nessun mi piace né commento su questo ricordo.",
 "Carnet de voyage gratuit, sans publicité.":"Diario di viaggio gratuito, senza pubblicità.",
-"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Posizione non trovata: posiziona il ricordo sulla mappa oppure autorizza la posizione nelle impostazioni del telefono."});
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Posizione non trovata: posiziona il ricordo sulla mappa oppure autorizza la posizione nelle impostazioni del telefono.",
+"Pour te repérer :":"Per orientarti:",
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Questo messaggio nella tua casella di posta sarà il tuo backup. Invialo al tuo indirizzo."});

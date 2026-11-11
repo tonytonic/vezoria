@@ -6647,4 +6647,6 @@ I18N.load({
 "Pays-Bas":"Hollanda",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"Bu anıda henüz beğeni veya yorum yok.",
 "Carnet de voyage gratuit, sans publicité.":"Ücretsiz seyahat defteri, reklamsız.",
-"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Konum bulunamadı: anıyı haritaya yerleştir veya telefon ayarlarından konuma izin ver."});
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Konum bulunamadı: anıyı haritaya yerleştir veya telefon ayarlarından konuma izin ver.",
+"Pour te repérer :":"Yönünü bulmak için:",
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Posta kutundaki bu mesaj yedeğin olacak. Kendi adresine gönder."});

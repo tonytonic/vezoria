@@ -3725,4 +3725,6 @@ I18N.load({
 "Pays-Bas":"Países Baixos",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"Ainda não há curtidas nem comentários nesta lembrança.",
 "Carnet de voyage gratuit, sans publicité.":"Caderno de viagem grátis, sem anúncios.",
-"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Localização não encontrada: coloca a recordação no mapa ou autoriza a localização nas definições do telemóvel."});
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Localização não encontrada: coloca a recordação no mapa ou autoriza a localização nas definições do telemóvel.",
+"Pour te repérer :":"Para te orientares:",
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Esta mensagem na tua caixa de correio será a tua cópia de segurança. Envia-a para o teu próprio endereço."});

@@ -6665,4 +6665,6 @@ I18N.load({
 "Sainte-Anne":"생탄",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"이 추억에는 아직 좋아요나 댓글이 없어요.",
 "Carnet de voyage gratuit, sans publicité.":"무료 여행 노트, 광고 없음.",
-"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"위치를 찾을 수 없습니다: 추억을 지도에 직접 놓거나 휴대폰 설정에서 위치를 허용하세요."});
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"위치를 찾을 수 없습니다: 추억을 지도에 직접 놓거나 휴대폰 설정에서 위치를 허용하세요.",
+"Pour te repérer :":"길 찾기:",
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"메일함의 이 메시지가 백업이 됩니다. 본인 주소로 보내세요."});
