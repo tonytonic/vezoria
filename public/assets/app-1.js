@@ -2184,16 +2184,30 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const codes = [].concat(code); code = codes.join(',');
     const ts = Object.entries(TS()).filter(([, c])=>codes.includes(c)).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip').sort((a, b)=>(a.debut||'9').localeCompare(b.debut||'9'));
     if(!ts.length) return;
-    const ppl = [...new Set(ts.flatMap(t=>t.voyageurs || []))].filter(prof), me = M.me && prof(M.me) ? M.me : '';
-    const meIn = me && ppl.includes(me);
+    const ppl0 = [...new Set(ts.flatMap(t=>t.voyageurs || []))].filter(prof), me = M.me && prof(M.me) ? M.me : '';
+    const meIn = me && ppl0.includes(me);
+    // 🔒 profils déjà utilisés par quelqu’un d’autre (celui qui invite, un compagnon déjà là) : pas proposés comme « c’est moi » ;
+    //    un vrai deuxième téléphone de la même personne passe par « J’ai déjà Vezoria sur un autre appareil » ou par le petit lien en bas
+    const tids = new Set(ts.map(t=>t.id)), authors = new Set();
+    Object.values(R).forEach(r=>{ if(r && (tids.has(r.id) || tids.has(r.trip))){ if(r.createdBy) authors.add(r.createdBy); if(r.updatedBy) authors.add(r.updatedBy); } });
+    const taken = pid => pid !== me && (authors.has(pid) || profLocked(pid));
+    const ppl = ppl0.filter(pid=>!taken(pid)), busy = ppl0.filter(taken);
     openSheet(`<h2>🙋 Bienvenue !</h2><div class="v-sum-small" style="margin-bottom:8px">${ts.length > 1 ? ts.length + ' voyages sont maintenant sur ton téléphone.' : 'Le voyage « ' + esc(ts[0].titre) + ' » est maintenant sur ton téléphone.'}</div>
       <div class="v-f"><label>Qui es-tu ?</label><div class="jp-who">
         ${ppl.map(pid=>`<label class="jp-p"><input type="radio" name="jp-me" value="${pid}"${pid === me ? ' checked' : ''}> ${pchip(pid)}</label>`).join('')}
         ${me && !meIn ? `<label class="jp-p"><input type="radio" name="jp-me" value="${me}" checked> ${pchip(me)} <small>(ton profil)</small></label>` : ''}
-        <label class="jp-p"><input type="radio" name="jp-me" value="new"${!me ? ' checked' : ''}> ✏️ Je ne suis pas dans la liste : <input class="v-in" id="jp-nom" placeholder="Ton prénom" style="flex:1;min-width:0"></label></div></div>
+        <label class="jp-p"><input type="radio" name="jp-me" value="new"${!me ? ' checked' : ''}> ✏️ ${ppl.length || (me && !meIn) ? 'Je ne suis pas dans la liste :' : 'Ton prénom :'} <input class="v-in" id="jp-nom" placeholder="Ton prénom" style="flex:1;min-width:0" oninput="const r=document.querySelector('input[name=jp-me][value=new]');if(r)r.checked=true"></label></div>
+        ${busy.length ? `<div class="v-sum-small" style="margin-top:6px"><span>Déjà dans le voyage :</span> <span data-notr>${busy.map(pid=>esc(pname(pid))).join(', ')}</span> · <a href="#" onclick="event.preventDefault();CV.joinPickBusy('${ja(code)}')">C’est moi, sur un nouveau téléphone</a></div>` : ''}</div>
       <div class="v-f"><label>Dans quels voyages pars-tu vraiment ?</label><div class="v-sum-small" style="margin-bottom:4px">Tu comptes alors dans le budget, les dépenses et « qui doit quoi ». Tu vois quand même tous les voyages.</div>
         ${ts.map(t=>`<label class="cv-checkline"><input type="checkbox" class="jp-t" value="${t.id}"${(me && (t.voyageurs||[]).includes(me)) || (ts.length === 1 && !(M.notTrav||{})[t.id]) ? ' checked' : ''}> <span data-notr>${esc(t.titre)}</span>${t.debut ? ' <small>' + esc(tripDatesLong(t)) + '</small>' : ''}</label>`).join('')}</div>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.joinPickSave('${ja(code)}')">✅ C’est bon</button></div>`, true);
+  }
+  // 📱 la même personne sur un deuxième téléphone : on montre aussi les profils déjà utilisés, après confirmation
+  async function joinPickBusy(code){
+    if(!(await uiConfirm(MSGT('Ce profil est déjà utilisé sur un autre téléphone. C’est bien toi (nouveau téléphone) ?')))) return;
+    const box = document.querySelector('.jp-who'); if(!box) return; const codes = String(code).split(',');
+    const ppl = [...new Set(Object.entries(TS()).filter(([, c])=>codes.includes(c)).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip').flatMap(t=>t.voyageurs || []))].filter(prof);
+    ppl.filter(pid=>!box.querySelector(`input[value="${pid}"]`)).forEach(pid=>{ const l = document.createElement('label'); l.className = 'jp-p'; l.innerHTML = `<input type="radio" name="jp-me" value="${esc(pid)}"> ${pchip(pid)}`; box.insertBefore(l, box.firstChild); });
   }
   function joinPickSave(code){
     const r = document.querySelector('input[name=jp-me]:checked'); let me = r ? r.value : '';
