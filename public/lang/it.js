@@ -3735,4 +3735,5 @@ I18N.load({
 "administrateur du voyage":"amministratore del viaggio",
 "Administrateur du voyage :":"Amministratore del viaggio:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Tenere questo viaggio tra quelli che segui (❤️ e 💬)?",
-"Annuler = il disparaît complètement de ton Vezoria.":"Annulla = scompare del tutto dal tuo Vezoria."});
+"Annuler = il disparaît complètement de ton Vezoria.":"Annulla = scompare del tutto dal tuo Vezoria.",
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"Seguono un tuo compagno e hanno lasciato un ❤️ o un 💬 su un viaggio comune. Gli altri follower dei tuoi compagni restano privati. Invitali a seguire anche te o a unirsi al viaggio come compagni."});

@@ -6676,4 +6676,5 @@ I18N.load({
 "administrateur du voyage":"यात्रा के व्यवस्थापक",
 "Administrateur du voyage :":"यात्रा के व्यवस्थापक:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"क्या यह यात्रा आपकी फ़ॉलो सूची में रहे (❤️ और 💬)?",
-"Annuler = il disparaît complètement de ton Vezoria.":"रद्द करें = यह आपके Vezoria से पूरी तरह हट जाएगी।"});
+"Annuler = il disparaît complètement de ton Vezoria.":"रद्द करें = यह आपके Vezoria से पूरी तरह हट जाएगी।",
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"वे आपके किसी साथी को फ़ॉलो करते हैं और साझा यात्रा पर ❤️ या 💬 छोड़ा है। आपके साथियों के बाकी फ़ॉलोअर निजी रहते हैं। उन्हें आपको भी फ़ॉलो करने या साथी के रूप में यात्रा में जुड़ने के लिए बुलाएँ।"});

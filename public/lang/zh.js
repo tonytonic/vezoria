@@ -6676,4 +6676,5 @@ I18N.load({
 "administrateur du voyage":"行程管理员",
 "Administrateur du voyage :":"行程管理员：",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"把这次旅行保留在你关注的列表中（❤️ 和 💬）？",
-"Annuler = il disparaît complètement de ton Vezoria.":"取消 = 它会从你的 Vezoria 中完全消失。"});
+"Annuler = il disparaît complètement de ton Vezoria.":"取消 = 它会从你的 Vezoria 中完全消失。",
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"他们关注了你的一位旅伴，并在共同的行程上留下了 ❤️ 或 💬。你旅伴的其他关注者保持私密。邀请他们也关注你，或作为旅伴加入行程。"});

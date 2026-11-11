@@ -6676,4 +6676,5 @@ I18N.load({
 "administrateur du voyage":"여행 관리자",
 "Administrateur du voyage :":"여행 관리자:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"이 여행을 팔로우 목록에 남길까요 (❤️ 및 💬)?",
-"Annuler = il disparaît complètement de ton Vezoria.":"취소 = Vezoria에서 완전히 사라집니다."});
+"Annuler = il disparaît complètement de ton Vezoria.":"취소 = Vezoria에서 완전히 사라집니다.",
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"동행자를 팔로우하며 공동 여행에 ❤️ 또는 💬를 남긴 사람들입니다. 동행자의 다른 팔로워는 비공개입니다. 나도 팔로우하거나 동행자로 여행에 참여하도록 초대하세요."});

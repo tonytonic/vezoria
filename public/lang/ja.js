@@ -6676,4 +6676,5 @@ I18N.load({
 "administrateur du voyage":"旅行の管理者",
 "Administrateur du voyage :":"旅行の管理者：",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"この旅行をフォロー中に残しますか（❤️ と 💬）？",
-"Annuler = il disparaît complètement de ton Vezoria.":"キャンセル＝Vezoria から完全に消えます。"});
+"Annuler = il disparaît complètement de ton Vezoria.":"キャンセル＝Vezoria から完全に消えます。",
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"旅の仲間をフォローしていて、共通の旅行に ❤️ か 💬 を残した人です。仲間のほかのフォロワーは非公開のままです。あなたのフォローや、仲間としての参加に招待しましょう。"});

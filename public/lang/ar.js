@@ -6677,4 +6677,5 @@ I18N.load({
 "administrateur du voyage":"مسؤول الرحلة",
 "Administrateur du voyage :":"مسؤول الرحلة:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"هل تُبقي هذه الرحلة ضمن ما تتابعه (❤️ و💬)؟",
-"Annuler = il disparaît complètement de ton Vezoria.":"إلغاء = تختفي تمامًا من Vezoria لديك."});
+"Annuler = il disparaît complètement de ton Vezoria.":"إلغاء = تختفي تمامًا من Vezoria لديك.",
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"يتابعون أحد رفاقك وتركوا ❤️ أو 💬 على رحلة مشتركة. يبقى بقية متابعي رفاقك خاصين. ادعُهم لمتابعتك أيضًا أو للانضمام إلى الرحلة كرفاق."});

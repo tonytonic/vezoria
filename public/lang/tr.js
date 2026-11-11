@@ -6658,4 +6658,5 @@ I18N.load({
 "administrateur du voyage":"seyahat yöneticisi",
 "Administrateur du voyage :":"Seyahat yöneticisi:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Bu seyahat takip ettiklerinde kalsın mı (❤️ ve 💬)?",
-"Annuler = il disparaît complètement de ton Vezoria.":"İptal = Vezoria’ndan tamamen kaybolur."});
+"Annuler = il disparaît complètement de ton Vezoria.":"İptal = Vezoria’ndan tamamen kaybolur.",
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"Bir yol arkadaşını takip ediyorlar ve ortak bir seyahate ❤️ ya da 💬 bıraktılar. Yol arkadaşlarının diğer takipçileri gizli kalır. Onları seni de takip etmeye ya da seyahate yol arkadaşı olarak katılmaya davet et."});

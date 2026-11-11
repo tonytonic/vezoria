@@ -6677,4 +6677,5 @@ I18N.load({
 "administrateur du voyage":"администратор поездки",
 "Administrateur du voyage :":"Администратор поездки:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Оставить эту поездку в подписках (❤️ и 💬)?",
-"Annuler = il disparaît complètement de ton Vezoria.":"Отмена = она полностью исчезнет из вашего Vezoria."});
+"Annuler = il disparaît complètement de ton Vezoria.":"Отмена = она полностью исчезнет из вашего Vezoria.",
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"Они подписаны на вашего спутника и оставили ❤️ или 💬 в общей поездке. Остальные подписчики ваших спутников скрыты. Пригласите их подписаться и на вас или присоединиться к поездке как спутники."});
