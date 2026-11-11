@@ -6686,10 +6686,7 @@ I18N.load({
 "{0} est maintenant l’admin de « {1} ».":"{0} 现在是「{1}」的管理员。",
 "Lui passer l’admin de « {0} »":"把「{0}」的管理权交给他",
 "Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"只有行程管理员（{0}）可以移除他人。",
-"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"{0} 已超过 30 天没有打开「{1}」：你可以接管管理权，然后移除任何人。",
-"Reprendre l’admin maintenant ?":"现在接管管理权？",
-"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"你可以自己退出行程。如果管理员 30 天没有打开行程，你就可以接管管理权。",
 "Tu es maintenant l’admin de « {0} ».":"你现在是「{0}」的管理员。",
 "Pas retiré de : {0}.":"未从以下行程移除：{0}。",
 "Seul l’admin d’un voyage peut en retirer quelqu’un.":"只有行程管理员才能从中移除他人。",
-"Reprendre l’admin (absent depuis 30 jours)":"接管管理权（已缺席 30 天）"});
+"Toi, tu peux quitter le voyage. L’admin peut aussi te passer l’administration.":"你可以自己退出行程。管理员也可以把管理权移交给你。"});

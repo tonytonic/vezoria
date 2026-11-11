@@ -3745,10 +3745,7 @@ I18N.load({
 "{0} est maintenant l’admin de « {1} ».":"{0} ora amministra «{1}».",
 "Lui passer l’admin de « {0} »":"Passagli l’amministrazione di «{0}»",
 "Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"Solo l’amministratore del viaggio ({0}) può rimuovere qualcuno.",
-"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"{0} non apre «{1}» da più di 30 giorni: puoi prendere l’amministrazione e poi rimuovere chi vuoi.",
-"Reprendre l’admin maintenant ?":"Prendere l’amministrazione ora?",
-"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"Tu puoi lasciare il viaggio. Se l’amministratore non apre il viaggio per 30 giorni, potrai prendere l’amministrazione.",
 "Tu es maintenant l’admin de « {0} ».":"Ora amministri «{0}».",
 "Pas retiré de : {0}.":"Non rimosso da: {0}.",
 "Seul l’admin d’un voyage peut en retirer quelqu’un.":"Solo l’amministratore di un viaggio può rimuovere qualcuno.",
-"Reprendre l’admin (absent depuis 30 jours)":"Prendi l’amministrazione (assente da 30 giorni)"});
+"Toi, tu peux quitter le voyage. L’admin peut aussi te passer l’administration.":"Tu puoi lasciare il viaggio. L’amministratore può anche passarti l’amministrazione."});

@@ -3739,10 +3739,7 @@ I18N.load({
 "{0} est maintenant l’admin de « {1} ».":"{0} verwaltet jetzt „{1}“.",
 "Lui passer l’admin de « {0} »":"Verwaltung von „{0}“ übergeben",
 "Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"Nur der Verwalter der Reise ({0}) kann jemanden entfernen.",
-"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"{0} hat „{1}“ seit über 30 Tagen nicht geöffnet: Du kannst die Verwaltung übernehmen und dann entfernen, wen du willst.",
-"Reprendre l’admin maintenant ?":"Verwaltung jetzt übernehmen?",
-"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"Du kannst die Reise selbst verlassen. Öffnet der Verwalter die Reise 30 Tage lang nicht, kannst du die Verwaltung übernehmen.",
 "Tu es maintenant l’admin de « {0} ».":"Du verwaltest jetzt „{0}“.",
 "Pas retiré de : {0}.":"Nicht entfernt aus: {0}.",
 "Seul l’admin d’un voyage peut en retirer quelqu’un.":"Nur der Verwalter einer Reise kann jemanden daraus entfernen.",
-"Reprendre l’admin (absent depuis 30 jours)":"Verwaltung übernehmen (30 Tage abwesend)"});
+"Toi, tu peux quitter le voyage. L’admin peut aussi te passer l’administration.":"Du kannst die Reise selbst verlassen. Der Verwalter kann dir die Verwaltung auch übergeben."});

@@ -6686,10 +6686,7 @@ I18N.load({
 "{0} est maintenant l’admin de « {1} ».":"{0}님이 이제 “{1}”의 관리자입니다.",
 "Lui passer l’admin de « {0} »":"“{0}” 관리 넘기기",
 "Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"여행 관리자({0})만 다른 사람을 내보낼 수 있습니다.",
-"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"{0}님이 “{1}”을(를) 30일 넘게 열지 않았습니다. 관리를 넘겨받은 뒤 원하는 사람을 내보낼 수 있습니다.",
-"Reprendre l’admin maintenant ?":"지금 관리를 넘겨받을까요?",
-"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"직접 여행에서 나갈 수 있습니다. 관리자가 30일 동안 여행을 열지 않으면 관리를 넘겨받을 수 있습니다.",
 "Tu es maintenant l’admin de « {0} ».":"이제 “{0}”의 관리자입니다.",
 "Pas retiré de : {0}.":"다음에서 제외되지 않음: {0}.",
 "Seul l’admin d’un voyage peut en retirer quelqu’un.":"여행 관리자만 그 여행에서 다른 사람을 내보낼 수 있습니다.",
-"Reprendre l’admin (absent depuis 30 jours)":"관리 넘겨받기 (30일 부재)"});
+"Toi, tu peux quitter le voyage. L’admin peut aussi te passer l’administration.":"직접 여행에서 나갈 수 있습니다. 관리자가 관리를 넘겨줄 수도 있습니다."});

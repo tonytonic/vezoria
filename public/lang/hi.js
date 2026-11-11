@@ -6686,10 +6686,7 @@ I18N.load({
 "{0} est maintenant l’admin de « {1} ».":"{0} अब “{1}” के व्यवस्थापक हैं।",
 "Lui passer l’admin de « {0} »":"“{0}” का व्यवस्थापन सौंपें",
 "Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"केवल यात्रा के व्यवस्थापक ({0}) किसी को हटा सकते हैं।",
-"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"{0} ने “{1}” को 30 दिनों से ज़्यादा से नहीं खोला: आप व्यवस्थापन ले सकते हैं, फिर जिसे चाहें हटा सकते हैं।",
-"Reprendre l’admin maintenant ?":"अभी व्यवस्थापन लें?",
-"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"आप ख़ुद यात्रा छोड़ सकते हैं। अगर व्यवस्थापक 30 दिनों तक यात्रा नहीं खोलते, तो आप व्यवस्थापन ले सकेंगे।",
 "Tu es maintenant l’admin de « {0} ».":"अब आप “{0}” के व्यवस्थापक हैं।",
 "Pas retiré de : {0}.":"यहाँ से नहीं हटाया गया: {0}।",
 "Seul l’admin d’un voyage peut en retirer quelqu’un.":"केवल यात्रा के व्यवस्थापक ही उससे किसी को हटा सकते हैं।",
-"Reprendre l’admin (absent depuis 30 jours)":"व्यवस्थापन लें (30 दिनों से अनुपस्थित)"});
+"Toi, tu peux quitter le voyage. L’admin peut aussi te passer l’administration.":"आप ख़ुद यात्रा छोड़ सकते हैं। व्यवस्थापक आपको व्यवस्थापन भी सौंप सकते हैं।"});

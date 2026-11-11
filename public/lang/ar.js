@@ -6687,10 +6687,7 @@ I18N.load({
 "{0} est maintenant l’admin de « {1} ».":"أصبح {0} مسؤول «{1}».",
 "Lui passer l’admin de « {0} »":"تسليمه إدارة «{0}»",
 "Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"يمكن لمسؤول الرحلة فقط ({0}) إزالة شخص.",
-"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"لم يفتح {0} «{1}» منذ أكثر من 30 يومًا: يمكنك تولّي الإدارة ثم إزالة من تشاء.",
-"Reprendre l’admin maintenant ?":"تولّي الإدارة الآن؟",
-"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"يمكنك مغادرة الرحلة بنفسك. إذا لم يفتح المسؤول الرحلة لمدة 30 يومًا، يمكنك تولّي الإدارة.",
 "Tu es maintenant l’admin de « {0} ».":"أنت الآن مسؤول «{0}».",
 "Pas retiré de : {0}.":"لم تتم الإزالة من: {0}.",
 "Seul l’admin d’un voyage peut en retirer quelqu’un.":"يمكن لمسؤول الرحلة فقط إزالة أحد منها.",
-"Reprendre l’admin (absent depuis 30 jours)":"تولّي الإدارة (غائب منذ 30 يومًا)"});
+"Toi, tu peux quitter le voyage. L’admin peut aussi te passer l’administration.":"يمكنك مغادرة الرحلة بنفسك. ويمكن للمسؤول أيضًا أن يسلّمك الإدارة."});

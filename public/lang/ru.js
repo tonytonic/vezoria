@@ -6687,10 +6687,7 @@ I18N.load({
 "{0} est maintenant l’admin de « {1} ».":"{0} теперь администратор «{1}».",
 "Lui passer l’admin de « {0} »":"Передать управление «{0}»",
 "Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"Удалить участника может только администратор поездки ({0}).",
-"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"{0} не открывал «{1}» больше 30 дней: вы можете взять управление и удалить кого нужно.",
-"Reprendre l’admin maintenant ?":"Взять управление сейчас?",
-"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"Вы можете сами выйти из поездки. Если администратор не откроет поездку 30 дней, вы сможете взять управление.",
 "Tu es maintenant l’admin de « {0} ».":"Теперь вы администратор «{0}».",
 "Pas retiré de : {0}.":"Не удалён из: {0}.",
 "Seul l’admin d’un voyage peut en retirer quelqu’un.":"Удалять участников может только администратор поездки.",
-"Reprendre l’admin (absent depuis 30 jours)":"Взять управление (нет 30 дней)"});
+"Toi, tu peux quitter le voyage. L’admin peut aussi te passer l’administration.":"Вы можете сами выйти из поездки. Администратор также может передать вам управление."});

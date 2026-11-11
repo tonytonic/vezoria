@@ -6686,10 +6686,7 @@ I18N.load({
 "{0} est maintenant l’admin de « {1} ».":"{0} が「{1}」の管理者になりました。",
 "Lui passer l’admin de « {0} »":"「{0}」の管理を任せる",
 "Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"メンバーを外せるのは旅行の管理者（{0}）だけです。",
-"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"{0} は「{1}」を 30 日以上開いていません。管理を引き継いでから、外したい人を外せます。",
-"Reprendre l’admin maintenant ?":"今すぐ管理を引き継ぎますか？",
-"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"あなたは自分で旅行から抜けられます。管理者が 30 日間旅行を開かなければ、管理を引き継げます。",
 "Tu es maintenant l’admin de « {0} ».":"「{0}」の管理者になりました。",
 "Pas retiré de : {0}.":"外せなかった旅行：{0}。",
 "Seul l’admin d’un voyage peut en retirer quelqu’un.":"旅行からメンバーを外せるのは管理者だけです。",
-"Reprendre l’admin (absent depuis 30 jours)":"管理を引き継ぐ（30 日不在）"});
+"Toi, tu peux quitter le voyage. L’admin peut aussi te passer l’administration.":"あなたは自分で旅行から抜けられます。管理者があなたに管理を引き継ぐこともできます。"});

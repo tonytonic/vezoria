@@ -6668,10 +6668,7 @@ I18N.load({
 "{0} est maintenant l’admin de « {1} ».":"{0} artık “{1}” seyahatinin yöneticisi.",
 "Lui passer l’admin de « {0} »":"“{0}” yönetimini devret",
 "Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"Birini yalnızca seyahat yöneticisi ({0}) çıkarabilir.",
-"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"{0}, “{1}” seyahatini 30 günden fazladır açmadı: yönetimi devralıp istediğini çıkarabilirsin.",
-"Reprendre l’admin maintenant ?":"Yönetimi şimdi devral?",
-"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"Sen seyahatten kendin ayrılabilirsin. Yönetici seyahati 30 gün açmazsa yönetimi devralabilirsin.",
 "Tu es maintenant l’admin de « {0} ».":"Artık “{0}” seyahatinin yöneticisisin.",
 "Pas retiré de : {0}.":"Şuradan çıkarılmadı: {0}.",
 "Seul l’admin d’un voyage peut en retirer quelqu’un.":"Bir seyahatten birini yalnızca yöneticisi çıkarabilir.",
-"Reprendre l’admin (absent depuis 30 jours)":"Yönetimi devral (30 gündür yok)"});
+"Toi, tu peux quitter le voyage. L’admin peut aussi te passer l’administration.":"Seyahatten kendin ayrılabilirsin. Yönetici de yönetimi sana devredebilir."});
