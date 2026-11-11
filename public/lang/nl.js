@@ -3720,4 +3720,6 @@ I18N.load({
 "Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Dit bericht in je mailbox is je back-up. Stuur het naar je eigen adres.",
 "Déjà dans le voyage :":"Al in de reis:",
 "C’est moi, sur un nouveau téléphone":"Dat ben ik, op een nieuwe telefoon",
-"✏️ Ton prénom :":"✏️ Je voornaam:"});
+"✏️ Ton prénom :":"✏️ Je voornaam:",
+"« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"‘{0}’ bestaat al in dit reisboek. Voeg de eerste letter van je achternaam toe (bijv. {0} C.) of een bijnaam.",
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Ben jij het op een nieuwe telefoon? Tik op ‘Dat ben ik, op een nieuwe telefoon’."});

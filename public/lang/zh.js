@@ -6670,4 +6670,6 @@ I18N.load({
 "Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"邮箱里的这封邮件就是你的备份。请发送到你自己的邮箱。",
 "Déjà dans le voyage :":"已在行程中：",
 "C’est moi, sur un nouveau téléphone":"是我，在新手机上",
-"✏️ Ton prénom :":"✏️ 你的名字："});
+"✏️ Ton prénom :":"✏️ 你的名字：",
+"« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"“{0}”已在此旅行本中。请加上姓氏首字母（如 {0} C.）或昵称。",
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"如果是你在新手机上：请点“是我，在新手机上”。"});

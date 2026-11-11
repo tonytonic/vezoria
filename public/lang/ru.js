@@ -6671,4 +6671,6 @@ I18N.load({
 "Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Это письмо в вашем почтовом ящике станет резервной копией. Отправьте его на свой адрес.",
 "Déjà dans le voyage :":"Уже в поездке:",
 "C’est moi, sur un nouveau téléphone":"Это я, на новом телефоне",
-"✏️ Ton prénom :":"✏️ Твоё имя:"});
+"✏️ Ton prénom :":"✏️ Твоё имя:",
+"« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"«{0}» уже есть в этом дневнике. Добавьте первую букву фамилии (например, {0} C.) или прозвище.",
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Если это вы на новом телефоне, нажмите «Это я, на новом телефоне»."});

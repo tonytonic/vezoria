@@ -3711,4 +3711,6 @@ I18N.load({
 "Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"This message in your mailbox will be your backup. Send it to your own address.",
 "Déjà dans le voyage :":"Already in the trip:",
 "C’est moi, sur un nouveau téléphone":"That’s me, on a new phone",
-"✏️ Ton prénom :":"✏️ Your first name:"});
+"✏️ Ton prénom :":"✏️ Your first name:",
+"« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"“{0}” already exists in this notebook. Add the initial of your last name (e.g. {0} C.) or a nickname.",
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"If it’s you on a new phone: tap “That’s me, on a new phone”."});

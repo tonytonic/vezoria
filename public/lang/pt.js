@@ -3730,4 +3730,6 @@ I18N.load({
 "Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Esta mensagem na tua caixa de correio será a tua cópia de segurança. Envia-a para o teu próprio endereço.",
 "Déjà dans le voyage :":"Já na viagem:",
 "C’est moi, sur un nouveau téléphone":"Sou eu, num telemóvel novo",
-"✏️ Ton prénom :":"✏️ Seu nome:"});
+"✏️ Ton prénom :":"✏️ Seu nome:",
+"« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"«{0}» já existe neste caderno. Acrescenta a inicial do teu apelido (ex. {0} C.) ou uma alcunha.",
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Se és tu num telemóvel novo: toca em «Sou eu, num telemóvel novo»."});

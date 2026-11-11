@@ -6670,4 +6670,6 @@ I18N.load({
 "Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"आपके मेलबॉक्स में यह संदेश आपका बैकअप होगा। इसे अपने ही पते पर भेजें।",
 "Déjà dans le voyage :":"यात्रा में पहले से:",
 "C’est moi, sur un nouveau téléphone":"यह मैं हूँ, नए फ़ोन पर",
-"✏️ Ton prénom :":"✏️ तुम्हारा नाम:"});
+"✏️ Ton prénom :":"✏️ तुम्हारा नाम:",
+"« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"“{0}” इस नोटबुक में पहले से है। अपने उपनाम का पहला अक्षर (जैसे {0} C.) या कोई उपनाम जोड़ें।",
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"अगर यह आप ही हैं नए फ़ोन पर: “यह मैं हूँ, नए फ़ोन पर” दबाएँ।"});

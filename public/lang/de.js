@@ -3723,4 +3723,6 @@ I18N.load({
 "Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Diese Nachricht in deinem Postfach ist deine Sicherung. Sende sie an deine eigene Adresse.",
 "Déjà dans le voyage :":"Schon in der Reise:",
 "C’est moi, sur un nouveau téléphone":"Das bin ich, auf einem neuen Handy",
-"✏️ Ton prénom :":"✏️ Dein Vorname:"});
+"✏️ Ton prénom :":"✏️ Dein Vorname:",
+"« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"„{0}“ gibt es in diesem Reisetagebuch schon. Füge den Anfangsbuchstaben deines Nachnamens hinzu (z. B. {0} C.) oder einen Spitznamen.",
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Wenn du es auf einem neuen Handy bist: Tippe auf „Das bin ich, auf einem neuen Handy“."});

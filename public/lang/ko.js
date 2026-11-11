@@ -6670,4 +6670,6 @@ I18N.load({
 "Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"메일함의 이 메시지가 백업이 됩니다. 본인 주소로 보내세요.",
 "Déjà dans le voyage :":"이미 여행에 참여 중:",
 "C’est moi, sur un nouveau téléphone":"저예요, 새 휴대폰에서",
-"✏️ Ton prénom :":"✏️ 내 이름:"});
+"✏️ Ton prénom :":"✏️ 내 이름:",
+"« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"“{0}”은(는) 이미 이 노트에 있습니다. 성의 첫 글자(예: {0} C.)나 별명을 붙이세요.",
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"새 휴대폰의 본인이라면 “저예요, 새 휴대폰에서”를 누르세요."});

@@ -3729,4 +3729,6 @@ I18N.load({
 "Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Questo messaggio nella tua casella di posta sarà il tuo backup. Invialo al tuo indirizzo.",
 "Déjà dans le voyage :":"Già nel viaggio:",
 "C’est moi, sur un nouveau téléphone":"Sono io, su un nuovo telefono",
-"✏️ Ton prénom :":"✏️ Il tuo nome:"});
+"✏️ Ton prénom :":"✏️ Il tuo nome:",
+"« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"«{0}» esiste già in questo diario. Aggiungi l’iniziale del cognome (es. {0} C.) o un soprannome.",
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Se sei tu su un nuovo telefono: tocca «Sono io, su un nuovo telefono»."});

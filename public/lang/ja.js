@@ -6670,4 +6670,6 @@ I18N.load({
 "Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"メールボックスに届くこのメッセージがバックアップになります。自分のアドレスに送ってください。",
 "Déjà dans le voyage :":"すでに旅行に参加中：",
 "C’est moi, sur un nouveau téléphone":"自分です（新しいスマホ）",
-"✏️ Ton prénom :":"✏️ あなたの名前："});
+"✏️ Ton prénom :":"✏️ あなたの名前：",
+"« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"「{0}」はこのノートにすでにいます。名字の頭文字（例：{0} C.）かニックネームを付けてください。",
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"新しいスマホのあなたなら「自分です（新しいスマホ）」をタップしてください。"});

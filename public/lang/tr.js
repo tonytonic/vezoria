@@ -6652,4 +6652,6 @@ I18N.load({
 "Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Posta kutundaki bu mesaj yedeğin olacak. Kendi adresine gönder.",
 "Déjà dans le voyage :":"Zaten seyahatte:",
 "C’est moi, sur un nouveau téléphone":"Bu benim, yeni bir telefonda",
-"✏️ Ton prénom :":"✏️ Adın:"});
+"✏️ Ton prénom :":"✏️ Adın:",
+"« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"“{0}” bu defterde zaten var. Soyadının baş harfini (ör. {0} C.) ya da bir takma ad ekle.",
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Yeni bir telefondaki sensen: “Bu benim, yeni bir telefonda”ya dokun."});
