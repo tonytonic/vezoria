@@ -1043,6 +1043,7 @@
           ${(()=>{ const ho = dayHol(d), su = daySun(d); return ho || su ? `<div class="v-day-x">${ho ? `<span class="v-hol">🎌 ${MSGT('Jour férié')} ${flag(ho.cc)} <b data-notr>${esc(ho.n)}</b> · ${MSGT('musées, banques et administrations souvent fermés ; sites et transports très fréquentés.')}</span>` : ''}${su ? `<span class="v-sun">${sunTxt(su)}</span>` : ''}</div>` : ''; })()}
           ${info.plan ? `<div class="v-day-plan">${esc(info.plan)}</div>` : ''}
           ${dayFlow(d, own, night, row)}
+          ${list('city', c=>c.trip===M.trip && c.date===d).map(c=>`<div class="v-day-item" onclick="CV.explore('${ja(c.id)}')"><span>📍</span><span class="x" data-notr>${esc(c.titre)}</span></div>`).join('')}
           ${dn.map(n=>noteCard(n,true)).join('')}
           ${routeHTML(d, true)}
           <div class="cv-row"><button class="v-day-edit" onclick="CV.planDay('${ja(d)}')">🗺️ Itinéraire</button><button class="v-day-edit cv-dmore" aria-label="${esc(MSGT('Actions du jour'))}" onclick="CV.dayMenu('${ja(d)}')">⋯</button></div>
@@ -2009,11 +2010,22 @@
     if(code.length < 8){ alert('Colle le code reçu (au moins 8 caractères).'); return; }
     obAccept();
     if(urlEl && urlEl.value.trim()) M.sync.url = urlEl.value.trim();
+    // 0) 👥 code compagnon de tout un carnet : même chemin que « Rejoindre » dans l’appli
+    try { if(await memberTry(code)){ const mc = 'M:' + normCode(code); if(!spaceObj(mc)) return;   // « Annuler » : on reste sur l’accueil
+        delete M.joinCode; persist(); closeSheet(true); applyMode();
+        const ts = Object.keys(TS()).filter(k=>TS()[k] === mc && R[k] && R[k].type === 'trip' && !R[k].deleted).sort((x, y)=>(R[x].debut || '9').localeCompare(R[y].debut || '9'));
+        if(ts.length){ const td = isoToday(); go((ts.find(k=>(R[k].fin || R[k].debut || '') >= td) || ts[ts.length - 1])); }
+        refresh(); if(ts.length) joinPick(mc); else if(!M.me || !prof(M.me)) editProfile(null); return; } } catch(e){}
     // 1) code d’un voyage partagé (le cas le plus courant : une invitation reçue) → seul ce voyage est ajouté
     try {
       if(!spaceObj(code)) (M.spaces = M.spaces || []).push({code, since:0, dirty:[], last:0, err:''});
       const sp = spaceObj(code); await syncSpace(sp, true);
       { const xf = !sp.err && list('xfer', r=>r.trip === 'xf:' + code)[0]; if(xf){ delete M.joinCode; persist(); await xferApply(xf, code); return; } }
+      // 👤 invitation personnelle (paquet de voyages) : on rejoint chacun de ses voyages, comme depuis « Rejoindre » dans l’appli
+      if(!sp.err && list('packtrip', r=>TS()[r.trip] === code).length){
+        await packApply(); const codes = [...new Set(list('packtrip', r=>TS()[r.trip] === code).map(r=>r.code).filter(Boolean))];
+        for(const c of codes){ try { await syncSpace(spaceObj(c), true); } catch(e){} }
+        delete M.joinCode; persist(); closeSheet(true); const first = Object.keys(TS()).find(k=>codes.includes(TS()[k]) && R[k] && R[k].type === 'trip'); if(first) go(first); refresh(); joinPick(codes); return; }
       const got = sp.err ? [] : Object.entries(TS()).filter(([, c])=>c === code).map(([tid])=>R[tid]).filter(t=>t && !t.deleted && t.type === 'trip');
       if(got.length){ delete M.joinCode; persist(); closeSheet(true); go(got[0].id); refresh(); joinPick(code); return; }
       const isFol = !sp.err && Object.entries(TS()).some(([k, c])=>c === code && /^ft:/.test(k));
@@ -3000,8 +3012,10 @@
     tr.forEach(t=>{ if(t.from) L.push([MODE_ICON[t.mode] || '🧭', RF('Depuis ma position → {0}', /Avion/i.test(t.mode || '') ? RF('aéroport de {0}', (aptAny(t.from) || {}).n || cityOf(t.from)) : t.from), here(tfPt(t.from, t.mode))]);
       const u = itMapUrl(t, d); if(u) L.push(['🗺️', (t.from || '') + ' → ' + (t.to || ''), u]); });
     if(night && (night.nom || night.adresse || night.titre)) L.push(['🏨', RF('Depuis ma position → {0}', night.nom || cityOf(night.titre)), here(tfHotel(night))]);
+    // 🎟️ les visites saisies à la main ce jour-là (fiches Résas) : on les montre, avec leur plan
+    const acts = itemsForDay(d).own.filter(i=>i.cat === 'activite' && itMapUrl(i, d)); acts.forEach(i=>L.unshift(['🎟️', (i.heure ? i.heure + ' · ' : '') + i.titre, itMapUrl(i, d)]));
     if(!L.length) return '';
-    return `<div class="pl-none"><div class="v-sum-small" style="margin-bottom:6px">${esc(MSGT('Pas encore de visite ce jour-là. Pour te repérer :'))}</div>${L.map(([i, l, u])=>`<a class="cv-tf-go pl-nl" href="${esc(u)}" target="_blank" rel="noopener">${i} <span data-notr>${esc(l)}</span></a>`).join('')}</div>`;
+    return `<div class="pl-none"><div class="v-sum-small" style="margin-bottom:6px">${esc(MSGT(acts.length ? 'Pour te repérer :' : 'Pas encore de visite ce jour-là. Pour te repérer :'))}</div>${L.map(([i, l, u])=>`<a class="cv-tf-go pl-nl" href="${esc(u)}" target="_blank" rel="noopener">${i} <span data-notr>${esc(l)}</span></a>`).join('')}</div>`;
   }
   function planDay(d, map){
     planD = d; const rh = routeHTML(d, false), showMap = map !== false;   // 🗺️ venu de « Itinéraire » : trajet ouvert · après « remettre dans l’ordre » : on reste sur la liste

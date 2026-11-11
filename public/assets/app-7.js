@@ -3702,7 +3702,7 @@
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.memberSend('${ja(C)}')">📤 ${MSGT('Envoyer l’invitation')}</button><button type="button" class="v-btn sec" onclick="CV.cloudSheet()">${MSGT('Fermer')}</button></div>`);
   }
   async function memberSend(C){
-    const url = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
+    const url0 = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : ''), url = url0 ? url0 + '#rejoindre=' + C + (typeof invTag === 'function' ? invTag('') : '') : '';   // 🔗 le lien porte le code : à l’ouverture, il est déjà rempli
     const text = RF('Rejoins mon carnet Vezoria en compagnon 🧳\n{0}\nCode compagnon : {1}\n(☁️ Cloud → « Tu as déjà un code ? » → colle le code)', url, C);
     if(navigator.share){ try { await navigator.share({title:'Vezoria', text}); return; } catch(e){ return; } }
     try { await navigator.clipboard.writeText(text); toast('📋 ' + MSGT('Invitation copiée')); } catch(e){ await uiPrompt(MSGT('Copie ce texte :'), text); }
@@ -3996,7 +3996,7 @@
   function stRanges(){ const st = tlStages(); return st.map((x, i)=>({city:x.city, h:x.h, debut:x.debut, fin:x.fin, end:st[i + 1] ? st[i + 1].debut : x.fin})); }
   function stChipTxt(d, city){
     const info = dayInfo(d), same = x => city && normQ(String(x || '').replace(/\(.*?\)/g, '').trim()) === normQ(city); if(info.titre && !same(info.titre)) return info.titre; const p = String(info.plan || '').split('\n')[0].trim(); if(p && !same(p)) return p.slice(0, 40);
-    const {own} = itemsForDay(d), a = own.find(i=>i.cat !== 'hotel' && i.cat !== 'divers'); if(a && !same(a.titre)) return a.titre || '';
+    const {own} = itemsForDay(d), a = own.find(i=>i.cat !== 'hotel' && i.cat !== 'divers') || own.find(i=>i.cat === 'divers' && i.heure && i.titre); if(a && !same(a.titre)) return a.titre || '';
     const pl = placesOf(d)[0]; return pl && !same(pl.nom) ? pl.nom || '' : '';
   }
   function progStages(ds){

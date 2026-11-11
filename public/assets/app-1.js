@@ -678,7 +678,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   async function tripPushAll(id){
     const out = document.getElementById('sy-res'); if(out) out.textContent = MSGT('J’envoie tout le voyage…');
-    try { await photoResend(id); await syncNow(true); const sp = spaceObj(TS()[id]);
+    try { await photoResend(id, true); await syncNow(true); const sp = spaceObj(TS()[id]);
       if(out) out.innerHTML = sp && sp.err ? '⚠️ ' + esc(sp.err) : `✅ ${MSGT('Voyage renvoyé :')} <b>${tripCount(id).live}</b> ${MSGT('fiches')}. ${MSGT('Les compagnons le reçoivent à leur prochaine synchro.')}`; }
     catch(e){ if(out) out.textContent = '⚠️ ' + (e.message || e); }
   }
@@ -724,7 +724,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     L.forEach((c, i)=>setTimeout(()=>toast('🔀 ' + RF('{0} : modifié aussi par {1}, les deux versions sont fusionnées', c.t, c.by)), i * 3200));
   }
   function mergeRemote(records, fromMain){
-    let changed = 0;
+    let changed = 0; const fdNew = new Set();
     for(const r of records){
       if(!r || !r.id || !safeRec(r)) continue;   // 🛡️ fiche piégée (identifiant ou champ technique avec " < > ' &) : ignorée / nettoyée
       if(r.id === 'vz:codes' && fromMain !== true) continue;   // 🔑 la liste de codes d’un AUTRE carnet (celui dont je suis compagnon) ne remplace jamais la mienne
@@ -741,8 +741,10 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
         try { gdRemoteEdit(r); } catch(e){}
         continue;
       }
-      if(!l || (r.updatedAt||0) > (l.updatedAt||0)){ R[r.id] = r; changed++; if(l) M.remoteAt = Date.now(); try { gdRemoteEdit(r); } catch(e){} }
+      if(!l || (r.updatedAt||0) > (l.updatedAt||0)){ R[r.id] = r; changed++; if(l) M.remoteAt = Date.now(); try { gdRemoteEdit(r); } catch(e){} if((r.type === 'like' || r.type === 'comment') && r.feed) fdNew.add(r.feed); }
     }
+    // 💬 un ❤️ ou un commentaire vient d’arriver sur une publication affichée : on la redessine (sauf si on est en train d’y écrire)
+    if(fdNew.size) setTimeout(()=>{ try { fdNew.forEach(fid=>{ const el = document.getElementById('fp-' + fid); if(!el) return; const a = document.activeElement; if(a && el.contains(a) && /^(INPUT|TEXTAREA)$/.test(a.tagName) && a.value) return; feedPaint(fid); }); } catch(e){} }, 60);
     return changed;
   }
   async function syncSpace(sp, force){
@@ -1392,7 +1394,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const reuse = c.length >= 8; if(!reuse) c = genCode();
     if(!spaceObj(c)) (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''});
     TS()[t.id] = c;
-    persist(); tripShareSheet(t.id); photoResend(t.id);
+    persist(); tripShareSheet(t.id); photoResend(t.id, true);
   }
   function tripShareSheet(id){
     const t = R[id], code = TS()[id], sp = spaceObj(code) || {};
@@ -1414,7 +1416,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[id] = c;
     if(old && !Object.values(TS()).includes(old)) M.spaces = M.spaces.filter(x=>x.code !== old);
     persist(); tripShareSheet(id);
-    photoResend(id).then(()=>{ const sp = spaceObj(TS()[id]); if(sp && sp.err) alert('⚠️ Le voyage n’a pas pu être envoyé sous le nouveau code : ' + sp.err + '\nRéessaie avec « Tout renvoyer » quand la connexion est bonne.'); else if(sp) { toast('✅ Voyage en ligne : le code peut être donné'); tripShareSheet(id); } });
+    photoResend(id, true).then(()=>{ const sp = spaceObj(TS()[id]); if(sp && sp.err) alert('⚠️ Le voyage n’a pas pu être envoyé sous le nouveau code : ' + sp.err + '\nRéessaie avec « Tout renvoyer » quand la connexion est bonne.'); else if(sp) { toast('✅ Voyage en ligne : le code peut être donné'); tripShareSheet(id); } });
   }
   async function tripInvite(id){
     const t = R[id], url = M.sync.url || (/^https?:/.test(location.protocol) ? location.origin + location.pathname : '');
@@ -1591,7 +1593,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const t = R[tid]; if(!t) return; const P = genCode(); (M.spaces = M.spaces || []).push({code:P, since:0, dirty:[], last:0, err:''}); PACKS()[P] = {who: who || '?', trips:[], at:Date.now()};
     const pk = PACKS()[P]; TS()['pa:' + P] = P;
     if(!(TS()[tid] && spaceObj(TS()[tid]))){ const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[tid] = c;
-      Object.values(R).filter(r=>!r.demo && (r.id === tid || r.trip === tid)).forEach(r=>markDirty(r.id)); photoResend(tid); }
+      Object.values(R).filter(r=>!r.demo && (r.id === tid || r.trip === tid)).forEach(r=>markDirty(r.id)); photoResend(tid, true); }
     putQuiet([{id:'pt:' + tid + '@' + P, type:'packtrip', trip:'pa:' + P, tid, code:TS()[tid], titre:t.titre || ''}]); pk.trips.push(tid);
     persist(); try { await clmPrime(P); await syncNow(); } catch(e){}
     return P;
@@ -1605,7 +1607,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const pk = PACKS()[P]; TS()['pa:' + P] = P;
     const add = sel.filter(t=>!pk.trips.includes(t)), rem = pk.trips.filter(t=>!sel.includes(t)), out = [];
     for(const t of add){
-      if(!(TS()[t] && spaceObj(TS()[t]))){ const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t] = c; photoResend(t); }   // le voyage part sur son propre code (extrait du carnet)
+      if(!(TS()[t] && spaceObj(TS()[t]))){ const c = genCode(); (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t] = c; photoResend(t, true); }   // le voyage part sur son propre code (extrait du carnet)
       out.push({id:'pt:' + t + '@' + P, type:'packtrip', trip:'pa:' + P, tid:t, code:TS()[t], titre:R[t].titre || ''}); pk.trips.push(t); }
     if(out.length) putQuiet(out);
     for(const t of rem) await packRemoveTrip(P, t, true);
@@ -2049,8 +2051,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(document.getElementById('v-sheet-bg') || ovOpen()){ if((n || 0) < 600) setTimeout(()=>withWhom(tid, (n || 0) + 1), 1500); return; }   // 15 min au plus (le tri peut être long)
     M.wwSeen = Object.assign({}, M.wwSeen || {}, {[tid]:1}); persist();
     const me = M.me, ppl = profiles().filter(p=>p.id !== me).map(p=>p.id), v = new Set(t.voyageurs || []);
-    openSheet(`<h2>👥 Avec qui pars-tu ?</h2><div class="v-sum-small" style="margin-bottom:8px">« ${esc(t.titre)} » arrive chez tes compagnons, qui reçoivent une notification. Ils pourront le compléter avec toi.</div>
-      ${ppl.length ? `<div class="jp-who">${ppl.map(pid=>`<label class="jp-p"><input type="checkbox" class="ww-p" value="${pid}"${v.has(pid) ? ' checked' : ''} onchange="CV.withWhomUpd('${ja(tid)}')"> ${pchip(pid)}</label>`).join('')}</div>` : `<div class="v-sum-small">Tu n’as pas encore de compagnon dans Vezoria.</div>`}
+    openSheet(`<h2>👥 Avec qui pars-tu ?</h2>${ppl.length ? `<div class="v-sum-small" style="margin-bottom:8px">« ${esc(t.titre)} » arrive chez tes compagnons, qui reçoivent une notification. Ils pourront le compléter avec toi.</div>` : ''}
+      ${ppl.length ? `<div class="jp-who">${ppl.map(pid=>`<label class="jp-p"><input type="checkbox" class="ww-p" value="${pid}"${v.has(pid) ? ' checked' : ''} onchange="CV.withWhomUpd('${ja(tid)}')"> ${pchip(pid)}</label>`).join('')}</div>` : `<div class="v-sum-small">Tu n’as pas encore de compagnon dans Vezoria.</div><div class="v-sum-small" style="margin-top:4px">Invite quelqu’un dans un voyage : il apparaîtra ici, et tu choisiras ce qu’il peut voir.</div>`}
       <div id="ww-msg" class="v-sum-small" style="margin:8px 0"></div>
       <div class="v-actions" style="flex-direction:column">${ppl.length ? `<button type="button" class="v-btn" onclick="CV.withWhomGo('${ja(tid)}')">✅ Partager avec eux</button>` : ''}
         <button type="button" class="v-btn sec" onclick="CV.close();CV.tripInviteNow('${ja(tid)}')">📤 Inviter quelqu’un de nouveau</button>

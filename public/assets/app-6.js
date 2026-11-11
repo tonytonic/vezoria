@@ -33,7 +33,7 @@
       <ol class="gs">${steps}</ol>
       ${installEvt ? `<button type="button" class="v-btn" onclick="CV.gateInstall()">📲 Installer l’appli</button>` : ''}
       ${webFollowing() ? `<div class="gb"><button type="button" onclick="CV.webBack()">← Revenir au voyage que je suis</button><button type="button" id="gw-copy" onclick="CV.webCopy()">📋 Copier mon lien de passage (à coller dans l’appli installée)</button></div>` : ''}
-      <p class="gm">Aucune inscription, aucune publicité. <a href="mentions-legales">Mentions légales</a> · <a href="privacy">Confidentialité</a></p></div>`;
+      <p class="gm">Carnet de voyage gratuit, sans publicité. <a href="mentions-legales">Mentions légales</a> · <a href="privacy">Confidentialité</a></p></div>`;
   }
   // l’appli installée sur iPhone ne voit pas le lien ouvert dans Safari : l’invitation passe par le presse-papiers
   async function gateCopy(){ const b = document.getElementById('gv-copy'), jc = ((location.hash.match(/rejoindre=([A-Za-z0-9-]{8,})/i) || [])[1] || M.joinCode || ''), href = jc ? location.origin + location.pathname + '#rejoindre=' + jc.toUpperCase() : location.href; try { await navigator.clipboard.writeText(href); if(b){ b.textContent = '✅ ' + MSGT('Invitation copiée : installe l’appli puis colle-la'); b.classList.add('sec'); } } catch(e){ await uiPrompt('Copie ce texte :', href); } }
@@ -409,6 +409,8 @@
       return true;
     }
     if(now - (M.zipLast || 0) < 30 * 864e5 || now - (M.protAsk || 0) < 14 * 864e5) return false;
+    // 🧘 tout premier rappel : pas dans la foulée de la création du premier voyage (« Avec qui pars-tu ? » passe d’abord), le lendemain
+    if(!M.protAsk){ if(!M.protT0){ M.protT0 = now; persist(); return false; } if(now - M.protT0 < 20 * 3600e3) return false; }
     M.protAsk = now; persist();
     momentShow(`<div class="mo-k">${MSGT('Protège tes voyages')}</div><div class="mo-big">🛟</div><h2>${MSGT('Et si tu perdais ce téléphone ?')}</h2>
       <div class="mo-sub">${MSGT('Tes voyages ne sont que sur ce téléphone : en le perdant ou en changeant de téléphone, tout serait perdu (même nous ne pouvons rien récupérer, tout est chiffré).')}</div>
@@ -558,11 +560,11 @@
       <div class="cv-bigcode">${esc(M.sync.code)}</div>
       <p class="cv-warn">C’est la seule clé de ton carnet : sans lui, personne ne pourra le récupérer, même pas nous.</p>
       <button class="v-btn" onclick="CV.codeMail()">📧 ${MSGT('M’envoyer le code par e-mail')}</button>
-      <div class="v-sum-small" style="margin:-2px 0 8px">${MSGT('Pas de compte chez Vezoria : ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.')}</div>
+      <div class="v-sum-small" style="margin:-2px 0 8px">${MSGT('Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.')}</div>
       <button class="v-btn sec" onclick="CV.copyCode()">📋 Copier le code</button>
       <button class="v-btn sec" onclick="CV.codeKeep()">📤 Me l’envoyer pour le garder (notes, e-mail…)</button>
       <div class="v-sum-small" style="margin-top:6px">Ne le donne qu’à toi-même : il ouvre tout ton carnet. Pour inviter des amis : 👥 Partager, ou un code compagnon (☁️ Cloud).</div>
-      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close();CV.cloudSheet()">C’est noté</button></div>`);
+      <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close();CV.codeNoted()">C’est noté</button></div>`);
   }
   async function codeKeep(){
     const MSG = x => (window.I18N && I18N.msg ? I18N.msg(x) : x);
@@ -1401,7 +1403,7 @@
       let t = null; try { t = await IDB.get(id + '.t'); } catch(e){} if(t && t.blob && !M.pq.includes(id + '.t')){ M.pq.push(id + '.t'); n++; } }
     return n;
   }
-  async function photoResend(only){
+  async function photoResend(only, quiet){
     // 1) toutes les fiches (voyage, souvenirs, dépenses…) repartent vers leur carnet (principal ou code du voyage), depuis le début
     // only = id d’un voyage : on ne renvoie que ce voyage (et son code)
     const inScope = r => r && r.id && !r.demo && (!only || r.id === only || r.trip === only);
@@ -1419,7 +1421,7 @@
       let t = null; try { t = await IDB.get(id + '.t'); } catch(e){} if(t && t.blob && !M.pq.includes(id + '.t')){ M.pq.push(id + '.t'); n++; }
     }
     persist();
-    alert(nr + ' fiche(s) et ' + n + ' photo(s) remises en file d’envoi.');
+    if(!quiet) alert(nr + ' fiche(s) et ' + n + ' photo(s) remises en file d’envoi.');   // quiet : envoi automatique (invitation, partage) : pas de fenêtre technique au milieu
     await syncNow(true);
     uploadQueue();
   }
@@ -2424,7 +2426,9 @@
     try { if(quotaNag()){ momentDone = true; return; } } catch(e){}   // 📦 place photos dépassée ou presque pleine
     try { if(protectNag()){ momentDone = true; return; } } catch(e){}   // 🛟 ne jamais tout perdre en changeant de téléphone
     try { if(M.cloud === 'trips' && !M.migTrips){ momentDone = true; cloudTripsMigrate(); return; } } catch(e){}   // 🔁 fin du cloud « voyage par voyage »
-    const t = trip(); if(!t || !t.debut || t.demo || t.ro) return;   // 📖 lecture seule : aucun « Demain tu pars », « Bienvenue », « Bon retour »…
+    const t = trip(); if(!t || !t.debut || t.demo || t.ro) return;
+    if(t.createdAt > 1000 && Date.now() - t.createdAt < 10 * 60e3) return;   // 🧘 voyage créé à l’instant : une seule fenêtre à la fois (« Avec qui pars-tu ? »), le reste à la prochaine ouverture
+    // 📖 lecture seule : aucun « Demain tu pars », « Bienvenue », « Bon retour »…
     const td = isoToday(), tm = new Date(Date.now() + 864e5).toISOString().slice(0,10); M.seen = M.seen || {};
     // la veille (ou le matin du départ) : « Demain, tu pars »
     if(!t.archived && (t.debut === tm || (t.debut === td && new Date().getHours() < 11)) && !M.seen['eve:' + t.id]){
