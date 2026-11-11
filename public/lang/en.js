@@ -3708,4 +3708,7 @@ I18N.load({
 "Carnet de voyage gratuit, sans publicité.":"Free travel journal, no ads.",
 "Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Location not found: place the memory on the map, or allow location in your phone settings.",
 "Pour te repérer :":"To find your way:",
-"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"This message in your mailbox will be your backup. Send it to your own address."});
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"This message in your mailbox will be your backup. Send it to your own address.",
+"Déjà dans le voyage :":"Already in the trip:",
+"C’est moi, sur un nouveau téléphone":"That’s me, on a new phone",
+"✏️ Ton prénom :":"✏️ Your first name:"});

@@ -6667,4 +6667,7 @@ I18N.load({
 "Carnet de voyage gratuit, sans publicité.":"無料の旅ノート、広告なし。",
 "Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"位置を取得できません：思い出を地図上に置くか、スマートフォンの設定で位置情報を許可してください。",
 "Pour te repérer :":"道案内：",
-"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"メールボックスに届くこのメッセージがバックアップになります。自分のアドレスに送ってください。"});
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"メールボックスに届くこのメッセージがバックアップになります。自分のアドレスに送ってください。",
+"Déjà dans le voyage :":"すでに旅行に参加中：",
+"C’est moi, sur un nouveau téléphone":"自分です（新しいスマホ）",
+"✏️ Ton prénom :":"✏️ あなたの名前："});

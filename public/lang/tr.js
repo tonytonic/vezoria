@@ -6649,4 +6649,7 @@ I18N.load({
 "Carnet de voyage gratuit, sans publicité.":"Ücretsiz seyahat defteri, reklamsız.",
 "Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Konum bulunamadı: anıyı haritaya yerleştir veya telefon ayarlarından konuma izin ver.",
 "Pour te repérer :":"Yönünü bulmak için:",
-"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Posta kutundaki bu mesaj yedeğin olacak. Kendi adresine gönder."});
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Posta kutundaki bu mesaj yedeğin olacak. Kendi adresine gönder.",
+"Déjà dans le voyage :":"Zaten seyahatte:",
+"C’est moi, sur un nouveau téléphone":"Bu benim, yeni bir telefonda",
+"✏️ Ton prénom :":"✏️ Adın:"});

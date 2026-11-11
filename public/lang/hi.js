@@ -6667,4 +6667,7 @@ I18N.load({
 "Carnet de voyage gratuit, sans publicité.":"मुफ़्त यात्रा डायरी, बिना विज्ञापन।",
 "Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"स्थान नहीं मिला: याद को नक्शे पर रखें, या फ़ोन की सेटिंग में लोकेशन की अनुमति दें।",
 "Pour te repérer :":"रास्ता समझने के लिए:",
-"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"आपके मेलबॉक्स में यह संदेश आपका बैकअप होगा। इसे अपने ही पते पर भेजें।"});
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"आपके मेलबॉक्स में यह संदेश आपका बैकअप होगा। इसे अपने ही पते पर भेजें।",
+"Déjà dans le voyage :":"यात्रा में पहले से:",
+"C’est moi, sur un nouveau téléphone":"यह मैं हूँ, नए फ़ोन पर",
+"✏️ Ton prénom :":"✏️ तुम्हारा नाम:"});

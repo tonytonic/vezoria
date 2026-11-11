@@ -6667,4 +6667,7 @@ I18N.load({
 "Carnet de voyage gratuit, sans publicité.":"무료 여행 노트, 광고 없음.",
 "Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"위치를 찾을 수 없습니다: 추억을 지도에 직접 놓거나 휴대폰 설정에서 위치를 허용하세요.",
 "Pour te repérer :":"길 찾기:",
-"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"메일함의 이 메시지가 백업이 됩니다. 본인 주소로 보내세요."});
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"메일함의 이 메시지가 백업이 됩니다. 본인 주소로 보내세요.",
+"Déjà dans le voyage :":"이미 여행에 참여 중:",
+"C’est moi, sur un nouveau téléphone":"저예요, 새 휴대폰에서",
+"✏️ Ton prénom :":"✏️ 내 이름:"});

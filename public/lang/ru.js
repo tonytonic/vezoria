@@ -6668,4 +6668,7 @@ I18N.load({
 "Carnet de voyage gratuit, sans publicité.":"Бесплатный дневник путешествий, без рекламы.",
 "Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Местоположение не найдено: отметьте воспоминание на карте или разрешите геолокацию в настройках телефона.",
 "Pour te repérer :":"Чтобы сориентироваться:",
-"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Это письмо в вашем почтовом ящике станет резервной копией. Отправьте его на свой адрес."});
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Это письмо в вашем почтовом ящике станет резервной копией. Отправьте его на свой адрес.",
+"Déjà dans le voyage :":"Уже в поездке:",
+"C’est moi, sur un nouveau téléphone":"Это я, на новом телефоне",
+"✏️ Ton prénom :":"✏️ Твоё имя:"});

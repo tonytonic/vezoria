@@ -3726,4 +3726,7 @@ I18N.load({
 "Carnet de voyage gratuit, sans publicité.":"Diario di viaggio gratuito, senza pubblicità.",
 "Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Posizione non trovata: posiziona il ricordo sulla mappa oppure autorizza la posizione nelle impostazioni del telefono.",
 "Pour te repérer :":"Per orientarti:",
-"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Questo messaggio nella tua casella di posta sarà il tuo backup. Invialo al tuo indirizzo."});
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"Questo messaggio nella tua casella di posta sarà il tuo backup. Invialo al tuo indirizzo.",
+"Déjà dans le voyage :":"Già nel viaggio:",
+"C’est moi, sur un nouveau téléphone":"Sono io, su un nuovo telefono",
+"✏️ Ton prénom :":"✏️ Il tuo nome:"});

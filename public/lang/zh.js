@@ -6667,4 +6667,7 @@ I18N.load({
 "Carnet de voyage gratuit, sans publicité.":"免费旅行手账，没有广告。",
 "Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"无法获取位置：请在地图上放置这条回忆，或在手机设置中允许定位。",
 "Pour te repérer :":"帮你辨认方向：",
-"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"邮箱里的这封邮件就是你的备份。请发送到你自己的邮箱。"});
+"Ce message dans ta boîte mail sera ta sauvegarde. Envoie-le à ta propre adresse.":"邮箱里的这封邮件就是你的备份。请发送到你自己的邮箱。",
+"Déjà dans le voyage :":"已在行程中：",
+"C’est moi, sur un nouveau téléphone":"是我，在新手机上",
+"✏️ Ton prénom :":"✏️ 你的名字："});
