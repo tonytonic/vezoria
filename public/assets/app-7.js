@@ -670,13 +670,13 @@
 
   /* 🏁 VOYAGE FINI : boucler le voyage (comptes, souvenirs, notes, partager, ranger) */
   function finFil(t){
-    const key = 'fin:' + t.id, tr = settle(balances()), sv = souvs(), daysNo = dayList().filter(d=>!sv.some(s=>s.date === d));
+    const key = 'fin:' + t.id, tr = settle(balances()), sv = souvs(), daysNo = dayList().filter(d=>d <= isoToday() && !sv.some(s=>s.date === d));
     const its = list('item', i=>i.trip === t.id && (i.cat === 'hotel' || i.cat === 'activite')), nr = its.filter(i=>R[rtId(i.id)]).length, rated = !!R[rtId(t.id)];
     const shared = !!((M.finShared || {})[t.id]);
     const steps = [
       {k:'comptes', ic:'💸', l:MSGT('Les comptes'), ok: !tr.length, n: tr.length ? tr.length + ' ' + MSGT('remboursement(s)') : '',
         body: ()=>`${tr.map(x=>`<div class="ar-f"><i>💸</i><span><span data-notr>${esc(pname(x.de))}</span> → <span data-notr>${esc(pname(x.a))}</span> : <b>${eur(x.v)}</b></span></div>`).join('')}${fbtn(`CV.innerGo('budget')`, `💸 ${MSGT('Régler / demander')}`)}`},
-      {k:'souv', ic:'📸', l:MSGT('Les souvenirs'), ok: !daysNo.length || filSk(key, 'souv'), skip:true, f: dayList().length ? 1 - daysNo.length / dayList().length : 1, n: daysNo.length ? daysNo.length + ' ' + MSGT('jour(s) sans souvenir') : '',
+      {k:'souv', ic:'📸', l:MSGT('Les souvenirs'), ok: !daysNo.length || filSk(key, 'souv'), skip:true, f: (n=>n ? 1 - daysNo.length / n : 1)(dayList().filter(d=>d <= isoToday()).length), n: daysNo.length ? daysNo.length + ' ' + MSGT('jour(s) sans souvenir') : '',
         body: ()=>`${daysNo.length ? `<div class="ar-p">${MSGT('Jours sans souvenir')} :</div><div class="fil-chips fil-days">${daysNo.slice(0, 12).map(d=>`<button type="button" onclick="CV.editSouv(null,'${ja(d)}')">📸 ${fshort(d)}</button>`).join('')}</div>` : ''}${fbtn(`CV.editSouv(null${daysNo.length ? `,'${ja(daysNo[0])}'` : ''})`, `📸 ${MSGT('Ajouter un souvenir')}`)}${daysNo.length > 1 ? fbtn('CV.autoPhotoPick()', MSGT('✨ Ranger mes photos'), 1) : ''}`},
       {k:'notes', ic:'⭐', l:MSGT('Noter tes adresses'), ok: (rated && (!its.length || nr === its.length)) || filSk(key, 'notes'), skip:true, f: (rated ? .5 : 0) + (its.length ? nr / its.length * .5 : .5), n: its.length ? nr + '/' + its.length : '',
         body: ()=>`<div class="ar-p">${MSGT('Note le voyage, les hôtels et les visites : tu retrouveras tes meilleures adresses pour la prochaine fois.')}</div>${fbtn(`CV.rtSheet('${ja(t.id)}')`, `⭐ ${MSGT('Noter')}`)}`},
@@ -688,7 +688,7 @@
     // ✨ bouclé : la suite logique, c’est le prochain voyage (sauf s’il y en a déjà un en préparation : on l’ouvre)
     const nx = trips().filter(x=>!x.demo && !x.deleted && !x.archived && x.id !== t.id && tripPhase(x) !== 'past').sort((a, b)=>(a.debut || '9').localeCompare(b.debut || '9'))[0];
     const doneMsg = '✨ ' + MSGT('Voyage bouclé : il est rangé dans tes souvenirs.') + (nx ? fbtn(`CV.go('${ja(nx.id)}')`, `🧳 ${MSGT('Ouvrir mon prochain voyage')} · <span data-notr>${esc(nx.titre)}</span>`) : fbtn('CV.newTrip()', `🧳 ${MSGT('Préparer mon prochain voyage')}`));
-    return filCard({key, kick:MSGT('Boucler ton voyage'), title:`🏁 <span data-notr>${esc(t.titre)}</span>`, steps, doneMsg});
+    return filCard({key, kick:MSGT(tripPhase(t) === 'past' ? 'Boucler ton voyage' : tripPhase(t) === 'live' ? 'En cours' : 'À venir'), title:`🏁 <span data-notr>${esc(t.titre)}</span>`, steps, doneMsg});
   }
   function finMark(tid){ M.finShared = M.finShared || {}; M.finShared[tid] = 1; persist(); }
 
@@ -743,7 +743,7 @@
   }
   function bilanHero(t){
     const r = tripRecap(t), chip = (ic, n, l) => n ? `<span><b>${ic} ${Number(n).toLocaleString(NL())}</b><small>${l}</small></span>` : '';
-    return `<div class="cv-bhero"><div class="bh-k">🏡 Quel voyage !</div><h2>${esc(t.titre)}</h2><div class="bh-d">${tripDatesLong(t)}</div>
+    return `<div class="cv-bhero"><div class="bh-k">${tripPhase(t) === 'live' ? '🧭 <span>En cours</span>' : tripPhase(t) === 'prep' ? '🧳 <span>À venir</span>' : '🏡 Quel voyage !'}</div><h2>${esc(t.titre)}</h2><div class="bh-d">${tripDatesLong(t)}</div>
       <div class="bh-c">${chip('🗓️', r.days, r.days > 1 ? 'jours' : 'jour')}${chip('🛣️', r.km, 'km')}${chip('🌍', r.ccs.length, r.ccs.length > 1 ? 'pays' : 'pays')}${chip('📸', r.nph, r.nph > 1 ? 'photos' : 'photo')}</div>
       ${r.ccs.length ? `<div class="bh-f">${r.ccs.slice(0, 10).map(flag).join(' ')}</div>` : ''}
       <div class="bh-b"><button type="button" class="pri" onclick="CV.filmOpen()">🎬 Revivre en film</button><button type="button" onclick="CV.albumSheet()">📕 Album</button><button type="button" onclick="CV.worldTrip('${ja(t.id)}')">🌍 Sur le globe</button></div></div>`;

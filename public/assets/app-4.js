@@ -2146,13 +2146,15 @@ ${pm.join('\n')}</Document></kml>`;
     navigator.geolocation.getCurrentPosition(async pos => {
       const lat = +pos.coords.latitude.toFixed(5), lng = +pos.coords.longitude.toFixed(5);
       let lieu = '', pays = '', cc = '';
-      try { const j = await (await fetch(`${GEO}reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${lat}&lon=${lng}`)).json();
+      // ⏱️ (2026-11-11) 4 s au plus pour le nom du lieu : avec un réseau faible, la fiche attendait sans fin (la position, elle, est déjà connue)
+      try { const ac = new AbortController(), tm = setTimeout(()=>ac.abort(), 4000);
+        const j = await (await fetch(`${GEO}reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${lat}&lon=${lng}`, {signal:ac.signal})).json(); clearTimeout(tm);
         const a = (j && j.address) || {}; lieu = a.city || a.town || a.village || a.municipality || a.county || ''; pays = a.country || ''; cc = (a.country_code || '').toUpperCase(); } catch(e){}
       editSouv(null);
-      Object.assign(editing, {lat, lng, pays, cc, step:1});
+      Object.assign(editing, {lat, lng, pays, cc, step:1}); souvPosShow();   // 📍 la position est connue : ne plus afficher « Pas encore placé »
       const f = document.getElementById('v-form'); if(f){ if(f.titre) f.titre.value = lieu || 'Step'; if(f.lieu) f.lieu.value = [lieu, pays].filter(Boolean).join(', '); }
       const h2 = document.querySelector('.v-sheet h2'); if(h2) h2.insertAdjacentHTML('afterend', `<div class="cv-here">${flag(cc)} <b>${esc(lieu || 'Position enregistrée')}</b>${pays ? ', ' + esc(pays) : ''} · ${new Date().toLocaleTimeString((window.I18N ? I18N.locale : 'fr-FR'),{hour:'2-digit',minute:'2-digit'})}<small>Ajoute des photos et un petit récit. Il apparaît sur la carte du monde et dans le journal.</small></div>`);
-    }, err => alert('Position introuvable (' + (err && err.message || 'refusée') + '). Autorise la localisation pour l’appli dans les réglages du téléphone.'), {enableHighAccuracy:true, timeout:15000, maximumAge:60000});
+    }, err => { editSouv(null); toast('📍 ' + MSGT('Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.')); }, {enableHighAccuracy:true, timeout:15000, maximumAge:60000});   // la fiche s'ouvre quand même : on ne perd pas le souvenir
   }
   // 📸 raccourci du voyage en cours : l’appareil photo s’ouvre tout de suite (le geste du doigt est encore « frais »),
   //    la position du step se remplit pendant que tu prends la photo
@@ -2161,9 +2163,11 @@ ${pm.join('\n')}</Document></kml>`;
     if(!navigator.geolocation) return; const ed = editing;
     navigator.geolocation.getCurrentPosition(async pos => {
       if(editing !== ed || !ed) return; const lat = +pos.coords.latitude.toFixed(5), lng = +pos.coords.longitude.toFixed(5); let lieu = '', pays = '', cc = '';
-      try { const j = await (await fetch(`${GEO}reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${lat}&lon=${lng}`)).json();
+      // ⏱️ (2026-11-11) 4 s au plus pour le nom du lieu : avec un réseau faible, la fiche attendait sans fin (la position, elle, est déjà connue)
+      try { const ac = new AbortController(), tm = setTimeout(()=>ac.abort(), 4000);
+        const j = await (await fetch(`${GEO}reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${lat}&lon=${lng}`, {signal:ac.signal})).json(); clearTimeout(tm);
         const a = (j && j.address) || {}; lieu = a.city || a.town || a.village || a.municipality || a.county || ''; pays = a.country || ''; cc = (a.country_code || '').toUpperCase(); } catch(e){}
-      if(editing !== ed) return; Object.assign(ed, {lat, lng, pays, cc, step:1});
+      if(editing !== ed) return; Object.assign(ed, {lat, lng, pays, cc, step:1}); souvPosShow();
       const f = document.getElementById('v-form'); if(f){ if(f.titre && !f.titre.value) f.titre.value = lieu || 'Step'; if(f.lieu && !f.lieu.value) f.lieu.value = [lieu, pays].filter(Boolean).join(', '); }
     }, ()=>{}, {enableHighAccuracy:true, timeout:15000, maximumAge:60000});
   }

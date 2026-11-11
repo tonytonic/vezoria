@@ -421,7 +421,7 @@
     const t = trip(); if(!t) return '<div class="v-box"><p>Aucun voyage.</p></div>';
     const all = items(), tot = all.reduce((s,i)=>s+totalOf(i),0), v = tv(), tr = settle(balances()), sv = souvs(), nph = sv.reduce((a,s)=>a+(s.photos||[]).length,0);
     const unpaid = all.filter(i=>(i.echeances||[]).some(e=>!e.fait)), todo = all.filter(i=>i.statut==='todo' && totalOf(i) > 0);
-    const daysNo = dayList().filter(d=>!sv.some(s=>s.date===d));
+    const daysNo = dayList().filter(d=>d <= isoToday() && !sv.some(s=>s.date===d));
     const byCat = {}; all.forEach(i=>{ byCat[i.cat] = (byCat[i.cat]||0) + totalOf(i); }); const mx = Math.max(1, ...Object.values(byCat));
     const chk = (ok, l, extra) => `<div class="cv-bchk${ok?' ok':''}"><i>${ok ? '✓' : '!'}</i><span>${l}${extra ? '<small>' + extra + '</small>' : ''}</span></div>`;
     const pick = trips().filter(x=>tripPhase(x)!=='prep');

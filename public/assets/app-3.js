@@ -793,7 +793,7 @@
         <div class="v-f2">${field('Date','date',s.date,'date')}${field('Lieu','lieu',s.lieu,'text','data-place="poi" autocomplete="off" placeholder="' + esc(MSGT('Monument, rue, quartier, ville')) + '"')}</div>
         <div class="sv-pos"><span id="sv-pos">${souvPosTxt(s)}</span><button type="button" class="v-btn sec" onclick="CV.pinOpen()">🗺️ ${esc(MSGT('Placer sur la carte'))}</button></div>
         <div class="v-f"><label>Récit</label><textarea class="v-in" name="texte" style="min-height:120px">${esc(s.texte)}</textarea></div>
-        <div class="v-f"><label>Photos (${(s.photos||[]).length})</label>
+        <div class="v-f"><label id="sv-nph">Photos (${(s.photos||[]).length})</label>
           <div class="cv-grid" id="sv-grid">${(s.photos||[]).map((p,i)=>`<div class="cv-th"><img data-ph="${esc(p)}.t" alt=""><button type="button" class="cv-thx" onclick="CV.souvDelPhoto(${i})" aria-label="Retirer">✕</button></div>`).join('')}</div>
           <div class="cv-row cv-phrow"><label class="v-btn cv-addph">📸 Prendre une photo<input type="file" accept="image/*" capture="environment" onchange="CV.souvAddPhotos(this)"></label><label class="v-btn sec cv-addph">🖼️ Mes photos<input type="file" accept="image/*" multiple onchange="CV.souvAddPhotos(this)"></label></div>
           <div class="v-sum-small" id="sv-prog"></div></div>
@@ -906,12 +906,15 @@
       if(f && isNew && firstDate && f.date && (!f.date.value || f.date.value === locIso())){ f.date.value = firstDate; s.date = firstDate; }
       if(f && s.lat != null && f.lieu && !f.lieu.value.trim()){ revGeo(s.lat, s.lng).then(g=>{ if(!g || !g.city) return; if(f.lieu && !f.lieu.value.trim()) f.lieu.value = [g.city, g.pays].filter(Boolean).join(', '); if(f.titre && !f.titre.value.trim()) f.titre.value = g.city; s.pays = g.pays; s.cc = g.cc; }); } }
     document.getElementById('sv-grid').innerHTML = s.photos.map((p,i)=>`<div class="cv-th"><img data-ph="${esc(p)}.t" alt=""><button type="button" class="cv-thx" onclick="CV.souvDelPhoto(${i})" aria-label="Retirer">✕</button></div>`).join('');
+    svNph(s);
     input.value = '';
     hydrate();
   }
+  const svNph = s => { const e = document.getElementById('sv-nph'); if(e) e.textContent = 'Photos (' + (s.photos || []).length + ')'; };   // 🔢 le compteur restait à « Photos (0) » après un ajout
   function souvDelPhoto(i){
     const s = readSouv(); s.photos.splice(i,1);
     document.getElementById('sv-grid').innerHTML = s.photos.map((p,j)=>`<div class="cv-th"><img data-ph="${esc(p)}.t" alt=""><button type="button" class="cv-thx" onclick="CV.souvDelPhoto(${j})" aria-label="Retirer">✕</button></div>`).join('');
+    svNph(s);
     hydrate();
   }
   function saveSouv(){
