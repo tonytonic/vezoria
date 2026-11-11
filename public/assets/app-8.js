@@ -2062,7 +2062,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-11g'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-11h'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2196,7 +2196,7 @@
   }
   function ab2MatesFwHTML(){
     const L = ab2MatesFws(); if(!L.length) return '';
-    return `<div class="sp2-sec" style="margin-top:12px">🤝 <b>${esc(MSGT('Les abonnés de mes compagnons'))}</b></div><div class="sp2-empty">${esc(MSGT('Ils suivent nos voyages communs chez un compagnon. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.'))}</div>
+    return `<div class="sp2-sec" style="margin-top:12px">🤝 <b>${esc(MSGT('Les abonnés de mes compagnons'))}</b></div><div class="sp2-empty">${esc(MSGT('Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.'))}</div>
       ${L.map(x=>{ const t = R[x.tid];
         return `<div class="sp2-row sp2-mf"><span class="sp2-mfn"><b data-notr>${esc(x.who)}</b>${t ? `<small>❤️ <span data-notr>${esc(t.titre || '')}</span></small>` : ''}</span><span class="sp2-mfb">
           ${x.asked ? `<small class="sp2-wait">📩 ${esc(MSGT('invité'))}</small>` : `<button type="button" class="sp2-fol" onclick="CV.ab2AskFw('${ja(x.dev)}')">👀 ${esc(MSGT('Abonné'))}</button>`}
@@ -2279,6 +2279,7 @@
     } finally { cryptHide('🗑️ ' + MSGT('Lien commun supprimé')); }
     closeSheet(true); shareHub(); }
   async function ab2Common(){
+    if(!(M.sync.on && M.sync.code)){ acctNeedSpace.at = 0; closeSheet(true); return setTimeout(acctNeedSpace, 250); }   // 📧 lien commun = en ligne = compte
     if(!(await ab2Name())) return; try { ab2Reset(); } catch(e){}
     if(!ab2Vis().length){ toast('👁️ ' + MSGT('Allume d’abord les voyages à montrer')); return ab2TripsSheet(); }
     let x = ab2Pub();
@@ -2328,7 +2329,7 @@
   // ＋ un abonné : son prénom → son propre lien (QR code + message)
   async function ab2Invite(){
     try { ab2Reset(); } catch(e){}   // l’ancien système part AVANT, jamais après (il effacerait ce qu’on vient de faire)
-    if(!(M.sync.on && M.sync.code)){ acctNeedSpace.at = 0; return acctNeedSpace(); }   // 📧 abonnés = en ligne = carnet en ligne avec compte
+    if(!(M.sync.on && M.sync.code)){ acctNeedSpace.at = 0; closeSheet(true); return setTimeout(acctNeedSpace, 250); }   // 📧 (la fenêtre Partage est fermée d’abord : sinon la question du compte ne s’ouvrait jamais) abonnés = en ligne = carnet en ligne avec compte
     if(!(await ab2Name())) return;
     if(!ab2Vis().length){ if(!myTrips().length){ alert(MSGT('Crée d’abord un voyage.')); return; } toast('👁️ ' + MSGT('Allume d’abord les voyages à montrer')); return ab2TripsSheet(); }
     const n = await uiPrompt(MSGT('Qui invites-tu ? Son prénom (toi seul le vois) :'), ''); if(!n || !n.trim()) return;

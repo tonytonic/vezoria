@@ -307,7 +307,8 @@
     closeSheet(true); M.trip = null; persist(); applyMode(); refresh();
     try { roFeedBack(); syncNow(); } catch(e){}
     // 👀 il le suivait aussi en abonné : on demande s’il veut le garder dans ses suivis (sinon il revenait « tout seul » côté suivis)
-    if(fol && !(await uiConfirm(MSGT('Garder ce voyage dans tes suivis (❤️ et 💬) ?') + '\n\n' + MSGT('Annuler = il disparaît complètement de ton Vezoria.')))){ try { await feedUnfollow('ft:' + id, false, true); refresh(); } catch(e){} return; }
+    if(fol && !(await uiConfirm(MSGT('Garder ce voyage dans tes suivis (❤️ et 💬) ?') + '\n\n' + MSGT('Annuler = il disparaît complètement de ton Vezoria.')))){ try { await feedUnfollow('ft:' + id, false, true); profPrune(); refresh(); } catch(e){} return; }
+    profPrune();
     if(fol) setTimeout(()=>{ try { socialHub('fo'); } catch(e){} }, 400); }
   function phaseTheme(){ const t = M.trip !== LEGACY && trip(), ph = t ? tripPhase(t) : 'prep'; const was = document.body.className; document.body.classList.toggle('cv-ph-live', ph === 'live'); document.body.classList.toggle('cv-ph-past', ph === 'past'); if(was !== document.body.className && typeof viPhase === 'function') try { viPhase(); } catch(e){}
     // barre d'état Android (appli Google Play et Chrome) : même couleur que l'en-tête de la période
@@ -1628,7 +1629,15 @@
     if(toTrip===true && trip()) addToTrip(p.id); else { closeSheet(); refresh(); }
     return p;
   }
-  const profLocked = id => { const p = id && R[id]; return !!(p && p.type === 'profile' && id !== M.me && p.dev && p.dev !== devId()); };
+  // 🔒 profil d’une personne qui l’utilise sur SON téléphone : seule elle le modifie… tant qu’on partage encore un voyage avec elle.
+  //    Plus aucun voyage partagé en commun : son prénom ne peut plus nous parvenir, on peut donc le renommer ou le supprimer chez soi.
+  const profLocked = id => { const p = id && R[id]; return !!(p && p.type === 'profile' && id !== M.me && p.dev && p.dev !== devId() && list('trip', t=>!t.deleted && !t.ro && TS()[t.id] && (t.voyageurs || []).includes(id)).length); };
+  // 🧹 profils des autres (venus avec un voyage partagé) qui ne sont plus dans aucun de mes voyages : retirés de ce téléphone
+  function profPrune(){ try {
+    const used = new Set(); list('trip', t=>!t.deleted).forEach(t=>(t.voyageurs || []).forEach(v=>used.add(v)));
+    const out = list('profile', p=>!p.deleted && p.id !== M.me && p.dev && p.dev !== devId() && !used.has(p.id)).map(p=>Object.assign(clone(p), {deleted:true}));
+    if(out.length){ putQuiet(out); refresh(); }
+  } catch(e){} }
   function editProfile(id){
     if(profLocked(id)){ alert(pname(id) + ' : ' + MSGT('seule cette personne peut modifier son profil (prénom, couleur, moyen de remboursement).')); return; }
     const p = id ? clone(R[id]) : {id:null, nom:'', couleur:nextColor()};
