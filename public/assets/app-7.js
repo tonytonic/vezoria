@@ -3556,6 +3556,8 @@
     if(pdBusy) return; const me = R[M.me]; if(!me || me.type !== 'profile' || me.deleted) return;
     const twin = profiles().find(p=>p.id !== me.id && !p.deleted && normQ(p.nom || '') === normQ(me.nom || '') && (p.createdAt || 0) < (me.createdAt || 0));
     if(!twin) return; const D = M.pdNo || (M.pdNo = {}); if(D[twin.id]) return;
+    // 🛡️ hors de l’entrée du code administrateur (asked) : jamais sur un profil déjà utilisé par un autre téléphone (un invité qui porte le même prénom que celui qui l’invite ne doit pas pouvoir « devenir » lui)
+    if(!asked && (!M.sync.on || !M.sync.code || profLocked(twin.id) || list('trip', t=>(t.voyageurs||[]).includes(twin.id) && t.createdBy === twin.id && TS()[t.id]).length)) return;
     pdBusy = true;
     try {
       if(!(await uiConfirm(RF('Le profil « {0} » existe déjà dans ce carnet (créé sur ton autre appareil). C’est toi ?\n\nOK = je garde un seul profil « {0} » (tout ce que tu as ajouté ici passe dessus).\nAnnuler = ce sont deux personnes différentes.', me.nom || '')))){ D[twin.id] = 1; persist(); return; }

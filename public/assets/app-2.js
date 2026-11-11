@@ -1615,8 +1615,12 @@
     (el.dataset.c ? el : el.parentNode).classList.add('on');
     if(!el.dataset.c) el.parentNode.style.background = c;
   }
+  // 👥 deux profils ne portent jamais le même prénom (sinon on ne sait plus qui a écrit quoi, ni qui doit quoi)
+  const nameTaken = (nom, except) => profiles().find(p=>!p.deleted && p.id !== except && normQ(p.nom || '') === normQ(nom || ''));
+  const nameTakenMsg = nom => RF('« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.', nom);
   function newProfile(toTrip){
     const nom = document.getElementById('cv-pnom').value.trim(); if(!nom) return;
+    if(nameTaken(nom)){ alert(nameTakenMsg(nameTaken(nom).nom)); return; }
     if(profiles().length >= MAXP){ alert('Maximum ' + MAXP + ' compagnons dans un carnet.'); return; }
     const p = put({id:'p'+uid(), type:'profile', nom, couleur:document.getElementById('cv-pcol').value}, '👤 ' + nom + ' ajouté(e)');
     if(toTrip===true && trip()) addToTrip(p.id); else { closeSheet(); refresh(); }
@@ -1651,7 +1655,9 @@
   }
   function avDel(){ if(!editing) return; delete editing.av; const pv = document.getElementById('av-prev'); if(pv) pv.innerHTML = avTag('', editing.nom, editing.couleur, 'av-lg'); }
   function saveProfile(){
-    const p = editing; p.nom = document.getElementById('cv-pnom').value.trim(); if(!p.nom) return;
+    const p = editing, nom0 = document.getElementById('cv-pnom').value.trim(); if(!nom0) return;
+    if(nameTaken(nom0, p.id)){ alert(nameTakenMsg(nameTaken(nom0, p.id).nom)); return; }
+    p.nom = nom0;
     p.couleur = document.getElementById('cv-pcol').value; p.type = 'profile';
     const rb = document.getElementById('cv-prb'); if(rb) p.rembours = rb.value.trim();
     if(!p.id) p.id = 'p' + uid();

@@ -2212,6 +2212,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   function joinPickSave(code){
     const r = document.querySelector('input[name=jp-me]:checked'); let me = r ? r.value : '';
     if(me === 'new' || !me){ const nom = ((document.getElementById('jp-nom') || {}).value || '').trim(); if(!nom){ alert('Indique ton prénom.'); return; }
+      if(nameTaken(nom)){ alert(nameTakenMsg(nameTaken(nom).nom) + '\n\n' + MSGT('Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».')); return; }
       const cols = ['#2563eb','#db2777','#16a34a','#ea580c','#7c3aed','#0891b2','#ca8a04'], p = {id:'p' + uid(), type:'profile', nom, couleur:cols[profiles().length % cols.length]}; put(p, false); me = p.id; }
     if(R[me] && R[me].type === 'profile' && R[me].dev !== devId()) putQuiet([Object.assign(clone(R[me]), {dev:devId()})]);
     M.me = me; delete M.joinAdd;
