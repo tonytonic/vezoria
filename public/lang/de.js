@@ -3717,4 +3717,5 @@ I18N.load({
 "https://… ou XXXX-XXXX-XXXX":"https://… oder XXXX-XXXX-XXXX",
 "Pays-Bas":"Niederlande",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"Noch keine Likes oder Kommentare zu dieser Erinnerung.",
-"Carnet de voyage gratuit, sans publicité.":"Kostenloses Reisetagebuch, ohne Werbung."});
+"Carnet de voyage gratuit, sans publicité.":"Kostenloses Reisetagebuch, ohne Werbung.",
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Standort nicht gefunden: Platziere die Erinnerung auf der Karte oder erlaube den Standort in den Telefoneinstellungen."});

@@ -3705,4 +3705,5 @@ I18N.load({
 "https://… ou XXXX-XXXX-XXXX":"https://… or XXXX-XXXX-XXXX",
 "Pays-Bas":"Netherlands",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"No likes or comments on this memory yet.",
-"Carnet de voyage gratuit, sans publicité.":"Free travel journal, no ads."});
+"Carnet de voyage gratuit, sans publicité.":"Free travel journal, no ads.",
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Location not found: place the memory on the map, or allow location in your phone settings."});

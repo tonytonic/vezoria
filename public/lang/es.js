@@ -3724,4 +3724,5 @@ I18N.load({
 "https://… ou XXXX-XXXX-XXXX":"https://… o XXXX-XXXX-XXXX",
 "Pays-Bas":"Países Bajos",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"Todavía no hay me gusta ni comentarios en este recuerdo.",
-"Carnet de voyage gratuit, sans publicité.":"Cuaderno de viaje gratis, sin anuncios."});
+"Carnet de voyage gratuit, sans publicité.":"Cuaderno de viaje gratis, sin anuncios.",
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Ubicación no encontrada: coloca el recuerdo en el mapa o autoriza la ubicación en los ajustes del teléfono."});

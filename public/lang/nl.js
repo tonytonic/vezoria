@@ -3714,4 +3714,5 @@ I18N.load({
 "nature randonnée mer":"natuur wandelen zee",
 "Pays-Bas":"Nederland",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"Nog geen likes of reacties op deze herinnering.",
-"Carnet de voyage gratuit, sans publicité.":"Gratis reisdagboek, zonder advertenties."});
+"Carnet de voyage gratuit, sans publicité.":"Gratis reisdagboek, zonder advertenties.",
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Locatie niet gevonden: plaats de herinnering op de kaart of sta locatie toe in de instellingen van je telefoon."});

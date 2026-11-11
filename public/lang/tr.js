@@ -6646,4 +6646,5 @@ I18N.load({
 "https://… ou XXXX-XXXX-XXXX":"https://… veya XXXX-XXXX-XXXX",
 "Pays-Bas":"Hollanda",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"Bu anıda henüz beğeni veya yorum yok.",
-"Carnet de voyage gratuit, sans publicité.":"Ücretsiz seyahat defteri, reklamsız."});
+"Carnet de voyage gratuit, sans publicité.":"Ücretsiz seyahat defteri, reklamsız.",
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Konum bulunamadı: anıyı haritaya yerleştir veya telefon ayarlarından konuma izin ver."});

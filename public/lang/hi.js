@@ -6664,4 +6664,5 @@ I18N.load({
 "Saint-Pierre":"सेंट-पियरे",
 "Sainte-Anne":"सेंट-ऐन",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"इस याद पर अभी कोई लाइक या टिप्पणी नहीं।",
-"Carnet de voyage gratuit, sans publicité.":"मुफ़्त यात्रा डायरी, बिना विज्ञापन।"});
+"Carnet de voyage gratuit, sans publicité.":"मुफ़्त यात्रा डायरी, बिना विज्ञापन।",
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"स्थान नहीं मिला: याद को नक्शे पर रखें, या फ़ोन की सेटिंग में लोकेशन की अनुमति दें।"});

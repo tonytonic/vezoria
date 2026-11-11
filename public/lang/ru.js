@@ -6665,4 +6665,5 @@ I18N.load({
 "Saint-Pierre":"Сен-Пьер",
 "Sainte-Anne":"Сент-Анн",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"У этого воспоминания пока нет лайков и комментариев.",
-"Carnet de voyage gratuit, sans publicité.":"Бесплатный дневник путешествий, без рекламы."});
+"Carnet de voyage gratuit, sans publicité.":"Бесплатный дневник путешествий, без рекламы.",
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"Местоположение не найдено: отметьте воспоминание на карте или разрешите геолокацию в настройках телефона."});

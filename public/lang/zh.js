@@ -6664,4 +6664,5 @@ I18N.load({
 "Saint-Pierre":"圣皮埃尔",
 "Sainte-Anne":"圣安妮",
 "Pas encore de j’aime ni de commentaire sur ce souvenir.":"这条回忆还没有点赞或评论。",
-"Carnet de voyage gratuit, sans publicité.":"免费旅行手账，没有广告。"});
+"Carnet de voyage gratuit, sans publicité.":"免费旅行手账，没有广告。",
+"Position introuvable : place le souvenir sur la carte, ou autorise la localisation dans les réglages du téléphone.":"无法获取位置：请在地图上放置这条回忆，或在手机设置中允许定位。"});
