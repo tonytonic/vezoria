@@ -6659,4 +6659,11 @@ I18N.load({
 "Administrateur du voyage :":"Seyahat yöneticisi:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Bu seyahat takip ettiklerinde kalsın mı (❤️ ve 💬)?",
 "Annuler = il disparaît complètement de ton Vezoria.":"İptal = Vezoria’ndan tamamen kaybolur.",
-"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"Bir yol arkadaşını takip ediyorlar ve ortak bir seyahate ❤️ ya da 💬 bıraktılar. Yol arkadaşlarının diğer takipçileri gizli kalır. Onları seni de takip etmeye ya da seyahate yol arkadaşı olarak katılmaya davet et."});
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"Bir yol arkadaşını takip ediyorlar ve ortak bir seyahate ❤️ ya da 💬 bıraktılar. Yol arkadaşlarının diğer takipçileri gizli kalır. Onları seni de takip etmeye ya da seyahate yol arkadaşı olarak katılmaya davet et.",
+"Seul l’administrateur du voyage peut passer la main. Ici : {0}.":"Yönetimi yalnızca seyahat yöneticisi devredebilir. Burada: {0}.",
+"Il faut un autre voyageur dans ce voyage pour lui passer l’administration.":"Yönetimi devretmek için bu seyahatte başka bir yolcu gerekir.",
+"Passer l’administration":"Yönetimi devret",
+"Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"Seyahat aynı ortak seyahat olarak kalır: yol arkadaşları ve takipçiler bir değişiklik görmez. Yalnızca fotoğrafları yeni yöneticinin alanında sayılır.",
+"Passer l’administration de « {0} » à {1} ?":"“{0}” yönetimi {1} kişisine devredilsin mi?",
+"{0} est maintenant l’admin de « {1} ».":"{0} artık “{1}” seyahatinin yöneticisi.",
+"Lui passer l’admin de « {0} »":"“{0}” yönetimini devret"});

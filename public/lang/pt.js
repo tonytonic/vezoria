@@ -3737,4 +3737,11 @@ I18N.load({
 "Administrateur du voyage :":"Administrador da viagem:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Manter esta viagem nas que segues (❤️ e 💬)?",
 "Annuler = il disparaît complètement de ton Vezoria.":"Cancelar = desaparece por completo do teu Vezoria.",
-"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"Seguem um companheiro teu e deixaram um ❤️ ou 💬 numa viagem comum. Os outros seguidores dos teus companheiros continuam privados. Convida-os a seguir-te também ou a juntarem-se à viagem como companheiros."});
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"Seguem um companheiro teu e deixaram um ❤️ ou 💬 numa viagem comum. Os outros seguidores dos teus companheiros continuam privados. Convida-os a seguir-te também ou a juntarem-se à viagem como companheiros.",
+"Seul l’administrateur du voyage peut passer la main. Ici : {0}.":"Só o administrador da viagem pode passar o comando. Aqui: {0}.",
+"Il faut un autre voyageur dans ce voyage pour lui passer l’administration.":"É preciso outro viajante nesta viagem para lhe passar a administração.",
+"Passer l’administration":"Passar a administração",
+"Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"A viagem continua a ser a mesma viagem partilhada: companheiros e seguidores não notam nada. Só as fotos contam no espaço do novo administrador.",
+"Passer l’administration de « {0} » à {1} ?":"Passar a administração de «{0}» a {1}?",
+"{0} est maintenant l’admin de « {1} ».":"{0} é agora o administrador de «{1}».",
+"Lui passer l’admin de « {0} »":"Passar-lhe a administração de «{0}»"});

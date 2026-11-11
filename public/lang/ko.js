@@ -6677,4 +6677,11 @@ I18N.load({
 "Administrateur du voyage :":"여행 관리자:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"이 여행을 팔로우 목록에 남길까요 (❤️ 및 💬)?",
 "Annuler = il disparaît complètement de ton Vezoria.":"취소 = Vezoria에서 완전히 사라집니다.",
-"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"동행자를 팔로우하며 공동 여행에 ❤️ 또는 💬를 남긴 사람들입니다. 동행자의 다른 팔로워는 비공개입니다. 나도 팔로우하거나 동행자로 여행에 참여하도록 초대하세요."});
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"동행자를 팔로우하며 공동 여행에 ❤️ 또는 💬를 남긴 사람들입니다. 동행자의 다른 팔로워는 비공개입니다. 나도 팔로우하거나 동행자로 여행에 참여하도록 초대하세요.",
+"Seul l’administrateur du voyage peut passer la main. Ici : {0}.":"여행 관리자만 관리를 넘길 수 있습니다. 현재: {0}.",
+"Il faut un autre voyageur dans ce voyage pour lui passer l’administration.":"관리를 넘기려면 이 여행에 다른 여행자가 있어야 합니다.",
+"Passer l’administration":"관리 넘기기",
+"Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"여행은 같은 공유 여행 그대로입니다. 동행자와 팔로워는 변화를 느끼지 못합니다. 사진만 새 관리자의 저장 공간에 계산됩니다.",
+"Passer l’administration de « {0} » à {1} ?":"“{0}”의 관리를 {1}에게 넘길까요?",
+"{0} est maintenant l’admin de « {1} ».":"{0}님이 이제 “{1}”의 관리자입니다.",
+"Lui passer l’admin de « {0} »":"“{0}” 관리 넘기기"});

@@ -6677,4 +6677,11 @@ I18N.load({
 "Administrateur du voyage :":"行程管理员：",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"把这次旅行保留在你关注的列表中（❤️ 和 💬）？",
 "Annuler = il disparaît complètement de ton Vezoria.":"取消 = 它会从你的 Vezoria 中完全消失。",
-"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"他们关注了你的一位旅伴，并在共同的行程上留下了 ❤️ 或 💬。你旅伴的其他关注者保持私密。邀请他们也关注你，或作为旅伴加入行程。"});
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"他们关注了你的一位旅伴，并在共同的行程上留下了 ❤️ 或 💬。你旅伴的其他关注者保持私密。邀请他们也关注你，或作为旅伴加入行程。",
+"Seul l’administrateur du voyage peut passer la main. Ici : {0}.":"只有行程管理员才能移交。当前：{0}。",
+"Il faut un autre voyageur dans ce voyage pour lui passer l’administration.":"需要行程中另一位旅行者才能移交管理权。",
+"Passer l’administration":"移交管理权",
+"Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"行程仍是同一个共享行程：旅伴和关注者不会察觉任何变化。只是照片会计入新管理员的空间。",
+"Passer l’administration de « {0} » à {1} ?":"把「{0}」的管理权移交给 {1}？",
+"{0} est maintenant l’admin de « {1} ».":"{0} 现在是「{1}」的管理员。",
+"Lui passer l’admin de « {0} »":"把「{0}」的管理权交给他"});

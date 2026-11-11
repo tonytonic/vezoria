@@ -6677,4 +6677,11 @@ I18N.load({
 "Administrateur du voyage :":"यात्रा के व्यवस्थापक:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"क्या यह यात्रा आपकी फ़ॉलो सूची में रहे (❤️ और 💬)?",
 "Annuler = il disparaît complètement de ton Vezoria.":"रद्द करें = यह आपके Vezoria से पूरी तरह हट जाएगी।",
-"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"वे आपके किसी साथी को फ़ॉलो करते हैं और साझा यात्रा पर ❤️ या 💬 छोड़ा है। आपके साथियों के बाकी फ़ॉलोअर निजी रहते हैं। उन्हें आपको भी फ़ॉलो करने या साथी के रूप में यात्रा में जुड़ने के लिए बुलाएँ।"});
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"वे आपके किसी साथी को फ़ॉलो करते हैं और साझा यात्रा पर ❤️ या 💬 छोड़ा है। आपके साथियों के बाकी फ़ॉलोअर निजी रहते हैं। उन्हें आपको भी फ़ॉलो करने या साथी के रूप में यात्रा में जुड़ने के लिए बुलाएँ।",
+"Seul l’administrateur du voyage peut passer la main. Ici : {0}.":"केवल यात्रा के व्यवस्थापक ही ज़िम्मेदारी सौंप सकते हैं। यहाँ: {0}।",
+"Il faut un autre voyageur dans ce voyage pour lui passer l’administration.":"व्यवस्थापन सौंपने के लिए इस यात्रा में कोई और यात्री चाहिए।",
+"Passer l’administration":"व्यवस्थापन सौंपें",
+"Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"यात्रा वही साझा यात्रा रहती है: साथियों और फ़ॉलोअर्स को कोई बदलाव नहीं दिखेगा। केवल इसकी फ़ोटो नए व्यवस्थापक की जगह में गिनी जाएँगी।",
+"Passer l’administration de « {0} » à {1} ?":"“{0}” का व्यवस्थापन {1} को सौंपें?",
+"{0} est maintenant l’admin de « {1} ».":"{0} अब “{1}” के व्यवस्थापक हैं।",
+"Lui passer l’admin de « {0} »":"“{0}” का व्यवस्थापन सौंपें"});

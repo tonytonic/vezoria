@@ -3718,4 +3718,11 @@ I18N.load({
 "Administrateur du voyage :":"Trip administrator:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Keep this trip in what you follow (❤️ and 💬)?",
 "Annuler = il disparaît complètement de ton Vezoria.":"Cancel = it disappears completely from your Vezoria.",
-"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"They follow one of your companions and left a ❤️ or 💬 on a shared trip. Your companions’ other followers stay private. Invite them to follow you too, or to join the trip as a companion."});
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"They follow one of your companions and left a ❤️ or 💬 on a shared trip. Your companions’ other followers stay private. Invite them to follow you too, or to join the trip as a companion.",
+"Seul l’administrateur du voyage peut passer la main. Ici : {0}.":"Only the trip administrator can hand over. Here: {0}.",
+"Il faut un autre voyageur dans ce voyage pour lui passer l’administration.":"You need another traveller in this trip to hand over the administration.",
+"Passer l’administration":"Hand over administration",
+"Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"The trip stays the same shared trip: companions and followers won’t notice any change. Only its photos will count in the new admin’s space.",
+"Passer l’administration de « {0} » à {1} ?":"Hand over the administration of “{0}” to {1}?",
+"{0} est maintenant l’admin de « {1} ».":"{0} is now the admin of “{1}”.",
+"Lui passer l’admin de « {0} »":"Make them admin of “{0}”"});

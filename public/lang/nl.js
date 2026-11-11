@@ -3727,4 +3727,11 @@ I18N.load({
 "Administrateur du voyage :":"Beheerder van de reis:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Deze reis houden bij wat je volgt (❤️ en 💬)?",
 "Annuler = il disparaît complètement de ton Vezoria.":"Annuleren = hij verdwijnt helemaal uit je Vezoria.",
-"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"Ze volgen een van je reisgenoten en lieten een ❤️ of 💬 achter bij een gezamenlijke reis. De andere volgers van je reisgenoten blijven privé. Nodig ze uit om jou ook te volgen of als reisgenoot mee te doen."});
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"Ze volgen een van je reisgenoten en lieten een ❤️ of 💬 achter bij een gezamenlijke reis. De andere volgers van je reisgenoten blijven privé. Nodig ze uit om jou ook te volgen of als reisgenoot mee te doen.",
+"Seul l’administrateur du voyage peut passer la main. Ici : {0}.":"Alleen de beheerder van de reis kan het overdragen. Hier: {0}.",
+"Il faut un autre voyageur dans ce voyage pour lui passer l’administration.":"Er is nog een reiziger nodig om het beheer over te dragen.",
+"Passer l’administration":"Beheer overdragen",
+"Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"De reis blijft dezelfde gedeelde reis: reisgenoten en volgers merken niets. Alleen de foto’s tellen bij de nieuwe beheerder.",
+"Passer l’administration de « {0} » à {1} ?":"Het beheer van ‘{0}’ overdragen aan {1}?",
+"{0} est maintenant l’admin de « {1} ».":"{0} beheert nu ‘{1}’.",
+"Lui passer l’admin de « {0} »":"Beheer van ‘{0}’ overdragen"});

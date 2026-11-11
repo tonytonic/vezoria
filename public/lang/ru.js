@@ -6678,4 +6678,11 @@ I18N.load({
 "Administrateur du voyage :":"Администратор поездки:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Оставить эту поездку в подписках (❤️ и 💬)?",
 "Annuler = il disparaît complètement de ton Vezoria.":"Отмена = она полностью исчезнет из вашего Vezoria.",
-"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"Они подписаны на вашего спутника и оставили ❤️ или 💬 в общей поездке. Остальные подписчики ваших спутников скрыты. Пригласите их подписаться и на вас или присоединиться к поездке как спутники."});
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"Они подписаны на вашего спутника и оставили ❤️ или 💬 в общей поездке. Остальные подписчики ваших спутников скрыты. Пригласите их подписаться и на вас или присоединиться к поездке как спутники.",
+"Seul l’administrateur du voyage peut passer la main. Ici : {0}.":"Передать управление может только администратор поездки. Здесь: {0}.",
+"Il faut un autre voyageur dans ce voyage pour lui passer l’administration.":"Чтобы передать управление, в поездке нужен ещё один путешественник.",
+"Passer l’administration":"Передать управление",
+"Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"Поездка остаётся той же общей поездкой: спутники и подписчики ничего не заметят. Только её фото будут учитываться в месте нового администратора.",
+"Passer l’administration de « {0} » à {1} ?":"Передать управление «{0}» пользователю {1}?",
+"{0} est maintenant l’admin de « {1} ».":"{0} теперь администратор «{1}».",
+"Lui passer l’admin de « {0} »":"Передать управление «{0}»"});

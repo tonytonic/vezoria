@@ -6677,4 +6677,11 @@ I18N.load({
 "Administrateur du voyage :":"旅行の管理者：",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"この旅行をフォロー中に残しますか（❤️ と 💬）？",
 "Annuler = il disparaît complètement de ton Vezoria.":"キャンセル＝Vezoria から完全に消えます。",
-"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"旅の仲間をフォローしていて、共通の旅行に ❤️ か 💬 を残した人です。仲間のほかのフォロワーは非公開のままです。あなたのフォローや、仲間としての参加に招待しましょう。"});
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"旅の仲間をフォローしていて、共通の旅行に ❤️ か 💬 を残した人です。仲間のほかのフォロワーは非公開のままです。あなたのフォローや、仲間としての参加に招待しましょう。",
+"Seul l’administrateur du voyage peut passer la main. Ici : {0}.":"管理を引き継げるのは旅行の管理者だけです。現在：{0}。",
+"Il faut un autre voyageur dans ce voyage pour lui passer l’administration.":"管理を引き継ぐには、この旅行に別の参加者が必要です。",
+"Passer l’administration":"管理を引き継ぐ",
+"Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"旅行は同じ共有旅行のままです。仲間やフォロワーには何も変わりません。写真だけが新しい管理者の容量に数えられます。",
+"Passer l’administration de « {0} » à {1} ?":"「{0}」の管理を {1} に引き継ぎますか？",
+"{0} est maintenant l’admin de « {1} ».":"{0} が「{1}」の管理者になりました。",
+"Lui passer l’admin de « {0} »":"「{0}」の管理を任せる"});

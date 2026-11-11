@@ -6678,4 +6678,11 @@ I18N.load({
 "Administrateur du voyage :":"مسؤول الرحلة:",
 "Garder ce voyage dans tes suivis (❤️ et 💬) ?":"هل تُبقي هذه الرحلة ضمن ما تتابعه (❤️ و💬)؟",
 "Annuler = il disparaît complètement de ton Vezoria.":"إلغاء = تختفي تمامًا من Vezoria لديك.",
-"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"يتابعون أحد رفاقك وتركوا ❤️ أو 💬 على رحلة مشتركة. يبقى بقية متابعي رفاقك خاصين. ادعُهم لمتابعتك أيضًا أو للانضمام إلى الرحلة كرفاق."});
+"Ils suivent un compagnon et ont mis un ❤️ ou un 💬 sur un voyage commun. Les autres abonnés de tes compagnons restent privés. Invite-les à te suivre aussi, ou à rejoindre le voyage comme compagnon.":"يتابعون أحد رفاقك وتركوا ❤️ أو 💬 على رحلة مشتركة. يبقى بقية متابعي رفاقك خاصين. ادعُهم لمتابعتك أيضًا أو للانضمام إلى الرحلة كرفاق.",
+"Seul l’administrateur du voyage peut passer la main. Ici : {0}.":"يمكن لمسؤول الرحلة فقط تسليم الإدارة. هنا: {0}.",
+"Il faut un autre voyageur dans ce voyage pour lui passer l’administration.":"يلزم مسافر آخر في هذه الرحلة لتسليمه الإدارة.",
+"Passer l’administration":"تسليم الإدارة",
+"Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"تبقى الرحلة نفس الرحلة المشتركة: لن يلاحظ الرفاق والمتابعون أي تغيير. تُحسب صورها فقط في مساحة المسؤول الجديد.",
+"Passer l’administration de « {0} » à {1} ?":"تسليم إدارة «{0}» إلى {1}؟",
+"{0} est maintenant l’admin de « {1} ».":"أصبح {0} مسؤول «{1}».",
+"Lui passer l’admin de « {0} »":"تسليمه إدارة «{0}»"});
