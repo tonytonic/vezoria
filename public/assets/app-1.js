@@ -654,7 +654,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const t = R[id], c = TS()[id], sp = c && spaceObj(c); if(!t || !sp) return;
     const n = tripCount(id), mine = !t.createdBy || t.createdBy === M.me;
     const adm = tripAdmin(t);
-    openSheet(`<h2>🔄 Synchro du voyage</h2><div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(t.titre)}</div>${adm && prof(adm) ? `<div class="v-sum-small" style="margin:-4px 0 8px">👑 ${MSGT('Admin du voyage (ses photos comptent dans sa place) :')} <b data-notr>${esc(adm === M.me ? myName() || pname(adm) : pname(adm))}</b>${adm === M.me && adminNext(id).length ? ` · <a href="#" onclick="event.preventDefault();CV.adminPass('${ja(id)}')">${esc(MSGT('Passer l’administration'))}</a>` : ''}</div>` : ''}
+    openSheet(`<h2>🔄 Synchro du voyage</h2><div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(t.titre)}</div>${adm && prof(adm) ? `<div class="v-sum-small" style="margin:-4px 0 8px">👑 ${MSGT('Admin du voyage (ses photos comptent dans sa place) :')} <b data-notr>${esc(adm === M.me ? myName() || pname(adm) : pname(adm))}</b>${adm === M.me && adminNext(id).length ? ` · <a href="#" onclick="event.preventDefault();CV.adminPass('${ja(id)}')">${esc(MSGT('Passer l’administration'))}</a>` : ''}${adm !== M.me && adminIdle(t) ? ` · <a href="#" onclick="event.preventDefault();CV.adminTake('${ja(id)}')">${esc(MSGT('Reprendre l’admin (absent depuis 30 jours)'))}</a>` : ''}</div>` : ''}
       <div class="sy-diag"><div><span>Sur ce téléphone</span><b>${n.live}</b><small><span>fiches</span> · <span data-notr>${n.items}</span> <span>résas</span> · <span data-notr>${n.days}</span> <span>jours</span></small></div>
         <div><span>État</span><b>${sp.err ? '🔴' : (sp.dirty||[]).length ? '🟠' : '🟢'}</b><small>${sp.err ? `<span data-notr>${esc(sp.err)}</span>` : (sp.dirty||[]).length ? `<span data-notr>${sp.dirty.length}</span> <span>en attente d’envoi</span>` : sp.last ? `<span>à jour</span> · <span data-notr>${vzWhen(sp.last)}</span>` : '<span>jamais synchronisé</span>'}</small></div></div>
       <div id="sy-res" class="v-sum-small" style="margin:8px 0"></div>
@@ -1617,6 +1617,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   // retirer UN voyage à UNE personne
   async function packRemoveTrip(P, t, quiet, exPid){   // exPid : compagnon venu directement (sans paquet) qu’on retire aussi pour de vrai
+    if(R[t] && typeof canKick === 'function' && !canKick(R[t])){ if(!quiet) kickDenied(R[t]); return; }   // 🛡️ seul l’admin retire quelqu’un
     const pk = P ? PACKS()[P] : {who: exPid && prof(exPid) ? pname(exPid) : '', trips:[]}, old = TS()[t], oldSp = old && spaceObj(old); if(!pk) return;
     if(!quiet && !(await uiConfirm(MSGT('Ne plus partager ce voyage avec cette personne ?') + '\n\n' + (pk.who || '') + ' · ' + ((R[t]||{}).titre || '') + '\n\n' + MSGT('Elle garde le voyage en lecture seule, sans pouvoir le modifier. S’il est montré à tes abonnés, elle reçoit son lien d’abonné pour les ❤️ et 💬. Les autres compagnons continuent normalement.')))) return;
     pk.trips = pk.trips.filter(x=>x !== t); persist();
@@ -1644,7 +1645,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
           await ivSend({dev:mm.dev, pk:mm.pk, ib:mm.ib}, {k:'follow', id:uid(), c:x.code, t:(R[t] || {}).titre || ''}); } catch(e){} }, 1500); }
       // 👤 la personne retirée quitte aussi la liste des voyageurs (ses appareils venus par ce paquet)
       { const gone = new Set(list('member', y=>y.trip === t && isBad(y) && y.pid).map(y=>y.pid)), tr = R[t]; if(exPid) gone.add(exPid); gone.delete(M.me);   // 🛡️ jamais moi : un appareil retiré qui avait pris mon profil ne m’emporte pas avec lui
-        if(tr && gone.size && (tr.voyageurs || []).some(p=>gone.has(p))) put(Object.assign(clone(tr), {voyageurs:(tr.voyageurs || []).filter(p=>!gone.has(p))}), false); }
+        const admGone = tr && typeof tripAdmin === 'function' && gone.has(tripAdmin(tr));   // 👑 on retire l’admin lui-même : celui qui le retire reprend l’admin (le voyage part sur un nouveau dossier, branché sur son carnet)
+        if(tr && gone.size && ((tr.voyageurs || []).some(p=>gone.has(p)) || admGone)) put(Object.assign(clone(tr), {voyageurs:(tr.voyageurs || []).filter(p=>!gone.has(p))}, admGone && M.me ? {adminBy:M.me} : {}), false); }
       (M.spaces = M.spaces || []).push({code:c, since:0, dirty:[], last:0, err:''}); TS()[t] = c;
       Object.values(R).filter(r=>r && !r.demo && (r.id === t || r.trip === t) && r.type !== 'member').forEach(r=>markDirty(r.id));
       // les autres paquets qui contiennent ce voyage reçoivent le nouveau code

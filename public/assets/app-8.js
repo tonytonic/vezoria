@@ -787,20 +787,24 @@
   }
   async function spTripsSave(){
     if(!spSel) return; const pid = spSel.pid, now = new Set([...document.querySelectorAll('.sp-g.on')].map(b=>b.dataset.t)), out = [], added = [];
-    myTripsAll().forEach(t=>{ const v = new Set(t.voyageurs || []), had = v.has(pid), want = now.has(t.id); if(had === want) return; want ? v.add(pid) : v.delete(pid); out.push(Object.assign(clone(t), {voyageurs:[...v]})); if(want) added.push(t); });
+    const denied = [];
+    myTripsAll().forEach(t=>{ const v = new Set(t.voyageurs || []), had = v.has(pid), want = now.has(t.id); if(had === want) return; if(had && !want && !canKick(t)){ denied.push(t); return; } want ? v.add(pid) : v.delete(pid); out.push(Object.assign(clone(t), {voyageurs:[...v]})); if(want) added.push(t); });
     if(out.length) putMany(out, '👥 ' + RF('Voyages de {0} mis à jour', pname(pid))); spSel = null; closeSheet(true);
+    if(denied.length) alert(RF('Pas retiré de : {0}.', denied.map(t=>t.titre).join(', ')) + '\n\n' + MSGT('Seul l’admin d’un voyage peut en retirer quelqu’un.'));
     for(const t of out) if(!(t.voyageurs || []).includes(pid)) { try { await compRevoke(t.id, pid); } catch(e){} }
     // un voyage qu’il ne peut pas encore ouvrir : on propose d’envoyer l’invitation (lien du voyage)
     if(added.length && await uiConfirm(RF('Envoyer l’invitation à {0} pour {1} ?', pname(pid), added.map(t=>t.titre).join(', ')))) for(const t of added){ await tripInviteNow(t.id); }
     spCompSheet(pid);
   }
   async function spTripOff(pid, tid){ const t = R[tid]; if(!t) return;
+    if(!canKick(t)) return kickDenied(t);
     if(!(await uiConfirm(RF('Retirer {0} du voyage « {1} » ?', pname(pid), t.titre) + '\n\n' + MSGT('Il ne compte plus dans les dépenses et n’a plus accès au voyage partagé : il garde une copie en lecture seule, sans pouvoir la modifier.')))) return;
     put(Object.assign(clone(t), {voyageurs:(t.voyageurs || []).filter(x=>x !== pid)}), '👥 ' + RF('{0} retiré', pname(pid)));
     await compRevoke(tid, pid); spCompSheet(pid); }
   // 🔑 retirer VRAIMENT l’accès d’un compagnon à un voyage partagé (pas seulement de la liste des voyageurs)
   async function compRevoke(tid, pid){
     const code = TS()[tid]; if(!code || !spaceObj(code) || !pid || pid === M.me) return;
+    if(!canKick(R[tid])) return 'na';   // 🛡️ seul l’admin retire quelqu’un
     const ms = list('member', m=>m.trip === tid && m.pid === pid);
     if(!ms.length){   // pas de présence connue : son invitation à son prénom
       const nm = nmKey(pname(pid)), hit = Object.entries(PACKS()).find(([P, pk])=>pk.trips.includes(tid) && nmKey(pk.who) === nm);
@@ -929,11 +933,15 @@
   }
   // retirer un compagnon : de tous mes voyages, et son code « tout mon carnet » s’il en a un
   async function spCompDel(pid){
+    { const mine = myTripsAll().filter(t=>(t.voyageurs || []).includes(pid)); if(mine.length && !mine.some(t=>canKick(t))) return kickDenied(mine[0]); }   // 🛡️ admin d’aucun de ses voyages : on le dit tout de suite
     if(!(await uiConfirm(RF('Retirer {0} de tes compagnons ?\n\n{0} est retiré de tous tes voyages et ne compte plus dans les dépenses. S’il avait accès à tout ton carnet, cet accès est retiré.', pname(pid))))) return;
-    const all = myTripsAll(), out = all.filter(t=>(t.voyageurs || []).includes(pid)).map(t=>Object.assign(clone(t), {voyageurs:t.voyageurs.filter(x=>x !== pid)}));
+    const all0 = myTripsAll(), denied = all0.filter(t=>(t.voyageurs || []).includes(pid) && !canKick(t)), all = all0.filter(t=>canKick(t));
+    if(denied.length && !all.some(t=>(t.voyageurs || []).includes(pid))){ return kickDenied(denied[0]); }
+    const out = all.filter(t=>(t.voyageurs || []).includes(pid)).map(t=>Object.assign(clone(t), {voyageurs:t.voyageurs.filter(x=>x !== pid)}));
     if(out.length) putMany(out, '👥 ' + RF('{0} retiré', pname(pid)));
     cryptShow('🔑 ' + MSGT('Je coupe son accès aux voyages partagés…'));
     try { for(const t of all) { try { await compRevoke(t.id, pid); } catch(e){} } } finally { cryptHide(''); }   // 🔑 vrai retrait : il garde une copie en lecture seule
+    if(denied.length) alert(RF('Pas retiré de : {0}.', denied.map(t=>t.titre).join(', ')) + '\n\n' + MSGT('Seul l’admin d’un voyage peut en retirer quelqu’un.'));
     const id = spAllId(pid); if(id){ try { const r = await memberApiCall({a:'revoke', id}, M.sync.code); if(r.ok){ if(M.memLocal) delete M.memLocal[id]; if(M.memNames) delete M.memNames[id]; persist(); } } catch(e){} }
     spCompSheet();
   }
@@ -2063,7 +2071,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-11i'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-11k'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -3002,7 +3010,7 @@
     window.addEventListener('scroll', ()=>{ if(!raf) raf = requestAnimationFrame(check); }, {passive:true});
     [300, 1200, 3000, 6000].forEach(later);
   })();
-  var RECAPI = {adminPass, codeNoted, joinPickBusy, userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg, pgList, pgGo, pgDecide, rxGo};
+  var RECAPI = {adminPass, adminTake, codeNoted, joinPickBusy, userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg, pgList, pgGo, pgDecide, rxGo};
 
   const api = {souvResend, obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
