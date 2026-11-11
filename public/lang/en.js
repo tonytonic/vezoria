@@ -3725,4 +3725,12 @@ I18N.load({
 "Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"The trip stays the same shared trip: companions and followers won’t notice any change. Only its photos will count in the new admin’s space.",
 "Passer l’administration de « {0} » à {1} ?":"Hand over the administration of “{0}” to {1}?",
 "{0} est maintenant l’admin de « {1} ».":"{0} is now the admin of “{1}”.",
-"Lui passer l’admin de « {0} »":"Make them admin of “{0}”"});
+"Lui passer l’admin de « {0} »":"Make them admin of “{0}”",
+"Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"Only the trip admin ({0}) can remove someone.",
+"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"{0} hasn’t opened “{1}” for more than 30 days: you can take over as admin, then remove whoever you want.",
+"Reprendre l’admin maintenant ?":"Take over as admin now?",
+"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"You can leave the trip yourself. If the admin doesn’t open the trip for 30 days, you’ll be able to take over as admin.",
+"Tu es maintenant l’admin de « {0} ».":"You are now the admin of “{0}”.",
+"Pas retiré de : {0}.":"Not removed from: {0}.",
+"Seul l’admin d’un voyage peut en retirer quelqu’un.":"Only a trip’s admin can remove someone from it.",
+"Reprendre l’admin (absent depuis 30 jours)":"Take over as admin (away for 30 days)"});

@@ -3744,4 +3744,12 @@ I18N.load({
 "Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"A viagem continua a ser a mesma viagem partilhada: companheiros e seguidores não notam nada. Só as fotos contam no espaço do novo administrador.",
 "Passer l’administration de « {0} » à {1} ?":"Passar a administração de «{0}» a {1}?",
 "{0} est maintenant l’admin de « {1} ».":"{0} é agora o administrador de «{1}».",
-"Lui passer l’admin de « {0} »":"Passar-lhe a administração de «{0}»"});
+"Lui passer l’admin de « {0} »":"Passar-lhe a administração de «{0}»",
+"Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"Só o administrador da viagem ({0}) pode retirar alguém.",
+"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"{0} não abre «{1}» há mais de 30 dias: podes assumir a administração e depois retirar quem quiseres.",
+"Reprendre l’admin maintenant ?":"Assumir a administração agora?",
+"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"Tu podes sair da viagem. Se o administrador não abrir a viagem durante 30 dias, poderás assumir a administração.",
+"Tu es maintenant l’admin de « {0} ».":"Agora és o administrador de «{0}».",
+"Pas retiré de : {0}.":"Não retirado de: {0}.",
+"Seul l’admin d’un voyage peut en retirer quelqu’un.":"Só o administrador de uma viagem pode retirar alguém.",
+"Reprendre l’admin (absent depuis 30 jours)":"Assumir a administração (ausente há 30 dias)"});

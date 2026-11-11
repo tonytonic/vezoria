@@ -6685,4 +6685,12 @@ I18N.load({
 "Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"تبقى الرحلة نفس الرحلة المشتركة: لن يلاحظ الرفاق والمتابعون أي تغيير. تُحسب صورها فقط في مساحة المسؤول الجديد.",
 "Passer l’administration de « {0} » à {1} ?":"تسليم إدارة «{0}» إلى {1}؟",
 "{0} est maintenant l’admin de « {1} ».":"أصبح {0} مسؤول «{1}».",
-"Lui passer l’admin de « {0} »":"تسليمه إدارة «{0}»"});
+"Lui passer l’admin de « {0} »":"تسليمه إدارة «{0}»",
+"Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"يمكن لمسؤول الرحلة فقط ({0}) إزالة شخص.",
+"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"لم يفتح {0} «{1}» منذ أكثر من 30 يومًا: يمكنك تولّي الإدارة ثم إزالة من تشاء.",
+"Reprendre l’admin maintenant ?":"تولّي الإدارة الآن؟",
+"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"يمكنك مغادرة الرحلة بنفسك. إذا لم يفتح المسؤول الرحلة لمدة 30 يومًا، يمكنك تولّي الإدارة.",
+"Tu es maintenant l’admin de « {0} ».":"أنت الآن مسؤول «{0}».",
+"Pas retiré de : {0}.":"لم تتم الإزالة من: {0}.",
+"Seul l’admin d’un voyage peut en retirer quelqu’un.":"يمكن لمسؤول الرحلة فقط إزالة أحد منها.",
+"Reprendre l’admin (absent depuis 30 jours)":"تولّي الإدارة (غائب منذ 30 يومًا)"});

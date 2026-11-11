@@ -3734,4 +3734,12 @@ I18N.load({
 "Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.":"De reis blijft dezelfde gedeelde reis: reisgenoten en volgers merken niets. Alleen de foto’s tellen bij de nieuwe beheerder.",
 "Passer l’administration de « {0} » à {1} ?":"Het beheer van ‘{0}’ overdragen aan {1}?",
 "{0} est maintenant l’admin de « {1} ».":"{0} beheert nu ‘{1}’.",
-"Lui passer l’admin de « {0} »":"Beheer van ‘{0}’ overdragen"});
+"Lui passer l’admin de « {0} »":"Beheer van ‘{0}’ overdragen",
+"Seul l’admin du voyage ({0}) peut retirer quelqu’un.":"Alleen de beheerder van de reis ({0}) kan iemand verwijderen.",
+"{0} n’a pas ouvert « {1} » depuis plus de 30 jours : tu peux reprendre l’admin, puis retirer qui tu veux.":"{0} heeft ‘{1}’ al meer dan 30 dagen niet geopend: je kunt het beheer overnemen en daarna verwijderen wie je wilt.",
+"Reprendre l’admin maintenant ?":"Het beheer nu overnemen?",
+"Toi, tu peux quitter le voyage. Si l’admin n’ouvre plus le voyage pendant 30 jours, tu pourras reprendre l’admin.":"Je kunt zelf de reis verlaten. Opent de beheerder de reis 30 dagen niet, dan kun je het beheer overnemen.",
+"Tu es maintenant l’admin de « {0} ».":"Je beheert nu ‘{0}’.",
+"Pas retiré de : {0}.":"Niet verwijderd uit: {0}.",
+"Seul l’admin d’un voyage peut en retirer quelqu’un.":"Alleen de beheerder van een reis kan er iemand uit verwijderen.",
+"Reprendre l’admin (absent depuis 30 jours)":"Beheer overnemen (30 dagen afwezig)"});
