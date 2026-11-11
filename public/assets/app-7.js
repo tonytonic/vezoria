@@ -3772,7 +3772,8 @@
     return [...out].filter(c=>c && c !== main && !/^M:/.test(c) && spaceObj(c));
   }
   /* 👑 l’admin d’un voyage partagé = son créateur, ou le compagnon à qui il l’a passé en partant (adminBy) : ses photos comptent chez lui */
-  const tripAdmin = t => t ? (t.adminBy || t.createdBy || '') : '';
+  // 👑 l’admin : celui qui l’a passé (adminBy), sinon celui qui l’a créé ; voyage ancien sans créateur connu (ou profil disparu) : le premier voyageur
+  const tripAdmin = t => { if(!t) return ''; const a = t.adminBy || t.createdBy || ''; return a && prof(a) ? a : ((t.voyageurs || []).find(prof) || a); };
   function adminNext(tid){
     const t = R[tid]; if(!t) return []; const act = new Set(mbOthers(tid).map(m=>m.pid).filter(Boolean));
     const v = (t.voyageurs || []).filter(p=>p && p !== M.me && prof(p)); return [...v.filter(p=>act.has(p)), ...v.filter(p=>!act.has(p))];
