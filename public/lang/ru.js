@@ -6673,4 +6673,8 @@ I18N.load({
 "C’est moi, sur un nouveau téléphone":"Это я, на новом телефоне",
 "✏️ Ton prénom :":"✏️ Твоё имя:",
 "« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"«{0}» уже есть в этом дневнике. Добавьте первую букву фамилии (например, {0} C.) или прозвище.",
-"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Если это вы на новом телефоне, нажмите «Это я, на новом телефоне»."});
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Если это вы на новом телефоне, нажмите «Это я, на новом телефоне».",
+"administrateur du voyage":"администратор поездки",
+"Administrateur du voyage :":"Администратор поездки:",
+"Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Оставить эту поездку в подписках (❤️ и 💬)?",
+"Annuler = il disparaît complètement de ton Vezoria.":"Отмена = она полностью исчезнет из вашего Vezoria."});

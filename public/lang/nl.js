@@ -3722,4 +3722,8 @@ I18N.load({
 "C’est moi, sur un nouveau téléphone":"Dat ben ik, op een nieuwe telefoon",
 "✏️ Ton prénom :":"✏️ Je voornaam:",
 "« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"‘{0}’ bestaat al in dit reisboek. Voeg de eerste letter van je achternaam toe (bijv. {0} C.) of een bijnaam.",
-"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Ben jij het op een nieuwe telefoon? Tik op ‘Dat ben ik, op een nieuwe telefoon’."});
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Ben jij het op een nieuwe telefoon? Tik op ‘Dat ben ik, op een nieuwe telefoon’.",
+"administrateur du voyage":"beheerder van de reis",
+"Administrateur du voyage :":"Beheerder van de reis:",
+"Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Deze reis houden bij wat je volgt (❤️ en 💬)?",
+"Annuler = il disparaît complètement de ton Vezoria.":"Annuleren = hij verdwijnt helemaal uit je Vezoria."});

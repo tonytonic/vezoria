@@ -3731,4 +3731,8 @@ I18N.load({
 "C’est moi, sur un nouveau téléphone":"Sono io, su un nuovo telefono",
 "✏️ Ton prénom :":"✏️ Il tuo nome:",
 "« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"«{0}» esiste già in questo diario. Aggiungi l’iniziale del cognome (es. {0} C.) o un soprannome.",
-"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Se sei tu su un nuovo telefono: tocca «Sono io, su un nuovo telefono»."});
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Se sei tu su un nuovo telefono: tocca «Sono io, su un nuovo telefono».",
+"administrateur du voyage":"amministratore del viaggio",
+"Administrateur du voyage :":"Amministratore del viaggio:",
+"Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Tenere questo viaggio tra quelli che segui (❤️ e 💬)?",
+"Annuler = il disparaît complètement de ton Vezoria.":"Annulla = scompare del tutto dal tuo Vezoria."});

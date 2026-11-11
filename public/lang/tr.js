@@ -6654,4 +6654,8 @@ I18N.load({
 "C’est moi, sur un nouveau téléphone":"Bu benim, yeni bir telefonda",
 "✏️ Ton prénom :":"✏️ Adın:",
 "« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"“{0}” bu defterde zaten var. Soyadının baş harfini (ör. {0} C.) ya da bir takma ad ekle.",
-"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Yeni bir telefondaki sensen: “Bu benim, yeni bir telefonda”ya dokun."});
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Yeni bir telefondaki sensen: “Bu benim, yeni bir telefonda”ya dokun.",
+"administrateur du voyage":"seyahat yöneticisi",
+"Administrateur du voyage :":"Seyahat yöneticisi:",
+"Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Bu seyahat takip ettiklerinde kalsın mı (❤️ ve 💬)?",
+"Annuler = il disparaît complètement de ton Vezoria.":"İptal = Vezoria’ndan tamamen kaybolur."});

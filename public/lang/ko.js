@@ -6672,4 +6672,8 @@ I18N.load({
 "C’est moi, sur un nouveau téléphone":"저예요, 새 휴대폰에서",
 "✏️ Ton prénom :":"✏️ 내 이름:",
 "« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"“{0}”은(는) 이미 이 노트에 있습니다. 성의 첫 글자(예: {0} C.)나 별명을 붙이세요.",
-"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"새 휴대폰의 본인이라면 “저예요, 새 휴대폰에서”를 누르세요."});
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"새 휴대폰의 본인이라면 “저예요, 새 휴대폰에서”를 누르세요.",
+"administrateur du voyage":"여행 관리자",
+"Administrateur du voyage :":"여행 관리자:",
+"Garder ce voyage dans tes suivis (❤️ et 💬) ?":"이 여행을 팔로우 목록에 남길까요 (❤️ 및 💬)?",
+"Annuler = il disparaît complètement de ton Vezoria.":"취소 = Vezoria에서 완전히 사라집니다."});

@@ -3713,4 +3713,8 @@ I18N.load({
 "C’est moi, sur un nouveau téléphone":"That’s me, on a new phone",
 "✏️ Ton prénom :":"✏️ Your first name:",
 "« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"“{0}” already exists in this notebook. Add the initial of your last name (e.g. {0} C.) or a nickname.",
-"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"If it’s you on a new phone: tap “That’s me, on a new phone”."});
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"If it’s you on a new phone: tap “That’s me, on a new phone”.",
+"administrateur du voyage":"trip administrator",
+"Administrateur du voyage :":"Trip administrator:",
+"Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Keep this trip in what you follow (❤️ and 💬)?",
+"Annuler = il disparaît complètement de ton Vezoria.":"Cancel = it disappears completely from your Vezoria."});

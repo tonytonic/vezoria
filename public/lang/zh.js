@@ -6672,4 +6672,8 @@ I18N.load({
 "C’est moi, sur un nouveau téléphone":"是我，在新手机上",
 "✏️ Ton prénom :":"✏️ 你的名字：",
 "« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"“{0}”已在此旅行本中。请加上姓氏首字母（如 {0} C.）或昵称。",
-"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"如果是你在新手机上：请点“是我，在新手机上”。"});
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"如果是你在新手机上：请点“是我，在新手机上”。",
+"administrateur du voyage":"行程管理员",
+"Administrateur du voyage :":"行程管理员：",
+"Garder ce voyage dans tes suivis (❤️ et 💬) ?":"把这次旅行保留在你关注的列表中（❤️ 和 💬）？",
+"Annuler = il disparaît complètement de ton Vezoria.":"取消 = 它会从你的 Vezoria 中完全消失。"});

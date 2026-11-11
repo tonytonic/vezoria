@@ -6672,4 +6672,8 @@ I18N.load({
 "C’est moi, sur un nouveau téléphone":"यह मैं हूँ, नए फ़ोन पर",
 "✏️ Ton prénom :":"✏️ तुम्हारा नाम:",
 "« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"“{0}” इस नोटबुक में पहले से है। अपने उपनाम का पहला अक्षर (जैसे {0} C.) या कोई उपनाम जोड़ें।",
-"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"अगर यह आप ही हैं नए फ़ोन पर: “यह मैं हूँ, नए फ़ोन पर” दबाएँ।"});
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"अगर यह आप ही हैं नए फ़ोन पर: “यह मैं हूँ, नए फ़ोन पर” दबाएँ।",
+"administrateur du voyage":"यात्रा के व्यवस्थापक",
+"Administrateur du voyage :":"यात्रा के व्यवस्थापक:",
+"Garder ce voyage dans tes suivis (❤️ et 💬) ?":"क्या यह यात्रा आपकी फ़ॉलो सूची में रहे (❤️ और 💬)?",
+"Annuler = il disparaît complètement de ton Vezoria.":"रद्द करें = यह आपके Vezoria से पूरी तरह हट जाएगी।"});

@@ -3725,4 +3725,8 @@ I18N.load({
 "C’est moi, sur un nouveau téléphone":"Das bin ich, auf einem neuen Handy",
 "✏️ Ton prénom :":"✏️ Dein Vorname:",
 "« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"„{0}“ gibt es in diesem Reisetagebuch schon. Füge den Anfangsbuchstaben deines Nachnamens hinzu (z. B. {0} C.) oder einen Spitznamen.",
-"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Wenn du es auf einem neuen Handy bist: Tippe auf „Das bin ich, auf einem neuen Handy“."});
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"Wenn du es auf einem neuen Handy bist: Tippe auf „Das bin ich, auf einem neuen Handy“.",
+"administrateur du voyage":"Reiseverwalter",
+"Administrateur du voyage :":"Verwalter der Reise:",
+"Garder ce voyage dans tes suivis (❤️ et 💬) ?":"Diese Reise bei deinen gefolgten behalten (❤️ und 💬)?",
+"Annuler = il disparaît complètement de ton Vezoria.":"Abbrechen = sie verschwindet ganz aus deinem Vezoria."});

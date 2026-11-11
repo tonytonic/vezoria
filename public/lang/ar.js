@@ -6673,4 +6673,8 @@ I18N.load({
 "C’est moi, sur un nouveau téléphone":"هذا أنا، على هاتف جديد",
 "✏️ Ton prénom :":"✏️ اسمك الأول:",
 "« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"«{0}» موجود بالفعل في هذا الدفتر. أضف الحرف الأول من اسم عائلتك (مثل {0} C.) أو لقبًا.",
-"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"إذا كنت أنت على هاتف جديد: اضغط «هذا أنا، على هاتف جديد»."});
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"إذا كنت أنت على هاتف جديد: اضغط «هذا أنا، على هاتف جديد».",
+"administrateur du voyage":"مسؤول الرحلة",
+"Administrateur du voyage :":"مسؤول الرحلة:",
+"Garder ce voyage dans tes suivis (❤️ et 💬) ?":"هل تُبقي هذه الرحلة ضمن ما تتابعه (❤️ و💬)؟",
+"Annuler = il disparaît complètement de ton Vezoria.":"إلغاء = تختفي تمامًا من Vezoria لديك."});

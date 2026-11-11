@@ -6672,4 +6672,8 @@ I18N.load({
 "C’est moi, sur un nouveau téléphone":"自分です（新しいスマホ）",
 "✏️ Ton prénom :":"✏️ あなたの名前：",
 "« {0} » existe déjà dans ce carnet. Ajoute l’initiale de ton nom (ex. {0} C.) ou un surnom.":"「{0}」はこのノートにすでにいます。名字の頭文字（例：{0} C.）かニックネームを付けてください。",
-"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"新しいスマホのあなたなら「自分です（新しいスマホ）」をタップしてください。"});
+"Si c’est toi sur un nouveau téléphone : touche « C’est moi, sur un nouveau téléphone ».":"新しいスマホのあなたなら「自分です（新しいスマホ）」をタップしてください。",
+"administrateur du voyage":"旅行の管理者",
+"Administrateur du voyage :":"旅行の管理者：",
+"Garder ce voyage dans tes suivis (❤️ et 💬) ?":"この旅行をフォロー中に残しますか（❤️ と 💬）？",
+"Annuler = il disparaît complètement de ton Vezoria.":"キャンセル＝Vezoria から完全に消えます。"});
