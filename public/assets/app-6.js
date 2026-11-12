@@ -1633,16 +1633,18 @@
   }
   async function autoPhotoGo(){
     if(!AP) return; const btn = document.getElementById('ap-go'), msg = document.getElementById('ap-msg2'); if(btn) btn.disabled = true;
-    const total = AP.groups.reduce((s,g,i)=> s + ((document.getElementById('ap-' + i)||{}).checked ? g.ph.length : 0), 0); let done = 0, bad = 0; const made = [];
+    // 📸 cases et titres lus tout de suite : fenêtre fermée pendant la préparation, les groupes suivants étaient oubliés (et l’appli plantait sur le titre)
+    const pick = AP.groups.map((g,i)=>({on: !!(document.getElementById('ap-' + i)||{}).checked, titre: ((document.getElementById('ap-t-' + i)||{}).value || '').trim()}));
+    const total = AP.groups.reduce((s,g,i)=> s + (pick[i].on ? g.ph.length : 0), 0); let done = 0, bad = 0; const made = [];
     for(let i=0;i<AP.groups.length;i++){
-      const g = AP.groups[i]; if(!(document.getElementById('ap-' + i)||{}).checked) continue;
+      const g = AP.groups[i]; if(!pick[i].on) continue;
       const ids = [];
       for(const p of g.ph){ done++; if(msg) msg.textContent = `Préparation des photos… ${done}/${total}`;
         try { const pid = 'ph' + uid() + done; await storePhoto(p.f, pid); ids.push(pid); if(p.lat != null) (g.pts = g.pts || []).push([p.lat, p.lng, exTs(p), pid]); } catch(e){ bad++; } }
       if(!ids.length) continue;
       if(g.into && R[g.into] && !R[g.into].deleted){ const c = clone(R[g.into]); c.photos = [...(c.photos || []), ...ids]; if(g.pts) c.pts = [...(c.pts || []), ...g.pts]; (AP.keys = AP.keys || []).push(...g.ph.map(p=>apKey(p.f))); made.push(c); continue; }   // 🤝 dans le souvenir du compagnon
       const hm = /^(\d\d):(\d\d)/.exec(g.time || '');
-      const s = {id:'sv' + uid() + i, type:'souv', trip:AP.t.id, date:g.date, titre:(document.getElementById('ap-t-' + i).value || '').trim() || g.titre, lieu: g.lieu || g.city || '', texte:'', photos:ids};
+      const s = {id:'sv' + uid() + i, type:'souv', trip:AP.t.id, date:g.date, titre:pick[i].titre || g.titre, lieu: g.lieu || g.city || '', texte:'', photos:ids};
       if(hm){ s.heure = hm[0]; s.ordre = +hm[1] * 60 + +hm[2]; }   // dans l'ordre de la journée
       if(g.lat != null){ s.lat = g.lat; s.lng = g.lng; s.pays = g.pays; s.cc = g.cc; } if(g.pts) s.pts = g.pts;
       (AP.keys = AP.keys || []).push(...g.ph.map(p=>apKey(p.f)));
@@ -1856,7 +1858,8 @@
     try { if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file]}); return; } } catch(e){ if(e && e.name === 'AbortError') return; }
     wrappedSave();
   }
-  function wrappedSave(){ if(!wrBlob) return; const a = document.createElement('a'); a.href = URL.createObjectURL(wrBlob); a.download = wrName(); document.body.appendChild(a); a.click(); setTimeout(()=>{ a.remove(); URL.revokeObjectURL(a.href); }, 5000); }
+  function wrappedSave(){ if(!wrBlob){ toast('⏳ ' + MSGT('Préparation…')); return; }   // image pas encore prête : on le dit (le bouton ne faisait rien)
+    const a = document.createElement('a'); a.href = URL.createObjectURL(wrBlob); a.download = wrName(); document.body.appendChild(a); a.click(); setTimeout(()=>{ a.remove(); URL.revokeObjectURL(a.href); }, 5000); }
   async function filmData(){
     const t = trip(), sv = souvs(), all = items();
     const geo = [...geoSouvs(M.trip), ...all.filter(i=>i.cat==='hotel' && i.lat != null && i.date).map(i=>({lat:i.lat, lng:i.lng, date:i.date, titre:i.titre, lieu:i.titre}))]
@@ -2532,7 +2535,9 @@
     for(const f of fs){ evePh.push(f); if(box) box.insertAdjacentHTML('beforeend', `<img src="${URL.createObjectURL(f)}" alt="">`); }
     input.value = '';
   }
-  async function eveSave(){
+  let eveBusy = false;   // 👆 deux appuis sur « Garder ce souvenir » pendant la préparation des photos doublaient le texte et les photos
+  async function eveSave(){ if(eveBusy) return; eveBusy = true; try { await eveSave2(); } finally { eveBusy = false; } }
+  async function eveSave2(){
     const t = trip(); if(!t) return; const td = isoToday(), txt = (document.getElementById('ev-txt')||{}).value || '';
     if(!txt.trim() && !evePh.length){ alert('Écris une phrase ou ajoute une photo.'); return; }
     toast('✨ Souvenir en cours…');

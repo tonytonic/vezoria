@@ -898,7 +898,8 @@
     ov.innerHTML = `<div class="scr-top"><button type="button" onclick="CV.scrClose()" aria-label="Fermer">✕</button><div><b>🗺️ ${MSGT('Ma carte à gratter')}</b><small id="scr-sub">…</small></div></div>
       <div class="scr-map"><canvas id="scr-c"></canvas></div><div class="scr-st" id="scr-st"></div><div class="scr-h" id="scr-h"></div><div class="scr-cards" id="scr-cards"><div class="v-sum-small" style="color:#fff">🌍 ${MSGT('Chargement de la carte…')}</div></div>`;
     document.body.appendChild(ov); document.body.style.overflow = 'hidden'; requestAnimationFrame(()=>ov.classList.add('on'));
-    try { await neLoad(); } catch(e){ document.getElementById('scr-cards').innerHTML = '<div class="v-sum-small" style="color:#fff">⚠️ ' + MSGT('Carte indisponible (connexion ?)') + '</div>'; return; }
+    try { await neLoad(); } catch(e){ const c = document.getElementById('scr-cards'); if(c) c.innerHTML = '<div class="v-sum-small" style="color:#fff">⚠️ ' + MSGT('Carte indisponible (connexion ?)') + '</div>'; return; }
+    if(!document.getElementById('cv-scr')) return;   // fermée pendant le chargement
     scrPaint();
   }
   function scrClose(){ const o = document.getElementById('cv-scr'); if(o) o.remove(); document.body.style.overflow = ''; }
@@ -1281,7 +1282,7 @@
     return `<div class="bb">
       ${rtCard(t)}
       <div class="bb-tro">${tr.slice(0, 4).map((x, i)=>`<div class="bb-t" style="--i:${i}"><i>${x.i}</i><b>${esc(x.t)}</b><small>${esc(x.d)}</small></div>`).join('')}</div>
-      <button type="button" class="bb-story" onclick="CV.storyTrip('${ja(t.id)}')"><span class="bb-pl">▶</span><span><b>La story du voyage</b><small>${nph} photos · en musique · un chapitre par jour</small></span></button>
+      <button type="button" class="bb-story" onclick="CV.storyTrip('${ja(t.id)}')"><span class="bb-pl">▶</span><span><b>La story du voyage</b><small>${nph} photo${nph > 1 ? 's' : ''} · en musique · un chapitre par jour</small></span></button>
       <div class="bb-car" aria-label="${esc(MSGT('Souvenirs du voyage'))}">
         ${bd ? `<div class="bb-sl"><div class="bb-best"><div class="bb-bi">${bph.slice(0, 3).map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('')}</div><div class="bb-bt"><small>⭐ Le meilleur jour</small><b>${k >= 0 ? PJ(k + 1) + ' · ' : ''}${esc(fdate(bd))}</b><span>${esc(dayInfo(bd).titre || bbPlaces(bS))}</span><button type="button" onclick="CV.storyOpen('${ja(bd)}')">▶ Revivre ce jour</button></div></div></div>` : ''}
         ${top.length ? `<div class="bb-sl bb-slp"><div class="bb-sec"><b>❤️ ${top.some(x=>x.n) ? 'Les plus aimées' : 'Quelques pépites'}</b></div><div class="bb-top">${top.map((x, i)=>`<button type="button" class="bb-ph${i === 0 ? ' big' : ''}" style="--i:${i}" onclick="CV.view('${ja(x.s.id)}',${(x.s.photos||[]).indexOf(x.p)})"><img data-ph="${esc(x.p)}.t" alt="">${x.n ? `<b>${x.n} ❤️</b>` : ''}</button>`).join('')}</div></div>` : ''}
@@ -1320,7 +1321,7 @@
     if((trip() || {}).ro) return '';   // 📖 lecture seule : pas d’invitation à raconter, défis, etc.
     const td = isoToday(), sv = list('souv', x=>x.trip === t.id && x.date === td); if(!sv.length) return '';
     const ph = sv.flatMap(x=>x.photos || []).slice(0, 4);
-    return `<button type="button" class="st-today" onclick="CV.storyOpen('${ja(td)}')"><span class="st-stack">${ph.map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('') || '<i>📍</i>'}</span><span class="tx"><b>▶ Ta journée en story</b><small>${sv.length} souvenir${sv.length > 1 ? 's' : ''} · ${sv.reduce((a, x)=>a + (x.photos||[]).length, 0)} photos · en musique</small></span></button>`;
+    return `<button type="button" class="st-today" onclick="CV.storyOpen('${ja(td)}')"><span class="st-stack">${ph.map((p, i)=>`<img data-ph="${esc(p)}.t" alt="" style="--i:${i}">`).join('') || '<i>📍</i>'}</span><span class="tx"><b>▶ Ta journée en story</b><small>${sv.length} souvenir${sv.length > 1 ? 's' : ''} · ${(n=>n + ' photo' + (n > 1 ? 's' : ''))(sv.reduce((a, x)=>a + (x.photos||[]).length, 0))} · en musique</small></span></button>`;
   }
   // ---------- lecteur façon Instagram (sert aussi au diaporama) ----------
   let ST = null;
@@ -1870,7 +1871,7 @@
         D.ph.slice().sort((a, b)=>String(b.d || '').localeCompare(String(a.d || ''))).slice(0, 12).forEach(x=>ph.push(Object.assign({}, x, {by:[x.by, tt].filter(Boolean).join(' · ')}))); });
       return {title: MSGT('Tout le monde en direct'), sub: RF('{0} voyage(s) en cours', ks.length), people, ph}; }
     if(/^ft:/.test(key)){ const r = feedTrkRec(key), ft = R[key] || {};
-      return {title: ft.titre || '', sub: 'Voyage de ' + ftTeamTxt(ft), people: r ? r.people.map(p=>({n:p.n || '—', c:hexc(p.c, '#0ea5e9'), pts:p.pts || [], gps:!!p.gps})) : [],
+      return {title: ft.titre || '', sub: voyageDe(ftTeamTxt(ft)), people: r ? r.people.map(p=>({n:p.n || '—', c:hexc(p.c, '#0ea5e9'), pts:p.pts || [], gps:!!p.gps})) : [],
         ph: list('feed', f=>f.trip===key && f.lat != null && f.lng != null).map(f=>({id:f.id, lat:+f.lat, lng:+f.lng, ph:(f.photos||[])[0] || '', t:f.titre || f.lieu || '', by:f.by || '', d:f.date || ''}))}; }
     const t = R[key] || {}, by = trkByWho(key, true);
     return {title: t.titre || '', sub: (t.voyageurs||[]).length > 1 ? (t.voyageurs||[]).map(v=>pname(v)).filter(n=>n && n !== '?').join(' · ') : '',
@@ -3572,6 +3573,8 @@
     } finally { pdBusy = false; }
   }
   setTimeout(()=>{ try { profDedupe(); } catch(e){} }, 9000);
+  // 🩹 démo créée avant le 11/11/2026 : le sondage, les courses, 2 dépenses et le remboursement étaient rangés sous un autre identifiant que le leur → impossible de voter, cocher, ouvrir ou retirer
+  setTimeout(()=>{ try { let n = 0; Object.keys(R).forEach(k=>{ const r = R[k]; if(r && r.demo && r.id && r.id !== k){ if(!R[r.id]) R[r.id] = r; delete R[k]; n++; } }); if(n){ persist(); refresh(); } } catch(e){} }, 1500);
 
   /* ══════════ 🔑 Code administrateur · 👥 code compagnon · 📱 mon compte sur tous mes appareils ══════════
      • Code administrateur (= code principal) : TON compte. Il ne se partage plus. Sur un autre appareil, il ramène TOUT :
@@ -3772,6 +3775,8 @@
     return [...out].filter(c=>c && c !== main && !/^M:/.test(c) && spaceObj(c));
   }
   /* 👑 l’admin d’un voyage partagé = son créateur, ou le compagnon à qui il l’a passé en partant (adminBy) : ses photos comptent chez lui */
+  // « Voyage d’Anthony », « Voyage de Claire » : l’élision devant une voyelle ou un h
+  const voyageDe = n => (/^[aeiouyhàâäéèêëîïôöùûü]/i.test(String(n || '').trim()) ? 'Voyage d’' : 'Voyage de ') + (n || '');
   // 👑 l’admin : celui qui l’a passé (adminBy), sinon celui qui l’a créé ; voyage ancien sans créateur connu (ou profil disparu) : le premier voyageur
   const tripAdmin = t => { if(!t) return ''; const a = t.adminBy || t.createdBy || ''; return a && prof(a) ? a : ((t.voyageurs || []).find(prof) || a); };
   function adminNext(tid){
@@ -4398,7 +4403,7 @@
     return filCard({key, kick:MSGT('Ton budget pas à pas'), title:num(t.objectif) ? `🎯 ${eur(num(t.objectif))} / ${MSGT('pers.')}` : `💶 ${MSGT('Budget du voyage')}`, steps, doneMsg:'✨ ' + MSGT('Budget bouclé : tout est prévu et payé.')});
   }
   function buRe(){ const y = window.scrollY; renderBudget(); window.scrollTo(0, y); }
-  function buTier(v){ const t = trip(); if(!t) return; const n = num(v); if(!(n > 0)) return; const c = clone(t); c.objectif = String(Math.round(n)); put(c, '🎯 ' + MSGT('Objectif enregistré')); buRe(); }
+  function buTier(v){ const t = trip(); if(!t) return; const n = num(v); if(!(n > 0)){ const e = document.getElementById('bu-obj'); if(e) e.focus(); return; } const c = clone(t); c.objectif = String(Math.round(n)); put(c, '🎯 ' + MSGT('Objectif enregistré')); buRe(); }
   function buAll(){ M.buAll = 1; buRe(); }
   function buPrices(){ const out = [];
     document.querySelectorAll('[data-bu]').forEach(i=>{ const it = R[i.dataset.bu], k = i.dataset.k || 'estime', raw = i.value.trim(), v = num(raw); if(!it || raw === String(i.dataset.v0 || '').replace('.', ',') || raw === String(i.dataset.v0 || '')) return;

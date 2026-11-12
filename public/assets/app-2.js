@@ -202,7 +202,7 @@
     // justificatifs : quelques tickets et reçus déjà photographiés (Bilan › Budget)
     { const its = past.recs.filter(r=>r.type==='item' && num(r.prix) > 0 && r.cat !== 'transport').slice(0, 6);
       for(const [k, r] of its.entries()){ const rc = 'rc' + uid() + 'dmp' + k; DEMO_TK = K.tk; await storePhoto(await demoPaint('ticket', Math.round(num(r.prix)) || 20 + k), rc); r.recu = rc; } }
-    R['rb' + uid() + 'dm'] = {id:'rb' + uid() + 'dm', type:'remb', trip:past.tid, de:p1, a:M.me, montant:'400', date:addDays(past.day0, 25), demo:true, createdAt:now, updatedAt:now};
+    { const dmId = 'rb' + uid() + 'dm'; R[dmId] = {id:dmId, type:'remb', trip:past.tid, de:p1, a:M.me, montant:'400', date:addDays(past.day0, 25), demo:true, createdAt:now, updatedAt:now}; }
     // ── voyage en cours : jour 7, steps des jours passés, traces, tickets, courses, plafond, parts ──
     for(let i=0;i<6;i++) await addSouv(live, addDays(live.day0, i), i + 3, i % 2 ? 2 : 1, '');
     live.recs.filter(r=>r.type==='item' && r.date && r.date < today).forEach(r=>{ r.statut = 'paid'; if(!num(r.prix) && num(r.estime)) r.prix = r.estime; });
@@ -211,12 +211,12 @@
       R['trk:' + live.tid + ':' + d] = {id:'trk:' + live.tid + ':' + d, type:'trk', trip:live.tid, date:d, pts, demo:true, createdAt:now, updatedAt:now}; }
     for(const [k, [t, px]] of [['ramen', K.rc], ['city', K.taxi]].entries()){
       const rc = 'rc' + uid() + 'dm' + k; await storePhoto(await demoPaint(t, 40 + k), rc);
-      R['i' + uid() + 'dmr' + k] = {id:'i' + uid() + 'dmr' + k, type:'item', trip:live.tid, cat:'divers', titre:px[0], date:today, statut:'paid', prix:px[1], partage:'grp', payeur: k ? p1 : M.me, qui:[], recu:rc, demo:true, createdAt:now, updatedAt:now}; }
-    K.shop.forEach((l,k)=>{ R['c' + uid() + 'dmc' + k] = {id:'c' + uid() + 'dmc' + k, type:'check', trip:live.tid, cat:'🛒 Courses', label:l, done:k===2, createdBy:k%2?p1:M.me, demo:true, createdAt:now+k, updatedAt:now+k}; });
+      { const dmId = 'i' + uid() + 'dmr' + k; R[dmId] = {id:dmId, type:'item', trip:live.tid, cat:'divers', titre:px[0], date:today, statut:'paid', prix:px[1], partage:'grp', payeur: k ? p1 : M.me, qui:[], recu:rc, demo:true, createdAt:now, updatedAt:now}; } }
+    K.shop.forEach((l,k)=>{ { const dmId = 'c' + uid() + 'dmc' + k; R[dmId] = {id:dmId, type:'check', trip:live.tid, cat:'🛒 Courses', label:l, done:k===2, createdBy:k%2?p1:M.me, demo:true, createdAt:now+k, updatedAt:now+k}; } });
     if(!R[live.tid]) return;   // démo effacée pendant sa préparation
     Object.assign(R[live.tid], {plafond:'150', coef:{[p2]:0.5}, foyer:{[p1]:'Léo & Inès', [p2]:'Léo & Inès'}});
     // ── sondage dans les Envies ──
-    R['po' + uid() + 'dm'] = {id:'po' + uid() + 'dm', type:'poll', question:'Prochain voyage : on part où ?', options:['Islande','Lisbonne','Vietnam'], votes:{[M.me]:0, [p1]:2, [p2]:0}, closed:false, demo:true, createdBy:p1, createdAt:now, updatedAt:now};
+    { const dmId = 'po' + uid() + 'dm'; R[dmId] = {id:dmId, type:'poll', question:'Prochain voyage : on part où ?', options:['Islande','Lisbonne','Vietnam'], votes:{[M.me]:0, [p1]:2, [p2]:0}, closed:false, demo:true, createdBy:p1, createdAt:now, updatedAt:now}; }
     for(const v of [prep, live, past]) Object.values(R).filter(r=>r.demo && (r.trip===v.tid || r.id===v.tid)).forEach(r=>{ r.demo = true; });
     { const dm = new Set(Object.values(R).filter(r=>r.demo).flatMap(r=>[...(r.photos||[]), r.recu].filter(Boolean))); M.pq = (M.pq||[]).filter(x=>!dm.has(String(x).replace(/\.t$/,''))); }
     try { await demoTr(); } catch(e){}   // 🌍 la démo dans la langue de l’appli (récits, visites, villes…)
@@ -1634,8 +1634,12 @@
   const profLocked = id => { const p = id && R[id]; return !!(p && p.type === 'profile' && id !== M.me && p.dev && p.dev !== devId() && list('trip', t=>!t.deleted && !t.ro && TS()[t.id] && (t.voyageurs || []).includes(id)).length); };
   // 🧹 profils des autres (venus avec un voyage partagé) qui ne sont plus dans aucun de mes voyages : retirés de ce téléphone
   function profPrune(){ try {
-    const used = new Set(); list('trip', t=>!t.deleted).forEach(t=>(t.voyageurs || []).forEach(v=>used.add(v)));
-    const out = list('profile', p=>!p.deleted && p.id !== M.me && p.dev && p.dev !== devId() && !used.has(p.id)).map(p=>Object.assign(clone(p), {deleted:true}));
+    const cand = list('profile', p=>!p.deleted && p.id !== M.me && p.dev && p.dev !== devId()); if(!cand.length) return;
+    // gardé : quiconque voyage, a écrit, payé ou est cité dans une fiche encore là (dépense, souvenir, sondage…)
+    const live = new Set(list('trip', t=>!t.deleted).map(t=>t.id)), used = new Set();
+    const blob = Object.values(R).filter(r=>r && !r.deleted && r.type !== 'profile' && (live.has(r.id) || live.has(r.trip))).map(r=>JSON.stringify(r)).join('\n');
+    cand.forEach(p=>{ if(blob.includes('"' + p.id + '"')) used.add(p.id); });
+    const out = cand.filter(p=>!used.has(p.id)).map(p=>Object.assign(clone(p), {deleted:true}));
     if(out.length){ putQuiet(out); refresh(); }
   } catch(e){} }
   function editProfile(id){
@@ -1938,7 +1942,7 @@
         <div class="v-sum-small" style="margin-top:6px;text-align:center">Trois voyages déjà remplis (à préparer, en cours, terminé) pour tout découvrir. Il reste sur ton téléphone et se supprime en un geste.</div>` : ''}
       </div>
       <div id="cv-ob-join" style="display:none">
-        ${hosted ? '' : `<div class="v-f"><label>Adresse de l’appli en ligne</label><input class="v-in" id="cv-surl" placeholder="https://carnet-voyage.pages.dev"></div>`}
+        ${hosted ? '' : `<div class="v-f"><label>Adresse de l’appli en ligne</label><input class="v-in" id="cv-surl" placeholder="https://vezoria.pages.dev"></div>`}
         <div class="v-sum-small" style="margin-bottom:10px">🔑 ${esc(MSGT('Ton code administrateur (sur ton autre appareil : Cloud → Mon code administrateur) ramène ici tout ton carnet, avec tes voyages, tes abonnés et ton abonnement. Sur l’autre appareil, « Ajouter un de mes appareils » affiche aussi un QR code à scanner.'))}</div>
         <div class="v-f"><label>${esc(MSGT('Code administrateur, ou invitation reçue (lien ou code)'))}</label><input class="v-in" id="cv-scode" placeholder="https://… ou XXXX-XXXX-XXXX" autocapitalize="characters"></div>
         ${qrBtn('cv-scode')}<button type="button" class="v-btn sec" style="margin-bottom:8px" onclick="CV.obPaste()">📋 Coller l’invitation</button>
@@ -2061,7 +2065,11 @@
       applyMode();
       if(!profiles().length){ editProfile(null); return; }
       whoSheet();
-    } catch(e){ M.sync.on = false; persist(); alert('Connexion impossible : ' + e.message); }
+    } catch(e){ M.sync.on = false; persist();
+      // 🔒 carnet protégé par un compte, appareil pas encore validé (nouveau téléphone, appli réinstallée) : on valide par e-mail, puis le carnet s’ouvre
+      if(e && e.needVerify){ M.sync.code = ''; persist(); acctGateSheet(code, e.mail); return; }
+      if(e && e.needAcct){ M.sync.code = ''; persist(); alert(MSGT('Ce code n’est pas reconnu. Vérifie-le (lettres et chiffres, avec les tirets), ou demande un nouveau lien à la personne qui t’invite.')); return; }
+      alert('Connexion impossible : ' + e.message); }
   }
 
   /* ══════════ 💶 Qui paie quoi ══════════ */
@@ -2807,7 +2815,8 @@
       if(editing && editing.type === 'souv'){ editing.lat = +(+it.lat).toFixed(6); editing.lng = +(+it.lng).toFixed(6); editing.pinAt = Date.now(); if(it.cc){ editing.cc = it.cc; editing.pays = it.ctry || ''; } try { souvPosShow(); } catch(e){} }
       i.dispatchEvent(new Event('change', {bubbles:true})); return; }
     const key = 'geo:' + normQ(it.name), cur = R[key];
-    const g = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:it.name}, {lat:it.lat, lng:it.lng, v:2, pick:1}); delete g.auto; delete g.g5; delete g.g6; delete g.g7; if(it.ar) g.area = 1; else delete g.area;   // revérifiée une fois : la ville de ce nom la plus proche du choix stamp(g); R[key] = g; markDirty(key);
+    const g = Object.assign(cur && !cur.deleted ? clone(cur) : {id:key, type:'geo', q:it.name}, {lat:it.lat, lng:it.lng, v:2, pick:1}); delete g.auto; delete g.g5; delete g.g6; delete g.g7; if(it.ar) g.area = 1; else delete g.area;   // revérifiée une fois : la ville de ce nom la plus proche du choix
+    stamp(g); R[key] = g; markDirty(key);   // 🩹 ces 3 instructions étaient passées en commentaire par erreur : la ville choisie dans la liste n’était pas retenue (l’appli replaçait la ville toute seule)
     if(it.cc){ M.ctry = M.ctry || {}; M.ctry[normQ(it.name)] = {pays:it.ctry || '', cc:it.cc}; }
     persist(); pacClose(i);
     if(/multi/.test(i.dataset.place || '')){ const parts = i.value.split(','); parts[parts.length - 1] = ' ' + it.name; i.value = parts.map(x=>x.trim()).filter(Boolean).join(', ') + ', '; }   // liste de pays : on remplace le dernier
@@ -3131,7 +3140,7 @@
     }
   }
   function plAdd(){
-    const d = planD, raw = val('pl-new'); if(!raw) return;
+    const d = planD, raw = val('pl-new'); if(!raw){ const el = document.getElementById('pl-new'); if(el) el.focus(); return; }   // champ vide : on y met le curseur (le ＋ ne faisait rien)
     const out = raw.split(/[;\n]+/).map(s=>s.trim()).filter(Boolean).map((s,i)=>{
       let nom = s; const m = s.match(/\/place\/([^/@?]+)/);
       if(/^https?:/.test(s)) nom = m ? decodeURIComponent(m[1].replace(/\+/g,' ')) : 'Lieu ' + (placesOf(d).length + i + 1);

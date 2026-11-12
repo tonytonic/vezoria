@@ -781,6 +781,8 @@
       </select><div class="v-sum-small" style="margin-top:4px">Le souvenir et ses photos sont classés sous ce jour.</div></div>`;
   }
   function editSouv(id, d0){
+    if(!id && !trip()){ toast('Crée d’abord un voyage.'); return; }   // aucun voyage ouvert : un message, pas un plantage
+    if(id && !R[id]){ refresh(); return; }                                // souvenir retiré entre-temps (par un autre téléphone)
     // 📅 le jour proposé : celui demandé (un « jour sans souvenir » du bilan), sinon aujourd’hui ; voyage fini : son premier jour encore sans souvenir
     const dd = (()=>{ if(d0) return d0; const td = isoToday(), t = trip(), ds = dayList(); if(!t || ds.includes(td) || tripPhase(t) !== 'past' || !ds.length) return td;
       const sv = list('souv', x=>x.trip === t.id && !x.deleted); return ds.find(d=>!sv.some(x=>x.date === d)) || ds[ds.length - 1]; })();
@@ -890,17 +892,24 @@
     { const pv = document.querySelector('#v-form [name=priv]'); if(pv) s.priv = pv.checked; }
     return s;
   }
+  // 📸 photos encore en préparation : « Enregistrer » touché trop tôt enregistrait le souvenir sans elles (elles n’arrivaient jamais chez les autres) et l’appli plantait en silence
+  let svBusyN = 0, svSaving = false;
+  const svIdle = () => new Promise(r => { const t = setInterval(()=>{ if(!svBusyN){ clearInterval(t); r(); } }, 120); });
   async function souvAddPhotos(input){
     const files = [...(input.files||[])]; if(!files.length) return;
     const s = readSouv(), prog = document.getElementById('sv-prog');
     s.photos = s.photos || [];
     const isNew = !s.id, dateWas = s.date; let firstDate = '';
+    svBusyN++;
+    try {
     for(let i=0;i<files.length;i++){
       if(prog) prog.textContent = `Préparation ${i+1}/${files.length}…`;
       try { const ex = await exifOf(files[i]).catch(()=>({})), pid = 'ph' + uid() + i; await storePhoto(files[i], pid); s.photos.push(pid); photoGeoInto(s, ex, pid); if(!ex.guess && !firstDate) firstDate = ex.date; }
       catch(e){ if(prog) prog.textContent = 'Une photo n’a pas pu être lue (format non pris en charge ?)'; }
     }
+    } finally { svBusyN--; }
     persist();
+    if(editing !== s || !document.getElementById('sv-grid')){ try { input.value = ''; } catch(e){} return; }   // fiche fermée entre-temps : rien à redessiner
     if(prog) prog.textContent = '';
     { const f = document.getElementById('v-form');
       if(f && isNew && firstDate && f.date && (!f.date.value || f.date.value === locIso())){ f.date.value = firstDate; s.date = firstDate; }
@@ -913,11 +922,14 @@
   const svNph = s => { const e = document.getElementById('sv-nph'); if(e) e.textContent = 'Photos (' + (s.photos || []).length + ')'; };   // 🔢 le compteur restait à « Photos (0) » après un ajout
   function souvDelPhoto(i){
     const s = readSouv(); s.photos.splice(i,1);
+    if(!document.getElementById('sv-grid')) return;
     document.getElementById('sv-grid').innerHTML = s.photos.map((p,j)=>`<div class="cv-th"><img data-ph="${esc(p)}.t" alt=""><button type="button" class="cv-thx" onclick="CV.souvDelPhoto(${j})" aria-label="Retirer">✕</button></div>`).join('');
     svNph(s);
     hydrate();
   }
-  function saveSouv(){
+  async function saveSouv(){
+    if(svSaving) return;
+    if(svBusyN){ const s0 = editing; svSaving = true; toast('⏳ ' + MSGT('Les photos finissent de se préparer…')); try { await svIdle(); } finally { svSaving = false; } if(editing !== s0 || !document.getElementById('v-form')) return; }
     const s = readSouv();
     if(!s.titre && !s.texte && !(s.photos||[]).length){ alert('Ajoute au moins un titre, un récit ou une photo.'); return; }
     if(!s.id) s.id = 'sv' + uid();
@@ -3221,7 +3233,7 @@
     let info = p.info;
     if(!info || refresh || info.v !== 2 || Date.now() - (info.ts || 0) > 30 * 864e5){   // v2 : recherche Wikipédia plus stricte (anciennes fiches refaites)
       if(navigator.onLine !== false){ const got = await placeLookup(p, city);
-        if(got.oh || got.txt || got.web || got.img){ info = got; const c = clone(R[id]); c.info = got; if(c.lat == null && got.lat){ c.lat = got.lat; c.lng = got.lng; } put(c, false); } else if(!info || info.v !== 2){ const bad = info && info.v !== 2; info = got; if(bad){ const c = clone(R[id]); c.info = got; put(c, false); } } }
+        if(got.oh || got.txt || got.web || got.img){ info = got; const c = clone(R[id]); if(!c) return; c.info = got; if(c.lat == null && got.lat){ c.lat = got.lat; c.lng = got.lng; } put(c, false); } else if(!info || info.v !== 2){ const bad = info && info.v !== 2; info = got; if(bad){ const c = clone(R[id]); c.info = got; put(c, false); } } }
     }
     const box = document.getElementById('pi-box'); if(!box || !R[id]) return; box.className = '';
     const P = R[id], I = info || {}, L = (window.I18N && I18N.locale) || 'fr-FR';

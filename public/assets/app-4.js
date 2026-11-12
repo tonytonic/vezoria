@@ -100,15 +100,20 @@
       o.textContent = ' ✓ ' + val.toLocaleString((window.I18N ? I18N.locale : 'fr-FR')) + ' lu — vérifie avant d’enregistrer.';
     } catch(e){ o.textContent = ' ⚠️ ' + e.message + ' : saisis le montant à la main.'; }
   }
+  let rcSaving = false;   // 👆 deux appuis rapides sur « Enregistrer » (conversion de devise ou photo en cours) créaient la dépense en double
   async function tlRcSave(){
+    if(rcSaving) return;
     const f = document.getElementById('v-form'), titre = f.titre.value.trim(); let m = num(f.montant.value); const cur = document.getElementById('rc-c').value;
     if(!titre || !m) return;
-    let note = (rcpt && rcpt.fxNote) || '';
-    if(cur !== curCode()){ try { const e = await fxToEur(m, cur); note = m.toLocaleString((window.I18N ? I18N.locale : 'fr-FR')) + ' ' + cur; m = Math.round(e*100)/100; } catch(e){ alert(e.message); return; } }
-    const payeur = document.getElementById('rc-p').value, share = document.getElementById('rc-s').value;
-    const it = {id:'i'+uid(), type:'item', trip:M.trip, cat:'divers', titre, date:isoToday(), statut:'paid', prix:String(m), partage:'grp', payeur, qui: share==='all' ? [] : [share], note};
-    if(rcpt && rcpt.blob){ const pid = 'rc' + uid(); try { await storePhoto(rcpt.blob, pid); it.recu = pid; } catch(e){} }
-    put(it, '🧾 Dépense ajoutée' + (note ? ' (' + note + ')' : '')); closeSheet(true); refresh(); uploadQueue(); capWarn();
+    const payeur = document.getElementById('rc-p').value, share = document.getElementById('rc-s').value;   // lus tout de suite : la fenêtre peut se fermer pendant la conversion
+    rcSaving = true;
+    try {
+      let note = (rcpt && rcpt.fxNote) || '';
+      if(cur !== curCode()){ try { const e = await fxToEur(m, cur); note = m.toLocaleString((window.I18N ? I18N.locale : 'fr-FR')) + ' ' + cur; m = Math.round(e*100)/100; } catch(e){ alert(e.message); return; } }
+      const it = {id:'i'+uid(), type:'item', trip:M.trip, cat:'divers', titre, date:isoToday(), statut:'paid', prix:String(m), partage:'grp', payeur, qui: share==='all' ? [] : [share], note};
+      if(rcpt && rcpt.blob){ const pid = 'rc' + uid(); try { await storePhoto(rcpt.blob, pid); it.recu = pid; } catch(e){} }
+      put(it, '🧾 Dépense ajoutée' + (note ? ' (' + note + ')' : '')); closeSheet(true); refresh(); uploadQueue(); capWarn();
+    } finally { rcSaving = false; }
   }
   function tlReceipts(){
     const l = items(i=>i.recu).sort((a,b)=>(b.date||'').localeCompare(a.date||'') || (b.createdAt||0)-(a.createdAt||0));
@@ -243,9 +248,12 @@
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.tlBagsGo()">🧳 Ajouter à la checklist</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
     bagCcFill();
   }
-  async function tlBagsGo(){
+  let bagsBusy = false;   // 👆 deux appuis pendant la lecture de la météo ajoutaient la liste en double
+  async function tlBagsGo(){ if(bagsBusy) return; bagsBusy = true; try { await tlBagsGo2(); } finally { bagsBusy = false; } }
+  async function tlBagsGo2(){
     const t = trip(), n = Math.max(1, nights(t.debut, t.fin || t.debut)), q = k => Math.min(n + 1, k);
-    const on = k => { const e = document.getElementById('bg-' + k); return e && e.checked; };
+    const onv = {}; document.querySelectorAll('input[type=checkbox][id^="bg-"]').forEach(e=>{ onv[e.id] = e.checked; });   // cases lues tout de suite : la fenêtre peut se fermer pendant la lecture de la météo
+    const on = k => !!onv['bg-' + k];
     let cl = document.getElementById('bg-cl').value; const who = document.getElementById('bg-who').value;
     const from = (document.getElementById('bg-from') || {}).value || 'eu', ccs = [...new Set(((document.getElementById('bg-cc') || {}).value || '').split(',').map(x=>ccOf(x.trim())).filter(Boolean))];
     M.bagFrom = from;
@@ -388,7 +396,7 @@
     put(Object.assign(id ? clone(R[id]) : {id:'d'+uid(), type:'doc', pid}, {kind:f.kind.value, expire:f.expire.value, num:f.num.value.trim(), note:f.note.value.trim()}), '🛂 Document enregistré');
     tlDocs();
   }
-  async function tlDocDel(id, pid){ if(!(await uiConfirm('Supprimer ce document ?'))) return; const d = clone(R[id]); d.deleted = true; put(d, '🗑 Supprimé'); tlDocs(); }
+  async function tlDocDel(id, pid){ if(!(await uiConfirm('Supprimer ce document ?'))) return; const d = clone(R[id]); if(!d) return; d.deleted = true; put(d, '🗑 Supprimé'); tlDocs(); }
 
   /* ---------- 📖 Journal de voyage ---------- */
   function tlJournal(){
@@ -920,8 +928,8 @@
       <div id="sh-list">${l.map(c=>`<label class="cv-checkline cv-shop${c.done?' done':''}"><input type="checkbox"${c.done?' checked':''} onchange="CV.shopTick('${ja(c.id)}')"> ${esc(c.label)}${c.createdBy ? ` <span class="v-sum-small">· ${esc(pname(c.createdBy))}</span>` : ''}</label>`).join('') || '<div class="v-sum-small">Liste vide.</div>'}</div>
       <div class="v-actions">${l.some(c=>c.done) ? `<button type="button" class="v-btn sec" onclick="CV.shopClear()">🧹 Retirer les cochés</button>` : ''}<button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div>`);
   }
-  function shopAdd(){ const i = document.getElementById('sh-new'); const v = (i.value||'').trim(); if(!v) return; v.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean).forEach((x,k)=>put({id:'c'+uid()+k, type:'check', trip:M.trip, cat:SHOP, label:x, done:false})); shopSheet(); }
-  function shopTick(id){ const c = clone(R[id]); c.done = !c.done; put(c); }
+  function shopAdd(){ const i = document.getElementById('sh-new'); const v = (i.value||'').trim(); if(!v){ i.focus(); return; } v.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean).forEach((x,k)=>put({id:'c'+uid()+k, type:'check', trip:M.trip, cat:SHOP, label:x, done:false})); shopSheet(); }
+  function shopTick(id){ const c = clone(R[id]); if(!c) return; c.done = !c.done; put(c); }
   function shopClear(){ const out = list('check', c=>c.trip===M.trip && c.cat===SHOP && c.done).map(c=>Object.assign(clone(c), {deleted:true})); if(out.length) putMany(out, '🧹 ' + out.length + ' retiré(s)'); shopSheet(); }
 
   /* ---------- 💸 Demander / envoyer un remboursement ---------- */
@@ -966,7 +974,7 @@
       ${ps.length ? ps.map(p=>pollCard(p, true)).join('') : `<div class="v-sum-small">${MSGT('Une question pour le groupe ? « Resto japonais ou italien ce soir ? », « Quelle visite samedi ? »… Chacun vote, et le choix gagnant peut aller directement au programme.')}</div>`}
       ${all > ps.length ? `<button type="button" class="v-day-edit" style="margin-top:6px" onclick="CV.tab('envies')">${RF('Voir tous les sondages ({0})', all)}</button>` : ''}</div>`;
   }
-  function pollPin(id){ const p = clone(R[id]); p.pin = !p.pin; put(p, p.pin ? '📌 Sondage épinglé sur l’accueil' : '📌 Sondage désépinglé'); toast(p.pin ? '📌 Épinglé sur l’accueil' : '📌 Désépinglé'); refresh(); }
+  function pollPin(id){ const p = clone(R[id]); if(!p) return; p.pin = !p.pin; put(p, p.pin ? '📌 Sondage épinglé sur l’accueil' : '📌 Sondage désépinglé'); toast(p.pin ? '📌 Épinglé sur l’accueil' : '📌 Désépinglé'); refresh(); }
   function pollNew(){
     openSheet(`<h2>🗳️ Nouveau sondage</h2><form id="v-form" onsubmit="event.preventDefault();CV.pollSave()">
       <div class="v-f"><label>Pour</label><select class="v-in" name="kind" onchange="this.form.querySelector('.pl-dt').style.display=this.value?'':'none'"><option value="">❓ Une question libre</option>${trip() ? `<option value="activite">🎟️ Une activité ou une visite</option><option value="resto">🍽️ Un restaurant</option><option value="hotel">🏨 Un hébergement</option>` : ''}</select></div>
@@ -981,8 +989,8 @@
     const kind = f.kind ? f.kind.value : '', t = trip();
     put(Object.assign({id:'po'+uid(), type:'poll', question:q, options:o, votes:{}, closed:false}, kind && t ? {kind, trip:t.id, date:(f.date && f.date.value) || '', pin:true} : {}), '🗳️ ' + (kind ? MSGT('Vote lancé : chacun choisit') : 'Sondage créé')); closeSheet(true); refresh();
   }
-  function pollVote(id, i){ if(!M.me) return; const p = clone(R[id]); p.votes = Object.assign({}, p.votes); if(p.votes[M.me] === i) delete p.votes[M.me]; else p.votes[M.me] = i; put(p); refresh(); }
-  function pollClose(id){ const p = clone(R[id]); p.closed = !p.closed; put(p); refresh(); if(p.closed && p.kind && !p.added) setTimeout(()=>pollWin(id, true), 200); }
+  function pollVote(id, i){ if(!M.me) return; const p = clone(R[id]); if(!p){ refresh(); return; } p.votes = Object.assign({}, p.votes); if(p.votes[M.me] === i) delete p.votes[M.me]; else p.votes[M.me] = i; put(p); refresh(); }
+  function pollClose(id){ const p = clone(R[id]); if(!p) return; p.closed = !p.closed; put(p); refresh(); if(p.closed && p.kind && !p.added) setTimeout(()=>pollWin(id, true), 200); }
   function pollBest(p){ const votes = p.votes || {}, cnt = p.options.map((_, i)=>Object.values(votes).filter(v=>v === i).length), mx = Math.max(0, ...cnt); return mx ? cnt.indexOf(mx) : -1; }
   async function pollWin(id, ask){
     const p = clone(R[id]); if(!p || !p.kind || p.added) return; const w = pollBest(p); if(w < 0) return;
@@ -994,7 +1002,7 @@
     p.added = nm; p.closed = true; put(p); pollFx(); refresh();
   }
   function pollFx(){ const b = document.createElement('div'); b.className = 'wlc-conf po-fx'; b.innerHTML = Array.from({length:30}, (_, i)=>`<i style="left:${Math.random() * 100}%;animation-delay:${(Math.random() * .8).toFixed(2)}s;animation-duration:${(2.2 + Math.random() * 1.6).toFixed(2)}s;background:${['#fbbf24','#f472b6','#60a5fa','#34d399','#a78bfa'][i % 5]}"></i>`).join(''); document.body.appendChild(b); setTimeout(()=>b.remove(), 4200); }
-  async function pollDel(id){ if(!(await uiConfirm('Supprimer ce sondage ?'))) return; const p = clone(R[id]); p.deleted = true; put(p, '🗑 Sondage supprimé'); refresh(); }
+  async function pollDel(id){ if(!(await uiConfirm('Supprimer ce sondage ?'))) return; const p = clone(R[id]); if(!p) return; p.deleted = true; put(p, '🗑 Sondage supprimé'); refresh(); }
 
   /* ══════════════════════════════════════════════════════════════════════════
      🎫 BILLETS JOINTS · 📋 CONFIRMATION COLLÉE · 🌍 CO2 & CONSEILS · 📍 JE SUIS ICI · 📊 STATS
@@ -1017,10 +1025,13 @@
   }
   function pjAdd(cam){
     tlPickFile(cam ? 'image/*' : 'image/*,application/pdf', async f => {
-      const id = 'pj' + uid(), isPdf = /pdf/i.test(f.type) || /\.pdf$/i.test(f.name||'');
+      const id = 'pj' + uid(), isPdf = /pdf/i.test(f.type) || /\.pdf$/i.test(f.name||''), it0 = editing;   // la fiche ouverte au moment du choix
       try { if(isPdf) await IDB.put({id, blob:f, up:1}); else { await storePhoto(f, id); uploadQueue(); } }
       catch(e){ alert('Fichier impossible à enregistrer.'); return; }
-      pjSave([...pjOf(editing), {id, t: isPdf ? 'pdf' : 'img', n: (f.name || (isPdf ? 'billet.pdf' : 'billet')).replace(/\.[a-z0-9]+$/i,'').slice(0,40)}]);
+      const one = {id, t: isPdf ? 'pdf' : 'img', n: (f.name || (isPdf ? 'billet.pdf' : 'billet')).replace(/\.[a-z0-9]+$/i,'').slice(0,40)};
+      // 🎫 fiche enregistrée (ou une autre ouverte) pendant la préparation du billet : il va sur SA fiche, pas sur celle affiché maintenant, et n’est plus perdu
+      if(editing !== it0){ const r0 = it0 && it0.id && R[it0.id] && !R[it0.id].deleted ? clone(R[it0.id]) : null; if(r0){ r0.pj = [...pjOf(r0), one]; put(r0, '🎫 Billet joint'); } return; }
+      pjSave([...pjOf(editing), one]);
     }, !!cam);
   }
   async function pjDel(i){ if(!(await uiConfirm('Retirer ce document de la fiche ?'))) return; const l = pjOf(editing).slice(); l.splice(i,1); pjSave(l); }

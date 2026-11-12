@@ -1361,6 +1361,8 @@
     } catch(e){} finally { dvBusy = false; }
   }
   setTimeout(dvTick, 12000); setInterval(dvTick, 60e3);
+  // 📱 dès la 1re synchro réussie de cet appareil : il s’inscrit tout de suite dans « Mes appareils » (avant : jusqu’à 1 min plus tard, pendant laquelle on ne pouvait ni le voir ni le bloquer)
+  function dvSoon(){ try { if(dvOwner() && M.sync.last && !(R[dvMine()] && !R[dvMine()].deleted)) setTimeout(dvTick, 600); } catch(e){} }
   async function devBlock(id, un){
     const d = R[id]; if(!d) return; const dev = String(id).replace(/^dv:/, '');
     if(!un && !(await uiConfirm(RF('Bloquer « {0} » ? Il ne pourra plus ouvrir ton carnet.', d.label || MSGT('Appareil'))))) return;
@@ -1883,7 +1885,7 @@
     if(M.cmTo) { delete M.cmTo[rec.id]; persist(); }
   }
   async function feedComment(fid){
-    const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt) return;
+    const f = R[fid], i = document.getElementById('cm-' + fid); if(!f || !i) return; const txt = i.value.trim(); if(!txt){ try { i.focus(); } catch(e){} return; }   // « Envoyer » sans texte : on place le curseur au lieu de ne rien faire
     if(!myName()){ const n = (await uiPrompt('Ton prénom :', '')); if(!n) return; M.followName = n.trim(); }
     const cmId = 'cm:' + uid(); setTimeout(()=>cmSent(cmId), 0);
     putQuiet([{id:cmId, type:'comment', trip:f.trip, feed:fid, who:fwAsFor(TS()[f.trip]), dev:devId(), pk:(M.fkey || {}).pub, ib:(M.fkey && M.fkey.pub) ? inbox() : '', text:txt.slice(0, 600), at:Date.now()}]); socCodes(f.trip).forEach(c=>socialPush(f.trip, 'comment', txt, c, f.id)); replyPush(f, txt); i.value = ''; i.blur(); syncNow(); feedPaint(fid);
@@ -1966,13 +1968,21 @@
     const n = String(v || '').trim().slice(0, 40); if(!n) return;
     M.followName = n; persist(); try { await fwKeyTouch(); await syncNow(); } catch(e){} toast('👋 ' + MSGT('Merci') + ' ' + n + ' !');
   }
-  function feedView(ftid){
+  // 👤 les prénoms connus (profils, abonnés, compagnons, équipes suivies) ne sont jamais traduits : « Claire » ne devient pas « Light »
+  function i18nNames(){ try { if(!window.I18N || I18N.lang === 'fr' || !I18N.setNames) return; const S = new Set();
+    Object.values(R).forEach(r=>{ if(!r || r.deleted) return; const t = r.type;
+      if(t === 'profile'){ if(r.nom) S.add(r.nom); } else if(t === 'follower' || t === 'comment' || t === 'like' || t === 'feedco' || t === 'member' || t === 'feed'){ if(r.who) S.add(r.who); if(r.nom) S.add(r.nom); }
+      else if(t === 'feedtrip'){ try { ftTeam(r).forEach(n=>S.add(n)); } catch(e){} } });
+    try { AI().forEach(x=>{ if(x && x.name) S.add(x.name); }); } catch(e){} try { Object.values(PACKS()).forEach(p=>{ if(p && p.who) S.add(p.who); }); } catch(e){}
+    if(M.fwAs) Object.values(typeof M.fwAs === 'object' ? M.fwAs : {v:M.fwAs}).forEach(v=>{ if(typeof v === 'string') S.add(v); });
+    I18N.setNames([...S]); } catch(e){} }
+  function feedView(ftid){ i18nNames();
     setTimeout(()=>{ pubNameAsk().catch(()=>{}); }, 1200);
     const ft = R[ftid]; if(!ft) return; closeSheet(true);
     let ov = document.getElementById('cv-feed'); if(ov) ov.remove(); ov = document.createElement('div'); ov.id = 'cv-feed';
     const posts = list('feed', f=>f.trip===ftid).sort((a,b)=>fdOrd(b, a));
     const fw = FT()[String(ftid).slice(3)] ? ab2NFw(String(ftid).slice(3)) : 0;
-    ov.innerHTML = `<div class="fd-top"><button type="button" class="fd-x" onclick="CV.feedClose()" aria-label="Fermer">✕</button><div><small>Voyage de ${esc(ftTeamTxt(ft))}</small><b>${esc(ft.titre)}</b><small>${ft.debut ? tripDatesLong(ft) : ''}${fw ? ' · 👀 ' + fw + ' abonné' + (fw>1?'s':'') : ''}</small></div></div>
+    ov.innerHTML = `<div class="fd-top"><button type="button" class="fd-x" onclick="CV.feedClose()" aria-label="Fermer">✕</button><div><small>${esc(voyageDe(ftTeamTxt(ft)))}</small><b>${esc(ft.titre)}</b><small>${ft.debut ? tripDatesLong(ft) : ''}${fw ? ' · 👀 ' + fw + ' abonné' + (fw>1?'s':'') : ''}</small></div></div>
       ${(()=>{ const c = TS()[ftid], sib = c ? list('feedtrip', f=>TS()[f.id] === c && !f.deleted).sort((a, b)=>(b.debut||'').localeCompare(a.debut||'')) : [];
         const nAll = list('feedtrip', f=>TS()[f.id] && !FT()[f.id.replace(/^ft:/,'')] && !f.deleted).length;
         return !FT()[String(ftid).replace(/^ft:/,'')] && (sib.length > 1 || nAll > 1) ? `<button type="button" class="fd-back" onclick="CV.feedBack()"><span>←</span><b>Tous les voyages que je suis</b></button>` : ''; })()}
@@ -2071,7 +2081,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-11l'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-11n'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -2136,7 +2146,7 @@
   // 🔗 la fiche du lien d’un abonné : le code du fil (il le suit avec), son prénom, ses voyages cachés
   function ab2InvRec(x, extra){ TS()['fi:' + x.code] = x.code; const cur = R['iv:' + x.code];
     const keep = cur && !cur.deleted ? cur : {};
-    const r = Object.assign({id:'iv:' + x.code, type:'abinv', trip:'fi:' + x.code, code:ab2C(), name:x.name, owner:myName() || '', oav:myAv() || '', hide:keep.hide || []}, x.pub ? {pub:1, ban:keep.ban || [], hd:keep.hd || {}, mv:keep.mv || {}} : {}, x.pub && (x.closed || keep.closed) ? {closed:1} : {}, extra || {});
+    const r = Object.assign({id:'iv:' + x.code, type:'abinv', trip:'fi:' + x.code, code:ab2C(), name:x.name, owner:myName() || '', oav:myAv() || '', hide:keep.hide || []}, keep.only ? {only:keep.only} : {}, x.pub ? {pub:1, ban:keep.ban || [], hd:keep.hd || {}, mv:keep.mv || {}} : {}, x.pub && (x.closed || keep.closed) ? {closed:1} : {}, extra || {});
     if(!cur || cur.deleted || stripStamp(cur) !== stripStamp(r)) putQuiet([r]); }
   // 🟢 un voyage montré / caché à tous mes abonnés
   async function ab2TripSet(tid, on){
@@ -2299,7 +2309,9 @@
   }
   const ab2Devs = x => ab2InvFws(x).map(fwDevOf);
   function ab2Fws(){ return [...AI().filter(x=>!x.pub).map(x=>ab2InvFws(x)[0]).filter(Boolean), ...ab2PubFws()]; }   // une fiche (la plus récente) par abonné qui a ouvert son lien
-  const ab2InvHide = x => { const r = R['iv:' + x.code]; return new Set(r && !r.deleted ? (r.hide || []) : []); };
+  const ab2InvHide = x => { const r = R['iv:' + x.code], h = new Set(r && !r.deleted ? (r.hide || []) : []);
+    if(r && !r.deleted && Array.isArray(r.only)){ const o = new Set(r.only); ab2Vis().map(ftId).forEach(f=>{ if(!o.has(f)) h.add(f); }); }   // « seulement ces voyages » : tout le reste est caché pour lui, y compris les voyages montrés plus tard
+    return h; };
   const ab2Hid = d => { const x = AI().find(y=>ab2Devs(y).includes(d)); return x ? ab2InvHide(x) : new Set(); };
   const ab2NFw = tid => ab2People().filter(P=>P.f && !P.hide.has(ftId(tid)) && !(P.pub && (ab2PubRec().hide || []).includes(ftId(tid)))).length;   // abonnés qui voient ce voyage
   const ab2Nm = x => String(((M.fwNick || {})[fwDevOf(x)]) || (fwGeneric(x.who) ? MSGT('Un proche') : x.who) || '?').replace(/^🧳\s*/, '');
@@ -2376,7 +2388,15 @@
     if(own && ab2Own(P)){ const n = ab2Own(P); if(P.pub){ M.fwNick = M.fwNick || {}; M.fwNick[P.devs[0]] = n; persist(); ab2Repaint(); return; } P.x.name = n.slice(0, 40); persist(); ab2InvRec(P.x); ab2CfgSave(); ab2Repaint(); try { await syncNow(); } catch(e){} return; }
     if(P.pub) return fwNickAsk(P.devs[0]);
     const x = P.x, n = await uiPrompt(MSGT('Qui est-ce ? Donne-lui un nom pour t’y retrouver (toi seul le vois).'), x.name || ab2Own(P) || ''); if(!n || !n.trim()) return; x.name = n.trim().slice(0, 40); persist(); ab2InvRec(x); ab2CfgSave(); ab2Repaint(); try { await syncNow(); } catch(e){} }
-  function ab2SetHide(P, arr){ if(P.pub){ const hd = Object.assign({}, ab2PubRec().hd || {}); hd[P.devs[0]] = arr; ab2InvRec(P.x, {hd}); } else ab2InvRec(P.x, {hide:arr}); }
+  // 🩹 abonnés qui ont ouvert leur lien entre le 9 et le 11/11/2026 : les voyages que l’auteur leur cachait s’affichaient quand même
+  //    (la liste restait sur le lien, sans arriver jusqu’à l’abonnement). Au démarrage, on la remet à sa place.
+  setTimeout(()=>{ try { let n = 0; Object.keys(M.subs || {}).forEach(c=>{ const S = M.subs[c], iv = S && S.iv && spaceObj(S.iv); if(!iv) return;
+      if(Array.isArray(iv.ah) && JSON.stringify(iv.ah) !== JSON.stringify(S.ah || [])){ S.ah = iv.ah; n++; }
+      if(Array.isArray(iv.ao) && JSON.stringify(iv.ao) !== JSON.stringify(S.ao || null)){ S.ao = iv.ao; n++; }
+      if(n) ab2Map(c); });
+    if(n){ persist(); refresh(); } } catch(e){} }, 2500);
+  function ab2SetHide(P, arr){ if(P.pub){ const hd = Object.assign({}, ab2PubRec().hd || {}); hd[P.devs[0]] = arr; ab2InvRec(P.x, {hd}); }
+    else { const r = R['iv:' + P.x.code], lim = r && !r.deleted && Array.isArray(r.only); ab2InvRec(P.x, Object.assign({hide:arr}, lim ? {only:ab2Vis().map(ftId).filter(f=>!arr.includes(f))} : {})); } }
   async function ab2FwAll(id, on){ const P = ab2P(id); if(!P) return; ab2SetHide(P, on ? [] : ab2Vis().map(ftId)); ab2Repaint(); try { await syncNow(); } catch(e){} }
   async function ab2FwHide(id, tid){
     const P = ab2P(id); if(!P) return; const H = new Set(P.hide), fid = ftId(tid);
@@ -2422,7 +2442,7 @@
         if(r.pub && r.mv && r.mv[me]){ const nc = r.mv[me]; sp.real = r.code; if(k && k.iv !== nc) setTimeout(()=>ab2Switch(sp.code, nc, sp.of), 40); return; }   // 🔀 l’auteur m’a donné mon propre lien : je bascule sans rien dire
         if(r.deleted || r.gone || (r.pub && (r.ban || []).includes(me)) || (r.pub && r.closed)){ if(k) k.ban = 1; else sp.ban = 1; return; }
         const ahx = [...(r.hide || []), ...(r.pub ? ((r.hd || {})[me] || []) : [])];
-        sp.real = r.code; sp.pub = !!r.pub; if(k){ k.ah = ahx; if(r.owner) k.owner = r.owner; if(avOk(r.oav)) k.oav = r.oav; if(r.code && r.code !== sp.of) setTimeout(()=>ab2Move(sp.code, r.code), 30); }
+        sp.real = r.code; sp.pub = !!r.pub; sp.ao = Array.isArray(r.only) ? r.only : null; if(k){ k.ah = ahx; k.ao = sp.ao; if(r.owner) k.owner = r.owner; if(avOk(r.oav)) k.oav = r.oav; if(r.code && r.code !== sp.of) setTimeout(()=>ab2Move(sp.code, r.code), 30); }
         sp.owner = r.owner || sp.owner; sp.oav = avOk(r.oav) ? r.oav : sp.oav; sp.ah = ahx; return; }
       if(r.type === 'follower' && !String(r.id).endsWith(':' + me)) return;
       if(r.type !== 'follower') return;
@@ -2467,8 +2487,8 @@
   }
   // quels voyages de ce fil je vois : ni cachés par moi, ni cachés pour moi par l’auteur
   function ab2Map(c){
-    const S = (M.subs || {})[c]; if(!S) return; const ah = new Set(S.ah || []);
-    Object.keys(S.t || {}).forEach(id=>{ const r = R[id], ok = S.t[id] && r && !r.deleted && !S.hide[id] && !ah.has(id);
+    const S = (M.subs || {})[c]; if(!S) return; const ah = new Set(S.ah || []), ao = S.ao ? new Set(S.ao) : null;   // ao : « seulement ces voyages » (ancien compagnon : le voyage qu’il a fait, pas ceux montrés plus tard)
+    Object.keys(S.t || {}).forEach(id=>{ const r = R[id], ok = S.t[id] && r && !r.deleted && !S.hide[id] && !ah.has(id) && (!ao || ao.has(id));
       if(ok){ if(!TS()[id] || !spaceObj(TS()[id])) TS()[id] = c; } else if(TS()[id] === c) delete TS()[id]; });
     if(S.ban) setTimeout(()=>ab2Gone(c, 'ban'), 50);
   }
@@ -2488,7 +2508,8 @@
     if(iv.pub && !myName()){
       let n = ''; while(!n){ const v = await uiPrompt(MSGT('Ton prénom ? Il est obligatoire pour suivre avec un lien commun : c’est comme ça que la personne saura qui tu es.'), ''); if(v === null){ drop(); return; } n = String(v).trim().slice(0, 40); }
       M.followName = n; persist(); }
-    const c = iv.real, S = ab2Sub(c), prevIv = S.iv && S.iv !== code && !S.gone && spaceObj(S.iv) ? S.iv : ''; delete S.ban; delete S.gone; S.iv = prevIv || code;   // déjà abonné par un autre lien : on garde le sien S.ah = iv.ah || []; if(iv.owner) S.owner = iv.owner; if(avOk(iv.oav)) S.oav = iv.oav;
+    const c = iv.real, S = ab2Sub(c), prevIv = S.iv && S.iv !== code && !S.gone && spaceObj(S.iv) ? S.iv : ''; delete S.ban; delete S.gone; S.iv = prevIv || code;   // déjà abonné par un autre lien : on garde le sien
+    S.ah = iv.ah || []; S.ao = iv.ao || null; if(iv.owner) S.owner = iv.owner; if(avOk(iv.oav)) S.oav = iv.oav;   // 🩹 cette ligne était passée en commentaire par erreur : les voyages cachés à cet abonné s’affichaient quand même à l’ouverture du lien
     iv.of = c; const sp = ab2Space(c, {sub:1, iv:code}); sp.since = 0; await syncSpace(sp, true);
     if(sp.err){ alert(sp.net ? '📴 ' + netMsg() : '⚠️ ' + sp.err); return; }
     if(web) M.webCode = c;
@@ -2524,7 +2545,7 @@
   function ab2SubAll(c, on){ const S = (M.subs || {})[c]; if(!S) return; S.hide = {}; if(!on) ab2SubTrips(c).forEach(f=>{ S.hide[f.id] = 1; }); ab2Map(c); persist(); ab2Repaint(); }
   function ab2SubHide(c, id){ const S = (M.subs || {})[c]; if(!S) return; if(S.hide[id]) delete S.hide[id]; else S.hide[id] = 1; ab2Map(c); persist(); ab2Repaint(); }
   const ab2Subs = () => Object.entries(M.subs || {}).filter(([c, S])=>!S.gone && spaceObj(c));
-  const ab2SubTrips = c => { const S = (M.subs || {})[c] || {}, ah = new Set(S.ah || []); return Object.keys(S.t || {}).filter(id=>S.t[id] && R[id] && !R[id].deleted && !ah.has(id)).map(id=>R[id]).sort((a, b)=>(b.debut || '').localeCompare(a.debut || '')); };
+  const ab2SubTrips = c => { const S = (M.subs || {})[c] || {}, ah = new Set(S.ah || []), ao = S.ao ? new Set(S.ao) : null; return Object.keys(S.t || {}).filter(id=>S.t[id] && R[id] && !R[id].deleted && !ah.has(id) && (!ao || ao.has(id))).map(id=>R[id]).sort((a, b)=>(b.debut || '').localeCompare(a.debut || '')); };
   function ab2SuisHTML(){
     const L = ab2Subs(), lv = L.filter(([c])=>ab2SubTrips(c).some(f=>TS()[f.id] === c && tripPhase(f) === 'live'));
     return `<div class="sp2-sec">${SVG_ME}<b>${esc(MSGT('Mes abonnements'))}</b>${spLive(lv.map(([, S])=>S.owner || '?'))}<br><small>(${esc(MSGT('ceux que je suis'))})</small></div>
@@ -3010,7 +3031,7 @@
     window.addEventListener('scroll', ()=>{ if(!raf) raf = requestAnimationFrame(check); }, {passive:true});
     [300, 1200, 3000, 6000].forEach(later);
   })();
-  var RECAPI = {adminPass, codeNoted, joinPickBusy, userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg, pgList, pgGo, pgDecide, rxGo};
+  var RECAPI = {i18nNames, adminPass, codeNoted, joinPickBusy, userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg, pgList, pgGo, pgDecide, rxGo};
 
   const api = {souvResend, obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
