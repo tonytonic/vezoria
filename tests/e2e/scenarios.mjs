@@ -56,7 +56,7 @@ SC['03 invitation d’un compagnon qui n’a pas Vezoria'] = async us => {
   const v = await voyage(C, 'Rome à deux'); ok('Claire est voyageuse, Anthony reste admin', v && v.voyageurs.includes('Claire') && v.voyageurs.includes('Anthony') && v.admin === 'Anthony', JSON.stringify(v));
   await souvenir(C, 'Fontaine de Trevi', 'Fontaine de Trevi', 'Une pièce.', [PHOTO[0]]); await souvenir(A, 'Colisée', 'Rome', 'Tôt.', [PHOTO[1]]); await sync(C, A); await sync(C, A);
   ok('le souvenir de Claire arrive chez Anthony', (await fiches(A, 'souv')).includes('Fontaine de Trevi')); ok('le souvenir d’Anthony arrive chez Claire', (await fiches(C, 'souv')).includes('Colisée'));
-  await A.closeAll(); await A.ev(() => (CV._M().trip && CV.go(CV._M().trip))); await A.wait(600); const h = await heros(A); ok('la couronne est sur l’admin en haut du voyage', /Anthony 👑/.test(h), h);
+  await A.closeAll(); await A.ev(() => (CV._M().trip && CV.go(CV._M().trip))); await A.wait(600); const h = await heros(A); ok('l’étoile « Admin » est sur l’admin en haut du voyage (et sur sa pastille seulement)', /★ ?Admin ?Anthony/.test(h) && await A.ev(() => [...document.querySelectorAll('#cv-avs .cv-av')].filter(x => x.querySelector('.cv-adm')).map(x => x.innerText.replace(/\W/g, '')).join() === 'A'), h);
 };
 
 SC['04 code compagnon de tout le carnet'] = async us => {
@@ -89,7 +89,7 @@ SC['05 abonnés : navigateur et appli, j’aime, commentaires, réponses'] = asy
   await wsync(V); await V.pg.reload(); await V.wait(4500); const va = await V.ev(() => document.body.innerText.replace(/\s+/g, ' ')); ok('Victoria retirée ne voit plus le voyage', !/Colisée/.test(va) && !/Fontaine de Trevi/.test(va), va.slice(0, 160));
 };
 
-SC['06 admin : couronne, seul l’admin retire, passer l’admin, départ'] = async us => {
+SC['06 admin : étoile, seul l’admin retire, passer l’admin, départ'] = async us => {
   const { A, C } = await partage({ abonne: false }); us.push(A, C);
   await corbeille(C); let t = await dlgTxt(C); ok('Claire (compagnon) ne peut pas retirer Anthony : refus immédiat', /Seul l’admin du voyage \(Anthony\) peut retirer/.test(t), t.slice(0, 140)); ok('aucune reprise de l’admin proposée', !/Reprendre l’admin/.test(t)); await okDlg(C);
   await croix(C); t = await dlgTxt(C); ok('la croix du voyage est refusée aussi', /Seul l’admin/.test(t), t.slice(0, 100)); await okDlg(C); await sync(C, A);
@@ -97,7 +97,7 @@ SC['06 admin : couronne, seul l’admin retire, passer l’admin, départ'] = as
   // passer l’admin
   await A.closeAll(); await A.ev(() => CV.spCompSheet()); await A.wait(900); await A.tap(/Lui passer l’admin/, '#v-sheet-bg', 900); t = await dlgTxt(A); ok('confirmation « Passer l’administration de … à Claire ? »', /Passer l’administration de « Rome à deux » à Claire/.test(t), t.slice(0, 120)); await okDlg(A); await A.wait(3500);
   for (let i = 0; i < 3; i++) await sync(A, C); await C.closeAll(); await C.ev(() => (CV._M().trip && CV.go(CV._M().trip))); await C.wait(600);
-  v = await voyage(C, 'Rome à deux'); ok('chez Claire : elle est admin, Anthony reste voyageur', v.admin === 'Claire' && v.voyageurs.includes('Anthony'), JSON.stringify(v)); ok('la couronne passe sur Claire', /Claire 👑/.test(await heros(C)), await heros(C));
+  v = await voyage(C, 'Rome à deux'); ok('chez Claire : elle est admin, Anthony reste voyageur', v.admin === 'Claire' && v.voyageurs.includes('Anthony'), JSON.stringify(v)); ok('l’étoile « Admin » passe sur Claire', /★ ?Admin ?Claire/.test(await heros(C)), await heros(C));
   await corbeille(A); t = await dlgTxt(A); ok('Anthony, qui n’est plus admin, ne peut plus retirer Claire', /Seul l’admin du voyage \(Claire\)/.test(t), t.slice(0, 100)); await okDlg(A);
   // Claire (admin) retire Anthony
   await corbeille(C); await okDlg(C); await C.wait(6500); for (let i = 0; i < 4; i++) { await sync(C, A); await A.wait(1200); } await A.closeAll(); await A.ev(() => CV.go(Object.values(CV._R()).find(r => r.type === 'trip' && r.titre === 'Rome à deux').id)); await A.wait(1200);

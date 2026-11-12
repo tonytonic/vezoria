@@ -91,7 +91,7 @@ export async function depense(U, titre, montant, { par, entre } = {}) {
 // 🔎 petits lecteurs d’état pour les vérifications
 export const voyage = (U, titre) => U.ev(t => { const R = CV._R(), x = Object.values(R).find(r => r.type === 'trip' && !r.deleted && r.titre === t); if (!x) return null;
   const adm = (x.adminBy && R[x.adminBy] ? x.adminBy : x.createdBy && R[x.createdBy] ? x.createdBy : (x.voyageurs || [])[0]) || ''; return { id: x.id, voyageurs: (x.voyageurs || []).map(v => (R[v] || {}).nom || '?'), admin: (R[adm] || {}).nom || '', ro: !!x.ro }; }, titre);
-export const heros = U => U.ev(() => ((document.querySelector('.cv-av-names') || {}).textContent || '').trim());
+export const heros = U => U.ev(() => [document.querySelector('.cv-adm-p'), document.querySelector('.cv-av-names')].map(e => ((e || {}).textContent || '').replace(/\s+/g, ' ').trim()).filter(Boolean).join(' | '));
 export const ecran = (U, n = 4000) => U.ev(n => (document.querySelector('#cv-body') || document.body).innerText.replace(/\s+/g, ' ').slice(0, n), n);
 export const dessus = async U => { const t = await U.top(); return t.s + ' ' + t.t; };
 export const fiches = (U, type, champ = 'titre') => U.ev(([t, c]) => Object.values(CV._R()).filter(r => r.type === t && !r.deleted).map(r => r[c] || ''), [type, champ]);
