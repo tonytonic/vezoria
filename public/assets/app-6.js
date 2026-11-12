@@ -709,7 +709,7 @@
       const sm = document.createElement('summary'); sm.innerHTML = h.innerHTML; d.appendChild(sm); h.remove();
       const inner = document.createElement('div'); inner.className = 'fold-in'; while(b.firstChild) inner.appendChild(b.firstChild); d.appendChild(inner);
       if(op === t) d.open = true;
-      d.addEventListener('toggle', ()=>{ if(!d.open) return; (M.foldOpen = M.foldOpen || {})[key] = t; persist(); root.querySelectorAll('details.cv-pfold').forEach(x=>{ if(x !== d) x.open = false; }); });
+      d.addEventListener('toggle', ()=>{ if(!d.open) return; (M.foldOpen = M.foldOpen || {})[key] = t; persist(); const y0 = sm.getBoundingClientRect().top; root.querySelectorAll('details.cv-pfold').forEach(x=>{ if(x !== d) x.open = false; }); const dy = sm.getBoundingClientRect().top - y0; if(dy) window.scrollBy(0, dy); });   // 🧭 la rubrique touchée reste sous le doigt (avant : la rubrique ouverte au-dessus se refermait et la page remontait)
       b.replaceWith(d); });
   }
   function prefFix(){

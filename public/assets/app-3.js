@@ -26,7 +26,7 @@
     if(n > wz.step){
       if(wz.step===1 && !wz.titre){ alert('Donne un nom au voyage.'); return; }
       if(wz.step===1 && !wz.voyageurs.length){ alert('Choisis au moins un voyageur.'); return; }
-      if(wz.step===2 && !wz.debut){ alert('Choisis la date de départ.'); return; }
+      if(wz.step===2 && !wz.debut){ const db = document.querySelector('#v-sheet-bg .dr-btn'); if(db){ toast('📅 ' + MSGT('Choisis la date de départ.')); db.click(); return; } alert('Choisis la date de départ.'); return; }   // 🧭 le calendrier s’ouvre tout seul au lieu d’un message bloquant
       if(wz.step===2 && wz.etapes.length===1) wz.etapes[0].nuits = wz.nuits;
       if(wz.step===3 && !wz.etapes.some(e=>e.ville)){ alert('Ajoute au moins une étape (une ville).'); return; }
       if(wz.step===3){ wz.etapes = wz.etapes.filter(e=>e.ville); if(wz.etapes.every(e=>!e.nuits) && wz.etapes.length <= wz.nuits) wzNights(); wzModes(); }   // 🌙 tes nuits restent les tiennes : on ne répartit que si aucune n’est remplie

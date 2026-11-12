@@ -3561,3 +3561,15 @@ button.rx-w{border:0;background:none;padding:0;font:inherit;color:inherit;text-a
 .ar-opts>summary::-webkit-details-marker{display:none}
 .ar-opts>summary::after{content:' ▾'}
 .ar-opts[open]>summary::after{content:' ▴'}
+
+/* 🧹 « Réserver » : les réservations suivantes sur une ligne, « Réserver ▸ » les ouvre */
+.ar-r.later{grid-template-columns:22px minmax(0,1fr) auto}
+.ar-r.later .ar-ra,.ar-r.later .ar-bkp{display:none!important}
+.ar-r:not(.later) .ar-rmore{display:none}
+.ar-r .ar-rmore{all:unset;grid-column:3;grid-row:1;align-self:center;cursor:pointer;font-size:.74rem;font-weight:800;padding:6px 10px;border-radius:99px;background:rgba(255,255,255,.2);color:#fff;white-space:nowrap}
+/* 🧹 « Finaliser » : le bloc PDF replié */
+.ar-prd>summary{list-style:none;cursor:pointer}
+.ar-prd>summary::-webkit-details-marker{display:none}
+.ar-prd>summary::after{content:' ▾';opacity:.7}
+.ar-prd[open]>summary::after{content:' ▴'}
+.ar-prd:not([open])>div{display:none}

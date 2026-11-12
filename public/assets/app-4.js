@@ -1351,6 +1351,7 @@ ${pm.join('\n')}</Document></kml>`;
     if(M.suggRun) delete M.suggRun;
     const nOf = d => list('place', p=>p.trip === tid && p.date === d).length;
     SG = {tid, i:0, n:hs.length, city:'', got:0, more:!!more};
+    if(M.ariOpen) delete M.ariOpen[tid];   // la recherche démarre : « Que faire » s’ouvre (la personne peut ensuite ouvrir une autre étape)
     if(M.trip === tid){ M.tab = 'prog'; M.ariOpen = M.ariOpen || {}; M.ariOpen[tid] = 'faire'; }
     toast('💡 ' + MSGT(more ? 'Je cherche de nouvelles suggestions…' : 'Je cherche les incontournables…')); refresh();
     const exDay = {}, t0 = R[tid] || {}, td0 = isoToday(), live = tripPhase(t0) === 'live', fut = d => !live || d >= td0;   // 📍 pendant le voyage : rien pour les jours passés

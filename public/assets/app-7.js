@@ -53,7 +53,7 @@
   function ariHTML(){
     const t = trip(); if(!t || t.archived || tripPhase(t) !== 'prep' || hidden('blk:prep')) return '';
     const D = ariData(t), S = D.S, done = S.filter(x=>x.ok).length, pct = Math.round(S.reduce((a, x)=>a + (x.ok ? 1 : x.f) * (x.w || 1), 0) / S.reduce((a, x)=>a + (x.w || 1), 0) * 100);   // réserver compte double
-    const cur = S.find(x=>!x.ok), op = SG && SG.tid === t.id ? 'faire' : ((M.ariOpen || {})[t.id]) || (cur && cur.k);
+    const cur = S.find(x=>!x.ok), op = ((M.ariOpen || {})[t.id]) || (SG && SG.tid === t.id ? 'faire' : cur && cur.k);   // 🩹 pendant la recherche d’idées, toucher « Réserver » ou « Finaliser » ne faisait rien : le choix de la personne passe d’abord
     const compact = !(SG && SG.tid === t.id) && !(M.ariFull || {})[t.id] && !((M.ariOpen || {})[t.id] && (M.ariOpen || {})[t.id] !== '-'), nx = compact ? ariNext(t, D, cur) : null;
     const lv = pct >= 100 ? ['✅','Prêt à partir'] : pct >= 75 ? ['🎒','Presque prêt'] : pct >= 45 ? ['🧩','En préparation'] : pct >= 15 ? ['✏️','Esquisse'] : ['💭','Rêve'];
     // 🧭 parcours guidé : dès que les villes et les dates sont posées (en plus du mode manuel)
@@ -90,9 +90,11 @@
       }
       if(k === 'resa'){
         if(!D.rs.length) return `<div class="ar-p">${MSGT('Ajoute d’abord tes étapes : les nuits et les trajets apparaîtront ici.')}</div>`;
-        return `<div class="ar-rs">${D.rs.map(it=>`<div class="ar-r${okB(it) ? ' ok' : ''}" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${okB(it) ? '✓' : it.cat === 'hotel' ? '🛏️' : icon(it)}</i>
+        // 🧹 tableau allégé (12/11/2026) : seule la prochaine réservation à faire montre ses boutons ; les suivantes tiennent sur une ligne (« Réserver ▸ » les ouvre), les faites aussi
+        const nxR = D.rs.find(it=>!okB(it)), later = it => !okB(it) && it !== nxR;
+        return `<div class="ar-rs">${D.rs.map(it=>`<div class="ar-r${okB(it) ? ' ok' : ''}${later(it) ? ' later' : ''}" role="button" onclick="CV.edit('${ja(it.id)}')"><i>${okB(it) ? '✓' : it.cat === 'hotel' ? '🛏️' : icon(it)}</i>
           <span><b data-notr>${esc(it.cat === 'hotel' ? (cityOf(it.titre) || it.titre) : itLbl(it))}</b><small>${it.cat === 'hotel' ? `${fd(it.date)} → ${fd(it.dateFin)} · ${nights(it.date, it.dateFin || it.date)} ${MSGT('nuits')}` : fd(it.date)}</small></span>
-          ${bkBtn(it)}<div class="ar-ra" data-bkid="${esc(it.id)}">${okB(it) ? '' : ariLink(it, t)}<button type="button" class="ar-ed" onclick="event.stopPropagation();CV.edit('${ja(it.id)}')">✏️ ${MSGT(okB(it) ? 'Ma résa' : 'Saisir ma résa')}</button>${okB(it) ? '' : `<button type="button" onclick="event.stopPropagation();CV.ariBook('${ja(it.id)}')">${MSGT('C’est réservé')}</button>`}</div></div>` + (okB(it) ? '' : it.cat === 'hotel' ? hoodHTML(it, t) : it.cat === 'transport' ? aptHTML(it, t) : '')).join('')}</div>`;
+          ${later(it) ? `<button type="button" class="ar-rmore" onclick="event.stopPropagation();this.closest('.ar-r').classList.remove('later')">${MSGT('Réserver')} ▸</button>` : ''}${bkBtn(it)}<div class="ar-ra" data-bkid="${esc(it.id)}">${okB(it) ? '' : ariLink(it, t)}<button type="button" class="ar-ed" onclick="event.stopPropagation();CV.edit('${ja(it.id)}')">✏️ ${MSGT(okB(it) ? 'Ma résa' : 'Saisir ma résa')}</button>${okB(it) ? '' : `<button type="button" onclick="event.stopPropagation();CV.ariBook('${ja(it.id)}')">${MSGT('C’est réservé')}</button>`}</div></div>` + (okB(it) || later(it) ? '' : it.cat === 'hotel' ? hoodHTML(it, t) : it.cat === 'transport' ? aptHTML(it, t) : '')).join('')}</div>`;
       }
       const rows = [
         `<button type="button" class="ar-f" onclick="CV.avantSheet()"><i>🧭</i><span>${MSGT('Avant de partir')}</span><small>${MSGT('papiers, santé, argent, urgences')}</small></button>`,
@@ -100,7 +102,7 @@
         ...D.fm.map(x=>`<button type="button" class="ar-f${x.done ? ' ok' : ''}" data-fm="${esc(x.l)}" onclick="CV.ariFm(this)"><i>${x.done ? '✅' : '🛂'}</i><span>${esc(x.l)}</span></button>`),
         `<button type="button" class="ar-f${D.ck.length && D.ckd === D.ck.length ? ' ok' : ''}" onclick="CV.tab('check')"><i>🧳</i><span>${MSGT('Valise et checklist')}</span><small>${D.ck.length ? D.ckd + '/' + D.ck.length : ''}</small></button>`,
         `<button type="button" class="ar-f" onclick="CV.socialHub()"><i>👥</i><span>${MSGT('Compagnons et abonnés')}</span><small>${(t.voyageurs || []).filter(prof).length}</small></button>`,
-        `<div class="ar-pr"><b>🖨️ ${MSGT('Imprimer ou exporter (PDF)')}</b><div>${[['iti','🗺️','Itinéraire'], ['resa','🎫','Réservations'], ['budget','💶','Budget et répartition'], ['recap','📋','Récap des étapes']].map(([k, ic, l], i)=>`<button type="button" onclick="CV.pdfPart('${ja(k)}')"><small>${i + 1}</small>${ic} ${MSGT(l)}</button>`).join('')}</div></div>`];
+        `<details class="ar-pr ar-prd"><summary><b>🖨️ ${MSGT('Imprimer ou exporter (PDF)')}</b></summary><div>${[['iti','🗺️','Itinéraire'], ['resa','🎫','Réservations'], ['budget','💶','Budget et répartition'], ['recap','📋','Récap des étapes']].map(([k, ic, l], i)=>`<button type="button" onclick="CV.pdfPart('${ja(k)}')"><small>${i + 1}</small>${ic} ${MSGT(l)}</button>`).join('')}</div></details>`];   // 🧹 les 4 boutons PDF repliés (12/11/2026)
       return `<div class="ar-fs">${rows.join('')}</div>${cdIns(t)}`;
     };
     const ms = t.debut ? cdLeft(t) : 0, cdOn = !!t.debut && !t.demo && ms > -864e5 && ms <= 400 * 864e5 && !hidden('blk:cd');
@@ -274,7 +276,9 @@
     try { for(const x of tlStages()){ if(!(M.ctry || {})[normQ(x.city)]){ const c = await countryOf(x.city); if(c) n++; } } } catch(e){}
     acBusy = false; if(n){ const y = window.scrollY; render(); window.scrollTo(0, y); }
   }
-  function ariTog(k){ const t = trip(); if(!t) return; M.ariOpen = M.ariOpen || {}; M.ariOpen[t.id] = M.ariOpen[t.id] === k ? '-' : k; (M.ariFull = M.ariFull || {})[t.id] = 1; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  function ariTog(k){ const t = trip(); if(!t) return; M.ariOpen = M.ariOpen || {}; M.ariOpen[t.id] = M.ariOpen[t.id] === k ? '-' : k; (M.ariFull = M.ariFull || {})[t.id] = 1; persist(); const y = window.scrollY; render(); window.scrollTo(0, y);
+    // 🧭 l’étape touchée s’ouvre sous les yeux (avant : depuis le résumé, le tableau se dépliait et on se retrouvait ailleurs dans la page)
+    if(M.ariOpen[t.id] === k) requestAnimationFrame(()=>{ const s = document.querySelector('.ar-steps .ar-s.open'); if(!s) return; const r = s.getBoundingClientRect(), top = (document.querySelector('body > .header') || {offsetHeight:90}).offsetHeight + 12; if(r.top < top || r.top > innerHeight * .55) window.scrollBy({top:r.top - top, behavior:'smooth'}); }); }
   function ariSkip(k){ const t = trip(); if(!t) return; M.ariSkip = M.ariSkip || {}; (M.ariSkip[t.id] = M.ariSkip[t.id] || {})[k] = 1; if(M.ariOpen) delete M.ariOpen[t.id]; persist(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function ariBook(id){ const it = R[id]; if(!it) return; const c = clone(it); c.statut = 'booked'; put(c, '✓ ' + MSGT('Noté comme réservé')); const y = window.scrollY; render(); window.scrollTo(0, y); }
   function ariFm(b){ cdFm(b); const y = window.scrollY; setTimeout(()=>{ render(); window.scrollTo(0, y); }, 250); }

@@ -1383,7 +1383,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       cd.innerHTML = countdown(t); cd.style.display = cd.innerHTML ? '' : 'none';
       const vv = tv(), shown = vv.slice(0, 8);
       const adm = TS()[t.id] && vv.length > 1 && typeof tripAdmin === 'function' ? tripAdmin(t) : '';   // 👑 voyage partagé : on voit qui l’administre
-      av.innerHTML = shown.map(id=>`<span class="cv-av" style="background:${pcol(id)};position:relative" title="${esc(pname(id))}${id === adm ? ' · ' + esc(MSGT('administrateur du voyage')) : ''}">${esc((pname(id)[0]||'?').toUpperCase())}${id === adm ? '<i class="cv-adm" aria-hidden="true">★</i>' : ''}</span>`).join('')
+      av.innerHTML = shown.map(id=>`<span class="cv-av" style="background:${pcol(id)};position:relative" title="${esc(pname(id))}${id === adm ? ' · ' + esc(MSGT('administrateur du voyage')) : ''}">${esc((pname(id)[0]||'?').toUpperCase())}</span>`).join('')
         + (vv.length > 8 ? `<span class="cv-av" style="background:#444" title="${vv.length - 8} autres">+${vv.length - 8}</span>` : '')
         + `<span class="cv-av-names">${vv.length <= 3 ? vv.map(id=>esc(pname(id))).join(' & ') : vv.slice(0,2).map(id=>esc(pname(id))).join(', ') + ' et ' + (vv.length - 2) + ' autres'}</span>`;
       { const hc = document.getElementById('hdr-chips'); if(hc && adm && prof(adm)) hc.insertAdjacentHTML('beforeend', `<span class="cv-adm-p" title="${esc(MSGT('administrateur du voyage'))}">★ <b>${esc(MSGT('Admin'))}</b> <i data-notr>${esc(pname(adm))}</i></span>`); }   // ★ qui gère le voyage, avec les autres repères du voyage
