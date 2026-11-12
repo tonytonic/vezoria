@@ -2084,7 +2084,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-12g'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-12h'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -3034,7 +3034,7 @@
     window.addEventListener('scroll', ()=>{ if(!raf) raf = requestAnimationFrame(check); }, {passive:true});
     [300, 1200, 3000, 6000].forEach(later);
   })();
-  var RECAPI = {wzSame, plDay, wzNearAdd, tcfWho, tcfSet, i18nNames, adminPass, codeNoted, joinPickBusy, userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg, pgList, pgGo, pgDecide, rxGo};
+  var RECAPI = {inspPP, worldPre, worldPreGo, wzSame, plDay, wzNearAdd, tcfWho, tcfSet, i18nNames, adminPass, codeNoted, joinPickBusy, userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg, pgList, pgGo, pgDecide, rxGo};
 
   const api = {souvResend, obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
     toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,

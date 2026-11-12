@@ -1328,7 +1328,7 @@
   function newTrip(){
     openSheet(`<h2>🧳 Nouveau voyage</h2><div class="v-sum-small" style="margin-bottom:10px">Comment veux-tu commencer ?</div>
       <button type="button" class="cv-choice" onclick="CV.close();CV.wizard()"><i>🧭</i><span><b>Je sais où je vais</b><small>L’assistant crée le programme, les hébergements et les trajets en 5 étapes.</small></span></button>
-      <button type="button" class="cv-choice" onclick="CV.worldNew()"><i>🌍</i><span><b>Je le dessine sur le globe</b><small>Touche les villes sur la Terre, dans l’ordre : la route se trace et le voyage est créé.</small></span></button>
+      <button type="button" class="cv-choice" onclick="CV.worldPre()"><i>🌍</i><span><b>Je le dessine sur le globe</b><small>Touche les villes sur la Terre, dans l’ordre : la route se trace et le voyage est créé.</small></span></button>
       <button type="button" class="cv-choice" onclick="CV.inspire()"><i>💡</i><span><b>Je ne sais pas encore où aller</b><small>Quelques questions, et l’appli te propose des destinations adaptées avec ses conseils.</small></span></button>
       <button type="button" class="cv-choice" onclick="CV.blankTrip()"><i>📄</i><span><b>Voyage vierge</b><small>Juste un nom : tu remplis tout toi-même, à ton rythme.</small></span></button>
       <button type="button" class="cv-choice" onclick="CV.close();CV.joinAny()"><i>🔗</i><span><b>Je rejoins le voyage ou le carnet d’un ami</b><small>Tu as reçu un code ou un lien : colle-le, le voyage (ou tous ses voyages) arrive sur ton téléphone.</small></span></button>
@@ -1712,6 +1712,7 @@
           <div class="v-f"><label>${esc(MSGT('Retour le'))}</label><input class="v-in" type="date" id="in-d2" value="${esc(v('d2',''))}" onchange="CV.inspDatesTouch()"></div></div>
         <div class="v-f"><label>${MSGT('Combien de jours ?')}</label>${cards('in-duree', [['3', MSGT('Week-end'), '🌅', MSGT('2–3 jours')], ['5', MSGT('Court séjour'), '🧳', MSGT('4–5 jours')], ['7', MSGT('Une semaine'), '🏖️', RF('{0} jours', 7)], ['10', RF('{0} jours', 10), '🗺️', ''], ['14', MSGT('Deux semaines'), '🌍', RF('{0} jours', 14)], ['21', MSGT('Trois semaines et +'), '✈️', ''], ...(['3','5','7','10','14','21'].includes(String(v('duree','7'))) ? [] : [[String(v('duree','7')), RF('{0} jours', v('duree','7')), '📅', '']])], v('duree','7'))}</div></div>
       <div class="in-pg" data-pg="2">
+        ${profiles().length ? `<div class="v-f"><label>👥 ${MSGT('Qui part ?')}</label><div onclick="setTimeout(()=>{ const n = document.querySelectorAll('#in-tv button.on').length, s = document.getElementById('in-nb'); if(s && n) s.value = String(Math.min(6, Math.max(n, +s.value > n ? +s.value : n))); },0)">${peopleSel('in-tv', profiles().map(p=>p.id), (S.vv && S.vv.length ? S.vv : [M.me]).filter(Boolean))}</div></div>` : ''}
         ${cards('in-qui', [['solo', MSGT('Seul(e)'), '🧍'], ['couple', MSGT('En couple'), '💕'], ['amis', MSGT('Entre amis'), '🎉'], ['famille', MSGT('En famille'), '👨‍👩‍👧']], v('qui','couple'))}
         <div class="v-f" style="margin-top:14px"><label>${MSGT('Combien de voyageurs ?')}</label>${sel('in-nb', [['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6 et +']], v('nb','2'))}</div>
         <div class="v-f"><label>${MSGT('Rythme')}</label>${cards('in-rythme', [['calme', MSGT('Tranquille'), '🧘'], ['equil', MSGT('Équilibré'), '⚖️'], ['intense', MSGT('J’en veux plein'), '⚡']], v('rythme','equil'), 'wz-c3')}</div></div>
@@ -1725,11 +1726,13 @@
         <div class="v-f"><label>${MSGT('Départ de')}</label>${depSelect(v('dep', depGuess()))}</div>
         <div class="v-f2" id="in-other" style="${v('dep','Nantes')==='autre' ? '' : 'display:none'}"><div class="v-f"><label>Ta ville de départ</label><input class="v-in" id="in-deptxt" data-place autocomplete="off" value="${esc(v('depTxt',''))}" placeholder="Ex. Plougastel, Genève, Montréal…"></div>
           <div class="v-f"><label>Aéroport (code, facultatif)</label><input class="v-in" id="in-iata" value="${esc(v('iata',''))}" placeholder="Ex. BES, GVA, YUL" maxlength="3" autocapitalize="characters"></div></div>
+        <label class="cv-checkline wz-same"><input type="checkbox" id="in-same" ${S.same !== false ? 'checked' : ''} onchange="CV.inspPP()"> 🤝 ${MSGT('On part et on revient tous du même endroit')}</label>
+        <div id="in-pp"></div>
         <div class="v-f"><label>${esc(MSGT('Comment y aller ?'))}</label><div class="v-filters in-how" style="flex-wrap:wrap">${[['tout', MSGT('Peu importe')], ['avion', '✈️ ' + MSGT('Avion')], ['sol', '🚗 🚆 🚌 ' + MSGT('Sans avion (voiture, train, bus)')]].map(([k, l])=>`<button type="button" class="v-chip${v('how','tout') === k ? ' on' : ''}" data-how="${k}" onclick="this.parentNode.querySelectorAll('[data-how]').forEach(b=>b.classList.toggle('on', b === this))">${esc(l)}</button>`).join('')}</div></div>
         <div class="v-f"><label>${MSGT('Trajet au maximum')}</label>${sel('in-vol', [['1','1 h'],['2','2 h'],['3','3 h'],['4','4 h'],['6','6 h'],['8','8 h'],['99','Peu importe']], v('vol','4'))}</div>
         <label class="cv-checkline"><input type="checkbox" id="in-cni"${S.cni?' checked':''}> Uniquement avec la carte d’identité (pas de passeport)</label></div>
       <div class="v-actions wz-act"><button type="button" class="v-btn sec cv-sq in-prev" onclick="${nav(-1)}" aria-label="Revenir en arrière">←</button>
-        <button type="button" class="v-btn in-next" onclick="${nav(1)}">${MSGT('Suivant')} →</button>
+        <button type="button" class="v-btn in-next" onclick="${nav(1)}CV.inspPP();">${MSGT('Suivant')} →</button>
         <button type="button" class="v-btn in-go" onclick="CV.inspireGo()">✨ ${MSGT('Me proposer des destinations')}</button>
         <button type="button" class="v-btn sec cv-sq in-demo" onclick="CV.inspireDemo()" title="${esc(MSGT('Exemple'))}">👀</button></div></div>`);
   }
@@ -1786,12 +1789,21 @@
     const m = document.getElementById('in-mois'); if(m) m.value = S.mois;
     const d = document.getElementById('in-duree'); if(d){ if(![...d.options].some(o=>o.value === S.duree)){ const o = document.createElement('option'); o.value = S.duree; o.textContent = RF('{0} jours', S.duree); d.appendChild(o); } d.value = S.duree; }
   }
+  // 👥 départs de chacun (questionnaire « Où partir ? » et préparation du globe) : un bloc par voyageur quand tout le monde ne part pas du même endroit
+  function ppRead(){ const o = {}; document.querySelectorAll('[data-pdep]').forEach(i=>{ const pid = i.dataset.pdep, r = document.querySelector(`[data-pret="${pid}"]`); o[pid] = {dep:i.value.trim(), ret:(r ? r.value : '').trim()}; }); return o; }
+  function ppHTML(vv, gens, dep){ return `<div class="v-sum-small" style="margin:-4px 0 8px">${MSGT('Chacun son trajet : l’un en voiture, l’autre en train ou en avion.')}</div>` + vv.map(pid=>{ const g = gens[pid] || {}; return `<div class="wz-pp">${pchip(pid)}
+      <div class="wz-pl"><span>🛫 ${MSGT('Aller')}</span><input class="v-in" data-pdep="${esc(pid)}" data-place autocomplete="off" value="${esc(g.dep != null ? g.dep : dep || '')}" placeholder="${esc(MSGT('départ de…'))}"></div>
+      <div class="wz-pl"><span>🏠 ${MSGT('Retour')}</span><input class="v-in" data-pret="${esc(pid)}" data-place autocomplete="off" value="${esc(g.ret != null ? g.ret : dep || '')}" placeholder="${esc(MSGT('retour vers…'))}"></div></div>`; }).join(''); }
+  function inspPP(){ const el = document.getElementById('in-pp'); if(!el) return; const vv = peopleVal('in-tv'), same = (document.getElementById('in-same') || {checked:true}).checked;
+    const box = document.getElementById('in-same'); if(box) box.closest('label').style.display = vv.length > 1 ? '' : 'none';
+    const dsel = document.getElementById('in-dep'), dep = dsel ? (dsel.value === 'autre' ? (document.getElementById('in-deptxt') || {}).value : dsel.value) : '';
+    el.innerHTML = vv.length > 1 && !same ? ppHTML(vv, Object.assign({}, (M.insp || {}).gens || {}, ppRead()), dep) : ''; }
   async function inspireGo(){
     const g = id => (document.getElementById(id)||{}).value;
     if(g('in-dep') === 'autre'){ const t = (g('in-deptxt')||'').trim(); if(!t){ alert('Indique ta ville de départ.'); return; }
       if(!M.insp || M.insp.depTxt !== t || !M.insp.depLL){ toast('📡 Je situe ' + t + '…'); const gg = await geocode(t, null).catch(()=>null); if(!gg){ alert('Ville introuvable : essaie avec le pays (ex. « Plougastel, France »).'); return; } M.insp = Object.assign({}, M.insp, {depTxt:t, depLL:[gg.lat, gg.lng]}); } }
     const S = M.insp = inspDates(Object.assign({}, M.insp, {dep:g('in-dep'), mois:g('in-mois'), duree:g('in-duree'), nb:g('in-nb'), budget:g('in-budget'), style:g('in-style'), vol:g('in-vol'), climat:g('in-climat'), qui:g('in-qui'), rythme:g('in-rythme'),
-      depTxt:(g('in-deptxt')||'').trim(), iata:(g('in-iata')||'').trim().toUpperCase(), cni:(document.getElementById('in-cni')||{}).checked, tags:[...document.querySelectorAll('[data-tag].on')].map(b=>b.dataset.tag), how:((document.querySelector('[data-how].on') || {}).dataset || {}).how || 'tout'})); persist();
+      depTxt:(g('in-deptxt')||'').trim(), iata:(g('in-iata')||'').trim().toUpperCase(), cni:(document.getElementById('in-cni')||{}).checked, vv:document.getElementById('in-tv') ? peopleVal('in-tv') : (M.insp || {}).vv, same:(document.getElementById('in-same') || {checked:true}).checked, gens:Object.assign({}, (M.insp || {}).gens || {}, ppRead()), tags:[...document.querySelectorAll('[data-tag].on')].map(b=>b.dataset.tag), how:((document.querySelector('[data-how].on') || {}).dataset || {}).how || 'tout'})); persist();
     inspRes = inspCalc(S); inspShow(8);
   }
   function inspShow(n, focus){
@@ -1852,7 +1864,7 @@
     const rows = c.stops.map(([v, n])=>{ const d = cur; cur = addDays(cur, n); return `<li><b>${esc(v)}</b> · ${RF(n > 1 ? '{0} nuits' : '{0} nuit', n)} <span class="v-sum-small">${fshort(d)} → ${fshort(cur)}</span></li>`; }).join('');
     if(c.dep == null) c.dep = dep || M.home || ''; if(c.ret == null) c.ret = c.dep;
     // 👥 12/11/2026 : qui part, et pour chacun son départ et son retour (comme dans « Je sais où je vais »)
-    c.vv = c.vv || [M.me].filter(Boolean); c.gens = c.gens || {};
+    const I0 = M.insp || {}; c.vv = c.vv || (I0.vv && I0.vv.length ? I0.vv.slice() : [M.me].filter(Boolean)); c.gens = c.gens || Object.assign({}, I0.gens || {}); if(c.same == null && I0.same === false) c.same = false;
     const pool = profiles().map(p=>p.id), many = c.vv.length > 1 && c.same === false;   // 🤝 par défaut tout le monde part et revient du même endroit : une seule saisie
     openSheet(`<h2>🧳 ${MSGT('Vérifie ton voyage avant de le créer')}</h2>
       <div class="v-f"><label>✏️ ${MSGT('Nom du voyage')}</label><input class="v-in" id="tcf-titre" value="${esc(c.titre != null ? c.titre : c.x.nom + ' · ' + durLbl(+(S.duree || 7)))}" oninput="CV.tcfSet('titre',this.value)"></div>

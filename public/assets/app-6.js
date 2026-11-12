@@ -2567,6 +2567,32 @@
   /* ---------- Rêver : créer un voyage en touchant le globe ---------- */
   let wantPlan = false, wantFly = null;
   function worldTrip(id){ if(wm && wm.map && wm.data){ worldMap(); setTimeout(()=>worldFly(id), 400); } else { wantFly = id; worldMap(); } }
+  // 🌍 12/11/2026 : avant de dessiner, on demande tout (dates, qui part, d’où et vers où) : le globe connaît alors le nombre de nuits à répartir
+  function worldPre(re){
+    if(re === 1 && document.getElementById('gp-tv')) return worldPrePP();   // case cochée ou voyageur ajouté : on redessine seulement les départs
+    const I = M.insp || {}, pool = profiles().map(p=>p.id), vv = (I.vv && I.vv.length ? I.vv : [M.me]).filter(Boolean), dep = I.gDep || M.home || '';
+    openSheet(`<div class="wz2"><div class="wz-hero"><i aria-hidden="true">🌍</i><h2>${MSGT('Avant de dessiner')}</h2><p>${MSGT('Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.')}</p></div>
+      <div class="v-f2"><div class="v-f"><label>${MSGT('Départ le')}</label><input class="v-in" type="date" id="gp-d1" value="${esc(I.gD1 || '')}"></div><div class="v-f"><label>${MSGT('Retour le')}</label><input class="v-in" type="date" id="gp-d2" value="${esc(I.gD2 || '')}"></div></div>
+      ${pool.length ? `<div class="v-f"><label>👥 ${MSGT('Qui part ?')}</label><div onclick="setTimeout(()=>CV.worldPre(1),0)">${peopleSel('gp-tv', pool, vv)}</div></div>` : ''}
+      <label class="cv-checkline wz-same" id="gp-samel"${vv.length > 1 ? '' : ' style="display:none"'}><input type="checkbox" id="gp-same" ${I.gSame !== false ? 'checked' : ''} onchange="CV.worldPre(1)"> 🤝 ${MSGT('On part et on revient tous du même endroit')}</label>
+      <div id="gp-one"><div class="v-f2"><div class="v-f"><label>🏠 ${MSGT('Départ de')}</label><input class="v-in" id="gp-dep" data-place autocomplete="off" value="${esc(dep)}" placeholder="${esc(MSGT('Ta ville'))}"></div><div class="v-f"><label>🏁 ${MSGT('Retour à')}</label><input class="v-in" id="gp-ret" data-place autocomplete="off" value="${esc(I.gRet || dep)}" placeholder="${esc(MSGT('Même ville'))}"></div></div></div>
+      <div id="gp-pp"></div>
+      <div class="v-actions wz-act"><button type="button" class="v-btn" onclick="CV.worldPreGo()">🌍 ${MSGT('Je pose mes étapes sur le globe')}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div></div>`);
+    worldPrePP();
+  }
+  function worldPrePP(){ const vv = peopleVal('gp-tv'), box = document.getElementById('gp-same'), same = !box || box.checked || vv.length < 2;
+    const l = document.getElementById('gp-samel'); if(l) l.style.display = vv.length > 1 ? '' : 'none';
+    const one = document.getElementById('gp-one'), pp = document.getElementById('gp-pp'); if(!pp) return;
+    if(one) one.style.display = same ? '' : 'none';
+    pp.innerHTML = same ? '' : ppHTML(vv, Object.assign({}, (M.insp || {}).gens || {}, ppRead()), ((document.getElementById('gp-dep') || {}).value || '').trim()); }
+  function worldPreGo(){
+    const g = id => ((document.getElementById(id) || {}).value || '').trim(), d1 = g('gp-d1'), d2 = g('gp-d2');
+    if(!d1){ alert(MSGT('Choisis la date de départ.')); return; } if(!d2 || d2 <= d1){ alert(MSGT('Choisis une date de retour après le départ.')); return; }
+    const vv = document.getElementById('gp-tv') ? peopleVal('gp-tv') : [M.me].filter(Boolean), same = (document.getElementById('gp-same') || {checked:true}).checked || vv.length < 2;
+    const gens = Object.assign({}, (M.insp || {}).gens || {}, ppRead()), me = gens[M.me] || gens[vv[0]] || {}, dep = same ? g('gp-dep') : me.dep || '', ret = same ? g('gp-ret') || dep : me.ret || dep;
+    M.insp = Object.assign({}, M.insp || {}, {d1, d2, duree:String(Math.min(60, nights(d1, d2) + 1)), mois:String(+d1.slice(5, 7)), vv:vv.length ? vv : [M.me].filter(Boolean), same, gens, gD1:d1, gD2:d2, gDep:dep, gRet:ret, gSame:same, globePre:1});
+    if(dep){ M.home = dep; } persist(); worldNew();
+  }
   function worldNew(){ closeSheet(true); if(wm && wm.map && wm.map.loaded && wm.map.loaded()){ worldMap(); setTimeout(worldPlan, 300); } else { wantPlan = true; worldMap(); } }
   async function worldPlan(){
     if(!wm || !wm.map){ toast('🌍 Le globe se charge…'); return; }
@@ -2597,7 +2623,8 @@
     let b = document.getElementById('wm-plan'); const ov = document.getElementById('cv-world'); if(!ov) return;
     if(!b){ b = document.createElement('div'); b.id = 'wm-plan'; ov.appendChild(b); }
     const P = wm.plan || [];
-    b.innerHTML = `<div class="wp-h">✨ Touche le globe pour poser les villes de ton voyage, dans l’ordre.</div><div class="wp-c">${P.map((p,i)=>`<span>${flag(p.cc)} ${esc(p.city)}</span>`).join('<i>→</i>') || '<em>Aucune ville pour l’instant</em>'}</div>
+    const I = M.insp || {}, pre = I.globePre && I.d1 && I.d2 ? `<div class="wp-p">🏠 ${esc(I.gDep || '')}${I.gDep ? ' → … → ' + esc(I.gRet || I.gDep) + ' · ' : ''}${esc(fshort(I.d1))} → ${esc(fshort(I.d2))} · ${RF('{0} nuits', nights(I.d1, I.d2))}</div>` : '';
+    b.innerHTML = `${pre}<div class="wp-h">✨ Touche le globe pour poser les villes de ton voyage, dans l’ordre.</div><div class="wp-c">${P.map((p,i)=>`<span>${flag(p.cc)} ${esc(p.city)}</span>`).join('<i>→</i>') || '<em>Aucune ville pour l’instant</em>'}</div>
       <div class="wp-b"><button type="button" onclick="CV.worldPlanUndo()"${P.length ? '' : ' disabled'} aria-label="Annuler">↶</button><button type="button" onclick="CV.worldPlanStop()">Annuler</button><button type="button" class="pri" onclick="CV.worldPlanGo()"${P.length ? '' : ' disabled'}>✨ Créer ce voyage</button></div>`;
   }
   function worldPlanUndo(){ if(!wm || !wm.plan || !wm.plan.length) return; wm.plan.pop(); const m = wm.planM.pop(); if(m) m.remove(); if(wm.plan.length) worldPlanLine(); else { ['plan','plan-glow'].forEach(l=>{ try { wm.map.removeLayer(l); } catch(e){} }); try { wm.map.removeSource('plan'); } catch(e){} } worldPlanUI(); }
@@ -2610,14 +2637,18 @@
     const match = P.map(p => DESTS.find(d => n(d[0]).split(/[^a-z0-9]+/).includes(n(p.city)) || (d[9]||[]).some(e=>n(e[0])===n(p.city))));
     const m0 = match.find(Boolean);
     const itin = P.map((p,i)=>{ const m = match[i], e = m && (m[9]||[]).find(e=>n(e[0])===n(p.city)); return [p.city, e ? e[1] : (P.length === 1 ? 4 : 2)]; });
+    // 🌍 dates choisies avant de dessiner : on répartit leurs nuits sur les étapes posées
+    { const I = M.insp || {}; if(I.globePre && I.d1 && I.d2){ const N = Math.max(1, nights(I.d1, I.d2)), tot = itin.reduce((s,a)=>s+a[1],0) || 1;
+      itin.forEach(a=>{ a[1] = Math.max(1, Math.round(a[1] * N / tot)); }); let df = N - itin.reduce((s,a)=>s+a[1],0), k = 0; while(df && k < 60){ const j = k % itin.length; if(df > 0){ itin[j][1]++; df--; } else if(itin[j][1] > 1){ itin[j][1]--; df++; } k++; } } }
     const nights = itin.reduce((s,a)=>s+a[1],0);
     const nm = P.length === 1 ? P[0].city : P.length === 2 ? P[0].city + ' & ' + P[1].city : P[0].city + ' → ' + P[P.length-1].city;
     const eu = EURO.includes(P[0].cc) || ['FR','CH','NO','IS','LI'].includes(P[0].cc);
     const d = [nm, P[0].pays, P[0].cc, P[0].lat, P[0].lng, m0 ? m0[5] : 'ville culture', m0 ? m0[6] : [5,6,9], m0 ? m0[7] : 90, [Math.max(2, nights - 2), nights + 3], itin,
       m0 ? m0[10] : 'Itinéraire dessiné sur le globe : règle les nuits, choisis les lieux à voir, puis crée le voyage.', m0 ? m0[11] : (eu ? 'UE' : 'P'), m0 ? m0[12] : Array(12).fill(20), m0 ? m0[13] : P[0].city];
     if(!m0){ toast('🌡️ ' + MSGT('Je regarde le climat…')); cl = await climOf(P[0]).catch(()=>null); if(cl){ d[12] = cl.t; d[6] = bestOf(cl); } }
-    const i = DESTS.push(d) - 1, now = new Date().getMonth() + 1, best = d[6], mo = best.find(m=>m > now) || best[0] || now;
-    M.insp = Object.assign({}, M.insp || {}, {duree: nights + 1, rythme: 'intense'}); persist();
+    const I0 = M.insp || {}, pre = I0.globePre && I0.d1;
+    const i = DESTS.push(d) - 1, now = new Date().getMonth() + 1, best = d[6], mo = pre ? +I0.d1.slice(5, 7) : best.find(m=>m > now) || best[0] || now;
+    M.insp = Object.assign({}, M.insp || {}, {duree: nights + 1, rythme: 'intense'}, pre ? {dep:'autre', depTxt:I0.gDep || ''} : {}); persist();
     inspRes.unshift({i, d, nom:nm, pays:P[0].pays, cc:P[0].cc, tip:d[10], visa:d[11], wk:d[13], tags:d[5].split(' '), best, dur:d[8], sc:0, est:d[7]*nights, trans:0, stay:d[7]*nights, h:0, ground:false, escale:false, mo, tmp:d[12][mo-1], why:[], warn:[], itin, globe:1, known:!!m0 || !!cl});
     worldPlanStop(); worldClose(); M.mode = 'prep';
     inspOpen(i);   // même écran que « Je ne sais pas où aller » : présentation, étapes et nuits, lieux à voir, villes proches, puis création (dates, budget, trajets)
