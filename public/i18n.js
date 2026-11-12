@@ -13,7 +13,7 @@
   var lang = saved && LANGS[saved] ? saved : (nav.filter(function(l){ return LANGS[l]; })[0] || 'en');
   var I = window.I18N = {lang: lang, locale: LOC[lang], langs: LANGS, ready: lang === 'fr',
     set: function(l){ try { localStorage.setItem('cv-lang', l); } catch(e){} location.reload(); },
-    tr: function(s){ return s; }, msg: function(s){ return s; }, load: load};
+    tr: function(s){ return s; }, msg: function(s){ return s; }, load: load, setNames: function(){}};
   document.documentElement.lang = lang;
   if(RTL[lang]){ document.documentElement.dir = 'rtl'; I.rtl = true; }   // l’arabe s’affiche de droite à gauche
   if(lang === 'fr') return;
@@ -30,6 +30,8 @@
         for(var i = 0; i < parts.length; i++){ if(i % 2) { re += '([\\s\\S]*?)'; order.push(+parts[i]); } else re += esc(parts[i]); }
         var p = {re: new RegExp(re + '$'), order: order, v: flat(v), lit: parts.filter(function(x, i){ return !(i % 2); }).join('').length}, head = parts[0];
         if(head.length >= 3){ var key = head.slice(0, 3); if(!PAT.has(key)) PAT.set(key, []); PAT.get(key).push(p); } else WILD.push(p);
+        // modèle sur plusieurs lignes (« Rejoindre le carnet de {0} ?\n\nTu verras… ») : l’appli le demande tel quel, avec ses {0} → on le rend tel quel
+        if(/\n/.test(k) && !/\{\d+\|/.test(v)) RAW.set(rawN(k), rawN(v));
       } else { EXACT.set(flat(k), flat(v)); if(/\n/.test(k)) RAW.set(rawN(k), rawN(v)); }
     });
     // une phrase coupée par une balise (« 💳 payé par <b>Anthony</b> ») : chaque morceau de texte fixe est aussi traduit seul
@@ -63,10 +65,15 @@
     // description pour les moteurs de recherche : dans la langue choisie
     try { var md = document.querySelector('meta[name="description"]'); if(md){ if(!md.__fr) md.__fr = md.getAttribute('content'); md.setAttribute('content', msg(md.__fr)); } } catch(e){}
   }
+  // 👤 prénoms connus de l’appli (profils, abonnés, compagnons) : jamais traduits. « Voyage de Claire » ne devient pas « Light’s trip ».
+  var NAMES = new Set(), namesKey = '';
+  function isName(c){ if(!NAMES.size) return false; if(NAMES.has(c)) return true; var ps = c.split(/\s*(?:&|,| et )\s*/); if(ps.length < 2) return false; for(var i = 0; i < ps.length; i++){ var q = ps[i].replace(/\s*👑$/, ''); if(!q || !NAMES.has(q)) return false; } return true; }
+  I.setNames = function(list){ var L = []; (list || []).forEach(function(n){ n = flat(n == null ? '' : n); if(n && L.indexOf(n) < 0) L.push(n); }); L.sort(); var k = L.join('\u0001'); if(k === namesKey) return; namesKey = k; NAMES = new Set(L); memo.clear(); };
   // une valeur insérée dans une phrase peut elle-même être un texte connu (« hébergement », « 3 jours · »)
   function sub(x, depth){
     if(!x || depth > 1 || !/[A-Za-zÀ-ÿ]/.test(x)) return x;
     var m = /^(\s*)([\s\S]*?)(\s*)$/.exec(x), c = flat(m[2]); if(!c) return x;
+    if(isName(c)) return x;   // un prénom (« Claire », « Rose ») n’est jamais traduit, même s’il est aussi un mot du dictionnaire
     var r = EXACT.has(c) ? EXACT.get(c) : viaPattern(c, depth + 1);
     return r == null ? x : m[1] + r + m[3];
   }
@@ -85,6 +92,7 @@
   }
   function look(core){
     if(memo.has(core)) return memo.get(core);
+    if(NAMES.size && isName(core)) return null;
     // « · il y a 3 min » : un séparateur « · » devant un texte connu (sinon un modèle trop large comme « {0} min » le gardait en français)
     if(/^·\s/.test(core) && !EXACT.has(core)){ var rs = look(core.replace(/^·\s+/, '')); if(rs != null){ memo.set(core, '· ' + rs); return '· ' + rs; } }
     var r = EXACT.has(core) ? EXACT.get(core) : null, pm = /^([^A-Za-zÀ-ÿ]+?)([A-Za-zÀ-ÿ][\s\S]*)$/.exec(core);
