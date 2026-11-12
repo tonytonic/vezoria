@@ -1,0 +1,69 @@
+import { chromium } from 'playwright'; import fs from 'node:fs';
+import { BASE, srv, apiLog, env } from './local.mjs';
+export { BASE, apiLog, env };
+import path from 'node:path'; import os from 'node:os';
+export const OUT = process.env.SHOTS || path.join(os.tmpdir(), 'vezoria-e2e'); fs.mkdirSync(OUT, { recursive: true });
+export const QUIET = !!process.env.QUIET; export const log = (...a) => { if (!QUIET) console.log(...a); }; export const say = (...a) => console.log(...a);
+// ✅ vérification d’un résultat (pas seulement « ça ne plante pas »)
+export const RES = []; export const ok = (label, cond, detail) => { RES.push([!!cond, label, detail]); console.log((cond ? '  ✓ ' : '  ✗ ') + label + (cond || detail == null ? '' : ' → ' + String(detail).slice(0, 300))); return !!cond; };
+export const br = await chromium.launch({ args: (process.env.PW_ARGS || '--disable-gpu').split(' ').filter(Boolean) });
+export const iso = d => { const x = new Date(Date.now() + d * 864e5); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
+let shotN = 0;
+export async function user(name, { geo = { latitude: 41.9028, longitude: 12.4964 }, url = '/?web=1', lang = 'fr' } = {}) {
+  const ctx = await br.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, serviceWorkers: 'block', locale: 'fr-FR', timezoneId: 'Europe/Paris', ...(geo ? { geolocation: geo, permissions: ['geolocation'] } : {}) });
+  await ctx.route(/^https?:\/\/(?!localhost)/, r => r.abort());
+  await ctx.addInitScript(l => { try { if (!localStorage.getItem('cv-lang')) localStorage.setItem('cv-lang', l); } catch (e) {} window.__sh = []; try { navigator.share = async d => { window.__sh.push(d); }; navigator.canShare = () => true; } catch (e) {} try { navigator.clipboard.writeText = async t => { window.__clip = t; }; navigator.clipboard.readText = async () => window.__clip || ''; } catch (e) {} }, lang);
+  const pg = await ctx.newPage(); const errs = []; const U = { name, pg, ctx, errs };
+  pg.on('pageerror', e => errs.push(name + ': ' + e.message.slice(0, 300) + ' @ ' + String(e.stack || '').split('\n').slice(1, 4).map(x => x.trim().replace(/https?:\/\/[^/]+\//, '')).join(' < ').slice(0, 260)));
+  pg.on('console', m => { if (m.type() === 'error' && !/Failed to load resource|net::ERR|AJAXError|arcgis|tile|favicon|Could not load image/i.test(m.text())) errs.push(name + ' console: ' + m.text().slice(0, 300)); });
+  pg.on('dialog', async d => { U.nd = (U.nd || 0) + 1; U.ndLast = d.message().slice(0, 200); log(`   [${name}] dialogue natif ${d.type()}: ${d.message().slice(0, 200)}`); await d.accept().catch(() => {}); });
+  
+  U.top = () => pg.evaluate(() => { const vis = b => b.getClientRects().length && getComputedStyle(b).visibility !== 'hidden';
+    let root = null; for (const y of [420, 700, 200]) { let e = document.elementFromPoint(195, y); while (e && e !== document.body) { const cs = getComputedStyle(e); if ((cs.position === 'fixed' || cs.position === 'absolute') && e.offsetHeight > 150 && e.parentElement === document.body) { root = e; break; } e = e.parentElement; } if (root) break; }
+    if (!root || root.id === 'appC' || (root.querySelector && root.querySelector('#cv-body'))) root = document.querySelector('#cv-body') || document.body;
+    const toast = [...document.querySelectorAll('.cv-toast, #cv-toast, .toast')].filter(vis).map(x => x.innerText.trim()).join(' / ');
+    return { s: root.id ? '#' + root.id : '.' + String(root.className).split(' ')[0], t: root.innerText.replace(/\n+/g, ' | '),
+      b: [...root.querySelectorAll('button, a, [role=button], label.jp-p, .cv-choice')].filter(vis).map(b => (b.innerText || b.getAttribute('aria-label') || b.title || '').trim().replace(/\n+/g, ' ').slice(0, 44)).filter(Boolean),
+      i: [...root.querySelectorAll('input, textarea, select')].filter(vis).map(x => (x.id ? '#' + x.id : x.tagName.toLowerCase()) + (x.type && x.type !== 'text' ? ':' + x.type : '') + '[' + (x.placeholder || '').slice(0, 24) + ']=' + (x.type === 'checkbox' ? x.checked : String(x.value).slice(0, 24))), toast }; });
+  U.see = async (label, n = 700) => { await pg.waitForTimeout(700); const f = `${String(++shotN).padStart(3, '0')}-${name}-${label}`.replace(/[^\w\-àéèç]/g, '_'); await pg.screenshot({ path: `${OUT}/${f}.png` }).catch(() => {}); const r = await U.top();
+    log(`\n### [${name}] ${label}  ${r.s}\n${r.t.slice(0, n)}\n  BTN: ${r.b.slice(0, U.nb || 40).join(' ¦ ').slice(0, 900)}${r.i.length ? '\n  CHAMPS: ' + r.i.join(' ¦ ') : ''}${r.toast ? '\n  TOAST: ' + r.toast : ''}`); return r; };
+  // touche le premier élément cliquable visible dont le texte correspond, dans la couche du dessus (ou dans scope)
+  U.tap = async (re, scope, wait = 900) => { const src = re instanceof RegExp ? re.source : re.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); const tops = scope ? null : (await U.top()).s;
+    const ok = await pg.evaluate(([src, scope]) => { const re = new RegExp(src, 'i'); const vis = b => b.getClientRects().length && getComputedStyle(b).visibility !== 'hidden';
+      const roots = [...document.querySelectorAll(scope)].reverse(); for (const root of roots) { const L = [...root.querySelectorAll('button, a, [role=button], label, .cv-choice, [onclick]')].filter(vis);
+        const b = L.find(b => re.test((b.innerText || b.getAttribute('aria-label') || b.title || '').trim().replace(/\n+/g, ' '))); if (b) { b.scrollIntoView({ block: 'center' }); b.click(); return (b.innerText || b.getAttribute('aria-label') || '?').trim().replace(/\n+/g, ' ').slice(0, 60); } } return false; }, [src, scope || (tops.startsWith('#') ? tops : 'body')]);
+    log(`   [${name}] touche /${src}/ → ${ok === false ? '✗ INTROUVABLE' : ok}`); await pg.waitForTimeout(wait); return ok; };
+  U.fill = async (sel, v) => { try { const el = pg.locator(sel).filter({ visible: true }).first(); await el.fill(v, { timeout: 3000 }); await el.dispatchEvent('input'); await el.dispatchEvent('change'); return true; } catch (e) { log(`   [${name}] champ ${sel} ✗ ${String(e.message).split('\n')[0].slice(0, 120)}`); return false; } };
+  U.type = async (sel, v) => { try { const el = pg.locator(sel).filter({ visible: true }).first(); await el.click({ timeout: 3000 }); await el.fill(''); await el.type(v, { delay: 25 }); await pg.waitForTimeout(1100); return true; } catch (e) { log(`   [${name}] saisie ${sel} ✗ ${String(e.message).split('\n')[0].slice(0, 120)}`); return false; } };
+  // un appel qui attend une réponse à l’écran ne bloque plus tout le banc : échec net au bout de 45 s
+  U.ev = (f, a) => { let t; return Promise.race([pg.evaluate(f, a), new Promise((_, no) => { t = setTimeout(() => no(new Error('appel bloqué plus de 45 s : ' + String(f).slice(0, 80))), 45000); })]).finally(() => clearTimeout(t)); };
+  U.wait = ms => pg.waitForTimeout(ms);
+  U.closeAll = async () => { await pg.evaluate(() => { document.querySelectorAll('.ui-dlg .ui-act button:last-child').forEach(b => b.click()); try { CV.close(); } catch (e) {} ['worldClose', 'liveClose', 'filmClose', 'wallClose', 'scrClose', 'pcClose', 'stEdClose', 'vjStop', 'psClose', 'rgClose', 'swClose', 'pgClose', 'momentClose', 'expClose', 'exploreClose', 'planClose', 'pdClose'].forEach(f => { try { if (CV[f]) CV[f](); } catch (e) {} }); document.querySelectorAll('#cv-moment,#cv-story,#cv-exp').forEach(x => x.remove()); document.body.style.overflow = ''; }); await pg.waitForTimeout(400); };
+  U.recs = (type) => pg.evaluate(t => { try { const d = JSON.parse(localStorage.getItem('cv-data') || localStorage.getItem('carnet') || '{}'); return null; } catch (e) { return null; } }, type);
+  await pg.goto(BASE + url); await pg.waitForTimeout(2200);
+  return U;
+}
+export const done = async (users) => { const all = [...new Set(users.flatMap(u => u.errs))].slice(0, 12); log('\n=== ERREURS JS : ' + (all.length ? '\n' + all.join('\n') : 'aucune')); const bad = apiLog.filter(l => /→ [45]\d\d|ERREUR/.test(l)); log('=== API en échec : ' + (bad.length ? '\n' + bad.join('\n') : 'aucune') + `  (${apiLog.length} appels)`); await br.close(); srv.close(); };
+export async function carnet(name, opt) { const U = await user(name, opt); await U.tap(/Je crée mon carnet/, null, 300); await U.fill('#cv-pnom', name); await U.tap(/^Commencer$/, null, 1500); return U; }
+export const pickDay = async (U, d) => { const ok = await U.ev(d => { for (let k = 0; k < 14; k++) { const b = document.querySelector('.dr-bg [data-d="' + d + '"], .dr-bg [data-iso="' + d + '"], .dr-bg [onclick*="' + d + '"]'); if (b) { b.click(); return true; } const nx = [...document.querySelectorAll('.dr-bg button')].find(x => /›|→|suiv/i.test(x.innerText || x.getAttribute('aria-label') || '')); if (!nx) return 'pas de bouton mois suivant'; nx.click(); } return false; }, d); log(`   [${U.name}] jour ${d} → ${ok}`); await U.wait(500); };
+// remplit le champ dont l’étiquette correspond (dans la feuille ouverte)
+export const fl = async (U, label, v) => { const src = label instanceof RegExp ? label.source : '^' + label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const r = await U.ev(([src, v]) => { const re = new RegExp(src, 'i'); const root = document.querySelector('#v-sheet-bg') || document.body; const vis = b => b.getClientRects().length;
+    const lab = [...root.querySelectorAll('label')].filter(vis).find(l => re.test(l.innerText.trim())); if (!lab) return 'étiquette introuvable';
+    let el = lab.htmlFor && document.getElementById(lab.htmlFor); if (!el) { let p = lab.parentElement; el = p && [...p.querySelectorAll('input, textarea, select')].filter(vis)[0]; } if (!el) el = lab.nextElementSibling && lab.nextElementSibling.matches('input,textarea,select') ? lab.nextElementSibling : null;
+    if (!el) return 'champ introuvable'; el.focus(); if (el.tagName === 'SELECT') { const o = [...el.options].find(o => o.value === v || o.text.trim() === v || o.text.includes(v)); if (!o) return 'option introuvable : ' + [...el.options].map(o => o.text).join(','); el.value = o.value; } else { const set = Object.getOwnPropertyDescriptor(el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype, 'value').set; set.call(el, v); }
+    el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); el.blur(); return 'ok (' + (el.id || el.type || el.tagName) + ')'; }, [src, v]);
+  if (!/^ok/.test(r)) log(`   [${U.name}] ${label} = ${v} → ✗ ${r}`); await U.wait(250); return r; };
+export const form = (U) => U.ev(() => { const root = document.querySelector('#v-sheet-bg'); if (!root) return 'pas de feuille'; return [...root.querySelectorAll('label')].filter(l => l.getClientRects().length).map(l => { const p = l.parentElement; const el = (l.htmlFor && document.getElementById(l.htmlFor)) || [...p.querySelectorAll('input, textarea, select')][0]; return l.innerText.trim().slice(0, 40) + (el ? ' ⟶ ' + el.tagName.toLowerCase() + (el.type ? ':' + el.type : '') + (el.id ? '#' + el.id : '') + '=' + String(el.value).slice(0, 20) : ' ⟶ ?'); }).join('\n'); });
+// crée le compte e-mail quand la feuille « Crée ton compte » est ouverte (mode essai : le code est affiché)
+export const compte = async (U, mail) => { await U.fill('#ac-mail', mail); await U.tap(/Recevoir un code/, null, 2500); const otp = await U.ev(() => { const m = (document.querySelector('#v-sheet-bg') || document.body).innerText.match(/test : (\d{6})/); return m && m[1]; }); if (!otp) { log(`   [${U.name}] ✗ pas de code affiché`); return false; } await U.fill('#ac-otp', otp); await U.tap(/Valider/, null, 4000); return true; };
+export const otpIfAsked = async (U) => { const otp = await U.ev(() => { const s = document.querySelector('#v-sheet-bg'); const m = s && s.innerText.match(/test : (\d{6})/); return m && m[1]; }); if (otp) { await U.fill('#ac-otp', otp); await U.tap(/Valider/, null, 4000); } return !!otp; };
+
+export const lastShare = (U) => U.ev(() => { const d = window.__sh[window.__sh.length - 1]; return d ? [d.title, d.text, d.url].filter(Boolean).join('\n') : (window.__clip || ''); });
+export const sheetCode = (U) => U.ev(() => { const m = (document.querySelector('#v-sheet-bg') || document.body).innerText.match(/[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}/); return m && m[0]; });
+export const souvenir = async (U, titre, lieu, texte, photos = []) => { await U.closeAll(); await U.ev(() => CV.editSouv(null)); await U.wait(1000); await U.fill('#v-sheet-bg input[name=titre]', titre); if (lieu) { await U.type('#v-sheet-bg input[name=lieu]', lieu); } await U.fill('#v-sheet-bg textarea[name=texte]', texte);
+  if (photos.length) { const f = U.pg.locator('#v-sheet-bg input[type=file]').last(); await f.setInputFiles(photos); await U.wait(2500); }
+  const st = await U.ev(() => { const t = document.querySelector('#v-sheet-bg').innerText; return (t.match(/(⚪|🟢|✅|📍)[^\n]{0,70}/) || [''])[0] + ' · ' + (t.match(/Photos \(\d+\)/) || [''])[0]; }); log(`   [${U.name}] souvenir « ${titre} » : ${st}`);
+  await U.tap(/^Enregistrer$/, '#v-sheet-bg', 2500); const t = await U.top(); log(`   ↳ après enregistrement : ${t.s}${t.toast ? ' · « ' + t.toast + ' »' : ''}${t.s !== '#cv-body' ? ' · ' + t.t.slice(0, 300) + ' · BTN: ' + t.b.join(' ¦ ').slice(0, 200) : ''}`); };
+export const sync = async (...us) => { for (let k = 0; k < 2; k++) for (const U of us) { await U.ev(() => CV.syncNow(true)).catch(() => {}); await U.wait(1800); } };
+export const txt = (U, from, n = 500) => U.ev(([from, n]) => { const t = document.querySelector('#cv-body').innerText.replace(/\n+/g, ' | '); const i = from ? t.indexOf(from) : 0; return (i < 0 ? '(« ' + from + ' » absent) ' : '') + t.slice(Math.max(0, i), Math.max(0, i) + n); }, [from, n]);
