@@ -1328,7 +1328,7 @@
     // 👑 des compagnons s’en servent encore : plutôt que tout effacer pour eux, on propose de leur passer le voyage
     if(!sure && tc && tripAdmin(t) === M.me && adminNext(tid).length && mbOthers(tid).length){
       openSheet(`<h2>🗑 « <span data-notr>${esc(t.titre)}</span> »</h2><div class="v-sum-small" style="margin-bottom:10px">${MSGT('Tes compagnons utilisent encore ce voyage. Plutôt que de tout effacer pour eux, tu peux le leur passer.')}</div>
-        <button type="button" class="cv-choice" onclick="CV.close();CV.tripUnshare('${ja(tid)}')"><i>👑</i><span><b>${MSGT('Le passer à un compagnon et partir')}</b><small>${MSGT('Le voyage continue pour eux, avec toutes leurs photos. Ses photos ne comptent plus dans ta place.')}</small></span></button>
+        <button type="button" class="cv-choice" onclick="CV.close();CV.tripUnshare('${ja(tid)}')"><i>★</i><span><b>${MSGT('Le passer à un compagnon et partir')}</b><small>${MSGT('Le voyage continue pour eux, avec toutes leurs photos. Ses photos ne comptent plus dans ta place.')}</small></span></button>
         <button type="button" class="cv-choice" onclick="CV.close();CV.serverWipeTrip('${ja(tid)}',1)"><i>🗑</i><span><b>${MSGT('L’effacer pour tout le monde')}</b><small>${MSGT('Fiches et photos supprimées du serveur. Tes compagnons ne gardent que ce que leur téléphone a déjà.')}</small></span></button>
         <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${MSGT('Annuler')}</button></div>`);
       return;

@@ -85,7 +85,8 @@
         const redo = !pk && D.pl.length - D.sg.length > 1 ? `<button type="button" class="ar-more" onclick="CV.rgRedo()">🏨 ${MSGT('Réorganiser depuis mon hôtel')}</button>` : '';
         // 🧭 visites triées et rangées : la suite du parcours tout de suite (sans devoir re-trier une visite pour voir le bouton)
         const nxt = !pk ? `<button type="button" class="ar-go" onclick="CV.guideNext('rg')">🧭 ${MSGT('Continuer : trajets, activités, hébergements')}</button>` : '';
-        return `<div class="ar-p">✓ ${D.pl.length - D.sg.length} ${MSGT('lieux au programme')}</div><div class="ar-subs">${subA}${subB}</div>${nxt}${more}${redo}<button type="button" class="ar-more" onclick="CV.plkOpen()">🔗 ${MSGT('Ajouter un lieu depuis un lien')}</button><button type="button" class="ar-more" onclick="CV.swReset()">🔁 ${MSGT('Recommencer ma sélection à zéro')}</button>${D.sg.length && !((M.ariSkip || {})[t.id] || {}).faire ? `<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('C’est bon, j’ai assez de visites')}</button>` : ''}`;
+        // 🧹 tableau allégé (12/11/2026) : l’étape à faire et « Continuer » en clair, les 4 autres boutons rangés dans « Autres options »
+        return `<div class="ar-p">✓ ${D.pl.length - D.sg.length} ${MSGT('lieux au programme')}</div><div class="ar-subs">${subA}${subB}</div>${nxt}<details class="ar-opts"><summary>${MSGT('Autres options')}</summary>${more}${redo}<button type="button" class="ar-more" onclick="CV.plkOpen()">🔗 ${MSGT('Ajouter un lieu depuis un lien')}</button><button type="button" class="ar-more" onclick="CV.swReset()">🔁 ${MSGT('Recommencer ma sélection à zéro')}</button></details>${D.sg.length && !((M.ariSkip || {})[t.id] || {}).faire ? `<button type="button" class="ar-sk" onclick="CV.ariSkip('faire')">${MSGT('C’est bon, j’ai assez de visites')}</button>` : ''}`;
       }
       if(k === 'resa'){
         if(!D.rs.length) return `<div class="ar-p">${MSGT('Ajoute d’abord tes étapes : les nuits et les trajets apparaîtront ici.')}</div>`;
@@ -3795,16 +3796,16 @@
     const t = R[tid], c = TS()[tid]; if(!t || t.deleted || !c || !spaceObj(c)) return;
     if(tripAdmin(t) !== M.me){ alert(RF('Seul l’administrateur du voyage peut passer la main. Ici : {0}.', pname(tripAdmin(t)) || '?')); return; }
     const L = adminNext(tid); if(!L.length){ alert(MSGT('Il faut un autre voyageur dans ce voyage pour lui passer l’administration.')); return; }
-    if(!pid){ openSheet(`<h2>👑 ${esc(MSGT('Passer l’administration'))}</h2><div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(t.titre || '')}</div>
+    if(!pid){ openSheet(`<h2>★ ${esc(MSGT('Passer l’administration'))}</h2><div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(t.titre || '')}</div>
         <div class="v-sum-small" style="margin-bottom:10px">${esc(MSGT('Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.'))}</div>
-        <div class="cv-plist">${L.map(p=>`<button type="button" class="cv-prow" onclick="CV.adminPass('${ja(tid)}','${ja(p)}')">${pchip(p)}<span>👑</span></button>`).join('')}</div>
+        <div class="cv-plist">${L.map(p=>`<button type="button" class="cv-prow" onclick="CV.adminPass('${ja(tid)}','${ja(p)}')">${pchip(p)}<span>★</span></button>`).join('')}</div>
         <div class="v-actions"><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Annuler'))}</button></div>`); return; }
     if(!L.includes(pid)) return;
     if(!(await uiConfirm(RF('Passer l’administration de « {0} » à {1} ?', t.titre || '', pname(pid)) + '\n\n' + MSGT('Le voyage reste le même voyage partagé : compagnons et abonnés ne voient rien changer. Seules ses photos compteront dans la place du nouvel admin.')))) return;
     put(Object.assign(clone(t), {adminBy:pid}), false); closeSheet(true); refresh();
     try { await syncNow(true); } catch(e){}
     try { await adminRelease(c); } catch(e){}
-    toast('👑 ' + RF('{0} est maintenant l’admin de « {1} ».', pname(pid), t.titre || ''));
+    toast('★ ' + RF('{0} est maintenant l’admin de « {1} ».', pname(pid), t.titre || ''));
   }
   async function adminRelease(code){
     try { if(ownerOn() && planApi()) await planCall({a:'unlink', kids:[await authCode(code)]}, M.sync.code); } catch(e){}
@@ -3814,7 +3815,7 @@
   async function branchSync(){
     try { const N = M.admNote || (M.admNote = {});   // on vient de me passer un voyage : je le dis une fois
       Object.entries(TS()).forEach(([tid, c])=>{ const t = R[tid]; if(!t || t.type !== 'trip' || N[tid] || t.adminBy !== M.me || t.createdBy === M.me || !spaceObj(c)) return;
-        N[tid] = 1; persist(); toast('👑 ' + RF(ownerOn() ? 'Tu es maintenant l’admin du voyage « {0} » : ses photos comptent dans ta place.' : 'Tu es maintenant l’admin du voyage « {0} ». Mets ton carnet dans le cloud pour que ses photos comptent chez toi.', t.titre || '')); }); } catch(e){}
+        N[tid] = 1; persist(); toast('★ ' + RF(ownerOn() ? 'Tu es maintenant l’admin du voyage « {0} » : ses photos comptent dans ta place.' : 'Tu es maintenant l’admin du voyage « {0} ». Mets ton carnet dans le cloud pour que ses photos comptent chez toi.', t.titre || '')); }); } catch(e){}
     if(brBusy || !ownerOn() || !planApi()) return 0;
     const L = M.linked || (M.linked = {}), T = M.linkTry || (M.linkTry = {}), now = Date.now();
     const todo = myBranchCodes().filter(c=>!L[c] && !(T[c] && now - T[c] < 6 * 3600e3)).slice(0, 40); if(!todo.length) return 0;   // déjà branché ailleurs : on réessaie dans 6 h (voyage qu’on vient de me passer)

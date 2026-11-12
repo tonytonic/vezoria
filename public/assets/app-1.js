@@ -659,7 +659,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const t = R[id], c = TS()[id], sp = c && spaceObj(c); if(!t || !sp) return;
     const n = tripCount(id), mine = !t.createdBy || t.createdBy === M.me;
     const adm = tripAdmin(t);
-    openSheet(`<h2>🔄 Synchro du voyage</h2><div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(t.titre)}</div>${adm && prof(adm) ? `<div class="v-sum-small" style="margin:-4px 0 8px">👑 ${MSGT('Admin du voyage (ses photos comptent dans sa place) :')} <b data-notr>${esc(adm === M.me ? myName() || pname(adm) : pname(adm))}</b>${adm === M.me && adminNext(id).length ? ` · <a href="#" onclick="event.preventDefault();CV.adminPass('${ja(id)}')">${esc(MSGT('Passer l’administration'))}</a>` : ''}</div>` : ''}
+    openSheet(`<h2>🔄 Synchro du voyage</h2><div class="v-sum-small" style="margin-bottom:8px" data-notr>${esc(t.titre)}</div>${adm && prof(adm) ? `<div class="v-sum-small" style="margin:-4px 0 8px">★ ${MSGT('Admin du voyage (ses photos comptent dans sa place) :')} <b data-notr>${esc(adm === M.me ? myName() || pname(adm) : pname(adm))}</b>${adm === M.me && adminNext(id).length ? ` · <a href="#" onclick="event.preventDefault();CV.adminPass('${ja(id)}')">${esc(MSGT('Passer l’administration'))}</a>` : ''}</div>` : ''}
       <div class="sy-diag"><div><span>Sur ce téléphone</span><b>${n.live}</b><small><span>fiches</span> · <span data-notr>${n.items}</span> <span>résas</span> · <span data-notr>${n.days}</span> <span>jours</span></small></div>
         <div><span>État</span><b>${sp.err ? '🔴' : (sp.dirty||[]).length ? '🟠' : '🟢'}</b><small>${sp.err ? `<span data-notr>${esc(sp.err)}</span>` : (sp.dirty||[]).length ? `<span data-notr>${sp.dirty.length}</span> <span>en attente d’envoi</span>` : sp.last ? `<span>à jour</span> · <span data-notr>${vzWhen(sp.last)}</span>` : '<span>jamais synchronisé</span>'}</small></div></div>
       <div id="sy-res" class="v-sum-small" style="margin:8px 0"></div>
@@ -1383,9 +1383,10 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       cd.innerHTML = countdown(t); cd.style.display = cd.innerHTML ? '' : 'none';
       const vv = tv(), shown = vv.slice(0, 8);
       const adm = TS()[t.id] && vv.length > 1 && typeof tripAdmin === 'function' ? tripAdmin(t) : '';   // 👑 voyage partagé : on voit qui l’administre
-      av.innerHTML = shown.map(id=>`<span class="cv-av" style="background:${pcol(id)};position:relative" title="${esc(pname(id))}${id === adm ? ' · ' + esc(MSGT('administrateur du voyage')) : ''}">${esc((pname(id)[0]||'?').toUpperCase())}${id === adm ? '<i style="position:absolute;top:-9px;right:-5px;font-style:normal;font-size:.75em">👑</i>' : ''}</span>`).join('')
+      av.innerHTML = shown.map(id=>`<span class="cv-av" style="background:${pcol(id)};position:relative" title="${esc(pname(id))}${id === adm ? ' · ' + esc(MSGT('administrateur du voyage')) : ''}">${esc((pname(id)[0]||'?').toUpperCase())}${id === adm ? '<i class="cv-adm" aria-hidden="true">★</i>' : ''}</span>`).join('')
         + (vv.length > 8 ? `<span class="cv-av" style="background:#444" title="${vv.length - 8} autres">+${vv.length - 8}</span>` : '')
-        + `<span class="cv-av-names">${vv.length <= 3 ? vv.map(id=>esc(pname(id)) + (id === adm ? ' 👑' : '')).join(' & ') : vv.slice(0,2).map(id=>esc(pname(id)) + (id === adm ? ' 👑' : '')).join(', ') + ' et ' + (vv.length - 2) + ' autres'}</span>`;
+        + `<span class="cv-av-names">${vv.length <= 3 ? vv.map(id=>esc(pname(id))).join(' & ') : vv.slice(0,2).map(id=>esc(pname(id))).join(', ') + ' et ' + (vv.length - 2) + ' autres'}</span>`;
+      { const hc = document.getElementById('hdr-chips'); if(hc && adm && prof(adm)) hc.insertAdjacentHTML('beforeend', `<span class="cv-adm-p" title="${esc(MSGT('administrateur du voyage'))}">★ <b>${esc(MSGT('Admin'))}</b> <i data-notr>${esc(pname(adm))}</i></span>`); }   // ★ qui gère le voyage, avec les autres repères du voyage
       document.title = 'Vezoria · ' + (t.titre||'Voyage');
     } else { { const hc = document.getElementById('hdr-chips'); if(hc) hc.innerHTML = ''; } title.textContent = 'Vezoria'; sub.textContent = 'Ton premier voyage t’attend'; pill.textContent = 'Mes voyages'; cd.innerHTML = ''; av.innerHTML = ''; }
     try { heroStats(!legacy && !!t); } catch(e){}

@@ -954,9 +954,12 @@
         <div class="sp2-chips"><button type="button" class="${all ? 'sel' : ''}" onclick="event.stopPropagation();CV.spAll('${pid}')">${all ? '✓ ' : ''}${esc(MSGT('Tous mes voyages'))}</button><button type="button" class="${all ? '' : 'sel'}" onclick="event.stopPropagation();CV.spCompSheet('${pid}')">${all ? '' : '✓ '}${esc(MSGT('Voyage par voyage'))}</button></div></div><button type="button" class="sp2-del" aria-label="${esc(MSGT('Retirer'))}" onclick="event.stopPropagation();CV.spCompDel('${pid}')">🗑</button></div>`; };
     const F = P.find(x=>x.pid === spFocus), all = F && spAllId(F.pid);
     const sel = F && !all ? `<div class="sp2-sec">🧳 <b>${esc(MSGT('Voyages sélectionnés'))}</b> <small data-notr>· ${esc(pname(F.pid))}</small></div>
-      <div class="sp2-ts">${F.ts.map(t=>`<span class="sp2-t"><button type="button" class="sp2-tc" onclick="CV.go('${ja(t.id)}');CV.close()">${spCov(t)}<small data-notr>${tripAdmin(t) === F.pid ? '👑 ' : ''}${esc(t.titre)}</small></button><button type="button" class="sp2-tx" aria-label="${esc(MSGT('Retirer'))}" onclick="CV.spTripOff('${ja(F.pid)}','${ja(t.id)}')">✕</button></span>`).join('')}
+      <div class="sp2-ts">${F.ts.map(t=>`<span class="sp2-t"><button type="button" class="sp2-tc" onclick="CV.go('${ja(t.id)}');CV.close()">${spCov(t)}<small data-notr>${tripAdmin(t) === F.pid ? '★ ' : ''}${esc(t.titre)}</small></button><button type="button" class="sp2-tx" aria-label="${esc(MSGT('Retirer'))}" onclick="CV.spTripOff('${ja(F.pid)}','${ja(t.id)}')">✕</button></span>`).join('')}
         <button type="button" class="sp2-t sp2-add" onclick="CV.spTrips('${ja(F.pid)}')"><b>＋</b><small>${esc(MSGT('Ajouter un voyage'))}</small></button></div>
-      ${F.ts.filter(t=>tripAdmin(t) === M.me && TS()[t.id] && (t.voyageurs || []).includes(F.pid)).map(t=>`<div class="sp2-pills" style="margin-top:6px"><button type="button" class="soft" onclick="CV.adminPass('${ja(t.id)}','${ja(F.pid)}')">👑 ${esc(RF('Lui passer l’admin de « {0} »', t.titre || ''))}</button></div>`).join('')}` : '';
+      ${(()=>{ const AT = F.ts.filter(t=>tripAdmin(t) === M.me && TS()[t.id] && (t.voyageurs || []).includes(F.pid)); if(!AT.length) return '';
+        // un seul bouton (avant : un gros bouton par voyage, 10 voyages = un écran entier) ; plusieurs voyages : on choisit dans une petite liste
+        return AT.length === 1 ? `<div class="sp2-pills" style="margin-top:6px"><button type="button" class="soft" onclick="CV.adminPass('${ja(AT[0].id)}','${ja(F.pid)}')">★ ${esc(RF('Lui passer l’admin de « {0} »', AT[0].titre || ''))}</button></div>`
+          : `<details class="sp2-adm" style="margin-top:6px"><summary class="soft" style="list-style:none;cursor:pointer;text-align:center;padding:10px 14px;border-radius:999px">★ ${esc(MSGT('Lui passer l’admin d’un voyage…'))} <small>(${AT.length})</small></summary><div class="cv-plist" style="margin-top:6px">${AT.map(t=>`<button type="button" class="cv-prow" onclick="CV.adminPass('${ja(t.id)}','${ja(F.pid)}')"><span data-notr>${esc(t.titre || '')}</span><span>★</span></button>`).join('')}</div></details>`; })()}` : '';
     openSheet(`<div class="sp2"><div class="sp2-top"><h2>${esc(MSGT('Mes compagnons de voyage'))}</h2></div><div class="sp2-body"><div class="sp2-pills" style="margin-bottom:8px"><button type="button" class="soft" onclick="CV.spCompAdd()">＋ ${esc(MSGT('Ajouter un compagnon'))}</button></div><div class="sp2-blk">${P.map(card).join('') || `<div class="sp2-empty">${esc(MSGT('Invite quelqu’un dans un voyage : il apparaîtra ici, et tu choisiras ce qu’il peut voir.'))}</div>`}${sel}</div>
       <button type="button" class="sp2-save" onclick="CV.shareHub()">${esc(MSGT('Enregistrer'))}</button></div></div>`);
   }
@@ -2081,7 +2084,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-11n'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-12a'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
