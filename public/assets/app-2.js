@@ -328,8 +328,8 @@
       const fol = (()=>{ try { return followHTML(); } catch(e){ return ''; } })(); if(fol) setTimeout(()=>{ folPaint(); hydrate(); }, 40);
       // 👥 la grille Compagnons · Abonnés · Je suis, aussi sur l’accueil d’un carnet sans voyage à soi (ex. sur ordinateur, juste pour suivre un proche)
       let hub = ''; try { if(fol) hub = `<div class="sp2 home-sp2">${spOverview()}</div><style>.home-sp2{margin:0 0 14px}.home-sp2 .sp2-top{display:none}@media(min-width:760px){.home-sp2 .sp2-body{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}.home-sp2 .sp2-blk{margin:0}}</style>`; } catch(e){}
-      body.innerHTML = homeJoinHTML() + hub + (fol ? `<div class="home-fol">${fol}</div>` : '') + `<div class="v-box"><h2 class="vb-h">${fol ? 'Mes propres voyages' : 'Aucun voyage'}</h2><p>${fol ? 'Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.' : 'Crée un voyage, ou transforme une envie en voyage depuis l’onglet ✨ Envies.'}</p>
-        <button class="v-btn" onclick="CV.newTrip()">＋ Nouveau voyage</button>${tutoBtn()}${demoBtn()}</div>${fol ? '' : tri3HTML()}`;
+      body.innerHTML = (fol ? homeJoinHTML() : '') + hub + (fol ? `<div class="home-fol">${fol}</div>` : '') + `<div class="v-box"><h2 class="vb-h">${fol ? 'Mes propres voyages' : 'Aucun voyage'}</h2><p>${fol ? 'Tu n’as pas encore de voyage à toi : prépare le tien quand tu veux.' : 'Crée un voyage, ou transforme une envie en voyage depuis l’onglet ✨ Envies.'}</p>
+        <button class="v-btn" onclick="CV.newTrip()">＋ Nouveau voyage</button>${tutoBtn()}${demoBtn()}</div>${fol ? '' : homeJoinHTML()}${fol ? '' : tri3HTML()}`;   // 🧭 nouveau sans voyage : « Nouveau voyage » d’abord, « J’ai reçu un code » ensuite
       return;
     }
     if(CATS[M.tab]) renderList(M.tab);
@@ -1006,7 +1006,7 @@
     const ds = dayList();
     const arT = trip(), arOn = !!(arT && !arT.archived && tripPhase(arT) === 'prep' && !hidden('blk:prep'));
     if(arT && !arT.archived && !arT.demo && tripPhase(arT) !== 'past') setTimeout(()=>dayExtras(arT), 400);
-    let h = startFil() + pinBar() + (arOn ? ariHTML() : cdHTML() + suggCard() + actBand()) + annivCard() + nextHero() + eveCard() + (arOn ? '' : prepGauge()) + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + progPolls();
+    let h = (arOn ? '' : startFil()) + pinBar() + (arOn ? ariHTML() + startFil() : cdHTML() + suggCard() + actBand())   // 🧭 voyage en préparation : le parcours guidé d’abord, « Premiers pas » juste après + annivCard() + nextHero() + eveCard() + (arOn ? '' : prepGauge()) + liveCard() + daysBar() + quickBar() + progMap() + pendBar() + whoBar() + pinBoard() + progPolls();
     const tt = trip();
     if(tt && tt.demo) h = `<div class="cv-demo-bar">👀 <b>Voyage de démo</b> : touche à tout, modifie, supprime. Il reste sur ce téléphone et n’est jamais partagé.
         <span class="cv-demo-btns"><button type="button" onclick="CV.demoReset()">↺ Recommencer</button><button type="button" onclick="CV.demoDel()">Supprimer la démo</button></span></div>` + h;
@@ -1928,9 +1928,6 @@
     openSheet(`<h2>Bienvenue à bord ✈️</h2>
       <div class="v-sum-small" style="margin-bottom:12px">Ici on prépare les voyages à plusieurs. Chacun a sa couleur, et tout ce que tu ajoutes est signé de ton prénom.</div>
       ${obSetupHTML()}
-      ${PUBLIC ? `<div class="ob-inv"><b>🎟️ ${esc(MSGT('On t’a invité(e) ? Compagnon de voyage ou abonné'))}</b>
-        <button type="button" class="v-btn" onclick="CV.obMagic()">📋 ${esc(MSGT('Coller mon invitation'))}</button>
-        <small>${esc(MSGT('Copie d’abord le message ou le lien reçu (SMS, WhatsApp, e-mail), puis touche ce bouton.'))}</small><div class="v-sum-small" id="ob-inv-msg"></div></div>` : ''}
       <div class="cv-seg-big">${segBtns('cv-ob', [['new','🆕 Je crée mon carnet'],['join','🔑 ' + MSGT('J’ai déjà un code')],['fol','👀 Je suis un proche']], 'new')}</div>
       <div id="cv-ob-new">
         <div class="v-f"><label>Ton prénom</label><input class="v-in" id="cv-pnom" placeholder="Ex. Camille"></div>
@@ -1941,6 +1938,10 @@
         ${PUBLIC ? `<button class="v-btn sec" onclick="CV.obCreate('demo')">👀 Commencer avec un voyage de démo</button>
         <div class="v-sum-small" style="margin-top:6px;text-align:center">Trois voyages déjà remplis (à préparer, en cours, terminé) pour tout découvrir. Il reste sur ton téléphone et se supprime en un geste.</div>` : ''}
       </div>
+      <!-- 🧭 12/11/2026 : l’invitation passe après « Je crée mon carnet » (un nouveau voyait d’abord « Coller mon invitation ») -->
+      ${PUBLIC ? `<div class="ob-inv"><b>🎟️ ${esc(MSGT('On t’a invité(e) ? Compagnon de voyage ou abonné'))}</b>
+        <button type="button" class="v-btn sec" onclick="CV.obMagic()">📋 ${esc(MSGT('Coller mon invitation'))}</button>
+        <small>${esc(MSGT('Copie d’abord le message ou le lien reçu (SMS, WhatsApp, e-mail), puis touche ce bouton.'))}</small><div class="v-sum-small" id="ob-inv-msg"></div></div>` : ''}
       <div id="cv-ob-join" style="display:none">
         ${hosted ? '' : `<div class="v-f"><label>Adresse de l’appli en ligne</label><input class="v-in" id="cv-surl" placeholder="https://vezoria.pages.dev"></div>`}
         <div class="v-sum-small" style="margin-bottom:10px">🔑 ${esc(MSGT('Ton code administrateur (sur ton autre appareil : Cloud → Mon code administrateur) ramène ici tout ton carnet, avec tes voyages, tes abonnés et ton abonnement. Sur l’autre appareil, « Ajouter un de mes appareils » affiche aussi un QR code à scanner.'))}</div>

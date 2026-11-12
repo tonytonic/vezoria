@@ -108,12 +108,12 @@
     const ms = t.debut ? cdLeft(t) : 0, cdOn = !!t.debut && !t.demo && ms > -864e5 && ms <= 400 * 864e5 && !hidden('blk:cd');
     const dj = t.debut ? Math.max(0, nights(isoToday(), t.debut)) : 0, dest = cdDest(t), dco = (M.ctry || {})[normQ(dest)] || co;
     return `${rainCard(t)}<div class="cv-prep2 ar${cdOn ? ' ar-cd' : ''}${anim ? '' : ' still'}"${cdOn ? ` id="cd" data-at="${Date.now() + ms}" data-city="${esc(dest)}"` : ''}>
+      ${gdOk && (!compact || nx) ? `<div class="ar-gtop">${gdB}</div>` : ''}
       ${cdOn ? `<div class="ar-top"><span>${dj === 0 ? '🧳 ' + MSGT('C’est aujourd’hui !') : dj === 1 ? '✈️ ' + MSGT('Départ demain') : '⏳ ' + MSGT('Départ dans')}</span><span class="cd-wx" id="cd-wx"></span></div>
       <div class="ar-j"><b>${dj === 0 ? MSGT('Jour J') : 'J-' + dj}</b><span class="cd-dest">${dco && dco.cc ? flag(dco.cc) + ' ' : '📍 '}<span data-notr>${esc(dest)}</span></span></div>
       <div class="cd-clock ar-clock" id="cd-clock">${cdClock(ms)}</div>` : ''}
       <div class="p2-top ar-lv"><div><div class="p2-k">${MSGT('Ta préparation')}</div><div class="p2-l">${lv[0]} ${MSGT(lv[1])}</div></div><div class="p2-pct"><b>${pct}</b><small>%</small></div></div>
       ${compact ? `<div class="ar-seg">${S.map(x=>`<button type="button" class="${x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : ''}" onclick="CV.ariTog('${ja(x.k)}')"><i style="--f:${x.ok ? 100 : Math.round(x.f * 100)}%"></i><span>${MSGT(x.l)}${x.ok ? ' ✓' : ''}</span></button>`).join('')}</div>
-      ${nx && gdOk ? gdB : ''}
       ${nx ? `<div class="ar-nx"><div class="ar-nk">${MSGT(gdOk ? 'Ou à la main, ta prochaine étape' : 'Ta prochaine étape')}</div><button type="button" class="ar-sub cur" onclick="${nx.fn}"><i>${nx.ic}</i><span><b>${nx.b}</b><small>${nx.s}</small></span></button></div>` : `<div class="p2-msg">✨ ${MSGT('Tout est prêt, il ne reste qu’à partir !')}</div>`}
       ${pgB}<button type="button" class="ar-all" onclick="CV.ariFull(1)">${MSGT('Voir les 4 étapes en détail')} ▾</button></div>` : `
       <svg class="p2-svg" viewBox="0 0 360 112" aria-hidden="true">
@@ -123,7 +123,6 @@
         <g class="p2-plane"><text x="-12" y="8" font-size="24" transform="rotate(45)">✈️</text>
           <animateMotion dur="${anim ? '1.8s' : '0.001s'}" fill="freeze" keyPoints="${anim ? 0 : tp.toFixed(3)};${tp.toFixed(3)}" keyTimes="0;1" calcMode="spline" keySplines=".2 .7 .2 1" rotate="auto" path="${path}"/></g>
       </svg>
-      ${gdOk ? gdB : ''}
       <div class="ar-steps">${S.map((x, i)=>{ const o = op === x.k, st = x.ok ? 'ok' : cur && cur.k === x.k ? 'cur' : 'next';
         return `<div class="ar-s ${st}${o ? ' open' : ''}"><button type="button" class="ar-h" onclick="CV.ariTog('${ja(x.k)}')"><i>${x.ok ? '✓' : i + 1}</i><span>${x.ic} ${MSGT(x.l)}</span><small>${x.ok ? '' : Math.round(x.f * 100) + ' %'}</small><em>${o ? '▾' : '▸'}</em></button>
           ${o ? `<div class="ar-b">${body(x.k)}</div>` : ''}</div>`; }).join('')}</div>

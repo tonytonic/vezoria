@@ -237,9 +237,12 @@
   }
   function wzRender(){
     const s = wz.step, modes = cur => Object.keys(MODE_ICON).map(m=>`<option${m===cur?' selected':''}>${m}</option>`).join('');
-    let h = `<div id="wz"><h2>🧭 Nouveau voyage</h2>
-      <div class="wz-steps">${WZ_STEPS.map((l,i)=>`<span class="${i+1===s?'on':i+1<s?'done':''}" title="${l}">${i+1<s?'✓':i+1}</span>`).join('<i></i>')}</div>
-      <div class="wz-title">${WZ_STEPS[s-1]}</div>`;
+    // ✨ une question par écran, en grand (12/11/2026) : barre de progression, titre-question, sous-titre, choix en cartes, bouton fixé en bas
+    const Q = [['✈️', 'Ton voyage', 'Donne-lui un nom, et dis qui part.'], ['📅', 'Quand pars-tu ?', 'Choisis tes dates, ou juste la durée.'], ['📍', 'Où vas-tu dormir ?', 'Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.'], ['🧳', 'Comment y vas-tu ?', 'D’où part chacun, et où il rentre.'], ['✨', 'Prêt à partir', 'Vérifie, puis crée ton voyage.']][s-1];
+    let h = `<div id="wz" class="wz2"><div class="wz-top"><span>${MSGT('Nouveau voyage')}</span><span>${RF('Étape {0} sur {1}', s, 5)}</span></div>
+      <div class="wz-bar"><i style="width:${Math.round(s / 5 * 100)}%"></i></div>
+      <div class="wz-steps" hidden>${WZ_STEPS.map((l,i)=>`<span class="${i+1===s?'on':i+1<s?'done':''}" title="${l}">${i+1<s?'✓':i+1}</span>`).join('<i></i>')}</div>
+      <div class="wz-hero"><i aria-hidden="true">${Q[0]}</i><h2>${MSGT(Q[1])}</h2><p>${MSGT(Q[2])}</p></div>`;
     if(s===1){
       h += `<div class="v-f"><label>Nom du voyage</label><input class="v-in" id="wz-titre" value="${esc(wz.titre)}" placeholder="Ex. Été 2028 en Scandinavie, Week-end Palma…"></div>
         <div class="v-f"><label>Qui part ?</label>${peopleSel('wz-tv', profiles().map(p=>p.id), wz.voyageurs)}
@@ -251,7 +254,7 @@
           <div class="v-f"><label>Retour le</label><input class="v-in" type="date" id="wz-fin" oninput="CV.wzDates('f')"></div></div>
         <div class="v-f"><label>Combien de nuits ?</label><div class="cv-row"><input class="v-in cv-num" type="number" min="1" max="90" id="wz-nuits" value="${wz.nuits}" oninput="CV.wzDates('n')">
           <span class="v-sum-small" id="wz-dur"></span></div></div>
-        <div class="cv-row">${[2,3,7,14,19,21].map(n=>`<button type="button" class="v-chip" onclick="document.getElementById('wz-nuits').value=${n};CV.wzDates('n')">${n===2?'Week-end (2)':n+' nuits'}</button>`).join('')}</div>`;
+        <div class="wz-cards">${[[2,'🌅','Week-end'],[3,'🧳','Court séjour'],[7,'🏖️','Une semaine'],[14,'🗺️','Deux semaines'],[21,'🌍','Trois semaines']].map(([n, ic, l])=>`<button type="button" class="wz-card${+wz.nuits === n ? ' on' : ''}" onclick="document.getElementById('wz-nuits').value=${n};CV.wzDates('n');document.querySelectorAll('.wz-card').forEach(x=>x.classList.toggle('on', x === this))"><i>${ic}</i><b>${MSGT(l)}</b><small>${RF('{0} nuits', n)}</small></button>`).join('')}</div>`;
     }
     if(s===3){
       h += `<div id="wz-ctry"></div>${wz.ctryOk ? `<div class="v-sum-small wz-ok">✓ ${MSGT('Itinéraire proposé pour')} ${esc(frCountry(wz.ctryOk))}${(wz.far || []).length ? ' · ' + MSGT('À ne pas manquer aussi (ajoute une étape si tu veux) :') + ' <span data-notr>' + wz.far.map(esc).join(', ') + '</span>' : ''}</div>${seasonLine(wz.sea, wz.debut ? +wz.debut.slice(5, 7) : 0)}` : ''}
@@ -284,8 +287,8 @@
         <div id="wz-cov">${covBlock()}</div>
         <div class="v-hint">Seront créés : le programme jour par jour, un hébergement par étape, les trajets entre étapes et les allers-retours de chacun, sans prix (à remplir).</div>`;
     }
-    h += `<div class="v-actions">${s>1 ? `<button type="button" class="v-btn sec cv-sq" onclick="CV.wzGo(${s-1})" aria-label="Revenir en arrière">←</button>` : ''}
-      ${s<5 ? `<button type="button" class="v-btn" onclick="CV.wzGo(${s+1})">Suivant →</button>` : `<button type="button" class="v-btn" onclick="CV.wzCreate()">🚀 Créer le voyage</button>`}
+    h += `<div class="v-actions wz-act">${s>1 ? `<button type="button" class="v-btn sec cv-sq" onclick="CV.wzGo(${s-1})" aria-label="Revenir en arrière">←</button>` : ''}
+      ${s<5 ? `<button type="button" class="v-btn" onclick="CV.wzGo(${s+1})">${MSGT('Suivant')} →</button>` : `<button type="button" class="v-btn" onclick="CV.wzCreate()">🚀 Créer le voyage</button>`}
       <button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div></div>`;
     openSheet(h);
     if(s===2) wzDates(wz.debut ? 'n' : 'd');
