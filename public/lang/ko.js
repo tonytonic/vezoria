@@ -6703,5 +6703,8 @@ I18N.load({
 "sans position": "위치 없음",
 "Demandez-le à la personne qui vous a partagé l’appli.": "앱을 공유해 준 사람에게 요청하세요.",
 "Billet joint": "티켓을 첨부했어요",
-"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "이 휴대폰에 있는 것은 여기에 남아요 (사본을 남기려면 먼저 ZIP 백업을 만드세요)."
+"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "이 휴대폰에 있는 것은 여기에 남아요 (사본을 남기려면 먼저 ZIP 백업을 만드세요).",
+"Admin": "관리자",
+"Lui passer l’admin d’un voyage…": "여행 관리자 넘기기…",
+"Autres options": "다른 옵션"
 });

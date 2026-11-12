@@ -6703,5 +6703,8 @@ I18N.load({
 "sans position": "स्थान नहीं",
 "Demandez-le à la personne qui vous a partagé l’appli.": "जिसने आपके साथ ऐप साझा किया है, उससे माँगें।",
 "Billet joint": "टिकट जोड़ा गया",
-"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "इस फ़ोन पर जो है वह यहीं रहता है (कॉपी रखनी हो तो पहले ZIP बैकअप बना लो)।"
+"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "इस फ़ोन पर जो है वह यहीं रहता है (कॉपी रखनी हो तो पहले ZIP बैकअप बना लो)।",
+"Admin": "एडमिन",
+"Lui passer l’admin d’un voyage…": "किसी यात्रा का एडमिन उन्हें सौंपें…",
+"Autres options": "और विकल्प"
 });

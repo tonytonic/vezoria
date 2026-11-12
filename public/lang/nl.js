@@ -3753,5 +3753,8 @@ I18N.load({
 "sans position": "geen locatie",
 "Demandez-le à la personne qui vous a partagé l’appli.": "Vraag het aan degene die de app met u heeft gedeeld.",
 "Billet joint": "Ticket toegevoegd",
-"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "Wat op deze telefoon staat, blijft hier (maak eerst een ZIP-back-up als je een kopie wilt bewaren)."
+"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "Wat op deze telefoon staat, blijft hier (maak eerst een ZIP-back-up als je een kopie wilt bewaren).",
+"Admin": "Beheerder",
+"Lui passer l’admin d’un voyage…": "Beheer van een reis overdragen…",
+"Autres options": "Meer opties"
 });

@@ -6703,5 +6703,8 @@ I18N.load({
 "sans position": "位置情報なし",
 "Demandez-le à la personne qui vous a partagé l’appli.": "アプリを共有してくれた人に尋ねてください。",
 "Billet joint": "チケットを添付しました",
-"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "このスマホにあるものはここに残ります（コピーを残したい場合は、先にZIPバックアップを作成してください）。"
+"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "このスマホにあるものはここに残ります（コピーを残したい場合は、先にZIPバックアップを作成してください）。",
+"Admin": "管理者",
+"Lui passer l’admin d’un voyage…": "旅の管理者を引き継ぐ…",
+"Autres options": "その他のオプション"
 });

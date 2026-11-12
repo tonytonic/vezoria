@@ -6704,5 +6704,8 @@ I18N.load({
 "sans position": "بلا موقع",
 "Demandez-le à la personne qui vous a partagé l’appli.": "اطلبه من الشخص الذي شارك التطبيق معك.",
 "Billet joint": "تم إرفاق التذكرة",
-"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "ما على هذا الهاتف يبقى هنا (أنشئ أولًا نسخة ZIP احتياطية إن أردت الاحتفاظ بنسخة)."
+"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "ما على هذا الهاتف يبقى هنا (أنشئ أولًا نسخة ZIP احتياطية إن أردت الاحتفاظ بنسخة).",
+"Admin": "المشرف",
+"Lui passer l’admin d’un voyage…": "نقل إدارة رحلة إليه…",
+"Autres options": "خيارات أخرى"
 });

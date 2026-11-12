@@ -6703,5 +6703,8 @@ I18N.load({
 "sans position": "无位置",
 "Demandez-le à la personne qui vous a partagé l’appli.": "请向与你分享本应用的人索取。",
 "Billet joint": "已附上票据",
-"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "这部手机上的内容会留在这里（想保留副本的话，请先做一份 ZIP 备份）。"
+"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "这部手机上的内容会留在这里（想保留副本的话，请先做一份 ZIP 备份）。",
+"Admin": "管理员",
+"Lui passer l’admin d’un voyage…": "把某次旅行的管理权交给TA…",
+"Autres options": "更多选项"
 });

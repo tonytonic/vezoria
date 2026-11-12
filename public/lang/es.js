@@ -3763,5 +3763,8 @@ I18N.load({
 "sans position": "sin ubicación",
 "Demandez-le à la personne qui vous a partagé l’appli.": "Pídaselo a la persona que le compartió la app.",
 "Billet joint": "Billete adjuntado",
-"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "Lo que hay en este teléfono se queda aquí (haz antes una copia ZIP si quieres conservar una copia)."
+"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "Lo que hay en este teléfono se queda aquí (haz antes una copia ZIP si quieres conservar una copia).",
+"Admin": "Admin",
+"Lui passer l’admin d’un voyage…": "Pasarle la administración de un viaje…",
+"Autres options": "Más opciones"
 });

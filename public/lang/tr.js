@@ -6685,5 +6685,8 @@ I18N.load({
 "sans position": "konum yok",
 "Demandez-le à la personne qui vous a partagé l’appli.": "Uygulamayı sizinle paylaşan kişiden isteyin.",
 "Billet joint": "Bilet eklendi",
-"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "Bu telefondakiler burada kalır (bir kopya saklamak istersen önce ZIP yedeği al)."
+"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "Bu telefondakiler burada kalır (bir kopya saklamak istersen önce ZIP yedeği al).",
+"Admin": "Yönetici",
+"Lui passer l’admin d’un voyage…": "Bir seyahatin yöneticiliğini devret…",
+"Autres options": "Diğer seçenekler"
 });

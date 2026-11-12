@@ -6704,5 +6704,8 @@ I18N.load({
 "sans position": "без геопозиции",
 "Demandez-le à la personne qui vous a partagé l’appli.": "Попросите его у того, кто поделился с вами приложением.",
 "Billet joint": "Билет прикреплён",
-"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "То, что на этом телефоне, остаётся здесь (сначала сделай ZIP-копию, если хочешь сохранить копию)."
+"Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "То, что на этом телефоне, остаётся здесь (сначала сделай ZIP-копию, если хочешь сохранить копию).",
+"Admin": "Админ",
+"Lui passer l’admin d’un voyage…": "Передать управление поездкой…",
+"Autres options": "Другие действия"
 });
