@@ -3601,3 +3601,16 @@ html.vz-dark .wz2 .wz-act{background:linear-gradient(180deg,rgba(0,0,0,0),#1d142
 .wz2 .wz-et{background:#fff;border-radius:16px;padding:10px;border:1.5px solid rgba(124,58,237,.12);margin-bottom:10px}
 html.vz-dark .wz2 .wz-et{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
 .ar-gtop{margin:0 0 14px}.ar-gtop .ar-guide{margin:0}
+
+/* ✨ « Où partir ? » en 5 écrans */
+.in-w .in-pg,.in-w .in-q,.in-w .in-k{display:none}
+.in-w[data-p="1"] .in-pg[data-pg="1"],.in-w[data-p="1"] .in-q[data-q="1"]{display:block}.in-w[data-p="1"] .in-k[data-k="1"]{display:inline}.in-w[data-p="1"] .wz-bar i{width:20%}
+.in-w[data-p="2"] .in-pg[data-pg="2"],.in-w[data-p="2"] .in-q[data-q="2"]{display:block}.in-w[data-p="2"] .in-k[data-k="2"]{display:inline}.in-w[data-p="2"] .wz-bar i{width:40%}
+.in-w[data-p="3"] .in-pg[data-pg="3"],.in-w[data-p="3"] .in-q[data-q="3"]{display:block}.in-w[data-p="3"] .in-k[data-k="3"]{display:inline}.in-w[data-p="3"] .wz-bar i{width:60%}
+.in-w[data-p="4"] .in-pg[data-pg="4"],.in-w[data-p="4"] .in-q[data-q="4"]{display:block}.in-w[data-p="4"] .in-k[data-k="4"]{display:inline}.in-w[data-p="4"] .wz-bar i{width:80%}
+.in-w[data-p="5"] .in-pg[data-pg="5"],.in-w[data-p="5"] .in-q[data-q="5"]{display:block}.in-w[data-p="5"] .in-k[data-k="5"]{display:inline}.in-w[data-p="5"] .wz-bar i{width:100%}
+.in-w .in-go,.in-w[data-p="5"] .in-next,.in-w[data-p="1"] .in-prev{display:none}
+.in-w[data-p="5"] .in-go{display:block;flex:1}
+.wz-cards.wz-c3{grid-template-columns:repeat(3,1fr)}
+.wz-cards.wz-c1{grid-template-columns:1fr}
+.in-w .in-tags .v-chip{font-size:.95rem;padding:10px 14px}

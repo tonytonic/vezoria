@@ -1698,25 +1698,40 @@
     const v = (k, d) => S[k] != null && S[k] !== '' ? S[k] : d;
     const sel = (id, opts, cur) => `<select class="v-in" id="${id}">${opts.map(([val,l])=>`<option value="${val}"${String(cur)===String(val)?' selected':''}>${l}</option>`).join('')}</select>`;
     setTimeout(()=>{ const d = document.getElementById('in-dep'); if(d) d.onchange = () => { document.getElementById('in-other').style.display = d.value === 'autre' ? '' : 'none'; }; }, 50);
-    openSheet(`<h2>💡 Où partir ?</h2><div class="v-sum-small" style="margin-bottom:8px">Réponds en 30 secondes : l’appli compare ${DESTS.length} destinations (météo du mois, temps de trajet depuis chez toi, budget, formalités) et te propose les meilleures, avec un itinéraire type.</div>
-      <div class="v-f2"><div class="v-f"><label>Départ de</label>${depSelect(v('dep', depGuess()))}</div>
-        <div class="v-f"><label>Quand ?</label>${sel('in-mois', [['','Je suis flexible'], ...MOIS_L.map((m,i)=>[i+1, m])], v('mois',''))}</div></div>
-      <div class="v-f2 in-dates"><div class="v-f"><label>${esc(MSGT('Aller le (facultatif)'))}</label><input class="v-in" type="date" id="in-d1" value="${esc(v('d1',''))}" onchange="CV.inspDatesTouch()"></div>
-        <div class="v-f"><label>${esc(MSGT('Retour le'))}</label><input class="v-in" type="date" id="in-d2" value="${esc(v('d2',''))}" onchange="CV.inspDatesTouch()"></div></div>
-      <div class="v-f2"><div class="v-f"><label>Combien de jours ?</label>${sel('in-duree', [['3','Week-end (2–3 j)'],['5','4–5 jours'],['7','1 semaine'],['10','10 jours'],['14','2 semaines'],['21','3 semaines et +'], ...(['3','5','7','10','14','21'].includes(String(v('duree','7'))) ? [] : [[String(v('duree','7')), RF('{0} jours', v('duree','7'))]])], v('duree','7'))}</div>
-        <div class="v-f"><label>Combien de voyageurs ?</label>${sel('in-nb', [['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6 et +']], v('nb','2'))}</div></div>
-      <div class="v-f2"><div class="v-f"><label>Budget total par personne</label><input class="v-in" id="in-budget" inputmode="numeric" value="${esc(v('budget','1200'))}" placeholder="${CS()}, transport compris"></div>
-        <div class="v-f"><label>Style</label>${sel('in-style', [['eco','Économique'],['confort','Confort'],['luxe','Petit luxe']], v('style','confort'))}</div></div>
-      <div class="v-f"><label>${esc(MSGT('Comment y aller ?'))}</label><div class="v-filters in-how" style="flex-wrap:wrap">${[['tout', MSGT('Peu importe')], ['avion', '✈️ ' + MSGT('Avion')], ['sol', '🚗 🚆 🚌 ' + MSGT('Sans avion (voiture, train, bus)')]].map(([k, l])=>`<button type="button" class="v-chip${v('how','tout') === k ? ' on' : ''}" data-how="${k}" onclick="this.parentNode.querySelectorAll('[data-how]').forEach(b=>b.classList.toggle('on', b === this))">${esc(l)}</button>`).join('')}</div></div>
-      <div class="v-f2"><div class="v-f"><label>Trajet au maximum</label>${sel('in-vol', [['1','1 h'],['2','2 h'],['3','3 h'],['4','4 h'],['6','6 h'],['8','8 h'],['99','Peu importe']], v('vol','4'))}</div>
-        <div class="v-f"><label>Climat souhaité</label>${sel('in-climat', [['','Peu importe'],['chaud','Chaud (26 °C et +)'],['doux','Doux (18–25 °C)'],['frais','Frais (< 18 °C)']], v('climat',''))}</div></div>
-      <div class="v-f2"><div class="v-f"><label>Avec qui ?</label>${sel('in-qui', [['solo','Seul(e)'],['couple','En couple'],['amis','Entre amis'],['famille','En famille']], v('qui','couple'))}</div>
-        <div class="v-f"><label>Rythme</label>${sel('in-rythme', [['calme','Tranquille'],['equil','Équilibré'],['intense','J’en veux plein']], v('rythme','equil'))}</div></div>
-      <div class="v-f2" id="in-other" style="${v('dep','Nantes')==='autre' ? '' : 'display:none'}"><div class="v-f"><label>Ta ville de départ</label><input class="v-in" id="in-deptxt" data-place autocomplete="off" value="${esc(v('depTxt',''))}" placeholder="Ex. Plougastel, Genève, Montréal…"></div>
-        <div class="v-f"><label>Aéroport (code, facultatif)</label><input class="v-in" id="in-iata" value="${esc(v('iata',''))}" placeholder="Ex. BES, GVA, YUL" maxlength="3" autocapitalize="characters"></div></div>
-      <label class="cv-checkline"><input type="checkbox" id="in-cni"${S.cni?' checked':''}> Uniquement avec la carte d’identité (pas de passeport)</label>
-      <div class="v-f"><label>Envies (plusieurs choix)</label><div class="v-filters" style="flex-wrap:wrap">${INSP_TAGS.map(([k,l])=>`<button type="button" class="v-chip${(S.tags||[]).includes(k)?' on':''}" data-tag="${k}" onclick="this.classList.toggle('on')">${l}</button>`).join('')}</div></div>
-      <div class="v-actions"><button type="button" class="v-btn" onclick="CV.inspireGo()">✨ Me proposer des destinations</button><button type="button" class="v-btn sec" onclick="CV.inspireDemo()">👀 Exemple</button></div>`);
+    // ✨ 12/11/2026 : le questionnaire en 5 écrans (une question par écran, des grandes cartes), mêmes champs qu’avant pour le calcul
+    const cards = (id, opts, cur, cls) => `<select class="v-in" id="${id}" hidden>${opts.map(([val,l])=>`<option value="${val}"${String(cur)===String(val)?' selected':''}>${esc(l)}</option>`).join('')}</select>
+      <div class="wz-cards ${cls || ''}">${opts.map(([val, l, ic, sub])=>`<button type="button" class="wz-card${String(cur)===String(val) ? ' on' : ''}" onclick="const s=document.getElementById('${id}');s.value='${val}';s.dispatchEvent(new Event('change'));this.parentNode.querySelectorAll('.wz-card').forEach(x=>x.classList.toggle('on', x === this))">${ic ? `<i>${ic}</i>` : ''}<b>${esc(l)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</button>`).join('')}</div>`;
+    const Q = [['📅', 'Quand pars-tu ?', 'Un mois, ou tes dates si tu les connais.'], ['👫', 'Avec qui ?', 'Pour adapter les idées et le rythme.'], ['💶', 'Ton budget', 'Par personne, trajet compris.'], ['🌴', 'Tes envies', 'Choisis tout ce qui te fait rêver.'], ['🧭', 'D’où pars-tu ?', 'Pour calculer les trajets et les formalités.']];
+    const nav = d => `const w=this.closest('.in-w'),n=Math.min(5,Math.max(1,+w.dataset.p+(${d})));w.dataset.p=n;const sh=w.closest('.v-sheet');if(sh)sh.scrollTop=0;`;
+    openSheet(`<div class="wz2 in-w" data-p="1"><div class="wz-top"><span>💡 ${MSGT('Où partir ?')}</span><span>${[1,2,3,4,5].map(n=>`<b class="in-k" data-k="${n}">${RF('Étape {0} sur {1}', n, 5)}</b>`).join('')}</span></div>
+      <div class="wz-bar"><i></i></div>
+      ${Q.map(([ic, t, st], k)=>`<div class="wz-hero in-q" data-q="${k + 1}"><i aria-hidden="true">${ic}</i><h2>${MSGT(t)}</h2><p>${MSGT(st)}</p></div>`).join('')}
+      <div class="in-pg" data-pg="1">
+        <div class="v-f"><label>${MSGT('Quand ?')}</label>${sel('in-mois', [['','Je suis flexible'], ...MOIS_L.map((m,i)=>[i+1, m])], v('mois',''))}</div>
+        <div class="v-f2 in-dates"><div class="v-f"><label>${esc(MSGT('Aller le (facultatif)'))}</label><input class="v-in" type="date" id="in-d1" value="${esc(v('d1',''))}" onchange="CV.inspDatesTouch()"></div>
+          <div class="v-f"><label>${esc(MSGT('Retour le'))}</label><input class="v-in" type="date" id="in-d2" value="${esc(v('d2',''))}" onchange="CV.inspDatesTouch()"></div></div>
+        <div class="v-f"><label>${MSGT('Combien de jours ?')}</label>${cards('in-duree', [['3', MSGT('Week-end'), '🌅', MSGT('2–3 jours')], ['5', MSGT('Court séjour'), '🧳', MSGT('4–5 jours')], ['7', MSGT('Une semaine'), '🏖️', RF('{0} jours', 7)], ['10', RF('{0} jours', 10), '🗺️', ''], ['14', MSGT('Deux semaines'), '🌍', RF('{0} jours', 14)], ['21', MSGT('Trois semaines et +'), '✈️', ''], ...(['3','5','7','10','14','21'].includes(String(v('duree','7'))) ? [] : [[String(v('duree','7')), RF('{0} jours', v('duree','7')), '📅', '']])], v('duree','7'))}</div></div>
+      <div class="in-pg" data-pg="2">
+        ${cards('in-qui', [['solo', MSGT('Seul(e)'), '🧍'], ['couple', MSGT('En couple'), '💕'], ['amis', MSGT('Entre amis'), '🎉'], ['famille', MSGT('En famille'), '👨‍👩‍👧']], v('qui','couple'))}
+        <div class="v-f" style="margin-top:14px"><label>${MSGT('Combien de voyageurs ?')}</label>${sel('in-nb', [['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6 et +']], v('nb','2'))}</div>
+        <div class="v-f"><label>${MSGT('Rythme')}</label>${cards('in-rythme', [['calme', MSGT('Tranquille'), '🧘'], ['equil', MSGT('Équilibré'), '⚖️'], ['intense', MSGT('J’en veux plein'), '⚡']], v('rythme','equil'), 'wz-c3')}</div></div>
+      <div class="in-pg" data-pg="3">
+        ${cards('in-style', [['eco', MSGT('Économique'), '🎒', MSGT('Auberges, transports publics')], ['confort', MSGT('Confort'), '🏨', MSGT('Hôtels 3★, restaurants variés')], ['luxe', MSGT('Petit luxe'), '💎', MSGT('Beaux hôtels, bonnes tables')]], v('style','confort'), 'wz-c1')}
+        <div class="v-f" style="margin-top:14px"><label>${MSGT('Budget total par personne')}</label><input class="v-in" id="in-budget" inputmode="numeric" value="${esc(v('budget','1200'))}" placeholder="${CS()}, transport compris"></div></div>
+      <div class="in-pg" data-pg="4">
+        <div class="v-filters in-tags" style="flex-wrap:wrap">${INSP_TAGS.map(([k,l])=>`<button type="button" class="v-chip${(S.tags||[]).includes(k)?' on':''}" data-tag="${k}" onclick="this.classList.toggle('on')">${l}</button>`).join('')}</div>
+        <div class="v-f" style="margin-top:14px"><label>${MSGT('Climat souhaité')}</label>${cards('in-climat', [['', MSGT('Peu importe'), '🌤️'], ['chaud', MSGT('Chaud'), '☀️', '26 °C +'], ['doux', MSGT('Doux'), '🌸', '18–25 °C'], ['frais', MSGT('Frais'), '🍃', '< 18 °C']], v('climat',''))}</div></div>
+      <div class="in-pg" data-pg="5">
+        <div class="v-f"><label>${MSGT('Départ de')}</label>${depSelect(v('dep', depGuess()))}</div>
+        <div class="v-f2" id="in-other" style="${v('dep','Nantes')==='autre' ? '' : 'display:none'}"><div class="v-f"><label>Ta ville de départ</label><input class="v-in" id="in-deptxt" data-place autocomplete="off" value="${esc(v('depTxt',''))}" placeholder="Ex. Plougastel, Genève, Montréal…"></div>
+          <div class="v-f"><label>Aéroport (code, facultatif)</label><input class="v-in" id="in-iata" value="${esc(v('iata',''))}" placeholder="Ex. BES, GVA, YUL" maxlength="3" autocapitalize="characters"></div></div>
+        <div class="v-f"><label>${esc(MSGT('Comment y aller ?'))}</label><div class="v-filters in-how" style="flex-wrap:wrap">${[['tout', MSGT('Peu importe')], ['avion', '✈️ ' + MSGT('Avion')], ['sol', '🚗 🚆 🚌 ' + MSGT('Sans avion (voiture, train, bus)')]].map(([k, l])=>`<button type="button" class="v-chip${v('how','tout') === k ? ' on' : ''}" data-how="${k}" onclick="this.parentNode.querySelectorAll('[data-how]').forEach(b=>b.classList.toggle('on', b === this))">${esc(l)}</button>`).join('')}</div></div>
+        <div class="v-f"><label>${MSGT('Trajet au maximum')}</label>${sel('in-vol', [['1','1 h'],['2','2 h'],['3','3 h'],['4','4 h'],['6','6 h'],['8','8 h'],['99','Peu importe']], v('vol','4'))}</div>
+        <label class="cv-checkline"><input type="checkbox" id="in-cni"${S.cni?' checked':''}> Uniquement avec la carte d’identité (pas de passeport)</label></div>
+      <div class="v-actions wz-act"><button type="button" class="v-btn sec cv-sq in-prev" onclick="${nav(-1)}" aria-label="Revenir en arrière">←</button>
+        <button type="button" class="v-btn in-next" onclick="${nav(1)}">${MSGT('Suivant')} →</button>
+        <button type="button" class="v-btn in-go" onclick="CV.inspireGo()">✨ ${MSGT('Me proposer des destinations')}</button>
+        <button type="button" class="v-btn sec cv-sq in-demo" onclick="CV.inspireDemo()" title="${esc(MSGT('Exemple'))}">👀</button></div></div>`);
   }
   // ⏱️ « · 10 jours », « · 1 semaine », « · 2 semaines » : en semaines seulement quand le compte tombe juste
   const durLbl = d => d >= 7 && d % 7 === 0 ? d / 7 + ' semaine' + (d >= 14 ? 's' : '') : d + ' jours';
