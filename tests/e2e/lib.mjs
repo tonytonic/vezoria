@@ -10,7 +10,7 @@ export const br = await chromium.launch({ args: (process.env.PW_ARGS || '--disab
 export const iso = d => { const x = new Date(Date.now() + d * 864e5); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
 let shotN = 0;
 export async function user(name, { geo = { latitude: 41.9028, longitude: 12.4964 }, url = '/?web=1', lang = 'fr' } = {}) {
-  const ctx = await br.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, serviceWorkers: 'block', locale: 'fr-FR', timezoneId: 'Europe/Paris', ...(geo ? { geolocation: geo, permissions: ['geolocation'] } : {}) });
+  const ctx = await br.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, ...(process.env.TOUCH ? { hasTouch: true, isMobile: true, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1' } : {}), serviceWorkers: 'block', locale: 'fr-FR', timezoneId: 'Europe/Paris', ...(geo ? { geolocation: geo, permissions: ['geolocation'] } : {}) });
   await ctx.route(/^https?:\/\/(?!localhost)/, r => r.abort());
   await ctx.addInitScript(l => { try { if (!localStorage.getItem('cv-lang')) localStorage.setItem('cv-lang', l); } catch (e) {} window.__sh = []; try { navigator.share = async d => { window.__sh.push(d); }; navigator.canShare = () => true; } catch (e) {} try { navigator.clipboard.writeText = async t => { window.__clip = t; }; navigator.clipboard.readText = async () => window.__clip || ''; } catch (e) {} }, lang);
   const pg = await ctx.newPage(); const errs = []; const U = { name, pg, ctx, errs };
