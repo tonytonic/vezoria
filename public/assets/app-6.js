@@ -2604,22 +2604,29 @@
     if(!wm.planOn){ wm.planOn = true; wm.map.on('click', worldPick); }
     worldPlanUI();
   }
+  // 📍 12/11/2026 : un repère « … » apparaît tout de suite au toucher ; les touchers suivants attendent qu’il soit trouvé (avant : rien ne se passait 1 à 3 s, on retouchait → villes en double)
   async function worldPick(e){
     if(!wm || !document.getElementById('cv-world').classList.contains('wm-planning')) return;
+    if(wm.picking){ toast('📍 ' + MSGT('Je cherche la ville…')); return; }
     let {lng, lat} = e.lngLat, city = '', cc = '', pays = '';
-    try { const j = await (await fetch(`${GEO}reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${lat}&lon=${lng}`)).json();
-      const a = (j && j.address) || {}; city = a.city || a.town || a.village || a.municipality || a.county || a.state || ''; pays = a.country || ''; cc = (a.country_code || '').toUpperCase(); } catch(e){}
-    if(!city){ toast('🌊 Pas de ville ici : touche la terre ferme'); return; }
-    // 🏙️ 12/11/2026 : un doigt tombe souvent sur un village (« Mesegar de Corneja ») → on prend la ville connue la plus proche (40 km max), sinon le lieu touché
-    let pl = {city, pays, cc, lat:+lat.toFixed(4), lng:+lng.toFixed(4)};
-    try { const L = await wdNear(lat, lng, 40); const big = (L || []).filter(x=>x.n >= 60).map(x=>Object.assign({d:km({lat, lng}, x)}, x)).sort((a, b)=>(b.n - a.n) - (a.d - b.d) * 4)[0];
-      if(big && normQ(big.c) !== normQ(city)) pl = Object.assign(pl, {city:big.c, lat:+big.lat.toFixed(4), lng:+big.lng.toFixed(4)}); } catch(e){}
-    if(!wm || !document.getElementById('cv-world').classList.contains('wm-planning')) return;
-    ({city} = pl); lng = pl.lng; lat = pl.lat;
-    wm.plan.push(pl);
-    const el = document.createElement('div'); el.className = 'wm-plan-pin'; el.textContent = wm.plan.length;
-    (wm.planM = wm.planM || []).push(new maplibregl.Marker({element:el}).setLngLat([lng, lat]).addTo(wm.map));
-    worldPlanLine(); worldPlanUI();
+    const tmp = document.createElement('div'); tmp.className = 'wm-plan-pin wait'; tmp.textContent = '…';
+    const tmpM = new maplibregl.Marker({element:tmp}).setLngLat([lng, lat]).addTo(wm.map); wm.picking = true;
+    const done = () => { wm.picking = false; try { tmpM.remove(); } catch(x){} };
+    try {
+      try { const j = await (await fetch(`${GEO}reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${lat}&lon=${lng}`)).json();
+        const a = (j && j.address) || {}; city = a.city || a.town || a.village || a.municipality || a.county || a.state || ''; pays = a.country || ''; cc = (a.country_code || '').toUpperCase(); } catch(x){}
+      if(!city){ toast('🌊 Pas de ville ici : touche la terre ferme'); return; }
+      // 🏙️ un doigt tombe souvent sur un village (« Mesegar de Corneja ») → la ville connue la plus proche (40 km max, 4 s au plus), sinon le lieu touché
+      let pl = {city, pays, cc, lat:+lat.toFixed(4), lng:+lng.toFixed(4)};
+      try { const L = await Promise.race([wdNear(lat, lng, 40), new Promise(r=>setTimeout(()=>r(null), 4000))]); const big = (L || []).filter(x=>x.n >= 60).map(x=>Object.assign({d:km({lat, lng}, x)}, x)).sort((a, b)=>(b.n - a.n) - (a.d - b.d) * 4)[0];
+        if(big && normQ(big.c) !== normQ(city)) pl = Object.assign(pl, {city:big.c, lat:+big.lat.toFixed(4), lng:+big.lng.toFixed(4)}); } catch(x){}
+      if(!wm || !document.getElementById('cv-world').classList.contains('wm-planning')) return;
+      const last = wm.plan[wm.plan.length - 1]; if(last && normQ(last.city) === normQ(pl.city)){ toast('📍 ' + RF('{0} est déjà ta dernière étape.', pl.city)); return; }   // même ville touchée deux fois de suite : pas de doublon
+      wm.plan.push(pl);
+      const el = document.createElement('div'); el.className = 'wm-plan-pin'; el.textContent = wm.plan.length;
+      (wm.planM = wm.planM || []).push(new maplibregl.Marker({element:el}).setLngLat([pl.lng, pl.lat]).addTo(wm.map));
+      worldPlanLine(); worldPlanUI();
+    } finally { done(); }
   }
   async function worldHome(){
     const I = M.insp || {}, pts = [[I.gDep, '🏠'], [I.gRet && normQ(I.gRet) !== normQ(I.gDep || '') ? I.gRet : '', '🏁']].filter(x=>x[0]);

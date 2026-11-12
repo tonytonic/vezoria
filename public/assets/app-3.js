@@ -84,10 +84,10 @@
       const a = (j && j.address) || {}; return a.country_code ? {pays:a.country || '', cc:String(a.country_code).toUpperCase(), at:1} : null; } catch(e){ return null; }
   }
   async function wzLocate(){
-    if(!wz) return; wz.geo = wz.geo || {}; const L = wz.etapes.filter(e=>e.ville && !wz.geo[normQ(e.ville)]); if(!L.length) return true;
+    if(!wz) return; wz.geo = wz.geo || {}; const W = wz, L = wz.etapes.filter(e=>e.ville && !wz.geo[normQ(e.ville)]); if(!L.length) return true;   // W : l’assistant de départ (fermé puis rouvert pendant la recherche → on s’arrête)
     const box = () => document.getElementById('wz-loc'); let i = 0;
     for(const e of L){ i++; const b = box(); if(b) b.innerHTML = `<div class="ar-run wz-run">📍 ${MSGT('Je situe les villes…')} <small class="sg-pr">${esc(e.ville)} · ${i}/${L.length}</small></div>`;
-      const o = await cityInfo(e.ville); if(!wz) return; wz.geo[normQ(e.ville)] = o || {miss:1}; }
+      const o = await cityInfo(e.ville); if(wz !== W) return; wz.geo[normQ(e.ville)] = o || {miss:1}; }
     const b = box(); if(b) b.innerHTML = ''; return true;
   }
   // 🧭 une ville ajoutée avec « ＋ Étape » va là où elle allonge le moins le trajet (Bologne entre Milan et Venise) ; les autres gardent leur ordre
@@ -223,15 +223,20 @@
     const cands = [...wz.etapes.map(e=>e.ville), wz.titre].filter(Boolean);
     for(const t of cands){
       const w = t.split(/[\s·,–\-\/]+/).filter(Boolean);
-      for(let a = 0; a < w.length; a++) for(let b = Math.min(w.length, a + 3); b > a; b--){ const cc = ccOf(w.slice(a, b).join(' ')); if(cc && cc.length === 2 && cc !== 'FR' && frCountry(cc) !== cc) return {cc, from:t}; }
+      for(let a = 0; a < w.length; a++) for(let b = Math.min(w.length, a + 3); b > a; b--){ const ws = w.slice(a, b).join(' '), cc = ccOf(ws); if(cc && cc.length === 2 && (cc !== 'FR' || /^france$/i.test(ws)) && frCountry(cc) !== cc) return {cc, from:t}; }   // 🇫🇷 la France aussi, quand le mot « France » est écrit (pas pour une ville française)
     }
     return null;
   }
   function wzCtryBox(){
     const el = document.getElementById('wz-ctry'); if(!el || !wz) return;
-    const g = wzCtryGuess(); if(!g || wz.ctryOk === g.cc || wz.etapes.filter(e=>e.ville && normQ(e.ville) !== normQ(g.from)).length > 0){ el.innerHTML = ''; return; }
+    const g = wzCtryGuess(), any = wz.etapes.some(e=>e.ville);
+    // 🌍 12/11/2026 : aucun pays deviné et aucune ville écrite → on propose d’écrire un pays (France, Russie…)
+    if(!g && !any && !wz.ctryOk){ if(!document.getElementById('wz-cin')) el.innerHTML = `<div class="sg-c wz-cpick"><i>🌍</i><div><b>${MSGT('Un pays ? Je te propose les étapes')}</b><input class="v-in" id="wz-cin" autocomplete="off" placeholder="${esc(MSGT('Ex. France, Russie, Japon…'))}" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.wzCtryType()}"></div><button type="button" class="sg-go" onclick="CV.wzCtryType()">${MSGT('Proposer')} ›</button></div>`; return; }
+    if(!g || wz.ctryOk === g.cc || wz.etapes.filter(e=>e.ville && normQ(e.ville) !== normQ(g.from)).length > 0){ el.innerHTML = ''; return; }
     el.innerHTML = `<button type="button" class="sg-c" onclick="CV.wzCountry('${ja(g.cc)}')"><i>${flag(g.cc)}</i><div><b>${esc(frCountry(g.cc))} : ${MSGT('je te propose les étapes')}</b><small>${MSGT('Les villes à voir et les nuits dans chacune, pour')} ${wz.nuits} ${MSGT('nuits')}. ${MSGT('Tu pourras tout modifier.')}</small></div><span class="sg-go">${MSGT('Proposer')} ›</span></button>`;
   }
+  function wzCtryType(){ const v = ((document.getElementById('wz-cin') || {}).value || '').trim(); if(!v) return; const cc = ccOf(v);
+    if(!cc || cc.length !== 2){ toast('🌍 ' + RF('Je ne connais pas le pays « {0} ».', v)); return; } wzCountry(cc); }
   async function wzCountry(cc){
     wzRead(); const el = document.getElementById('wz-ctry'); if(el) el.innerHTML = `<div class="sg-c run"><i>${flag(cc)}</i><div><b>${MSGT('Je prépare l’itinéraire…')}</b><small>${MSGT('Wikidata et les destinations de l’appli')}</small></div></div>`;
     const it = await ctryItin(cc, wz.nuits).catch(()=>null);
@@ -1277,14 +1282,23 @@
       SERVICE wikibase:label { bd:serviceParam wikibase:language "${L}". ?it rdfs:label ?l. } } ORDER BY DESC(?sl) LIMIT 25`;
     const [a, b] = await Promise.allSettled([wdq(qc, 20000), wdq(qs, 20000)]);
     const o = {t:Date.now(), cities: a.status === 'fulfilled' ? wdRows(a.value) : [], sites: b.status === 'fulfilled' ? wdRows(b.value) : []};
+    // 🇷🇺 grands pays (Russie, États-Unis…) : la première requête dépasse le temps → secours plus léger, les villes les plus peuplées
+    if(!o.cities.length){ const q2 = `SELECT DISTINCT ?it ?l ?co ?sl WHERE { ${K} ?it wdt:P17 ?k; wdt:P31 ?t; wdt:P1082 ?pop; wdt:P625 ?co; wikibase:sitelinks ?sl. VALUES ?t { wd:Q515 wd:Q1549591 wd:Q5119 } FILTER(?pop > 250000)
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "${L}". ?it rdfs:label ?l. } } ORDER BY DESC(?sl) LIMIT 30`;
+      try { o.cities = wdRows(await wdq(q2, 25000)); } catch(e){} }
     if(o.cities.length || o.sites.length){ M.ctryD[cc] = o; const ks = Object.keys(M.ctryD); if(ks.length > 20) delete M.ctryD[ks[0]]; persist(); }
     return o;
   }
   // un itinéraire pour un pays : celui des destinations de l’appli s’il existe, sinon ses villes les plus connues (une ville tous les 3 nuits environ)
   async function ctryItin(cc, nightsTot){
-    const DS = DESTS.filter(d=>d[2] === cc), D = DS.find(d=>normQ(d[0]) === normQ(frCountry(cc))) || DS.sort((a, b)=>b[9].length - a[9].length)[0], n = Math.max(1, nightsTot || 7);
-    let base = D ? D[9].map(e=>[e[0], e[1]]) : null, far = [];
+    // 🇫🇷 12/11/2026 : un pays qui a plusieurs itinéraires régionaux dans l’appli (France : Corse, Provence…) → ses grandes villes d’abord (Wikidata), la région la plus longue seulement en secours
+    const DS = DESTS.filter(d=>d[2] === cc), DN = DS.find(d=>normQ(d[0]) === normQ(frCountry(cc))), n = Math.max(1, nightsTot || 7);
     const cd = await ctryData(cc).catch(()=>null);
+    const hasWd = cd && (cd.cities || []).length >= 2, D = DN || (DS.length > 1 ? null : DS[0]);
+    let base = D ? D[9].map(e=>[e[0], e[1]]) : null, far = [];
+    if(!base && !hasWd && DS.length > 1){   // hors ligne : la 1ʳᵉ ville de chaque région de l’appli, dans l’ordre du trajet le plus court
+      const k = Math.max(2, Math.min(DS.length, 5, Math.round(n / 2))), P = DS.slice().sort((a, b)=>(b[9] || []).length - (a[9] || []).length).slice(0, k).map(d=>({nom:(d[9][0] || [d[0]])[0], lat:d[3], lng:d[4]}));
+      const ord = [P.shift()]; while(P.length){ const last = ord[ord.length - 1]; P.sort((x, y)=>km(last, x) - km(last, y)); ord.push(P.shift()); } base = ord.map(c=>[c.nom, 1]); }
     if(!base){
       const L = (cd && cd.cities) || []; if(!L.length) return null;
       const k = Math.max(1, Math.min(5, Math.round(n / 3))), pick = [];
