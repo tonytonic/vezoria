@@ -1016,7 +1016,7 @@
     if(!ds.length) h += '<div class="v-empty">Aucun jour pour l’instant.<br><button type="button" class="v-btn" style="margin-top:10px" onclick="CV.datesSheet()">📅 Fixer les dates du voyage</button></div>';
     const canDays = ds.length && tt && !tt.archived && !M.lock;
     h += progViewBar(ds);
-    if(ds.length > 1 && !progStOn(ds)) h += `<div class="cv-dayall"><button type="button" onclick="CV.dayAll(${M.dayAll ? 0 : 1})">${M.dayAll ? '▴ ' + MSGT('Replier les jours') : '▾ ' + MSGT('Déplier tous les jours')}</button></div>`;
+    if(ds.length > 1 && !progStOn(ds)) h += `<div class="cv-dayall"><button type="button" onclick="CV.dayAll(${M.dayAll !== false ? 0 : 1})">${M.dayAll !== false ? '▴ ' + MSGT('Replier les jours') : '▾ ' + MSGT('Déplier tous les jours')}</button></div>`;
     if(canDays && !progStOn(ds)) h += `<button type="button" class="cv-addday" onclick="CV.dayAdd('before')">＋ Ajouter un jour avant le J1</button>`;
     const stV = progStages(ds);
     if(stV) h += stV; else h += ds.map((d, idx)=>dayHTML(d, idx)).join('');
@@ -1055,13 +1055,14 @@
       </div>`;
   }
   // 🧹 les jours sont repliés sur une ligne ; on en ouvre un à la fois (aujourd’hui ouvert pendant le voyage). « Déplier tous les jours » au besoin.
-  function dayOpenDef(d){ if(M.dayAll) return true; const t = trip(); return !!(t && tripPhase(t) === 'live' && d === isoToday()); }
+  // 📂 12/11/2026 : jours ouverts par défaut, « Replier les jours » reste ton choix
+  function dayOpenDef(d){ if(M.dayAll !== false) return true; const t = trip(); return !!(t && tripPhase(t) === 'live' && d === isoToday()); }
   // dans une carte d’étape : un titre égal à la ville de l’étape ne dit rien (« Sibiu, Sibiu… »)
   function dayTitle(info, own, night){ if(!DAY_NOCITY) return info.titre || dayFallback(info, own, night); const same = x => normQ(cityOf(String(x || ''))) === normQ(DAY_NOCITY);
     if(info.titre && !same(info.titre)) return info.titre; const f = dayFallback(info, own, []); return same(f) ? '' : f; }
   function dayFallback(info, own, night){ const p = String(info.plan || '').split('\n')[0].trim(); if(p) return p.slice(0, 60); const a = own.find(i=>i.cat !== 'hotel'); if(a) return a.titre || ''; const h = night[0]; return h ? (cityOf(h.titre) || h.titre || '') : ''; }
   function toggleDay(d){ const was = openD[d] !== undefined ? openD[d] : dayOpenDef(d);
-    if(!M.dayAll) dayList().forEach(x=>{ if(x !== d) openD[x] = false; });
+    if(M.dayAll === false) dayList().forEach(x=>{ if(x !== d) openD[x] = false; });
     openD[d] = !was; renderProg();
     if(!was) setTimeout(()=>{ const e = document.getElementById('d-' + d); if(e){ const r = e.getBoundingClientRect(); if(r.top < 70 || r.top > innerHeight * .6) window.scrollTo({top: window.scrollY + r.top - 80, behavior:'smooth'}); } }, 30); }
   function dayAll(on){ M.dayAll = !!on; Object.keys(openD).forEach(k=>delete openD[k]); persist(); renderProg(); }

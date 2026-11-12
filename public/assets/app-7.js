@@ -4037,12 +4037,12 @@
   function progStages(ds){
     if(!progStOn(ds)) return ''; const t = trip(), S = stRanges(), live = tripPhase(t) === 'live', td = isoToday();
     const canE = !t.archived && !M.lock, idxOf = d => ds.indexOf(d) + 1;
-    let op = STO[t.id]; if(op === undefined && live){ const c = S.find(x=>td >= x.debut && td < x.end); op = c ? c.h.id : ''; }
+    const shut = ((M.stShut || {})[t.id]) || {};   // 📂 12/11/2026 : toutes les étapes ouvertes par défaut ; chacune se replie et le reste (choix gardé)
     const inSt = d => S.some(x=>d >= x.debut && d < x.end);
     const loose = L => L.map(d=>dayHTML(d, ds.indexOf(d))).join('');
     let h = loose(ds.filter(d=>d < S[0].debut)); const trSeen = new Set();
     S.forEach((x, i)=>{
-      const days = ds.filter(d=>d >= x.debut && d < x.end), n = nights(x.debut, x.end), open = op === x.h.id;
+      const days = ds.filter(d=>d >= x.debut && d < x.end), n = nights(x.debut, x.end), open = !shut[x.h.id];
       const hs = items(it=>it.cat === 'hotel' && it.date && it.date >= x.debut && it.date < x.end), bk = hs.length && hs.every(okB), pd = bk && hs.every(it=>it.statut === 'paid');
       const hl = bk ? (hs.map(it=>it.nom).filter(Boolean).join(' · ') || MSGT('Hébergement réservé')) : MSGT('Hébergement à réserver');
       let chips = ''; if(!open){
@@ -4070,7 +4070,7 @@
     if(canE) h += `<div class="etp-foot">${S.length > 1 ? `<button type="button" class="etp-reorg" onclick="CV.soOpen()">⇅ ${MSGT('Réorganiser les étapes')}</button>` : ''}<button type="button" class="etp-add" onclick="CV.ariCity()">＋ ${MSGT('Ajouter une ville')}</button></div>`;
     return h;
   }
-  function stTog(id){ const t = trip(); if(!t) return; STO[t.id] = STO[t.id] === id ? '' : id; renderProg();
+  function stTog(id){ const t = trip(); if(!t) return; const S = (M.stShut = M.stShut || {})[t.id] = (M.stShut[t.id] || {}); if(S[id]) delete S[id]; else S[id] = 1; persist(); renderProg(); if(S[id]) return;
     setTimeout(()=>{ const e = document.getElementById('etp-' + id); if(e){ const r = e.getBoundingClientRect(); if(r.top < 70 || r.top > innerHeight * .6) window.scrollTo({top: window.scrollY + r.top - 80, behavior:'smooth'}); } }, 30); }
 
   /* 🚆 Les trajets suivent l’ordre des étapes : aller (maison → 1ʳᵉ ville), un trajet entre chaque étape, retour (dernière ville → maison).

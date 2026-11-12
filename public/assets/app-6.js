@@ -2656,18 +2656,18 @@
     const m0 = match.find(Boolean);
     const itin = P.map((p,i)=>{ const m = match[i], e = m && (m[9]||[]).find(e=>n(e[0])===n(p.city)); return [p.city, e ? e[1] : (P.length === 1 ? 4 : 2)]; });
     // 🌍 dates choisies avant de dessiner : on répartit leurs nuits sur les étapes posées
-    { const I = M.insp || {}; if(I.globePre && I.d1 && I.d2){ const N = Math.max(1, nights(I.d1, I.d2)), tot = itin.reduce((s,a)=>s+a[1],0) || 1;
+    { const I = M.insp || {}; if(I.globePre && I.d1 && I.d2){ const N = Math.max(1, Math.round((new Date(I.d2 + 'T12:00:00') - new Date(I.d1 + 'T12:00:00')) / 864e5)), tot = itin.reduce((s,a)=>s+a[1],0) || 1;
       itin.forEach(a=>{ a[1] = Math.max(1, Math.round(a[1] * N / tot)); }); let df = N - itin.reduce((s,a)=>s+a[1],0), k = 0; while(df && k < 60){ const j = k % itin.length; if(df > 0){ itin[j][1]++; df--; } else if(itin[j][1] > 1){ itin[j][1]--; df++; } k++; } } }
-    const nights = itin.reduce((s,a)=>s+a[1],0);
+    const nn = itin.reduce((s,a)=>s+a[1],0);
     const nm = P.length === 1 ? P[0].city : P.length === 2 ? P[0].city + ' & ' + P[1].city : P[0].city + ' → ' + P[P.length-1].city;
     const eu = EURO.includes(P[0].cc) || ['FR','CH','NO','IS','LI'].includes(P[0].cc);
-    const d = [nm, P[0].pays, P[0].cc, P[0].lat, P[0].lng, m0 ? m0[5] : 'ville culture', m0 ? m0[6] : [5,6,9], m0 ? m0[7] : 90, [Math.max(2, nights - 2), nights + 3], itin,
+    const d = [nm, P[0].pays, P[0].cc, P[0].lat, P[0].lng, m0 ? m0[5] : 'ville culture', m0 ? m0[6] : [5,6,9], m0 ? m0[7] : 90, [Math.max(2, nn - 2), nn + 3], itin,
       m0 ? m0[10] : 'Itinéraire dessiné sur le globe : règle les nuits, choisis les lieux à voir, puis crée le voyage.', m0 ? m0[11] : (eu ? 'UE' : 'P'), m0 ? m0[12] : Array(12).fill(20), m0 ? m0[13] : P[0].city];
     if(!m0){ toast('🌡️ ' + MSGT('Je regarde le climat…')); cl = await climOf(P[0]).catch(()=>null); if(cl){ d[12] = cl.t; d[6] = bestOf(cl); } }
     const I0 = M.insp || {}, pre = I0.globePre && I0.d1;
     const i = DESTS.push(d) - 1, now = new Date().getMonth() + 1, best = d[6], mo = pre ? +I0.d1.slice(5, 7) : best.find(m=>m > now) || best[0] || now;
-    M.insp = Object.assign({}, M.insp || {}, {duree: nights + 1, rythme: 'intense'}, pre ? {dep:'autre', depTxt:I0.gDep || ''} : {}); persist();
-    inspRes.unshift({i, d, nom:nm, pays:P[0].pays, cc:P[0].cc, tip:d[10], visa:d[11], wk:d[13], tags:d[5].split(' '), best, dur:d[8], sc:0, est:d[7]*nights, trans:0, stay:d[7]*nights, h:0, ground:false, escale:false, mo, tmp:d[12][mo-1], why:[], warn:[], itin, globe:1, known:!!m0 || !!cl});
+    M.insp = Object.assign({}, M.insp || {}, {duree: nn + 1, rythme: 'intense'}, pre ? {dep:'autre', depTxt:I0.gDep || ''} : {}); persist();
+    inspRes.unshift({i, d, nom:nm, pays:P[0].pays, cc:P[0].cc, tip:d[10], visa:d[11], wk:d[13], tags:d[5].split(' '), best, dur:d[8], sc:0, est:d[7]*nn, trans:0, stay:d[7]*nn, h:0, ground:false, escale:false, mo, tmp:d[12][mo-1], why:[], warn:[], itin, globe:1, known:!!m0 || !!cl});
     worldPlanStop(); worldClose(); M.mode = 'prep';
     inspOpen(i);   // même écran que « Je ne sais pas où aller » : présentation, étapes et nuits, lieux à voir, villes proches, puis création (dates, budget, trajets)
   }
