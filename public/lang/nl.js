@@ -3787,5 +3787,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "Steden in de buurt nu niet beschikbaar (verbinding?).",
 "les jours à {0}": "je dagen in {0}",
 "Déplacé au {0}": "Verplaatst naar {0}",
-"On part et on revient tous du même endroit": "We vertrekken en keren allemaal terug op dezelfde plek"
+"On part et on revient tous du même endroit": "We vertrekken en keren allemaal terug op dezelfde plek",
+"Avant de dessiner": "Voordat je tekent",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Je data, wie er gaat en vanwaar — daarna zet je je etappes op de wereldbol.",
+"Je pose mes étapes sur le globe": "Mijn etappes op de wereldbol zetten",
+"Choisis une date de retour après le départ.": "Kies een terugkeerdatum na het vertrek."
 });

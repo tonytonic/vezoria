@@ -6719,5 +6719,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "Yakındaki şehirler şu an alınamıyor (bağlantı?).",
 "les jours à {0}": "{0} günlerin",
 "Déplacé au {0}": "{0} tarihine taşındı",
-"On part et on revient tous du même endroit": "Hepimiz aynı yerden çıkıp aynı yere dönüyoruz"
+"On part et on revient tous du même endroit": "Hepimiz aynı yerden çıkıp aynı yere dönüyoruz",
+"Avant de dessiner": "Çizmeden önce",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Tarihlerin, kimin gittiği ve nereden: sonra duraklarını küreye koyarsın.",
+"Je pose mes étapes sur le globe": "Duraklarımı küreye koy",
+"Choisis une date de retour après le départ.": "Gidişten sonra bir dönüş tarihi seç."
 });

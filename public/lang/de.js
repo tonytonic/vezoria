@@ -3790,5 +3790,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "Städte in der Nähe gerade nicht verfügbar (Verbindung?).",
 "les jours à {0}": "deine Tage in {0}",
 "Déplacé au {0}": "Verschoben auf {0}",
-"On part et on revient tous du même endroit": "Wir starten und kommen alle am selben Ort an"
+"On part et on revient tous du même endroit": "Wir starten und kommen alle am selben Ort an",
+"Avant de dessiner": "Bevor du zeichnest",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Deine Daten, wer mitfährt und von wo – dann setzt du deine Etappen auf den Globus.",
+"Je pose mes étapes sur le globe": "Etappen auf den Globus setzen",
+"Choisis une date de retour après le départ.": "Wähle ein Rückreisedatum nach der Abreise."
 });

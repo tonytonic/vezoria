@@ -6737,5 +6737,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "पास के शहर अभी उपलब्ध नहीं (कनेक्शन?)।",
 "les jours à {0}": "{0} में तुम्हारे दिन",
 "Déplacé au {0}": "{0} पर ले जाया गया",
-"On part et on revient tous du même endroit": "हम सब एक ही जगह से जाते और लौटते हैं"
+"On part et on revient tous du même endroit": "हम सब एक ही जगह से जाते और लौटते हैं",
+"Avant de dessiner": "बनाने से पहले",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "तारीखें, कौन जा रहा है और कहाँ से — फिर ग्लोब पर पड़ाव रखो।",
+"Je pose mes étapes sur le globe": "ग्लोब पर पड़ाव रखूँ",
+"Choisis une date de retour après le départ.": "जाने के बाद की लौटने की तारीख चुनो।"
 });

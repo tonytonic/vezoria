@@ -6737,5 +6737,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "지금은 근처 도시를 불러올 수 없어요 (연결?).",
 "les jours à {0}": "{0}에 있는 날",
 "Déplacé au {0}": "{0}(으)로 옮겼어요",
-"On part et on revient tous du même endroit": "모두 같은 곳에서 출발하고 돌아와요"
+"On part et on revient tous du même endroit": "모두 같은 곳에서 출발하고 돌아와요",
+"Avant de dessiner": "그리기 전에",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "날짜, 가는 사람, 출발지를 정한 뒤 지구본에 경유지를 놓으세요.",
+"Je pose mes étapes sur le globe": "지구본에 경유지 놓기",
+"Choisis une date de retour après le départ.": "출발일 이후의 귀국 날짜를 고르세요."
 });

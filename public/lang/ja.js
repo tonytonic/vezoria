@@ -6737,5 +6737,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "近くの都市を今は取得できません（接続？）。",
 "les jours à {0}": "{0}での日程",
 "Déplacé au {0}": "{0}に移動しました",
-"On part et on revient tous du même endroit": "全員同じ場所から出発し、同じ場所に帰る"
+"On part et on revient tous du même endroit": "全員同じ場所から出発し、同じ場所に帰る",
+"Avant de dessiner": "描く前に",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "日程、誰が行くか、どこから。その後、地球儀に経由地を置きます。",
+"Je pose mes étapes sur le globe": "地球儀に経由地を置く",
+"Choisis une date de retour après le départ.": "出発日より後の帰着日を選んでください。"
 });

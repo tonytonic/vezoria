@@ -6738,5 +6738,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "Ближайшие города пока недоступны (связь?).",
 "les jours à {0}": "дни в {0}",
 "Déplacé au {0}": "Перенесено на {0}",
-"On part et on revient tous du même endroit": "Все уезжаем и возвращаемся в одно место"
+"On part et on revient tous du même endroit": "Все уезжаем и возвращаемся в одно место",
+"Avant de dessiner": "Перед тем как рисовать",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Даты, кто едет и откуда — потом отметишь этапы на глобусе.",
+"Je pose mes étapes sur le globe": "Отметить этапы на глобусе",
+"Choisis une date de retour après le départ.": "Выбери дату возвращения после отъезда."
 });

@@ -3778,5 +3778,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "Nearby cities unavailable for now (connection?).",
 "les jours à {0}": "your days in {0}",
 "Déplacé au {0}": "Moved to {0}",
-"On part et on revient tous du même endroit": "We all leave from and return to the same place"
+"On part et on revient tous du même endroit": "We all leave from and return to the same place",
+"Avant de dessiner": "Before you draw",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Your dates, who’s going and from where — then you place your stops on the globe.",
+"Je pose mes étapes sur le globe": "Place my stops on the globe",
+"Choisis une date de retour après le départ.": "Choose a return date after the departure."
 });

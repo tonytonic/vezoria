@@ -3796,5 +3796,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "Città vicine non disponibili per ora (connessione?).",
 "les jours à {0}": "i giorni a {0}",
 "Déplacé au {0}": "Spostato al {0}",
-"On part et on revient tous du même endroit": "Partiamo e torniamo tutti dallo stesso posto"
+"On part et on revient tous du même endroit": "Partiamo e torniamo tutti dallo stesso posto",
+"Avant de dessiner": "Prima di disegnare",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Le tue date, chi parte e da dove: poi metti le tappe sul globo.",
+"Je pose mes étapes sur le globe": "Metto le tappe sul globo",
+"Choisis une date de retour après le départ.": "Scegli una data di ritorno dopo la partenza."
 });

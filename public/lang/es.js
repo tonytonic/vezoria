@@ -3797,5 +3797,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "Ciudades cercanas no disponibles por ahora (¿conexión?).",
 "les jours à {0}": "tus días en {0}",
 "Déplacé au {0}": "Movido al {0}",
-"On part et on revient tous du même endroit": "Salimos y volvemos todos del mismo sitio"
+"On part et on revient tous du même endroit": "Salimos y volvemos todos del mismo sitio",
+"Avant de dessiner": "Antes de dibujar",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Tus fechas, quién va y desde dónde; luego colocas tus etapas en el globo.",
+"Je pose mes étapes sur le globe": "Colocar mis etapas en el globo",
+"Choisis une date de retour après le départ.": "Elige una fecha de regreso posterior a la salida."
 });

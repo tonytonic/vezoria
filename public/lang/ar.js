@@ -6738,5 +6738,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "المدن القريبة غير متاحة حاليًا (الاتصال؟).",
 "les jours à {0}": "أيامك في {0}",
 "Déplacé au {0}": "نُقل إلى {0}",
-"On part et on revient tous du même endroit": "نغادر ونعود جميعًا من المكان نفسه"
+"On part et on revient tous du même endroit": "نغادر ونعود جميعًا من المكان نفسه",
+"Avant de dessiner": "قبل الرسم",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "تواريخك ومن يسافر ومن أين، ثم تضع محطاتك على الكرة الأرضية.",
+"Je pose mes étapes sur le globe": "أضع محطاتي على الكرة الأرضية",
+"Choisis une date de retour après le départ.": "اختر تاريخ عودة بعد المغادرة."
 });

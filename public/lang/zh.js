@@ -6737,5 +6737,9 @@ I18N.load({
 "Villes proches indisponibles pour l’instant (connexion ?).": "暂时无法获取附近城市（网络？）。",
 "les jours à {0}": "在{0}的日子",
 "Déplacé au {0}": "已移至{0}",
-"On part et on revient tous du même endroit": "大家从同一地方出发、回到同一地方"
+"On part et on revient tous du même endroit": "大家从同一地方出发、回到同一地方",
+"Avant de dessiner": "开始画之前",
+"Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "先填日期、谁去、从哪出发，然后在地球上标出各站。",
+"Je pose mes étapes sur le globe": "在地球上标出各站",
+"Choisis une date de retour après le départ.": "请选择晚于出发日的返回日期。"
 });
