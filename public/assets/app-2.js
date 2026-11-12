@@ -583,7 +583,7 @@
     }
     shPend = null; shBack = false; shCur = html;
   }
-  const shBar = locked => locked ? '' : `<div class="sh-bar">${shStack.length ? '<button type="button" class="sh-bk" aria-label="Retour" onclick="CV.sheetBack()">←</button>' : ''}<button type="button" class="sh-x" aria-label="Fermer" onclick="CV.xClose()">✕</button></div>`;
+  const shBar = locked => locked ? '' : `<div class="sh-bar">${shStack.length ? '<button type="button" class="sh-bk" aria-label="Retour" onclick="CV.sheetBack()">←</button>' : ''}<button type="button" class="sh-x" aria-label="Fermer" onclick="CV.xClose(1)">✕</button></div>`;
   function sheetBack(){
     const h = shStack.pop(); if(!h){ xClose(); return; }
     shBack = true;
@@ -592,7 +592,7 @@
     if(/<div class="gd">/.test(h) && /gd-ch/.test(h) && typeof guideSheet === 'function'){ shBack = false; shStack = []; guideSheet(); return; }   // 🧭 le menu du parcours, à jour   // 👥 la page Partager est refaite : elle montre l’état actuel (voyage masqué, remis…)
     openSheet(h);
   }
-  async function xClose(){
+  async function xClose(all){   // all : la ✕ en haut à droite ferme tout (12/11/2026) ; « ← », toucher à côté ou glisser vers le bas reviennent à la fenêtre d’avant
     // l’assistant de création déjà commencé : on demande avant de tout perdre
     const wt = document.getElementById('wz-titre');
     if(document.getElementById('wz') && typeof wz === 'object' && wz && (wz.step > 1 || (wz.titre || '').trim() || (wt && wt.value.trim()))){
@@ -600,7 +600,7 @@
     }
     // 🧭 parcours guidé : fermer une fenêtre ouverte depuis une de ses étapes ramène à cette étape (pas au menu principal)
     // une fenêtre ouverte depuis une autre (← visible) : toucher à côté ou ✕ ramène à celle d’avant, pas au menu principal
-    if(shStack.length){ sheetBack(); return; }
+    if(shStack.length && all !== 1){ sheetBack(); return; }
     shStack = []; closeSheet();
   }
   // ↩️ les boutons « Fermer » / ✕ d’une fenêtre ouverte depuis une autre reviennent à celle d’avant (pas au menu principal)

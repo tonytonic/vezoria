@@ -18,7 +18,9 @@
     if(wz.step===3) wz.etapes = [...document.querySelectorAll('.wz-et')].map((r, i)=>{ const o = wz.etapes[i] || {}, ville = r.querySelector('[data-k=ville]').value.trim(), mode = r.querySelector('[data-k=mode]').value;
       return {ville, nuits:Math.max(0, parseInt(r.querySelector('[data-k=nuits]').value)||0), mode, mm: !!o.mm || (o.ville === ville && o.mode && mode !== o.mode), ...(o.nw ? {nw:1} : {})}; });
     if(wz.step===4){ const gg = {}; document.querySelectorAll('[data-wdep]').forEach(i=>{ const pid = i.dataset.wdep, q = a => document.querySelector(`[${a}="${pid}"]`);
-      gg[pid] = {dep:i.value.trim(), ret:q('data-wret').value.trim(), mDep:q('data-wmdep').value, mRet:q('data-wmret').value}; }); wz.gens = gg; }
+      gg[pid] = {dep:i.value.trim(), ret:q('data-wret').value.trim(), mDep:q('data-wmdep').value, mRet:q('data-wmret').value}; });
+      if(wz.voyageurs.length > 1 && wz.same !== false){ const g0 = gg[wz.voyageurs[0]]; if(g0) wz.voyageurs.forEach(pid=>{ gg[pid] = Object.assign({}, g0); }); }   // 🤝 tous du même endroit : une seule saisie, copiée pour chacun
+      wz.gens = gg; }
     if(wz.step===5){ const sgc = document.getElementById('wz-sg'); if(sgc) wz.sugg = sgc.checked; wz.tpl = g('wz-tpl'); const cc = document.getElementById('wz-cc'), cd = document.getElementById('wz-cd'); wz.copyCheck = cc ? cc.checked : true; wz.copyDivers = cd ? cd.checked : false; }
   }
   function wzGo(n){
@@ -39,6 +41,23 @@
     else if(deb) f.value = addDays(deb, Math.max(1, parseInt(n.value)||1));
     const k = parseInt(n.value)||0, lbl = document.getElementById('wz-dur');
     if(lbl) lbl.textContent = deb ? `${k} nuit${k>1?'s':''} · ${k+1} jours, du ${fdate(deb)} au ${fdate(addDays(deb,k))}` : '';
+  }
+  // ➕ comme sur la page d’une destination : les villes autour de tes étapes, en photos, à ajouter d’un geste (12/11/2026)
+  async function wzNear(){
+    const el = () => wz && wz.step === 3 && document.getElementById('wz-near'); if(!el()) return; wz.nearBy = wz.nearBy || {};
+    const E = wz.etapes.filter(e=>e.ville && wzPt(e));
+    if(!E.length){ el().innerHTML = `<div class="v-sum-small">${MSGT(wz.etapes.some(e=>e.ville) ? 'Villes proches indisponibles pour l’instant (connexion ?).' : 'Écris d’abord une ville : je te proposerai celles d’à côté.')}</div>`; return; }
+    for(const e of E){ const k = normQ(e.ville); if(wz.nearBy[k]) continue; const p = wzPt(e); try { wz.nearBy[k] = await wdNear(p.lat, p.lng, 120); } catch(x){ wz.nearBy[k] = []; } if(!el()) return; }
+    const have = new Set(wz.etapes.map(e=>normQ(e.ville))), seen = new Set(), P = E.map(wzPt);
+    const all = Object.values(wz.nearBy).flat().filter(n=>n && n.c && !have.has(normQ(n.c)) && !seen.has(normQ(n.c)) && seen.add(normQ(n.c)));
+    const dmin = n => Math.min(...P.map(q=>km(q, n))), l = all.map(n=>Object.assign({d:dmin(n)}, n)).sort((a, b)=>(a.d > 150) - (b.d > 150) || b.n - a.n).slice(0, 12);
+    el().innerHTML = l.length ? l.map(n=>`<button type="button" class="cp-city" onclick="CV.wzNearAdd('${ja(n.c)}',${+n.lat||0},${+n.lng||0})">${n.img ? `<img src="${esc(n.img)}" alt="" loading="lazy">` : '<i>🏙️</i>'}<span data-notr>${esc(n.c)}</span><small>＋ ${MSGT('ajouter')}</small></button>`).join('') : `<div class="v-sum-small">${MSGT('Pas d’autre ville proposée.')}</div>`;
+  }
+  function wzSame(on){ wzRead(); wz.same = !!on; wzRender(); }
+  function wzNearAdd(c, lat, lng){
+    wzRead(); const big = wz.etapes.reduce((a, b)=>b.nuits > a.nuits ? b : a, wz.etapes[0]); if(big && big.nuits > 2) big.nuits--;   // une nuit prise à l’étape la plus longue
+    wz.etapes.push({ville:c, nuits:1, mode:(wz.etapes[0] || {}).mode === 'Voiture' ? 'Voiture' : 'Train', nw:1}); if(lat || lng){ wz.geo = wz.geo || {}; wz.geo[normQ(c)] = wz.geo[normQ(c)] || {lat, lng}; }
+    const sh = document.querySelector('#v-sheet-bg .v-sheet'), y = sh ? sh.scrollTop : 0; wzRender(); const s2 = document.querySelector('#v-sheet-bg .v-sheet'); if(s2) s2.scrollTop = y; toast('➕ ' + c);
   }
   function wzEt(action, i){
     wzRead();
@@ -180,7 +199,7 @@
       for(const e of wz.etapes){ const p = wzPt(e); if(!p || !p.cc || seen[p.cc]) continue; seen[p.cc] = 1;
         const se = await ctrySeason(p.cc, e.ville).catch(()=>null); if(se) out.push({cc:p.cc, se}); if(out.length >= 10) break; }
       wz.seas = out;
-    } finally { if(wz){ wz.chk = 0; if(wz.step === 3){ if(mv) wzRender(); else wzSoft(); } } }
+    } finally { if(wz){ wz.chk = 0; if(wz.step === 3){ if(mv) wzRender(); else wzSoft(); wzNear(); } } }
   }
   function wzInfo(){
     const se = (wz.seas || []).length > 1 ? `<div class="wz-seas">${wz.seas.map(x=>`<div class="wz-sl"><b>${flag(x.cc)} ${esc(frCountry(x.cc))}</b>${seasonLine(x.se, wz.debut ? +wz.debut.slice(5, 7) : 0)}</div>`).join('')}</div>` : '';
@@ -266,13 +285,15 @@
           <span class="wz-btns">${i>0?`<button type="button" class="cv-x" onclick="CV.wzEt('up',${i})" title="Monter" aria-label="Monter">↑</button>`:''}<button type="button" class="cv-x" onclick="CV.wzEt('del',${i})" aria-label="Retirer">✕</button></span></div>`).join('')}</div>
         <div id="wz-sum" class="v-sum-small" style="margin:6px 0;font-weight:700"></div>
         <div class="cv-row" style="flex-wrap:wrap;gap:6px"><button type="button" class="v-day-edit" onclick="CV.wzEt('add')">＋ Étape</button><button type="button" class="v-day-edit" onclick="CV.wzEt('even')">⚖️ Répartir les nuits</button>${wz.etapes.filter(e=>e.ville).length >= 3 ? `<button type="button" class="v-day-edit" id="wz-ord" onclick="CV.wzOrder()">🧭 ${MSGT('Ordonner mon itinéraire')}</button>` : ''}</div>
-        <div id="wz-loc"></div><div id="wz-warn">${wzWarn()}</div><div id="wz-info">${wzInfo()}</div>`;
+        <div id="wz-loc"></div><div id="wz-warn">${wzWarn()}</div><div id="wz-info">${wzInfo()}</div>
+        <h3 class="wz-nh">➕ ${MSGT('Ajouter une étape')} <small class="v-sum-small">${MSGT('villes autour de tes étapes')}</small></h3><div id="wz-near" class="cp-near"><div class="v-sum-small">📡 ${MSGT('Recherche des villes proches…')}</div></div>`;
     }
     if(s===4){
       const plan = wzPlan(), first = plan.st[0] ? plan.st[0].ville : '…', last = plan.st.length ? plan.st[plan.st.length-1].ville : '…';
       const m0 = (plan.st[0] || {}).mode || 'Avion';
       h += `<div class="v-sum-small" style="margin-bottom:8px">D’où part chacun vers ${esc(first)}, comment, et où rentre-t-il après ${esc(last)} ? Chacun son trajet : l’un en voiture, l’autre en train ou en avion.</div>
-        ${wz.voyageurs.map(pid=>{ const g = wz.gens[pid] || {}; return `<div class="wz-pp">${pchip(pid)}
+        ${wz.voyageurs.length > 1 ? `<label class="cv-checkline wz-same"><input type="checkbox" ${wz.same !== false ? 'checked' : ''} onchange="CV.wzSame(this.checked)"> 🤝 ${MSGT('On part et on revient tous du même endroit')}</label>` : ''}
+        ${(wz.voyageurs.length > 1 && wz.same !== false ? wz.voyageurs.slice(0, 1) : wz.voyageurs).map(pid=>{ const g = wz.gens[pid] || {}; return `<div class="wz-pp">${wz.voyageurs.length > 1 && wz.same !== false ? `<b class="wz-all">👥 ${MSGT('Tout le monde')}</b>` : pchip(pid)}
           <div class="wz-pl"><span>🛫 Aller</span><input class="v-in" data-wdep="${pid}" data-place autocomplete="off" value="${esc(g.dep)}" placeholder="départ de…"><select class="v-in" data-wmdep="${pid}">${modes(g.mDep || m0)}</select></div>
           <div class="wz-pl"><span>🏠 Retour</span><input class="v-in" data-wret="${pid}" data-place autocomplete="off" value="${esc(g.ret)}" placeholder="retour vers…"><select class="v-in" data-wmret="${pid}">${modes(g.mRet || g.mDep || wz.modeRetour || m0)}</select></div></div>`; }).join('')}`;
     }
@@ -292,7 +313,7 @@
       <button type="button" class="v-btn sec cv-sq" onclick="CV.close()" aria-label="Fermer">✕</button></div></div>`;
     openSheet(h);
     if(s===2) wzDates(wz.debut ? 'n' : 'd');
-    if(s===3){ wzSum(); if(wz.etapes.some(e=>e.ville && !(wz.geo || {})[normQ(e.ville)])) setTimeout(wzCheck, 300); }
+    if(s===3){ wzSum(); if(wz.etapes.some(e=>e.ville && !(wz.geo || {})[normQ(e.ville)])) setTimeout(wzCheck, 300); else setTimeout(wzNear, 100); }
     if(s===5){ covPrev(); wzOrdAsk(); }
   }
   function wzTplOpts(){
@@ -3223,6 +3244,27 @@
     } catch(e){}
     return info;
   }
+  // 📅 changer le jour d’une visite, parmi les jours où l’on est dans cette ville (12/11/2026) : depuis le programme, les étapes et la carte de préparation, tout passe par cette fiche
+  function plStayDays(p){
+    const t = R[p.trip] || trip(); if(!t || !p.date) return [];
+    let h = p.stay && R[p.stay] && !R[p.stay].deleted ? R[p.stay] : null;
+    if(!h) h = list('item', i=>i.trip === p.trip && i.cat === 'hotel' && !i.deleted && i.date && i.date <= p.date && (i.dateFin || i.date) >= p.date).sort((a, b)=>(a.date < b.date) - (a.date > b.date))[0] || null;
+    let a = h ? h.date : p.date, b = h ? (h.dateFin || h.date) : p.date;
+    if(t.debut && a < t.debut) a = t.debut; if(t.fin && b > t.fin) b = t.fin;
+    return range(a, b);
+  }
+  function plDaysHTML(p){
+    if(!p || p.sugg || !p.date) return ''; const ds = plStayDays(p); if(ds.length < 2) return '';
+    const city = (h => h ? cityOf(h.titre || h.base || '') : '')(p.stay && R[p.stay]);
+    return `<div class="pi-days"><label>📅 ${esc(MSGT('Jour de la visite'))}${city ? ` <small class="v-sum-small">· ${esc(RF('les jours à {0}', city))}</small>` : ''}</label>
+      <div class="pi-dl">${ds.map(d=>{ const n = list('place', x=>x.trip === p.trip && x.date === d && !x.deleted && !x.sugg && x.id !== p.id).length;
+        return `<button type="button" class="${d === p.date ? 'on' : ''}" onclick="CV.plDay('${ja(p.id)}','${d}')"><b>${esc(new Date(d + 'T12:00:00').toLocaleDateString(NL(), {weekday:'short'}))}</b><span>${esc(fshort(d))}</span><small>${n ? RF(n > 1 ? '{0} visites' : '{0} visite', n) : MSGT('libre')}</small></button>`; }).join('')}</div></div>`;
+  }
+  function plDay(id, d){
+    const p = R[id]; if(!p || p.date === d) return; const c = clone(p); c.date = d; delete c.ordre;
+    put(c, '📅 ' + RF('Déplacé au {0}', fdate(d))); try { refresh(); } catch(e){}
+    const el = document.querySelector('#v-sheet-bg .pi-days'); if(el) el.outerHTML = plDaysHTML(R[id]);   // la fiche reste ouverte, le jour choisi s’allume
+  }
   async function plInfo(id, refresh, from){
     const p = R[id]; if(!p) return;
     const d = p.date || '', city = (d && dayCity(d)) || cityOf((trip() || {}).titre || '');
@@ -3232,6 +3274,7 @@
     const act = sg && p.sugg ? `<div class="pi-sg"><button type="button" class="v-btn" onclick="CV.suggKeep('${ja(id)}')">✓ ${MSGT('Ajouter au programme')}</button><button type="button" class="v-btn sec" onclick="CV.suggDrop('${ja(id)}')">✕ ${MSGT('Écarter')}</button></div>` : '';
     openSheet(`<h2>📍 ${esc(p.nom)}</h2>${p.exc ? `<div class="v-sum-small">🚌 ${MSGT('Excursion à la journée')} · ${p.exc} km</div>` : ''}<div id="pi-box" class="cv-route-load">📖 Recherche des informations…</div>${act}
       ${!p.sugg && (()=>{ try { return tripPhase(R[p.trip] || trip()) !== 'prep'; } catch(e){ return true; } })() ? `<div class="pi-vu"><button type="button" class="v-btn${p.vu ? ' sec' : ''}" onclick="CV.plVu('${ja(id)}')">${p.vu ? '↩️ ' + esc(MSGT('Pas encore vu')) : '✓ ' + esc(MSGT('C’est vu'))}</button><button type="button" class="v-btn sec" onclick="CV.plSkip('${ja(id)}')">${p.skip ? '↩️ ' + esc(MSGT('Remettre au programme')) : '⏭️ ' + esc(MSGT('Pas le temps / plus envie'))}</button></div>` : ''}
+      ${plDaysHTML(p)}
       <div class="v-actions">${back}<button type="button" class="v-btn sec cv-sq" onclick="${sg ? 'CV.suggOpen()' : 'CV.close()'}" aria-label="Fermer">✕</button></div>`);
     let info = p.info;
     if(!info || refresh || info.v !== 2 || Date.now() - (info.ts || 0) > 30 * 864e5){   // v2 : recherche Wikipédia plus stricte (anciennes fiches refaites)

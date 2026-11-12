@@ -3614,3 +3614,14 @@ html.vz-dark .wz2 .wz-et{background:rgba(255,255,255,.06);border-color:rgba(255,
 .wz-cards.wz-c3{grid-template-columns:repeat(3,1fr)}
 .wz-cards.wz-c1{grid-template-columns:1fr}
 .in-w .in-tags .v-chip{font-size:.95rem;padding:10px 14px}
+.wz2 .wz-nh{margin:18px 0 8px;font-size:1rem}
+
+/* 📅 changer le jour d'une visite */
+.pi-days{margin:14px 0 4px}.pi-days label{display:block;font-weight:700;font-size:.85rem;margin-bottom:8px}
+.pi-dl{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.pi-dl button{all:unset;flex:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:64px;padding:9px 8px;border-radius:14px;background:#fff;border:1.5px solid rgba(124,58,237,.15)}
+.pi-dl button b{font-size:.72rem;text-transform:capitalize;opacity:.7}.pi-dl button span{font-weight:800;font-size:.95rem}.pi-dl button small{font-size:.68rem;opacity:.6}
+.pi-dl button.on{border-color:#7c3aed;background:#f5f0ff;box-shadow:0 0 0 3px rgba(124,58,237,.18)}
+html.vz-dark .pi-dl button{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}html.vz-dark .pi-dl button.on{background:rgba(124,58,237,.3)}
+.wz-same{margin:4px 0 12px;padding:12px;border-radius:14px;background:#f5f0ff;font-weight:700}.wz-all{display:inline-block;margin-bottom:6px}
+html.vz-dark .wz-same{background:rgba(124,58,237,.2)}
