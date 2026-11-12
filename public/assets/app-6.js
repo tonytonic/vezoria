@@ -2606,11 +2606,17 @@
   }
   async function worldPick(e){
     if(!wm || !document.getElementById('cv-world').classList.contains('wm-planning')) return;
-    const {lng, lat} = e.lngLat; let city = '', cc = '', pays = '';
+    let {lng, lat} = e.lngLat, city = '', cc = '', pays = '';
     try { const j = await (await fetch(`${GEO}reverse?format=jsonv2&zoom=10&accept-language=${((window.I18N && I18N.lang) || 'fr')}&lat=${lat}&lon=${lng}`)).json();
       const a = (j && j.address) || {}; city = a.city || a.town || a.village || a.municipality || a.county || a.state || ''; pays = a.country || ''; cc = (a.country_code || '').toUpperCase(); } catch(e){}
     if(!city){ toast('🌊 Pas de ville ici : touche la terre ferme'); return; }
-    wm.plan.push({city, pays, cc, lat:+lat.toFixed(4), lng:+lng.toFixed(4)});
+    // 🏙️ 12/11/2026 : un doigt tombe souvent sur un village (« Mesegar de Corneja ») → on prend la ville connue la plus proche (40 km max), sinon le lieu touché
+    let pl = {city, pays, cc, lat:+lat.toFixed(4), lng:+lng.toFixed(4)};
+    try { const L = await wdNear(lat, lng, 40); const big = (L || []).filter(x=>x.n >= 60).map(x=>Object.assign({d:km({lat, lng}, x)}, x)).sort((a, b)=>(b.n - a.n) - (a.d - b.d) * 4)[0];
+      if(big && normQ(big.c) !== normQ(city)) pl = Object.assign(pl, {city:big.c, lat:+big.lat.toFixed(4), lng:+big.lng.toFixed(4)}); } catch(e){}
+    if(!wm || !document.getElementById('cv-world').classList.contains('wm-planning')) return;
+    ({city} = pl); lng = pl.lng; lat = pl.lat;
+    wm.plan.push(pl);
     const el = document.createElement('div'); el.className = 'wm-plan-pin'; el.textContent = wm.plan.length;
     (wm.planM = wm.planM || []).push(new maplibregl.Marker({element:el}).setLngLat([lng, lat]).addTo(wm.map));
     worldPlanLine(); worldPlanUI();
@@ -2632,7 +2638,8 @@
   }
   function worldPlanUI(){
     let b = document.getElementById('wm-plan'); const ov = document.getElementById('cv-world'); if(!ov) return;
-    if(!b){ b = document.createElement('div'); b.id = 'wm-plan'; ov.appendChild(b); }
+    // 📱 12/11/2026 : sur iPhone, les boutons de ce panneau ne répondaient pas (la carte 3D passait devant au toucher) → le panneau vit au-dessus du globe, hors de lui
+    if(!b){ b = document.createElement('div'); b.id = 'wm-plan'; document.body.appendChild(b); ['touchstart','touchmove','pointerdown','wheel'].forEach(ev=>b.addEventListener(ev, e=>e.stopPropagation(), {passive:true})); }
     const P = wm.plan || [];
     const I = M.insp || {}, pre = I.globePre && I.d1 && I.d2 ? `<div class="wp-p">🏠 ${esc(I.gDep || '')}${I.gDep ? ' → … → ' + esc(I.gRet || I.gDep) + ' · ' : ''}${esc(fshort(I.d1))} → ${esc(fshort(I.d2))} · ${RF('{0} nuits', nights(I.d1, I.d2))}</div>` : '';
     b.innerHTML = `${pre}<div class="wp-h">✨ Touche le globe pour poser les villes de ton voyage, dans l’ordre.</div><div class="wp-c">${P.map((p,i)=>`<span>${flag(p.cc)} ${esc(p.city)}</span>`).join('<i>→</i>') || '<em>Aucune ville pour l’instant</em>'}</div>

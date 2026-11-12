@@ -1247,7 +1247,7 @@
     }
   }
   function worldOpen(id){ worldClose(); go(id); M.mode = tripPhase(R[id]) === 'past' ? 'bilan' : tripPhase(R[id]); persist(); applyMode(); }
-  function worldClose(){ stopStory(); cineStop(); const ov = document.getElementById('cv-world'); if(wm) wm.spin = false; if(ov) ov.style.display = 'none'; document.body.style.overflow = ''; }   // la carte reste prête pour la prochaine ouverture
+  function worldClose(){ try { if(document.getElementById('wm-plan')) worldPlanStop(); } catch(e){} stopStory(); cineStop(); const ov = document.getElementById('cv-world'); if(wm) wm.spin = false; if(ov) ov.style.display = 'none'; document.body.style.overflow = ''; }   // la carte reste prête pour la prochaine ouverture
 
   /* ══════════════════════════════════════════════════════════════════════════
      ⚖️ PARTS INÉGALES & FOYERS · 🔎 LIEUX ILLUSTRÉS (Wikipédia) · 🧭 NOUVEAU VOYAGE : 3 FAÇONS
