@@ -3626,3 +3626,10 @@ html.vz-dark .pi-dl button{background:rgba(255,255,255,.06);border-color:rgba(25
 .wz-same{margin:4px 0 12px;padding:12px;border-radius:14px;background:#f5f0ff;font-weight:700}.wz-all{display:inline-block;margin-bottom:6px}
 html.vz-dark .wz-same{background:rgba(124,58,237,.2)}
 .wp-p{font-size:.78rem;font-weight:700;opacity:.85;margin-bottom:4px}
+
+/* 🌍 globe en préparation : seulement ce voyage */
+.wm-planning .maplibregl-marker:not(.wm-plan-pin):not(.wm-home-pin){display:none!important}
+.wm-home-pin{display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.wm-home-pin b{font-size:1.6rem;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+.wm-home-pin span{margin-top:2px;padding:2px 8px;border-radius:99px;background:#fff;color:#2b1840;font-size:.72rem;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+#wm-plan .pri.off{opacity:.55}

@@ -2598,6 +2598,9 @@
     if(!wm || !wm.map){ toast('🌍 Le globe se charge…'); return; }
     wm.plan = wm.plan || []; wm.spin = false; stopStory();
     document.getElementById('cv-world').classList.add('wm-planning');
+    // 🌍 12/11/2026 : une carte rien que pour ce voyage — les autres voyages, photos et pays disparaissent ; la maison (départ / retour) s’affiche
+    try { ['routes','routes-glow','steps','ph-cluster','ph-count','ph-point','pays-fill','pays-line','ci-base','ci-dot','ci-glow','ci-line'].forEach(l=>{ if(wm.map.getLayer(l)){ (wm.hidL = wm.hidL || {})[l] = wm.map.getLayoutProperty(l, 'visibility') || 'visible'; wm.map.setLayoutProperty(l, 'visibility', 'none'); } }); } catch(e){}
+    worldHome();
     if(!wm.planOn){ wm.planOn = true; wm.map.on('click', worldPick); }
     worldPlanUI();
   }
@@ -2612,8 +2615,16 @@
     (wm.planM = wm.planM || []).push(new maplibregl.Marker({element:el}).setLngLat([lng, lat]).addTo(wm.map));
     worldPlanLine(); worldPlanUI();
   }
+  async function worldHome(){
+    const I = M.insp || {}, pts = [[I.gDep, '🏠'], [I.gRet && normQ(I.gRet) !== normQ(I.gDep || '') ? I.gRet : '', '🏁']].filter(x=>x[0]);
+    (wm.homeM || []).forEach(m=>m.remove()); wm.homeM = []; wm.home = null;
+    for(const [v, ic] of pts){ let g = null; try { g = await geocode(v, null); } catch(e){} if(!g || g.lat == null || !wm || !wm.map) continue;
+      const el = document.createElement('div'); el.className = 'wm-home-pin'; el.innerHTML = `<b>${ic}</b><span>${esc(v)}</span>`;
+      wm.homeM.push(new maplibregl.Marker({element:el, anchor:'bottom'}).setLngLat([g.lng, g.lat]).addTo(wm.map)); if(ic === '🏠') wm.home = {lat:g.lat, lng:g.lng}; }
+    if(wm.home && !(wm.plan || []).length) try { wm.map.flyTo({center:[wm.home.lng, wm.home.lat], zoom:Math.max(3, wm.map.getZoom()), duration:900}); } catch(e){}
+    if((wm.plan || []).length) worldPlanLine(); }
   function worldPlanLine(){
-    const map = wm.map, P = wm.plan, coords = [];
+    const map = wm.map, P = wm.home && wm.plan.length ? [wm.home, ...wm.plan, wm.home] : wm.plan, coords = [];
     for(let i=1;i<P.length;i++){ const a = P[i-1], b = P[i]; for(let k=0;k<=24;k++){ const f = k/24; coords.push([a.lng + (b.lng - a.lng) * f, a.lat + (b.lat - a.lat) * f]); } }
     const data = {type:'Feature', geometry:{type:'LineString', coordinates: coords.length ? coords : [[P[0].lng, P[0].lat],[P[0].lng, P[0].lat]]}};
     if(map.getSource('plan')) map.getSource('plan').setData(data);
@@ -2625,12 +2636,12 @@
     const P = wm.plan || [];
     const I = M.insp || {}, pre = I.globePre && I.d1 && I.d2 ? `<div class="wp-p">🏠 ${esc(I.gDep || '')}${I.gDep ? ' → … → ' + esc(I.gRet || I.gDep) + ' · ' : ''}${esc(fshort(I.d1))} → ${esc(fshort(I.d2))} · ${RF('{0} nuits', nights(I.d1, I.d2))}</div>` : '';
     b.innerHTML = `${pre}<div class="wp-h">✨ Touche le globe pour poser les villes de ton voyage, dans l’ordre.</div><div class="wp-c">${P.map((p,i)=>`<span>${flag(p.cc)} ${esc(p.city)}</span>`).join('<i>→</i>') || '<em>Aucune ville pour l’instant</em>'}</div>
-      <div class="wp-b"><button type="button" onclick="CV.worldPlanUndo()"${P.length ? '' : ' disabled'} aria-label="Annuler">↶</button><button type="button" onclick="CV.worldPlanStop()">Annuler</button><button type="button" class="pri" onclick="CV.worldPlanGo()"${P.length ? '' : ' disabled'}>✨ Créer ce voyage</button></div>`;
+      <div class="wp-b"><button type="button" onclick="CV.worldPlanUndo()"${P.length ? '' : ' disabled'} aria-label="Annuler">↶</button><button type="button" onclick="CV.worldPlanStop()">Annuler</button><button type="button" class="pri${P.length ? '' : ' off'}" onclick="CV.worldPlanGo()">✨ ${MSGT('Continuer')}</button></div>`;
   }
   function worldPlanUndo(){ if(!wm || !wm.plan || !wm.plan.length) return; wm.plan.pop(); const m = wm.planM.pop(); if(m) m.remove(); if(wm.plan.length) worldPlanLine(); else { ['plan','plan-glow'].forEach(l=>{ try { wm.map.removeLayer(l); } catch(e){} }); try { wm.map.removeSource('plan'); } catch(e){} } worldPlanUI(); }
-  function worldPlanStop(){ if(!wm) return; while(wm.plan && wm.plan.length) worldPlanUndo(); const b = document.getElementById('wm-plan'); if(b) b.remove(); const ov = document.getElementById('cv-world'); if(ov) ov.classList.remove('wm-planning'); wmInfo(''); }
+  function worldPlanStop(){ if(!wm) return; (wm.homeM || []).forEach(m=>m.remove()); wm.homeM = []; wm.home = null; try { Object.entries(wm.hidL || {}).forEach(([l, v])=>{ if(wm.map.getLayer(l)) wm.map.setLayoutProperty(l, 'visibility', v); }); } catch(e){} wm.hidL = {}; while(wm.plan && wm.plan.length) worldPlanUndo(); const b = document.getElementById('wm-plan'); if(b) b.remove(); const ov = document.getElementById('cv-world'); if(ov) ov.classList.remove('wm-planning'); wmInfo(''); }
   async function worldPlanGo(){
-    const P = (wm && wm.plan || []).slice(); if(!P.length) return;
+    const P = (wm && wm.plan || []).slice(); if(!P.length){ toast('👆 ' + MSGT('Touche le globe pour poser au moins une ville.')); return; }
     let cl = null;
     const n = x => normQ(x || '');
     // on reconnaît les villes connues de l'appli : météo, meilleure saison, budget sur place, conseils, formalités

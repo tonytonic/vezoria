@@ -1726,6 +1726,7 @@
         <div class="v-f"><label>${MSGT('Départ de')}</label>${depSelect(v('dep', depGuess()))}</div>
         <div class="v-f2" id="in-other" style="${v('dep','Nantes')==='autre' ? '' : 'display:none'}"><div class="v-f"><label>Ta ville de départ</label><input class="v-in" id="in-deptxt" data-place autocomplete="off" value="${esc(v('depTxt',''))}" placeholder="Ex. Plougastel, Genève, Montréal…"></div>
           <div class="v-f"><label>Aéroport (code, facultatif)</label><input class="v-in" id="in-iata" value="${esc(v('iata',''))}" placeholder="Ex. BES, GVA, YUL" maxlength="3" autocapitalize="characters"></div></div>
+        <div class="v-f" id="in-retw"><label>🏁 ${MSGT('Retour à')}</label><input class="v-in" id="in-ret" data-place autocomplete="off" value="${esc(v('ret', ''))}" placeholder="${esc(MSGT('Même ville'))}"></div>
         <label class="cv-checkline wz-same"><input type="checkbox" id="in-same" ${S.same !== false ? 'checked' : ''} onchange="CV.inspPP()"> 🤝 ${MSGT('On part et on revient tous du même endroit')}</label>
         <div id="in-pp"></div>
         <div class="v-f"><label>${esc(MSGT('Comment y aller ?'))}</label><div class="v-filters in-how" style="flex-wrap:wrap">${[['tout', MSGT('Peu importe')], ['avion', '✈️ ' + MSGT('Avion')], ['sol', '🚗 🚆 🚌 ' + MSGT('Sans avion (voiture, train, bus)')]].map(([k, l])=>`<button type="button" class="v-chip${v('how','tout') === k ? ' on' : ''}" data-how="${k}" onclick="this.parentNode.querySelectorAll('[data-how]').forEach(b=>b.classList.toggle('on', b === this))">${esc(l)}</button>`).join('')}</div></div>
@@ -1797,13 +1798,13 @@
   function inspPP(){ const el = document.getElementById('in-pp'); if(!el) return; const vv = peopleVal('in-tv'), same = (document.getElementById('in-same') || {checked:true}).checked;
     const box = document.getElementById('in-same'); if(box) box.closest('label').style.display = vv.length > 1 ? '' : 'none';
     const dsel = document.getElementById('in-dep'), dep = dsel ? (dsel.value === 'autre' ? (document.getElementById('in-deptxt') || {}).value : dsel.value) : '';
-    el.innerHTML = vv.length > 1 && !same ? ppHTML(vv, Object.assign({}, (M.insp || {}).gens || {}, ppRead()), dep) : ''; }
+    el.innerHTML = vv.length > 1 && !same ? ppHTML(vv, Object.assign({}, (M.insp || {}).gens || {}, ppRead()), dep) : ''; const rw = document.getElementById('in-retw'); if(rw) rw.style.display = vv.length > 1 && !same ? 'none' : ''; }
   async function inspireGo(){
     const g = id => (document.getElementById(id)||{}).value;
     if(g('in-dep') === 'autre'){ const t = (g('in-deptxt')||'').trim(); if(!t){ alert('Indique ta ville de départ.'); return; }
       if(!M.insp || M.insp.depTxt !== t || !M.insp.depLL){ toast('📡 Je situe ' + t + '…'); const gg = await geocode(t, null).catch(()=>null); if(!gg){ alert('Ville introuvable : essaie avec le pays (ex. « Plougastel, France »).'); return; } M.insp = Object.assign({}, M.insp, {depTxt:t, depLL:[gg.lat, gg.lng]}); } }
     const S = M.insp = inspDates(Object.assign({}, M.insp, {dep:g('in-dep'), mois:g('in-mois'), duree:g('in-duree'), nb:g('in-nb'), budget:g('in-budget'), style:g('in-style'), vol:g('in-vol'), climat:g('in-climat'), qui:g('in-qui'), rythme:g('in-rythme'),
-      depTxt:(g('in-deptxt')||'').trim(), iata:(g('in-iata')||'').trim().toUpperCase(), cni:(document.getElementById('in-cni')||{}).checked, vv:document.getElementById('in-tv') ? peopleVal('in-tv') : (M.insp || {}).vv, same:(document.getElementById('in-same') || {checked:true}).checked, gens:Object.assign({}, (M.insp || {}).gens || {}, ppRead()), tags:[...document.querySelectorAll('[data-tag].on')].map(b=>b.dataset.tag), how:((document.querySelector('[data-how].on') || {}).dataset || {}).how || 'tout'})); persist();
+      depTxt:(g('in-deptxt')||'').trim(), iata:(g('in-iata')||'').trim().toUpperCase(), cni:(document.getElementById('in-cni')||{}).checked, ret:(g('in-ret') || '').trim(), vv:document.getElementById('in-tv') ? peopleVal('in-tv') : (M.insp || {}).vv, same:(document.getElementById('in-same') || {checked:true}).checked, gens:Object.assign({}, (M.insp || {}).gens || {}, ppRead()), tags:[...document.querySelectorAll('[data-tag].on')].map(b=>b.dataset.tag), how:((document.querySelector('[data-how].on') || {}).dataset || {}).how || 'tout'})); persist();
     inspRes = inspCalc(S); inspShow(8);
   }
   function inspShow(n, focus){
@@ -1862,13 +1863,14 @@
   function tcfRender(){
     const c = tcf, S = M.insp || {}, debut = c.debut || inspDebut(c.x), dep = S.dep === 'autre' ? S.depTxt : S.dep; let cur = debut;
     const rows = c.stops.map(([v, n])=>{ const d = cur; cur = addDays(cur, n); return `<li><b>${esc(v)}</b> · ${RF(n > 1 ? '{0} nuits' : '{0} nuit', n)} <span class="v-sum-small">${fshort(d)} → ${fshort(cur)}</span></li>`; }).join('');
-    if(c.dep == null) c.dep = dep || M.home || ''; if(c.ret == null) c.ret = c.dep;
+    if(c.dep == null) c.dep = (S.globePre && S.gDep) || dep || M.home || ''; if(c.ret == null) c.ret = (S.globePre && S.gRet) || S.ret || c.dep; if(S.ret || S.globePre) c.retSet = 1;
     // 👥 12/11/2026 : qui part, et pour chacun son départ et son retour (comme dans « Je sais où je vais »)
     const I0 = M.insp || {}; c.vv = c.vv || (I0.vv && I0.vv.length ? I0.vv.slice() : [M.me].filter(Boolean)); c.gens = c.gens || Object.assign({}, I0.gens || {}); if(c.same == null && I0.same === false) c.same = false;
     const pool = profiles().map(p=>p.id), many = c.vv.length > 1 && c.same === false;   // 🤝 par défaut tout le monde part et revient du même endroit : une seule saisie
     openSheet(`<h2>🧳 ${MSGT('Vérifie ton voyage avant de le créer')}</h2>
       <div class="v-f"><label>✏️ ${MSGT('Nom du voyage')}</label><input class="v-in" id="tcf-titre" value="${esc(c.titre != null ? c.titre : c.x.nom + ' · ' + durLbl(+(S.duree || 7)))}" oninput="CV.tcfSet('titre',this.value)"></div>
-      <div class="v-f"><label>📅 ${MSGT('Départ le')}</label><input class="v-in" type="date" id="tcf-d1" value="${esc(debut)}" onchange="CV.tcfSet('debut',this.value,1)"></div>
+      <div class="v-f2"><div class="v-f"><label>📅 ${MSGT('Départ le')}</label><input class="v-in" type="date" id="tcf-d1" value="${esc(debut)}" onchange="CV.tcfSet('debut',this.value,1)"></div>
+        <div class="v-f"><label>🏁 ${MSGT('Retour le')}</label><input class="v-in" type="date" id="tcf-d2" value="${esc(addDays(debut, c.stops.reduce((s,a)=>s+a[1],0)))}" min="${esc(addDays(debut, 1))}" onchange="CV.tcfFin(this.value)"></div></div>
       ${pool.length ? `<div class="v-f"><label>👥 ${MSGT('Qui part ?')}</label><div onclick="setTimeout(()=>CV.tcfWho(),0)">${peopleSel('tcf-tv', pool, c.vv)}</div></div>` : ''}
       ${c.vv.length > 1 ? `<label class="cv-checkline wz-same"><input type="checkbox" ${c.same !== false ? 'checked' : ''} onchange="CV.tcfSet('same',this.checked,1)"> 🤝 ${MSGT('On part et on revient tous du même endroit')}</label>` : ''}
       ${many ? `<div class="v-sum-small" style="margin:-2px 0 8px">${MSGT('Chacun son trajet : l’un en voiture, l’autre en train ou en avion.')}</div>${c.vv.map(pid=>{ const g = c.gens[pid] || {}; return `<div class="wz-pp">${pchip(pid)}
@@ -1913,6 +1915,11 @@
   function tcfRead(){ const c = tcf; if(!c) return; const t = document.getElementById('tcf-tv'); if(t) c.vv = peopleVal('tcf-tv');
     document.querySelectorAll('[data-tdep]').forEach(i=>{ const pid = i.dataset.tdep, r = document.querySelector(`[data-tret="${pid}"]`); c.gens[pid] = {dep:i.value.trim(), ret:(r ? r.value : '').trim()}; }); }
   function tcfSet(k, v, re){ if(!tcf) return; tcfRead(); tcf[k] = v; if(re){ const sh = document.querySelector('#v-sheet-bg .v-sheet'), y = sh ? sh.scrollTop : 0; tcfRender(); const s2 = document.querySelector('#v-sheet-bg .v-sheet'); if(s2) s2.scrollTop = y; } }
+  // 🏁 changer la date de retour : les nuits se répartissent sur les étapes (au moins 1 chacune)
+  function tcfFin(v){ if(!tcf || !v) return; tcfRead(); const c = tcf, d0 = c.debut || inspDebut(c.x), N = Math.max(c.stops.length, nights(d0, v)); if(!(N > 0)) return;
+    const tot = c.stops.reduce((s,a)=>s+a[1],0) || 1; c.stops.forEach(a=>{ a[1] = Math.max(1, Math.round(a[1] * N / tot)); });
+    let df = N - c.stops.reduce((s,a)=>s+a[1],0), k = 0; while(df && k < 80){ const j = k % c.stops.length; if(df > 0){ c.stops[j][1]++; df--; } else if(c.stops[j][1] > 1){ c.stops[j][1]--; df++; } k++; }
+    const sh = document.querySelector('#v-sheet-bg .v-sheet'), y = sh ? sh.scrollTop : 0; tcfRender(); const s2 = document.querySelector('#v-sheet-bg .v-sheet'); if(s2) s2.scrollTop = y; }
   function tcfWho(){ if(!tcf) return; tcfRead(); if(!tcf.vv.length) tcf.vv = [M.me].filter(Boolean); const sh = document.querySelector('#v-sheet-bg .v-sheet'), y = sh ? sh.scrollTop : 0; tcfRender(); const s2 = document.querySelector('#v-sheet-bg .v-sheet'); if(s2) s2.scrollTop = y; }
   function tcfBack(){ const b = tcf && tcf.back; tcf = null; if(b === 'comp' && typeof comp !== 'undefined' && comp) compRender(); else inspShow(inspN); }
   function tcfGo(){ if(!tcf) return; tcfRead(); const c = tcf, g = id => ((document.getElementById(id) || {}).value || '').trim(); let dep = g('tcf-dep'), ret = g('tcf-ret') || dep;
