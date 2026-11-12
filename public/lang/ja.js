@@ -6742,5 +6742,10 @@ I18N.load({
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "日程、誰が行くか、どこから。その後、地球儀に経由地を置きます。",
 "Je pose mes étapes sur le globe": "地球儀に経由地を置く",
 "Choisis une date de retour après le départ.": "出発日より後の帰着日を選んでください。",
-"Touche le globe pour poser au moins une ville.": "地球儀をタップして、少なくとも1つ都市を置いてください。"
+"Touche le globe pour poser au moins une ville.": "地球儀をタップして、少なくとも1つ都市を置いてください。",
+"Un pays ? Je te propose les étapes": "国は？経由地を提案します",
+"Ex. France, Russie, Japon…": "例：フランス、ロシア、日本…",
+"Je ne connais pas le pays « {0} ».": "「{0}」という国が見つかりません。",
+"Je cherche la ville…": "都市を探しています…",
+"{0} est déjà ta dernière étape.": "{0}はすでに最後の経由地です。"
 });

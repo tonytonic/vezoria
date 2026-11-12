@@ -6742,5 +6742,10 @@ I18N.load({
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "날짜, 가는 사람, 출발지를 정한 뒤 지구본에 경유지를 놓으세요.",
 "Je pose mes étapes sur le globe": "지구본에 경유지 놓기",
 "Choisis une date de retour après le départ.": "출발일 이후의 귀국 날짜를 고르세요.",
-"Touche le globe pour poser au moins une ville.": "지구본을 눌러 도시를 하나 이상 놓으세요."
+"Touche le globe pour poser au moins une ville.": "지구본을 눌러 도시를 하나 이상 놓으세요.",
+"Un pays ? Je te propose les étapes": "나라를 정했나요? 경유지를 제안할게요",
+"Ex. France, Russie, Japon…": "예: 프랑스, 러시아, 일본…",
+"Je ne connais pas le pays « {0} ».": "‘{0}’ 나라를 찾을 수 없어요.",
+"Je cherche la ville…": "도시를 찾는 중…",
+"{0} est déjà ta dernière étape.": "{0}은(는) 이미 마지막 경유지예요."
 });

@@ -6742,5 +6742,10 @@ I18N.load({
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "先填日期、谁去、从哪出发，然后在地球上标出各站。",
 "Je pose mes étapes sur le globe": "在地球上标出各站",
 "Choisis une date de retour après le départ.": "请选择晚于出发日的返回日期。",
-"Touche le globe pour poser au moins une ville.": "点击地球，至少放一个城市。"
+"Touche le globe pour poser au moins une ville.": "点击地球，至少放一个城市。",
+"Un pays ? Je te propose les étapes": "一个国家？我来推荐各站",
+"Ex. France, Russie, Japon…": "例如：法国、俄罗斯、日本…",
+"Je ne connais pas le pays « {0} ».": "我不认识国家“{0}”。",
+"Je cherche la ville…": "正在查找城市…",
+"{0} est déjà ta dernière étape.": "{0}已经是你的最后一站。"
 });

@@ -6724,5 +6724,10 @@ I18N.load({
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Tarihlerin, kimin gittiği ve nereden: sonra duraklarını küreye koyarsın.",
 "Je pose mes étapes sur le globe": "Duraklarımı küreye koy",
 "Choisis une date de retour après le départ.": "Gidişten sonra bir dönüş tarihi seç.",
-"Touche le globe pour poser au moins une ville.": "En az bir şehir koymak için küreye dokun."
+"Touche le globe pour poser au moins une ville.": "En az bir şehir koymak için küreye dokun.",
+"Un pays ? Je te propose les étapes": "Bir ülke mi? Durakları önereyim",
+"Ex. France, Russie, Japon…": "Örn. Fransa, Rusya, Japonya…",
+"Je ne connais pas le pays « {0} ».": "“{0}” ülkesini tanımıyorum.",
+"Je cherche la ville…": "Şehri arıyorum…",
+"{0} est déjà ta dernière étape.": "{0} zaten son durağın."
 });

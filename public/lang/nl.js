@@ -3792,5 +3792,10 @@ I18N.load({
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Je data, wie er gaat en vanwaar — daarna zet je je etappes op de wereldbol.",
 "Je pose mes étapes sur le globe": "Mijn etappes op de wereldbol zetten",
 "Choisis une date de retour après le départ.": "Kies een terugkeerdatum na het vertrek.",
-"Touche le globe pour poser au moins une ville.": "Tik op de wereldbol om minstens één stad te plaatsen."
+"Touche le globe pour poser au moins une ville.": "Tik op de wereldbol om minstens één stad te plaatsen.",
+"Un pays ? Je te propose les étapes": "Een land? Ik stel de etappes voor",
+"Ex. France, Russie, Japon…": "Bijv. Frankrijk, Rusland, Japan…",
+"Je ne connais pas le pays « {0} ».": "Ik ken het land ‘{0}’ niet.",
+"Je cherche la ville…": "Ik zoek de stad…",
+"{0} est déjà ta dernière étape.": "{0} is al je laatste etappe."
 });

@@ -6742,5 +6742,10 @@ I18N.load({
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "तारीखें, कौन जा रहा है और कहाँ से — फिर ग्लोब पर पड़ाव रखो।",
 "Je pose mes étapes sur le globe": "ग्लोब पर पड़ाव रखूँ",
 "Choisis une date de retour après le départ.": "जाने के बाद की लौटने की तारीख चुनो।",
-"Touche le globe pour poser au moins une ville.": "कम से कम एक शहर रखने के लिए ग्लोब छुओ।"
+"Touche le globe pour poser au moins une ville.": "कम से कम एक शहर रखने के लिए ग्लोब छुओ।",
+"Un pays ? Je te propose les étapes": "कोई देश? मैं पड़ाव सुझाऊँगा",
+"Ex. France, Russie, Japon…": "जैसे फ़्रांस, रूस, जापान…",
+"Je ne connais pas le pays « {0} ».": "मुझे देश “{0}” नहीं पता।",
+"Je cherche la ville…": "शहर ढूँढ रहे हैं…",
+"{0} est déjà ta dernière étape.": "{0} पहले से तुम्हारा आख़िरी पड़ाव है।"
 });

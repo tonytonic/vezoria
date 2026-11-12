@@ -3783,5 +3783,10 @@ I18N.load({
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Your dates, who’s going and from where — then you place your stops on the globe.",
 "Je pose mes étapes sur le globe": "Place my stops on the globe",
 "Choisis une date de retour après le départ.": "Choose a return date after the departure.",
-"Touche le globe pour poser au moins une ville.": "Tap the globe to place at least one city."
+"Touche le globe pour poser au moins une ville.": "Tap the globe to place at least one city.",
+"Un pays ? Je te propose les étapes": "A country? I’ll suggest the stops",
+"Ex. France, Russie, Japon…": "E.g. France, Russia, Japan…",
+"Je ne connais pas le pays « {0} ».": "I don’t know the country “{0}”.",
+"Je cherche la ville…": "Looking for the city…",
+"{0} est déjà ta dernière étape.": "{0} is already your last stop."
 });

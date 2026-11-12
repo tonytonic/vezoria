@@ -3802,5 +3802,10 @@ I18N.load({
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Suas datas, quem vai e de onde; depois você coloca as etapas no globo.",
 "Je pose mes étapes sur le globe": "Colocar minhas etapas no globo",
 "Choisis une date de retour après le départ.": "Escolha uma data de volta depois da partida.",
-"Touche le globe pour poser au moins une ville.": "Toque no globo para colocar pelo menos uma cidade."
+"Touche le globe pour poser au moins une ville.": "Toque no globo para colocar pelo menos uma cidade.",
+"Un pays ? Je te propose les étapes": "Um país? Eu sugiro as etapas",
+"Ex. France, Russie, Japon…": "Ex. França, Rússia, Japão…",
+"Je ne connais pas le pays « {0} ».": "Não conheço o país «{0}».",
+"Je cherche la ville…": "Procurando a cidade…",
+"{0} est déjà ta dernière étape.": "{0} já é sua última etapa."
 });

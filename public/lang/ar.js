@@ -6743,5 +6743,10 @@ I18N.load({
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "تواريخك ومن يسافر ومن أين، ثم تضع محطاتك على الكرة الأرضية.",
 "Je pose mes étapes sur le globe": "أضع محطاتي على الكرة الأرضية",
 "Choisis une date de retour après le départ.": "اختر تاريخ عودة بعد المغادرة.",
-"Touche le globe pour poser au moins une ville.": "المس الكرة الأرضية لوضع مدينة واحدة على الأقل."
+"Touche le globe pour poser au moins une ville.": "المس الكرة الأرضية لوضع مدينة واحدة على الأقل.",
+"Un pays ? Je te propose les étapes": "بلد؟ سأقترح عليك المحطات",
+"Ex. France, Russie, Japon…": "مثلًا فرنسا، روسيا، اليابان…",
+"Je ne connais pas le pays « {0} ».": "لا أعرف البلد «{0}».",
+"Je cherche la ville…": "أبحث عن المدينة…",
+"{0} est déjà ta dernière étape.": "{0} هي محطتك الأخيرة بالفعل."
 });
