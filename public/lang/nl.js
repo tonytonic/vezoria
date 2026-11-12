@@ -3791,5 +3791,6 @@ I18N.load({
 "Avant de dessiner": "Voordat je tekent",
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Je data, wie er gaat en vanwaar — daarna zet je je etappes op de wereldbol.",
 "Je pose mes étapes sur le globe": "Mijn etappes op de wereldbol zetten",
-"Choisis une date de retour après le départ.": "Kies een terugkeerdatum na het vertrek."
+"Choisis une date de retour après le départ.": "Kies een terugkeerdatum na het vertrek.",
+"Touche le globe pour poser au moins une ville.": "Tik op de wereldbol om minstens één stad te plaatsen."
 });

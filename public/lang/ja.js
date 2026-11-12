@@ -6741,5 +6741,6 @@ I18N.load({
 "Avant de dessiner": "描く前に",
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "日程、誰が行くか、どこから。その後、地球儀に経由地を置きます。",
 "Je pose mes étapes sur le globe": "地球儀に経由地を置く",
-"Choisis une date de retour après le départ.": "出発日より後の帰着日を選んでください。"
+"Choisis une date de retour après le départ.": "出発日より後の帰着日を選んでください。",
+"Touche le globe pour poser au moins une ville.": "地球儀をタップして、少なくとも1つ都市を置いてください。"
 });

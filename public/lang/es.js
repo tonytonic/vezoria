@@ -3801,5 +3801,6 @@ I18N.load({
 "Avant de dessiner": "Antes de dibujar",
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Tus fechas, quién va y desde dónde; luego colocas tus etapas en el globo.",
 "Je pose mes étapes sur le globe": "Colocar mis etapas en el globo",
-"Choisis une date de retour après le départ.": "Elige una fecha de regreso posterior a la salida."
+"Choisis une date de retour après le départ.": "Elige una fecha de regreso posterior a la salida.",
+"Touche le globe pour poser au moins une ville.": "Toca el globo para colocar al menos una ciudad."
 });

@@ -6742,5 +6742,6 @@ I18N.load({
 "Avant de dessiner": "قبل الرسم",
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "تواريخك ومن يسافر ومن أين، ثم تضع محطاتك على الكرة الأرضية.",
 "Je pose mes étapes sur le globe": "أضع محطاتي على الكرة الأرضية",
-"Choisis une date de retour après le départ.": "اختر تاريخ عودة بعد المغادرة."
+"Choisis une date de retour après le départ.": "اختر تاريخ عودة بعد المغادرة.",
+"Touche le globe pour poser au moins une ville.": "المس الكرة الأرضية لوضع مدينة واحدة على الأقل."
 });

@@ -6741,5 +6741,6 @@ I18N.load({
 "Avant de dessiner": "बनाने से पहले",
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "तारीखें, कौन जा रहा है और कहाँ से — फिर ग्लोब पर पड़ाव रखो।",
 "Je pose mes étapes sur le globe": "ग्लोब पर पड़ाव रखूँ",
-"Choisis une date de retour après le départ.": "जाने के बाद की लौटने की तारीख चुनो।"
+"Choisis une date de retour après le départ.": "जाने के बाद की लौटने की तारीख चुनो।",
+"Touche le globe pour poser au moins une ville.": "कम से कम एक शहर रखने के लिए ग्लोब छुओ।"
 });

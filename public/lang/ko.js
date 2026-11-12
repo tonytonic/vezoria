@@ -6741,5 +6741,6 @@ I18N.load({
 "Avant de dessiner": "그리기 전에",
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "날짜, 가는 사람, 출발지를 정한 뒤 지구본에 경유지를 놓으세요.",
 "Je pose mes étapes sur le globe": "지구본에 경유지 놓기",
-"Choisis une date de retour après le départ.": "출발일 이후의 귀국 날짜를 고르세요."
+"Choisis une date de retour après le départ.": "출발일 이후의 귀국 날짜를 고르세요.",
+"Touche le globe pour poser au moins une ville.": "지구본을 눌러 도시를 하나 이상 놓으세요."
 });

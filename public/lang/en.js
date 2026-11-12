@@ -3782,5 +3782,6 @@ I18N.load({
 "Avant de dessiner": "Before you draw",
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Your dates, who’s going and from where — then you place your stops on the globe.",
 "Je pose mes étapes sur le globe": "Place my stops on the globe",
-"Choisis une date de retour après le départ.": "Choose a return date after the departure."
+"Choisis une date de retour après le départ.": "Choose a return date after the departure.",
+"Touche le globe pour poser au moins une ville.": "Tap the globe to place at least one city."
 });

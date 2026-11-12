@@ -6742,5 +6742,6 @@ I18N.load({
 "Avant de dessiner": "Перед тем как рисовать",
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "Даты, кто едет и откуда — потом отметишь этапы на глобусе.",
 "Je pose mes étapes sur le globe": "Отметить этапы на глобусе",
-"Choisis une date de retour après le départ.": "Выбери дату возвращения после отъезда."
+"Choisis une date de retour après le départ.": "Выбери дату возвращения после отъезда.",
+"Touche le globe pour poser au moins une ville.": "Коснись глобуса, чтобы отметить хотя бы один город."
 });

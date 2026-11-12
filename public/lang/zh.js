@@ -6741,5 +6741,6 @@ I18N.load({
 "Avant de dessiner": "开始画之前",
 "Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.": "先填日期、谁去、从哪出发，然后在地球上标出各站。",
 "Je pose mes étapes sur le globe": "在地球上标出各站",
-"Choisis une date de retour après le départ.": "请选择晚于出发日的返回日期。"
+"Choisis une date de retour après le départ.": "请选择晚于出发日的返回日期。",
+"Touche le globe pour poser au moins une ville.": "点击地球，至少放一个城市。"
 });
