@@ -6706,5 +6706,20 @@ I18N.load({
 "Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "このスマホにあるものはここに残ります（コピーを残したい場合は、先にZIPバックアップを作成してください）。",
 "Admin": "管理者",
 "Lui passer l’admin d’un voyage…": "旅の管理者を引き継ぐ…",
-"Autres options": "その他のオプション"
+"Autres options": "その他のオプション",
+"Étape {0} sur {1}": "ステップ {0}/{1}",
+"Ton voyage": "あなたの旅",
+"Donne-lui un nom, et dis qui part.": "名前をつけて、誰が行くか教えてください。",
+"Quand pars-tu ?": "いつ出発しますか？",
+"Choisis tes dates, ou juste la durée.": "日付か、期間だけを選んでください。",
+"Où vas-tu dormir ?": "どこに泊まりますか？",
+"Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.": "1都市に1行。ルートを提案するので、自由に変えてください。",
+"Comment y vas-tu ?": "どうやって行きますか？",
+"D’où part chacun, et où il rentre.": "それぞれの出発地と帰着地。",
+"Vérifie, puis crée ton voyage.": "確認して、旅を作成しましょう。",
+"Week-end": "週末",
+"Court séjour": "短期滞在",
+"Une semaine": "1週間",
+"Deux semaines": "2週間",
+"Trois semaines": "3週間"
 });

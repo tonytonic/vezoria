@@ -3766,5 +3766,20 @@ I18N.load({
 "Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "O que está neste celular fica aqui (faça antes um backup ZIP se quiser guardar uma cópia).",
 "Admin": "Admin",
 "Lui passer l’admin d’un voyage…": "Passar a administração de uma viagem…",
-"Autres options": "Mais opções"
+"Autres options": "Mais opções",
+"Étape {0} sur {1}": "Etapa {0} de {1}",
+"Ton voyage": "Sua viagem",
+"Donne-lui un nom, et dis qui part.": "Dê um nome e diga quem vai.",
+"Quand pars-tu ?": "Quando você parte?",
+"Choisis tes dates, ou juste la durée.": "Escolha as datas, ou só a duração.",
+"Où vas-tu dormir ?": "Onde você vai dormir?",
+"Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.": "Uma linha por cidade. Eu sugiro um roteiro, você muda o que quiser.",
+"Comment y vas-tu ?": "Como você vai chegar?",
+"D’où part chacun, et où il rentre.": "De onde cada um sai, e para onde volta.",
+"Vérifie, puis crée ton voyage.": "Confira e crie sua viagem.",
+"Week-end": "Fim de semana",
+"Court séjour": "Estadia curta",
+"Une semaine": "Uma semana",
+"Deux semaines": "Duas semanas",
+"Trois semaines": "Três semanas"
 });

@@ -6707,5 +6707,20 @@ I18N.load({
 "Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "ما على هذا الهاتف يبقى هنا (أنشئ أولًا نسخة ZIP احتياطية إن أردت الاحتفاظ بنسخة).",
 "Admin": "المشرف",
 "Lui passer l’admin d’un voyage…": "نقل إدارة رحلة إليه…",
-"Autres options": "خيارات أخرى"
+"Autres options": "خيارات أخرى",
+"Étape {0} sur {1}": "الخطوة {0} من {1}",
+"Ton voyage": "رحلتك",
+"Donne-lui un nom, et dis qui part.": "أعطها اسمًا وقل من سيسافر.",
+"Quand pars-tu ?": "متى تسافر؟",
+"Choisis tes dates, ou juste la durée.": "اختر التواريخ، أو المدة فقط.",
+"Où vas-tu dormir ?": "أين ستنام؟",
+"Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.": "سطر لكل مدينة. أقترح مسارًا وتغيّر ما تشاء.",
+"Comment y vas-tu ?": "كيف ستصل؟",
+"D’où part chacun, et où il rentre.": "من أين ينطلق كل شخص، وإلى أين يعود.",
+"Vérifie, puis crée ton voyage.": "تحقق، ثم أنشئ رحلتك.",
+"Week-end": "عطلة نهاية الأسبوع",
+"Court séjour": "إقامة قصيرة",
+"Une semaine": "أسبوع",
+"Deux semaines": "أسبوعان",
+"Trois semaines": "ثلاثة أسابيع"
 });

@@ -6706,5 +6706,20 @@ I18N.load({
 "Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "इस फ़ोन पर जो है वह यहीं रहता है (कॉपी रखनी हो तो पहले ZIP बैकअप बना लो)।",
 "Admin": "एडमिन",
 "Lui passer l’admin d’un voyage…": "किसी यात्रा का एडमिन उन्हें सौंपें…",
-"Autres options": "और विकल्प"
+"Autres options": "और विकल्प",
+"Étape {0} sur {1}": "चरण {0} / {1}",
+"Ton voyage": "तुम्हारी यात्रा",
+"Donne-lui un nom, et dis qui part.": "इसे एक नाम दो, और बताओ कौन जा रहा है।",
+"Quand pars-tu ?": "कब निकल रहे हो?",
+"Choisis tes dates, ou juste la durée.": "तारीखें चुनो, या बस अवधि।",
+"Où vas-tu dormir ?": "कहाँ ठहरोगे?",
+"Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.": "हर शहर के लिए एक पंक्ति। मैं रास्ता सुझाता हूँ, तुम जो चाहो बदलो।",
+"Comment y vas-tu ?": "वहाँ कैसे जाओगे?",
+"D’où part chacun, et où il rentre.": "हर कोई कहाँ से निकलता है, और कहाँ लौटता है।",
+"Vérifie, puis crée ton voyage.": "जाँच लो, फिर अपनी यात्रा बनाओ।",
+"Week-end": "सप्ताहांत",
+"Court séjour": "छोटी यात्रा",
+"Une semaine": "एक सप्ताह",
+"Deux semaines": "दो सप्ताह",
+"Trois semaines": "तीन सप्ताह"
 });

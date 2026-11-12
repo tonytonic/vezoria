@@ -3747,5 +3747,20 @@ I18N.load({
 "Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "What’s on this phone stays here (make a ZIP backup first if you want to keep a copy).",
 "Admin": "Admin",
 "Lui passer l’admin d’un voyage…": "Make them admin of a trip…",
-"Autres options": "More options"
+"Autres options": "More options",
+"Étape {0} sur {1}": "Step {0} of {1}",
+"Ton voyage": "Your trip",
+"Donne-lui un nom, et dis qui part.": "Give it a name, and say who’s going.",
+"Quand pars-tu ?": "When are you leaving?",
+"Choisis tes dates, ou juste la durée.": "Pick your dates, or just the length.",
+"Où vas-tu dormir ?": "Where will you sleep?",
+"Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.": "One line per city. I suggest a route, you change whatever you like.",
+"Comment y vas-tu ?": "How are you getting there?",
+"D’où part chacun, et où il rentre.": "Where each person leaves from, and where they return.",
+"Vérifie, puis crée ton voyage.": "Check it, then create your trip.",
+"Week-end": "Weekend",
+"Court séjour": "Short stay",
+"Une semaine": "One week",
+"Deux semaines": "Two weeks",
+"Trois semaines": "Three weeks"
 });

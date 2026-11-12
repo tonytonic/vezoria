@@ -6707,5 +6707,20 @@ I18N.load({
 "Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "То, что на этом телефоне, остаётся здесь (сначала сделай ZIP-копию, если хочешь сохранить копию).",
 "Admin": "Админ",
 "Lui passer l’admin d’un voyage…": "Передать управление поездкой…",
-"Autres options": "Другие действия"
+"Autres options": "Другие действия",
+"Étape {0} sur {1}": "Шаг {0} из {1}",
+"Ton voyage": "Твоя поездка",
+"Donne-lui un nom, et dis qui part.": "Дай ей название и укажи, кто едет.",
+"Quand pars-tu ?": "Когда уезжаешь?",
+"Choisis tes dates, ou juste la durée.": "Выбери даты или только длительность.",
+"Où vas-tu dormir ?": "Где будешь ночевать?",
+"Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.": "Одна строка на город. Я предложу маршрут, ты изменишь что хочешь.",
+"Comment y vas-tu ?": "Как доберёшься?",
+"D’où part chacun, et où il rentre.": "Откуда каждый уезжает и куда возвращается.",
+"Vérifie, puis crée ton voyage.": "Проверь и создай поездку.",
+"Week-end": "Выходные",
+"Court séjour": "Короткая поездка",
+"Une semaine": "Неделя",
+"Deux semaines": "Две недели",
+"Trois semaines": "Три недели"
 });

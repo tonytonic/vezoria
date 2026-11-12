@@ -6706,5 +6706,20 @@ I18N.load({
 "Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "这部手机上的内容会留在这里（想保留副本的话，请先做一份 ZIP 备份）。",
 "Admin": "管理员",
 "Lui passer l’admin d’un voyage…": "把某次旅行的管理权交给TA…",
-"Autres options": "更多选项"
+"Autres options": "更多选项",
+"Étape {0} sur {1}": "第 {0} 步，共 {1} 步",
+"Ton voyage": "你的旅行",
+"Donne-lui un nom, et dis qui part.": "给它起个名字，再说说谁去。",
+"Quand pars-tu ?": "什么时候出发？",
+"Choisis tes dates, ou juste la durée.": "选择日期，或只选时长。",
+"Où vas-tu dormir ?": "你会住在哪里？",
+"Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.": "每个城市一行。我先给出路线，你可以随意修改。",
+"Comment y vas-tu ?": "怎么过去？",
+"D’où part chacun, et où il rentre.": "每个人从哪里出发，回到哪里。",
+"Vérifie, puis crée ton voyage.": "确认一下，然后创建旅行。",
+"Week-end": "周末",
+"Court séjour": "短途",
+"Une semaine": "一周",
+"Deux semaines": "两周",
+"Trois semaines": "三周"
 });

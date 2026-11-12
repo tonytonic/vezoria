@@ -6706,5 +6706,20 @@ I18N.load({
 "Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "이 휴대폰에 있는 것은 여기에 남아요 (사본을 남기려면 먼저 ZIP 백업을 만드세요).",
 "Admin": "관리자",
 "Lui passer l’admin d’un voyage…": "여행 관리자 넘기기…",
-"Autres options": "다른 옵션"
+"Autres options": "다른 옵션",
+"Étape {0} sur {1}": "{1}단계 중 {0}단계",
+"Ton voyage": "나의 여행",
+"Donne-lui un nom, et dis qui part.": "이름을 정하고, 누가 가는지 알려 주세요.",
+"Quand pars-tu ?": "언제 떠나요?",
+"Choisis tes dates, ou juste la durée.": "날짜를 고르거나 기간만 정하세요.",
+"Où vas-tu dormir ?": "어디에서 묵나요?",
+"Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.": "도시마다 한 줄. 일정을 제안할게요, 원하는 대로 바꾸세요.",
+"Comment y vas-tu ?": "어떻게 가나요?",
+"D’où part chacun, et où il rentre.": "각자 어디서 출발해 어디로 돌아오는지.",
+"Vérifie, puis crée ton voyage.": "확인한 뒤 여행을 만드세요.",
+"Week-end": "주말",
+"Court séjour": "짧은 여행",
+"Une semaine": "일주일",
+"Deux semaines": "2주",
+"Trois semaines": "3주"
 });

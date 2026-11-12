@@ -3756,5 +3756,20 @@ I18N.load({
 "Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "Wat op deze telefoon staat, blijft hier (maak eerst een ZIP-back-up als je een kopie wilt bewaren).",
 "Admin": "Beheerder",
 "Lui passer l’admin d’un voyage…": "Beheer van een reis overdragen…",
-"Autres options": "Meer opties"
+"Autres options": "Meer opties",
+"Étape {0} sur {1}": "Stap {0} van {1}",
+"Ton voyage": "Je reis",
+"Donne-lui un nom, et dis qui part.": "Geef het een naam en zeg wie er meegaat.",
+"Quand pars-tu ?": "Wanneer vertrek je?",
+"Choisis tes dates, ou juste la durée.": "Kies je data, of alleen de duur.",
+"Où vas-tu dormir ?": "Waar ga je slapen?",
+"Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.": "Eén regel per stad. Ik stel een route voor, jij past aan wat je wilt.",
+"Comment y vas-tu ?": "Hoe kom je er?",
+"D’où part chacun, et où il rentre.": "Waar iedereen vertrekt, en waar hij terugkeert.",
+"Vérifie, puis crée ton voyage.": "Controleer het en maak dan je reis.",
+"Week-end": "Weekend",
+"Court séjour": "Kort verblijf",
+"Une semaine": "Een week",
+"Deux semaines": "Twee weken",
+"Trois semaines": "Drie weken"
 });

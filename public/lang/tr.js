@@ -6688,5 +6688,20 @@ I18N.load({
 "Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "Bu telefondakiler burada kalır (bir kopya saklamak istersen önce ZIP yedeği al).",
 "Admin": "Yönetici",
 "Lui passer l’admin d’un voyage…": "Bir seyahatin yöneticiliğini devret…",
-"Autres options": "Diğer seçenekler"
+"Autres options": "Diğer seçenekler",
+"Étape {0} sur {1}": "Adım {0}/{1}",
+"Ton voyage": "Seyahatin",
+"Donne-lui un nom, et dis qui part.": "Bir ad ver ve kimlerin gittiğini söyle.",
+"Quand pars-tu ?": "Ne zaman gidiyorsun?",
+"Choisis tes dates, ou juste la durée.": "Tarihlerini ya da sadece süreyi seç.",
+"Où vas-tu dormir ?": "Nerede kalacaksın?",
+"Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.": "Her şehir için bir satır. Ben bir rota öneririm, sen istediğini değiştirirsin.",
+"Comment y vas-tu ?": "Oraya nasıl gideceksin?",
+"D’où part chacun, et où il rentre.": "Herkes nereden çıkıyor, nereye dönüyor.",
+"Vérifie, puis crée ton voyage.": "Kontrol et, sonra seyahatini oluştur.",
+"Week-end": "Hafta sonu",
+"Court séjour": "Kısa kaçamak",
+"Une semaine": "Bir hafta",
+"Deux semaines": "İki hafta",
+"Trois semaines": "Üç hafta"
 });

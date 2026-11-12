@@ -3766,5 +3766,20 @@ I18N.load({
 "Ce qui est sur ce téléphone reste ici (fais d’abord une sauvegarde ZIP si tu veux garder une copie).": "Lo que hay en este teléfono se queda aquí (haz antes una copia ZIP si quieres conservar una copia).",
 "Admin": "Admin",
 "Lui passer l’admin d’un voyage…": "Pasarle la administración de un viaje…",
-"Autres options": "Más opciones"
+"Autres options": "Más opciones",
+"Étape {0} sur {1}": "Paso {0} de {1}",
+"Ton voyage": "Tu viaje",
+"Donne-lui un nom, et dis qui part.": "Ponle un nombre y di quién va.",
+"Quand pars-tu ?": "¿Cuándo te vas?",
+"Choisis tes dates, ou juste la durée.": "Elige tus fechas, o solo la duración.",
+"Où vas-tu dormir ?": "¿Dónde vas a dormir?",
+"Une ligne par ville. Je te propose un itinéraire, tu changes ce que tu veux.": "Una línea por ciudad. Te propongo un itinerario y cambias lo que quieras.",
+"Comment y vas-tu ?": "¿Cómo llegas?",
+"D’où part chacun, et où il rentre.": "Desde dónde sale cada uno y adónde vuelve.",
+"Vérifie, puis crée ton voyage.": "Revísalo y crea tu viaje.",
+"Week-end": "Fin de semana",
+"Court séjour": "Escapada",
+"Une semaine": "Una semana",
+"Deux semaines": "Dos semanas",
+"Trois semaines": "Tres semanas"
 });
