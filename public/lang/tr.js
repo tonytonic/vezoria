@@ -6711,5 +6711,13 @@ I18N.load({
 "Doux": "Ilık",
 "Frais": "Serin",
 "Me proposer des destinations": "Bana yer öner",
-"Exemple": "Örnek"
+"Exemple": "Örnek",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "Önce bir şehir yaz: yakındakileri önereceğim.",
+"ajouter": "ekle",
+"Recherche des villes proches…": "Yakındaki şehirler aranıyor…",
+"Aller": "Gidiş",
+"Villes proches indisponibles pour l’instant (connexion ?).": "Yakındaki şehirler şu an alınamıyor (bağlantı?).",
+"les jours à {0}": "{0} günlerin",
+"Déplacé au {0}": "{0} tarihine taşındı",
+"On part et on revient tous du même endroit": "Hepimiz aynı yerden çıkıp aynı yere dönüyoruz"
 });

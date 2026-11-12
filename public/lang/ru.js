@@ -6730,5 +6730,13 @@ I18N.load({
 "Doux": "Мягкий",
 "Frais": "Прохладный",
 "Me proposer des destinations": "Предложить направления",
-"Exemple": "Пример"
+"Exemple": "Пример",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "Сначала введи город — я предложу соседние.",
+"ajouter": "добавить",
+"Recherche des villes proches…": "Ищу города поблизости…",
+"Aller": "Туда",
+"Villes proches indisponibles pour l’instant (connexion ?).": "Ближайшие города пока недоступны (связь?).",
+"les jours à {0}": "дни в {0}",
+"Déplacé au {0}": "Перенесено на {0}",
+"On part et on revient tous du même endroit": "Все уезжаем и возвращаемся в одно место"
 });

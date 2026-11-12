@@ -3770,5 +3770,13 @@ I18N.load({
 "Doux": "Mild",
 "Frais": "Cool",
 "Me proposer des destinations": "Suggest destinations",
-"Exemple": "Example"
+"Exemple": "Example",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "Type a city first: I’ll suggest the ones nearby.",
+"ajouter": "add",
+"Recherche des villes proches…": "Looking for nearby cities…",
+"Aller": "Outbound",
+"Villes proches indisponibles pour l’instant (connexion ?).": "Nearby cities unavailable for now (connection?).",
+"les jours à {0}": "your days in {0}",
+"Déplacé au {0}": "Moved to {0}",
+"On part et on revient tous du même endroit": "We all leave from and return to the same place"
 });

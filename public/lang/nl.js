@@ -3779,5 +3779,13 @@ I18N.load({
 "Doux": "Zacht",
 "Frais": "Koel",
 "Me proposer des destinations": "Bestemmingen voorstellen",
-"Exemple": "Voorbeeld"
+"Exemple": "Voorbeeld",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "Typ eerst een stad: ik stel de steden in de buurt voor.",
+"ajouter": "toevoegen",
+"Recherche des villes proches…": "Steden in de buurt zoeken…",
+"Aller": "Heenreis",
+"Villes proches indisponibles pour l’instant (connexion ?).": "Steden in de buurt nu niet beschikbaar (verbinding?).",
+"les jours à {0}": "je dagen in {0}",
+"Déplacé au {0}": "Verplaatst naar {0}",
+"On part et on revient tous du même endroit": "We vertrekken en keren allemaal terug op dezelfde plek"
 });

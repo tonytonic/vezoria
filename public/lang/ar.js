@@ -6730,5 +6730,13 @@ I18N.load({
 "Doux": "معتدل",
 "Frais": "منعش",
 "Me proposer des destinations": "اقترح عليّ وجهات",
-"Exemple": "مثال"
+"Exemple": "مثال",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "اكتب مدينة أولًا: سأقترح المدن القريبة منها.",
+"ajouter": "أضف",
+"Recherche des villes proches…": "جارٍ البحث عن المدن القريبة…",
+"Aller": "الذهاب",
+"Villes proches indisponibles pour l’instant (connexion ?).": "المدن القريبة غير متاحة حاليًا (الاتصال؟).",
+"les jours à {0}": "أيامك في {0}",
+"Déplacé au {0}": "نُقل إلى {0}",
+"On part et on revient tous du même endroit": "نغادر ونعود جميعًا من المكان نفسه"
 });

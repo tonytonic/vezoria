@@ -3782,5 +3782,13 @@ I18N.load({
 "Doux": "Mild",
 "Frais": "Kühl",
 "Me proposer des destinations": "Ziele vorschlagen",
-"Exemple": "Beispiel"
+"Exemple": "Beispiel",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "Gib zuerst eine Stadt ein: Ich schlage dir die in der Nähe vor.",
+"ajouter": "hinzufügen",
+"Recherche des villes proches…": "Suche nach Städten in der Nähe…",
+"Aller": "Hinweg",
+"Villes proches indisponibles pour l’instant (connexion ?).": "Städte in der Nähe gerade nicht verfügbar (Verbindung?).",
+"les jours à {0}": "deine Tage in {0}",
+"Déplacé au {0}": "Verschoben auf {0}",
+"On part et on revient tous du même endroit": "Wir starten und kommen alle am selben Ort an"
 });

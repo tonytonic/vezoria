@@ -3788,5 +3788,13 @@ I18N.load({
 "Doux": "Mite",
 "Frais": "Fresco",
 "Me proposer des destinations": "Proponimi delle mete",
-"Exemple": "Esempio"
+"Exemple": "Esempio",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "Scrivi prima una città: ti proporrò quelle vicine.",
+"ajouter": "aggiungi",
+"Recherche des villes proches…": "Cerco le città vicine…",
+"Aller": "Andata",
+"Villes proches indisponibles pour l’instant (connexion ?).": "Città vicine non disponibili per ora (connessione?).",
+"les jours à {0}": "i giorni a {0}",
+"Déplacé au {0}": "Spostato al {0}",
+"On part et on revient tous du même endroit": "Partiamo e torniamo tutti dallo stesso posto"
 });

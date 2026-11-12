@@ -3789,5 +3789,13 @@ I18N.load({
 "Doux": "Templado",
 "Frais": "Fresco",
 "Me proposer des destinations": "Proponerme destinos",
-"Exemple": "Ejemplo"
+"Exemple": "Ejemplo",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "Escribe primero una ciudad: te propondré las de alrededor.",
+"ajouter": "añadir",
+"Recherche des villes proches…": "Buscando ciudades cercanas…",
+"Aller": "Ida",
+"Villes proches indisponibles pour l’instant (connexion ?).": "Ciudades cercanas no disponibles por ahora (¿conexión?).",
+"les jours à {0}": "tus días en {0}",
+"Déplacé au {0}": "Movido al {0}",
+"On part et on revient tous du même endroit": "Salimos y volvemos todos del mismo sitio"
 });

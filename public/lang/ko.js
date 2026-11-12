@@ -6729,5 +6729,13 @@ I18N.load({
 "Doux": "온화함",
 "Frais": "선선함",
 "Me proposer des destinations": "여행지 추천받기",
-"Exemple": "예시"
+"Exemple": "예시",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "먼저 도시를 입력하세요. 근처 도시를 추천해 드릴게요.",
+"ajouter": "추가",
+"Recherche des villes proches…": "근처 도시를 찾는 중…",
+"Aller": "가는 편",
+"Villes proches indisponibles pour l’instant (connexion ?).": "지금은 근처 도시를 불러올 수 없어요 (연결?).",
+"les jours à {0}": "{0}에 있는 날",
+"Déplacé au {0}": "{0}(으)로 옮겼어요",
+"On part et on revient tous du même endroit": "모두 같은 곳에서 출발하고 돌아와요"
 });

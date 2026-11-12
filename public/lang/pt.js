@@ -3789,5 +3789,13 @@ I18N.load({
 "Doux": "Ameno",
 "Frais": "Fresco",
 "Me proposer des destinations": "Sugerir destinos",
-"Exemple": "Exemplo"
+"Exemple": "Exemplo",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "Escreva primeiro uma cidade: vou sugerir as próximas.",
+"ajouter": "adicionar",
+"Recherche des villes proches…": "Procurando cidades próximas…",
+"Aller": "Ida",
+"Villes proches indisponibles pour l’instant (connexion ?).": "Cidades próximas indisponíveis por enquanto (conexão?).",
+"les jours à {0}": "os dias em {0}",
+"Déplacé au {0}": "Movido para {0}",
+"On part et on revient tous du même endroit": "Todos saímos e voltamos do mesmo lugar"
 });

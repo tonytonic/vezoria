@@ -6729,5 +6729,13 @@ I18N.load({
 "Doux": "सुहावना",
 "Frais": "ठंडा",
 "Me proposer des destinations": "जगहें सुझाओ",
-"Exemple": "उदाहरण"
+"Exemple": "उदाहरण",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "पहले एक शहर लिखो: मैं पास वाले सुझाऊँगा।",
+"ajouter": "जोड़ें",
+"Recherche des villes proches…": "पास के शहर ढूँढ रहे हैं…",
+"Aller": "जाना",
+"Villes proches indisponibles pour l’instant (connexion ?).": "पास के शहर अभी उपलब्ध नहीं (कनेक्शन?)।",
+"les jours à {0}": "{0} में तुम्हारे दिन",
+"Déplacé au {0}": "{0} पर ले जाया गया",
+"On part et on revient tous du même endroit": "हम सब एक ही जगह से जाते और लौटते हैं"
 });

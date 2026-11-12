@@ -6729,5 +6729,13 @@ I18N.load({
 "Doux": "穏やか",
 "Frais": "涼しい",
 "Me proposer des destinations": "行き先を提案して",
-"Exemple": "例"
+"Exemple": "例",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "まず都市を入力してください。近くの都市を提案します。",
+"ajouter": "追加",
+"Recherche des villes proches…": "近くの都市を探しています…",
+"Aller": "行き",
+"Villes proches indisponibles pour l’instant (connexion ?).": "近くの都市を今は取得できません（接続？）。",
+"les jours à {0}": "{0}での日程",
+"Déplacé au {0}": "{0}に移動しました",
+"On part et on revient tous du même endroit": "全員同じ場所から出発し、同じ場所に帰る"
 });

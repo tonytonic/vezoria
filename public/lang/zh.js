@@ -6729,5 +6729,13 @@ I18N.load({
 "Doux": "温和",
 "Frais": "凉爽",
 "Me proposer des destinations": "为我推荐目的地",
-"Exemple": "示例"
+"Exemple": "示例",
+"Écris d’abord une ville : je te proposerai celles d’à côté.": "先输入一个城市，我会推荐附近的城市。",
+"ajouter": "添加",
+"Recherche des villes proches…": "正在查找附近城市…",
+"Aller": "去程",
+"Villes proches indisponibles pour l’instant (connexion ?).": "暂时无法获取附近城市（网络？）。",
+"les jours à {0}": "在{0}的日子",
+"Déplacé au {0}": "已移至{0}",
+"On part et on revient tous du même endroit": "大家从同一地方出发、回到同一地方"
 });
