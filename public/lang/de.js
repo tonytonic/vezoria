@@ -3774,5 +3774,13 @@ I18N.load({
 "Court séjour": "Kurztrip",
 "Une semaine": "Eine Woche",
 "Deux semaines": "Zwei Wochen",
-"Trois semaines": "Drei Wochen"
+"Trois semaines": "Drei Wochen",
+"Seul(e)": "Allein",
+"Auberges, transports publics": "Hostels, öffentliche Verkehrsmittel",
+"Hôtels 3★, restaurants variés": "3★-Hotels, verschiedene Restaurants",
+"Beaux hôtels, bonnes tables": "Schöne Hotels, gute Küche",
+"Doux": "Mild",
+"Frais": "Kühl",
+"Me proposer des destinations": "Ziele vorschlagen",
+"Exemple": "Beispiel"
 });

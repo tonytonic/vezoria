@@ -3762,5 +3762,13 @@ I18N.load({
 "Court séjour": "Short stay",
 "Une semaine": "One week",
 "Deux semaines": "Two weeks",
-"Trois semaines": "Three weeks"
+"Trois semaines": "Three weeks",
+"Seul(e)": "Solo",
+"Auberges, transports publics": "Hostels, public transport",
+"Hôtels 3★, restaurants variés": "3★ hotels, varied restaurants",
+"Beaux hôtels, bonnes tables": "Lovely hotels, fine dining",
+"Doux": "Mild",
+"Frais": "Cool",
+"Me proposer des destinations": "Suggest destinations",
+"Exemple": "Example"
 });

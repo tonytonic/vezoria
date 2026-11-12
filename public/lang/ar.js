@@ -6722,5 +6722,13 @@ I18N.load({
 "Court séjour": "إقامة قصيرة",
 "Une semaine": "أسبوع",
 "Deux semaines": "أسبوعان",
-"Trois semaines": "ثلاثة أسابيع"
+"Trois semaines": "ثلاثة أسابيع",
+"Seul(e)": "بمفردي",
+"Auberges, transports publics": "نُزُل، مواصلات عامة",
+"Hôtels 3★, restaurants variés": "فنادق 3★، مطاعم متنوعة",
+"Beaux hôtels, bonnes tables": "فنادق جميلة، مطاعم راقية",
+"Doux": "معتدل",
+"Frais": "منعش",
+"Me proposer des destinations": "اقترح عليّ وجهات",
+"Exemple": "مثال"
 });

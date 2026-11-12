@@ -6721,5 +6721,13 @@ I18N.load({
 "Court séjour": "짧은 여행",
 "Une semaine": "일주일",
 "Deux semaines": "2주",
-"Trois semaines": "3주"
+"Trois semaines": "3주",
+"Seul(e)": "혼자",
+"Auberges, transports publics": "호스텔, 대중교통",
+"Hôtels 3★, restaurants variés": "3성급 호텔, 다양한 식당",
+"Beaux hôtels, bonnes tables": "멋진 호텔, 좋은 식당",
+"Doux": "온화함",
+"Frais": "선선함",
+"Me proposer des destinations": "여행지 추천받기",
+"Exemple": "예시"
 });

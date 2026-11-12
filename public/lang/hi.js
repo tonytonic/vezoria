@@ -6721,5 +6721,13 @@ I18N.load({
 "Court séjour": "छोटी यात्रा",
 "Une semaine": "एक सप्ताह",
 "Deux semaines": "दो सप्ताह",
-"Trois semaines": "तीन सप्ताह"
+"Trois semaines": "तीन सप्ताह",
+"Seul(e)": "अकेले",
+"Auberges, transports publics": "हॉस्टल, सार्वजनिक परिवहन",
+"Hôtels 3★, restaurants variés": "3★ होटल, तरह-तरह के रेस्टोरेंट",
+"Beaux hôtels, bonnes tables": "सुंदर होटल, बढ़िया खाना",
+"Doux": "सुहावना",
+"Frais": "ठंडा",
+"Me proposer des destinations": "जगहें सुझाओ",
+"Exemple": "उदाहरण"
 });

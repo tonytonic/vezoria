@@ -6703,5 +6703,13 @@ I18N.load({
 "Court séjour": "Kısa kaçamak",
 "Une semaine": "Bir hafta",
 "Deux semaines": "İki hafta",
-"Trois semaines": "Üç hafta"
+"Trois semaines": "Üç hafta",
+"Seul(e)": "Yalnız",
+"Auberges, transports publics": "Hosteller, toplu taşıma",
+"Hôtels 3★, restaurants variés": "3★ oteller, çeşitli restoranlar",
+"Beaux hôtels, bonnes tables": "Güzel oteller, iyi restoranlar",
+"Doux": "Ilık",
+"Frais": "Serin",
+"Me proposer des destinations": "Bana yer öner",
+"Exemple": "Örnek"
 });

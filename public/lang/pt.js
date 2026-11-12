@@ -3781,5 +3781,13 @@ I18N.load({
 "Court séjour": "Estadia curta",
 "Une semaine": "Uma semana",
 "Deux semaines": "Duas semanas",
-"Trois semaines": "Três semanas"
+"Trois semaines": "Três semanas",
+"Seul(e)": "Sozinho(a)",
+"Auberges, transports publics": "Albergues, transporte público",
+"Hôtels 3★, restaurants variés": "Hotéis 3★, restaurantes variados",
+"Beaux hôtels, bonnes tables": "Hotéis bonitos, boa comida",
+"Doux": "Ameno",
+"Frais": "Fresco",
+"Me proposer des destinations": "Sugerir destinos",
+"Exemple": "Exemplo"
 });

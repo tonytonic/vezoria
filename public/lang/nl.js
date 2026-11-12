@@ -3771,5 +3771,13 @@ I18N.load({
 "Court séjour": "Kort verblijf",
 "Une semaine": "Een week",
 "Deux semaines": "Twee weken",
-"Trois semaines": "Drie weken"
+"Trois semaines": "Drie weken",
+"Seul(e)": "Alleen",
+"Auberges, transports publics": "Hostels, openbaar vervoer",
+"Hôtels 3★, restaurants variés": "3★-hotels, gevarieerde restaurants",
+"Beaux hôtels, bonnes tables": "Mooie hotels, goed eten",
+"Doux": "Zacht",
+"Frais": "Koel",
+"Me proposer des destinations": "Bestemmingen voorstellen",
+"Exemple": "Voorbeeld"
 });

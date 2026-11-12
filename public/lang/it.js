@@ -3780,5 +3780,13 @@ I18N.load({
 "Court séjour": "Breve soggiorno",
 "Une semaine": "Una settimana",
 "Deux semaines": "Due settimane",
-"Trois semaines": "Tre settimane"
+"Trois semaines": "Tre settimane",
+"Seul(e)": "Da solo/a",
+"Auberges, transports publics": "Ostelli, mezzi pubblici",
+"Hôtels 3★, restaurants variés": "Hotel 3★, ristoranti vari",
+"Beaux hôtels, bonnes tables": "Bei hotel, buona tavola",
+"Doux": "Mite",
+"Frais": "Fresco",
+"Me proposer des destinations": "Proponimi delle mete",
+"Exemple": "Esempio"
 });

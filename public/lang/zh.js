@@ -6721,5 +6721,13 @@ I18N.load({
 "Court séjour": "短途",
 "Une semaine": "一周",
 "Deux semaines": "两周",
-"Trois semaines": "三周"
+"Trois semaines": "三周",
+"Seul(e)": "独自",
+"Auberges, transports publics": "青旅，公共交通",
+"Hôtels 3★, restaurants variés": "三星酒店，多样餐厅",
+"Beaux hôtels, bonnes tables": "精美酒店，美食餐厅",
+"Doux": "温和",
+"Frais": "凉爽",
+"Me proposer des destinations": "为我推荐目的地",
+"Exemple": "示例"
 });

@@ -6722,5 +6722,13 @@ I18N.load({
 "Court séjour": "Короткая поездка",
 "Une semaine": "Неделя",
 "Deux semaines": "Две недели",
-"Trois semaines": "Три недели"
+"Trois semaines": "Три недели",
+"Seul(e)": "Один/одна",
+"Auberges, transports publics": "Хостелы, общественный транспорт",
+"Hôtels 3★, restaurants variés": "Отели 3★, разные рестораны",
+"Beaux hôtels, bonnes tables": "Красивые отели, хорошие рестораны",
+"Doux": "Мягкий",
+"Frais": "Прохладный",
+"Me proposer des destinations": "Предложить направления",
+"Exemple": "Пример"
 });

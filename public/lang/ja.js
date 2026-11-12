@@ -6721,5 +6721,13 @@ I18N.load({
 "Court séjour": "短期滞在",
 "Une semaine": "1週間",
 "Deux semaines": "2週間",
-"Trois semaines": "3週間"
+"Trois semaines": "3週間",
+"Seul(e)": "ひとり",
+"Auberges, transports publics": "ホステル、公共交通",
+"Hôtels 3★, restaurants variés": "3つ星ホテル、いろいろなレストラン",
+"Beaux hôtels, bonnes tables": "素敵なホテル、おいしい食事",
+"Doux": "穏やか",
+"Frais": "涼しい",
+"Me proposer des destinations": "行き先を提案して",
+"Exemple": "例"
 });
