@@ -87,6 +87,8 @@
      à préparer (dans 6 mois) · en cours (on est au jour 7) · terminé (souvenirs, photos, bilan).
      Photos dessinées sur le téléphone, rien n'est téléchargé, rien n'est partagé. */
   const DEMO_CITY = {tokyo:[35.6812,139.7671], hakone:[35.2324,139.1069], kyoto:[35.0116,135.7681], hiroshima:[34.3853,132.4553], osaka:[34.6937,135.5023]};
+  // position connue d’une ville de démo (Japon ou région choisie) : sert de secours quand la recherche en ligne ne répond pas
+  const demoLL = c => { const n = normQ(c); if(DEMO_CITY[n]) return DEMO_CITY[n]; for(const G of Object.values(DEMO_REG)){ const i = G.cities.findIndex(x=>normQ(x) === n); if(i >= 0 && G.coords && G.coords[i]) return G.coords[i]; } return null; };
   let DEMO_TK = 'TOKYO';
   function demoPaint(kind, seed){
     const W = 960, H = 720, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
@@ -185,6 +187,10 @@
     const live = mk(addDays(today, -6), K.nom + ' · ' + MSGT('voyage en cours (démo)'));
     const past = mk(addDays(today, -80), K.nom + ' · ' + MSGT('souvenirs (démo)'));
     all.forEach(r=>{ R[r.id] = r; });
+    // 🗺️ (13/11/2026) les villes de la démo ont leur position toute prête : la carte ne dépend plus d’une recherche en ligne
+    //    (une recherche ratée pour « Osaka », et l’étape disparaissait de la carte avec ses deux trajets)
+    Object.keys(K.CITY).forEach(k=>{ const id = 'geo:' + k, c = K.CITY[k], o = R[id];
+      if(c && !(o && !o.deleted && o.lat != null && (o.pick || o.g7))) R[id] = {id, type:'geo', q:k, lat:c[0], lng:c[1], g3:1, g4:1, g5:1, g6:1, g7:1, demo:true, createdAt:now, updatedAt:now}; });
     demoRetitle();
     const cityOn = (v, d) => { const h = v.recs.find(r=>r.type==='item' && r.cat==='hotel' && r.date <= d && (!r.dateFin || r.dateFin > d)); return h ? stayCity(h) : K.first; };
     const coords = c => K.CITY[normQ(c)] || K.CITY[normQ(K.first)];
@@ -2928,7 +2934,7 @@
     const c = d && typeof dayCity === 'function' ? dayCity(d) : '', a = String(i.adresse || '').trim(), street = /\d|\b(rue|via|piazza|piazzale|plaza|calle|avenue|av\.|bd|boulevard|street|st\.|road|rd|strasse|straße|platz|place|quai|chemin|largo|corso|viale|praça|rua)\b/i.test(a);
     const w = street ? [i.titre, a].filter(Boolean).join(', ') : [i.q || i.titre, a && normQ(a) !== normQ(c) ? a : '', c].filter(Boolean).join(', ');   // « Galerie des Offices, Florence » (pas « Florence » seul)
     return (i.titre || i.adresse) && !/^divers$/.test(i.cat) ? `https://www.google.com/maps/search/?api=1&query=${q(w)}` : ''; };
-  const tfMode = m => m === 'Voiture' ? 'driving' : m === 'Pied' ? 'walking' : 'transit';
+  const tfMode = m => m === 'Voiture' ? 'driving' : /pied/i.test(m || '') ? 'walking' : 'transit';
   // 🚶 hôtel ↔ gare (ou port) : souvent à quelques minutes, à pied ou en taxi ; l’aéroport, lui, est plus loin (taxi, navette, transports)
   const tfGround = (m, far) => far ? {ic:'🚆', how:MSGT('Train, bus ou taxi'), tm:'Train'} : /Avion/i.test(m || '') ? {ic:'🚕', how:MSGT('Taxi, navette ou transports'), tm:'Train'} : {ic:'🚶', how:MSGT('À pied ou en taxi'), tm:'Pied'};
   const tfHotel = h => [h.nom, h.adresse || cityOf(h.titre)].filter(Boolean).join(', ');   // nom + adresse : Google Maps trouve le bon hôtel

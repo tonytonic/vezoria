@@ -172,6 +172,7 @@ body.cv-jourj .hero{box-shadow:inset 0 -6px 0 #fbbf24}body.cv-jourj #hdr-title::
 .wm-new{margin-left:auto;white-space:nowrap;flex:none;background:#fbbf24;color:#1f1300;border:0;border-radius:999px;padding:8px 12px;font-weight:800;font-size:.8rem}
 #wm-plan{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9001;transform:translateZ(0);touch-action:manipulation;background:rgba(15,10,40,.92);color:#fff;border-radius:18px;padding:12px;box-sizing:border-box}
 .wm-planning .wm-bottom,.wm-planning .wm-chips{display:none}
+.wm-planning .wm-seg{visibility:hidden}
 .wp-h{font-size:.8rem;opacity:.85;margin-bottom:8px}.wp-c{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.86rem;margin-bottom:10px}.wp-c span{background:rgba(255,255,255,.12);border-radius:999px;padding:4px 10px}.wp-c i{opacity:.6;font-style:normal}.wp-c em{opacity:.7}
 .wp-b{display:flex;gap:6px}.wp-b button{flex:1;border:0;border-radius:12px;padding:10px;font-weight:700;background:rgba(255,255,255,.14);color:#fff}.wp-b button:first-child{flex:0 0 48px}.wp-b .pri{background:#fbbf24;color:#1f1300;flex:2}.wp-b button:disabled{opacity:.4}
 .wm-plan-pin{width:26px;height:26px;border-radius:50%;background:#fbbf24;color:#1f1300;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 4px rgba(251,191,36,.35),0 0 18px #fbbf24;font-size:.8rem}

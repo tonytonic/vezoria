@@ -157,7 +157,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     activite: {lbl:'Visites & résas', one:'visite / réservation', icon:'🎟️'},
     divers:   {lbl:'Divers',      one:'dépense',           icon:'🧾'},
   };
-  const MODE_ICON = {Avion:'✈️',Train:'🚆',Bus:'🚌',Bateau:'⛴️',Voiture:'🚗','Taxi / Uber':'🚕',Autre:'🧭'};
+  const MODE_ICON = {Avion:'✈️',Train:'🚆',Bus:'🚌',Bateau:'⛴️',Voiture:'🚗','À pied':'🚶','Taxi / Uber':'🚕',Autre:'🧭'};   // 🚶 (13/11/2026) « À pied » : deux étapes proches, une balade d’une ville à l’autre
   const STATUTS = {todo:'À réserver', booked:'Réservé', paid:'Payé'};
   const NEXT = {todo:'booked', booked:'paid', paid:'todo'};
   const WISH = {
@@ -581,6 +581,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(!Array.isArray(j.records)) throw new Error('Réponse inattendue du serveur');
     { const env0 = j.records; let recs = E2E ? await Promise.all(env0.map(x=>openRec(x, code))) : env0.slice();
       // ✍️ « _au » : écrit par l’auteur du fil — vient UNIQUEMENT de la marque du serveur (une fiche qui le contient d’elle-même le perd)
+      { const lim = (+j.now || Date.now()) + 864e5; recs.forEach(r=>{ if(r && typeof r === 'object' && +r.updatedAt > lim) r.updatedAt = +j.now || Date.now(); }); }   // 🛡️ (13/11/2026) fiche datée du futur (horloge fausse, ou piège) : ramenée à maintenant, sinon plus personne ne pouvait la corriger
       recs = await admFilter(j, env0, recs, code); recs = recs.map((r, i)=>{ if(r && typeof r === 'object'){ delete r._a; delete r._au; if(j.adm && env0[i] && env0[i]._a) r._au = 1; } return r; }); j.records = recs.filter(Boolean); }
     if(code) admAck(j, code);
     if(j.sh && (!code || code === M.sync.code) && /^[0-9a-f]{64}$/.test(j.sh) && M.sync.sh !== j.sh){ M.sync.sh = j.sh; persist(); }   // 🔑 code changé : place d’origine du carnet (photos du pot commun)
@@ -768,24 +769,69 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   //    Un compagnon malveillant pouvait ainsi changer mes réglages d’abonnés, ma clé de compte ou déplacer mes villes sur la carte.
   //    Le carnet entier d’un autre (je suis son compagnon, code « M:… ») apporte tout ce qu’il contient, sauf SES réglages personnels :
   //    la clé de son compte et ses abonnés ne remplacent jamais les miens (comme sa liste de codes, déjà écartée).
-  const SPDROP = [], SP_MINE = new Set(['acct', 'abcfg', 'vz:codes']);
-  const spIn = (recs, sp) => (recs || []).filter(r => { if(!r) return false;
-    if(sp && /^M:/.test(sp.code || '')) return !SP_MINE.has(r.id);
-    if(r.type === 'trip' || r.type === 'profile' || r.type === 'feedtrip' || r.trip) return true;
-    if(SPDROP.length < 60) SPDROP.push(String(r.type || '?') + ' ' + String(r.id).slice(0, 40)); return false; });
+  // 🛡️ (13/11/2026) deux règles de plus : une fiche reçue d’un dossier ne touche qu’à CE dossier.
+  //    1. Elle ne remplace jamais une fiche que j’ai déjà et qui vit ailleurs (dans mon carnet, ou dans un autre dossier).
+  //    2. Elle ne se range que dans un voyage de ce dossier : jamais dans un de mes voyages privés, ni dans un voyage d’un autre dossier.
+  //    Avant : celui qui connaissait l’identifiant d’un de mes voyages (une ancienne compagne, un abonné de ce voyage) glissait une fiche
+  //    « voyage » avec cet identifiant dans n’importe quel dossier que je partage avec lui (ou m’invitait dans le sien). Mon téléphone
+  //    remplaçait alors mon voyage par le sien, le RANGEAIT dans son dossier, et y envoyait ensuite tout ce que j’écrivais dedans.
+  //    De même, un fil que je suis (un simple lien « suivre ») pouvait remplacer la clé de mon compte ou mes réglages d’abonnés.
+  const SPDROP = [], SP_MINE = new Set(['acct', 'abcfg', 'vz:codes']), MAIN_ID = /^(geo|mv|dv):/;   // villes placées, voyages déménagés, appareils : seulement dans mon carnet
+  const spNo = (r, why) => { if(SPDROP.length < 60) SPDROP.push((why ? why + ' : ' : '') + String(r.type || '?') + ' ' + String(r.id).slice(0, 40)); return false; };
+  const feedFam = r => !!r && (r.type === 'feedtrip' ? /^ft:/.test(String(r.id)) : /^f[tai]:/.test(String(r.trip || '')));   // fiche d’un fil d’abonnés
+  const liveTrip = id => { const t = R[id]; return !!(t && t.type === 'trip' && !t.deleted); };
+  const spKey = r => r.type === 'trip' || r.type === 'feedtrip' ? r.id : r.type === 'tripmove' ? r.tid : r.trip;   // le voyage dont parle la fiche
+  const spHome = l => l.type === 'tripmove' ? [TS()[l.tid] || 'main'] : targets(l);   // où vit la fiche que j’ai déjà
+  const spIn = (recs, sp, force) => (recs || []).filter(r => { if(!r) return false;
+    const code = (sp && sp.code) || '', l = R[r.id], k = spKey(r), cur = k ? TS()[k] : '';
+    if(/^M:/.test(code)){   // le carnet entier d’un autre (je suis son compagnon)
+      if(SP_MINE.has(r.id)) return false;
+      if(r.type === 'moved'){ const F = M.mvFrom || (M.mvFrom = {});   // « ce voyage a déménagé » : seulement pour SES voyages, jamais pour un des miens
+        if(F[r.tid] !== code && (TS()[r.tid] ? TS()[r.tid] !== code : liveTrip(r.tid))) return spNo(r, 'déménagement d’un voyage qui n’est pas à ce carnet');
+        if(r.tid) F[r.tid] = code; return true; }
+      if(l && (l.type === 'trip' || l.trip) && !spHome(l).includes(code)) return spNo(r, 'fiche d’un de mes voyages');
+      if(k && (cur ? cur !== code : liveTrip(k))) return spNo(r, 'voyage qui n’est pas à ce carnet');
+      return true; }
+    if(SP_MINE.has(r.id) || MAIN_ID.test(String(r.id))) return spNo(r, 'identifiant réservé à mon carnet');
+    if(!(r.type === 'trip' || r.type === 'profile' || r.type === 'feedtrip' || r.trip)) return spNo(r, '');
+    if(feedFam(r)){   // fiche de fil (❤️, commentaire, abonnement, publication) : elle ne remplace qu’une fiche de fil, et vient de mes liens ou du dossier de ce fil
+      if(l && !feedFam(l)) return spNo(r, 'fiche de mon carnet');
+      if(cur && cur !== code && !sp.inv && !(typeof myFeedCode === 'function' && myFeedCode(code))) return spNo(r, 'fil d’un autre dossier');
+      return true; }
+    if(l){ const T = spHome(l); if(T.length && !T.includes(code)) return r.type === 'profile' && l.type === 'profile' ? false : spNo(r, 'cette fiche vit ailleurs'); }   // le profil de quelqu’un qui ne voyage pas (ou plus) dans ce dossier : ignoré sans bruit
+    if(r.type !== 'profile' && k && (cur ? cur !== code : (liveTrip(k) && !(force && ((M.left || {})[k] || R[k].ro))))) return spNo(r, 'voyage d’un autre dossier');
+    return true; });
+  // un fil que je suis n’apporte que des fiches de fil, et ne remplace que des fiches de fil
+  const feedOnly = recs => (recs || []).filter(r => { if(!r) return false;
+    if(SP_MINE.has(r.id) || MAIN_ID.test(String(r.id))) return spNo(r, 'identifiant réservé à mon carnet');
+    if(!feedFam(r)) return spNo(r, 'hors fil');
+    const l = R[r.id]; if(l && !feedFam(l)) return spNo(r, 'fiche de mon carnet');
+    return true; });
+  // 🔗 je rejoins exprès un dossier qui contient un voyage que j’ai déjà (téléphone restauré, code du voyage changé…) : on me le demande, en le nommant
+  async function spAdopt(recs, sp){
+    const D = sp.adoptNo || (sp.adoptNo = {});
+    for(const r of (recs || [])){ if(!r || r.type !== 'trip' || r.deleted || !liveTrip(r.id) || TS()[r.id] === sp.code || D[r.id]) continue;
+      if(!TS()[r.id] && ((M.left || {})[r.id] || R[r.id].ro)) continue;   // un voyage que j’avais quitté : il revient sans question
+      const yes = await uiConfirm('🔗 ' + MSGT('Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».').replace('{0}', R[r.id].titre || '') + '\n\n'
+        + MSGT('Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.'));
+      if(yes){ const prev = TS()[r.id]; TS()[r.id] = sp.code; if(prev && !Object.values(TS()).includes(prev)) M.spaces = (M.spaces || []).filter(x=>x.code !== prev); persist(); }
+      else D[r.id] = 1; }
+  }
   async function syncSpace(sp, force){
     sp.dirty = (sp.dirty || []).filter(id=>R[id]); let changed = 0;
     await clmPrime(sp.code);
-    const flt = recs => sp.sub ? ab2In(recs, sp) : sp.ivme ? ab2InIv(recs, sp) : sp.mate ? ab2MateIn(recs) : spIn(recs, sp);
+    const flt = recs => sp.sub ? feedOnly(ab2In(recs, sp)) : sp.ivme ? feedOnly(ab2InIv(recs, sp)) : sp.mate ? feedOnly(ab2MateIn(recs)) : spIn(recs, sp, force);
+    const collab = !sp.sub && !sp.ivme && !sp.mate && !sp.inv && !/^M:/.test(sp.code || '');
     const aft = () => { if(sp.sub) ab2Map(sp.code); else if(sp.ivme && sp.of) ab2Map(sp.of); };   // 👀 lien suivi : seulement ses voyages (abonnés v2)   // une fiche qui n’existe plus ici ne reste pas « à envoyer » pour toujours
     try {
-      if(sp.dirty.length){ const j0 = await call(Math.max(0, (sp.since||0) - 5000), [], sp.code); changed += mergeRemote(flt(j0.records)); sp.since = j0.now; aft(); }   // 🔀 recevoir et fusionner avant d’envoyer
+      if(sp.dirty.length){ const j0 = await call(Math.max(0, (sp.since||0) - 5000), [], sp.code); if(force && collab) await spAdopt(j0.records, sp); changed += mergeRemote(flt(j0.records)); sp.since = j0.now; aft(); }   // 🔀 recevoir et fusionner avant d’envoyer
       const groups = syChunks([...sp.dirty]); if(!groups.length) groups.push([]);
       for(const g of groups){
         const chunk = g.map(id => R[id]).filter(Boolean);
         const sent = {}; chunk.forEach(c => sent[c.id] = c.updatedAt);
         const j = await call(Math.max(0, (sp.since||0) - 5000), chunk, sp.code);
         spKeep(chunk); sp.dirty = sp.dirty.filter(id => !(id in sent) || (R[id] && R[id].updatedAt !== sent[id])); sbDone(Object.keys(sent));
+        if(force && collab) await spAdopt(j.records, sp);
         j.records = flt(j.records);
         j.records.forEach(r=>{ if(r && r.type === 'trip' && !r.deleted && R[r.id] && R[r.id].type === 'trip' && r.updatedBy !== M.me){   // 🆕 quelqu’un a rejoint un voyage
             const was = new Set(R[r.id].voyageurs || []); (r.voyageurs || []).filter(p=>!was.has(p) && p !== M.me).forEach(p=>{ (M.joinNote = M.joinNote || []).push({tid:r.id, pid:p, at:Date.now()}); setTimeout(()=>{ try { toast('🆕 ' + RF('{0} a rejoint « {1} »', pname(p), r.titre || '')); } catch(e){} }, 400); }); }
@@ -1772,7 +1818,9 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   async function packApply(){
     const mine = PACKS(), viaP = M.viaP || (M.viaP = {}), viaH = M.viaH || (M.viaH = {}); let n = 0;
     for(const r of list('packtrip', x=>TS()[x.trip] && !mine[TS()[x.trip]] && !(M.left || {})[x.tid])){
-      const P = TS()[r.trip]; viaP[r.tid] = P; if(!viaH[r.tid]) viaH[r.tid] = await viaHash(r.tid, P);
+      const P = TS()[r.trip];
+      if(viaP[r.tid] !== P && (TS()[r.tid] || liveTrip(r.tid))) continue;   // 🛡️ (13/11/2026) un paquet ne range que les voyages qu’il m’a apportés : jamais un voyage que j’avais déjà
+      viaP[r.tid] = P; if(!viaH[r.tid]) viaH[r.tid] = await viaHash(r.tid, P);
       if(r.code && TS()[r.tid] !== r.code){ const prev = TS()[r.tid]; TS()[r.tid] = r.code; if(!spaceObj(r.code)) (M.spaces = M.spaces || []).push({code:r.code, since:0, dirty:[], last:0, err:''});
         if(prev && !Object.values(TS()).includes(prev)) M.spaces = (M.spaces||[]).filter(x=>x.code !== prev); n++; } }
     for(const r of Object.values(R).filter(x=>x && x.type === 'packtrip' && x.deleted && TS()[x.trip] && !mine[TS()[x.trip]])){

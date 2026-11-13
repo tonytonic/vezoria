@@ -1227,7 +1227,10 @@
     if(!wm || !wm.data) return; wm.mode = m;
     document.querySelectorAll('.wm-seg button').forEach(b=>b.classList.toggle('on', b.dataset.m === m));
     wm.markers.forEach(x=>x.remove()); wm.markers = []; for(const [, mk] of thumbM) mk.remove(); thumbM.clear();
-    const vis = (l, v) => { try { if(wm.map.getLayer(l)) wm.map.setLayoutProperty(l, 'visibility', v ? 'visible' : 'none'); } catch(e){} };
+    // 🌍 (13/11/2026) pendant qu’on dessine un nouveau voyage sur le globe, les tracés des anciens voyages restent cachés : ils revenaient
+    //    (traits blancs) dès que cette fonction repassait — fin du chargement, onglet touché. On note seulement ce qu’il faudra remontrer après.
+    const planning = (document.getElementById('cv-world') || {classList:{contains:()=>false}}).classList.contains('wm-planning');
+    const vis = (l, v) => { try { if(wm.map.getLayer(l)){ if(planning){ (wm.hidL = wm.hidL || {})[l] = v ? 'visible' : 'none'; v = false; } wm.map.setLayoutProperty(l, 'visibility', v ? 'visible' : 'none'); } } catch(e){} };
     vis('routes', m !== 'pays'); vis('routes-glow', m !== 'pays'); vis('steps', m === 'trips'); ['ph-cluster','ph-count','ph-point'].forEach(l=>vis(l, m === 'photos'));
     const add = (el, ll, anchor) => wm.markers.push(new maplibregl.Marker({element:el, anchor:anchor||'center'}).setLngLat(ll).addTo(wm.map));
     if(m === 'trips'){
@@ -1712,9 +1715,9 @@
           <div class="v-f"><label>${esc(MSGT('Retour le'))}</label><input class="v-in" type="date" id="in-d2" value="${esc(v('d2',''))}" onchange="CV.inspDatesTouch()"></div></div>
         <div class="v-f"><label>${MSGT('Combien de jours ?')}</label>${cards('in-duree', [['3', MSGT('Week-end'), '🌅', MSGT('2–3 jours')], ['5', MSGT('Court séjour'), '🧳', MSGT('4–5 jours')], ['7', MSGT('Une semaine'), '🏖️', RF('{0} jours', 7)], ['10', RF('{0} jours', 10), '🗺️', ''], ['14', MSGT('Deux semaines'), '🌍', RF('{0} jours', 14)], ['21', MSGT('Trois semaines et +'), '✈️', ''], ...(['3','5','7','10','14','21'].includes(String(v('duree','7'))) ? [] : [[String(v('duree','7')), RF('{0} jours', v('duree','7')), '📅', '']])], v('duree','7'))}</div></div>
       <div class="in-pg" data-pg="2">
-        ${profiles().length ? `<div class="v-f"><label>👥 ${MSGT('Qui part ?')}</label><div onclick="setTimeout(()=>{ const n = document.querySelectorAll('#in-tv button.on').length, s = document.getElementById('in-nb'); if(s && n) s.value = String(Math.min(6, Math.max(n, +s.value > n ? +s.value : n))); },0)">${peopleSel('in-tv', profiles().map(p=>p.id), (S.vv && S.vv.length ? S.vv : [M.me]).filter(Boolean))}</div></div>` : ''}
-        ${cards('in-qui', [['solo', MSGT('Seul(e)'), '🧍'], ['couple', MSGT('En couple'), '💕'], ['amis', MSGT('Entre amis'), '🎉'], ['famille', MSGT('En famille'), '👨‍👩‍👧']], v('qui','couple'))}
-        <div class="v-f" style="margin-top:14px"><label>${MSGT('Combien de voyageurs ?')}</label>${sel('in-nb', [['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6 et +']], v('nb','2'))}</div>
+        ${profiles().length ? `<div class="v-f"><label>👥 ${MSGT('Qui part ?')}</label><div onclick="setTimeout(()=>{ const n = document.querySelectorAll('#in-tv button.on').length, s = document.getElementById('in-nb'); if(s && n) s.value = String(Math.min(6, Math.max(n, +s.value > n ? +s.value : n))); CV.inspWho('nb'); },0)">${peopleSel('in-tv', profiles().map(p=>p.id), (S.vv && S.vv.length ? S.vv : [M.me]).filter(Boolean))}</div></div>` : ''}
+        ${cards('in-qui', [['solo', MSGT('Seul(e)'), '🧍'], ['couple', MSGT('En couple'), '💕'], ['amis', MSGT('Entre amis'), '🎉'], ['famille', MSGT('En famille'), '👨‍👩‍👧']], v('qui','couple')).replace('id="in-qui"', 'id="in-qui" onchange="CV.inspWho(\'qui\')"')}
+        <div class="v-f" style="margin-top:14px"><label>${MSGT('Combien de voyageurs ?')}</label>${sel('in-nb', [['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6 et +']], v('qui','couple') === 'solo' ? '1' : v('qui','couple') === 'couple' ? '2' : String(Math.max(2, +v('nb','2') || 2))).replace('id="in-nb"', 'id="in-nb" onchange="CV.inspWho(\'nb\')"')}</div>
         <div class="v-f"><label>${MSGT('Rythme')}</label>${cards('in-rythme', [['calme', MSGT('Tranquille'), '🧘'], ['equil', MSGT('Équilibré'), '⚖️'], ['intense', MSGT('J’en veux plein'), '⚡']], v('rythme','equil'), 'wz-c3')}</div></div>
       <div class="in-pg" data-pg="3">
         ${cards('in-style', [['eco', MSGT('Économique'), '🎒', MSGT('Auberges, transports publics')], ['confort', MSGT('Confort'), '🏨', MSGT('Hôtels 3★, restaurants variés')], ['luxe', MSGT('Petit luxe'), '💎', MSGT('Beaux hôtels, bonnes tables')]], v('style','confort'), 'wz-c1')}
@@ -1853,6 +1856,14 @@
   /* 🧳 Écran de confirmation avant de créer un voyage proposé (« Créer tel quel », « Explorer & composer », globe) :
      le récapitulatif, et l’ordre des villes le plus court si on peut gagner de la route. */
   let tcf = null;
+  // 👫 (13/11/2026) « Avec qui ? » et « Combien de voyageurs ? » restent d’accord : on pouvait partir « Seul(e) » à 2, ou « En couple » à 5.
+  function inspWho(src){
+    const q = document.getElementById('in-qui'), n = document.getElementById('in-nb'); if(!q || !n) return;
+    const setQ = v => { if(q.value === v) return; q.value = v; const box = q.nextElementSibling, i = [...q.options].findIndex(o=>o.value === v); if(box) [...box.querySelectorAll('.wz-card')].forEach((b, k)=>b.classList.toggle('on', k === i)); };
+    if(src === 'qui'){ const picked = document.querySelectorAll('#in-tv button.on').length;
+      if(q.value === 'solo') n.value = '1'; else if(q.value === 'couple') n.value = '2'; else if(+n.value < 2) n.value = String(Math.min(6, Math.max(q.value === 'famille' ? 3 : 2, picked))); }
+    else { const k = +n.value || 1; if(k === 1) setQ('solo'); else if(k === 2){ if(q.value === 'solo') setQ('couple'); } else if(q.value === 'solo' || q.value === 'couple') setQ('amis'); }
+  }
   function tripConfirm(i, custom){
     const x = inspRes.find(r=>r.i === i) || inspCalc(M.insp || {}).find(r=>r.i === i); if(!x) return;
     const S = M.insp || {}, days = +(S.duree || 7);
@@ -1878,6 +1889,10 @@
         <div class="wz-pl"><span>🏠 ${MSGT('Retour')}</span><input class="v-in" data-tret="${esc(pid)}" data-place autocomplete="off" value="${esc(g.ret != null ? g.ret : c.ret || '')}" placeholder="${esc(MSGT('retour vers…'))}"></div></div>`; }).join('')}` : ''}
       <div class="v-f2"${many ? ' style="display:none"' : ''}><div class="v-f"><label>🏠 ${MSGT('Départ de')}</label><input class="v-in" id="tcf-dep" data-place autocomplete="off" value="${esc(c.dep)}" placeholder="${esc(MSGT('Ta ville'))}" oninput="CV.tcfDep('dep',this.value)" onchange="CV.tcfDep('dep',this.value,1)"></div>
         <div class="v-f"><label>🏁 ${MSGT('Retour à')}</label><input class="v-in" id="tcf-ret" data-place autocomplete="off" value="${esc(c.ret)}" placeholder="${esc(MSGT('Même ville'))}" oninput="CV.tcfDep('ret',this.value)" onchange="CV.tcfDep('ret',this.value,1)"></div></div>
+      ${(()=>{ const g0 = c.x.ground ? 'Voiture' : c.x.globe ? '' : 'Avion', go = c.go != null ? c.go : g0, leg = c.leg != null ? c.leg : (go === 'Voiture' ? 'Voiture' : c.x.globe ? '' : 'Train');
+        const chips = (k, cur, L) => `<div class="v-filters" style="flex-wrap:wrap">${L.map(m=>`<button type="button" class="v-chip${cur === m ? ' on' : ''}" onclick="CV.tcfSet('${k}','${ja(m)}',1)">${m ? MODE_ICON[m] : '🧭'} ${esc(MSGT(m || 'Peu importe'))}</button>`).join('')}</div>`;
+        return `<div class="v-f"><label>🧭 ${esc(MSGT('Pour y aller et revenir'))}</label>${chips('go', go, ['', 'Avion', 'Train', 'Voiture', 'Bus'])}</div>`
+          + (c.stops.length > 1 ? `<div class="v-f"><label>↔️ ${esc(MSGT('Entre les étapes'))}</label>${chips('leg', leg, ['', 'Train', 'Voiture', 'Bus', 'À pied'])}</div>` : ''); })()}
       <div id="tcf-ord"></div>
       <div class="wz-recap"><b>${flag(c.x.cc)} ${esc(c.x.nom)}</b><div class="v-sum-small">${fdate(debut)} → ${fdate(cur)} · ${RF(nights(debut, cur) > 1 ? '{0} nuits' : '{0} nuit', nights(debut, cur))}</div><ol>${rows}</ol></div>
       <div class="v-hint">${MSGT('Tu pourras tout modifier ensuite : dates, étapes, nuits.')}</div>
@@ -1926,7 +1941,7 @@
     const vv = (c.vv || []).length ? c.vv : [M.me].filter(Boolean), gens = vv.length > 1 && c.same === false ? c.gens : null;
     if(gens){ const me = gens[M.me] || gens[vv[0]] || {}; dep = me.dep || dep; ret = me.ret || dep; }
     tcf = null; if(dep){ M.home = dep; persist(); }   // retenu pour le prochain voyage
-    inspireCreate(c.i, {stops:c.stops, sel:c.sel, ok:1, auto:c.back === 'list', dep, ret, vv, gens, debut:c.debut, titre:(c.titre || '').trim()}); try { comp = null; } catch(e){} }
+    inspireCreate(c.i, {stops:c.stops, sel:c.sel, ok:1, auto:c.back === 'list', dep, ret, vv, gens, debut:c.debut, titre:(c.titre || '').trim(), go:c.go, leg:c.leg}); try { comp = null; } catch(e){} }
   function inspireCreate(i, custom){
     if(!custom || !custom.ok) return tripConfirm(i, custom);   // toujours l’écran de confirmation d’abord
     const x = inspRes.find(r=>r.i === i) || inspCalc(M.insp || {}).find(r=>r.i === i); if(!x) return;
@@ -1936,7 +1951,8 @@
     out.push({id:tid, type:'trip', ccs:[x.d[2]].filter(Boolean), titre:custom.titre || x.nom + ' · ' + durLbl(days), sous:stops.map(s=>s.c).join(' → '), debut, fin, voyageurs:v, objectif:num(S.budget)||''});
     // 🧭 (12/11/2026) voyage dessiné sur le globe : l’aller et le retour restent « Peu importe » (de Nantes à Tours, on ne prend pas l’avion) ;
     //    on choisit ensuite sur la carte 3D ou dans la fiche. « Où partir ? » garde son calcul (avion, ou voiture si c’est près).
-    const mode = x.ground ? 'Voiture' : x.globe ? '' : 'Avion', DEP = custom.dep != null ? custom.dep : (S.dep === 'autre' ? S.depTxt : S.dep) || '', RET = custom.ret != null ? custom.ret : DEP;
+    //    (13/11/2026) et ils se choisissent avant de créer le voyage : « Pour y aller et revenir », « Entre les étapes » (train, voiture, bus, à pied, ou peu importe).
+    const mode = custom.go != null && (custom.go === '' || MODE_ICON[custom.go]) ? custom.go : x.ground ? 'Voiture' : x.globe ? '' : 'Avion', legMode = custom.leg != null && (custom.leg === '' || MODE_ICON[custom.leg]) ? custom.leg : mode === 'Voiture' ? 'Voiture' : x.globe ? '' : 'Train', DEP = custom.dep != null ? custom.dep : (S.dep === 'autre' ? S.depTxt : S.dep) || '', RET = custom.ret != null ? custom.ret : DEP;
     const G = custom.gens && v.length > 1 ? custom.gens : null, half = String(Math.round((x.trans + (x.escale ? 80 : 0))/2));
     // 👥 plusieurs voyageurs : un aller et un retour par personne, chacun depuis sa ville (sinon : un seul trajet pour tous)
     if(G) v.forEach(pid=>{ const gp = G[pid] || {}, d0 = gp.dep || DEP; out.push({id:'i'+uid()+'a'+pid, type:'item', trip:tid, cat:'transport', mode, titre:(d0||'Départ') + ' → ' + stops[0].c, from:d0, to:stops[0].c, date:debut, statut:'todo', partage:'pp', qui:[pid], estime:half}); });
@@ -1947,7 +1963,7 @@
       pls.forEach((p,j)=>out.push({id:'pl'+uid()+k+'_'+j, type:'place', trip:tid, stay:hid, date:dd[Math.min(dd.length-1, Math.floor(j/per))], nom:p.nom, adresse:'', lat:p.lat, lng:p.lng, cat:p.cat, lock:false}));
       out.push({id:'day:'+tid+':'+s.d, type:'day', trip:tid, date:s.d, titre: k === 0 ? 'Arrivée à ' + s.c : stops[k-1].c + ' → ' + s.c, plan:''});
       range(addDays(s.d,1), addDays(s.f,-1)).forEach(dd=>out.push({id:'day:'+tid+':'+dd, type:'day', trip:tid, date:dd, titre:s.c, plan:''}));
-      if(k > 0) out.push({id:'i'+uid()+'t'+k, type:'item', trip:tid, cat:'transport', mode:mode === 'Voiture' ? 'Voiture' : 'Train', titre:stops[k-1].c + ' → ' + s.c, from:stops[k-1].c, to:s.c, date:s.d, statut:'todo', partage:'pp', qui:[]});
+      if(k > 0) out.push({id:'i'+uid()+'t'+k, type:'item', trip:tid, cat:'transport', mode:legMode, titre:stops[k-1].c + ' → ' + s.c, from:stops[k-1].c, to:s.c, date:s.d, statut:'todo', partage:'pp', qui:[]});
     });
     if(G) v.forEach(pid=>{ const gp = G[pid] || {}, r0 = gp.ret || gp.dep || RET; out.push({id:'i'+uid()+'r'+pid, type:'item', trip:tid, cat:'transport', mode, titre:stops[stops.length-1].c + ' → ' + (r0||'retour'), from:stops[stops.length-1].c, to:r0, date:fin, statut:'todo', partage:'pp', qui:[pid], estime:half}); });
     else out.push({id:'i'+uid()+'r', type:'item', trip:tid, cat:'transport', mode, titre:stops[stops.length-1].c + ' → ' + (RET||'retour'), from:stops[stops.length-1].c, to:RET, date:fin, statut:'todo', partage:'pp', qui:[], estime:half});

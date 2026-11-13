@@ -2090,7 +2090,7 @@
   function lvPlanWins(K){ const out = [];
     const hm = (d, h) => { const m = /^(\d{1,2})\s*[:h]\s*(\d{2})/.exec(String(h || '')); return m ? new Date(d + 'T' + m[1].padStart(2, '0') + ':' + m[2] + ':00').getTime() : 0; };
     list('item', i=>i.trip === K && i.cat === 'transport' && !i.deleted && i.date && i.heureDep).forEach(i=>{ const a = hm(i.date, i.heureDep); if(!a) return; let b = i.heureArr ? hm(i.date, i.heureArr) : a + 3 * 3600e3; if(b < a) b += 864e5;
-      const m = (i.mode || '') + ' ' + (i.titre || ''), md = /avion|\bvol\b|flight|plane/i.test(m) ? 'plane' : /bateau|ferry|ship|boat|\bcgn\b/i.test(m) ? 'boat' : /train|tgv|\bter\b|rail|\bic\b|eurostar|sbb|cff|tram|m[ée]tro/i.test(m) ? 'rail' : /voiture|taxi|uber|bus|\bcar\b/i.test(m) ? 'car' : '';
+      const m = (i.mode || '') + ' ' + (i.titre || ''), md = /avion|\bvol\b|flight|plane/i.test(m) ? 'plane' : /bateau|ferry|ship|boat|\bcgn\b/i.test(m) ? 'boat' : /train|tgv|\bter\b|rail|\bic\b|eurostar|sbb|cff|tram|m[ée]tro/i.test(m) ? 'rail' : /voiture|taxi|uber|bus|\bcar\b/i.test(m) ? 'car' : /^à pied /i.test(m) ? 'foot' : '';
       if(md) out.push([a - 45 * 60e3, b + 45 * 60e3, md]); });
     return out; }
   const lvRK = r => 'R' + (+r[0][0]).toFixed(4) + ',' + (+r[0][1]).toFixed(4) + ',' + (r[0][2] || 0);
@@ -2806,7 +2806,13 @@
     const g = async q => { q = (q || '').trim(); if(!q) return null; const r = await geocode(q, null).catch(()=>null); return r && r.lat != null ? {lat:+r.lat, lng:+r.lng} : null; };
     const F = {legs:[], cities:[], hood:[], rays:[], visits:[], acts:[], hotels:[]};
     const st = tlStages(), SC = []; let k = 0;
-    for(const s of st){ const c = await g(s.city); if(!c) continue;
+    for(const s of st){ let c = await g(s.city);
+      // 🗺️ (13/11/2026) une étape ne disparaît plus de la carte quand la recherche de sa ville échoue (réseau, service saturé) : avant, elle n’était
+      //    ni numérotée ni reliée (démo Japon : pas d’Osaka, et un trait direct Hiroshima → Tokyo). Secours : la ville de démo, puis l’hôtel de l’étape.
+      if(!c && t.demo){ const d = demoLL(s.city); if(d) c = {lat:d[0], lng:d[1]}; }
+      if(!c){ try { const h = items(x=>x.cat === 'hotel' && normQ(stayCity(x)) === normQ(s.city))[0];
+        if(h) c = h.lat != null && h.lng != null ? {lat:+h.lat, lng:+h.lng} : await g(h.adresse || ''); } catch(e){} }
+      if(!c) continue;
       F.cities.push({c, name:s.city, n:++k}); SC.push({s, c}); }
     // 🚆 un bout de trajet se place d’abord sur une ville d’étape ; sinon on le cherche AUTOUR de l’étape du jour
     //    (« Aéroport », « Gare Termini », « Pompéi » : pas un aéroport au hasard en Biélorussie)
@@ -3291,7 +3297,7 @@
     const it = R[id]; if(!it || it.cat !== 'transport' || (m && !MODE_ICON[m]) || (it.mode || '') === m || pgLock()) return;
     if(okB(it) && !(await uiConfirm(RF('Ce trajet est déjà réservé. Passer en {0} ? Il redevient « à réserver ».', MSGT(m || 'Peu importe'))))) return;
     const c = clone(it); c.mode = m; if(okB(it)) c.statut = 'todo';
-    put(c, m ? MODE_ICON[m] + ' ' + RF('Trajet en {0} : noté dans tes réservations', MSGT(m)) : '🧭 ' + MSGT('Peu importe'));
+    put(c, m === 'À pied' ? '🚶 ' + MSGT('Trajet à pied : rien à réserver') : m ? MODE_ICON[m] + ' ' + RF('Trajet en {0} : noté dans tes réservations', MSGT(m)) : '🧭 ' + MSGT('Peu importe'));
     if(PG && PG.F){ PG.F.legs.forEach(f=>{ if(f.properties.id === id){ f.properties.mode = m; f.properties.col = P3C[p3St(c)]; } });
       try { PG.map.getSource('pg-legs').setData(pgFc(PG.F.legs)); } catch(e){} pgLegIcons(); }
     pgLeg(id); refresh();
