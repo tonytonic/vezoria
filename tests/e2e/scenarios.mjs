@@ -347,6 +347,24 @@ SC['21 on ne détourne pas un de mes voyages en passant par un autre partage'] =
   ok('… mais ses publications arrivent bien', u.s7.length === 1, JSON.stringify(u.s7));
 };
 
+SC['22 clé secrète de l’appareil : perdue ou recopiée → revalidation par e-mail, rien n’est perdu'] = async us => {
+  const A = await carnet('Anthony'); us.push(A); await voyageVierge(A, 'Lisbonne', 10, 14); ok('carnet en ligne avec compte', await enLigne(A, 'a22@example.org'));
+  const k1 = await A.ev(() => { try { return JSON.parse(localStorage.getItem('vz_dk')).k; } catch (e) { return ''; } });
+  const ids = await A.ev(() => JSON.stringify(Object.values(CV._R()).filter(r => r.type === 'device' || r.type === 'member' || r.type === 'profile')));
+  ok('la clé de l’appareil existe et n’est écrite dans aucune fiche du carnet', /^[0-9a-f]{64}$/.test(k1) && !ids.includes(k1), k1.slice(0, 8));
+  // la clé change (stockage effacé à moitié, ou quelqu'un a pris l'identifiant de ce téléphone en premier)
+  await A.ev(() => { localStorage.setItem('vz_dk', JSON.stringify({ d: CV._M().devId, k: 'ab'.repeat(32) })); });
+  await souvenir(A, 'Écrit avant revalidation', '', 'Attend sur le téléphone.', []); await A.closeAll(); await A.ev(() => CV.syncNow(true)).catch(() => {}); await A.wait(3500);
+  let d = await dessus(A); ok('autre clé → « vérifie que c’est toi » avec envoi d’un code par e-mail', /vérifie que c’est toi|revalid/i.test(d) && /Recevoir un code/.test(d), d.slice(0, 160));
+  await A.tap(/Recevoir un code/, null, 3000); const otp = await A.ev(() => { const m = (document.querySelector('#v-sheet-bg') || document.body).innerText.match(/test : (\d{6})/); return m && m[1]; });
+  await A.fill('#ac-otp', otp || '000000'); await A.tap(/Valider/, null, 6500); for (let k = 0; k < 3 && await dlgTxt(A); k++) { await okDlg(A); await A.wait(600); }
+  await A.closeAll(); await A.ev(() => CV.syncNow(true)).catch(() => {}); await A.wait(3000);
+  const st = await A.ev(() => ({ err: CV._M().sync.err || '', dirty: (CV._M().dirty || []).length }));
+  ok('revalidé : la synchro repart sans erreur', !st.err, JSON.stringify(st));
+  ok('… et ce qui a été écrit entre-temps est parti (rien en attente)', st.dirty === 0, JSON.stringify(st));
+  ok('le voyage et le souvenir sont toujours là', !!(await tripOf(A, 'Lisbonne')) && (await fiches(A, 'souv')).includes('Écrit avant revalidation'));
+};
+
 // ───────── moteur ─────────
 const only = process.argv[2] ? new RegExp(process.argv[2], 'i') : null; let jsErr = 0;
 for (const [name, fn] of Object.entries(SC)) { if (only && !only.test(name)) continue; console.log('\n▶ ' + name); const us = []; const t0 = Date.now();

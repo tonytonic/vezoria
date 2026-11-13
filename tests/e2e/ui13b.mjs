@@ -3,6 +3,11 @@
 import { ok, log, RES, br, carnet } from './lib.mjs';
 const A = await carnet('Anthony');
 try {
+  // réponses gardées d'un ancien passage (« En couple » + 1 voyageur, capture du 13/11 sur iPhone) : l'écran doit s'ouvrir sur 2
+  await A.ev(() => { CV._M().insp = { qui: 'couple', nb: '1' }; void CV.inspire(); }); await A.wait(900);
+  { const s0 = await A.ev(() => ({ qui: document.getElementById('in-qui').value, nb: document.getElementById('in-nb').value }));
+    ok('« En couple » gardé avec 1 voyageur → l’écran s’ouvre sur 2 voyageurs', s0.qui === 'couple' && s0.nb === '2', JSON.stringify(s0)); }
+  await A.closeAll();
   await A.ev(() => { void CV.inspireDemo(); }); await A.wait(900);
   const st = () => A.ev(() => ({ qui: document.getElementById('in-qui').value, nb: document.getElementById('in-nb').value, on: [...document.querySelectorAll('#in-qui + .wz-cards .wz-card')].findIndex(b => b.classList.contains('on')) }));
   const card = i => A.ev(i => document.querySelectorAll('#in-qui + .wz-cards .wz-card')[i].click(), i);
