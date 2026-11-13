@@ -300,13 +300,60 @@ SC['20 un compagnon malveillant ne touche ni mon compte, ni mes abonnés, ni mes
   const dr = await A.ev(() => CV._spDrop().join(' | ')); ok('les fiches refusées sont bien celles-là (compte, abonnés, ville, déménagement)', /acct/.test(dr) && /abcfg/.test(dr) && /geo/.test(dr) && /moved/.test(dr), dr);
 };
 
+SC['21 on ne détourne pas un de mes voyages en passant par un autre partage'] = async us => {
+  const { A, C } = await partage({ abonne: false }); us.push(A, C);
+  await enLigne(C, 'claire' + (Date.now() % 1e7) + '@example.org');   // créer un dossier demande un compte : Claire en a un, comme n’importe qui
+  await voyageVierge(A, 'Lisbonne secret', -1, 3); const tp = await tripOf(A, 'Lisbonne secret'), tr = await tripOf(A, 'Rome à deux');
+  ok('Anthony a un 2e voyage, privé', !!tp && !(await A.ev(t => (CV._M().tripSpace || {})[t], tp)));
+  const etat = () => A.ev(t => { const R = CV._R(), M = CV._M(); return { titre: (R[t] || {}).titre, del: !!(R[t] || {}).deleted, ts: (M.tripSpace || {})[t] || '', glisse: Object.values(R).filter(r => /^Glissée/.test(r.nom || '') && !r.deleted).length }; }, tp);
+  // 1) Claire connaît l’identifiant de ce voyage (comme une ancienne compagne, ou une abonnée de son fil) : elle glisse dans le dossier de « Rome »
+  //    une fiche « voyage » qui porte cet identifiant, et une visite rangée dedans
+  await C.ev(([tp, tr]) => { const R = CV._R(), M = CV._M(), now = Date.now() + 5000, sp = (M.spaces || []).find(x => x.code === (M.tripSpace || {})[tr]);
+    [{ id: tp, type: 'trip', titre: 'PIRATÉ', debut: '2030-01-01', fin: '2030-01-02', voyageurs: [M.me], createdBy: M.me, updatedAt: now },
+     { id: 'evil-p1', type: 'place', trip: tp, nom: 'Glissée par Claire', date: '2030-01-01', updatedAt: now }].forEach(r => { R[r.id] = r; sp.dirty = sp.dirty || []; sp.dirty.push(r.id); }); }, [tp, tr]);
+  await sync(C, A); await sync(C, A); let e = await etat();
+  ok('par le dossier d’un voyage commun : mon autre voyage ne change pas de titre et ne reçoit rien', e.titre === 'Lisbonne secret' && !e.del && !e.glisse, JSON.stringify(e));
+  ok('… et il n’est pas rangé dans ce dossier', !e.ts, e.ts);
+  // 2) Claire crée un autre dossier, y met la même fausse fiche « voyage », et envoie son code à Anthony (« rejoins mon voyage »)
+  const code2 = await C.ev(tp => { const R = CV._R(), M = CV._M(), now = Date.now() + 9000, code = 'ZZZZ-' + String(Date.now()).slice(-4) + '-ZZZZ';
+    M.spaces.push({ code, since: 0, dirty: [], last: 0, err: '' }); const sp = M.spaces[M.spaces.length - 1]; (M.tripSpace = M.tripSpace || {})[tp] = code;
+    [{ id: tp, type: 'trip', titre: 'PIRATÉ 2', debut: '2030-01-01', fin: '2030-01-02', voyageurs: [M.me], createdBy: M.me, updatedAt: now },
+     { id: 'evil-p2', type: 'place', trip: tp, nom: 'Glissée 2', date: '2030-01-01', updatedAt: now }].forEach(r => { R[r.id] = r; sp.dirty.push(r.id); }); return code; }, tp);
+  await sync(C); await sync(C);
+  await A.closeAll(); await A.ev(() => CV.tripJoin()); await A.wait(800); await A.fill('#tj-code', code2); A.ev(() => CV.tripJoinGo()).catch(() => {}); await A.wait(6000);
+  const q = await dlgTxt(A); if (!q) log('DEBUG ' + JSON.stringify(await A.ev(c => { const M = CV._M(), sp = (M.spaces || []).find(x => x.code === c); return { sp: sp ? { since: sp.since, err: sp.err, no: sp.adoptNo } : null, msg: (document.getElementById('tj-msg') || {}).textContent, drop: CV._spDrop().slice(-4) }; }, code2)) + ' ' + apiLog.slice(-8).join(' | '));
+  ok('l’appli me prévient, en nommant mon voyage, avant de le relier à un partage', /Lisbonne secret/.test(q) && /tu as déjà/.test(q), q.slice(0, 160));
+  await okDlg(A, /Annuler/); await A.wait(1500);
+  for (let k = 0; k < 3 && await dlgTxt(A); k++) { await okDlg(A, /OK|Annuler|Fermer/); await A.wait(800); } await A.closeAll(); await sync(A); e = await etat();
+  ok('en « rejoignant » le dossier de Claire : mon voyage ne change pas de titre et ne reçoit rien', e.titre === 'Lisbonne secret' && !e.del && !e.glisse, JSON.stringify(e));
+  ok('… et il ne part pas dans le dossier de Claire', e.ts !== code2, e.ts);
+  // 3) la preuve par le résultat : ce qu’Anthony écrit ensuite dans son voyage privé n’arrive jamais chez Claire
+  await go(A, 'Lisbonne secret'); await depense(A, 'Hôtel secret', 120); await sync(A, C); await sync(A, C);
+  ok('la dépense est bien dans le voyage privé d’Anthony', await A.ev(() => Object.values(CV._R()).some(r => r.titre === 'Hôtel secret' && !r.deleted)));
+  ok('Claire ne reçoit rien du voyage privé d’Anthony', !(await C.ev(() => Object.values(CV._R()).some(r => r.titre === 'Hôtel secret'))));
+  ok('le voyage commun marche toujours dans les deux sens', (await fiches(A, 'souv')).includes('Fontaine de Trevi') && (await fiches(C, 'souv')).includes('Colisée au petit matin'));
+  // 4) les mêmes pièges par les deux autres portes : le carnet entier d’un autre (je suis son compagnon), et un fil que je suis
+  const u = await A.ev(([tp, tr]) => { const now = Date.now() + 5000, MC = 'M:AAAA-BBBB-CCCC', f = (recs, force) => CV._spIn(recs, MC, force).map(r => r.id), g = recs => CV._feedOnly(recs).map(r => r.id);
+    const R = CV._R(), someMine = Object.values(R).find(r => r.trip === tr && r.type === 'souv');
+    return { m1: f([{ id: tp, type: 'trip', titre: 'x', updatedAt: now }]), m2: f([{ id: 'mv:' + tp, type: 'moved', tid: tp, code: 'ZZZZ-0000-ZZZZ', updatedAt: now }]),
+      m3: f([{ id: 'n1', type: 'place', trip: tp, nom: 'x', updatedAt: now }]), m4: f([{ id: 'acct', type: 'acct', k: 'x', updatedAt: now }]),
+      m5: f([{ id: someMine.id, type: 'souv', trip: tr, titre: 'x', updatedAt: now }]), m6: f([{ id: 'tneuf1', type: 'trip', titre: 'Voyage de ce carnet', updatedAt: now }, { id: 'n2', type: 'place', trip: 'tneuf1', nom: 'ok', updatedAt: now }]),
+      s1: g([{ id: 'acct', type: 'acct', k: 'x', updatedAt: now }]), s2: g([{ id: 'acct', type: 'like', trip: 'ft:zzz', k: 'x', updatedAt: now }]), s3: g([{ id: tp, type: 'feed', trip: 'ft:zzz', updatedAt: now }]),
+      s4: g([{ id: 'mv:x', type: 'moved', tid: tp, code: 'ZZZZ', updatedAt: now }]), s5: g([{ id: 'geo:paris', type: 'feed', trip: 'ft:zzz', lat: 1, lng: 1, updatedAt: now }]), s6: g([{ id: someMine.id, type: 'feed', trip: 'ft:zzz', updatedAt: now }]),
+      s7: g([{ id: 'fd:neuf', type: 'feed', trip: 'ft:zzz', texte: 'ok', updatedAt: now }]) }; }, [tp, tr]);
+  ok('carnet d’un autre : il ne remplace pas mon voyage, ne le « déménage » pas, n’y glisse rien, ne touche ni mon compte ni mes fiches', ![u.m1, u.m2, u.m3, u.m4, u.m5].some(x => x.length), JSON.stringify(u));
+  ok('… mais ses propres voyages arrivent bien', u.m6.length === 2, JSON.stringify(u.m6));
+  ok('fil que je suis : il ne touche ni mon compte, ni mes voyages, ni mes villes, ni mes fiches', ![u.s1, u.s2, u.s3, u.s4, u.s5, u.s6].some(x => x.length), JSON.stringify(u));
+  ok('… mais ses publications arrivent bien', u.s7.length === 1, JSON.stringify(u.s7));
+};
+
 // ───────── moteur ─────────
 const only = process.argv[2] ? new RegExp(process.argv[2], 'i') : null; let jsErr = 0;
 for (const [name, fn] of Object.entries(SC)) { if (only && !only.test(name)) continue; console.log('\n▶ ' + name); const us = []; const t0 = Date.now();
   try { await fn(us); } catch (e) { ok('le parcours va jusqu’au bout', false, String(e && e.stack || e).split('\n').slice(0, 3).join(' ')); }
   const errs = [...new Set(us.flatMap(u => u.errs))]; if (errs.length) { jsErr += errs.length; ok('aucune erreur JavaScript', false, errs.join(' | ')); }
   // 🛡️ le filtre des dossiers partagés ne doit jamais refuser une fiche d’un parcours normal (seul le scénario du compagnon malveillant en refuse)
-  if (!/^20 /.test(name)) { const dr = []; for (const u of us) { try { dr.push(...(await u.ev(() => (CV._spDrop ? CV._spDrop() : [])))); } catch (e) {} } if (dr.length) ok('aucune fiche légitime refusée par le filtre des dossiers partagés', false, [...new Set(dr)].join(' | ')); }
+  if (!/^2[01] /.test(name)) { const dr = []; for (const u of us) { try { dr.push(...(await u.ev(() => (CV._spDrop ? CV._spDrop() : [])))); } catch (e) {} } if (dr.length) ok('aucune fiche légitime refusée par le filtre des dossiers partagés', false, [...new Set(dr)].join(' | ')); }
   for (const u of us) await u.ctx.close().catch(() => {}); log(`   (${Math.round((Date.now() - t0) / 1000)} s)`); }
 const bad = RES.filter(r => !r[0]); console.log(`\n═══ ${RES.length - bad.length} vérifications réussies, ${bad.length} en échec ═══`); bad.forEach(r => console.log('  ✗ ' + r[1]));
 const apiBad = apiLog.filter(l => /→ 5\d\d|ERREUR SERVEUR/.test(l)); if (apiBad.length) console.log('Erreurs serveur :\n' + apiBad.slice(0, 10).join('\n'));
