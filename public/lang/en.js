@@ -3790,4 +3790,10 @@ I18N.load({
 "Je cherche la ville…": "Looking for the city…",
 "{0} est déjà ta dernière étape.": "{0} is already your last stop.",
 "Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Everyone their own way: one by car, another by train or plane.",
-"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Your posts for your followers are deleted from the server too: they will no longer see them."});
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Your posts for your followers are deleted from the server too: they will no longer see them.",
+"À pied":"On foot",
+"Trajet à pied : rien à réserver":"Walking leg: nothing to book",
+"Pour y aller et revenir":"Getting there and back",
+"Entre les étapes":"Between stops",
+"Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"This share contains a trip you already have on this phone: “{0}”.",
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"If you continue, your trip is linked to this share: the people who have it can read and edit it. Only continue if this really is the trip you were invited to join."});

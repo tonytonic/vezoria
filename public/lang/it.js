@@ -3808,4 +3808,10 @@ I18N.load({
 "Je cherche la ville…": "Cerco la città…",
 "{0} est déjà ta dernière étape.": "{0} è già la tua ultima tappa.",
 "Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Ognuno il suo tragitto: uno in auto, l’altro in treno o in aereo.",
-"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Anche le tue pubblicazioni per i tuoi follower vengono cancellate dal server: non le vedranno più."});
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Anche le tue pubblicazioni per i tuoi follower vengono cancellate dal server: non le vedranno più.",
+"À pied":"A piedi",
+"Trajet à pied : rien à réserver":"Tragitto a piedi: niente da prenotare",
+"Pour y aller et revenir":"Per andare e tornare",
+"Entre les étapes":"Tra le tappe",
+"Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"Questa condivisione contiene un viaggio che hai già su questo telefono: «{0}».",
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Se continui, il tuo viaggio viene collegato a questa condivisione: le persone che ce l’hanno possono leggerlo e modificarlo. Continua solo se è davvero il viaggio a cui ti hanno invitato."});

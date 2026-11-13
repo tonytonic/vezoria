@@ -3802,4 +3802,10 @@ I18N.load({
 "Je cherche la ville…": "Ich suche die Stadt…",
 "{0} est déjà ta dernière étape.": "{0} ist schon deine letzte Etappe.",
 "Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Jeder auf seinem Weg: einer mit dem Auto, ein anderer mit Zug oder Flugzeug.",
-"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Deine Beiträge für deine Follower werden ebenfalls vom Server gelöscht: Sie sehen sie nicht mehr."});
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Deine Beiträge für deine Follower werden ebenfalls vom Server gelöscht: Sie sehen sie nicht mehr.",
+"À pied":"Zu Fuß",
+"Trajet à pied : rien à réserver":"Strecke zu Fuß: nichts zu buchen",
+"Pour y aller et revenir":"Hin- und Rückreise",
+"Entre les étapes":"Zwischen den Etappen",
+"Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"Diese Freigabe enthält eine Reise, die du schon auf diesem Handy hast: „{0}“.",
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Wenn du fortfährst, wird deine Reise mit dieser Freigabe verknüpft: Die Personen, die sie haben, können sie lesen und ändern. Fahre nur fort, wenn es wirklich die Reise ist, zu der du eingeladen wurdest."});

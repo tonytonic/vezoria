@@ -6749,4 +6749,10 @@ I18N.load({
 "Je cherche la ville…": "शहर ढूँढ रहे हैं…",
 "{0} est déjà ta dernière étape.": "{0} पहले से तुम्हारा आख़िरी पड़ाव है।",
 "Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"हर किसी का अपना रास्ता: कोई कार से, कोई ट्रेन या हवाई जहाज़ से।",
-"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"तुम्हारे फ़ॉलोअर्स के लिए की गई पोस्ट भी सर्वर से मिट जाती हैं: वे उन्हें अब नहीं देख पाएँगे।"});
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"तुम्हारे फ़ॉलोअर्स के लिए की गई पोस्ट भी सर्वर से मिट जाती हैं: वे उन्हें अब नहीं देख पाएँगे।",
+"À pied":"पैदल",
+"Trajet à pied : rien à réserver":"पैदल रास्ता: कुछ बुक नहीं करना",
+"Pour y aller et revenir":"जाने और लौटने के लिए",
+"Entre les étapes":"पड़ावों के बीच",
+"Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"इस साझा फ़ोल्डर में एक यात्रा है जो इस फ़ोन पर पहले से है: “{0}”।",
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"आगे बढ़ने पर तुम्हारी यात्रा इस साझा फ़ोल्डर से जुड़ जाएगी: जिनके पास यह है वे उसे पढ़ और बदल सकते हैं। तभी आगे बढ़ो जब यह सचमुच वही यात्रा हो जिसमें तुम्हें बुलाया गया है।"});

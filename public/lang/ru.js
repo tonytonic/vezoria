@@ -6750,4 +6750,10 @@ I18N.load({
 "Je cherche la ville…": "Ищу город…",
 "{0} est déjà ta dernière étape.": "{0} — уже твой последний этап.",
 "Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"У каждого свой путь: один на машине, другой на поезде или самолёте.",
-"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Твои публикации для подписчиков тоже удаляются с сервера: они их больше не увидят."});
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Твои публикации для подписчиков тоже удаляются с сервера: они их больше не увидят.",
+"À pied":"Пешком",
+"Trajet à pied : rien à réserver":"Пеший переход: бронировать нечего",
+"Pour y aller et revenir":"Дорога туда и обратно",
+"Entre les étapes":"Между этапами",
+"Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"В этом общем доступе есть поездка, которая уже есть на этом телефоне: «{0}».",
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Если продолжить, твоя поездка будет связана с этим общим доступом: люди, у которых он есть, смогут читать и менять её. Продолжай, только если это действительно та поездка, в которую тебя пригласили."});

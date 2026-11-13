@@ -6750,4 +6750,10 @@ I18N.load({
 "Je cherche la ville…": "أبحث عن المدينة…",
 "{0} est déjà ta dernière étape.": "{0} هي محطتك الأخيرة بالفعل.",
 "Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"لكلٍّ طريقه: واحد بالسيارة وآخر بالقطار أو الطائرة.",
-"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"منشوراتك لمتابعيك تُحذف من الخادم أيضًا: لن يروها بعد الآن."});
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"منشوراتك لمتابعيك تُحذف من الخادم أيضًا: لن يروها بعد الآن.",
+"À pied":"سيرًا على الأقدام",
+"Trajet à pied : rien à réserver":"مسار سيرًا على الأقدام: لا شيء للحجز",
+"Pour y aller et revenir":"للذهاب والعودة",
+"Entre les étapes":"بين المحطات",
+"Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"تحتوي هذه المشاركة على رحلة موجودة لديك مسبقًا على هذا الهاتف: «{0}».",
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"إذا تابعت، ستُربط رحلتك بهذه المشاركة: يستطيع من لديهم المشاركة قراءتها وتعديلها. لا تتابع إلا إذا كانت هذه فعلًا الرحلة التي دُعيت للانضمام إليها."});

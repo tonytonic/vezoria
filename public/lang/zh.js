@@ -6749,4 +6749,10 @@ I18N.load({
 "Je cherche la ville…": "正在查找城市…",
 "{0} est déjà ta dernière étape.": "{0}已经是你的最后一站。",
 "Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"各走各的路：有人开车，有人坐火车或飞机。",
-"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"你发给关注者的内容也会从服务器删除：他们将看不到了。"});
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"你发给关注者的内容也会从服务器删除：他们将看不到了。",
+"À pied":"步行",
+"Trajet à pied : rien à réserver":"步行路段：无需预订",
+"Pour y aller et revenir":"往返方式",
+"Entre les étapes":"各站之间",
+"Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"此共享包含一个你手机上已有的旅程：“{0}”。",
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"如果继续，你的旅程将与此共享关联：拥有该共享的人可以查看和修改它。只有在这确实是别人邀请你加入的旅程时才继续。"});

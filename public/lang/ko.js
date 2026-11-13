@@ -6749,4 +6749,10 @@ I18N.load({
 "Je cherche la ville…": "도시를 찾는 중…",
 "{0} est déjà ta dernière étape.": "{0}은(는) 이미 마지막 경유지예요.",
 "Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"각자 자기 방식으로: 누구는 차로, 누구는 기차나 비행기로.",
-"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"팔로워에게 공개한 게시물도 서버에서 삭제돼요. 팔로워는 더 이상 볼 수 없어요."});
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"팔로워에게 공개한 게시물도 서버에서 삭제돼요. 팔로워는 더 이상 볼 수 없어요.",
+"À pied":"도보",
+"Trajet à pied : rien à réserver":"도보 이동: 예약할 것 없음",
+"Pour y aller et revenir":"가는 길과 오는 길",
+"Entre les étapes":"경유지 사이",
+"Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"이 공유에는 이 휴대폰에 이미 있는 여행이 들어 있습니다: “{0}”.",
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"계속하면 내 여행이 이 공유에 연결되어, 공유를 가진 사람들이 읽고 수정할 수 있습니다. 정말로 초대받은 그 여행일 때만 계속하세요."});

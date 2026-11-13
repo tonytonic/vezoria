@@ -6731,4 +6731,10 @@ I18N.load({
 "Je cherche la ville…": "Şehri arıyorum…",
 "{0} est déjà ta dernière étape.": "{0} zaten son durağın.",
 "Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Herkesin yolu ayrı: biri arabayla, diğeri trenle ya da uçakla.",
-"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Takipçilerin için paylaştıkların da sunucudan silinir: artık göremezler."});
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Takipçilerin için paylaştıkların da sunucudan silinir: artık göremezler.",
+"À pied":"Yürüyerek",
+"Trajet à pied : rien à réserver":"Yürüyerek gidilecek: rezervasyon gerekmez",
+"Pour y aller et revenir":"Gidiş ve dönüş için",
+"Entre les étapes":"Duraklar arasında",
+"Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"Bu paylaşım, bu telefonda zaten bulunan bir seyahati içeriyor: “{0}”.",
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Devam edersen seyahatin bu paylaşıma bağlanır: paylaşıma sahip kişiler onu okuyabilir ve değiştirebilir. Yalnızca gerçekten davet edildiğin seyahat buysa devam et."});

@@ -3799,4 +3799,10 @@ I18N.load({
 "Je cherche la ville…": "Ik zoek de stad…",
 "{0} est déjà ta dernière étape.": "{0} is al je laatste etappe.",
 "Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Ieder zijn eigen route: de een met de auto, de ander met de trein of het vliegtuig.",
-"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Je berichten voor je volgers worden ook van de server gewist: ze zien ze niet meer."});
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Je berichten voor je volgers worden ook van de server gewist: ze zien ze niet meer.",
+"À pied":"Te voet",
+"Trajet à pied : rien à réserver":"Traject te voet: niets te boeken",
+"Pour y aller et revenir":"Heen en terug",
+"Entre les étapes":"Tussen de etappes",
+"Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"Deze deling bevat een reis die je al op deze telefoon hebt: ‘{0}’.",
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Als je doorgaat, wordt je reis aan deze deling gekoppeld: de mensen die haar hebben kunnen je reis lezen en wijzigen. Ga alleen door als dit echt de reis is waarvoor je bent uitgenodigd."});

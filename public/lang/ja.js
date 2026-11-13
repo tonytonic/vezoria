@@ -6749,4 +6749,10 @@ I18N.load({
 "Je cherche la ville…": "都市を探しています…",
 "{0} est déjà ta dernière étape.": "{0}はすでに最後の経由地です。",
 "Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"それぞれの行き方で：車の人も、電車や飛行機の人も。",
-"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"フォロワー向けの投稿もサーバーから削除されます。フォロワーには見えなくなります。"});
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"フォロワー向けの投稿もサーバーから削除されます。フォロワーには見えなくなります。",
+"À pied":"徒歩",
+"Trajet à pied : rien à réserver":"徒歩の移動：予約は不要",
+"Pour y aller et revenir":"行きと帰り",
+"Entre les étapes":"滞在地の間",
+"Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"この共有には、このスマホにすでにある旅行が含まれています：「{0}」。",
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"続けると、あなたの旅行がこの共有に結び付けられ、共有を持つ人が閲覧・編集できるようになります。本当に招待された旅行である場合だけ続けてください。"});
