@@ -293,7 +293,7 @@
   // lien reçu : #rejoindre=CODE (voyage partagé) ou #suivre=CODE (abonné)
   async function hashJoin(){
     const h = location.hash || ''; const m = h.match(/#(rejoindre|suivre)=([A-Z0-9-]{8,})/i); if(!m) return;
-    { const g = k => { const x = h.match(new RegExp('[&#]' + k + '=([^&]*)')); try { return x ? decodeURIComponent(x[1]).slice(0, 60) : ''; } catch(e){ return ''; } };
+    { const g = k => { const x = h.match(new RegExp('[&#]' + k + '=([^&]*)')); try { return x ? dURI(x[1]).slice(0, 60) : ''; } catch(e){ return ''; } };
       const de = g('de'), v = g('v'); M.invFrom = de || v ? {de, v, at:Date.now()} : null; }
     history.replaceState(null, '', location.pathname + location.search);
     const code = m[2].toUpperCase();
@@ -2091,7 +2091,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-12m'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-13a'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {

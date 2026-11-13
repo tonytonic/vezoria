@@ -417,7 +417,7 @@
     const d = (document.getElementById('gdm-d') || {}).value, raw = String((document.getElementById('gdm-n') || {}).value || '').trim(); if(!d || !raw) return;
     GDM = {d}; const st = hotelsAround(d).night, n0 = list('place', p=>p.trip === M.trip && !p.deleted && p.date === d).length;
     const out = raw.split(/[;\n]+/).map(x=>x.trim()).filter(Boolean).map((x, i)=>{ let nom = x; const m = x.match(/\/place\/([^/@?]+)/);
-      if(/^https?:/.test(x)) nom = m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : MSGT('Lieu') + ' ' + (n0 + i + 1);
+      if(/^https?:/.test(x)) nom = m ? dURI(m[1].replace(/\+/g, ' ')) : MSGT('Lieu') + ' ' + (n0 + i + 1);
       const P = window.GDMP, pk = P && P.v === x ? P : null;   // choisi dans la liste : placé exactement
       return Object.assign({id:'pl' + uid() + i, type:'place', trip:M.trip, date:d, stay:st ? st.id : '', nom:pk ? x.split(',')[0].trim() : nom, adresse:pk ? x : x !== nom ? x : ''}, pk ? {lat:pk.lat, lng:pk.lng} : {}); });
     window.GDMP = null;
@@ -3908,7 +3908,7 @@
     if(payPlay(M.quota)) return playBuy(plan, period);
     try { const r = await planCall({a:'checkout', plan, period, back:location.href}, M.sync.code);
       if(r.status === 409 && r.j.already === 'stripe'){ if(await uiConfirm(srvMsg(r.j.error))) planPortal(); return; }
-      if(!r.ok || !r.j.url) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status)); location.href = r.j.url; }
+      if(!r.ok || !r.j.url) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status)); location.href = safeUrl(r.j.url); }
     catch(e){ alert(e.message); }
   }
   async function playBuy(plan, period){
@@ -3957,7 +3957,7 @@
       if(inPlay()) location.href = u; else window.open(u, '_blank', 'noopener');
       return;
     }
-    try { const r = await planCall({a:'portal', back:location.href}, M.sync.code); if(!r.ok || !r.j.url) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status)); location.href = r.j.url; }
+    try { const r = await planCall({a:'portal', back:location.href}, M.sync.code); if(!r.ok || !r.j.url) throw new Error(srvMsg(r.j.error) || ('erreur ' + r.status)); location.href = safeUrl(r.j.url); }
     catch(e){ alert(e.message); }
   }
   // retour du paiement : #abonnement=ok

@@ -51,7 +51,7 @@
     const have = new Set(wz.etapes.map(e=>normQ(e.ville))), seen = new Set(), P = E.map(wzPt);
     const all = Object.values(wz.nearBy).flat().filter(n=>n && n.c && !have.has(normQ(n.c)) && !seen.has(normQ(n.c)) && seen.add(normQ(n.c)));
     const dmin = n => Math.min(...P.map(q=>km(q, n))), l = all.map(n=>Object.assign({d:dmin(n)}, n)).sort((a, b)=>(a.d > 150) - (b.d > 150) || b.n - a.n).slice(0, 12);
-    el().innerHTML = l.length ? l.map(n=>`<button type="button" class="cp-city" onclick="CV.wzNearAdd('${ja(n.c)}',${+n.lat||0},${+n.lng||0})">${n.img ? `<img src="${esc(n.img)}" alt="" loading="lazy">` : '<i>🏙️</i>'}<span data-notr>${esc(n.c)}</span><small>＋ ${MSGT('ajouter')}</small></button>`).join('') : `<div class="v-sum-small">${MSGT('Pas d’autre ville proposée.')}</div>`;
+    el().innerHTML = l.length ? l.map(n=>`<button type="button" class="cp-city" onclick="CV.wzNearAdd('${ja(n.c)}',${+n.lat||0},${+n.lng||0})">${n.img ? `<img src="${esc(safeUrl(n.img))}" alt="" loading="lazy">` : '<i>🏙️</i>'}<span data-notr>${esc(n.c)}</span><small>＋ ${MSGT('ajouter')}</small></button>`).join('') : `<div class="v-sum-small">${MSGT('Pas d’autre ville proposée.')}</div>`;
   }
   function wzSame(on){ wzRead(); wz.same = !!on; wzRender(); }
   function wzNearAdd(c, lat, lng){
@@ -3315,7 +3315,7 @@
           walk = `<div class="pi-walk">🚶 ${fmtKm(dk)} · ≈ ${fmtMin(min)} à pied depuis l’hôtel <small>(${esc(h.nom || h.titre)})</small></div>`; } } } catch(e){}
     const q = P.lat != null ? P.lat + ',' + P.lng : (P.adresse || P.nom) + (city ? ', ' + city : '');
     const wurl = I.wt ? `https://${I.wl}.wikipedia.org/wiki/${encodeURIComponent(I.wt.replace(/ /g, '_'))}` : '';
-    box.innerHTML = (I.img ? `<img class="wk-img" src="${esc(I.img)}" alt="">` : '')
+    box.innerHTML = (I.img ? `<img class="wk-img" src="${esc(safeUrl(I.img))}" alt="">` : '')
       + (I.txt ? `<p class="wk-tx">${esc(I.txt)}</p>` : '')
       + hours + walk
       + (I.wc === 'yes' ? `<div class="v-sum-small">♿ Accessible en fauteuil roulant</div>` : I.wc === 'limited' ? `<div class="v-sum-small">♿ Accès en fauteuil limité</div>` : '')

@@ -204,7 +204,7 @@
     if(!L.length){ box.innerHTML = ''; return; }
     inspNearL = L;
     box.innerHTML = `<h3 style="margin:14px 0 6px">📍 ${esc(MSGT('Près de chez toi, sans avion'))}</h3><div class="v-sum-small" style="margin-bottom:6px">${esc(RF('Villes connues à moins de {0} km de {1} : en voiture, en train ou en bus.', rad, depName(S)))}</div>
-      <div class="cv-deals">${L.map((c, k)=>`<button type="button" class="cv-deal" onclick="CV.inspNearGo(${k})">${c.img ? `<img src="${esc(c.img)}" alt="" loading="lazy">` : ''}<b data-notr>${esc(c.c)}</b><small>🚗 ≈ ${hhm(c.km / 70 + 0.2)} · ${c.km} km</small></button>`).join('')}</div>`;
+      <div class="cv-deals">${L.map((c, k)=>`<button type="button" class="cv-deal" onclick="CV.inspNearGo(${k})">${c.img ? `<img src="${esc(safeUrl(c.img))}" alt="" loading="lazy">` : ''}<b data-notr>${esc(c.c)}</b><small>🚗 ≈ ${hhm(c.km / 70 + 0.2)} · ${c.km} km</small></button>`).join('')}</div>`;
   }
   let inspNearL = [];
   function inspNearGo(k){
@@ -280,7 +280,7 @@
       <h3 id="cp-add-h">➕ Ajouter une étape <small class="v-sum-small">${MSGT('villes autour de tes étapes')}</small></h3><div id="cp-near" class="cp-near">${c.near || Object.keys(c.nearBy || {}).length ? '' : '<div class="v-sum-small">📡 Recherche des villes proches…</div>'}</div>
       <div class="v-sum-small" style="margin-top:8px">💡 ${MSGT('Les visites se choisissent après la création, ville par ville.')}</div>
       <div class="v-actions"><button type="button" class="v-btn" onclick="CV.compCreate()">🧳 ${esc(RF('Créer mon voyage ({0} étapes)', c.stops.length))}</button><button type="button" class="v-btn sec cv-sq" onclick="CV.inspBack()" aria-label="Revenir en arrière">←</button></div>`);
-    const im = document.getElementById('cp-img'); if(c.img && im){ im.src = c.img; im.parentNode.classList.add('has'); }
+    const im = document.getElementById('cp-img'); if(c.img && im){ im.src = safeUrl(c.img); im.parentNode.classList.add('has'); }
     if(c.sum){ const e = document.getElementById('cp-sum'); if(e) e.innerHTML = c.sum; }
     if(c.near || Object.keys(c.nearBy || {}).length) compNear();
   }
@@ -289,7 +289,7 @@
     // toutes les villes trouvées autour de chaque étape (et de la région), les plus proches du trajet d’abord
     const all = [...Object.values(comp.nearBy || {}).flat(), ...(comp.near || [])].filter(n=>!have.has(normQ(n.c)) && !seen.has(normQ(n.c)) && seen.add(normQ(n.c)));
     const dmin = n => P.length ? Math.min(...P.map(s=>km(s, n))) : 0, l = all.map(n=>Object.assign({d:dmin(n)}, n)).sort((a, b)=>(a.d > 150) - (b.d > 150) || b.n - a.n).slice(0, 12);
-    el.innerHTML = l.length ? l.map(n=>`<button type="button" class="cp-city" onclick="CV.compAdd('${ja(n.c)}',${+n.lat||0},${+n.lng||0})">${n.img ? `<img src="${esc(n.img)}" alt="" loading="lazy">` : '<i>🏙️</i>'}<span>${esc(n.c)}</span><small>＋ ajouter</small></button>`).join('') : '<div class="v-sum-small">Pas d’autre ville proposée.</div>';
+    el.innerHTML = l.length ? l.map(n=>`<button type="button" class="cp-city" onclick="CV.compAdd('${ja(n.c)}',${+n.lat||0},${+n.lng||0})">${n.img ? `<img src="${esc(safeUrl(n.img))}" alt="" loading="lazy">` : '<i>🏙️</i>'}<span>${esc(n.c)}</span><small>＋ ajouter</small></button>`).join('') : '<div class="v-sum-small">Pas d’autre ville proposée.</div>';
   }
   async function compPlaces(s){
     if(!comp) return; try { const l = await seeWiki({lat:s.lat, lng:s.lng}); comp.places[s.c] = l.filter(p=>normQ(p.nom) !== normQ(s.c)).slice(0, 9); } catch(e){ comp.places[s.c] = []; }

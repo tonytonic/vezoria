@@ -1570,7 +1570,7 @@ ${pm.join('\n')}</Document></kml>`;
       (el.closest('.rain-vt, .vt-sec, .sw-vt') || el).remove(); return; }
     { const sv = el.closest('.sw-vt'); if(sv){ const c = sv.closest('.sw-card'); if(c){ c.classList.add('has-vt');
         const nom = (c.querySelector('.sw-tx > b') || {}).textContent || '', m = L.find(x=>x.img && vtMatch(x.title, nom));
-        if(m){ c.dataset.vtled = '1'; const im = c.querySelector('.sw-img'); if(im){ im.onload = () => im.classList.add('ok'); im.src = m.img; } } } } }
+        if(m){ c.dataset.vtled = '1'; const im = c.querySelector('.sw-img'); if(im){ im.onload = () => im.classList.add('ok'); im.src = safeUrl(m.img); } } } } }
     { const pr = el.previousElementSibling; if(pr && pr.classList.contains('ex-r')){ const ln = pr.querySelector('.ex-ln'); if(ln) ln.remove(); } }
     el.innerHTML = L.map(vtTile).join('');
   }
@@ -1647,15 +1647,15 @@ ${pm.join('\n')}</Document></kml>`;
   }
   function swFill(el, p){
     if(p && p.ex && p.e && p.e.wg){ const w = p.e.wg, im = el.querySelector('.sw-img');   // visite WeGoTrip : sa photo, sa durée, son lien
-      if(w.img){ im.onload = () => im.classList.add('ok'); im.src = w.img; }
+      if(w.img){ im.onload = () => im.classList.add('ok'); im.src = safeUrl(w.img); }
       el.querySelector('.sw-ex').textContent = [w.duration, w.reviews ? RF('{0} avis', w.reviews) : ''].filter(Boolean).join(' · ');
-      const a = el.querySelector('.sw-wk'); if(p.e.vt){ a.href = w.url; a.textContent = '🎟️ Viator ›'; a.rel = 'sponsored noopener'; a.hidden = false; return; }
-      a.href = affWrap('wegotrip', w.url); a.textContent = '🎧 WeGoTrip ›'; if(affOn('wegotrip')) a.rel = 'sponsored noopener'; a.hidden = false; return; }
+      const a = el.querySelector('.sw-wk'); if(p.e.vt){ a.href = safeUrl(w.url); a.textContent = '🎟️ Viator ›'; a.rel = 'sponsored noopener'; a.hidden = false; return; }
+      a.href = safeUrl(affWrap('wegotrip', w.url)); a.textContent = '🎧 WeGoTrip ›'; if(affOn('wegotrip')) a.rel = 'sponsored noopener'; a.hidden = false; return; }
     swInfo(p).then(x=>{ if(!el.isConnected) return; const im = el.querySelector('.sw-img');
-      if(x.img && !el.dataset.vtled){ im.onload = () => im.classList.add('ok'); im.src = x.img; }
+      if(x.img && !el.dataset.vtled){ im.onload = () => im.classList.add('ok'); im.src = safeUrl(x.img); }
       if(p.grp) return;   // carte « que faire à… » : la photo de la ville seulement
       if(x.ex) el.querySelector('.sw-ex').textContent = x.ex;
-      if(x.url){ const a = el.querySelector('.sw-wk'); a.href = x.url; a.hidden = false; } });   // texte de Wikipédia affiché = sa source citée (licence CC BY-SA), même quand la photo vient de Viator
+      if(x.url){ const a = el.querySelector('.sw-wk'); a.href = safeUrl(x.url); a.hidden = false; } });   // texte de Wikipédia affiché = sa source citée (licence CC BY-SA), même quand la photo vient de Viator
   }
   function swRender(){
     if(!SW) return; const t = R[SW.tid]; if(!t){ swClose(); return; }
@@ -1710,7 +1710,7 @@ ${pm.join('\n')}</Document></kml>`;
   // 📍 aller directement à une ville : ses idées passent devant, les autres restent à trier après
   function swCityGo(c){ if(!SW) return; SW.gate = null; const left = swLeft(), of = id => (swCityOf(swRec(id)) || '—') === c;
     SW.ids = SW.ids.slice(0, SW.i).concat(left.filter(of), left.filter(id=>!of(id))); swRender(); }
-  function swPre(left){ left.slice(2, 5).forEach(id=>{ const r = swRec(id); if(r) swInfo(r).then(x=>{ if(x.img) (new Image()).src = x.img; }); }); }   // les suivantes se préparent
+  function swPre(left){ left.slice(2, 5).forEach(id=>{ const r = swRec(id); if(r) swInfo(r).then(x=>{ if(x.img) (new Image()).src = safeUrl(x.img); }); }); }   // les suivantes se préparent
   // carte suivante sans tout redessiner : celle de derrière passe devant (déjà chargée), une nouvelle se glisse derrière
   const swStopB = (t, left) => left.length && rgItems(t).length ? `<button type="button" class="sw-stop" onclick="CV.swStopRg()">② ${esc(MSGT('Ranger maintenant'))} (${rgItems(t).length}) <small>· ${esc(RF('je finirai le tri plus tard ({0} restantes)', left.length))}</small> ›</button>` : '';
   function swNext(){
@@ -2013,7 +2013,7 @@ ${pm.join('\n')}</Document></kml>`;
       ${left > 1 ? `<button type="button" class="rg-auto" onclick="CV.rgAuto()">⚡ ${esc(RF('Tout ranger comme conseillé ({0})', left))}</button>` : ''}`;
     const el = ov.querySelector('.rg-card'); swFill(el, info); rgDrag(el);
     const sg = ov.querySelector('.rg-day.sug'); if(sg) try { sg.scrollIntoView({inline:'center', block:'nearest'}); } catch(e){}
-    P.out.slice(1, 4).forEach(o=>{ const r = o.x.type === 'place' ? o.x : {nom:rgNom(o.x).replace(/^.*?·\s*/, ''), ex:1, city:o.x.adresse || ''}; swInfo(r).then(z=>{ if(z.img) (new Image()).src = z.img; }); });
+    P.out.slice(1, 4).forEach(o=>{ const r = o.x.type === 'place' ? o.x : {nom:rgNom(o.x).replace(/^.*?·\s*/, ''), ex:1, city:o.x.adresse || ''}; swInfo(r).then(z=>{ if(z.img) (new Image()).src = safeUrl(z.img); }); });
   }
   function rgDrag(el){
     let x0 = 0, y0 = 0, dx = 0, dy = 0, on = false, over = null;

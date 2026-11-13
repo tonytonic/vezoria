@@ -99,6 +99,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const lieuPays = (lieu, pays) => { const l = String(lieu || '').trim(), p = String(pays || '').trim(); if(!p) return l; if(!l) return p;
     const n = x => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); return l.split(',').some(x=>n(x) === n(p)) ? l : l + ', ' + p; };
   // 🔒 lien venu des données (compagnon, import…) : seulement http(s), jamais javascript:, data:, etc.
+  /* 🛡️ décodage d’un lien qui ne plante jamais (un « % » isolé dans un lien collé ou une adresse faisait tout échouer) */
+  const dURI = s => { try { return decodeURIComponent(s); } catch(e){ return String(s == null ? '' : s); } };
   const safeUrl = u => { const t = String(u ?? '').trim().replace(/[\u0000-\u001F\u007F\s]+/g, ''); if(!t) return ''; if(/^https?:\/\//i.test(t)) return t; return /^[a-z][a-z0-9+.-]*:/i.test(t) ? '' : 'https://' + t.replace(/^\/+/, ''); };
 
   /* ══ Fenêtres de dialogue de l'appli (remplacent alert/confirm/prompt, qui affichent l'adresse du site sur Android et iPhone) ══ */
@@ -2649,7 +2651,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
       const chunk = need.slice(i, i + 60), q = `SELECT ?i ?img WHERE { VALUES ?i { ${chunk.map(x=>'wd:' + x.wd).join(' ')} } ?i wdt:P18 ?img }`;
       try { const j = await expJ('https://query.wikidata.org/sparql?format=json&query=' + encodeURIComponent(q), 15000);
         const map = {}; (j.results && j.results.bindings || []).forEach(b=>{ const id = b.i.value.split('/').pop(); if(!map[id]) map[id] = b.img.value; });
-        chunk.forEach(x=>{ const u = map[x.wd]; if(u) x.ph = commons(decodeURIComponent(u.split('/FilePath/').pop()), 500); });
+        chunk.forEach(x=>{ const u = map[x.wd]; if(u) x.ph = commons(dURI(u.split('/FilePath/').pop()), 500); });
       } catch(e){}
     }
   }
@@ -2689,10 +2691,10 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     // les plus parlants d’abord : avec photo et description
     items.sort((a, b)=>(!!b.ph - !!a.ph) || ((b.d || '').length > 40) - ((a.d || '').length > 40));
     const cats = {}; EXP_CATS.forEach(([k])=>{ cats[k] = items.filter(x=>x.cat === k).slice(0, 40); });
-    const bad = u => !u || /montage|collage|mosai|composite|compilation|map|karte|carte|plan_|flag|drapeau|bandera|coat|blason|wappen|seal|logo|\.svg|locator|location|skyline_collage/i.test(decodeURIComponent(u));
+    const bad = u => !u || /montage|collage|mosai|composite|compilation|map|karte|carte|plan_|flag|drapeau|bandera|coat|blason|wappen|seal|logo|\.svg|locator|location|skyline_collage/i.test(dURI(u));
     const heroes = [];
     if(wp && wp.wikibase_item){ try { const j = await expJ('https://query.wikidata.org/sparql?format=json&query=' + encodeURIComponent(`SELECT ?img WHERE { wd:${wp.wikibase_item} wdt:P18 ?img }`), 8000);
-      (j.results && j.results.bindings || []).forEach(b=>{ const u = commons(decodeURIComponent(b.img.value.split('/FilePath/').pop()), 1280); if(!bad(u)) heroes.push(u); }); } catch(e){} }
+      (j.results && j.results.bindings || []).forEach(b=>{ const u = commons(dURI(b.img.value.split('/FilePath/').pop()), 1280); if(!bad(u)) heroes.push(u); }); } catch(e){} }
     const oi = wp && wp.originalimage, th = wp && wp.thumbnail;
     const wpi = th ? th.source.replace(/\/(\d+)px-/, '/1280px-') : oi ? oi.source : '';
     if(wpi && !bad(wpi)) heroes.push(wpi);

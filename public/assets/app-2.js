@@ -2394,8 +2394,8 @@
     const best = hd && hd.name ? normQ(hd.name) : '', hot = n => best && (normQ(n).includes(best) || best.includes(normQ(n)));
     const L = w.items.slice().sort((a, b)=>(hot(b.n) ? 1 : 0) - (hot(a.n) ? 1 : 0));
     const lg0 = (window.I18N && I18N.lang) || 'fr', foreign = w.lg !== lg0 && !w.trd;
-    const src = `${foreign ? `<a class="v-btn sec hd-tr" href="${esc('https://translate.google.com/translate?sl=' + w.lg + '&tl=' + lg0 + '&u=' + encodeURIComponent(w.url))}" target="_blank" rel="noopener">🌐 ${esc(MSGT('Lire la page traduite'))}</a>` : ''}
-      <div class="v-sum-small hd-src">${esc(MSGT('Source'))} : <a href="${esc(w.url)}" target="_blank" rel="noopener">Wikivoyage · ${esc(w.title)}</a> — ${esc(MSGT(w.trd ? 'licence CC BY-SA, textes abrégés et traduits automatiquement' : 'licence CC BY-SA, textes abrégés'))}</div>`;
+    const src = `${foreign ? `<a class="v-btn sec hd-tr" href="${esc(safeUrl('https://translate.google.com/translate?sl=' + w.lg + '&tl=' + lg0 + '&u=' + encodeURIComponent(w.url)))}" target="_blank" rel="noopener">🌐 ${esc(MSGT('Lire la page traduite'))}</a>` : ''}
+      <div class="v-sum-small hd-src">${esc(MSGT('Source'))} : <a href="${esc(safeUrl(w.url))}" target="_blank" rel="noopener">Wikivoyage · ${esc(w.title)}</a> — ${esc(MSGT(w.trd ? 'licence CC BY-SA, textes abrégés et traduits automatiquement' : 'licence CC BY-SA, textes abrégés'))}</div>`;
     const lead0 = w.lg !== ((window.I18N && I18N.lang) || 'fr') && !w.trd ? `<div class="v-sum-small" style="margin-bottom:6px">🌐 ${esc(MSGT('Rien dans ta langue sur Wikivoyage : voici la page en anglais.'))}</div>` : '';
     const lead = lead0 + (w.lead ? `<div class="hd-it"><b>${esc(MSGT('Où loger, selon Wikivoyage'))}</b><p data-notr lang="${esc(w.trd || w.lg)}">${esc(w.lead)}</p></div>` : '');
     el.className = 'hd-list'; el.innerHTML = lead + (L.length ? L.map(x=>`<div class="hd-it${hot(x.n) ? ' on' : ''}"><b data-notr>${esc(x.n)}</b>${hot(x.n) ? ` <small>⭐ ${esc(MSGT('près de tes visites'))}</small>` : ''}${x.d ? `<p data-notr lang="${esc(w.lg)}">${esc(x.d)}</p>` : ''}
@@ -2511,7 +2511,7 @@
     const g = el.closest('.bk-g'), a = g && g.querySelector('a[href*="aviasales"]');
     if(!r || !r.ok){ el.remove(); return; }
     if(Array.isArray(r.list)) return fpMulti(el, r, a);
-    const url = affWrap('aviasales', r.found ? r.link : r.search); if(a) a.href = url;
+    const url = safeUrl(affWrap('aviasales', r.found ? r.link : r.search)); if(a) a.href = url;
     if(!r.found){ el.innerHTML = `✈️ ${RF('Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.', esc(r.on), esc(r.dn))}`; return; }
     const dd = r.at ? new Date(r.at) : null, day = dd && !isNaN(dd) ? dd.toLocaleDateString(NL(), {day:'numeric', month:'short'}) : '';
     const esc2 = r.transfers === 0 ? MSGT('direct') : r.transfers === 1 ? MSGT('1 escale') : r.transfers > 1 ? RF('{0} escales', r.transfers) : '';
@@ -2529,10 +2529,10 @@
       el.innerHTML = `✈️ ${MSGT('Aucun vol récent connu depuis les aéroports autour de toi pour ce mois-ci.')}${(r.none || []).length ? `<div class="fpm-n">${MSGT('Regarde quand même depuis :')} ${r.none.map(x=>`<a href="${esc(affWrap('aviasales', x.search))}" target="_blank"${bookRel('aviasales')} onclick="event.stopPropagation()">${esc(x.on)} (${esc(x.o)}) · ${x.okm} km</a>`).join(' · ')}</div>` : ''}`;
       return;
     }
-    if(a) a.href = affWrap('aviasales', r.list[0].link || r.list[0].search);
+    if(a) a.href = safeUrl(affWrap('aviasales', r.list[0].link || r.list[0].search));
     el.innerHTML = `<style>.fpm{display:flex;flex-direction:column;gap:6px;margin-top:6px}.fpm a{white-space:normal;margin-left:0;font-weight:500;display:flex;gap:8px;align-items:center;text-decoration:none;color:inherit;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:7px 10px}.fpm a>.fpt{flex:1;min-width:0}.fpm a>b{white-space:nowrap}.fpm a small{display:block;opacity:.75}.fpm .fpd{font-weight:700;color:#14804a}.fpm-n{margin-top:6px;font-size:12px}.fpm-n a{text-decoration:underline}</style>
       ✈️ <b>${MSGT('D’où décoller ?')}</b> <small>${MSGT('Les aéroports autour de toi qui ont un vol vers ta destination.')}</small>
-      <div class="fpm">${r.list.map(x=>`<a href="${esc(affWrap('aviasales', x.link || x.search))}" target="_blank"${bookRel('aviasales')} onclick="event.stopPropagation()"><span class="fpt"><b data-notr>${esc(x.on)} (${esc(x.o)})</b> → <span data-notr>${esc(x.dn)} (${esc(x.d)})</span>
+      <div class="fpm">${r.list.map(x=>`<a href="${esc(safeUrl(affWrap('aviasales', x.link || x.search)))}" target="_blank"${bookRel('aviasales')} onclick="event.stopPropagation()"><span class="fpt"><b data-notr>${esc(x.on)} (${esc(x.o)})</b> → <span data-notr>${esc(x.dn)} (${esc(x.d)})</span>
         <small>${[x.okm ? RF('à {0} km', x.okm) : '', `<span class="${x.transfers === 0 ? 'fpd' : ''}">${stp(x.transfers)}</span>`, day(x) ? (x.exact ? day(x) : RF('le {0}, même mois', day(x))) : ''].filter(Boolean).join(' · ')}</small></span><b>${RF('dès {0}', cur(x.price))}</b> ›</a>`).join('')}</div>
       ${(r.none || []).length ? `<div class="fpm-n">${MSGT('Sans vol connu ce mois-ci :')} ${r.none.map(x=>`<a href="${esc(affWrap('aviasales', x.search))}" target="_blank"${bookRel('aviasales')} onclick="event.stopPropagation()">${esc(x.on)} (${esc(x.o)})</a>`).join(', ')}</div>` : ''}
       <small>${MSGT('Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.')}</small>`;
@@ -2575,7 +2575,7 @@
     const L = r && r.ok ? (r.tours || []).slice(0, 3) : [];
     if(!L.length){ el.remove(); return; }
     const money = (v, cur) => (+v).toLocaleString(NL(), {style:'currency', currency:/^[A-Za-z]{3}$/.test(cur || '') ? cur : 'EUR', maximumFractionDigits:v % 1 ? 2 : 0});   // 🛡️ devise inconnue renvoyée par le partenaire : euros, au lieu d’une erreur
-    el.innerHTML = `<small>🎧 ${RF('Visites audio à {0}', esc(r.city.name))}</small>` + L.map(t=>`<a class="wg-t" href="${esc(affWrap('wegotrip', t.url))}" target="_blank"${bookRel('wegotrip')} onclick="event.stopPropagation()">
+    el.innerHTML = `<small>🎧 ${RF('Visites audio à {0}', esc(r.city.name))}</small>` + L.map(t=>`<a class="wg-t" href="${esc(safeUrl(affWrap('wegotrip', t.url)))}" target="_blank"${bookRel('wegotrip')} onclick="event.stopPropagation()">
         ${safeUrl(t.img) ? `<img src="${esc(safeUrl(t.img))}" alt="" loading="lazy">` : '<i>🎧</i>'}<span><b>${esc(t.title)}</b><em>${t.price ? RF('dès {0}', money(t.price, t.currency)) : ''}${t.rating ? ` · ⭐ ${(+t.rating).toFixed(1).replace('.', ',')}${t.reviews ? ' (' + t.reviews + ')' : ''}` : ''}${t.duration ? ' · ' + esc(t.duration) : ''}</em></span></a>`).join('')
       + `<small class="wg-n">${MSGT('Prix et notes fournis par WeGoTrip.')}</small>`;
   }
@@ -3076,7 +3076,7 @@
       let c = null; try { c = await dayTrace(d, 640, 400); } catch(e){}
       const el = document.getElementById('pl-trace'); if(!el || planD !== d) return;
       if(c){ c.style.cssText = 'width:100%;height:auto;border-radius:14px;display:block'; el.innerHTML = ''; el.appendChild(c);
-        if((c._links || []).length){ const g = document.createElement('div'); g.className = 'pl-gm'; g.innerHTML = c._links.map(x=>`<a class="pl-gm-a" href="${esc(x.href)}" target="_blank" rel="noopener"><span>${x.ic}</span><b data-notr>${esc(x.lbl)}</b><i>Google Maps ↗</i></a>`).join(''); el.appendChild(g); } }
+        if((c._links || []).length){ const g = document.createElement('div'); g.className = 'pl-gm'; g.innerHTML = c._links.map(x=>`<a class="pl-gm-a" href="${esc(safeUrl(x.href))}" target="_blank" rel="noopener"><span>${x.ic}</span><b data-notr>${esc(x.lbl)}</b><i>Google Maps ↗</i></a>`).join(''); el.appendChild(g); } }
       else el.innerHTML = `<div class="v-sum-small">${MSGT('Ajoute des lieux à voir (ou un trajet ce jour-là) pour voir le tracé.')}</div>`;
     })();
   }
@@ -3146,7 +3146,7 @@
     const d = planD, raw = val('pl-new'); if(!raw){ const el = document.getElementById('pl-new'); if(el) el.focus(); return; }   // champ vide : on y met le curseur (le ＋ ne faisait rien)
     const out = raw.split(/[;\n]+/).map(s=>s.trim()).filter(Boolean).map((s,i)=>{
       let nom = s; const m = s.match(/\/place\/([^/@?]+)/);
-      if(/^https?:/.test(s)) nom = m ? decodeURIComponent(m[1].replace(/\+/g,' ')) : 'Lieu ' + (placesOf(d).length + i + 1);
+      if(/^https?:/.test(s)) nom = m ? dURI(m[1].replace(/\+/g,' ')) : 'Lieu ' + (placesOf(d).length + i + 1);
       const st = hotelsAround(d).night;
       return {id:'pl'+uid()+i, type:'place', trip:M.trip, date:d, stay: st ? st.id : '', nom, adresse: s!==nom ? s : ''};
     });

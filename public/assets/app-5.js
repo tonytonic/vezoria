@@ -32,7 +32,7 @@
     history.replaceState(null, '', location.pathname);
     try {
       const c = await caches.open('share-inbox'), keys = await c.keys(); let file = null, text = '';
-      for(const k of keys){ const res = await c.match(k); if(/\/share\/file/.test(k.url)){ const b = await res.blob(); file = new File([b], decodeURIComponent((k.url.split('name=')[1]||'document')), {type:b.type}); } else if(/\/share\/text/.test(k.url)) text = await res.text(); await c.delete(k); }
+      for(const k of keys){ const res = await c.match(k); if(/\/share\/file/.test(k.url)){ const b = await res.blob(); file = new File([b], dURI((k.url.split('name=')[1]||'document')), {type:b.type}); } else if(/\/share\/text/.test(k.url)) text = await res.text(); await c.delete(k); }
       if(!trip()){ alert('Crée ou ouvre d’abord un voyage, puis partage à nouveau la réservation.'); return; }
       if(file) impAny(file, text); else if(text) cfImport(text);
     } catch(e){}
@@ -1215,7 +1215,7 @@
   const thumbM = new Map();
   function photoThumbs(){
     if(!wm) return; const map = wm.map;
-    const feats = map.getZoom() < 3 ? [] : map.queryRenderedFeatures({layers:['ph-point']}).slice(0, 40), keep = new Set();
+    const feats = map.getZoom() < 3 || !map.getLayer('ph-point') ? [] : map.queryRenderedFeatures({layers:['ph-point']}).slice(0, 40), keep = new Set();
     feats.forEach(f=>{ const id = f.properties.id; keep.add(id); if(thumbM.has(id)) return; const p = wm.data.photos.find(x=>x.id===id); if(!p) return;
       const el = document.createElement('button'); el.type = 'button'; el.className = 'wm-photo'; el.innerHTML = `<img alt="">${p.n > 1 ? `<span>${p.n}</span>` : ''}`;
       photoURL(p.ph + '.t').then(u=>{ if(u) el.querySelector('img').src = u; }).catch(()=>{});
@@ -1281,7 +1281,7 @@
 
   /* ---------- 🔎 Lieux à voir illustrés : vignette + fiche Wikipédia au toucher ---------- */
   const wkCache = {};
-  const wkParse = w => { if(!w) return null; let m = String(w).match(/^https?:\/\/(\w+)\.wikipedia\.org\/wiki\/(.+)$/); if(m) return {lang:m[1], title:decodeURIComponent(m[2]).replace(/_/g,' ')};
+  const wkParse = w => { if(!w) return null; let m = String(w).match(/^https?:\/\/(\w+)\.wikipedia\.org\/wiki\/(.+)$/); if(m) return {lang:m[1], title:dURI(m[2]).replace(/_/g,' ')};
     m = String(w).match(/^(\w{2,3}):(.+)$/); return m ? {lang:m[1], title:m[2]} : {lang:'fr', title:String(w)}; };
   async function wkThumbs(list){
     const by = {}; list.forEach(p=>{ const w = wkParse(p.wiki); if(w && !((w.lang+':'+w.title) in wkCache)) (by[w.lang] = by[w.lang] || []).push(w.title); });
@@ -1964,7 +1964,7 @@
   const webFollowing = () => document.body.classList.contains('vz-webf');
   function webFollowBoot(){
     if(isInstalled() || !/^https?:/.test(location.protocol)) return false;
-    const m = decodeURIComponent(location.hash || '').match(/#suivre=([A-Z0-9-]{8,})/i);
+    const m = dURI(location.hash || '').match(/#suivre=([A-Z0-9-]{8,})/i);
     const fl = list('feedtrip', f=>TS()[f.id] && !FT()[String(f.id).replace(/^ft:/,'')] && !f.deleted);
     if(!m && M.webPend && !fl.length){ M.webFollow = true; document.body.classList.add('vz-webf'); webChoice(M.webPend); return true; }
     if(!m && !(M.webFollow && fl.length)) return false;
