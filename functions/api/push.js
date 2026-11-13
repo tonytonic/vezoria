@@ -186,7 +186,10 @@ export async function onRequestGet({ request, env }) {
   if (!env.DB) return json({ error: 'Base D1 non liée (DB)' }, 500);
   await tables(env.DB);
   const a = new URL(request.url).searchParams.get('a');
-  if (a === 'flush') {   // appelé toutes les 30 min par le robot GitHub « Rappels » : une erreur passagère (base, réseau) répond 503 et le robot réessaie
+  if (a === 'flush') {
+    // 🛡️ (13/11) n'importe qui pouvait appeler cette adresse en boucle et faire travailler le serveur : 20 fois par heure et par connexion
+    { const hr = Math.floor(Date.now() / 3600e3), ip = 'fl:' + (request.headers.get('CF-Connecting-IP') || ''), r = SOC_RATE.get(ip); if (SOC_RATE.size > 20000) SOC_RATE.clear();
+      const n = (r && r.h === hr ? r.n : 0) + 1; SOC_RATE.set(ip, { h: hr, n }); if (n > 20) return json({ ok: false, error: 'trop de demandes' }, 429); }   // appelé toutes les 30 min par le robot GitHub « Rappels » : une erreur passagère (base, réseau) répond 503 et le robot réessaie
     try { return json({ ok: true, sent: await flush(env) }); } catch (e) { return json({ ok: false, error: String(e && e.message || e).slice(0, 200) }, 503); }
   }
   return json({ pub: (await vapid(env.DB)).pub });

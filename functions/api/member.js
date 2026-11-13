@@ -95,8 +95,11 @@ export async function onRequestPost({ request, env }) {
     const n = await env.DB.prepare('SELECT COUNT(*) AS n FROM space_members WHERE space = ?1').bind(space).first();
     if (n && n.n >= MAX_MEMBERS) return json({ error: 'Trop de compagnons sur ce carnet (' + MAX_MEMBERS + ' au plus) : retire d’abord un accès.' }, 409);
     const mh = await sha256('vz-member:' + b.mt);
-    await env.DB.prepare('INSERT INTO space_members (mh, space, label, gk, created, last) VALUES (?1, ?2, ?3, ?4, ?5, 0) ON CONFLICT (mh) DO UPDATE SET space = ?2, label = ?3, gk = ?4')
-      .bind(mh, space, String(b.label || '').slice(0, 400), grant, Date.now()).run();   // prénom chiffré sur le téléphone (« e1:… ») : le serveur ne le lit pas
+    const put = await env.DB.prepare('INSERT INTO space_members (mh, space, label, gk, created, last) VALUES (?1, ?2, ?3, ?4, ?5, 0) ON CONFLICT (mh) DO UPDATE SET label = ?3, gk = ?4 WHERE space_members.space = ?2')
+      .bind(mh, space, String(b.label || '').slice(0, 400), grant, Date.now()).run();
+    // 🛡️ (13/11) un code compagnon déjà rangé dans UN AUTRE carnet n'est jamais déplacé : avant, le propriétaire d'un autre carnet
+    //    qui connaissait ce code pouvait le « reprendre » et couper l'accès du compagnon au carnet d'origine
+    if (!(put.meta && put.meta.changes)) return json({ error: 'Ce code compagnon sert déjà ailleurs — This companion code is already in use' }, 409);   // prénom chiffré sur le téléphone (« e1:… ») : le serveur ne le lit pas
     return json({ ok: true, id: mh.slice(0, 12) });
   }
   if (a === 'list') {
