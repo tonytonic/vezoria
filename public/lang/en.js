@@ -3788,5 +3788,6 @@ I18N.load({
 "Ex. France, Russie, Japon…": "E.g. France, Russia, Japan…",
 "Je ne connais pas le pays « {0} ».": "I don’t know the country “{0}”.",
 "Je cherche la ville…": "Looking for the city…",
-"{0} est déjà ta dernière étape.": "{0} is already your last stop."
-});
+"{0} est déjà ta dernière étape.": "{0} is already your last stop.",
+"Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Everyone their own way: one by car, another by train or plane.",
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Your posts for your followers are deleted from the server too: they will no longer see them."});

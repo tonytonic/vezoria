@@ -6747,5 +6747,6 @@ I18N.load({
 "Ex. France, Russie, Japon…": "例如：法国、俄罗斯、日本…",
 "Je ne connais pas le pays « {0} ».": "我不认识国家“{0}”。",
 "Je cherche la ville…": "正在查找城市…",
-"{0} est déjà ta dernière étape.": "{0}已经是你的最后一站。"
-});
+"{0} est déjà ta dernière étape.": "{0}已经是你的最后一站。",
+"Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"各走各的路：有人开车，有人坐火车或飞机。",
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"你发给关注者的内容也会从服务器删除：他们将看不到了。"});

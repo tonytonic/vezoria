@@ -6747,5 +6747,6 @@ I18N.load({
 "Ex. France, Russie, Japon…": "例：フランス、ロシア、日本…",
 "Je ne connais pas le pays « {0} ».": "「{0}」という国が見つかりません。",
 "Je cherche la ville…": "都市を探しています…",
-"{0} est déjà ta dernière étape.": "{0}はすでに最後の経由地です。"
-});
+"{0} est déjà ta dernière étape.": "{0}はすでに最後の経由地です。",
+"Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"それぞれの行き方で：車の人も、電車や飛行機の人も。",
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"フォロワー向けの投稿もサーバーから削除されます。フォロワーには見えなくなります。"});

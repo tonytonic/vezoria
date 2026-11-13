@@ -6747,5 +6747,6 @@ I18N.load({
 "Ex. France, Russie, Japon…": "예: 프랑스, 러시아, 일본…",
 "Je ne connais pas le pays « {0} ».": "‘{0}’ 나라를 찾을 수 없어요.",
 "Je cherche la ville…": "도시를 찾는 중…",
-"{0} est déjà ta dernière étape.": "{0}은(는) 이미 마지막 경유지예요."
-});
+"{0} est déjà ta dernière étape.": "{0}은(는) 이미 마지막 경유지예요.",
+"Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"각자 자기 방식으로: 누구는 차로, 누구는 기차나 비행기로.",
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"팔로워에게 공개한 게시물도 서버에서 삭제돼요. 팔로워는 더 이상 볼 수 없어요."});

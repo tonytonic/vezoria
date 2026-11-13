@@ -6729,5 +6729,6 @@ I18N.load({
 "Ex. France, Russie, Japon…": "Örn. Fransa, Rusya, Japonya…",
 "Je ne connais pas le pays « {0} ».": "“{0}” ülkesini tanımıyorum.",
 "Je cherche la ville…": "Şehri arıyorum…",
-"{0} est déjà ta dernière étape.": "{0} zaten son durağın."
-});
+"{0} est déjà ta dernière étape.": "{0} zaten son durağın.",
+"Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Herkesin yolu ayrı: biri arabayla, diğeri trenle ya da uçakla.",
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Takipçilerin için paylaştıkların da sunucudan silinir: artık göremezler."});

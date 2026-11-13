@@ -6748,5 +6748,6 @@ I18N.load({
 "Ex. France, Russie, Japon…": "مثلًا فرنسا، روسيا، اليابان…",
 "Je ne connais pas le pays « {0} ».": "لا أعرف البلد «{0}».",
 "Je cherche la ville…": "أبحث عن المدينة…",
-"{0} est déjà ta dernière étape.": "{0} هي محطتك الأخيرة بالفعل."
-});
+"{0} est déjà ta dernière étape.": "{0} هي محطتك الأخيرة بالفعل.",
+"Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"لكلٍّ طريقه: واحد بالسيارة وآخر بالقطار أو الطائرة.",
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"منشوراتك لمتابعيك تُحذف من الخادم أيضًا: لن يروها بعد الآن."});

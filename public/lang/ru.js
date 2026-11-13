@@ -6748,5 +6748,6 @@ I18N.load({
 "Ex. France, Russie, Japon…": "Напр. Франция, Россия, Япония…",
 "Je ne connais pas le pays « {0} ».": "Я не знаю страну «{0}».",
 "Je cherche la ville…": "Ищу город…",
-"{0} est déjà ta dernière étape.": "{0} — уже твой последний этап."
-});
+"{0} est déjà ta dernière étape.": "{0} — уже твой последний этап.",
+"Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"У каждого свой путь: один на машине, другой на поезде или самолёте.",
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Твои публикации для подписчиков тоже удаляются с сервера: они их больше не увидят."});

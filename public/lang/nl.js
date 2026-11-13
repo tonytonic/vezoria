@@ -3797,5 +3797,6 @@ I18N.load({
 "Ex. France, Russie, Japon…": "Bijv. Frankrijk, Rusland, Japan…",
 "Je ne connais pas le pays « {0} ».": "Ik ken het land ‘{0}’ niet.",
 "Je cherche la ville…": "Ik zoek de stad…",
-"{0} est déjà ta dernière étape.": "{0} is al je laatste etappe."
-});
+"{0} est déjà ta dernière étape.": "{0} is al je laatste etappe.",
+"Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Ieder zijn eigen route: de een met de auto, de ander met de trein of het vliegtuig.",
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"Je berichten voor je volgers worden ook van de server gewist: ze zien ze niet meer."});

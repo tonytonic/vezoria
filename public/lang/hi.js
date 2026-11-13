@@ -6747,5 +6747,6 @@ I18N.load({
 "Ex. France, Russie, Japon…": "जैसे फ़्रांस, रूस, जापान…",
 "Je ne connais pas le pays « {0} ».": "मुझे देश “{0}” नहीं पता।",
 "Je cherche la ville…": "शहर ढूँढ रहे हैं…",
-"{0} est déjà ta dernière étape.": "{0} पहले से तुम्हारा आख़िरी पड़ाव है।"
-});
+"{0} est déjà ta dernière étape.": "{0} पहले से तुम्हारा आख़िरी पड़ाव है।",
+"Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"हर किसी का अपना रास्ता: कोई कार से, कोई ट्रेन या हवाई जहाज़ से।",
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"तुम्हारे फ़ॉलोअर्स के लिए की गई पोस्ट भी सर्वर से मिट जाती हैं: वे उन्हें अब नहीं देख पाएँगे।"});

@@ -3807,5 +3807,6 @@ I18N.load({
 "Ex. France, Russie, Japon…": "Ex. França, Rússia, Japão…",
 "Je ne connais pas le pays « {0} ».": "Não conheço o país «{0}».",
 "Je cherche la ville…": "Procurando a cidade…",
-"{0} est déjà ta dernière étape.": "{0} já é sua última etapa."
-});
+"{0} est déjà ta dernière étape.": "{0} já é sua última etapa.",
+"Chacun son trajet : l’un en voiture, l’autre en train ou en avion.":"Cada um com o seu trajeto: um de carro, outro de comboio ou de avião.",
+"Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.":"As tuas publicações para os teus seguidores também são apagadas do servidor: deixarão de as ver."});
