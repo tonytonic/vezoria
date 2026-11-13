@@ -29,8 +29,17 @@ function gmaps(u) {
   return out;
 }
 
+// 🛡️ limite par connexion, en mémoire (l'adresse IP n'est gardée nulle part) : sans elle, n'importe qui pouvait faire lire des pages
+//    (ou lancer des recherches avec la clé du partenaire) par le serveur, des milliers de fois, et user le forfait du mois.
+const MEM = new Map();
+function rateOk(request, limit) {
+  const hour = Math.floor(Date.now() / 3600e3), k = request.headers.get("CF-Connecting-IP") || "", r = MEM.get(k);
+  if (MEM.size > 20000) MEM.clear();
+  const n = (r && r.hour === hour ? r.n : 0) + 1; MEM.set(k, { hour, n }); return n <= limit;
+}
 export async function onRequest({ request }) {
   if (request.method === "OPTIONS") return new Response(null, { headers: { ...H, "Access-Control-Allow-Methods": "GET, OPTIONS" } });
+  if (!rateOk(request, 60)) return new Response(JSON.stringify({ ok: false, error: "trop de demandes, réessaie dans une heure" }), { status: 429, headers: { ...H, "Cache-Control": "no-store" } });
   let u = new URL(request.url).searchParams.get("u") || "";
   u = (u.match(/https?:\/\/\S+/) || [""])[0].replace(/[)\].,;]+$/, "");
   let url; try { url = new URL(u); } catch (e) { return json({ ok: false, error: "lien" }, 400); }

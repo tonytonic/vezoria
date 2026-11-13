@@ -26,7 +26,7 @@ import { codeSpace } from './rotate.js';   // 🔑 code administrateur changé
  *                                            ses appareils, tous les espaces qu’il a créés et leur état — sans jamais voir le contenu
  *   {action:'suspendOwner', token|space, note} → ⏸ suspendre tout le compte : son carnet + tous les espaces qu’il a créés (réversible)
  *   {action:'restoreOwner', token|space, note} → ▶ tout rétablir
- *   {action:'userDelete', space, note}     → 🗑️ supprimer à la demande de l’utilisateur : fiches, photos, compte (sans bloquer)
+ *   {action:'userDelete', space, note}     → 🗑️ supprimer à la demande de l’utilisateur : fiches, photos, compte, et tous les espaces créés par ce compte (sans bloquer)
  *   {action:'mailFind', email}             → 🗑️ demande de suppression par e-mail : le(s) carnet(s) de cette adresse (puis 'userDelete' avec space)
  *
  * Le CODE du carnet n'est jamais envoyé ici : la page d'administration calcule elle-même son empreinte
@@ -266,9 +266,16 @@ export async function onRequestPost({ request, env }) {
     await log(env, 'rétabli', space, b.note); return json({ ok: true, ...(await info(env, space)) });
   }
   if (a === 'userDelete') {   // 🗑️ suppression DEMANDÉE par l’utilisateur (pas une sanction) : fiches, photos ET compte (adresse, appareils) ; le carnet n’est pas bloqué
-    const w = await wipe(env, space); await acctTables(env.DB);
+    await acctTables(env.DB);
+    // 🛡️ (12/11/2026) tout ce que ce compte a créé part avec lui : ses publications pour ses abonnés, ses liens d’abonnés, ses voyages partagés
+    //    (avant, seul le carnet principal était effacé : ses publications restaient en ligne). Les compagnons gardent ce que leur téléphone a déjà.
+    let kids = []; try { kids = ((await env.DB.prepare('SELECT space FROM space_owner WHERE owner = ?1 AND space != ?1 ORDER BY at LIMIT 300').bind(space).all()).results || []).map(r => r.space); } catch (e) {}
+    const w = await wipe(env, space); let kr = 0, kp = 0;
+    for (const k of kids) { try { const x = await wipe(env, k); kr += x.records; kp += x.photos; for (const t of ['space_admin', 'space_lock', 'photo_caps', 'space_seen']) { try { await env.DB.prepare(`DELETE FROM ${t} WHERE space = ?1`).bind(k).run(); } catch (e) {} } } catch (e) {} }
     await env.DB.batch(['acct', 'acct_dev', 'acct_otp'].map(t => env.DB.prepare(`DELETE FROM ${t} WHERE space = ?1`).bind(space)));
-    await log(env, 'supprimé à la demande', space, (b.note || '') + ` (${w.records} fiches, ${w.photos} photos, compte effacé)`); return json({ ok: true, wiped: w });
+    try { await env.DB.prepare('DELETE FROM space_owner WHERE space = ?1 OR owner = ?1').bind(space).run(); } catch (e) {}
+    await log(env, 'supprimé à la demande', space, (b.note || '') + ` (${w.records} fiches, ${w.photos} photos, compte effacé ; ${kids.length} espace(s) créé(s) par ce compte : ${kr} fiches, ${kp} photos)`);
+    return json({ ok: true, wiped: w, spaces: kids.length, spacesWiped: { records: kr, photos: kp }, more: kids.length >= 300 });
   }
   if (a === 'delete') {
     const w = await wipe(env, space);

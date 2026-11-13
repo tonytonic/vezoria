@@ -1,5 +1,5 @@
 import { codeSpace, ROTATED, devSeen, cleanDev } from './rotate.js';
-import { acctGate, acctMain, acctNew } from './account.js';   // 👤 compte du carnet : seuls ses appareils validés   // 🔑 code administrateur changé
+import { acctGate, acctMain, acctNew, ownerOf } from './account.js';   // 👤 compte du carnet : seuls ses appareils validés   // 🔑 code administrateur changé
 /**
  * Carnet de voyage — synchronisation (Cloudflare Pages Function + D1)
  *
@@ -19,6 +19,7 @@ import { acctGate, acctMain, acctNew } from './account.js';   // 👤 compte du 
  */
 const MAX_CHANGES = 1000;
 const MAX_RECORD = 100_000;
+const MAX_RECORD_LIGHT = 16_000;   // 🛡️ petit espace créé sans compte (invitation, code de passage) : de petites fiches seulement (200 × 16 Ko au plus, au lieu de 200 × 100 Ko)
 const MAX_BODY = 30_000_000;   // 🛡️ une requête de synchro ne dépasse jamais 30 Mo (le téléphone découpe ses envois bien en dessous)
 // 🔁 recouvrement : on renvoie aussi les fiches reçues dans les 15 s précédant « since ». Deux téléphones qui synchronisent
 // au même instant (deux serveurs Cloudflare) pouvaient sinon se croiser et l'un ne recevait jamais la fiche de l'autre.
@@ -144,13 +145,33 @@ async function wkColumn(env) {
   wkReady = true;
 }
 const hdr = (request, k) => (request.headers.get(k) || '').trim().slice(0, 200);
+// 🛡️ (12/11/2026) qui peut poser la 1re clé d’auteur d’un espace : son CRÉATEUR seulement.
+//    Avant, n’importe qui ayant le code pouvait se déclarer auteur après coup : un compagnon (code « mb: ») prenait ainsi la main sur le
+//    carnet principal de son propriétaire, un membre d’un voyage partagé sur tout le voyage — les autres ne pouvaient plus ni écrire,
+//    ni envoyer de photos, ni effacer leur propre espace.
+//    · jamais avec un code compagnon, jamais sur un carnet principal (il a un compte : ce n’est pas un fil d’abonnés) ;
+//    · espace créé depuis un compte : seulement ce compte (en-tête X-Carnet-Acct = son carnet) ;
+//    · sinon (pas de créateur connu) : seulement à la création, tant que l’espace est vide.
+async function mayClaim(env, request, space) {
+  try {
+    if ((request.headers.get('X-Carnet-Code') || '').trim().startsWith('mb:')) return false;
+    try { if (await env.DB.prepare('SELECT 1 AS x FROM acct WHERE space = ?1').bind(space).first()) return false; } catch (e) {}   // pas encore de table des comptes
+    const ow = await ownerOf(env, space);
+    if (ow && ow !== '-light') {
+      if (ow === space) return false;
+      const tok = hdr(request, 'X-Carnet-Acct'); if (tok.length < 8 || tok.startsWith('mb:')) return false;
+      const cs = await codeSpace(env, tok); return !cs.dead && cs.space === ow;
+    }
+    return !(await env.DB.prepare('SELECT 1 AS x FROM records WHERE space = ?1 LIMIT 1').bind(space).first());
+  } catch (e) { return false; }
+}
 async function writerOf(request) { const w = hdr(request, 'X-Carnet-Writer'); return w.length >= 16 ? (await sha256('vz-w:' + w)).slice(0, 32) : null; }
 // rôle de l’appelant sur cet espace : has = un auteur est déclaré ; me = c’est lui ; bad = il a présenté une autre clé
 async function adminOf(env, request, space, claim) {
   await wkColumn(env);
   const k = hdr(request, 'X-Carnet-Admin'), ah = k.length >= 16 ? await sha256('vz-admin:' + k) : '';
   let row = await env.DB.prepare('SELECT ah FROM space_admin WHERE space = ?1').bind(space).first();
-  if (!row && ah && claim) {
+  if (!row && ah && claim && await mayClaim(env, request, space)) {
     const r = await env.DB.prepare('INSERT OR IGNORE INTO space_admin (space, ah, at) VALUES (?1, ?2, ?3)').bind(space, ah, Date.now()).run();
     if (r && r.meta && r.meta.changes) {   // 1re clé d’auteur : ce qui est déjà en ligne vient de lui (marqué), le reste suivra
       try { await env.DB.prepare(`UPDATE records SET data = json_set(data, '$._a', 1) WHERE space = ?1 AND json_valid(data)`).bind(space).run(); } catch (e) {}
@@ -343,6 +364,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   { const lk = await lockOf(env, request, space, adm); if (lk) return lk; }
   if (changes.length) { const na = await acctNew(env, request, space, changes.length); if (na) return json(na, 403); }   // 📧 nouvel espace : seulement depuis un carnet avec compte
   if (changes.length) {
+    const maxRec = (await ownerOf(env, space)) === '-light' ? MAX_RECORD_LIGHT : MAX_RECORD;
     const stmt = env.DB.prepare(
       `INSERT INTO records (space, id, data, updated_at, rev, wk) VALUES (?1, ?2, ?3, ?4, ?5, ?6)
        ON CONFLICT (space, id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at, rev = excluded.rev, wk = excluded.wk
@@ -366,7 +388,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
       if (adm.me) r._a = 1;
       else if (adm.has && owner.has(r.id)) { const w = owner.get(r.id); if (w === 'A' || (w && w !== wh)) { denied.push(r.id); continue; } }
       const data = JSON.stringify(r);
-      if (data.length > MAX_RECORD) { skipped.push(r.id); continue; }
+      if (data.length > maxRec) { skipped.push(r.id); continue; }
       batch.push(stmt.bind(space, r.id, data, Number(r.updatedAt) || 0, now, adm.me ? 'A' : wh));
     }
     if (batch.length) await env.DB.batch(batch);

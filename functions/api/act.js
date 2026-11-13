@@ -23,6 +23,14 @@ const dur = d => { if (!d) return ""; const m = d.fixedDurationInMinutes || d.va
   return m ? (m2 && m2 !== m ? f(m) + "–" + f(m2) : f(m)) : ""; };
 const img = p => { const im = (p.images || []).find(i => i.isCover) || (p.images || [])[0]; const v = ((im && im.variants) || []).filter(v => v.width >= 400).sort((a, b) => a.width - b.width)[0] || ((im && im.variants) || []).slice(-1)[0]; return v ? v.url : ""; };
 
+// 🛡️ limite par connexion, en mémoire (l'adresse IP n'est gardée nulle part) : sans elle, n'importe qui pouvait faire lire des pages
+//    (ou lancer des recherches avec la clé du partenaire) par le serveur, des milliers de fois, et user le forfait du mois.
+const MEM = new Map();
+function rateOk(request, limit) {
+  const hour = Math.floor(Date.now() / 3600e3), k = request.headers.get("CF-Connecting-IP") || "", r = MEM.get(k);
+  if (MEM.size > 20000) MEM.clear();
+  const n = (r && r.hour === hour ? r.n : 0) + 1; MEM.set(k, { hour, n }); return n <= limit;
+}
 export async function onRequest({ request, env }) {
   if (request.method === "OPTIONS") return new Response(null, { headers: { ...H, "Access-Control-Allow-Methods": "GET, OPTIONS" } });
   const p = new URL(request.url).searchParams, q = (p.get("q") || "").trim().slice(0, 80);
@@ -37,6 +45,7 @@ export async function onRequest({ request, env }) {
 
   const cache = caches.default, ck = new Request(`https://vz-act.cache/${encodeURIComponent(q.toLowerCase())}/${lang}/${cur}/${n}/${from}/${to}`);
   const hit = await cache.match(ck); if (hit) return hit;
+  if (!rateOk(request, 60)) return json({ ok: false, error: "trop de demandes, réessaie dans une heure" }, 429);   // seulement les recherches nouvelles (pas celles déjà en cache)
 
   const base = env.VIATOR_BASE || "https://api.viator.com/partner";
   let j;

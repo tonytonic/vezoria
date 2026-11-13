@@ -96,6 +96,26 @@ export async function acctNew(env, request, space, nChanges = 1) {
     if (!(await acctReady(env, cs.space, dev))) return NEED; await own(cs.space); return null;   // cet espace appartient à ce compte
   } catch (e) { return null; }
 }
+// 📷 (12/11/2026) envoi d’une photo : jamais dans un espace inconnu, ni dans un petit espace créé sans compte.
+//    Avant, n’importe qui pouvait ranger 700 Mo de fichiers chiffrés sous n’importe quel code, sans compte, autant de fois qu’il voulait
+//    (jusqu’à remplir le stockage : envois bloqués pour tout le monde, et la facture qui monte).
+//    Accepté : le carnet principal avec compte · un espace créé depuis un compte · un espace d’avant les comptes qui a déjà des fiches ·
+//    un espace tout neuf si l’envoi vient d’un carnet avec compte (X-Carnet-Acct), sur un appareil validé.
+export async function acctPhoto(env, request, space) {
+  if (env.ACCT_REQUIRED === '0') return null;
+  try {
+    await acctTables(env.DB);
+    const ow = await ownerOf(env, space);
+    if (ow === '-light') return NEED;
+    if (ow) return null;
+    if (await env.DB.prepare('SELECT 1 AS x FROM acct WHERE space = ?1 AND verified = 1').bind(space).first()) return null;
+    if (await env.DB.prepare('SELECT 1 AS x FROM records WHERE space = ?1 LIMIT 1').bind(space).first()) return null;
+    const dev = String(request.headers.get('X-Carnet-Dev') || '').replace(/[^a-z0-9]/gi, '').slice(0, 40);
+    const tok = (request.headers.get('X-Carnet-Acct') || '').trim();
+    if (tok.length >= 8 && !tok.startsWith('mb:')) { const cs = await codeSpace(env, tok); if (!cs.dead && cs.space && await acctReady(env, cs.space, dev)) return null; }
+    return NEED;
+  } catch (e) { return null; }   // en cas de souci, on ne bloque jamais un vrai voyageur
+}
 // 🛡️ limites gardées dans la base (les compteurs en mémoire ci-dessous repartent de zéro sur chaque serveur Cloudflare : un robot passait entre).
 //    Une ligne par compteur (empreinte seulement : jamais l'adresse e-mail ni l'adresse IP en clair), effacée quand elle a expiré.
 let rlReady = false;

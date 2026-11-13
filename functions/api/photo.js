@@ -1,5 +1,5 @@
 import { codeSpace, ROTATED, cleanDev } from './rotate.js';
-import { acctGate } from './account.js';   // 🔑 code administrateur changé
+import { acctGate, acctPhoto } from './account.js';   // 🔑 code administrateur changé
 import { uploadCheck } from './plan.js';   // 🫙 place du carnet
 // Photos du carnet : POST = envoyer une photo, GET ?id= = la récupérer.
 // 🫙 Pot commun (photos « v2 ») : chaque photo est rangée UNE fois, chiffrée avec sa propre clé (sur le téléphone).
@@ -143,6 +143,7 @@ export async function onRequestPost({ request, env }) {
   const space = await spaceOf(request, env);
   if (space instanceof Response) return space;
   { const na = await notAuthor(env, request, space); if (na) return na; }
+  { const np = await acctPhoto(env, request, space); if (np) return json(np, 403); }   // 📷 pas de photo dans un espace inconnu ou sans compte
   const id = request.headers.get('X-Photo-Id') || '';
   if (!validId(id)) return json({ error: 'Identifiant de photo invalide' }, 400);
   const mime = (request.headers.get('Content-Type') || 'image/jpeg').split(';')[0].trim().toLowerCase();
