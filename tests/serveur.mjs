@@ -168,5 +168,38 @@ IP = '203.0.113.94';
 // 7h. (13/11) l'envoi des rappels (?a=flush) ne peut pas être appelé en boucle
 IP = '203.0.113.95';
 { const fs2 = []; for (let i = 0; i < 25; i++) { const x = await call('push', { method: 'GET', query: '?a=flush' }); fs2.push(x.s); } ok(fs2.slice(0, 20).every(s => s !== 429) && fs2.includes(429), 'envoi des rappels : limité à 20 appels par heure et par connexion', fs2.join(',')); }
+// 7i. (13/11) 🔐 clé secrète par appareil : recopier l'identifiant d'un appareil validé ne suffit plus
+IP = '203.0.113.96';
+{ const C = hex(), D1 = 'dCLEF000001', K1 = hex(), K2 = hex(), hk = k => Object.assign({ 'X-Carnet-Acct': C }, k ? { 'X-Carnet-Key': k } : {});
+  const ac = (body, k) => call('account', { code: C, dev: D1, body, headers: k ? { 'X-Carnet-Key': k } : {} });
+  let x = await sync(C, D1, [rec('k1')], hk(K1)); { let n = 0, kh = ''; try { const q = env.DB._db.prepare('SELECT kh FROM dev_key WHERE dev = ?').all(D1); n = q.length; kh = q[0].kh; } catch (e) {} ok(n === 1 && kh.length === 64 && kh !== K1, 'clé : 1er passage, la clé de l’appareil est enregistrée (empreinte seulement)', { n, x }); }
+  x = await ac({ a: 'start', email: 'dora@example.org' }, K1); x = await ac({ a: 'verify', otp: x.j.devOtp }, K1); ok(x.s === 200, 'clé : compte créé depuis cet appareil', x);
+  x = await sync(C, D1, [], hk(K1)); ok(x.s === 200, 'clé : avec sa clé, il synchronise', x);
+  x = await sync(C, D1, [], hk(K2)); ok(x.s === 403 && x.j.needVerify && x.j.devKey, 'clé : même identifiant, autre clé → refusé (revalidation par e-mail)', x);
+  x = await sync(C, D1, [], hk('')); ok(x.s === 403 && x.j.needVerify, 'clé : même identifiant, sans clé → refusé', x);
+  x = await call('photo', { code: C, dev: D1, method: 'GET', query: '?list=1', headers: { 'X-Carnet-Key': K2 } }); ok(x.s === 403, 'clé : autre clé → pas de liste de photos', x);
+  x = await call('device', { code: C, dev: D1, body: { a: 'list' }, headers: { 'X-Carnet-Key': K2 } }); ok(x.s === 403, 'clé : autre clé → pas d’accès aux appareils', x);
+  x = await call('member', { code: C, dev: D1, body: { a: 'add', mt: hex(), grant: 'QUJD', label: 'e1:x' }, headers: { 'X-Carnet-Key': K2 } }); ok(x.s === 403, 'clé : autre clé → pas de code compagnon', x);
+  x = await call('push', { code: C, dev: D1, body: { a: 'sub', dev: D1, sub: { endpoint: 'https://push.example/x', keys: { p256dh: 'BA' + 'a'.repeat(85), auth: 'a'.repeat(22) } }, kinds: ['depense'] }, headers: { 'X-Carnet-Key': K2 } }); ok(x.s === 403, 'clé : autre clé → pas de notifications', x);
+  x = await ac({ a: 'status' }, K2); ok(x.s === 200 && x.j.devOk === false, 'clé : autre clé → l’appareil n’est plus considéré comme validé', x);
+  x = await ac({ a: 'start', email: 'pirate@example.org' }, K2); ok(x.s === 403, 'clé : autre clé → ne change pas l’adresse du compte', x);
+  x = await ac({ a: 'approve', dev: 'dAUTRE000009' }, K2); ok(x.s === 403, 'clé : autre clé → ne valide pas d’autre appareil', x);
+  // le vrai propriétaire qui a perdu sa clé (ou dont un autre a pris l'identifiant en premier) se revalide par e-mail
+  x = await ac({ a: 'login' }, K2); const y = await ac({ a: 'verify', otp: x.j.devOtp }, K2); ok(x.s === 200 && y.s === 200, 'clé : revalidé par le code reçu par e-mail', { x, y });
+  x = await sync(C, D1, [], hk(K2)); ok(x.s === 200, 'clé : après revalidation, sa nouvelle clé marche', x);
+  x = await sync(C, D1, [], hk(K1)); ok(x.s === 403, 'clé : et l’ancienne ne marche plus', x);
+  // carnet sans compte, ancienne version de l'appli : rien ne change
+  const C3 = hex(), D3 = 'dCLEF000003';
+  x = await sync(C3, D3, [rec('k3')]); ok(x.s === 200, 'clé : ancienne appli (sans clé) toujours acceptée', x);
+  x = await sync(C3, D3, [], { 'X-Carnet-Key': K1 }); ok(x.s === 200, 'clé : la nouvelle appli enregistre sa clé sans couper le carnet', x); }
+// 7j. (14/11) lien collé : le serveur ne suit jamais une redirection vers un site inconnu (pas de relais ouvert)
+IP = '203.0.113.97';
+{ const seen = [], f0 = globalThis.fetch;
+  // comme le vrai fetch : sans redirect:'manual', une redirection est suivie toute seule
+  const fk = async (u, o = {}) => { u = String(u); seen.push(new URL(u).hostname); if (/google\.com\/url/.test(u)) { if (o.redirect === 'manual') return new Response('', { status: 302, headers: { Location: 'http://169.254.169.254/latest/meta-data' } }); return fk('http://169.254.169.254/latest/meta-data', o); } return new Response('<html><title>x</title></html>', { status: 200 }); };
+  globalThis.fetch = fk;
+  const x = await call('unfurl', { method: 'GET', query: '?u=' + encodeURIComponent('https://www.google.com/url?q=http://169.254.169.254/') });
+  globalThis.fetch = f0;
+  ok(x.s < 500 && !seen.some(u => /169\.254|localhost|127\.0/.test(u)), 'lien collé : une redirection vers une adresse inconnue n’est jamais suivie', { s: x.s, seen }); }
 console.log(`\n${pass} essais réussis, ${fail} en échec` + (fail ? ' : ' + bad.join(' | ') : ''));
 process.exit(fail ? 1 : 0);

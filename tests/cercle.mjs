@@ -32,7 +32,7 @@ globalThis.fetch = async (u) => { u = String(u); if (u.includes('api.stripe.com'
 const mods = {}; for (const f of ['sync', 'account', 'device', 'member', 'plan', 'push', 'photo', 'admin', 'rotate']) mods[f] = await imp(f + '.js');
 async function call(route, { who, code, body, method = 'POST', headers = {}, query = '', raw } = {}) {
   const h = { 'Content-Type': 'application/json', 'CF-Connecting-IP': (who && who.ip) || '203.0.113.250', ...headers };
-  if (code) h['X-Carnet-Code'] = code; if (who && who.dev) h['X-Carnet-Dev'] = who.dev;
+  if (code) h['X-Carnet-Code'] = code; if (who && who.dev) h['X-Carnet-Dev'] = who.dev; if (who && who.key) h['X-Carnet-Key'] = who.key;   // 🔐 clé secrète de l'appareil (13/11)
   const req = new Request('https://vezoria.test/api/' + route + query, { method, headers: h, body: method === 'GET' ? undefined : raw || JSON.stringify(body || {}) });
   const fn = mods[route]['onRequest' + method[0] + method.slice(1).toLowerCase()] || mods[route].onRequest;
   const res = await fn({ request: req, env, waitUntil: p => { p && p.catch && p.catch(() => {}); }, params: {} });
@@ -50,7 +50,7 @@ const ids = r => (r.j.records || []).map(x => x.id);
 const img = new Uint8Array(2000).fill(7);
 const photo = (who, code, id, more = {}) => call('photo', { who, code, raw: img, headers: { 'Content-Type': 'image/jpeg', 'X-Photo-Id': id, ...H(who, more) } });
 let nIp = 10;
-const person = name => ({ name, dev: 'd' + name.toUpperCase().padEnd(10, '0').slice(0, 10), w: hex().slice(0, 32), ip: '198.51.100.' + (nIp++), main: '' });
+const person = name => ({ name, dev: 'd' + name.toUpperCase().padEnd(10, '0').slice(0, 10), key: hex(), w: hex().slice(0, 32), ip: '198.51.100.' + (nIp++), main: '' });
 async function account(p) {
   p.main = hex();
   let r = await call('account', { who: p, code: p.main, body: { a: 'start', email: p.name + '@example.org' } });
@@ -254,7 +254,7 @@ ok(x.s >= 400 || !ids(x).includes('profil-anthony'), 'il ne se rebranche pas lui
 r = await sync(claire, claire.mb); ok(r.s === 200 && !ids(r).includes('note-marc-après'), 'Claire, elle, garde son accès', r);
 
 console.log('\nO. 2e téléphone d’Anthony, validé puis bloqué');
-const tel2 = { ...anthony, dev: 'dANTHONY2222', w: hex().slice(0, 32), ip: '198.51.100.99' };
+const tel2 = { ...anthony, dev: 'dANTHONY2222', key: hex(), w: hex().slice(0, 32), ip: '198.51.100.99' };
 r = await sync(tel2, anthony.main); ok(r.s === 403 && (r.j.needVerify || r.j.needAcct), 'un téléphone inconnu qui a le code doit d’abord être validé par e-mail', r);
 r = await call('account', { who: tel2, code: anthony.main, body: { a: 'login' } }); x = await call('account', { who: tel2, code: anthony.main, body: { a: 'verify', otp: r.j.devOtp } });
 r = await sync(tel2, anthony.main, [rec('note-tel2')]); ok(x.s === 200 && r.s === 200, 'validé par le code reçu par e-mail : il synchronise', { x, r });
@@ -271,8 +271,11 @@ r = await call('rotate', { who: tel2, code: anthony.main, body: { a: 'start', to
 r = await call('push', { who: tel2, code: anthony.main, body: { a: 'sub', dev: tel2.dev, sub: SUB, kinds: ['depense'] } }); ok(r.s === 403, 'bloqué : il ne reçoit plus les notifications', r);
 r = await sync({ ...tel2, dev: 'dINVENTE0001' }, anthony.main); ok(r.s === 403, 'en changeant d’identifiant d’appareil : toujours refusé (appareil non validé)', r);
 r = await sync(anthony, anthony.main); ok(r.s === 200, 'le 1er téléphone d’Anthony marche toujours', r);
-// ⚠ limite connue, pas corrigée dans ce lot : l’identifiant d’un appareil n’est pas un secret (il est écrit dans les fiches « appareils »)
-r = await sync({ ...tel2, dev: anthony.dev }, anthony.main); console.log('  ' + (r.s === 200 ? '⚠ LIMITE CONNUE' : '✓') + ' un téléphone bloqué qui envoie l’identifiant du 1er téléphone : ' + (r.s === 200 ? 'il passe (remède : changer le code administrateur)' : 'refusé'));
+// 🔐 (13/11) [A] corrigé : l’identifiant d’un appareil n’est pas un secret, mais sa clé l’est (jamais dans les fiches)
+r = await sync({ ...tel2, dev: anthony.dev }, anthony.main); ok(r.s === 403, 'un téléphone bloqué qui envoie l’identifiant du 1er téléphone (sans sa clé) : refusé', r);
+r = await sync({ ...tel2, dev: anthony.dev, key: '' }, anthony.main); ok(r.s === 403, '… et sans aucune clé : refusé aussi', r);
+r = await call('account', { who: { ...tel2, dev: anthony.dev }, code: anthony.main, body: { a: 'start', email: 'pirate@example.org' } }); ok(r.s === 403, '… il ne change pas l’adresse du compte', r);
+r = await sync(anthony, anthony.main); ok(r.s === 200, 'le vrai 1er téléphone, avec sa clé, marche toujours', r);
 
 console.log('\nP. Inconnu sans appli, sans compte, sans aucun code : seulement des requêtes vers le serveur');
 const bot = { name: 'bot', dev: '', w: '', ip: '192.0.2.66', main: '' };
