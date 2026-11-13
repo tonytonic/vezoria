@@ -1202,15 +1202,21 @@
       const bf = m.getLayer('routes-glow') ? 'routes-glow' : undefined;   // tracés pas (encore) là : les pays se posent simplement dessus
       if(!m.getLayer('pays-fill')) m.addLayer({id:'pays-fill', type:'fill', source:'pays', paint:{'fill-color':'#e11d48', 'fill-opacity':0.3}}, bf);
       if(!m.getLayer('pays-line')) m.addLayer({id:'pays-line', type:'line', source:'pays', paint:{'line-color':'#fb7185', 'line-width':1.3, 'line-opacity':0.9}}, bf);
+      planHide();
     } catch(e){}
   }
+  // 🌍 (13/11/2026) pendant le dessin d’un nouveau voyage, toute couche RECRÉÉE (rafraîchissement du globe, pays chargés en retard) est cachée
+  //    aussitôt : le 13b ne cachait que les couches déjà là, et le rafraîchissement lancé à l’ouverture les recréait 0,1 s après → traits blancs.
+  const PLAN_HIDE = ['routes','routes-glow','steps','ph-cluster','ph-count','ph-point','pays-fill','pays-line','ci-base','ci-dot','ci-glow','ci-line'];
+  function planHide(){ try { const ov = document.getElementById('cv-world'); if(!wm || !wm.map || !ov || !ov.classList.contains('wm-planning')) return;
+    const H = wm.hidL = wm.hidL || {}; PLAN_HIDE.forEach(l=>{ if(wm.map.getLayer(l) && wm.map.getLayoutProperty(l, 'visibility') !== 'none'){ if(!(l in H)) H[l] = 'visible'; wm.map.setLayoutProperty(l, 'visibility', 'none'); } }); } catch(e){} }
   let wmRefT = null;
   function worldRefresh(){
     clearTimeout(wmRefT);
     wmRefT = setTimeout(()=>wmSerial(async ()=>{ if(!wm) return; const keep = {mode:wm.mode, sel:wm.sel};
       ['ph-count','ph-point','ph-cluster','steps','routes','routes-glow','pays-line','pays-fill'].forEach(l=>{ try { if(wm.map.getLayer(l)) wm.map.removeLayer(l); } catch(e){} });
       ['photos','steps','routes','pays'].forEach(s=>{ try { if(wm.map.getSource(s)) wm.map.removeSource(s); } catch(e){} });
-      await worldData(); worldCarousel(); worldMode(keep.mode); }), 400);
+      await worldData(); worldCarousel(); worldMode(keep.mode); planHide(); }), 400);
   }
   const thumbM = new Map();
   function photoThumbs(){
