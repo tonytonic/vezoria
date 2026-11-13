@@ -1627,7 +1627,7 @@
       <div class="ln-top"><span class="ln-badge"><i></i>EN DIRECT · ${PJ(k + 1)}/${n}</span><span class="ln-wx" id="ln-wx">${w ? wxIcon(w.c, w.d) + ' ' + w.t + '°' : ''}</span></div>
       <div class="ln-place"><b id="ln-city" data-notr>${esc(g ? g.city : (t.titre === 'Mon prochain voyage' ? MSGT(t.titre) : (t.titre || '')))}</b><small><span id="ln-clock">${lnClock(w)}</span>${g && g.cc ? ' · ' + flag(g.cc) + ' <span data-notr>' + esc(g.country || '') + '</span>' : ''}</small></div>
       <button type="button" class="ln-go" onclick="CV.liveOpen('${ja(t.id)}')">🛰️ Carte live</button>
-      <div class="ln-stats">${stat('🚶', +st.km.toFixed(1), MSGT('km à pied') + (st.tot >= 1 ? `<br><span class="ln-tot">🛣️ ${Math.round(st.tot).toLocaleString((window.I18N && I18N.locale) || 'fr-FR')} km ${esc(MSGT('au total'))}</span>` : ''), 'km', 1)}${stat('📸', st.ph, st.ph > 1 ? 'photos' : 'photo', 'ph')}${stat('💶', Math.round(st.dep), ((t.devise || M.cur || 'EUR') === 'EUR' ? '€ ' : (t.devise || M.cur) + ' ') + MSGT('dépensés'), 'dep')}${stat('❤️', st.rx, st.rx > 1 ? 'réactions' : 'réaction', 'rx')}</div>
+      <div class="ln-stats">${stat('🚶', +st.km.toFixed(1), MSGT('km à pied') + (st.tot >= 1 ? `<br><span class="ln-tot">🛣️ ${Math.round(st.tot).toLocaleString((window.I18N && I18N.locale) || 'fr-FR')} km ${esc(MSGT('au total'))}</span>` : ''), 'km', 1)}${stat('📸', st.ph, st.ph > 1 ? 'photos' : 'photo', 'ph')}${stat('💶', Math.round(st.dep), ((t.devise || M.cur || 'EUR') === 'EUR' ? '€ ' : esc(t.devise || M.cur) + ' ') + esc(MSGT('dépensés')), 'dep')}${stat('❤️', st.rx, st.rx > 1 ? 'réactions' : 'réaction', 'rx')}</div>
       <div class="ln-tick" id="ln-tick">${ev.length ? ev.map((e, i)=>`<div class="ln-e${i === 0 ? ' on' : ''}" style="--c:${esc(e.c)}"><i>${e.ic}</i><span><b data-notr>${esc(e.w)}</b> <span>${esc(e.tx)}</span>${e.x ? ' · <span>' + esc(e.x) + '</span>' : ''}</span><small>${vzWhen(e.at)}</small></div>`).join('') : `<div class="ln-e on calm"><i>✨</i><span>Tout est calme… un souvenir pour réveiller tes abonnés ?</span><button type="button" onclick="CV.hereNow()">📍 Step ici</button></div>`}</div>
     </div>`;
   }
@@ -3284,14 +3284,14 @@
     const it = R[id], t = trip(); if(!it || it.cat !== 'transport' || !t) return;
     pgCard(`<div class="pg-ct"><b>${MODE_ICON[it.mode] || '🧭'} <span data-notr>${esc(itLbl(it))}</span></b><small>${it.date ? esc(fshort(it.date)) + ' · ' : ''}${esc(MSGT(it.statut === 'paid' ? 'Payé' : okB(it) ? 'Réservé' : needBook(it) ? 'À réserver' : 'Rien à réserver'))}</small></div>
       <div class="pg-k">${esc(MSGT('Changer de transport'))}</div>
-      <div class="pg-modes">${Object.keys(MODE_ICON).map(m=>`<button type="button" class="${it.mode === m ? 'on' : ''}" onclick="CV.pgMode('${ja(id)}','${ja(m)}')"><span>${MODE_ICON[m]}</span><small>${esc(MSGT(m))}</small></button>`).join('')}</div>
+      <div class="pg-modes">${Object.keys(MODE_ICON).filter(m=>m !== 'Autre').map(m=>`<button type="button" class="${it.mode === m ? 'on' : ''}" onclick="CV.pgMode('${ja(id)}','${ja(m)}')"><span>${MODE_ICON[m]}</span><small>${esc(MSGT(m))}</small></button>`).join('')}<button type="button" class="${!it.mode || it.mode === 'Autre' ? 'on' : ''}" onclick="CV.pgMode('${ja(id)}','')"><span>🧭</span><small>${esc(MSGT('Peu importe'))}</small></button></div>
       <div class="pg-acts" data-bkid="${esc(id)}">${okB(it) ? '' : ariLink(it, t)}<button type="button" onclick="CV.pgEdit('${ja(id)}')">✏️ ${esc(MSGT(okB(it) ? 'Ma résa' : 'Saisir ma résa'))}</button></div>`);
   }
   async function pgMode(id, m){
-    const it = R[id]; if(!it || it.cat !== 'transport' || !MODE_ICON[m] || it.mode === m || pgLock()) return;
-    if(okB(it) && !(await uiConfirm(RF('Ce trajet est déjà réservé. Passer en {0} ? Il redevient « à réserver ».', MSGT(m))))) return;
+    const it = R[id]; if(!it || it.cat !== 'transport' || (m && !MODE_ICON[m]) || (it.mode || '') === m || pgLock()) return;
+    if(okB(it) && !(await uiConfirm(RF('Ce trajet est déjà réservé. Passer en {0} ? Il redevient « à réserver ».', MSGT(m || 'Peu importe'))))) return;
     const c = clone(it); c.mode = m; if(okB(it)) c.statut = 'todo';
-    put(c, MODE_ICON[m] + ' ' + RF('Trajet en {0} : noté dans tes réservations', MSGT(m)));
+    put(c, m ? MODE_ICON[m] + ' ' + RF('Trajet en {0} : noté dans tes réservations', MSGT(m)) : '🧭 ' + MSGT('Peu importe'));
     if(PG && PG.F){ PG.F.legs.forEach(f=>{ if(f.properties.id === id){ f.properties.mode = m; f.properties.col = P3C[p3St(c)]; } });
       try { PG.map.getSource('pg-legs').setData(pgFc(PG.F.legs)); } catch(e){} pgLegIcons(); }
     pgLeg(id); refresh();

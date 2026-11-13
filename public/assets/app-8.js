@@ -1475,8 +1475,15 @@
   }
   async function acctMax(n){ try { await acctPost({a:'max', n:+n || 0}); toast('✓'); } catch(e){ alert(e.message); } }
   async function acctDel(){
-    if(!(await uiConfirm(MSGT('Supprimer ton compte ? Ton adresse e-mail ET ton carnet sont effacés du serveur. Tout reste sur ce téléphone, hors ligne. Les voyages partagés avec tes compagnons restent chez eux.')))) return;
+    if(!(await uiConfirm(MSGT('Supprimer ton compte ? Ton adresse e-mail ET ton carnet sont effacés du serveur. Tout reste sur ce téléphone, hors ligne. Les voyages partagés avec tes compagnons restent chez eux.') + '\n\n' + MSGT('Tes publications pour tes abonnés sont effacées du serveur aussi : ils ne les verront plus.')))) return;
     try { await mainPrime(); const r = await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(M.sync.code)}}); if(!r.ok){ const j = await r.json().catch(()=>({})); throw new Error(srvMsg(j.error) || ('erreur ' + r.status)); }
+      // 👀 (12/11/2026) mes publications pour mes abonnés (mon fil et chaque lien d’abonné) partent aussi du serveur : avant, elles y restaient
+      //    alors que la page « Supprimer mon compte » annonce leur effacement. Les voyages partagés en compagnon ne bougent pas.
+      try { const mine = [...new Set([M.feedAll, ...(M.abInv || []).map(x=>x && x.code), ...Object.values(FT())].filter(c=>c && c !== M.sync.code && myFeedCode(c)))];
+        for(const c of mine){ try { await admPrime(c); await fetch(apiUrl(), {method:'DELETE', headers:{'X-Carnet-Code':await authCode(c)}}); } catch(e){} }
+        if(mine.length){ M.spaces = (M.spaces || []).filter(sp=>!mine.includes(sp.code));
+          Object.keys(FT()).forEach(t=>{ if(mine.includes(FT()[t])){ delete TS()[ftId(t)]; delete FT()[t]; } }); (M.abInv || []).forEach(x=>{ if(x && x.code) delete TS()['fi:' + x.code]; });
+          delete M.feedAll; M.abInv = []; M.fq = (M.fq || []).filter(x=>!mine.includes(x[0])); M.fdel = (M.fdel || []).filter(x=>!mine.includes(x[0])); if(M.fup) mine.forEach(c=>{ delete M.fup[c]; }); } } catch(e){}
       await acctPost({a:'delete'}).catch(()=>{}); M.sync.on = false; M.acctSt = {at:Date.now(), acct:false}; M.acctAsk = Date.now(); persist(); toast(MSGT('Compte supprimé')); closeSheet(); } catch(e){ alert(e.message); }
   }
   // ── 🆘 kit de secours : le code administrateur à garder hors du téléphone (sans lui, rien ne peut rouvrir le carnet)
@@ -2084,7 +2091,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-12l'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-12m'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -3046,7 +3053,7 @@
     pickColor, newProfile, editProfile, saveProfile, delProfile, whoSheet, setMe,
     bellSheet, bellGo, bellClear, rateGo, packFrom, packCc, inviteSheet, inviteSend, inviteCopy, carnetShareSheet, carnetPublishSheet, carnetPublish, joinPick, joinPickSave, withWhom, withWhomUpd, withWhomGo, joinAny, joinPaste, joinAnyGo, dupSheet, dupTripsGo, photoSweep, spaceSheet, spaceFree, bagEntryUpd, impPickShot, impPickPass, impPass,
     genCode, syncOn, syncOff, syncNow, shareCode, exportShare, exportDownload, importPick, wipe, obCreate, obJoin, obFollow, codesCopy,
-    _R:()=>R, _M:()=>M, ...VZAPI, ...RECAPI, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
+    _R:()=>R, _M:()=>M, _spDrop:()=>SPDROP, ...VZAPI, ...RECAPI, ...NEWAPI, ...APPAPI, impBack:()=>impSheet(impCat)};
   // En mode lecture, toutes les actions qui modifient sont bloquées
   const MUT = ['seedUSA2025','convert2026','saveSouv','delSouv','souvAddPhotos','souvDelPhoto','rembAdd','rembDel',
     'cycle','saveForm','noteFromItem','del','add','saveDay','saveNote','delNote','pin','setObj','addCompanion','addToTrip','removeCompanion',

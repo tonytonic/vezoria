@@ -3325,7 +3325,7 @@
           <a class="v-day-edit" href="https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=${encodeURIComponent(q)}" target="_blank" rel="noopener">🧭 Itinéraire</a>
           ${safeUrl(I.web) ? `<a class="v-day-edit" href="${esc(safeUrl(I.web))}" target="_blank" rel="noopener">🌐 Site officiel</a>` : ''}
           ${I.tel ? `<a class="v-day-edit" href="tel:${esc(I.tel.split(';')[0].replace(/[^\d+]/g, ''))}">📞 Appeler</a>` : ''}
-          ${wurl ? `<a class="v-day-edit" href="${wurl}" target="_blank" rel="noopener">📖 Wikipédia</a>` : ''}
+          ${wurl ? `<a class="v-day-edit" href="${esc(wurl)}" target="_blank" rel="noopener">📖 Wikipédia</a>` : ''}
           <button type="button" class="v-day-edit" onclick="CV.plInfo('${ja(id)}', true)">🔄 Actualiser</button></div>`
       + `<div class="v-sum-small" style="margin-top:8px">Infos : OpenStreetMap${I.txt ? ' et Wikipédia (CC BY-SA)' : ''}. Horaires à confirmer sur place ou sur le site du lieu. ${I.ts ? 'Mises à jour le ' + new Date(I.ts).toLocaleDateString(L) + ', disponibles hors ligne.' : ''}</div>`;
   }

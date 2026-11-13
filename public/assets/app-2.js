@@ -717,7 +717,7 @@
         <div class="v-sum-small" style="margin-top:4px">Décoche ceux qui ne sont pas concernés (ex. retour séparé : l’un vers Lyon, l’autre vers Bruxelles).</div></div>`;
     }
     if(c==='transport'){
-      h += `<div class="v-f"><label>Mode</label><select class="v-in" name="mode">${Object.keys(MODE_ICON).map(m=>`<option${it.mode===m?' selected':''}>${m}</option>`).join('')}</select></div>`;
+      h += `<div class="v-f"><label>Mode</label><select class="v-in" name="mode">${Object.keys(MODE_ICON).map(m=>`<option${it.mode===m?' selected':''}>${m}</option>`).join('')}<option value=""${it.id && !it.mode ? ' selected' : ''}>🧭 ${esc(MSGT('Peu importe'))}</option></select></div>`;
       h += `<div class="v-f2">${field('Départ','from',it.from,'text','data-place autocomplete="off"')}${field('Arrivée','to',it.to,'text','data-place autocomplete="off"')}</div>`;
       h += `<div class="v-f2">${field('Date','date',it.date,'date')}${field('Compagnie / n° vol','compagnie',it.compagnie)}</div>`;
       h += `<div class="v-f2">${field('Heure départ','heureDep',it.heureDep,'time')}${field('Heure arrivée','heureArr',it.heureArr,'time')}</div>`;
@@ -1609,7 +1609,8 @@
 
   /* ══════════ Profils ══════════ */
   function colorPick(sel){
-    return `<input type="hidden" id="cv-pcol" value="${sel}"><div class="cv-colors">${COLORS.map(c=>`<button type="button" class="cv-sw${c===sel?' on':''}" style="background:${c}" data-c="${c}" onclick="CV.pickColor(this)" aria-label="Couleur"></button>`).join('')}
+    sel = /^#[0-9a-f]{3,8}$/i.test(String(sel || '')) ? sel : COLORS[0];   // 🛡️ seulement une vraie couleur
+    return `<input type="hidden" id="cv-pcol" value="${esc(sel)}"><div class="cv-colors">${COLORS.map(c=>`<button type="button" class="cv-sw${c===sel?' on':''}" style="background:${c}" data-c="${c}" onclick="CV.pickColor(this)" aria-label="Couleur"></button>`).join('')}
       <label class="cv-sw cv-sw-custom" title="Autre couleur">🎨<input type="color" value="${sel}" oninput="CV.pickColor(this)"></label></div>`;
   }
   function pickColor(el){
@@ -2514,7 +2515,7 @@
     if(!r.found){ el.innerHTML = `✈️ ${RF('Pas de prix récent pour {0} → {1} : vois les vols du jour sur Aviasales.', esc(r.on), esc(r.dn))}`; return; }
     const dd = r.at ? new Date(r.at) : null, day = dd && !isNaN(dd) ? dd.toLocaleDateString(NL(), {day:'numeric', month:'short'}) : '';
     const esc2 = r.transfers === 0 ? MSGT('direct') : r.transfers === 1 ? MSGT('1 escale') : r.transfers > 1 ? RF('{0} escales', r.transfers) : '';
-    const pr = (+r.price).toLocaleString(NL(), {style:'currency', currency:r.currency || 'EUR', maximumFractionDigits:0});
+    const pr = (+r.price).toLocaleString(NL(), {style:'currency', currency:/^[A-Za-z]{3}$/.test(r.currency || '') ? r.currency : 'EUR', maximumFractionDigits:0});
     el.innerHTML = `✈️ <b>${RF('dès {0}', pr)}</b> · ${esc(r.on)} → ${esc(r.dn)}${day ? ' · ' + (r.exact ? day : RF('le {0}, même mois', day)) : ''}${esc2 ? ' · ' + esc2 : ''}
       <a href="${esc(url)}" target="_blank"${bookRel('aviasales')} onclick="event.stopPropagation()">${MSGT('Voir ce vol')} ›</a>
       <small>${MSGT('Prix indicatif trouvé ces derniers jours sur Aviasales ; il peut avoir changé.')}</small>`;
@@ -2573,9 +2574,9 @@
   function wgShow(el, r){
     const L = r && r.ok ? (r.tours || []).slice(0, 3) : [];
     if(!L.length){ el.remove(); return; }
-    const money = (v, cur) => (+v).toLocaleString(NL(), {style:'currency', currency:cur || 'EUR', maximumFractionDigits:v % 1 ? 2 : 0});
+    const money = (v, cur) => (+v).toLocaleString(NL(), {style:'currency', currency:/^[A-Za-z]{3}$/.test(cur || '') ? cur : 'EUR', maximumFractionDigits:v % 1 ? 2 : 0});   // 🛡️ devise inconnue renvoyée par le partenaire : euros, au lieu d’une erreur
     el.innerHTML = `<small>🎧 ${RF('Visites audio à {0}', esc(r.city.name))}</small>` + L.map(t=>`<a class="wg-t" href="${esc(affWrap('wegotrip', t.url))}" target="_blank"${bookRel('wegotrip')} onclick="event.stopPropagation()">
-        ${t.img ? `<img src="${esc(t.img)}" alt="" loading="lazy">` : '<i>🎧</i>'}<span><b>${esc(t.title)}</b><em>${t.price ? RF('dès {0}', money(t.price, t.currency)) : ''}${t.rating ? ` · ⭐ ${(+t.rating).toFixed(1).replace('.', ',')}${t.reviews ? ' (' + t.reviews + ')' : ''}` : ''}${t.duration ? ' · ' + esc(t.duration) : ''}</em></span></a>`).join('')
+        ${safeUrl(t.img) ? `<img src="${esc(safeUrl(t.img))}" alt="" loading="lazy">` : '<i>🎧</i>'}<span><b>${esc(t.title)}</b><em>${t.price ? RF('dès {0}', money(t.price, t.currency)) : ''}${t.rating ? ` · ⭐ ${(+t.rating).toFixed(1).replace('.', ',')}${t.reviews ? ' (' + t.reviews + ')' : ''}` : ''}${t.duration ? ' · ' + esc(t.duration) : ''}</em></span></a>`).join('')
       + `<small class="wg-n">${MSGT('Prix et notes fournis par WeGoTrip.')}</small>`;
   }
   async function wgFill(){

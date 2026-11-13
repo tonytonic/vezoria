@@ -1556,8 +1556,8 @@ ${pm.join('\n')}</Document></kml>`;
   // une offre Viator qui porte le nom du lieu (« Colisée : billet coupe-file… ») : c’est ce lieu, en version payante
   const vtMatch = (title, nom) => { const a = normQ(nom); if(a.length < 4) return false; return normQ(title).includes(a) || swSim(title, nom) >= .5; };
   const VTR = (q, d1, d2, n) => hidden('blk:book') || !q ? '' : `<div class="vt-row" data-vtq="${esc(q)}" data-vtd="${esc((d1 || '') + '|' + (d2 || ''))}" data-vtn="${n || 3}"></div>`;
-  function vtTile(x){ const pr = x.price ? RF('dès {0}', (+x.price).toLocaleString(NL(), {style:'currency', currency:x.currency || 'EUR', maximumFractionDigits:x.price % 1 ? 2 : 0})) : '';
-    return `<a class="vt-t" href="${esc(safeUrl(x.url) || '#')}" target="_blank" rel="sponsored noopener" onclick="event.stopPropagation()">${x.img ? `<img src="${esc(x.img)}" alt="" loading="lazy" decoding="async">` : '<i>🎟️</i>'}<span><b data-notr>${esc(x.title)}</b><small>${[pr, x.rating ? '⭐ ' + (+x.rating).toFixed(1).replace('.', ',') : '', x.duration].filter(Boolean).map(esc).join(' · ')}</small></span><em>Viator · ${esc(MSGT('partenaire'))}</em></a>`; }
+  function vtTile(x){ const pr = x.price ? RF('dès {0}', (+x.price).toLocaleString(NL(), {style:'currency', currency:/^[A-Za-z]{3}$/.test(x.currency || '') ? x.currency : 'EUR', maximumFractionDigits:x.price % 1 ? 2 : 0})) : '';
+    return `<a class="vt-t" href="${esc(safeUrl(x.url) || '#')}" target="_blank" rel="sponsored noopener" onclick="event.stopPropagation()">${safeUrl(x.img) ? `<img src="${esc(safeUrl(x.img))}" alt="" loading="lazy" decoding="async">` : '<i>🎟️</i>'}<span><b data-notr>${esc(x.title)}</b><small>${[pr, x.rating ? '⭐ ' + (+x.rating).toFixed(1).replace('.', ',') : '', x.duration].filter(Boolean).map(esc).join(' · ')}</small></span><em>Viator · ${esc(MSGT('partenaire'))}</em></a>`; }
   async function vtFill(el){
     if(el.dataset.vto) return; el.dataset.vto = '1'; const [d1, d2] = (el.dataset.vtd || '|').split('|'), n = +el.dataset.vtn || 3;
     el.innerHTML = '<div class="vt-ld"></div><div class="vt-ld"></div><div class="vt-ld"></div>';
@@ -1638,7 +1638,7 @@ ${pm.join('\n')}</Document></kml>`;
       <div class="sw-ph"><span class="sw-ic">${ic}</span><img class="sw-img" alt="" decoding="async"></div><div class="sw-shade"></div>
       <i class="sw-tag yes">${esc(MSGT('Je garde'))}</i><i class="sw-tag no">${esc(MSGT('Non merci'))}</i>
       <div class="sw-tx"><small>${c ? '📍 <span data-notr>' + esc(c) + '</span>' : ''}</small>
-        ${p.ex && p.e.wg ? `<em class="sw-pay">${p.e.vt ? '🎟️ ' + esc(MSGT('Activité à réserver')) : '🎧 ' + esc(MSGT('Visite audio'))}${p.e.wg.price ? ' · ' + esc(RF('dès {0}', (+p.e.wg.price).toLocaleString(NL(), {style:'currency', currency:p.e.wg.currency || 'EUR', maximumFractionDigits:p.e.wg.price % 1 ? 2 : 0}))) : ''}${p.e.wg.rating ? ' · ⭐ ' + (+p.e.wg.rating).toFixed(1).replace('.', ',') : ''} · ${esc(MSGT('partenaire'))}</em>`
+        ${p.ex && p.e.wg ? `<em class="sw-pay">${p.e.vt ? '🎟️ ' + esc(MSGT('Activité à réserver')) : '🎧 ' + esc(MSGT('Visite audio'))}${p.e.wg.price ? ' · ' + esc(RF('dès {0}', (+p.e.wg.price).toLocaleString(NL(), {style:'currency', currency:/^[A-Za-z]{3}$/.test(p.e.wg.currency || 'EUR' || '') ? p.e.wg.currency || 'EUR' : 'EUR', maximumFractionDigits:p.e.wg.price % 1 ? 2 : 0}))) : ''}${p.e.wg.rating ? ' · ⭐ ' + (+p.e.wg.rating).toFixed(1).replace('.', ',') : ''} · ${esc(MSGT('partenaire'))}</em>`
         : p.ex ? `<em class="sw-pay">🎟️ ${esc(MSGT(p.e.l))} · ${esc(MSGT('activité à réserver'))}</em>`
         : SW && SW.PAY && SW.PAY[p.id] ? `<em class="sw-pay">🎟️ ${esc(MSGT('Payant : pense à réserver'))}</em>` : ''}
         ${!p.ex && swOthers(p).length ? `<em class="sw-vt">${swOthers(p).map(([w, v])=>(v ? '❤️ ' : '✕ ') + esc(RF(v ? '{0} l’a gardé' : '{0} l’a écarté', pname(w)))).join(' · ')}</em>` : ''}

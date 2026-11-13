@@ -1934,7 +1934,9 @@
     const tid = 't' + uid(), out = [], v = (custom.vv || []).length ? custom.vv : M.me ? [M.me] : [];
     let cur = debut; const stops = st.map(([c,n])=>{ const s = {c, n, d:cur, f:addDays(cur, n)}; cur = s.f; return s; }), fin = cur;
     out.push({id:tid, type:'trip', ccs:[x.d[2]].filter(Boolean), titre:custom.titre || x.nom + ' · ' + durLbl(days), sous:stops.map(s=>s.c).join(' → '), debut, fin, voyageurs:v, objectif:num(S.budget)||''});
-    const mode = x.ground ? 'Voiture' : 'Avion', DEP = custom.dep != null ? custom.dep : (S.dep === 'autre' ? S.depTxt : S.dep) || '', RET = custom.ret != null ? custom.ret : DEP;
+    // 🧭 (12/11/2026) voyage dessiné sur le globe : l’aller et le retour restent « Peu importe » (de Nantes à Tours, on ne prend pas l’avion) ;
+    //    on choisit ensuite sur la carte 3D ou dans la fiche. « Où partir ? » garde son calcul (avion, ou voiture si c’est près).
+    const mode = x.ground ? 'Voiture' : x.globe ? '' : 'Avion', DEP = custom.dep != null ? custom.dep : (S.dep === 'autre' ? S.depTxt : S.dep) || '', RET = custom.ret != null ? custom.ret : DEP;
     const G = custom.gens && v.length > 1 ? custom.gens : null, half = String(Math.round((x.trans + (x.escale ? 80 : 0))/2));
     // 👥 plusieurs voyageurs : un aller et un retour par personne, chacun depuis sa ville (sinon : un seul trajet pour tous)
     if(G) v.forEach(pid=>{ const gp = G[pid] || {}, d0 = gp.dep || DEP; out.push({id:'i'+uid()+'a'+pid, type:'item', trip:tid, cat:'transport', mode, titre:(d0||'Départ') + ' → ' + stops[0].c, from:d0, to:stops[0].c, date:debut, statut:'todo', partage:'pp', qui:[pid], estime:half}); });

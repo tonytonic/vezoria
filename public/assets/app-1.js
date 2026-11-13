@@ -129,7 +129,8 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   /* ── Devise : chaque voyage a la sienne (t.devise ; absente = euro, comme les anciens voyages) ── */
   const CURS = {EUR:'€', USD:'$', GBP:'£', CHF:'CHF', CAD:'CA$', AUD:'A$', NZD:'NZ$', JPY:'¥', CNY:'CN¥', SEK:'kr', NOK:'kr', DKK:'kr', PLN:'PLN', CZK:'CZK', HUF:'HUF', RON:'RON', MXN:'MX$', BRL:'R$', MAD:'MAD', TND:'TND', TRY:'TRY', AED:'AED', THB:'THB', INR:'INR', ZAR:'R', KRW:'KRW'};
   const REGION_CUR = {US:'USD', GB:'GBP', CH:'CHF', CA:'CAD', AU:'AUD', NZ:'NZD', JP:'JPY', CN:'CNY', SE:'SEK', NO:'NOK', DK:'DKK', PL:'PLN', CZ:'CZK', HU:'HUF', RO:'RON', MX:'MXN', BR:'BRL', MA:'MAD', TN:'TND', TR:'TRY', AE:'AED', TH:'THB', IN:'INR', ZA:'ZAR', KR:'KRW'};
-  const curCode = () => { try { const t = trip(); if(t) return t.devise || 'EUR'; return (M && M.cur) || 'EUR'; } catch(e){ return 'EUR'; } };
+  const curOk = c => /^[A-Za-z]{2,5}$/.test(String(c || '')) ? String(c) : 'EUR';   // 🛡️ une devise est un code de lettres (EUR, USD…) : jamais autre chose dans la page
+  const curCode = () => { try { const t = trip(); if(t) return curOk(t.devise); return curOk(M && M.cur); } catch(e){ return 'EUR'; } };
   const CS = () => CURS[curCode()] || curCode();
   const eur = n => {
     const s = (Math.round(n*100)/100).toLocaleString((window.I18N ? I18N.locale : 'fr-FR'),{minimumFractionDigits:0,maximumFractionDigits:2}), c = CS();
@@ -419,7 +420,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   }
   const forWho = it => M.who==='all' || parts(it).includes(M.who);
 
-  function icon(it){ return it.cat==='transport' ? (MODE_ICON[it.mode]||'✈️') : (CATS[it.cat]||{icon:'•'}).icon; }
+  function icon(it){ return it.cat==='transport' ? (MODE_ICON[it.mode] || (it.mode ? '✈️' : '🧭')) : (CATS[it.cat]||{icon:'•'}).icon; }
   function sortItems(a,b){
     const da = a.date||'9999', db = b.date||'9999';
     if(da!==db) return da<db?-1:1;
@@ -675,7 +676,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     try {
       tombClear(id); TS()[id] = c;
       const j = await call(0, [], c), of = j.records.filter(r=>r && r.trip === id && !['member','invite','tripmove'].includes(r.type));
-      mergeRemote(j.records); sp.since = j.now; sp.err = ''; sp.last = Date.now(); persist(); refresh();
+      mergeRemote(spIn(j.records, sp)); sp.since = j.now; sp.err = ''; sp.last = Date.now(); persist(); refresh();
       const n = tripCount(id);
       if(out) out.innerHTML = `✅ ${MSGT('Le voyage partagé contient')} <b>${of.filter(r=>!r.deleted).length}</b> ${MSGT('fiches')} · ${MSGT('ce téléphone en a maintenant')} <b>${n.live}</b>.`
         + (of.filter(r=>!r.deleted).length < 3 ? '<br>⚠️ ' + MSGT('Le voyage partagé est presque vide : celui qui l’a rempli doit toucher « Tout renvoyer » sur son téléphone.') : '');
@@ -759,10 +760,21 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     if(fdNew.size) setTimeout(()=>{ try { fdNew.forEach(fid=>{ const el = document.getElementById('fp-' + fid); if(!el) return; const a = document.activeElement; if(a && el.contains(a) && /^(INPUT|TEXTAREA)$/.test(a.tagName) && a.value) return; feedPaint(fid); }); } catch(e){} }, 60);
     return changed;
   }
+  // 🛡️ (12/11/2026) un dossier partagé (voyage à plusieurs, paquet, boîte d’invitations) n’apporte QUE des fiches de voyage : le voyage, ses fiches
+  //    (elles portent « trip »), les profils de ses voyageurs. Une fiche « sans voyage » (clé de mon compte, réglages de mes abonnés, « ce voyage a
+  //    déménagé », cache des villes…) appartient à MON carnet : venue d’un dossier partagé, elle remplaçait la mienne sur ce téléphone.
+  //    Un compagnon malveillant pouvait ainsi changer mes réglages d’abonnés, ma clé de compte ou déplacer mes villes sur la carte.
+  //    Le carnet entier d’un autre (je suis son compagnon, code « M:… ») apporte tout ce qu’il contient, sauf SES réglages personnels :
+  //    la clé de son compte et ses abonnés ne remplacent jamais les miens (comme sa liste de codes, déjà écartée).
+  const SPDROP = [], SP_MINE = new Set(['acct', 'abcfg', 'vz:codes']);
+  const spIn = (recs, sp) => (recs || []).filter(r => { if(!r) return false;
+    if(sp && /^M:/.test(sp.code || '')) return !SP_MINE.has(r.id);
+    if(r.type === 'trip' || r.type === 'profile' || r.type === 'feedtrip' || r.trip) return true;
+    if(SPDROP.length < 60) SPDROP.push(String(r.type || '?') + ' ' + String(r.id).slice(0, 40)); return false; });
   async function syncSpace(sp, force){
     sp.dirty = (sp.dirty || []).filter(id=>R[id]); let changed = 0;
     await clmPrime(sp.code);
-    const flt = recs => sp.sub ? ab2In(recs, sp) : sp.ivme ? ab2InIv(recs, sp) : sp.mate ? ab2MateIn(recs) : (recs || []);
+    const flt = recs => sp.sub ? ab2In(recs, sp) : sp.ivme ? ab2InIv(recs, sp) : sp.mate ? ab2MateIn(recs) : spIn(recs, sp);
     const aft = () => { if(sp.sub) ab2Map(sp.code); else if(sp.ivme && sp.of) ab2Map(sp.of); };   // 👀 lien suivi : seulement ses voyages (abonnés v2)   // une fiche qui n’existe plus ici ne reste pas « à envoyer » pour toujours
     try {
       if(sp.dirty.length){ const j0 = await call(Math.max(0, (sp.since||0) - 5000), [], sp.code); changed += mergeRemote(flt(j0.records)); sp.since = j0.now; aft(); }   // 🔀 recevoir et fusionner avant d’envoyer
@@ -1119,7 +1131,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     const P = PU(); if(!P.on || !pushOk()) return;
     const code = pushDevCode(), now = Date.now(), items = [];
     const at = (d, hm) => new Date(d + 'T' + hm + ':00').getTime();
-    const money = (n, t) => Math.round(n * 100) / 100 + ' ' + (CURS[(t && t.devise) || 'EUR'] || (t && t.devise) || '€');
+    const money = (n, t) => { const c = curOk(t && t.devise); return Math.round(n * 100) / 100 + ' ' + (CURS[c] || c); };
     if(P.kinds.rappel) trips().filter(t=>!t.demo && !t.deleted && !t.ro).forEach(t=>{   // 📖 voyage en lecture seule : aucun rappel
       const its = Object.values(R).filter(r=>r.type === 'item' && r.trip === t.id && !r.deleted);
       // ⏳ entre la préparation et le départ : J-30 et J-7, avec ce qu’il reste à préparer
