@@ -17,7 +17,7 @@
  *                     code (non renvoyées depuis le début du changement) effacées.
  * Le serveur ne voit jamais les codes : seulement leurs empreintes.
  */
-import { acctGate } from './account.js';   // 👤 compte du carnet
+import { acctGate, mainSpace, NOT_MAIN } from './account.js';   // 👤 compte du carnet
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Dev', 'Access-Control-Max-Age': '86400' };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
 async function sha256(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
@@ -71,6 +71,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   await tables(env.DB);
   const cur = await codeSpace(env, code), space = cur.space, now = Date.now();
   if (cur.dead) return json({ error: ROTATED, rotated: true }, 403);
+  if (!(await mainSpace(env, space))) return json(NOT_MAIN, 403);   // 🛡️ (13/11/2026) jamais sur un espace partagé avec le seul code (voir sharedSpace dans account.js)
   { const g = await acctGate(env, space, dev); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
   try { const bl = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first(); if (bl) return json({ error: 'suspendu', suspended: true }, 423); } catch (e) {}
   try { if (dev && await env.DB.prepare('SELECT 1 AS x FROM dev_block WHERE space = ?1 AND dev = ?2').bind(space, dev).first()) return json({ error: 'Appareil bloqué — Device blocked', devBlocked: true }, 403); } catch (e) {}

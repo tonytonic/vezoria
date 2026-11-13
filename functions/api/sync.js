@@ -20,6 +20,9 @@ import { acctGate, acctMain, acctNew, ownerOf } from './account.js';   // 👤 c
 const MAX_CHANGES = 1000;
 const MAX_RECORD = 100_000;
 const MAX_RECORD_LIGHT = 16_000;   // 🛡️ petit espace créé sans compte (invitation, code de passage) : de petites fiches seulement (200 × 16 Ko au plus, au lieu de 200 × 100 Ko)
+const MAX_RECORD_FAN = 12_000;   // 🛡️ fiche d’un abonné dans le fil de quelqu’un d’autre (❤️, commentaire, abonnement) : petite
+const FAN_NEW = 200;             // 🛡️ nouvelles fiches d’un abonné par envoi
+const FUTURE = 600_000;          // 🛡️ une fiche datée de plus de 10 minutes dans le futur est ramenée à « maintenant »
 const MAX_BODY = 30_000_000;   // 🛡️ une requête de synchro ne dépasse jamais 30 Mo (le téléphone découpe ses envois bien en dessous)
 // 🔁 recouvrement : on renvoie aussi les fiches reçues dans les 15 s précédant « since ». Deux téléphones qui synchronisent
 // au même instant (deux serveurs Cloudflare) pouvaient sinon se croiser et l'un ne recevait jamais la fiche de l'autre.
@@ -162,8 +165,38 @@ async function mayClaim(env, request, space) {
       const tok = hdr(request, 'X-Carnet-Acct'); if (tok.length < 8 || tok.startsWith('mb:')) return false;
       const cs = await codeSpace(env, tok); return !cs.dead && cs.space === ow;
     }
+    // 🛡️ (13/11/2026) « vide » ne veut pas dire « neuf » : un membre pouvait vider le voyage partagé (permis), puis s’en déclarer l’auteur
+    try { if (await env.DB.prepare('SELECT 1 AS x FROM space_wipes WHERE space = ?1').bind(space).first()) return false; } catch (e) {}
     return !(await env.DB.prepare('SELECT 1 AS x FROM records WHERE space = ?1 LIMIT 1').bind(space).first());
   } catch (e) { return false; }
+}
+// 🛡️ abonné d’un fil : 600 nouvelles fiches par heure et par connexion dans un même fil (en mémoire, par instance)
+const FANR = new Map();
+function fanRate(request, space) {
+  const k = (request.headers.get('CF-Connecting-IP') || 'x') + '|' + space.slice(0, 16), hour = Math.floor(Date.now() / 3600e3), r = FANR.get(k);
+  if (FANR.size > 20000) FANR.clear();
+  const n = (r && r.hour === hour ? r.n : 0) + 1; FANR.set(k, { hour, n }); return n <= 600;
+}
+// 🛡️ place des fiches. Un espace : SPACE_MAX_MB (60 Mo). Un compte, avec tous les espaces qu’il a créés : REC_MAX_MB (400 Mo).
+//    Le calcul (une somme en base) n’est fait qu’après 2 Mo écrits dans un espace par cette instance : les carnets ordinaires ne le voient jamais.
+const RQ = new Map();
+async function recFull(env, space, add) {
+  const now = Date.now(); let q = RQ.get(space);
+  if (!q) { if (RQ.size > 5000) RQ.clear(); q = { w: 0, full: false, at: 0 }; RQ.set(space, q); }
+  q.w += add;
+  if (q.full ? now - q.at < 60e3 : q.w < 2e6) return q.full;
+  try {
+    const spMax = Math.max(1, Number(env.SPACE_MAX_MB) || 60) * 1048576, acMax = Math.max(1, Number(env.REC_MAX_MB) || 400) * 1048576;
+    const one = await env.DB.prepare('SELECT COALESCE(SUM(LENGTH(data)), 0) AS b FROM records WHERE space = ?1').bind(space).first();
+    let full = !!one && one.b + add > spMax;
+    if (!full) {
+      const ow = await ownerOf(env, space), own = ow && ow !== '-light' ? ow : space;
+      const all = await env.DB.prepare('SELECT COALESCE(SUM(LENGTH(data)), 0) AS b FROM records WHERE space = ?1 OR space IN (SELECT space FROM space_owner WHERE owner = ?1)').bind(own).first();
+      full = !!all && all.b + add > acMax;
+    }
+    q.full = full; q.at = now; q.w = 0;
+  } catch (e) { q.full = false; q.w = 0; }
+  return q.full;
 }
 async function writerOf(request) { const w = hdr(request, 'X-Carnet-Writer'); return w.length >= 16 ? (await sha256('vz-w:' + w)).slice(0, 32) : null; }
 // rôle de l’appelant sur cet espace : has = un auteur est déclaré ; me = c’est lui ; bad = il a présenté une autre clé
@@ -175,6 +208,7 @@ async function adminOf(env, request, space, claim) {
     const r = await env.DB.prepare('INSERT OR IGNORE INTO space_admin (space, ah, at) VALUES (?1, ?2, ?3)').bind(space, ah, Date.now()).run();
     if (r && r.meta && r.meta.changes) {   // 1re clé d’auteur : ce qui est déjà en ligne vient de lui (marqué), le reste suivra
       try { await env.DB.prepare(`UPDATE records SET data = json_set(data, '$._a', 1) WHERE space = ?1 AND json_valid(data)`).bind(space).run(); } catch (e) {}
+      try { await env.DB.prepare(`UPDATE records SET wk = 'A' WHERE space = ?1`).bind(space).run(); } catch (e) {}   // 🛡️ et elles sont à lui : un abonné ne les remplace pas
     }
     row = await env.DB.prepare('SELECT ah FROM space_admin WHERE space = ?1').bind(space).first();
   }
@@ -192,7 +226,8 @@ async function lockOf(env, request, space, adm) {
   let row = null; try { row = await env.DB.prepare('SELECT ch, oh FROM space_lock WHERE space = ?1').bind(space).first(); } catch (e) { return null; }
   if (!row) {
     // invitation de compagnon : verrouillée par son créateur à son 1er envoi, tant que l’espace est encore vide
-    if (lock && h) { const any = await env.DB.prepare('SELECT 1 FROM records WHERE space = ?1 LIMIT 1').bind(space).first();
+    // 🛡️ (13/11/2026) mêmes règles que la clé d’auteur : jamais un compagnon, jamais un espace vidé par un membre puis « repris »
+    if (lock && h && await mayClaim(env, request, space)) { const any = await env.DB.prepare('SELECT 1 FROM records WHERE space = ?1 LIMIT 1').bind(space).first();
       if (!any) { try { await env.DB.prepare('INSERT OR IGNORE INTO space_lock (space, ch, at, oh) VALUES (?1, NULL, ?2, ?3)').bind(space, Date.now(), h).run(); } catch (e) {} } }
     return null;
   }
@@ -337,7 +372,12 @@ export async function onRequestDelete({ request, env }) {
   if (space instanceof Response) return space;
   const adm = await adminOf(env, request, space, false);
   if (adm.has && !adm.me) return json({ error: 'Seul l’auteur peut effacer ce fil. — Only the author can erase this feed.', author: true }, 403);
+  // 🛡️ (13/11/2026) un membre peut vider un voyage partagé (ses compagnons le remettent en ligne depuis leur téléphone), mais l’espace
+  //    garde son créateur : sinon le membre le recréait à son nom, s’en déclarait l’auteur, et les autres ne pouvaient plus rien y écrire.
+  const ow = await ownerOf(env, space); let me = '';
+  { const tok = hdr(request, 'X-Carnet-Acct'); if (tok.length >= 8 && !tok.startsWith('mb:')) { try { const cs = await codeSpace(env, tok); if (!cs.dead) me = cs.space; } catch (e) {} } }
   const out = await wipeSpace(env, space);
+  if (ow && ow !== space && ow !== me) { try { await env.DB.prepare('INSERT OR IGNORE INTO space_owner (space, owner, at) VALUES (?1, ?2, ?3)').bind(space, ow, Date.now()).run(); } catch (e) {} }
   const at = Date.now(); await wipeMark(env, space, at);
   return json({ ok: true, ...out, at });
 }
@@ -364,11 +404,16 @@ export async function onRequestPost({ request, env, waitUntil }) {
   { const lk = await lockOf(env, request, space, adm); if (lk) return lk; }
   if (changes.length) { const na = await acctNew(env, request, space, changes.length); if (na) return json(na, 403); }   // 📧 nouvel espace : seulement depuis un carnet avec compte
   if (changes.length) {
-    const maxRec = (await ownerOf(env, space)) === '-light' ? MAX_RECORD_LIGHT : MAX_RECORD;
+    const fan = adm.has && !adm.me;   // abonné d’un fil qui a un auteur : des ❤️, des commentaires, son abonnement — rien d’autre
+    const light = (await ownerOf(env, space)) === '-light';
+    const maxRec = light ? MAX_RECORD_LIGHT : fan ? MAX_RECORD_FAN : MAX_RECORD;
+    // 🛡️ (13/11/2026) trois règles de plus dans la même requête :
+    //    · une fiche datée du futur (horloge fausse ou piège) est toujours remplaçable : elle ne « fige » plus rien ;
+    //    · l’auteur d’un fil passe toujours devant une fiche d’abonné (un abonné ne réserve pas d’avance l’identifiant d’une publication).
     const stmt = env.DB.prepare(
       `INSERT INTO records (space, id, data, updated_at, rev, wk) VALUES (?1, ?2, ?3, ?4, ?5, ?6)
        ON CONFLICT (space, id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at, rev = excluded.rev, wk = excluded.wk
-       WHERE excluded.updated_at >= records.updated_at`
+       WHERE excluded.updated_at >= records.updated_at OR records.updated_at > ?5 + ${FUTURE}` + (adm.me ? ` OR COALESCE(records.wk, '') != 'A'` : '')
     );
     const ok = changes.filter(r => r && typeof r.id === 'string' && r.id && r.id.length <= 120);
     changes.forEach(r => { if (r && typeof r.id === 'string' && !ok.includes(r)) skipped.push(r.id.slice(0, 120)); });
@@ -378,19 +423,27 @@ export async function onRequestPost({ request, env, waitUntil }) {
       const ids = [...new Set(ok.map(r => r.id))];
       for (let i = 0; i < ids.length; i += 90) {
         const part = ids.slice(i, i + 90);
-        const { results: rs } = await env.DB.prepare(`SELECT id, wk FROM records WHERE space = ?1 AND id IN (${part.map((_, j) => '?' + (j + 2)).join(',')})`).bind(space, ...part).all();
-        (rs || []).forEach(x => owner.set(x.id, x.wk));
+        const { results: rs } = await env.DB.prepare(`SELECT id, wk, CASE WHEN json_valid(data) THEN json_extract(data, '$._a') END AS a FROM records WHERE space = ?1 AND id IN (${part.map((_, j) => '?' + (j + 2)).join(',')})`).bind(space, ...part).all();
+        (rs || []).forEach(x => owner.set(x.id, x.a === 1 ? 'A' : x.wk));   // 🛡️ marquée « auteur » : à l’auteur, même si elle date d’avant les clés d’écriture
       }
     }
-    const batch = [];
+    const batch = []; let bytes = 0, fanNew = 0;
     for (const r0 of ok) {
       const r = Object.assign({}, r0); delete r._a;
       if (adm.me) r._a = 1;
-      else if (adm.has && owner.has(r.id)) { const w = owner.get(r.id); if (w === 'A' || (w && w !== wh)) { denied.push(r.id); continue; } }
+      else if (fan) {
+        // un abonné ne remplace que SES fiches : jamais celles de l’auteur ni d’un autre abonné
+        if (owner.has(r.id)) { const w = owner.get(r.id); if (w === 'A' || (w && w !== wh)) { denied.push(r.id); continue; } }
+        else if (++fanNew > FAN_NEW || !fanRate(request, space)) { skipped.push(r.id); continue; }   // 🛡️ pas des centaines de fiches d’un coup dans le fil de quelqu’un d’autre
+      }
+      let up = Number(r.updatedAt) || 0; if (!(up <= now + FUTURE)) { up = now; r.updatedAt = now; }   // 🛡️ date dans le futur : ramenée à maintenant
       const data = JSON.stringify(r);
       if (data.length > maxRec) { skipped.push(r.id); continue; }
-      batch.push(stmt.bind(space, r.id, data, Number(r.updatedAt) || 0, now, adm.me ? 'A' : wh));
+      bytes += data.length;
+      batch.push(stmt.bind(space, r.id, data, up, now, adm.me ? 'A' : wh));
     }
+    // 🛡️ place des fiches : un carnet ne grossit pas sans limite (sinon un seul compte gratuit pouvait remplir la base de tout le monde)
+    if (batch.length && !light && await recFull(env, space, bytes)) return json({ error: 'Ce carnet a atteint sa taille maximale : supprime d’anciens voyages ou d’anciennes traces GPS pour continuer à synchroniser. — This notebook reached its maximum size: delete old trips or GPS tracks to keep syncing.', recFull: true }, 413);
     if (batch.length) await env.DB.batch(batch);
   }
 

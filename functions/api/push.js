@@ -254,7 +254,11 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (b.a === 'plan') {
     // l’essai part tout de suite à l’heure du serveur (l’horloge du téléphone peut avancer ou retarder)
     const items = (Array.isArray(b.items) ? b.items : []).slice(0, 60).map(x => x && /^test-/.test(String(x.id)) ? Object.assign({}, x, { at: Date.now() - 1000 }) : x)
-      .filter(x => x && x.id && Number(x.at) > Date.now() - 60e3 && x.msg);
+      .filter(x => x && x.id && Number(x.at) > Date.now() - 60e3 && x.msg)
+      // 🛡️ (13/11/2026) un rappel se programme à 200 jours au plus et reste court. Avant, n’importe qui (sans compte, sous un code inventé)
+      //    rangeait 60 × 3 Ko par requête, datés de l’an 3000 : jamais envoyés, jamais effacés.
+      .filter(x => Number(x.at) < Date.now() + 200 * 864e5 && String(x.msg).length <= 2000);
+    if (!(await rateIp(env, request, 'pp', 150))) return json({ error: TOO_MANY, retry: 3600 }, 429);
     const st = [db.prepare('DELETE FROM push_due WHERE space = ?1 AND dev = ?2').bind(space, dev)];
     items.forEach(x => st.push(db.prepare('INSERT OR REPLACE INTO push_due (space, dev, id, at, kid, msg) VALUES (?1, ?2, ?3, ?4, ?5, ?6)').bind(space, dev, clean(x.id, 60), Math.round(Number(x.at)), clean(b.kid, 24), clean(x.msg, 3000))));
     await db.batch(st);

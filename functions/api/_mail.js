@@ -6,7 +6,9 @@
  */
 export async function sendMail(env, to, subject, text, html) {
   const from = env.MAIL_FROM || 'noreply@vezoria.fr';   // adresse seule : le format « Nom <adresse> » n’est pas garanti par l’API
-  if (env.MAIL_DEV === '1') return { ok: true, dev: { to, subject, text } };
+  // 🛡️ (13/11/2026) mode essai : seulement là où aucun vrai envoi n’est branché. Sur le site en ligne (EMAIL ou CF_EMAIL_TOKEN présents),
+  //    MAIL_DEV resté à « 1 » par erreur ne rend plus le code de vérification à celui qui le demande (il ouvrait alors n’importe quel compte).
+  if (env.MAIL_DEV === '1' && !env.EMAIL && !env.CF_EMAIL_TOKEN) return { ok: true, dev: { to, subject, text } };
   try {
     if (env.EMAIL && typeof env.EMAIL.send === 'function') { const r = await env.EMAIL.send({ to, from, subject, text, html: html || undefined }); return { ok: true, id: r && r.messageId }; }
     if (env.CF_ACCOUNT_ID && env.CF_EMAIL_TOKEN) {

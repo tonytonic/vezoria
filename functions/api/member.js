@@ -1,5 +1,5 @@
 import { codeSpace, ROTATED, cleanDev, devIsBlocked } from './rotate.js';   // 🔑 code administrateur changé
-import { acctGate } from './account.js';
+import { acctGate, mainSpace, NOT_MAIN } from './account.js';
 /**
  * Vezoria — 👥 codes compagnon du carnet principal (le code administrateur ne se partage plus).
  *
@@ -52,6 +52,7 @@ async function ownerSpace(request, env) {
   if (code.startsWith('mb:')) return json({ error: 'Réservé au propriétaire du carnet (code administrateur) — Owner only' }, 403);
   const cs = await codeSpace(env, code), space = cs.space;
   if (cs.dead) return json({ error: ROTATED, rotated: true }, 403);
+  if (!(await mainSpace(env, space))) return json(NOT_MAIN, 403);   // 🛡️ (13/11/2026) jamais sur un espace partagé avec le seul code (voir sharedSpace dans account.js)
   const dev = cleanDev(request.headers.get('X-Carnet-Dev'));
   if (await devIsBlocked(env, space, dev)) return json({ error: 'Appareil bloqué — Device blocked', devBlocked: true }, 403);   // 🛡️ un appareil retiré ne se crée pas un code compagnon
   { const g = await acctGate(env, space, dev); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé

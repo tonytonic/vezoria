@@ -1,5 +1,5 @@
 import { codeSpace, ROTATED, cleanDev, devIsBlocked } from './rotate.js';   // 🔑 code administrateur changé
-import { acctGate } from './account.js';   // 👤 compte du carnet : appareils validés
+import { acctGate, ownerOf } from './account.js';   // 👤 compte du carnet : appareils validés
 /**
  * Vezoria — 🫙 place photos par carnet · 🌿 voyages branchés · 💳 formules · 🎁 codes cadeaux
  *
@@ -308,6 +308,9 @@ export async function onRequestPost({ request, env }) {
       if (cur) { if (cur.owner === w.space) { linked++; out[k] = 'ok'; } else { taken++; out[k] = 'taken'; } continue; }
       const sub = await env.DB.prepare('SELECT 1 AS x FROM space_links WHERE owner = ?1 LIMIT 1').bind(child).first();
       if (sub || room <= 0) { taken++; out[k] = 'taken'; continue; }   // un autre carnet complet (il a ses propres branches) ne se branche pas
+      // 🛡️ (13/11/2026) un espace créé depuis le compte de quelqu’un d’autre ne se rattache pas : un membre vidait le voyage (son rattachement
+      //    tombait), puis le rattachait à SON abonnement. Pour passer un voyage, son créateur le détache d’abord (« unlink » ci-dessous).
+      { const ow = await ownerOf(env, child); if (ow && ow !== '-light' && ow !== child && ow !== w.space) { taken++; out[k] = 'taken'; continue; } }
       await env.DB.prepare('INSERT INTO space_links (child, owner, at) VALUES (?1, ?2, ?3) ON CONFLICT (child) DO NOTHING').bind(child, w.space, Date.now()).run();
       linked++; room--; out[k] = 'ok';
     }
@@ -317,7 +320,9 @@ export async function onRequestPost({ request, env }) {
     if (!rate(request, 'pl', 120)) return json({ error: 'Trop de demandes' }, 429);
     const kids = (Array.isArray(b.kids) ? b.kids : []).filter(t => typeof t === 'string' && t.length >= 16 && t.length <= 128).slice(0, 50);
     let n = 0;
-    for (const t of kids) { const r = await env.DB.prepare('DELETE FROM space_links WHERE child = ?1 AND owner = ?2').bind(await sha256('carnet-voyage:' + t), w.space).run(); n += (r.meta && r.meta.changes) || 0; }
+    for (const t of kids) { const child = await sha256('carnet-voyage:' + t);
+      const r = await env.DB.prepare('DELETE FROM space_links WHERE child = ?1 AND owner = ?2').bind(child, w.space).run(); n += (r.meta && r.meta.changes) || 0;
+      try { await env.DB.prepare('DELETE FROM space_owner WHERE space = ?1 AND owner = ?2').bind(child, w.space).run(); } catch (e) {} }   // je passe ce voyage : je n’en suis plus le créateur attitré
     return json({ ok: true, unlinked: n });
   }
   if (a === 'redeem') {
@@ -359,6 +364,7 @@ export async function onRequestPost({ request, env }) {
   }
   if (a === 'checkout' || a === 'portal') {
     if (!pay || !env.STRIPE_SECRET) return json({ error: 'Les abonnements ne sont pas encore ouverts — Subscriptions are not open yet', closed: true }, 503);
+    if (!rate(request, 'pc', 12)) return json({ error: 'Trop de demandes : réessaie dans une heure. — Too many requests: try again in an hour.' }, 429);   // 🛡️ (13/11/2026) chaque appel ouvre une session chez Stripe : pas en boucle
     const origin = new URL(request.url).origin, back = String(b.back || '').split('#')[0];   // retour toujours vers l’appli elle-même (vezoria.pages.dev), jamais ailleurs
     const base = back.startsWith(origin + '/') ? back : (env.APP_URL || origin + '/');
     if (a === 'portal') {

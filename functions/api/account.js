@@ -33,6 +33,24 @@ export async function mailEnc(env, m) { if (!m) return m; const k = await mkey(e
 export async function mailDec(env, v) { if (!v || !String(v).startsWith('e1:')) return v || ''; const k = await mkey(env); if (!k) return ''; try { const u = unb64(v.slice(3));
   return new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: u.slice(0, 12) }, k, u.slice(12))); } catch (e) { return ''; } }
 // 👤 qui a créé quel espace (voyage partagé, fil d’abonnés, invitation) : pour pouvoir suspendre tout un compte après un signalement
+// 🛡️ (13/11/2026) espace « partagé » : voyage partagé, fil d’abonnés, lien personnel, boîte d’invitations… Ce n’est le carnet principal
+//    de personne. Celui qui en a seulement le code (un compagnon, un abonné) ne peut ni y attacher un compte, ni en changer le code,
+//    ni y bloquer un appareil, ni s’y créer des codes compagnon. Avant : un abonné attachait SON adresse e-mail au fil d’un auteur
+//    (tous les autres appareils étaient alors refusés), ou changeait le code du fil (l’ancien mourait pour tout le monde, fiches effacées).
+export async function sharedSpace(env, space) {
+  try { const r = await env.DB.prepare('SELECT owner FROM space_owner WHERE space = ?1').bind(space).first(); if (r && r.owner && r.owner !== space) return true; } catch (e) {}
+  for (const q of ['SELECT 1 AS x FROM space_links WHERE child = ?1', 'SELECT 1 AS x FROM space_admin WHERE space = ?1', 'SELECT 1 AS x FROM space_lock WHERE space = ?1']) {
+    try { if (await env.DB.prepare(q).bind(space).first()) return true; } catch (e) {}   // table pas encore créée : rien à dire
+  }
+  return false;
+}
+// vrai si cet espace se gère comme un carnet principal : il a déjà un compte vérifié, ou rien ne dit qu’il est partagé
+export async function mainSpace(env, space) {
+  try { if (await env.DB.prepare('SELECT 1 AS x FROM acct WHERE space = ?1 AND verified = 1').bind(space).first()) return true; } catch (e) {}
+  return !(await sharedSpace(env, space));
+}
+const NOT_MAIN = { error: 'Cet espace est partagé (voyage, fil d’abonnés, invitation) : cette action se fait depuis le carnet de son propriétaire. — This is a shared space: do this from its owner’s notebook.', shared: true };
+export { NOT_MAIN };
 export async function ownerOf(env, space) { try { const r = await env.DB.prepare('SELECT owner FROM space_owner WHERE space = ?1').bind(space).first(); return r ? r.owner : ''; } catch (e) { return ''; } }
 let ready = false;
 export async function acctTables(db) {
@@ -77,8 +95,8 @@ export async function acctNew(env, request, space, nChanges = 1) {
     await acctTables(env.DB);
     const ow = await ownerOf(env, space);
     if (ow === '-light') {   // petit espace créé sans compte (boîte d’invitations, code de passage) : il reste petit
-      const r = await env.DB.prepare('SELECT COUNT(*) AS n FROM records WHERE space = ?1').bind(space).first();
-      return r && r.n + nChanges > 200 ? NEED : null;
+      const r = await env.DB.prepare('SELECT COUNT(*) AS n, COALESCE(SUM(LENGTH(data)), 0) AS b FROM records WHERE space = ?1').bind(space).first();
+      return r && (r.n + nChanges > 200 || r.b > 1000000) ? NEED : null;   // 🛡️ 200 fiches et 1 Mo en tout (avant : jusqu’à 3,2 Mo par petit espace)
     }
     const any = await env.DB.prepare('SELECT 1 FROM records WHERE space = ?1 LIMIT 1').bind(space).first(); if (any) return null;   // espace existant : rien ne change
     const dev = String(request.headers.get('X-Carnet-Dev') || '').replace(/[^a-z0-9]/gi, '').slice(0, 40);
@@ -93,7 +111,10 @@ export async function acctNew(env, request, space, nChanges = 1) {
     if (request.headers.get('X-Carnet-Main') === '1') { if (!(await acctReady(env, space, dev))) return NEED; await own(space); return null; }
     const tok = (request.headers.get('X-Carnet-Acct') || '').trim(); if (tok.length < 8 || tok.startsWith('mb:')) return NEED;
     const cs = await codeSpace(env, tok); if (cs.dead || !cs.space) return NEED;
-    if (!(await acctReady(env, cs.space, dev))) return NEED; await own(cs.space); return null;   // cet espace appartient à ce compte
+    if (!(await acctReady(env, cs.space, dev))) return NEED;
+    // 🛡️ 80 nouveaux espaces par jour et par compte (voyages partagés, fils, liens personnels) : largement au-dessus d’un usage réel
+    if (!(await dbRate(env, 'ns:' + cs.space, DAY, 80))) return { error: 'Trop de nouveaux partages aujourd’hui : réessaie demain. — Too many new shares today: try again tomorrow.', retry: 3600 };
+    await own(cs.space); return null;   // cet espace appartient à ce compte
   } catch (e) { return null; }
 }
 // 📷 (12/11/2026) envoi d’une photo : jamais dans un espace inconnu, ni dans un petit espace créé sans compte.
@@ -163,6 +184,8 @@ export async function onRequestPost({ request, env }) {
     let n = 0; if (active) { const r = await env.DB.prepare('SELECT COUNT(*) AS n FROM acct_dev WHERE space = ?1 AND ok = 1').bind(space).first(); n = r ? r.n : 0; }
     return json({ ok: true, acct: active, pendMail: !!(a && a.pend), mail: a ? mask(await mailDec(env, a.verified ? a.email : a.pend)) : '', devOk: !active || devOk, pend, n, max: a ? a.maxdev : 0 });
   }
+  // 🛡️ pas de compte sur un espace partagé (voir sharedSpace)
+  if (!active && (b.a === 'start' || b.a === 'verify') && await sharedSpace(env, space)) return json(NOT_MAIN, 403);
   if (b.a === 'start') {
     if (!canAdmin) return json({ error: 'Valide d’abord cet appareil — Verify this device first' }, 403);
     const email = String(b.email || '').trim().toLowerCase(); if (!okMail(email)) return json({ error: 'Adresse e-mail invalide — Invalid e-mail address' }, 400);
