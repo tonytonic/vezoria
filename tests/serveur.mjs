@@ -154,5 +154,19 @@ IP = '203.0.113.93';
   const after = env.DB._db.prepare('SELECT COUNT(*) AS n FROM records WHERE space IN (SELECT space FROM space_owner WHERE owner = ?)').get(sp).n, f1 = env.DB._db.prepare("SELECT COUNT(*) AS n FROM records WHERE id IN ('f1','g1')").get().n;
   ok(r.s === 200 && before > 0 && after === 0 && f1 === 0 && r.j.spaces >= 2, 'suppression à la demande : le carnet, le compte ET les espaces créés par ce compte', { before, after, f1, j: r.j });
   ok(env.DB._db.prepare('SELECT COUNT(*) AS n FROM acct WHERE space = ?').get(sp).n === 0, 'le compte (adresse e-mail) est effacé'); }
+// 7g. (13/11) le propriétaire d'un AUTRE carnet ne peut pas « reprendre » un code compagnon qui existe déjà
+IP = '203.0.113.94';
+{ const C2 = hex(), D2 = 'dAUTRE00001', mt2 = hex();
+  let x = await sync(C2, D2, [rec('o1')], { 'X-Carnet-Acct': C2 });
+  x = await call('account', { code: C2, dev: D2, body: { a: 'start', email: 'bruno@example.org' } }); x = await call('account', { code: C2, dev: D2, body: { a: 'verify', otp: x.j.devOtp } });
+  const C3 = hex(), D3 = 'dPROPRIO003'; x = await sync(C3, D3, [rec('o2')], { 'X-Carnet-Acct': C3 });
+  x = await call('account', { code: C3, dev: D3, body: { a: 'start', email: 'carla@example.org' } }); x = await call('account', { code: C3, dev: D3, body: { a: 'verify', otp: x.j.devOtp } });
+  x = await call('member', { code: C3, dev: D3, body: { a: 'add', mt: mt2, grant: 'QUJD', label: 'e1:y' } }); ok(x.s === 200, 'un 2e propriétaire crée son code compagnon', x);
+  x = await call('member', { code: C2, dev: D2, body: { a: 'add', mt: mt2, grant: 'WFla', label: 'e1:z' } }); ok(x.s === 409, 'un autre propriétaire ne peut pas reprendre ce code compagnon', x);
+  x = await call('member', { body: { a: 'grant', mt: mt2 } }); ok(x.s === 200 && x.j.grant === 'QUJD', 'le compagnon garde son accès au bon carnet', x);
+  x = await call('member', { code: C3, dev: D3, body: { a: 'add', mt: mt2, grant: 'TU5P', label: 'e1:w' } }); ok(x.s === 200, 'son propriétaire peut toujours le renouveler', x); }
+// 7h. (13/11) l'envoi des rappels (?a=flush) ne peut pas être appelé en boucle
+IP = '203.0.113.95';
+{ const fs2 = []; for (let i = 0; i < 25; i++) { const x = await call('push', { method: 'GET', query: '?a=flush' }); fs2.push(x.s); } ok(fs2.slice(0, 20).every(s => s !== 429) && fs2.includes(429), 'envoi des rappels : limité à 20 appels par heure et par connexion', fs2.join(',')); }
 console.log(`\n${pass} essais réussis, ${fail} en échec` + (fail ? ' : ' + bad.join(' | ') : ''));
 process.exit(fail ? 1 : 0);

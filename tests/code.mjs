@@ -31,4 +31,10 @@ for (const f of files) { const full = REPO + '/' + f, src = fs.readFileSync(full
       while (k > 0 && i - k < 80) { k--; const l2 = L[k], i2 = l2.length - l2.trimStart().length; if (/\bfunction\b|=>\s*\{\s*$/.test(l2) && i2 < ind) { before.unshift(l2.slice(l2.indexOf('{') + 1)); break; } before.unshift(l2); }
       const re = new RegExp('(^|[^\\w$.])' + nm.replace(/\$/g, '\\$') + '\\s*\\('), hit = before.map(l => l.replace(/\/\/.*$/, '')).some(l => { const m2 = re.exec(l); return m2 && !/=>/.test(l.slice(0, m2.index)); });   // appel direct, pas dans une petite fonction appelée plus tard
       if (hit) say(f, i + 1, `« ${nm} » est appelée plus haut dans ce bloc, puis redéclarée ici : plantage « before initialization »`, ln); } }); } }
-console.log(bad ? bad + ' souci(s).' : files.length + ' fichiers : syntaxe correcte, aucune instruction avalée par un commentaire, aucune fiche mal rangée.'); process.exit(bad ? 1 : 0);
+// 5. un lien décodé sans filet : un « % » isolé (lien collé, adresse modifiée) faisait planter l'écran (13/11/2026) → dURI()
+// 6. un lien venu des données (fiche, compagnon, site extérieur) mis dans href/src sans safeUrl() : « javascript:… » possible
+{ for (const f of files.filter(f => /public\/assets\/app-\d\.js$/.test(f))) fs.readFileSync(REPO + '/' + f, 'utf8').split('\n').forEach((ln, i) => {
+    if (/\bdecodeURIComponent\(/.test(ln) && !/const dURI =/.test(ln)) say(f, i + 1, 'decodeURIComponent sans filet : utiliser dURI()', ln);
+    for (const m of ln.matchAll(/(?:href|src)=["']?\$\{([^}]{1,120})\}/g)) if (/\.(lien|url|web|site|img|link|href|photo)\b/.test(m[1]) && !/safeUrl\(/.test(m[1])) say(f, i + 1, 'lien venu des données sans safeUrl()', m[0]);
+    for (const m of ln.matchAll(/\.(?:href|src) = ([^;]{1,120})/g)) if (/\.(url|img|link|lien|web|site|search)\b/.test(m[1]) && !/safeUrl\(|createObjectURL|toDataURL/.test(m[1])) say(f, i + 1, 'lien venu des données sans safeUrl()', m[0]); }); }
+console.log(bad ? '✗ ÉCHEC : ' + bad + ' souci(s) (voir plus haut).' : files.length + ' fichiers : syntaxe correcte, aucune instruction avalée par un commentaire, aucune fiche mal rangée.'); process.exit(bad ? 1 : 0);

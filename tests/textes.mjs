@@ -51,4 +51,4 @@ for (const lang of LANGS) {
   for (const [core, [w, t]] of fixed) if (T(t) === t && T(core) === core && !keys.has(flat(t)) && !keys.has(flat(core))) miss.push(w + ' · ' + core.slice(0, 140));
   bad += miss.length; console.log(lang + ' : ' + (miss.length ? miss.length + ' texte(s) non traduit(s)\n' + miss.slice(0, +process.env.MAX || 30).map(x => '   · ' + x.replace(/\n/g, '⏎')).join('\n') : 'tout est traduit'));
 }
-console.log(plain.size + ' messages simples, ' + composed.length + ' messages composés, ' + fixed.size + ' textes fixes contrôlés dans ' + LANGS.length + ' langues.'); process.exit(bad ? 1 : 0);
+console.log(plain.size + ' messages simples, ' + composed.length + ' messages composés, ' + fixed.size + ' textes fixes contrôlés dans ' + LANGS.length + ' langues.'); console.log(bad ? '✗ ÉCHEC : ' + bad + ' texte(s) non traduit(s) (voir plus haut)' : '✓ OK : tout est traduit'); process.exit(bad ? 1 : 0);

@@ -22,4 +22,5 @@ for (const lang of LANGS) {
     if (latin && SAME.test(s)) continue; miss.push(s); }
   bad += miss.length; console.log(lang + ' : ' + (miss.length ? miss.length + ' phrase(s) non traduite(s)' : 'tout est traduit') + (miss.length ? '\n' + miss.slice(0, +process.env.MAX || 40).map(x => '   · ' + x.replace(/\n/g, '⏎').slice(0, 150)).join('\n') : ''));
 }
-console.log(cand.size + ' phrases contrôlées dans ' + LANGS.length + ' langues.'); process.exit(bad ? 1 : 0);
+console.log(cand.size + ' phrases contrôlées dans ' + LANGS.length + ' langues.');
+console.log(bad ? '✗ ÉCHEC : ' + bad + ' traduction(s) manquante(s) (voir plus haut)' : '✓ OK : tout est traduit'); process.exit(bad ? 1 : 0);   // la dernière ligne dit toujours le verdict
