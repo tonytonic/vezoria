@@ -281,11 +281,32 @@ SC['19 toutes les façons de créer un voyage, à plusieurs'] = async us => {
   n0 = await trips(); await voyageVierge(A, 'Vierge', 60, 62); ok('voyage vierge créé', (await trips()) === n0 + 1);
 };
 
+SC['20 un compagnon malveillant ne touche ni mon compte, ni mes abonnés, ni mes villes'] = async us => {
+  const { A, C } = await partage({ abonne: false }); us.push(A, C); const tid = await tripOf(A, 'Rome à deux');
+  // côté Anthony : son compte, ses réglages d’abonnés, une ville placée
+  await A.ev(() => { const R = CV._R(); R['geo:pise'] = { id: 'geo:pise', type: 'geo', q: 'Pise', lat: 43.716, lng: 10.401, updatedAt: 1000 }; });
+  const before = await A.ev(() => { const R = CV._R(); return JSON.stringify([R.acct && R.acct.k, R.abcfg && R.abcfg.code, R['geo:pise'].lat]); });
+  // Claire (membre du voyage partagé) glisse dans le dossier du voyage des fiches qui n’ont rien à y faire
+  await C.ev(tid => { const R = CV._R(), M = CV._M(), now = Date.now() + 5000, sp = (M.spaces || []).find(x => x.code === (M.tripSpace || {})[tid]) || (M.spaces || [])[0];
+    const evil = [{ id: 'acct', type: 'acct', k: 'CLE-DU-VOLEUR', updatedAt: now }, { id: 'abcfg', type: 'abcfg', v: 2, at: now, code: 'CODEDUVOLEUR', vis: [tid], inv: [], updatedAt: now },
+      { id: 'geo:pise', type: 'geo', q: 'Pise', lat: 1, lng: 1, g5: 1, updatedAt: now }, { id: 'mv:' + tid, type: 'moved', tid, code: 'CODEDUVOLEUR', at: now, updatedAt: now },
+      { id: 'plok1', type: 'place', trip: tid, nom: 'Visite ajoutée par Claire', date: R[tid].debut, updatedAt: now }];
+    evil.forEach(r => { R[r.id] = r; sp.dirty = sp.dirty || []; sp.dirty.push(r.id); }); }, tid);
+  await sync(C, A); await sync(C, A);
+  const after = await A.ev(() => { const R = CV._R(); return JSON.stringify([R.acct && R.acct.k, R.abcfg && R.abcfg.code, R['geo:pise'].lat]); });
+  ok('la clé de mon compte, mes réglages d’abonnés et mes villes ne bougent pas', before === after, before + ' → ' + after);
+  ok('aucune fiche « ce voyage a déménagé » acceptée depuis un voyage partagé', await A.ev(tid => !CV._R()['mv:' + tid] || CV._R()['mv:' + tid].code !== 'CODEDUVOLEUR', tid));
+  ok('une vraie fiche du voyage (une visite) passe toujours', (await fiches(A, 'place', 'nom')).includes('Visite ajoutée par Claire'));
+  const dr = await A.ev(() => CV._spDrop().join(' | ')); ok('les fiches refusées sont bien celles-là (compte, abonnés, ville, déménagement)', /acct/.test(dr) && /abcfg/.test(dr) && /geo/.test(dr) && /moved/.test(dr), dr);
+};
+
 // ───────── moteur ─────────
 const only = process.argv[2] ? new RegExp(process.argv[2], 'i') : null; let jsErr = 0;
 for (const [name, fn] of Object.entries(SC)) { if (only && !only.test(name)) continue; console.log('\n▶ ' + name); const us = []; const t0 = Date.now();
   try { await fn(us); } catch (e) { ok('le parcours va jusqu’au bout', false, String(e && e.stack || e).split('\n').slice(0, 3).join(' ')); }
   const errs = [...new Set(us.flatMap(u => u.errs))]; if (errs.length) { jsErr += errs.length; ok('aucune erreur JavaScript', false, errs.join(' | ')); }
+  // 🛡️ le filtre des dossiers partagés ne doit jamais refuser une fiche d’un parcours normal (seul le scénario du compagnon malveillant en refuse)
+  if (!/^20 /.test(name)) { const dr = []; for (const u of us) { try { dr.push(...(await u.ev(() => (CV._spDrop ? CV._spDrop() : [])))); } catch (e) {} } if (dr.length) ok('aucune fiche légitime refusée par le filtre des dossiers partagés', false, [...new Set(dr)].join(' | ')); }
   for (const u of us) await u.ctx.close().catch(() => {}); log(`   (${Math.round((Date.now() - t0) / 1000)} s)`); }
 const bad = RES.filter(r => !r[0]); console.log(`\n═══ ${RES.length - bad.length} vérifications réussies, ${bad.length} en échec ═══`); bad.forEach(r => console.log('  ✗ ' + r[1]));
 const apiBad = apiLog.filter(l => /→ 5\d\d|ERREUR SERVEUR/.test(l)); if (apiBad.length) console.log('Erreurs serveur :\n' + apiBad.slice(0, 10).join('\n'));

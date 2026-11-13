@@ -1,6 +1,7 @@
 // Serveur local complet : public/ + /api/* (fonctions Pages) sur SQLite + faux R2
 import { DatabaseSync } from 'node:sqlite';
 import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path'; import { pathToFileURL } from 'node:url';
+globalThis.caches = globalThis.caches || { default: { async match() { return null; }, async put() {} } };   // le cache de Cloudflare n’existe pas ici (seewhat, act, unfurl)
 const REPO = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../..'), ROOT = REPO + '/public', API = REPO + '/functions/api';
 function d1() { const db = new DatabaseSync(':memory:');
   const mk = (sql, args = []) => ({ bind: (...a) => mk(sql, a),
