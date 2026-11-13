@@ -1863,10 +1863,24 @@
      le récapitulatif, et l’ordre des villes le plus court si on peut gagner de la route. */
   let tcf = null;
   // 👫 (13/11/2026) « Avec qui ? » et « Combien de voyageurs ? » restent d’accord : on pouvait partir « Seul(e) » à 2, ou « En couple » à 5.
-  function inspWho(src){
-    const q = document.getElementById('in-qui'), n = document.getElementById('in-nb'); if(!q || !n) return;
+  // 👫 (13/11/2026) le même bloc « Qui part ? · Avec qui ? · Combien de voyageurs ? » au DÉBUT de toutes les créations de voyage
+  //    (Où partir ?, Je sais où je vais, Je le dessine sur le globe). p = préfixe des champs (in, wz, gp) ; onPick = à faire après un voyageur coché.
+  function whoHTML(p, st, onPick){
+    const vv = (st.vv && st.vv.length ? st.vv : [M.me]).filter(Boolean), n0 = vv.length;
+    const qui = st.qui || (n0 <= 1 ? 'solo' : n0 === 2 ? 'couple' : 'amis');
+    const nb = qui === 'solo' ? '1' : qui === 'couple' ? '2' : String(Math.min(6, Math.max(2, +st.nb || n0 || 2)));
+    const opts = [['solo', MSGT('Seul(e)'), '🧍'], ['couple', MSGT('En couple'), '💕'], ['amis', MSGT('Entre amis'), '🎉'], ['famille', MSGT('En famille'), '👨‍👩‍👧']];
+    return `${profiles().length ? `<div class="v-f"><label>👥 ${MSGT('Qui part ?')}</label><div onclick="setTimeout(()=>{ CV.whoPick('${p}'); ${onPick || ''} },0)">${peopleSel(p + '-tv', profiles().map(x=>x.id), vv)}</div></div>` : ''}
+      <div class="v-f"><label>👫 ${MSGT('Avec qui ?')}</label><select class="v-in" id="${p}-qui" hidden onchange="CV.inspWho('qui','${p}')">${opts.map(([v, l])=>`<option value="${v}"${v === qui ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>
+      <div class="wz-cards">${opts.map(([v, l, ic])=>`<button type="button" class="wz-card${v === qui ? ' on' : ''}" onclick="const s=document.getElementById('${p}-qui');s.value='${v}';s.dispatchEvent(new Event('change'));this.parentNode.querySelectorAll('.wz-card').forEach(x=>x.classList.toggle('on', x === this))"><i>${ic}</i><b>${esc(l)}</b></button>`).join('')}</div></div>
+      <div class="v-f"><label>${MSGT('Combien de voyageurs ?')}</label><select class="v-in" id="${p}-nb" onchange="CV.inspWho('nb','${p}')">${[['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6',MSGT('6 et +')]].map(([v, l])=>`<option value="${v}"${v === nb ? ' selected' : ''}>${l}</option>`).join('')}</select></div>`;
+  }
+  // un voyageur coché de plus : le nombre ne descend jamais sous le nombre de cochés
+  function whoPick(p){ const n = document.querySelectorAll('#' + p + '-tv button.on').length, s = document.getElementById(p + '-nb'); if(s && n) s.value = String(Math.min(6, Math.max(n, +s.value > n ? +s.value : n))); inspWho('nb', p); }
+  function inspWho(src, p){
+    p = p || 'in'; const q = document.getElementById(p + '-qui'), n = document.getElementById(p + '-nb'); if(!q || !n) return;
     const setQ = v => { if(q.value === v) return; q.value = v; const box = q.nextElementSibling, i = [...q.options].findIndex(o=>o.value === v); if(box) [...box.querySelectorAll('.wz-card')].forEach((b, k)=>b.classList.toggle('on', k === i)); };
-    if(src === 'qui'){ const picked = document.querySelectorAll('#in-tv button.on').length;
+    if(src === 'qui'){ const picked = document.querySelectorAll('#' + p + '-tv button.on').length;
       if(q.value === 'solo') n.value = '1'; else if(q.value === 'couple') n.value = '2'; else if(+n.value < 2) n.value = String(Math.min(6, Math.max(q.value === 'famille' ? 3 : 2, picked))); }
     else { const k = +n.value || 1; if(k === 1) setQ('solo'); else if(k === 2){ if(q.value === 'solo') setQ('couple'); } else if(q.value === 'solo' || q.value === 'couple') setQ('amis'); }
   }
@@ -1954,7 +1968,7 @@
     const S = M.insp || {}, days = +(S.duree || 7), st = custom.stops, debut = custom.debut || inspDebut(x);
     const tid = 't' + uid(), out = [], v = (custom.vv || []).length ? custom.vv : M.me ? [M.me] : [];
     let cur = debut; const stops = st.map(([c,n])=>{ const s = {c, n, d:cur, f:addDays(cur, n)}; cur = s.f; return s; }), fin = cur;
-    out.push({id:tid, type:'trip', ccs:[x.d[2]].filter(Boolean), titre:custom.titre || x.nom + ' · ' + durLbl(days), sous:stops.map(s=>s.c).join(' → '), debut, fin, voyageurs:v, objectif:num(S.budget)||''});
+    out.push({id:tid, type:'trip', ccs:[x.d[2]].filter(Boolean), titre:custom.titre || x.nom + ' · ' + durLbl(days), sous:stops.map(s=>s.c).join(' → '), debut, fin, voyageurs:v, objectif:num(S.budget)||'', qui:S.qui || '', nbv:Math.min(6, +S.nb || v.length || 1)});
     // 🧭 (12/11/2026) voyage dessiné sur le globe : l’aller et le retour restent « Peu importe » (de Nantes à Tours, on ne prend pas l’avion) ;
     //    on choisit ensuite sur la carte 3D ou dans la fiche. « Où partir ? » garde son calcul (avion, ou voiture si c’est près).
     //    (13/11/2026) et ils se choisissent avant de créer le voyage : « Pour y aller et revenir », « Entre les étapes » (train, voiture, bus, à pied, ou peu importe).

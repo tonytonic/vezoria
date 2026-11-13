@@ -2573,7 +2573,7 @@
     const I = M.insp || {}, pool = profiles().map(p=>p.id), vv = (I.vv && I.vv.length ? I.vv : [M.me]).filter(Boolean), dep = I.gDep || M.home || '';
     openSheet(`<div class="wz2"><div class="wz-hero"><i aria-hidden="true">🌍</i><h2>${MSGT('Avant de dessiner')}</h2><p>${MSGT('Tes dates, qui part et d’où : ensuite tu poses tes étapes sur le globe.')}</p></div>
       <div class="v-f2"><div class="v-f"><label>${MSGT('Départ le')}</label><input class="v-in" type="date" id="gp-d1" value="${esc(I.gD1 || '')}"></div><div class="v-f"><label>${MSGT('Retour le')}</label><input class="v-in" type="date" id="gp-d2" value="${esc(I.gD2 || '')}"></div></div>
-      ${pool.length ? `<div class="v-f"><label>👥 ${MSGT('Qui part ?')}</label><div onclick="setTimeout(()=>CV.worldPre(1),0)">${peopleSel('gp-tv', pool, vv)}</div></div>` : ''}
+      ${whoHTML('gp', {vv, qui:I.qui, nb:I.nb}, 'CV.worldPre(1);')}
       <label class="cv-checkline wz-same" id="gp-samel"${vv.length > 1 ? '' : ' style="display:none"'}><input type="checkbox" id="gp-same" ${I.gSame !== false ? 'checked' : ''} onchange="CV.worldPre(1)"> 🤝 ${MSGT('On part et on revient tous du même endroit')}</label>
       <div id="gp-one"><div class="v-f2"><div class="v-f"><label>🏠 ${MSGT('Départ de')}</label><input class="v-in" id="gp-dep" data-place autocomplete="off" value="${esc(dep)}" placeholder="${esc(MSGT('Ta ville'))}"></div><div class="v-f"><label>🏁 ${MSGT('Retour à')}</label><input class="v-in" id="gp-ret" data-place autocomplete="off" value="${esc(I.gRet || dep)}" placeholder="${esc(MSGT('Même ville'))}"></div></div></div>
       <div id="gp-pp"></div>
@@ -2590,7 +2590,7 @@
     if(!d1){ alert(MSGT('Choisis la date de départ.')); return; } if(!d2 || d2 <= d1){ alert(MSGT('Choisis une date de retour après le départ.')); return; }
     const vv = document.getElementById('gp-tv') ? peopleVal('gp-tv') : [M.me].filter(Boolean), same = (document.getElementById('gp-same') || {checked:true}).checked || vv.length < 2;
     const gens = Object.assign({}, (M.insp || {}).gens || {}, ppRead()), me = gens[M.me] || gens[vv[0]] || {}, dep = same ? g('gp-dep') : me.dep || '', ret = same ? g('gp-ret') || dep : me.ret || dep;
-    M.insp = Object.assign({}, M.insp || {}, {d1, d2, duree:String(Math.min(60, nights(d1, d2) + 1)), mois:String(+d1.slice(5, 7)), vv:vv.length ? vv : [M.me].filter(Boolean), same, gens, gD1:d1, gD2:d2, gDep:dep, gRet:ret, gSame:same, globePre:1});
+    M.insp = Object.assign({}, M.insp || {}, {d1, d2, duree:String(Math.min(60, nights(d1, d2) + 1)), mois:String(+d1.slice(5, 7)), vv:vv.length ? vv : [M.me].filter(Boolean), qui:g('gp-qui') || (M.insp || {}).qui, nb:g('gp-nb') || (M.insp || {}).nb, same, gens, gD1:d1, gD2:d2, gDep:dep, gRet:ret, gSame:same, globePre:1});
     if(dep){ M.home = dep; } persist(); worldNew();
   }
   function worldNew(){ closeSheet(true); if(wm && wm.map && wm.map.loaded && wm.map.loaded()){ worldMap(); setTimeout(worldPlan, 300); } else { wantPlan = true; worldMap(); } }
@@ -2630,14 +2630,15 @@
   }
   async function worldHome(){
     const I = M.insp || {}, pts = [[I.gDep, '🏠'], [I.gRet && normQ(I.gRet) !== normQ(I.gDep || '') ? I.gRet : '', '🏁']].filter(x=>x[0]);
-    (wm.homeM || []).forEach(m=>m.remove()); wm.homeM = []; wm.home = null;
+    (wm.homeM || []).forEach(m=>m.remove()); wm.homeM = []; wm.home = null; wm.ret = null;
     for(const [v, ic] of pts){ let g = null; try { g = await geocode(v, null); } catch(e){} if(!g || g.lat == null || !wm || !wm.map) continue;
       const el = document.createElement('div'); el.className = 'wm-home-pin'; el.innerHTML = `<b>${ic}</b><span>${esc(v)}</span>`;
-      wm.homeM.push(new maplibregl.Marker({element:el, anchor:'bottom'}).setLngLat([g.lng, g.lat]).addTo(wm.map)); if(ic === '🏠') wm.home = {lat:g.lat, lng:g.lng}; }
+      wm.homeM.push(new maplibregl.Marker({element:el, anchor:'bottom'}).setLngLat([g.lng, g.lat]).addTo(wm.map)); if(ic === '🏠') wm.home = {lat:g.lat, lng:g.lng}; else wm.ret = {lat:g.lat, lng:g.lng}; }
     if(wm.home && !(wm.plan || []).length) try { wm.map.flyTo({center:[wm.home.lng, wm.home.lat], zoom:Math.max(3, wm.map.getZoom()), duration:900}); } catch(e){}
     if((wm.plan || []).length) worldPlanLine(); }
   function worldPlanLine(){
-    const map = wm.map, P = wm.home && wm.plan.length ? [wm.home, ...wm.plan, wm.home] : wm.plan, coords = [];
+    // 🏁 (13/11/2026) le trait revient à la ville de RETOUR (Paris → … → Nantes), plus à la ville de départ
+    const map = wm.map, P = wm.home && wm.plan.length ? [wm.home, ...wm.plan, wm.ret || wm.home] : wm.plan, coords = [];
     for(let i=1;i<P.length;i++){ const a = P[i-1], b = P[i]; for(let k=0;k<=24;k++){ const f = k/24; coords.push([a.lng + (b.lng - a.lng) * f, a.lat + (b.lat - a.lat) * f]); } }
     const data = {type:'Feature', geometry:{type:'LineString', coordinates: coords.length ? coords : [[P[0].lng, P[0].lat],[P[0].lng, P[0].lat]]}};
     if(map.getSource('plan')) map.getSource('plan').setData(data);

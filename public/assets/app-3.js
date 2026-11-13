@@ -13,7 +13,7 @@
   function wzRead(){
     const g = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
     if(!document.getElementById('wz')) return;
-    if(wz.step===1){ wz.titre = g('wz-titre'); wz.voyageurs = peopleVal('wz-tv'); wz.objectif = g('wz-obj'); }
+    if(wz.step===1){ wz.titre = g('wz-titre'); wz.voyageurs = document.getElementById('wz-tv') ? peopleVal('wz-tv') : [M.me].filter(Boolean); wz.qui = g('wz-qui'); wz.nb = g('wz-nb'); wz.objectif = g('wz-obj'); }
     if(wz.step===2){ wz.debut = g('wz-debut'); wz.nuits = Math.max(1, parseInt(g('wz-nuits'))||1); }
     if(wz.step===3) wz.etapes = [...document.querySelectorAll('.wz-et')].map((r, i)=>{ const o = wz.etapes[i] || {}, ville = r.querySelector('[data-k=ville]').value.trim(), mode = r.querySelector('[data-k=mode]').value;
       return {ville, nuits:Math.max(0, parseInt(r.querySelector('[data-k=nuits]').value)||0), mode, mm: !!o.mm || (o.ville === ville && o.mode && mode !== o.mode), ...(o.nw ? {nw:1} : {})}; });
@@ -269,8 +269,8 @@
       <div class="wz-hero"><i aria-hidden="true">${Q[0]}</i><h2>${MSGT(Q[1])}</h2><p>${MSGT(Q[2])}</p></div>`;
     if(s===1){
       h += `<div class="v-f"><label>Nom du voyage</label><input class="v-in" id="wz-titre" value="${esc(wz.titre)}" placeholder="Ex. Été 2028 en Scandinavie, Week-end Palma…"></div>
-        <div class="v-f"><label>Qui part ?</label>${peopleSel('wz-tv', profiles().map(p=>p.id), wz.voyageurs)}
-          <div class="v-sum-small" style="margin-top:4px">Il manque quelqu’un ? Ajoute son profil dans ⚙️ Partage, ou plus tard dans 💰 Budget.</div></div>
+        ${whoHTML('wz', {vv:wz.voyageurs, qui:wz.qui, nb:wz.nb})}
+        <div class="v-sum-small" style="margin:-6px 0 10px">Il manque quelqu’un ? Ajoute son profil dans ⚙️ Partage, ou plus tard dans 💰 Budget.</div>
         <div class="v-f"><label>Budget visé par personne (facultatif)</label><input class="v-in" id="wz-obj" inputmode="decimal" value="${esc(wz.objectif)}" placeholder="${CS()}"></div>`;
     }
     if(s===2){
@@ -334,7 +334,7 @@
     const tid = 't' + uid(), out = [], v = wz.voyageurs, days = {};
     const day = (date, titre) => { days[date] = {id:'day:'+tid+':'+date, type:'day', trip:tid, date, titre, plan:''}; };
     const T = (o, k) => out.push(Object.assign({id:'i'+uid()+k, type:'item', trip:tid, cat:'transport', statut:'todo', partage:'pp', qui:[]}, o));
-    out.push({id:tid, type:'trip', titre:wz.titre, sous:st.map(e=>e.ville).join(' → '), debut:wz.debut, fin, voyageurs:v, objectif: wz.objectif==='' ? '' : num(wz.objectif), cover:wz.cover || '', coverWk:wz.coverWk || '', ccs: wz.ccs || undefined});
+    out.push({id:tid, type:'trip', titre:wz.titre, sous:st.map(e=>e.ville).join(' → '), debut:wz.debut, fin, voyageurs:v, qui:wz.qui || '', nbv:Math.min(6, +wz.nb || v.length || 1), objectif: wz.objectif==='' ? '' : num(wz.objectif), cover:wz.cover || '', coverWk:wz.coverWk || '', ccs: wz.ccs || undefined});
     st.forEach((e,i)=>{
       if(e.nuits > 0) out.push({id:'i'+uid()+'h'+i, type:'item', trip:tid, cat:'hotel', titre:e.ville, base:e.ville, date:e.debut, dateFin:e.fin, statut:'todo', partage:'grp', qui:[]});
       const arrive = i===0 ? 'Arrivée à ' + e.ville : st[i-1].ville + ' → ' + e.ville;

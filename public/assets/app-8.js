@@ -345,6 +345,14 @@
       return r.type !== 'feed' || !FT()[tid]; });
   }
   const devId = () => M.devId || (M.devId = 'd' + uid());
+  // 🔐 (13/11/2026) clé secrète de CET appareil : tirée au hasard, gardée sur le téléphone seul (jamais dans les fiches du carnet,
+  //    jamais dans une sauvegarde), envoyée au serveur avec l'identifiant. Sans elle, un autre téléphone qui recopie l'identifiant
+  //    (il est visible dans les fiches « appareils ») est refusé. Écrite tout de suite : une clé perdue obligerait à revalider par e-mail.
+  const devKey = () => { try { const id = devId(), o = JSON.parse(localStorage.getItem('vz_dk') || 'null');
+    if(o && o.d === id && /^[0-9a-f]{64}$/.test(o.k || '')) return o.k;
+    const k = [...crypto.getRandomValues(new Uint8Array(32))].map(b=>b.toString(16).padStart(2, '0')).join('');
+    localStorage.setItem('vz_dk', JSON.stringify({d:id, k})); const back = JSON.parse(localStorage.getItem('vz_dk') || 'null');
+    return back && back.k === k ? k : ''; } catch(e){ return ''; } };
   const myName = () => (M.me && prof(M.me) ? pname(M.me) : '') || M.followName || '';
   const stripStamp = r => { const o = Object.assign({}, r); ['createdAt','createdBy','updatedAt','updatedBy'].forEach(k=>delete o[k]); return JSON.stringify(o); };
   function putQuiet(arr){ arr.forEach(r=>{ sbKeep(r); photoGone(R[r.id], r); stamp(r); R[r.id] = r; markDirty(r.id); }); if(arr.length){ persist(); queueSync(); } }
@@ -1324,7 +1332,9 @@
   // l’identifiant de l’appareil accompagne les synchros et les photos : le serveur refuse un appareil bloqué
   { const f0 = window.fetch.bind(window);
     window.fetch = (u, o) => { try { const url = typeof u === 'string' ? u : (u && u.url) || '';
-      if(/\/api\/(sync|photo|device|rotate|member|account|plan)\b/.test(url) && o && o.headers && !(o.headers instanceof Headers) && o.headers['X-Carnet-Code'] && !o.headers['X-Carnet-Dev']) o = Object.assign({}, o, {headers:Object.assign({}, o.headers, {'X-Carnet-Dev':devId()})}); } catch(e){}
+      if(/\/api\/(sync|photo|device|rotate|member|account|plan|push)\b/.test(url) && o && o.headers && !(o.headers instanceof Headers) && o.headers['X-Carnet-Code']){
+        const add = {}; if(!o.headers['X-Carnet-Dev']) add['X-Carnet-Dev'] = devId(); if(!o.headers['X-Carnet-Key']){ const k = devKey(); if(k) add['X-Carnet-Key'] = k; }
+        if(Object.keys(add).length) o = Object.assign({}, o, {headers:Object.assign({}, o.headers, add)}); } } catch(e){}
       return f0(u, o); }; }
   function devLabel(){
     const ua = navigator.userAgent || '', pl = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iPad' : /Android/.test(ua) ? (/Mobile/.test(ua) ? MSGT('Téléphone Android') : MSGT('Tablette Android')) : /Windows/.test(ua) ? 'PC Windows' : /Macintosh/.test(ua) ? 'Mac' : /CrOS/.test(ua) ? 'Chromebook' : /Linux/.test(ua) ? 'Linux' : MSGT('Appareil');
@@ -2091,7 +2101,7 @@
     M.cmOpen = M.cmOpen || {}; M.cmOpen[fid] = true; feedPaint(fid);
   }
 
-  const BUILD='2026-11-13c'; window.VZ_BUILD = BUILD;
+  const BUILD='2026-11-13d'; window.VZ_BUILD = BUILD;
   async function forceUpdate(){
     if(window.VZ_HOST){ location.replace(location.pathname + '?maj=' + Date.now()); return; }
     try {
@@ -3044,7 +3054,7 @@
   var RECAPI = {wzCtryType, tcfFin, inspPP, worldPre, worldPreGo, wzSame, plDay, wzNearAdd, tcfWho, tcfSet, i18nNames, adminPass, codeNoted, joinPickBusy, userUnhide, preHideSheet, preHideAdd, preHideDel, fwInviteSend, pubMapSync, fwLinkBack, psGo, psClose, psFeed, wallStep, psTrip, rgOpen, rgClose, rgSet, rgLater, rgDrop, rgUndo, rgAll, rgAuto, rgRedo, potToggle, potMigrate, pdfPart, suggRedo, swReset, nowOpen, nowMark, nowPlan, nowPlanOk, rainSwap, rainNo, hotelPub, ab2Indiv, ab2PubDel, stEditSave, stEditHint, gdNotedOk, plkOpen, plkPaste, plkGo, plkAdd, exCard, expMore, suggList, swGo, swUndo, swChip, swAll, swClose, ariCity, ariCitySave, hideFlush, travSheet, travSave, mergeSheet, mergeGo, hideSheet, hideGo, hideUndo, linkSheet, linkGo, ab2AskMate, swGateMore, swGateNext, swEndMore, gdHoods, gdHoodHotel, gdFromHotel, pgOpen, pgClose, pgD3, pgBase, pgFit, pgVote, pgMode, pgCardX, pgInfo, pgEdit, pgAct, pgActDel, pgHot, pgHotel, pgLeg, pgList, pgGo, pgDecide, rxGo};
 
   const api = {souvResend, obMagic, souvSplit, liveMe, demoPhase, plSkip, nhStep, plVu, nearCheck, pinOpen, pinOk, pinClose, pinFly, feedBell, tripSyncSheet, tripPullAll, tripPushAll, feedBack, covWiki, covFile, covDel, covPick, bookSheet, packCcAdd, packCcDel, init, installNow, installSheet, infoSheet, infoOk, codeSheet, copyCode, discover, discF, discQ, discAdd, planCity, cityMove, cityLock, cityDel, cityOpt, toggleLock, pdfSheet, pdfMake, pdfClose, mySheet, go, tab, navGo, tripSheet, seedUSA2025, convert2026, editSouv, saveSouv, delSouv, souvAddPhotos, souvDelPhoto, view, viewGo, viewClose, rembAdd, rembDel, who:setWho, filter, cycle, edit, seg, saveForm, noteFromItem, del, close:closeSheet, xClose, onThisDay, smartPack, smartPackAdd, sheetBack, add,
-    toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, inspWho, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
+    toggleDay, dayAll, avantSheet, swCityGo, toolOpen, ckTog, ariCityPos, ariShiftHint, ariCityGuess, progV, stTog, segStat, trFix, carFix, buTier, buAll, buPrices, buSpN, buSpSave, buPaid, soOpen, soMove, soN, soAuto, soSave, soDel, soRev, soEven, inspDatesTouch, inspWho, whoPick, livePhoto, demoPick, demoGo, stMove, stDel, stRename, editDay, saveDay, editNote, saveNote, delNote, pin, openRef,
     setObj, addCompanion, addToTrip, removeCompanion, check, delCheck, addCheck,
     envF:setEnvF, envP:setEnvP, like, editWish, saveWish, delWish, wishToTrip,
     editTrip, saveTrip, delTrip, closeTrip, reopenTrip,
