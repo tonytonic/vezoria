@@ -21,7 +21,7 @@ import { acctGate } from './account.js';   // 👤 compte du carnet : appareils 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Admin, X-Carnet-Writer, X-Carnet-Dev, X-Carnet-Claim, X-Carnet-Lock, X-Carnet-Main, X-Carnet-Acct',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Admin, X-Carnet-Writer, X-Carnet-Dev, X-Carnet-Claim, X-Carnet-Lock, X-Carnet-Main, X-Carnet-Acct, X-Carnet-Key',
   'Access-Control-Max-Age': '86400',
 };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
@@ -211,7 +211,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (b.a !== 'unsub' && !(request.headers.get('X-Carnet-Code') || '').trim().startsWith('mb:')) {
     if (await devIsBlocked(env, space, dev)) return json({ error: 'Appareil bloqué — Device blocked', devBlocked: true }, 403);
     // (exception : l'alerte « nouvel appareil sur ton carnet », envoyée justement par l'appareil pas encore validé, pour prévenir les autres)
-    if (!(b.a === 'send' && b.kind === 'device')) { const g = await acctGate(env, space, dev); if (g) return json(g, 403); }
+    if (!(b.a === 'send' && b.kind === 'device')) { const g = await acctGate(env, space, dev, 0, request); if (g) return json(g, 403); }
   }
 
   if (b.a === 'sub') {

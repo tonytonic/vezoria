@@ -1,4 +1,4 @@
-import { codeSpace, ROTATED, cleanDev } from './rotate.js';   // 🔑 code administrateur changé
+import { codeSpace, ROTATED, cleanDev, devKeyForget } from './rotate.js';   // 🔑 code administrateur changé
 import { acctGate, mainSpace, NOT_MAIN } from './account.js';
 /**
  * Vezoria — 📱 appareils d’un carnet : le propriétaire bloque (ou débloque) un appareil qui a ouvert son carnet.
@@ -8,7 +8,7 @@ import { acctGate, mainSpace, NOT_MAIN } from './account.js';
  *   {a:'unblock', dev} levée du blocage
  *   {a:'list'}         appareils bloqués
  */
-const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Dev', 'Access-Control-Max-Age': '86400' };
+const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Dev, X-Carnet-Key', 'Access-Control-Max-Age': '86400' };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
 async function sha256(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
@@ -19,7 +19,7 @@ export async function onRequestPost({ request, env }) {
   const cs = await codeSpace(env, code), space = cs.space, me = cleanDev(request.headers.get('X-Carnet-Dev'));
   if (cs.dead) return json({ error: ROTATED, rotated: true }, 403);
   if (!(await mainSpace(env, space))) return json(NOT_MAIN, 403);   // 🛡️ (13/11/2026) jamais sur un espace partagé avec le seul code (voir sharedSpace dans account.js)
-  { const g = await acctGate(env, space, me); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
+  { const g = await acctGate(env, space, me, 0, request); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
   // un appareil bloqué ne peut pas se débloquer lui-même
   await env.DB.prepare('CREATE TABLE IF NOT EXISTS dev_block (space TEXT NOT NULL, dev TEXT NOT NULL, at INTEGER NOT NULL, PRIMARY KEY (space, dev))').run();
   if (me && await env.DB.prepare('SELECT 1 AS x FROM dev_block WHERE space = ?1 AND dev = ?2').bind(space, me).first()) return json({ error: 'Appareil bloqué — Device blocked', devBlocked: true }, 403);
@@ -34,6 +34,6 @@ export async function onRequestPost({ request, env }) {
     for (const q of ['DELETE FROM acct_dev WHERE space = ?1 AND dev = ?2', 'DELETE FROM acct_otp WHERE space = ?1 AND dev = ?2', 'DELETE FROM push_subs WHERE space = ?1 AND dev = ?2', 'DELETE FROM push_due WHERE space = ?1 AND dev = ?2']) { try { await env.DB.prepare(q).bind(space, dev).run(); } catch (e) {} }   // table pas encore créée : rien à retirer
     return json({ ok: true });
   }
-  if (b.a === 'unblock') { await env.DB.prepare('DELETE FROM dev_block WHERE space = ?1 AND dev = ?2').bind(space, dev).run(); return json({ ok: true }); }
+  if (b.a === 'unblock') { await env.DB.prepare('DELETE FROM dev_block WHERE space = ?1 AND dev = ?2').bind(space, dev).run(); await devKeyForget(env, space, dev); return json({ ok: true }); }   // 🔐 débloqué : il repart avec une clé neuve
   return json({ error: 'action inconnue' }, 400);
 }

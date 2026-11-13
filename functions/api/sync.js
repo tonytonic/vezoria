@@ -32,7 +32,7 @@ const OVERLAP = 15_000;
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Admin, X-Carnet-Writer, X-Carnet-Dev, X-Carnet-Claim, X-Carnet-Lock, X-Carnet-Main, X-Carnet-Acct',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Admin, X-Carnet-Writer, X-Carnet-Dev, X-Carnet-Claim, X-Carnet-Lock, X-Carnet-Main, X-Carnet-Acct, X-Carnet-Key',
   'Access-Control-Max-Age': '86400',
 };
 const json = (obj, status = 200) =>
@@ -127,7 +127,7 @@ async function spaceOf(request, env) {
       return json({ error: 'Cet appareil a été retiré de ce carnet par son propriétaire. — This device was removed from this notebook by its owner.', devBlocked: true }, 403);
     if (dv) await devSeen(env, space, dv);   // date d'arrivée de l'appareil (un appareil tout neuf ne peut pas changer le code)
   } catch (e) {}
-  { const g = await acctGate(env, space, cleanDev(request.headers.get('X-Carnet-Dev')), 1); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
+  { const g = await acctGate(env, space, cleanDev(request.headers.get('X-Carnet-Dev')), 1, request); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
   { const g = await acctMain(env, request, space); if (g) return json(g, 403); }   // 📧 carnet principal : compte obligatoire
   return space;
 }

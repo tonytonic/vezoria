@@ -68,8 +68,10 @@ export async function onRequest({ request }) {
   // les autres (et en secours) : le titre et la description de la page
   if (out.lat == null && !out.title) {
     try {
-      const r = await fetch(cur, { headers: { "User-Agent": UA, "Accept-Language": "fr,en;q=0.8" } });
-      const html = (await r.text()).slice(0, 400000);
+      // 🛡️ (14/11) sans suivre de redirection : avant, cette dernière lecture suivait toute seule une redirection vers
+      //    N'IMPORTE QUEL site (ex. lien google.com/url?q=… → site inconnu), et le serveur servait de relais.
+      const r = await fetch(cur, { redirect: "manual", headers: { "User-Agent": UA, "Accept-Language": "fr,en;q=0.8" } });
+      const html = r.status >= 300 && r.status < 400 ? "" : (await r.text()).slice(0, 400000);
       out.title = meta(html, "og:title") || dec((html.match(/<title[^>]*>([^<]*)<\/title>/i) || [])[1]);
       out.desc = meta(html, "og:description") || meta(html, "description");
       const la = meta(html, "place:location:latitude") || meta(html, "og:latitude"), lo = meta(html, "place:location:longitude") || meta(html, "og:longitude");

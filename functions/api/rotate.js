@@ -18,7 +18,7 @@
  * Le serveur ne voit jamais les codes : seulement leurs empreintes.
  */
 import { acctGate, mainSpace, NOT_MAIN } from './account.js';   // 👤 compte du carnet
-const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Dev', 'Access-Control-Max-Age': '86400' };
+const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Dev, X-Carnet-Key', 'Access-Control-Max-Age': '86400' };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
 async function sha256(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
 export const ROTATED = 'Ce code administrateur a été remplacé par un nouveau. Entre le nouveau code pour retrouver ton carnet. — This admin code was replaced by a new one. Enter the new code to get your notebook back.';
@@ -62,6 +62,45 @@ export async function devIsBlocked(env, space, dev) {
   try { return !!(await env.DB.prepare('SELECT 1 AS x FROM dev_block WHERE space = ?1 AND dev = ?2').bind(space, dev).first()); } catch (e) { return false; }   // pas encore de table : aucun appareil bloqué
 }
 
+// 🔐 (13/11/2026) CLÉ SECRÈTE PAR APPAREIL. L'identifiant d'un appareil n'est pas un secret (il est écrit dans les fiches
+//    « appareils » du carnet) : un téléphone bloqué, modifié, pouvait envoyer l'identifiant du 1er téléphone et passer.
+//    Chaque appareil tire maintenant une clé au hasard, gardée sur lui seul (jamais dans les fiches, jamais dans une sauvegarde),
+//    envoyée en en-tête X-Carnet-Key. Le serveur n'en garde que l'empreinte, pour ce carnet et cet appareil :
+//      · 1re fois qu'il la voit : il l'enregistre ;
+//      · ensuite : même identifiant + autre clé (ou aucune) = refusé, sur un carnet qui a un compte (voir acctGate) ;
+//      · un appareil qui a perdu sa clé (ou dont un autre a pris l'identifiant en premier) se revalide par le code reçu
+//        par e-mail : la clé qu'il présente remplace alors l'ancienne (account.js, verify).
+//    Ancienne version de l'appli (pas de clé) : acceptée tant qu'aucune clé n'est enregistrée pour cet appareil.
+const DKC = new Map(); let dkReady = false;
+async function dkTable(env) { if (dkReady) return; await env.DB.prepare('CREATE TABLE IF NOT EXISTS dev_key (space TEXT NOT NULL, dev TEXT NOT NULL, kh TEXT NOT NULL, at INTEGER NOT NULL, PRIMARY KEY (space, dev))').run(); dkReady = true; }
+const dkHash = async request => { const k = String(request.headers.get('X-Carnet-Key') || ''); return /^[0-9a-f]{64}$/.test(k) ? sha256('vz-devkey:' + k) : ''; };
+// → 'ok' (bonne clé) · 'none' (pas de clé, et aucune enregistrée) · 'bad' (clé absente ou différente de celle enregistrée)
+export async function devKeyCheck(env, request, space, dev) {
+  dev = cleanDev(dev); if (!request || !dev || dev.length < 8 || !env.DB) return 'none';
+  try {
+    await dkTable(env); const kh = await dkHash(request), ck = space.slice(0, 24) + ':' + dev, now = Date.now(), c = DKC.get(ck);
+    let row = c && now - c.at < 60e3 ? c.kh : undefined;
+    if (row === undefined) { const r = await env.DB.prepare('SELECT kh FROM dev_key WHERE space = ?1 AND dev = ?2').bind(space, dev).first(); row = r ? r.kh : null; }
+    if (row === null) {
+      if (!kh) return 'none';
+      await env.DB.prepare('INSERT OR IGNORE INTO dev_key (space, dev, kh, at) VALUES (?1, ?2, ?3, ?4)').bind(space, dev, kh, now).run();
+      const r = await env.DB.prepare('SELECT kh FROM dev_key WHERE space = ?1 AND dev = ?2').bind(space, dev).first(); row = r ? r.kh : kh;   // deux envois en même temps : le premier gagne
+    }
+    if (DKC.size > 50000) DKC.clear(); DKC.set(ck, { at: now, kh: row });
+    return kh && kh === row ? 'ok' : 'bad';
+  } catch (e) { return 'none'; }   // base indisponible : on ne ferme jamais un appareil par erreur
+}
+// appareil revalidé par e-mail : sa clé devient la bonne
+export async function devKeySet(env, request, space, dev) {
+  dev = cleanDev(dev); if (!dev) return; try { await dkTable(env); const kh = await dkHash(request); DKC.delete(space.slice(0, 24) + ':' + dev);
+    if (kh) await env.DB.prepare('INSERT OR REPLACE INTO dev_key (space, dev, kh, at) VALUES (?1, ?2, ?3, ?4)').bind(space, dev, kh, Date.now()).run();
+    else await env.DB.prepare('DELETE FROM dev_key WHERE space = ?1 AND dev = ?2').bind(space, dev).run(); } catch (e) {}
+}
+// appareil débloqué ou retiré : sa clé est oubliée (il en enregistrera une nouvelle à son prochain passage)
+export async function devKeyForget(env, space, dev) {
+  dev = cleanDev(dev); if (!dev) return; try { await dkTable(env); DKC.delete(space.slice(0, 24) + ':' + dev); await env.DB.prepare('DELETE FROM dev_key WHERE space = ?1 AND dev = ?2').bind(space, dev).run(); } catch (e) {}
+}
+
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 export async function onRequestPost({ request, env, waitUntil }) {
   if (!env.DB) return json({ error: 'Base D1 non liée (DB)' }, 500);
@@ -72,7 +111,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const cur = await codeSpace(env, code), space = cur.space, now = Date.now();
   if (cur.dead) return json({ error: ROTATED, rotated: true }, 403);
   if (!(await mainSpace(env, space))) return json(NOT_MAIN, 403);   // 🛡️ (13/11/2026) jamais sur un espace partagé avec le seul code (voir sharedSpace dans account.js)
-  { const g = await acctGate(env, space, dev); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
+  { const g = await acctGate(env, space, dev, 0, request); if (g) return json(g, 403); }   // 👤 compte : appareil pas encore validé
   try { const bl = await env.DB.prepare('SELECT status FROM blocked WHERE space = ?1').bind(space).first(); if (bl) return json({ error: 'suspendu', suspended: true }, 423); } catch (e) {}
   try { if (dev && await env.DB.prepare('SELECT 1 AS x FROM dev_block WHERE space = ?1 AND dev = ?2').bind(space, dev).first()) return json({ error: 'Appareil bloqué — Device blocked', devBlocked: true }, 403); } catch (e) {}
 

@@ -37,7 +37,7 @@ import { acctGate, ownerOf } from './account.js';   // 👤 compte du carnet : a
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Dev',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Dev, X-Carnet-Key',
   'Access-Control-Max-Age': '86400',
 };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
@@ -372,7 +372,7 @@ export async function onRequestPost({ request, env }) {
       //    qu'à un appareil validé du compte (le code seul ne suffit pas), et jamais à un appareil retiré du carnet
       const dev = cleanDev(request.headers.get('X-Carnet-Dev'));
       if (await devIsBlocked(env, w.space, dev)) return json({ error: 'Appareil bloqué — Device blocked', devBlocked: true }, 403);
-      { const g = await acctGate(env, w.space, dev); if (g) return json(g, 403); }
+      { const g = await acctGate(env, w.space, dev, 0, request); if (g) return json(g, 403); }
       const p = await env.DB.prepare('SELECT cust FROM plans WHERE space = ?1').bind(w.space).first();
       if (!p || !p.cust) return json({ error: 'Aucun abonnement Stripe sur ce carnet' }, 404);
       const s = await stripe(env, 'billing_portal/sessions', { customer: p.cust, return_url: base });

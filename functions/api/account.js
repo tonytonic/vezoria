@@ -16,9 +16,9 @@
  *   {a:'delete'}              → supprime le compte (l’adresse e-mail ; les appareils redeviennent libres)
  * Conservation : l’adresse est effacée à la suppression du compte ou du carnet.
  */
-import { codeSpace, ROTATED, devSeen, cleanDev, devIsBlocked } from './rotate.js';
+import { codeSpace, ROTATED, devSeen, cleanDev, devIsBlocked, devKeyCheck, devKeySet } from './rotate.js';
 import { sendMail } from './_mail.js';
-const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Dev', 'Access-Control-Max-Age': '86400' };
+const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Carnet-Code, X-Carnet-Dev, X-Carnet-Key', 'Access-Control-Max-Age': '86400' };
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS } });
 async function sha256(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
 const mask = m => { const [u, d] = String(m || '').split('@'); if (!d) return ''; return (u.length <= 2 ? u[0] + '*' : u.slice(0, 2) + '*'.repeat(Math.min(6, u.length - 2))) + '@' + d; };
@@ -63,13 +63,16 @@ export async function acctTables(db) {
 }
 const lbOf = b => String(b.lb || '').replace(/[<>"]/g, '').slice(0, 60);   // « iPhone · Safari » : pour reconnaître l’appareil en attente
 // 🔒 utilisé par sync.js / photo.js : un carnet avec compte n’accepte que ses appareils validés
-export async function acctGate(env, space, dev, ins) {
+export async function acctGate(env, space, dev, ins, request) {
   dev = String(dev || '').replace(/[^a-z0-9]/gi, '').slice(0, 40);
   try {
+    const kc = request ? await devKeyCheck(env, request, space, dev) : 'none';   // 🔐 enregistre la clé de l'appareil à son 1er passage
     await acctTables(env.DB);
     const a = await env.DB.prepare('SELECT email, verified, maxdev FROM acct WHERE space = ?1').bind(space).first();
     if (!a || !a.verified) return null;
     const d = dev ? await env.DB.prepare('SELECT ok FROM acct_dev WHERE space = ?1 AND dev = ?2').bind(space, dev).first() : null;
+    // 🔐 bon identifiant mais pas la bonne clé : un autre appareil se fait passer pour celui-ci → revalidation par e-mail
+    if (kc === 'bad') return { error: 'Cet appareil doit être revalidé : code envoyé par e-mail. — This device must be verified again (code sent by e-mail).', needVerify: true, devKey: true, mail: mask(await mailDec(env, a.email)) };
     if (d && d.ok) return null;
     if (ins && dev && !d) await env.DB.prepare('INSERT OR IGNORE INTO acct_dev (space, dev, ok, at) VALUES (?1, ?2, 0, ?3)').bind(space, dev, Date.now()).run();   // en attente : visible sur mes autres appareils
     return { error: 'Nouvel appareil : vérifie que c’est toi (code envoyé par e-mail, ou validation depuis ton autre appareil). — New device: please verify it’s you.', needVerify: true, mail: mask(await mailDec(env, a.email)) };
@@ -177,7 +180,9 @@ export async function onRequestPost({ request, env }) {
   const TOO_MAIL = { error: 'Trop d’envois, réessaie plus tard — Too many e-mails, try again later' };
   const a = await env.DB.prepare('SELECT * FROM acct WHERE space = ?1').bind(space).first();
   const me = await env.DB.prepare('SELECT ok FROM acct_dev WHERE space = ?1 AND dev = ?2').bind(space, dev).first();
-  const devOk = !!(me && me.ok), active = !!(a && a.verified);
+  // 🔐 identifiant d'un appareil validé, mais pas sa clé secrète : traité comme un appareil pas encore validé (seul le code e-mail le revalide)
+  const keyBad = (await devKeyCheck(env, request, space, dev)) === 'bad';
+  const devOk = !!(me && me.ok) && !keyBad, active = !!(a && a.verified);
   const canAdmin = !active || devOk;   // pas encore de compte vérifié : l’appareil qui a le code fait foi
   if (b.a === 'status') {
     let pend = []; if (active && devOk) { const { results } = await env.DB.prepare('SELECT dev, at, lb FROM acct_dev WHERE space = ?1 AND ok = 0 ORDER BY at DESC LIMIT 20').bind(space).all(); pend = results || []; }
@@ -238,6 +243,7 @@ export async function onRequestPost({ request, env }) {
     }
     await env.DB.prepare('INSERT OR REPLACE INTO acct_dev (space, dev, ok, at) VALUES (?1, ?2, 1, ?3)').bind(space, dev, now).run();
     await devSeen(env, space, dev);
+    await devKeySet(env, request, space, dev);   // 🔐 revalidé par e-mail : la clé de CE téléphone devient la bonne
     return json({ ok: true, acct: true });
   }
   if (b.a === 'approve' || b.a === 'deny') {
