@@ -25,8 +25,10 @@ import fs from 'node:fs';
 const env = { DB: d1(), PHOTOS: r2(), MAIL_DEV: '1', ADMIN_KEY: 'k'.repeat(30), PAY_ON: '1', STRIPE_SECRET: 'sk_test_x', MAIL_KEY: 'clef-de-test' };
 env.DB._db.exec(fs.readFileSync(path.join(DIR, '..', 'schema.sql'), 'utf8'));
 const realFetch = globalThis.fetch;
+globalThis.caches = globalThis.caches || { default: { async match() { return null; }, async put() {} } };   // cache Cloudflare : absent ici
+env.VIATOR_KEY = 'cle-de-test';
 globalThis.fetch = async (u, o) => { u = String(u); if (u.includes('api.stripe.com')) return new Response(JSON.stringify({ url: 'https://billing.stripe.com/session/test' }), { status: 200 }); if (u.includes('/api/push?a=flush')) return new Response('{}'); throw new Error('réseau interdit dans les essais : ' + u); };
-const mods = {}; for (const f of ['sync', 'account', 'device', 'member', 'plan', 'push', 'photo', 'admin', 'rotate']) mods[f] = await imp(f + '.js');
+const mods = {}; for (const f of ['sync', 'account', 'device', 'member', 'plan', 'push', 'photo', 'admin', 'rotate', 'unfurl', 'act']) mods[f] = await imp(f + '.js');
 let IP = '203.0.113.1';
 async function call(route, { code, dev, body, method = 'POST', headers = {}, query = '', raw } = {}) {
   const h = { 'Content-Type': 'application/json', 'CF-Connecting-IP': IP, ...headers };
@@ -114,5 +116,43 @@ const lt = []; IP = '203.0.113.77'; for (let i = 0; i < 43; i++) { r = await syn
 ok(lt.every(s => s === 200), '43 petits espaces par heure et par connexion, pas plus', lt.join(''));
 IP = '203.0.113.78'; r = await sync(hex(), 'dINVITE9999', [rec('iv')]); ok(r.s === 200, 'une autre connexion n’est pas gênée', r);
 r = await call('admin', { body: { action: 'list' }, headers: { 'X-Admin-Key': 'mauvaise' } }); ok(r.s === 403, 'page admin : mauvaise clé refusée', r);
+
+console.log('\n7. Audit du 12/11 : prise de contrôle par un compagnon, stockage anonyme');
+IP = '203.0.113.90';
+// 7a. un compagnon (code « mb: ») se déclare « auteur » du carnet principal de A
+r = await sync('mb:' + mt, 'dMEMBRE0001', [], { 'X-Carnet-Admin': 'cle-auteur-du-voleur-000000' });
+ok(r.s === 200 && !r.j.adm && !r.j.me, 'un compagnon ne peut pas se déclarer auteur du carnet principal', { s: r.s, adm: r.j.adm, me: r.j.me });
+r = await sync(C, A, [rec('n2')], { 'X-Carnet-Main': '1' }); ok(r.s === 200 && !r.j.adm, 'le propriétaire écrit toujours dans son carnet', r);
+r = await call('photo', { code: C, dev: A, raw: img, headers: { 'Content-Type': 'image/jpeg', 'X-Photo-Id': 'x' + 'b'.repeat(40) } }); ok(r.s === 200, 'le propriétaire envoie toujours ses photos', r);
+// 7b. un membre d’un voyage partagé (il a le code du voyage) se déclare auteur après coup
+r = await sync(T, 'dCOMPAGNON1', [], { 'X-Carnet-Admin': 'cle-auteur-du-voleur-111111' });
+ok(!r.j.adm, 'un membre ne peut pas se déclarer auteur d’un voyage partagé déjà créé', { adm: r.j.adm, me: r.j.me });
+r = await sync(T, A, [rec('t3')], { 'X-Carnet-Acct': C }); ok(r.s === 200 && !(r.j.denied || []).length && !r.j.adm, 'le créateur du voyage écrit toujours', r);
+r = await call('sync', { code: T, dev: A, method: 'DELETE', headers: { 'X-Carnet-Acct': C } }); ok(r.s === 200, 'le créateur peut toujours effacer son voyage du serveur', r);
+// 7c. le fil d’abonnés : son créateur le signe dès la création, et après coup depuis son carnet
+const F1 = hex(); r = await sync(F1, A, [rec('f1')], { 'X-Carnet-Acct': C, 'X-Carnet-Admin': 'cle-auteur-de-A-0000000000' }); ok(r.s === 200 && r.j.me === 'a', 'fil d’abonnés : son créateur en devient l’auteur à la création', r);
+r = await sync(F1, 'dABONNE0001', [rec('f1')], { 'X-Carnet-Admin': 'autre-cle-000000000000000' }); ok((r.j.denied || []).includes('f1') && r.j.admBad === 1, 'un abonné ne remplace pas une fiche de l’auteur', r);
+const F2 = hex(); r = await sync(F2, A, [rec('g1')], { 'X-Carnet-Acct': C }); r = await sync(F2, A, [], { 'X-Carnet-Acct': C, 'X-Carnet-Admin': 'cle-auteur-de-A-0000000000' });
+ok(r.j.me === 'a', 'fil créé sans clé d’auteur : son créateur (même compte) peut encore le signer', r);
+// 7d. photos sans compte : un inconnu ne range pas de fichiers dans un dossier qui n’existe pas
+IP = '203.0.113.91';
+r = await call('photo', { code: hex(), dev: 'dROBOT00001', raw: img, headers: { 'Content-Type': 'image/jpeg', 'X-Photo-Id': 'x' + 'c'.repeat(40) } }); ok(r.s === 403 && r.j.needAcct, 'photo refusée dans un espace inconnu, sans compte', r);
+const L1 = hex(); r = await sync(L1, 'dROBOT00002', [rec('iv')]); ok(r.s === 200, 'petit espace sans compte créé (invitation)', r);
+r = await call('photo', { code: L1, dev: 'dROBOT00002', raw: img, headers: { 'Content-Type': 'image/jpeg', 'X-Photo-Id': 'x' + 'd'.repeat(40) } }); ok(r.s === 403, 'pas de photo dans un petit espace sans compte', r);
+r = await sync(L1, 'dROBOT00002', [{ id: 'gros', type: 'note', updatedAt: Date.now(), v: 'x'.repeat(60000) }]); ok(r.s === 200 && (r.j.skipped || []).includes('gros'), 'petit espace sans compte : une fiche de 60 Ko est refusée', r);
+r = await sync(L1, 'dROBOT00002', [{ id: 'petit', type: 'note', updatedAt: Date.now(), v: 'x'.repeat(3000) }]); ok(r.s === 200 && !(r.j.skipped || []).length, 'petit espace sans compte : une fiche normale passe', r);
+const T2 = hex(); r = await call('photo', { code: T2, dev: A, raw: img, headers: { 'Content-Type': 'image/jpeg', 'X-Photo-Id': 'x' + 'e'.repeat(40), 'X-Carnet-Acct': C } }); ok(r.s === 200, 'photo acceptée dans un nouveau voyage créé depuis un carnet avec compte', r);
+r = await call('photo', { code: T, dev: 'dCOMPAGNON1', raw: img, headers: { 'Content-Type': 'image/jpeg', 'X-Photo-Id': 'x' + 'f'.repeat(40) } }); ok(r.s === 200 || r.s === 403, 'voyage effacé : état cohérent', r.s);
+// 7e. lecture de liens et activités : limités par connexion
+IP = '203.0.113.92';
+if (mods.unfurl) { const us = []; for (let i = 0; i < 70; i++) { const x = await call('unfurl', { method: 'GET', query: '?u=' + encodeURIComponent('https://example.com/' + i) }); us.push(x.s); } ok(us.includes(429), 'lecture de liens : limitée par connexion', us.slice(-3)); }
+if (mods.act) { const as = []; for (let i = 0; i < 70; i++) { const x = await call('act', { method: 'GET', query: '?q=ville' + i }); as.push(x.s); } ok(as.includes(429), 'recherche d’activités : limitée par connexion', as.slice(-3)); }
+// 7f. suppression demandée par e-mail : les publications et voyages créés par le compte partent aussi
+IP = '203.0.113.93';
+{ const sp = env.DB._db.prepare("SELECT space FROM acct WHERE verified = 1 LIMIT 1").get().space, before = env.DB._db.prepare('SELECT COUNT(*) AS n FROM records WHERE space IN (SELECT space FROM space_owner WHERE owner = ?)').get(sp).n;
+  r = await call('admin', { body: { action: 'userDelete', space: sp }, headers: { 'X-Admin-Key': env.ADMIN_KEY } });
+  const after = env.DB._db.prepare('SELECT COUNT(*) AS n FROM records WHERE space IN (SELECT space FROM space_owner WHERE owner = ?)').get(sp).n, f1 = env.DB._db.prepare("SELECT COUNT(*) AS n FROM records WHERE id IN ('f1','g1')").get().n;
+  ok(r.s === 200 && before > 0 && after === 0 && f1 === 0 && r.j.spaces >= 2, 'suppression à la demande : le carnet, le compte ET les espaces créés par ce compte', { before, after, f1, j: r.j });
+  ok(env.DB._db.prepare('SELECT COUNT(*) AS n FROM acct WHERE space = ?').get(sp).n === 0, 'le compte (adresse e-mail) est effacé'); }
 console.log(`\n${pass} essais réussis, ${fail} en échec` + (fail ? ' : ' + bad.join(' | ') : ''));
 process.exit(fail ? 1 : 0);
