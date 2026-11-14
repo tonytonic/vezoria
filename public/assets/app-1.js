@@ -107,7 +107,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const SANE_DATE = ['date','dateFin','debut','fin'];
   const SANE_SHORT = ['titre','nom','lieu','sous','couleur','trip','who','mode','statut','cat','ville','pays','compagnie','ref','heure','heureDep','heureArr','titreAuto','from','to','city','ret','owner','title','name','cc','label','devise'];
   function saneRec(r){
-    if(!r || typeof r !== 'object' || Array.isArray(r) || typeof r.id !== 'string' || !r.id) return null;
+    if(!r || typeof r !== 'object' || Array.isArray(r) || typeof r.id !== 'string' || !r.id || /^(__proto__|constructor|prototype)$/.test(r.id)) return null;   // « __proto__ » changeait le carnet lui-même en mémoire
     if(r.type != null && typeof r.type !== 'string') return null;
     for(const k of [...SANE_ARR_S, ...SANE_ARR, ...SANE_STR, ...SANE_DATE]) if(k in r && r[k] === null) delete r[k];   // null = champ absent
     if(r.type === 'trip' && 'qui' in r){ if(!/^(solo|couple|amis|famille)$/.test(String(r.qui))) delete r.qui; }   // voyage : « qui part » est un mot ; ailleurs « qui » est une liste de personnes
