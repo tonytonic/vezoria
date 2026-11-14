@@ -3636,3 +3636,6 @@ html.vz-dark .wz-same{background:rgba(124,58,237,.2)}
 #wm-plan .pri.off{opacity:.55}
 .wz-cpick{align-items:center}.wz-cpick div{flex:1;min-width:0}.wz-cpick .v-in{margin-top:6px;padding:9px 12px}
 .wm-plan-pin.wait{animation:wmPulse 1s ease-in-out infinite}@keyframes wmPulse{50%{opacity:.45}}
+/* 🛡️ 14/11/2026 : un texte sans espace (20 000 lettres, lien très long) ne fait plus déborder l’écran */
+body{overflow-wrap:break-word}.cv-souv-h>*,.cv-souv-grp>*,.v-cl .t{min-width:0}.cv-souv-h *,.cv-souv-grp *,.v-cl .t{overflow-wrap:anywhere}
+.cv-pchip,.v-chip{max-width:100%}.cv-pchip>span{min-width:0;overflow:hidden;text-overflow:ellipsis}

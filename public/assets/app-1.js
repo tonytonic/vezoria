@@ -57,7 +57,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   function safeRec(r){
     if(!r || typeof r !== 'object' || typeof r.id !== 'string' || !r.id || r.id.length > 200 || BAD_ID.test(r.id)) return null;
     for(const k of Object.keys(r)){ if(k === 'id') continue; r[k] = safeVal(r[k], FREE_TXT.has(k), 0); }
-    return r;
+    return saneRec(r);   // 🛡️ et remise en forme (listes, textes, dates) — 14/11/2026
   }
   // 🌍 recherche d’adresses : toujours par notre serveur (cache, 1 requête/s pour toute l’appli, repli Photon, coupure à distance)
   const GEO = (/^https?:/.test(location.protocol) ? location.origin : 'https://vezoria.pages.dev') + '/api/geo/';
@@ -99,6 +99,33 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   const lieuPays = (lieu, pays) => { const l = String(lieu || '').trim(), p = String(pays || '').trim(); if(!p) return l; if(!l) return p;
     const n = x => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); return l.split(',').some(x=>n(x) === n(p)) ? l : l + ', ' + p; };
   // 🔒 lien venu des données (compagnon, import…) : seulement http(s), jamais javascript:, data:, etc.
+  /* 🛡️ (14/11/2026) FICHE MAL FORMÉE. Le serveur garde n’importe quel JSON : un compagnon ou un abonné malveillant (ou une vieille version)
+     pouvait envoyer « voyageurs: 5 » ou « date: {} », et l’appli de tous les autres plantait sur l’écran du voyage (panel de 60, nuit du 13/11).
+     Chaque fiche qui arrive (serveur, et au démarrage pour les fiches déjà enregistrées) est remise dans la bonne forme, champ par champ. */
+  const SANE_ARR_S = ['voyageurs','qui','ccs','tags','vv','tids','ban'], SANE_ARR = ['photos','etapes','echeances','likes','people','lines','pj','tours','inv','items','checklist','files','gaps','heroes'];
+  const SANE_STR = ['titre','nom','lieu','texte','sous','adresse','couleur','trip','note','description','who','mode','statut','cat','ville','pays','compagnie','ref','heure','heureDep','heureArr','titreAuto','ph','from','to','city','ret','rembours','owner','bagHome','text','title','name','msg'];
+  const SANE_DATE = ['date','dateFin','debut','fin'];
+  const SANE_SHORT = ['titre','nom','lieu','sous','couleur','trip','who','mode','statut','cat','ville','pays','compagnie','ref','heure','heureDep','heureArr','titreAuto','from','to','city','ret','owner','title','name','cc','label','devise'];
+  function saneRec(r){
+    if(!r || typeof r !== 'object' || Array.isArray(r) || typeof r.id !== 'string' || !r.id) return null;
+    if(r.type != null && typeof r.type !== 'string') return null;
+    for(const k of [...SANE_ARR_S, ...SANE_ARR, ...SANE_STR, ...SANE_DATE]) if(k in r && r[k] === null) delete r[k];   // null = champ absent
+    if(r.type === 'trip' && 'qui' in r){ if(!/^(solo|couple|amis|famille)$/.test(String(r.qui))) delete r.qui; }   // voyage : « qui part » est un mot ; ailleurs « qui » est une liste de personnes
+    for(const k of SANE_ARR_S) if(k in r && r[k] != null && !(k === 'qui' && r.type === 'trip')){ r[k] = Array.isArray(r[k]) ? r[k].filter(x=>typeof x === 'string' || typeof x === 'number').map(String) : []; }
+    for(const k of SANE_ARR) if(k in r && r[k] != null){ r[k] = Array.isArray(r[k]) ? r[k].filter(x=>x != null) : []; }
+    if(r.type === 'trk' && 'pts' in r) r.pts = Array.isArray(r.pts) ? r.pts.filter(p=>Array.isArray(p) && typeof p[0] === 'number' && typeof p[1] === 'number' && isFinite(p[0]) && isFinite(p[1]) && Math.abs(p[0]) <= 90) : [];   // trace GPS : [lat, lng, heure…]
+    for(const k of SANE_STR) if(k in r && r[k] != null && typeof r[k] !== 'string') r[k] = typeof r[k] === 'number' && isFinite(r[k]) ? String(r[k]) : '';
+    for(const k of SANE_SHORT) if(typeof r[k] === 'string' && r[k].length > 400) r[k] = r[k].slice(0, 400);
+    if(r.type === 'profile' && typeof r.nom === 'string' && r.nom.length > 60) r.nom = r.nom.slice(0, 60);   // un prénom   // un nom, un titre, un lieu : jamais 20 000 lettres
+    const okDay = v => { if(v === '') return true; const m = /^(\d{4})-(\d\d)-(\d\d)/.exec(v); if(!m) return false; const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])); return d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3]; };   // « 2026-13-45 » n’est pas une date
+    for(const k of SANE_DATE) if(k in r && r[k] != null && !(typeof r[k] === 'string' && okDay(r[k]))) r[k] = '';
+    for(const k of ['lat','lng']) if(k in r && r[k] != null && !(typeof r[k] === 'number' && isFinite(r[k]))){ const n = parseFloat(r[k]); if(isFinite(n) && typeof r[k] === 'string') r[k] = n; else delete r[k]; }
+    if(typeof r.lat === 'number' && Math.abs(r.lat) > 90) delete r.lat; if(typeof r.lng === 'number' && Math.abs(r.lng) > 360) delete r.lng;
+    if(('lat' in r || 'lng' in r) && !(typeof r.lat === 'number' && typeof r.lng === 'number')){ delete r.lat; delete r.lng; }   // une moitié de position (lat sans lng) faisait exploser la mémoire de la carte
+    for(const k of ['nuits','nbv','montant','prix','total','km','ordre','order']) if(k in r && r[k] != null && typeof r[k] !== 'string' && !(typeof r[k] === 'number' && isFinite(r[k]) && Math.abs(r[k]) < 1e9)) r[k] = 0;
+    return r;
+  }
+  const saneAll = () => { for(const id of Object.keys(R)){ const x = saneRec(R[id]); if(!x) delete R[id]; } };
   /* 🛡️ décodage d’un lien qui ne plante jamais (un « % » isolé dans un lien collé ou une adresse faisait tout échouer) */
   const dURI = s => { try { return decodeURIComponent(s); } catch(e){ return String(s == null ? '' : s); } };
   const safeUrl = u => { const t = String(u ?? '').trim().replace(/[\u0000-\u001F\u007F\s]+/g, ''); if(!t) return ''; if(/^https?:\/\//i.test(t)) return t; return /^[a-z][a-z0-9+.-]*:/i.test(t) ? '' : 'https://' + t.replace(/^\/+/, ''); };
@@ -188,13 +215,14 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   })();
   let storeIdb = false, storeLoading = false, storeBroken = false, storeReady = false;   // storeReady : carnet relu → seulement là on a le droit d’écrire
   async function loadStoreIdb(){
-    try { const r = await RDB.get('R'); if(r && typeof r === 'object') R = r; }
+    try { const r = await RDB.get('R'); if(r && typeof r === 'object'){ R = r; try { saneAll(); } catch(e){} } }
     catch(e){   // jamais d’écriture d’un carnet vide par-dessus le vrai : on bloque et on prévient
       console.warn('carnet : lecture de la base impossible', e); persistOff = true; storeBroken = true;
       setTimeout(()=>alert(MSGT('Ton carnet n’a pas pu être lu sur ce téléphone. Ferme complètement l’appli puis rouvre-la : rien n’a été effacé.')), 1500); }
   }
   function loadStore(){
     try { const raw = localStorage.getItem(KEY); if(raw){ const o = JSON.parse(raw); R = o.records || {}; M = o.meta || {}; storeIdb = !!o.idb; } } catch(e){ R = {}; M = {}; }
+    try { saneAll(); } catch(e){}   // 🛡️ fiches déjà enregistrées avant la remise en forme (14/11/2026)
     M = Object.assign(baseMeta(), M);
     M.sync = Object.assign(baseMeta().sync, M.sync || {});
     if(!Array.isArray(M.dirty)) M.dirty = [];
@@ -236,7 +264,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
   function list(type, f){ return Object.values(R).filter(r => r.type===type && !r.deleted && (!f || f(r))); }
   const prof = id => (R[id] && R[id].type==='profile' && !R[id].deleted) ? R[id] : null;
   try { if(/Android/i.test(navigator.userAgent || '')) document.documentElement.classList.add('vz-and'); } catch(e){}
-  const pname = id => { const p = prof(id); return p ? p.nom : (R[id] ? R[id].nom || '?' : '?'); };
+  const pname = id => { const p = prof(id); return p ? String(p.nom || '?') : (R[id] ? String(R[id].nom || '?') : '?'); };
   const pcol = id => { const p = prof(id) || R[id]; return p && p.couleur && /^#[0-9a-f]{3,8}$/i.test(p.couleur) ? p.couleur : '#999'; };   // 🛡️ seulement une vraie couleur (jamais du CSS venu d’ailleurs)
   const hexc = (c, d) => /^#[0-9a-f]{3,8}$/i.test(String(c || '')) ? String(c) : (d || '#999');   // 🛡️ idem pour une couleur rangée dans une fiche (trace partagée, abonnés…)
   const profiles = () => list('profile').sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
@@ -582,7 +610,7 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     { const env0 = j.records; let recs = E2E ? await Promise.all(env0.map(x=>openRec(x, code))) : env0.slice();
       // ✍️ « _au » : écrit par l’auteur du fil — vient UNIQUEMENT de la marque du serveur (une fiche qui le contient d’elle-même le perd)
       { const lim = (+j.now || Date.now()) + 864e5; recs.forEach(r=>{ if(r && typeof r === 'object' && +r.updatedAt > lim) r.updatedAt = +j.now || Date.now(); }); }   // 🛡️ (13/11/2026) fiche datée du futur (horloge fausse, ou piège) : ramenée à maintenant, sinon plus personne ne pouvait la corriger
-      recs = await admFilter(j, env0, recs, code); recs = recs.map((r, i)=>{ if(r && typeof r === 'object'){ delete r._a; delete r._au; if(j.adm && env0[i] && env0[i]._a) r._au = 1; } return r; }); j.records = recs.filter(Boolean); }
+      recs = await admFilter(j, env0, recs, code); recs = recs.map((r, i)=>{ if(r && typeof r === 'object'){ delete r._a; delete r._au; if(j.adm && env0[i] && env0[i]._a) r._au = 1; } return r; }); j.records = recs.filter(Boolean).map(r=>saneRec(r)).filter(Boolean); }   // 🛡️ remise en forme (14/11/2026)
     if(code) admAck(j, code);
     if(j.sh && (!code || code === M.sync.code) && /^[0-9a-f]{64}$/.test(j.sh) && M.sync.sh !== j.sh){ M.sync.sh = j.sh; persist(); }   // 🔑 code changé : place d’origine du carnet (photos du pot commun)
     if(code) try { j.records.forEach(r=>{ if(!r || r.type !== 'feedtrip') return; const k = r.id + '|' + code;   // 🔗 même voyage suivi par 2 liens : l’âge de chacun (voir ftPick)
@@ -2131,13 +2159,16 @@ const PUBLIC = true;   // version grand public : sans données perso ni archives
     // on attend qu’il soit fermé
     if(document.getElementById('v-sheet-bg') || ovOpen()){ if((n || 0) < 600) setTimeout(()=>withWhom(tid, (n || 0) + 1), 1500); return; }   // 15 min au plus (le tri peut être long)
     M.wwSeen = Object.assign({}, M.wwSeen || {}, {[tid]:1}); persist();
+    if(t.qui === 'solo') return;   // 🧍 (14/11/2026) « Seul(e) » choisi à la création : on ne redemande pas « avec qui »
     const me = M.me, ppl = profiles().filter(p=>p.id !== me).map(p=>p.id), v = new Set(t.voyageurs || []);
-    openSheet(`<h2>👥 Avec qui pars-tu ?</h2>${ppl.length ? `<div class="v-sum-small" style="margin-bottom:8px">« ${esc(t.titre)} » arrive chez tes compagnons, qui reçoivent une notification. Ils pourront le compléter avec toi.</div>` : ''}
+    // 👫 réponse déjà donnée à la création (« En couple », « Entre amis »…) : on ne propose plus « Je pars seul(e) », et on rappelle combien
+    const known = !!t.qui, hd = known && t.nbv > 1 ? RF('👥 Vous partez à {0} : invite-les', t.nbv) : '👥 ' + MSGT('Avec qui pars-tu ?');
+    openSheet(`<h2>${esc(hd)}</h2>${ppl.length ? `<div class="v-sum-small" style="margin-bottom:8px">« ${esc(t.titre)} » arrive chez tes compagnons, qui reçoivent une notification. Ils pourront le compléter avec toi.</div>` : ''}
       ${ppl.length ? `<div class="jp-who">${ppl.map(pid=>`<label class="jp-p"><input type="checkbox" class="ww-p" value="${pid}"${v.has(pid) ? ' checked' : ''} onchange="CV.withWhomUpd('${ja(tid)}')"> ${pchip(pid)}</label>`).join('')}</div>` : `<div class="v-sum-small">Tu n’as pas encore de compagnon dans Vezoria.</div><div class="v-sum-small" style="margin-top:4px">Invite quelqu’un dans un voyage : il apparaîtra ici, et tu choisiras ce qu’il peut voir.</div>`}
       <div id="ww-msg" class="v-sum-small" style="margin:8px 0"></div>
       <div class="v-actions" style="flex-direction:column">${ppl.length ? `<button type="button" class="v-btn" onclick="CV.withWhomGo('${ja(tid)}')">✅ Partager avec eux</button>` : ''}
         <button type="button" class="v-btn sec" onclick="CV.close();CV.tripInviteNow('${ja(tid)}')">📤 Inviter quelqu’un de nouveau</button>
-        <button type="button" class="v-btn sec" onclick="CV.close()">🧍 Je pars seul(e) / plus tard</button></div>`);
+        <button type="button" class="v-btn sec" onclick="CV.close()">${known ? '⏳ ' + MSGT('Plus tard') : '🧍 Je pars seul(e) / plus tard'}</button></div>`);
     withWhomUpd(tid);
   }
   // le meilleur carnet partagé pour ces personnes : tout le monde dedans, le moins d’autres personnes possible

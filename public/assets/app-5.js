@@ -678,7 +678,15 @@
   let wm = null;
   var wmFont = ['Noto Sans Bold'];
   function loadCss(href){ return new Promise(res=>{ if(document.querySelector(`link[href="${href}"]`)) return res(); const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = href; l.onload = res; l.onerror = res; document.head.appendChild(l); }); }
-  function loadJs(src){ return new Promise((res, rej)=>{ const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = ()=>rej(new Error('carte 3D indisponible (pas de réseau ?)')); document.head.appendChild(s); }); }
+  /* 🛡️ (14/11/2026) un point sans position valable (fiche abîmée par un compagnon malveillant, géocodage raté) ne casse plus la carte :
+     le marqueur est caché, le cadrage l’ignore. Avant : « Invalid LngLat » et le globe ne s’ouvrait plus. */
+  function mlGuard(){ const g = window.maplibregl; if(!g || g.__vzSafe) return; g.__vzSafe = 1;
+    const okLL = ll => { try { const a = Array.isArray(ll) ? ll : ll && [ll.lng != null ? ll.lng : ll.lon, ll.lat]; return !!a && isFinite(a[0]) && isFinite(a[1]) && Math.abs(a[1]) <= 90; } catch(e){ return false; } };
+    const sl = g.Marker.prototype.setLngLat; g.Marker.prototype.setLngLat = function(ll){ const ok = okLL(ll); try { const e = this.getElement(); if(e) e.style.visibility = ok ? '' : 'hidden'; } catch(e){} return sl.call(this, ok ? ll : [0, 0]); };
+    if(g.Popup){ const sp = g.Popup.prototype.setLngLat; g.Popup.prototype.setLngLat = function(ll){ return sp.call(this, okLL(ll) ? ll : [0, -89.9]); }; }
+    const ex = g.LngLatBounds.prototype.extend; g.LngLatBounds.prototype.extend = function(o){ if(Array.isArray(o) && o.length === 2 && typeof o[0] !== 'object' && !okLL(o)) return this; if(o && !Array.isArray(o) && 'lat' in o && !okLL(o)) return this; return ex.call(this, o); };
+  }
+  function loadJs(src){ return new Promise((res, rej)=>{ const s = document.createElement('script'); s.src = src; s.onload = ()=>{ try { mlGuard(); } catch(e){} res(); }; s.onerror = ()=>rej(new Error('carte 3D indisponible (pas de réseau ?)')); document.head.appendChild(s); }); }
   const wmInfo = h => { const i = document.getElementById('wm-info'); if(i) i.innerHTML = h; };
   let wmOpening = false;   // globe en cours de création : un 2e toucher ne crée pas un 2e globe par-dessus
   let wmQ = Promise.resolve();   // 🔒 une seule construction des couches à la fois (ouverture et rafraîchissement se croisaient : couches en double)
@@ -1870,10 +1878,22 @@
     const qui = st.qui || (n0 <= 1 ? 'solo' : n0 === 2 ? 'couple' : 'amis');
     const nb = qui === 'solo' ? '1' : qui === 'couple' ? '2' : String(Math.min(6, Math.max(2, +st.nb || n0 || 2)));
     const opts = [['solo', MSGT('Seul(e)'), '🧍'], ['couple', MSGT('En couple'), '💕'], ['amis', MSGT('Entre amis'), '🎉'], ['famille', MSGT('En famille'), '👨‍👩‍👧']];
-    return `${profiles().length ? `<div class="v-f"><label>👥 ${MSGT('Qui part ?')}</label><div onclick="setTimeout(()=>{ CV.whoPick('${p}'); ${onPick || ''} },0)">${peopleSel(p + '-tv', profiles().map(x=>x.id), vv)}</div></div>` : ''}
+    return `${profiles().length ? `<div class="v-f"><label>👥 ${MSGT('Qui part ?')}</label><div onclick="setTimeout(()=>{ CV.whoPick('${p}'); ${onPick || ''} },0)">${peopleSel(p + '-tv', profiles().map(x=>x.id), vv)}</div>
+        <div class="cv-row who-add" style="gap:6px;margin-top:6px"><input class="v-in" id="${p}-add" autocomplete="off" maxlength="40" placeholder="${esc(MSGT('Prénom d’un autre voyageur'))}" onkeydown="if(event.key==='Enter'){event.preventDefault();CV.whoAdd('${p}')}"><button type="button" class="v-day-edit" onclick="CV.whoAdd('${p}')">＋ ${MSGT('Ajouter')}</button></div></div>` : ''}
       <div class="v-f"><label>👫 ${MSGT('Avec qui ?')}</label><select class="v-in" id="${p}-qui" hidden onchange="CV.inspWho('qui','${p}')">${opts.map(([v, l])=>`<option value="${v}"${v === qui ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>
       <div class="wz-cards">${opts.map(([v, l, ic])=>`<button type="button" class="wz-card${v === qui ? ' on' : ''}" onclick="const s=document.getElementById('${p}-qui');s.value='${v}';s.dispatchEvent(new Event('change'));this.parentNode.querySelectorAll('.wz-card').forEach(x=>x.classList.toggle('on', x === this))"><i>${ic}</i><b>${esc(l)}</b></button>`).join('')}</div></div>
       <div class="v-f"><label>${MSGT('Combien de voyageurs ?')}</label><select class="v-in" id="${p}-nb" onchange="CV.inspWho('nb','${p}')">${[['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6',MSGT('6 et +')]].map(([v, l])=>`<option value="${v}"${v === nb ? ' selected' : ''}>${l}</option>`).join('')}</select></div>`;
+  }
+  // ＋ un voyageur qui n’a pas encore de profil : on tape son prénom, il est ajouté au carnet et coché (14/11/2026)
+  function whoAdd(p){
+    const inp = document.getElementById(p + '-add'), box = document.getElementById(p + '-tv'); if(!inp || !box) return;
+    const nom = inp.value.trim().slice(0, 40); if(!nom){ inp.focus(); return; }
+    let pr = nameTaken(nom);
+    if(!pr){ if(profiles().length >= MAXP){ alert(RF('Maximum {0} compagnons dans un carnet.', MAXP)); return; }
+      pr = put({id:'p' + uid(), type:'profile', nom, couleur:COLORS[profiles().length % COLORS.length]}, '👤 ' + RF('{0} ajouté(e)', nom)); }
+    let b = box.querySelector(`button[data-p="${pr.id}"]`);
+    if(!b){ b = document.createElement('button'); b.type = 'button'; b.dataset.p = pr.id; b.style.setProperty('--pc', pcol(pr.id)); b.textContent = pname(pr.id); b.setAttribute('onclick', "this.classList.toggle('on');CV.live()"); box.appendChild(b); }
+    b.classList.add('on'); inp.value = ''; box.parentElement.click();   // même suite qu’un voyageur coché à la main (nombre, départs de chacun)
   }
   // un voyageur coché de plus : le nombre ne descend jamais sous le nombre de cochés
   function whoPick(p){ const n = document.querySelectorAll('#' + p + '-tv button.on').length, s = document.getElementById(p + '-nb'); if(s && n) s.value = String(Math.min(6, Math.max(n, +s.value > n ? +s.value : n))); inspWho('nb', p); }

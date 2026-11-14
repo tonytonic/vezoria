@@ -1441,7 +1441,7 @@ ${pm.join('\n')}</Document></kml>`;
             <button type="button" class="v-day-edit${on ? ' on' : ''}" id="ts-a${i}" onclick="CV.todaySeeAdd(${i})">${on ? '✓' : '＋'} ${esc(MSGT(on ? 'Ma journée' : 'Ma journée'))}</button></div>`; }).join('')}</div>`
         : `<div class="ex-empty">${esc(navigator.onLine === false ? MSGT('Hors connexion : impossible de chercher les lieux autour de toi.') : MSGT('Rien trouvé autour de toi pour l’instant.'))}</div>`)
       + (hidden('blk:book') ? '' : `<div class="vt-sec"><div class="sg-dh">🎟️ ${esc(MSGT('À réserver aujourd’hui ou demain'))} · <span data-notr>${esc(city)}</span></div>${VTR(city, td, addDays(td, 1), 6)}</div>`)
-      + `<div class="v-actions" style="flex-wrap:wrap"><button type="button" class="v-btn" onclick="CV.close();CV.exploreCity(${esc(JSON.stringify(city))},'','${td}')">🔎 ${esc(MSGT('Explorer la ville'))}</button><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`;
+      + `<div class="v-actions" style="flex-wrap:wrap"><button type="button" class="v-btn" onclick="CV.close();CV.exploreCity(${esc(JSON.stringify(String(city || "")))},'','${td}')">🔎 ${esc(MSGT('Explorer la ville'))}</button><button type="button" class="v-btn sec" onclick="CV.close()">${esc(MSGT('Fermer'))}</button></div>`;
   }
   function todaySeeAdd(i){
     const p = TSEE && TSEE.L && TSEE.L[i], t = trip(); if(!p || !t) return;

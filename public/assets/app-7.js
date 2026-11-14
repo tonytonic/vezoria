@@ -825,7 +825,7 @@
     const contain = (im) => { if(!im) return; const sc = Math.min(W / im.width, H / im.height), w = im.width * sc, h = im.height * sc; c.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); };
     const grad = (a, b) => { const g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, a); g.addColorStop(1, b); c.fillStyle = g; c.fillRect(0, 0, W, H); };
     const shade = () => { const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, 'rgba(0,0,0,.45)'); g.addColorStop(.25, 'rgba(0,0,0,0)'); g.addColorStop(.6, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.75)'); c.fillStyle = g; c.fillRect(0, 0, W, H); };
-    const txt = (t, x, y, n, w, al, mw) => { fs(n, w); c.textAlign = al || 'center'; c.fillStyle = '#fff'; c.shadowColor = 'rgba(0,0,0,.45)'; c.shadowBlur = 16; let s2 = String(t || ''); if(mw) while(c.measureText(s2).width > mw && s2.length > 3) s2 = s2.slice(0, -2) + '…'; c.fillText(s2, x, y); c.shadowBlur = 0; };
+    const txt = (t, x, y, n, w, al, mw) => { fs(n, w); c.textAlign = al || 'center'; c.fillStyle = '#fff'; c.shadowColor = 'rgba(0,0,0,.45)'; c.shadowBlur = 16; let s2 = String(t || ''); if(s2.length > 160) s2 = s2.slice(0, 159) + '…'; if(mw) while(c.measureText(s2).width > mw && s2.length > 3) s2 = s2.slice(0, -2) + '…';   /* 🛡️ 14/11 : un titre de 20 000 lettres figeait la vidéo */ c.fillText(s2, x, y); c.shadowBlur = 0; };
     const wrap = (t, x, y, n, w, mw, lh, max) => { fs(n, w); const L = []; let l = ''; String(t || '').split(/\s+/).forEach(wd=>{ const tt = l ? l + ' ' + wd : wd; if(c.measureText(tt).width > mw){ L.push(l); l = wd; } else l = tt; }); if(l) L.push(l); L.slice(0, max || 6).forEach((ln, i)=>txt(ln, x, y + i * lh, n, w, 'left')); };
     function frame(t){
       let acc = 0, i = 0; while(i < slides.length - 1 && t > acc + slides[i].d){ acc += slides[i].d; i++; }
@@ -2803,7 +2803,7 @@
       <small class="p3-z">🔍 ${MSGT('Zoome sur une ville : hébergements, visites, activités et quartier conseillé apparaissent.')}</small>`;
   }
   async function p3Data(t){
-    const g = async q => { q = (q || '').trim(); if(!q) return null; const r = await geocode(q, null).catch(()=>null); return r && r.lat != null ? {lat:+r.lat, lng:+r.lng} : null; };
+    const g = async q => { q = String(q || '').trim(); if(!q) return null; const r = await geocode(q, null).catch(()=>null); return r && r.lat != null ? {lat:+r.lat, lng:+r.lng} : null; };
     const F = {legs:[], cities:[], hood:[], rays:[], visits:[], acts:[], hotels:[]};
     const st = tlStages(), SC = []; let k = 0;
     for(const s of st){ let c = await g(s.city);
@@ -2818,7 +2818,7 @@
     //    (« Aéroport », « Gare Termini », « Pompéi » : pas un aéroport au hasard en Biélorussie)
     const stageAt = (d, leave) => { if(!d) return null; const x = SC.find(({s})=>leave ? (s.debut < d && d <= (s.fin || s.debut)) : (s.debut <= d && d < (s.fin || addDays(s.debut, 1)))); return x || null; };
     const LOCAL = /a[eé]roport|airport|aeropuerto|aeroporto|flughafen|gare|station|stazione|estaci|bahnhof|termini|port\b|porto\b|terminal|centre|center|centro|h[oô]tel/i;
-    const resolve = async (q, ctx) => { q = (q || '').trim(); if(!q) return null; const nq = normQ(q);
+    const resolve = async (q, ctx) => { q = String(q || '').trim(); if(!q) return null; const nq = normQ(q);
       const hit = SC.find(({s})=>{ const n = normQ(s.city); return n && (nq === n || nq.startsWith(n + ' ') || nq.endsWith(' ' + n)); }); if(hit) return {p:hit.c, stage:1};
       // une vraie ville (« Bruxelles ») se cherche telle quelle — avec l’étape on tomberait sur la « Via Bruxelles » de Rome ;
       // seuls les lieux sans ville (« Aéroport », « Gare ») se cherchent autour de l’étape du jour
