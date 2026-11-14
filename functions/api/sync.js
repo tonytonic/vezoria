@@ -389,7 +389,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (space instanceof Response) return space;
 
   let body;
-  try { body = await request.json(); } catch { return json({ error: 'Requête illisible' }, 400); }
+  try { const _j = await request.json(); if (!_j || typeof _j !== 'object' || Array.isArray(_j)) throw 0; body = _j; } catch { return json({ error: 'Requête illisible' }, 400); }
   const since = Math.max(0, Number(body.since) || 0);
   const changes = Array.isArray(body.changes) ? body.changes.slice(0, MAX_CHANGES) : [];
   if (!(await rateIp(env, request, 'sy', 6000))) return json({ error: TOO_MANY, retry: 3600 }, 429);

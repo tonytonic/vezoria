@@ -276,7 +276,7 @@ export async function onRequestPost({ request, env }) {
   if (new URL(request.url).searchParams.get('stripe') === '1') return stripeHook(request, env);
   if (new URL(request.url).searchParams.get('play') === '1') return playHook(request, env);
   await planTables(env.DB);
-  let b = {}; try { b = await request.json(); } catch (e) { return json({ error: 'Requête illisible' }, 400); }
+  let b = {}; try { const _j = await request.json(); if (!_j || typeof _j !== 'object' || Array.isArray(_j)) throw 0; b = _j; } catch (e) { return json({ error: 'Requête illisible' }, 400); }
   const a = b.a, w = await who(request, env); if (w.err) return w.err;
   const pay = env.PAY_ON === '1';
 

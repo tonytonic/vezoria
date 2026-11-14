@@ -44,7 +44,7 @@ export async function onRequest({request, env}){
   if(!env.DB) return json({error:'Base D1 non liée (DB)'}, 500);
   await table(env.DB);
   if(request.method === 'POST'){
-    let b = {}; try { b = await request.json(); } catch(e){}
+    let b = {}; try { const _j = await request.json(); if (!_j || typeof _j !== 'object' || Array.isArray(_j)) throw 0; b = _j; } catch(e){}
     const id = String(b.id || '').replace(/[^a-z0-9]/gi, '').slice(0, 40), plat = ['ios','android','desktop'].includes(b.plat) ? b.plat : 'autre';
     if(id.length < 12) return json({error:'id'}, 400);
     if(!(await rateIp(env, request, 'in', 30))) return json({error:'trop'}, 429);

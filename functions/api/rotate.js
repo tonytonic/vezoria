@@ -106,7 +106,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (!env.DB) return json({ error: 'Base D1 non liée (DB)' }, 500);
   const code = (request.headers.get('X-Carnet-Code') || '').trim(), dev = cleanDev(request.headers.get('X-Carnet-Dev'));
   if (code.length < 8 || code.startsWith('mb:')) return json({ error: 'Réservé au propriétaire du carnet (code administrateur) — Owner only' }, 403);
-  let b = {}; try { b = await request.json(); } catch (e) { return json({ error: 'Requête illisible' }, 400); }
+  let b = {}; try { const _j = await request.json(); if (!_j || typeof _j !== 'object' || Array.isArray(_j)) throw 0; b = _j; } catch (e) { return json({ error: 'Requête illisible' }, 400); }
   await tables(env.DB);
   const cur = await codeSpace(env, code), space = cur.space, now = Date.now();
   if (cur.dead) return json({ error: ROTATED, rotated: true }, 403);

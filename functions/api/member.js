@@ -65,7 +65,7 @@ export const onRequestOptions = () => new Response(null, { status: 204, headers:
 export async function onRequestPost({ request, env }) {
   if (!env.DB) return json({ error: 'Base D1 non liée (DB)' }, 500);
   await table(env.DB);
-  let b = {}; try { b = await request.json(); } catch (e) { return json({ error: 'Requête illisible' }, 400); }
+  let b = {}; try { const _j = await request.json(); if (!_j || typeof _j !== 'object' || Array.isArray(_j)) throw 0; b = _j; } catch (e) { return json({ error: 'Requête illisible' }, 400); }
   const a = b.a;
 
   if (a === 'grant') {   // le compagnon tape son code : on lui rend son droit d'accès chiffré (illisible sans le code)

@@ -115,7 +115,7 @@ export async function onRequestPost({ request, env }) {
   if (!(await sameKey(request.headers.get('X-Admin-Key') || '', env.ADMIN_KEY))) { await rateIp(env, request, 'ak-check', 10, 1); await new Promise(r => setTimeout(r, 800)); return json({ error: 'clé invalide' }, 403); }
   if (!env.DB) return json({ error: 'Base D1 non liée' }, 500);
   await tables(env.DB);
-  let b = {}; try { b = await request.json(); } catch (e) { return json({ error: 'requête illisible' }, 400); }
+  let b = {}; try { const _j = await request.json(); if (!_j || typeof _j !== 'object' || Array.isArray(_j)) throw 0; b = _j; } catch (e) { return json({ error: 'requête illisible' }, 400); }
   const a = b.action;
   if (a === 'usage') {   // 🧮 forfait du mois : appels /api, opérations photos (R2), comptés par _middleware.js
     const m = new Date().toISOString().slice(0, 7), u = { m };

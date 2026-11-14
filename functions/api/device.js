@@ -23,7 +23,7 @@ export async function onRequestPost({ request, env }) {
   // un appareil bloqué ne peut pas se débloquer lui-même
   await env.DB.prepare('CREATE TABLE IF NOT EXISTS dev_block (space TEXT NOT NULL, dev TEXT NOT NULL, at INTEGER NOT NULL, PRIMARY KEY (space, dev))').run();
   if (me && await env.DB.prepare('SELECT 1 AS x FROM dev_block WHERE space = ?1 AND dev = ?2').bind(space, me).first()) return json({ error: 'Appareil bloqué — Device blocked', devBlocked: true }, 403);
-  let b = {}; try { b = await request.json(); } catch (e) { return json({ error: 'Requête illisible' }, 400); }
+  let b = {}; try { const _j = await request.json(); if (!_j || typeof _j !== 'object' || Array.isArray(_j)) throw 0; b = _j; } catch (e) { return json({ error: 'Requête illisible' }, 400); }
   const dev = String(b.dev || '').replace(/[^a-z0-9]/gi, '').slice(0, 40);
   if (b.a === 'list') { const { results } = await env.DB.prepare('SELECT dev, at FROM dev_block WHERE space = ?1').bind(space).all(); return json({ ok: true, blocked: results || [] }); }
   if (dev.length < 8) return json({ error: 'Appareil inconnu' }, 400);

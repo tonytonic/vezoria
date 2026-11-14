@@ -223,7 +223,7 @@ export async function onRequestDelete({ request, env }) {
   // Garde-fou : seules les photos envoyées il y a plus de 3 jours partent (un autre téléphone n’a peut-être pas encore synchronisé ses fiches).
   if (u.searchParams.get('bulk') === '1') {
     if (!env.PHOTOS) return json({ ok: true, deleted: 0, freed: 0 });
-    let body = {}; try { body = await request.json(); } catch (e) {}
+    let body = {}; try { const _j = await request.json(); if (!_j || typeof _j !== 'object' || Array.isArray(_j)) throw 0; body = _j; } catch (e) {}
     const ids = (Array.isArray(body.ids) ? body.ids : []).filter(validId).slice(0, 1000), now = Date.now();
     let freed = 0; const del = [];
     for (let i = 0; i < ids.length; i += 50) {

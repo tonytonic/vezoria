@@ -198,7 +198,7 @@ export async function onRequestGet({ request, env }) {
 export async function onRequestPost({ request, env, waitUntil }) {
   if (!env.DB) return json({ error: 'Base D1 non liée (DB)' }, 500);
   await tables(env.DB);
-  let b; try { b = await request.json(); } catch (e) { return json({ error: 'Requête illisible' }, 400); }
+  let b; try { const _j = await request.json(); if (!_j || typeof _j !== 'object' || Array.isArray(_j)) throw 0; b = _j; } catch (e) { return json({ error: 'Requête illisible' }, 400); }
   if (!(await rateIp(env, request, 'pu', 300))) return json({ error: TOO_MANY, retry: 3600 }, 429);
   if (b.a === 'key') return json({ pub: (await vapid(env.DB)).pub });
   const space = await spaceOf(request, env);

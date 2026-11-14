@@ -175,7 +175,7 @@ export async function onRequestPost({ request, env }) {
   await acctTables(env.DB);
   // 🛡️ un appareil retiré du carnet (device.js) ne touche plus au compte : ni valider un autre appareil, ni changer l'adresse, ni supprimer le compte
   if (await devIsBlocked(env, space, dev)) return json({ error: 'Cet appareil a été retiré de ce carnet par son propriétaire. — This device was removed from this notebook by its owner.', devBlocked: true }, 403);
-  let b = {}; try { b = await request.json(); } catch (e) { return json({ error: 'Requête illisible' }, 400); }
+  let b = {}; try { const _j = await request.json(); if (!_j || typeof _j !== 'object' || Array.isArray(_j)) throw 0; b = _j; } catch (e) { return json({ error: 'Requête illisible' }, 400); }
   const ip = request.headers.get('CF-Connecting-IP') || 'x';
   const TOO_MAIL = { error: 'Trop d’envois, réessaie plus tard — Too many e-mails, try again later' };
   const a = await env.DB.prepare('SELECT * FROM acct WHERE space = ?1').bind(space).first();

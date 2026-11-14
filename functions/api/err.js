@@ -31,7 +31,7 @@ export async function onRequest({ request, env }) {
   if (request.method !== 'POST') return json({ error: 'POST' }, 405);
   if (!env.DB) return json({ error: 'Base D1 non liée (DB)' }, 500);
   const len = +(request.headers.get('Content-Length') || 0); if (len > 4000) return json({ error: 'trop long' }, 413);
-  let b = {}; try { b = JSON.parse((await request.text()).slice(0, 4000)); } catch (e) { return json({ error: 'illisible' }, 400); }
+  let b = {}; try { const _j = JSON.parse((await request.text()).slice(0, 4000)); if (!_j || typeof _j !== 'object' || Array.isArray(_j)) throw 0; b = _j; } catch (e) { return json({ error: 'illisible' }, 400); }
   const m = cut(b.m, 300), s = cut(b.s, 160), v = cut(b.v, 20), ua = cut(b.ua, 60);
   if (!m) return json({ error: 'vide' }, 400);
   if (!(await rateIp(env, request, 30))) return json({ ok: true });   // trop d'envois : ignorés sans bruit
