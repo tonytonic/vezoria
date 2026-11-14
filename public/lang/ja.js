@@ -6755,4 +6755,9 @@ I18N.load({
 "Pour y aller et revenir":"行きと帰り",
 "Entre les étapes":"滞在地の間",
 "Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"この共有には、このスマホにすでにある旅行が含まれています：「{0}」。",
-"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"続けると、あなたの旅行がこの共有に結び付けられ、共有を持つ人が閲覧・編集できるようになります。本当に招待された旅行である場合だけ続けてください。"});
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"続けると、あなたの旅行がこの共有に結び付けられ、共有を持つ人が閲覧・編集できるようになります。本当に招待された旅行である場合だけ続けてください。",
+"Avec qui pars-tu ?": "誰と行く？",
+"👥 Vous partez à {0} : invite-les": "👥 {0}人で行くなら：招待しよう",
+"Prénom d’un autre voyageur": "ほかの旅行者の名前",
+"{0} ajouté(e)": "{0} を追加しました"
+});

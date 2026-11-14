@@ -3796,4 +3796,9 @@ I18N.load({
 "Pour y aller et revenir":"Getting there and back",
 "Entre les étapes":"Between stops",
 "Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"This share contains a trip you already have on this phone: “{0}”.",
-"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"If you continue, your trip is linked to this share: the people who have it can read and edit it. Only continue if this really is the trip you were invited to join."});
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"If you continue, your trip is linked to this share: the people who have it can read and edit it. Only continue if this really is the trip you were invited to join.",
+"Avec qui pars-tu ?": "Who are you travelling with?",
+"👥 Vous partez à {0} : invite-les": "👥 There are {0} of you: invite them",
+"Prénom d’un autre voyageur": "Another traveller's first name",
+"{0} ajouté(e)": "{0} added"
+});

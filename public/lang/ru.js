@@ -6756,4 +6756,9 @@ I18N.load({
 "Pour y aller et revenir":"Дорога туда и обратно",
 "Entre les étapes":"Между этапами",
 "Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"В этом общем доступе есть поездка, которая уже есть на этом телефоне: «{0}».",
-"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Если продолжить, твоя поездка будет связана с этим общим доступом: люди, у которых он есть, смогут читать и менять её. Продолжай, только если это действительно та поездка, в которую тебя пригласили."});
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Если продолжить, твоя поездка будет связана с этим общим доступом: люди, у которых он есть, смогут читать и менять её. Продолжай, только если это действительно та поездка, в которую тебя пригласили.",
+"Avec qui pars-tu ?": "С кем ты едешь?",
+"👥 Vous partez à {0} : invite-les": "👥 Вас {0}: пригласи их",
+"Prénom d’un autre voyageur": "Имя другого путешественника",
+"{0} ajouté(e)": "{0} добавлен(а)"
+});

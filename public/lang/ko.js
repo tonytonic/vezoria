@@ -6755,4 +6755,9 @@ I18N.load({
 "Pour y aller et revenir":"가는 길과 오는 길",
 "Entre les étapes":"경유지 사이",
 "Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"이 공유에는 이 휴대폰에 이미 있는 여행이 들어 있습니다: “{0}”.",
-"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"계속하면 내 여행이 이 공유에 연결되어, 공유를 가진 사람들이 읽고 수정할 수 있습니다. 정말로 초대받은 그 여행일 때만 계속하세요."});
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"계속하면 내 여행이 이 공유에 연결되어, 공유를 가진 사람들이 읽고 수정할 수 있습니다. 정말로 초대받은 그 여행일 때만 계속하세요.",
+"Avec qui pars-tu ?": "누구와 함께 가나요?",
+"👥 Vous partez à {0} : invite-les": "👥 {0}명이 함께 가요: 초대하세요",
+"Prénom d’un autre voyageur": "다른 여행자의 이름",
+"{0} ajouté(e)": "{0} 추가됨"
+});

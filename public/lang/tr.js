@@ -6737,4 +6737,9 @@ I18N.load({
 "Pour y aller et revenir":"Gidiş ve dönüş için",
 "Entre les étapes":"Duraklar arasında",
 "Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"Bu paylaşım, bu telefonda zaten bulunan bir seyahati içeriyor: “{0}”.",
-"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Devam edersen seyahatin bu paylaşıma bağlanır: paylaşıma sahip kişiler onu okuyabilir ve değiştirebilir. Yalnızca gerçekten davet edildiğin seyahat buysa devam et."});
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Devam edersen seyahatin bu paylaşıma bağlanır: paylaşıma sahip kişiler onu okuyabilir ve değiştirebilir. Yalnızca gerçekten davet edildiğin seyahat buysa devam et.",
+"Avec qui pars-tu ?": "Kiminle gidiyorsun?",
+"👥 Vous partez à {0} : invite-les": "👥 {0} kişi gidiyorsunuz: onları davet et",
+"Prénom d’un autre voyageur": "Başka bir yolcunun adı",
+"{0} ajouté(e)": "{0} eklendi"
+});

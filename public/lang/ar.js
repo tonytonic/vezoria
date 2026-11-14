@@ -6756,4 +6756,9 @@ I18N.load({
 "Pour y aller et revenir":"للذهاب والعودة",
 "Entre les étapes":"بين المحطات",
 "Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"تحتوي هذه المشاركة على رحلة موجودة لديك مسبقًا على هذا الهاتف: «{0}».",
-"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"إذا تابعت، ستُربط رحلتك بهذه المشاركة: يستطيع من لديهم المشاركة قراءتها وتعديلها. لا تتابع إلا إذا كانت هذه فعلًا الرحلة التي دُعيت للانضمام إليها."});
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"إذا تابعت، ستُربط رحلتك بهذه المشاركة: يستطيع من لديهم المشاركة قراءتها وتعديلها. لا تتابع إلا إذا كانت هذه فعلًا الرحلة التي دُعيت للانضمام إليها.",
+"Avec qui pars-tu ?": "مع من تسافر؟",
+"👥 Vous partez à {0} : invite-les": "👥 أنتم {0}: ادعُهم",
+"Prénom d’un autre voyageur": "اسم مسافر آخر",
+"{0} ajouté(e)": "تمت إضافة {0}"
+});

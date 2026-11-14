@@ -6755,4 +6755,9 @@ I18N.load({
 "Pour y aller et revenir":"往返方式",
 "Entre les étapes":"各站之间",
 "Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"此共享包含一个你手机上已有的旅程：“{0}”。",
-"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"如果继续，你的旅程将与此共享关联：拥有该共享的人可以查看和修改它。只有在这确实是别人邀请你加入的旅程时才继续。"});
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"如果继续，你的旅程将与此共享关联：拥有该共享的人可以查看和修改它。只有在这确实是别人邀请你加入的旅程时才继续。",
+"Avec qui pars-tu ?": "你和谁一起去？",
+"👥 Vous partez à {0} : invite-les": "👥 你们共 {0} 人：邀请他们",
+"Prénom d’un autre voyageur": "另一位旅伴的名字",
+"{0} ajouté(e)": "已添加 {0}"
+});

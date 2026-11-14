@@ -3805,4 +3805,9 @@ I18N.load({
 "Pour y aller et revenir":"Heen en terug",
 "Entre les étapes":"Tussen de etappes",
 "Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"Deze deling bevat een reis die je al op deze telefoon hebt: ‘{0}’.",
-"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Als je doorgaat, wordt je reis aan deze deling gekoppeld: de mensen die haar hebben kunnen je reis lezen en wijzigen. Ga alleen door als dit echt de reis is waarvoor je bent uitgenodigd."});
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Als je doorgaat, wordt je reis aan deze deling gekoppeld: de mensen die haar hebben kunnen je reis lezen en wijzigen. Ga alleen door als dit echt de reis is waarvoor je bent uitgenodigd.",
+"Avec qui pars-tu ?": "Met wie ga je op reis?",
+"👥 Vous partez à {0} : invite-les": "👥 Jullie gaan met {0}: nodig ze uit",
+"Prénom d’un autre voyageur": "Voornaam van een andere reiziger",
+"{0} ajouté(e)": "{0} toegevoegd"
+});

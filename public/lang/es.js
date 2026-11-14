@@ -3815,4 +3815,9 @@ I18N.load({
 "Pour y aller et revenir":"Para ir y volver",
 "Entre les étapes":"Entre las etapas",
 "Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"Este uso compartido contiene un viaje que ya tienes en este teléfono: «{0}».",
-"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Si continúas, tu viaje queda vinculado a este uso compartido: las personas que lo tienen pueden leerlo y modificarlo. Continúa solo si es de verdad el viaje al que te han invitado."});
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"Si continúas, tu viaje queda vinculado a este uso compartido: las personas que lo tienen pueden leerlo y modificarlo. Continúa solo si es de verdad el viaje al que te han invitado.",
+"Avec qui pars-tu ?": "¿Con quién viajas?",
+"👥 Vous partez à {0} : invite-les": "👥 Viajáis {0}: invítalos",
+"Prénom d’un autre voyageur": "Nombre de otro viajero",
+"{0} ajouté(e)": "{0} añadido/a"
+});

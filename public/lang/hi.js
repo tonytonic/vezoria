@@ -6755,4 +6755,9 @@ I18N.load({
 "Pour y aller et revenir":"जाने और लौटने के लिए",
 "Entre les étapes":"पड़ावों के बीच",
 "Ce partage contient un voyage que tu as déjà sur ce téléphone : « {0} ».":"इस साझा फ़ोल्डर में एक यात्रा है जो इस फ़ोन पर पहले से है: “{0}”।",
-"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"आगे बढ़ने पर तुम्हारी यात्रा इस साझा फ़ोल्डर से जुड़ जाएगी: जिनके पास यह है वे उसे पढ़ और बदल सकते हैं। तभी आगे बढ़ो जब यह सचमुच वही यात्रा हो जिसमें तुम्हें बुलाया गया है।"});
+"Si tu continues, ton voyage est relié à ce partage : les personnes qui l’ont peuvent le lire et le modifier. Ne continue que si c’est bien ce voyage qu’on t’a invité à rejoindre.":"आगे बढ़ने पर तुम्हारी यात्रा इस साझा फ़ोल्डर से जुड़ जाएगी: जिनके पास यह है वे उसे पढ़ और बदल सकते हैं। तभी आगे बढ़ो जब यह सचमुच वही यात्रा हो जिसमें तुम्हें बुलाया गया है।",
+"Avec qui pars-tu ?": "तुम किसके साथ जा रहे हो?",
+"👥 Vous partez à {0} : invite-les": "👥 तुम {0} लोग जा रहे हो: उन्हें बुलाओ",
+"Prénom d’un autre voyageur": "दूसरे यात्री का पहला नाम",
+"{0} ajouté(e)": "{0} जोड़ा गया"
+});
