@@ -201,5 +201,11 @@ IP = '203.0.113.97';
   const x = await call('unfurl', { method: 'GET', query: '?u=' + encodeURIComponent('https://www.google.com/url?q=http://169.254.169.254/') });
   globalThis.fetch = f0;
   ok(x.s < 500 && !seen.some(u => /169\.254|localhost|127\.0/.test(u)), 'lien collé : une redirection vers une adresse inconnue n’est jamais suivie', { s: x.s, seen }); }
+// 7k. (14/11) corps de requête « null », nombre, liste, texte : refusé proprement partout (avant : member.js plantait → erreur 500)
+IP = '203.0.113.98';
+{ const crash = []; for (const route of ['sync', 'account', 'device', 'member', 'plan', 'push', 'rotate', 'photo', 'admin']) for (const raw of ['null', '[]', '5', '"x"', 'true']) {
+    let s = 0; try { s = (await call(route, { code: hex(), dev: 'dCORPS00001', raw, headers: route === 'photo' ? { 'Content-Type': 'application/json' } : {} })).s; } catch (e) { s = 'plantage ' + e.message; }
+    if (!(s >= 400 && s < 500) && s !== 200) crash.push(route + ' ' + raw + ' → ' + s); }
+  ok(!crash.length, 'corps de requête bizarre (null, nombre, liste…) : jamais d’erreur serveur', crash); }
 console.log(`\n${pass} essais réussis, ${fail} en échec` + (fail ? ' : ' + bad.join(' | ') : ''));
 process.exit(fail ? 1 : 0);
