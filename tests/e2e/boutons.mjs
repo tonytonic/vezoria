@@ -1,6 +1,7 @@
 // 🔎 Détecteur de boutons sans effet : touche chaque bouton de chaque écran (et de chaque fenêtre qu’il ouvre)
 // et vérifie que QUELQUE CHOSE change : écran, fenêtre, message, envoi réseau, partage, fichier, défilement…
 // Un bouton qui ne change rien du tout est listé (c’est ce qui avait laissé passer « ＋ Ajouter » sans compte).
+import fs from 'node:fs';
 import { log, say, BASE } from './lib.mjs';
 export const FX_INIT = () => {
   if (window.__fx) return;
@@ -47,7 +48,7 @@ export const sheetPlaces = U => SHEETS.map(f => ({ name: 'fenêtre ' + f, scope:
 export async function sweep(U, state, { deep = true, perFn = 2, skip = /^$/, only = null, keys = KEYS.prep, extra = [] } = {}) {
   await arm(U); const dead = [], errs = [], seenP = {}, seenO = {}, placesOut = []; let clicks = 0;
   const tripId = await U.ev(() => CV._M().trip);
-  const judge = async (sc, d, where) => { const e0 = U.errs.length, n0 = U.nd || 0; let r;
+  const judge = async (sc, d, where) => { const e0 = U.errs.length, n0 = U.nd || 0; let r; if (process.env.TRACE) fs.appendFileSync(process.env.TRACE, (await U.ev(() => [Math.round(performance.memory.usedJSHeapSize / 1e6) + 'Mo', document.documentElement.scrollWidth + 'px', document.querySelectorAll('*').length + 'el'].join(' ')).catch(() => '?')) + ' → ' + where + ' · ' + d.label + ' · ' + d.oc.slice(0, 90) + '\n');
     try { r = await U.ev(([sc, d]) => window.__fxHit(sc, d), [sc, d]); } catch (e) { r = { nav: 1 }; await U.wait(1200); const away = await alive(); if (away) placesOut.push(`   « ${d.label} » ${d.oc.slice(0, 50)} quitte l’appli → ${away}`); }
     clicks++; if (U.errs.length > e0) errs.push(`${state} · ${where} · « ${d.label} » ${d.oc.slice(0, 70)} → ${U.errs.slice(e0).join(' | ').slice(0, 220)}`);
     if (r.gone) return { gone: 1 }; const eff = r.nav || r.mut > 0 || !r.same || (U.nd || 0) > n0 || U.errs.length > e0;

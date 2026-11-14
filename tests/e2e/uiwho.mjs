@@ -12,14 +12,35 @@ try {
   await card('wz', 1); s = await st('wz'); ok('Je sais où je vais : « En couple » → 2 voyageurs', s.qui === 'couple' && s.nb === '2', JSON.stringify(s));
   await nb('wz', '4'); s = await st('wz'); ok('Je sais où je vais : 4 voyageurs → « Entre amis »', s.qui === 'amis', JSON.stringify(s));
   await card('wz', 3); s = await st('wz'); ok('Je sais où je vais : « En famille » garde 4 voyageurs', s.qui === 'famille' && s.nb === '4', JSON.stringify(s));
+  // ＋ un voyageur sans profil : on tape son prénom, il est créé et coché
+  await A.ev(() => { document.getElementById('wz-add').value = 'Claire'; CV.whoAdd('wz'); }); await A.wait(500);
+  s = await A.ev(() => ({ on: [...document.querySelectorAll('#wz-tv button.on')].map(b => b.innerText.trim()), prof: Object.values(CV._R()).filter(r => r.type === 'profile' && !r.deleted).map(r => r.nom), nb: document.getElementById('wz-nb').value }));
+  ok('« Qui part ? » : ajouter « Claire » crée son profil et la coche', s.on.includes('Claire') && s.prof.includes('Claire') && +s.nb >= 2, JSON.stringify(s));
+  await A.ev(() => { document.getElementById('wz-add').value = 'claire'; CV.whoAdd('wz'); }); await A.wait(300);
+  s = await A.ev(() => Object.values(CV._R()).filter(r => r.type === 'profile' && !r.deleted && /^claire$/i.test(r.nom)).length); ok('… la retaper ne crée pas de doublon', s === 1, s);
   // on va jusqu’au bout : le voyage garde « en famille, 4 voyageurs »
   await A.ev(() => { document.getElementById('wz-titre').value = 'Famille à Lisbonne'; }); await A.ev(() => CV.wzGo(2)); await A.wait(400);
   s = await A.ev(() => { const d = new Date(Date.now() + 40 * 864e5).toISOString().slice(0, 10); const i = document.getElementById('wz-debut'); i.value = d; i.dispatchEvent(new Event('input')); return d; });
   await A.ev(() => CV.wzGo(3)); await A.wait(500); await A.ev(() => { const v = document.querySelector('.wz-et [data-k=ville]'); v.value = 'Lisbonne'; }); await A.ev(() => CV.wzGo(4)); await A.wait(500);
   await A.ev(() => CV.wzGo(5)); await A.wait(600);
-  await A.ev(() => { void CV.wzCreate(); }); await A.wait(3500); await A.closeAll();
+  await A.ev(() => { void CV.wzCreate(); }); await A.wait(5000);
+  { const d = await A.ev(() => { const sh = document.querySelector('#v-sheet-bg'); return sh ? sh.innerText : ''; });
+    ok('après la création : « Vous partez à 4 : invite-les », sans « Je pars seul(e) »', /partez à 4/.test(d) && !/seul\(e\)/i.test(d), d.slice(0, 160)); }
+  await A.closeAll();
+  // « Seul(e) » : la fenêtre « avec qui » ne s’ouvre pas
+  await A.ev(() => { void CV.wizard(); }); await A.wait(900); await card('wz', 0);
+  await A.ev(() => { document.getElementById('wz-titre').value = 'Solo à Porto'; }); await A.ev(() => CV.wzGo(2)); await A.wait(400);
+  await A.ev(() => { const d = new Date(Date.now() + 60 * 864e5).toISOString().slice(0, 10); const i = document.getElementById('wz-debut'); i.value = d; i.dispatchEvent(new Event('input')); });
+  await A.ev(() => CV.wzGo(3)); await A.wait(500); await A.ev(() => { const v = document.querySelector('.wz-et [data-k=ville]'); v.value = 'Porto'; }); await A.ev(() => CV.wzGo(4)); await A.wait(500); await A.ev(() => CV.wzGo(5)); await A.wait(600);
+  await A.ev(() => { void CV.wzCreate(); }); await A.wait(5000);
+  { const d = await A.ev(() => { const sh = document.querySelector('#v-sheet-bg'); return sh ? sh.innerText : ''; }); ok('voyage « Seul(e) » : on ne redemande pas « avec qui pars-tu »', !/Avec qui pars-tu|partez à/i.test(d), d.slice(0, 120)); }
+  await A.closeAll();
   const t = await A.ev(() => { const r = Object.values(CV._R()).find(x => x.type === 'trip' && !x.deleted && x.titre === 'Famille à Lisbonne'); return r ? { qui: r.qui, nbv: r.nbv } : null; });
   ok('Je sais où je vais : le voyage créé garde « en famille, 4 voyageurs »', !!t && t.qui === 'famille' && t.nbv === 4, JSON.stringify(t));
+  // … et le garde après un redémarrage (la remise en forme des fiches du 14/11 ne doit pas prendre « famille » pour une liste)
+  await A.pg.reload(); for (let i = 0; i < 40 && !(await A.ev(() => { try { return !!CV._R(); } catch (e) { return false; } }).catch(() => false)); i++) await A.wait(400); await A.wait(2500); await A.closeAll().catch(() => {});
+  { const t2 = await A.ev(() => { const r = Object.values(CV._R()).find(x => x.type === 'trip' && !x.deleted && x.titre === 'Famille à Lisbonne'); return r ? { qui: r.qui, nbv: r.nbv, v: r.voyageurs } : null; });
+    ok('après un redémarrage : toujours « en famille, 4 voyageurs »', !!t2 && t2.qui === 'famille' && t2.nbv === 4 && Array.isArray(t2.v), JSON.stringify(t2)); }
   // 2) globe : l’écran « Avant de dessiner » pose les mêmes questions
   await A.ev(() => { void CV.newTrip(); }); await A.wait(900); await A.ev(() => { const b = [...document.querySelectorAll('#v-sheet-bg button')].find(x => /Je le dessine sur le globe/.test(x.innerText)); b && b.click(); }); await A.wait(1200);
   s = await st('gp'); ok('globe : « Avec qui ? » et « Combien de voyageurs ? » avant de dessiner', s.cards === 4 && !!s.nb, JSON.stringify(s));
