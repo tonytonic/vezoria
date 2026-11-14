@@ -17,6 +17,15 @@
  * Les compteurs sont approximatifs (quelques centaines d'appels d'écart au plus) : les paliers gardent une marge.
  */
 const C = { req: 0, r2a: 0, r2b: 0 };   // pas encore envoyés à D1 (ce serveur)
+// 🚨 (14/11/2026) alertes (OWASP A09) : chaque refus (401, 403, 429) est compté par jour et par route, pour voir une attaque
+//    (quelqu’un qui essaie des milliers de codes) dans l’admin (a: 'usage' → alerts). Aucun contenu, aucune adresse IP gardée.
+const AL = {};
+async function alertFlush(env) {
+  const d = new Date().toISOString().slice(0, 10), e = Object.entries(AL); e.forEach(([k]) => delete AL[k]); if (!e.length) return;
+  await env.DB.prepare('CREATE TABLE IF NOT EXISTS alerts_d (d TEXT NOT NULL, k TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (d, k))').run();
+  await env.DB.batch(e.map(([k, n]) => env.DB.prepare('INSERT INTO alerts_d (d, k, n) VALUES (?1, ?2, ?3) ON CONFLICT (d, k) DO UPDATE SET n = n + ?3').bind(d, k, n)));
+  if (Math.random() < 0.02) await env.DB.prepare('DELETE FROM alerts_d WHERE d < ?1').bind(new Date(Date.now() - 31 * 864e5).toISOString().slice(0, 10)).run();
+}
 let lastFlush = Date.now(), tot = null, totAt = 0, ready = false;
 const month = () => new Date().toISOString().slice(0, 7);
 const lim = (env, k, d) => Number(env[k]) || d;
@@ -58,6 +67,8 @@ export async function onRequest(ctx) {
     }
   }
   C.req += 1;
-  if (C.req >= 100 || Date.now() - lastFlush > 30000) { const pr = flush(env).catch(() => {}); if (waitUntil) waitUntil(pr); }
-  return next();
+  if (C.req >= 100 || Date.now() - lastFlush > 30000) { const pr = Promise.all([flush(env).catch(() => {}), alertFlush(env).catch(() => {})]); if (waitUntil) waitUntil(pr); }
+  const res = await next();
+  try { if (res && (res.status === 401 || res.status === 403 || res.status === 429)) { const k = res.status + ' ' + p.replace(/^\/api\//, '').slice(0, 20); AL[k] = (AL[k] || 0) + 1; } } catch (e) {}
+  return res;
 }

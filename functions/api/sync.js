@@ -88,6 +88,7 @@ async function rateSpace(env, space, limit) {
 }
 const TOO_MANY = 'Trop d’envois depuis cette connexion : réessaie dans une heure. — Too many uploads from this connection: try again in an hour.';
 
+const BAD_RID = /['"<>&\\`\u0000-\u001f\u2028\u2029]/;   // pas l’espace : « geo:new york » est un vrai identifiant
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 
 // 📱 appareils bloqués d’un carnet : relus au plus une fois par minute (une seule requête D1 pour toutes les synchros et photos)
@@ -415,7 +416,9 @@ export async function onRequestPost({ request, env, waitUntil }) {
        ON CONFLICT (space, id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at, rev = excluded.rev, wk = excluded.wk
        WHERE excluded.updated_at >= records.updated_at OR records.updated_at > ?5 + ${FUTURE}` + (adm.me ? ` OR COALESCE(records.wk, '') != 'A'` : '')
     );
-    const ok = changes.filter(r => r && typeof r.id === 'string' && r.id && r.id.length <= 120);
+    // 🛡️ (14/11) identifiant piégé refusé ici aussi (l’appli les refusait déjà) : « __proto__ » abîmait le carnet des autres en mémoire,
+    //    et " < > ' & \ ` et caractères de contrôle n’existent dans aucun vrai identifiant. Protège aussi les anciennes versions de l’appli.
+    const ok = changes.filter(r => r && typeof r === 'object' && !Array.isArray(r) && typeof r.id === 'string' && r.id && r.id.length <= 120 && !BAD_RID.test(r.id) && !/^(__proto__|constructor|prototype)$/.test(r.id));
     changes.forEach(r => { if (r && typeof r.id === 'string' && !ok.includes(r)) skipped.push(r.id.slice(0, 120)); });
     // ✍️ fil avec auteur : un abonné ne remplace que ses propres fiches (jamais celles de l’auteur ni d’un autre abonné)
     const owner = new Map();
